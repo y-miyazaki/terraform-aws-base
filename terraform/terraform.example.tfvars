@@ -369,8 +369,12 @@ security_logging = {
     bucket        = "aws-logging"
     acl           = "log-delivery-write"
     force_destroy = true
-    versioning    = []
-    logging       = []
+    versioning = [
+      {
+        enabled = true
+      }
+    ]
+    logging = []
     lifecycle_rule = [
       {
         id                                     = "default"
@@ -441,8 +445,12 @@ security_config = {
     bucket        = "aws-config"
     acl           = "private"
     force_destroy = true
-    versioning    = []
-    logging       = []
+    versioning = [
+      {
+        enabled = true
+      }
+    ]
+    logging = []
     lifecycle_rule = [
       {
         id                                     = "default"
@@ -629,7 +637,11 @@ PATTERN
     bucket        = "aws-cloudtrail"
     acl           = null
     force_destroy = true
-    versioning    = []
+    versioning = [
+      {
+        enabled = true
+      }
+    ]
     #    logging               = []
     lifecycle_rule = [
       {
@@ -781,7 +793,7 @@ application_log = {
   aws_kinesis_firehose_delivery_stream = {
     buffer_size        = 5
     buffer_interval    = 60
-    prefix             = "/Application"
+    prefix             = "Application/"
     compression_format = "GZIP"
     cloudwatch_logging_options = [
       {

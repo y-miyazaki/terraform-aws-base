@@ -8,12 +8,17 @@ locals {
 # Provides a S3 bucket resource.
 #--------------------------------------------------------------
 module "aws_recipes_s3_bucket_log_logging" {
-  source                               = "../modules/aws/recipes/s3/bucket/log"
-  bucket                               = lookup(local.aws_s3_bucket_logging, "bucket")
-  acl                                  = lookup(local.aws_s3_bucket_logging, "acl", "private")
-  tags                                 = var.tags
-  force_destroy                        = lookup(local.aws_s3_bucket_logging, "force_destroy", false)
-  versioning                           = lookup(local.aws_s3_bucket_logging, "versioning", [])
+  source        = "../modules/aws/recipes/s3/bucket/log"
+  bucket        = lookup(local.aws_s3_bucket_logging, "bucket")
+  acl           = lookup(local.aws_s3_bucket_logging, "acl", "private")
+  tags          = var.tags
+  force_destroy = lookup(local.aws_s3_bucket_logging, "force_destroy", false)
+  versioning = lookup(local.aws_s3_bucket_logging, "versioning", [
+    {
+      enabled = true
+    }
+    ]
+  )
   logging                              = lookup(local.aws_s3_bucket_logging, "logging", [])
   lifecycle_rule                       = lookup(local.aws_s3_bucket_logging, "lifecycle_rule", [])
   replication_configuration            = lookup(local.aws_s3_bucket_logging, "replication_configuration", [])
