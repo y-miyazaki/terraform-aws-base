@@ -11,4 +11,4 @@ crash.log
 main_init.tf
 provider.json
 terraform.*.tfvars
-!terraform.sample.tfvars
+!terraform.example.tfvars
