@@ -18,7 +18,7 @@ resource "aws_kinesis_firehose_delivery_stream" "this" {
     for_each = lookup(var.aws_kinesis_firehose_delivery_stream[count.index], "extended_s3_configuration", [])
     content {
       # base
-      role_arn           = aws_iam_role.this.arn
+      role_arn           = aws_iam_role.this[0].arn
       bucket_arn         = lookup(extended_s3_configuration.value, "bucket_arn", null)
       prefix             = lookup(extended_s3_configuration.value, "prefix", null)
       buffer_size        = lookup(extended_s3_configuration.value, "buffer_size", null)
