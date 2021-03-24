@@ -133,11 +133,11 @@ region: ap-northeast-1
 
 ### 環境毎に設定する terraform.{environment}.tfvars ファイル
 
-リンク先にある[terraform.sample.tfvars](terraform/terraform.sample.tfvars)を名前を変更し、自分の環境用に各変数を変更する必要があります。変更するべき変数には TODO コメントが記載されています。TODO で検索してください。
+リンク先にある[terraform.example.tfvars](terraform/terraform.example.tfvars)を名前を変更し、自分の環境用に各変数を変更する必要があります。変更するべき変数には TODO コメントが記載されています。TODO で検索してください。
 
 ### 環境毎に設定する main_provider.tf ファイル
 
-リンク先にある[main_provider.tf](terraform/main_provider.tf)の各パラメータを変更する必要があります。変更するべき変数には TODO コメントが記載されています。TODO で検索してください。
+リンク先にある[main_provider.tf.example](terraform/main_provider.tf.example)を main_provider.tf にリネームししてください。その後、各パラメータを変更する必要があります。変更するべき変数には TODO コメントが記載されています。TODO で検索してください。
 
 ```
 #--------------------------------------------------------------
@@ -217,7 +217,7 @@ commands will detect it and remind you to do so if necessary.
 ```
 
 ```
-bash-5.1# terraform apply --auto-approve -var-file=terraform.sample.tfvars
+bash-5.1# terraform apply --auto-approve -var-file=terraform.example.tfvars
 module.aws_recipes_s3_bucket_log_logging.random_id.this: Creating...
 random_id.this: Creating...
 module.aws_recipes_s3_bucket_log_logging.random_id.this: Creation complete after 0s [id=wiatHg]
