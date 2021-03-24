@@ -174,3 +174,59 @@ provider "aws" {
   region = "ap-northeast-1"
 }
 ```
+
+### Terraform の実行
+
+terraform コマンドで実行します。terraform init 後に terraform apply を行います。
+もしかすると terraform apply が失敗するかもしれませんが、conflict などの問題で失敗する場合があるので再度実行すれば成功します。
+
+```
+bash-5.1# terraform init
+There are some problems with the CLI configuration:
+
+Error: The specified plugin cache dir /root/.terraform.d/plugin-cache cannot be opened: stat /root/.terraform.d/plugin-cache: no such file or directory
+
+
+As a result of the above problems, Terraform may not behave as intended.
+
+
+Initializing modules...
+
+Initializing the backend...
+
+Initializing provider plugins...
+- Reusing previous version of hashicorp/aws from the dependency lock file
+- Reusing previous version of hashicorp/random from the dependency lock file
+- Reusing previous version of hashicorp/template from the dependency lock file
+- Installing hashicorp/aws v3.29.1...
+- Installed hashicorp/aws v3.29.1 (signed by HashiCorp)
+- Installing hashicorp/random v3.1.0...
+- Installed hashicorp/random v3.1.0 (signed by HashiCorp)
+- Installing hashicorp/template v2.2.0...
+- Installed hashicorp/template v2.2.0 (signed by HashiCorp)
+
+Terraform has been successfully initialized!
+
+You may now begin working with Terraform. Try running "terraform plan" to see
+any changes that are required for your infrastructure. All Terraform commands
+should now work.
+
+If you ever set or change modules or backend configuration for Terraform,
+rerun this command to reinitialize your working directory. If you forget, other
+commands will detect it and remind you to do so if necessary.
+```
+
+```
+bash-5.1# terraform apply --auto-approve -var-file=terraform.sample.tfvars
+module.aws_recipes_s3_bucket_log_logging.random_id.this: Creating...
+random_id.this: Creating...
+module.aws_recipes_s3_bucket_log_logging.random_id.this: Creation complete after 0s [id=wiatHg]
+random_id.this: Creation complete after 0s [id=uqe0bU7J]
+module.aws_recipes_security_default_vpc.aws_default_subnet.this[1]: Creating...
+
+...
+...
+...
+
+Apply complete! Resources: x added, x changed, 0 destroyed.
+```
