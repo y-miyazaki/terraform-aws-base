@@ -32,6 +32,14 @@ locals {
       ],
       "Effect": "Allow",
       "Resource": "*"
+    },
+    {
+      "Sid": "AllowSupports",
+      "Action": [
+        "support:*"
+      ],
+      "Effect": "Allow",
+      "Resource": "*"
     }
   ]
 }

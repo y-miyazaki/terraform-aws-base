@@ -119,7 +119,40 @@ budgets = {
     }
   }
 }
-
+#--------------------------------------------------------------
+# Trusted Advisor
+#--------------------------------------------------------------
+trusted_advisor = {
+  // TODO: need to set is_enabled.
+  // If you are not in a business or enterprise plan with a support plan, set is_enable to false as notifications will fail. If not, set it to true.
+  is_enabled = false
+  aws_cloudwatch_event_rule = {
+    name        = "trusted-advisor-cloudwatch-event-rule"
+    description = "This cloudwatch event used for Trusted Advisor."
+    is_enabled  = true
+  }
+  aws_cloudwatch_log_group_lambda = {
+    retention_in_days = 7
+    kms_key_id        = null
+  }
+  aws_lambda_function = {
+    environment = {
+      LANGUAGE = "en"
+      # TODO: need to change SERVICE.
+      # SERVICE is project name or job name or product name.
+      SERVICE = "test"
+      # TODO: need to change ENV.
+      ENV = "dev"
+      # TODO: need to change SLACK_OAUTH_ACCESS_TOKEN.
+      SLACK_OAUTH_ACCESS_TOKEN = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+      # TODO: need to change SLACK_CHANNEL_ID.
+      SLACK_CHANNEL_ID = "xxxxxxxxxx"
+      LOGGER_FORMATTER = "json"
+      LOGGER_OUT       = "stdout"
+      LOGGER_LEVEL     = "warn"
+    }
+  }
+}
 #--------------------------------------------------------------
 # IAM: Users
 #--------------------------------------------------------------
