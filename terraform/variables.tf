@@ -3,6 +3,7 @@ variable "name_prefix" {}
 variable "region" {}
 variable "resourcegroups_group" {}
 variable "budgets" {}
+variable "trusted_advisor" {}
 variable "iam" {}
 # security
 variable "security_iam" {}
