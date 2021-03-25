@@ -128,6 +128,7 @@ trusted_advisor = {
   is_enabled = false
   aws_cloudwatch_event_rule = {
     name        = "trusted-advisor-cloudwatch-event-rule"
+    schedule_expression = "cron(0 0 * * ? *)"
     description = "This cloudwatch event used for Trusted Advisor."
     is_enabled  = true
   }
