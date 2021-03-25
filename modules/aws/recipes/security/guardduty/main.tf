@@ -25,3 +25,33 @@ resource "aws_guardduty_invite_accepter" "this" {
   detector_id       = aws_guardduty_detector.this.id
   master_account_id = lookup(var.aws_guardduty_detector, "master_account_id", null)
 }
+
+#--------------------------------------------------------------
+# Provides an EventBridge Rule resource.
+#--------------------------------------------------------------
+resource "aws_cloudwatch_event_rule" "this" {
+  name          = lookup(var.aws_cloudwatch_event_rule, "name", "security-guarduty-cloudwatch-event-rule")
+  event_pattern = <<EVENT_PATTERN
+  {
+    "source": [
+      "aws.guardduty"
+    ],
+    "detail-type": [
+      "GuardDuty Finding"
+    ]
+  }
+EVENT_PATTERN
+  description   = lookup(var.aws_cloudwatch_event_rule, "description", "This cloudwatch event used for GuardDuty.")
+  is_enabled    = lookup(var.aws_cloudwatch_event_rule, "is_enabled", true)
+  tags          = var.tags
+}
+#--------------------------------------------------------------
+# Provides an EventBridge Target resource.
+#--------------------------------------------------------------
+resource "aws_cloudwatch_event_target" "this" {
+  rule = aws_cloudwatch_event_rule.this.name
+  arn  = lookup(var.aws_cloudwatch_event_target, "arn", null)
+  depends_on = [
+    aws_cloudwatch_event_rule.this
+  ]
+}

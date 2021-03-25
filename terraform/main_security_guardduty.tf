@@ -5,6 +5,14 @@ module "aws_recipes_security_guardduty" {
   source                 = "../modules/aws/recipes/security/guardduty"
   aws_guardduty_detector = lookup(var.security_guardduty, "aws_guardduty_detector")
   aws_guardduty_member   = lookup(var.security_guardduty, "aws_guardduty_member")
+  aws_cloudwatch_event_rule = {
+    name        = "${var.name_prefix}${lookup(var.security_guardduty.aws_cloudwatch_event_rule, "name", "security-guardduty")}"
+    description = lookup(var.security_guardduty.aws_cloudwatch_event_rule, "description", "This cloudwatch event used for GuardDuty.")
+  }
+  aws_cloudwatch_event_target = {
+    arn = module.aws_recipes_lambda_create_guardduty.arn
+  }
+  tags = var.tags
 }
 
 #--------------------------------------------------------------
@@ -43,54 +51,9 @@ module "aws_recipes_lambda_create_guardduty" {
     principal           = "events.amazonaws.com"
     qualifier           = null
     source_account      = null
-    source_arn          = module.aws_recipes_cloudwatch_event_guardduty.arn
+    source_arn          = module.aws_recipes_security_guardduty.arn
     statement_id        = "GuardDutyDetectUnexpectedUsage"
     statement_id_prefix = null
-  }
-  tags = var.tags
-}
-
-#--------------------------------------------------------------
-# Provides a resource to manage CloudWatch Rule and CloudWatch Event.
-#--------------------------------------------------------------
-module "aws_recipes_cloudwatch_event_guardduty" {
-  source = "../modules/aws/recipes/cloudwatch/event"
-  aws_cloudwatch_event_rule = {
-    name = "${var.name_prefix}guardduty"
-    # # ex) cron(0 0 1 * ? *)
-    # guard duty can't use schedule_expression
-    # schedule_expression = var.schedule_expression
-    schedule_expression = null
-    event_bus_name      = null
-    event_pattern       = <<EVENT_PATTERN
-  {
-    "source": [
-      "aws.guardduty"
-    ],
-    "detail-type": [
-      "GuardDuty Finding"
-    ]
-  }
-EVENT_PATTERN
-    description         = "This cloudwatch event used for GuardDuty."
-    role_arn            = null
-    is_enabled          = true
-  }
-  aws_cloudwatch_event_target = {
-    event_bus_name      = null
-    target_id           = null
-    arn                 = module.aws_recipes_lambda_create_guardduty.arn
-    input               = null
-    input_path          = null
-    role_arn            = null
-    run_command_targets = []
-    ecs_target          = []
-    batch_target        = []
-    kinesis_target      = []
-    sqs_target          = []
-    input_transformer   = []
-    retry_policy        = []
-    dead_letter_config  = []
   }
   tags = var.tags
 }
