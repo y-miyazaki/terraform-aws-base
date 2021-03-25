@@ -24,34 +24,34 @@ variable "aws_cloudwatch_event_rule" {
 variable "aws_cloudwatch_event_target" {
   type = object(
     {
-    # (Optional) The event bus to associate with the rule. If you omit this, the default event bus is used.
+      # (Optional) The event bus to associate with the rule. If you omit this, the default event bus is used.
       event_bus_name = string
       # (Optional) The unique target assignment ID. If missing, will generate a random, unique id.
-      target_id      = string
+      target_id = string
       # (Required) The Amazon Resource Name (ARN) associated of the target.
-      arn                 = string
+      arn = string
       # (Optional) Valid JSON text passed to the target. Conflicts with input_path and input_transformer.
-      input               = string
+      input = string
       # (Optional) The value of the JSONPath that is used for extracting part of the matched event when passing it to the target. Conflicts with input and input_transformer.
-      input_path          = string
+      input_path = string
       # (Optional) The Amazon Resource Name (ARN) of the IAM role to be used for this target when the rule is triggered. Required if ecs_target is used.
-      role_arn            = string
+      role_arn = string
       # (Optional) Parameters used when you are using the rule to invoke Amazon EC2 Run Command. Documented below. A maximum of 5 are allowed.
       run_command_targets = list(any)
       # (Optional) Parameters used when you are using the rule to invoke Amazon ECS Task. Documented below. A maximum of 1 are allowed.
-      ecs_target          = list(any)
+      ecs_target = list(any)
       # (Optional) Parameters used when you are using the rule to invoke an Amazon Batch Job. Documented below. A maximum of 1 are allowed.
-      batch_target        = list(any)
+      batch_target = list(any)
       # (Optional) Parameters used when you are using the rule to invoke an Amazon Kinesis Stream. Documented below. A maximum of 1 are allowed.
-      kinesis_target      = list(any)
+      kinesis_target = list(any)
       # (Optional) Parameters used when you are using the rule to invoke an Amazon SQS Queue. Documented below. A maximum of 1 are allowed.
-      sqs_target          = list(any)
+      sqs_target = list(any)
       # (Optional) Parameters used when you are providing a custom input to a target based on certain event data. Conflicts with input and input_path.
-      input_transformer   = list(any)
+      input_transformer = list(any)
       # (Optional) Parameters used when you are providing retry policies. Documented below. A maximum of 1 are allowed.
-      retry_policy        = list(any)
+      retry_policy = list(any)
       # (Optional) Parameters used when you are providing a dead letter conifg. Documented below. A maximum of 1 are allowed.
-      dead_letter_config  = list(any)
+      dead_letter_config = list(any)
     }
   )
   description = "(Required) Provides an EventBridge Target resource."

@@ -61,14 +61,10 @@ budgets = {
   # by Cost Explorer to show you the status of your budgets, to provide forecasts of
   # your estimated costs, and to track your AWS usage, including your free tier usage.
   aws_budgets_budget = {
-    name        = "budget-monthly"
-    budget_type = "COST"
+    name = "budgets-monthly"
     # TODO: need to change limit_amount for Service
-    limit_amount      = "100.0"
-    limit_unit        = "USD"
-    time_period_end   = "2050-12-31_00:00"
-    time_period_start = "2021-01-01_00:00"
-    time_unit         = "MONTHLY"
+    limit_amount = "100.0"
+    time_unit    = "MONTHLY"
     notification = [
       {
         comparison_operator = "GREATER_THAN"
@@ -87,7 +83,7 @@ budgets = {
     ]
   }
   aws_cloudwatch_event_rule = {
-    name = "budgets"
+    name = "budgets-cloudwatch-event-rule"
     # TODO: need to change schedule_expression.
     # schedule_expression when Budgets will be notified.
     schedule_expression = "cron(0 0 * * ? *)"
@@ -308,8 +304,12 @@ security_iam = {
     require_symbols                = true
     require_uppercase_characters   = true
   }
-  # TODO: wip
+  # TODO: need to set principal role arn for Support IAM Role.
+  # https://docs.aws.amazon.com/securityhub/latest/userguide/securityhub-cis-controls.html#cis-1.20-remediation
   support_iam_role_principal_arns = [
+    # example)
+    # "arn:aws:iam::{account id}:{iam user}"
+    "arn:aws:iam::999999999999:root"
   ]
   aws_iam_role = {
     description = null
@@ -533,6 +533,10 @@ security_guardduty = {
   aws_cloudwatch_log_group_lambda = {
     retention_in_days = 7
     kms_key_id        = null
+  }
+  aws_cloudwatch_event_rule = {
+    name        = "security-guardduty-cloudwatch-event-rule"
+    description = "This cloudwatch event used for GuardDuty."
   }
   aws_lambda_function = {
     environment = {
