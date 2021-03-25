@@ -129,7 +129,7 @@ region: ap-northeast-1
 ```
 
 -   環境毎に設定する terraform.{environment}.tfvars ファイル  
-    リンク先にある[terraform.example.tfvars](terraform/terraform.example.tfvars)を名前を変更し、自分の環境用に各変数を変更する必要があります。変更するべき変数には TODO コメントが記載されています。TODO で検索してください。
+    リンク先にある[terraform.example.tfvars](terraform/terraform.example.tfvars)の名前を変更し、自分の環境用に各変数を変更する必要があります。変更するべき変数には TODO コメントが記載されています。TODO で検索してください。
 
 -   環境毎に設定する main_provider.tf ファイル  
     リンク先にある[main_provider.tf.example](terraform/main_provider.tf.example)を main_provider.tf にリネームししてください。その後、各パラメータを変更する必要があります。変更するべき変数には TODO コメントが記載されています。TODO で検索してください。

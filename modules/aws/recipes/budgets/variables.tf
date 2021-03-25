@@ -1,29 +1,22 @@
 #--------------------------------------------------------------
 # module variables
 #--------------------------------------------------------------
-variable "aws_guardduty_detector" {
+
+variable "aws_budgets_budget" {
   type = object(
     {
-      enable                       = bool
-      finding_publishing_frequency = string
+      # account_id   = string
+      name         = string
+      budget_type  = string
+      cost_filters = map(any)
+      limit_amount = string
+      notification = list(any)
     }
   )
-  description = "(Required) The resource of aws_guardduty_detector."
+  description = "(Required) Provides a budgets budget resource. Budgets use the cost visualisation provided by Cost Explorer to show you the status of your budgets, to provide forecasts of your estimated costs, and to track your AWS usage, including your free tier usage."
   default     = null
 }
-variable "aws_guardduty_member" {
-  type = list(object(
-    {
-      account_id                 = string
-      email                      = string
-      invite                     = bool
-      invitation_message         = string
-      disable_email_notification = bool
-    }
-  ))
-  description = "(Required) The resource of aws_guardduty_member."
-  default     = null
-}
+
 variable "aws_cloudwatch_event_rule" {
   type = object(
     {
@@ -35,8 +28,8 @@ variable "aws_cloudwatch_event_rule" {
   )
   description = "(Required) Provides an EventBridge Rule resource."
   default = {
-    name        = "security-guarduty-cloudwatch-event-rule"
-    description = "This cloudwatch event used for GuardDuty."
+    name        = "budgets-cloudwatch-event-rule"
+    description = "This cloudwatch event used for Budgets."
     role_arn    = null
     is_enabled  = true
   }
