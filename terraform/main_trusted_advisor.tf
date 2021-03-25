@@ -10,7 +10,7 @@ module "aws_recipes_trusted_advisor" {
   count  = var.trusted_advisor.is_enabled ? 1 : 0
   aws_cloudwatch_event_rule = {
     name                = "${var.name_prefix}${lookup(var.trusted_advisor.aws_cloudwatch_event_rule, "name", "budgets")}"
-    schedule_expression = lookup(var.trusted_advisor.aws_cloudwatch_event_rule, "schedule_expression", "cron(*/5 * * * ? *)")
+    schedule_expression = lookup(var.trusted_advisor.aws_cloudwatch_event_rule, "schedule_expression", "cron(0 0 * * ? *)")
     description         = lookup(var.trusted_advisor.aws_cloudwatch_event_rule, "description", null)
     is_enabled          = lookup(var.trusted_advisor.aws_cloudwatch_event_rule, "is_enabled", true)
   }
