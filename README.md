@@ -17,6 +17,7 @@ AWS でインフラを構築する際には、どんなプロジェクトでも�
 -   [CloudTrail によるセキュリティ面での Slack 通知](#cloudtrail-によるセキュリティ面での-Slack-通知)
 -   [GuardDuty によるセキュリティ面での Slack 通知](#guardduty-によるセキュリティ面での-slack-通知)
 -   [Cost Management での Budgets のアラート設定・Slack 通知](#cost-management-での-budgets-のアラート設定・slack-通知)
+-   [Trusted Advisor での Slack 通知](#trusted-advisor-での-slack-通知)
 -   [CloudWatch 上にあるログの Slack 通知](#cloudWatch-上にあるログの-slack-通知)
 -   [初期設定](#初期設定)
 
@@ -41,7 +42,7 @@ AWS Security Hub で提供されている Security standards の 3 つのセキ�
 
 ## IAM ユーザ・グループの作成
 
-IAM ユーザ・グループ(administrator/developer/operator)の作成を行うことができます。
+IAM ユーザ・グループ(例では、administrator/developer/operator)の作成を行うことができます。
 terraform ユーザと deploy グループは、[マニュアル](#Terraform-を実行するための-iam-ユーザ-and-iam-グループのマニュアル作成)
 で作成されたものです。
 
@@ -75,6 +76,11 @@ Slack チャンネルへの設定・Slack アプリの追加を行い、Token �
 ## CloudWatch 上にあるログの Slack 通知
 
 Slack チャンネルへの設定・Slack アプリの追加を行い、Token を設定することで、指定したロググループのフィルタ条件に一致した内容が Slack 通知で届くようになります。
+
+## Trusted Advisor での Slack 通知
+
+Slack チャンネルへの設定・Slack アプリの追加を行い、Token を設定することで、指定の時間（デフォルトは毎日 9:00JST）に Slack 通知が届くようになります。
+ただし、Trusted Advisor はサポートプランがビジネスプランかエンタープライズプランの契約が必要です。デフォルトでは false となっています。
 
 ## 初期設定
 
