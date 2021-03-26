@@ -1,17 +1,39 @@
 #--------------------------------------------------------------
+# Local
+#--------------------------------------------------------------
+locals {
+  group = flatten([
+    for group, group_property in var.group : {
+      group           = group
+      users           = group_property.users
+      policy_document = group_property.policy_document
+    }
+    ]
+  )
+  group_policy_arns = flatten([
+    for group, group_property in var.group : [
+      for key, policy in group_property.policy : {
+        group      = group
+        policy_arn = policy.policy_arn
+        key        = key
+      }
+    ]
+  ])
+}
+#--------------------------------------------------------------
 # Provides an IAM user.
 #--------------------------------------------------------------
 resource "aws_iam_user" "this" {
-  for_each = toset(var.iam_user_users)
-  name     = each.value
-  path     = "/"
+  count = length(var.user)
+  name  = var.user[count.index]
+  path  = "/"
 }
 #--------------------------------------------------------------
 # Manages an IAM User Login Profile with limited support for password creation during Terraform resource creation. Uses PGP to encrypt the password for safe transport to the user. PGP keys can be obtained from Keybase.
 #--------------------------------------------------------------
 resource "aws_iam_user_login_profile" "this" {
-  for_each                = toset(var.iam_user_users)
-  user                    = each.value
+  count                   = length(var.user)
+  user                    = var.user[count.index]
   pgp_key                 = "keybase:exp_enechange"
   password_reset_required = true
   password_length         = "20"
@@ -22,24 +44,28 @@ resource "aws_iam_user_login_profile" "this" {
 #--------------------------------------------------------------
 # IAM Group for administrator
 #--------------------------------------------------------------
-resource "aws_iam_group" "administrator" {
-  name = "administrator"
+resource "aws_iam_group" "this" {
+  for_each = {
+    for group in local.group : group.group => group
+  }
+  name = each.value.group
   path = "/"
 }
 #--------------------------------------------------------------
-# Attaches a Managed IAM Policy to an IAM group
+# IAM Group Mapping
 #--------------------------------------------------------------
-resource "aws_iam_group_policy_attachment" "administrator" {
-  group      = aws_iam_group.administrator.name
-  policy_arn = "arn:aws:iam::aws:policy/AdministratorAccess"
-}
+resource "aws_iam_group_membership" "this" {
+  for_each = {
+    for group in local.group : group.group => group
+  }
+  name  = "${each.key}-membership"
+  users = each.value.users
+  group = each.value.group
 
-#--------------------------------------------------------------
-# IAM Group for developer
-#--------------------------------------------------------------
-resource "aws_iam_group" "developer" {
-  name = "developer"
-  path = "/"
+  depends_on = [
+    aws_iam_group.this,
+    aws_iam_user.this,
+  ]
 }
 
 #--------------------------------------------------------------
@@ -161,58 +187,85 @@ POLICY
 #--------------------------------------------------------------
 # Attaches a Managed IAM Policy to an IAM group
 #--------------------------------------------------------------
-resource "aws_iam_group_policy_attachment" "developer" {
-  group      = aws_iam_group.developer.name
+resource "aws_iam_group_policy_attachment" "mfa" {
+  for_each = {
+    for group in local.group : group.group => group
+  }
+  group      = each.value.group
   policy_arn = aws_iam_policy.this.arn
 }
-
-#--------------------------------------------------------------
-# IAM Group for operator
-#--------------------------------------------------------------
-resource "aws_iam_group" "operator" {
-  name = "operator"
-  path = "/"
-}
-
 #--------------------------------------------------------------
 # Attaches a Managed IAM Policy to an IAM group
 #--------------------------------------------------------------
-resource "aws_iam_group_policy_attachment" "operator" {
-  group      = aws_iam_group.operator.name
-  policy_arn = aws_iam_policy.this.arn
+resource "aws_iam_group_policy_attachment" "this" {
+  for_each = {
+    for tm in local.group_policy_arns : "${tm.group}-${tm.key}" => tm
+  }
+  group      = each.value.group
+  policy_arn = each.value.policy_arn
+}
+
+#--------------------------------------------------------------
+# Generates an IAM policy document in JSON format for use with resources that expect policy documents such as aws_iam_policy.
+#--------------------------------------------------------------
+data "aws_iam_policy_document" "custom" {
+  for_each = {
+    for group in local.group : group.group => group if(group.policy_document != null)
+  }
+  dynamic "statement" {
+    for_each = lookup(each.value.policy_document, "statement", [])
+    content {
+      sid           = lookup(statement.value, "sid", null)
+      effect        = lookup(statement.value, "effect", null)
+      actions       = lookup(statement.value, "actions", null)
+      not_actions   = lookup(statement.value, "not_actions", null)
+      resources     = lookup(statement.value, "resources", null)
+      not_resources = lookup(statement.value, "not_resources", null)
+      dynamic "principals" {
+        for_each = lookup(statement.value, "principals", [])
+        content {
+          type        = lookup(principals.value, "type", null)
+          identifiers = lookup(principals.value, "identifiers", null)
+        }
+      }
+      dynamic "not_principals" {
+        for_each = lookup(statement.value, "not_principals", [])
+        content {
+          type        = lookup(not_principals.value, "type", null)
+          identifiers = lookup(not_principals.value, "identifiers", null)
+        }
+      }
+      dynamic "condition" {
+        for_each = lookup(statement.value, "condition", [])
+        content {
+          test     = lookup(condition.value, "test", null)
+          variable = lookup(condition.value, "variable", null)
+          values   = lookup(condition.value, "values", null)
+        }
+      }
+    }
+  }
 }
 #--------------------------------------------------------------
-# IAM Group Mapping
+# Provides an IAM policy.
 #--------------------------------------------------------------
-resource "aws_iam_group_membership" "administrator" {
-  name  = "administrator-membership"
-  users = var.iam_user_group_administrator
-  group = "administrator"
-
-  depends_on = [
-    aws_iam_group.administrator,
-    aws_iam_user.this,
-  ]
+resource "aws_iam_policy" "custom" {
+  for_each = {
+    for group in local.group : group.group => group if(group.policy_document != null)
+  }
+  description = lookup(each.value.policy_document, "description", null)
+  name        = "${var.name_prefix}${lookup(each.value.policy_document, "name", null)}"
+  #   name_prefix = var.name_prefix
+  path   = lookup(each.value.policy_document, "path", "/")
+  policy = data.aws_iam_policy_document.custom[each.key].json
 }
-
-resource "aws_iam_group_membership" "developer" {
-  name  = "developer-membership"
-  users = var.iam_user_group_developer
-  group = "developer"
-
-  depends_on = [
-    aws_iam_group.developer,
-    aws_iam_user.this,
-  ]
-}
-
-resource "aws_iam_group_membership" "operator" {
-  name  = "operator-membership"
-  users = var.iam_user_group_operator
-  group = "operator"
-
-  depends_on = [
-    aws_iam_group.operator,
-    aws_iam_user.this,
-  ]
+#--------------------------------------------------------------
+# Attaches a Managed IAM Policy to an IAM group
+#--------------------------------------------------------------
+resource "aws_iam_group_policy_attachment" "custom" {
+  for_each = {
+    for group in local.group : group.group => group if(group.policy_document != null)
+  }
+  group      = each.value.group
+  policy_arn = aws_iam_policy.custom[each.key].arn
 }

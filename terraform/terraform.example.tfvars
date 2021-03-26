@@ -127,10 +127,10 @@ trusted_advisor = {
   // If you are not in a business or enterprise plan with a support plan, set is_enable to false as notifications will fail. If not, set it to true.
   is_enabled = false
   aws_cloudwatch_event_rule = {
-    name        = "trusted-advisor-cloudwatch-event-rule"
+    name                = "trusted-advisor-cloudwatch-event-rule"
     schedule_expression = "cron(0 0 * * ? *)"
-    description = "This cloudwatch event used for Trusted Advisor."
-    is_enabled  = true
+    description         = "This cloudwatch event used for Trusted Advisor."
+    is_enabled          = true
   }
   aws_cloudwatch_log_group_lambda = {
     retention_in_days = 7
@@ -158,169 +158,181 @@ trusted_advisor = {
 # IAM: Users
 #--------------------------------------------------------------
 iam = {
-  # TODO: need to change users
-  user = {
-    users = [
-      "test1",
-      "test2",
-      "test3",
-    ]
-  }
-  # TODO: need to change group members
+  # TODO: need to change IAM User.
+  user = [
+    "test1",
+    "test2",
+    "test3",
+  ]
+  # TODO: need to change IAM Group.
   # Please specify the user with the same name that has been set in users.
   group = {
-    group_administrator = [
-      "test1"
-    ]
-    group_developer = [
-      "test2",
-    ]
-    group_operator = [
-      "test2",
-      "test3",
-    ]
-  }
-  group_policy_document = {
-    # TODO: need to change developer base policy.
-    # Please specify the base policy to provide to the developer.
-    # By default, AWSSecurityHubReadOnlyAccess / AWSConfigUserAccess / CloudWatchFullAccess is set.
-    # You need to check this document.
-    # https://aws.amazon.com/jp/premiumsupport/knowledge-center/iam-increase-policy-size/
-    # developer base policy
-    developer_base = {
-      name        = "iam-group-developer-base-policy"
-      path        = "/"
-      description = ""
-      statement = [
+    administrator = {
+      users = [
+        "test1",
+      ]
+      # TODO: need to set base policy.
+      # Please specify the base policy to provide.
+      # default null.
+      # You need to check this document.
+      # https://aws.amazon.com/jp/premiumsupport/knowledge-center/iam-increase-policy-size/
+      policy_document = null
+      # TODO: need to add policy arn. group policy limit is 10.
+      # You need to check this document.
+      # https://aws.amazon.com/jp/premiumsupport/knowledge-center/iam-increase-policy-size/
+      policy = [
         {
-          sid    = "AllowAWSSecurityHubReadOnlyAccess"
-          effect = "Allow"
-          actions = [
-            "securityhub:Get*",
-            "securityhub:List*",
-            "securityhub:Describe*",
-          ]
-          resources = [
-            "*"
-          ]
+          policy_arn = "arn:aws:iam::aws:policy/AdministratorAccess"
+        }
+      ]
+    }
+    developer = {
+      users = [
+        "test2",
+      ]
+      # TODO: need to set base policy.
+      # Please specify the base policy to provide.
+      # default null.
+      # You need to check this document.
+      # https://aws.amazon.com/jp/premiumsupport/knowledge-center/iam-increase-policy-size/
+      policy_document = {
+        name        = "iam-group-developer-base-policy"
+        path        = "/"
+        description = ""
+        statement = [
+          {
+            sid    = "AllowAWSSecurityHubReadOnlyAccess"
+            effect = "Allow"
+            actions = [
+              "securityhub:Get*",
+              "securityhub:List*",
+              "securityhub:Describe*",
+            ]
+            resources = [
+              "*"
+            ]
+          },
+          {
+            sid    = "AllowAWSConfigUserAccess"
+            effect = "Allow"
+            actions = [
+              "config:Get*",
+              "config:Describe*",
+              "config:Deliver*",
+              "config:List*",
+              "config:Select*",
+              "tag:GetResources",
+              "tag:GetTagKeys",
+              "cloudtrail:DescribeTrails",
+              "cloudtrail:GetTrailStatus",
+              "cloudtrail:LookupEvents",
+            ]
+            resources = [
+              "*"
+            ]
+          },
+          {
+            sid    = "AllowCloudWatchFullAccess1"
+            effect = "Allow"
+            actions = [
+              "autoscaling:Describe*",
+              "cloudwatch:*",
+              "logs:*",
+              "sns:*",
+              "iam:GetPolicy",
+              "iam:GetPolicyVersion",
+              "iam:GetRole"
+            ]
+            resources = [
+              "*"
+            ]
+          },
+          {
+            sid    = "AllowCloudWatchFullAccess2"
+            effect = "Allow"
+            actions = [
+              "iam:CreateServiceLinkedRole",
+            ]
+            resources = [
+              "arn:aws:iam::*:role/aws-service-role/events.amazonaws.com/AWSServiceRoleForCloudWatchEvents"
+            ]
+            condition = [
+              {
+                test     = "StringLike"
+                variable = "iam:AWSServiceName"
+                values   = ["events.amazonaws.com"]
+              }
+            ]
+          },
+        ]
+      }
+      # TODO: need to add policy arn. group policy limit is 10.
+      # You need to check this document.
+      # https://aws.amazon.com/jp/premiumsupport/knowledge-center/iam-increase-policy-size/
+      policy = [
+        {
+          policy_arn = "arn:aws:iam::aws:policy/AmazonS3FullAccess"
         },
         {
-          sid    = "AllowAWSConfigUserAccess"
-          effect = "Allow"
-          actions = [
-            "config:Get*",
-            "config:Describe*",
-            "config:Deliver*",
-            "config:List*",
-            "config:Select*",
-            "tag:GetResources",
-            "tag:GetTagKeys",
-            "cloudtrail:DescribeTrails",
-            "cloudtrail:GetTrailStatus",
-            "cloudtrail:LookupEvents",
-          ]
-          resources = [
-            "*"
-          ]
-        },
-        {
-          sid    = "AllowCloudWatchFullAccess1"
-          effect = "Allow"
-          actions = [
-            "autoscaling:Describe*",
-            "cloudwatch:*",
-            "logs:*",
-            "sns:*",
-            "iam:GetPolicy",
-            "iam:GetPolicyVersion",
-            "iam:GetRole"
-          ]
-          resources = [
-            "*"
-          ]
-        },
-        {
-          sid    = "AllowCloudWatchFullAccess2"
-          effect = "Allow"
-          actions = [
-            "iam:CreateServiceLinkedRole",
-          ]
-          resources = [
-            "arn:aws:iam::*:role/aws-service-role/events.amazonaws.com/AWSServiceRoleForCloudWatchEvents"
-          ]
-          condition = [
-            {
-              test     = "StringLike"
-              variable = "iam:AWSServiceName"
-              values   = ["events.amazonaws.com"]
-            }
-          ]
+          policy_arn = "arn:aws:iam::aws:policy/AmazonVPCFullAccess"
         },
       ]
     }
-    # TODO: need to change operator base policy.
-    # Please specify the base policy to provide to the developer.
-    # By default, CloudWatchReadOnlyAccess / AllowAmazonS3ReadOnlyAccess is set.
-    # You need to check this document.
-    # https://aws.amazon.com/jp/premiumsupport/knowledge-center/iam-increase-policy-size/
-
-    # operator base policy
-    operator_base = {
-      name        = "iam-group-operator-base-policy"
-      path        = "/"
-      description = ""
-      statement = [
-        {
-          sid    = "AllowCloudWatchReadOnlyAccess"
-          effect = "Allow"
-          actions = [
-            "autoscaling:Describe*",
-            "cloudwatch:Describe*",
-            "cloudwatch:Get*",
-            "cloudwatch:List*",
-            "logs:Get*",
-            "logs:List*",
-            "logs:StartQuery",
-            "logs:StopQuery",
-            "logs:Describe*",
-            "logs:TestMetricFilter",
-            "logs:FilterLogEvents",
-            "sns:Get*",
-            "sns:List*"
-          ]
-          resources = [
-            "*"
-          ]
-        },
-        {
-          sid    = "AllowAmazonS3ReadOnlyAccess"
-          effect = "Allow"
-          actions = [
-            "s3:Get*",
-            "s3:List*"
-          ]
-          resources = [
-            "*"
-          ]
-        },
+    operator = {
+      users = [
+        "test2",
+        "test3",
       ]
+      # TODO: need to set base policy.
+      # Please specify the base policy to provide.
+      # default null.
+      # You need to check this document.
+      # https://aws.amazon.com/jp/premiumsupport/knowledge-center/iam-increase-policy-size/
+      policy_document = {
+        name        = "iam-group-operator-base-policy"
+        path        = "/"
+        description = ""
+        statement = [
+          {
+            sid    = "AllowCloudWatchReadOnlyAccess"
+            effect = "Allow"
+            actions = [
+              "autoscaling:Describe*",
+              "cloudwatch:Describe*",
+              "cloudwatch:Get*",
+              "cloudwatch:List*",
+              "logs:Get*",
+              "logs:List*",
+              "logs:StartQuery",
+              "logs:StopQuery",
+              "logs:Describe*",
+              "logs:TestMetricFilter",
+              "logs:FilterLogEvents",
+              "sns:Get*",
+              "sns:List*"
+            ]
+            resources = [
+              "*"
+            ]
+          },
+          {
+            sid    = "AllowAmazonS3ReadOnlyAccess"
+            effect = "Allow"
+            actions = [
+              "s3:Get*",
+              "s3:List*"
+            ]
+            resources = [
+              "*"
+            ]
+          },
+        ]
+      }
+      # TODO: need to add policy arn. group policy limit is 10.
+      # You need to check this document.
+      # https://aws.amazon.com/jp/premiumsupport/knowledge-center/iam-increase-policy-size/
+      policy = []
     }
-  }
-  # TODO: need to add policy arn. group policy limit is 10.
-  # You need to check this document.
-  # https://aws.amazon.com/jp/premiumsupport/knowledge-center/iam-increase-policy-size/
-  group_policy = {
-    developer = [
-      {
-        group      = "developer"
-        policy_arn = "arn:aws:iam::aws:policy/AmazonS3FullAccess"
-      },
-      {
-        group      = "developer"
-        policy_arn = "arn:aws:iam::aws:policy/AmazonVPCFullAccess"
-      },
-    ]
-    operator = []
   }
 }
 #--------------------------------------------------------------
