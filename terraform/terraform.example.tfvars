@@ -572,6 +572,7 @@ security_securityhub = {
     }
   }
   aws_securityhub_product_subscription = {
+    # TODO: need to change product_subscription.
     product_subscription = {
     }
   }
@@ -632,7 +633,7 @@ security_access_analyzer = {
 # Security:CloudTrail
 #--------------------------------------------------------------
 security_cloudtrail = {
-  // TODO: need to set is_enabled for settings of IAM security.
+  // TODO: need to set is_enabled for settings of CloudTrail.
   is_enabled = true
   aws_kms_key = {
     cloudtrail = {
