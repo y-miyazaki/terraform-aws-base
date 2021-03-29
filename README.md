@@ -21,6 +21,16 @@ AWS でインフラを構築する際には、どんなプロジェクトでも�
 -   [CloudWatch 上にあるログの Slack 通知](#cloudWatch-上にあるログの-slack-通知)
 -   [初期設定](#初期設定)
 
+## Required
+
+-   Terraform  
+    Terraform を実行するためにコマンドが必要です。  
+    https://www.terraform.io/
+-   Slack
+    通知用として、Slack と OAuth Token/ChannelID が必要です。  
+    https://slack.com/  
+    https://slack.dev/node-slack-sdk/getting-started
+
 ## AWS Security Hub でのセキュリティ対応
 
 AWS Security Hub で提供されている Security standards の 3 つのセキュリティを可能な限り対応したものです。
