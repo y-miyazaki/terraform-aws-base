@@ -2,7 +2,6 @@
 # Basically, it is already set so that the setting is completed only by changing tfvars.
 # All parameters that need to be changed for each environment are described in TODO comments.
 #--------------------------------------------------------------
-
 #--------------------------------------------------------------
 # Default Tags for Resources
 # A tag that is set globally for the resources used.
@@ -620,16 +619,18 @@ security_access_analyzer = {
 security_cloudtrail = {
   aws_kms_key = {
     cloudtrail = {
-      description         = "This key used for CloudTrail."
-      is_enabled          = true
-      enable_key_rotation = true
-      alias_name          = "cloudtrail"
+      description             = "This key used for CloudTrail."
+      deletion_window_in_days = 7
+      is_enabled              = true
+      enable_key_rotation     = true
+      alias_name              = "cloudtrail"
     }
     sns = {
-      description         = "This key used for SNS."
-      is_enabled          = true
-      enable_key_rotation = true
-      alias_name          = "sns-cloudtrail"
+      description             = "This key used for SNS."
+      deletion_window_in_days = 7
+      is_enabled              = true
+      enable_key_rotation     = true
+      alias_name              = "sns-cloudtrail"
     }
   }
   aws_iam_role = {
@@ -805,10 +806,11 @@ PATTERN
 #--------------------------------------------------------------
 application_log = {
   aws_kms_key = {
-    description         = "This key used for SNS."
-    is_enabled          = true
-    enable_key_rotation = true
-    alias_name          = "sns-application"
+    description             = "This key used for SNS."
+    deletion_window_in_days = 7
+    is_enabled              = true
+    enable_key_rotation     = true
+    alias_name              = "sns-application"
   }
   aws_sns_topic = {
     name                                     = "application-logs"

@@ -25,7 +25,7 @@ variable "aws_cloudwatch_log_group" {
   )
   description = "(Optional) need to flow log, true. flow log saves cloudwatch logs."
   default = {
-    name_prefix       = "flow-log-"
+    name_prefix       = "vpc-flow-log-"
     retention_in_days = 30
   }
 }

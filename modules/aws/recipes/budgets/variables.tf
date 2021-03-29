@@ -5,11 +5,15 @@
 variable "aws_budgets_budget" {
   type = object(
     {
-      # account_id   = string
-      name         = string
-      budget_type  = string
+      # (Optional) The name of a budget. Unique within accounts.
+      name = string
+      # (Required) Whether this budget tracks monetary cost or usage.
+      budget_type = string
+      # (Optional) Map of Cost Filters key/value pairs to apply to the budget.
       cost_filters = map(any)
+      # (Required) The amount of cost or usage being measured for a budget.
       limit_amount = string
+      # (Optional) Object containing Budget Notifications. Can be used multiple times to define more than one budget notification
       notification = list(any)
     }
   )

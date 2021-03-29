@@ -4,10 +4,11 @@
 variable "aws_kms_key" {
   type = object(
     {
-      description         = string
-      is_enabled          = bool
-      enable_key_rotation = bool
-      alias_name          = string
+      description             = string
+      deletion_window_in_days = number
+      is_enabled              = bool
+      enable_key_rotation     = bool
+      alias_name              = string
     }
   )
   description = "(Required) The resource of aws_kms_key."

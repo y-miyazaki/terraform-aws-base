@@ -1,4 +1,10 @@
 #--------------------------------------------------------------
+# Locals
+#--------------------------------------------------------------
+locals {
+  name_prefix = trimsuffix(var.name_prefix, "-")
+}
+#--------------------------------------------------------------
 # Provides an VPC subnet resource.
 #--------------------------------------------------------------
 resource "aws_subnet" "this" {
@@ -8,7 +14,7 @@ resource "aws_subnet" "this" {
   map_public_ip_on_launch = lookup(var.aws_subnet[count.index], "map_public_ip_on_launch", false)
   outpost_arn             = lookup(var.aws_subnet[count.index], "outpost_arn", null)
   vpc_id                  = lookup(var.aws_subnet[count.index], "vpc_id", null)
-  tags                    = var.tags
+  tags                    = merge(var.tags, { "Name" = format("%v-subnet-%d", local.name_prefix, count.index + 1) })
 }
 
 #--------------------------------------------------------------

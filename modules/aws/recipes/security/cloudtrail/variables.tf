@@ -6,18 +6,20 @@ variable "aws_kms_key" {
     {
       cloudtrail = object(
         {
-          description         = string
-          is_enabled          = bool
-          enable_key_rotation = bool
-          alias_name          = string
+          description             = string
+          deletion_window_in_days = number
+          is_enabled              = bool
+          enable_key_rotation     = bool
+          alias_name              = string
         }
       )
       sns = object(
         {
-          description         = string
-          is_enabled          = bool
-          enable_key_rotation = bool
-          alias_name          = string
+          description             = string
+          deletion_window_in_days = number
+          is_enabled              = bool
+          enable_key_rotation     = bool
+          alias_name              = string
         }
       )
     }
@@ -25,16 +27,18 @@ variable "aws_kms_key" {
   description = "(Required) The resource of aws_kms_key."
   default = {
     cloudtrail = {
-      description         = "This key used for CloudTrail."
-      is_enabled          = true
-      enable_key_rotation = true
-      alias_name          = "alias/cloudtrail"
+      description             = "This key used for CloudTrail."
+      deletion_window_in_days = 7
+      is_enabled              = true
+      enable_key_rotation     = true
+      alias_name              = "alias/cloudtrail"
     }
     sns = {
-      description         = "This key used for SNS."
-      is_enabled          = true
-      enable_key_rotation = true
-      alias_name          = "alias/sns"
+      description             = "This key used for SNS."
+      deletion_window_in_days = 7
+      is_enabled              = true
+      enable_key_rotation     = true
+      alias_name              = "alias/sns"
     }
   }
 }

@@ -3,8 +3,8 @@
 # Provides a KMS customer master key.
 #--------------------------------------------------------------
 resource "aws_kms_key" "this" {
-  description         = lookup(var.aws_kms_key, "description", null)
-  policy              = <<POLICY
+  description             = lookup(var.aws_kms_key, "description", null)
+  policy                  = <<POLICY
 {
   "Version":"2012-10-17",
   "Id":"Key policy created by CloudTrail",
@@ -53,8 +53,9 @@ resource "aws_kms_key" "this" {
   ]
 }
 POLICY
-  is_enabled          = lookup(var.aws_kms_key, "is_enabled", true)
-  enable_key_rotation = lookup(var.aws_kms_key, "enable_key_rotation", true)
+  deletion_window_in_days = lookup(var.aws_kms_key, "deletion_window_in_days", 7)
+  is_enabled              = lookup(var.aws_kms_key, "is_enabled", true)
+  enable_key_rotation     = lookup(var.aws_kms_key, "enable_key_rotation", true)
   tags = merge(var.tags, {
     Name = lookup(var.aws_kms_key, "alias_name")
     }

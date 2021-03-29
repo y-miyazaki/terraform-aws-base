@@ -37,6 +37,27 @@ POLICY
   tags                  = var.tags
 }
 #--------------------------------------------------------------
+# Generates an IAM policy document in JSON format for use with resources that expect policy documents such as aws_iam_policy.
+#--------------------------------------------------------------
+data "aws_iam_policy_document" "this" {
+  count = var.enable_flow_logs ? 1 : 0
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "logs:CreateLogGroup",
+      "logs:CreateLogStream",
+      "logs:PutLogEvents",
+      "logs:DescribeLogGroups",
+      "logs:DescribeLogStreams",
+    ]
+
+    resources = [
+      "*",
+    ]
+  }
+}
+#--------------------------------------------------------------
 # Provides an IAM policy.
 #--------------------------------------------------------------
 resource "aws_iam_policy" "this" {
@@ -44,25 +65,9 @@ resource "aws_iam_policy" "this" {
   description = lookup(var.aws_iam_policy, "description", null)
   name        = lookup(var.aws_iam_policy, "name")
   path        = lookup(var.aws_iam_policy, "path", "/")
-  policy      = <<POLICY
-{
-  "Version":"2012-10-17",
-  "Statement":[
-     {
-        "Action":[
-           "logs:CreateLogGroup",
-           "logs:CreateLogStream",
-           "logs:PutLogEvents",
-           "logs:DescribeLogGroups",
-           "logs:DescribeLogStreams"
-        ],
-        "Effect":"Allow",
-        "Resource":"*"
-     }
-  ]
+  policy      = data.aws_iam_policy_document.this[0].json
 }
-POLICY
-}
+
 #--------------------------------------------------------------
 # Attaches a Managed IAM Policy to an IAM role
 #--------------------------------------------------------------
