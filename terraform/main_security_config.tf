@@ -28,6 +28,7 @@ locals {
 #--------------------------------------------------------------
 module "aws_recipes_security_config_create" {
   source                                   = "../modules/aws/recipes/security/config/create"
+  is_enabled                               = lookup(var.security_config, "is_enabled", true)
   aws_config_configuration_recorder        = local.aws_config_configuration_recorder_config
   aws_iam_role                             = local.aws_iam_role_config
   aws_iam_policy                           = local.aws_iam_policy_config

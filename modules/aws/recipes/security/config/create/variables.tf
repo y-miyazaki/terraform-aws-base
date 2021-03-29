@@ -1,6 +1,11 @@
 #--------------------------------------------------------------
 # module variables
 #--------------------------------------------------------------
+variable "is_enabled" {
+  type        = bool
+  description = "(Required) A boolean flag to enable/disable AWS Config. Defaults true."
+  default     = true
+}
 variable "aws_config_configuration_recorder" {
   type = object(
     {

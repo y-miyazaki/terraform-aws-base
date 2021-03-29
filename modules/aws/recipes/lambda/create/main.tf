@@ -2,7 +2,8 @@
 # Provides a CloudWatch Log Group resource.
 #--------------------------------------------------------------
 resource "aws_cloudwatch_log_group" "this" {
-  name              = "/aws/lambda/${aws_lambda_function.this.function_name}"
+  count = var.is_enabled ? 1 : 0
+  name              = "/aws/lambda/${aws_lambda_function.this[0].function_name}"
   retention_in_days = lookup(var.aws_cloudwatch_log_group, "retention_in_days")
   kms_key_id        = lookup(var.aws_cloudwatch_log_group, "kms_key_id", null)
   tags              = var.tags
@@ -12,6 +13,7 @@ resource "aws_cloudwatch_log_group" "this" {
 # Lambda allows you to trigger execution of code in response to events in AWS, enabling serverless backend solutions. The Lambda Function itself includes source code and runtime configuration.
 #--------------------------------------------------------------
 resource "aws_lambda_function" "this" {
+  count = var.is_enabled ? 1 : 0
   filename          = lookup(var.aws_lambda_function, "filename", null)
   s3_bucket         = lookup(var.aws_lambda_function, "s3_bucket", null)
   s3_key            = lookup(var.aws_lambda_function, "s3_key", null)
@@ -51,10 +53,10 @@ resource "aws_lambda_function" "this" {
 # Creates a Lambda permission to allow external sources invoking the Lambda function (e.g. CloudWatch Event Rule, SNS or S3).
 #--------------------------------------------------------------
 resource "aws_lambda_permission" "this" {
-  count               = var.aws_lambda_permission == null ? 0 : 1
+  count               = var.is_enabled && var.aws_lambda_permission != null ? 1 : 0
   action              = lookup(var.aws_lambda_permission, "action", null)
   event_source_token  = lookup(var.aws_lambda_permission, "event_source_token", null)
-  function_name       = aws_lambda_function.this.function_name
+  function_name       = aws_lambda_function.this[0].function_name
   principal           = lookup(var.aws_lambda_permission, "principal", null)
   qualifier           = lookup(var.aws_lambda_permission, "qualifier", null)
   source_account      = lookup(var.aws_lambda_permission, "source_account", null)

@@ -98,6 +98,7 @@ locals {
 #--------------------------------------------------------------
 module "aws_recipes_security_cloudtrail" {
   source                     = "../modules/aws/recipes/security/cloudtrail"
+  is_enabled                 = lookup(var.security_cloudtrail, "is_enabled", true)
   aws_kms_key                = local.aws_kms_key_cloudtrail
   aws_sns_topic              = local.aws_sns_topic_cloudtrail
   aws_sns_topic_subscription = local.aws_sns_topic_subscription_cloudtrail
@@ -116,6 +117,7 @@ module "aws_recipes_security_cloudtrail" {
 # Provides a CloudWatch Log Metric Filter And Alerm resource.
 #--------------------------------------------------------------
 module "aws_recipes_cloudwatch_alerm_cloudtrail" {
+  count                            = lookup(var.security_cloudtrail, "is_enabled", true) ? 1 : 0
   source                           = "../modules/aws/recipes/cloudwatch/alerm"
   aws_cloudwatch_log_metric_filter = local.aws_cloudwatch_log_metric_filter_cloudtrail
   aws_cloudwatch_metric_alarm      = local.aws_cloudwatch_metric_alarm_cloudtrail
@@ -126,6 +128,7 @@ module "aws_recipes_cloudwatch_alerm_cloudtrail" {
 #--------------------------------------------------------------
 module "aws_recipes_lambda_create_cloudtrail" {
   source                   = "../modules/aws/recipes/lambda/create"
+  is_enabled = lookup(var.security_cloudtrail, "is_enabled", true)
   aws_cloudwatch_log_group = lookup(var.security_cloudtrail, "aws_cloudwatch_log_group_lambda")
 
   # Provides a Lambda Function resource.

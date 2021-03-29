@@ -2,6 +2,7 @@
 # Provides an IAM role.
 #--------------------------------------------------------------
 resource "aws_iam_role" "config" {
+  count                 = var.is_enabled ? 1 : 0
   description           = lookup(var.aws_iam_role, "description", null)
   name                  = lookup(var.aws_iam_role, "name")
   assume_role_policy    = <<POLICY
@@ -26,6 +27,7 @@ POLICY
 # Generates an IAM policy document in JSON format for use with resources that expect policy documents such as aws_iam_policy.
 #--------------------------------------------------------------
 data "aws_iam_policy_document" "config" {
+  count = var.is_enabled ? 1 : 0
   statement {
     effect = "Allow"
     actions = [
@@ -224,24 +226,30 @@ data "aws_iam_policy_document" "config" {
 # Provides an IAM policy.
 #--------------------------------------------------------------
 resource "aws_iam_policy" "config" {
+  count       = var.is_enabled ? 1 : 0
   description = lookup(var.aws_iam_policy, "description", null)
   name        = lookup(var.aws_iam_policy, "name")
   path        = lookup(var.aws_iam_policy, "path", "/")
-  policy      = data.aws_iam_policy_document.config.json
+  policy      = data.aws_iam_policy_document.config[0].json
+  depends_on = [
+    data.aws_iam_policy_document.config,
+  ]
 }
 #--------------------------------------------------------------
 # Attaches a Managed IAM Policy to an IAM role
 #--------------------------------------------------------------
 resource "aws_iam_role_policy_attachment" "config" {
-  role       = aws_iam_role.config.name
-  policy_arn = aws_iam_policy.config.arn
+  count      = var.is_enabled ? 1 : 0
+  role       = aws_iam_role.config[0].name
+  policy_arn = aws_iam_policy.config[0].arn
 }
 #--------------------------------------------------------------
 # Provides an AWS Config Configuration Recorder. Please note that this resource does not start the created recorder automatically.
 #--------------------------------------------------------------
 resource "aws_config_configuration_recorder" "this" {
+  count    = var.is_enabled ? 1 : 0
   name     = lookup(var.aws_config_configuration_recorder, "name", null)
-  role_arn = aws_iam_role.config.arn
+  role_arn = aws_iam_role.config[0].arn
   dynamic "recording_group" {
     for_each = lookup(var.aws_config_configuration_recorder, "recording_group", [])
     content {
@@ -259,6 +267,7 @@ resource "aws_config_configuration_recorder" "this" {
 # Provides a S3 bucket resource.
 #--------------------------------------------------------------
 resource "aws_s3_bucket" "this" {
+  count  = var.is_enabled ? 1 : 0
   bucket = lookup(var.aws_s3_bucket, "bucket")
   # bucket_prefix = var.bucket_prefix
   acl           = lookup(var.aws_s3_bucket, "acl", "private")
@@ -408,17 +417,22 @@ resource "aws_s3_bucket" "this" {
 # Manages S3 bucket-level Public Access Block configuration. For more information about these settings, see the AWS S3 Block Public Access documentation.
 #--------------------------------------------------------------
 resource "aws_s3_bucket_public_access_block" "this" {
-  bucket                  = aws_s3_bucket.this.id
+  count                   = var.is_enabled ? 1 : 0
+  bucket                  = aws_s3_bucket.this[0].id
   block_public_acls       = true
   block_public_policy     = true
   ignore_public_acls      = true
   restrict_public_buckets = true
+  depends_on = [
+    aws_s3_bucket.this
+  ]
 }
 
 #--------------------------------------------------------------
 # Generates an IAM policy document in JSON format for use with resources that expect policy documents such as aws_iam_policy.
 #--------------------------------------------------------------
 data "aws_iam_policy_document" "s3" {
+  count   = var.is_enabled ? 1 : 0
   version = "2012-10-17"
   statement {
     sid    = "AWSConfigBucketPermissionsCheck"
@@ -431,7 +445,7 @@ data "aws_iam_policy_document" "s3" {
       "s3:GetBucketAcl"
     ]
     resources = [
-      aws_s3_bucket.this.arn
+      aws_s3_bucket.this[0].arn
     ]
   }
   statement {
@@ -445,7 +459,7 @@ data "aws_iam_policy_document" "s3" {
       "s3:PutObject"
     ]
     resources = [
-      "${aws_s3_bucket.this.arn}/AWSLogs/${var.account_id}/Config/*"
+      "${aws_s3_bucket.this[0].arn}/AWSLogs/${var.account_id}/Config/*"
     ]
   }
   statement {
@@ -459,8 +473,8 @@ data "aws_iam_policy_document" "s3" {
       "s3:*"
     ]
     resources = [
-      aws_s3_bucket.this.arn,
-      "${aws_s3_bucket.this.arn}/*"
+      aws_s3_bucket.this[0].arn,
+      "${aws_s3_bucket.this[0].arn}/*"
     ]
     condition {
       test     = "Bool"
@@ -468,14 +482,19 @@ data "aws_iam_policy_document" "s3" {
       values   = ["false"]
     }
   }
+  depends_on = [
+    aws_s3_bucket.this,
+  ]
 }
 #--------------------------------------------------------------
 # Attaches a policy to an S3 bucket resource.
 #--------------------------------------------------------------
 resource "aws_s3_bucket_policy" "s3" {
-  bucket = aws_s3_bucket.this.id
-  policy = data.aws_iam_policy_document.s3.json
+  count  = var.is_enabled ? 1 : 0
+  bucket = aws_s3_bucket.this[0].id
+  policy = data.aws_iam_policy_document.s3[0].json
   depends_on = [
+    aws_s3_bucket.this,
     aws_s3_bucket_public_access_block.this
   ]
 }
@@ -484,8 +503,9 @@ resource "aws_s3_bucket_policy" "s3" {
 # Provides an AWS Config Delivery Channel.
 #--------------------------------------------------------------
 resource "aws_config_delivery_channel" "this" {
+  count          = var.is_enabled ? 1 : 0
   name           = lookup(var.aws_config_delivery_channel, "name")
-  s3_bucket_name = aws_s3_bucket.this.bucket
+  s3_bucket_name = aws_s3_bucket.this[0].bucket
   sns_topic_arn  = lookup(var.aws_config_delivery_channel, "sns_topic_arn", null)
   dynamic "snapshot_delivery_properties" {
     for_each = lookup(var.aws_config_delivery_channel, "snapshot_delivery_properties", [])
@@ -503,7 +523,8 @@ resource "aws_config_delivery_channel" "this" {
 # Manages status (recording / stopped) of an AWS Config Configuration Recorder.
 #--------------------------------------------------------------
 resource "aws_config_configuration_recorder_status" "this" {
-  name       = aws_config_configuration_recorder.this.name
+  count      = var.is_enabled ? 1 : 0
+  name       = aws_config_configuration_recorder.this[0].name
   is_enabled = lookup(var.aws_config_configuration_recorder_status, "is_enabled", true)
   depends_on = [
     aws_config_delivery_channel.this,

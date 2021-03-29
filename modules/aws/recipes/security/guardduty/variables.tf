@@ -1,6 +1,11 @@
 #--------------------------------------------------------------
 # module variables
 #--------------------------------------------------------------
+variable "is_enabled" {
+  type        = bool
+  description = "(Required) A boolean flag to enable/disable settings of GuardDuty. Defaults true."
+  default     = true
+}
 variable "aws_guardduty_detector" {
   type = object(
     {

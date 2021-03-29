@@ -1,6 +1,11 @@
 #--------------------------------------------------------------
 # module variables
 #--------------------------------------------------------------
+variable "is_enabled" {
+  type        = bool
+  description = "(Required) A boolean flag to enable/disable settings of Access Analyzer. Defaults true."
+  default     = true
+}
 variable "analyzer_name" {
   type        = string
   description = "(Required) Name of the Analyzer."

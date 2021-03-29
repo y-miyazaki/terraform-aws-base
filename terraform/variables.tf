@@ -15,6 +15,6 @@ variable "security_securityhub" {}
 variable "security_guardduty" {}
 variable "security_access_analyzer" {}
 variable "security_cloudtrail" {}
-
+variable "security_ebs" {}
 # application
 variable "application_log" {}

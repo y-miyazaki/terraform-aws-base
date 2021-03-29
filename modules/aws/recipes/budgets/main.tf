@@ -2,6 +2,7 @@
 # Provides a budgets budget resource. Budgets use the cost visualisation provided by Cost Explorer to show you the status of your budgets, to provide forecasts of your estimated costs, and to track your AWS usage, including your free tier usage.
 #--------------------------------------------------------------
 resource "aws_budgets_budget" "this" {
+  count        = var.is_enabled ? 1 : 0
   name         = lookup(var.aws_budgets_budget, "name")
   budget_type  = lookup(var.aws_budgets_budget, "budget_type", "COST")
   cost_filters = lookup(var.aws_budgets_budget, "cost_filters", [])
@@ -43,6 +44,7 @@ resource "aws_budgets_budget" "this" {
 # Provides an EventBridge Rule resource.
 #--------------------------------------------------------------
 resource "aws_cloudwatch_event_rule" "this" {
+  count               = var.is_enabled ? 1 : 0
   name                = lookup(var.aws_cloudwatch_event_rule, "name", "budgets-cloudwatch-event-rule")
   schedule_expression = lookup(var.aws_cloudwatch_event_rule, "schedule_expression", "cron(0 0 * * ? *)")
   description         = lookup(var.aws_cloudwatch_event_rule, "description", "This cloudwatch event used for Budgets.")
@@ -53,9 +55,10 @@ resource "aws_cloudwatch_event_rule" "this" {
 # Provides an EventBridge Target resource.
 #--------------------------------------------------------------
 resource "aws_cloudwatch_event_target" "this" {
-  rule = aws_cloudwatch_event_rule.this.name
-  arn  = lookup(var.aws_cloudwatch_event_target, "arn")
+  count = var.is_enabled ? 1 : 0
+  rule  = aws_cloudwatch_event_rule.this[0].name
+  arn   = lookup(var.aws_cloudwatch_event_target, "arn")
   depends_on = [
-    aws_cloudwatch_event_rule.this
+    aws_cloudwatch_event_rule.this[0]
   ]
 }

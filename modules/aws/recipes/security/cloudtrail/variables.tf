@@ -1,6 +1,11 @@
 #--------------------------------------------------------------
 # module variables
 #--------------------------------------------------------------
+variable "is_enabled" {
+  type        = bool
+  description = "(Required) A boolean flag to enable/disable settings of CloudTrail. Defaults true."
+  default     = true
+}
 variable "aws_kms_key" {
   type = object(
     {

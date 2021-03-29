@@ -104,6 +104,7 @@ locals {
 # Provides a SNS for application logs.
 #--------------------------------------------------------------
 module "aws_recipes_sns_subscription_application_log" {
+  count                      = var.application_log.is_enabled ? 1 : 0
   source                     = "../modules/aws/recipes/sns/subscription"
   aws_kms_key                = local.aws_kms_key_application_log
   aws_sns_topic              = local.aws_sns_topic_application_log
@@ -116,6 +117,7 @@ module "aws_recipes_sns_subscription_application_log" {
 # Provides a Kinesis Firehose Delivery Stream resource. Amazon Kinesis Firehose is a fully managed, elastic service to easily deliver real-time data streams to destinations such as Amazon S3 and Amazon Redshift.
 #--------------------------------------------------------------
 module "aws_recipes_kinesis_firehose_s3_application_log" {
+  count                                = var.application_log.is_enabled ? 1 : 0
   source                               = "../modules/aws/recipes/kinesis/firehose/s3"
   aws_kinesis_firehose_delivery_stream = local.aws_kinesis_firehose_delivery_stream_application_log
   aws_iam_role                         = local.aws_iam_role_kinesis_firehose_application_log
@@ -127,6 +129,7 @@ module "aws_recipes_kinesis_firehose_s3_application_log" {
 # Provides a CloudWatch Log Metric Filter And Alerm resource.
 #--------------------------------------------------------------
 module "aws_recipes_cloudwatch_alerm_application_log" {
+  count                            = var.application_log.is_enabled ? 1 : 0
   source                           = "../modules/aws/recipes/cloudwatch/alerm"
   aws_cloudwatch_log_metric_filter = local.aws_cloudwatch_log_metric_filter_application_log
   aws_cloudwatch_metric_alarm      = local.aws_cloudwatch_metric_alarm_application_log
@@ -136,6 +139,7 @@ module "aws_recipes_cloudwatch_alerm_application_log" {
 # Provides a CloudWatch Logs subscription filter resource.
 #--------------------------------------------------------------
 module "aws_recipes_cloudwatch_subscription_application_log" {
+  count                                  = var.application_log.is_enabled ? 1 : 0
   source                                 = "../modules/aws/recipes/cloudwatch/subscription"
   aws_cloudwatch_log_subscription_filter = local.aws_cloudwatch_log_subscription_filter_application_log
   aws_iam_role                           = local.aws_iam_role_cloudwatch_logs_application_log
@@ -150,6 +154,7 @@ module "aws_recipes_cloudwatch_subscription_application_log" {
 #--------------------------------------------------------------
 module "aws_recipes_lambda_create_application_log" {
   source                   = "../modules/aws/recipes/lambda/create"
+  is_enabled                    = lookup(var.application_log, "is_enabled", true)
   aws_cloudwatch_log_group = lookup(var.application_log, "aws_cloudwatch_log_group_lambda")
 
   # Provides a Lambda Function resource.
@@ -182,7 +187,7 @@ module "aws_recipes_lambda_create_application_log" {
     principal           = "sns.amazonaws.com"
     qualifier           = null
     source_account      = null
-    source_arn          = module.aws_recipes_sns_subscription_application_log.arn
+    source_arn          = module.aws_recipes_sns_subscription_application_log[0].arn
     statement_id        = "ApplicationLogDetectUnexpectedUsage"
     statement_id_prefix = null
   }
