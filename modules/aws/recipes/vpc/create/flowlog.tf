@@ -1,33 +1,22 @@
 #--------------------------------------------------------------
-# flow log
-#--------------------------------------------------------------
-resource "aws_flow_log" "flow_log" {
-  count           = lookup(var.flow_log, "enabled") ? 1 : 0
-  log_destination = element(aws_cloudwatch_log_group.flow_log.*.arn, count.index)
-  iam_role_arn    = aws_iam_role.flow_log.arn
-  vpc_id          = aws_vpc.this.id
-  traffic_type    = "ALL"
-}
-
-#--------------------------------------------------------------
 # CloudWatch Log Group for flow log
 #--------------------------------------------------------------
-resource "aws_cloudwatch_log_group" "flow_log" {
-  # count             = lookup(var.flow_log, "enabled") ? length(data.aws_subnet_ids.this.ids) : 0
-  retention_in_days = lookup(var.flow_log, "retention_in_days")
-  name_prefix       = "flow-log-"
-  tags              = merge(local.tags, { "Name" = "${local.tags.Name}-flow-log" })
+resource "aws_cloudwatch_log_group" "this" {
+  retention_in_days = lookup(var.aws_cloudwatch_log_group, "retention_in_days")
+  name_prefix       = lookup(var.aws_cloudwatch_log_group, "name_prefix")
+  tags              = merge(var.tags, { "Name" = "${local.name_prefix}-flow-log" })
   lifecycle {
     create_before_destroy = true
   }
 }
 
 #--------------------------------------------------------------
-# IAM Role and policy for flow log
+# Provides an IAM role.
 #--------------------------------------------------------------
-resource "aws_iam_role" "flow_log" {
-  name               = "${local.name}-flow-log"
-  assume_role_policy = <<EOF
+resource "aws_iam_role" "this" {
+  description           = lookup(var.aws_iam_role, "description", null)
+  name                  = lookup(var.aws_iam_role, "name")
+  assume_role_policy    = <<EOF
 {
   "Version": "2012-10-17",
   "Statement": [
@@ -42,11 +31,14 @@ resource "aws_iam_role" "flow_log" {
   ]
 }
 EOF
+  path                  = lookup(var.aws_iam_role, "path", "/")
+  force_detach_policies = true
+  tags                  = var.tags
 }
 #--------------------------------------------------------------
 # Generates an IAM policy document in JSON format for use with resources that expect policy documents such as aws_iam_policy.
 #--------------------------------------------------------------
-data "aws_iam_policy_document" "flow_log" {
+data "aws_iam_policy_document" "this" {
   statement {
     effect = "Allow"
 
@@ -67,15 +59,30 @@ data "aws_iam_policy_document" "flow_log" {
 #--------------------------------------------------------------
 # Provides an IAM policy.
 #--------------------------------------------------------------
-resource "aws_iam_policy" "flow_log" {
-  name   = "flow_log"
-  path   = "/"
-  policy = data.aws_iam_policy_document.flow_log.json
+resource "aws_iam_policy" "this" {
+  description = lookup(var.aws_iam_policy, "description", null)
+  name        = lookup(var.aws_iam_policy, "name")
+  path        = lookup(var.aws_iam_policy, "path", "/")
+  policy      = data.aws_iam_policy_document.this.json
 }
 #--------------------------------------------------------------
 # Attaches a Managed IAM Policy to an IAM role
 #--------------------------------------------------------------
-resource "aws_iam_role_policy_attachment" "flow_log" {
-  role       = aws_iam_role.flow_log.id
-  policy_arn = aws_iam_policy.flow_log.arn
+resource "aws_iam_role_policy_attachment" "this" {
+  role       = aws_iam_role.this.id
+  policy_arn = aws_iam_policy.this.arn
+}
+#--------------------------------------------------------------
+# Provides a resource to manage a default security group. This resource can manage the default security group of the default or a non-default VPC.
+#--------------------------------------------------------------
+resource "aws_flow_log" "this" {
+  log_destination = aws_cloudwatch_log_group.this.arn
+  iam_role_arn    = aws_iam_role.this.arn
+  vpc_id          = aws_vpc.this.id
+  traffic_type    = "ALL"
+  depends_on = [
+    aws_cloudwatch_log_group.this,
+    aws_iam_role.this,
+    aws_vpc.this
+  ]
 }

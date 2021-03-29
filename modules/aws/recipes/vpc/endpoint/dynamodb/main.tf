@@ -10,6 +10,6 @@ resource "aws_vpc_endpoint" "this" {
   private_dns_enabled = var.private_dns_enabled
   #  subnet_ids          = var.subnet_ids
   #  security_group_ids  = var.security_group_ids
-  tags              = local.tags
+  tags              = var.tags
   vpc_endpoint_type = "Gateway"
 }

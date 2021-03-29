@@ -4,16 +4,18 @@
 locals {
   aws_kms_key_cloudtrail = merge(var.security_cloudtrail.aws_kms_key, {
     cloudtrail = {
-      description         = lookup(var.security_cloudtrail.aws_kms_key.cloudtrail, "description", null)
-      is_enabled          = lookup(var.security_cloudtrail.aws_kms_key.cloudtrail, "is_enabled")
-      enable_key_rotation = lookup(var.security_cloudtrail.aws_kms_key.cloudtrail, "enable_key_rotation")
-      alias_name          = "alias/${var.name_prefix}${lookup(var.security_cloudtrail.aws_kms_key.cloudtrail, "alias_name")}"
+      description             = lookup(var.security_cloudtrail.aws_kms_key.cloudtrail, "description", null)
+      deletion_window_in_days = lookup(var.security_cloudtrail.aws_kms_key.cloudtrail, "deletion_window_in_days", 7)
+      is_enabled              = lookup(var.security_cloudtrail.aws_kms_key.cloudtrail, "is_enabled")
+      enable_key_rotation     = lookup(var.security_cloudtrail.aws_kms_key.cloudtrail, "enable_key_rotation")
+      alias_name              = "alias/${var.name_prefix}${lookup(var.security_cloudtrail.aws_kms_key.cloudtrail, "alias_name")}"
     }
     sns = {
-      description         = lookup(var.security_cloudtrail.aws_kms_key.sns, "description", null)
-      is_enabled          = lookup(var.security_cloudtrail.aws_kms_key.sns, "is_enabled")
-      enable_key_rotation = lookup(var.security_cloudtrail.aws_kms_key.sns, "enable_key_rotation")
-      alias_name          = "alias/${var.name_prefix}${lookup(var.security_cloudtrail.aws_kms_key.sns, "alias_name")}"
+      description             = lookup(var.security_cloudtrail.aws_kms_key.sns, "description", null)
+      deletion_window_in_days = lookup(var.security_cloudtrail.aws_kms_key.sns, "deletion_window_in_days", 7)
+      is_enabled              = lookup(var.security_cloudtrail.aws_kms_key.sns, "is_enabled")
+      enable_key_rotation     = lookup(var.security_cloudtrail.aws_kms_key.sns, "enable_key_rotation")
+      alias_name              = "alias/${var.name_prefix}${lookup(var.security_cloudtrail.aws_kms_key.sns, "alias_name")}"
     }
     }
   )

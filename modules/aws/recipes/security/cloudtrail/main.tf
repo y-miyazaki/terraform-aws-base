@@ -7,8 +7,8 @@
 # Provides a KMS customer master key.
 #--------------------------------------------------------------
 resource "aws_kms_key" "cloudtrail" {
-  description         = lookup(var.aws_kms_key.cloudtrail, "description", null)
-  policy              = <<POLICY
+  description             = lookup(var.aws_kms_key.cloudtrail, "description", null)
+  policy                  = <<POLICY
 {
   "Version":"2012-10-17",
   "Id":"Key policy created by CloudTrail",
@@ -106,8 +106,9 @@ resource "aws_kms_key" "cloudtrail" {
   ]
 }
 POLICY
-  is_enabled          = lookup(var.aws_kms_key.cloudtrail, "is_enabled", true)
-  enable_key_rotation = lookup(var.aws_kms_key.cloudtrail, "enable_key_rotation", true)
+  deletion_window_in_days = lookup(var.aws_kms_key.cloudtrail, "deletion_window_in_days", 7)
+  is_enabled              = lookup(var.aws_kms_key.cloudtrail, "is_enabled", true)
+  enable_key_rotation     = lookup(var.aws_kms_key.cloudtrail, "enable_key_rotation", true)
   tags = merge(var.tags, {
     Name = lookup(var.aws_kms_key.cloudtrail, "alias_name")
     }
@@ -124,8 +125,8 @@ resource "aws_kms_alias" "cloudtrail" {
 # Provides a KMS customer master key.
 #--------------------------------------------------------------
 resource "aws_kms_key" "sns" {
-  description         = lookup(var.aws_kms_key.sns, "description", null)
-  policy              = <<POLICY
+  description             = lookup(var.aws_kms_key.sns, "description", null)
+  policy                  = <<POLICY
 {
   "Version":"2012-10-17",
   "Id":"Key policy created by CloudTrail",
@@ -174,8 +175,9 @@ resource "aws_kms_key" "sns" {
   ]
 }
 POLICY
-  is_enabled          = lookup(var.aws_kms_key.sns, "is_enabled", true)
-  enable_key_rotation = lookup(var.aws_kms_key.sns, "enable_key_rotation", true)
+  deletion_window_in_days = lookup(var.aws_kms_key.sns, "deletion_window_in_days", 7)
+  is_enabled              = lookup(var.aws_kms_key.sns, "is_enabled", true)
+  enable_key_rotation     = lookup(var.aws_kms_key.sns, "enable_key_rotation", true)
   tags = merge(var.tags, {
     Name = lookup(var.aws_kms_key.sns, "alias_name")
     }
@@ -1037,6 +1039,9 @@ data "aws_iam_policy_document" "this" {
 resource "aws_s3_bucket_policy" "this" {
   bucket = aws_s3_bucket.this.id
   policy = data.aws_iam_policy_document.this.json
+  depends_on = [
+    aws_s3_bucket_public_access_block.this
+  ]
 }
 
 #--------------------------------------------------------------

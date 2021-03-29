@@ -4,9 +4,9 @@ variable "user" {
   default     = []
 }
 variable "group" {
-  type        = map(any)
+  type        = any
   description = "(Required) Provides an IAM Group."
-  default     = {}
+  default     = null
 }
 variable "name_prefix" {
   type        = string

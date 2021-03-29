@@ -193,6 +193,10 @@ resource "aws_iam_group_policy_attachment" "mfa" {
   }
   group      = each.value.group
   policy_arn = aws_iam_policy.this.arn
+  depends_on = [
+    aws_iam_group.this,
+    aws_iam_policy.this,
+  ]
 }
 #--------------------------------------------------------------
 # Attaches a Managed IAM Policy to an IAM group
@@ -203,6 +207,9 @@ resource "aws_iam_group_policy_attachment" "this" {
   }
   group      = each.value.group
   policy_arn = each.value.policy_arn
+  depends_on = [
+    aws_iam_group.this,
+  ]
 }
 
 #--------------------------------------------------------------
@@ -258,6 +265,9 @@ resource "aws_iam_policy" "custom" {
   #   name_prefix = var.name_prefix
   path   = lookup(each.value.policy_document, "path", "/")
   policy = data.aws_iam_policy_document.custom[each.key].json
+  depends_on = [
+    aws_iam_group.this,
+  ]
 }
 #--------------------------------------------------------------
 # Attaches a Managed IAM Policy to an IAM group
@@ -268,4 +278,7 @@ resource "aws_iam_group_policy_attachment" "custom" {
   }
   group      = each.value.group
   policy_arn = aws_iam_policy.custom[each.key].arn
+  depends_on = [
+    aws_iam_group.this,
+  ]
 }

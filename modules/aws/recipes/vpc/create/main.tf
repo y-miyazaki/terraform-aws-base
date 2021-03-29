@@ -2,11 +2,7 @@
 # Locals
 #--------------------------------------------------------------
 locals {
-  prefix = lookup(var.tags, "env", null) != null && lookup(var.tags, "service", null) != null ? "${var.tags.env}-${var.tags.service}" : ""
-  name   = local.prefix
-  tags = var.tags == null ? null : merge(var.tags, {
-    "Name" = local.name
-  })
+  name_prefix = trimsuffix(var.name_prefix, "-")
 }
 #--------------------------------------------------------------
 # Create VPC
@@ -17,7 +13,7 @@ resource "aws_vpc" "this" {
   instance_tenancy     = "default"
   enable_dns_support   = "true"
   enable_dns_hostnames = "true"
-  tags                 = merge(local.tags, { "Name" = "${local.tags.Name}-vpc" })
+  tags                 = merge(var.tags, { "Name" = "${local.name_prefix}-vpc" })
 }
 
 #--------------------------------------------------------------
@@ -26,7 +22,7 @@ resource "aws_vpc" "this" {
 #--------------------------------------------------------------
 resource "aws_internet_gateway" "igw" {
   vpc_id = aws_vpc.this.id
-  tags   = merge(local.tags, { "Name" = "${local.tags.Name}-igw" })
+  tags   = merge(var.tags, { "Name" = "${local.name_prefix}-igw" })
 }
 
 #--------------------------------------------------------------
@@ -38,7 +34,7 @@ resource "aws_subnet" "igw" {
   cidr_block              = var.igw_cidr_block[count.index]
   availability_zone       = var.availability_zone[count.index]
   map_public_ip_on_launch = true
-  tags                    = merge(local.tags, { "Name" = format("%v-igw-%d", local.tags.Name, count.index + 1) })
+  tags                    = merge(var.tags, { "Name" = format("%v-igw-subnet-%d", local.name_prefix, count.index + 1) })
 }
 
 #--------------------------------------------------------------
@@ -48,14 +44,14 @@ resource "aws_subnet" "igw" {
 resource "aws_eip" "nat" {
   count = length(var.nat_cidr_block)
   vpc   = true
-  tags  = merge(local.tags, { "Name" = format("%v-nat-%d", local.tags.Name, count.index + 1) })
+  tags  = merge(var.tags, { "Name" = format("%v-nat-%d", local.name_prefix, count.index + 1) })
 }
 
 resource "aws_nat_gateway" "nat" {
   count         = length(var.nat_cidr_block)
   allocation_id = element(aws_eip.nat.*.id, count.index)
   subnet_id     = element(aws_subnet.igw.*.id, count.index)
-  tags          = merge(local.tags, { "Name" = format("%v-nat-%d", local.tags.Name, count.index + 1) })
+  tags          = merge(var.tags, { "Name" = format("%v-nat-%d", local.name_prefix, count.index + 1) })
 }
 
 #--------------------------------------------------------------
@@ -66,7 +62,7 @@ resource "aws_subnet" "nat" {
   vpc_id            = aws_vpc.this.id
   cidr_block        = var.nat_cidr_block[count.index]
   availability_zone = var.availability_zone[count.index]
-  tags              = merge(local.tags, { "Name" = format("%v-nat-%d", local.tags.Name, count.index + 1) })
+  tags              = merge(var.tags, { "Name" = format("%v-nat-subnet-%d", local.name_prefix, count.index + 1) })
 }
 
 #--------------------------------------------------------------
@@ -82,7 +78,7 @@ resource "aws_route_table" "private" {
     cidr_block     = "0.0.0.0/0"
     nat_gateway_id = element(aws_nat_gateway.nat.*.id, count.index)
   }
-  tags = merge(local.tags, { "Name" = format("%v-private-routetable-%d", local.tags.Name, count.index + 1) })
+  tags = merge(var.tags, { "Name" = format("%v-private-routetable-%d", local.name_prefix, count.index + 1) })
 }
 
 resource "aws_route_table" "public" {
@@ -91,7 +87,7 @@ resource "aws_route_table" "public" {
     cidr_block = "0.0.0.0/0"
     gateway_id = aws_internet_gateway.igw.id
   }
-  tags = merge(local.tags, { "Name" = format("%v-public-routetable-1", local.tags.Name) })
+  tags = merge(var.tags, { "Name" = format("%v-public-routetable-1", local.name_prefix) })
 }
 
 #--------------------------------------------------------------

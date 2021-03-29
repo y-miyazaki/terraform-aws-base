@@ -4,11 +4,15 @@
 variable "aws_cloudwatch_log_subscription_filter" {
   type = list(object(
     {
-      name            = string
+      # (Required) A name for the subscription filter
+      name = string
+      # (Required) The ARN of the destination to deliver matching log events to. Kinesis stream or Lambda function ARN.
       destination_arn = string
-      filter_pattern  = string
-      log_group_name  = string
-      #   role_arn        = string
+      # (Required) A valid CloudWatch Logs filter pattern for subscribing to a filtered stream of log events.
+      filter_pattern = string
+      # (Required) The name of the log group to associate the subscription filter with
+      log_group_name = string
+      # (Optional) The method used to distribute log data to the destination. By default log data is grouped by log stream, but the grouping can be set to random for a more even distribution. This property is only applicable when the destination is an Amazon Kinesis stream. Valid values are "Random" and "ByLogStream".
       distribution = string
     }
     )
