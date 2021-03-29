@@ -2,6 +2,7 @@
 # Provides a resource to manage a GuardDuty detector.
 #--------------------------------------------------------------
 resource "aws_guardduty_detector" "this" {
+  count                        = var.is_enabled ? 1 : 0
   enable                       = lookup(var.aws_guardduty_detector, "enable")
   finding_publishing_frequency = lookup(var.aws_guardduty_detector, "finding_publishing_frequency")
 }
@@ -9,9 +10,9 @@ resource "aws_guardduty_detector" "this" {
 # Provides a resource to manage a GuardDuty member. To accept invitations in member accounts, see the aws_guardduty_invite_accepter resource.
 #--------------------------------------------------------------
 resource "aws_guardduty_member" "this" {
-  count                      = length(var.aws_guardduty_member)
+  count                      = var.is_enabled ? length(var.aws_guardduty_member) : 0
   account_id                 = lookup(var.aws_guardduty_member[count.index], "account_id")
-  detector_id                = aws_guardduty_detector.this.id
+  detector_id                = aws_guardduty_detector.this[0].id
   email                      = lookup(var.aws_guardduty_member[count.index], "email")
   invite                     = lookup(var.aws_guardduty_member[count.index], "invite", false)
   invitation_message         = lookup(var.aws_guardduty_member[count.index], "invitation_message", null)
@@ -21,8 +22,8 @@ resource "aws_guardduty_member" "this" {
 # Provides a resource to accept a pending GuardDuty invite on creation, ensure the detector has the correct primary account on read, and disassociate with the primary account upon removal.
 #--------------------------------------------------------------
 resource "aws_guardduty_invite_accepter" "this" {
-  count             = lookup(var.aws_guardduty_detector, "master_account_id", null) == null ? 0 : 1
-  detector_id       = aws_guardduty_detector.this.id
+  count             = var.is_enabled && lookup(var.aws_guardduty_detector, "master_account_id", null) != null ? 1 : 0
+  detector_id       = aws_guardduty_detector.this[0].id
   master_account_id = lookup(var.aws_guardduty_detector, "master_account_id", null)
 }
 
@@ -30,6 +31,7 @@ resource "aws_guardduty_invite_accepter" "this" {
 # Provides an EventBridge Rule resource.
 #--------------------------------------------------------------
 resource "aws_cloudwatch_event_rule" "this" {
+  count         = var.is_enabled ? 1 : 0
   name          = lookup(var.aws_cloudwatch_event_rule, "name", "security-guarduty-cloudwatch-event-rule")
   event_pattern = <<EVENT_PATTERN
   {
@@ -49,8 +51,9 @@ EVENT_PATTERN
 # Provides an EventBridge Target resource.
 #--------------------------------------------------------------
 resource "aws_cloudwatch_event_target" "this" {
-  rule = aws_cloudwatch_event_rule.this.name
-  arn  = lookup(var.aws_cloudwatch_event_target, "arn", null)
+  count = var.is_enabled ? 1 : 0
+  rule  = aws_cloudwatch_event_rule.this[0].name
+  arn   = lookup(var.aws_cloudwatch_event_target, "arn", null)
   depends_on = [
     aws_cloudwatch_event_rule.this
   ]

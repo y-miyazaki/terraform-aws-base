@@ -55,4 +55,7 @@ module "aws_recipes_s3_policy_custom_logging" {
     ]
 }
 POLICY
+  depends_on = [
+    module.aws_recipes_s3_bucket_log_logging
+  ]
 }

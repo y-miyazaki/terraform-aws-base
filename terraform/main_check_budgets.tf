@@ -5,7 +5,8 @@
 # Provides a resource to manage CloudWatch Rule and CloudWatch Event.
 #--------------------------------------------------------------
 module "aws_recipes_budgets_budgets" {
-  source = "../modules/aws/recipes/budgets"
+  source     = "../modules/aws/recipes/budgets"
+  is_enabled = lookup(var.budgets, "is_enabled", true)
   aws_budgets_budget = {
     name         = "${var.name_prefix}${lookup(var.budgets.aws_budgets_budget, "name", "budgets-monthly")}"
     budget_type  = "COST"
@@ -22,7 +23,7 @@ module "aws_recipes_budgets_budgets" {
     is_enabled          = lookup(var.budgets.aws_cloudwatch_event_rule, "is_enabled", true)
   }
   aws_cloudwatch_event_target = {
-    arn = module.aws_recipes_lambda_create_budgets.arn
+    arn = var.budgets.is_enabled ? module.aws_recipes_lambda_create_budgets.arn : null
   }
   tags = var.tags
 }
@@ -32,6 +33,7 @@ module "aws_recipes_budgets_budgets" {
 #--------------------------------------------------------------
 module "aws_recipes_lambda_create_budgets" {
   source                   = "../modules/aws/recipes/lambda/create"
+  is_enabled                    = lookup(var.budgets, "is_enabled", true)
   aws_cloudwatch_log_group = lookup(var.budgets, "aws_cloudwatch_log_group_lambda")
   # Provides a Lambda Function resource.
   # Lambda allows you to trigger execution of code in response to events in AWS, enabling serverless backend solutions. The Lambda Function itself includes source code and runtime configuration.

@@ -56,6 +56,8 @@ JSON
 # Budgets
 #--------------------------------------------------------------
 budgets = {
+  // TODO: need to set is_enabled for settings of budgets.
+  is_enabled = true
   # Provides a budgets budget resource. Budgets use the cost visualisation provided
   # by Cost Explorer to show you the status of your budgets, to provide forecasts of
   # your estimated costs, and to track your AWS usage, including your free tier usage.
@@ -122,7 +124,7 @@ budgets = {
 # Trusted Advisor
 #--------------------------------------------------------------
 trusted_advisor = {
-  // TODO: need to set is_enabled.
+  // TODO: need to set is_enabled for settings of Trusted Advisor.
   // If you are not in a business or enterprise plan with a support plan, set is_enable to false as notifications will fail. If not, set it to true.
   is_enabled = false
   aws_cloudwatch_event_rule = {
@@ -157,6 +159,8 @@ trusted_advisor = {
 # IAM: Users
 #--------------------------------------------------------------
 iam = {
+  // TODO: need to set is_enabled for settings of IAM.
+  is_enabled = true
   # TODO: need to change IAM User.
   user = [
     "test1",
@@ -338,6 +342,8 @@ iam = {
 # Security:IAM
 #--------------------------------------------------------------
 security_iam = {
+  // TODO: need to set is_enabled for settings of IAM security.
+  is_enabled = true
   aws_iam_account_password_policy = {
     allow_users_to_change_password = true
     hard_expiry                    = true
@@ -366,15 +372,16 @@ security_iam = {
 # Security:Default VPC
 #--------------------------------------------------------------
 security_default_vpc = {
-  enabled          = true
-  enable_flow_logs = true
+  // TODO: need to set is_enabled for settings of IAM security.
+  is_enabled           = true
+  is_enabled_flow_logs = true
   # A boolean flag to enable/disable VPC Endpoint for [EC2.10]. Defaults true."
   # https://docs.aws.amazon.com/securityhub/latest/userguide/securityhub-standards-fsbp-controls.html#ec2-10-remediation
   # If true, the EC2-10 indication will be resolved.
   # If false, Security Hub will point out Severity: Medium on EC2-10.
   # This flag will set the VPC Endpoint for the default VPC in each region.
   # Normally, it costs more than 10 USD a month for the default VPC that you do not use, so the initial value is set to false.
-  enable_vpc_end_point = false
+  is_enabled_vpc_end_point = false
   aws_cloudwatch_log_group = {
     name_prefix       = "flow-log-"
     retention_in_days = 30
@@ -466,6 +473,8 @@ security_logging = {
 # Security:AWS Config
 #--------------------------------------------------------------
 security_config = {
+  // TODO: need to set is_enabled for settings of AWS Config.
+  is_enabled = true
   aws_config_configuration_recorder = {
     name = "aws-config-configuration-recorder"
     recording_group = [
@@ -556,6 +565,8 @@ security_config = {
 # Security:SecurityHub
 #--------------------------------------------------------------
 security_securityhub = {
+  // TODO: need to set is_enabled for settings of SecurityHub.
+  is_enabled = true
   aws_securityhub_member = {
     securityhub_member = {
     }
@@ -569,6 +580,8 @@ security_securityhub = {
 # Security:GuardDuty
 #--------------------------------------------------------------
 security_guardduty = {
+  // TODO: need to set is_enabled for settings of GuardDuty.
+  is_enabled = true
   aws_guardduty_detector = {
     enable                       = true
     finding_publishing_frequency = "FIFTEEN_MINUTES"
@@ -607,6 +620,8 @@ security_guardduty = {
 # Security:Access Analyzer
 #--------------------------------------------------------------
 security_access_analyzer = {
+  // TODO: need to set is_enabled for settings of Access Analyzer.
+  is_enabled = true
   aws_accessanalyzer_analyzer = {
     analyzer_name = "aws-access-analyzer"
     type          = "ACCOUNT"
@@ -617,6 +632,8 @@ security_access_analyzer = {
 # Security:CloudTrail
 #--------------------------------------------------------------
 security_cloudtrail = {
+  // TODO: need to set is_enabled for settings of IAM security.
+  is_enabled = true
   aws_kms_key = {
     cloudtrail = {
       description             = "This key used for CloudTrail."
@@ -802,9 +819,19 @@ PATTERN
   }
 }
 #--------------------------------------------------------------
+# Security:EBS
+#--------------------------------------------------------------
+security_ebs = {
+  // TODO: need to set is_enabled for settings of EBS.
+  is_enabled = true
+}
+
+#--------------------------------------------------------------
 # Application Log
 #--------------------------------------------------------------
 application_log = {
+  // TODO: need to set is_enabled for settings of application log.
+  is_enabled = true
   aws_kms_key = {
     description             = "This key used for SNS."
     deletion_window_in_days = 7

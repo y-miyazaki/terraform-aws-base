@@ -1,7 +1,11 @@
 #--------------------------------------------------------------
 # module variables
 #--------------------------------------------------------------
-
+variable "is_enabled" {
+  type        = bool
+  description = "(Required) A boolean flag to enable/disable Budgets. Defaults true."
+  default     = true
+}
 variable "aws_budgets_budget" {
   type = object(
     {

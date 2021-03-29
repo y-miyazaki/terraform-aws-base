@@ -1,4 +1,4 @@
 output "id" {
   description = "Analyzer name."
-  value       = aws_accessanalyzer_analyzer.this.id
+  value       = var.is_enabled ? aws_accessanalyzer_analyzer.this[0].id : null
 }

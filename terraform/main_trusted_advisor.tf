@@ -6,8 +6,8 @@
 # Enables Security Hub for this AWS account.
 #--------------------------------------------------------------
 module "aws_recipes_trusted_advisor" {
-  source = "../modules/aws/recipes/trusted_advisor"
-  count  = var.trusted_advisor.is_enabled ? 1 : 0
+  source     = "../modules/aws/recipes/trusted_advisor"
+  is_enabled = lookup(var.trusted_advisor, "is_enabled", true)
   aws_cloudwatch_event_rule = {
     name                = "${var.name_prefix}${lookup(var.trusted_advisor.aws_cloudwatch_event_rule, "name", "budgets")}"
     schedule_expression = lookup(var.trusted_advisor.aws_cloudwatch_event_rule, "schedule_expression", "cron(0 0 * * ? *)")
@@ -15,7 +15,7 @@ module "aws_recipes_trusted_advisor" {
     is_enabled          = lookup(var.trusted_advisor.aws_cloudwatch_event_rule, "is_enabled", true)
   }
   aws_cloudwatch_event_target = {
-    arn = module.aws_recipes_lambda_create_trusted_advisor[0].arn
+    arn = module.aws_recipes_lambda_create_trusted_advisor.arn
   }
   tags = var.tags
 }
@@ -25,7 +25,7 @@ module "aws_recipes_trusted_advisor" {
 #--------------------------------------------------------------
 module "aws_recipes_lambda_create_trusted_advisor" {
   source                   = "../modules/aws/recipes/lambda/create"
-  count                    = var.trusted_advisor.is_enabled ? 1 : 0
+  is_enabled                    = lookup(var.trusted_advisor, "is_enabled", true)
   aws_cloudwatch_log_group = lookup(var.trusted_advisor, "aws_cloudwatch_log_group_lambda")
   # Provides a Lambda Function resource.
   # Lambda allows you to trigger execution of code in response to events in AWS, enabling serverless backend solutions. The Lambda Function itself includes source code and runtime configuration.
@@ -57,7 +57,7 @@ module "aws_recipes_lambda_create_trusted_advisor" {
     principal           = "events.amazonaws.com"
     qualifier           = null
     source_account      = null
-    source_arn          = module.aws_recipes_trusted_advisor[0].arn
+    source_arn          = module.aws_recipes_trusted_advisor.arn
     statement_id        = "TrustedAdvisorDetectUnexpectedUsage"
     statement_id_prefix = null
   }

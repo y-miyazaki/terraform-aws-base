@@ -1,6 +1,11 @@
 #--------------------------------------------------------------
 # module variables
 #--------------------------------------------------------------
+variable "is_enabled" {
+  type        = bool
+  description = "(Required) A boolean flag to enable/disable Lambda. Defaults true."
+  default     = true
+}
 variable "aws_cloudwatch_log_group" {
   type = object(
     {

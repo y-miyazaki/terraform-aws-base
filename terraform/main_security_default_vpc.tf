@@ -16,9 +16,9 @@ locals {
 #--------------------------------------------------------------
 module "aws_recipes_security_default_vpc" {
   source                   = "../modules/aws/recipes/security/default_vpc"
-  enabled                  = lookup(var.security_default_vpc, "enabled", true)
-  enable_vpc_end_point     = lookup(var.security_default_vpc, "enable_vpc_end_point", false)
-  enable_flow_logs         = lookup(var.security_default_vpc, "enable_flow_logs", true)
+  is_enabled               = lookup(var.security_default_vpc, "is_enabled", true)
+  is_enabled_vpc_end_point = lookup(var.security_default_vpc, "is_enabled_vpc_end_point", false)
+  is_enabled_flow_logs     = lookup(var.security_default_vpc, "is_enabled_flow_logs", true)
   aws_cloudwatch_log_group = local.aws_cloudwatch_log_group_default_vpc
   aws_iam_role = {
     description = lookup(var.security_default_vpc.aws_iam_role, "description", null)

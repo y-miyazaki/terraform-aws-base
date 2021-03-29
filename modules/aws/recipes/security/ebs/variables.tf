@@ -1,8 +1,8 @@
 #--------------------------------------------------------------
 # module variables
 #--------------------------------------------------------------
-variable "enabled" {
+variable "is_enabled" {
   type        = bool
-  description = "(Optional) Whether or not default EBS encryption is enabled. Valid values are true or false. Defaults to true."
+  description = "(Required) A boolean flag to enable/disable settings of EBS. Defaults true."
   default     = true
 }

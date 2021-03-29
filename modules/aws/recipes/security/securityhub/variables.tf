@@ -1,6 +1,11 @@
 #--------------------------------------------------------------
 # module variables
 #--------------------------------------------------------------
+variable "is_enabled" {
+  type        = bool
+  description = "(Required) A boolean flag to enable/disable SecurityHub. Defaults true."
+  default     = true
+}
 variable "securityhub_member" {
   type        = map(any)
   description = "(Required) list of Security Hub member resource."

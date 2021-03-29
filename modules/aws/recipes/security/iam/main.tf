@@ -2,6 +2,7 @@
 # Manages Password Policy for the AWS Account. See more about Account Password Policy in the official AWS docs.
 #--------------------------------------------------------------
 resource "aws_iam_account_password_policy" "this" {
+  count                          = var.is_enabled ? 1 : 0
   allow_users_to_change_password = lookup(var.aws_iam_account_password_policy, "allow_users_to_change_password")
   hard_expiry                    = lookup(var.aws_iam_account_password_policy, "hard_expiry")
   max_password_age               = lookup(var.aws_iam_account_password_policy, "max_password_age")
@@ -17,6 +18,7 @@ resource "aws_iam_account_password_policy" "this" {
 # Generates an IAM policy document in JSON format for use with resources that expect policy documents such as aws_iam_policy.
 # --------------------------------------------------------------------------------------------------
 data "aws_iam_policy_document" "this" {
+  count = var.is_enabled && var.aws_iam_role != null ? 1 : 0
   statement {
     principals {
       type        = "AWS"
@@ -30,17 +32,17 @@ data "aws_iam_policy_document" "this" {
 # Generates an IAM policy document in JSON format for use with resources that expect policy documents such as aws_iam_policy.
 # --------------------------------------------------------------------------------------------------
 resource "aws_iam_role" "this" {
-  count                 = var.aws_iam_role == null ? 0 : 1
+  count                 = var.is_enabled && var.aws_iam_role != null ? 1 : 0
   description           = lookup(var.aws_iam_role, "description", null)
   name                  = lookup(var.aws_iam_role, "name")
-  assume_role_policy    = data.aws_iam_policy_document.this.json
+  assume_role_policy    = var.is_enabled ? data.aws_iam_policy_document.this[0].json : null
   force_detach_policies = true
   path                  = lookup(var.aws_iam_role, "path", "/")
   tags                  = var.tags
 }
 
 resource "aws_iam_role_policy_attachment" "support_policy" {
-  count      = var.aws_iam_role == null ? 0 : 1
+  count      = var.is_enabled && var.aws_iam_role != null ? 1 : 0
   role       = aws_iam_role.this[0].id
   policy_arn = "arn:aws:iam::aws:policy/AWSSupportAccess"
 }

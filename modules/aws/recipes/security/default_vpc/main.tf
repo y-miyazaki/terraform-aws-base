@@ -9,20 +9,20 @@ data "aws_availability_zones" "this" {
 # Provides a resource to manage the default AWS VPC in the current region.
 #--------------------------------------------------------------
 resource "aws_default_vpc" "this" {
-  count = var.enabled ? 1 : 0
+  count = var.is_enabled ? 1 : 0
 }
 #--------------------------------------------------------------
 # Provides a resource to manage a default route table of a VPC. This resource can manage the default route table of the default or a non-default VPC.
 #--------------------------------------------------------------
 resource "aws_default_route_table" "this" {
-  count                  = var.enabled ? 1 : 0
+  count                  = var.is_enabled ? 1 : 0
   default_route_table_id = aws_default_vpc.this[0].default_route_table_id
 }
 #--------------------------------------------------------------
 # Provides a resource to manage a VPC's default network ACL. This resource can manage the default network ACL of the default or a non-default VPC.
 #--------------------------------------------------------------
 resource "aws_default_network_acl" "this" {
-  count                  = var.enabled ? 1 : 0
+  count                  = var.is_enabled ? 1 : 0
   default_network_acl_id = aws_default_vpc.this[0].default_network_acl_id
   lifecycle {
     ignore_changes = [subnet_ids]
@@ -32,7 +32,7 @@ resource "aws_default_network_acl" "this" {
 # Provides a resource to manage a default security group. This resource can manage the default security group of the default or a non-default VPC.
 #--------------------------------------------------------------
 resource "aws_default_security_group" "this" {
-  count  = var.enabled ? 1 : 0
+  count  = var.is_enabled ? 1 : 0
   vpc_id = aws_default_vpc.this[0].id
 }
 
@@ -40,7 +40,7 @@ resource "aws_default_security_group" "this" {
 # Provides a resource to manage a default AWS VPC subnet in the current region.
 #--------------------------------------------------------------
 resource "aws_default_subnet" "this" {
-  count             = length(data.aws_availability_zones.this.names)
+  count             = var.is_enabled ? length(data.aws_availability_zones.this.names) : 0
   availability_zone = data.aws_availability_zones.this.names[count.index]
 }
 
@@ -49,7 +49,7 @@ resource "aws_default_subnet" "this" {
 # https://docs.aws.amazon.com/securityhub/latest/userguide/securityhub-standards-fsbp-controls.html#ec2-10-remediation
 #--------------------------------------------------------------
 resource "aws_vpc_endpoint" "this" {
-  count        = var.enabled && var.enable_vpc_end_point ? 1 : 0
+  count        = var.is_enabled && var.is_enabled_vpc_end_point ? 1 : 0
   service_name = "com.amazonaws.${var.region}.ec2"
   vpc_id       = aws_default_vpc.this[0].id
   #  auto_accept         = var.auto_accept
