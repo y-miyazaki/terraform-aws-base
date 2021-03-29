@@ -128,7 +128,7 @@ module "aws_recipes_cloudwatch_alerm_cloudtrail" {
 #--------------------------------------------------------------
 module "aws_recipes_lambda_create_cloudtrail" {
   source                   = "../modules/aws/recipes/lambda/create"
-  is_enabled = lookup(var.security_cloudtrail, "is_enabled", true)
+  is_enabled               = lookup(var.security_cloudtrail, "is_enabled", true)
   aws_cloudwatch_log_group = lookup(var.security_cloudtrail, "aws_cloudwatch_log_group_lambda")
 
   # Provides a Lambda Function resource.

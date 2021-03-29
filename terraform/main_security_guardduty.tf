@@ -21,7 +21,7 @@ module "aws_recipes_security_guardduty" {
 #--------------------------------------------------------------
 module "aws_recipes_lambda_create_guardduty" {
   source                   = "../modules/aws/recipes/lambda/create"
-  is_enabled                    = lookup(var.security_guardduty, "is_enabled", true)
+  is_enabled               = lookup(var.security_guardduty, "is_enabled", true)
   aws_cloudwatch_log_group = lookup(var.security_guardduty, "aws_cloudwatch_log_group_lambda")
   # Provides a Lambda Function resource.
   # Lambda allows you to trigger execution of code in response to events in AWS, enabling serverless backend solutions. The Lambda Function itself includes source code and runtime configuration.
