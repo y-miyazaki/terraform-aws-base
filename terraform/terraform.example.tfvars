@@ -339,66 +339,6 @@ iam = {
   }
 }
 #--------------------------------------------------------------
-# Security:IAM
-#--------------------------------------------------------------
-security_iam = {
-  // TODO: need to set is_enabled for settings of IAM security.
-  is_enabled = true
-  aws_iam_account_password_policy = {
-    allow_users_to_change_password = true
-    hard_expiry                    = true
-    max_password_age               = 90
-    minimum_password_length        = 14
-    password_reuse_prevention      = 24
-    require_lowercase_characters   = true
-    require_numbers                = true
-    require_symbols                = true
-    require_uppercase_characters   = true
-  }
-  # TODO: need to set principal role arn for Support IAM Role.
-  # https://docs.aws.amazon.com/securityhub/latest/userguide/securityhub-cis-controls.html#cis-1.20-remediation
-  support_iam_role_principal_arns = [
-    # example)
-    # "arn:aws:iam::{account id}:{iam user}"
-    "arn:aws:iam::999999999999:root"
-  ]
-  aws_iam_role = {
-    description = null
-    name        = "security-support-role"
-    path        = "/"
-  }
-}
-#--------------------------------------------------------------
-# Security:Default VPC
-#--------------------------------------------------------------
-security_default_vpc = {
-  // TODO: need to set is_enabled for settings of IAM security.
-  is_enabled           = true
-  is_enabled_flow_logs = true
-  # A boolean flag to enable/disable VPC Endpoint for [EC2.10]. Defaults true."
-  # https://docs.aws.amazon.com/securityhub/latest/userguide/securityhub-standards-fsbp-controls.html#ec2-10-remediation
-  # If true, the EC2-10 indication will be resolved.
-  # If false, Security Hub will point out Severity: Medium on EC2-10.
-  # This flag will set the VPC Endpoint for the default VPC in each region.
-  # Normally, it costs more than 10 USD a month for the default VPC that you do not use, so the initial value is set to false.
-  is_enabled_vpc_end_point = false
-  aws_cloudwatch_log_group = {
-    name_prefix       = "flow-log-"
-    retention_in_days = 30
-  }
-  aws_iam_role = {
-    description = null
-    name        = "security-vpc-flow-log-role"
-    path        = "/"
-  }
-  aws_iam_policy = {
-    description = null
-    name        = "security-vpc-flow-log-policy"
-    path        = "/"
-  }
-}
-
-#--------------------------------------------------------------
 # Security:Lambda
 #--------------------------------------------------------------
 security_lambda = {
@@ -470,154 +410,6 @@ security_logging = {
   }
 }
 #--------------------------------------------------------------
-# Security:AWS Config
-#--------------------------------------------------------------
-security_config = {
-  // TODO: need to set is_enabled for settings of AWS Config.
-  is_enabled = true
-  aws_config_configuration_recorder = {
-    name = "aws-config-configuration-recorder"
-    recording_group = [
-      {
-        all_supported                 = true
-        include_global_resource_types = true
-      }
-    ]
-  }
-  aws_iam_role = {
-    description = null
-    name        = "security-config-role"
-    path        = "/"
-  }
-  aws_iam_policy = {
-    description = null
-    name        = "security-config-policy"
-    path        = "/"
-  }
-  aws_s3_bucket = {
-    # Random suffix is automatically added to the bucket name.
-    bucket        = "aws-config"
-    acl           = "private"
-    force_destroy = true
-    versioning = [
-      {
-        enabled = true
-      }
-    ]
-    logging = []
-    lifecycle_rule = [
-      {
-        id                                     = "default"
-        abort_incomplete_multipart_upload_days = 7
-        enabled                                = true
-        prefix                                 = null
-        expiration = [
-          {
-            # TODO: need to change days. default 3years.
-            days                         = 1095
-            expired_object_delete_marker = false
-          }
-        ]
-        transition = [
-          {
-            days          = 30
-            storage_class = "ONEZONE_IA"
-          }
-        ]
-        noncurrent_version_expiration = [
-          {
-            days = 30
-          }
-        ]
-      }
-    ]
-    replication_configuration = []
-    server_side_encryption_configuration = [
-      {
-        rule = [
-          {
-            apply_server_side_encryption_by_default = [
-              {
-                sse_algorithm     = "AES256"
-                kms_master_key_id = null
-              }
-            ]
-          }
-        ]
-      }
-    ]
-    object_lock_configuration = []
-  }
-  aws_config_delivery_channel = {
-    name          = "aws-config-delivery-channel"
-    sns_topic_arn = null
-    snapshot_delivery_properties = [
-      {
-        delivery_frequency = "Three_Hours"
-      }
-    ]
-  }
-  aws_config_configuration_recorder_status = {
-    is_enabled = true
-  }
-}
-#--------------------------------------------------------------
-# Security:SecurityHub
-#--------------------------------------------------------------
-security_securityhub = {
-  // TODO: need to set is_enabled for settings of SecurityHub.
-  is_enabled = true
-  aws_securityhub_member = {
-    securityhub_member = {
-    }
-  }
-  aws_securityhub_product_subscription = {
-    # TODO: need to change product_subscription.
-    product_subscription = {
-    }
-  }
-}
-#--------------------------------------------------------------
-# Security:GuardDuty
-#--------------------------------------------------------------
-security_guardduty = {
-  // TODO: need to set is_enabled for settings of GuardDuty.
-  is_enabled = true
-  aws_guardduty_detector = {
-    enable                       = true
-    finding_publishing_frequency = "FIFTEEN_MINUTES"
-  }
-  aws_guardduty_member = [
-  ]
-  aws_cloudwatch_log_group_lambda = {
-    retention_in_days = 7
-    kms_key_id        = null
-  }
-  aws_cloudwatch_event_rule = {
-    name        = "security-guardduty-cloudwatch-event-rule"
-    description = "This cloudwatch event used for GuardDuty."
-  }
-  aws_lambda_function = {
-    environment = {
-      # need to change REGION.
-      REGION = "ap-northeast-1"
-      # TODO: need to change SERVICE.
-      # SERVICE is project name or job name or product name.
-      SERVICE = "test"
-      # TODO: need to change ENV.
-      ENV = "dev"
-      # TODO: need to change SLACK_OAUTH_ACCESS_TOKEN.
-      SLACK_OAUTH_ACCESS_TOKEN = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-      # TODO: need to change SLACK_CHANNEL_ID.
-      SLACK_CHANNEL_ID = "xxxxxxxxxx"
-      LOGGER_FORMATTER = "json"
-      LOGGER_OUT       = "stdout"
-      LOGGER_LEVEL     = "warn"
-    }
-  }
-}
-
-#--------------------------------------------------------------
 # Security:Access Analyzer
 #--------------------------------------------------------------
 security_access_analyzer = {
@@ -628,7 +420,6 @@ security_access_analyzer = {
     type          = "ACCOUNT"
   }
 }
-
 #--------------------------------------------------------------
 # Security:CloudTrail
 #--------------------------------------------------------------
@@ -820,13 +611,232 @@ PATTERN
   }
 }
 #--------------------------------------------------------------
+# Security:AWS Config
+#--------------------------------------------------------------
+security_config = {
+  // TODO: need to set is_enabled for settings of AWS Config.
+  is_enabled = true
+  aws_config_configuration_recorder = {
+    name = "aws-config-configuration-recorder"
+    recording_group = [
+      {
+        all_supported                 = true
+        include_global_resource_types = true
+      }
+    ]
+  }
+  aws_iam_role = {
+    description = null
+    name        = "security-config-role"
+    path        = "/"
+  }
+  aws_iam_policy = {
+    description = null
+    name        = "security-config-policy"
+    path        = "/"
+  }
+  aws_s3_bucket = {
+    # Random suffix is automatically added to the bucket name.
+    bucket        = "aws-config"
+    acl           = "private"
+    force_destroy = true
+    versioning = [
+      {
+        enabled = true
+      }
+    ]
+    logging = []
+    lifecycle_rule = [
+      {
+        id                                     = "default"
+        abort_incomplete_multipart_upload_days = 7
+        enabled                                = true
+        prefix                                 = null
+        expiration = [
+          {
+            # TODO: need to change days. default 3years.
+            days                         = 1095
+            expired_object_delete_marker = false
+          }
+        ]
+        transition = [
+          {
+            days          = 30
+            storage_class = "ONEZONE_IA"
+          }
+        ]
+        noncurrent_version_expiration = [
+          {
+            days = 30
+          }
+        ]
+      }
+    ]
+    replication_configuration = []
+    server_side_encryption_configuration = [
+      {
+        rule = [
+          {
+            apply_server_side_encryption_by_default = [
+              {
+                sse_algorithm     = "AES256"
+                kms_master_key_id = null
+              }
+            ]
+          }
+        ]
+      }
+    ]
+    object_lock_configuration = []
+  }
+  aws_config_delivery_channel = {
+    name          = "aws-config-delivery-channel"
+    sns_topic_arn = null
+    snapshot_delivery_properties = [
+      {
+        delivery_frequency = "Three_Hours"
+      }
+    ]
+  }
+  aws_config_configuration_recorder_status = {
+    is_enabled = true
+  }
+}
+#--------------------------------------------------------------
+# Security:Default VPC
+#--------------------------------------------------------------
+security_default_vpc = {
+  // TODO: need to set is_enabled for settings of IAM security.
+  is_enabled           = true
+  is_enabled_flow_logs = true
+  # A boolean flag to enable/disable VPC Endpoint for [EC2.10]. Defaults true."
+  # https://docs.aws.amazon.com/securityhub/latest/userguide/securityhub-standards-fsbp-controls.html#ec2-10-remediation
+  # If true, the EC2-10 indication will be resolved.
+  # If false, Security Hub will point out Severity: Medium on EC2-10.
+  # This flag will set the VPC Endpoint for the default VPC in each region.
+  # Normally, it costs more than 10 USD a month for the default VPC that you do not use, so the initial value is set to false.
+  is_enabled_vpc_end_point = false
+  aws_cloudwatch_log_group = {
+    name_prefix       = "flow-log-"
+    retention_in_days = 30
+  }
+  aws_iam_role = {
+    description = null
+    name        = "security-vpc-flow-log-role"
+    path        = "/"
+  }
+  aws_iam_policy = {
+    description = null
+    name        = "security-vpc-flow-log-policy"
+    path        = "/"
+  }
+}
+#--------------------------------------------------------------
 # Security:EBS
 #--------------------------------------------------------------
 security_ebs = {
   // TODO: need to set is_enabled for settings of EBS.
   is_enabled = true
 }
-
+#--------------------------------------------------------------
+# Security:GuardDuty
+#--------------------------------------------------------------
+security_guardduty = {
+  // TODO: need to set is_enabled for settings of GuardDuty.
+  is_enabled = true
+  aws_guardduty_detector = {
+    enable                       = true
+    finding_publishing_frequency = "FIFTEEN_MINUTES"
+  }
+  aws_guardduty_member = [
+  ]
+  aws_cloudwatch_log_group_lambda = {
+    retention_in_days = 7
+    kms_key_id        = null
+  }
+  aws_cloudwatch_event_rule = {
+    name        = "security-guardduty-cloudwatch-event-rule"
+    description = "This cloudwatch event used for GuardDuty."
+  }
+  aws_lambda_function = {
+    environment = {
+      # need to change REGION.
+      REGION = "ap-northeast-1"
+      # TODO: need to change SERVICE.
+      # SERVICE is project name or job name or product name.
+      SERVICE = "test"
+      # TODO: need to change ENV.
+      ENV = "dev"
+      # TODO: need to change SLACK_OAUTH_ACCESS_TOKEN.
+      SLACK_OAUTH_ACCESS_TOKEN = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+      # TODO: need to change SLACK_CHANNEL_ID.
+      SLACK_CHANNEL_ID = "xxxxxxxxxx"
+      LOGGER_FORMATTER = "json"
+      LOGGER_OUT       = "stdout"
+      LOGGER_LEVEL     = "warn"
+    }
+  }
+}
+#--------------------------------------------------------------
+# Security:IAM
+#--------------------------------------------------------------
+security_iam = {
+  // TODO: need to set is_enabled for settings of IAM security.
+  is_enabled = true
+  aws_iam_account_password_policy = {
+    allow_users_to_change_password = true
+    hard_expiry                    = true
+    max_password_age               = 90
+    minimum_password_length        = 14
+    password_reuse_prevention      = 24
+    require_lowercase_characters   = true
+    require_numbers                = true
+    require_symbols                = true
+    require_uppercase_characters   = true
+  }
+  # TODO: need to set principal role arn for Support IAM Role.
+  # https://docs.aws.amazon.com/securityhub/latest/userguide/securityhub-cis-controls.html#cis-1.20-remediation
+  support_iam_role_principal_arns = [
+    # example)
+    # "arn:aws:iam::{account id}:{iam user}"
+    "arn:aws:iam::999999999999:root"
+  ]
+  aws_iam_role = {
+    description = null
+    name        = "security-support-role"
+    path        = "/"
+  }
+}
+#--------------------------------------------------------------
+# Security:S3
+#--------------------------------------------------------------
+security_s3 = {
+  // TODO: need to set is_enabled for settings of S3 security.
+  is_enabled           = true
+  # Manages S3 account-level Public Access Block configuration. For more information about these settings, see the AWS S3 Block Public Access documentation.
+  aws_s3_account_public_access_block = {
+    block_public_acls       = true
+    block_public_policy     = true
+    ignore_public_acls      = false
+    restrict_public_buckets = false
+  }
+}
+#--------------------------------------------------------------
+# Security:SecurityHub
+#--------------------------------------------------------------
+security_securityhub = {
+  // TODO: need to set is_enabled for settings of SecurityHub.
+  is_enabled = true
+  aws_securityhub_member = {
+    securityhub_member = {
+    }
+  }
+  aws_securityhub_product_subscription = {
+    # TODO: need to change product_subscription.
+    product_subscription = {
+    }
+  }
+}
 #--------------------------------------------------------------
 # Application Log
 #--------------------------------------------------------------
