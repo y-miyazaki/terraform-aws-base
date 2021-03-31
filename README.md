@@ -1,43 +1,42 @@
 # AWS 初期設定用 Terraform
 
-`!!!!!!!!!!WORK IN PROGRESS!!!!!!!!!!`
-
 ## OverView
 
 AWS でインフラを構築する際には、どんなプロジェクトでも必ず考慮すべき事項があります。
-例えばセキュリティ、IAM、コスト、ログの保存・通知関連等...
-必ず考慮すべき事項をプロジェクト毎に毎回 Terraform を別々に構築するのは、かなり大変です。
-このリポジトリでは、基本的に設定した方が良い項目を対応したものです。
+例えばセキュリティ、IAM、コスト、ログの保存・通知関連等...  
+プロジェクト毎にインフラ構築を行うメンバーのスキルは異なり、セキュリティレベルが落ちたり、必要なログ取らないなど、問題になることが多くなります。  
+このリポジトリでは Terraform でベースラインとなる設定を行うことで、インフラの構築コストを下げることができます。
 
 ## INDEX
 
--   [AWS Security Hub でのセキュリティ対応](#aws-security-hub-でのセキュリティ対応)
--   [IAM ユーザ・グループの作成](#iam-ユーザ・グループの作成)
--   [IAM グループへのポリシーの設定](#iam-グループへのポリシーの設定)
--   [CloudTrail によるセキュリティ面での Slack 通知](#cloudtrail-によるセキュリティ面での-Slack-通知)
--   [GuardDuty によるセキュリティ面での Slack 通知](#guardduty-によるセキュリティ面での-slack-通知)
--   [Cost Management での Budgets のアラート設定・Slack 通知](#cost-management-での-budgets-のアラート設定・slack-通知)
--   [Trusted Advisor での Slack 通知](#trusted-advisor-での-slack-通知)
--   [CloudWatch 上にあるログの Slack 通知](#cloudWatch-上にあるログの-slack-通知)
--   [初期設定](#初期設定)
+- [AWS Security Hub でのセキュリティ対応](#aws-security-hub-でのセキュリティ対応)
+- [IAM ユーザ・グループの作成](#iam-ユーザ・グループの作成)
+- [IAM グループへのポリシーの設定](#iam-グループへのポリシーの設定)
+- [S3 アカウントパブリックアクセスブロック](#s3-アカウントパブリックアクセスブロック)
+- [CloudTrail によるセキュリティ面での Slack 通知](#cloudtrail-によるセキュリティ面での-Slack-通知)
+- [GuardDuty によるセキュリティ面での Slack 通知](#guardduty-によるセキュリティ面での-slack-通知)
+- [Cost Management での Budgets のアラート設定・Slack 通知](#cost-management-での-budgets-のアラート設定・slack-通知)
+- [Trusted Advisor での Slack 通知](#trusted-advisor-での-slack-通知)
+- [CloudWatch 上にあるログの Slack 通知](#cloudWatch-上にあるログの-slack-通知)
+- [初期設定](#初期設定)
 
 ## Required
 
--   Terraform  
-    Terraform を実行するためにコマンドが必要です。  
-    https://www.terraform.io/
--   Slack
-    通知用として、Slack と OAuth Token/ChannelID が必要です。  
-    https://slack.com/  
-    https://slack.dev/node-slack-sdk/getting-started
+- Terraform  
+  Terraform を実行するためにコマンドが必要です。  
+  https://www.terraform.io/
+- Slack
+  通知用として、Slack と OAuth Token/ChannelID が必要です。  
+  https://slack.com/  
+  https://slack.dev/node-slack-sdk/getting-started
 
 ## AWS Security Hub でのセキュリティ対応
 
 AWS Security Hub で提供されている Security standards の 3 つのセキュリティを可能な限り対応したものです。
 
--   AWS Foundational Security Best Practices
--   CIS AWS Foundations Benchmark
--   PCI DSS v3.2.1
+- AWS Foundational Security Best Practices
+- CIS AWS Foundations Benchmark
+- PCI DSS v3.2.1
 
 以下の内容は、本 Terraform のみを適用した場合の Security score です。
 `構築後すぐに正確なスコアが出ないことを認識する必要があります。`
@@ -64,6 +63,12 @@ terraform ユーザと deploy グループは、[マニュアル](#Terraform-を
 IAM グループに割り振るポリシーを設定することができます。またベースのポリシーとして仮想 MFA 設定が必須となっているため IAM ユーザでログインした後には必ず MFA の設定が必要になります。
 
 ![IAM Group Policy](image/iam_group_policy.png)
+
+## S3 アカウントパブリックアクセスブロック
+
+S3 のパブリックアクセスブロック機能は、S3 のリソースへのパブリックアクセスの管理に役立つ、アクセスポイント、バケット、アカウントの設定を提供します。  
+これをアカウントレベルで S3 全体に適用することができます。  
+https://docs.aws.amazon.com/AmazonS3/latest/userguide/access-control-block-public-access.html
 
 ## CloudTrail によるセキュリティ面での Slack 通知
 
@@ -94,17 +99,17 @@ Slack チャンネルへの設定・Slack アプリの追加を行い、Token �
 
 ## 初期設定
 
--   ルートアカウントからアクセスキーをマニュアル削除  
-    セキュリティとして問題があるため、マネージメントコンソールからルートアカウントのアクセスキーを削除しましょう。
--   Terraform を実行するための IAM ユーザ and IAM グループのマニュアル作成  
-    Terraform を実行するためにマネージメントコンソールから IAM ユーザと IAM グループを作成します。
-    IAM グループ(仮名:deploy)を作成します。ポリシーは AdministratorAccess をアタッチします。
-    IAM ユーザ(仮名:terraform)を作成します。Access Type は Programmatic access のみ与えます。IAM グループ(仮名:deploy)に追加します。
+- ルートアカウントからアクセスキーをマニュアル削除  
+  セキュリティとして問題があるため、マネージメントコンソールからルートアカウントのアクセスキーを削除しましょう。
+- Terraform を実行するための IAM ユーザ and IAM グループのマニュアル作成  
+  Terraform を実行するためにマネージメントコンソールから IAM ユーザと IAM グループを作成します。
+  IAM グループ(仮名:deploy)を作成します。ポリシーは AdministratorAccess をアタッチします。
+  IAM ユーザ(仮名:terraform)を作成します。Access Type は Programmatic access のみ与えます。IAM グループ(仮名:deploy)に追加します。
 
--   Terraform State を保存するための S3 作成  
-    Terraform State を管理するためのマネージメントコンソールから S3 を作成します。
-    ただし、aws コマンドと profile が設定済みで実行できる環境がある場合は、下記のコマンドを実行すると S3 が作成されます。  
-    https://github.com/y-miyazaki/cloud-commands/blob/master/cmd/awstfinitstate
+- Terraform State を保存するための S3 作成  
+  Terraform State を管理するためのマネージメントコンソールから S3 を作成します。
+  ただし、aws コマンドと profile が設定済みで実行できる環境がある場合は、下記のコマンドを実行すると S3 が作成されます。  
+  https://github.com/y-miyazaki/cloud-commands/blob/master/cmd/awstfinitstate
 
 ```sh
 # awstfinitstate -h
@@ -144,11 +149,11 @@ region: ap-northeast-1
 --------------------------------------------------------------
 ```
 
--   環境毎に設定する terraform.{environment}.tfvars ファイル  
-    リンク先にある[terraform.example.tfvars](terraform/terraform.example.tfvars)の名前を変更し、自分の環境用に各変数を変更する必要があります。変更するべき変数には TODO コメントが記載されています。TODO で検索してください。
+- 環境毎に設定する terraform.{environment}.tfvars ファイル  
+   リンク先にある[terraform.example.tfvars](terraform/terraform.example.tfvars)の名前を変更し、自分の環境用に各変数を変更する必要があります。変更するべき変数には TODO コメントが記載されています。TODO で検索してください。
 
--   環境毎に設定する main_provider.tf ファイル  
-    リンク先にある[main_provider.tf.example](terraform/main_provider.tf.example)を main_provider.tf にリネームししてください。その後、各パラメータを変更する必要があります。変更するべき変数には TODO コメントが記載されています。TODO で検索してください。
+- 環境毎に設定する main_provider.tf ファイル  
+  リンク先にある[main_provider.tf.example](terraform/main_provider.tf.example)を main_provider.tf にリネームししてください。その後、各パラメータを変更する必要があります。変更するべき変数には TODO コメントが記載されています。TODO で検索してください。
 
 ```terraform
 #--------------------------------------------------------------
@@ -186,9 +191,9 @@ provider "aws" {
 }
 ```
 
--   Terraform の実行  
-    terraform コマンドで実行します。terraform init 後に terraform apply を行います。
-    もしかすると terraform apply が失敗するかもしれませんが、conflict などの問題で失敗する場合があるので再度実行すれば成功します。
+- Terraform の実行  
+  terraform コマンドで実行します。terraform init 後に terraform apply を行います。
+  もしかすると terraform apply が失敗するかもしれませんが、conflict などの問題で失敗する場合があるので再度実行すれば成功します。
 
 ```sh
 bash-5.1# terraform init
