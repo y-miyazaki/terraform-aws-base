@@ -22,5 +22,6 @@ indent_size = 2
 indent_style = tab
 
 [*.md]
+indent_size = 2
 max_line_length = off
 trim_trailing_whitespace = false
