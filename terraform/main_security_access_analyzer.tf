@@ -1,4 +1,7 @@
 #--------------------------------------------------------------
+# For Access Analyzer
+#--------------------------------------------------------------
+#--------------------------------------------------------------
 # Manages an Access Analyzer Analyzer. More information can be found in the Access Analyzer User Guide.
 #--------------------------------------------------------------
 module "aws_recipes_security_access_analyzer" {
