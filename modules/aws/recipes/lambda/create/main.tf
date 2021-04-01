@@ -2,7 +2,7 @@
 # Provides a CloudWatch Log Group resource.
 #--------------------------------------------------------------
 resource "aws_cloudwatch_log_group" "this" {
-  count = var.is_enabled ? 1 : 0
+  count             = var.is_enabled ? 1 : 0
   name              = "/aws/lambda/${aws_lambda_function.this[0].function_name}"
   retention_in_days = lookup(var.aws_cloudwatch_log_group, "retention_in_days")
   kms_key_id        = lookup(var.aws_cloudwatch_log_group, "kms_key_id", null)
@@ -13,7 +13,7 @@ resource "aws_cloudwatch_log_group" "this" {
 # Lambda allows you to trigger execution of code in response to events in AWS, enabling serverless backend solutions. The Lambda Function itself includes source code and runtime configuration.
 #--------------------------------------------------------------
 resource "aws_lambda_function" "this" {
-  count = var.is_enabled ? 1 : 0
+  count             = var.is_enabled ? 1 : 0
   filename          = lookup(var.aws_lambda_function, "filename", null)
   s3_bucket         = lookup(var.aws_lambda_function, "s3_bucket", null)
   s3_key            = lookup(var.aws_lambda_function, "s3_key", null)
