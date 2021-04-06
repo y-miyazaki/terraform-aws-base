@@ -7,6 +7,7 @@ locals {
       group           = group
       users           = group_property.users
       policy_document = group_property.policy_document
+      is_enabled_mfa  = group_property.is_enabled_mfa
     }
     ]
   )
@@ -190,7 +191,7 @@ POLICY
 #--------------------------------------------------------------
 resource "aws_iam_group_policy_attachment" "mfa" {
   for_each = {
-    for group in local.group : group.group => group
+    for group in local.group : group.group => group if(lookup(group, "is_enabled_mfa", true))
   }
   group      = each.value.group
   policy_arn = aws_iam_policy.this.arn

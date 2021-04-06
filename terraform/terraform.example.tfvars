@@ -171,6 +171,10 @@ iam = {
   # Please specify the user with the same name that has been set in users.
   group = {
     administrator = {
+      # TODO: need to set is_enabled_mfa.
+      # If true, force MFA settings and login.
+      is_enabled_mfa = true
+      # TODO: need to set users.
       users = [
         "test1",
       ]
@@ -190,6 +194,10 @@ iam = {
       ]
     }
     developer = {
+      # TODO: need to set is_enabled_mfa.
+      # If true, force MFA settings and login.
+      is_enabled_mfa = true
+      # TODO: need to set users.
       users = [
         "test2",
       ]
@@ -282,6 +290,10 @@ iam = {
       ]
     }
     operator = {
+      # TODO: need to set is_enabled_mfa.
+      # If true, force MFA settings and login.
+      is_enabled_mfa = true
+      # TODO: need to set users.
       users = [
         "test2",
         "test3",
@@ -812,7 +824,7 @@ security_iam = {
 #--------------------------------------------------------------
 security_s3 = {
   // TODO: need to set is_enabled for settings of S3 security.
-  is_enabled           = true
+  is_enabled = true
   # Manages S3 account-level Public Access Block configuration. For more information about these settings, see the AWS S3 Block Public Access documentation.
   aws_s3_account_public_access_block = {
     block_public_acls       = true
