@@ -1,6 +1,6 @@
 output "securty_group_id" {
   description = "The ID of the security group"
-  value       = module.lambda_vpc_security_group.id
+  value       = aws_security_group.this.id
 }
 output "role_name" {
   description = "The name of the role."

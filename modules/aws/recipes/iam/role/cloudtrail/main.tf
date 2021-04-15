@@ -29,7 +29,7 @@ resource "aws_iam_policy" "this" {
   description = lookup(var.aws_iam_policy, "description", null)
   name        = lookup(var.aws_iam_policy, "name")
   path        = lookup(var.aws_iam_policy, "path", "/")
-  policy      = var.policy
+  policy      = lookup(var.aws_iam_policy, "policy")
 }
 #--------------------------------------------------------------
 # Attaches a Managed IAM Policy to an IAM role

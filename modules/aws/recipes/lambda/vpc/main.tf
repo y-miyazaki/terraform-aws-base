@@ -19,11 +19,32 @@ resource "aws_route_table_association" "this" {
   route_table_id = lookup(var.aws_route_table_association, "route_table_id")
 }
 
-module "lambda_vpc_security_group" {
-  source = "../../../recipes/security_group/any"
-  name   = lookup(var.aws_security_group, "name")
-  vpc_id = lookup(var.aws_subnet[0], "vpc_id", null)
-  tags   = var.tags
+#--------------------------------------------------------------
+# Security Group
+#--------------------------------------------------------------
+resource "aws_security_group" "this" {
+  name        = lookup(var.aws_security_group, "name")
+  vpc_id      = lookup(var.aws_subnet[0], "vpc_id")
+  description = "Allow inbound/outbound traffic"
+  ingress {
+    description = "from VPC"
+    from_port   = 0
+    to_port     = 65535
+    protocol    = "tcp"
+    cidr_blocks = aws_subnet.this.*.cidr_block
+  }
+  egress {
+    description = "Allow outbound all"
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    #tfsec:ignore:AWS009
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+  tags = var.tags
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 #--------------------------------------------------------------
 # Provides an IAM role.

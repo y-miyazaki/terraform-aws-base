@@ -53,26 +53,21 @@ variable "aws_iam_role" {
     }
   )
   description = "(Required) The resource of aws_iam_role."
-  default = {
-    description = null
-    name        = "lambda-vpc-role"
-    path        = "/"
-  }
 }
 variable "aws_iam_policy" {
   type = object(
     {
-      name   = string
+      # (Optional, Forces new resource) Description of the IAM policy.
+      description = string
+      # (Optional, Forces new resource) The name of the policy. If omitted, Terraform will assign a random, unique name.
+      name = string
+      # (Optional, default "/") Path in which to create the policy. See IAM Identifiers for more information.
+      path = string
+      #  (Required) The policy document. This is a JSON formatted string. For more information about building AWS IAM policy documents with Terraform, see the AWS IAM Policy Document Guide.
       policy = string
-      path   = string
     }
   )
   description = "(Required) The resource of aws_iam_policy."
-  default = {
-    description = null
-    name        = "lambda-vpc-policy"
-    path        = "/"
-  }
 }
 variable "tags" {
   type        = map(any)

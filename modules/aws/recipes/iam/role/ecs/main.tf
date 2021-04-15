@@ -21,7 +21,7 @@ resource "aws_iam_role" "ecs" {
 POLICY
   force_detach_policies = true
   path                  = lookup(var.aws_iam_role.ecs, "path", "/")
-  tags                  = local.tags
+  tags                  = var.tags
 }
 
 #--------------------------------------------------------------
@@ -57,7 +57,7 @@ resource "aws_iam_role" "ecs_tasks" {
 POLICY
   force_detach_policies = true
   path                  = lookup(var.aws_iam_role.ecs_tasks, "path", "/")
-  tags                  = local.tags
+  tags                  = var.tags
 }
 
 #--------------------------------------------------------------
@@ -91,7 +91,7 @@ resource "aws_iam_role" "events" {
 POLICY
   force_detach_policies = true
   path                  = lookup(var.aws_iam_role.events, "path", "/")
-  tags                  = local.tags
+  tags                  = var.tags
 }
 #--------------------------------------------------------------
 # Generates an IAM policy document in JSON format for use with resources that expect policy documents such as aws_iam_policy.
