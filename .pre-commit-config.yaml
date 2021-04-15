@@ -15,5 +15,8 @@ repos:
     hooks:
       - id: terraform_fmt
       - id: terraform_validate
+        args:
+          - "--args=-json"
+          - "--args=-no-color"
       - id: terraform_tflint
       - id: terraform_tfsec

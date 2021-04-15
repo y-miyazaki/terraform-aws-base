@@ -14,7 +14,10 @@ variable "aws_cloudwatch_log_group" {
     }
   )
   description = "(Required) The aws_cloudwatch_log_group."
-  default     = null
+  default = {
+    retention_in_days = 7
+    kms_key_id        = null
+  }
 }
 variable "aws_lambda_function" {
   type = object(
