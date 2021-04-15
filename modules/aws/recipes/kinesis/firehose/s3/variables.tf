@@ -10,7 +10,6 @@ variable "aws_kinesis_firehose_delivery_stream" {
     }
   ))
   description = "(Required) The resource of aws_kinesis_firehose_delivery_stream."
-  default     = null
 }
 variable "aws_iam_role" {
   type = object(

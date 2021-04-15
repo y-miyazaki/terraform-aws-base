@@ -12,5 +12,4 @@ variable "aws_iam_group_policy_attachment" {
     )
   )
   description = "(Required) - Attaches a Managed IAM Policy to an IAM group"
-  default     = null
 }

@@ -40,12 +40,10 @@ variable "aws_iam_policy" {
 variable "account_id" {
   type        = number
   description = "(Required) AWS account ID for member account."
-  default     = null
 }
 variable "region" {
   type        = string
   description = "(Required) Specify the region."
-  default     = null
 }
 variable "tags" {
   type        = map(any)

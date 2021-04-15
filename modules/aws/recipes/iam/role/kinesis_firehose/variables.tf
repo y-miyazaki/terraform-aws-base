@@ -37,7 +37,6 @@ variable "aws_iam_policy" {
 variable "bucket_arn" {
   type        = string
   description = "(Required) The s3 bucket arn."
-  default     = null
 }
 variable "tags" {
   type        = map(any)
