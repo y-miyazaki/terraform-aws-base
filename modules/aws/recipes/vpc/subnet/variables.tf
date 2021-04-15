@@ -4,7 +4,6 @@
 variable "name_prefix" {
   type        = string
   description = "(Required, Forces new resource) Creates a tag name beginning with the specified prefix."
-  default     = null
 }
 variable "aws_subnet" {
   type = list(object({
