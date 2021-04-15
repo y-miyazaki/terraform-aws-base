@@ -141,7 +141,7 @@ resource "aws_iam_policy" "eks_worker_node" {
   description = lookup(var.aws_iam_policy.eks_worker_node, "description", null)
   name        = lookup(var.aws_iam_policy.eks_worker_node, "name")
   path        = lookup(var.aws_iam_policy.eks_worker_node, "path", "/")
-  policy      = data.aws_iam_policy_document.this.json
+  policy      = data.aws_iam_policy_document.eks_worker_node.json
 }
 
 #--------------------------------------------------------------

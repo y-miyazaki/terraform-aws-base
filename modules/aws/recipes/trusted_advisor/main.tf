@@ -15,7 +15,7 @@ resource "aws_cloudwatch_event_rule" "this" {
 resource "aws_cloudwatch_event_target" "this" {
   count = var.is_enabled ? 1 : 0
   rule  = aws_cloudwatch_event_rule.this[0].name
-  arn   = lookup(var.aws_cloudwatch_event_target, "arn", null)
+  arn   = lookup(var.aws_cloudwatch_event_target, "arn")
   depends_on = [
     aws_cloudwatch_event_rule.this
   ]
