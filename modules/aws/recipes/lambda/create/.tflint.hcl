@@ -1,4 +1,3 @@
-
 rule "aws_lambda_function_invalid_description" {
   enabled = false
 }
