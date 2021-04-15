@@ -3,7 +3,7 @@
 #--------------------------------------------------------------
 variable "is_enabled" {
   type        = bool
-  description = "(Required) A boolean flag to enable/disable settings of Access Analyzer. Defaults true."
+  description = "(Optional) A boolean flag to enable/disable settings of Access Analyzer. Defaults true."
   default     = true
 }
 variable "analyzer_name" {

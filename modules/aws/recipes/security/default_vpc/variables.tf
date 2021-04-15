@@ -3,17 +3,17 @@
 #--------------------------------------------------------------
 variable "is_enabled" {
   type        = bool
-  description = "(Required) A boolean flag to enable/disable settings of Dafault VPC. Defaults true."
+  description = "(Optioaal) A boolean flag to enable/disable settings of Dafault VPC. Defaults true."
   default     = true
 }
 variable "is_enabled_vpc_end_point" {
   type        = bool
-  description = "(Required) A boolean flag to enable/disable VPC Endpoint for [EC2.10]. Defaults false."
+  description = "(Optioaal) A boolean flag to enable/disable VPC Endpoint for [EC2.10]. Defaults false."
   default     = false
 }
 variable "is_enabled_flow_logs" {
   type        = bool
-  description = "(Required) A boolean flag to enable/disable Flow Log. Defaults true."
+  description = "(Optioaal) A boolean flag to enable/disable Flow Log. Defaults true."
   default     = true
 }
 variable "aws_cloudwatch_log_group" {

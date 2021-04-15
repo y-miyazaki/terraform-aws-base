@@ -3,22 +3,22 @@
 #--------------------------------------------------------------
 variable "is_enabled" {
   type        = bool
-  description = "(Required) A boolean flag to enable/disable SecurityHub. Defaults true."
+  description = "(Optional) A boolean flag to enable/disable SecurityHub. Defaults true."
   default     = true
 }
 variable "securityhub_member" {
   type        = map(any)
-  description = "(Required) list of Security Hub member resource."
+  description = "(Optional) list of Security Hub member resource."
   default     = null
 }
 variable "product_subscription" {
   type        = map(any)
-  description = "(Required) The ARN of the product that generates findings that you want to import into Security Hub - see below."
+  description = "(Optional) The ARN of the product that generates findings that you want to import into Security Hub - see below."
   default     = null
 }
 variable "region" {
   type        = string
-  description = "(Required) The region name."
+  description = "(Optional) The region name."
   default     = null
 }
 variable "enabled_cis_aws_foundations_benchmark" {
