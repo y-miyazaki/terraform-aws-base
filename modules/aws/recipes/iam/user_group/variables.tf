@@ -11,5 +11,5 @@ variable "group" {
 variable "name_prefix" {
   type        = string
   description = "(Required) Prefix of policy name ."
-  default     = null
+  default     = ""
 }
