@@ -10,9 +10,10 @@ repos:
       - id: check-added-large-files
       - id: detect-aws-credentials
       - id: detect-private-key
-  - repo: https://github.com/gruntwork-io/pre-commit
-    rev: v0.1.12 # Get the latest from: https://github.com/gruntwork-io/pre-commit/releases
+  - repo: git://github.com/antonbabenko/pre-commit-terraform
+    rev: v1.48.0 # https://github.com/antonbabenko/pre-commit-terraform/releases
     hooks:
-      - id: terraform-fmt
-      - id: terraform-validate
-      - id: tflint
+      - id: terraform_fmt
+      - id: terraform_validate
+      - id: terraform_tflint
+      - id: terraform_tfsec
