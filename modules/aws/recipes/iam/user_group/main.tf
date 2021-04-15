@@ -38,7 +38,6 @@ resource "aws_iam_user_login_profile" "this" {
   user                    = each.value
   pgp_key                 = "keybase:exp_enechange"
   password_reset_required = true
-  password_length         = "20"
   depends_on = [
     aws_iam_user.this,
   ]

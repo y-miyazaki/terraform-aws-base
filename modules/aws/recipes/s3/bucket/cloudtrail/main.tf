@@ -39,6 +39,7 @@ resource "aws_s3_bucket" "this" {
   #     max_age_seconds = lookup(cors_rule.value, "max_age_seconds", null)
   #   }
   # }
+  #tfsec:ignore:AWS077
   dynamic "versioning" {
     for_each = var.versioning
     content {
@@ -46,6 +47,7 @@ resource "aws_s3_bucket" "this" {
       mfa_delete = lookup(versioning.value, "mfa_delete", null)
     }
   }
+  #tfsec:ignore:AWS002
   dynamic "logging" {
     for_each = var.logging
     content {
@@ -145,7 +147,7 @@ resource "aws_s3_bucket" "this" {
       }
     }
   }
-  dynamic "server_side_encryption_configuration" {
+  dynamic "server_side_encryption_configuration" { #tfsec:ignore:AWS017
     for_each = var.server_side_encryption_configuration
     content {
       dynamic "rule" {
