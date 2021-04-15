@@ -22,7 +22,6 @@ variable "aws_budgets_budget" {
     }
   )
   description = "(Required) Provides a budgets budget resource. Budgets use the cost visualisation provided by Cost Explorer to show you the status of your budgets, to provide forecasts of your estimated costs, and to track your AWS usage, including your free tier usage."
-  default     = null
 }
 
 variable "aws_cloudwatch_event_rule" {
@@ -50,7 +49,6 @@ variable "aws_cloudwatch_event_target" {
     }
   )
   description = "(Required) Provides an EventBridge Target resource."
-  default     = null
 }
 variable "tags" {
   type        = map(any)
