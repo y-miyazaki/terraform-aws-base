@@ -3,7 +3,7 @@
 #--------------------------------------------------------------
 variable "is_enabled" {
   type        = bool
-  description = "(Required) A boolean flag to enable/disable IAM security. Defaults true."
+  description = "(Optional) A boolean flag to enable/disable IAM security. Defaults true."
   default     = true
 }
 variable "aws_iam_account_password_policy" {

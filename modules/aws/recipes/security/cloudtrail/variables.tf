@@ -3,7 +3,7 @@
 #--------------------------------------------------------------
 variable "is_enabled" {
   type        = bool
-  description = "(Required) A boolean flag to enable/disable settings of CloudTrail. Defaults true."
+  description = "(Optional) A boolean flag to enable/disable settings of CloudTrail. Defaults true."
   default     = true
 }
 variable "aws_kms_key" {
@@ -169,7 +169,6 @@ variable "aws_cloudtrail" {
 variable "cis_name_prefix" {
   type        = string
   description = "(Required) Center for Internet Security CloudWatch Filter/Alerm name prefix."
-  default     = null
 }
 variable "account_id" {
   type        = string

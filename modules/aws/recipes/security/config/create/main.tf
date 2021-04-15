@@ -248,7 +248,7 @@ resource "aws_iam_role_policy_attachment" "config" {
 #--------------------------------------------------------------
 resource "aws_config_configuration_recorder" "this" {
   count    = var.is_enabled ? 1 : 0
-  name     = lookup(var.aws_config_configuration_recorder, "name", null)
+  name     = lookup(var.aws_config_configuration_recorder, "name")
   role_arn = aws_iam_role.config[0].arn
   dynamic "recording_group" {
     for_each = lookup(var.aws_config_configuration_recorder, "recording_group", [])
