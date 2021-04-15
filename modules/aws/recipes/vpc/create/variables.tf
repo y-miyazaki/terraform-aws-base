@@ -4,27 +4,22 @@
 variable "name_prefix" {
   type        = string
   description = "(Required, Forces new resource) Creates a tag name beginning with the specified prefix."
-  default     = null
 }
 variable "cidr_block" {
   type        = string
   description = "(Required) The CIDR block for the VPC."
-  default     = null
 }
 variable "availability_zone" {
   type        = list(any)
   description = "(Required) The AZ for the subnet."
-  default     = null
 }
 variable "nat_cidr_block" {
   type        = list(any)
   description = "(Required) The CIDR block for the nat gateway subnet."
-  default     = null
 }
 variable "igw_cidr_block" {
   type        = list(any)
   description = "(Required) The CIDR block for the internet gateway subnet."
-  default     = null
 }
 variable "aws_cloudwatch_log_group" {
   type = object(

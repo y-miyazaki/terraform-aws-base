@@ -4,12 +4,10 @@
 variable "region" {
   type        = string
   description = "(Required) The region name, in the form com.amazonaws.region.service for AWS services."
-  default     = null
 }
 variable "vpc_id" {
   type        = string
   description = "(Required) The ID of the VPC in which the endpoint will be used."
-  default     = null
 }
 variable "auto_accept" {
   type        = bool
