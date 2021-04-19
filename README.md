@@ -1,6 +1,4 @@
-# AWS 初期設定用 Terraform
-
-`!!!!!!!!!!WORK IN PROGRESS!!!!!!!!!!`
+# AWS Base Terraform
 
 ## OverView
 

@@ -1,4 +1,4 @@
-# AWS 初期設定用 Terraform
+# AWS Base Terraform
 
 ## OverView
 
