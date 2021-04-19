@@ -1,24 +1,22 @@
 #!/bin/bash
 set -e
 DIR=${1:-./}
-echo "#--------------------------------------------------------------"
-echo "# terraform fmt -recursive -check ($PWD)"
-echo "#--------------------------------------------------------------"
-terraform fmt -recursive -check
+
 cd $DIR
 echo "#--------------------------------------------------------------"
 echo "# terraform init ($PWD)"
 echo "#--------------------------------------------------------------"
+# terraform init -reconfigure -backend-config=terraform."${ENV}".tfbackend
 terraform init
 echo "#--------------------------------------------------------------"
 echo "# tflint ($PWD)"
 echo "#--------------------------------------------------------------"
-tflint
+tflint --module
 echo "#--------------------------------------------------------------"
 echo "# tfsec ($PWD)"
 echo "#--------------------------------------------------------------"
-tfsec
+tfsec --tfvars-file terraform."${ENV}".tfvars
 echo "#--------------------------------------------------------------"
-echo "# terraform apply ($PWD)"
+echo "# terraform plan ($PWD)"
 echo "#--------------------------------------------------------------"
-terraform apply -auto-approve
+# terraform plan -lock=false -no-color -var-file=terraform."${ENV}".tfvars

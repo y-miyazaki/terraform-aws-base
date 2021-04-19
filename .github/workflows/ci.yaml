@@ -19,7 +19,7 @@ jobs:
           echo "$ENV" >> $PWD/.env
           chmod +x scripts/*
           docker pull ymiyazakixyz/terraform-aws:latest
-          docker run --rm -v $PWD:/workspace --env-file=$PWD/.env -w /workspace --name terraform-aws ymiyazakixyz/terraform-aws:0.14.7 scripts/integration.sh terraform
+          docker run --rm -v $PWD:/workspace --env-file=$PWD/.env -w /workspace --name terraform-aws ymiyazakixyz/terraform-aws:latest scripts/terraform/aws/integration_push.sh terraform
       - name: "slack: notification for failed build."
         if: failure()
         uses: rtCamp/action-slack-notify@v2.0.2
