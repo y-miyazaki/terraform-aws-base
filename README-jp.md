@@ -1,13 +1,11 @@
 # AWS 初期設定用 Terraform
 
-`!!!!!!!!!!WORK IN PROGRESS!!!!!!!!!!`
-
 ## OverView
 
-When building an infrastructure on AWS, there are always things to consider in any project.
-For example, security, IAM, cost, log storage / notification related, etc ...
-Building a Terraform separately for each project, which must be considered, can be a daunting task.
-In this repository, it corresponds to the items that should be set basically.
+AWS でインフラを構築する際には、どんなプロジェクトでも必ず考慮すべき事項があります。
+例えばセキュリティ、IAM、コスト、ログの保存・通知関連等...
+必ず考慮すべき事項をプロジェクト毎に毎回 Terraform を別々に構築するのは、かなり大変です。
+このリポジトリでは、基本的に設定した方が良い項目を対応したものです。
 
 ## INDEX
 
@@ -34,78 +32,78 @@ In this repository, it corresponds to the items that should be set basically.
 
 ## Security Hub
 
-It is as close as possible to the three security standards provided by the Security Hub.
+Security Hub で提供されている Security standards の 3 つのセキュリティを可能な限り対応したものです。
 
 - AWS Foundational Security Best Practices
 - CIS AWS Foundations Benchmark
 - PCI DSS v3.2.1
 
-The following content is the Security score when only this Terraform is applied.
-`After building, you need to be aware that you will not get an accurate score unless you re-evaluate.`
+以下の内容は、本 Terraform のみを適用した場合の Security score です。
+`構築後は、再評価しないと正確なスコアが出ないことを認識する必要があります。`
 
 ![](image/security_hub_security_score.png)
 
 ## Resource Groups
 
-Overall, all resources created by Terraform are the same TAG, and Resource Groups filtered by that TAG are created.
+全体的に Terraform で作成された resource は全て同一の TAG で、その TAG でフィルタされた Resource Groups が作成されます。
 
 ![Resource Groups](image/resource_groups.png)
 
 ## IAM User and Group
 
-You can create IAM Users and Groups.
+IAM User と Group の作成を行うことができます。
 
 ![IAM User](image/iam_user.png)
 ![IAM Group](image/iam_group.png)
 
 ## IAM group policy
 
-You can set policies to allocate to IAM groups. You can also require virtual MFA configuration as a base policy.
+IAM グループに割り振るポリシーを設定することができます。またベースのポリシーとして仮想 MFA 設定を必須とすることもできます。
 
 ![IAM Group Policy](image/iam_group_policy.png)
 
 ## CloudTrail
 
-By setting the Slack channel, adding the Slack app, and setting the OAuthToken, Slack notifications will be sent.
-You will be notified with a message similar to the following:
+Slack チャンネルへの設定・Slack アプリの追加を行い、OAuthToken を設定することで、Slack 通知が行われるようになります。
+以下のようなメッセージが通知されます。
 
 ![CloudTrail](image/slack_cloudtrail.png)
 
 ## GuardDuty
 
-By setting the Slack channel, adding the Slack app, and setting the OAuthToken, Slack notifications will be sent.
-You will be notified with a message similar to the following:
+Slack チャンネルへの設定・Slack アプリの追加を行い、OAuthToken を設定することで、Slack 通知が行われるようになります。
+以下のようなメッセージが通知されます。
 
 ![GuardDuty](image/slack_guardduty.png)
 
 ## Cost Management
 
-By setting the Slack channel, adding the Slack app, and setting the OAuthToken, you will receive Slack notifications at the specified time (default is 9:00 JST every day). Also, if the specified cost limit is exceeded, an email will be sent.
+Slack チャンネルへの設定・Slack アプリの追加を行い、OAuthToken を設定することで、指定の時間（デフォルトは毎日 9:00JST）に Slack 通知が届くようになります。また、指定したコストリミットを超える場合はメールが送信されます。
 
 ![Budgets](image/slack_budgets.png)
 
 ## CloudWatch
 
-By setting the Slack channel, adding the Slack app, and setting the OAuthToken, you will receive Slack notifications that match the filter conditions of the specified log group.
+Slack チャンネルへの設定・Slack アプリの追加を行い、OAuthToken を設定することで、指定したロググループのフィルタ条件に一致した内容が Slack 通知で届くようになります。
 
 ## Trusted Advisor
 
-By setting the Slack channel, adding the Slack app, and setting the OAuthToken, you will receive Slack notifications at the specified time (default is 9:00 JST every day).
-However, Trusted Advisor requires a contract for a business plan or an enterprise plan as a support plan. The default is false.
+Slack チャンネルへの設定・Slack アプリの追加を行い、OAuthToken を設定することで、指定の時間（デフォルトは毎日 9:00JST）に Slack 通知が届くようになります。
+ただし、Trusted Advisor はサポートプランがビジネスプランかエンタープライズプランの契約が必要です。デフォルトでは false となっています。
 
 ## Initial setting
 
-- Remove access key from root account
-  Due to security issues, remove the root account access key from the management console.
+- ルートアカウントからアクセスキーを削除
+  セキュリティとして問題があるため、マネージメントコンソールからルートアカウントのアクセスキーを削除しましょう。
 
-- Manual creation of IAM users and IAM groups to run Terraform
-  Create an IAM user and IAM group from the management console to run Terraform.
-  Create an IAM group (pseudonym: deploy). The policy attaches AdministratorAccess.
-  Create an IAM user (pseudonym: terraform). Access Type gives only Programmatic access. Add to the IAM group (pseudonym: deploy).
+- Terraform を実行するための IAM ユーザ and IAM グループのマニュアル作成
+  Terraform を実行するためにマネージメントコンソールから IAM ユーザと IAM グループを作成します。
+  IAM グループ(仮名:deploy)を作成します。ポリシーは AdministratorAccess をアタッチします。
+  IAM ユーザ(仮名:terraform)を作成します。Access Type は Programmatic access のみ与えます。IAM グループ(仮名:deploy)に追加します。
 
-- Create S3 to save Terraform State
-  Create S3 from the management console to manage Terraform State.
-  However, if you have an environment in which the aws command and profile have been set and can be executed, executing the following command will create S3.
+- Terraform State を保存するための S3 作成
+  Terraform State を管理するためのマネージメントコンソールから S3 を作成します。
+  ただし、aws コマンドと profile が設定済みで実行できる環境がある場合は、下記のコマンドを実行すると S3 が作成されます。
   https://github.com/y-miyazaki/cloud-commands/blob/master/cmd/awstfinitstate
 
 ```sh
@@ -146,11 +144,11 @@ region: ap-northeast-1
 --------------------------------------------------------------
 ```
 
-- Terraform.{environment}.tfvars file to set for each environment
-  You need to rename the linked [terraform.example.tfvars] (terraform/terraform.example.tfvars) and change each variable for your environment. The variable to be changed contains a TODO comment. Search by TODO.
+- 環境毎に設定する terraform.{environment}.tfvars ファイル
+  リンク先にある[terraform.example.tfvars](terraform/terraform.example.tfvars)の名前を変更し、自分の環境用に各変数を変更する必要があります。変更するべき変数には TODO コメントが記載されています。TODO で検索してください。
 
---Main_provider.tf file to be set for each environment
-Rename the linked [main_provider.tf.example] (terraform / main_provider.tf.example) to main_provider.tf. Then you need to change each parameter. The variable to be changed contains a TODO comment. Search by TODO.
+- 環境毎に設定する main_provider.tf ファイル
+  リンク先にある[main_provider.tf.example](terraform/main_provider.tf.example)を main_provider.tf にリネームししてください。その後、各パラメータを変更する必要があります。変更するべき変数には TODO コメントが記載されています。TODO で検索してください。
 
 ```terraform
 #--------------------------------------------------------------
@@ -188,9 +186,9 @@ provider "aws" {
 }
 ```
 
-- Run Terraform
-  Execute with the terraform command. Do terraform apply after terraform init.
-  Perhaps terraform apply will fail, but it may fail due to issues such as conflict, so try again and it will succeed.
+- Terraform の実行
+  terraform コマンドで実行します。terraform init 後に terraform apply を行います。
+  もしかすると terraform apply が失敗するかもしれませんが、conflict などの問題で失敗する場合があるので再度実行すれば成功します。
 
 ```sh
 bash-5.1# terraform init
@@ -240,5 +238,5 @@ module.aws_recipes_security_default_vpc.aws_default_subnet.this[1]: Creating...
 ...
 ...
 
-Apply complete! Resources: x added, x changed, 0 destroyed.
+Apply complete! resources: x added, x changed, 0 destroyed.
 ```
