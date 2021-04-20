@@ -1,6 +1,4 @@
-# AWS 初期設定用 Terraform
-
-`!!!!!!!!!!WORK IN PROGRESS!!!!!!!!!!`
+# AWS Base Terraform
 
 ## OverView
 
@@ -25,11 +23,11 @@ In this repository, it corresponds to the items that should be set basically.
 ## Required
 
 - Terraform
-  Requires the Terraform command.
+  Requires the Terraform command.  
   https://www.terraform.io/
 - Slack
-  You'll need Slack, OAuthToken, and ChannelID for notifications.
-  https://slack.com/
+  You'll need Slack, OAuthToken, and ChannelID for notifications.  
+  https://slack.com/  
   https://slack.dev/node-slack-sdk/getting-started
 
 ## Security Hub
