@@ -1,4 +1,4 @@
-# AWS 初期設定用 Terraform
+# AWS Base Terraform
 
 ## OverView
 
@@ -23,11 +23,11 @@ AWS でインフラを構築する際には、どんなプロジェクトでも�
 ## Required
 
 - Terraform
-  Terraform コマンドが必要です。
+  Terraform コマンドが必要です。  
   https://www.terraform.io/
 - Slack
-  通知用として、Slack と OAuthToken と ChannelID が必要です。
-  https://slack.com/
+  通知用として、Slack と OAuthToken と ChannelID が必要です。  
+  https://slack.com/  
   https://slack.dev/node-slack-sdk/getting-started
 
 ## Security Hub
@@ -38,7 +38,7 @@ Security Hub で提供されている Security standards の 3 つのセキュ�
 - CIS AWS Foundations Benchmark
 - PCI DSS v3.2.1
 
-以下の内容は、本 Terraform のみを適用した場合の Security score です。
+以下の内容は、本 Terraform のみを適用した場合の Security score です。  
 `構築後は、再評価しないと正確なスコアが出ないことを認識する必要があります。`
 
 ![](image/security_hub_security_score.png)
