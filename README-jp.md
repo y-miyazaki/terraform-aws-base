@@ -1,4 +1,4 @@
-# AWS Base Terraform
+# AWS 初期設定用 Terraform
 
 ## OverView
 
@@ -23,7 +23,7 @@ AWS でインフラを構築する際には、どんなプロジェクトでも�
 ## Required
 
 - Terraform
-  Terraform を実行するためにコマンドが必要です。
+  Terraform コマンドが必要です。
   https://www.terraform.io/
 - Slack
   通知用として、Slack と OAuthToken と ChannelID が必要です。

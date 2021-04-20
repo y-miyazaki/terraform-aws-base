@@ -9,6 +9,8 @@ crash.log
 .terraform.lock.hcl
 # terraform customize file.
 main_init.tf
+main_provider.tf
 provider.json
 terraform.*.tfvars
 !terraform.example.tfvars
+*.tfbackend
