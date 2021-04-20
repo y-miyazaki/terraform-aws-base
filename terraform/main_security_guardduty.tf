@@ -10,7 +10,7 @@ module "aws_recipes_security_guardduty" {
   aws_guardduty_detector = lookup(var.security_guardduty, "aws_guardduty_detector")
   aws_guardduty_member   = lookup(var.security_guardduty, "aws_guardduty_member")
   aws_cloudwatch_event_rule = {
-    name        = "${var.name_prefix}${lookup(var.security_guardduty.aws_cloudwatch_event_rule, "name", "security-guardduty")}"
+    name        = "${var.name_prefix}${lookup(var.security_guardduty.aws_cloudwatch_event_rule, "name", "security-guardduty-cloudwatch-event-rule")}"
     description = lookup(var.security_guardduty.aws_cloudwatch_event_rule, "description", "This cloudwatch event used for GuardDuty.")
   }
   aws_cloudwatch_event_target = {

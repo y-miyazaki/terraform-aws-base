@@ -92,6 +92,7 @@ budgets = {
     is_enabled          = true
   }
   aws_cloudwatch_log_group_lambda = {
+    # TODO: need to change retention_in_days for each services.
     retention_in_days = 7
     kms_key_id        = null
   }
@@ -134,6 +135,7 @@ trusted_advisor = {
     is_enabled          = true
   }
   aws_cloudwatch_log_group_lambda = {
+    # TODO: need to change retention_in_days for each services.
     retention_in_days = 7
     kms_key_id        = null
   }
@@ -465,7 +467,8 @@ security_cloudtrail = {
     path        = "/"
   }
   aws_cloudwatch_log_group = {
-    name              = "aws-cloudtrail-logs"
+    name = "aws-cloudtrail-logs"
+    # TODO: need to change retention_in_days for each services.
     retention_in_days = 30
   }
   aws_cloudwatch_log_metric_filter = [
@@ -559,6 +562,7 @@ PATTERN
     object_lock_configuration = []
   }
   aws_cloudwatch_log_group_lambda = {
+    # TODO: need to change retention_in_days for each services.
     retention_in_days = 7
     kms_key_id        = null
   }
@@ -729,7 +733,8 @@ security_default_vpc = {
   # Normally, it costs more than 10 USD a month for the default VPC that you do not use, so the initial value is set to false.
   is_enabled_vpc_end_point = false
   aws_cloudwatch_log_group = {
-    name_prefix       = "flow-log-"
+    name_prefix = "flow-log-"
+    # TODO: need to change retention_in_days for each services.
     retention_in_days = 30
   }
   aws_iam_role = {
@@ -763,6 +768,7 @@ security_guardduty = {
   aws_guardduty_member = [
   ]
   aws_cloudwatch_log_group_lambda = {
+    # TODO: need to change retention_in_days for each services.
     retention_in_days = 7
     kms_key_id        = null
   }
@@ -840,12 +846,40 @@ security_securityhub = {
   // TODO: need to set is_enabled for settings of SecurityHub.
   is_enabled = true
   aws_securityhub_member = {
-    securityhub_member = {
-    }
   }
+  # TODO: need to change product_subscription.
   aws_securityhub_product_subscription = {
-    # TODO: need to change product_subscription.
-    product_subscription = {
+  }
+  aws_securityhub_action_target = {
+    name        = "Send notification"
+    identifier  = "SendToEvent"
+    description = "This is custom action sends selected findings to event"
+  }
+  aws_cloudwatch_event_rule = {
+    name        = "security-securityhub-cloudwatch-event-rule"
+    description = "This cloudwatch event used for SecurityHub."
+  }
+  aws_cloudwatch_log_group_lambda = {
+    # TODO: need to change retention_in_days for each services.
+    retention_in_days = 7
+    kms_key_id        = null
+  }
+  aws_lambda_function = {
+    environment = {
+      # need to change REGION.
+      REGION = "ap-northeast-1"
+      # TODO: need to change SERVICE.
+      # SERVICE is project name or job name or product name.
+      SERVICE = "test"
+      # TODO: need to change ENV.
+      ENV = "dev"
+      # TODO: need to change SLACK_OAUTH_ACCESS_TOKEN.
+      SLACK_OAUTH_ACCESS_TOKEN = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+      # TODO: need to change SLACK_CHANNEL_ID.
+      SLACK_CHANNEL_ID = "xxxxxxxxxx"
+      LOGGER_FORMATTER = "json"
+      LOGGER_OUT       = "stdout"
+      LOGGER_LEVEL     = "warn"
     }
   }
 }

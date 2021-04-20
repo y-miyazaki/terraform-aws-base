@@ -19,7 +19,7 @@ resource "aws_securityhub_account" "this" {
 # Provides a Security Hub member resource.
 #--------------------------------------------------------------
 resource "aws_securityhub_member" "this" {
-  for_each   = var.is_enabled ? var.securityhub_member : {}
+  for_each   = var.is_enabled ? var.aws_securityhub_member : {}
   account_id = each.value.account_id
   email      = each.value.email
   invite     = each.value.invite
@@ -31,7 +31,7 @@ resource "aws_securityhub_member" "this" {
 # Subscribes to a Security Hub product.
 #--------------------------------------------------------------
 resource "aws_securityhub_product_subscription" "this" {
-  for_each    = var.is_enabled ? var.product_subscription : {}
+  for_each    = var.is_enabled ? var.aws_securityhub_product_subscription : {}
   product_arn = each.value.product_arn
   depends_on = [
     aws_securityhub_account.this
@@ -57,5 +57,75 @@ resource "aws_securityhub_standards_subscription" "pci_dss" {
   standards_arn = "arn:aws:securityhub:${local.region}::standards/pci-dss/v/3.2.1"
   depends_on = [
     aws_securityhub_account.this
+  ]
+}
+#--------------------------------------------------------------
+# Creates Security Hub custom action.
+#--------------------------------------------------------------
+resource "aws_securityhub_action_target" "this" {
+  count       = var.is_enabled ? 1 : 0
+  name        = lookup(var.aws_securityhub_action_target, "name")
+  identifier  = lookup(var.aws_securityhub_action_target, "identifier")
+  description = lookup(var.aws_securityhub_action_target, "description")
+  depends_on = [
+    aws_securityhub_account.this
+  ]
+}
+
+#--------------------------------------------------------------
+# Provides an EventBridge Rule resource.
+#--------------------------------------------------------------
+resource "aws_cloudwatch_event_rule" "this" {
+  count = var.is_enabled ? 1 : 0
+  name  = lookup(var.aws_cloudwatch_event_rule, "name")
+  # event_pattern: https://dev.classmethod.jp/articles/security-hub-filtering-examples/
+  event_pattern = <<EVENT_PATTERN
+{
+  "source":[
+    "aws.securityhub"
+  ],
+  "detail-type":[
+    "Security Hub Findings - Imported"
+  ],
+  "detail":{
+    "findings":{
+      "Compliance":{
+        "Status":[
+          {
+            "anything-but":"PASSED"
+          }
+        ]
+      },
+      "Severity":{
+        "Label":[
+          "CRITICAL",
+          "HIGH"
+        ]
+      },
+      "Workflow":{
+        "Status":[
+          "NEW"
+        ]
+      },
+      "RecordState":[
+        "ACTIVE"
+      ]
+    }
+  }
+}
+EVENT_PATTERN
+  description   = lookup(var.aws_cloudwatch_event_rule, "description")
+  is_enabled    = true
+  tags          = var.tags
+}
+#--------------------------------------------------------------
+# Provides an EventBridge Target resource.
+#--------------------------------------------------------------
+resource "aws_cloudwatch_event_target" "this" {
+  count = var.is_enabled ? 1 : 0
+  rule  = aws_cloudwatch_event_rule.this[0].name
+  arn   = lookup(var.aws_cloudwatch_event_target, "arn")
+  depends_on = [
+    aws_cloudwatch_event_rule.this
   ]
 }
