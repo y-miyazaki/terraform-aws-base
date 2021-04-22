@@ -38,3 +38,39 @@ module "aws_recipes_security_config_create" {
   account_id                               = data.aws_caller_identity.current.account_id
   tags                                     = var.tags
 }
+#--------------------------------------------------------------
+# Provides an AWS Config Rule for API Gateway
+#--------------------------------------------------------------
+module "aws_recipes_security_config_rule_api_gateway" {
+  source      = "../modules/aws/recipes/security/config/rule/api_gateway"
+  is_enabled  = lookup(var.security_config, "is_enabled", true)
+  name_prefix = var.name_prefix
+  tags        = var.tags
+  depends_on = [
+    module.aws_recipes_security_config_create
+  ]
+}
+#--------------------------------------------------------------
+# Provides an AWS Config Rule for RDS
+#--------------------------------------------------------------
+module "aws_recipes_security_config_rule_rds" {
+  source      = "../modules/aws/recipes/security/config/rule/rds"
+  is_enabled  = lookup(var.security_config, "is_enabled", true)
+  name_prefix = var.name_prefix
+  tags        = var.tags
+  depends_on = [
+    module.aws_recipes_security_config_create
+  ]
+}
+#--------------------------------------------------------------
+# Provides an AWS Config Rule for Load Balancer
+#--------------------------------------------------------------
+module "aws_recipes_security_config_rule_load_balancer" {
+  source      = "../modules/aws/recipes/security/config/rule/load_balancer"
+  is_enabled  = lookup(var.security_config, "is_enabled", true)
+  name_prefix = var.name_prefix
+  tags        = var.tags
+  depends_on = [
+    module.aws_recipes_security_config_create
+  ]
+}

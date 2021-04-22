@@ -41,7 +41,12 @@ Security Hub で提供されている Security standards の 3 つのセキュ�
 以下の内容は、本 Terraform のみを適用した場合の Security score です。  
 `構築後は、再評価しないと正確なスコアが出ないことを認識する必要があります。`
 
-![](image/security_hub_security_score.png)
+![SecurityHub Score](image/security_hub_security_score.png)
+
+Slack チャンネルへの設定・Slack アプリの追加を行い、OAuthToken を設定することで、Slack 通知が行われるようになります。  
+以下のようなメッセージが通知されます。
+
+![SecurityHub](image/slack_security_hub.png)
 
 ## Resource Groups
 
@@ -64,14 +69,14 @@ IAM グループに割り振るポリシーを設定することができます�
 
 ## CloudTrail
 
-Slack チャンネルへの設定・Slack アプリの追加を行い、OAuthToken を設定することで、Slack 通知が行われるようになります。
+Slack チャンネルへの設定・Slack アプリの追加を行い、OAuthToken を設定することで、Slack 通知が行われるようになります。  
 以下のようなメッセージが通知されます。
 
 ![CloudTrail](image/slack_cloudtrail.png)
 
 ## GuardDuty
 
-Slack チャンネルへの設定・Slack アプリの追加を行い、OAuthToken を設定することで、Slack 通知が行われるようになります。
+Slack チャンネルへの設定・Slack アプリの追加を行い、OAuthToken を設定することで、Slack 通知が行われるようになります。  
 以下のようなメッセージが通知されます。
 
 ![GuardDuty](image/slack_guardduty.png)
@@ -88,7 +93,7 @@ Slack チャンネルへの設定・Slack アプリの追加を行い、OAuthTok
 
 ## Trusted Advisor
 
-Slack チャンネルへの設定・Slack アプリの追加を行い、OAuthToken を設定することで、指定の時間（デフォルトは毎日 9:00JST）に Slack 通知が届くようになります。
+Slack チャンネルへの設定・Slack アプリの追加を行い、OAuthToken を設定することで、指定の時間（デフォルトは毎日 9:00JST）に Slack 通知が届くようになります。  
 ただし、Trusted Advisor はサポートプランがビジネスプランかエンタープライズプランの契約が必要です。デフォルトでは false となっています。
 
 ## Initial setting
