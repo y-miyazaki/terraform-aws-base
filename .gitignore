@@ -7,6 +7,7 @@ crash.log
 # terraform files.
 .terraform
 .terraform.lock.hcl
+
 # terraform customize file.
 main_init.tf
 main_provider.tf

@@ -38,10 +38,15 @@ It is as close as possible to the three security standards provided by the Secur
 - CIS AWS Foundations Benchmark
 - PCI DSS v3.2.1
 
-The following content is the Security score when only this Terraform is applied.
+The following content is the Security score when only this Terraform is applied.  
 `After building, you need to be aware that you will not get an accurate score unless you re-evaluate.`
 
-![](image/security_hub_security_score.png)
+![SecurityHub Score](image/security_hub_security_score.png)
+
+By setting the Slack channel, adding the Slack app, and setting the OAuthToken, Slack notifications will be sent.  
+You will be notified with a message similar to the following:
+
+![SecurityHub](image/slack_security_hub.png)
 
 ## Resource Groups
 
@@ -64,14 +69,14 @@ You can set policies to allocate to IAM groups. You can also require virtual MFA
 
 ## CloudTrail
 
-By setting the Slack channel, adding the Slack app, and setting the OAuthToken, Slack notifications will be sent.
+By setting the Slack channel, adding the Slack app, and setting the OAuthToken, Slack notifications will be sent.  
 You will be notified with a message similar to the following:
 
 ![CloudTrail](image/slack_cloudtrail.png)
 
 ## GuardDuty
 
-By setting the Slack channel, adding the Slack app, and setting the OAuthToken, Slack notifications will be sent.
+By setting the Slack channel, adding the Slack app, and setting the OAuthToken, Slack notifications will be sent.  
 You will be notified with a message similar to the following:
 
 ![GuardDuty](image/slack_guardduty.png)
@@ -88,7 +93,7 @@ By setting the Slack channel, adding the Slack app, and setting the OAuthToken, 
 
 ## Trusted Advisor
 
-By setting the Slack channel, adding the Slack app, and setting the OAuthToken, you will receive Slack notifications at the specified time (default is 9:00 JST every day).
+By setting the Slack channel, adding the Slack app, and setting the OAuthToken, you will receive Slack notifications at the specified time (default is 9:00 JST every day).  
 However, Trusted Advisor requires a contract for a business plan or an enterprise plan as a support plan. The default is false.
 
 ## Initial setting
