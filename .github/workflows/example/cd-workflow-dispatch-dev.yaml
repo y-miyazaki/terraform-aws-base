@@ -1,5 +1,5 @@
 # https://help.github.com/ja/actions/reference/workflow-syntax-for-github-actions
-name: cd-workflow-dispatch-dev
+name: deploy-workflow-dispatch-dev
 on:
   workflow_dispatch:
 jobs:

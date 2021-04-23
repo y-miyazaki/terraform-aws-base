@@ -1,5 +1,5 @@
 # https://help.github.com/ja/actions/reference/workflow-syntax-for-github-actions
-name: ci-pullrequst-dev
+name: integration-pull-requst-dev
 on:
   pull_request:
     branches:
