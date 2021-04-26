@@ -3,6 +3,11 @@
 # All parameters that need to be changed for each environment are described in TODO comments.
 #--------------------------------------------------------------
 #--------------------------------------------------------------
+# Deploy IAM user
+#--------------------------------------------------------------
+# TODO: need to change deploy IAM user.
+deploy_user = "terraform"
+#--------------------------------------------------------------
 # Default Tags for Resources
 # A tag that is set globally for the resources used.
 #--------------------------------------------------------------

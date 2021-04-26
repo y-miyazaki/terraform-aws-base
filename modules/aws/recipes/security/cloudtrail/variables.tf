@@ -180,6 +180,10 @@ variable "region" {
   description = "(Required) The region name."
   default     = null
 }
+variable "user" {
+  type        = string
+  description = "(Required) IAM user access KMS."
+}
 variable "tags" {
   type        = map(any)
   description = "(Optional) Key-value map of resource tags."

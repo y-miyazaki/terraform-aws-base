@@ -1,3 +1,4 @@
+variable "deploy_user" {}
 variable "tags" {}
 variable "name_prefix" {}
 variable "region" {}
