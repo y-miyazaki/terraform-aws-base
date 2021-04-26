@@ -91,14 +91,14 @@ Slack チャンネルへの設定・Slack アプリの追加を行い、OAuthTok
 
 ![Budgets](image/slack_budgets.png)
 
-## CloudWatch
-
-Slack チャンネルへの設定・Slack アプリの追加を行い、OAuthToken を設定することで、指定したロググループのフィルタ条件に一致した内容が Slack 通知で届くようになります。
-
 ## Trusted Advisor
 
 Slack チャンネルへの設定・Slack アプリの追加を行い、OAuthToken を設定することで、指定の時間（デフォルトは毎日 9:00JST）に Slack 通知が届くようになります。  
 ただし、Trusted Advisor はサポートプランがビジネスプランかエンタープライズプランの契約が必要です。デフォルトでは false となっています。
+
+## CloudWatch
+
+Slack チャンネルへの設定・Slack アプリの追加を行い、OAuthToken を設定することで、指定したロググループのフィルタ条件に一致した内容が Slack 通知で届くようになります。
 
 ## Initial setting
 
