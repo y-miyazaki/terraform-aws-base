@@ -91,14 +91,14 @@ By setting the Slack channel, adding the Slack app, and setting the OAuthToken, 
 
 ![Budgets](image/slack_budgets.png)
 
-## CloudWatch
-
-By setting the Slack channel, adding the Slack app, and setting the OAuthToken, you will receive Slack notifications that match the filter conditions of the specified log group.
-
 ## Trusted Advisor
 
 By setting the Slack channel, adding the Slack app, and setting the OAuthToken, you will receive Slack notifications at the specified time (default is 9:00 JST every day).  
 However, Trusted Advisor requires a contract for a business plan or an enterprise plan as a support plan. The default is false.
+
+## CloudWatch
+
+By setting the Slack channel, adding the Slack app, and setting the OAuthToken, you will receive Slack notifications that match the filter conditions of the specified log group.
 
 ## Initial setting
 
