@@ -45,6 +45,7 @@ resource "aws_config_config_rule" "rds-automatic-minor-version-upgrade-enabled" 
 }
 #--------------------------------------------------------------
 # Provides an AWS Config Rule.
+# SecurityHub: enabled
 #--------------------------------------------------------------
 # resource "aws_config_config_rule" "rds-cluster-deletion-protection-enabled" {
 #   count       = var.is_enabled ? 1 : 0
@@ -71,6 +72,7 @@ resource "aws_config_config_rule" "rds-in-backup-plan" {
 }
 #--------------------------------------------------------------
 # Provides an AWS Config Rule.
+# SecurityHub: enabled
 #--------------------------------------------------------------
 # resource "aws_config_config_rule" "rds-instance-deletion-protection-enabled" {
 #   count       = var.is_enabled ? 1 : 0
@@ -97,6 +99,7 @@ resource "aws_config_config_rule" "rds-in-backup-plan" {
 # }
 #--------------------------------------------------------------
 # Provides an AWS Config Rule.
+# SecurityHub: enabled
 #--------------------------------------------------------------
 # resource "aws_config_config_rule" "rds-logging-enabled" {
 #   count       = var.is_enabled ? 1 : 0
@@ -110,6 +113,7 @@ resource "aws_config_config_rule" "rds-in-backup-plan" {
 # }
 #--------------------------------------------------------------
 # Provides an AWS Config Rule.
+# SecurityHub: enabled
 #--------------------------------------------------------------
 # resource "aws_config_config_rule" "rds-multi-az-support" {
 #   count       = var.is_enabled ? 1 : 0
@@ -123,6 +127,7 @@ resource "aws_config_config_rule" "rds-in-backup-plan" {
 # }
 #--------------------------------------------------------------
 # Provides an AWS Config Rule.
+# SecurityHub: enabled
 #--------------------------------------------------------------
 # resource "aws_config_config_rule" "rds-snapshot-encrypted" {
 #   count       = var.is_enabled ? 1 : 0
@@ -136,6 +141,7 @@ resource "aws_config_config_rule" "rds-in-backup-plan" {
 # }
 #--------------------------------------------------------------
 # Provides an AWS Config Rule.
+# SecurityHub: enabled
 #--------------------------------------------------------------
 # resource "aws_config_config_rule" "rds-snapshots-public-prohibited" {
 #   count       = var.is_enabled ? 1 : 0
@@ -149,6 +155,7 @@ resource "aws_config_config_rule" "rds-in-backup-plan" {
 # }
 #--------------------------------------------------------------
 # Provides an AWS Config Rule.
+# SecurityHub: enabled
 #--------------------------------------------------------------
 # resource "aws_config_config_rule" "rds-storage-encrypted" {
 #   count       = var.is_enabled ? 1 : 0

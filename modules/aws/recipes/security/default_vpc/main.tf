@@ -40,8 +40,9 @@ resource "aws_default_security_group" "this" {
 # Provides a resource to manage a default AWS VPC subnet in the current region.
 #--------------------------------------------------------------
 resource "aws_default_subnet" "this" {
-  count             = var.is_enabled ? length(data.aws_availability_zones.this.names) : 0
-  availability_zone = data.aws_availability_zones.this.names[count.index]
+  count                   = var.is_enabled ? length(data.aws_availability_zones.this.names) : 0
+  map_public_ip_on_launch = false
+  availability_zone       = data.aws_availability_zones.this.names[count.index]
 }
 
 #--------------------------------------------------------------

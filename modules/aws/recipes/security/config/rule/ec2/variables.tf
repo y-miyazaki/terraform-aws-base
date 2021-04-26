@@ -11,7 +11,7 @@ variable "name_prefix" {
   description = "(Optional) Prefix of config name."
   default     = ""
 }
-variable "api-gw-endpoint-type-check" {
+variable "restricted_common_ports" {
   type = object(
     {
       input_parameters = map(any)
@@ -19,7 +19,11 @@ variable "api-gw-endpoint-type-check" {
   )
   default = {
     input_parameters = {
-      endpointConfigurationTypes = ["REGIONAL", "PRIVATE"]
+      blockedPort1 = "20"
+      blockedPort2 = "21"
+      blockedPort3 = "3389"
+      blockedPort4 = "3306"
+      blockedPort5 = "4333"
     }
   }
 }

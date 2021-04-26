@@ -6,6 +6,7 @@ locals {
 }
 #--------------------------------------------------------------
 # Provides an AWS Config Rule.
+# SecurityHub: enabled
 #--------------------------------------------------------------
 # resource "aws_config_config_rule" "alb-http-drop-invalid-header-enabled" {
 #   count       = var.is_enabled ? 1 : 0
@@ -19,6 +20,7 @@ locals {
 # }
 #--------------------------------------------------------------
 # Provides an AWS Config Rule.
+# SecurityHub: enabled
 #--------------------------------------------------------------
 # resource "aws_config_config_rule" "alb-http-to-https-redirection-check" {
 #   count       = var.is_enabled ? 1 : 0
@@ -45,6 +47,7 @@ resource "aws_config_config_rule" "alb-waf-enabled" {
 }
 #--------------------------------------------------------------
 # Provides an AWS Config Rule.
+# SecurityHub: enabled
 #--------------------------------------------------------------
 # resource "aws_config_config_rule" "autoscaling-group-elb-healthcheck-required" {
 #   count       = var.is_enabled ? 1 : 0
@@ -97,6 +100,7 @@ resource "aws_config_config_rule" "elb-cross-zone-load-balancing-enabled" {
 # }
 #--------------------------------------------------------------
 # Provides an AWS Config Rule.
+# SecurityHub: enabled
 #--------------------------------------------------------------
 # resource "aws_config_config_rule" "elb-deletion-protection-enabled" {
 #   count       = var.is_enabled ? 1 : 0
@@ -110,6 +114,7 @@ resource "aws_config_config_rule" "elb-cross-zone-load-balancing-enabled" {
 # }
 #--------------------------------------------------------------
 # Provides an AWS Config Rule.
+# SecurityHub: enabled
 #--------------------------------------------------------------
 # resource "aws_config_config_rule" "elb-logging-enabled" {
 #   count       = var.is_enabled ? 1 : 0
@@ -136,6 +141,7 @@ resource "aws_config_config_rule" "elb-cross-zone-load-balancing-enabled" {
 # }
 #--------------------------------------------------------------
 # Provides an AWS Config Rule.
+# SecurityHub: enabled
 #--------------------------------------------------------------
 # resource "aws_config_config_rule" "elb-tls-https-listeners-only" {
 #   count       = var.is_enabled ? 1 : 0

@@ -10,6 +10,7 @@ locals {
 # resource "aws_config_config_rule" "api-gw-endpoint-type-check" {
 #   count       = var.is_enabled ? 1 : 0
 #   name        = "${local.name_prefix}api-gw-endpoint-type-check"
+#   input_parameters = jsonencode(var.api_gw_endpoint_type_check.input_parameters)
 #   description = "Checks that Amazon API Gateway APIs are of type as specified in the rule parameter 'endpointConfigurationTypes'. The rule returns COMPLIANT if any of the RestApi endpoint types matches the endpointConfigurationTypes configured in the rule parameter."
 #   source {
 #     owner             = "AWS"
@@ -32,6 +33,7 @@ resource "aws_config_config_rule" "api-gw-xray-enabled" {
 }
 #--------------------------------------------------------------
 # Provides an AWS Config Rule.
+# SecurityHub: enabled
 #--------------------------------------------------------------
 # resource "aws_config_config_rule" "api-gw-execution-logging-enabled" {
 #   count       = var.is_enabled ? 1 : 0

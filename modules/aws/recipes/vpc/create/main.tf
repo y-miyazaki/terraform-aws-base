@@ -58,11 +58,12 @@ resource "aws_nat_gateway" "nat" {
 # Provides an VPC subnet resource.
 #--------------------------------------------------------------
 resource "aws_subnet" "nat" {
-  count             = length(var.nat_cidr_block)
-  vpc_id            = aws_vpc.this.id
-  cidr_block        = var.nat_cidr_block[count.index]
-  availability_zone = var.availability_zone[count.index]
-  tags              = merge(var.tags, { "Name" = format("%v-nat-subnet-%d", local.name_prefix, count.index + 1) })
+  count                   = length(var.nat_cidr_block)
+  vpc_id                  = aws_vpc.this.id
+  cidr_block              = var.nat_cidr_block[count.index]
+  availability_zone       = var.availability_zone[count.index]
+  map_public_ip_on_launch = false
+  tags                    = merge(var.tags, { "Name" = format("%v-nat-subnet-%d", local.name_prefix, count.index + 1) })
 }
 
 #--------------------------------------------------------------
