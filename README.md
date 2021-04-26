@@ -153,10 +153,10 @@ region: ap-northeast-1
 --------------------------------------------------------------
 ```
 
-- terraform.{environment}.tfvars file to set for each environment
+- terraform.{environment}.tfvars file to set for each environment  
   You need to rename the linked [terraform.example.tfvars] (terraform/terraform.example.tfvars) and change each variable for your environment. The variable to be changed contains a TODO comment. Search by TODO.
 
-- main_provider.tf file to be set for each environment
+- main_provider.tf file to be set for each environment  
   Rename the linked [main_provider.tf.example](terraform/main_provider.tf.example) to main_provider.tf. Then you need to change each parameter. The variable to be changed contains a TODO comment. Search by TODO.
 
 ```terraform
