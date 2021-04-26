@@ -20,7 +20,7 @@ resource "aws_kms_key" "cloudtrail" {
       "Principal":{
         "AWS":[
           "arn:aws:iam::${var.account_id}:root",
-          "arn:aws:iam::${var.account_id}:user/terraform"
+          "arn:aws:iam::${var.account_id}:user/${var.user}"
         ]
       },
       "Action":"kms:*",
@@ -140,7 +140,7 @@ resource "aws_kms_key" "sns" {
       "Principal":{
         "AWS":[
           "arn:aws:iam::${var.account_id}:root",
-          "arn:aws:iam::${var.account_id}:user/terraform"
+          "arn:aws:iam::${var.account_id}:user/${var.user}"
         ]
       },
       "Action":"kms:*",

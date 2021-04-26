@@ -111,6 +111,7 @@ module "aws_recipes_sns_subscription_application_log" {
   aws_sns_topic_subscription = local.aws_sns_topic_subscription_application_log
   account_id                 = data.aws_caller_identity.current.account_id
   region                     = var.region
+  user                       = var.deploy_user
   tags                       = var.tags
 }
 #--------------------------------------------------------------

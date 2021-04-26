@@ -7,7 +7,7 @@ resource "aws_kms_key" "this" {
   policy                  = <<POLICY
 {
   "Version":"2012-10-17",
-  "Id":"Key policy created by CloudTrail",
+  "Id":"Key policy created",
   "Statement":[
     {
       "Sid":"Enable IAM User Permissions",
@@ -15,7 +15,7 @@ resource "aws_kms_key" "this" {
       "Principal":{
         "AWS":[
           "arn:aws:iam::${var.account_id}:root",
-          "arn:aws:iam::${var.account_id}:user/terraform"
+          "arn:aws:iam::${var.account_id}:user/${var.user}"
         ]
       },
       "Action":"kms:*",

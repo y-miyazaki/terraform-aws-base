@@ -113,6 +113,7 @@ module "aws_recipes_security_cloudtrail" {
   cis_name_prefix            = var.name_prefix
   account_id                 = data.aws_caller_identity.current.account_id
   region                     = var.region
+  user                       = var.deploy_user
   tags                       = var.tags
 }
 
