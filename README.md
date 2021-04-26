@@ -9,16 +9,20 @@ In this repository, it corresponds to the items that should be set basically.
 
 ## INDEX
 
-- [Security Hub](#security-hub)
-- [Resource Groups](#resource-groups)
-- [IAM User and Group](#iam-user-and-group)
-- [IAM group policy](#iam-group-policy)
-- [CloudTrail](#cloudTrail)
-- [GuardDuty](#guardduty)
-- [Cost Management](#cost-management)
-- [Trusted Advisor](#trusted-advisor)
-- [CloudWatch](#cloudWatch)
-- [Initial setting](#initial-setting)
+- Functions
+  - [Security Hub](#security-hub)
+  - [Resource Groups](#resource-groups)
+  - [IAM User and Group](#iam-user-and-group)
+  - [IAM group policy](#iam-group-policy)
+  - [CloudTrail](#cloudTrail)
+  - [GuardDuty](#guardduty)
+  - [Cost Management](#cost-management)
+  - [Trusted Advisor](#trusted-advisor)
+  - [CloudWatch](#cloudWatch)
+- Settings
+  - [Initial setting](#initial-setting)
+- Logs
+  - [S3 bucket list](#s3-bucket-list)
 
 ## Required
 
@@ -245,3 +249,16 @@ module.aws_recipes_security_default_vpc.aws_default_subnet.this[1]: Creating...
 
 Apply complete! Resources: x added, x changed, 0 destroyed.
 ```
+
+## S3 bucket list
+
+| Category       | bucket         | Directory                                                       | Description                                                                                                                                                                                                                                                                                                                                                                                                                                           | Note                                                                                                                 |
+| :------------- | :------------- | :-------------------------------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------- |
+| AWS Config     | aws-config     | /AWSLogs/{accountID}/Config/{region}/yyyy/m/d/ConfigHistory/    | AWS Config Compliance History Timeline for Resources.                                                                                                                                                                                                                                                                                                                                                                                                 | https://docs.aws.amazon.com/config/latest/developerguide/view-compliance-history.html                                |
+| AWS Config     | aws-config     | /AWSLogs/{accountID}/Config/{region}/yyyy/m/d/ConfigSnapshot/   | AWS Config snapshot.                                                                                                                                                                                                                                                                                                                                                                                                                                  | https://docs.aws.amazon.com/config/latest/developerguide/deliver-snapshot-cli.html                                   |
+| AWS Config     | aws-config     | /AWSLogs/{accountID}/Config/ConfigWritabilityCheckFile/yyyy/m/d | This is a test file to confirm that Config can be written to the S3 bucket normally.                                                                                                                                                                                                                                                                                                                                                                  |                                                                                                                      |
+| AWS CloudTrail | aws-cloudtrail | /AWSLogs/{accountID}/CloudTrail-Digest/{region}/yyyy/mm/dd      | Each digest file contains the names of the log files that were delivered to your Amazon S3 bucket during the last hour, the hash values for those log files, and the digital signature of the previous digest file. The signature for the current digest file is stored in the metadata properties of the digest file object. The digital signatures and hashes are used for validating the integrity of the log files and of the digest file itself. | https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudtrail-log-file-validation-digest-file-structure.html |
+| AWS CloudTrail | aws-cloudtrail | /AWSLogs/{accountID}/CloudTrail-Insight/{region}/yyyy/mm/dd     | CloudTrail Insights can help you detect unusual API activity in your AWS account by raising Insights events. CloudTrail Insights measures your normal patterns of API call volume, also called the baseline, and generates Insights events when the volume is outside normal patterns. Insights events are generated for write management APIs.                                                                                                       | https://docs.aws.amazon.com/awscloudtrail/latest/userguide/logging-insights-events-with-cloudtrail.html              |
+| AWS CloudTrail | aws-cloudtrail | /AWSLogs/{accountID}/CloudTrail/{region}/yyyy/mm/dd             | It is recorded as an event in CloudTrail. Events include actions taken in the AWS Management Console, AWS Command Line Interface.                                                                                                                                                                                                                                                                                                                     | https://docs.aws.amazon.com/awscloudtrail/latest/userguide/get-and-view-cloudtrail-log-files.html                    |
+| AWS Log        | aws-logging    | /Application                                                    | Application log from CloudWatch Logs.                                                                                                                                                                                                                                                                                                                                                                                                                 |                                                                                                                      |
+| AWS Log        | aws-logging    | /CloudTrail                                                     | S3 bucket access log for CloudTrail bucket.                                                                                                                                                                                                                                                                                                                                                                                                           | https://docs.aws.amazon.com/ja_jp/AmazonS3/latest/userguide/ServerLogs.html                                          |

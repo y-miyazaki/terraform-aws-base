@@ -74,3 +74,27 @@ module "aws_recipes_security_config_rule_load_balancer" {
     module.aws_recipes_security_config_create
   ]
 }
+#--------------------------------------------------------------
+# Provides an AWS Config Rule for EC2
+#--------------------------------------------------------------
+module "aws_recipes_security_config_rule_ec2" {
+  source      = "../modules/aws/recipes/security/config/rule/ec2"
+  is_enabled  = lookup(var.security_config, "is_enabled", true)
+  name_prefix = var.name_prefix
+  tags        = var.tags
+  depends_on = [
+    module.aws_recipes_security_config_create
+  ]
+}
+#--------------------------------------------------------------
+# Provides an AWS Config Rule for S3
+#--------------------------------------------------------------
+module "aws_recipes_security_config_rule_s3" {
+  source      = "../modules/aws/recipes/security/config/rule/s3"
+  is_enabled  = lookup(var.security_config, "is_enabled", true)
+  name_prefix = var.name_prefix
+  tags        = var.tags
+  depends_on = [
+    module.aws_recipes_security_config_create
+  ]
+}
