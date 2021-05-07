@@ -29,16 +29,20 @@ variable "aws_cloudwatch_event_rule" {
     {
       # (Required) The name of the rule. If omitted, Terraform will assign a random, unique name. Conflicts with name_prefix.
       name = string
+      # (Optional) The scheduling expression. For example, cron(0 20 * * ? *) or rate(5 minutes). At least one of schedule_expression or event_pattern is required. Can only be used on the default event bus.
+      schedule_expression = string
       # (Optional) The description of the rule.
       description = string
+      # (Optional) Whether the rule should be enabled (defaults to true).
+      is_enabled = bool
     }
   )
   description = "(Required) Provides an EventBridge Rule resource."
   default = {
-    name        = "budgets-cloudwatch-event-rule"
-    description = "This cloudwatch event used for Budgets."
-    role_arn    = null
-    is_enabled  = true
+    name                = "budgets-cloudwatch-event-rule"
+    description         = "This cloudwatch event used for Budgets."
+    schedule_expression = "cron(0 9 * * ? *)"
+    is_enabled          = true
   }
 }
 variable "aws_cloudwatch_event_target" {

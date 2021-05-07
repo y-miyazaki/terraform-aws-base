@@ -46,7 +46,7 @@ resource "aws_budgets_budget" "this" {
 resource "aws_cloudwatch_event_rule" "this" {
   count               = var.is_enabled ? 1 : 0
   name                = lookup(var.aws_cloudwatch_event_rule, "name", "budgets-cloudwatch-event-rule")
-  schedule_expression = lookup(var.aws_cloudwatch_event_rule, "schedule_expression", "cron(0 0 * * ? *)")
+  schedule_expression = lookup(var.aws_cloudwatch_event_rule, "schedule_expression", "cron(0 9 * * ? *)")
   description         = lookup(var.aws_cloudwatch_event_rule, "description", "This cloudwatch event used for Budgets.")
   is_enabled          = lookup(var.aws_cloudwatch_event_rule, "is_enabled", true)
   tags                = var.tags

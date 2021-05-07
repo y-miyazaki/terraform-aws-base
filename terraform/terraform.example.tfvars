@@ -92,7 +92,7 @@ budgets = {
     name = "budgets-cloudwatch-event-rule"
     # TODO: need to change schedule_expression.
     # schedule_expression when Budgets will be notified.
-    schedule_expression = "cron(0 0 * * ? *)"
+    schedule_expression = "cron(0 9 * * ? *)"
     description         = "This cloudwatch event used for Budgets."
     is_enabled          = true
   }

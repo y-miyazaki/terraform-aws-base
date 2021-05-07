@@ -9,6 +9,8 @@ In this repository, it corresponds to the items that should be set basically.
 
 ## INDEX
 
+- Base
+  - [Required](#required)
 - Functions
   - [Security Hub](#security-hub)
   - [Resource Groups](#resource-groups)
@@ -26,10 +28,10 @@ In this repository, it corresponds to the items that should be set basically.
 
 ## Required
 
-- Terraform
+- Terraform  
   Requires the Terraform command.  
   https://www.terraform.io/
-- Slack
+- Slack  
   You'll need Slack, OAuthToken, and ChannelID for notifications.  
   https://slack.com/  
   https://slack.dev/node-slack-sdk/getting-started
@@ -87,7 +89,7 @@ You will be notified with a message similar to the following:
 
 ## Cost Management
 
-By setting the Slack channel, adding the Slack app, and setting the OAuthToken, you will receive Slack notifications at the specified time (default is 9:00 JST every day). Also, if the specified cost limit is exceeded, an email will be sent.
+By setting the Slack channel, adding the Slack app, and setting the OAuthToken, you will receive Slack notifications at the specified time (default is 18:00 JST every day). Also, if the specified cost limit is exceeded, an email will be sent.
 
 ![Budgets](image/slack_budgets.png)
 

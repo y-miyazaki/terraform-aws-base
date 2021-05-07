@@ -9,6 +9,8 @@ AWS でインフラを構築する際には、どんなプロジェクトでも�
 
 ## INDEX
 
+- Base
+  - [Required](#required)
 - Functions
   - [Security Hub](#security-hub)
   - [Resource Groups](#resource-groups)
@@ -26,10 +28,10 @@ AWS でインフラを構築する際には、どんなプロジェクトでも�
 
 ## Required
 
-- Terraform
+- Terraform  
   Terraform コマンドが必要です。  
   https://www.terraform.io/
-- Slack
+- Slack  
   通知用として、Slack と OAuthToken と ChannelID が必要です。  
   https://slack.com/  
   https://slack.dev/node-slack-sdk/getting-started
@@ -87,7 +89,7 @@ Slack チャンネルへの設定・Slack アプリの追加を行い、OAuthTok
 
 ## Cost Management
 
-Slack チャンネルへの設定・Slack アプリの追加を行い、OAuthToken を設定することで、指定の時間（デフォルトは毎日 9:00JST）に Slack 通知が届くようになります。また、指定したコストリミットを超える場合はメールが送信されます。
+Slack チャンネルへの設定・Slack アプリの追加を行い、OAuthToken を設定することで、指定の時間（デフォルトは毎日 18:00JST）に Slack 通知が届くようになります。また、指定したコストリミットを超える場合はメールが送信されます。
 
 ![Budgets](image/slack_budgets.png)
 
