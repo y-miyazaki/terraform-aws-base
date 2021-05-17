@@ -282,6 +282,16 @@ iam = {
               }
             ]
           },
+          {
+            sid    = "AllowHealth"
+            effect = "Allow"
+            actions = [
+              "health:DescribeEventAggregates",
+            ]
+            resources = [
+              "*"
+            ]
+          },
         ]
       }
       # TODO: need to add policy arn. group policy limit is 10.
@@ -343,6 +353,16 @@ iam = {
             actions = [
               "s3:Get*",
               "s3:List*"
+            ]
+            resources = [
+              "*"
+            ]
+          },
+          {
+            sid    = "AllowHealth"
+            effect = "Allow"
+            actions = [
+              "health:DescribeEventAggregates",
             ]
             resources = [
               "*"
