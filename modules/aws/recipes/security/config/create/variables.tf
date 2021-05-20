@@ -35,24 +35,7 @@ variable "aws_iam_role" {
     path        = "/"
   }
 }
-variable "aws_iam_policy" {
-  type = object(
-    {
-      # (Optional) Description of the IAM policy.
-      description = string
-      # (Optional, Forces new resource) Friendly name of the role. If omitted, Terraform will assign a random, unique name. See IAM Identifiers for more information.
-      name = string
-      # (Optional) Path to the role. See IAM Identifiers for more information.
-      path = string
-    }
-  )
-  description = "(Required) The aws_iam_policy resource."
-  default = {
-    description = null
-    name        = "security-config-policy"
-    path        = "/"
-  }
-}
+
 variable "aws_s3_bucket" {
   type = object(
     {
