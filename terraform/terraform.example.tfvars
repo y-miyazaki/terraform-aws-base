@@ -671,11 +671,6 @@ security_config = {
     name        = "security-config-role"
     path        = "/"
   }
-  aws_iam_policy = {
-    description = null
-    name        = "security-config-policy"
-    path        = "/"
-  }
   aws_s3_bucket = {
     # Random suffix is automatically added to the bucket name.
     bucket        = "aws-config"
