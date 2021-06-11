@@ -168,7 +168,7 @@ variable "aws_cloudtrail" {
 }
 variable "cis_name_prefix" {
   type        = string
-  description = "(Required) Center for Internet Security CloudWatch Filter/Alerm name prefix."
+  description = "(Required) Center for Internet Security CloudWatch Filter/Alarm name prefix."
 }
 variable "account_id" {
   type        = string

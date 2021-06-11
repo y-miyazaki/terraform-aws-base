@@ -1,12 +1,20 @@
 #--------------------------------------------------------------
+# Locals
+#--------------------------------------------------------------
+locals {
+  aws_kinesis_firehose_delivery_stream = {
+    for k, v in var.aws_kinesis_firehose_delivery_stream : v.name => v
+  }
+}
+#--------------------------------------------------------------
 # Provides a Kinesis Firehose Delivery Stream resource. Amazon Kinesis Firehose is a fully managed, elastic service to easily deliver real-time data streams to destinations such as Amazon S3 and Amazon Redshift.
 #--------------------------------------------------------------
 resource "aws_kinesis_firehose_delivery_stream" "this" {
-  count = length(var.aws_kinesis_firehose_delivery_stream)
-  name  = lookup(var.aws_kinesis_firehose_delivery_stream[count.index], "name")
-  tags  = var.tags
+  for_each = local.aws_kinesis_firehose_delivery_stream
+  name     = lookup(each.value, "name")
+  tags     = var.tags
   dynamic "server_side_encryption" {
-    for_each = lookup(var.aws_kinesis_firehose_delivery_stream[count.index], "server_side_encryption", [])
+    for_each = lookup(each.value, "server_side_encryption", [])
     content {
       enabled  = lookup(server_side_encryption.value, "enabled", false)
       key_type = lookup(server_side_encryption.value, "key_type", null)
@@ -15,7 +23,7 @@ resource "aws_kinesis_firehose_delivery_stream" "this" {
   }
   destination = "extended_s3"
   dynamic "extended_s3_configuration" {
-    for_each = lookup(var.aws_kinesis_firehose_delivery_stream[count.index], "extended_s3_configuration", [])
+    for_each = lookup(each.value, "extended_s3_configuration", [])
     content {
       # base
       role_arn           = aws_iam_role.this[0].arn

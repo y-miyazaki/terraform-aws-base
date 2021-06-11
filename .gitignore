@@ -3,15 +3,18 @@
 .vscode
 terraform.log
 crash.log
+memo.txt
 
 # terraform files.
 .terraform
+.terraform.d
 .terraform.lock.hcl
 
 # terraform customize file.
 main_init.tf
 main_provider.tf
 provider.json
-terraform.*.tfvars
+*.tfvars
 !terraform.example.tfvars
 *.tfbackend
+!terraform.example.tfbackend

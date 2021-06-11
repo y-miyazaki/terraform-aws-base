@@ -359,17 +359,18 @@ resource "aws_config_config_rule" "restricted-common-ports" {
 # }
 #--------------------------------------------------------------
 # Provides an AWS Config Rule.
+# SecurityHub: enabled
 #--------------------------------------------------------------
-resource "aws_config_config_rule" "subnet-auto-assign-public-ip-disabled" {
-  count       = var.is_enabled ? 1 : 0
-  name        = "${local.name_prefix}subnet-auto-assign-public-ip-disabled"
-  description = "Checks if Amazon Virtual Private Cloud (Amazon VPC) subnets are assigned a public IP address. This rule is NON_COMPLIANT if Amazon VPC has subnets that are assigned a public IP address."
-  source {
-    owner             = "AWS"
-    source_identifier = "SUBNET_AUTO_ASSIGN_PUBLIC_IP_DISABLED"
-  }
-  tags = var.tags
-}
+# resource "aws_config_config_rule" "subnet-auto-assign-public-ip-disabled" {
+#   count       = var.is_enabled ? 1 : 0
+#   name        = "${local.name_prefix}subnet-auto-assign-public-ip-disabled"
+#   description = "Checks if Amazon Virtual Private Cloud (Amazon VPC) subnets are assigned a public IP address. This rule is NON_COMPLIANT if Amazon VPC has subnets that are assigned a public IP address."
+#   source {
+#     owner             = "AWS"
+#     source_identifier = "SUBNET_AUTO_ASSIGN_PUBLIC_IP_DISABLED"
+#   }
+#   tags = var.tags
+# }
 #--------------------------------------------------------------
 # Provides an AWS Config Rule.
 # SecurityHub: enabled

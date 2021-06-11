@@ -60,7 +60,7 @@ variable "aws_lambda_permission" {
       statement_id_prefix = string
     }
   )
-  description = "(Required) The aws_lambda_permission."
+  description = "(Optional) The aws_lambda_permission."
   default     = null
 }
 #--------------------------------------------------------------

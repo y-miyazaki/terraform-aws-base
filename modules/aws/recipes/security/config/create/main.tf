@@ -319,3 +319,46 @@ resource "aws_config_configuration_recorder_status" "this" {
     aws_config_configuration_recorder.this
   ]
 }
+
+#--------------------------------------------------------------
+# Provides an EventBridge Rule resource.
+#--------------------------------------------------------------
+resource "aws_cloudwatch_event_rule" "this" {
+  count = var.is_enabled ? 1 : 0
+  name  = lookup(var.aws_cloudwatch_event_rule, "name")
+  # event_pattern: https://aws.amazon.com/jp/premiumsupport/knowledge-center/config-resource-non-compliant/
+  event_pattern = <<EVENT_PATTERN
+{
+    "source": [
+        "aws.config"
+    ],
+    "detail-type": [
+        "Config Rules Compliance Change"
+    ],
+    "detail": {
+        "messageType": [
+            "ComplianceChangeNotification"
+        ],
+        "newEvaluationResult": {
+            "complianceType": [
+                "NON_COMPLIANT"
+            ]
+        }
+    }
+}
+EVENT_PATTERN
+  description   = lookup(var.aws_cloudwatch_event_rule, "description")
+  is_enabled    = true
+  tags          = var.tags
+}
+#--------------------------------------------------------------
+# Provides an EventBridge Target resource.
+#--------------------------------------------------------------
+resource "aws_cloudwatch_event_target" "this" {
+  count = var.is_enabled ? 1 : 0
+  rule  = aws_cloudwatch_event_rule.this[0].name
+  arn   = lookup(var.aws_cloudwatch_event_target, "arn")
+  depends_on = [
+    aws_cloudwatch_event_rule.this
+  ]
+}

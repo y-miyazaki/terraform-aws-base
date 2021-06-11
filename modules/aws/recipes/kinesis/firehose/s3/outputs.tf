@@ -4,5 +4,7 @@ output "aws_iam_role_arn" {
 }
 output "aws_kinesis_firehose_delivery_stream_arn" {
   description = "arn of the role."
-  value       = aws_kinesis_firehose_delivery_stream.this[*].arn
+  value = length(var.aws_kinesis_firehose_delivery_stream) > 0 ? tomap({
+    for k, v in aws_kinesis_firehose_delivery_stream.this : v.name => v.arn
+  }) : null
 }
