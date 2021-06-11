@@ -2,25 +2,25 @@
 
 ## OverView
 
-AWS でインフラを構築する際には、どんなプロジェクトでも必ず考慮すべき事項があります。
-例えばセキュリティ、IAM、コスト、ログの保存・通知関連等...
-必ず考慮すべき事項をプロジェクト毎に毎回 Terraform を別々に構築するのは、かなり大変です。
-このリポジトリでは、基本的に設定した方が良い項目を対応したものです。
+AWS でインフラを構築する際には、どんなプロジェクトでも必ず考慮すべき事項があります。例えばセキュリティ、IAM、コスト、ログの保存・通知関連等...必ず考慮すべき事項をプロジェクト毎に毎回 Terraform を別々に構築するのは、かなり大変です。  
+このリポジトリでは、ベースラインとなる設定を Terraform で構築しています。
 
 ## INDEX
 
 - Base
   - [Required](#required)
 - Functions
-  - [Security Hub](#security-hub)
-  - [Resource Groups](#resource-groups)
-  - [IAM User and Group](#iam-user-and-group)
-  - [IAM group policy](#iam-group-policy)
-  - [CloudTrail](#cloudTrail)
-  - [GuardDuty](#guardduty)
-  - [Cost Management](#cost-management)
-  - [Trusted Advisor](#trusted-advisor)
-  - [CloudWatch](#cloudWatch)
+  - Security
+    - [Security Hub](#security-hub)
+    - [Config](#config)
+    - [CloudTrail](#cloudtrail)
+    - [GuardDuty](#guardduty)
+  - Other
+    - [Resource Groups](#resource-groups)
+    - [IAM User and Group](#iam-user-and-group)
+    - [IAM group policy](#iam-group-policy)
+    - [Budgets](#budgets)
+    - [Trusted Advisor](#trusted-advisor)
 - Settings
   - [Initial setting](#initial-setting)
 - Logs
@@ -38,6 +38,8 @@ AWS でインフラを構築する際には、どんなプロジェクトでも�
 
 ## Security Hub
 
+AWS Security Hub では、セキュリティアラートとセキュリティ状況を、すべての AWS アカウントで包括的に確認できます。ファイアウォールとエンドポイントの保護から脆弱性とコンプライアンスに対するスキャナーに至るまで、幅広い高機能なセキュリティツールを自由に利用できます。
+
 Security Hub で提供されている Security standards の 3 つのセキュリティを可能な限り対応したものです。
 
 - AWS Foundational Security Best Practices
@@ -49,10 +51,32 @@ Security Hub で提供されている Security standards の 3 つのセキュ�
 
 ![SecurityHub Score](image/security_hub_security_score.png)
 
+## Config
+
+AWS Config は、AWS リソースの設定を評価、監査、審査できるサービスです。Config では、AWS リソースの設定が継続的にモニタリングおよび記録され、望まれる設定に対する記録された設定の評価を自動的に実行できます。Config を使用すると、AWS リソース間の設定や関連性の変更を確認し、詳細なリソース設定履歴を調べ、社内ガイドラインで指定された設定に対する全体的なコンプライアンスを確認できます。これにより、コンプライアンス監査、セキュリティ分析、変更管理、運用上のトラブルシューティングを簡素化できます。
+
 Slack チャンネルへの設定・Slack アプリの追加を行い、OAuthToken を設定することで、Slack 通知が行われるようになります。  
 以下のようなメッセージが通知されます。
 
-![SecurityHub](image/slack_security_hub.png)
+![Config](image/slack_config.png)
+
+## CloudTrail
+
+AWS CloudTrail は、AWS アカウントのガバナンス、コンプライアンス、運用監査、リスク監査を行うためのサービスです。CloudTrail を使用すると、AWS インフラストラクチャ全体でアカウントアクティビティをログに記録し、継続的に監視し、保持できます。
+
+Slack チャンネルへの設定・Slack アプリの追加を行い、OAuthToken を設定することで、Slack 通知が行われるようになります。  
+以下のようなメッセージが通知されます。
+
+![CloudTrail](image/slack_cloudtrail.png)
+
+## GuardDuty
+
+Amazon GuardDuty は、AWS 　のアカウント、ワークロード、および　 Amazon S3 に保存されたデータを保護するために、悪意のあるアクティビティや不正な動作を継続的にモニタリングする脅威検出サービスです。
+
+Slack チャンネルへの設定・Slack アプリの追加を行い、OAuthToken を設定することで、Slack 通知が行われるようになります。  
+以下のようなメッセージが通知されます。
+
+![GuardDuty](image/slack_guardduty.png)
 
 ## Resource Groups
 
@@ -73,21 +97,9 @@ IAM グループに割り振るポリシーを設定することができます�
 
 ![IAM Group Policy](image/iam_group_policy.png)
 
-## CloudTrail
+## Budgets
 
-Slack チャンネルへの設定・Slack アプリの追加を行い、OAuthToken を設定することで、Slack 通知が行われるようになります。  
-以下のようなメッセージが通知されます。
-
-![CloudTrail](image/slack_cloudtrail.png)
-
-## GuardDuty
-
-Slack チャンネルへの設定・Slack アプリの追加を行い、OAuthToken を設定することで、Slack 通知が行われるようになります。  
-以下のようなメッセージが通知されます。
-
-![GuardDuty](image/slack_guardduty.png)
-
-## Cost Management
+AWS Budgets には、カスタム予算を設定して、コストまたは使用量が予算額や予算量を超えたとき (あるいは、超えると予測されたとき) にアラートを発信できる機能が用意されています。
 
 Slack チャンネルへの設定・Slack アプリの追加を行い、OAuthToken を設定することで、指定の時間（デフォルトは毎日 18:00JST）に Slack 通知が届くようになります。また、指定したコストリミットを超える場合はメールが送信されます。
 
@@ -95,26 +107,26 @@ Slack チャンネルへの設定・Slack アプリの追加を行い、OAuthTok
 
 ## Trusted Advisor
 
+AWS Trusted Advisor は、AWS のベストプラクティスに従うためのガイダンスを提供するフルマネージドサービスです。AWS インフラストラクチャを最適化するのに役立つ Trusted Advisor にアクセスして、セキュリティとパフォーマンスを向上し、総コストを削減し、サービスの制限をモニタリングします。
+
 Slack チャンネルへの設定・Slack アプリの追加を行い、OAuthToken を設定することで、指定の時間（デフォルトは毎日 9:00JST）に Slack 通知が届くようになります。  
 ただし、Trusted Advisor はサポートプランがビジネスプランかエンタープライズプランの契約が必要です。デフォルトでは false となっています。
 
-## CloudWatch
-
-Slack チャンネルへの設定・Slack アプリの追加を行い、OAuthToken を設定することで、指定したロググループのフィルタ条件に一致した内容が Slack 通知で届くようになります。
+![Trusted Advisor](image/slack_trusted_advisor.png)
 
 ## Initial setting
 
-- ルートアカウントからアクセスキーを削除
+- ルートアカウントからアクセスキーを削除  
   セキュリティとして問題があるため、マネージメントコンソールからルートアカウントのアクセスキーを削除しましょう。
 
-- Terraform を実行するための IAM ユーザ and IAM グループのマニュアル作成
+- Terraform を実行するための IAM ユーザ and IAM グループのマニュアル作成  
   Terraform を実行するためにマネージメントコンソールから IAM ユーザと IAM グループを作成します。
   IAM グループ(仮名:deploy)を作成します。ポリシーは AdministratorAccess をアタッチします。
   IAM ユーザ(仮名:terraform)を作成します。Access Type は Programmatic access のみ与えます。IAM グループ(仮名:deploy)に追加します。
 
-- Terraform State を保存するための S3 作成
+- Terraform State を保存するための S3 作成  
   Terraform State を管理するためのマネージメントコンソールから S3 を作成します。
-  ただし、aws コマンドと profile が設定済みで実行できる環境がある場合は、下記のコマンドを実行すると S3 が作成されます。
+  ただし、aws コマンドと profile が設定済みで実行できる環境がある場合は、下記のコマンドを実行すると S3 が作成されます。  
   https://github.com/y-miyazaki/cloud-commands/blob/master/cmd/awstfinitstate
 
 ```sh
@@ -156,10 +168,10 @@ region: ap-northeast-1
 ```
 
 - 環境毎に設定する terraform.{environment}.tfvars ファイル  
-  リンク先にある[terraform.example.tfvars](terraform/terraform.example.tfvars)の名前を変更し、自分の環境用に各変数を変更する必要があります。変更するべき変数には TODO コメントが記載されています。TODO で検索してください。
+  リンク先にある[terraform.example.tfvars](terraform/base/terraform.example.tfvars)の名前を変更し、自分の環境用に各変数を変更する必要があります。変更するべき変数には TODO コメントが記載されています。TODO で検索してください。
 
 - 環境毎に設定する main_provider.tf ファイル  
-  リンク先にある[main_provider.tf.example](terraform/main_provider.tf.example)を main_provider.tf にリネームししてください。その後、各パラメータを変更する必要があります。変更するべき変数には TODO コメントが記載されています。TODO で検索してください。
+  リンク先にある[main_provider.tf.example](terraform/base/main_provider.tf.example)を main_provider.tf にリネームししてください。その後、各パラメータを変更する必要があります。変更するべき変数には TODO コメントが記載されています。TODO で検索してください。
 
 ```terraform
 #--------------------------------------------------------------
@@ -197,7 +209,7 @@ provider "aws" {
 }
 ```
 
-- Terraform の実行
+- Terraform の実行  
   terraform コマンドで実行します。terraform init 後に terraform apply を行います。
   もしかすると terraform apply が失敗するかもしれませんが、conflict などの問題で失敗する場合があるので再度実行すれば成功します。
 
@@ -254,13 +266,15 @@ Apply complete! resources: x added, x changed, 0 destroyed.
 
 ## S3 bucket list
 
-| Category       | bucket         | Directory                                                       | Description                                                                                                                                                                                                                                                                                                                                                                                                                                           | Note                                                                                                                 |
-| :------------- | :------------- | :-------------------------------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------- |
-| AWS Config     | aws-config     | /AWSLogs/{accountID}/Config/{region}/yyyy/m/d/ConfigHistory/    | AWS Config Compliance History Timeline for Resources.                                                                                                                                                                                                                                                                                                                                                                                                 | https://docs.aws.amazon.com/config/latest/developerguide/view-compliance-history.html                                |
-| AWS Config     | aws-config     | /AWSLogs/{accountID}/Config/{region}/yyyy/m/d/ConfigSnapshot/   | AWS Config snapshot.                                                                                                                                                                                                                                                                                                                                                                                                                                  | https://docs.aws.amazon.com/config/latest/developerguide/deliver-snapshot-cli.html                                   |
-| AWS Config     | aws-config     | /AWSLogs/{accountID}/Config/ConfigWritabilityCheckFile/yyyy/m/d | This is a test file to confirm that Config can be written to the S3 bucket normally.                                                                                                                                                                                                                                                                                                                                                                  |                                                                                                                      |
-| AWS CloudTrail | aws-cloudtrail | /AWSLogs/{accountID}/CloudTrail-Digest/{region}/yyyy/mm/dd      | Each digest file contains the names of the log files that were delivered to your Amazon S3 bucket during the last hour, the hash values for those log files, and the digital signature of the previous digest file. The signature for the current digest file is stored in the metadata properties of the digest file object. The digital signatures and hashes are used for validating the integrity of the log files and of the digest file itself. | https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudtrail-log-file-validation-digest-file-structure.html |
-| AWS CloudTrail | aws-cloudtrail | /AWSLogs/{accountID}/CloudTrail-Insight/{region}/yyyy/mm/dd     | CloudTrail Insights can help you detect unusual API activity in your AWS account by raising Insights events. CloudTrail Insights measures your normal patterns of API call volume, also called the baseline, and generates Insights events when the volume is outside normal patterns. Insights events are generated for write management APIs.                                                                                                       | https://docs.aws.amazon.com/awscloudtrail/latest/userguide/logging-insights-events-with-cloudtrail.html              |
-| AWS CloudTrail | aws-cloudtrail | /AWSLogs/{accountID}/CloudTrail/{region}/yyyy/mm/dd             | It is recorded as an event in CloudTrail. Events include actions taken in the AWS Management Console, AWS Command Line Interface.                                                                                                                                                                                                                                                                                                                     | https://docs.aws.amazon.com/awscloudtrail/latest/userguide/get-and-view-cloudtrail-log-files.html                    |
-| AWS Log        | aws-logging    | /Application                                                    | Application log from CloudWatch Logs.                                                                                                                                                                                                                                                                                                                                                                                                                 |                                                                                                                      |
-| AWS Log        | aws-logging    | /CloudTrail                                                     | S3 bucket access log for CloudTrail bucket.                                                                                                                                                                                                                                                                                                                                                                                                           | https://docs.aws.amazon.com/ja_jp/AmazonS3/latest/userguide/ServerLogs.html                                          |
+作成される S3 Bucket と Bucket 内にあるデータの説明です。
+
+| Category       | bucket                  | Directory                                                       | Description                                                                                                                                                                                                                                                                                                                                                                                                                                           | Note                                                                                                                 |
+| :------------- | :---------------------- | :-------------------------------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------- |
+| AWS Config     | aws-config              | /AWSLogs/{accountID}/Config/{region}/yyyy/m/d/ConfigHistory/    | AWS Config Compliance History Timeline for Resources.                                                                                                                                                                                                                                                                                                                                                                                                 | https://docs.aws.amazon.com/config/latest/developerguide/view-compliance-history.html                                |
+| AWS Config     | aws-config              | /AWSLogs/{accountID}/Config/{region}/yyyy/m/d/ConfigSnapshot/   | AWS Config snapshot.                                                                                                                                                                                                                                                                                                                                                                                                                                  | https://docs.aws.amazon.com/config/latest/developerguide/deliver-snapshot-cli.html                                   |
+| AWS Config     | aws-config              | /AWSLogs/{accountID}/Config/ConfigWritabilityCheckFile/yyyy/m/d | This is a test file to confirm that Config can be written to the S3 bucket normally.                                                                                                                                                                                                                                                                                                                                                                  |                                                                                                                      |
+| AWS CloudTrail | aws-cloudtrail          | /AWSLogs/{accountID}/CloudTrail-Digest/{region}/yyyy/mm/dd      | Each digest file contains the names of the log files that were delivered to your Amazon S3 bucket during the last hour, the hash values for those log files, and the digital signature of the previous digest file. The signature for the current digest file is stored in the metadata properties of the digest file object. The digital signatures and hashes are used for validating the integrity of the log files and of the digest file itself. | https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudtrail-log-file-validation-digest-file-structure.html |
+| AWS CloudTrail | aws-cloudtrail          | /AWSLogs/{accountID}/CloudTrail-Insight/{region}/yyyy/mm/dd     | CloudTrail Insights can help you detect unusual API activity in your AWS account by raising Insights events. CloudTrail Insights measures your normal patterns of API call volume, also called the baseline, and generates Insights events when the volume is outside normal patterns. Insights events are generated for write management APIs.                                                                                                       | https://docs.aws.amazon.com/awscloudtrail/latest/userguide/logging-insights-events-with-cloudtrail.html              |
+| AWS CloudTrail | aws-cloudtrail          | /AWSLogs/{accountID}/CloudTrail/{region}/yyyy/mm/dd             | It is recorded as an event in CloudTrail. Events include actions taken in the AWS Management Console, AWS Command Line Interface.                                                                                                                                                                                                                                                                                                                     | https://docs.aws.amazon.com/awscloudtrail/latest/userguide/get-and-view-cloudtrail-log-files.html                    |
+| AWS Log        | aws-logging             | /CloudTrail                                                     | S3 bucket access log for CloudTrail bucket.                                                                                                                                                                                                                                                                                                                                                                                                           | https://docs.aws.amazon.com/ja_jp/AmazonS3/latest/userguide/ServerLogs.html                                          |
+| AWS Log        | aws-logging-application | /Application                                                    | Application log from CloudWatch Logs.                                                                                                                                                                                                                                                                                                                                                                                                                 |                                                                                                                      |

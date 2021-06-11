@@ -1,0 +1,4 @@
+bucket  = "terraform-state-xxxxxxx"
+key     = "terraform-monitor.tfstate"
+profile = "default"    # fix for environment
+region  = "ap-northeast-1" # fix for environment

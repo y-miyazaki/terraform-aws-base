@@ -1,4 +1,12 @@
 #--------------------------------------------------------------
+# Locals
+#--------------------------------------------------------------
+locals {
+  aws_cloudwatch_log_subscription_filter = {
+    for k, v in var.aws_cloudwatch_log_subscription_filter : v.name => v
+  }
+}
+#--------------------------------------------------------------
 # Provides an IAM role.
 #--------------------------------------------------------------
 resource "aws_iam_role" "this" {
@@ -57,11 +65,11 @@ resource "aws_iam_role_policy_attachment" "this" {
 # Provides a CloudWatch Logs subscription filter resource.
 #--------------------------------------------------------------
 resource "aws_cloudwatch_log_subscription_filter" "this" {
-  count           = length(var.aws_cloudwatch_log_subscription_filter)
-  name            = lookup(var.aws_cloudwatch_log_subscription_filter[count.index], "name")
-  destination_arn = lookup(var.aws_cloudwatch_log_subscription_filter[count.index], "destination_arn")
-  filter_pattern  = lookup(var.aws_cloudwatch_log_subscription_filter[count.index], "filter_pattern", null)
-  log_group_name  = lookup(var.aws_cloudwatch_log_subscription_filter[count.index], "log_group_name")
+  for_each        = local.aws_cloudwatch_log_subscription_filter
+  name            = lookup(each.value, "name")
+  destination_arn = lookup(each.value, "destination_arn")
+  filter_pattern  = lookup(each.value, "filter_pattern", null)
+  log_group_name  = lookup(each.value, "log_group_name")
   role_arn        = aws_iam_role.this.arn
-  distribution    = lookup(var.aws_cloudwatch_log_subscription_filter[count.index], "distribution", "Random")
+  distribution    = lookup(each.value, "distribution", "Random")
 }

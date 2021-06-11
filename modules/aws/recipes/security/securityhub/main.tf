@@ -75,57 +75,57 @@ resource "aws_securityhub_action_target" "this" {
 #--------------------------------------------------------------
 # Provides an EventBridge Rule resource.
 #--------------------------------------------------------------
-resource "aws_cloudwatch_event_rule" "this" {
-  count = var.is_enabled ? 1 : 0
-  name  = lookup(var.aws_cloudwatch_event_rule, "name")
-  # event_pattern: https://dev.classmethod.jp/articles/security-hub-filtering-examples/
-  event_pattern = <<EVENT_PATTERN
-{
-  "source":[
-    "aws.securityhub"
-  ],
-  "detail-type":[
-    "Security Hub Findings - Imported"
-  ],
-  "detail":{
-    "findings":{
-      "Compliance":{
-        "Status":[
-          {
-            "anything-but":"PASSED"
-          }
-        ]
-      },
-      "Severity":{
-        "Label":[
-          "CRITICAL",
-          "HIGH"
-        ]
-      },
-      "Workflow":{
-        "Status":[
-          "NEW"
-        ]
-      },
-      "RecordState":[
-        "ACTIVE"
-      ]
-    }
-  }
-}
-EVENT_PATTERN
-  description   = lookup(var.aws_cloudwatch_event_rule, "description")
-  is_enabled    = true
-  tags          = var.tags
-}
+# resource "aws_cloudwatch_event_rule" "this" {
+#   count = var.is_enabled ? 1 : 0
+#   name  = lookup(var.aws_cloudwatch_event_rule, "name", null)
+#   # event_pattern: https://docs.aws.amazon.com/ja_jp/securityhub/latest/userguide/securityhub-cwe-event-formats.html
+#   event_pattern = <<EVENT_PATTERN
+# {
+#   "source":[
+#     "aws.securityhub"
+#   ],
+#   "detail-type":[
+#     "Security Hub Findings - Imported"
+#   ],
+#   "detail":{
+#     "findings":{
+#       "Compliance":{
+#         "Status":[
+#           {
+#             "anything-but":"PASSED"
+#           }
+#         ]
+#       },
+#       "Severity":{
+#         "Label":[
+#           "CRITICAL",
+#           "HIGH"
+#         ]
+#       },
+#       "Workflow":{
+#         "Status":[
+#           "NEW"
+#         ]
+#       },
+#       "RecordState":[
+#         "ACTIVE"
+#       ]
+#     }
+#   }
+# }
+# EVENT_PATTERN
+#   description   = lookup(var.aws_cloudwatch_event_rule, "description", null)
+#   is_enabled    = true
+#   tags          = var.tags
+# }
 #--------------------------------------------------------------
 # Provides an EventBridge Target resource.
 #--------------------------------------------------------------
-resource "aws_cloudwatch_event_target" "this" {
-  count = var.is_enabled ? 1 : 0
-  rule  = aws_cloudwatch_event_rule.this[0].name
-  arn   = lookup(var.aws_cloudwatch_event_target, "arn")
-  depends_on = [
-    aws_cloudwatch_event_rule.this
-  ]
-}
+# resource "aws_cloudwatch_event_target" "this" {
+#   count = var.is_enabled ? 1 : 0
+#   rule  = aws_cloudwatch_event_rule.this[0].name
+#   arn   = lookup(var.aws_cloudwatch_event_target, "arn", null)
+#   depends_on = [
+#     aws_cloudwatch_event_rule.this
+#   ]
+# }

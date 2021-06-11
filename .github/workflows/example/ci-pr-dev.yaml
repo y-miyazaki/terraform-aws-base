@@ -1,0 +1,134 @@
+# https://help.github.com/ja/actions/reference/workflow-syntax-for-github-actions
+name: integration-pr-dev
+on:
+  pull_request:
+    branches:
+      - "feature/**"
+      - "develop"
+jobs:
+  integration:
+    env:
+      ENVIRONMENT: dev
+      TERRAFORM_VERSION: 0.14.7
+    runs-on: ubuntu-latest
+    steps:
+      - name: "code: check out code"
+        uses: actions/checkout@v2
+      - name: "parameters: set parameters"
+        id: parameters
+        run: |
+          PR_NUMBER=$(echo $GITHUB_REF | awk 'BEGIN { FS = "/" } ; { print $3 }')
+          echo "::set-output name=pr_number::${PR_NUMBER}"
+          echo "::set-output name=pr_url::https://github.com/$GITHUB_REPOSITORY/pull/${PR_NUMBER}"
+      - name: configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.DEV_AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.DEV_AWS_SECRET_ACCESS_KEY }}
+          aws-region: ap-northeast-1
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_version: ${{ env.TERRAFORM_VERSION }}
+          #cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
+      - name: Terraform init
+        run: |
+          cd terraform/base
+          terraform init -reconfigure -backend-config=terraform.${{ env.ENVIRONMENT }}.tfbackend
+          cd ../monitor
+          terraform init -reconfigure -backend-config=terraform.${{ env.ENVIRONMENT }}.tfbackend
+      # More complex example
+      - name: tflint
+        uses: reviewdog/action-tflint@master
+        with:
+          github_token: ${{ secrets.github_token }}
+          working_directory: "terraform/base" # Optional. Change working directory
+          reporter: github-pr-review # Optional. Change reporter
+          fail_on_error: "true" # Optional. Fail action if errors are found
+          filter_mode: "nofilter" # Optional. Check all files, not just the diff
+          flags: "--module" # Optional. Add custom tflint flags
+      - name: tflint
+        uses: reviewdog/action-tflint@master
+        with:
+          github_token: ${{ secrets.github_token }}
+          working_directory: "terraform/monitor" # Optional. Change working directory
+          reporter: github-pr-review # Optional. Change reporter
+          fail_on_error: "true" # Optional. Fail action if errors are found
+          filter_mode: "nofilter" # Optional. Check all files, not just the diff
+          flags: "--module" # Optional. Add custom tflint flags
+      # - name: tfsec
+      #   uses: reviewdog/action-tfsec@master
+      #   with:
+      #     github_token: ${{ secrets.github_token }}
+      #     working_directory: "terraform/base" # Optional. Change working directory
+      #     reporter: github-pr-review # Change reporter
+      #     fail_on_error: "true" # Fail action if errors are found
+      #     filter_mode: "nofilter" # Check all files, not just the diff
+      #     flags: "--tfvars-file terraform.${{ env.ENVIRONMENT }}.tfvars" # Optional
+      # - name: tfsec
+      #   uses: reviewdog/action-tfsec@master
+      #   with:
+      #     github_token: ${{ secrets.github_token }}
+      #     working_directory: "terraform/monitor" # Optional. Change working directory
+      #     reporter: github-pr-review # Change reporter
+      #     fail_on_error: "true" # Fail action if errors are found
+      #     filter_mode: "nofilter" # Check all files, not just the diff
+      #     flags: "--tfvars-file terraform.${{ env.ENVIRONMENT }}.tfvars" # Optional
+      - name: "terraform: plan-base"
+        id: plan-base
+        run: |
+          cd terraform/base
+          terraform plan -lock=false -no-color -var-file=terraform.${{ env.ENVIRONMENT }}.tfvars
+      - name: "terraform: plan-monitor"
+        id: plan-monitor
+        run: |
+          cd terraform/monitor
+          terraform plan -lock=false -no-color -var-file=terraform.${{ env.ENVIRONMENT }}.tfvars
+      - name: "terraform: plan-base log"
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v2
+        env:
+          PLAN: "${{ steps.plan-base.outputs.stderr }}\n${{ steps.plan-base.outputs.stdout }}"
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const output = ` ### Report
+
+            #### Terraform Plan
+              \`\`\`${process.env.PLAN}\`\`\` `;
+              github.issues.createComment({
+                  issue_number: context.issue.number,
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  body: output
+              })
+      - name: "terraform: plan-monitor log"
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v2
+        env:
+          PLAN: "${{ steps.plan-monitor.outputs.stderr }}\n${{ steps.plan-monitor.outputs.stdout }}"
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const output = ` ### Report
+
+            #### Terraform Plan
+              \`\`\`${process.env.PLAN}\`\`\` `;
+              github.issues.createComment({
+                  issue_number: context.issue.number,
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  body: output
+              })
+      - name: "slack: notification"
+        if: failure()
+        uses: rtCamp/action-slack-notify@v2.0.2
+        env:
+          SLACK_CHANNEL: ${{ secrets.SLACK_CHANNEL_ID }}
+          SLACK_COLOR: "danger"
+          SLACK_ICON: ""
+          SLACK_TITLE: failed integration on pull request
+          SLACK_USERNAME: github-notification
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+          SLACK_MESSAGE: |
+            ${{ steps.parameters.outputs.pr_url }}

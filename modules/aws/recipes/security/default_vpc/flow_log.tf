@@ -3,8 +3,9 @@
 #--------------------------------------------------------------
 resource "aws_cloudwatch_log_group" "this" {
   count             = var.is_enabled && var.is_enabled_flow_logs ? 1 : 0
-  retention_in_days = lookup(var.aws_cloudwatch_log_group, "retention_in_days")
   name_prefix       = lookup(var.aws_cloudwatch_log_group, "name_prefix")
+  retention_in_days = lookup(var.aws_cloudwatch_log_group, "retention_in_days")
+  kms_key_id        = lookup(var.aws_cloudwatch_log_group, "kms_key_id", null)
   tags              = var.tags
   lifecycle {
     create_before_destroy = true
