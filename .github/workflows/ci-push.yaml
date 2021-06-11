@@ -19,7 +19,9 @@ jobs:
       - name: "terraform: check"
         run: |
           docker pull ymiyazakixyz/terraform-aws:latest
-          docker run --rm -v $PWD:/workspace -e ENV=${{ env.ENVIRONMENT }} -w /workspace --name terraform-aws ymiyazakixyz/terraform-aws:latest scripts/terraform/aws/integration_push.sh terraform
+          docker run --rm -v $PWD:/workspace -e ENV=${{ env.ENVIRONMENT }} -w /workspace --name terraform-aws ymiyazakixyz/terraform-aws:latest scripts/terraform/aws/integration_push.sh terraform/base
+          docker pull ymiyazakixyz/terraform-aws:latest
+          docker run --rm -v $PWD:/workspace -e ENV=${{ env.ENVIRONMENT }} -w /workspace --name terraform-aws ymiyazakixyz/terraform-aws:latest scripts/terraform/aws/integration_push.sh terraform/monitor
       - name: "slack: notification for failed build."
         if: failure()
         uses: rtCamp/action-slack-notify@v2.0.2
