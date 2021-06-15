@@ -14,7 +14,6 @@ variable "aws_config_configuration_recorder" {
     }
   )
   description = "(Required) The aws_config_configuration_recorder resource."
-  default     = null
 }
 
 variable "aws_iam_role" {
@@ -28,9 +27,9 @@ variable "aws_iam_role" {
       path = string
     }
   )
-  description = "(Required) The aws_iam_role resource."
+  description = "(Optional) The aws_iam_role resource."
   default = {
-    description = null
+    description = "Role for AWS Config."
     name        = "security-config-role"
     path        = "/"
   }
@@ -39,18 +38,25 @@ variable "aws_iam_role" {
 variable "aws_s3_bucket" {
   type = object(
     {
-      bucket                               = string
-      force_destroy                        = bool
-      versioning                           = list(any)
-      logging                              = list(any)
-      lifecycle_rule                       = list(any)
-      replication_configuration            = list(any)
+      # The name of the bucket. If omitted, Terraform will assign a random, unique name. Must be less than or equal to 63 characters in length.
+      bucket = string
+      # A boolean that indicates all objects (including any locked objects) should be deleted from the bucket so that the bucket can be destroyed without error. These objects are not recoverable.
+      force_destroy = bool
+      # A state of versioning
+      versioning = list(any)
+      # A settings of bucket logging
+      logging = list(any)
+      # A configuration of object lifecycle management
+      lifecycle_rule = list(any)
+      # A configuration of replication configuration
+      replication_configuration = list(any)
+      # A configuration of server-side encryption configuration
       server_side_encryption_configuration = list(any)
-      object_lock_configuration            = list(any)
+      # A configuration of S3 object locking
+      object_lock_configuration = list(any)
     }
   )
   description = "(Required) The aws_s3_bucket resource."
-  default     = null
 }
 
 variable "aws_config_delivery_channel" {
@@ -62,7 +68,6 @@ variable "aws_config_delivery_channel" {
     }
   )
   description = "(Required) The aws_config_delivery_channel resource."
-  default     = null
 }
 
 variable "aws_config_configuration_recorder_status" {
@@ -72,7 +77,6 @@ variable "aws_config_configuration_recorder_status" {
     }
   )
   description = "(Required) The aws_config_configuration_recorder_status resource."
-  default     = null
 }
 variable "aws_cloudwatch_event_rule" {
   type = object(
@@ -101,7 +105,6 @@ variable "aws_cloudwatch_event_target" {
 variable "account_id" {
   type        = number
   description = "(Required) AWS account ID for member account."
-  default     = null
 }
 variable "tags" {
   type        = map(any)

@@ -9,7 +9,6 @@ variable "is_enabled" {
 variable "analyzer_name" {
   type        = string
   description = "(Required) Name of the Analyzer."
-  default     = null
 }
 variable "tags" {
   type        = map(any)

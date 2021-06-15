@@ -13,13 +13,13 @@ variable "period" {
 }
 variable "threshold" {
   type = object({
-    # (Required) ConcurrentExecutions threshold (unit=Count)
+    # ConcurrentExecutions threshold (unit=Count)
     concurrent_executions = number
-    # (Required) Duration threshold (unit=Milliseconds)
+    # Duration threshold (unit=Milliseconds)
     duration = number
-    # (Required) Errors threshold (unit=Count)
+    # Errors threshold (unit=Count)
     errors = number
-    # (Required) Throttles threshold (unit=Count)
+    # Throttles threshold (unit=Count)
     throttles = number
     }
   )

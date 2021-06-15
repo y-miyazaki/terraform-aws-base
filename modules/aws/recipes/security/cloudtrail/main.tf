@@ -859,7 +859,7 @@ resource "aws_s3_bucket" "this" {
   count  = var.is_enabled ? 1 : 0
   bucket = lookup(var.aws_s3_bucket, "bucket")
   # bucket_prefix = var.bucket_prefix
-  acl           = lookup(var.aws_s3_bucket, "acl", "private")
+  acl           = "private"
   tags          = var.tags
   force_destroy = lookup(var.aws_s3_bucket, "force_destroy", false)
   dynamic "versioning" {

@@ -3,7 +3,7 @@
 #--------------------------------------------------------------
 variable "is_enabled" {
   type        = bool
-  description = "(Optional) A boolean flag to enable/disable settings of Lambda. Defaults true."
+  description = "(Optional) A boolean flag to enable/disable settings of RDS. Defaults true."
   default     = true
 }
 variable "is_aurora" {
@@ -30,25 +30,25 @@ variable "period" {
 }
 variable "threshold" {
   type = object({
-    # (Required) CommitRatency threshold (unit=Milliseconds)
+    # CommitRatency threshold (unit=Milliseconds)
     commit_latency = number
-    # (Required) CPUCreditBalance threshold (unit=Count)
+    # CPUCreditBalance threshold (unit=Count)
     cpu_creadit_balance = number
-    # (Required) CPUUtilization threshold (unit=%)
+    # CPUUtilization threshold (unit=%)
     cpu_utilization = number
-    # (Required) DatabaseConnections threshold (unit=Count)
+    # DatabaseConnections threshold (unit=Count)
     database_connections = number
-    # (Required) Deadlocks threshold (unit=Count/Seconds)
+    # Deadlocks threshold (unit=Count/Seconds)
     deadlocks = number
-    # (Required) DeleteLatency threshold (unit=Count)
+    # DeleteLatency threshold (unit=Count)
     delete_latency = number
-    # (Required) DiskQueueDepth threshold (unit=Count)
+    # DiskQueueDepth threshold (unit=Count)
     disk_queue_depth = number
-    # (Required) FreeableMemory threshold (unit=Megabytes)
+    # FreeableMemory threshold (unit=Megabytes)
     freeable_memory = number
-    # (Required) ReadLatency threshold (unit=Seconds)
+    # ReadLatency threshold (unit=Seconds)
     read_latency = number
-    # (Required) WriteLatency threshold (unit=Seconds)
+    # WriteLatency threshold (unit=Seconds)
     write_latency = number
     }
   )

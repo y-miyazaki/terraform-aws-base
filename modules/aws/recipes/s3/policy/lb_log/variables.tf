@@ -1,23 +1,15 @@
 #--------------------------------------------------------------
 # module variables
 #--------------------------------------------------------------
-variable "bucket_id" {
+variable "bucket" {
   type        = string
-  description = "The S3 Bucket ID."
-  default     = null
-}
-variable "vpc_id" {
-  type        = string
-  description = "The VPC ID."
-  default     = null
+  description = "(Required) The S3 Bucket ID."
 }
 variable "bucket_arn" {
   type        = string
-  description = "The S3 bucket arn."
-  default     = null
+  description = "(Required) The S3 bucket arn."
 }
 variable "principal_account_id" {
   type        = string
-  description = "AWS root account id. default root account is ap-northeast-1 region."
-  default     = "582318560864"
+  description = "(Required) AWS root account id. default root account is ap-northeast-1 region."
 }

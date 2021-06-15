@@ -24,7 +24,9 @@ variable "igw_cidr_block" {
 variable "aws_cloudwatch_log_group" {
   type = object(
     {
-      name_prefix       = string
+      # Creates a unique name beginning with the specified prefix. Conflicts with name.
+      name_prefix = string
+      # Specifies the number of days you want to retain log events in the specified log group. Possible values are: 1, 3, 5, 7, 14, 30, 60, 90, 120, 150, 180, 365, 400, 545, 731, 1827, 3653, and 0. If you select 0, the events in the log group are always retained and never expire.
       retention_in_days = number
     }
   )
@@ -37,17 +39,17 @@ variable "aws_cloudwatch_log_group" {
 variable "aws_iam_role" {
   type = object(
     {
-      # (Optional) Description of the role.
+      # Description of the role.
       description = string
-      # (Optional, Forces new resource) Friendly name of the role. If omitted, Terraform will assign a random, unique name. See IAM Identifiers for more information.
+      # Friendly name of the role. If omitted, Terraform will assign a random, unique name. See IAM Identifiers for more information.
       name = string
-      # (Optional) Path to the role. See IAM Identifiers for more information.
+      # Path to the role. See IAM Identifiers for more information.
       path = string
     }
   )
-  description = "(Required) The resource of aws_iam_role."
+  description = "(Optional) The resource of aws_iam_role."
   default = {
-    description = null
+    description = "Role for VPC Flow log."
     name        = "vpc-flow-log-role"
     path        = "/"
   }
@@ -55,17 +57,17 @@ variable "aws_iam_role" {
 variable "aws_iam_policy" {
   type = object(
     {
-      # (Optional) Description of the IAM policy.
+      # Description of the IAM policy.
       description = string
-      # (Optional, Forces new resource) Friendly name of the role. If omitted, Terraform will assign a random, unique name. See IAM Identifiers for more information.
+      # Friendly name of the role. If omitted, Terraform will assign a random, unique name. See IAM Identifiers for more information.
       name = string
-      # (Optional) Path to the role. See IAM Identifiers for more information.
+      # Path to the role. See IAM Identifiers for more information.
       path = string
     }
   )
-  description = "(Required) The resource of aws_iam_policy."
+  description = "(Optional) The resource of aws_iam_policy."
   default = {
-    description = null
+    description = "Policy for VPC Flow log."
     name        = "vpc-flow-log-policy"
     path        = "/"
   }

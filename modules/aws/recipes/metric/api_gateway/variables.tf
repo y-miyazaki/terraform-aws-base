@@ -3,7 +3,7 @@
 #--------------------------------------------------------------
 variable "is_enabled" {
   type        = bool
-  description = "(Optional) A boolean flag to enable/disable settings of Lambda. Defaults true."
+  description = "(Optional) A boolean flag to enable/disable settings of API Gateway. Defaults true."
   default     = true
 }
 variable "period" {
@@ -13,11 +13,11 @@ variable "period" {
 }
 variable "threshold" {
   type = object({
-    # (Required) 4XXerror threshold (unit=%)
+    # 4XXerror threshold (unit=%)
     error4XX = number
-    # (Required) 5XXerror threshold (unit=%)
+    # 5XXerror threshold (unit=%)
     error5XX = number
-    # (Required) Latency threshold (unit=Milliseconds)
+    # Latency threshold (unit=Milliseconds)
     latency = number
     }
   )

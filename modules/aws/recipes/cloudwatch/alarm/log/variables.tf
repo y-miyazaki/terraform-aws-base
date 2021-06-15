@@ -1,5 +1,5 @@
 #--------------------------------------------------------------
-# module variables(aws_cloudwatch_event_rule)
+# module variables
 #--------------------------------------------------------------
 variable "aws_cloudwatch_log_metric_filter" {
   type        = list(any)

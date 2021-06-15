@@ -5,34 +5,34 @@ variable "aws_iam_role" {
   type = object(
     {
       eks = object({
-        # (Optional) Description of the role.
+        # Description of the role.
         description = string
-        # (Optional, Forces new resource) Friendly name of the role. If omitted, Terraform will assign a random, unique name. See IAM Identifiers for more information.
+        # Friendly name of the role. If omitted, Terraform will assign a random, unique name. See IAM Identifiers for more information.
         name = string
-        # (Optional) Path to the role. See IAM Identifiers for more information.
+        # Path to the role. See IAM Identifiers for more information.
         path = string
         }
       )
       eks_worker_node = object({
-        # (Optional) Description of the role.
+        # Description of the role.
         description = string
-        # (Optional, Forces new resource) Friendly name of the role. If omitted, Terraform will assign a random, unique name. See IAM Identifiers for more information.
+        # Friendly name of the role. If omitted, Terraform will assign a random, unique name. See IAM Identifiers for more information.
         name = string
-        # (Optional) Path to the role. See IAM Identifiers for more information.
+        # Path to the role. See IAM Identifiers for more information.
         path = string
         }
       )
     }
   )
-  description = "(Required) Provides an IAM role."
+  description = "(Optional) Provides an IAM role."
   default = {
     eks = {
-      description = null
+      description = "Role for EKS."
       name        = "eks-role"
       path        = "/"
     }
     eks_worker_node = {
-      description = null
+      description = "Role for EKS worker node."
       name        = "eks-worker-node-role"
       path        = "/"
     }
@@ -42,20 +42,20 @@ variable "aws_iam_policy" {
   type = object(
     {
       eks_worker_node = object({
-        # (Optional, Forces new resource) Description of the IAM policy.
+        # Description of the IAM policy.
         description = string
-        # (Optional, Forces new resource) The name of the policy. If omitted, Terraform will assign a random, unique name.
+        # The name of the policy. If omitted, Terraform will assign a random, unique name.
         name = string
-        # (Optional, default "/") Path in which to create the policy. See IAM Identifiers for more information.
+        # Path in which to create the policy. See IAM Identifiers for more information.
         path = string
         }
       )
     }
   )
-  description = "(Required) Provides an IAM policy."
+  description = "(Optional) Provides an IAM policy."
   default = {
     eks_worker_node = {
-      description = null
+      description = "Policy for EKS worker node."
       name        = "eks-worker-node-policy"
       path        = "/"
     }
@@ -65,15 +65,15 @@ variable "aws_iam_instance_profile" {
   type = object(
     {
       eks_worker_node = object({
-        # (Optional, Forces new resource) Name of the instance profile. If omitted, Terraform will assign a random, unique name. Conflicts with name_prefix. Can be a string of characters consisting of upper and lowercase alphanumeric characters and these special characters: _, +, =, ,, ., @, -. Spaces are not allowed.
+        # Name of the instance profile. If omitted, Terraform will assign a random, unique name. Conflicts with name_prefix. Can be a string of characters consisting of upper and lowercase alphanumeric characters and these special characters: _, +, =, ,, ., @, -. Spaces are not allowed.
         name = string
-        # (Optional, default "/") Path to the instance profile. For more information about paths, see IAM Identifiers in the IAM User Guide. Can be a string of characters consisting of either a forward slash (/) by itself or a string that must begin and end with forward slashes. Can include any ASCII character from the ! (\u0021) through the DEL character (\u007F), including most punctuation characters, digits, and upper and lowercase letters.
+        # Path to the instance profile. For more information about paths, see IAM Identifiers in the IAM User Guide. Can be a string of characters consisting of either a forward slash (/) by itself or a string that must begin and end with forward slashes. Can include any ASCII character from the ! (\u0021) through the DEL character (\u007F), including most punctuation characters, digits, and upper and lowercase letters.
         path = string
         }
       )
     }
   )
-  description = "(Required) Provides an IAM instance profile."
+  description = "(Optional) Provides an IAM instance profile."
   default = {
     eks_worker_node = {
       name = "eks-worker-node-profile"
@@ -83,6 +83,6 @@ variable "aws_iam_instance_profile" {
 }
 variable "tags" {
   type        = map(any)
-  description = "Key-value mapping of tags for the IAM role"
+  description = "(Optional) Key-value mapping of tags for the IAM role"
   default     = null
 }

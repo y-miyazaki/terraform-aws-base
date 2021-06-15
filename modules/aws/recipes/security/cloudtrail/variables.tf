@@ -11,25 +11,35 @@ variable "aws_kms_key" {
     {
       cloudtrail = object(
         {
-          description             = string
+          # The description of the key as viewed in AWS console.
+          description = string
+          # Duration in days after which the key is deleted after destruction of the resource, must be between 7 and 30 days. Defaults to 30 days.
           deletion_window_in_days = number
-          is_enabled              = bool
-          enable_key_rotation     = bool
-          alias_name              = string
+          # Specifies whether the key is enabled. Defaults to true.
+          is_enabled = bool
+          # Specifies whether key rotation is enabled. Defaults to true.
+          enable_key_rotation = bool
+          # The display name of the alias. The name must start with the word "alias" followed by a forward slash (alias/)
+          alias_name = string
         }
       )
       sns = object(
         {
-          description             = string
+          # The description of the key as viewed in AWS console.
+          description = string
+          # Duration in days after which the key is deleted after destruction of the resource, must be between 7 and 30 days. Defaults to 30 days.
           deletion_window_in_days = number
-          is_enabled              = bool
-          enable_key_rotation     = bool
-          alias_name              = string
+          # Specifies whether the key is enabled. Defaults to true.
+          is_enabled = bool
+          # Specifies whether key rotation is enabled. Defaults to true.
+          enable_key_rotation = bool
+          # The display name of the alias. The name must start with the word "alias" followed by a forward slash (alias/)
+          alias_name = string
         }
       )
     }
   )
-  description = "(Required) The resource of aws_kms_key."
+  description = "(Optional) The resource of aws_kms_key."
   default = {
     cloudtrail = {
       description             = "This key used for CloudTrail."
@@ -50,67 +60,90 @@ variable "aws_kms_key" {
 variable "aws_sns_topic" {
   type = object(
     {
-      name                                     = string
-      name_prefix                              = string
-      display_name                             = string
-      delivery_policy                          = string
-      application_success_feedback_role_arn    = string
+      # The name of the topic. Topic names must be made up of only uppercase and lowercase ASCII letters, numbers, underscores, and hyphens, and must be between 1 and 256 characters long. For a FIFO (first-in-first-out) topic, the name must end with the .fifo suffix. If omitted, Terraform will assign a random, unique name. Conflicts with name_prefix
+      name = string
+      # Creates a unique name beginning with the specified prefix. Conflicts with name
+      name_prefix = string
+      # The display name for the topic
+      display_name = string
+      # The fully-formed AWS policy as JSON. For more information about building AWS IAM policy documents with Terraform, see the AWS IAM Policy Document Guide.
+      delivery_policy = string
+      # The IAM role permitted to receive success feedback for this topic
+      application_success_feedback_role_arn = string
+      # Percentage of success to sample
       application_success_feedback_sample_rate = string
-      application_failure_feedback_role_arn    = string
-      http_success_feedback_role_arn           = string
-      http_success_feedback_sample_rate        = string
-      http_failure_feedback_role_arn           = string
-      lambda_success_feedback_role_arn         = string
-      lambda_success_feedback_sample_rate      = string
-      lambda_failure_feedback_role_arn         = string
-      sqs_success_feedback_role_arn            = string
-      sqs_success_feedback_sample_rate         = string
-      sqs_failure_feedback_role_arn            = string
+      # IAM role for failure feedback
+      application_failure_feedback_role_arn = string
+      # The IAM role permitted to receive success feedback for this topic
+      http_success_feedback_role_arn = string
+      # Percentage of success to sample
+      http_success_feedback_sample_rate = string
+      # IAM role for failure feedback
+      http_failure_feedback_role_arn = string
+      # The IAM role permitted to receive success feedback for this topic
+      lambda_success_feedback_role_arn = string
+      # Percentage of success to sample
+      lambda_success_feedback_sample_rate = string
+      # IAM role for failure feedback
+      lambda_failure_feedback_role_arn = string
+      # The IAM role permitted to receive success feedback for this topic
+      sqs_success_feedback_role_arn = string
+      # Percentage of success to sample
+      sqs_success_feedback_sample_rate = string
+      # IAM role for failure feedback
+      sqs_failure_feedback_role_arn = string
     }
   )
   description = "(Required) The resource of aws_sns_topic."
-  default     = null
 }
 variable "aws_sns_topic_subscription" {
   type = object(
     {
-      protocol                        = string
-      endpoint                        = string
-      endpoint_auto_confirms          = bool
+      # Endpoint to send data to. The contents vary with the protocol. See details below.
+      endpoint = string
+      # Protocol to use. Valid values are: sqs, sms, lambda, firehose, and application. Protocols email, email-json, http and https are also valid but partially supported. See details below.
+      protocol = string
+      # Integer indicating number of minutes to wait in retrying mode for fetching subscription arn before marking it as failure. Only applicable for http and https protocols. Default is 1.
       confirmation_timeout_in_minutes = number
-      raw_message_delivery            = string
-      filter_policy                   = string
-      delivery_policy                 = string
-      redrive_policy                  = string
+      # JSON String with the delivery policy (retries, backoff, etc.) that will be used in the subscription - this only applies to HTTP/S subscriptions. Refer to the SNS docs for more details.
+      delivery_policy = string
+      # Whether the endpoint is capable of auto confirming subscription (e.g., PagerDuty). Default is false.
+      endpoint_auto_confirms = bool
+      # JSON String with the filter policy that will be used in the subscription to filter messages seen by the target resource. Refer to the SNS docs for more details.
+      filter_policy = string
+      # Whether to enable raw message delivery (the original message is directly passed, not wrapped in JSON with the original message in the message property). Default is false.
+      raw_message_delivery = string
+      # JSON String with the redrive policy that will be used in the subscription. Refer to the SNS docs for more details.
+      redrive_policy = string
     }
   )
   description = "(Required) The resource of aws_sns_topic_subscription."
-  default     = null
 }
 variable "aws_cloudwatch_log_group" {
   type = object(
     {
-      name              = string
+      # The name of the log group. If omitted, Terraform will assign a random, unique name.
+      name = string
+      # Specifies the number of days you want to retain log events in the specified log group. Possible values are: 1, 3, 5, 7, 14, 30, 60, 90, 120, 150, 180, 365, 400, 545, 731, 1827, 3653, and 0. If you select 0, the events in the log group are always retained and never expire.
       retention_in_days = number
     }
   )
   description = "(Required) The resource of aws_cloudwatch_log_group."
-  default     = null
 }
 variable "aws_iam_role" {
   type = object(
     {
-      # (Optional) Description of the role.
+      # Description of the role.
       description = string
-      # (Optional, Forces new resource) Friendly name of the role. If omitted, Terraform will assign a random, unique name. See IAM Identifiers for more information.
+      # Friendly name of the role. If omitted, Terraform will assign a random, unique name. See IAM Identifiers for more information.
       name = string
-      # (Optional) Path to the role. See IAM Identifiers for more information.
+      # Path to the role. See IAM Identifiers for more information.
       path = string
     }
   )
-  description = "(Required) The resource of aws_iam_role."
+  description = "(Optional) The resource of aws_iam_role."
   default = {
-    description = null
+    description = "Role for CloudTrail."
     name        = "security-cloudtrail-role"
     path        = "/"
   }
@@ -118,17 +151,17 @@ variable "aws_iam_role" {
 variable "aws_iam_policy" {
   type = object(
     {
-      # (Optional) Description of the IAM policy.
+      # Description of the IAM policy.
       description = string
-      # (Optional, Forces new resource) Friendly name of the role. If omitted, Terraform will assign a random, unique name. See IAM Identifiers for more information.
+      # Friendly name of the role. If omitted, Terraform will assign a random, unique name. See IAM Identifiers for more information.
       name = string
-      # (Optional) Path to the role. See IAM Identifiers for more information.
+      # Path to the role. See IAM Identifiers for more information.
       path = string
     }
   )
-  description = "(Required) The resource of aws_iam_policy."
+  description = "(Optional) The resource of aws_iam_policy."
   default = {
-    description = null
+    description = "Policy for CloudTrail."
     name        = "security-cloudtrail-policy"
     path        = "/"
   }
@@ -136,35 +169,73 @@ variable "aws_iam_policy" {
 variable "aws_s3_bucket" {
   type = object(
     {
-      bucket                               = string
-      acl                                  = string
-      force_destroy                        = bool
-      versioning                           = list(any)
-      logging                              = list(any)
-      lifecycle_rule                       = list(any)
-      replication_configuration            = list(any)
+      # The name of the bucket. If omitted, Terraform will assign a random, unique name. Must be less than or equal to 63 characters in length.
+      bucket = string
+      # A boolean that indicates all objects (including any locked objects) should be deleted from the bucket so that the bucket can be destroyed without error. These objects are not recoverable.
+      force_destroy = bool
+      # A state of versioning
+      versioning = list(any)
+      # A settings of bucket logging
+      logging = list(any)
+      # A configuration of object lifecycle management
+      lifecycle_rule = list(any)
+      # A configuration of replication configuration
+      replication_configuration = list(any)
+      # A configuration of server-side encryption configuration
       server_side_encryption_configuration = list(any)
-      object_lock_configuration            = list(any)
+      # A configuration of S3 object locking
+      object_lock_configuration = list(any)
     }
   )
   description = "(Required) The resource of aws_sns_topic_subscription."
-  default     = null
 }
 variable "aws_cloudtrail" {
   type = object(
     {
-      name                          = string
-      enable_logging                = bool
+      # Name of the trail.
+      name = string
+      # Enables logging for the trail. Defaults to true. Setting this to false will pause logging.
+      enable_logging = bool
+      # Whether the trail is publishing events from global services such as IAM to the log files. Defaults to true.
       include_global_service_events = bool
-      is_multi_region_trail         = bool
-      is_organization_trail         = bool
-      enable_log_file_validation    = bool
-      event_selector                = list(any)
-      insight_selector              = list(any)
+      # Whether the trail is created in the current region or in all regions. Defaults to false.
+      is_multi_region_trail = bool
+      # Whether the trail is an AWS Organizations trail. Organization trails log events for the master account and all member accounts. Can only be created in the organization master account. Defaults to false.
+      is_organization_trail = bool
+      # Enables logging for the trail. Defaults to true. Setting this to false will pause logging.
+      enable_log_file_validation = bool
+      # Configuration block of an event selector for enabling data event logging. See details below. Please note the CloudTrail limits when configuring these.
+      event_selector = list(any)
+      # Configuration block for identifying unusual operational activity. See details below.
+      insight_selector = list(any)
     }
   )
-  description = "(Required) The resource of aws_cloudtrail."
-  default     = null
+  description = "(Optional) The resource of aws_cloudtrail."
+  default = {
+    name                          = "cloudtrail"
+    enable_logging                = true
+    include_global_service_events = true
+    is_multi_region_trail         = true
+    is_organization_trail         = false
+    enable_log_file_validation    = true
+    event_selector = [
+      {
+        read_write_type           = "All"
+        include_management_events = true
+        data_resource = [
+          {
+            type   = "AWS::S3::Object"
+            values = ["arn:aws:s3:::"]
+          }
+        ]
+      }
+    ]
+    insight_selector = [
+      {
+        insight_type = "ApiCallRateInsight"
+      }
+    ]
+  }
 }
 variable "cis_name_prefix" {
   type        = string
@@ -173,12 +244,10 @@ variable "cis_name_prefix" {
 variable "account_id" {
   type        = string
   description = "(Required) AWS account ID for member account."
-  default     = null
 }
 variable "region" {
   type        = string
   description = "(Required) The region name."
-  default     = null
 }
 variable "user" {
   type        = string

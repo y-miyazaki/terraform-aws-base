@@ -3,7 +3,7 @@
 #--------------------------------------------------------------
 variable "is_enabled" {
   type        = bool
-  description = "(Optional) A boolean flag to enable/disable settings of Lambda. Defaults true."
+  description = "(Optional) A boolean flag to enable/disable settings of ElastiCache. Defaults true."
   default     = true
 }
 variable "db_instance_class" {
@@ -18,23 +18,23 @@ variable "period" {
 }
 variable "threshold" {
   type = object({
-    # (Required) AuthenticationFailures threshold (unit=Count)
+    # AuthenticationFailures threshold (unit=Count)
     authentication_failures = number
-    # (Required) CacheHitRate threshold (unit=Percent)
+    # CacheHitRate threshold (unit=Percent)
     cache_hit_rate = number
-    # (Required) CommandAuthorizationFailures threshold (unit=Count)
+    # CommandAuthorizationFailures threshold (unit=Count)
     command_authorization_failures = number
-    # (Required) CurrConnections threshold (unit=Count)
+    # CurrConnections threshold (unit=Count)
     curr_connections = number
-    # (Required) DatabaseMemoryUsagePercentage threshold (unit=Percent)
+    # DatabaseMemoryUsagePercentage threshold (unit=Percent)
     database_memory_usage_percentage = number
-    # (Required) EngineCPUUtilization threshold (unit=Percent)
+    # EngineCPUUtilization threshold (unit=Percent)
     engine_cpu_utilization = number
-    # (Required) KeyAuthorizationFailures threshold (unit=Count)
+    # KeyAuthorizationFailures threshold (unit=Count)
     key_authorization_failures = number
-    # (Required) NewConnections threshold (unit=Count)
+    # NewConnections threshold (unit=Count)
     new_connections = number
-    # (Required) SwapUsage threshold (unit=Bytes)
+    # SwapUsage threshold (unit=Bytes)
     swap_usage = number
     }
   )

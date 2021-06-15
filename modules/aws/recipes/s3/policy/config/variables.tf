@@ -3,16 +3,13 @@
 #--------------------------------------------------------------
 variable "bucket" {
   type        = string
-  description = "The S3 Bucket ID."
-  default     = null
+  description = "(Required) The S3 Bucket ID."
 }
 variable "bucket_arn" {
   type        = string
-  description = "The S3 bucket arn."
-  default     = null
+  description = "(Required) The S3 bucket arn."
 }
 variable "account_id" {
   type        = number
   description = "(Required) AWS account ID for member account."
-  default     = null
 }

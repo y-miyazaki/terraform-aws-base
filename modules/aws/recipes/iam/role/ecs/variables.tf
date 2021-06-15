@@ -5,48 +5,48 @@ variable "aws_iam_role" {
   type = object(
     {
       ecs = object({
-        # (Optional) Description of the role.
+        # Description of the role.
         description = string
-        # (Optional, Forces new resource) Friendly name of the role. If omitted, Terraform will assign a random, unique name. See IAM Identifiers for more information.
+        # Friendly name of the role. If omitted, Terraform will assign a random, unique name. See IAM Identifiers for more information.
         name = string
-        # (Optional) Path to the role. See IAM Identifiers for more information.
+        # Path to the role. See IAM Identifiers for more information.
         path = string
         }
       )
       ecs_tasks = object({
-        # (Optional) Description of the role.
+        # Description of the role.
         description = string
-        # (Optional, Forces new resource) Friendly name of the role. If omitted, Terraform will assign a random, unique name. See IAM Identifiers for more information.
+        # Friendly name of the role. If omitted, Terraform will assign a random, unique name. See IAM Identifiers for more information.
         name = string
-        # (Optional) Path to the role. See IAM Identifiers for more information.
+        # Path to the role. See IAM Identifiers for more information.
         path = string
         }
       )
       events = object({
-        # (Optional) Description of the role.
+        # Description of the role.
         description = string
-        # (Optional, Forces new resource) Friendly name of the role. If omitted, Terraform will assign a random, unique name. See IAM Identifiers for more information.
+        # Friendly name of the role. If omitted, Terraform will assign a random, unique name. See IAM Identifiers for more information.
         name = string
-        # (Optional) Path to the role. See IAM Identifiers for more information.
+        # Path to the role. See IAM Identifiers for more information.
         path = string
         }
       )
     }
   )
-  description = "(Required) Provides an IAM role."
+  description = "(Optional) Provides an IAM role."
   default = {
     ecs = {
-      description = null
+      description = "Role for ECS."
       name        = "ecs-role"
       path        = "/"
     }
     ecs_tasks = {
-      description = null
+      description = "Role for ECS Task."
       name        = "ecs-tasks-role"
       path        = "/"
     }
     events = {
-      description = null
+      description = "Role for Events."
       name        = "events-role"
       path        = "/"
     }
@@ -57,20 +57,20 @@ variable "aws_iam_policy" {
   type = object(
     {
       events = object({
-        # (Optional, Forces new resource) Description of the IAM policy.
+        # Description of the IAM policy.
         description = string
-        # (Optional, Forces new resource) The name of the policy. If omitted, Terraform will assign a random, unique name.
+        # The name of the policy. If omitted, Terraform will assign a random, unique name.
         name = string
-        # (Optional, default "/") Path in which to create the policy. See IAM Identifiers for more information.
+        # Path in which to create the policy. See IAM Identifiers for more information.
         path = string
         }
       )
     }
   )
-  description = "(Required) Provides an IAM policy."
+  description = "(Optional) Provides an IAM policy."
   default = {
     events = {
-      description = null
+      description = "Policy for ECS."
       name        = "ecs-policy"
       path        = "/"
     }
@@ -79,6 +79,6 @@ variable "aws_iam_policy" {
 }
 variable "tags" {
   type        = map(any)
-  description = "Key-value mapping of tags for the IAM role"
+  description = "(Optional) Key-value mapping of tags for the IAM role"
   default     = null
 }

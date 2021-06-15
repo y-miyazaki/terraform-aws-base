@@ -201,7 +201,6 @@ resource "aws_cloudwatch_metric_alarm" "origin_latency" {
   tags                = var.tags
 }
 
-
 #--------------------------------------------------------------
 # For CloudFront create monitoring subscription
 #--------------------------------------------------------------
