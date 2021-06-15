@@ -12,10 +12,10 @@ variable "aws_iam_role" {
       path = string
     }
   )
-  description = "(Required) Provides an IAM role."
+  description = "(Optional) Provides an IAM role."
   default = {
-    description = null
-    name        = "config-role"
+    description = "Role for AWS Config."
+    name        = "security-config-role"
     path        = "/"
   }
 }
@@ -30,9 +30,9 @@ variable "aws_iam_policy" {
       path = string
     }
   )
-  description = "(Required) Provides an IAM policy."
+  description = "(Optional) Provides an IAM policy."
   default = {
-    description = null
+    description = "Policy for AWS Config."
     name        = "config-policy"
     path        = "/"
   }

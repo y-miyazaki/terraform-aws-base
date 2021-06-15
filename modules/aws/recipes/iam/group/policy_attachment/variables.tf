@@ -4,9 +4,9 @@
 variable "aws_iam_group_policy_attachment" {
   type = list(object(
     {
-      # (Required) - The group the policy should be applied to
+      # The group the policy should be applied to
       group = string
-      # (Required) - The ARN of the policy you want to apply
+      # The ARN of the policy you want to apply
       policy_arn = string
     }
     )

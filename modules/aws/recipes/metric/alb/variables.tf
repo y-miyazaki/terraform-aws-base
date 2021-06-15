@@ -3,7 +3,7 @@
 #--------------------------------------------------------------
 variable "is_enabled" {
   type        = bool
-  description = "(Optional) A boolean flag to enable/disable settings of Lambda. Defaults true."
+  description = "(Optional) A boolean flag to enable/disable settings of ALB. Defaults true."
   default     = true
 }
 variable "period" {
@@ -13,25 +13,25 @@ variable "period" {
 }
 variable "threshold" {
   type = object({
-    # (Required) ActiveConnectionCount threshold (unit=Count)
+    # ActiveConnectionCount threshold (unit=Count)
     active_connection_count = number
-    # (Required) ClientTLSNegotiationErrorCount threshold (unit=Count)
+    # ClientTLSNegotiationErrorCount threshold (unit=Count)
     client_tls_negotiation_error_count = number
-    # (Required) ConsumedLCUs threshold (unit=Count)
+    # ConsumedLCUs threshold (unit=Count)
     consumed_lcus = number
-    # (Required) HTTPCode_4XX_Count	threshold (unit=Count)
+    # HTTPCode_4XX_Count	threshold (unit=Count)
     httpcode_4xx_count = number
-    # (Required) HTTPCode_5XX_Count	threshold (unit=Count)
+    # HTTPCode_5XX_Count	threshold (unit=Count)
     httpcode_5xx_count = number
-    # (Required) HTTPCode_ELB_4XX_Count	threshold (unit=Count)
+    # HTTPCode_ELB_4XX_Count	threshold (unit=Count)
     httpcode_elb_4xx_count = number
-    # (Required) HTTPCode_ELB_5XX_Count	threshold (unit=Count)
+    # HTTPCode_ELB_5XX_Count	threshold (unit=Count)
     httpcode_elb_5xx_count = number
-    # (Required) TargetResponseTime	threshold (unit=)
+    # TargetResponseTime	threshold (unit=)
     target_response_time = number
-    # (Required) TargetTLSNegotiationErrorCount	threshold (unit=Count)
+    # TargetTLSNegotiationErrorCount	threshold (unit=Count)
     target_tls_negotiation_error_count = number
-    # (Required) UnHealthyHostCount	threshold (unit=Count)
+    # UnHealthyHostCount	threshold (unit=Count)
     unhealthy_host_count = number
     }
   )

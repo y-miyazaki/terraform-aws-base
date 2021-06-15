@@ -3,23 +3,23 @@
 #--------------------------------------------------------------
 variable "is_enabled" {
   type        = bool
-  description = "(Required) A boolean flag to enable/disable Trusted Advisor. Defaults true."
+  description = "(Optional) A boolean flag to enable/disable Trusted Advisor. Defaults true."
   default     = true
 }
 variable "aws_cloudwatch_event_rule" {
   type = object(
     {
-      # (Required) The name of the rule. If omitted, Terraform will assign a random, unique name. Conflicts with name_prefix.
+      # The name of the rule. If omitted, Terraform will assign a random, unique name. Conflicts with name_prefix.
       name = string
-      # (Optional) The scheduling expression. For example, cron(0 20 * * ? *) or rate(5 minutes). At least one of schedule_expression or event_pattern is required. Can only be used on the default event bus.
+      # The scheduling expression. For example, cron(0 20 * * ? *) or rate(5 minutes). At least one of schedule_expression or event_pattern is required. Can only be used on the default event bus.
       schedule_expression = string
-      # (Optional) The description of the rule.
+      # The description of the rule.
       description = string
-      # (Optional) Whether the rule should be enabled (defaults to true).
+      # Whether the rule should be enabled (defaults to true).
       is_enabled = bool
     }
   )
-  description = "(Required) Provides an EventBridge Rule resource."
+  description = "(Optional) Provides an EventBridge Rule resource."
   default = {
     name                = "trusted-advisor-cloudwatch-event-rule"
     schedule_expression = "cron(*/5 * * * ? *)"
@@ -36,7 +36,6 @@ variable "aws_cloudwatch_event_target" {
     }
   )
   description = "(Required) Provides an EventBridge Target resource."
-  default     = null
 }
 variable "tags" {
   type        = map(any)

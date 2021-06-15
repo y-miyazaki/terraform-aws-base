@@ -1,9 +1,9 @@
 #--------------------------------------------------------------
-# module variables(template_file)
+# module variables
 #--------------------------------------------------------------
 variable "template" {
   type        = string
-  description = "(Required) The contents of the template, as a string using Terraform template syntax. Use the file function to load the template source from a separate file on disk."
+  description = "(Optional) The contents of the template, as a string using Terraform template syntax. Use the file function to load the template source from a separate file on disk."
   default     = null
 }
 variable "vars" {
@@ -11,9 +11,6 @@ variable "vars" {
   description = "(Optional) Variables for interpolation within the template. Note that variables must all be primitives. Direct references to lists or maps will cause a validation error."
   default     = null
 }
-#--------------------------------------------------------------
-# module variables(aws_iam_policy_document)
-#--------------------------------------------------------------
 variable "policy_id" {
   type        = string
   description = "(Optional) - An ID for the policy document."
@@ -39,7 +36,7 @@ variable "ver" {
   default     = "2012-10-17"
 }
 #--------------------------------------------------------------
-# module variables(aws_iam_policy)
+# module variables
 #--------------------------------------------------------------
 variable "description" {
   type        = string

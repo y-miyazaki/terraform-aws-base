@@ -120,6 +120,19 @@ budgets = {
   }
 }
 #--------------------------------------------------------------
+# Compute Optimizer
+# AWS Compute Optimizer recommends optimal AWS resources for your workloads to reduce
+# costs and improve performance by using machine learning to analyze historical utilization metrics.
+# Over-provisioning resources can lead to unnecessary infrastructure cost, and under-provisioning resources
+# can lead to poor application performance. Compute Optimizer helps you choose optimal configurations
+# for three types of AWS resources: Amazon EC2 instances, Amazon EBS volumes, and AWS Lambda functions,
+# based on your utilization data.
+#--------------------------------------------------------------
+compute_optimizer = {
+  // TODO: need to set is_enabled for settings of Compute Optimizer.
+  is_enabled = true
+}
+#--------------------------------------------------------------
 # Health
 #--------------------------------------------------------------
 health = {
@@ -546,7 +559,6 @@ PATTERN
   ]
   aws_s3_bucket = {
     bucket        = "aws-cloudtrail"
-    acl           = null
     force_destroy = true
     versioning = [
       {
@@ -641,13 +653,24 @@ PATTERN
     redrive_policy                  = null
   }
   aws_cloudtrail = {
-    name                          = "management-events"
+    name                          = "cloudtrail"
     enable_logging                = true
     include_global_service_events = true
     is_multi_region_trail         = true
     is_organization_trail         = false
     enable_log_file_validation    = true
-    event_selector                = []
+    event_selector = [
+      {
+        read_write_type           = "All"
+        include_management_events = true
+        data_resource = [
+          {
+            type   = "AWS::S3::Object"
+            values = ["arn:aws:s3:::"]
+          }
+        ]
+      }
+    ]
     insight_selector = [
       {
         insight_type = "ApiCallRateInsight"
@@ -671,14 +694,13 @@ security_config = {
     ]
   }
   aws_iam_role = {
-    description = null
+    description = "Role for AWS Config."
     name        = "security-config-role"
     path        = "/"
   }
   aws_s3_bucket = {
     # Random suffix is automatically added to the bucket name.
     bucket        = "aws-config"
-    acl           = "private"
     force_destroy = true
     versioning = [
       {

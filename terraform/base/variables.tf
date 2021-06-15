@@ -4,6 +4,7 @@ variable "name_prefix" {}
 variable "region" {}
 variable "resourcegroups_group" {}
 variable "budgets" {}
+variable "compute_optimizer" {}
 variable "health" {}
 variable "trusted_advisor" {}
 variable "iam" {}

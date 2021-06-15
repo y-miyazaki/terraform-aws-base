@@ -3,7 +3,7 @@
 #--------------------------------------------------------------
 variable "is_enabled" {
   type        = bool
-  description = "(Optional) A boolean flag to enable/disable settings of Lambda. Defaults true."
+  description = "(Optional) A boolean flag to enable/disable settings of EC2. Defaults true."
   default     = true
 }
 variable "period" {
@@ -13,13 +13,13 @@ variable "period" {
 }
 variable "threshold" {
   type = object({
-    # (Required) CPUUtilization threshold (unit=Percent)
+    # CPUUtilization threshold (unit=Percent)
     cpu_utilization = number
-    # (Required) MetadataNoToken threshold (unit=Count)
+    # MetadataNoToken threshold (unit=Count)
     metadata_no_token = number
-    # (Required) CPUCreditUsage threshold (unit=Count)
+    # CPUCreditUsage threshold (unit=Count)
     cpu_credit_usage = number
-    # (Required) StatusCheckFailed threshold (unit=Count)
+    # StatusCheckFailed threshold (unit=Count)
     status_check_failed = number
     }
   )

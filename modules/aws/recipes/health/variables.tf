@@ -15,7 +15,7 @@ variable "aws_cloudwatch_event_rule" {
       description = string
     }
   )
-  description = "(Required) Provides an EventBridge Rule resource."
+  description = "(Optional) Provides an EventBridge Rule resource."
   default = {
     name        = "health-cloudwatch-event-rule"
     description = "This cloudwatch event used for Health."
@@ -31,7 +31,6 @@ variable "aws_cloudwatch_event_target" {
     }
   )
   description = "(Required) Provides an EventBridge Target resource."
-  default     = null
 }
 variable "tags" {
   type        = map(any)

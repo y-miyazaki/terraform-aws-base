@@ -4,17 +4,17 @@
 variable "aws_iam_role" {
   type = object(
     {
-      # (Optional) Description of the role.
+      # Description of the role.
       description = string
-      # (Optional, Forces new resource) Friendly name of the role. If omitted, Terraform will assign a random, unique name. See IAM Identifiers for more information.
+      # Friendly name of the role. If omitted, Terraform will assign a random, unique name. See IAM Identifiers for more information.
       name = string
-      # (Optional) Path to the role. See IAM Identifiers for more information.
+      # Path to the role. See IAM Identifiers for more information.
       path = string
     }
   )
-  description = "(Required) Provides an IAM role."
+  description = "(Optional) Provides an IAM role."
   default = {
-    description = null
+    description = "Role for EC2."
     name        = "ec2-role"
     path        = "/"
   }
@@ -28,7 +28,7 @@ variable "aws_iam_instance_profile" {
       path = string
     }
   )
-  description = "(Required) Provides an IAM instance profile."
+  description = "(Optional) Provides an IAM instance profile."
   default = {
     name = "ec2-profile"
     path = "/"
@@ -36,6 +36,6 @@ variable "aws_iam_instance_profile" {
 }
 variable "tags" {
   type        = map(any)
-  description = "Key-value mapping of tags for the IAM role"
+  description = "(Optional) Key-value mapping of tags for the IAM role"
   default     = null
 }
