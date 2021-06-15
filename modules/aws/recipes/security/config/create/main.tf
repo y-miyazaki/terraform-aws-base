@@ -270,7 +270,6 @@ data "aws_iam_policy_document" "s3" {
     principals {
       type = "AWS"
       identifiers = [
-        "arn:aws:iam::${var.account_id}:role/aws-service-role/config.amazonaws.com/AWSServiceRoleForConfig",
         "arn:aws:sts::${var.account_id}:assumed-role/${aws_iam_role.config[0].name}/AWSConfig-BucketConfigCheck",
       ]
     }
@@ -302,6 +301,7 @@ data "aws_iam_policy_document" "s3" {
     }
   }
   depends_on = [
+    aws_iam_role.config,
     aws_s3_bucket.this,
   ]
 }
