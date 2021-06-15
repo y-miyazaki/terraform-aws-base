@@ -237,6 +237,20 @@ data "aws_iam_policy_document" "s3" {
     ]
   }
   statement {
+    sid    = "AWSConfigBucketExistenceCheck"
+    effect = "Allow"
+    principals {
+      type        = "Service"
+      identifiers = ["config.amazonaws.com"]
+    }
+    actions = [
+      "s3:ListBucket"
+    ]
+    resources = [
+      aws_s3_bucket.this[0].arn
+    ]
+  }
+  statement {
     sid    = "AWSConfigBucketDelivery"
     effect = "Allow"
     principals {
