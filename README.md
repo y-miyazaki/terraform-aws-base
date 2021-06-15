@@ -11,15 +11,16 @@ In this repository, we use Terraform to build the baseline configuration.
   - [Required](#required)
 - Functions
   - Security
-    - [Security Hub](#security-hub)
-    - [Config](#config)
     - [CloudTrail](#cloudtrail)
+    - [Config](#config)
     - [GuardDuty](#guardduty)
+    - [Security Hub](#security-hub)
   - Other
-    - [Resource Groups](#resource-groups)
-    - [IAM User and Group](#iam-user-and-group)
-    - [IAM group policy](#iam-group-policy)
     - [Budgets](#budgets)
+    - [Compute Optimizer](#compute-optimizer)
+    - [IAM group policy](#iam-group-policy)
+    - [IAM User and Group](#iam-user-and-group)
+    - [Resource Groups](#resource-groups)
     - [Trusted Advisor](#trusted-advisor)
 - Settings
   - [Initial setting](#initial-setting)
@@ -34,6 +35,33 @@ In this repository, we use Terraform to build the baseline configuration.
   For notifications, you will need Slack, OAuthToken, and ChannelID.  
   https://slack.com/  
   https://slack.dev/node-slack-sdk/getting-started
+
+## CloudTrail
+
+AWS CloudTrail is a service for governance, compliance, operational and risk auditing of AWS accounts.CloudTrail enables you to log, continuously monitor and retain account activity across your AWS infrastructure.
+
+After configuring the Slack channel, adding the Slack app, and setting the OAuthToken, Slack notifications will be sent.  
+You will be notified with a message similar to the following.
+
+![CloudTrail](image/slack_cloudtrail.png)
+
+## Config
+
+AWS Config is a service that allows you to evaluate, audit, and review the configuration of AWS resources. Config continuously monitors and records the configuration of AWS resources and automatically evaluates the recorded configuration against the desired settings. Config allows you to review configuration and association changes between AWS resources, examine detailed resource configuration history, and verify overall compliance with settings specified in company guidelines. This simplifies compliance audits, security analysis, change management, and operational troubleshooting.
+
+After configuring the Slack channel, adding the Slack app, and setting the OAuthToken, Slack notifications will be sent.  
+You will be notified with a message similar to the following.
+
+![Config](image/slack_config.png)
+
+## GuardDuty
+
+Amazon GuardDuty is a threat detection service that continuously monitors for malicious or unauthorized activity in order to protect AWS accounts, workloads, and data stored in Amazon S3.
+
+After configuring the Slack channel, adding the Slack app, and setting the OAuthToken, Slack notifications will be sent.  
+You will be notified with a message similar to the following.
+
+![GuardDuty](image/slack_guardduty.png)
 
 ## Security Hub
 
@@ -50,38 +78,23 @@ The following is the security score when only this Terraform is applied.
 
 ![SecurityHub Score](image/security_hub_security_score.png)
 
-## Config
+## Budgets
 
-AWS Config is a service that allows you to evaluate, audit, and review the configuration of AWS resources. Config continuously monitors and records the configuration of AWS resources and automatically evaluates the recorded configuration against the desired settings. Config allows you to review configuration and association changes between AWS resources, examine detailed resource configuration history, and verify overall compliance with settings specified in company guidelines. This simplifies compliance audits, security analysis, change management, and operational troubleshooting.
+AWS Budgets provides the ability to set up custom budgets and be alerted when costs or usage exceed (or are expected to exceed) the budgeted amount or amounts.
 
-After configuring the Slack channel, adding the Slack app, and setting the OAuthToken, Slack notifications will be sent.  
-You will be notified with a message similar to the following.
+After configuring the Slack channel, adding the Slack app, and setting the OAuthToken, you will receive Slack notifications at the specified time (default is 18:00 JST daily). An email will also be sent if the specified cost limit is exceeded.
 
-![Config](image/slack_config.png)
+![Budgets](image/slack_budgets.png)
 
-## CloudTrail
+## Compute Optimizer
 
-AWS CloudTrail is a service for governance, compliance, operational and risk auditing of AWS accounts.CloudTrail enables you to log, continuously monitor and retain account activity across your AWS infrastructure.
+AWS Compute Optimizer recommends optimal AWS resources for your workloads to reduce costs and improve performance by using machine learning to analyze historical utilization metrics. Over-provisioning resources can lead to unnecessary infrastructure cost, and under-provisioning resources can lead to poor application performance. Compute Optimizer helps you choose optimal configurations for three types of AWS resources: Amazon EC2 instances, Amazon EBS volumes, and AWS Lambda functions, based on your utilization data.
 
-After configuring the Slack channel, adding the Slack app, and setting the OAuthToken, Slack notifications will be sent.  
-You will be notified with a message similar to the following.
+## IAM group policy
 
-![CloudTrail](image/slack_cloudtrail.png)
+You can set the policy to assign to IAM groups. You can also make the virtual MFA setting mandatory as a base policy.
 
-## GuardDuty
-
-Amazon GuardDuty is a threat detection service that continuously monitors for malicious or unauthorized activity in order to protect AWS accounts, workloads, and data stored in Amazon S3.
-
-After configuring the Slack channel, adding the Slack app, and setting the OAuthToken, Slack notifications will be sent.  
-You will be notified with a message similar to the following.
-
-![GuardDuty](image/slack_guardduty.png)
-
-## Resource Groups
-
-Overall, all resources created in Terraform will have the same TAG, and Resource Groups will be filtered by that TAG.
-
-![Resource Groups](image/resource_groups.png)
+![IAM Group Policy](image/iam_group_policy.png)
 
 ## IAM User and Group
 
@@ -90,19 +103,11 @@ You can create an IAM User and Group.
 ![IAM User](image/iam_user.png)
 ![IAM Group](image/iam_group.png)
 
-## IAM group policy
+## Resource Groups
 
-You can set the policy to assign to IAM groups. You can also make the virtual MFA setting mandatory as a base policy.
+Overall, all resources created in Terraform will have the same TAG, and Resource Groups will be filtered by that TAG.
 
-![IAM Group Policy](image/iam_group_policy.png)
-
-## Budgets
-
-AWS Budgets provides the ability to set up custom budgets and be alerted when costs or usage exceed (or are expected to exceed) the budgeted amount or amounts.
-
-After configuring the Slack channel, adding the Slack app, and setting the OAuthToken, you will receive Slack notifications at the specified time (default is 18:00 JST daily). An email will also be sent if the specified cost limit is exceeded.
-
-![Budgets](image/slack_budgets.png)
+![Resource Groups](image/resource_groups.png)
 
 ## Trusted Advisor
 
@@ -277,3 +282,8 @@ This is a description of the S3 bucket that will be created and the data in the 
 | AWS CloudTrail | aws-cloudtrail          | /AWSLogs/{accountID}/CloudTrail/{region}/yyyy/mm/dd             | It is recorded as an event in CloudTrail. Events include actions taken in the AWS Management Console, AWS Command Line Interface.                                                                                                                                                                                                                                                                                                                     | https://docs.aws.amazon.com/awscloudtrail/latest/userguide/get-and-view-cloudtrail-log-files.html                    |
 | AWS Log        | aws-logging             | /CloudTrail                                                     | S3 bucket access log for CloudTrail bucket.                                                                                                                                                                                                                                                                                                                                                                                                           | https://docs.aws.amazon.com/ja_jp/AmazonS3/latest/userguide/ServerLogs.html                                          |
 | AWS Log        | aws-logging-application | /Application                                                    | Application log from CloudWatch Logs.                                                                                                                                                                                                                                                                                                                                                                                                                 |                                                                                                                      |
+
+## Author Information
+
+Author: Yoshiaki Miyazaki  
+Contact: https://github.com/y-miyazaki

@@ -11,15 +11,15 @@ AWS でインフラを構築する際には、どんなプロジェクトでも�
   - [Required](#required)
 - Functions
   - Security
-    - [Security Hub](#security-hub)
-    - [Config](#config)
     - [CloudTrail](#cloudtrail)
+    - [Config](#config)
     - [GuardDuty](#guardduty)
+    - [Security Hub](#security-hub)
   - Other
-    - [Resource Groups](#resource-groups)
-    - [IAM User and Group](#iam-user-and-group)
-    - [IAM group policy](#iam-group-policy)
     - [Budgets](#budgets)
+    - [IAM group policy](#iam-group-policy)
+    - [IAM User and Group](#iam-user-and-group)
+    - [Resource Groups](#resource-groups)
     - [Trusted Advisor](#trusted-advisor)
 - Settings
   - [Initial setting](#initial-setting)
@@ -36,6 +36,33 @@ AWS でインフラを構築する際には、どんなプロジェクトでも�
   https://slack.com/  
   https://slack.dev/node-slack-sdk/getting-started
 
+## CloudTrail
+
+AWS CloudTrail は、AWS アカウントのガバナンス、コンプライアンス、運用監査、リスク監査を行うためのサービスです。CloudTrail を使用すると、AWS インフラストラクチャ全体でアカウントアクティビティをログに記録し、継続的に監視し、保持できます。
+
+Slack チャンネルへの設定・Slack アプリの追加を行い、OAuthToken を設定することで、Slack 通知が行われるようになります。  
+以下のようなメッセージが通知されます。
+
+![CloudTrail](image/slack_cloudtrail.png)
+
+## Config
+
+AWS Config は、AWS リソースの設定を評価、監査、審査できるサービスです。Config では、AWS リソースの設定が継続的にモニタリングおよび記録され、望まれる設定に対する記録された設定の評価を自動的に実行できます。Config を使用すると、AWS リソース間の設定や関連性の変更を確認し、詳細なリソース設定履歴を調べ、社内ガイドラインで指定された設定に対する全体的なコンプライアンスを確認できます。これにより、コンプライアンス監査、セキュリティ分析、変更管理、運用上のトラブルシューティングを簡素化できます。
+
+Slack チャンネルへの設定・Slack アプリの追加を行い、OAuthToken を設定することで、Slack 通知が行われるようになります。  
+以下のようなメッセージが通知されます。
+
+![Config](image/slack_config.png)
+
+## GuardDuty
+
+Amazon GuardDuty は、AWS 　のアカウント、ワークロード、および　 Amazon S3 に保存されたデータを保護するために、悪意のあるアクティビティや不正な動作を継続的にモニタリングする脅威検出サービスです。
+
+Slack チャンネルへの設定・Slack アプリの追加を行い、OAuthToken を設定することで、Slack 通知が行われるようになります。  
+以下のようなメッセージが通知されます。
+
+![GuardDuty](image/slack_guardduty.png)
+
 ## Security Hub
 
 AWS Security Hub では、セキュリティアラートとセキュリティ状況を、すべての AWS アカウントで包括的に確認できます。ファイアウォールとエンドポイントの保護から脆弱性とコンプライアンスに対するスキャナーに至るまで、幅広い高機能なセキュリティツールを自由に利用できます。
@@ -51,38 +78,23 @@ Security Hub で提供されている Security standards の 3 つのセキュ�
 
 ![SecurityHub Score](image/security_hub_security_score.png)
 
-## Config
+## Budgets
 
-AWS Config は、AWS リソースの設定を評価、監査、審査できるサービスです。Config では、AWS リソースの設定が継続的にモニタリングおよび記録され、望まれる設定に対する記録された設定の評価を自動的に実行できます。Config を使用すると、AWS リソース間の設定や関連性の変更を確認し、詳細なリソース設定履歴を調べ、社内ガイドラインで指定された設定に対する全体的なコンプライアンスを確認できます。これにより、コンプライアンス監査、セキュリティ分析、変更管理、運用上のトラブルシューティングを簡素化できます。
+AWS Budgets には、カスタム予算を設定して、コストまたは使用量が予算額や予算量を超えたとき (あるいは、超えると予測されたとき) にアラートを発信できる機能が用意されています。
 
-Slack チャンネルへの設定・Slack アプリの追加を行い、OAuthToken を設定することで、Slack 通知が行われるようになります。  
-以下のようなメッセージが通知されます。
+Slack チャンネルへの設定・Slack アプリの追加を行い、OAuthToken を設定することで、指定の時間（デフォルトは毎日 18:00JST）に Slack 通知が届くようになります。また、指定したコストリミットを超える場合はメールが送信されます。
 
-![Config](image/slack_config.png)
+![Budgets](image/slack_budgets.png)
 
-## CloudTrail
+## Compute Optimizer
 
-AWS CloudTrail は、AWS アカウントのガバナンス、コンプライアンス、運用監査、リスク監査を行うためのサービスです。CloudTrail を使用すると、AWS インフラストラクチャ全体でアカウントアクティビティをログに記録し、継続的に監視し、保持できます。
+AWS Compute Optimizer はワークロードに最適な AWS リソースを推奨し、機械学習を使って過去の使用率メトリクスを分析することで、コストを削減し、パフォーマンスを向上します。リソースを過剰にプロビジョニングすると不要なインフラストラクチャのコストを招く可能性があります。一方、リソースのプロビジョニング不足だとアプリケーションのパフォーマンスが低下する可能性があります。Compute Optimizer は、使用率データに基づいて、Amazon EC2 インスタンス、Amazon EBS ボリューム、AWS Lambda 関数の 3 種類の AWS リソースに最適な構成を選択する場合に役に立ちます。
 
-Slack チャンネルへの設定・Slack アプリの追加を行い、OAuthToken を設定することで、Slack 通知が行われるようになります。  
-以下のようなメッセージが通知されます。
+## IAM group policy
 
-![CloudTrail](image/slack_cloudtrail.png)
+IAM グループに割り振るポリシーを設定することができます。またベースのポリシーとして仮想 MFA 設定を必須とすることもできます。
 
-## GuardDuty
-
-Amazon GuardDuty は、AWS 　のアカウント、ワークロード、および　 Amazon S3 に保存されたデータを保護するために、悪意のあるアクティビティや不正な動作を継続的にモニタリングする脅威検出サービスです。
-
-Slack チャンネルへの設定・Slack アプリの追加を行い、OAuthToken を設定することで、Slack 通知が行われるようになります。  
-以下のようなメッセージが通知されます。
-
-![GuardDuty](image/slack_guardduty.png)
-
-## Resource Groups
-
-全体的に Terraform で作成された resource は全て同一の TAG で、その TAG でフィルタされた Resource Groups が作成されます。
-
-![Resource Groups](image/resource_groups.png)
+![IAM Group Policy](image/iam_group_policy.png)
 
 ## IAM User and Group
 
@@ -91,19 +103,11 @@ IAM User と Group の作成を行うことができます。
 ![IAM User](image/iam_user.png)
 ![IAM Group](image/iam_group.png)
 
-## IAM group policy
+## Resource Groups
 
-IAM グループに割り振るポリシーを設定することができます。またベースのポリシーとして仮想 MFA 設定を必須とすることもできます。
+全体的に Terraform で作成された resource は全て同一の TAG で、その TAG でフィルタされた Resource Groups が作成されます。
 
-![IAM Group Policy](image/iam_group_policy.png)
-
-## Budgets
-
-AWS Budgets には、カスタム予算を設定して、コストまたは使用量が予算額や予算量を超えたとき (あるいは、超えると予測されたとき) にアラートを発信できる機能が用意されています。
-
-Slack チャンネルへの設定・Slack アプリの追加を行い、OAuthToken を設定することで、指定の時間（デフォルトは毎日 18:00JST）に Slack 通知が届くようになります。また、指定したコストリミットを超える場合はメールが送信されます。
-
-![Budgets](image/slack_budgets.png)
+![Resource Groups](image/resource_groups.png)
 
 ## Trusted Advisor
 
@@ -278,3 +282,8 @@ Apply complete! resources: x added, x changed, 0 destroyed.
 | AWS CloudTrail | aws-cloudtrail          | /AWSLogs/{accountID}/CloudTrail/{region}/yyyy/mm/dd             | It is recorded as an event in CloudTrail. Events include actions taken in the AWS Management Console, AWS Command Line Interface.                                                                                                                                                                                                                                                                                                                     | https://docs.aws.amazon.com/awscloudtrail/latest/userguide/get-and-view-cloudtrail-log-files.html                    |
 | AWS Log        | aws-logging             | /CloudTrail                                                     | S3 bucket access log for CloudTrail bucket.                                                                                                                                                                                                                                                                                                                                                                                                           | https://docs.aws.amazon.com/ja_jp/AmazonS3/latest/userguide/ServerLogs.html                                          |
 | AWS Log        | aws-logging-application | /Application                                                    | Application log from CloudWatch Logs.                                                                                                                                                                                                                                                                                                                                                                                                                 |                                                                                                                      |
+
+## Author Information
+
+Author: Yoshiaki Miyazaki  
+Contact: https://github.com/y-miyazaki
