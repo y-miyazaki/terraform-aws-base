@@ -265,6 +265,23 @@ data "aws_iam_policy_document" "s3" {
     ]
   }
   statement {
+    sid    = "AWSConfigBucketDelivery2"
+    effect = "Allow"
+    principals {
+      type = "AWS"
+      identifiers = [
+        "arn:aws:iam::${var.account_id}:role/aws-service-role/config.amazonaws.com/AWSServiceRoleForConfig",
+        "arn:aws:sts::${var.account_id}:assumed-role/${aws_iam_role.config[0].name}/AWSConfig-BucketConfigCheck",
+      ]
+    }
+    actions = [
+      "s3:PutObject"
+    ]
+    resources = [
+      "${aws_s3_bucket.this[0].arn}/AWSLogs/${var.account_id}/Config/*"
+    ]
+  }
+  statement {
     sid    = "AllowSSLRequestsOnly"
     effect = "Deny"
     principals {
