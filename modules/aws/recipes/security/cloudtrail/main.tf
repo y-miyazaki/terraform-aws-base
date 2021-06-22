@@ -2,6 +2,14 @@
 #--------------------------------------------------------------
 # For CloudTrail
 #--------------------------------------------------------------
+#--------------------------------------------------------------
+# Local
+#--------------------------------------------------------------
+locals {
+  is_s3_enabled = var.is_enabled && var.is_s3_enabled
+  bucket_id     = local.is_s3_enabled ? aws_s3_bucket.this[0].id : var.aws_s3_bucket_existing.bucket_id
+  bucket_arn    = local.is_s3_enabled ? aws_s3_bucket.this[0].arn : var.aws_s3_bucket_existing.bucket_arn
+}
 
 #--------------------------------------------------------------
 # Provides a KMS customer master key.
@@ -856,7 +864,7 @@ resource "aws_iam_role_policy_attachment" "this" {
 # Provides a S3 bucket resource.
 #--------------------------------------------------------------
 resource "aws_s3_bucket" "this" {
-  count  = var.is_enabled ? 1 : 0
+  count  = local.is_s3_enabled ? 1 : 0
   bucket = lookup(var.aws_s3_bucket, "bucket")
   # bucket_prefix = var.bucket_prefix
   acl           = "private"
@@ -1006,8 +1014,8 @@ resource "aws_s3_bucket" "this" {
 # Manages S3 bucket-level Public Access Block configuration. For more information about these settings, see the AWS S3 Block Public Access documentation.
 #--------------------------------------------------------------
 resource "aws_s3_bucket_public_access_block" "this" {
-  count                   = var.is_enabled ? 1 : 0
-  bucket                  = aws_s3_bucket.this[0].id
+  count                   = local.is_s3_enabled ? 1 : 0
+  bucket                  = local.bucket_id
   block_public_acls       = true
   block_public_policy     = true
   ignore_public_acls      = true
@@ -1018,7 +1026,7 @@ resource "aws_s3_bucket_public_access_block" "this" {
 # Generates an IAM policy document in JSON format for use with resources that expect policy documents such as aws_iam_policy.
 #--------------------------------------------------------------
 data "aws_iam_policy_document" "this" {
-  count   = var.is_enabled ? 1 : 0
+  count   = local.is_s3_enabled ? 1 : 0
   version = "2012-10-17"
   statement {
     sid    = "AWSCloudTrailAclCheck"
@@ -1031,7 +1039,7 @@ data "aws_iam_policy_document" "this" {
       "s3:GetBucketAcl"
     ]
     resources = [
-      aws_s3_bucket.this[0].arn
+      local.bucket_arn
     ]
   }
   statement {
@@ -1045,7 +1053,7 @@ data "aws_iam_policy_document" "this" {
       "s3:PutObject"
     ]
     resources = [
-      "${aws_s3_bucket.this[0].arn}/AWSLogs/${var.account_id}/*"
+      "${local.bucket_arn}/AWSLogs/${var.account_id}/*"
     ]
     condition {
       test     = "StringEquals"
@@ -1064,8 +1072,8 @@ data "aws_iam_policy_document" "this" {
       "s3:*"
     ]
     resources = [
-      aws_s3_bucket.this[0].arn,
-      "${aws_s3_bucket.this[0].arn}/*"
+      local.bucket_arn,
+      "${local.bucket_arn}/*"
     ]
     condition {
       test     = "Bool"
@@ -1078,8 +1086,8 @@ data "aws_iam_policy_document" "this" {
 # Attaches a policy to an S3 bucket resource.
 #--------------------------------------------------------------
 resource "aws_s3_bucket_policy" "this" {
-  count  = var.is_enabled ? 1 : 0
-  bucket = aws_s3_bucket.this[0].id
+  count  = local.is_s3_enabled ? 1 : 0
+  bucket = local.bucket_id
   policy = data.aws_iam_policy_document.this[0].json
   depends_on = [
     aws_s3_bucket_public_access_block.this
@@ -1092,7 +1100,7 @@ resource "aws_s3_bucket_policy" "this" {
 resource "aws_cloudtrail" "this" {
   count                         = var.is_enabled ? 1 : 0
   name                          = lookup(var.aws_cloudtrail, "name")
-  s3_bucket_name                = aws_s3_bucket.this[0].id
+  s3_bucket_name                = local.bucket_id
   s3_key_prefix                 = lookup(var.aws_cloudtrail, "s3_key_prefix", null)
   cloud_watch_logs_role_arn     = aws_iam_role.this[0].arn
   cloud_watch_logs_group_arn    = "${aws_cloudwatch_log_group.this[0].arn}:*"

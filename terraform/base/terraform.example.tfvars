@@ -61,7 +61,7 @@ JSON
 # Budgets
 #--------------------------------------------------------------
 budgets = {
-  // TODO: need to set is_enabled for settings of budgets.
+  # TODO: need to set is_enabled for settings of budgets.
   is_enabled = true
   # Provides a budgets budget resource. Budgets use the cost visualisation provided
   # by Cost Explorer to show you the status of your budgets, to provide forecasts of
@@ -129,14 +129,14 @@ budgets = {
 # based on your utilization data.
 #--------------------------------------------------------------
 compute_optimizer = {
-  // TODO: need to set is_enabled for settings of Compute Optimizer.
+  # TODO: need to set is_enabled for settings of Compute Optimizer.
   is_enabled = true
 }
 #--------------------------------------------------------------
 # Health
 #--------------------------------------------------------------
 health = {
-  // TODO: need to set is_enabled for settings of AWS Health.
+  # TODO: need to set is_enabled for settings of AWS Health.
   is_enabled = true
   aws_cloudwatch_event_rule = {
     name                = "health-cloudwatch-event-rule"
@@ -165,7 +165,7 @@ health = {
 # Trusted Advisor
 #--------------------------------------------------------------
 trusted_advisor = {
-  // TODO: need to set is_enabled for settings of Trusted Advisor.
+  # TODO: need to set is_enabled for settings of Trusted Advisor.
   // If you are not in a business or enterprise plan with a support plan, set is_enable to false as notifications will fail. If not, set it to true.
   is_enabled = false
   aws_cloudwatch_event_rule = {
@@ -196,7 +196,7 @@ trusted_advisor = {
 # IAM: Users
 #--------------------------------------------------------------
 iam = {
-  // TODO: need to set is_enabled for settings of IAM.
+  # TODO: need to set is_enabled for settings of IAM.
   is_enabled = true
   # TODO: need to change IAM User.
   user = [
@@ -482,7 +482,7 @@ common_logging = {
 # Security:Access Analyzer
 #--------------------------------------------------------------
 security_access_analyzer = {
-  // TODO: need to set is_enabled for settings of Access Analyzer.
+  # TODO: need to set is_enabled for settings of Access Analyzer.
   is_enabled = true
   aws_accessanalyzer_analyzer = {
     analyzer_name = "aws-access-analyzer"
@@ -493,8 +493,10 @@ security_access_analyzer = {
 # Security:CloudTrail
 #--------------------------------------------------------------
 security_cloudtrail = {
-  // TODO: need to set is_enabled for settings of CloudTrail.
+  # TODO: need to set is_enabled for settings of CloudTrail.
   is_enabled = true
+  # TODO: need to set is_s3_enabled for settings of New S3 Bucket.
+  is_s3_enabled = false
   aws_kms_key = {
     cloudtrail = {
       description             = "This key used for CloudTrail."
@@ -557,58 +559,58 @@ PATTERN
       treat_missing_data  = "notBreaching"
     },
   ]
-  aws_s3_bucket = {
-    bucket        = "aws-cloudtrail"
-    force_destroy = true
-    versioning = [
-      {
-        enabled = true
-      }
-    ]
-    #    logging               = []
-    lifecycle_rule = [
-      {
-        id                                     = "default"
-        abort_incomplete_multipart_upload_days = 7
-        enabled                                = true
-        prefix                                 = null
-        expiration = [
-          {
-            # TODO: need to change days. default 3years.
-            days                         = 1095
-            expired_object_delete_marker = false
-          }
-        ]
-        transition = [
-          {
-            days          = 30
-            storage_class = "ONEZONE_IA"
-          }
-        ]
-        noncurrent_version_expiration = [
-          {
-            days = 30
-          }
-        ]
-      }
-    ]
-    replication_configuration = []
-    server_side_encryption_configuration = [
-      {
-        rule = [
-          {
-            apply_server_side_encryption_by_default = [
-              {
-                sse_algorithm     = "AES256"
-                kms_master_key_id = null
-              }
-            ]
-          }
-        ]
-      }
-    ]
-    object_lock_configuration = []
-  }
+  #   aws_s3_bucket = {
+  #     bucket        = "aws-cloudtrail"
+  #     force_destroy = true
+  #     versioning = [
+  #       {
+  #         enabled = true
+  #       }
+  #     ]
+  #     #    logging               = []
+  #     lifecycle_rule = [
+  #       {
+  #         id                                     = "default"
+  #         abort_incomplete_multipart_upload_days = 7
+  #         enabled                                = true
+  #         prefix                                 = null
+  #         expiration = [
+  #           {
+  #             # TODO: need to change days. default 3years.
+  #             days                         = 1095
+  #             expired_object_delete_marker = false
+  #           }
+  #         ]
+  #         transition = [
+  #           {
+  #             days          = 30
+  #             storage_class = "ONEZONE_IA"
+  #           }
+  #         ]
+  #         noncurrent_version_expiration = [
+  #           {
+  #             days = 30
+  #           }
+  #         ]
+  #       }
+  #     ]
+  #     replication_configuration = []
+  #     server_side_encryption_configuration = [
+  #       {
+  #         rule = [
+  #           {
+  #             apply_server_side_encryption_by_default = [
+  #               {
+  #                 sse_algorithm     = "AES256"
+  #                 kms_master_key_id = null
+  #               }
+  #             ]
+  #           }
+  #         ]
+  #       }
+  #     ]
+  #     object_lock_configuration = []
+  #   }
   aws_cloudwatch_log_group_lambda = {
     # TODO: need to change retention_in_days for each services.
     retention_in_days = 7
@@ -682,8 +684,10 @@ PATTERN
 # Security:AWS Config
 #--------------------------------------------------------------
 security_config = {
-  // TODO: need to set is_enabled for settings of AWS Config.
+  # TODO: need to set is_enabled for settings of AWS Config.
   is_enabled = true
+  # TODO: need to set is_s3_enabled for settings of New S3 Bucket.
+  is_s3_enabled = false
   aws_config_configuration_recorder = {
     name = "aws-config-configuration-recorder"
     recording_group = [
@@ -698,59 +702,59 @@ security_config = {
     name        = "security-config-role"
     path        = "/"
   }
-  aws_s3_bucket = {
-    # Random suffix is automatically added to the bucket name.
-    bucket        = "aws-config"
-    force_destroy = true
-    versioning = [
-      {
-        enabled = true
-      }
-    ]
-    logging = []
-    lifecycle_rule = [
-      {
-        id                                     = "default"
-        abort_incomplete_multipart_upload_days = 7
-        enabled                                = true
-        prefix                                 = null
-        expiration = [
-          {
-            # TODO: need to change days. default 3years.
-            days                         = 1095
-            expired_object_delete_marker = false
-          }
-        ]
-        transition = [
-          {
-            days          = 30
-            storage_class = "ONEZONE_IA"
-          }
-        ]
-        noncurrent_version_expiration = [
-          {
-            days = 30
-          }
-        ]
-      }
-    ]
-    replication_configuration = []
-    server_side_encryption_configuration = [
-      {
-        rule = [
-          {
-            apply_server_side_encryption_by_default = [
-              {
-                sse_algorithm     = "AES256"
-                kms_master_key_id = null
-              }
-            ]
-          }
-        ]
-      }
-    ]
-    object_lock_configuration = []
-  }
+  #   aws_s3_bucket = {
+  #     # Random suffix is automatically added to the bucket name.
+  #     bucket        = "aws-config"
+  #     force_destroy = true
+  #     versioning = [
+  #       {
+  #         enabled = true
+  #       }
+  #     ]
+  #     logging = []
+  #     lifecycle_rule = [
+  #       {
+  #         id                                     = "default"
+  #         abort_incomplete_multipart_upload_days = 7
+  #         enabled                                = true
+  #         prefix                                 = null
+  #         expiration = [
+  #           {
+  #             # TODO: need to change days. default 3years.
+  #             days                         = 1095
+  #             expired_object_delete_marker = false
+  #           }
+  #         ]
+  #         transition = [
+  #           {
+  #             days          = 30
+  #             storage_class = "ONEZONE_IA"
+  #           }
+  #         ]
+  #         noncurrent_version_expiration = [
+  #           {
+  #             days = 30
+  #           }
+  #         ]
+  #       }
+  #     ]
+  #     replication_configuration = []
+  #     server_side_encryption_configuration = [
+  #       {
+  #         rule = [
+  #           {
+  #             apply_server_side_encryption_by_default = [
+  #               {
+  #                 sse_algorithm     = "AES256"
+  #                 kms_master_key_id = null
+  #               }
+  #             ]
+  #           }
+  #         ]
+  #       }
+  #     ]
+  #     object_lock_configuration = []
+  #   }
   aws_config_delivery_channel = {
     name          = "aws-config-delivery-channel"
     sns_topic_arn = null
@@ -788,7 +792,7 @@ security_config = {
 # Security:Default VPC
 #--------------------------------------------------------------
 security_default_vpc = {
-  // TODO: need to set is_enabled for settings of default VPC security.
+  # TODO: need to set is_enabled for settings of default VPC security.
   is_enabled           = true
   is_enabled_flow_logs = true
   # A boolean flag to enable/disable VPC Endpoint for [EC2.10]. Defaults true."
@@ -818,14 +822,14 @@ security_default_vpc = {
 # Security:EBS
 #--------------------------------------------------------------
 security_ebs = {
-  // TODO: need to set is_enabled for settings of EBS.
+  # TODO: need to set is_enabled for settings of EBS.
   is_enabled = true
 }
 #--------------------------------------------------------------
 # Security:GuardDuty
 #--------------------------------------------------------------
 security_guardduty = {
-  // TODO: need to set is_enabled for settings of GuardDuty.
+  # TODO: need to set is_enabled for settings of GuardDuty.
   is_enabled = true
   aws_guardduty_detector = {
     enable                       = true
@@ -858,7 +862,7 @@ security_guardduty = {
 # Security:IAM
 #--------------------------------------------------------------
 security_iam = {
-  // TODO: need to set is_enabled for settings of IAM security.
+  # TODO: need to set is_enabled for settings of IAM security.
   is_enabled = true
   aws_iam_account_password_policy = {
     allow_users_to_change_password = true
@@ -888,7 +892,7 @@ security_iam = {
 # Security:S3
 #--------------------------------------------------------------
 security_s3 = {
-  // TODO: need to set is_enabled for settings of S3 security.
+  # TODO: need to set is_enabled for settings of S3 security.
   is_enabled = true
   # Manages S3 account-level Public Access Block configuration. For more information about these settings, see the AWS S3 Block Public Access documentation.
   aws_s3_account_public_access_block = {
@@ -902,7 +906,7 @@ security_s3 = {
 # Security:SecurityHub
 #--------------------------------------------------------------
 security_securityhub = {
-  // TODO: need to set is_enabled for settings of SecurityHub.
+  # TODO: need to set is_enabled for settings of SecurityHub.
   is_enabled = true
   aws_securityhub_member = {
   }

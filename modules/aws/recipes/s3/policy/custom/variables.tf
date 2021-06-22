@@ -3,7 +3,7 @@
 #--------------------------------------------------------------
 variable "bucket" {
   type        = string
-  description = "(Required) The name of the bucket to which to apply the policy."
+  description = "(Required) The S3 bucket name."
 }
 variable "policy" {
   type        = string
