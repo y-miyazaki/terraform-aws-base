@@ -9,7 +9,6 @@ jobs:
   integration:
     env:
       ENVIRONMENT: dev
-      TERRAFORM_VERSION: 0.14.7
     runs-on: ubuntu-latest
     steps:
       - name: "code: check out code"

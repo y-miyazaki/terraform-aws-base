@@ -6,7 +6,6 @@ jobs:
   integration:
     env:
       ENVIRONMENT: example
-      TERRAFORM_VERSION: 0.14.7
     runs-on: ubuntu-latest
     steps:
       - name: "code: check out code"
@@ -18,10 +17,9 @@ jobs:
           echo "::set-output name=pr_number::${PR_NUMBER}"
       - name: "terraform: check"
         run: |
-          docker pull ymiyazakixyz/terraform-aws:latest
-          docker run --rm -v $PWD:/workspace -e ENV=${{ env.ENVIRONMENT }} -w /workspace --name terraform-aws ymiyazakixyz/terraform-aws:latest scripts/terraform/aws/integration_push.sh terraform/base
-          docker pull ymiyazakixyz/terraform-aws:latest
-          docker run --rm -v $PWD:/workspace -e ENV=${{ env.ENVIRONMENT }} -w /workspace --name terraform-aws ymiyazakixyz/terraform-aws:latest scripts/terraform/aws/integration_push.sh terraform/monitor
+          docker pull ghcr.io/y-miyazaki/terraform-aws:latest
+          docker run --rm -v $PWD:/workspace -e ENV=${{ env.ENVIRONMENT }} -w /workspace --name terraform-aws ghcr.io/y-miyazaki/terraform-aws:latest scripts/terraform/aws/integration_push.sh terraform/base
+          docker run --rm -v $PWD:/workspace -e ENV=${{ env.ENVIRONMENT }} -w /workspace --name terraform-aws ghcr.io/y-miyazaki/terraform-aws:latest scripts/terraform/aws/integration_push.sh terraform/monitor
       - name: "slack: notification for failed build."
         if: failure()
         uses: rtCamp/action-slack-notify@v2.0.2
