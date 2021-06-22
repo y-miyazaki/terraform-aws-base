@@ -7,7 +7,6 @@ jobs:
     env:
       ENVIRONMENT: dev
       ENV: ${{ secrets.ENV_DEV }}
-      TERRAFORM_VERSION: 0.14.7
     runs-on: ubuntu-latest
     steps:
       - name: "code: check out code"
@@ -16,8 +15,8 @@ jobs:
         run: |
           echo "$ENV" >> $PWD/.env
           find scripts -type f -name '*.sh' -exec chmod +x \{\} \;
-          docker pull ymiyazakixyz/terraform-aws:${{ env.TERRAFORM_VERSION }}
-          docker run --rm -v $PWD:/workspace --env-file=$PWD/.env -w /workspace --name terraform-aws ymiyazakixyz/terraform-aws:${{ env.TERRAFORM_VERSION }} scripts/terraform/aws/deploy.sh terraform/monitor
+          docker pull ghcr.io/y-miyazaki/terraform-aws:latest
+          docker run --rm -v $PWD:/workspace --env-file=$PWD/.env -w /workspace --name terraform-aws ghcr.io/y-miyazaki/terraform-aws:latest scripts/terraform/aws/deploy.sh terraform/monitor
       - name: "slack: notification"
         if: failure()
         uses: rtCamp/action-slack-notify@v2.0.2
