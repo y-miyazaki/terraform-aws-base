@@ -1,5 +1,5 @@
 # https://help.github.com/ja/actions/reference/workflow-syntax-for-github-actions
-name: integration-pr-dev
+name: ci-pullrequst-dev
 on:
   pull_request:
     branches:
@@ -9,6 +9,7 @@ jobs:
   integration:
     env:
       ENVIRONMENT: dev
+      TERRAFORM_VERSION: 0.14.7
     runs-on: ubuntu-latest
     steps:
       - name: "code: check out code"
