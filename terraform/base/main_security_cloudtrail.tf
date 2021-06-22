@@ -82,16 +82,16 @@ locals {
     name = "${var.name_prefix}${lookup(var.security_cloudtrail.aws_iam_policy, "name")}"
     }
   )
-  aws_s3_bucket_cloudtrail = merge(var.security_cloudtrail.aws_s3_bucket, {
-    bucket = "${var.name_prefix}${var.security_cloudtrail.aws_s3_bucket.bucket}-${random_id.this.dec}"
-    logging = [
-      {
-        target_bucket = module.aws_recipes_s3_bucket_log_logging.id
-        target_prefix = "CloudTrail/"
-      }
-    ]
-    }
-  )
+  #   aws_s3_bucket_cloudtrail = merge(var.security_cloudtrail.aws_s3_bucket, {
+  #     bucket = "${var.name_prefix}${var.security_cloudtrail.aws_s3_bucket.bucket}-${random_id.this.dec}"
+  #     logging = [
+  #       {
+  #         target_bucket = module.aws_recipes_s3_bucket_log_logging.id
+  #         target_prefix = "CloudTrail/"
+  #       }
+  #     ]
+  #     }
+  #   )
   aws_cloudtrail_cloudtrail = merge(var.security_cloudtrail.aws_cloudtrail, {
     name = "${var.name_prefix}${lookup(var.security_cloudtrail.aws_cloudtrail, "name")}"
     }
@@ -104,19 +104,26 @@ locals {
 module "aws_recipes_security_cloudtrail" {
   source                     = "../../modules/aws/recipes/security/cloudtrail"
   is_enabled                 = lookup(var.security_cloudtrail, "is_enabled", true)
+  is_s3_enabled              = lookup(var.security_cloudtrail, "is_s3_enabled", false)
   aws_kms_key                = local.aws_kms_key_cloudtrail
   aws_sns_topic              = local.aws_sns_topic_cloudtrail
   aws_sns_topic_subscription = local.aws_sns_topic_subscription_cloudtrail
   aws_cloudwatch_log_group   = local.aws_cloudwatch_log_group_cloudtrail
   aws_iam_role               = local.aws_iam_role_cloudtrail
   aws_iam_policy             = local.aws_iam_policy_cloudtrail
-  aws_s3_bucket              = local.aws_s3_bucket_cloudtrail
-  aws_cloudtrail             = local.aws_cloudtrail_cloudtrail
-  cis_name_prefix            = var.name_prefix
-  account_id                 = data.aws_caller_identity.current.account_id
-  region                     = var.region
-  user                       = var.deploy_user
-  tags                       = var.tags
+  #   aws_s3_bucket              = local.aws_s3_bucket_cloudtrail
+  aws_s3_bucket_existing = {
+    # The S3 bucket id
+    bucket_id = module.aws_recipes_s3_bucket_log_logging.id
+    # The S3 bucket arn
+    bucket_arn = module.aws_recipes_s3_bucket_log_logging.arn
+  }
+  aws_cloudtrail  = local.aws_cloudtrail_cloudtrail
+  cis_name_prefix = var.name_prefix
+  account_id      = data.aws_caller_identity.current.account_id
+  region          = var.region
+  user            = var.deploy_user
+  tags            = var.tags
 }
 
 #--------------------------------------------------------------

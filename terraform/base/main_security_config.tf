@@ -13,7 +13,7 @@ locals {
     name = "${var.name_prefix}${lookup(var.security_config.aws_iam_role, "name")}"
     }
   )
-  aws_s3_bucket_config = merge(var.security_config.aws_s3_bucket, { bucket = "${var.name_prefix}${var.security_config.aws_s3_bucket.bucket}-${random_id.this.dec}" })
+  #   aws_s3_bucket_config = merge(var.security_config.aws_s3_bucket, { bucket = "${var.name_prefix}${var.security_config.aws_s3_bucket.bucket}-${random_id.this.dec}" })
   aws_config_delivery_channel_config = merge(var.security_config.aws_config_delivery_channel, {
     name = "${var.name_prefix}${lookup(var.security_config.aws_config_delivery_channel, "name")}"
     }
@@ -23,11 +23,18 @@ locals {
 # Provides AWS Config.
 #--------------------------------------------------------------
 module "aws_recipes_security_config_create" {
-  source                                   = "../../modules/aws/recipes/security/config/create"
-  is_enabled                               = lookup(var.security_config, "is_enabled", true)
-  aws_config_configuration_recorder        = local.aws_config_configuration_recorder_config
-  aws_iam_role                             = local.aws_iam_role_config
-  aws_s3_bucket                            = local.aws_s3_bucket_config
+  source                            = "../../modules/aws/recipes/security/config/create"
+  is_enabled                        = lookup(var.security_config, "is_enabled", true)
+  is_s3_enabled                     = lookup(var.security_config, "is_s3_enabled", false)
+  aws_config_configuration_recorder = local.aws_config_configuration_recorder_config
+  aws_iam_role                      = local.aws_iam_role_config
+  #   aws_s3_bucket                     = local.aws_s3_bucket_config
+  aws_s3_bucket_existing = {
+    # The S3 bucket id
+    bucket_id = module.aws_recipes_s3_bucket_log_logging.id
+    # The S3 bucket arn
+    bucket_arn = module.aws_recipes_s3_bucket_log_logging.arn
+  }
   aws_config_delivery_channel              = local.aws_config_delivery_channel_config
   aws_config_configuration_recorder_status = lookup(var.security_config, "aws_config_configuration_recorder_status")
   aws_cloudwatch_event_rule = {

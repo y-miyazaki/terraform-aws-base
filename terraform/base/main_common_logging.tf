@@ -10,7 +10,7 @@ locals {
 module "aws_recipes_s3_bucket_log_logging" {
   source        = "../../modules/aws/recipes/s3/bucket/log"
   bucket        = lookup(local.aws_s3_bucket_logging, "bucket")
-  acl           = lookup(local.aws_s3_bucket_logging, "acl", "private")
+  acl           = lookup(local.aws_s3_bucket_logging, "acl", "log-delivery-write")
   tags          = var.tags
   force_destroy = lookup(local.aws_s3_bucket_logging, "force_destroy", false)
   versioning = lookup(local.aws_s3_bucket_logging, "versioning", [
@@ -28,33 +28,14 @@ module "aws_recipes_s3_bucket_log_logging" {
 
 #--------------------------------------------------------------
 # Provides a S3 bucket resource.
+# Policy for CloudTrail and Config.
 #--------------------------------------------------------------
 module "aws_recipes_s3_policy_custom_logging" {
-  source = "../../modules/aws/recipes/s3/policy/custom"
-  bucket = module.aws_recipes_s3_bucket_log_logging.id
-  policy = <<POLICY
-{
-    "Id": "ExamplePolicy",
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Sid": "AllowSSLRequestsOnly",
-            "Action": "s3:*",
-            "Effect": "Deny",
-            "Resource": [
-                "${module.aws_recipes_s3_bucket_log_logging.arn}",
-                "${module.aws_recipes_s3_bucket_log_logging.arn}/*"
-            ],
-            "Condition": {
-                "Bool": {
-                     "aws:SecureTransport": "false"
-                }
-            },
-           "Principal": "*"
-        }
-    ]
-}
-POLICY
+  source           = "../../modules/aws/recipes/s3/policy/security"
+  bucket           = module.aws_recipes_s3_bucket_log_logging.id
+  bucket_arn       = module.aws_recipes_s3_bucket_log_logging.arn
+  account_id       = data.aws_caller_identity.current.account_id
+  config_role_name = module.aws_recipes_security_config_create.config_role_name
   depends_on = [
     module.aws_recipes_s3_bucket_log_logging
   ]

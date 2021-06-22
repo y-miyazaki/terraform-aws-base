@@ -6,6 +6,11 @@ variable "is_enabled" {
   description = "(Optional) A boolean flag to enable/disable AWS Config. Defaults true."
   default     = true
 }
+variable "is_s3_enabled" {
+  type        = bool
+  description = "(Optional) A boolean flag to enable/disable S3 Bucket. Defaults false."
+  default     = false
+}
 variable "aws_config_configuration_recorder" {
   type = object(
     {
@@ -56,7 +61,20 @@ variable "aws_s3_bucket" {
       object_lock_configuration = list(any)
     }
   )
-  description = "(Required) The aws_s3_bucket resource."
+  description = "(Optional) If you have a new S3 to create, please specify this one. Yes to the variable:aws_s3_bucket_exsiting."
+  default     = null
+}
+variable "aws_s3_bucket_existing" {
+  type = object(
+    {
+      # The name of the bucket. If omitted, Terraform will assign a random, unique name. Must be less than or equal to 63 characters in length.
+      bucket_id = string
+      # The S3 bucket arn
+      bucket_arn = string
+    }
+  )
+  description = "(Optional) If you have an S3 that already exists, please specify this one. It is exclusive to the variable:aws_s3_bucket."
+  default     = null
 }
 
 variable "aws_config_delivery_channel" {

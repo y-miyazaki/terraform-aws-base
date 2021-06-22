@@ -18,11 +18,41 @@ data "aws_iam_policy_document" "this" {
     ]
   }
   statement {
+    sid    = "AWSConfigBucketExistenceCheck"
+    effect = "Allow"
+    principals {
+      type        = "Service"
+      identifiers = ["config.amazonaws.com"]
+    }
+    actions = [
+      "s3:ListBucket"
+    ]
+    resources = [
+      var.bucket_arn
+    ]
+  }
+  statement {
     sid    = "AWSConfigBucketDelivery"
     effect = "Allow"
     principals {
       type        = "Service"
       identifiers = ["config.amazonaws.com"]
+    }
+    actions = [
+      "s3:PutObject"
+    ]
+    resources = [
+      "${var.bucket_arn}/AWSLogs/${var.account_id}/Config/*"
+    ]
+  }
+  statement {
+    sid    = "AWSConfigBucketDelivery2"
+    effect = "Allow"
+    principals {
+      type = "AWS"
+      identifiers = [
+        "arn:aws:sts::${var.account_id}:assumed-role/${var.config_role_name}/AWSConfig-BucketConfigCheck",
+      ]
     }
     actions = [
       "s3:PutObject"
