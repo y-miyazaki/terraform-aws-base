@@ -18,8 +18,8 @@ jobs:
       - name: "terraform: check"
         run: |
           docker pull ghcr.io/y-miyazaki/terraform-aws:latest
-          docker run --rm -v $PWD:/workspace -e ENV=${{ env.ENVIRONMENT }} -w /workspace --name terraform-aws ghcr.io/y-miyazaki/terraform-aws:latest scripts/terraform/aws/integration_push.sh terraform/base
-          docker run --rm -v $PWD:/workspace -e ENV=${{ env.ENVIRONMENT }} -w /workspace --name terraform-aws ghcr.io/y-miyazaki/terraform-aws:latest scripts/terraform/aws/integration_push.sh terraform/monitor
+          docker run --rm -v $PWD:/workspace -e ENV=${{ env.ENVIRONMENT }} -w /workspace --name terraform-aws ghcr.io/y-miyazaki/terraform-aws:latest scripts/terraform/integration_push.sh terraform/base
+          docker run --rm -v $PWD:/workspace -e ENV=${{ env.ENVIRONMENT }} -w /workspace --name terraform-aws ghcr.io/y-miyazaki/terraform-aws:latest scripts/terraform/integration_push.sh terraform/monitor
       - name: "slack: notification for failed build."
         if: failure()
         uses: rtCamp/action-slack-notify@v2.0.2
