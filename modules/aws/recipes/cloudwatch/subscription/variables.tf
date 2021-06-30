@@ -57,7 +57,7 @@ variable "aws_iam_policy" {
   }
 }
 variable "account_id" {
-  type        = number
+  type        = string
   description = "(Required) AWS account ID for member account."
 }
 variable "region" {
