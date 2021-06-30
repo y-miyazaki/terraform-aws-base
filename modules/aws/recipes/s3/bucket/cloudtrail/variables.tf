@@ -80,6 +80,6 @@ variable "object_lock_configuration" {
 }
 
 variable "account_id" {
-  type        = number
+  type        = string
   description = "(Required) AWS account ID for member account."
 }
