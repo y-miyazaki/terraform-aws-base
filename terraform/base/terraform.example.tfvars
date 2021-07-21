@@ -82,7 +82,7 @@ budgets = {
         # At least one must set an email address.
         subscriber_email_addresses = [
           # example)
-          #          "youremail@yourtest.test.hogehoge.com"
+          # "youremail@yourtest.test.hogehoge.com"
         ]
         subscriber_sns_topic_arns = null
       }
@@ -204,9 +204,13 @@ iam = {
     "test2",
     "test3",
   ]
+  #--------------------------------------------------------------
   # TODO: need to change IAM Group.
   # Please specify the user with the same name that has been set in users.
+  #--------------------------------------------------------------
   group = {
+    # TODO: need to change IAM Group name.
+    # This name will be used as the group name.
     administrator = {
       # TODO: need to set is_enabled_mfa.
       # If true, force MFA settings and login.
@@ -230,6 +234,8 @@ iam = {
         }
       ]
     }
+    # TODO: need to change IAM Group name.
+    # This name will be used as the group name.
     developer = {
       # TODO: need to set is_enabled_mfa.
       # If true, force MFA settings and login.
@@ -280,36 +286,25 @@ iam = {
             ]
           },
           {
-            sid    = "AllowCloudWatchFullAccess1"
+            sid    = "AllowCloudWatchReadOnlyAccess"
             effect = "Allow"
             actions = [
               "autoscaling:Describe*",
-              "cloudwatch:*",
-              "logs:*",
-              "sns:*",
-              "iam:GetPolicy",
-              "iam:GetPolicyVersion",
-              "iam:GetRole"
+              "cloudwatch:Describe*",
+              "cloudwatch:Get*",
+              "cloudwatch:List*",
+              "logs:Get*",
+              "logs:List*",
+              "logs:StartQuery",
+              "logs:StopQuery",
+              "logs:Describe*",
+              "logs:TestMetricFilter",
+              "logs:FilterLogEvents",
+              "sns:Get*",
+              "sns:List*"
             ]
             resources = [
               "*"
-            ]
-          },
-          {
-            sid    = "AllowCloudWatchFullAccess2"
-            effect = "Allow"
-            actions = [
-              "iam:CreateServiceLinkedRole",
-            ]
-            resources = [
-              "arn:aws:iam::*:role/aws-service-role/events.amazonaws.com/AWSServiceRoleForCloudWatchEvents"
-            ]
-            condition = [
-              {
-                test     = "StringLike"
-                variable = "iam:AWSServiceName"
-                values   = ["events.amazonaws.com"]
-              }
             ]
           },
           {
@@ -331,11 +326,10 @@ iam = {
         {
           policy_arn = "arn:aws:iam::aws:policy/AmazonS3FullAccess"
         },
-        {
-          policy_arn = "arn:aws:iam::aws:policy/AmazonVPCFullAccess"
-        },
       ]
     }
+    # TODO: need to change IAM Group name.
+    # This name will be used as the group name.
     operator = {
       # TODO: need to set is_enabled_mfa.
       # If true, force MFA settings and login.
@@ -406,18 +400,306 @@ iam = {
       policy = []
     }
   }
+  #--------------------------------------------------------------
+  # Variable settings for SwitchRole.
+  # This role is used when switching from another AWS environment and not registering an IAM user.
+  # https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_use_switch-role-console.html
+  #--------------------------------------------------------------
+  switch_role = {
+    # These are the settings for the original AWS account that will use SwitchRole.
+    from = {
+      # TODO: need to set is_enabled for switch role(from).
+      is_enabled = false
+      group = {
+        # TODO: need to change IAM Group name.
+        # An IAM policy for the SwitchRole will be attached to the group with the specified name.
+        administrator = {
+          aws_iam_policy = {
+            name        = "iam-switch-from-administrator-policy"
+            path        = "/"
+            description = ""
+            statement = [
+              {
+                sid    = "AllowSwitchFromAccountAdministrator"
+                effect = "Allow"
+                actions = [
+                  "sts:AssumeRole",
+                ]
+                resources = [
+                  # TODO: need to change AWS accound ID(99999999999) and role name
+                  # Specify the original AWS account ID that will use the IAM Switch role.
+                  "arn:aws:iam::99999999999:role/base-iam-switch-to-administrator-role",
+                ]
+              },
+            ]
+          }
+        }
+        # TODO: need to change IAM Group name.
+        # An IAM policy for the SwitchRole will be attached to the group with the specified name.
+        developer = {
+          aws_iam_policy = {
+            name        = "iam-switch-from-developer-policy"
+            path        = "/"
+            description = ""
+            statement = [
+              {
+                sid    = "AllowSwitchFromAccountDeveloper"
+                effect = "Allow"
+                actions = [
+                  "sts:AssumeRole",
+                ]
+                resources = [
+                  # TODO: need to change AWS accound ID(99999999999) and role name
+                  # Specify the original AWS account ID that will use the IAM Switch role.
+                  "arn:aws:iam::99999999999:role/base-iam-switch-to-developer-role",
+                ]
+              },
+            ]
+          }
+        }
+        # TODO: need to change IAM Group name.
+        # An IAM policy for the SwitchRole will be attached to the group with the specified name.
+        operator = {
+          aws_iam_policy = {
+            name        = "iam-switch-from-operator-policy"
+            path        = "/"
+            description = ""
+            statement = [
+              {
+                sid    = "AllowSwitchFromAccountOperator"
+                effect = "Allow"
+                actions = [
+                  "sts:AssumeRole",
+                ]
+                resources = [
+                  # TODO: need to change AWS accound ID(99999999999) and role name
+                  # Specify the original AWS account ID that will use the IAM Switch role.
+                  "arn:aws:iam::99999999999:role/base-iam-switch-to-operator-role",
+                ]
+              },
+            ]
+          }
+        }
+      }
+    }
+    # These are the settings for the AWS account to which the SwitchRole is to be used.
+    to = {
+      # TODO: need to set is_enabled for switch role(to).
+      is_enabled = false
+      role = {
+        # TODO: need to change IAM switch role name.
+        # Part of this name will be used as the switch role name.
+        administrator = {
+          # TODO: need to change IAM switch role.
+          aws_iam_role = {
+            name        = "iam-switch-to-administrator-role"
+            path        = "/"
+            description = ""
+            # TODO: need to change AWS accound ID(99999999999)
+            # Specify the original AWS account ID that will use the IAM Switch role.
+            account_id    = "99999999999"
+            assume_policy = null
+          }
+          # TODO: need to set base policy.
+          # Please specify the base policy to provide.
+          # default null.
+          # You need to check this document.
+          # https://aws.amazon.com/jp/premiumsupport/knowledge-center/iam-increase-policy-size/
+          aws_iam_policy = null
+          # TODO: need to add policy arn. group policy limit is 10.
+          # You need to check this document.
+          # https://aws.amazon.com/jp/premiumsupport/knowledge-center/iam-increase-policy-size/
+          policy = [
+            {
+              policy_arn = "arn:aws:iam::aws:policy/AdministratorAccess"
+            }
+          ]
+        }
+        # TODO: need to change IAM switch role name.
+        # Part of this name will be used as the switch role name.
+        developer = {
+          # TODO: need to change IAM switch role.
+          aws_iam_role = {
+            name        = "iam-switch-to-developer-role"
+            path        = "/"
+            description = ""
+            # TODO: need to change AWS accound ID(99999999999)
+            # Specify the original AWS account ID that will use the IAM Switch role.
+            account_id    = "99999999999"
+            assume_policy = null
+          }
+          # TODO: need to set base policy.
+          # Please specify the base policy to provide.
+          # default null.
+          # You need to check this document.
+          # https://aws.amazon.com/jp/premiumsupport/knowledge-center/iam-increase-policy-size/
+          aws_iam_policy = {
+            name        = "iam-switch-to-developer-policy"
+            path        = "/"
+            description = ""
+            statement = [
+              {
+                sid    = "AllowAWSSecurityHubReadOnlyAccess"
+                effect = "Allow"
+                actions = [
+                  "securityhub:Get*",
+                  "securityhub:List*",
+                  "securityhub:Describe*",
+                ]
+                resources = [
+                  "*"
+                ]
+              },
+              {
+                sid    = "AllowAWSConfigUserAccess"
+                effect = "Allow"
+                actions = [
+                  "config:Get*",
+                  "config:Describe*",
+                  "config:Deliver*",
+                  "config:List*",
+                  "config:Select*",
+                  "tag:GetResources",
+                  "tag:GetTagKeys",
+                  "cloudtrail:DescribeTrails",
+                  "cloudtrail:GetTrailStatus",
+                  "cloudtrail:LookupEvents",
+                ]
+                resources = [
+                  "*"
+                ]
+              },
+              {
+                sid    = "AllowCloudWatchReadOnlyAccess"
+                effect = "Allow"
+                actions = [
+                  "autoscaling:Describe*",
+                  "cloudwatch:Describe*",
+                  "cloudwatch:Get*",
+                  "cloudwatch:List*",
+                  "logs:Get*",
+                  "logs:List*",
+                  "logs:StartQuery",
+                  "logs:StopQuery",
+                  "logs:Describe*",
+                  "logs:TestMetricFilter",
+                  "logs:FilterLogEvents",
+                  "sns:Get*",
+                  "sns:List*"
+                ]
+                resources = [
+                  "*"
+                ]
+              },
+              {
+                sid    = "AllowHealth"
+                effect = "Allow"
+                actions = [
+                  "health:DescribeEventAggregates",
+                ]
+                resources = [
+                  "*"
+                ]
+              },
+            ]
+          }
+          # TODO: need to add policy arn. group policy limit is 10.
+          # You need to check this document.
+          # https://aws.amazon.com/jp/premiumsupport/knowledge-center/iam-increase-policy-size/
+          policy = [
+            {
+              policy_arn = "arn:aws:iam::aws:policy/AmazonS3FullAccess"
+            },
+          ]
+        }
+        # TODO: need to change IAM switch role name.
+        # Part of this name will be used as the switch role name.
+        operator = {
+          # TODO: need to change IAM switch role.
+          aws_iam_role = {
+            name        = "iam-switch-to-operator-role"
+            path        = "/"
+            description = ""
+            # TODO: need to change AWS accound ID(99999999999)
+            # Specify the original AWS account ID that will use the IAM Switch role.
+            account_id    = "99999999999"
+            assume_policy = null
+          }
+          # TODO: need to set base policy.
+          # Please specify the base policy to provide.
+          # default null.
+          # You need to check this document.
+          # https://aws.amazon.com/jp/premiumsupport/knowledge-center/iam-increase-policy-size/
+          aws_iam_policy = {
+            name        = "iam-switch-to-operator-policy"
+            path        = "/"
+            description = ""
+            statement = [
+              {
+                sid    = "AllowCloudWatchReadOnlyAccess"
+                effect = "Allow"
+                actions = [
+                  "autoscaling:Describe*",
+                  "cloudwatch:Describe*",
+                  "cloudwatch:Get*",
+                  "cloudwatch:List*",
+                  "logs:Get*",
+                  "logs:List*",
+                  "logs:StartQuery",
+                  "logs:StopQuery",
+                  "logs:Describe*",
+                  "logs:TestMetricFilter",
+                  "logs:FilterLogEvents",
+                  "sns:Get*",
+                  "sns:List*"
+                ]
+                resources = [
+                  "*"
+                ]
+              },
+              {
+                sid    = "AllowAmazonS3ReadOnlyAccess"
+                effect = "Allow"
+                actions = [
+                  "s3:Get*",
+                  "s3:List*"
+                ]
+                resources = [
+                  "*"
+                ]
+              },
+              {
+                sid    = "AllowHealth"
+                effect = "Allow"
+                actions = [
+                  "health:DescribeEventAggregates",
+                ]
+                resources = [
+                  "*"
+                ]
+              },
+            ]
+          }
+          # TODO: need to add policy arn. group policy limit is 10.
+          # You need to check this document.
+          # https://aws.amazon.com/jp/premiumsupport/knowledge-center/iam-increase-policy-size/
+          policy = []
+        }
+      }
+    }
+  }
 }
 #--------------------------------------------------------------
 # Common:Lambda
 #--------------------------------------------------------------
 common_lambda = {
   aws_iam_role = {
-    description = null
+    description = ""
     name        = "security-lambda-role"
     path        = "/"
   }
   aws_iam_policy = {
-    description = null
+    description = ""
     name        = "security-lambda-policy"
     path        = "/"
   }
@@ -514,12 +796,12 @@ security_cloudtrail = {
     }
   }
   aws_iam_role = {
-    description = null
+    description = ""
     name        = "security-cloudtrail-role"
     path        = "/"
   }
   aws_iam_policy = {
-    description = null
+    description = ""
     name        = "security-cloudtrail-policy"
     path        = "/"
   }
@@ -808,12 +1090,12 @@ security_default_vpc = {
     retention_in_days = 30
   }
   aws_iam_role = {
-    description = null
+    description = ""
     name        = "security-vpc-flow-log-role"
     path        = "/"
   }
   aws_iam_policy = {
-    description = null
+    description = ""
     name        = "security-vpc-flow-log-policy"
     path        = "/"
   }
@@ -880,10 +1162,10 @@ security_iam = {
   support_iam_role_principal_arns = [
     # example)
     # "arn:aws:iam::{account id}:{iam user}"
-    "arn:aws:iam::999999999999:root"
+    "arn:aws:iam::99999999999:root"
   ]
   aws_iam_role = {
-    description = null
+    description = ""
     name        = "security-support-role"
     path        = "/"
   }
