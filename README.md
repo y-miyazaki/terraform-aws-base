@@ -92,7 +92,8 @@ AWS Compute Optimizer recommends optimal AWS resources for your workloads to red
 
 ## IAM group policy
 
-You can set the policy to assign to IAM groups. You can also make the virtual MFA setting mandatory as a base policy.
+You can set the policy to assign to IAM groups. You can also make the virtual MFA setting mandatory as a base policy.  
+You can also configure the IAM Switch Role.
 
 ![IAM Group Policy](image/iam_group_policy.png)
 

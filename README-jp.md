@@ -92,14 +92,14 @@ AWS Compute Optimizer はワークロードに最適な AWS リソースを推�
 
 ## IAM group policy
 
-IAM グループに割り振るポリシーを設定することができます。またベースのポリシーとして仮想 MFA 設定を必須とすることもできます。
+IAM グループに割り振るポリシーを設定することができます。またベースのポリシーとして仮想 MFA 設定を必須とすることもできます。  
+IAM Switch Role の設定もできます。
 
 ![IAM Group Policy](image/iam_group_policy.png)
 
 ## IAM User and Group
 
 IAM User と Group の作成を行うことができます。
-
 ![IAM User](image/iam_user.png)
 ![IAM Group](image/iam_group.png)
 

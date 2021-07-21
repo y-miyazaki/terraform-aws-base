@@ -25,6 +25,7 @@ POLICY
 #--------------------------------------------------------------
 # Generates an IAM policy document in JSON format for use with resources that expect policy documents such as aws_iam_policy.
 #--------------------------------------------------------------
+#tfsec:ignore:AWS097
 data "aws_iam_policy_document" "this" {
   statement {
     effect = "Allow"
