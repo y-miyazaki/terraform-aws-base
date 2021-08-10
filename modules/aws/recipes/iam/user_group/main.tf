@@ -72,6 +72,7 @@ resource "aws_iam_group_membership" "this" {
 #--------------------------------------------------------------
 # Provides an IAM policy.
 #--------------------------------------------------------------
+#tfsec:ignore:AWS099
 resource "aws_iam_policy" "this" {
   name   = "${var.name_prefix}iam-group-base-policy"
   path   = "/"
