@@ -137,6 +137,7 @@ data "aws_iam_policy_document" "eks_worker_node" {
 #--------------------------------------------------------------
 # Provides an IAM policy.
 #--------------------------------------------------------------
+#tfsec:ignore:AWS099
 resource "aws_iam_policy" "eks_worker_node" {
   description = lookup(var.aws_iam_policy.eks_worker_node, "description", null)
   name        = lookup(var.aws_iam_policy.eks_worker_node, "name")
