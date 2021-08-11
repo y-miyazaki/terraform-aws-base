@@ -25,6 +25,7 @@ POLICY
 #--------------------------------------------------------------
 # Provides an IAM policy.
 #--------------------------------------------------------------
+#tfsec:ignore:AWS099
 resource "aws_iam_policy" "this" {
   description = lookup(var.aws_iam_policy, "description", null)
   name        = lookup(var.aws_iam_policy, "name")

@@ -12,6 +12,7 @@ resource "aws_cloudwatch_log_group" "this" {
 # Provides a Lambda Function resource.
 # Lambda allows you to trigger execution of code in response to events in AWS, enabling serverless backend solutions. The Lambda Function itself includes source code and runtime configuration.
 #--------------------------------------------------------------
+#tfsec:ignore:aws-lambda-enable-tracing
 resource "aws_lambda_function" "this" {
   count             = var.is_enabled ? 1 : 0
   filename          = lookup(var.aws_lambda_function, "filename", null)
