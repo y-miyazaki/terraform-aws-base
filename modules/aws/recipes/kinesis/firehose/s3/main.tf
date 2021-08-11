@@ -138,6 +138,7 @@ data "aws_iam_policy_document" "this" {
     actions = [
       "logs:PutLogEvents"
     ]
+    #tfsec:ignore:AWS099
     resources = [
       "*"
     ]
