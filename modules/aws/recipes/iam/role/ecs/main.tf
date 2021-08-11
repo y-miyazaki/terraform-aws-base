@@ -118,6 +118,7 @@ data "aws_iam_policy_document" "this" {
 #--------------------------------------------------------------
 # Provides an IAM policy.
 #--------------------------------------------------------------
+#tfsec:ignore:AWS099
 resource "aws_iam_policy" "events" {
   description = lookup(var.aws_iam_policy.events, "description", null)
   name        = lookup(var.aws_iam_policy.events, "name")

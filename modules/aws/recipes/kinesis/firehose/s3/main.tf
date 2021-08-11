@@ -143,10 +143,10 @@ data "aws_iam_policy_document" "this" {
     ]
   }
 }
-
 #--------------------------------------------------------------
 # Provides an IAM policy.
 #--------------------------------------------------------------
+#tfsec:ignore:AWS099
 resource "aws_iam_policy" "this" {
   count       = length(var.aws_kinesis_firehose_delivery_stream) > 0 ? 1 : 0
   description = lookup(var.aws_iam_policy, "description", null)
