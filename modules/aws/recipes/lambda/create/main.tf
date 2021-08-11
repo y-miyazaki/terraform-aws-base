@@ -34,6 +34,12 @@ resource "aws_lambda_function" "this" {
   timeout                        = lookup(var.aws_lambda_function, "timeout", null)
   reserved_concurrent_executions = lookup(var.aws_lambda_function, "reserved_concurrent_executions", null)
   publish                        = lookup(var.aws_lambda_function, "publish", null)
+  dynamic "tracing_config" {
+    for_each = var.tracing_config
+    content {
+      mode = lookup(tracing_config.value, "mode")
+    }
+  }
   dynamic "vpc_config" {
     for_each = lookup(var.aws_lambda_function, "vpc_config", [])
     content {
