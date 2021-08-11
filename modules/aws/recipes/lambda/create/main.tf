@@ -35,9 +35,9 @@ resource "aws_lambda_function" "this" {
   reserved_concurrent_executions = lookup(var.aws_lambda_function, "reserved_concurrent_executions", null)
   publish                        = lookup(var.aws_lambda_function, "publish", null)
   dynamic "tracing_config" {
-    for_each = var.tracing_config
+    for_each = lookup(var.aws_lambda_function, "tracing_config", [])
     content {
-      mode = lookup(tracing_config.value, "mode")
+      mode = lookup(tracing_config.value, "mode", "Active")
     }
   }
   dynamic "vpc_config" {
