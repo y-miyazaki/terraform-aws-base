@@ -40,6 +40,7 @@ POLICY
 #--------------------------------------------------------------
 # Generates an IAM policy document in JSON format for use with resources that expect policy documents such as aws_iam_policy.
 #--------------------------------------------------------------
+#tfsec:ignore:AWS099
 data "aws_iam_policy_document" "this" {
   count = var.is_enabled && var.is_enabled_flow_logs ? 1 : 0
   statement {
