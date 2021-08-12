@@ -62,6 +62,7 @@ resource "aws_config_configuration_recorder" "this" {
 #--------------------------------------------------------------
 # Provides a S3 bucket resource.
 #--------------------------------------------------------------
+#tfsec:ignore:AWS002 tfsec:ignore:AWS017 tfsec:ignore:AWS077 tfsec:ignore:AWS098
 resource "aws_s3_bucket" "this" {
   count  = local.is_s3_enabled ? 1 : 0
   bucket = lookup(var.aws_s3_bucket, "bucket")
