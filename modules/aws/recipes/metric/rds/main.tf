@@ -21,7 +21,7 @@ locals {
 # Provides a CloudWatch Metric Alarm resource.
 #--------------------------------------------------------------
 resource "aws_cloudwatch_metric_alarm" "commit_latency" {
-  count               = var.is_enabled && var.is_aurora && (var.is_mysql || var.is_postgres) ? local.count : 0
+  count               = var.is_enabled && var.threshold.enabled_commit_latency && var.is_aurora && (var.is_mysql || var.is_postgres) ? local.count : 0
   alarm_name          = "${var.name_prefix}metric-rds-${local.names[count.index].name}commit-latency"
   comparison_operator = "GreaterThanOrEqualToThreshold"
   evaluation_periods  = 1
@@ -44,7 +44,7 @@ resource "aws_cloudwatch_metric_alarm" "commit_latency" {
 # Provides a CloudWatch Metric Alarm resource.
 #--------------------------------------------------------------
 resource "aws_cloudwatch_metric_alarm" "cpu_creadit_balance" {
-  count               = var.is_enabled && length(regexall("(t2|t3)", var.db_instance_class)) > 0 ? local.count : 0
+  count               = var.is_enabled && var.threshold.enabled_cpu_creadit_balance && length(regexall("(t2|t3)", var.db_instance_class)) > 0 ? local.count : 0
   alarm_name          = "${var.name_prefix}metric-rds-${local.names[count.index].name}cpu-creadit-balance"
   comparison_operator = "LessThanOrEqualToThreshold"
   evaluation_periods  = 1
@@ -68,7 +68,7 @@ resource "aws_cloudwatch_metric_alarm" "cpu_creadit_balance" {
 # Provides a CloudWatch Metric Alarm resource.
 #--------------------------------------------------------------
 resource "aws_cloudwatch_metric_alarm" "cpu_utilization" {
-  count               = var.is_enabled ? local.count : 0
+  count               = var.is_enabled && var.threshold.enabled_cpu_utilization ? local.count : 0
   alarm_name          = "${var.name_prefix}metric-rds-${local.names[count.index].name}cpu-utilization"
   comparison_operator = "GreaterThanOrEqualToThreshold"
   evaluation_periods  = 1
@@ -92,7 +92,7 @@ resource "aws_cloudwatch_metric_alarm" "cpu_utilization" {
 # Provides a CloudWatch Metric Alarm resource.
 #--------------------------------------------------------------
 resource "aws_cloudwatch_metric_alarm" "database_connections" {
-  count               = var.is_enabled ? local.count : 0
+  count               = var.is_enabled && var.threshold.enabled_database_connections ? local.count : 0
   alarm_name          = "${var.name_prefix}metric-rds-${local.names[count.index].name}database-connections"
   comparison_operator = "GreaterThanOrEqualToThreshold"
   evaluation_periods  = 1
@@ -116,7 +116,7 @@ resource "aws_cloudwatch_metric_alarm" "database_connections" {
 # Provides a CloudWatch Metric Alarm resource.
 #--------------------------------------------------------------
 resource "aws_cloudwatch_metric_alarm" "deadlocks" {
-  count               = var.is_enabled && var.is_aurora && (var.is_mysql || var.is_postgres) ? local.count : 0
+  count               = var.is_enabled && var.threshold.enabled_deadlocks && var.is_aurora && (var.is_mysql || var.is_postgres) ? local.count : 0
   alarm_name          = "${var.name_prefix}metric-rds-${local.names[count.index].name}deadlocks"
   comparison_operator = "GreaterThanOrEqualToThreshold"
   evaluation_periods  = 1
@@ -139,7 +139,7 @@ resource "aws_cloudwatch_metric_alarm" "deadlocks" {
 # Provides a CloudWatch Metric Alarm resource.
 #--------------------------------------------------------------
 resource "aws_cloudwatch_metric_alarm" "delete_latency" {
-  count               = var.is_enabled && var.is_aurora && var.is_mysql ? local.count : 0
+  count               = var.is_enabled && var.threshold.enabled_delete_latency && var.is_aurora && var.is_mysql ? local.count : 0
   alarm_name          = "${var.name_prefix}metric-rds-${local.names[count.index].name}delete-latency"
   comparison_operator = "GreaterThanOrEqualToThreshold"
   evaluation_periods  = 1
@@ -162,7 +162,7 @@ resource "aws_cloudwatch_metric_alarm" "delete_latency" {
 # Provides a CloudWatch Metric Alarm resource.
 #--------------------------------------------------------------
 resource "aws_cloudwatch_metric_alarm" "disk_queue_depth" {
-  count               = var.is_enabled ? local.count : 0
+  count               = var.is_enabled && var.threshold.enabled_disk_queue_depth ? local.count : 0
   alarm_name          = "${var.name_prefix}metric-rds-${local.names[count.index].name}disk-queue-depth"
   comparison_operator = "GreaterThanOrEqualToThreshold"
   evaluation_periods  = 1
@@ -186,7 +186,7 @@ resource "aws_cloudwatch_metric_alarm" "disk_queue_depth" {
 # Provides a CloudWatch Metric Alarm resource.
 #--------------------------------------------------------------
 resource "aws_cloudwatch_metric_alarm" "freeable_memory" {
-  count               = var.is_enabled && var.is_aurora && var.is_mysql ? local.count : 0
+  count               = var.is_enabled && var.threshold.enabled_freeable_memory && var.is_aurora && var.is_mysql ? local.count : 0
   alarm_name          = "${var.name_prefix}metric-rds-${local.names[count.index].name}freeable-memory"
   comparison_operator = "LessThanOrEqualToThreshold"
   evaluation_periods  = 1
@@ -210,7 +210,7 @@ resource "aws_cloudwatch_metric_alarm" "freeable_memory" {
 # Provides a CloudWatch Metric Alarm resource.
 #--------------------------------------------------------------
 resource "aws_cloudwatch_metric_alarm" "read_latency" {
-  count               = var.is_enabled ? local.count : 0
+  count               = var.is_enabled && var.threshold.enabled_read_latency ? local.count : 0
   alarm_name          = "${var.name_prefix}metric-rds-${local.names[count.index].name}read-latency"
   comparison_operator = "GreaterThanOrEqualToThreshold"
   evaluation_periods  = 1
@@ -234,7 +234,7 @@ resource "aws_cloudwatch_metric_alarm" "read_latency" {
 # Provides a CloudWatch Metric Alarm resource.
 #--------------------------------------------------------------
 resource "aws_cloudwatch_metric_alarm" "write_latency" {
-  count               = var.is_enabled ? local.count : 0
+  count               = var.is_enabled && var.threshold.enabled_write_latency ? local.count : 0
   alarm_name          = "${var.name_prefix}metric-rds-${local.names[count.index].name}write-latency"
   comparison_operator = "GreaterThanOrEqualToThreshold"
   evaluation_periods  = 1

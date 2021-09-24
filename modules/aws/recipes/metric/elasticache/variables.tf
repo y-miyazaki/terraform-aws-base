@@ -19,36 +19,54 @@ variable "period" {
 variable "threshold" {
   type = object({
     # AuthenticationFailures threshold (unit=Count)
-    authentication_failures = number
+    enabled_authentication_failures = bool
+    authentication_failures         = number
     # CacheHitRate threshold (unit=Percent)
-    cache_hit_rate = number
+    enabled_cache_hit_rate = bool
+    cache_hit_rate         = number
     # CommandAuthorizationFailures threshold (unit=Count)
-    command_authorization_failures = number
+    enabled_command_authorization_failures = bool
+    command_authorization_failures         = number
     # CurrConnections threshold (unit=Count)
-    curr_connections = number
+    enabled_curr_connections = bool
+    curr_connections         = number
     # DatabaseMemoryUsagePercentage threshold (unit=Percent)
-    database_memory_usage_percentage = number
+    enabled_database_memory_usage_percentage = bool
+    database_memory_usage_percentage         = number
     # EngineCPUUtilization threshold (unit=Percent)
-    engine_cpu_utilization = number
+    enabled_engine_cpu_utilization = bool
+    engine_cpu_utilization         = number
     # KeyAuthorizationFailures threshold (unit=Count)
-    key_authorization_failures = number
+    enabled_key_authorization_failures = bool
+    key_authorization_failures         = number
     # NewConnections threshold (unit=Count)
-    new_connections = number
+    enabled_new_connections = bool
+    new_connections         = number
     # SwapUsage threshold (unit=Bytes)
-    swap_usage = number
+    enabled_swap_usage = bool
+    swap_usage         = number
     }
   )
   description = "(Optional) Set the threshold for each Metric in ElastiCache."
   default = {
-    authentication_failures          = 1
-    cache_hit_rate                   = 10
-    command_authorization_failures   = 1
-    curr_connections                 = 50
-    database_memory_usage_percentage = 80
-    engine_cpu_utilization           = 90
-    key_authorization_failures       = 1
-    new_connections                  = 100
-    swap_usage                       = 52428800 # 50MB
+    enabled_authentication_failures          = true
+    authentication_failures                  = 1
+    enabled_cache_hit_rate                   = true
+    cache_hit_rate                           = 10
+    enabled_command_authorization_failures   = true
+    command_authorization_failures           = 1
+    enabled_curr_connections                 = true
+    curr_connections                         = 50
+    enabled_database_memory_usage_percentage = true
+    database_memory_usage_percentage         = 80
+    enabled_engine_cpu_utilization           = true
+    engine_cpu_utilization                   = 90
+    enabled_key_authorization_failures       = true
+    key_authorization_failures               = 1
+    enabled_new_connections                  = true
+    new_connections                          = 100
+    enabled_swap_usage                       = true
+    swap_usage                               = 52428800 # 50MB
   }
 }
 variable "dimensions" {

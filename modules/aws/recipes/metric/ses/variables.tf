@@ -3,7 +3,7 @@
 #--------------------------------------------------------------
 variable "is_enabled" {
   type        = bool
-  description = "(Optional) A boolean flag to enable/disable settings of EC2. Defaults true."
+  description = "(Optional) A boolean flag to enable/disable settings of SES. Defaults true."
   default     = true
 }
 variable "period" {
@@ -13,30 +13,22 @@ variable "period" {
 }
 variable "threshold" {
   type = object({
-    # CPUUtilization threshold (unit=Percent)
-    enabled_cpu_utilization = bool
-    cpu_utilization         = number
-    # MetadataNoToken threshold (unit=Count)
-    enabled_metadata_no_token = bool
-    metadata_no_token         = number
-    # CPUCreditUsage threshold (unit=Count)
-    enabled_cpu_credit_usage = bool
-    cpu_credit_usage         = number
-    # StatusCheckFailed threshold (unit=Count)
-    enabled_status_check_failed = bool
-    status_check_failed         = number
+    # Reputation.BounceRate threshold (unit=Percent)
+    enabled_reputation_bouncerate = bool
+    reputation_bouncerate         = number
+    # Reputation.ComplaintRate threshold (unit=Percent)
+    enabled_reputation_complaintrate = bool
+    reputation_complaintrate         = number
     }
   )
-  description = "(Optional) Set the threshold for each Metric in EC2."
+  description = "(Optional) Set the threshold for each Metric in SES."
   default = {
-    enabled_cpu_utilization     = true
-    cpu_utilization             = 80
-    enabled_metadata_no_token   = true
-    metadata_no_token           = 1
-    enabled_cpu_credit_usage    = true
-    cpu_credit_usage            = 5
-    enabled_status_check_failed = true
-    status_check_failed         = 1
+    # https://aws.amazon.com/jp/premiumsupport/knowledge-center/ses-reputation-dashboard-bounce-rate/
+    enabled_reputation_bouncerate = true
+    reputation_bouncerate         = 5
+    # https://aws.amazon.com/jp/premiumsupport/knowledge-center/ses-reputation-dashboard-bounce-rate/
+    enabled_reputation_complaintrate = true
+    reputation_complaintrate         = 0.1
   }
 }
 variable "dimensions" {

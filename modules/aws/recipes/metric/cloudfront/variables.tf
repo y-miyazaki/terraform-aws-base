@@ -14,33 +14,49 @@ variable "period" {
 variable "threshold" {
   type = object({
     # (Required) Error401Rate threshold (unit=%)
-    error_401_rate = number
+    enabled_error_401_rate = bool
+    error_401_rate         = number
     # (Required) Error403Rate threshold (unit=%)
-    error_403_rate = number
+    enabled_error_403_rate = bool
+    error_403_rate         = number
     # (Required) Error404Rate threshold (unit=%)
-    error_404_rate = number
+    enabled_error_404_rate = bool
+    error_404_rate         = number
     # (Required) Error502Rate threshold (unit=%)
-    error_502_rate = number
+    enabled_error_502_rate = bool
+    error_502_rate         = number
     # (Required) Error503Rate threshold (unit=%)
-    error_503_rate = number
+    enabled_error_503_rate = bool
+    error_503_rate         = number
     # (Required) Error504Rate threshold (unit=%)
-    error_504_rate = number
+    enabled_error_504_rate = bool
+    error_504_rate         = number
     # (Required) CacheHitRate threshold (unit=%)
-    cache_hit_rate = number
+    enabled_cache_hit_rate = bool
+    cache_hit_rate         = number
     # (Required) OriginLatency threshold (unit=Milliseconds)
-    origin_latency = number
+    enabled_origin_latency = bool
+    origin_latency         = number
     }
   )
   description = "(Optional) Set the threshold for each Metric in CloudFront."
   default = {
-    error_401_rate = 1
-    error_403_rate = 1
-    error_404_rate = 1
-    error_502_rate = 1
-    error_503_rate = 1
-    error_504_rate = 1
-    cache_hit_rate = 70
-    origin_latency = 10000
+    enabled_error_401_rate = true
+    error_401_rate         = 1
+    enabled_error_403_rate = true
+    error_403_rate         = 1
+    enabled_error_404_rate = true
+    error_404_rate         = 1
+    enabled_error_502_rate = true
+    error_502_rate         = 1
+    enabled_error_503_rate = true
+    error_503_rate         = 1
+    enabled_error_504_rate = true
+    error_504_rate         = 1
+    enabled_cache_hit_rate = true
+    cache_hit_rate         = 70
+    enabled_origin_latency = true
+    origin_latency         = 10000
   }
 }
 variable "dimensions" {
