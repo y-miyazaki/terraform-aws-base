@@ -14,18 +14,24 @@ variable "period" {
 variable "threshold" {
   type = object({
     # 4XXerror threshold (unit=%)
-    error4XX = number
+    enabled_error4XX = bool
+    error4XX         = number
     # 5XXerror threshold (unit=%)
-    error5XX = number
+    enabled_error5XX = bool
+    error5XX         = number
     # Latency threshold (unit=Milliseconds)
-    latency = number
+    enabled_latency = bool
+    latency         = number
     }
   )
   description = "(Optional) Set the threshold for each Metric in API Gateway."
   default = {
-    error4XX = 1
-    error5XX = 1
-    latency  = 10000
+    enabled_error4XX = true
+    error4XX         = 1
+    enabled_error5XX = true
+    error5XX         = 1
+    enabled_latency  = true
+    latency          = 10000
   }
 }
 variable "dimensions" {

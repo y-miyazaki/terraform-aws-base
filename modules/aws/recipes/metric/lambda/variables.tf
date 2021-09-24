@@ -14,21 +14,29 @@ variable "period" {
 variable "threshold" {
   type = object({
     # ConcurrentExecutions threshold (unit=Count)
-    concurrent_executions = number
+    enabled_concurrent_executions = bool
+    concurrent_executions         = number
     # Duration threshold (unit=Milliseconds)
-    duration = number
+    enabled_duration = bool
+    duration         = number
     # Errors threshold (unit=Count)
-    errors = number
+    enabled_errors = bool
+    errors         = number
     # Throttles threshold (unit=Count)
-    throttles = number
+    enabled_throttles = bool
+    throttles         = number
     }
   )
   description = "(Optional) Set the threshold for each Metric in Lambda."
   default = {
-    concurrent_executions = 500
-    duration              = 10000
-    errors                = 1
-    throttles             = 10
+    enabled_concurrent_executions = true
+    concurrent_executions         = 500
+    enabled_duration              = true
+    duration                      = 10000
+    enabled_errors                = true
+    errors                        = 1
+    enabled_throttles             = true
+    throttles                     = 10
   }
 }
 variable "dimensions" {

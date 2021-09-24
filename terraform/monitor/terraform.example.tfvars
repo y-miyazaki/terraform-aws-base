@@ -151,11 +151,11 @@ common_lambda = {
   }
 }
 #--------------------------------------------------------------
-# Application Log
+# Log:Application
 #--------------------------------------------------------------
-metric_application_log = {
+metric_log_application = {
   # TODO: need to set is_enabled for settings of application log.
-  is_enabled = true
+  is_enabled = false
   aws_kms_key = {
     description             = "This key used for SNS(Application Log)."
     deletion_window_in_days = 7
@@ -278,6 +278,134 @@ PATTERN
   }
 }
 #--------------------------------------------------------------
+# Log:Postgres
+#--------------------------------------------------------------
+metric_log_postgres = {
+  # TODO: need to set is_enabled for settings of postgres log.
+  is_enabled = false
+  aws_kms_key = {
+    description             = "This key used for SNS(Postgres Log)."
+    deletion_window_in_days = 7
+    is_enabled              = true
+    enable_key_rotation     = true
+    alias_name              = "sns-postgres"
+  }
+  aws_sns_topic = {
+    name                                     = "postgres-logs"
+    name_prefix                              = null
+    display_name                             = null
+    delivery_policy                          = null
+    application_success_feedback_role_arn    = null
+    application_success_feedback_sample_rate = null
+    application_failure_feedback_role_arn    = null
+    http_success_feedback_role_arn           = null
+    http_success_feedback_sample_rate        = null
+    http_failure_feedback_role_arn           = null
+    lambda_success_feedback_role_arn         = null
+    lambda_success_feedback_sample_rate      = null
+    lambda_failure_feedback_role_arn         = null
+    sqs_success_feedback_role_arn            = null
+    sqs_success_feedback_sample_rate         = null
+    sqs_failure_feedback_role_arn            = null
+  }
+  aws_sns_topic_subscription = {
+    protocol                        = "lambda"
+    endpoint_auto_confirms          = false
+    confirmation_timeout_in_minutes = null
+    raw_message_delivery            = null
+    filter_policy                   = null
+    delivery_policy                 = null
+    redrive_policy                  = null
+  }
+  #--------------------------------------------------------------
+  # Provides a Kinesis Firehose Delivery Stream resource. Amazon Kinesis Firehose is a fully managed, elastic service to easily deliver real-time data streams to destinations such as Amazon S3 and Amazon Redshift.
+  #--------------------------------------------------------------
+  aws_kinesis_firehose_delivery_stream = {
+    buffer_size        = 5
+    buffer_interval    = 60
+    prefix             = "Postgres/"
+    compression_format = "GZIP"
+    cloudwatch_logging_options = [
+      {
+        enabled = false
+      }
+    ]
+  }
+  aws_iam_role_kinesis_firehose = {
+    description = null
+    name        = "postgres-kinesis-firehose-role"
+    path        = "/"
+  }
+  aws_iam_policy_kinesis_firehose = {
+    description = null
+    name        = "postgres-kinesis-firehose-policy"
+    path        = "/"
+  }
+
+  # TODO: need to add log_group_name for postgres.
+  #       check log group name for postgres.
+  # check CloudWatch Group name list command.
+  # ex1) aws logs describe-log-groups --log-group-name-prefix hogehoge | jq -r ".logGroups[].logGroupName"
+  # ex2) aws logs describe-log-groups --log-group-name-prefix /aws/rds/ | jq -r '.logGroups[] | .logGroupName = "\"" + .logGroupName + "\"," | .logGroupName'
+  log_group_name = [
+  ]
+
+  aws_cloudwatch_log_metric_filter = {
+    name = "postgres-logs-error"
+    # TODO: need to change pattern for postgres log.
+    pattern = <<PATTERN
+?ERROR
+PATTERN
+    metric_transformation = [
+      {
+        name      = "postgres-logs-error"
+        namespace = "Postgres"
+        value     = "1"
+      }
+    ]
+  }
+  aws_cloudwatch_metric_alarm = {
+    alarm_name          = "postgres-logs-error"
+    comparison_operator = "GreaterThanOrEqualToThreshold"
+    evaluation_periods  = 1
+    period              = 300
+    statistic           = "Sum"
+    threshold           = 1
+    threshold_metric_id = null
+    actions_enabled     = true
+    alarm_description   = "Alert postgres log notification."
+    datapoints_to_alarm = 1
+    dimensions          = null
+    treat_missing_data  = "notBreaching"
+  }
+  aws_iam_role_cloudwatch_logs = {
+    description = null
+    name        = "postgres-cloudwatch-logs-kinesis-firehose-role"
+    path        = "/"
+  }
+  aws_iam_policy_cloudwatch_logs = {
+    description = null
+    name        = "postgres-cloudwatch-logs-kinesis-firehose-policy"
+    path        = "/"
+  }
+  aws_cloudwatch_log_group_lambda = {
+    # TODO: need to change retention_in_days for each services.
+    retention_in_days = 7
+    kms_key_id        = null
+  }
+  aws_lambda_function = {
+    environment = {
+      # TODO: need to change SLACK_OAUTH_ACCESS_TOKEN.
+      SLACK_OAUTH_ACCESS_TOKEN = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+      # TODO: need to change SLACK_CHANNEL_ID.
+      SLACK_CHANNEL_ID = "xxxxxxxxxx"
+      LOGGER_FORMATTER = "json"
+      LOGGER_OUT       = "stdout"
+      LOGGER_LEVEL     = "warn"
+    }
+  }
+}
+#--------------------------------------------------------------
 # Metric:ALB
 #--------------------------------------------------------------
 metric_resource_alb = {
@@ -288,25 +416,35 @@ metric_resource_alb = {
   # TODO: need to set threshold for ALB.
   threshold = {
     # (Required) ActiveConnectionCount threshold (unit=Count)
-    active_connection_count = 10000
+    enabled_active_connection_count = true
+    active_connection_count         = 10000
     # (Required) ClientTLSNegotiationErrorCount threshold (unit=Count)
-    client_tls_negotiation_error_count = 10
+    enabled_client_tls_negotiation_error_count = true
+    client_tls_negotiation_error_count         = 10
     # (Required) ConsumedLCUs threshold (unit=Count)
-    consumed_lcus = 5
+    enabled_consumed_lcus = true
+    consumed_lcus         = 5
     # (Required) HTTPCode_4XX_Count	threshold (unit=Count)
-    httpcode_4xx_count = 1
+    enabled_httpcode_4xx_count = true
+    httpcode_4xx_count         = 1
     # (Required) HTTPCode_5XX_Count	threshold (unit=Count)
-    httpcode_5xx_count = 1
+    enabled_httpcode_5xx_count = true
+    httpcode_5xx_count         = 1
     # (Required) HTTPCode_ELB_4XX_Count	threshold (unit=Count)
-    httpcode_elb_4xx_count = 1
+    enabled_httpcode_elb_4xx_count = true
+    httpcode_elb_4xx_count         = 1
     # (Required) HTTPCode_ELB_5XX_Count	threshold (unit=Count)
-    httpcode_elb_5xx_count = 1
+    enabled_httpcode_elb_5xx_count = true
+    httpcode_elb_5xx_count         = 1
     # (Required) TargetResponseTime	threshold (unit=)
-    target_response_time = 10
+    enabled_target_response_time = true
+    target_response_time         = 10
     # (Required) TargetTLSNegotiationErrorCount	threshold (unit=Count)
-    target_tls_negotiation_error_count = 10
+    enabled_target_tls_negotiation_error_count = true
+    target_tls_negotiation_error_count         = 10
     # (Required) UnHealthyHostCount	threshold (unit=Count)
-    unhealthy_host_count = 1
+    enabled_unhealthy_host_count = true
+    unhealthy_host_count         = 1
   }
   # TODO: need to set dimensions for monitor of ALB.
   # Specify the instance of the target ALB name to be monitored by Map.
@@ -329,11 +467,14 @@ metric_resource_api_gateway = {
   # TODO: need to set threshold for API Gateway.
   threshold = {
     # (Required) 4XXerror threshold (unit=%)
-    error4XX = 1
+    enabled_error4XX = true
+    error4XX         = 1
     # (Required) 5XXerror threshold (unit=%)
-    error5XX = 1
+    enabled_error5XX = true
+    error5XX         = 1
     # (Required) Error threshold (unit=Milliseconds)
-    latency = 10000
+    enabled_latency = true
+    latency         = 10000
   }
   # TODO: need to set dimensions for monitor of API Gateway.
   # Specify the instance of the target API Gateway name to be monitored by Map.
@@ -358,31 +499,40 @@ metric_resource_cloudfront = {
   # TODO: need to set threshold for CloudFront.
   threshold = {
     # (Required) Error401Rate threshold (unit=%)
-    error_401_rate = 1
+    enabled_error_401_rate = false
+    error_401_rate         = 1
     # (Required) Error403Rate threshold (unit=%)
-    error_403_rate = 1
+    enabled_error_403_rate = true
+    error_403_rate         = 1
     # (Required) Error404Rate threshold (unit=%)
-    error_404_rate = 1
+    enabled_error_404_rate = true
+    error_404_rate         = 1
     # (Required) Error502Rate threshold (unit=%)
-    error_502_rate = 1
+    enabled_error_502_rate = true
+    error_502_rate         = 1
     # (Required) Error503Rate threshold (unit=%)
-    error_503_rate = 1
+    enabled_error_503_rate = true
+    error_503_rate         = 1
     # (Required) Error504Rate threshold (unit=%)
-    error_504_rate = 1
+    enabled_error_504_rate = true
+    error_504_rate         = 1
     # (Required) CacheHitRate threshold (unit=%)
-    cache_hit_rate = 70
+    enabled_cache_hit_rate = true
+    cache_hit_rate         = 70
     # (Required) OriginLatency threshold (unit=Milliseconds)
-    origin_latency = 10000
+    enabled_origin_latency = true
+    origin_latency         = 10000
   }
   # TODO: need to set dimensions for monitor of CloudFront.
   # Specify the instance of the target CloudFront name to be monitored by Map.
   # check CloudFront distribution name list command.
-  # ex) aws cloudfront list-distributions | jq -r '.DistributionList.Items[] | .Dimensions = "{\n  \"DistributionId\" = \"" + .Id + "\" # " + .DomainName + "(" +.Aliases.Items[0] +")\n  \"Region\" = \"Global\"\n}," | .Dimensions'
+  # ex) aws cloudfront list-distributions | jq -r '.DistributionList.Items[] | if .Aliases.Items[0] then .Dimensions = "{\n  \"DistributionId\" = \"" + .Id + "\"\n  \"Region\" = \"Global\"\n  \"Domain\" = \"" + .Aliases.Items[0] + "\"\n }," else .Dimensions = "{\n  \"DistributionId\" = \"" + .Id + "\"\n  \"Region\" = \"Global\"\n  \"Domain\" = \"" + .DomainName + "\"\n }," end | .Dimensions'
   #   ex)
   #   dimensions = [
   #     {
   #       "DistributionId" = "ABCDEFG12345"
   #       "Region"         = "Global"
+  #       "Domain"         = "aaaaaaaaaaaa.cloudfront.net"
   #     }
   #   ]
   dimensions = []
@@ -398,23 +548,26 @@ metric_resource_ec2 = {
   # TODO: need to set threshold for EC2.
   threshold = {
     # (Required) CPUUtilization threshold (unit=Percent)
-    cpu_utilization = 80
+    enabled_cpu_utilization = true
+    cpu_utilization         = 80
     # (Required) MetadataNoToken threshold (unit=Count)
-    metadata_no_token = 1
+    enabled_metadata_no_token = true
+    metadata_no_token         = 1
     # (Required) CPUCreditUsage threshold (unit=Count)
-    cpu_credit_usage = 5
+    enabled_cpu_credit_usage = true
+    cpu_credit_usage         = 5
     # (Required) StatusCheckFailed threshold (unit=Count)
-    status_check_failed = 1
+    enabled_status_check_failed = true
+    status_check_failed         = 1
   }
-  # TODO: need to set dimensions for monitor of CloudFront.
+  # TODO: need to set dimensions for monitor of EC2.
   # Specify the instance of the target CloudFront name to be monitored by Map.
-  # check CloudFront distribution name list command.
+  # check EC2 distribution name list command.
   # ex) aws ec2 describe-instances | jq -r '.Reservations[].Instances[] | .Dimensions = "{\n  \"InstanceId\" = \"" + .InstanceId + "\" # " + .InstanceType + "\n}," | .Dimensions'
   #   ex)
   #   dimensions = [
   #     {
-  #       "DistributionId" = "ABCDEFG12345"
-  #       "Region"         = "Global"
+  #       "InstanceId" = "i-xxxxxxxxxxxxxxx" # t3.small
   #     }
   #   ]
   dimensions = []
@@ -430,23 +583,32 @@ metric_resource_elasticache = {
   # TODO: need to set threshold for ElastiCache.
   threshold = {
     # (Required) AuthenticationFailures threshold (unit=Count)
-    authentication_failures = 1
+    enabled_authentication_failures = true
+    authentication_failures         = 1
     # (Required) CacheHitRate threshold (unit=Percent)
-    cache_hit_rate = 10
+    enabled_cache_hit_rate = true
+    cache_hit_rate         = 10
     # (Required) CommandAuthorizationFailures threshold (unit=Count)
-    command_authorization_failures = 1
+    enabled_command_authorization_failures = true
+    command_authorization_failures         = 1
     # (Required) CurrConnections threshold (unit=Count)
-    curr_connections = 50
+    enabled_curr_connections = true
+    curr_connections         = 50
     # (Required) DatabaseMemoryUsagePercentage threshold (unit=Percent)
-    database_memory_usage_percentage = 80
+    enabled_database_memory_usage_percentage = true
+    database_memory_usage_percentage         = 80
     # (Required) EngineCPUUtilization threshold (unit=Percent)
-    engine_cpu_utilization = 90
+    enabled_engine_cpu_utilization = true
+    engine_cpu_utilization         = 90
     # (Required) KeyAuthorizationFailures threshold (unit=Count)
-    key_authorization_failures = 1
+    enabled_key_authorization_failures = true
+    key_authorization_failures         = 1
     # (Required) NewConnections threshold (unit=Count)
-    new_connections = 100
+    enabled_new_connections = true
+    new_connections         = 100
     # (Required) SwapUsage threshold (unit=Bytes)
-    swap_usage = 52428800 # 50MB
+    enabled_swap_usage = true
+    swap_usage         = 52428800 # 50MB
   }
   # TODO: need to set dimensions for monitor of ElastiCache.
   # Specify the instance of the target ElastiCache name to be monitored by Map.
@@ -471,13 +633,17 @@ metric_resource_lambda = {
   # TODO: need to set threshold for Lambda.
   threshold = {
     # (Required) ConcurrentExecutions threshold (unit=Count)
-    concurrent_executions = 500
+    enabled_concurrent_executions = true
+    concurrent_executions         = 500
     # (Required) Duration threshold (unit=Milliseconds)
-    duration = 10000
+    enabled_duration = true
+    duration         = 10000
     # (Required) Errors threshold (unit=Count)
-    errors = 1
+    enabled_errors = true
+    errors         = 1
     # (Required) Throttles threshold (unit=Count)
-    throttles = 10
+    enabled_throttles = true
+    throttles         = 10
   }
   # TODO: need to set dimensions for monitor of Lambda.
   # Specify the instance of the target Lambda name to be monitored by Map.
@@ -514,25 +680,35 @@ metric_resource_rds = {
   # TODO: need to set threshold for RDS.
   threshold = {
     # (Required) CommitRatency threshold (unit=Seconds)
-    commit_latency = 10
+    enabled_commit_latency = true
+    commit_latency         = 10
     # (Required) CPUCreditBalance threshold (unit=Count)
-    cpu_creadit_balance = 100
+    enabled_cpu_creadit_balance = true
+    cpu_creadit_balance         = 100
     # (Required) CPUUtilization threshold (unit=%)
-    cpu_utilization = 80
+    enabled_cpu_utilization = true
+    cpu_utilization         = 80
     # (Required) DatabaseConnections threshold (unit=Count)
-    database_connections = 100
+    enabled_database_connections = true
+    database_connections         = 100
     # (Required) Deadlocks threshold (unit=Count)
-    deadlocks = 1
+    enabled_deadlocks = true
+    deadlocks         = 1
     # (Required) DeleteLatency threshold (unit=Count)
-    delete_latency = 10
+    enabled_delete_latency = true
+    delete_latency         = 10
     # (Required) DiskQueueDepth threshold (unit=Count)
-    disk_queue_depth = 64
+    enabled_disk_queue_depth = true
+    disk_queue_depth         = 64
     # (Required) FreeableMemory threshold (unit=Megabytes)
-    freeable_memory = 512
+    enabled_freeable_memory = true
+    freeable_memory         = 512
     # (Required) ReadLatency threshold (unit=Seconds)
-    read_latency = 10
+    enabled_read_latency = true
+    read_latency         = 10
     # (Required) WriteLatency threshold (unit=Seconds)
-    write_latency = 10
+    enabled_write_latency = true
+    write_latency         = 10
   }
   # TODO: need to set dimensions for monitor of RDS.
   # Specify the instance of the target DB to be monitored by Map.
@@ -551,4 +727,25 @@ metric_resource_rds = {
   #     }
   #   ]
   dimensions = []
+}
+#--------------------------------------------------------------
+# Metric:SES
+#--------------------------------------------------------------
+metric_resource_ses = {
+  # TODO: need to set is_enabled for monitor of SES.
+  is_enabled = false
+  # TODO: need to set period for SES.
+  period = 300
+  # TODO: need to set threshold for SES.
+  threshold = {
+    # Reputation.BounceRate threshold (unit=Percent)
+    enabled_reputation_bouncerate = true
+    reputation_bouncerate         = 5
+    # Reputation.ComplaintRate threshold (unit=Percent)
+    enabled_reputation_complaintrate = true
+    reputation_complaintrate         = 0.1
+  }
+  # TODO: need to set dimensions for monitor of SES.
+  dimensions = [
+  ]
 }

@@ -20,7 +20,7 @@ locals {
 # Provides a CloudWatch Metric Alarm resource.
 #--------------------------------------------------------------
 resource "aws_cloudwatch_metric_alarm" "cpu_utilization" {
-  count                     = var.is_enabled ? local.count : 0
+  count                     = var.is_enabled && var.threshold.enabled_cpu_utilization ? local.count : 0
   alarm_name                = "${var.name_prefix}metric-ec2-${local.names[count.index].name}cpu-utilization"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -44,7 +44,7 @@ resource "aws_cloudwatch_metric_alarm" "cpu_utilization" {
 # Provides a CloudWatch Metric Alarm resource.
 #--------------------------------------------------------------
 resource "aws_cloudwatch_metric_alarm" "metadata_no_token" {
-  count                     = var.is_enabled ? local.count : 0
+  count                     = var.is_enabled && var.threshold.enabled_metadata_no_token ? local.count : 0
   alarm_name                = "${var.name_prefix}metric-ec2-${local.names[count.index].name}metadata-no-token"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -68,7 +68,7 @@ resource "aws_cloudwatch_metric_alarm" "metadata_no_token" {
 # Provides a CloudWatch Metric Alarm resource.
 #--------------------------------------------------------------
 resource "aws_cloudwatch_metric_alarm" "cpu_credit_usage" {
-  count                     = var.is_enabled ? local.count : 0
+  count                     = var.is_enabled && var.threshold.enabled_cpu_credit_usage ? local.count : 0
   alarm_name                = "${var.name_prefix}metric-ec2-${local.names[count.index].name}cpu-credit-usage"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -92,7 +92,7 @@ resource "aws_cloudwatch_metric_alarm" "cpu_credit_usage" {
 # Provides a CloudWatch Metric Alarm resource.
 #--------------------------------------------------------------
 resource "aws_cloudwatch_metric_alarm" "status_check_failed" {
-  count                     = var.is_enabled ? local.count : 0
+  count                     = var.is_enabled && var.threshold.enabled_status_check_failed ? local.count : 0
   alarm_name                = "${var.name_prefix}metric-ec2-${local.names[count.index].name}status-check-failed"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
