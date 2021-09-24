@@ -14,13 +14,24 @@ locals {
     name = ""
   }]
   is_dimensions = length(var.dimensions) > 0 ? true : false
+  dimensions = length(var.dimensions) > 0 ? flatten([
+    for r in var.dimensions : {
+      DistributionId = r.DistributionId
+      Region         = r.Region
+    }]) : [{
+  }]
+  domains = length(var.dimensions) > 0 ? flatten([
+    for r in var.dimensions : {
+      Domain = r.Domain
+    }]) : [{
+  }]
 }
 #--------------------------------------------------------------
 # For 404ErrorRate
 # Provides a CloudWatch Metric Alarm resource.
 #--------------------------------------------------------------
 resource "aws_cloudwatch_metric_alarm" "error_401_rate" {
-  count               = var.is_enabled ? local.count : 0
+  count               = var.is_enabled && var.threshold.enabled_error_401_rate ? local.count : 0
   alarm_name          = "${var.name_prefix}metric-cloudfront-${local.names[count.index].name}error-401-rate"
   comparison_operator = "GreaterThanOrEqualToThreshold"
   evaluation_periods  = 1
@@ -31,11 +42,11 @@ resource "aws_cloudwatch_metric_alarm" "error_401_rate" {
   threshold           = var.threshold.error_401_rate
   actions_enabled     = true
   alarm_actions       = var.alarm_actions
-  alarm_description   = "This is an alarm to check for <${local.url}|CloudFront 401 Error Rate>(>= ${var.threshold.error_401_rate}%)."
+  alarm_description   = "This is an alarm to check for ${local.domains[count.index].Domain} <${local.url}|CloudFront 401 Error Rate>(>= ${var.threshold.error_401_rate}%)."
   ok_actions          = var.ok_actions
   unit                = "Percent"
   treat_missing_data  = "notBreaching"
-  dimensions          = local.is_dimensions ? var.dimensions[count.index] : null
+  dimensions          = local.is_dimensions ? local.dimensions[count.index] : null
   tags                = var.tags
 }
 #--------------------------------------------------------------
@@ -43,7 +54,7 @@ resource "aws_cloudwatch_metric_alarm" "error_401_rate" {
 # Provides a CloudWatch Metric Alarm resource.
 #--------------------------------------------------------------
 resource "aws_cloudwatch_metric_alarm" "error_403_rate" {
-  count               = var.is_enabled ? local.count : 0
+  count               = var.is_enabled && var.threshold.enabled_error_403_rate ? local.count : 0
   alarm_name          = "${var.name_prefix}metric-cloudfront-${local.names[count.index].name}error-403-rate"
   comparison_operator = "GreaterThanOrEqualToThreshold"
   evaluation_periods  = 1
@@ -54,11 +65,11 @@ resource "aws_cloudwatch_metric_alarm" "error_403_rate" {
   threshold           = var.threshold.error_403_rate
   actions_enabled     = true
   alarm_actions       = var.alarm_actions
-  alarm_description   = "This is an alarm to check for <${local.url}|CloudFront 403 Error Rate>(>= ${var.threshold.error_403_rate}%)."
+  alarm_description   = "This is an alarm to check for ${local.domains[count.index].Domain} <${local.url}|CloudFront 403 Error Rate>(>= ${var.threshold.error_403_rate}%)."
   ok_actions          = var.ok_actions
   unit                = "Percent"
   treat_missing_data  = "notBreaching"
-  dimensions          = local.is_dimensions ? var.dimensions[count.index] : null
+  dimensions          = local.is_dimensions ? local.dimensions[count.index] : null
   tags                = var.tags
 }
 #--------------------------------------------------------------
@@ -66,7 +77,7 @@ resource "aws_cloudwatch_metric_alarm" "error_403_rate" {
 # Provides a CloudWatch Metric Alarm resource.
 #--------------------------------------------------------------
 resource "aws_cloudwatch_metric_alarm" "error_404_rate" {
-  count               = var.is_enabled ? local.count : 0
+  count               = var.is_enabled && var.threshold.enabled_error_404_rate ? local.count : 0
   alarm_name          = "${var.name_prefix}metric-cloudfront-${local.names[count.index].name}error-404-rate"
   comparison_operator = "GreaterThanOrEqualToThreshold"
   evaluation_periods  = 1
@@ -77,11 +88,11 @@ resource "aws_cloudwatch_metric_alarm" "error_404_rate" {
   threshold           = var.threshold.error_404_rate
   actions_enabled     = true
   alarm_actions       = var.alarm_actions
-  alarm_description   = "This is an alarm to check for <${local.url}|CloudFront 404 Error Rate>(>= ${var.threshold.error_404_rate}%)."
+  alarm_description   = "This is an alarm to check for ${local.domains[count.index].Domain} <${local.url}|CloudFront 404 Error Rate>(>= ${var.threshold.error_404_rate}%)."
   ok_actions          = var.ok_actions
   unit                = "Percent"
   treat_missing_data  = "notBreaching"
-  dimensions          = local.is_dimensions ? var.dimensions[count.index] : null
+  dimensions          = local.is_dimensions ? local.dimensions[count.index] : null
   tags                = var.tags
 }
 
@@ -90,7 +101,7 @@ resource "aws_cloudwatch_metric_alarm" "error_404_rate" {
 # Provides a CloudWatch Metric Alarm resource.
 #--------------------------------------------------------------
 resource "aws_cloudwatch_metric_alarm" "error_502_rate" {
-  count               = var.is_enabled ? local.count : 0
+  count               = var.is_enabled && var.threshold.enabled_error_502_rate ? local.count : 0
   alarm_name          = "${var.name_prefix}metric-cloudfront-${local.names[count.index].name}error-502-rate"
   comparison_operator = "GreaterThanOrEqualToThreshold"
   evaluation_periods  = 1
@@ -101,11 +112,11 @@ resource "aws_cloudwatch_metric_alarm" "error_502_rate" {
   threshold           = var.threshold.error_502_rate
   actions_enabled     = true
   alarm_actions       = var.alarm_actions
-  alarm_description   = "This is an alarm to check for <${local.url}|CloudFront 502 Error Rate>(>= ${var.threshold.error_502_rate}%)."
+  alarm_description   = "This is an alarm to check for ${local.domains[count.index].Domain} <${local.url}|CloudFront 502 Error Rate>(>= ${var.threshold.error_502_rate}%)."
   ok_actions          = var.ok_actions
   unit                = "Percent"
   treat_missing_data  = "notBreaching"
-  dimensions          = local.is_dimensions ? var.dimensions[count.index] : null
+  dimensions          = local.is_dimensions ? local.dimensions[count.index] : null
   tags                = var.tags
 }
 #--------------------------------------------------------------
@@ -113,7 +124,7 @@ resource "aws_cloudwatch_metric_alarm" "error_502_rate" {
 # Provides a CloudWatch Metric Alarm resource.
 #--------------------------------------------------------------
 resource "aws_cloudwatch_metric_alarm" "error_503_rate" {
-  count               = var.is_enabled ? local.count : 0
+  count               = var.is_enabled && var.threshold.enabled_error_503_rate ? local.count : 0
   alarm_name          = "${var.name_prefix}metric-cloudfront-${local.names[count.index].name}error-503-rate"
   comparison_operator = "GreaterThanOrEqualToThreshold"
   evaluation_periods  = 1
@@ -124,11 +135,11 @@ resource "aws_cloudwatch_metric_alarm" "error_503_rate" {
   threshold           = var.threshold.error_503_rate
   actions_enabled     = true
   alarm_actions       = var.alarm_actions
-  alarm_description   = "This is an alarm to check for <${local.url}|CloudFront 503 Error Rate>(>= ${var.threshold.error_503_rate}%)."
+  alarm_description   = "This is an alarm to check for ${local.domains[count.index].Domain} <${local.url}|CloudFront 503 Error Rate>(>= ${var.threshold.error_503_rate}%)."
   ok_actions          = var.ok_actions
   unit                = "Percent"
   treat_missing_data  = "notBreaching"
-  dimensions          = local.is_dimensions ? var.dimensions[count.index] : null
+  dimensions          = local.is_dimensions ? local.dimensions[count.index] : null
   tags                = var.tags
 }
 #--------------------------------------------------------------
@@ -136,7 +147,7 @@ resource "aws_cloudwatch_metric_alarm" "error_503_rate" {
 # Provides a CloudWatch Metric Alarm resource.
 #--------------------------------------------------------------
 resource "aws_cloudwatch_metric_alarm" "error_504_rate" {
-  count               = var.is_enabled ? local.count : 0
+  count               = var.is_enabled && var.threshold.enabled_error_504_rate ? local.count : 0
   alarm_name          = "${var.name_prefix}metric-cloudfront-${local.names[count.index].name}error-504-rate"
   comparison_operator = "GreaterThanOrEqualToThreshold"
   evaluation_periods  = 1
@@ -147,11 +158,11 @@ resource "aws_cloudwatch_metric_alarm" "error_504_rate" {
   threshold           = var.threshold.error_504_rate
   actions_enabled     = true
   alarm_actions       = var.alarm_actions
-  alarm_description   = "This is an alarm to check for <${local.url}|CloudFront 504 Error Rate>(>= ${var.threshold.error_504_rate}%)."
+  alarm_description   = "This is an alarm to check for ${local.domains[count.index].Domain} <${local.url}|CloudFront 504 Error Rate>(>= ${var.threshold.error_504_rate}%)."
   ok_actions          = var.ok_actions
   unit                = "Percent"
   treat_missing_data  = "notBreaching"
-  dimensions          = local.is_dimensions ? var.dimensions[count.index] : null
+  dimensions          = local.is_dimensions ? local.dimensions[count.index] : null
   tags                = var.tags
 }
 #--------------------------------------------------------------
@@ -159,7 +170,7 @@ resource "aws_cloudwatch_metric_alarm" "error_504_rate" {
 # Provides a CloudWatch Metric Alarm resource.
 #--------------------------------------------------------------
 resource "aws_cloudwatch_metric_alarm" "cache_hit_rate" {
-  count               = var.is_enabled ? local.count : 0
+  count               = var.is_enabled && var.threshold.enabled_cache_hit_rate ? local.count : 0
   alarm_name          = "${var.name_prefix}metric-cloudfront-${local.names[count.index].name}cache-hit-rate"
   comparison_operator = "LessThanOrEqualToThreshold"
   evaluation_periods  = 1
@@ -170,11 +181,11 @@ resource "aws_cloudwatch_metric_alarm" "cache_hit_rate" {
   threshold           = var.threshold.cache_hit_rate
   actions_enabled     = true
   alarm_actions       = var.alarm_actions
-  alarm_description   = "This is an alarm to check for <${local.url}|CloudFront cache hit rate>(<= ${var.threshold.cache_hit_rate}%)."
+  alarm_description   = "This is an alarm to check for ${local.domains[count.index].Domain} <${local.url}|CloudFront cache hit rate>(<= ${var.threshold.cache_hit_rate}%)."
   ok_actions          = var.ok_actions
   unit                = "Percent"
   treat_missing_data  = "notBreaching"
-  dimensions          = local.is_dimensions ? var.dimensions[count.index] : null
+  dimensions          = local.is_dimensions ? local.dimensions[count.index] : null
   tags                = var.tags
 }
 #--------------------------------------------------------------
@@ -182,7 +193,7 @@ resource "aws_cloudwatch_metric_alarm" "cache_hit_rate" {
 # Provides a CloudWatch Metric Alarm resource.
 #--------------------------------------------------------------
 resource "aws_cloudwatch_metric_alarm" "origin_latency" {
-  count               = var.is_enabled ? local.count : 0
+  count               = var.is_enabled && var.threshold.enabled_origin_latency ? local.count : 0
   alarm_name          = "${var.name_prefix}metric-cloudfront-${local.names[count.index].name}origin-latency"
   comparison_operator = "GreaterThanOrEqualToThreshold"
   evaluation_periods  = 1
@@ -193,11 +204,11 @@ resource "aws_cloudwatch_metric_alarm" "origin_latency" {
   threshold           = var.threshold.origin_latency
   actions_enabled     = true
   alarm_actions       = var.alarm_actions
-  alarm_description   = "This is an alarm to check for <${local.url}|CloudFront origin latency>(>= ${var.threshold.origin_latency}msec)."
+  alarm_description   = "This is an alarm to check for ${local.domains[count.index].Domain} <${local.url}|CloudFront origin latency>(>= ${var.threshold.origin_latency}msec)."
   ok_actions          = var.ok_actions
   unit                = "Milliseconds"
   treat_missing_data  = "notBreaching"
-  dimensions          = local.is_dimensions ? var.dimensions[count.index] : null
+  dimensions          = local.is_dimensions ? local.dimensions[count.index] : null
   tags                = var.tags
 }
 
