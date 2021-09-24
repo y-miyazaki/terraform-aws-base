@@ -20,7 +20,7 @@ locals {
 # Provides a CloudWatch Metric Alarm resource.
 #--------------------------------------------------------------
 resource "aws_cloudwatch_metric_alarm" "authentication_failures" {
-  count                     = var.is_enabled ? local.count : 0
+  count                     = var.is_enabled && var.threshold.enabled_authentication_failures ? local.count : 0
   alarm_name                = "${var.name_prefix}metric-elasticache-${local.names[count.index].name}authentication-failures"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -44,7 +44,7 @@ resource "aws_cloudwatch_metric_alarm" "authentication_failures" {
 # Provides a CloudWatch Metric Alarm resource.
 #--------------------------------------------------------------
 resource "aws_cloudwatch_metric_alarm" "cache_hit_rate" {
-  count               = var.is_enabled ? local.count : 0
+  count               = var.is_enabled && var.threshold.enabled_cache_hit_rate ? local.count : 0
   alarm_name          = "${var.name_prefix}metric-elasticache-${local.names[count.index].name}cache-hit-rate"
   comparison_operator = "LessThanOrEqualToThreshold"
   evaluation_periods  = 1
@@ -89,7 +89,7 @@ resource "aws_cloudwatch_metric_alarm" "cache_hit_rate" {
 # Provides a CloudWatch Metric Alarm resource.
 #--------------------------------------------------------------
 resource "aws_cloudwatch_metric_alarm" "command_authorization_failures" {
-  count                     = var.is_enabled ? local.count : 0
+  count                     = var.is_enabled && var.threshold.enabled_command_authorization_failures ? local.count : 0
   alarm_name                = "${var.name_prefix}metric-elasticache-${local.names[count.index].name}command-authorization-failures"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -113,7 +113,7 @@ resource "aws_cloudwatch_metric_alarm" "command_authorization_failures" {
 # Provides a CloudWatch Metric Alarm resource.
 #--------------------------------------------------------------
 resource "aws_cloudwatch_metric_alarm" "curr_connections" {
-  count                     = var.is_enabled ? local.count : 0
+  count                     = var.is_enabled && var.threshold.enabled_curr_connections ? local.count : 0
   alarm_name                = "${var.name_prefix}metric-elasticache-${local.names[count.index].name}curr-connections"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -137,7 +137,7 @@ resource "aws_cloudwatch_metric_alarm" "curr_connections" {
 # Provides a CloudWatch Metric Alarm resource.
 #--------------------------------------------------------------
 resource "aws_cloudwatch_metric_alarm" "database_memory_usage_percentage" {
-  count                     = var.is_enabled ? local.count : 0
+  count                     = var.is_enabled && var.threshold.enabled_database_memory_usage_percentage ? local.count : 0
   alarm_name                = "${var.name_prefix}metric-elasticache-${local.names[count.index].name}database-memory-usage-percentage"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -161,7 +161,7 @@ resource "aws_cloudwatch_metric_alarm" "database_memory_usage_percentage" {
 # Provides a CloudWatch Metric Alarm resource.
 #--------------------------------------------------------------
 resource "aws_cloudwatch_metric_alarm" "engine_cpu_utilization" {
-  count                     = var.is_enabled ? local.count : 0
+  count                     = var.is_enabled && var.threshold.enabled_engine_cpu_utilization ? local.count : 0
   alarm_name                = "${var.name_prefix}metric-elasticache-${local.names[count.index].name}engine-cpu-utilization"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -185,7 +185,7 @@ resource "aws_cloudwatch_metric_alarm" "engine_cpu_utilization" {
 # Provides a CloudWatch Metric Alarm resource.
 #--------------------------------------------------------------
 resource "aws_cloudwatch_metric_alarm" "key_authorization_failures" {
-  count                     = var.is_enabled ? local.count : 0
+  count                     = var.is_enabled && var.threshold.enabled_key_authorization_failures ? local.count : 0
   alarm_name                = "${var.name_prefix}metric-elasticache-${local.names[count.index].name}key-authorization-failures"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -209,7 +209,7 @@ resource "aws_cloudwatch_metric_alarm" "key_authorization_failures" {
 # Provides a CloudWatch Metric Alarm resource.
 #--------------------------------------------------------------
 resource "aws_cloudwatch_metric_alarm" "new_connections" {
-  count                     = var.is_enabled ? local.count : 0
+  count                     = var.is_enabled && var.threshold.enabled_new_connections ? local.count : 0
   alarm_name                = "${var.name_prefix}metric-elasticache-${local.names[count.index].name}new-connections"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -233,7 +233,7 @@ resource "aws_cloudwatch_metric_alarm" "new_connections" {
 # Provides a CloudWatch Metric Alarm resource.
 #--------------------------------------------------------------
 resource "aws_cloudwatch_metric_alarm" "swap_usage" {
-  count                     = var.is_enabled ? local.count : 0
+  count                     = var.is_enabled && var.threshold.enabled_swap_usage ? local.count : 0
   alarm_name                = "${var.name_prefix}metric-elasticache-${local.names[count.index].name}swap-usage"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1

@@ -20,7 +20,7 @@ locals {
 # Provides a CloudWatch Metric Alarm resource.
 #--------------------------------------------------------------
 resource "aws_cloudwatch_metric_alarm" "concurrent_executions" {
-  count                     = var.is_enabled ? local.count : 0
+  count                     = var.is_enabled && var.threshold.enabled_concurrent_executions ? local.count : 0
   alarm_name                = "${var.name_prefix}metric-lambda-${local.names[count.index].name}concurrent-executions"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -44,7 +44,7 @@ resource "aws_cloudwatch_metric_alarm" "concurrent_executions" {
 # Provides a CloudWatch Metric Alarm resource.
 #--------------------------------------------------------------
 resource "aws_cloudwatch_metric_alarm" "duration" {
-  count                     = var.is_enabled ? local.count : 0
+  count                     = var.is_enabled && var.threshold.enabled_duration ? local.count : 0
   alarm_name                = "${var.name_prefix}metric-lambda-${local.names[count.index].name}duration"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -69,7 +69,7 @@ resource "aws_cloudwatch_metric_alarm" "duration" {
 # Provides a CloudWatch Metric Alarm resource.
 #--------------------------------------------------------------
 resource "aws_cloudwatch_metric_alarm" "error" {
-  count                     = var.is_enabled ? local.count : 0
+  count                     = var.is_enabled && var.threshold.enabled_errors ? local.count : 0
   alarm_name                = "${var.name_prefix}metric-lambda-${local.names[count.index].name}error"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -93,7 +93,7 @@ resource "aws_cloudwatch_metric_alarm" "error" {
 # Provides a CloudWatch Metric Alarm resource.
 #--------------------------------------------------------------
 resource "aws_cloudwatch_metric_alarm" "throttles" {
-  count                     = var.is_enabled ? local.count : 0
+  count                     = var.is_enabled && var.threshold.enabled_throttles ? local.count : 0
   alarm_name                = "${var.name_prefix}metric-lambda-${local.names[count.index].name}throttles"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1

@@ -20,7 +20,7 @@ locals {
 # Provides a CloudWatch Metric Alarm resource.
 #--------------------------------------------------------------
 resource "aws_cloudwatch_metric_alarm" "error_4xx" {
-  count               = var.is_enabled ? local.count : 0
+  count               = var.is_enabled && var.threshold.enabled_error4XX ? local.count : 0
   alarm_name          = "${var.name_prefix}metric-api-gateway-${local.names[count.index].name}4xx-error"
   comparison_operator = "GreaterThanOrEqualToThreshold"
   evaluation_periods  = 1
@@ -67,7 +67,7 @@ resource "aws_cloudwatch_metric_alarm" "error_4xx" {
 # Provides a CloudWatch Metric Alarm resource.
 #--------------------------------------------------------------
 resource "aws_cloudwatch_metric_alarm" "error_5xx" {
-  count               = var.is_enabled ? local.count : 0
+  count               = var.is_enabled && var.threshold.enabled_error5XX ? local.count : 0
   alarm_name          = "${var.name_prefix}metric-api-gateway-${local.names[count.index].name}5xx-error"
   comparison_operator = "GreaterThanOrEqualToThreshold"
   evaluation_periods  = 1
@@ -115,7 +115,7 @@ resource "aws_cloudwatch_metric_alarm" "error_5xx" {
 # Provides a CloudWatch Metric Alarm resource.
 #--------------------------------------------------------------
 resource "aws_cloudwatch_metric_alarm" "latency" {
-  count               = var.is_enabled ? local.count : 0
+  count               = var.is_enabled && var.threshold.enabled_latency ? local.count : 0
   alarm_name          = "${var.name_prefix}metric-api-gateway-${local.names[count.index].name}latency"
   comparison_operator = "GreaterThanOrEqualToThreshold"
   evaluation_periods  = 1

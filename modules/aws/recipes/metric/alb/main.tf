@@ -20,7 +20,7 @@ locals {
 # Provides a CloudWatch Metric Alarm resource.
 #--------------------------------------------------------------
 resource "aws_cloudwatch_metric_alarm" "active_connection_count" {
-  count                     = var.is_enabled ? local.count : 0
+  count                     = var.is_enabled && var.threshold.enabled_active_connection_count ? local.count : 0
   alarm_name                = "${var.name_prefix}metric-alb-${local.names[count.index].name}active-connection-count"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -44,7 +44,7 @@ resource "aws_cloudwatch_metric_alarm" "active_connection_count" {
 # Provides a CloudWatch Metric Alarm resource.
 #--------------------------------------------------------------
 resource "aws_cloudwatch_metric_alarm" "client_tls_negotiation_error_count" {
-  count                     = var.is_enabled ? local.count : 0
+  count                     = var.is_enabled && var.threshold.enabled_client_tls_negotiation_error_count ? local.count : 0
   alarm_name                = "${var.name_prefix}metric-alb-${local.names[count.index].name}client-tls-negotiation-error-count"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -68,7 +68,7 @@ resource "aws_cloudwatch_metric_alarm" "client_tls_negotiation_error_count" {
 # Provides a CloudWatch Metric Alarm resource.
 #--------------------------------------------------------------
 resource "aws_cloudwatch_metric_alarm" "consumed_lcus" {
-  count                     = var.is_enabled ? local.count : 0
+  count                     = var.is_enabled && var.threshold.enabled_consumed_lcus ? local.count : 0
   alarm_name                = "${var.name_prefix}metric-alb-${local.names[count.index].name}consumed-lcus"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -92,7 +92,7 @@ resource "aws_cloudwatch_metric_alarm" "consumed_lcus" {
 # Provides a CloudWatch Metric Alarm resource.
 #--------------------------------------------------------------
 resource "aws_cloudwatch_metric_alarm" "httpcode_4xx_count" {
-  count                     = var.is_enabled ? local.count : 0
+  count                     = var.is_enabled && var.threshold.enabled_httpcode_4xx_count ? local.count : 0
   alarm_name                = "${var.name_prefix}metric-alb-${local.names[count.index].name}httpcode-4xx-count"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -116,7 +116,7 @@ resource "aws_cloudwatch_metric_alarm" "httpcode_4xx_count" {
 # Provides a CloudWatch Metric Alarm resource.
 #--------------------------------------------------------------
 resource "aws_cloudwatch_metric_alarm" "httpcode_5xx_count" {
-  count                     = var.is_enabled ? local.count : 0
+  count                     = var.is_enabled && var.threshold.enabled_httpcode_5xx_count ? local.count : 0
   alarm_name                = "${var.name_prefix}metric-alb-${local.names[count.index].name}httpcode-5xx-count"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -140,7 +140,7 @@ resource "aws_cloudwatch_metric_alarm" "httpcode_5xx_count" {
 # Provides a CloudWatch Metric Alarm resource.
 #--------------------------------------------------------------
 resource "aws_cloudwatch_metric_alarm" "httpcode_elb_4xx_count" {
-  count                     = var.is_enabled ? local.count : 0
+  count                     = var.is_enabled && var.threshold.enabled_httpcode_elb_4xx_count ? local.count : 0
   alarm_name                = "${var.name_prefix}metric-alb-${local.names[count.index].name}httpcode-elb-4xx-count"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -164,7 +164,7 @@ resource "aws_cloudwatch_metric_alarm" "httpcode_elb_4xx_count" {
 # Provides a CloudWatch Metric Alarm resource.
 #--------------------------------------------------------------
 resource "aws_cloudwatch_metric_alarm" "httpcode_elb_5xx_count" {
-  count                     = var.is_enabled ? local.count : 0
+  count                     = var.is_enabled && var.threshold.enabled_httpcode_elb_5xx_count ? local.count : 0
   alarm_name                = "${var.name_prefix}metric-alb-${local.names[count.index].name}httpcode-elb-5xx-count"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -188,7 +188,7 @@ resource "aws_cloudwatch_metric_alarm" "httpcode_elb_5xx_count" {
 # Provides a CloudWatch Metric Alarm resource.
 #--------------------------------------------------------------
 resource "aws_cloudwatch_metric_alarm" "target_response_time" {
-  count                     = var.is_enabled ? local.count : 0
+  count                     = var.is_enabled && var.threshold.enabled_target_response_time ? local.count : 0
   alarm_name                = "${var.name_prefix}metric-alb-${local.names[count.index].name}target-response-time"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -211,7 +211,7 @@ resource "aws_cloudwatch_metric_alarm" "target_response_time" {
 # Provides a CloudWatch Metric Alarm resource.
 #--------------------------------------------------------------
 resource "aws_cloudwatch_metric_alarm" "target_tls_negotiation_error_count" {
-  count                     = var.is_enabled ? local.count : 0
+  count                     = var.is_enabled && var.threshold.enabled_target_tls_negotiation_error_count ? local.count : 0
   alarm_name                = "${var.name_prefix}metric-alb-${local.names[count.index].name}target-tls-negotiation-error-count"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -235,7 +235,7 @@ resource "aws_cloudwatch_metric_alarm" "target_tls_negotiation_error_count" {
 # Provides a CloudWatch Metric Alarm resource.
 #--------------------------------------------------------------
 resource "aws_cloudwatch_metric_alarm" "unhealthy_host_count" {
-  count                     = var.is_enabled ? local.count : 0
+  count                     = var.is_enabled && var.threshold.enabled_unhealthy_host_count ? local.count : 0
   alarm_name                = "${var.name_prefix}metric-alb-${local.names[count.index].name}unhealthy-host-count"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
