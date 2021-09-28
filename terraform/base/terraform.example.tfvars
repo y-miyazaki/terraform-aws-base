@@ -1169,9 +1169,9 @@ security_config_us_east_1 = {
   aws_lambda_function = {
     environment = {
       # TODO: need to change SLACK_OAUTH_ACCESS_TOKEN.
-      SLACK_OAUTH_ACCESS_TOKEN = "xoxb-271107642704-1965344965378-NDfYp4A7g3e0kFQM1xCnLpFA" # application: AWS Notification Application
+      SLACK_OAUTH_ACCESS_TOKEN = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
       # TODO: need to change SLACK_CHANNEL_ID.
-      SLACK_CHANNEL_ID = "C01UNPQ4M08" # channel: mbsv_white-label-coffee_wlc_alert_dev
+      SLACK_CHANNEL_ID = "xxxxxxxxxx"
       LOGGER_FORMATTER = "json"
       LOGGER_OUT       = "stdout"
       LOGGER_LEVEL     = "warn"
