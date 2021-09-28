@@ -1071,6 +1071,114 @@ security_config = {
   }
 }
 #--------------------------------------------------------------
+# Security:AWS Config(us-east-1(CloudFront))
+#--------------------------------------------------------------
+security_config_us_east_1 = {
+  # TODO: need to set is_enabled for settings of AWS Config.
+  is_enabled = false
+  # TODO: need to set is_s3_enabled for settings of New S3 Bucket.
+  is_s3_enabled = false
+  aws_config_configuration_recorder = {
+    name = "aws-config-us-east-1-configuration-recorder"
+    recording_group = [
+      {
+        all_supported                 = true
+        include_global_resource_types = true
+      }
+    ]
+  }
+  aws_iam_role = {
+    description = "Role for AWS Config."
+    name        = "security-config-us-east-1-role"
+    path        = "/"
+  }
+  #   aws_s3_bucket = {
+  #     # Random suffix is automatically added to the bucket name.
+  #     bucket        = "aws-config"
+  #     force_destroy = true
+  #     versioning = [
+  #       {
+  #         enabled = true
+  #       }
+  #     ]
+  #     logging = []
+  #     lifecycle_rule = [
+  #       {
+  #         id                                     = "default"
+  #         abort_incomplete_multipart_upload_days = 7
+  #         enabled                                = true
+  #         prefix                                 = null
+  #         expiration = [
+  #           {
+  #             # TODO: need to change days. default 3years.
+  #             days                         = 1095
+  #             expired_object_delete_marker = false
+  #           }
+  #         ]
+  #         transition = [
+  #           {
+  #             days          = 30
+  #             storage_class = "ONEZONE_IA"
+  #           }
+  #         ]
+  #         noncurrent_version_expiration = [
+  #           {
+  #             days = 30
+  #           }
+  #         ]
+  #       }
+  #     ]
+  #     replication_configuration = []
+  #     server_side_encryption_configuration = [
+  #       {
+  #         rule = [
+  #           {
+  #             apply_server_side_encryption_by_default = [
+  #               {
+  #                 sse_algorithm     = "AES256"
+  #                 kms_master_key_id = null
+  #               }
+  #             ]
+  #           }
+  #         ]
+  #       }
+  #     ]
+  #     object_lock_configuration = []
+  #   }
+  aws_config_delivery_channel = {
+    name          = "aws-config-us-east-1-delivery-channel"
+    sns_topic_arn = null
+    snapshot_delivery_properties = [
+      {
+        delivery_frequency = "Three_Hours"
+      }
+    ]
+  }
+  aws_config_configuration_recorder_status = {
+    is_enabled = true
+  }
+  aws_cloudwatch_event_rule = {
+    name        = "security-config-us-east-1-cloudwatch-event-rule"
+    description = "This cloudwatch event used for Config."
+  }
+  aws_cloudwatch_log_group_lambda = {
+    # TODO: need to change retention_in_days for each services.
+    retention_in_days = 7
+    kms_key_id        = null
+  }
+  aws_lambda_function = {
+    environment = {
+      # TODO: need to change SLACK_OAUTH_ACCESS_TOKEN.
+      SLACK_OAUTH_ACCESS_TOKEN = "xoxb-271107642704-1965344965378-NDfYp4A7g3e0kFQM1xCnLpFA" # application: AWS Notification Application
+      # TODO: need to change SLACK_CHANNEL_ID.
+      SLACK_CHANNEL_ID = "C01UNPQ4M08" # channel: mbsv_white-label-coffee_wlc_alert_dev
+      LOGGER_FORMATTER = "json"
+      LOGGER_OUT       = "stdout"
+      LOGGER_LEVEL     = "warn"
+    }
+  }
+}
+#--------------------------------------------------------------
 # Security:Default VPC
 #--------------------------------------------------------------
 security_default_vpc = {

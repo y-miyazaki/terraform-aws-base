@@ -2,6 +2,11 @@
 # Local
 #--------------------------------------------------------------
 locals {
+  temp_resource_config = []
+  resource_config = flatten([
+    for v in var.config_role_names : concat(local.temp_resource_config, ["arn:aws:sts::${var.account_id}:assumed-role/${v}/AWSConfig-BucketConfigCheck"])
+    ]
+  )
   statement = [
     # For Security
     {
@@ -125,10 +130,8 @@ locals {
       effect = "Allow"
       principals = [
         {
-          type = "AWS"
-          identifiers = [
-            "arn:aws:sts::${var.account_id}:assumed-role/${var.config_role_name}/AWSConfig-BucketConfigCheck",
-          ]
+          type        = "AWS"
+          identifiers = local.resource_config
         }
       ]
       actions = [
