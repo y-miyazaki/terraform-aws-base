@@ -31,3 +31,8 @@ provider "aws" {
   # TODO: need to change region.
   region = "ap-northeast-1"
 }
+# Need to add aws provider(us-east-1) for CloudFront Metric.
+provider "aws" {
+  region = "us-east-1"
+  alias  = "us-east-1"
+}

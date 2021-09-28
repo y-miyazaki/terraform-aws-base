@@ -14,6 +14,7 @@ variable "common_logging" {}
 variable "security_access_analyzer" {}
 variable "security_cloudtrail" {}
 variable "security_config" {}
+variable "security_config_us_east_1" {}
 variable "security_default_vpc" {}
 variable "security_ebs" {}
 variable "security_guardduty" {}
