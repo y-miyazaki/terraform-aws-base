@@ -2,10 +2,10 @@
 # CloudWatch Log Group for flow log
 #--------------------------------------------------------------
 resource "aws_cloudwatch_log_group" "this" {
-  name_prefix       = lookup(var.aws_cloudwatch_log_group, "name_prefix")
+  name              = lookup(var.aws_cloudwatch_log_group, "name")
   retention_in_days = lookup(var.aws_cloudwatch_log_group, "retention_in_days")
   kms_key_id        = lookup(var.aws_cloudwatch_log_group, "kms_key_id", null)
-  tags              = merge(var.tags, { "Name" = "${local.name_prefix}-flow-log" })
+  tags              = merge(var.tags, { "Name" = lookup(var.aws_cloudwatch_log_group, "name") })
   lifecycle {
     create_before_destroy = true
   }

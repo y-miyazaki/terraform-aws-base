@@ -19,15 +19,15 @@ variable "is_enabled_flow_logs" {
 variable "aws_cloudwatch_log_group" {
   type = object(
     {
-      # Creates a unique name beginning with the specified prefix. Conflicts with name.
-      name_prefix = string
+      # The name of the log group. If omitted, Terraform will assign a random, unique name.
+      name = string
       # Specifies the number of days you want to retain log events in the specified log group. Possible values are: 1, 3, 5, 7, 14, 30, 60, 90, 120, 150, 180, 365, 400, 545, 731, 1827, 3653, and 0. If you select 0, the events in the log group are always retained and never expire.
       retention_in_days = number
     }
   )
   description = "(Optional) need to flow log, true. flow log saves cloudwatch logs."
   default = {
-    name_prefix       = "vpc-flow-log-"
+    name              = "vpc-flow-logs"
     retention_in_days = 30
   }
 }
@@ -45,7 +45,7 @@ variable "aws_iam_role" {
   description = "(Optional) The resource of aws_iam_role."
   default = {
     description = "Role for VPC Flow log."
-    name        = "vpc-flow-log-role"
+    name        = "vpc-flow-logs-role"
     path        = "/"
   }
 }
@@ -63,7 +63,7 @@ variable "aws_iam_policy" {
   description = "(Optional) The resource of aws_iam_policy."
   default = {
     description = "Policy for VPC Flow log."
-    name        = "vpc-flow-log-policy"
+    name        = "vpc-flow-logs-policy"
     path        = "/"
   }
 }

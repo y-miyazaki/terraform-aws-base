@@ -110,9 +110,9 @@ budgets = {
       # Set an estimated monthly AWS cost.
       MONTHLY_TARGET_COST = 100
       # TODO: need to change SLACK_OAUTH_ACCESS_TOKEN.
-      SLACK_OAUTH_ACCESS_TOKEN = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+      SLACK_OAUTH_ACCESS_TOKEN = "xxxx-xxxxxxxxxxxxx-xxxxxxxxxxxxx-xxxxxxxxxxxxxxxxxxxxxxxx"
       # TODO: need to change SLACK_CHANNEL_ID.
-      SLACK_CHANNEL_ID = "xxxxxxxxxx"
+      SLACK_CHANNEL_ID = "XXXXXXXXXXXXXX"
       LOGGER_FORMATTER = "json"
       LOGGER_OUT       = "stdout"
       LOGGER_LEVEL     = "warn"
@@ -152,9 +152,9 @@ health = {
   aws_lambda_function = {
     environment = {
       # TODO: need to change SLACK_OAUTH_ACCESS_TOKEN.
-      SLACK_OAUTH_ACCESS_TOKEN = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+      SLACK_OAUTH_ACCESS_TOKEN = "xxxx-xxxxxxxxxxxxx-xxxxxxxxxxxxx-xxxxxxxxxxxxxxxxxxxxxxxx"
       # TODO: need to change SLACK_CHANNEL_ID.
-      SLACK_CHANNEL_ID = "xxxxxxxxxx"
+      SLACK_CHANNEL_ID = "XXXXXXXXXXXXXX"
       LOGGER_FORMATTER = "json"
       LOGGER_OUT       = "stdout"
       LOGGER_LEVEL     = "warn"
@@ -183,9 +183,9 @@ trusted_advisor = {
     environment = {
       LANGUAGE = "en"
       # TODO: need to change SLACK_OAUTH_ACCESS_TOKEN.
-      SLACK_OAUTH_ACCESS_TOKEN = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+      SLACK_OAUTH_ACCESS_TOKEN = "xxxx-xxxxxxxxxxxxx-xxxxxxxxxxxxx-xxxxxxxxxxxxxxxxxxxxxxxx"
       # TODO: need to change SLACK_CHANNEL_ID.
-      SLACK_CHANNEL_ID = "xxxxxxxxxx"
+      SLACK_CHANNEL_ID = "XXXXXXXXXXXXXX"
       LOGGER_FORMATTER = "json"
       LOGGER_OUT       = "stdout"
       LOGGER_LEVEL     = "warn"
@@ -705,11 +705,12 @@ common_lambda = {
   }
 }
 #--------------------------------------------------------------
-# Common:Logging Bucket
+# Common:Log Bucket
 #--------------------------------------------------------------
-common_logging = {
-  aws_s3_bucket = {
-    bucket        = "aws-logging"
+common_log = {
+  # A bucket that mainly stores common logs, such as Config logs and CloudTrail access logs.
+  aws_s3_bucket_common = {
+    bucket        = "aws-log-common"
     acl           = "log-delivery-write"
     force_destroy = true
     versioning = [
@@ -726,19 +727,76 @@ common_logging = {
         prefix                                 = null
         expiration = [
           {
-            # TODO: need to change days. default 3years.
+            # TODO: need to change days. default 3 years.
             days                         = 1095
             expired_object_delete_marker = false
           }
         ]
         transition = [
           {
+            # TODO: need to change days. default 30 days.
             days          = 30
             storage_class = "ONEZONE_IA"
           }
         ]
         noncurrent_version_expiration = [
           {
+            # TODO: need to change days. default 30 days.
+            days = 30
+          }
+        ]
+      }
+    ]
+    server_side_encryption_configuration = [
+      {
+        rule = [
+          {
+            apply_server_side_encryption_by_default = [
+              {
+                sse_algorithm     = "AES256"
+                kms_master_key_id = null
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+  # Mainly stores CloudTrail logs.
+  aws_s3_bucket_cloudtrail = {
+    bucket        = "aws-log-cloudtrail"
+    acl           = "log-delivery-write"
+    force_destroy = true
+    versioning = [
+      {
+        enabled = true
+      }
+    ]
+    # If you comment out, the log will be automatically set to the common bucket.
+    # logging = []
+    lifecycle_rule = [
+      {
+        id                                     = "default"
+        abort_incomplete_multipart_upload_days = 7
+        enabled                                = true
+        prefix                                 = null
+        expiration = [
+          {
+            # TODO: need to change days. default 3 years.
+            days                         = 1095
+            expired_object_delete_marker = false
+          }
+        ]
+        transition = [
+          {
+            # TODO: need to change days. default 30 days.
+            days          = 30
+            storage_class = "ONEZONE_IA"
+          }
+        ]
+        noncurrent_version_expiration = [
+          {
+            # TODO: need to change days. default 30 days.
             days = 30
           }
         ]
@@ -901,9 +959,9 @@ PATTERN
   aws_lambda_function = {
     environment = {
       # TODO: need to change SLACK_OAUTH_ACCESS_TOKEN.
-      SLACK_OAUTH_ACCESS_TOKEN = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+      SLACK_OAUTH_ACCESS_TOKEN = "xxxx-xxxxxxxxxxxxx-xxxxxxxxxxxxx-xxxxxxxxxxxxxxxxxxxxxxxx"
       # TODO: need to change SLACK_CHANNEL_ID.
-      SLACK_CHANNEL_ID = "xxxxxxxxxx"
+      SLACK_CHANNEL_ID = "XXXXXXXXXXXXXX"
       LOGGER_FORMATTER = "json"
       LOGGER_OUT       = "stdout"
       LOGGER_LEVEL     = "warn"
@@ -1061,9 +1119,9 @@ security_config = {
   aws_lambda_function = {
     environment = {
       # TODO: need to change SLACK_OAUTH_ACCESS_TOKEN.
-      SLACK_OAUTH_ACCESS_TOKEN = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+      SLACK_OAUTH_ACCESS_TOKEN = "xxxx-xxxxxxxxxxxxx-xxxxxxxxxxxxx-xxxxxxxxxxxxxxxxxxxxxxxx"
       # TODO: need to change SLACK_CHANNEL_ID.
-      SLACK_CHANNEL_ID = "xxxxxxxxxx"
+      SLACK_CHANNEL_ID = "XXXXXXXXXXXXXX"
       LOGGER_FORMATTER = "json"
       LOGGER_OUT       = "stdout"
       LOGGER_LEVEL     = "warn"
@@ -1169,9 +1227,9 @@ security_config_us_east_1 = {
   aws_lambda_function = {
     environment = {
       # TODO: need to change SLACK_OAUTH_ACCESS_TOKEN.
-      SLACK_OAUTH_ACCESS_TOKEN = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+      SLACK_OAUTH_ACCESS_TOKEN = "xxxx-xxxxxxxxxxxxx-xxxxxxxxxxxxx-xxxxxxxxxxxxxxxxxxxxxxxx"
       # TODO: need to change SLACK_CHANNEL_ID.
-      SLACK_CHANNEL_ID = "xxxxxxxxxx"
+      SLACK_CHANNEL_ID = "XXXXXXXXXXXXXX"
       LOGGER_FORMATTER = "json"
       LOGGER_OUT       = "stdout"
       LOGGER_LEVEL     = "warn"
@@ -1193,7 +1251,7 @@ security_default_vpc = {
   # Normally, it costs more than 10 USD a month for the default VPC that you do not use, so the initial value is set to false.
   is_enabled_vpc_end_point = false
   aws_cloudwatch_log_group = {
-    name_prefix = "flow-log-"
+    name = "aws-vpc-flow-logs"
     # TODO: need to change retention_in_days for each services.
     retention_in_days = 30
   }
@@ -1239,9 +1297,9 @@ security_guardduty = {
   aws_lambda_function = {
     environment = {
       # TODO: need to change SLACK_OAUTH_ACCESS_TOKEN.
-      SLACK_OAUTH_ACCESS_TOKEN = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+      SLACK_OAUTH_ACCESS_TOKEN = "xxxx-xxxxxxxxxxxxx-xxxxxxxxxxxxx-xxxxxxxxxxxxxxxxxxxxxxxx"
       # TODO: need to change SLACK_CHANNEL_ID.
-      SLACK_CHANNEL_ID = "xxxxxxxxxx"
+      SLACK_CHANNEL_ID = "XXXXXXXXXXXXXX"
       LOGGER_FORMATTER = "json"
       LOGGER_OUT       = "stdout"
       LOGGER_LEVEL     = "warn"
@@ -1270,7 +1328,7 @@ security_iam = {
   support_iam_role_principal_arns = [
     # example)
     # "arn:aws:iam::{account id}:{iam user}"
-    "arn:aws:iam::99999999999:root"
+    "arn:aws:iam::999999999999:root"
   ]
   aws_iam_role = {
     description = ""

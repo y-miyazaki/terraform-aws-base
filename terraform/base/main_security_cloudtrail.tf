@@ -86,7 +86,7 @@ locals {
   #     bucket = "${var.name_prefix}${var.security_cloudtrail.aws_s3_bucket.bucket}-${random_id.this.dec}"
   #     logging = [
   #       {
-  #         target_bucket = module.aws_recipes_s3_bucket_log_logging.id
+  #         target_bucket = module.aws_recipes_s3_bucket_log_cloudtrail.id
   #         target_prefix = "CloudTrail/"
   #       }
   #     ]
@@ -114,9 +114,9 @@ module "aws_recipes_security_cloudtrail" {
   #   aws_s3_bucket              = local.aws_s3_bucket_cloudtrail
   aws_s3_bucket_existing = {
     # The S3 bucket id
-    bucket_id = module.aws_recipes_s3_bucket_log_logging.id
+    bucket_id = module.aws_recipes_s3_bucket_log_cloudtrail.id
     # The S3 bucket arn
-    bucket_arn = module.aws_recipes_s3_bucket_log_logging.arn
+    bucket_arn = module.aws_recipes_s3_bucket_log_cloudtrail.arn
   }
   aws_cloudtrail  = local.aws_cloudtrail_cloudtrail
   cis_name_prefix = var.name_prefix
@@ -124,6 +124,10 @@ module "aws_recipes_security_cloudtrail" {
   region          = var.region
   user            = var.deploy_user
   tags            = var.tags
+  depends_on = [
+    module.aws_recipes_s3_bucket_log_cloudtrail,
+    module.aws_recipes_s3_policy_cloudtrail_cloudtrail
+  ]
 }
 
 #--------------------------------------------------------------

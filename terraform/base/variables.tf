@@ -9,7 +9,7 @@ variable "health" {}
 variable "trusted_advisor" {}
 variable "iam" {}
 variable "common_lambda" {}
-variable "common_logging" {}
+variable "common_log" {}
 # security
 variable "security_access_analyzer" {}
 variable "security_cloudtrail" {}

@@ -7,7 +7,7 @@
 #--------------------------------------------------------------
 locals {
   aws_cloudwatch_log_group_default_vpc = merge(var.security_default_vpc.aws_cloudwatch_log_group, {
-    name_prefix = "${var.name_prefix}${lookup(var.security_default_vpc.aws_cloudwatch_log_group, "name_prefix")}"
+    name = "${var.name_prefix}${lookup(var.security_default_vpc.aws_cloudwatch_log_group, "name")}"
     }
   )
 }

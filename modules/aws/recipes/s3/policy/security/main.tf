@@ -4,7 +4,10 @@
 locals {
   temp_resource_config = []
   resource_config = flatten([
-    for v in var.config_role_names : concat(local.temp_resource_config, ["arn:aws:sts::${var.account_id}:assumed-role/${v}/AWSConfig-BucketConfigCheck"])
+    for v in var.config_role_names : concat(local.temp_resource_config, [
+      "arn:aws:sts::${var.account_id}:assumed-role/${v}/AWSConfig-BucketConfigCheck",
+      "arn:aws:iam::${var.account_id}:role/aws-service-role/config.amazonaws.com/AWSServiceRoleForConfig",
+    ])
     ]
   )
   statement = [
