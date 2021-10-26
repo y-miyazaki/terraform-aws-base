@@ -6,17 +6,17 @@
 # Local
 #--------------------------------------------------------------
 locals {
-  aws_kms_key_lambda_us_east_1 = merge(var.common_lambda.aws_kms_key, {
-    description             = lookup(var.common_lambda.aws_kms_key, "description", null)
-    deletion_window_in_days = lookup(var.common_lambda.aws_kms_key, "deletion_window_in_days", 7)
-    is_enabled              = lookup(var.common_lambda.aws_kms_key, "is_enabled")
-    enable_key_rotation     = lookup(var.common_lambda.aws_kms_key, "enable_key_rotation")
-    alias_name              = "alias/${var.name_prefix}${lookup(var.common_lambda.aws_kms_key, "alias_name")}"
+  aws_kms_key_lambda_us_east_1 = merge(var.common_lambda.metric.aws_kms_key, {
+    description             = lookup(var.common_lambda.metric.aws_kms_key, "description", null)
+    deletion_window_in_days = lookup(var.common_lambda.metric.aws_kms_key, "deletion_window_in_days", 7)
+    is_enabled              = lookup(var.common_lambda.metric.aws_kms_key, "is_enabled")
+    enable_key_rotation     = lookup(var.common_lambda.metric.aws_kms_key, "enable_key_rotation")
+    alias_name              = "alias/${var.name_prefix}${lookup(var.common_lambda.metric.aws_kms_key, "alias_name")}"
     }
   )
 
-  aws_sns_topic_lambda_us_east_1 = merge(var.common_lambda.aws_sns_topic, {
-    name = "${var.name_prefix}${lookup(var.common_lambda.aws_sns_topic, "name")}"
+  aws_sns_topic_lambda_us_east_1 = merge(var.common_lambda.metric.aws_sns_topic, {
+    name = "${var.name_prefix}${lookup(var.common_lambda.metric.aws_sns_topic, "name")}"
     }
   )
 }
@@ -67,7 +67,7 @@ module "aws_recipes_lambda_create_lambda_us_east_1" {
     function_name                  = "${var.name_prefix}cloudwatch-alarm-monitor"
     dead_letter_config             = []
     handler                        = "cloudwatch_alarm_to_sns_to_slack"
-    role                           = module.aws_recipes_iam_lambda.arn
+    role                           = module.aws_recipes_iam_role_lambda.arn
     description                    = "This program sends the result of monitor to Slack."
     layers                         = []
     memory_size                    = 128
@@ -78,7 +78,7 @@ module "aws_recipes_lambda_create_lambda_us_east_1" {
     vpc_config                     = []
     kms_key_arn                    = null
     source_code_hash               = filebase64sha256("../../lambda/outputs/cloudwatch_alarm_to_sns_to_slack.zip")
-    environment                    = lookup(var.common_lambda.aws_lambda_function, "environment")
+    environment                    = lookup(var.common_lambda.metric.aws_lambda_function, "environment")
   }
   # Creates a Lambda permission to allow external sources invoking the Lambda function (e.g. CloudWatch Event Rule, SNS or S3).
   tags = var.tags

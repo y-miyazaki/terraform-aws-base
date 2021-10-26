@@ -1,4 +1,18 @@
 #--------------------------------------------------------------
+# Local
+#--------------------------------------------------------------
+locals {
+  temp_resource_config = []
+  resource_config = flatten([
+    for v in var.config_role_names : concat(local.temp_resource_config, [
+      "arn:aws:sts::${var.account_id}:assumed-role/${v}/AWSConfig-BucketConfigCheck",
+      "arn:aws:iam::${var.account_id}:role/aws-service-role/config.amazonaws.com/AWSServiceRoleForConfig",
+      ]
+    )
+    ]
+  )
+}
+#--------------------------------------------------------------
 # Generates an IAM policy document in JSON format for use with resources that expect policy documents such as aws_iam_policy.
 #--------------------------------------------------------------
 data "aws_iam_policy_document" "this" {
@@ -49,10 +63,8 @@ data "aws_iam_policy_document" "this" {
     sid    = "AWSConfigBucketDelivery2"
     effect = "Allow"
     principals {
-      type = "AWS"
-      identifiers = [
-        "arn:aws:sts::${var.account_id}:assumed-role/${var.config_role_name}/AWSConfig-BucketConfigCheck",
-      ]
+      type        = "AWS"
+      identifiers = local.resource_config
     }
     actions = [
       "s3:PutObject"

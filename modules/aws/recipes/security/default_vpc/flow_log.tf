@@ -3,7 +3,7 @@
 #--------------------------------------------------------------
 resource "aws_cloudwatch_log_group" "this" {
   count             = var.is_enabled && var.is_enabled_flow_logs ? 1 : 0
-  name_prefix       = lookup(var.aws_cloudwatch_log_group, "name_prefix")
+  name              = lookup(var.aws_cloudwatch_log_group, "name")
   retention_in_days = lookup(var.aws_cloudwatch_log_group, "retention_in_days")
   kms_key_id        = lookup(var.aws_cloudwatch_log_group, "kms_key_id", null)
   tags              = var.tags

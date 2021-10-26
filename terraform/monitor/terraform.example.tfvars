@@ -30,11 +30,12 @@ name_prefix = "base-"
 # TODO: need to change region.
 region = "ap-northeast-1"
 #--------------------------------------------------------------
-# Common:Logging Bucket
+# Common:Log Bucket
 #--------------------------------------------------------------
-common_logging = {
-  aws_s3_bucket = {
-    bucket        = "aws-logging-application"
+common_log = {
+  # A bucket that mainly stores application logs.
+  aws_s3_bucket_application = {
+    bucket        = "aws-log-application"
     acl           = "log-delivery-write"
     force_destroy = true
     versioning = [
@@ -51,19 +52,21 @@ common_logging = {
         prefix                                 = null
         expiration = [
           {
-            # TODO: need to change days. default 3years.
+            # TODO: need to change days. default 3 years.
             days                         = 1095
             expired_object_delete_marker = false
           }
         ]
         transition = [
           {
+            # TODO: need to change days. default 30 days.
             days          = 30
             storage_class = "ONEZONE_IA"
           }
         ]
         noncurrent_version_expiration = [
           {
+            # TODO: need to change days. default 30 days.
             days = 30
           }
         ]
@@ -86,59 +89,99 @@ common_logging = {
   }
 }
 #--------------------------------------------------------------
-# Common settings for notifying metrics
+# Common: settings for notifying metrics
 #--------------------------------------------------------------
 common_lambda = {
+  metric = {
+    aws_kms_key = {
+      description             = "This key used for SNS(for Metrics)."
+      deletion_window_in_days = 7
+      is_enabled              = true
+      enable_key_rotation     = true
+      alias_name              = "sns-lambda-metric"
+    }
+    aws_sns_topic = {
+      name                                     = "aws-metric"
+      name_prefix                              = null
+      display_name                             = null
+      delivery_policy                          = null
+      application_success_feedback_role_arn    = null
+      application_success_feedback_sample_rate = null
+      application_failure_feedback_role_arn    = null
+      http_success_feedback_role_arn           = null
+      http_success_feedback_sample_rate        = null
+      http_failure_feedback_role_arn           = null
+      lambda_success_feedback_role_arn         = null
+      lambda_success_feedback_sample_rate      = null
+      lambda_failure_feedback_role_arn         = null
+      sqs_success_feedback_role_arn            = null
+      sqs_success_feedback_sample_rate         = null
+      sqs_failure_feedback_role_arn            = null
+    }
+    aws_lambda_function = {
+      environment = {
+        # TODO: need to change SLACK_OAUTH_ACCESS_TOKEN.
+        SLACK_OAUTH_ACCESS_TOKEN = "xxxx-xxxxxxxxxxxxx-xxxxxxxxxxxxx-xxxxxxxxxxxxxxxxxxxxxxxx"
+        # TODO: need to change SLACK_CHANNEL_ID.
+        SLACK_CHANNEL_ID = "XXXXXXXXXXXXXX"
+        LOGGER_FORMATTER = "json"
+        LOGGER_OUT       = "stdout"
+        LOGGER_LEVEL     = "warn"
+      }
+    }
+  }
+  log = {
+    aws_kms_key = {
+      description             = "This key used for SNS(for Log)."
+      deletion_window_in_days = 7
+      is_enabled              = true
+      enable_key_rotation     = true
+      alias_name              = "sns-lambda-log"
+    }
+    aws_sns_topic = {
+      name                                     = "aws-log"
+      name_prefix                              = null
+      display_name                             = null
+      delivery_policy                          = null
+      application_success_feedback_role_arn    = null
+      application_success_feedback_sample_rate = null
+      application_failure_feedback_role_arn    = null
+      http_success_feedback_role_arn           = null
+      http_success_feedback_sample_rate        = null
+      http_failure_feedback_role_arn           = null
+      lambda_success_feedback_role_arn         = null
+      lambda_success_feedback_sample_rate      = null
+      lambda_failure_feedback_role_arn         = null
+      sqs_success_feedback_role_arn            = null
+      sqs_success_feedback_sample_rate         = null
+      sqs_failure_feedback_role_arn            = null
+    }
+    aws_lambda_function = {
+      environment = {
+        # TODO: need to change SLACK_OAUTH_ACCESS_TOKEN.
+        SLACK_OAUTH_ACCESS_TOKEN = "xxxx-xxxxxxxxxxxxx-xxxxxxxxxxxxx-xxxxxxxxxxxxxxxxxxxxxxxx"
+        # TODO: need to change SLACK_CHANNEL_ID.
+        SLACK_CHANNEL_ID = "XXXXXXXXXXXXXX"
+        LOGGER_FORMATTER = "json"
+        LOGGER_OUT       = "stdout"
+        LOGGER_LEVEL     = "warn"
+      }
+    }
+  }
   aws_iam_role = {
     description = null
-    name        = "metric-lambda-role"
+    name        = "monitor-lambda-common-role"
     path        = "/"
   }
   aws_iam_policy = {
     description = null
-    name        = "metric-lambda-policy"
+    name        = "monitor-lambda-common-policy"
     path        = "/"
-  }
-  aws_kms_key = {
-    description             = "This key used for SNS(Metric)."
-    deletion_window_in_days = 7
-    is_enabled              = true
-    enable_key_rotation     = true
-    alias_name              = "sns-metric-lambda"
   }
   aws_cloudwatch_log_group_lambda = {
     # TODO: need to change retention_in_days for each services.
     retention_in_days = 7
     kms_key_id        = null
-  }
-  aws_lambda_function = {
-    environment = {
-      # TODO: need to change SLACK_OAUTH_ACCESS_TOKEN.
-      SLACK_OAUTH_ACCESS_TOKEN = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-      # TODO: need to change SLACK_CHANNEL_ID.
-      SLACK_CHANNEL_ID = "xxxxxxxxxx"
-      LOGGER_FORMATTER = "json"
-      LOGGER_OUT       = "stdout"
-      LOGGER_LEVEL     = "warn"
-    }
-  }
-  aws_sns_topic = {
-    name                                     = "aws-metric"
-    name_prefix                              = null
-    display_name                             = null
-    delivery_policy                          = null
-    application_success_feedback_role_arn    = null
-    application_success_feedback_sample_rate = null
-    application_failure_feedback_role_arn    = null
-    http_success_feedback_role_arn           = null
-    http_success_feedback_sample_rate        = null
-    http_failure_feedback_role_arn           = null
-    lambda_success_feedback_role_arn         = null
-    lambda_success_feedback_sample_rate      = null
-    lambda_failure_feedback_role_arn         = null
-    sqs_success_feedback_role_arn            = null
-    sqs_success_feedback_sample_rate         = null
-    sqs_failure_feedback_role_arn            = null
   }
   aws_sns_topic_subscription = {
     protocol                        = "lambda"
@@ -151,52 +194,16 @@ common_lambda = {
   }
 }
 #--------------------------------------------------------------
-# Log:Application
+# Delivery: log
 #--------------------------------------------------------------
-metric_log_application = {
-  # TODO: need to set is_enabled for settings of application log.
-  is_enabled = false
-  aws_kms_key = {
-    description             = "This key used for SNS(Application Log)."
-    deletion_window_in_days = 7
-    is_enabled              = true
-    enable_key_rotation     = true
-    alias_name              = "sns-application"
-  }
-  aws_sns_topic = {
-    name                                     = "application-logs"
-    name_prefix                              = null
-    display_name                             = null
-    delivery_policy                          = null
-    application_success_feedback_role_arn    = null
-    application_success_feedback_sample_rate = null
-    application_failure_feedback_role_arn    = null
-    http_success_feedback_role_arn           = null
-    http_success_feedback_sample_rate        = null
-    http_failure_feedback_role_arn           = null
-    lambda_success_feedback_role_arn         = null
-    lambda_success_feedback_sample_rate      = null
-    lambda_failure_feedback_role_arn         = null
-    sqs_success_feedback_role_arn            = null
-    sqs_success_feedback_sample_rate         = null
-    sqs_failure_feedback_role_arn            = null
-  }
-  aws_sns_topic_subscription = {
-    protocol                        = "lambda"
-    endpoint_auto_confirms          = false
-    confirmation_timeout_in_minutes = null
-    raw_message_delivery            = null
-    filter_policy                   = null
-    delivery_policy                 = null
-    redrive_policy                  = null
-  }
+delivery_log = {
   #--------------------------------------------------------------
   # Provides a Kinesis Firehose Delivery Stream resource. Amazon Kinesis Firehose is a fully managed, elastic service to easily deliver real-time data streams to destinations such as Amazon S3 and Amazon Redshift.
   #--------------------------------------------------------------
   aws_kinesis_firehose_delivery_stream = {
     buffer_size        = 5
     buffer_interval    = 60
-    prefix             = "Application/"
+    prefix             = "Logs/"
     compression_format = "GZIP"
     cloudwatch_logging_options = [
       {
@@ -204,24 +211,46 @@ metric_log_application = {
       }
     ]
   }
-  aws_iam_role_kinesis_firehose = {
-    description = null
-    name        = "application-kinesis-firehose-role"
-    path        = "/"
-  }
-  aws_iam_policy_kinesis_firehose = {
-    description = null
-    name        = "application-kinesis-firehose-policy"
-    path        = "/"
-  }
-
   # TODO: need to add log_group_name for application.
   #       check log group name for application.
   # check CloudWatch Group name list command.
   # ex1) aws logs describe-log-groups --log-group-name-prefix hogehoge | jq -r ".logGroups[].logGroupName"
   # ex2) aws logs describe-log-groups --log-group-name-prefix /aws/lambda | jq -r '.logGroups[] | .logGroupName = "\"" + .logGroupName + "\"," | .logGroupName'
-  log_group_name = []
+  log_group_names = []
 
+  aws_iam_role_kinesis_firehose = {
+    description = null
+    name        = "monitor-kinesis-firehose-role"
+    path        = "/"
+  }
+  aws_iam_policy_kinesis_firehose = {
+    description = null
+    name        = "monitor-kinesis-firehose-policy"
+    path        = "/"
+  }
+  aws_iam_role_cloudwatch_logs = {
+    description = null
+    name        = "monitor-cloudwatch-logs-kinesis-firehose-role"
+    path        = "/"
+  }
+  aws_iam_policy_cloudwatch_logs = {
+    description = null
+    name        = "monitor-cloudwatch-logs-kinesis-firehose-policy"
+    path        = "/"
+  }
+}
+#--------------------------------------------------------------
+# Log:Application
+#--------------------------------------------------------------
+metric_log_application = {
+  # TODO: need to set is_enabled for settings of application log.
+  is_enabled = true
+  # TODO: need to add log_group_name for application.
+  #       check log group name for application.
+  # check CloudWatch Group name list command.
+  # ex1) aws logs describe-log-groups --log-group-name-prefix hogehoge | jq -r ".logGroups[].logGroupName"
+  # ex2) aws logs describe-log-groups --log-group-name-prefix /aws/lambda | jq -r '.logGroups[] | .logGroupName = "\"" + .logGroupName + "\"," | .logGroupName'
+  log_group_names = []
   aws_cloudwatch_log_metric_filter = {
     name = "application-logs-error"
     # TODO: need to change pattern for application log.
@@ -250,32 +279,6 @@ PATTERN
     dimensions          = null
     treat_missing_data  = "notBreaching"
   }
-  aws_iam_role_cloudwatch_logs = {
-    description = null
-    name        = "application-cloudwatch-logs-kinesis-firehose-role"
-    path        = "/"
-  }
-  aws_iam_policy_cloudwatch_logs = {
-    description = null
-    name        = "application-cloudwatch-logs-kinesis-firehose-policy"
-    path        = "/"
-  }
-  aws_cloudwatch_log_group_lambda = {
-    # TODO: need to change retention_in_days for each services.
-    retention_in_days = 7
-    kms_key_id        = null
-  }
-  aws_lambda_function = {
-    environment = {
-      # TODO: need to change SLACK_OAUTH_ACCESS_TOKEN.
-      SLACK_OAUTH_ACCESS_TOKEN = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-      # TODO: need to change SLACK_CHANNEL_ID.
-      SLACK_CHANNEL_ID = "xxxxxxxxxx"
-      LOGGER_FORMATTER = "json"
-      LOGGER_OUT       = "stdout"
-      LOGGER_LEVEL     = "warn"
-    }
-  }
 }
 #--------------------------------------------------------------
 # Log:Postgres
@@ -283,72 +286,12 @@ PATTERN
 metric_log_postgres = {
   # TODO: need to set is_enabled for settings of postgres log.
   is_enabled = false
-  aws_kms_key = {
-    description             = "This key used for SNS(Postgres Log)."
-    deletion_window_in_days = 7
-    is_enabled              = true
-    enable_key_rotation     = true
-    alias_name              = "sns-postgres"
-  }
-  aws_sns_topic = {
-    name                                     = "postgres-logs"
-    name_prefix                              = null
-    display_name                             = null
-    delivery_policy                          = null
-    application_success_feedback_role_arn    = null
-    application_success_feedback_sample_rate = null
-    application_failure_feedback_role_arn    = null
-    http_success_feedback_role_arn           = null
-    http_success_feedback_sample_rate        = null
-    http_failure_feedback_role_arn           = null
-    lambda_success_feedback_role_arn         = null
-    lambda_success_feedback_sample_rate      = null
-    lambda_failure_feedback_role_arn         = null
-    sqs_success_feedback_role_arn            = null
-    sqs_success_feedback_sample_rate         = null
-    sqs_failure_feedback_role_arn            = null
-  }
-  aws_sns_topic_subscription = {
-    protocol                        = "lambda"
-    endpoint_auto_confirms          = false
-    confirmation_timeout_in_minutes = null
-    raw_message_delivery            = null
-    filter_policy                   = null
-    delivery_policy                 = null
-    redrive_policy                  = null
-  }
-  #--------------------------------------------------------------
-  # Provides a Kinesis Firehose Delivery Stream resource. Amazon Kinesis Firehose is a fully managed, elastic service to easily deliver real-time data streams to destinations such as Amazon S3 and Amazon Redshift.
-  #--------------------------------------------------------------
-  aws_kinesis_firehose_delivery_stream = {
-    buffer_size        = 5
-    buffer_interval    = 60
-    prefix             = "Postgres/"
-    compression_format = "GZIP"
-    cloudwatch_logging_options = [
-      {
-        enabled = false
-      }
-    ]
-  }
-  aws_iam_role_kinesis_firehose = {
-    description = null
-    name        = "postgres-kinesis-firehose-role"
-    path        = "/"
-  }
-  aws_iam_policy_kinesis_firehose = {
-    description = null
-    name        = "postgres-kinesis-firehose-policy"
-    path        = "/"
-  }
-
   # TODO: need to add log_group_name for postgres.
   #       check log group name for postgres.
   # check CloudWatch Group name list command.
   # ex1) aws logs describe-log-groups --log-group-name-prefix hogehoge | jq -r ".logGroups[].logGroupName"
   # ex2) aws logs describe-log-groups --log-group-name-prefix /aws/rds/ | jq -r '.logGroups[] | .logGroupName = "\"" + .logGroupName + "\"," | .logGroupName'
-  log_group_name = [
-  ]
+  log_group_names = []
 
   aws_cloudwatch_log_metric_filter = {
     name = "postgres-logs-error"
@@ -377,32 +320,6 @@ PATTERN
     datapoints_to_alarm = 1
     dimensions          = null
     treat_missing_data  = "notBreaching"
-  }
-  aws_iam_role_cloudwatch_logs = {
-    description = null
-    name        = "postgres-cloudwatch-logs-kinesis-firehose-role"
-    path        = "/"
-  }
-  aws_iam_policy_cloudwatch_logs = {
-    description = null
-    name        = "postgres-cloudwatch-logs-kinesis-firehose-policy"
-    path        = "/"
-  }
-  aws_cloudwatch_log_group_lambda = {
-    # TODO: need to change retention_in_days for each services.
-    retention_in_days = 7
-    kms_key_id        = null
-  }
-  aws_lambda_function = {
-    environment = {
-      # TODO: need to change SLACK_OAUTH_ACCESS_TOKEN.
-      SLACK_OAUTH_ACCESS_TOKEN = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-      # TODO: need to change SLACK_CHANNEL_ID.
-      SLACK_CHANNEL_ID = "xxxxxxxxxx"
-      LOGGER_FORMATTER = "json"
-      LOGGER_OUT       = "stdout"
-      LOGGER_LEVEL     = "warn"
-    }
   }
 }
 #--------------------------------------------------------------

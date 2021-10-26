@@ -13,6 +13,6 @@ echo "#--------------------------------------------------------------"
 #terraform init -reconfigure -backend-config=terraform."${ENV}".tfbackend
 terraform init
 echo "#--------------------------------------------------------------"
-echo "# terraform plan ($PWD)"
+echo "# terraform apply ($PWD)"
 echo "#--------------------------------------------------------------"
 terraform apply --auto-approve -var-file=terraform."${ENV}".tfvars

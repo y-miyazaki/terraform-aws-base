@@ -12,7 +12,7 @@ module "aws_recipes_metric_rds" {
   is_postgres   = lookup(var.metric_resource_rds, "is_postgres")
   period        = lookup(var.metric_resource_rds, "period")
   dimensions    = lookup(var.metric_resource_rds, "dimensions")
-  alarm_actions = [module.aws_recipes_sns_subscription_lambda.arn]
+  alarm_actions = [module.aws_recipes_sns_subscription_lambda_metric.arn]
   name_prefix   = var.name_prefix
   tags          = var.tags
 }

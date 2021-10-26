@@ -3,7 +3,8 @@ variable "tags" {}
 variable "name_prefix" {}
 variable "region" {}
 variable "common_lambda" {}
-variable "common_logging" {}
+variable "common_log" {}
+variable "delivery_log" {}
 variable "metric_log_application" {}
 variable "metric_log_postgres" {}
 variable "metric_resource_alb" {}

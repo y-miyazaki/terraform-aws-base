@@ -31,9 +31,9 @@ module "aws_recipes_security_config_create" {
   #   aws_s3_bucket                     = local.aws_s3_bucket_config
   aws_s3_bucket_existing = {
     # The S3 bucket id
-    bucket_id = module.aws_recipes_s3_bucket_log_logging.id
+    bucket_id = module.aws_recipes_s3_bucket_log_common.id
     # The S3 bucket arn
-    bucket_arn = module.aws_recipes_s3_bucket_log_logging.arn
+    bucket_arn = module.aws_recipes_s3_bucket_log_common.arn
   }
   aws_config_delivery_channel              = local.aws_config_delivery_channel_config
   aws_config_configuration_recorder_status = lookup(var.security_config, "aws_config_configuration_recorder_status")
