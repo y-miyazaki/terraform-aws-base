@@ -23,7 +23,7 @@ locals {
         "logs:FilterLogEvents"
       ],
       "Effect": "Allow",
-      "Resource": "*"
+      "Resource": "arn:aws:logs:*:${data.aws_caller_identity.current.account_id}:log-group:*"
     },
     {
       "Sid": "AllowBudgets",
