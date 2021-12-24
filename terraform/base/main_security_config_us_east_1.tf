@@ -59,9 +59,11 @@ module "aws_recipes_security_config_rule_cloudfront_us_east_1" {
   providers = {
     aws = aws.us-east-1
   }
-  is_enabled  = lookup(var.security_config_us_east_1, "is_enabled", true)
-  name_prefix = var.name_prefix
-  tags        = var.tags
+  is_enabled                               = lookup(var.security_config_us_east_1, "is_enabled", true)
+  name_prefix                              = var.name_prefix
+  ssm_automation_assume_role_arn           = module.aws_recipes_security_config_ssm_automation.role_arn
+  is_enable_cloudfront_viewer_policy_https = lookup(var.security_config_us_east_1.remediation.cloudfront, "is_enable_cloudfront_viewer_policy_https", false)
+  tags                                     = var.tags
   depends_on = [
     module.aws_recipes_security_config_create_us_east_1
   ]

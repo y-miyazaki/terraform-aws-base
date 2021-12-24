@@ -108,3 +108,28 @@ resource "aws_config_config_rule" "cloudfront-viewer-policy-https" {
   }
   tags = var.tags
 }
+#--------------------------------------------------------------
+# Provides an AWS Config Remediation Configuration.
+#--------------------------------------------------------------
+resource "aws_config_remediation_configuration" "cloudfront-viewer-policy-https" {
+  count            = var.is_enabled && var.is_enable_cloudfront_viewer_policy_https ? 1 : 0
+  config_rule_name = aws_config_config_rule.cloudfront-viewer-policy-https[0].name
+  target_type      = "SSM_DOCUMENT"
+  # https://docs.aws.amazon.com/systems-manager-automation-runbooks/latest/userguide/automation-aws-enable-cloudfront-viewer-policy.html
+  target_id = "AWSConfigRemediation-EnableCloudFrontViewerPolicyHTTPS"
+  parameter {
+    name         = "AutomationAssumeRole"
+    static_value = var.ssm_automation_assume_role_arn
+  }
+  parameter {
+    name           = "CloudFrontDistributionId"
+    resource_value = "RESOURCE_ID"
+  }
+  parameter {
+    name         = "ViewerProtocolPolicy"
+    static_value = "redirect-to-https"
+  }
+  automatic                  = true
+  maximum_automatic_attempts = 5
+  retry_attempt_seconds      = 60
+}
