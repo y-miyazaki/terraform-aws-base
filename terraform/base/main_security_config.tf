@@ -18,6 +18,14 @@ locals {
     name = "${var.name_prefix}${lookup(var.security_config.aws_config_delivery_channel, "name")}"
     }
   )
+  aws_iam_role_ssm_automation = merge(var.security_config.ssm_automation.aws_iam_role, {
+    name = "${var.name_prefix}${lookup(var.security_config.ssm_automation.aws_iam_role, "name")}"
+    }
+  )
+  aws_iam_policy_ssm_automation = merge(var.security_config.ssm_automation.aws_iam_policy, {
+    name = "${var.name_prefix}${lookup(var.security_config.ssm_automation.aws_iam_policy, "name")}"
+    }
+  )
 }
 #--------------------------------------------------------------
 # Provides AWS Config.
@@ -47,6 +55,17 @@ module "aws_recipes_security_config_create" {
   account_id = data.aws_caller_identity.current.account_id
   tags       = var.tags
 }
+#--------------------------------------------------------------
+# Create SSM Automation Role
+#--------------------------------------------------------------
+module "aws_recipes_security_config_ssm_automation" {
+  source         = "../../modules/aws/recipes/security/config/ssm_automation"
+  is_enabled     = lookup(var.security_config, "is_enabled", true)
+  aws_iam_role   = local.aws_iam_role_ssm_automation
+  aws_iam_policy = local.aws_iam_policy_ssm_automation
+  tags           = var.tags
+}
+
 #--------------------------------------------------------------
 # Provides an AWS Config Rule for API Gateway
 #--------------------------------------------------------------
@@ -87,10 +106,12 @@ module "aws_recipes_security_config_rule_load_balancer" {
 # Provides an AWS Config Rule for EC2
 #--------------------------------------------------------------
 module "aws_recipes_security_config_rule_ec2" {
-  source      = "../../modules/aws/recipes/security/config/rule/ec2"
-  is_enabled  = lookup(var.security_config, "is_enabled", true)
-  name_prefix = var.name_prefix
-  tags        = var.tags
+  source                                      = "../../modules/aws/recipes/security/config/rule/ec2"
+  is_enabled                                  = lookup(var.security_config, "is_enabled", true)
+  name_prefix                                 = var.name_prefix
+  ssm_automation_assume_role_arn              = module.aws_recipes_security_config_ssm_automation.role_arn
+  is_disable_public_access_for_security_group = lookup(var.security_config.remediation.ec2, "is_disable_public_access_for_security_group", false)
+  tags                                        = var.tags
   depends_on = [
     module.aws_recipes_security_config_create
   ]
@@ -99,10 +120,32 @@ module "aws_recipes_security_config_rule_ec2" {
 # Provides an AWS Config Rule for S3
 #--------------------------------------------------------------
 module "aws_recipes_security_config_rule_s3" {
-  source      = "../../modules/aws/recipes/security/config/rule/s3"
-  is_enabled  = lookup(var.security_config, "is_enabled", true)
-  name_prefix = var.name_prefix
-  tags        = var.tags
+  source                              = "../../modules/aws/recipes/security/config/rule/s3"
+  is_enabled                          = lookup(var.security_config, "is_enabled", true)
+  name_prefix                         = var.name_prefix
+  ssm_automation_assume_role_arn      = module.aws_recipes_security_config_ssm_automation.role_arn
+  is_configure_s3_public_access_block = lookup(var.security_config.remediation.s3, "is_configure_s3_public_access_block", false)
+  configure_s3_public_access_block = lookup(var.security_config.remediation.s3, "configure_s3_public_access_block",
+    {
+      block_public_acls       = true
+      block_public_policy     = true
+      ignore_public_acls      = true
+      restrict_public_buckets = true
+  })
+  is_configure_s3_bucket_public_access_block = lookup(var.security_config.remediation.s3, "is_configure_s3_bucket_public_access_block", false)
+  configure_s3_bucket_public_access_block = lookup(var.security_config.remediation.s3, "configure_s3_bucket_public_access_block",
+    {
+      block_public_acls       = true
+      block_public_policy     = true
+      ignore_public_acls      = true
+      restrict_public_buckets = true
+  })
+  is_disable_s3_bucket_public_read_write     = lookup(var.security_config.remediation.s3, "is_disable_s3_bucket_public_read_write", false)
+  is_enabled_s3_bucket_encryption            = lookup(var.security_config.remediation.s3, "is_enabled_s3_bucket_encryption", false)
+  enabled_s3_bucket_encryption_sse_algorithm = lookup(var.security_config.remediation.s3, "enabled_s3_bucket_encryption_sse_algorithm", "AES256")
+  is_restrict_bucket_ssl_requests_only       = lookup(var.security_config.remediation.s3, "is_restrict_bucket_ssl_requests_only", false)
+  is_configure_s3_bucket_versioning          = lookup(var.security_config.remediation.s3, "is_configure_s3_bucket_versioning", false)
+  tags                                       = var.tags
   depends_on = [
     module.aws_recipes_security_config_create
   ]

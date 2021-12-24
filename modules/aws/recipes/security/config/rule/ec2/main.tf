@@ -345,18 +345,39 @@ resource "aws_config_config_rule" "restricted-common-ports" {
 }
 #--------------------------------------------------------------
 # Provides an AWS Config Rule.
-# SecurityHub: enabled
 #--------------------------------------------------------------
-# resource "aws_config_config_rule" "restricted-ssh" {
-#   count       = var.is_enabled ? 1 : 0
-#   name        = "${local.name_prefix}restricted-ssh"
-#   description = "Checks whether security groups that are in use disallow unrestricted incoming SSH traffic."
-#   source {
-#     owner             = "AWS"
-#     source_identifier = "RESTRICTED_SSH"
-#   }
-#   tags = var.tags
-# }
+resource "aws_config_config_rule" "restricted-ssh" {
+  count       = var.is_enabled ? 1 : 0
+  name        = "${local.name_prefix}restricted-ssh"
+  description = "Checks whether security groups that are in use disallow unrestricted incoming SSH traffic."
+  source {
+    owner             = "AWS"
+    source_identifier = "INCOMING_SSH_DISABLED"
+  }
+  tags = var.tags
+}
+#--------------------------------------------------------------
+# Provides an AWS Config Remediation Configuration.
+#--------------------------------------------------------------
+resource "aws_config_remediation_configuration" "restricted-ssh" {
+  count            = var.is_enabled && var.is_disable_public_access_for_security_group ? 1 : 0
+  config_rule_name = aws_config_config_rule.restricted-ssh[0].name
+  target_type      = "SSM_DOCUMENT"
+  # https://docs.aws.amazon.com/systems-manager-automation-runbooks/latest/userguide/automation-aws-disablepublicaccessforsecuritygroup.html
+  target_id = "AWS-DisablePublicAccessForSecurityGroup"
+  parameter {
+    name         = "AutomationAssumeRole"
+    static_value = var.ssm_automation_assume_role_arn
+  }
+  parameter {
+    name           = "GroupId"
+    resource_value = "RESOURCE_ID"
+  }
+  automatic                  = true
+  maximum_automatic_attempts = 5
+  retry_attempt_seconds      = 60
+}
+
 #--------------------------------------------------------------
 # Provides an AWS Config Rule.
 # SecurityHub: enabled

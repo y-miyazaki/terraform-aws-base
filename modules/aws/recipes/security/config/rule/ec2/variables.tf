@@ -11,6 +11,15 @@ variable "name_prefix" {
   description = "(Optional) Prefix of config name."
   default     = ""
 }
+variable "ssm_automation_assume_role_arn" {
+  type        = string
+  description = "(Required) AssumeRole arn in SSM Automation"
+}
+variable "is_disable_public_access_for_security_group" {
+  type        = bool
+  description = "(Optional) If true, it will disable the default SSH and RDP ports that are open for all IP addresses."
+  default     = false
+}
 variable "restricted_common_ports" {
   type = object(
     {
