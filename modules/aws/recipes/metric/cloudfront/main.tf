@@ -5,6 +5,9 @@
 # Local
 #--------------------------------------------------------------
 locals {
+  tags = {
+    for k, v in(var.tags == null ? {} : var.tags) : k => v if lookup(data.aws_default_tags.provider.tags, k, null) == null || lookup(data.aws_default_tags.provider.tags, k, null) != v
+  }
   url   = "https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/programming-cloudwatch-metrics.html"
   count = length(var.dimensions) > 0 ? length(var.dimensions) : 1
   names = length(var.dimensions) > 0 ? flatten([
@@ -27,6 +30,11 @@ locals {
   }]
 }
 #--------------------------------------------------------------
+# Use this data source to get the default tags configured on the provider.
+#--------------------------------------------------------------
+data "aws_default_tags" "provider" {}
+
+#--------------------------------------------------------------
 # For 404ErrorRate
 # Provides a CloudWatch Metric Alarm resource.
 #--------------------------------------------------------------
@@ -47,7 +55,7 @@ resource "aws_cloudwatch_metric_alarm" "error_401_rate" {
   unit                = "Percent"
   treat_missing_data  = "notBreaching"
   dimensions          = local.is_dimensions ? local.dimensions[count.index] : null
-  tags                = var.tags
+  tags                = local.tags
 }
 #--------------------------------------------------------------
 # For 403ErrorRate
@@ -70,7 +78,7 @@ resource "aws_cloudwatch_metric_alarm" "error_403_rate" {
   unit                = "Percent"
   treat_missing_data  = "notBreaching"
   dimensions          = local.is_dimensions ? local.dimensions[count.index] : null
-  tags                = var.tags
+  tags                = local.tags
 }
 #--------------------------------------------------------------
 # For 404ErrorRate
@@ -93,7 +101,7 @@ resource "aws_cloudwatch_metric_alarm" "error_404_rate" {
   unit                = "Percent"
   treat_missing_data  = "notBreaching"
   dimensions          = local.is_dimensions ? local.dimensions[count.index] : null
-  tags                = var.tags
+  tags                = local.tags
 }
 
 #--------------------------------------------------------------
@@ -117,7 +125,7 @@ resource "aws_cloudwatch_metric_alarm" "error_502_rate" {
   unit                = "Percent"
   treat_missing_data  = "notBreaching"
   dimensions          = local.is_dimensions ? local.dimensions[count.index] : null
-  tags                = var.tags
+  tags                = local.tags
 }
 #--------------------------------------------------------------
 # For 503ErrorRate
@@ -140,7 +148,7 @@ resource "aws_cloudwatch_metric_alarm" "error_503_rate" {
   unit                = "Percent"
   treat_missing_data  = "notBreaching"
   dimensions          = local.is_dimensions ? local.dimensions[count.index] : null
-  tags                = var.tags
+  tags                = local.tags
 }
 #--------------------------------------------------------------
 # For 504ErrorRate
@@ -163,7 +171,7 @@ resource "aws_cloudwatch_metric_alarm" "error_504_rate" {
   unit                = "Percent"
   treat_missing_data  = "notBreaching"
   dimensions          = local.is_dimensions ? local.dimensions[count.index] : null
-  tags                = var.tags
+  tags                = local.tags
 }
 #--------------------------------------------------------------
 # For CacheHitRate
@@ -186,7 +194,7 @@ resource "aws_cloudwatch_metric_alarm" "cache_hit_rate" {
   unit                = "Percent"
   treat_missing_data  = "notBreaching"
   dimensions          = local.is_dimensions ? local.dimensions[count.index] : null
-  tags                = var.tags
+  tags                = local.tags
 }
 #--------------------------------------------------------------
 # For OriginLatency
@@ -209,7 +217,7 @@ resource "aws_cloudwatch_metric_alarm" "origin_latency" {
   unit                = "Milliseconds"
   treat_missing_data  = "notBreaching"
   dimensions          = local.is_dimensions ? local.dimensions[count.index] : null
-  tags                = var.tags
+  tags                = local.tags
 }
 
 #--------------------------------------------------------------

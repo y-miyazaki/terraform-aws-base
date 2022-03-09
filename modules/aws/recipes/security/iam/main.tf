@@ -1,4 +1,17 @@
 #--------------------------------------------------------------
+# Locals
+#--------------------------------------------------------------
+locals {
+  tags = {
+    for k, v in(var.tags == null ? {} : var.tags) : k => v if lookup(data.aws_default_tags.provider.tags, k, null) == null || lookup(data.aws_default_tags.provider.tags, k, null) != v
+  }
+}
+#--------------------------------------------------------------
+# Use this data source to get the default tags configured on the provider.
+#--------------------------------------------------------------
+data "aws_default_tags" "provider" {}
+
+#--------------------------------------------------------------
 # Manages Password Policy for the AWS Account. See more about Account Password Policy in the official AWS docs.
 #--------------------------------------------------------------
 resource "aws_iam_account_password_policy" "this" {
@@ -38,7 +51,7 @@ resource "aws_iam_role" "this" {
   assume_role_policy    = var.is_enabled ? data.aws_iam_policy_document.this[0].json : null
   force_detach_policies = true
   path                  = lookup(var.aws_iam_role, "path", "/")
-  tags                  = var.tags
+  tags                  = local.tags
 }
 
 resource "aws_iam_role_policy_attachment" "support_policy" {

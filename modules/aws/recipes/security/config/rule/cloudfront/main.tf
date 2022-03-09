@@ -2,8 +2,16 @@
 # Locals
 #--------------------------------------------------------------
 locals {
+  tags = {
+    for k, v in(var.tags == null ? {} : var.tags) : k => v if lookup(data.aws_default_tags.provider.tags, k, null) == null || lookup(data.aws_default_tags.provider.tags, k, null) != v
+  }
   name_prefix = var.name_prefix == "" ? "" : "${trimsuffix(var.name_prefix, "-")}-"
 }
+#--------------------------------------------------------------
+# Use this data source to get the default tags configured on the provider.
+#--------------------------------------------------------------
+data "aws_default_tags" "provider" {}
+
 #--------------------------------------------------------------
 # Provides an AWS Config Rule.
 #--------------------------------------------------------------
@@ -15,7 +23,7 @@ resource "aws_config_config_rule" "cloudfront-accesslogs-enabled" {
     owner             = "AWS"
     source_identifier = "CLOUDFRONT_ACCESSLOGS_ENABLED"
   }
-  tags = var.tags
+  tags = local.tags
 }
 #--------------------------------------------------------------
 # Provides an AWS Config Rule.
@@ -28,7 +36,7 @@ resource "aws_config_config_rule" "cloudfront-associated-with-waf" {
     owner             = "AWS"
     source_identifier = "CLOUDFRONT_ASSOCIATED_WITH_WAF"
   }
-  tags = var.tags
+  tags = local.tags
 }
 #--------------------------------------------------------------
 # Provides an AWS Config Rule.
@@ -41,7 +49,7 @@ resource "aws_config_config_rule" "cloudfront-custom-ssl-certificate" {
     owner             = "AWS"
     source_identifier = "CLOUDFRONT_CUSTOM_SSL_CERTIFICATE"
   }
-  tags = var.tags
+  tags = local.tags
 }
 #--------------------------------------------------------------
 # Provides an AWS Config Rule.
@@ -54,7 +62,7 @@ resource "aws_config_config_rule" "cloudfront-default-root-object-configured" {
     owner             = "AWS"
     source_identifier = "CLOUDFRONT_DEFAULT_ROOT_OBJECT_CONFIGURED"
   }
-  tags = var.tags
+  tags = local.tags
 }
 #--------------------------------------------------------------
 # Provides an AWS Config Rule.
@@ -67,7 +75,7 @@ resource "aws_config_config_rule" "cloudfront-origin-access-identity-enabled" {
     owner             = "AWS"
     source_identifier = "CLOUDFRONT_ORIGIN_ACCESS_IDENTITY_ENABLED"
   }
-  tags = var.tags
+  tags = local.tags
 }
 #--------------------------------------------------------------
 # Provides an AWS Config Rule.
@@ -80,7 +88,7 @@ resource "aws_config_config_rule" "cloudfront-origin-failover-enabled" {
     owner             = "AWS"
     source_identifier = "CLOUDFRONT_ORIGIN_FAILOVER_ENABLED"
   }
-  tags = var.tags
+  tags = local.tags
 }
 #--------------------------------------------------------------
 # Provides an AWS Config Rule.
@@ -93,7 +101,7 @@ resource "aws_config_config_rule" "cloudfront-sni-enabled" {
     owner             = "AWS"
     source_identifier = "CLOUDFRONT_SNI_ENABLED"
   }
-  tags = var.tags
+  tags = local.tags
 }
 #--------------------------------------------------------------
 # Provides an AWS Config Rule.
@@ -106,7 +114,7 @@ resource "aws_config_config_rule" "cloudfront-viewer-policy-https" {
     owner             = "AWS"
     source_identifier = "CLOUDFRONT_VIEWER_POLICY_HTTPS"
   }
-  tags = var.tags
+  tags = local.tags
 }
 #--------------------------------------------------------------
 # Provides an AWS Config Remediation Configuration.

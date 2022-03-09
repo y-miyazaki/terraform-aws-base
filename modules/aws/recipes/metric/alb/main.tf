@@ -5,6 +5,9 @@
 # Local
 #--------------------------------------------------------------
 locals {
+  tags = {
+    for k, v in(var.tags == null ? {} : var.tags) : k => v if lookup(data.aws_default_tags.provider.tags, k, null) == null || lookup(data.aws_default_tags.provider.tags, k, null) != v
+  }
   url   = "https://docs.aws.amazon.com/elasticloadbalancing/latest/application/load-balancer-cloudwatch-metrics.html"
   count = length(var.dimensions) > 0 ? length(var.dimensions) : 1
   names = length(var.dimensions) > 0 ? flatten([
@@ -15,6 +18,11 @@ locals {
   }]
   is_dimensions = length(var.dimensions) > 0 ? true : false
 }
+#--------------------------------------------------------------
+# Use this data source to get the default tags configured on the provider.
+#--------------------------------------------------------------
+data "aws_default_tags" "provider" {}
+
 #--------------------------------------------------------------
 # For ActiveConnectionCount
 # Provides a CloudWatch Metric Alarm resource.
@@ -37,7 +45,7 @@ resource "aws_cloudwatch_metric_alarm" "active_connection_count" {
   unit                      = "Count"
   treat_missing_data        = "notBreaching"
   dimensions                = local.is_dimensions ? var.dimensions[count.index] : null
-  tags                      = var.tags
+  tags                      = local.tags
 }
 #--------------------------------------------------------------
 # For ClientTLSNegotiationErrorCount
@@ -61,7 +69,7 @@ resource "aws_cloudwatch_metric_alarm" "client_tls_negotiation_error_count" {
   unit                      = "Count"
   treat_missing_data        = "notBreaching"
   dimensions                = local.is_dimensions ? var.dimensions[count.index] : null
-  tags                      = var.tags
+  tags                      = local.tags
 }
 #--------------------------------------------------------------
 # For ConsumedLCUs
@@ -85,7 +93,7 @@ resource "aws_cloudwatch_metric_alarm" "consumed_lcus" {
   unit                      = "Count"
   treat_missing_data        = "notBreaching"
   dimensions                = local.is_dimensions ? var.dimensions[count.index] : null
-  tags                      = var.tags
+  tags                      = local.tags
 }
 #--------------------------------------------------------------
 # For HTTPCode_4XX_Count
@@ -109,7 +117,7 @@ resource "aws_cloudwatch_metric_alarm" "httpcode_4xx_count" {
   unit                      = "Count"
   treat_missing_data        = "notBreaching"
   dimensions                = local.is_dimensions ? var.dimensions[count.index] : null
-  tags                      = var.tags
+  tags                      = local.tags
 }
 #--------------------------------------------------------------
 # For HTTPCode_5XX_Count
@@ -133,7 +141,7 @@ resource "aws_cloudwatch_metric_alarm" "httpcode_5xx_count" {
   unit                      = "Count"
   treat_missing_data        = "notBreaching"
   dimensions                = local.is_dimensions ? var.dimensions[count.index] : null
-  tags                      = var.tags
+  tags                      = local.tags
 }
 #--------------------------------------------------------------
 # For HTTPCode_ELB_4XX_Count
@@ -157,7 +165,7 @@ resource "aws_cloudwatch_metric_alarm" "httpcode_elb_4xx_count" {
   unit                      = "Count"
   treat_missing_data        = "notBreaching"
   dimensions                = local.is_dimensions ? var.dimensions[count.index] : null
-  tags                      = var.tags
+  tags                      = local.tags
 }
 #--------------------------------------------------------------
 # For HTTPCode_ELB_5XX_Count
@@ -181,7 +189,7 @@ resource "aws_cloudwatch_metric_alarm" "httpcode_elb_5xx_count" {
   unit                      = "Count"
   treat_missing_data        = "notBreaching"
   dimensions                = local.is_dimensions ? var.dimensions[count.index] : null
-  tags                      = var.tags
+  tags                      = local.tags
 }
 #--------------------------------------------------------------
 # For TargetResponseTime
@@ -204,7 +212,7 @@ resource "aws_cloudwatch_metric_alarm" "target_response_time" {
   ok_actions                = var.ok_actions
   treat_missing_data        = "notBreaching"
   dimensions                = local.is_dimensions ? var.dimensions[count.index] : null
-  tags                      = var.tags
+  tags                      = local.tags
 }
 #--------------------------------------------------------------
 # For TargetTLSNegotiationErrorCount
@@ -228,7 +236,7 @@ resource "aws_cloudwatch_metric_alarm" "target_tls_negotiation_error_count" {
   unit                      = "Count"
   treat_missing_data        = "notBreaching"
   dimensions                = local.is_dimensions ? var.dimensions[count.index] : null
-  tags                      = var.tags
+  tags                      = local.tags
 }
 #--------------------------------------------------------------
 # For UnHealthyHostCount
@@ -252,5 +260,5 @@ resource "aws_cloudwatch_metric_alarm" "unhealthy_host_count" {
   unit                      = "Count"
   treat_missing_data        = "notBreaching"
   dimensions                = local.is_dimensions ? var.dimensions[count.index] : null
-  tags                      = var.tags
+  tags                      = local.tags
 }

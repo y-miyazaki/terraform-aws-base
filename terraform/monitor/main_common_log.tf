@@ -2,29 +2,34 @@
 # Local
 #--------------------------------------------------------------
 locals {
-  aws_s3_bucket_application = merge(var.common_log.aws_s3_bucket_application, { "bucket" = "${var.name_prefix}${var.common_log.aws_s3_bucket_application.bucket}-${random_id.this.dec}" })
+  aws_s3_bucket = merge(var.common_log.aws_s3_bucket_application.aws_s3_bucket, { "bucket" = "${var.name_prefix}${var.common_log.aws_s3_bucket_application.aws_s3_bucket.bucket}-${random_id.this.dec}" })
 }
 #--------------------------------------------------------------
 # Provides a S3 bucket resource.
 # For application log.
 #--------------------------------------------------------------
 module "aws_recipes_s3_bucket_log_application" {
-  source        = "../../modules/aws/recipes/s3/bucket/log"
-  bucket        = lookup(local.aws_s3_bucket_application, "bucket")
-  acl           = lookup(local.aws_s3_bucket_application, "acl", "private")
+  source        = "../../modules/aws/recipes/s3/bucket/log-v4"
   tags          = var.tags
-  force_destroy = lookup(local.aws_s3_bucket_application, "force_destroy", false)
-  versioning = lookup(local.aws_s3_bucket_application, "versioning", [
-    {
-      enabled = true
+  aws_s3_bucket = local.aws_s3_bucket
+  aws_s3_bucket_acl = lookup(var.common_log.aws_s3_bucket_application, "aws_s3_bucket_acl", {
+    acl = "log-delivery-write"
     }
-    ]
   )
-  logging                              = lookup(local.aws_s3_bucket_application, "logging", [])
-  lifecycle_rule                       = lookup(local.aws_s3_bucket_application, "lifecycle_rule", [])
-  replication_configuration            = lookup(local.aws_s3_bucket_application, "replication_configuration", [])
-  server_side_encryption_configuration = lookup(local.aws_s3_bucket_application, "server_side_encryption_configuration", [])
-  object_lock_configuration            = lookup(local.aws_s3_bucket_application, "object_lock_configuration", [])
+  aws_s3_bucket_versioning = lookup(var.common_log.aws_s3_bucket_application, "aws_s3_bucket_versioning", {
+    versioning_configuration = [
+      {
+        status     = "Enabled"
+        mfa_delete = "Disabled"
+      }
+    ]
+    }
+  )
+  aws_s3_bucket_logging                              = lookup(var.common_log.aws_s3_bucket_application, "aws_s3_bucket_logging", null)
+  aws_s3_bucket_lifecycle_configuration              = lookup(var.common_log.aws_s3_bucket_application, "aws_s3_bucket_lifecycle_configuration")
+  aws_s3_bucket_server_side_encryption_configuration = lookup(var.common_log.aws_s3_bucket_application, "aws_s3_bucket_server_side_encryption_configuration", null)
+  s3_replication_configuration_role_arn              = lookup(var.common_log.aws_s3_bucket_application, "s3_replication_configuration_role_arn", null)
+  aws_s3_bucket_replication_configuration            = lookup(var.common_log.aws_s3_bucket_application, "aws_s3_bucket_replication_configuration", null)
 }
 
 #--------------------------------------------------------------

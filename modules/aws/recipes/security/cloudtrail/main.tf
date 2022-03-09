@@ -6,10 +6,17 @@
 # Local
 #--------------------------------------------------------------
 locals {
+  tags = {
+    for k, v in(var.tags == null ? {} : var.tags) : k => v if lookup(data.aws_default_tags.provider.tags, k, null) == null || lookup(data.aws_default_tags.provider.tags, k, null) != v
+  }
   is_s3_enabled = var.is_enabled && var.is_s3_enabled
   bucket_id     = local.is_s3_enabled ? aws_s3_bucket.this[0].id : var.aws_s3_bucket_existing.bucket_id
   bucket_arn    = local.is_s3_enabled ? aws_s3_bucket.this[0].arn : var.aws_s3_bucket_existing.bucket_arn
 }
+#--------------------------------------------------------------
+# Use this data source to get the default tags configured on the provider.
+#--------------------------------------------------------------
+data "aws_default_tags" "provider" {}
 
 #--------------------------------------------------------------
 # Provides a KMS customer master key.
@@ -118,7 +125,7 @@ POLICY
   deletion_window_in_days = lookup(var.aws_kms_key.cloudtrail, "deletion_window_in_days", 7)
   is_enabled              = lookup(var.aws_kms_key.cloudtrail, "is_enabled", true)
   enable_key_rotation     = lookup(var.aws_kms_key.cloudtrail, "enable_key_rotation", true)
-  tags = merge(var.tags, {
+  tags = merge(local.tags, {
     Name = lookup(var.aws_kms_key.cloudtrail, "alias_name")
     }
   )
@@ -189,7 +196,7 @@ POLICY
   deletion_window_in_days = lookup(var.aws_kms_key.sns, "deletion_window_in_days", 7)
   is_enabled              = lookup(var.aws_kms_key.sns, "is_enabled", true)
   enable_key_rotation     = lookup(var.aws_kms_key.sns, "enable_key_rotation", true)
-  tags = merge(var.tags, {
+  tags = merge(local.tags, {
     Name = lookup(var.aws_kms_key.sns, "alias_name")
     }
   )
@@ -226,7 +233,7 @@ resource "aws_sns_topic" "this" {
   sqs_success_feedback_role_arn            = lookup(var.aws_sns_topic, "sqs_success_feedback_role_arn", null)
   sqs_success_feedback_sample_rate         = lookup(var.aws_sns_topic, "sqs_success_feedback_sample_rate", null)
   sqs_failure_feedback_role_arn            = lookup(var.aws_sns_topic, "sqs_failure_feedback_role_arn", null)
-  tags                                     = var.tags
+  tags                                     = local.tags
 }
 #--------------------------------------------------------------
 # Provides a resource for subscribing to SNS topics.
@@ -254,7 +261,7 @@ resource "aws_cloudwatch_log_group" "this" {
   name              = lookup(var.aws_cloudwatch_log_group, "name")
   retention_in_days = lookup(var.aws_cloudwatch_log_group, "retention_in_days")
   kms_key_id        = lookup(var.aws_cloudwatch_log_group, "kms_key_id", null)
-  tags              = var.tags
+  tags              = local.tags
 }
 
 #--------------------------------------------------------------
@@ -293,7 +300,7 @@ resource "aws_cloudwatch_metric_alarm" "cis_3_1" {
   alarm_description         = "[CIS.3.1] Real-time monitoring of API calls can be achieved by directing CloudTrail Logs to CloudWatch Logs and establishing corresponding metric filters and alarms. It is recommended that a metric filter and alarm be established for unauthorized API calls."
   insufficient_data_actions = []
   treat_missing_data        = "notBreaching"
-  tags                      = var.tags
+  tags                      = local.tags
 }
 
 #--------------------------------------------------------------
@@ -332,7 +339,7 @@ resource "aws_cloudwatch_metric_alarm" "cis_3_2" {
   alarm_description         = "[CIS.3.2] Real-time monitoring of API calls can be achieved by directing CloudTrail Logs to CloudWatch Logs and establishing corresponding metric filters and alarms. It is recommended that a metric filter and alarm be established for console logins that are not protected by multi-factor authentication (MFA)."
   insufficient_data_actions = []
   treat_missing_data        = "notBreaching"
-  tags                      = var.tags
+  tags                      = local.tags
 }
 
 #--------------------------------------------------------------
@@ -371,7 +378,7 @@ resource "aws_cloudwatch_metric_alarm" "cis_3_3" {
   alarm_description         = "[CIS.3.3] Real-time monitoring of API calls can be achieved by directing CloudTrail Logs to CloudWatch Logs and establishing corresponding metric filters and alarms. It is recommended that a metric filter and alarm be established for root login attempts."
   insufficient_data_actions = []
   treat_missing_data        = "notBreaching"
-  tags                      = var.tags
+  tags                      = local.tags
 }
 #--------------------------------------------------------------
 # (CIS.3.4) Provides a CloudWatch Log Metric Filter resource.
@@ -409,7 +416,7 @@ resource "aws_cloudwatch_metric_alarm" "cis_3_4" {
   alarm_description         = "[CIS.3.4] Real-time monitoring of API calls can be achieved by directing CloudTrail Logs to CloudWatch Logs and establishing corresponding metric filters and alarms. It is recommended that a metric filter and alarm be established changes made to Identity and Access Management (IAM) policies."
   insufficient_data_actions = []
   treat_missing_data        = "notBreaching"
-  tags                      = var.tags
+  tags                      = local.tags
 }
 #--------------------------------------------------------------
 # (CIS.3.5) Provides a CloudWatch Log Metric Filter resource.
@@ -447,7 +454,7 @@ resource "aws_cloudwatch_metric_alarm" "cis_3_5" {
   alarm_description         = "[CIS.3.5] Real-time monitoring of API calls can be achieved by directing CloudTrail Logs to CloudWatch Logs and establishing corresponding metric filters and alarms. It is recommended that a metric filter and alarm be established for detecting changes to CloudTrail's configurations."
   insufficient_data_actions = []
   treat_missing_data        = "notBreaching"
-  tags                      = var.tags
+  tags                      = local.tags
 }
 #--------------------------------------------------------------
 # (CIS.3.6) Provides a CloudWatch Log Metric Filter resource.
@@ -485,7 +492,7 @@ resource "aws_cloudwatch_metric_alarm" "cis_3_6" {
   alarm_description         = "[CIS.3.6] Real-time monitoring of API calls can be achieved by directing CloudTrail Logs to CloudWatch Logs and establishing corresponding metric filters and alarms. It is recommended that a metric filter and alarm be established for failed console authentication attempts."
   insufficient_data_actions = []
   treat_missing_data        = "notBreaching"
-  tags                      = var.tags
+  tags                      = local.tags
 }
 #--------------------------------------------------------------
 # (CIS.3.7) Provides a CloudWatch Log Metric Filter resource.
@@ -523,7 +530,7 @@ resource "aws_cloudwatch_metric_alarm" "cis_3_7" {
   alarm_description         = "[CIS.3.7] Real-time monitoring of API calls can be achieved by directing CloudTrail Logs to CloudWatch Logs and establishing corresponding metric filters and alarms. It is recommended that a metric filter and alarm be established for customer created CMKs which have changed state to disabled or scheduled deletion."
   insufficient_data_actions = []
   treat_missing_data        = "notBreaching"
-  tags                      = var.tags
+  tags                      = local.tags
 }
 #--------------------------------------------------------------
 # (CIS.3.8) Provides a CloudWatch Log Metric Filter resource.
@@ -561,7 +568,7 @@ resource "aws_cloudwatch_metric_alarm" "cis_3_8" {
   alarm_description         = "[CIS.3.8] Real-time monitoring of API calls can be achieved by directing CloudTrail Logs to CloudWatch Logs and establishing corresponding metric filters and alarms. It is recommended that a metric filter and alarm be established for changes to S3 bucket policies."
   insufficient_data_actions = []
   treat_missing_data        = "notBreaching"
-  tags                      = var.tags
+  tags                      = local.tags
 }
 #--------------------------------------------------------------
 # (CIS.3.9) Provides a CloudWatch Log Metric Filter resource.
@@ -599,7 +606,7 @@ resource "aws_cloudwatch_metric_alarm" "cis_3_9" {
   alarm_description         = "[CIS.3.9] Real-time monitoring of API calls can be achieved by directing CloudTrail Logs to CloudWatch Logs and establishing corresponding metric filters and alarms. It is recommended that a metric filter and alarm be established for detecting changes to CloudTrail's configurations"
   insufficient_data_actions = []
   treat_missing_data        = "notBreaching"
-  tags                      = var.tags
+  tags                      = local.tags
 }
 #--------------------------------------------------------------
 # (CIS.3.10) Provides a CloudWatch Log Metric Filter resource.
@@ -637,7 +644,7 @@ resource "aws_cloudwatch_metric_alarm" "cis_3_10" {
   alarm_description         = "[CIS.3.10] Real-time monitoring of API calls can be achieved by directing CloudTrail Logs to CloudWatch Logs and establishing corresponding metric filters and alarms. Security Groups are a stateful packet filter that controls ingress and egress traffic within a VPC. It is recommended that a metric filter and alarm be established changes to Security Groups."
   insufficient_data_actions = []
   treat_missing_data        = "notBreaching"
-  tags                      = var.tags
+  tags                      = local.tags
 }
 #--------------------------------------------------------------
 # (CIS.3.11) Provides a CloudWatch Log Metric Filter resource.
@@ -675,7 +682,7 @@ resource "aws_cloudwatch_metric_alarm" "cis_3_11" {
   alarm_description         = "[CIS.3.11] Real-time monitoring of API calls can be achieved by directing CloudTrail Logs to CloudWatch Logs and establishing corresponding metric filters and alarms. NACLs are used as a stateless packet filter to control ingress and egress traffic for subnets within a VPC. It is recommended that a metric filter and alarm be established for changes made to NACLs."
   insufficient_data_actions = []
   treat_missing_data        = "notBreaching"
-  tags                      = var.tags
+  tags                      = local.tags
 }
 #--------------------------------------------------------------
 # (CIS.3.12) Provides a CloudWatch Log Metric Filter resource.
@@ -713,7 +720,7 @@ resource "aws_cloudwatch_metric_alarm" "cis_3_12" {
   alarm_description         = "[CIS.3.12] Real-time monitoring of API calls can be achieved by directing CloudTrail Logs to CloudWatch Logs and establishing corresponding metric filters and alarms. Network gateways are required to send/receive traffic to a destination outside of a VPC. It is recommended that a metric filter and alarm be established for changes to network gateways."
   insufficient_data_actions = []
   treat_missing_data        = "notBreaching"
-  tags                      = var.tags
+  tags                      = local.tags
 }
 #--------------------------------------------------------------
 # (CIS.3.13) Provides a CloudWatch Log Metric Filter resource.
@@ -751,7 +758,7 @@ resource "aws_cloudwatch_metric_alarm" "cis_3_13" {
   alarm_description         = "[CIS.3.13] Real-time monitoring of API calls can be achieved by directing CloudTrail Logs to CloudWatch Logs and establishing corresponding metric filters and alarms. Routing tables are used to route network traffic between subnets and to network gateways. It is recommended that a metric filter and alarm be established for changes to route tables."
   insufficient_data_actions = []
   treat_missing_data        = "notBreaching"
-  tags                      = var.tags
+  tags                      = local.tags
 }
 #--------------------------------------------------------------
 # (CIS.3.14) Provides a CloudWatch Log Metric Filter resource.
@@ -789,7 +796,7 @@ resource "aws_cloudwatch_metric_alarm" "cis_3_14" {
   alarm_description         = "[CIS.3.14] Real-time monitoring of API calls can be achieved by directing CloudTrail Logs to CloudWatch Logs and establishing corresponding metric filters and alarms. It is possible to have more than 1 VPC within an account, in addition it is also possible to create a peer connection between 2 VPCs enabling network traffic to route between VPCs. It is recommended that a metric filter and alarm be established for changes made to VPCs."
   insufficient_data_actions = []
   treat_missing_data        = "notBreaching"
-  tags                      = var.tags
+  tags                      = local.tags
 }
 
 #--------------------------------------------------------------
@@ -813,7 +820,7 @@ resource "aws_iam_role" "this" {
 }
 POLICY
   path               = lookup(var.aws_iam_role, "path", "/")
-  tags               = var.tags
+  tags               = local.tags
 }
 #--------------------------------------------------------------
 # Provides an IAM policy.
@@ -869,7 +876,7 @@ resource "aws_s3_bucket" "this" {
   bucket = lookup(var.aws_s3_bucket, "bucket")
   # bucket_prefix = var.bucket_prefix
   acl           = "private"
-  tags          = var.tags
+  tags          = local.tags
   force_destroy = lookup(var.aws_s3_bucket, "force_destroy", false)
   dynamic "versioning" {
     for_each = lookup(var.aws_s3_bucket, "versioning", [])
@@ -1132,7 +1139,7 @@ resource "aws_cloudtrail" "this" {
       insight_type = lookup(insight_selector.value, "insight_type", null)
     }
   }
-  tags = var.tags
+  tags = local.tags
   depends_on = [
     aws_kms_key.cloudtrail,
     aws_cloudwatch_log_group.this,

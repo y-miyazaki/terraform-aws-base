@@ -1,4 +1,17 @@
 #--------------------------------------------------------------
+# Locals
+#--------------------------------------------------------------
+locals {
+  tags = {
+    for k, v in(var.tags == null ? {} : var.tags) : k => v if lookup(data.aws_default_tags.provider.tags, k, null) == null || lookup(data.aws_default_tags.provider.tags, k, null) != v
+  }
+}
+#--------------------------------------------------------------
+# Use this data source to get the default tags configured on the provider.
+#--------------------------------------------------------------
+data "aws_default_tags" "provider" {}
+
+#--------------------------------------------------------------
 # Provides an VPC subnet resource.
 #--------------------------------------------------------------
 resource "aws_subnet" "this" {
@@ -8,7 +21,7 @@ resource "aws_subnet" "this" {
   map_public_ip_on_launch = lookup(var.aws_subnet[count.index], "map_public_ip_on_launch", false)
   outpost_arn             = lookup(var.aws_subnet[count.index], "outpost_arn", null)
   vpc_id                  = lookup(var.aws_subnet[count.index], "vpc_id", null)
-  tags                    = var.tags
+  tags                    = local.tags
 }
 #--------------------------------------------------------------
 # Provides a resource to create an association between a route table and a subnet or a route table and an internet gateway or virtual private gateway.
@@ -41,7 +54,7 @@ resource "aws_security_group" "this" {
     #tfsec:ignore:AWS009
     cidr_blocks = ["0.0.0.0/0"]
   }
-  tags = var.tags
+  tags = local.tags
   lifecycle {
     create_before_destroy = true
   }
@@ -55,7 +68,7 @@ resource "aws_iam_role" "this" {
   assume_role_policy    = lookup(var.aws_iam_role, "assume_role_policy")
   force_detach_policies = true
   path                  = lookup(var.aws_iam_role, "path", "/")
-  tags                  = var.tags
+  tags                  = local.tags
 }
 
 #--------------------------------------------------------------

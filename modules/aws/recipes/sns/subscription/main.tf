@@ -1,4 +1,17 @@
 #--------------------------------------------------------------
+# Locals
+#--------------------------------------------------------------
+locals {
+  tags = {
+    for k, v in(var.tags == null ? {} : var.tags) : k => v if lookup(data.aws_default_tags.provider.tags, k, null) == null || lookup(data.aws_default_tags.provider.tags, k, null) != v
+  }
+}
+#--------------------------------------------------------------
+# Use this data source to get the default tags configured on the provider.
+#--------------------------------------------------------------
+data "aws_default_tags" "provider" {}
+
+#--------------------------------------------------------------
 # Provides a KMS customer master key.
 #--------------------------------------------------------------
 resource "aws_kms_key" "this" {
@@ -55,7 +68,7 @@ POLICY
   deletion_window_in_days = lookup(var.aws_kms_key, "deletion_window_in_days", 7)
   is_enabled              = lookup(var.aws_kms_key, "is_enabled", true)
   enable_key_rotation     = lookup(var.aws_kms_key, "enable_key_rotation", true)
-  tags = merge(var.tags, {
+  tags = merge(local.tags, {
     Name = lookup(var.aws_kms_key, "alias_name")
     }
   )
@@ -90,7 +103,7 @@ resource "aws_sns_topic" "this" {
   sqs_success_feedback_role_arn            = lookup(var.aws_sns_topic, "sqs_success_feedback_role_arn", null)
   sqs_success_feedback_sample_rate         = lookup(var.aws_sns_topic, "sqs_success_feedback_sample_rate", null)
   sqs_failure_feedback_role_arn            = lookup(var.aws_sns_topic, "sqs_failure_feedback_role_arn", null)
-  tags                                     = var.tags
+  tags                                     = local.tags
 }
 #--------------------------------------------------------------
 # Provides a resource for subscribing to SNS topics.

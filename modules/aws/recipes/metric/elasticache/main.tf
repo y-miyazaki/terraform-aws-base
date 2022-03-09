@@ -5,6 +5,9 @@
 # Local
 #--------------------------------------------------------------
 locals {
+  tags = {
+    for k, v in(var.tags == null ? {} : var.tags) : k => v if lookup(data.aws_default_tags.provider.tags, k, null) == null || lookup(data.aws_default_tags.provider.tags, k, null) != v
+  }
   url   = "https://docs.aws.amazon.com/AmazonElastiCache/latest/red-ug/CacheMetrics.Redis.html"
   count = length(var.dimensions) > 0 ? length(var.dimensions) : 1
   names = length(var.dimensions) > 0 ? flatten([
@@ -15,6 +18,11 @@ locals {
   }]
   is_dimensions = length(var.dimensions) > 0 ? true : false
 }
+#--------------------------------------------------------------
+# Use this data source to get the default tags configured on the provider.
+#--------------------------------------------------------------
+data "aws_default_tags" "provider" {}
+
 #--------------------------------------------------------------
 # For AuthenticationFailures
 # Provides a CloudWatch Metric Alarm resource.
@@ -37,7 +45,7 @@ resource "aws_cloudwatch_metric_alarm" "authentication_failures" {
   unit                      = "Count"
   treat_missing_data        = "notBreaching"
   dimensions                = local.is_dimensions ? var.dimensions[count.index] : null
-  tags                      = var.tags
+  tags                      = local.tags
 }
 #--------------------------------------------------------------
 # For CacheHitRate
@@ -82,7 +90,7 @@ resource "aws_cloudwatch_metric_alarm" "cache_hit_rate" {
       stat        = "Sum"
     }
   }
-  tags = var.tags
+  tags = local.tags
 }
 #--------------------------------------------------------------
 # For CommandAuthorizationFailures
@@ -106,7 +114,7 @@ resource "aws_cloudwatch_metric_alarm" "command_authorization_failures" {
   unit                      = "Count"
   treat_missing_data        = "notBreaching"
   dimensions                = local.is_dimensions ? var.dimensions[count.index] : null
-  tags                      = var.tags
+  tags                      = local.tags
 }
 #--------------------------------------------------------------
 # For CurrConnections
@@ -130,7 +138,7 @@ resource "aws_cloudwatch_metric_alarm" "curr_connections" {
   unit                      = "Count"
   treat_missing_data        = "notBreaching"
   dimensions                = local.is_dimensions ? var.dimensions[count.index] : null
-  tags                      = var.tags
+  tags                      = local.tags
 }
 #--------------------------------------------------------------
 # For DatabaseMemoryUsagePercentage
@@ -154,7 +162,7 @@ resource "aws_cloudwatch_metric_alarm" "database_memory_usage_percentage" {
   unit                      = "Percent"
   treat_missing_data        = "notBreaching"
   dimensions                = local.is_dimensions ? var.dimensions[count.index] : null
-  tags                      = var.tags
+  tags                      = local.tags
 }
 #--------------------------------------------------------------
 # For EngineCPUUtilization
@@ -178,7 +186,7 @@ resource "aws_cloudwatch_metric_alarm" "engine_cpu_utilization" {
   unit                      = "Percent"
   treat_missing_data        = "notBreaching"
   dimensions                = local.is_dimensions ? var.dimensions[count.index] : null
-  tags                      = var.tags
+  tags                      = local.tags
 }
 #--------------------------------------------------------------
 # For KeyAuthorizationFailures
@@ -202,7 +210,7 @@ resource "aws_cloudwatch_metric_alarm" "key_authorization_failures" {
   unit                      = "Count"
   treat_missing_data        = "notBreaching"
   dimensions                = local.is_dimensions ? var.dimensions[count.index] : null
-  tags                      = var.tags
+  tags                      = local.tags
 }
 #--------------------------------------------------------------
 # For NewConnections
@@ -226,7 +234,7 @@ resource "aws_cloudwatch_metric_alarm" "new_connections" {
   unit                      = "Count"
   treat_missing_data        = "notBreaching"
   dimensions                = local.is_dimensions ? var.dimensions[count.index] : null
-  tags                      = var.tags
+  tags                      = local.tags
 }
 #--------------------------------------------------------------
 # For SwapUsage
@@ -250,5 +258,5 @@ resource "aws_cloudwatch_metric_alarm" "swap_usage" {
   unit                      = "Bytes"
   treat_missing_data        = "notBreaching"
   dimensions                = local.is_dimensions ? var.dimensions[count.index] : null
-  tags                      = var.tags
+  tags                      = local.tags
 }

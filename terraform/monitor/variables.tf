@@ -15,3 +15,4 @@ variable "metric_resource_elasticache" {}
 variable "metric_resource_lambda" {}
 variable "metric_resource_rds" {}
 variable "metric_resource_ses" {}
+variable "synthetics_canary" {}

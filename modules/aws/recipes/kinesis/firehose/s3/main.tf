@@ -2,17 +2,25 @@
 # Locals
 #--------------------------------------------------------------
 locals {
+  tags = {
+    for k, v in(var.tags == null ? {} : var.tags) : k => v if lookup(data.aws_default_tags.provider.tags, k, null) == null || lookup(data.aws_default_tags.provider.tags, k, null) != v
+  }
   aws_kinesis_firehose_delivery_stream = {
     for k, v in var.aws_kinesis_firehose_delivery_stream : v.name => v
   }
 }
+#--------------------------------------------------------------
+# Use this data source to get the default tags configured on the provider.
+#--------------------------------------------------------------
+data "aws_default_tags" "provider" {}
+
 #--------------------------------------------------------------
 # Provides a Kinesis Firehose Delivery Stream resource. Amazon Kinesis Firehose is a fully managed, elastic service to easily deliver real-time data streams to destinations such as Amazon S3 and Amazon Redshift.
 #--------------------------------------------------------------
 resource "aws_kinesis_firehose_delivery_stream" "this" {
   for_each = local.aws_kinesis_firehose_delivery_stream
   name     = lookup(each.value, "name")
-  tags     = var.tags
+  tags     = local.tags
   dynamic "server_side_encryption" {
     for_each = lookup(each.value, "server_side_encryption", [])
     content {
@@ -87,7 +95,6 @@ resource "aws_kinesis_firehose_delivery_stream" "this" {
       }
     }
   }
-
 }
 #--------------------------------------------------------------
 # Provides an IAM role.
@@ -111,7 +118,7 @@ resource "aws_iam_role" "this" {
 }
 POLICY
   path               = lookup(var.aws_iam_role, "path", "/")
-  tags               = var.tags
+  tags               = local.tags
 }
 #--------------------------------------------------------------
 # Generates an IAM policy document in JSON format for use with resources that expect policy documents such as aws_iam_policy.

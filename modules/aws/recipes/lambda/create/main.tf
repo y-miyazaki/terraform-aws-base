@@ -1,4 +1,16 @@
 #--------------------------------------------------------------
+# Locals
+#--------------------------------------------------------------
+locals {
+  tags = {
+    for k, v in(var.tags == null ? {} : var.tags) : k => v if lookup(data.aws_default_tags.provider.tags, k, null) == null || lookup(data.aws_default_tags.provider.tags, k, null) != v
+  }
+}
+#--------------------------------------------------------------
+# Use this data source to get the default tags configured on the provider.
+#--------------------------------------------------------------
+data "aws_default_tags" "provider" {}
+#--------------------------------------------------------------
 # Provides a CloudWatch Log Group resource.
 #--------------------------------------------------------------
 resource "aws_cloudwatch_log_group" "this" {
@@ -6,7 +18,7 @@ resource "aws_cloudwatch_log_group" "this" {
   name              = "/aws/lambda/${aws_lambda_function.this[0].function_name}"
   retention_in_days = lookup(var.aws_cloudwatch_log_group, "retention_in_days")
   kms_key_id        = lookup(var.aws_cloudwatch_log_group, "kms_key_id", null)
-  tags              = var.tags
+  tags              = local.tags
 }
 #--------------------------------------------------------------
 # Provides a Lambda Function resource.
@@ -53,7 +65,7 @@ resource "aws_lambda_function" "this" {
   }
   kms_key_arn      = lookup(var.aws_lambda_function, "kms_key_arn", null)
   source_code_hash = lookup(var.aws_lambda_function, "source_code_hash", null)
-  tags             = var.tags
+  tags             = local.tags
 }
 
 #--------------------------------------------------------------

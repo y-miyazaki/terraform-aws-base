@@ -2,8 +2,16 @@
 # Locals
 #--------------------------------------------------------------
 locals {
+  tags = {
+    for k, v in(var.tags == null ? {} : var.tags) : k => v if lookup(data.aws_default_tags.provider.tags, k, null) == null || lookup(data.aws_default_tags.provider.tags, k, null) != v
+  }
   name_prefix = var.name_prefix == "" ? "" : "${trimsuffix(var.name_prefix, "-")}-"
 }
+#--------------------------------------------------------------
+# Use this data source to get the default tags configured on the provider.
+#--------------------------------------------------------------
+data "aws_default_tags" "provider" {}
+
 #--------------------------------------------------------------
 # Provides an AWS Config Rule.
 #--------------------------------------------------------------
@@ -15,7 +23,7 @@ resource "aws_config_config_rule" "cloudtrail-s3-dataevents-enabled" {
     owner             = "AWS"
     source_identifier = "CLOUDTRAIL_S3_DATAEVENTS_ENABLED"
   }
-  tags = var.tags
+  tags = local.tags
 }
 #--------------------------------------------------------------
 # Provides an AWS Config Rule.
@@ -29,7 +37,7 @@ resource "aws_config_config_rule" "s3-account-level-public-access-blocks" {
     owner             = "AWS"
     source_identifier = "S3_ACCOUNT_LEVEL_PUBLIC_ACCESS_BLOCKS"
   }
-  tags = var.tags
+  tags = local.tags
 }
 #--------------------------------------------------------------
 # Provides an AWS Config Remediation Configuration.
@@ -80,7 +88,7 @@ resource "aws_config_remediation_configuration" "s3-account-level-public-access-
 #     owner             = "AWS"
 #     source_identifier = "S3_BUCKET_BLACKLISTED_ACTIONS_PROHIBITED"
 #   }
-#   tags = var.tags
+#   tags = local.tags
 # }
 #--------------------------------------------------------------
 # Provides an AWS Config Rule.
@@ -93,7 +101,7 @@ resource "aws_config_remediation_configuration" "s3-account-level-public-access-
 #     owner             = "AWS"
 #     source_identifier = "S3_BUCKET_DEFAULT_LOCK_ENABLED"
 #   }
-#   tags = var.tags
+#   tags = local.tags
 # }
 #--------------------------------------------------------------
 # Provides an AWS Config Rule.
@@ -106,7 +114,7 @@ resource "aws_config_config_rule" "s3-bucket-level-public-access-prohibited" {
     owner             = "AWS"
     source_identifier = "S3_BUCKET_LEVEL_PUBLIC_ACCESS_PROHIBITED"
   }
-  tags = var.tags
+  tags = local.tags
 }
 #--------------------------------------------------------------
 # Provides an AWS Config Remediation Configuration.
@@ -157,7 +165,7 @@ resource "aws_config_remediation_configuration" "s3-bucket-level-public-access-p
 #     owner             = "AWS"
 #     source_identifier = "S3_BUCKET_LOGGING_ENABLED"
 #   }
-#   tags = var.tags
+#   tags = local.tags
 # }
 #--------------------------------------------------------------
 # Provides an AWS Config Rule.
@@ -170,7 +178,7 @@ resource "aws_config_remediation_configuration" "s3-bucket-level-public-access-p
 #     owner             = "AWS"
 #     source_identifier = "S3_BUCKET_POLICY_GRANTEE_CHECK"
 #   }
-#   tags = var.tags
+#   tags = local.tags
 # }
 #--------------------------------------------------------------
 # Provides an AWS Config Rule.
@@ -183,7 +191,7 @@ resource "aws_config_remediation_configuration" "s3-bucket-level-public-access-p
 #     owner             = "AWS"
 #     source_identifier = "S3_BUCKET_POLICY_NOT_MORE_PERMISSIVE"
 #   }
-#   tags = var.tags
+#   tags = local.tags
 # }
 #--------------------------------------------------------------
 # Provides an AWS Config Rule.
@@ -197,7 +205,7 @@ resource "aws_config_config_rule" "s3-bucket-public-read-prohibited" {
     owner             = "AWS"
     source_identifier = "S3_BUCKET_PUBLIC_READ_PROHIBITED"
   }
-  tags = var.tags
+  tags = local.tags
 }
 #--------------------------------------------------------------
 # Provides an AWS Config Remediation Configuration.
@@ -233,7 +241,7 @@ resource "aws_config_config_rule" "s3-bucket-public-write-prohibited" {
     owner             = "AWS"
     source_identifier = "S3_BUCKET_PUBLIC_WRITE_PROHIBITED"
   }
-  tags = var.tags
+  tags = local.tags
 }
 #--------------------------------------------------------------
 # Provides an AWS Config Remediation Configuration.
@@ -269,7 +277,7 @@ resource "aws_config_remediation_configuration" "s3-bucket-public-write-prohibit
 #     owner             = "AWS"
 #     source_identifier = "S3_BUCKET_REPLICATION_ENABLED"
 #   }
-#   tags = var.tags
+#   tags = local.tags
 # }
 #--------------------------------------------------------------
 # Provides an AWS Config Rule.
@@ -283,7 +291,7 @@ resource "aws_config_config_rule" "s3-bucket-server-side-encryption-enabled" {
     owner             = "AWS"
     source_identifier = "S3_BUCKET_SERVER_SIDE_ENCRYPTION_ENABLED"
   }
-  tags = var.tags
+  tags = local.tags
 }
 #--------------------------------------------------------------
 # Provides an AWS Config Remediation Configuration.
@@ -323,7 +331,7 @@ resource "aws_config_config_rule" "s3-bucket-ssl-requests-only" {
     owner             = "AWS"
     source_identifier = "S3_BUCKET_SSL_REQUESTS_ONLY"
   }
-  tags = var.tags
+  tags = local.tags
 }
 #--------------------------------------------------------------
 # Provides an AWS Config Remediation Configuration.
@@ -359,7 +367,7 @@ resource "aws_config_config_rule" "s3-bucket-versioning-enabled" {
     owner             = "AWS"
     source_identifier = "S3_BUCKET_VERSIONING_ENABLED"
   }
-  tags = var.tags
+  tags = local.tags
 }
 #--------------------------------------------------------------
 # Provides an AWS Config Remediation Configuration.
@@ -399,5 +407,5 @@ resource "aws_config_remediation_configuration" "s3-bucket-versioning-enabled" {
 #     owner             = "AWS"
 #     source_identifier = "S3_DEFAULT_ENCRYPTION_KMS"
 #   }
-#   tags = var.tags
+#   tags = local.tags
 # }
