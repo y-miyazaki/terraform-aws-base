@@ -691,11 +691,49 @@ metric_resource_ses = {
   ]
 }
 #--------------------------------------------------------------
+# Metric: Synthetics Canary
+#--------------------------------------------------------------
+metric_synthetics_canary = {
+  # TODO: need to set is_enabled for Metric of Synthetics Canary.
+  is_enabled = true
+  # TODO: need to set period for Synthetics Canary.
+  period = 300
+  # TODO: need to set threshold for Synthetics Canary.
+  threshold = {
+    # (Required) SuccessPercent threshold (unit=Percent)
+    enabled_success_percent = true
+    success_percent         = 99
+  }
+  # TODO: need to set dimensions for monitor of Synthetics Canary.
+  # Specify the instance of the target Synthetics Canary Name to be monitored by Map.
+  #   ex)
+  #   dimensions = [
+  #     {
+  #       "CanaryName" = "base-heartbeat"
+  #     }
+  #   ]
+  dimensions = [
+    {
+      "CanaryName" = "base-heartbeat"
+    }
+  ]
+}
+#--------------------------------------------------------------
 # Synthetics Canary
 #--------------------------------------------------------------
 synthetics_canary = {
   # TODO: need to set is_enabled for monitor of Synthetics Canary.
   is_enabled = false
+  aws_iam_role = {
+    description = "Role for Synthetics Canaly."
+    name        = "monitor-synthetics-canary-role"
+    path        = "/"
+  }
+  aws_iam_policy = {
+    description = "Policy for Synthetics Canaly."
+    name        = "monitor-synthetics-canary-policy"
+    path        = "/"
+  }
   aws_synthetics_canary = {
     # Location in Amazon S3 where Synthetics stores artifacts from the test runs of this canary.
     # If not specified, the log bucket is automatically specified.
@@ -706,13 +744,13 @@ synthetics_canary = {
     # (Required) Entry point to use for the source code when running the canary. This value must end with the string .handler .
     handler = "heartbeat.handler"
     # (Required) Name for this canary. Has a maximum length of 21 characters. Valid characters are lowercase alphanumeric, hyphen, or underscore.
-    name = "monitor-heartbeat"
+    name = "heartbeat"
     # (Required) Runtime version to use for the canary. Versions change often so consult the Amazon CloudWatch documentation for the latest valid versions. Values include syn-python-selenium-1.0, syn-nodejs-puppeteer-3.0, syn-nodejs-2.2, syn-nodejs-2.1, syn-nodejs-2.0, and syn-1.0.
     runtime_version = "syn-nodejs-puppeteer-3.4"
     # (Required) Configuration block providing how often the canary is to run and when these test runs are to stop. Detailed below.
     schedule = [
       {
-        expression = "cron(*/10 * * * ? *)"
+        expression = "cron(*/5 * * * ? *)"
       }
     ]
     # (Optional) Configuration block. Detailed below.
