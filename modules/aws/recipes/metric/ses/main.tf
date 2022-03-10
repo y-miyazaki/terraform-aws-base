@@ -8,14 +8,8 @@ locals {
   tags = {
     for k, v in(var.tags == null ? {} : var.tags) : k => v if lookup(data.aws_default_tags.provider.tags, k, null) == null || lookup(data.aws_default_tags.provider.tags, k, null) != v
   }
-  url   = "https://docs.aws.amazon.com/ses/latest/DeveloperGuide/reputationdashboard-cloudwatch-alarm.html"
-  count = length(var.dimensions) > 0 ? length(var.dimensions) : 1
-  names = length(var.dimensions) > 0 ? flatten([
-    for r in var.dimensions : {
-      name = format("%s-", r.InstanceId)
-    }]) : [{
-    name = ""
-  }]
+  url           = "https://docs.aws.amazon.com/ses/latest/DeveloperGuide/reputationdashboard-cloudwatch-alarm.html"
+  count         = length(var.dimensions) > 0 ? length(var.dimensions) : 1
   is_dimensions = length(var.dimensions) > 0 ? true : false
 }
 #--------------------------------------------------------------
@@ -29,7 +23,7 @@ data "aws_default_tags" "provider" {}
 #--------------------------------------------------------------
 resource "aws_cloudwatch_metric_alarm" "reputation_bouncerate" {
   count                     = var.is_enabled && var.threshold.enabled_reputation_bouncerate ? local.count : 0
-  alarm_name                = "${var.name_prefix}metric-ses-${local.names[count.index].name}reputation-bouncerate"
+  alarm_name                = "${var.name_prefix}metric-ses-reputation-bouncerate"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
   namespace                 = "AWS/SES"
@@ -53,7 +47,7 @@ resource "aws_cloudwatch_metric_alarm" "reputation_bouncerate" {
 #--------------------------------------------------------------
 resource "aws_cloudwatch_metric_alarm" "reputation_complaintrate" {
   count                     = var.is_enabled && var.threshold.enabled_reputation_complaintrate ? local.count : 0
-  alarm_name                = "${var.name_prefix}metric-ses-${local.names[count.index].name}reputation-complaintrate"
+  alarm_name                = "${var.name_prefix}metric-ses-reputation-complaintrate"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
   namespace                 = "AWS/SES"

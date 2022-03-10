@@ -93,7 +93,7 @@ module "aws_recipes_sns_subscription_lambda_metric" {
   aws_sns_topic = local.aws_sns_topic_lambda_metric
   aws_sns_topic_subscription = {
     protocol                        = lookup(var.common_lambda.aws_sns_topic_subscription, "protocol")
-    endpoint                        = module.aws_recipes_lambda_create_lambda_log.arn
+    endpoint                        = module.aws_recipes_lambda_create_lambda_metric.arn
     endpoint_auto_confirms          = lookup(var.common_lambda.aws_sns_topic_subscription, "endpoint_auto_confirms")
     confirmation_timeout_in_minutes = lookup(var.common_lambda.aws_sns_topic_subscription, "confirmation_timeout_in_minutes")
     raw_message_delivery            = lookup(var.common_lambda.aws_sns_topic_subscription, "raw_message_delivery")
