@@ -5,6 +5,9 @@
 # Local
 #--------------------------------------------------------------
 locals {
+  tags = {
+    for k, v in(var.tags == null ? {} : var.tags) : k => v if lookup(data.aws_default_tags.provider.tags, k, null) == null || lookup(data.aws_default_tags.provider.tags, k, null) != v
+  }
   url   = var.is_aurora ? "https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/Aurora.AuroraMySQL.Monitoring.Metrics.html" : "https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/monitoring-cloudwatch.html"
   count = length(var.dimensions) > 0 ? length(var.dimensions) : 1
   names = length(var.dimensions) > 0 ? flatten([
@@ -15,6 +18,10 @@ locals {
   }]
   is_dimensions = length(var.dimensions) > 0 ? true : false
 }
+#--------------------------------------------------------------
+# Use this data source to get the default tags configured on the provider.
+#--------------------------------------------------------------
+data "aws_default_tags" "provider" {}
 
 #--------------------------------------------------------------
 # For CommitLatency
@@ -37,7 +44,7 @@ resource "aws_cloudwatch_metric_alarm" "commit_latency" {
   unit                = "Milliseconds"
   treat_missing_data  = "notBreaching"
   dimensions          = var.dimensions[count.index]
-  tags                = var.tags
+  tags                = local.tags
 }
 #--------------------------------------------------------------
 # For CPUCreditBalance
@@ -60,7 +67,7 @@ resource "aws_cloudwatch_metric_alarm" "cpu_creadit_balance" {
   unit                = "Count"
   treat_missing_data  = "notBreaching"
   dimensions          = var.dimensions[count.index]
-  tags                = var.tags
+  tags                = local.tags
 }
 
 #--------------------------------------------------------------
@@ -84,7 +91,7 @@ resource "aws_cloudwatch_metric_alarm" "cpu_utilization" {
   unit                = "Percent"
   treat_missing_data  = "notBreaching"
   dimensions          = var.dimensions[count.index]
-  tags                = var.tags
+  tags                = local.tags
 }
 
 #--------------------------------------------------------------
@@ -108,7 +115,7 @@ resource "aws_cloudwatch_metric_alarm" "database_connections" {
   unit                = "Count"
   treat_missing_data  = "notBreaching"
   dimensions          = var.dimensions[count.index]
-  tags                = var.tags
+  tags                = local.tags
 }
 
 #--------------------------------------------------------------
@@ -132,7 +139,7 @@ resource "aws_cloudwatch_metric_alarm" "deadlocks" {
   unit                = "Count/Second"
   treat_missing_data  = "notBreaching"
   dimensions          = var.dimensions[count.index]
-  tags                = var.tags
+  tags                = local.tags
 }
 #--------------------------------------------------------------
 # For DeleteLatency
@@ -155,7 +162,7 @@ resource "aws_cloudwatch_metric_alarm" "delete_latency" {
   unit                = "Seconds"
   treat_missing_data  = "notBreaching"
   dimensions          = var.dimensions[count.index]
-  tags                = var.tags
+  tags                = local.tags
 }
 #--------------------------------------------------------------
 # For DiskQueueDepth
@@ -178,7 +185,7 @@ resource "aws_cloudwatch_metric_alarm" "disk_queue_depth" {
   unit                = "Count"
   treat_missing_data  = "notBreaching"
   dimensions          = var.dimensions[count.index]
-  tags                = var.tags
+  tags                = local.tags
 }
 
 #--------------------------------------------------------------
@@ -202,7 +209,7 @@ resource "aws_cloudwatch_metric_alarm" "freeable_memory" {
   unit                = "Megabits"
   treat_missing_data  = "notBreaching"
   dimensions          = var.dimensions[count.index]
-  tags                = var.tags
+  tags                = local.tags
 }
 
 #--------------------------------------------------------------
@@ -226,7 +233,7 @@ resource "aws_cloudwatch_metric_alarm" "read_latency" {
   unit                = "Seconds"
   treat_missing_data  = "notBreaching"
   dimensions          = var.dimensions[count.index]
-  tags                = var.tags
+  tags                = local.tags
 }
 
 #--------------------------------------------------------------
@@ -250,5 +257,5 @@ resource "aws_cloudwatch_metric_alarm" "write_latency" {
   unit                = "Seconds"
   treat_missing_data  = "notBreaching"
   dimensions          = var.dimensions[count.index]
-  tags                = var.tags
+  tags                = local.tags
 }

@@ -35,57 +35,81 @@ region = "ap-northeast-1"
 common_log = {
   # A bucket that mainly stores application logs.
   aws_s3_bucket_application = {
-    bucket        = "aws-log-application"
-    acl           = "log-delivery-write"
-    force_destroy = true
-    versioning = [
-      {
-        enabled = true
-      }
-    ]
-    logging = []
-    lifecycle_rule = [
-      {
-        id                                     = "default"
-        abort_incomplete_multipart_upload_days = 7
-        enabled                                = true
-        prefix                                 = null
-        expiration = [
-          {
-            # TODO: need to change days. default 3 years.
-            days                         = 1095
-            expired_object_delete_marker = false
-          }
-        ]
-        transition = [
-          {
-            # TODO: need to change days. default 30 days.
-            days          = 30
-            storage_class = "ONEZONE_IA"
-          }
-        ]
-        noncurrent_version_expiration = [
-          {
-            # TODO: need to change days. default 30 days.
-            days = 30
-          }
-        ]
-      }
-    ]
-    server_side_encryption_configuration = [
-      {
-        rule = [
-          {
-            apply_server_side_encryption_by_default = [
-              {
-                sse_algorithm     = "AES256"
-                kms_master_key_id = null
-              }
-            ]
-          }
-        ]
-      }
-    ]
+    aws_s3_bucket = {
+      bucket                    = "aws-log-application"
+      force_destroy             = true
+      object_lock_configuration = []
+    }
+    aws_s3_bucket_acl = {
+      acl                   = "log-delivery-write"
+      access_control_policy = []
+      expected_bucket_owner = null
+    }
+    aws_s3_bucket_versioning = {
+      versioning_configuration = [
+        {
+          status     = "Enabled"
+          mfa_delete = "Disabled"
+        }
+      ]
+    }
+    aws_s3_bucket_server_side_encryption_configuration = {
+      expected_bucket_owner = null
+      rule = [
+        {
+          apply_server_side_encryption_by_default = [
+            {
+              sse_algorithm     = "AES256"
+              kms_master_key_id = null
+            }
+          ]
+          bucket_key_enabled = null
+        }
+      ]
+    }
+    aws_s3_bucket_logging = null
+    aws_s3_bucket_lifecycle_configuration = {
+      expected_bucket_owner = null
+      rule = [
+        {
+          abort_incomplete_multipart_upload_days = [
+            {
+              days_after_initiation = 7
+            }
+          ]
+          expiration = [
+            {
+              date = null
+              # TODO: need to change days. default 3 years.
+              days                         = 1095
+              expired_object_delete_marker = false
+            }
+          ]
+          filter = []
+          id     = "default"
+          noncurrent_version_expiration = [
+            {
+              newer_noncurrent_versions = null
+              # TODO: need to change days. default 30 days.
+              noncurrent_days = 30
+            }
+          ]
+          noncurrent_version_transition = []
+          prefix                        = null
+          status                        = "Enabled"
+          transition = [
+            {
+              date = null
+              # TODO: need to change days. default 30 days.
+              days          = 30
+              storage_class = "ONEZONE_IA"
+            }
+          ]
+        }
+      ]
+    }
+    s3_replication_configuration_role_arn   = null
+    aws_s3_bucket_replication_configuration = null
   }
 }
 #--------------------------------------------------------------
@@ -665,4 +689,110 @@ metric_resource_ses = {
   # TODO: need to set dimensions for monitor of SES.
   dimensions = [
   ]
+}
+#--------------------------------------------------------------
+# Metric: Synthetics Canary
+#--------------------------------------------------------------
+metric_synthetics_canary = {
+  # TODO: need to set is_enabled for Metric of Synthetics Canary.
+  is_enabled = true
+  # TODO: need to set period for Synthetics Canary.
+  period = 300
+  # TODO: need to set threshold for Synthetics Canary.
+  threshold = {
+    # (Required) SuccessPercent threshold (unit=Percent)
+    enabled_success_percent = true
+    success_percent         = 99
+  }
+  # TODO: need to set dimensions for monitor of Synthetics Canary.
+  # Specify the instance of the target Synthetics Canary Name to be monitored by Map.
+  #   ex)
+  #   dimensions = [
+  #     {
+  #       "CanaryName" = "base-heartbeat"
+  #     }
+  #   ]
+  dimensions = [
+    {
+      "CanaryName" = "base-heartbeat"
+    }
+  ]
+}
+#--------------------------------------------------------------
+# Synthetics Canary
+#--------------------------------------------------------------
+synthetics_canary = {
+  # TODO: need to set is_enabled for monitor of Synthetics Canary.
+  is_enabled = false
+  aws_iam_role = {
+    description = "Role for Synthetics Canaly."
+    name        = "monitor-synthetics-canary-role"
+    path        = "/"
+  }
+  aws_iam_policy = {
+    description = "Policy for Synthetics Canaly."
+    name        = "monitor-synthetics-canary-policy"
+    path        = "/"
+  }
+  aws_synthetics_canary = {
+    # Location in Amazon S3 where Synthetics stores artifacts from the test runs of this canary.
+    # If not specified, the log bucket is automatically specified.
+    artifact_s3_location = null
+    # ARN of the IAM role to be used to run the canary. see AWS Docs for permissions needs for IAM Role.
+    # If not specified, a role policy is automatically created.
+    execution_role_arn = null
+    # (Required) Entry point to use for the source code when running the canary. This value must end with the string .handler .
+    handler = "heartbeat.handler"
+    # (Required) Name for this canary. Has a maximum length of 21 characters. Valid characters are lowercase alphanumeric, hyphen, or underscore.
+    name = "heartbeat"
+    # (Required) Runtime version to use for the canary. Versions change often so consult the Amazon CloudWatch documentation for the latest valid versions. Values include syn-python-selenium-1.0, syn-nodejs-puppeteer-3.0, syn-nodejs-2.2, syn-nodejs-2.1, syn-nodejs-2.0, and syn-1.0.
+    runtime_version = "syn-nodejs-puppeteer-3.4"
+    # (Required) Configuration block providing how often the canary is to run and when these test runs are to stop. Detailed below.
+    schedule = [
+      {
+        expression = "cron(*/5 * * * ? *)"
+      }
+    ]
+    # (Optional) Configuration block. Detailed below.
+    vpc_config = []
+    # (Optional) Number of days to retain data about failed runs of this canary. If you omit this field, the default of 31 days is used. The valid range is 1 to 455 days.
+    failure_retention_period = 7
+    # (Optional) Configuration block for individual canary runs. Detailed below.
+    run_config = [
+      {
+        timeout_in_seconds = 60
+        memory_in_mb       = 960
+        active_tracing     = false
+      }
+    ]
+    # (Optional) Full bucket name which is used if your canary script is located in S3. The bucket must already exist. Specify the full bucket name including s3:// as the start of the bucket name. Conflicts with zip_file.
+    s3_bucket = null
+    # (Optional) S3 key of your script. Conflicts with zip_file.
+    s3_key = null
+    # (Optional) S3 version ID of your script. Conflicts with zip_file.
+    s3_version = null
+    # (Optional) Whether to run or stop the canary.
+    start_canary = true
+    # (Optional) Number of days to retain data about successful runs of this canary. If you omit this field, the default of 31 days is used. The valid range is 1 to 455 days.
+    success_retention_period = 7
+    # (Optional) configuration for canary artifacts, including the encryption-at-rest settings for artifacts that the canary uploads to Amazon S3. See Artifact Config.
+    artifact_config = [
+      {
+        s3_encryption = [
+          {
+            encryption_mode = "SSE-S3"
+          }
+        ]
+      }
+    ]
+    # (Optional) ZIP file that contains the script, if you input your canary script directly into the canary instead of referring to an S3 location. It can be up to 5 MB. Conflicts with s3_bucket, s3_key, and s3_version.
+    # zip -r lambda/outputs/heartbeat.zip ./nodejs/*
+    zip_file = "../../lambda/outputs/heartbeat.zip"
+    # TODO: Set the Heartbeat URL and list of acceptable status codes.
+    # (Optional) URLS/STATUS_CODE_RANGES is an environment variable that can be specified as a delimited string to allow heart beats to be thrown to multiple URLs.
+    env = {
+      URLS               = "https://yahoo.co.jp/,https://google.com/"
+      STATUS_CODE_RANGES = "200-299,200-299"
+    }
+  }
 }

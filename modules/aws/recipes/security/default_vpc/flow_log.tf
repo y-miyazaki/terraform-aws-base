@@ -1,4 +1,17 @@
 #--------------------------------------------------------------
+# Locals
+#--------------------------------------------------------------
+locals {
+  tags = {
+    for k, v in(var.tags == null ? {} : var.tags) : k => v if lookup(data.aws_default_tags.provider.tags, k, null) == null || lookup(data.aws_default_tags.provider.tags, k, null) != v
+  }
+}
+#--------------------------------------------------------------
+# Use this data source to get the default tags configured on the provider.
+#--------------------------------------------------------------
+data "aws_default_tags" "provider" {}
+
+#--------------------------------------------------------------
 # CloudWatch Log Group for flow log
 #--------------------------------------------------------------
 resource "aws_cloudwatch_log_group" "this" {
@@ -6,7 +19,7 @@ resource "aws_cloudwatch_log_group" "this" {
   name              = lookup(var.aws_cloudwatch_log_group, "name")
   retention_in_days = lookup(var.aws_cloudwatch_log_group, "retention_in_days")
   kms_key_id        = lookup(var.aws_cloudwatch_log_group, "kms_key_id", null)
-  tags              = var.tags
+  tags              = local.tags
   lifecycle {
     create_before_destroy = true
   }
@@ -35,7 +48,7 @@ resource "aws_iam_role" "this" {
 POLICY
   path                  = lookup(var.aws_iam_role, "path", "/")
   force_detach_policies = true
-  tags                  = var.tags
+  tags                  = local.tags
 }
 #--------------------------------------------------------------
 # Generates an IAM policy document in JSON format for use with resources that expect policy documents such as aws_iam_policy.

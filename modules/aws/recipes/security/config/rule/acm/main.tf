@@ -3,7 +3,15 @@
 #--------------------------------------------------------------
 locals {
   name_prefix = var.name_prefix == "" ? "" : "${trimsuffix(var.name_prefix, "-")}-"
+  tags = {
+    for k, v in(var.tags == null ? {} : var.tags) : k => v if lookup(data.aws_default_tags.provider.tags, k, null) == null || lookup(data.aws_default_tags.provider.tags, k, null) != v
+  }
 }
+#--------------------------------------------------------------
+# Use this data source to get the default tags configured on the provider.
+#--------------------------------------------------------------
+data "aws_default_tags" "provider" {}
+
 #--------------------------------------------------------------
 # Provides an AWS Config Rule.
 #--------------------------------------------------------------
@@ -15,7 +23,7 @@ resource "aws_config_config_rule" "acm-certificate-expiration-check" {
     owner             = "AWS"
     source_identifier = "ACM_CERTIFICATE_EXPIRATION_CHECK"
   }
-  tags = var.tags
+  tags = local.tags
 }
 #--------------------------------------------------------------
 # Provides an AWS Config Rule.
@@ -29,5 +37,5 @@ resource "aws_config_config_rule" "acm-certificate-expiration-check" {
 #     owner             = "AWS"
 #     source_identifier = "API_GW_EXECUTION_LOGGING_ENABLED"
 #   }
-#   tags = var.tags
+#   tags = local.tags
 # }

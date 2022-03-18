@@ -2,8 +2,16 @@
 # Locals
 #--------------------------------------------------------------
 locals {
+  tags = {
+    for k, v in(var.tags == null ? {} : var.tags) : k => v if lookup(data.aws_default_tags.provider.tags, k, null) == null || lookup(data.aws_default_tags.provider.tags, k, null) != v
+  }
   name_prefix = trimsuffix(var.name_prefix, "-")
 }
+#--------------------------------------------------------------
+# Use this data source to get the default tags configured on the provider.
+#--------------------------------------------------------------
+data "aws_default_tags" "provider" {}
+
 #--------------------------------------------------------------
 # Provides an VPC subnet resource.
 #--------------------------------------------------------------
@@ -14,7 +22,7 @@ resource "aws_subnet" "this" {
   map_public_ip_on_launch = lookup(var.aws_subnet[count.index], "map_public_ip_on_launch", false)
   outpost_arn             = lookup(var.aws_subnet[count.index], "outpost_arn", null)
   vpc_id                  = lookup(var.aws_subnet[count.index], "vpc_id", null)
-  tags                    = merge(var.tags, { "Name" = format("%v-subnet-%d", local.name_prefix, count.index + 1) })
+  tags                    = merge(local.tags, { "Name" = format("%v-subnet-%d", local.name_prefix, count.index + 1) })
 }
 
 #--------------------------------------------------------------

@@ -23,8 +23,8 @@ locals {
 #--------------------------------------------------------------
 # Provides AWS Config.
 #--------------------------------------------------------------
-module "aws_recipes_security_config_create_us_east_1" {
-  source = "../../modules/aws/recipes/security/config/create"
+module "aws_recipes_security_config_create_v4_us_east_1" {
+  source = "../../modules/aws/recipes/security/config/create-v4"
   providers = {
     aws = aws.us-east-1
   }
@@ -35,9 +35,9 @@ module "aws_recipes_security_config_create_us_east_1" {
   #   aws_s3_bucket                     = local.aws_s3_bucket_config_us_east_1
   aws_s3_bucket_existing = {
     # The S3 bucket id
-    bucket_id = module.aws_recipes_s3_bucket_log_common.id
+    bucket_id = module.aws_recipes_s3_bucket_log_v4_common.id
     # The S3 bucket arn
-    bucket_arn = module.aws_recipes_s3_bucket_log_common.arn
+    bucket_arn = module.aws_recipes_s3_bucket_log_v4_common.arn
   }
   aws_config_delivery_channel              = local.aws_config_delivery_channel_config_us_east_1
   aws_config_configuration_recorder_status = lookup(var.security_config_us_east_1, "aws_config_configuration_recorder_status")
@@ -65,7 +65,7 @@ module "aws_recipes_security_config_rule_cloudfront_us_east_1" {
   is_enable_cloudfront_viewer_policy_https = lookup(var.security_config_us_east_1.remediation.cloudfront, "is_enable_cloudfront_viewer_policy_https", false)
   tags                                     = var.tags
   depends_on = [
-    module.aws_recipes_security_config_create_us_east_1
+    module.aws_recipes_security_config_create_v4_us_east_1
   ]
 }
 
@@ -109,7 +109,7 @@ module "aws_recipes_lambda_create_config_us_east_1" {
     principal           = "events.amazonaws.com"
     qualifier           = null
     source_account      = null
-    source_arn          = module.aws_recipes_security_config_create_us_east_1.arn
+    source_arn          = module.aws_recipes_security_config_create_v4_us_east_1.arn
     statement_id        = "configDetectUnexpectedUsage"
     statement_id_prefix = null
   }

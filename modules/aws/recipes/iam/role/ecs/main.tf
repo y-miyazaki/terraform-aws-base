@@ -1,4 +1,17 @@
 #--------------------------------------------------------------
+# Locals
+#--------------------------------------------------------------
+locals {
+  tags = {
+    for k, v in(var.tags == null ? {} : var.tags) : k => v if lookup(data.aws_default_tags.provider.tags, k, null) == null || lookup(data.aws_default_tags.provider.tags, k, null) != v
+  }
+}
+#--------------------------------------------------------------
+# Use this data source to get the default tags configured on the provider.
+#--------------------------------------------------------------
+data "aws_default_tags" "provider" {}
+
+#--------------------------------------------------------------
 # role: ecs.amazonaws.com
 #--------------------------------------------------------------
 resource "aws_iam_role" "ecs" {
@@ -21,7 +34,7 @@ resource "aws_iam_role" "ecs" {
 POLICY
   force_detach_policies = true
   path                  = lookup(var.aws_iam_role.ecs, "path", "/")
-  tags                  = var.tags
+  tags                  = local.tags
 }
 
 #--------------------------------------------------------------
@@ -57,7 +70,7 @@ resource "aws_iam_role" "ecs_tasks" {
 POLICY
   force_detach_policies = true
   path                  = lookup(var.aws_iam_role.ecs_tasks, "path", "/")
-  tags                  = var.tags
+  tags                  = local.tags
 }
 
 #--------------------------------------------------------------
@@ -91,7 +104,7 @@ resource "aws_iam_role" "events" {
 POLICY
   force_detach_policies = true
   path                  = lookup(var.aws_iam_role.events, "path", "/")
-  tags                  = var.tags
+  tags                  = local.tags
 }
 #--------------------------------------------------------------
 # Generates an IAM policy document in JSON format for use with resources that expect policy documents such as aws_iam_policy.

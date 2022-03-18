@@ -1,8 +1,22 @@
 #--------------------------------------------------------------
+# Locals
+#--------------------------------------------------------------
+locals {
+  tags = {
+    for k, v in(var.tags == null ? {} : var.tags) : k => v if lookup(data.aws_default_tags.provider.tags, k, null) == null || lookup(data.aws_default_tags.provider.tags, k, null) != v
+  }
+}
+#--------------------------------------------------------------
+# Use this data source to get the default tags configured on the provider.
+#--------------------------------------------------------------
+data "aws_default_tags" "provider" {}
+
+#--------------------------------------------------------------
 # Provides a budgets budget resource. Budgets use the cost visualisation provided by Cost Explorer to show you the status of your budgets, to provide forecasts of your estimated costs, and to track your AWS usage, including your free tier usage.
 #--------------------------------------------------------------
 resource "aws_budgets_budget" "this" {
   count        = var.is_enabled ? 1 : 0
+  account_id   = lookup(var.aws_budgets_budget, "account_id", null)
   name         = lookup(var.aws_budgets_budget, "name")
   budget_type  = lookup(var.aws_budgets_budget, "budget_type", "COST")
   cost_filters = lookup(var.aws_budgets_budget, "cost_filters", [])
@@ -49,7 +63,7 @@ resource "aws_cloudwatch_event_rule" "this" {
   schedule_expression = lookup(var.aws_cloudwatch_event_rule, "schedule_expression", "cron(0 9 * * ? *)")
   description         = lookup(var.aws_cloudwatch_event_rule, "description", "This cloudwatch event used for Budgets.")
   is_enabled          = lookup(var.aws_cloudwatch_event_rule, "is_enabled", true)
-  tags                = var.tags
+  tags                = local.tags
 }
 #--------------------------------------------------------------
 # Provides an EventBridge Target resource.

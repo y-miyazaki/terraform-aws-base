@@ -2,8 +2,16 @@
 # Locals
 #--------------------------------------------------------------
 locals {
+  tags = {
+    for k, v in(var.tags == null ? {} : var.tags) : k => v if lookup(data.aws_default_tags.provider.tags, k, null) == null || lookup(data.aws_default_tags.provider.tags, k, null) != v
+  }
   name_prefix = var.name_prefix == "" ? "" : "${trimsuffix(var.name_prefix, "-")}-"
 }
+#--------------------------------------------------------------
+# Use this data source to get the default tags configured on the provider.
+#--------------------------------------------------------------
+data "aws_default_tags" "provider" {}
+
 #--------------------------------------------------------------
 # Provides an AWS Config Rule.
 # SecurityHub: enabled
@@ -16,7 +24,7 @@ locals {
 #     owner             = "AWS"
 #     source_identifier = "ALB_HTTP_DROP_INVALID_HEADER_ENABLED"
 #   }
-#   tags = var.tags
+#   tags = local.tags
 # }
 #--------------------------------------------------------------
 # Provides an AWS Config Rule.
@@ -30,7 +38,7 @@ locals {
 #     owner             = "AWS"
 #     source_identifier = "ALB_HTTP_TO_HTTPS_REDIRECTION_CHECK"
 #   }
-#   tags = var.tags
+#   tags = local.tags
 # }
 #--------------------------------------------------------------
 # Provides an AWS Config Rule.
@@ -43,7 +51,7 @@ resource "aws_config_config_rule" "alb-waf-enabled" {
     owner             = "AWS"
     source_identifier = "ALB_WAF_ENABLED"
   }
-  tags = var.tags
+  tags = local.tags
 }
 #--------------------------------------------------------------
 # Provides an AWS Config Rule.
@@ -57,7 +65,7 @@ resource "aws_config_config_rule" "alb-waf-enabled" {
 #     owner             = "AWS"
 #     source_identifier = "AUTOSCALING_GROUP_ELB_HEALTHCHECK_REQUIRED"
 #   }
-#   tags = var.tags
+#   tags = local.tags
 # }
 #--------------------------------------------------------------
 # Provides an AWS Config Rule.
@@ -70,7 +78,7 @@ resource "aws_config_config_rule" "elb-acm-certificate-required" {
     owner             = "AWS"
     source_identifier = "ELB_ACM_CERTIFICATE_REQUIRED"
   }
-  tags = var.tags
+  tags = local.tags
 }
 #--------------------------------------------------------------
 # Provides an AWS Config Rule.
@@ -83,7 +91,7 @@ resource "aws_config_config_rule" "elb-cross-zone-load-balancing-enabled" {
     owner             = "AWS"
     source_identifier = "ELB_CROSS_ZONE_LOAD_BALANCING_ENABLED"
   }
-  tags = var.tags
+  tags = local.tags
 }
 #--------------------------------------------------------------
 # Provides an AWS Config Rule.
@@ -96,7 +104,7 @@ resource "aws_config_config_rule" "elb-cross-zone-load-balancing-enabled" {
 #     owner             = "AWS"
 #     source_identifier = "ELB_CUSTOM_SECURITY_POLICY_SSL_CHECK"
 #   }
-#   tags = var.tags
+#   tags = local.tags
 # }
 #--------------------------------------------------------------
 # Provides an AWS Config Rule.
@@ -110,7 +118,7 @@ resource "aws_config_config_rule" "elb-cross-zone-load-balancing-enabled" {
 #     owner             = "AWS"
 #     source_identifier = "ELB_DELETION_PROTECTION_ENABLED"
 #   }
-#   tags = var.tags
+#   tags = local.tags
 # }
 #--------------------------------------------------------------
 # Provides an AWS Config Rule.
@@ -124,7 +132,7 @@ resource "aws_config_config_rule" "elb-cross-zone-load-balancing-enabled" {
 #     owner             = "AWS"
 #     source_identifier = "ELB_LOGGING_ENABLED"
 #   }
-#   tags = var.tags
+#   tags = local.tags
 # }
 #--------------------------------------------------------------
 # Provides an AWS Config Rule.
@@ -137,7 +145,7 @@ resource "aws_config_config_rule" "elb-cross-zone-load-balancing-enabled" {
 #     owner             = "AWS"
 #     source_identifier = "ELB_PREDEFINED_SECURITY_POLICY_SSL_CHECK"
 #   }
-#   tags = var.tags
+#   tags = local.tags
 # }
 #--------------------------------------------------------------
 # Provides an AWS Config Rule.
@@ -151,5 +159,5 @@ resource "aws_config_config_rule" "elb-cross-zone-load-balancing-enabled" {
 #     owner             = "AWS"
 #     source_identifier = "ELB_TLS_HTTPS_LISTENERS_ONLY"
 #   }
-#   tags = var.tags
+#   tags = local.tags
 # }

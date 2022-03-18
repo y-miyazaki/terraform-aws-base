@@ -4,13 +4,13 @@
 #--------------------------------------------------------------
 # Provides a resource to manage CloudWatch Rule and CloudWatch Event.
 #--------------------------------------------------------------
-module "aws_recipes_budgets_budgets" {
-  source     = "../../modules/aws/recipes/budgets"
+module "aws_recipes_budgets_create_v4" {
+  source     = "../../modules/aws/recipes/budgets/create-v4"
   is_enabled = lookup(var.budgets, "is_enabled", true)
   aws_budgets_budget = {
     name         = "${var.name_prefix}${lookup(var.budgets.aws_budgets_budget, "name", "budgets-monthly")}"
     budget_type  = "COST"
-    cost_filters = lookup(var.budgets.aws_budgets_budget, "cost_filters", null)
+    cost_filter  = lookup(var.budgets.aws_budgets_budget, "cost_filter", [])
     cost_types   = {}
     limit_amount = lookup(var.budgets.aws_budgets_budget, "limit_amount")
     time_unit    = lookup(var.budgets.aws_budgets_budget, "time_unit", "MONTHLY")
@@ -65,7 +65,7 @@ module "aws_recipes_lambda_create_budgets" {
     principal           = "events.amazonaws.com"
     qualifier           = null
     source_account      = null
-    source_arn          = module.aws_recipes_budgets_budgets.arn
+    source_arn          = module.aws_recipes_budgets_create_v4.arn
     statement_id        = "BudgetsDetectUnexpectedUsage"
     statement_id_prefix = null
   }
