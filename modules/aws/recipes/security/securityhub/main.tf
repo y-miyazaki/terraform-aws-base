@@ -2,8 +2,16 @@
 # Local
 #--------------------------------------------------------------
 locals {
+  tags = {
+    for k, v in(var.tags == null ? {} : var.tags) : k => v if lookup(data.aws_default_tags.provider.tags, k, null) == null || lookup(data.aws_default_tags.provider.tags, k, null) != v
+  }
   region = var.region == null ? data.aws_region.current.name : var.region
 }
+#--------------------------------------------------------------
+# Use this data source to get the default tags configured on the provider.
+#--------------------------------------------------------------
+data "aws_default_tags" "provider" {}
+
 #--------------------------------------------------------------
 # Current Region
 #--------------------------------------------------------------
@@ -116,7 +124,7 @@ resource "aws_securityhub_action_target" "this" {
 # EVENT_PATTERN
 #   description   = lookup(var.aws_cloudwatch_event_rule, "description", null)
 #   is_enabled    = true
-#   tags          = var.tags
+#   tags          = local.tags
 # }
 #--------------------------------------------------------------
 # Provides an EventBridge Target resource.

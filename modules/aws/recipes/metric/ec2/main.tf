@@ -5,6 +5,9 @@
 # Local
 #--------------------------------------------------------------
 locals {
+  tags = {
+    for k, v in(var.tags == null ? {} : var.tags) : k => v if lookup(data.aws_default_tags.provider.tags, k, null) == null || lookup(data.aws_default_tags.provider.tags, k, null) != v
+  }
   url   = "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/viewing_metrics_with_cloudwatch.html"
   count = length(var.dimensions) > 0 ? length(var.dimensions) : 1
   names = length(var.dimensions) > 0 ? flatten([
@@ -15,6 +18,11 @@ locals {
   }]
   is_dimensions = length(var.dimensions) > 0 ? true : false
 }
+#--------------------------------------------------------------
+# Use this data source to get the default tags configured on the provider.
+#--------------------------------------------------------------
+data "aws_default_tags" "provider" {}
+
 #--------------------------------------------------------------
 # For CPUUtilization
 # Provides a CloudWatch Metric Alarm resource.
@@ -37,7 +45,7 @@ resource "aws_cloudwatch_metric_alarm" "cpu_utilization" {
   unit                      = "Percent"
   treat_missing_data        = "notBreaching"
   dimensions                = local.is_dimensions ? var.dimensions[count.index] : null
-  tags                      = var.tags
+  tags                      = local.tags
 }
 #--------------------------------------------------------------
 # For MetadataNoToken
@@ -61,7 +69,7 @@ resource "aws_cloudwatch_metric_alarm" "metadata_no_token" {
   unit                      = "Count"
   treat_missing_data        = "notBreaching"
   dimensions                = local.is_dimensions ? var.dimensions[count.index] : null
-  tags                      = var.tags
+  tags                      = local.tags
 }
 #--------------------------------------------------------------
 # For CPUCreditUsage
@@ -85,7 +93,7 @@ resource "aws_cloudwatch_metric_alarm" "cpu_credit_usage" {
   unit                      = "Count"
   treat_missing_data        = "notBreaching"
   dimensions                = local.is_dimensions ? var.dimensions[count.index] : null
-  tags                      = var.tags
+  tags                      = local.tags
 }
 #--------------------------------------------------------------
 # For StatusCheckFailed
@@ -109,5 +117,5 @@ resource "aws_cloudwatch_metric_alarm" "status_check_failed" {
   unit                      = "Count"
   treat_missing_data        = "notBreaching"
   dimensions                = local.is_dimensions ? var.dimensions[count.index] : null
-  tags                      = var.tags
+  tags                      = local.tags
 }

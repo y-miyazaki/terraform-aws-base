@@ -2,8 +2,16 @@
 # Locals
 #--------------------------------------------------------------
 locals {
+  tags = {
+    for k, v in(var.tags == null ? {} : var.tags) : k => v if lookup(data.aws_default_tags.provider.tags, k, null) == null || lookup(data.aws_default_tags.provider.tags, k, null) != v
+  }
   name = var.is_random_name_suffix ? "${var.bucket}-${random_id.this.dec}" : var.bucket
 }
+#--------------------------------------------------------------
+# Use this data source to get the default tags configured on the provider.
+#--------------------------------------------------------------
+data "aws_default_tags" "provider" {}
+
 #--------------------------------------------------------------
 # create random id for s3 bukect name
 #--------------------------------------------------------------
@@ -18,7 +26,7 @@ resource "aws_s3_bucket" "this" {
   bucket = local.name
   # bucket_prefix = var.bucket_prefix
   acl  = var.acl
-  tags = var.tags
+  tags = local.tags
 
   force_destroy = var.force_destroy
   # dynamic "website" {

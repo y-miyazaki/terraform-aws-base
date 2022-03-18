@@ -5,6 +5,9 @@
 # Local
 #--------------------------------------------------------------
 locals {
+  tags = {
+    for k, v in(var.tags == null ? {} : var.tags) : k => v if lookup(data.aws_default_tags.provider.tags, k, null) == null || lookup(data.aws_default_tags.provider.tags, k, null) != v
+  }
   url   = "https://docs.aws.amazon.com/lambda/latest/dg/monitoring-metrics.html"
   count = length(var.dimensions) > 0 ? length(var.dimensions) : 1
   names = length(var.dimensions) > 0 ? flatten([
@@ -15,6 +18,11 @@ locals {
   }]
   is_dimensions = length(var.dimensions) > 0 ? true : false
 }
+#--------------------------------------------------------------
+# Use this data source to get the default tags configured on the provider.
+#--------------------------------------------------------------
+data "aws_default_tags" "provider" {}
+
 #--------------------------------------------------------------
 # For Concurrent Executions
 # Provides a CloudWatch Metric Alarm resource.
@@ -37,7 +45,7 @@ resource "aws_cloudwatch_metric_alarm" "concurrent_executions" {
   unit                      = "Count"
   treat_missing_data        = "notBreaching"
   dimensions                = local.is_dimensions ? var.dimensions[count.index] : null
-  tags                      = var.tags
+  tags                      = local.tags
 }
 #--------------------------------------------------------------
 # For Duration
@@ -61,7 +69,7 @@ resource "aws_cloudwatch_metric_alarm" "duration" {
   unit                      = "Milliseconds"
   treat_missing_data        = "notBreaching"
   dimensions                = local.is_dimensions ? var.dimensions[count.index] : null
-  tags                      = var.tags
+  tags                      = local.tags
 }
 
 #--------------------------------------------------------------
@@ -86,7 +94,7 @@ resource "aws_cloudwatch_metric_alarm" "error" {
   unit                      = "Count"
   treat_missing_data        = "notBreaching"
   dimensions                = local.is_dimensions ? var.dimensions[count.index] : null
-  tags                      = var.tags
+  tags                      = local.tags
 }
 #--------------------------------------------------------------
 # For Throttles
@@ -110,5 +118,5 @@ resource "aws_cloudwatch_metric_alarm" "throttles" {
   unit                      = "Count"
   treat_missing_data        = "notBreaching"
   dimensions                = local.is_dimensions ? var.dimensions[count.index] : null
-  tags                      = var.tags
+  tags                      = local.tags
 }

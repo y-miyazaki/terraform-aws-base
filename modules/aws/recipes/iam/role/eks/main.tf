@@ -1,4 +1,17 @@
 #--------------------------------------------------------------
+# Locals
+#--------------------------------------------------------------
+locals {
+  tags = {
+    for k, v in(var.tags == null ? {} : var.tags) : k => v if lookup(data.aws_default_tags.provider.tags, k, null) == null || lookup(data.aws_default_tags.provider.tags, k, null) != v
+  }
+}
+#--------------------------------------------------------------
+# Use this data source to get the default tags configured on the provider.
+#--------------------------------------------------------------
+data "aws_default_tags" "provider" {}
+
+#--------------------------------------------------------------
 # Provides an IAM role.
 # role: eks.amazonaws.com
 #--------------------------------------------------------------
@@ -21,7 +34,7 @@ resource "aws_iam_role" "eks" {
 POLICY
   force_detach_policies = true
   path                  = lookup(var.aws_iam_role.eks, "path", "/")
-  tags                  = var.tags
+  tags                  = local.tags
 }
 #--------------------------------------------------------------
 # Attaches a Managed IAM Policy to an IAM role
@@ -63,7 +76,7 @@ resource "aws_iam_role" "eks_worker_node" {
 POLICY
   force_detach_policies = true
   path                  = lookup(var.aws_iam_role.eks_worker_node, "path", "/")
-  tags                  = var.tags
+  tags                  = local.tags
 }
 #--------------------------------------------------------------
 # Attaches a Managed IAM Policy to an IAM role

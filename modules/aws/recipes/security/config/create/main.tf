@@ -2,10 +2,18 @@
 # Local
 #--------------------------------------------------------------
 locals {
+  tags = {
+    for k, v in(var.tags == null ? {} : var.tags) : k => v if lookup(data.aws_default_tags.provider.tags, k, null) == null || lookup(data.aws_default_tags.provider.tags, k, null) != v
+  }
   is_s3_enabled = var.is_enabled && var.is_s3_enabled
   bucket_id     = local.is_s3_enabled ? aws_s3_bucket.this[0].id : var.aws_s3_bucket_existing.bucket_id
   bucket_arn    = local.is_s3_enabled ? aws_s3_bucket.this[0].arn : var.aws_s3_bucket_existing.bucket_arn
 }
+#--------------------------------------------------------------
+# Use this data source to get the default tags configured on the provider.
+#--------------------------------------------------------------
+data "aws_default_tags" "provider" {}
+
 #--------------------------------------------------------------
 # Provides an IAM role.
 #--------------------------------------------------------------
@@ -29,7 +37,7 @@ resource "aws_iam_role" "config" {
 POLICY
   path                  = lookup(var.aws_iam_role, "path", "/")
   force_detach_policies = true
-  tags                  = var.tags
+  tags                  = local.tags
 }
 #--------------------------------------------------------------
 # Attaches a Managed IAM Policy to an IAM role
@@ -68,7 +76,7 @@ resource "aws_s3_bucket" "this" {
   bucket = lookup(var.aws_s3_bucket, "bucket")
   # bucket_prefix = var.bucket_prefix
   acl           = "private"
-  tags          = var.tags
+  tags          = local.tags
   force_destroy = lookup(var.aws_s3_bucket, "force_destroy", false)
   dynamic "versioning" {
     for_each = lookup(var.aws_s3_bucket, "versioning", [])
@@ -390,7 +398,7 @@ resource "aws_cloudwatch_event_rule" "this" {
 EVENT_PATTERN
   description   = lookup(var.aws_cloudwatch_event_rule, "description")
   is_enabled    = true
-  tags          = var.tags
+  tags          = local.tags
 }
 #--------------------------------------------------------------
 # Provides an EventBridge Target resource.

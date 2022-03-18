@@ -2,8 +2,16 @@
 # Locals
 #--------------------------------------------------------------
 locals {
+  tags = {
+    for k, v in(var.tags == null ? {} : var.tags) : k => v if lookup(data.aws_default_tags.provider.tags, k, null) == null || lookup(data.aws_default_tags.provider.tags, k, null) != v
+  }
   name_prefix = var.name_prefix == "" ? "" : "${trimsuffix(var.name_prefix, "-")}-"
 }
+#--------------------------------------------------------------
+# Use this data source to get the default tags configured on the provider.
+#--------------------------------------------------------------
+data "aws_default_tags" "provider" {}
+
 #--------------------------------------------------------------
 # Provides an AWS Config Rule.
 #--------------------------------------------------------------
@@ -16,7 +24,7 @@ locals {
 #     owner             = "AWS"
 #     source_identifier = "API_GW_ENDPOINT_TYPE_CHECK"
 #   }
-#   tags = var.tags
+#   tags = local.tags
 # }
 #--------------------------------------------------------------
 # Provides an AWS Config Rule.
@@ -29,7 +37,7 @@ resource "aws_config_config_rule" "api-gw-xray-enabled" {
     owner             = "AWS"
     source_identifier = "API_GW_XRAY_ENABLED"
   }
-  tags = var.tags
+  tags = local.tags
 }
 #--------------------------------------------------------------
 # Provides an AWS Config Rule.
@@ -43,5 +51,5 @@ resource "aws_config_config_rule" "api-gw-xray-enabled" {
 #     owner             = "AWS"
 #     source_identifier = "API_GW_EXECUTION_LOGGING_ENABLED"
 #   }
-#   tags = var.tags
+#   tags = local.tags
 # }

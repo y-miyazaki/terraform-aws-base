@@ -711,112 +711,159 @@ common_lambda = {
 common_log = {
   # A bucket that mainly stores common logs, such as Config logs and CloudTrail access logs.
   aws_s3_bucket_common = {
-    bucket        = "aws-log-common"
-    acl           = "log-delivery-write"
-    force_destroy = true
-    versioning = [
-      {
-        enabled = true
-      }
-    ]
-    logging = []
-    lifecycle_rule = [
-      {
-        id                                     = "default"
-        abort_incomplete_multipart_upload_days = 7
-        enabled                                = true
-        prefix                                 = null
-        expiration = [
-          {
-            # TODO: need to change days. default 3 years.
-            days                         = 1095
-            expired_object_delete_marker = false
-          }
-        ]
-        transition = [
-          {
-            # TODO: need to change days. default 30 days.
-            days          = 30
-            storage_class = "ONEZONE_IA"
-          }
-        ]
-        noncurrent_version_expiration = [
-          {
-            # TODO: need to change days. default 30 days.
-            days = 30
-          }
-        ]
-      }
-    ]
-    server_side_encryption_configuration = [
-      {
-        rule = [
-          {
-            apply_server_side_encryption_by_default = [
-              {
-                sse_algorithm     = "AES256"
-                kms_master_key_id = null
-              }
-            ]
-          }
-        ]
-      }
-    ]
+    aws_s3_bucket = {
+      bucket                    = "aws-log-common"
+      force_destroy             = true
+      object_lock_configuration = []
+    }
+    aws_s3_bucket_acl = {
+      acl                   = "log-delivery-write"
+      access_control_policy = []
+      expected_bucket_owner = null
+    }
+    aws_s3_bucket_versioning = {
+      versioning_configuration = [
+        {
+          status     = "Enabled"
+          mfa_delete = "Disabled"
+        }
+      ]
+    }
+    aws_s3_bucket_server_side_encryption_configuration = {
+      expected_bucket_owner = null
+      rule = [
+        {
+          apply_server_side_encryption_by_default = [
+            {
+              sse_algorithm     = "AES256"
+              kms_master_key_id = null
+            }
+          ]
+          bucket_key_enabled = null
+        }
+      ]
+    }
+    aws_s3_bucket_logging = null
+    aws_s3_bucket_lifecycle_configuration = {
+      expected_bucket_owner = null
+      rule = [
+        {
+          abort_incomplete_multipart_upload_days = [
+            {
+              days_after_initiation = 7
+            }
+          ]
+          expiration = [
+            {
+              date = null
+              # TODO: need to change days. default 3 years.
+              days                         = 1095
+              expired_object_delete_marker = false
+            }
+          ]
+          filter = []
+          id     = "default"
+          noncurrent_version_expiration = [
+            {
+              newer_noncurrent_versions = null
+              # TODO: need to change days. default 30 days.
+              noncurrent_days = 30
+            }
+          ]
+          noncurrent_version_transition = []
+          prefix                        = null
+          status                        = "Enabled"
+          transition = [
+            {
+              date = null
+              # TODO: need to change days. default 30 days.
+              days          = 30
+              storage_class = "ONEZONE_IA"
+            }
+          ]
+        }
+      ]
+    }
+    s3_replication_configuration_role_arn   = null
+    aws_s3_bucket_replication_configuration = null
   }
   # Mainly stores CloudTrail logs.
   aws_s3_bucket_cloudtrail = {
-    bucket        = "aws-log-cloudtrail"
-    acl           = "log-delivery-write"
-    force_destroy = true
-    versioning = [
-      {
-        enabled = true
-      }
-    ]
-    # If you comment out, the log will be automatically set to the common bucket.
-    # logging = []
-    lifecycle_rule = [
-      {
-        id                                     = "default"
-        abort_incomplete_multipart_upload_days = 7
-        enabled                                = true
-        prefix                                 = null
-        expiration = [
-          {
-            # TODO: need to change days. default 3 years.
-            days                         = 1095
-            expired_object_delete_marker = false
-          }
-        ]
-        transition = [
-          {
-            # TODO: need to change days. default 30 days.
-            days          = 30
-            storage_class = "ONEZONE_IA"
-          }
-        ]
-        noncurrent_version_expiration = [
-          {
-            # TODO: need to change days. default 30 days.
-            days = 30
-          }
-        ]
-      }
-    ]
-    server_side_encryption_configuration = [
-      {
-        rule = [
-          {
-            apply_server_side_encryption_by_default = [
-              {
-                sse_algorithm     = "AES256"
-                kms_master_key_id = null
-              }
-            ]
-          }
-        ]
-      }
-    ]
+    aws_s3_bucket = {
+      bucket                    = "aws-log-cloudtrail"
+      force_destroy             = true
+      object_lock_configuration = []
+    }
+    aws_s3_bucket_acl = {
+      acl                   = "log-delivery-write"
+      access_control_policy = []
+      expected_bucket_owner = null
+    }
+    aws_s3_bucket_versioning = {
+      versioning_configuration = [
+        {
+          status     = "Enabled"
+          mfa_delete = "Disabled"
+        }
+      ]
+    }
+    aws_s3_bucket_server_side_encryption_configuration = {
+      expected_bucket_owner = null
+      rule = [
+        {
+          apply_server_side_encryption_by_default = [
+            {
+              sse_algorithm     = "AES256"
+              kms_master_key_id = null
+            }
+          ]
+          bucket_key_enabled = null
+        }
+      ]
+    }
+    aws_s3_bucket_logging = null
+    aws_s3_bucket_lifecycle_configuration = {
+      expected_bucket_owner = null
+      rule = [
+        {
+          abort_incomplete_multipart_upload_days = [
+            {
+              days_after_initiation = 7
+            }
+          ]
+          expiration = [
+            {
+              date = null
+              # TODO: need to change days. default 3 years.
+              days                         = 1095
+              expired_object_delete_marker = false
+            }
+          ]
+          filter = []
+          id     = "default"
+          noncurrent_version_expiration = [
+            {
+              newer_noncurrent_versions = null
+              # TODO: need to change days. default 30 days.
+              noncurrent_days = 30
+            }
+          ]
+          noncurrent_version_transition = []
+          prefix                        = null
+          status                        = "Enabled"
+          transition = [
+            {
+              date = null
+              # TODO: need to change days. default 30 days.
+              days          = 30
+              storage_class = "ONEZONE_IA"
+            }
+          ]
+        }
+      ]
+    }
+    s3_replication_configuration_role_arn   = null
+    aws_s3_bucket_replication_configuration = null
   }
 }
 #--------------------------------------------------------------

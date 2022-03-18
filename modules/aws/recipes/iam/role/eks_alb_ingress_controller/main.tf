@@ -1,4 +1,17 @@
 #--------------------------------------------------------------
+# Locals
+#--------------------------------------------------------------
+locals {
+  tags = {
+    for k, v in(var.tags == null ? {} : var.tags) : k => v if lookup(data.aws_default_tags.provider.tags, k, null) == null || lookup(data.aws_default_tags.provider.tags, k, null) != v
+  }
+}
+#--------------------------------------------------------------
+# Use this data source to get the default tags configured on the provider.
+#--------------------------------------------------------------
+data "aws_default_tags" "provider" {}
+
+#--------------------------------------------------------------
 # Generates an IAM policy document in JSON format for use with resources that expect policy documents such as aws_iam_policy.
 # policy attach: for ALB Ingrees controller
 # - ALB Ingress Controller on Amazon EKS
@@ -33,7 +46,7 @@ resource "aws_iam_role" "this" {
   assume_role_policy    = data.aws_iam_policy_document.this.json
   force_detach_policies = true
   path                  = lookup(var.aws_iam_role, "path", "/")
-  tags                  = var.tags
+  tags                  = local.tags
 }
 
 #--------------------------------------------------------------

@@ -1,4 +1,17 @@
 #--------------------------------------------------------------
+# Locals
+#--------------------------------------------------------------
+locals {
+  tags = {
+    for k, v in(var.tags == null ? {} : var.tags) : k => v if lookup(data.aws_default_tags.provider.tags, k, null) == null || lookup(data.aws_default_tags.provider.tags, k, null) != v
+  }
+}
+#--------------------------------------------------------------
+# Use this data source to get the default tags configured on the provider.
+#--------------------------------------------------------------
+data "aws_default_tags" "provider" {}
+
+#--------------------------------------------------------------
 # Provides a resource to manage a GuardDuty detector.
 #--------------------------------------------------------------
 resource "aws_guardduty_detector" "this" {
@@ -45,7 +58,7 @@ resource "aws_cloudwatch_event_rule" "this" {
 EVENT_PATTERN
   description   = lookup(var.aws_cloudwatch_event_rule, "description", "This cloudwatch event used for GuardDuty.")
   is_enabled    = lookup(var.aws_cloudwatch_event_rule, "is_enabled", true)
-  tags          = var.tags
+  tags          = local.tags
 }
 #--------------------------------------------------------------
 # Provides an EventBridge Target resource.

@@ -5,7 +5,9 @@
 # Enables Security Hub for this AWS account.
 #--------------------------------------------------------------
 module "aws_recipes_security_securityhub" {
-  source     = "../../modules/aws/recipes/security/securityhub"
+  source = "../../modules/aws/recipes/security/securityhub"
+  tags   = var.tags
+
   is_enabled = lookup(var.security_securityhub, "is_enabled", true)
   # aws_securityhub_member
   aws_securityhub_member = lookup(var.security_securityhub, "aws_securityhub_member", {})
@@ -22,6 +24,6 @@ module "aws_recipes_security_securityhub" {
   #   }
 
   depends_on = [
-    module.aws_recipes_security_config_create
+    module.aws_recipes_security_config_create_v4
   ]
 }

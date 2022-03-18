@@ -2,8 +2,16 @@
 # Locals
 #--------------------------------------------------------------
 locals {
+  tags = {
+    for k, v in(var.tags == null ? {} : var.tags) : k => v if lookup(data.aws_default_tags.provider.tags, k, null) == null || lookup(data.aws_default_tags.provider.tags, k, null) != v
+  }
   name_prefix = var.name_prefix == "" ? "" : "${trimsuffix(var.name_prefix, "-")}-"
 }
+#--------------------------------------------------------------
+# Use this data source to get the default tags configured on the provider.
+#--------------------------------------------------------------
+data "aws_default_tags" "provider" {}
+
 #--------------------------------------------------------------
 # Provides an AWS Config Rule.
 #--------------------------------------------------------------
@@ -15,7 +23,7 @@ resource "aws_config_config_rule" "aurora-mysql-backtracking-enabled" {
     owner             = "AWS"
     source_identifier = "AURORA_MYSQL_BACKTRACKING_ENABLED"
   }
-  tags = var.tags
+  tags = local.tags
 }
 #--------------------------------------------------------------
 # Provides an AWS Config Rule.
@@ -28,7 +36,7 @@ resource "aws_config_config_rule" "db-instance-backup-enabled" {
     owner             = "AWS"
     source_identifier = "DB_INSTANCE_BACKUP_ENABLED"
   }
-  tags = var.tags
+  tags = local.tags
 }
 #--------------------------------------------------------------
 # Provides an AWS Config Rule.
@@ -41,7 +49,7 @@ resource "aws_config_config_rule" "rds-automatic-minor-version-upgrade-enabled" 
     owner             = "AWS"
     source_identifier = "RDS_AUTOMATIC_MINOR_VERSION_UPGRADE_ENABLED"
   }
-  tags = var.tags
+  tags = local.tags
 }
 #--------------------------------------------------------------
 # Provides an AWS Config Rule.
@@ -55,7 +63,7 @@ resource "aws_config_config_rule" "rds-automatic-minor-version-upgrade-enabled" 
 #     owner             = "AWS"
 #     source_identifier = "RDS_CLUSTER_DELETION_PROTECTION_ENABLED"
 #   }
-#   tags = var.tags
+#   tags = local.tags
 # }
 #--------------------------------------------------------------
 # Provides an AWS Config Rule.
@@ -68,7 +76,7 @@ resource "aws_config_config_rule" "rds-in-backup-plan" {
     owner             = "AWS"
     source_identifier = "RDS_IN_BACKUP_PLAN"
   }
-  tags = var.tags
+  tags = local.tags
 }
 #--------------------------------------------------------------
 # Provides an AWS Config Rule.
@@ -82,7 +90,7 @@ resource "aws_config_config_rule" "rds-in-backup-plan" {
 #     owner             = "AWS"
 #     source_identifier = "RDS_INSTANCE_DELETION_PROTECTION_ENABLED"
 #   }
-#   tags = var.tags
+#   tags = local.tags
 # }
 #--------------------------------------------------------------
 # Provides an AWS Config Rule.
@@ -95,7 +103,7 @@ resource "aws_config_config_rule" "rds-in-backup-plan" {
 #     owner             = "AWS"
 #     source_identifier = "RDS_INSTANCE_PUBLIC_ACCESS_CHECK"
 #   }
-#   tags = var.tags
+#   tags = local.tags
 # }
 #--------------------------------------------------------------
 # Provides an AWS Config Rule.
@@ -109,7 +117,7 @@ resource "aws_config_config_rule" "rds-in-backup-plan" {
 #     owner             = "AWS"
 #     source_identifier = "RDS_LOGGING_ENABLED"
 #   }
-#   tags = var.tags
+#   tags = local.tags
 # }
 #--------------------------------------------------------------
 # Provides an AWS Config Rule.
@@ -123,7 +131,7 @@ resource "aws_config_config_rule" "rds-in-backup-plan" {
 #     owner             = "AWS"
 #     source_identifier = "RDS_MULTI_AZ_SUPPORT"
 #   }
-#   tags = var.tags
+#   tags = local.tags
 # }
 #--------------------------------------------------------------
 # Provides an AWS Config Rule.
@@ -137,7 +145,7 @@ resource "aws_config_config_rule" "rds-in-backup-plan" {
 #     owner             = "AWS"
 #     source_identifier = "RDS_SNAPSHOT_ENCRYPTED"
 #   }
-#   tags = var.tags
+#   tags = local.tags
 # }
 #--------------------------------------------------------------
 # Provides an AWS Config Rule.
@@ -151,7 +159,7 @@ resource "aws_config_config_rule" "rds-in-backup-plan" {
 #     owner             = "AWS"
 #     source_identifier = "RDS_SNAPSHOTS_PUBLIC_PROHIBITED"
 #   }
-#   tags = var.tags
+#   tags = local.tags
 # }
 #--------------------------------------------------------------
 # Provides an AWS Config Rule.
@@ -165,5 +173,5 @@ resource "aws_config_config_rule" "rds-in-backup-plan" {
 #     owner             = "AWS"
 #     source_identifier = "RDS_STORAGE_ENCRYPTED"
 #   }
-#   tags = var.tags
+#   tags = local.tags
 # }

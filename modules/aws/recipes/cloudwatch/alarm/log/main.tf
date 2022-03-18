@@ -2,6 +2,9 @@
 # Locals
 #--------------------------------------------------------------
 locals {
+  tags = {
+    for k, v in(var.tags == null ? {} : var.tags) : k => v if lookup(data.aws_default_tags.provider.tags, k, null) == null || lookup(data.aws_default_tags.provider.tags, k, null) != v
+  }
   aws_cloudwatch_log_metric_filter = {
     for k, v in var.aws_cloudwatch_log_metric_filter : v.log_group_name => v
   }
@@ -9,6 +12,11 @@ locals {
     for k, v in var.aws_cloudwatch_metric_alarm : v.alarm_name => v
   }
 }
+#--------------------------------------------------------------
+# Use this data source to get the default tags configured on the provider.
+#--------------------------------------------------------------
+data "aws_default_tags" "provider" {}
+
 #--------------------------------------------------------------
 # Provides a CloudWatch Log Metric Filter resource.
 #--------------------------------------------------------------
@@ -52,5 +60,5 @@ resource "aws_cloudwatch_metric_alarm" "this" {
   extended_statistic                    = lookup(each.value, "extended_statistic", null)
   treat_missing_data                    = lookup(each.value, "treat_missing_data", null)
   evaluate_low_sample_count_percentiles = lookup(each.value, "evaluate_low_sample_count_percentiles", null)
-  tags                                  = var.tags
+  tags                                  = local.tags
 }

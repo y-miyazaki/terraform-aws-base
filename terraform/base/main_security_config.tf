@@ -30,8 +30,8 @@ locals {
 #--------------------------------------------------------------
 # Provides AWS Config.
 #--------------------------------------------------------------
-module "aws_recipes_security_config_create" {
-  source                            = "../../modules/aws/recipes/security/config/create"
+module "aws_recipes_security_config_create_v4" {
+  source                            = "../../modules/aws/recipes/security/config/create-v4"
   is_enabled                        = lookup(var.security_config, "is_enabled", true)
   is_s3_enabled                     = lookup(var.security_config, "is_s3_enabled", false)
   aws_config_configuration_recorder = local.aws_config_configuration_recorder_config
@@ -39,9 +39,9 @@ module "aws_recipes_security_config_create" {
   #   aws_s3_bucket                     = local.aws_s3_bucket_config
   aws_s3_bucket_existing = {
     # The S3 bucket id
-    bucket_id = module.aws_recipes_s3_bucket_log_common.id
+    bucket_id = module.aws_recipes_s3_bucket_log_v4_common.id
     # The S3 bucket arn
-    bucket_arn = module.aws_recipes_s3_bucket_log_common.arn
+    bucket_arn = module.aws_recipes_s3_bucket_log_v4_common.arn
   }
   aws_config_delivery_channel              = local.aws_config_delivery_channel_config
   aws_config_configuration_recorder_status = lookup(var.security_config, "aws_config_configuration_recorder_status")
@@ -75,7 +75,7 @@ module "aws_recipes_security_config_rule_api_gateway" {
   name_prefix = var.name_prefix
   tags        = var.tags
   depends_on = [
-    module.aws_recipes_security_config_create
+    module.aws_recipes_security_config_create_v4
   ]
 }
 #--------------------------------------------------------------
@@ -87,7 +87,7 @@ module "aws_recipes_security_config_rule_rds" {
   name_prefix = var.name_prefix
   tags        = var.tags
   depends_on = [
-    module.aws_recipes_security_config_create
+    module.aws_recipes_security_config_create_v4
   ]
 }
 #--------------------------------------------------------------
@@ -99,7 +99,7 @@ module "aws_recipes_security_config_rule_load_balancer" {
   name_prefix = var.name_prefix
   tags        = var.tags
   depends_on = [
-    module.aws_recipes_security_config_create
+    module.aws_recipes_security_config_create_v4
   ]
 }
 #--------------------------------------------------------------
@@ -113,7 +113,7 @@ module "aws_recipes_security_config_rule_ec2" {
   is_disable_public_access_for_security_group = lookup(var.security_config.remediation.ec2, "is_disable_public_access_for_security_group", false)
   tags                                        = var.tags
   depends_on = [
-    module.aws_recipes_security_config_create
+    module.aws_recipes_security_config_create_v4
   ]
 }
 #--------------------------------------------------------------
@@ -147,7 +147,7 @@ module "aws_recipes_security_config_rule_s3" {
   is_configure_s3_bucket_versioning          = lookup(var.security_config.remediation.s3, "is_configure_s3_bucket_versioning", false)
   tags                                       = var.tags
   depends_on = [
-    module.aws_recipes_security_config_create
+    module.aws_recipes_security_config_create_v4
   ]
 }
 
@@ -188,7 +188,7 @@ module "aws_recipes_lambda_create_config" {
     principal           = "events.amazonaws.com"
     qualifier           = null
     source_account      = null
-    source_arn          = module.aws_recipes_security_config_create.arn
+    source_arn          = module.aws_recipes_security_config_create_v4.arn
     statement_id        = "configDetectUnexpectedUsage"
     statement_id_prefix = null
   }

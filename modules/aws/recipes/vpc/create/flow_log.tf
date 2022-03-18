@@ -5,7 +5,7 @@ resource "aws_cloudwatch_log_group" "this" {
   name              = lookup(var.aws_cloudwatch_log_group, "name")
   retention_in_days = lookup(var.aws_cloudwatch_log_group, "retention_in_days")
   kms_key_id        = lookup(var.aws_cloudwatch_log_group, "kms_key_id", null)
-  tags              = merge(var.tags, { "Name" = lookup(var.aws_cloudwatch_log_group, "name") })
+  tags              = merge(local.tags, { "Name" = lookup(var.aws_cloudwatch_log_group, "name") })
   lifecycle {
     create_before_destroy = true
   }
@@ -34,7 +34,7 @@ resource "aws_iam_role" "this" {
 EOF
   path                  = lookup(var.aws_iam_role, "path", "/")
   force_detach_policies = true
-  tags                  = var.tags
+  tags                  = local.tags
 }
 #--------------------------------------------------------------
 # Generates an IAM policy document in JSON format for use with resources that expect policy documents such as aws_iam_policy.

@@ -2,8 +2,16 @@
 # Locals
 #--------------------------------------------------------------
 locals {
+  tags = {
+    for k, v in(var.tags == null ? {} : var.tags) : k => v if lookup(data.aws_default_tags.provider.tags, k, null) == null || lookup(data.aws_default_tags.provider.tags, k, null) != v
+  }
   name_prefix = var.name_prefix == "" ? "" : "${trimsuffix(var.name_prefix, "-")}-"
 }
+#--------------------------------------------------------------
+# Use this data source to get the default tags configured on the provider.
+#--------------------------------------------------------------
+data "aws_default_tags" "provider" {}
+
 #--------------------------------------------------------------
 # Provides an AWS Config Rule.
 #--------------------------------------------------------------
@@ -15,7 +23,7 @@ locals {
 #     owner             = "AWS"
 #     source_identifier = "APPROVED_AMIS_BY_ID"
 #   }
-#   tags = var.tags
+#   tags = local.tags
 # }
 #--------------------------------------------------------------
 # Provides an AWS Config Rule.
@@ -28,7 +36,7 @@ locals {
 #     owner             = "AWS"
 #     source_identifier = "APPROVED_AMIS_BY_TAG"
 #   }
-#   tags = var.tags
+#   tags = local.tags
 # }
 #--------------------------------------------------------------
 # Provides an AWS Config Rule.
@@ -41,7 +49,7 @@ locals {
 #     owner             = "AWS"
 #     source_identifier = "DESIRED_INSTANCE_TENANCY"
 #   }
-#   tags = var.tags
+#   tags = local.tags
 # }
 #--------------------------------------------------------------
 # Provides an AWS Config Rule.
@@ -54,7 +62,7 @@ locals {
 #     owner             = "AWS"
 #     source_identifier = "DESIRED_INSTANCE_TYPE"
 #   }
-#   tags = var.tags
+#   tags = local.tags
 # }
 #--------------------------------------------------------------
 # Provides an AWS Config Rule.
@@ -67,7 +75,7 @@ resource "aws_config_config_rule" "ebs-optimized-instance" {
     owner             = "AWS"
     source_identifier = "EBS_OPTIMIZED_INSTANCE"
   }
-  tags = var.tags
+  tags = local.tags
 }
 #--------------------------------------------------------------
 # Provides an AWS Config Rule.
@@ -81,7 +89,7 @@ resource "aws_config_config_rule" "ebs-optimized-instance" {
 #     owner             = "AWS"
 #     source_identifier = "EBS_SNAPSHOT_PUBLIC_RESTORABLE_CHECK"
 #   }
-#   tags = var.tags
+#   tags = local.tags
 # }
 #--------------------------------------------------------------
 # Provides an AWS Config Rule.
@@ -95,7 +103,7 @@ resource "aws_config_config_rule" "ebs-optimized-instance" {
 #     owner             = "AWS"
 #     source_identifier = "EC2_EBS_ENCRYPTION_BY_DEFAULT"
 #   }
-#   tags = var.tags
+#   tags = local.tags
 # }
 #--------------------------------------------------------------
 # Provides an AWS Config Rule.
@@ -109,7 +117,7 @@ resource "aws_config_config_rule" "ebs-optimized-instance" {
 #     owner             = "AWS"
 #     source_identifier = "EC2_IMDSV2_CHECK"
 #   }
-#   tags = var.tags
+#   tags = local.tags
 # }
 #--------------------------------------------------------------
 # Provides an AWS Config Rule.
@@ -122,7 +130,7 @@ resource "aws_config_config_rule" "ec2-instance-detailed-monitoring-enabled" {
     owner             = "AWS"
     source_identifier = "EC2_INSTANCE_DETAILED_MONITORING_ENABLED"
   }
-  tags = var.tags
+  tags = local.tags
 }
 #--------------------------------------------------------------
 # Provides an AWS Config Rule.
@@ -136,7 +144,7 @@ resource "aws_config_config_rule" "ec2-instance-detailed-monitoring-enabled" {
 #     owner             = "AWS"
 #     source_identifier = "EC2_INSTANCE_MANAGED_BY_SSM"
 #   }
-#   tags = var.tags
+#   tags = local.tags
 # }
 #--------------------------------------------------------------
 # Provides an AWS Config Rule.
@@ -150,7 +158,7 @@ resource "aws_config_config_rule" "ec2-instance-detailed-monitoring-enabled" {
 #     owner             = "AWS"
 #     source_identifier = "EC2_INSTANCE_NO_PUBLIC_IP"
 #   }
-#   tags = var.tags
+#   tags = local.tags
 # }
 #--------------------------------------------------------------
 # Provides an AWS Config Rule.
@@ -163,7 +171,7 @@ resource "aws_config_config_rule" "ec2-instance-profile-attached" {
     owner             = "AWS"
     source_identifier = "EC2_INSTANCE_PROFILE_ATTACHED"
   }
-  tags = var.tags
+  tags = local.tags
 }
 #--------------------------------------------------------------
 # Provides an AWS Config Rule.
@@ -176,7 +184,7 @@ resource "aws_config_config_rule" "ec2-instances-in-vpc" {
     owner             = "AWS"
     source_identifier = "INSTANCES_IN_VPC"
   }
-  tags = var.tags
+  tags = local.tags
 }
 #--------------------------------------------------------------
 # Provides an AWS Config Rule.
@@ -189,7 +197,7 @@ resource "aws_config_config_rule" "ec2-instances-in-vpc" {
 #     owner             = "AWS"
 #     source_identifier = "EC2_MANAGEDINSTANCE_APPLICATIONS_BLACKLISTED"
 #   }
-#   tags = var.tags
+#   tags = local.tags
 # }
 #--------------------------------------------------------------
 # Provides an AWS Config Rule.
@@ -202,7 +210,7 @@ resource "aws_config_config_rule" "ec2-instances-in-vpc" {
 #     owner             = "AWS"
 #     source_identifier = "EC2_MANAGEDINSTANCE_APPLICATIONS_REQUIRED"
 #   }
-#   tags = var.tags
+#   tags = local.tags
 # }
 #--------------------------------------------------------------
 # Provides an AWS Config Rule.
@@ -216,7 +224,7 @@ resource "aws_config_config_rule" "ec2-instances-in-vpc" {
 #     owner             = "AWS"
 #     source_identifier = "EC2_MANAGEDINSTANCE_ASSOCIATION_COMPLIANCE_STATUS_CHECK"
 #   }
-#   tags = var.tags
+#   tags = local.tags
 # }
 #--------------------------------------------------------------
 # Provides an AWS Config Rule.
@@ -229,7 +237,7 @@ resource "aws_config_config_rule" "ec2-instances-in-vpc" {
 #     owner             = "AWS"
 #     source_identifier = "EC2_MANAGEDINSTANCE_INVENTORY_BLACKLISTED"
 #   }
-#   tags = var.tags
+#   tags = local.tags
 # }
 #--------------------------------------------------------------
 # Provides an AWS Config Rule.
@@ -242,7 +250,7 @@ resource "aws_config_config_rule" "ec2-instances-in-vpc" {
 #     owner             = "AWS"
 #     source_identifier = "EC2_MANAGEDINSTANCE_PATCH_COMPLIANCE_STATUS_CHECK"
 #   }
-#   tags = var.tags
+#   tags = local.tags
 # }
 #--------------------------------------------------------------
 # Provides an AWS Config Rule.
@@ -255,7 +263,7 @@ resource "aws_config_config_rule" "ec2-instances-in-vpc" {
 #     owner             = "AWS"
 #     source_identifier = "EC2_MANAGEDINSTANCE_PLATFORM_CHECK"
 #   }
-#   tags = var.tags
+#   tags = local.tags
 # }
 #--------------------------------------------------------------
 # Provides an AWS Config Rule.
@@ -269,7 +277,7 @@ resource "aws_config_config_rule" "ec2-instances-in-vpc" {
 #     owner             = "AWS"
 #     source_identifier = "EC2_SECURITY_GROUP_ATTACHED_TO_ENI"
 #   }
-#   tags = var.tags
+#   tags = local.tags
 # }
 #--------------------------------------------------------------
 # Provides an AWS Config Rule.
@@ -286,7 +294,7 @@ resource "aws_config_config_rule" "ec2-instances-in-vpc" {
 #     owner             = "AWS"
 #     source_identifier = "EC2_STOPPED_INSTANCE"
 #   }
-#   tags = var.tags
+#   tags = local.tags
 # }
 #--------------------------------------------------------------
 # Provides an AWS Config Rule.
@@ -299,7 +307,7 @@ resource "aws_config_config_rule" "ec2-volume-inuse-check" {
     owner             = "AWS"
     source_identifier = "EC2_VOLUME_INUSE_CHECK"
   }
-  tags = var.tags
+  tags = local.tags
 }
 #--------------------------------------------------------------
 # Provides an AWS Config Rule.
@@ -313,7 +321,7 @@ resource "aws_config_config_rule" "ec2-volume-inuse-check" {
 #     owner             = "AWS"
 #     source_identifier = "EIP_ATTACHED"
 #   }
-#   tags = var.tags
+#   tags = local.tags
 # }
 #--------------------------------------------------------------
 # Provides an AWS Config Rule.
@@ -327,7 +335,7 @@ resource "aws_config_config_rule" "ec2-volume-inuse-check" {
 #     owner             = "AWS"
 #     source_identifier = "ENCRYPTED_VOLUMES"
 #   }
-#   tags = var.tags
+#   tags = local.tags
 # }
 #--------------------------------------------------------------
 # Provides an AWS Config Rule.
@@ -341,7 +349,7 @@ resource "aws_config_config_rule" "restricted-common-ports" {
     owner             = "AWS"
     source_identifier = "RESTRICTED_INCOMING_TRAFFIC"
   }
-  tags = var.tags
+  tags = local.tags
 }
 #--------------------------------------------------------------
 # Provides an AWS Config Rule.
@@ -354,7 +362,7 @@ resource "aws_config_config_rule" "restricted-ssh" {
     owner             = "AWS"
     source_identifier = "INCOMING_SSH_DISABLED"
   }
-  tags = var.tags
+  tags = local.tags
 }
 #--------------------------------------------------------------
 # Provides an AWS Config Remediation Configuration.
@@ -390,7 +398,7 @@ resource "aws_config_remediation_configuration" "restricted-ssh" {
 #     owner             = "AWS"
 #     source_identifier = "SUBNET_AUTO_ASSIGN_PUBLIC_IP_DISABLED"
 #   }
-#   tags = var.tags
+#   tags = local.tags
 # }
 #--------------------------------------------------------------
 # Provides an AWS Config Rule.
@@ -404,7 +412,7 @@ resource "aws_config_remediation_configuration" "restricted-ssh" {
 #     owner             = "AWS"
 #     source_identifier = "VPC_FLOW_LOGS_ENABLED"
 #   }
-#   tags = var.tags
+#   tags = local.tags
 # }
 #--------------------------------------------------------------
 # Provides an AWS Config Rule.
@@ -417,5 +425,5 @@ resource "aws_config_remediation_configuration" "restricted-ssh" {
 #     owner             = "AWS"
 #     source_identifier = "VPC_VPN_2_TUNNELS_UP"
 #   }
-#   tags = var.tags
+#   tags = local.tags
 # }

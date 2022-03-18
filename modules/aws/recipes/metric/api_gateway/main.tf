@@ -5,6 +5,9 @@
 # Local
 #--------------------------------------------------------------
 locals {
+  tags = {
+    for k, v in(var.tags == null ? {} : var.tags) : k => v if lookup(data.aws_default_tags.provider.tags, k, null) == null || lookup(data.aws_default_tags.provider.tags, k, null) != v
+  }
   url   = "https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-metrics-and-dimensions.html"
   count = length(var.dimensions) > 0 ? length(var.dimensions) : 1
   names = length(var.dimensions) > 0 ? flatten([
@@ -15,6 +18,11 @@ locals {
   }]
   is_dimensions = length(var.dimensions) > 0 ? true : false
 }
+#--------------------------------------------------------------
+# Use this data source to get the default tags configured on the provider.
+#--------------------------------------------------------------
+data "aws_default_tags" "provider" {}
+
 #--------------------------------------------------------------
 # For 4XXError
 # Provides a CloudWatch Metric Alarm resource.
@@ -60,7 +68,7 @@ resource "aws_cloudwatch_metric_alarm" "error_4xx" {
       unit        = "Count"
     }
   }
-  tags = var.tags
+  tags = local.tags
 }
 #--------------------------------------------------------------
 # For 5XXError
@@ -107,7 +115,7 @@ resource "aws_cloudwatch_metric_alarm" "error_5xx" {
       unit        = "Count"
     }
   }
-  tags = var.tags
+  tags = local.tags
 }
 
 #--------------------------------------------------------------
@@ -131,5 +139,5 @@ resource "aws_cloudwatch_metric_alarm" "latency" {
   unit                = "Milliseconds"
   treat_missing_data  = "notBreaching"
   dimensions          = local.is_dimensions ? var.dimensions[count.index] : null
-  tags                = var.tags
+  tags                = local.tags
 }

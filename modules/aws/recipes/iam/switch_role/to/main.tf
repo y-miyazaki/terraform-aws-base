@@ -1,4 +1,17 @@
 #--------------------------------------------------------------
+# Locals
+#--------------------------------------------------------------
+locals {
+  tags = {
+    for k, v in(var.tags == null ? {} : var.tags) : k => v if lookup(data.aws_default_tags.provider.tags, k, null) == null || lookup(data.aws_default_tags.provider.tags, k, null) != v
+  }
+}
+#--------------------------------------------------------------
+# Use this data source to get the default tags configured on the provider.
+#--------------------------------------------------------------
+data "aws_default_tags" "provider" {}
+
+#--------------------------------------------------------------
 # Local
 #--------------------------------------------------------------
 locals {
@@ -32,7 +45,7 @@ resource "aws_iam_role" "this" {
   assume_role_policy    = lookup(var.aws_iam_role, "assume_role_policy", null) == null ? local.assume_role_policy : lookup(var.aws_iam_role, "assume_role_policy", null)
   force_detach_policies = true
   path                  = lookup(var.aws_iam_role, "path", "/")
-  tags                  = var.tags
+  tags                  = local.tags
 }
 #--------------------------------------------------------------
 # Attaches a Managed IAM Policy to an IAM role

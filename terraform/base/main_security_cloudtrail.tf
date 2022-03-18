@@ -26,7 +26,7 @@ locals {
     for r in var.security_cloudtrail.aws_cloudwatch_log_metric_filter : {
       name           = "${var.name_prefix}${lookup(r, "name")}"
       pattern        = lookup(r, "pattern", null)
-      log_group_name = module.aws_recipes_security_cloudtrail.log_group_name
+      log_group_name = module.aws_recipes_security_cloudtrail_v4.log_group_name
       metric_transformation = [
         {
           name      = "${var.name_prefix}${lookup(r.metric_transformation[0], "name", null)}"
@@ -59,7 +59,7 @@ locals {
       evaluate_low_sample_count_percentiles = lookup(r, "evaluate_low_sample_count_percentiles", null)
       metric_query                          = lookup(r, "metric_query", [])
       extended_statistic                    = lookup(r, "extended_statistic", null)
-      alarm_actions                         = [module.aws_recipes_security_cloudtrail.sns_topic_arn]
+      alarm_actions                         = [module.aws_recipes_security_cloudtrail_v4.sns_topic_arn]
     }
   ])
   aws_sns_topic_cloudtrail = merge(var.security_cloudtrail.aws_sns_topic, {
@@ -101,8 +101,8 @@ locals {
 #--------------------------------------------------------------
 # Provides a CloudTrail.
 #--------------------------------------------------------------
-module "aws_recipes_security_cloudtrail" {
-  source                     = "../../modules/aws/recipes/security/cloudtrail"
+module "aws_recipes_security_cloudtrail_v4" {
+  source                     = "../../modules/aws/recipes/security/cloudtrail-v4"
   is_enabled                 = lookup(var.security_cloudtrail, "is_enabled", true)
   is_s3_enabled              = lookup(var.security_cloudtrail, "is_s3_enabled", false)
   aws_kms_key                = local.aws_kms_key_cloudtrail
@@ -114,9 +114,9 @@ module "aws_recipes_security_cloudtrail" {
   #   aws_s3_bucket              = local.aws_s3_bucket_cloudtrail
   aws_s3_bucket_existing = {
     # The S3 bucket id
-    bucket_id = module.aws_recipes_s3_bucket_log_cloudtrail.id
+    bucket_id = module.aws_recipes_s3_bucket_log_v4_cloudtrail.id
     # The S3 bucket arn
-    bucket_arn = module.aws_recipes_s3_bucket_log_cloudtrail.arn
+    bucket_arn = module.aws_recipes_s3_bucket_log_v4_cloudtrail.arn
   }
   aws_cloudtrail  = local.aws_cloudtrail_cloudtrail
   cis_name_prefix = var.name_prefix
@@ -125,7 +125,7 @@ module "aws_recipes_security_cloudtrail" {
   user            = var.deploy_user
   tags            = var.tags
   depends_on = [
-    module.aws_recipes_s3_bucket_log_cloudtrail,
+    module.aws_recipes_s3_bucket_log_v4_cloudtrail,
     module.aws_recipes_s3_policy_cloudtrail_cloudtrail
   ]
 }
@@ -178,7 +178,7 @@ module "aws_recipes_lambda_create_cloudtrail" {
     principal           = "sns.amazonaws.com"
     qualifier           = null
     source_account      = null
-    source_arn          = module.aws_recipes_security_cloudtrail.sns_topic_arn
+    source_arn          = module.aws_recipes_security_cloudtrail_v4.sns_topic_arn
     statement_id        = "CloudTrailDetectUnexpectedUsage"
     statement_id_prefix = null
   }
