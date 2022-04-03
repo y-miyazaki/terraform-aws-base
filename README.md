@@ -29,17 +29,16 @@ The directory is divided into two parts, [base](#base) and [monitor](#monitor), 
       - [Log:Application](#log:application)
       - [Log:Postgres](#log:postgres)
     - [Metrics](#metrics)
-      - [Metrics:ALB](#metrics:alb)
-      - [Metrics:API Gateway](#metrics:api-gateway)
-      - [Metrics:Cloudfront](#metrics:cloudfront)
-      - [Metrics:EC2](#metrics:ec2)
-      - [Metrics:ElastiCache](#metrics:elasticache)
-      - [Metrics:Lambda](#metrics:lambda)
-      - [Metrics:RDS](#metrics:rds)
-      - [Metrics:SES](#metrics:ses)
-      - [Metrics:Synthetics Canary](#metrics:synthetics-canary)
-- Logs
-  - [S3 bucket list](#s3-bucket-list)
+      - [Metrics:ALB](#metricsalb)
+      - [Metrics:API Gateway](#metricsapi-gateway)
+      - [Metrics:Cloudfront](#metricscloudfront)
+      - [Metrics:EC2](#metricsec2)
+      - [Metrics:ElastiCache](#metricselasticache)
+      - [Metrics:Lambda](#metricslambda)
+      - [Metrics:RDS](#metricsrds)
+      - [Metrics:SES](#metricsses)
+      - [Metrics:Synthetics Canary](#metricssynthetics-canary)
+- [S3 bucket list](#s3-bucket-list)
 
 ## Required
 
