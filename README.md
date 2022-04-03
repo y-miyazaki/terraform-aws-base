@@ -5,7 +5,7 @@
 When building infrastructure in AWS, there are always things to consider for any project. For example, security, IAM, cost, log storage and notification, etc... It is quite difficult to build a separate Terraform for each project for all the things that must be considered.  
 In this repository, we use Terraform to build the baseline configuration.
 
-The directory is divided into two parts, [base](#base) and [monitor](#monitor), each of which has different corresponding functions. For details, please refer to the description of each part.
+The directory is divided into two parts, [base](./terraform/base) and [monitor](./terraform/monitor), each of which has different corresponding functions. For details, please refer to the description of each part.
 # INDEX
 
 - [Required](#required)
