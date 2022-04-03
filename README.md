@@ -13,17 +13,17 @@ The directory is divided into two parts, [base](#base) and [monitor](#monitor), 
 - [Functions](#functions)
   - [Base](#base)
     - [Security](#security)
-      - [CloudTrail](#cloudtrail)
-      - [Config](#config)
-      - [GuardDuty](#guardduty)
-      - [Security Hub](#security-hub)
+      - [Security:CloudTrail](#securitycloudtrail)
+      - [Security:Config](#securityconfig)
+      - [Security:GuardDuty](#securityguardduty)
+      - [Security:Security Hub](#securitysecurity-hub)
     - [Other](#other)
-      - [Budgets](#budgets)
-      - [Compute Optimizer](#compute-optimizer)
-      - [IAM group policy](#iam-group-policy)
-      - [IAM User and Group](#iam-user-and-group)
-      - [Resource Groups](#resource-groups)
-      - [Trusted Advisor](#trusted-advisor)
+      - [Other:Budgets](#otherbudgets)
+      - [Other:Compute Optimizer](#othercompute-optimizer)
+      - [Other:IAM group policy](#otheriam-group-policy)
+      - [Other:IAM User and Group](#otheriam-user-and-group)
+      - [Other:Resource Groups](#otherresource-groups)
+      - [Other:Trusted Advisor](#othertrusted-advisor)
   - [Monitor](#monitor)
     - [Log](#log)
       - [Log:Application](#log:application)
@@ -50,13 +50,14 @@ The directory is divided into two parts, [base](#base) and [monitor](#monitor), 
   https://slack.com/  
   https://slack.dev/node-slack-sdk/getting-started
 
-# Functions
+## Functions
 ## Base
 
 This is a description of [Terraform's Base](./terraform/base/). The following contents provide an overview of each function.
 
 ## Security
-## CloudTrail
+
+### Security:CloudTrail
 
 AWS CloudTrail is a service for governance, compliance, operational and risk auditing of AWS accounts.CloudTrail enables you to log, continuously monitor and retain account activity across your AWS infrastructure.
 
@@ -65,7 +66,7 @@ You will be notified with a message similar to the following.
 
 ![CloudTrail](image/slack_cloudtrail.png)
 
-## Config
+### Security:Config
 
 AWS Config is a service that allows you to evaluate, audit, and review the configuration of AWS resources. Config continuously monitors and records the configuration of AWS resources and automatically evaluates the recorded configuration against the desired settings. Config allows you to review configuration and association changes between AWS resources, examine detailed resource configuration history, and verify overall compliance with settings specified in company guidelines. This simplifies compliance audits, security analysis, change management, and operational troubleshooting.
 
@@ -74,7 +75,7 @@ You will be notified with a message similar to the following.
 
 ![Config](image/slack_config.png)
 
-## GuardDuty
+### Security:GuardDuty
 
 Amazon GuardDuty is a threat detection service that continuously monitors for malicious or unauthorized activity in order to protect AWS accounts, workloads, and data stored in Amazon S3.
 
@@ -83,7 +84,7 @@ You will be notified with a message similar to the following.
 
 ![GuardDuty](image/slack_guardduty.png)
 
-## Security Hub
+### Security:Security Hub
 
 The AWS Security Hub provides a comprehensive view of security alerts and security status across all your AWS accounts. A wide range of sophisticated security tools are at your disposal, from firewall and endpoint protection to vulnerability and compliance scanners.
 
@@ -100,7 +101,7 @@ The following is the security score when only this Terraform is applied.
 
 ## Other
 
-## Budgets
+### Other:Budgets
 
 AWS Budgets provides the ability to set up custom budgets and be alerted when costs or usage exceed (or are expected to exceed) the budgeted amount or amounts.
 
@@ -108,31 +109,31 @@ After configuring the Slack channel, adding the Slack app, and setting the OAuth
 
 ![Budgets](image/slack_budgets.png)
 
-## Compute Optimizer
+### Other:Compute Optimizer
 
 AWS Compute Optimizer recommends optimal AWS resources for your workloads to reduce costs and improve performance by using machine learning to analyze historical utilization metrics. Over-provisioning resources can lead to unnecessary infrastructure cost, and under-provisioning resources can lead to poor application performance. Compute Optimizer helps you choose optimal configurations for three types of AWS resources: Amazon EC2 instances, Amazon EBS volumes, and AWS Lambda functions, based on your utilization data.
 
-## IAM group policy
+### Other:IAM group policy
 
 You can set the policy to assign to IAM groups. You can also make the virtual MFA setting mandatory as a base policy.  
 You can also configure the IAM Switch Role.
 
 ![IAM Group Policy](image/iam_group_policy.png)
 
-## IAM User and Group
+### Other:IAM User and Group
 
 You can create an IAM User and Group.
 
 ![IAM User](image/iam_user.png)
 ![IAM Group](image/iam_group.png)
 
-## Resource Groups
+### Other:Resource Groups
 
 Overall, all resources created in Terraform will have the same TAG, and Resource Groups will be filtered by that TAG.
 
 ![Resource Groups](image/resource_groups.png)
 
-## Trusted Advisor
+### Other:Trusted Advisor
 
 AWS Trusted Advisor is a fully managed service that provides guidance on how to follow AWS best practices. Improve security and performance, reduce costs, and monitor service limitations.
 
@@ -148,15 +149,18 @@ This is a description of [Terraform's Monitor](./terraform/monitor/). The follow
 
 ## Log
 
-The filter function of CloudWatchLogs can be used to check specified logs
-with specified filter patterns. Those that hit the filter pattern will be
-notified by Slack via Lambda.
-## Log:Application
+You can use Amazon CloudWatch Logs to monitor, store, and access your log files from Amazon Elastic Compute Cloud (Amazon EC2) instances, AWS CloudTrail, Route 53, and other sources.
 
-Filter logs related to Application.
-## Log:Postgres
+CloudWatch Logs enables you to centralize the logs from all of your systems, applications, and AWS services that you use, in a single, highly scalable service. You can then easily view them, search them for specific error codes or patterns, filter them based on specific fields, or archive them securely for future analysis. CloudWatch Logs enables you to see all of your logs, regardless of their source, as a single and consistent flow of events ordered by time, and you can query them and sort them based on other dimensions, group them by specific fields, create custom computations with a powerful query language, and visualize log data in dashboards.
 
-Filter logs related to Postgres.
+https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/WhatIsCloudWatchLogs.html
+
+### Log:Application
+
+The filter function of CloudWatchLogs can be used to check specified logs with specified filter patterns. Those that hit the filter pattern will be notified by Slack via Lambda.
+### Log:Postgres
+
+The filter function of CloudWatchLogs can be used to check specified logs with specified filter patterns. Those that hit the filter pattern will be notified by Slack via Lambda.
 
 ## Metrics
 
@@ -164,56 +168,56 @@ Metrics are data about the performance of your systems. By default, many service
 
 https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/working_with_metrics.html
 
-## Metrics:ALB
+### Metrics:ALB
 
 Metrics about ALB will be checked and you will be notified via Slack if the specified threshold is exceeded.
 
 https://docs.aws.amazon.com/elasticloadbalancing/latest/application/load-balancer-cloudwatch-metrics.html
 
-## Metrics:API Gateway
+### Metrics:API Gateway
 Metrics about API Gateway will be checked and you will be notified via Slack if the specified threshold is exceeded.
 
 https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-metrics-and-dimensions.html
 
 
-## Metrics:Cloudfront
+### Metrics:Cloudfront
 
 Metrics about Cloudfront will be checked and you will be notified via Slack if the specified threshold is exceeded.
 
 https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/monitoring-using-cloudwatch.html
 
 
-## Metrics:EC2
+### Metrics:EC2
 
 Metrics about EC2 will be checked and you will be notified via Slack if the specified threshold is exceeded.
 
 https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/viewing_metrics_with_cloudwatch.html
 
-## Metrics:ElastiCache
+### Metrics:ElastiCache
 
 Metrics about ElastiCache will be checked and you will be notified via Slack if the specified threshold is exceeded.
 
 https://docs.aws.amazon.com/AmazonElastiCache/latest/red-ug/CacheMetrics.html
 
-## Metrics:Lambda
+### Metrics:Lambda
 
 Metrics about Lambda will be checked and you will be notified via Slack if the specified threshold is exceeded.
 
 https://docs.aws.amazon.com/lambda/latest/dg/monitoring-metrics.html
 
-## Metrics:RDS
+### Metrics:RDS
 
 Metrics about RDS will be checked and you will be notified via Slack if the specified threshold is exceeded.
 
 https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/monitoring-cloudwatch.html
 
-## Metrics:SES
+### Metrics:SES
 
 Metrics about SES will be checked and you will be notified via Slack if the specified threshold is exceeded.
 
 https://docs.aws.amazon.com/ses/latest/dg/event-publishing-retrieving-cloudwatch.html
 
-## Metrics:Synthetics Canary
+### Metrics:Synthetics Canary
 You can use Amazon CloudWatch Synthetics to create canaries, configurable scripts that run on a schedule, to monitor your endpoints and APIs. Canaries follow the same routes and perform the same actions as a customer, which makes it possible for you to continually verify your customer experience even when you don't have any customer traffic on your applications. By using canaries, you can discover issues before your customers do.
 
 Using Sythetics Canary, the status code is checked against the specified URL,
