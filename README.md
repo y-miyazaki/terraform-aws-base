@@ -1,29 +1,43 @@
 # AWS Base Terraform
 
-## OverView
+# OverView
 
 When building infrastructure in AWS, there are always things to consider for any project. For example, security, IAM, cost, log storage and notification, etc... It is quite difficult to build a separate Terraform for each project for all the things that must be considered.  
 In this repository, we use Terraform to build the baseline configuration.
 
-## INDEX
+The directory is divided into two parts, [base](#base) and [monitor](#monitor), each of which has different corresponding functions. For details, please refer to the description of each part.
+# INDEX
 
-- Base
-  - [Required](#required)
-- Functions
-  - Security
-    - [CloudTrail](#cloudtrail)
-    - [Config](#config)
-    - [GuardDuty](#guardduty)
-    - [Security Hub](#security-hub)
-  - Other
-    - [Budgets](#budgets)
-    - [Compute Optimizer](#compute-optimizer)
-    - [IAM group policy](#iam-group-policy)
-    - [IAM User and Group](#iam-user-and-group)
-    - [Resource Groups](#resource-groups)
-    - [Trusted Advisor](#trusted-advisor)
-- Settings
-  - [Initial setting](#initial-setting)
+- [Required](#required)
+
+- [Functions](#functions)
+  - [Base](#base)
+    - [Security](#security)
+      - [CloudTrail](#cloudtrail)
+      - [Config](#config)
+      - [GuardDuty](#guardduty)
+      - [Security Hub](#security-hub)
+    - [Other](#other)
+      - [Budgets](#budgets)
+      - [Compute Optimizer](#compute-optimizer)
+      - [IAM group policy](#iam-group-policy)
+      - [IAM User and Group](#iam-user-and-group)
+      - [Resource Groups](#resource-groups)
+      - [Trusted Advisor](#trusted-advisor)
+  - [Monitor](#monitor)
+    - [Log](#log)
+      - [Log:Application](#log:application)
+      - [Log:Postgres](#log:postgres)
+    - [Metrics](#metrics)
+      - [Metrics:ALB](#metrics:alb)
+      - [Metrics:API Gateway](#metrics:api-gateway)
+      - [Metrics:Cloudfront](#metrics:cloudfront)
+      - [Metrics:EC2](#metrics:ec2)
+      - [Metrics:ElastiCache](#metrics:elasticache)
+      - [Metrics:Lambda](#metrics:lambda)
+      - [Metrics:RDS](#metrics:rds)
+      - [Metrics:SES](#metrics:ses)
+      - [Metrics:Synthetics Canary](#metrics:synthetics-canary)
 - Logs
   - [S3 bucket list](#s3-bucket-list)
 
@@ -36,6 +50,12 @@ In this repository, we use Terraform to build the baseline configuration.
   https://slack.com/  
   https://slack.dev/node-slack-sdk/getting-started
 
+# Functions
+## Base
+
+This is a description of [Terraform's Base](./terraform/base/). The following contents provide an overview of each function.
+
+## Security
 ## CloudTrail
 
 AWS CloudTrail is a service for governance, compliance, operational and risk auditing of AWS accounts.CloudTrail enables you to log, continuously monitor and retain account activity across your AWS infrastructure.
@@ -78,6 +98,8 @@ The following is the security score when only this Terraform is applied.
 
 ![SecurityHub Score](image/security_hub_security_score.png)
 
+## Other
+
 ## Budgets
 
 AWS Budgets provides the ability to set up custom budgets and be alerted when costs or usage exceed (or are expected to exceed) the budgeted amount or amounts.
@@ -119,154 +141,85 @@ However, Trusted Advisor requires the support plan to be signed up for the Busin
 
 ![Trusted Advisor](image/slack_trusted_advisor.png)
 
-## Initial setting
 
-- Remove the access key from the root account  
-  Since this is a security issue, let's remove the access key from the root account from the management console.
+# Monitor
 
-- Manual creation of IAM user and IAM group to run Terraform  
-  Create an IAM user and an IAM group from the management console in order to run Terraform.
-  Create an IAM group (pseudonym: deploy). Attach AdministratorAccess as the policy.
-  Create an IAM user (pseudonym: terraform), giving it only Programmatic access for Access Type, and add it to the IAM group (pseudonym: deploy).
+This is a description of [Terraform's Monitor](./terraform/monitor/). The following contents provide an overview of each function.
 
-- Create an S3 to store the Terraform State  
-  Create an S3 from the management console to manage the Terraform State.
-  However, if you have an environment where you can run the aws command and profile already configured, you can create an S3 by running the following command.  
-  https://github.com/y-miyazaki/cloud-commands/blob/master/cmd/awstfinitstate
+## Log
 
-```sh
-# awstfinitstate -h
+The filter function of CloudWatchLogs can be used to check specified logs
+with specified filter patterns. Those that hit the filter pattern will be
+notified by Slack via Lambda.
+## Log:Application
 
-This command creates a S3 Bucket for Terraform State.
-You can also add random hash to bucket name suffix.
+Filter logs related to Application.
+## Log:Postgres
 
-Usage:
-    awstfinitstate -r {region} -b {bucket name} -p {profile}[<options>]
-    awstfinitstate -r ap-northeast-1 -b terraform-state
-    awstfinitstate -r ap-northeast-1 -b terraform-state -p default -s
+Filter logs related to Postgres.
 
-Options:
-    -b {bucket name}          S3 bucket name
-    -p {aws profile name}     Name of AWS profile
-    -r {region}               S3 region
-    -s                        If set, a random hash will suffix bucket name.
-    -h                        Usage awstfinitstate
+## Metrics
 
-# awstfinitstate -r ap-northeast-1 -b terraform-state -p default -s
-~
-~
-~
-~
-~
-~
-~
-~
-~
-~
-~
-~
-~
---------------------------------------------------------------
-bucket_name: terraform-state-xxxxxxxxxx
-region: ap-northeast-1
---------------------------------------------------------------
-```
+Metrics are data about the performance of your systems. By default, many services provide free metrics for resources (such as Amazon EC2 instances, Amazon EBS volumes, and Amazon RDS DB instances). You can also enable detailed monitoring for some resources, such as your Amazon EC2 instances, or publish your own application metrics. Amazon CloudWatch can load all the metrics in your account (both AWS resource metrics and application metrics that you provide) for search, graphing, and alarms.
 
-- terraform.{environment}.tfvars file to configure for each environment  
-  You need to rename the linked file [terraform.example.tfvars](terraform/base/terraform.example.tfvars) and change each variable for your environment. The variables that need to be changed are marked with TODO comments; search for them in TODO.
-- main_provider.tf file to set for each environment  
-  Rename the linked file [main_provider.tf.example](terraform/base/main_provider.tf.example) to main_provider.tf. After that, you need to change each parameter. The variables that need to be changed are marked with TODO comments, search for them in TODO.
+https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/working_with_metrics.html
 
-```terraform
-#--------------------------------------------------------------
-# Terraform Provider
-#--------------------------------------------------------------
-terraform {
-  required_version = ">=0.13"
-  required_providers {
-    aws = {
-      source  = "hashicorp/aws"
-      version = ">=3.29.1"
-    }
-  }
-  backend "s3" {
-    # TODO: need to change bucket for terraform state.
-    bucket = "xxxxxxxxxxxxxxxx"
-    # TODO: need to change bucket key for terraform state.
-    key = "xxxxxxxxxx"
-    # TODO: need to change profile for terraform state.
-    profile = "default"
-    # TODO: need to change region for terraform state.
-    region = "ap-northeast-1"
-  }
-}
+## Metrics:ALB
 
-#--------------------------------------------------------------
-# AWS Provider
-# access key and secret key should not use.
-#--------------------------------------------------------------
-provider "aws" {
-  # TODO: need to change profile.
-  profile = "default"
-  # TODO: need to change region.
-  region = "ap-northeast-1"
-}
-```
+Metrics about ALB will be checked and you will be notified via Slack if the specified threshold is exceeded.
 
-- Running Terraform  
-  Run the terraform command: terraform init followed by terraform apply.
-  You may find that terraform apply fails due to conflicts or other problems, so run it again and it will succeed.
+https://docs.aws.amazon.com/elasticloadbalancing/latest/application/load-balancer-cloudwatch-metrics.html
 
-```sh
-bash-5.1# terraform init
-There are some problems with the CLI configuration:
+## Metrics:API Gateway
+Metrics about API Gateway will be checked and you will be notified via Slack if the specified threshold is exceeded.
 
-Error: The specified plugin cache dir /root/.terraform.d/plugin-cache cannot be opened: stat /root/.terraform.d/plugin-cache: no such file or directory
+https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-metrics-and-dimensions.html
 
 
-As a result of the above problems, Terraform may not behave as intended.
+## Metrics:Cloudfront
+
+Metrics about Cloudfront will be checked and you will be notified via Slack if the specified threshold is exceeded.
+
+https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/monitoring-using-cloudwatch.html
 
 
-Initializing modules...
+## Metrics:EC2
 
-Initializing the backend...
+Metrics about EC2 will be checked and you will be notified via Slack if the specified threshold is exceeded.
 
-Initializing provider plugins...
-- Reusing previous version of hashicorp/aws from the dependency lock file
-- Reusing previous version of hashicorp/random from the dependency lock file
-- Reusing previous version of hashicorp/template from the dependency lock file
-- Installing hashicorp/aws v3.29.1...
-- Installed hashicorp/aws v3.29.1 (signed by HashiCorp)
-- Installing hashicorp/random v3.1.0...
-- Installed hashicorp/random v3.1.0 (signed by HashiCorp)
-- Installing hashicorp/template v2.2.0...
-- Installed hashicorp/template v2.2.0 (signed by HashiCorp)
+https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/viewing_metrics_with_cloudwatch.html
 
-Terraform has been successfully initialized!
+## Metrics:ElastiCache
 
-You may now begin working with Terraform. Try running "terraform plan" to see
-any changes that are required for your infrastructure. All Terraform commands
-should now work.
+Metrics about ElastiCache will be checked and you will be notified via Slack if the specified threshold is exceeded.
 
-If you ever set or change modules or backend configuration for Terraform,
-rerun this command to reinitialize your working directory. If you forget, other
-commands will detect it and remind you to do so if necessary.
-```
+https://docs.aws.amazon.com/AmazonElastiCache/latest/red-ug/CacheMetrics.html
 
-```sh
-bash-5.1# terraform apply --auto-approve -var-file=terraform.example.tfvars
-module.aws_recipes_s3_bucket_log_log.random_id.this: Creating...
-random_id.this: Creating...
-module.aws_recipes_s3_bucket_log_logdom_id.this: Creation complete after 0s [id=wiatHg]
-random_id.this: Creation complete after 0s [id=uqe0bU7J]
-module.aws_recipes_security_default_vpc.aws_default_subnet.this[1]: Creating...
+## Metrics:Lambda
 
-...
-...
-...
+Metrics about Lambda will be checked and you will be notified via Slack if the specified threshold is exceeded.
 
-Apply complete! resources: x added, x changed, 0 destroyed.
-```
+https://docs.aws.amazon.com/lambda/latest/dg/monitoring-metrics.html
+
+## Metrics:RDS
+
+Metrics about RDS will be checked and you will be notified via Slack if the specified threshold is exceeded.
+
+https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/monitoring-cloudwatch.html
+
+## Metrics:SES
+
+Metrics about SES will be checked and you will be notified via Slack if the specified threshold is exceeded.
+
+https://docs.aws.amazon.com/ses/latest/dg/event-publishing-retrieving-cloudwatch.html
+
+## Metrics:Synthetics Canary
+You can use Amazon CloudWatch Synthetics to create canaries, configurable scripts that run on a schedule, to monitor your endpoints and APIs. Canaries follow the same routes and perform the same actions as a customer, which makes it possible for you to continually verify your customer experience even when you don't have any customer traffic on your applications. By using canaries, you can discover issues before your customers do.
+
+Using Sythetics Canary, the status code is checked against the specified URL,
+and if an unexpected status code is returned, the user is notified via Slack.
+
+https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Synthetics_Canaries.html
 
 ## S3 bucket list
 
@@ -274,14 +227,14 @@ This is a description of the S3 bucket that will be created and the data in the 
 
 | Category       | bucket              | Directory                                                       | Description                                                                                                                                                                                                                                                                                                                                                                                                                                           | Note                                                                                                                 |
 | :------------- | :------------------ | :-------------------------------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------- |
-| AWS Config     | aws-log-common      | /AWSLogs/{accountID}/Config/{region}/yyyy/m/d/ConfigHistory/    | AWS Config Compliance History Timeline for Resources.                                                                                                                                                                                                                                                                                                                                                                                                 | https://docs.aws.amazon.com/config/latest/developerguide/view-compliance-history.html                                |
-| AWS Config     | aws-log-common      | /AWSLogs/{accountID}/Config/{region}/yyyy/m/d/ConfigSnapshot/   | AWS Config snapshot.                                                                                                                                                                                                                                                                                                                                                                                                                                  | https://docs.aws.amazon.com/config/latest/developerguide/deliver-snapshot-cli.html                                   |
-| AWS Config     | aws-log-common      | /AWSLogs/{accountID}/Config/ConfigWritabilityCheckFile/yyyy/m/d | This is a test file to confirm that Config can be written to the S3 bucket normally.                                                                                                                                                                                                                                                                                                                                                                  |                                                                                                                      |
-| AWS Config     | aws-log-common      | /AWSLogs/{accountID}/CloudTrail/AccessLog                       | This is the access log of the CloudTrail bucket.                                                                                                                                                                                                                                                                                                                                                                                                      |
-| AWS CloudTrail | aws-log-cloudtrail  | /AWSLogs/{accountID}/CloudTrail-Digest/{region}/yyyy/mm/dd      | Each digest file contains the names of the log files that were delivered to your Amazon S3 bucket during the last hour, the hash values for those log files, and the digital signature of the previous digest file. The signature for the current digest file is stored in the metadata properties of the digest file object. The digital signatures and hashes are used for validating the integrity of the log files and of the digest file itself. | https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudtrail-log-file-validation-digest-file-structure.html |
-| AWS CloudTrail | aws-log-cloudtrail  | /AWSLogs/{accountID}/CloudTrail-Insight/{region}/yyyy/mm/dd     | CloudTrail Insights can help you detect unusual API activity in your AWS account by raising Insights events. CloudTrail Insights measures your normal patterns of API call volume, also called the baseline, and generates Insights events when the volume is outside normal patterns. Insights events are generated for write management APIs.                                                                                                       | https://docs.aws.amazon.com/awscloudtrail/latest/userguide/log-insights-events-with-cloudtrail.html                  |
-| AWS CloudTrail | aws-log-cloudtrail  | /AWSLogs/{accountID}/CloudTrail/{region}/yyyy/mm/dd             | It is recorded as an event in CloudTrail. Events include actions taken in the AWS Management Console, AWS Command Line Interface.                                                                                                                                                                                                                                                                                                                     | https://docs.aws.amazon.com/awscloudtrail/latest/userguide/get-and-view-cloudtrail-log-files.html                    |
-| AWS Log        | aws-log-application | /Logs                                                           | Application log from CloudWatch Logs.                                                                                                                                                                                                                                                                                                                                                                                                                 |                                                                                                                      |
+| AWS Config     | aws-log-common-{randomid}      | /AWSLogs/{accountID}/Config/{region}/yyyy/m/d/ConfigHistory/    | AWS Config Compliance History Timeline for Resources.                                                                                                                                                                                                                                                                                                                                                                                                 | https://docs.aws.amazon.com/config/latest/developerguide/view-compliance-history.html                                |
+| AWS Config     | aws-log-common-{randomid}      | /AWSLogs/{accountID}/Config/{region}/yyyy/m/d/ConfigSnapshot/   | AWS Config snapshot.                                                                                                                                                                                                                                                                                                                                                                                                                                  | https://docs.aws.amazon.com/config/latest/developerguide/deliver-snapshot-cli.html                                   |
+| AWS Config     | aws-log-common-{randomid}      | /AWSLogs/{accountID}/Config/ConfigWritabilityCheckFile/yyyy/m/d | This is a test file to confirm that Config can be written to the S3 bucket normally.                                                                                                                                                                                                                                                                                                                                                                  |                                                                                                                      |
+| AWS Config     | aws-log-common-{randomid}      | /AWSLogs/{accountID}/CloudTrail/AccessLog                       | This is the access log of the CloudTrail bucket.                                                                                                                                                                                                                                                                                                                                                                                                      |
+| AWS CloudTrail | aws-log-cloudtrail-{randomid}  | /AWSLogs/{accountID}/CloudTrail-Digest/{region}/yyyy/mm/dd      | Each digest file contains the names of the log files that were delivered to your Amazon S3 bucket during the last hour, the hash values for those log files, and the digital signature of the previous digest file. The signature for the current digest file is stored in the metadata properties of the digest file object. The digital signatures and hashes are used for validating the integrity of the log files and of the digest file itself. | https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudtrail-log-file-validation-digest-file-structure.html |
+| AWS CloudTrail | aws-log-cloudtrail-{randomid}  | /AWSLogs/{accountID}/CloudTrail-Insight/{region}/yyyy/mm/dd     | CloudTrail Insights can help you detect unusual API activity in your AWS account by raising Insights events. CloudTrail Insights measures your normal patterns of API call volume, also called the baseline, and generates Insights events when the volume is outside normal patterns. Insights events are generated for write management APIs.                                                                                                       | https://docs.aws.amazon.com/awscloudtrail/latest/userguide/log-insights-events-with-cloudtrail.html                  |
+| AWS CloudTrail | aws-log-cloudtrail-{randomid}  | /AWSLogs/{accountID}/CloudTrail/{region}/yyyy/mm/dd             | It is recorded as an event in CloudTrail. Events include actions taken in the AWS Management Console, AWS Command Line Interface.                                                                                                                                                                                                                                                                                                                     | https://docs.aws.amazon.com/awscloudtrail/latest/userguide/get-and-view-cloudtrail-log-files.html                    |
+| AWS Log        | aws-log-application-{randomid} | /Logs                                                           | Application log from CloudWatch Logs.                                                                                                                                                                                                                                                                                                                                                                                                                 |                                                                                                                      |
 
 ## Author Information
 
