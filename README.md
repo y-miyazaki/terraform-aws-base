@@ -6,6 +6,16 @@ When building infrastructure in AWS, there are always things to consider for any
 In this repository, we use Terraform to build the baseline configuration.
 
 The directory is divided into two parts, [base](./terraform/base) and [monitor](./terraform/monitor), each of which has different corresponding functions. For details, please refer to the description of each part.
+
+Basically, it is designed to be turned on and off for each setting and function by simply modifying terraform.example.tfvars in each function. Please check the link below for an explanation.
+
+- base  
+  [terraform/base/terraform.example.tfvars](./terraform/base/terraform.example.tfvars)  
+  Document: [README-base-tfvars.md](./README-base-tfvars.md)
+
+- monitor  
+  [terraform/monitor/terraform.example.tfvars](./terraform/monitor/terraform.example.tfvars)  
+  Document: [README-monitor-tfvars.md](./README-monitor-tfvars.md)
 # INDEX
 
 - [Required](#required)
