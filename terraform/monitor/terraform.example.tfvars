@@ -273,7 +273,7 @@ delivery_log = {
 #--------------------------------------------------------------
 metric_log_application = {
   # TODO: need to set is_enabled for settings of application log.
-  is_enabled = true
+  is_enabled = false
   # TODO: need to add log_group_name for application.
   #       check log group name for application.
   # check CloudWatch Group name list command.
@@ -357,7 +357,7 @@ PATTERN
   }
 }
 #--------------------------------------------------------------
-# Metric:ALB
+# Metrics:ALB
 # Metrics are data about the performance of your systems. By default,
 # many services provide free metrics for resources (such as Amazon EC2 instances,
 # Amazon EBS volumes, and Amazon RDS DB instances).
@@ -417,7 +417,7 @@ metric_resource_alb = {
   dimensions = []
 }
 #--------------------------------------------------------------
-# Metric:API Gateway
+# Metrics:API Gateway
 # Metrics are data about the performance of your systems. By default,
 # many services provide free metrics for resources (such as Amazon EC2 instances,
 # Amazon EBS volumes, and Amazon RDS DB instances).
@@ -458,7 +458,7 @@ metric_resource_api_gateway = {
   dimensions = []
 }
 #--------------------------------------------------------------
-# Metric:CloudFront
+# Metrics:CloudFront
 # Metrics are data about the performance of your systems. By default,
 # many services provide free metrics for resources (such as Amazon EC2 instances,
 # Amazon EBS volumes, and Amazon RDS DB instances).
@@ -516,7 +516,7 @@ metric_resource_cloudfront = {
   dimensions = []
 }
 #--------------------------------------------------------------
-# Metric:EC2
+# Metrics:EC2
 # Metrics are data about the performance of your systems. By default,
 # many services provide free metrics for resources (such as Amazon EC2 instances,
 # Amazon EBS volumes, and Amazon RDS DB instances).
@@ -560,7 +560,7 @@ metric_resource_ec2 = {
   dimensions = []
 }
 #--------------------------------------------------------------
-# Metric:ElastiCache
+# Metrics:ElastiCache
 # Metrics are data about the performance of your systems. By default,
 # many services provide free metrics for resources (such as Amazon EC2 instances,
 # Amazon EBS volumes, and Amazon RDS DB instances).
@@ -619,7 +619,7 @@ metric_resource_elasticache = {
   dimensions = []
 }
 #--------------------------------------------------------------
-# Metric:Lambda
+# Metrics:Lambda
 # Metrics are data about the performance of your systems. By default,
 # many services provide free metrics for resources (such as Amazon EC2 instances,
 # Amazon EBS volumes, and Amazon RDS DB instances).
@@ -666,7 +666,7 @@ metric_resource_lambda = {
   dimensions = []
 }
 #--------------------------------------------------------------
-# Metric:RDS
+# Metrics:RDS
 # Metrics are data about the performance of your systems. By default,
 # many services provide free metrics for resources (such as Amazon EC2 instances,
 # Amazon EBS volumes, and Amazon RDS DB instances).
@@ -743,7 +743,7 @@ metric_resource_rds = {
   dimensions = []
 }
 #--------------------------------------------------------------
-# Metric:SES
+# Metrics:SES
 # Metrics are data about the performance of your systems. By default,
 # many services provide free metrics for resources (such as Amazon EC2 instances,
 # Amazon EBS volumes, and Amazon RDS DB instances).
@@ -773,7 +773,7 @@ metric_resource_ses = {
   ]
 }
 #--------------------------------------------------------------
-# Metric: Synthetics Canary
+# Metrics:Synthetics Canary
 # You can use Amazon CloudWatch Synthetics to create canaries,
 # configurable scripts that run on a schedule, to monitor your endpoints and APIs.
 # Canaries follow the same routes and perform the same actions as a customer,
@@ -787,7 +787,7 @@ metric_resource_ses = {
 #--------------------------------------------------------------
 metric_synthetics_canary = {
   # TODO: need to set is_enabled for Metric of Synthetics Canary.
-  is_enabled = true
+  is_enabled = false
   # TODO: need to set period for Synthetics Canary.
   period = 300
   # TODO: need to set threshold for Synthetics Canary.
