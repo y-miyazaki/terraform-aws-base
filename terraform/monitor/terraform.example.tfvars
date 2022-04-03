@@ -265,6 +265,11 @@ delivery_log = {
 }
 #--------------------------------------------------------------
 # Log:Application
+# The filter function of CloudWatchLogs can be used to check specified logs
+# with specified filter patterns. Those that hit the filter pattern will be
+# notified by Slack via Lambda.
+#
+# Filter logs related to Application.
 #--------------------------------------------------------------
 metric_log_application = {
   # TODO: need to set is_enabled for settings of application log.
@@ -306,6 +311,11 @@ PATTERN
 }
 #--------------------------------------------------------------
 # Log:Postgres
+# The filter function of CloudWatchLogs can be used to check specified logs
+# with specified filter patterns. Those that hit the filter pattern will be
+# notified by Slack via Lambda.
+#
+# Filter logs related to Postgres.
 #--------------------------------------------------------------
 metric_log_postgres = {
   # TODO: need to set is_enabled for settings of postgres log.
@@ -348,6 +358,15 @@ PATTERN
 }
 #--------------------------------------------------------------
 # Metric:ALB
+# Metrics are data about the performance of your systems. By default,
+# many services provide free metrics for resources (such as Amazon EC2 instances,
+# Amazon EBS volumes, and Amazon RDS DB instances).
+# You can also enable detailed monitoring for some resources, such as your Amazon EC2 instances,
+# or publish your own application metrics. Amazon CloudWatch can load all the metrics in your account
+# (both AWS resource metrics and application metrics that you provide) for search, graphing, and alarms.
+#
+# Metrics about ALB will be checked and you will be notified via Slack if the specified threshold is exceeded.
+# https://docs.aws.amazon.com/elasticloadbalancing/latest/application/load-balancer-cloudwatch-metrics.html
 #--------------------------------------------------------------
 metric_resource_alb = {
   # TODO: need to set is_enabled for Metric of ALB.
@@ -399,6 +418,15 @@ metric_resource_alb = {
 }
 #--------------------------------------------------------------
 # Metric:API Gateway
+# Metrics are data about the performance of your systems. By default,
+# many services provide free metrics for resources (such as Amazon EC2 instances,
+# Amazon EBS volumes, and Amazon RDS DB instances).
+# You can also enable detailed monitoring for some resources, such as your Amazon EC2 instances,
+# or publish your own application metrics. Amazon CloudWatch can load all the metrics in your account
+# (both AWS resource metrics and application metrics that you provide) for search, graphing, and alarms.
+#
+# Metrics about API Gateway will be checked and you will be notified via Slack if the specified threshold is exceeded.
+# https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-metrics-and-dimensions.html
 #--------------------------------------------------------------
 metric_resource_api_gateway = {
   # TODO: need to set is_enabled for Metric of API Gateway.
@@ -431,6 +459,15 @@ metric_resource_api_gateway = {
 }
 #--------------------------------------------------------------
 # Metric:CloudFront
+# Metrics are data about the performance of your systems. By default,
+# many services provide free metrics for resources (such as Amazon EC2 instances,
+# Amazon EBS volumes, and Amazon RDS DB instances).
+# You can also enable detailed monitoring for some resources, such as your Amazon EC2 instances,
+# or publish your own application metrics. Amazon CloudWatch can load all the metrics in your account
+# (both AWS resource metrics and application metrics that you provide) for search, graphing, and alarms.
+#
+# Metrics about Cloudfront will be checked and you will be notified via Slack if the specified threshold is exceeded.
+# https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/monitoring-using-cloudwatch.html
 #--------------------------------------------------------------
 metric_resource_cloudfront = {
   # TODO: need to set is_enabled for Metric of CloudFront.
@@ -480,6 +517,15 @@ metric_resource_cloudfront = {
 }
 #--------------------------------------------------------------
 # Metric:EC2
+# Metrics are data about the performance of your systems. By default,
+# many services provide free metrics for resources (such as Amazon EC2 instances,
+# Amazon EBS volumes, and Amazon RDS DB instances).
+# You can also enable detailed monitoring for some resources, such as your Amazon EC2 instances,
+# or publish your own application metrics. Amazon CloudWatch can load all the metrics in your account
+# (both AWS resource metrics and application metrics that you provide) for search, graphing, and alarms.
+#
+# Metrics about EC2 will be checked and you will be notified via Slack if the specified threshold is exceeded.
+# https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/viewing_metrics_with_cloudwatch.html
 #--------------------------------------------------------------
 metric_resource_ec2 = {
   # TODO: need to set is_enabled for Metric of EC2.
@@ -515,6 +561,15 @@ metric_resource_ec2 = {
 }
 #--------------------------------------------------------------
 # Metric:ElastiCache
+# Metrics are data about the performance of your systems. By default,
+# many services provide free metrics for resources (such as Amazon EC2 instances,
+# Amazon EBS volumes, and Amazon RDS DB instances).
+# You can also enable detailed monitoring for some resources, such as your Amazon EC2 instances,
+# or publish your own application metrics. Amazon CloudWatch can load all the metrics in your account
+# (both AWS resource metrics and application metrics that you provide) for search, graphing, and alarms.
+#
+# Metrics about ElastiCache will be checked and you will be notified via Slack if the specified threshold is exceeded.
+# https://docs.aws.amazon.com/AmazonElastiCache/latest/red-ug/CacheMetrics.html
 #--------------------------------------------------------------
 metric_resource_elasticache = {
   # TODO: need to set is_enabled for Metric of ElastiCache.
@@ -565,6 +620,15 @@ metric_resource_elasticache = {
 }
 #--------------------------------------------------------------
 # Metric:Lambda
+# Metrics are data about the performance of your systems. By default,
+# many services provide free metrics for resources (such as Amazon EC2 instances,
+# Amazon EBS volumes, and Amazon RDS DB instances).
+# You can also enable detailed monitoring for some resources, such as your Amazon EC2 instances,
+# or publish your own application metrics. Amazon CloudWatch can load all the metrics in your account
+# (both AWS resource metrics and application metrics that you provide) for search, graphing, and alarms.
+#
+# Metrics about Lambda will be checked and you will be notified via Slack if the specified threshold is exceeded.
+# https://docs.aws.amazon.com/lambda/latest/dg/monitoring-metrics.html
 #--------------------------------------------------------------
 metric_resource_lambda = {
   # TODO: need to set is_enabled for monitor of Lambda.
@@ -603,6 +667,15 @@ metric_resource_lambda = {
 }
 #--------------------------------------------------------------
 # Metric:RDS
+# Metrics are data about the performance of your systems. By default,
+# many services provide free metrics for resources (such as Amazon EC2 instances,
+# Amazon EBS volumes, and Amazon RDS DB instances).
+# You can also enable detailed monitoring for some resources, such as your Amazon EC2 instances,
+# or publish your own application metrics. Amazon CloudWatch can load all the metrics in your account
+# (both AWS resource metrics and application metrics that you provide) for search, graphing, and alarms.
+#
+# Metrics about RDS will be checked and you will be notified via Slack if the specified threshold is exceeded.
+# https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/monitoring-cloudwatch.html
 #--------------------------------------------------------------
 metric_resource_rds = {
   # TODO: need to set is_enabled for monitor of RDS.
@@ -671,6 +744,15 @@ metric_resource_rds = {
 }
 #--------------------------------------------------------------
 # Metric:SES
+# Metrics are data about the performance of your systems. By default,
+# many services provide free metrics for resources (such as Amazon EC2 instances,
+# Amazon EBS volumes, and Amazon RDS DB instances).
+# You can also enable detailed monitoring for some resources, such as your Amazon EC2 instances,
+# or publish your own application metrics. Amazon CloudWatch can load all the metrics in your account
+# (both AWS resource metrics and application metrics that you provide) for search, graphing, and alarms.
+#
+# Metrics about SES will be checked and you will be notified via Slack if the specified threshold is exceeded.
+# https://docs.aws.amazon.com/ses/latest/dg/event-publishing-retrieving-cloudwatch.html
 #--------------------------------------------------------------
 metric_resource_ses = {
   # TODO: need to set is_enabled for monitor of SES.
@@ -692,6 +774,16 @@ metric_resource_ses = {
 }
 #--------------------------------------------------------------
 # Metric: Synthetics Canary
+# You can use Amazon CloudWatch Synthetics to create canaries,
+# configurable scripts that run on a schedule, to monitor your endpoints and APIs.
+# Canaries follow the same routes and perform the same actions as a customer,
+# which makes it possible for you to continually verify your customer experience even
+# when you don't have any customer traffic on your applications. By using canaries,
+# you can discover issues before your customers do.
+#
+# Using Sythetics Canary, the status code is checked against the specified URL,
+# and if an unexpected status code is returned, the user is notified via Slack.
+# https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Synthetics_Canaries.html
 #--------------------------------------------------------------
 metric_synthetics_canary = {
   # TODO: need to set is_enabled for Metric of Synthetics Canary.
@@ -718,9 +810,6 @@ metric_synthetics_canary = {
     }
   ]
 }
-#--------------------------------------------------------------
-# Synthetics Canary
-#--------------------------------------------------------------
 synthetics_canary = {
   # TODO: need to set is_enabled for monitor of Synthetics Canary.
   is_enabled = false
