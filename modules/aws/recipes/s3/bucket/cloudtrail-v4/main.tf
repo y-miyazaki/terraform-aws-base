@@ -5,7 +5,7 @@ locals {
   tags = {
     for k, v in(var.tags == null ? {} : var.tags) : k => v if lookup(data.aws_default_tags.provider.tags, k, null) == null || lookup(data.aws_default_tags.provider.tags, k, null) != v
   }
-  name = var.is_random_name_suffix ? "${var.bucket}-${random_id.this.dec}" : var.bucket
+  name = var.is_random_name_suffix ? "${var.aws_s3_bucket.bucket}-${random_id.this.dec}" : var.aws_s3_bucket.bucket
 }
 #--------------------------------------------------------------
 # Use this data source to get the default tags configured on the provider.
@@ -24,9 +24,9 @@ resource "random_id" "this" {
 #tfsec:ignore:AWS002 tfsec:ignore:AWS017 tfsec:ignore:AWS077
 resource "aws_s3_bucket" "this" {
   bucket        = local.name
-  force_destroy = var.force_destroy
+  force_destroy = lookup(var.aws_s3_bucket, "force_destroy")
   dynamic "object_lock_configuration" {
-    for_each = var.object_lock_configuration
+    for_each = lookup(var.aws_s3_bucket, "object_lock_configuration", [])
     content {
       object_lock_enabled = lookup(object_lock_configuration.value, "object_lock_enabled", null)
       dynamic "rule" {

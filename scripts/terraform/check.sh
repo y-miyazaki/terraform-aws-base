@@ -12,4 +12,5 @@ for file in `find /workspace/ -name "main.tf" -type f`; do
     terraform validate
     tflint
     tfsec
+    terraform-docs markdown --output-file README.md ./
 done
