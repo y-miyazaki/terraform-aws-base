@@ -18,9 +18,9 @@ jobs:
         run: |
           echo "$ENV" >> $PWD/.env
           find scripts -type f -name '*.sh' -exec chmod +x \{\} \;
-          docker pull ghcr.io/y-miyazaki/terraform-aws:latest
-          docker run --rm -v $PWD:/workspace --env-file=$PWD/.env -w /workspace --name terraform-aws ghcr.io/y-miyazaki/terraform-aws:latest scripts/terraform/integration_push.sh terraform/base
-          docker run --rm -v $PWD:/workspace --env-file=$PWD/.env -w /workspace --name terraform-aws ghcr.io/y-miyazaki/terraform-aws:latest scripts/terraform/integration_push.sh terraform/monitor
+          docker pull ghcr.io/y-miyazaki/terraform-aws-debian:latest
+          docker run --rm -v $PWD:/workspace --env-file=$PWD/.env -w /workspace --name terraform-aws ghcr.io/y-miyazaki/terraform-aws-debian:latest scripts/terraform/integration_push.sh terraform/base
+          docker run --rm -v $PWD:/workspace --env-file=$PWD/.env -w /workspace --name terraform-aws ghcr.io/y-miyazaki/terraform-aws-debian:latest scripts/terraform/integration_push.sh terraform/monitor
       - name: "slack: notification"
         if: failure()
         uses: rtCamp/action-slack-notify@v2.0.2
