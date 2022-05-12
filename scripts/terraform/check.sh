@@ -3,7 +3,7 @@ set -e
 #--------------------------------------------------------------
 # recursive check
 #--------------------------------------------------------------
-for file in `find /workspace/ -name "main.tf" -type f`; do
+for file in `find /workspace/ ! -path '*/.terraform/*' -type f -name 'main.tf'`; do
     dir=`dirname $file`
     cd ${dir}
     pwd
