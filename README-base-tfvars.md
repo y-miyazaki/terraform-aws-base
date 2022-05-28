@@ -1,32 +1,34 @@
 # How do we fix base tfvars?
 
-The example is [terraform.example.tfvars](terraform/base/terraform.example.tfvars). The following is a list of things that must be modified and things that should be modified when doing terraform apply for the first time.  
+The example is [terraform.example.tfvars](terraform/base/terraform.example.tfvars). The following is a list of things that must be modified and things that should be modified when doing terraform apply for the first time.
 If you need to adjust the parameters, you can do so by yourself by searching TODO.
 
 - [Initial setting](#initial-setting)
 - [Required](#required)
-  - [deploy_user](#deployuser)
+  - [deploy_user](#deploy_user)
   - [region](#region)
   - [support_iam_role_principal_arns](#supportiamroleprincipalarns)
+  - [subscriber_email_addresses](#subscriber_email_addresses)
 - [Not Required](#not-required)
   - [tags](#tags)
   - [Slack](#slack)
-  - [is_enabled](#isenabled)
+  - [is_enabled](#is_enabled)
 
 # Initial setting
+
 This section describes the initial settings for running [Base's Terraform](./terraform/base/). If an item has already been addressed, please skip to the next section.
 
-- Remove the access key from the root account  
+- Remove the access key from the root account
   Since this is a security issue, let's remove the access key from the root account from the management console.
 
-- Manual creation of IAM user and IAM group to run Terraform  
+- Manual creation of IAM user and IAM group to run Terraform
   Create an IAM user and an IAM group from the management console in order to run Terraform.
   Create an IAM group (pseudonym: deploy). Attach AdministratorAccess as the policy.
   Create an IAM user (pseudonym: terraform), giving it only Programmatic access for Access Type, and add it to the IAM group (pseudonym: deploy).
 
-- Create an S3 to store the Terraform State  
+- Create an S3 to store the Terraform State
   Create an S3 from the management console to manage the Terraform State.
-  However, if you have an environment where you can run the aws command and profile already configured, you can create an S3 by running the following command.  
+  However, if you have an environment where you can run the aws command and profile already configured, you can create an S3 by running the following command.
   https://github.com/y-miyazaki/cloud-commands/blob/master/cmd/awstfinitstate
 
 ```sh
@@ -67,9 +69,9 @@ region: ap-northeast-1
 --------------------------------------------------------------
 ```
 
-- terraform.{environment}.tfvars file to configure for each environment  
+- terraform.{environment}.tfvars file to configure for each environment
   You need to rename the linked file [terraform.example.tfvars](terraform/base/terraform.example.tfvars) and change each variable for your environment. The variables that need to be changed are marked with TODO comments; search for them in TODO.
-- main_provider.tf file to set for each environment  
+- main_provider.tf file to set for each environment
   Rename the linked file [main_provider.tf.example](terraform/base/main_provider.tf.example) to main_provider.tf. After that, you need to change each parameter. The variables that need to be changed are marked with TODO comments, search for them in TODO.
 
 ```terraform
@@ -119,7 +121,7 @@ provider "aws" {
 }
 ```
 
-- Running Terraform  
+- Running Terraform
   Run the terraform command: terraform init followed by terraform apply.
   You may find that terraform apply fails due to conflicts or other problems, so run it again and it will succeed.
 
@@ -214,6 +216,41 @@ https://docs.aws.amazon.com/securityhub/latest/userguide/securityhub-cis-control
     # "arn:aws:iam::{account id}:{iam user}"
     "arn:aws:iam::999999999999:root"
   ]
+```
+
+## subscriber_email_addresses
+
+The following are the supporting Budgets. If you want to receive Budgets notifications, you must set the email address for Budgets notifications to subscriber_email_addresses.
+
+```
+budgets = {
+  # TODO: need to set is_enabled for settings of budgets.
+  is_enabled = true
+  # Provides a budgets budget resource. Budgets use the cost visualisation provided
+  # by Cost Explorer to show you the status of your budgets, to provide forecasts of
+  # your estimated costs, and to track your AWS usage, including your free tier usage.
+  aws_budgets_budget = {
+    name = "budgets-monthly"
+    # TODO: need to change limit_amount for Service
+    limit_amount = "100.0"
+    time_unit    = "MONTHLY"
+    notification = [
+      {
+        comparison_operator = "GREATER_THAN"
+        threshold           = "80"
+        threshold_type      = "PERCENTAGE"
+        notification_type   = "ACTUAL"
+        # TODO: need to change subscriber_email_addresses.
+        # If the threshold is exceeded, you will be notified to the email address provided.
+        # At least one must set an email address.
+        subscriber_email_addresses = [
+          # example)
+          # "youremail@yourtest.test.hogehoge.com"
+        ]
+        subscriber_sns_topic_arns = null
+      }
+    ]
+  }
 ```
 
 # Not Required

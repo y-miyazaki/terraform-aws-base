@@ -12,51 +12,49 @@ module "aws_recipes_health" {
     description = lookup(var.health.aws_cloudwatch_event_rule, "description", "This cloudwatch event used for Health.")
   }
   aws_cloudwatch_event_target = {
-    arn = module.aws_recipes_lambda_create_health.arn
+    arn = module.lambda_function_health.lambda_function_arn
   }
   tags = var.tags
 }
 
 #--------------------------------------------------------------
 # Create Lambda function
+# https://registry.terraform.io/modules/terraform-aws-modules/lambda/aws/latest
 #--------------------------------------------------------------
-module "aws_recipes_lambda_create_health" {
-  source                   = "../../modules/aws/recipes/lambda/create"
-  is_enabled               = lookup(var.health, "is_enabled", true)
-  aws_cloudwatch_log_group = lookup(var.health, "aws_cloudwatch_log_group_lambda")
-  # Provides a Lambda Function resource.
-  # Lambda allows you to trigger execution of code in response to events in AWS, enabling serverless backend solutions. The Lambda Function itself includes source code and runtime configuration.
-  aws_lambda_function = {
-    filename                       = "../../lambda/outputs/cloudwatch_event_health_to_slack.zip"
-    s3_bucket                      = null
-    s3_key                         = null
-    s3_object_version              = null
-    function_name                  = "${var.name_prefix}cloudwatch-event-health"
-    dead_letter_config             = []
-    handler                        = "cloudwatch_event_health_to_slack"
-    role                           = module.aws_recipes_iam_lambda.arn
-    description                    = "This program sends the result of Health to Slack."
-    layers                         = []
-    memory_size                    = 128
-    runtime                        = "go1.x"
-    timeout                        = 300
-    reserved_concurrent_executions = null
-    publish                        = false
-    vpc_config                     = []
-    kms_key_arn                    = null
-    source_code_hash               = filebase64sha256("../../lambda/outputs/cloudwatch_event_health_to_slack.zip")
-    environment                    = lookup(var.health.aws_lambda_function, "environment")
+# tfsec:ignore:aws-lambda-enable-tracing
+module "lambda_function_health" {
+  source  = "terraform-aws-modules/lambda/aws"
+  version = "3.2.1"
+  create  = lookup(var.health, "is_enabled", true)
+
+  create_current_version_allowed_triggers = false
+  create_package                          = false
+  create_role                             = false
+
+  allowed_triggers = {
+    trigger = {
+      action              = "lambda:InvokeFunction"
+      event_source_token  = null
+      principal           = "events.amazonaws.com"
+      qualifier           = null
+      source_account      = null
+      source_arn          = module.aws_recipes_health.arn
+      statement_id        = "HealthDetectUnexpectedUsage"
+      statement_id_prefix = null
+    }
   }
-  # Creates a Lambda permission to allow external sources invoking the Lambda function (e.g. CloudWatch Event Rule, SNS or S3).
-  aws_lambda_permission = {
-    action              = "lambda:InvokeFunction"
-    event_source_token  = null
-    principal           = "events.amazonaws.com"
-    qualifier           = null
-    source_account      = null
-    source_arn          = module.aws_recipes_health.arn
-    statement_id        = "HealthDetectUnexpectedUsage"
-    statement_id_prefix = null
-  }
-  tags = var.tags
+  cloudwatch_logs_retention_in_days = var.health.aws_cloudwatch_log_group_lambda.retention_in_days
+  environment_variables             = lookup(var.health.aws_lambda_function, "environment")
+  description                       = "This program sends the result of Health to Slack."
+  function_name                     = "${var.name_prefix}cloudwatch-event-health"
+  handler                           = "cloudwatch_event_health_to_slack"
+  lambda_role                       = module.aws_recipes_iam_lambda.arn
+  local_existing_package            = "../../lambda/outputs/cloudwatch_event_health_to_slack.zip"
+  memory_size                       = 128
+  runtime                           = "go1.x"
+  timeout                           = 300
+  tags                              = var.tags
+  tracing_mode                      = "PassThrough"
+  vpc_subnet_ids                    = module.lambda_vpc.private_subnets
+  vpc_security_group_ids            = [module.lambda_vpc.default_security_group_id]
 }

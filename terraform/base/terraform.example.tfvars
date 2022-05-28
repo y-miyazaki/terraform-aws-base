@@ -694,6 +694,60 @@ iam = {
 # Common:Lambda
 #--------------------------------------------------------------
 common_lambda = {
+  vpc = {
+    # TODO: If you want to run LambdaFunctions inside a VPC, set to true. However,
+    # VPC requires more cost since you need to configure NAT Gateway and other settings.
+    is_enabled = false
+    name       = "vpc-lambda"
+    cidr       = "10.0.0.0/16"
+    azs = [
+      "ap-northeast-1a",
+      "ap-northeast-1c",
+      "ap-northeast-1d",
+    ]
+    private_subnets = [
+      "10.0.1.0/24",
+      "10.0.2.0/24",
+      "10.0.3.0/24"
+    ]
+    public_subnets = [
+      "10.0.101.0/24",
+      "10.0.102.0/24",
+      "10.0.103.0/24"
+    ]
+    enable_dns_support   = true
+    enable_dns_hostnames = true
+
+    # No NAT Gateway(private subnet can't access internet.)
+    #   enable_nat_gateway     = false
+    #   single_nat_gateway     = false
+    #   one_nat_gateway_per_az = false
+
+    # One NAT Gateway per subnet (default behavior)
+    # enable_nat_gateway = true
+    # single_nat_gateway = false
+    # one_nat_gateway_per_az = false
+
+    # Single NAT Gateway(high cost)
+    enable_nat_gateway     = true
+    single_nat_gateway     = true
+    one_nat_gateway_per_az = true
+
+    #   One NAT Gateway per availability zone
+    # enable_nat_gateway = true
+    # single_nat_gateway = false
+    # one_nat_gateway_per_az = true
+
+    # VPN Gateway
+    enable_vpn_gateway = false
+
+    # Flow Log(plain-text or parquet)
+    enable_flow_log                                 = true
+    create_flow_log_cloudwatch_log_group            = true
+    create_flow_log_cloudwatch_iam_role             = true
+    flow_log_cloudwatch_log_group_retention_in_days = 7
+    flow_log_file_format                            = "plain-text"
+  }
   aws_iam_role = {
     description = ""
     name        = "security-lambda-role"

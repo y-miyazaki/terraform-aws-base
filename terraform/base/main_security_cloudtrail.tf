@@ -67,7 +67,7 @@ locals {
     }
   )
   aws_sns_topic_subscription_cloudtrail = merge(var.security_cloudtrail.aws_sns_topic_subscription, {
-    endpoint = module.aws_recipes_lambda_create_cloudtrail.arn
+    endpoint = module.lambda_function_cloudtrail.lambda_function_arn
     }
   )
   aws_cloudwatch_log_group_cloudtrail = merge(var.security_cloudtrail.aws_cloudwatch_log_group, {
@@ -142,45 +142,41 @@ module "aws_recipes_cloudwatch_alarm_cloudtrail" {
 }
 #--------------------------------------------------------------
 # Create Lambda function
+# https://registry.terraform.io/modules/terraform-aws-modules/lambda/aws/latest
 #--------------------------------------------------------------
-module "aws_recipes_lambda_create_cloudtrail" {
-  source                   = "../../modules/aws/recipes/lambda/create"
-  is_enabled               = lookup(var.security_cloudtrail, "is_enabled", true)
-  aws_cloudwatch_log_group = lookup(var.security_cloudtrail, "aws_cloudwatch_log_group_lambda")
+# tfsec:ignore:aws-lambda-enable-tracing
+module "lambda_function_cloudtrail" {
+  source  = "terraform-aws-modules/lambda/aws"
+  version = "3.2.1"
+  create  = lookup(var.security_cloudtrail, "is_enabled", true)
 
-  # Provides a Lambda Function resource.
-  # Lambda allows you to trigger execution of code in response to events in AWS, enabling serverless backend solutions. The Lambda Function itself includes source code and runtime configuration.
-  aws_lambda_function = {
-    filename                       = "../../lambda/outputs/cloudwatch_alarm_to_sns_to_slack.zip"
-    s3_bucket                      = null
-    s3_key                         = null
-    s3_object_version              = null
-    function_name                  = "${var.name_prefix}cloudwatch-alarm-cloudtrail"
-    dead_letter_config             = []
-    handler                        = "cloudwatch_alarm_to_sns_to_slack"
-    role                           = module.aws_recipes_iam_lambda.arn
-    description                    = "This program sends the result of CloudTrail to Slack."
-    layers                         = []
-    memory_size                    = 128
-    runtime                        = "go1.x"
-    timeout                        = 300
-    reserved_concurrent_executions = null
-    publish                        = false
-    vpc_config                     = []
-    kms_key_arn                    = null
-    source_code_hash               = filebase64sha256("../../lambda/outputs/cloudwatch_alarm_to_sns_to_slack.zip")
-    environment                    = lookup(var.security_cloudtrail.aws_lambda_function, "environment")
+  create_current_version_allowed_triggers = false
+  create_package                          = false
+  create_role                             = false
+  allowed_triggers = {
+    trigger = {
+      action              = "lambda:InvokeFunction"
+      event_source_token  = null
+      principal           = "sns.amazonaws.com"
+      qualifier           = null
+      source_account      = null
+      source_arn          = module.aws_recipes_security_cloudtrail_v4.sns_topic_arn
+      statement_id        = "CloudTrailDetectUnexpectedUsage"
+      statement_id_prefix = null
+    }
   }
-  # Creates a Lambda permission to allow external sources invoking the Lambda function (e.g. CloudWatch Event Rule, SNS or S3).
-  aws_lambda_permission = {
-    action              = "lambda:InvokeFunction"
-    event_source_token  = null
-    principal           = "sns.amazonaws.com"
-    qualifier           = null
-    source_account      = null
-    source_arn          = module.aws_recipes_security_cloudtrail_v4.sns_topic_arn
-    statement_id        = "CloudTrailDetectUnexpectedUsage"
-    statement_id_prefix = null
-  }
-  tags = var.tags
+  cloudwatch_logs_retention_in_days = var.security_cloudtrail.aws_cloudwatch_log_group.retention_in_days
+  environment_variables             = lookup(var.security_cloudtrail.aws_lambda_function, "environment")
+  description                       = "This program sends the result of CloudTrail to Slack."
+  function_name                     = "${var.name_prefix}cloudwatch-alarm-cloudtrail"
+  handler                           = "cloudwatch_alarm_to_sns_to_slack"
+  lambda_role                       = module.aws_recipes_iam_lambda.arn
+  local_existing_package            = "../../lambda/outputs/cloudwatch_alarm_to_sns_to_slack.zip"
+  memory_size                       = 128
+  runtime                           = "go1.x"
+  timeout                           = 300
+  tags                              = var.tags
+  tracing_mode                      = "PassThrough"
+  vpc_subnet_ids                    = module.lambda_vpc.private_subnets
+  vpc_security_group_ids            = [module.lambda_vpc.default_security_group_id]
 }
