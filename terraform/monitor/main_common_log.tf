@@ -27,7 +27,7 @@ module "s3_application_log" {
   force_destroy                         = var.common_log.s3_application_log.force_destroy
   ignore_public_acls                    = var.common_log.s3_application_log.ignore_public_acls
   lifecycle_rule                        = var.common_log.s3_application_log.lifecycle_rule
-  logging                               = {}
+  logging                               = var.common_log.s3_application_log.logging
   restrict_public_buckets               = var.common_log.s3_application_log.restrict_public_buckets
   server_side_encryption_configuration  = var.common_log.s3_application_log.server_side_encryption_configuration
   tags                                  = var.tags

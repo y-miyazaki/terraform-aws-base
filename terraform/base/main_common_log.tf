@@ -13,7 +13,7 @@ locals {
   ]
 }
 #--------------------------------------------------------------
-# S3 for log
+# S3 for log.
 # https://registry.terraform.io/modules/terraform-aws-modules/s3-bucket/aws/latest
 #--------------------------------------------------------------
 module "s3_log" {
@@ -37,7 +37,7 @@ module "s3_log" {
 }
 #--------------------------------------------------------------
 # Provides a S3 bucket policy.
-# Policy for Config etc...
+# Policy for log.
 #--------------------------------------------------------------
 module "aws_recipes_s3_policy_security_log" {
   source               = "../../modules/aws/recipes/s3/policy/security"
@@ -50,7 +50,7 @@ module "aws_recipes_s3_policy_security_log" {
 }
 #--------------------------------------------------------------
 # Provides a S3 bucket policy.
-# Policy for Config etc...
+# Policy for log.
 #--------------------------------------------------------------
 module "aws_recipes_s3_policy_config_log" {
   source               = "../../modules/aws/recipes/s3/policy/config"
@@ -65,10 +65,23 @@ module "aws_recipes_s3_policy_config_log" {
 }
 #--------------------------------------------------------------
 # Provides a S3 bucket policy.
-# Policy for Config etc...
+# Policy for log.
 #--------------------------------------------------------------
 module "aws_recipes_s3_policy_lb_log_log" {
   source               = "../../modules/aws/recipes/s3/policy/lb_log"
+  attach_bucket_policy = false
+  bucket               = module.s3_log.s3_bucket_id
+  bucket_arn           = module.s3_log.s3_bucket_arn
+  depends_on = [
+    module.s3_log
+  ]
+}
+#--------------------------------------------------------------
+# Provides a S3 bucket policy.
+# Policy for log.
+#--------------------------------------------------------------
+module "aws_recipes_s3_policy_access_log_log" {
+  source               = "../../modules/aws/recipes/s3/policy/access_log"
   attach_bucket_policy = false
   bucket               = module.s3_log.s3_bucket_id
   bucket_arn           = module.s3_log.s3_bucket_arn
@@ -84,6 +97,7 @@ data "aws_iam_policy_document" "log" {
     module.aws_recipes_s3_policy_security_log.policy_json,
     module.aws_recipes_s3_policy_config_log.policy_json,
     module.aws_recipes_s3_policy_lb_log_log.policy_json,
+    module.aws_recipes_s3_policy_access_log_log.policy_json,
   ])
 }
 resource "aws_s3_bucket_policy" "log" {
@@ -92,7 +106,7 @@ resource "aws_s3_bucket_policy" "log" {
 }
 
 #--------------------------------------------------------------
-# S3 for cloudtrail
+# S3 for cloudtrail.
 # https://registry.terraform.io/modules/terraform-aws-modules/s3-bucket/aws/latest
 #--------------------------------------------------------------
 module "s3_cloudtrail" {
@@ -110,7 +124,7 @@ module "s3_cloudtrail" {
   lifecycle_rule       = var.common_log.s3_cloudtrail.lifecycle_rule
   logging = {
     target_bucket = module.s3_log.s3_bucket_id
-    target_prefix = "AccessLogs/"
+    target_prefix = "AccessLogs/${data.aws_caller_identity.current.account_id}/${local.s3_cloudtrail_bucket}/"
   }
   restrict_public_buckets              = var.common_log.s3_cloudtrail.restrict_public_buckets
   server_side_encryption_configuration = var.common_log.s3_cloudtrail.server_side_encryption_configuration

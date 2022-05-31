@@ -77,6 +77,13 @@ common_log = {
         ]
       }
     ]
+    # TODO: need to change for logging.
+    # example)
+    #    logging = {
+    #      target_bucket = "{your bucket}"
+    #      target_prefix = "AccessLogs/{your account id}/{your bucket}/"
+    #    }
+    logging                 = {}
     restrict_public_buckets = true
     server_side_encryption_configuration = {
       rule = {
