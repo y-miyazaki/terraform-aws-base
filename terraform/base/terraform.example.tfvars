@@ -429,7 +429,7 @@ iam = {
                 resources = [
                   # TODO: need to change AWS accound ID(99999999999) and role name
                   # Specify the original AWS account ID that will use the IAM Switch role.
-                  "arn:aws:iam::99999999999:role/base-iam-switch-to-administrator-role",
+                  "arn:aws:iam::999999999999:role/base-iam-switch-to-administrator-role",
                 ]
               },
             ]
@@ -452,7 +452,7 @@ iam = {
                 resources = [
                   # TODO: need to change AWS accound ID(99999999999) and role name
                   # Specify the original AWS account ID that will use the IAM Switch role.
-                  "arn:aws:iam::99999999999:role/base-iam-switch-to-developer-role",
+                  "arn:aws:iam::999999999999:role/base-iam-switch-to-developer-role",
                 ]
               },
             ]
@@ -475,7 +475,7 @@ iam = {
                 resources = [
                   # TODO: need to change AWS accound ID(99999999999) and role name
                   # Specify the original AWS account ID that will use the IAM Switch role.
-                  "arn:aws:iam::99999999999:role/base-iam-switch-to-operator-role",
+                  "arn:aws:iam::999999999999:role/base-iam-switch-to-operator-role",
                 ]
               },
             ]
@@ -498,7 +498,7 @@ iam = {
             description = ""
             # TODO: need to change AWS accound ID(99999999999)
             # Specify the original AWS account ID that will use the IAM Switch role.
-            account_id    = "99999999999"
+            account_id    = "999999999999"
             assume_policy = null
           }
           # TODO: need to set base policy.
@@ -526,7 +526,7 @@ iam = {
             description = ""
             # TODO: need to change AWS accound ID(99999999999)
             # Specify the original AWS account ID that will use the IAM Switch role.
-            account_id    = "99999999999"
+            account_id    = "999999999999"
             assume_policy = null
           }
           # TODO: need to set base policy.
@@ -623,7 +623,7 @@ iam = {
             description = ""
             # TODO: need to change AWS accound ID(99999999999)
             # Specify the original AWS account ID that will use the IAM Switch role.
-            account_id    = "99999999999"
+            account_id    = "999999999999"
             assume_policy = null
           }
           # TODO: need to set base policy.

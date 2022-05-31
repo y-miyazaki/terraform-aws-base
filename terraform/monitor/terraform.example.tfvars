@@ -254,12 +254,12 @@ common_lambda = {
   }
   aws_iam_role = {
     description = null
-    name        = "monitor-lambda-common-role"
+    name        = "monitor-lambda-role"
     path        = "/"
   }
   aws_iam_policy = {
     description = null
-    name        = "monitor-lambda-common-policy"
+    name        = "monitor-lambda-policy"
     path        = "/"
   }
   aws_cloudwatch_log_group_lambda = {
