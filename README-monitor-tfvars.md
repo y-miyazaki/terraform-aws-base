@@ -225,7 +225,7 @@ Basically, for notifications, you need an oauth access token from Slack and a sp
 If you can get it, please modify all of the following If there is no normal token and channel ID, you will not be notified, but the deployment itself will succeed.
 
 ```
-      # TODO: need to change SLACK_OAUTH_ACCESS_TOKEN.
+      # TODO: need to change SLACK_OAUTH_ACCESS_TOKEN.(bot token xoxb-xxxxxx....)
       SLACK_OAUTH_ACCESS_TOKEN = "xxxx-xxxxxxxxxxxxx-xxxxxxxxxxxxx-xxxxxxxxxxxxxxxxxxxxxxxx"
       # TODO: need to change SLACK_CHANNEL_ID.
       SLACK_CHANNEL_ID = "XXXXXXXXXXXXXX"

@@ -110,7 +110,7 @@ budgets = {
       # TODO: need to change MONTHLY_TARGET_COST.(unit USD)
       # Set an estimated monthly AWS cost.
       MONTHLY_TARGET_COST = 100
-      # TODO: need to change SLACK_OAUTH_ACCESS_TOKEN.
+      # TODO: need to change SLACK_OAUTH_ACCESS_TOKEN.(bot token xoxb-xxxxxx....)
       SLACK_OAUTH_ACCESS_TOKEN = "xxxx-xxxxxxxxxxxxx-xxxxxxxxxxxxx-xxxxxxxxxxxxxxxxxxxxxxxx"
       # TODO: need to change SLACK_CHANNEL_ID.
       SLACK_CHANNEL_ID = "XXXXXXXXXXXXXX"
@@ -152,7 +152,7 @@ health = {
   }
   aws_lambda_function = {
     environment = {
-      # TODO: need to change SLACK_OAUTH_ACCESS_TOKEN.
+      # TODO: need to change SLACK_OAUTH_ACCESS_TOKEN.(bot token xoxb-xxxxxx....)
       SLACK_OAUTH_ACCESS_TOKEN = "xxxx-xxxxxxxxxxxxx-xxxxxxxxxxxxx-xxxxxxxxxxxxxxxxxxxxxxxx"
       # TODO: need to change SLACK_CHANNEL_ID.
       SLACK_CHANNEL_ID = "XXXXXXXXXXXXXX"
@@ -183,7 +183,7 @@ trusted_advisor = {
   aws_lambda_function = {
     environment = {
       LANGUAGE = "en"
-      # TODO: need to change SLACK_OAUTH_ACCESS_TOKEN.
+      # TODO: need to change SLACK_OAUTH_ACCESS_TOKEN.(bot token xoxb-xxxxxx....)
       SLACK_OAUTH_ACCESS_TOKEN = "xxxx-xxxxxxxxxxxxx-xxxxxxxxxxxxx-xxxxxxxxxxxxxxxxxxxxxxxx"
       # TODO: need to change SLACK_CHANNEL_ID.
       SLACK_CHANNEL_ID = "XXXXXXXXXXXXXX"
@@ -698,55 +698,75 @@ common_lambda = {
     # TODO: If you want to run LambdaFunctions inside a VPC, set to true. However,
     # VPC requires more cost since you need to configure NAT Gateway and other settings.
     is_enabled = false
-    name       = "vpc-lambda"
-    cidr       = "10.0.0.0/16"
-    azs = [
-      "ap-northeast-1a",
-      "ap-northeast-1c",
-      "ap-northeast-1d",
-    ]
-    private_subnets = [
-      "10.0.1.0/24",
-      "10.0.2.0/24",
-      "10.0.3.0/24"
-    ]
-    public_subnets = [
-      "10.0.101.0/24",
-      "10.0.102.0/24",
-      "10.0.103.0/24"
-    ]
-    enable_dns_support   = true
-    enable_dns_hostnames = true
+    # TODO: If a VPC has already been established, specify false; if a new VPC is to be created, specify true.
+    create_vpc = true
 
-    # No NAT Gateway(private subnet can't access internet.)
-    #   enable_nat_gateway     = false
-    #   single_nat_gateway     = false
-    #   one_nat_gateway_per_az = false
+    # TODO: To specify a VPC that already exists, configure the following settings for Lambda.
+    # If var.common_lambda.vpc.is_enabled = true and var.common_lambda.vpc.create_vpc = false,
+    # the Lambda will be built in an existing VPC by referencing the parameters here.
+    exsits = {
+      private_subnets = [
+        "subnet-xxxxxxxxxxxxxxxxx",
+        "subnet-xxxxxxxxxxxxxxxxx",
+        "subnet-xxxxxxxxxxxxxxxxx",
+      ]
+      security_group_id = "sg-xxxxxxxxxxxxxxxxx"
+      private_subnets_us_east_1 = [
+        "subnet-xxxxxxxxxxxxxxxxx",
+        "subnet-xxxxxxxxxxxxxxxxx",
+        "subnet-xxxxxxxxxxxxxxxxx",
+      ]
+      security_group_id_us_east_1 = "sg-xxxxxxxxxxxxxxxxx"
+    }
+    # TODO: To specify a new VPC to be set up for Lambda, please set the following information.
+    # If var.common_lambda.vpc.is_enabled = true and var.common_lambda.vpc.create_vpc = true,
+    # a new VPC is built by referencing the parameters here.
+    new = {
+      name = "vpc-lambda"
+      cidr = "10.0.0.0/16"
+      azs = [
+        "ap-northeast-1a",
+        "ap-northeast-1c",
+        "ap-northeast-1d",
+      ]
+      azs_us_east_1 = [
+        "us-east-1a",
+        "us-east-1b",
+        "us-east-1c",
+      ]
+      private_subnets = [
+        "10.0.1.0/24",
+        "10.0.2.0/24",
+        "10.0.3.0/24"
+      ]
+      public_subnets = [
+        "10.0.101.0/24",
+        "10.0.102.0/24",
+        "10.0.103.0/24"
+      ]
+      enable_dns_support   = true
+      enable_dns_hostnames = true
 
-    # One NAT Gateway per subnet (default behavior)
-    # enable_nat_gateway = true
-    # single_nat_gateway = false
-    # one_nat_gateway_per_az = false
+      # No NAT Gateway(private subnet can't access internet.)
+      #   enable_nat_gateway     = false
+      #   single_nat_gateway     = false
+      #   one_nat_gateway_per_az = false
 
-    # Single NAT Gateway(high cost)
-    enable_nat_gateway     = true
-    single_nat_gateway     = true
-    one_nat_gateway_per_az = true
+      # One NAT Gateway per subnet (default behavior)
+      enable_nat_gateway     = true
+      single_nat_gateway     = false
+      one_nat_gateway_per_az = false
 
-    #   One NAT Gateway per availability zone
-    # enable_nat_gateway = true
-    # single_nat_gateway = false
-    # one_nat_gateway_per_az = true
+      # VPN Gateway
+      enable_vpn_gateway = false
 
-    # VPN Gateway
-    enable_vpn_gateway = false
-
-    # Flow Log(plain-text or parquet)
-    enable_flow_log                                 = true
-    create_flow_log_cloudwatch_log_group            = true
-    create_flow_log_cloudwatch_iam_role             = true
-    flow_log_cloudwatch_log_group_retention_in_days = 7
-    flow_log_file_format                            = "plain-text"
+      # Flow Log(plain-text or parquet)
+      enable_flow_log                                 = true
+      create_flow_log_cloudwatch_log_group            = true
+      create_flow_log_cloudwatch_iam_role             = true
+      flow_log_cloudwatch_log_group_retention_in_days = 7
+      flow_log_file_format                            = "plain-text"
+    }
   }
   aws_iam_role = {
     description = ""
@@ -763,161 +783,110 @@ common_lambda = {
 # Common:Log Bucket
 #--------------------------------------------------------------
 common_log = {
-  # A bucket that mainly stores common logs, such as Config logs and CloudTrail access logs.
-  aws_s3_bucket_common = {
-    aws_s3_bucket = {
-      bucket                    = "aws-log-common"
-      force_destroy             = true
-      object_lock_configuration = []
-    }
-    aws_s3_bucket_acl = {
-      acl                   = "log-delivery-write"
-      access_control_policy = []
-      expected_bucket_owner = null
-    }
-    aws_s3_bucket_versioning = {
-      versioning_configuration = [
-        {
-          status     = "Enabled"
-          mfa_delete = "Disabled"
+  #--------------------------------------------------------------
+  # S3 for log
+  # https://registry.terraform.io/modules/terraform-aws-modules/s3-bucket/aws/latest
+  #--------------------------------------------------------------
+  s3_log = {
+    bucket               = "aws-log-common"
+    create_bucket        = true
+    acl                  = "log-delivery-write"
+    attach_public_policy = true
+    block_public_acls    = true
+    block_public_policy  = true
+    force_destroy        = true
+    ignore_public_acls   = true
+    lifecycle_rule = [
+      {
+        id                                     = "default"
+        abort_incomplete_multipart_upload_days = 7
+        enabled                                = true
+        prefix                                 = null
+        expiration = [
+          {
+            # TODO: need to change days. default 3years.
+            days                         = 1095
+            expired_object_delete_marker = false
+          }
+        ]
+        transition = [
+          {
+            days          = 30
+            storage_class = "ONEZONE_IA"
+          }
+        ]
+        noncurrent_version_expiration = [
+          {
+            days = 30
+          }
+        ]
+      }
+    ]
+    restrict_public_buckets = true
+    server_side_encryption_configuration = {
+      rule = {
+        apply_server_side_encryption_by_default = {
+          sse_algorithm     = "AES256"
+          kms_master_key_id = null
         }
-      ]
+      }
     }
-    aws_s3_bucket_server_side_encryption_configuration = {
-      expected_bucket_owner = null
-      rule = [
-        {
-          apply_server_side_encryption_by_default = [
-            {
-              sse_algorithm     = "AES256"
-              kms_master_key_id = null
-            }
-          ]
-          bucket_key_enabled = null
-        }
-      ]
+    versioning = {
+      enabled = false
     }
-    aws_s3_bucket_logging = null
-    aws_s3_bucket_lifecycle_configuration = {
-      expected_bucket_owner = null
-      rule = [
-        {
-          abort_incomplete_multipart_upload_days = [
-            {
-              days_after_initiation = 7
-            }
-          ]
-          expiration = [
-            {
-              date = null
-              # TODO: need to change days. default 3 years.
-              days                         = 1095
-              expired_object_delete_marker = false
-            }
-          ]
-          filter = []
-          id     = "default"
-          noncurrent_version_expiration = [
-            {
-              newer_noncurrent_versions = null
-              # TODO: need to change days. default 30 days.
-              noncurrent_days = 30
-            }
-          ]
-          noncurrent_version_transition = []
-          prefix                        = null
-          status                        = "Enabled"
-          transition = [
-            {
-              date = null
-              # TODO: need to change days. default 30 days.
-              days          = 30
-              storage_class = "ONEZONE_IA"
-            }
-          ]
-        }
-      ]
-    }
-    s3_replication_configuration_role_arn   = null
-    aws_s3_bucket_replication_configuration = null
   }
-  # Mainly stores CloudTrail logs.
-  aws_s3_bucket_cloudtrail = {
-    aws_s3_bucket = {
-      bucket                    = "aws-log-cloudtrail"
-      force_destroy             = true
-      object_lock_configuration = []
-    }
-    aws_s3_bucket_acl = {
-      acl                   = "log-delivery-write"
-      access_control_policy = []
-      expected_bucket_owner = null
-    }
-    aws_s3_bucket_versioning = {
-      versioning_configuration = [
-        {
-          status     = "Enabled"
-          mfa_delete = "Disabled"
+
+  #--------------------------------------------------------------
+  # S3 for CloudTrail
+  # https://registry.terraform.io/modules/terraform-aws-modules/s3-bucket/aws/latest
+  #--------------------------------------------------------------
+  s3_cloudtrail = {
+    bucket               = "aws-log-cloudtrail"
+    create_bucket        = true
+    acl                  = "log-delivery-write"
+    attach_public_policy = true
+    block_public_acls    = true
+    block_public_policy  = true
+    force_destroy        = true
+    ignore_public_acls   = true
+    lifecycle_rule = [
+      {
+        id                                     = "default"
+        abort_incomplete_multipart_upload_days = 7
+        enabled                                = true
+        prefix                                 = null
+        expiration = [
+          {
+            # TODO: need to change days. default 3years.
+            days                         = 1095
+            expired_object_delete_marker = false
+          }
+        ]
+        transition = [
+          {
+            days          = 30
+            storage_class = "ONEZONE_IA"
+          }
+        ]
+        noncurrent_version_expiration = [
+          {
+            days = 30
+          }
+        ]
+      }
+    ]
+    restrict_public_buckets = true
+    server_side_encryption_configuration = {
+      rule = {
+        apply_server_side_encryption_by_default = {
+          sse_algorithm     = "AES256"
+          kms_master_key_id = null
         }
-      ]
+      }
     }
-    aws_s3_bucket_server_side_encryption_configuration = {
-      expected_bucket_owner = null
-      rule = [
-        {
-          apply_server_side_encryption_by_default = [
-            {
-              sse_algorithm     = "AES256"
-              kms_master_key_id = null
-            }
-          ]
-          bucket_key_enabled = null
-        }
-      ]
+    versioning = {
+      enabled = false
     }
-    aws_s3_bucket_logging = null
-    aws_s3_bucket_lifecycle_configuration = {
-      expected_bucket_owner = null
-      rule = [
-        {
-          abort_incomplete_multipart_upload_days = [
-            {
-              days_after_initiation = 7
-            }
-          ]
-          expiration = [
-            {
-              date = null
-              # TODO: need to change days. default 3 years.
-              days                         = 1095
-              expired_object_delete_marker = false
-            }
-          ]
-          filter = []
-          id     = "default"
-          noncurrent_version_expiration = [
-            {
-              newer_noncurrent_versions = null
-              # TODO: need to change days. default 30 days.
-              noncurrent_days = 30
-            }
-          ]
-          noncurrent_version_transition = []
-          prefix                        = null
-          status                        = "Enabled"
-          transition = [
-            {
-              date = null
-              # TODO: need to change days. default 30 days.
-              days          = 30
-              storage_class = "ONEZONE_IA"
-            }
-          ]
-        }
-      ]
-    }
-    s3_replication_configuration_role_arn   = null
-    aws_s3_bucket_replication_configuration = null
   }
 }
 #--------------------------------------------------------------
@@ -1060,7 +1029,7 @@ PATTERN
   }
   aws_lambda_function = {
     environment = {
-      # TODO: need to change SLACK_OAUTH_ACCESS_TOKEN.
+      # TODO: need to change SLACK_OAUTH_ACCESS_TOKEN.(bot token xoxb-xxxxxx....)
       SLACK_OAUTH_ACCESS_TOKEN = "xxxx-xxxxxxxxxxxxx-xxxxxxxxxxxxx-xxxxxxxxxxxxxxxxxxxxxxxx"
       # TODO: need to change SLACK_CHANNEL_ID.
       SLACK_CHANNEL_ID = "XXXXXXXXXXXXXX"
@@ -1220,7 +1189,7 @@ security_config = {
   }
   aws_lambda_function = {
     environment = {
-      # TODO: need to change SLACK_OAUTH_ACCESS_TOKEN.
+      # TODO: need to change SLACK_OAUTH_ACCESS_TOKEN.(bot token xoxb-xxxxxx....)
       SLACK_OAUTH_ACCESS_TOKEN = "xxxx-xxxxxxxxxxxxx-xxxxxxxxxxxxx-xxxxxxxxxxxxxxxxxxxxxxxx"
       # TODO: need to change SLACK_CHANNEL_ID.
       SLACK_CHANNEL_ID = "XXXXXXXXXXXXXX"
@@ -1394,7 +1363,7 @@ security_config_us_east_1 = {
   }
   aws_lambda_function = {
     environment = {
-      # TODO: need to change SLACK_OAUTH_ACCESS_TOKEN.
+      # TODO: need to change SLACK_OAUTH_ACCESS_TOKEN.(bot token xoxb-xxxxxx....)
       SLACK_OAUTH_ACCESS_TOKEN = "xxxx-xxxxxxxxxxxxx-xxxxxxxxxxxxx-xxxxxxxxxxxxxxxxxxxxxxxx"
       # TODO: need to change SLACK_CHANNEL_ID.
       SLACK_CHANNEL_ID = "XXXXXXXXXXXXXX"
@@ -1464,7 +1433,7 @@ security_guardduty = {
   }
   aws_lambda_function = {
     environment = {
-      # TODO: need to change SLACK_OAUTH_ACCESS_TOKEN.
+      # TODO: need to change SLACK_OAUTH_ACCESS_TOKEN.(bot token xoxb-xxxxxx....)
       SLACK_OAUTH_ACCESS_TOKEN = "xxxx-xxxxxxxxxxxxx-xxxxxxxxxxxxx-xxxxxxxxxxxxxxxxxxxxxxxx"
       # TODO: need to change SLACK_CHANNEL_ID.
       SLACK_CHANNEL_ID = "XXXXXXXXXXXXXX"

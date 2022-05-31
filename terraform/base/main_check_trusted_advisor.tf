@@ -45,6 +45,7 @@ module "lambda_function_trusted_advisor" {
       statement_id_prefix = null
     }
   }
+  attach_network_policy             = var.common_lambda.vpc.is_enabled
   cloudwatch_logs_retention_in_days = var.trusted_advisor.aws_cloudwatch_log_group_lambda.retention_in_days
   environment_variables             = lookup(var.trusted_advisor.aws_lambda_function, "environment")
   description                       = "This program sends the result of Trusted Advisor to Slack."
@@ -57,6 +58,9 @@ module "lambda_function_trusted_advisor" {
   timeout                           = 300
   tags                              = var.tags
   tracing_mode                      = "PassThrough"
-  vpc_subnet_ids                    = module.lambda_vpc.private_subnets
-  vpc_security_group_ids            = [module.lambda_vpc.default_security_group_id]
+  vpc_subnet_ids                    = var.common_lambda.vpc.is_enabled ? var.common_lambda.vpc.create_vpc ? module.lambda_vpc.private_subnets : var.common_lambda.vpc.exsits.private_subnets : []
+  vpc_security_group_ids            = var.common_lambda.vpc.is_enabled ? var.common_lambda.vpc.create_vpc ? [module.lambda_vpc.default_security_group_id] : [var.common_lambda.vpc.exsits.security_group_id] : []
+  depends_on = [
+    module.lambda_vpc
+  ]
 }

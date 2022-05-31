@@ -32,12 +32,11 @@ module "aws_recipes_security_config_create_v4_us_east_1" {
   is_s3_enabled                     = lookup(var.security_config_us_east_1, "is_s3_enabled", false)
   aws_config_configuration_recorder = local.aws_config_configuration_recorder_config_us_east_1
   aws_iam_role                      = local.aws_iam_role_config_us_east_1
-  #   aws_s3_bucket                     = local.aws_s3_bucket_config_us_east_1
   aws_s3_bucket_existing = {
     # The S3 bucket id
-    bucket_id = module.aws_recipes_s3_bucket_log_v4_common.id
+    bucket_id = module.s3_log.s3_bucket_id
     # The S3 bucket arn
-    bucket_arn = module.aws_recipes_s3_bucket_log_v4_common.arn
+    bucket_arn = module.s3_log.s3_bucket_arn
   }
   aws_config_delivery_channel              = local.aws_config_delivery_channel_config_us_east_1
   aws_config_configuration_recorder_status = lookup(var.security_config_us_east_1, "aws_config_configuration_recorder_status")
@@ -50,6 +49,9 @@ module "aws_recipes_security_config_create_v4_us_east_1" {
   }
   account_id = data.aws_caller_identity.current.account_id
   tags       = var.tags
+  depends_on = [
+    module.s3_log
+  ]
 }
 #--------------------------------------------------------------
 # Provides an AWS Config Rule for API Gateway
@@ -98,6 +100,7 @@ module "lambda_function_config_us_east_1" {
       statement_id_prefix = null
     }
   }
+  attach_network_policy             = var.common_lambda.vpc.is_enabled
   cloudwatch_logs_retention_in_days = var.security_config_us_east_1.aws_cloudwatch_log_group_lambda.retention_in_days
   environment_variables             = lookup(var.security_config_us_east_1.aws_lambda_function, "environment")
   description                       = "This program sends the result of config to Slack."
@@ -110,6 +113,9 @@ module "lambda_function_config_us_east_1" {
   timeout                           = 300
   tags                              = var.tags
   tracing_mode                      = "PassThrough"
-  vpc_subnet_ids                    = module.lambda_vpc.private_subnets
-  vpc_security_group_ids            = [module.lambda_vpc.default_security_group_id]
+  vpc_subnet_ids                    = var.common_lambda.vpc.is_enabled ? var.common_lambda.vpc.create_vpc ? module.lambda_vpc_us_east_1.private_subnets : var.common_lambda.vpc.exsits.private_subnets_us_east_1 : []
+  vpc_security_group_ids            = var.common_lambda.vpc.is_enabled ? var.common_lambda.vpc.create_vpc ? [module.lambda_vpc_us_east_1.default_security_group_id] : [var.common_lambda.vpc.exsits.security_group_id_east_1] : []
+  depends_on = [
+    module.lambda_vpc_us_east_1
+  ]
 }

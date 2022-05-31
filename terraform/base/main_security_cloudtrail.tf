@@ -114,9 +114,9 @@ module "aws_recipes_security_cloudtrail_v4" {
   #   aws_s3_bucket              = local.aws_s3_bucket_cloudtrail
   aws_s3_bucket_existing = {
     # The S3 bucket id
-    bucket_id = module.aws_recipes_s3_bucket_log_v4_cloudtrail.id
+    bucket_id = module.s3_cloudtrail.s3_bucket_id
     # The S3 bucket arn
-    bucket_arn = module.aws_recipes_s3_bucket_log_v4_cloudtrail.arn
+    bucket_arn = module.s3_cloudtrail.s3_bucket_arn
   }
   aws_cloudtrail  = local.aws_cloudtrail_cloudtrail
   cis_name_prefix = var.name_prefix
@@ -125,7 +125,7 @@ module "aws_recipes_security_cloudtrail_v4" {
   user            = var.deploy_user
   tags            = var.tags
   depends_on = [
-    module.aws_recipes_s3_bucket_log_v4_cloudtrail,
+    module.s3_cloudtrail,
     module.aws_recipes_s3_policy_cloudtrail_cloudtrail
   ]
 }
@@ -165,6 +165,7 @@ module "lambda_function_cloudtrail" {
       statement_id_prefix = null
     }
   }
+  attach_network_policy             = var.common_lambda.vpc.is_enabled
   cloudwatch_logs_retention_in_days = var.security_cloudtrail.aws_cloudwatch_log_group.retention_in_days
   environment_variables             = lookup(var.security_cloudtrail.aws_lambda_function, "environment")
   description                       = "This program sends the result of CloudTrail to Slack."
@@ -177,6 +178,9 @@ module "lambda_function_cloudtrail" {
   timeout                           = 300
   tags                              = var.tags
   tracing_mode                      = "PassThrough"
-  vpc_subnet_ids                    = module.lambda_vpc.private_subnets
-  vpc_security_group_ids            = [module.lambda_vpc.default_security_group_id]
+  vpc_subnet_ids                    = var.common_lambda.vpc.is_enabled ? var.common_lambda.vpc.create_vpc ? module.lambda_vpc.private_subnets : var.common_lambda.vpc.exsits.private_subnets : []
+  vpc_security_group_ids            = var.common_lambda.vpc.is_enabled ? var.common_lambda.vpc.create_vpc ? [module.lambda_vpc.default_security_group_id] : [var.common_lambda.vpc.exsits.security_group_id] : []
+  depends_on = [
+    module.lambda_vpc
+  ]
 }

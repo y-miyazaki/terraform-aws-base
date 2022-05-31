@@ -27,11 +27,14 @@ No modules.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_bucket"></a> [bucket](#input\_bucket) | (Required) The S3 Bucket ID. | `string` | n/a | yes |
+| <a name="input_attach_bucket_policy"></a> [attach\_bucket\_policy](#input\_attach\_bucket\_policy) | (Optional) Specify true to attach to S3BucketPolicy. | `bool` | `true` | no |
+| <a name="input_bucket"></a> [bucket](#input\_bucket) | (Optional) The S3 bucket name. | `string` | `null` | no |
 | <a name="input_bucket_arn"></a> [bucket\_arn](#input\_bucket\_arn) | (Required) The S3 bucket arn. | `string` | n/a | yes |
 | <a name="input_vpc_id"></a> [vpc\_id](#input\_vpc\_id) | (Required) The VPC ID. | `string` | n/a | yes |
 
 ## Outputs
 
-No outputs.
+| Name | Description |
+|------|-------------|
+| <a name="output_policy_json"></a> [policy\_json](#output\_policy\_json) | S3 bucket policy output as string. |
 <!-- END_TF_DOCS -->
