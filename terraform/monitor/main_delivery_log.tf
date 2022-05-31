@@ -17,7 +17,7 @@ locals {
       server_side_encryption = []
       extended_s3_configuration = [
         {
-          bucket_arn         = module.aws_recipes_s3_bucket_log_application.arn
+          bucket_arn         = module.s3_application_log.s3_bucket_arn
           buffer_size        = lookup(var.delivery_log.aws_kinesis_firehose_delivery_stream, "buffer_size", 5)
           buffer_interval    = lookup(var.delivery_log.aws_kinesis_firehose_delivery_stream, "buffer_interval", 60)
           prefix             = lookup(var.delivery_log.aws_kinesis_firehose_delivery_stream, "prefix", "/Application")

@@ -2,66 +2,40 @@
 # Local
 #--------------------------------------------------------------
 locals {
-  aws_s3_bucket = merge(var.common_log.aws_s3_bucket_application.aws_s3_bucket, { "bucket" = "${var.name_prefix}${var.common_log.aws_s3_bucket_application.aws_s3_bucket.bucket}-${random_id.this.dec}" })
-}
-#--------------------------------------------------------------
-# Provides a S3 bucket resource.
-# For application log.
-#--------------------------------------------------------------
-module "aws_recipes_s3_bucket_log_application" {
-  source        = "../../modules/aws/recipes/s3/bucket/log-v4"
-  tags          = var.tags
-  aws_s3_bucket = local.aws_s3_bucket
-  aws_s3_bucket_acl = lookup(var.common_log.aws_s3_bucket_application, "aws_s3_bucket_acl", {
-    acl = "log-delivery-write"
-    }
-  )
-  aws_s3_bucket_versioning = lookup(var.common_log.aws_s3_bucket_application, "aws_s3_bucket_versioning", {
-    versioning_configuration = [
-      {
-        status     = "Enabled"
-        mfa_delete = "Disabled"
-      }
-    ]
-    }
-  )
-  aws_s3_bucket_logging                              = lookup(var.common_log.aws_s3_bucket_application, "aws_s3_bucket_logging", null)
-  aws_s3_bucket_lifecycle_configuration              = lookup(var.common_log.aws_s3_bucket_application, "aws_s3_bucket_lifecycle_configuration")
-  aws_s3_bucket_server_side_encryption_configuration = lookup(var.common_log.aws_s3_bucket_application, "aws_s3_bucket_server_side_encryption_configuration", null)
-  s3_replication_configuration_role_arn              = lookup(var.common_log.aws_s3_bucket_application, "s3_replication_configuration_role_arn", null)
-  aws_s3_bucket_replication_configuration            = lookup(var.common_log.aws_s3_bucket_application, "aws_s3_bucket_replication_configuration", null)
+  s3_application_log_bucket = "${var.name_prefix}${var.common_log.s3_application_log.bucket}-${random_id.this.dec}"
 }
 
 #--------------------------------------------------------------
-# Provides a S3 bucket resource.
+# S3 for application log
+# https://registry.terraform.io/modules/terraform-aws-modules/s3-bucket/aws/latest
 #--------------------------------------------------------------
-module "aws_recipes_s3_policy_custom_log" {
-  source = "../../modules/aws/recipes/s3/policy/custom"
-  bucket = module.aws_recipes_s3_bucket_log_application.id
-  policy = <<POLICY
-{
-    "Id": "ExamplePolicy",
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Sid": "AllowSSLRequestsOnly",
-            "Action": "s3:*",
-            "Effect": "Deny",
-            "Resource": [
-                "${module.aws_recipes_s3_bucket_log_application.arn}",
-                "${module.aws_recipes_s3_bucket_log_application.arn}/*"
-            ],
-            "Condition": {
-                "Bool": {
-                     "aws:SecureTransport": "false"
-                }
-            },
-           "Principal": "*"
-        }
-    ]
-}
-POLICY
-  depends_on = [
-    module.aws_recipes_s3_bucket_log_application
-  ]
+#tfsec:ignore:aws-s3-enable-versioning
+#tfsec:ignore:aws-s3-block-public-policy
+#tfsec:ignore:aws-s3-ignore-public-acls
+#tfsec:ignore:aws-s3-no-public-buckets
+#tfsec:ignore:aws-s3-block-public-acls
+#tfsec:ignore:aws-s3-specify-public-access-block
+module "s3_application_log" {
+  source        = "terraform-aws-modules/s3-bucket/aws"
+  version       = "3.2.1"
+  create_bucket = var.common_log.s3_application_log.create_bucket
+
+  acl                                   = var.common_log.s3_application_log.acl
+  attach_deny_insecure_transport_policy = var.common_log.s3_application_log.attach_deny_insecure_transport_policy
+  attach_elb_log_delivery_policy        = var.common_log.s3_application_log.attach_elb_log_delivery_policy
+  attach_lb_log_delivery_policy         = var.common_log.s3_application_log.attach_lb_log_delivery_policy
+  attach_policy                         = var.common_log.s3_application_log.attach_policy
+  attach_public_policy                  = var.common_log.s3_application_log.attach_public_policy
+  attach_require_latest_tls_policy      = var.common_log.s3_application_log.attach_require_latest_tls_policy
+  block_public_acls                     = var.common_log.s3_application_log.block_public_acls
+  block_public_policy                   = var.common_log.s3_application_log.block_public_policy
+  bucket                                = local.s3_application_log_bucket
+  force_destroy                         = var.common_log.s3_application_log.force_destroy
+  ignore_public_acls                    = var.common_log.s3_application_log.ignore_public_acls
+  lifecycle_rule                        = var.common_log.s3_application_log.lifecycle_rule
+  logging                               = var.common_log.s3_application_log.logging
+  restrict_public_buckets               = var.common_log.s3_application_log.restrict_public_buckets
+  server_side_encryption_configuration  = var.common_log.s3_application_log.server_side_encryption_configuration
+  tags                                  = var.tags
+  versioning                            = var.common_log.s3_application_log.versioning
 }

@@ -3,7 +3,7 @@
 #--------------------------------------------------------------
 locals {
   aws_synthetics_canary = merge(var.synthetics_canary.aws_synthetics_canary, {
-    artifact_s3_location = var.synthetics_canary.aws_synthetics_canary.artifact_s3_location == null ? "s3://${module.aws_recipes_s3_bucket_log_application.id}/" : var.synthetics_canary.aws_synthetics_canaryartifact_s3_location
+    artifact_s3_location = var.synthetics_canary.aws_synthetics_canary.artifact_s3_location == null ? "s3://${module.s3_application_log.s3_bucket_id}/" : var.synthetics_canary.aws_synthetics_canaryartifact_s3_location
     name                 = "${var.name_prefix}${var.synthetics_canary.aws_synthetics_canary.name}"
     }
   )
@@ -13,7 +13,7 @@ locals {
   aws_iam_policy_synthetics_canary = merge(var.synthetics_canary.aws_iam_policy, {
     name = "${var.name_prefix}${var.synthetics_canary.aws_iam_policy.name}"
   })
-  s3_bucket_arn = var.synthetics_canary.aws_synthetics_canary.execution_role_arn == null ? module.aws_recipes_s3_bucket_log_application.arn : null
+  s3_bucket_arn = var.synthetics_canary.aws_synthetics_canary.execution_role_arn == null ? module.s3_application_log.s3_bucket_arn : null
 }
 #--------------------------------------------------------------
 #️ Provides a Synthetics Canary resource.

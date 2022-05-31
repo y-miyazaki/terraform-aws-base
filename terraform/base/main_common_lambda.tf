@@ -10,6 +10,8 @@ locals {
     name = "${var.name_prefix}${lookup(var.common_lambda.aws_iam_policy, "name")}"
     # Note: remove logs:CreateLogGroup from Action.
     # https://advancedweb.hu/how-to-manage-lambda-log-groups-with-terraform/
+    # AllowBudgets for cost notification .
+    # AllowSupports for Trusted Advisor notification.
     policy = <<POLICY
 {
   "Version": "2012-10-17",
@@ -31,7 +33,7 @@ locals {
         "ce:GetCostAndUsage"
       ],
       "Effect": "Allow",
-      "Resource": "*"
+      "Resource": "arn:aws:ce:us-east-1:${data.aws_caller_identity.current.account_id}:/GetCostAndUsage"
     },
     {
       "Sid": "AllowSupports",
@@ -52,6 +54,7 @@ POLICY
 #--------------------------------------------------------------
 module "aws_recipes_iam_lambda" {
   source         = "../../modules/aws/recipes/iam/role/lambda"
+  is_vpc         = var.common_lambda.vpc.is_enabled
   aws_iam_role   = local.aws_iam_role_lambda
   aws_iam_policy = local.aws_iam_policy_lambda
   tags           = var.tags

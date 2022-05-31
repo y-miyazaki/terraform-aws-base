@@ -51,3 +51,12 @@ resource "aws_iam_role_policy_attachment" "this" {
   role       = aws_iam_role.this.name
   policy_arn = aws_iam_policy.this.arn
 }
+
+#--------------------------------------------------------------
+# Attaches a Managed IAM Policy to an IAM role
+#--------------------------------------------------------------
+resource "aws_iam_role_policy_attachment" "vpc" {
+  count      = var.is_vpc ? 1 : 0
+  role       = aws_iam_role.this.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaENIManagementAccess"
+}

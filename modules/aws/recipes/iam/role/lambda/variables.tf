@@ -1,6 +1,11 @@
 #--------------------------------------------------------------
 # module variables
 #--------------------------------------------------------------
+variable "is_vpc" {
+  type        = bool
+  description = "(Optional) If you are deploying Lambda inside a VPC, set to true."
+  default     = false
+}
 variable "aws_iam_role" {
   type = object(
     {

@@ -14,51 +14,53 @@ module "aws_recipes_trusted_advisor" {
     is_enabled          = lookup(var.trusted_advisor.aws_cloudwatch_event_rule, "is_enabled", true)
   }
   aws_cloudwatch_event_target = {
-    arn = module.aws_recipes_lambda_create_trusted_advisor.arn
+    arn = module.lambda_function_trusted_advisor.lambda_function_arn
   }
   tags = var.tags
 }
 
+
 #--------------------------------------------------------------
 # Create Lambda function
+# https://registry.terraform.io/modules/terraform-aws-modules/lambda/aws/latest
 #--------------------------------------------------------------
-module "aws_recipes_lambda_create_trusted_advisor" {
-  source                   = "../../modules/aws/recipes/lambda/create"
-  is_enabled               = lookup(var.trusted_advisor, "is_enabled", true)
-  aws_cloudwatch_log_group = lookup(var.trusted_advisor, "aws_cloudwatch_log_group_lambda")
-  # Provides a Lambda Function resource.
-  # Lambda allows you to trigger execution of code in response to events in AWS, enabling serverless backend solutions. The Lambda Function itself includes source code and runtime configuration.
-  aws_lambda_function = {
-    filename                       = "../../lambda/outputs/cloudwatch_event_trusted_advisor_to_slack.zip"
-    s3_bucket                      = null
-    s3_key                         = null
-    s3_object_version              = null
-    function_name                  = "${var.name_prefix}cloudwatch-event-trusted-advisor"
-    dead_letter_config             = []
-    handler                        = "cloudwatch_event_trusted_advisor_to_slack"
-    role                           = module.aws_recipes_iam_lambda.arn
-    description                    = "This program sends the result of Trusted Advisor to Slack."
-    layers                         = []
-    memory_size                    = 128
-    runtime                        = "go1.x"
-    timeout                        = 300
-    reserved_concurrent_executions = null
-    publish                        = false
-    vpc_config                     = []
-    kms_key_arn                    = null
-    source_code_hash               = filebase64sha256("../../lambda/outputs/cloudwatch_event_trusted_advisor_to_slack.zip")
-    environment                    = lookup(var.trusted_advisor.aws_lambda_function, "environment")
+# tfsec:ignore:aws-lambda-enable-tracing
+module "lambda_function_trusted_advisor" {
+  source  = "terraform-aws-modules/lambda/aws"
+  version = "3.2.1"
+  create  = lookup(var.trusted_advisor, "is_enabled", true)
+
+  create_current_version_allowed_triggers = false
+  create_package                          = false
+  create_role                             = false
+  allowed_triggers = {
+    trigger = {
+      action              = "lambda:InvokeFunction"
+      event_source_token  = null
+      principal           = "events.amazonaws.com"
+      qualifier           = null
+      source_account      = null
+      source_arn          = module.aws_recipes_trusted_advisor.arn
+      statement_id        = "TrustedAdvisorDetectUnexpectedUsage"
+      statement_id_prefix = null
+    }
   }
-  # Creates a Lambda permission to allow external sources invoking the Lambda function (e.g. CloudWatch Event Rule, SNS or S3).
-  aws_lambda_permission = {
-    action              = "lambda:InvokeFunction"
-    event_source_token  = null
-    principal           = "events.amazonaws.com"
-    qualifier           = null
-    source_account      = null
-    source_arn          = module.aws_recipes_trusted_advisor.arn
-    statement_id        = "TrustedAdvisorDetectUnexpectedUsage"
-    statement_id_prefix = null
-  }
-  tags = var.tags
+  attach_network_policy             = var.common_lambda.vpc.is_enabled
+  cloudwatch_logs_retention_in_days = var.trusted_advisor.aws_cloudwatch_log_group_lambda.retention_in_days
+  environment_variables             = lookup(var.trusted_advisor.aws_lambda_function, "environment")
+  description                       = "This program sends the result of Trusted Advisor to Slack."
+  function_name                     = "${var.name_prefix}cloudwatch-event-trusted-advisor"
+  handler                           = "cloudwatch_event_trusted_advisor_to_slack"
+  lambda_role                       = module.aws_recipes_iam_lambda.arn
+  local_existing_package            = "../../lambda/outputs/cloudwatch_event_trusted_advisor_to_slack.zip"
+  memory_size                       = 128
+  runtime                           = "go1.x"
+  timeout                           = 300
+  tags                              = var.tags
+  tracing_mode                      = "PassThrough"
+  vpc_subnet_ids                    = var.common_lambda.vpc.is_enabled ? var.common_lambda.vpc.create_vpc ? module.lambda_vpc.private_subnets : var.common_lambda.vpc.exsits.private_subnets : []
+  vpc_security_group_ids            = var.common_lambda.vpc.is_enabled ? var.common_lambda.vpc.create_vpc ? [module.lambda_vpc.default_security_group_id] : [var.common_lambda.vpc.exsits.security_group_id] : []
+  depends_on = [
+    module.lambda_vpc
+  ]
 }

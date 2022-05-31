@@ -22,7 +22,7 @@ locals {
         "logs:FilterLogEvents"
       ],
       "Effect": "Allow",
-      "Resource": "*"
+      "Resource": "arn:aws:logs:*:${data.aws_caller_identity.current.account_id}:log-group:*"
     },
     {
       "Sid": "AllowSupports",
@@ -75,6 +75,7 @@ POLICY
 #--------------------------------------------------------------
 module "aws_recipes_iam_role_lambda" {
   source = "../../modules/aws/recipes/iam/role/lambda"
+  is_vpc = var.common_lambda.vpc.is_enabled
   aws_iam_role = merge(var.common_lambda.aws_iam_role, {
     name = "${var.name_prefix}${lookup(var.common_lambda.aws_iam_role, "name")}"
     }
@@ -134,13 +135,26 @@ module "aws_recipes_lambda_create_lambda_metric" {
     timeout                        = 300
     reserved_concurrent_executions = null
     publish                        = false
-    vpc_config                     = []
     kms_key_arn                    = null
     source_code_hash               = filebase64sha256("../../lambda/outputs/cloudwatch_alarm_to_sns_to_slack.zip")
     environment                    = lookup(var.common_lambda.metric.aws_lambda_function, "environment")
+    vpc_config = var.common_lambda.vpc.is_enabled ? var.common_lambda.vpc.create_vpc ? [
+      {
+        subnet_ids         = module.lambda_vpc.private_subnets
+        security_group_ids = [module.lambda_vpc.default_security_group_id]
+      }
+      ] : [
+      {
+        subnet_ids         = var.common_lambda.vpc.exsits.private_subnets
+        security_group_ids = [var.common_lambda.vpc.exsits.security_group_id]
+      }
+    ] : []
   }
   # Creates a Lambda permission to allow external sources invoking the Lambda function (e.g. CloudWatch Event Rule, SNS or S3).
   tags = var.tags
+  depends_on = [
+    module.lambda_vpc
+  ]
 }
 
 #--------------------------------------------------------------
@@ -213,13 +227,26 @@ module "aws_recipes_lambda_create_lambda_log" {
     timeout                        = 300
     reserved_concurrent_executions = null
     publish                        = false
-    vpc_config                     = []
     kms_key_arn                    = null
     source_code_hash               = filebase64sha256("../../lambda/outputs/cloudwatch_alarm_to_sns_to_slack.zip")
     environment                    = lookup(var.common_lambda.log.aws_lambda_function, "environment")
+    vpc_config = var.common_lambda.vpc.is_enabled ? var.common_lambda.vpc.create_vpc ? [
+      {
+        subnet_ids         = module.lambda_vpc_us_east_1.private_subnets
+        security_group_ids = [module.lambda_vpc_us_east_1.default_security_group_id]
+      }
+      ] : [
+      {
+        subnet_ids         = var.common_lambda.vpc.exsits.private_subnets
+        security_group_ids = [var.common_lambda.vpc.exsits.security_group_id]
+      }
+    ] : []
   }
   # Creates a Lambda permission to allow external sources invoking the Lambda function (e.g. CloudWatch Event Rule, SNS or S3).
   tags = var.tags
+  depends_on = [
+    module.lambda_vpc_us_east_1
+  ]
 }
 #--------------------------------------------------------------
 # Create Lambda Permission
