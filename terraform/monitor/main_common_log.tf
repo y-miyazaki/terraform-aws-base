@@ -15,7 +15,6 @@ locals {
 #tfsec:ignore:aws-s3-no-public-buckets
 #tfsec:ignore:aws-s3-block-public-acls
 #tfsec:ignore:aws-s3-specify-public-access-block
-
 module "s3_application_log" {
   source        = "terraform-aws-modules/s3-bucket/aws"
   version       = "3.2.1"
