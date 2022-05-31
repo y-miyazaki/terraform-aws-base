@@ -9,6 +9,11 @@ locals {
 # S3 for application log
 # https://registry.terraform.io/modules/terraform-aws-modules/s3-bucket/aws/latest
 #--------------------------------------------------------------
+#tfsec:ignore:aws-s3-enable-versioning
+#tfsec:ignore:aws-s3-block-public-policy
+#tfsec:ignore:aws-s3-ignore-public-acls
+#tfsec:ignore:aws-s3-no-public-buckets
+#tfsec:ignore:aws-s3-specify-public-access-block
 module "s3_application_log" {
   source        = "terraform-aws-modules/s3-bucket/aws"
   version       = "3.2.1"
