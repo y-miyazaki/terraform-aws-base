@@ -4,21 +4,37 @@
 data "aws_iam_policy_document" "this" {
   version = "2012-10-17"
   statement {
-    sid    = "AllowLBPutAccessLog"
-    effect = "Allow"
+    sid = "AWSLogDeliveryWrite"
     principals {
-      type = "AWS"
-      # see principal account list
-      # https://docs.aws.amazon.com/ja_jp/elasticloadbalancing/latest/application/load-balancer-access-logs.html#access-logging-bucket-permissions
-      identifiers = [
-        var.principal_account_id,
-      ]
+      type        = "Service"
+      identifiers = ["delivery.logs.amazonaws.com"]
     }
+    effect = "Allow"
     actions = [
-      "s3:PutObject"
+      "s3:PutObject",
     ]
     resources = [
       "${var.bucket_arn}/*",
+    ]
+    condition {
+      test     = "StringEquals"
+      variable = "s3:x-amz-acl"
+      values   = ["bucket-owner-full-control"]
+    }
+  }
+
+  statement {
+    sid    = "AWSLogDeliveryAclCheck"
+    effect = "Allow"
+    principals {
+      type        = "Service"
+      identifiers = ["delivery.logs.amazonaws.com"]
+    }
+    actions = [
+      "s3:GetBucketAcl",
+    ]
+    resources = [
+      var.bucket_arn,
     ]
   }
 }
@@ -26,6 +42,7 @@ data "aws_iam_policy_document" "this" {
 # Attaches a policy to an S3 bucket resource.
 #--------------------------------------------------------------
 resource "aws_s3_bucket_policy" "this" {
+  count  = var.attach_bucket_policy && var.bucket != null ? 1 : 0
   bucket = var.bucket
   policy = data.aws_iam_policy_document.this.json
 }

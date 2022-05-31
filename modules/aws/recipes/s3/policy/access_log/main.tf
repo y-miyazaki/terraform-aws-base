@@ -1,41 +1,21 @@
 #--------------------------------------------------------------
-# Provides IAM Policy document.
+# Generates an IAM policy document in JSON format for use with resources that expect policy documents such as aws_iam_policy.
 #--------------------------------------------------------------
 data "aws_iam_policy_document" "this" {
   version = "2012-10-17"
-
   statement {
-    sid    = "AWSCloudTrailAclCheck"
+    sid    = "AWSAccessLog"
     effect = "Allow"
     principals {
       type        = "Service"
-      identifiers = ["cloudtrail.amazonaws.com"]
+      identifiers = ["logging.s3.amazonaws.com"]
     }
     actions = [
-      "s3:GetBucketAcl"
+      "s3:PutObject",
     ]
     resources = [
-      var.bucket_arn
+      "${var.bucket_arn}/*",
     ]
-  }
-  statement {
-    sid    = "AWSCloudTrailWrite"
-    effect = "Allow"
-    principals {
-      type        = "Service"
-      identifiers = ["cloudtrail.amazonaws.com"]
-    }
-    actions = [
-      "s3:PutObject"
-    ]
-    resources = [
-      "${var.bucket_arn}/AWSLogs/${var.account_id}/*"
-    ]
-    condition {
-      test     = "StringEquals"
-      variable = "s3:x-amz-acl"
-      values   = ["bucket-owner-full-control"]
-    }
   }
 }
 #--------------------------------------------------------------
