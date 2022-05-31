@@ -28,7 +28,7 @@ No modules.
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | <a name="input_account_id"></a> [account\_id](#input\_account\_id) | (Required) AWS account ID for member account. | `string` | n/a | yes |
-| <a name="input_attach_bucket_policy"></a> [attach\_bucket\_policy](#input\_attach\_bucket\_policy) | (Optional) Specify true to attach to S3BucketPolicy. | `bool` | `true` | no |
+| <a name="input_attach_bucket_policy"></a> [attach\_bucket\_policy](#input\_attach\_bucket\_policy) | (Optional) Specify true to attach to S3BucketPolicy. | `bool` | `false` | no |
 | <a name="input_bucket"></a> [bucket](#input\_bucket) | (Optional) The S3 bucket name. | `string` | `null` | no |
 | <a name="input_bucket_arn"></a> [bucket\_arn](#input\_bucket\_arn) | (Required) The S3 bucket arn. | `string` | n/a | yes |
 

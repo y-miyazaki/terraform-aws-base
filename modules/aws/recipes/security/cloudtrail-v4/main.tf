@@ -825,6 +825,7 @@ POLICY
 #--------------------------------------------------------------
 # Provides an IAM policy.
 #--------------------------------------------------------------
+#tfsec:ignore:aws-iam-no-policy-wildcards
 resource "aws_iam_policy" "this" {
   count       = var.is_enabled ? 1 : 0
   description = lookup(var.aws_iam_policy, "description", null)
