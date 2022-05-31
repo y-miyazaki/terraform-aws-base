@@ -18,15 +18,15 @@ If you need to adjust the parameters, you can do so by yourself by searching TOD
 
 This section describes the initial settings for running [Base's Terraform](./terraform/base/). If an item has already been addressed, please skip to the next section.
 
-- Remove the access key from the root account
+- Remove the access key from the root account  
   Since this is a security issue, let's remove the access key from the root account from the management console.
 
-- Manual creation of IAM user and IAM group to run Terraform
+- Manual creation of IAM user and IAM group to run Terraform  
   Create an IAM user and an IAM group from the management console in order to run Terraform.
   Create an IAM group (pseudonym: deploy). Attach AdministratorAccess as the policy.
   Create an IAM user (pseudonym: terraform), giving it only Programmatic access for Access Type, and add it to the IAM group (pseudonym: deploy).
 
-- Create an S3 to store the Terraform State
+- Create an S3 to store the Terraform State  
   Create an S3 from the management console to manage the Terraform State.
   However, if you have an environment where you can run the aws command and profile already configured, you can create an S3 by running the following command.
   https://github.com/y-miyazaki/cloud-commands/blob/master/cmd/awstfinitstate
@@ -69,9 +69,9 @@ region: ap-northeast-1
 --------------------------------------------------------------
 ```
 
-- terraform.{environment}.tfvars file to configure for each environment
+- terraform.{environment}.tfvars file to configure for each environment  
   You need to rename the linked file [terraform.example.tfvars](terraform/base/terraform.example.tfvars) and change each variable for your environment. The variables that need to be changed are marked with TODO comments; search for them in TODO.
-- main_provider.tf file to set for each environment
+- main_provider.tf file to set for each environment  
   Rename the linked file [main_provider.tf.example](terraform/base/main_provider.tf.example) to main_provider.tf. After that, you need to change each parameter. The variables that need to be changed are marked with TODO comments, search for them in TODO.
 
 ```terraform
@@ -121,7 +121,7 @@ provider "aws" {
 }
 ```
 
-- Running Terraform
+- Running Terraform  
   Run the terraform command: terraform init followed by terraform apply.
   You may find that terraform apply fails due to conflicts or other problems, so run it again and it will succeed.
 
