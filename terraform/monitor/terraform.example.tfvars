@@ -874,7 +874,7 @@ cloudwatch_event_ec2 = {
 # when you don't have any customer traffic on your applications. By using canaries,
 # you can discover issues before your customers do.
 #
-# Using Sythetics Canary, the status code is checked against the specified URL,
+# Using Synthetics Canary, the status code is checked against the specified URL,
 # and if an unexpected status code is returned, the user is notified via Slack.
 # https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Synthetics_Canaries.html
 #--------------------------------------------------------------
