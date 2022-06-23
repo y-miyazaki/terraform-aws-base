@@ -855,9 +855,9 @@ cloudwatch_event_ec2 = {
     environment = {
       LANGUAGE = "en"
       # TODO: need to change SLACK_OAUTH_ACCESS_TOKEN.(bot token xoxb-xxxxxx....)
-      SLACK_OAUTH_ACCESS_TOKEN = "***REMOVED***"
+      SLACK_OAUTH_ACCESS_TOKEN = "xxxx-xxxxxxxxxxxxx-xxxxxxxxxxxxx-xxxxxxxxxxxxxxxxxxxxxxxx"
       # TODO: need to change SLACK_CHANNEL_ID.
-      SLACK_CHANNEL_ID = "C02KASD6KRP"
+      SLACK_CHANNEL_ID = "XXXXXXXXXXXXXX"
       LOGGER_FORMATTER = "json"
       LOGGER_OUT       = "stdout"
       LOGGER_LEVEL     = "warn"
