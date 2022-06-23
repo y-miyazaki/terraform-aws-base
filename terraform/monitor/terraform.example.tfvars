@@ -833,6 +833,39 @@ metric_resource_ses = {
   ]
 }
 #--------------------------------------------------------------
+# CloudWatch Events:EC2
+# The following events are monitored.
+# - EC2 Instance Rebalance Recommendation
+# - EC2 Spot Instance Interruption Warning
+#--------------------------------------------------------------
+cloudwatch_event_ec2 = {
+  # TODO: need to set is_enabled for settings of EC2.
+  is_enabled = false
+  aws_cloudwatch_event_rule = {
+    name        = "ec2-cloudwatch-event-rule"
+    description = "This cloudwatch event used for EC2."
+    is_enabled  = true
+  }
+  aws_cloudwatch_log_group_lambda = {
+    # TODO: need to change retention_in_days for each services.
+    retention_in_days = 7
+    kms_key_id        = null
+  }
+  aws_lambda_function = {
+    environment = {
+      LANGUAGE = "en"
+      # TODO: need to change SLACK_OAUTH_ACCESS_TOKEN.(bot token xoxb-xxxxxx....)
+      SLACK_OAUTH_ACCESS_TOKEN = "xoxb-1158403095506-2644348727010-6eDFJhs71g9TNGHHGZc5QPNe"
+      # TODO: need to change SLACK_CHANNEL_ID.
+      SLACK_CHANNEL_ID = "C02KASD6KRP"
+      LOGGER_FORMATTER = "json"
+      LOGGER_OUT       = "stdout"
+      LOGGER_LEVEL     = "warn"
+    }
+  }
+}
+
+#--------------------------------------------------------------
 # Metrics:Synthetics Canary
 # You can use Amazon CloudWatch Synthetics to create canaries,
 # configurable scripts that run on a schedule, to monitor your endpoints and APIs.

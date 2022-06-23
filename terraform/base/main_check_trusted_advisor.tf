@@ -2,13 +2,13 @@
 # For Trusted Advisor
 #--------------------------------------------------------------
 #--------------------------------------------------------------
-# Enables Security Hub for this AWS account.
+# Provides an Trusted Advisor.
 #--------------------------------------------------------------
-module "aws_recipes_trusted_advisor" {
-  source     = "../../modules/aws/recipes/trusted_advisor"
+module "aws_recipes_cloudwatch_events_trusted_advisor" {
+  source     = "../../modules/aws/recipes/cloudwatch/events/trusted_advisor"
   is_enabled = lookup(var.trusted_advisor, "is_enabled", true)
   aws_cloudwatch_event_rule = {
-    name                = "${var.name_prefix}${lookup(var.trusted_advisor.aws_cloudwatch_event_rule, "name", "budgets")}"
+    name                = "${var.name_prefix}${lookup(var.trusted_advisor.aws_cloudwatch_event_rule, "name", "trusted-advisor-cloudwatch-event-rule")}"
     schedule_expression = lookup(var.trusted_advisor.aws_cloudwatch_event_rule, "schedule_expression", "cron(0 0 * * ? *)")
     description         = lookup(var.trusted_advisor.aws_cloudwatch_event_rule, "description", null)
     is_enabled          = lookup(var.trusted_advisor.aws_cloudwatch_event_rule, "is_enabled", true)
@@ -18,7 +18,6 @@ module "aws_recipes_trusted_advisor" {
   }
   tags = var.tags
 }
-
 
 #--------------------------------------------------------------
 # Create Lambda function
@@ -40,7 +39,7 @@ module "lambda_function_trusted_advisor" {
       principal           = "events.amazonaws.com"
       qualifier           = null
       source_account      = null
-      source_arn          = module.aws_recipes_trusted_advisor.arn
+      source_arn          = module.aws_recipes_cloudwatch_events_trusted_advisor.arn
       statement_id        = "TrustedAdvisorDetectUnexpectedUsage"
       statement_id_prefix = null
     }
@@ -51,7 +50,7 @@ module "lambda_function_trusted_advisor" {
   description                       = "This program sends the result of Trusted Advisor to Slack."
   function_name                     = "${var.name_prefix}cloudwatch-event-trusted-advisor"
   handler                           = "cloudwatch_event_trusted_advisor_to_slack"
-  lambda_role                       = module.aws_recipes_iam_lambda.arn
+  lambda_role                       = module.aws_recipes_iam_role_lambda.arn
   local_existing_package            = "../../lambda/outputs/cloudwatch_event_trusted_advisor_to_slack.zip"
   memory_size                       = 128
   runtime                           = "go1.x"

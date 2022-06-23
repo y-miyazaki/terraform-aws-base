@@ -171,7 +171,7 @@ module "lambda_function_cloudtrail" {
   description                       = "This program sends the result of CloudTrail to Slack."
   function_name                     = "${var.name_prefix}cloudwatch-alarm-cloudtrail"
   handler                           = "cloudwatch_alarm_to_sns_to_slack"
-  lambda_role                       = module.aws_recipes_iam_lambda.arn
+  lambda_role                       = module.aws_recipes_iam_role_lambda.arn
   local_existing_package            = "../../lambda/outputs/cloudwatch_alarm_to_sns_to_slack.zip"
   memory_size                       = 128
   runtime                           = "go1.x"

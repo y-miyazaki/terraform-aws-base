@@ -22,7 +22,7 @@ data "aws_iam_policy_document" "this" {
 # Attaches a policy to an S3 bucket resource.
 #--------------------------------------------------------------
 resource "aws_s3_bucket_policy" "this" {
-  count  = var.attach_bucket_policy && var.bucket != null ? 1 : 0
+  count  = var.attach_bucket_policy ? 1 : 0
   bucket = var.bucket
   policy = data.aws_iam_policy_document.this.json
 }
