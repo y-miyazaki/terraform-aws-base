@@ -9,12 +9,12 @@ locals {
     for k, v in(var.tags == null ? {} : var.tags) : k => v if lookup(data.aws_default_tags.provider.tags, k, null) == null || lookup(data.aws_default_tags.provider.tags, k, null) != v
   }
 }
-##--------------------------------------------------------------
+#--------------------------------------------------------------
 # Use this data source to get the default tags configured on the provider.
 #--------------------------------------------------------------
 data "aws_default_tags" "provider" {}
 
-# --------------------------------------------------------------
+#--------------------------------------------------------------
 # Provides an IAM role.
 #--------------------------------------------------------------
 resource "aws_iam_role" "this" {

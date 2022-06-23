@@ -150,7 +150,7 @@ module "aws_recipes_lambda_create_lambda_metric" {
       }
     ] : []
   }
-  # Creates a Lambda permission to allow external sources invoking the Lambda function (e.g. CloudWatch Event Rule, SNS or S3).
+  # Creates a Lambda permission to allow external sources invoking the Lambda function (e.g. CloudWatch Events Rule, SNS or S3).
   tags = var.tags
   depends_on = [
     module.lambda_vpc
@@ -242,7 +242,7 @@ module "aws_recipes_lambda_create_lambda_log" {
       }
     ] : []
   }
-  # Creates a Lambda permission to allow external sources invoking the Lambda function (e.g. CloudWatch Event Rule, SNS or S3).
+  # Creates a Lambda permission to allow external sources invoking the Lambda function (e.g. CloudWatch Eventss Rule, SNS or S3).
   tags = var.tags
   depends_on = [
     module.lambda_vpc_us_east_1

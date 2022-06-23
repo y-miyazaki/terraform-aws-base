@@ -16,6 +16,7 @@ Basically, it is designed to be turned on and off for each setting and function 
 - monitor  
   [terraform/monitor/terraform.example.tfvars](./terraform/monitor/terraform.example.tfvars)  
   Document: [README-monitor-tfvars.md](./README-monitor-tfvars.md)
+
 # INDEX
 
 - [Required](#required)
@@ -48,6 +49,8 @@ Basically, it is designed to be turned on and off for each setting and function 
       - [Metrics:RDS](#metricsrds)
       - [Metrics:SES](#metricsses)
       - [Metrics:Synthetics Canary](#metricssynthetics-canary)
+    - [CloudWatch Events(EventBridge)](#cloudwatch-eventseventbridge)
+      - [CloudWatch Events:EC2](#cloudwatch-eventsec2)
 - [S3 bucket list](#s3-bucket-list)
 
 ## Required
@@ -60,6 +63,7 @@ Basically, it is designed to be turned on and off for each setting and function 
   https://slack.dev/node-slack-sdk/getting-started
 
 ## Functions
+
 ## Base
 
 This is a description of [Terraform's Base](./terraform/base/). The following contents provide an overview of each function.
@@ -151,7 +155,6 @@ However, Trusted Advisor requires the support plan to be signed up for the Busin
 
 ![Trusted Advisor](image/slack_trusted_advisor.png)
 
-
 # Monitor
 
 This is a description of [Terraform's Monitor](./terraform/monitor/). The following contents provide an overview of each function.
@@ -167,6 +170,7 @@ https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/WhatIsCloudWatchLogs.ht
 ### Log:Application
 
 The filter function of CloudWatchLogs can be used to check specified logs with specified filter patterns. Those that hit the filter pattern will be notified by Slack via Lambda.
+
 ### Log:Postgres
 
 The filter function of CloudWatchLogs can be used to check specified logs with specified filter patterns. Those that hit the filter pattern will be notified by Slack via Lambda.
@@ -184,17 +188,16 @@ Metrics about ALB will be checked and you will be notified via Slack if the spec
 https://docs.aws.amazon.com/elasticloadbalancing/latest/application/load-balancer-cloudwatch-metrics.html
 
 ### Metrics:API Gateway
+
 Metrics about API Gateway will be checked and you will be notified via Slack if the specified threshold is exceeded.
 
 https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-metrics-and-dimensions.html
-
 
 ### Metrics:Cloudfront
 
 Metrics about Cloudfront will be checked and you will be notified via Slack if the specified threshold is exceeded.
 
 https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/monitoring-using-cloudwatch.html
-
 
 ### Metrics:EC2
 
@@ -227,6 +230,7 @@ Metrics about SES will be checked and you will be notified via Slack if the spec
 https://docs.aws.amazon.com/ses/latest/dg/event-publishing-retrieving-cloudwatch.html
 
 ### Metrics:Synthetics Canary
+
 You can use Amazon CloudWatch Synthetics to create canaries, configurable scripts that run on a schedule, to monitor your endpoints and APIs. Canaries follow the same routes and perform the same actions as a customer, which makes it possible for you to continually verify your customer experience even when you don't have any customer traffic on your applications. By using canaries, you can discover issues before your customers do.
 
 Using Sythetics Canary, the status code is checked against the specified URL,
@@ -234,12 +238,27 @@ and if an unexpected status code is returned, the user is notified via Slack.
 
 https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Synthetics_Canaries.html
 
+## CloudWatch Events(EventBridge)
+
+Amazon EventBridge is a serverless event bus service that you can use to connect your applications with data from a variety of sources. EventBridge delivers a stream of real-time data from your applications, software as a service (SaaS) applications, and AWS services to targets such as AWS Lambda functions, HTTP invocation endpoints using API destinations, or event buses in other AWS accounts.
+
+https://docs.aws.amazon.com/eventbridge/latest/userguide/eb-what-is.html
+
+### CloudWatch Events:EC2
+
+The following events are monitored.
+
+- EC2 Instance Rebalance Recommendation  
+  https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/rebalance-recommendations.html
+- EC2 Spot Instance Interruption Warning  
+  https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/spot-instance-termination-notices.html
+
 ## S3 bucket list
 
 This is a description of the S3 bucket that will be created and the data in the bucket.
 
-| Category       | bucket              | Directory                                                       | Description                                                                                                                                                                                                                                                                                                                                                                                                                                           | Note                                                                                                                 |
-| :------------- | :------------------ | :-------------------------------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------- |
+| Category       | bucket                         | Directory                                                       | Description                                                                                                                                                                                                                                                                                                                                                                                                                                           | Note                                                                                                                 |
+| :------------- | :----------------------------- | :-------------------------------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------- |
 | AWS Config     | aws-log-common-{randomid}      | /AWSLogs/{accountID}/Config/{region}/yyyy/m/d/ConfigHistory/    | AWS Config Compliance History Timeline for Resources.                                                                                                                                                                                                                                                                                                                                                                                                 | https://docs.aws.amazon.com/config/latest/developerguide/view-compliance-history.html                                |
 | AWS Config     | aws-log-common-{randomid}      | /AWSLogs/{accountID}/Config/{region}/yyyy/m/d/ConfigSnapshot/   | AWS Config snapshot.                                                                                                                                                                                                                                                                                                                                                                                                                                  | https://docs.aws.amazon.com/config/latest/developerguide/deliver-snapshot-cli.html                                   |
 | AWS Config     | aws-log-common-{randomid}      | /AWSLogs/{accountID}/Config/ConfigWritabilityCheckFile/yyyy/m/d | This is a test file to confirm that Config can be written to the S3 bucket normally.                                                                                                                                                                                                                                                                                                                                                                  |                                                                                                                      |

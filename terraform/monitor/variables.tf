@@ -16,4 +16,5 @@ variable "metric_resource_lambda" {}
 variable "metric_resource_rds" {}
 variable "metric_resource_ses" {}
 variable "metric_synthetics_canary" {}
+variable "cloudwatch_event_ec2" {}
 variable "synthetics_canary" {}

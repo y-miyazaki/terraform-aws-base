@@ -2,7 +2,7 @@
 # For Budgets
 #--------------------------------------------------------------
 #--------------------------------------------------------------
-# Provides a resource to manage CloudWatch Rule and CloudWatch Event.
+# Provides a resource to manage CloudWatch Rule and CloudWatch Events.
 #--------------------------------------------------------------
 module "aws_recipes_budgets_create_v4" {
   source     = "../../modules/aws/recipes/budgets/create-v4"
@@ -59,7 +59,7 @@ module "lambda_function_budgets" {
   description                       = "This program sends the result of Budgets to Slack."
   function_name                     = "${var.name_prefix}cloudwatch-event-budgets"
   handler                           = "cloudwatch_event_budgets_to_slack"
-  lambda_role                       = module.aws_recipes_iam_lambda.arn
+  lambda_role                       = module.aws_recipes_iam_role_lambda.arn
   local_existing_package            = "../../lambda/outputs/cloudwatch_event_budgets_to_slack.zip"
   memory_size                       = 128
   runtime                           = "go1.x"

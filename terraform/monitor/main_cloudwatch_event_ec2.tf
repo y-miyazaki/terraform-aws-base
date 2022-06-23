@@ -1,20 +1,22 @@
 #--------------------------------------------------------------
-# For Trusted Advisor
+# CloudWatch Events:EC2
+# The following events are monitored.
+# - EC2 Instance Rebalance Recommendation
+# - EC2 Spot Instance Interruption Warning
 #--------------------------------------------------------------
 #--------------------------------------------------------------
-# Provides an Trusted Advisor.
+# Provides an EC2.
 #--------------------------------------------------------------
-module "aws_recipes_cloudwatch_events_trusted_advisor" {
-  source     = "../../modules/aws/recipes/cloudwatch/events/trusted_advisor"
-  is_enabled = lookup(var.trusted_advisor, "is_enabled", true)
+module "aws_recipes_cloudwatch_events_ec2" {
+  source     = "../../modules/aws/recipes/cloudwatch/events/ec2"
+  is_enabled = lookup(var.cloudwatch_event_ec2, "is_enabled", true)
   aws_cloudwatch_event_rule = {
-    name                = "${var.name_prefix}${lookup(var.trusted_advisor.aws_cloudwatch_event_rule, "name", "trusted-advisor-cloudwatch-event-rule")}"
-    schedule_expression = lookup(var.trusted_advisor.aws_cloudwatch_event_rule, "schedule_expression", "cron(0 0 * * ? *)")
-    description         = lookup(var.trusted_advisor.aws_cloudwatch_event_rule, "description", null)
-    is_enabled          = lookup(var.trusted_advisor.aws_cloudwatch_event_rule, "is_enabled", true)
+    name        = "${var.name_prefix}${lookup(var.cloudwatch_event_ec2.aws_cloudwatch_event_rule, "name", "ec2-cloudwatch-event-rule")}"
+    description = lookup(var.cloudwatch_event_ec2.aws_cloudwatch_event_rule, "description", null)
+    is_enabled  = lookup(var.cloudwatch_event_ec2.aws_cloudwatch_event_rule, "is_enabled", true)
   }
   aws_cloudwatch_event_target = {
-    arn = module.lambda_function_trusted_advisor.lambda_function_arn
+    arn = module.lambda_function_cloudwatch_event_ec2.lambda_function_arn
   }
   tags = var.tags
 }
@@ -24,10 +26,10 @@ module "aws_recipes_cloudwatch_events_trusted_advisor" {
 # https://registry.terraform.io/modules/terraform-aws-modules/lambda/aws/latest
 #--------------------------------------------------------------
 # tfsec:ignore:aws-lambda-enable-tracing
-module "lambda_function_trusted_advisor" {
+module "lambda_function_cloudwatch_event_ec2" {
   source  = "terraform-aws-modules/lambda/aws"
   version = "3.2.1"
-  create  = lookup(var.trusted_advisor, "is_enabled", true)
+  create  = lookup(var.cloudwatch_event_ec2, "is_enabled", true)
 
   create_current_version_allowed_triggers = false
   create_package                          = false
@@ -39,19 +41,19 @@ module "lambda_function_trusted_advisor" {
       principal           = "events.amazonaws.com"
       qualifier           = null
       source_account      = null
-      source_arn          = module.aws_recipes_cloudwatch_events_trusted_advisor.arn
-      statement_id        = "TrustedAdvisorDetectUnexpectedUsage"
+      source_arn          = module.aws_recipes_cloudwatch_events_ec2.arn
+      statement_id        = "EC2DetectUnexpectedUsage"
       statement_id_prefix = null
     }
   }
   attach_network_policy             = var.common_lambda.vpc.is_enabled
-  cloudwatch_logs_retention_in_days = var.trusted_advisor.aws_cloudwatch_log_group_lambda.retention_in_days
-  environment_variables             = lookup(var.trusted_advisor.aws_lambda_function, "environment")
-  description                       = "This program sends the result of Trusted Advisor to Slack."
-  function_name                     = "${var.name_prefix}cloudwatch-event-trusted-advisor"
-  handler                           = "cloudwatch_event_trusted_advisor_to_slack"
+  cloudwatch_logs_retention_in_days = var.cloudwatch_event_ec2.aws_cloudwatch_log_group_lambda.retention_in_days
+  environment_variables             = lookup(var.cloudwatch_event_ec2.aws_lambda_function, "environment")
+  description                       = "This program sends the result of EC2 to Slack."
+  function_name                     = "${var.name_prefix}cloudwatch-event-ec2"
+  handler                           = "cloudwatch_event_ec2_to_slack"
   lambda_role                       = module.aws_recipes_iam_role_lambda.arn
-  local_existing_package            = "../../lambda/outputs/cloudwatch_event_trusted_advisor_to_slack.zip"
+  local_existing_package            = "../../lambda/outputs/cloudwatch_event_ec2_to_slack.zip"
   memory_size                       = 128
   runtime                           = "go1.x"
   timeout                           = 300

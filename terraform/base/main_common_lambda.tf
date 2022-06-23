@@ -52,7 +52,7 @@ POLICY
 #--------------------------------------------------------------
 # Create role and policy for Lambda
 #--------------------------------------------------------------
-module "aws_recipes_iam_lambda" {
+module "aws_recipes_iam_role_lambda" {
   source         = "../../modules/aws/recipes/iam/role/lambda"
   is_vpc         = var.common_lambda.vpc.is_enabled
   aws_iam_role   = local.aws_iam_role_lambda

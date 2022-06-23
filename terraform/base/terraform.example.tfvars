@@ -140,10 +140,9 @@ health = {
   # TODO: need to set is_enabled for settings of AWS Health.
   is_enabled = true
   aws_cloudwatch_event_rule = {
-    name                = "health-cloudwatch-event-rule"
-    schedule_expression = "cron(0 0 * * ? *)"
-    description         = "This cloudwatch event used for Health."
-    is_enabled          = true
+    name        = "health-cloudwatch-event-rule"
+    description = "This cloudwatch event used for Health."
+    is_enabled  = true
   }
   aws_cloudwatch_log_group_lambda = {
     # TODO: need to change retention_in_days for each services.

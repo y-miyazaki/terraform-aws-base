@@ -90,7 +90,7 @@ module "aws_recipes_lambda_create_lambda_us_east_1" {
     source_code_hash = filebase64sha256("../../lambda/outputs/cloudwatch_alarm_to_sns_to_slack.zip")
     environment      = lookup(var.common_lambda.metric.aws_lambda_function, "environment")
   }
-  # Creates a Lambda permission to allow external sources invoking the Lambda function (e.g. CloudWatch Event Rule, SNS or S3).
+  # Creates a Lambda permission to allow external sources invoking the Lambda function (e.g. CloudWatch Events Rule, SNS or S3).
   tags = var.tags
   depends_on = [
     module.lambda_vpc_us_east_1

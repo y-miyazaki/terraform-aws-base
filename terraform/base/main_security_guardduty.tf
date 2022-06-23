@@ -51,7 +51,7 @@ module "lambda_function_guardduty" {
   description                       = "This program sends the result of GuardDuty to Slack."
   function_name                     = "${var.name_prefix}cloudwatch-event-guardduty"
   handler                           = "cloudwatch_event_guardduty_to_slack"
-  lambda_role                       = module.aws_recipes_iam_lambda.arn
+  lambda_role                       = module.aws_recipes_iam_role_lambda.arn
   local_existing_package            = "../../lambda/outputs/cloudwatch_event_guardduty_to_slack.zip"
   memory_size                       = 128
   runtime                           = "go1.x"

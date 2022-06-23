@@ -427,6 +427,20 @@ metric_resource_ses = {
   is_enabled = false
 ```
 
+- CloudWatch Events:EC2
+
+```
+#--------------------------------------------------------------
+# CloudWatch Events:EC2
+# The following events are monitored.
+# - EC2 Instance Rebalance Recommendation
+# - EC2 Spot Instance Interruption Warning
+#--------------------------------------------------------------
+cloudwatch_event_ec2 = {
+  # TODO: need to set is_enabled for settings of EC2.
+  is_enabled = false
+```
+
 - Metrics:Synthetics Canary
 
 ```

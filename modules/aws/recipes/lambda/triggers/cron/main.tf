@@ -93,7 +93,7 @@ resource "aws_cloudwatch_event_target" "this" {
 }
 
 #--------------------------------------------------------------
-# Creates a Lambda permission to allow external sources invoking the Lambda function (e.g. CloudWatch Event Rule, SNS or S3).
+# Creates a Lambda permission to allow external sources invoking the Lambda function (e.g. CloudWatch Events Rule, SNS or S3).
 #--------------------------------------------------------------
 resource "aws_lambda_permission" "this" {
   action              = "lambda:InvokeFunction"

@@ -27,9 +27,9 @@ resource "aws_iam_account_password_policy" "this" {
   require_uppercase_characters   = lookup(var.aws_iam_account_password_policy, "require_uppercase_characters")
 }
 
-# --------------------------------------------------------------------------------------------------
+#--------------------------------------------------------------------------------------------------
 # Generates an IAM policy document in JSON format for use with resources that expect policy documents such as aws_iam_policy.
-# --------------------------------------------------------------------------------------------------
+#--------------------------------------------------------------------------------------------------
 data "aws_iam_policy_document" "this" {
   count = var.is_enabled && var.aws_iam_role != null ? 1 : 0
   statement {
@@ -41,9 +41,9 @@ data "aws_iam_policy_document" "this" {
   }
 }
 
-# --------------------------------------------------------------------------------------------------
+#--------------------------------------------------------------------------------------------------
 # Generates an IAM policy document in JSON format for use with resources that expect policy documents such as aws_iam_policy.
-# --------------------------------------------------------------------------------------------------
+#--------------------------------------------------------------------------------------------------
 resource "aws_iam_role" "this" {
   count                 = var.is_enabled && var.aws_iam_role != null ? 1 : 0
   description           = lookup(var.aws_iam_role, "description", null)
