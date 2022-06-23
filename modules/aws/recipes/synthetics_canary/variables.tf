@@ -31,7 +31,7 @@ variable "account_id" {
 }
 variable "region" {
   type        = string
-  description = "(Optional) Specify the region in which Sythetics Canary will be run. Set only if aws_synthetics_canary.execution_role_arn is not specified."
+  description = "(Optional) Specify the region in which Synthetics Canary will be run. Set only if aws_synthetics_canary.execution_role_arn is not specified."
   default     = null
 }
 variable "s3_bucket_arn" {
