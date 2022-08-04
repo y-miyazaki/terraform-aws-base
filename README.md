@@ -20,7 +20,7 @@ Basically, it is designed to be turned on and off for each setting and function 
 # INDEX
 
 - [Required](#required)
-
+- [Architecture][#architecture]
 - [Functions](#functions)
   - [Base](#base)
     - [Security](#security)
@@ -61,6 +61,12 @@ Basically, it is designed to be turned on and off for each setting and function 
   For notifications, you will need Slack, OAuthToken, and ChannelID.  
   https://slack.com/  
   https://slack.dev/node-slack-sdk/getting-started
+
+## Architecture
+
+The architecture when all elements are supported is shown below. Each resource can be included or removed depending on the infrastructure configuration.
+
+![Architecture](image/architecture.png)
 
 ## Functions
 
