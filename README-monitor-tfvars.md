@@ -1,8 +1,11 @@
+<!-- omit in toc -->
 # How do we fix monitor tfvars?
 
 The example is [terraform.example.tfvars](terraform/monitor/terraform.example.tfvars). The following is a list of things that must be modified and things that should be modified when doing terraform apply for the first time.
 If you need to adjust the parameters, you can do so by yourself by searching TODO.
 
+<!-- omit in toc -->
+# Table of Contents
 - [Initial setting](#initial-setting)
 - [Required](#required)
   - [deploy_user](#deploy_user)

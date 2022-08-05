@@ -1,5 +1,7 @@
+<!-- omit in toc -->
 # AWS Base Terraform
 
+<!-- omit in toc -->
 # OverView
 
 When building infrastructure in AWS, there are always things to consider for any project. For example, security, IAM, cost, log storage and notification, etc... It is quite difficult to build a separate Terraform for each project for all the things that must be considered.  
@@ -17,43 +19,44 @@ Basically, it is designed to be turned on and off for each setting and function 
   [terraform/monitor/terraform.example.tfvars](./terraform/monitor/terraform.example.tfvars)  
   Document: [README-monitor-tfvars.md](./README-monitor-tfvars.md)
 
-# INDEX
-
+<!-- omit in toc -->
+# Table of Contents
 - [Required](#required)
-- [Architecture][#architecture]
+- [Architecture](#architecture)
 - [Functions](#functions)
-  - [Base](#base)
-    - [Security](#security)
-      - [Security:CloudTrail](#securitycloudtrail)
-      - [Security:Config](#securityconfig)
-      - [Security:GuardDuty](#securityguardduty)
-      - [Security:Security Hub](#securitysecurity-hub)
-    - [Other](#other)
-      - [Other:Budgets](#otherbudgets)
-      - [Other:Compute Optimizer](#othercompute-optimizer)
-      - [Other:IAM group policy](#otheriam-group-policy)
-      - [Other:IAM User and Group](#otheriam-user-and-group)
-      - [Other:Resource Groups](#otherresource-groups)
-      - [Other:Trusted Advisor](#othertrusted-advisor)
-  - [Monitor](#monitor)
-    - [Log](#log)
-      - [Log:Application](#logapplication)
-      - [Log:Postgres](#logpostgres)
-    - [Metrics](#metrics)
-      - [Metrics:ALB](#metricsalb)
-      - [Metrics:API Gateway](#metricsapi-gateway)
-      - [Metrics:Cloudfront](#metricscloudfront)
-      - [Metrics:EC2](#metricsec2)
-      - [Metrics:ElastiCache](#metricselasticache)
-      - [Metrics:Lambda](#metricslambda)
-      - [Metrics:RDS](#metricsrds)
-      - [Metrics:SES](#metricsses)
-      - [Metrics:Synthetics Canary](#metricssynthetics-canary)
-    - [CloudWatch Events(EventBridge)](#cloudwatch-eventseventbridge)
-      - [CloudWatch Events:EC2](#cloudwatch-eventsec2)
-- [S3 bucket list](#s3-bucket-list)
+- [Base](#base)
+  - [Security](#security)
+    - [Security:CloudTrail](#securitycloudtrail)
+    - [Security:Config](#securityconfig)
+    - [Security:GuardDuty](#securityguardduty)
+    - [Security:Security Hub](#securitysecurity-hub)
+  - [Other](#other)
+    - [Other:Budgets](#otherbudgets)
+    - [Other:Compute Optimizer](#othercompute-optimizer)
+    - [Other:IAM group policy](#otheriam-group-policy)
+    - [Other:IAM User and Group](#otheriam-user-and-group)
+    - [Other:Resource Groups](#otherresource-groups)
+    - [Other:Trusted Advisor](#othertrusted-advisor)
+- [Monitor](#monitor)
+  - [Log](#log)
+    - [Log:Application](#logapplication)
+    - [Log:Postgres](#logpostgres)
+  - [Metrics](#metrics)
+    - [Metrics:ALB](#metricsalb)
+    - [Metrics:API Gateway](#metricsapi-gateway)
+    - [Metrics:Cloudfront](#metricscloudfront)
+    - [Metrics:EC2](#metricsec2)
+    - [Metrics:ElastiCache](#metricselasticache)
+    - [Metrics:Lambda](#metricslambda)
+    - [Metrics:RDS](#metricsrds)
+    - [Metrics:SES](#metricsses)
+    - [Metrics:Synthetics Canary](#metricssynthetics-canary)
+  - [CloudWatch Events(EventBridge)](#cloudwatch-eventseventbridge)
+    - [CloudWatch Events:EC2](#cloudwatch-eventsec2)
+  - [S3 bucket list](#s3-bucket-list)
+  - [Author Information](#author-information)
 
-## Required
+# Required
 
 - Terraform  
   https://www.terraform.io/
@@ -62,15 +65,15 @@ Basically, it is designed to be turned on and off for each setting and function 
   https://slack.com/  
   https://slack.dev/node-slack-sdk/getting-started
 
-## Architecture
+# Architecture
 
 The architecture when all elements are supported is shown below. Each resource can be included or removed depending on the infrastructure configuration.
 
 ![Architecture](image/architecture.png)
 
-## Functions
+# Functions
 
-## Base
+# Base
 
 This is a description of [Terraform's Base](./terraform/base/). The following contents provide an overview of each function.
 
