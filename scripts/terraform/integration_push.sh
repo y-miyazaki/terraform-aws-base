@@ -7,16 +7,12 @@ if [ -n "${AWS_ACCESS_KEY_ID}" ] && [ -n "${AWS_SECRET_ACCESS_KEY}" ] && [ -n "$
     aws configure set aws_secret_access_key "${AWS_SECRET_ACCESS_KEY}" --profile default
     aws configure set region "${AWS_DEFAULT_REGION}" --profile default
 else
-    echo "can't set AWS_ACCESS_KEY_ID/AWS_SECRET_ACCESS_KEY/AWS_DEFAULT_REGION."
-    exit 1
 fi
 
 # Create terraform plugin dirctory.
 if [ -n "${TF_PLUGIN_CACHE_DIR}" ]; then
     mkdir -p "${TF_PLUGIN_CACHE_DIR}"
 else
-    echo "can't set TF_PLUGIN_CACHE_DIR."
-    exit 1
 fi
 
 cd $DIR
