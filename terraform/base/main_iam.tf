@@ -4,6 +4,7 @@
 #--------------------------------------------------------------
 # Create IAM Users and Group
 #--------------------------------------------------------------
+# tfsec:ignore:aws-iam-enforce-mfa
 module "aws_recipes_iam_user_group" {
   count       = lookup(var.iam, "is_enabled", true) ? 1 : 0
   source      = "../../modules/aws/recipes/iam/user_group"

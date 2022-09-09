@@ -1,0 +1,29 @@
+# root
+.DS_Store
+.vscode
+terraform.log
+crash.log
+memo.txt
+
+# terraform files.
+.terraform
+.terraform.d
+.terraform.lock.hcl
+
+# terraform customize file.
+main_init.tf
+# main_provider.tf
+provider.json
+*.tfvars
+!terraform.example.tfvars
+!terraform.dev.tfvars
+!terraform.stg.tfvars
+!terraform.prd.tfvars
+*.tfbackend
+!terraform.example.tfbackend
+!terraform.dev.tfbackend
+!terraform.stg.tfbackend
+!terraform.prd.tfbackend
+
+devcontainer.json
+.env
