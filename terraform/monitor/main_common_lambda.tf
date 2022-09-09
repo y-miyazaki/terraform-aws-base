@@ -61,14 +61,6 @@ POLICY
     name = "${var.name_prefix}${lookup(var.common_lambda.log.aws_sns_topic, "name")}"
     }
   )
-  aws_sns_topic_subscription_metric = merge(var.common_lambda.aws_sns_topic_subscription, {
-    endpoint = module.aws_recipes_lambda_create_lambda_metric.arn
-    }
-  )
-  aws_sns_topic_subscription_log = merge(var.common_lambda.aws_sns_topic_subscription, {
-    endpoint = module.aws_recipes_lambda_create_lambda_log.arn
-    }
-  )
 }
 #--------------------------------------------------------------
 # Create role and policy for Lambda
