@@ -8,7 +8,7 @@ data "aws_availability_zones" "this" {
 #--------------------------------------------------------------
 # Provides a resource to manage the default AWS VPC in the current region.
 #--------------------------------------------------------------
-#tfsec:ignore:AWS082
+#tfsec:ignore:AWS082 tfsec:ignore:aws-ec2-no-default-vpc
 resource "aws_default_vpc" "this" {
   count = var.is_enabled ? 1 : 0
 }
