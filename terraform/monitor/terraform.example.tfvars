@@ -94,7 +94,7 @@ common_log = {
       }
     }
     versioning = {
-      enabled = false
+      enabled = true
     }
   }
 }
@@ -172,7 +172,7 @@ common_lambda = {
       enable_flow_log                                 = true
       create_flow_log_cloudwatch_log_group            = true
       create_flow_log_cloudwatch_iam_role             = true
-      flow_log_cloudwatch_log_group_retention_in_days = 7
+      flow_log_cloudwatch_log_group_retention_in_days = 14
       flow_log_file_format                            = "plain-text"
     }
   }
@@ -264,7 +264,7 @@ common_lambda = {
   }
   aws_cloudwatch_log_group_lambda = {
     # TODO: need to change retention_in_days for each services.
-    retention_in_days = 7
+    retention_in_days = 14
     kms_key_id        = null
   }
   aws_sns_topic_subscription = {
@@ -828,9 +828,7 @@ metric_resource_ses = {
     enabled_reputation_complaintrate = true
     reputation_complaintrate         = 0.1
   }
-  # TODO: need to set dimensions for monitor of SES.
-  dimensions = [
-  ]
+  dimensions = []
 }
 #--------------------------------------------------------------
 # CloudWatch Events:EC2
@@ -848,7 +846,7 @@ cloudwatch_event_ec2 = {
   }
   aws_cloudwatch_log_group_lambda = {
     # TODO: need to change retention_in_days for each services.
-    retention_in_days = 7
+    retention_in_days = 14
     kms_key_id        = null
   }
   aws_lambda_function = {

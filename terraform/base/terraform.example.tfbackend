@@ -1,4 +1,4 @@
 bucket  = "terraform-state-xxxxxxxx"
-key     = "terraform.tfstate"
+key     = "terraform.base.tfstate"
 profile = "default"    # fix for environment
 region  = "ap-northeast-1" # fix for environment

@@ -45,7 +45,8 @@ POLICY
 resource "aws_iam_role_policy_attachment" "config" {
   count      = var.is_enabled ? 1 : 0
   role       = aws_iam_role.config[0].name
-  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSConfigRole"
+  # https://docs.aws.amazon.com/ja_jp/config/latest/developerguide/security-iam-awsmanpol.html
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWS_ConfigRole"
 }
 #--------------------------------------------------------------
 # Provides an AWS Config Configuration Recorder. Please note that this resource does not start the created recorder automatically.
