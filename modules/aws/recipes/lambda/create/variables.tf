@@ -17,7 +17,7 @@ variable "aws_cloudwatch_log_group" {
   )
   description = "(Optional) The aws_cloudwatch_log_group."
   default = {
-    retention_in_days = 7
+    retention_in_days = 14
     kms_key_id        = null
   }
 }

@@ -99,7 +99,7 @@ budgets = {
   }
   aws_cloudwatch_log_group_lambda = {
     # TODO: need to change retention_in_days for each services.
-    retention_in_days = 7
+    retention_in_days = 14
     kms_key_id        = null
   }
   aws_lambda_function = {
@@ -140,13 +140,14 @@ health = {
   # TODO: need to set is_enabled for settings of AWS Health.
   is_enabled = true
   aws_cloudwatch_event_rule = {
-    name        = "health-cloudwatch-event-rule"
-    description = "This cloudwatch event used for Health."
-    is_enabled  = true
+    name           = "health-cloudwatch-event-rule"
+    name_us_east_1 = "health-us-east-1-cloudwatch-event-rule"
+    description    = "This cloudwatch event used for Health."
+    is_enabled     = true
   }
   aws_cloudwatch_log_group_lambda = {
     # TODO: need to change retention_in_days for each services.
-    retention_in_days = 7
+    retention_in_days = 14
     kms_key_id        = null
   }
   aws_lambda_function = {
@@ -176,7 +177,7 @@ trusted_advisor = {
   }
   aws_cloudwatch_log_group_lambda = {
     # TODO: need to change retention_in_days for each services.
-    retention_in_days = 7
+    retention_in_days = 14
     kms_key_id        = null
   }
   aws_lambda_function = {
@@ -224,7 +225,157 @@ iam = {
       # default null.
       # You need to check this document.
       # https://aws.amazon.com/jp/premiumsupport/knowledge-center/iam-increase-policy-size/
-      policy_document = null
+      policy_document = {
+        name        = "iam-group-administrator-base-policy"
+        path        = "/"
+        description = ""
+        statement = [
+          {
+            sid    = "DenyCloudTrailWrite"
+            effect = "Deny"
+            actions = [
+              "cloudtrail:DeleteEventDataStore",
+              "cloudtrail:PutEventSelectors",
+              "cloudtrail:StopLogging",
+              "cloudtrail:StartLogging",
+              "cloudtrail:UpdateEventDataStore",
+              "cloudtrail:UpdateTrail",
+              "cloudtrail:RestoreEventDataStore",
+              "cloudtrail:CancelQuery",
+              "cloudtrail:CreateEventDataStore",
+              "cloudtrail:PutInsightSelectors",
+              "cloudtrail:AddTags",
+              "cloudtrail:DeleteTrail",
+              "cloudtrail:CreateTrail",
+              "cloudtrail:StartQuery",
+              "cloudtrail:RemoveTags",
+            ]
+            resources = [
+              "*"
+            ]
+          },
+          {
+            sid    = "DenyConfigWrite"
+            effect = "Deny"
+            actions = [
+              "config:DeleteDeliveryChannel",
+              "config:DeleteOrganizationConfigRule",
+              "config:DeleteConformancePack",
+              "config:DeleteRetentionConfiguration",
+              "config:StartConfigurationRecorder",
+              "config:PutDeliveryChannel",
+              "config:PutExternalEvaluation",
+              "config:StartRemediationExecution",
+              "config:DeleteAggregationAuthorization",
+              "config:DeleteEvaluationResults",
+              "config:DeleteStoredQuery",
+              "config:DeleteConfigurationAggregator",
+              "config:DeleteConfigRule",
+              "config:PutConformancePack",
+              "config:PutStoredQuery",
+              "config:PutConfigurationRecorder",
+              "config:PutConfigRule",
+              "config:DeleteRemediationConfiguration",
+              "config:PutEvaluations",
+              "config:StopConfigurationRecorder",
+              "config:PutAggregationAuthorization",
+              "config:PutRemediationConfigurations",
+              "config:DeleteRemediationExceptions",
+              "config:StartConfigRulesEvaluation",
+              "config:DeleteConfigurationRecorder",
+              "config:DeleteResourceConfig",
+              "config:PutResourceConfig",
+              "config:DeleteOrganizationConformancePack",
+              "config:PutOrganizationConformancePack",
+              "config:PutConfigurationAggregator",
+              "config:TagResource",
+              "config:DeletePendingAggregationRequest",
+              "config:PutRetentionConfiguration",
+              "config:PutRemediationExceptions",
+              "config:PutOrganizationConfigRule",
+              "config:UntagResource",
+            ]
+            resources = [
+              "*"
+            ]
+          },
+          {
+            sid    = "DenyS3Log"
+            effect = "Deny"
+            actions = [
+              "s3:PutAnalyticsConfiguration",
+              "s3:PutAccessPointConfigurationForObjectLambda",
+              "s3:PutStorageLensConfiguration",
+              "s3:DeleteAccessPoint",
+              "s3:CreateBucket",
+              "s3:DeleteAccessPointForObjectLambda",
+              "s3:ReplicateObject",
+              "s3:DeleteBucketWebsite",
+              "s3:DeleteAccessPointPolicyForObjectLambda",
+              "s3:DeleteJobTagging",
+              "s3:PutLifecycleConfiguration",
+              "s3:PutBucketAcl",
+              "s3:PutObjectTagging",
+              "s3:DeleteObject",
+              "s3:CreateMultiRegionAccessPoint",
+              "s3:DeleteObjectTagging",
+              "s3:PutAccessPointPolicyForObjectLambda",
+              "s3:PutAccountPublicAccessBlock",
+              "s3:PutMultiRegionAccessPointPolicy",
+              "s3:DeleteStorageLensConfigurationTagging",
+              "s3:PutReplicationConfiguration",
+              "s3:DeleteObjectVersionTagging",
+              "s3:PutObjectLegalHold",
+              "s3:InitiateReplication",
+              "s3:PutBucketCORS",
+              "s3:DeleteBucketPolicy",
+              "s3:PutObject",
+              "s3:PutBucketNotification",
+              "s3:PutBucketLogging",
+              "s3:PutObjectVersionAcl",
+              "s3:PutAccessPointPublicAccessBlock",
+              "s3:PutBucketObjectLockConfiguration",
+              "s3:CreateJob",
+              "s3:PutAccessPointPolicy",
+              "s3:CreateAccessPoint",
+              "s3:PutAccelerateConfiguration",
+              "s3:DeleteObjectVersion",
+              "s3:ReplicateTags",
+              "s3:RestoreObject",
+              "s3:PutEncryptionConfiguration",
+              "s3:AbortMultipartUpload",
+              "s3:PutBucketTagging",
+              "s3:UpdateJobPriority",
+              "s3:DeleteBucket",
+              "s3:PutBucketVersioning",
+              "s3:PutObjectAcl",
+              "s3:PutBucketPublicAccessBlock",
+              "s3:PutIntelligentTieringConfiguration",
+              "s3:PutMetricsConfiguration",
+              "s3:PutStorageLensConfigurationTagging",
+              "s3:PutBucketOwnershipControls",
+              "s3:PutObjectVersionTagging",
+              "s3:DeleteMultiRegionAccessPoint",
+              "s3:PutJobTagging",
+              "s3:UpdateJobStatus",
+              "s3:BypassGovernanceRetention",
+              "s3:PutInventoryConfiguration",
+              "s3:ObjectOwnerOverrideToBucketOwner",
+              "s3:DeleteStorageLensConfiguration",
+              "s3:PutBucketWebsite",
+              "s3:PutBucketRequestPayment",
+              "s3:PutObjectRetention",
+              "s3:CreateAccessPointForObjectLambda",
+              "s3:PutBucketPolicy",
+              "s3:DeleteAccessPointPolicy",
+              "s3:ReplicateDelete",
+            ]
+            resources = [
+              "arn:aws:s3:::*-aws-log-*"
+            ]
+          },
+        ]
+      }
       # TODO: need to add policy arn. group policy limit is 10.
       # You need to check this document.
       # https://aws.amazon.com/jp/premiumsupport/knowledge-center/iam-increase-policy-size/
@@ -387,6 +538,68 @@ iam = {
             effect = "Allow"
             actions = [
               "health:DescribeEventAggregates",
+            ]
+            resources = [
+              "*"
+            ]
+          },
+        ]
+      }
+      # TODO: need to add policy arn. group policy limit is 10.
+      # You need to check this document.
+      # https://aws.amazon.com/jp/premiumsupport/knowledge-center/iam-increase-policy-size/
+      policy = []
+    }
+    # TODO: need to change IAM Group name.
+    # This name will be used as the group name.
+    deploy_infra = {
+      # TODO: need to set is_enabled_mfa.
+      # If true, force MFA settings and login.
+      is_enabled_mfa = false
+      # TODO: need to set users.
+      users = [
+      ]
+      # TODO: need to set base policy.
+      # Please specify the base policy to provide.
+      # default null.
+      # You need to check this document.
+      # https://aws.amazon.com/jp/premiumsupport/knowledge-center/iam-increase-policy-size/
+      policy_document = null
+      # TODO: need to add policy arn. group policy limit is 10.
+      # You need to check this document.
+      # https://aws.amazon.com/jp/premiumsupport/knowledge-center/iam-increase-policy-size/
+      policy = [
+        {
+          policy_arn = "arn:aws:iam::aws:policy/AdministratorAccess"
+        }
+      ]
+    }
+    # TODO: need to change IAM Group name.
+    # This name will be used as the group name.
+    deploy_code = {
+      # TODO: need to set is_enabled_mfa.
+      # If true, force MFA settings and login.
+      is_enabled_mfa = false
+      # TODO: need to set users.
+      users = [
+      ]
+      # TODO: need to set base policy.
+      # Please specify the base policy to provide.
+      # default null.
+      # You need to check this document.
+      # https://aws.amazon.com/jp/premiumsupport/knowledge-center/iam-increase-policy-size/
+      policy_document = {
+        name        = "iam-group-deploy-code-base-policy"
+        path        = "/"
+        description = ""
+        statement = [
+          {
+            sid    = "AllowAmazonS3Access"
+            effect = "Allow"
+            actions = [
+              "s3:Get*",
+              "s3:List*",
+              "s3:PutObject",
             ]
             resources = [
               "*"
@@ -831,7 +1044,7 @@ common_log = {
       }
     }
     versioning = {
-      enabled = false
+      enabled = true
     }
   }
 
@@ -884,7 +1097,7 @@ common_log = {
       }
     }
     versioning = {
-      enabled = false
+      enabled = true
     }
   }
 }
@@ -936,7 +1149,7 @@ security_cloudtrail = {
   aws_cloudwatch_log_group = {
     name = "aws-cloudtrail-logs"
     # TODO: need to change retention_in_days for each services.
-    retention_in_days = 30
+    retention_in_days = 14
   }
   aws_cloudwatch_log_metric_filter = [
     {
@@ -1023,7 +1236,7 @@ PATTERN
   #   }
   aws_cloudwatch_log_group_lambda = {
     # TODO: need to change retention_in_days for each services.
-    retention_in_days = 7
+    retention_in_days = 14
     kms_key_id        = null
   }
   aws_lambda_function = {
@@ -1183,7 +1396,7 @@ security_config = {
   }
   aws_cloudwatch_log_group_lambda = {
     # TODO: need to change retention_in_days for each services.
-    retention_in_days = 7
+    retention_in_days = 14
     kms_key_id        = null
   }
   aws_lambda_function = {
@@ -1348,7 +1561,7 @@ security_config_us_east_1 = {
   }
   aws_cloudwatch_log_group_lambda = {
     # TODO: need to change retention_in_days for each services.
-    retention_in_days = 7
+    retention_in_days = 14
     kms_key_id        = null
   }
   # TODO: If you want to automatically remediation resources, please modify the following.
@@ -1389,7 +1602,7 @@ security_default_vpc = {
   aws_cloudwatch_log_group = {
     name = "aws-vpc-flow-logs"
     # TODO: need to change retention_in_days for each services.
-    retention_in_days = 30
+    retention_in_days = 14
   }
   aws_iam_role = {
     description = ""
@@ -1423,7 +1636,7 @@ security_guardduty = {
   ]
   aws_cloudwatch_log_group_lambda = {
     # TODO: need to change retention_in_days for each services.
-    retention_in_days = 7
+    retention_in_days = 14
     kms_key_id        = null
   }
   aws_cloudwatch_event_rule = {
