@@ -38,6 +38,15 @@ resource "aws_iam_user_login_profile" "this" {
   user                    = each.value
   pgp_key                 = "keybase:exp_enechange"
   password_reset_required = true
+  # Check this following document.
+  # https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_user_login_profile#import
+  lifecycle {
+    ignore_changes = [
+      password_length,
+      password_reset_required,
+      pgp_key,
+    ]
+  }
   depends_on = [
     aws_iam_user.this,
   ]
