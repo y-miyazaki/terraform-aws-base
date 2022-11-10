@@ -1,7 +1,7 @@
 variable "user" {
   type        = list(any)
   description = "(Optional) Provides an IAM User."
-  default     = {}
+  default     = []
 }
 variable "group" {
   type        = any
