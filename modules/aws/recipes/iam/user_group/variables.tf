@@ -1,15 +1,15 @@
 variable "user" {
-  type        = list(any)
-  description = "(Required) Provides an IAM User."
-  default     = []
+  type        = map(any)
+  description = "(Optional) Provides an IAM User."
+  default     = {}
 }
 variable "group" {
   type        = any
-  description = "(Required) Provides an IAM Group."
+  description = "(Optional) Provides an IAM Group."
   default     = null
 }
 variable "name_prefix" {
   type        = string
-  description = "(Required) Prefix of policy name ."
+  description = "(Optional) Prefix of policy name ."
   default     = ""
 }

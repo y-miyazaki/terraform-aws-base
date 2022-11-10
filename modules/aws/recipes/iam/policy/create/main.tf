@@ -58,4 +58,5 @@ resource "aws_iam_policy" "this" {
   #   name_prefix = var.name_prefix
   path   = var.path
   policy = var.template != null ? data.template_file.this.rendered : data.aws_iam_policy_document.this.json
+  tags   = var.tags
 }
