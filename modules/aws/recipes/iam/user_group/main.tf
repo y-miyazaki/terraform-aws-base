@@ -25,8 +25,8 @@ locals {
 # Provides an IAM user.
 #--------------------------------------------------------------
 resource "aws_iam_user" "this" {
-  for_each      = toset(var.user)
-  name          = each.value
+  for_each      = var.user
+  name          = each.key
   path          = "/"
   force_destroy = true
 }
@@ -34,8 +34,8 @@ resource "aws_iam_user" "this" {
 # Manages an IAM User Login Profile with limited support for password creation during Terraform resource creation. Uses PGP to encrypt the password for safe transport to the user. PGP keys can be obtained from Keybase.
 #--------------------------------------------------------------
 resource "aws_iam_user_login_profile" "this" {
-  for_each                = toset(var.user)
-  user                    = each.value
+  for_each                = {for k, v in var.user : k => v if v.is_console_access }
+  user                    = each.key
   pgp_key                 = "keybase:exp_enechange"
   password_reset_required = true
   # Check this following document.

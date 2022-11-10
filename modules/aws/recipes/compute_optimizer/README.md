@@ -5,6 +5,7 @@
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >=0.14 |
 | <a name="requirement_aws"></a> [aws](#requirement\_aws) | >=3.0.0 |
+| <a name="requirement_null"></a> [null](#requirement\_null) | >=3.0.0 |
 
 ## Providers
 

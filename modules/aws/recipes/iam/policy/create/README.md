@@ -5,6 +5,7 @@
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >=0.14 |
 | <a name="requirement_aws"></a> [aws](#requirement\_aws) | >=3.0.0 |
+| <a name="requirement_template"></a> [template](#requirement\_template) | >=2.0.0 |
 
 ## Providers
 
@@ -33,7 +34,7 @@ No modules.
 | <a name="input_name"></a> [name](#input\_name) | (Optional, Forces new resource) The name of the policy. If omitted, Terraform will assign a random, unique name. | `string` | `null` | no |
 | <a name="input_path"></a> [path](#input\_path) | (Optional, default  / ) Path in which to create the policy. See IAM Identifiers for more information. | `string` | `"/"` | no |
 | <a name="input_policy_id"></a> [policy\_id](#input\_policy\_id) | (Optional) - An ID for the policy document. | `string` | `null` | no |
-| <a name="input_statement"></a> [statement](#input\_statement) | (Optional) - A nested configuration block (described below) configuring one statement to be included in the policy document. | `list` | `[]` | no |
+| <a name="input_statement"></a> [statement](#input\_statement) | (Optional) - A nested configuration block (described below) configuring one statement to be included in the policy document. | `list(any)` | `[]` | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | (Optional) A mapping of tags to assign to the resource. | `map(any)` | `null` | no |
 | <a name="input_template"></a> [template](#input\_template) | (Optional) The contents of the template, as a string using Terraform template syntax. Use the file function to load the template source from a separate file on disk. | `string` | `null` | no |
 | <a name="input_vars"></a> [vars](#input\_vars) | (Optional) Variables for interpolation within the template. Note that variables must all be primitives. Direct references to lists or maps will cause a validation error. | `map(any)` | `null` | no |

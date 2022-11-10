@@ -27,6 +27,7 @@ variable "policy_id" {
 #   default     = null
 # }
 variable "statement" {
+  type        = list(any)
   description = "(Optional) - A nested configuration block (described below) configuring one statement to be included in the policy document."
   default     = []
 }

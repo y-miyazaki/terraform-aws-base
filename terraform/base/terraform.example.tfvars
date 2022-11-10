@@ -200,11 +200,23 @@ iam = {
   # TODO: need to set is_enabled for settings of IAM.
   is_enabled = true
   # TODO: need to change IAM User.
-  user = [
-    "test1",
-    "test2",
-    "test3",
-  ]
+  user = {
+    "test1" = {
+      # TODO: need to set is_console_access for cosole access.
+      # Set to true if you want to access the AWS console.
+      is_console_access = true
+    },
+    "test2" = {
+      # TODO: need to set is_console_access for cosole access.
+      # Set to true if you want to access the AWS console.
+      is_console_access = false
+    },
+    "test3" = {
+      # TODO: need to set is_console_access for cosole access.
+      # Set to true if you want to access the AWS console.
+      is_console_access = false
+    },
+  }
   #--------------------------------------------------------------
   # TODO: need to change IAM Group.
   # Please specify the user with the same name that has been set in users.
@@ -1473,7 +1485,7 @@ security_config = {
 #--------------------------------------------------------------
 security_config_us_east_1 = {
   # TODO: need to set is_enabled for settings of AWS Config.
-  is_enabled = false
+  is_enabled = true
   # TODO: need to set is_s3_enabled for settings of New S3 Bucket.
   is_s3_enabled = false
   aws_config_configuration_recorder = {

@@ -106,6 +106,7 @@ resource "aws_iam_role_policy_attachment" "ec2_container_registry_read_only" {
 #--------------------------------------------------------------
 # Generates an IAM policy document in JSON format for use with resources that expect policy documents such as aws_iam_policy.
 #--------------------------------------------------------------
+#tfsec:ignore:aws-iam-no-policy-wildcards
 data "aws_iam_policy_document" "eks_worker_node" {
   # policy attach: for worker node cluster autoscaling
   # - Cluster Autoscaler
