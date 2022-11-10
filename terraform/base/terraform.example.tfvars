@@ -200,11 +200,11 @@ iam = {
   # TODO: need to set is_enabled for settings of IAM.
   is_enabled = true
   # TODO: need to change IAM User.
-  user = {
+  user = [
     "test1",
     "test2",
     "test3",
-  }
+  ]
   #--------------------------------------------------------------
   # TODO: need to change IAM Group.
   # Please specify the user with the same name that has been set in users.

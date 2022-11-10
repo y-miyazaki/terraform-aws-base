@@ -1,5 +1,5 @@
 variable "user" {
-  type        = map(any)
+  type        = list(any)
   description = "(Optional) Provides an IAM User."
   default     = {}
 }
