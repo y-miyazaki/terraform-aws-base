@@ -201,21 +201,9 @@ iam = {
   is_enabled = true
   # TODO: need to change IAM User.
   user = {
-    "test1" = {
-      # TODO: need to set is_console_access for cosole access.
-      # Set to true if you want to access the AWS console.
-      is_console_access = true
-    },
-    "test2" = {
-      # TODO: need to set is_console_access for cosole access.
-      # Set to true if you want to access the AWS console.
-      is_console_access = false
-    },
-    "test3" = {
-      # TODO: need to set is_console_access for cosole access.
-      # Set to true if you want to access the AWS console.
-      is_console_access = false
-    },
+    "test1",
+    "test2",
+    "test3",
   }
   #--------------------------------------------------------------
   # TODO: need to change IAM Group.
