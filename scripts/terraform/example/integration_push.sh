@@ -39,4 +39,4 @@ tfsec --tfvars-file terraform."${ENV}".tfvars
 # echo "#--------------------------------------------------------------"
 # echo "# terraform plan ($PWD)"
 # echo "#--------------------------------------------------------------"
-# terraform plan -lock=false -no-color -var-file=terraform."${ENV}".tfvars
+terraform plan -lock=false -no-color -var-file=terraform."${ENV}".tfvars

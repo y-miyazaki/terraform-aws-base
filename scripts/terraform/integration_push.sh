@@ -28,7 +28,7 @@ echo "#--------------------------------------------------------------"
 echo "# terraform init ($PWD)"
 echo "#--------------------------------------------------------------"
 # terraform init -reconfigure -backend-config=terraform."${ENV}".tfbackend
-terraform init
+# terraform init
 echo "#--------------------------------------------------------------"
 echo "# tflint ($PWD)"
 echo "#--------------------------------------------------------------"
@@ -36,7 +36,8 @@ tflint --module
 echo "#--------------------------------------------------------------"
 echo "# tfsec ($PWD)"
 echo "#--------------------------------------------------------------"
-tfsec --tfvars-file terraform."${ENV}".tfvars
+# tfsec --tfvars-file terraform."${ENV}".tfvars
+tfsec --tfvars-file terraform.example.tfvars
 # echo "#--------------------------------------------------------------"
 # echo "# terraform plan ($PWD)"
 # echo "#--------------------------------------------------------------"
