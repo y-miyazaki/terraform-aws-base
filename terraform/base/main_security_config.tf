@@ -52,8 +52,7 @@ module "aws_recipes_security_config_create_v4" {
   aws_cloudwatch_event_target = {
     arn = module.lambda_function_config.lambda_function_arn
   }
-  account_id = data.aws_caller_identity.current.account_id
-  tags       = var.tags
+  tags = var.tags
   depends_on = [
     module.s3_log
   ]
@@ -123,18 +122,10 @@ module "aws_recipes_security_config_rule_ec2" {
 # Provides an AWS Config Rule for S3
 #--------------------------------------------------------------
 module "aws_recipes_security_config_rule_s3" {
-  source                              = "../../modules/aws/recipes/security/config/rule/s3"
-  is_enabled                          = lookup(var.security_config, "is_enabled", true)
-  name_prefix                         = var.name_prefix
-  ssm_automation_assume_role_arn      = module.aws_recipes_security_config_ssm_automation.role_arn
-  is_configure_s3_public_access_block = lookup(var.security_config.remediation.s3, "is_configure_s3_public_access_block", false)
-  configure_s3_public_access_block = lookup(var.security_config.remediation.s3, "configure_s3_public_access_block",
-    {
-      block_public_acls       = true
-      block_public_policy     = true
-      ignore_public_acls      = true
-      restrict_public_buckets = true
-  })
+  source                                     = "../../modules/aws/recipes/security/config/rule/s3"
+  is_enabled                                 = lookup(var.security_config, "is_enabled", true)
+  name_prefix                                = var.name_prefix
+  ssm_automation_assume_role_arn             = module.aws_recipes_security_config_ssm_automation.role_arn
   is_configure_s3_bucket_public_access_block = lookup(var.security_config.remediation.s3, "is_configure_s3_bucket_public_access_block", false)
   configure_s3_bucket_public_access_block = lookup(var.security_config.remediation.s3, "configure_s3_bucket_public_access_block",
     {

@@ -11,6 +11,7 @@ variable "description" {
   default     = null
 }
 variable "resource_query" {
+  type        = any
   description = "(Required) A resource_query block. Resource queries are documented below."
 }
 variable "tags" {

@@ -16,7 +16,7 @@ locals {
     }]) : [{
     name = ""
   }]
-  is_dimensions = length(var.dimensions) > 0 ? true : false
+  #   is_dimensions = length(var.dimensions) > 0 ? true : false
 }
 #--------------------------------------------------------------
 # Use this data source to get the default tags configured on the provider.

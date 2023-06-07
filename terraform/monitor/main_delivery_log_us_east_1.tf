@@ -40,13 +40,13 @@ locals {
                       parameter_value = "${module.aws_recipes_lambda_create_lambda_kinesis_data_firehose_cloudwatch_logs_processor_us_east_1.arn}:$LATEST"
                     },
                     {
+                      parameter_name  = "BufferSizeInMBs"
+                      parameter_value = "2"
+                    },
+                    {
                       parameter_name  = "BufferIntervalInSeconds"
                       parameter_value = 900
                     },
-                    {
-                      parameter_name  = "BufferSizeInMBs"
-                      parameter_value = "2"
-                    }
                   ]
                 }
               ]

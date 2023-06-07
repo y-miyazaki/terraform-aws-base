@@ -115,10 +115,6 @@ variable "aws_cloudwatch_event_target" {
   )
   description = "(Required) Provides an EventBridge Target resource."
 }
-variable "account_id" {
-  type        = string
-  description = "(Required) AWS account ID for member account."
-}
 variable "tags" {
   type        = map(any)
   description = "(Optional) Key-value map of resource tags."

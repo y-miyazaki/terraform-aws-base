@@ -81,8 +81,8 @@ variable "aws_securityhub_action_target" {
 #     arn = null
 #   }
 # }
-variable "tags" {
-  type        = map(any)
-  description = "(Optional) Key-value map of resource tags."
-  default     = null
-}
+# variable "tags" {
+#   type        = map(any)
+#   description = "(Optional) Key-value map of resource tags."
+#   default     = null
+# }

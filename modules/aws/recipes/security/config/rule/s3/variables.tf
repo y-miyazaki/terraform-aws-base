@@ -16,32 +16,6 @@ variable "ssm_automation_assume_role_arn" {
   description = "(Required) AssumeRole arn in SSM Automation"
 }
 
-variable "is_configure_s3_public_access_block" {
-  type        = bool
-  description = "(Optional) If true, configures the Amazon Simple Storage Service (Amazon S3) public access block settings for an Amazon S3 bucket based on the values you specify."
-  default     = false
-}
-variable "configure_s3_public_access_block" {
-  type = object(
-    {
-      # If set to True, Amazon S3 blocks public access control lists (ACLs) for S3 buckets owned by the AWS account you specify in the AccountId parameter.
-      block_public_acls = bool
-      # If set to True, Amazon S3 blocks public bucket policies for S3 buckets owned by the AWS account you specify in the AccountId parameter.
-      block_public_policy = bool
-      # If set to True, Amazon S3 ignores all public ACLs for S3 buckets owned by the AWS account you specify in the AccountId parameter.
-      ignore_public_acls = bool
-      # If set to True, Amazon S3 restricts public bucket policies for S3 buckets owned by the AWS account you specify in the AccountId parameter.
-      restrict_public_buckets = bool
-    }
-  )
-  description = "(Optional) If true, configures the Amazon Simple Storage Service (Amazon S3) public access block settings for an Amazon S3 bucket based on the values you specify."
-  default = {
-    block_public_acls       = true
-    block_public_policy     = true
-    ignore_public_acls      = true
-    restrict_public_buckets = true
-  }
-}
 variable "is_configure_s3_bucket_public_access_block" {
   type        = bool
   description = "(Optional) If true, configures the Amazon Simple Storage Service (Amazon S3) public access block settings for an Amazon S3 bucket based on the values you specify."
@@ -95,22 +69,22 @@ variable "is_configure_s3_bucket_versioning" {
   default     = false
 }
 
-variable "restricted_common_ports" {
-  type = object(
-    {
-      input_parameters = map(any)
-    }
-  )
-  default = {
-    input_parameters = {
-      blockedPort1 = "20"
-      blockedPort2 = "21"
-      blockedPort3 = "3389"
-      blockedPort4 = "3306"
-      blockedPort5 = "4333"
-    }
-  }
-}
+# variable "restricted_common_ports" {
+#   type = object(
+#     {
+#       input_parameters = map(any)
+#     }
+#   )
+#   default = {
+#     input_parameters = {
+#       blockedPort1 = "20"
+#       blockedPort2 = "21"
+#       blockedPort3 = "3389"
+#       blockedPort4 = "3306"
+#       blockedPort5 = "4333"
+#     }
+#   }
+# }
 variable "tags" {
   type        = map(any)
   description = "(Optional) Key-value map of resource tags."

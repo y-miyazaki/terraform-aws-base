@@ -2,15 +2,15 @@
 # Local
 #--------------------------------------------------------------
 locals {
-  tags = {
-    for k, v in(var.tags == null ? {} : var.tags) : k => v if lookup(data.aws_default_tags.provider.tags, k, null) == null || lookup(data.aws_default_tags.provider.tags, k, null) != v
-  }
+  #   tags = {
+  #     for k, v in(var.tags == null ? {} : var.tags) : k => v if lookup(data.aws_default_tags.provider.tags, k, null) == null || lookup(data.aws_default_tags.provider.tags, k, null) != v
+  #   }
   region = var.region == null ? data.aws_region.current.name : var.region
 }
 #--------------------------------------------------------------
 # Use this data source to get the default tags configured on the provider.
 #--------------------------------------------------------------
-data "aws_default_tags" "provider" {}
+# data "aws_default_tags" "provider" {}
 
 #--------------------------------------------------------------
 # Current Region
@@ -21,7 +21,8 @@ data "aws_region" "current" {}
 # Enables Security Hub for this AWS account.
 #--------------------------------------------------------------
 resource "aws_securityhub_account" "this" {
-  count = var.is_enabled ? 1 : 0
+  count                     = var.is_enabled ? 1 : 0
+  control_finding_generator = "SECURITY_CONTROL"
 }
 #--------------------------------------------------------------
 # Provides a Security Hub member resource.

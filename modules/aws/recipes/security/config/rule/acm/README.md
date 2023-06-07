@@ -3,14 +3,14 @@
 
 | Name | Version |
 |------|---------|
-| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >=0.14 |
-| <a name="requirement_aws"></a> [aws](#requirement\_aws) | >=3.70.0 |
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | ~>1.4 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | ~>4.67.0 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | 4.8.0 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | 4.67.0 |
 
 ## Modules
 
@@ -27,7 +27,6 @@ No modules.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_api-gw-endpoint-type-check"></a> [api-gw-endpoint-type-check](#input\_api-gw-endpoint-type-check) | n/a | <pre>object(<br>    {<br>      input_parameters = map(any)<br>    }<br>  )</pre> | <pre>{<br>  "input_parameters": {<br>    "endpointConfigurationTypes": [<br>      "REGIONAL",<br>      "PRIVATE"<br>    ]<br>  }<br>}</pre> | no |
 | <a name="input_is_enabled"></a> [is\_enabled](#input\_is\_enabled) | (Optional) A boolean flag to enable/disable AWS Config. Defaults true. | `bool` | `true` | no |
 | <a name="input_name_prefix"></a> [name\_prefix](#input\_name\_prefix) | (Optional) Prefix of config name. | `string` | `""` | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | (Optional) Key-value map of resource tags. | `map(any)` | `null` | no |

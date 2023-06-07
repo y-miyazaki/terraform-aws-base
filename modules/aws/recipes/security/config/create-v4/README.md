@@ -3,20 +3,20 @@
 
 | Name | Version |
 |------|---------|
-| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >=0.14 |
-| <a name="requirement_aws"></a> [aws](#requirement\_aws) | >=4.0.0 |
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | ~>1.4 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | ~>4.67.0 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | 4.8.0 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | 4.67.0 |
 
 ## Modules
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_s3"></a> [s3](#module\_s3) | terraform-aws-modules/s3-bucket/aws | 3.2.1 |
+| <a name="module_s3"></a> [s3](#module\_s3) | terraform-aws-modules/s3-bucket/aws | 3.6.0 |
 
 ## Resources
 
@@ -35,7 +35,6 @@
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_account_id"></a> [account\_id](#input\_account\_id) | (Required) AWS account ID for member account. | `string` | n/a | yes |
 | <a name="input_aws_cloudwatch_event_rule"></a> [aws\_cloudwatch\_event\_rule](#input\_aws\_cloudwatch\_event\_rule) | (Optional) Provides an EventBridge Rule resource. | <pre>object(<br>    {<br>      # (Required) The name of the rule. If omitted, Terraform will assign a random, unique name. Conflicts with name_prefix.<br>      name = string<br>      # (Optional) The description of the rule.<br>      description = string<br>    }<br>  )</pre> | <pre>{<br>  "description": "This cloudwatch event used for Config.",<br>  "name": "security-config-cloudwatch-event-rule"<br>}</pre> | no |
 | <a name="input_aws_cloudwatch_event_target"></a> [aws\_cloudwatch\_event\_target](#input\_aws\_cloudwatch\_event\_target) | (Required) Provides an EventBridge Target resource. | <pre>object(<br>    {<br>      # (Required) The Amazon Resource Name (ARN) associated of the target.<br>      arn = string<br>    }<br>  )</pre> | n/a | yes |
 | <a name="input_aws_config_configuration_recorder"></a> [aws\_config\_configuration\_recorder](#input\_aws\_config\_configuration\_recorder) | (Required) The aws\_config\_configuration\_recorder resource. | <pre>object(<br>    {<br>      name            = string<br>      recording_group = list(any)<br>    }<br>  )</pre> | n/a | yes |

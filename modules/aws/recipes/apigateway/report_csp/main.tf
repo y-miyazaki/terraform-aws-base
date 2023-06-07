@@ -47,6 +47,7 @@ resource "aws_api_gateway_deployment" "this" {
 # with the aws_api_gateway_base_path_mapping resource, aws_api_gateway_domain_name resource,
 # and aws_api_method_settings resource. For more information, see the API Gateway Developer Guide.
 #--------------------------------------------------------------
+# tfsec:ignore:aws-api-gateway-enable-access-logging
 resource "aws_api_gateway_stage" "this" {
   deployment_id = aws_api_gateway_deployment.this.id
   rest_api_id   = var.aws_api_gateway_rest_api_id

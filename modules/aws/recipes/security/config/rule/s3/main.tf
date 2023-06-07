@@ -43,7 +43,7 @@ resource "aws_config_config_rule" "s3-account-level-public-access-blocks" {
 # Provides an AWS Config Remediation Configuration.
 #--------------------------------------------------------------
 resource "aws_config_remediation_configuration" "s3-account-level-public-access-blocks" {
-  count            = var.is_enabled && var.is_configure_s3_public_access_block ? 1 : 0
+  count            = var.is_enabled && var.is_configure_s3_bucket_public_access_block ? 1 : 0
   config_rule_name = aws_config_config_rule.s3-account-level-public-access-blocks[0].name
   target_type      = "SSM_DOCUMENT"
   # https://docs.aws.amazon.com/systems-manager-automation-runbooks/latest/userguide/automation-aws-block-public-s3.html
@@ -312,7 +312,7 @@ resource "aws_config_remediation_configuration" "s3-bucket-server-side-encryptio
   }
   parameter {
     name         = "SSEAlgorithm"
-    static_value = "AES256"
+    static_value = var.enabled_s3_bucket_encryption_sse_algorithm
   }
 
   automatic                  = true
