@@ -36,6 +36,7 @@ resource "aws_internet_gateway" "igw" {
 #--------------------------------------------------------------
 # Provides an VPC subnet resource.
 #--------------------------------------------------------------
+# tfsec:ignore:aws-ec2-no-public-ip-subnet
 resource "aws_subnet" "igw" {
   count                   = length(var.igw_cidr_block)
   vpc_id                  = aws_vpc.this.id

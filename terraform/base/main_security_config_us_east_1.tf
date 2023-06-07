@@ -47,8 +47,7 @@ module "aws_recipes_security_config_create_v4_us_east_1" {
   aws_cloudwatch_event_target = {
     arn = module.lambda_function_config_us_east_1.lambda_function_arn
   }
-  account_id = data.aws_caller_identity.current.account_id
-  tags       = var.tags
+  tags = var.tags
   depends_on = [
     module.s3_log
   ]

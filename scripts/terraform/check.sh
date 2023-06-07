@@ -6,7 +6,10 @@ set -e
 for file in `find /workspace/ ! -path '*/.terraform/*' -type f -name 'main.tf'`; do
     dir=`dirname $file`
     cd ${dir}
-    pwd
+    pwddir=`pwd`
+    echo "#--------------------------------------------------------------"
+    echo "# ${PWD}"
+    echo "#--------------------------------------------------------------"
     tfenv install
     terraform init -backend=false
     terraform validate

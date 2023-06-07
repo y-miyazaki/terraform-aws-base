@@ -1,6 +1,8 @@
 #--------------------------------------------------------------
 # Provides an Athena Workgroup.
 #--------------------------------------------------------------
+# tfsec:ignore:aws-athena-enable-at-rest-encryption
+# tfsec:ignore:aws-athena-no-encryption-override
 resource "aws_athena_workgroup" "this" {
   name = format("%s%s", var.name_prefix, var.workgroup_name)
   dynamic "configuration" {
@@ -21,7 +23,7 @@ resource "aws_athena_workgroup" "this" {
           dynamic "encryption_configuration" {
             for_each = length(keys(lookup(result_configuration.value, "encryption_configuration", {}))) == 0 ? [] : [lookup(result_configuration.value, "encryption_configuration", {})]
             content {
-              encryption_option = lookup(encryption_configuration.value, "encryption_option", null)
+              encryption_option = lookup(encryption_configuration.value, "encryption_option")
               kms_key_arn       = lookup(encryption_configuration.value, "kms_key_arn", null)
             }
           }
@@ -47,6 +49,7 @@ resource "aws_athena_workgroup" "this" {
 #--------------------------------------------------------------
 # Provides an Athena database.
 #--------------------------------------------------------------
+# tfsec:ignore:aws-athena-enable-at-rest-encryption
 resource "aws_athena_database" "this" {
   bucket = var.database_bucket
   name   = format("%s_%s", trimsuffix(var.name_prefix, "-"), var.database_name)

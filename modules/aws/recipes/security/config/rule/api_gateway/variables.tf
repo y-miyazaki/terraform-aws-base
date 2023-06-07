@@ -11,18 +11,18 @@ variable "name_prefix" {
   description = "(Optional) Prefix of config name."
   default     = ""
 }
-variable "api-gw-endpoint-type-check" {
-  type = object(
-    {
-      input_parameters = map(any)
-    }
-  )
-  default = {
-    input_parameters = {
-      endpointConfigurationTypes = ["REGIONAL", "PRIVATE"]
-    }
-  }
-}
+# variable "api_gw_endpoint_type_check" {
+#   type = object(
+#     {
+#       input_parameters = map(any)
+#     }
+#   )
+#   default = {
+#     input_parameters = {
+#       endpointConfigurationTypes = ["REGIONAL", "PRIVATE"]
+#     }
+#   }
+# }
 variable "tags" {
   type        = map(any)
   description = "(Optional) Key-value map of resource tags."

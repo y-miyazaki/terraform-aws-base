@@ -35,9 +35,6 @@ module "aws_recipes_api_gateway_report_csp" {
   tags                        = var.tags
 }
 
-#--------------------------------------------------------------
-# Output
-#--------------------------------------------------------------
 output "report_csp_endpoint" {
   description = "Endpoint to report CSP. method is POST."
   value       = var.report_csp.is_enabled ? module.aws_recipes_api_gateway_report_csp[0].endpoint : null

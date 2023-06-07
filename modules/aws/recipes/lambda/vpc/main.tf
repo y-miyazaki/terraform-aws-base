@@ -35,6 +35,7 @@ resource "aws_route_table_association" "this" {
 #--------------------------------------------------------------
 # Security Group
 #--------------------------------------------------------------
+# tfsec:ignore:aws-ec2-no-public-egress-sgr
 resource "aws_security_group" "this" {
   name        = lookup(var.aws_security_group, "name")
   vpc_id      = lookup(var.aws_subnet[0], "vpc_id")

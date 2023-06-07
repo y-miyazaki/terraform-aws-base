@@ -1857,18 +1857,6 @@ security_config = {
     }
     s3 = {
       # TODO: If true, configures the Amazon Simple Storage Service (Amazon S3) public access block settings for an Amazon S3 bucket based on the values you specify.
-      is_configure_s3_public_access_block = true
-      configure_s3_public_access_block = {
-        # TODO: If set to True, Amazon S3 blocks public access control lists (ACLs) for S3 buckets owned by the AWS account you specify in the AccountId parameter.
-        block_public_acls = true
-        # TODO: If set to True, Amazon S3 blocks public bucket policies for S3 buckets owned by the AWS account you specify in the AccountId parameter.
-        block_public_policy = true
-        # TODO: If set to True, Amazon S3 ignores all public ACLs for S3 buckets owned by the AWS account you specify in the AccountId parameter.
-        ignore_public_acls = true
-        # TODO: If set to True, Amazon S3 restricts public bucket policies for S3 buckets owned by the AWS account you specify in the AccountId parameter.
-        restrict_public_buckets = true
-      }
-      # TODO: If true, configures the Amazon Simple Storage Service (Amazon S3) public access block settings for an Amazon S3 bucket based on the values you specify.
       is_configure_s3_bucket_public_access_block = true
       configure_s3_bucket_public_access_block = {
         # TODO: If set to True, Amazon S3 blocks public access control lists (ACLs) for the S3 bucket, and objects stored in the S3 bucket you specify in the BucketName parameter.

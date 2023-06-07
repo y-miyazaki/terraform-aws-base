@@ -11,7 +11,7 @@ locals {
   }
   is_s3_enabled = var.is_enabled && var.is_s3_enabled
   bucket_id     = local.is_s3_enabled ? module.s3.s3_bucket_id : var.aws_s3_bucket_existing.bucket_id
-  bucket_arn    = local.is_s3_enabled ? module.s3.s3_bucket_arn : var.aws_s3_bucket_existing.bucket_arn
+  #   bucket_arn    = local.is_s3_enabled ? module.s3.s3_bucket_arn : var.aws_s3_bucket_existing.bucket_arn
 }
 #--------------------------------------------------------------
 # Use this data source to get the default tags configured on the provider.

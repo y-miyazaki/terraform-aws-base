@@ -6,11 +6,6 @@ variable "is_enabled" {
   description = "(Optional) A boolean flag to enable/disable settings of ElastiCache. Defaults true."
   default     = true
 }
-variable "db_instance_class" {
-  type        = string
-  description = "(Optional) ElasicCache instance class."
-  default     = ""
-}
 variable "period" {
   type        = number
   description = "(Optional) The period in seconds over which the specified statistic is applied."

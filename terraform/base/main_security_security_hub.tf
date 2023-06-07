@@ -6,7 +6,7 @@
 #--------------------------------------------------------------
 module "aws_recipes_security_securityhub" {
   source = "../../modules/aws/recipes/security/securityhub"
-  tags   = var.tags
+  #   tags   = var.tags
 
   is_enabled = lookup(var.security_securityhub, "is_enabled", true)
   # aws_securityhub_member

@@ -3,14 +3,14 @@
 
 | Name | Version |
 |------|---------|
-| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >=0.14 |
-| <a name="requirement_aws"></a> [aws](#requirement\_aws) | >=3.0.0 |
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | ~>1.4 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | ~>4.67.0 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | 4.8.0 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | 4.67.0 |
 
 ## Modules
 
@@ -32,7 +32,7 @@ No modules.
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | <a name="input_aws_iam_policy"></a> [aws\_iam\_policy](#input\_aws\_iam\_policy) | (Optional) Provides an IAM policy. | <pre>object(<br>    {<br>      # Description of the IAM policy.<br>      description = string<br>      # The name of the policy. If omitted, Terraform will assign a random, unique name.<br>      name = string<br>      # Path in which to create the policy. See IAM Identifiers for more information.<br>      path = string<br>      # The policy document. This is a JSON formatted string. For more information about building AWS IAM policy documents with Terraform, see the AWS IAM Policy Document Guide.<br>      statement = list(any)<br>    }<br>  )</pre> | `null` | no |
-| <a name="input_aws_iam_role"></a> [aws\_iam\_role](#input\_aws\_iam\_role) | (Required) Provides an IAM role. | <pre>object(<br>    {<br>      # Description of the IAM policy.<br>      description = string<br>      # The name of the policy. If omitted, Terraform will assign a random, unique name.<br>      name = string<br>      # Path in which to create the policy. See IAM Identifiers for more information.<br>      path = string<br>      # Specify the original AWS account ID that will use the IAM Switch role. Please specify either assume_policy or account_id.<br>      account_id = string<br>      # If you want to configure your own settings for the role, specify the assume_policy. Please specify either assume_policy or account_id.<br>      assume_policy = string<br>    }<br>  )</pre> | n/a | yes |
+| <a name="input_aws_iam_role"></a> [aws\_iam\_role](#input\_aws\_iam\_role) | (Required) Provides an IAM role. | <pre>object(<br>    {<br>      # Description of the IAM policy.<br>      description = string<br>      # The name of the policy. If omitted, Terraform will assign a random, unique name.<br>      name = string<br>      # Path in which to create the policy. See IAM Identifiers for more information.<br>      path = string<br>      # Specify the original AWS account ID that will use the IAM Switch role. Please specify either assume_policy or account_id.<br>      account_id = string<br>      # If you want to configure your own settings for the role, specify the assume_policy. Please specify either assume_policy or account_id.<br>      assume_role_policy = string<br>    }<br>  )</pre> | n/a | yes |
 | <a name="input_is_enabled"></a> [is\_enabled](#input\_is\_enabled) | (Optional) A boolean flag to enable/disable Trusted Advisor. Defaults true. | `bool` | `true` | no |
 | <a name="input_name_prefix"></a> [name\_prefix](#input\_name\_prefix) | (Optional) Prefix of policy name . | `string` | `""` | no |
 | <a name="input_policy"></a> [policy](#input\_policy) | (Optional) Provides an IAM policy. | `list(any)` | `[]` | no |
