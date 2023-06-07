@@ -161,7 +161,7 @@ module "aws_recipes_security_config_rule_s3" {
 # tfsec:ignore:aws-lambda-enable-tracing
 module "lambda_function_config" {
   source  = "terraform-aws-modules/lambda/aws"
-  version = "3.2.1"
+  version = "5.0.0"
   create  = lookup(var.security_config, "is_enabled", true)
 
   create_current_version_allowed_triggers = false
