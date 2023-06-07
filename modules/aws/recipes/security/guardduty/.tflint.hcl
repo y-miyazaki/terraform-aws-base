@@ -1,6 +1,6 @@
-rule "aws_cloudwatch_event_target_invalid_arn" {
-  enabled = false
-}
+# rule "aws_cloudwatch_event_target_invalid_arn" {
+#   enabled = false
+# }
 rule "aws_guardduty_detector_invalid_finding_publishing_frequency" {
   enabled = false
 }

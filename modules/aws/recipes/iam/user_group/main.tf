@@ -31,6 +31,27 @@ resource "aws_iam_user" "this" {
   force_destroy = true
 }
 #--------------------------------------------------------------
+# Manages an IAM User Login Profile with limited support for password creation during Terraform resource creation. Uses PGP to encrypt the password for safe transport to the user. PGP keys can be obtained from Keybase.
+#--------------------------------------------------------------
+resource "aws_iam_user_login_profile" "this" {
+  for_each                = { for k, v in var.user : k => v if v.is_console_access }
+  user                    = each.key
+  pgp_key                 = "keybase:exp_enechange"
+  password_reset_required = true
+  # Check this following document.
+  # https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_user_login_profile#import
+  lifecycle {
+    ignore_changes = [
+      password_length,
+      password_reset_required,
+      pgp_key,
+    ]
+  }
+  depends_on = [
+    aws_iam_user.this,
+  ]
+}
+#--------------------------------------------------------------
 # IAM Group for administrator
 #--------------------------------------------------------------
 resource "aws_iam_group" "this" {
@@ -124,7 +145,7 @@ resource "aws_iam_policy" "this" {
         "iam:ResyncMFADevice"
       ],
       "Resource": [
-        "arn:aws:iam::*:mfa/$${aws:username}",
+        "arn:aws:iam::*:mfa/*",
         "arn:aws:iam::*:user/$${aws:username}"
       ]
     },
@@ -133,7 +154,7 @@ resource "aws_iam_policy" "this" {
       "Effect": "Allow",
       "Action": ["iam:DeactivateMFADevice"],
       "Resource": [
-        "arn:aws:iam::*:mfa/$${aws:username}",
+        "arn:aws:iam::*:mfa/*",
         "arn:aws:iam::*:user/$${aws:username}"
       ],
       "Condition": {
@@ -271,4 +292,11 @@ resource "aws_iam_group_policy_attachment" "custom" {
   depends_on = [
     aws_iam_group.this,
   ]
+}
+#--------------------------------------------------------------
+# Provides an IAM access key. This is a set of credentials that allow API requests to be made as an IAM user.
+#--------------------------------------------------------------
+resource "aws_iam_access_key" "this" {
+  for_each = { for k, v in var.user : k => v if v.is_access_key }
+  user     = each.key
 }

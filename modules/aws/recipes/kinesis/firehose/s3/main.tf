@@ -150,6 +150,17 @@ data "aws_iam_policy_document" "this" {
       "*"
     ]
   }
+  statement {
+    effect = "Allow"
+    actions = [
+      "lambda:InvokeFunction",
+      "lambda:GetFunctionConfiguration"
+    ]
+    #tfsec:ignore:AWS099
+    resources = [
+      "*"
+    ]
+  }
 }
 #--------------------------------------------------------------
 # Provides an IAM policy.

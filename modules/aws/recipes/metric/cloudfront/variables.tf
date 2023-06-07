@@ -43,7 +43,7 @@ variable "threshold" {
   default = {
     enabled_error_401_rate = true
     error_401_rate         = 1
-    enabled_error_403_rate = true
+    enabled_error_403_rate = false
     error_403_rate         = 1
     enabled_error_404_rate = true
     error_404_rate         = 1

@@ -18,7 +18,7 @@ variable "aws_iam_role" {
       # Specify the original AWS account ID that will use the IAM Switch role. Please specify either assume_policy or account_id.
       account_id = string
       # If you want to configure your own settings for the role, specify the assume_policy. Please specify either assume_policy or account_id.
-      assume_policy = string
+      assume_role_policy = string
     }
   )
   description = "(Required) Provides an IAM role."

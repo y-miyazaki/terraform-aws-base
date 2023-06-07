@@ -43,8 +43,8 @@ POLICY
 # Attaches a Managed IAM Policy to an IAM role
 #--------------------------------------------------------------
 resource "aws_iam_role_policy_attachment" "config" {
-  count      = var.is_enabled ? 1 : 0
-  role       = aws_iam_role.config[0].name
+  count = var.is_enabled ? 1 : 0
+  role  = aws_iam_role.config[0].name
   # https://docs.aws.amazon.com/ja_jp/config/latest/developerguide/security-iam-awsmanpol.html
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWS_ConfigRole"
 }
@@ -74,7 +74,7 @@ resource "aws_config_configuration_recorder" "this" {
 #--------------------------------------------------------------
 module "s3" {
   source        = "terraform-aws-modules/s3-bucket/aws"
-  version       = "3.2.1"
+  version       = "3.6.0"
   create_bucket = local.is_s3_enabled
 
   acl                                   = "log-delivery-write"

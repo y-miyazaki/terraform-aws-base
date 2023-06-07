@@ -8,12 +8,12 @@ If you need to adjust the parameters, you can do so by yourself by searching TOD
 # Table of Contents
 - [Initial setting](#initial-setting)
 - [Required](#required)
-  - [deploy_user](#deploy_user)
+  - [deploy\_user](#deploy_user)
   - [region](#region)
 - [Not Required](#not-required)
   - [tags](#tags)
   - [Slack](#slack)
-  - [is_enabled](#is_enabled)
+  - [is\_enabled](#is_enabled)
 
 # Initial setting
 
@@ -322,7 +322,7 @@ metric_resource_api_gateway = {
 # or publish your own application metrics. Amazon CloudWatch can load all the metrics in your account
 # (both AWS resource metrics and application metrics that you provide) for search, graphing, and alarms.
 #
-# Metrics about Cloudfront will be checked and you will be notified via Slack if the specified threshold is exceeded.
+# Metrics about CloudFront will be checked and you will be notified via Slack if the specified threshold is exceeded.
 # https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/monitoring-using-cloudwatch.html
 #--------------------------------------------------------------
 metric_resource_cloudfront = {
@@ -463,4 +463,32 @@ cloudwatch_event_ec2 = {
 metric_synthetics_canary = {
   # TODO: need to set is_enabled for Metric of Synthetics Canary.
   is_enabled = false
+```
+
+- Athena
+
+```
+#--------------------------------------------------------------
+# Athena
+# Amazon Athena is an interactive query service that makes it easy to 
+# analyze data directly in Amazon Simple Storage Service (Amazon S3) using standard SQL.
+# With a few actions in the AWS Management Console, you can point Athena at your data stored in
+# Amazon S3 and begin using standard SQL to run ad-hoc queries and get results in seconds.
+#
+# With this configuration, CloudFront and SES logs can be viewed in Athena.
+#--------------------------------------------------------------
+athena = {
+  # TODO: need to set is_enabled for Athena.
+  is_enabled     = false
+  .
+  .
+  .
+  # TODO: To check CloudFront logs with Athena, specify true.
+  enabled_cloudfront    = false
+  # TODO: Specify the S3 bucket where CloudFront logs are stored. s3://{bucket name}/{bucket prefix}
+  cloudfront_log_bucket = "s3://{bucket name}/{bucket prefix}"
+  # TODO: To check SES logs with Athena, specify true.
+  enabled_ses = false
+  # TODO: Specify the S3 bucket where SES logs are stored. s3://{bucket name}/{bucket prefix}
+  ses_log_bucket = "s3://{bucket name}/{bucket prefix}"  
 ```

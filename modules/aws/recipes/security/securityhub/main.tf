@@ -51,7 +51,7 @@ resource "aws_securityhub_product_subscription" "this" {
 #--------------------------------------------------------------
 resource "aws_securityhub_standards_subscription" "cis_aws_foundations_benchmark" {
   count         = var.is_enabled && var.enabled_cis_aws_foundations_benchmark ? 1 : 0
-  standards_arn = "arn:aws:securityhub:::ruleset/cis-aws-foundations-benchmark/v/1.2.0"
+  standards_arn = "arn:aws:securityhub:${local.region}::standards/cis-aws-foundations-benchmark/v/${var.cis_aws_foundations_benchmark_version}"
   depends_on = [
     aws_securityhub_account.this
   ]
@@ -62,7 +62,7 @@ resource "aws_securityhub_standards_subscription" "cis_aws_foundations_benchmark
 #--------------------------------------------------------------
 resource "aws_securityhub_standards_subscription" "pci_dss" {
   count         = var.is_enabled && var.enabled_pci_dss ? 1 : 0
-  standards_arn = "arn:aws:securityhub:${local.region}::standards/pci-dss/v/3.2.1"
+  standards_arn = "arn:aws:securityhub:${local.region}::standards/pci-dss/v/${var.pci_dss_version}"
   depends_on = [
     aws_securityhub_account.this
   ]

@@ -35,6 +35,8 @@ variable "aws_sns_topic" {
       # The display name for the topic
       display_name = string
       # The fully-formed AWS policy as JSON. For more information about building AWS IAM policy documents with Terraform, see the AWS IAM Policy Document Guide.
+      policy = string
+      # The fully-formed AWS policy as JSON. For more information about building AWS IAM policy documents with Terraform, see the AWS IAM Policy Document Guide.
       delivery_policy = string
       # The IAM role permitted to receive success feedback for this topic
       application_success_feedback_role_arn = string
