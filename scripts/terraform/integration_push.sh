@@ -28,7 +28,7 @@ echo "#--------------------------------------------------------------"
 echo "# terraform init ($PWD)"
 echo "#--------------------------------------------------------------"
 # terraform init -reconfigure -backend-config=terraform."${ENV}".tfbackend
-# terraform init
+terraform init
 echo "#--------------------------------------------------------------"
 echo "# tflint ($PWD)"
 echo "#--------------------------------------------------------------"
