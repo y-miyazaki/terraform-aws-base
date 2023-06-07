@@ -1,7 +1,10 @@
 variable "user" {
-  type        = list(any)
+  type = map(object({
+    is_console_access = bool
+    is_access_key     = bool
+  }))
   description = "(Optional) Provides an IAM User."
-  default     = []
+  default     = {}
 }
 variable "group" {
   type        = any

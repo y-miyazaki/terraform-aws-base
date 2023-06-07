@@ -4,13 +4,13 @@
 locals {
   s3_log_bucket        = "${var.name_prefix}${var.common_log.s3_log.bucket}-${random_id.this.dec}"
   s3_cloudtrail_bucket = "${var.name_prefix}${var.common_log.s3_cloudtrail.bucket}-${random_id.this.dec}"
-  config_role_names = var.security_config_us_east_1.is_enabled ? [
+  config_role_names = var.security_config.is_enabled ? var.security_config_us_east_1.is_enabled ? [
     module.aws_recipes_security_config_create_v4.config_role_name,
     # for CloudFront
     module.aws_recipes_security_config_create_v4_us_east_1.config_role_name,
     ] : [
     module.aws_recipes_security_config_create_v4.config_role_name,
-  ]
+  ] : []
 }
 #--------------------------------------------------------------
 # S3 for log.
@@ -19,7 +19,7 @@ locals {
 #tfsec:ignore:aws-s3-enable-versioning
 module "s3_log" {
   source        = "terraform-aws-modules/s3-bucket/aws"
-  version       = "3.2.1"
+  version       = "3.6.0"
   create_bucket = var.common_log.s3_log.create_bucket
 
   acl                                  = var.common_log.s3_log.acl
@@ -113,7 +113,7 @@ resource "aws_s3_bucket_policy" "log" {
 #tfsec:ignore:aws-s3-enable-versioning
 module "s3_cloudtrail" {
   source        = "terraform-aws-modules/s3-bucket/aws"
-  version       = "3.2.1"
+  version       = "3.6.0"
   create_bucket = var.common_log.s3_cloudtrail.create_bucket
 
   acl                  = var.common_log.s3_cloudtrail.acl

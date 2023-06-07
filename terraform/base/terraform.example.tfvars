@@ -200,11 +200,20 @@ iam = {
   # TODO: need to set is_enabled for settings of IAM.
   is_enabled = true
   # TODO: need to change IAM User.
-  user = [
-    "test1",
-    "test2",
-    "test3",
-  ]
+  user = {
+    "test1" = {
+      is_console_access = true
+      is_access_key     = false
+    },
+    "test2" = {
+      is_console_access = true
+      is_access_key     = false
+    },
+    "test3" = {
+      is_console_access = true
+      is_access_key     = false
+    },
+  }
   #--------------------------------------------------------------
   # TODO: need to change IAM Group.
   # Please specify the user with the same name that has been set in users.
@@ -230,6 +239,9 @@ iam = {
         path        = "/"
         description = ""
         statement = [
+          #--------------------------------------------------------------
+          # Admin default rule start
+          #--------------------------------------------------------------
           {
             sid    = "DenyCloudTrailWrite"
             effect = "Deny"
@@ -374,6 +386,9 @@ iam = {
               "arn:aws:s3:::*-aws-log-*"
             ]
           },
+          #--------------------------------------------------------------
+          # Admin default rule end
+          #--------------------------------------------------------------
         ]
       }
       # TODO: need to add policy arn. group policy limit is 10.
@@ -405,6 +420,50 @@ iam = {
         path        = "/"
         description = ""
         statement = [
+          #--------------------------------------------------------------
+          # Default rule start
+          #--------------------------------------------------------------
+          {
+            sid    = "AllowDefaultWidgetPage"
+            effect = "Allow"
+            actions = [
+              "servicecatalog:ListApplications",
+              "ce:GetCostAndUsage",
+              "ce:GetCostForecast",
+              "support:DescribeTrustedAdvisorChecks",
+              "support:DescribeTrustedAdvisorCheckSummaries",
+              "ram:ListResources",
+              "health:DescribeEventAggregates",
+            ]
+            resources = [
+              "*"
+            ]
+          },
+          {
+            sid    = "AllowS3LogList"
+            effect = "Allow"
+            actions = [
+              "s3:ListAllMyBuckets",
+            ]
+            resources = [
+              "*",
+            ]
+          },
+          {
+            sid    = "AllowS3Log"
+            effect = "Allow"
+            actions = [
+              "s3:Get*",
+              "s3:List*",
+              "s3:HeadBucket",
+            ]
+            resources = [
+              "arn:aws:s3:::base-aws-log-common-*",
+              "arn:aws:s3:::base-aws-log-common-*/*",
+              "arn:aws:s3:::base-aws-log-application-*",
+              "arn:aws:s3:::base-aws-log-application-*/*",
+            ]
+          },
           {
             sid    = "AllowAWSSecurityHubReadOnlyAccess"
             effect = "Allow"
@@ -458,16 +517,34 @@ iam = {
               "*"
             ]
           },
-          {
-            sid    = "AllowHealth"
-            effect = "Allow"
-            actions = [
-              "health:DescribeEventAggregates",
-            ]
-            resources = [
-              "*"
-            ]
-          },
+          #--------------------------------------------------------------
+          # Default rule end
+          #--------------------------------------------------------------
+          #--------------------------------------------------------------
+          # Custom rule start
+          #--------------------------------------------------------------
+          # TODO: If you wish to grant permissions to users, please add permissions for the target action below.
+          # The commented out items below are samples.
+
+          #   {
+          #     sid    = "AllowSSM"
+          #     effect = "Allow"
+          #     actions = [
+          #       "ssm:StartSession",
+          #       "ssm:TerminateSession",
+          #       "ssm:ResumeSession",
+          #       "ssm:DescribeSessions",
+          #       "ssm:GetConnectionStatus",
+          #       "ssm:DescribeInstanceProperties",
+          #       "ec2:describeInstances",
+          #     ]
+          #     resources = [
+          #       "*",
+          #     ]
+          #   },
+          #--------------------------------------------------------------
+          # Custom rule end
+          #--------------------------------------------------------------
         ]
       }
       # TODO: need to add policy arn. group policy limit is 10.
@@ -500,6 +577,81 @@ iam = {
         path        = "/"
         description = ""
         statement = [
+          #--------------------------------------------------------------
+          # Default rule start
+          #--------------------------------------------------------------
+          {
+            sid    = "AllowDefaultWidgetPage"
+            effect = "Allow"
+            actions = [
+              "servicecatalog:ListApplications",
+              "ce:GetCostAndUsage",
+              "ce:GetCostForecast",
+              "support:DescribeTrustedAdvisorChecks",
+              "support:DescribeTrustedAdvisorCheckSummaries",
+              "ram:ListResources",
+              "health:DescribeEventAggregates",
+            ]
+            resources = [
+              "*"
+            ]
+          },
+          {
+            sid    = "AllowS3LogList"
+            effect = "Allow"
+            actions = [
+              "s3:ListAllMyBuckets",
+            ]
+            resources = [
+              "*",
+            ]
+          },
+          {
+            sid    = "AllowS3Log"
+            effect = "Allow"
+            actions = [
+              "s3:Get*",
+              "s3:List*",
+              "s3:HeadBucket",
+            ]
+            resources = [
+              "arn:aws:s3:::base-aws-log-common-*",
+              "arn:aws:s3:::base-aws-log-common-*/*",
+              "arn:aws:s3:::base-aws-log-application-*",
+              "arn:aws:s3:::base-aws-log-application-*/*",
+            ]
+          },
+          {
+            sid    = "AllowAWSSecurityHubReadOnlyAccess"
+            effect = "Allow"
+            actions = [
+              "securityhub:Get*",
+              "securityhub:List*",
+              "securityhub:Describe*",
+            ]
+            resources = [
+              "*"
+            ]
+          },
+          {
+            sid    = "AllowAWSConfigUserAccess"
+            effect = "Allow"
+            actions = [
+              "config:Get*",
+              "config:Describe*",
+              "config:Deliver*",
+              "config:List*",
+              "config:Select*",
+              "tag:GetResources",
+              "tag:GetTagKeys",
+              "cloudtrail:DescribeTrails",
+              "cloudtrail:GetTrailStatus",
+              "cloudtrail:LookupEvents",
+            ]
+            resources = [
+              "*"
+            ]
+          },
           {
             sid    = "AllowCloudWatchReadOnlyAccess"
             effect = "Allow"
@@ -522,27 +674,34 @@ iam = {
               "*"
             ]
           },
-          {
-            sid    = "AllowAmazonS3ReadOnlyAccess"
-            effect = "Allow"
-            actions = [
-              "s3:Get*",
-              "s3:List*"
-            ]
-            resources = [
-              "*"
-            ]
-          },
-          {
-            sid    = "AllowHealth"
-            effect = "Allow"
-            actions = [
-              "health:DescribeEventAggregates",
-            ]
-            resources = [
-              "*"
-            ]
-          },
+          #--------------------------------------------------------------
+          # Default rule end
+          #--------------------------------------------------------------
+          #--------------------------------------------------------------
+          # Custom rule start
+          #--------------------------------------------------------------
+          # TODO: If you wish to grant permissions to users, please add permissions for the target action below.
+          # The commented out items below are samples.
+
+          #   {
+          #     sid    = "AllowSSM"
+          #     effect = "Allow"
+          #     actions = [
+          #       "ssm:StartSession",
+          #       "ssm:TerminateSession",
+          #       "ssm:ResumeSession",
+          #       "ssm:DescribeSessions",
+          #       "ssm:GetConnectionStatus",
+          #       "ssm:DescribeInstanceProperties",
+          #       "ec2:describeInstances",
+          #     ]
+          #     resources = [
+          #       "*",
+          #     ]
+          #   },
+          #--------------------------------------------------------------
+          # Custom rule end
+          #--------------------------------------------------------------
         ]
       }
       # TODO: need to add policy arn. group policy limit is 10.
@@ -593,18 +752,27 @@ iam = {
         path        = "/"
         description = ""
         statement = [
-          {
-            sid    = "AllowAmazonS3Access"
-            effect = "Allow"
-            actions = [
-              "s3:Get*",
-              "s3:List*",
-              "s3:PutObject",
-            ]
-            resources = [
-              "*"
-            ]
-          },
+          #--------------------------------------------------------------
+          # Custom rule start
+          #--------------------------------------------------------------
+          # TODO: If you wish to grant permissions to users, please add permissions for the target action below.
+          # The commented out items below are samples.
+
+          #   {
+          #     sid    = "AllowS3"
+          #     effect = "Allow"
+          #     actions = [
+          #       "s3:Get*",
+          #       "s3:List*",
+          #       "s3:HeadBucket",
+          #       "s3:PutObject",
+          #       "s3:DeleteObject",
+          #     ]
+          #     resources = [
+          #       "arn:aws:s3:::*",
+          #       "arn:aws:s3:::*/*",
+          #     ]
+          #   },
         ]
       }
       # TODO: need to add policy arn. group policy limit is 10.
@@ -640,7 +808,8 @@ iam = {
                 ]
                 resources = [
                   # TODO: need to change AWS accound ID(99999999999) and role name
-                  # Specify the original AWS account ID that will use the IAM Switch role.
+                  # Specify the original AWS account ID(99999999999) that will use the IAM Switch role.
+                  # Specify the AWS Account ID(99999999999) of the switch destination.
                   "arn:aws:iam::999999999999:role/base-iam-switch-to-administrator-role",
                 ]
               },
@@ -663,7 +832,8 @@ iam = {
                 ]
                 resources = [
                   # TODO: need to change AWS accound ID(99999999999) and role name
-                  # Specify the original AWS account ID that will use the IAM Switch role.
+                  # Specify the original AWS account ID(99999999999) that will use the IAM Switch role.
+                  # Specify the AWS Account ID(99999999999) of the switch destination.
                   "arn:aws:iam::999999999999:role/base-iam-switch-to-developer-role",
                 ]
               },
@@ -686,7 +856,8 @@ iam = {
                 ]
                 resources = [
                   # TODO: need to change AWS accound ID(99999999999) and role name
-                  # Specify the original AWS account ID that will use the IAM Switch role.
+                  # Specify the original AWS account ID(99999999999) that will use the IAM Switch role.
+                  # Specify the AWS Account ID(99999999999) of the switch destination.
                   "arn:aws:iam::999999999999:role/base-iam-switch-to-operator-role",
                 ]
               },
@@ -709,16 +880,173 @@ iam = {
             path        = "/"
             description = ""
             # TODO: need to change AWS accound ID(99999999999)
-            # Specify the original AWS account ID that will use the IAM Switch role.
-            account_id    = "999999999999"
-            assume_policy = null
+            # Specify the original AWS account ID(99999999999) that will use the IAM Switch role.
+            # Specify the AWS Account ID(99999999999) of the switch source.
+            account_id         = "999999999999"
+            assume_role_policy = null
           }
           # TODO: need to set base policy.
           # Please specify the base policy to provide.
           # default null.
           # You need to check this document.
           # https://aws.amazon.com/jp/premiumsupport/knowledge-center/iam-increase-policy-size/
-          aws_iam_policy = null
+          aws_iam_policy = {
+            name        = "iam-group-administrator-base-policy"
+            path        = "/"
+            description = ""
+            statement = [
+              #--------------------------------------------------------------
+              # Admin default rule start
+              #--------------------------------------------------------------
+              {
+                sid    = "DenyCloudTrailWrite"
+                effect = "Deny"
+                actions = [
+                  "cloudtrail:DeleteEventDataStore",
+                  "cloudtrail:PutEventSelectors",
+                  "cloudtrail:StopLogging",
+                  "cloudtrail:StartLogging",
+                  "cloudtrail:UpdateEventDataStore",
+                  "cloudtrail:UpdateTrail",
+                  "cloudtrail:RestoreEventDataStore",
+                  "cloudtrail:CancelQuery",
+                  "cloudtrail:CreateEventDataStore",
+                  "cloudtrail:PutInsightSelectors",
+                  "cloudtrail:AddTags",
+                  "cloudtrail:DeleteTrail",
+                  "cloudtrail:CreateTrail",
+                  "cloudtrail:StartQuery",
+                  "cloudtrail:RemoveTags",
+                ]
+                resources = [
+                  "*"
+                ]
+              },
+              {
+                sid    = "DenyConfigWrite"
+                effect = "Deny"
+                actions = [
+                  "config:DeleteDeliveryChannel",
+                  "config:DeleteOrganizationConfigRule",
+                  "config:DeleteConformancePack",
+                  "config:DeleteRetentionConfiguration",
+                  "config:StartConfigurationRecorder",
+                  "config:PutDeliveryChannel",
+                  "config:PutExternalEvaluation",
+                  "config:StartRemediationExecution",
+                  "config:DeleteAggregationAuthorization",
+                  "config:DeleteEvaluationResults",
+                  "config:DeleteStoredQuery",
+                  "config:DeleteConfigurationAggregator",
+                  "config:DeleteConfigRule",
+                  "config:PutConformancePack",
+                  "config:PutStoredQuery",
+                  "config:PutConfigurationRecorder",
+                  "config:PutConfigRule",
+                  "config:DeleteRemediationConfiguration",
+                  "config:PutEvaluations",
+                  "config:StopConfigurationRecorder",
+                  "config:PutAggregationAuthorization",
+                  "config:PutRemediationConfigurations",
+                  "config:DeleteRemediationExceptions",
+                  "config:StartConfigRulesEvaluation",
+                  "config:DeleteConfigurationRecorder",
+                  "config:DeleteResourceConfig",
+                  "config:PutResourceConfig",
+                  "config:DeleteOrganizationConformancePack",
+                  "config:PutOrganizationConformancePack",
+                  "config:PutConfigurationAggregator",
+                  "config:TagResource",
+                  "config:DeletePendingAggregationRequest",
+                  "config:PutRetentionConfiguration",
+                  "config:PutRemediationExceptions",
+                  "config:PutOrganizationConfigRule",
+                  "config:UntagResource",
+                ]
+                resources = [
+                  "*"
+                ]
+              },
+              {
+                sid    = "DenyS3Log"
+                effect = "Deny"
+                actions = [
+                  "s3:PutAnalyticsConfiguration",
+                  "s3:PutAccessPointConfigurationForObjectLambda",
+                  "s3:PutStorageLensConfiguration",
+                  "s3:DeleteAccessPoint",
+                  "s3:CreateBucket",
+                  "s3:DeleteAccessPointForObjectLambda",
+                  "s3:ReplicateObject",
+                  "s3:DeleteBucketWebsite",
+                  "s3:DeleteAccessPointPolicyForObjectLambda",
+                  "s3:DeleteJobTagging",
+                  "s3:PutLifecycleConfiguration",
+                  "s3:PutBucketAcl",
+                  "s3:PutObjectTagging",
+                  "s3:DeleteObject",
+                  "s3:CreateMultiRegionAccessPoint",
+                  "s3:DeleteObjectTagging",
+                  "s3:PutAccessPointPolicyForObjectLambda",
+                  "s3:PutAccountPublicAccessBlock",
+                  "s3:PutMultiRegionAccessPointPolicy",
+                  "s3:DeleteStorageLensConfigurationTagging",
+                  "s3:PutReplicationConfiguration",
+                  "s3:DeleteObjectVersionTagging",
+                  "s3:PutObjectLegalHold",
+                  "s3:InitiateReplication",
+                  "s3:PutBucketCORS",
+                  "s3:DeleteBucketPolicy",
+                  "s3:PutObject",
+                  "s3:PutBucketNotification",
+                  "s3:PutBucketLogging",
+                  "s3:PutObjectVersionAcl",
+                  "s3:PutAccessPointPublicAccessBlock",
+                  "s3:PutBucketObjectLockConfiguration",
+                  "s3:CreateJob",
+                  "s3:PutAccessPointPolicy",
+                  "s3:CreateAccessPoint",
+                  "s3:PutAccelerateConfiguration",
+                  "s3:DeleteObjectVersion",
+                  "s3:ReplicateTags",
+                  "s3:RestoreObject",
+                  "s3:PutEncryptionConfiguration",
+                  "s3:AbortMultipartUpload",
+                  "s3:PutBucketTagging",
+                  "s3:UpdateJobPriority",
+                  "s3:DeleteBucket",
+                  "s3:PutBucketVersioning",
+                  "s3:PutObjectAcl",
+                  "s3:PutBucketPublicAccessBlock",
+                  "s3:PutIntelligentTieringConfiguration",
+                  "s3:PutMetricsConfiguration",
+                  "s3:PutStorageLensConfigurationTagging",
+                  "s3:PutBucketOwnershipControls",
+                  "s3:PutObjectVersionTagging",
+                  "s3:DeleteMultiRegionAccessPoint",
+                  "s3:PutJobTagging",
+                  "s3:UpdateJobStatus",
+                  "s3:BypassGovernanceRetention",
+                  "s3:PutInventoryConfiguration",
+                  "s3:ObjectOwnerOverrideToBucketOwner",
+                  "s3:DeleteStorageLensConfiguration",
+                  "s3:PutBucketWebsite",
+                  "s3:PutBucketRequestPayment",
+                  "s3:PutObjectRetention",
+                  "s3:CreateAccessPointForObjectLambda",
+                  "s3:PutBucketPolicy",
+                  "s3:DeleteAccessPointPolicy",
+                  "s3:ReplicateDelete",
+                ]
+                resources = [
+                  "arn:aws:s3:::*-aws-log-*"
+                ]
+              },
+              #--------------------------------------------------------------
+              # Admin default rule end
+              #--------------------------------------------------------------
+            ]
+          }
           # TODO: need to add policy arn. group policy limit is 10.
           # You need to check this document.
           # https://aws.amazon.com/jp/premiumsupport/knowledge-center/iam-increase-policy-size/
@@ -737,9 +1065,10 @@ iam = {
             path        = "/"
             description = ""
             # TODO: need to change AWS accound ID(99999999999)
-            # Specify the original AWS account ID that will use the IAM Switch role.
-            account_id    = "999999999999"
-            assume_policy = null
+            # Specify the original AWS account ID(99999999999) that will use the IAM Switch role.
+            # Specify the AWS Account ID(99999999999) of the switch source.
+            account_id         = "999999999999"
+            assume_role_policy = null
           }
           # TODO: need to set base policy.
           # Please specify the base policy to provide.
@@ -751,6 +1080,50 @@ iam = {
             path        = "/"
             description = ""
             statement = [
+              #--------------------------------------------------------------
+              # Default rule start
+              #--------------------------------------------------------------
+              {
+                sid    = "AllowDefaultWidgetPage"
+                effect = "Allow"
+                actions = [
+                  "servicecatalog:ListApplications",
+                  "ce:GetCostAndUsage",
+                  "ce:GetCostForecast",
+                  "support:DescribeTrustedAdvisorChecks",
+                  "support:DescribeTrustedAdvisorCheckSummaries",
+                  "ram:ListResources",
+                  "health:DescribeEventAggregates",
+                ]
+                resources = [
+                  "*"
+                ]
+              },
+              {
+                sid    = "AllowS3LogList"
+                effect = "Allow"
+                actions = [
+                  "s3:ListAllMyBuckets",
+                ]
+                resources = [
+                  "*",
+                ]
+              },
+              {
+                sid    = "AllowS3Log"
+                effect = "Allow"
+                actions = [
+                  "s3:Get*",
+                  "s3:List*",
+                  "s3:HeadBucket",
+                ]
+                resources = [
+                  "arn:aws:s3:::base-aws-log-common-*",
+                  "arn:aws:s3:::base-aws-log-common-*/*",
+                  "arn:aws:s3:::base-aws-log-application-*",
+                  "arn:aws:s3:::base-aws-log-application-*/*",
+                ]
+              },
               {
                 sid    = "AllowAWSSecurityHubReadOnlyAccess"
                 effect = "Allow"
@@ -804,16 +1177,9 @@ iam = {
                   "*"
                 ]
               },
-              {
-                sid    = "AllowHealth"
-                effect = "Allow"
-                actions = [
-                  "health:DescribeEventAggregates",
-                ]
-                resources = [
-                  "*"
-                ]
-              },
+              #--------------------------------------------------------------
+              # Default rule end
+              #--------------------------------------------------------------
             ]
           }
           # TODO: need to add policy arn. group policy limit is 10.
@@ -834,9 +1200,10 @@ iam = {
             path        = "/"
             description = ""
             # TODO: need to change AWS accound ID(99999999999)
-            # Specify the original AWS account ID that will use the IAM Switch role.
-            account_id    = "999999999999"
-            assume_policy = null
+            # Specify the original AWS account ID(99999999999) that will use the IAM Switch role.
+            # Specify the AWS Account ID(99999999999) of the switch source.
+            account_id         = "999999999999"
+            assume_role_policy = null
           }
           # TODO: need to set base policy.
           # Please specify the base policy to provide.
@@ -848,6 +1215,81 @@ iam = {
             path        = "/"
             description = ""
             statement = [
+              #--------------------------------------------------------------
+              # Default rule start
+              #--------------------------------------------------------------
+              {
+                sid    = "AllowDefaultWidgetPage"
+                effect = "Allow"
+                actions = [
+                  "servicecatalog:ListApplications",
+                  "ce:GetCostAndUsage",
+                  "ce:GetCostForecast",
+                  "support:DescribeTrustedAdvisorChecks",
+                  "support:DescribeTrustedAdvisorCheckSummaries",
+                  "ram:ListResources",
+                  "health:DescribeEventAggregates",
+                ]
+                resources = [
+                  "*"
+                ]
+              },
+              {
+                sid    = "AllowS3LogList"
+                effect = "Allow"
+                actions = [
+                  "s3:ListAllMyBuckets",
+                ]
+                resources = [
+                  "*",
+                ]
+              },
+              {
+                sid    = "AllowS3Log"
+                effect = "Allow"
+                actions = [
+                  "s3:Get*",
+                  "s3:List*",
+                  "s3:HeadBucket",
+                ]
+                resources = [
+                  "arn:aws:s3:::base-aws-log-common-*",
+                  "arn:aws:s3:::base-aws-log-common-*/*",
+                  "arn:aws:s3:::base-aws-log-application-*",
+                  "arn:aws:s3:::base-aws-log-application-*/*",
+                ]
+              },
+              {
+                sid    = "AllowAWSSecurityHubReadOnlyAccess"
+                effect = "Allow"
+                actions = [
+                  "securityhub:Get*",
+                  "securityhub:List*",
+                  "securityhub:Describe*",
+                ]
+                resources = [
+                  "*"
+                ]
+              },
+              {
+                sid    = "AllowAWSConfigUserAccess"
+                effect = "Allow"
+                actions = [
+                  "config:Get*",
+                  "config:Describe*",
+                  "config:Deliver*",
+                  "config:List*",
+                  "config:Select*",
+                  "tag:GetResources",
+                  "tag:GetTagKeys",
+                  "cloudtrail:DescribeTrails",
+                  "cloudtrail:GetTrailStatus",
+                  "cloudtrail:LookupEvents",
+                ]
+                resources = [
+                  "*"
+                ]
+              },
               {
                 sid    = "AllowCloudWatchReadOnlyAccess"
                 effect = "Allow"
@@ -870,27 +1312,9 @@ iam = {
                   "*"
                 ]
               },
-              {
-                sid    = "AllowAmazonS3ReadOnlyAccess"
-                effect = "Allow"
-                actions = [
-                  "s3:Get*",
-                  "s3:List*"
-                ]
-                resources = [
-                  "*"
-                ]
-              },
-              {
-                sid    = "AllowHealth"
-                effect = "Allow"
-                actions = [
-                  "health:DescribeEventAggregates",
-                ]
-                resources = [
-                  "*"
-                ]
-              },
+              #--------------------------------------------------------------
+              # Default rule end
+              #--------------------------------------------------------------
             ]
           }
           # TODO: need to add policy arn. group policy limit is 10.
@@ -1462,7 +1886,7 @@ security_config = {
       is_enabled_s3_bucket_encryption            = true
       enabled_s3_bucket_encryption_sse_algorithm = "AES256"
       # TODO: If true, bucket policy statement that explicitly denies HTTP requests to the Amazon S3 bucket you specify.
-      is_restrict_bucket_ssl_requests_only = true
+      is_restrict_bucket_ssl_requests_only = false
       # TODO: If true, it will enable S3 bucket versioning.
       is_configure_s3_bucket_versioning = true
     }

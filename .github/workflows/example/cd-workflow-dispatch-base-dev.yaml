@@ -4,9 +4,10 @@ on:
   workflow_dispatch:
 jobs:
   deploy:
+    environment:
+      name: dev
     env:
-      ENVIRONMENT: dev
-      ENV: ${{ secrets.ENV_DEV }}
+      ENV: ${{ secrets.ENV }}
     runs-on: ubuntu-latest
     steps:
       - name: "code: check out code"

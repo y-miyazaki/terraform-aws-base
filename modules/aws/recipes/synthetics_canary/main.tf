@@ -76,8 +76,13 @@ data "aws_iam_policy_document" "this" {
   statement {
     effect = "Allow"
     actions = [
+      "ec2:CreateNetworkInterface",
+      "ec2:DescribeNetworkInterfaces",
+      "ec2:DeleteNetworkInterface",
+      "ec2:AssignPrivateIpAddresses",
+      "ec2:UnassignPrivateIpAddresses",
       "s3:ListAllMyBuckets",
-      "xray:PutTraceSegments"
+      "xray:PutTraceSegments",
     ]
     resources = [
       "*",

@@ -4,9 +4,10 @@ on:
   workflow_dispatch:
 jobs:
   deploy:
+    environment:
+      name: dev
     env:
-      ENVIRONMENT: dev
-      ENV: ${{ secrets.ENV_DEV }}
+      ENV: ${{ secrets.ENV }}
     runs-on: ubuntu-latest
     steps:
       - name: "code: check out code"
@@ -14,6 +15,7 @@ jobs:
       - name: "terraform: apply"
         run: |
           echo "$ENV" >> $PWD/.env
+          echo $ENV
           find scripts -type f -name '*.sh' -exec chmod +x \{\} \;
           docker pull ghcr.io/y-miyazaki/terraform-aws-debian:latest
           docker run --rm -v $PWD:/workspace --env-file=$PWD/.env -w /workspace --name terraform-aws ghcr.io/y-miyazaki/terraform-aws-debian:latest scripts/terraform/deploy.sh terraform/monitor

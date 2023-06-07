@@ -188,6 +188,7 @@ common_lambda = {
       name                                     = "aws-metric"
       name_prefix                              = null
       display_name                             = null
+      policy                                   = null
       delivery_policy                          = null
       application_success_feedback_role_arn    = null
       application_success_feedback_sample_rate = null
@@ -226,6 +227,7 @@ common_lambda = {
       name                                     = "aws-log"
       name_prefix                              = null
       display_name                             = null
+      policy                                   = null
       delivery_policy                          = null
       application_success_feedback_role_arn    = null
       application_success_feedback_sample_rate = null
@@ -249,6 +251,47 @@ common_lambda = {
         LOGGER_FORMATTER = "json"
         LOGGER_OUT       = "stdout"
         LOGGER_LEVEL     = "warn"
+      }
+    }
+  }
+  ses = {
+    aws_kms_key = {
+      description             = "This key used for SNS(for SES)."
+      deletion_window_in_days = 7
+      is_enabled              = true
+      enable_key_rotation     = true
+      alias_name              = "sns-lambda-ses"
+    }
+    aws_sns_topic = {
+      name                                     = "aws-ses"
+      name_prefix                              = null
+      display_name                             = null
+      policy                                   = null
+      delivery_policy                          = null
+      application_success_feedback_role_arn    = null
+      application_success_feedback_sample_rate = null
+      application_failure_feedback_role_arn    = null
+      http_success_feedback_role_arn           = null
+      http_success_feedback_sample_rate        = null
+      http_failure_feedback_role_arn           = null
+      lambda_success_feedback_role_arn         = null
+      lambda_success_feedback_sample_rate      = null
+      lambda_failure_feedback_role_arn         = null
+      sqs_success_feedback_role_arn            = null
+      sqs_success_feedback_sample_rate         = null
+      sqs_failure_feedback_role_arn            = null
+    }
+    aws_lambda_function = {
+      environment = {
+        # TODO: need to change SLACK_OAUTH_ACCESS_TOKEN.(bot token xoxb-xxxxxx....)
+        SLACK_OAUTH_ACCESS_TOKEN = "xxxx-xxxxxxxxxxxxx-xxxxxxxxxxxxx-xxxxxxxxxxxxxxxxxxxxxxxx"
+        # TODO: need to change SLACK_CHANNEL_ID.
+        SLACK_CHANNEL_ID            = "XXXXXXXXXXXXXX"
+        LOGGER_FORMATTER            = "json"
+        LOGGER_OUT                  = "stdout"
+        LOGGER_LEVEL                = "warn"
+        LOG_GROUP_NAME              = "/aws/ses/log"
+        LOG_GROUP_RETENTION_IN_DAYS = 14
       }
     }
   }
@@ -279,6 +322,8 @@ common_lambda = {
 }
 #--------------------------------------------------------------
 # Delivery: log
+# Each log group in CloudWatchLogs is transferred to S3 by Kinesis Data Firehose.
+# Specify the target log group in the log_group_names variable to transfer logs to S3.
 #--------------------------------------------------------------
 delivery_log = {
   #--------------------------------------------------------------
@@ -300,6 +345,7 @@ delivery_log = {
   # check CloudWatch Group name list command.
   # ex1) aws logs describe-log-groups --log-group-name-prefix hogehoge | jq -r ".logGroups[].logGroupName"
   # ex2) aws logs describe-log-groups --log-group-name-prefix /aws/lambda | jq -r '.logGroups[] | .logGroupName = "\"" + .logGroupName + "\"," | .logGroupName'
+  # ex3) aws logs describe-log-groups | jq -r '.logGroups[] | .logGroupName = "\"" + .logGroupName + "\"," | .logGroupName'
   log_group_names = []
 
   aws_iam_role_kinesis_firehose = {
@@ -324,6 +370,55 @@ delivery_log = {
   }
 }
 #--------------------------------------------------------------
+# Delivery: log(us-east-1)
+# Each log group in CloudWatchLogs is transferred to S3 by Kinesis Data Firehose.
+# Specify the target log group in the log_group_names variable to transfer logs to S3.
+#--------------------------------------------------------------
+delivery_log_us_east_1 = {
+  #--------------------------------------------------------------
+  # Provides a Kinesis Firehose Delivery Stream resource. Amazon Kinesis Firehose is a fully managed, elastic service to easily deliver real-time data streams to destinations such as Amazon S3 and Amazon Redshift.
+  #--------------------------------------------------------------
+  aws_kinesis_firehose_delivery_stream = {
+    buffer_size        = 5
+    buffer_interval    = 60
+    prefix             = "Logs/"
+    compression_format = "GZIP"
+    cloudwatch_logging_options = [
+      {
+        enabled = false
+      }
+    ]
+  }
+  # TODO: need to add log_group_name for application.
+  #       check log group name for application.
+  # check CloudWatch Group name list command.
+  # ex1) aws logs describe-log-groups --region us-east-1 --log-group-name-prefix hogehoge | jq -r ".logGroups[].logGroupName"
+  # ex2) aws logs describe-log-groups --region us-east-1 --log-group-name-prefix /aws/lambda | jq -r '.logGroups[] | .logGroupName = "\"" + .logGroupName + "\"," | .logGroupName'
+  # ex3) aws logs describe-log-groups --region us-east-1 | jq -r '.logGroups[] | .logGroupName = "\"" + .logGroupName + "\"," | .logGroupName'
+  log_group_names = []
+
+  aws_iam_role_kinesis_firehose = {
+    description = null
+    name        = "monitor-kinesis-firehose-us-east-1-role"
+    path        = "/"
+  }
+  aws_iam_policy_kinesis_firehose = {
+    description = null
+    name        = "monitor-kinesis-firehose-us-east-1-policy"
+    path        = "/"
+  }
+  aws_iam_role_cloudwatch_logs = {
+    description = null
+    name        = "monitor-cloudwatch-logs-kinesis-firehose-us-east-1-role"
+    path        = "/"
+  }
+  aws_iam_policy_cloudwatch_logs = {
+    description = null
+    name        = "monitor-cloudwatch-logs-kinesis-firehose-us-east-1-policy"
+    path        = "/"
+  }
+}
+#--------------------------------------------------------------
 # Log:Application
 # The filter function of CloudWatchLogs can be used to check specified logs
 # with specified filter patterns. Those that hit the filter pattern will be
@@ -343,8 +438,10 @@ metric_log_application = {
   aws_cloudwatch_log_metric_filter = {
     name = "application-logs-error"
     # TODO: need to change pattern for application log.
+    # ex1) ?error ?Error ?ERROR ?fatal ?Fatal ?FATAL ?exception ?Exception ?EXCEPTION
+    # ex2) ?"\"level\":\"error\""  ?"\"level\":\"fatal\""  ?"\"level\":\"panic\""
     pattern = <<PATTERN
-?error ?Error ?ERROR ?fatal ?Fatal ?FATAL ?exception ?Exception ?EXCEPTION
+?"\"level\":\"error\""  ?"\"level\":\"fatal\""  ?"\"level\":\"panic\""
 PATTERN
     metric_transformation = [
       {
@@ -364,6 +461,53 @@ PATTERN
     threshold_metric_id = null
     actions_enabled     = true
     alarm_description   = "Alert log notification."
+    datapoints_to_alarm = 1
+    dimensions          = null
+    treat_missing_data  = "notBreaching"
+  }
+}
+#--------------------------------------------------------------
+# Log:MySQL slow query
+# The filter function of CloudWatchLogs can be used to check specified logs
+# with specified filter patterns. Those that hit the filter pattern will be
+# notified by Slack via Lambda.
+#
+# Filter logs related to MySQL.
+#--------------------------------------------------------------
+metric_log_mysql_slowquery = {
+  # TODO: need to set is_enabled for settings of postgres log.
+  is_enabled = false
+  # TODO: need to add log_group_name for postgres.
+  #       check log group name for postgres.
+  # check CloudWatch Group name list command.
+  # ex1) aws logs describe-log-groups --log-group-name-prefix hogehoge | jq -r ".logGroups[].logGroupName"
+  # ex2) aws logs describe-log-groups --log-group-name-prefix /aws/rds/ | jq -r '.logGroups[] | .logGroupName = "\"" + .logGroupName + "\"," | .logGroupName'
+  log_group_names = []
+
+  aws_cloudwatch_log_metric_filter = {
+    name = "mysql-slowquery-logs-error"
+    # TODO: need to change pattern for postgres log.
+    pattern = <<PATTERN
+-rdsproxy -rdsproxyadmin -rdsadmin
+PATTERN
+    metric_transformation = [
+      {
+        name      = "mysql-slowquery-logs-error"
+        namespace = "MySQL"
+        value     = "1"
+      }
+    ]
+  }
+  aws_cloudwatch_metric_alarm = {
+    alarm_name          = "mysql-slowquery-logs-error"
+    comparison_operator = "GreaterThanOrEqualToThreshold"
+    evaluation_periods  = 1
+    period              = 300
+    statistic           = "Sum"
+    threshold           = 1
+    threshold_metric_id = null
+    actions_enabled     = true
+    alarm_description   = "Alert MySQL slow query log notification."
     datapoints_to_alarm = 1
     dimensions          = null
     treat_missing_data  = "notBreaching"
@@ -410,12 +554,13 @@ PATTERN
     threshold           = 1
     threshold_metric_id = null
     actions_enabled     = true
-    alarm_description   = "Alert postgres log notification."
+    alarm_description   = "Alert Postgres log notification."
     datapoints_to_alarm = 1
     dimensions          = null
     treat_missing_data  = "notBreaching"
   }
 }
+
 #--------------------------------------------------------------
 # Metrics:ALB
 # Metrics are data about the performance of your systems. By default,
@@ -526,7 +671,7 @@ metric_resource_api_gateway = {
 # or publish your own application metrics. Amazon CloudWatch can load all the metrics in your account
 # (both AWS resource metrics and application metrics that you provide) for search, graphing, and alarms.
 #
-# Metrics about Cloudfront will be checked and you will be notified via Slack if the specified threshold is exceeded.
+# Metrics about CloudFront will be checked and you will be notified via Slack if the specified threshold is exceeded.
 # https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/monitoring-using-cloudwatch.html
 #--------------------------------------------------------------
 metric_resource_cloudfront = {
@@ -540,7 +685,7 @@ metric_resource_cloudfront = {
     enabled_error_401_rate = false
     error_401_rate         = 1
     # (Required) Error403Rate threshold (unit=%)
-    enabled_error_403_rate = true
+    enabled_error_403_rate = false
     error_403_rate         = 1
     # (Required) Error404Rate threshold (unit=%)
     enabled_error_404_rate = true
@@ -748,7 +893,7 @@ metric_resource_rds = {
   is_mysql = false
   # TODO: need to set is_aurora for monitor of RDS(Postgres).
   # If the target DB to be monitored is Postgres, set to true.
-  is_postgres = true
+  is_postgres = false
   # TODO: need to set period for RDS.
   period = 300
   # TODO: need to set threshold for RDS.
@@ -864,7 +1009,7 @@ cloudwatch_event_ec2 = {
 }
 
 #--------------------------------------------------------------
-# Metrics:Synthetics Canary
+# Metrics: Synthetics Canary: Heartbeat
 # You can use Amazon CloudWatch Synthetics to create canaries,
 # configurable scripts that run on a schedule, to monitor your endpoints and APIs.
 # Canaries follow the same routes and perform the same actions as a customer,
@@ -876,7 +1021,7 @@ cloudwatch_event_ec2 = {
 # and if an unexpected status code is returned, the user is notified via Slack.
 # https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Synthetics_Canaries.html
 #--------------------------------------------------------------
-metric_synthetics_canary = {
+metric_synthetics_canary_heartbeat = {
   # TODO: need to set is_enabled for Metric of Synthetics Canary.
   is_enabled = false
   # TODO: need to set period for Synthetics Canary.
@@ -887,92 +1032,265 @@ metric_synthetics_canary = {
     enabled_success_percent = true
     success_percent         = 99
   }
-  # TODO: need to set dimensions for monitor of Synthetics Canary.
   # Specify the instance of the target Synthetics Canary Name to be monitored by Map.
-  #   ex)
-  #   dimensions = [
-  #     {
-  #       "CanaryName" = "base-heartbeat"
-  #     }
-  #   ]
   dimensions = [
     {
       "CanaryName" = "base-heartbeat"
     }
   ]
+  synthetics_canary = {
+    aws_iam_role = {
+      description = "Role for Synthetics Canaly heartbeat."
+      name        = "monitor-synthetics-canary-heartbeat-role"
+      path        = "/"
+    }
+    aws_iam_policy = {
+      description = "Policy for Synthetics Canaly heartbeat."
+      name        = "monitor-synthetics-canary-heartbeat-policy"
+      path        = "/"
+    }
+    aws_synthetics_canary = {
+      # Location in Amazon S3 where Synthetics stores artifacts from the test runs of this canary.
+      # If not specified, the log bucket is automatically specified.
+      artifact_s3_location = null
+      # ARN of the IAM role to be used to run the canary. see AWS Docs for permissions needs for IAM Role.
+      # If not specified, a role policy is automatically created.
+      execution_role_arn = null
+      # (Required) Name for this canary. Has a maximum length of 21 characters. Valid characters are lowercase alphanumeric, hyphen, or underscore.
+      name = "heartbeat"
+      # (Required) Runtime version to use for the canary. Versions change often so consult the Amazon CloudWatch documentation for the latest valid versions. Values include syn-python-selenium-1.0, syn-nodejs-puppeteer-3.0, syn-nodejs-2.2, syn-nodejs-2.1, syn-nodejs-2.0, and syn-1.0.
+      runtime_version = "syn-nodejs-puppeteer-3.9"
+      # (Required) Configuration block providing how often the canary is to run and when these test runs are to stop. Detailed below.
+      schedule = [
+        {
+          expression = "cron(*/5 * * * ? *)"
+        }
+      ]
+      # (Optional) Configuration block. Detailed below.
+      # TODO: need to set vpc_config bypass WAF.
+      #       When a request must be made from a fixed IP, such as in the case of a site with restricted access.
+      vpc_config = [
+        # {
+        #   subnet_ids = [
+        #     "subnet-xxxxxxxxxxxxxxxxx",
+        #     "subnet-xxxxxxxxxxxxxxxxx",
+        #     "subnet-xxxxxxxxxxxxxxxxx",
+        #   ]
+        #   security_group_ids = [
+        #     "sg-xxxxxxxxxxxxxxxxx",
+        #   ]
+        # }
+      ]
+      # (Optional) Number of days to retain data about failed runs of this canary. If you omit this field, the default of 31 days is used. The valid range is 1 to 455 days.
+      failure_retention_period = 7
+      # (Optional) Configuration block for individual canary runs. Detailed below.
+      run_config = [
+        {
+          timeout_in_seconds = 60
+          memory_in_mb       = 960
+          active_tracing     = false
+        }
+      ]
+      # (Optional) Full bucket name which is used if your canary script is located in S3. The bucket must already exist. Specify the full bucket name including s3:// as the start of the bucket name. Conflicts with zip_file.
+      s3_bucket = null
+      # (Optional) S3 key of your script. Conflicts with zip_file.
+      s3_key = null
+      # (Optional) S3 version ID of your script. Conflicts with zip_file.
+      s3_version = null
+      # (Optional) Whether to run or stop the canary.
+      start_canary = true
+      # (Optional) Number of days to retain data about successful runs of this canary. If you omit this field, the default of 31 days is used. The valid range is 1 to 455 days.
+      success_retention_period = 7
+      # (Optional) configuration for canary artifacts, including the encryption-at-rest settings for artifacts that the canary uploads to Amazon S3. See Artifact Config.
+      artifact_config = [
+        {
+          s3_encryption = [
+            {
+              encryption_mode = "SSE-S3"
+            }
+          ]
+        }
+      ]
+      # TODO: Set the Heartbeat URL and list of acceptable status codes.
+      # (Optional) URLS/STATUS_CODE_RANGES is an environment variable that can be specified as a delimited string to allow heart beats to be thrown to multiple URLs.
+      env = {
+        URLS               = "https://yahoo.co.jp/,https://google.com/"
+        STATUS_CODE_RANGES = "200-299,200-299"
+      }
+    }
+  }
 }
-synthetics_canary = {
-  # TODO: need to set is_enabled for monitor of Synthetics Canary.
+
+#--------------------------------------------------------------
+# Metrics: Synthetics Canary: Linkcheck
+# You can use Amazon CloudWatch Synthetics to create canaries,
+# configurable scripts that run on a schedule, to monitor your endpoints and APIs.
+# Canaries follow the same routes and perform the same actions as a customer,
+# which makes it possible for you to continually verify your customer experience even
+# when you don't have any customer traffic on your applications. By using canaries,
+# you can discover issues before your customers do.
+#
+# Using Synthetics Canary, the status code is checked against the specified URL,
+# and if an unexpected status code is returned, the user is notified via Slack.
+# https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Synthetics_Canaries.html
+#--------------------------------------------------------------
+metric_synthetics_canary_linkcheck = {
+  # TODO: need to set is_enabled for Metric of Synthetics Canary.
   is_enabled = false
-  aws_iam_role = {
-    description = "Role for Synthetics Canaly."
-    name        = "monitor-synthetics-canary-role"
-    path        = "/"
+  # TODO: need to set period for Synthetics Canary.
+  period = 300
+  # TODO: need to set threshold for Synthetics Canary.
+  threshold = {
+    # (Required) SuccessPercent threshold (unit=Percent)
+    enabled_success_percent = true
+    success_percent         = 99
   }
-  aws_iam_policy = {
-    description = "Policy for Synthetics Canaly."
-    name        = "monitor-synthetics-canary-policy"
-    path        = "/"
+  # Specify the instance of the target Synthetics Canary Name to be monitored by Map.
+  dimensions = [
+    {
+      "CanaryName" = "base-linkcheck"
+    }
+  ]
+
+  synthetics_canary = {
+    aws_iam_role = {
+      description = "Role for Synthetics Canaly."
+      name        = "monitor-synthetics-canary-linkcheck-role"
+      path        = "/"
+    }
+    aws_iam_policy = {
+      description = "Policy for Synthetics Canaly."
+      name        = "monitor-synthetics-canary-linkcheck-policy"
+      path        = "/"
+    }
+    aws_synthetics_canary = {
+      # Location in Amazon S3 where Synthetics stores artifacts from the test runs of this canary.
+      # If not specified, the log bucket is automatically specified.
+      artifact_s3_location = null
+      # ARN of the IAM role to be used to run the canary. see AWS Docs for permissions needs for IAM Role.
+      # If not specified, a role policy is automatically created.
+      execution_role_arn = null
+      # (Required) Name for this canary. Has a maximum length of 21 characters. Valid characters are lowercase alphanumeric, hyphen, or underscore.
+      name = "linkcheck"
+      # (Required) Runtime version to use for the canary. Versions change often so consult the Amazon CloudWatch documentation for the latest valid versions. Values include syn-python-selenium-1.0, syn-nodejs-puppeteer-3.0, syn-nodejs-2.2, syn-nodejs-2.1, syn-nodejs-2.0, and syn-1.0.
+      runtime_version = "syn-nodejs-puppeteer-3.9"
+      # (Required) Configuration block providing how often the canary is to run and when these test runs are to stop. Detailed below.
+      schedule = [
+        {
+          expression = "cron(0 0 * * ? *)"
+        }
+      ]
+      # (Optional) Configuration block. Detailed below.
+      # TODO: need to set vpc_config bypass WAF.
+      #       When a request must be made from a fixed IP, such as in the case of a site with restricted access.
+      vpc_config = [
+        # {
+        #   subnet_ids = [
+        #     "subnet-xxxxxxxxxxxxxxxxx",
+        #     "subnet-xxxxxxxxxxxxxxxxx",
+        #     "subnet-xxxxxxxxxxxxxxxxx",
+        #   ]
+        #   security_group_ids = [
+        #     "sg-xxxxxxxxxxxxxxxxx",
+        #   ]
+        # }
+      ]
+      # (Optional) Number of days to retain data about failed runs of this canary. If you omit this field, the default of 31 days is used. The valid range is 1 to 455 days.
+      failure_retention_period = 7
+      # (Optional) Configuration block for individual canary runs. Detailed below.
+      run_config = [
+        {
+          timeout_in_seconds = 60
+          memory_in_mb       = 960
+          active_tracing     = false
+        }
+      ]
+      # (Optional) Full bucket name which is used if your canary script is located in S3. The bucket must already exist. Specify the full bucket name including s3:// as the start of the bucket name. Conflicts with zip_file.
+      s3_bucket = null
+      # (Optional) S3 key of your script. Conflicts with zip_file.
+      s3_key = null
+      # (Optional) S3 version ID of your script. Conflicts with zip_file.
+      s3_version = null
+      # (Optional) Whether to run or stop the canary.
+      start_canary = true
+      # (Optional) Number of days to retain data about successful runs of this canary. If you omit this field, the default of 31 days is used. The valid range is 1 to 455 days.
+      success_retention_period = 7
+      # (Optional) configuration for canary artifacts, including the encryption-at-rest settings for artifacts that the canary uploads to Amazon S3. See Artifact Config.
+      artifact_config = [
+        {
+          s3_encryption = [
+            {
+              encryption_mode = "SSE-S3"
+            }
+          ]
+        }
+      ]
+      # TODO: Set the URL for the link check and the maximum number of links to follow.
+      # (Optional) URLS/LIMIT is an environment variable that can be specified as a delimited string to allow heart beats to be thrown to multiple URLs.
+      env = {
+        URLS  = "https://www.google.com/"
+        LIMIT = 10
+      }
+    }
   }
-  aws_synthetics_canary = {
-    # Location in Amazon S3 where Synthetics stores artifacts from the test runs of this canary.
-    # If not specified, the log bucket is automatically specified.
-    artifact_s3_location = null
-    # ARN of the IAM role to be used to run the canary. see AWS Docs for permissions needs for IAM Role.
-    # If not specified, a role policy is automatically created.
-    execution_role_arn = null
-    # (Required) Entry point to use for the source code when running the canary. This value must end with the string .handler .
-    handler = "heartbeat.handler"
-    # (Required) Name for this canary. Has a maximum length of 21 characters. Valid characters are lowercase alphanumeric, hyphen, or underscore.
-    name = "heartbeat"
-    # (Required) Runtime version to use for the canary. Versions change often so consult the Amazon CloudWatch documentation for the latest valid versions. Values include syn-python-selenium-1.0, syn-nodejs-puppeteer-3.0, syn-nodejs-2.2, syn-nodejs-2.1, syn-nodejs-2.0, and syn-1.0.
-    runtime_version = "syn-nodejs-puppeteer-3.4"
-    # (Required) Configuration block providing how often the canary is to run and when these test runs are to stop. Detailed below.
-    schedule = [
-      {
-        expression = "cron(*/5 * * * ? *)"
+}
+#--------------------------------------------------------------
+# Athena
+# Amazon Athena is an interactive query service that makes it easy to
+# analyze data directly in Amazon Simple Storage Service (Amazon S3) using standard SQL.
+# With a few actions in the AWS Management Console, you can point Athena at your data stored in
+# Amazon S3 and begin using standard SQL to run ad-hoc queries and get results in seconds.
+#
+# With this configuration, CloudFront and SES logs can be viewed in Athena.
+#--------------------------------------------------------------
+athena = {
+  # TODO: need to set is_enabled for Athena.
+  is_enabled     = false
+  workgroup_name = "analytics"
+  workgroup_configuration = {
+    enforce_workgroup_configuration    = true
+    publish_cloudwatch_metrics_enabled = false
+    result_configuration = {
+      encryption_configuration = {
+        encryption_option = "SSE_S3"
       }
-    ]
-    # (Optional) Configuration block. Detailed below.
-    vpc_config = []
-    # (Optional) Number of days to retain data about failed runs of this canary. If you omit this field, the default of 31 days is used. The valid range is 1 to 455 days.
-    failure_retention_period = 7
-    # (Optional) Configuration block for individual canary runs. Detailed below.
-    run_config = [
-      {
-        timeout_in_seconds = 60
-        memory_in_mb       = 960
-        active_tracing     = false
-      }
-    ]
-    # (Optional) Full bucket name which is used if your canary script is located in S3. The bucket must already exist. Specify the full bucket name including s3:// as the start of the bucket name. Conflicts with zip_file.
-    s3_bucket = null
-    # (Optional) S3 key of your script. Conflicts with zip_file.
-    s3_key = null
-    # (Optional) S3 version ID of your script. Conflicts with zip_file.
-    s3_version = null
-    # (Optional) Whether to run or stop the canary.
-    start_canary = true
-    # (Optional) Number of days to retain data about successful runs of this canary. If you omit this field, the default of 31 days is used. The valid range is 1 to 455 days.
-    success_retention_period = 7
-    # (Optional) configuration for canary artifacts, including the encryption-at-rest settings for artifacts that the canary uploads to Amazon S3. See Artifact Config.
-    artifact_config = [
-      {
-        s3_encryption = [
-          {
-            encryption_mode = "SSE-S3"
-          }
-        ]
-      }
-    ]
-    # (Optional) ZIP file that contains the script, if you input your canary script directly into the canary instead of referring to an S3 location. It can be up to 5 MB. Conflicts with s3_bucket, s3_key, and s3_version.
-    # zip -r lambda/outputs/heartbeat.zip ./nodejs/*
-    zip_file = "../../lambda/outputs/heartbeat.zip"
-    # TODO: Set the Heartbeat URL and list of acceptable status codes.
-    # (Optional) URLS/STATUS_CODE_RANGES is an environment variable that can be specified as a delimited string to allow heart beats to be thrown to multiple URLs.
-    env = {
-      URLS               = "https://yahoo.co.jp/,https://google.com/"
-      STATUS_CODE_RANGES = "200-299,200-299"
+    }
+  }
+  workgroup_state       = "ENABLED"
+  workgroup_description = "Workgroup for analysis."
+  database_name         = "analytics"
+  database_comment      = "Database for analyzing various logs."
+  database_encryption_configuration = {
+    encryption_option = "SSE_S3"
+  }
+  # TODO: To check CloudFront logs with Athena, specify true.
+  enabled_cloudfront = false
+  # TODO: Specify the S3 bucket where CloudFront logs are stored. s3://{bucket name}/{bucket prefix}
+  # ex1) cloudfront_log_bucket = "s3://base-aws-log-application-xxxxxxxxxxxx/Logs/CloudFront/"
+  cloudfront_log_bucket = ""
+  # TODO: To check SES logs with Athena, specify true.
+  enabled_ses = false
+  # TODO: Specify the S3 bucket where SES logs are stored. s3://{bucket name}/{bucket prefix}
+  # ex1) ses_log_bucket = "s3://base-aws-log-application-xxxxxxxxxxx/Logs/base-aws-ses-log/"
+  ses_log_bucket = ""
+}
+#--------------------------------------------------------------
+# Report CSP
+# Note: Custom domains are not yet supported.
+# If enabled, report_csp_url will be displayed as the Endpoint in the output.
+#--------------------------------------------------------------
+report_csp = {
+  # TODO: need to set is_enabled for report CSP.
+  is_enabled = true
+  aws_lambda_function = {
+    environment = {
+      # TODO: need to change SLACK_OAUTH_ACCESS_TOKEN.(bot token xoxb-xxxxxx....)
+      SLACK_OAUTH_ACCESS_TOKEN = "xxxx-xxxxxxxxxxxxx-xxxxxxxxxxxxx-xxxxxxxxxxxxxxxxxxxxxxxx"
+      # TODO: need to change SLACK_CHANNEL_ID.
+      SLACK_CHANNEL_ID = "XXXXXXXXXXXXXX"
+      LOGGER_FORMATTER = "json"
+      LOGGER_OUT       = "stdout"
+      LOGGER_LEVEL     = "warn"
     }
   }
 }

@@ -26,10 +26,20 @@ variable "enabled_cis_aws_foundations_benchmark" {
   description = "(Optional) CIS AWS Foundations Benchmark is valid, set it to true. default is true."
   default     = true
 }
+variable "cis_aws_foundations_benchmark_version" {
+  type        = string
+  description = "(Optional) CIS AWS Foundations Benchmark version. Please check https://docs.aws.amazon.com/securityhub/latest/userguide/securityhub-standards-cis1.4-vs-cis1.2.html"
+  default     = "1.4.0"
+}
 variable "enabled_pci_dss" {
   type        = bool
   description = "(Optional) PCI DSS is valid, set it to true. default is true."
   default     = true
+}
+variable "pci_dss_version" {
+  type        = string
+  description = "(Optional) PCI DSS version. Please check https://aws.amazon.com/compliance/pci-dss-level-1-faqs/"
+  default     = "3.2.1"
 }
 variable "aws_securityhub_action_target" {
   type = object({

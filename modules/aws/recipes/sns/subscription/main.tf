@@ -49,11 +49,12 @@ resource "aws_kms_key" "this" {
       }
     },
     {
-      "Sid":"Allow_CloudWatch_for_CMK",
+      "Sid":"Allow_for_CMK",
       "Effect":"Allow",
       "Principal":{
         "Service":[
-          "cloudwatch.amazonaws.com"
+          "cloudwatch.amazonaws.com",
+          "ses.amazonaws.com"
         ]
       },
       "Action":[

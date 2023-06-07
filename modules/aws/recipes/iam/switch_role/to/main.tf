@@ -22,7 +22,7 @@ locals {
     {
       "Effect": "Allow",
       "Principal": {
-        "AWS": "arn:aws:iam::${var.aws_iam_role.account_id}:root"
+        "AWS": "${var.aws_iam_role.account_id}"
       },
       "Action": "sts:AssumeRole",
       "Condition": {

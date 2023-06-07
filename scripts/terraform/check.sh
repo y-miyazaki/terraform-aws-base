@@ -8,7 +8,6 @@ for file in `find /workspace/ ! -path '*/.terraform/*' -type f -name 'main.tf'`;
     cd ${dir}
     pwd
     tfenv install
-    tfenv use
     terraform init -backend=false
     terraform validate
     tflint
