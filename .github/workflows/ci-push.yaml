@@ -1,5 +1,5 @@
 # https://help.github.com/ja/actions/reference/workflow-syntax-for-github-actions
-name: ci-push-dev
+name: ci-push
 on:
   push:
     branches:
