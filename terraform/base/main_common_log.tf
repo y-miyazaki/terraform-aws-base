@@ -19,7 +19,7 @@ locals {
 #tfsec:ignore:aws-s3-enable-versioning
 module "s3_log" {
   source        = "terraform-aws-modules/s3-bucket/aws"
-  version       = "3.6.0"
+  version       = "3.12.0"
   create_bucket = var.common_log.s3_log.create_bucket
 
   acl                                  = var.common_log.s3_log.acl
@@ -113,7 +113,7 @@ resource "aws_s3_bucket_policy" "log" {
 #tfsec:ignore:aws-s3-enable-versioning
 module "s3_cloudtrail" {
   source        = "terraform-aws-modules/s3-bucket/aws"
-  version       = "3.6.0"
+  version       = "3.12.0"
   create_bucket = var.common_log.s3_cloudtrail.create_bucket
 
   acl                  = var.common_log.s3_cloudtrail.acl
