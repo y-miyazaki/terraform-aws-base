@@ -77,7 +77,7 @@ module "aws_recipes_security_config_rule_cloudfront_us_east_1" {
 # tfsec:ignore:aws-lambda-enable-tracing
 module "lambda_function_config_us_east_1" {
   source  = "terraform-aws-modules/lambda/aws"
-  version = "3.2.1"
+  version = "5.1.0"
   providers = {
     aws = aws.us-east-1
   }

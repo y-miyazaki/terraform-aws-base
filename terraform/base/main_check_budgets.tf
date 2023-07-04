@@ -35,7 +35,7 @@ module "aws_recipes_budgets_create_v4" {
 # tfsec:ignore:aws-lambda-enable-tracing
 module "lambda_function_budgets" {
   source  = "terraform-aws-modules/lambda/aws"
-  version = "3.2.1"
+  version = "5.1.0"
   create  = lookup(var.budgets, "is_enabled", true)
 
   create_current_version_allowed_triggers = false
