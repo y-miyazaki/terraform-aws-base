@@ -28,7 +28,7 @@ module "aws_recipes_cloudwatch_events_ec2" {
 # tfsec:ignore:aws-lambda-enable-tracing
 module "lambda_function_cloudwatch_event_ec2" {
   source  = "terraform-aws-modules/lambda/aws"
-  version = "3.2.1"
+  version = "5.3.0"
   create  = lookup(var.cloudwatch_event_ec2, "is_enabled", true)
 
   create_current_version_allowed_triggers = false
