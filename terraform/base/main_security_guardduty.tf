@@ -26,7 +26,7 @@ module "aws_recipes_security_guardduty" {
 # tfsec:ignore:aws-lambda-enable-tracing
 module "lambda_function_guardduty" {
   source  = "terraform-aws-modules/lambda/aws"
-  version = "3.2.1"
+  version = "5.3.0"
   create  = lookup(var.security_guardduty, "is_enabled", true)
 
   create_current_version_allowed_triggers = false
