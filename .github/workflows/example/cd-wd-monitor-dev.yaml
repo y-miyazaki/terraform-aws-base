@@ -1,0 +1,62 @@
+# https://docs.github.com/en/actions/reference/workflow-syntax-for-github-actions
+name: cd-wd-monitor-dev
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    timeout-minutes: 30
+    environment:
+      name: dev
+    env:
+      ENV: dev
+      # Terraform
+      TERRAFORM_PATH: "terraform/monitor"
+      TERRAFORM_VERSION: "1.5.6"
+    permissions:
+      id-token: write
+      contents: read
+
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_IAM_ROLE_ARN }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: ${{ env.TERRAFORM_VERSION }}
+
+      - name: Config Terraform plugin cache
+        run: |
+          echo 'plugin_cache_dir="$HOME/.terraform.d/plugin-cache"' >~/.terraformrc
+          mkdir --parents ~/.terraform.d/plugin-cache
+
+      - name: Cache Terraform Plugins
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.terraform.d/plugin-cache
+          key: ${{ runner.os }}-terraform-${{ hashFiles('**/.terraform.lock.hcl') }}
+          restore-keys: |
+            ${{ runner.os }}-terraform-
+
+      - name: Exec Terraform init
+        id: init
+        shell: bash
+        run: terraform -chdir=${{ env.TERRAFORM_PATH }} init -reconfigure -backend-config=terraform."${{ env.ENV }}".tfbackend
+
+      - name: Exec Terraform apply
+        id: apply
+        shell: bash
+        run: terraform -chdir=${{ env.TERRAFORM_PATH }} apply --auto-approve -var-file=terraform."${{ env.ENV }}".tfvars

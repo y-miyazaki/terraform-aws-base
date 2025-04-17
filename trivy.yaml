@@ -1,0 +1,10 @@
+misconfiguration:
+  terraform:
+    exclude-downloaded-modules: true
+
+scan:
+  # Same as '--skip-dirs'
+  # Default is empty
+  skip-dirs:
+    - "env/"
+    - "**/.terraform/**/*"

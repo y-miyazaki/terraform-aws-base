@@ -6,6 +6,7 @@ If you need to adjust the parameters, you can do so by yourself by searching TOD
 
 <!-- omit in toc -->
 # Table of Contents
+
 - [Initial setting](#initial-setting)
 - [Required](#required)
   - [deploy\_user](#deploy_user)
@@ -30,27 +31,27 @@ This section describes the initial settings for running [monitor's Terraform](./
 - Create an S3 to store the Terraform State  
   Create an S3 from the management console to manage the Terraform State.
   However, if you have an environment where you can run the aws command and profile already configured, you can create an S3 by running the following command.
-  https://github.com/y-miyazaki/cloud-commands/blob/master/cmd/awstfinitstate
+  <https://github.com/y-miyazaki/cloud-commands/blob/master/cmd/awstfinitstate>
 
 ```sh
-# awstfinitstate -h
+$ ./scripts/terraform/init_state.sh -h
 
 This command creates a S3 Bucket for Terraform State.
 You can also add random hash to bucket name suffix.
 
 Usage:
-    awstfinitstate -r {region} -b {bucket name} -p {profile}[<options>]
-    awstfinitstate -r ap-northeast-1 -b terraform-state
-    awstfinitstate -r ap-northeast-1 -b terraform-state -p default -s
+    init_state.sh -r {region} -b {bucket name} -p {profile}[<options>]
+    init_state.sh -r ap-northeast-1 -b terraform-state
+    init_state.sh -r ap-northeast-1 -b terraform-state -p default -s
 
 Options:
     -b {bucket name}          S3 bucket name
     -p {aws profile name}     Name of AWS profile
     -r {region}               S3 region
     -s                        If set, a random hash will suffix bucket name.
-    -h                        Usage awstfinitstate
+    -h                        Usage init_state.sh
 
-# awstfinitstate -r ap-northeast-1 -b terraform-state -p default -s
+$ ./scripts/terraform/init_state.sh -r ap-northeast-1 -b base-terraform-state- -p default -s
 ~
 ~
 ~
@@ -65,7 +66,7 @@ Options:
 ~
 ~
 --------------------------------------------------------------
-bucket_name: terraform-state-xxxxxxxxxx
+bucket_name: base-terraform-state-xxxxxxxxxx
 region: ap-northeast-1
 --------------------------------------------------------------
 ```
@@ -80,11 +81,11 @@ region: ap-northeast-1
 # Terraform Provider
 #--------------------------------------------------------------
 terraform {
-  required_version = ">=0.13"
+  required_version = "~>1.4"
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = ">=4.0.0"
+      version = "~>5.0"
     }
   }
   backend "s3" {
@@ -164,11 +165,11 @@ commands will detect it and remind you to do so if necessary.
 
 ```sh
 bash-5.1# terraform apply --auto-approve -var-file=terraform.example.tfvars
-module.aws_recipes_s3_bucket_log_log.random_id.this: Creating...
+module.aws_s3_bucket_log_log.random_id.this: Creating...
 random_id.this: Creating...
-module.aws_recipes_s3_bucket_log_logdom_id.this: Creation complete after 0s [id=wiatHg]
+module.aws_s3_bucket_log_id.this: Creation complete after 0s [id=wiatHg]
 random_id.this: Creation complete after 0s [id=uqe0bU7J]
-module.aws_recipes_security_default_vpc.aws_default_subnet.this[1]: Creating...
+module.aws_security_default_vpc.aws_default_subnet.this[1]: Creating...
 
 ...
 ...
@@ -183,22 +184,25 @@ The following items must be modified; terraform apply will fail if you run it as
 
 ## deploy_user
 
-Specify a user to deploy Terraform that has been registered as an IAM user.
+**In recent years, deployment using IAM roles is considered better from a security standpoint, so you can usually leave this value as null.
+**  
+Specify a user to deploy Terraform that has been registered as an IAM user.  
 Of course, you can narrow down the permissions, but due to the large number of permissions required, give the user `Administrator Access` to deploy Terraform.
 
-```
+```terraform
 #--------------------------------------------------------------
 # Deploy IAM user
 #--------------------------------------------------------------
 # TODO: need to change deploy IAM user.
-deploy_user = "terraform"
+# This is the IAM user that will be used to deploy the resources. However, if you are not deploying using an IAM user, you can leave it as null.
+deploy_user = null
 ```
 
 ## region
 
 Select the region where you want to create the resource.
 
-```
+```terraform
 # TODO: need to change region.
 region = "ap-northeast-1"
 ```
@@ -211,7 +215,7 @@ Although terraform apply will succeed without fixing the following items, the fo
 
 You can leave the following as it is without any problem. However, if you want to add TAGs to the resources according to your environment, please modify the following.
 
-```
+```terraform
 # TODO: need to change tags.
 tags = {
 # TODO: need to change env.
@@ -227,9 +231,9 @@ service = "base"
 Basically, for notifications, you need an oauth access token from Slack and a specified channel ID.
 If you can get it, please modify all of the following If there is no normal token and channel ID, you will not be notified, but the deployment itself will succeed.
 
-```
+```terraform
       # TODO: need to change SLACK_OAUTH_ACCESS_TOKEN.(bot token xoxb-xxxxxx....)
-      SLACK_OAUTH_ACCESS_TOKEN = "xxxx-xxxxxxxxxxxxx-xxxxxxxxxxxxx-xxxxxxxxxxxxxxxxxxxxxxxx"
+      SLACK_OAUTH_ACCESS_TOKEN = "xoxb-xxxxxxxxxxxxx-xxxxxxxxxxxxx-xxxxxxxxxxxxxxxxxxxxxxxx"
       # TODO: need to change SLACK_CHANNEL_ID.
       SLACK_CHANNEL_ID = "XXXXXXXXXXXXXX"
 ```
@@ -240,7 +244,7 @@ The variable for each function has is_enabled. If you do not want to use it as a
 
 - Log:Application
 
-```
+```terraform
 #--------------------------------------------------------------
 # Log:Application
 # The filter function of CloudWatchLogs can be used to check specified logs
@@ -256,7 +260,7 @@ metric_log_application = {
 
 - Log:Postgres
 
-```
+```terraform
 #--------------------------------------------------------------
 # Log:Postgres
 # The filter function of CloudWatchLogs can be used to check specified logs
@@ -272,7 +276,7 @@ metric_log_postgres = {
 
 - Metrics:ALB
 
-```
+```terraform
 #--------------------------------------------------------------
 # Metrics:ALB
 # Metrics are data about the performance of your systems. By default,
@@ -292,7 +296,7 @@ metric_resource_alb = {
 
 - Metrics:API Gateway
 
-```
+```terraform
 #--------------------------------------------------------------
 # Metrics:API Gateway
 # Metrics are data about the performance of your systems. By default,
@@ -312,7 +316,7 @@ metric_resource_api_gateway = {
 
 - Metrics:CloudFront
 
-```
+```terraform
 #--------------------------------------------------------------
 # Metrics:CloudFront
 # Metrics are data about the performance of your systems. By default,
@@ -332,7 +336,7 @@ metric_resource_cloudfront = {
 
 - Metrics:EC2
 
-```
+```terraform
 #--------------------------------------------------------------
 # Metrics:EC2
 # Metrics are data about the performance of your systems. By default,
@@ -352,7 +356,7 @@ metric_resource_ec2 = {
 
 - Metrics:ElastiCache
 
-```
+```terraform
 #--------------------------------------------------------------
 # Metrics:ElastiCache
 # Metrics are data about the performance of your systems. By default,
@@ -372,7 +376,7 @@ metric_resource_elasticache = {
 
 - Metrics:Lambda
 
-```
+```terraform
 #--------------------------------------------------------------
 # Metrics:Lambda
 # Metrics are data about the performance of your systems. By default,
@@ -392,7 +396,7 @@ metric_resource_lambda = {
 
 - Metrics:RDS
 
-```
+```terraform
 #--------------------------------------------------------------
 # Metrics:RDS
 # Metrics are data about the performance of your systems. By default,
@@ -405,14 +409,14 @@ metric_resource_lambda = {
 # Metrics about RDS will be checked and you will be notified via Slack if the specified threshold is exceeded.
 # https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/monitoring-cloudwatch.html
 #--------------------------------------------------------------
-metric_resource_rds = {
+metric_resource_rds_cluster = {
   # TODO: need to set is_enabled for monitor of RDS.
   is_enabled = false
 ```
 
 - Metrics:SES
 
-```
+```terraform
 #--------------------------------------------------------------
 # Metrics:SES
 # Metrics are data about the performance of your systems. By default,
@@ -432,7 +436,7 @@ metric_resource_ses = {
 
 - CloudWatch Events:EC2
 
-```
+```terraform
 #--------------------------------------------------------------
 # CloudWatch Events:EC2
 # The following events are monitored.
@@ -446,7 +450,7 @@ cloudwatch_event_ec2 = {
 
 - Metrics:Synthetics Canary
 
-```
+```terraform
 #--------------------------------------------------------------
 # Metrics: Synthetics Canary
 # You can use Amazon CloudWatch Synthetics to create canaries,
@@ -467,7 +471,7 @@ metric_synthetics_canary = {
 
 - Athena
 
-```
+```terraform
 #--------------------------------------------------------------
 # Athena
 # Amazon Athena is an interactive query service that makes it easy to 

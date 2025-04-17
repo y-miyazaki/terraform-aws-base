@@ -3,7 +3,7 @@
 #--------------------------------------------------------------
 module "athena" {
   count          = var.athena.is_enabled ? 1 : 0
-  source         = "../../modules/aws/recipes/athena"
+  source         = "../../modules/aws/athena"
   name_prefix    = var.name_prefix
   workgroup_name = var.athena.workgroup_name
   workgroup_configuration = {

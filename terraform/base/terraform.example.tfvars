@@ -4,10 +4,17 @@
 #--------------------------------------------------------------
 
 #--------------------------------------------------------------
+# Check use Control Tower
+# If you are using Control Tower, set use_control_tower to true. If you set it to true, some options will be ignored.
+#--------------------------------------------------------------
+# TODO: need to change use Control Tower.
+use_control_tower = false
+#--------------------------------------------------------------
 # Deploy IAM user
 #--------------------------------------------------------------
 # TODO: need to change deploy IAM user.
-deploy_user = "terraform"
+# This is the IAM user that will be used to deploy the resources. However, if you are not deploying using an IAM user, you can leave it as null.
+deploy_user = null
 #--------------------------------------------------------------
 # Default Tags for Resources
 # A tag that is set globally for the resources used.
@@ -15,10 +22,12 @@ deploy_user = "terraform"
 # TODO: need to change tags.
 tags = {
   # TODO: need to change env.
-  env = "dev"
+  env = "example"
   # TODO: need to change service.
   # service is project name or job name or product name.
   service = "base"
+  # Map Program
+  # map-migrated = "xxxxxxxxxxxxx"
 }
 #--------------------------------------------------------------
 # Name prefix
@@ -30,6 +39,28 @@ name_prefix = "base-"
 #--------------------------------------------------------------
 # TODO: need to change region.
 region = "ap-northeast-1"
+#--------------------------------------------------------------
+# OpenID Connect for AWS and GitHub Actions
+# Terraform module to configure GitHub Actions as an IAM OIDC identity provider in AWS.
+# The target ARN is output(oidc_github_iam_role_arn) for the target ARN.
+# ex) oidc_github_iam_role_arn = "arn:aws:iam::{aws_account_id}:role/{iam_role_name}"
+#--------------------------------------------------------------
+oidc_github = {
+  # TODO: need to set is_enabled for settings of IAM OIDC for GitHub Actions.
+  is_enabled = true
+  # TODO: Flag to enable/disable the attachment of the AdministratorAccess policy.
+  attach_admin_policy = true
+  # TODO: Flag to enable/disable the attachment of the ReadOnly policy.
+  attach_read_only_policy = false
+  # TODO: Flag to enable/disable the creation of the GitHub OIDC provider.
+  create_oidc_provider = true
+  # TODO: Set the org/repo of the GitHub repository to github_repositories.
+  github_repositories = [
+    # "your-repository/repository-name",
+  ]
+  iam_role_name = "oidc-github-role"
+  iam_role_path = "/"
+}
 #--------------------------------------------------------------
 # Resource Group
 #--------------------------------------------------------------
@@ -95,7 +126,7 @@ budgets = {
     # schedule_expression when Budgets will be notified.
     schedule_expression = "cron(0 9 * * ? *)"
     description         = "This cloudwatch event used for Budgets."
-    is_enabled          = true
+    state               = "ENABLED"
   }
   aws_cloudwatch_log_group_lambda = {
     # TODO: need to change retention_in_days for each services.
@@ -107,13 +138,10 @@ budgets = {
       # TODO: need to change TIMEZONE.
       # https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
       TIMEZONE = "Asia/Tokyo"
-      # TODO: need to change MONTHLY_TARGET_COST.(unit USD)
-      # Set an estimated monthly AWS cost.
-      MONTHLY_TARGET_COST = 100
       # TODO: need to change SLACK_OAUTH_ACCESS_TOKEN.(bot token xoxb-xxxxxx....)
-      SLACK_OAUTH_ACCESS_TOKEN = "xxxx-xxxxxxxxxxxxx-xxxxxxxxxxxxx-xxxxxxxxxxxxxxxxxxxxxxxx"
+      SLACK_OAUTH_ACCESS_TOKEN = "xoxb-xxxxxxxxxxxxx-xxxxxxxxxxxxx-xxxxxxxxxxxxxxxxxxxxxxxx"
       # TODO: need to change SLACK_CHANNEL_ID.
-      SLACK_CHANNEL_ID = "XXXXXXXXXXXXXX"
+      SLACK_CHANNEL_ID = "xxxxxxxxxxx"
       LOGGER_FORMATTER = "json"
       LOGGER_OUT       = "stdout"
       LOGGER_LEVEL     = "warn"
@@ -134,16 +162,18 @@ compute_optimizer = {
   is_enabled = true
 }
 #--------------------------------------------------------------
-# Health
+# GuardDuty
+# Amazon GuardDuty is a threat detection service that continuously monitors your AWS accounts and workloads for malicious activity and
+# delivers detailed security findings for visibility and remediation.
+# Notice: This option is automatically disabled if use_control_tower=true.
 #--------------------------------------------------------------
-health = {
-  # TODO: need to set is_enabled for settings of AWS Health.
-  is_enabled = true
+guardduty = {
+  # TODO: need to set is_enabled for settings of AWS GuardDuty.
+  is_enabled = false
   aws_cloudwatch_event_rule = {
-    name           = "health-cloudwatch-event-rule"
-    name_us_east_1 = "health-us-east-1-cloudwatch-event-rule"
-    description    = "This cloudwatch event used for Health."
-    is_enabled     = true
+    name        = "guardduty-cloudwatch-event-rule"
+    description = "This cloudwatch event used for GuardDuty."
+    state       = "ENABLED"
   }
   aws_cloudwatch_log_group_lambda = {
     # TODO: need to change retention_in_days for each services.
@@ -153,9 +183,38 @@ health = {
   aws_lambda_function = {
     environment = {
       # TODO: need to change SLACK_OAUTH_ACCESS_TOKEN.(bot token xoxb-xxxxxx....)
-      SLACK_OAUTH_ACCESS_TOKEN = "xxxx-xxxxxxxxxxxxx-xxxxxxxxxxxxx-xxxxxxxxxxxxxxxxxxxxxxxx"
+      SLACK_OAUTH_ACCESS_TOKEN = "xoxb-xxxxxxxxxxxxx-xxxxxxxxxxxxx-xxxxxxxxxxxxxxxxxxxxxxxx"
       # TODO: need to change SLACK_CHANNEL_ID.
-      SLACK_CHANNEL_ID = "XXXXXXXXXXXXXX"
+      SLACK_CHANNEL_ID = "xxxxxxxxxxx"
+      LOGGER_FORMATTER = "json"
+      LOGGER_OUT       = "stdout"
+      LOGGER_LEVEL     = "warn"
+    }
+  }
+}
+#--------------------------------------------------------------
+# Health
+#--------------------------------------------------------------
+health = {
+  # TODO: need to set is_enabled for settings of AWS Health.
+  is_enabled = true
+  aws_cloudwatch_event_rule = {
+    name           = "health-cloudwatch-event-rule"
+    name_us_east_1 = "health-us-east-1-cloudwatch-event-rule"
+    description    = "This cloudwatch event used for Health."
+    state          = "ENABLED"
+  }
+  aws_cloudwatch_log_group_lambda = {
+    # TODO: need to change retention_in_days for each services.
+    retention_in_days = 14
+    kms_key_id        = null
+  }
+  aws_lambda_function = {
+    environment = {
+      # TODO: need to change SLACK_OAUTH_ACCESS_TOKEN.(bot token xoxb-xxxxxx....)
+      SLACK_OAUTH_ACCESS_TOKEN = "xoxb-xxxxxxxxxxxxx-xxxxxxxxxxxxx-xxxxxxxxxxxxxxxxxxxxxxxx"
+      # TODO: need to change SLACK_CHANNEL_ID.
+      SLACK_CHANNEL_ID = "xxxxxxxxxxx"
       LOGGER_FORMATTER = "json"
       LOGGER_OUT       = "stdout"
       LOGGER_LEVEL     = "warn"
@@ -173,7 +232,7 @@ trusted_advisor = {
     name                = "trusted-advisor-cloudwatch-event-rule"
     schedule_expression = "cron(0 0 * * ? *)"
     description         = "This cloudwatch event used for Trusted Advisor."
-    is_enabled          = true
+    state               = "ENABLED"
   }
   aws_cloudwatch_log_group_lambda = {
     # TODO: need to change retention_in_days for each services.
@@ -184,12 +243,45 @@ trusted_advisor = {
     environment = {
       LANGUAGE = "en"
       # TODO: need to change SLACK_OAUTH_ACCESS_TOKEN.(bot token xoxb-xxxxxx....)
-      SLACK_OAUTH_ACCESS_TOKEN = "xxxx-xxxxxxxxxxxxx-xxxxxxxxxxxxx-xxxxxxxxxxxxxxxxxxxxxxxx"
+      SLACK_OAUTH_ACCESS_TOKEN = "xoxb-xxxxxxxxxxxxx-xxxxxxxxxxxxx-xxxxxxxxxxxxxxxxxxxxxxxx"
       # TODO: need to change SLACK_CHANNEL_ID.
-      SLACK_CHANNEL_ID = "XXXXXXXXXXXXXX"
+      SLACK_CHANNEL_ID = "xxxxxxxxxxx"
       LOGGER_FORMATTER = "json"
       LOGGER_OUT       = "stdout"
       LOGGER_LEVEL     = "warn"
+    }
+  }
+}
+#--------------------------------------------------------------
+# IAM password expired
+# A list of target users will be automatically notified in Slack 10 days before the IAM password expires.
+# Notice: This option is automatically disabled if use_control_tower=true.
+#--------------------------------------------------------------
+iam_password_expired = {
+  # TODO: need to set is_enabled for settings of IAM password expired.
+  is_enabled = false
+  aws_cloudwatch_event_rule = {
+    name                = "iam-password-expired-cloudwatch-event-rule"
+    schedule_expression = "cron(0 0 * * ? *)"
+    description         = "This cloudwatch event used for IAM password expired."
+    state               = "ENABLED"
+  }
+  aws_cloudwatch_log_group_lambda = {
+    # TODO: need to change retention_in_days for each services.
+    retention_in_days = 14
+    kms_key_id        = null
+  }
+  aws_lambda_function = {
+    environment = {
+      LANGUAGE = "en"
+      # TODO: need to change SLACK_OAUTH_ACCESS_TOKEN.(bot token xoxb-xxxxxx....)
+      SLACK_OAUTH_ACCESS_TOKEN = "xoxb-xxxxxxxxxxxxx-xxxxxxxxxxxxx-xxxxxxxxxxxxxxxxxxxxxxxx"
+      # TODO: need to change SLACK_CHANNEL_ID.
+      SLACK_CHANNEL_ID        = "xxxxxxxxxxx"
+      LOGGER_FORMATTER        = "json"
+      LOGGER_OUT              = "stdout"
+      LOGGER_LEVEL            = "warn"
+      NOTIFICATION_BEFORE_DAY = "10"
     }
   }
 }
@@ -198,21 +290,13 @@ trusted_advisor = {
 #--------------------------------------------------------------
 iam = {
   # TODO: need to set is_enabled for settings of IAM.
-  is_enabled = true
+  is_enabled = false
   # TODO: need to change IAM User.
   user = {
-    "test1" = {
-      is_console_access = true
+    "test" = {
+      is_console_access = false
       is_access_key     = false
-    },
-    "test2" = {
-      is_console_access = true
-      is_access_key     = false
-    },
-    "test3" = {
-      is_console_access = true
-      is_access_key     = false
-    },
+    }
   }
   #--------------------------------------------------------------
   # TODO: need to change IAM Group.
@@ -520,40 +604,12 @@ iam = {
           #--------------------------------------------------------------
           # Default rule end
           #--------------------------------------------------------------
-          #--------------------------------------------------------------
-          # Custom rule start
-          #--------------------------------------------------------------
-          # TODO: If you wish to grant permissions to users, please add permissions for the target action below.
-          # The commented out items below are samples.
-
-          #   {
-          #     sid    = "AllowSSM"
-          #     effect = "Allow"
-          #     actions = [
-          #       "ssm:StartSession",
-          #       "ssm:TerminateSession",
-          #       "ssm:ResumeSession",
-          #       "ssm:DescribeSessions",
-          #       "ssm:GetConnectionStatus",
-          #       "ssm:DescribeInstanceProperties",
-          #       "ec2:describeInstances",
-          #     ]
-          #     resources = [
-          #       "*",
-          #     ]
-          #   },
-          #--------------------------------------------------------------
-          # Custom rule end
-          #--------------------------------------------------------------
         ]
       }
       # TODO: need to add policy arn. group policy limit is 10.
       # You need to check this document.
       # https://aws.amazon.com/jp/premiumsupport/knowledge-center/iam-increase-policy-size/
       policy = [
-        {
-          policy_arn = "arn:aws:iam::aws:policy/AmazonS3FullAccess"
-        },
       ]
     }
     # TODO: need to change IAM Group name.
@@ -564,8 +620,6 @@ iam = {
       is_enabled_mfa = true
       # TODO: need to set users.
       users = [
-        "test2",
-        "test3",
       ]
       # TODO: need to set base policy.
       # Please specify the base policy to provide.
@@ -677,31 +731,6 @@ iam = {
           #--------------------------------------------------------------
           # Default rule end
           #--------------------------------------------------------------
-          #--------------------------------------------------------------
-          # Custom rule start
-          #--------------------------------------------------------------
-          # TODO: If you wish to grant permissions to users, please add permissions for the target action below.
-          # The commented out items below are samples.
-
-          #   {
-          #     sid    = "AllowSSM"
-          #     effect = "Allow"
-          #     actions = [
-          #       "ssm:StartSession",
-          #       "ssm:TerminateSession",
-          #       "ssm:ResumeSession",
-          #       "ssm:DescribeSessions",
-          #       "ssm:GetConnectionStatus",
-          #       "ssm:DescribeInstanceProperties",
-          #       "ec2:describeInstances",
-          #     ]
-          #     resources = [
-          #       "*",
-          #     ]
-          #   },
-          #--------------------------------------------------------------
-          # Custom rule end
-          #--------------------------------------------------------------
         ]
       }
       # TODO: need to add policy arn. group policy limit is 10.
@@ -741,6 +770,7 @@ iam = {
       is_enabled_mfa = false
       # TODO: need to set users.
       users = [
+        "deploy-static-contents",
       ]
       # TODO: need to set base policy.
       # Please specify the base policy to provide.
@@ -752,27 +782,38 @@ iam = {
         path        = "/"
         description = ""
         statement = [
-          #--------------------------------------------------------------
-          # Custom rule start
-          #--------------------------------------------------------------
-          # TODO: If you wish to grant permissions to users, please add permissions for the target action below.
-          # The commented out items below are samples.
-
-          #   {
-          #     sid    = "AllowS3"
-          #     effect = "Allow"
-          #     actions = [
-          #       "s3:Get*",
-          #       "s3:List*",
-          #       "s3:HeadBucket",
-          #       "s3:PutObject",
-          #       "s3:DeleteObject",
-          #     ]
-          #     resources = [
-          #       "arn:aws:s3:::*",
-          #       "arn:aws:s3:::*/*",
-          #     ]
-          #   },
+          {
+            sid    = "AllowS3"
+            effect = "Allow"
+            actions = [
+              "s3:Get*",
+              "s3:List*",
+              "s3:HeadBucket",
+              "s3:PutObject",
+              "s3:DeleteObject",
+            ]
+            resources = [
+              "arn:aws:s3:::dev-*",
+              "arn:aws:s3:::dev-*/*",
+              "arn:aws:s3:::base-*/*/Athena/*",
+            ]
+          },
+          {
+            sid    = "AllowCloudFrontIndvalidation"
+            effect = "Allow"
+            actions = [
+              "cloudfront:GetDistribution",
+              "cloudfront:GetDistributionConfig",
+              "cloudfront:ListDistributions",
+              "cloudfront:ListStreamingDistributions",
+              "cloudfront:CreateInvalidation",
+              "cloudfront:ListInvalidations",
+              "cloudfront:GetInvalidation"
+            ]
+            resources = [
+              "*",
+            ]
+          },
         ]
       }
       # TODO: need to add policy arn. group policy limit is 10.
@@ -807,10 +848,10 @@ iam = {
                   "sts:AssumeRole",
                 ]
                 resources = [
-                  # TODO: need to change AWS accound ID(99999999999) and role name
-                  # Specify the original AWS account ID(99999999999) that will use the IAM Switch role.
-                  # Specify the AWS Account ID(99999999999) of the switch destination.
-                  "arn:aws:iam::999999999999:role/base-iam-switch-to-administrator-role",
+                  # TODO: need to change AWS account ID(123456789012) and role name
+                  # Specify the original AWS account ID(123456789012) that will use the IAM Switch role.
+                  # Specify the AWS Account ID(123456789012) of the switch destination.
+                  "arn:aws:iam::123456789012:role/base-iam-switch-to-administrator-role",
                 ]
               },
             ]
@@ -831,10 +872,10 @@ iam = {
                   "sts:AssumeRole",
                 ]
                 resources = [
-                  # TODO: need to change AWS accound ID(99999999999) and role name
-                  # Specify the original AWS account ID(99999999999) that will use the IAM Switch role.
-                  # Specify the AWS Account ID(99999999999) of the switch destination.
-                  "arn:aws:iam::999999999999:role/base-iam-switch-to-developer-role",
+                  # TODO: need to change AWS account ID(123456789012) and role name
+                  # Specify the original AWS account ID(123456789012) that will use the IAM Switch role.
+                  # Specify the AWS Account ID(123456789012) of the switch destination.
+                  "arn:aws:iam::123456789012:role/base-iam-switch-to-developer-role",
                 ]
               },
             ]
@@ -855,10 +896,10 @@ iam = {
                   "sts:AssumeRole",
                 ]
                 resources = [
-                  # TODO: need to change AWS accound ID(99999999999) and role name
-                  # Specify the original AWS account ID(99999999999) that will use the IAM Switch role.
-                  # Specify the AWS Account ID(99999999999) of the switch destination.
-                  "arn:aws:iam::999999999999:role/base-iam-switch-to-operator-role",
+                  # TODO: need to change AWS account ID(123456789012) and role name
+                  # Specify the original AWS account ID(123456789012) that will use the IAM Switch role.
+                  # Specify the AWS Account ID(123456789012) of the switch destination.
+                  "arn:aws:iam::123456789012:role/base-iam-switch-to-operator-role",
                 ]
               },
             ]
@@ -879,10 +920,10 @@ iam = {
             name        = "iam-switch-to-administrator-role"
             path        = "/"
             description = ""
-            # TODO: need to change AWS accound ID(99999999999)
-            # Specify the original AWS account ID(99999999999) that will use the IAM Switch role.
-            # Specify the AWS Account ID(99999999999) of the switch source.
-            account_id         = "999999999999"
+            # TODO: need to change AWS account ID(123456789012)
+            # Specify the original AWS account ID(123456789012) that will use the IAM Switch role.
+            # Specify the AWS Account ID(123456789012) of the switch source.
+            account_id         = "123456789012"
             assume_role_policy = null
           }
           # TODO: need to set base policy.
@@ -1064,10 +1105,10 @@ iam = {
             name        = "iam-switch-to-developer-role"
             path        = "/"
             description = ""
-            # TODO: need to change AWS accound ID(99999999999)
-            # Specify the original AWS account ID(99999999999) that will use the IAM Switch role.
-            # Specify the AWS Account ID(99999999999) of the switch source.
-            account_id         = "999999999999"
+            # TODO: need to change AWS account ID(123456789012)
+            # Specify the original AWS account ID(123456789012) that will use the IAM Switch role.
+            # Specify the AWS Account ID(123456789012) of the switch source.
+            account_id         = "123456789012"
             assume_role_policy = null
           }
           # TODO: need to set base policy.
@@ -1199,10 +1240,10 @@ iam = {
             name        = "iam-switch-to-operator-role"
             path        = "/"
             description = ""
-            # TODO: need to change AWS accound ID(99999999999)
-            # Specify the original AWS account ID(99999999999) that will use the IAM Switch role.
-            # Specify the AWS Account ID(99999999999) of the switch source.
-            account_id         = "999999999999"
+            # TODO: need to change AWS account ID(123456789012)
+            # Specify the original AWS account ID(123456789012) that will use the IAM Switch role.
+            # Specify the AWS Account ID(123456789012) of the switch source.
+            account_id         = "123456789012"
             assume_role_policy = null
           }
           # TODO: need to set base policy.
@@ -1340,7 +1381,7 @@ common_lambda = {
     # TODO: To specify a VPC that already exists, configure the following settings for Lambda.
     # If var.common_lambda.vpc.is_enabled = true and var.common_lambda.vpc.create_vpc = false,
     # the Lambda will be built in an existing VPC by referencing the parameters here.
-    exsits = {
+    exists = {
       private_subnets = [
         "subnet-xxxxxxxxxxxxxxxxx",
         "subnet-xxxxxxxxxxxxxxxxx",
@@ -1419,6 +1460,9 @@ common_lambda = {
 # Common:Log Bucket
 #--------------------------------------------------------------
 common_log = {
+  # https://docs.aws.amazon.com/ja_jp/elasticloadbalancing/latest/classic/enable-access-logs.html
+  # elb account id is ap-northeast-1.
+  elb_account_id = "582318560864"
   #--------------------------------------------------------------
   # S3 for log
   # https://registry.terraform.io/modules/terraform-aws-modules/s3-bucket/aws/latest
@@ -1426,7 +1470,6 @@ common_log = {
   s3_log = {
     bucket               = "aws-log-common"
     create_bucket        = true
-    acl                  = "log-delivery-write"
     attach_public_policy = true
     block_public_acls    = true
     block_public_policy  = true
@@ -1475,55 +1518,56 @@ common_log = {
   #--------------------------------------------------------------
   # S3 for CloudTrail
   # https://registry.terraform.io/modules/terraform-aws-modules/s3-bucket/aws/latest
+  # Notice: This option is automatically disabled if use_control_tower=true.
   #--------------------------------------------------------------
-  s3_cloudtrail = {
-    bucket               = "aws-log-cloudtrail"
-    create_bucket        = true
-    acl                  = "log-delivery-write"
-    attach_public_policy = true
-    block_public_acls    = true
-    block_public_policy  = true
-    force_destroy        = true
-    ignore_public_acls   = true
-    lifecycle_rule = [
-      {
-        id                                     = "default"
-        abort_incomplete_multipart_upload_days = 7
-        enabled                                = true
-        prefix                                 = null
-        expiration = [
-          {
-            # TODO: need to change days. default 3years.
-            days                         = 1095
-            expired_object_delete_marker = false
-          }
-        ]
-        transition = [
-          {
-            days          = 30
-            storage_class = "ONEZONE_IA"
-          }
-        ]
-        noncurrent_version_expiration = [
-          {
-            days = 30
-          }
-        ]
-      }
-    ]
-    restrict_public_buckets = true
-    server_side_encryption_configuration = {
-      rule = {
-        apply_server_side_encryption_by_default = {
-          sse_algorithm     = "AES256"
-          kms_master_key_id = null
-        }
-      }
-    }
-    versioning = {
-      enabled = true
-    }
-  }
+  #   s3_cloudtrail = {
+  #     bucket = "aws-log-cloudtrail"
+  #     # TODO: need to change create_bucket for cloudtrail
+  #     create_bucket        = false
+  #     attach_public_policy = true
+  #     block_public_acls    = true
+  #     block_public_policy  = true
+  #     force_destroy        = true
+  #     ignore_public_acls   = true
+  #     lifecycle_rule = [
+  #       {
+  #         id                                     = "default"
+  #         abort_incomplete_multipart_upload_days = 7
+  #         enabled                                = true
+  #         prefix                                 = null
+  #         expiration = [
+  #           {
+  #             # TODO: need to change days. default 3years.
+  #             days                         = 1095
+  #             expired_object_delete_marker = false
+  #           }
+  #         ]
+  #         transition = [
+  #           {
+  #             days          = 30
+  #             storage_class = "ONEZONE_IA"
+  #           }
+  #         ]
+  #         noncurrent_version_expiration = [
+  #           {
+  #             days = 30
+  #           }
+  #         ]
+  #       }
+  #     ]
+  #     restrict_public_buckets = true
+  #     server_side_encryption_configuration = {
+  #       rule = {
+  #         apply_server_side_encryption_by_default = {
+  #           sse_algorithm     = "AES256"
+  #           kms_master_key_id = null
+  #         }
+  #       }
+  #     }
+  #     versioning = {
+  #       enabled = true
+  #     }
+  #   }
 }
 #--------------------------------------------------------------
 # Security:Access Analyzer
@@ -1537,11 +1581,20 @@ security_access_analyzer = {
   }
 }
 #--------------------------------------------------------------
+# Security:Athena
+# Change the EncryptionConfiguration setting of Athena's Workgroup(primary) to SSE_S3.
+#--------------------------------------------------------------
+security_athena = {
+  # TODO: need to set is_enabled for settings of Athena.
+  is_enabled = true
+}
+#--------------------------------------------------------------
 # Security:CloudTrail
+# Notice: This option is automatically disabled if use_control_tower=true.
 #--------------------------------------------------------------
 security_cloudtrail = {
   # TODO: need to set is_enabled for settings of CloudTrail.
-  is_enabled = true
+  is_enabled = false
   # TODO: need to set is_s3_enabled for settings of New S3 Bucket.
   is_s3_enabled = false
   aws_kms_key = {
@@ -1666,9 +1719,9 @@ PATTERN
   aws_lambda_function = {
     environment = {
       # TODO: need to change SLACK_OAUTH_ACCESS_TOKEN.(bot token xoxb-xxxxxx....)
-      SLACK_OAUTH_ACCESS_TOKEN = "xxxx-xxxxxxxxxxxxx-xxxxxxxxxxxxx-xxxxxxxxxxxxxxxxxxxxxxxx"
+      SLACK_OAUTH_ACCESS_TOKEN = "xoxb-xxxxxxxxxxxxx-xxxxxxxxxxxxx-xxxxxxxxxxxxxxxxxxxxxxxx"
       # TODO: need to change SLACK_CHANNEL_ID.
-      SLACK_CHANNEL_ID = "XXXXXXXXXXXXXX"
+      SLACK_CHANNEL_ID = "xxxxxxxxxxx"
       LOGGER_FORMATTER = "json"
       LOGGER_OUT       = "stdout"
       LOGGER_LEVEL     = "warn"
@@ -1729,10 +1782,11 @@ PATTERN
 }
 #--------------------------------------------------------------
 # Security:AWS Config
+# Notice: This option is automatically disabled if use_control_tower=true.
 #--------------------------------------------------------------
 security_config = {
   # TODO: need to set is_enabled for settings of AWS Config.
-  is_enabled = true
+  is_enabled = false
   # TODO: need to set is_s3_enabled for settings of New S3 Bucket.
   is_s3_enabled = false
   aws_config_configuration_recorder = {
@@ -1826,9 +1880,9 @@ security_config = {
   aws_lambda_function = {
     environment = {
       # TODO: need to change SLACK_OAUTH_ACCESS_TOKEN.(bot token xoxb-xxxxxx....)
-      SLACK_OAUTH_ACCESS_TOKEN = "xxxx-xxxxxxxxxxxxx-xxxxxxxxxxxxx-xxxxxxxxxxxxxxxxxxxxxxxx"
+      SLACK_OAUTH_ACCESS_TOKEN = "xoxb-xxxxxxxxxxxxx-xxxxxxxxxxxxx-xxxxxxxxxxxxxxxxxxxxxxxx"
       # TODO: need to change SLACK_CHANNEL_ID.
-      SLACK_CHANNEL_ID = "XXXXXXXXXXXXXX"
+      SLACK_CHANNEL_ID = "xxxxxxxxxxx"
       LOGGER_FORMATTER = "json"
       LOGGER_OUT       = "stdout"
       LOGGER_LEVEL     = "warn"
@@ -1882,10 +1936,11 @@ security_config = {
 }
 #--------------------------------------------------------------
 # Security:AWS Config(us-east-1(CloudFront))
+# Notice: This option is automatically disabled if use_control_tower=true.
 #--------------------------------------------------------------
 security_config_us_east_1 = {
   # TODO: need to set is_enabled for settings of AWS Config.
-  is_enabled = true
+  is_enabled = false
   # TODO: need to set is_s3_enabled for settings of New S3 Bucket.
   is_s3_enabled = false
   aws_config_configuration_recorder = {
@@ -1988,9 +2043,9 @@ security_config_us_east_1 = {
   aws_lambda_function = {
     environment = {
       # TODO: need to change SLACK_OAUTH_ACCESS_TOKEN.(bot token xoxb-xxxxxx....)
-      SLACK_OAUTH_ACCESS_TOKEN = "xxxx-xxxxxxxxxxxxx-xxxxxxxxxxxxx-xxxxxxxxxxxxxxxxxxxxxxxx"
+      SLACK_OAUTH_ACCESS_TOKEN = "xoxb-xxxxxxxxxxxxx-xxxxxxxxxxxxx-xxxxxxxxxxxxxxxxxxxxxxxx"
       # TODO: need to change SLACK_CHANNEL_ID.
-      SLACK_CHANNEL_ID = "XXXXXXXXXXXXXX"
+      SLACK_CHANNEL_ID = "xxxxxxxxxxx"
       LOGGER_FORMATTER = "json"
       LOGGER_OUT       = "stdout"
       LOGGER_LEVEL     = "warn"
@@ -2036,36 +2091,19 @@ security_ebs = {
 }
 #--------------------------------------------------------------
 # Security:GuardDuty
+# Notice: This option is automatically disabled if use_control_tower=true.
 #--------------------------------------------------------------
 security_guardduty = {
-  # TODO: need to set is_enabled for settings of GuardDuty.
-  is_enabled = true
+
+  # TODO: need to set is_enabled for settings of GuardDuty. Even if GuardDuty is already set, it must be set to false.
+  is_enabled = false
   aws_guardduty_detector = {
-    enable                       = true
+    # TODO: need to set enabled for settings of GuardDuty Detector.
+    enable                       = false
     finding_publishing_frequency = "FIFTEEN_MINUTES"
   }
   aws_guardduty_member = [
   ]
-  aws_cloudwatch_log_group_lambda = {
-    # TODO: need to change retention_in_days for each services.
-    retention_in_days = 14
-    kms_key_id        = null
-  }
-  aws_cloudwatch_event_rule = {
-    name        = "security-guardduty-cloudwatch-event-rule"
-    description = "This cloudwatch event used for GuardDuty."
-  }
-  aws_lambda_function = {
-    environment = {
-      # TODO: need to change SLACK_OAUTH_ACCESS_TOKEN.(bot token xoxb-xxxxxx....)
-      SLACK_OAUTH_ACCESS_TOKEN = "xxxx-xxxxxxxxxxxxx-xxxxxxxxxxxxx-xxxxxxxxxxxxxxxxxxxxxxxx"
-      # TODO: need to change SLACK_CHANNEL_ID.
-      SLACK_CHANNEL_ID = "XXXXXXXXXXXXXX"
-      LOGGER_FORMATTER = "json"
-      LOGGER_OUT       = "stdout"
-      LOGGER_LEVEL     = "warn"
-    }
-  }
 }
 #--------------------------------------------------------------
 # Security:IAM
@@ -2089,7 +2127,7 @@ security_iam = {
   support_iam_role_principal_arns = [
     # example)
     # "arn:aws:iam::{account id}:{iam user}"
-    "arn:aws:iam::999999999999:root"
+    "arn:aws:iam::123456789012:root"
   ]
   aws_iam_role = {
     description = ""
@@ -2113,10 +2151,11 @@ security_s3 = {
 }
 #--------------------------------------------------------------
 # Security:SecurityHub
+# Notice: This option is automatically disabled if use_control_tower=true.
 #--------------------------------------------------------------
 security_securityhub = {
   # TODO: need to set is_enabled for settings of SecurityHub.
-  is_enabled = true
+  is_enabled = false
   aws_securityhub_member = {
   }
   # TODO: need to change product_subscription.

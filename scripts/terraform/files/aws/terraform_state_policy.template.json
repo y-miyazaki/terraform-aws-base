@@ -1,0 +1,26 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "TerraformStatePolicy",
+      "Effect": "Allow",
+      "Principal": {
+        "AWS": ["##AWS_ID##"]
+      },
+      "Action": "s3:*",
+      "Resource": "arn:aws:s3:::##BUCKET##/*"
+    },
+    {
+      "Sid": "AllowSSLRequestsOnly",
+      "Action": "s3:*",
+      "Effect": "Deny",
+      "Resource": ["arn:aws:s3:::##BUCKET##", "arn:aws:s3:::##BUCKET##/*"],
+      "Condition": {
+        "Bool": {
+          "aws:SecureTransport": "false"
+        }
+      },
+      "Principal": "*"
+    }
+  ]
+}

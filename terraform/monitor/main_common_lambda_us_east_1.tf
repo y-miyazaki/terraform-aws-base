@@ -18,8 +18,8 @@ locals {
 #--------------------------------------------------------------
 # Provides a SNS
 #--------------------------------------------------------------
-module "aws_recipes_sns_subscription_lambda_us_east_1" {
-  source = "../../modules/aws/recipes/sns/subscription"
+module "aws_sns_subscription_lambda_metric_us_east_1" {
+  source = "../../modules/aws/sns/subscription"
   providers = {
     aws = aws.us-east-1
   }
@@ -30,7 +30,7 @@ module "aws_recipes_sns_subscription_lambda_us_east_1" {
   )
   aws_sns_topic_subscription = {
     protocol                        = lookup(var.common_lambda.aws_sns_topic_subscription, "protocol")
-    endpoint                        = module.aws_recipes_lambda_create_lambda_us_east_1.arn
+    endpoint                        = module.aws_lambda_create_lambda_us_east_1.arn
     endpoint_auto_confirms          = lookup(var.common_lambda.aws_sns_topic_subscription, "endpoint_auto_confirms")
     confirmation_timeout_in_minutes = lookup(var.common_lambda.aws_sns_topic_subscription, "confirmation_timeout_in_minutes")
     raw_message_delivery            = lookup(var.common_lambda.aws_sns_topic_subscription, "raw_message_delivery")
@@ -47,8 +47,8 @@ module "aws_recipes_sns_subscription_lambda_us_east_1" {
 #--------------------------------------------------------------
 # Create Lambda function
 #--------------------------------------------------------------
-module "aws_recipes_lambda_create_lambda_us_east_1" {
-  source = "../../modules/aws/recipes/lambda/create"
+module "aws_lambda_create_lambda_us_east_1" {
+  source = "../../modules/aws/lambda/create"
   providers = {
     aws = aws.us-east-1
   }
@@ -58,18 +58,19 @@ module "aws_recipes_lambda_create_lambda_us_east_1" {
   # Provides a Lambda Function resource.
   # Lambda allows you to trigger execution of code in response to events in AWS, enabling serverless backend solutions. The Lambda Function itself includes source code and runtime configuration.
   aws_lambda_function = {
-    filename                       = "../../lambda/outputs/cloudwatch_alarm_to_sns_to_slack.zip"
+    filename                       = "../../lambda/outputs/go_cloudwatch_alarm_to_sns_to_slack.zip"
     s3_bucket                      = null
     s3_key                         = null
     s3_object_version              = null
     function_name                  = "${var.name_prefix}cloudwatch-alarm-monitor"
     dead_letter_config             = []
     handler                        = "cloudwatch_alarm_to_sns_to_slack"
-    role                           = module.aws_recipes_iam_role_lambda.arn
+    architectures                  = ["arm64"]
+    role                           = module.aws_iam_role_lambda.arn
     description                    = "This program sends the result of monitor to Slack."
     layers                         = []
     memory_size                    = 128
-    runtime                        = "go1.x"
+    runtime                        = "provided.al2"
     timeout                        = 300
     reserved_concurrent_executions = null
     publish                        = false
@@ -80,12 +81,12 @@ module "aws_recipes_lambda_create_lambda_us_east_1" {
       }
       ] : [
       {
-        subnet_ids         = var.common_lambda.vpc.exsits.private_subnets_us_east_1
-        security_group_ids = [var.common_lambda.vpc.exsits.security_group_id_us_east_1]
+        subnet_ids         = var.common_lambda.vpc.exists.private_subnets_us_east_1
+        security_group_ids = [var.common_lambda.vpc.exists.security_group_id_us_east_1]
       }
     ] : []
     kms_key_arn      = null
-    source_code_hash = filebase64sha256("../../lambda/outputs/cloudwatch_alarm_to_sns_to_slack.zip")
+    source_code_hash = filebase64sha256("../../lambda/outputs/go_cloudwatch_alarm_to_sns_to_slack.zip")
     environment      = lookup(var.common_lambda.metric.aws_lambda_function, "environment")
   }
   # Creates a Lambda permission to allow external sources invoking the Lambda function (e.g. CloudWatch Events Rule, SNS or S3).
@@ -98,8 +99,8 @@ module "aws_recipes_lambda_create_lambda_us_east_1" {
 #--------------------------------------------------------------
 # Create Lambda Permission
 #--------------------------------------------------------------
-module "aws_recipes_lambda_permission_lambda_us_east_1" {
-  source = "../../modules/aws/recipes/lambda/permission"
+module "aws_lambda_permission_lambda_us_east_1" {
+  source = "../../modules/aws/lambda/permission"
   providers = {
     aws = aws.us-east-1
   }
@@ -107,11 +108,11 @@ module "aws_recipes_lambda_permission_lambda_us_east_1" {
   aws_lambda_permission = {
     action              = "lambda:InvokeFunction"
     event_source_token  = null
-    function_name       = module.aws_recipes_lambda_create_lambda_us_east_1.function_name
+    function_name       = module.aws_lambda_create_lambda_us_east_1.function_name
     principal           = "sns.amazonaws.com"
     qualifier           = null
     source_account      = null
-    source_arn          = module.aws_recipes_sns_subscription_lambda_us_east_1.arn
+    source_arn          = module.aws_sns_subscription_lambda_metric_us_east_1.arn
     statement_id        = "MonitorDetectUnexpectedUsage"
     statement_id_prefix = null
   }
@@ -120,8 +121,8 @@ module "aws_recipes_lambda_permission_lambda_us_east_1" {
 # Provides a SNS
 # For SES
 #--------------------------------------------------------------
-module "aws_recipes_sns_subscription_lambda_ses_us_east_1" {
-  source = "../../modules/aws/recipes/sns/subscription"
+module "aws_sns_subscription_lambda_ses_us_east_1" {
+  source = "../../modules/aws/sns/subscription"
   providers = {
     aws = aws.us-east-1
   }
@@ -156,7 +157,7 @@ POLICY
   )
   aws_sns_topic_subscription = {
     protocol                        = lookup(var.common_lambda.aws_sns_topic_subscription, "protocol")
-    endpoint                        = module.aws_recipes_lambda_create_lambda_ses_us_east_1.arn
+    endpoint                        = module.aws_lambda_create_lambda_ses_us_east_1.arn
     endpoint_auto_confirms          = lookup(var.common_lambda.aws_sns_topic_subscription, "endpoint_auto_confirms")
     confirmation_timeout_in_minutes = lookup(var.common_lambda.aws_sns_topic_subscription, "confirmation_timeout_in_minutes")
     raw_message_delivery            = lookup(var.common_lambda.aws_sns_topic_subscription, "raw_message_delivery")
@@ -174,8 +175,8 @@ POLICY
 # Create Lambda function
 # For SES
 #--------------------------------------------------------------
-module "aws_recipes_lambda_create_lambda_ses_us_east_1" {
-  source = "../../modules/aws/recipes/lambda/create"
+module "aws_lambda_create_lambda_ses_us_east_1" {
+  source = "../../modules/aws/lambda/create"
   providers = {
     aws = aws.us-east-1
   }
@@ -185,23 +186,24 @@ module "aws_recipes_lambda_create_lambda_ses_us_east_1" {
   # Provides a Lambda Function resource.
   # Lambda allows you to trigger execution of code in response to events in AWS, enabling serverless backend solutions. The Lambda Function itself includes source code and runtime configuration.
   aws_lambda_function = {
-    filename                       = "../../lambda/outputs/cloudwatch_alarm_to_sns_ses_to_slack.zip"
+    filename                       = "../../lambda/outputs/go_cloudwatch_alarm_to_sns_ses_to_slack.zip"
     s3_bucket                      = null
     s3_key                         = null
     s3_object_version              = null
     function_name                  = "${var.name_prefix}cloudwatch-alarm-ses"
     dead_letter_config             = []
     handler                        = "cloudwatch_alarm_to_sns_ses_to_slack"
-    role                           = module.aws_recipes_iam_role_lambda.arn
+    architectures                  = ["arm64"]
+    role                           = module.aws_iam_role_lambda.arn
     description                    = "This program sends the result of SES to Slack."
     layers                         = []
     memory_size                    = 128
-    runtime                        = "go1.x"
+    runtime                        = "provided.al2"
     timeout                        = 300
     reserved_concurrent_executions = null
     publish                        = false
     kms_key_arn                    = null
-    source_code_hash               = filebase64sha256("../../lambda/outputs/cloudwatch_alarm_to_sns_ses_to_slack.zip")
+    source_code_hash               = filebase64sha256("../../lambda/outputs/go_cloudwatch_alarm_to_sns_ses_to_slack.zip")
     environment                    = lookup(var.common_lambda.ses.aws_lambda_function, "environment")
     vpc_config = var.common_lambda.vpc.is_enabled ? var.common_lambda.vpc.create_vpc ? [
       {
@@ -210,8 +212,8 @@ module "aws_recipes_lambda_create_lambda_ses_us_east_1" {
       }
       ] : [
       {
-        subnet_ids         = var.common_lambda.vpc.exsits.private_subnets
-        security_group_ids = [var.common_lambda.vpc.exsits.security_group_id]
+        subnet_ids         = var.common_lambda.vpc.exists.private_subnets
+        security_group_ids = [var.common_lambda.vpc.exists.security_group_id]
       }
     ] : []
   }
@@ -225,8 +227,8 @@ module "aws_recipes_lambda_create_lambda_ses_us_east_1" {
 # Create Lambda Permission
 # For SES
 #--------------------------------------------------------------
-module "aws_recipes_lambda_permission_lambda_ses_us_east_1" {
-  source = "../../modules/aws/recipes/lambda/permission"
+module "aws_lambda_permission_lambda_ses_us_east_1" {
+  source = "../../modules/aws/lambda/permission"
   providers = {
     aws = aws.us-east-1
   }
@@ -234,11 +236,11 @@ module "aws_recipes_lambda_permission_lambda_ses_us_east_1" {
   aws_lambda_permission = {
     action              = "lambda:InvokeFunction"
     event_source_token  = null
-    function_name       = module.aws_recipes_lambda_create_lambda_ses_us_east_1.function_name
+    function_name       = module.aws_lambda_create_lambda_ses_us_east_1.function_name
     principal           = "sns.amazonaws.com"
     qualifier           = null
     source_account      = null
-    source_arn          = module.aws_recipes_sns_subscription_lambda_ses_us_east_1.arn
+    source_arn          = module.aws_sns_subscription_lambda_ses_us_east_1.arn
     statement_id        = "SESDetectUnexpectedUsage"
     statement_id_prefix = null
   }
@@ -248,8 +250,8 @@ module "aws_recipes_lambda_permission_lambda_ses_us_east_1" {
 # Create Lambda function
 # For Kinesis Data Firehose Cloudwatch Logs Processor
 #--------------------------------------------------------------
-module "aws_recipes_lambda_create_lambda_kinesis_data_firehose_cloudwatch_logs_processor_us_east_1" {
-  source = "../../modules/aws/recipes/lambda/create"
+module "aws_lambda_create_lambda_kinesis_data_firehose_cloudwatch_logs_processor_us_east_1" {
+  source = "../../modules/aws/lambda/create"
   providers = {
     aws = aws.us-east-1
   }
@@ -259,24 +261,25 @@ module "aws_recipes_lambda_create_lambda_kinesis_data_firehose_cloudwatch_logs_p
   # Provides a Lambda Function resource.
   # Lambda allows you to trigger execution of code in response to events in AWS, enabling serverless backend solutions. The Lambda Function itself includes source code and runtime configuration.
   aws_lambda_function = {
-    # cd nodejs/kinesis/; zip /workspace/lambda/outputs/kinesis_data_firehose_cloudwatch_logs_processor.zip kinesis_data_firehose_cloudwatch_logs_processor.js 
-    filename                       = "../../lambda/outputs/kinesis_data_firehose_cloudwatch_logs_processor.zip"
+    # cd /workspace/nodejs/kinesis_data_firehose_cloudwatch_logs_processor; zip /workspace/lambda/outputs/nodejs_kinesis_data_firehose_cloudwatch_logs_processor.zip index.mjs
+    filename                       = "../../lambda/outputs/nodejs_kinesis_data_firehose_cloudwatch_logs_processor.zip"
     s3_bucket                      = null
     s3_key                         = null
     s3_object_version              = null
     function_name                  = "${var.name_prefix}kinesis-data-firehose-cloudwatch-logs-processor"
     dead_letter_config             = []
     handler                        = "index.handler"
-    role                           = module.aws_recipes_iam_role_lambda.arn
+    architectures                  = ["arm64"]
+    role                           = module.aws_iam_role_lambda.arn
     description                    = "An Amazon Kinesis Firehose stream processor that extracts individual log events from records sent by Cloudwatch Logs subscription filters."
     layers                         = []
     memory_size                    = 128
-    runtime                        = "nodejs14.x"
+    runtime                        = "nodejs18.x"
     timeout                        = 300
     reserved_concurrent_executions = null
     publish                        = false
     kms_key_arn                    = null
-    source_code_hash               = filebase64sha256("../../lambda/outputs/kinesis_data_firehose_cloudwatch_logs_processor.zip")
+    source_code_hash               = filebase64sha256("../../lambda/outputs/nodejs_kinesis_data_firehose_cloudwatch_logs_processor.zip")
     environment                    = lookup(var.common_lambda.metric.aws_lambda_function, "environment")
     vpc_config = var.common_lambda.vpc.is_enabled ? var.common_lambda.vpc.create_vpc ? [
       {
@@ -285,8 +288,8 @@ module "aws_recipes_lambda_create_lambda_kinesis_data_firehose_cloudwatch_logs_p
       }
       ] : [
       {
-        subnet_ids         = var.common_lambda.vpc.exsits.private_subnets
-        security_group_ids = [var.common_lambda.vpc.exsits.security_group_id]
+        subnet_ids         = var.common_lambda.vpc.exists.private_subnets
+        security_group_ids = [var.common_lambda.vpc.exists.security_group_id]
       }
     ] : []
   }
@@ -300,8 +303,8 @@ module "aws_recipes_lambda_create_lambda_kinesis_data_firehose_cloudwatch_logs_p
 # Create Lambda Permission
 # For Kinesis Data Firehose Cloudwatch Logs Processor
 #--------------------------------------------------------------
-module "aws_recipes_lambda_permission_lambda_kinesis_data_firehose_cloudwatch_logs_processor_us_east_1" {
-  source = "../../modules/aws/recipes/lambda/permission"
+module "aws_lambda_permission_lambda_kinesis_data_firehose_cloudwatch_logs_processor_us_east_1" {
+  source = "../../modules/aws/lambda/permission"
   providers = {
     aws = aws.us-east-1
   }
@@ -309,7 +312,7 @@ module "aws_recipes_lambda_permission_lambda_kinesis_data_firehose_cloudwatch_lo
   aws_lambda_permission = {
     action              = "lambda:InvokeFunction"
     event_source_token  = null
-    function_name       = module.aws_recipes_lambda_create_lambda_kinesis_data_firehose_cloudwatch_logs_processor_us_east_1.function_name
+    function_name       = module.aws_lambda_create_lambda_kinesis_data_firehose_cloudwatch_logs_processor_us_east_1.function_name
     principal           = "lambda.amazonaws.com"
     qualifier           = null
     source_account      = null

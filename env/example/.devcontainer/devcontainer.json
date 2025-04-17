@@ -1,0 +1,48 @@
+{
+    "dockerFile": "../env/common/Dockerfile",
+    "remoteUser": "vscode",
+    "customizations": {
+        "vscode": {
+            "settings": {
+                "extensions.verifySignature": false
+            },
+            "extensions": [
+                "github.copilot",
+                "eamodio.gitlens",
+                "esbenp.prettier-vscode",
+                "usernamehw.errorlens",
+                "streetsidesoftware.code-spell-checker",
+                "vscode-icons-team.vscode-icons",
+                "yzhang.markdown-all-in-one",
+                "davidanson.vscode-markdownlint",
+                "editorconfig.editorconfig",
+                "ibm.output-colorizer",
+                "github.vscode-github-actions",
+                "hashicorp.terraform"
+            ]
+        }
+    },
+    "runArgs": [
+        "-v",
+        "${env:HOME}/workspace/terraform-aws-base:/workspace",
+        "-v",
+        "${env:HOME}/workspace/terraform-aws-base/env/common/.bashrc:/home/vscode/.bashrc",
+        "-v",
+        "${env:HOME}/workspace/terraform-aws-base/env/common/.gitconfig:/home/vscode/.gitconfig",
+        "-v",
+        "${env:HOME}/workspace/terraform-aws-base/env/common/.aws:/home/vscode/.aws",
+        "-v",
+        "/var/run/docker.sock:/var/run/docker.sock"
+    ],
+    "postCreateCommand": "/bin/sh env/common/scripts/init.sh",
+    "workspaceMount": "",
+    "workspaceFolder": "/workspace",
+    "overrideCommand": false,
+    "features": {
+        "ghcr.io/devcontainers/features/docker-outside-of-docker:1": {
+            "version": "latest",
+            "moby": true,
+            "dockerDashComposeVersion": "v2"
+        }
+    }
+}
