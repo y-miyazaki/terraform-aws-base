@@ -4,7 +4,7 @@
 #--------------------------------------------------------------
 module "lambda_vpc" {
   source     = "terraform-aws-modules/vpc/aws"
-  version    = "5.5.2"
+  version    = "5.19.0"
   create_vpc = var.common_lambda.vpc.is_enabled && var.common_lambda.vpc.create_vpc
 
   name = "${var.name_prefix}${var.common_lambda.vpc.new.name}"
@@ -44,7 +44,7 @@ module "lambda_vpc" {
 #--------------------------------------------------------------
 module "lambda_vpc_us_east_1" {
   source  = "terraform-aws-modules/vpc/aws"
-  version = "5.5.2"
+  version = "5.19.0"
   providers = {
     aws = aws.us-east-1
   }
