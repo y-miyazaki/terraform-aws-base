@@ -4,7 +4,7 @@
 #--------------------------------------------------------------
 module "lambda_vpc" {
   source     = "terraform-aws-modules/vpc/aws"
-  version    = "3.14.0"
+  version    = "5.5.2"
   create_vpc = var.common_lambda.vpc.is_enabled && var.common_lambda.vpc.create_vpc
 
   name = "${var.name_prefix}${var.common_lambda.vpc.new.name}"
@@ -33,7 +33,9 @@ module "lambda_vpc" {
   flow_log_cloudwatch_log_group_retention_in_days = var.common_lambda.vpc.new.flow_log_cloudwatch_log_group_retention_in_days
   flow_log_file_format                            = var.common_lambda.vpc.new.flow_log_file_format
 
-  tags = var.tags
+  manage_default_vpc            = false
+  manage_default_security_group = false
+  tags                          = var.tags
 }
 #--------------------------------------------------------------
 # VPC for Lambda(us-east-1)
@@ -41,7 +43,7 @@ module "lambda_vpc" {
 #--------------------------------------------------------------
 module "lambda_vpc_us_east_1" {
   source  = "terraform-aws-modules/vpc/aws"
-  version = "3.14.0"
+  version = "5.5.2"
   providers = {
     aws = aws.us-east-1
   }
@@ -72,6 +74,9 @@ module "lambda_vpc_us_east_1" {
   create_flow_log_cloudwatch_iam_role             = var.common_lambda.vpc.new.create_flow_log_cloudwatch_iam_role
   flow_log_cloudwatch_log_group_retention_in_days = var.common_lambda.vpc.new.flow_log_cloudwatch_log_group_retention_in_days
   flow_log_file_format                            = var.common_lambda.vpc.new.flow_log_file_format
+
+  manage_default_vpc            = false
+  manage_default_security_group = false
 
   tags = var.tags
 }

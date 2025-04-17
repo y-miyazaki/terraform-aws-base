@@ -33,10 +33,10 @@ echo "# tflint ($PWD)"
 echo "#--------------------------------------------------------------"
 tflint --module
 echo "#--------------------------------------------------------------"
-echo "# tfsec ($PWD)"
+echo "# trivy"
 echo "#--------------------------------------------------------------"
-tfsec --tfvars-file terraform."${ENV}".tfvars
+trivy fs . --format table
 # echo "#--------------------------------------------------------------"
 # echo "# terraform plan ($PWD)"
 # echo "#--------------------------------------------------------------"
-terraform plan -lock=false -no-color -var-file=terraform."${ENV}".tfvars
+terraform plan -lock=false -var-file=terraform."${ENV}".tfvars

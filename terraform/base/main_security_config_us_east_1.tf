@@ -7,66 +7,63 @@
 #--------------------------------------------------------------
 locals {
   aws_config_configuration_recorder_config_us_east_1 = merge(var.security_config_us_east_1.aws_config_configuration_recorder, {
-    name = "${var.name_prefix}${lookup(var.security_config_us_east_1.aws_config_configuration_recorder, "name")}"
+    name = "${var.name_prefix}${var.security_config_us_east_1.aws_config_configuration_recorder.name}"
     }
   )
   aws_iam_role_config_us_east_1 = merge(var.security_config_us_east_1.aws_iam_role, {
-    name = "${var.name_prefix}${lookup(var.security_config_us_east_1.aws_iam_role, "name")}"
+    name = "${var.name_prefix}${var.security_config_us_east_1.aws_iam_role.name}"
     }
   )
-  #   aws_s3_bucket_config = merge(var.security_config_us_east_1.aws_s3_bucket, { bucket = "${var.name_prefix}${var.security_config_us_east_1.aws_s3_bucket.bucket}-${random_id.this.dec}" })
+  #   aws_s3_bucket_config = merge(var.security_config_us_east_1.aws_s3_bucket, { bucket = "${var.name_prefix}${var.security_config_us_east_1.aws_s3_bucket.bucket}-${data.aws_caller_identity.current.account_id}" })
   aws_config_delivery_channel_config_us_east_1 = merge(var.security_config_us_east_1.aws_config_delivery_channel, {
-    name = "${var.name_prefix}${lookup(var.security_config_us_east_1.aws_config_delivery_channel, "name")}"
+    name = "${var.name_prefix}${var.security_config_us_east_1.aws_config_delivery_channel.name}"
     }
   )
 }
 #--------------------------------------------------------------
 # Provides AWS Config.
 #--------------------------------------------------------------
-module "aws_recipes_security_config_create_v4_us_east_1" {
-  source = "../../modules/aws/recipes/security/config/create-v4"
+module "aws_security_config_create_v4_us_east_1" {
+  source = "../../modules/aws/security/config/create-v4"
   providers = {
     aws = aws.us-east-1
   }
-  is_enabled                        = lookup(var.security_config_us_east_1, "is_enabled", true)
-  is_s3_enabled                     = lookup(var.security_config_us_east_1, "is_s3_enabled", false)
+  is_enabled                        = var.security_config_us_east_1.is_enabled && var.use_control_tower
+  is_s3_enabled                     = var.security_config_us_east_1.is_s3_enabled
   aws_config_configuration_recorder = local.aws_config_configuration_recorder_config_us_east_1
   aws_iam_role                      = local.aws_iam_role_config_us_east_1
   aws_s3_bucket_existing = {
     # The S3 bucket id
-    bucket_id = module.s3_log.s3_bucket_id
+    bucket_id = local.s3_log_bucket
     # The S3 bucket arn
-    bucket_arn = module.s3_log.s3_bucket_arn
+    bucket_arn = "arn:aws:s3:::${local.s3_log_bucket}"
   }
   aws_config_delivery_channel              = local.aws_config_delivery_channel_config_us_east_1
-  aws_config_configuration_recorder_status = lookup(var.security_config_us_east_1, "aws_config_configuration_recorder_status")
+  aws_config_configuration_recorder_status = var.security_config_us_east_1.aws_config_configuration_recorder_status
   aws_cloudwatch_event_rule = {
-    name        = "${var.name_prefix}${lookup(var.security_config_us_east_1.aws_cloudwatch_event_rule, "name", "security-©-cloudwatch-event-rule")}"
-    description = lookup(var.security_config_us_east_1.aws_cloudwatch_event_rule, "description", "This cloudwatch event used for Config.")
+    name        = "${var.name_prefix}${var.security_config_us_east_1.aws_cloudwatch_event_rule.name}"
+    description = var.security_config_us_east_1.aws_cloudwatch_event_rule.description
   }
   aws_cloudwatch_event_target = {
     arn = module.lambda_function_config_us_east_1.lambda_function_arn
   }
   tags = var.tags
-  depends_on = [
-    module.s3_log
-  ]
 }
 #--------------------------------------------------------------
 # Provides an AWS Config Rule for API Gateway
 #--------------------------------------------------------------
-module "aws_recipes_security_config_rule_cloudfront_us_east_1" {
-  source = "../../modules/aws/recipes/security/config/rule/cloudfront"
+module "aws_security_config_rule_cloudfront_us_east_1" {
+  source = "../../modules/aws/security/config/rule/cloudfront"
   providers = {
     aws = aws.us-east-1
   }
-  is_enabled                               = lookup(var.security_config_us_east_1, "is_enabled", true)
+  is_enabled                               = var.security_config_us_east_1.is_enabled && var.use_control_tower
   name_prefix                              = var.name_prefix
-  ssm_automation_assume_role_arn           = module.aws_recipes_security_config_ssm_automation.role_arn
-  is_enable_cloudfront_viewer_policy_https = lookup(var.security_config_us_east_1.remediation.cloudfront, "is_enable_cloudfront_viewer_policy_https", false)
+  ssm_automation_assume_role_arn           = module.aws_security_config_ssm_automation.role_arn
+  is_enable_cloudfront_viewer_policy_https = var.security_config_us_east_1.remediation.cloudfront.is_enable_cloudfront_viewer_policy_https
   tags                                     = var.tags
   depends_on = [
-    module.aws_recipes_security_config_create_v4_us_east_1
+    module.aws_security_config_create_v4_us_east_1
   ]
 }
 
@@ -77,12 +74,13 @@ module "aws_recipes_security_config_rule_cloudfront_us_east_1" {
 # tfsec:ignore:aws-lambda-enable-tracing
 module "lambda_function_config_us_east_1" {
   source  = "terraform-aws-modules/lambda/aws"
-  version = "3.2.1"
+  version = "7.2.1"
   providers = {
     aws = aws.us-east-1
   }
   create = lookup(var.security_config_us_east_1, "is_enabled", true)
 
+  architectures                           = ["arm64"]
   create_current_version_allowed_triggers = false
   create_package                          = false
   create_role                             = false
@@ -94,7 +92,7 @@ module "lambda_function_config_us_east_1" {
       principal           = "events.amazonaws.com"
       qualifier           = null
       source_account      = null
-      source_arn          = module.aws_recipes_security_config_create_v4_us_east_1.arn
+      source_arn          = module.aws_security_config_create_v4_us_east_1.arn
       statement_id        = "ConfigDetectUnexpectedUsage"
       statement_id_prefix = null
     }
@@ -105,15 +103,15 @@ module "lambda_function_config_us_east_1" {
   description                       = "This program sends the result of config to Slack."
   function_name                     = "${var.name_prefix}cloudwatch-event-config"
   handler                           = "cloudwatch_event_config_to_slack"
-  lambda_role                       = module.aws_recipes_iam_role_lambda.arn
-  local_existing_package            = "../../lambda/outputs/cloudwatch_event_config_to_slack.zip"
+  lambda_role                       = module.aws_iam_role_lambda.arn
+  local_existing_package            = "../../lambda/outputs/go_cloudwatch_event_config_to_slack.zip"
   memory_size                       = 128
-  runtime                           = "go1.x"
+  runtime                           = "provided.al2"
   timeout                           = 300
   tags                              = var.tags
   tracing_mode                      = "PassThrough"
-  vpc_subnet_ids                    = var.common_lambda.vpc.is_enabled ? var.common_lambda.vpc.create_vpc ? module.lambda_vpc_us_east_1.private_subnets : var.common_lambda.vpc.exsits.private_subnets_us_east_1 : []
-  vpc_security_group_ids            = var.common_lambda.vpc.is_enabled ? var.common_lambda.vpc.create_vpc ? [module.lambda_vpc_us_east_1.default_security_group_id] : [var.common_lambda.vpc.exsits.security_group_id_east_1] : []
+  vpc_subnet_ids                    = var.common_lambda.vpc.is_enabled ? var.common_lambda.vpc.create_vpc ? module.lambda_vpc_us_east_1.private_subnets : var.common_lambda.vpc.exists.private_subnets_us_east_1 : []
+  vpc_security_group_ids            = var.common_lambda.vpc.is_enabled ? var.common_lambda.vpc.create_vpc ? [module.lambda_vpc_us_east_1.default_security_group_id] : [var.common_lambda.vpc.exists.security_group_id_east_1] : []
   depends_on = [
     module.lambda_vpc_us_east_1
   ]

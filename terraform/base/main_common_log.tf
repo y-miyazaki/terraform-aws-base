@@ -2,14 +2,14 @@
 # Local
 #--------------------------------------------------------------
 locals {
-  s3_log_bucket        = "${var.name_prefix}${var.common_log.s3_log.bucket}-${random_id.this.dec}"
-  s3_cloudtrail_bucket = "${var.name_prefix}${var.common_log.s3_cloudtrail.bucket}-${random_id.this.dec}"
-  config_role_names = var.security_config.is_enabled ? var.security_config_us_east_1.is_enabled ? [
-    module.aws_recipes_security_config_create_v4.config_role_name,
+  s3_log_bucket        = "${var.name_prefix}${var.common_log.s3_log.bucket}-${data.aws_caller_identity.current.account_id}"
+  s3_cloudtrail_bucket = "${var.name_prefix}${var.common_log.s3_cloudtrail.bucket}-${data.aws_caller_identity.current.account_id}"
+  config_role_names = var.security_config.is_enabled && var.use_control_tower ? var.security_config_us_east_1.is_enabled ? [
+    module.aws_security_config_create_v4.config_role_name,
     # for CloudFront
-    module.aws_recipes_security_config_create_v4_us_east_1.config_role_name,
+    module.aws_security_config_create_v4_us_east_1.config_role_name,
     ] : [
-    module.aws_recipes_security_config_create_v4.config_role_name,
+    module.aws_security_config_create_v4.config_role_name,
   ] : []
 }
 #--------------------------------------------------------------
@@ -19,91 +19,93 @@ locals {
 #tfsec:ignore:aws-s3-enable-versioning
 module "s3_log" {
   source        = "terraform-aws-modules/s3-bucket/aws"
-  version       = "3.6.0"
+  version       = "4.1.0"
   create_bucket = var.common_log.s3_log.create_bucket
 
-  acl                                  = var.common_log.s3_log.acl
-  attach_public_policy                 = var.common_log.s3_log.attach_public_policy
-  block_public_acls                    = var.common_log.s3_log.block_public_acls
-  block_public_policy                  = var.common_log.s3_log.block_public_policy
-  bucket                               = local.s3_log_bucket
-  force_destroy                        = var.common_log.s3_log.force_destroy
-  ignore_public_acls                   = var.common_log.s3_log.ignore_public_acls
-  lifecycle_rule                       = var.common_log.s3_log.lifecycle_rule
-  logging                              = {}
-  restrict_public_buckets              = var.common_log.s3_log.restrict_public_buckets
-  server_side_encryption_configuration = var.common_log.s3_log.server_side_encryption_configuration
-  tags                                 = var.tags
-  versioning                           = var.common_log.s3_log.versioning
-}
-#--------------------------------------------------------------
-# Provides a S3 bucket policy.
-# Policy for log.
-#--------------------------------------------------------------
-module "aws_recipes_s3_policy_security_log" {
-  source               = "../../modules/aws/recipes/s3/policy/security"
-  attach_bucket_policy = false
-  bucket               = module.s3_log.s3_bucket_id
-  bucket_arn           = module.s3_log.s3_bucket_arn
-  depends_on = [
-    module.s3_log
+  grant = [
+    {
+      type       = "CanonicalUser"
+      permission = "FULL_CONTROL"
+      id         = data.aws_canonical_user_id.current.id
+    },
+    {
+      type       = "CanonicalUser"
+      permission = "FULL_CONTROL"
+      id         = data.aws_cloudfront_log_delivery_canonical_user_id.current.id
+      # Ref. https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/AccessLogs.html
+    },
   ]
+  attach_access_log_delivery_policy        = true
+  attach_analytics_destination_policy      = false
+  attach_deny_incorrect_encryption_headers = false
+  attach_deny_incorrect_kms_key_sse        = false
+  attach_deny_insecure_transport_policy    = true
+  attach_deny_unencrypted_object_uploads   = false
+  attach_elb_log_delivery_policy           = false
+  attach_inventory_destination_policy      = false
+  attach_lb_log_delivery_policy            = false
+  attach_policy                            = true
+  attach_public_policy                     = var.common_log.s3_log.attach_public_policy
+  attach_require_latest_tls_policy         = true
+  block_public_acls                        = var.common_log.s3_log.block_public_acls
+  block_public_policy                      = var.common_log.s3_log.block_public_policy
+  bucket                                   = local.s3_log_bucket
+  control_object_ownership                 = true
+  force_destroy                            = var.common_log.s3_log.force_destroy
+  ignore_public_acls                       = var.common_log.s3_log.ignore_public_acls
+  lifecycle_rule                           = var.common_log.s3_log.lifecycle_rule
+  logging                                  = {}
+  object_ownership                         = "ObjectWriter"
+  policy                                   = data.aws_iam_policy_document.s3_log_combined.json
+  restrict_public_buckets                  = var.common_log.s3_log.restrict_public_buckets
+  server_side_encryption_configuration     = var.common_log.s3_log.server_side_encryption_configuration
+  tags                                     = var.tags
+  versioning                               = var.common_log.s3_log.versioning
 }
+
 #--------------------------------------------------------------
-# Provides a S3 bucket policy.
+# Provides a S3 bucket policy for Config.
 # Policy for log.
 #--------------------------------------------------------------
-module "aws_recipes_s3_policy_config_log" {
-  source               = "../../modules/aws/recipes/s3/policy/config"
+module "aws_s3_policy_config_log" {
+  source               = "../../modules/aws/s3/bucket_policy/config"
   attach_bucket_policy = false
-  bucket               = module.s3_log.s3_bucket_id
-  bucket_arn           = module.s3_log.s3_bucket_arn
+  bucket               = local.s3_log_bucket
   account_id           = data.aws_caller_identity.current.account_id
   config_role_names    = local.config_role_names
-  depends_on = [
-    module.s3_log
-  ]
 }
+
 #--------------------------------------------------------------
-# Provides a S3 bucket policy.
+# Provides a S3 bucket policy for Redshift.
 # Policy for log.
 #--------------------------------------------------------------
-module "aws_recipes_s3_policy_lb_log_log" {
-  source               = "../../modules/aws/recipes/s3/policy/lb_log"
+module "aws_s3_policy_redshift_log" {
+  source               = "../../modules/aws/s3/bucket_policy/redshift"
   attach_bucket_policy = false
-  bucket               = module.s3_log.s3_bucket_id
-  bucket_arn           = module.s3_log.s3_bucket_arn
-  depends_on = [
-    module.s3_log
-  ]
+  bucket               = local.s3_log_bucket
 }
+
 #--------------------------------------------------------------
-# Provides a S3 bucket policy.
+# Provides a S3 bucket policy for Redshift.
 # Policy for log.
 #--------------------------------------------------------------
-module "aws_recipes_s3_policy_access_log_log" {
-  source               = "../../modules/aws/recipes/s3/policy/access_log"
+module "aws_s3_policy_lb_log" {
+  source               = "../../modules/aws/s3/bucket_policy/lb"
   attach_bucket_policy = false
-  bucket               = module.s3_log.s3_bucket_id
-  bucket_arn           = module.s3_log.s3_bucket_arn
-  depends_on = [
-    module.s3_log
-  ]
+  bucket               = local.s3_log_bucket
+  elb_account_id       = var.common_log.elb_account_id
 }
+
 #--------------------------------------------------------------
-# S3 bucket policy combined for log.
+# Provides a S3 bucket policy for Redshift.
+# Policy for log.
 #--------------------------------------------------------------
-data "aws_iam_policy_document" "log" {
+data "aws_iam_policy_document" "s3_log_combined" {
   source_policy_documents = compact([
-    module.aws_recipes_s3_policy_security_log.policy_json,
-    module.aws_recipes_s3_policy_config_log.policy_json,
-    module.aws_recipes_s3_policy_lb_log_log.policy_json,
-    module.aws_recipes_s3_policy_access_log_log.policy_json,
+    module.aws_s3_policy_config_log.policy_json,
+    module.aws_s3_policy_lb_log.policy_json,
+    module.aws_s3_policy_redshift_log.policy_json,
   ])
-}
-resource "aws_s3_bucket_policy" "log" {
-  bucket = module.s3_log.s3_bucket_id
-  policy = data.aws_iam_policy_document.log.json
 }
 
 #--------------------------------------------------------------
@@ -113,21 +115,32 @@ resource "aws_s3_bucket_policy" "log" {
 #tfsec:ignore:aws-s3-enable-versioning
 module "s3_cloudtrail" {
   source        = "terraform-aws-modules/s3-bucket/aws"
-  version       = "3.6.0"
+  version       = "4.1.0"
   create_bucket = var.common_log.s3_cloudtrail.create_bucket
 
-  acl                  = var.common_log.s3_cloudtrail.acl
-  attach_public_policy = var.common_log.s3_cloudtrail.attach_public_policy
-  block_public_acls    = var.common_log.s3_cloudtrail.block_public_acls
-  block_public_policy  = var.common_log.s3_cloudtrail.block_public_policy
-  bucket               = local.s3_cloudtrail_bucket
-  force_destroy        = var.common_log.s3_cloudtrail.force_destroy
-  ignore_public_acls   = var.common_log.s3_cloudtrail.ignore_public_acls
-  lifecycle_rule       = var.common_log.s3_cloudtrail.lifecycle_rule
+  attach_access_log_delivery_policy        = true
+  attach_analytics_destination_policy      = false
+  attach_deny_incorrect_encryption_headers = false
+  attach_deny_incorrect_kms_key_sse        = false
+  attach_deny_insecure_transport_policy    = true
+  attach_deny_unencrypted_object_uploads   = false
+  attach_elb_log_delivery_policy           = false
+  attach_inventory_destination_policy      = false
+  attach_lb_log_delivery_policy            = false
+  attach_policy                            = true
+  attach_public_policy                     = var.common_log.s3_cloudtrail.attach_public_policy
+  attach_require_latest_tls_policy         = true
+  block_public_acls                        = var.common_log.s3_cloudtrail.block_public_acls
+  block_public_policy                      = var.common_log.s3_cloudtrail.block_public_policy
+  bucket                                   = local.s3_cloudtrail_bucket
+  force_destroy                            = var.common_log.s3_cloudtrail.force_destroy
+  ignore_public_acls                       = var.common_log.s3_cloudtrail.ignore_public_acls
+  lifecycle_rule                           = var.common_log.s3_cloudtrail.lifecycle_rule
   logging = {
     target_bucket = module.s3_log.s3_bucket_id
-    target_prefix = "AccessLogs/${data.aws_caller_identity.current.account_id}/${local.s3_cloudtrail_bucket}/"
+    target_prefix = "AccessLogs/${data.aws_caller_identity.current.account_id}/S3/${local.s3_cloudtrail_bucket}/"
   }
+  policy                               = module.aws_s3_policy_cloudtrail_cloudtrail.policy_json
   restrict_public_buckets              = var.common_log.s3_cloudtrail.restrict_public_buckets
   server_side_encryption_configuration = var.common_log.s3_cloudtrail.server_side_encryption_configuration
   tags                                 = var.tags
@@ -138,39 +151,9 @@ module "s3_cloudtrail" {
 # Provides a S3 bucket resource.
 # Policy for CloudTrail.
 #--------------------------------------------------------------
-module "aws_recipes_s3_policy_cloudtrail_cloudtrail" {
-  source               = "../../modules/aws/recipes/s3/policy/cloudtrail"
+module "aws_s3_policy_cloudtrail_cloudtrail" {
+  source               = "../../modules/aws/s3/bucket_policy/cloudtrail"
   attach_bucket_policy = false
-  bucket               = module.s3_cloudtrail.s3_bucket_id
-  bucket_arn           = module.s3_cloudtrail.s3_bucket_arn
+  bucket               = local.s3_cloudtrail_bucket
   account_id           = data.aws_caller_identity.current.account_id
-  depends_on = [
-    module.s3_cloudtrail
-  ]
-}
-#--------------------------------------------------------------
-# Provides a S3 bucket policy.
-# Policy for CloudTrail.
-#--------------------------------------------------------------
-module "aws_recipes_s3_policy_security_cloudtrail" {
-  source               = "../../modules/aws/recipes/s3/policy/security"
-  attach_bucket_policy = false
-  bucket               = module.s3_cloudtrail.s3_bucket_id
-  bucket_arn           = module.s3_cloudtrail.s3_bucket_arn
-  depends_on = [
-    module.s3_cloudtrail
-  ]
-}
-#--------------------------------------------------------------
-# S3 bucket policy combined for cloudtrail.
-#--------------------------------------------------------------
-data "aws_iam_policy_document" "cloudtrail" {
-  source_policy_documents = compact([
-    module.aws_recipes_s3_policy_security_cloudtrail.policy_json,
-    module.aws_recipes_s3_policy_cloudtrail_cloudtrail.policy_json,
-  ])
-}
-resource "aws_s3_bucket_policy" "cloudtrail" {
-  bucket = module.s3_cloudtrail.s3_bucket_id
-  policy = data.aws_iam_policy_document.cloudtrail.json
 }

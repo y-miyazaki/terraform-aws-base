@@ -6,16 +6,18 @@ If you need to adjust the parameters, you can do so by yourself by searching TOD
 
 <!-- omit in toc -->
 # Table of Contents
+
 - [Initial setting](#initial-setting)
 - [Required](#required)
-  - [deploy_user](#deploy_user)
+  - [deploy\_user](#deploy_user)
   - [region](#region)
-  - [support_iam_role_principal_arns](#support_iam_role_principal_arns)
-  - [subscriber_email_addresses](#subscriber_email_addresses)
+  - [support\_iam\_role\_principal\_arns](#support_iam_role_principal_arns)
+  - [subscriber\_email\_addresses](#subscriber_email_addresses)
 - [Not Required](#not-required)
   - [tags](#tags)
   - [Slack](#slack)
-  - [is_enabled](#is_enabled)
+  - [is\_enabled](#is_enabled)
+  - [use\_control\_tower](#use_control_tower)
 
 # Initial setting
 
@@ -32,7 +34,7 @@ This section describes the initial settings for running [Base's Terraform](./ter
 - Create an S3 to store the Terraform State  
   Create an S3 from the management console to manage the Terraform State.
   However, if you have an environment where you can run the aws command and profile already configured, you can create an S3 by running the following command.
-  https://github.com/y-miyazaki/cloud-commands/blob/master/cmd/awstfinitstate
+  <https://github.com/y-miyazaki/cloud-commands/blob/master/cmd/awstfinitstate>
 
 ```sh
 # awstfinitstate -h
@@ -82,11 +84,11 @@ region: ap-northeast-1
 # Terraform Provider
 #--------------------------------------------------------------
 terraform {
-  required_version = ">=0.13"
+  required_version = "~>1.4"
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = ">=4.0.0"
+      version = "~>5.0"
     }
   }
   backend "s3" {
@@ -166,11 +168,11 @@ commands will detect it and remind you to do so if necessary.
 
 ```sh
 bash-5.1# terraform apply --auto-approve -var-file=terraform.example.tfvars
-module.aws_recipes_s3_bucket_log_log.random_id.this: Creating...
+module.aws_s3_bucket_log_log.random_id.this: Creating...
 random_id.this: Creating...
-module.aws_recipes_s3_bucket_log_logdom_id.this: Creation complete after 0s [id=wiatHg]
+module.aws_s3_bucket_log_logdom_id.this: Creation complete after 0s [id=wiatHg]
 random_id.this: Creation complete after 0s [id=uqe0bU7J]
-module.aws_recipes_security_default_vpc.aws_default_subnet.this[1]: Creating...
+module.aws_security_default_vpc.aws_default_subnet.this[1]: Creating...
 
 ...
 ...
@@ -185,22 +187,25 @@ The following items must be modified; terraform apply will fail if you run it as
 
 ## deploy_user
 
-Specify a user to deploy Terraform that has been registered as an IAM user.
+**In recent years, deployment using IAM roles is considered better from a security standpoint, so you can usually leave this value as null.
+**  
+Specify a user to deploy Terraform that has been registered as an IAM user.  
 Of course, you can narrow down the permissions, but due to the large number of permissions required, give the user `Administrator Access` to deploy Terraform.
 
-```
+```terraform
 #--------------------------------------------------------------
 # Deploy IAM user
 #--------------------------------------------------------------
 # TODO: need to change deploy IAM user.
-deploy_user = "terraform"
+# This is the IAM user that will be used to deploy the resources. However, if you are not deploying using an IAM user, you can leave it as null.
+deploy_user = null
 ```
 
 ## region
 
 Select the region where you want to create the resource.
 
-```
+```terraform
 # TODO: need to change region.
 region = "ap-northeast-1"
 ```
@@ -209,9 +214,9 @@ region = "ap-northeast-1"
 
 The following are the supporting IAM roles. If you are not sure, please specify your AWS Account ID once. For detailed documentation, please see
 
-https://docs.aws.amazon.com/securityhub/latest/userguide/securityhub-cis-controls.html#cis-1.20-remediation
+<https://docs.aws.amazon.com/securityhub/latest/userguide/securityhub-cis-controls.html#cis-1.20-remediation>
 
-```
+```terraform
   # TODO: need to set principal role arn for Support IAM Role.
   # https://docs.aws.amazon.com/securityhub/latest/userguide/securityhub-cis-controls.html#cis-1.20-remediation
   support_iam_role_principal_arns = [
@@ -225,7 +230,7 @@ https://docs.aws.amazon.com/securityhub/latest/userguide/securityhub-cis-control
 
 The following are the supporting Budgets. If you want to receive Budgets notifications, you must set the email address for Budgets notifications to subscriber_email_addresses.
 
-```
+```terraform
 budgets = {
   # TODO: need to set is_enabled for settings of budgets.
   is_enabled = true
@@ -264,7 +269,7 @@ Although terraform apply will succeed without fixing the following items, the fo
 
 You can leave the following as it is without any problem. However, if you want to add TAGs to the resources according to your environment, please modify the following.
 
-```
+```terraform
 # TODO: need to change tags.
 tags = {
 # TODO: need to change env.
@@ -280,9 +285,9 @@ service = "base"
 Basically, for notifications, you need an oauth access token from Slack and a specified channel ID.
 If you can get it, please modify all of the following If there is no normal token and channel ID, you will not be notified, but the deployment itself will succeed.
 
-```
+```terraform
       # TODO: need to change SLACK_OAUTH_ACCESS_TOKEN.(bot token xoxb-xxxxxx....)
-      SLACK_OAUTH_ACCESS_TOKEN = "xxxx-xxxxxxxxxxxxx-xxxxxxxxxxxxx-xxxxxxxxxxxxxxxxxxxxxxxx"
+      SLACK_OAUTH_ACCESS_TOKEN = "xoxb-xxxxxxxxxxxxx-xxxxxxxxxxxxx-xxxxxxxxxxxxxxxxxxxxxxxx"
       # TODO: need to change SLACK_CHANNEL_ID.
       SLACK_CHANNEL_ID = "XXXXXXXXXXXXXX"
 ```
@@ -291,9 +296,23 @@ If you can get it, please modify all of the following If there is no normal toke
 
 The variable for each function has is_enabled. If you do not want to use it as a function, you can disable it by specifying false.
 
+- IAM OIDC for GitHub Actions
+
+```terraform
+#--------------------------------------------------------------
+# IAM OIDC for GitHub Actions
+# Terraform module to configure GitHub Actions as an IAM OIDC identity provider in AWS.
+# The target ARN is output(oidc_github_iam_role_arn) for the target ARN.
+# ex) oidc_github_iam_role_arn = "arn:aws:iam::{aws_account_id}:role/{iam_role_name}"
+#--------------------------------------------------------------
+oidc_github = {
+  # TODO: need to set is_enabled for settings of IAM OIDC for GitHub Actions.
+  is_enabled = true
+```
+
 - Budgets
 
-```
+```terraform
 #--------------------------------------------------------------
 # Budgets
 #--------------------------------------------------------------
@@ -304,7 +323,7 @@ budgets = {
 
 - IAM
 
-```
+```terraform
 #--------------------------------------------------------------
 # IAM: Users
 #--------------------------------------------------------------
@@ -315,35 +334,25 @@ iam = {
 
 - Compute Optimizer
 
-```
-  #--------------------------------------------------------------
-
+```terraform
+#--------------------------------------------------------------
 # Compute Optimizer
-
 # AWS Compute Optimizer recommends optimal AWS resources for your workloads to reduce
-
 # costs and improve performance by using machine learning to analyze historical utilization metrics.
-
 # Over-provisioning resources can lead to unnecessary infrastructure cost, and under-provisioning resources
-
 # can lead to poor application performance. Compute Optimizer helps you choose optimal configurations
-
 # for three types of AWS resources: Amazon EC2 instances, Amazon EBS volumes, and AWS Lambda functions,
-
 # based on your utilization data.
-
 #--------------------------------------------------------------
 compute_optimizer = {
-
 # TODO: need to set is_enabled for settings of Compute Optimizer.
-
 is_enabled = true
 }
 ```
 
 - Health
 
-```
+```terraform
 #--------------------------------------------------------------
 # Health
 #--------------------------------------------------------------
@@ -354,7 +363,7 @@ health = {
 
 - Trusted Advisor
 
-```
+```terraform
 #--------------------------------------------------------------
 # Trusted Advisor
 #--------------------------------------------------------------
@@ -364,9 +373,22 @@ trusted_advisor = {
   is_enabled = false
 ```
 
-- Access Analyzer
+- IAM password expired
 
+```terraform
+#--------------------------------------------------------------
+# IAM password expired
+# A list of target users will be automatically notified in Slack 10 days before the IAM password expires.
+# Notice: This option is automatically disabled if use_control_tower=true.
+#--------------------------------------------------------------
+iam_password_expired = {
+  # TODO: need to set is_enabled for settings of IAM password expired.
+  is_enabled = false
 ```
+
+- Security:Access Analyzer
+
+```terraform
 #--------------------------------------------------------------
 # Security:Access Analyzer
 #--------------------------------------------------------------
@@ -375,33 +397,24 @@ security_access_analyzer = {
   is_enabled = true
 ```
 
-- Access Analyzer
+- Security:CloudTrail
 
-```
-#--------------------------------------------------------------
-# Security:Access Analyzer
-#--------------------------------------------------------------
-security_access_analyzer = {
-  # TODO: need to set is_enabled for settings of Access Analyzer.
-  is_enabled = true
-```
-
-- CloudTrail
-
-```
+```terraform
 #--------------------------------------------------------------
 # Security:CloudTrail
+# Notice: This option is automatically disabled if use_control_tower=true.
 #--------------------------------------------------------------
 security_cloudtrail = {
   # TODO: need to set is_enabled for settings of CloudTrail.
   is_enabled = true
 ```
 
-- AWS Config
+- Security:AWS Config
 
-```
+```terraform
 #--------------------------------------------------------------
 # Security:AWS Config
+# Notice: This option is automatically disabled if use_control_tower=true.
 #--------------------------------------------------------------
 security_config = {
   # TODO: need to set is_enabled for settings of AWS Config.
@@ -410,9 +423,10 @@ security_config = {
 
 - Security:AWS Config(us-east-1(CloudFront))
 
-```
+```terraform
 #--------------------------------------------------------------
 # Security:AWS Config(us-east-1(CloudFront))
+# Notice: This option is automatically disabled if use_control_tower=true.
 #--------------------------------------------------------------
 security_config_us_east_1 = {
   # TODO: need to set is_enabled for settings of AWS Config.
@@ -421,7 +435,7 @@ security_config_us_east_1 = {
 
 - Security: Default VPC
 
-```
+```terraform
 #--------------------------------------------------------------
 # Security:Default VPC
 #--------------------------------------------------------------
@@ -432,7 +446,7 @@ security_default_vpc = {
 
 - Security: EBS
 
-```
+```terraform
 #--------------------------------------------------------------
 # Security:EBS
 #--------------------------------------------------------------
@@ -442,9 +456,10 @@ security_ebs = {
 
 - Security:GuardDuty
 
-```
+```terraform
 #--------------------------------------------------------------
 # Security:GuardDuty
+# Notice: This option is automatically disabled if use_control_tower=true.
 #--------------------------------------------------------------
 security_guardduty = {
   # TODO: need to set is_enabled for settings of GuardDuty.
@@ -453,7 +468,7 @@ security_guardduty = {
 
 - Security:IAM
 
-```
+```terraform
 #--------------------------------------------------------------
 # Security:IAM
 #--------------------------------------------------------------
@@ -464,7 +479,7 @@ security_iam = {
 
 - Security:S3
 
-```
+```terraform
 #--------------------------------------------------------------
 # Security:S3
 #--------------------------------------------------------------
@@ -475,11 +490,35 @@ security_s3 = {
 
 - Security:SecurityHub
 
-```
+```terraform
 #--------------------------------------------------------------
 # Security:SecurityHub
+# Notice: This option is automatically disabled if use_control_tower=true.
 #--------------------------------------------------------------
 security_securityhub = {
   # TODO: need to set is_enabled for settings of SecurityHub.
   is_enabled = true
 ```
+
+## use_control_tower
+
+If you are using AWS Control Tower to manage your AWS Organization, you should set this option to `true`. When enabled, several security services will be automatically disabled as they are already managed by Control Tower.
+
+```terraform
+#--------------------------------------------------------------
+# Check use Control Tower
+# If you are using Control Tower, set use_control_tower to true. If you set it to true, some options will be ignored.
+#--------------------------------------------------------------
+# TODO: need to change use Control Tower.
+use_control_tower = false
+```
+
+Setting `use_control_tower=true` will automatically disable the following services to avoid conflicts:
+
+- CloudTrail
+- GuardDuty
+- SecurityHub
+- AWS Config (both regional and us-east-1)
+- IAM password expiration notifications
+
+This helps prevent duplicate configurations and potential conflicts between your Terraform-managed resources and those managed by AWS Control Tower.

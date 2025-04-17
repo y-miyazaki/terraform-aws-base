@@ -5,41 +5,43 @@
 # Create IAM Users and Group
 #--------------------------------------------------------------
 # tfsec:ignore:aws-iam-enforce-mfa
-module "aws_recipes_iam_user_group" {
-  count       = lookup(var.iam, "is_enabled", true) ? 1 : 0
-  source      = "../../modules/aws/recipes/iam/user_group"
-  user        = lookup(var.iam, "user")
-  group       = lookup(var.iam, "group")
+module "aws_iam_user_group" {
+  count       = var.iam.is_enabled ? 1 : 0
+  source      = "../../modules/aws/iam/user_group"
+  user        = var.iam.user
+  group       = var.iam.group
   name_prefix = var.name_prefix
+  tags        = var.tags
 }
 #--------------------------------------------------------------
 # Create IAM switch role(From)
 #--------------------------------------------------------------
-module "aws_recipes_iam_switch_role_from" {
-  for_each       = lookup(var.iam.switch_role.from, "group", {})
-  source         = "../../modules/aws/recipes/iam/switch_role/from"
-  is_enabled     = lookup(var.iam, "is_enabled") && lookup(var.iam.switch_role.from, "is_enabled")
+module "aws_iam_switch_role_from" {
+  for_each       = var.iam.switch_role.from.group
+  source         = "../../modules/aws/iam/switch_role/from"
+  is_enabled     = var.iam.is_enabled && var.iam.switch_role.from.is_enabled
   group          = each.key
-  aws_iam_policy = lookup(each.value, "aws_iam_policy", null)
+  aws_iam_policy = each.value.aws_iam_policy
   name_prefix    = var.name_prefix
+  tags           = var.tags
   depends_on = [
-    module.aws_recipes_iam_user_group
+    module.aws_iam_user_group
   ]
 }
 #--------------------------------------------------------------
 # Create IAM switch role(To)
 #--------------------------------------------------------------
-module "aws_recipes_iam_switch_role_to" {
-  for_each       = lookup(var.iam.switch_role.to, "role", {})
-  source         = "../../modules/aws/recipes/iam/switch_role/to"
-  is_enabled     = lookup(var.iam, "is_enabled") && lookup(var.iam.switch_role.to, "is_enabled")
-  aws_iam_role   = lookup(each.value, "aws_iam_role")
-  aws_iam_policy = lookup(each.value, "aws_iam_policy", null)
-  policy         = lookup(each.value, "policy", [])
+module "aws_iam_switch_role_to" {
+  for_each       = var.iam.switch_role.to.role
+  source         = "../../modules/aws/iam/switch_role/to"
+  is_enabled     = var.iam.is_enabled && var.iam.switch_role.to.is_enabled
+  aws_iam_role   = each.value.aws_iam_role
+  aws_iam_policy = each.value.aws_iam_policy
+  policy         = each.value.policy
   name_prefix    = var.name_prefix
   tags           = var.tags
   depends_on = [
-    module.aws_recipes_iam_user_group
+    module.aws_iam_user_group
   ]
 }
 
@@ -47,10 +49,10 @@ module "aws_recipes_iam_switch_role_to" {
 # Output
 #--------------------------------------------------------------
 output "iam_user_login_profile" {
-  value     = lookup(var.iam, "is_enabled", true) ? module.aws_recipes_iam_user_group[0].iam_user_login_profile : null
+  value     = var.iam.is_enabled ? module.aws_iam_user_group[0].iam_user_login_profile : null
   sensitive = true
 }
 output "iam_access_key" {
-  value     = lookup(var.iam, "is_enabled", true) ? module.aws_recipes_iam_user_group[0].iam_access_key : null
+  value     = var.iam.is_enabled ? module.aws_iam_user_group[0].iam_access_key : null
   sensitive = true
 }

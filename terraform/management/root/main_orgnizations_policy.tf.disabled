@@ -1,0 +1,23 @@
+resource "aws_organizations_policy" "deny_iam_user_creation" {
+  name        = "Deny IAM User Creation"
+  description = "Prevents the creation of IAM users"
+  content = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Sid    = "DenyIAMUserCreation"
+        Effect = "Deny"
+        Action = [
+          "iam:CreateUser",
+          "iam:CreateAccessKey"
+        ]
+        Resource = "*"
+      }
+    ]
+  })
+}
+
+resource "aws_organizations_policy_attachment" "attach_deny_iam_user_creation" {
+  policy_id = aws_organizations_policy.deny_iam_user_creation.id
+  target_id = var.organization_root_id # または特定のOU ID
+}

@@ -11,13 +11,22 @@ repos:
       - id: check-added-large-files
         args: ["--maxkb=10240"]
       - id: detect-aws-credentials
+        args: [--allow-missing-credentials]
       - id: detect-private-key
   - repo: https://github.com/antonbabenko/pre-commit-terraform
-    rev: v1.64.1 # https://github.com/antonbabenko/pre-commit-terraform/releases
+    rev: v1.97.4 # https://github.com/antonbabenko/pre-commit-terraform/releases
     hooks:
       - id: terraform_fmt
       - id: terraform_tflint
-      - id: terraform_tfsec
+        args:
+          - --args=-f=compact
+          - --args=--module
+          - --args=--no-color
+      # - id: terraform_trivy
+      #   args:
+      #     - --args=--format=table
+      #     - --args=--skip-dirs="**/.terraform"
+
   # - repo: https://github.com/zricethezav/gitleaks
   #   rev: v7.6.0
   #   hooks:

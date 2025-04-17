@@ -2,11 +2,14 @@
 # Basically, it is already set so that the setting is completed only by changing tfvars.
 # All parameters that need to be changed for each environment are described in TODO comments.
 #--------------------------------------------------------------
+
 #--------------------------------------------------------------
 # Deploy IAM user
 #--------------------------------------------------------------
 # TODO: need to change deploy IAM user.
-deploy_user = "terraform"
+# This is the IAM user that will be used to deploy the resources. However, if you are not deploying using an IAM user, you can leave it as null.
+deploy_user = null
+
 #--------------------------------------------------------------
 # Default Tags for Resources
 # A tag that is set globally for the resources used.
@@ -14,10 +17,12 @@ deploy_user = "terraform"
 # TODO: need to change tags.
 tags = {
   # TODO: need to change env.
-  env = "dev"
+  env = "example"
   # TODO: need to change service.
   # service is project name or job name or product name.
   service = "base"
+  # Map Program
+  # map-migrated = "xxxxxxxxxxxxx"
 }
 #--------------------------------------------------------------
 # Name prefix
@@ -38,19 +43,13 @@ common_log = {
   # https://registry.terraform.io/modules/terraform-aws-modules/s3-bucket/aws/latest
   #--------------------------------------------------------------
   s3_application_log = {
-    bucket                                = "aws-log-application"
-    create_bucket                         = true
-    acl                                   = "log-delivery-write"
-    attach_deny_insecure_transport_policy = true
-    attach_elb_log_delivery_policy        = false
-    attach_lb_log_delivery_policy         = false
-    attach_policy                         = false
-    attach_public_policy                  = true
-    attach_require_latest_tls_policy      = true
-    block_public_acls                     = true
-    block_public_policy                   = true
-    force_destroy                         = true
-    ignore_public_acls                    = true
+    bucket               = "aws-log-application"
+    create_bucket        = true
+    attach_public_policy = true
+    block_public_acls    = true
+    block_public_policy  = true
+    force_destroy        = true
+    ignore_public_acls   = true
     lifecycle_rule = [
       {
         id                                     = "default"
@@ -81,7 +80,7 @@ common_log = {
     # example)
     #    logging = {
     #      target_bucket = "{your bucket}"
-    #      target_prefix = "AccessLogs/{your account id}/{your bucket}/"
+    #      target_prefix = "AccessLogs/{your account id}/S3/{your bucket}/"
     #    }
     logging                 = {}
     restrict_public_buckets = true
@@ -112,7 +111,7 @@ common_lambda = {
     # TODO: To specify a VPC that already exists, configure the following settings for Lambda.
     # If var.common_lambda.vpc.is_enabled = true and var.common_lambda.vpc.create_vpc = false,
     # the Lambda will be built in an existing VPC by referencing the parameters here.
-    exsits = {
+    exists = {
       private_subnets = [
         "subnet-xxxxxxxxxxxxxxxxx",
         "subnet-xxxxxxxxxxxxxxxxx",
@@ -206,9 +205,9 @@ common_lambda = {
     aws_lambda_function = {
       environment = {
         # TODO: need to change SLACK_OAUTH_ACCESS_TOKEN.(bot token xoxb-xxxxxx....)
-        SLACK_OAUTH_ACCESS_TOKEN = "xxxx-xxxxxxxxxxxxx-xxxxxxxxxxxxx-xxxxxxxxxxxxxxxxxxxxxxxx"
+        SLACK_OAUTH_ACCESS_TOKEN = "xoxb-xxxxxxxxxxxxx-xxxxxxxxxxxxx-xxxxxxxxxxxxxxxxxxxxxxxx"
         # TODO: need to change SLACK_CHANNEL_ID.
-        SLACK_CHANNEL_ID = "XXXXXXXXXXXXXX"
+        SLACK_CHANNEL_ID = "xxxxxxxxxxx"
         LOGGER_FORMATTER = "json"
         LOGGER_OUT       = "stdout"
         LOGGER_LEVEL     = "warn"
@@ -245,9 +244,49 @@ common_lambda = {
     aws_lambda_function = {
       environment = {
         # TODO: need to change SLACK_OAUTH_ACCESS_TOKEN.(bot token xoxb-xxxxxx....)
-        SLACK_OAUTH_ACCESS_TOKEN = "xxxx-xxxxxxxxxxxxx-xxxxxxxxxxxxx-xxxxxxxxxxxxxxxxxxxxxxxx"
+        SLACK_OAUTH_ACCESS_TOKEN = "xoxb-xxxxxxxxxxxxx-xxxxxxxxxxxxx-xxxxxxxxxxxxxxxxxxxxxxxx"
         # TODO: need to change SLACK_CHANNEL_ID.
-        SLACK_CHANNEL_ID = "XXXXXXXXXXXXXX"
+        SLACK_CHANNEL_ID = "xxxxxxxxxxx"
+        LOGGER_FORMATTER = "json"
+        LOGGER_OUT       = "stdout"
+        LOGGER_LEVEL     = "warn"
+      }
+    }
+  }
+  # TODO: ex
+  step_functions_log = {
+    aws_kms_key = {
+      description             = "This key used for SNS(for Step Functions Log)."
+      deletion_window_in_days = 7
+      is_enabled              = true
+      enable_key_rotation     = true
+      alias_name              = "sns-lambda-step-functions-log"
+    }
+    aws_sns_topic = {
+      name                                     = "aws-ste-functions-log"
+      name_prefix                              = null
+      display_name                             = null
+      policy                                   = null
+      delivery_policy                          = null
+      application_success_feedback_role_arn    = null
+      application_success_feedback_sample_rate = null
+      application_failure_feedback_role_arn    = null
+      http_success_feedback_role_arn           = null
+      http_success_feedback_sample_rate        = null
+      http_failure_feedback_role_arn           = null
+      lambda_success_feedback_role_arn         = null
+      lambda_success_feedback_sample_rate      = null
+      lambda_failure_feedback_role_arn         = null
+      sqs_success_feedback_role_arn            = null
+      sqs_success_feedback_sample_rate         = null
+      sqs_failure_feedback_role_arn            = null
+    }
+    aws_lambda_function = {
+      environment = {
+        # TODO: need to change SLACK_OAUTH_ACCESS_TOKEN.(bot token xoxb-xxxxxx....)
+        SLACK_OAUTH_ACCESS_TOKEN = "xoxb-xxxxxxxxxxxxx-xxxxxxxxxxxxx-xxxxxxxxxxxxxxxxxxxxxxxx"
+        # TODO: need to change SLACK_CHANNEL_ID.
+        SLACK_CHANNEL_ID = "xxxxxxxxxxx"
         LOGGER_FORMATTER = "json"
         LOGGER_OUT       = "stdout"
         LOGGER_LEVEL     = "warn"
@@ -284,9 +323,9 @@ common_lambda = {
     aws_lambda_function = {
       environment = {
         # TODO: need to change SLACK_OAUTH_ACCESS_TOKEN.(bot token xoxb-xxxxxx....)
-        SLACK_OAUTH_ACCESS_TOKEN = "xxxx-xxxxxxxxxxxxx-xxxxxxxxxxxxx-xxxxxxxxxxxxxxxxxxxxxxxx"
+        SLACK_OAUTH_ACCESS_TOKEN = "xoxb-xxxxxxxxxxxxx-xxxxxxxxxxxxx-xxxxxxxxxxxxxxxxxxxxxxxx"
         # TODO: need to change SLACK_CHANNEL_ID.
-        SLACK_CHANNEL_ID            = "XXXXXXXXXXXXXX"
+        SLACK_CHANNEL_ID            = "xxxxxxxxxxx"
         LOGGER_FORMATTER            = "json"
         LOGGER_OUT                  = "stdout"
         LOGGER_LEVEL                = "warn"
@@ -330,8 +369,8 @@ delivery_log = {
   # Provides a Kinesis Firehose Delivery Stream resource. Amazon Kinesis Firehose is a fully managed, elastic service to easily deliver real-time data streams to destinations such as Amazon S3 and Amazon Redshift.
   #--------------------------------------------------------------
   aws_kinesis_firehose_delivery_stream = {
-    buffer_size        = 5
-    buffer_interval    = 60
+    buffering_size     = 5
+    buffering_interval = 60
     prefix             = "Logs/"
     compression_format = "GZIP"
     cloudwatch_logging_options = [
@@ -379,8 +418,8 @@ delivery_log_us_east_1 = {
   # Provides a Kinesis Firehose Delivery Stream resource. Amazon Kinesis Firehose is a fully managed, elastic service to easily deliver real-time data streams to destinations such as Amazon S3 and Amazon Redshift.
   #--------------------------------------------------------------
   aws_kinesis_firehose_delivery_stream = {
-    buffer_size        = 5
-    buffer_interval    = 60
+    buffering_size     = 5
+    buffering_interval = 60
     prefix             = "Logs/"
     compression_format = "GZIP"
     cloudwatch_logging_options = [
@@ -429,20 +468,42 @@ delivery_log_us_east_1 = {
 metric_log_application = {
   # TODO: need to set is_enabled for settings of application log.
   is_enabled = false
-  # TODO: need to add log_group_name for application.
+  # (Optional) Builds a list of log group name to automatically set log_group_names. If this is true, the log_group_names setting will be ignored.
+  create_auto_log_group_names = true
+  # (Optional) If create_auto_log_group_names is set to true, a list of log_group_names will be automatically registered, but at that time, specify the log group name you want to exclude using partial match.
+  auto_log_group_names_exclude_list = [
+    "/aws-glue/jobs/error",
+    "/aws-glue/jobs/logs-v2",
+    "/aws-glue/sessions/error",
+    "/aws/api-gateway",
+    "/aws/apigateway",
+    "/aws/ecs/containerinsights",
+    "/aws/ecs/example-",
+    "/aws/lambda/aws-controltower-NotificationForwarder",
+    "/aws/lambda/base-",
+    "/aws/kinesis",
+    "/aws/rds",
+    "/aws/redshift",
+    "/aws/transfer/",
+    "/aws/vpc-flow-log/",
+    "API-Gateway-Execution-Logs",
+    "StackSet",
+    "aws-waf-logs",
+    "base-aws-vpc",
+  ]
+  # (Optional) If create_auto_log_group_names is set to false, need to add log_group_name for application.
   #       check log group name for application.
   # check CloudWatch Group name list command.
   # ex1) aws logs describe-log-groups --log-group-name-prefix hogehoge | jq -r ".logGroups[].logGroupName"
-  # ex2) aws logs describe-log-groups --log-group-name-prefix /aws/lambda | jq -r '.logGroups[] | .logGroupName = "\"" + .logGroupName + "\"," | .logGroupName'
+  # ex2) aws logs describe-log-groups --log-group-name-prefix /aws | jq -r '.logGroups[] | .logGroupName = "\"" + .logGroupName + "\"," | .logGroupName'
   log_group_names = []
   aws_cloudwatch_log_metric_filter = {
     name = "application-logs-error"
     # TODO: need to change pattern for application log.
-    # ex1) ?error ?Error ?ERROR ?fatal ?Fatal ?FATAL ?exception ?Exception ?EXCEPTION
-    # ex2) ?"\"level\":\"error\""  ?"\"level\":\"fatal\""  ?"\"level\":\"panic\""
     pattern = <<PATTERN
-?"\"level\":\"error\""  ?"\"level\":\"fatal\""  ?"\"level\":\"panic\""
+[( msg="*\"ERROR\"*" || msg="*\"error\"*" || msg="*\"FATAL\"*" || msg="*\"fatal\"*" || msg="*\"PANIC\"*" || msg="*\"panic\"*" || msg="*\"CRITICAL\"*" || msg="*\"critical\"*" || msg="*AccessDenied*" || msg="*ERROR*" || msg="*Failed\"*" || msg="*Aborted\"*" || msg="*TimedOut\"*" || msg="*FailStateEntered\"*") && ( msg!="*'PAUSED'*" && msg!=%"level": ?"(debug|info|warn|warning)"% && msg!="{\"header\":*")]
 PATTERN
+
     metric_transformation = [
       {
         name      = "application-logs-error"
@@ -455,12 +516,112 @@ PATTERN
     alarm_name          = "application-logs-error"
     comparison_operator = "GreaterThanOrEqualToThreshold"
     evaluation_periods  = 1
-    period              = 300
+    period              = 60
     statistic           = "Sum"
     threshold           = 1
     threshold_metric_id = null
     actions_enabled     = true
     alarm_description   = "Alert log notification."
+    datapoints_to_alarm = 1
+    dimensions          = null
+    treat_missing_data  = "notBreaching"
+  }
+}
+# TODO: ex
+#--------------------------------------------------------------
+# Log:Step Functions
+# The filter function of CloudWatchLogs can be used to check specified logs
+# with specified filter patterns. Those that hit the filter pattern will be
+# notified by Slack via Lambda.
+#
+# Filter logs related to Step Functions
+#--------------------------------------------------------------
+metric_log_step_functions = {
+  # TODO: need to set is_enabled for settings of application log.
+  is_enabled = false
+  # (Optional) Builds a list of log group name to automatically set log_group_names. If this is true, the log_group_names setting will be ignored.
+  create_auto_log_group_names = false
+  # (Optional) If create_auto_log_group_names is set to true, a list of log_group_names will be automatically registered, but at that time, specify the log group name you want to exclude using partial match.
+  auto_log_group_names_exclude_list = []
+  # (Optional) If create_auto_log_group_names is set to false, need to add log_group_name for application.
+  #       check log group name for application.
+  # check CloudWatch Group name list command.
+  # ex1) aws logs describe-log-groups --log-group-name-prefix hogehoge | jq -r ".logGroups[].logGroupName"
+  # ex2) aws logs describe-log-groups --log-group-name-prefix /aws/sfn/qa-etl-ma-daily-batch-ci | jq -r '.logGroups[] | .logGroupName = "\"" + .logGroupName + "\"," | .logGroupName'
+  log_group_names = []
+  aws_cloudwatch_log_metric_filter = {
+    name = "step-functions-logs-success"
+    # TODO: need to change pattern for application log.
+    pattern = <<PATTERN
+[( msg="*ExecutionSucceeded\"*")]
+PATTERN
+
+    metric_transformation = [
+      {
+        name      = "step-functions-logs-success"
+        namespace = "Application"
+        value     = "1"
+      }
+    ]
+  }
+  aws_cloudwatch_metric_alarm = {
+    alarm_name          = "step-functions-logs-success"
+    comparison_operator = "GreaterThanOrEqualToThreshold"
+    evaluation_periods  = 1
+    period              = 60
+    statistic           = "Sum"
+    threshold           = 1
+    threshold_metric_id = null
+    actions_enabled     = true
+    alarm_description   = "Success log notification."
+    datapoints_to_alarm = 1
+    dimensions          = null
+    treat_missing_data  = "notBreaching"
+  }
+}
+#--------------------------------------------------------------
+# Log:WAF
+# The filter function of CloudWatchLogs can be used to check specified logs
+# with specified filter patterns. Those that hit the filter pattern will be
+# notified by Slack via Lambda.
+#
+# Filter logs related to WAF.
+#--------------------------------------------------------------
+metric_log_waf = {
+  # TODO: need to set is_enabled for settings of application log.
+  is_enabled = false
+  # TODO: need to add log_group_name for application.
+  #       check log group name for application.
+  # check CloudWatch Group name list command.
+  # ex2) aws logs describe-log-groups --log-group-name-prefix aws-waf | jq -r '.logGroups[] | .logGroupName = "\"" + .logGroupName + "\"," | .logGroupName'
+  log_group_names = [
+    "aws-waf-logs-ap-northeast-1",
+  ]
+  aws_cloudwatch_log_metric_filter = {
+    name = "waf-logs-error"
+    # TODO: need to change pattern for application log.
+    pattern = <<PATTERN
+{$.action= "BLOCK" && $.terminatingRuleType = "MANAGED_RULE_GROUP"}
+PATTERN
+
+    metric_transformation = [
+      {
+        name      = "waf-logs-error"
+        namespace = "WAF"
+        value     = "1"
+      }
+    ]
+  }
+  aws_cloudwatch_metric_alarm = {
+    alarm_name          = "waf-logs-error"
+    comparison_operator = "GreaterThanOrEqualToThreshold"
+    evaluation_periods  = 1
+    period              = 60
+    statistic           = "Sum"
+    threshold           = 1
+    threshold_metric_id = null
+    actions_enabled     = true
+    alarm_description   = "Alert WAF log notification."
     datapoints_to_alarm = 1
     dimensions          = null
     treat_missing_data  = "notBreaching"
@@ -475,18 +636,20 @@ PATTERN
 # Filter logs related to MySQL.
 #--------------------------------------------------------------
 metric_log_mysql_slowquery = {
-  # TODO: need to set is_enabled for settings of postgres log.
+  # TODO: need to set is_enabled for settings of mysql slowquery log.
   is_enabled = false
-  # TODO: need to add log_group_name for postgres.
-  #       check log group name for postgres.
+  # TODO: need to add log_group_name for mysql slowquery.
+  #       check log group name for mysql slowquery.
   # check CloudWatch Group name list command.
   # ex1) aws logs describe-log-groups --log-group-name-prefix hogehoge | jq -r ".logGroups[].logGroupName"
   # ex2) aws logs describe-log-groups --log-group-name-prefix /aws/rds/ | jq -r '.logGroups[] | .logGroupName = "\"" + .logGroupName + "\"," | .logGroupName'
-  log_group_names = []
+  log_group_names = [
+    #    "/aws/rds/cluster/example-db/slowquery",
+  ]
 
   aws_cloudwatch_log_metric_filter = {
     name = "mysql-slowquery-logs-error"
-    # TODO: need to change pattern for postgres log.
+    # TODO: need to change pattern for postgresql log.
     pattern = <<PATTERN
 -rdsproxy -rdsproxyadmin -rdsadmin
 PATTERN
@@ -519,34 +682,38 @@ PATTERN
 # with specified filter patterns. Those that hit the filter pattern will be
 # notified by Slack via Lambda.
 #
-# Filter logs related to Postgres.
+# Filter logs related to PostgreSQL.
 #--------------------------------------------------------------
-metric_log_postgres = {
-  # TODO: need to set is_enabled for settings of postgres log.
+metric_log_postgresql = {
+  # TODO: need to set is_enabled for settings of postgresql log.
   is_enabled = false
-  # TODO: need to add log_group_name for postgres.
-  #       check log group name for postgres.
+  # TODO: need to add log_group_name for postgresql.
+  #       check log group name for postgresql.
   # check CloudWatch Group name list command.
   # ex1) aws logs describe-log-groups --log-group-name-prefix hogehoge | jq -r ".logGroups[].logGroupName"
   # ex2) aws logs describe-log-groups --log-group-name-prefix /aws/rds/ | jq -r '.logGroups[] | .logGroupName = "\"" + .logGroupName + "\"," | .logGroupName'
-  log_group_names = []
+  log_group_names = [
+    # "/aws/rds/cluster/example-db/postgresql"
+  ]
 
   aws_cloudwatch_log_metric_filter = {
-    name = "postgres-logs-error"
-    # TODO: need to change pattern for postgres log.
+    name = "postgresql-logs-error"
+    # TODO: need to change pattern for postgresql log.
+    # [the database system...]: is start database instance log.
+    # [Can't handle storage runtime process crash]: is start database instance log.
     pattern = <<PATTERN
-?ERROR
+[( msg="*ERROR:*" || msg="*FATAL:*" ) && ( msg!="*FATAL:*the database system*" && msg!="*FATAL:*Can't handle storage runtime process crash*" && msg!="*ERROR:*canceling autovacuum task*")]
 PATTERN
     metric_transformation = [
       {
-        name      = "postgres-logs-error"
-        namespace = "Postgres"
+        name      = "postgresql-logs-error"
+        namespace = "PostgreSQL"
         value     = "1"
       }
     ]
   }
   aws_cloudwatch_metric_alarm = {
-    alarm_name          = "postgres-logs-error"
+    alarm_name          = "postgresql-logs-error"
     comparison_operator = "GreaterThanOrEqualToThreshold"
     evaluation_periods  = 1
     period              = 300
@@ -554,7 +721,57 @@ PATTERN
     threshold           = 1
     threshold_metric_id = null
     actions_enabled     = true
-    alarm_description   = "Alert Postgres log notification."
+    alarm_description   = "Alert PostgreSQL log notification."
+    datapoints_to_alarm = 1
+    dimensions          = null
+    treat_missing_data  = "notBreaching"
+  }
+}
+
+#--------------------------------------------------------------
+# Log:PostgreSQL slow query
+# The filter function of CloudWatchLogs can be used to check specified logs
+# with specified filter patterns. Those that hit the filter pattern will be
+# notified by Slack via Lambda.
+#
+# Filter logs related to PostgreSQL.
+#--------------------------------------------------------------
+metric_log_postgresql_slowquery = {
+  # TODO: need to set is_enabled for settings of postgresql slowquery log.
+  is_enabled = false
+  # TODO: need to add log_group_name for postgresql.
+  #       check log group name for postgresql.
+  # check CloudWatch Group name list command.
+  # ex1) aws logs describe-log-groups --log-group-name-prefix hogehoge | jq -r ".logGroups[].logGroupName"
+  # ex2) aws logs describe-log-groups --log-group-name-prefix /aws/rds/ | jq -r '.logGroups[] | .logGroupName = "\"" + .logGroupName + "\"," | .logGroupName'
+  log_group_names = [
+    # "/aws/rds/cluster/example-db/postgresql"
+  ]
+
+  aws_cloudwatch_log_metric_filter = {
+    name = "postgresql-slowquery-logs-error"
+    # TODO: need to change pattern for postgresql log.
+    pattern = <<PATTERN
+[( msg="*duration:*" ) && ( msg!="*aws_s3.table_import_from_s3*" && msg!="*INSERT INTO*" && msg!="*MERGE INTO*" && msg!=%ci[0-9]{5}.do% && msg!="*statement: FETCH*" && msg!="*statement: REFRESH MATERIALIZED VIEW*")]
+PATTERN
+    metric_transformation = [
+      {
+        name      = "postgresql-slowquery-error"
+        namespace = "PostgreSQL"
+        value     = "1"
+      }
+    ]
+  }
+  aws_cloudwatch_metric_alarm = {
+    alarm_name          = "postgresql-slowquery-logs-error"
+    comparison_operator = "GreaterThanOrEqualToThreshold"
+    evaluation_periods  = 1
+    period              = 300
+    statistic           = "Sum"
+    threshold           = 1
+    threshold_metric_id = null
+    actions_enabled     = true
+    alarm_description   = "Alert PostgreSQL slow query log notification."
     datapoints_to_alarm = 1
     dimensions          = null
     treat_missing_data  = "notBreaching"
@@ -611,7 +828,11 @@ metric_resource_alb = {
     enabled_unhealthy_host_count = true
     unhealthy_host_count         = 1
   }
-  # TODO: need to set dimensions for monitor of ALB.
+  # (Optional) Builds a list of ALB to automatically set dimensions. If this is true, the dimensions setting will be ignored.
+  create_auto_dimensions = true
+  # (Optional) If create_auto_dimensions is set to true, a list of ALB will be automatically registered, but at that time, specify the ALB name you want to exclude using partial match.
+  auto_dimensions_exclude_list = []
+  # (Optional) If create_auto_dimensions is set to false, need to set dimensions for monitor of ALB
   # Specify the instance of the target ALB name to be monitored by Map.
   #   ex)
   #   dimensions = [
@@ -641,16 +862,20 @@ metric_resource_api_gateway = {
   # TODO: need to set threshold for API Gateway.
   threshold = {
     # (Required) 4XXerror threshold (unit=%)
-    enabled_error4XX = true
-    error4XX         = 1
+    enabled_error4XX = false
+    error4XX         = 20
     # (Required) 5XXerror threshold (unit=%)
     enabled_error5XX = true
     error5XX         = 1
     # (Required) Error threshold (unit=Milliseconds)
     enabled_latency = true
-    latency         = 10000
+    latency         = 8000
   }
-  # TODO: need to set dimensions for monitor of API Gateway.
+  # (Optional) Builds a list of API Gateways to automatically set dimensions. If this is true, the dimensions setting will be ignored.
+  create_auto_dimensions = true
+  # (Optional) If create_auto_dimensions is set to true, a list of API Gateways will be automatically registered, but at that time, specify the API Gateway name you want to exclude using partial match.
+  auto_dimensions_exclude_list = []
+  # (Optional) If create_auto_dimensions is set to false, need to set dimensions for monitor of API Gateway
   # Specify the instance of the target API Gateway name to be monitored by Map.
   # check API Gateway name list command.
   # ex) aws apigateway get-rest-apis | jq -r '.items[] | .Dimensions = "{\n  \"ApiName\" = \"" + .name + "\"\n}," | .Dimensions'
@@ -688,7 +913,7 @@ metric_resource_cloudfront = {
     enabled_error_403_rate = false
     error_403_rate         = 1
     # (Required) Error404Rate threshold (unit=%)
-    enabled_error_404_rate = true
+    enabled_error_404_rate = false
     error_404_rate         = 1
     # (Required) Error502Rate threshold (unit=%)
     enabled_error_502_rate = true
@@ -700,13 +925,17 @@ metric_resource_cloudfront = {
     enabled_error_504_rate = true
     error_504_rate         = 1
     # (Required) CacheHitRate threshold (unit=%)
-    enabled_cache_hit_rate = true
+    enabled_cache_hit_rate = false
     cache_hit_rate         = 70
     # (Required) OriginLatency threshold (unit=Milliseconds)
     enabled_origin_latency = true
     origin_latency         = 10000
   }
-  # TODO: need to set dimensions for monitor of CloudFront.
+  # (Optional) Builds a list of CloudFronts to automatically set dimensions. If this is true, the dimensions setting will be ignored.
+  create_auto_dimensions = true
+  # (Optional) If create_auto_dimensions is set to true, a list of CloudFronts will be automatically registered, but at that time, specify the CloudFront name you want to exclude using partial match.
+  auto_dimensions_exclude_list = []
+  # (Optional) If create_auto_dimensions is set to false, need to set dimensions for monitor of CloudFront
   # Specify the instance of the target CloudFront name to be monitored by Map.
   # check CloudFront distribution name list command.
   # ex) aws cloudfront list-distributions | jq -r '.DistributionList.Items[] | if .Aliases.Items[0] then .Dimensions = "{\n  \"DistributionId\" = \"" + .Id + "\"\n  \"Region\" = \"Global\"\n  \"Domain\" = \"" + .Aliases.Items[0] + "\"\n }," else .Dimensions = "{\n  \"DistributionId\" = \"" + .Id + "\"\n  \"Region\" = \"Global\"\n  \"Domain\" = \"" + .DomainName + "\"\n }," end | .Dimensions'
@@ -752,8 +981,12 @@ metric_resource_ec2 = {
     enabled_status_check_failed = true
     status_check_failed         = 1
   }
-  # TODO: need to set dimensions for monitor of EC2.
-  # Specify the instance of the target CloudFront name to be monitored by Map.
+  # (Optional) Builds a list of EC2s to automatically set dimensions. If this is true, the dimensions setting will be ignored.
+  create_auto_dimensions = true
+  # (Optional) If create_auto_dimensions is set to true, a list of EC2s will be automatically registered, but at that time, specify the EC2 name you want to exclude using partial match.
+  auto_dimensions_exclude_list = []
+  # (Optional) If create_auto_dimensions is set to false, need to set dimensions for monitor of EC2
+  # Specify the instance of the target EC2 name to be monitored by Map.
   # check EC2 distribution name list command.
   # ex) aws ec2 describe-instances | jq -r '.Reservations[].Instances[] | .Dimensions = "{\n  \"InstanceId\" = \"" + .InstanceId + "\" # " + .InstanceType + "\n}," | .Dimensions'
   #   ex)
@@ -764,6 +997,37 @@ metric_resource_ec2 = {
   #   ]
   dimensions = []
 }
+
+#--------------------------------------------------------------
+# Metrics:ECS/ContainerInsights
+#--------------------------------------------------------------
+metric_resource_ecs_container_insights = {
+  # TODO: need to set is_enabled for Metric of ECS/ContainerInsights.
+  is_enabled = false
+  # TODO: need to set period for ECS/ContainerInsights.
+  period = 300
+  # TODO: need to set threshold for ECS/ContainerInsights.
+  threshold = {
+    # (Required) CpuUtilized/CpuReserved threshold (unit=Percent)
+    enabled_cpu_utilization = true
+    cpu_utilization         = 80
+    # (Required) MemoryUtilized/MemoryReserved threshold (unit=Percent)
+    enabled_memory_utilization = true
+    memory_utilization         = 90
+  }
+  # TODO: need to set dimensions for monitor of ECS/ContainerInsights.
+  # check ECS distribution name list command.
+  # ex) scripts/terraform/ecs_container_sights.sh
+  #   ex)
+  #   dimensions = [
+  #     {
+  #       "ClusterName" = "clustername",
+  #       "TaskDefinitionFamily" = "taskdefinition"
+  #     }
+  #   ]
+  dimensions = []
+}
+
 #--------------------------------------------------------------
 # Metrics:ElastiCache
 # Metrics are data about the performance of your systems. By default,
@@ -824,6 +1088,53 @@ metric_resource_elasticache = {
   dimensions = []
 }
 #--------------------------------------------------------------
+# Metrics:EventBridge Scheduler
+# EventBridge is a serverless service that uses events to connect application components together,
+# making it easier for you to build scalable event-driven applications. Event-driven architecture is a
+# style of building loosely-coupled software systems that work together by emitting and responding to events.
+# Event-driven architecture can help you boost agility and build reliable, scalable applications.
+# https://docs.aws.amazon.com/eventbridge/latest/userguide/eb-what-is.html
+#--------------------------------------------------------------
+metric_resource_eventbridge_scheduler = {
+  # TODO: need to set is_enabled for Metric of EventBridge Scheduler.
+  is_enabled = false
+  # TODO: need to set period for EventBridge Scheduler.
+  period = 300
+  # TODO: need to set threshold for EventBridge Scheduler.
+  threshold = {
+    # InvocationAttemptCount threshold (unit=Count)
+    enabled_invocation_attempt_count = false
+    invocation_attempt_count         = 0
+    # TargetErrorCount threshold (unit=Count)
+    enabled_target_error_count = true
+    target_error_count         = 1
+    # TargetErrorThrottledCount threshold (unit=Count)
+    enabled_target_error_throttled_count = true
+    target_error_throttled_count         = 1
+    # InvocationThrottleCount threshold (unit=Count)
+    enabled_invocation_throttle_count = true
+    invocation_throttle_count         = 1
+    # InvocationDroppedCount threshold (unit=Count)
+    enabled_invocation_dropped_count = true
+    invocation_dropped_count         = 1
+  }
+  # TODO: need to set dimensions for monitor of EventBridge Scheduler.
+  # Specify the instance of the target EventBridge Scheduler name to be monitored by Map.
+  # check EventBridge Scheduler id list command.
+  # ex) aws scheduler list-schedule-groups | jq -r '.ScheduleGroups[] | .Dimensions = "{\n  \"ScheduleGroup\" = \"" + .Name + "\"\n}," | .Dimensions'
+  #   ex)
+  #   dimensions = [
+  #     {
+  #       "ScheduleGroup" = "default"
+  #     }
+  #   ]
+  dimensions = [
+    {
+      "ScheduleGroup" = "default"
+    },
+  ]
+}
+#--------------------------------------------------------------
 # Metrics:Lambda
 # Metrics are data about the performance of your systems. By default,
 # many services provide free metrics for resources (such as Amazon EC2 instances,
@@ -853,9 +1164,19 @@ metric_resource_lambda = {
     errors         = 1
     # (Required) Throttles threshold (unit=Count)
     enabled_throttles = true
-    throttles         = 10
+    throttles         = 1
   }
-  # TODO: need to set dimensions for monitor of Lambda.
+  # (Optional) Builds a list of Lambda to automatically set dimensions. If this is true, the dimensions setting will be ignored.
+  create_auto_dimensions = true
+  # (Optional) If create_auto_dimensions is set to true, a list of Lambda will be automatically registered, but at that time, specify the Lambda name you want to exclude using partial match.
+  auto_dimensions_exclude_list = [
+    "aws-controltower-NotificationForwarder",
+    "base-",
+    "cw-role",
+    "etl-data-transfer-lambda",
+    "etl-transfer-family-lambda",
+  ]
+  # (Optional) If create_auto_dimensions is set to false, need to set dimensions for monitor of Lambda
   # Specify the instance of the target Lambda name to be monitored by Map.
   # check Lambda function name list command.
   # ex) aws lambda list-functions | jq -r '.Functions[] | .Dimensions = "{\n  \"FunctionName\" = \"" + .FunctionName + "\"\n}," | .Dimensions'
@@ -871,7 +1192,7 @@ metric_resource_lambda = {
   dimensions = []
 }
 #--------------------------------------------------------------
-# Metrics:RDS
+# Metrics:RDS Cluster
 # Metrics are data about the performance of your systems. By default,
 # many services provide free metrics for resources (such as Amazon EC2 instances,
 # Amazon EBS volumes, and Amazon RDS DB instances).
@@ -882,7 +1203,7 @@ metric_resource_lambda = {
 # Metrics about RDS will be checked and you will be notified via Slack if the specified threshold is exceeded.
 # https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/monitoring-cloudwatch.html
 #--------------------------------------------------------------
-metric_resource_rds = {
+metric_resource_rds_cluster = {
   # TODO: need to set is_enabled for monitor of RDS.
   is_enabled = false
   # TODO: need to set is_aurora for monitor of RDS(Aurora).
@@ -891,9 +1212,9 @@ metric_resource_rds = {
   # TODO: need to set is_aurora for monitor of RDS(MySQL).
   # If the target DB to be monitored is MySQL, set to true.
   is_mysql = false
-  # TODO: need to set is_aurora for monitor of RDS(Postgres).
-  # If the target DB to be monitored is Postgres, set to true.
-  is_postgres = false
+  # TODO: need to set is_aurora for monitor of RDS(PostgreSQL).
+  # If the target DB to be monitored is PostgreSQL, set to true.
+  is_postgresql = true
   # TODO: need to set period for RDS.
   period = 300
   # TODO: need to set threshold for RDS.
@@ -929,9 +1250,13 @@ metric_resource_rds = {
     enabled_write_latency = true
     write_latency         = 10
   }
-  # TODO: need to set dimensions for monitor of RDS.
+  # (Optional) Builds a list of RDS to automatically set dimensions. If this is true, the dimensions setting will be ignored.
+  create_auto_dimensions = true
+  # (Optional) If create_auto_dimensions is set to true, a list of RDS will be automatically registered, but at that time, specify the RDS name you want to exclude using partial match.
+  auto_dimensions_exclude_list = []
+  # (Optional) If create_auto_dimensions is set to false, need to set dimensions for monitor of RDS
   # Specify the instance of the target DB to be monitored by Map.
-  # check DB Cluster Identifier list command.
+  # check RDS Cluster Identifier list command.
   # ex) aws rds describe-db-clusters | jq -r '.DBClusters[] | .Dimensions = "{\n  \"DBClusterIdentifier\" = \"" + .DBClusterIdentifier + "\"\n}," | .Dimensions'
   #   ex) RDS
   #   dimensions = [
@@ -944,6 +1269,136 @@ metric_resource_rds = {
   #     {
   #       "DBClusterIdentifier" = "exampledb"
   #     }
+  #   ]
+  dimensions = []
+}
+#--------------------------------------------------------------
+# Metrics:Redshift
+# Using CloudWatch metrics for Amazon Redshift, you can get information about
+# your cluster's health and performance and see information at the node level.
+# When working with these metrics, keep in mind that each metric has one or more dimensions
+# associated with it. These dimensions tell you what the metric is applicable to,
+# that is the scope of the metric. Amazon Redshift has the following two dimensions:
+#
+# https://docs.aws.amazon.com/redshift/latest/mgmt/metrics-listing.html
+#--------------------------------------------------------------
+metric_resource_redshift = {
+  # TODO: need to set is_enabled for monitor of RDS.
+  is_enabled = false
+  # TODO: need to set period for RDS.
+  period = 300
+  # TODO: need to set threshold for RDS.
+  threshold = {
+    # (Required) CommitQueueLength threshold (unit=Count)
+    enabled_commit_queue_length = true
+    commit_queue_length         = 100
+    # (Required) ConcurrencyScalingActiveClusters threshold (unit=Count)
+    enabled_concurrency_scaling_active_clusters = true
+    concurrency_scaling_active_clusters         = 100
+    # (Required) ConcurrencyScalingSeconds threshold (unit=Sum)
+    enabled_concurrency_scaling_seconds = true
+    concurrency_scaling_seconds         = 10
+    # (Required) CPUUtilization threshold (unit=Percent)
+    enabled_cpu_utilization = true
+    cpu_utilization         = 80
+    # (Required) DatabaseConnections threshold (unit=Count)
+    enabled_database_connections = true
+    database_connections         = 100
+    # (Required) HealthStatus threshold (HEALTHY(1)/UNHEALTHY(0))
+    enabled_health_status = true
+    health_status         = 0
+    # (Required) MaintenanceMode threshold (unit=Count(ON(1)/OFF(0)))
+    enabled_maintenance_mode = true
+    maintenance_mode         = 1
+    # (Required) MaxConfiguredConcurrencyScalingClusters threshold (unit=Count)
+    enabled_max_configured_concurrency_scaling_clusters = true
+    max_configured_concurrency_scaling_clusters         = 5
+    # (Required) NetworkReceiveThroughput threshold (unit=Bytes/Second)
+    enabled_network_receive_throughput = false
+    network_receive_throughput         = 1024 * 1024
+    # (Required) NetworkTransmitThroughput threshold (unit=Bytes/Second)
+    enabled_network_transmit_throughput = false
+    network_transmit_throughput         = 1024 * 1024
+    # (Required) PercentageDiskSpaceUsed threshold (unit=Percent)
+    enabled_percentage_disk_space_used = true
+    percentage_disk_space_used         = 80
+    # (Required) QueriesCompletedPerSecond threshold (unit=Count/Second)
+    enabled_queries_completed_per_second = true
+    queries_completed_per_second         = 100
+    # (Required) QueryDuration threshold (unit=Microseconds)
+    enabled_query_duration = true
+    query_duration         = 3000000
+    # (Required) QueryRuntimeBreakdown threshold (unit=Microseconds)
+    enabled_query_runtime_breakdown = true
+    query_runtime_breakdown         = 3000000
+    # (Required) ReadIOPS threshold (unit=Count/Second)
+    enabled_read_iops = false
+    read_iops         = 1000
+    # (Required) ReadLatency threshold (unit=Seconds)
+    enabled_read_latency = true
+    read_latency         = 3
+    # (Required) ReadThroughput threshold (unit=Bytes)
+    enabled_read_throughput = false
+    read_throughput         = 1024 * 1024 * 1024
+    # (Required) RedshiftManagedStorageTotalCapacity threshold (unit=Megabytes)
+    enabled_redshift_managed_storage_total_capacity = true
+    redshift_managed_storage_total_capacity         = 1000 * 1000 * 4 + 1
+    # (Required) TotalTableCount threshold (unit=Count)
+    enabled_total_table_count = false
+    total_table_count         = 50
+    # (Required) WLMQueueLength threshold (unit=Count)
+    enabled_wlm_queue_length = true
+    wlm_queue_length         = 5
+    # (Required) WLMQueueWaitTime threshold (unit=Milliseconds)
+    enabled_wlm_queue_wait_time = true
+    wlm_queue_wait_time         = 100
+    # (Required) WLMQueriesCompletedPerSecond threshold (unit=Count/Second)
+    enabled_wlm_queries_completed_per_second = false
+    wlm_queries_completed_per_second         = 100
+    # (Required) WLMQueryDuration threshold (unit=Microseconds)
+    enabled_wlm_query_duration = true
+    wlm_query_duration         = 3000000
+    # (Required) WLMRunningQueries threshold (unit=Count)
+    enabled_wlm_running_queries = false
+    wlm_running_queries         = 10
+    # (Required) WriteIOPS threshold (unit=Count/Second)
+    enabled_write_iops = false
+    write_iops         = 1000
+    # (Required) WriteLatency threshold (unit=Seconds)
+    enabled_write_latency = true
+    write_latency         = 3
+    # (Required) WriteThroughput threshold (unit=Bytes)
+    enabled_write_throughput = false
+    write_throughput         = 1024 * 1024 * 1024
+    # (Required) WriteThroughput threshold (unit=Bytes)
+    enabled_write_throughput = false
+    write_throughput         = 1024 * 1024 * 1024
+    # (Required) SchemaQuota threshold (unit=Megabytes)
+    enabled_schema_quota = false
+    schema_quota         = 1024
+    # (Required) NumExceededSchemaQuotas threshold (unit=Count)
+    enabled_num_exceeded_schema_quotas = true
+    num_exceeded_schema_quotas         = 0
+    # (Required) StorageUsed threshold (unit=Megabytes)
+    enabled_storage_used = false
+    storage_used         = 1024
+    # (Required) PercentageQuotaUsed threshold (unit=Percent)
+    enabled_percentage_quota_used = false
+    percentage_quota_used         = 1024
+  }
+  # (Optional) Builds a list of Redshift to automatically set dimensions. If this is true, the dimensions setting will be ignored.
+  create_auto_dimensions = true
+  # (Optional) If create_auto_dimensions is set to true, a list of Redshift will be automatically registered, but at that time, specify the Redshift name you want to exclude using partial match.
+  auto_dimensions_exclude_list = []
+  # (Optional) If create_auto_dimensions is set to false, need to set dimensions for monitor of Redshift
+  # Specify the instance of the target DB to be monitored by Map.
+  # check Redshift Cluster Identifier list command.
+  # ex) aws redshift describe-clusters | jq -r '.Clusters[] | .Dimensions = "{\n  \"ClusterIdentifier\" = \"" + .ClusterIdentifier + "\"\n}," | .Dimensions'
+  #   ex)
+  #   dimensions = [
+  #     {
+  #       "ClusterIdentifier" = "example-redshift"
+  #     },
   #   ]
   dimensions = []
 }
@@ -976,6 +1431,34 @@ metric_resource_ses = {
   dimensions = []
 }
 #--------------------------------------------------------------
+# Metrics:SQS(DLQ)
+#--------------------------------------------------------------
+metric_resource_sqs_dlq = {
+  # TODO: need to set is_enabled for Metric of SQS(DLQ).
+  is_enabled = false
+  # TODO: need to set period for SQS(DLQ).
+  period = 300
+  # TODO: need to set threshold for SQS(DLQ).
+  threshold = {
+    # (Required) ApproximateNumberOfMessagesVisible threshold (unit=Count)
+    enabled_approximate_number_of_messages_visible = true
+    approximate_number_of_messages_visible         = 1
+  }
+  # (Optional) Builds a list of DLQs to automatically set dimensions. If this is true, the dimensions setting will be ignored.
+  create_auto_dimensions = true
+  # (Optional) If create_auto_dimensions is set to true, a list of DLQs will be automatically registered, but at that time, specify the DLQ name you want to exclude using partial match.
+  auto_dimensions_exclude_list = []
+  # (Optional) If create_auto_dimensions is set to false, need to set dimensions for monitor of SQS(DLQ)
+  # ex) scripts/terraform/sqs_dlq.sh
+  #   ex)
+  #   dimensions = [
+  #     {
+  #       "QueueName" = "dlq name",
+  #     }
+  #   ]
+  dimensions = []
+}
+#--------------------------------------------------------------
 # CloudWatch Events:EC2
 # The following events are monitored.
 # - EC2 Instance Rebalance Recommendation
@@ -987,7 +1470,7 @@ cloudwatch_event_ec2 = {
   aws_cloudwatch_event_rule = {
     name        = "ec2-cloudwatch-event-rule"
     description = "This cloudwatch event used for EC2."
-    is_enabled  = true
+    state       = "ENABLED"
   }
   aws_cloudwatch_log_group_lambda = {
     # TODO: need to change retention_in_days for each services.
@@ -998,9 +1481,9 @@ cloudwatch_event_ec2 = {
     environment = {
       LANGUAGE = "en"
       # TODO: need to change SLACK_OAUTH_ACCESS_TOKEN.(bot token xoxb-xxxxxx....)
-      SLACK_OAUTH_ACCESS_TOKEN = "xxxx-xxxxxxxxxxxxx-xxxxxxxxxxxxx-xxxxxxxxxxxxxxxxxxxxxxxx"
+      SLACK_OAUTH_ACCESS_TOKEN = "xoxb-xxxxxxxxxxxxx-xxxxxxxxxxxxx-xxxxxxxxxxxxxxxxxxxxxxxx"
       # TODO: need to change SLACK_CHANNEL_ID.
-      SLACK_CHANNEL_ID = "XXXXXXXXXXXXXX"
+      SLACK_CHANNEL_ID = "xxxxxxxxxxx"
       LOGGER_FORMATTER = "json"
       LOGGER_OUT       = "stdout"
       LOGGER_LEVEL     = "warn"
@@ -1059,7 +1542,7 @@ metric_synthetics_canary_heartbeat = {
       # (Required) Name for this canary. Has a maximum length of 21 characters. Valid characters are lowercase alphanumeric, hyphen, or underscore.
       name = "heartbeat"
       # (Required) Runtime version to use for the canary. Versions change often so consult the Amazon CloudWatch documentation for the latest valid versions. Values include syn-python-selenium-1.0, syn-nodejs-puppeteer-3.0, syn-nodejs-2.2, syn-nodejs-2.1, syn-nodejs-2.0, and syn-1.0.
-      runtime_version = "syn-nodejs-puppeteer-3.9"
+      runtime_version = "syn-nodejs-puppeteer-5.1"
       # (Required) Configuration block providing how often the canary is to run and when these test runs are to stop. Detailed below.
       schedule = [
         {
@@ -1077,7 +1560,7 @@ metric_synthetics_canary_heartbeat = {
         #     "subnet-xxxxxxxxxxxxxxxxx",
         #   ]
         #   security_group_ids = [
-        #     "sg-xxxxxxxxxxxxxxxxx",
+        #     "subnet-xxxxxxxxxxxxxxxxx",
         #   ]
         # }
       ]
@@ -1173,7 +1656,7 @@ metric_synthetics_canary_linkcheck = {
       # (Required) Name for this canary. Has a maximum length of 21 characters. Valid characters are lowercase alphanumeric, hyphen, or underscore.
       name = "linkcheck"
       # (Required) Runtime version to use for the canary. Versions change often so consult the Amazon CloudWatch documentation for the latest valid versions. Values include syn-python-selenium-1.0, syn-nodejs-puppeteer-3.0, syn-nodejs-2.2, syn-nodejs-2.1, syn-nodejs-2.0, and syn-1.0.
-      runtime_version = "syn-nodejs-puppeteer-3.9"
+      runtime_version = "syn-nodejs-puppeteer-5.1"
       # (Required) Configuration block providing how often the canary is to run and when these test runs are to stop. Detailed below.
       schedule = [
         {
@@ -1184,16 +1667,14 @@ metric_synthetics_canary_linkcheck = {
       # TODO: need to set vpc_config bypass WAF.
       #       When a request must be made from a fixed IP, such as in the case of a site with restricted access.
       vpc_config = [
-        # {
-        #   subnet_ids = [
-        #     "subnet-xxxxxxxxxxxxxxxxx",
-        #     "subnet-xxxxxxxxxxxxxxxxx",
-        #     "subnet-xxxxxxxxxxxxxxxxx",
-        #   ]
-        #   security_group_ids = [
-        #     "sg-xxxxxxxxxxxxxxxxx",
-        #   ]
-        # }
+        {
+          subnet_ids = [
+            "subnet-xxxxxxxxxxxxxxxxx",
+          ]
+          security_group_ids = [
+            "sg-xxxxxxxxxxxxxxxxx",
+          ]
+        }
       ]
       # (Optional) Number of days to retain data about failed runs of this canary. If you omit this field, the default of 31 days is used. The valid range is 1 to 455 days.
       failure_retention_period = 7
@@ -1228,7 +1709,7 @@ metric_synthetics_canary_linkcheck = {
       # TODO: Set the URL for the link check and the maximum number of links to follow.
       # (Optional) URLS/LIMIT is an environment variable that can be specified as a delimited string to allow heart beats to be thrown to multiple URLs.
       env = {
-        URLS  = "https://www.google.com/"
+        URLS  = "https://google.com/"
         LIMIT = 10
       }
     }
@@ -1264,33 +1745,49 @@ athena = {
     encryption_option = "SSE_S3"
   }
   # TODO: To check CloudFront logs with Athena, specify true.
-  enabled_cloudfront = false
+  enabled_cloudfront = true
   # TODO: Specify the S3 bucket where CloudFront logs are stored. s3://{bucket name}/{bucket prefix}
-  # ex1) cloudfront_log_bucket = "s3://base-aws-log-application-xxxxxxxxxxxx/Logs/CloudFront/"
-  cloudfront_log_bucket = ""
+  cloudfront_log_bucket = "s3://base-aws-log-application-0123456789012/Logs/CloudFront/"
   # TODO: To check SES logs with Athena, specify true.
-  enabled_ses = false
+  enabled_ses = true
   # TODO: Specify the S3 bucket where SES logs are stored. s3://{bucket name}/{bucket prefix}
-  # ex1) ses_log_bucket = "s3://base-aws-log-application-xxxxxxxxxxx/Logs/base-aws-ses-log/"
-  ses_log_bucket = ""
+  ses_log_bucket = "s3://base-aws-log-application-0123456789012/Logs/base-aws-ses-log/"
 }
 #--------------------------------------------------------------
 # Report CSP
-# Note: Custom domains are not yet supported.
-# If enabled, report_csp_url will be displayed as the Endpoint in the output.
 #--------------------------------------------------------------
 report_csp = {
   # TODO: need to set is_enabled for report CSP.
-  is_enabled = true
+  is_enabled = false
   aws_lambda_function = {
     environment = {
       # TODO: need to change SLACK_OAUTH_ACCESS_TOKEN.(bot token xoxb-xxxxxx....)
-      SLACK_OAUTH_ACCESS_TOKEN = "xxxx-xxxxxxxxxxxxx-xxxxxxxxxxxxx-xxxxxxxxxxxxxxxxxxxxxxxx"
+      SLACK_OAUTH_ACCESS_TOKEN = "xoxb-xxxxxxxxxxxxx-xxxxxxxxxxxxx-xxxxxxxxxxxxxxxxxxxxxxxx"
       # TODO: need to change SLACK_CHANNEL_ID.
-      SLACK_CHANNEL_ID = "XXXXXXXXXXXXXX"
+      SLACK_CHANNEL_ID = "xxxxxxxxxxx"
       LOGGER_FORMATTER = "json"
       LOGGER_OUT       = "stdout"
       LOGGER_LEVEL     = "warn"
     }
+  }
+}
+
+#--------------------------------------------------------------
+# Processes automatic shutdowns, restarts, etc. using EventBridge.
+# The following are covered
+# - RDS Cluster
+#--------------------------------------------------------------
+eventbridge = {
+  #--------------------------------------------------------------
+  # Schedule automatic stop and start of RDS Cluster.
+  #--------------------------------------------------------------
+  rds_cluster = {
+    # TODO: need to set is_enabled for stop and start rds_cluster schedule.
+    is_enabled = false
+    # TODO: need to set schedule_expression_stop for stop rds cluster.
+    schedule_expression_stop = "cron(0 10 * * ? *)"
+    # TODO: need to set schedule_expression_start for stop rds cluster.
+    schedule_expression_start = "cron(0 1 ? * MON-FRI *)"
+    db_cluster_identifier     = "example-db"
   }
 }

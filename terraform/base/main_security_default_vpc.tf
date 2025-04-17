@@ -14,8 +14,8 @@ locals {
 #--------------------------------------------------------------
 # Provides a KMS customer master key.
 #--------------------------------------------------------------
-module "aws_recipes_security_default_vpc" {
-  source                   = "../../modules/aws/recipes/security/default_vpc"
+module "aws_security_default_vpc" {
+  source                   = "../../modules/aws/security/default_vpc"
   is_enabled               = lookup(var.security_default_vpc, "is_enabled", true)
   is_enabled_vpc_end_point = lookup(var.security_default_vpc, "is_enabled_vpc_end_point", false)
   is_enabled_flow_logs     = lookup(var.security_default_vpc, "is_enabled_flow_logs", true)

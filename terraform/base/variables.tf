@@ -1,3 +1,6 @@
+variable "use_control_tower" {
+  type = bool
+}
 variable "deploy_user" {
   type = string
 }
@@ -10,6 +13,9 @@ variable "name_prefix" {
 variable "region" {
   type = string
 }
+variable "oidc_github" {
+  type = any
+}
 variable "resourcegroups_group" {
   type = any
 }
@@ -19,10 +25,16 @@ variable "budgets" {
 variable "compute_optimizer" {
   type = any
 }
+variable "guardduty" {
+  type = any
+}
 variable "health" {
   type = any
 }
 variable "trusted_advisor" {
+  type = any
+}
+variable "iam_password_expired" {
   type = any
 }
 variable "iam" {
@@ -36,6 +48,9 @@ variable "common_log" {
 }
 # security
 variable "security_access_analyzer" {
+  type = any
+}
+variable "security_athena" {
   type = any
 }
 variable "security_cloudtrail" {

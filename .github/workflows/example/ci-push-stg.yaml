@@ -1,0 +1,132 @@
+# https://docs.github.com/en/actions/reference/workflow-syntax-for-github-actions
+name: ci-push-stg
+on:
+  push:
+    branches:
+      - "staging"
+      - "release/**"
+  pull_request:
+    branches:
+      - "staging"
+      - "release/**"
+jobs:
+  integration:
+    environment:
+      name: stg
+    env:
+      ENV: stg
+      # Terraform
+      TERRAFORM_PATH_BASE: "terraform/base"
+      TERRAFORM_PATH_MONITOR: "terraform/monitor"
+      TERRAFORM_VERSION: "1.5.6"
+      TFLINT_VERSION: "v0.44.1"
+      TFCMT_VERSION: "4.5.1"
+    permissions:
+      id-token: write
+      contents: write
+      pull-requests: write
+
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Configure AWS Credentials
+        if: ${{ github.actor != 'dependabot[bot]' }}
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_IAM_ROLE_ARN }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Setup Terraform
+        if: ${{ github.actor != 'dependabot[bot]' }}
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: ${{ env.TERRAFORM_VERSION }}
+
+      - name: Config Terraform plugin cache
+        run: |
+          echo 'plugin_cache_dir="$HOME/.terraform.d/plugin-cache"' >~/.terraformrc
+          mkdir --parents ~/.terraform.d/plugin-cache
+
+      - name: Cache Terraform Plugins
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.terraform.d/plugin-cache
+          key: ${{ runner.os }}-terraform-${{ hashFiles('**/.terraform.lock.hcl') }}
+          restore-keys: |
+            ${{ runner.os }}-terraform-
+
+      - name: Setup TFLint
+        if: ${{ github.actor != 'dependabot[bot]' }}
+        uses: terraform-linters/setup-tflint@v3
+        with:
+          tflint_version: ${{ env.TFLINT_VERSION }}
+
+      - name: Exec TFLint
+        if: ${{ github.actor != 'dependabot[bot]' }}
+        run: tflint -f compact --chdir ./modules --module
+        env:
+          # https://github.com/terraform-linters/tflint/blob/master/docs/user-guide/plugins.md#avoiding-rate-limiting
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Generate Trivy Vulnerability Report
+        if: ${{ github.actor != 'dependabot[bot]' }}
+        uses: aquasecurity/trivy-action@0.29.0
+        with:
+          exit-code: 1
+          format: table
+          scan-ref: .
+          scan-type: "fs"
+          severity: HIGH,CRITICAL
+
+      - name: Setup tfcmt
+        if: ${{ github.event_name == 'pull_request' }}
+        run: |
+          sudo curl -fL -o tfcmt.tar.gz https://github.com/suzuki-shunsuke/tfcmt/releases/download/v${{env.TFCMT_VERSION }}/tfcmt_linux_amd64.tar.gz
+          sudo tar -C /usr/bin -xzf ./tfcmt.tar.gz
+
+      - name: Exec Terraform init(base)
+        if: ${{ github.actor != 'dependabot[bot]' }}
+        id: init-base
+        run: terraform -chdir=${{ env.TERRAFORM_PATH_BASE }} init -reconfigure -backend-config=terraform."${{ env.ENV }}".tfbackend
+
+      - name: Exec Terraform plan(base)(Push)
+        if: ${{ github.actor != 'dependabot[bot]' && github.event_name != 'pull_request' }}
+        id: plan-base
+        run: terraform -chdir=${{ env.TERRAFORM_PATH_BASE }} plan -lock=false -var-file=terraform."${{ env.ENV }}".tfvars
+
+      - name: Terraform plan(base)(PR)
+        if: ${{ github.actor != 'dependabot[bot]' && github.event_name == 'pull_request' }}
+        run: |
+          if [ -n "$PR_HEAD_SHA" ]; then
+            export GITHUB_SHA=$PR_HEAD_SHA
+          fi
+          tfcmt -repo ${GITHUB_REPOSITORY#*/} -pr "$PR_NUMBER" plan -- terraform -chdir=${{ env.TERRAFORM_PATH_BASE }} plan -lock=false -var-file=terraform."${{ env.ENV }}".tfvars
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          PR_NUMBER: ${{ github.event.number }}
+
+      - name: Exec Terraform init(monitor)
+        if: ${{ github.actor != 'dependabot[bot]' }}
+        id: init-monitor
+        run: terraform -chdir=${{ env.TERRAFORM_PATH_MONITOR }} init -reconfigure -backend-config=terraform."${{ env.ENV }}".tfbackend
+
+      - name: Exec Terraform plan(monitor)(Push)
+        if: ${{ github.actor != 'dependabot[bot]' && github.event_name != 'pull_request' }}
+        id: plan-monitor
+        run: terraform -chdir=${{ env.TERRAFORM_PATH_MONITOR }} plan -lock=false -var-file=terraform."${{ env.ENV }}".tfvars
+
+      - name: Terraform plan(monitor)(PR)
+        if: ${{ github.actor != 'dependabot[bot]' && github.event_name == 'pull_request' }}
+        run: |
+          if [ -n "$PR_HEAD_SHA" ]; then
+            export GITHUB_SHA=$PR_HEAD_SHA
+          fi
+          tfcmt -repo ${GITHUB_REPOSITORY#*/} -pr "$PR_NUMBER" plan -- terraform -chdir=${{ env.TERRAFORM_PATH_MONITOR }} plan -lock=false -var-file=terraform."${{ env.ENV }}".tfvars
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          PR_NUMBER: ${{ github.event.number }}
