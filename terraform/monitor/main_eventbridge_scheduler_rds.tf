@@ -7,6 +7,6 @@ module "eventbridge_rds_cluster" {
   name_prefix               = var.name_prefix
   schedule_expression_stop  = var.eventbridge.rds_cluster.schedule_expression_stop
   schedule_expression_start = var.eventbridge.rds_cluster.schedule_expression_start
-  role_arn                  = module.aws_iam_role_eventbrdige.arn
+  role_arn                  = module.aws_iam_role_eventbridge.arn
   db_cluster_identifier     = var.eventbridge.rds_cluster.db_cluster_identifier
 }

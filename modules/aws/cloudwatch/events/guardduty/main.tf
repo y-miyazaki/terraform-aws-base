@@ -16,7 +16,7 @@ data "aws_default_tags" "provider" {}
 #--------------------------------------------------------------
 resource "aws_cloudwatch_event_rule" "this" {
   count         = var.is_enabled ? 1 : 0
-  name          = lookup(var.aws_cloudwatch_event_rule, "name", "security-guarduty-cloudwatch-event-rule")
+  name          = lookup(var.aws_cloudwatch_event_rule, "name", "security-guardduty-cloudwatch-event-rule")
   event_pattern = <<EVENT_PATTERN
   {
     "source": [

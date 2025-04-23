@@ -49,7 +49,7 @@ variable "aws_cloudwatch_event_target" {
       input_transformer = optional(list(any))
       # (Optional) Parameters used when you are providing retry policies. Documented below. A maximum of 1 are allowed.
       retry_policy = optional(list(any))
-      # (Optional) Parameters used when you are providing a dead letter conifg. Documented below. A maximum of 1 are allowed.
+      # (Optional) Parameters used when you are providing a dead letter config. Documented below. A maximum of 1 are allowed.
       dead_letter_config = optional(list(any))
     }
   )

@@ -30,12 +30,12 @@ variable "period" {
 }
 variable "threshold" {
   type = object({
-    # CommitRatency threshold (unit=Milliseconds)
+    # CommitLatency threshold (unit=Milliseconds)
     enabled_commit_latency = bool
     commit_latency         = number
     # CPUCreditBalance threshold (unit=Count)
-    enabled_cpu_creadit_balance = bool
-    cpu_creadit_balance         = number
+    enabled_cpu_credit_balance = bool
+    cpu_credit_balance         = number
     # CPUUtilization threshold (unit=%)
     enabled_cpu_utilization = bool
     cpu_utilization         = number
@@ -66,8 +66,8 @@ variable "threshold" {
   default = {
     enabled_commit_latency       = true
     commit_latency               = 10000
-    enabled_cpu_creadit_balance  = true
-    cpu_creadit_balance          = 100
+    enabled_cpu_credit_balance   = true
+    cpu_credit_balance           = 100
     enabled_cpu_utilization      = true
     cpu_utilization              = 80
     enabled_database_connections = true

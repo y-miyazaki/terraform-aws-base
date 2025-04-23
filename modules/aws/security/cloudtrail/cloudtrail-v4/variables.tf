@@ -182,7 +182,7 @@ variable "s3_bucket" {
       versioning                           = any
     }
   )
-  description = "(Optional) If you have a new S3 to create, please specify this one. Yes to the variable:aws_s3_bucket_exsiting."
+  description = "(Optional) If you have a new S3 to create, please specify this one. Yes to the variable:aws_s3_bucket_existing."
   default = {
     bucket                               = "s3-cloudtrail"
     lifecycle_rule                       = {}

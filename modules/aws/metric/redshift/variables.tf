@@ -94,9 +94,6 @@ variable "threshold" {
     # (Required) WriteThroughput threshold (unit=Bytes)
     enabled_write_throughput = bool
     write_throughput         = number
-    # (Required) WriteThroughput threshold (unit=Bytes)
-    enabled_write_throughput = bool
-    write_throughput         = number
     # (Required) SchemaQuota threshold (unit=Megabytes)
     enabled_schema_quota = bool
     schema_quota         = number

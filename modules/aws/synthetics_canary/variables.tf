@@ -19,7 +19,7 @@ variable "aws_iam_role" {
   )
   description = "(Optional) The aws_iam_role resource."
   default = {
-    description = "Role for Synthetics Canaly."
+    description = "Role for Synthetics Canary."
     name        = "monitor-synthetics-canary-role"
     path        = "/"
   }
@@ -53,7 +53,7 @@ variable "aws_iam_policy" {
   )
   description = "(Optional) Provides an IAM policy."
   default = {
-    description = "Policy for Synthetics Canaly."
+    description = "Policy for Synthetics Canary."
     name        = "monitor-synthetics-canary-policy"
     path        = "/"
   }

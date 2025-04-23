@@ -31,7 +31,7 @@ variable "aws_iam_policy" {
       description = optional(string)
       # The name of the policy. If omitted, Terraform will assign a random, unique name.
       name = string
-      # Path in which to create the poliwcy. See IAM Identifiers for more information.
+      # Path in which to create the policy. See IAM Identifiers for more information.
       path = optional(string)
     }
   )

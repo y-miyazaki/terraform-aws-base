@@ -46,5 +46,6 @@ export PROMPT_DIRTRIM=4
 # export PATH="$PYENV_ROOT/bin/:$PATH"
 # eval "$(pyenv init -)"
 export PATH="/usr/local/bin/gh_2.21.1_linux_amd64/bin:$PATH"
+export PATH="/usr/local/bin/gh_2.21.1_linux_arm64/bin:$PATH"
 alias awsp="source _awsp; source ~/.bashrc"
 alias awsc="eval $(aws configure export-credentials --format env)"

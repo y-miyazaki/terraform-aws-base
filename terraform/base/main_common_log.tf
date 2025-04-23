@@ -4,7 +4,7 @@
 locals {
   s3_log_bucket        = "${var.name_prefix}${var.common_log.s3_log.bucket}-${data.aws_caller_identity.current.account_id}"
   s3_cloudtrail_bucket = "${var.name_prefix}${var.common_log.s3_cloudtrail.bucket}-${data.aws_caller_identity.current.account_id}"
-  config_role_names = var.security_config.is_enabled && var.use_control_tower ? var.security_config_us_east_1.is_enabled ? [
+  config_role_names = var.security_config.is_enabled && !var.use_control_tower ? var.security_config_us_east_1.is_enabled ? [
     module.aws_security_config_create_v4.config_role_name,
     # for CloudFront
     module.aws_security_config_create_v4_us_east_1.config_role_name,
@@ -116,7 +116,7 @@ data "aws_iam_policy_document" "s3_log_combined" {
 module "s3_cloudtrail" {
   source        = "terraform-aws-modules/s3-bucket/aws"
   version       = "4.1.0"
-  create_bucket = var.common_log.s3_cloudtrail.create_bucket
+  create_bucket = var.common_log.s3_cloudtrail.create_bucket && !var.use_control_tower
 
   attach_access_log_delivery_policy        = true
   attach_analytics_destination_policy      = false

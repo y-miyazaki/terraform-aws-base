@@ -20,7 +20,7 @@ module "aws_synthetics_canary_heartbeat" {
     name = format("%s%s", var.name_prefix, var.metric_synthetics_canary_heartbeat.synthetics_canary.aws_iam_policy.name)
   })
   aws_synthetics_canary = merge(var.metric_synthetics_canary_heartbeat.synthetics_canary.aws_synthetics_canary, {
-    artifact_s3_location = var.metric_synthetics_canary_heartbeat.synthetics_canary.aws_synthetics_canary.artifact_s3_location == null ? "s3://${module.s3_application_log.s3_bucket_id}/" : var.metric_synthetics_canary_heartbeat.synthetics_canary.aws_synthetics_canaryartifact_s3_location
+    artifact_s3_location = var.metric_synthetics_canary_heartbeat.synthetics_canary.aws_synthetics_canary.artifact_s3_location == null ? "s3://${module.s3_application_log.s3_bucket_id}/" : var.metric_synthetics_canary_heartbeat.synthetics_canary.aws_synthetics_canary.artifact_s3_location
     handler              = "index.handler"
     name                 = format("%s%s", var.name_prefix, var.metric_synthetics_canary_heartbeat.synthetics_canary.aws_synthetics_canary.name)
     # (Optional) ZIP file that contains the script, if you input your canary script directly into the canary instead of referring to an S3 location. It can be up to 5 MB. Conflicts with s3_bucket, s3_key, and s3_version.
@@ -44,7 +44,7 @@ module "aws_synthetics_canary_linkcheck" {
     name = format("%s%s", var.name_prefix, var.metric_synthetics_canary_linkcheck.synthetics_canary.aws_iam_policy.name)
   })
   aws_synthetics_canary = merge(var.metric_synthetics_canary_linkcheck.synthetics_canary.aws_synthetics_canary, {
-    artifact_s3_location = var.metric_synthetics_canary_linkcheck.synthetics_canary.aws_synthetics_canary.artifact_s3_location == null ? "s3://${module.s3_application_log.s3_bucket_id}/" : var.metric_synthetics_canary_linkcheck.synthetics_canary.aws_synthetics_canaryartifact_s3_location
+    artifact_s3_location = var.metric_synthetics_canary_linkcheck.synthetics_canary.aws_synthetics_canary.artifact_s3_location == null ? "s3://${module.s3_application_log.s3_bucket_id}/" : var.metric_synthetics_canary_linkcheck.synthetics_canary.aws_synthetics_canary.artifact_s3_location
     handler              = "index.handler"
     name                 = format("%s%s", var.name_prefix, var.metric_synthetics_canary_linkcheck.synthetics_canary.aws_synthetics_canary.name)
     # (Optional) ZIP file that contains the script, if you input your canary script directly into the canary instead of referring to an S3 location. It can be up to 5 MB. Conflicts with s3_bucket, s3_key, and s3_version.

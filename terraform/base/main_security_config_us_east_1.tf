@@ -28,7 +28,7 @@ module "aws_security_config_create_v4_us_east_1" {
   providers = {
     aws = aws.us-east-1
   }
-  is_enabled                        = var.security_config_us_east_1.is_enabled && var.use_control_tower
+  is_enabled                        = var.security_config_us_east_1.is_enabled && !var.use_control_tower
   is_s3_enabled                     = var.security_config_us_east_1.is_s3_enabled
   aws_config_configuration_recorder = local.aws_config_configuration_recorder_config_us_east_1
   aws_iam_role                      = local.aws_iam_role_config_us_east_1
@@ -57,7 +57,7 @@ module "aws_security_config_rule_cloudfront_us_east_1" {
   providers = {
     aws = aws.us-east-1
   }
-  is_enabled                               = var.security_config_us_east_1.is_enabled && var.use_control_tower
+  is_enabled                               = var.security_config_us_east_1.is_enabled && !var.use_control_tower
   name_prefix                              = var.name_prefix
   ssm_automation_assume_role_arn           = module.aws_security_config_ssm_automation.role_arn
   is_enable_cloudfront_viewer_policy_https = var.security_config_us_east_1.remediation.cloudfront.is_enable_cloudfront_viewer_policy_https

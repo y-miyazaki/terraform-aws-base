@@ -63,7 +63,7 @@ locals {
 #--------------------------------------------------------------
 module "aws_security_cloudtrail_v4" {
   source                     = "../../modules/aws/security/cloudtrail/cloudtrail-v4"
-  is_enabled                 = var.security_cloudtrail.is_enabled
+  is_enabled                 = var.security_cloudtrail.is_enabled && !var.use_control_tower
   is_s3_enabled              = var.security_cloudtrail.is_s3_enabled
   aws_kms_key                = local.aws_kms_key_cloudtrail
   aws_sns_topic              = local.aws_sns_topic_cloudtrail
@@ -90,12 +90,12 @@ module "aws_security_cloudtrail_v4" {
 }
 
 #--------------------------------------------------------------
-# Provides a CloudWatch Log Metric Filter And Alerm resource.
+# Provides a CloudWatch Log Metric Filter And Alarm resource.
 #--------------------------------------------------------------
 module "aws_cloudwatch_alarm_cloudtrail" {
   count                             = var.security_cloudtrail.is_enabled ? 1 : 0
   source                            = "../../modules/aws/cloudwatch/alarm/log"
-  alarm_actions                     = var.security_cloudtrail.is_enabled ? [module.aws_security_cloudtrail_v4.sns_topic_arn] : []
+  alarm_actions                     = var.security_cloudtrail.is_enabled && !var.use_control_tower ? [module.aws_security_cloudtrail_v4.sns_topic_arn] : []
   create_auto_log_group_names       = false
   auto_log_group_names_exclude_list = []
   log_group_names                   = [module.aws_security_cloudtrail_v4.log_group_name]
@@ -113,7 +113,7 @@ module "aws_cloudwatch_alarm_cloudtrail" {
 module "lambda_function_cloudtrail" {
   source  = "terraform-aws-modules/lambda/aws"
   version = "7.2.1"
-  create  = var.security_cloudtrail.is_enabled
+  create  = var.security_cloudtrail.is_enabled && !var.use_control_tower
 
   architectures                           = ["arm64"]
   create_current_version_allowed_triggers = false

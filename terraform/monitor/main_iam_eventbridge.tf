@@ -33,7 +33,7 @@ POLICY
 #--------------------------------------------------------------
 # Create role and policy for Lambda
 #--------------------------------------------------------------
-module "aws_iam_role_eventbrdige" {
+module "aws_iam_role_eventbridge" {
   source         = "../../modules/aws/iam/role/eventbridge"
   aws_iam_role   = local.eventbridge_role.aws_iam_role
   aws_iam_policy = local.eventbridge_role.aws_iam_policy

@@ -93,7 +93,7 @@ module "lambda_create_lambda_report_csp" {
     environment                    = var.lambda_function_environment
     vpc_config                     = var.vpc_config
   }
-  # Creates a Lambda permission to allow external sources invoking the Lambda function (e.g. CloudWatch Eventss Rule, SNS or S3).
+  # Creates a Lambda permission to allow external sources invoking the Lambda function (e.g. CloudWatch Events Rule, SNS or S3).
   tags = var.tags
 }
 #--------------------------------------------------------------
