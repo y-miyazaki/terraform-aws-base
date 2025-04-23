@@ -57,7 +57,7 @@ resource "aws_cloudwatch_metric_alarm" "reputation_complaintrate" {
   threshold                 = var.threshold.reputation_complaintrate
   actions_enabled           = true
   alarm_actions             = var.alarm_actions
-  alarm_description         = "This is an alarm to check for <${local.url}|SES reputation complaintrate>(>= ${var.threshold.reputation_complaintrate}%)."
+  alarm_description         = "This is an alarm to check for <${local.url}|SES reputation complaint rate>(>= ${var.threshold.reputation_complaintrate}%)."
   insufficient_data_actions = var.insufficient_data_actions
   ok_actions                = var.ok_actions
   unit                      = "Percent"

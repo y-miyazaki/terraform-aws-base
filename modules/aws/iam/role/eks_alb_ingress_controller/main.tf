@@ -13,7 +13,7 @@ data "aws_default_tags" "provider" {}
 
 #--------------------------------------------------------------
 # Generates an IAM policy document in JSON format for use with resources that expect policy documents such as aws_iam_policy.
-# policy attach: for ALB Ingrees controller
+# policy attach: for ALB Ingress controller
 # - ALB Ingress Controller on Amazon EKS
 #   https://docs.aws.amazon.com/ja_jp/eks/latest/userguide/alb-ingress.html
 #--------------------------------------------------------------

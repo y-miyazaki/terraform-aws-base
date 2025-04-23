@@ -17,7 +17,7 @@ variable "aws_cloudwatch_event_rule" {
   )
   description = "(Optional) Provides an EventBridge Rule resource."
   default = {
-    name        = "security-guarduty-cloudwatch-event-rule"
+    name        = "security-guardduty-cloudwatch-event-rule"
     description = "This cloudwatch event used for GuardDuty."
     role_arn    = null
     is_enabled  = true

@@ -66,7 +66,8 @@ oidc_github = {
 #--------------------------------------------------------------
 # TODO: need to change env and service.
 resourcegroups_group = {
-  name = "resource-group"
+  name        = "resource-group"
+  description = null
   resource_query = [
     {
       query = <<JSON
@@ -799,7 +800,7 @@ iam = {
             ]
           },
           {
-            sid    = "AllowCloudFrontIndvalidation"
+            sid    = "AllowCloudFrontInvalidation"
             effect = "Allow"
             actions = [
               "cloudfront:GetDistribution",
@@ -1485,7 +1486,7 @@ common_log = {
           {
             # TODO: need to change days. default 3years.
             days                         = 1095
-            expired_object_delete_marker = false
+            expired_object_delete_marker = null
           }
         ]
         transition = [
@@ -1520,54 +1521,54 @@ common_log = {
   # https://registry.terraform.io/modules/terraform-aws-modules/s3-bucket/aws/latest
   # Notice: This option is automatically disabled if use_control_tower=true.
   #--------------------------------------------------------------
-  #   s3_cloudtrail = {
-  #     bucket = "aws-log-cloudtrail"
-  #     # TODO: need to change create_bucket for cloudtrail
-  #     create_bucket        = false
-  #     attach_public_policy = true
-  #     block_public_acls    = true
-  #     block_public_policy  = true
-  #     force_destroy        = true
-  #     ignore_public_acls   = true
-  #     lifecycle_rule = [
-  #       {
-  #         id                                     = "default"
-  #         abort_incomplete_multipart_upload_days = 7
-  #         enabled                                = true
-  #         prefix                                 = null
-  #         expiration = [
-  #           {
-  #             # TODO: need to change days. default 3years.
-  #             days                         = 1095
-  #             expired_object_delete_marker = false
-  #           }
-  #         ]
-  #         transition = [
-  #           {
-  #             days          = 30
-  #             storage_class = "ONEZONE_IA"
-  #           }
-  #         ]
-  #         noncurrent_version_expiration = [
-  #           {
-  #             days = 30
-  #           }
-  #         ]
-  #       }
-  #     ]
-  #     restrict_public_buckets = true
-  #     server_side_encryption_configuration = {
-  #       rule = {
-  #         apply_server_side_encryption_by_default = {
-  #           sse_algorithm     = "AES256"
-  #           kms_master_key_id = null
-  #         }
-  #       }
-  #     }
-  #     versioning = {
-  #       enabled = true
-  #     }
-  #   }
+  s3_cloudtrail = {
+    bucket = "aws-log-cloudtrail"
+    # TODO: need to change create_bucket for cloudtrail
+    create_bucket        = true
+    attach_public_policy = true
+    block_public_acls    = true
+    block_public_policy  = true
+    force_destroy        = true
+    ignore_public_acls   = true
+    lifecycle_rule = [
+      {
+        id                                     = "default"
+        abort_incomplete_multipart_upload_days = 7
+        enabled                                = true
+        prefix                                 = null
+        expiration = [
+          {
+            # TODO: need to change days. default 3years.
+            days                         = 1095
+            expired_object_delete_marker = null
+          }
+        ]
+        transition = [
+          {
+            days          = 30
+            storage_class = "ONEZONE_IA"
+          }
+        ]
+        noncurrent_version_expiration = [
+          {
+            days = 30
+          }
+        ]
+      }
+    ]
+    restrict_public_buckets = true
+    server_side_encryption_configuration = {
+      rule = {
+        apply_server_side_encryption_by_default = {
+          sse_algorithm     = "AES256"
+          kms_master_key_id = null
+        }
+      }
+    }
+    versioning = {
+      enabled = true
+    }
+  }
 }
 #--------------------------------------------------------------
 # Security:Access Analyzer
@@ -1678,7 +1679,7 @@ PATTERN
   #           {
   #             # TODO: need to change days. default 3years.
   #             days                         = 1095
-  #             expired_object_delete_marker = false
+  #             expired_object_delete_marker = null
   #           }
   #         ]
   #         transition = [
@@ -1823,7 +1824,7 @@ security_config = {
   #           {
   #             # TODO: need to change days. default 3years.
   #             days                         = 1095
-  #             expired_object_delete_marker = false
+  #             expired_object_delete_marker = null
   #           }
   #         ]
   #         transition = [
@@ -1977,7 +1978,7 @@ security_config_us_east_1 = {
   #           {
   #             # TODO: need to change days. default 3years.
   #             days                         = 1095
-  #             expired_object_delete_marker = false
+  #             expired_object_delete_marker = null
   #           }
   #         ]
   #         transition = [

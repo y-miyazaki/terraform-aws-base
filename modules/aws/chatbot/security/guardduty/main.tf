@@ -16,7 +16,7 @@ data "aws_default_tags" "provider" {}
 #--------------------------------------------------------------
 resource "aws_cloudwatch_event_rule" "this" {
   count         = var.is_enabled ? 1 : 0
-  name          = "${var.name_prefix}security-guarduty-rule"
+  name          = "${var.name_prefix}security-guardduty-rule"
   event_pattern = <<EVENT_PATTERN
   {
     "source": [

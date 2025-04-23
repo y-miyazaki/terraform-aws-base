@@ -46,5 +46,5 @@ No modules.
 | <a name="output_role_arn"></a> [role\_arn](#output\_role\_arn) | The Amazon Resource Name (ARN) specifying the role. |
 | <a name="output_role_id"></a> [role\_id](#output\_role\_id) | The name of the role. |
 | <a name="output_role_name"></a> [role\_name](#output\_role\_name) | The name of the role. |
-| <a name="output_securty_group_id"></a> [securty\_group\_id](#output\_securty\_group\_id) | The ID of the security group |
+| <a name="output_security_group_id"></a> [security\_group\_id](#output\_security\_group\_id) | The ID of the security group |
 <!-- END_TF_DOCS -->

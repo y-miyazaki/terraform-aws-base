@@ -59,19 +59,19 @@ resource "aws_cloudwatch_metric_alarm" "commit_latency" {
 # For CPUCreditBalance
 # Provides a CloudWatch Metric Alarm resource.
 #--------------------------------------------------------------
-resource "aws_cloudwatch_metric_alarm" "cpu_creadit_balance" {
-  for_each                  = var.is_enabled && var.threshold.enabled_cpu_creadit_balance && length(regexall("(t2|t3)", var.db_instance_class)) > 0 ? local.list : {}
-  alarm_name                = "${var.name_prefix}metric-rds-cluster-${each.value.name}-cpu-creadit-balance"
+resource "aws_cloudwatch_metric_alarm" "cpu_credit_balance" {
+  for_each                  = var.is_enabled && var.threshold.enabled_cpu_credit_balance && length(regexall("(t2|t3)", var.db_instance_class)) > 0 ? local.list : {}
+  alarm_name                = "${var.name_prefix}metric-rds-cluster-${each.value.name}-cpu-credit-balance"
   comparison_operator       = "LessThanOrEqualToThreshold"
   evaluation_periods        = 1
   namespace                 = "AWS/RDS"
   metric_name               = "CPUCreditBalance"
   period                    = var.period
   statistic                 = "Average"
-  threshold                 = var.threshold.cpu_creadit_balance
+  threshold                 = var.threshold.cpu_credit_balance
   actions_enabled           = true
   alarm_actions             = var.alarm_actions
-  alarm_description         = "This is an alarm to check for <${local.url}|RDS CPU Credit Balance>(<= ${var.threshold.cpu_creadit_balance})."
+  alarm_description         = "This is an alarm to check for <${local.url}|RDS CPU Credit Balance>(<= ${var.threshold.cpu_credit_balance})."
   insufficient_data_actions = var.insufficient_data_actions
   ok_actions                = var.ok_actions
   unit                      = "Count"

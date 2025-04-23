@@ -60,7 +60,7 @@ common_log = {
           {
             # TODO: need to change days. default 3years.
             days                         = 1095
-            expired_object_delete_marker = false
+            expired_object_delete_marker = null
           }
         ]
         transition = [
@@ -365,6 +365,8 @@ common_lambda = {
 # Specify the target log group in the log_group_names variable to transfer logs to S3.
 #--------------------------------------------------------------
 delivery_log = {
+  # TODO: need to set is_enabled for settings of delivery log.
+  is_enabled = true
   #--------------------------------------------------------------
   # Provides a Kinesis Firehose Delivery Stream resource. Amazon Kinesis Firehose is a fully managed, elastic service to easily deliver real-time data streams to destinations such as Amazon S3 and Amazon Redshift.
   #--------------------------------------------------------------
@@ -414,6 +416,8 @@ delivery_log = {
 # Specify the target log group in the log_group_names variable to transfer logs to S3.
 #--------------------------------------------------------------
 delivery_log_us_east_1 = {
+  # TODO: need to set is_enabled for settings of delivery log.
+  is_enabled = true
   #--------------------------------------------------------------
   # Provides a Kinesis Firehose Delivery Stream resource. Amazon Kinesis Firehose is a fully managed, elastic service to easily deliver real-time data streams to destinations such as Amazon S3 and Amazon Redshift.
   #--------------------------------------------------------------
@@ -1219,12 +1223,12 @@ metric_resource_rds_cluster = {
   period = 300
   # TODO: need to set threshold for RDS.
   threshold = {
-    # (Required) CommitRatency threshold (unit=Seconds)
+    # (Required) CommitLatency threshold (unit=Seconds)
     enabled_commit_latency = true
     commit_latency         = 10
     # (Required) CPUCreditBalance threshold (unit=Count)
-    enabled_cpu_creadit_balance = true
-    cpu_creadit_balance         = 100
+    enabled_cpu_credit_balance = true
+    cpu_credit_balance         = 100
     # (Required) CPUUtilization threshold (unit=%)
     enabled_cpu_utilization = true
     cpu_utilization         = 80
@@ -1523,12 +1527,12 @@ metric_synthetics_canary_heartbeat = {
   ]
   synthetics_canary = {
     aws_iam_role = {
-      description = "Role for Synthetics Canaly heartbeat."
+      description = "Role for Synthetics Canary heartbeat."
       name        = "monitor-synthetics-canary-heartbeat-role"
       path        = "/"
     }
     aws_iam_policy = {
-      description = "Policy for Synthetics Canaly heartbeat."
+      description = "Policy for Synthetics Canary heartbeat."
       name        = "monitor-synthetics-canary-heartbeat-policy"
       path        = "/"
     }
@@ -1637,12 +1641,12 @@ metric_synthetics_canary_linkcheck = {
 
   synthetics_canary = {
     aws_iam_role = {
-      description = "Role for Synthetics Canaly."
+      description = "Role for Synthetics Canary."
       name        = "monitor-synthetics-canary-linkcheck-role"
       path        = "/"
     }
     aws_iam_policy = {
-      description = "Policy for Synthetics Canaly."
+      description = "Policy for Synthetics Canary."
       name        = "monitor-synthetics-canary-linkcheck-policy"
       path        = "/"
     }

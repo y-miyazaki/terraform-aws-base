@@ -48,7 +48,7 @@ module "aws_security_cloudtrail_controltower" {
 }
 
 #--------------------------------------------------------------
-# Provides a CloudWatch Log Metric Filter And Alerm resource.
+# Provides a CloudWatch Log Metric Filter And Alarm resource.
 #--------------------------------------------------------------
 module "aws_cloudwatch_alarm_cloudtrail" {
   for_each                          = var.security_cloudtrail.is_enabled ? var.security_cloudtrail.aws_cloudwatch_log : {}

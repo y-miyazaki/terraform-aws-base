@@ -217,7 +217,7 @@ module "aws_lambda_create_lambda_ses_us_east_1" {
       }
     ] : []
   }
-  # Creates a Lambda permission to allow external sources invoking the Lambda function (e.g. CloudWatch Eventss Rule, SNS or S3).
+  # Creates a Lambda permission to allow external sources invoking the Lambda function (e.g. CloudWatch Events Rule, SNS or S3).
   tags = var.tags
   depends_on = [
     module.lambda_vpc_us_east_1
@@ -293,7 +293,7 @@ module "aws_lambda_create_lambda_kinesis_data_firehose_cloudwatch_logs_processor
       }
     ] : []
   }
-  # Creates a Lambda permission to allow external sources invoking the Lambda function (e.g. CloudWatch Eventss Rule, SNS or S3).
+  # Creates a Lambda permission to allow external sources invoking the Lambda function (e.g. CloudWatch Events Rule, SNS or S3).
   tags = var.tags
   depends_on = [
     module.lambda_vpc_us_east_1
