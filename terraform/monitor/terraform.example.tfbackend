@@ -1,4 +1,4 @@
-bucket  = "base-terraform-state-example" # fix for environment
+bucket  = "base-terraform-state-example" # TODO: fix for environment
 key     = "terraform.monitor.tfstate"
-# profile = "default"    # fix for environment
-region  = "ap-northeast-1" # fix for environment
+# profile = "default"    # TODO: fix for environment
+region  = "ap-northeast-1" # TODO: fix for environment

@@ -35,7 +35,7 @@ tags = {
 #--------------------------------------------------------------
 name_prefix = "base-"
 #--------------------------------------------------------------
-# Default Tags for Resources
+# Default Region for Resources
 #--------------------------------------------------------------
 # TODO: need to change region.
 region = "ap-northeast-1"

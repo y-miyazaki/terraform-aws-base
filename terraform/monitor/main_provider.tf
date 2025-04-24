@@ -18,8 +18,6 @@ terraform {
 # access key and secret key should not use.
 #--------------------------------------------------------------
 provider "aws" {
-  # TODO: need to change profile.
-  #   profile = "default"
   # TODO: need to change region.
   region = "ap-northeast-1"
   default_tags {

@@ -92,14 +92,6 @@ terraform {
     }
   }
   backend "s3" {
-    # TODO: need to change bucket for terraform state.
-    bucket = "xxxxxxxxxxxxxxxx"
-    # TODO: need to change bucket key for terraform state.
-    key = "xxxxxxxxxx"
-    # TODO: need to change profile for terraform state.
-    profile = "default"
-    # TODO: need to change region for terraform state.
-    region = "ap-northeast-1"
   }
 }
 
@@ -108,8 +100,6 @@ terraform {
 # access key and secret key should not use.
 #--------------------------------------------------------------
 provider "aws" {
-  # TODO: need to change profile.
-  profile = "default"
   # TODO: need to change region.
   region = "ap-northeast-1"
   #   default_tags {
@@ -206,6 +196,9 @@ deploy_user = null
 Select the region where you want to create the resource.
 
 ```terraform
+#--------------------------------------------------------------
+# Default Region for Resources
+#--------------------------------------------------------------
 # TODO: need to change region.
 region = "ap-northeast-1"
 ```
