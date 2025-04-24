@@ -31,7 +31,6 @@ This section describes the initial settings for running [monitor's Terraform](./
 - Create an S3 to store the Terraform State  
   Create an S3 from the management console to manage the Terraform State.
   However, if you have an environment where you can run the aws command and profile already configured, you can create an S3 by running the following command.
-  <https://github.com/y-miyazaki/cloud-commands/blob/master/cmd/awstfinitstate>
 
 ```sh
 $ ./scripts/terraform/init_state.sh -h

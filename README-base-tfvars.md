@@ -34,27 +34,26 @@ This section describes the initial settings for running [Base's Terraform](./ter
 - Create an S3 to store the Terraform State  
   Create an S3 from the management console to manage the Terraform State.
   However, if you have an environment where you can run the aws command and profile already configured, you can create an S3 by running the following command.
-  <https://github.com/y-miyazaki/cloud-commands/blob/master/cmd/awstfinitstate>
 
 ```sh
-# awstfinitstate -h
+$ ./scripts/terraform/init_state.sh -h
 
 This command creates a S3 Bucket for Terraform State.
 You can also add random hash to bucket name suffix.
 
 Usage:
-    awstfinitstate -r {region} -b {bucket name} -p {profile}[<options>]
-    awstfinitstate -r ap-northeast-1 -b terraform-state
-    awstfinitstate -r ap-northeast-1 -b terraform-state -p default -s
+    init_state.sh -r {region} -b {bucket name} -p {profile}[<options>]
+    init_state.sh -r ap-northeast-1 -b terraform-state
+    init_state.sh -r ap-northeast-1 -b terraform-state -p default -s
 
 Options:
     -b {bucket name}          S3 bucket name
     -p {aws profile name}     Name of AWS profile
     -r {region}               S3 region
     -s                        If set, a random hash will suffix bucket name.
-    -h                        Usage awstfinitstate
+    -h                        Usage init_state.sh
 
-# awstfinitstate -r ap-northeast-1 -b terraform-state -p default -s
+$ ./scripts/terraform/init_state.sh -r ap-northeast-1 -b base-terraform-state- -p default -s
 ~
 ~
 ~
@@ -69,7 +68,7 @@ Options:
 ~
 ~
 --------------------------------------------------------------
-bucket_name: terraform-state-xxxxxxxxxx
+bucket_name: base-terraform-state-xxxxxxxxxx
 region: ap-northeast-1
 --------------------------------------------------------------
 ```
@@ -215,7 +214,7 @@ The following are the supporting IAM roles. If you are not sure, please specify 
   support_iam_role_principal_arns = [
     # example)
     # "arn:aws:iam::{account id}:{iam user}"
-    "arn:aws:iam::999999999999:root"
+    "arn:aws:iam::123456789012:root"
   ]
 ```
 
