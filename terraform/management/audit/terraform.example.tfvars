@@ -18,6 +18,11 @@ tags = {
 #--------------------------------------------------------------
 name_prefix = "base-"
 #--------------------------------------------------------------
+# Default Region for Resources
+#--------------------------------------------------------------
+# TODO: need to change region.
+region = "ap-northeast-1"
+#--------------------------------------------------------------
 # CloudWatch Logs retention in days
 #--------------------------------------------------------------
 # TODO: need to change CloudWatch Logs retention in days.

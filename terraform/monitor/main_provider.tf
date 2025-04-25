@@ -2,11 +2,11 @@
 # Terraform Provider
 #--------------------------------------------------------------
 terraform {
-  required_version = "~>1.11"
+  required_version = "~>1.11.0"
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "~>5.96"
+      version = "~>5.96.0"
     }
   }
   backend "s3" {
@@ -18,8 +18,7 @@ terraform {
 # access key and secret key should not use.
 #--------------------------------------------------------------
 provider "aws" {
-  # TODO: need to change region.
-  region = "ap-northeast-1"
+  region = var.region
   default_tags {
     tags = var.tags
   }
