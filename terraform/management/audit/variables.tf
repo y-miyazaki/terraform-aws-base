@@ -4,6 +4,9 @@ variable "tags" {
 variable "name_prefix" {
   type = string
 }
+variable "region" {
+  type = string
+}
 variable "cloudwatch_log_group_retention_in_days" {
   type = number
 }
