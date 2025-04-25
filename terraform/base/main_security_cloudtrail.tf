@@ -112,7 +112,7 @@ module "aws_cloudwatch_alarm_cloudtrail" {
 # tfsec:ignore:aws-lambda-enable-tracing
 module "lambda_function_cloudtrail" {
   source  = "terraform-aws-modules/lambda/aws"
-  version = "7.2.1"
+  version = "7.20.2"
   create  = var.security_cloudtrail.is_enabled && !var.use_control_tower
 
   architectures                           = ["arm64"]
