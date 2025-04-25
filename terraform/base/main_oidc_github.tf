@@ -6,7 +6,7 @@
 #--------------------------------------------------------------
 module "oidc_github" {
   source                  = "unfunco/oidc-github/aws"
-  version                 = "1.7.1"
+  version                 = "1.8.1"
   attach_admin_policy     = var.oidc_github.attach_admin_policy
   attach_read_only_policy = var.oidc_github.attach_read_only_policy
   create_oidc_provider    = var.oidc_github.create_oidc_provider
