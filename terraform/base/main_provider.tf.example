@@ -2,11 +2,11 @@
 # Terraform Provider
 #--------------------------------------------------------------
 terraform {
-  required_version = "~>1.4"
+  required_version = "~>1.11"
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "~>5.0"
+      version = "~>5.96"
     }
   }
   backend "s3" {
@@ -26,8 +26,8 @@ provider "aws" {
 }
 # Need to add aws provider(us-east-1) for CloudFront Metric.
 provider "aws" {
-  region = "us-east-1"
-  alias  = "us-east-1"
+    region = "us-east-1"
+    alias  = "us-east-1"
   #   default_tags {
   #     tags = var.tags
   #   }
