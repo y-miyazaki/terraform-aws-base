@@ -272,7 +272,7 @@ resource "aws_cloudwatch_log_metric_filter" "cis_3_1" {
   count          = var.is_enabled ? 1 : 0
   name           = "${var.cis_name_prefix}cloudtrail-logs-unautorizedoperation-api"
   pattern        = <<PATTERN
-{(($.errorCode="*UnauthorizedOperation") || ($.errorCode="AccessDenied*")) && $.userIdentity.principalId!="*configLambdaExecution" && $.userIdentity.principalId!="*AutoScaling-UpdateDesiredCapacity"}
+{(($.errorCode="*UnauthorizedOperation") || ($.errorCode="AccessDenied*")) && $.userIdentity.principalId!="*configLambdaExecution" && $.userIdentity.principalId!="*AutoScaling-UpdateDesiredCapacity" && $.userIdentity.principalId!="*AWSServiceRoleForConfig/*"}
 PATTERN
   log_group_name = aws_cloudwatch_log_group.this[0].name
   metric_transformation {
