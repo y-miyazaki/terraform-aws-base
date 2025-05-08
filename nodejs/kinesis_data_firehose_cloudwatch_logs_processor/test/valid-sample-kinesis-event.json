@@ -1,0 +1,27 @@
+{
+  "sourceKinesisStreamArn": "arn:aws:kinesis:us-east-1:123456789012:stream/my-kinesis-stream",
+  "records": [
+    {
+      "recordId": "49615338669541255871590765702795576036079249399008288770",
+      "data": "H4sIAAAAAAAAA6WQUWvCMBSF/0rI9mjXNLXa9a2wKoKbw/ZpKiO2qQTapiSpIuJ/322r4IvIMOQh3Hty7nfPCZdca7bjybHmOMAfYRL+fkZxHE4jPMDyUHEFZYe6Q2809t+JQ6FcyN1UyaaGjs0O2i5Yuc2YXR6t/mXlTZUaIateGxvFWQliSqhrE88mvr16nYdJFCcbtk3BPeM5DAC5brY6VaJuf09EYbjSOFhhsL7tWHnXwpvOP9rzyrSyExYZjCG3uP94wXgjIA/DSljNGfmu51KftGdwzemyhUU8i/iJQwLS3jeQ/KzN7GuyWJt5lwG6ZoDATxmeoVrJFExEtcPnwXOoo3uozmNU5wb1u0cCOKgixVOpMo10k7bVvCmK49Oo43uo9DEq7VCj5XKxXJsJEwWAGnkN8sKLXoY0QLNqzwqRIVHVjUG5VCUz+Lw5/wGLRiLp4QIAAA==",
+      "kinesisRecordMetadata": {
+        "partitionKey": "test-partition-key",
+        "sequenceNumber": "49615338669541255871590765702795576036079249399008288770",
+        "subsequenceNumber": 0,
+        "shardId": "shardId-000000000000",
+        "approximateArrivalTimestamp": 1510109208016
+      }
+    },
+    {
+      "recordId": "49615338669541255871590765702796785962698864124167954434",
+      "data": "H4sIAAAAAAAAA6WQUWvCMBSF/0rI9mjXNLXa9a2wKoKbw/ZpKiO2qQTapiSpIuJ/322r4IvIMOQh3Hty7nfPCZdca7bjybHmOMAfYRL+fkZxHE4jPMDyUHEFZYe6Q2809t+JQ6FcyN1UyaaGjs0O2i5Yuc2YXR6t/mXlTZUaIateGxvFWQliSqhrE88mvr16nYdJFCcbtk3BPeM5DAC5brY6VaJuf09EYbjSOFhhsL7tWHnXwpvOP9rzyrSyExYZjCG3uP94wXgjIA/DSljNGfmu51KftGdwzemyhUU8i/iJQwLS3jeQ/KzN7GuyWJt5lwG6ZoDATxmeoVrJFExEtcPnwXOoo3uozmNU5wb1u0cCOKgixVOpMo10k7bVvCmK49Oo43uo9DEq7VCj5XKxXJsJEwWAGnkN8sKLXoY0QLNqzwqRIVHVjUG5VCUz+Lw5/wGLRiLp4QIAAA==",
+      "kinesisRecordMetadata": {
+        "partitionKey": "test-partition-key",
+        "sequenceNumber": "49615338669541255871590765702796785962698864124167954434",
+        "subsequenceNumber": 0,
+        "shardId": "shardId-000000000000",
+        "approximateArrivalTimestamp": 1510109208017
+      }
+    }
+  ]
+}

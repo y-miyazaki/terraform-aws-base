@@ -1,0 +1,14 @@
+{
+  "name": "kinesis-data-firehose-cloudwatch-logs-processor",
+  "version": "1.0.0",
+  "description": "Process CloudWatch Logs data for Kinesis Data Firehose",
+  "main": "index.mjs",
+  "type": "module",
+  "scripts": {
+    "test": "node test-local.js"
+  },
+  "dependencies": {
+    "@aws-sdk/client-firehose": "^3.456.0",
+    "@aws-sdk/client-kinesis": "^3.456.0"
+  }
+}

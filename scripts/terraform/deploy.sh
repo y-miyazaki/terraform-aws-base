@@ -11,7 +11,7 @@ else
     exit 1
 fi
 
-# Create terraform plugin dirctory.
+# Create terraform plugin directory.
 if [ -n "${TF_PLUGIN_CACHE_DIR}" ]; then
     mkdir -p "${TF_PLUGIN_CACHE_DIR}"
 else
