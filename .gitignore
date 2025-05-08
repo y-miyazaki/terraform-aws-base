@@ -1,6 +1,7 @@
 # root
 .DS_Store
 .vscode/**
+!.vscode/cspell.json
 terraform.log
 crash.log
 memo.txt
@@ -41,3 +42,6 @@ devcontainer.json
 env/common/.aws
 env/common/.ssh
 !env/example/**
+
+# nodejs
+node_modules

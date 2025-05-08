@@ -1,0 +1,26 @@
+{
+  "messageType": "DATA_MESSAGE",
+  "owner": "123456789012",
+  "logGroup": "/aws/lambda/my-lambda-function",
+  "logStream": "2023/05/08/[$LATEST]abc123def456",
+  "subscriptionFilters": [
+    "my-subscription-filter"
+  ],
+  "logEvents": [
+    {
+      "id": "01234567890123456789012345678901234567890123456789012345",
+      "timestamp": 1683532800000,
+      "message": "2023-05-08T10:00:00.000Z\tINFO\tLambda function started processing"
+    },
+    {
+      "id": "01234567890123456789012345678901234567890123456789012346",
+      "timestamp": 1683532800100,
+      "message": "2023-05-08T10:00:00.100Z\tINFO\tProcessed 100 records successfully"
+    },
+    {
+      "id": "01234567890123456789012345678901234567890123456789012347",
+      "timestamp": 1683532800200,
+      "message": "2023-05-08T10:00:00.200Z\tERROR\tFailed to process record #42: Invalid input format"
+    }
+  ]
+}

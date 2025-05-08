@@ -1,0 +1,13 @@
+{
+  "name": "s3-notification-s3-object-created-for-athena",
+  "version": "1.0.0",
+  "description": "Process S3 notifications for CloudFront logs and partition them for Athena",
+  "main": "index.mjs",
+  "type": "module",
+  "scripts": {
+    "test": "node test-local.js"
+  },
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.456.0"
+  }
+}
