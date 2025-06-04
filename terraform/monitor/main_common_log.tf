@@ -17,7 +17,7 @@ locals {
 #tfsec:ignore:aws-s3-specify-public-access-block
 module "s3_application_log" {
   source        = "terraform-aws-modules/s3-bucket/aws"
-  version       = "4.7.0"
+  version       = "4.10.1"
   create_bucket = var.common_log.s3_application_log.create_bucket
 
   grant = [
@@ -66,7 +66,7 @@ module "s3_application_log" {
 #--------------------------------------------------------------
 module "s3_application_log_notification_cloudfront" {
   source      = "terraform-aws-modules/s3-bucket/aws//modules/notification"
-  version     = "4.7.0"
+  version     = "4.10.1"
   bucket      = module.s3_application_log.s3_bucket_id
   eventbridge = true
 
