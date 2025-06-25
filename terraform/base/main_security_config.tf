@@ -143,7 +143,7 @@ module "aws_security_config_rule_s3" {
 # tfsec:ignore:aws-lambda-enable-tracing
 module "lambda_function_config" {
   source  = "terraform-aws-modules/lambda/aws"
-  version = "7.20.2"
+  version = "8.0.1"
   create  = var.security_config.is_enabled && !var.use_control_tower
 
   architectures                           = ["arm64"]
