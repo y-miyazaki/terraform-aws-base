@@ -73,7 +73,11 @@ updates:
       prefix: "dependabot(terraform)"
       include: "scope"
     directories:
-      - "/"
+      - "/modules/aws"
+      - "/terraform/base"
+      - "/terraform/management/audit"
+      - "/terraform/management/root"
+      - "/terraform/monitor"
     labels:
       - "dependencies"
       - "terraform"
