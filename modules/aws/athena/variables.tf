@@ -1,6 +1,11 @@
 #--------------------------------------------------------------
 # module variables
 #--------------------------------------------------------------
+variable "is_enabled" {
+  type        = bool
+  description = "(Optional) Whether to create Athena resources. Set to false to disable the entire module."
+  default     = true
+}
 variable "name_prefix" {
   type        = string
   description = "(Optional) Name prefix of all resources."

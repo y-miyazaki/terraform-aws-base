@@ -14,7 +14,7 @@ variable "aws_iam_role" {
   )
   description = "(Optional) Provides an IAM role."
   default = {
-    description = "Role for AWS Config."
+    description = "IAM role for AWS Config."
     name        = "security-config-role"
     path        = "/"
   }

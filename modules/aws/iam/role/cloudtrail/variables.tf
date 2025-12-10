@@ -14,7 +14,7 @@ variable "aws_iam_role" {
   )
   description = "(Optional) Provides an IAM role."
   default = {
-    description = "Role for CloudTrail."
+    description = "IAM role for CloudTrail."
     name        = "cloudtrail-role"
     path        = "/"
   }

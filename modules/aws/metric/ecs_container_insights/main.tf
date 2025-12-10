@@ -1,15 +1,15 @@
 #--------------------------------------------------------------
-# For ECS Container Insights
+# Module: aws/metric/ecs_container_insights
+# Purpose: Provide CloudWatch metric alarms for ECS cluster/container utilization (CPU and Memory) via Container Insights metric math.
+# Notes: Supports optional dimension-based filtering (cluster/service/task family); unified tagging applied; future improvement: add additional Container Insights metrics (e.g., network, storage) and consolidate metric math patterns.
 #--------------------------------------------------------------
 #--------------------------------------------------------------
-# Local
+# Locals
 #--------------------------------------------------------------
 locals {
-  tags = {
-    for k, v in(var.tags == null ? {} : var.tags) : k => v if lookup(data.aws_default_tags.provider.tags, k, null) == null || lookup(data.aws_default_tags.provider.tags, k, null) != v
-  }
   url   = "https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/Container-Insights-metrics-ECS.html"
   count = length(var.dimensions) > 0 ? length(var.dimensions) : 1
+
   names = length(var.dimensions) > 0 ? flatten([
     for r in var.dimensions : {
       name = format("%s-", r.TaskDefinitionFamily)
@@ -18,17 +18,14 @@ locals {
   }]
   is_dimensions = length(var.dimensions) > 0 ? true : false
 }
-#--------------------------------------------------------------
-# Use this data source to get the default tags configured on the provider.
-#--------------------------------------------------------------
-data "aws_default_tags" "provider" {}
 
 #--------------------------------------------------------------
 # For CPU Utilization
 # Provides a CloudWatch Metric Alarm resource.
 #--------------------------------------------------------------
 resource "aws_cloudwatch_metric_alarm" "cpu_utilization" {
-  count               = var.is_enabled && var.threshold.enabled_cpu_utilization ? local.count : 0
+  count = var.is_enabled && var.threshold.enabled_cpu_utilization ? local.count : 0
+
   alarm_name          = "${var.name_prefix}metric-ecs-container-insights-${local.names[count.index].name}cpu-utilization"
   comparison_operator = "GreaterThanOrEqualToThreshold"
   evaluation_periods  = 1
@@ -64,7 +61,8 @@ resource "aws_cloudwatch_metric_alarm" "cpu_utilization" {
       dimensions  = local.is_dimensions ? var.dimensions[count.index] : null
     }
   }
-  tags = local.tags
+
+  tags = var.tags
 }
 
 #--------------------------------------------------------------
@@ -72,7 +70,8 @@ resource "aws_cloudwatch_metric_alarm" "cpu_utilization" {
 # Provides a CloudWatch Metric Alarm resource.
 #--------------------------------------------------------------
 resource "aws_cloudwatch_metric_alarm" "memory_utilization" {
-  count               = var.is_enabled && var.threshold.enabled_memory_utilization ? local.count : 0
+  count = var.is_enabled && var.threshold.enabled_memory_utilization ? local.count : 0
+
   alarm_name          = "${var.name_prefix}metric-ecs-container-insights-${local.names[count.index].name}memory-utilization"
   comparison_operator = "GreaterThanOrEqualToThreshold"
   evaluation_periods  = 1
@@ -108,5 +107,6 @@ resource "aws_cloudwatch_metric_alarm" "memory_utilization" {
       dimensions  = local.is_dimensions ? var.dimensions[count.index] : null
     }
   }
-  tags = local.tags
+
+  tags = var.tags
 }

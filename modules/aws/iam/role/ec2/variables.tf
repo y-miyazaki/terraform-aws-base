@@ -14,7 +14,7 @@ variable "aws_iam_role" {
   )
   description = "(Optional) Provides an IAM role."
   default = {
-    description = "Role for EC2."
+    description = "IAM role for EC2."
     name        = "ec2-role"
     path        = "/"
   }

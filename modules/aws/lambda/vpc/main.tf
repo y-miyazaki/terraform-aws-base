@@ -1,35 +1,31 @@
 #--------------------------------------------------------------
-# Locals
+# Module: aws/lambda/vpc
+# Purpose: Provision subnets, security group, and IAM role/policy resources for Lambda functions requiring VPC access.
+# Notes: Simplified networking constructs; future improvement: optional NACLs and SG ingress/egress customization via variables.
 #--------------------------------------------------------------
-locals {
-  tags = {
-    for k, v in(var.tags == null ? {} : var.tags) : k => v if lookup(data.aws_default_tags.provider.tags, k, null) == null || lookup(data.aws_default_tags.provider.tags, k, null) != v
-  }
-}
-#--------------------------------------------------------------
-# Use this data source to get the default tags configured on the provider.
-#--------------------------------------------------------------
-data "aws_default_tags" "provider" {}
-
 #--------------------------------------------------------------
 # Provides an VPC subnet resource.
 #--------------------------------------------------------------
 resource "aws_subnet" "this" {
-  count                   = length(var.aws_subnet)
-  availability_zone       = lookup(var.aws_subnet[count.index], "availability_zone")
-  cidr_block              = lookup(var.aws_subnet[count.index], "cidr_block")
-  map_public_ip_on_launch = lookup(var.aws_subnet[count.index], "map_public_ip_on_launch", false)
-  outpost_arn             = lookup(var.aws_subnet[count.index], "outpost_arn", null)
-  vpc_id                  = lookup(var.aws_subnet[count.index], "vpc_id", null)
-  tags                    = local.tags
+  count = length(var.aws_subnet)
+
+  availability_zone       = try(var.aws_subnet[count.index].availability_zone)
+  cidr_block              = try(var.aws_subnet[count.index].cidr_block)
+  map_public_ip_on_launch = try(var.aws_subnet[count.index].map_public_ip_on_launch, false)
+  outpost_arn             = try(var.aws_subnet[count.index].outpost_arn, null)
+  vpc_id                  = try(var.aws_subnet[count.index].vpc_id, null)
+
+  tags = var.tags
 }
+
 #--------------------------------------------------------------
 # Provides a resource to create an association between a route table and a subnet or a route table and an internet gateway or virtual private gateway.
 #--------------------------------------------------------------
 resource "aws_route_table_association" "this" {
-  count          = length(var.aws_subnet)
+  count = length(var.aws_subnet)
+
   subnet_id      = element(aws_subnet.this[*].id, count.index)
-  route_table_id = lookup(var.aws_route_table_association, "route_table_id")
+  route_table_id = try(var.aws_route_table_association.route_table_id)
 }
 
 #--------------------------------------------------------------
@@ -37,8 +33,8 @@ resource "aws_route_table_association" "this" {
 #--------------------------------------------------------------
 # tfsec:ignore:aws-ec2-no-public-egress-sgr
 resource "aws_security_group" "this" {
-  name        = lookup(var.aws_security_group, "name")
-  vpc_id      = lookup(var.aws_subnet[0], "vpc_id")
+  name        = try(var.aws_security_group.name)
+  vpc_id      = try(var.aws_subnet[0].vpc_id)
   description = "Allow inbound/outbound traffic"
   ingress {
     description = "from VPC"
@@ -55,32 +51,38 @@ resource "aws_security_group" "this" {
     #tfsec:ignore:AWS009
     cidr_blocks = ["0.0.0.0/0"]
   }
-  tags = local.tags
+
+  tags = var.tags
+
   lifecycle {
     create_before_destroy = true
   }
 }
+
 #--------------------------------------------------------------
 # Provides an IAM role.
 #--------------------------------------------------------------
 resource "aws_iam_role" "this" {
-  description           = lookup(var.aws_iam_role, "description", null)
-  name                  = lookup(var.aws_iam_role, "name")
-  assume_role_policy    = lookup(var.aws_iam_role, "assume_role_policy")
+  assume_role_policy = try(var.aws_iam_role.assume_role_policy)
+
+  description           = try(var.aws_iam_role.description, null)
   force_detach_policies = true
-  path                  = lookup(var.aws_iam_role, "path", "/")
-  tags                  = local.tags
+  name                  = try(var.aws_iam_role.name)
+  path                  = try(var.aws_iam_role.path, "/")
+
+  tags = var.tags
 }
 
 #--------------------------------------------------------------
 # Provides an IAM policy.
 #--------------------------------------------------------------
 resource "aws_iam_policy" "this" {
-  description = lookup(var.aws_iam_policy, "description", null)
-  name        = lookup(var.aws_iam_policy, "name")
-  path        = lookup(var.aws_iam_policy, "path", "/")
-  policy      = lookup(var.aws_iam_policy, "policy")
-  tags        = local.tags
+  description = try(var.aws_iam_policy.description, null)
+  name        = try(var.aws_iam_policy.name)
+  path        = try(var.aws_iam_policy.path, "/")
+  policy      = try(var.aws_iam_policy.policy)
+
+  tags = var.tags
 }
 
 #--------------------------------------------------------------

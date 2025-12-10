@@ -1,44 +1,41 @@
 #--------------------------------------------------------------
-# Locals
+# Module: aws/security/config/ssm_automation
+# Purpose: IAM role and policy for SSM Automation remediation runbooks used by Config remediation configurations (e.g., S3 public access block, SG SSH restriction, CloudFront HTTPS enforcement).
+# Notes: Grants broad permissions (*) for remediation actions; future improvement: restrict resources and scope per action; tags standardized via locals.
 #--------------------------------------------------------------
-locals {
-  tags = {
-    for k, v in(var.tags == null ? {} : var.tags) : k => v if lookup(data.aws_default_tags.provider.tags, k, null) == null || lookup(data.aws_default_tags.provider.tags, k, null) != v
-  }
-}
-#--------------------------------------------------------------
-# Use this data source to get the default tags configured on the provider.
-#--------------------------------------------------------------
-data "aws_default_tags" "provider" {}
-
 #--------------------------------------------------------------
 # Provides an IAM role.
 #--------------------------------------------------------------
 resource "aws_iam_role" "this" {
-  count              = var.is_enabled ? 1 : 0
-  name               = lookup(var.aws_iam_role, "name")
-  assume_role_policy = <<POLICY
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Action": "sts:AssumeRole",
-      "Principal": {
-        "Service": "ssm.amazonaws.com"
-      },
-      "Effect": "Allow"
-    }
-  ]
+  count = var.is_enabled ? 1 : 0
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = "sts:AssumeRole"
+        Effect = "Allow"
+        Principal = {
+          Service = "ssm.amazonaws.com"
+        }
+      }
+    ]
+  })
+
+  description           = try(var.aws_iam_role.description, null)
+  force_detach_policies = true
+  name                  = var.aws_iam_role.name
+  path                  = try(var.aws_iam_role.path, "/")
+
+  tags = var.tags
 }
-POLICY
-  path               = lookup(var.aws_iam_role, "path", "/")
-  tags               = local.tags
-}
+
 #--------------------------------------------------------------
 # Generates an IAM policy document in JSON format for use with resources that expect policy documents such as aws_iam_policy.
 #--------------------------------------------------------------
 data "aws_iam_policy_document" "this" {
   count = var.is_enabled ? 1 : 0
+
   statement {
     effect = "Allow"
     actions = [
@@ -75,18 +72,22 @@ data "aws_iam_policy_document" "this" {
 # Provides an IAM policy.
 #--------------------------------------------------------------
 resource "aws_iam_policy" "this" {
-  count       = var.is_enabled ? 1 : 0
-  description = lookup(var.aws_iam_policy, "description", null)
-  name        = lookup(var.aws_iam_policy, "name")
-  path        = lookup(var.aws_iam_policy, "path", "/")
+  count = var.is_enabled ? 1 : 0
+
+  description = try(var.aws_iam_policy.description, null)
+  name        = var.aws_iam_policy.name
+  path        = try(var.aws_iam_policy.path, "/")
   policy      = data.aws_iam_policy_document.this[0].json
-  tags        = local.tags
+
+  tags = var.tags
 }
+
 #--------------------------------------------------------------
 # Attaches a Managed IAM Policy to an IAM role
 #--------------------------------------------------------------
 resource "aws_iam_role_policy_attachment" "this" {
-  count      = var.is_enabled ? 1 : 0
+  count = var.is_enabled ? 1 : 0
+
   role       = aws_iam_role.this[0].name
   policy_arn = aws_iam_policy.this[0].arn
 }

@@ -49,7 +49,7 @@ variable "aws_iam_role" {
   )
   description = "(Optional) The resource of aws_iam_role."
   default = {
-    description = "Role for VPC Flow log."
+    description = "IAM role for VPC Flow log."
     name        = "vpc-flow-logs-role"
     path        = "/"
   }
@@ -67,7 +67,7 @@ variable "aws_iam_policy" {
   )
   description = "(Optional) The resource of aws_iam_policy."
   default = {
-    description = "Policy for VPC Flow log."
+    description = "IAM policy for VPC Flow log."
     name        = "vpc-flow-logs-policy"
     path        = "/"
   }

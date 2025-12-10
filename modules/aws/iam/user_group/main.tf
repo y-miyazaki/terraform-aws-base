@@ -1,11 +1,13 @@
 #--------------------------------------------------------------
-# Local
+# Module: aws/iam/user_group
+# Purpose: Manage IAM users, groups, MFA enforcement, group memberships, and optional custom/managed policies.
+# Notes: MFA base policy applied conditionally; future improvement: externalize PGP key and add variable validation for policy blocks.
+#--------------------------------------------------------------
+#--------------------------------------------------------------
+# Locals
 #--------------------------------------------------------------
 locals {
-  tags = {
-    for k, v in(var.tags == null ? {} : var.tags) : k => v if lookup(data.aws_default_tags.provider.tags, k, null) == null || lookup(data.aws_default_tags.provider.tags, k, null) != v
-  }
-  group = flatten([
+  group = var.is_enabled ? flatten([
     for group, group_property in var.group : {
       group           = group
       users           = group_property.users
@@ -13,8 +15,8 @@ locals {
       is_enabled_mfa  = group_property.is_enabled_mfa
     }
     ]
-  )
-  group_policy_arns = flatten([
+  ) : []
+  group_policy_arns = var.is_enabled ? flatten([
     for group, group_property in var.group : [
       for key, policy in group_property.policy : {
         group      = group
@@ -22,60 +24,61 @@ locals {
         key        = key
       }
     ]
-  ])
+  ]) : []
 }
-#--------------------------------------------------------------
-# Use this data source to get the default tags configured on the provider.
-#--------------------------------------------------------------
-data "aws_default_tags" "provider" {}
 
 #--------------------------------------------------------------
 # Provides an IAM user.
 #--------------------------------------------------------------
 resource "aws_iam_user" "this" {
-  for_each      = var.user
+  for_each = var.is_enabled ? var.user : {}
+
   name          = each.key
   path          = "/"
   force_destroy = true
 }
+
 #--------------------------------------------------------------
 # Manages an IAM User Login Profile with limited support for password creation during Terraform resource creation. Uses PGP to encrypt the password for safe transport to the user. PGP keys can be obtained from Keybase.
 #--------------------------------------------------------------
 resource "aws_iam_user_login_profile" "this" {
-  for_each                = { for k, v in var.user : k => v if v.is_console_access }
+  for_each = var.is_enabled ? { for k, v in var.user : k => v if v.is_console_access } : {}
+
   user                    = each.key
   pgp_key                 = "keybase:exp_enechange"
   password_reset_required = true
-  # Check this following document.
-  # https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_user_login_profile#import
+
+  depends_on = [
+    aws_iam_user.this,
+  ]
+
   lifecycle {
+    # Check this following document.
+    # https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_user_login_profile#import
     ignore_changes = [
       password_length,
       password_reset_required,
       pgp_key,
     ]
   }
-  depends_on = [
-    aws_iam_user.this,
-  ]
 }
+
 #--------------------------------------------------------------
 # IAM Group for administrator
 #--------------------------------------------------------------
 resource "aws_iam_group" "this" {
-  for_each = {
-    for group in local.group : group.group => group
-  }
+  for_each = { for group in local.group : group.group => group }
+
   name = each.value.group
   path = "/"
 }
+
 #--------------------------------------------------------------
 # IAM Group Mapping
 #--------------------------------------------------------------
 resource "aws_iam_group_membership" "this" {
-  for_each = {
-    for group in local.group : group.group => group
-  }
+  for_each = { for group in local.group : group.group => group }
+
   name  = "${each.key}-membership"
   users = each.value.users
   group = each.value.group
@@ -91,117 +94,118 @@ resource "aws_iam_group_membership" "this" {
 #--------------------------------------------------------------
 #tfsec:ignore:AWS099
 resource "aws_iam_policy" "this" {
-  name   = "${var.name_prefix}iam-group-base-policy"
-  path   = "/"
-  policy = <<POLICY
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Sid": "AllowAllUsersToListAccounts",
-      "Effect": "Allow",
-      "Action": [
-        "iam:ListAccountAliases",
-        "iam:ListUsers",
-        "iam:ListVirtualMFADevices",
-        "iam:GetAccountPasswordPolicy",
-        "iam:GetAccountSummary"
-      ],
-      "Resource": "*"
-    },
-    {
-      "Sid": "AllowIndividualUserToSeeAndManageOnlyTheirOwnAccountInformation",
-      "Effect": "Allow",
-      "Action": [
-        "iam:ChangePassword",
-        "iam:CreateAccessKey",
-        "iam:CreateLoginProfile",
-        "iam:DeleteAccessKey",
-        "iam:DeleteLoginProfile",
-        "iam:GetLoginProfile",
-        "iam:ListAccessKeys",
-        "iam:UpdateAccessKey",
-        "iam:UpdateLoginProfile",
-        "iam:ListSigningCertificates",
-        "iam:DeleteSigningCertificate",
-        "iam:UpdateSigningCertificate",
-        "iam:UploadSigningCertificate",
-        "iam:ListSSHPublicKeys",
-        "iam:GetSSHPublicKey",
-        "iam:DeleteSSHPublicKey",
-        "iam:UpdateSSHPublicKey",
-        "iam:UploadSSHPublicKey"
-      ],
-      "Resource": "arn:aws:iam::*:user/$${aws:username}"
-    },
-    {
-      "Sid": "AllowIndividualUserToListOnlyTheirOwnMFA",
-      "Effect": "Allow",
-      "Action": ["iam:ListMFADevices"],
-      "Resource": [
-        "arn:aws:iam::*:mfa/*",
-        "arn:aws:iam::*:user/$${aws:username}"
-      ]
-    },
-    {
-      "Sid": "AllowIndividualUserToManageTheirOwnMFA",
-      "Effect": "Allow",
-      "Action": [
-        "iam:CreateVirtualMFADevice",
-        "iam:DeleteVirtualMFADevice",
-        "iam:EnableMFADevice",
-        "iam:ResyncMFADevice"
-      ],
-      "Resource": [
-        "arn:aws:iam::*:mfa/*",
-        "arn:aws:iam::*:user/$${aws:username}"
-      ]
-    },
-    {
-      "Sid": "AllowIndividualUserToDeactivateOnlyTheirOwnMFAOnlyWhenUsingMFA",
-      "Effect": "Allow",
-      "Action": ["iam:DeactivateMFADevice"],
-      "Resource": [
-        "arn:aws:iam::*:mfa/*",
-        "arn:aws:iam::*:user/$${aws:username}"
-      ],
-      "Condition": {
-        "Bool": {
-          "aws:MultiFactorAuthPresent": "true"
+  count = var.is_enabled ? 1 : 0
+
+  name = "${var.name_prefix}iam-group-base-policy"
+  path = "/"
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Sid    = "AllowAllUsersToListAccounts"
+        Effect = "Allow"
+        Action = [
+          "iam:ListAccountAliases",
+          "iam:ListUsers",
+          "iam:ListVirtualMFADevices",
+          "iam:GetAccountPasswordPolicy",
+          "iam:GetAccountSummary"
+        ]
+        Resource = "*"
+      },
+      {
+        Sid    = "AllowIndividualUserToSeeAndManageOnlyTheirOwnAccountInformation"
+        Effect = "Allow"
+        Action = [
+          "iam:ChangePassword",
+          "iam:CreateAccessKey",
+          "iam:CreateLoginProfile",
+          "iam:DeleteAccessKey",
+          "iam:DeleteLoginProfile",
+          "iam:GetLoginProfile",
+          "iam:ListAccessKeys",
+          "iam:UpdateAccessKey",
+          "iam:UpdateLoginProfile",
+          "iam:ListSigningCertificates",
+          "iam:DeleteSigningCertificate",
+          "iam:UpdateSigningCertificate",
+          "iam:UploadSigningCertificate",
+          "iam:ListSSHPublicKeys",
+          "iam:GetSSHPublicKey",
+          "iam:DeleteSSHPublicKey",
+          "iam:UpdateSSHPublicKey",
+          "iam:UploadSSHPublicKey"
+        ]
+        Resource = "arn:aws:iam::*:user/$${aws:username}"
+      },
+      {
+        Sid    = "AllowIndividualUserToListOnlyTheirOwnMFA"
+        Effect = "Allow"
+        Action = ["iam:ListMFADevices"]
+        Resource = [
+          "arn:aws:iam::*:mfa/*",
+          "arn:aws:iam::*:user/$${aws:username}"
+        ]
+      },
+      {
+        Sid    = "AllowIndividualUserToManageTheirOwnMFA"
+        Effect = "Allow"
+        Action = [
+          "iam:CreateVirtualMFADevice",
+          "iam:DeleteVirtualMFADevice",
+          "iam:EnableMFADevice",
+          "iam:ResyncMFADevice"
+        ]
+        Resource = [
+          "arn:aws:iam::*:mfa/*",
+          "arn:aws:iam::*:user/$${aws:username}"
+        ]
+      },
+      {
+        Sid    = "AllowIndividualUserToDeactivateOnlyTheirOwnMFAOnlyWhenUsingMFA"
+        Effect = "Allow"
+        Action = ["iam:DeactivateMFADevice"]
+        Resource = [
+          "arn:aws:iam::*:mfa/*",
+          "arn:aws:iam::*:user/$${aws:username}"
+        ]
+        Condition = {
+          Bool = {
+            "aws:MultiFactorAuthPresent" = "true"
+          }
+        }
+      },
+      {
+        Sid    = "BlockMostAccessUnlessSignedInWithMFA"
+        Effect = "Deny"
+        NotAction = [
+          "iam:CreateVirtualMFADevice",
+          "iam:DeleteVirtualMFADevice",
+          "iam:ListVirtualMFADevices",
+          "iam:EnableMFADevice",
+          "iam:ResyncMFADevice",
+          "iam:ListAccountAliases",
+          "iam:ListUsers",
+          "iam:ListSSHPublicKeys",
+          "iam:ListAccessKeys",
+          "iam:ListServiceSpecificCredentials",
+          "iam:ListMFADevices",
+          "iam:GetAccountSummary",
+          "sts:GetSessionToken",
+          "iam:CreateLoginProfile",
+          "iam:ChangePassword"
+        ]
+        Resource = "*"
+        Condition = {
+          BoolIfExists = {
+            "aws:MultiFactorAuthPresent" = "false"
+          }
         }
       }
-    },
-    {
-      "Sid": "BlockMostAccessUnlessSignedInWithMFA",
-      "Effect": "Deny",
-      "NotAction": [
-        "iam:CreateVirtualMFADevice",
-        "iam:DeleteVirtualMFADevice",
-        "iam:ListVirtualMFADevices",
-        "iam:EnableMFADevice",
-        "iam:ResyncMFADevice",
-        "iam:ListAccountAliases",
-        "iam:ListUsers",
-        "iam:ListSSHPublicKeys",
-        "iam:ListAccessKeys",
-        "iam:ListServiceSpecificCredentials",
-        "iam:ListMFADevices",
-        "iam:GetAccountSummary",
-        "sts:GetSessionToken",
-        "iam:CreateLoginProfile",
-        "iam:ChangePassword"
-      ],
-      "Resource": "*",
-      "Condition": {
-        "BoolIfExists": {
-          "aws:MultiFactorAuthPresent": "false"
-        }
-      }
-    }
-  ]
-}
-POLICY
-  tags   = local.tags
+    ]
+  })
+
+  tags = var.tags
 }
 
 #--------------------------------------------------------------
@@ -209,24 +213,31 @@ POLICY
 #--------------------------------------------------------------
 resource "aws_iam_group_policy_attachment" "mfa" {
   for_each = {
-    for group in local.group : group.group => group if(lookup(group, "is_enabled_mfa", true))
+
+    for group in local.group : group.group => group if(try(group.is_enabled_mfa, true))
   }
+
   group      = each.value.group
-  policy_arn = aws_iam_policy.this.arn
+  policy_arn = var.is_enabled ? aws_iam_policy.this[0].arn : null
+
   depends_on = [
     aws_iam_group.this,
     aws_iam_policy.this,
   ]
 }
+
 #--------------------------------------------------------------
 # Attaches a Managed IAM Policy to an IAM group
 #--------------------------------------------------------------
 resource "aws_iam_group_policy_attachment" "this" {
   for_each = {
+
     for tm in local.group_policy_arns : "${tm.group}-${tm.key}" => tm
   }
+
   group      = each.value.group
   policy_arn = each.value.policy_arn
+
   depends_on = [
     aws_iam_group.this,
   ]
@@ -237,76 +248,93 @@ resource "aws_iam_group_policy_attachment" "this" {
 #--------------------------------------------------------------
 data "aws_iam_policy_document" "custom" {
   for_each = {
+
     for group in local.group : group.group => group if(group.policy_document != null)
   }
+
   dynamic "statement" {
-    for_each = lookup(each.value.policy_document, "statement", [])
+    for_each = try(each.value.policy_document.statement, [])
+
     content {
-      sid           = lookup(statement.value, "sid", null)
-      effect        = lookup(statement.value, "effect", null)
-      actions       = lookup(statement.value, "actions", null)
-      not_actions   = lookup(statement.value, "not_actions", null)
-      resources     = lookup(statement.value, "resources", null)
-      not_resources = lookup(statement.value, "not_resources", null)
+      sid           = try(statement.value.sid, null)
+      effect        = try(statement.value.effect, null)
+      actions       = try(statement.value.actions, null)
+      not_actions   = try(statement.value.not_actions, null)
+      resources     = try(statement.value.resources, null)
+      not_resources = try(statement.value.not_resources, null)
       dynamic "principals" {
-        for_each = lookup(statement.value, "principals", [])
+        for_each = try(statement.value.principals, [])
+
         content {
-          type        = lookup(principals.value, "type", null)
-          identifiers = lookup(principals.value, "identifiers", null)
+          type        = try(principals.value.type, null)
+          identifiers = try(principals.value.identifiers, null)
         }
       }
       dynamic "not_principals" {
-        for_each = lookup(statement.value, "not_principals", [])
+        for_each = try(statement.value.not_principals, [])
+
         content {
-          type        = lookup(not_principals.value, "type", null)
-          identifiers = lookup(not_principals.value, "identifiers", null)
+          type        = try(not_principals.value.type, null)
+          identifiers = try(not_principals.value.identifiers, null)
         }
       }
       dynamic "condition" {
-        for_each = lookup(statement.value, "condition", [])
+        for_each = try(statement.value.condition, [])
+
         content {
-          test     = lookup(condition.value, "test", null)
-          variable = lookup(condition.value, "variable", null)
-          values   = lookup(condition.value, "values", null)
+          test     = try(condition.value.test, null)
+          variable = try(condition.value.variable, null)
+          values   = try(condition.value.values, null)
         }
       }
     }
   }
 }
+
 #--------------------------------------------------------------
 # Provides an IAM policy.
 #--------------------------------------------------------------
 resource "aws_iam_policy" "custom" {
   for_each = {
+
     for group in local.group : group.group => group if(group.policy_document != null)
   }
-  description = lookup(each.value.policy_document, "description", null)
-  name        = "${var.name_prefix}${lookup(each.value.policy_document, "name", null)}"
+
+  description = try(each.value.policy_document.description, null)
+  name        = "${var.name_prefix}${try(each.value.policy_document.name, null)}"
   #   name_prefix = var.name_prefix
-  path   = lookup(each.value.policy_document, "path", "/")
+  path   = try(each.value.policy_document.path, "/")
   policy = data.aws_iam_policy_document.custom[each.key].json
+
+  tags = var.tags
+
   depends_on = [
     aws_iam_group.this,
   ]
-  tags = local.tags
 }
+
 #--------------------------------------------------------------
 # Attaches a Managed IAM Policy to an IAM group
 #--------------------------------------------------------------
 resource "aws_iam_group_policy_attachment" "custom" {
   for_each = {
+
     for group in local.group : group.group => group if(group.policy_document != null)
   }
+
   group      = each.value.group
   policy_arn = aws_iam_policy.custom[each.key].arn
+
   depends_on = [
     aws_iam_group.this,
   ]
 }
+
 #--------------------------------------------------------------
 # Provides an IAM access key. This is a set of credentials that allow API requests to be made as an IAM user.
 #--------------------------------------------------------------
 resource "aws_iam_access_key" "this" {
-  for_each = { for k, v in var.user : k => v if v.is_access_key }
-  user     = each.key
+  for_each = var.is_enabled ? { for k, v in var.user : k => v if v.is_access_key } : {}
+
+  user = each.key
 }

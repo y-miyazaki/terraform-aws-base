@@ -14,7 +14,7 @@ variable "aws_iam_role" {
   )
   description = "(Optional) Provides an IAM role."
   default = {
-    description = "Role for Monitoring RDS."
+    description = "IAM role for Monitoring RDS."
     name        = "monitoring-rds-role"
     path        = "/"
   }

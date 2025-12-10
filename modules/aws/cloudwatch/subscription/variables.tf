@@ -33,7 +33,7 @@ variable "aws_iam_role" {
   )
   description = "(Optional) Provides an IAM role."
   default = {
-    description = "Roles for CloudWatch Subscription."
+    description = "IAM role forCloudWatch Subscription."
     name        = "cloudwatch-subscription-role"
     path        = "/"
   }
@@ -51,7 +51,7 @@ variable "aws_iam_policy" {
   )
   description = "(Optional) Provides an IAM policy."
   default = {
-    description = "Policy for CloudWatch Subscription."
+    description = "IAM policy for CloudWatch Subscription."
     name        = "cloudwatch-subscription-policy"
     path        = "/"
   }

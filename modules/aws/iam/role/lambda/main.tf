@@ -1,50 +1,46 @@
 #--------------------------------------------------------------
-# Locals
+# Module: aws/iam/role/lambda
+# Purpose: Create an IAM role and inline policy for Lambda execution with optional VPC ENI management policy attachment.
+# Notes: Ensures tagging via unified local; future improvement: parameterize VPC ENI policy attachment for finer control.
 #--------------------------------------------------------------
-locals {
-  tags = {
-    for k, v in(var.tags == null ? {} : var.tags) : k => v if lookup(data.aws_default_tags.provider.tags, k, null) == null || lookup(data.aws_default_tags.provider.tags, k, null) != v
-  }
-}
-#--------------------------------------------------------------
-# Use this data source to get the default tags configured on the provider.
-#--------------------------------------------------------------
-data "aws_default_tags" "provider" {}
 #--------------------------------------------------------------
 # Provides an IAM role.
 #--------------------------------------------------------------
 resource "aws_iam_role" "this" {
-  description           = lookup(var.aws_iam_role, "description", null)
-  name                  = lookup(var.aws_iam_role, "name")
-  assume_role_policy    = <<POLICY
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Action": "sts:AssumeRole",
-      "Principal": {
-        "Service": "lambda.amazonaws.com"
-      },
-      "Effect": "Allow"
-    }
-  ]
-}
-POLICY
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = "sts:AssumeRole"
+        Effect = "Allow"
+        Principal = {
+          Service = "lambda.amazonaws.com"
+        }
+      }
+    ]
+  })
+
+  description           = try(var.aws_iam_role.description, null)
   force_detach_policies = true
-  path                  = lookup(var.aws_iam_role, "path", "/")
-  tags                  = local.tags
+  name                  = var.aws_iam_role.name
+  path                  = try(var.aws_iam_role.path, "/")
+
+  tags = var.tags
 }
+
 #--------------------------------------------------------------
 # Provides an IAM policy.
 #--------------------------------------------------------------
 #tfsec:ignore:AWS099
 resource "aws_iam_policy" "this" {
-  description = lookup(var.aws_iam_policy, "description", null)
-  name        = lookup(var.aws_iam_policy, "name")
-  path        = lookup(var.aws_iam_policy, "path", "/")
-  policy      = lookup(var.aws_iam_policy, "policy")
-  tags        = local.tags
+  description = try(var.aws_iam_policy.description, null)
+  name        = var.aws_iam_policy.name
+  path        = try(var.aws_iam_policy.path, "/")
+  policy      = var.aws_iam_policy.policy
+
+  tags = var.tags
 }
+
 #--------------------------------------------------------------
 # Attaches a Managed IAM Policy to an IAM role
 #--------------------------------------------------------------
@@ -57,7 +53,8 @@ resource "aws_iam_role_policy_attachment" "this" {
 # Attaches a Managed IAM Policy to an IAM role
 #--------------------------------------------------------------
 resource "aws_iam_role_policy_attachment" "vpc" {
-  count      = var.is_vpc ? 1 : 0
+  count = var.is_vpc ? 1 : 0
+
   role       = aws_iam_role.this.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaENIManagementAccess"
 }

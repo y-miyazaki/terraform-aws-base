@@ -1,0 +1,191 @@
+name: reusable-ci-script
+
+# Reusable workflow: lint and validate repository shell scripts
+# - Uses shellcheck and shfmt actions when available
+# - Performs bash syntax checks and shebang verification
+# - Does NOT call scripts/validate_all_scripts.sh directly (reference only)
+
+on:
+  workflow_call:
+    inputs:
+      fail_level:
+        description: "Otherwise, exit code 1 for reviewdog if it finds at least 1 issue with severity greater than or equal to the given level. Possible values: [none,any,info,warning,error]"
+        required: false
+        type: string
+        default: "warning"
+      fail_on_warnings:
+        description: "When true, treat warnings as failures for selected steps (boolean)."
+        required: false
+        type: boolean
+        default: false
+      script_path:
+        description: "Comma-separated glob(s) of script files to check. If empty, all **/*.sh are checked"
+        required: false
+        type: string
+        default: ""
+      shellcheck_version:
+        description: "ShellCheck version to use"
+        required: false
+        type: string
+        default: "0.10.0"
+
+env:
+  SCRIPT_PATH: ${{ inputs.script_path }}
+
+jobs:
+  lint:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    permissions:
+      checks: write
+      contents: read
+      pull-requests: write
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Setup Expand file list
+        id: file-list
+        run: |
+          # shellcheck disable=SC2086,SC2046
+          set -euo pipefail
+          # If script_path is empty, check all shell scripts in the repo
+          raw_input="${SCRIPT_PATH}"
+          if [ -z "$raw_input" ]; then
+            raw_input='**/*.sh'
+          fi
+          IFS=',' read -ra patterns <<< "$raw_input"
+          files=()
+          for p in "${patterns[@]}"; do
+            # globs are expanded by the shell; if no match, continue
+            shopt -s nullglob
+            for f in $p; do
+              files+=("$f")
+            done
+            shopt -u nullglob
+          done
+          if [ ${#files[@]} -eq 0 ]; then
+            {
+              echo "no_files=true"
+              echo "files_list="
+            } >> "$GITHUB_OUTPUT"
+          else
+            printf "%s\n" "${files[@]}" > /tmp/scripts_to_check.txt
+            # Join files with a comma (no trailing comma) for reviewdog 'path' input
+            files_csv=$(IFS=,; echo "${files[*]}")
+            {
+              echo "no_files=false"
+              echo "files_list=$files_csv"
+            } >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Exec shfmt + reviewdog (PR comments)
+        if: steps.file-list.outputs.no_files == 'false' && github.event_name == 'pull_request'
+        uses: reviewdog/action-shfmt@d8f080930b9be5847b4f97e9f4122b81a82aaeac # v1.0.4
+        with:
+          filter_mode: file
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          level: error
+          reviewdog_flags: "-fail-level=${{ inputs.fail_level }} -reporter=github-pr-review"
+          shfmt_flags: "-l -i 4 -ci -bn -sr"
+          workdir: "."
+
+      - name: Exec shfmt + reviewdog (push/check)
+        if: steps.file-list.outputs.no_files == 'false' && github.event_name != 'pull_request'
+        uses: reviewdog/action-shfmt@d8f080930b9be5847b4f97e9f4122b81a82aaeac # v1.0.4
+        with:
+          filter_mode: file
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          level: error
+          reviewdog_flags: "-fail-level=${{ inputs.fail_level }} -reporter=github-check"
+          shfmt_flags: "-l -s -i 4 -ci -bn -sr"
+          workdir: "."
+
+      - name: Exec ShellCheck + reviewdog (PR comments)
+        if: steps.file-list.outputs.no_files == 'false' && github.event_name == 'pull_request'
+        uses: reviewdog/action-shellcheck@4c07458293ac342d477251099501a718ae5ef86e # v1.32.0
+        with:
+          fail_level: ${{ inputs.fail_level }}
+          filter_mode: file
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          level: error
+          path: ${{ steps.file-list.outputs.files_list }}
+          reporter: github-pr-review
+          shellcheck_flags: "-x"
+
+      - name: Exec ShellCheck + reviewdog (push/check)
+        if: steps.file-list.outputs.no_files == 'false' && github.event_name != 'pull_request'
+        uses: reviewdog/action-shellcheck@4c07458293ac342d477251099501a718ae5ef86e # v1.32.0
+        with:
+          fail_level: ${{ inputs.fail_level }}
+          filter_mode: file
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          level: error
+          path: ${{ steps.file-list.outputs.files_list }}
+          reporter: github-check
+          shellcheck_flags: "-x"
+
+      - name: Exec Bash syntax check (bash -n)
+        if: steps.file-list.outputs.no_files == 'false'
+        run: |
+          # shellcheck disable=SC2086
+          set -euo pipefail
+          while IFS= read -r f; do
+            echo "Checking syntax: $f"
+            bash -n "$f"
+          done < /tmp/scripts_to_check.txt
+
+      - name: Exec Shebang check (must be bash)
+        if: steps.file-list.outputs.no_files == 'false'
+        run: |
+          # shellcheck disable=SC2086
+          set -euo pipefail
+          while IFS= read -r f; do
+            first_line=$(head -n1 "$f" || true)
+            if [[ "$first_line" != "#!"*"bash"* ]]; then
+              echo "Invalid shebang in $f: $first_line" >&2
+              exit 2
+            fi
+          done < /tmp/scripts_to_check.txt
+
+      - name: Exec Permissions check
+        if: steps.file-list.outputs.no_files == 'false'
+        env:
+          FAIL_ON_WARNINGS: ${{ inputs.fail_on_warnings }}
+        run: |
+          # shellcheck disable=SC2086
+          set -euo pipefail
+          rc=0
+          while IFS= read -r f; do
+            if [[ ! -x "$f" ]]; then
+              # Emit GitHub workflow warning annotation for visibility
+              echo "::warning file=$f::Script is not executable"
+              rc=1
+            fi
+          done < /tmp/scripts_to_check.txt
+
+          if [[ $rc -ne 0 ]]; then
+            if [[ "${FAIL_ON_WARNINGS:-false}" == "true" ]]; then
+              echo "Failing due to non-executable scripts and fail_on_warnings=true" >&2
+              exit 1
+            else
+              echo "One or more scripts are not executable; continue because fail_on_warnings=false"
+            fi
+          fi
+
+      - name: Summary
+        if: always()
+        uses: ./.github/actions/summary
+        with:
+          artifacts: |
+            (none)
+          outputs: |
+            files_list: ${{ steps.file-list.outputs.files_list }}
+          params: |
+            script_path: ${{ inputs.script_path }}
+            fail_level: ${{ inputs.fail_level }}
+          status: "${{ job.status }}"
+          title: "Shell Script Lint"

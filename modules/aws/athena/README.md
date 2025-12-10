@@ -4,7 +4,7 @@
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | ~>1.4 |
-| <a name="requirement_aws"></a> [aws](#requirement\_aws) | ~>5.0 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | ~>6.0 |
 | <a name="requirement_null"></a> [null](#requirement\_null) | ~>3.2.1 |
 | <a name="requirement_template"></a> [template](#requirement\_template) | ~>2.2.0 |
 
@@ -12,8 +12,8 @@
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | 5.35.0 |
-| <a name="provider_null"></a> [null](#provider\_null) | 3.2.2 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | 6.8.0 |
+| <a name="provider_null"></a> [null](#provider\_null) | 3.2.4 |
 | <a name="provider_template"></a> [template](#provider\_template) | 2.2.0 |
 
 ## Modules
@@ -58,6 +58,7 @@ No modules.
 | <a name="input_database_properties"></a> [database\_properties](#input\_database\_properties) | (Optional) Key-value map of custom metadata properties for the database definition. | `any` | `null` | no |
 | <a name="input_enabled_cloudfront"></a> [enabled\_cloudfront](#input\_enabled\_cloudfront) | (Optional) To check CloudFront logs with Athena, specify true. | `bool` | `false` | no |
 | <a name="input_enabled_ses"></a> [enabled\_ses](#input\_enabled\_ses) | (Optional) To check SES logs with Athena, specify true. | `bool` | `false` | no |
+| <a name="input_is_enabled"></a> [is\_enabled](#input\_is\_enabled) | (Optional) Whether to create Athena resources. Set to false to disable the entire module. | `bool` | `true` | no |
 | <a name="input_name_prefix"></a> [name\_prefix](#input\_name\_prefix) | (Optional) Name prefix of all resources. | `string` | `""` | no |
 | <a name="input_ses_log_bucket"></a> [ses\_log\_bucket](#input\_ses\_log\_bucket) | (Required) Specify the bucket where the SES logs are located. s3://{bucket name}/{bucket prefix} | `string` | n/a | yes |
 | <a name="input_ses_table_name"></a> [ses\_table\_name](#input\_ses\_table\_name) | (Optional) Specify the name of the SES table to be created in Athena. | `string` | `"ses_logs"` | no |

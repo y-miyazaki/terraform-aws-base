@@ -2,7 +2,7 @@
 # For AWS Config
 #--------------------------------------------------------------
 #--------------------------------------------------------------
-# Local
+# Locals
 #--------------------------------------------------------------
 locals {
   aws_config_configuration_recorder_config = merge(var.security_config.aws_config_configuration_recorder, {
@@ -27,12 +27,14 @@ locals {
     }
   )
 }
+
 #--------------------------------------------------------------
 # Provides AWS Config.
 #--------------------------------------------------------------
 module "aws_security_config_create_v4" {
-  source                            = "../../modules/aws/security/config/create-v4"
-  is_enabled                        = var.security_config.is_enabled && !var.use_control_tower
+  source     = "../../modules/aws/security/config/create-v4"
+  is_enabled = var.security_config.is_enabled && !var.use_control_tower
+
   is_s3_enabled                     = var.security_config.is_s3_enabled
   aws_config_configuration_recorder = local.aws_config_configuration_recorder_config
   aws_iam_role                      = local.aws_iam_role_config
@@ -52,75 +54,96 @@ module "aws_security_config_create_v4" {
   aws_cloudwatch_event_target = {
     arn = module.lambda_function_config.lambda_function_arn
   }
+
   tags = var.tags
 }
+
 #--------------------------------------------------------------
 # Create SSM Automation Role
 #--------------------------------------------------------------
 module "aws_security_config_ssm_automation" {
-  source         = "../../modules/aws/security/config/ssm_automation"
-  is_enabled     = var.security_config.is_enabled && !var.use_control_tower
+  source     = "../../modules/aws/security/config/ssm_automation"
+  is_enabled = var.security_config.is_enabled && !var.use_control_tower
+
   aws_iam_role   = local.aws_iam_role_ssm_automation
   aws_iam_policy = local.aws_iam_policy_ssm_automation
-  tags           = var.tags
+
+  tags = var.tags
 }
 
 #--------------------------------------------------------------
 # Provides an AWS Config Rule for API Gateway
 #--------------------------------------------------------------
 module "aws_security_config_rule_api_gateway" {
-  source      = "../../modules/aws/security/config/rule/api_gateway"
-  is_enabled  = var.security_config.is_enabled && !var.use_control_tower
+  source     = "../../modules/aws/security/config/rule/api_gateway"
+  is_enabled = var.security_config.is_enabled && !var.use_control_tower
+
   name_prefix = var.name_prefix
-  tags        = var.tags
+
+  tags = var.tags
+
   depends_on = [
     module.aws_security_config_create_v4
   ]
 }
+
 #--------------------------------------------------------------
 # Provides an AWS Config Rule for RDS
 #--------------------------------------------------------------
 module "aws_security_config_rule_rds" {
-  source      = "../../modules/aws/security/config/rule/rds"
-  is_enabled  = var.security_config.is_enabled && !var.use_control_tower
+  source     = "../../modules/aws/security/config/rule/rds"
+  is_enabled = var.security_config.is_enabled && !var.use_control_tower
+
   name_prefix = var.name_prefix
-  tags        = var.tags
+
+  tags = var.tags
+
   depends_on = [
     module.aws_security_config_create_v4
   ]
 }
+
 #--------------------------------------------------------------
 # Provides an AWS Config Rule for Load Balancer
 #--------------------------------------------------------------
 module "aws_security_config_rule_load_balancer" {
-  source      = "../../modules/aws/security/config/rule/load_balancer"
-  is_enabled  = var.security_config.is_enabled && !var.use_control_tower
+  source     = "../../modules/aws/security/config/rule/load_balancer"
+  is_enabled = var.security_config.is_enabled && !var.use_control_tower
+
   name_prefix = var.name_prefix
-  tags        = var.tags
+
+  tags = var.tags
+
   depends_on = [
     module.aws_security_config_create_v4
   ]
 }
+
 #--------------------------------------------------------------
 # Provides an AWS Config Rule for EC2
 #--------------------------------------------------------------
 module "aws_security_config_rule_ec2" {
-  source                                      = "../../modules/aws/security/config/rule/ec2"
-  is_enabled                                  = var.security_config.is_enabled && !var.use_control_tower
+  source     = "../../modules/aws/security/config/rule/ec2"
+  is_enabled = var.security_config.is_enabled && !var.use_control_tower
+
   name_prefix                                 = var.name_prefix
   ssm_automation_assume_role_arn              = module.aws_security_config_ssm_automation.role_arn
   is_disable_public_access_for_security_group = var.security_config.remediation.ec2.is_disable_public_access_for_security_group
-  tags                                        = var.tags
+
+  tags = var.tags
+
   depends_on = [
     module.aws_security_config_create_v4
   ]
 }
+
 #--------------------------------------------------------------
 # Provides an AWS Config Rule for S3
 #--------------------------------------------------------------
 module "aws_security_config_rule_s3" {
-  source                                     = "../../modules/aws/security/config/rule/s3"
-  is_enabled                                 = var.security_config.is_enabled && !var.use_control_tower
+  source     = "../../modules/aws/security/config/rule/s3"
+  is_enabled = var.security_config.is_enabled && !var.use_control_tower
+
   name_prefix                                = var.name_prefix
   ssm_automation_assume_role_arn             = module.aws_security_config_ssm_automation.role_arn
   is_configure_s3_bucket_public_access_block = var.security_config.remediation.s3.is_configure_s3_bucket_public_access_block
@@ -130,7 +153,9 @@ module "aws_security_config_rule_s3" {
   enabled_s3_bucket_encryption_sse_algorithm = var.security_config.remediation.s3.enabled_s3_bucket_encryption_sse_algorithm
   is_restrict_bucket_ssl_requests_only       = var.security_config.remediation.s3.is_restrict_bucket_ssl_requests_only
   is_configure_s3_bucket_versioning          = var.security_config.remediation.s3.is_configure_s3_bucket_versioning
-  tags                                       = var.tags
+
+  tags = var.tags
+
   depends_on = [
     module.aws_security_config_create_v4
   ]
@@ -143,13 +168,9 @@ module "aws_security_config_rule_s3" {
 # tfsec:ignore:aws-lambda-enable-tracing
 module "lambda_function_config" {
   source  = "terraform-aws-modules/lambda/aws"
-  version = "7.20.2"
+  version = "8.1.2"
   create  = var.security_config.is_enabled && !var.use_control_tower
 
-  architectures                           = ["arm64"]
-  create_current_version_allowed_triggers = false
-  create_package                          = false
-  create_role                             = false
   allowed_triggers = {
     trigger = {
       action              = "lambda:InvokeFunction"
@@ -158,25 +179,44 @@ module "lambda_function_config" {
       qualifier           = null
       source_account      = null
       source_arn          = module.aws_security_config_create_v4.arn
-      statement_id        = "ConfigDetectUnexpectedUsage"
+      statement_id        = "ConfigDetection"
       statement_id_prefix = null
     }
   }
-  attach_network_policy             = var.common_lambda.vpc.is_enabled
-  cloudwatch_logs_retention_in_days = var.security_config.aws_cloudwatch_log_group_lambda.retention_in_days
-  environment_variables             = var.security_config.aws_lambda_function.environment
-  description                       = "This program sends the result of config to Slack."
-  function_name                     = "${var.name_prefix}cloudwatch-event-config"
-  handler                           = "cloudwatch_event_config_to_slack"
-  lambda_role                       = module.aws_iam_role_lambda.arn
-  local_existing_package            = "../../lambda/outputs/go_cloudwatch_event_config_to_slack.zip"
-  memory_size                       = 128
-  runtime                           = "provided.al2"
-  timeout                           = 300
-  tags                              = var.tags
-  tracing_mode                      = "PassThrough"
-  vpc_subnet_ids                    = var.common_lambda.vpc.is_enabled ? var.common_lambda.vpc.create_vpc ? module.lambda_vpc.private_subnets : var.common_lambda.vpc.exists.private_subnets : []
-  vpc_security_group_ids            = var.common_lambda.vpc.is_enabled ? var.common_lambda.vpc.create_vpc ? [module.lambda_vpc.default_security_group_id] : [var.common_lambda.vpc.exists.security_group_id] : []
+  architectures                           = ["arm64"]
+  attach_network_policy                   = var.common_lambda.vpc.is_enabled
+  cloudwatch_logs_kms_key_id              = module.kms_key["base"].key_arn
+  cloudwatch_logs_retention_in_days       = try(var.cloudwatch_log_group.override.security_config.retention_in_days, null) == null ? var.cloudwatch_log_group.retention_in_days : var.cloudwatch_log_group.override.security_config.retention_in_days
+  create_current_version_allowed_triggers = false
+  create_package                          = false
+  create_role                             = false
+  description                             = "This program sends the result of config to Slack."
+  environment_variables = {
+    LOGGER_FORMATTER = "json"
+    LOGGER_OUT       = "stdout"
+    LOGGER_LEVEL     = "warn"
+    # Override SLACK_* with priority: override > defaults
+    SLACK_OAUTH_ACCESS_TOKEN = try(var.slack.override.security_config.oauth_access_token, null) != null ? var.slack.override.security_config.oauth_access_token : var.slack.oauth_access_token
+    SLACK_CHANNEL_ID         = try(var.slack.override.security_config.channel_id, null) != null ? var.slack.override.security_config.channel_id : var.slack.channel_id
+  }
+  function_name                 = "${var.name_prefix}cloudwatch-event-config"
+  handler                       = "cloudwatch_event_config_to_slack"
+  lambda_role                   = module.aws_iam_role_lambda.arn
+  layers                        = []
+  local_existing_package        = "../../lambda/outputs/go_cloudwatch_event_config_to_slack.zip"
+  logging_application_log_level = "WARN"
+  logging_log_format            = "JSON"
+  logging_system_log_level      = "WARN"
+  memory_size                   = 128
+  publish                       = false
+  runtime                       = "provided.al2"
+  timeout                       = 300
+  tracing_mode                  = "PassThrough"
+  vpc_security_group_ids        = var.common_lambda.vpc.is_enabled ? var.common_lambda.vpc.create_vpc ? [module.lambda_vpc.default_security_group_id] : [var.common_lambda.vpc.exists.security_group_id] : []
+  vpc_subnet_ids                = var.common_lambda.vpc.is_enabled ? var.common_lambda.vpc.create_vpc ? module.lambda_vpc.private_subnets : var.common_lambda.vpc.exists.private_subnets : []
+
+  tags = var.tags
+
   depends_on = [
     module.lambda_vpc
   ]

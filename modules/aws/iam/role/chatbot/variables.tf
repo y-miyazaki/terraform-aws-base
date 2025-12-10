@@ -1,9 +1,9 @@
 #--------------------------------------------------------------
 # module variables
 #--------------------------------------------------------------
-variable "role_name" {
+variable "name" {
   type        = string
-  description = "(Required) The name of the role."
+  description = "(Required) Name of all resources."
 }
 variable "tags" {
   type        = map(any)

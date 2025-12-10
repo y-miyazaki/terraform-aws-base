@@ -36,17 +36,17 @@ variable "aws_iam_role" {
   description = "(Optional) Provides an IAM role."
   default = {
     ecs = {
-      description = "Role for ECS."
+      description = "IAM role for ECS."
       name        = "ecs-role"
       path        = "/"
     }
     ecs_tasks = {
-      description = "Role for ECS Task."
+      description = "IAM role for ECS Task."
       name        = "ecs-tasks-role"
       path        = "/"
     }
     events = {
-      description = "Role for Events."
+      description = "IAM role for Events."
       name        = "events-role"
       path        = "/"
     }
@@ -70,7 +70,7 @@ variable "aws_iam_policy" {
   description = "(Optional) Provides an IAM policy."
   default = {
     events = {
-      description = "Policy for ECS."
+      description = "IAM policy for ECS."
       name        = "ecs-policy"
       path        = "/"
     }

@@ -1,17 +1,32 @@
 #--------------------------------------------------------------
-# For Redshift
+# Module: aws/metric/redshift
+# Purpose: Provide CloudWatch metric alarms for Amazon Redshift clusters (performance, storage, query, WLM, and resource utilization).
+# Notes: Includes auto-discovery of clusters via external script when enabled; unified tagging pattern applied; future improvement: replace external data source with native data source when possible.
 #--------------------------------------------------------------
 #--------------------------------------------------------------
-# Local
+# Auto-discovery filter module
+#--------------------------------------------------------------
+module "filter" {
+  source     = "../../_internal/auto_discovery_filter"
+  is_enabled = var.is_enabled
+
+  create_auto       = var.create_auto_dimensions
+  source_list       = var.create_auto_dimensions && length(data.external.list) > 0 ? split(",", data.external.list[0].result.list) : []
+  include_list      = var.auto_dimensions_include_list
+  exclude_list      = var.auto_dimensions_exclude_list
+  manual_dimensions = var.dimensions
+}
+
+#--------------------------------------------------------------
+# Locals
 #--------------------------------------------------------------
 locals {
-  tags = {
-    for k, v in(var.tags == null ? {} : var.tags) : k => v if lookup(data.aws_default_tags.provider.tags, k, null) == null || lookup(data.aws_default_tags.provider.tags, k, null) != v
-  }
   url = "https://docs.aws.amazon.com/ja_jp/redshift/latest/mgmt/metrics-listing.html"
-  auto_dimensions = var.create_auto_dimensions ? [
-    for v in split(",", data.external.list[0].result.list) : v if !anytrue([for el in var.auto_dimensions_exclude_list : strcontains(v, el)])
-  ] : []
+
+  # Use filtered results from helper module
+  auto_dimensions = module.filter.filtered_list
+  safe_dimensions = module.filter.safe_manual_dimensions
+
   list = var.create_auto_dimensions ? {
     for v in local.auto_dimensions : v => {
       name = v
@@ -20,23 +35,20 @@ locals {
       }
     }
     } : {
-    for v in var.dimensions : v.ClusterIdentifier => {
+    for v in local.safe_dimensions : v.ClusterIdentifier => {
       name       = v.ClusterIdentifier
       dimensions = v
-    }
+    } if v != null && try(v.ClusterIdentifier, null) != null && v.ClusterIdentifier != ""
   }
 }
-#--------------------------------------------------------------
-# Use this data source to get the default tags configured on the provider.
-#--------------------------------------------------------------
-data "aws_default_tags" "provider" {}
 
 #--------------------------------------------------------------
 # For CommitQueueLength
 # Provides a CloudWatch Metric Alarm resource.
 #--------------------------------------------------------------
 resource "aws_cloudwatch_metric_alarm" "commit_queue_length" {
-  for_each                  = var.is_enabled && var.threshold.enabled_commit_queue_length ? local.list : {}
+  for_each = var.is_enabled && var.threshold.enabled_commit_queue_length ? local.list : {}
+
   alarm_name                = "${var.name_prefix}metric-redshift-${each.value.name}-commit-queue-length"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -53,7 +65,8 @@ resource "aws_cloudwatch_metric_alarm" "commit_queue_length" {
   unit                      = "Count"
   treat_missing_data        = "notBreaching"
   dimensions                = each.value.dimensions
-  tags                      = local.tags
+
+  tags = var.tags
 }
 
 #--------------------------------------------------------------
@@ -61,7 +74,8 @@ resource "aws_cloudwatch_metric_alarm" "commit_queue_length" {
 # Provides a CloudWatch Metric Alarm resource.
 #--------------------------------------------------------------
 resource "aws_cloudwatch_metric_alarm" "concurrency_scaling_active_clusters" {
-  for_each                  = var.is_enabled && var.threshold.enabled_concurrency_scaling_active_clusters ? local.list : {}
+  for_each = var.is_enabled && var.threshold.enabled_concurrency_scaling_active_clusters ? local.list : {}
+
   alarm_name                = "${var.name_prefix}metric-redshift-${each.value.name}-concurrency-scaling-active-clusters"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -78,14 +92,17 @@ resource "aws_cloudwatch_metric_alarm" "concurrency_scaling_active_clusters" {
   unit                      = "Count"
   treat_missing_data        = "notBreaching"
   dimensions                = each.value.dimensions
-  tags                      = local.tags
+
+  tags = var.tags
 }
+
 #--------------------------------------------------------------
 # For ConcurrencyScalingSeconds
 # Provides a CloudWatch Metric Alarm resource.
 #--------------------------------------------------------------
 resource "aws_cloudwatch_metric_alarm" "concurrency_scaling_seconds" {
-  for_each                  = var.is_enabled && var.threshold.enabled_concurrency_scaling_seconds ? local.list : {}
+  for_each = var.is_enabled && var.threshold.enabled_concurrency_scaling_seconds ? local.list : {}
+
   alarm_name                = "${var.name_prefix}metric-redshift-${each.value.name}-concurrency-scaling-seconds"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -96,20 +113,23 @@ resource "aws_cloudwatch_metric_alarm" "concurrency_scaling_seconds" {
   threshold                 = var.threshold.concurrency_scaling_seconds
   actions_enabled           = true
   alarm_actions             = var.alarm_actions
-  alarm_description         = "This is an alarm to check for <${local.url}|Redshift ConcurrencyScalingSeconds>(>= ${var.threshold.concurrency_scaling_seconds})."
+  alarm_description         = "This is an alarm to check for <${local.url}|Redshift ConcurrencyScalingSeconds>(>= ${var.threshold.concurrency_scaling_seconds}s)."
   insufficient_data_actions = var.insufficient_data_actions
   ok_actions                = var.ok_actions
   unit                      = "Seconds"
   treat_missing_data        = "notBreaching"
   dimensions                = each.value.dimensions
-  tags                      = local.tags
+
+  tags = var.tags
 }
+
 #--------------------------------------------------------------
 # For CPUUtilization
 # Provides a CloudWatch Metric Alarm resource.
 #--------------------------------------------------------------
 resource "aws_cloudwatch_metric_alarm" "cpu_utilization" {
-  for_each                  = var.is_enabled && var.threshold.enabled_cpu_utilization ? local.list : {}
+  for_each = var.is_enabled && var.threshold.enabled_cpu_utilization ? local.list : {}
+
   alarm_name                = "${var.name_prefix}metric-redshift-${each.value.name}-cpu-utilization"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -126,14 +146,17 @@ resource "aws_cloudwatch_metric_alarm" "cpu_utilization" {
   unit                      = "Percent"
   treat_missing_data        = "notBreaching"
   dimensions                = each.value.dimensions
-  tags                      = local.tags
+
+  tags = var.tags
 }
+
 #--------------------------------------------------------------
 # For DatabaseConnections
 # Provides a CloudWatch Metric Alarm resource.
 #--------------------------------------------------------------
 resource "aws_cloudwatch_metric_alarm" "database_connections" {
-  for_each                  = var.is_enabled && var.threshold.enabled_database_connections ? local.list : {}
+  for_each = var.is_enabled && var.threshold.enabled_database_connections ? local.list : {}
+
   alarm_name                = "${var.name_prefix}metric-redshift-${each.value.name}-database-connections"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -150,14 +173,17 @@ resource "aws_cloudwatch_metric_alarm" "database_connections" {
   unit                      = "Count"
   treat_missing_data        = "notBreaching"
   dimensions                = each.value.dimensions
-  tags                      = local.tags
+
+  tags = var.tags
 }
+
 #--------------------------------------------------------------
 # For HealthStatus
 # Provides a CloudWatch Metric Alarm resource.
 #--------------------------------------------------------------
 resource "aws_cloudwatch_metric_alarm" "health_status" {
-  for_each                  = var.is_enabled && var.threshold.enabled_health_status ? local.list : {}
+  for_each = var.is_enabled && var.threshold.enabled_health_status ? local.list : {}
+
   alarm_name                = "${var.name_prefix}metric-redshift-${each.value.name}-health-status"
   comparison_operator       = "LessThanThreshold"
   evaluation_periods        = 1
@@ -174,14 +200,17 @@ resource "aws_cloudwatch_metric_alarm" "health_status" {
   unit                      = "Count"
   treat_missing_data        = "notBreaching"
   dimensions                = each.value.dimensions
-  tags                      = local.tags
+
+  tags = var.tags
 }
+
 #--------------------------------------------------------------
 # For MaintenanceMode
 # Provides a CloudWatch Metric Alarm resource.
 #--------------------------------------------------------------
 resource "aws_cloudwatch_metric_alarm" "maintenance_mode" {
-  for_each                  = var.is_enabled && var.threshold.enabled_maintenance_mode ? local.list : {}
+  for_each = var.is_enabled && var.threshold.enabled_maintenance_mode ? local.list : {}
+
   alarm_name                = "${var.name_prefix}metric-redshift-${each.value.name}-maintenance-mode"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -198,14 +227,17 @@ resource "aws_cloudwatch_metric_alarm" "maintenance_mode" {
   unit                      = "Count"
   treat_missing_data        = "notBreaching"
   dimensions                = each.value.dimensions
-  tags                      = local.tags
+
+  tags = var.tags
 }
+
 #--------------------------------------------------------------
 # For MaxConfiguredConcurrencyScalingClusters
 # Provides a CloudWatch Metric Alarm resource.
 #--------------------------------------------------------------
 resource "aws_cloudwatch_metric_alarm" "max_configured_concurrency_scaling_clusters" {
-  for_each                  = var.is_enabled && var.threshold.enabled_max_configured_concurrency_scaling_clusters ? local.list : {}
+  for_each = var.is_enabled && var.threshold.enabled_max_configured_concurrency_scaling_clusters ? local.list : {}
+
   alarm_name                = "${var.name_prefix}metric-redshift-${each.value.name}-max-configured-concurrency-scaling-clusters"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -222,14 +254,17 @@ resource "aws_cloudwatch_metric_alarm" "max_configured_concurrency_scaling_clust
   unit                      = "Count"
   treat_missing_data        = "notBreaching"
   dimensions                = each.value.dimensions
-  tags                      = local.tags
+
+  tags = var.tags
 }
+
 #--------------------------------------------------------------
 # For NetworkReceiveThroughput
 # Provides a CloudWatch Metric Alarm resource.
 #--------------------------------------------------------------
 resource "aws_cloudwatch_metric_alarm" "network_receive_throughput" {
-  for_each                  = var.is_enabled && var.threshold.enabled_network_receive_throughput ? local.list : {}
+  for_each = var.is_enabled && var.threshold.enabled_network_receive_throughput ? local.list : {}
+
   alarm_name                = "${var.name_prefix}metric-redshift-${each.value.name}-network-receive-throughput"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -246,14 +281,44 @@ resource "aws_cloudwatch_metric_alarm" "network_receive_throughput" {
   unit                      = "Bytes/Second"
   treat_missing_data        = "notBreaching"
   dimensions                = each.value.dimensions
-  tags                      = local.tags
+
+  tags = var.tags
 }
+
+#--------------------------------------------------------------
+# For NumExceededSchemaQuotas
+# Provides a CloudWatch Metric Alarm resource.
+#--------------------------------------------------------------
+resource "aws_cloudwatch_metric_alarm" "num_exceeded_schema_quotas" {
+  for_each = var.is_enabled && var.threshold.enabled_num_exceeded_schema_quotas ? local.list : {}
+
+  alarm_name                = "${var.name_prefix}metric-redshift-${each.value.name}-num-exceeded-schema-quotas"
+  comparison_operator       = "GreaterThanThreshold"
+  evaluation_periods        = 1
+  namespace                 = "AWS/Redshift"
+  metric_name               = "NumExceededSchemaQuotas"
+  period                    = var.period
+  statistic                 = "Maximum"
+  threshold                 = var.threshold.num_exceeded_schema_quotas
+  actions_enabled           = true
+  alarm_actions             = var.alarm_actions
+  alarm_description         = "This is an alarm to check for <${local.url}|Redshift NumExceededSchemaQuotas>(> ${var.threshold.num_exceeded_schema_quotas})."
+  insufficient_data_actions = var.insufficient_data_actions
+  ok_actions                = var.ok_actions
+  unit                      = "Count"
+  treat_missing_data        = "notBreaching"
+  dimensions                = each.value.dimensions
+
+  tags = var.tags
+}
+
 #--------------------------------------------------------------
 # For NetworkTransmitThroughput
 # Provides a CloudWatch Metric Alarm resource.
 #--------------------------------------------------------------
 resource "aws_cloudwatch_metric_alarm" "network_transmit_throughput" {
-  for_each                  = var.is_enabled && var.threshold.enabled_network_transmit_throughput ? local.list : {}
+  for_each = var.is_enabled && var.threshold.enabled_network_transmit_throughput ? local.list : {}
+
   alarm_name                = "${var.name_prefix}metric-redshift-${each.value.name}-network-transmit-throughput"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -270,14 +335,17 @@ resource "aws_cloudwatch_metric_alarm" "network_transmit_throughput" {
   unit                      = "Bytes/Second"
   treat_missing_data        = "notBreaching"
   dimensions                = each.value.dimensions
-  tags                      = local.tags
+
+  tags = var.tags
 }
+
 #--------------------------------------------------------------
 # For PercentageDiskSpaceUsed
 # Provides a CloudWatch Metric Alarm resource.
 #--------------------------------------------------------------
 resource "aws_cloudwatch_metric_alarm" "percentage_disk_space_used" {
-  for_each                  = var.is_enabled && var.threshold.enabled_percentage_disk_space_used ? local.list : {}
+  for_each = var.is_enabled && var.threshold.enabled_percentage_disk_space_used ? local.list : {}
+
   alarm_name                = "${var.name_prefix}metric-redshift-${each.value.name}-percentage-disk-space-used"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -294,14 +362,44 @@ resource "aws_cloudwatch_metric_alarm" "percentage_disk_space_used" {
   unit                      = "Percent"
   treat_missing_data        = "notBreaching"
   dimensions                = each.value.dimensions
-  tags                      = local.tags
+
+  tags = var.tags
 }
+
+#--------------------------------------------------------------
+# For PercentageQuotaUsed
+# Provides a CloudWatch Metric Alarm resource.
+#--------------------------------------------------------------
+resource "aws_cloudwatch_metric_alarm" "percentage_quota_used" {
+  for_each = var.is_enabled && var.threshold.enabled_percentage_quota_used ? local.list : {}
+
+  alarm_name                = "${var.name_prefix}metric-redshift-${each.value.name}-percentage-quota-used"
+  comparison_operator       = "GreaterThanOrEqualToThreshold"
+  evaluation_periods        = 1
+  namespace                 = "AWS/Redshift"
+  metric_name               = "PercentageQuotaUsed"
+  period                    = var.period
+  statistic                 = "Average"
+  threshold                 = var.threshold.percentage_quota_used
+  actions_enabled           = true
+  alarm_actions             = var.alarm_actions
+  alarm_description         = "This is an alarm to check for <${local.url}|Redshift PercentageQuotaUsed>(>= ${var.threshold.percentage_quota_used}%)."
+  insufficient_data_actions = var.insufficient_data_actions
+  ok_actions                = var.ok_actions
+  unit                      = "Percent"
+  treat_missing_data        = "notBreaching"
+  dimensions                = each.value.dimensions
+
+  tags = var.tags
+}
+
 #--------------------------------------------------------------
 # For QueriesCompletedPerSecond
 # Provides a CloudWatch Metric Alarm resource.
 #--------------------------------------------------------------
 resource "aws_cloudwatch_metric_alarm" "queries_completed_per_second" {
-  for_each                  = var.is_enabled && var.threshold.enabled_queries_completed_per_second ? local.list : {}
+  for_each = var.is_enabled && var.threshold.enabled_queries_completed_per_second ? local.list : {}
+
   alarm_name                = "${var.name_prefix}metric-redshift-${each.value.name}-queries-completed-per-second"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -318,14 +416,17 @@ resource "aws_cloudwatch_metric_alarm" "queries_completed_per_second" {
   unit                      = "Count/Second"
   treat_missing_data        = "notBreaching"
   dimensions                = each.value.dimensions
-  tags                      = local.tags
+
+  tags = var.tags
 }
+
 #--------------------------------------------------------------
 # For QueryDuration
 # Provides a CloudWatch Metric Alarm resource.
 #--------------------------------------------------------------
 resource "aws_cloudwatch_metric_alarm" "query_duration" {
-  for_each                  = var.is_enabled && var.threshold.enabled_query_duration ? local.list : {}
+  for_each = var.is_enabled && var.threshold.enabled_query_duration ? local.list : {}
+
   alarm_name                = "${var.name_prefix}metric-redshift-${each.value.name}-query-duration"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -342,14 +443,17 @@ resource "aws_cloudwatch_metric_alarm" "query_duration" {
   unit                      = "Microseconds"
   treat_missing_data        = "notBreaching"
   dimensions                = each.value.dimensions
-  tags                      = local.tags
+
+  tags = var.tags
 }
+
 #--------------------------------------------------------------
 # For QueryRuntimeBreakdown
 # Provides a CloudWatch Metric Alarm resource.
 #--------------------------------------------------------------
 resource "aws_cloudwatch_metric_alarm" "query_runtime_breakdown" {
-  for_each                  = var.is_enabled && var.threshold.enabled_query_runtime_breakdown ? local.list : {}
+  for_each = var.is_enabled && var.threshold.enabled_query_runtime_breakdown ? local.list : {}
+
   alarm_name                = "${var.name_prefix}metric-redshift-${each.value.name}-query-runtime-breakdown"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -366,14 +470,17 @@ resource "aws_cloudwatch_metric_alarm" "query_runtime_breakdown" {
   unit                      = "Microseconds"
   treat_missing_data        = "notBreaching"
   dimensions                = each.value.dimensions
-  tags                      = local.tags
+
+  tags = var.tags
 }
+
 #--------------------------------------------------------------
 # For ReadIOPS
 # Provides a CloudWatch Metric Alarm resource.
 #--------------------------------------------------------------
 resource "aws_cloudwatch_metric_alarm" "read_iops" {
-  for_each                  = var.is_enabled && var.threshold.enabled_read_iops ? local.list : {}
+  for_each = var.is_enabled && var.threshold.enabled_read_iops ? local.list : {}
+
   alarm_name                = "${var.name_prefix}metric-redshift-${each.value.name}-read-iops"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -390,14 +497,17 @@ resource "aws_cloudwatch_metric_alarm" "read_iops" {
   unit                      = "Count/Second"
   treat_missing_data        = "notBreaching"
   dimensions                = each.value.dimensions
-  tags                      = local.tags
+
+  tags = var.tags
 }
+
 #--------------------------------------------------------------
 # For ReadLatency
 # Provides a CloudWatch Metric Alarm resource.
 #--------------------------------------------------------------
 resource "aws_cloudwatch_metric_alarm" "read_latency" {
-  for_each                  = var.is_enabled && var.threshold.enabled_read_latency ? local.list : {}
+  for_each = var.is_enabled && var.threshold.enabled_read_latency ? local.list : {}
+
   alarm_name                = "${var.name_prefix}metric-redshift-${each.value.name}-read-latency"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -408,20 +518,23 @@ resource "aws_cloudwatch_metric_alarm" "read_latency" {
   threshold                 = var.threshold.read_latency
   actions_enabled           = true
   alarm_actions             = var.alarm_actions
-  alarm_description         = "This is an alarm to check for <${local.url}|Redshift ReadLatency>(>= ${var.threshold.read_latency}Seconds)."
+  alarm_description         = "This is an alarm to check for <${local.url}|Redshift ReadLatency>(>= ${var.threshold.read_latency}s)."
   insufficient_data_actions = var.insufficient_data_actions
   ok_actions                = var.ok_actions
   unit                      = "Seconds"
   treat_missing_data        = "notBreaching"
   dimensions                = each.value.dimensions
-  tags                      = local.tags
+
+  tags = var.tags
 }
+
 #--------------------------------------------------------------
 # For ReadThroughput
 # Provides a CloudWatch Metric Alarm resource.
 #--------------------------------------------------------------
 resource "aws_cloudwatch_metric_alarm" "read_throughput" {
-  for_each                  = var.is_enabled && var.threshold.enabled_read_throughput ? local.list : {}
+  for_each = var.is_enabled && var.threshold.enabled_read_throughput ? local.list : {}
+
   alarm_name                = "${var.name_prefix}metric-redshift-${each.value.name}-read-throughput"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -438,14 +551,17 @@ resource "aws_cloudwatch_metric_alarm" "read_throughput" {
   unit                      = "Bytes"
   treat_missing_data        = "notBreaching"
   dimensions                = each.value.dimensions
-  tags                      = local.tags
+
+  tags = var.tags
 }
+
 #--------------------------------------------------------------
 # For RedshiftManagedStorageTotalCapacity
 # Provides a CloudWatch Metric Alarm resource.
 #--------------------------------------------------------------
 resource "aws_cloudwatch_metric_alarm" "redshift_managed_storage_total_capacity" {
-  for_each                  = var.is_enabled && var.threshold.enabled_redshift_managed_storage_total_capacity ? local.list : {}
+  for_each = var.is_enabled && var.threshold.enabled_redshift_managed_storage_total_capacity ? local.list : {}
+
   alarm_name                = "${var.name_prefix}metric-redshift-${each.value.name}-redshift-managed-storage-total-capacity"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -462,14 +578,71 @@ resource "aws_cloudwatch_metric_alarm" "redshift_managed_storage_total_capacity"
   unit                      = "Megabytes"
   treat_missing_data        = "notBreaching"
   dimensions                = each.value.dimensions
-  tags                      = local.tags
+
+  tags = var.tags
 }
+
+#--------------------------------------------------------------
+# For SchemaQuota
+# Provides a CloudWatch Metric Alarm resource.
+#--------------------------------------------------------------
+resource "aws_cloudwatch_metric_alarm" "schema_quota" {
+  for_each = var.is_enabled && var.threshold.enabled_schema_quota ? local.list : {}
+
+  alarm_name                = "${var.name_prefix}metric-redshift-${each.value.name}-schema-quota"
+  comparison_operator       = "GreaterThanOrEqualToThreshold"
+  evaluation_periods        = 1
+  namespace                 = "AWS/Redshift"
+  metric_name               = "SchemaQuota"
+  period                    = var.period
+  statistic                 = "Average"
+  threshold                 = var.threshold.schema_quota
+  actions_enabled           = true
+  alarm_actions             = var.alarm_actions
+  alarm_description         = "This is an alarm to check for <${local.url}|Redshift SchemaQuota>(>= ${var.threshold.schema_quota}Megabytes)."
+  insufficient_data_actions = var.insufficient_data_actions
+  ok_actions                = var.ok_actions
+  unit                      = "Megabytes"
+  treat_missing_data        = "notBreaching"
+  dimensions                = each.value.dimensions
+
+  tags = var.tags
+}
+
+#--------------------------------------------------------------
+# For StorageUsed
+# Provides a CloudWatch Metric Alarm resource.
+#--------------------------------------------------------------
+resource "aws_cloudwatch_metric_alarm" "storage_used" {
+  for_each = var.is_enabled && var.threshold.enabled_storage_used ? local.list : {}
+
+  alarm_name                = "${var.name_prefix}metric-redshift-${each.value.name}-storage-used"
+  comparison_operator       = "GreaterThanOrEqualToThreshold"
+  evaluation_periods        = 1
+  namespace                 = "AWS/Redshift"
+  metric_name               = "StorageUsed"
+  period                    = var.period
+  statistic                 = "Average"
+  threshold                 = var.threshold.storage_used
+  actions_enabled           = true
+  alarm_actions             = var.alarm_actions
+  alarm_description         = "This is an alarm to check for <${local.url}|Redshift StorageUsed>(>= ${var.threshold.storage_used}Megabytes)."
+  insufficient_data_actions = var.insufficient_data_actions
+  ok_actions                = var.ok_actions
+  unit                      = "Megabytes"
+  treat_missing_data        = "notBreaching"
+  dimensions                = each.value.dimensions
+
+  tags = var.tags
+}
+
 #--------------------------------------------------------------
 # For TotalTableCount
 # Provides a CloudWatch Metric Alarm resource.
 #--------------------------------------------------------------
 resource "aws_cloudwatch_metric_alarm" "total_table_count" {
-  for_each                  = var.is_enabled && var.threshold.enabled_total_table_count ? local.list : {}
+  for_each = var.is_enabled && var.threshold.enabled_total_table_count ? local.list : {}
+
   alarm_name                = "${var.name_prefix}metric-redshift-${each.value.name}-total-table-count"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -486,14 +659,17 @@ resource "aws_cloudwatch_metric_alarm" "total_table_count" {
   unit                      = "Count"
   treat_missing_data        = "notBreaching"
   dimensions                = each.value.dimensions
-  tags                      = local.tags
+
+  tags = var.tags
 }
+
 #--------------------------------------------------------------
 # For WLMQueueLength
 # Provides a CloudWatch Metric Alarm resource.
 #--------------------------------------------------------------
 resource "aws_cloudwatch_metric_alarm" "wlm_queue_length" {
-  for_each                  = var.is_enabled && var.threshold.enabled_wlm_queue_length ? local.list : {}
+  for_each = var.is_enabled && var.threshold.enabled_wlm_queue_length ? local.list : {}
+
   alarm_name                = "${var.name_prefix}metric-redshift-${each.value.name}-wlm-queue-length"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -512,14 +688,17 @@ resource "aws_cloudwatch_metric_alarm" "wlm_queue_length" {
   dimensions = merge(each.value.dimensions, {
     QueueName = "Default queue"
   })
-  tags = local.tags
+
+  tags = var.tags
 }
+
 #--------------------------------------------------------------
 # For WLMQueueWaitTime
 # Provides a CloudWatch Metric Alarm resource.
 #--------------------------------------------------------------
 resource "aws_cloudwatch_metric_alarm" "wlm_queue_wait_time" {
-  for_each                  = var.is_enabled && var.threshold.enabled_wlm_queue_wait_time ? local.list : {}
+  for_each = var.is_enabled && var.threshold.enabled_wlm_queue_wait_time ? local.list : {}
+
   alarm_name                = "${var.name_prefix}metric-redshift-${each.value.name}-wlm-queue-wait-time"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -530,7 +709,7 @@ resource "aws_cloudwatch_metric_alarm" "wlm_queue_wait_time" {
   threshold                 = var.threshold.wlm_queue_wait_time
   actions_enabled           = true
   alarm_actions             = var.alarm_actions
-  alarm_description         = "This is an alarm to check for <${local.url}|Redshift WLMQueueWaitTime>(>= ${var.threshold.wlm_queue_wait_time}Milliseconds)."
+  alarm_description         = "This is an alarm to check for <${local.url}|Redshift WLMQueueWaitTime>(>= ${var.threshold.wlm_queue_wait_time}ms)."
   insufficient_data_actions = var.insufficient_data_actions
   ok_actions                = var.ok_actions
   unit                      = "Milliseconds"
@@ -538,14 +717,17 @@ resource "aws_cloudwatch_metric_alarm" "wlm_queue_wait_time" {
   dimensions = merge(each.value.dimensions, {
     QueueName = "Default queue"
   })
-  tags = local.tags
+
+  tags = var.tags
 }
+
 #--------------------------------------------------------------
 # For WLMQueriesCompletedPerSecond
 # Provides a CloudWatch Metric Alarm resource.
 #--------------------------------------------------------------
 resource "aws_cloudwatch_metric_alarm" "wlm_queries_completed_per_second" {
-  for_each                  = var.is_enabled && var.threshold.enabled_wlm_queries_completed_per_second ? local.list : {}
+  for_each = var.is_enabled && var.threshold.enabled_wlm_queries_completed_per_second ? local.list : {}
+
   alarm_name                = "${var.name_prefix}metric-redshift-${each.value.name}-enabled-wlm-queries-completed-per-second"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -564,14 +746,17 @@ resource "aws_cloudwatch_metric_alarm" "wlm_queries_completed_per_second" {
   dimensions = merge(each.value.dimensions, {
     QueueName = "Default queue"
   })
-  tags = local.tags
+
+  tags = var.tags
 }
+
 #--------------------------------------------------------------
 # For WLMQueryDuration
 # Provides a CloudWatch Metric Alarm resource.
 #--------------------------------------------------------------
 resource "aws_cloudwatch_metric_alarm" "wlm_query_duration" {
-  for_each                  = var.is_enabled && var.threshold.enabled_wlm_query_duration ? local.list : {}
+  for_each = var.is_enabled && var.threshold.enabled_wlm_query_duration ? local.list : {}
+
   alarm_name                = "${var.name_prefix}metric-redshift-${each.value.name}-wlm-query-duration"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -590,14 +775,17 @@ resource "aws_cloudwatch_metric_alarm" "wlm_query_duration" {
   dimensions = merge(each.value.dimensions, {
     QueueName = "Default queue"
   })
-  tags = local.tags
+
+  tags = var.tags
 }
+
 #--------------------------------------------------------------
 # For WLMRunningQueries
 # Provides a CloudWatch Metric Alarm resource.
 #--------------------------------------------------------------
 resource "aws_cloudwatch_metric_alarm" "wlm_running_queries" {
-  for_each                  = var.is_enabled && var.threshold.enabled_wlm_running_queries ? local.list : {}
+  for_each = var.is_enabled && var.threshold.enabled_wlm_running_queries ? local.list : {}
+
   alarm_name                = "${var.name_prefix}metric-redshift-${each.value.name}-wlm-running-queries"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -616,14 +804,17 @@ resource "aws_cloudwatch_metric_alarm" "wlm_running_queries" {
   dimensions = merge(each.value.dimensions, {
     QueueName = "Default queue"
   })
-  tags = local.tags
+
+  tags = var.tags
 }
+
 #--------------------------------------------------------------
 # For WriteIOPS
 # Provides a CloudWatch Metric Alarm resource.
 #--------------------------------------------------------------
 resource "aws_cloudwatch_metric_alarm" "write_iops" {
-  for_each                  = var.is_enabled && var.threshold.enabled_write_iops ? local.list : {}
+  for_each = var.is_enabled && var.threshold.enabled_write_iops ? local.list : {}
+
   alarm_name                = "${var.name_prefix}metric-redshift-${each.value.name}-write-iops"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -640,14 +831,17 @@ resource "aws_cloudwatch_metric_alarm" "write_iops" {
   unit                      = "Count/Second"
   treat_missing_data        = "notBreaching"
   dimensions                = each.value.dimensions
-  tags                      = local.tags
+
+  tags = var.tags
 }
+
 #--------------------------------------------------------------
 # For WriteLatency
 # Provides a CloudWatch Metric Alarm resource.
 #--------------------------------------------------------------
 resource "aws_cloudwatch_metric_alarm" "write_latency" {
-  for_each                  = var.is_enabled && var.threshold.enabled_write_latency ? local.list : {}
+  for_each = var.is_enabled && var.threshold.enabled_write_latency ? local.list : {}
+
   alarm_name                = "${var.name_prefix}metric-redshift-${each.value.name}-write-latency"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -658,20 +852,23 @@ resource "aws_cloudwatch_metric_alarm" "write_latency" {
   threshold                 = var.threshold.write_latency
   actions_enabled           = true
   alarm_actions             = var.alarm_actions
-  alarm_description         = "This is an alarm to check for <${local.url}|Redshift WriteLatency>(>= ${var.threshold.write_latency}Seconds)."
+  alarm_description         = "This is an alarm to check for <${local.url}|Redshift WriteLatency>(>= ${var.threshold.write_latency}s)."
   insufficient_data_actions = var.insufficient_data_actions
   ok_actions                = var.ok_actions
   unit                      = "Seconds"
   treat_missing_data        = "notBreaching"
   dimensions                = each.value.dimensions
-  tags                      = local.tags
+
+  tags = var.tags
 }
+
 #--------------------------------------------------------------
 # For WriteThroughput
 # Provides a CloudWatch Metric Alarm resource.
 #--------------------------------------------------------------
 resource "aws_cloudwatch_metric_alarm" "write_throughput" {
-  for_each                  = var.is_enabled && var.threshold.enabled_write_throughput ? local.list : {}
+  for_each = var.is_enabled && var.threshold.enabled_write_throughput ? local.list : {}
+
   alarm_name                = "${var.name_prefix}metric-redshift-${each.value.name}-write-throughput"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -688,101 +885,6 @@ resource "aws_cloudwatch_metric_alarm" "write_throughput" {
   unit                      = "Bytes"
   treat_missing_data        = "notBreaching"
   dimensions                = each.value.dimensions
-  tags                      = local.tags
-}
-#--------------------------------------------------------------
-# For SchemaQuota
-# Provides a CloudWatch Metric Alarm resource.
-#--------------------------------------------------------------
-resource "aws_cloudwatch_metric_alarm" "schema_quota" {
-  for_each                  = var.is_enabled && var.threshold.enabled_schema_quota ? local.list : {}
-  alarm_name                = "${var.name_prefix}metric-redshift-${each.value.name}-schema-quota"
-  comparison_operator       = "GreaterThanOrEqualToThreshold"
-  evaluation_periods        = 1
-  namespace                 = "AWS/Redshift"
-  metric_name               = "SchemaQuota"
-  period                    = var.period
-  statistic                 = "Average"
-  threshold                 = var.threshold.schema_quota
-  actions_enabled           = true
-  alarm_actions             = var.alarm_actions
-  alarm_description         = "This is an alarm to check for <${local.url}|Redshift SchemaQuota>(>= ${var.threshold.schema_quota}Megabytes)."
-  insufficient_data_actions = var.insufficient_data_actions
-  ok_actions                = var.ok_actions
-  unit                      = "Megabytes"
-  treat_missing_data        = "notBreaching"
-  dimensions                = each.value.dimensions
-  tags                      = local.tags
-}
-#--------------------------------------------------------------
-# For NumExceededSchemaQuotas
-# Provides a CloudWatch Metric Alarm resource.
-#--------------------------------------------------------------
-resource "aws_cloudwatch_metric_alarm" "num_exceeded_schema_quotas" {
-  for_each                  = var.is_enabled && var.threshold.enabled_num_exceeded_schema_quotas ? local.list : {}
-  alarm_name                = "${var.name_prefix}metric-redshift-${each.value.name}-num-exceeded-schema-quotas"
-  comparison_operator       = "GreaterThanThreshold"
-  evaluation_periods        = 1
-  namespace                 = "AWS/Redshift"
-  metric_name               = "NumExceededSchemaQuotas"
-  period                    = var.period
-  statistic                 = "Maximum"
-  threshold                 = var.threshold.num_exceeded_schema_quotas
-  actions_enabled           = true
-  alarm_actions             = var.alarm_actions
-  alarm_description         = "This is an alarm to check for <${local.url}|Redshift NumExceededSchemaQuotas>(> ${var.threshold.num_exceeded_schema_quotas})."
-  insufficient_data_actions = var.insufficient_data_actions
-  ok_actions                = var.ok_actions
-  unit                      = "Count"
-  treat_missing_data        = "notBreaching"
-  dimensions                = each.value.dimensions
-  tags                      = local.tags
-}
-#--------------------------------------------------------------
-# For StorageUsed
-# Provides a CloudWatch Metric Alarm resource.
-#--------------------------------------------------------------
-resource "aws_cloudwatch_metric_alarm" "storage_used" {
-  for_each                  = var.is_enabled && var.threshold.enabled_storage_used ? local.list : {}
-  alarm_name                = "${var.name_prefix}metric-redshift-${each.value.name}-commit-queue-length"
-  comparison_operator       = "GreaterThanOrEqualToThreshold"
-  evaluation_periods        = 1
-  namespace                 = "AWS/Redshift"
-  metric_name               = "StorageUsed"
-  period                    = var.period
-  statistic                 = "Average"
-  threshold                 = var.threshold.storage_used
-  actions_enabled           = true
-  alarm_actions             = var.alarm_actions
-  alarm_description         = "This is an alarm to check for <${local.url}|Redshift StorageUsed>(>= ${var.threshold.storage_used}Megabytes)."
-  insufficient_data_actions = var.insufficient_data_actions
-  ok_actions                = var.ok_actions
-  unit                      = "Megabytes"
-  treat_missing_data        = "notBreaching"
-  dimensions                = each.value.dimensions
-  tags                      = local.tags
-}
-#--------------------------------------------------------------
-# For PercentageQuotaUsed
-# Provides a CloudWatch Metric Alarm resource.
-#--------------------------------------------------------------
-resource "aws_cloudwatch_metric_alarm" "percentage_quota_used" {
-  for_each                  = var.is_enabled && var.threshold.enabled_percentage_quota_used ? local.list : {}
-  alarm_name                = "${var.name_prefix}metric-redshift-${each.value.name}-percentage-quota-used"
-  comparison_operator       = "GreaterThanOrEqualToThreshold"
-  evaluation_periods        = 1
-  namespace                 = "AWS/Redshift"
-  metric_name               = "PercentageQuotaUsed"
-  period                    = var.period
-  statistic                 = "Average"
-  threshold                 = var.threshold.percentage_quota_used
-  actions_enabled           = true
-  alarm_actions             = var.alarm_actions
-  alarm_description         = "This is an alarm to check for <${local.url}|Redshift PercentageQuotaUsed>(>= ${var.threshold.percentage_quota_used}%)."
-  insufficient_data_actions = var.insufficient_data_actions
-  ok_actions                = var.ok_actions
-  unit                      = "Percent"
-  treat_missing_data        = "notBreaching"
-  dimensions                = each.value.dimensions
-  tags                      = local.tags
+
+  tags = var.tags
 }

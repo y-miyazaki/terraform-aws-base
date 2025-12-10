@@ -30,6 +30,12 @@ variable "period" {
 }
 variable "threshold" {
   type = object({
+    # AuroraReplicaLag threshold (unit=Milliseconds)
+    enabled_aurora_replica_lag = bool
+    aurora_replica_lag         = number
+    # BufferCacheHitRatio threshold (unit=Percent)
+    enabled_buffer_cache_hit_ratio = bool
+    buffer_cache_hit_ratio         = number
     # CommitLatency threshold (unit=Milliseconds)
     enabled_commit_latency = bool
     commit_latency         = number
@@ -51,39 +57,83 @@ variable "threshold" {
     # DiskQueueDepth threshold (unit=Count)
     enabled_disk_queue_depth = bool
     disk_queue_depth         = number
+    # EngineUptime threshold (unit=Seconds)
+    enabled_engine_uptime = bool
+    engine_uptime         = number
+    # FreeLocalStorage threshold (unit=Bytes)
+    enabled_free_local_storage = bool
+    free_local_storage         = number
     # FreeableMemory threshold (unit=Megabytes)
     enabled_freeable_memory = bool
     freeable_memory         = number
+    # NetworkReceiveThroughput threshold (unit=Bytes/Second)
+    enabled_network_receive_throughput = bool
+    network_receive_throughput         = number
+    # NetworkTransmitThroughput threshold (unit=Bytes/Second)
+    enabled_network_transmit_throughput = bool
+    network_transmit_throughput         = number
+    # ReadIOPS threshold (unit=Count/Second)
+    enabled_read_iops = bool
+    read_iops         = number
     # ReadLatency threshold (unit=Seconds)
     enabled_read_latency = bool
     read_latency         = number
+    # ReadThroughput threshold (unit=Bytes/Second)
+    enabled_read_throughput = bool
+    read_throughput         = number
+    # WriteIOPS threshold (unit=Count/Second)
+    enabled_write_iops = bool
+    write_iops         = number
     # WriteLatency threshold (unit=Seconds)
     enabled_write_latency = bool
     write_latency         = number
+    # WriteThroughput threshold (unit=Bytes/Second)
+    enabled_write_throughput = bool
+    write_throughput         = number
     }
   )
   description = "(Optional) Set the threshold for each Metric in RDS."
   default = {
-    enabled_commit_latency       = true
-    commit_latency               = 10000
-    enabled_cpu_credit_balance   = true
-    cpu_credit_balance           = 100
-    enabled_cpu_utilization      = true
-    cpu_utilization              = 80
-    enabled_database_connections = true
-    database_connections         = 100
-    enabled_deadlocks            = true
-    deadlocks                    = 1
-    enabled_delete_latency       = true
-    delete_latency               = 10
-    enabled_disk_queue_depth     = true
-    disk_queue_depth             = 64
-    enabled_freeable_memory      = true
-    freeable_memory              = 512
-    enabled_read_latency         = true
-    read_latency                 = 10
-    enabled_write_latency        = true
-    write_latency                = 10
+    enabled_aurora_replica_lag          = true
+    aurora_replica_lag                  = 1000
+    enabled_buffer_cache_hit_ratio      = true
+    buffer_cache_hit_ratio              = 95
+    enabled_commit_latency              = true
+    commit_latency                      = 10000
+    enabled_cpu_credit_balance          = true
+    cpu_credit_balance                  = 100
+    enabled_cpu_utilization             = true
+    cpu_utilization                     = 80
+    enabled_database_connections        = true
+    database_connections                = 100
+    enabled_deadlocks                   = true
+    deadlocks                           = 1
+    enabled_delete_latency              = true
+    delete_latency                      = 10
+    enabled_disk_queue_depth            = true
+    disk_queue_depth                    = 64
+    enabled_engine_uptime               = true
+    engine_uptime                       = 86400
+    enabled_free_local_storage          = true
+    free_local_storage                  = 1073741824 # 1GB
+    enabled_freeable_memory             = true
+    freeable_memory                     = 512
+    enabled_network_receive_throughput  = true
+    network_receive_throughput          = 104857600 # 100MB/s
+    enabled_network_transmit_throughput = true
+    network_transmit_throughput         = 104857600 # 100MB/s
+    enabled_read_iops                   = true
+    read_iops                           = 1000
+    enabled_read_latency                = true
+    read_latency                        = 10
+    enabled_read_throughput             = true
+    read_throughput                     = 104857600 # 100MB/s
+    enabled_write_iops                  = true
+    write_iops                          = 1000
+    enabled_write_latency               = true
+    write_latency                       = 10
+    enabled_write_throughput            = true
+    write_throughput                    = 104857600 # 100MB/s
   }
 }
 variable "create_auto_dimensions" {
@@ -94,6 +144,11 @@ variable "create_auto_dimensions" {
 variable "auto_dimensions_exclude_list" {
   type        = list(string)
   description = "(Optional) If create_auto_dimensions is set to true, a list of RDSs will be automatically registered, but at that time, specify the RDS name you want to exclude using partial match."
+  default     = []
+}
+variable "auto_dimensions_include_list" {
+  type        = list(string)
+  description = "(Optional) If create_auto_dimensions is set to true, a list of RDSs will be automatically registered, but at that time, specify the RDS cluster identifier you want to include using partial match. If empty, all RDS clusters will be included (except excluded ones)."
   default     = []
 }
 variable "dimensions" {

@@ -1,9 +1,15 @@
 #--------------------------------------------------------------
+# Module: aws/eventbridge/rds_cluster
+# Purpose: Schedule start and stop of an RDS/Aurora DB Cluster using EventBridge Scheduler.
+# Notes: Creates separate schedules for start/stop if expressions provided; future improvement: add tagging support when service adds it and validation of cron syntax.
+#--------------------------------------------------------------
+#--------------------------------------------------------------
 # Provides an EventBridge Scheduler Schedule resource.
 #--------------------------------------------------------------
 resource "aws_scheduler_schedule" "stop" {
   count = var.schedule_expression_stop == null ? 0 : 1
-  name  = var.name_prefix == null ? var.name_stop_cluster : format("%s%s", var.name_prefix, "stop-db-cluster-scheduler")
+
+  name  = var.name_prefix == null ? var.name_stop_cluster : format("%s%s", var.name_prefix, "stop-db-cluster-eventbridge-scheduler")
   state = "ENABLED"
 
   flexible_time_window {
@@ -33,7 +39,8 @@ resource "aws_scheduler_schedule" "stop" {
 #--------------------------------------------------------------
 resource "aws_scheduler_schedule" "start" {
   count = var.schedule_expression_start == null ? 0 : 1
-  name  = var.name_prefix == null ? var.name_start_cluster : format("%s%s", var.name_prefix, "start-db-cluster-scheduler")
+
+  name  = var.name_prefix == null ? var.name_start_cluster : format("%s%s", var.name_prefix, "start-db-eventbridge-scheduler")
   state = "ENABLED"
 
   flexible_time_window {

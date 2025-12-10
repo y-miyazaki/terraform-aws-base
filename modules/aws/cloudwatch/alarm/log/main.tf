@@ -1,40 +1,55 @@
 #--------------------------------------------------------------
+# Module: aws/cloudwatch/alarm/log
+# Purpose: Create CloudWatch Logs metric filters and corresponding metric alarms with optional auto-discovery of log groups.
+# Notes: Builds dynamic names per log group; unified tagging applied; future improvement: allow multiple transformations per filter with for_each.
+#--------------------------------------------------------------
+#--------------------------------------------------------------
+# Auto-discovery filter module
+#--------------------------------------------------------------
+module "filter" {
+  source     = "../../../_internal/auto_discovery_filter"
+  is_enabled = var.is_enabled
+
+  create_auto       = var.create_auto_log_group_names
+  source_list       = data.aws_cloudwatch_log_groups.this.log_group_names
+  include_list      = var.auto_log_group_names_include_list
+  exclude_list      = var.auto_log_group_names_exclude_list
+  manual_dimensions = var.log_group_names
+}
+
+#--------------------------------------------------------------
 # Locals
 #--------------------------------------------------------------
 locals {
-  tags = {
-    for k, v in(var.tags == null ? {} : var.tags) : k => v if lookup(data.aws_default_tags.provider.tags, k, null) == null || lookup(data.aws_default_tags.provider.tags, k, null) != v
-  }
-  auto_log_group_names = var.create_auto_log_group_names ? [
-    for v in data.aws_cloudwatch_log_groups.this.log_group_names : v if !anytrue([for el in var.auto_log_group_names_exclude_list : strcontains(v, el)])
-  ] : []
+  # Use filtered results from helper module
+  auto_log_group_names = module.filter.filtered_list
+  safe_log_group_names = module.filter.safe_manual_dimensions
+
   list = var.create_auto_log_group_names ? {
     for v in local.auto_log_group_names : v => {
       metric_filter_name = "${var.name_prefix}${var.aws_cloudwatch_log_metric_filter.name}-${replace(replace(v, "/", "-"), "/^-/", "")}"
       metric_alarm_name  = "${var.name_prefix}${var.aws_cloudwatch_metric_alarm.alarm_name}-${replace(replace(v, "/", "-"), "/^-/", "")}"
     }
     } : {
-    for v in var.log_group_names : v => {
+    for v in local.safe_log_group_names : v => {
       metric_filter_name = "${var.name_prefix}${var.aws_cloudwatch_log_metric_filter.name}-${replace(replace(v, "/", "-"), "/^-/", "")}"
       metric_alarm_name  = "${var.name_prefix}${var.aws_cloudwatch_metric_alarm.alarm_name}-${replace(replace(v, "/", "-"), "/^-/", "")}"
-    }
+    } if v != null && v != ""
   }
 }
-#--------------------------------------------------------------
-# Use this data source to get the default tags configured on the provider.
-#--------------------------------------------------------------
-data "aws_default_tags" "provider" {}
 
 #--------------------------------------------------------------
 # Provides a CloudWatch Log Metric Filter resource.
 #--------------------------------------------------------------
 resource "aws_cloudwatch_log_metric_filter" "this" {
-  for_each       = local.list
+  for_each = var.is_enabled ? local.list : {}
+
   name           = each.value.metric_filter_name
   pattern        = var.aws_cloudwatch_log_metric_filter.pattern
   log_group_name = each.key
   dynamic "metric_transformation" {
     for_each = var.aws_cloudwatch_log_metric_filter.metric_transformation
+
     content {
       name          = each.value.metric_filter_name
       namespace     = metric_transformation.value.namespace
@@ -44,11 +59,13 @@ resource "aws_cloudwatch_log_metric_filter" "this" {
     }
   }
 }
+
 #--------------------------------------------------------------
 # Provides a CloudWatch Metric Alarm resource.
 #--------------------------------------------------------------
 resource "aws_cloudwatch_metric_alarm" "this" {
-  for_each                              = local.list
+  for_each = var.is_enabled ? local.list : {}
+
   alarm_name                            = each.value.metric_alarm_name
   comparison_operator                   = var.aws_cloudwatch_metric_alarm.comparison_operator
   evaluation_periods                    = var.aws_cloudwatch_metric_alarm.evaluation_periods
@@ -69,5 +86,6 @@ resource "aws_cloudwatch_metric_alarm" "this" {
   extended_statistic                    = try(var.aws_cloudwatch_metric_alarm.extended_statistic, null)
   treat_missing_data                    = var.aws_cloudwatch_metric_alarm.treat_missing_data
   evaluate_low_sample_count_percentiles = try(var.aws_cloudwatch_metric_alarm.evaluate_low_sample_count_percentiles, null)
-  tags                                  = local.tags
+
+  tags = var.tags
 }

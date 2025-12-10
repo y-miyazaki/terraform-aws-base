@@ -2,7 +2,7 @@
 # See https://pre-commit.com/hooks.html for more hooks
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v3.2.0
+    rev: v6.0.0
     hooks:
       - id: trailing-whitespace
         exclude: README.*.md
@@ -13,21 +13,59 @@ repos:
       - id: detect-aws-credentials
         args: [--allow-missing-credentials]
       - id: detect-private-key
+  - repo: https://github.com/Yelp/detect-secrets
+    rev: v1.5.0
+    hooks:
+      - id: detect-secrets
+        # args: ['--baseline', '.secrets.baseline']
+        # Exclude go test file and gitleaks config and any terraform.*.tfvars files in any directory
+        exclude: '(.*_test.go|.gitleaks.toml|aqua-checksums.json|(?:^|/)(?:.*/)?terraform\.[^.]+\.tfvars$)'
+  - repo: https://github.com/gitleaks/gitleaks
+    rev: v8.24.2
+    hooks:
+      - id: gitleaks
+  - repo: https://github.com/cisagov/pre-commit-shfmt
+    rev: v0.0.2
+    hooks:
+      - id: shfmt
+        args:
+          - -w
+          - -i
+          - "4"
+          - -ci
+          - -bn
+          - -sr
   - repo: https://github.com/antonbabenko/pre-commit-terraform
-    rev: v1.97.4 # https://github.com/antonbabenko/pre-commit-terraform/releases
+    rev: v1.100.0 # https://github.com/antonbabenko/pre-commit-terraform/releases
     hooks:
       - id: terraform_fmt
       - id: terraform_tflint
         args:
           - --args=-f=compact
-          - --args=--module
+          - --args=--chdir=/workspace/modules
           - --args=--no-color
-      # - id: terraform_trivy
-      #   args:
-      #     - --args=--format=table
-      #     - --args=--skip-dirs="**/.terraform"
-
-  # - repo: https://github.com/zricethezav/gitleaks
-  #   rev: v7.6.0
+          - --args=--call-module-type=all
+      - id: terraform_trivy
+        args:
+          - --args=--format=table
+          - --args=--skip-dirs="**/.terraform"
+          - --args=--config="/workspace/trivy.yaml"
+  # - repo: local
   #   hooks:
-  #     - id: gitleaks
+  #     - id: golangci-lint
+  #       name: golangci-lint
+  #       description: Fast linters runner for Go.
+  #       entry: golangci-lint run --max-same-issues=0 --max-issues-per-linter=0 --config=.golangci.yaml --fix
+  #       exclude: ^(.*_test.go|tmp/.*\.go)$
+  #       language: golang
+  #       pass_filenames: false
+  #       types: [go]
+  - repo: local
+    hooks:
+      - id: actionlint
+        name: actionlint
+        description: GitHub Actions workflow linter.
+        language: unsupported
+        entry: actionlint -color=false
+        types: [yaml]
+        files: ^\.github/workflows/.*\.(ya?ml)$

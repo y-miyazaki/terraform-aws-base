@@ -1,6 +1,11 @@
 #--------------------------------------------------------------
 # module variables
 #--------------------------------------------------------------
+variable "is_enabled" {
+  type        = bool
+  description = "(Optional) Whether to create API Gateway resources. Set to false to disable the entire module."
+  default     = true
+}
 variable "name" {
   type        = string
   description = "(Required) API Gateway Name."

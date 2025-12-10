@@ -59,7 +59,7 @@ variable "aws_iam_role" {
   )
   description = "(Optional) The resource of aws_iam_role."
   default = {
-    description = "Role for IAM Role."
+    description = "IAM role for IAM Role."
     name        = "security-iam-role"
     path        = "/"
   }

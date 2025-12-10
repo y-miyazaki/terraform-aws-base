@@ -14,7 +14,7 @@ variable "aws_iam_role" {
   )
   description = "(Optional) Provides an IAM role."
   default = {
-    description = "Role for EventBridge."
+    description = "IAM role for EventBridge."
     name        = "eventbridge-role"
     path        = "/"
   }
@@ -34,7 +34,7 @@ variable "aws_iam_policy" {
   )
   description = "(Optional) Provides an IAM policy."
   default = {
-    description = "Policy for Eventbridge."
+    description = "IAM policy for Eventbridge."
     name        = "eventbridge-policy"
     path        = "/"
     policy      = null

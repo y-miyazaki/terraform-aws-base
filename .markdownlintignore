@@ -1,0 +1,5 @@
+.github/CODEOWNERS
+modules/**
+node_modules/**
+trivy-secret.yaml
+trivy.yaml

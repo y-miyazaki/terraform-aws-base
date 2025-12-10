@@ -1,15 +1,8 @@
 #--------------------------------------------------------------
-# Locals
+# Module: aws/chatbot/security/securityhub
+# Purpose: Ingest Security Hub findings (non-PASSED, NEW, CRITICAL/HIGH) via EventBridge, notify Slack (SNS + Chatbot) and update findings workflow using Step Functions.
+# Notes: Multiple IAM roles/policies for events and step functions; unified tagging applied; future improvement: externalize Step Functions definition and severity thresholds.
 #--------------------------------------------------------------
-locals {
-  tags = {
-    for k, v in(var.tags == null ? {} : var.tags) : k => v if lookup(data.aws_default_tags.provider.tags, k, null) == null || lookup(data.aws_default_tags.provider.tags, k, null) != v
-  }
-}
-#--------------------------------------------------------------
-# Use this data source to get the default tags configured on the provider.
-#--------------------------------------------------------------
-data "aws_default_tags" "provider" {}
 
 #--------------------------------------------------------------
 # IAM Role for EventBridge(Step Functions)
@@ -25,27 +18,30 @@ data "aws_iam_policy_document" "eventbridge_assume_role" {
 }
 
 resource "aws_iam_role" "eventbridge" {
-  count              = var.is_enabled ? 1 : 0
-  name               = "${var.name_prefix}security-securityhub-events-role"
+  count = var.is_enabled ? 1 : 0
+
   assume_role_policy = data.aws_iam_policy_document.eventbridge_assume_role.json
-  tags = {
-    Name = "${var.name_prefix}security-securityhub-events-role"
-  }
+
+  force_detach_policies = true
+  name                  = "${var.name_prefix}security-securityhub-events-role"
+
+  tags = merge(var.tags, { Name = "${var.name_prefix}security-securityhub-events-role" })
 }
 
 resource "aws_iam_role_policy_attachment" "eventbridge" {
-  count      = var.is_enabled ? 1 : 0
+  count = var.is_enabled ? 1 : 0
+
   role       = aws_iam_role.eventbridge[0].name
   policy_arn = aws_iam_policy.eventbridge[0].arn
 }
 
 resource "aws_iam_policy" "eventbridge" {
-  count  = var.is_enabled ? 1 : 0
+  count = var.is_enabled ? 1 : 0
+
   name   = "${var.name_prefix}security-securityhub-events-policy"
   policy = data.aws_iam_policy_document.eventbridge.json
-  tags = {
-    Name = "${var.name_prefix}security-securityhub-events-policy"
-  }
+
+  tags = merge(var.tags, { Name = "${var.name_prefix}security-securityhub-events-policy" })
 }
 
 data "aws_iam_policy_document" "eventbridge" {
@@ -75,12 +71,14 @@ data "aws_iam_policy_document" "step_functions_assume_role" {
 }
 
 resource "aws_iam_role" "step_functions" {
-  count              = var.is_enabled ? 1 : 0
-  name               = "${var.name_prefix}security-securityhub-step-functions-role"
+  count = var.is_enabled ? 1 : 0
+
   assume_role_policy = data.aws_iam_policy_document.step_functions_assume_role.json
-  tags = {
-    Name = "${var.name_prefix}security-securityhub-step-functions-role"
-  }
+
+  force_detach_policies = true
+  name                  = "${var.name_prefix}security-securityhub-step-functions-role"
+
+  tags = merge(var.tags, { Name = "${var.name_prefix}security-securityhub-step-functions-role" })
 }
 
 data "aws_iam_policy_document" "step_functions" {
@@ -88,16 +86,16 @@ data "aws_iam_policy_document" "step_functions" {
     effect = "Allow"
     actions = [
       "logs:CreateLogDelivery",
-      "logs:GetLogDelivery",
-      "logs:UpdateLogDelivery",
-      "logs:DeleteLogDelivery",
-      "logs:ListLogDeliveries",
-      "logs:PutResourcePolicy",
-      "logs:DescribeResourcePolicies",
-      "logs:DescribeLogGroups",
       "logs:CreateLogGroup",
       "logs:CreateLogStream",
+      "logs:DeleteLogDelivery",
+      "logs:DescribeLogGroups",
+      "logs:DescribeResourcePolicies",
+      "logs:GetLogDelivery",
+      "logs:ListLogDeliveries",
       "logs:PutLogEvents",
+      "logs:PutResourcePolicy",
+      "logs:UpdateLogDelivery",
     ]
     resources = [
       "*",
@@ -115,15 +113,16 @@ data "aws_iam_policy_document" "step_functions" {
 }
 
 resource "aws_iam_policy" "step_functions" {
-  count  = var.is_enabled ? 1 : 0
+  count = var.is_enabled ? 1 : 0
+
   name   = "${var.name_prefix}security-securityhub-step-functions-policy"
   policy = data.aws_iam_policy_document.step_functions.json
-  tags = {
-    Name = "${var.name_prefix}security-securityhub-step-functions-policy"
-  }
+
+  tags = merge(var.tags, { Name = "${var.name_prefix}security-securityhub-step-functions-policy" })
 }
 resource "aws_iam_role_policy_attachment" "step_functions" {
-  count      = var.is_enabled ? 1 : 0
+  count = var.is_enabled ? 1 : 0
+
   role       = aws_iam_role.step_functions[0].name
   policy_arn = aws_iam_policy.step_functions[0].arn
 }
@@ -132,47 +131,46 @@ resource "aws_iam_role_policy_attachment" "step_functions" {
 # CloudWatch event rule
 #--------------------------------------------------------------
 resource "aws_cloudwatch_event_rule" "securityhub" {
-  count         = var.is_enabled ? 1 : 0
-  name          = "${var.name_prefix}security-securityhub-rule"
-  event_pattern = <<EOF
-{
-  "source": [
-    "aws.securityhub"
-  ],
-  "detail-type": [
-    "Security Hub Findings - Imported"
-  ],
-  "detail": {
-    "findings":
-      {
-        "Compliance": {
-          "Status": [
+  count = var.is_enabled ? 1 : 0
+
+  description = "This cloudwatch event used for SecurityHub."
+  event_pattern = jsonencode({
+    source = [
+      "aws.securityhub"
+    ]
+    detail-type = [
+      "Security Hub Findings - Imported"
+    ]
+    detail = {
+      findings = {
+        Compliance = {
+          Status = [
             {
-              "anything-but": "PASSED"
+              anything-but = "PASSED"
             }
           ]
-        },
-        "Severity": {
-           "Label": [
-             "CRITICAL",
-             "HIGH"
-           ]
-        },
-        "Workflow": {
-          "Status": [
+        }
+        Severity = {
+          Label = [
+            "CRITICAL",
+            "HIGH"
+          ]
+        }
+        Workflow = {
+          Status = [
             "NEW"
           ]
-        },
-        "RecordState": [
+        }
+        RecordState = [
           "ACTIVE"
         ]
       }
-  }
-}
-EOF
-  description   = "This cloudwatch event used for SecurityHub."
-  state         = "ENABLED"
-  tags          = local.tags
+    }
+  })
+  name  = "${var.name_prefix}security-securityhub-rule"
+  state = "ENABLED"
+
+  tags = var.tags
 }
 
 data "aws_iam_policy_document" "sns_topic" {
@@ -192,14 +190,17 @@ data "aws_iam_policy_document" "sns_topic" {
 }
 
 resource "aws_sns_topic" "this" {
-  count             = var.is_enabled ? 1 : 0
+  count = var.is_enabled ? 1 : 0
+
   name              = "${var.name_prefix}security-securityhub-chatbot-slack-topic"
   kms_master_key_id = var.kms_master_key_id
-  tags              = var.tags
+
+  tags = var.tags
 }
 
 resource "aws_sns_topic_policy" "this" {
-  count  = var.is_enabled ? 1 : 0
+  count = var.is_enabled ? 1 : 0
+
   arn    = aws_sns_topic.this[0].arn
   policy = data.aws_iam_policy_document.sns_topic.json
 }
@@ -210,14 +211,16 @@ resource "aws_sns_topic_policy" "this" {
 # - step functions
 #--------------------------------------------------------------
 resource "aws_cloudwatch_event_target" "sns_publish" {
-  count     = var.is_enabled ? 1 : 0
+  count = var.is_enabled ? 1 : 0
+
   rule      = aws_cloudwatch_event_rule.securityhub[0].name
   target_id = aws_sns_topic.this[0].name
   arn       = aws_sns_topic.this[0].arn
 }
 
 resource "aws_cloudwatch_event_target" "step_functions" {
-  count    = var.is_enabled ? 1 : 0
+  count = var.is_enabled ? 1 : 0
+
   rule     = aws_cloudwatch_event_rule.securityhub[0].name
   arn      = module.step_functions[0].state_machine_arn
   role_arn = aws_iam_role.eventbridge[0].arn
@@ -228,39 +231,39 @@ resource "aws_cloudwatch_event_target" "step_functions" {
 # Terraform module which creates Step Functions on AWS
 #--------------------------------------------------------------
 module "step_functions" {
-  source                                 = "terraform-aws-modules/step-functions/aws"
-  count                                  = var.is_enabled ? 1 : 0
-  version                                = "4.2.0"
+  count = var.is_enabled ? 1 : 0
+
+  source  = "terraform-aws-modules/step-functions/aws"
+  version = "4.2.0"
+
   cloudwatch_log_group_kms_key_id        = var.cloudwatch_log_group_kms_key_id
   cloudwatch_log_group_name              = "/aws/sfn/${var.name_prefix}securityhub-update-findings-sfn"
   cloudwatch_log_group_retention_in_days = var.cloudwatch_log_group_retention_in_days
   create                                 = true
   create_role                            = false
-  definition                             = <<EOF
-{
-  "Comment": "A description of my state machine",
-  "StartAt": "BatchUpdateFindings",
-  "States": {
-    "BatchUpdateFindings": {
-      "Type": "Task",
-      "Parameters": {
-        "FindingIdentifiers": [
-          {
-            "Id.$": "$.detail.findings[0].Id",
-            "ProductArn.$": "$.detail.findings[0].ProductArn"
+  definition = jsonencode({
+    Comment = "A description of my state machine"
+    StartAt = "BatchUpdateFindings"
+    States = {
+      BatchUpdateFindings = {
+        Type = "Task"
+        Parameters = {
+          FindingIdentifiers = [
+            {
+              "Id.$"         = "$.detail.findings[0].Id"
+              "ProductArn.$" = "$.detail.findings[0].ProductArn"
+            }
+          ]
+          Workflow = {
+            Status = "NOTIFIED"
           }
-        ],
-        "Workflow": {
-          "Status": "NOTIFIED"
         }
-      },
-      "Resource": "arn:aws:states:::aws-sdk:securityhub:batchUpdateFindings",
-      "End": true,
-      "Comment": "Update Findings \"New\" to \"NOTIFIED\"."
+        Resource = "arn:aws:states:::aws-sdk:securityhub:batchUpdateFindings"
+        End      = true
+        Comment  = "Update Findings \"New\" to \"NOTIFIED\"."
+      }
     }
-  }
-}
-EOF
+  })
   logging_configuration = {
     include_execution_data = true
     level                  = "ERROR"

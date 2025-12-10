@@ -1,0 +1,42 @@
+# This is a reusable GitHub Actions workflow for CI that performs linting on GitHub Actions workflows.
+# It uses aqua to install necessary tools and runs actionlint, ghalint, and zizmor
+name: reusable-ci-github-actions-workflow
+
+on:
+  workflow_call:
+    inputs:
+      aqua_version:
+        required: false
+        type: string
+        default: v2.55.1
+      zizmor_version:
+        required: false
+        type: string
+        default: 1.7.0
+
+env:
+  AQUA_VERSION: ${{ inputs.aqua_version }}
+  ZIZMOR_VERSION: ${{ inputs.zizmor_version }}
+
+jobs:
+  lint:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        with:
+          persist-credentials: false
+      - uses: aquaproj/aqua-installer@11dd79b4e498d471a9385aa9fb7f62bb5f52a73c # v4.0.4
+        with:
+          aqua_version: ${{ inputs.aqua_version }}
+      # github workflows/action's Static Checker
+      - name: Run actionlint
+        run: actionlint -color -oneline
+      # checkout's persist-credentials: false checker
+      - name: Run ghalint
+        run: ghalint run
+      # A static analysis tool for GitHub Actions
+      - name: Run zizmor
+        run: docker run -t -v .:/github ghcr.io/woodruffw/zizmor:"${ZIZMOR_VERSION}" /github --min-severity medium

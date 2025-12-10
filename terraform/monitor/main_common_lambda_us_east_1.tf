@@ -1,323 +1,439 @@
 #--------------------------------------------------------------
 # IAM role of Lambda for alarm monitoring
 # for CloudFront
+# NOTE: These resources are for global services (CloudFront, SES) that
+#       are always in us-east-1, regardless of the default region.
+#       They should NOT be skipped even if default region is us-east-1.
 #--------------------------------------------------------------
-#--------------------------------------------------------------
-# Local
-#--------------------------------------------------------------
-locals {
-  aws_kms_key_lambda_us_east_1 = merge(var.common_lambda.metric.aws_kms_key, {
-    description             = lookup(var.common_lambda.metric.aws_kms_key, "description", null)
-    deletion_window_in_days = lookup(var.common_lambda.metric.aws_kms_key, "deletion_window_in_days", 7)
-    is_enabled              = lookup(var.common_lambda.metric.aws_kms_key, "is_enabled")
-    enable_key_rotation     = lookup(var.common_lambda.metric.aws_kms_key, "enable_key_rotation")
-    alias_name              = "alias/${var.name_prefix}${lookup(var.common_lambda.metric.aws_kms_key, "alias_name")}"
-    }
-  )
-}
 #--------------------------------------------------------------
 # Provides a SNS
+# NOTE: Skip creation if default region is us-east-1 to avoid duplication
 #--------------------------------------------------------------
 module "aws_sns_subscription_lambda_metric_us_east_1" {
+  count = !local.is_default_region_us_east_1 ? 1 : 0
+
   source = "../../modules/aws/sns/subscription"
   providers = {
     aws = aws.us-east-1
   }
-  aws_kms_key = local.aws_kms_key_lambda_us_east_1
+
   aws_sns_topic = merge(var.common_lambda.metric.aws_sns_topic, {
-    name = "${var.name_prefix}${lookup(var.common_lambda.metric.aws_sns_topic, "name")}"
+    name = "${var.name_prefix}${var.common_lambda.metric.aws_sns_topic.name}"
     }
   )
   aws_sns_topic_subscription = {
-    protocol                        = lookup(var.common_lambda.aws_sns_topic_subscription, "protocol")
-    endpoint                        = module.aws_lambda_create_lambda_us_east_1.arn
-    endpoint_auto_confirms          = lookup(var.common_lambda.aws_sns_topic_subscription, "endpoint_auto_confirms")
-    confirmation_timeout_in_minutes = lookup(var.common_lambda.aws_sns_topic_subscription, "confirmation_timeout_in_minutes")
-    raw_message_delivery            = lookup(var.common_lambda.aws_sns_topic_subscription, "raw_message_delivery")
-    filter_policy                   = lookup(var.common_lambda.aws_sns_topic_subscription, "filter_policy")
-    delivery_policy                 = lookup(var.common_lambda.aws_sns_topic_subscription, "delivery_policy")
-    redrive_policy                  = lookup(var.common_lambda.aws_sns_topic_subscription, "redrive_policy")
+    protocol                        = var.common_lambda.aws_sns_topic_subscription.protocol
+    endpoint                        = module.aws_lambda_create_lambda_us_east_1.lambda_function_arn
+    endpoint_auto_confirms          = var.common_lambda.aws_sns_topic_subscription.endpoint_auto_confirms
+    confirmation_timeout_in_minutes = var.common_lambda.aws_sns_topic_subscription.confirmation_timeout_in_minutes
+    raw_message_delivery            = var.common_lambda.aws_sns_topic_subscription.raw_message_delivery
+    filter_policy                   = var.common_lambda.aws_sns_topic_subscription.filter_policy
+    delivery_policy                 = var.common_lambda.aws_sns_topic_subscription.delivery_policy
+    redrive_policy                  = var.common_lambda.aws_sns_topic_subscription.redrive_policy
   }
+  kms_master_key_id = module.kms_key_us_east_1["monitor"].key_id
 
-  account_id = data.aws_caller_identity.current.account_id
-  region     = var.region
-  user       = var.deploy_user
-  tags       = var.tags
+  tags = var.tags
 }
+
 #--------------------------------------------------------------
 # Create Lambda function
+# NOTE: Skip creation if default region is us-east-1 to avoid duplication
 #--------------------------------------------------------------
 module "aws_lambda_create_lambda_us_east_1" {
-  source = "../../modules/aws/lambda/create"
+  source  = "terraform-aws-modules/lambda/aws"
+  version = "8.1.2"
+  create  = !local.is_default_region_us_east_1
   providers = {
     aws = aws.us-east-1
   }
-  is_enabled               = lookup(var.common_lambda, "is_enabled", true)
-  aws_cloudwatch_log_group = lookup(var.common_lambda, "aws_cloudwatch_log_group_lambda")
 
-  # Provides a Lambda Function resource.
-  # Lambda allows you to trigger execution of code in response to events in AWS, enabling serverless backend solutions. The Lambda Function itself includes source code and runtime configuration.
-  aws_lambda_function = {
-    filename                       = "../../lambda/outputs/go_cloudwatch_alarm_to_sns_to_slack.zip"
-    s3_bucket                      = null
-    s3_key                         = null
-    s3_object_version              = null
-    function_name                  = "${var.name_prefix}cloudwatch-alarm-monitor"
-    dead_letter_config             = []
-    handler                        = "cloudwatch_alarm_to_sns_to_slack"
-    architectures                  = ["arm64"]
-    role                           = module.aws_iam_role_lambda.arn
-    description                    = "This program sends the result of monitor to Slack."
-    layers                         = []
-    memory_size                    = 128
-    runtime                        = "provided.al2"
-    timeout                        = 300
-    reserved_concurrent_executions = null
-    publish                        = false
-    vpc_config = var.common_lambda.vpc.is_enabled ? var.common_lambda.vpc.create_vpc ? [
-      {
-        subnet_ids         = module.lambda_vpc_us_east_1.private_subnets
-        security_group_ids = [module.lambda_vpc_us_east_1.default_security_group_id]
-      }
-      ] : [
-      {
-        subnet_ids         = var.common_lambda.vpc.exists.private_subnets_us_east_1
-        security_group_ids = [var.common_lambda.vpc.exists.security_group_id_us_east_1]
-      }
-    ] : []
-    kms_key_arn      = null
-    source_code_hash = filebase64sha256("../../lambda/outputs/go_cloudwatch_alarm_to_sns_to_slack.zip")
-    environment      = lookup(var.common_lambda.metric.aws_lambda_function, "environment")
+  allowed_triggers = {
+    trigger = {
+      action              = "lambda:InvokeFunction"
+      event_source_token  = null
+      principal           = "sns.amazonaws.com"
+      qualifier           = null
+      source_account      = null
+      source_arn          = module.aws_sns_subscription_lambda_metric_us_east_1[0].arn
+      statement_id        = "MonitorDetection"
+      statement_id_prefix = null
+    }
   }
-  # Creates a Lambda permission to allow external sources invoking the Lambda function (e.g. CloudWatch Events Rule, SNS or S3).
+  architectures                           = ["arm64"]
+  attach_network_policy                   = var.common_lambda.vpc.is_enabled
+  cloudwatch_logs_kms_key_id              = module.kms_key_us_east_1["monitor"].key_arn
+  cloudwatch_logs_retention_in_days       = try(var.cloudwatch_log_group.override.common_lambda_metric.retention_in_days, null) == null ? var.cloudwatch_log_group.retention_in_days : var.cloudwatch_log_group.override.common_lambda_metric.retention_in_days
+  create_current_version_allowed_triggers = false
+  create_package                          = false
+  create_role                             = false
+  description                             = "This program sends the result of monitor to Slack."
+  environment_variables = merge({
+    LOGGER_FORMATTER    = "json"
+    LOGGER_OUT          = "stdout"
+    LOGGER_LEVEL        = "warn"
+    DYNAMODB_TABLE_NAME = module.dynamodb_table_monitor_log_us_east_1.dynamodb_table_id
+    # Override SLACK_* with priority: override > defaults
+    SLACK_OAUTH_ACCESS_TOKEN = try(var.slack.override.common_lambda_metric.oauth_access_token, null) != null ? var.slack.override.common_lambda_metric.oauth_access_token : var.slack.oauth_access_token
+    SLACK_CHANNEL_ID         = try(var.slack.override.common_lambda_metric.channel_id, null) != null ? var.slack.override.common_lambda_metric.channel_id : var.slack.channel_id
+  }, var.common_lambda.metric.aws_lambda_function.environment)
+  function_name                 = "${var.name_prefix}cloudwatch-alarm-monitor"
+  handler                       = "cloudwatch_alarm_to_sns_to_slack"
+  lambda_role                   = module.aws_iam_role_lambda.arn
+  layers                        = []
+  local_existing_package        = "../../lambda/outputs/go_cloudwatch_alarm_to_sns_to_slack.zip"
+  logging_application_log_level = "WARN"
+  logging_log_format            = "JSON"
+  logging_system_log_level      = "WARN"
+  memory_size                   = 128
+  publish                       = false
+  runtime                       = "provided.al2"
+  timeout                       = 300
+  tracing_mode                  = "PassThrough"
+  vpc_security_group_ids        = var.common_lambda.vpc.is_enabled ? var.common_lambda.vpc.create_vpc ? [module.lambda_vpc_us_east_1.default_security_group_id] : [var.common_lambda.vpc.exists.security_group_id_us_east_1] : []
+  vpc_subnet_ids                = var.common_lambda.vpc.is_enabled ? var.common_lambda.vpc.create_vpc ? module.lambda_vpc_us_east_1.private_subnets : var.common_lambda.vpc.exists.private_subnets_us_east_1 : []
+
   tags = var.tags
+
   depends_on = [
     module.lambda_vpc_us_east_1
   ]
 }
 
 #--------------------------------------------------------------
-# Create Lambda Permission
-#--------------------------------------------------------------
-module "aws_lambda_permission_lambda_us_east_1" {
-  source = "../../modules/aws/lambda/permission"
-  providers = {
-    aws = aws.us-east-1
-  }
-  is_enabled = lookup(var.common_lambda, "is_enabled", true)
-  aws_lambda_permission = {
-    action              = "lambda:InvokeFunction"
-    event_source_token  = null
-    function_name       = module.aws_lambda_create_lambda_us_east_1.function_name
-    principal           = "sns.amazonaws.com"
-    qualifier           = null
-    source_account      = null
-    source_arn          = module.aws_sns_subscription_lambda_metric_us_east_1.arn
-    statement_id        = "MonitorDetectUnexpectedUsage"
-    statement_id_prefix = null
-  }
-}
-#--------------------------------------------------------------
 # Provides a SNS
 # For SES
+# NOTE: Skip creation if default region is us-east-1 to avoid duplication
 #--------------------------------------------------------------
 module "aws_sns_subscription_lambda_ses_us_east_1" {
+  count = !local.is_default_region_us_east_1 ? 1 : 0
+
   source = "../../modules/aws/sns/subscription"
   providers = {
     aws = aws.us-east-1
   }
-  aws_kms_key = local.aws_kms_key_lambda_ses
+
   aws_sns_topic = merge(var.common_lambda.ses.aws_sns_topic, tomap({
-    name   = "${var.name_prefix}${lookup(var.common_lambda.ses.aws_sns_topic, "name")}",
-    policy = <<POLICY
-{
-  "Version": "2008-10-17",
-  "Statement": [
-    {
-      "Sid": "SESAllow",
-      "Effect": "Allow",
-      "Principal": {
-        "Service": "ses.amazonaws.com"
-      },
-      "Action": "SNS:Publish",
-      "Resource": "arn:aws:sns:us-east-1:${data.aws_caller_identity.current.account_id}:${var.name_prefix}${lookup(var.common_lambda.ses.aws_sns_topic, "name")}",
-      "Condition": {
-        "StringEquals": {
-          "AWS:SourceAccount": "${data.aws_caller_identity.current.account_id}"
-        },
-        "StringLike": {
-          "AWS:SourceArn": "arn:aws:ses:*"
+    name = "${var.name_prefix}${var.common_lambda.ses.aws_sns_topic.name}",
+    policy = jsonencode({
+      Version = "2008-10-17"
+      Statement = [
+        {
+          Sid    = "SESAllow"
+          Effect = "Allow"
+          Principal = {
+            Service = "ses.amazonaws.com"
+          }
+          Action   = "SNS:Publish"
+          Resource = "arn:aws:sns:us-east-1:${data.aws_caller_identity.current.account_id}:${var.name_prefix}${var.common_lambda.ses.aws_sns_topic.name}"
+          Condition = {
+            StringEquals = {
+              "AWS:SourceAccount" = data.aws_caller_identity.current.account_id
+            }
+            StringLike = {
+              "AWS:SourceArn" = "arn:aws:ses:*"
+            }
+          }
         }
-      }
-    }
-  ]
-}
-POLICY
+      ]
+    })
     })
   )
   aws_sns_topic_subscription = {
-    protocol                        = lookup(var.common_lambda.aws_sns_topic_subscription, "protocol")
-    endpoint                        = module.aws_lambda_create_lambda_ses_us_east_1.arn
-    endpoint_auto_confirms          = lookup(var.common_lambda.aws_sns_topic_subscription, "endpoint_auto_confirms")
-    confirmation_timeout_in_minutes = lookup(var.common_lambda.aws_sns_topic_subscription, "confirmation_timeout_in_minutes")
-    raw_message_delivery            = lookup(var.common_lambda.aws_sns_topic_subscription, "raw_message_delivery")
-    filter_policy                   = lookup(var.common_lambda.aws_sns_topic_subscription, "filter_policy")
-    delivery_policy                 = lookup(var.common_lambda.aws_sns_topic_subscription, "delivery_policy")
-    redrive_policy                  = lookup(var.common_lambda.aws_sns_topic_subscription, "redrive_policy")
+    protocol                        = var.common_lambda.aws_sns_topic_subscription.protocol
+    endpoint                        = module.aws_lambda_create_lambda_ses_us_east_1.lambda_function_arn
+    endpoint_auto_confirms          = var.common_lambda.aws_sns_topic_subscription.endpoint_auto_confirms
+    confirmation_timeout_in_minutes = var.common_lambda.aws_sns_topic_subscription.confirmation_timeout_in_minutes
+    raw_message_delivery            = var.common_lambda.aws_sns_topic_subscription.raw_message_delivery
+    filter_policy                   = var.common_lambda.aws_sns_topic_subscription.filter_policy
+    delivery_policy                 = var.common_lambda.aws_sns_topic_subscription.delivery_policy
+    redrive_policy                  = var.common_lambda.aws_sns_topic_subscription.redrive_policy
   }
+  kms_master_key_id = module.kms_key_us_east_1["monitor"].key_id
 
-  account_id = data.aws_caller_identity.current.account_id
-  region     = var.region
-  user       = var.deploy_user
-  tags       = var.tags
+  tags = var.tags
 }
+
 #--------------------------------------------------------------
 # Create Lambda function
 # For SES
+# NOTE: Skip creation if default region is us-east-1 to avoid duplication
 #--------------------------------------------------------------
 module "aws_lambda_create_lambda_ses_us_east_1" {
-  source = "../../modules/aws/lambda/create"
+  source  = "terraform-aws-modules/lambda/aws"
+  version = "8.1.2"
+  create  = !local.is_default_region_us_east_1
   providers = {
     aws = aws.us-east-1
   }
-  is_enabled               = lookup(var.common_lambda, "is_enabled", true)
-  aws_cloudwatch_log_group = lookup(var.common_lambda, "aws_cloudwatch_log_group_lambda")
 
-  # Provides a Lambda Function resource.
-  # Lambda allows you to trigger execution of code in response to events in AWS, enabling serverless backend solutions. The Lambda Function itself includes source code and runtime configuration.
-  aws_lambda_function = {
-    filename                       = "../../lambda/outputs/go_cloudwatch_alarm_to_sns_ses_to_slack.zip"
-    s3_bucket                      = null
-    s3_key                         = null
-    s3_object_version              = null
-    function_name                  = "${var.name_prefix}cloudwatch-alarm-ses"
-    dead_letter_config             = []
-    handler                        = "cloudwatch_alarm_to_sns_ses_to_slack"
-    architectures                  = ["arm64"]
-    role                           = module.aws_iam_role_lambda.arn
-    description                    = "This program sends the result of SES to Slack."
-    layers                         = []
-    memory_size                    = 128
-    runtime                        = "provided.al2"
-    timeout                        = 300
-    reserved_concurrent_executions = null
-    publish                        = false
-    kms_key_arn                    = null
-    source_code_hash               = filebase64sha256("../../lambda/outputs/go_cloudwatch_alarm_to_sns_ses_to_slack.zip")
-    environment                    = lookup(var.common_lambda.ses.aws_lambda_function, "environment")
-    vpc_config = var.common_lambda.vpc.is_enabled ? var.common_lambda.vpc.create_vpc ? [
-      {
-        subnet_ids         = module.lambda_vpc_us_east_1.private_subnets
-        security_group_ids = [module.lambda_vpc_us_east_1.default_security_group_id]
-      }
-      ] : [
-      {
-        subnet_ids         = var.common_lambda.vpc.exists.private_subnets
-        security_group_ids = [var.common_lambda.vpc.exists.security_group_id]
-      }
-    ] : []
+  allowed_triggers = {
+    trigger = {
+      action              = "lambda:InvokeFunction"
+      event_source_token  = null
+      principal           = "sns.amazonaws.com"
+      qualifier           = null
+      source_account      = null
+      source_arn          = module.aws_sns_subscription_lambda_ses_us_east_1[0].arn
+      statement_id        = "SESDetection"
+      statement_id_prefix = null
+    }
   }
-  # Creates a Lambda permission to allow external sources invoking the Lambda function (e.g. CloudWatch Events Rule, SNS or S3).
+  architectures                           = ["arm64"]
+  attach_network_policy                   = var.common_lambda.vpc.is_enabled
+  cloudwatch_logs_kms_key_id              = module.kms_key_us_east_1["monitor"].key_arn
+  cloudwatch_logs_retention_in_days       = try(var.cloudwatch_log_group.override.common_lambda_ses.retention_in_days, null) == null ? var.cloudwatch_log_group.retention_in_days : var.cloudwatch_log_group.override.common_lambda_ses.retention_in_days
+  create_current_version_allowed_triggers = false
+  create_package                          = false
+  create_role                             = false
+  description                             = "This program sends the result of SES to Slack."
+  environment_variables = merge({
+    LOGGER_FORMATTER            = "json"
+    LOGGER_OUT                  = "stdout"
+    LOGGER_LEVEL                = "warn"
+    LOG_GROUP_RETENTION_IN_DAYS = try(var.cloudwatch_log_group.override.common_lambda_ses.retention_in_days, null) != null ? var.cloudwatch_log_group.override.common_lambda_ses.retention_in_days : var.cloudwatch_log_group.retention_in_days
+    # Override SLACK_* with priority: override > defaults
+    SLACK_OAUTH_ACCESS_TOKEN = try(var.slack.override.common_lambda_ses.oauth_access_token, null) != null ? var.slack.override.common_lambda_ses.oauth_access_token : var.slack.oauth_access_token
+    SLACK_CHANNEL_ID         = try(var.slack.override.common_lambda_ses.channel_id, null) != null ? var.slack.override.common_lambda_ses.channel_id : var.slack.channel_id
+  }, var.common_lambda.ses.aws_lambda_function.environment)
+  function_name                 = "${var.name_prefix}cloudwatch-alarm-ses"
+  handler                       = "cloudwatch_alarm_to_sns_ses_to_slack"
+  lambda_role                   = module.aws_iam_role_lambda.arn
+  layers                        = []
+  local_existing_package        = "../../lambda/outputs/go_cloudwatch_alarm_to_sns_ses_to_slack.zip"
+  logging_application_log_level = "WARN"
+  logging_log_format            = "JSON"
+  logging_system_log_level      = "WARN"
+  memory_size                   = 128
+  publish                       = false
+  runtime                       = "provided.al2"
+  timeout                       = 300
+  tracing_mode                  = "PassThrough"
+  vpc_security_group_ids        = var.common_lambda.vpc.is_enabled ? var.common_lambda.vpc.create_vpc ? [module.lambda_vpc_us_east_1.default_security_group_id] : [var.common_lambda.vpc.exists.security_group_id_us_east_1] : []
+  vpc_subnet_ids                = var.common_lambda.vpc.is_enabled ? var.common_lambda.vpc.create_vpc ? module.lambda_vpc_us_east_1.private_subnets : var.common_lambda.vpc.exists.private_subnets_us_east_1 : []
+
   tags = var.tags
+
   depends_on = [
     module.lambda_vpc_us_east_1
   ]
-}
-#--------------------------------------------------------------
-# Create Lambda Permission
-# For SES
-#--------------------------------------------------------------
-module "aws_lambda_permission_lambda_ses_us_east_1" {
-  source = "../../modules/aws/lambda/permission"
-  providers = {
-    aws = aws.us-east-1
-  }
-  is_enabled = lookup(var.common_lambda, "is_enabled", true)
-  aws_lambda_permission = {
-    action              = "lambda:InvokeFunction"
-    event_source_token  = null
-    function_name       = module.aws_lambda_create_lambda_ses_us_east_1.function_name
-    principal           = "sns.amazonaws.com"
-    qualifier           = null
-    source_account      = null
-    source_arn          = module.aws_sns_subscription_lambda_ses_us_east_1.arn
-    statement_id        = "SESDetectUnexpectedUsage"
-    statement_id_prefix = null
-  }
 }
 
 #--------------------------------------------------------------
 # Create Lambda function
 # For Kinesis Data Firehose Cloudwatch Logs Processor
+# NOTE: Skip creation if default region is us-east-1 to avoid duplication
 #--------------------------------------------------------------
 module "aws_lambda_create_lambda_kinesis_data_firehose_cloudwatch_logs_processor_us_east_1" {
-  source = "../../modules/aws/lambda/create"
+  source  = "terraform-aws-modules/lambda/aws"
+  version = "8.1.2"
+  create  = !local.is_default_region_us_east_1
   providers = {
     aws = aws.us-east-1
   }
-  is_enabled               = lookup(var.common_lambda, "is_enabled", true)
-  aws_cloudwatch_log_group = lookup(var.common_lambda, "aws_cloudwatch_log_group_lambda")
 
-  # Provides a Lambda Function resource.
-  # Lambda allows you to trigger execution of code in response to events in AWS, enabling serverless backend solutions. The Lambda Function itself includes source code and runtime configuration.
-  aws_lambda_function = {
-    # cd /workspace/nodejs/kinesis_data_firehose_cloudwatch_logs_processor; zip /workspace/lambda/outputs/nodejs_kinesis_data_firehose_cloudwatch_logs_processor.zip index.mjs
-    filename                       = "../../lambda/outputs/nodejs_kinesis_data_firehose_cloudwatch_logs_processor.zip"
-    s3_bucket                      = null
-    s3_key                         = null
-    s3_object_version              = null
-    function_name                  = "${var.name_prefix}kinesis-data-firehose-cloudwatch-logs-processor"
-    dead_letter_config             = []
-    handler                        = "index.handler"
-    architectures                  = ["arm64"]
-    role                           = module.aws_iam_role_lambda.arn
-    description                    = "An Amazon Kinesis Firehose stream processor that extracts individual log events from records sent by Cloudwatch Logs subscription filters."
-    layers                         = []
-    memory_size                    = 128
-    runtime                        = "nodejs18.x"
-    timeout                        = 300
-    reserved_concurrent_executions = null
-    publish                        = false
-    kms_key_arn                    = null
-    source_code_hash               = filebase64sha256("../../lambda/outputs/nodejs_kinesis_data_firehose_cloudwatch_logs_processor.zip")
-    environment                    = lookup(var.common_lambda.metric.aws_lambda_function, "environment")
-    vpc_config = var.common_lambda.vpc.is_enabled ? var.common_lambda.vpc.create_vpc ? [
-      {
-        subnet_ids         = module.lambda_vpc_us_east_1.private_subnets
-        security_group_ids = [module.lambda_vpc_us_east_1.default_security_group_id]
-      }
-      ] : [
-      {
-        subnet_ids         = var.common_lambda.vpc.exists.private_subnets
-        security_group_ids = [var.common_lambda.vpc.exists.security_group_id]
-      }
-    ] : []
+  allowed_triggers = {
+    trigger = {
+      action              = "lambda:InvokeFunction"
+      event_source_token  = null
+      principal           = "lambda.amazonaws.com"
+      qualifier           = null
+      source_account      = null
+      source_arn          = null
+      statement_id        = "KinesisDataFirehoseCloudwatchLogsProcessorDetection"
+      statement_id_prefix = null
+    }
   }
-  # Creates a Lambda permission to allow external sources invoking the Lambda function (e.g. CloudWatch Events Rule, SNS or S3).
+  architectures                           = ["arm64"]
+  attach_network_policy                   = var.common_lambda.vpc.is_enabled
+  cloudwatch_logs_kms_key_id              = module.kms_key_us_east_1["monitor"].key_arn
+  cloudwatch_logs_retention_in_days       = try(var.cloudwatch_log_group.override.common_lambda_step_functions.retention_in_days, null) == null ? var.cloudwatch_log_group.retention_in_days : var.cloudwatch_log_group.override.common_lambda_step_functions.retention_in_days
+  create_current_version_allowed_triggers = false
+  create_package                          = false
+  create_role                             = false
+  description                             = "An Amazon Kinesis Firehose stream processor that extracts individual log events from records sent by Cloudwatch Logs subscription filters."
+  environment_variables = merge({
+    LOGGER_FORMATTER = "json"
+    LOGGER_OUT       = "stdout"
+    LOGGER_LEVEL     = "warn"
+    # Override SLACK_* with priority: override > defaults
+    SLACK_OAUTH_ACCESS_TOKEN = try(var.slack.override.common_lambda_metric.oauth_access_token, null) != null ? var.slack.override.common_lambda_metric.oauth_access_token : var.slack.oauth_access_token
+    SLACK_CHANNEL_ID         = try(var.slack.override.common_lambda_metric.channel_id, null) != null ? var.slack.override.common_lambda_metric.channel_id : var.slack.channel_id
+  }, var.common_lambda.metric.aws_lambda_function.environment)
+  function_name                 = "${var.name_prefix}kinesis-data-firehose-cloudwatch-logs-processor"
+  handler                       = "index.handler"
+  lambda_role                   = module.aws_iam_role_lambda.arn
+  layers                        = []
+  local_existing_package        = "../../lambda/outputs/nodejs_kinesis_data_firehose_cloudwatch_logs_processor.zip"
+  logging_application_log_level = "WARN"
+  logging_log_format            = "JSON"
+  logging_system_log_level      = "WARN"
+  memory_size                   = 128
+  publish                       = false
+  runtime                       = "nodejs22.x"
+  timeout                       = 300
+  tracing_mode                  = "PassThrough"
+  vpc_security_group_ids        = var.common_lambda.vpc.is_enabled ? var.common_lambda.vpc.create_vpc ? [module.lambda_vpc_us_east_1.default_security_group_id] : [var.common_lambda.vpc.exists.security_group_id_us_east_1] : []
+  vpc_subnet_ids                = var.common_lambda.vpc.is_enabled ? var.common_lambda.vpc.create_vpc ? module.lambda_vpc_us_east_1.private_subnets : var.common_lambda.vpc.exists.private_subnets_us_east_1 : []
+
   tags = var.tags
+
   depends_on = [
     module.lambda_vpc_us_east_1
   ]
 }
+
 #--------------------------------------------------------------
-# Create Lambda Permission
-# For Kinesis Data Firehose Cloudwatch Logs Processor
+# Provides a SNS
+# For Log
+# NOTE: Skip creation if default region is us-east-1 to avoid duplication
 #--------------------------------------------------------------
-module "aws_lambda_permission_lambda_kinesis_data_firehose_cloudwatch_logs_processor_us_east_1" {
-  source = "../../modules/aws/lambda/permission"
+module "aws_sns_subscription_lambda_log_us_east_1" {
+  count = !local.is_default_region_us_east_1 ? 1 : 0
+
+  source = "../../modules/aws/sns/subscription"
   providers = {
     aws = aws.us-east-1
   }
-  is_enabled = lookup(var.common_lambda, "is_enabled", true)
-  aws_lambda_permission = {
-    action              = "lambda:InvokeFunction"
-    event_source_token  = null
-    function_name       = module.aws_lambda_create_lambda_kinesis_data_firehose_cloudwatch_logs_processor_us_east_1.function_name
-    principal           = "lambda.amazonaws.com"
-    qualifier           = null
-    source_account      = null
-    source_arn          = null
-    statement_id        = "KinesisDataFirehoseCloudwatchLogsProcessorDetectUnexpectedUsage"
-    statement_id_prefix = null
+
+  aws_sns_topic = merge(var.common_lambda.log.aws_sns_topic, {
+    name = "${var.name_prefix}${var.common_lambda.log.aws_sns_topic.name}"
+    }
+  )
+  aws_sns_topic_subscription = {
+    protocol                        = var.common_lambda.aws_sns_topic_subscription.protocol
+    endpoint                        = module.aws_lambda_create_lambda_log_us_east_1.lambda_function_arn
+    endpoint_auto_confirms          = var.common_lambda.aws_sns_topic_subscription.endpoint_auto_confirms
+    confirmation_timeout_in_minutes = var.common_lambda.aws_sns_topic_subscription.confirmation_timeout_in_minutes
+    raw_message_delivery            = var.common_lambda.aws_sns_topic_subscription.raw_message_delivery
+    filter_policy                   = var.common_lambda.aws_sns_topic_subscription.filter_policy
+    delivery_policy                 = var.common_lambda.aws_sns_topic_subscription.delivery_policy
+    redrive_policy                  = var.common_lambda.aws_sns_topic_subscription.redrive_policy
   }
+  kms_master_key_id = module.kms_key_us_east_1["monitor"].key_id
+
+  tags = var.tags
+}
+
+#--------------------------------------------------------------
+# Create Lambda function
+# For Log
+# NOTE: Skip creation if default region is us-east-1 to avoid duplication
+#--------------------------------------------------------------
+module "aws_lambda_create_lambda_log_us_east_1" {
+  source  = "terraform-aws-modules/lambda/aws"
+  version = "8.1.2"
+  create  = !local.is_default_region_us_east_1
+  providers = {
+    aws = aws.us-east-1
+  }
+
+  allowed_triggers = {
+    trigger = {
+      action              = "lambda:InvokeFunction"
+      event_source_token  = null
+      principal           = "sns.amazonaws.com"
+      qualifier           = null
+      source_account      = null
+      source_arn          = module.aws_sns_subscription_lambda_log_us_east_1[0].arn
+      statement_id        = "LogDetection"
+      statement_id_prefix = null
+    }
+  }
+  architectures                           = ["arm64"]
+  attach_network_policy                   = var.common_lambda.vpc.is_enabled
+  cloudwatch_logs_kms_key_id              = module.kms_key_us_east_1["monitor"].key_arn
+  cloudwatch_logs_retention_in_days       = try(var.cloudwatch_log_group.override.common_lambda_log.retention_in_days, null) == null ? var.cloudwatch_log_group.retention_in_days : var.cloudwatch_log_group.override.common_lambda_log.retention_in_days
+  create_current_version_allowed_triggers = false
+  create_package                          = false
+  create_role                             = false
+  description                             = "This program sends the result of log to Slack."
+  environment_variables = {
+    LOGGER_FORMATTER = "json"
+    LOGGER_OUT       = "stdout"
+    LOGGER_LEVEL     = "warn"
+    # Override SLACK_* with priority: override > defaults
+    SLACK_OAUTH_ACCESS_TOKEN = try(var.slack.override.common_lambda_log.oauth_access_token, null) != null ? var.slack.override.common_lambda_log.oauth_access_token : var.slack.oauth_access_token
+    SLACK_CHANNEL_ID         = try(var.slack.override.common_lambda_log.channel_id, null) != null ? var.slack.override.common_lambda_log.channel_id : var.slack.channel_id
+  }
+  function_name                 = "${var.name_prefix}cloudwatch-alarm-log"
+  handler                       = "cloudwatch_alarm_to_sns_to_slack"
+  lambda_role                   = module.aws_iam_role_lambda.arn
+  layers                        = []
+  local_existing_package        = "../../lambda/outputs/go_cloudwatch_alarm_to_sns_to_slack.zip"
+  logging_application_log_level = "WARN"
+  logging_log_format            = "JSON"
+  logging_system_log_level      = "WARN"
+  memory_size                   = 128
+  publish                       = false
+  runtime                       = "provided.al2"
+  timeout                       = 300
+  tracing_mode                  = "PassThrough"
+  vpc_security_group_ids        = var.common_lambda.vpc.is_enabled ? var.common_lambda.vpc.create_vpc ? [module.lambda_vpc_us_east_1.default_security_group_id] : [var.common_lambda.vpc.exists.security_group_id_us_east_1] : []
+  vpc_subnet_ids                = var.common_lambda.vpc.is_enabled ? var.common_lambda.vpc.create_vpc ? module.lambda_vpc_us_east_1.private_subnets : var.common_lambda.vpc.exists.private_subnets_us_east_1 : []
+
+  tags = var.tags
+
+  depends_on = [
+    module.lambda_vpc_us_east_1
+  ]
+}
+
+#--------------------------------------------------------------
+# Create Lambda function
+# For CloudFront Logs moves object key.
+# NOTE: Skip creation if default region is us-east-1 to avoid duplication
+#--------------------------------------------------------------
+module "aws_lambda_create_lambda_s3_notification_s3_object_created_for_athena_us_east_1" {
+  source  = "terraform-aws-modules/lambda/aws"
+  version = "8.1.2"
+  providers = {
+    aws = aws.us-east-1
+  }
+  create = !local.is_default_region_us_east_1
+
+  allowed_triggers = {
+    trigger = {
+      action              = "lambda:InvokeFunction"
+      event_source_token  = null
+      principal           = "lambda.amazonaws.com"
+      qualifier           = null
+      source_account      = null
+      source_arn          = null
+      statement_id        = "S3NotificationS3ObjectCreatedForAthenaProcessorDetection"
+      statement_id_prefix = null
+    }
+  }
+  architectures                           = ["arm64"]
+  attach_network_policy                   = var.common_lambda.vpc.is_enabled
+  cloudwatch_logs_kms_key_id              = module.kms_key_us_east_1["monitor"].key_arn
+  cloudwatch_logs_retention_in_days       = try(var.cloudwatch_log_group.override.common_lambda_step_functions.retention_in_days, null) == null ? var.cloudwatch_log_group.retention_in_days : var.cloudwatch_log_group.override.common_lambda_step_functions.retention_in_days
+  create_current_version_allowed_triggers = false
+  create_package                          = false
+  create_role                             = false
+  description                             = "This program moves s3 object(CloudFront) for Athena."
+  environment_variables = {
+    TARGET_KEY_PREFIX = "Logs/CloudFront/"
+  }
+  function_name                 = "${var.name_prefix}s3-notification-s3-object-created-for-athena"
+  handler                       = "index.handler"
+  lambda_role                   = module.aws_iam_role_lambda.arn
+  layers                        = []
+  local_existing_package        = "../../lambda/outputs/nodejs_s3_notification_s3_object_created_for_athena.zip"
+  logging_application_log_level = "INFO"
+  logging_log_format            = "JSON"
+  logging_system_log_level      = "WARN"
+  memory_size                   = 128
+  publish                       = false
+  runtime                       = "nodejs22.x"
+  timeout                       = 300
+  tracing_mode                  = "PassThrough"
+  vpc_security_group_ids        = var.common_lambda.vpc.is_enabled ? var.common_lambda.vpc.create_vpc ? [module.lambda_vpc_us_east_1.default_security_group_id] : [var.common_lambda.vpc.exists.security_group_id_us_east_1] : []
+  vpc_subnet_ids                = var.common_lambda.vpc.is_enabled ? var.common_lambda.vpc.create_vpc ? module.lambda_vpc_us_east_1.private_subnets : var.common_lambda.vpc.exists.private_subnets_us_east_1 : []
+
+  tags = var.tags
+
+  depends_on = [
+    module.lambda_vpc_us_east_1
+  ]
 }

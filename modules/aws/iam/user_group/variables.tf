@@ -1,3 +1,8 @@
+variable "is_enabled" {
+  type        = bool
+  description = "(Optional) Whether to create IAM resources. Set to false to disable the entire module."
+  default     = true
+}
 variable "user" {
   type = map(object({
     is_console_access = bool

@@ -1,4 +1,9 @@
 #--------------------------------------------------------------
+# Module: aws/s3/bucket_policy/lb
+# Purpose: Attach S3 bucket policy to enable ELB and log delivery service to write access logs.
+# Notes: Includes ACL enforcement for log delivery; future improvement: regionalize ELB account ID mapping via data source.
+#--------------------------------------------------------------
+#--------------------------------------------------------------
 # Generates an IAM policy document in JSON format for use with resources that expect policy documents such as aws_iam_policy.
 #--------------------------------------------------------------
 data "aws_iam_policy_document" "this" {
@@ -52,11 +57,13 @@ data "aws_iam_policy_document" "this" {
     ]
   }
 }
+
 #--------------------------------------------------------------
 # Attaches a policy to an S3 bucket resource.
 #--------------------------------------------------------------
 resource "aws_s3_bucket_policy" "this" {
-  count  = var.attach_bucket_policy ? 1 : 0
+  count = var.attach_bucket_policy ? 1 : 0
+
   bucket = var.bucket
   policy = data.aws_iam_policy_document.this.json
 }

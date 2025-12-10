@@ -2,58 +2,61 @@
 # module variables
 #--------------------------------------------------------------
 variable "aws_cloudwatch_event_rule" {
-  type = object(
-    {
-      # (Required) The name of the rule. If omitted, Terraform will assign a random, unique name. Conflicts with name_prefix.
-      name = string
-      # (Optional) The scheduling expression. For example, cron(0 20 * * ? *) or rate(5 minutes). At least one of schedule_expression or event_pattern is required. Can only be used on the default event bus.
-      schedule_expression = string
-      # (Optional) The event pattern described a JSON object. At least one of schedule_expression or event_pattern is required. See full documentation of Events and Event Patterns in EventBridge for details.
-      event_pattern = string
-      # (Optional) The description of the rule.
-      description = optional(string)
-      # (Optional) The Amazon Resource Name (ARN) associated with the role that is used for target invocation.
-      role_arn = string
-      # (Optional) Whether the rule should be enabled (defaults to ENABLED).
-      state = string
-    }
-  )
-  description = "(Required) Provides an EventBridge Rule resource."
+  type = object({
+    # (Required) The name of the rule. If omitted, Terraform will assign a random, unique name. Conflicts with name_prefix.
+    name = string
+    # (Optional) The scheduling expression. e.g., cron(0 20 * * ? *) or rate(5 minutes). Either schedule_expression or event_pattern is required.
+    schedule_expression = optional(string)
+    # (Optional) JSON event pattern (string form). Either schedule_expression or event_pattern is required.
+    event_pattern = optional(string)
+    # (Optional) The description of the rule.
+    description = optional(string)
+    # (Optional) Role ARN used for target invocation. Needed for certain target types such as ECS or Batch.
+    role_arn = optional(string)
+    # (Optional) Rule state (ENABLED or DISABLED). Defaults to ENABLED when omitted.
+    state = optional(string)
+  })
+  description = "(Required) EventBridge rule definition (must specify one of schedule_expression or event_pattern)."
+  validation {
+    condition = (
+      try(var.aws_cloudwatch_event_rule.schedule_expression, null) != null ||
+      try(var.aws_cloudwatch_event_rule.event_pattern, null) != null
+    )
+    error_message = "Either schedule_expression or event_pattern must be specified in aws_cloudwatch_event_rule."
+  }
 }
 variable "aws_cloudwatch_event_target" {
-  type = object(
-    {
-      # (Optional) The event bus to associate with the rule. If you omit this, the default event bus is used.
-      event_bus_name = optional(string)
-      # (Optional) The unique target assignment ID. If missing, will generate a random, unique id.
-      target_id = optional(string)
-      # (Required) The Amazon Resource Name (ARN) associated of the target.
-      arn = string
-      # (Optional) Valid JSON text passed to the target. Conflicts with input_path and input_transformer.
-      input = optional(string)
-      # (Optional) The value of the JSONPath that is used for extracting part of the matched event when passing it to the target. Conflicts with input and input_transformer.
-      input_path = optional(string)
-      # (Optional) The Amazon Resource Name (ARN) of the IAM role to be used for this target when the rule is triggered. Required if ecs_target is used.
-      role_arn = optional(string)
-      # (Optional) Parameters used when you are using the rule to invoke Amazon EC2 Run Command. Documented below. A maximum of 5 are allowed.
-      run_command_targets = optional(list(any))
-      # (Optional) Parameters used when you are using the rule to invoke Amazon ECS Task. Documented below. A maximum of 1 are allowed.
-      ecs_target = optional(list(any))
-      # (Optional) Parameters used when you are using the rule to invoke an Amazon Batch Job. Documented below. A maximum of 1 are allowed.
-      batch_target = optional(list(any))
-      # (Optional) Parameters used when you are using the rule to invoke an Amazon Kinesis Stream. Documented below. A maximum of 1 are allowed.
-      kinesis_target = optional(list(any))
-      # (Optional) Parameters used when you are using the rule to invoke an Amazon SQS Queue. Documented below. A maximum of 1 are allowed.
-      sqs_target = optional(list(any))
-      # (Optional) Parameters used when you are providing a custom input to a target based on certain event data. Conflicts with input and input_path.
-      input_transformer = optional(list(any))
-      # (Optional) Parameters used when you are providing retry policies. Documented below. A maximum of 1 are allowed.
-      retry_policy = optional(list(any))
-      # (Optional) Parameters used when you are providing a dead letter config. Documented below. A maximum of 1 are allowed.
-      dead_letter_config = optional(list(any))
-    }
-  )
-  description = "(Required) Provides an EventBridge Target resource."
+  type = object({
+    # (Optional) The event bus to associate with the rule. If omitted the default event bus is used.
+    event_bus_name = optional(string)
+    # (Optional) The unique target assignment ID. If missing a random unique id is generated.
+    target_id = optional(string)
+    # (Required) The Amazon Resource Name (ARN) of the target.
+    arn = string
+    # (Optional) Valid JSON text passed to the target. Conflicts with input_path and input_transformer.
+    input = optional(string)
+    # (Optional) JSONPath for extracting part of the matched event. Conflicts with input and input_transformer.
+    input_path = optional(string)
+    # (Optional) IAM role ARN for this target (required if ecs_target is used).
+    role_arn = optional(string)
+    # (Optional) Parameters for Amazon EC2 Run Command. Maximum 5 entries.
+    run_command_targets = optional(list(any))
+    # (Optional) Parameters for a single Amazon ECS Task target. Maximum 1 entry.
+    ecs_target = optional(list(any))
+    # (Optional) Parameters for an Amazon Batch Job target. Maximum 1 entry.
+    batch_target = optional(list(any))
+    # (Optional) Parameters for an Amazon Kinesis Stream target. Maximum 1 entry.
+    kinesis_target = optional(list(any))
+    # (Optional) Parameters for an Amazon SQS Queue target. Maximum 1 entry.
+    sqs_target = optional(list(any))
+    # (Optional) Input transformer parameters. Maximum 1 entry. Conflicts with input and input_path.
+    input_transformer = optional(list(any))
+    # (Optional) Retry policy parameters. Maximum 1 entry.
+    retry_policy = optional(list(any))
+    # (Optional) Dead letter config parameters. Maximum 1 entry.
+    dead_letter_config = optional(list(any))
+  })
+  description = "(Required) EventBridge target definition (single target with optional nested configuration blocks)."
 }
 variable "tags" {
   type        = map(any)

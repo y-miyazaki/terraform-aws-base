@@ -1,6 +1,14 @@
 #--------------------------------------------------------------
 # module variables
 #--------------------------------------------------------------
+variable "account_id" {
+  type        = string
+  description = "(Required) The AWS account ID."
+}
+variable "region" {
+  type        = string
+  description = "(Required) The AWS region."
+}
 variable "aws_kinesis_firehose_delivery_stream" {
   type = list(object(
     {
@@ -27,7 +35,7 @@ variable "aws_iam_role" {
   )
   description = "(Optional) The resource of aws_iam_role."
   default = {
-    description = "Role for Kinesis Firehose to S3."
+    description = "IAM role for Kinesis Firehose to S3."
     name        = "firehose-s3-role"
     path        = "/"
   }
@@ -45,7 +53,7 @@ variable "aws_iam_policy" {
   )
   description = "(Optional) The resource of aws_iam_policy."
   default = {
-    description = "Policy for Kinesis Firehose to S3."
+    description = "IAM policy for Kinesis Firehose to S3."
     name        = "firehose-s3-policy"
     path        = "/"
   }

@@ -27,12 +27,12 @@ variable "aws_iam_role" {
   description = "(Optional) Provides an IAM role."
   default = {
     eks = {
-      description = "Role for EKS."
+      description = "IAM role for EKS."
       name        = "eks-role"
       path        = "/"
     }
     eks_worker_node = {
-      description = "Role for EKS worker node."
+      description = "IAM role for EKS worker node."
       name        = "eks-worker-node-role"
       path        = "/"
     }
@@ -55,7 +55,7 @@ variable "aws_iam_policy" {
   description = "(Optional) Provides an IAM policy."
   default = {
     eks_worker_node = {
-      description = "Policy for EKS worker node."
+      description = "IAM policy for EKS worker node."
       name        = "eks-worker-node-policy"
       path        = "/"
     }

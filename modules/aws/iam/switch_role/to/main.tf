@@ -1,57 +1,53 @@
 #--------------------------------------------------------------
+# Module: aws/iam/switch_role/to
+# Purpose: Create a target IAM role for cross-account switch with optional managed and custom inline policies.
+# Notes: Enforces MFA via assume role policy; future improvement: add validation for mutually exclusive actions/not_actions.
+#--------------------------------------------------------------
+#--------------------------------------------------------------
 # Locals
 #--------------------------------------------------------------
 locals {
-  tags = {
-    for k, v in(var.tags == null ? {} : var.tags) : k => v if lookup(data.aws_default_tags.provider.tags, k, null) == null || lookup(data.aws_default_tags.provider.tags, k, null) != v
-  }
-}
-#--------------------------------------------------------------
-# Use this data source to get the default tags configured on the provider.
-#--------------------------------------------------------------
-data "aws_default_tags" "provider" {}
-
-#--------------------------------------------------------------
-# Local
-#--------------------------------------------------------------
-locals {
-  assume_role_policy = <<POLICY
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Effect": "Allow",
-      "Principal": {
-        "AWS": "${var.aws_iam_role.account_id}"
-      },
-      "Action": "sts:AssumeRole",
-      "Condition": {
-        "BoolIfExists": {
-          "aws:MultiFactorAuthPresent": "true"
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = "sts:AssumeRole"
+        Effect = "Allow"
+        Principal = {
+          AWS = var.aws_iam_role.account_id
+        }
+        Condition = {
+          BoolIfExists = {
+            "aws:MultiFactorAuthPresent" = "true"
+          }
         }
       }
-    }
-  ]
+    ]
+  })
 }
-POLICY
-}
+
 #--------------------------------------------------------------
 # Provides an IAM role.
 #--------------------------------------------------------------
 resource "aws_iam_role" "this" {
-  count                 = var.is_enabled ? 1 : 0
-  description           = lookup(var.aws_iam_role, "description")
-  name                  = "${var.name_prefix}${lookup(var.aws_iam_role, "name")}"
-  assume_role_policy    = lookup(var.aws_iam_role, "assume_role_policy", null) == null ? local.assume_role_policy : lookup(var.aws_iam_role, "assume_role_policy", null)
+  count = var.is_enabled ? 1 : 0
+
+  assume_role_policy = try(var.aws_iam_role.assume_role_policy, null) == null ? local.assume_role_policy : try(var.aws_iam_role.assume_role_policy, null)
+
+  description           = var.aws_iam_role.description
   force_detach_policies = true
-  path                  = lookup(var.aws_iam_role, "path", "/")
-  tags                  = local.tags
+  name                  = "${var.name_prefix}${var.aws_iam_role.name}"
+  path                  = try(var.aws_iam_role.path, "/")
+
+  tags = var.tags
 }
+
 #--------------------------------------------------------------
 # Attaches a Managed IAM Policy to an IAM role
 #--------------------------------------------------------------
 resource "aws_iam_role_policy_attachment" "this" {
-  count      = var.is_enabled ? length(var.policy) : 0
+  count = var.is_enabled ? length(var.policy) : 0
+
   role       = aws_iam_role.this[0].name
   policy_arn = var.policy[count.index].policy_arn
 }
@@ -61,57 +57,67 @@ resource "aws_iam_role_policy_attachment" "this" {
 #--------------------------------------------------------------
 data "aws_iam_policy_document" "custom" {
   count = var.is_enabled && var.aws_iam_policy != null ? 1 : 0
+
   dynamic "statement" {
-    for_each = lookup(var.aws_iam_policy, "statement", [])
+    for_each = try(var.aws_iam_policy.statement, [])
+
     content {
-      sid           = lookup(statement.value, "sid", null)
-      effect        = lookup(statement.value, "effect", null)
-      actions       = lookup(statement.value, "actions", null)
-      not_actions   = lookup(statement.value, "not_actions", null)
-      resources     = lookup(statement.value, "resources", null)
-      not_resources = lookup(statement.value, "not_resources", null)
+      sid           = try(statement.value.sid, null)
+      effect        = try(statement.value.effect, null)
+      actions       = try(statement.value.actions, null)
+      not_actions   = try(statement.value.not_actions, null)
+      resources     = try(statement.value.resources, null)
+      not_resources = try(statement.value.not_resources, null)
       dynamic "principals" {
-        for_each = lookup(statement.value, "principals", [])
+        for_each = try(statement.value.principals, [])
+
         content {
-          type        = lookup(principals.value, "type", null)
-          identifiers = lookup(principals.value, "identifiers", null)
+          type        = try(principals.value.type, null)
+          identifiers = try(principals.value.identifiers, null)
         }
       }
       dynamic "not_principals" {
-        for_each = lookup(statement.value, "not_principals", [])
+        for_each = try(statement.value.not_principals, [])
+
         content {
-          type        = lookup(not_principals.value, "type", null)
-          identifiers = lookup(not_principals.value, "identifiers", null)
+          type        = try(not_principals.value.type, null)
+          identifiers = try(not_principals.value.identifiers, null)
         }
       }
       dynamic "condition" {
-        for_each = lookup(statement.value, "condition", [])
+        for_each = try(statement.value.condition, [])
+
         content {
-          test     = lookup(condition.value, "test", null)
-          variable = lookup(condition.value, "variable", null)
-          values   = lookup(condition.value, "values", null)
+          test     = try(condition.value.test, null)
+          variable = try(condition.value.variable, null)
+          values   = try(condition.value.values, null)
         }
       }
     }
   }
 }
+
 #--------------------------------------------------------------
 # Provides an IAM policy.
 #--------------------------------------------------------------
 resource "aws_iam_policy" "custom" {
-  count       = var.is_enabled && var.aws_iam_policy != null ? 1 : 0
-  description = lookup(var.aws_iam_policy, "description")
-  name        = "${var.name_prefix}${lookup(var.aws_iam_policy, "name", null)}"
+  count = var.is_enabled && var.aws_iam_policy != null ? 1 : 0
+
+  description = var.aws_iam_policy.description
+  name        = "${var.name_prefix}${try(var.aws_iam_policy.name, null)}"
   #   name_prefix = var.name_prefix
-  path   = lookup(var.aws_iam_policy, "path", "/")
+  path   = try(var.aws_iam_policy.path, "/")
   policy = data.aws_iam_policy_document.custom[0].json
-  tags   = local.tags
+
+  tags = var.tags
 }
+
 #--------------------------------------------------------------
 # Attaches a Managed IAM Policy to an IAM role
 #--------------------------------------------------------------
 resource "aws_iam_role_policy_attachment" "custom" {
-  count      = var.is_enabled && var.aws_iam_policy != null ? 1 : 0
+  count = var.is_enabled && var.aws_iam_policy != null ? 1 : 0
+
   role       = aws_iam_role.this[0].name
   policy_arn = aws_iam_policy.custom[0].arn
 }
