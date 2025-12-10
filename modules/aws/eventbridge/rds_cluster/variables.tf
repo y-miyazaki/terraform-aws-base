@@ -10,7 +10,6 @@ variable "description" {
   description = "(Optional) Brief description of the schedule."
   default     = null
 }
-
 variable "name_start_cluster" {
   type        = string
   description = "(Optional, Forces new resource) Name of the schedule. If omitted, Terraform will assign a random, unique name. Conflicts with name_prefix."

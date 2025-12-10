@@ -1,71 +1,75 @@
 #--------------------------------------------------------------
+# Module: aws/kinesis/firehose/s3
+# Purpose: Create Kinesis Firehose delivery streams targeting S3 with optional encryption, processing, and backup configuration.
+# Notes: Assumes uniform first stream values for IAM policy scoping; future improvement: per-stream policy generation.
+#--------------------------------------------------------------
+#--------------------------------------------------------------
 # Locals
 #--------------------------------------------------------------
 locals {
-  tags = {
-    for k, v in(var.tags == null ? {} : var.tags) : k => v if lookup(data.aws_default_tags.provider.tags, k, null) == null || lookup(data.aws_default_tags.provider.tags, k, null) != v
-  }
   aws_kinesis_firehose_delivery_stream = {
     for k, v in var.aws_kinesis_firehose_delivery_stream : v.name => v
   }
 }
-#--------------------------------------------------------------
-# Use this data source to get the default tags configured on the provider.
-#--------------------------------------------------------------
-data "aws_default_tags" "provider" {}
 
 #--------------------------------------------------------------
 # Provides a Kinesis Firehose Delivery Stream resource. Amazon Kinesis Firehose is a fully managed, elastic service to easily deliver real-time data streams to destinations such as Amazon S3 and Amazon Redshift.
 #--------------------------------------------------------------
 resource "aws_kinesis_firehose_delivery_stream" "this" {
   for_each = local.aws_kinesis_firehose_delivery_stream
-  name     = lookup(each.value, "name")
-  tags     = local.tags
+
+  name = each.value.name
   dynamic "server_side_encryption" {
-    for_each = lookup(each.value, "server_side_encryption", [])
+    for_each = try(each.value.server_side_encryption, [])
+
     content {
-      enabled  = lookup(server_side_encryption.value, "enabled", false)
-      key_type = lookup(server_side_encryption.value, "key_type", null)
-      key_arn  = lookup(server_side_encryption.value, "key_arn", null)
+      enabled  = try(server_side_encryption.value.enabled, false)
+      key_type = try(server_side_encryption.value.key_type, null)
+      key_arn  = try(server_side_encryption.value.key_arn, null)
     }
   }
   destination = "extended_s3"
   dynamic "extended_s3_configuration" {
-    for_each = lookup(each.value, "extended_s3_configuration", [])
+    for_each = try(each.value.extended_s3_configuration, [])
+
     content {
       # base
       role_arn           = aws_iam_role.this[0].arn
-      bucket_arn         = lookup(extended_s3_configuration.value, "bucket_arn", null)
-      prefix             = lookup(extended_s3_configuration.value, "prefix", null)
-      buffering_size     = lookup(extended_s3_configuration.value, "buffering_size", null)
-      buffering_interval = lookup(extended_s3_configuration.value, "buffering_interval", null)
-      compression_format = lookup(extended_s3_configuration.value, "compression_format", null)
-      kms_key_arn        = lookup(extended_s3_configuration.value, "kms_key_arn", null)
+      bucket_arn         = try(extended_s3_configuration.value.bucket_arn, null)
+      prefix             = try(extended_s3_configuration.value.prefix, null)
+      buffering_size     = try(extended_s3_configuration.value.buffering_size, null)
+      buffering_interval = try(extended_s3_configuration.value.buffering_interval, null)
+      compression_format = try(extended_s3_configuration.value.compression_format, null)
+      kms_key_arn        = try(extended_s3_configuration.value.kms_key_arn, null)
       dynamic "cloudwatch_logging_options" {
-        for_each = lookup(extended_s3_configuration.value, "cloudwatch_logging_options", [])
+        for_each = try(extended_s3_configuration.value.cloudwatch_logging_options, [])
+
         content {
-          enabled         = lookup(cloudwatch_logging_options.value, "enabled", null)
-          log_group_name  = lookup(cloudwatch_logging_options.value, "log_group_name", null)
-          log_stream_name = lookup(cloudwatch_logging_options.value, "log_stream_name", null)
+          enabled         = try(cloudwatch_logging_options.value.enabled, null)
+          log_group_name  = try(cloudwatch_logging_options.value.log_group_name, null)
+          log_stream_name = try(cloudwatch_logging_options.value.log_stream_name, null)
         }
       }
       # extended
-      #   data_format_conversion_configuration = lookup(extended_s3_configuration.value, "data_format_conversion_configuration", null)
-      error_output_prefix = lookup(extended_s3_configuration.value, "error_output_prefix", null)
-      s3_backup_mode      = lookup(extended_s3_configuration.value, "s3_backup_mode", null)
+      #   data_format_conversion_configuration = try(extended_s3_configuration.value.data_format_conversion_configuration, null)
+      error_output_prefix = try(extended_s3_configuration.value.error_output_prefix, null)
+      s3_backup_mode      = try(extended_s3_configuration.value.s3_backup_mode, null)
       dynamic "processing_configuration" {
-        for_each = lookup(extended_s3_configuration.value, "processing_configuration", [])
+        for_each = try(extended_s3_configuration.value.processing_configuration, [])
+
         content {
-          enabled = lookup(processing_configuration.value, "enabled", null)
+          enabled = try(processing_configuration.value.enabled, null)
           dynamic "processors" {
-            for_each = lookup(processing_configuration.value, "processors", [])
+            for_each = try(processing_configuration.value.processors, [])
+
             content {
-              type = lookup(processors.value, "type", null)
+              type = try(processors.value.type, null)
               dynamic "parameters" {
-                for_each = lookup(processors.value, "parameters", [])
+                for_each = try(processors.value.parameters, [])
+
                 content {
-                  parameter_name  = lookup(parameters.value, "parameter_name", null)
-                  parameter_value = lookup(parameters.value, "parameter_value", null)
+                  parameter_name  = try(parameters.value.parameter_name, null)
+                  parameter_value = try(parameters.value.parameter_value, null)
                 }
               }
             }
@@ -73,58 +77,68 @@ resource "aws_kinesis_firehose_delivery_stream" "this" {
         }
       }
       dynamic "s3_backup_configuration" {
-        for_each = lookup(extended_s3_configuration.value, "s3_backup_configuration", [])
+        for_each = try(extended_s3_configuration.value.s3_backup_configuration, [])
+
         content {
           # base
-          role_arn           = aws_iam_role.this.arn
-          bucket_arn         = lookup(extended_s3_configuration.value, "bucket_arn", null)
-          prefix             = lookup(extended_s3_configuration.value, "prefix", null)
-          buffering_size     = lookup(extended_s3_configuration.value, "buffering_size", null)
-          buffering_interval = lookup(extended_s3_configuration.value, "buffering_interval", null)
-          compression_format = lookup(extended_s3_configuration.value, "compression_format", null)
-          kms_key_arn        = lookup(extended_s3_configuration.value, "kms_key_arn", null)
+          role_arn           = aws_iam_role.this[0].arn
+          bucket_arn         = try(extended_s3_configuration.value.bucket_arn, null)
+          prefix             = try(extended_s3_configuration.value.prefix, null)
+          buffering_size     = try(extended_s3_configuration.value.buffering_size, null)
+          buffering_interval = try(extended_s3_configuration.value.buffering_interval, null)
+          compression_format = try(extended_s3_configuration.value.compression_format, null)
+          kms_key_arn        = try(extended_s3_configuration.value.kms_key_arn, null)
           dynamic "cloudwatch_logging_options" {
-            for_each = lookup(extended_s3_configuration.value, "cloudwatch_logging_options", [])
+            for_each = try(extended_s3_configuration.value.cloudwatch_logging_options, [])
+
             content {
-              enabled         = lookup(cloudwatch_logging_options.value, "enabled", null)
-              log_group_name  = lookup(cloudwatch_logging_options.value, "log_group_name", null)
-              log_stream_name = lookup(cloudwatch_logging_options.value, "log_stream_name", null)
+              enabled         = try(cloudwatch_logging_options.value.enabled, null)
+              log_group_name  = try(cloudwatch_logging_options.value.log_group_name, null)
+              log_stream_name = try(cloudwatch_logging_options.value.log_stream_name, null)
             }
           }
         }
       }
     }
   }
+
+  tags = var.tags
 }
+
 #--------------------------------------------------------------
 # Provides an IAM role.
 #--------------------------------------------------------------
 resource "aws_iam_role" "this" {
-  count              = length(var.aws_kinesis_firehose_delivery_stream) > 0 ? 1 : 0
-  description        = lookup(var.aws_iam_role, "description", null)
-  name               = lookup(var.aws_iam_role, "name")
-  assume_role_policy = <<POLICY
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Action": "sts:AssumeRole",
-      "Principal": {
-        "Service": "firehose.amazonaws.com"
-      },
-      "Effect": "Allow"
-    }
-  ]
+  count = length(var.aws_kinesis_firehose_delivery_stream) > 0 ? 1 : 0
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = "sts:AssumeRole"
+        Effect = "Allow"
+        Principal = {
+          Service = "firehose.amazonaws.com"
+        }
+      }
+    ]
+  })
+
+  description           = try(var.aws_iam_role.description, null)
+  force_detach_policies = true
+  name                  = var.aws_iam_role.name
+  path                  = try(var.aws_iam_role.path, "/")
+
+  tags = var.tags
 }
-POLICY
-  path               = lookup(var.aws_iam_role, "path", "/")
-  tags               = local.tags
-}
+
 #--------------------------------------------------------------
 # Generates an IAM policy document in JSON format for use with resources that expect policy documents such as aws_iam_policy.
+# https://docs.aws.amazon.com/firehose/latest/dev/controlling-access.html#using-iam-s3
 #--------------------------------------------------------------
 data "aws_iam_policy_document" "this" {
   count = length(var.aws_kinesis_firehose_delivery_stream) > 0 ? 1 : 0
+
   statement {
     effect = "Allow"
     actions = [
@@ -136,9 +150,47 @@ data "aws_iam_policy_document" "this" {
       "s3:PutObject",
     ]
     resources = [
-      lookup(var.aws_kinesis_firehose_delivery_stream[0].extended_s3_configuration[0], "bucket_arn"),
-      "${lookup(var.aws_kinesis_firehose_delivery_stream[0].extended_s3_configuration[0], "bucket_arn")}/*"
+      var.aws_kinesis_firehose_delivery_stream[0].extended_s3_configuration[0].bucket_arn,
+      "${var.aws_kinesis_firehose_delivery_stream[0].extended_s3_configuration[0].bucket_arn}/*"
     ]
+  }
+  statement {
+    effect = "Allow"
+    actions = [
+      "kinesis:DescribeStream",
+      "kinesis:GetShardIterator",
+      "kinesis:GetRecords",
+      "kinesis:ListShards",
+    ]
+    resources = [
+      "arn:aws:kinesis:${var.region}:${var.account_id}:stream/*",
+    ]
+  }
+  statement {
+    effect = "Allow"
+    actions = [
+      "kms:Decrypt",
+      "kms:GenerateDataKey*",
+    ]
+    #tfsec:ignore:AWS099
+    resources = [
+      "arn:aws:kms:${var.region}:${var.account_id}:key/*",
+    ]
+    condition {
+      test     = "StringEquals"
+      variable = "kms:ViaService"
+      values = [
+        "s3.${var.region}.amazonaws.com"
+      ]
+    }
+    condition {
+      test     = "StringLike"
+      variable = "kms:EncryptionContext:aws:s3:arn"
+      values = [
+        var.aws_kinesis_firehose_delivery_stream[0].extended_s3_configuration[0].bucket_arn,
+        "${var.aws_kinesis_firehose_delivery_stream[0].extended_s3_configuration[0].bucket_arn}/*"
+      ]
+    }
   }
   statement {
     effect = "Allow"
@@ -147,7 +199,7 @@ data "aws_iam_policy_document" "this" {
     ]
     #tfsec:ignore:AWS099
     resources = [
-      "*"
+      "arn:aws:logs:${var.region}:${var.account_id}:log-group/*",
     ]
   }
   statement {
@@ -158,27 +210,32 @@ data "aws_iam_policy_document" "this" {
     ]
     #tfsec:ignore:AWS099
     resources = [
-      "*"
+      "arn:aws:lambda:${var.region}:${var.account_id}:function:*",
     ]
   }
 }
+
 #--------------------------------------------------------------
 # Provides an IAM policy.
 #--------------------------------------------------------------
 #tfsec:ignore:AWS099
 resource "aws_iam_policy" "this" {
-  count       = length(var.aws_kinesis_firehose_delivery_stream) > 0 ? 1 : 0
-  description = lookup(var.aws_iam_policy, "description", null)
-  name        = lookup(var.aws_iam_policy, "name")
-  path        = lookup(var.aws_iam_policy, "path", "/")
+  count = length(var.aws_kinesis_firehose_delivery_stream) > 0 ? 1 : 0
+
+  description = try(var.aws_iam_policy.description, null)
+  name        = var.aws_iam_policy.name
+  path        = try(var.aws_iam_policy.path, "/")
   policy      = data.aws_iam_policy_document.this[0].json
-  tags        = local.tags
+
+  tags = var.tags
 }
+
 #--------------------------------------------------------------
 # Attaches a Managed IAM Policy to an IAM role
 #--------------------------------------------------------------
 resource "aws_iam_role_policy_attachment" "this" {
-  count      = length(var.aws_kinesis_firehose_delivery_stream) > 0 ? 1 : 0
+  count = length(var.aws_kinesis_firehose_delivery_stream) > 0 ? 1 : 0
+
   role       = aws_iam_role.this[0].name
   policy_arn = aws_iam_policy.this[0].arn
 }

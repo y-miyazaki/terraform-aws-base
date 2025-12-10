@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- Favicon: simple AWS-style 'A' in orange circle (SVG data URI) -->
+    <link rel="icon"
+        href="data:image/svg+xml;utf8,<svg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2064%2064'><rect%20fill='%23ffffff'%20width='64'%20height='64'/><circle%20cx='32'%20cy='32'%20r='30'%20fill='%23FF9900'/><text%20x='32'%20y='42'%20font-family='Arial,Helvetica,sans-serif'%20font-size='36'%20font-weight='700'%20fill='%23ffffff'%20text-anchor='middle'>A</text></svg>" />
+    <title>@@INDEX_TITLE@@</title>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" />
+    <link rel="stylesheet" href="https://cdn.datatables.net/fixedcolumns/4.3.0/css/fixedColumns.dataTables.min.css" />
+    <!-- minimal DataTables styles (Buttons/FixedColumns removed - viewer uses per-category tables) -->
+    <style>
+        :root {
+            --max-width: 1400px;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+                Roboto, "Helvetica Neue", Arial;
+            max-width: var(--max-width);
+            margin: 20px auto;
+            padding: 18px;
+            background: #f6f8fa;
+        }
+
+        h1 {
+            color: #24292f;
+            border-bottom: 3px solid #0969da;
+            padding-bottom: 12px;
+        }
+
+        .controls {
+            margin: 12px 0;
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .panel {
+            background: #fff;
+            border: 1px solid #d0d7de;
+            border-radius: 6px;
+            margin: 12px 0;
+            overflow: hidden;
+        }
+
+        .panel-header {
+            padding: 12px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .panel-title {
+            font-weight: 600;
+            color: #0969da;
+        }
+
+        .panel-body {
+            padding: 8px 16px;
+            display: none;
+        }
+
+        .table-container {
+            width: 100%;
+            overflow: auto;
+        }
+
+        /* horizontal scroll for wide tables */
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            font-size: 13px;
+        }
+
+        th,
+        td {
+            border: 1px solid #e1e4e8;
+            padding: 6px 8px;
+            text-align: left;
+        }
+
+        th {
+            background: #f6f8fa;
+        }
+
+        table.dataTable thead tr th {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        table.dataTable tbody td {
+            white-space: pre-wrap;
+            overflow-wrap: break-word;
+            min-width: 120px;
+            /* ensure minimum readable width */
+            max-width: 400px;
+            /* prevent overly wide cells */
+            position: relative;
+        }
+
+        table.dataTable tbody td.no-wrap {
+            overflow-wrap: normal;
+            word-break: normal;
+            white-space: pre;
+            max-width: none;
+            /* allow cells to expand when word wrap is disabled */
+        }
+
+        /* Collapsible cell styles */
+        .cell-content {
+            display: block;
+        }
+
+        .cell-content.collapsed {
+            max-height: 7.5em;
+            /* ~7 lines */
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .cell-content.collapsed::after {
+            content: "... (click to expand)";
+            display: block;
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            background: linear-gradient(to right, transparent, #fff 50%);
+            padding: 0 8px 0 30px;
+            color: #0969da;
+            font-style: italic;
+            font-size: 11px;
+        }
+
+        .cell-content.expanded {
+            cursor: pointer;
+        }
+
+        .btn {
+            background: #0969da;
+            color: #fff;
+            border: none;
+            padding: 6px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .btn.secondary {
+            background: #ffffff;
+            color: #0969da;
+            border: 1px solid #cbd5e1;
+        }
+
+        .meta {
+            margin-top: 18px;
+            font-size: 13px;
+            color: #57606a;
+        }
+
+        .global-filter {
+            margin-left: 8px;
+            padding: 6px 8px;
+            border-radius: 6px;
+            border: 1px solid #cbd5e1;
+        }
+
+        .wide {
+            max-width: 2000px;
+        }
+
+        /* allow expanding viewer if desired */
+    </style>
+</head>
+
+<body>
+    <h1>@@INDEX_TITLE@@</h1>
+    <p class="description">@@INDEX_DESCRIPTION@@</p>
+
+    <div class="controls">
+        <label for="panelFilter">Filter categories:</label>
+        <input id="panelFilter" class="global-filter" placeholder="type to hide categories by name" />
+
+        <!-- <label style="display:flex;align-items:center;gap:6px;margin-left:8px">
+            <input type="checkbox" id="autoExpandCheckbox" />
+            <span style="font-size:13px">Auto-expand on load</span>
+        </label> -->
+
+        <!-- Display mode removed: viewer only shows per-category panels -->
+
+        <a id="downloadAll" class="btn secondary" href="resources/@@OUTPUT_FILE@@" download
+            style="margin-right: 8px">Download @@OUTPUT_FILE@@</a>
+        <button id="expandAll" class="btn">Expand all</button>
+        <button id="collapseAll" class="btn">Collapse all</button>
+        <button id="wordWrap" class="btn" title="Toggle word wrapping in cells">
+            Word wrap
+        </button>
+        <button id="wideView" class="btn" title="Toggle wide layout" style="margin-left: 8px">
+            Wide view
+        </button>
+        <button id="lockColumns" class="btn" title="Lock columns up to Name for horizontal scrolling">
+            Lock to Name
+        </button>
+    </div>
+
+    <div id="content"></div>
+    <div class="meta">Generated: <span id="generated"></span></div>
+
+    <!-- Libraries: PapaParse for CSV parsing; jQuery + DataTables for table features -->
+    <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.datatables.net/fixedcolumns/4.3.0/js/dataTables.fixedColumns.min.js"
+        crossorigin="anonymous"></script>
+
+    <script>
+        // ========================================
+        // Global State Management
+        // ========================================
+        const ViewState = {
+            columnsLocked: false,
+            wordWrapEnabled: true,
+            wideViewActive: true
+        };
+
+        // ========================================
+        // Button Controller
+        // ========================================
+        class ButtonController {
+            constructor(buttonId) {
+                this.button = document.getElementById(buttonId);
+                this.state = false;
+                this.trueLabel = "";
+                this.falseLabel = "";
+                this.isPrimaryWhenTrue = true;
+            }
+
+            setLabel(label, isPrimary = true) {
+                if (!this.button) return;
+                if (isPrimary) {
+                    this.button.classList.remove("secondary");
+                } else {
+                    this.button.classList.add("secondary");
+                }
+                this.button.textContent = label;
+            }
+
+            // Initialize button with state and labels
+            init(initialState, trueLabel, falseLabel, isPrimaryWhenTrue = true) {
+                this.state = initialState;
+                this.trueLabel = trueLabel;
+                this.falseLabel = falseLabel;
+                this.isPrimaryWhenTrue = isPrimaryWhenTrue;
+                // Set label and style based on current state
+                this.setLabel(
+                    this.state ? trueLabel : falseLabel,
+                    this.state ? isPrimaryWhenTrue : !isPrimaryWhenTrue
+                );
+            }
+
+            toggle() {
+                this.state = !this.state;
+                this.setLabel(
+                    this.state ? this.trueLabel : this.falseLabel,
+                    this.state ? this.isPrimaryWhenTrue : !this.isPrimaryWhenTrue
+                );
+                return this.state;
+            }
+
+            setState(newState, trueLabel, falseLabel, isPrimaryWhenTrue = true) {
+                this.state = newState;
+                this.setLabel(
+                    this.state ? trueLabel : falseLabel,
+                    this.state ? isPrimaryWhenTrue : !isPrimaryWhenTrue
+                );
+            }
+
+            // Setup click event listener with callback
+            onClick(callback) {
+                if (!this.button) return;
+                this.button.addEventListener("click", () => {
+                    const newState = this.toggle();
+                    callback(newState);
+                });
+            }
+        }
+
+        // ========================================
+        // DataTable Manager
+        // ========================================
+        class TableManager {
+            static applyToAllTables(callback) {
+                document.querySelectorAll("table.dataTable").forEach((table) => {
+                    if ($.fn.dataTable.isDataTable(table)) {
+                        try {
+                            callback($(table).DataTable(), table);
+                        } catch (e) {
+                            console.warn("applyToAllTables callback error", e);
+                        }
+                    }
+                });
+            }
+
+            static isTableReady(api) {
+                try {
+                    const settings = api.settings();
+                    return settings && settings[0] && !!settings[0]._bInitComplete;
+                } catch (e) {
+                    return false;
+                }
+            }
+
+            static adjustColumns(api) {
+                try {
+                    api.columns.adjust().draw(false);
+                    window.dispatchEvent(new Event("resize"));
+                } catch (e) {
+                    console.warn("adjustColumns error", e);
+                }
+            }
+
+            // Adjust columns and relayout fixed columns if enabled
+            static adjustColumnsWithRelayout(api) {
+                this.adjustColumns(api);
+                try {
+                    if (api && api.fixedColumns) {
+                        api.fixedColumns().relayout();
+                    }
+                } catch (e) {
+                    // ignore relayout errors
+                }
+            }
+
+            // Get DataTable API from a container element
+            static getTableApi(containerElement) {
+                try {
+                    const tableNode = containerElement.querySelector("table");
+                    if (tableNode && $.fn.dataTable.isDataTable(tableNode)) {
+                        return $(tableNode).DataTable();
+                    }
+                } catch (e) {
+                    console.warn("getTableApi error", e);
+                }
+                return null;
+            }
+
+            // Expand panel and adjust table if already loaded
+            static expandPanel(item) {
+                item.body.style.display = "block";
+                item.btnToggle.textContent = "Collapse";
+
+                // If table already loaded, adjust columns
+                if (item.body.dataset.loaded === "1") {
+                    const api = this.getTableApi(item.body);
+                    if (api) {
+                        this.adjustColumnsWithRelayout(api);
+                    }
+                }
+            }
+
+            // Collapse panel
+            static collapsePanel(item) {
+                item.body.style.display = "none";
+                item.btnToggle.textContent = "Expand";
+            }
+
+            static applyFixedColumns(api, table, enable) {
+                if (!this.isTableReady(api)) {
+                    console.warn("Table not fully initialized, skipping FixedColumns");
+                    return;
+                }
+
+                const isEnabled = $(table).data("fixedColumnsEnabled");
+                if (enable && !isEnabled) {
+                    try {
+                        if (api && api.fixedColumns) {
+                            api.fixedColumns().left(3);
+                            $(table).data("fixedColumnsEnabled", true);
+                            console.log("FixedColumns enabled");
+                        }
+                    } catch (e) {
+                        console.error("Failed to enable FixedColumns:", e);
+                    }
+                } else if (!enable && isEnabled) {
+                    try {
+                        if (api && api.fixedColumns) {
+                            api.fixedColumns().left(0);
+                            $(table).data("fixedColumnsEnabled", false);
+                            console.log("FixedColumns disabled");
+                        }
+                    } catch (e) {
+                        console.error("Failed to disable FixedColumns:", e);
+                    }
+                }
+
+                this.adjustColumns(api);
+            }
+        }
+
+        // ========================================
+        // Main Render Function
+        // ========================================
+        // Lazy-load and render per-file tables; initialize DataTables for search/sort/paging
+        async function loadAndRender() {
+            try {
+                const content = document.getElementById("content");
+                const resp = await fetch("files.json");
+                if (!resp.ok) {
+                    content.innerText = "Failed to load files.json";
+                    return;
+                }
+                const files = await resp.json();
+
+                const items = [];
+                for (const f of files) {
+                    const panel = document.createElement("div");
+                    panel.classList.add("panel");
+                    const header = document.createElement("div");
+                    header.classList.add("panel-header");
+                    const title = document.createElement("div");
+                    title.classList.add("panel-title");
+                    title.textContent = f.display_name || f.path;
+                    const actions = document.createElement("div");
+                    const btnToggle = document.createElement("button");
+                    btnToggle.textContent = "Expand";
+                    btnToggle.classList.add("btn");
+                    actions.appendChild(btnToggle);
+                    header.appendChild(title);
+                    header.appendChild(actions);
+                    const body = document.createElement("div");
+                    body.classList.add("panel-body");
+                    panel.appendChild(header);
+                    panel.appendChild(body);
+                    content.appendChild(panel);
+
+                    btnToggle.addEventListener("click", async () => {
+                        const isCollapsed = body.style.display === "none" || body.style.display === "";
+
+                        if (isCollapsed) {
+                            body.style.display = "block";
+                            btnToggle.textContent = "Collapse";
+
+                            if (!body.dataset.loaded) {
+                                // fetch file and initialize while visible
+                                try {
+                                    const r = await fetch(f.path);
+                                    if (!r.ok) {
+                                        body.textContent =
+                                            "Failed to load " + f.path;
+                                        body.dataset.loaded = true;
+                                        return;
+                                    }
+                                    const txt = await r.text();
+                                    const parsed = Papa.parse(txt, {
+                                        header: true,
+                                        skipEmptyLines: true,
+                                    });
+                                    const rows = parsed.data || [];
+                                    const fields =
+                                        parsed.meta && parsed.meta.fields
+                                            ? parsed.meta.fields
+                                            : rows.length
+                                                ? Object.keys(rows[0])
+                                                : [];
+
+                                    // create container and table
+                                    const tableContainer =
+                                        document.createElement("div");
+                                    tableContainer.classList.add(
+                                        "table-container"
+                                    );
+                                    const table =
+                                        document.createElement("table");
+                                    table.classList.add(
+                                        "data-table",
+                                        "dataTable"
+                                    );
+                                    table.setAttribute("width", "100%");
+
+                                    if (fields.length > 0) {
+                                        const thead =
+                                            document.createElement("thead");
+                                        const trh =
+                                            document.createElement("tr");
+                                        for (const h of fields) {
+                                            const th =
+                                                document.createElement(
+                                                    "th"
+                                                );
+                                            th.textContent = h;
+                                            trh.appendChild(th);
+                                        }
+                                        thead.appendChild(trh);
+                                        table.appendChild(thead);
+                                        const tbody =
+                                            document.createElement("tbody");
+                                        for (const row of rows) {
+                                            const tr =
+                                                document.createElement(
+                                                    "tr"
+                                                );
+                                            for (const h of fields) {
+                                                const td =
+                                                    document.createElement(
+                                                        "td"
+                                                    );
+                                                const content =
+                                                    row[h] ?? "";
+                                                const lineCount =
+                                                    content.split(
+                                                        "\n"
+                                                    ).length;
+
+                                                // If content has 7+ lines, make it collapsible
+                                                if (lineCount >= 7) {
+                                                    const wrapper =
+                                                        document.createElement(
+                                                            "div"
+                                                        );
+                                                    wrapper.classList.add(
+                                                        "cell-content",
+                                                        "collapsed"
+                                                    );
+                                                    wrapper.textContent =
+                                                        content;
+                                                    wrapper.addEventListener(
+                                                        "click",
+                                                        function (e) {
+                                                            e.stopPropagation();
+                                                            if (
+                                                                this.classList.contains(
+                                                                    "collapsed"
+                                                                )
+                                                            ) {
+                                                                this.classList.remove(
+                                                                    "collapsed"
+                                                                );
+                                                                this.classList.add(
+                                                                    "expanded"
+                                                                );
+                                                            } else {
+                                                                this.classList.remove(
+                                                                    "expanded"
+                                                                );
+                                                                this.classList.add(
+                                                                    "collapsed"
+                                                                );
+                                                            }
+                                                        }
+                                                    );
+                                                    td.appendChild(wrapper);
+                                                } else {
+                                                    td.textContent =
+                                                        content;
+                                                }
+                                                // Apply word wrap setting to new cells
+                                                if (!ViewState.wordWrapEnabled) {
+                                                    td.classList.add(
+                                                        "no-wrap"
+                                                    );
+                                                }
+                                                tr.appendChild(td);
+                                            }
+                                            tbody.appendChild(tr);
+                                        }
+                                        table.appendChild(tbody);
+                                    }
+
+                                    tableContainer.appendChild(table);
+                                    body.appendChild(tableContainer);
+
+                                    // small delay to allow browser to apply layout for visible container
+                                    await new Promise((resolve) =>
+                                        setTimeout(resolve, 50)
+                                    );
+                                    // initialize DataTable (jQuery) with horizontal scroll, pagination, search
+                                    const dt = $(table).DataTable({
+                                        scrollX: true,
+                                        pageLength: 100,
+                                        lengthMenu: [10, 25, 50, 100],
+                                        deferRender: true,
+                                        autoWidth: false,
+                                        fixedColumns: {
+                                            left: 0, // Start with no fixed columns, controlled by button
+                                        },
+                                        columnDefs: [
+                                            {
+                                                targets: 0, // Hide first column (Category)
+                                                visible: false,
+                                            },
+                                        ],
+                                    });
+
+                                    // Store table reference for FixedColumns management
+                                    $(table).data("fixedColumnsEnabled", false);
+
+                                    // If columns are currently locked globally, enable FixedColumns for this newly initialized table
+                                    if (ViewState.columnsLocked) {
+                                        TableManager.applyFixedColumns(dt, table, true);
+                                    }
+
+                                    // Ensure column widths are recalculated while table is visible and redraw to update header layout
+                                    TableManager.adjustColumnsWithRelayout(dt);
+
+                                    body.dataset.loaded = "1";
+                                } catch (e) {
+                                    body.textContent =
+                                        "Failed to load CSV: " + e;
+                                    body.dataset.loaded = true;
+                                }
+                            } else {
+                                // Already loaded: adjust columns for visible table
+                                const api = TableManager.getTableApi(body);
+                                if (api) {
+                                    TableManager.adjustColumnsWithRelayout(api);
+                                }
+                            }
+                        } else {
+                            TableManager.collapsePanel({ body, btnToggle });
+                        }
+                    });
+
+                    items.push({ panel, header, body, btnToggle, file: f });
+                }
+
+                document.getElementById("generated").textContent =
+                    new Date().toUTCString();
+
+                // Initialize button controllers
+                const wordWrapBtn = new ButtonController("wordWrap");
+                const wideViewBtn = new ButtonController("wideView");
+                const lockColumnsBtn = new ButtonController("lockColumns");
+
+                // expand/collapse all
+                document
+                    .getElementById("expandAll")
+                    .addEventListener("click", () => {
+                        items.forEach((it) => {
+                            if (!it.body.dataset.loaded) {
+                                it.btnToggle.click();
+                            } else {
+                                TableManager.expandPanel(it);
+                            }
+                        });
+                    });
+
+                document
+                    .getElementById("collapseAll")
+                    .addEventListener("click", () => {
+                        items.forEach((it) => {
+                            TableManager.collapsePanel(it);
+                        });
+                    });
+
+                // word wrap toggle
+                // Initialize button with proper state and labels
+                wordWrapBtn.init(ViewState.wordWrapEnabled, "Disable wrap", "Enable wrap", true);
+                wordWrapBtn.onClick((newState) => {
+                    ViewState.wordWrapEnabled = newState;
+
+                    // apply to all cells
+                    document
+                        .querySelectorAll("table.dataTable tbody td")
+                        .forEach((td) => {
+                            if (ViewState.wordWrapEnabled) {
+                                td.classList.remove("no-wrap");
+                            } else {
+                                td.classList.add("no-wrap");
+                            }
+                        });
+
+                    // Re-adjust all table columns after wrap state change
+                    TableManager.applyToAllTables((api, table) => {
+                        TableManager.adjustColumnsWithRelayout(api);
+                    });
+                });
+
+                // Combined display mode removed; viewer uses per-category panels only
+
+                // panel filter by name
+                const panelFilter = document.getElementById("panelFilter");
+                panelFilter.addEventListener("input", () => {
+                    const q = panelFilter.value.trim().toLowerCase();
+                    items.forEach((it) => {
+                        const name = (
+                            it.file.display_name ||
+                            it.file.path ||
+                            ""
+                        ).toLowerCase();
+                        if (q === "" || name.includes(q)) {
+                            it.panel.style.display = "block";
+                        } else {
+                            it.panel.style.display = "none";
+                        }
+                    });
+                });
+
+                // wide view toggle: expand max width
+                // Initialize button with proper state and labels
+                wideViewBtn.init(ViewState.wideViewActive, "Wide view", "Normal view", true);
+                wideViewBtn.onClick((newState) => {
+                    ViewState.wideViewActive = newState;
+
+                    const root = document.documentElement;
+                    if (ViewState.wideViewActive) {
+                        root.style.setProperty("--max-width", "1400px");
+                    } else {
+                        root.style.setProperty("--max-width", "2000px");
+                    }
+                });
+
+                // lock columns toggle: fix columns up to Name for horizontal scrolling
+                // Initialize button with proper state and labels (false = "Lock to Name", true = "Unlock columns")
+                // isPrimaryWhenTrue=false means: true state (Unlock) is white, false state (Lock) is blue
+                lockColumnsBtn.init(ViewState.columnsLocked, "Unlock columns", "Lock to Name", false);
+                lockColumnsBtn.onClick((newState) => {
+                    ViewState.columnsLocked = newState;
+
+                    console.log(
+                        "Lock columns clicked, new state:",
+                        ViewState.columnsLocked
+                    );
+
+                    TableManager.applyToAllTables((api, table) => {
+                        TableManager.applyFixedColumns(
+                            api,
+                            table,
+                            ViewState.columnsLocked
+                        );
+                    });
+                });
+
+                // Robust download handler
+                const downloadBtn = document.getElementById("downloadAll");
+                if (downloadBtn) {
+                    downloadBtn.addEventListener("click", async (e) => {
+                        e.preventDefault();
+                        const url =
+                            downloadBtn.getAttribute("href") ||
+                            "resources/all.csv";
+                        try {
+                            const r = await fetch(url);
+                            if (!r.ok) {
+                                alert("Failed to download " + url);
+                                return;
+                            }
+                            const blob = await r.blob();
+                            const filename =
+                                url.split("/").pop() || "all.csv";
+                            const a = document.createElement("a");
+                            a.href = URL.createObjectURL(blob);
+                            a.download = filename;
+                            document.body.appendChild(a);
+                            a.click();
+                            a.remove();
+                            URL.revokeObjectURL(a.href);
+                        } catch (err) {
+                            alert("Download failed: " + err);
+                        }
+                    });
+                }
+
+                // Auto-expand first few panels on load is OFF by default.
+                // Provide a UI checkbox (or ?autoExpand=1 URL param) to enable it when desired.
+                try {
+                    const urlParams = new URLSearchParams(
+                        window.location.search
+                    );
+                    const paramAuto =
+                        urlParams.get("autoExpand") === "1" ||
+                        urlParams.get("autoExpand") === "true";
+                    const autoCheckbox =
+                        document.getElementById("autoExpandCheckbox");
+                    if (autoCheckbox && paramAuto) {
+                        autoCheckbox.checked = true;
+                    }
+
+                    const doAutoExpand = () => {
+                        const enabled =
+                            paramAuto ||
+                            (autoCheckbox && autoCheckbox.checked);
+                        if (!enabled) return;
+                        // small timeout to allow the DOM to settle
+                        setTimeout(() => {
+                            const panels =
+                                document.querySelectorAll(".panel");
+                            for (
+                                let i = 0;
+                                i < Math.min(panels.length, 3);
+                                i++
+                            ) {
+                                const btn = panels[i].querySelector(
+                                    ".panel-header button"
+                                );
+                                if (btn) btn.click();
+                            }
+                        }, 200);
+                    };
+
+                    // run once after DOM ready
+                    doAutoExpand();
+
+                    // if user toggles the checkbox after load, optionally trigger auto-expansion immediately
+                    if (autoCheckbox) {
+                        autoCheckbox.addEventListener("change", () => {
+                            if (autoCheckbox.checked) doAutoExpand();
+                        });
+                    }
+                } catch (e) {
+                    /* ignore */
+                }
+            } catch (err) {
+                console.error("loadAndRender error", err);
+                const content = document.getElementById("content");
+                if (content)
+                    content.innerText =
+                        "Error while rendering viewer: " +
+                        (err && err.stack ? err.stack : String(err));
+            }
+        }
+
+        window.addEventListener("load", loadAndRender);
+    </script>
+</body>
+
+</html>

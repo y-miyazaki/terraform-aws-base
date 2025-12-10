@@ -1,81 +1,58 @@
 #--------------------------------------------------------------
 # VPC for Lambda
+#--------------------------------------------------------------
+#--------------------------------------------------------------
+# Creates a dedicated VPC for Lambda functions when VPC-enabled Lambda
+# execution is required. This VPC provides network isolation and enables
+# Lambda functions to access resources in private subnets.
+#
+# Features:
+# - Private and public subnets across multiple availability zones
+# - NAT Gateway for outbound internet access from private subnets
+# - VPC Flow Logs for network traffic monitoring
+# - DNS support for internal service discovery
+#
+# This VPC is only created when:
+# - var.common_lambda.vpc.is_enabled = true
+# - var.common_lambda.vpc.create_vpc = true
+#
+# Reference:
 # https://registry.terraform.io/modules/terraform-aws-modules/vpc/aws/latest
 #--------------------------------------------------------------
 module "lambda_vpc" {
   source     = "terraform-aws-modules/vpc/aws"
-  version    = "5.21.0"
+  version    = "6.5.1"
   create_vpc = var.common_lambda.vpc.is_enabled && var.common_lambda.vpc.create_vpc
 
+  # Basic VPC configuration
   name = "${var.name_prefix}${var.common_lambda.vpc.new.name}"
   cidr = var.common_lambda.vpc.new.cidr
 
-  # Network
+  # Subnet configuration across availability zones
   azs             = var.common_lambda.vpc.new.azs
   private_subnets = var.common_lambda.vpc.new.private_subnets
   public_subnets  = var.common_lambda.vpc.new.public_subnets
 
+  # DNS settings for service discovery
   enable_dns_hostnames = var.common_lambda.vpc.new.enable_dns_hostnames
   enable_dns_support   = var.common_lambda.vpc.new.enable_dns_support
 
-  # NAT Gateway
+  # NAT Gateway for private subnet internet access
   enable_nat_gateway     = var.common_lambda.vpc.new.enable_nat_gateway
   single_nat_gateway     = var.common_lambda.vpc.new.single_nat_gateway
   one_nat_gateway_per_az = var.common_lambda.vpc.new.one_nat_gateway_per_az
 
-  # VPN Gateway
+  # VPN Gateway for on-premises connectivity
   enable_vpn_gateway = var.common_lambda.vpc.new.enable_vpn_gateway
 
-  # Flow Log
+  # VPC Flow Logs for network monitoring
   enable_flow_log                                 = var.common_lambda.vpc.new.enable_flow_log
   create_flow_log_cloudwatch_log_group            = var.common_lambda.vpc.new.create_flow_log_cloudwatch_log_group
   create_flow_log_cloudwatch_iam_role             = var.common_lambda.vpc.new.create_flow_log_cloudwatch_iam_role
-  flow_log_cloudwatch_log_group_retention_in_days = var.common_lambda.vpc.new.flow_log_cloudwatch_log_group_retention_in_days
+  flow_log_cloudwatch_log_group_retention_in_days = try(var.cloudwatch_log_group.override.common_lambda_vpc_flow_log.retention_in_days, null) != null ? var.cloudwatch_log_group.override.common_lambda_vpc_flow_log.retention_in_days : var.cloudwatch_log_group.retention_in_days
   flow_log_file_format                            = var.common_lambda.vpc.new.flow_log_file_format
 
-  manage_default_vpc            = false
-  manage_default_security_group = false
-
-  tags = var.tags
-}
-#--------------------------------------------------------------
-# VPC for Lambda(us-east-1)
-# https://registry.terraform.io/modules/terraform-aws-modules/vpc/aws/latest
-#--------------------------------------------------------------
-module "lambda_vpc_us_east_1" {
-  source  = "terraform-aws-modules/vpc/aws"
-  version = "5.21.0"
-  providers = {
-    aws = aws.us-east-1
-  }
-  create_vpc = var.common_lambda.vpc.is_enabled && var.common_lambda.vpc.create_vpc
-
-  name = "${var.name_prefix}${var.common_lambda.vpc.new.name}"
-  cidr = var.common_lambda.vpc.new.cidr
-
-  # Network
-  azs             = var.common_lambda.vpc.new.azs_us_east_1
-  private_subnets = var.common_lambda.vpc.new.private_subnets
-  public_subnets  = var.common_lambda.vpc.new.public_subnets
-
-  enable_dns_hostnames = var.common_lambda.vpc.new.enable_dns_hostnames
-  enable_dns_support   = var.common_lambda.vpc.new.enable_dns_support
-
-  # NAT Gateway
-  enable_nat_gateway     = var.common_lambda.vpc.new.enable_nat_gateway
-  single_nat_gateway     = var.common_lambda.vpc.new.single_nat_gateway
-  one_nat_gateway_per_az = var.common_lambda.vpc.new.one_nat_gateway_per_az
-
-  # VPN Gateway
-  enable_vpn_gateway = var.common_lambda.vpc.new.enable_vpn_gateway
-
-  # Flow Log
-  enable_flow_log                                 = var.common_lambda.vpc.new.enable_flow_log
-  create_flow_log_cloudwatch_log_group            = var.common_lambda.vpc.new.create_flow_log_cloudwatch_log_group
-  create_flow_log_cloudwatch_iam_role             = var.common_lambda.vpc.new.create_flow_log_cloudwatch_iam_role
-  flow_log_cloudwatch_log_group_retention_in_days = var.common_lambda.vpc.new.flow_log_cloudwatch_log_group_retention_in_days
-  flow_log_file_format                            = var.common_lambda.vpc.new.flow_log_file_format
-
+  # Disable default resource management
   manage_default_vpc            = false
   manage_default_security_group = false
 
@@ -85,21 +62,25 @@ module "lambda_vpc_us_east_1" {
 #--------------------------------------------------------------
 # Output
 #--------------------------------------------------------------
+# Exports VPC resource IDs for use by Lambda function modules.
+# These outputs are referenced by Lambda configurations that require
+# VPC connectivity.
+#--------------------------------------------------------------
+
+# VPC ID for Lambda functions
 output "lambda_vpc_id" {
-  value = module.lambda_vpc.vpc_id
+  description = "The ID of the VPC created for Lambda functions"
+  value       = module.lambda_vpc.vpc_id
 }
+
+# Private subnet IDs for Lambda execution
 output "lambda_vpc_private_subnet" {
-  value = module.lambda_vpc.private_subnets
+  description = "List of private subnet IDs where Lambda functions will be deployed"
+  value       = module.lambda_vpc.private_subnets
 }
+
+# Default security group for Lambda VPC
 output "lambda_vpc_default_security_group_id" {
-  value = module.lambda_vpc.default_security_group_id
-}
-output "lambda_vpc_id_us_east_1" {
-  value = module.lambda_vpc_us_east_1.vpc_id
-}
-output "lambda_vpc_private_subnet_us_east_1" {
-  value = module.lambda_vpc_us_east_1.private_subnets
-}
-output "lambda_vpc_default_security_group_id_us_east_1" {
-  value = module.lambda_vpc_us_east_1.default_security_group_id
+  description = "The ID of the default security group for Lambda VPC"
+  value       = module.lambda_vpc.default_security_group_id
 }

@@ -1,0 +1,66 @@
+{
+  "servers": {
+    "awsdac_mcp_server": {
+      "command": "/go/bin/awsdac-mcp-server",
+      "args": []
+    },
+    "awslabs.aws-api-mcp-server": {
+      "command": "uvx",
+      "args": ["awslabs.aws-api-mcp-server@latest"],
+      "env": {
+        "AWS_REGION": "us-east-1"
+      }
+    },
+    "aws-knowledge-mcp-server": {
+      "command": "uvx",
+      "args": [
+        "mcp-proxy",
+        "--transport",
+        "streamablehttp",
+        "https://knowledge-mcp.global.api.aws"
+      ]
+    },
+    "context7": {
+      "command": "npx",
+      "args": ["-y", "@upstash/context7-mcp@latest"]
+    },
+    "github": {
+      "type": "http",
+      "url": "https://api.githubcopilot.com/mcp/"
+    },
+    // https://github.com/hashicorp/terraform-mcp-server
+    "terraform": {
+      "command": "docker",
+      "args": [
+        "run",
+        "-i",
+        "--rm",
+        "-v",
+        "/Users/ymiyazaki/workspace/{your repository}:/workspace",
+        "-w",
+        "/workspace",
+        "hashicorp/terraform-mcp-server"
+      ]
+    },
+    "awslabs.terraform-mcp-server": {
+      "command": "uvx",
+      "args": ["awslabs.terraform-mcp-server@latest"],
+      "env": {
+        "FASTMCP_LOG_LEVEL": "ERROR"
+      }
+    },
+    "serena": {
+      "command": "uvx",
+      "args": [
+        "--from",
+        "git+https://github.com/oraios/serena",
+        "serena",
+        "start-mcp-server",
+        "--context",
+        "ide-assistant",
+        "--project",
+        "/workspace"
+      ]
+    }
+  }
+}

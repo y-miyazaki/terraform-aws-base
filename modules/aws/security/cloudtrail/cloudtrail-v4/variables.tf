@@ -11,57 +11,6 @@ variable "is_s3_enabled" {
   description = "(Optional) A boolean flag to enable/disable S3 Bucket. Defaults false."
   default     = false
 }
-variable "aws_kms_key" {
-  type = object(
-    {
-      cloudtrail = object(
-        {
-          # The description of the key as viewed in AWS console.
-          description = string
-          # Duration in days after which the key is deleted after destruction of the resource, must be between 7 and 30 days. Defaults to 30 days.
-          deletion_window_in_days = number
-          # Specifies whether the key is enabled. Defaults to true.
-          is_enabled = bool
-          # Specifies whether key rotation is enabled. Defaults to true.
-          enable_key_rotation = bool
-          # The display name of the alias. The name must start with the word "alias" followed by a forward slash (alias/)
-          alias_name = string
-        }
-      )
-      sns = object(
-        {
-          # The description of the key as viewed in AWS console.
-          description = string
-          # Duration in days after which the key is deleted after destruction of the resource, must be between 7 and 30 days. Defaults to 30 days.
-          deletion_window_in_days = number
-          # Specifies whether the key is enabled. Defaults to true.
-          is_enabled = bool
-          # Specifies whether key rotation is enabled. Defaults to true.
-          enable_key_rotation = bool
-          # The display name of the alias. The name must start with the word "alias" followed by a forward slash (alias/)
-          alias_name = string
-        }
-      )
-    }
-  )
-  description = "(Optional) The resource of aws_kms_key."
-  default = {
-    cloudtrail = {
-      description             = "This key used for CloudTrail."
-      deletion_window_in_days = 7
-      is_enabled              = true
-      enable_key_rotation     = true
-      alias_name              = "alias/cloudtrail"
-    }
-    sns = {
-      description             = "This key used for SNS."
-      deletion_window_in_days = 7
-      is_enabled              = true
-      enable_key_rotation     = true
-      alias_name              = "alias/sns"
-    }
-  }
-}
 variable "aws_sns_topic" {
   type = object(
     {
@@ -148,7 +97,7 @@ variable "aws_iam_role" {
   )
   description = "(Optional) The resource of aws_iam_role."
   default = {
-    description = "Role for CloudTrail."
+    description = "IAM role for CloudTrail."
     name        = "security-cloudtrail-role"
     path        = "/"
   }
@@ -166,7 +115,7 @@ variable "aws_iam_policy" {
   )
   description = "(Optional) The resource of aws_iam_policy."
   default = {
-    description = "Policy for CloudTrail."
+    description = "IAM policy for CloudTrail."
     name        = "security-cloudtrail-policy"
     path        = "/"
   }
@@ -264,9 +213,15 @@ variable "region" {
   type        = string
   description = "(Required) The region name."
 }
-variable "user" {
+variable "cloudtrail_kms_master_key_id" {
   type        = string
-  description = "(Required) IAM user access KMS."
+  description = "(Optional) The KMS master key for CloudTrail."
+  default     = null
+}
+variable "sns_kms_master_key_id" {
+  type        = string
+  description = "(Optional) The KMS master key for SNS."
+  default     = null
 }
 variable "tags" {
   type        = map(any)

@@ -1,14 +1,16 @@
 #--------------------------------------------------------------
-# IAM role of AWS Support App
+# For AWS Support App
 #--------------------------------------------------------------
 #--------------------------------------------------------------
-# Create role and policy for AWS Support App
+# Creates IAM role and policy for AWS Support App integration.
+# This role enables AWS Support App to access support cases and provide notifications.
 #--------------------------------------------------------------
 module "aws_iam_role_aws_support_app" {
   source = "../../modules/aws/iam/role/aws_support_app"
+
   aws_iam_role = merge(var.common_lambda.aws_iam_role, {
-    name = "${var.name_prefix}aws-support-app-role"
-    }
-  )
+    name = format("%saws-support-app-role", var.name_prefix)
+  })
+
   tags = var.tags
 }

@@ -1,0 +1,39 @@
+name: ci-push-script
+
+# CI workflow for shell scripts — caller for reusable-ci-script.yaml
+
+on:
+  push:
+    branches:
+      - "main"
+      - "master"
+      - "hotfix/**"
+      - "release/**"
+      - "develop"
+      - "feature/**"
+    paths:
+      - "**/*.sh"
+      - ".github/workflows/ci-push-script.yaml"
+      - ".github/workflows/reusable-ci-script.yaml"
+  pull_request:
+    branches:
+      - "main"
+      - "master"
+      - "hotfix/**"
+      - "release/**"
+      - "develop"
+      - "feature/**"
+    paths:
+      - "**/*.sh"
+      - ".github/workflows/ci-push-script.yaml"
+      - ".github/workflows/reusable-ci-script.yaml"
+
+jobs:
+  script-ci:
+    uses: ./.github/workflows/reusable-ci-script.yaml
+    with:
+      script_path: "**/*.sh"
+    permissions:
+      checks: write
+      contents: read
+      pull-requests: write

@@ -1,7 +1,14 @@
 #--------------------------------------------------------------
+# Module: aws/api_gateway/report_csp
+# Purpose: Expose a POST /report-csp endpoint via API Gateway integrated with a Lambda to send CSP violation reports to Slack.
+# Notes: Adds deployment and stage with optional access logs; tagging to be unified via future refactor (currently passed through); future improvement: enable access logging and WAF association.
+#--------------------------------------------------------------
+#--------------------------------------------------------------
 # Provides an API Gateway Resource.
 #--------------------------------------------------------------
 resource "aws_api_gateway_resource" "this" {
+  count = var.is_enabled ? 1 : 0
+
   rest_api_id = var.aws_api_gateway_rest_api_id
   parent_id   = var.aws_api_gateway_rest_api_root_resource_id
   path_part   = "report-csp"
@@ -11,8 +18,10 @@ resource "aws_api_gateway_resource" "this" {
 # Provides a HTTP Method for an API Gateway Resource.
 #--------------------------------------------------------------
 resource "aws_api_gateway_method" "this" {
+  count = var.is_enabled ? 1 : 0
+
   rest_api_id   = var.aws_api_gateway_rest_api_id
-  resource_id   = aws_api_gateway_resource.this.id
+  resource_id   = aws_api_gateway_resource.this[0].id
   http_method   = "POST"
   authorization = "NONE"
 }
@@ -26,15 +35,18 @@ resource "aws_api_gateway_method" "this" {
 # For more information, see the API Gateway Developer Guide.
 #--------------------------------------------------------------
 resource "aws_api_gateway_deployment" "this" {
+  count = var.is_enabled ? 1 : 0
+
   rest_api_id = var.aws_api_gateway_rest_api_id
   triggers = {
     redeployment = sha1(jsonencode([
-      aws_api_gateway_resource.this.id,
-      aws_api_gateway_method.this.id,
-      aws_api_gateway_integration.this.id,
-      aws_api_gateway_integration.this.uri,
+      aws_api_gateway_resource.this[0].id,
+      aws_api_gateway_method.this[0].id,
+      aws_api_gateway_integration.this[0].id,
+      aws_api_gateway_integration.this[0].uri,
     ]))
   }
+
   lifecycle {
     create_before_destroy = true
   }
@@ -49,85 +61,80 @@ resource "aws_api_gateway_deployment" "this" {
 #--------------------------------------------------------------
 # tfsec:ignore:aws-api-gateway-enable-access-logging
 resource "aws_api_gateway_stage" "this" {
-  deployment_id = aws_api_gateway_deployment.this.id
+  count = var.is_enabled ? 1 : 0
+
+  deployment_id = aws_api_gateway_deployment.this[0].id
   rest_api_id   = var.aws_api_gateway_rest_api_id
   stage_name    = "base"
   dynamic "access_log_settings" {
     for_each = length(keys(var.access_log_settings)) == 0 ? [] : [var.access_log_settings]
+
     content {
-      destination_arn = lookup(access_log_settings.value, "destination_arn", null)
-      format          = lookup(access_log_settings.value, "format", null)
+      destination_arn = try(access_log_settings.value.destination_arn, null)
+      format          = try(access_log_settings.value.format, null)
     }
   }
 }
 
 #--------------------------------------------------------------
 # Create Lambda function
-# For Log
+# For CSP report handler
 #--------------------------------------------------------------
-module "lambda_create_lambda_report_csp" {
-  source                   = "../../lambda/create"
-  aws_cloudwatch_log_group = var.lambda_function_aws_cloudwatch_log_group
+module "aws_lambda_create_lambda_report_csp" {
+  source  = "terraform-aws-modules/lambda/aws"
+  version = "8.1.0"
+  create  = var.is_enabled
 
-  # Provides a Lambda Function resource.
-  # Lambda allows you to trigger execution of code in response to events in AWS, enabling serverless backend solutions. The Lambda Function itself includes source code and runtime configuration.
-  aws_lambda_function = {
-    filename                       = "${path.module}/../../../../lambda/outputs/api/go_report_csp.zip"
-    s3_bucket                      = null
-    s3_key                         = null
-    s3_object_version              = null
-    function_name                  = "${var.name_prefix}report-csp"
-    dead_letter_config             = []
-    handler                        = "report_csp"
-    architectures                  = ["arm64"]
-    role                           = var.role_arn
-    description                    = "This program sends the result of report csp to Slack."
-    layers                         = []
-    memory_size                    = 128
-    runtime                        = "provided.al2"
-    timeout                        = 300
-    reserved_concurrent_executions = null
-    publish                        = false
-    kms_key_arn                    = null
-    source_code_hash               = filebase64sha256("${path.module}/../../../../lambda/outputs/api/go_report_csp.zip")
-    environment                    = var.lambda_function_environment
-    vpc_config                     = var.vpc_config
-  }
-  # Creates a Lambda permission to allow external sources invoking the Lambda function (e.g. CloudWatch Events Rule, SNS or S3).
+  allowed_triggers = var.is_enabled ? {
+    trigger = {
+      action              = "lambda:InvokeFunction"
+      event_source_token  = null
+      principal           = "apigateway.amazonaws.com"
+      qualifier           = null
+      source_account      = null
+      source_arn          = "${var.aws_api_gateway_rest_api_execution_arn}/*/*"
+      statement_id        = "APIGatewayInvokeReportCSP"
+      statement_id_prefix = null
+    }
+  } : {}
+  architectures                           = ["arm64"]
+  attach_network_policy                   = length(var.vpc_config) > 0
+  cloudwatch_logs_kms_key_id              = try(var.lambda_function_aws_cloudwatch_log_group.kms_key_id, null)
+  cloudwatch_logs_retention_in_days       = try(var.lambda_function_aws_cloudwatch_log_group.retention_in_days, null)
+  create_current_version_allowed_triggers = false
+  create_package                          = false
+  create_role                             = false
+  description                             = "This program sends the result of report csp to Slack."
+  environment_variables                   = var.lambda_function_environment
+  function_name                           = "${var.name_prefix}report-csp"
+  handler                                 = "report_csp"
+  lambda_role                             = var.role_arn
+  layers                                  = []
+  local_existing_package                  = "${path.module}/../../../../lambda/outputs/api/go_report_csp.zip"
+  logging_application_log_level           = "WARN"
+  logging_log_format                      = "JSON"
+  logging_system_log_level                = "WARN"
+  memory_size                             = 128
+  publish                                 = false
+  runtime                                 = "provided.al2"
+  timeout                                 = 300
+  tracing_mode                            = "PassThrough"
+  vpc_security_group_ids                  = length(var.vpc_config) > 0 ? try(var.vpc_config[0]["security_group_ids"], []) : []
+  vpc_subnet_ids                          = length(var.vpc_config) > 0 ? try(var.vpc_config[0]["subnet_ids"], []) : []
+
   tags = var.tags
-}
-#--------------------------------------------------------------
-# Create Lambda Permission
-# For Log
-#--------------------------------------------------------------
-module "lambda_permission_lambda_report_csp" {
-  source     = "../../lambda/permission"
-  is_enabled = true
-  aws_lambda_permission = {
-    action              = "lambda:InvokeFunction"
-    event_source_token  = null
-    function_name       = module.lambda_create_lambda_report_csp.function_name
-    principal           = "apigateway.amazonaws.com"
-    qualifier           = null
-    source_account      = null
-    source_arn          = "${var.aws_api_gateway_rest_api_execution_arn}/*/*"
-    statement_id        = "APIGatewayInvokeReportCSP"
-    statement_id_prefix = null
-  }
-  depends_on = [
-    aws_api_gateway_deployment.this,
-    aws_api_gateway_stage.this,
-  ]
 }
 
 #--------------------------------------------------------------
 # Provides an HTTP Method Integration for an API Gateway Integration.
 #--------------------------------------------------------------
 resource "aws_api_gateway_integration" "this" {
+  count = var.is_enabled ? 1 : 0
+
   rest_api_id             = var.aws_api_gateway_rest_api_id
-  resource_id             = aws_api_gateway_method.this.resource_id
-  http_method             = aws_api_gateway_method.this.http_method
+  resource_id             = aws_api_gateway_method.this[0].resource_id
+  http_method             = aws_api_gateway_method.this[0].http_method
   integration_http_method = "POST"
   type                    = "AWS_PROXY"
-  uri                     = module.lambda_create_lambda_report_csp.invoke_arn
+  uri                     = module.aws_lambda_create_lambda_report_csp.lambda_function_invoke_arn
 }

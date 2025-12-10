@@ -1,40 +1,33 @@
 #--------------------------------------------------------------
-# Locals
+# Module: aws/iam/role/cloudwatch
+# Purpose: Create IAM role and policy for CloudWatch Logs subscription delivery to Firehose.
+# Notes: Unified tagging applied; future improvement: restrict Firehose resource ARNs to specific streams and add condition keys.
 #--------------------------------------------------------------
-locals {
-  tags = {
-    for k, v in(var.tags == null ? {} : var.tags) : k => v if lookup(data.aws_default_tags.provider.tags, k, null) == null || lookup(data.aws_default_tags.provider.tags, k, null) != v
-  }
-}
-#--------------------------------------------------------------
-# Use this data source to get the default tags configured on the provider.
-#--------------------------------------------------------------
-data "aws_default_tags" "provider" {}
-
 #--------------------------------------------------------------
 # Provides an IAM role.
 #--------------------------------------------------------------
 resource "aws_iam_role" "this" {
-  description           = lookup(var.aws_iam_role, "description", null)
-  name                  = lookup(var.aws_iam_role, "name")
-  assume_role_policy    = <<POLICY
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Action": "sts:AssumeRole",
-      "Principal": {
-        "Service": "logs.${var.region}.amazonaws.com"
-      },
-      "Effect": "Allow"
-    }
-  ]
-}
-POLICY
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = "sts:AssumeRole"
+        Effect = "Allow"
+        Principal = {
+          Service = "logs.${var.region}.amazonaws.com"
+        }
+      }
+    ]
+  })
+
+  description           = try(var.aws_iam_role.description, null)
   force_detach_policies = true
-  path                  = lookup(var.aws_iam_role, "path", "/")
-  tags                  = local.tags
+  name                  = var.aws_iam_role.name
+  path                  = try(var.aws_iam_role.path, "/")
+
+  tags = var.tags
 }
+
 #--------------------------------------------------------------
 # Generates an IAM policy document in JSON format for use with resources that expect policy documents such as aws_iam_policy.
 #--------------------------------------------------------------
@@ -55,12 +48,14 @@ data "aws_iam_policy_document" "this" {
 # Provides an IAM policy.
 #--------------------------------------------------------------
 resource "aws_iam_policy" "this" {
-  description = lookup(var.aws_iam_policy, "description", null)
-  name        = lookup(var.aws_iam_policy, "name")
-  path        = lookup(var.aws_iam_policy, "path", "/")
+  description = try(var.aws_iam_policy.description, null)
+  name        = var.aws_iam_policy.name
+  path        = try(var.aws_iam_policy.path, "/")
   policy      = data.aws_iam_policy_document.this.json
-  tags        = local.tags
+
+  tags = var.tags
 }
+
 #--------------------------------------------------------------
 # Attaches a Managed IAM Policy to an IAM role
 #--------------------------------------------------------------

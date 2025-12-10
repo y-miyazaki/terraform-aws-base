@@ -13,6 +13,9 @@ variable "period" {
 }
 variable "threshold" {
   type = object({
+    # (Required) CacheHitRate threshold (unit=%)
+    enabled_cache_hit_rate = bool
+    cache_hit_rate         = number
     # (Required) Error401Rate threshold (unit=%)
     enabled_error_401_rate = bool
     error_401_rate         = number
@@ -31,9 +34,6 @@ variable "threshold" {
     # (Required) Error504Rate threshold (unit=%)
     enabled_error_504_rate = bool
     error_504_rate         = number
-    # (Required) CacheHitRate threshold (unit=%)
-    enabled_cache_hit_rate = bool
-    cache_hit_rate         = number
     # (Required) OriginLatency threshold (unit=Milliseconds)
     enabled_origin_latency = bool
     origin_latency         = number
@@ -41,6 +41,8 @@ variable "threshold" {
   )
   description = "(Optional) Set the threshold for each Metric in CloudFront."
   default = {
+    enabled_cache_hit_rate = true
+    cache_hit_rate         = 70
     enabled_error_401_rate = true
     error_401_rate         = 1
     enabled_error_403_rate = false
@@ -53,8 +55,6 @@ variable "threshold" {
     error_503_rate         = 1
     enabled_error_504_rate = true
     error_504_rate         = 1
-    enabled_cache_hit_rate = true
-    cache_hit_rate         = 70
     enabled_origin_latency = true
     origin_latency         = 10000
   }
@@ -67,6 +67,11 @@ variable "create_auto_dimensions" {
 variable "auto_dimensions_exclude_list" {
   type        = list(string)
   description = "(Optional) If create_auto_dimensions is set to true, a list of CloudFronts will be automatically registered, but at that time, specify the CloudFront name you want to exclude using partial match."
+  default     = []
+}
+variable "auto_dimensions_include_list" {
+  type        = list(string)
+  description = "(Optional) If create_auto_dimensions is set to true, a list of CloudFronts will be automatically registered, but at that time, specify the CloudFront distribution ID you want to include using partial match. If empty, all CloudFronts will be included (except excluded ones)."
   default     = []
 }
 variable "dimensions" {

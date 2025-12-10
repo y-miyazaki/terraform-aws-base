@@ -1,40 +1,33 @@
 #--------------------------------------------------------------
-# Locals
+# Module: aws/iam/role/kinesis_firehose
+# Purpose: Create IAM role and policy for Kinesis Firehose delivery stream with access to S3, Kinesis, KMS, CloudWatch Logs, and Lambda transforms.
+# Notes: Unified tagging applied; future improvement: narrow wildcard resources (streams, keys, functions) to specific ARNs.
 #--------------------------------------------------------------
-locals {
-  tags = {
-    for k, v in(var.tags == null ? {} : var.tags) : k => v if lookup(data.aws_default_tags.provider.tags, k, null) == null || lookup(data.aws_default_tags.provider.tags, k, null) != v
-  }
-}
-#--------------------------------------------------------------
-# Use this data source to get the default tags configured on the provider.
-#--------------------------------------------------------------
-data "aws_default_tags" "provider" {}
-
 #--------------------------------------------------------------
 # Provides an IAM role.
 #--------------------------------------------------------------
 resource "aws_iam_role" "this" {
-  description           = lookup(var.aws_iam_role, "description", null)
-  name                  = lookup(var.aws_iam_role, "name")
-  assume_role_policy    = <<POLICY
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Action": "sts:AssumeRole",
-      "Principal": {
-        "Service": "firehose.amazonaws.com"
-      },
-      "Effect": "Allow"
-    }
-  ]
-}
-POLICY
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = "sts:AssumeRole"
+        Effect = "Allow"
+        Principal = {
+          Service = "firehose.amazonaws.com"
+        }
+      }
+    ]
+  })
+
+  description           = try(var.aws_iam_role.description, null)
   force_detach_policies = true
-  path                  = lookup(var.aws_iam_role, "path", "/")
-  tags                  = local.tags
+  name                  = var.aws_iam_role.name
+  path                  = try(var.aws_iam_role.path, "/")
+
+  tags = var.tags
 }
+
 #--------------------------------------------------------------
 # Generates an IAM policy document in JSON format for use with resources that expect policy documents such as aws_iam_policy.
 #--------------------------------------------------------------
@@ -58,10 +51,44 @@ data "aws_iam_policy_document" "this" {
   statement {
     effect = "Allow"
     actions = [
+      "kinesis:DescribeStream",
+      "kinesis:GetShardIterator",
+      "kinesis:GetRecords",
+      "kinesis:ListShards",
+    ]
+    resources = [
+      "arn:aws:kinesis:${var.region}:${var.account_id}:stream/*",
+    ]
+  }
+  statement {
+    effect = "Allow"
+    actions = [
+      "kms:Decrypt",
+      "kms:GenerateDataKey*",
+    ]
+    #tfsec:ignore:AWS099
+    resources = [
+      "arn:aws:kms:${var.region}:${var.account_id}:key/*",
+    ]
+  }
+  statement {
+    effect = "Allow"
+    actions = [
       "logs:PutLogEvents"
     ]
     resources = [
-      "*"
+      "arn:aws:logs:${var.region}:${var.account_id}:log-group/*",
+    ]
+  }
+  statement {
+    effect = "Allow"
+    actions = [
+      "lambda:InvokeFunction",
+      "lambda:GetFunctionConfiguration"
+    ]
+    #tfsec:ignore:AWS099
+    resources = [
+      "arn:aws:lambda:${var.region}:${var.account_id}:function:*",
     ]
   }
 }
@@ -71,12 +98,14 @@ data "aws_iam_policy_document" "this" {
 #--------------------------------------------------------------
 #tfsec:ignore:AWS099
 resource "aws_iam_policy" "this" {
-  description = lookup(var.aws_iam_policy, "description", null)
-  name        = lookup(var.aws_iam_policy, "name")
-  path        = lookup(var.aws_iam_policy, "path", "/")
+  description = try(var.aws_iam_policy.description, null)
+  name        = var.aws_iam_policy.name
+  path        = try(var.aws_iam_policy.path, "/")
   policy      = data.aws_iam_policy_document.this.json
-  tags        = local.tags
+
+  tags = var.tags
 }
+
 #--------------------------------------------------------------
 # Attaches a Managed IAM Policy to an IAM role
 #--------------------------------------------------------------

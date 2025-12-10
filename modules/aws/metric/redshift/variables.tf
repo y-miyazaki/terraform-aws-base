@@ -19,7 +19,7 @@ variable "threshold" {
     # (Required) ConcurrencyScalingActiveClusters threshold (unit=Count)
     enabled_concurrency_scaling_active_clusters = bool
     concurrency_scaling_active_clusters         = number
-    # (Required) ConcurrencyScalingSeconds threshold (unit=Sum)
+    # (Required) ConcurrencyScalingSeconds threshold (unit=Seconds)
     enabled_concurrency_scaling_seconds = bool
     concurrency_scaling_seconds         = number
     # (Required) CPUUtilization threshold (unit=Percent)
@@ -43,9 +43,21 @@ variable "threshold" {
     # (Required) NetworkTransmitThroughput threshold (unit=Bytes/Second)
     enabled_network_transmit_throughput = bool
     network_transmit_throughput         = number
+    # (Required) NumExceededSchemaQuotas threshold (unit=Count)
+    enabled_num_exceeded_schema_quotas = bool
+    num_exceeded_schema_quotas         = number
+    # (Required) SchemaQuota threshold (unit=Megabytes)
+    enabled_schema_quota = bool
+    schema_quota         = number
+    # (Required) StorageUsed threshold (unit=Megabytes)
+    enabled_storage_used = bool
+    storage_used         = number
     # (Required) PercentageDiskSpaceUsed threshold (unit=Percent)
     enabled_percentage_disk_space_used = bool
     percentage_disk_space_used         = number
+    # (Required) PercentageQuotaUsed threshold (unit=Percent)
+    enabled_percentage_quota_used = bool
+    percentage_quota_used         = number
     # (Required) QueriesCompletedPerSecond threshold (unit=Count/Second)
     enabled_queries_completed_per_second = bool
     queries_completed_per_second         = number
@@ -94,18 +106,6 @@ variable "threshold" {
     # (Required) WriteThroughput threshold (unit=Bytes)
     enabled_write_throughput = bool
     write_throughput         = number
-    # (Required) SchemaQuota threshold (unit=Megabytes)
-    enabled_schema_quota = bool
-    schema_quota         = number
-    # (Required) NumExceededSchemaQuotas threshold (unit=Count)
-    enabled_num_exceeded_schema_quotas = bool
-    num_exceeded_schema_quotas         = number
-    # (Required) StorageUsed threshold (unit=Megabytes)
-    enabled_storage_used = bool
-    storage_used         = number
-    # (Required) PercentageQuotaUsed threshold (unit=Percent)
-    enabled_percentage_quota_used = bool
-    percentage_quota_used         = number
     }
   )
   description = "(Optional) Set the threshold for each Metric in SES."
@@ -116,7 +116,7 @@ variable "threshold" {
     # (Required) ConcurrencyScalingActiveClusters threshold (unit=Count)
     enabled_concurrency_scaling_active_clusters = true
     concurrency_scaling_active_clusters         = 100
-    # (Required) ConcurrencyScalingSeconds threshold (unit=Sum)
+    # (Required) ConcurrencyScalingSeconds threshold (unit=Seconds)
     enabled_concurrency_scaling_seconds = true
     concurrency_scaling_seconds         = 10
     # (Required) CPUUtilization threshold (unit=Percent)
@@ -140,9 +140,15 @@ variable "threshold" {
     # (Required) NetworkTransmitThroughput threshold (unit=Bytes/Second)
     enabled_network_transmit_throughput = false
     network_transmit_throughput         = 1024 * 1024
+    # (Required) NumExceededSchemaQuotas threshold (unit=Count)
+    enabled_num_exceeded_schema_quotas = false
+    num_exceeded_schema_quotas         = 10
     # (Required) PercentageDiskSpaceUsed threshold (unit=Percent)
     enabled_percentage_disk_space_used = true
     percentage_disk_space_used         = 80
+    # (Required) PercentageQuotaUsed threshold (unit=Percent)
+    enabled_percentage_quota_used = false
+    percentage_quota_used         = 1024
     # (Required) QueriesCompletedPerSecond threshold (unit=Count/Second)
     enabled_queries_completed_per_second = true
     queries_completed_per_second         = 100
@@ -162,8 +168,14 @@ variable "threshold" {
     enabled_read_throughput = false
     read_throughput         = 1024 * 1024 * 1024
     # (Required) RedshiftManagedStorageTotalCapacity threshold (unit=Megabytes)
-    enabled_redshift_managed_storage_total_capacity = true
-    redshift_managed_storage_total_capacity         = 10240
+    enabled_redshift_managed_storage_total_capacity = false
+    redshift_managed_storage_total_capacity         = 1024 * 1024 * 500
+    # (Required) SchemaQuota threshold (unit=Megabytes)
+    enabled_schema_quota = false
+    schema_quota         = 1024
+    # (Required) StorageUsed threshold (unit=Megabytes)
+    enabled_storage_used = false
+    storage_used         = 1024
     # (Required) TotalTableCount threshold (unit=Count)
     enabled_total_table_count = false
     total_table_count         = 50
@@ -191,21 +203,6 @@ variable "threshold" {
     # (Required) WriteThroughput threshold (unit=Bytes)
     enabled_write_throughput = false
     write_throughput         = 1024 * 1024 * 1024
-    # (Required) WriteThroughput threshold (unit=Bytes)
-    enabled_write_throughput = false
-    write_throughput         = 1024 * 1024 * 1024
-    # (Required) SchemaQuota threshold (unit=Megabytes)
-    enabled_schema_quota = false
-    schema_quota         = 1024
-    # (Required) NumExceededSchemaQuotas threshold (unit=Count)
-    enabled_num_exceeded_schema_quotas = false
-    num_exceeded_schema_quotas         = 10
-    # (Required) StorageUsed threshold (unit=Megabytes)
-    enabled_storage_used = false
-    storage_used         = 1024
-    # (Required) PercentageQuotaUsed threshold (unit=Percent)
-    enabled_percentage_quota_used = false
-    percentage_quota_used         = 1024
   }
 }
 variable "create_auto_dimensions" {
@@ -216,6 +213,11 @@ variable "create_auto_dimensions" {
 variable "auto_dimensions_exclude_list" {
   type        = list(string)
   description = "(Optional) If create_auto_dimensions is set to true, a list of Redshifts will be automatically registered, but at that time, specify the Redshift name you want to exclude using partial match."
+  default     = []
+}
+variable "auto_dimensions_include_list" {
+  type        = list(string)
+  description = "(Optional) If create_auto_dimensions is set to true, a list of Redshifts will be automatically registered, but at that time, specify the Redshift cluster identifier you want to include using partial match. If empty, all Redshifts will be included (except excluded ones)."
   default     = []
 }
 variable "dimensions" {

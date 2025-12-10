@@ -36,6 +36,7 @@ variable "ver" {
   description = "(Optional) - IAM policy document version. Valid values: 2008-10-17, 2012-10-17. Defaults to 2012-10-17. For more information, see the AWS IAM User Guide."
   default     = "2012-10-17"
 }
+
 #--------------------------------------------------------------
 # module variables
 #--------------------------------------------------------------
@@ -64,6 +65,7 @@ variable "path" {
 #   description = "(Required) The policy document. This is a JSON formatted string. For more information about building AWS IAM policy documents with Terraform, see the AWS IAM Policy Document Guide"
 #   default     = null
 # }
+
 #--------------------------------------------------------------
 # Other
 #--------------------------------------------------------------

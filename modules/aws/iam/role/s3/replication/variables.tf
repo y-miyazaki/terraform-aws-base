@@ -14,7 +14,7 @@ variable "aws_iam_role" {
   )
   description = "(Optional) Provides an IAM role."
   default = {
-    description = "Role for S3 replication."
+    description = "IAM role for S3 replication."
     name        = "s3-replication-role"
     path        = "/"
   }
@@ -32,7 +32,7 @@ variable "aws_iam_policy" {
   )
   description = "(Required) Provides an IAM policy."
   default = {
-    description = "Policy for S3 replication."
+    description = "IAM policy for S3 replication."
     name        = "s3-replication-policy"
     path        = "/"
   }

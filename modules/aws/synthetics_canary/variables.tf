@@ -19,7 +19,7 @@ variable "aws_iam_role" {
   )
   description = "(Optional) The aws_iam_role resource."
   default = {
-    description = "Role for Synthetics Canary."
+    description = "IAM role for Synthetics Canary."
     name        = "monitor-synthetics-canary-role"
     path        = "/"
   }
@@ -53,7 +53,7 @@ variable "aws_iam_policy" {
   )
   description = "(Optional) Provides an IAM policy."
   default = {
-    description = "Policy for Synthetics Canary."
+    description = "IAM policy for Synthetics Canary."
     name        = "monitor-synthetics-canary-policy"
     path        = "/"
   }
@@ -97,7 +97,12 @@ variable "aws_synthetics_canary" {
       # (Optional) Number of days to retain data about successful runs of this canary. If you omit this field, the default of 31 days is used. The valid range is 1 to 455 days.
       success_retention_period = optional(number)
       # (Optional) configuration for canary artifacts, including the encryption-at-rest settings for artifacts that the canary uploads to Amazon S3. See Artifact Config.
-      #   artifact_config = list(any)
+      artifact_config = optional(list(object({
+        s3_encryption = optional(list(object({
+          encryption_mode = optional(string)
+          kms_key_arn     = optional(string)
+        })))
+      })))
       # (Optional) ZIP file that contains the script, if you input your canary script directly into the canary instead of referring to an S3 location. It can be up to 5 MB. Conflicts with s3_bucket, s3_key, and s3_version.
       zip_file = optional(string)
       env      = map(string)

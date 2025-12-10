@@ -1,10 +1,51 @@
-misconfiguration:
-  terraform:
-    exclude-downloaded-modules: true
+---
+#--------------------------------------------------------------
+# Report Options
+#--------------------------------------------------------------
+# Same as '--format'
+# Default is 'table'
+format: table
 
+# Same as '--severity'
+# Default is all severities
+severity:
+  - HIGH
+  - CRITICAL
+
+#--------------------------------------------------------------
+# Scan Options
+#--------------------------------------------------------------
 scan:
+  security-checks:
+    - config
+    - misconfig
+    - secret
+    - vuln
   # Same as '--skip-dirs'
   # Default is empty
   skip-dirs:
+    - ".copilot/"
+    - ".git/"
+    - ".serena/"
     - "env/"
+    - "test/"
+    - "tmp/"
     - "**/.terraform/**/*"
+  # Same as '--skip-files'
+  # Default is empty
+  skip-files:
+    - nodejs/Dockerfile
+
+#--------------------------------------------------------------
+# Misconfiguration Options
+#--------------------------------------------------------------
+misconfiguration:
+  terraform:
+    exclude-downloaded-modules: true
+    # vars:
+    #   - terraform.dev.tfvars
+    #   - terraform.qa.tfvars
+    #   - terraform.stg.tfvars
+    #   - terraform.prd.tfvars
+    #   - terraform.root.tfvars
+    #   - terraform.audit.tfvars

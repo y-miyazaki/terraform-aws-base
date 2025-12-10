@@ -1,0 +1,371 @@
+{
+  // ------------------------------------------------------------
+  // Base
+  // ------------------------------------------------------------
+  "breadcrumbs.enabled": true,
+  "editor.autoIndent": "full", // オートインデント
+  "editor.detectIndentation": false, // インデントの自動判別
+  "editor.formatOnPaste": false, // コード整形
+  "editor.formatOnType": false, // コード整形
+  "editor.formatOnSave": true, // format on save
+  "editor.fontSize": 16, // font size
+  "editor.folding": true, // コードの折りたたみを許可
+  "editor.hover.sticky": false,
+  "editor.insertSpaces": true, // Tabキーで半角スペースを入力
+  "editor.letterSpacing": -1, // 文字の間隔を詰める
+  "editor.lineNumbers": "on", // 行番号の表示
+  "editor.links": true, // リンクをクリック可能に
+  "editor.matchBrackets": "always", // 対応する括弧の強調表示をオンに
+  "editor.minimap.enabled": true, // minimap
+  "editor.minimap.maxColumn": 40, // ミニマップの幅
+  "editor.minimap.renderCharacters": false, // ミニマップを簡略化
+  "editor.minimap.showSlider": "always", // ミニマップのハイライトを常に表示
+  "editor.minimap.side": "right", // ミニマップを右に表示
+  "editor.renderControlCharacters": true, // 制御文字の表示
+  "editor.renderLineHighlight": "all", // 選択中の行を強調する
+  "editor.renderWhitespace": "all", // エディターで空白文字を表示する方法を制御します。'none'、'boundary' および 'all' が使用可能です。'boundary' オプションでは、単語間の単一スペースは表示されません。
+  "editor.suggestFontSize": 16, // font size
+  // "editor.tabSize": 4, // (.editorconfig) tab size
+  "explorer.confirmDragAndDrop": false,
+  "files.autoGuessEncoding": true, // 文字コードを自動判別
+  "files.eol": "\n", // 改行コードをLF(Linux/OSX)にする
+  "files.encoding": "utf8", // 既定の文字コード
+  "files.insertFinalNewline": true, // 有効にすると、ファイルの保存時に最新の行を末尾に挿入します。
+  // "files.trimTrailingWhitespace": true, // (.editorconfig) ファイルの保存時に末尾の空白をトリミング
+  "git.autofetch": true,
+  "terminal.integrated.defaultProfile.linux": "bash",
+  "terminal.integrated.scrollback": 10000,
+  "window.zoomLevel": 0,
+  "workbench.startupEditor": "newUntitledFile",
+  "workbench.colorCustomizations": {
+    // "statusBar.background": "#000000", // ステータスバー背景色
+    // "statusBar.noFolderBackground": "#000000",
+    // "statusBar.foreground": "#ffffff", // ステータスバー前景色
+    // "statusBar.noFolderForeground": "#ffffff",
+    // "statusBar.border": "#ffffff", // ステータスバーの境界線
+    // "sideBar.background": "#000000", // サイドバーの背景色
+    // "sideBar.foreground": "#ffffff", // サイドバーの前景色
+    // "sideBar.border": "#ffffff", // サイドバーの境界線
+    // "activityBar.background": "#000000", // アクティビティバーの背景色
+    // "activityBar.foreground": "#ffffff", // アクティビティバーの前景色
+    // "activityBar.border": "#ffffff", // アクティビティバーの境界線
+    // "editor.background": "#121817", // エディタ背景色
+    "editor.lineHighlightBackground": "#404040", // 選択している行の強調色
+    "editor.selectionBackground": "#0077ff77", // 選択領域の強調色（青系）
+    "editorBracketMatch.background": "#ffff0077", // 対応する括弧の背景色
+    "editorError.border": "#ff000090" // エラー部分の下線
+    // "editorLineNumber.foreground": "#0077ffbb",
+    // "editorLineNumber.activeForeground": "#ffffff",
+    // "editorSuggestWidget.selectedBackground": "#0044ff", // サジェスト欄,選択中項目の背景色
+    // "scrollbarSlider.background": "#0077ff99", // スクロールバーの色
+    // "scrollbarSlider.hoverBackground": "#00ccffcc", // 移動中のスクロールバーの色
+    // "tab.activeBorder": "#ffffff", // アクティブタブの下線
+    // "tab.inactiveForeground": "#999999", // 非選択タブの文字色
+    // "scrollbar.shadow": "#0077ff99",
+    // "editorLink.activeForeground": "#5555ce"
+  },
+  // ------------------------------------------------------------
+  // GitHub Copilot
+  // ------------------------------------------------------------
+  "accessibility.signals.chatUserActionRequired": {
+    "sound": "on",
+    "announcement": "auto"
+  },
+  "chat.agent.enabled": true,
+  "chat.agent.maxRequests": 200,
+  "chat.agentSessionsViewLocation": "view",
+  "chat.emptyState.history.enabled": true,
+  "chat.tools.todos.showWidget": true,
+  "chat.mcp.access": "all",
+  "chat.mcp.autostart": "onlyNew",
+  "chat.mcp.discovery.enabled": {
+    "claude-desktop": true,
+    "windsurf": true,
+    "cursor-global": true,
+    "cursor-workspace": true
+  },
+  "chat.tools.terminal.autoApprove": {
+    "/.*/": true,
+    "curl": true,
+    "rm": false,
+    "git add": false,
+    "git commit": false,
+    "git checkout": false
+  },
+  "editor.inlineSuggest.enabled": true,
+  "github.copilot.chat.agent.autoFix": true,
+  "github.copilot.chat.codeGeneration.useInstructionFiles": true,
+  "github.copilot.chat.codesearch.enabled": true,
+  "github.copilot.chat.commitMessageGeneration.instructions": [
+    {
+      "file": ".github/copilot-instructions.md"
+    }
+  ],
+  "github.copilot.chat.localeOverride": "ja",
+  "github.copilot.chat.newWorkspace.useContext7": true,
+  "github.copilot.chat.virtualTools.threshold": 128,
+  "github.copilot.enable": {
+    "*": true,
+    "go": true,
+    "javascript": true,
+    "markdown": true,
+    "plaintext": true,
+    "python": true,
+    "typescriptreact": true
+  },
+  "github.copilot.nextEditSuggestions.enabled": true,
+  "github.copilot.nextEditSuggestions.fixes": true,
+  // ------------------------------------------------------------
+  // cspell
+  // ------------------------------------------------------------
+  "cSpell.autoFormatConfigFile": true,
+  "cSpell.caseSensitive": false,
+  "cSpell.customDictionaries": {
+    "project-words": {
+      "name": "project-words",
+      "path": "${workspaceRoot}/.vscode/cspell-project.txt",
+      "description": "Words used in this project",
+      "addWords": true
+    },
+    "custom": true, // Enable the `custom` dictionary
+    "internal-terms": false // Disable the `internal-terms` dictionary
+  },
+  "cSpell.showAutocompleteDirectiveSuggestions": true,
+  // ------------------------------------------------------------
+  // files assotiations
+  // ------------------------------------------------------------
+  "files.associations": {
+    "tfvars": "Terraform"
+  },
+  // ------------------------------------------------------------
+  // for Golang
+  // https://github.com/golang/vscode-go/blob/master/docs/settings.md
+  // ------------------------------------------------------------
+  "go.alternateTools": {
+    "go-langserver": "gopls"
+  },
+  "go.coverMode": "default",
+  "go.coverOnSave": true,
+  "go.coverOnSingleTest": true,
+  "go.coverOnSingleTestFile": true,
+  "go.coverOnTestPackage": true,
+  "go.coverShowCounts": false,
+  "go.coverageDecorator": {
+    "coveredBorderColor": "rgba(64,128,128,0.5)", // Color to use for the border of covered code.
+    "coveredGutterStyle": "blockblue", // Allowed Options: blockblue, blockred, blockgreen, blockyellow, slashred, slashgreen, slashblue, slashyellow, verticalred, verticalgreen, verticalblue, verticalyellow
+    "coveredHighlightColor": "rgba(64,128,128,0.2)", // Color in the rgba format to use to highlight covered code.
+    "type": "highlight", // Allowed Options: highlight, gutter
+    "uncoveredGutterStyle": "slashyellow", // Gutter style to indicate covered code. Allowed Options: blockblue, blockred, blockgreen, blockyellow, slashred, slashgreen, slashblue, slashyellow, verticalred, verticalgreen, verticalblue, verticalyellow
+    "uncoveredHighlightColor": "rgba(128,64,64,0.2)" // Color to use for the border of uncovered code.
+  },
+  "go.coverageOptions": "showBothCoveredAndUncoveredCode",
+  "go.delveConfig": {
+    "dlvLoadConfig": {
+      "followPointers": true,
+      "maxVariableRecurse": 1,
+      "maxStringLen": 64,
+      "maxArrayValues": 64,
+      "maxStructFields": -1
+    },
+    "apiVersion": 2,
+    "showGlobalVariables": false,
+    "debugAdapter": "legacy",
+    "substitutePath": []
+  },
+  "go.disableConcurrentTests": false,
+  // "go.docsTool": "godoc", // It will be ignored if you use a language server.
+  "go.editorContextMenuCommands": {
+    "toggleTestFile": true,
+    "addTags": true,
+    "removeTags": false,
+    "fillStruct": false,
+    "testAtCursor": true,
+    "testFile": false,
+    "testPackage": false,
+    "generateTestForFunction": true,
+    "generateTestForFile": false,
+    "generateTestForPackage": false,
+    "addImport": true,
+    "testCoverage": true,
+    "playground": true,
+    "debugTestAtCursor": true,
+    "benchmarkAtCursor": false
+  },
+  "go.enableCodeLens": {
+    "runtest": true
+  },
+  // "go.formatTool": "goimports", // It will be ignored if you use a language server.
+  // "go.formatFlags": ["-w"], // It will be ignored if you use a language server.
+  "go.generateTestsFlags": [],
+  // "go.gocodeAutoBuild": false, // It will be ignored if you use a language server.
+  // "go.gocodeFlags": ["-builtin", "-ignore-case", "-unimported-packages"], // It will be ignored if you use a language server.
+  // "go.gocodePackageLookupMode":"go", // It will be ignored if you use a language server.
+  "go.gopath": "/go",
+  "go.goroot": "/usr/local/go",
+  // "go.gotoSymbol.ignoreFolders":[], // It will be ignored if you use a language server.
+  // "go.gotoSymbol.includeGoroot":false, // It will be ignored if you use a language server.
+  // "go.gotoSymbol.includeImports": false, // It will be ignored if you use a language server.
+  "go.inferGopath": false,
+  "go.installDependenciesWhenBuilding": false,
+  "go.languageServerFlags": [],
+  "go.lintFlags": [
+    "-c",
+    "/workspace/.golangci.yaml",
+    "-v",
+    "--max-same-issues",
+    "0",
+    "--max-issues-per-linter",
+    "0"
+    // "--fast"
+  ],
+  "go.lintOnSave": "workspace",
+  "go.lintTool": "golangci-lint",
+  "go.playground": {
+    "openbrowser": true,
+    "share": true,
+    "run": true
+  },
+  "go.removeTags": {
+    "tags": "",
+    "options": "",
+    "promptForTags": false
+  },
+  "go.testOnSave": true,
+  "go.testTags": null,
+  "go.testTimeout": "30s",
+  "go.toolsEnvVars": {
+    "PATH": "/go/bin:${env:PATH}",
+    "GOPATH": "/go",
+    "GO111MODULE": "on"
+  },
+  "go.toolsGopath": "/go",
+  "go.toolsManagement.autoUpdate": true,
+  "go.toolsManagement.checkForUpdates": "proxy",
+  "go.trace.server": "verbose",
+  "go.useLanguageServer": true,
+  "go.vetFlags": [],
+  "gopls": {
+    "usePlaceholders": true,
+    "completeUnimported": true,
+    "staticcheck": false,
+    // "verboseOutput": true,
+    "directoryFilters": [
+      "-/workspace/.devcontainer",
+      "-/workspace/.git",
+      "-/workspace/.serena",
+      "-/workspace/.vscode",
+      "-/workspace/node_modules",
+      "-/workspace/output",
+      "-/workspace/tmp",
+      "-/workspace/vendor",
+      "-/mnt/",
+      "-/proc/"
+    ]
+  },
+  "[go]": {
+    "editor.snippetSuggestions": "bottom",
+    "editor.codeActionsOnSave": {
+      "source.organizeImports": "always"
+    }
+  },
+  // ------------------------------------------------------------
+  // for Json
+  //  ------------------------------------------------------------
+  "[json]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  // ------------------------------------------------------------
+  // for Markdown
+  //  ------------------------------------------------------------
+  "markdownlint.lintWorkspaceGlobs": [
+    "**/*.{md,mkd,mdwn,mdown,markdown,markdn,mdtxt,mdtext,workbook}",
+    "!**/*.code-search",
+    "!**/bower_components",
+    "!**/node_modules",
+    "!**/.git",
+    "!**/vendor",
+    "!modules/**/README.md",
+    "!**/.terraform",
+    "!.github/instructions/*.md",
+    "!.github/prompt/*.md",
+    "!CODEOWNERS"
+  ],
+  // ------------------------------------------------------------
+  // for Terraform
+  // https://github.com/hashicorp/vscode-terraform
+  // ------------------------------------------------------------
+  "terraform.codelens.referenceCount": true,
+  "terraform.experimentalFeatures.prefillRequiredFields": true,
+  "terraform.experimentalFeatures.validateOnSave": true,
+  "terraform.languageServer.enabled": true,
+  "terraform.languageServer.external": true,
+  "terraform.languageServer.args": ["serve"],
+  "terraform.languageServer.ignoreSingleFileWarning": true,
+  "terraform.validation.enableEnhancedValidation": true,
+  "[terraform]": {
+    "editor.defaultFormatter": "hashicorp.terraform",
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+      "source.formatAll.terraform": "always"
+    }
+  },
+  "[terraform-vars]": {
+    "editor.defaultFormatter": "hashicorp.terraform",
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+      "source.formatAll.terraform": "always"
+    }
+  },
+  // ------------------------------------------------------------
+  // for Python
+  // ------------------------------------------------------------
+  "python.pythonPath": "/usr/local/bin/python",
+  "python.linting.lintOnSave": true,
+  "python.linting.mypyEnabled": true,
+  "python.linting.pylintEnabled": false,
+  "python.linting.flake8Enabled": true,
+  "python.linting.enabled": true,
+  "python.linting.flake8Args": [
+    "--max-line-length",
+    "120",
+    "--max-complexity",
+    "20"
+  ],
+  "python.formatting.provider": "autopep8",
+  "python.formatting.autopep8Path": "/usr/local/bin/autopep8",
+  "python.formatting.autopep8Args": [
+    "--indent-size=4",
+    "--aggressive",
+    "--aggressive"
+  ],
+  "python.sortImports.path": "/usr/local/bin/isort",
+  "python.testing.unittestArgs": ["-v", "-s", ".", "-p", "*test.py"],
+  "python.testing.pytestEnabled": false,
+  "python.testing.nosetestsEnabled": false,
+  "python.testing.unittestEnabled": true,
+  "python.linting.mypyPath": "/usr/local/bin/mypy",
+  "python.linting.mypyArgs": ["--config-file", "mypy.ini"],
+  // ------------------------------------------------------------
+  // for Shell Script
+  // ------------------------------------------------------------
+  "shellformat.flag": "-i 4 -ci -bn -sr",
+  "shellformat.path": "shfmt",
+  "shellformat.effectLanguages": ["shellscript", "bats"],
+  "shellcheck.enable": true,
+  "shellcheck.useWorkspaceRootAsCwd": true,
+  "shellcheck.run": "onSave",
+  "shellcheck.executablePath": "shellcheck",
+  "shellcheck.ignorePatterns": {
+    "**/*.zsh": true,
+    "**/*.fish": true
+  },
+  "shellcheck.customArgs": ["-x -e SC1091"],
+  "[shellscript]": {
+    "editor.defaultFormatter": "mads-hartmann.bash-ide-vscode",
+    "editor.formatOnSave": true
+  },
+  "[bats]": {
+    "editor.defaultFormatter": "foxundermoon.shell-format",
+    "editor.formatOnSave": true
+  }
+}

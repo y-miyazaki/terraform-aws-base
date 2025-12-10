@@ -4,13 +4,13 @@
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | ~>1.4 |
-| <a name="requirement_aws"></a> [aws](#requirement\_aws) | ~>5.0 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | ~>6.0 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | 5.35.0 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | 6.8.0 |
 
 ## Modules
 
@@ -20,11 +20,8 @@ No modules.
 
 | Name | Type |
 |------|------|
-| [aws_cloudwatch_metric_alarm.concurrent_executions](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_metric_alarm) | resource |
-| [aws_cloudwatch_metric_alarm.duration](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_metric_alarm) | resource |
-| [aws_cloudwatch_metric_alarm.error](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_metric_alarm) | resource |
-| [aws_cloudwatch_metric_alarm.throttles](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_metric_alarm) | resource |
-| [aws_default_tags.provider](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/default_tags) | data source |
+| [aws_cloudwatch_metric_alarm.cpu_utilization](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_metric_alarm) | resource |
+| [aws_cloudwatch_metric_alarm.memory_utilization](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_metric_alarm) | resource |
 
 ## Inputs
 
@@ -37,7 +34,7 @@ No modules.
 | <a name="input_ok_actions"></a> [ok\_actions](#input\_ok\_actions) | (Optional) The list of actions to execute when this alarm transitions into an OK state from any other state. Each action is specified as an Amazon Resource Name (ARN). | `list(string)` | `null` | no |
 | <a name="input_period"></a> [period](#input\_period) | (Optional) The period in seconds over which the specified statistic is applied. | `number` | `300` | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | (Optional) Key-value map of resource tags. | `map(any)` | `null` | no |
-| <a name="input_threshold"></a> [threshold](#input\_threshold) | (Optional) Set the threshold for each Metric in Lambda. | <pre>object({<br>    # ConcurrentExecutions threshold (unit=Count)<br>    enabled_concurrent_executions = bool<br>    concurrent_executions         = number<br>    # Duration threshold (unit=Milliseconds)<br>    enabled_duration = bool<br>    duration         = number<br>    # Errors threshold (unit=Count)<br>    enabled_errors = bool<br>    errors         = number<br>    # Throttles threshold (unit=Count)<br>    enabled_throttles = bool<br>    throttles         = number<br>    }<br>  )</pre> | <pre>{<br>  "concurrent_executions": 500,<br>  "duration": 10000,<br>  "enabled_concurrent_executions": true,<br>  "enabled_duration": true,<br>  "enabled_errors": true,<br>  "enabled_throttles": true,<br>  "errors": 1,<br>  "throttles": 10<br>}</pre> | no |
+| <a name="input_threshold"></a> [threshold](#input\_threshold) | (Optional) Set the threshold for each Metric in Lambda. | <pre>object({<br/>    # (Required) CpuUtilized/CpuReserved threshold (unit=Percent)<br/>    enabled_cpu_utilization = bool<br/>    cpu_utilization         = number<br/>    # (Required) MemoryUtilized/MemoryReserved threshold (unit=Percent)<br/>    enabled_memory_utilization = bool<br/>    memory_utilization         = number<br/>    }<br/>  )</pre> | <pre>{<br/>  "cpu_utilization": 80,<br/>  "enabled_cpu_utilization": true,<br/>  "enabled_memory_utilization": true,<br/>  "memory_utilization": 80<br/>}</pre> | no |
 
 ## Outputs
 

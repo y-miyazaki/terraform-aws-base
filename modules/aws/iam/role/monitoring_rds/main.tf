@@ -1,40 +1,33 @@
 #--------------------------------------------------------------
-# Locals
+# Module: aws/iam/role/monitoring_rds
+# Purpose: Create an IAM role for RDS Enhanced Monitoring with required managed policy attachment.
+# Notes: Uses unified tagging local; future improvement: allow additional custom policies via variable list.
 #--------------------------------------------------------------
-locals {
-  tags = {
-    for k, v in(var.tags == null ? {} : var.tags) : k => v if lookup(data.aws_default_tags.provider.tags, k, null) == null || lookup(data.aws_default_tags.provider.tags, k, null) != v
-  }
-}
-#--------------------------------------------------------------
-# Use this data source to get the default tags configured on the provider.
-#--------------------------------------------------------------
-data "aws_default_tags" "provider" {}
-
 #--------------------------------------------------------------
 # Provides an IAM role.
 #--------------------------------------------------------------
 resource "aws_iam_role" "this" {
-  description           = lookup(var.aws_iam_role, "description", null)
-  name                  = lookup(var.aws_iam_role, "name")
-  assume_role_policy    = <<POLICY
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Action": "sts:AssumeRole",
-      "Principal": {
-        "Service": "monitoring.rds.amazonaws.com"
-      },
-      "Effect": "Allow"
-    }
-  ]
-}
-POLICY
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = "sts:AssumeRole"
+        Effect = "Allow"
+        Principal = {
+          Service = "monitoring.rds.amazonaws.com"
+        }
+      }
+    ]
+  })
+
+  description           = try(var.aws_iam_role.description, null)
   force_detach_policies = true
-  path                  = lookup(var.aws_iam_role, "path", "/")
-  tags                  = local.tags
+  name                  = var.aws_iam_role.name
+  path                  = try(var.aws_iam_role.path, "/")
+
+  tags = var.tags
 }
+
 #--------------------------------------------------------------
 # Attaches a Managed IAM Policy to an IAM role
 #--------------------------------------------------------------

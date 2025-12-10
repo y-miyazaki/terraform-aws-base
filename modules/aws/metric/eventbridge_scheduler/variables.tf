@@ -14,18 +14,23 @@ variable "period" {
 variable "threshold" {
   type = object({
     # InvocationAttemptCount threshold (unit=Count)
+    # Monitor total invocation attempts (typically disabled for regular monitoring)
     enabled_invocation_attempt_count = bool
     invocation_attempt_count         = number
     # TargetErrorCount threshold (unit=Count)
+    # Alert on target execution errors (recommended: 1 for immediate notification)
     enabled_target_error_count = bool
     target_error_count         = number
     # TargetErrorThrottledCount threshold (unit=Count)
+    # Alert on throttling errors from target services
     enabled_target_error_throttled_count = bool
     target_error_throttled_count         = number
     # InvocationThrottleCount threshold (unit=Count)
+    # Alert on scheduler throttling due to rate limits
     enabled_invocation_throttle_count = bool
     invocation_throttle_count         = number
     # InvocationDroppedCount threshold (unit=Count)
+    # Alert on dropped invocations due to system issues
     enabled_invocation_dropped_count = bool
     invocation_dropped_count         = number
     }

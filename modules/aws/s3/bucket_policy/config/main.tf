@@ -1,5 +1,10 @@
 #--------------------------------------------------------------
-# Local
+# Module: aws/s3/bucket_policy/config
+# Purpose: Attach S3 bucket policy allowing AWS Config service and specified roles to deliver configuration snapshots.
+# Notes: Dynamically builds principals for config delivery; future improvement: enforce non-empty role list with validation.
+#--------------------------------------------------------------
+#--------------------------------------------------------------
+# Locals
 #--------------------------------------------------------------
 locals {
   temp_resource_config = []
@@ -12,11 +17,13 @@ locals {
     ]
   )
 }
+
 #--------------------------------------------------------------
 # Generates an IAM policy document in JSON format for use with resources that expect policy documents such as aws_iam_policy.
 #--------------------------------------------------------------
 data "aws_iam_policy_document" "this" {
-  count   = length(local.resource_config) > 0 ? 1 : 0
+  count = length(local.resource_config) > 0 ? 1 : 0
+
   version = "2012-10-17"
 
   statement {
@@ -76,11 +83,13 @@ data "aws_iam_policy_document" "this" {
     ]
   }
 }
+
 #--------------------------------------------------------------
 # Attaches a policy to an S3 bucket resource.
 #--------------------------------------------------------------
 resource "aws_s3_bucket_policy" "this" {
-  count  = length(local.resource_config) > 1 && var.attach_bucket_policy ? 1 : 0
+  count = length(local.resource_config) > 1 && var.attach_bucket_policy ? 1 : 0
+
   bucket = var.bucket
   policy = data.aws_iam_policy_document.this[0].json
 }

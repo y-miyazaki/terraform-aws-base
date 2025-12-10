@@ -19,7 +19,7 @@ variable "aws_iam_role" {
   )
   description = "(Optional) Provides an IAM role."
   default = {
-    description = "Role for Lambda."
+    description = "IAM role for Lambda."
     name        = "lambda-role"
     path        = "/"
   }
@@ -39,7 +39,7 @@ variable "aws_iam_policy" {
   )
   description = "(Optional) Provides an IAM policy."
   default = {
-    description = "Policy for Lambda."
+    description = "IAM policy for Lambda."
     name        = "lambda-policy"
     path        = "/"
     policy      = null

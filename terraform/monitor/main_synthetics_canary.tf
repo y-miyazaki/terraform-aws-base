@@ -1,57 +1,57 @@
 #--------------------------------------------------------------
-# For Synthetics Canary
+# Synthetics Canary Configuration
 #--------------------------------------------------------------
 locals {
-  synthetics_canary_s3_bucket_arn = var.metric_synthetics_canary_linkcheck.synthetics_canary.aws_synthetics_canary.execution_role_arn == null ? module.s3_application_log.s3_bucket_arn : null
+  # Map of function names to their ZIP file paths
+  synthetics_canary_zip_files = {
+    heartbeat = "../../lambda/outputs/nodejs_synthetics_canary_heartbeat.zip"
+    linkcheck = "../../lambda/outputs/nodejs_synthetics_canary_linkcheck.zip"
+  }
 }
+
 #--------------------------------------------------------------
-#️ Provides a Synthetics Canary resource.
+# Provides Synthetics Canary resources
 #--------------------------------------------------------------
-module "aws_synthetics_canary_heartbeat" {
+module "aws_synthetics_canary" {
+  for_each = var.metric_synthetics_canary.functions
+
   source     = "../../modules/aws/synthetics_canary"
-  is_enabled = lookup(var.metric_synthetics_canary_heartbeat, "is_enabled", true)
-  aws_iam_role = merge(var.metric_synthetics_canary_heartbeat.synthetics_canary.aws_iam_role, {
-    name = format("%s%s", var.name_prefix, var.metric_synthetics_canary_heartbeat.synthetics_canary.aws_iam_role.name)
-  })
-  account_id    = data.aws_caller_identity.current.account_id
-  region        = var.region
-  s3_bucket_arn = local.synthetics_canary_s3_bucket_arn
-  aws_iam_policy = merge(var.metric_synthetics_canary_heartbeat.synthetics_canary.aws_iam_policy, {
-    name = format("%s%s", var.name_prefix, var.metric_synthetics_canary_heartbeat.synthetics_canary.aws_iam_policy.name)
-  })
-  aws_synthetics_canary = merge(var.metric_synthetics_canary_heartbeat.synthetics_canary.aws_synthetics_canary, {
-    artifact_s3_location = var.metric_synthetics_canary_heartbeat.synthetics_canary.aws_synthetics_canary.artifact_s3_location == null ? "s3://${module.s3_application_log.s3_bucket_id}/" : var.metric_synthetics_canary_heartbeat.synthetics_canary.aws_synthetics_canary.artifact_s3_location
+  is_enabled = each.value.is_enabled
+
+  account_id = data.aws_caller_identity.current.account_id
+  aws_iam_role = {
+    name        = format("%smonitor-synthetics-canary-%s-role", var.name_prefix, each.key)
+    description = format("IAM role for Synthetics Canary(%s)", each.key)
+    path        = "/"
+  }
+  aws_iam_policy = {
+    name        = format("%smonitor-synthetics-canary-%s-policy", var.name_prefix, each.key)
+    description = format("IAM policy for Synthetics Canary(%s)", each.key)
+    path        = "/"
+  }
+  aws_synthetics_canary = merge(each.value.aws_synthetics_canary, {
+    # Fixed S3 location using application log bucket
+    artifact_s3_location = "s3://${module.s3_application_log.s3_bucket_id}/Logs/"
     handler              = "index.handler"
-    name                 = format("%s%s", var.name_prefix, var.metric_synthetics_canary_heartbeat.synthetics_canary.aws_synthetics_canary.name)
-    # (Optional) ZIP file that contains the script, if you input your canary script directly into the canary instead of referring to an S3 location. It can be up to 5 MB. Conflicts with s3_bucket, s3_key, and s3_version.
+    name                 = format("%s%s", var.name_prefix, each.key)
+    # Configuration block for individual canary runs. Detailed below.
+    run_config = [
+      {
+        timeout_in_seconds = 60
+        memory_in_mb       = 960
+        active_tracing     = false
+      }
+    ]
+    runtime_version = "syn-nodejs-puppeteer-11.0"
+    # ZIP file path based on function name (heartbeat or linkcheck)
     # https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Synthetics_Canaries_WritingCanary_Nodejs.html#CloudWatch_Synthetics_Canaries_package
-    # cd /workspace/nodejs/heartbeat; zip -r /workspace/lambda/outputs/nodejs_heartbeat.zip ./
-    zip_file = "../../lambda/outputs/nodejs_heartbeat.zip"
+    # cd /workspace/nodejs/synthetics_canary_heartbeat; zip -r /workspace/lambda/outputs/nodejs_synthetics_canary_heartbeat.zip ./
+    # cd /workspace/nodejs/synthetics_canary_linkcheck; zip -r /workspace/lambda/outputs/nodejs_synthetics_canary_linkcheck.zip ./
+    zip_file = local.synthetics_canary_zip_files[each.key]
     }
   )
-  tags = var.tags
-}
-module "aws_synthetics_canary_linkcheck" {
-  source     = "../../modules/aws/synthetics_canary"
-  is_enabled = lookup(var.metric_synthetics_canary_linkcheck, "is_enabled", true)
-  aws_iam_role = merge(var.metric_synthetics_canary_linkcheck.synthetics_canary.aws_iam_role, {
-    name = format("%s%s", var.name_prefix, var.metric_synthetics_canary_linkcheck.synthetics_canary.aws_iam_role.name)
-  })
-  account_id    = data.aws_caller_identity.current.account_id
   region        = var.region
-  s3_bucket_arn = local.synthetics_canary_s3_bucket_arn
-  aws_iam_policy = merge(var.metric_synthetics_canary_linkcheck.synthetics_canary.aws_iam_policy, {
-    name = format("%s%s", var.name_prefix, var.metric_synthetics_canary_linkcheck.synthetics_canary.aws_iam_policy.name)
-  })
-  aws_synthetics_canary = merge(var.metric_synthetics_canary_linkcheck.synthetics_canary.aws_synthetics_canary, {
-    artifact_s3_location = var.metric_synthetics_canary_linkcheck.synthetics_canary.aws_synthetics_canary.artifact_s3_location == null ? "s3://${module.s3_application_log.s3_bucket_id}/" : var.metric_synthetics_canary_linkcheck.synthetics_canary.aws_synthetics_canary.artifact_s3_location
-    handler              = "index.handler"
-    name                 = format("%s%s", var.name_prefix, var.metric_synthetics_canary_linkcheck.synthetics_canary.aws_synthetics_canary.name)
-    # (Optional) ZIP file that contains the script, if you input your canary script directly into the canary instead of referring to an S3 location. It can be up to 5 MB. Conflicts with s3_bucket, s3_key, and s3_version.
-    # https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Synthetics_Canaries_WritingCanary_Nodejs.html#CloudWatch_Synthetics_Canaries_package
-    # cd /workspace/nodejs/linkcheck; zip -r /workspace/lambda/outputs/nodejs_linkcheck.zip ./
-    zip_file = "../../lambda/outputs/nodejs_linkcheck.zip"
-    }
-  )
+  s3_bucket_arn = module.s3_application_log.s3_bucket_arn
+
   tags = var.tags
 }

@@ -44,6 +44,11 @@ variable "auto_dimensions_exclude_list" {
   description = "(Optional) If create_auto_dimensions is set to true, a list of API Gateways will be automatically registered, but at that time, specify the API Gateway name you want to exclude using partial match."
   default     = []
 }
+variable "auto_dimensions_include_list" {
+  type        = list(string)
+  description = "(Optional) If create_auto_dimensions is set to true, a list of API Gateways will be automatically registered, but at that time, specify the API Gateway name you want to include using partial match. If empty, all API Gateways will be included (except excluded ones)."
+  default     = []
+}
 variable "dimensions" {
   type        = list(map(any))
   description = "(Optional) If create_auto_dimensions is set to false, The dimensions for the alarm's associated metric. For the list of available dimensions see the AWS documentation here."

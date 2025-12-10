@@ -1,17 +1,32 @@
 #--------------------------------------------------------------
-# For SQS(DLQ)
+# Module: aws/metric/sqs/dlq
+# Purpose: Provide CloudWatch metric alarms for SQS dead-letter queues (age, message count, redrive metrics).
+# Notes: Unified tagging; monitors DLQ health indicators to surface processing issues.
 #--------------------------------------------------------------
 #--------------------------------------------------------------
-# Local
+# Auto-discovery filter module
+#--------------------------------------------------------------
+module "filter" {
+  source     = "../../../_internal/auto_discovery_filter"
+  is_enabled = var.is_enabled
+
+  create_auto       = var.create_auto_dimensions
+  source_list       = var.create_auto_dimensions && length(data.external.list) > 0 ? [for v in split(",", data.external.list[0].result.list) : split(":", v)[length(split(":", v)) - 1]] : []
+  include_list      = var.auto_dimensions_include_list
+  exclude_list      = var.auto_dimensions_exclude_list
+  manual_dimensions = var.dimensions
+}
+
+#--------------------------------------------------------------
+# Locals
 #--------------------------------------------------------------
 locals {
-  tags = {
-    for k, v in(var.tags == null ? {} : var.tags) : k => v if lookup(data.aws_default_tags.provider.tags, k, null) == null || lookup(data.aws_default_tags.provider.tags, k, null) != v
-  }
   url = "https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-available-cloudwatch-metrics.html"
-  auto_dimensions = var.create_auto_dimensions ? [
-    for v in split(",", data.external.list[0].result.list) : split(":", v)[length(split(":", v)) - 1] if !anytrue([for el in var.auto_dimensions_exclude_list : strcontains(v, el)])
-  ] : []
+
+  # Use filtered results from helper module
+  auto_dimensions = module.filter.filtered_list
+  safe_dimensions = module.filter.safe_manual_dimensions
+
   list = var.create_auto_dimensions ? {
     for v in local.auto_dimensions : v => {
       name = v
@@ -20,24 +35,21 @@ locals {
       }
     }
     } : {
-    for v in var.dimensions : v.QueueName => {
+    for v in local.safe_dimensions : v.QueueName => {
       name       = v.QueueName
       dimensions = v
-    }
+    } if v != null && try(v.QueueName, null) != null && v.QueueName != ""
   }
 }
 
-#--------------------------------------------------------------
-# Use this data source to get the default tags configured on the provider.
-#--------------------------------------------------------------
-data "aws_default_tags" "provider" {}
 
 #--------------------------------------------------------------
 # For ApproximateNumberOfMessagesVisible
 # Provides a CloudWatch Metric Alarm resource.
 #--------------------------------------------------------------
 resource "aws_cloudwatch_metric_alarm" "approximate_number_of_messages_visible" {
-  for_each                  = var.is_enabled && var.threshold.enabled_approximate_number_of_messages_visible ? local.list : {}
+  for_each = var.is_enabled && var.threshold.enabled_approximate_number_of_messages_visible ? local.list : {}
+
   alarm_name                = "${var.name_prefix}metric-sqs-${each.value.name}-approximate-number-of-messages-visible"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -54,5 +66,6 @@ resource "aws_cloudwatch_metric_alarm" "approximate_number_of_messages_visible" 
   unit                      = "Count"
   treat_missing_data        = "notBreaching"
   dimensions                = each.value.dimensions
-  tags                      = local.tags
+
+  tags = var.tags
 }

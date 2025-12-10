@@ -1,0 +1,268 @@
+# Reusable workflow for Go CI operations
+# This workflow runs Go tests and golangci-lint. It is intended to be called from other workflows.
+name: reusable-ci-go-common
+
+on:
+  workflow_call:
+    inputs:
+      codecov_token:
+        description: "Codecov token for private repositories (optional for public repos). If provided, the token will be used to upload coverage."
+        required: false
+        type: string
+      component:
+        description: "Logical component name (e.g. base)"
+        required: true
+        type: string
+      environment:
+        description: "Target environment (dev, qa, stg, prd, etc.)"
+        required: true
+        type: string
+      go_path:
+        description: "Path (relative) to the Go project root (directory containing go.mod)"
+        required: true
+        type: string
+      go_version:
+        description: "Go version to use for setup-go and linting"
+        required: false
+        type: string
+        default: "1.25.4"
+      golangci_lint_version:
+        description: "golangci-lint version to use"
+        required: false
+        type: string
+        default: "v2.6.2"
+      govulncheck_version:
+        description: "govulncheck version to use"
+        required: false
+        type: string
+        default: "v1.1.4"
+
+env:
+  COMPONENT: ${{ inputs.component }}
+  ENVIRONMENT: ${{ inputs.environment }}
+  GO_PROJECT_PATH: ${{ inputs.go_path }}
+  GO_VERSION: ${{ inputs.go_version }}
+  GOLANGCI_LINT_VERSION: ${{ inputs.golangci_lint_version }} # Defaults via inputs
+  GOVULNCHECK_VERSION: ${{ inputs.govulncheck_version }} # Defaults via inputs
+
+jobs:
+  lint:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    environment:
+      name: ${{ inputs.environment }}
+    permissions:
+      contents: read
+      id-token: write
+      pull-requests: write
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Setup Go
+        uses: actions/setup-go@4dc6199c7b1a012772edbd06daecab0f50c9053c # v6.1.0
+        with:
+          go-version: ${{ env.GO_VERSION }}
+          cache: false
+
+      - name: Determine Go cache paths
+        id: go-cache-paths
+        working-directory: ${{ env.GO_PROJECT_PATH }}
+        run: |
+          # Write outputs in a single grouped redirect to avoid multiple >> usage
+          {
+            echo "gomodcache=$(go env GOMODCACHE)"
+            echo "gocache=$(go env GOCACHE)"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Cache Go build and module caches
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        with:
+          path: |
+            ${{ steps.go-cache-paths.outputs.gomodcache }}
+            ${{ steps.go-cache-paths.outputs.gocache }}
+          key: go-cache-${{ env.ENVIRONMENT }}-${{ env.COMPONENT }}-${{ runner.os }}-${{ env.GO_VERSION }}-${{ hashFiles(format('{0}/go.mod', env.GO_PROJECT_PATH), format('{0}/go.sum', env.GO_PROJECT_PATH)) }}
+          restore-keys: |
+            go-cache-${{ env.ENVIRONMENT }}-${{ env.COMPONENT }}-${{ runner.os }}-${{ env.GO_VERSION }}-
+            go-cache-${{ env.ENVIRONMENT }}-${{ env.COMPONENT }}-${{ runner.os }}-
+
+      - name: Download Go Modules
+        run: go mod download
+        working-directory: ${{ env.GO_PROJECT_PATH }}
+
+      - name: Exec gofmt
+        run: |
+          cd "${GO_PROJECT_PATH}"
+          go_files=$(git ls-files '*.go')
+          if [ -z "$go_files" ]; then
+            echo "No Go files tracked by git. Skipping gofmt check."
+            exit 0
+          fi
+          formatted=$(echo "$go_files" | xargs gofmt -l)
+          if [ -n "$formatted" ]; then
+            echo "The following files are not gofmt-formatted:"
+            echo "$formatted"
+            exit 1
+          fi
+
+      - name: Exec go mod tidy
+        run: |
+          cd "${GO_PROJECT_PATH}"
+          go mod tidy
+          if ! git diff --exit-code -- go.mod go.sum; then
+            echo "go.mod/go.sum are not tidy. Run 'go mod tidy' locally and commit the changes."
+            exit 1
+          fi
+
+      - name: Exec Go Tests (with race + coverage)
+        run: |
+          mkdir -p coverage
+          go test ./... -race -count=1 -covermode=atomic -coverprofile=coverage/coverage.out
+          go tool cover -func=coverage/coverage.out | tee coverage/coverage.txt
+        working-directory: ${{ env.GO_PROJECT_PATH }}
+
+      - name: Upload Coverage Artifact
+        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5.0.0
+        with:
+          name: coverage-${{ env.COMPONENT }}-${{ env.ENVIRONMENT }}
+          path: ${{ env.GO_PROJECT_PATH }}/coverage
+          retention-days: 30
+
+      - name: Determine repository visibility
+        id: repo_visibility
+        uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8
+        with:
+          script: |
+            const { data } = await github.rest.repos.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+            });
+            // Return string 'true' or 'false' so github-script sets it as outputs.result
+            return data.private ? 'true' : 'false';
+
+      - name: Upload to Codecov
+        # Run upload only when repo is public OR codecov_token is provided
+        if: ${{ (steps.repo_visibility.outputs.result != 'true') || (inputs.codecov_token != '') }}
+        uses: codecov/codecov-action@5a1091511ad55cbe89839c7260b706298ca349f7 # v5.5.1
+        with:
+          use_oidc: true
+          files: ${{ env.GO_PROJECT_PATH }}/coverage/coverage.out
+          token: ${{ inputs.codecov_token }}
+          fail_ci_if_error: false
+
+      - name: Setup govulncheck
+        working-directory: ${{ env.GO_PROJECT_PATH }}
+        run: go install golang.org/x/vuln/cmd/govulncheck@${{ env.GOVULNCHECK_VERSION }}
+
+      # Do not fail the job on vulnerabilities; save reports as artifacts instead
+      - name: Exec govulncheck (no-fail, save artifacts)
+        working-directory: ${{ env.GO_PROJECT_PATH }}
+        continue-on-error: true
+        run: |
+          mkdir -p security
+          # JSON report for machine processing
+          govulncheck -format=json ./... > "security/govulncheck-${COMPONENT}-${ENVIRONMENT}.json" || true
+          # Text report for easy reading
+          govulncheck ./... > "security/govulncheck-${COMPONENT}-${ENVIRONMENT}.txt" || true
+
+      - name: Upload govulncheck Artifact
+        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5.0.0
+        with:
+          name: govulncheck-${{ env.COMPONENT }}-${{ env.ENVIRONMENT }}
+          path: ${{ env.GO_PROJECT_PATH }}/security
+          retention-days: 30
+
+      # https://github.com/aquasecurity/trivy-action/tree/0.33.1/?tab=readme-ov-file#inputs
+      - name: Exec Trivy Vulnerability Scan
+        uses: aquasecurity/trivy-action@b6643a29fecd7f34b3597bc6acb0a98b03d33ff8 # 0.33.1
+        with:
+          exit-code: 1
+          format: table
+          scan-ref: .
+          scan-type: "fs"
+          scanners: license,misconfig,secret,vuln
+          severity: HIGH,CRITICAL
+          trivy-config: trivy.yaml
+
+      # https://github.com/aquasecurity/trivy-action/tree/0.33.1/?tab=readme-ov-file#inputs
+      - name: Exec Trivy Generate SBOM (CycloneDX)
+        uses: aquasecurity/trivy-action@b6643a29fecd7f34b3597bc6acb0a98b03d33ff8 # 0.33.1
+        with:
+          exit-code: 0
+          format: cyclonedx
+          output: ${{ env.GO_PROJECT_PATH }}/sbom-${{ env.COMPONENT }}-${{ env.ENVIRONMENT }}.json
+          scan-ref: .
+          scan-type: "fs"
+
+      - name: Upload SBOM Artifact
+        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5.0.0
+        with:
+          name: sbom-${{ env.COMPONENT }}-${{ env.ENVIRONMENT }}
+          path: ${{ env.GO_PROJECT_PATH }}/sbom-${{ env.COMPONENT }}-${{ env.ENVIRONMENT }}.json
+          retention-days: 30
+
+      - name: Exec GolangCI-Lint via reviewdog (PR inline comments)
+        if: github.event_name == 'pull_request' && github.actor != 'dependabot[bot]'
+        env:
+          PR_BASE_REF: ${{ github.event.pull_request.base.ref }}
+        uses: reviewdog/action-golangci-lint@f9bba13753278f6a73b27a56a3ffb1bfda90ed71 # v2.8.0
+        with:
+          fail_level: error
+          filter_mode: file
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          go_version: ${{ env.GO_VERSION }}
+          golangci_lint_flags: "--config=.golangci.yaml --new-from-rev=origin/${{ env.PR_BASE_REF }}"
+          golangci_lint_version: ${{ env.GOLANGCI_LINT_VERSION }}
+          level: error
+          reporter: github-pr-review
+          workdir: ${{ env.GO_PROJECT_PATH }}
+
+      - name: Exec Enforce golangci-lint (non-PR)
+        if: github.event_name != 'pull_request'
+        uses: golangci/golangci-lint-action@1e7e51e771db61008b38414a730f564565cf7c20 # v9.2.0
+        with:
+          args: --config=.golangci.yaml --max-same-issues=0 --max-issues-per-linter=0
+          version: ${{ env.GOLANGCI_LINT_VERSION }}
+          working-directory: ${{ env.GO_PROJECT_PATH }}
+
+      - name: Post PR failure comment
+        if: failure() && github.event_name == 'pull_request' && github.actor != 'dependabot[bot]'
+        uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8
+        with:
+          script: |
+            const runUrl = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+            const artifacts = [
+              `coverage-${process.env.COMPONENT}-${process.env.ENVIRONMENT}`,
+              `govulncheck-${process.env.COMPONENT}-${process.env.ENVIRONMENT}`,
+              `sbom-${process.env.COMPONENT}-${process.env.ENVIRONMENT}`,
+            ].join('\n- ');
+            const body = `❌ Go CI failed for component: ${process.env.COMPONENT} (env: ${process.env.ENVIRONMENT})\n\n`+
+              `Run page (artifacts available): ${runUrl}\n\n`+
+              `Artifacts:\n- ${artifacts}\n\n`+
+              `See inline PR review comments from golangci-lint (via reviewdog) for details.\n\n`+
+              `Re-run guidance:\n- Fix issues locally\n- Commit & push to trigger CI again.`;
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body
+            });
+
+      - name: Summary
+        if: always()
+        uses: ./.github/actions/summary
+        with:
+          artifacts: |
+            coverage-${{ env.COMPONENT }}-${{ env.ENVIRONMENT }}
+            govulncheck-${{ env.COMPONENT }}-${{ env.ENVIRONMENT }}
+            sbom-${{ env.COMPONENT }}-${{ env.ENVIRONMENT }}
+          outputs: |
+            (none)
+          params: |
+            component: ${{ inputs.component }}
+            environment: ${{ inputs.environment }}
+          status: "${{ job.status }}"
+          title: "${{ format('Go CI: {0}', env.COMPONENT) }}"

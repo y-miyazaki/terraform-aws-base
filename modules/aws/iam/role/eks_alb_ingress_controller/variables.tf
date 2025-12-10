@@ -14,7 +14,7 @@ variable "aws_iam_role" {
   )
   description = "(Optional) Provides an IAM role."
   default = {
-    description = "Role for EKS ALB ingress controller."
+    description = "IAM role for EKS ALB ingress controller."
     name        = "eks-alb-ingress-controller-role"
     path        = "/"
   }
@@ -32,7 +32,7 @@ variable "aws_iam_policy" {
   )
   description = "(Optional) Provides an IAM policy."
   default = {
-    description = "Policy for EKS ALB ingress controller."
+    description = "IAM policy for EKS ALB ingress controller."
     name        = "eks-alb-ingress-controller-policy"
     path        = "/"
   }

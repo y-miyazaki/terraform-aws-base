@@ -1,55 +1,194 @@
 #--------------------------------------------------------------
 # Basically, it is already set so that the setting is completed only by changing tfvars.
 # All parameters that need to be changed for each environment are described in TODO comments.
+#
+# ENVIRONMENT-SPECIFIC CONFIGURATION GUIDE:
+# - Development: Set minimal security services, lower budgets, disable expensive features
+# - Staging: Enable moderate security, moderate budgets, enable testing features
+# - Production: Enable all security services, higher budgets, comprehensive monitoring
+#
+# IMPORTANT: Always review and adjust these settings based on your organization's
+# security requirements, compliance needs, and cost constraints.
 #--------------------------------------------------------------
 
 #--------------------------------------------------------------
 # Check use Control Tower
 # If you are using Control Tower, set use_control_tower to true. If you set it to true, some options will be ignored.
+# CRITICAL SETTING: This affects which security services are automatically disabled
+# AWS Control Tower provides automated setup of a multi-account AWS environment with best practices.
+# When enabled, services like GuardDuty, SecurityHub, Config, and CloudTrail are managed by Control Tower.
 #--------------------------------------------------------------
 # TODO: need to change use Control Tower.
 use_control_tower = false
 #--------------------------------------------------------------
-# Deploy IAM user
-#--------------------------------------------------------------
-# TODO: need to change deploy IAM user.
-# This is the IAM user that will be used to deploy the resources. However, if you are not deploying using an IAM user, you can leave it as null.
-deploy_user = null
-#--------------------------------------------------------------
 # Default Tags for Resources
 # A tag that is set globally for the resources used.
+# These tags are automatically applied to all resources created by this Terraform configuration.
+# Common tags help with cost allocation, resource organization, and compliance tracking.
 #--------------------------------------------------------------
 # TODO: need to change tags.
 tags = {
   # TODO: need to change env.
+  # Environment name for resource identification and cost allocation
+  # Examples: "dev", "stg", "prd", "audit", "root"
   env = "example"
   # TODO: need to change service.
-  # service is project name or job name or product name.
+  # Service/project name for resource grouping and identification
+  # This should match your project name, job name, or product name
   service = "base"
-  # Map Program
+  # Map Program (optional)
+  # Uncomment and set if you have a Migration Acceleration Program (MAP) assessment ID
+  # This helps track resources for AWS migration programs
   # map-migrated = "xxxxxxxxxxxxx"
 }
+
 #--------------------------------------------------------------
 # Name prefix
 # It is used as a prefix attached to various resource names.
+# This prefix helps identify resources belonging to this project and environment.
+# Example: If name_prefix="myproject-", resources will be named "myproject-vpc", "myproject-lambda", etc.
 #--------------------------------------------------------------
 name_prefix = "base-"
 #--------------------------------------------------------------
 # Default Region for Resources
+# Specifies the primary AWS region where most resources will be deployed.
+# Some services like CloudFront require resources in us-east-1 regardless of this setting.
+# Common regions: ap-northeast-1 (Tokyo), us-east-1 (N. Virginia), eu-west-1 (Ireland)
 #--------------------------------------------------------------
 # TODO: need to change region.
 region = "ap-northeast-1"
+
+#--------------------------------------------------------------
+# CloudWatch Log Group Configuration
+# Common CloudWatch Log Group settings for all services.
+# This configuration is applied globally but can be overridden per service.
+#
+# Priority order (higher priority overrides lower):
+# 1. cloudwatch_log_group.override.<service_name>.retention_in_days (highest priority)
+# 2. cloudwatch_log_group.retention_in_days (lowest priority - common default)
+#
+# retention_in_days: How long logs are kept before automatic deletion
+# Common values: 1, 3, 5, 7, 14, 30, 60, 90, 120, 150, 180, 365, 400, 545, 731, 1827, 3653
+# COST CONSIDERATION: Longer retention = higher CloudWatch Logs storage costs
+#
+# Use cloudwatch_log_group.override for centralized management.
+#--------------------------------------------------------------
+# TODO: need to change cloudwatch_log_group settings.
+cloudwatch_log_group = {
+  # Default retention period for all services (in days)
+  retention_in_days = 14
+
+  # Optional: Override settings for specific services
+  # Uncomment and configure as needed
+  override = {
+    # budgets = {
+    #   retention_in_days = 7
+    # }
+    # common_lambda_vpc_flow_log = {
+    #   retention_in_days = 7
+    # }
+    # guardduty = {
+    #   retention_in_days = 30
+    # }
+    # health = {
+    #   retention_in_days = 14
+    # }
+    # iam_password_expired = {
+    #   retention_in_days = 14
+    # }
+    # security_cloudtrail = {
+    #   retention_in_days = 90
+    # }
+    # security_config = {
+    #   retention_in_days = 30
+    # }
+    # security_securityhub = {
+    #   retention_in_days = 30
+    # }
+    # security_ssm_automation = {
+    #   retention_in_days = 14
+    # }
+    # trusted_advisor = {
+    #   retention_in_days = 14
+    # }
+  }
+}
+
+#--------------------------------------------------------------
+# Slack Configuration
+# Common Slack settings for Lambda function notifications.
+#
+# Priority order (higher priority overrides lower):
+# 1. slack.override.<function_name> (highest priority)
+# 2. slack (lowest priority - common defaults)
+#
+# Use slack.override for centralized management.
+#--------------------------------------------------------------
+slack = {
+  # TODO: need to change SLACK_OAUTH_ACCESS_TOKEN (bot token xoxb-xxxxxx....)
+  # Get this from your Slack app's OAuth & Permissions page
+  # Format: xoxb-XXXXXXXXX-XXXXXXXXX-XXXXXXXXXXXXXXXXXXXXXXXX
+  oauth_access_token = "xoxb-xxxxxxxxxxxxx-xxxxxxxxxxxxx-xxxxxxxxxxxxxxxxxxxxxxxx"
+  # TODO: need to change SLACK_CHANNEL_ID
+  # Right-click on your Slack channel and select "Copy link" to find the channel ID
+  channel_id = "C0XXXXXXXXX"
+
+  # Optional: Override slack settings for specific Lambda functions
+  # Uncomment and configure as needed
+  override = {
+    # budgets = {
+    #   channel_id = "C0XXXXXXXXX"
+    # }
+    # guardduty = {
+    #   channel_id = "C0XXXXXXXXX"
+    # }
+    # health = {
+    #   channel_id = "C0XXXXXXXXX"
+    # }
+    # iam_password_expired = {
+    #   channel_id = "C0XXXXXXXXX"
+    # }
+    # security_cloudtrail = {
+    #   channel_id = "C0XXXXXXXXX"
+    # }
+    # security_config = {
+    #   channel_id = "C0XXXXXXXXX"
+    # }
+    # trusted_advisor = {
+    #   channel_id = "C0XXXXXXXXX"
+    # }
+  }
+}
+
+#--------------------------------------------------------------
+# KMS
+# AWS Key Management Service (KMS) keys for encrypting sensitive data.
+# These keys are used to encrypt many services.
+# Enable key rotation for enhanced security (rotates keys annually).
+#--------------------------------------------------------------
+kms = {
+  base = {
+    description             = "This key used for base default."
+    deletion_window_in_days = 7
+    is_enabled              = true
+  }
+}
+
 #--------------------------------------------------------------
 # OpenID Connect for AWS and GitHub Actions
 # Terraform module to configure GitHub Actions as an IAM OIDC identity provider in AWS.
+# Allows GitHub Actions workflows to authenticate with AWS without storing long-lived credentials.
 # The target ARN is output(oidc_github_iam_role_arn) for the target ARN.
 # ex) oidc_github_iam_role_arn = "arn:aws:iam::{aws_account_id}:role/{iam_role_name}"
+#
+# SECURITY WARNING: dangerously_attach_admin_policy should be false in production!
+# Use least privilege principles and attach only necessary policies.
 #--------------------------------------------------------------
 oidc_github = {
   # TODO: need to set is_enabled for settings of IAM OIDC for GitHub Actions.
   is_enabled = true
   # TODO: Flag to enable/disable the attachment of the AdministratorAccess policy.
-  attach_admin_policy = true
+  dangerously_attach_admin_policy = true
   # TODO: Flag to enable/disable the attachment of the ReadOnly policy.
   attach_read_only_policy = false
   # TODO: Flag to enable/disable the creation of the GitHub OIDC provider.
@@ -61,37 +200,25 @@ oidc_github = {
   iam_role_name = "oidc-github-role"
   iam_role_path = "/"
 }
+
 #--------------------------------------------------------------
 # Resource Group
+# AWS Resource Groups allow you to organize and manage AWS resources using tags.
+# This creates a resource group that automatically includes all resources matching the specified tags.
+# Useful for viewing all resources belonging to a specific environment or service in one place.
 #--------------------------------------------------------------
-# TODO: need to change env and service.
-resourcegroups_group = {
-  name        = "resource-group"
-  description = null
-  resource_query = [
-    {
-      query = <<JSON
-{
-  "ResourceTypeFilters": [
-    "AWS::AllSupported"
-  ],
-  "TagFilters": [
-    {
-      "Key": "env",
-      "Values": ["dev"]
-    },
-    {
-      "Key": "service",
-      "Values": ["base"]
-    }
-  ]
+resource_groups = {
+  # TODO: need to change is_enabled for settings of resourcegroups_group.
+  is_enabled = true
 }
-JSON
-    }
-  ]
-}
+
 #--------------------------------------------------------------
 # Budgets
+# CRITICAL SETTING: Always configure budget alerts to prevent unexpected costs
+# Adjust limit_amount based on your environment:
+# - Development: $50-200/month
+# - Staging: $200-500/month
+# - Production: $500+/month
 #--------------------------------------------------------------
 budgets = {
   # TODO: need to set is_enabled for settings of budgets.
@@ -121,34 +248,20 @@ budgets = {
       }
     ]
   }
-  aws_cloudwatch_event_rule = {
-    name = "budgets-cloudwatch-event-rule"
-    # TODO: need to change schedule_expression.
-    # schedule_expression when Budgets will be notified.
+  aws_eventbridge_schedule = {
+    name                = "budgets-eventbridge-scheduler"
     schedule_expression = "cron(0 9 * * ? *)"
-    description         = "This cloudwatch event used for Budgets."
-    state               = "ENABLED"
-  }
-  aws_cloudwatch_log_group_lambda = {
-    # TODO: need to change retention_in_days for each services.
-    retention_in_days = 14
-    kms_key_id        = null
+    description         = "This eventbridge scheduler called budgets lambda function."
   }
   aws_lambda_function = {
     environment = {
       # TODO: need to change TIMEZONE.
       # https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
       TIMEZONE = "Asia/Tokyo"
-      # TODO: need to change SLACK_OAUTH_ACCESS_TOKEN.(bot token xoxb-xxxxxx....)
-      SLACK_OAUTH_ACCESS_TOKEN = "xoxb-xxxxxxxxxxxxx-xxxxxxxxxxxxx-xxxxxxxxxxxxxxxxxxxxxxxx"
-      # TODO: need to change SLACK_CHANNEL_ID.
-      SLACK_CHANNEL_ID = "xxxxxxxxxxx"
-      LOGGER_FORMATTER = "json"
-      LOGGER_OUT       = "stdout"
-      LOGGER_LEVEL     = "warn"
     }
   }
 }
+
 #--------------------------------------------------------------
 # Compute Optimizer
 # AWS Compute Optimizer recommends optimal AWS resources for your workloads to reduce
@@ -162,11 +275,13 @@ compute_optimizer = {
   # TODO: need to set is_enabled for settings of Compute Optimizer.
   is_enabled = true
 }
+
 #--------------------------------------------------------------
 # GuardDuty
 # Amazon GuardDuty is a threat detection service that continuously monitors your AWS accounts and workloads for malicious activity and
 # delivers detailed security findings for visibility and remediation.
 # Notice: This option is automatically disabled if use_control_tower=true.
+# COST CONSIDERATION: ~$1.00 per GB of logs analyzed
 #--------------------------------------------------------------
 guardduty = {
   # TODO: need to set is_enabled for settings of AWS GuardDuty.
@@ -176,25 +291,13 @@ guardduty = {
     description = "This cloudwatch event used for GuardDuty."
     state       = "ENABLED"
   }
-  aws_cloudwatch_log_group_lambda = {
-    # TODO: need to change retention_in_days for each services.
-    retention_in_days = 14
-    kms_key_id        = null
-  }
-  aws_lambda_function = {
-    environment = {
-      # TODO: need to change SLACK_OAUTH_ACCESS_TOKEN.(bot token xoxb-xxxxxx....)
-      SLACK_OAUTH_ACCESS_TOKEN = "xoxb-xxxxxxxxxxxxx-xxxxxxxxxxxxx-xxxxxxxxxxxxxxxxxxxxxxxx"
-      # TODO: need to change SLACK_CHANNEL_ID.
-      SLACK_CHANNEL_ID = "xxxxxxxxxxx"
-      LOGGER_FORMATTER = "json"
-      LOGGER_OUT       = "stdout"
-      LOGGER_LEVEL     = "warn"
-    }
-  }
 }
+
 #--------------------------------------------------------------
 # Health
+# AWS Health provides personalized information about events that can affect your AWS infrastructure.
+# This monitors AWS Health events and sends notifications to Slack when issues occur.
+# Monitors both regional (ap-northeast-1) and global (us-east-1) health events.
 #--------------------------------------------------------------
 health = {
   # TODO: need to set is_enabled for settings of AWS Health.
@@ -205,25 +308,13 @@ health = {
     description    = "This cloudwatch event used for Health."
     state          = "ENABLED"
   }
-  aws_cloudwatch_log_group_lambda = {
-    # TODO: need to change retention_in_days for each services.
-    retention_in_days = 14
-    kms_key_id        = null
-  }
-  aws_lambda_function = {
-    environment = {
-      # TODO: need to change SLACK_OAUTH_ACCESS_TOKEN.(bot token xoxb-xxxxxx....)
-      SLACK_OAUTH_ACCESS_TOKEN = "xoxb-xxxxxxxxxxxxx-xxxxxxxxxxxxx-xxxxxxxxxxxxxxxxxxxxxxxx"
-      # TODO: need to change SLACK_CHANNEL_ID.
-      SLACK_CHANNEL_ID = "xxxxxxxxxxx"
-      LOGGER_FORMATTER = "json"
-      LOGGER_OUT       = "stdout"
-      LOGGER_LEVEL     = "warn"
-    }
-  }
 }
+
 #--------------------------------------------------------------
 # Trusted Advisor
+# AWS Trusted Advisor provides real-time guidance to help you provision resources following AWS best practices.
+# Checks cost optimization, performance, security, fault tolerance, and service limits.
+# NOTE: Full Trusted Advisor checks require Business or Enterprise support plan.
 #--------------------------------------------------------------
 trusted_advisor = {
   # TODO: need to set is_enabled for settings of Trusted Advisor.
@@ -235,24 +326,8 @@ trusted_advisor = {
     description         = "This cloudwatch event used for Trusted Advisor."
     state               = "ENABLED"
   }
-  aws_cloudwatch_log_group_lambda = {
-    # TODO: need to change retention_in_days for each services.
-    retention_in_days = 14
-    kms_key_id        = null
-  }
-  aws_lambda_function = {
-    environment = {
-      LANGUAGE = "en"
-      # TODO: need to change SLACK_OAUTH_ACCESS_TOKEN.(bot token xoxb-xxxxxx....)
-      SLACK_OAUTH_ACCESS_TOKEN = "xoxb-xxxxxxxxxxxxx-xxxxxxxxxxxxx-xxxxxxxxxxxxxxxxxxxxxxxx"
-      # TODO: need to change SLACK_CHANNEL_ID.
-      SLACK_CHANNEL_ID = "xxxxxxxxxxx"
-      LOGGER_FORMATTER = "json"
-      LOGGER_OUT       = "stdout"
-      LOGGER_LEVEL     = "warn"
-    }
-  }
 }
+
 #--------------------------------------------------------------
 # IAM password expired
 # A list of target users will be automatically notified in Slack 10 days before the IAM password expires.
@@ -267,31 +342,23 @@ iam_password_expired = {
     description         = "This cloudwatch event used for IAM password expired."
     state               = "ENABLED"
   }
-  aws_cloudwatch_log_group_lambda = {
-    # TODO: need to change retention_in_days for each services.
-    retention_in_days = 14
-    kms_key_id        = null
-  }
-  aws_lambda_function = {
-    environment = {
-      LANGUAGE = "en"
-      # TODO: need to change SLACK_OAUTH_ACCESS_TOKEN.(bot token xoxb-xxxxxx....)
-      SLACK_OAUTH_ACCESS_TOKEN = "xoxb-xxxxxxxxxxxxx-xxxxxxxxxxxxx-xxxxxxxxxxxxxxxxxxxxxxxx"
-      # TODO: need to change SLACK_CHANNEL_ID.
-      SLACK_CHANNEL_ID        = "xxxxxxxxxxx"
-      LOGGER_FORMATTER        = "json"
-      LOGGER_OUT              = "stdout"
-      LOGGER_LEVEL            = "warn"
-      NOTIFICATION_BEFORE_DAY = "10"
-    }
-  }
 }
+
 #--------------------------------------------------------------
 # IAM: Users
+# AWS Identity and Access Management (IAM) configuration for users, groups, and policies.
+# Manages user access, group memberships, and permission policies.
+# Includes MFA enforcement, password policies, and role-based access control.
 #--------------------------------------------------------------
 iam = {
   # TODO: need to set is_enabled for settings of IAM.
   is_enabled = false
+  #--------------------------------------------------------------
+  # IAM Users Configuration
+  # Define IAM users with console access and/or programmatic access (access keys).
+  # Set is_console_access=true for AWS Management Console login.
+  # Set is_access_key=true for CLI/API access via access keys.
+  #--------------------------------------------------------------
   # TODO: need to change IAM User.
   user = {
     "test" = {
@@ -300,9 +367,10 @@ iam = {
     }
   }
   #--------------------------------------------------------------
+  # IAM Groups Configuration
+  #--------------------------------------------------------------
   # TODO: need to change IAM Group.
   # Please specify the user with the same name that has been set in users.
-  #--------------------------------------------------------------
   group = {
     # TODO: need to change IAM Group name.
     # This name will be used as the group name.
@@ -1368,8 +1436,12 @@ iam = {
     }
   }
 }
+
 #--------------------------------------------------------------
 # Common:Lambda
+# Common configuration for Lambda functions used across security and monitoring features.
+# Optionally run Lambda functions inside VPC for access to private resources.
+# Configure VPC settings, IAM roles, and policies for Lambda execution.
 #--------------------------------------------------------------
 common_lambda = {
   vpc = {
@@ -1439,11 +1511,10 @@ common_lambda = {
       enable_vpn_gateway = false
 
       # Flow Log(plain-text or parquet)
-      enable_flow_log                                 = true
-      create_flow_log_cloudwatch_log_group            = true
-      create_flow_log_cloudwatch_iam_role             = true
-      flow_log_cloudwatch_log_group_retention_in_days = 7
-      flow_log_file_format                            = "plain-text"
+      enable_flow_log                      = true
+      create_flow_log_cloudwatch_log_group = true
+      create_flow_log_cloudwatch_iam_role  = true
+      flow_log_file_format                 = "plain-text"
     }
   }
   aws_iam_role = {
@@ -1457,10 +1528,16 @@ common_lambda = {
     path        = "/"
   }
 }
+
 #--------------------------------------------------------------
 # Common:Log Bucket
+# S3 buckets for centralized log storage and management.
+# Includes buckets for ELB logs, CloudTrail logs, and other AWS service logs.
+# Configured with lifecycle policies, encryption, and versioning for compliance.
 #--------------------------------------------------------------
 common_log = {
+  # TODO: need to set elb_account_id for ELB access log.
+  # Please specify the account ID for the target region of ELB. Refer to the following URL for the account ID.
   # https://docs.aws.amazon.com/ja_jp/elasticloadbalancing/latest/classic/enable-access-logs.html
   # elb account id is ap-northeast-1.
   elb_account_id = "582318560864"
@@ -1485,6 +1562,7 @@ common_log = {
         expiration = [
           {
             # TODO: need to change days. default 3years.
+            # Adjust retention period based on your compliance requirements
             days                         = 1095
             expired_object_delete_marker = null
           }
@@ -1524,7 +1602,7 @@ common_log = {
   s3_cloudtrail = {
     bucket = "aws-log-cloudtrail"
     # TODO: need to change create_bucket for cloudtrail
-    create_bucket        = true
+    create_bucket        = false
     attach_public_policy = true
     block_public_acls    = true
     block_public_policy  = true
@@ -1539,6 +1617,7 @@ common_log = {
         expiration = [
           {
             # TODO: need to change days. default 3years.
+            # Adjust retention period based on your compliance requirements
             days                         = 1095
             expired_object_delete_marker = null
           }
@@ -1570,8 +1649,12 @@ common_log = {
     }
   }
 }
+
 #--------------------------------------------------------------
 # Security:Access Analyzer
+# AWS IAM Access Analyzer helps identify resources in your organization and accounts that are shared with external entities.
+# Analyzes resource-based policies and generates findings for resources with public or cross-account access.
+# Helps ensure that only intended access to resources is allowed.
 #--------------------------------------------------------------
 security_access_analyzer = {
   # TODO: need to set is_enabled for settings of Access Analyzer.
@@ -1581,14 +1664,18 @@ security_access_analyzer = {
     type          = "ACCOUNT"
   }
 }
+
 #--------------------------------------------------------------
 # Security:Athena
-# Change the EncryptionConfiguration setting of Athena's Workgroup(primary) to SSE_S3.
+# AWS Athena security configuration for query results encryption.
+# Changes the EncryptionConfiguration setting of Athena's Workgroup(primary) to SSE_S3.
+# Ensures that all query results are encrypted at rest using S3 server-side encryption.
 #--------------------------------------------------------------
 security_athena = {
   # TODO: need to set is_enabled for settings of Athena.
   is_enabled = true
 }
+
 #--------------------------------------------------------------
 # Security:CloudTrail
 # Notice: This option is automatically disabled if use_control_tower=true.
@@ -1598,22 +1685,6 @@ security_cloudtrail = {
   is_enabled = false
   # TODO: need to set is_s3_enabled for settings of New S3 Bucket.
   is_s3_enabled = false
-  aws_kms_key = {
-    cloudtrail = {
-      description             = "This key used for CloudTrail."
-      deletion_window_in_days = 7
-      is_enabled              = true
-      enable_key_rotation     = true
-      alias_name              = "cloudtrail"
-    }
-    sns = {
-      description             = "This key used for SNS."
-      deletion_window_in_days = 7
-      is_enabled              = true
-      enable_key_rotation     = true
-      alias_name              = "sns-cloudtrail"
-    }
-  }
   aws_iam_role = {
     description = ""
     name        = "security-cloudtrail-role"
@@ -1623,11 +1694,6 @@ security_cloudtrail = {
     description = ""
     name        = "security-cloudtrail-policy"
     path        = "/"
-  }
-  aws_cloudwatch_log_group = {
-    name = "aws-cloudtrail-logs"
-    # TODO: need to change retention_in_days for each services.
-    retention_in_days = 14
   }
   aws_cloudwatch_log_metric_filter = [
     {
@@ -1678,6 +1744,7 @@ PATTERN
   #         expiration = [
   #           {
   #             # TODO: need to change days. default 3years.
+  #             # Adjust retention period based on your compliance requirements
   #             days                         = 1095
   #             expired_object_delete_marker = null
   #           }
@@ -1712,22 +1779,6 @@ PATTERN
   #     ]
   #     object_lock_configuration = []
   #   }
-  aws_cloudwatch_log_group_lambda = {
-    # TODO: need to change retention_in_days for each services.
-    retention_in_days = 14
-    kms_key_id        = null
-  }
-  aws_lambda_function = {
-    environment = {
-      # TODO: need to change SLACK_OAUTH_ACCESS_TOKEN.(bot token xoxb-xxxxxx....)
-      SLACK_OAUTH_ACCESS_TOKEN = "xoxb-xxxxxxxxxxxxx-xxxxxxxxxxxxx-xxxxxxxxxxxxxxxxxxxxxxxx"
-      # TODO: need to change SLACK_CHANNEL_ID.
-      SLACK_CHANNEL_ID = "xxxxxxxxxxx"
-      LOGGER_FORMATTER = "json"
-      LOGGER_OUT       = "stdout"
-      LOGGER_LEVEL     = "warn"
-    }
-  }
   aws_sns_topic = {
     name                                     = "aws-cloudtrail-logs"
     name_prefix                              = null
@@ -1781,6 +1832,7 @@ PATTERN
     ]
   }
 }
+
 #--------------------------------------------------------------
 # Security:AWS Config
 # Notice: This option is automatically disabled if use_control_tower=true.
@@ -1800,7 +1852,7 @@ security_config = {
     ]
   }
   aws_iam_role = {
-    description = "Role for AWS Config."
+    description = "IAM role for AWS Config."
     name        = "security-config-role"
     path        = "/"
   }
@@ -1823,6 +1875,7 @@ security_config = {
   #         expiration = [
   #           {
   #             # TODO: need to change days. default 3years.
+  #             # Adjust retention period based on your compliance requirements
   #             days                         = 1095
   #             expired_object_delete_marker = null
   #           }
@@ -1873,22 +1926,6 @@ security_config = {
     name        = "security-config-cloudwatch-event-rule"
     description = "This cloudwatch event used for Config."
   }
-  aws_cloudwatch_log_group_lambda = {
-    # TODO: need to change retention_in_days for each services.
-    retention_in_days = 14
-    kms_key_id        = null
-  }
-  aws_lambda_function = {
-    environment = {
-      # TODO: need to change SLACK_OAUTH_ACCESS_TOKEN.(bot token xoxb-xxxxxx....)
-      SLACK_OAUTH_ACCESS_TOKEN = "xoxb-xxxxxxxxxxxxx-xxxxxxxxxxxxx-xxxxxxxxxxxxxxxxxxxxxxxx"
-      # TODO: need to change SLACK_CHANNEL_ID.
-      SLACK_CHANNEL_ID = "xxxxxxxxxxx"
-      LOGGER_FORMATTER = "json"
-      LOGGER_OUT       = "stdout"
-      LOGGER_LEVEL     = "warn"
-    }
-  }
   # SSM Automation configuration
   ssm_automation = {
     aws_iam_role = {
@@ -1935,6 +1972,7 @@ security_config = {
     }
   }
 }
+
 #--------------------------------------------------------------
 # Security:AWS Config(us-east-1(CloudFront))
 # Notice: This option is automatically disabled if use_control_tower=true.
@@ -1954,7 +1992,7 @@ security_config_us_east_1 = {
     ]
   }
   aws_iam_role = {
-    description = "Role for AWS Config."
+    description = "IAM role for AWS Config."
     name        = "security-config-us-east-1-role"
     path        = "/"
   }
@@ -1977,6 +2015,7 @@ security_config_us_east_1 = {
   #         expiration = [
   #           {
   #             # TODO: need to change days. default 3years.
+  #             # Adjust retention period based on your compliance requirements
   #             days                         = 1095
   #             expired_object_delete_marker = null
   #           }
@@ -2027,11 +2066,6 @@ security_config_us_east_1 = {
     name        = "security-config-us-east-1-cloudwatch-event-rule"
     description = "This cloudwatch event used for Config."
   }
-  aws_cloudwatch_log_group_lambda = {
-    # TODO: need to change retention_in_days for each services.
-    retention_in_days = 14
-    kms_key_id        = null
-  }
   # TODO: If you want to automatically remediation resources, please modify the following.
   # AWS Config allows you to remediate noncompliant resources that are evaluated by AWS Config Rules. AWS Config applies remediation using AWS Systems Manager Automation documents.
   # https://docs.aws.amazon.com/config/latest/developerguide/remediation.html
@@ -2041,20 +2075,13 @@ security_config_us_east_1 = {
       is_enable_cloudfront_viewer_policy_https = true
     }
   }
-  aws_lambda_function = {
-    environment = {
-      # TODO: need to change SLACK_OAUTH_ACCESS_TOKEN.(bot token xoxb-xxxxxx....)
-      SLACK_OAUTH_ACCESS_TOKEN = "xoxb-xxxxxxxxxxxxx-xxxxxxxxxxxxx-xxxxxxxxxxxxxxxxxxxxxxxx"
-      # TODO: need to change SLACK_CHANNEL_ID.
-      SLACK_CHANNEL_ID = "xxxxxxxxxxx"
-      LOGGER_FORMATTER = "json"
-      LOGGER_OUT       = "stdout"
-      LOGGER_LEVEL     = "warn"
-    }
-  }
 }
+
 #--------------------------------------------------------------
 # Security:Default VPC
+# Security configuration for the default VPC in each region.
+# Enables VPC Flow Logs for network traffic monitoring and analysis.
+# Optionally creates VPC Endpoints to resolve Security Hub EC2.10 finding (costs ~$10/month per VPC).
 #--------------------------------------------------------------
 security_default_vpc = {
   # TODO: need to set is_enabled for settings of default VPC security.
@@ -2067,11 +2094,6 @@ security_default_vpc = {
   # This flag will set the VPC Endpoint for the default VPC in each region.
   # Normally, it costs more than 10 USD a month for the default VPC that you do not use, so the initial value is set to false.
   is_enabled_vpc_end_point = false
-  aws_cloudwatch_log_group = {
-    name = "aws-vpc-flow-logs"
-    # TODO: need to change retention_in_days for each services.
-    retention_in_days = 14
-  }
   aws_iam_role = {
     description = ""
     name        = "security-vpc-flow-log-role"
@@ -2083,19 +2105,31 @@ security_default_vpc = {
     path        = "/"
   }
 }
+
 #--------------------------------------------------------------
 # Security:EBS
+# Manage EBS account-level security defaults: EBS Encryption by Default
+# and public snapshot access blocking. See `modules/aws/security/ebs` for
+# implementation details.
 #--------------------------------------------------------------
 security_ebs = {
-  # TODO: need to set is_enabled for settings of EBS.
+  # TODO: need to set is_enabled for EBS security controls
   is_enabled = true
+
+  # TODO: need to set is_enabled for enabling EBS encryption by default
+  is_enabled_ebs_encryption_by_default = true
+  # TODO: need to set is_enabled for blocking public access to EBS snapshots
+  is_enabled_ebs_public_snapshot_block_access = true
 }
+
 #--------------------------------------------------------------
 # Security:GuardDuty
+# Amazon GuardDuty provides intelligent threat detection for your AWS environment.
+# Continuously monitors for malicious activity and unauthorized behavior using machine learning.
+# Detects reconnaissance, instance compromise, account compromise, and bucket compromise.
 # Notice: This option is automatically disabled if use_control_tower=true.
 #--------------------------------------------------------------
 security_guardduty = {
-
   # TODO: need to set is_enabled for settings of GuardDuty. Even if GuardDuty is already set, it must be set to false.
   is_enabled = false
   aws_guardduty_detector = {
@@ -2106,8 +2140,12 @@ security_guardduty = {
   aws_guardduty_member = [
   ]
 }
+
 #--------------------------------------------------------------
 # Security:IAM
+# IAM security settings including password policy and support role configuration.
+# Configures account-wide password requirements (length, complexity, expiration, reuse prevention).
+# Creates IAM role for AWS Support access as required by CIS benchmark 1.20.
 #--------------------------------------------------------------
 security_iam = {
   # TODO: need to set is_enabled for settings of IAM security.
@@ -2136,22 +2174,29 @@ security_iam = {
     path        = "/"
   }
 }
+
 #--------------------------------------------------------------
 # Security:S3
+# S3 account-level public access block configuration.
+# Prevents accidental public exposure of S3 buckets and objects across the entire AWS account.
+# These settings apply to all buckets in the account unless explicitly overridden.
 #--------------------------------------------------------------
 security_s3 = {
   # TODO: need to set is_enabled for settings of S3 security.
   is_enabled = true
+
   # Manages S3 account-level Public Access Block configuration. For more information about these settings, see the AWS S3 Block Public Access documentation.
-  aws_s3_account_public_access_block = {
-    block_public_acls       = true
-    block_public_policy     = true
-    ignore_public_acls      = true
-    restrict_public_buckets = true
-  }
+  block_public_acls       = true
+  block_public_policy     = true
+  ignore_public_acls      = true
+  restrict_public_buckets = true
 }
+
 #--------------------------------------------------------------
 # Security:SecurityHub
+# AWS Security Hub provides a comprehensive view of security alerts and compliance status.
+# Aggregates findings from GuardDuty, Inspector, Macie, IAM Access Analyzer, and AWS Config.
+# Enables security standards compliance checks (CIS AWS Foundations, PCI DSS, AWS Foundational Security Best Practices).
 # Notice: This option is automatically disabled if use_control_tower=true.
 #--------------------------------------------------------------
 security_securityhub = {
@@ -2167,4 +2212,16 @@ security_securityhub = {
     identifier  = "SendToEvent"
     description = "This is custom action sends selected findings to event"
   }
+}
+
+#--------------------------------------------------------------
+# Security:SSM Automation
+# SSM.6 and SSM.7 compliance settings for AWS Systems Manager Automation.
+# Enables CloudWatch logging for SSM Automation to meet SSM.6 control requirements.
+# Disables public sharing of SSM Automation documents to comply with SSM.7 control.
+#--------------------------------------------------------------
+security_ssm_automation = {
+  # TODO: need to set is_enabled for settings of SSM Automation.
+  is_enabled                = true
+  cloudwatch_log_group_name = "/aws/ssm/automation/executeScript"
 }

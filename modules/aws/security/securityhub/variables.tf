@@ -28,8 +28,8 @@ variable "enabled_cis_aws_foundations_benchmark" {
 }
 variable "cis_aws_foundations_benchmark_version" {
   type        = string
-  description = "(Optional) CIS AWS Foundations Benchmark version. Please check https://docs.aws.amazon.com/securityhub/latest/userguide/securityhub-standards-cis1.4-vs-cis1.2.html"
-  default     = "1.4.0"
+  description = "(Optional) CIS AWS Foundations Benchmark version. Please check https://docs.aws.amazon.com/securityhub/latest/userguide/cis-aws-foundations-benchmark.html"
+  default     = "5.0.0"
 }
 variable "enabled_pci_dss" {
   type        = bool

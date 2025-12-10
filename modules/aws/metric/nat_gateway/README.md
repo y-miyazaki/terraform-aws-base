@@ -1,0 +1,63 @@
+<!-- BEGIN_TF_DOCS -->
+## Requirements
+
+| Name | Version |
+|------|---------|
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | ~>1.4 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | ~>6.0 |
+
+## Providers
+
+| Name | Version |
+|------|---------|
+| <a name="provider_aws"></a> [aws](#provider\_aws) | 6.16.0 |
+
+## Modules
+
+| Name | Source | Version |
+|------|--------|---------|
+| <a name="module_filter"></a> [filter](#module\_filter) | ../../_internal/auto_discovery_filter | n/a |
+
+## Resources
+
+| Name | Type |
+|------|------|
+| [aws_cloudwatch_metric_alarm.active_connection_count](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_metric_alarm) | resource |
+| [aws_cloudwatch_metric_alarm.bytes_in_from_destination](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_metric_alarm) | resource |
+| [aws_cloudwatch_metric_alarm.bytes_in_from_source](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_metric_alarm) | resource |
+| [aws_cloudwatch_metric_alarm.bytes_out_to_destination](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_metric_alarm) | resource |
+| [aws_cloudwatch_metric_alarm.bytes_out_to_source](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_metric_alarm) | resource |
+| [aws_cloudwatch_metric_alarm.connection_attempt_count](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_metric_alarm) | resource |
+| [aws_cloudwatch_metric_alarm.connection_established_count](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_metric_alarm) | resource |
+| [aws_cloudwatch_metric_alarm.error_port_allocation](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_metric_alarm) | resource |
+| [aws_cloudwatch_metric_alarm.idle_timeout_count](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_metric_alarm) | resource |
+| [aws_cloudwatch_metric_alarm.packets_drop_count](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_metric_alarm) | resource |
+| [aws_cloudwatch_metric_alarm.packets_in_from_destination](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_metric_alarm) | resource |
+| [aws_cloudwatch_metric_alarm.packets_in_from_source](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_metric_alarm) | resource |
+| [aws_cloudwatch_metric_alarm.packets_out_to_destination](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_metric_alarm) | resource |
+| [aws_cloudwatch_metric_alarm.packets_out_to_source](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_metric_alarm) | resource |
+| [aws_cloudwatch_metric_alarm.peak_bytes_per_second](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_metric_alarm) | resource |
+| [aws_cloudwatch_metric_alarm.peak_packets_per_second](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_metric_alarm) | resource |
+| [aws_nat_gateways.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/nat_gateways) | data source |
+
+## Inputs
+
+| Name | Description | Type | Default | Required |
+|------|-------------|------|---------|:--------:|
+| <a name="input_alarm_actions"></a> [alarm\_actions](#input\_alarm\_actions) | (Required) The list of actions to execute when this alarm transitions into an ALARM state from any other state. Each action is specified as an Amazon Resource Name (ARN). | `list(string)` | n/a | yes |
+| <a name="input_auto_dimensions_exclude_list"></a> [auto\_dimensions\_exclude\_list](#input\_auto\_dimensions\_exclude\_list) | (Optional) If create\_auto\_dimensions is set to true, a list of NAT Gateways will be automatically registered, but at that time, specify the NAT Gateway ID you want to exclude using partial match. | `list(string)` | `[]` | no |
+| <a name="input_auto_dimensions_include_list"></a> [auto\_dimensions\_include\_list](#input\_auto\_dimensions\_include\_list) | (Optional) If create\_auto\_dimensions is set to true, a list of NAT Gateways will be automatically registered, but at that time, specify the NAT Gateway ID you want to include using partial match. If empty, all NAT Gateways will be included (except excluded ones). | `list(string)` | `[]` | no |
+| <a name="input_create_auto_dimensions"></a> [create\_auto\_dimensions](#input\_create\_auto\_dimensions) | (Optional) Builds a list of NAT Gateways to automatically set dimensions. If this is true, the dimensions setting will be ignored. | `bool` | `false` | no |
+| <a name="input_dimensions"></a> [dimensions](#input\_dimensions) | (Optional) If create\_auto\_dimensions is set to false, The dimensions for the alarm's associated metric. For the list of available dimensions see the AWS documentation here. | `list(map(any))` | `[]` | no |
+| <a name="input_insufficient_data_actions"></a> [insufficient\_data\_actions](#input\_insufficient\_data\_actions) | (Optional) The list of actions to execute when this alarm transitions into an INSUFFICIENT\_DATA state from any other state. Each action is specified as an Amazon Resource Name (ARN). | `list(string)` | `[]` | no |
+| <a name="input_is_enabled"></a> [is\_enabled](#input\_is\_enabled) | (Optional) A boolean flag to enable/disable settings of NAT Gateway. Defaults true. | `bool` | `true` | no |
+| <a name="input_name_prefix"></a> [name\_prefix](#input\_name\_prefix) | (Required) CloudWatch Filter/Alarm name prefix. | `string` | n/a | yes |
+| <a name="input_ok_actions"></a> [ok\_actions](#input\_ok\_actions) | (Optional) The list of actions to execute when this alarm transitions into an OK state from any other state. Each action is specified as an Amazon Resource Name (ARN). | `list(string)` | `[]` | no |
+| <a name="input_period"></a> [period](#input\_period) | (Optional) The period in seconds over which the specified statistic is applied. | `number` | `300` | no |
+| <a name="input_tags"></a> [tags](#input\_tags) | (Optional) Key-value map of resource tags. | `map(any)` | `null` | no |
+| <a name="input_threshold"></a> [threshold](#input\_threshold) | (Optional) Set the threshold for each Metric in NAT Gateway. | <pre>object({<br/>    # ActiveConnectionCount threshold (unit=Count)<br/>    enabled_active_connection_count = bool<br/>    active_connection_count         = number<br/>    # BytesOutToDestination threshold (unit=Bytes)<br/>    enabled_bytes_out_to_destination = bool<br/>    bytes_out_to_destination         = number<br/>    # BytesInFromSource threshold (unit=Bytes)<br/>    enabled_bytes_in_from_source = bool<br/>    bytes_in_from_source         = number<br/>    # BytesInFromDestination threshold (unit=Bytes)<br/>    enabled_bytes_in_from_destination = bool<br/>    bytes_in_from_destination         = number<br/>    # BytesOutToSource threshold (unit=Bytes)<br/>    enabled_bytes_out_to_source = bool<br/>    bytes_out_to_source         = number<br/>    # PacketsDropCount threshold (unit=Count)<br/>    enabled_packets_drop_count = bool<br/>    packets_drop_count         = number<br/>    # ErrorPortAllocation threshold (unit=Count)<br/>    enabled_error_port_allocation = bool<br/>    error_port_allocation         = number<br/>    # IdleTimeoutCount threshold (unit=Count)<br/>    enabled_idle_timeout_count = bool<br/>    idle_timeout_count         = number<br/>    # PacketsInFromDestination threshold (unit=Count)<br/>    enabled_packets_in_from_destination = bool<br/>    packets_in_from_destination         = number<br/>    # PacketsInFromSource threshold (unit=Count)<br/>    enabled_packets_in_from_source = bool<br/>    packets_in_from_source         = number<br/>    # PacketsOutToDestination threshold (unit=Count)<br/>    enabled_packets_out_to_destination = bool<br/>    packets_out_to_destination         = number<br/>    # PacketsOutToSource threshold (unit=Count)<br/>    enabled_packets_out_to_source = bool<br/>    packets_out_to_source         = number<br/>    # ConnectionAttemptCount threshold (unit=Count)<br/>    enabled_connection_attempt_count = bool<br/>    connection_attempt_count         = number<br/>    # ConnectionEstablishedCount threshold (unit=Count)<br/>    enabled_connection_established_count = bool<br/>    connection_established_count         = number<br/>    # PeakBytesPerSecond threshold (unit=Bytes/Second)<br/>    enabled_peak_bytes_per_second = bool<br/>    peak_bytes_per_second         = number<br/>    # PeakPacketsPerSecond threshold (unit=Count/Second)<br/>    enabled_peak_packets_per_second = bool<br/>    peak_packets_per_second         = number<br/>    }<br/>  )</pre> | <pre>{<br/>  "active_connection_count": 10000,<br/>  "bytes_in_from_destination": 107374182400,<br/>  "bytes_in_from_source": 107374182400,<br/>  "bytes_out_to_destination": 107374182400,<br/>  "bytes_out_to_source": 107374182400,<br/>  "connection_attempt_count": 10000,<br/>  "connection_established_count": 10000,<br/>  "enabled_active_connection_count": false,<br/>  "enabled_bytes_in_from_destination": false,<br/>  "enabled_bytes_in_from_source": true,<br/>  "enabled_bytes_out_to_destination": true,<br/>  "enabled_bytes_out_to_source": false,<br/>  "enabled_connection_attempt_count": true,<br/>  "enabled_connection_established_count": true,<br/>  "enabled_error_port_allocation": true,<br/>  "enabled_idle_timeout_count": false,<br/>  "enabled_packets_drop_count": true,<br/>  "enabled_packets_in_from_destination": false,<br/>  "enabled_packets_in_from_source": false,<br/>  "enabled_packets_out_to_destination": false,<br/>  "enabled_packets_out_to_source": false,<br/>  "enabled_peak_bytes_per_second": false,<br/>  "enabled_peak_packets_per_second": false,<br/>  "error_port_allocation": 10,<br/>  "idle_timeout_count": 100,<br/>  "packets_drop_count": 100,<br/>  "packets_in_from_destination": 10000000,<br/>  "packets_in_from_source": 10000000,<br/>  "packets_out_to_destination": 10000000,<br/>  "packets_out_to_source": 10000000,<br/>  "peak_bytes_per_second": 1073741824,<br/>  "peak_packets_per_second": 100000<br/>}</pre> | no |
+
+## Outputs
+
+No outputs.
+<!-- END_TF_DOCS -->

@@ -1,6 +1,14 @@
 #--------------------------------------------------------------
 # module variables
 #--------------------------------------------------------------
+variable "account_id" {
+  type        = string
+  description = "(Required) The AWS account ID."
+}
+variable "region" {
+  type        = string
+  description = "(Required) The AWS region."
+}
 variable "aws_iam_role" {
   type = object(
     {
@@ -14,7 +22,7 @@ variable "aws_iam_role" {
   )
   description = "(Optional) Provides an IAM role."
   default = {
-    description = "Role for Kinesis Firehose."
+    description = "IAM role for Kinesis Firehose."
     name        = "kinesis-firehose-role"
     path        = "/"
   }
@@ -32,7 +40,7 @@ variable "aws_iam_policy" {
   )
   description = "(Optional) Provides an IAM policy."
   default = {
-    description = "Policy for Kinesis Firehose."
+    description = "IAM policy for Kinesis Firehose."
     name        = "kinesis-firehose-policy"
     path        = "/"
   }

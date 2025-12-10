@@ -1,20 +1,10 @@
 #--------------------------------------------------------------
-# Locals
+# Module: aws/iam/role/chatbot
+# Purpose: Create IAM role for AWS Chatbot (Slack) with optional SecurityHub update permissions.
+# Notes: Unified tagging applied; future improvement: parameterize additional managed policies.
 #--------------------------------------------------------------
-locals {
-  tags = {
-    for k, v in(var.tags == null ? {} : var.tags) : k => v if lookup(data.aws_default_tags.provider.tags, k, null) == null || lookup(data.aws_default_tags.provider.tags, k, null) != v
-  }
-}
-#--------------------------------------------------------------
-# Use this data source to get the default tags configured on the provider.
-#--------------------------------------------------------------
-data "aws_default_tags" "provider" {}
-
-resource "awscc_iam_role" "this" {
-  role_name = var.role_name
-
-  assume_role_policy_document = jsonencode({
+resource "aws_iam_role" "this" {
+  assume_role_policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
       {
@@ -23,12 +13,37 @@ resource "awscc_iam_role" "this" {
         Principal = {
           Service = "chatbot.amazonaws.com"
         }
-      },
+      }
     ]
   })
-  # このロールにアタッチする管理ポリシーのARN
-  managed_policy_arns = [
-    "arn:aws:iam::aws:policy/AWSResourceExplorerReadOnlyAccess",
-  ]
-  tags = local.tags
+
+  description           = "IAM role for AWS Q(Chatbot)"
+  force_detach_policies = true
+  name                  = "${var.name}-chatbot-role"
+
+  tags = var.tags
+}
+data "aws_iam_policy_document" "securityhub" {
+  statement {
+    sid    = "AllowSecurityHubBatchUpdateFindings"
+    effect = "Allow"
+    actions = [
+      "securityhub:BatchUpdateFindings",
+    ]
+    resources = ["*"]
+  }
+}
+resource "aws_iam_policy" "securityhub" {
+  name        = "${var.name}-chatbot-securityhub-policy"
+  description = "securityhub policy for AWS Q(Chatbot)."
+  policy      = data.aws_iam_policy_document.securityhub.json
+}
+
+resource "aws_iam_role_policy_attachment" "aws_resource_explorer_read_only_access" {
+  role       = aws_iam_role.this.name
+  policy_arn = "arn:aws:iam::aws:policy/AWSResourceExplorerReadOnlyAccess"
+}
+resource "aws_iam_role_policy_attachment" "securityhub" {
+  role       = aws_iam_role.this.name
+  policy_arn = aws_iam_policy.securityhub.arn
 }

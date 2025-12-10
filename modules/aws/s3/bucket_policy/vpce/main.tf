@@ -1,4 +1,9 @@
 #--------------------------------------------------------------
+# Module: aws/s3/bucket_policy/vpce
+# Purpose: Attach S3 bucket policy restricting access to a specific VPC Endpoint.
+# Notes: Uses Deny with StringNotEquals on aws:SourceVpce; future improvement: support multiple VPCE IDs list.
+#--------------------------------------------------------------
+#--------------------------------------------------------------
 # Generates an IAM policy document in JSON format for use with resources that expect policy documents such as aws_iam_policy.
 #--------------------------------------------------------------
 data "aws_iam_policy_document" "this" {
@@ -24,11 +29,13 @@ data "aws_iam_policy_document" "this" {
     }
   }
 }
+
 #--------------------------------------------------------------
 # Attaches a policy to an S3 bucket resource.
 #--------------------------------------------------------------
 resource "aws_s3_bucket_policy" "this" {
-  count  = var.attach_bucket_policy && var.bucket != null ? 1 : 0
+  count = var.attach_bucket_policy && var.bucket != null ? 1 : 0
+
   bucket = var.bucket
   policy = data.aws_iam_policy_document.this.json
 }

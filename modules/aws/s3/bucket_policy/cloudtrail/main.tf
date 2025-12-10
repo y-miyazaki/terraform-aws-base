@@ -1,4 +1,9 @@
 #--------------------------------------------------------------
+# Module: aws/s3/bucket_policy/cloudtrail
+# Purpose: Attach S3 bucket policy enabling CloudTrail to write logs with ACL enforcement.
+# Notes: Enforces bucket-owner-full-control ACL; future improvement: add optional condition for specific CloudTrail ARNs.
+#--------------------------------------------------------------
+#--------------------------------------------------------------
 # Provides IAM Policy document.
 #--------------------------------------------------------------
 data "aws_iam_policy_document" "this" {
@@ -38,11 +43,13 @@ data "aws_iam_policy_document" "this" {
     }
   }
 }
+
 #--------------------------------------------------------------
 # Attaches a policy to an S3 bucket resource.
 #--------------------------------------------------------------
 resource "aws_s3_bucket_policy" "this" {
-  count  = var.attach_bucket_policy ? 1 : 0
+  count = var.attach_bucket_policy ? 1 : 0
+
   bucket = var.bucket
   policy = data.aws_iam_policy_document.this.json
 }

@@ -19,8 +19,6 @@ variable "aws_cloudwatch_event_rule" {
   default = {
     name        = "security-guardduty-cloudwatch-event-rule"
     description = "This cloudwatch event used for GuardDuty."
-    role_arn    = null
-    is_enabled  = true
   }
 }
 variable "aws_cloudwatch_event_target" {

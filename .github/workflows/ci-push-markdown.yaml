@@ -1,0 +1,40 @@
+# CI workflow for Markdown files
+name: ci-push-markdown
+
+on:
+  push:
+    branches:
+      - "main"
+      - "master"
+      - "hotfix/**"
+      - "release/**"
+      - "develop"
+      - "feature/**"
+    paths:
+      - "**/*.md"
+      - ".markdownlint.yaml"
+      - ".github/workflows/ci-push-markdown.yaml"
+      - ".github/workflows/reusable-ci-markdown.yaml"
+  pull_request:
+    branches:
+      - "main"
+      - "master"
+      - "hotfix/**"
+      - "release/**"
+      - "develop"
+      - "feature/**"
+    paths:
+      - "**/*.md"
+      - ".markdownlint.yaml"
+      - ".github/workflows/ci-push-markdown.yaml"
+      - ".github/workflows/reusable-ci-markdown.yaml"
+
+jobs:
+  markdown-lint:
+    uses: ./.github/workflows/reusable-ci-markdown.yaml
+    with:
+      environment: "markdown"
+      component: "base"
+    permissions:
+      contents: read
+      pull-requests: write

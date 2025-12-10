@@ -1,43 +1,156 @@
 #--------------------------------------------------------------
+# Basically, it is already set so that the setting is completed only by changing tfvars.
+# All parameters that need to be changed for each environment are described in TODO comments.
+#
+# ENVIRONMENT-SPECIFIC CONFIGURATION GUIDE:
+# - Root Environment: Organizational governance, budgets, policies, CloudTrail audit
+#
+# IMPORTANT: Always review and adjust these settings based on your organization's
+# governance requirements, compliance needs, and cost constraints.
+#--------------------------------------------------------------
+
+#--------------------------------------------------------------
 # Default Tags for Resources
 # A tag that is set globally for the resources used.
+# These tags are automatically applied to all resources created by this Terraform configuration.
+# Common tags help with cost allocation, resource organization, and compliance tracking.
 #--------------------------------------------------------------
 # TODO: need to change tags.
 tags = {
   # TODO: need to change env.
+  # Environment name for resource identification and cost allocation
+  # Examples: "dev", "stg", "prd", "audit", "root"
   env = "example"
   # TODO: need to change service.
-  # service is project name or job name or product name.
+  # Service/project name for resource grouping and identification
+  # This should match your project name, job name, or product name
   service = "base"
-  # Map Program
+  # Map Program (optional)
+  # Uncomment and set if you have a Migration Acceleration Program (MAP) assessment ID
+  # This helps track resources for AWS migration programs
   # map-migrated = "xxxxxxxxxxxxx"
 }
+
 #--------------------------------------------------------------
 # Name prefix
 # It is used as a prefix attached to various resource names.
+# This prefix helps identify resources belonging to this project and environment.
+# Example: If name_prefix="myproject-", resources will be named "myproject-vpc", "myproject-lambda", etc.
 #--------------------------------------------------------------
 name_prefix = "base-"
 #--------------------------------------------------------------
 # Default Region for Resources
+# Specifies the primary AWS region where most resources will be deployed.
+# Some services like CloudFront require resources in us-east-1 regardless of this setting.
+# Common regions: ap-northeast-1 (Tokyo), us-east-1 (N. Virginia), eu-west-1 (Ireland)
 #--------------------------------------------------------------
 # TODO: need to change region.
 region = "ap-northeast-1"
+
 #--------------------------------------------------------------
-# CloudWatch Logs retention in days
+# CloudWatch Log Group Configuration
+# Common CloudWatch Log Group settings for all services.
+# This configuration is applied globally but can be overridden per service.
+#
+# Priority order (higher priority overrides lower):
+# 1. cloudwatch_log_group.override.<service_name>.retention_in_days (highest priority)
+# 2. cloudwatch_log_group.retention_in_days (lowest priority - common default)
+#
+# retention_in_days: How long logs are kept before automatic deletion
+# Common values: 1, 3, 5, 7, 14, 30, 60, 90, 120, 150, 180, 365, 400, 545, 731, 1827, 3653
+# COST CONSIDERATION: Longer retention = higher CloudWatch Logs storage costs
+#
+# Use cloudwatch_log_group.override for centralized management.
 #--------------------------------------------------------------
-# TODO: need to change CloudWatch Logs retention in days.
-cloudwatch_log_group_retention_in_days = 14
+# TODO: need to change cloudwatch_log_group settings.
+cloudwatch_log_group = {
+  # Default retention period for all services (in days)
+  retention_in_days = 14
+
+  # Optional: Override settings for specific services
+  # Uncomment and configure as needed
+  override = {
+    # budgets = {
+    #   retention_in_days = 7
+    # }
+    # common_lambda_vpc_flow_log = {
+    #   retention_in_days = 7
+    # }
+    # security_cloudtrail = {
+    #   retention_in_days = 90
+    # }
+  }
+}
+
+#--------------------------------------------------------------
+# Slack Configuration
+# Common Slack settings for Lambda function notifications.
+#
+# Priority order (higher priority overrides lower):
+# 1. slack.override.<function_name> (highest priority)
+# 2. slack (lowest priority - common defaults)
+#
+# Use slack.override for centralized management.
+#--------------------------------------------------------------
+slack = {
+  # TODO: need to change SLACK_OAUTH_ACCESS_TOKEN (bot token xoxb-xxxxxx....)
+  # Get this from your Slack app's OAuth & Permissions page
+  # Format: xoxb-XXXXXXXXX-XXXXXXXXX-XXXXXXXXXXXXXXXXXXXXXXXX
+  oauth_access_token = "xoxb-xxxxxxxxxxxxx-xxxxxxxxxxxxx-xxxxxxxxxxxxxxxxxxxxxxxx"
+  # TODO: need to change SLACK_CHANNEL_ID
+  # Right-click on your Slack channel and select "Copy link" to find the channel ID
+  channel_id = "C0XXXXXXXXX"
+
+  # -----------------------------------------------------------
+  # Override Configuration (Optional)
+  # Override Slack settings for specific Lambda functions.
+  # Priority order: override (highest) > defaults (lowest)
+  #
+  # Available function overrides:
+  # - budgets: AWS Budgets Alerts to Slack
+  # - security_cloudtrail: CloudTrail Security Events to Slack
+  # -----------------------------------------------------------
+  # Optional: Override slack settings for specific Lambda functions
+  # Uncomment and configure as needed
+  override = {
+    # budgets = {
+    #   channel_id = "C0XXXXXXXXX"
+    # }
+    # security_cloudtrail = {
+    #   channel_id = "C0XXXXXXXXX"
+    # }
+  }
+}
+
+#--------------------------------------------------------------
+# KMS
+# AWS Key Management Service (KMS) keys for encrypting sensitive data.
+# These keys are used to encrypt many services.
+# Enable key rotation for enhanced security (rotates keys annually).
+#--------------------------------------------------------------
+kms = {
+  root = {
+    description             = "This key used for root default."
+    deletion_window_in_days = 7
+    is_enabled              = true
+  }
+}
+
 #--------------------------------------------------------------
 # OpenID Connect for AWS and GitHub Actions
 # Terraform module to configure GitHub Actions as an IAM OIDC identity provider in AWS.
+# Allows GitHub Actions workflows to authenticate with AWS without storing long-lived credentials.
 # The target ARN is output(oidc_github_iam_role_arn) for the target ARN.
 # ex) oidc_github_iam_role_arn = "arn:aws:iam::{aws_account_id}:role/{iam_role_name}"
+#
+# SECURITY WARNING: dangerously_attach_admin_policy should be false in production!
+# Use least privilege principles and attach only necessary policies.
 #--------------------------------------------------------------
 oidc_github = {
   # TODO: need to set is_enabled for settings of IAM OIDC for GitHub Actions.
   is_enabled = true
   # TODO: Flag to enable/disable the attachment of the AdministratorAccess policy.
-  attach_admin_policy = true
+  dangerously_attach_admin_policy = true
   # TODO: Flag to enable/disable the attachment of the ReadOnly policy.
   attach_read_only_policy = false
   # TODO: Flag to enable/disable the creation of the GitHub OIDC provider.
@@ -49,8 +162,75 @@ oidc_github = {
   iam_role_name = "oidc-github-role"
   iam_role_path = "/"
 }
+
 #--------------------------------------------------------------
-# Common: settings for notifying metrics
+# Budgets
+# AWS Budgets configuration for cost monitoring and alerts.
+# Helps track spending and prevent unexpected charges across your AWS organization.
+#
+# CRITICAL SETTING: Always configure budget alerts to prevent unexpected costs
+# Adjust limit_amount based on your environment:
+# - Development: $50-200/month
+# - Staging: $200-500/month
+# - Production: $500+/month (adjust based on expected usage)
+#
+# COST CONSIDERATION: The first two budgets are free. Additional budgets cost $0.02 per day (~$0.60/month).
+#--------------------------------------------------------------
+budgets = {
+  # TODO: need to set is_enabled for settings of budgets.
+  is_enabled = true
+  # Provides a budgets budget resource. Budgets use the cost visualisation provided
+  # by Cost Explorer to show you the status of your budgets, to provide forecasts of
+  # your estimated costs, and to track your AWS usage, including your free tier usage.
+  aws_budgets_budget = {
+    name = "budgets-monthly"
+    # TODO: need to change limit_amount for Service
+    limit_amount = "100.0"
+    time_unit    = "MONTHLY"
+    notification = [
+      {
+        comparison_operator = "GREATER_THAN"
+        threshold           = "80"
+        threshold_type      = "PERCENTAGE"
+        notification_type   = "ACTUAL"
+        # TODO: need to change subscriber_email_addresses.
+        # If the threshold is exceeded, you will be notified to the email address provided.
+        # At least one must set an email address.
+        subscriber_email_addresses = [
+          # example)
+          # "youremail@yourtest.test.hogehoge.com"
+        ]
+        subscriber_sns_topic_arns = null
+      }
+    ]
+  }
+  aws_eventbridge_schedule = {
+    name                = "budgets-eventbridge-scheduler"
+    schedule_expression = "cron(0 9 * * ? *)"
+    description         = "This eventbridge scheduler called budgets lambda function."
+  }
+  aws_lambda_function = {
+    environment = {
+      ENV = "root"
+      # TODO: need to change TIMEZONE.
+      # https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
+      TIMEZONE = "Asia/Tokyo"
+    }
+  }
+}
+
+#--------------------------------------------------------------
+# Common Lambda
+# Common Lambda function settings including VPC configuration.
+# Use this when Lambda functions need to access resources in a VPC (e.g., RDS, ElastiCache).
+#
+# VPC CONFIGURATION:
+# - is_enabled = false: Lambda runs in AWS-managed VPC (no additional cost)
+# - is_enabled = true: Lambda runs in your VPC (requires NAT Gateway, adds ~$32/month per AZ)
+#
+# COST CONSIDERATION:
+# - NAT Gateway: ~$32/month per AZ + data transfer costs
+# - VPC Flow Logs: Storage costs based on retention and traffic volume
 #--------------------------------------------------------------
 common_lambda = {
   vpc = {
@@ -120,11 +300,10 @@ common_lambda = {
       enable_vpn_gateway = false
 
       # Flow Log(plain-text or parquet)
-      enable_flow_log                                 = true
-      create_flow_log_cloudwatch_log_group            = true
-      create_flow_log_cloudwatch_iam_role             = true
-      flow_log_cloudwatch_log_group_retention_in_days = 3
-      flow_log_file_format                            = "plain-text"
+      enable_flow_log                      = true
+      create_flow_log_cloudwatch_log_group = true
+      create_flow_log_cloudwatch_iam_role  = true
+      flow_log_file_format                 = "plain-text"
     }
   }
   aws_iam_role = {
@@ -138,10 +317,23 @@ common_lambda = {
     path        = "/"
   }
 }
+
 #--------------------------------------------------------------
-# Organizations policy
-# TODO: WIP
+# Organizations Policy
+# AWS Organizations service control policy (SCP) configuration.
+# This policy restricts which AWS services and regions can be used across all accounts in the organization.
+#
+# IMPORTANT: Service Control Policies (SCPs) are the maximum available permissions.
+# They do not grant permissions but set boundaries on what can be done.
+#
+# DEFAULT POLICY:
+# - Denies access to services outside specified regions (ap-northeast-1, us-east-1)
+# - Allows global services (IAM, CloudFront, Route53, etc.) regardless of region
+#
+# CAUTION: Test SCPs carefully in non-production environments first!
+# Incorrectly configured SCPs can block critical operations, including administrative access.
 #--------------------------------------------------------------
+# TODO: Review and adjust allowed services and regions based on organizational requirements.
 organizations_policy = {
   policy = {
     Version = "2012-10-17",
@@ -212,28 +404,32 @@ organizations_policy = {
     ]
   }
 }
+
 #--------------------------------------------------------------
 # Security:CloudTrail
+# CloudTrail configuration for audit logging and security event alerts.
+# Monitors and alerts on specific CloudTrail events (e.g., EC2 termination, IAM changes).
+#
+# KEY FEATURES:
+# - Metric Filters: Define patterns to detect specific events in CloudTrail logs
+# - CloudWatch Alarms: Trigger alerts when patterns match
+# - SNS Integration: Send notifications via SNS
+# - Lambda Integration: Process alerts and send to Slack
+#
+# COMMON USE CASES:
+# - Detect resource termination (EC2, RDS, etc.)
+# - Monitor IAM policy changes
+# - Alert on security group modifications
+# - Track API call patterns
+#
+# COST CONSIDERATION:
+# - CloudWatch Logs: Storage costs based on retention and log volume
+# - CloudWatch Metrics: $0.30 per custom metric per month
+# - SNS: First 1,000 notifications free, then $0.50 per 1M notifications
 #--------------------------------------------------------------
 security_cloudtrail = {
   # TODO: need to set is_enabled for settings of CloudTrail.
   is_enabled = false
-  aws_kms_key = {
-    cloudtrail = {
-      description             = "This key used for CloudTrail."
-      deletion_window_in_days = 7
-      is_enabled              = true
-      enable_key_rotation     = true
-      alias_name              = "cloudtrail"
-    }
-    sns = {
-      description             = "This key used for SNS."
-      deletion_window_in_days = 7
-      is_enabled              = true
-      enable_key_rotation     = true
-      alias_name              = "sns-cloudtrail"
-    }
-  }
   aws_cloudwatch_log = {
     cloudtrail_logs_terminate = {
       aws_cloudwatch_log_metric_filter = {
@@ -253,7 +449,7 @@ PATTERN
         alarm_name          = "cloudtrail-logs-terminate"
         comparison_operator = "GreaterThanOrEqualToThreshold"
         evaluation_periods  = 1
-        period              = 300
+        period              = 60
         statistic           = "Sum"
         threshold           = 1
         threshold_metric_id = null
@@ -263,20 +459,6 @@ PATTERN
         dimensions          = null
         treat_missing_data  = "notBreaching"
       }
-    }
-  }
-  aws_cloudwatch_log_group_lambda = {
-    kms_key_id = null
-  }
-  aws_lambda_function = {
-    environment = {
-      # TODO: need to change SLACK_OAUTH_ACCESS_TOKEN.(bot token xoxb-xxxxxx....)
-      SLACK_OAUTH_ACCESS_TOKEN = "xoxb-xxxxxxxxxxxxx-xxxxxxxxxxxxx-xxxxxxxxxxxxxxxxxxxxxxxx"
-      # TODO: need to change SLACK_CHANNEL_ID.
-      SLACK_CHANNEL_ID = "xxxxxxxxxxx"
-      LOGGER_FORMATTER = "json"
-      LOGGER_OUT       = "stdout"
-      LOGGER_LEVEL     = "warn"
     }
   }
   aws_sns_topic = {
