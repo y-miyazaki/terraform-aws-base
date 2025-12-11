@@ -17,7 +17,7 @@ on:
         description: "Target environment (dev, qa, stg, prd, etc.)"
         required: true
         type: string
-      go_path:
+      go_project_path:
         description: "Path (relative) to the Go project root (directory containing go.mod)"
         required: true
         type: string
@@ -40,7 +40,7 @@ on:
 env:
   COMPONENT: ${{ inputs.component }}
   ENVIRONMENT: ${{ inputs.environment }}
-  GO_PROJECT_PATH: ${{ inputs.go_path }}
+  GO_PROJECT_PATH: ${{ inputs.go_project_path }}
   GO_VERSION: ${{ inputs.go_version }}
   GOLANGCI_LINT_VERSION: ${{ inputs.golangci_lint_version }} # Defaults via inputs
   GOVULNCHECK_VERSION: ${{ inputs.govulncheck_version }} # Defaults via inputs

@@ -113,7 +113,7 @@ jobs:
           CATS="${CATEGORIES}"
           REGION_ARG="${REGION}"
 
-          CMD=("arc" -v -H -D "$OUTDIR")
+          CMD=(arc -H -D "$OUTDIR")
           if [[ -n "$CATS" ]]; then
             CMD+=( -c "$CATS" )
           fi
