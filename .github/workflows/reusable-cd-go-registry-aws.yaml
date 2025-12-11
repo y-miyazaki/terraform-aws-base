@@ -30,7 +30,7 @@ on:
         description: "Target environment (dev, qa, stg, prd, etc.)"
         required: true
         type: string
-      go_path:
+      go_project_path:
         description: "Path (relative) to the Go project root (directory containing go.mod). Used as default Docker context."
         required: true
         type: string
@@ -55,7 +55,7 @@ env:
   ECR_REGISTRY: ${{ inputs.ecr_registry }}
   ECR_REPOSITORY: ${{ inputs.ecr_repository }}
   ENVIRONMENT: ${{ inputs.environment }}
-  GO_PROJECT_PATH: ${{ inputs.go_path }}
+  GO_PROJECT_PATH: ${{ inputs.go_project_path }}
   IMAGE_TAG: ${{ inputs.image_tag }}
   PLATFORM: ${{ inputs.platform }}
 

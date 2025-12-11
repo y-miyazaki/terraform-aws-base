@@ -20,7 +20,7 @@ on:
         required: false
         type: boolean
         default: false
-      go_path:
+      go_project_path:
         description: "Path (relative) to the Go project root (directory containing go.mod)"
         required: false
         type: string
@@ -54,7 +54,7 @@ env:
   COMPONENT: ${{ inputs.component }}
   CREATE_TAG: ${{ inputs.create_tag }}
   DRAFT: ${{ inputs.draft }}
-  GO_PROJECT_PATH: ${{ inputs.go_path }}
+  GO_PROJECT_PATH: ${{ inputs.go_project_path }}
   GO_VERSION: ${{ inputs.go_version }}
   GORELEASER_ARGS: ${{ inputs.goreleaser_args }}
   GORELEASER_VERSION: ${{ inputs.goreleaser_version }}
@@ -212,7 +212,7 @@ jobs:
             component: ${{ inputs.component }}
             create_tag: ${{ inputs.create_tag }}
             draft: ${{ inputs.draft }}
-            go_path: ${{ inputs.go_path }}
+            go_project_path: ${{ inputs.go_project_path }}
             go_version: ${{ inputs.go_version }}
             goreleaser_version: ${{ inputs.goreleaser_version }}
             prerelease: ${{ inputs.prerelease }}
