@@ -7,7 +7,7 @@
 #--------------------------------------------------------------
 module "s3_account_public_access" {
   source  = "terraform-aws-modules/s3-bucket/aws//modules/account-public-access"
-  version = "5.9.0"
+  version = "5.9.1"
   create  = var.security_s3.is_enabled
 
   block_public_acls       = var.security_s3.block_public_acls
