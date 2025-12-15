@@ -125,7 +125,7 @@ jobs:
         working-directory: ${{ env.GO_PROJECT_PATH }}
 
       - name: Upload Coverage Artifact
-        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5.0.0
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         with:
           name: coverage-${{ env.COMPONENT }}-${{ env.ENVIRONMENT }}
           path: ${{ env.GO_PROJECT_PATH }}/coverage
@@ -169,7 +169,7 @@ jobs:
           govulncheck ./... > "security/govulncheck-${COMPONENT}-${ENVIRONMENT}.txt" || true
 
       - name: Upload govulncheck Artifact
-        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5.0.0
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         with:
           name: govulncheck-${{ env.COMPONENT }}-${{ env.ENVIRONMENT }}
           path: ${{ env.GO_PROJECT_PATH }}/security
@@ -198,7 +198,7 @@ jobs:
           scan-type: "fs"
 
       - name: Upload SBOM Artifact
-        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5.0.0
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         with:
           name: sbom-${{ env.COMPONENT }}-${{ env.ENVIRONMENT }}
           path: ${{ env.GO_PROJECT_PATH }}/sbom-${{ env.COMPONENT }}-${{ env.ENVIRONMENT }}.json
