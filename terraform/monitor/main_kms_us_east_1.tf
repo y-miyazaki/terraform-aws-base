@@ -11,8 +11,8 @@ module "kms_key_us_east_1" {
     aws = aws.us-east-1
   }
 
-  description             = try(each.value.dynamodb.description, null)
-  deletion_window_in_days = try(each.value.dynamodb.deletion_window_in_days, 7)
+  deletion_window_in_days = each.value.deletion_window_in_days
+  description             = each.value.description
   enable_key_rotation     = true
   enable_default_policy   = true
   #   key_owners              = var.key_owners
