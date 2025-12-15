@@ -204,6 +204,13 @@ jobs:
           path: ${{ env.GO_PROJECT_PATH }}/sbom-${{ env.COMPONENT }}-${{ env.ENVIRONMENT }}.json
           retention-days: 30
 
+      - name: Configure git auth
+        if: github.event_name == 'pull_request'
+        uses: ./.github/actions/git-auth
+        with:
+          operation: configure
+          token: ${{ github.token }}
+
       - name: Exec GolangCI-Lint via reviewdog (PR inline comments)
         if: github.event_name == 'pull_request' && github.actor != 'dependabot[bot]'
         env:
@@ -212,7 +219,7 @@ jobs:
         with:
           fail_level: error
           filter_mode: file
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          github_token: ${{ github.token }}
           go_version: ${{ env.GO_VERSION }}
           golangci_lint_flags: "--config=.golangci.yaml --new-from-rev=origin/${{ env.PR_BASE_REF }}"
           golangci_lint_version: ${{ env.GOLANGCI_LINT_VERSION }}
@@ -227,6 +234,13 @@ jobs:
           args: --config=.golangci.yaml --max-same-issues=0 --max-issues-per-linter=0
           version: ${{ env.GOLANGCI_LINT_VERSION }}
           working-directory: ${{ env.GO_PROJECT_PATH }}
+
+      - name: Clear git auth
+        if: always() && github.event_name == 'pull_request'
+        uses: ./.github/actions/git-auth
+        with:
+          operation: clear
+          token: ${{ github.token }}
 
       - name: Post PR failure comment
         if: failure() && github.event_name == 'pull_request' && github.actor != 'dependabot[bot]'

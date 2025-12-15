@@ -11,40 +11,40 @@ on:
         required: true
         type: string
       create_tag:
+        default: true
         description: "Create a git tag if it doesn't exist (true/false)"
         required: false
         type: boolean
-        default: true
       draft:
+        default: false
         description: "Create a draft release (true/false)"
         required: false
         type: boolean
-        default: false
       go_project_path:
+        default: "."
         description: "Path (relative) to the Go project root (directory containing go.mod)"
         required: false
         type: string
-        default: "."
       go_version:
+        default: "1.25.4"
         description: "Go version to use for building"
         required: false
         type: string
-        default: "1.25.4"
       goreleaser_args:
+        default: ""
         description: "Additional GoReleaser arguments (e.g. --skip=validate)"
         required: false
         type: string
-        default: ""
       goreleaser_version:
+        default: "v2.6.1"
         description: "GoReleaser version to use"
         required: false
         type: string
-        default: "v2.6.1"
       prerelease:
+        default: "auto"
         description: "Mark as prerelease (true/false, or 'auto' for automatic detection)"
         required: false
         type: string
-        default: "auto"
       version:
         description: "Release version (e.g. v1.0.0). Must start with 'v'. If empty, uses the tag that triggered the workflow."
         required: false
@@ -73,10 +73,10 @@ jobs:
       id-token: write
     steps:
       - name: Checkout Code
-        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8cf # v5.0.0
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # pinned full SHA
         with:
           fetch-depth: 0 # Required for GoReleaser to generate changelog
-          persist-credentials: true
+          persist-credentials: false
 
       - name: Validate version format
         if: inputs.version != ''
@@ -108,6 +108,12 @@ jobs:
           fi
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
 
+      - name: Configure git auth
+        uses: ./.github/actions/git-auth
+        with:
+          operation: configure
+          token: ${{ github.token }}
+
       - name: Create tag
         if: steps.check-tag.outputs.tag_exists == 'false' && inputs.create_tag == true
         run: |
@@ -123,6 +129,13 @@ jobs:
         run: |
           git fetch --tags --force
           echo "✅ Tags refreshed"
+
+      - name: Clear git auth
+        if: steps.check-tag.outputs.tag_exists == 'false' && inputs.create_tag == true
+        uses: ./.github/actions/git-auth
+        with:
+          operation: clear
+          token: ${{ github.token }}
 
       - name: Setup Go
         uses: actions/setup-go@4dc6199c7b1a012772edbd06daecab0f50c9053c # v6.1.0

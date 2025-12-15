@@ -1,0 +1,33 @@
+name: git-auth
+description: "Configure and clear ephemeral git authentication for actions using url.insteadOf."
+author: "GitHub Copilot"
+inputs:
+  operation:
+    default: "configure"
+    description: "Operation to perform: configure or clear"
+    required: false
+  token:
+    description: "Authentication token to use (pass github.token from workflow)"
+    required: true
+runs:
+  using: composite
+  steps:
+    - name: Configure git auth (url.insteadOf)
+      if: ${{ inputs.operation == 'configure' }}
+      shell: bash
+      env:
+        GITHUB_TOKEN: ${{ inputs.token }}
+      run: |
+        set -euo pipefail
+        echo "Configuring url.insteadOf for github.com"
+        git config --local url."https://x-access-token:${GITHUB_TOKEN}@github.com/".insteadOf "https://github.com/"
+
+    - name: Clear git auth (url.insteadOf)
+      if: ${{ inputs.operation == 'clear' }}
+      shell: bash
+      env:
+        GITHUB_TOKEN: ${{ inputs.token }}
+      run: |
+        set -euo pipefail
+        echo "Clearing url.insteadOf for github.com"
+        git config --local --unset url."https://x-access-token:${GITHUB_TOKEN}@github.com/".insteadOf || true

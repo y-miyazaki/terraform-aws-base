@@ -220,14 +220,14 @@ jobs:
       - name: Exec TFLint (Modules)
         run: tflint -f compact --chdir ./modules --call-module-type=all
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ github.token }}
 
       - name: Exec TFLint (Terraform)
         run: |
           # Quote paths/filenames to avoid shell splitting (addresses SC2086)
           tflint -f compact --chdir "${TERRAFORM_PATH}" --var-file="terraform.${ENVIRONMENT}.tfvars"
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ github.token }}
 
       # https://github.com/aquasecurity/trivy-action/tree/0.33.1/?tab=readme-ov-file#inputs
       - name: Exec Trivy Vulnerability Scan
@@ -330,7 +330,7 @@ jobs:
           fi
           tfcmt -repo "${GITHUB_REPOSITORY#*/}" -pr "$PR_NUMBER" plan -- terraform -chdir="${TERRAFORM_PATH}" plan -lock=false -var-file=terraform."${ENVIRONMENT}".tfvars
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ github.token }}
           PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
           PR_NUMBER: ${{ github.event.number }}
 
