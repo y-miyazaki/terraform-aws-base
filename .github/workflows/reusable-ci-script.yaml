@@ -45,7 +45,14 @@ jobs:
         uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
         with:
           fetch-depth: 0
-          persist-credentials: true
+          persist-credentials: false
+
+      - name: Configure git auth
+        if: github.event_name == 'pull_request'
+        uses: ./.github/actions/git-auth
+        with:
+          operation: configure
+          token: ${{ github.token }}
 
       - name: Setup Expand file list
         id: file-list
@@ -87,7 +94,7 @@ jobs:
         uses: reviewdog/action-shfmt@d8f080930b9be5847b4f97e9f4122b81a82aaeac # v1.0.4
         with:
           filter_mode: file
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          github_token: ${{ github.token }}
           level: error
           reviewdog_flags: "-fail-level=${{ inputs.fail_level }} -reporter=github-pr-review"
           shfmt_flags: "-l -i 4 -ci -bn -sr"
@@ -98,7 +105,7 @@ jobs:
         uses: reviewdog/action-shfmt@d8f080930b9be5847b4f97e9f4122b81a82aaeac # v1.0.4
         with:
           filter_mode: file
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          github_token: ${{ github.token }}
           level: error
           reviewdog_flags: "-fail-level=${{ inputs.fail_level }} -reporter=github-check"
           shfmt_flags: "-l -s -i 4 -ci -bn -sr"
@@ -110,7 +117,7 @@ jobs:
         with:
           fail_level: ${{ inputs.fail_level }}
           filter_mode: file
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          github_token: ${{ github.token }}
           level: error
           path: ${{ steps.file-list.outputs.files_list }}
           reporter: github-pr-review
@@ -122,7 +129,7 @@ jobs:
         with:
           fail_level: ${{ inputs.fail_level }}
           filter_mode: file
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          github_token: ${{ github.token }}
           level: error
           path: ${{ steps.file-list.outputs.files_list }}
           reporter: github-check
@@ -175,6 +182,13 @@ jobs:
               echo "One or more scripts are not executable; continue because fail_on_warnings=false"
             fi
           fi
+
+      - name: Clear git auth
+        if: always() && github.event_name == 'pull_request'
+        uses: ./.github/actions/git-auth
+        with:
+          operation: clear
+          token: ${{ github.token }}
 
       - name: Summary
         if: always()

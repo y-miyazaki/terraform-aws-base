@@ -2,25 +2,25 @@ name: "Summary"
 description: "Composite action to write a standardized job summary to GITHUB_STEP_SUMMARY\nSections: H1 title, H2 Results, H2 Parameters, H2 Outputs, H2 Artifacts"
 
 inputs:
+  artifacts:
+    default: ""
+    description: "Multiline artifacts list (one per line)"
+    required: false
+  outputs:
+    default: ""
+    description: "Multiline outputs block (key: value per line)"
+    required: false
+  params:
+    default: ""
+    description: "Multiline parameters block (key: value per line)"
+    required: false
+  status:
+    default: ""
+    description: "Job status (pass from workflow using job.status)"
+    required: false
   title:
     description: "Title to use for the summary (H1)"
     required: true
-  status:
-    description: "Job status (pass from workflow using job.status)"
-    required: false
-    default: ""
-  params:
-    description: "Multiline parameters block (key: value per line)"
-    required: false
-    default: ""
-  outputs:
-    description: "Multiline outputs block (key: value per line)"
-    required: false
-    default: ""
-  artifacts:
-    description: "Multiline artifacts list (one per line)"
-    required: false
-    default: ""
 
 runs:
   using: "composite"

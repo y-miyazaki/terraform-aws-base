@@ -1,0 +1,11 @@
+# actionlint configuration
+# https://github.com/rhysd/actionlint/blob/main/docs/config.md
+
+# Path-specific configurations
+paths:
+  # Ignore false positive: "true"/"false" string literals are incorrectly detected as bool
+  # when passed to string-typed inputs in reusable workflows
+  .github/workflows/**/*.{yml,yaml}:
+    ignore:
+      # db_ssl_mode accepts "true"/"false" as string for MySQL/Redshift
+      - 'input "db_ssl_mode" is typed as string by reusable workflow .+ bool value cannot be assigned'
