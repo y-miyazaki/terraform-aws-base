@@ -4,7 +4,7 @@
 #--------------------------------------------------------------
 module "dynamodb_table_monitor_log" {
   source  = "terraform-aws-modules/dynamodb-table/aws"
-  version = "5.3.0"
+  version = "5.4.0"
 
   name                = "${var.name_prefix}monitor-log"
   autoscaling_enabled = false
