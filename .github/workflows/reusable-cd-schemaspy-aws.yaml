@@ -44,7 +44,7 @@ on:
         type: string
         default: ""
       db_ssl_mode:
-        description: "Database SSL mode for PostgreSQL/Redshift (require, verify-full, verify-ca, disable) or MySQL (true, false). Default: require"
+        description: "Database SSL mode. PostgreSQL: require|verify-full|verify-ca|disable (default: require). MySQL: true|false. Redshift: true|false."
         required: false
         type: string
         default: "require"
