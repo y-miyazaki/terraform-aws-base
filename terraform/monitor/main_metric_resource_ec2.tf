@@ -10,6 +10,7 @@ module "aws_metric_ec2" {
 
   period                       = var.metric_resource_ec2.period
   threshold                    = var.metric_resource_ec2.threshold
+  threshold_override           = var.metric_resource_ec2.threshold_override
   create_auto_dimensions       = var.metric_resource_ec2.create_auto_dimensions
   auto_dimensions_exclude_list = var.metric_resource_ec2.auto_dimensions_exclude_list
   auto_dimensions_include_list = var.metric_resource_ec2.auto_dimensions_include_list

@@ -1,0 +1,134 @@
+# Composite action to install a binary from a GitHub release
+# - Downloads from GitHub releases with checksum verification
+# - Caches the binary for future runs
+# - Adds binary to PATH via GITHUB_PATH
+name: "Install GitHub Release"
+description: "Download and install a binary from a GitHub release with caching and checksum verification"
+
+inputs:
+  asset_pattern:
+    description: "Asset filename pattern. Use {binary}, {version} as placeholders (e.g., {binary}_{version}_linux_amd64.tar.gz)"
+    required: false
+    default: "{binary}_{version}_linux_amd64.tar.gz"
+  binary:
+    description: "Name of the binary to install (e.g., actionlint)"
+    required: true
+  checksum:
+    description: "SHA256 checksum of the release asset"
+    required: true
+  repo:
+    description: "GitHub repository in format owner/repo (e.g., rhysd/actionlint)"
+    required: true
+  strip_v_prefix:
+    description: "Strip 'v' prefix from version in asset name (default: false)"
+    required: false
+    default: "false"
+  version:
+    description: "Version to install (e.g., 1.7.7 or v1.7.7)"
+    required: true
+
+outputs:
+  cache-hit:
+    description: "Whether the binary was restored from cache"
+    value: ${{ steps.cache.outputs.cache-hit }}
+
+runs:
+  using: "composite"
+  steps:
+    - name: Set up binary directory
+      id: setup
+      shell: bash
+      env:
+        RUNNER_TEMP: ${{ runner.temp }}
+      run: | # zizmor: ignore[github-env]
+        BIN_DIR="${RUNNER_TEMP}/bin"
+        mkdir -p "${BIN_DIR}"
+        echo "${BIN_DIR}" >> "$GITHUB_PATH"
+        echo "bin_dir=${BIN_DIR}" >> "$GITHUB_OUTPUT"
+
+    - name: Cache binary
+      id: cache
+      uses: actions/cache@9255dc7a253b0ccc959486e2bca901246202afeb # v5.0.1
+      with:
+        key: ${{ inputs.binary }}-${{ runner.os }}-${{ inputs.version }}-${{ inputs.checksum }}
+        path: ${{ steps.setup.outputs.bin_dir }}/${{ inputs.binary }}
+
+    - name: Download and install
+      if: steps.cache.outputs.cache-hit != 'true'
+      shell: bash
+      env:
+        ASSET_PATTERN: ${{ inputs.asset_pattern }}
+        BINARY: ${{ inputs.binary }}
+        BIN_DIR: ${{ steps.setup.outputs.bin_dir }}
+        CHECKSUM: ${{ inputs.checksum }}
+        REPO: ${{ inputs.repo }}
+        STRIP_V_PREFIX: ${{ inputs.strip_v_prefix }}
+        VERSION: ${{ inputs.version }}
+      run: |
+        set -euo pipefail
+
+        # Prepare version for asset name (optionally strip 'v' prefix)
+        ASSET_VERSION="${VERSION}"
+        if [[ "${STRIP_V_PREFIX}" == "true" ]]; then
+          ASSET_VERSION="${VERSION#v}"
+        fi
+
+        # Build asset name from pattern
+        ASSET="${ASSET_PATTERN//\{binary\}/${BINARY}}"
+        ASSET="${ASSET//\{version\}/${ASSET_VERSION}}"
+
+        # Ensure version has 'v' prefix for download URL
+        DL_VERSION="${VERSION}"
+        if [[ "${DL_VERSION}" != v* ]]; then
+          DL_VERSION="v${DL_VERSION}"
+        fi
+
+        DOWNLOAD_URL="https://github.com/${REPO}/releases/download/${DL_VERSION}/${ASSET}"
+
+        echo "Downloading ${BINARY} ${VERSION} from ${REPO}..."
+        echo "Asset: ${ASSET}"
+
+        # Determine extraction method based on file extension
+        if [[ "${ASSET}" == *.tar.gz || "${ASSET}" == *.tgz ]]; then
+          # Download and extract tar.gz
+          curl -sSLo /tmp/${BINARY}.tar.gz "${DOWNLOAD_URL}"
+          echo "Verifying checksum..."
+          echo "${CHECKSUM}  /tmp/${BINARY}.tar.gz" | sha256sum -c -
+          echo "Extracting tar.gz..."
+          tar -xzf /tmp/${BINARY}.tar.gz -C /tmp
+          mv /tmp/${BINARY} "${BIN_DIR}/"
+        elif [[ "${ASSET}" == *.tar.xz ]]; then
+          # Download and extract tar.xz
+          curl -sSLo /tmp/${BINARY}.tar.xz "${DOWNLOAD_URL}"
+          echo "Verifying checksum..."
+          echo "${CHECKSUM}  /tmp/${BINARY}.tar.xz" | sha256sum -c -
+          echo "Extracting tar.xz..."
+          tar -xJf /tmp/${BINARY}.tar.xz -C /tmp
+          mv /tmp/${BINARY} "${BIN_DIR}/"
+        elif [[ "${ASSET}" == *.zip ]]; then
+          # Download and extract zip
+          curl -sSLo /tmp/${BINARY}.zip "${DOWNLOAD_URL}"
+          echo "Verifying checksum..."
+          echo "${CHECKSUM}  /tmp/${BINARY}.zip" | sha256sum -c -
+          echo "Extracting zip..."
+          unzip -q /tmp/${BINARY}.zip -d /tmp
+          mv /tmp/${BINARY} "${BIN_DIR}/"
+        else
+          # Download binary directly
+          curl -sSLo "${BIN_DIR}/${BINARY}" "${DOWNLOAD_URL}"
+          echo "Verifying checksum..."
+          echo "${CHECKSUM}  ${BIN_DIR}/${BINARY}" | sha256sum -c -
+        fi
+
+        chmod +x "${BIN_DIR}/${BINARY}"
+        echo "Installed ${BINARY} to ${BIN_DIR}"
+        ${BIN_DIR}/${BINARY} --version || true
+
+    - name: Verify installation
+      shell: bash
+      env:
+        BINARY: ${{ inputs.binary }}
+      run: |
+        echo "Verifying ${BINARY} is available..."
+        which "${BINARY}"
+        "${BINARY}" --version || true

@@ -1,6 +1,6 @@
 # Reusable workflow for Go CI operations
 # This workflow runs Go tests and golangci-lint. It is intended to be called from other workflows.
-name: reusable-ci-go-common
+name: reusable-ci-go
 
 on:
   workflow_call:
@@ -38,12 +38,14 @@ on:
         default: "v1.1.4"
 
 env:
+  CODECOV_TOKEN: ${{ inputs.codecov_token }}
   COMPONENT: ${{ inputs.component }}
   ENVIRONMENT: ${{ inputs.environment }}
   GO_PROJECT_PATH: ${{ inputs.go_project_path }}
   GO_VERSION: ${{ inputs.go_version }}
   GOLANGCI_LINT_VERSION: ${{ inputs.golangci_lint_version }} # Defaults via inputs
   GOVULNCHECK_VERSION: ${{ inputs.govulncheck_version }} # Defaults via inputs
+  PR_BASE_REF: ${{ github.event.pull_request.base.ref }}
 
 jobs:
   lint:
@@ -65,8 +67,8 @@ jobs:
       - name: Setup Go
         uses: actions/setup-go@4dc6199c7b1a012772edbd06daecab0f50c9053c # v6.1.0
         with:
-          go-version: ${{ env.GO_VERSION }}
           cache: false
+          go-version: ${{ env.GO_VERSION }}
 
       - name: Determine Go cache paths
         id: go-cache-paths
@@ -79,12 +81,12 @@ jobs:
           } >> "$GITHUB_OUTPUT"
 
       - name: Cache Go build and module caches
-        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        uses: actions/cache@9255dc7a253b0ccc959486e2bca901246202afeb # v5.0.1
         with:
+          key: go-cache-${{ env.ENVIRONMENT }}-${{ env.COMPONENT }}-${{ runner.os }}-${{ env.GO_VERSION }}-${{ hashFiles(format('{0}/go.mod', env.GO_PROJECT_PATH), format('{0}/go.sum', env.GO_PROJECT_PATH)) }}
           path: |
             ${{ steps.go-cache-paths.outputs.gomodcache }}
             ${{ steps.go-cache-paths.outputs.gocache }}
-          key: go-cache-${{ env.ENVIRONMENT }}-${{ env.COMPONENT }}-${{ runner.os }}-${{ env.GO_VERSION }}-${{ hashFiles(format('{0}/go.mod', env.GO_PROJECT_PATH), format('{0}/go.sum', env.GO_PROJECT_PATH)) }}
           restore-keys: |
             go-cache-${{ env.ENVIRONMENT }}-${{ env.COMPONENT }}-${{ runner.os }}-${{ env.GO_VERSION }}-
             go-cache-${{ env.ENVIRONMENT }}-${{ env.COMPONENT }}-${{ runner.os }}-
@@ -125,7 +127,7 @@ jobs:
         working-directory: ${{ env.GO_PROJECT_PATH }}
 
       - name: Upload Coverage Artifact
-        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5.0.0
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         with:
           name: coverage-${{ env.COMPONENT }}-${{ env.ENVIRONMENT }}
           path: ${{ env.GO_PROJECT_PATH }}/coverage
@@ -145,17 +147,17 @@ jobs:
 
       - name: Upload to Codecov
         # Run upload only when repo is public OR codecov_token is provided
-        if: ${{ (steps.repo_visibility.outputs.result != 'true') || (inputs.codecov_token != '') }}
+        if: ${{ (steps.repo_visibility.outputs.result != 'true') || (env.CODECOV_TOKEN != '') }}
         uses: codecov/codecov-action@671740ac38dd9b0130fbe1cec585b89eea48d3de # v5.5.2
         with:
-          use_oidc: true
-          files: ${{ env.GO_PROJECT_PATH }}/coverage/coverage.out
-          token: ${{ inputs.codecov_token }}
           fail_ci_if_error: false
+          files: ${{ env.GO_PROJECT_PATH }}/coverage/coverage.out
+          token: ${{ env.CODECOV_TOKEN }}
+          use_oidc: true
 
       - name: Setup govulncheck
         working-directory: ${{ env.GO_PROJECT_PATH }}
-        run: go install golang.org/x/vuln/cmd/govulncheck@${{ env.GOVULNCHECK_VERSION }}
+        run: go install "golang.org/x/vuln/cmd/govulncheck@${GOVULNCHECK_VERSION}"
 
       # Do not fail the job on vulnerabilities; save reports as artifacts instead
       - name: Exec govulncheck (no-fail, save artifacts)
@@ -169,7 +171,7 @@ jobs:
           govulncheck ./... > "security/govulncheck-${COMPONENT}-${ENVIRONMENT}.txt" || true
 
       - name: Upload govulncheck Artifact
-        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5.0.0
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         with:
           name: govulncheck-${{ env.COMPONENT }}-${{ env.ENVIRONMENT }}
           path: ${{ env.GO_PROJECT_PATH }}/security
@@ -198,7 +200,7 @@ jobs:
           scan-type: "fs"
 
       - name: Upload SBOM Artifact
-        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5.0.0
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         with:
           name: sbom-${{ env.COMPONENT }}-${{ env.ENVIRONMENT }}
           path: ${{ env.GO_PROJECT_PATH }}/sbom-${{ env.COMPONENT }}-${{ env.ENVIRONMENT }}.json
@@ -213,10 +215,9 @@ jobs:
 
       - name: Exec GolangCI-Lint via reviewdog (PR inline comments)
         if: github.event_name == 'pull_request' && github.actor != 'dependabot[bot]'
-        env:
-          PR_BASE_REF: ${{ github.event.pull_request.base.ref }}
         uses: reviewdog/action-golangci-lint@f9bba13753278f6a73b27a56a3ffb1bfda90ed71 # v2.8.0
         with:
+          cache: false
           fail_level: error
           filter_mode: file
           github_token: ${{ github.token }}
@@ -276,7 +277,7 @@ jobs:
           outputs: |
             (none)
           params: |
-            component: ${{ inputs.component }}
-            environment: ${{ inputs.environment }}
+            component: ${{ env.COMPONENT }}
+            environment: ${{ env.ENVIRONMENT }}
           status: "${{ job.status }}"
           title: "${{ format('Go CI: {0}', env.COMPONENT) }}"

@@ -10,6 +10,7 @@ module "aws_metric_elasticache" {
 
   period                       = var.metric_resource_elasticache.period
   threshold                    = var.metric_resource_elasticache.threshold
+  threshold_override           = var.metric_resource_elasticache.threshold_override
   create_auto_dimensions       = var.metric_resource_elasticache.create_auto_dimensions
   auto_dimensions_exclude_list = var.metric_resource_elasticache.auto_dimensions_exclude_list
   auto_dimensions_include_list = var.metric_resource_elasticache.auto_dimensions_include_list

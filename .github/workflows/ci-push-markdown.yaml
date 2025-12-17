@@ -30,7 +30,7 @@ on:
       - ".github/workflows/reusable-ci-markdown.yaml"
 
 jobs:
-  markdown-lint:
+  markdown-ci:
     uses: ./.github/workflows/reusable-ci-markdown.yaml
     with:
       component: "base"

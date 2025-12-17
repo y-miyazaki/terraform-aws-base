@@ -205,9 +205,13 @@ variable "metric_resource_ses" {
   type        = any
   description = "CloudWatch event(SES) resources on AWS"
 }
-variable "metric_resource_sqs_dlq" {
+variable "metric_resource_sns" {
   type        = any
-  description = "CloudWatch event(SQS(DLQ)) resources on AWS"
+  description = "CloudWatch event(SNS) resources on AWS"
+}
+variable "metric_resource_sqs" {
+  type        = any
+  description = "CloudWatch event(SQS) resources on AWS"
 }
 variable "cloudwatch_event_ec2" {
   type        = any

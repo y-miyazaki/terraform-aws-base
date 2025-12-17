@@ -18,7 +18,7 @@
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_filter"></a> [filter](#module\_filter) | ../../_internal/auto_discovery_filter | n/a |
+| <a name="module_helper"></a> [helper](#module\_helper) | ../../_internal/metric_helper | n/a |
 
 ## Resources
 
@@ -45,6 +45,7 @@
 | <a name="input_period"></a> [period](#input\_period) | (Optional) The period in seconds over which the specified statistic is applied. | `number` | `300` | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | (Optional) Key-value map of resource tags. | `map(any)` | `null` | no |
 | <a name="input_threshold"></a> [threshold](#input\_threshold) | (Optional) Set the threshold for each Metric in API Gateway. | <pre>object({<br/>    # 4XXerror threshold (unit=%)<br/>    enabled_error4XX = bool<br/>    error4XX         = number<br/>    # 5XXerror threshold (unit=%)<br/>    enabled_error5XX = bool<br/>    error5XX         = number<br/>    # Latency threshold (unit=Milliseconds)<br/>    enabled_latency = bool<br/>    latency         = number<br/>    }<br/>  )</pre> | <pre>{<br/>  "enabled_error4XX": true,<br/>  "enabled_error5XX": true,<br/>  "enabled_latency": true,<br/>  "error4XX": 1,<br/>  "error5XX": 1,<br/>  "latency": 10000<br/>}</pre> | no |
+| <a name="input_threshold_override"></a> [threshold\_override](#input\_threshold\_override) | (Optional) Override thresholds for specific resources. Key is the ApiName. | <pre>map(object({<br/>    # (Optional) 4XXerror threshold (unit=%)<br/>    enabled_error4XX = optional(bool)<br/>    error4XX         = optional(number)<br/>    # (Optional) 5XXerror threshold (unit=%)<br/>    enabled_error5XX = optional(bool)<br/>    error5XX         = optional(number)<br/>    # (Optional) Latency threshold (unit=Milliseconds)<br/>    enabled_latency = optional(bool)<br/>    latency         = optional(number)<br/>  }))</pre> | `{}` | no |
 
 ## Outputs
 

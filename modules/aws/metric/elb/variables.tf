@@ -69,6 +69,42 @@ variable "threshold" {
     unhealthy_host_count                       = 1
   }
 }
+variable "threshold_override" {
+  type = map(object({
+    # (Optional) ActiveConnectionCount threshold (unit=Count)
+    enabled_active_connection_count = optional(bool)
+    active_connection_count         = optional(number)
+    # (Optional) ClientTLSNegotiationErrorCount threshold (unit=Count)
+    enabled_client_tls_negotiation_error_count = optional(bool)
+    client_tls_negotiation_error_count         = optional(number)
+    # (Optional) ConsumedLCUs threshold (unit=Count)
+    enabled_consumed_lcus = optional(bool)
+    consumed_lcus         = optional(number)
+    # (Optional) HTTPCode_4XX_Count threshold (unit=Count)
+    enabled_httpcode_4xx_count = optional(bool)
+    httpcode_4xx_count         = optional(number)
+    # (Optional) HTTPCode_5XX_Count threshold (unit=Count)
+    enabled_httpcode_5xx_count = optional(bool)
+    httpcode_5xx_count         = optional(number)
+    # (Optional) HTTPCode_ELB_4XX_Count threshold (unit=Count)
+    enabled_httpcode_elb_4xx_count = optional(bool)
+    httpcode_elb_4xx_count         = optional(number)
+    # (Optional) HTTPCode_ELB_5XX_Count threshold (unit=Count)
+    enabled_httpcode_elb_5xx_count = optional(bool)
+    httpcode_elb_5xx_count         = optional(number)
+    # (Optional) TargetResponseTime threshold (unit=)
+    enabled_target_response_time = optional(bool)
+    target_response_time         = optional(number)
+    # (Optional) TargetTLSNegotiationErrorCount threshold (unit=Count)
+    enabled_target_tls_negotiation_error_count = optional(bool)
+    target_tls_negotiation_error_count         = optional(number)
+    # (Optional) UnHealthyHostCount threshold (unit=Count)
+    enabled_unhealthy_host_count = optional(bool)
+    unhealthy_host_count         = optional(number)
+  }))
+  description = "(Optional) Override thresholds for specific resources. Key is the LoadBalancer."
+  default     = {}
+}
 variable "create_auto_dimensions" {
   type        = bool
   description = "(Optional) Builds a list of ELBs (ALB/NLB) to automatically set dimensions. If this is true, the dimensions setting will be ignored."

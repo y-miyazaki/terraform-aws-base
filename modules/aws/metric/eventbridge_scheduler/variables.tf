@@ -49,9 +49,44 @@ variable "threshold" {
     invocation_dropped_count             = 1
   }
 }
+variable "threshold_override" {
+  type = map(object({
+    enabled_invocation_attempt_count     = optional(bool)
+    invocation_attempt_count             = optional(number)
+    enabled_target_error_count           = optional(bool)
+    target_error_count                   = optional(number)
+    enabled_target_error_throttled_count = optional(bool)
+    target_error_throttled_count         = optional(number)
+    enabled_invocation_throttle_count    = optional(bool)
+    invocation_throttle_count            = optional(number)
+    enabled_invocation_dropped_count     = optional(bool)
+    invocation_dropped_count             = optional(number)
+  }))
+  description = "(Optional) Per-schedule-group threshold overrides. Key is the schedule group name."
+  default     = {}
+}
 variable "dimensions" {
   type        = list(map(any))
-  description = "(Required) The dimensions for the alarm's associated metric. For the list of available dimensions see the AWS documentation here."
+  description = "(Optional) The dimensions for the alarm's associated metric. For the list of available dimensions see the AWS documentation here."
+  default     = []
+}
+#--------------------------------------------------------------
+# Auto-discovery variables
+#--------------------------------------------------------------
+variable "create_auto_dimensions" {
+  type        = bool
+  description = "(Optional) Create dimensions automatically from EventBridge Scheduler schedule groups."
+  default     = false
+}
+variable "auto_dimensions_exclude_list" {
+  type        = list(string)
+  description = "(Optional) List of schedule group names to exclude from auto-discovered dimensions."
+  default     = []
+}
+variable "auto_dimensions_include_list" {
+  type        = list(string)
+  description = "(Optional) List of schedule group names to include in auto-discovered dimensions. If empty, all discovered schedule groups are included."
+  default     = []
 }
 variable "name_prefix" {
   type        = string

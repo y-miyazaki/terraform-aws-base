@@ -13,6 +13,7 @@ module "aws_metric_rds_cluster" {
   is_postgresql                = var.metric_resource_rds_cluster.is_postgresql
   period                       = var.metric_resource_rds_cluster.period
   threshold                    = var.metric_resource_rds_cluster.threshold
+  threshold_override           = var.metric_resource_rds_cluster.threshold_override
   create_auto_dimensions       = var.metric_resource_rds_cluster.create_auto_dimensions
   auto_dimensions_exclude_list = var.metric_resource_rds_cluster.auto_dimensions_exclude_list
   auto_dimensions_include_list = var.metric_resource_rds_cluster.auto_dimensions_include_list

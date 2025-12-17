@@ -5,11 +5,16 @@ name: reusable-cd-resources-aws
 on:
   workflow_call:
     inputs:
-      arc_version:
-        description: "arc version to use (e.g. v1.0.5)"
+      arc_checksum:
+        description: "SHA256 checksum for arc release tarball"
         required: false
         type: string
-        default: "v1.0.5"
+        default: "9c34323caf1f5c4a39f96d7daa7574200f7ed86a6781cdcf6097a122925b1aa5" # pragma: allowlist secret
+      arc_version:
+        description: "arc version to use (e.g. v1.0.6)"
+        required: false
+        type: string
+        default: "v1.0.6"
       categories:
         description: "Comma-separated categories to limit collection (optional)"
         required: false
@@ -40,6 +45,7 @@ on:
         required: true
 
 env:
+  ARC_CHECKSUM: ${{ inputs.arc_checksum }}
   ARC_VERSION: ${{ inputs.arc_version }}
   CATEGORIES: ${{ inputs.categories }}
   ENVIRONMENT: ${{ inputs.environment }}
@@ -70,16 +76,18 @@ jobs:
       - name: Setup AWS Credentials
         uses: aws-actions/configure-aws-credentials@61815dcd50bd041e203e49132bacad1fd04d2708 # v5.1.1
         with:
-          role-to-assume: ${{ secrets.AWS_IAM_ROLE_ARN }}
           aws-region: ${{ secrets.AWS_REGION }}
+          role-to-assume: ${{ secrets.AWS_IAM_ROLE_ARN }}
 
       - name: Download and install arc
-        run: |
-          set -euo pipefail
-          VERSION="${ARC_VERSION}"
-          ASSET="arc-${VERSION#v}-linux-amd64.tar.gz"
-          curl -L "https://github.com/y-miyazaki/arc/releases/download/${VERSION}/${ASSET}" | tar -xzf - && sudo mv arc /usr/local/bin/ && sudo chmod +x /usr/local/bin/arc
-          arc --version
+        uses: ./.github/actions/install-github-release
+        with:
+          asset_pattern: "arc-linux-amd64.tar.gz"
+          binary: arc
+          checksum: ${{ env.ARC_CHECKSUM }}
+          repo: y-miyazaki/arc
+          strip_v_prefix: "true"
+          version: ${{ env.ARC_VERSION }}
 
       - name: Setup Parameters
         id: setup-parameters
@@ -151,7 +159,7 @@ jobs:
           ls -lh "${ARTIFACT_NAME}"
 
       - name: Upload Artifact
-        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5.0.0
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         with:
           name: ${{ steps.setup-parameters.outputs.artifact_name }}
           path: ${{ steps.setup-parameters.outputs.artifact_name }}
@@ -161,15 +169,15 @@ jobs:
         if: always()
         uses: ./.github/actions/summary
         with:
-          title: "AWS Resources (${{ inputs.environment }})"
-          status: "${{ job.status }}"
+          artifacts: |
+            ${{ steps.setup-parameters.outputs.artifact_name }}
+          outputs: |
+            artifact_name: ${{ steps.setup-parameters.outputs.artifact_name }}
           params: |
             arc_version: ${{ inputs.arc_version }}
             categories: ${{ inputs.categories }}
             environment: ${{ inputs.environment }}
             output_dir: ${{ inputs.output_dir }}
             region: ${{ inputs.region }}
-          outputs: |
-            artifact_name: ${{ steps.setup-parameters.outputs.artifact_name }}
-          artifacts: |
-            ${{ steps.setup-parameters.outputs.artifact_name }}
+          status: "${{ job.status }}"
+          title: "AWS Resources (${{ env.ENVIRONMENT }})"

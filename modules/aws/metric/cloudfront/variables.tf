@@ -59,6 +59,36 @@ variable "threshold" {
     origin_latency         = 10000
   }
 }
+variable "threshold_override" {
+  type = map(object({
+    # (Optional) CacheHitRate threshold (unit=%)
+    enabled_cache_hit_rate = optional(bool)
+    cache_hit_rate         = optional(number)
+    # (Optional) Error401Rate threshold (unit=%)
+    enabled_error_401_rate = optional(bool)
+    error_401_rate         = optional(number)
+    # (Optional) Error403Rate threshold (unit=%)
+    enabled_error_403_rate = optional(bool)
+    error_403_rate         = optional(number)
+    # (Optional) Error404Rate threshold (unit=%)
+    enabled_error_404_rate = optional(bool)
+    error_404_rate         = optional(number)
+    # (Optional) Error502Rate threshold (unit=%)
+    enabled_error_502_rate = optional(bool)
+    error_502_rate         = optional(number)
+    # (Optional) Error503Rate threshold (unit=%)
+    enabled_error_503_rate = optional(bool)
+    error_503_rate         = optional(number)
+    # (Optional) Error504Rate threshold (unit=%)
+    enabled_error_504_rate = optional(bool)
+    error_504_rate         = optional(number)
+    # (Optional) OriginLatency threshold (unit=Milliseconds)
+    enabled_origin_latency = optional(bool)
+    origin_latency         = optional(number)
+  }))
+  description = "(Optional) Override thresholds for specific resources. Key is the DistributionId."
+  default     = {}
+}
 variable "create_auto_dimensions" {
   type        = bool
   description = "(Optional) Builds a list of CloudFronts to automatically set dimensions. If this is true, the dimensions setting will be ignored."

@@ -10,6 +10,7 @@ module "aws_metric_redshift" {
 
   period                       = var.metric_resource_redshift.period
   threshold                    = var.metric_resource_redshift.threshold
+  threshold_override           = var.metric_resource_redshift.threshold_override
   create_auto_dimensions       = var.metric_resource_redshift.create_auto_dimensions
   auto_dimensions_exclude_list = var.metric_resource_redshift.auto_dimensions_exclude_list
   auto_dimensions_include_list = var.metric_resource_redshift.auto_dimensions_include_list
