@@ -18,6 +18,8 @@ This environment focuses on security monitoring including Security Hub, GuardDut
   - [name\_prefix](#name_prefix)
   - [kms](#kms)
   - [cloudwatch\_log\_group](#cloudwatch_log_group)
+    - [Centralized Configuration Pattern](#centralized-configuration-pattern)
+    - [Benefits of Centralized Configuration](#benefits-of-centralized-configuration)
   - [oidc\_github](#oidc_github)
   - [security](#security)
 - [Environment-Specific Configuration Examples](#environment-specific-configuration-examples)

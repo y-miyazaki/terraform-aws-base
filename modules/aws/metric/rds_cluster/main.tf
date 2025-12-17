@@ -9,15 +9,18 @@
 #--------------------------------------------------------------
 # Auto-discovery filter module
 #--------------------------------------------------------------
-module "filter" {
-  source     = "../../_internal/auto_discovery_filter"
+module "helper" {
+  source     = "../../_internal/metric_helper"
   is_enabled = var.is_enabled
 
-  create_auto       = var.create_auto_dimensions
-  source_list       = data.aws_rds_clusters.this.cluster_identifiers
-  include_list      = var.auto_dimensions_include_list
-  exclude_list      = var.auto_dimensions_exclude_list
-  manual_dimensions = var.dimensions
+  create_auto        = var.create_auto_dimensions
+  source_list        = data.aws_rds_clusters.this.cluster_identifiers
+  include_list       = var.auto_dimensions_include_list
+  exclude_list       = var.auto_dimensions_exclude_list
+  manual_dimensions  = var.dimensions
+  dimension_key      = "DBClusterIdentifier"
+  base_threshold     = var.threshold
+  threshold_override = var.threshold_override
 }
 
 #--------------------------------------------------------------
@@ -27,22 +30,8 @@ locals {
   url = "https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/Aurora.AuroraMySQL.Monitoring.Metrics.html"
 
   # Use filtered results from helper module
-  auto_dimensions = module.filter.filtered_list
-  safe_dimensions = module.filter.safe_manual_dimensions
-
-  list = var.create_auto_dimensions ? {
-    for v in local.auto_dimensions : v => {
-      name = v
-      dimensions = {
-        "DBClusterIdentifier" = v
-      }
-    }
-    } : {
-    for v in local.safe_dimensions : v.DBClusterIdentifier => {
-      name       = v.DBClusterIdentifier
-      dimensions = v
-    } if v != null && try(v.DBClusterIdentifier, null) != null && v.DBClusterIdentifier != ""
-  }
+  list                 = module.helper.list
+  effective_thresholds = module.helper.effective_thresholds
 }
 
 #--------------------------------------------------------------
@@ -59,10 +48,10 @@ resource "aws_cloudwatch_metric_alarm" "commit_latency" {
   metric_name               = "CommitLatency"
   period                    = var.period
   statistic                 = "Average"
-  threshold                 = var.threshold.commit_latency
+  threshold                 = local.effective_thresholds[each.key].commit_latency
   actions_enabled           = true
   alarm_actions             = var.alarm_actions
-  alarm_description         = "This is an alarm to check for <${local.url}|RDS commit latency>(>= ${var.threshold.commit_latency}ms)."
+  alarm_description         = "This is an alarm to check for <${local.url}|RDS commit latency>(>= ${local.effective_thresholds[each.key].commit_latency}ms)."
   insufficient_data_actions = var.insufficient_data_actions
   ok_actions                = var.ok_actions
   unit                      = "Milliseconds"
@@ -86,10 +75,10 @@ resource "aws_cloudwatch_metric_alarm" "cpu_credit_balance" {
   metric_name               = "CPUCreditBalance"
   period                    = var.period
   statistic                 = "Average"
-  threshold                 = var.threshold.cpu_credit_balance
+  threshold                 = local.effective_thresholds[each.key].cpu_credit_balance
   actions_enabled           = true
   alarm_actions             = var.alarm_actions
-  alarm_description         = "This is an alarm to check for <${local.url}|RDS CPU Credit Balance>(<= ${var.threshold.cpu_credit_balance})."
+  alarm_description         = "This is an alarm to check for <${local.url}|RDS CPU Credit Balance>(<= ${local.effective_thresholds[each.key].cpu_credit_balance})."
   insufficient_data_actions = var.insufficient_data_actions
   ok_actions                = var.ok_actions
   unit                      = "Count"
@@ -104,7 +93,10 @@ resource "aws_cloudwatch_metric_alarm" "cpu_credit_balance" {
 # Provides a CloudWatch Metric Alarm resource.
 #--------------------------------------------------------------
 resource "aws_cloudwatch_metric_alarm" "cpu_utilization" {
-  for_each = var.is_enabled && var.threshold.enabled_cpu_utilization ? local.list : {}
+  for_each = {
+    for k, v in local.list : k => v
+    if var.is_enabled && local.effective_thresholds[k].enabled_cpu_utilization
+  }
 
   alarm_name                = "${var.name_prefix}metric-rds-cluster-${each.value.name}-cpu-utilization"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
@@ -113,10 +105,10 @@ resource "aws_cloudwatch_metric_alarm" "cpu_utilization" {
   metric_name               = "CPUUtilization"
   period                    = var.period
   statistic                 = "Average"
-  threshold                 = var.threshold.cpu_utilization
+  threshold                 = local.effective_thresholds[each.key].cpu_utilization
   actions_enabled           = true
   alarm_actions             = var.alarm_actions
-  alarm_description         = "This is an alarm to check for <${local.url}|RDS CPU Utilization>(>= ${var.threshold.cpu_utilization}%)."
+  alarm_description         = "This is an alarm to check for <${local.url}|RDS CPU Utilization>(>= ${local.effective_thresholds[each.key].cpu_utilization}%)."
   insufficient_data_actions = var.insufficient_data_actions
   ok_actions                = var.ok_actions
   unit                      = "Percent"
@@ -131,7 +123,10 @@ resource "aws_cloudwatch_metric_alarm" "cpu_utilization" {
 # Provides a CloudWatch Metric Alarm resource.
 #--------------------------------------------------------------
 resource "aws_cloudwatch_metric_alarm" "database_connections" {
-  for_each = var.is_enabled && var.threshold.enabled_database_connections ? local.list : {}
+  for_each = {
+    for k, v in local.list : k => v
+    if var.is_enabled && local.effective_thresholds[k].enabled_database_connections
+  }
 
   alarm_name                = "${var.name_prefix}metric-rds-cluster-${each.value.name}-database-connections"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
@@ -140,10 +135,10 @@ resource "aws_cloudwatch_metric_alarm" "database_connections" {
   metric_name               = "DatabaseConnections"
   period                    = var.period
   statistic                 = "Average"
-  threshold                 = var.threshold.database_connections
+  threshold                 = local.effective_thresholds[each.key].database_connections
   actions_enabled           = true
   alarm_actions             = var.alarm_actions
-  alarm_description         = "This is an alarm to check for <${local.url}|RDS database connections>(>= ${var.threshold.database_connections})."
+  alarm_description         = "This is an alarm to check for <${local.url}|RDS database connections>(>= ${local.effective_thresholds[each.key].database_connections})."
   insufficient_data_actions = var.insufficient_data_actions
   ok_actions                = var.ok_actions
   unit                      = "Count"
@@ -167,10 +162,10 @@ resource "aws_cloudwatch_metric_alarm" "deadlocks" {
   metric_name               = "Deadlocks"
   period                    = var.period
   statistic                 = "Sum"
-  threshold                 = var.threshold.deadlocks
+  threshold                 = local.effective_thresholds[each.key].deadlocks
   actions_enabled           = true
   alarm_actions             = var.alarm_actions
-  alarm_description         = "This is an alarm to check for <${local.url}|RDS deadlocks>(>= ${var.threshold.deadlocks})."
+  alarm_description         = "This is an alarm to check for <${local.url}|RDS deadlocks>(>= ${local.effective_thresholds[each.key].deadlocks})."
   insufficient_data_actions = var.insufficient_data_actions
   ok_actions                = var.ok_actions
   unit                      = "Count/Second"
@@ -194,10 +189,10 @@ resource "aws_cloudwatch_metric_alarm" "delete_latency" {
   metric_name               = "DeleteLatency"
   period                    = var.period
   statistic                 = "Average"
-  threshold                 = var.threshold.delete_latency
+  threshold                 = local.effective_thresholds[each.key].delete_latency
   actions_enabled           = true
   alarm_actions             = var.alarm_actions
-  alarm_description         = "This is an alarm to check for <${local.url}|RDS delete latency>(>= ${var.threshold.delete_latency}s)."
+  alarm_description         = "This is an alarm to check for <${local.url}|RDS delete latency>(>= ${local.effective_thresholds[each.key].delete_latency}s)."
   insufficient_data_actions = var.insufficient_data_actions
   ok_actions                = var.ok_actions
   unit                      = "Seconds"
@@ -212,7 +207,10 @@ resource "aws_cloudwatch_metric_alarm" "delete_latency" {
 # Provides a CloudWatch Metric Alarm resource.
 #--------------------------------------------------------------
 resource "aws_cloudwatch_metric_alarm" "disk_queue_depth" {
-  for_each = var.is_enabled && var.threshold.enabled_disk_queue_depth ? local.list : {}
+  for_each = {
+    for k, v in local.list : k => v
+    if var.is_enabled && local.effective_thresholds[k].enabled_disk_queue_depth
+  }
 
   alarm_name                = "${var.name_prefix}metric-rds-cluster-${each.value.name}-disk-queue-depth"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
@@ -221,10 +219,10 @@ resource "aws_cloudwatch_metric_alarm" "disk_queue_depth" {
   metric_name               = "DiskQueueDepth"
   period                    = var.period
   statistic                 = "Average"
-  threshold                 = var.threshold.disk_queue_depth
+  threshold                 = local.effective_thresholds[each.key].disk_queue_depth
   actions_enabled           = true
   alarm_actions             = var.alarm_actions
-  alarm_description         = "This is an alarm to check for <${local.url}|RDS disk queue depth>(>= ${var.threshold.disk_queue_depth})."
+  alarm_description         = "This is an alarm to check for <${local.url}|RDS disk queue depth>(>= ${local.effective_thresholds[each.key].disk_queue_depth})."
   insufficient_data_actions = var.insufficient_data_actions
   ok_actions                = var.ok_actions
   unit                      = "Count"
@@ -248,10 +246,10 @@ resource "aws_cloudwatch_metric_alarm" "freeable_memory" {
   metric_name               = "FreeableMemory"
   period                    = var.period
   statistic                 = "Average"
-  threshold                 = var.threshold.freeable_memory
+  threshold                 = local.effective_thresholds[each.key].freeable_memory
   actions_enabled           = true
   alarm_actions             = var.alarm_actions
-  alarm_description         = "This is an alarm to check for <${local.url}|RDS freeable memory>(<= ${var.threshold.freeable_memory}MB)."
+  alarm_description         = "This is an alarm to check for <${local.url}|RDS freeable memory>(<= ${local.effective_thresholds[each.key].freeable_memory}MB)."
   insufficient_data_actions = var.insufficient_data_actions
   ok_actions                = var.ok_actions
   unit                      = "Megabits"
@@ -266,7 +264,10 @@ resource "aws_cloudwatch_metric_alarm" "freeable_memory" {
 # Provides a CloudWatch Metric Alarm resource.
 #--------------------------------------------------------------
 resource "aws_cloudwatch_metric_alarm" "read_latency" {
-  for_each = var.is_enabled && var.threshold.enabled_read_latency ? local.list : {}
+  for_each = {
+    for k, v in local.list : k => v
+    if var.is_enabled && local.effective_thresholds[k].enabled_read_latency
+  }
 
   alarm_name                = "${var.name_prefix}metric-rds-cluster-${each.value.name}-read-latency"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
@@ -275,10 +276,10 @@ resource "aws_cloudwatch_metric_alarm" "read_latency" {
   metric_name               = "ReadLatency"
   period                    = var.period
   statistic                 = "Average"
-  threshold                 = var.threshold.read_latency
+  threshold                 = local.effective_thresholds[each.key].read_latency
   actions_enabled           = true
   alarm_actions             = var.alarm_actions
-  alarm_description         = "This is an alarm to check for <${local.url}|RDS read latency>(>= ${var.threshold.read_latency}s)."
+  alarm_description         = "This is an alarm to check for <${local.url}|RDS read latency>(>= ${local.effective_thresholds[each.key].read_latency}s)."
   insufficient_data_actions = var.insufficient_data_actions
   ok_actions                = var.ok_actions
   unit                      = "Seconds"
@@ -293,7 +294,10 @@ resource "aws_cloudwatch_metric_alarm" "read_latency" {
 # Provides a CloudWatch Metric Alarm resource.
 #--------------------------------------------------------------
 resource "aws_cloudwatch_metric_alarm" "write_latency" {
-  for_each = var.is_enabled && var.threshold.enabled_write_latency ? local.list : {}
+  for_each = {
+    for k, v in local.list : k => v
+    if var.is_enabled && local.effective_thresholds[k].enabled_write_latency
+  }
 
   alarm_name                = "${var.name_prefix}metric-rds-cluster-${each.value.name}-write-latency"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
@@ -302,10 +306,10 @@ resource "aws_cloudwatch_metric_alarm" "write_latency" {
   metric_name               = "WriteLatency"
   period                    = var.period
   statistic                 = "Average"
-  threshold                 = var.threshold.write_latency
+  threshold                 = local.effective_thresholds[each.key].write_latency
   actions_enabled           = true
   alarm_actions             = var.alarm_actions
-  alarm_description         = "This is an alarm to check for <${local.url}|RDS write latency(>= ${var.threshold.write_latency}s)."
+  alarm_description         = "This is an alarm to check for <${local.url}|RDS write latency(>= ${local.effective_thresholds[each.key].write_latency}s)."
   insufficient_data_actions = var.insufficient_data_actions
   ok_actions                = var.ok_actions
   unit                      = "Seconds"
@@ -329,10 +333,10 @@ resource "aws_cloudwatch_metric_alarm" "aurora_replica_lag" {
   metric_name               = "AuroraReplicaLag"
   period                    = var.period
   statistic                 = "Average"
-  threshold                 = var.threshold.aurora_replica_lag
+  threshold                 = local.effective_thresholds[each.key].aurora_replica_lag
   actions_enabled           = true
   alarm_actions             = var.alarm_actions
-  alarm_description         = "This is an alarm to check for <${local.url}|RDS Aurora replica lag>(>= ${var.threshold.aurora_replica_lag}ms)."
+  alarm_description         = "This is an alarm to check for <${local.url}|RDS Aurora replica lag>(>= ${local.effective_thresholds[each.key].aurora_replica_lag}ms)."
   insufficient_data_actions = var.insufficient_data_actions
   ok_actions                = var.ok_actions
   unit                      = "Milliseconds"
@@ -347,7 +351,10 @@ resource "aws_cloudwatch_metric_alarm" "aurora_replica_lag" {
 # Provides a CloudWatch Metric Alarm resource.
 #--------------------------------------------------------------
 resource "aws_cloudwatch_metric_alarm" "buffer_cache_hit_ratio" {
-  for_each = var.is_enabled && var.threshold.enabled_buffer_cache_hit_ratio ? local.list : {}
+  for_each = {
+    for k, v in local.list : k => v
+    if var.is_enabled && local.effective_thresholds[k].enabled_buffer_cache_hit_ratio
+  }
 
   alarm_name                = "${var.name_prefix}metric-rds-cluster-${each.value.name}-buffer-cache-hit-ratio"
   comparison_operator       = "LessThanOrEqualToThreshold"
@@ -356,10 +363,10 @@ resource "aws_cloudwatch_metric_alarm" "buffer_cache_hit_ratio" {
   metric_name               = "BufferCacheHitRatio"
   period                    = var.period
   statistic                 = "Average"
-  threshold                 = var.threshold.buffer_cache_hit_ratio
+  threshold                 = local.effective_thresholds[each.key].buffer_cache_hit_ratio
   actions_enabled           = true
   alarm_actions             = var.alarm_actions
-  alarm_description         = "This is an alarm to check for <${local.url}|RDS buffer cache hit ratio>(<= ${var.threshold.buffer_cache_hit_ratio}%)."
+  alarm_description         = "This is an alarm to check for <${local.url}|RDS buffer cache hit ratio>(<= ${local.effective_thresholds[each.key].buffer_cache_hit_ratio}%)."
   insufficient_data_actions = var.insufficient_data_actions
   ok_actions                = var.ok_actions
   unit                      = "Percent"
@@ -374,7 +381,10 @@ resource "aws_cloudwatch_metric_alarm" "buffer_cache_hit_ratio" {
 # Provides a CloudWatch Metric Alarm resource.
 #--------------------------------------------------------------
 resource "aws_cloudwatch_metric_alarm" "engine_uptime" {
-  for_each = var.is_enabled && var.threshold.enabled_engine_uptime ? local.list : {}
+  for_each = {
+    for k, v in local.list : k => v
+    if var.is_enabled && local.effective_thresholds[k].enabled_engine_uptime
+  }
 
   alarm_name                = "${var.name_prefix}metric-rds-cluster-${each.value.name}-engine-uptime"
   comparison_operator       = "LessThanOrEqualToThreshold"
@@ -383,10 +393,10 @@ resource "aws_cloudwatch_metric_alarm" "engine_uptime" {
   metric_name               = "EngineUptime"
   period                    = var.period
   statistic                 = "Average"
-  threshold                 = var.threshold.engine_uptime
+  threshold                 = local.effective_thresholds[each.key].engine_uptime
   actions_enabled           = true
   alarm_actions             = var.alarm_actions
-  alarm_description         = "This is an alarm to check for <${local.url}|RDS engine uptime>(<= ${var.threshold.engine_uptime}s)."
+  alarm_description         = "This is an alarm to check for <${local.url}|RDS engine uptime>(<= ${local.effective_thresholds[each.key].engine_uptime}s)."
   insufficient_data_actions = var.insufficient_data_actions
   ok_actions                = var.ok_actions
   unit                      = "Seconds"
@@ -401,7 +411,10 @@ resource "aws_cloudwatch_metric_alarm" "engine_uptime" {
 # Provides a CloudWatch Metric Alarm resource.
 #--------------------------------------------------------------
 resource "aws_cloudwatch_metric_alarm" "free_local_storage" {
-  for_each = var.is_enabled && var.threshold.enabled_free_local_storage ? local.list : {}
+  for_each = {
+    for k, v in local.list : k => v
+    if var.is_enabled && local.effective_thresholds[k].enabled_free_local_storage
+  }
 
   alarm_name                = "${var.name_prefix}metric-rds-cluster-${each.value.name}-free-local-storage"
   comparison_operator       = "LessThanOrEqualToThreshold"
@@ -410,10 +423,10 @@ resource "aws_cloudwatch_metric_alarm" "free_local_storage" {
   metric_name               = "FreeLocalStorage"
   period                    = var.period
   statistic                 = "Average"
-  threshold                 = var.threshold.free_local_storage
+  threshold                 = local.effective_thresholds[each.key].free_local_storage
   actions_enabled           = true
   alarm_actions             = var.alarm_actions
-  alarm_description         = "This is an alarm to check for <${local.url}|RDS free local storage>(<= ${var.threshold.free_local_storage}bytes)."
+  alarm_description         = "This is an alarm to check for <${local.url}|RDS free local storage>(<= ${local.effective_thresholds[each.key].free_local_storage}bytes)."
   insufficient_data_actions = var.insufficient_data_actions
   ok_actions                = var.ok_actions
   unit                      = "Bytes"
@@ -428,7 +441,10 @@ resource "aws_cloudwatch_metric_alarm" "free_local_storage" {
 # Provides a CloudWatch Metric Alarm resource.
 #--------------------------------------------------------------
 resource "aws_cloudwatch_metric_alarm" "network_receive_throughput" {
-  for_each = var.is_enabled && var.threshold.enabled_network_receive_throughput ? local.list : {}
+  for_each = {
+    for k, v in local.list : k => v
+    if var.is_enabled && local.effective_thresholds[k].enabled_network_receive_throughput
+  }
 
   alarm_name                = "${var.name_prefix}metric-rds-cluster-${each.value.name}-network-receive-throughput"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
@@ -437,10 +453,10 @@ resource "aws_cloudwatch_metric_alarm" "network_receive_throughput" {
   metric_name               = "NetworkReceiveThroughput"
   period                    = var.period
   statistic                 = "Average"
-  threshold                 = var.threshold.network_receive_throughput
+  threshold                 = local.effective_thresholds[each.key].network_receive_throughput
   actions_enabled           = true
   alarm_actions             = var.alarm_actions
-  alarm_description         = "This is an alarm to check for <${local.url}|RDS network receive throughput>(>= ${var.threshold.network_receive_throughput}bytes/sec)."
+  alarm_description         = "This is an alarm to check for <${local.url}|RDS network receive throughput>(>= ${local.effective_thresholds[each.key].network_receive_throughput}bytes/sec)."
   insufficient_data_actions = var.insufficient_data_actions
   ok_actions                = var.ok_actions
   unit                      = "Bytes/Second"
@@ -455,7 +471,10 @@ resource "aws_cloudwatch_metric_alarm" "network_receive_throughput" {
 # Provides a CloudWatch Metric Alarm resource.
 #--------------------------------------------------------------
 resource "aws_cloudwatch_metric_alarm" "network_transmit_throughput" {
-  for_each = var.is_enabled && var.threshold.enabled_network_transmit_throughput ? local.list : {}
+  for_each = {
+    for k, v in local.list : k => v
+    if var.is_enabled && local.effective_thresholds[k].enabled_network_transmit_throughput
+  }
 
   alarm_name                = "${var.name_prefix}metric-rds-cluster-${each.value.name}-network-transmit-throughput"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
@@ -464,10 +483,10 @@ resource "aws_cloudwatch_metric_alarm" "network_transmit_throughput" {
   metric_name               = "NetworkTransmitThroughput"
   period                    = var.period
   statistic                 = "Average"
-  threshold                 = var.threshold.network_transmit_throughput
+  threshold                 = local.effective_thresholds[each.key].network_transmit_throughput
   actions_enabled           = true
   alarm_actions             = var.alarm_actions
-  alarm_description         = "This is an alarm to check for <${local.url}|RDS network transmit throughput>(>= ${var.threshold.network_transmit_throughput}bytes/sec)."
+  alarm_description         = "This is an alarm to check for <${local.url}|RDS network transmit throughput>(>= ${local.effective_thresholds[each.key].network_transmit_throughput}bytes/sec)."
   insufficient_data_actions = var.insufficient_data_actions
   ok_actions                = var.ok_actions
   unit                      = "Bytes/Second"
@@ -482,7 +501,10 @@ resource "aws_cloudwatch_metric_alarm" "network_transmit_throughput" {
 # Provides a CloudWatch Metric Alarm resource.
 #--------------------------------------------------------------
 resource "aws_cloudwatch_metric_alarm" "read_iops" {
-  for_each = var.is_enabled && var.threshold.enabled_read_iops ? local.list : {}
+  for_each = {
+    for k, v in local.list : k => v
+    if var.is_enabled && local.effective_thresholds[k].enabled_read_iops
+  }
 
   alarm_name                = "${var.name_prefix}metric-rds-cluster-${each.value.name}-read-iops"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
@@ -491,10 +513,10 @@ resource "aws_cloudwatch_metric_alarm" "read_iops" {
   metric_name               = "ReadIOPS"
   period                    = var.period
   statistic                 = "Average"
-  threshold                 = var.threshold.read_iops
+  threshold                 = local.effective_thresholds[each.key].read_iops
   actions_enabled           = true
   alarm_actions             = var.alarm_actions
-  alarm_description         = "This is an alarm to check for <${local.url}|RDS read IOPS>(>= ${var.threshold.read_iops})."
+  alarm_description         = "This is an alarm to check for <${local.url}|RDS read IOPS>(>= ${local.effective_thresholds[each.key].read_iops})."
   insufficient_data_actions = var.insufficient_data_actions
   ok_actions                = var.ok_actions
   unit                      = "Count/Second"
@@ -509,7 +531,10 @@ resource "aws_cloudwatch_metric_alarm" "read_iops" {
 # Provides a CloudWatch Metric Alarm resource.
 #--------------------------------------------------------------
 resource "aws_cloudwatch_metric_alarm" "read_throughput" {
-  for_each = var.is_enabled && var.threshold.enabled_read_throughput ? local.list : {}
+  for_each = {
+    for k, v in local.list : k => v
+    if var.is_enabled && local.effective_thresholds[k].enabled_read_throughput
+  }
 
   alarm_name                = "${var.name_prefix}metric-rds-cluster-${each.value.name}-read-throughput"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
@@ -518,10 +543,10 @@ resource "aws_cloudwatch_metric_alarm" "read_throughput" {
   metric_name               = "ReadThroughput"
   period                    = var.period
   statistic                 = "Average"
-  threshold                 = var.threshold.read_throughput
+  threshold                 = local.effective_thresholds[each.key].read_throughput
   actions_enabled           = true
   alarm_actions             = var.alarm_actions
-  alarm_description         = "This is an alarm to check for <${local.url}|RDS read throughput>(>= ${var.threshold.read_throughput}bytes/sec)."
+  alarm_description         = "This is an alarm to check for <${local.url}|RDS read throughput>(>= ${local.effective_thresholds[each.key].read_throughput}bytes/sec)."
   insufficient_data_actions = var.insufficient_data_actions
   ok_actions                = var.ok_actions
   unit                      = "Bytes/Second"
@@ -536,7 +561,10 @@ resource "aws_cloudwatch_metric_alarm" "read_throughput" {
 # Provides a CloudWatch Metric Alarm resource.
 #--------------------------------------------------------------
 resource "aws_cloudwatch_metric_alarm" "write_iops" {
-  for_each = var.is_enabled && var.threshold.enabled_write_iops ? local.list : {}
+  for_each = {
+    for k, v in local.list : k => v
+    if var.is_enabled && local.effective_thresholds[k].enabled_write_iops
+  }
 
   alarm_name                = "${var.name_prefix}metric-rds-cluster-${each.value.name}-write-iops"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
@@ -545,10 +573,10 @@ resource "aws_cloudwatch_metric_alarm" "write_iops" {
   metric_name               = "WriteIOPS"
   period                    = var.period
   statistic                 = "Average"
-  threshold                 = var.threshold.write_iops
+  threshold                 = local.effective_thresholds[each.key].write_iops
   actions_enabled           = true
   alarm_actions             = var.alarm_actions
-  alarm_description         = "This is an alarm to check for <${local.url}|RDS write IOPS>(>= ${var.threshold.write_iops})."
+  alarm_description         = "This is an alarm to check for <${local.url}|RDS write IOPS>(>= ${local.effective_thresholds[each.key].write_iops})."
   insufficient_data_actions = var.insufficient_data_actions
   ok_actions                = var.ok_actions
   unit                      = "Count/Second"
@@ -563,7 +591,10 @@ resource "aws_cloudwatch_metric_alarm" "write_iops" {
 # Provides a CloudWatch Metric Alarm resource.
 #--------------------------------------------------------------
 resource "aws_cloudwatch_metric_alarm" "write_throughput" {
-  for_each = var.is_enabled && var.threshold.enabled_write_throughput ? local.list : {}
+  for_each = {
+    for k, v in local.list : k => v
+    if var.is_enabled && local.effective_thresholds[k].enabled_write_throughput
+  }
 
   alarm_name                = "${var.name_prefix}metric-rds-cluster-${each.value.name}-write-throughput"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
@@ -572,10 +603,10 @@ resource "aws_cloudwatch_metric_alarm" "write_throughput" {
   metric_name               = "WriteThroughput"
   period                    = var.period
   statistic                 = "Average"
-  threshold                 = var.threshold.write_throughput
+  threshold                 = local.effective_thresholds[each.key].write_throughput
   actions_enabled           = true
   alarm_actions             = var.alarm_actions
-  alarm_description         = "This is an alarm to check for <${local.url}|RDS write throughput>(>= ${var.threshold.write_throughput}bytes/sec)."
+  alarm_description         = "This is an alarm to check for <${local.url}|RDS write throughput>(>= ${local.effective_thresholds[each.key].write_throughput}bytes/sec)."
   insufficient_data_actions = var.insufficient_data_actions
   ok_actions                = var.ok_actions
   unit                      = "Bytes/Second"

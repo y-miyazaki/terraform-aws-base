@@ -6,15 +6,18 @@
 #--------------------------------------------------------------
 # Auto-discovery filter module
 #--------------------------------------------------------------
-module "filter" {
-  source     = "../../_internal/auto_discovery_filter"
+module "helper" {
+  source     = "../../_internal/metric_helper"
   is_enabled = var.is_enabled
 
-  create_auto       = var.create_auto_dimensions
-  source_list       = var.create_auto_dimensions && length(data.external.list) > 0 ? split(",", data.external.list[0].result.list) : []
-  include_list      = var.auto_dimensions_include_list
-  exclude_list      = var.auto_dimensions_exclude_list
-  manual_dimensions = var.dimensions
+  create_auto        = var.create_auto_dimensions
+  source_list        = var.create_auto_dimensions && length(data.external.list) > 0 ? split(",", data.external.list[0].result.list) : []
+  include_list       = var.auto_dimensions_include_list
+  exclude_list       = var.auto_dimensions_exclude_list
+  manual_dimensions  = var.dimensions
+  dimension_key      = "CacheClusterId"
+  base_threshold     = var.threshold
+  threshold_override = var.threshold_override
 }
 
 #--------------------------------------------------------------
@@ -24,22 +27,8 @@ locals {
   url = "https://docs.aws.amazon.com/AmazonElastiCache/latest/red-ug/CacheMetrics.Redis.html"
 
   # Use filtered results from helper module
-  auto_dimensions = module.filter.filtered_list
-  safe_dimensions = module.filter.safe_manual_dimensions
-
-  list = var.create_auto_dimensions ? {
-    for v in local.auto_dimensions : v => {
-      name = v
-      dimensions = {
-        "CacheClusterId" = v
-      }
-    }
-    } : {
-    for v in local.safe_dimensions : v.CacheClusterId => {
-      name       = v.CacheClusterId
-      dimensions = v
-    } if v != null && try(v.CacheClusterId, null) != null && v.CacheClusterId != ""
-  }
+  list                 = module.helper.list
+  effective_thresholds = module.helper.effective_thresholds
 }
 
 #--------------------------------------------------------------
@@ -47,7 +36,10 @@ locals {
 # Provides a CloudWatch Metric Alarm resource.
 #--------------------------------------------------------------
 resource "aws_cloudwatch_metric_alarm" "authentication_failures" {
-  for_each = var.is_enabled && var.threshold.enabled_authentication_failures ? local.list : {}
+  for_each = {
+    for k, v in local.list : k => v
+    if var.is_enabled && local.effective_thresholds[k].enabled_authentication_failures
+  }
 
   alarm_name                = "${var.name_prefix}metric-elasticache-${each.value.name}-authentication-failures"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
@@ -56,10 +48,10 @@ resource "aws_cloudwatch_metric_alarm" "authentication_failures" {
   metric_name               = "AuthenticationFailures"
   period                    = var.period
   statistic                 = "Sum"
-  threshold                 = var.threshold.authentication_failures
+  threshold                 = local.effective_thresholds[each.key].authentication_failures
   actions_enabled           = true
   alarm_actions             = var.alarm_actions
-  alarm_description         = "This is an alarm to check for <${local.url}|ElastiCache authentication failures>(>= ${var.threshold.authentication_failures})."
+  alarm_description         = "This is an alarm to check for <${local.url}|ElastiCache authentication failures>(>= ${local.effective_thresholds[each.key].authentication_failures})."
   insufficient_data_actions = var.insufficient_data_actions
   ok_actions                = var.ok_actions
   unit                      = "Count"
@@ -74,7 +66,10 @@ resource "aws_cloudwatch_metric_alarm" "authentication_failures" {
 # Provides a CloudWatch Metric Alarm resource.
 #--------------------------------------------------------------
 resource "aws_cloudwatch_metric_alarm" "cache_hit_rate" {
-  for_each = var.is_enabled && var.threshold.enabled_cache_hit_rate ? local.list : {}
+  for_each = {
+    for k, v in local.list : k => v
+    if var.is_enabled && local.effective_thresholds[k].enabled_cache_hit_rate
+  }
 
   alarm_name          = "${var.name_prefix}metric-elasticache-${each.value.name}-cache-hit-rate"
   comparison_operator = "LessThanOrEqualToThreshold"
@@ -82,7 +77,7 @@ resource "aws_cloudwatch_metric_alarm" "cache_hit_rate" {
   threshold           = var.threshold.cache_hit_rate
   actions_enabled     = true
   alarm_actions       = var.alarm_actions
-  alarm_description   = "This is an alarm to check for <${local.url}|ElastiCache cache hit rate>(<= ${var.threshold.cache_hit_rate}%)."
+  alarm_description   = "This is an alarm to check for <${local.url}|ElastiCache cache hit rate>(<= ${local.effective_thresholds[each.key].cache_hit_rate}%)."
   ok_actions          = var.ok_actions
   treat_missing_data  = "notBreaching"
   metric_query {
@@ -122,7 +117,10 @@ resource "aws_cloudwatch_metric_alarm" "cache_hit_rate" {
 # Provides a CloudWatch Metric Alarm resource.
 #--------------------------------------------------------------
 resource "aws_cloudwatch_metric_alarm" "command_authorization_failures" {
-  for_each = var.is_enabled && var.threshold.enabled_command_authorization_failures ? local.list : {}
+  for_each = {
+    for k, v in local.list : k => v
+    if var.is_enabled && local.effective_thresholds[k].enabled_command_authorization_failures
+  }
 
   alarm_name                = "${var.name_prefix}metric-elasticache-${each.value.name}-command-authorization-failures"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
@@ -131,10 +129,10 @@ resource "aws_cloudwatch_metric_alarm" "command_authorization_failures" {
   metric_name               = "CommandAuthorizationFailures"
   period                    = var.period
   statistic                 = "Sum"
-  threshold                 = var.threshold.command_authorization_failures
+  threshold                 = local.effective_thresholds[each.key].command_authorization_failures
   actions_enabled           = true
   alarm_actions             = var.alarm_actions
-  alarm_description         = "This is an alarm to check for <${local.url}|ElastiCache command authentication failures>(>= ${var.threshold.command_authorization_failures})."
+  alarm_description         = "This is an alarm to check for <${local.url}|ElastiCache command authentication failures>(>= ${local.effective_thresholds[each.key].command_authorization_failures})."
   insufficient_data_actions = var.insufficient_data_actions
   ok_actions                = var.ok_actions
   unit                      = "Count"
@@ -149,7 +147,10 @@ resource "aws_cloudwatch_metric_alarm" "command_authorization_failures" {
 # Provides a CloudWatch Metric Alarm resource.
 #--------------------------------------------------------------
 resource "aws_cloudwatch_metric_alarm" "curr_connections" {
-  for_each = var.is_enabled && var.threshold.enabled_curr_connections ? local.list : {}
+  for_each = {
+    for k, v in local.list : k => v
+    if var.is_enabled && local.effective_thresholds[k].enabled_curr_connections
+  }
 
   alarm_name                = "${var.name_prefix}metric-elasticache-${each.value.name}-curr-connections"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
@@ -158,10 +159,10 @@ resource "aws_cloudwatch_metric_alarm" "curr_connections" {
   metric_name               = "CurrConnections"
   period                    = var.period
   statistic                 = "Average"
-  threshold                 = var.threshold.curr_connections
+  threshold                 = local.effective_thresholds[each.key].curr_connections
   actions_enabled           = true
   alarm_actions             = var.alarm_actions
-  alarm_description         = "This is an alarm to check for <${local.url}|ElastiCache current connections>(>= ${var.threshold.curr_connections})."
+  alarm_description         = "This is an alarm to check for <${local.url}|ElastiCache current connections>(>= ${local.effective_thresholds[each.key].curr_connections})."
   insufficient_data_actions = var.insufficient_data_actions
   ok_actions                = var.ok_actions
   unit                      = "Count"
@@ -176,7 +177,10 @@ resource "aws_cloudwatch_metric_alarm" "curr_connections" {
 # Provides a CloudWatch Metric Alarm resource.
 #--------------------------------------------------------------
 resource "aws_cloudwatch_metric_alarm" "database_memory_usage_percentage" {
-  for_each = var.is_enabled && var.threshold.enabled_database_memory_usage_percentage ? local.list : {}
+  for_each = {
+    for k, v in local.list : k => v
+    if var.is_enabled && local.effective_thresholds[k].enabled_database_memory_usage_percentage
+  }
 
   alarm_name                = "${var.name_prefix}metric-elasticache-${each.value.name}-database-memory-usage-percentage"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
@@ -185,10 +189,10 @@ resource "aws_cloudwatch_metric_alarm" "database_memory_usage_percentage" {
   metric_name               = "DatabaseMemoryUsagePercentage"
   period                    = var.period
   statistic                 = "Average"
-  threshold                 = var.threshold.database_memory_usage_percentage
+  threshold                 = local.effective_thresholds[each.key].database_memory_usage_percentage
   actions_enabled           = true
   alarm_actions             = var.alarm_actions
-  alarm_description         = "This is an alarm to check for <${local.url}|ElastiCache database memory usage percentage>(<= ${var.threshold.database_memory_usage_percentage}%)."
+  alarm_description         = "This is an alarm to check for <${local.url}|ElastiCache database memory usage percentage>(<= ${local.effective_thresholds[each.key].database_memory_usage_percentage}%)."
   insufficient_data_actions = var.insufficient_data_actions
   ok_actions                = var.ok_actions
   unit                      = "Percent"
@@ -203,7 +207,10 @@ resource "aws_cloudwatch_metric_alarm" "database_memory_usage_percentage" {
 # Provides a CloudWatch Metric Alarm resource.
 #--------------------------------------------------------------
 resource "aws_cloudwatch_metric_alarm" "engine_cpu_utilization" {
-  for_each = var.is_enabled && var.threshold.enabled_engine_cpu_utilization ? local.list : {}
+  for_each = {
+    for k, v in local.list : k => v
+    if var.is_enabled && local.effective_thresholds[k].enabled_engine_cpu_utilization
+  }
 
   alarm_name                = "${var.name_prefix}metric-elasticache-${each.value.name}-engine-cpu-utilization"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
@@ -212,10 +219,10 @@ resource "aws_cloudwatch_metric_alarm" "engine_cpu_utilization" {
   metric_name               = "EngineCPUUtilization"
   period                    = var.period
   statistic                 = "Average"
-  threshold                 = var.threshold.engine_cpu_utilization
+  threshold                 = local.effective_thresholds[each.key].engine_cpu_utilization
   actions_enabled           = true
   alarm_actions             = var.alarm_actions
-  alarm_description         = "This is an alarm to check for <${local.url}|ElastiCache Engine CPU Utilization>(>= ${var.threshold.engine_cpu_utilization}%)."
+  alarm_description         = "This is an alarm to check for <${local.url}|ElastiCache Engine CPU Utilization>(>= ${local.effective_thresholds[each.key].engine_cpu_utilization}%)."
   insufficient_data_actions = var.insufficient_data_actions
   ok_actions                = var.ok_actions
   unit                      = "Percent"
@@ -230,7 +237,10 @@ resource "aws_cloudwatch_metric_alarm" "engine_cpu_utilization" {
 # Provides a CloudWatch Metric Alarm resource.
 #--------------------------------------------------------------
 resource "aws_cloudwatch_metric_alarm" "error_count" {
-  for_each = var.is_enabled && var.threshold.enabled_error_count ? local.list : {}
+  for_each = {
+    for k, v in local.list : k => v
+    if var.is_enabled && local.effective_thresholds[k].enabled_error_count
+  }
 
   alarm_name                = "${var.name_prefix}metric-elasticache-${each.value.name}-error-count"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
@@ -239,10 +249,10 @@ resource "aws_cloudwatch_metric_alarm" "error_count" {
   metric_name               = "ErrorCount"
   period                    = var.period
   statistic                 = "Sum"
-  threshold                 = var.threshold.error_count
+  threshold                 = local.effective_thresholds[each.key].error_count
   actions_enabled           = true
   alarm_actions             = var.alarm_actions
-  alarm_description         = "This is an alarm to check for <${local.url}|ElastiCache error count>(>= ${var.threshold.error_count})."
+  alarm_description         = "This is an alarm to check for <${local.url}|ElastiCache error count>(>= ${local.effective_thresholds[each.key].error_count})."
   insufficient_data_actions = var.insufficient_data_actions
   ok_actions                = var.ok_actions
   unit                      = "Count"
@@ -257,7 +267,10 @@ resource "aws_cloudwatch_metric_alarm" "error_count" {
 # Provides a CloudWatch Metric Alarm resource.
 #--------------------------------------------------------------
 resource "aws_cloudwatch_metric_alarm" "evictions" {
-  for_each = var.is_enabled && var.threshold.enabled_evictions ? local.list : {}
+  for_each = {
+    for k, v in local.list : k => v
+    if var.is_enabled && local.effective_thresholds[k].enabled_evictions
+  }
 
   alarm_name                = "${var.name_prefix}metric-elasticache-${each.value.name}-evictions"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
@@ -266,10 +279,10 @@ resource "aws_cloudwatch_metric_alarm" "evictions" {
   metric_name               = "Evictions"
   period                    = var.period
   statistic                 = "Sum"
-  threshold                 = var.threshold.evictions
+  threshold                 = local.effective_thresholds[each.key].evictions
   actions_enabled           = true
   alarm_actions             = var.alarm_actions
-  alarm_description         = "This is an alarm to check for <${local.url}|ElastiCache evictions>(>= ${var.threshold.evictions})."
+  alarm_description         = "This is an alarm to check for <${local.url}|ElastiCache evictions>(>= ${local.effective_thresholds[each.key].evictions})."
   insufficient_data_actions = var.insufficient_data_actions
   ok_actions                = var.ok_actions
   unit                      = "Count"
@@ -283,7 +296,10 @@ resource "aws_cloudwatch_metric_alarm" "evictions" {
 # Provides a CloudWatch Metric Alarm resource.
 #--------------------------------------------------------------
 resource "aws_cloudwatch_metric_alarm" "iam_authentication_expirations" {
-  for_each = var.is_enabled && var.threshold.enabled_iam_authentication_expirations ? local.list : {}
+  for_each = {
+    for k, v in local.list : k => v
+    if var.is_enabled && local.effective_thresholds[k].enabled_iam_authentication_expirations
+  }
 
   alarm_name                = "${var.name_prefix}metric-elasticache-${each.value.name}-iam-authentication-expirations"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
@@ -292,10 +308,10 @@ resource "aws_cloudwatch_metric_alarm" "iam_authentication_expirations" {
   metric_name               = "IamAuthenticationExpirations"
   period                    = var.period
   statistic                 = "Sum"
-  threshold                 = var.threshold.iam_authentication_expirations
+  threshold                 = local.effective_thresholds[each.key].iam_authentication_expirations
   actions_enabled           = true
   alarm_actions             = var.alarm_actions
-  alarm_description         = "This is an alarm to check for <${local.url}|ElastiCache IAM authentication expirations>(>= ${var.threshold.iam_authentication_expirations})."
+  alarm_description         = "This is an alarm to check for <${local.url}|ElastiCache IAM authentication expirations>(>= ${local.effective_thresholds[each.key].iam_authentication_expirations})."
   insufficient_data_actions = var.insufficient_data_actions
   ok_actions                = var.ok_actions
   unit                      = "Count"
@@ -310,7 +326,10 @@ resource "aws_cloudwatch_metric_alarm" "iam_authentication_expirations" {
 # Provides a CloudWatch Metric Alarm resource.
 #--------------------------------------------------------------
 resource "aws_cloudwatch_metric_alarm" "iam_authentication_throttling" {
-  for_each = var.is_enabled && var.threshold.enabled_iam_authentication_throttling ? local.list : {}
+  for_each = {
+    for k, v in local.list : k => v
+    if var.is_enabled && local.effective_thresholds[k].enabled_iam_authentication_throttling
+  }
 
   alarm_name                = "${var.name_prefix}metric-elasticache-${each.value.name}-iam-authentication-throttling"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
@@ -319,10 +338,10 @@ resource "aws_cloudwatch_metric_alarm" "iam_authentication_throttling" {
   metric_name               = "IamAuthenticationThrottling"
   period                    = var.period
   statistic                 = "Sum"
-  threshold                 = var.threshold.iam_authentication_throttling
+  threshold                 = local.effective_thresholds[each.key].iam_authentication_throttling
   actions_enabled           = true
   alarm_actions             = var.alarm_actions
-  alarm_description         = "This is an alarm to check for <${local.url}|ElastiCache IAM authentication throttling>(>= ${var.threshold.iam_authentication_throttling})."
+  alarm_description         = "This is an alarm to check for <${local.url}|ElastiCache IAM authentication throttling>(>= ${local.effective_thresholds[each.key].iam_authentication_throttling})."
   insufficient_data_actions = var.insufficient_data_actions
   ok_actions                = var.ok_actions
   unit                      = "Count"
@@ -337,7 +356,10 @@ resource "aws_cloudwatch_metric_alarm" "iam_authentication_throttling" {
 # Provides a CloudWatch Metric Alarm resource.
 #--------------------------------------------------------------
 resource "aws_cloudwatch_metric_alarm" "key_authorization_failures" {
-  for_each = var.is_enabled && var.threshold.enabled_key_authorization_failures ? local.list : {}
+  for_each = {
+    for k, v in local.list : k => v
+    if var.is_enabled && local.effective_thresholds[k].enabled_key_authorization_failures
+  }
 
   alarm_name                = "${var.name_prefix}metric-elasticache-${each.value.name}-key-authorization-failures"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
@@ -346,10 +368,10 @@ resource "aws_cloudwatch_metric_alarm" "key_authorization_failures" {
   metric_name               = "KeyAuthorizationFailures"
   period                    = var.period
   statistic                 = "Sum"
-  threshold                 = var.threshold.key_authorization_failures
+  threshold                 = local.effective_thresholds[each.key].key_authorization_failures
   actions_enabled           = true
   alarm_actions             = var.alarm_actions
-  alarm_description         = "This is an alarm to check for <${local.url}|ElastiCache key authorization failures>(>= ${var.threshold.key_authorization_failures})."
+  alarm_description         = "This is an alarm to check for <${local.url}|ElastiCache key authorization failures>(>= ${local.effective_thresholds[each.key].key_authorization_failures})."
   insufficient_data_actions = var.insufficient_data_actions
   ok_actions                = var.ok_actions
   unit                      = "Count"
@@ -364,7 +386,10 @@ resource "aws_cloudwatch_metric_alarm" "key_authorization_failures" {
 # Provides a CloudWatch Metric Alarm resource.
 #--------------------------------------------------------------
 resource "aws_cloudwatch_metric_alarm" "memory_fragmentation_ratio" {
-  for_each = var.is_enabled && var.threshold.enabled_memory_fragmentation_ratio ? local.list : {}
+  for_each = {
+    for k, v in local.list : k => v
+    if var.is_enabled && local.effective_thresholds[k].enabled_memory_fragmentation_ratio
+  }
 
   alarm_name                = "${var.name_prefix}metric-elasticache-${each.value.name}-memory-fragmentation-ratio"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
@@ -373,10 +398,10 @@ resource "aws_cloudwatch_metric_alarm" "memory_fragmentation_ratio" {
   metric_name               = "MemoryFragmentationRatio"
   period                    = var.period
   statistic                 = "Average"
-  threshold                 = var.threshold.memory_fragmentation_ratio
+  threshold                 = local.effective_thresholds[each.key].memory_fragmentation_ratio
   actions_enabled           = true
   alarm_actions             = var.alarm_actions
-  alarm_description         = "This is an alarm to check for <${local.url}|ElastiCache memory fragmentation ratio>(>= ${var.threshold.memory_fragmentation_ratio})."
+  alarm_description         = "This is an alarm to check for <${local.url}|ElastiCache memory fragmentation ratio>(>= ${local.effective_thresholds[each.key].memory_fragmentation_ratio})."
   insufficient_data_actions = var.insufficient_data_actions
   ok_actions                = var.ok_actions
   treat_missing_data        = "notBreaching"
@@ -390,7 +415,10 @@ resource "aws_cloudwatch_metric_alarm" "memory_fragmentation_ratio" {
 # Provides a CloudWatch Metric Alarm resource.
 #--------------------------------------------------------------
 resource "aws_cloudwatch_metric_alarm" "new_connections" {
-  for_each = var.is_enabled && var.threshold.enabled_new_connections ? local.list : {}
+  for_each = {
+    for k, v in local.list : k => v
+    if var.is_enabled && local.effective_thresholds[k].enabled_new_connections
+  }
 
   alarm_name                = "${var.name_prefix}metric-elasticache-${each.value.name}-new-connections"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
@@ -399,10 +427,10 @@ resource "aws_cloudwatch_metric_alarm" "new_connections" {
   metric_name               = "NewConnections"
   period                    = var.period
   statistic                 = "Average"
-  threshold                 = var.threshold.new_connections
+  threshold                 = local.effective_thresholds[each.key].new_connections
   actions_enabled           = true
   alarm_actions             = var.alarm_actions
-  alarm_description         = "This is an alarm to check for <${local.url}|ElastiCache new connections>(>= ${var.threshold.new_connections})."
+  alarm_description         = "This is an alarm to check for <${local.url}|ElastiCache new connections>(>= ${local.effective_thresholds[each.key].new_connections})."
   insufficient_data_actions = var.insufficient_data_actions
   ok_actions                = var.ok_actions
   unit                      = "Count"
@@ -417,7 +445,10 @@ resource "aws_cloudwatch_metric_alarm" "new_connections" {
 # Provides a CloudWatch Metric Alarm resource.
 #--------------------------------------------------------------
 resource "aws_cloudwatch_metric_alarm" "replication_bytes" {
-  for_each = var.is_enabled && var.threshold.enabled_replication_bytes ? local.list : {}
+  for_each = {
+    for k, v in local.list : k => v
+    if var.is_enabled && local.effective_thresholds[k].enabled_replication_bytes
+  }
 
   alarm_name                = "${var.name_prefix}metric-elasticache-${each.value.name}-replication-bytes"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
@@ -426,10 +457,10 @@ resource "aws_cloudwatch_metric_alarm" "replication_bytes" {
   metric_name               = "ReplicationBytes"
   period                    = var.period
   statistic                 = "Average"
-  threshold                 = var.threshold.replication_bytes
+  threshold                 = local.effective_thresholds[each.key].replication_bytes
   actions_enabled           = true
   alarm_actions             = var.alarm_actions
-  alarm_description         = "This is an alarm to check for <${local.url}|ElastiCache replication bytes>(>= ${var.threshold.replication_bytes})."
+  alarm_description         = "This is an alarm to check for <${local.url}|ElastiCache replication bytes>(>= ${local.effective_thresholds[each.key].replication_bytes})."
   insufficient_data_actions = var.insufficient_data_actions
   ok_actions                = var.ok_actions
   unit                      = "Bytes"
@@ -444,7 +475,10 @@ resource "aws_cloudwatch_metric_alarm" "replication_bytes" {
 # Provides a CloudWatch Metric Alarm resource.
 #--------------------------------------------------------------
 resource "aws_cloudwatch_metric_alarm" "replication_lag" {
-  for_each = var.is_enabled && var.threshold.enabled_replication_lag ? local.list : {}
+  for_each = {
+    for k, v in local.list : k => v
+    if var.is_enabled && local.effective_thresholds[k].enabled_replication_lag
+  }
 
   alarm_name                = "${var.name_prefix}metric-elasticache-${each.value.name}-replication-lag"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
@@ -453,10 +487,10 @@ resource "aws_cloudwatch_metric_alarm" "replication_lag" {
   metric_name               = "ReplicationLag"
   period                    = var.period
   statistic                 = "Average"
-  threshold                 = var.threshold.replication_lag
+  threshold                 = local.effective_thresholds[each.key].replication_lag
   actions_enabled           = true
   alarm_actions             = var.alarm_actions
-  alarm_description         = "This is an alarm to check for <${local.url}|ElastiCache replication lag>(>= ${var.threshold.replication_lag}s)."
+  alarm_description         = "This is an alarm to check for <${local.url}|ElastiCache replication lag>(>= ${local.effective_thresholds[each.key].replication_lag}s)."
   insufficient_data_actions = var.insufficient_data_actions
   ok_actions                = var.ok_actions
   unit                      = "Seconds"
@@ -471,7 +505,10 @@ resource "aws_cloudwatch_metric_alarm" "replication_lag" {
 # Provides a CloudWatch Metric Alarm resource.
 #--------------------------------------------------------------
 resource "aws_cloudwatch_metric_alarm" "save_in_progress" {
-  for_each = var.is_enabled && var.threshold.enabled_save_in_progress ? local.list : {}
+  for_each = {
+    for k, v in local.list : k => v
+    if var.is_enabled && local.effective_thresholds[k].enabled_save_in_progress
+  }
 
   alarm_name                = "${var.name_prefix}metric-elasticache-${each.value.name}-save-in-progress"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
@@ -480,10 +517,10 @@ resource "aws_cloudwatch_metric_alarm" "save_in_progress" {
   metric_name               = "SaveInProgress"
   period                    = var.period
   statistic                 = "Maximum"
-  threshold                 = var.threshold.save_in_progress
+  threshold                 = local.effective_thresholds[each.key].save_in_progress
   actions_enabled           = true
   alarm_actions             = var.alarm_actions
-  alarm_description         = "This is an alarm to check for <${local.url}|ElastiCache save in progress>(>= ${var.threshold.save_in_progress})."
+  alarm_description         = "This is an alarm to check for <${local.url}|ElastiCache save in progress>(>= ${local.effective_thresholds[each.key].save_in_progress})."
   insufficient_data_actions = var.insufficient_data_actions
   ok_actions                = var.ok_actions
   treat_missing_data        = "notBreaching"
@@ -497,7 +534,10 @@ resource "aws_cloudwatch_metric_alarm" "save_in_progress" {
 # Provides a CloudWatch Metric Alarm resource.
 #--------------------------------------------------------------
 resource "aws_cloudwatch_metric_alarm" "successful_read_request_latency" {
-  for_each = var.is_enabled && var.threshold.enabled_successful_read_request_latency ? local.list : {}
+  for_each = {
+    for k, v in local.list : k => v
+    if var.is_enabled && local.effective_thresholds[k].enabled_successful_read_request_latency
+  }
 
   alarm_name                = "${var.name_prefix}metric-elasticache-${each.value.name}-successful-read-request-latency"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
@@ -506,10 +546,10 @@ resource "aws_cloudwatch_metric_alarm" "successful_read_request_latency" {
   metric_name               = "SuccessfulReadRequestLatency"
   period                    = var.period
   statistic                 = "Average"
-  threshold                 = var.threshold.successful_read_request_latency
+  threshold                 = local.effective_thresholds[each.key].successful_read_request_latency
   actions_enabled           = true
   alarm_actions             = var.alarm_actions
-  alarm_description         = "This is an alarm to check for <${local.url}|ElastiCache successful read request latency>(>= ${var.threshold.successful_read_request_latency}μs)."
+  alarm_description         = "This is an alarm to check for <${local.url}|ElastiCache successful read request latency>(>= ${local.effective_thresholds[each.key].successful_read_request_latency}μs)."
   insufficient_data_actions = var.insufficient_data_actions
   ok_actions                = var.ok_actions
   unit                      = "Microseconds"
@@ -524,7 +564,10 @@ resource "aws_cloudwatch_metric_alarm" "successful_read_request_latency" {
 # Provides a CloudWatch Metric Alarm resource.
 #--------------------------------------------------------------
 resource "aws_cloudwatch_metric_alarm" "successful_write_request_latency" {
-  for_each = var.is_enabled && var.threshold.enabled_successful_write_request_latency ? local.list : {}
+  for_each = {
+    for k, v in local.list : k => v
+    if var.is_enabled && local.effective_thresholds[k].enabled_successful_write_request_latency
+  }
 
   alarm_name                = "${var.name_prefix}metric-elasticache-${each.value.name}-successful-write-request-latency"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
@@ -533,10 +576,10 @@ resource "aws_cloudwatch_metric_alarm" "successful_write_request_latency" {
   metric_name               = "SuccessfulWriteRequestLatency"
   period                    = var.period
   statistic                 = "Average"
-  threshold                 = var.threshold.successful_write_request_latency
+  threshold                 = local.effective_thresholds[each.key].successful_write_request_latency
   actions_enabled           = true
   alarm_actions             = var.alarm_actions
-  alarm_description         = "This is an alarm to check for <${local.url}|ElastiCache successful write request latency>(>= ${var.threshold.successful_write_request_latency}μs)."
+  alarm_description         = "This is an alarm to check for <${local.url}|ElastiCache successful write request latency>(>= ${local.effective_thresholds[each.key].successful_write_request_latency}μs)."
   insufficient_data_actions = var.insufficient_data_actions
   ok_actions                = var.ok_actions
   unit                      = "Microseconds"
@@ -551,7 +594,10 @@ resource "aws_cloudwatch_metric_alarm" "successful_write_request_latency" {
 # Provides a CloudWatch Metric Alarm resource.
 #--------------------------------------------------------------
 resource "aws_cloudwatch_metric_alarm" "swap_usage" {
-  for_each = var.is_enabled && var.threshold.enabled_swap_usage ? local.list : {}
+  for_each = {
+    for k, v in local.list : k => v
+    if var.is_enabled && local.effective_thresholds[k].enabled_swap_usage
+  }
 
   alarm_name                = "${var.name_prefix}metric-elasticache-${each.value.name}-swap-usage"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
@@ -560,10 +606,10 @@ resource "aws_cloudwatch_metric_alarm" "swap_usage" {
   metric_name               = "SwapUsage"
   period                    = var.period
   statistic                 = "Average"
-  threshold                 = var.threshold.swap_usage
+  threshold                 = local.effective_thresholds[each.key].swap_usage
   actions_enabled           = true
   alarm_actions             = var.alarm_actions
-  alarm_description         = "This is an alarm to check for <${local.url}|ElastiCache swap usage>(>= ${var.threshold.swap_usage}Bytes)."
+  alarm_description         = "This is an alarm to check for <${local.url}|ElastiCache swap usage>(>= ${local.effective_thresholds[each.key].swap_usage}Bytes)."
   insufficient_data_actions = var.insufficient_data_actions
   ok_actions                = var.ok_actions
   unit                      = "Bytes"
@@ -578,7 +624,10 @@ resource "aws_cloudwatch_metric_alarm" "swap_usage" {
 # Provides a CloudWatch Metric Alarm resource.
 #--------------------------------------------------------------
 resource "aws_cloudwatch_metric_alarm" "traffic_management_active" {
-  for_each = var.is_enabled && var.threshold.enabled_traffic_management_active ? local.list : {}
+  for_each = {
+    for k, v in local.list : k => v
+    if var.is_enabled && local.effective_thresholds[k].enabled_traffic_management_active
+  }
 
   alarm_name                = "${var.name_prefix}metric-elasticache-${each.value.name}-traffic-management-active"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
@@ -587,10 +636,10 @@ resource "aws_cloudwatch_metric_alarm" "traffic_management_active" {
   metric_name               = "TrafficManagementActive"
   period                    = var.period
   statistic                 = "Maximum"
-  threshold                 = var.threshold.traffic_management_active
+  threshold                 = local.effective_thresholds[each.key].traffic_management_active
   actions_enabled           = true
   alarm_actions             = var.alarm_actions
-  alarm_description         = "This is an alarm to check for <${local.url}|ElastiCache traffic management active>(>= ${var.threshold.traffic_management_active})."
+  alarm_description         = "This is an alarm to check for <${local.url}|ElastiCache traffic management active>(>= ${local.effective_thresholds[each.key].traffic_management_active})."
   insufficient_data_actions = var.insufficient_data_actions
   ok_actions                = var.ok_actions
   treat_missing_data        = "notBreaching"

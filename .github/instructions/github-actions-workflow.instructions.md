@@ -117,9 +117,9 @@ Artifact:
 - name: Deploy with retry
   uses: nick-invision/retry@v3
   with:
-    timeout_minutes: 10
-    max_attempts: 3
     command: make deploy
+    max_attempts: 3
+    timeout_minutes: 10
 ```
 
 ### Performance

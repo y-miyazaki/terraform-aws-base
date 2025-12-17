@@ -10,6 +10,7 @@ module "aws_metric_lambda" {
 
   period                       = var.metric_resource_lambda.period
   threshold                    = var.metric_resource_lambda.threshold
+  threshold_override           = var.metric_resource_lambda.threshold_override
   create_auto_dimensions       = var.metric_resource_lambda.create_auto_dimensions
   auto_dimensions_exclude_list = var.metric_resource_lambda.auto_dimensions_exclude_list
   auto_dimensions_include_list = var.metric_resource_lambda.auto_dimensions_include_list

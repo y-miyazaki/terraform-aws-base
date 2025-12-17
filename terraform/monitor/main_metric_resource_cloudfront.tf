@@ -14,6 +14,7 @@ module "aws_metric_cloudfront" {
 
   period                       = var.metric_resource_cloudfront.period
   threshold                    = var.metric_resource_cloudfront.threshold
+  threshold_override           = var.metric_resource_cloudfront.threshold_override
   create_auto_dimensions       = var.metric_resource_cloudfront.create_auto_dimensions
   auto_dimensions_exclude_list = var.metric_resource_cloudfront.auto_dimensions_exclude_list
   auto_dimensions_include_list = var.metric_resource_cloudfront.auto_dimensions_include_list

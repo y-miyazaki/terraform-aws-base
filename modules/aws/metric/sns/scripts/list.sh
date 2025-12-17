@@ -1,10 +1,10 @@
 #!/bin/bash
 #######################################
-# Description: List SQS Dead Letter Queue ARNs as a JSON object
+# Description: List SNS topic names as a JSON object
 # Usage: ./list.sh
 #   -h, --help    Display this help message
 #
-# This script queries AWS SQS and outputs Dead Letter Queue ARNs in JSON format.
+# This script queries AWS SNS and outputs topic names in JSON format.
 #######################################
 
 # Error handling: exit on error, unset variable, or failed pipeline
@@ -32,7 +32,7 @@ set -euo pipefail
 function show_usage {
     echo "Usage: $(basename "$0")"
     echo ""
-    echo "Description: List SQS Dead Letter Queue ARNs as a JSON object."
+    echo "Description: List SNS topic names as a JSON object."
     echo ""
     echo "Options:"
     echo "  -h, --help    Display this help message"
@@ -85,13 +85,11 @@ function main {
         exit 1
     fi
 
-    # Get SQS Dead Letter Queue ARNs
+    # Get SNS topic names (extract topic name from ARN)
     mapfile -t list < <(
-        aws sqs list-queues | jq -r '.QueueUrls[]' | while read -r url; do
-            arn=$(aws sqs get-queue-attributes --queue-url "$url" --attribute-names RedrivePolicy | jq -r '.Attributes.RedrivePolicy' | jq -r '.deadLetterTargetArn // empty')
-            if [ -n "$arn" ]; then
-                echo "$arn"
-            fi
+        aws sns list-topics --query 'Topics[].TopicArn' --output text | tr '\t' '\n' | while read -r arn; do
+            # Extract topic name from ARN (arn:aws:sns:region:account-id:topic-name)
+            echo "${arn##*:}"
         done
     )
 

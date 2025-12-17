@@ -1,0 +1,22 @@
+# zizmor configuration file
+# https://docs.zizmor.sh/configuration/
+
+rules:
+  # Ignore github-env warning in install-github-release composite action
+  # This is intentional for setting up PATH
+  github-env:
+    ignore:
+      - action.yml
+
+  # Ignore template-injection for docker context
+  # The context comes from trusted workflow step output, not external input
+  template-injection:
+    ignore:
+      - reusable-cd-go-registry-aws.yaml:121
+
+  # Ignore cache-poisoning in Go release workflow
+  # Go module/build cache doesn't affect release artifacts produced by goreleaser
+  cache-poisoning:
+    ignore:
+      - reusable-cd-go-releaser.yaml:158
+      - reusable-cd-go-releaser.yaml:166

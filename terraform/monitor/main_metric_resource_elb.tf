@@ -10,6 +10,7 @@ module "aws_metric_elb" {
 
   period                       = var.metric_resource_elb.period
   threshold                    = var.metric_resource_elb.threshold
+  threshold_override           = var.metric_resource_elb.threshold_override
   create_auto_dimensions       = var.metric_resource_elb.create_auto_dimensions
   auto_dimensions_exclude_list = var.metric_resource_elb.auto_dimensions_exclude_list
   auto_dimensions_include_list = var.metric_resource_elb.auto_dimensions_include_list

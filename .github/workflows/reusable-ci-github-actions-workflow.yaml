@@ -1,42 +1,99 @@
-# This is a reusable GitHub Actions workflow for CI that performs linting on GitHub Actions workflows.
-# It uses aqua to install necessary tools and runs actionlint, ghalint, and zizmor
+# Reusable workflow: lint and validate GitHub Actions workflows
+# - Uses actionlint for workflow syntax validation
+# - Uses ghalint for security/settings validation
+# - Uses zizmor-action for static analysis
+# - Does NOT require aqua.yaml in the repository
 name: reusable-ci-github-actions-workflow
 
 on:
   workflow_call:
     inputs:
-      aqua_version:
+      actionlint_checksum:
+        description: "SHA256 checksum for actionlint release tarball"
         required: false
         type: string
-        default: v2.55.1
+        default: "233b280d05e100837f4af1433c7b40a5dcb306e3aa68fb4f17f8a7f45a7df7b4" # pragma: allowlist secret
+      actionlint_version:
+        description: "actionlint version to use"
+        required: false
+        type: string
+        default: "1.7.9"
+      ghalint_checksum:
+        description: "SHA256 checksum for ghalint release tarball"
+        required: false
+        type: string
+        default: "977555b7142cc057aad4663679772510a9ed3f1687f26f2359d18bb6b67314fe" # pragma: allowlist secret
+      ghalint_version:
+        description: "ghalint version to use"
+        required: false
+        type: string
+        default: "1.5.4"
       zizmor_version:
+        description: "zizmor version to use"
         required: false
         type: string
-        default: 1.7.0
+        default: "1.18.0"
 
 env:
-  AQUA_VERSION: ${{ inputs.aqua_version }}
+  ACTIONLINT_CHECKSUM: ${{ inputs.actionlint_checksum }}
+  ACTIONLINT_VERSION: ${{ inputs.actionlint_version }}
+  GHALINT_CHECKSUM: ${{ inputs.ghalint_checksum }}
+  GHALINT_VERSION: ${{ inputs.ghalint_version }}
   ZIZMOR_VERSION: ${{ inputs.zizmor_version }}
 
 jobs:
   lint:
     runs-on: ubuntu-24.04
-    timeout-minutes: 5
+    timeout-minutes: 10
     permissions:
       contents: read
     steps:
-      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+      - name: Checkout Code
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
         with:
           persist-credentials: false
-      - uses: aquaproj/aqua-installer@11dd79b4e498d471a9385aa9fb7f62bb5f52a73c # v4.0.4
+
+      # GitHub Actions workflow linter
+      - name: Setup actionlint
+        uses: ./.github/actions/install-github-release
         with:
-          aqua_version: ${{ inputs.aqua_version }}
-      # github workflows/action's Static Checker
-      - name: Run actionlint
+          binary: actionlint
+          checksum: ${{ env.ACTIONLINT_CHECKSUM }}
+          repo: rhysd/actionlint
+          version: ${{ env.ACTIONLINT_VERSION }}
+
+      # Security and settings validation (persist-credentials, timeout-minutes, etc.)
+      - name: Setup ghalint
+        uses: ./.github/actions/install-github-release
+        with:
+          binary: ghalint
+          checksum: ${{ env.GHALINT_CHECKSUM }}
+          repo: suzuki-shunsuke/ghalint
+          version: ${{ env.GHALINT_VERSION }}
+
+      - name: Exec actionlint
         run: actionlint -color -oneline
-      # checkout's persist-credentials: false checker
-      - name: Run ghalint
+
+      - name: Exec ghalint
         run: ghalint run
-      # A static analysis tool for GitHub Actions
-      - name: Run zizmor
-        run: docker run -t -v .:/github ghcr.io/woodruffw/zizmor:"${ZIZMOR_VERSION}" /github --min-severity medium
+
+      # Static analysis tool for GitHub Actions security
+      - name: Exec zizmor
+        uses: zizmorcore/zizmor-action@e639db99335bc9038abc0e066dfcd72e23d26fb4 # v0.3.0
+        with:
+          advanced-security: false
+          min-severity: medium
+          version: ${{ env.ZIZMOR_VERSION }}
+
+      - name: Summary
+        if: always()
+        uses: ./.github/actions/summary
+        with:
+          artifacts: |
+            (none)
+          params: |
+            actionlint_version: ${{ env.ACTIONLINT_VERSION }}
+            ghalint_version: ${{ env.GHALINT_VERSION }}
+            zizmor_version: ${{ env.ZIZMOR_VERSION }}
+          status: "${{ job.status }}"
+          title: "GitHub Actions Workflow Lint"

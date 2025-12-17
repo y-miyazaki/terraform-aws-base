@@ -6,15 +6,18 @@
 #--------------------------------------------------------------
 # Auto-discovery filter module
 #--------------------------------------------------------------
-module "filter" {
-  source     = "../../_internal/auto_discovery_filter"
+module "helper" {
+  source     = "../../_internal/metric_helper"
   is_enabled = var.is_enabled
 
-  create_auto       = var.create_auto_dimensions
-  source_list       = var.create_auto_dimensions && length(data.external.list) > 0 ? [for v in split(",", data.external.list[0].result.list) : split(":", v)[length(split(":", v)) - 1]] : []
-  include_list      = var.auto_dimensions_include_list
-  exclude_list      = var.auto_dimensions_exclude_list
-  manual_dimensions = var.dimensions
+  create_auto        = var.create_auto_dimensions
+  source_list        = var.create_auto_dimensions && length(data.external.list) > 0 ? [for v in split(",", data.external.list[0].result.list) : split(":", v)[length(split(":", v)) - 1]] : []
+  include_list       = var.auto_dimensions_include_list
+  exclude_list       = var.auto_dimensions_exclude_list
+  manual_dimensions  = var.dimensions
+  dimension_key      = "ApiName"
+  base_threshold     = var.threshold
+  threshold_override = var.threshold_override
 }
 
 #--------------------------------------------------------------
@@ -24,22 +27,8 @@ locals {
   url = "https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-metrics-and-dimensions.html"
 
   # Use filtered results from helper module
-  auto_dimensions = module.filter.filtered_list
-  safe_dimensions = module.filter.safe_manual_dimensions
-
-  list = var.create_auto_dimensions ? {
-    for v in local.auto_dimensions : v => {
-      name = v
-      dimensions = {
-        "ApiName" = v
-      }
-    }
-    } : {
-    for v in local.safe_dimensions : v.ApiName => {
-      name       = v.ApiName
-      dimensions = v
-    } if v != null && try(v.ApiName, null) != null && v.ApiName != ""
-  }
+  list                 = module.helper.list
+  effective_thresholds = module.helper.effective_thresholds
 }
 
 #--------------------------------------------------------------
@@ -149,7 +138,10 @@ resource "aws_cloudwatch_metric_alarm" "error_5xx" {
 # Provides a CloudWatch Metric Alarm resource.
 #--------------------------------------------------------------
 resource "aws_cloudwatch_metric_alarm" "latency" {
-  for_each = var.is_enabled && var.threshold.enabled_latency ? local.list : {}
+  for_each = {
+    for k, v in local.list : k => v
+    if var.is_enabled && local.effective_thresholds[k].enabled_latency
+  }
 
   alarm_name                = "${var.name_prefix}metric-api-gateway-${each.value.name}-latency"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
@@ -158,10 +150,10 @@ resource "aws_cloudwatch_metric_alarm" "latency" {
   metric_name               = "Latency"
   period                    = var.period
   statistic                 = "Maximum"
-  threshold                 = var.threshold.latency
+  threshold                 = local.effective_thresholds[each.key].latency
   actions_enabled           = true
   alarm_actions             = var.alarm_actions
-  alarm_description         = "This is an alarm to check for <${local.url}|API Gateway latency>(>= ${var.threshold.latency}ms)."
+  alarm_description         = "This is an alarm to check for <${local.url}|API Gateway latency>(>= ${local.effective_thresholds[each.key].latency}ms)."
   insufficient_data_actions = var.insufficient_data_actions
   ok_actions                = var.ok_actions
   unit                      = "Milliseconds"

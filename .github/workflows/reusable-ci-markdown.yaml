@@ -91,7 +91,7 @@ jobs:
           outputs: |
             (none)
           params: |
-            component: ${{ inputs.component }}
-            environment: ${{ inputs.environment }}
+            component: ${{ env.COMPONENT }}
+            environment: ${{ env.ENVIRONMENT }}
           status: "${{ job.status }}"
           title: "Markdownlint"

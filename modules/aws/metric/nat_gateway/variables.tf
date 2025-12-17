@@ -99,6 +99,60 @@ variable "threshold" {
     peak_packets_per_second              = 100000
   }
 }
+variable "threshold_override" {
+  type = map(object({
+    # ActiveConnectionCount threshold (unit=Count)
+    enabled_active_connection_count = optional(bool)
+    active_connection_count         = optional(number)
+    # BytesOutToDestination threshold (unit=Bytes)
+    enabled_bytes_out_to_destination = optional(bool)
+    bytes_out_to_destination         = optional(number)
+    # BytesInFromSource threshold (unit=Bytes)
+    enabled_bytes_in_from_source = optional(bool)
+    bytes_in_from_source         = optional(number)
+    # BytesInFromDestination threshold (unit=Bytes)
+    enabled_bytes_in_from_destination = optional(bool)
+    bytes_in_from_destination         = optional(number)
+    # BytesOutToSource threshold (unit=Bytes)
+    enabled_bytes_out_to_source = optional(bool)
+    bytes_out_to_source         = optional(number)
+    # PacketsDropCount threshold (unit=Count)
+    enabled_packets_drop_count = optional(bool)
+    packets_drop_count         = optional(number)
+    # ErrorPortAllocation threshold (unit=Count)
+    enabled_error_port_allocation = optional(bool)
+    error_port_allocation         = optional(number)
+    # IdleTimeoutCount threshold (unit=Count)
+    enabled_idle_timeout_count = optional(bool)
+    idle_timeout_count         = optional(number)
+    # PacketsInFromDestination threshold (unit=Count)
+    enabled_packets_in_from_destination = optional(bool)
+    packets_in_from_destination         = optional(number)
+    # PacketsInFromSource threshold (unit=Count)
+    enabled_packets_in_from_source = optional(bool)
+    packets_in_from_source         = optional(number)
+    # PacketsOutToDestination threshold (unit=Count)
+    enabled_packets_out_to_destination = optional(bool)
+    packets_out_to_destination         = optional(number)
+    # PacketsOutToSource threshold (unit=Count)
+    enabled_packets_out_to_source = optional(bool)
+    packets_out_to_source         = optional(number)
+    # ConnectionAttemptCount threshold (unit=Count)
+    enabled_connection_attempt_count = optional(bool)
+    connection_attempt_count         = optional(number)
+    # ConnectionEstablishedCount threshold (unit=Count)
+    enabled_connection_established_count = optional(bool)
+    connection_established_count         = optional(number)
+    # PeakBytesPerSecond threshold (unit=Bytes/Second)
+    enabled_peak_bytes_per_second = optional(bool)
+    peak_bytes_per_second         = optional(number)
+    # PeakPacketsPerSecond threshold (unit=Count/Second)
+    enabled_peak_packets_per_second = optional(bool)
+    peak_packets_per_second         = optional(number)
+  }))
+  description = "(Optional) Override thresholds for specific NAT Gateways. Key is the NatGatewayId."
+  default     = {}
+}
 variable "create_auto_dimensions" {
   type        = bool
   description = "(Optional) Builds a list of NAT Gateways to automatically set dimensions. If this is true, the dimensions setting will be ignored."

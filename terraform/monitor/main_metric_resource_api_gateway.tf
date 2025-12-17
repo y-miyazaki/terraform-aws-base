@@ -10,6 +10,7 @@ module "aws_metric_api_gateway" {
 
   period                       = var.metric_resource_api_gateway.period
   threshold                    = var.metric_resource_api_gateway.threshold
+  threshold_override           = var.metric_resource_api_gateway.threshold_override
   create_auto_dimensions       = var.metric_resource_api_gateway.create_auto_dimensions
   auto_dimensions_exclude_list = var.metric_resource_api_gateway.auto_dimensions_exclude_list
   auto_dimensions_include_list = var.metric_resource_api_gateway.auto_dimensions_include_list

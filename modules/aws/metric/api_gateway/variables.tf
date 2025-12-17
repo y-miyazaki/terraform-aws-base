@@ -34,6 +34,21 @@ variable "threshold" {
     latency          = 10000
   }
 }
+variable "threshold_override" {
+  type = map(object({
+    # (Optional) 4XXerror threshold (unit=%)
+    enabled_error4XX = optional(bool)
+    error4XX         = optional(number)
+    # (Optional) 5XXerror threshold (unit=%)
+    enabled_error5XX = optional(bool)
+    error5XX         = optional(number)
+    # (Optional) Latency threshold (unit=Milliseconds)
+    enabled_latency = optional(bool)
+    latency         = optional(number)
+  }))
+  description = "(Optional) Override thresholds for specific resources. Key is the ApiName."
+  default     = {}
+}
 variable "create_auto_dimensions" {
   type        = bool
   description = "(Optional) Builds a list of API Gateways to automatically set dimensions. If this is true, the dimensions setting will be ignored."

@@ -50,6 +50,7 @@ on:
         required: true
 
 env:
+  COMPONENT: ${{ inputs.component }}
   DOCKER_CONTEXT: ${{ inputs.docker_context }}
   DOCKERFILE: ${{ inputs.dockerfile }}
   ECR_REGISTRY: ${{ inputs.ecr_registry }}
@@ -86,11 +87,13 @@ jobs:
 
       - name: Setup image metadata
         id: meta
+        env:
+          ECR_LOGIN_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         run: |
           IMAGE_TAG_VAL="${IMAGE_TAG}"
           if [ -z "$IMAGE_TAG_VAL" ]; then IMAGE_TAG_VAL="${GITHUB_SHA::12}"; fi
           REGISTRY_INPUT="${ECR_REGISTRY}"
-          if [ -z "$REGISTRY_INPUT" ]; then REGISTRY_INPUT="${{ steps.login-ecr.outputs.registry }}"; fi
+          if [ -z "$REGISTRY_INPUT" ]; then REGISTRY_INPUT="${ECR_LOGIN_REGISTRY}"; fi
           REPOSITORY="${ECR_REPOSITORY}"
           DOCKER_CONTEXT_VAL="${DOCKER_CONTEXT}"
           if [ -z "$DOCKER_CONTEXT_VAL" ]; then DOCKER_CONTEXT_VAL="${GO_PROJECT_PATH}"; fi
@@ -130,8 +133,8 @@ jobs:
           outputs: |
             image: ${{ steps.meta.outputs.registry }}/${{ steps.meta.outputs.repository }}:${{ steps.meta.outputs.image_tag }}
           params: |
-            component: ${{ inputs.component }}
-            ecr_repository: ${{ inputs.ecr_repository }}
-            image_tag: ${{ inputs.image_tag }}
+            component: ${{ env.COMPONENT }}
+            ecr_repository: ${{ env.ECR_REPOSITORY }}
+            image_tag: ${{ env.IMAGE_TAG }}
           status: "${{ job.status }}"
           title: "${{ format('Docker Image: {0}/{1}:{2}', steps.meta.outputs.registry, steps.meta.outputs.repository, steps.meta.outputs.image_tag) }}"

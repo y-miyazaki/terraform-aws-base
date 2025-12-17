@@ -998,6 +998,13 @@ metric_resource_api_gateway = {
     enabled_latency = true
     latency         = 8000
   }
+  # (Optional) Override thresholds for specific resources. Key is the ApiName.
+  # threshold_override = {
+  #   "resource-name" = {
+  #     enabled_some_metric = false
+  #   }
+  # }
+  threshold_override = {}
   # (Optional) Builds a list of API Gateways to automatically set dimensions. If this is true, the dimensions setting will be ignored.
   create_auto_dimensions = true
   # (Optional) If create_auto_dimensions is set to true, a list of API Gateways will be automatically registered, but at that time, specify the API Gateway name you want to exclude using partial match.
@@ -1061,6 +1068,13 @@ metric_resource_cloudfront = {
     enabled_origin_latency = true
     origin_latency         = 10000
   }
+  # (Optional) Override thresholds for specific resources. Key is the DistributionId.
+  # threshold_override = {
+  #   "resource-name" = {
+  #     enabled_some_metric = false
+  #   }
+  # }
+  threshold_override = {}
   # (Optional) Builds a list of CloudFronts to automatically set dimensions. If this is true, the dimensions setting will be ignored.
   create_auto_dimensions = true
   # (Optional) If create_auto_dimensions is set to true, a list of CloudFronts will be automatically registered, but at that time, specify the CloudFront name you want to exclude using partial match.
@@ -1180,6 +1194,13 @@ metric_resource_ec2 = {
     enabled_status_check_failed_system = true
     status_check_failed_system         = 1
   }
+  # (Optional) Override thresholds for specific resources. Key is the InstanceId.
+  # threshold_override = {
+  #   "resource-name" = {
+  #     enabled_some_metric = false
+  #   }
+  # }
+  threshold_override = {}
   # (Optional) Builds a list of EC2s to automatically set dimensions. If this is true, the dimensions setting will be ignored.
   create_auto_dimensions = true
   # (Optional) If create_auto_dimensions is set to true, a list of EC2s will be automatically registered, but at that time, specify the EC2 instance ID you want to exclude using partial match.
@@ -1317,6 +1338,13 @@ metric_resource_elasticache = {
     enabled_traffic_management_active = true
     traffic_management_active         = 1
   }
+  # (Optional) Override thresholds for specific resources. Key is the CacheClusterId.
+  # threshold_override = {
+  #   "resource-name" = {
+  #     enabled_some_metric = false
+  #   }
+  # }
+  threshold_override = {}
   # (Optional) Builds a list of ElastiCache clusters to automatically set dimensions. If this is true, the dimensions setting will be ignored.
   create_auto_dimensions = true
   # (Optional) If create_auto_dimensions is set to true, a list of ElastiCache clusters will be automatically registered, but at that time, specify the ElastiCache cluster ID you want to exclude using partial match.
@@ -1386,6 +1414,13 @@ metric_resource_elb = {
     enabled_unhealthy_host_count = true
     unhealthy_host_count         = 1
   }
+  # (Optional) Override thresholds for specific resources. Key is the LoadBalancer.
+  # threshold_override = {
+  #   "resource-name" = {
+  #     enabled_some_metric = false
+  #   }
+  # }
+  threshold_override = {}
   # (Optional) Builds a list of ELB to automatically set dimensions. If this is true, the dimensions setting will be ignored.
   create_auto_dimensions = true
   # (Optional) If create_auto_dimensions is set to true, a list of ELB will be automatically registered, but at that time, specify the ELB name you want to exclude using partial match.
@@ -1434,6 +1469,19 @@ metric_resource_eventbridge_scheduler = {
     enabled_invocation_dropped_count = true
     invocation_dropped_count         = 1
   }
+  # (Optional) Per-schedule-group threshold overrides. Key is the schedule group name.
+  # threshold_override = {
+  #   "my-critical-group" = {
+  #     target_error_count = 0  # Stricter threshold for critical group
+  #   }
+  # }
+  threshold_override = {}
+  # (Optional) Builds a list of schedule groups to automatically set dimensions. If this is true, the dimensions setting will be ignored.
+  create_auto_dimensions = true
+  # (Optional) If create_auto_dimensions is set to true, a list of schedule groups will be automatically registered, but at that time, specify the schedule group name you want to exclude using partial match.
+  auto_dimensions_exclude_list = []
+  # (Optional) If create_auto_dimensions is set to true and this list is not empty, only schedule group names matching any of these patterns (partial match) will be included.
+  auto_dimensions_include_list = []
   # TODO: need to set dimensions for monitor of EventBridge Scheduler.
   # Specify the instance of the target EventBridge Scheduler name to be monitored by Map.
   # check EventBridge Scheduler id list command.
@@ -1444,11 +1492,7 @@ metric_resource_eventbridge_scheduler = {
   #       "ScheduleGroup" = "default"
   #     }
   #   ]
-  dimensions = [
-    {
-      "ScheduleGroup" = "default"
-    },
-  ]
+  dimensions = []
 }
 
 #--------------------------------------------------------------
@@ -1528,6 +1572,13 @@ metric_resource_lambda = {
     enabled_unreserved_concurrent_executions = false
     unreserved_concurrent_executions         = 800
   }
+  # (Optional) Override thresholds for specific resources. Key is the FunctionName.
+  # threshold_override = {
+  #   "resource-name" = {
+  #     enabled_some_metric = false
+  #   }
+  # }
+  threshold_override = {}
   # (Optional) Builds a list of Lambda to automatically set dimensions. If this is true, the dimensions setting will be ignored.
   create_auto_dimensions = true
   # (Optional) If create_auto_dimensions is set to true, a list of Lambda will be automatically registered, but at that time, specify the Lambda name you want to exclude using partial match.
@@ -1622,6 +1673,13 @@ metric_resource_nat_gateway = {
     enabled_peak_packets_per_second = false
     peak_packets_per_second         = 100000
   }
+  # (Optional) Override thresholds for specific resources. Key is the NatGatewayId.
+  # threshold_override = {
+  #   "resource-name" = {
+  #     enabled_some_metric = false
+  #   }
+  # }
+  threshold_override = {}
   # (Optional) Builds a list of NAT Gateways to automatically set dimensions. If this is true, the dimensions setting will be ignored.
   create_auto_dimensions = true
   # (Optional) If create_auto_dimensions is set to true, a list of NAT Gateways will be automatically registered, but at that time, specify the NAT Gateway ID you want to exclude using partial match.
@@ -1673,7 +1731,7 @@ metric_resource_rds_cluster = {
     enabled_aurora_replica_lag = true
     aurora_replica_lag         = 1000
     # (Required) BufferCacheHitRatio threshold (unit=Percent)
-    enabled_buffer_cache_hit_ratio = true
+    enabled_buffer_cache_hit_ratio = false
     buffer_cache_hit_ratio         = 95
     # (Required) CommitLatency threshold (unit=Milliseconds)
     enabled_commit_latency = true
@@ -1730,6 +1788,13 @@ metric_resource_rds_cluster = {
     enabled_write_throughput = false
     write_throughput         = 1024 * 1024 * 1024
   }
+  # (Optional) Override thresholds for specific resources. Key is the DBClusterIdentifier.
+  # threshold_override = {
+  #   "resource-name" = {
+  #     enabled_some_metric = false
+  #   }
+  # }
+  threshold_override = {}
   # (Optional) Builds a list of RDS to automatically set dimensions. If this is true, the dimensions setting will be ignored.
   create_auto_dimensions = true
   # (Optional) If create_auto_dimensions is set to true, a list of RDS will be automatically registered, but at that time, specify the RDS name you want to exclude using partial match.
@@ -1866,6 +1931,13 @@ metric_resource_redshift = {
     enabled_percentage_quota_used = false
     percentage_quota_used         = 1024
   }
+  # (Optional) Override thresholds for specific resources. Key is the ClusterIdentifier.
+  # threshold_override = {
+  #   "resource-name" = {
+  #     enabled_some_metric = false
+  #   }
+  # }
+  threshold_override = {}
   # (Optional) Builds a list of Redshift to automatically set dimensions. If this is true, the dimensions setting will be ignored.
   create_auto_dimensions = true
   # (Optional) If create_auto_dimensions is set to true, a list of Redshift will be automatically registered, but at that time, specify the Redshift name you want to exclude using partial match.
@@ -1915,31 +1987,166 @@ metric_resource_ses = {
 }
 
 #--------------------------------------------------------------
-# Metrics:SQS(DLQ)
+# Metrics:SNS
+# Amazon SNS publishes useful metrics to CloudWatch about your topics.
+# You can use these metrics to monitor your SNS topics, set alarms, or troubleshoot issues.
+# https://docs.aws.amazon.com/sns/latest/dg/sns-monitoring-using-cloudwatch.html
+# NOTE: SMS-related metrics (SMSMonthToDateSpentUSD, SMSSuccessRate) are excluded
+#       because they use different dimensions (no TopicName).
 #--------------------------------------------------------------
-metric_resource_sqs_dlq = {
-  # TODO: need to set is_enabled for Metric of SQS(DLQ).
+metric_resource_sns = {
+  # TODO: need to set is_enabled for monitor of SNS.
   is_enabled = false
-  # TODO: need to set period for SQS(DLQ).
+  # TODO: need to set period for SNS.
   period = 300
-  # TODO: need to set threshold for SQS(DLQ).
+  # TODO: need to set threshold for SNS.
   threshold = {
-    # (Required) ApproximateNumberOfMessagesVisible threshold (unit=Count)
-    enabled_approximate_number_of_messages_visible = true
-    approximate_number_of_messages_visible         = 1
+    # (Required) NumberOfMessagesPublished threshold (unit=Count)
+    enabled_number_of_messages_published = false
+    number_of_messages_published         = 1000
+    # (Required) NumberOfNotificationsDelivered threshold (unit=Count)
+    enabled_number_of_notifications_delivered = false
+    number_of_notifications_delivered         = 1000
+    # (Required) NumberOfNotificationsFailed threshold (unit=Count)
+    enabled_number_of_notifications_failed = true
+    number_of_notifications_failed         = 1
+    # (Required) NumberOfNotificationsFailedToRedriveToDlq threshold (unit=Count)
+    enabled_number_of_notifications_failed_to_redrive_to_dlq = true
+    number_of_notifications_failed_to_redrive_to_dlq         = 1
+    # (Required) NumberOfNotificationsFilteredOut threshold (unit=Count)
+    enabled_number_of_notifications_filtered_out = false
+    number_of_notifications_filtered_out         = 100
+    # (Required) NumberOfNotificationsFilteredOut-InvalidAttributes threshold (unit=Count)
+    enabled_number_of_notifications_filtered_out_invalid_attributes = false
+    number_of_notifications_filtered_out_invalid_attributes         = 1
+    # (Required) NumberOfNotificationsFilteredOut-InvalidMessageBody threshold (unit=Count)
+    enabled_number_of_notifications_filtered_out_invalid_message_body = false
+    number_of_notifications_filtered_out_invalid_message_body         = 1
+    # (Required) NumberOfNotificationsFilteredOut-MessageAttributes threshold (unit=Count)
+    enabled_number_of_notifications_filtered_out_message_attributes = false
+    number_of_notifications_filtered_out_message_attributes         = 100
+    # (Required) NumberOfNotificationsFilteredOut-MessageBody threshold (unit=Count)
+    enabled_number_of_notifications_filtered_out_message_body = false
+    number_of_notifications_filtered_out_message_body         = 100
+    # (Required) NumberOfNotificationsFilteredOut-NoMessageAttributes threshold (unit=Count)
+    enabled_number_of_notifications_filtered_out_no_message_attributes = false
+    number_of_notifications_filtered_out_no_message_attributes         = 100
+    # (Required) NumberOfNotificationsRedrivenToDlq threshold (unit=Count)
+    enabled_number_of_notifications_redriven_to_dlq = false
+    number_of_notifications_redriven_to_dlq         = 10
+    # (Required) PublishSize threshold (unit=Bytes)
+    enabled_publish_size = false
+    publish_size         = 262144
   }
-  # (Optional) Builds a list of DLQs to automatically set dimensions. If this is true, the dimensions setting will be ignored.
+  # (Optional) Override thresholds for specific resources. Key is the TopicName.
+  # threshold_override = {
+  #   "resource-name" = {
+  #     enabled_some_metric = false
+  #   }
+  # }
+  threshold_override = {}
+  # (Optional) Builds a list of SNS topics to automatically set dimensions. If this is true, the dimensions setting will be ignored.
   create_auto_dimensions = true
-  # (Optional) If create_auto_dimensions is set to true, a list of DLQs will be automatically registered, but at that time, specify the DLQ name you want to exclude using partial match.
+  # (Optional) If create_auto_dimensions is set to true, a list of topics will be automatically registered, but at that time, specify the topic name you want to exclude using partial match.
   auto_dimensions_exclude_list = []
-  # (Optional) If create_auto_dimensions is set to true and this list is not empty, only DLQ queue names matching any of these patterns (partial match) will be included.
+  # (Optional) If create_auto_dimensions is set to true and this list is not empty, only topic names matching any of these patterns (partial match) will be included.
   auto_dimensions_include_list = []
-  # (Optional) If create_auto_dimensions is set to false, need to set dimensions for monitor of SQS(DLQ)
-  # ex) scripts/terraform/sqs_dlq.sh
+  # (Optional) If create_auto_dimensions is set to false, need to set dimensions for monitor of SNS
+  # ex) aws sns list-topics | jq -r '.Topics[] | .TopicArn | split(":") | .[-1]'
   #   ex)
   #   dimensions = [
   #     {
-  #       "QueueName" = "dlq name",
+  #       "TopicName" = "my-topic",
+  #     }
+  #   ]
+  dimensions = []
+}
+
+#--------------------------------------------------------------
+# Metrics:SQS
+# Amazon SQS publishes useful metrics to CloudWatch about your queues.
+# You can use these metrics to monitor your SQS queues, set alarms, or troubleshoot issues.
+# https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-available-cloudwatch-metrics.html
+# NOTE: FIFO-specific metrics (ApproximateNumberOfGroupsWithInflightMessages, NumberOfDeduplicatedSentMessages)
+#       and Fair Queues metrics (*InQuietGroups, ApproximateNumberOfNoisyGroups) are included.
+#       For standard queues, these metrics will simply not be available, and treat_missing_data = "notBreaching"
+#       ensures no false alarms.
+#--------------------------------------------------------------
+metric_resource_sqs = {
+  # TODO: need to set is_enabled for monitor of SQS.
+  is_enabled = false
+  # TODO: need to set period for SQS.
+  period = 300
+  # TODO: need to set threshold for SQS.
+  threshold = {
+    # (Required) ApproximateAgeOfOldestMessage threshold (unit=Seconds)
+    enabled_approximate_age_of_oldest_message = true
+    approximate_age_of_oldest_message         = 3600
+    # (Required) ApproximateAgeOfOldestMessageInQuietGroups threshold (unit=Seconds, Fair Queues only)
+    enabled_approximate_age_of_oldest_message_in_quiet_groups = false
+    approximate_age_of_oldest_message_in_quiet_groups         = 3600
+    # (Required) ApproximateNumberOfGroupsWithInflightMessages threshold (unit=Count, FIFO only)
+    enabled_approximate_number_of_groups_with_inflight_messages = false
+    approximate_number_of_groups_with_inflight_messages         = 100
+    # (Required) ApproximateNumberOfMessagesDelayed threshold (unit=Count)
+    enabled_approximate_number_of_messages_delayed = false
+    approximate_number_of_messages_delayed         = 1000
+    # (Required) ApproximateNumberOfMessagesDelayedInQuietGroups threshold (unit=Count, Fair Queues only)
+    enabled_approximate_number_of_messages_delayed_in_quiet_groups = false
+    approximate_number_of_messages_delayed_in_quiet_groups         = 100
+    # (Required) ApproximateNumberOfMessagesNotVisible threshold (unit=Count)
+    enabled_approximate_number_of_messages_not_visible = false
+    approximate_number_of_messages_not_visible         = 1000
+    # (Required) ApproximateNumberOfMessagesNotVisibleInQuietGroups threshold (unit=Count, Fair Queues only)
+    enabled_approximate_number_of_messages_not_visible_in_quiet_groups = false
+    approximate_number_of_messages_not_visible_in_quiet_groups         = 100
+    # (Required) ApproximateNumberOfMessagesVisible threshold (unit=Count)
+    enabled_approximate_number_of_messages_visible = true
+    approximate_number_of_messages_visible         = 1000
+    # (Required) ApproximateNumberOfMessagesVisibleInQuietGroups threshold (unit=Count, Fair Queues only)
+    enabled_approximate_number_of_messages_visible_in_quiet_groups = false
+    approximate_number_of_messages_visible_in_quiet_groups         = 100
+    # (Required) ApproximateNumberOfNoisyGroups threshold (unit=Count, Fair Queues only)
+    enabled_approximate_number_of_noisy_groups = false
+    approximate_number_of_noisy_groups         = 10
+    # (Required) NumberOfDeduplicatedSentMessages threshold (unit=Count, FIFO only)
+    enabled_number_of_deduplicated_sent_messages = false
+    number_of_deduplicated_sent_messages         = 100
+    # (Required) NumberOfEmptyReceives threshold (unit=Count)
+    enabled_number_of_empty_receives = false
+    number_of_empty_receives         = 1000
+    # (Required) NumberOfMessagesDeleted threshold (unit=Count)
+    enabled_number_of_messages_deleted = false
+    number_of_messages_deleted         = 1000
+    # (Required) NumberOfMessagesReceived threshold (unit=Count)
+    enabled_number_of_messages_received = false
+    number_of_messages_received         = 1000
+    # (Required) NumberOfMessagesSent threshold (unit=Count)
+    enabled_number_of_messages_sent = false
+    number_of_messages_sent         = 1000
+    # (Required) SentMessageSize threshold (unit=Bytes)
+    enabled_sent_message_size = false
+    sent_message_size         = 262144
+  }
+  # (Optional) Override thresholds for specific resources. Key is the QueueName.
+  # threshold_override = {
+  #   "resource-name" = {
+  #     enabled_some_metric = false
+  #   }
+  # }
+  threshold_override = {}
+  # (Optional) Builds a list of SQS queues to automatically set dimensions. If this is true, the dimensions setting will be ignored.
+  create_auto_dimensions = true
+  # (Optional) If create_auto_dimensions is set to true, a list of queues will be automatically registered, but at that time, specify the queue name you want to exclude using partial match.
+  auto_dimensions_exclude_list = []
+  # (Optional) If create_auto_dimensions is set to true and this list is not empty, only queue names matching any of these patterns (partial match) will be included.
+  auto_dimensions_include_list = []
+  # (Optional) If create_auto_dimensions is set to false, need to set dimensions for monitor of SQS
+  # ex) aws sqs list-queues | jq -r '.QueueUrls[]? | split("/") | .[-1]'
+  #   ex)
+  #   dimensions = [
+  #     {
+  #       "QueueName" = "my-queue",
   #     }
   #   ]
   dimensions = []
