@@ -5,7 +5,7 @@ module "kms_key" {
   for_each = var.kms
 
   source  = "terraform-aws-modules/kms/aws"
-  version = "4.1.1"
+  version = "4.2.0"
   create  = each.value.is_enabled
 
   deletion_window_in_days = each.value.deletion_window_in_days
