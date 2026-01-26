@@ -1,7 +1,12 @@
 #!/bin/bash
 #######################################
 # Description: Get VPC-related resource information for a specified VPC
+#
 # Usage: ./aws_get_vpc_info.sh <VPC_ID>
+#   options:
+#     -h, --help    Display this help message
+#   arguments:
+#     VPC_ID        VPC ID to query resources for
 #######################################
 
 # Error handling: exit on error, unset variable, or failed pipeline
@@ -35,29 +40,28 @@ REGION="${AWS_DEFAULT_REGION:-ap-northeast-1}"
 # Arguments:
 #   None
 #
-# Global Variables:
-#   None
-#
 # Returns:
-#   Exits with status 0 after displaying help
+#   None (outputs to stdout)
 #
 # Usage:
 #   show_usage
 #
 #######################################
 function show_usage {
-    echo "Usage: $(basename "$0") [options]"
-    echo ""
-    echo "Description: Get VPC-related resource information for a specified VPC"
-    echo ""
-    echo "Options:"
-    echo "  -h, --help    Display this help message"
-    echo ""
-    echo "Arguments:"
-    echo "  VPC_ID        VPC ID to query resources for"
-    echo ""
-    echo "Examples:"
-    echo "  $(basename "$0") vpc-1234567890abcdef0"
+    cat << EOF
+Usage: $(basename "$0") [options]
+
+Description: Get VPC-related resource information for a specified VPC
+
+Options:
+  -h, --help    Display this help message
+
+Arguments:
+  VPC_ID        VPC ID to query resources for
+
+Examples:
+  $(basename "$0") vpc-1234567890abcdef0
+EOF
     exit 0
 }
 

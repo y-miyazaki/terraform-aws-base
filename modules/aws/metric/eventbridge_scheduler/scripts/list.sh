@@ -1,7 +1,9 @@
 #!/bin/bash
 #######################################
 # Description: List EventBridge Scheduler schedule group names as a JSON object
-# Usage: ./list.sh
+#
+# Usage: ./list.sh [options]
+#   options:
 #   -h, --help    Display this help message
 #
 # This script queries AWS EventBridge Scheduler and outputs schedule group names in JSON format.
@@ -44,6 +46,7 @@ Output Format:
   Example: {"list_schedule_group": "default,my-group"}
 
 USAGE
+    exit 0
 }
 
 #######################################
@@ -95,16 +98,12 @@ main() {
         case "$1" in
             -h | --help)
                 show_usage
-                exit 0
                 ;;
             *)
                 echo "Unknown option: $1" >&2
                 show_usage
-                exit 1
                 ;;
         esac
-        # shellcheck disable=SC2317
-        shift
     done
 
     # Get schedule group list

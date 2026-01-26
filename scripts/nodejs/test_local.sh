@@ -1,8 +1,12 @@
 #!/bin/bash
 #######################################
 # Description: Local testing script for Node.js Lambda modules
+#
 # Usage: ./test_local.sh [module_name]
-#   module_name: Name of the module to test (default: kinesis_data_firehose_cloudwatch_logs_processor)
+#   options:
+#     -h, --help      Display this help message
+#   arguments:
+#     module_name     Name of the module to test (default: kinesis_data_firehose_cloudwatch_logs_processor)
 #######################################
 
 # Error handling: exit on error, unset variable, or failed pipeline
@@ -22,6 +26,10 @@ export SCRIPT_DIR
 source "${SCRIPT_DIR}/../lib/all.sh"
 
 #######################################
+# Global variables and default values
+#######################################
+
+#######################################
 # show_usage: Display script usage information
 #
 # Description:
@@ -38,21 +46,24 @@ source "${SCRIPT_DIR}/../lib/all.sh"
 #
 #######################################
 function show_usage {
-    show_help_header "$(basename "$0")" "Local testing script for Node.js Lambda modules" "[module_name]"
-    echo "This script builds and runs tests for Node.js Lambda modules in Docker containers."
-    echo ""
-    echo "Arguments:"
-    echo "  module_name     Name of the module to test (default: kinesis_data_firehose_cloudwatch_logs_processor)"
-    echo ""
-    echo "Available modules:"
-    echo "  - kinesis_data_firehose_cloudwatch_logs_processor (default)"
-    echo "  - s3_notification_s3_object_created_for_athena"
-    echo ""
-    show_help_footer
-    echo "Examples:"
-    echo "  $0"
-    echo "  $0 kinesis_data_firehose_cloudwatch_logs_processor"
-    echo "  $0 s3_notification_s3_object_created_for_athena"
+    cat << EOF
+Usage: $(basename "$0") [module_name]
+
+Description: Local testing script for Node.js Lambda modules.
+             This script builds and runs tests for Node.js Lambda modules in Docker containers.
+
+Arguments:
+  module_name     Name of the module to test (default: kinesis_data_firehose_cloudwatch_logs_processor)
+
+Available modules:
+  - kinesis_data_firehose_cloudwatch_logs_processor (default)
+  - s3_notification_s3_object_created_for_athena
+
+Examples:
+  $0
+  $0 kinesis_data_firehose_cloudwatch_logs_processor
+  $0 s3_notification_s3_object_created_for_athena
+EOF
     exit 0
 }
 

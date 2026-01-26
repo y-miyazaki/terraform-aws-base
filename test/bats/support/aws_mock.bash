@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 # Helper utilities to mock the `aws` CLI for bats tests
 # Provide setup/teardown functions and a convenience function to write
 # a mock aws script to the mock bin.
@@ -10,7 +10,7 @@ function mock_aws_setup() {
 
     # Provide a no-op sleep to speed up retry/backoff tests
     cat > "$MOCK_DIR/sleep" << 'EOF'
-#!/usr/bin/env bash
+#!/bin/bash
 exit 0
 EOF
     chmod +x "$MOCK_DIR/sleep"

@@ -5,7 +5,10 @@
 # installing dependencies, building the project, and deploying to AWS.
 #
 # Usage: ./deploy.sh <stage>
-#   <stage>    Deployment stage/environment (e.g., dev, staging, prod)
+#   options:
+#     -h, --help      Display this help message
+#   arguments:
+#     <stage>    Deployment stage/environment (e.g., dev, staging, prod)
 #######################################
 
 # Error handling: exit on error, unset variable, or failed pipeline
@@ -23,6 +26,10 @@ export SCRIPT_DIR
 # shellcheck source=../lib/all.sh
 # shellcheck disable=SC1091
 source "${SCRIPT_DIR}/../lib/all.sh"
+
+#######################################
+# Global variables and default values
+#######################################
 
 #######################################
 # show_usage: Display script usage information
@@ -48,19 +55,22 @@ function show_usage {
         echo ""
     fi
 
-    show_help_header "$(basename "$0")" "Deploy Go Lambda functions to AWS using Serverless Framework" "<stage>"
-    echo "This script handles the deployment process of Go Lambda functions by"
-    echo "installing dependencies, building the project, and deploying to AWS."
-    echo ""
-    echo "Arguments:"
-    echo "  stage       Deployment stage/environment (e.g., dev, staging, prod)"
-    echo ""
-    show_help_footer
-    echo "Examples:"
-    echo "  $0 dev"
-    echo "  $0 staging"
-    echo "  $0 prod"
-    exit 1
+    cat << EOF
+Usage: $(basename "$0") <stage>
+
+Description: Deploy Go Lambda functions to AWS using Serverless Framework.
+This script handles the deployment process of Go Lambda functions by
+installing dependencies, building the project, and deploying to AWS.
+
+Arguments:
+  stage       Deployment stage/environment (e.g., dev, staging, prod)
+
+Examples:
+  $0 dev
+  $0 staging
+  $0 prod
+EOF
+    exit 0
 }
 
 #######################################

@@ -1,0 +1,313 @@
+# Reusable workflow for controlling RDS clusters (start/stop)
+# This workflow can start or stop RDS clusters with automatic resource discovery
+name: reusable-cd-aws-service-control-rds
+
+on:
+  workflow_call:
+    inputs:
+      action:
+        description: "Action to perform (start or stop)"
+        required: true
+        type: string
+      auto_discover:
+        description: "Automatically discover RDS clusters (if true, clusters input is ignored)"
+        required: false
+        type: boolean
+        default: false
+      clusters:
+        description: "JSON array of RDS cluster identifiers to control ['cluster-1', 'cluster-2']"
+        required: false
+        type: string
+        default: "[]"
+      environment:
+        description: "Target environment (dev, qa, stg, prd, etc.)"
+        required: true
+        type: string
+      exclude_patterns:
+        description: "JSON array of patterns to exclude from auto-discovery (partial match on cluster identifier) ['pattern1', 'pattern2']"
+        required: false
+        type: string
+        default: "[]"
+      include_patterns:
+        description: "JSON array of patterns to include in auto-discovery (partial match). If empty, all are included ['pattern1', 'pattern2']"
+        required: false
+        type: string
+        default: "[]"
+      wait_for_stable:
+        description: "Wait for cluster to reach desired state after operation (set to false to skip waiting)"
+        required: false
+        type: boolean
+        default: true
+    secrets:
+      AWS_IAM_ROLE_ARN:
+        required: true
+      AWS_REGION:
+        required: true
+
+env:
+  ACTION: ${{ inputs.action }}
+  AUTO_DISCOVER: ${{ inputs.auto_discover }}
+  CLUSTERS: ${{ inputs.clusters }}
+  ENVIRONMENT: ${{ inputs.environment }}
+  EXCLUDE_PATTERNS: ${{ inputs.exclude_patterns }}
+  INCLUDE_PATTERNS: ${{ inputs.include_patterns }}
+
+jobs:
+  discover-clusters:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    environment:
+      name: ${{ inputs.environment }}
+    permissions:
+      contents: read
+      id-token: write
+    outputs:
+      discovered_clusters: ${{ steps.discover.outputs.discovered_clusters }}
+      discovered_clusters_b64: ${{ steps.discover.outputs.discovered_clusters_b64 }}
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+
+      - name: Setup AWS Credentials
+        uses: aws-actions/configure-aws-credentials@61815dcd50bd041e203e49132bacad1fd04d2708 # v5.1.1
+        with:
+          aws-region: ${{ secrets.AWS_REGION }}
+          role-to-assume: ${{ secrets.AWS_IAM_ROLE_ARN }}
+
+      - name: Discover RDS Clusters
+        id: discover
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          # Helper: Check jq availability
+          check_jq() {
+            command -v jq >/dev/null 2>&1 || { echo "❌ jq is required"; exit 1; }
+          }
+
+          # Short-circuit when auto-discover is disabled
+          if [[ "$AUTO_DISCOVER" != "true" ]]; then
+            echo "discovered_clusters=[]" >> "$GITHUB_OUTPUT"
+            echo "discovered_clusters_b64=" >> "$GITHUB_OUTPUT"
+            echo "ℹ️ Auto-discover disabled"
+            exit 0
+          fi
+
+          check_jq
+
+          echo "🔍 Discovering RDS clusters..."
+
+          # List all RDS DB clusters
+          mapfile -t clusters < <(aws rds describe-db-clusters --query 'DBClusters[].DBClusterIdentifier' --output text | tr '\t' '\n')
+
+          FILTERED_CLUSTERS=()
+          INCLUDE_PATTERNS_ARRAY=$(echo "$INCLUDE_PATTERNS" | jq -r '.[]' 2>/dev/null || echo "")
+          EXCLUDE_PATTERNS_ARRAY=$(echo "$EXCLUDE_PATTERNS" | jq -r '.[]' 2>/dev/null || echo "")
+
+          for cluster_id in "${clusters[@]}"; do
+            [[ -z "$cluster_id" ]] && continue
+
+            # Check exclude patterns
+            EXCLUDED=false
+            if [[ -n "$EXCLUDE_PATTERNS_ARRAY" ]]; then
+              while IFS= read -r pattern; do
+                if [[ "$cluster_id" == *"$pattern"* ]]; then
+                  echo "  ⊖ Excluding: $cluster_id [matched exclude pattern: $pattern]"
+                  EXCLUDED=true
+                  break
+                fi
+              done <<< "$EXCLUDE_PATTERNS_ARRAY"
+            fi
+
+            [[ "$EXCLUDED" == true ]] && continue
+
+            # Check include patterns
+            if [[ -n "$INCLUDE_PATTERNS_ARRAY" ]]; then
+              INCLUDED=false
+              while IFS= read -r pattern; do
+                if [[ "$cluster_id" == *"$pattern"* ]]; then
+                  INCLUDED=true
+                  break
+                fi
+              done <<< "$INCLUDE_PATTERNS_ARRAY"
+
+              if [[ "$INCLUDED" == false ]]; then
+                echo "  ⊖ Skipping: $cluster_id [no include pattern matched]"
+                continue
+              fi
+            fi
+
+            echo "  ✓ Discovered: $cluster_id"
+            FILTERED_CLUSTERS+=("\"$cluster_id\"")
+          done
+
+          # Create JSON array
+          if [ ${#FILTERED_CLUSTERS[@]} -eq 0 ]; then
+            DISCOVERED_JSON='[]'
+          else
+            DISCOVERED_JSON=$(printf '%s\n' "${FILTERED_CLUSTERS[@]}" | jq -s .)
+          fi
+
+          # echo "discovered_clusters=$DISCOVERED_JSON" >> "$GITHUB_OUTPUT"
+          # Provide a base64-encoded form to avoid unsafe template expansion in downstream steps
+          DISCOVERED_B64=$(printf '%s' "$DISCOVERED_JSON" | base64 -w0)
+          echo "discovered_clusters_b64=$DISCOVERED_B64" >> "$GITHUB_OUTPUT"
+          echo "✅ Discovered ${#FILTERED_CLUSTERS[@]} RDS cluster(s)"
+          printf '%s' "$DISCOVERED_JSON" | jq .
+
+  validate:
+    needs: [discover-clusters]
+    if: ${{ always() && github.actor != 'dependabot[bot]' && (needs.discover-clusters.result == 'success' || needs.discover-clusters.result == 'skipped') }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    permissions:
+      contents: read
+    outputs:
+      action_validated: ${{ steps.validate-inputs.outputs.action }}
+      target_clusters: ${{ steps.validate-inputs.outputs.target_clusters }}
+    steps:
+      - name: Validate inputs
+        id: validate-inputs
+        shell: bash
+        env:
+          DISCOVERED_B64: ${{ needs.discover-clusters.outputs.discovered_clusters_b64 }}
+        run: |
+          set -euo pipefail
+          # Validate action
+          if [[ "$ACTION" != "start" && "$ACTION" != "stop" ]]; then
+            echo "❌ Error: action must be 'start' or 'stop', got '$ACTION'"
+            exit 1
+          fi
+          echo "action=$ACTION" >> "$GITHUB_OUTPUT"
+          echo "✅ Action validated: $ACTION"
+
+          # Determine target clusters (use base64-decoded discovered data to avoid unsafe template expansion)
+          if [[ "$AUTO_DISCOVER" == "true" ]]; then
+            if [[ -n "${DISCOVERED_B64:-}" ]]; then
+              TARGET_CLUSTERS=$(printf '%s' "$DISCOVERED_B64" | base64 --decode)
+            else
+              TARGET_CLUSTERS='[]'
+            fi
+            echo "Using auto-discovered clusters"
+          else
+            TARGET_CLUSTERS="$CLUSTERS"
+            echo "Using manually specified clusters"
+          fi
+
+          # Validate clusters JSON format
+          if ! printf '%s' "$TARGET_CLUSTERS" | jq empty 2>/dev/null; then
+            echo "❌ Error: clusters is not valid JSON"
+            exit 1
+          fi
+
+          # Validate at least one cluster is selected
+          CLUSTER_COUNT=$(printf '%s' "$TARGET_CLUSTERS" | jq '. | length')
+          if [[ "$CLUSTER_COUNT" -eq 0 ]]; then
+            echo "⚠️  Warning: No RDS clusters found (skipping control)"
+            echo "target_clusters=[]" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          SANITIZED_CLUSTERS=$(printf '%s' "$TARGET_CLUSTERS" | jq -c '.')
+          echo "target_clusters=$SANITIZED_CLUSTERS" >> "$GITHUB_OUTPUT"
+          echo "✅ Target clusters count: $CLUSTER_COUNT"
+          printf '%s' "$SANITIZED_CLUSTERS" | jq .
+
+  control-clusters:
+    needs: validate
+    if: ${{ github.actor != 'dependabot[bot]' && needs.validate.result == 'success' && needs.validate.outputs.target_clusters != '[]' }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    concurrency:
+      group: rds-control-${{ inputs.environment }}-${{ matrix.cluster }}-${{ inputs.action }}
+      cancel-in-progress: false
+    environment:
+      name: ${{ inputs.environment }}
+    permissions:
+      contents: read
+      id-token: write
+    strategy:
+      fail-fast: false
+      matrix:
+        cluster: ${{ fromJSON(needs.validate.outputs.target_clusters) }}
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+
+      - name: Setup AWS Credentials
+        uses: aws-actions/configure-aws-credentials@61815dcd50bd041e203e49132bacad1fd04d2708 # v5.1.1
+        with:
+          aws-region: ${{ secrets.AWS_REGION }}
+          role-to-assume: ${{ secrets.AWS_IAM_ROLE_ARN }}
+
+      - name: Control RDS Cluster
+        env:
+          CLUSTER: ${{ matrix.cluster }}
+        shell: bash
+        run: |
+          if [[ "$ACTION" == "stop" ]]; then
+            echo "🛑 Stopping RDS cluster: $CLUSTER"
+            # run command and capture stderr; ignore if cluster already stopped
+            ERR=$(aws rds stop-db-cluster --db-cluster-identifier "$CLUSTER" 2>&1) || RC=$?
+            if [ "${RC:-0}" -ne 0 ]; then
+              if echo "$ERR" | grep -qiE "is in stopped state|already.*stopped|InvalidDBClusterStateFault"; then
+                echo "ℹ️ RDS cluster is already stopped (ignoring): $ERR"
+              else
+                echo "$ERR"
+                exit "${RC:-1}"
+              fi
+            else
+              echo "✅ Stop command sent for RDS cluster: $CLUSTER"
+            fi
+
+          elif [[ "$ACTION" == "start" ]]; then
+            echo "▶️  Starting RDS cluster: $CLUSTER"
+            ERR=$(aws rds start-db-cluster --db-cluster-identifier "$CLUSTER" 2>&1) || RC=$?
+            if [ "${RC:-0}" -ne 0 ]; then
+              if echo "$ERR" | grep -qiE "is in available state|already.*available|InvalidDBClusterStateFault"; then
+                echo "ℹ️ RDS cluster is already available (ignoring): $ERR"
+              else
+                echo "$ERR"
+                exit "${RC:-1}"
+              fi
+            else
+              echo "✅ Start command sent for RDS cluster: $CLUSTER"
+            fi
+          fi
+
+      - name: Wait for RDS Cluster Status
+        if: ${{ inputs.wait_for_stable }}
+        timeout-minutes: 30
+        env:
+          CLUSTER: ${{ matrix.cluster }}
+        shell: bash
+        run: |
+          EXPECTED_STATUS="available"
+          if [[ "$ACTION" == "stop" ]]; then
+            EXPECTED_STATUS="stopped"
+          fi
+
+          echo "⏳ Waiting for RDS cluster to reach status: $EXPECTED_STATUS"
+
+          for i in {1..60}; do
+            STATUS=$(aws rds describe-db-clusters \
+              --db-cluster-identifier "$CLUSTER" \
+              --query 'DBClusters[0].Status' \
+              --output text)
+
+            echo "Current status: $STATUS (attempt $i/60)"
+
+            if [[ "$STATUS" == "$EXPECTED_STATUS" ]]; then
+              echo "✅ RDS cluster reached expected status: $EXPECTED_STATUS"
+              exit 0
+            fi
+
+            sleep 30
+          done
+
+          echo "⚠️  Warning: RDS cluster did not reach expected status within timeout"
+          exit 1

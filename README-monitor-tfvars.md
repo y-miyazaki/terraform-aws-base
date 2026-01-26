@@ -969,15 +969,68 @@ The variable for each function has is_enabled. If you do not want to use it as a
   #--------------------------------------------------------------
   # Processes automatic shutdowns, restarts, etc. using EventBridge.
   # The following are covered
+  # - AWS Batch Job Queue
+  # - EC2 Instance
+  # - ECS Service
+  # - ECS Scheduled Task
   # - RDS Cluster
+  # - Redshift Cluster
   #--------------------------------------------------------------
   eventbridge = {
+    #--------------------------------------------------------------
+    # Schedule automatic enable and disable of AWS Batch Job Queue.
+    #--------------------------------------------------------------
+    batch = {
+      # TODO: need to set is_enabled for enable and disable batch job queue schedule.
+      is_enabled = false
+    ...
+    ...
+    ...
+    #--------------------------------------------------------------
+    # Schedule automatic stop and start of EC2 Instance.
+    #--------------------------------------------------------------
+    ec2 = {
+      # TODO: need to set is_enabled for stop and start ec2_instance schedule.
+      is_enabled = false
+    ...
+    ...
+    ...
+    #--------------------------------------------------------------
+    # Schedule automatic stop and start of ECS Service.
+    #--------------------------------------------------------------
+    ecs_service = {
+      # TODO: need to set is_enabled for stop and start ecs_service schedule.
+      is_enabled = false
+    ...
+    ...
+    ...
+    #--------------------------------------------------------------
+    # Schedule automatic enable and disable of ECS Scheduled Task (EventBridge Rule).
+    #--------------------------------------------------------------
+    ecs_scheduled_task = {
+      # TODO: need to set is_enabled for enable and disable ecs scheduled task schedule.
+      is_enabled = false
+    ...
+    ...
+    ...
     #--------------------------------------------------------------
     # Schedule automatic stop and start of RDS Cluster.
     #--------------------------------------------------------------
     rds_cluster = {
       # TODO: need to set is_enabled for stop and start rds_cluster schedule.
-      is_enabled = true
+      is_enabled = false
+    ...
+    ...
+    ...
+    #--------------------------------------------------------------
+    # Schedule automatic pause and resume of Redshift Cluster.
+    #--------------------------------------------------------------
+    redshift = {
+      # TODO: need to set is_enabled for pause and resume redshift cluster schedule.
+      is_enabled = false
+    ...
+    ...
+    ...
   ```
 
 ### use_control_tower

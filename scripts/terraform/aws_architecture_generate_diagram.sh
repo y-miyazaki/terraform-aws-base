@@ -1,6 +1,7 @@
 #!/bin/bash
 #######################################
 # Description: Generate AWS architecture diagram YAML and image from AWS CLI using awsdac with hierarchical VPC structure
+#
 # Usage: ./aws_architecture_generate_diagram.sh [options]
 #   options:
 #     -h, --help        Display this help message
@@ -81,7 +82,7 @@ AWS_RESOURCE_CATEGORIES=(
 )
 
 #######################################
-# show_usage: Display usage information
+# show_usage: Display script usage information
 #
 # Description:
 #   Displays usage information for the script, including options and examples
@@ -89,36 +90,34 @@ AWS_RESOURCE_CATEGORIES=(
 # Arguments:
 #   None
 #
-# Global Variables:
-#   None
-#
 # Returns:
-#   None
+#   None (outputs to stdout)
 #
 # Usage:
 #   show_usage
 #
 #######################################
 function show_usage {
-    show_help_header "$(basename "$0")" "Generate AWS architecture diagram from AWS CLI" "[options]"
-    echo "This script queries AWS resources using AWS CLI, generates"
-    echo "awsdac YAML, and creates architecture diagram image."
-    echo ""
-    echo "Options:"
-    echo "  -h, --help        Display this help message"
-    echo "  -v, --verbose     Enable verbose output"
-    echo "  -d, --dry-run     Show what would be done without executing"
-    echo "  -r, --region      AWS region to query (default: \$AWS_DEFAULT_REGION or ap-northeast-1)"
-    echo "  -o, --output      Output diagram file (default: aws_architecture_diagram.png)"
-    echo "  -f, --format      Output format (png, svg, pdf) (default: png)"
-    echo "  --git             Commit and push diagram to git (default: no git operation)"
-    echo ""
-    show_help_footer
-    echo "Examples:"
-    echo "  $0 -v -r us-west-2"
-    echo "  $0 --dry-run"
-    echo "  $0 -o my_diagram.svg -f svg"
-    echo "  $0 --git"
+    cat << EOF
+Usage: $(basename "$0") [options]
+
+Description: Generate AWS architecture diagram from AWS CLI.
+
+Options:
+  -h, --help        Display this help message
+  -v, --verbose     Enable verbose output
+  -d, --dry-run     Show what would be done without executing
+  -r, --region      AWS region to query (default: \$AWS_DEFAULT_REGION or ap-northeast-1)
+  -o, --output      Output diagram file (default: aws_architecture_diagram.png)
+  -f, --format      Output format (png, svg, pdf) (default: png)
+  --git             Commit and push diagram to git (default: no git operation)
+
+Examples:
+  $0 -v -r us-west-2
+  $0 --dry-run
+  $0 -o my_diagram.svg -f svg
+  $0 --git
+EOF
     exit 0
 }
 
@@ -149,7 +148,9 @@ function show_usage {
 function parse_arguments {
     while [[ $# -gt 0 ]]; do
         case $1 in
-            -h | --help) show_usage ;;
+            -h | --help)
+                show_usage
+                ;;
             -v | --verbose)
                 VERBOSE=true
                 export VERBOSE

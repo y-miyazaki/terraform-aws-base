@@ -45,7 +45,7 @@ module "aws_cloudwatch_events_health_us_east_1" {
 # tfsec:ignore:aws-lambda-enable-tracing
 module "lambda_function_health_us_east_1" {
   source  = "terraform-aws-modules/lambda/aws"
-  version = "8.1.2"
+  version = "8.2.0"
   create  = !local.is_default_region_us_east_1 && var.health.is_enabled
   providers = {
     aws = aws.us-east-1

@@ -1,6 +1,7 @@
 #!/bin/bash
 #######################################
 # Description: Generate database schema documentation using SchemaSpy via AWS Bastion and Secrets Manager
+#
 # Usage: ./aws_schemaspy.sh [options]
 #   options:
 #     -h, --help           Display this help message

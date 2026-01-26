@@ -1,6 +1,9 @@
 {
   "dockerFile": "../env/common/Dockerfile",
   "remoteUser": "vscode",
+  "containerEnv": {
+    "LOCAL_WORKSPACE_FOLDER": "${localWorkspaceFolder}"
+  },
   "customizations": {
     "vscode": {
       "settings": {
@@ -25,6 +28,7 @@
         // for AI
         "automatalabs.copilot-mcp",
         "github.copilot",
+        "github.copilot-chat",
         // for Shell Script environment
         "foxundermoon.shell-format",
         "timonwong.shellcheck",
@@ -37,15 +41,15 @@
   },
   "runArgs": [
     "-v",
-    "${env:HOME}/workspace/terraform-aws-base:/workspace",
+    "${localWorkspaceFolder}:/workspace",
     "-v",
-    "${env:HOME}/workspace/terraform-aws-base/env/common/.bashrc:/home/vscode/.bashrc",
+    "${localWorkspaceFolder}/env/common/.bashrc:/home/vscode/.bashrc",
     "-v",
-    "${env:HOME}/workspace/terraform-aws-base/env/common/tmp/.gitconfig:/home/vscode/.gitconfig",
+    "${localWorkspaceFolder}/env/common/tmp/.gitconfig:/home/vscode/.gitconfig",
     "-v",
-    "${env:HOME}/workspace/terraform-aws-base/env/common/tmp/.aws:/home/vscode/.aws",
+    "${localWorkspaceFolder}/env/common/tmp/.aws:/home/vscode/.aws",
     "-v",
-    "${env:HOME}/workspace/terraform-aws-base/env/common/tmp/gh:/home/vscode/.config/gh",
+    "${localWorkspaceFolder}/env/common/tmp/gh:/home/vscode/.config/gh",
     "-v",
     "/var/run/docker.sock:/var/run/docker.sock"
   ],

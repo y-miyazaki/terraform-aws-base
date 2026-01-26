@@ -81,6 +81,31 @@
       "algorithm": "sha256"
     },
     {
+      "id": "github_release/github.com/aquasecurity/trivy/v0.68.2/trivy_0.68.2_Linux-64bit.tar.gz",
+      "checksum": "3D933BBC3685F95EC15280F620583D05D97EE3AFFB66944D14481D5D6D567064",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/aquasecurity/trivy/v0.68.2/trivy_0.68.2_Linux-ARM64.tar.gz",
+      "checksum": "33C87995FD0C3D1559086C3E18FD3148051296DFD0CA2A67583EB64F89998C91",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/aquasecurity/trivy/v0.68.2/trivy_0.68.2_macOS-64bit.tar.gz",
+      "checksum": "C0790530CD717B6BDD02ED437BE0710F5C7043078FAFAF6841BE7C865BF251CE",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/aquasecurity/trivy/v0.68.2/trivy_0.68.2_macOS-ARM64.tar.gz",
+      "checksum": "DFBE15FFE47426DAD9FD3E0D52AEACF3DBBB25CA5DBC66049F5920834435988D",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/aquasecurity/trivy/v0.68.2/trivy_0.68.2_windows-64bit.zip",
+      "checksum": "2AAA0CE06F9F2221A6BB21E1FC0E0ECC6AEB56362BC5C9463E9FD7B06983C3C3",
+      "algorithm": "sha256"
+    },
+    {
       "id": "github_release/github.com/bufbuild/buf/v1.60.0/buf-Darwin-arm64.tar.gz",
       "checksum": "31187D9C3005F71556E6BABEDB5CA851FD4F87299A1158AC2115442F3640952E",
       "algorithm": "sha256"
@@ -646,6 +671,31 @@
       "algorithm": "sha256"
     },
     {
+      "id": "github_release/github.com/zizmorcore/zizmor/v1.21.0/zizmor-aarch64-apple-darwin.tar.gz",
+      "checksum": "A1CA0E0B885E9EAE616BC5B5EDE7836E9328266B67DA59B3DEFCEE01C2A3011A",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/zizmorcore/zizmor/v1.21.0/zizmor-aarch64-unknown-linux-gnu.tar.gz",
+      "checksum": "05CE818C6028C3F7DBE8C4ED8B264D9F3EDFC03D9BE725AA2982F40779FBE183",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/zizmorcore/zizmor/v1.21.0/zizmor-x86_64-apple-darwin.tar.gz",
+      "checksum": "C71D7F95C648CB6110CD7457A658AA3C6518CE5C9C18B2A423DA6B87140513A1",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/zizmorcore/zizmor/v1.21.0/zizmor-x86_64-pc-windows-msvc.zip",
+      "checksum": "978CFAB35E719D91B88966F0964D3A5E86E37EE3AA67EF7C3ED8E29B11886499",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/zizmorcore/zizmor/v1.21.0/zizmor-x86_64-unknown-linux-gnu.tar.gz",
+      "checksum": "23AD2DC14B87820ABDFE0D8F2BE189CC7BFB55BA8278EBCE0D7A54220A7955D2",
+      "algorithm": "sha256"
+    },
+    {
       "id": "http/awscli.amazonaws.com/AWSCLIV2-2.31.37.pkg",
       "checksum": "D3AF9971F3454052B7CBCEF208E8A1972A961657FF8E1734D65A1EB3399F66C5",
       "algorithm": "sha256"
@@ -688,6 +738,11 @@
     {
       "id": "registries/github_content/github.com/aquaproj/aqua-registry/v4.436.0/registry.yaml",
       "checksum": "D10A9E3D8F3D28C8A75E536FD30C8B1C2E91C92637DF4BC97B61E375E133DDF271E277F9F7F628DBC8A1CA2C5F03CD4CAADB338EEB549B3C00C4BA9F5E444BEB",
+      "algorithm": "sha512"
+    },
+    {
+      "id": "registries/github_content/github.com/aquaproj/aqua-registry/v4.455.0/registry.yaml",
+      "checksum": "C8D780F7B7130DE3BA3B438A3E19404A9F8D74BEBAD680803E3247A775CAF9ACB9DFCC88076B34C3F795D38C1085377FCDBD4405286BCFFF0DE25AE8FCDF6745",
       "algorithm": "sha512"
     }
   ]

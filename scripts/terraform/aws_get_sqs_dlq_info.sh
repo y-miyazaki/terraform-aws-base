@@ -1,6 +1,7 @@
 #!/bin/bash
 #######################################
 # Description: Retrieves SQS Dead Letter Queue (DLQ) information and outputs them in Terraform configuration format
+#
 # Usage: ./aws_sqs_dlq.sh [options]
 #   options:
 #     -h, --help    Display this help message
@@ -23,6 +24,10 @@ export SCRIPT_DIR
 source "${SCRIPT_DIR}/../lib/all.sh"
 
 #######################################
+# Global variables and default values
+#######################################
+
+#######################################
 # show_usage: Display script usage information
 #
 # Description:
@@ -31,26 +36,25 @@ source "${SCRIPT_DIR}/../lib/all.sh"
 # Arguments:
 #   None
 #
-# Global Variables:
-#   None
-#
 # Returns:
-#   Exits with status 0 after displaying help
+#   None (outputs to stdout)
 #
 # Usage:
 #   show_usage
 #
 #######################################
 function show_usage {
-    echo "Usage: $(basename "$0") [options]"
-    echo ""
-    echo "This script retrieves SQS Dead Letter Queue (DLQ) information and outputs them in a format"
-    echo "suitable for Terraform configuration."
-    echo ""
-    echo "Options:"
-    echo "  -h, --help    Display this help message"
-    echo ""
-    echo "Example: $(basename "$0")"
+    cat << EOF
+Usage: $(basename "$0") [options]
+
+Description: This script retrieves SQS Dead Letter Queue (DLQ) information and outputs them in a format
+             suitable for Terraform configuration.
+
+Options:
+  -h, --help    Display this help message
+
+Example: $(basename "$0")
+EOF
     exit 0
 }
 

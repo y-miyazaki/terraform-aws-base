@@ -61,7 +61,7 @@
 - [ ] 対応 `.github/instructions/*.instructions.md` を `read_file` で読込・確認
 - [ ] grep による統一性確認実施・報告
 - [ ] 追加確認が必要なファイル・関数の読込
-- [ ] 対応言語の instructions.md（例: script.instructions.md）の `Code Modification Guidelines` 遵守
+- [ ] 対応言語の instructions.md（例: shell-script.instructions.md）の `Code Modification Guidelines` 遵守
 - [ ] 残作業リスト更新・未完了項目確認
 - [ ] 逸脱・懸念点の振り返りコメント記載
 
@@ -74,7 +74,7 @@
 **必須手順**:
 
 1. **作業前に `read_file` で対応 instructions ファイルを読込**
-   - 例: `read_file` with filePath="/workspace/.github/instructions/script.instructions.md"
+   - 例: `read_file` with filePath="/workspace/.github/instructions/shell-script.instructions.md"
 2. **要点の明示**
 3. **検証コマンド・コーディング規約の遵守**
 
@@ -84,7 +84,7 @@
 | -------------------------------------------------------------- | ------------------------------------------------------------ | ------------------------------------------------------------------------------ |
 | `.github/instructions/go.instructions.md`                      | \*\*/\*.go                                                   | 検証: go fmt, golangci-lint / 命名: camelCase, PascalCase / エラーハンドリング |
 | `.github/instructions/terraform.instructions.md`               | \*\*/\*.tf,\*\*/\*.tfvars,\*\*/\*.hcl                        | 検証: terraform fmt, tflint / 命名: snake_case / セキュリティ規約              |
-| `.github/instructions/script.instructions.md`                  | \*\*/\*.sh,scripts/\*\*                                      | 検証: bash -n, shellcheck / 関数ドキュメント / エラーハンドリング              |
+| `.github/instructions/shell-script.instructions.md`            | \*\*/\*.sh,scripts/\*\*                                      | 検証: bash -n, shellcheck / 関数ドキュメント / エラーハンドリング              |
 | `.github/instructions/markdown.instructions.md`                | \*\*/\*.md                                                   | GitHub Markdown 記法 / 表・リスト・コードブロックの規約                        |
 | `.github/instructions/github-actions-workflow.instructions.md` | \*\*/.github/workflows/\*.yaml,\*\*/.github/workflows/\*.yml | ワークフロー構文 / セキュリティ / 再利用可能なワークフロー                     |
 

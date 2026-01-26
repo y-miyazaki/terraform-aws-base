@@ -1,6 +1,7 @@
 #!/bin/bash
 #######################################
 # Description: Collect AWS Lambda, Glue, and RDS available runtime/engine versions and output as CSV
+#
 # Usage: ./aws_get_version.sh [-h] [-v] [-d] [-r REGION] [-c CATEGORIES] [-o OUTPUT_FILE]
 #   options:
 #     -h, --help       Display this help message

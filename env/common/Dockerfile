@@ -10,7 +10,7 @@ ARG USER=vscode
 ARG WORKDIR=/workspace
 # version(base)
 ARG NODE_VERSION=24 # https://github.com/nodejs/node/releases
-ARG AQUA_VERSION=v2.55.1 # https://github.com/aquaproj/aqua/releases
+ARG AQUA_VERSION=v2.55.2 # https://github.com/aquaproj/aqua/releases
 
 # x86_64
 # ARG ARCH_BASE=amd64
@@ -36,6 +36,11 @@ ENV GOARCH=arm64
 #--------------------------------------------------------------
 RUN mkdir -p ${WORKDIR}
 WORKDIR  ${WORKDIR}
+
+#--------------------------------------------------------------
+# for docker group access
+#--------------------------------------------------------------
+RUN groupadd -f docker && sudo usermod -aG docker vscode
 
 #--------------------------------------------------------------
 # Install minimal apt/https tooling (avoid software-properties-common)

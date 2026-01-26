@@ -8,14 +8,14 @@ checksum:
     - all
 registries:
   - type: standard
-    ref: v4.436.0 # renovate: depName=aquaproj/aqua-registry
+    ref: v4.455.0 # renovate: depName=aquaproj/aqua-registry
 packages:
   # Utility tools
   - name: BurntSushi/ripgrep@15.1.0 # grep alternative
   # Security related tools
   - name: pre-commit/pre-commit@v4.4.0 # pre-commit framework
   - name: gitleaks/gitleaks@v8.29.0 # secret scanner
-  - name: aquasecurity/trivy@v0.67.2 # vulnerability scanner
+  - name: aquasecurity/trivy@v0.68.2 # vulnerability scanner
   # AWS related tools
   - name: aws/aws-cli@2.31.37 # AWS CLI
   # GitHub related tools
@@ -24,6 +24,7 @@ packages:
   - name: suzuki-shunsuke/ghalint@v1.5.3 # GitHub Actions linter
   - name: suzuki-shunsuke/disable-checkout-persist-credentials@v0.1.3 # GitHub Actions settings persist-credentials
   - name: suzuki-shunsuke/ghatm@v0.3.7 # GitHub Actions settings timeout-minutes
+  - name: zizmorcore/zizmor@v1.21.0 # GitHub Actions settings concurrency
   # Go related tools
   - name: protocolbuffers/protobuf-go/protoc-gen-go@v1.36.10 # protobuf code generator
   - name: grpc/grpc-go/protoc-gen-go-grpc@cmd/protoc-gen-go-grpc/v1.5.1 # gRPC code generator

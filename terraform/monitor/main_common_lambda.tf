@@ -1,114 +1,4 @@
 #--------------------------------------------------------------
-# IAM role of Lambda for alarm monitoring
-#--------------------------------------------------------------
-#--------------------------------------------------------------
-# Locals
-#--------------------------------------------------------------
-locals {
-  aws_iam_policy_lambda = merge(var.common_lambda.aws_iam_policy, {
-    name = "${var.name_prefix}${var.common_lambda.aws_iam_policy.name}"
-    # Note: remove logs:CreateLogGroup from Action.
-    # https://advancedweb.hu/how-to-manage-lambda-log-groups-with-terraform/
-    policy = jsonencode({
-      Version = "2012-10-17"
-      Statement = [
-        {
-          Sid = "AllowCloudWatchLogs"
-          Action = [
-            "logs:CreateLogGroup",
-            "logs:CreateLogStream",
-            "logs:DescribeLogGroups",
-            "logs:DescribeLogStreams",
-            "logs:DescribeMetricFilters",
-            "logs:FilterLogEvents",
-            "logs:PutLogEvents",
-            "logs:PutRetentionPolicy",
-          ]
-          Effect   = "Allow"
-          Resource = "arn:aws:logs:*:${data.aws_caller_identity.current.account_id}:log-group:*"
-        },
-        {
-          Sid = "AllowS3FullAccess"
-          Action = [
-            "s3:DeleteObject",
-            "s3:GetObject",
-            "s3:ListBucket",
-            "s3:PutObject"
-          ]
-          Effect = "Allow"
-          Resource = [
-            module.s3_application_log.s3_bucket_arn,
-            "${module.s3_application_log.s3_bucket_arn}/*"
-          ]
-        },
-        {
-          Sid = "AllowKinesisDataFirehoseCloudwatchLogsProcessor"
-          Action = [
-            "firehose:PutRecordBatch"
-          ]
-          Effect   = "Allow"
-          Resource = "arn:aws:firehose:*:${data.aws_caller_identity.current.account_id}:deliverystream/*"
-        },
-        {
-          Sid = "AllowPostgreSQLSlowQuery"
-          Action = [
-            "logs:GetLogEvents",
-            "logs:FilterLogEvents",
-            "logs:DescribeLogStreams",
-            "logs:DescribeLogGroups"
-          ]
-          Effect   = "Allow"
-          Resource = "arn:aws:logs:*:*:log-group:/aws/rds/*"
-        },
-        {
-          Sid = "AllowDynamoDB"
-          Action = [
-            "dynamodb:PutItem",
-            "dynamodb:GetItem",
-            "dynamodb:DeleteItem"
-          ]
-          Effect   = "Allow"
-          Resource = "arn:aws:dynamodb:*:*:table/${var.name_prefix}monitor-log"
-        },
-        {
-          Sid = "AllowKMSDecrypt"
-          Action = [
-            "kms:Decrypt",
-            "kms:GenerateDataKey*",
-          ]
-          Effect   = "Allow"
-          Resource = "arn:aws:kms:*:${data.aws_caller_identity.current.account_id}:key/*"
-        },
-        {
-          Sid = "AllowSupports"
-          Action = [
-            "support:*"
-          ]
-          Effect   = "Allow"
-          Resource = "*"
-        }
-      ]
-    })
-  })
-}
-
-#--------------------------------------------------------------
-# Create role and policy for Lambda
-#--------------------------------------------------------------
-module "aws_iam_role_lambda" {
-  source = "../../modules/aws/iam/role/lambda"
-
-  is_vpc = var.common_lambda.vpc.is_enabled
-  aws_iam_role = merge(var.common_lambda.aws_iam_role, {
-    name = "${var.name_prefix}${var.common_lambda.aws_iam_role.name}"
-    }
-  )
-  aws_iam_policy = local.aws_iam_policy_lambda
-
-  tags = var.tags
-}
-
-#--------------------------------------------------------------
 # Provides a SNS
 # For Metric
 #--------------------------------------------------------------
@@ -142,7 +32,7 @@ module "aws_sns_subscription_lambda_metric" {
 # tfsec:ignore:aws-lambda-enable-tracing
 module "aws_lambda_create_lambda_metric" {
   source  = "terraform-aws-modules/lambda/aws"
-  version = "8.1.2"
+  version = "8.2.0"
 
   allowed_triggers = {
     trigger = {
@@ -230,7 +120,7 @@ module "aws_sns_subscription_lambda_log" {
 # tfsec:ignore:aws-lambda-enable-tracing
 module "aws_lambda_create_lambda_log" {
   source  = "terraform-aws-modules/lambda/aws"
-  version = "8.1.2"
+  version = "8.2.0"
 
   allowed_triggers = {
     trigger = {
@@ -339,7 +229,7 @@ module "aws_sns_subscription_lambda_ses" {
 # tfsec:ignore:aws-lambda-enable-tracing
 module "aws_lambda_create_lambda_ses" {
   source  = "terraform-aws-modules/lambda/aws"
-  version = "8.1.2"
+  version = "8.2.0"
 
   allowed_triggers = {
     trigger = {
@@ -401,7 +291,7 @@ module "aws_lambda_create_lambda_ses" {
 # tfsec:ignore:aws-lambda-enable-tracing
 module "aws_lambda_create_lambda_kinesis_data_firehose_cloudwatch_logs_processor" {
   source  = "terraform-aws-modules/lambda/aws"
-  version = "8.1.2"
+  version = "8.2.0"
 
   allowed_triggers = {
     trigger = {
@@ -462,7 +352,7 @@ module "aws_lambda_create_lambda_kinesis_data_firehose_cloudwatch_logs_processor
 # tfsec:ignore:aws-lambda-enable-tracing
 module "aws_lambda_create_lambda_s3_notification_s3_object_created_for_athena" {
   source  = "terraform-aws-modules/lambda/aws"
-  version = "8.1.2"
+  version = "8.2.0"
 
   allowed_triggers = {
     trigger = {

@@ -1,0 +1,377 @@
+# Reusable workflow for controlling AWS services (unified interface)
+# This workflow orchestrates EC2, ECS, and RDS control workflows based on service type
+name: reusable-cd-aws-service-control
+
+on:
+  workflow_call:
+    inputs:
+      action:
+        description: "Action to perform (start or stop)"
+        required: true
+        type: string
+      auto_discover_ec2:
+        description: "Automatically discover EC2 instances"
+        required: false
+        type: boolean
+        default: false
+      auto_discover_batch:
+        description: "Automatically discover AWS Batch job queues"
+        required: false
+        type: boolean
+        default: false
+      auto_discover_ecs:
+        description: "Automatically discover ECS services"
+        required: false
+        type: boolean
+        default: false
+      auto_discover_ecs_scheduled_task:
+        description: "Automatically discover ECS scheduled tasks"
+        required: false
+        type: boolean
+        default: false
+      auto_discover_rds:
+        description: "Automatically discover RDS clusters"
+        required: false
+        type: boolean
+        default: false
+      auto_discover_redshift:
+        description: "Automatically discover Redshift clusters"
+        required: false
+        type: boolean
+        default: false
+      autoscaling_max_capacity:
+        description: "Maximum capacity for autoscaling when starting ECS services (set to 0 to use discovered value)"
+        required: false
+        type: number
+        default: 10
+      autoscaling_min_capacity:
+        description: "Minimum capacity for autoscaling when starting ECS services (set to 0 to skip autoscaling adjustment)"
+        required: false
+        type: number
+        default: 1
+      default_desired_count:
+        description: "Default desired count for starting ECS services"
+        required: false
+        type: number
+        default: 1
+      batch_job_queues:
+        description: "JSON array of Batch job queue names to control ['queue-1', 'queue-2']"
+        required: false
+        type: string
+        default: "[]"
+      control_batch:
+        description: "Control AWS Batch job queues"
+        required: false
+        type: boolean
+        default: false
+      control_ec2:
+        description: "Control EC2 instances"
+        required: false
+        type: boolean
+        default: false
+      control_ecs_scheduled_task:
+        description: "Control ECS scheduled tasks"
+        required: false
+        type: boolean
+        default: false
+      control_ecs_service:
+        description: "Control ECS services"
+        required: false
+        type: boolean
+        default: false
+      control_rds:
+        description: "Control RDS clusters"
+        required: false
+        type: boolean
+        default: false
+      control_redshift:
+        description: "Control Redshift clusters"
+        required: false
+        type: boolean
+        default: false
+      ec2_instances:
+        description: "JSON array of EC2 instance IDs to control ['i-xxxxx', 'i-yyyyy']"
+        required: false
+        type: string
+        default: "[]"
+      ecs_services:
+        description: "JSON array of ECS services to control [{cluster: 'name', service: 'name', desired_count: 1}]"
+        required: false
+        type: string
+        default: "[]"
+      ecs_scheduled_tasks:
+        description: "JSON array of ECS scheduled tasks to control [{cluster: 'name', task_definition: 'family'}]"
+        required: false
+        type: string
+        default: "[]"
+      environment:
+        description: "Target environment (dev, qa, stg, prd, etc.)"
+        required: true
+        type: string
+      exclude_patterns_batch:
+        description: "JSON array of patterns to exclude from Batch auto-discovery ['pattern1']"
+        required: false
+        type: string
+        default: "[]"
+      exclude_patterns_ec2:
+        description: "JSON array of patterns to exclude from EC2 auto-discovery ['pattern1']"
+        required: false
+        type: string
+        default: "[]"
+      exclude_patterns_ecs:
+        description: "JSON array of patterns to exclude from ECS auto-discovery ['pattern1']"
+        required: false
+        type: string
+        default: "[]"
+      exclude_patterns_ecs_scheduled_task:
+        description: "JSON array of patterns to exclude from ECS Scheduled Task auto-discovery ['pattern1']"
+        required: false
+        type: string
+        default: "[]"
+      exclude_patterns_rds:
+        description: "JSON array of patterns to exclude from RDS auto-discovery ['pattern1']"
+        required: false
+        type: string
+        default: "[]"
+      exclude_patterns_redshift:
+        description: "JSON array of patterns to exclude from Redshift auto-discovery ['pattern1']"
+        required: false
+        type: string
+        default: "[]"
+      include_patterns_batch:
+        description: "JSON array of patterns to include in Batch auto-discovery ['pattern1']"
+        required: false
+        type: string
+        default: "[]"
+      include_patterns_ec2:
+        description: "JSON array of patterns to include in EC2 auto-discovery ['pattern1']"
+        required: false
+        type: string
+        default: "[]"
+      include_patterns_ecs:
+        description: "JSON array of patterns to include in ECS auto-discovery ['pattern1']"
+        required: false
+        type: string
+        default: "[]"
+      include_patterns_ecs_scheduled_task:
+        description: "JSON array of patterns to include in ECS Scheduled Task auto-discovery ['pattern1']"
+        required: false
+        type: string
+        default: "[]"
+      include_patterns_rds:
+        description: "JSON array of patterns to include in RDS auto-discovery ['pattern1']"
+        required: false
+        type: string
+        default: "[]"
+      include_patterns_redshift:
+        description: "JSON array of patterns to include in Redshift auto-discovery ['pattern1']"
+        required: false
+        type: string
+        default: "[]"
+      rds_clusters:
+        description: "JSON array of RDS cluster identifiers to control ['cluster-1', 'cluster-2']"
+        required: false
+        type: string
+        default: "[]"
+      redshift_clusters:
+        description: "JSON array of Redshift cluster identifiers to control ['cluster-1', 'cluster-2']"
+        required: false
+        type: string
+        default: "[]"
+      wait_for_stable:
+        description: "Wait for resources to reach stable state after operation (set to false to skip waiting)"
+        required: false
+        type: boolean
+        default: true
+    secrets:
+      AWS_IAM_ROLE_ARN:
+        required: true
+      AWS_REGION:
+        required: true
+
+jobs:
+  control-ec2-instances:
+    if: ${{ inputs.control_ec2 }}
+    uses: ./.github/workflows/reusable-cd-aws-service-control-ec2.yaml
+    with:
+      action: ${{ inputs.action }}
+      auto_discover: ${{ inputs.auto_discover_ec2 }}
+      environment: ${{ inputs.environment }}
+      exclude_patterns: ${{ inputs.exclude_patterns_ec2 }}
+      include_patterns: ${{ inputs.include_patterns_ec2 }}
+      instances: ${{ inputs.ec2_instances }}
+      wait_for_stable: ${{ inputs.wait_for_stable }}
+    secrets:
+      AWS_IAM_ROLE_ARN: ${{ secrets.AWS_IAM_ROLE_ARN }}
+      AWS_REGION: ${{ secrets.AWS_REGION }}
+    permissions:
+      contents: read
+      id-token: write
+
+  control-ecs-services:
+    if: ${{ inputs.control_ecs_service }}
+    uses: ./.github/workflows/reusable-cd-aws-service-control-ecs-service.yaml
+    with:
+      action: ${{ inputs.action }}
+      auto_discover: ${{ inputs.auto_discover_ecs }}
+      autoscaling_min_capacity: ${{ inputs.autoscaling_min_capacity }}
+      autoscaling_max_capacity: ${{ inputs.autoscaling_max_capacity }}
+      default_desired_count: ${{ inputs.default_desired_count }}
+      environment: ${{ inputs.environment }}
+      exclude_patterns: ${{ inputs.exclude_patterns_ecs }}
+      include_patterns: ${{ inputs.include_patterns_ecs }}
+      services: ${{ inputs.ecs_services }}
+      wait_for_stable: ${{ inputs.wait_for_stable }}
+    secrets:
+      AWS_IAM_ROLE_ARN: ${{ secrets.AWS_IAM_ROLE_ARN }}
+      AWS_REGION: ${{ secrets.AWS_REGION }}
+    permissions:
+      contents: read
+      id-token: write
+
+  control-batch-job-queues:
+    if: ${{ inputs.control_batch }}
+    uses: ./.github/workflows/reusable-cd-aws-service-control-batch.yaml
+    with:
+      action: ${{ inputs.action }}
+      auto_discover: ${{ inputs.auto_discover_batch }}
+      environment: ${{ inputs.environment }}
+      exclude_patterns: ${{ inputs.exclude_patterns_batch }}
+      include_patterns: ${{ inputs.include_patterns_batch }}
+      job_queues: ${{ inputs.batch_job_queues }}
+      wait_for_stable: ${{ inputs.wait_for_stable }}
+    secrets:
+      AWS_IAM_ROLE_ARN: ${{ secrets.AWS_IAM_ROLE_ARN }}
+      AWS_REGION: ${{ secrets.AWS_REGION }}
+    permissions:
+      contents: read
+      id-token: write
+
+  control-ecs-scheduled-tasks:
+    if: ${{ inputs.control_ecs_scheduled_task }}
+    uses: ./.github/workflows/reusable-cd-aws-service-control-ecs-scheduled-task.yaml
+    with:
+      action: ${{ inputs.action }}
+      auto_discover: ${{ inputs.auto_discover_ecs_scheduled_task }}
+      environment: ${{ inputs.environment }}
+      exclude_patterns: ${{ inputs.exclude_patterns_ecs_scheduled_task }}
+      include_patterns: ${{ inputs.include_patterns_ecs_scheduled_task }}
+      scheduled_tasks: ${{ inputs.ecs_scheduled_tasks }}
+      wait_for_stable: ${{ inputs.wait_for_stable }}
+    secrets:
+      AWS_IAM_ROLE_ARN: ${{ secrets.AWS_IAM_ROLE_ARN }}
+      AWS_REGION: ${{ secrets.AWS_REGION }}
+    permissions:
+      contents: read
+      id-token: write
+
+  control-rds-clusters:
+    if: ${{ inputs.control_rds }}
+    uses: ./.github/workflows/reusable-cd-aws-service-control-rds-cluster.yaml
+    with:
+      action: ${{ inputs.action }}
+      auto_discover: ${{ inputs.auto_discover_rds }}
+      clusters: ${{ inputs.rds_clusters }}
+      environment: ${{ inputs.environment }}
+      exclude_patterns: ${{ inputs.exclude_patterns_rds }}
+      include_patterns: ${{ inputs.include_patterns_rds }}
+      wait_for_stable: ${{ inputs.wait_for_stable }}
+    secrets:
+      AWS_IAM_ROLE_ARN: ${{ secrets.AWS_IAM_ROLE_ARN }}
+      AWS_REGION: ${{ secrets.AWS_REGION }}
+    permissions:
+      contents: read
+      id-token: write
+
+  control-redshift-clusters:
+    if: ${{ inputs.control_redshift }}
+    uses: ./.github/workflows/reusable-cd-aws-service-control-redshift.yaml
+    with:
+      action: ${{ inputs.action }}
+      auto_discover: ${{ inputs.auto_discover_redshift }}
+      clusters: ${{ inputs.redshift_clusters }}
+      environment: ${{ inputs.environment }}
+      exclude_patterns: ${{ inputs.exclude_patterns_redshift }}
+      include_patterns: ${{ inputs.include_patterns_redshift }}
+      wait_for_stable: ${{ inputs.wait_for_stable }}
+    secrets:
+      AWS_IAM_ROLE_ARN: ${{ secrets.AWS_IAM_ROLE_ARN }}
+      AWS_REGION: ${{ secrets.AWS_REGION }}
+    permissions:
+      contents: read
+      id-token: write
+
+  summary:
+    needs:
+      - control-ec2-instances
+      - control-ecs-services
+      - control-batch-job-queues
+      - control-ecs-scheduled-tasks
+      - control-rds-clusters
+      - control-redshift-clusters
+    if: always()
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+
+      - name: Prepare summary data
+        id: prepare
+        env:
+          ACTION: ${{ inputs.action }}
+          BATCH_AUTO: ${{ inputs.auto_discover_batch }}
+          BATCH_JOB_QUEUES: ${{ inputs.batch_job_queues }}
+          BATCH_RESULT: ${{ needs.control-batch-job-queues.result }}
+          EC2_AUTO: ${{ inputs.auto_discover_ec2 }}
+          EC2_INSTANCES: ${{ inputs.ec2_instances }}
+          EC2_RESULT: ${{ needs.control-ec2-instances.result }}
+          ECS_AUTO: ${{ inputs.auto_discover_ecs }}
+          ECS_RESULT: ${{ needs.control-ecs-services.result }}
+          ECS_SCHEDULED_TASK_AUTO: ${{ inputs.auto_discover_ecs_scheduled_task }}
+          ECS_SCHEDULED_TASK_RESULT: ${{ needs.control-ecs-scheduled-tasks.result }}
+          ECS_SCHEDULED_TASKS: ${{ inputs.ecs_scheduled_tasks }}
+          ECS_SERVICES: ${{ inputs.ecs_services }}
+          ENVIRONMENT: ${{ inputs.environment }}
+          RDS_AUTO: ${{ inputs.auto_discover_rds }}
+          RDS_CLUSTERS: ${{ inputs.rds_clusters }}
+          RDS_RESULT: ${{ needs.control-rds-clusters.result }}
+          REDSHIFT_AUTO: ${{ inputs.auto_discover_redshift }}
+          REDSHIFT_CLUSTERS: ${{ inputs.redshift_clusters }}
+          REDSHIFT_RESULT: ${{ needs.control-redshift-clusters.result }}
+        run: |
+          set -euo pipefail
+          # Determine overall status
+          if [[ "$EC2_RESULT" == "failure" || "$ECS_RESULT" == "failure" || "$BATCH_RESULT" == "failure" || "$ECS_SCHEDULED_TASK_RESULT" == "failure" || "$RDS_RESULT" == "failure" || "$REDSHIFT_RESULT" == "failure" ]]; then
+            OVERALL_STATUS="failure"
+          elif [[ "$EC2_RESULT" == "success" || "$ECS_RESULT" == "success" || "$BATCH_RESULT" == "success" || "$ECS_SCHEDULED_TASK_RESULT" == "success" || "$RDS_RESULT" == "success" || "$REDSHIFT_RESULT" == "success" ]]; then
+            OVERALL_STATUS="success"
+          else
+            OVERALL_STATUS="skipped"
+          fi
+          echo "overall_status=$OVERALL_STATUS" >> "$GITHUB_OUTPUT"
+
+      - name: Summary
+        uses: ./.github/actions/summary
+        with:
+          outputs: |
+            action: ${{ inputs.action }}
+            environment: ${{ inputs.environment }}
+            batch_result: ${{ needs.control-batch-job-queues.result }}
+            batch_auto_discover: ${{ inputs.auto_discover_batch }}
+            ec2_result: ${{ needs.control-ec2-instances.result }}
+            ec2_auto_discover: ${{ inputs.auto_discover_ec2 }}
+            ecs_result: ${{ needs.control-ecs-services.result }}
+            ecs_auto_discover: ${{ inputs.auto_discover_ecs }}
+            ecs_scheduled_task_result: ${{ needs.control-ecs-scheduled-tasks.result }}
+            ecs_scheduled_task_auto_discover: ${{ inputs.auto_discover_ecs_scheduled_task }}
+            rds_result: ${{ needs.control-rds-clusters.result }}
+            rds_auto_discover: ${{ inputs.auto_discover_rds }}
+            redshift_result: ${{ needs.control-redshift-clusters.result }}
+            redshift_auto_discover: ${{ inputs.auto_discover_redshift }}
+          status: "${{ steps.prepare.outputs.overall_status }}"
+          title: "AWS Service Control: ${{ inputs.action }}"

@@ -1,0 +1,467 @@
+# Reusable workflow for controlling ECS Services (start/stop)
+# This workflow can start or stop ECS services with automatic resource discovery
+name: reusable-cd-aws-service-control-ecs-service
+
+on:
+  workflow_call:
+    inputs:
+      action:
+        description: "Action to perform (start or stop)"
+        required: true
+        type: string
+      auto_discover:
+        description: "Automatically discover ECS services (if true, services input is ignored)"
+        required: false
+        type: boolean
+        default: false
+      autoscaling_max_capacity:
+        description: "Maximum capacity for autoscaling when starting services (set to 0 to use discovered value)"
+        required: false
+        type: number
+        default: 10
+      autoscaling_min_capacity:
+        description: "Minimum capacity for autoscaling when starting services (set to 0 to skip autoscaling adjustment)"
+        required: false
+        type: number
+        default: 1
+      default_desired_count:
+        description: "Default desired count for starting services (used when auto-discovering or not specified)"
+        required: false
+        type: number
+        default: 1
+      environment:
+        description: "Target environment (dev, qa, stg, prd, etc.)"
+        required: true
+        type: string
+      exclude_patterns:
+        description: "JSON array of patterns to exclude from auto-discovery (partial match on cluster or service name) ['pattern1', 'pattern2']"
+        required: false
+        type: string
+        default: "[]"
+      include_patterns:
+        description: "JSON array of patterns to include in auto-discovery (partial match). If empty, all are included ['pattern1', 'pattern2']"
+        required: false
+        type: string
+        default: "[]"
+      services:
+        description: "JSON array of ECS services to control [{cluster: 'name', service: 'name', desired_count: 1}]"
+        required: false
+        type: string
+        default: "[]"
+      wait_for_stable:
+        description: "Wait for service to reach stable state after operation (set to false to skip waiting)"
+        required: false
+        type: boolean
+        default: true
+    secrets:
+      AWS_IAM_ROLE_ARN:
+        required: true
+      AWS_REGION:
+        required: true
+
+env:
+  ACTION: ${{ inputs.action }}
+  AUTOSCALING_MIN_CAPACITY: ${{ inputs.autoscaling_min_capacity }}
+  AUTOSCALING_MAX_CAPACITY: ${{ inputs.autoscaling_max_capacity }}
+  AUTO_DISCOVER: ${{ inputs.auto_discover }}
+  DEFAULT_DESIRED_COUNT: ${{ inputs.default_desired_count }}
+  ENVIRONMENT: ${{ inputs.environment }}
+  EXCLUDE_PATTERNS: ${{ inputs.exclude_patterns }}
+  INCLUDE_PATTERNS: ${{ inputs.include_patterns }}
+  SERVICES: ${{ inputs.services }}
+
+jobs:
+  discover-services:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    environment:
+      name: ${{ inputs.environment }}
+    permissions:
+      contents: read
+      id-token: write
+    outputs:
+      discovered_services: ${{ steps.discover.outputs.discovered_services }}
+      discovered_services_b64: ${{ steps.discover.outputs.discovered_services_b64 }}
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+
+      - name: Setup AWS Credentials
+        uses: aws-actions/configure-aws-credentials@61815dcd50bd041e203e49132bacad1fd04d2708 # v5.1.1
+        with:
+          aws-region: ${{ secrets.AWS_REGION }}
+          role-to-assume: ${{ secrets.AWS_IAM_ROLE_ARN }}
+
+      - name: Discover ECS Services
+        id: discover
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          # Helper: Check jq availability
+          check_jq() {
+            command -v jq >/dev/null 2>&1 || { echo "❌ jq is required"; exit 1; }
+          }
+
+          # Short-circuit when auto-discover is disabled
+          if [[ "$AUTO_DISCOVER" != "true" ]]; then
+            echo "discovered_services=[]" >> "$GITHUB_OUTPUT"
+            echo "discovered_services_b64=" >> "$GITHUB_OUTPUT"
+            echo "ℹ️ Auto-discover disabled"
+            exit 0
+          fi
+
+          check_jq
+
+          echo "🔍 Discovering ECS services..."
+
+          # List all ECS clusters
+          mapfile -t clusters < <(aws ecs list-clusters --query 'clusterArns[]' --output text | tr '\t' '\n')
+
+          FILTERED_SERVICES=()
+          INCLUDE_PATTERNS_ARRAY=$(echo "$INCLUDE_PATTERNS" | jq -r '.[]' 2>/dev/null || echo "")
+          EXCLUDE_PATTERNS_ARRAY=$(echo "$EXCLUDE_PATTERNS" | jq -r '.[]' 2>/dev/null || echo "")
+
+          for cluster_arn in "${clusters[@]}"; do
+            [[ -z "$cluster_arn" ]] && continue
+            # Trim whitespace from cluster name
+            cluster_name=$(basename "$cluster_arn" | xargs)
+
+            # List services in this cluster
+            mapfile -t services < <(aws ecs list-services --cluster "$cluster_arn" --query 'serviceArns[]' --output text | tr '\t' '\n')
+
+            for service_arn in "${services[@]}"; do
+              [[ -z "$service_arn" ]] && continue
+              # Trim whitespace from service name
+              service_name=$(basename "$service_arn" | xargs)
+
+              # Get desired count for this service
+              desired_count=$(aws ecs describe-services \
+                --cluster "$cluster_arn" \
+                --services "$service_arn" \
+                --query 'services[0].desiredCount' \
+                --output text 2>/dev/null || echo "$DEFAULT_DESIRED_COUNT")
+
+              if [[ -z "$desired_count" || "$desired_count" == "None" ]]; then
+                desired_count="$DEFAULT_DESIRED_COUNT"
+              fi
+
+              # Check if AutoScaling is configured for this service
+              resource_id="service/${cluster_name}/${service_name}"
+              autoscaling_info=$(aws application-autoscaling describe-scalable-targets \
+                --service-namespace ecs \
+                --resource-ids "$resource_id" \
+                --scalable-dimension "ecs:service:DesiredCount" \
+                --query 'ScalableTargets[0].[MinCapacity,MaxCapacity]' \
+                --output text 2>/dev/null || echo "")
+
+              # Parse AutoScaling configuration
+              if [[ -n "$autoscaling_info" && "$autoscaling_info" != "None" ]]; then
+                has_autoscaling="1"
+                autoscaling_min=$(echo "$autoscaling_info" | awk '{print $1}')
+                autoscaling_max=$(echo "$autoscaling_info" | awk '{print $2}')
+                [[ -z "$autoscaling_min" || "$autoscaling_min" == "None" ]] && autoscaling_min="0"
+                [[ -z "$autoscaling_max" || "$autoscaling_max" == "None" ]] && autoscaling_max="0"
+              else
+                has_autoscaling="0"
+                autoscaling_min="0"
+                autoscaling_max="0"
+              fi
+
+              # Check exclude patterns
+              EXCLUDED=false
+              if [[ -n "$EXCLUDE_PATTERNS_ARRAY" ]]; then
+                while IFS= read -r pattern; do
+                  if [[ "$cluster_name" == *"$pattern"* ]] || [[ "$service_name" == *"$pattern"* ]]; then
+                    echo "  ⊖ Excluding: $cluster_name/$service_name [matched exclude pattern: $pattern]"
+                    EXCLUDED=true
+                    break
+                  fi
+                done <<< "$EXCLUDE_PATTERNS_ARRAY"
+              fi
+
+              [[ "$EXCLUDED" == true ]] && continue
+
+              # Check include patterns
+              if [[ -n "$INCLUDE_PATTERNS_ARRAY" ]]; then
+                INCLUDED=false
+                while IFS= read -r pattern; do
+                  if [[ "$cluster_name" == *"$pattern"* ]] || [[ "$service_name" == *"$pattern"* ]]; then
+                    INCLUDED=true
+                    break
+                  fi
+                done <<< "$INCLUDE_PATTERNS_ARRAY"
+
+                if [[ "$INCLUDED" == false ]]; then
+                  echo "  ⊖ Skipping: $cluster_name/$service_name [no include pattern matched]"
+                  continue
+                fi
+              fi
+
+              echo "  ✓ Discovered: $cluster_name/$service_name (desired_count=$desired_count, has_autoscaling=$has_autoscaling, min=$autoscaling_min, max=$autoscaling_max)"
+
+              # Build JSON object with proper escaping (trim before escaping)
+              cluster_escaped=$(printf '%s' "$cluster_name" | jq -Rs 'rtrimstr("\n")')
+              service_escaped=$(printf '%s' "$service_name" | jq -Rs 'rtrimstr("\n")')
+
+              FILTERED_SERVICES+=("{\"cluster\":$cluster_escaped,\"service\":$service_escaped,\"desired_count\":$desired_count,\"has_autoscaling\":$has_autoscaling,\"autoscaling_min\":$autoscaling_min,\"autoscaling_max\":$autoscaling_max}")
+            done
+          done
+
+          # Create JSON array
+          if [ ${#FILTERED_SERVICES[@]} -eq 0 ]; then
+            DISCOVERED_JSON='[]'
+          else
+            DISCOVERED_JSON=$(printf '%s\n' "${FILTERED_SERVICES[@]}" | jq -s .)
+          fi
+
+          # echo "discovered_services=$DISCOVERED_JSON" >> "$GITHUB_OUTPUT"
+          # Provide a base64-encoded form to avoid unsafe template expansion in downstream steps
+          DISCOVERED_B64=$(printf '%s' "$DISCOVERED_JSON" | base64 -w0)
+          echo "discovered_services_b64=$DISCOVERED_B64" >> "$GITHUB_OUTPUT"
+          echo "✅ Discovered ${#FILTERED_SERVICES[@]} ECS service(s)"
+          printf '%s' "$DISCOVERED_JSON" | jq .
+
+  validate:
+    needs: [discover-services]
+    if: ${{ always() && github.actor != 'dependabot[bot]' && (needs.discover-services.result == 'success' || needs.discover-services.result == 'skipped') }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    permissions:
+      contents: read
+    outputs:
+      action_validated: ${{ steps.validate-inputs.outputs.action }}
+      target_services: ${{ steps.validate-inputs.outputs.target_services }}
+    steps:
+      - name: Validate inputs
+        id: validate-inputs
+        shell: bash
+        env:
+          DISCOVERED_B64: ${{ needs.discover-services.outputs.discovered_services_b64 }}
+        run: |
+          set -euo pipefail
+          # Validate action
+          if [[ "$ACTION" != "start" && "$ACTION" != "stop" ]]; then
+            echo "❌ Error: action must be 'start' or 'stop', got '$ACTION'"
+            exit 1
+          fi
+          echo "action=$ACTION" >> "$GITHUB_OUTPUT"
+          echo "✅ Action validated: $ACTION"
+
+          # Determine target services (use base64-decoded discovered data to avoid unsafe template expansion)
+          if [[ "$AUTO_DISCOVER" == "true" ]]; then
+            if [[ -n "${DISCOVERED_B64:-}" ]]; then
+              TARGET_SERVICES=$(printf '%s' "$DISCOVERED_B64" | base64 --decode)
+            else
+              TARGET_SERVICES='[]'
+            fi
+            echo "Using auto-discovered services"
+          else
+            TARGET_SERVICES="$SERVICES"
+            echo "Using manually specified services"
+          fi
+
+          # Validate services JSON format
+          if ! printf '%s' "$TARGET_SERVICES" | jq empty 2>/dev/null; then
+            echo "❌ Error: services is not valid JSON"
+            exit 1
+          fi
+
+          # Validate at least one service is selected
+          SERVICE_COUNT=$(printf '%s' "$TARGET_SERVICES" | jq '. | length')
+          if [[ "$SERVICE_COUNT" -eq 0 ]]; then
+            echo "⚠️  Warning: No ECS services found (skipping control)"
+            echo "target_services=[]" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          SANITIZED_SERVICES=$(printf '%s' "$TARGET_SERVICES" | jq -c '.')
+          echo "target_services=$SANITIZED_SERVICES" >> "$GITHUB_OUTPUT"
+          echo "✅ Target services count: $SERVICE_COUNT"
+          printf '%s' "$SANITIZED_SERVICES" | jq .
+
+  control-services:
+    needs: validate
+    if: ${{ github.actor != 'dependabot[bot]' && needs.validate.result == 'success' && needs.validate.outputs.target_services != '[]' }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    concurrency:
+      group: ecs-control-${{ inputs.environment }}-${{ matrix.service.service }}-${{ inputs.action }}
+      cancel-in-progress: false
+    environment:
+      name: ${{ inputs.environment }}
+    permissions:
+      contents: read
+      id-token: write
+    strategy:
+      fail-fast: false
+      matrix:
+        service: ${{ fromJSON(needs.validate.outputs.target_services) }}
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+
+      - name: Setup AWS Credentials
+        uses: aws-actions/configure-aws-credentials@61815dcd50bd041e203e49132bacad1fd04d2708 # v5.1.1
+        with:
+          aws-region: ${{ secrets.AWS_REGION }}
+          role-to-assume: ${{ secrets.AWS_IAM_ROLE_ARN }}
+
+      - name: Control ECS Service
+        env:
+          CLUSTER: ${{ matrix.service.cluster }}
+          DESIRED_COUNT: ${{ matrix.service.desired_count }}
+          HAS_AUTOSCALING: ${{ matrix.service.has_autoscaling }}
+          AUTOSCALING_MIN: ${{ matrix.service.autoscaling_min }}
+          AUTOSCALING_MAX: ${{ matrix.service.autoscaling_max }}
+          SERVICE: ${{ matrix.service.service }}
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          # Helpers
+          check_jq() {
+            command -v jq >/dev/null 2>&1 || { echo "❌ jq is required"; exit 1; }
+          }
+
+          check_resource_exists() {
+            local check_value="$1"
+            local resource_name="$2"
+            if [[ -z "$check_value" || "$check_value" == "None" ]]; then
+              echo "ℹ️ $resource_name not found (skipping)"
+              exit 0
+            fi
+          }
+
+          set_autoscaling_min() {
+            local resource_id="$1"
+            local min_cap="$2"
+            local max_cap="$3"
+            echo "🔧 Setting autoscaling minCapacity to $min_cap for $resource_id"
+            aws application-autoscaling register-scalable-target \
+              --service-namespace ecs \
+              --resource-id "$resource_id" \
+              --scalable-dimension ecs:service:DesiredCount \
+              --min-capacity "$min_cap" \
+              --max-capacity "$max_cap" || {
+                echo "❌ Failed to set minCapacity"
+                exit 1
+              }
+            echo "✅ Set minCapacity to $min_cap"
+          }
+
+          echo "Cluster: [$CLUSTER], Service: [$SERVICE]"
+          check_jq
+
+          # Check if cluster exists
+          CLUSTER_CHECK=$(aws ecs describe-clusters --clusters "$CLUSTER" --query 'clusters[0].status' --output text 2>/dev/null || echo "")
+          check_resource_exists "$CLUSTER_CHECK" "Cluster $CLUSTER"
+
+          # Check if service exists
+          SERVICE_CHECK=$(aws ecs describe-services --cluster "$CLUSTER" --services "$SERVICE" --query 'services[0].status' --output text 2>/dev/null || echo "")
+          check_resource_exists "$SERVICE_CHECK" "Service $SERVICE in cluster $CLUSTER"
+
+          RESOURCE_ID="service/$CLUSTER/$SERVICE"
+
+          # Use discovered autoscaling configuration (defaults to 0 if not provided)
+          HAS_AUTOSCALING_FLAG="${HAS_AUTOSCALING:-0}"
+          MIN_CAP="${AUTOSCALING_MIN:-0}"
+          MAX_CAP="${AUTOSCALING_MAX:-0}"
+
+          echo "ℹ️  AutoScaling status: has_autoscaling=$HAS_AUTOSCALING_FLAG, min=$MIN_CAP, max=$MAX_CAP"
+
+          if [[ "$ACTION" == "stop" ]]; then
+            if [[ "$HAS_AUTOSCALING_FLAG" == "1" ]]; then
+              # AutoScaling enabled: set min/max to 0
+              echo "🔧 Stopping via AutoScaling: setting min/max capacity to 0"
+              set_autoscaling_min "$RESOURCE_ID" 0 0
+              echo "✅ AutoScaling min/max capacity set to 0 for: $SERVICE"
+            else
+              # AutoScaling disabled: set desiredCount to 0
+              echo "🛑 Stopping ECS service: $SERVICE in cluster: $CLUSTER"
+              ERR=$(aws ecs update-service \
+                --cluster "$CLUSTER" \
+                --service "$SERVICE" \
+                --desired-count 0 2>&1) || RC=$?
+              if [ "${RC:-0}" -ne 0 ]; then
+                if echo "$ERR" | grep -qiE "No updates are to be performed|already|no change|ClusterNotFoundException|ServiceNotFoundException"; then
+                  echo "ℹ️ ECS service already at desired state or not found (ignoring): $ERR"
+                else
+                  echo "$ERR"
+                  exit "${RC:-1}"
+                fi
+              else
+                echo "✅ Stop command sent for ECS service: $SERVICE"
+              fi
+            fi
+
+          elif [[ "$ACTION" == "start" ]]; then
+            if [[ "$HAS_AUTOSCALING_FLAG" == "1" ]]; then
+              # AutoScaling enabled: restore min/max capacity
+              # Use input parameters if > 0, otherwise use discovered values (but ensure at least 1 for min if both are 0)
+              RESTORE_MIN="${MIN_CAP}"
+              RESTORE_MAX="${MAX_CAP}"
+              if [[ "$AUTOSCALING_MIN_CAPACITY" -gt 0 ]]; then
+                RESTORE_MIN="$AUTOSCALING_MIN_CAPACITY"
+              fi
+              if [[ "$AUTOSCALING_MAX_CAPACITY" -gt 0 ]]; then
+                RESTORE_MAX="$AUTOSCALING_MAX_CAPACITY"
+              fi
+
+              # Ensure min is at least 1 if both discovered and input are 0
+              if [[ "$RESTORE_MIN" -eq 0 ]]; then
+                RESTORE_MIN="1"
+                echo "⚠️  Warning: minCapacity was 0, defaulting to 1"
+              fi
+
+              # Ensure max is at least equal to min
+              if [[ "$RESTORE_MAX" -lt "$RESTORE_MIN" ]]; then
+                RESTORE_MAX="$RESTORE_MIN"
+                echo "⚠️  Warning: maxCapacity ($RESTORE_MAX) was less than minCapacity ($RESTORE_MIN), setting to $RESTORE_MIN"
+              fi
+
+              echo "🔧 Starting via AutoScaling: restoring min=$RESTORE_MIN, max=$RESTORE_MAX"
+              set_autoscaling_min "$RESOURCE_ID" "$RESTORE_MIN" "$RESTORE_MAX"
+              echo "✅ AutoScaling capacity restored for: $SERVICE"
+            else
+              # AutoScaling disabled: set desiredCount
+              echo "▶️  Starting ECS service: $SERVICE in cluster: $CLUSTER with desired count: $DESIRED_COUNT"
+              ERR=$(aws ecs update-service \
+                --cluster "$CLUSTER" \
+                --service "$SERVICE" \
+                --desired-count "$DESIRED_COUNT" 2>&1) || RC=$?
+              if [ "${RC:-0}" -ne 0 ]; then
+                if echo "$ERR" | grep -qiE "No updates are to be performed|already|no change|ClusterNotFoundException|ServiceNotFoundException"; then
+                  echo "ℹ️ ECS service already at desired state or not found (ignoring): $ERR"
+                else
+                  echo "$ERR"
+                  exit "${RC:-1}"
+                fi
+              else
+                echo "✅ Start command sent for ECS service: $SERVICE"
+              fi
+            fi
+          fi
+
+      - name: Wait for ECS Service Stability
+        if: ${{ inputs.wait_for_stable }}
+        timeout-minutes: 30
+        env:
+          CLUSTER: ${{ matrix.service.cluster }}
+          SERVICE: ${{ matrix.service.service }}
+        shell: bash
+        run: |
+          echo "⏳ Waiting for ECS service to reach stable state"
+
+          aws ecs wait services-stable \
+            --cluster "$CLUSTER" \
+            --services "$SERVICE" || {
+              echo "⚠️  Warning: ECS service did not stabilize within timeout"
+              exit 1
+            }
+
+          echo "✅ ECS service reached stable state"

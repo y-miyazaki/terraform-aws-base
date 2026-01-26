@@ -1,6 +1,7 @@
 #!/bin/bash
 #######################################
 # Description: Create an S3 bucket for Terraform remote state with secure defaults
+#
 # Usage: ./aws_init_state.sh -r {region} -b {bucket name} [-s]
 #   options:
 #     -b {bucket name}   S3 bucket name (required)
@@ -63,19 +64,22 @@ function show_usage {
         error_exit "$error_msg"
     fi
 
-    show_help_header "$(basename "$0")" "Create S3 bucket for Terraform state management" "-r {region} -b {bucket name} [options]"
-    echo "This script creates an S3 bucket for Terraform state management with proper security settings."
-    echo "You can optionally add a random hash suffix to the bucket name for uniqueness."
-    echo ""
-    echo "Options:"
-    echo "  -b {bucket name}          S3 bucket name"
-    echo "  -r {region}               AWS region for S3 bucket"
-    echo "  -s                        Add random hash suffix to bucket name"
-    echo "  -h                        Show this help message"
-    show_help_footer
-    echo "Examples:"
-    echo "  $(basename "$0") -r us-east-1 -b my-terraform-state"
-    echo "  $(basename "$0") -r ap-northeast-1 -b terraform-state -s"
+    cat << EOF
+Usage: $(basename "$0") -r {region} -b {bucket name} [options]
+
+Description: Create S3 bucket for Terraform state management
+             This script creates an S3 bucket for Terraform state management with proper security settings.
+             You can optionally add a random hash suffix to the bucket name for uniqueness.
+
+Options:
+  -b {bucket name}          S3 bucket name
+  -r {region}               AWS region for S3 bucket
+  -s                        Add random hash suffix to bucket name
+  -h                        Show this help message
+Examples:
+  $(basename "$0") -r us-east-1 -b my-terraform-state
+  $(basename "$0") -r ap-northeast-1 -b terraform-state -s
+EOF
     exit 0
 }
 

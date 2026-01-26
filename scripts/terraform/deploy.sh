@@ -1,8 +1,10 @@
 #!/bin/bash
 #######################################
 # Description: Deploy Terraform configuration with validation and approval
+#
 # Usage: ./deploy.sh [directory]
-#   directory       Target directory (optional, defaults to current)
+#   arguments:
+#     directory       Target directory (optional, defaults to current)
 #
 # Required environment variables:
 #   TF_PLUGIN_CACHE_DIR     - Terraform plugin cache directory
@@ -35,6 +37,10 @@ export SCRIPT_DIR
 source "${SCRIPT_DIR}/../lib/all.sh"
 
 #######################################
+# Global variables and default values
+#######################################
+
+#######################################
 # show_usage: Display script usage information
 #
 # Description:
@@ -54,19 +60,23 @@ source "${SCRIPT_DIR}/../lib/all.sh"
 #
 #######################################
 function show_usage {
-    show_help_header "$(basename "$0")" "Deploy Terraform configuration" "[directory]"
-    echo "Arguments:"
-    echo "  directory       Target directory (optional, defaults to current)"
-    echo ""
-    show_help_footer
-    echo "Required environment variables:"
-    echo "  TF_PLUGIN_CACHE_DIR     - Terraform plugin cache directory"
-    echo "  ENV                     - Environment (e.g., dev, staging, prod)"
-    echo ""
-    echo "Examples:"
-    echo "  ENV=dev $0 ./terraform/base"
-    echo "  ENV=prod $0 ./terraform/application"
-    exit 1
+    cat << EOF
+Usage: $(basename "$0") [directory]
+
+Description: Deploy Terraform configuration
+
+Arguments:
+  directory       Target directory (optional, defaults to current)
+
+Required environment variables:
+  TF_PLUGIN_CACHE_DIR     - Terraform plugin cache directory
+  ENV                     - Environment (e.g., dev, staging, prod)
+
+Examples:
+  ENV=dev $0 ./terraform/base
+  ENV=prod $0 ./terraform/application
+EOF
+    exit 0
 }
 
 # Show usage if -h or --help is provided

@@ -1,7 +1,17 @@
 #!/bin/bash
 #######################################
 # Description: Complete Module-by-module Terraform updater with individual validation
+#
 # Usage: ./module_updater.sh [options] <terraform_directory>
+#   options:
+#     -h, --help                 Display this help message
+#     -v, --verbose              Enable verbose output (shows detailed plan content differences)
+#     -d, --dry-run              Run in dry-run mode
+#     -c, --check-only           Check only mode
+#     -r, --recursive            Search recursively
+#     --no-plan                  Skip plan/validation (no plan mode)
+#   arguments:
+#     terraform_directory        Target Terraform directory to process
 #######################################
 
 # Error handling: exit on error, unset variable, or failed pipeline
@@ -59,54 +69,53 @@ readonly MODULE_PATTERN_AWK='/^[[:space:]]*module[[:space:]]+"[^"]+"[[:space:]]*
 trap 'echo "[ERROR] Aborted while processing: ${CURRENT_FILE_BEING_SCANNED:-N/A}" >&2' ERR
 
 #######################################
-# show_usage: Display usage information
+# show_usage: Display script usage information
 #
 # Description:
-#   Display usage information
+#   Displays usage information for the script, including options and examples
 #
 # Arguments:
 #   None
 #
-# Global Variables:
-#   None
-#
 # Returns:
-#   None
+#   None (outputs to stdout)
 #
 # Usage:
 #   show_usage
 #
 #######################################
 function show_usage {
-    echo "Usage: $(basename "$0") [options]"
-    echo ""
-    echo "Description: Update Terraform module versions and validate configurations"
-    echo ""
-    echo "Options:"
-    echo "  -h, --help                 Display this help message"
-    echo "  -v, --verbose              Enable verbose output (shows detailed plan content differences)"
-    echo "  -d, --dry-run              Run in dry-run mode"
-    echo "  -c, --check-only           Check only mode"
-    echo "  -r, --recursive            Search recursively"
-    echo "  --no-plan                  Skip plan/validation (no plan mode)"
-    echo ""
-    echo "Arguments:"
-    echo "  terraform_directory        Target Terraform directory to process"
-    echo ""
-    echo "Environment Variables:"
-    echo "  ENV              Environment for tfvars file selection (default: dev)"
-    echo ""
-    echo "Verbose Mode Features:"
-    echo "  • Shows detailed terraform plan content differences (baseline vs current)"
-    echo "  • Displays error details for failed operations"
-    echo "  • Saves detailed diff logs to terraform_show_diff_YYYYMMDD_HHMMSS.log"
-    echo "  • Provides summary of resource changes (added/removed/modified)"
-    echo ""
-    echo "Examples:"
-    echo "  $(basename "$0") -v terraform/application"
-    echo "  $(basename "$0") --dry-run --check-only terraform/base"
-    echo "  $(basename "$0") --no-plan terraform/base"
-    echo "  $(basename "$0") -v -r terraform/                  # Recursive with verbose output"
+    cat << EOF
+Usage: $(basename "$0") [options]
+
+Description: Update Terraform module versions and validate configurations
+
+Options:
+  -h, --help                 Display this help message
+  -v, --verbose              Enable verbose output (shows detailed plan content differences)
+  -d, --dry-run              Run in dry-run mode
+  -c, --check-only           Check only mode
+  -r, --recursive            Search recursively
+  --no-plan                  Skip plan/validation (no plan mode)
+
+Arguments:
+  terraform_directory        Target Terraform directory to process
+
+Environment Variables:
+  ENV              Environment for tfvars file selection (default: dev)
+
+Verbose Mode Features:
+  - Shows detailed terraform plan content differences (baseline vs current)
+  - Displays error details for failed operations
+  - Saves detailed diff logs to terraform_show_diff_YYYYMMDD_HHMMSS.log
+  - Provides summary of resource changes (added/removed/modified)
+
+Examples:
+  $(basename "$0") -v terraform/application
+  $(basename "$0") --dry-run --check-only terraform/base
+  $(basename "$0") --no-plan terraform/base
+  $(basename "$0") -v -r terraform/                  # Recursive with verbose output
+EOF
     exit 0
 }
 
@@ -137,7 +146,9 @@ function show_usage {
 function parse_arguments {
     while [[ $# -gt 0 ]]; do
         case $1 in
-            -h | --help) show_usage ;;
+            -h | --help)
+                show_usage
+                ;;
             -v | --verbose)
                 VERBOSE=true
                 shift

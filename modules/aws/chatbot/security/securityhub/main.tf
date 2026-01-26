@@ -234,7 +234,7 @@ module "step_functions" {
   count = var.is_enabled ? 1 : 0
 
   source  = "terraform-aws-modules/step-functions/aws"
-  version = "4.2.0"
+  version = "5.1.0"
 
   cloudwatch_log_group_kms_key_id        = var.cloudwatch_log_group_kms_key_id
   cloudwatch_log_group_name              = "/aws/sfn/${var.name_prefix}securityhub-update-findings-sfn"

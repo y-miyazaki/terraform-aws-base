@@ -1,7 +1,10 @@
 #!/bin/bash
 #######################################
 # Description: Delete all QuickSight namespaces for the current AWS account
+#
 # Usage: ./aws_delete_quicksight_namespace.sh
+#   options:
+#     -h, --help    Display this help message
 #######################################
 
 # Error handling: exit on error, unset variable, or failed pipeline
@@ -29,27 +32,29 @@ AWS_ACCOUNT_ID=""
 # show_usage: Display script usage information
 #
 # Description:
-#   Displays usage information for the script
+#   Displays usage information for the script, including options and examples
 #
 # Arguments:
 #   None
 #
 # Returns:
-#   None (exits with status 0)
+#   None (outputs to stdout)
 #
 # Usage:
 #   show_usage
 #
 #######################################
 function show_usage {
-    echo "Usage: $(basename "$0")"
-    echo ""
-    echo "Delete all QuickSight namespaces for the current AWS account"
-    echo ""
-    echo "Options:"
-    echo "  -h, --help        Display this help message"
-    echo ""
-    echo "Example: $(basename "$0")"
+    cat << EOF
+Usage: $(basename "$0") [options]
+
+Description: Delete all QuickSight namespaces for the current AWS account.
+
+Options:
+  -h, --help        Display this help message
+
+Example: $(basename "$0")
+EOF
     exit 0
 }
 

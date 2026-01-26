@@ -88,7 +88,6 @@ description: "AI Assistant Instructions for Terraform"
 
 #### Tagging
 
-- 統一形式: `locals.tags = merge(try(data.aws_default_tags.provider.tags, {}), var.tags == null ? {} : var.tags)`
 - Name 追加: `merge(local.tags, { Name = "..." })`
 - 不要手動重複キー削除
 
@@ -117,17 +116,4 @@ AWS provider 優先:
 
 ## Testing and Validation
 
-### Validation Commands
-
-```bash
-terraform fmt -check
-terraform validate
-tflint
-trivy config .
-```
-
-## Security Guidelines
-
-- 機密情報: 環境変数・SSM Parameter Store
-- タグ統一: `locals.tags = merge(try(data.aws_default_tags.provider.tags, {}), var.tags)`
-- backend 暗号化: SSE+DynamoDB ロック
+**詳細ガイド**: [terraform-validation Skill](../skills/terraform-validation/SKILL.md) を参照（検証手順・トラブルシューティング・セキュリティチェック）

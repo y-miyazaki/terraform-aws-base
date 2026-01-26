@@ -1,6 +1,7 @@
 #!/bin/bash
 #######################################
 # Description: Install SchemaSpy and its dependencies (Java, Graphviz, JDBC drivers)
+#
 # Usage: ./install_schemaspy.sh [options]
 #   options:
 #     -h, --help           Display this help message
