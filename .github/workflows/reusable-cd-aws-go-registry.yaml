@@ -1,0 +1,140 @@
+# Reusable workflow for building and pushing Docker images to Amazon ECR
+# This workflow can be called by other workflows to perform go CD operations
+name: reusable-cd-aws-go-registry
+
+on:
+  workflow_call:
+    inputs:
+      component:
+        description: "Logical component name (e.g. base)"
+        required: true
+        type: string
+      docker_context:
+        description: "Docker build context path"
+        required: false
+        type: string
+      dockerfile:
+        description: "Dockerfile path"
+        required: false
+        type: string
+        default: "Dockerfile"
+      ecr_registry:
+        description: "Target ECR registry URL (e.g. 123456789012.dkr.ecr.ap-northeast-1.amazonaws.com). If empty, uses login output."
+        required: false
+        type: string
+      ecr_repository:
+        description: "Target ECR repository name"
+        required: true
+        type: string
+      environment:
+        description: "Target environment (dev, qa, stg, prd, etc.)"
+        required: true
+        type: string
+      go_project_path:
+        description: "Path (relative) to the Go project root (directory containing go.mod). Used as default Docker context."
+        required: true
+        type: string
+      image_tag:
+        description: "Image tag to push"
+        required: false
+        type: string
+      platform:
+        description: "Docker build platform(s) (e.g. linux/arm64 or linux/amd64,linux/arm64)"
+        required: false
+        type: string
+        default: "linux/arm64"
+    secrets:
+      AWS_IAM_ROLE_ARN:
+        required: true
+      AWS_REGION:
+        required: true
+
+env:
+  COMPONENT: ${{ inputs.component }}
+  DOCKER_CONTEXT: ${{ inputs.docker_context }}
+  DOCKERFILE: ${{ inputs.dockerfile }}
+  ECR_REGISTRY: ${{ inputs.ecr_registry }}
+  ECR_REPOSITORY: ${{ inputs.ecr_repository }}
+  ENVIRONMENT: ${{ inputs.environment }}
+  GO_PROJECT_PATH: ${{ inputs.go_project_path }}
+  IMAGE_TAG: ${{ inputs.image_tag }}
+  PLATFORM: ${{ inputs.platform }}
+
+jobs:
+  deploy:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    environment:
+      name: ${{ inputs.environment }}
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+
+      - name: Setup AWS Credentials
+        uses: aws-actions/configure-aws-credentials@61815dcd50bd041e203e49132bacad1fd04d2708 # v5.1.1
+        with:
+          role-to-assume: ${{ secrets.AWS_IAM_ROLE_ARN }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Setup Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@062b18b96a7aff071d4dc91bc00c4c1a7945b076 # v2.0.1
+
+      - name: Setup image metadata
+        id: meta
+        env:
+          ECR_LOGIN_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        run: |
+          IMAGE_TAG_VAL="${IMAGE_TAG}"
+          if [ -z "$IMAGE_TAG_VAL" ]; then IMAGE_TAG_VAL="${GITHUB_SHA::12}"; fi
+          REGISTRY_INPUT="${ECR_REGISTRY}"
+          if [ -z "$REGISTRY_INPUT" ]; then REGISTRY_INPUT="${ECR_LOGIN_REGISTRY}"; fi
+          REPOSITORY="${ECR_REPOSITORY}"
+          DOCKER_CONTEXT_VAL="${DOCKER_CONTEXT}"
+          if [ -z "$DOCKER_CONTEXT_VAL" ]; then DOCKER_CONTEXT_VAL="${GO_PROJECT_PATH}"; fi
+          # Write meta outputs in one grouped redirect to avoid multiple >> usage
+          {
+            echo "image_tag=$IMAGE_TAG_VAL"
+            echo "registry=$REGISTRY_INPUT"
+            echo "repository=$REPOSITORY"
+            echo "docker_context=$DOCKER_CONTEXT_VAL"
+            echo "dockerfile_path=${DOCKERFILE}"
+            echo "platforms=${PLATFORM}"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Setup QEMU
+        uses: docker/setup-qemu-action@c7c53464625b32c7a7e944ae62b3e17d2b600130 # v3.7.0
+        with:
+          platforms: all
+
+      - name: Setup Docker Buildx
+        uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f # v3.12.0
+
+      - name: Exec Build and Push Docker image
+        uses: docker/build-push-action@263435318d21b8e681c14492fe198d362a7d2c83 # v6.18.0
+        with:
+          context: ${{ steps.meta.outputs.docker_context }}
+          file: ${{ steps.meta.outputs.dockerfile_path }}
+          platforms: ${{ steps.meta.outputs.platforms }}
+          push: true
+          tags: ${{ steps.meta.outputs.registry }}/${{ steps.meta.outputs.repository }}:${{ steps.meta.outputs.image_tag }}
+
+      - name: Summary
+        if: always()
+        uses: ./.github/actions/summary
+        with:
+          artifacts: |
+            (none)
+          outputs: |
+            image: ${{ steps.meta.outputs.registry }}/${{ steps.meta.outputs.repository }}:${{ steps.meta.outputs.image_tag }}
+          params: |
+            component: ${{ env.COMPONENT }}
+            ecr_repository: ${{ env.ECR_REPOSITORY }}
+            image_tag: ${{ env.IMAGE_TAG }}
+          status: "${{ job.status }}"
+          title: "${{ format('Docker Image: {0}/{1}:{2}', steps.meta.outputs.registry, steps.meta.outputs.repository, steps.meta.outputs.image_tag) }}"

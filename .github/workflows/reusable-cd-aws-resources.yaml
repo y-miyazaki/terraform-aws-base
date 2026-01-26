@@ -1,0 +1,183 @@
+# Reusable workflow: generate AWS resources and upload as zip artifact
+# This workflow can be called by other workflows to generate AWS resources
+name: reusable-cd-aws-resources
+
+on:
+  workflow_call:
+    inputs:
+      arc_checksum:
+        description: "SHA256 checksum for arc release tarball"
+        required: false
+        type: string
+        default: "9c34323caf1f5c4a39f96d7daa7574200f7ed86a6781cdcf6097a122925b1aa5" # pragma: allowlist secret
+      arc_version:
+        description: "arc version to use (e.g. v1.0.6)"
+        required: false
+        type: string
+        default: "v1.0.6"
+      categories:
+        description: "Comma-separated categories to limit collection (optional)"
+        required: false
+        type: string
+        default: ""
+      environment:
+        description: "Target environment (dev, qa, stg, prd, etc.)"
+        required: true
+        type: string
+      output_dir:
+        description: "Output directory where CSVs will be written"
+        required: false
+        type: string
+        default: "./output"
+      region:
+        description: "AWS region to query (optional)"
+        required: false
+        type: string
+        default: ""
+    outputs:
+      artifact_name:
+        description: "Name of the uploaded artifact"
+        value: ${{ jobs.generate-documentation.outputs.artifact_name }}
+    secrets:
+      AWS_IAM_ROLE_ARN:
+        required: true
+      AWS_REGION:
+        required: true
+
+env:
+  ARC_CHECKSUM: ${{ inputs.arc_checksum }}
+  ARC_VERSION: ${{ inputs.arc_version }}
+  CATEGORIES: ${{ inputs.categories }}
+  ENVIRONMENT: ${{ inputs.environment }}
+  OUTPUT_DIR: ${{ inputs.output_dir }}
+  REGION: ${{ inputs.region }}
+
+jobs:
+  generate-documentation:
+    if: ${{ github.actor != 'dependabot[bot]' }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    concurrency:
+      group: aws-resources-${{ inputs.environment }}
+      cancel-in-progress: false
+    environment:
+      name: ${{ inputs.environment }}
+    permissions:
+      contents: read
+      id-token: write
+    outputs:
+      artifact_name: ${{ steps.setup-parameters.outputs.artifact_name }}
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+
+      - name: Setup AWS Credentials
+        uses: aws-actions/configure-aws-credentials@61815dcd50bd041e203e49132bacad1fd04d2708 # v5.1.1
+        with:
+          aws-region: ${{ secrets.AWS_REGION }}
+          role-to-assume: ${{ secrets.AWS_IAM_ROLE_ARN }}
+
+      - name: Download and install arc
+        uses: ./.github/actions/install-github-release
+        with:
+          asset_pattern: "arc-linux-amd64.tar.gz"
+          binary: arc
+          checksum: ${{ env.ARC_CHECKSUM }}
+          repo: y-miyazaki/arc
+          strip_v_prefix: "true"
+          version: ${{ env.ARC_VERSION }}
+
+      - name: Setup Parameters
+        id: setup-parameters
+        shell: bash
+        run: | # pragma: allowlist secret
+          # shellcheck disable=SC2086,SC2129,SC2002
+          set -euo pipefail
+
+          # Define common output and artifact naming variables here so downstream steps reuse them
+          ARTIFACT_BASE="resources-${ENVIRONMENT}"
+          ARTIFACT_NAME="${ARTIFACT_BASE}.zip"
+          OUTDIR="${OUTPUT_DIR}"
+
+          # Write environment variables to the GitHub environment file in one grouped redirect
+          {
+            echo "ARTIFACT_BASE=${ARTIFACT_BASE}"
+            echo "ARTIFACT_NAME=${ARTIFACT_NAME}"
+            echo "OUTDIR=${OUTDIR}"
+          } >> "$GITHUB_ENV"
+
+          # Write outputs to the GitHub output file in one grouped redirect
+          {
+            echo "artifact_base=${ARTIFACT_BASE}"
+            echo "artifact_name=${ARTIFACT_NAME}"
+            echo "outdir=${OUTDIR}"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Exec arc to collect AWS resources
+        run: |
+          set -euo pipefail
+          CATS="${CATEGORIES}"
+          REGION_ARG="${REGION}"
+
+          CMD=(arc -H -D "$OUTDIR")
+          if [[ -n "$CATS" ]]; then
+            CMD+=( -c "$CATS" )
+          fi
+          if [[ -n "$REGION_ARG" ]]; then
+            CMD+=( -r "$REGION_ARG" )
+          fi
+
+          # Print command safely, then execute using array expansion
+          printf 'Running: %s\n' "${CMD[*]}"
+          "${CMD[@]}"
+
+      - name: Prepare artifact structure
+        id: prepare-artifact-structure
+        run: |
+          set -euo pipefail
+
+          # Create artifact directory named after artifact base
+          mkdir -p artifact-output/"${ARTIFACT_BASE}"
+
+          # Move output to artifact base directory (move directory contents safely)
+          mv "$OUTDIR"/* "artifact-output/${ARTIFACT_BASE}/" || true
+
+          echo "Artifact structure:"
+          ls -lR artifact-output/
+
+      - name: Create zip archive
+        run: |
+          set -euo pipefail
+
+          cd artifact-output
+          zip -r ../"${ARTIFACT_NAME}" "${ARTIFACT_BASE}" -x "*.git/*"
+          cd ..
+
+          echo "Archive created successfully: ${ARTIFACT_NAME}"
+          ls -lh "${ARTIFACT_NAME}"
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        with:
+          name: ${{ steps.setup-parameters.outputs.artifact_name }}
+          path: ${{ steps.setup-parameters.outputs.artifact_name }}
+          retention-days: 30
+
+      - name: Summary
+        if: always()
+        uses: ./.github/actions/summary
+        with:
+          artifacts: |
+            ${{ steps.setup-parameters.outputs.artifact_name }}
+          outputs: |
+            artifact_name: ${{ steps.setup-parameters.outputs.artifact_name }}
+          params: |
+            arc_version: ${{ inputs.arc_version }}
+            categories: ${{ inputs.categories }}
+            environment: ${{ inputs.environment }}
+            output_dir: ${{ inputs.output_dir }}
+            region: ${{ inputs.region }}
+          status: "${{ job.status }}"
+          title: "AWS Resources (${{ env.ENVIRONMENT }})"

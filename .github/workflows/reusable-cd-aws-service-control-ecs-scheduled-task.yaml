@@ -1,0 +1,354 @@
+# Reusable workflow for controlling ECS Scheduled Tasks via EventBridge Scheduler (enable/disable)
+# This workflow can enable or disable EventBridge schedules that start/stop ECS tasks
+name: reusable-cd-aws-service-control-ecs-scheduled-task
+
+on:
+  workflow_call:
+    inputs:
+      action:
+        description: "Action to perform (start or stop)"
+        required: true
+        type: string
+      auto_discover:
+        description: "Automatically discover ECS scheduled tasks (if true, scheduled_tasks input is ignored)"
+        required: false
+        type: boolean
+        default: false
+      environment:
+        description: "Target environment (dev, qa, stg, prd, etc.)"
+        required: true
+        type: string
+      exclude_patterns:
+        description: "JSON array of patterns to exclude from auto-discovery (partial match on cluster or task definition) ['pattern1', 'pattern2']"
+        required: false
+        type: string
+        default: "[]"
+      include_patterns:
+        description: "JSON array of patterns to include in auto-discovery (partial match). If empty, all are included ['pattern1', 'pattern2']"
+        required: false
+        type: string
+        default: "[]"
+      scheduled_tasks:
+        description: "JSON array of ECS scheduled tasks to control [{cluster: 'name', task_definition: 'family'}]"
+        required: false
+        type: string
+        default: "[]"
+      wait_for_stable:
+        description: "Wait for schedules to be updated (currently not implemented for EventBridge)"
+        required: false
+        type: boolean
+        default: false
+    secrets:
+      AWS_IAM_ROLE_ARN:
+        required: true
+      AWS_REGION:
+        required: true
+
+env:
+  ACTION: ${{ inputs.action }}
+  AUTO_DISCOVER: ${{ inputs.auto_discover }}
+  ENVIRONMENT: ${{ inputs.environment }}
+  EXCLUDE_PATTERNS: ${{ inputs.exclude_patterns }}
+  INCLUDE_PATTERNS: ${{ inputs.include_patterns }}
+  SCHEDULED_TASKS: ${{ inputs.scheduled_tasks }}
+
+jobs:
+  discover-scheduled-tasks:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    environment:
+      name: ${{ inputs.environment }}
+    permissions:
+      contents: read
+      id-token: write
+    outputs:
+      discovered_tasks: ${{ steps.discover.outputs.discovered_tasks }}
+      discovered_tasks_b64: ${{ steps.discover.outputs.discovered_tasks_b64 }}
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+
+      - name: Setup AWS Credentials
+        uses: aws-actions/configure-aws-credentials@61815dcd50bd041e203e49132bacad1fd04d2708 # v5.1.1
+        with:
+          aws-region: ${{ secrets.AWS_REGION }}
+          role-to-assume: ${{ secrets.AWS_IAM_ROLE_ARN }}
+
+      - name: Discover ECS Scheduled Tasks
+        id: discover
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          check_jq() {
+            command -v jq >/dev/null 2>&1 || { echo "❌ jq is required"; exit 1; }
+          }
+
+          if [[ "$AUTO_DISCOVER" != "true" ]]; then
+            echo "discovered_tasks=[]" >> "$GITHUB_OUTPUT"
+            echo "discovered_tasks_b64=" >> "$GITHUB_OUTPUT"
+            echo "ℹ️ Auto-discover disabled"
+            exit 0
+          fi
+
+          check_jq
+          echo "🔍 Discovering ECS scheduled tasks via EventBridge..."
+
+          # Find EventBridge rules with ECS RunTask target
+          mapfile -t rule_names < <(aws events list-rules --query "Rules[].Name" --output text | tr '\t' '\n')
+
+          FILTERED_TASKS=()
+          INCLUDE_PATTERNS_ARRAY=$(echo "$INCLUDE_PATTERNS" | jq -r '.[]' 2>/dev/null || echo "")
+          EXCLUDE_PATTERNS_ARRAY=$(echo "$EXCLUDE_PATTERNS" | jq -r '.[]' 2>/dev/null || echo "")
+
+          for rule_name in "${rule_names[@]}"; do
+            [[ -z "$rule_name" ]] && continue
+
+            echo "Processing rule: $rule_name"
+
+            # Get targets for this rule
+            targets_json=$(aws events list-targets-by-rule --rule "$rule_name" --query "Targets[?RoleArn!=null]" --output json)
+            targets_rc=$?
+            echo "Targets JSON length: ${#targets_json}"
+            if [ $targets_rc -eq 0 ] && echo "$targets_json" | jq empty 2>/dev/null; then
+              targets="$targets_json"
+              echo "Targets valid"
+            else
+              targets="[]"
+              echo "Targets invalid or command failed"
+            fi
+
+            # Check if this rule has ECS RunTask targets
+            ecs_target_count=$(echo "$targets" | jq '[.[] | select(.EcsParameters != null)] | length')
+            [[ "$ecs_target_count" -eq 0 ]] && continue
+
+            # Extract cluster and task definition from first ECS target
+            first_ecs_target=$(echo "$targets" | jq -r '.[] | select(.EcsParameters != null) | .EcsParameters' | jq -c . | head -1)
+            [[ -z "$first_ecs_target" || "$first_ecs_target" == "null" ]] && continue
+
+            # Get task definition ARN
+            task_def_arn=$(echo "$first_ecs_target" | jq -r '.TaskDefinitionArn // empty')
+            [[ -z "$task_def_arn" ]] && continue
+
+            # Parse task family from ARN (arn:aws:ecs:region:account:task-definition/family:revision -> family)
+            task_family=${task_def_arn##*/}
+            task_family=${task_family%%:*}
+
+            # Get cluster name from EcsParameters
+            cluster_arn=$(echo "$first_ecs_target" | jq -r '.Cluster // empty')
+            if [[ -z "$cluster_arn" || "$cluster_arn" == "null" ]]; then
+              cluster_name="default"
+            else
+              # Parse cluster name from ARN if it's an ARN (arn:aws:ecs:region:account:cluster/name -> name)
+              if [[ "$cluster_arn" == arn:aws:ecs:* ]]; then
+                cluster_name=${cluster_arn##*/}
+              else
+                cluster_name="$cluster_arn"
+              fi
+            fi
+
+            # Check exclude patterns
+            EXCLUDED=false
+            if [[ -n "$EXCLUDE_PATTERNS_ARRAY" ]]; then
+              while IFS= read -r pattern; do
+                if [[ "$cluster_name" == *"$pattern"* ]] || [[ "$task_family" == *"$pattern"* ]] || [[ "$rule_name" == *"$pattern"* ]]; then
+                  echo "  ⊖ Excluding: $cluster_name/$task_family (rule: $rule_name) [matched exclude pattern: $pattern]"
+                  EXCLUDED=true
+                  break
+                fi
+              done <<< "$EXCLUDE_PATTERNS_ARRAY"
+            fi
+
+            [[ "$EXCLUDED" == true ]] && continue
+
+            # Check include patterns
+            if [[ -n "$INCLUDE_PATTERNS_ARRAY" ]]; then
+              INCLUDED=false
+              while IFS= read -r pattern; do
+                if [[ "$cluster_name" == *"$pattern"* ]] || [[ "$task_family" == *"$pattern"* ]] || [[ "$rule_name" == *"$pattern"* ]]; then
+                  INCLUDED=true
+                  break
+                fi
+              done <<< "$INCLUDE_PATTERNS_ARRAY"
+
+              if [[ "$INCLUDED" == false ]]; then
+                echo "  ⊖ Skipping: $cluster_name/$task_family (rule: $rule_name) [no include pattern matched]"
+                continue
+              fi
+            fi
+
+            echo "  ✓ Discovered: $cluster_name/$task_family"
+
+            cluster_escaped=$(printf '%s' "$cluster_name" | jq -Rs . | tr -d '\n')
+            task_escaped=$(printf '%s' "$task_family" | jq -Rs . | tr -d '\n')
+
+            FILTERED_TASKS+=("{\"cluster\":$cluster_escaped,\"task_definition\":$task_escaped}")
+          done
+
+          if [ ${#FILTERED_TASKS[@]} -eq 0 ]; then
+            DISCOVERED_JSON='[]'
+          else
+            DISCOVERED_JSON=$(printf '%s\n' "${FILTERED_TASKS[@]}" | jq -s .)
+          fi
+
+          # echo "discovered_tasks=$DISCOVERED_JSON" >> "$GITHUB_OUTPUT"
+          DISCOVERED_B64=$(printf '%s' "$DISCOVERED_JSON" | base64 -w0)
+          echo "discovered_tasks_b64=$DISCOVERED_B64" >> "$GITHUB_OUTPUT"
+          echo "✅ Discovered ${#FILTERED_TASKS[@]} ECS scheduled task(s)"
+          printf '%s' "$DISCOVERED_JSON" | jq .
+
+  validate:
+    needs: [discover-scheduled-tasks]
+    if: ${{ always() && github.actor != 'dependabot[bot]' && (needs.discover-scheduled-tasks.result == 'success' || needs.discover-scheduled-tasks.result == 'skipped') }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    permissions:
+      contents: read
+    outputs:
+      action_validated: ${{ steps.validate-inputs.outputs.action }}
+      target_tasks: ${{ steps.validate-inputs.outputs.target_tasks }}
+    steps:
+      - name: Validate inputs
+        id: validate-inputs
+        shell: bash
+        env:
+          DISCOVERED_B64: ${{ needs.discover-scheduled-tasks.outputs.discovered_tasks_b64 }}
+        run: |
+          set -euo pipefail
+          if [[ "$ACTION" != "start" && "$ACTION" != "stop" ]]; then
+            echo "❌ Error: action must be 'start' or 'stop', got '$ACTION'"
+            exit 1
+          fi
+          echo "action=$ACTION" >> "$GITHUB_OUTPUT"
+          echo "✅ Action validated: $ACTION"
+
+          if [[ "$AUTO_DISCOVER" == "true" ]]; then
+            if [[ -n "${DISCOVERED_B64:-}" ]]; then
+              TARGET_TASKS=$(printf '%s' "$DISCOVERED_B64" | base64 --decode)
+            else
+              TARGET_TASKS='[]'
+            fi
+            echo "Using auto-discovered scheduled tasks"
+          else
+            TARGET_TASKS="$SCHEDULED_TASKS"
+            echo "Using manually specified scheduled tasks"
+          fi
+
+          if ! printf '%s' "$TARGET_TASKS" | jq empty 2>/dev/null; then
+            echo "❌ Error: scheduled_tasks is not valid JSON"
+            exit 1
+          fi
+
+          TASK_COUNT=$(printf '%s' "$TARGET_TASKS" | jq '. | length')
+          if [[ "$TASK_COUNT" -eq 0 ]]; then
+            echo "⚠️  Warning: No ECS scheduled tasks found (skipping control)"
+            echo "target_tasks=[]" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          SANITIZED_TASKS=$(printf '%s' "$TARGET_TASKS" | jq -c '.')
+          echo "target_tasks=$SANITIZED_TASKS" >> "$GITHUB_OUTPUT"
+          echo "✅ Target scheduled tasks count: $TASK_COUNT"
+          printf '%s' "$SANITIZED_TASKS" | jq .
+
+  control-schedules:
+    needs: validate
+    if: ${{ github.actor != 'dependabot[bot]' && needs.validate.result == 'success' && needs.validate.outputs.target_tasks != '[]' }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    concurrency:
+      group: ecs-scheduled-task-control-${{ inputs.environment }}-${{ matrix.task.task_definition }}-${{ inputs.action }}
+      cancel-in-progress: false
+    environment:
+      name: ${{ inputs.environment }}
+    permissions:
+      contents: read
+      id-token: write
+    strategy:
+      fail-fast: false
+      matrix:
+        task: ${{ fromJSON(needs.validate.outputs.target_tasks) }}
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+
+      - name: Setup AWS Credentials
+        uses: aws-actions/configure-aws-credentials@61815dcd50bd041e203e49132bacad1fd04d2708 # v5.1.1
+        with:
+          aws-region: ${{ secrets.AWS_REGION }}
+          role-to-assume: ${{ secrets.AWS_IAM_ROLE_ARN }}
+
+      - name: Control EventBridge Schedules
+        env:
+          CLUSTER: ${{ matrix.task.cluster }}
+          TASK_DEFINITION: ${{ matrix.task.task_definition }}
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          echo "Task: [$CLUSTER/$TASK_DEFINITION]"
+
+          # Find all EventBridge rules targeting this cluster/task_definition
+          mapfile -t all_rules < <(aws events list-rules --query 'Rules[].Name' --output text | tr '\t' '\n')
+
+          MATCHING_RULES=()
+          for rule_name in "${all_rules[@]}"; do
+            [[ -z "$rule_name" ]] && continue
+
+            # Get targets for this rule
+            targets_json=$(aws events list-targets-by-rule --rule "$rule_name" --query "Targets[?RoleArn!=null]" --output json)
+            targets_rc=$?
+            if [ $targets_rc -eq 0 ] && echo "$targets_json" | jq empty 2>/dev/null; then
+              targets="$targets_json"
+            else
+              targets="[]"
+            fi
+
+            # Check if this rule has ECS RunTask targets matching our cluster/task_definition
+            ecs_target=$(echo "$targets" | jq -r '.[] | select(.EcsParameters != null) | .EcsParameters' | jq -c . | head -1)
+            [[ -z "$ecs_target" || "$ecs_target" == "null" ]] && continue
+
+            # Get task definition ARN
+            task_def_arn=$(echo "$ecs_target" | jq -r '.TaskDefinitionArn // empty')
+            [[ -z "$task_def_arn" ]] && continue
+
+            # Parse task family from ARN
+            task_family=${task_def_arn##*/}
+            task_family=${task_family%%:*}
+
+            # Match cluster and task_definition
+            if [[ "$task_family" == "$TASK_DEFINITION" ]]; then
+              MATCHING_RULES+=("$rule_name")
+            fi
+          done
+
+          if [ ${#MATCHING_RULES[@]} -eq 0 ]; then
+            echo "ℹ️ No EventBridge rules found for $CLUSTER/$TASK_DEFINITION (skipping)"
+            exit 0
+          fi
+
+          echo "Found ${#MATCHING_RULES[@]} rule(s) for $CLUSTER/$TASK_DEFINITION: ${MATCHING_RULES[*]}"
+
+          # Control all matching rules
+          for rule_name in "${MATCHING_RULES[@]}"; do
+            if [[ "$ACTION" == "stop" ]]; then
+              echo "🛑 Disabling EventBridge rule: $rule_name"
+              aws events disable-rule --name "$rule_name" || {
+                echo "❌ Failed to disable rule $rule_name"
+                exit 1
+              }
+              echo "✅ Disabled EventBridge rule: $rule_name"
+
+            elif [[ "$ACTION" == "start" ]]; then
+              echo "▶️  Enabling EventBridge rule: $rule_name"
+              aws events enable-rule --name "$rule_name" || {
+                echo "❌ Failed to enable rule $rule_name"
+                exit 1
+              }
+              echo "✅ Enabled EventBridge rule: $rule_name"
+            fi
+          done

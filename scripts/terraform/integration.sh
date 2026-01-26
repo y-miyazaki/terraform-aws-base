@@ -1,8 +1,10 @@
 #!/bin/bash
 #######################################
 # Description: Terraform integration testing script (init, validate, plan, lint, security)
+#
 # Usage: ./integration.sh [directory]
-#   directory: Target directory (optional, defaults to current)
+#   arguments:
+#     directory: Target directory (optional, defaults to current)
 #######################################
 
 # Error handling: exit on error, unset variable, or failed pipeline
@@ -20,6 +22,10 @@ export SCRIPT_DIR
 # shellcheck source=../lib/all.sh
 # shellcheck disable=SC1091
 source "${SCRIPT_DIR}/../lib/all.sh"
+
+#######################################
+# Global variables and default values
+#######################################
 
 #######################################
 # show_usage: Display script usage information
@@ -41,21 +47,24 @@ source "${SCRIPT_DIR}/../lib/all.sh"
 #
 #######################################
 function show_usage {
-    show_help_header "$(basename "$0")" "Terraform integration testing (init, validate, plan)" "[directory]"
-    echo "This script performs Terraform initialization, validation and planning for a directory."
-    echo ""
-    echo "Arguments:"
-    echo "  directory       Target directory (optional, defaults to current)"
-    echo ""
-    show_help_footer
-    echo "Required environment variables:"
-    echo "  TF_PLUGIN_CACHE_DIR     - Terraform plugin cache directory"
-    echo "  ENV                     - Environment (e.g., dev, staging, prod)"
-    echo ""
-    echo "Examples:"
-    echo "  ENV=dev $0 ./terraform/base"
-    echo "  ENV=prod $0 ./terraform/application"
-    exit 1
+    cat << EOF
+Usage: $(basename "$0") [directory]
+
+Description: Terraform integration testing (init, validate, plan)
+             This script performs Terraform initialization, validation and planning for a directory.
+
+Arguments:
+  directory       Target directory (optional, defaults to current)
+
+Required environment variables:
+  TF_PLUGIN_CACHE_DIR     - Terraform plugin cache directory
+  ENV                     - Environment (e.g., dev, staging, prod)
+
+Examples:
+  ENV=dev $0 ./terraform/base
+  ENV=prod $0 ./terraform/application
+EOF
+    exit 0
 }
 
 # Show usage if -h or --help is provided

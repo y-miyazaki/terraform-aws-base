@@ -16,8 +16,7 @@ severity:
 # Scan Options
 #--------------------------------------------------------------
 scan:
-  security-checks:
-    - config
+  scanners:
     - misconfig
     - secret
     - vuln

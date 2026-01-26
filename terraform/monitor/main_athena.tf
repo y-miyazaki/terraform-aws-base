@@ -15,7 +15,7 @@ module "athena" {
         encryption_option = try(var.athena.workgroup_configuration.result_configuration.encryption_configuration.encryption_option, null)
         kms_key           = try(var.athena.workgroup_configuration.result_configuration.encryption_configuration.kms_key, null)
       }
-      output_location = var.athena.is_enabled ? format("s3://%s/Logs/Athena/", module.s3_application_log.s3_bucket_id) : ""
+      output_location = var.athena.is_enabled ? format("s3://%s/Logs/Athena/", module.s3_application_log.s3_bucket_id) : null
     }
     requester_pays_enabled = try(var.athena.workgroup_configuration.requester_pays_enabled, false)
   }

@@ -1831,11 +1831,11 @@ metric_resource_rds_cluster = {
 # https://docs.aws.amazon.com/redshift/latest/mgmt/metrics-listing.html
 #--------------------------------------------------------------
 metric_resource_redshift = {
-  # TODO: need to set is_enabled for monitor of RDS.
+  # TODO: need to set is_enabled for monitor of Redshift.
   is_enabled = false
-  # TODO: need to set period for RDS.
+  # TODO: need to set period for Redshift.
   period = 300
-  # TODO: need to set threshold for RDS.
+  # TODO: need to set threshold for Redshift.
   threshold = {
     # (Required) CommitQueueLength threshold (unit=Count)
     enabled_commit_queue_length = true
@@ -2102,7 +2102,7 @@ metric_resource_sqs = {
     approximate_number_of_messages_not_visible_in_quiet_groups         = 100
     # (Required) ApproximateNumberOfMessagesVisible threshold (unit=Count)
     enabled_approximate_number_of_messages_visible = true
-    approximate_number_of_messages_visible         = 1000
+    approximate_number_of_messages_visible         = 1
     # (Required) ApproximateNumberOfMessagesVisibleInQuietGroups threshold (unit=Count, Fair Queues only)
     enabled_approximate_number_of_messages_visible_in_quiet_groups = false
     approximate_number_of_messages_visible_in_quiet_groups         = 100
@@ -2425,24 +2425,238 @@ report_csp = {
 #--------------------------------------------------------------
 # Processes automatic shutdowns, restarts, etc. using EventBridge.
 # The following are covered
+# - AWS Batch Job Queue
+# - EC2 Instance
+# - ECS Service
+# - ECS Scheduled Task
 # - RDS Cluster
+# - Redshift Cluster
 #--------------------------------------------------------------
 eventbridge = {
+  #--------------------------------------------------------------
+  # Schedule automatic enable and disable of AWS Batch Job Queue.
+  #--------------------------------------------------------------
+  batch = {
+    # TODO: need to set is_enabled for enable and disable batch job queue schedule.
+    is_enabled = false
+    # TODO: need to set schedule_expression_stop for disable batch job queue.
+    schedule_expression_stop = "cron(0 10 * * ? *)"
+    # TODO: need to set schedule_expression_start for enable batch job queue.
+    schedule_expression_start = "cron(0 1 ? * MON-FRI *)"
+    # (Optional) Automatically discover AWS Batch job queues to create schedules. If true, schedules variable is ignored.
+    create_auto_schedules = true
+    # (Optional) List of patterns to exclude from auto-discovery (partial match on job queue name).
+    auto_schedules_exclude_list = []
+    # (Optional) List of patterns to include in auto-discovery (partial match). If empty, all are included.
+    auto_schedules_include_list = []
+    # (Optional) If create_auto_schedules is set to false, need to set schedules for enable and disable AWS Batch Job Queue.
+    # Specify the instance of the target AWS Batch Job Queue to be scheduled by Map.
+    # check AWS Batch Job Queue list command.
+    # ex) aws batch describe-job-queues --query 'jobQueues[].[jobQueueName, state]' --output table
+    #   ex)
+    #   schedules = {
+    #     example = {
+    #       # TODO: need to set job_queue for enable and disable batch job queue.
+    #       job_queue = "example-job-queue"
+    #       # TODO: (Optional) if you want to override schedule_expression_stop for batch job queue.
+    #       schedule_expression_stop  = "cron(0 10 * * ? *)"
+    #       # TODO: (Optional) if you want to override schedule_expression_start for batch job queue.
+    #       schedule_expression_start = "cron(0 1 ? * MON-FRI *)"
+    #       # TODO: (Optional) if you want to override description for batch job queue.
+    #       description = "Enable and disable example Batch job queue"
+    #     }
+    #   }
+    schedules = {}
+  }
+  #--------------------------------------------------------------
+  # Schedule automatic stop and start of EC2 Instance.
+  #--------------------------------------------------------------
+  ec2 = {
+    # TODO: need to set is_enabled for stop and start ec2_instance schedule.
+    is_enabled = false
+    # TODO: need to set schedule_expression_stop for stop ec2 instance.
+    schedule_expression_stop = "cron(0 10 * * ? *)"
+    # TODO: need to set schedule_expression_start for start ec2 instance.
+    schedule_expression_start = "cron(0 1 ? * MON-FRI *)"
+    # (Optional) Automatically discover EC2 instances to create schedules. If true, schedules variable is ignored.
+    create_auto_schedules = true
+    # (Optional) List of patterns to exclude from auto-discovery (partial match on instance ID or Name tag).
+    auto_schedules_exclude_list = []
+    # (Optional) List of patterns to include in auto-discovery (partial match). If empty, all are included.
+    auto_schedules_include_list = []
+    # (Optional) If create_auto_schedules is set to false, need to set schedules for stop and start EC2 Instance.
+    # Specify the instance of the target EC2 Instance to be scheduled by Map.
+    # check EC2 Instance ID list command.
+    # ex) aws ec2 describe-instances --filters "Name=instance-state-name,Values=running,stopped" --query 'Reservations[].Instances[].[InstanceId, Tags[?Key==`Name`].Value | [0]]' --output table
+    #   ex)
+    #   schedules = {
+    #     example = {
+    #       # TODO: (Required) need to set instance_id for stop and start ec2 instance.
+    #       instance_id = "i-1234567890abcdef0"
+    #       # TODO: (Optional) if you want to override schedule_expression_stop for ec2 instance.
+    #       # schedule_expression_stop = "cron(0 10 * * ? *)"
+    #       # TODO: (Optional) if you want to override schedule_expression_start for ec2 instance.
+    #       # schedule_expression_start = "cron(0 1 ? * MON-FRI *)"
+    #       # TODO: (Optional) if you want to override description for ec2 instance.
+    #       description = "Stop and start example EC2 instance"
+    #     }
+    #   }
+    schedules = {}
+  }
+  #--------------------------------------------------------------
+  # Schedule automatic stop and start of ECS Service.
+  #--------------------------------------------------------------
+  ecs_service = {
+    # TODO: need to set is_enabled for stop and start ecs_service schedule.
+    is_enabled = false
+    # TODO: need to set schedule_expression_stop for stop ecs service.
+    schedule_expression_stop = "cron(0 10 * * ? *)"
+    # TODO: need to set schedule_expression_start for start ecs service.
+    schedule_expression_start = "cron(0 1 ? * MON-FRI *)"
+    # (Optional) Automatically discover ECS services to create schedules. If true, schedules variable is ignored.
+    create_auto_schedules = true
+    # (Optional) List of patterns to exclude from auto-discovery (partial match on cluster or service name).
+    auto_schedules_exclude_list = []
+    # (Optional) List of patterns to include in auto-discovery (partial match). If empty, all are included.
+    auto_schedules_include_list = []
+    # TODO: need to set autoscaling_min_capacity for start ecs service with autoscaling (set to 0 to skip autoscaling adjustment).
+    autoscaling_min_capacity = 1
+    # TODO: need to set autoscaling_max_capacity for start ecs service with autoscaling (set to 0 to use discovered value).
+    autoscaling_max_capacity = 10
+    # TODO: need to set desired_count for start ecs service.
+    desired_count = 1
+    # (Optional) If create_auto_schedules is set to false, need to set schedules for stop and start ECS Service.
+    # Specify the instance of the target ECS Service to be scheduled by Map.
+    # check ECS Cluster and Service list command.
+    # ex) for cluster in $(aws ecs list-clusters --query 'clusterArns[]' --output text); do cluster_name=$(basename $cluster); for service in $(aws ecs list-services --cluster $cluster --query 'serviceArns[]' --output text); do service_name=$(basename $service); desired=$(aws ecs describe-services --cluster $cluster --services $service --query 'services[0].desiredCount' --output text); echo "$cluster_name / $service_name / desired_count=$desired"; done; done
+    #   ex)
+    #   schedules = {
+    #     example-service = {
+    #       # TODO: (Required) need to set ecs_cluster for stop and start ecs service.
+    #       ecs_cluster   = "example-cluster"
+    #       # TODO: (Required) need to set ecs_service for stop and start ecs service.
+    #       ecs_service   = "example-service"
+    #       # TODO: (Optional) if you want to override autoscaling_min_capacity for start ecs service with autoscaling (set to 0 to skip autoscaling adjustment).
+    #       autoscaling_min_capacity = 1
+    #       # TODO: (Optional) if you want to override autoscaling_max_capacity for start ecs service with autoscaling (set to 0 to use discovered value).
+    #       autoscaling_max_capacity = 10
+    #       # TODO: (Optional) if you want to override desired_count for start ecs service.
+    #       desired_count = 1
+    #       # TODO: (Optional) if you want to override schedule_expression_stop for ecs service.
+    #       schedule_expression_stop  = "cron(0 10 * * ? *)"
+    #       # TODO: (Optional) if you want to override schedule_expression_start for ecs service.
+    #       schedule_expression_start = "cron(0 1 ? * MON-FRI *)"
+    #       # TODO: (Optional) if you want to override description for ecs service.
+    #       description = "Stop and start example ECS service"
+    #     }
+    #   }
+    schedules = {}
+  }
+  #--------------------------------------------------------------
+  # Schedule automatic enable and disable of ECS Scheduled Task (EventBridge Rule).
+  #--------------------------------------------------------------
+  ecs_scheduled_task = {
+    # TODO: need to set is_enabled for enable and disable ecs scheduled task schedule.
+    is_enabled = false
+    # TODO: need to set schedule_expression_stop for disable ecs scheduled task rule.
+    schedule_expression_stop = "cron(0 10 * * ? *)"
+    # TODO: need to set schedule_expression_start for enable ecs scheduled task rule.
+    schedule_expression_start = "cron(0 1 ? * MON-FRI *)"
+    # (Optional) Automatically discover EventBridge rules targeting ECS tasks to create schedules. If true, schedules variable is ignored.
+    create_auto_schedules = true
+    # (Optional) List of patterns to exclude from auto-discovery (partial match on rule name).
+    auto_schedules_exclude_list = []
+    # (Optional) List of patterns to include in auto-discovery (partial match). If empty, all are included.
+    auto_schedules_include_list = []
+    # (Optional) If create_auto_schedules is set to false, need to set schedules for enable and disable ECS Scheduled Task Rule.
+    # Specify the instance of the target EventBridge Rule to be scheduled by Map.
+    # check EventBridge Rule list command.
+    # ex) aws events list-rules --query 'Rules[].[Name, State]' --output table
+    #   ex)
+    #   schedules = {
+    #     example = {
+    #       # TODO: (Required) need to set ecs_cluster for enable and disable ecs scheduled task rule.
+    #       ecs_cluster = "example-ecs-cluster"
+    #       # TODO: (Required) need to set task_definition for enable and disable ecs scheduled task rule.
+    #       task_definition = "example-task-definition-family"
+    #       # TODO: (Optional) if you want to override schedule_expression_stop for ecs scheduled task rule.
+    #       schedule_expression_stop  = "cron(0 10 * * ? *)"
+    #       # TODO: (Optional) if you want to override schedule_expression_start for ecs scheduled task rule.
+    #       schedule_expression_start = "cron(0 1 ? * MON-FRI *)"
+    #       # TODO: (Optional) if you want to override description for ecs scheduled task rule.
+    #       description = "Enable and disable example ECS task rule"
+    #     }
+    #   }
+    schedules = {}
+  }
   #--------------------------------------------------------------
   # Schedule automatic stop and start of RDS Cluster.
   #--------------------------------------------------------------
   rds_cluster = {
     # TODO: need to set is_enabled for stop and start rds_cluster schedule.
     is_enabled = false
-    schedules = {
-      one = {
-        # TODO: need to set db_cluster_identifier for stop and start rds cluster.
-        db_cluster_identifier = "example-db"
-        # TODO: need to set schedule_expression_stop for stop rds cluster.
-        schedule_expression_stop = "cron(0 10 * * ? *)"
-        # TODO: need to set schedule_expression_start for start rds cluster.
-        schedule_expression_start = "cron(0 1 ? * MON-FRI *)"
-      }
-    }
+    # TODO: need to set schedule_expression_stop for stop rds cluster.
+    schedule_expression_stop = "cron(0 10 * * ? *)"
+    # TODO: need to set schedule_expression_start for start rds cluster.
+    schedule_expression_start = "cron(0 1 ? * MON-FRI *)"
+    # (Optional) Automatically discover RDS clusters to create schedules. If true, schedules variable is ignored.
+    create_auto_schedules = true
+    # (Optional) List of patterns to exclude from auto-discovery (partial match on cluster identifier).
+    auto_schedules_exclude_list = []
+    # (Optional) List of patterns to include in auto-discovery (partial match). If empty, all are included.
+    auto_schedules_include_list = []
+    # (Optional) If create_auto_schedules is set to false, need to set schedules for stop and start RDS Cluster.
+    # Specify the instance of the target RDS Cluster to be scheduled by Map.
+    # check RDS Cluster Identifier list command.
+    # ex) aws rds describe-db-clusters --query 'DBClusters[].[DBClusterIdentifier, Status]' --output table
+    #   ex)
+    #   schedules = {
+    #     example = {
+    #       # TODO: (Required) need to set db_cluster_identifier for stop and start rds cluster.
+    #       db_cluster_identifier = "example-db"
+    #       # TODO: (Optional) if you want to override schedule_expression_stop for rds cluster.
+    #       schedule_expression_stop  = "cron(0 10 * * ? *)"
+    #       # TODO: (Optional) if you want to override schedule_expression_start for rds cluster.
+    #       schedule_expression_start = "cron(0 1 ? * MON-FRI *)"
+    #       # TODO: (Optional) if you want to override description for rds cluster.
+    #       description = "Stop and start example RDS cluster"
+    #     }
+    #   }
+    schedules = {}
+  }
+  #--------------------------------------------------------------
+  # Schedule automatic pause and resume of Redshift Cluster.
+  #--------------------------------------------------------------
+  redshift = {
+    # TODO: need to set is_enabled for pause and resume redshift cluster schedule.
+    is_enabled = true
+    # TODO: need to set schedule_expression_stop for pause redshift cluster.
+    schedule_expression_stop = "cron(0 10 * * ? *)"
+    # TODO: need to set schedule_expression_start for resume redshift cluster.
+    schedule_expression_start = "cron(0 1 ? * MON-FRI *)"
+    # (Optional) Automatically discover Redshift clusters to create schedules. If true, schedules variable is ignored.
+    create_auto_schedules = true
+    # (Optional) List of patterns to exclude from auto-discovery (partial match on cluster identifier).
+    auto_schedules_exclude_list = []
+    # (Optional) List of patterns to include in auto-discovery (partial match). If empty, all are included.
+    auto_schedules_include_list = []
+    # (Optional) If create_auto_schedules is set to false, need to set schedules for pause and resume Redshift Cluster.
+    # Specify the instance of the target Redshift Cluster to be scheduled by Map.
+    # check Redshift Cluster Identifier list command.
+    # ex) aws redshift describe-clusters --query 'Clusters[].[ClusterIdentifier, ClusterStatus]' --output table
+    #   ex)
+    #   schedules = {
+    #     example = {
+    #       # TODO: (Required) need to set cluster_identifier for pause and resume redshift cluster.
+    #       cluster_identifier = "example-redshift"
+    #       # TODO: (Optional) if you want to override schedule_expression_stop for redshift cluster.
+    #       schedule_expression_stop  = "cron(0 10 * * ? *)"
+    #       # TODO: (Optional) if you want to override schedule_expression_start for redshift cluster.
+    #       schedule_expression_start = "cron(0 1 ? * MON-FRI *)"
+    #       # TODO: (Optional) if you want to override description for redshift cluster.
+    #       description = "Pause and resume example Redshift cluster"
+    #     }
+    #   }
+    schedules = {}
   }
 }

@@ -1,4 +1,7 @@
 #--------------------------------------------------------------
+# Create role and policy for EventBridge
+#--------------------------------------------------------------
+#--------------------------------------------------------------
 # Locals
 #--------------------------------------------------------------
 locals {
@@ -16,6 +19,31 @@ locals {
         Version = "2012-10-17"
         Statement = [
           {
+            Sid = "AllowEC2Operations"
+            Action = [
+              "ec2:StartInstances",
+              "ec2:StopInstances",
+            ]
+            Effect   = "Allow"
+            Resource = "arn:aws:ec2:*:${data.aws_caller_identity.current.account_id}:instance/*"
+          },
+          {
+            Sid = "AllowECSServiceOperations"
+            Action = [
+              "ecs:UpdateService",
+            ]
+            Effect   = "Allow"
+            Resource = "arn:aws:ecs:*:${data.aws_caller_identity.current.account_id}:service/*/*"
+          },
+          {
+            Sid = "AllowApplicationAutoScalingOperations"
+            Action = [
+              "application-autoscaling:RegisterScalableTarget",
+            ]
+            Effect   = "Allow"
+            Resource = "*"
+          },
+          {
             Sid = "AllowRDSClusterOperations"
             Action = [
               "rds:StartDBCluster",
@@ -25,12 +53,38 @@ locals {
             Resource = "arn:aws:rds:*:${data.aws_caller_identity.current.account_id}:cluster:*"
           },
           {
+            Sid = "AllowRedshiftClusterOperations"
+            Action = [
+              "redshift:ResumeCluster",
+              "redshift:PauseCluster",
+            ]
+            Effect   = "Allow"
+            Resource = "arn:aws:redshift:*:${data.aws_caller_identity.current.account_id}:cluster:*"
+          },
+          {
             Sid = "AllowEC2DescribeVpcs"
             Action = [
               "ec2:DescribeVpcs",
             ]
             Effect   = "Allow"
             Resource = "*"
+          },
+          {
+            Sid = "AllowEventBridgeRuleOperations"
+            Action = [
+              "events:EnableRule",
+              "events:DisableRule",
+            ]
+            Effect   = "Allow"
+            Resource = "arn:aws:events:*:${data.aws_caller_identity.current.account_id}:rule/*"
+          },
+          {
+            Sid = "AllowBatchJobQueueOperations"
+            Action = [
+              "batch:UpdateJobQueue",
+            ]
+            Effect   = "Allow"
+            Resource = "arn:aws:batch:*:${data.aws_caller_identity.current.account_id}:job-queue/*"
           },
           {
             Sid = "AllowLambdaInvoke"
@@ -46,9 +100,6 @@ locals {
   }
 }
 
-#--------------------------------------------------------------
-# Create role and policy for Lambda
-#--------------------------------------------------------------
 module "aws_iam_role_eventbridge" {
   source = "../../modules/aws/iam/role/eventbridge"
 

@@ -14,7 +14,7 @@ teardown() {
 
 @test "aws_paginate_items returns nothing for empty array" {
     mock_aws_write << 'EOF'
-#!/usr/bin/env bash
+#!/bin/bash
 echo '{"UserPools":[]}'
 EOF
     chmod +x "$MOCK_DIR/aws"
@@ -26,7 +26,7 @@ EOF
 
 @test "aws_paginate_items returns items for single page" {
     mock_aws_write << 'EOF'
-#!/usr/bin/env bash
+#!/bin/bash
 echo '{"UserPools":[{"Id":"1"},{"Id":"2"}]}'
 EOF
     chmod +x "$MOCK_DIR/aws"
@@ -40,7 +40,7 @@ EOF
 
 @test "aws_paginate_items paginates with NextToken" {
     mock_aws_write << 'EOF'
-#!/usr/bin/env bash
+#!/bin/bash
 if [[ "$*" == *"--next-token"* || "$*" == *"--starting-token"* ]]; then
   echo '{"UserPools":[{"Id":"2"}]}'
 else
@@ -57,7 +57,7 @@ EOF
 
 @test "aws_paginate_items handles CloudFront NextMarker pagination" {
     mock_aws_write << 'EOF'
-#!/usr/bin/env bash
+#!/bin/bash
 if [[ "$*" == *"--marker"* || "$*" == *"--next-token"* ]]; then
     echo '{"DistributionList":{"Items":[{"Id":"D2"}]}}'
 else
@@ -75,7 +75,7 @@ EOF
 
 @test "aws_paginate_items handles DynamoDB LastEvaluatedTableName pagination" {
     mock_aws_write << 'EOF'
-#!/usr/bin/env bash
+#!/bin/bash
 if [[ "$*" == *"--exclusive-start-table-name"* ]]; then
     echo '{"TableNames":["table2"]}'
 else
@@ -93,7 +93,7 @@ EOF
 
 @test "aws_paginate_items handles DynamoDB list-global-tables pagination" {
     mock_aws_write << 'EOF'
-#!/usr/bin/env bash
+#!/bin/bash
 if [[ "$*" == *"--exclusive-start-global-table-name"* ]]; then
     echo '{"GlobalTables":[{"GlobalTableName":"g2"}]}'
 else
@@ -111,7 +111,7 @@ EOF
 
 @test "aws_paginate_items values can be unquoted with jq -r for primitive arrays (DynamoDB TableNames)" {
     mock_aws_write << 'EOF'
-#!/usr/bin/env bash
+#!/bin/bash
 if [[ "$*" == *"--exclusive-start-table-name"* ]]; then
     echo '{"TableNames":["table2"]}'
 else
@@ -130,7 +130,7 @@ EOF
 
 @test "aws_paginate_items handles S3 list-objects-v2 ContinuationToken pagination" {
     mock_aws_write << 'EOF'
-#!/usr/bin/env bash
+#!/bin/bash
 if [[ "$*" == *"--continuation-token"* ]]; then
     echo '{"Contents":[{"Key":"obj2"}]}'
 else
@@ -149,7 +149,7 @@ EOF
 @test "aws_retry_exec retries on failure and succeeds" {
     # The mock aws will fail once then succeed
     cat > "$MOCK_DIR/aws" << 'EOF'
-#!/usr/bin/env bash
+#!/bin/bash
 COUNT_FILE="$MOCK_DIR/count.txt"
 count=$(cat "$COUNT_FILE" 2> /dev/null || echo 0)
 count=$((count + 1))

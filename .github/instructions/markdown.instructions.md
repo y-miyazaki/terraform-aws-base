@@ -69,45 +69,4 @@ Markdown 検証:
 
 ## Testing and Validation
 
-### Validation Commands
-
-必須検証コマンド:
-
-```bash
-# Markdownlint実行
-markdownlint **/*.md
-
-# リンク切れチェック（推奨）
-markdown-link-check **/*.md
-```
-
-検証項目:
-
-- Markdown 構文エラー検出
-- 見出し階層検証（H1→H2→H3 順）
-- リスト・表フォーマット確認
-- コードブロック言語指定確認
-- リンク切れ検出
-
-### Manual Review Checklist
-
-- [ ] 文書構成が統一されている
-- [ ] 誤字脱字がない
-- [ ] コードブロックが正しく表示される
-- [ ] リンクが有効である
-- [ ] 画像が正しく表示される
-- [ ] 表が整形されている
-
-## Security Guidelines
-
-機密情報管理:
-
-- API キー・パスワード記載禁止
-- 実データ記載回避（サンプル・ダミーデータ使用）
-- 個人情報・内部情報記載禁止
-
-ドキュメント公開時:
-
-- Public repository では機密情報確認必須
-- `.gitignore`で除外すべきドキュメント確認
-- 環境変数・設定ファイル参照で機密情報回避
+**詳細ガイド**: [markdown-validation Skill](../skills/markdown-validation/SKILL.md) を参照（検証手順・一般的なエラー修正・セキュリティガイドライン）

@@ -1,7 +1,9 @@
 #!/bin/bash
 #######################################
 # Description: List API Gateway REST API names as a JSON object
-# Usage: ./list.sh
+#
+# Usage: ./list.sh [options]
+#   options:
 #   -h, --help    Display this help message
 #
 # This script queries AWS API Gateway and outputs REST API names in JSON format.
@@ -11,7 +13,7 @@
 set -euo pipefail
 
 #######################################
-# show_usage: Display usage information
+# show_usage: Display script usage information
 #
 # Description:
 #   Displays usage information for the script, including options and examples
@@ -19,25 +21,24 @@ set -euo pipefail
 # Arguments:
 #   None
 #
-# Global Variables:
-#   None
-#
 # Returns:
-#   None
+#   None (outputs to stdout)
 #
 # Usage:
 #   show_usage
 #
 #######################################
 function show_usage {
-    echo "Usage: $(basename "$0")"
-    echo ""
-    echo "Description: List API Gateway REST API names as a JSON object."
-    echo ""
-    echo "Options:"
-    echo "  -h, --help    Display this help message"
-    echo ""
-    echo "Example: $(basename "$0")"
+    cat << EOF
+Usage: $(basename "$0") [options]
+
+Description: List API Gateway REST API names as a JSON object.
+
+Options:
+  -h, --help    Display this help message
+
+Example: $(basename "$0")
+EOF
     exit 0
 }
 
@@ -72,7 +73,6 @@ function main {
                 show_usage
                 ;;
         esac
-        shift
     done
 
     # Validate dependencies

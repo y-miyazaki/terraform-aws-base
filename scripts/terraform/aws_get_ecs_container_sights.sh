@@ -1,6 +1,7 @@
 #!/bin/bash
 #######################################
 # Description: Retrieves ECS task definition families and outputs them in Terraform configuration format
+#
 # Usage: ./aws_ecs_container_sights.sh [options]
 #   options:
 #     -h, --help    Display this help message
@@ -23,31 +24,37 @@ export SCRIPT_DIR
 source "${SCRIPT_DIR}/../lib/all.sh"
 
 #######################################
+# Global variables and default values
+#######################################
+
+#######################################
 # show_usage: Display script usage information
 #
 # Description:
-#   Displays usage information for the script
+#   Displays usage information for the script, including options and examples
 #
 # Arguments:
 #   None
 #
 # Returns:
-#   None (exits with status 0)
+#   None (outputs to stdout)
 #
 # Usage:
 #   show_usage
 #
 #######################################
 function show_usage {
-    echo "Usage: $(basename "$0") [options]"
-    echo ""
-    echo "This script retrieves ECS task definition families and outputs them in a format"
-    echo "suitable for Terraform configuration."
-    echo ""
-    echo "Options:"
-    echo "  -h, --help    Display this help message"
-    echo ""
-    echo "Example: $(basename "$0")"
+    cat << EOF
+Usage: $(basename "$0") [options]
+
+Description: This script retrieves ECS task definition families and outputs them in a format
+             suitable for Terraform configuration.
+
+Options:
+  -h, --help    Display this help message
+
+Example: $(basename "$0")
+EOF
     exit 0
 }
 

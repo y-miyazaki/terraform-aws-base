@@ -5,9 +5,12 @@
 # the binaries for AWS Lambda deployment.
 #
 # Usage: ./build_old.sh <source_dir> <output_dir> [architecture]
-#   <source_dir>    Directory containing main.go files (e.g., cmd/api)
-#   <output_dir>    Output directory name (e.g., api)
-#   [architecture]  Target architecture (default: amd64)
+#   options:
+#     -h, --help      Display this help message
+#   arguments:
+#     <source_dir>    Directory containing main.go files (e.g., cmd/api)
+#     <output_dir>    Output directory name (e.g., api)
+#     [architecture]  Target architecture (default: amd64)
 #######################################
 
 # Error handling: exit on error, unset variable, or failed pipeline
@@ -50,20 +53,22 @@ ARCH="amd64" # Default to amd64 for old style
 #
 #######################################
 function show_usage {
-    echo "Usage: $(basename "$0") [options]"
-    echo ""
-    echo "Description: Builds Go Lambda functions for deployment (old style)"
-    echo ""
-    echo "Options:"
-    echo "  -h, --help      Display this help message"
-    echo ""
-    echo "Arguments:"
-    echo "  source_dir      Directory containing main.go files (e.g., cmd/api)"
-    echo "  output_dir      Output directory name (e.g., api)"
-    echo "  architecture    Target architecture (default: amd64)"
-    echo ""
-    echo "Examples:"
-    echo "  $(basename "$0") cmd/api api amd64"
+    cat << EOF
+Usage: $(basename "$0") [options]
+
+Description: Builds Go Lambda functions for deployment (old style).
+
+Options:
+  -h, --help      Display this help message
+
+Arguments:
+  source_dir      Directory containing main.go files (e.g., cmd/api)
+  output_dir      Output directory name (e.g., api)
+  architecture    Target architecture (default: amd64)
+
+Examples:
+  $(basename "$0") cmd/api api amd64
+EOF
     exit 0
 }
 

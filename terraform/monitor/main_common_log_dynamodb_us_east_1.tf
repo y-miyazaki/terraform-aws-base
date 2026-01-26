@@ -5,7 +5,7 @@
 #--------------------------------------------------------------
 module "dynamodb_table_monitor_log_us_east_1" {
   source       = "terraform-aws-modules/dynamodb-table/aws"
-  version      = "5.3.0"
+  version      = "5.5.0"
   create_table = !local.is_default_region_us_east_1
   providers = {
     aws = aws.us-east-1

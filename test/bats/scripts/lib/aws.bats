@@ -64,7 +64,7 @@ teardown() {
 @test "is_service_available_in_region handles lambda with aws success" {
     # mock aws to succeed on lambda list-functions
     mock_aws_write << 'EOF'
-#!/usr/bin/env bash
+#!/bin/bash
 if [[ "$*" == *"lambda list-functions"* ]]; then
   exit 0
 fi
@@ -78,7 +78,7 @@ EOF
 
 @test "get_waf_association returns WebACL ARN" {
     mock_aws_write << 'EOF'
-#!/usr/bin/env bash
+#!/bin/bash
 echo '{"WebACL":{"ARN":"arn:aws:waf::123:regional/webacl/MyWebACL/uuid"}}'
 EOF
     chmod +x "$MOCK_DIR/aws"

@@ -1,29 +1,65 @@
 # root
+.copilot/**
 .DS_Store
-.vscode
-terraform.log
-crash.log
-memo.txt
+.devcontainer/devcontainer.json
+.serena
+.vscode/**
+!.vscode/cspell.json
+!.vscode/cspell-project.txt
+!.vscode/mcp-example.json
+!.vscode/mcp-example-config.json
+!.vscode/settings-example.json
+tmp
 
-# terraform files.
-.terraform
-.terraform.d
-.terraform.lock.hcl
+# env
+.env
+env/common/tmp/**
 
-# terraform customize file.
-main_init.tf
-# main_provider.tf
-provider.json
+# terraform
+builds
+# terraform modules
+**/.terraform/*
+**/.terraform.d/*
+# Lock files - exclude from modules, but keep in root configurations
+modules/**/.terraform.lock.hcl
+# .tfstate files
+*.tfstate
+*.tfstate.*
+# tfvars files
 *.tfvars
 !terraform.example.tfvars
 !terraform.dev.tfvars
+!terraform.qa.tfvars
 !terraform.stg.tfvars
 !terraform.prd.tfvars
+!terraform.root.tfvars
+!terraform.audit.tfvars
 *.tfbackend
 !terraform.example.tfbackend
 !terraform.dev.tfbackend
+!terraform.qa.tfbackend
 !terraform.stg.tfbackend
 !terraform.prd.tfbackend
+!terraform.root.tfbackend
+!terraform.audit.tfbackend
 
-devcontainer.json
-.env
+# go
+bin
+coverage
+dist
+vendor
+output
+.serverless
+cover.out
+coverage.html
+
+# node
+node_modules
+outputs
+!lambda/outputs
+!nodejs/*/nodejs/node_modules
+
+# python
+__pycache__
+.Python
+.venv

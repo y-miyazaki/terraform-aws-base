@@ -1,16 +1,19 @@
 #!/bin/bash
 #######################################
 # Description: Upload Docker image to AWS ECR with authentication and build support
+#
 # Usage: ./aws_upload_ecr.sh [options] <repository_name>
 #   options:
-#     -h, --help     Display this help message
-#     -v, --verbose  Enable verbose output
-#     -d, --dry-run  Run in dry-run mode (no changes made)
-#     -r, --region   AWS region (default: $AWS_DEFAULT_REGION or ap-northeast-1)
-#     -p, --platform Docker platform (default: linux/amd64)
-#     -t, --tag      Image tag (default: latest)
-#     -f, --file     Dockerfile path (default: ./Dockerfile)
-#     -c, --context  Build context path (default: .)
+#     -h, --help       Display this help message
+#     -v, --verbose    Enable verbose output
+#     -d, --dry-run    Run in dry-run mode (no changes made)
+#     -r, --region     AWS region (default: $AWS_DEFAULT_REGION or ap-northeast-1)
+#     -p, --platform   Docker platform (default: linux/amd64)
+#     -t, --tag        Image tag (default: latest)
+#     -f, --file       Dockerfile path (default: ./Dockerfile)
+#     -c, --context    Build context path (default: .)
+#   arguments:
+#     repository_name  Name of the ECR repository to upload to
 #######################################
 
 # Error handling: exit on error, unset variable, or failed pipeline
@@ -50,36 +53,35 @@ REPOSITORY_NAME=""
 # Arguments:
 #   None
 #
-# Global Variables:
-#   None
-#
 # Returns:
-#   Exits with status 0 after displaying help
+#   None (outputs to stdout)
 #
 # Usage:
 #   show_usage
 #
 #######################################
 function show_usage {
-    echo "Usage: $(basename "$0") [options] <repository_name>"
-    echo ""
-    echo "Description: Upload Docker image to AWS ECR with authentication and build support"
-    echo ""
-    echo "Options:"
-    echo "  -h, --help       Display this help message"
-    echo "  -v, --verbose    Enable verbose output"
-    echo "  -d, --dry-run    Run in dry-run mode (no changes made)"
-    echo "  -r, --region     AWS region (default: \$AWS_DEFAULT_REGION or ap-northeast-1)"
-    echo "  -p, --platform   Docker platform (default: linux/amd64)"
-    echo "  -t, --tag        Image tag (default: latest)"
-    echo "  -f, --file       Dockerfile path (default: ./Dockerfile)"
-    echo "  -c, --context    Build context path (default: .)"
-    echo ""
-    echo "Examples:"
-    echo "  $(basename "$0") my-app-repo"
-    echo "  $(basename "$0") -r us-east-1 -t v1.0.0 my-app-repo"
-    echo "  $(basename "$0") -p linux/arm64 -d my-app-repo"
-    echo "  $(basename "$0") -f ./docker/Dockerfile -c ./docker my-app-repo"
+    cat << EOF
+Usage: $(basename "$0") [options] <repository_name>
+
+Description: Upload Docker image to AWS ECR with authentication and build support
+
+Options:
+  -h, --help       Display this help message
+  -v, --verbose    Enable verbose output
+  -d, --dry-run    Run in dry-run mode (no changes made)
+  -r, --region     AWS region (default: \$AWS_DEFAULT_REGION or ap-northeast-1)
+  -p, --platform   Docker platform (default: linux/amd64)
+  -t, --tag        Image tag (default: latest)
+  -f, --file       Dockerfile path (default: ./Dockerfile)
+  -c, --context    Build context path (default: .)
+
+Examples:
+  $(basename "$0") my-app-repo
+  $(basename "$0") -r us-east-1 -t v1.0.0 my-app-repo
+  $(basename "$0") -p linux/arm64 -d my-app-repo
+  $(basename "$0") -f ./docker/Dockerfile -c ./docker my-app-repo
+EOF
     exit 0
 }
 

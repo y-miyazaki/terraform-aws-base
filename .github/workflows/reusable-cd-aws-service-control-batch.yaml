@@ -1,0 +1,291 @@
+# Reusable workflow for controlling AWS Batch job queues (enable/disable)
+# This workflow can enable or disable AWS Batch job queues
+name: reusable-cd-aws-service-control-batch
+
+on:
+  workflow_call:
+    inputs:
+      action:
+        description: "Action to perform (start or stop)"
+        required: true
+        type: string
+      auto_discover:
+        description: "Automatically discover Batch job queues (if true, job_queues input is ignored)"
+        required: false
+        type: boolean
+        default: false
+      environment:
+        description: "Target environment (dev, qa, stg, prd, etc.)"
+        required: true
+        type: string
+      exclude_patterns:
+        description: "JSON array of patterns to exclude from auto-discovery (partial match on queue name) ['pattern1', 'pattern2']"
+        required: false
+        type: string
+        default: "[]"
+      include_patterns:
+        description: "JSON array of patterns to include in auto-discovery (partial match). If empty, all are included ['pattern1', 'pattern2']"
+        required: false
+        type: string
+        default: "[]"
+      job_queues:
+        description: "JSON array of Batch job queue names to control ['queue-1', 'queue-2']"
+        required: false
+        type: string
+        default: "[]"
+      wait_for_stable:
+        description: "Wait for queue state to update (set to false to skip waiting)"
+        required: false
+        type: boolean
+        default: true
+    secrets:
+      AWS_IAM_ROLE_ARN:
+        required: true
+      AWS_REGION:
+        required: true
+
+env:
+  ACTION: ${{ inputs.action }}
+  AUTO_DISCOVER: ${{ inputs.auto_discover }}
+  ENVIRONMENT: ${{ inputs.environment }}
+  EXCLUDE_PATTERNS: ${{ inputs.exclude_patterns }}
+  INCLUDE_PATTERNS: ${{ inputs.include_patterns }}
+  JOB_QUEUES: ${{ inputs.job_queues }}
+
+jobs:
+  discover-job-queues:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    environment:
+      name: ${{ inputs.environment }}
+    permissions:
+      contents: read
+      id-token: write
+    outputs:
+      discovered_queues: ${{ steps.discover.outputs.discovered_queues }}
+      discovered_queues_b64: ${{ steps.discover.outputs.discovered_queues_b64 }}
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+
+      - name: Setup AWS Credentials
+        uses: aws-actions/configure-aws-credentials@61815dcd50bd041e203e49132bacad1fd04d2708 # v5.1.1
+        with:
+          aws-region: ${{ secrets.AWS_REGION }}
+          role-to-assume: ${{ secrets.AWS_IAM_ROLE_ARN }}
+
+      - name: Discover Batch Job Queues
+        id: discover
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          check_jq() {
+            command -v jq >/dev/null 2>&1 || { echo "❌ jq is required"; exit 1; }
+          }
+
+          if [[ "$AUTO_DISCOVER" != "true" ]]; then
+            echo "discovered_queues=[]" >> "$GITHUB_OUTPUT"
+            echo "discovered_queues_b64=" >> "$GITHUB_OUTPUT"
+            echo "ℹ️ Auto-discover disabled"
+            exit 0
+          fi
+
+          check_jq
+          echo "🔍 Discovering AWS Batch job queues..."
+
+          mapfile -t queues < <(aws batch describe-job-queues --query "jobQueues[].jobQueueName" --output text | tr '\t' '\n')
+
+          FILTERED_QUEUES=()
+          INCLUDE_PATTERNS_ARRAY=$(echo "$INCLUDE_PATTERNS" | jq -r '.[]' 2>/dev/null || echo "")
+          EXCLUDE_PATTERNS_ARRAY=$(echo "$EXCLUDE_PATTERNS" | jq -r '.[]' 2>/dev/null || echo "")
+
+          for queue_name in "${queues[@]}"; do
+            [[ -z "$queue_name" ]] && continue
+
+            EXCLUDED=false
+            if [[ -n "$EXCLUDE_PATTERNS_ARRAY" ]]; then
+              while IFS= read -r pattern; do
+                if [[ "$queue_name" == *"$pattern"* ]]; then
+                  echo "  ⊖ Excluding: $queue_name [matched exclude pattern: $pattern]"
+                  EXCLUDED=true
+                  break
+                fi
+              done <<< "$EXCLUDE_PATTERNS_ARRAY"
+            fi
+
+            [[ "$EXCLUDED" == true ]] && continue
+
+            if [[ -n "$INCLUDE_PATTERNS_ARRAY" ]]; then
+              INCLUDED=false
+              while IFS= read -r pattern; do
+                if [[ "$queue_name" == *"$pattern"* ]]; then
+                  INCLUDED=true
+                  break
+                fi
+              done <<< "$INCLUDE_PATTERNS_ARRAY"
+
+              if [[ "$INCLUDED" == false ]]; then
+                echo "  ⊖ Skipping: $queue_name [no include pattern matched]"
+                continue
+              fi
+            fi
+
+            echo "  ✓ Discovered: $queue_name"
+            FILTERED_QUEUES+=("\"$queue_name\"")
+          done
+
+          if [ ${#FILTERED_QUEUES[@]} -eq 0 ]; then
+            DISCOVERED_JSON='[]'
+          else
+            DISCOVERED_JSON=$(printf '%s\n' "${FILTERED_QUEUES[@]}" | jq -s .)
+          fi
+
+          # echo "discovered_queues=$DISCOVERED_JSON" >> "$GITHUB_OUTPUT"
+          DISCOVERED_B64=$(printf '%s' "$DISCOVERED_JSON" | base64 -w0)
+          echo "discovered_queues_b64=$DISCOVERED_B64" >> "$GITHUB_OUTPUT"
+          echo "✅ Discovered ${#FILTERED_QUEUES[@]} Batch job queue(s)"
+          printf '%s' "$DISCOVERED_JSON" | jq .
+
+  validate:
+    needs: [discover-job-queues]
+    if: ${{ always() && github.actor != 'dependabot[bot]' && (needs.discover-job-queues.result == 'success' || needs.discover-job-queues.result == 'skipped') }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    permissions:
+      contents: read
+    outputs:
+      action_validated: ${{ steps.validate-inputs.outputs.action }}
+      target_queues: ${{ steps.validate-inputs.outputs.target_queues }}
+    steps:
+      - name: Validate inputs
+        id: validate-inputs
+        shell: bash
+        env:
+          DISCOVERED_B64: ${{ needs.discover-job-queues.outputs.discovered_queues_b64 }}
+        run: |
+          set -euo pipefail
+          if [[ "$ACTION" != "start" && "$ACTION" != "stop" ]]; then
+            echo "❌ Error: action must be 'start' or 'stop', got '$ACTION'"
+            exit 1
+          fi
+          echo "action=$ACTION" >> "$GITHUB_OUTPUT"
+          echo "✅ Action validated: $ACTION"
+
+          if [[ "$AUTO_DISCOVER" == "true" ]]; then
+            if [[ -n "${DISCOVERED_B64:-}" ]]; then
+              TARGET_QUEUES=$(printf '%s' "$DISCOVERED_B64" | base64 --decode)
+            else
+              TARGET_QUEUES='[]'
+            fi
+            echo "Using auto-discovered job queues"
+          else
+            TARGET_QUEUES="$JOB_QUEUES"
+            echo "Using manually specified job queues"
+          fi
+
+          if ! printf '%s' "$TARGET_QUEUES" | jq empty 2>/dev/null; then
+            echo "❌ Error: job_queues is not valid JSON"
+            exit 1
+          fi
+
+          QUEUE_COUNT=$(printf '%s' "$TARGET_QUEUES" | jq '. | length')
+          if [[ "$QUEUE_COUNT" -eq 0 ]]; then
+            echo "⚠️  Warning: No Batch job queues found (skipping control)"
+            echo "target_queues=[]" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          SANITIZED_QUEUES=$(printf '%s' "$TARGET_QUEUES" | jq -c '.')
+          echo "target_queues=$SANITIZED_QUEUES" >> "$GITHUB_OUTPUT"
+          echo "✅ Target job queues count: $QUEUE_COUNT"
+          printf '%s' "$SANITIZED_QUEUES" | jq .
+
+  control-job-queues:
+    needs: validate
+    if: ${{ github.actor != 'dependabot[bot]' && needs.validate.result == 'success' && needs.validate.outputs.target_queues != '[]' }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    concurrency:
+      group: batch-control-${{ inputs.environment }}-${{ matrix.queue }}-${{ inputs.action }}
+      cancel-in-progress: false
+    environment:
+      name: ${{ inputs.environment }}
+    permissions:
+      contents: read
+      id-token: write
+    strategy:
+      fail-fast: false
+      matrix:
+        queue: ${{ fromJSON(needs.validate.outputs.target_queues) }}
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+
+      - name: Setup AWS Credentials
+        uses: aws-actions/configure-aws-credentials@61815dcd50bd041e203e49132bacad1fd04d2708 # v5.1.1
+        with:
+          aws-region: ${{ secrets.AWS_REGION }}
+          role-to-assume: ${{ secrets.AWS_IAM_ROLE_ARN }}
+
+      - name: Control Batch Job Queue
+        env:
+          QUEUE_NAME: ${{ matrix.queue }}
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          echo "Job Queue: [$QUEUE_NAME]"
+
+          # Check if queue exists
+          QUEUE_CHECK=$(aws batch describe-job-queues --job-queues "$QUEUE_NAME" --query 'jobQueues[0].jobQueueName' --output text 2>/dev/null || echo "")
+          if [[ -z "$QUEUE_CHECK" || "$QUEUE_CHECK" == "None" ]]; then
+            echo "ℹ️ Job queue $QUEUE_NAME not found (skipping)"
+            exit 0
+          fi
+
+          if [[ "$ACTION" == "stop" ]]; then
+            echo "🛑 Disabling Batch job queue: $QUEUE_NAME"
+            aws batch update-job-queue --job-queue "$QUEUE_NAME" --state DISABLED || {
+              echo "❌ Failed to disable job queue $QUEUE_NAME"
+              exit 1
+            }
+            echo "✅ Disabled Batch job queue: $QUEUE_NAME"
+
+          elif [[ "$ACTION" == "start" ]]; then
+            echo "▶️  Enabling Batch job queue: $QUEUE_NAME"
+            aws batch update-job-queue --job-queue "$QUEUE_NAME" --state ENABLED || {
+              echo "❌ Failed to enable job queue $QUEUE_NAME"
+              exit 1
+            }
+            echo "✅ Enabled Batch job queue: $QUEUE_NAME"
+          fi
+
+      - name: Wait for Queue State Update
+        if: ${{ inputs.wait_for_stable }}
+        timeout-minutes: 10
+        env:
+          QUEUE_NAME: ${{ matrix.queue }}
+          EXPECTED_STATE: ${{ inputs.action == 'stop' && 'DISABLED' || 'ENABLED' }}
+        shell: bash
+        run: |
+          echo "⏳ Waiting for job queue to reach $EXPECTED_STATE state"
+
+          for i in {1..20}; do
+            CURRENT_STATE=$(aws batch describe-job-queues --job-queues "$QUEUE_NAME" --query 'jobQueues[0].state' --output text 2>/dev/null || echo "")
+
+            if [[ "$CURRENT_STATE" == "$EXPECTED_STATE" ]]; then
+              echo "✅ Job queue reached $EXPECTED_STATE state"
+              exit 0
+            fi
+
+            echo "  Current state: $CURRENT_STATE (attempt $i/20)"
+            sleep 30
+          done
+
+          echo "⚠️  Warning: Job queue did not reach $EXPECTED_STATE state within timeout"
+          exit 1

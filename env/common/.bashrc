@@ -50,6 +50,7 @@ export PROMPT_DIRTRIM=4
 #######################################
 export TF_PLUGIN_CACHE_DIR="$HOME/.terraform.d/plugin-cache"
 alias tinit='terraform init -reconfigure -backend-config="terraform.${ENV}.tfbackend"'
+alias tinitupgrade='terraform init -upgrade -reconfigure -backend-config="terraform.${ENV}.tfbackend"'
 alias tplan='terraform plan -lock=false -var-file="terraform.${ENV}.tfvars"'
 alias tapply='terraform apply -auto-approve -var-file="terraform.${ENV}.tfvars"'
 

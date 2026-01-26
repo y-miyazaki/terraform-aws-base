@@ -69,3 +69,18 @@ repos:
         entry: actionlint -color=false
         types: [yaml]
         files: ^\.github/workflows/.*\.(ya?ml)$
+  - repo: local
+    hooks:
+      - id: ghalint
+        name: ghalint
+        description: GitHub Actions workflow linter.
+        language: unsupported
+        entry: ghalint run --log-color never
+        types: [yaml]
+        files: ^\.github/workflows/.*\.(ya?ml)$
+  - repo: https://github.com/zizmorcore/zizmor-pre-commit
+    # Zizmor version.
+    rev: v1.22.0
+    hooks:
+      # Run the linter.
+      - id: zizmor

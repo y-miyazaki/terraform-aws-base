@@ -1,7 +1,9 @@
 #!/bin/bash
 #######################################
 # Description: List CloudFront distribution IDs and domains as a JSON object
-# Usage: ./list.sh
+#
+# Usage: ./list.sh [options]
+#   options:
 #   -h, --help    Display this help message
 #
 # This script queries AWS CloudFront and outputs distribution IDs and domains in JSON format.
@@ -11,33 +13,32 @@
 set -euo pipefail
 
 #######################################
-# show_usage: Display usage information
+# show_usage: Display script usage information
 #
 # Description:
-#   Display usage information
+#   Displays usage information for the script, including options and examples
 #
 # Arguments:
 #   None
 #
-# Global Variables:
-#   None
-#
 # Returns:
-#   None
+#   None (outputs to stdout)
 #
 # Usage:
 #   show_usage
 #
 #######################################
 function show_usage {
-    echo "Usage: $(basename "$0")"
-    echo ""
-    echo "Description: List CloudFront distribution IDs and domains as a JSON object."
-    echo ""
-    echo "Options:"
-    echo "  -h, --help    Display this help message"
-    echo ""
-    echo "Example: $(basename "$0")"
+    cat << EOF
+Usage: $(basename "$0") [options]
+
+Description: List CloudFront distribution IDs and domains as a JSON object.
+
+Options:
+  -h, --help    Display this help message
+
+Example: $(basename "$0")
+EOF
     exit 0
 }
 
@@ -72,7 +73,6 @@ function main {
                 show_usage
                 ;;
         esac
-        shift
     done
 
     # Validate dependencies

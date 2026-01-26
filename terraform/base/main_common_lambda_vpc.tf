@@ -21,7 +21,7 @@
 #--------------------------------------------------------------
 module "lambda_vpc" {
   source     = "terraform-aws-modules/vpc/aws"
-  version    = "6.5.1"
+  version    = "6.6.0"
   create_vpc = var.common_lambda.vpc.is_enabled && var.common_lambda.vpc.create_vpc
 
   # Basic VPC configuration

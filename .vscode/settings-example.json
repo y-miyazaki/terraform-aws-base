@@ -76,6 +76,7 @@
   "chat.agentSessionsViewLocation": "view",
   "chat.emptyState.history.enabled": true,
   "chat.tools.todos.showWidget": true,
+  "chat.useAgentSkills": true,
   "chat.mcp.access": "all",
   "chat.mcp.autostart": "onlyNew",
   "chat.mcp.discovery.enabled": {
@@ -361,7 +362,7 @@
   },
   "shellcheck.customArgs": ["-x -e SC1091"],
   "[shellscript]": {
-    "editor.defaultFormatter": "mads-hartmann.bash-ide-vscode",
+    "editor.defaultFormatter": "foxundermoon.shell-format",
     "editor.formatOnSave": true
   },
   "[bats]": {

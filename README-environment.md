@@ -84,30 +84,6 @@ Since there is a devcontainer setting in [env/example](env/example), modify this
     cp -p env/example/.aws/config env/common/tmp/.aws/config 
     ```
 
-- Fix devcontainer.json  
-    The following excerpt of code is a locally mounted file, so please change the mount settings according to your own environment.  
-    You need to set up your mount paths as shown below. Replace `${env:HOME}/workspace/terraform-aws-base` with your actual local path to this repository (e.g., `/Users/yourname/projects/terraform-aws-base` on macOS or `C:\Users\yourname\projects\terraform-aws-base` on Windows). This ensures the devcontainer can access your local files correctly.
-
-    ```bash
-    cat .devcontainer/devcontainer.json
-    ```
-
-    ```json
-        "runArgs": [
-          "-v",
-          "${env:HOME}/workspace/terraform-aws-base:/workspace",
-          "-v",
-          "${env:HOME}/workspace/terraform-aws-base/env/common/.bashrc:/home/vscode/.bashrc",
-          "-v",
-          "${env:HOME}/workspace/terraform-aws-base/env/common/tmp/.gitconfig:/home/vscode/.gitconfig",
-          "-v",
-          "${env:HOME}/workspace/terraform-aws-base/env/common/tmp/.aws:/home/vscode/.aws",
-          "-v",
-          "${env:HOME}/workspace/terraform-aws-base/env/common/gh:/home/vscode/.config/gh",
-          "-v",
-          "/var/run/docker.sock:/var/run/docker.sock"
-    ```
-
 - Fix .aws/config  
     The following excerpt of code is a locally mounted file, so please change the mount settings according to your own environment.  
     You need to set up your AWS SSO configuration as shown below. Replace the `region` and `account_id` and `sso_start_url` and `sso_region` and `sso_account_id` and `sso_role_name` with your actual values.

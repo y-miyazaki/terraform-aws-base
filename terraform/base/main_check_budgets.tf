@@ -59,7 +59,7 @@ resource "aws_scheduler_schedule" "budgets" {
 # tfsec:ignore:aws-lambda-enable-tracing
 module "lambda_function_budgets" {
   source  = "terraform-aws-modules/lambda/aws"
-  version = "8.1.2"
+  version = "8.2.0"
   create  = var.budgets.is_enabled
 
   allowed_triggers = {

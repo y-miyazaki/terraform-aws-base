@@ -5,11 +5,14 @@
 # the binaries for AWS Lambda deployment.
 #
 # Usage: ./build.sh <source_dir> <output_dir> [architecture] [--parallel] [--verbose]
-#   <source_dir>    Directory containing main.go files (e.g., cmd/api)
-#   <output_dir>    Output directory name (e.g., api)
-#   [architecture]  Target architecture (default: arm64)
-#   [--parallel]    Enable parallel builds (experimental)
-#   [--verbose]     Show more detailed output
+#   options:
+#     -h, --help      Display this help message
+#     --parallel      Enable parallel builds (experimental)
+#     --verbose       Show more detailed output
+#   arguments:
+#     <source_dir>    Directory containing main.go files (e.g., cmd/api)
+#     <output_dir>    Output directory name (e.g., api)
+#     [architecture]  Target architecture (default: arm64)
 #######################################
 
 # Error handling: exit on error, unset variable, or failed pipeline
@@ -55,23 +58,25 @@ MIN_VERSION="1.25"
 #
 #######################################
 function show_usage {
-    echo "Usage: $(basename "$0") [options]"
-    echo ""
-    echo "Description: Builds Go Lambda functions for deployment"
-    echo ""
-    echo "Options:"
-    echo "  -h, --help      Display this help message"
-    echo "  --parallel      Enable parallel builds (experimental)"
-    echo "  --verbose       Show more detailed output"
-    echo ""
-    echo "Arguments:"
-    echo "  source_dir      Directory containing main.go files (e.g., cmd/api)"
-    echo "  output_dir      Output directory name (e.g., api)"
-    echo "  architecture    Target architecture (default: arm64)"
-    echo ""
-    echo "Examples:"
-    echo "  $(basename "$0") cmd/api api"
-    echo "  $(basename "$0") cmd/api api arm64 --parallel --verbose"
+    cat << EOF
+Usage: $(basename "$0") [options]
+
+Description: Builds Go Lambda functions for deployment.
+
+Options:
+  -h, --help      Display this help message
+  --parallel      Enable parallel builds (experimental)
+  --verbose       Show more detailed output
+
+Arguments:
+  source_dir      Directory containing main.go files (e.g., cmd/api)
+  output_dir      Output directory name (e.g., api)
+  architecture    Target architecture (default: arm64)
+
+Examples:
+  $(basename "$0") cmd/api api
+  $(basename "$0") cmd/api api arm64 --parallel --verbose
+EOF
     exit 0
 }
 

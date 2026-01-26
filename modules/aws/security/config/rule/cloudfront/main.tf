@@ -77,22 +77,6 @@ resource "aws_config_config_rule" "cloudfront-default-root-object-configured" {
 #--------------------------------------------------------------
 # Provides an AWS Config Rule.
 #--------------------------------------------------------------
-resource "aws_config_config_rule" "cloudfront-origin-access-identity-enabled" {
-  count = var.is_enabled ? 1 : 0
-
-  name        = "${local.name_prefix}cloudfront-origin-access-identity-enabled"
-  description = "Checks that Amazon CloudFront distribution with S3 Origin type has Origin Access Identity (OAI) configured. This rule is NON_COMPLIANT if the CloudFront distribution is backed by S3 and any of S3 Origin type is not OAI configured."
-  source {
-    owner             = "AWS"
-    source_identifier = "CLOUDFRONT_ORIGIN_ACCESS_IDENTITY_ENABLED"
-  }
-
-  tags = var.tags
-}
-
-#--------------------------------------------------------------
-# Provides an AWS Config Rule.
-#--------------------------------------------------------------
 resource "aws_config_config_rule" "cloudfront-origin-failover-enabled" {
   count = var.is_enabled ? 1 : 0
 
