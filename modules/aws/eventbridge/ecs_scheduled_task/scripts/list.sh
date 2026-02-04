@@ -75,6 +75,7 @@ function main {
 
     # Temporary file to store key-value pairs
     tmp_file=$(mktemp)
+    trap 'rm -f "$tmp_file"' EXIT
 
     # Iterate through rules and check targets
     # Note: This can be slow if there are many rules.
@@ -111,17 +112,15 @@ function main {
     # If multiple rules populate the same key, we define the behavior here.
     # We will join them with commas.
 
-    jq -n -R '
-        [inputs | split("=")] |
+    jq -n -R "
+        [inputs | split(\"=\")] |
         group_by(.[0]) |
         map({
             key: .[0][0],
-            value: (map(.[1]) | join(","))
+            value: (map(.[1]) | join(\",\"))
         }) |
         from_entries
-    ' "$tmp_file"
-
-    rm -f "$tmp_file"
+    " "$tmp_file"
 }
 
 main "$@"

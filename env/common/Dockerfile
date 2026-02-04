@@ -9,8 +9,12 @@ FROM mcr.microsoft.com/vscode/devcontainers/go:1.25@sha256:ade3e38a521ce356bc5b2
 ARG USER=vscode
 ARG WORKDIR=/workspace
 # version(base)
-ARG NODE_VERSION=24 # https://github.com/nodejs/node/releases
 ARG AQUA_VERSION=v2.55.2 # https://github.com/aquaproj/aqua/releases
+ARG AWSDAC_VERSION=v0.22.4 # https://github.com/awslabs/diagram-as-code/releases
+ARG AWSP_VERSION=0.2.0 # https://www.npmjs.com/package/awsp
+ARG AWS_MFA_VERSION=0.0.12 # https://pypi.org/project/aws-mfa/
+ARG GITHUB_COPILOT_VERSION=0.0.402 # https://github.com/github/copilot-cli/releases
+ARG NODE_VERSION=24 # https://github.com/nodejs/node/releases
 
 # x86_64
 # ARG ARCH_BASE=amd64
@@ -45,7 +49,9 @@ RUN groupadd -f docker && sudo usermod -aG docker vscode
 #--------------------------------------------------------------
 # Install minimal apt/https tooling (avoid software-properties-common)
 #--------------------------------------------------------------
-RUN apt-get update && \
+# Remove problematic Yarn repository first
+RUN rm -f /etc/apt/sources.list.d/yarn.list && \
+    apt-get update && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
     ca-certificates \
     gnupg \
@@ -60,8 +66,8 @@ RUN apt update && \
     apt -y install make openssl git tar curl zip jq groff gcc bison python3 python3-dev python3-pip fish shellcheck shfmt bats
 
 # Install Node.js
-RUN curl -fsSL https://deb.nodesource.com/setup_${NODE_VERSION}.x | bash -E - && \
-    apt-get install -y nodejs=${NODE_VERSION}.0.0-1nodesource1
+RUN curl -fsSL https://deb.nodesource.com/setup_${NODE_VERSION}.x | bash - && \
+    apt-get install -y nodejs
 
 # Install npm packages
 RUN npm install -g --ignore-scripts \
@@ -89,9 +95,10 @@ USER root
 # AWS environment
 #--------------------------------------------------------------
 # Install aws-mfa
-RUN pip3 install --break-system-packages aws-mfa==0.0.12 && \
+# aws-mfa requires system-wide install in devcontainer
+RUN pip3 install --break-system-packages aws-mfa==${AWS_MFA_VERSION} && \
     # Install awsp
-    npm install -g --ignore-scripts awsp@0.2.0 && \
+    npm install -g --ignore-scripts awsp@${AWSP_VERSION} && \
     # Install Session Manager Plugin
     curl "https://s3.amazonaws.com/session-manager-downloads/plugin/latest/ubuntu_${ARCH_SESSION_MANAGER_PLUGIN}/session-manager-plugin.deb" -o "session-manager-plugin.deb" && \
     # TODO: Add checksum verification:
@@ -102,16 +109,15 @@ RUN pip3 install --break-system-packages aws-mfa==0.0.12 && \
 # Install awsdac
 RUN apt update && \
     apt -y install fonts-liberation && \
-    go install github.com/awslabs/diagram-as-code/cmd/awsdac@latest && \
-    go install github.com/awslabs/diagram-as-code/cmd/awsdac-mcp-server@latest
+    go install github.com/awslabs/diagram-as-code/cmd/awsdac@${AWSDAC_VERSION} && \
+    go install github.com/awslabs/diagram-as-code/cmd/awsdac-mcp-server@${AWSDAC_VERSION}
 
-RUN chown -R vscode:golang /go && \
-    chmod -R g+w /go
+RUN chown -R vscode:vscode /go
 
 #--------------------------------------------------------------
 # Other tools
 #--------------------------------------------------------------
-RUN npm install -g --ignore-scripts @github/copilot@0.0.365
+RUN npm install -g --ignore-scripts @github/copilot@${GITHUB_COPILOT_VERSION}
 
 #--------------------------------------------------------------
 # Clean up

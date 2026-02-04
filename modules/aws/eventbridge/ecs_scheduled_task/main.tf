@@ -77,8 +77,8 @@ resource "aws_scheduler_schedule" "stop" {
     })
 
     retry_policy {
-      maximum_event_age_in_seconds = 3600
-      maximum_retry_attempts       = 3
+      maximum_event_age_in_seconds = var.retry_max_age_seconds
+      maximum_retry_attempts       = var.retry_max_attempts
     }
   }
 }
@@ -108,8 +108,8 @@ resource "aws_scheduler_schedule" "start" {
     })
 
     retry_policy {
-      maximum_event_age_in_seconds = 3600
-      maximum_retry_attempts       = 3
+      maximum_event_age_in_seconds = var.retry_max_age_seconds
+      maximum_retry_attempts       = var.retry_max_attempts
     }
   }
 }

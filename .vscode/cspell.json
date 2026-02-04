@@ -140,6 +140,7 @@
     "nolintlint",
     "opensearch",
     "opensearchserverless",
+    "parseable",
     "pgsql",
     "pidfile",
     "pipefail",

@@ -49,6 +49,10 @@ resource "aws_scheduler_schedule" "stop" {
     input = jsonencode({
       InstanceIds = [each.value.instance_id]
     })
+    retry_policy {
+      maximum_event_age_in_seconds = var.retry_max_age_seconds
+      maximum_retry_attempts       = var.retry_max_attempts
+    }
   }
 }
 
@@ -74,5 +78,9 @@ resource "aws_scheduler_schedule" "start" {
     input = jsonencode({
       InstanceIds = [each.value.instance_id]
     })
+    retry_policy {
+      maximum_event_age_in_seconds = var.retry_max_age_seconds
+      maximum_retry_attempts       = var.retry_max_attempts
+    }
   }
 }

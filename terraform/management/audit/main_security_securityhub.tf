@@ -11,5 +11,5 @@ module "aws_chatbot_security_securityhub" {
   name_prefix                            = var.name_prefix
   kms_master_key_id                      = module.kms_key["audit"].key_id
   cloudwatch_log_group_kms_key_id        = module.kms_key["audit"].key_arn
-  cloudwatch_log_group_retention_in_days = try(var.cloudwatch_log_group.override.security_securityhub.retention_in_days, null) == null ? var.cloudwatch_log_group.retention_in_days : var.cloudwatch_log_group.override.security_securityhub.retention_in_days
+  cloudwatch_log_group_retention_in_days = coalesce(try(var.cloudwatch_log_group.override.security_securityhub.retention_in_days, null), var.cloudwatch_log_group.retention_in_days)
 }

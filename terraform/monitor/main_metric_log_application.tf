@@ -12,6 +12,7 @@ module "aws_cloudwatch_alarm_log_application" {
   auto_log_group_names_exclude_list = var.metric_log_application.auto_log_group_names_exclude_list
   auto_log_group_names_include_list = var.metric_log_application.auto_log_group_names_include_list
   alarm_actions                     = var.metric_log_application.is_enabled ? [module.aws_sns_subscription_lambda_log.arn] : []
+  # In the case of logs, even if the alarm has been recovered, it is not considered OK.
   #   ok_actions                        = var.metric_log_application.is_enabled ? [module.aws_sns_subscription_lambda_log.arn] : []
   log_group_names                  = var.metric_log_application.log_group_names
   name_prefix                      = var.name_prefix

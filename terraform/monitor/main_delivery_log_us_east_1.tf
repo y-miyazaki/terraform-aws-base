@@ -1,6 +1,5 @@
 #--------------------------------------------------------------
-# For Application Log(us-east-1) - Using CloudWatch Delivery Module
-# CloudFront, SES etc...
+# For Application Log - Using CloudWatch Delivery Module
 # NOTE: Disabled when default region is us-east-1 to avoid duplication
 #--------------------------------------------------------------
 module "log_delivery_application_us_east_1" {

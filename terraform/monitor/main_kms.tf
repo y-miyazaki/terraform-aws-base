@@ -16,26 +16,11 @@ module "kms_key" {
   #   key_administrators      = var.key_administrators
   key_statements = [
     {
-      sid = "AllowCreateAlias"
-      principals = [{
-        type        = "AWS"
-        identifiers = ["*"]
-      }]
-      actions   = ["kms:CreateAlias"]
-      resources = ["*"]
-      conditions = [
-        {
-          test     = "StringEquals"
-          variable = "kms:CallerAccount"
-          values   = [data.aws_caller_identity.current.account_id]
-        }
-      ]
-    },
-    {
       sid = "AllowServices"
       principals = [{
         type = "Service"
         identifiers = [
+          "aiops.amazonaws.com",
           "cloudwatch.amazonaws.com",
           "dynamodb.amazonaws.com",
           "events.amazonaws.com",
@@ -48,6 +33,7 @@ module "kms_key" {
         "kms:Encrypt",
         "kms:Decrypt",
         "kms:GenerateDataKey*",
+        "kms:GetKeyPolicy",
         "kms:ReEncrypt*",
         "kms:DescribeKey",
       ]

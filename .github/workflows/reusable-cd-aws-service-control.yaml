@@ -182,7 +182,7 @@ on:
         description: "Wait for resources to reach stable state after operation (set to false to skip waiting)"
         required: false
         type: boolean
-        default: true
+        default: false
     secrets:
       AWS_IAM_ROLE_ARN:
         required: true

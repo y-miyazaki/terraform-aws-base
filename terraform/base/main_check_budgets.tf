@@ -77,7 +77,7 @@ module "lambda_function_budgets" {
   architectures                           = ["arm64"]
   attach_network_policy                   = var.common_lambda.vpc.is_enabled
   cloudwatch_logs_kms_key_id              = module.kms_key["base"].key_arn
-  cloudwatch_logs_retention_in_days       = try(var.cloudwatch_log_group.override.budgets.retention_in_days, null) == null ? var.cloudwatch_log_group.retention_in_days : var.cloudwatch_log_group.override.budgets.retention_in_days
+  cloudwatch_logs_retention_in_days       = coalesce(try(var.cloudwatch_log_group.override.budgets.retention_in_days, null), var.cloudwatch_log_group.retention_in_days)
   create_current_version_allowed_triggers = false
   create_package                          = false
   create_role                             = false
@@ -89,8 +89,8 @@ module "lambda_function_budgets" {
     }, var.budgets.aws_lambda_function.environment, {
     MONTHLY_TARGET_COST = var.budgets.aws_budgets_budget.limit_amount
     # Override SLACK_* with priority: override > defaults
-    SLACK_OAUTH_ACCESS_TOKEN = try(var.slack.override.budgets.oauth_access_token, null) != null ? var.slack.override.budgets.oauth_access_token : var.slack.oauth_access_token
-    SLACK_CHANNEL_ID         = try(var.slack.override.budgets.channel_id, null) != null ? var.slack.override.budgets.channel_id : var.slack.channel_id
+    SLACK_OAUTH_ACCESS_TOKEN = coalesce(try(var.slack.override.budgets.oauth_access_token, null), var.slack.oauth_access_token)
+    SLACK_CHANNEL_ID         = coalesce(try(var.slack.override.budgets.channel_id, null), var.slack.channel_id)
   })
   function_name                 = "${var.name_prefix}cloudwatch-event-budgets"
   handler                       = "cloudwatch_event_budgets_to_slack"

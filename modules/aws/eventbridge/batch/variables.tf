@@ -55,3 +55,13 @@ variable "schedules" {
   description = "(Optional) Map of AWS Batch job queue schedules. Key is a unique identifier. Ignored if create_auto_schedules is true."
   default     = {}
 }
+variable "retry_max_age_seconds" {
+  type        = number
+  description = "(Optional) Maximum age of a request that EventBridge Scheduler sends to a target for processing."
+  default     = 3600
+}
+variable "retry_max_attempts" {
+  type        = number
+  description = "(Optional) Maximum number of retry attempts to make before the request fails."
+  default     = 3
+}

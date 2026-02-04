@@ -39,9 +39,15 @@ locals {
             Sid = "AllowApplicationAutoScalingOperations"
             Action = [
               "application-autoscaling:RegisterScalableTarget",
+              "cloudwatch:DescribeAlarms",
+              "ecs:DescribeServices",
             ]
-            Effect   = "Allow"
-            Resource = "*"
+            Effect = "Allow"
+            Resource = [
+              "arn:aws:application-autoscaling:*:${data.aws_caller_identity.current.account_id}:scalable-target/*",
+              "arn:aws:cloudwatch:*:${data.aws_caller_identity.current.account_id}:alarm:*",
+              "arn:aws:ecs:*:${data.aws_caller_identity.current.account_id}:service/*/*",
+            ]
           },
           {
             Sid = "AllowRDSClusterOperations"
@@ -61,6 +67,7 @@ locals {
             Effect   = "Allow"
             Resource = "arn:aws:redshift:*:${data.aws_caller_identity.current.account_id}:cluster:*"
           },
+          # Note: ec2:DescribeVpcs does not support resource-level permissions
           {
             Sid = "AllowEC2DescribeVpcs"
             Action = [

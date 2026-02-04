@@ -1,6 +1,10 @@
 {
   "plugins": {},
-  "filters": {},
+  "filters": {
+    "allowlist": {
+      "allow": [".github/skills/**"]
+    }
+  },
   "rules": {
     "preset-ja-technical-writing": {
       "sentence-length": false

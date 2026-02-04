@@ -44,9 +44,9 @@ module "aws_synthetics_canary" {
     ]
     runtime_version = "syn-nodejs-puppeteer-11.0"
     # ZIP file path based on function name (heartbeat or linkcheck)
+    # Updated package structure for syn-nodejs-puppeteer-11.0+: index.js at root level
     # https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Synthetics_Canaries_WritingCanary_Nodejs.html#CloudWatch_Synthetics_Canaries_package
-    # cd /workspace/nodejs/synthetics_canary_heartbeat; zip -r /workspace/lambda/outputs/nodejs_synthetics_canary_heartbeat.zip ./
-    # cd /workspace/nodejs/synthetics_canary_linkcheck; zip -r /workspace/lambda/outputs/nodejs_synthetics_canary_linkcheck.zip ./
+    # Build command: bash /workspace/nodejs/build-nodejs.sh
     zip_file = local.synthetics_canary_zip_files[each.key]
     }
   )

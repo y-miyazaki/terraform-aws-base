@@ -37,7 +37,7 @@ on:
         description: "Wait for schedules to be updated (currently not implemented for EventBridge)"
         required: false
         type: boolean
-        default: false
+        default: true
     secrets:
       AWS_IAM_ROLE_ARN:
         required: true
