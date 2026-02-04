@@ -126,53 +126,24 @@ Only use individual commands when explicitly debugging a specific validation fai
 
 ## MCP Tools
 
-Model Context Protocol (MCP) 対応ツールを活用。目的: コードベース解析、ドキュメント検索、AWS 操作支援。
+Model Context Protocol (MCP) 対応ツールを活用。
 
-### 主要ツール
+### Serena 初期化（必須）
 
-#### serena (Code Analysis)
+作業開始時：
 
-- `mcp_serena_list_dir`: プロジェクト構造把握
-- `mcp_serena_get_symbols_overview`: ファイル概要取得
-- `mcp_serena_find_symbol`: シンボル詳細確認
-- `mcp_serena_replace_symbol_body`: 安全な編集
-- 使用場面: Go コード理解・編集、大規模リファクタリング
-- 避ける場面: 単純ファイル読取、1-2 行修正
+1. `mcp_serena_list_memories` でプロジェクトメモリを確認
+2. 関連メモリを `mcp_serena_read_memory` で参照
 
-#### aws-api-mcp-server (AWS CLI)
+**利用可能なメモリ**:
 
-- `call_aws`: AWS CLI コマンド実行
-- `suggest_aws_commands`: コマンド提案
-- 使用ルール: `--region` 明示、本番環境慎重、`max_results` で制限
-
-#### aws-knowledge-mcp-server (AWS Docs)
-
-- `search_documentation`: AWS ドキュメント検索
-- `read_documentation`: 詳細ドキュメント取得
-- 使用場面: 公式ドキュメント必要時、設計・アーキテクチャ決定時
-
-#### context7 (Library Docs)
-
-- `resolve-library-id`: ライブラリ ID 解決
-- `get-library-docs`: ドキュメント取得
+- `project_overview.md`: プロジェクト目的・技術スタック・構造
+- `suggested_commands.md`: 開発・検証・デプロイコマンド
+- `style_conventions.md`: 言語別コーディング規約
+- `post_task_checklist.md`: 変更後の検証手順
+- `system_utilities.md`: 利用可能なツール・コマンド
 
 ### 使用方針
 
-1. **serena 使用時:**
-   - 大ファイルは段階的読取（`get_symbols_overview` → `find_symbol`）
-   - 編集前に `find_referencing_symbols` で影響範囲確認
-   - **プロジェクトメモリ活用**: 作業前に `mcp_serena_list_memories` で利用可能なメモリを確認し、関連情報を `mcp_serena_read_memory` で参照
-   - **利用可能なメモリ**:
-     - `project_overview.md`: プロジェクト目的・技術スタック・構造
-     - `suggested_commands.md`: 開発・検証・デプロイコマンド
-     - `style_conventions.md`: 言語別コーディング規約
-     - `post_task_checklist.md`: 変更後の検証手順
-     - `system_utilities.md`: 利用可能なツール・コマンド
-
-2. **AWS MCP 使用時:**
-   - リージョン明示的指定
-   - `max_results` で出力制御
-
-3. **全般:**
-   - MCP ツールは補助的使用
-   - エラー時はツール制限として受入、代替手段検討
+- MCP ツールは補助的に使用
+- エラー時はツール制限として受入、代替手段を検討

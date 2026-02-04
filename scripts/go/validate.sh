@@ -277,7 +277,11 @@ function run_coverage_tests {
     fi
 
     local coverage_file
-    coverage_file="/tmp/coverage_$(date +%s).out"
+    coverage_file=$(mktemp /tmp/coverage.XXXXXX.out) || {
+        log "ERROR" "Failed to create temporary coverage file"
+        EXIT_CODE=1
+        return 1
+    }
     if go test -coverprofile="$coverage_file" "$TARGET_PATTERN"; then
         local coverage_percent
         local coverage_output
@@ -366,7 +370,7 @@ function run_go_build {
 #######################################
 function has_go_files {
     local dir=$1
-    find "$dir" -name "*.go" | head -1 | wc -l
+    find "$dir" -name "*.go" 2> /dev/null | wc -l
 }
 
 #######################################
@@ -462,7 +466,11 @@ function run_go_mod_tidy {
         fi
     fi
 
-    pushd "$mod_dir" > /dev/null || true
+    pushd "$mod_dir" > /dev/null || {
+        log "ERROR" "Failed to change directory to: $mod_dir"
+        EXIT_CODE=1
+        return 1
+    }
     if go mod tidy; then
         log "INFO" "go mod tidy completed successfully (dir=$mod_dir)"
     else
@@ -541,7 +549,14 @@ function run_golangci_lint {
 
     lint_args+=("$TARGET_PATTERN")
 
-    if golangci-lint "${lint_args[@]}" 2>&1 | tee /tmp/golint_output.txt; then
+    local lint_output
+    lint_output=$(mktemp /tmp/golint_output.XXXXXX.txt) || {
+        log "ERROR" "Failed to create temporary lint output file"
+        EXIT_CODE=1
+        return 1
+    }
+
+    if golangci-lint "${lint_args[@]}" 2>&1 | tee "$lint_output"; then
         log "INFO" "golangci-lint passed"
         LINT_ISSUES_COUNT=0
     else
@@ -549,8 +564,8 @@ function run_golangci_lint {
         EXIT_CODE=1
         LINT_FAILED=1
         # Count issues
-        if [[ -f /tmp/golint_output.txt ]]; then
-            LINT_ISSUES_COUNT=$(grep -cE '^\S+\.go:' /tmp/golint_output.txt 2> /dev/null || echo 0)
+        if [[ -f "$lint_output" ]]; then
+            LINT_ISSUES_COUNT=$(grep -cE '^\S+\.go:' "$lint_output" 2> /dev/null || echo 0)
             # Normalize to first token (avoid any unexpected whitespace/newlines)
             LINT_ISSUES_COUNT=$(echo "$LINT_ISSUES_COUNT" | awk '{print $1}')
         else
@@ -561,7 +576,7 @@ function run_golangci_lint {
             LINT_ISSUES_COUNT=0
         fi
     fi
-    rm -f /tmp/golint_output.txt
+    rm -f "$lint_output"
 }
 
 #######################################
@@ -641,7 +656,14 @@ function run_tests {
 
     test_args+=("$TARGET_PATTERN")
 
-    if go test "${test_args[@]}" 2>&1 | tee /tmp/gotest_output.txt; then
+    local test_output
+    test_output=$(mktemp /tmp/gotest_output.XXXXXX.txt) || {
+        log "ERROR" "Failed to create temporary test output file"
+        EXIT_CODE=1
+        return 1
+    }
+
+    if go test "${test_args[@]}" 2>&1 | tee "$test_output"; then
         log "INFO" "All tests passed"
         TEST_FAIL_COUNT=0
     else
@@ -649,11 +671,11 @@ function run_tests {
         EXIT_CODE=1
         TEST_FAILED=1
         # Count failed tests
-        TEST_FAIL_COUNT=$(grep -c '^--- FAIL:' /tmp/gotest_output.txt 2> /dev/null || echo 0)
+        TEST_FAIL_COUNT=$(grep -c '^--- FAIL:' "$test_output" 2> /dev/null || echo 0)
         # Normalize to a single integer token to prevent arithmetic parsing errors
         TEST_FAIL_COUNT=$(echo "$TEST_FAIL_COUNT" | awk '{print $1}')
     fi
-    rm -f /tmp/gotest_output.txt
+    rm -f "$test_output"
 }
 
 #######################################

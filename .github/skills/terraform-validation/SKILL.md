@@ -17,11 +17,9 @@ This skill is applicable for:
 - Ensuring security compliance
 - Verifying configuration correctness
 
-## ⚠️ CRITICAL: Always Use the Validation Script
+## Validation Script Usage
 
-**DO NOT run individual commands (terraform fmt, terraform validate, tflint, trivy) directly.**
-
-**The validation script handles everything automatically.**
+**Always use the validation script. Do not run individual commands.**
 
 ### Usage
 
@@ -52,125 +50,24 @@ The validation script performs all checks in the correct order:
 
 Before considering infrastructure code complete:
 
-- ✅ **All validation checks pass**
-- ✅ **Code properly formatted**
-- ✅ **No syntax or configuration errors**
-- ✅ **No security misconfigurations**
-- ✅ **Plan reviewed (if applicable)**
+- [ ] All validation checks pass
+- [ ] Code properly formatted
+- [ ] No syntax or configuration errors
+- [ ] No security misconfigurations
+- [ ] Plan reviewed (if applicable)
 
 ## Validation Workflow
 
-### Before Committing
-
 1. **Make changes** - Edit Terraform files
-2. **Run validation** (recommend scoped for faster feedback):
-   ```bash
-   bash terraform-validation/scripts/validate.sh ./terraform/path/to/module
-   ```
-3. **Auto-fix formatting** (if needed):
-   ```bash
-   bash terraform-validation/scripts/validate.sh --fix
-   ```
-4. **Address other issues** - Fix validation, lint, or security errors
-5. **Commit** - Only commit when validation passes
+2. **Run validation**: `bash terraform-validation/scripts/validate.sh ./path/to/module`
+3. **Auto-fix formatting**: `bash terraform-validation/scripts/validate.sh --fix`
+4. **Fix other issues** - Address validation, lint, or security errors
+5. **Commit** - Only when validation passes
 
-### Before Applying
+## Reference Documentation
 
-1. **Run validations** - Ensure all checks pass
-2. **Plan changes**:
-   ```bash
-   terraform plan -out=tfplan
-   ```
-3. **Review plan** - Verify expected changes
-4. **Apply** (if plan looks correct):
-   ```bash
-   terraform apply tfplan
-   ```
+For detailed information:
 
-## Common Failures & Quick Fixes
-
-### Formatting Errors
-
-```
-Error: terraform fmt check failed
-```
-
-**Fix**: Auto-format with `--fix` flag
-
-```bash
-bash terraform-validation/scripts/validate.sh --fix
-```
-
-### terraform validate Errors
-
-```
-Error: Missing required argument
-```
-
-**Fix**: Read error message, add missing arguments, re-run validation
-
-### tflint Errors
-
-```
-Error: Deprecated syntax
-```
-
-**Fix**: Update code according to linter suggestions
-
-### trivy config Errors
-
-```
-HIGH: S3 bucket has block public access disabled
-```
-
-**Fix**: Add security controls as recommended (encryption, access restrictions)
-
-## Security Requirements
-
-Required security measures:
-
-- ✅ KMS encryption for S3, SNS, Logs, State Machines
-- ✅ IAM policies follow least privilege
-- ✅ Resource policies include `Condition` clauses
-- ✅ No plaintext secrets
-- ✅ Logging enabled (CloudTrail, CloudWatch Logs)
-- ✅ No default VPC usage
-- ✅ No open security groups
-- ✅ No public S3 buckets
-
-### trivy Severity Levels
-
-- **CRITICAL**: Immediate fix required
-- **HIGH**: Fix before production deployment
-- **MEDIUM**: Fix in next iteration
-- **LOW**: Consider fixing
-
-## Troubleshooting
-
-### Validation Script Not Found
-
-```bash
-# Navigate to project root
-cd /workspace
-
-# Verify script exists
-ls -la .github/skills/terraform-validation/scripts/validate.sh
-
-# Run with bash explicitly
-bash terraform-validation/scripts/validate.sh
-```
-
-### Slow Validation
-
-```bash
-# Validate only changed directories (much faster)
-bash terraform-validation/scripts/validate.sh ./terraform/module/
-```
-
-### Need More Details
-
-For detailed information, see the reference documentation:
-
-- **[Individual Commands](reference/individual-commands.md)** - Detailed command usage for debugging
-- **[Troubleshooting Guide](reference/troubleshooting.md)** - Comprehensive error resolution
-- **[Security Best Practices](reference/security.md)** - Infrastructure security guidelines
+- **[Individual Commands](reference/individual-commands.md)** - Command usage for debugging
+- **[Troubleshooting Guide](reference/troubleshooting.md)** - Error resolution
+- **[Security Best Practices](reference/security.md)** - Security guidelines

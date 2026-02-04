@@ -369,9 +369,6 @@ function terraform_workflow {
     # Validate environment
     validate_terraform_env "$env_name"
 
-    # # Install Terraform
-    # terraform_install
-
     # Initialize Terraform
     terraform_init "$env_name"
 

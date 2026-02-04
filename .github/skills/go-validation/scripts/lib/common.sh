@@ -193,28 +193,6 @@ function log {
         echo "[$(date +'%Y-%m-%d %H:%M:%S')] [$level] $message" >&2
     fi
 }
-#######################################
-# start_echo_section: Display section headers and capture start time
-#
-# Description:
-#   Displays formatted section header (used with end_echo_section for timing)
-#
-# Arguments:
-#   $1 - Section title
-#
-# Returns:
-#   None (outputs to stderr)
-#
-# Usage:
-#   start_echo_section "Building application"
-#
-#######################################
-function start_echo_section {
-    local title="$1"
-    echo "#--------------------------------------------------------------" >&2
-    echo "# $title" >&2
-    echo "#--------------------------------------------------------------" >&2
-}
 
 #######################################
 # validate_dependencies: Validate required command line tools
