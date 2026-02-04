@@ -34,14 +34,14 @@ VERBOSE=false
 AUTO_FIX=false
 QUIET=false
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-WORKSPACE_ROOT="$(dirname "$SCRIPT_DIR")"
+WORKSPACE_ROOT="$(cd "${SCRIPT_DIR}/../.." && pwd)"
 # Global variable for script search paths
 SEARCH_PATHS=()
 
 # Load all-in-one library
-# shellcheck source=./lib/all.sh
+# shellcheck source=../lib/all.sh
 # shellcheck disable=SC1091
-source "${SCRIPT_DIR}/lib/all.sh"
+source "${SCRIPT_DIR}/../lib/all.sh"
 
 # Counters for statistics
 TOTAL_SCRIPTS=0
@@ -480,7 +480,11 @@ function find_shell_scripts {
     local scripts=()
 
     for search_path in "${SEARCH_PATHS[@]}"; do
-        if [[ -d "$search_path" ]]; then
+        if [[ -f "$search_path" ]]; then
+            # Direct file path specified
+            custom_log "DEBUG" "Adding file: $search_path" >&2
+            scripts+=("$search_path")
+        elif [[ -d "$search_path" ]]; then
             # Send debug log to stderr to avoid interfering with function output
             custom_log "DEBUG" "Searching for scripts in: $search_path" >&2
 
@@ -684,11 +688,11 @@ function run_bats_tests {
         pushd "$WORKSPACE_ROOT" > /dev/null || return 1
         if "$bats_bin" -r "test/bats"; then
             custom_log "INFO" "Bats tests passed"
-            popd > /dev/null || return 1
+            popd > /dev/null || true
             return 0
         else
             custom_log "ERROR" "Bats tests failed"
-            popd > /dev/null || return 1
+            popd > /dev/null || true
             return 1
         fi
     fi
@@ -925,12 +929,29 @@ function validate_shebang {
         custom_log "WARN" "⚠️  Missing or invalid shebang: $script_name"
         if [[ "$AUTO_FIX" == "true" ]]; then
             custom_log "INFO" "Auto-fixing shebang for: $script_name"
-            # Create backup and add shebang
-            cp "$script" "$script.bak"
-            echo "#!/bin/bash" > "$script.tmp"
-            cat "$script.bak" >> "$script.tmp"
-            mv "$script.tmp" "$script"
-            rm "$script.bak"
+            # Create backup and add shebang with error handling
+            if ! cp "$script" "$script.bak"; then
+                custom_log "ERROR" "Failed to create backup: $script_name"
+                return 1
+            fi
+            if ! echo "#!/bin/bash" > "$script.tmp"; then
+                custom_log "ERROR" "Failed to write temp file: $script_name"
+                rm -f "$script.bak"
+                return 1
+            fi
+            if ! cat "$script.bak" >> "$script.tmp"; then
+                custom_log "ERROR" "Failed to append content: $script_name"
+                rm -f "$script.bak" "$script.tmp"
+                return 1
+            fi
+            if ! mv "$script.tmp" "$script"; then
+                custom_log "ERROR" "Failed to replace original file: $script_name"
+                rm -f "$script.tmp"
+                # Restore from backup
+                mv "$script.bak" "$script" 2> /dev/null
+                return 1
+            fi
+            rm -f "$script.bak"
             custom_log "INFO" "✅ Added shebang to: $script_name"
         fi
         return 1

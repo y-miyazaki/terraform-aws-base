@@ -105,17 +105,6 @@ function make_csv_safe {
 }
 
 #######################################
-# Description: CSV utility functions for shell scripts
-# Usage: source /path/to/scripts/lib/csv.sh
-#
-# This library provides CSV data processing and normalization functions:
-# - CSV value normalization with empty/null handling
-# - CSV safety processing for special characters
-# - Support for preserving newlines in CSV output
-# - Quote escaping and comma handling for proper CSV format
-#######################################
-
-#######################################
 # CSV Value Normalization Functions
 #######################################
 

@@ -17,11 +17,9 @@ This skill is applicable for:
 - Ensuring test coverage meets standards
 - Security vulnerability scanning
 
-## ⚠️ CRITICAL: Always Use the Validation Script
+## Validation Script Usage
 
-**DO NOT run individual commands (go fmt, go vet, golangci-lint, go test) directly.**
-
-**The validation script handles everything automatically.**
+**Always use the validation script. Do not run individual commands.**
 
 ### Usage
 
@@ -54,125 +52,25 @@ The validation script performs all checks in the correct order:
 
 Before considering code complete:
 
-- ✅ **All validation checks pass**
-- ✅ **Test coverage ≥ 80%**
-- ✅ **No test failures**
-- ✅ **No race conditions**
-- ✅ **No security vulnerabilities**
+- [ ] All validation checks pass
+- [ ] Test coverage ≥ 80%
+- [ ] No test failures
+- [ ] No race conditions
+- [ ] No security vulnerabilities
 
 ## Validation Workflow
 
-### Before Committing
-
-1. **Make code changes** - Implement feature or fix
-2. **Run validation on changed directory** (recommended):
-   ```bash
-   bash go-validation/scripts/validate.sh ./path/to/changed/code/
-   ```
-3. **Fix any issues** - Address failures reported
+1. **Make changes** - Implement feature or fix
+2. **Run validation**: `bash go-validation/scripts/validate.sh ./path/to/code/`
+3. **Fix issues** - Address failures reported
 4. **Re-run validation** - Ensure all checks pass
-5. **Optional: Run full project validation**:
-   ```bash
-   bash go-validation/scripts/validate.sh
-   ```
-6. **Commit** - Only commit when validation passes
+5. **Commit** - Only when validation passes
 
-## Common Failures & Quick Fixes
+## Reference Documentation
 
-### Formatting Errors
+For detailed information:
 
-```
-Error: go fmt check failed
-Files not formatted correctly
-```
-
-**Fix**: Auto-format with `--fix` flag
-
-```bash
-bash go-validation/scripts/validate.sh --fix
-```
-
-### go vet Errors
-
-```
-Error: go vet failed
-main.go:15: unreachable code
-```
-
-**Fix**: Read error message, correct the code issue, re-run validation
-
-### Lint Errors
-
-```
-Error: golangci-lint failed
-error: unused variable 'result'
-```
-
-**Fix**: Address linter suggestions (remove unused code, check errors, etc.)
-
-### Test Failures
-
-```
-Error: Tests failed
-Expected: 5, Got: 3
-```
-
-**Fix**: Fix test logic or implementation, ensure all tests pass
-
-### Race Conditions
-
-```
-WARNING: DATA RACE
-Read at 0x00c000102090 by goroutine 7
-```
-
-**Fix**: Add proper synchronization (mutex, channels, atomic operations)
-
-### Coverage Below 80%
-
-```
-Error: Coverage below 80%
-Current coverage: 65.4%
-```
-
-**Fix**: Write tests for uncovered code, focus on public APIs and error paths
-
-### Security Vulnerabilities
-
-```
-govulncheck: found vulnerabilities
-Vulnerability in golang.org/x/crypto
-```
-
-**Fix**: Update vulnerable dependencies to patched versions
-
-## Troubleshooting
-
-### Validation Script Not Found
-
-```bash
-# Navigate to project root
-cd /workspace
-
-# Verify script exists
-ls -la .github/skills/go-validation/scripts/validate.sh
-
-# Run with bash explicitly
-bash go-validation/scripts/validate.sh
-```
-
-### Slow Validation
-
-```bash
-# Validate only changed directory (much faster)
-bash go-validation/scripts/validate.sh ./path/to/changed/code/
-```
-
-### Need More Details
-
-For detailed information, see the reference documentation:
-
-- **[Individual Commands](reference/individual-commands.md)** - Detailed command usage for debugging
-- **[Troubleshooting Guide](reference/troubleshooting.md)** - Comprehensive error resolution
-- **[Testing Best Practices](reference/testing.md)** - Test patterns and coverage strategies
-- **[Security Best Practices](reference/security.md)** - Security guidelines and patterns
+- **[Individual Commands](reference/individual-commands.md)** - Command usage for debugging
+- **[Troubleshooting Guide](reference/troubleshooting.md)** - Error resolution
+- **[Testing Best Practices](reference/testing.md)** - Test patterns and coverage
+- **[Security Best Practices](reference/security.md)** - Security guidelines
