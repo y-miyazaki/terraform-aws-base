@@ -70,6 +70,7 @@ locals {
           Effect   = "Allow"
           Resource = "arn:aws:dynamodb:*:*:table/${var.name_prefix}monitor-log"
         },
+        # Note: KMS key access required for decrypting CloudWatch Logs, S3 objects, and Kinesis streams
         {
           Sid = "AllowKMSDecrypt"
           Action = [
@@ -79,6 +80,7 @@ locals {
           Effect   = "Allow"
           Resource = "arn:aws:kms:*:${data.aws_caller_identity.current.account_id}:key/*"
         },
+        # Note: AWS Support API does not support resource-level permissions
         {
           Sid = "AllowSupports"
           Action = [

@@ -15,7 +15,7 @@ module "aws_security_default_vpc" {
   aws_cloudwatch_log_group = {
     name              = "${var.name_prefix}aws-vpc-flow-logs"
     kms_key_id        = module.kms_key["base"].key_arn
-    retention_in_days = try(var.cloudwatch_log_group.override.common_lambda_vpc_flow_log.retention_in_days, null) == null ? var.cloudwatch_log_group.retention_in_days : var.cloudwatch_log_group.override.common_lambda_vpc_flow_log.retention_in_days
+    retention_in_days = coalesce(try(var.cloudwatch_log_group.override.common_lambda_vpc_flow_log.retention_in_days, null), var.cloudwatch_log_group.retention_in_days)
   }
   aws_iam_role = {
     description = try(var.security_default_vpc.aws_iam_role.description, null)

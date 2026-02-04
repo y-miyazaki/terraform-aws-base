@@ -54,7 +54,7 @@ module "lambda_vpc_us_east_1" {
   enable_flow_log                                 = var.common_lambda.vpc.new.enable_flow_log
   create_flow_log_cloudwatch_log_group            = var.common_lambda.vpc.new.create_flow_log_cloudwatch_log_group
   create_flow_log_cloudwatch_iam_role             = var.common_lambda.vpc.new.create_flow_log_cloudwatch_iam_role
-  flow_log_cloudwatch_log_group_retention_in_days = try(var.cloudwatch_log_group.override.common_lambda_vpc_flow_log.retention_in_days, null) != null ? var.cloudwatch_log_group.override.common_lambda_vpc_flow_log.retention_in_days : var.cloudwatch_log_group.retention_in_days
+  flow_log_cloudwatch_log_group_retention_in_days = coalesce(try(var.cloudwatch_log_group.override.common_lambda_vpc_flow_log.retention_in_days, null), var.cloudwatch_log_group.retention_in_days)
   flow_log_file_format                            = var.common_lambda.vpc.new.flow_log_file_format
 
   # Disable default resource management

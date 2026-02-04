@@ -56,7 +56,7 @@ module "s3_application_log" {
   restrict_public_buckets                   = var.common_log.s3_application_log.restrict_public_buckets
   server_side_encryption_configuration      = var.common_log.s3_application_log.server_side_encryption_configuration
   versioning                                = var.common_log.s3_application_log.versioning
-  website                                   = {}
+
 
   tags = var.tags
 }

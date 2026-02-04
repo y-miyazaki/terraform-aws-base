@@ -74,10 +74,16 @@ cloudwatch_log_group = {
     # cloudwatch_event_ec2 = {
     #   retention_in_days = 7
     # }
+    # common_lambda_kinesis_data_firehose_cloudwatch_logs_processor = {
+    #   retention_in_days = 14
+    # }
     # common_lambda_log = {
     #   retention_in_days = 7
     # }
     # common_lambda_metric = {
+    #   retention_in_days = 14
+    # }
+    # common_lambda_s3_notification_s3_object_created_for_athena = {
     #   retention_in_days = 14
     # }
     # common_lambda_ses = {
@@ -138,6 +144,9 @@ slack = {
     # cloudwatch_event_ec2 = {
     #   channel_id         = "C0XXXXXXXXX"
     # }
+    # common_lambda_kinesis_data_firehose_cloudwatch_logs_processor = {
+    #   channel_id         = "C0XXXXXXXXX"
+    # }
     # common_lambda_log = {
     #   channel_id         = "C0XXXXXXXXX"
     # }
@@ -145,6 +154,9 @@ slack = {
     #   channel_id         = "C0XXXXXXXXX"
     # }
     # common_lambda_ses = {
+    #   channel_id         = "C0XXXXXXXXX"
+    # }
+    # common_lambda_s3_notification_s3_object_created_for_athena = {
     #   channel_id         = "C0XXXXXXXXX"
     # }
     # common_lambda_step_functions = {
@@ -2629,7 +2641,7 @@ eventbridge = {
   #--------------------------------------------------------------
   redshift = {
     # TODO: need to set is_enabled for pause and resume redshift cluster schedule.
-    is_enabled = true
+    is_enabled = false
     # TODO: need to set schedule_expression_stop for pause redshift cluster.
     schedule_expression_stop = "cron(0 10 * * ? *)"
     # TODO: need to set schedule_expression_start for resume redshift cluster.

@@ -3,9 +3,9 @@
 ## Language and Formatting Standards
 
 - instructions,prompt ファイル
-  日本語。章名のみ英語
+  - 日本語。章名のみ英語
 - other ファイル
-  生成されるコードとコメントはすべて英語
+  - 生成されるコードとコメントはすべて英語
 
 ## Core Principles
 
@@ -61,7 +61,7 @@
 - [ ] 対応 `.github/instructions/*.instructions.md` を `read_file` で読込・確認
 - [ ] grep による統一性確認実施・報告
 - [ ] 追加確認が必要なファイル・関数の読込
-- [ ] 対応言語の instructions.md（例: shell-script.instructions.md）の `Code Modification Guidelines` 遵守
+- [ ] 対応言語の instructions.md（例: script.instructions.md）の `Code Modification Guidelines` 遵守
 - [ ] 残作業リスト更新・未完了項目確認
 - [ ] 逸脱・懸念点の振り返りコメント記載
 
@@ -74,7 +74,7 @@
 **必須手順**:
 
 1. **作業前に `read_file` で対応 instructions ファイルを読込**
-   - 例: `read_file` with filePath="/workspace/.github/instructions/shell-script.instructions.md"
+   - 例: `read_file` with filePath="/workspace/.github/instructions/script.instructions.md"
 2. **要点の明示**
 3. **検証コマンド・コーディング規約の遵守**
 
@@ -84,7 +84,7 @@
 | -------------------------------------------------------------- | ------------------------------------------------------------ | ------------------------------------------------------------------------------ |
 | `.github/instructions/go.instructions.md`                      | \*\*/\*.go                                                   | 検証: go fmt, golangci-lint / 命名: camelCase, PascalCase / エラーハンドリング |
 | `.github/instructions/terraform.instructions.md`               | \*\*/\*.tf,\*\*/\*.tfvars,\*\*/\*.hcl                        | 検証: terraform fmt, tflint / 命名: snake_case / セキュリティ規約              |
-| `.github/instructions/shell-script.instructions.md`            | \*\*/\*.sh,scripts/\*\*                                      | 検証: bash -n, shellcheck / 関数ドキュメント / エラーハンドリング              |
+| `.github/instructions/script.instructions.md`                  | \*\*/\*.sh,scripts/\*\*                                      | 検証: bash -n, shellcheck / 関数ドキュメント / エラーハンドリング              |
 | `.github/instructions/markdown.instructions.md`                | \*\*/\*.md                                                   | GitHub Markdown 記法 / 表・リスト・コードブロックの規約                        |
 | `.github/instructions/github-actions-workflow.instructions.md` | \*\*/.github/workflows/\*.yaml,\*\*/.github/workflows/\*.yml | ワークフロー構文 / セキュリティ / 再利用可能なワークフロー                     |
 
@@ -101,6 +101,28 @@
 - 具体的かつ行動可能なエラーメッセージ
 - デバッグ用の十分なログ出力
 - 機密情報はエラーメッセージに含めない
+
+## Validation Script Enforcement
+
+**CRITICAL**: When validating code, ALWAYS use the comprehensive validation scripts. Never run individual commands directly.
+
+### Required Validation Scripts
+
+- **Go**: `bash go-validation/scripts/validate.sh`
+- **Terraform**: `bash terraform-validation/scripts/validate.sh`
+- **Shell Script**: `bash shell-script-validation/scripts/validate.sh`
+
+### Prohibited Individual Commands
+
+**NEVER run these commands directly:**
+
+- ❌ `go fmt`, `go vet`, `golangci-lint`, `go test` alone
+- ❌ `terraform fmt`, `terraform validate`, `tflint`, `trivy` alone
+- ❌ `bash -n`, `shellcheck` alone
+
+### Exception
+
+Only use individual commands when explicitly debugging a specific validation failure reported by the validation script. In such cases, refer to the skill's `reference/` directory for detailed command usage.
 
 ## MCP Tools
 
@@ -137,7 +159,6 @@ Model Context Protocol (MCP) 対応ツールを活用。目的: コードベー�
 ### 使用方針
 
 1. **serena 使用時:**
-
    - 大ファイルは段階的読取（`get_symbols_overview` → `find_symbol`）
    - 編集前に `find_referencing_symbols` で影響範囲確認
    - **プロジェクトメモリ活用**: 作業前に `mcp_serena_list_memories` で利用可能なメモリを確認し、関連情報を `mcp_serena_read_memory` で参照
@@ -149,7 +170,6 @@ Model Context Protocol (MCP) 対応ツールを活用。目的: コードベー�
      - `system_utilities.md`: 利用可能なツール・コマンド
 
 2. **AWS MCP 使用時:**
-
    - リージョン明示的指定
    - `max_results` で出力制御
 

@@ -57,9 +57,11 @@ resource "aws_sns_topic_subscription" "this" {
 resource "aws_cloudwatch_log_metric_filter" "cis_3_1" {
   count = var.is_enabled ? 1 : 0
 
-  name           = "${var.cis_name_prefix}cloudtrail-logs-unautorizedoperation-api"
+  name = "${var.cis_name_prefix}cloudtrail-logs-unautorizedoperation-api"
+  # noise list:
+  # - assumed-role/AWSServiceRoleFor*
   pattern        = <<PATTERN
-{(($.errorCode="*UnauthorizedOperation") || ($.errorCode="AccessDenied*")) && $.userIdentity.arn!="*assumed-role/AWSServiceRoleFor*"}
+{(($.errorCode="*UnauthorizedOperation") || ($.errorCode="AccessDenied*")) && ($.userIdentity.arn!="*assumed-role/AWSServiceRoleFor*")}
 PATTERN
   log_group_name = var.cloudtrail_log_group_name
   metric_transformation {

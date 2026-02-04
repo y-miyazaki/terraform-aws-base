@@ -48,7 +48,7 @@ module "lambda_function_cloudwatch_event_ec2" {
   architectures                           = ["arm64"]
   attach_network_policy                   = var.common_lambda.vpc.is_enabled
   cloudwatch_logs_kms_key_id              = module.kms_key["monitor"].key_arn
-  cloudwatch_logs_retention_in_days       = try(var.cloudwatch_log_group.override.cloudwatch_event_ec2.retention_in_days, null) == null ? var.cloudwatch_log_group.retention_in_days : var.cloudwatch_log_group.override.cloudwatch_event_ec2.retention_in_days
+  cloudwatch_logs_retention_in_days       = coalesce(try(var.cloudwatch_log_group.override.cloudwatch_event_ec2.retention_in_days, null), var.cloudwatch_log_group.retention_in_days)
   create_current_version_allowed_triggers = false
   create_package                          = false
   create_role                             = false
@@ -58,8 +58,8 @@ module "lambda_function_cloudwatch_event_ec2" {
     LOGGER_OUT       = "stdout"
     LOGGER_LEVEL     = "warn"
     # Override SLACK_* with priority: override > defaults
-    SLACK_OAUTH_ACCESS_TOKEN = try(var.slack.override.cloudwatch_event_ec2.oauth_access_token, null) != null ? var.slack.override.cloudwatch_event_ec2.oauth_access_token : var.slack.oauth_access_token
-    SLACK_CHANNEL_ID         = try(var.slack.override.cloudwatch_event_ec2.channel_id, null) != null ? var.slack.override.cloudwatch_event_ec2.channel_id : var.slack.channel_id
+    SLACK_OAUTH_ACCESS_TOKEN = coalesce(try(var.slack.override.cloudwatch_event_ec2.oauth_access_token, null), var.slack.oauth_access_token)
+    SLACK_CHANNEL_ID         = coalesce(try(var.slack.override.cloudwatch_event_ec2.channel_id, null), var.slack.channel_id)
   }, var.cloudwatch_event_ec2.aws_lambda_function.environment)
   function_name                 = "${var.name_prefix}cloudwatch-event-ec2"
   handler                       = "cloudwatch_event_ec2_to_slack"
@@ -74,8 +74,8 @@ module "lambda_function_cloudwatch_event_ec2" {
   runtime                       = "provided.al2"
   timeout                       = 300
   tracing_mode                  = "PassThrough"
-  vpc_security_group_ids        = var.common_lambda.vpc.is_enabled ? var.common_lambda.vpc.create_vpc ? [module.lambda_vpc.default_security_group_id] : [var.common_lambda.vpc.exists.security_group_id] : null
-  vpc_subnet_ids                = var.common_lambda.vpc.is_enabled ? var.common_lambda.vpc.create_vpc ? module.lambda_vpc.private_subnets : var.common_lambda.vpc.exists.private_subnets : null
+  vpc_security_group_ids        = var.common_lambda.vpc.is_enabled ? var.common_lambda.vpc.create_vpc ? [module.lambda_vpc.default_security_group_id] : [var.common_lambda.vpc.exists.security_group_id] : []
+  vpc_subnet_ids                = var.common_lambda.vpc.is_enabled ? var.common_lambda.vpc.create_vpc ? module.lambda_vpc.private_subnets : var.common_lambda.vpc.exists.private_subnets : []
 
   tags = var.tags
 

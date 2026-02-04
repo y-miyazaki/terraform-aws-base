@@ -38,8 +38,8 @@ module "aws_api_gateway_report_csp" {
     LOGGER_OUT       = "stdout"
     LOGGER_LEVEL     = "warn"
     # Override SLACK_* with priority: override > defaults
-    SLACK_OAUTH_ACCESS_TOKEN = try(var.slack.override.apigateway_report_csp.oauth_access_token, null) != null ? var.slack.override.apigateway_report_csp.oauth_access_token : var.slack.oauth_access_token
-    SLACK_CHANNEL_ID         = try(var.slack.override.apigateway_report_csp.channel_id, null) != null ? var.slack.override.apigateway_report_csp.channel_id : var.slack.channel_id
+    SLACK_OAUTH_ACCESS_TOKEN = coalesce(try(var.slack.override.apigateway_report_csp.oauth_access_token, null), var.slack.oauth_access_token)
+    SLACK_CHANNEL_ID         = coalesce(try(var.slack.override.apigateway_report_csp.channel_id, null), var.slack.channel_id)
   }
 
   tags = var.tags

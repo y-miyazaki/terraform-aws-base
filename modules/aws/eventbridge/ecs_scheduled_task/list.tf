@@ -23,8 +23,9 @@ locals {
   # Key: "ClusterName/TaskDefinitionFamily"
   auto_discovered_schedules = var.is_enabled && var.create_auto_schedules ? {
     for key, rule_names in local.discovered_rules_map : key => {
-      ecs_cluster     = split("/", key)[0]
-      task_definition = split("/", key)[1]
+      ecs_cluster     = try(split("/", key)[0], "")
+      task_definition = try(split("/", key)[1], "")
     }
+    if length(split("/", key)) == 2
   } : {}
 }
