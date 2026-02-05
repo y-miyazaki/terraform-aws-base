@@ -34,7 +34,7 @@ module "aws_cloudwatch_events_health" {
 # tfsec:ignore:aws-lambda-enable-tracing
 module "lambda_function_health" {
   source  = "terraform-aws-modules/lambda/aws"
-  version = "8.2.0"
+  version = "8.4.0"
   create  = var.health.is_enabled
 
   allowed_triggers = {
