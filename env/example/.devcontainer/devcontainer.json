@@ -49,9 +49,7 @@
     "-v",
     "${localWorkspaceFolder}/env/common/tmp/.aws:/home/vscode/.aws",
     "-v",
-    "${localWorkspaceFolder}/env/common/tmp/gh:/home/vscode/.config/gh",
-    "-v",
-    "/var/run/docker.sock:/var/run/docker.sock"
+    "${localWorkspaceFolder}/env/common/tmp/gh:/home/vscode/.config/gh"
   ],
   "postCreateCommand": "/bin/sh env/common/scripts/init.sh",
   "workspaceMount": "",
