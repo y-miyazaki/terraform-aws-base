@@ -50,7 +50,7 @@ resource "aws_scheduler_schedule" "postgresql_slowquery" {
 # tfsec:ignore:aws-lambda-enable-tracing
 module "lambda_function_postgresql_slowquery" {
   source  = "terraform-aws-modules/lambda/aws"
-  version = "8.2.0"
+  version = "8.4.0"
   create  = try(var.metric_log_postgresql_slowquery.is_enabled_report, true)
 
   allowed_triggers = {

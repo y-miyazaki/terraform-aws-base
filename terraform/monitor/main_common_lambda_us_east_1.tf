@@ -38,7 +38,7 @@ module "aws_sns_subscription_lambda_metric_us_east_1" {
 #--------------------------------------------------------------
 module "aws_lambda_create_lambda_metric_us_east_1" {
   source  = "terraform-aws-modules/lambda/aws"
-  version = "8.2.0"
+  version = "8.4.0"
   create  = !local.is_default_region_us_east_1
   providers = {
     aws = aws.us-east-1
@@ -136,7 +136,7 @@ module "aws_sns_subscription_lambda_log_us_east_1" {
 #--------------------------------------------------------------
 module "aws_lambda_create_lambda_log_us_east_1" {
   source  = "terraform-aws-modules/lambda/aws"
-  version = "8.2.0"
+  version = "8.4.0"
   create  = !local.is_default_region_us_east_1
   providers = {
     aws = aws.us-east-1
@@ -255,7 +255,7 @@ module "aws_sns_subscription_lambda_ses_us_east_1" {
 #--------------------------------------------------------------
 module "aws_lambda_create_lambda_ses_us_east_1" {
   source  = "terraform-aws-modules/lambda/aws"
-  version = "8.2.0"
+  version = "8.4.0"
   create  = !local.is_default_region_us_east_1
   providers = {
     aws = aws.us-east-1
@@ -321,7 +321,7 @@ module "aws_lambda_create_lambda_ses_us_east_1" {
 #--------------------------------------------------------------
 module "aws_lambda_create_lambda_kinesis_data_firehose_cloudwatch_logs_processor_us_east_1" {
   source  = "terraform-aws-modules/lambda/aws"
-  version = "8.2.0"
+  version = "8.4.0"
   create  = !local.is_default_region_us_east_1
   providers = {
     aws = aws.us-east-1
@@ -386,7 +386,7 @@ module "aws_lambda_create_lambda_kinesis_data_firehose_cloudwatch_logs_processor
 #--------------------------------------------------------------
 module "aws_lambda_create_lambda_s3_notification_s3_object_created_for_athena_us_east_1" {
   source  = "terraform-aws-modules/lambda/aws"
-  version = "8.2.0"
+  version = "8.4.0"
   providers = {
     aws = aws.us-east-1
   }
