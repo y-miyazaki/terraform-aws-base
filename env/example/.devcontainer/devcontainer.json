@@ -51,7 +51,7 @@
     "-v",
     "${localWorkspaceFolder}/env/common/tmp/gh:/home/vscode/.config/gh"
   ],
-  "postCreateCommand": "/bin/sh env/common/scripts/init.sh",
+  "postCreateCommand": "/bin/bash env/common/scripts/init.sh",
   "workspaceMount": "",
   "workspaceFolder": "/workspace",
   "overrideCommand": false,
