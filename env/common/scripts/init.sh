@@ -9,13 +9,15 @@
 set -eu
 
 # aqua lazy install
-aqua i -l
+if command -v aqua > /dev/null 2>&1; then
+    aqua i -l || echo "[warn] aqua lazy install failed" >&2
+fi
 
 # Adjust ownership (only if paths exist)
 if [ -e /home/vscode/.aws ]; then sudo chown -R "$(id -u)":"$(id -g)" /home/vscode/.aws || true; fi
 if [ -e /home/vscode/.gitconfig ]; then sudo chown -R "$(id -u)":"$(id -g)" /home/vscode/.gitconfig || true; fi
 if [ -e /home/vscode/.ssh ]; then sudo chown -R "$(id -u)":"$(id -g)" /home/vscode/.ssh || true; fi
-if [ -f /home/vscode/.ssh/id_rsa ]; then chmod 600 /home/vscode/.ssh/id_rsa || true; fi
+chmod 600 /home/vscode/.ssh/id_* 2> /dev/null || true
 
 # pre-commit (optional)
 if command -v pre-commit > /dev/null 2>&1; then
@@ -42,7 +44,7 @@ fi
 
 # for GitHub Copilot CLI setup
 if command -v copilot > /dev/null 2>&1; then
-    if [ -d "$COPILOT_BASE/config/.copilot" ]; then
+    if [ -n "${COPILOT_BASE:-}" ] && [ -d "$COPILOT_BASE/config/.copilot" ]; then
         cp -rp /workspace/.vscode/mcp-example-config.json "$COPILOT_BASE/config/.copilot/mcp-config.json" || true
     fi
 fi
