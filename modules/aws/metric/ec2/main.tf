@@ -810,3 +810,63 @@ resource "aws_cloudwatch_metric_alarm" "status_check_failed_system" {
 
   tags = var.tags
 }
+
+#--------------------------------------------------------------
+# For InstanceEBSIOPSExceededCheck
+# Provides a CloudWatch Metric Alarm resource.
+#--------------------------------------------------------------
+resource "aws_cloudwatch_metric_alarm" "instance_ebs_iops_exceeded_check" {
+  for_each = {
+    for k, v in local.list : k => v
+    if var.is_enabled && local.effective_thresholds[k].enabled_instance_ebs_iops_exceeded_check
+  }
+
+  alarm_name                = "${var.name_prefix}metric-ec2-${each.value.name}-instance-ebs-iops-exceeded-check"
+  comparison_operator       = "GreaterThanOrEqualToThreshold"
+  evaluation_periods        = 1
+  namespace                 = "AWS/EC2"
+  metric_name               = "InstanceEBSIOPSExceededCheck"
+  period                    = var.period
+  statistic                 = "Maximum"
+  threshold                 = local.effective_thresholds[each.key].instance_ebs_iops_exceeded_check
+  actions_enabled           = true
+  alarm_actions             = var.alarm_actions
+  alarm_description         = "This is an alarm to check for <${local.url}|EC2 instance EBS IOPS exceeded>(>= ${local.effective_thresholds[each.key].instance_ebs_iops_exceeded_check})."
+  insufficient_data_actions = var.insufficient_data_actions
+  ok_actions                = var.ok_actions
+  unit                      = "None"
+  treat_missing_data        = "notBreaching"
+  dimensions                = each.value.dimensions
+
+  tags = var.tags
+}
+
+#--------------------------------------------------------------
+# For InstanceEBSThroughputExceededCheck
+# Provides a CloudWatch Metric Alarm resource.
+#--------------------------------------------------------------
+resource "aws_cloudwatch_metric_alarm" "instance_ebs_throughput_exceeded_check" {
+  for_each = {
+    for k, v in local.list : k => v
+    if var.is_enabled && local.effective_thresholds[k].enabled_instance_ebs_throughput_exceeded_check
+  }
+
+  alarm_name                = "${var.name_prefix}metric-ec2-${each.value.name}-instance-ebs-throughput-exceeded-check"
+  comparison_operator       = "GreaterThanOrEqualToThreshold"
+  evaluation_periods        = 1
+  namespace                 = "AWS/EC2"
+  metric_name               = "InstanceEBSThroughputExceededCheck"
+  period                    = var.period
+  statistic                 = "Maximum"
+  threshold                 = local.effective_thresholds[each.key].instance_ebs_throughput_exceeded_check
+  actions_enabled           = true
+  alarm_actions             = var.alarm_actions
+  alarm_description         = "This is an alarm to check for <${local.url}|EC2 instance EBS throughput exceeded>(>= ${local.effective_thresholds[each.key].instance_ebs_throughput_exceeded_check})."
+  insufficient_data_actions = var.insufficient_data_actions
+  ok_actions                = var.ok_actions
+  unit                      = "None"
+  treat_missing_data        = "notBreaching"
+  dimensions                = each.value.dimensions
+
+  tags = var.tags
+}

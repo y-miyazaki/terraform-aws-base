@@ -52,6 +52,9 @@ variable "threshold" {
     # PostRuntimeExtensionsDuration threshold (unit=Milliseconds)
     enabled_post_runtime_extensions_duration = bool
     post_runtime_extensions_duration         = number
+    # ProvisionedConcurrentExecutions threshold (unit=Count)
+    enabled_provisioned_concurrent_executions = bool
+    provisioned_concurrent_executions         = number
     # ProvisionedConcurrencyInvocations threshold (unit=Count)
     enabled_provisioned_concurrency_invocations = bool
     provisioned_concurrency_invocations         = number
@@ -100,6 +103,8 @@ variable "threshold" {
     offset_lag                                            = 100000
     enabled_post_runtime_extensions_duration              = false
     post_runtime_extensions_duration                      = 5000
+    enabled_provisioned_concurrent_executions             = false
+    provisioned_concurrent_executions                     = 500
     enabled_provisioned_concurrency_invocations           = false
     provisioned_concurrency_invocations                   = 10000
     enabled_provisioned_concurrency_spillover_invocations = false
@@ -155,6 +160,9 @@ variable "threshold_override" {
     # PostRuntimeExtensionsDuration threshold (unit=Milliseconds)
     enabled_post_runtime_extensions_duration = optional(bool)
     post_runtime_extensions_duration         = optional(number)
+    # ProvisionedConcurrentExecutions threshold (unit=Count)
+    enabled_provisioned_concurrent_executions = optional(bool)
+    provisioned_concurrent_executions         = optional(number)
     # ProvisionedConcurrencyInvocations threshold (unit=Count)
     enabled_provisioned_concurrency_invocations = optional(bool)
     provisioned_concurrency_invocations         = optional(number)

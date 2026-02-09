@@ -19,9 +19,21 @@ variable "threshold" {
     # (Required) MemoryUtilized/MemoryReserved threshold (unit=Percent)
     enabled_memory_utilization = bool
     memory_utilization         = number
+    # (Optional) NetworkRxBytes threshold (unit=Bytes/Second)
+    enabled_network_rx_bytes = bool
+    network_rx_bytes         = number
+    # (Optional) NetworkTxBytes threshold (unit=Bytes/Second)
+    enabled_network_tx_bytes = bool
+    network_tx_bytes         = number
+    # (Optional) StorageReadBytes threshold (unit=Bytes)
+    enabled_storage_read_bytes = bool
+    storage_read_bytes         = number
+    # (Optional) StorageWriteBytes threshold (unit=Bytes)
+    enabled_storage_write_bytes = bool
+    storage_write_bytes         = number
     }
   )
-  description = "(Optional) Set the threshold for each Metric in Lambda."
+  description = "(Optional) Set the threshold for each Metric in ECS Container Insights."
   default = {
     # (Required) CpuUtilized/CpuReserved threshold (unit=Percent)
     enabled_cpu_utilization = true
@@ -29,6 +41,18 @@ variable "threshold" {
     # (Required) MemoryUtilized/MemoryReserved threshold (unit=Percent)
     enabled_memory_utilization = true
     memory_utilization         = 80
+    # (Optional) NetworkRxBytes threshold (unit=Bytes/Second)
+    enabled_network_rx_bytes = false
+    network_rx_bytes         = 10485760 # 10 MB/s
+    # (Optional) NetworkTxBytes threshold (unit=Bytes/Second)
+    enabled_network_tx_bytes = false
+    network_tx_bytes         = 10485760 # 10 MB/s
+    # (Optional) StorageReadBytes threshold (unit=Bytes)
+    enabled_storage_read_bytes = false
+    storage_read_bytes         = 104857600 # 100 MB
+    # (Optional) StorageWriteBytes threshold (unit=Bytes)
+    enabled_storage_write_bytes = false
+    storage_write_bytes         = 104857600 # 100 MB
   }
 }
 variable "dimensions" {

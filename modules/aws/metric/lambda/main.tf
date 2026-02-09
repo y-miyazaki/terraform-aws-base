@@ -24,7 +24,7 @@ module "helper" {
 # Locals
 #--------------------------------------------------------------
 locals {
-  url = "https://docs.aws.amazon.com/lambda/latest/dg/monitoring-metrics.html"
+  url = "https://docs.aws.amazon.com/ja_jp/lambda/latest/dg/monitoring-metrics-types.html"
 
   # Use filtered results from helper module
   list                 = module.helper.list
@@ -422,6 +422,36 @@ resource "aws_cloudwatch_metric_alarm" "post_runtime_extensions_duration" {
 }
 
 #--------------------------------------------------------------
+# For ProvisionedConcurrentExecutions
+# Provides a CloudWatch Metric Alarm resource.
+#--------------------------------------------------------------
+resource "aws_cloudwatch_metric_alarm" "provisioned_concurrent_executions" {
+  for_each = {
+    for k, v in local.list : k => v
+    if var.is_enabled && local.effective_thresholds[k].enabled_provisioned_concurrent_executions
+  }
+
+  alarm_name                = "${var.name_prefix}metric-lambda-${each.value.name}-provisioned-concurrent-executions"
+  comparison_operator       = "GreaterThanOrEqualToThreshold"
+  evaluation_periods        = 1
+  namespace                 = "AWS/Lambda"
+  metric_name               = "ProvisionedConcurrentExecutions"
+  period                    = var.period
+  statistic                 = "Maximum"
+  threshold                 = local.effective_thresholds[each.key].provisioned_concurrent_executions
+  actions_enabled           = true
+  alarm_actions             = var.alarm_actions
+  alarm_description         = "This is an alarm to check for <${local.url}|Lambda provisioned concurrent executions>(>= ${local.effective_thresholds[each.key].provisioned_concurrent_executions})."
+  insufficient_data_actions = var.insufficient_data_actions
+  ok_actions                = var.ok_actions
+  unit                      = "Count"
+  treat_missing_data        = "notBreaching"
+  dimensions                = each.value.dimensions
+
+  tags = var.tags
+}
+
+#--------------------------------------------------------------
 # For ProvisionedConcurrencyInvocations
 # Provides a CloudWatch Metric Alarm resource.
 #--------------------------------------------------------------
@@ -504,6 +534,7 @@ resource "aws_cloudwatch_metric_alarm" "provisioned_concurrency_utilization" {
   alarm_description         = "This is an alarm to check for <${local.url}|Lambda provisioned concurrency utilization>(>= ${local.effective_thresholds[each.key].provisioned_concurrency_utilization}%)."
   insufficient_data_actions = var.insufficient_data_actions
   ok_actions                = var.ok_actions
+  unit                      = "Percent"
   treat_missing_data        = "notBreaching"
   dimensions                = each.value.dimensions
 

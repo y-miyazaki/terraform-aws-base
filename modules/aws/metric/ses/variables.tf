@@ -13,22 +13,52 @@ variable "period" {
 }
 variable "threshold" {
   type = object({
+    # Bounce threshold (unit=Count)
+    enabled_bounce = bool
+    bounce         = number
+    # Complaint threshold (unit=Count)
+    enabled_complaint = bool
+    complaint         = number
+    # Delivery threshold (unit=Count)
+    enabled_delivery = bool
+    delivery         = number
+    # Reject threshold (unit=Count)
+    enabled_reject = bool
+    reject         = number
     # Reputation.BounceRate threshold (unit=Percent)
     enabled_reputation_bouncerate = bool
     reputation_bouncerate         = number
     # Reputation.ComplaintRate threshold (unit=Percent)
     enabled_reputation_complaintrate = bool
     reputation_complaintrate         = number
+    # Send threshold (unit=Count)
+    enabled_send = bool
+    send         = number
     }
   )
   description = "(Optional) Set the threshold for each Metric in SES."
   default = {
+    # Bounce count threshold
+    enabled_bounce = false
+    bounce         = 100
+    # Complaint count threshold
+    enabled_complaint = false
+    complaint         = 10
+    # Delivery count threshold (monitoring)
+    enabled_delivery = false
+    delivery         = 1000
+    # Reject count threshold
+    enabled_reject = false
+    reject         = 100
     # https://aws.amazon.com/jp/premiumsupport/knowledge-center/ses-reputation-dashboard-bounce-rate/
     enabled_reputation_bouncerate = true
     reputation_bouncerate         = 5
     # https://aws.amazon.com/jp/premiumsupport/knowledge-center/ses-reputation-dashboard-bounce-rate/
     enabled_reputation_complaintrate = true
     reputation_complaintrate         = 0.1
+    # Send count threshold (monitoring)
+    enabled_send = false
+    send         = 10000
   }
 }
 variable "dimensions" {

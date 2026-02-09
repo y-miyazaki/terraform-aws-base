@@ -205,7 +205,7 @@ resource "aws_cloudwatch_metric_alarm" "failed" {
 }
 
 #--------------------------------------------------------------
-# For Failed requests
+# For FailedRequests
 # Monitors count of failed HTTP requests with no response.
 #--------------------------------------------------------------
 resource "aws_cloudwatch_metric_alarm" "failed_requests" {
@@ -215,7 +215,7 @@ resource "aws_cloudwatch_metric_alarm" "failed_requests" {
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
   namespace                 = "CloudWatchSynthetics"
-  metric_name               = "Failed requests"
+  metric_name               = "FailedRequests"
   period                    = var.period
   statistic                 = "Sum"
   threshold                 = var.threshold.failed_requests

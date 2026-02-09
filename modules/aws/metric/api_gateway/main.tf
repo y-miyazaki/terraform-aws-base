@@ -162,3 +162,33 @@ resource "aws_cloudwatch_metric_alarm" "latency" {
 
   tags = var.tags
 }
+
+#--------------------------------------------------------------
+# For IntegrationLatency
+# Provides a CloudWatch Metric Alarm resource.
+#--------------------------------------------------------------
+resource "aws_cloudwatch_metric_alarm" "integration_latency" {
+  for_each = {
+    for k, v in local.list : k => v
+    if var.is_enabled && local.effective_thresholds[k].enabled_integration_latency
+  }
+
+  alarm_name                = "${var.name_prefix}metric-api-gateway-${each.value.name}-integration-latency"
+  comparison_operator       = "GreaterThanOrEqualToThreshold"
+  evaluation_periods        = 1
+  namespace                 = "AWS/ApiGateway"
+  metric_name               = "IntegrationLatency"
+  period                    = var.period
+  statistic                 = "Average"
+  threshold                 = local.effective_thresholds[each.key].integration_latency
+  actions_enabled           = true
+  alarm_actions             = var.alarm_actions
+  alarm_description         = "This is an alarm to check for <${local.url}|API Gateway integration latency>(>= ${local.effective_thresholds[each.key].integration_latency}ms)."
+  insufficient_data_actions = var.insufficient_data_actions
+  ok_actions                = var.ok_actions
+  unit                      = "Milliseconds"
+  treat_missing_data        = "notBreaching"
+  dimensions                = each.value.dimensions
+
+  tags = var.tags
+}

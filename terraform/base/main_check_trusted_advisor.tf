@@ -38,7 +38,7 @@ module "aws_cloudwatch_events_trusted_advisor" {
 # tfsec:ignore:aws-lambda-enable-tracing
 module "lambda_function_trusted_advisor" {
   source  = "terraform-aws-modules/lambda/aws"
-  version = "8.2.0"
+  version = "8.4.0"
   create  = var.trusted_advisor.is_enabled
 
   allowed_triggers = {

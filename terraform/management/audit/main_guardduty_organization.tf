@@ -11,6 +11,5 @@ module "guardduty_organization" {
 
   admin_account_id                 = data.aws_caller_identity.current.account_id
   auto_enable_organization_members = var.guardduty_organization.auto_enable_organization_members
-  datasources                      = var.guardduty_organization.datasources
   features                         = var.guardduty_organization.features
 }
