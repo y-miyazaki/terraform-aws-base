@@ -16,12 +16,6 @@ variable "threshold" {
     # (Required) CPUCreditBalance threshold (unit=Count)
     enabled_cpu_credit_balance = bool
     cpu_credit_balance         = number
-    # (Required) InstanceEBSIOPSExceededCheck threshold (unit=None)
-    enabled_instance_ebs_iops_exceeded_check = bool
-    instance_ebs_iops_exceeded_check         = number
-    # (Required) InstanceEBSThroughputExceededCheck threshold (unit=None)
-    enabled_instance_ebs_throughput_exceeded_check = bool
-    instance_ebs_throughput_exceeded_check         = number
     # (Required) CPUCreditUsage threshold (unit=Count)
     enabled_cpu_credit_usage = bool
     cpu_credit_usage         = number
@@ -67,6 +61,12 @@ variable "threshold" {
     # (Required) EBSWriteOps threshold (unit=Count)
     enabled_ebs_write_ops = bool
     ebs_write_ops         = number
+    # (Required) InstanceEBSIOPSExceededCheck threshold (unit=None)
+    enabled_instance_ebs_iops_exceeded_check = bool
+    instance_ebs_iops_exceeded_check         = number
+    # (Required) InstanceEBSThroughputExceededCheck threshold (unit=None)
+    enabled_instance_ebs_throughput_exceeded_check = bool
+    instance_ebs_throughput_exceeded_check         = number
     # (Required) MetadataNoToken threshold (unit=Count)
     enabled_metadata_no_token = bool
     metadata_no_token         = number
