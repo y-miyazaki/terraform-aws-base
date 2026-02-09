@@ -111,14 +111,14 @@ jobs:
           echo "key=terraform-init-${ENVIRONMENT}-${COMPONENT}-${{ runner.os }}-${{ hashFiles(format('{0}/terraform.{1}.tfbackend', env.TERRAFORM_PATH, env.ENVIRONMENT), format('{0}/.terraform.lock.hcl', env.TERRAFORM_PATH), format('{0}/**/*.tf', env.TERRAFORM_PATH), 'modules/**/*.tf') }}" >> "$GITHUB_OUTPUT"
 
       - name: Cache Terraform plugin cache
-        uses: actions/cache@8b402f58fbc84540c8b491a91e594a4576fec3d7 # v5.0.2
+        uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306 # v5.0.3
         with:
           key: ${{ steps.compute-plugin-cache-key.outputs.key }}
           path: |
             ~/.terraform.d/plugin-cache
 
       - name: Cache Terraform init
-        uses: actions/cache@8b402f58fbc84540c8b491a91e594a4576fec3d7 # v5.0.2
+        uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306 # v5.0.3
         with:
           key: ${{ steps.compute-init-cache-key.outputs.key }}
           path: |
