@@ -7,10 +7,10 @@
 # Generates an IAM policy document in JSON format for use with resources that expect policy documents such as aws_iam_policy.
 #--------------------------------------------------------------
 data "aws_iam_policy_document" "custom" {
-  count = var.is_enabled ? 1 : 0
+  count = var.is_enabled && var.aws_iam_policy != null ? 1 : 0
 
   dynamic "statement" {
-    for_each = try(var.aws_iam_policy.statement, [])
+    for_each = var.aws_iam_policy != null ? var.aws_iam_policy.statement : []
 
     content {
       sid           = try(statement.value.sid, null)
@@ -52,13 +52,12 @@ data "aws_iam_policy_document" "custom" {
 # Provides an IAM policy.
 #--------------------------------------------------------------
 resource "aws_iam_policy" "custom" {
-  count = var.is_enabled ? 1 : 0
+  count = var.is_enabled && var.aws_iam_policy != null ? 1 : 0
 
   description = try(var.aws_iam_policy.description, null)
-  name        = "${var.name_prefix}${try(var.aws_iam_policy.name, null)}"
-  #   name_prefix = var.name_prefix
-  path   = try(var.aws_iam_policy.path, "/")
-  policy = data.aws_iam_policy_document.custom[0].json
+  name        = "${var.name_prefix}${var.aws_iam_policy.name}"
+  path        = try(var.aws_iam_policy.path, "/")
+  policy      = data.aws_iam_policy_document.custom[0].json
 
   tags = var.tags
 }
@@ -67,12 +66,8 @@ resource "aws_iam_policy" "custom" {
 # Attaches a Managed IAM Policy to an IAM group
 #--------------------------------------------------------------
 resource "aws_iam_group_policy_attachment" "custom" {
-  count = var.is_enabled ? 1 : 0
+  count = var.is_enabled && var.aws_iam_policy != null ? 1 : 0
 
   group      = var.group
   policy_arn = aws_iam_policy.custom[0].arn
-
-  depends_on = [
-    aws_iam_policy.custom
-  ]
 }

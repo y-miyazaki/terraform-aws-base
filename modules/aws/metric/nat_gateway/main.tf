@@ -474,7 +474,7 @@ resource "aws_cloudwatch_metric_alarm" "peak_bytes_per_second" {
   alarm_description         = "This is an alarm to check for <${local.url}|NAT Gateway peak bytes per second>(>= ${local.effective_thresholds[each.key].peak_bytes_per_second} bytes/sec)."
   insufficient_data_actions = var.insufficient_data_actions
   ok_actions                = var.ok_actions
-  unit                      = "None"
+  unit                      = "Bytes/Second"
   treat_missing_data        = "notBreaching"
   dimensions                = each.value.dimensions
 
@@ -504,7 +504,7 @@ resource "aws_cloudwatch_metric_alarm" "peak_packets_per_second" {
   alarm_description         = "This is an alarm to check for <${local.url}|NAT Gateway peak packets per second>(>= ${local.effective_thresholds[each.key].peak_packets_per_second} packets/sec)."
   insufficient_data_actions = var.insufficient_data_actions
   ok_actions                = var.ok_actions
-  unit                      = "None"
+  unit                      = "Count/Second"
   treat_missing_data        = "notBreaching"
   dimensions                = each.value.dimensions
 

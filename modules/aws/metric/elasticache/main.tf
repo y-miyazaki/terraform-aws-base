@@ -647,3 +647,275 @@ resource "aws_cloudwatch_metric_alarm" "traffic_management_active" {
 
   tags = var.tags
 }
+
+#--------------------------------------------------------------
+# For CPUUtilization
+# Provides a CloudWatch Metric Alarm resource.
+# Note: Host-level CPU utilization, recommended for instances with < 4 vCPUs
+#--------------------------------------------------------------
+resource "aws_cloudwatch_metric_alarm" "cpu_utilization" {
+  for_each = {
+    for k, v in local.list : k => v
+    if var.is_enabled && local.effective_thresholds[k].enabled_cpu_utilization
+  }
+
+  alarm_name                = "${var.name_prefix}metric-elasticache-${each.value.name}-cpu-utilization"
+  comparison_operator       = "GreaterThanOrEqualToThreshold"
+  evaluation_periods        = 1
+  namespace                 = "AWS/ElastiCache"
+  metric_name               = "CPUUtilization"
+  period                    = var.period
+  statistic                 = "Average"
+  threshold                 = local.effective_thresholds[each.key].cpu_utilization
+  actions_enabled           = true
+  alarm_actions             = var.alarm_actions
+  alarm_description         = "This is an alarm to check for <${local.url}|ElastiCache CPU Utilization (Host-level)>(>= ${local.effective_thresholds[each.key].cpu_utilization}%)."
+  insufficient_data_actions = var.insufficient_data_actions
+  ok_actions                = var.ok_actions
+  unit                      = "Percent"
+  treat_missing_data        = "notBreaching"
+  dimensions                = each.value.dimensions
+
+  tags = var.tags
+}
+
+#--------------------------------------------------------------
+# For BytesUsedForCache
+# Provides a CloudWatch Metric Alarm resource.
+#--------------------------------------------------------------
+resource "aws_cloudwatch_metric_alarm" "bytes_used_for_cache" {
+  for_each = {
+    for k, v in local.list : k => v
+    if var.is_enabled && local.effective_thresholds[k].enabled_bytes_used_for_cache
+  }
+
+  alarm_name                = "${var.name_prefix}metric-elasticache-${each.value.name}-bytes-used-for-cache"
+  comparison_operator       = "GreaterThanOrEqualToThreshold"
+  evaluation_periods        = 1
+  namespace                 = "AWS/ElastiCache"
+  metric_name               = "BytesUsedForCache"
+  period                    = var.period
+  statistic                 = "Average"
+  threshold                 = local.effective_thresholds[each.key].bytes_used_for_cache
+  actions_enabled           = true
+  alarm_actions             = var.alarm_actions
+  alarm_description         = "This is an alarm to check for <${local.url}|ElastiCache bytes used for cache>(>= ${local.effective_thresholds[each.key].bytes_used_for_cache} Bytes)."
+  insufficient_data_actions = var.insufficient_data_actions
+  ok_actions                = var.ok_actions
+  unit                      = "Bytes"
+  treat_missing_data        = "notBreaching"
+  dimensions                = each.value.dimensions
+
+  tags = var.tags
+}
+
+#--------------------------------------------------------------
+# For FreeableMemory
+# Provides a CloudWatch Metric Alarm resource.
+#--------------------------------------------------------------
+resource "aws_cloudwatch_metric_alarm" "freeable_memory" {
+  for_each = {
+    for k, v in local.list : k => v
+    if var.is_enabled && local.effective_thresholds[k].enabled_freeable_memory
+  }
+
+  alarm_name                = "${var.name_prefix}metric-elasticache-${each.value.name}-freeable-memory"
+  comparison_operator       = "LessThanOrEqualToThreshold"
+  evaluation_periods        = 1
+  namespace                 = "AWS/ElastiCache"
+  metric_name               = "FreeableMemory"
+  period                    = var.period
+  statistic                 = "Average"
+  threshold                 = local.effective_thresholds[each.key].freeable_memory
+  actions_enabled           = true
+  alarm_actions             = var.alarm_actions
+  alarm_description         = "This is an alarm to check for <${local.url}|ElastiCache freeable memory>(<= ${local.effective_thresholds[each.key].freeable_memory} Bytes)."
+  insufficient_data_actions = var.insufficient_data_actions
+  ok_actions                = var.ok_actions
+  unit                      = "Bytes"
+  treat_missing_data        = "notBreaching"
+  dimensions                = each.value.dimensions
+
+  tags = var.tags
+}
+
+#--------------------------------------------------------------
+# For CacheHits
+# Provides a CloudWatch Metric Alarm resource.
+#--------------------------------------------------------------
+resource "aws_cloudwatch_metric_alarm" "cache_hits" {
+  for_each = {
+    for k, v in local.list : k => v
+    if var.is_enabled && local.effective_thresholds[k].enabled_cache_hits
+  }
+
+  alarm_name                = "${var.name_prefix}metric-elasticache-${each.value.name}-cache-hits"
+  comparison_operator       = "LessThanOrEqualToThreshold"
+  evaluation_periods        = 1
+  namespace                 = "AWS/ElastiCache"
+  metric_name               = "CacheHits"
+  period                    = var.period
+  statistic                 = "Sum"
+  threshold                 = local.effective_thresholds[each.key].cache_hits
+  actions_enabled           = true
+  alarm_actions             = var.alarm_actions
+  alarm_description         = "This is an alarm to check for <${local.url}|ElastiCache cache hits>(<= ${local.effective_thresholds[each.key].cache_hits})."
+  insufficient_data_actions = var.insufficient_data_actions
+  ok_actions                = var.ok_actions
+  unit                      = "Count"
+  treat_missing_data        = "notBreaching"
+  dimensions                = each.value.dimensions
+
+  tags = var.tags
+}
+
+#--------------------------------------------------------------
+# For CacheMisses
+# Provides a CloudWatch Metric Alarm resource.
+#--------------------------------------------------------------
+resource "aws_cloudwatch_metric_alarm" "cache_misses" {
+  for_each = {
+    for k, v in local.list : k => v
+    if var.is_enabled && local.effective_thresholds[k].enabled_cache_misses
+  }
+
+  alarm_name                = "${var.name_prefix}metric-elasticache-${each.value.name}-cache-misses"
+  comparison_operator       = "GreaterThanOrEqualToThreshold"
+  evaluation_periods        = 1
+  namespace                 = "AWS/ElastiCache"
+  metric_name               = "CacheMisses"
+  period                    = var.period
+  statistic                 = "Sum"
+  threshold                 = local.effective_thresholds[each.key].cache_misses
+  actions_enabled           = true
+  alarm_actions             = var.alarm_actions
+  alarm_description         = "This is an alarm to check for <${local.url}|ElastiCache cache misses>(>= ${local.effective_thresholds[each.key].cache_misses})."
+  insufficient_data_actions = var.insufficient_data_actions
+  ok_actions                = var.ok_actions
+  unit                      = "Count"
+  treat_missing_data        = "notBreaching"
+  dimensions                = each.value.dimensions
+
+  tags = var.tags
+}
+
+#--------------------------------------------------------------
+# For CurrItems
+# Provides a CloudWatch Metric Alarm resource.
+#--------------------------------------------------------------
+resource "aws_cloudwatch_metric_alarm" "curr_items" {
+  for_each = {
+    for k, v in local.list : k => v
+    if var.is_enabled && local.effective_thresholds[k].enabled_curr_items
+  }
+
+  alarm_name                = "${var.name_prefix}metric-elasticache-${each.value.name}-curr-items"
+  comparison_operator       = "GreaterThanOrEqualToThreshold"
+  evaluation_periods        = 1
+  namespace                 = "AWS/ElastiCache"
+  metric_name               = "CurrItems"
+  period                    = var.period
+  statistic                 = "Average"
+  threshold                 = local.effective_thresholds[each.key].curr_items
+  actions_enabled           = true
+  alarm_actions             = var.alarm_actions
+  alarm_description         = "This is an alarm to check for <${local.url}|ElastiCache current items>(>= ${local.effective_thresholds[each.key].curr_items})."
+  insufficient_data_actions = var.insufficient_data_actions
+  ok_actions                = var.ok_actions
+  unit                      = "Count"
+  treat_missing_data        = "notBreaching"
+  dimensions                = each.value.dimensions
+
+  tags = var.tags
+}
+
+#--------------------------------------------------------------
+# For NetworkBytesIn
+# Provides a CloudWatch Metric Alarm resource.
+#--------------------------------------------------------------
+resource "aws_cloudwatch_metric_alarm" "network_bytes_in" {
+  for_each = {
+    for k, v in local.list : k => v
+    if var.is_enabled && local.effective_thresholds[k].enabled_network_bytes_in
+  }
+
+  alarm_name                = "${var.name_prefix}metric-elasticache-${each.value.name}-network-bytes-in"
+  comparison_operator       = "GreaterThanOrEqualToThreshold"
+  evaluation_periods        = 1
+  namespace                 = "AWS/ElastiCache"
+  metric_name               = "NetworkBytesIn"
+  period                    = var.period
+  statistic                 = "Sum"
+  threshold                 = local.effective_thresholds[each.key].network_bytes_in
+  actions_enabled           = true
+  alarm_actions             = var.alarm_actions
+  alarm_description         = "This is an alarm to check for <${local.url}|ElastiCache network bytes in>(>= ${local.effective_thresholds[each.key].network_bytes_in} Bytes)."
+  insufficient_data_actions = var.insufficient_data_actions
+  ok_actions                = var.ok_actions
+  unit                      = "Bytes"
+  treat_missing_data        = "notBreaching"
+  dimensions                = each.value.dimensions
+
+  tags = var.tags
+}
+
+#--------------------------------------------------------------
+# For NetworkBytesOut
+# Provides a CloudWatch Metric Alarm resource.
+#--------------------------------------------------------------
+resource "aws_cloudwatch_metric_alarm" "network_bytes_out" {
+  for_each = {
+    for k, v in local.list : k => v
+    if var.is_enabled && local.effective_thresholds[k].enabled_network_bytes_out
+  }
+
+  alarm_name                = "${var.name_prefix}metric-elasticache-${each.value.name}-network-bytes-out"
+  comparison_operator       = "GreaterThanOrEqualToThreshold"
+  evaluation_periods        = 1
+  namespace                 = "AWS/ElastiCache"
+  metric_name               = "NetworkBytesOut"
+  period                    = var.period
+  statistic                 = "Sum"
+  threshold                 = local.effective_thresholds[each.key].network_bytes_out
+  actions_enabled           = true
+  alarm_actions             = var.alarm_actions
+  alarm_description         = "This is an alarm to check for <${local.url}|ElastiCache network bytes out>(>= ${local.effective_thresholds[each.key].network_bytes_out} Bytes)."
+  insufficient_data_actions = var.insufficient_data_actions
+  ok_actions                = var.ok_actions
+  unit                      = "Bytes"
+  treat_missing_data        = "notBreaching"
+  dimensions                = each.value.dimensions
+
+  tags = var.tags
+}
+
+#--------------------------------------------------------------
+# For DatabaseCapacityUsagePercentage
+# Provides a CloudWatch Metric Alarm resource.
+# Note: Redis-only metric
+#--------------------------------------------------------------
+resource "aws_cloudwatch_metric_alarm" "database_capacity_usage_percentage" {
+  for_each = {
+    for k, v in local.list : k => v
+    if var.is_enabled && local.effective_thresholds[k].enabled_database_capacity_usage_percentage
+  }
+
+  alarm_name                = "${var.name_prefix}metric-elasticache-${each.value.name}-database-capacity-usage-percentage"
+  comparison_operator       = "GreaterThanOrEqualToThreshold"
+  evaluation_periods        = 1
+  namespace                 = "AWS/ElastiCache"
+  metric_name               = "DatabaseCapacityUsagePercentage"
+  period                    = var.period
+  statistic                 = "Average"
+  threshold                 = local.effective_thresholds[each.key].database_capacity_usage_percentage
+  actions_enabled           = true
+  alarm_actions             = var.alarm_actions
+  alarm_description         = "This is an alarm to check for <${local.url}|ElastiCache database capacity usage percentage>(>= ${local.effective_thresholds[each.key].database_capacity_usage_percentage}%)."
+  insufficient_data_actions = var.insufficient_data_actions
+  ok_actions                = var.ok_actions
+  unit                      = "Percent"
+  treat_missing_data        = "notBreaching"
+  dimensions                = each.value.dimensions
+
+  tags = var.tags
+}

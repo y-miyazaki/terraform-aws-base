@@ -1006,7 +1006,10 @@ metric_resource_api_gateway = {
     # (Required) 5XXerror threshold (unit=%)
     enabled_error5XX = true
     error5XX         = 1
-    # (Required) Error threshold (unit=Milliseconds)
+    # (Required) IntegrationLatency threshold (unit=Milliseconds)
+    enabled_integration_latency = false
+    integration_latency         = 10000
+    # (Required) Latency threshold (unit=Milliseconds)
     enabled_latency = true
     latency         = 8000
   }
@@ -1130,6 +1133,12 @@ metric_resource_ec2 = {
     # (Required) CPUCreditBalance threshold (unit=Count)
     enabled_cpu_credit_balance = false
     cpu_credit_balance         = 100
+    # (Required) InstanceEBSIOPSExceededCheck threshold (unit=None)
+    enabled_instance_ebs_iops_exceeded_check = true
+    instance_ebs_iops_exceeded_check         = 1
+    # (Required) InstanceEBSThroughputExceededCheck threshold (unit=None)
+    enabled_instance_ebs_throughput_exceeded_check = true
+    instance_ebs_throughput_exceeded_check         = 1
     # (Required) CPUCreditUsage threshold (unit=Count)
     enabled_cpu_credit_usage = false
     cpu_credit_usage         = 5
@@ -1256,6 +1265,18 @@ metric_resource_ecs_container_insights = {
     # (Required) MemoryUtilized/MemoryReserved threshold (unit=Percent)
     enabled_memory_utilization = true
     memory_utilization         = 90
+    # (Optional) NetworkRxBytes threshold (unit=Bytes/Second)
+    enabled_network_rx_bytes = false
+    network_rx_bytes         = 104857600
+    # (Optional) NetworkTxBytes threshold (unit=Bytes/Second)
+    enabled_network_tx_bytes = false
+    network_tx_bytes         = 104857600
+    # (Optional) StorageReadBytes threshold (unit=Bytes)
+    enabled_storage_read_bytes = false
+    storage_read_bytes         = 1073741824
+    # (Optional) StorageWriteBytes threshold (unit=Bytes)
+    enabled_storage_write_bytes = false
+    storage_write_bytes         = 1073741824
   }
   # TODO: need to set dimensions for monitor of ECS/ContainerInsights.
   # check ECS distribution name list command.
@@ -1292,15 +1313,33 @@ metric_resource_elasticache = {
     # (Required) AuthenticationFailures threshold (unit=Count)
     enabled_authentication_failures = true
     authentication_failures         = 1
+    # (Optional) BytesUsedForCache threshold (unit=Bytes)
+    enabled_bytes_used_for_cache = false
+    bytes_used_for_cache         = 10737418240
+    # (Optional) CacheHits threshold (unit=Count)
+    enabled_cache_hits = false
+    cache_hits         = 1000000
     # (Required) CacheHitRate threshold (unit=Percent)
     enabled_cache_hit_rate = true
     cache_hit_rate         = 10
+    # (Optional) CacheMisses threshold (unit=Count)
+    enabled_cache_misses = true
+    cache_misses         = 1000
     # (Required) CommandAuthorizationFailures threshold (unit=Count)
     enabled_command_authorization_failures = true
     command_authorization_failures         = 1
+    # (Optional) CPUUtilization threshold (unit=Percent)
+    enabled_cpu_utilization = false
+    cpu_utilization         = 90
     # (Required) CurrConnections threshold (unit=Count)
     enabled_curr_connections = true
     curr_connections         = 50
+    # (Optional) CurrItems threshold (unit=Count)
+    enabled_curr_items = false
+    curr_items         = 1000000
+    # (Optional) DatabaseCapacityUsagePercentage threshold (unit=Percent)
+    enabled_database_capacity_usage_percentage = false
+    database_capacity_usage_percentage         = 80
     # (Required) DatabaseMemoryUsagePercentage threshold (unit=Percent)
     enabled_database_memory_usage_percentage = true
     database_memory_usage_percentage         = 80
@@ -1313,6 +1352,9 @@ metric_resource_elasticache = {
     # (Required) Evictions threshold (unit=Count)
     enabled_evictions = true
     evictions         = 100
+    # (Optional) FreeableMemory threshold (unit=Bytes)
+    enabled_freeable_memory = false
+    freeable_memory         = 104857600
     # (Required) IamAuthenticationExpirations threshold (unit=Count)
     enabled_iam_authentication_expirations = true
     iam_authentication_expirations         = 1
@@ -1325,6 +1367,12 @@ metric_resource_elasticache = {
     # (Required) MemoryFragmentationRatio threshold (unit=None)
     enabled_memory_fragmentation_ratio = true
     memory_fragmentation_ratio         = 5
+    # (Optional) NetworkBytesIn threshold (unit=Bytes)
+    enabled_network_bytes_in = false
+    network_bytes_in         = 104857600
+    # (Optional) NetworkBytesOut threshold (unit=Bytes)
+    enabled_network_bytes_out = false
+    network_bytes_out         = 104857600
     # (Required) NewConnections threshold (unit=Count)
     enabled_new_connections = true
     new_connections         = 100
@@ -1427,6 +1475,11 @@ metric_resource_elb = {
     unhealthy_host_count         = 1
   }
   # (Optional) Override thresholds for specific resources. Key is the LoadBalancer.
+  # NOTE: Metrics requiring TargetGroup dimension (enabled by default = false):
+  #   - anomalous_host_count, healthy_host_count, request_count_per_target, zonal_shifted_host_count
+  #   - mitigated_host_count, healthy_state_dns, healthy_state_routing, unhealthy_state_dns,
+  #   - unhealthy_state_routing, unhealthy_routing_request_count, lambda_internal_error, lambda_user_error
+  # To enable TargetGroup-specific metrics, create dimensions with TargetGroup parameter.
   # threshold_override = {
   #   "resource-name" = {
   #     enabled_some_metric = false
@@ -1441,10 +1494,18 @@ metric_resource_elb = {
   auto_dimensions_include_list = []
   # (Optional) If create_auto_dimensions is set to false, need to set dimensions for monitor of ELB
   # Specify the instance of the target ELB name to be monitored by Map.
-  #   ex)
+  # NOTE: To monitor TargetGroup-specific metrics, include TargetGroup in dimensions.
+  #   ex) LoadBalancer only:
   #   dimensions = [
   #     {
-  #       "LoadBalancer" = "example-elb"
+  #       "LoadBalancer" = "app/example-alb/1234567890abcdef"
+  #     }
+  #   ]
+  #   ex) LoadBalancer + TargetGroup (required for target-specific metrics):
+  #   dimensions = [
+  #     {
+  #       "LoadBalancer" = "app/example-alb/1234567890abcdef"
+  #       "TargetGroup" = "targetgroup/example-tg/1234567890abcdef"
   #     }
   #   ]
   dimensions = []
@@ -1565,6 +1626,9 @@ metric_resource_lambda = {
     # (Optional) PostRuntimeExtensionsDuration threshold (unit=Milliseconds)
     enabled_post_runtime_extensions_duration = false
     post_runtime_extensions_duration         = 5000
+    # (Optional) ProvisionedConcurrentExecutions threshold (unit=Count)
+    enabled_provisioned_concurrent_executions = false
+    provisioned_concurrent_executions         = 500
     # (Optional) ProvisionedConcurrencyInvocations threshold (unit=Count)
     enabled_provisioned_concurrency_invocations = false
     provisioned_concurrency_invocations         = 10000
@@ -1866,7 +1930,7 @@ metric_resource_redshift = {
     database_connections         = 100
     # (Required) HealthStatus threshold (HEALTHY(1)/UNHEALTHY(0))
     enabled_health_status = true
-    health_status         = 0
+    health_status         = 1
     # (Required) MaintenanceMode threshold (unit=Count(ON(1)/OFF(0)))
     enabled_maintenance_mode = true
     maintenance_mode         = 1
@@ -1988,12 +2052,27 @@ metric_resource_ses = {
   period = 300
   # TODO: need to set threshold for SES.
   threshold = {
+    # (Optional) Bounce threshold (unit=Count)
+    enabled_bounce = false
+    bounce         = 100
+    # (Optional) Complaint threshold (unit=Count)
+    enabled_complaint = false
+    complaint         = 10
+    # (Optional) Delivery threshold (unit=Count)
+    enabled_delivery = false
+    delivery         = 100000
+    # (Optional) Reject threshold (unit=Count)
+    enabled_reject = false
+    reject         = 10
     # Reputation.BounceRate threshold (unit=Percent)
     enabled_reputation_bouncerate = true
     reputation_bouncerate         = 5
     # Reputation.ComplaintRate threshold (unit=Percent)
     enabled_reputation_complaintrate = true
     reputation_complaintrate         = 0.1
+    # (Optional) Send threshold (unit=Count)
+    enabled_send = false
+    send         = 100000
   }
   dimensions = []
 }

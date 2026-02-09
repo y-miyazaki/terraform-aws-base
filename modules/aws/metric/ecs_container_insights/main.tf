@@ -1,7 +1,7 @@
 #--------------------------------------------------------------
 # Module: aws/metric/ecs_container_insights
-# Purpose: Provide CloudWatch metric alarms for ECS cluster/container utilization (CPU and Memory) via Container Insights metric math.
-# Notes: Supports optional dimension-based filtering (cluster/service/task family); unified tagging applied; future improvement: add additional Container Insights metrics (e.g., network, storage) and consolidate metric math patterns.
+# Purpose: Provide CloudWatch metric alarms for ECS cluster/container utilization (CPU, Memory, Network, Storage) via Container Insights.
+# Notes: Supports optional dimension-based filtering (cluster/service/task family); unified tagging applied. Network metrics require awsvpc or bridge network mode.
 #--------------------------------------------------------------
 #--------------------------------------------------------------
 # Locals
@@ -107,6 +107,110 @@ resource "aws_cloudwatch_metric_alarm" "memory_utilization" {
       dimensions  = local.is_dimensions ? var.dimensions[count.index] : null
     }
   }
+
+  tags = var.tags
+}
+
+#--------------------------------------------------------------
+# For Network Rx Bytes (Ingress)
+# Provides a CloudWatch Metric Alarm resource.
+#--------------------------------------------------------------
+resource "aws_cloudwatch_metric_alarm" "network_rx_bytes" {
+  count = var.is_enabled && var.threshold.enabled_network_rx_bytes ? local.count : 0
+
+  alarm_name          = "${var.name_prefix}metric-ecs-container-insights-${local.names[count.index].name}network-rx-bytes"
+  comparison_operator = "GreaterThanOrEqualToThreshold"
+  evaluation_periods  = 1
+  metric_name         = "NetworkRxBytes"
+  namespace           = "ECS/ContainerInsights"
+  period              = var.period
+  statistic           = "Sum"
+  threshold           = var.threshold.network_rx_bytes
+  actions_enabled     = true
+  alarm_actions       = var.alarm_actions
+  alarm_description   = "This is an alarm to check for <${local.url}|ECS ContainerInsights Network Rx Bytes>(>= ${var.threshold.network_rx_bytes} Bytes/Second)."
+  ok_actions          = var.ok_actions
+  treat_missing_data  = "notBreaching"
+  dimensions          = local.is_dimensions ? var.dimensions[count.index] : null
+  unit                = "Bytes/Second"
+
+  tags = var.tags
+}
+
+#--------------------------------------------------------------
+# For Network Tx Bytes (Egress)
+# Provides a CloudWatch Metric Alarm resource.
+#--------------------------------------------------------------
+resource "aws_cloudwatch_metric_alarm" "network_tx_bytes" {
+  count = var.is_enabled && var.threshold.enabled_network_tx_bytes ? local.count : 0
+
+  alarm_name          = "${var.name_prefix}metric-ecs-container-insights-${local.names[count.index].name}network-tx-bytes"
+  comparison_operator = "GreaterThanOrEqualToThreshold"
+  evaluation_periods  = 1
+  metric_name         = "NetworkTxBytes"
+  namespace           = "ECS/ContainerInsights"
+  period              = var.period
+  statistic           = "Sum"
+  threshold           = var.threshold.network_tx_bytes
+  actions_enabled     = true
+  alarm_actions       = var.alarm_actions
+  alarm_description   = "This is an alarm to check for <${local.url}|ECS ContainerInsights Network Tx Bytes>(>= ${var.threshold.network_tx_bytes} Bytes/Second)."
+  ok_actions          = var.ok_actions
+  treat_missing_data  = "notBreaching"
+  dimensions          = local.is_dimensions ? var.dimensions[count.index] : null
+  unit                = "Bytes/Second"
+
+  tags = var.tags
+}
+
+#--------------------------------------------------------------
+# For Storage Read Bytes
+# Provides a CloudWatch Metric Alarm resource.
+#--------------------------------------------------------------
+resource "aws_cloudwatch_metric_alarm" "storage_read_bytes" {
+  count = var.is_enabled && var.threshold.enabled_storage_read_bytes ? local.count : 0
+
+  alarm_name          = "${var.name_prefix}metric-ecs-container-insights-${local.names[count.index].name}storage-read-bytes"
+  comparison_operator = "GreaterThanOrEqualToThreshold"
+  evaluation_periods  = 1
+  metric_name         = "StorageReadBytes"
+  namespace           = "ECS/ContainerInsights"
+  period              = var.period
+  statistic           = "Sum"
+  threshold           = var.threshold.storage_read_bytes
+  actions_enabled     = true
+  alarm_actions       = var.alarm_actions
+  alarm_description   = "This is an alarm to check for <${local.url}|ECS ContainerInsights Storage Read Bytes>(>= ${var.threshold.storage_read_bytes} Bytes)."
+  ok_actions          = var.ok_actions
+  treat_missing_data  = "notBreaching"
+  dimensions          = local.is_dimensions ? var.dimensions[count.index] : null
+  unit                = "Bytes"
+
+  tags = var.tags
+}
+
+#--------------------------------------------------------------
+# For Storage Write Bytes
+# Provides a CloudWatch Metric Alarm resource.
+#--------------------------------------------------------------
+resource "aws_cloudwatch_metric_alarm" "storage_write_bytes" {
+  count = var.is_enabled && var.threshold.enabled_storage_write_bytes ? local.count : 0
+
+  alarm_name          = "${var.name_prefix}metric-ecs-container-insights-${local.names[count.index].name}storage-write-bytes"
+  comparison_operator = "GreaterThanOrEqualToThreshold"
+  evaluation_periods  = 1
+  metric_name         = "StorageWriteBytes"
+  namespace           = "ECS/ContainerInsights"
+  period              = var.period
+  statistic           = "Sum"
+  threshold           = var.threshold.storage_write_bytes
+  actions_enabled     = true
+  alarm_actions       = var.alarm_actions
+  alarm_description   = "This is an alarm to check for <${local.url}|ECS ContainerInsights Storage Write Bytes>(>= ${var.threshold.storage_write_bytes} Bytes)."
+  ok_actions          = var.ok_actions
+  treat_missing_data  = "notBreaching"
+  dimensions          = local.is_dimensions ? var.dimensions[count.index] : null
+  unit                = "Bytes"
 
   tags = var.tags
 }

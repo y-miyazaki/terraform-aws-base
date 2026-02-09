@@ -34,7 +34,7 @@ resource "aws_iam_role" "this" {
 
   assume_role_policy = try(var.aws_iam_role.assume_role_policy, null) == null ? local.assume_role_policy : try(var.aws_iam_role.assume_role_policy, null)
 
-  description           = var.aws_iam_role.description
+  description           = try(var.aws_iam_role.description, null)
   force_detach_policies = true
   name                  = "${var.name_prefix}${var.aws_iam_role.name}"
   path                  = try(var.aws_iam_role.path, "/")
@@ -103,11 +103,10 @@ data "aws_iam_policy_document" "custom" {
 resource "aws_iam_policy" "custom" {
   count = var.is_enabled && var.aws_iam_policy != null ? 1 : 0
 
-  description = var.aws_iam_policy.description
+  description = try(var.aws_iam_policy.description, null)
   name        = "${var.name_prefix}${try(var.aws_iam_policy.name, null)}"
-  #   name_prefix = var.name_prefix
-  path   = try(var.aws_iam_policy.path, "/")
-  policy = data.aws_iam_policy_document.custom[0].json
+  path        = try(var.aws_iam_policy.path, "/")
+  policy      = data.aws_iam_policy_document.custom[0].json
 
   tags = var.tags
 }

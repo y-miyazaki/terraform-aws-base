@@ -19,6 +19,9 @@ variable "threshold" {
     # 5XXerror threshold (unit=%)
     enabled_error5XX = bool
     error5XX         = number
+    # IntegrationLatency threshold (unit=Milliseconds)
+    enabled_integration_latency = bool
+    integration_latency         = number
     # Latency threshold (unit=Milliseconds)
     enabled_latency = bool
     latency         = number
@@ -26,12 +29,14 @@ variable "threshold" {
   )
   description = "(Optional) Set the threshold for each Metric in API Gateway."
   default = {
-    enabled_error4XX = true
-    error4XX         = 1
-    enabled_error5XX = true
-    error5XX         = 1
-    enabled_latency  = true
-    latency          = 10000
+    enabled_error4XX            = true
+    error4XX                    = 1
+    enabled_error5XX            = true
+    error5XX                    = 1
+    enabled_integration_latency = true
+    integration_latency         = 10000
+    enabled_latency             = true
+    latency                     = 10000
   }
 }
 variable "threshold_override" {
@@ -42,6 +47,9 @@ variable "threshold_override" {
     # (Optional) 5XXerror threshold (unit=%)
     enabled_error5XX = optional(bool)
     error5XX         = optional(number)
+    # (Optional) IntegrationLatency threshold (unit=Milliseconds)
+    enabled_integration_latency = optional(bool)
+    integration_latency         = optional(number)
     # (Optional) Latency threshold (unit=Milliseconds)
     enabled_latency = optional(bool)
     latency         = optional(number)

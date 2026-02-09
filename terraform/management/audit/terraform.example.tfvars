@@ -183,24 +183,6 @@ guardduty_organization = {
   is_enabled = false
   # TODO: need to set auto_enable_organization_members for settings of AWS GuardDuty Organization.
   auto_enable_organization_members = "ALL"
-  # GuardDuty datasources configuration
-  datasources = {
-    s3_logs = {
-      auto_enable = false
-    }
-    kubernetes = {
-      audit_logs = {
-        enable = false
-      }
-    }
-    malware_protection = {
-      scan_ec2_instance_with_findings = {
-        ebs_volumes = {
-          auto_enable = false
-        }
-      }
-    }
-  }
   features = {
     # https://docs.aws.amazon.com/guardduty/latest/APIReference/API_DetectorFeatureConfiguration.html
     EBS_MALWARE_PROTECTION = {
