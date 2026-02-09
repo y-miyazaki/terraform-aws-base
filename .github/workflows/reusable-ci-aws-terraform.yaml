@@ -174,7 +174,7 @@ jobs:
 
       - name: Restore Cache Terraform plugin cache
         id: restore-terraform-plugin-cache
-        uses: actions/cache/restore@8b402f58fbc84540c8b491a91e594a4576fec3d7 # v5.0.2
+        uses: actions/cache/restore@cdf6c1fa76f9f475f3d7449005a359c84ca0f306 # v5.0.3
         with:
           path: |
             ~/.terraform.d/plugin-cache
@@ -182,7 +182,7 @@ jobs:
 
       - name: Restore Cache Terraform init
         id: restore-terraform-init
-        uses: actions/cache/restore@8b402f58fbc84540c8b491a91e594a4576fec3d7 # v5.0.2
+        uses: actions/cache/restore@cdf6c1fa76f9f475f3d7449005a359c84ca0f306 # v5.0.3
         with:
           path: |
             ${{ env.TERRAFORM_PATH }}/.terraform
@@ -284,7 +284,7 @@ jobs:
 
       - name: Restore Cache Terraform plugin cache
         id: restore-terraform-plugin-cache
-        uses: actions/cache/restore@8b402f58fbc84540c8b491a91e594a4576fec3d7 # v5.0.2
+        uses: actions/cache/restore@cdf6c1fa76f9f475f3d7449005a359c84ca0f306 # v5.0.3
         with:
           key: ${{ needs.init.outputs.tf_plugin_cache_key }}
           path: |
@@ -292,7 +292,7 @@ jobs:
 
       - name: Restore Cache Terraform init
         id: restore-terraform-init
-        uses: actions/cache/restore@8b402f58fbc84540c8b491a91e594a4576fec3d7 # v5.0.2
+        uses: actions/cache/restore@cdf6c1fa76f9f475f3d7449005a359c84ca0f306 # v5.0.3
         with:
           key: ${{ needs.init.outputs.tf_init_cache_key }}
           path: |
