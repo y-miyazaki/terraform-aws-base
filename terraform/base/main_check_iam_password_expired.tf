@@ -38,7 +38,7 @@ module "aws_cloudwatch_events_iam_password_expired" {
 # tfsec:ignore:aws-lambda-enable-tracing
 module "lambda_function_iam_password_expired" {
   source  = "terraform-aws-modules/lambda/aws"
-  version = "8.4.0"
+  version = "8.5.0"
   create  = var.iam_password_expired.is_enabled && !var.use_control_tower
 
   allowed_triggers = {
