@@ -65,7 +65,7 @@ module "aws_lambda_create_lambda_step_functions_log" {
     description                    = "This program sends the result of log to Slack."
     layers                         = []
     memory_size                    = 128
-    runtime                        = "provided.al2"
+    runtime                        = "provided.al2023"
     timeout                        = 300
     reserved_concurrent_executions = null
     publish                        = false
