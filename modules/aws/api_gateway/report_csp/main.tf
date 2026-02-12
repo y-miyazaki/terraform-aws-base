@@ -116,7 +116,7 @@ module "aws_lambda_create_lambda_report_csp" {
   logging_system_log_level                = "WARN"
   memory_size                             = 128
   publish                                 = false
-  runtime                                 = "provided.al2"
+  runtime                                 = "provided.al2023"
   timeout                                 = 300
   tracing_mode                            = "PassThrough"
   vpc_security_group_ids                  = length(var.vpc_config) > 0 ? try(var.vpc_config[0]["security_group_ids"], []) : []

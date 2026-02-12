@@ -75,7 +75,7 @@ module "lambda_function_health" {
   logging_system_log_level      = "WARN"
   memory_size                   = 128
   publish                       = false
-  runtime                       = "provided.al2"
+  runtime                       = "provided.al2023"
   timeout                       = 300
   tracing_mode                  = "PassThrough"
   vpc_security_group_ids        = var.common_lambda.vpc.is_enabled ? var.common_lambda.vpc.create_vpc ? [module.lambda_vpc.default_security_group_id] : [var.common_lambda.vpc.exists.security_group_id] : []
