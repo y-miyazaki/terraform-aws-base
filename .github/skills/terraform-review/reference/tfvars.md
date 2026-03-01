@@ -2,28 +2,24 @@
 
 **T-01: No Secrets in tfvars**
 
-- Problem: Secrets in tfvars, passwords, tokens
-- Impact: Repository leak risk, Git history contamination, security breach
-- Recommendation: Reference external secret stores (data sources), use environment variables
-- Check: No hardcoded secrets in tfvars files
+Check: Are there no hardcoded secrets in tfvars files?
+Why: Secrets in tfvars (passwords, tokens) cause repository leak risk, Git history contamination, and security breaches
+Fix: Reference external secret stores (data sources), use environment variables
 
 **T-02: Environment-Specific File Separation**
 
-- Problem: Mixed environment configs, single tfvars file
-- Impact: Misdeployment risk, environment contamination, operational errors
-- Recommendation: Separate files per environment (dev.tfvars, prd.tfvars)
-- Check: Clear environment-specific file separation
+Check: Is there clear environment-specific file separation?
+Why: Mixed environment configs and single tfvars files cause misdeployment risk, environment contamination, and operational errors
+Fix: Separate files per environment (dev.tfvars, prd.tfvars)
 
 **T-03: No Cross-Environment Identifiers**
 
-- Problem: Cross-environment ID mixing, incorrect IDs from other environments
-- Impact: Cross-environment contamination, unintended resource references
-- Recommendation: Only environment-specific values, validate variables/locals
-- Check: No foreign environment IDs (account IDs, VPC IDs, etc.)
+Check: Are there no foreign environment IDs (account IDs, VPC IDs, etc.)?
+Why: Cross-environment ID mixing and incorrect IDs from other environments cause cross-environment contamination and unintended resource references
+Fix: Use only environment-specific values, validate variables/locals
 
 **T-04: No Environment Prefix Mixing**
 
-- Problem: Incorrect environment prefixes, naming inconsistencies
-- Impact: Resource naming errors, identification difficulties, operational confusion
-- Recommendation: Verify correct environment prefix, follow naming rules
-- Check: Consistent environment prefixes throughout
+Check: Are environment prefixes consistent throughout?
+Why: Incorrect environment prefixes and naming inconsistencies cause resource naming errors, identification difficulties, and operational confusion
+Fix: Verify correct environment prefix, follow naming rules

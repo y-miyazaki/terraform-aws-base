@@ -1,19 +1,19 @@
 ### 7. Testing (TEST)
 
-**TEST-01: 単体テスト実装**
+**TEST-01: Implement Unit Tests**
 
-Check: Batsによる単体テストが実装されているか
-Why: テスト未実装でリグレッション、バグ混入、CI/CD困難
-Fix: Bats導入、test/bats/配下テスト作成、自動化
+Check: Are unit tests implemented with Bats?
+Why: Missing tests cause regressions, bug introduction, difficult CI/CD
+Fix: Introduce Bats, create tests under test/bats/, automate
 
-**TEST-02: Bats テスト関数 a-z 順**
+**TEST-02: Bats Test Functions in a-z Order**
 
-Check: テスト関数がsetup/teardown後にa-z順で配置されているか
-Why: テスト関数順序不統一でテスト保守困難、レビュー効率低下
-Fix: setup/teardown後、テスト関数a-z順配置
+Check: Are test functions placed in a-z order after setup/teardown?
+Why: Inconsistent test function order makes test maintenance difficult, reduces review efficiency
+Fix: Place test functions in a-z order after setup/teardown
 
-**TEST-03: CI/CD 統合**
+**TEST-03: CI/CD Integration**
 
-Check: テストがGitHub Actions等CI/CDに統合されているか
-Why: テスト自動実行なしで本番障害、品質低下、デプロイリスク
-Fix: GitHub Actions統合、PR時自動テスト、品質ゲート
+Check: Are tests integrated into CI/CD like GitHub Actions?
+Why: No automated test execution causes production failures, quality degradation, deployment risks
+Fix: Integrate with GitHub Actions, automated tests on PRs, quality gates

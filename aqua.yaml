@@ -12,19 +12,23 @@ registries:
 packages:
   # Utility tools
   - name: BurntSushi/ripgrep@15.1.0 # grep alternative
+  - name: google/go-jsonnet@v0.21.0 # Jsonnet command-line tool
   # Security related tools
   - name: pre-commit/pre-commit@v4.5.1 # pre-commit framework
   - name: gitleaks/gitleaks@v8.30.0 # secret scanner
   - name: aquasecurity/trivy@v0.69.0 # vulnerability scanner
   # AWS related tools
   - name: aws/aws-cli@2.33.15 # AWS CLI
+  - name: kayac/ecspresso@v2.7.1 # ECS deployment tool
+  - name: Songmu/ecschedule@v0.17.2 # ECS scheduled tasks deployment tool
   # GitHub related tools
   - name: cli/cli@v2.86.0 # GitHub CLI
   - name: github/copilot-cli@v0.0.402 # GitHub Copilot CLI
   - name: rhysd/actionlint@v1.7.10 # GitHub Actions linter
-  - name: suzuki-shunsuke/ghalint@v1.5.5 # GitHub Actions linter
   - name: suzuki-shunsuke/disable-checkout-persist-credentials@v1.0.0 # GitHub Actions settings persist-credentials
+  - name: suzuki-shunsuke/ghalint@v1.5.5 # GitHub Actions linter
   - name: suzuki-shunsuke/ghatm@v1.0.0 # GitHub Actions settings timeout-minutes
+  - name: suzuki-shunsuke/pinact@v3.9.0 # GitHub Actions pinning tool
   - name: zizmorcore/zizmor@v1.22.0 # GitHub Actions settings concurrency
   # Go related tools
   - name: protocolbuffers/protobuf-go/protoc-gen-go@v1.36.11 # protobuf code generator

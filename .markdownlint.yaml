@@ -19,6 +19,7 @@ MD036: false  # Emphasis used instead of header
 MD040: false  # Fenced code blocks should have a language specified
 MD041: false  # First line in file should be a top level header
 MD051: false  # Link fragments should be valid
+MD060: false  # Table column alignment (problematic with Japanese text)
 
 # Keep only essential rules enabled
 MD001: true   # Header levels should only increment by one level at a time

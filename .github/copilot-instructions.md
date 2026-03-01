@@ -1,149 +1,45 @@
 # GitHub Copilot Instructions
 
+Common guidelines for AI-assisted development. Project-specific overrides defined in `.github/instructions/*.instructions.md`.
+
 ## Language and Formatting Standards
 
-- instructions,prompt ファイル
-  - 日本語。章名のみ英語
-- other ファイル
-  - 生成されるコードとコメントはすべて英語
+- **Documentation files** (instructions, prompt, SKILL.md): 日本語（章名のみ英語）
+- **Generated code and comments**: English only
+- **Chat/Agent interaction**: 日本語で質問・回答、コード例は英語で記載
 
 ## Core Principles
 
-- **Path-Specific Instructions の遵守（最重要）**
-  - **Chat/Agent 機能使用時**: 作業前に `.github/instructions/*.instructions.md` を `read_file` で明示的読込・確認
-  - **自動補完時**: 現在のコンテキストから最大限推測して適用
-  - 対象ファイルの拡張子に応じた instructions ファイルを適用（例: `terraform.instructions.md` for .tf files）
-  - 自動適用でも `read_file` で内容確認
-  - 検証コマンド・コーディング規約の遵守
-- **Serena Memory の活用（最重要）**
-  - 新規作業開始時に `mcp_serena_list_memories` で利用可能なプロジェクトメモリを確認
-  - 関連するメモリを `mcp_serena_read_memory` で参照し、プロジェクト知識を活用
-  - 主要メモリ: project_overview, suggested_commands, style_conventions, post_task_checklist, system_utilities
-  - **Fallback**: 指定された MCP ツールが利用できない場合は、このステップをスキップし、ユーザーに手動確認が必要な旨を報告（捏造禁止）
-- 作業開始時に instructions の要点を明示
-- **統一性の維持**: 修正内容が他にも適用すべき場合は grep で検索し全体修正
-- 完了報告は全作業完了後に実施（残作業はリスト化）
-- 「残タスクリスト」を維持し進捗更新
+- **優先順位**: 共通ルールより `.github/instructions/*.instructions.md` の path-specific 指示を優先
+- **Memory 活用**: 新規作業時は repo/session memory を確認
+- **Tool Fallback**: 指定ツール利用不可時は代替手段検討（捏造禁止）
+- **曖昧性対応**: 要件不明確時は確認してから進行
+- **完了報告**: 全作業後に総括、残工事はリスト化
 
-## General Standards
+## General Development Standards
 
-### Git Command Guidelines
+### Code Modifications
 
-- コミットメッセージフォーマット: 英語、Markdown、先頭行は #(h1)+概要、2 行目以降はリスト形式
+- **Pre-flight Check**: grep で他箇所への波及確認
+- **Implementation**: 修正後の検証必須、エラー自律修正、複数ファイル編集時は `apply_patch` 利用
+- **QA**: 統一性が必須なら全該当箇所一括修正、変更前後で動作確認
 
-### Code Modification Guidelines
+### Output Formatting
 
-- 修正後の動作検証必須
-- **統一性確保手順**:
-  1. grep でパターン検索
-  2. 他ファイルの同様パターン確認
-  3. 該当箇所を一括修正
-  4. grep コマンドと結果を報告
-- 共通ライブラリは内容把握後に修正
-- エラーは自律的に修正
-- コマンド検証: dry-run 不使用、`||`/`&&` でワンライナー化、`set -e` 不使用
-- 出力ファイル名はデフォルト維持
-- 長時間対話（10 ターン以上）時はガイドライン再確認
-- CLI は help または公式ドキュメント確認後に実行
+- **Markdown**: Headings、lists、code blocks は Markdown 記法に従う。File references は workspace-relative paths で記載
+- **Code Examples**: 言語固有の慣例に従う。長いスニペットは段階的に説明
+- **Response Length**: Simple queries は 1-3 sentences（コード外）。Complex tasks は必要な detail のみ。ツール呼び出し後は簡潔に
+
+### Error Handling & Edge Cases
+
+- **Unexpected Situations**: 手作業確認必須時は明示（捏造禁止）。ツール制限下でも代替手段検討。Timeout/部分的結果は明示後に次ステップ提案
+- **User Interaction**: 要件曖昧時は確認してから進行。エラーメッセージは具体的で行動可能に
 
 ### Temporary Files Management
 
-- **一時ファイルの配置**: `/workspace/tmp/` ディレクトリ以下に作成
+- **配置**: `/workspace/tmp/` ディレクトリ以下に作成
   - カバレッジレポート（`*.out`, `*.html`）
   - テスト出力ファイル
   - ビルド成果物の一時コピー
   - その他の検証用一時ファイル
-- **理由**: `.gitignore` で `tmp` ディレクトリ全体を除外しており、誤コミット防止
-- **例外**: プロジェクトルートに生成される特定のファイル（`go.sum` など）は対象外
-
-#### Final Checklist
-
-- [ ] 対応 `.github/instructions/*.instructions.md` を `read_file` で読込・確認
-- [ ] grep による統一性確認実施・報告
-- [ ] 追加確認が必要なファイル・関数の読込
-- [ ] 対応言語の instructions.md（例: script.instructions.md）の `Code Modification Guidelines` 遵守
-- [ ] 残作業リスト更新・未完了項目確認
-- [ ] 逸脱・懸念点の振り返りコメント記載
-
-## Path-Specific Instructions
-
-**重要**: `.github/instructions/*.instructions.md` でパス固有の指示を定義。
-
-### 使用方法
-
-**必須手順**:
-
-1. **作業前に `read_file` で対応 instructions ファイルを読込**
-   - 例: `read_file` with filePath="/workspace/.github/instructions/script.instructions.md"
-2. **要点の明示**
-3. **検証コマンド・コーディング規約の遵守**
-
-### Available Instructions Files
-
-| File                                                           | Applies To                                                   | 主要内容                                                                       |
-| -------------------------------------------------------------- | ------------------------------------------------------------ | ------------------------------------------------------------------------------ |
-| `.github/instructions/go.instructions.md`                      | \*\*/\*.go                                                   | 検証: go fmt, golangci-lint / 命名: camelCase, PascalCase / エラーハンドリング |
-| `.github/instructions/terraform.instructions.md`               | \*\*/\*.tf,\*\*/\*.tfvars,\*\*/\*.hcl                        | 検証: terraform fmt, tflint / 命名: snake_case / セキュリティ規約              |
-| `.github/instructions/script.instructions.md`                  | \*\*/\*.sh,scripts/\*\*                                      | 検証: bash -n, shellcheck / 関数ドキュメント / エラーハンドリング              |
-| `.github/instructions/markdown.instructions.md`                | \*\*/\*.md                                                   | GitHub Markdown 記法 / 表・リスト・コードブロックの規約                        |
-| `.github/instructions/github-actions-workflow.instructions.md` | \*\*/.github/workflows/\*.yaml,\*\*/.github/workflows/\*.yml | ワークフロー構文 / セキュリティ / 再利用可能なワークフロー                     |
-
-### Documentation and Comments
-
-- ファイル/スクリプト/モジュールは目的記載ヘッダーを含む
-- 関数は目的・引数説明を含む
-- 複雑なロジックにインラインコメント付与
-- コメント・ドキュメントは英語記載（全言語共通）
-
-### Error Handling
-
-- エラー検知と適切な処理
-- 具体的かつ行動可能なエラーメッセージ
-- デバッグ用の十分なログ出力
-- 機密情報はエラーメッセージに含めない
-
-## Validation Script Enforcement
-
-**CRITICAL**: When validating code, ALWAYS use the comprehensive validation scripts. Never run individual commands directly.
-
-### Required Validation Scripts
-
-- **Go**: `bash go-validation/scripts/validate.sh`
-- **Terraform**: `bash terraform-validation/scripts/validate.sh`
-- **Shell Script**: `bash shell-script-validation/scripts/validate.sh`
-
-### Prohibited Individual Commands
-
-**NEVER run these commands directly:**
-
-- ❌ `go fmt`, `go vet`, `golangci-lint`, `go test` alone
-- ❌ `terraform fmt`, `terraform validate`, `tflint`, `trivy` alone
-- ❌ `bash -n`, `shellcheck` alone
-
-### Exception
-
-Only use individual commands when explicitly debugging a specific validation failure reported by the validation script. In such cases, refer to the skill's `reference/` directory for detailed command usage.
-
-## MCP Tools
-
-Model Context Protocol (MCP) 対応ツールを活用。
-
-### Serena 初期化（必須）
-
-作業開始時：
-
-1. `mcp_serena_list_memories` でプロジェクトメモリを確認
-2. 関連メモリを `mcp_serena_read_memory` で参照
-
-**利用可能なメモリ**:
-
-- `project_overview.md`: プロジェクト目的・技術スタック・構造
-- `suggested_commands.md`: 開発・検証・デプロイコマンド
-- `style_conventions.md`: 言語別コーディング規約
-- `post_task_checklist.md`: 変更後の検証手順
-- `system_utilities.md`: 利用可能なツール・コマンド
-
-### 使用方針
-
-- MCP ツールは補助的に使用
-- エラー時はツール制限として受入、代替手段を検討
+- **目的**: `.gitignore` で除外対象のディレクトリを活用し、誤コミット防止

@@ -26,6 +26,36 @@
       "algorithm": "sha256"
     },
     {
+      "id": "github_release/github.com/Songmu/ecschedule/v0.17.2/ecschedule_v0.17.2_darwin_amd64.zip",
+      "checksum": "EF715869AEB706C84AFDB0796E87B297D3420A30697654FF304BC0D8E30B2889",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/Songmu/ecschedule/v0.17.2/ecschedule_v0.17.2_darwin_arm64.zip",
+      "checksum": "9CC32A2833E2F3C2BB9960C98065F50D9DDA250CFD812BCF3B496D8FAA9FC4F3",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/Songmu/ecschedule/v0.17.2/ecschedule_v0.17.2_linux_amd64.tar.gz",
+      "checksum": "D87383C236E9233E357F2581ED7BEAC4BD9F694CE4F1361C324664A83CA5DE2F",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/Songmu/ecschedule/v0.17.2/ecschedule_v0.17.2_linux_arm64.tar.gz",
+      "checksum": "C469ABA03F2593C5C0E77F96AC74C1D98B11D6A822D93E6FA6ED52DFA93FE0F7",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/Songmu/ecschedule/v0.17.2/ecschedule_v0.17.2_windows_amd64.zip",
+      "checksum": "861CD56547C9892DCD36E31D82E8755D7184B4A39CE966E924221A862C019E06",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/Songmu/ecschedule/v0.17.2/ecschedule_v0.17.2_windows_arm64.zip",
+      "checksum": "C25C7C368BE06A6920BA1A2B6A79DC15B5257E67440FE35C9AF62C1AA8898165",
+      "algorithm": "sha256"
+    },
+    {
       "id": "github_release/github.com/air-verse/air/v1.63.1/air_1.63.1_darwin_amd64.tar.gz",
       "checksum": "C221755FF634217A42B3B373A6FA3ABFD02A30F804781CCD0BBBB2F224D8FF3A",
       "algorithm": "sha256"
@@ -476,6 +506,36 @@
       "algorithm": "sha256"
     },
     {
+      "id": "github_release/github.com/google/go-jsonnet/v0.21.0/go-jsonnet_Darwin_arm64.tar.gz",
+      "checksum": "398189A264E31A2C1316EED8EE6308306A221FD10B72F405DEF0100D295EFEAC",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/google/go-jsonnet/v0.21.0/go-jsonnet_Darwin_x86_64.tar.gz",
+      "checksum": "A6CEE4B381D2319FA807D7A7BF8A4ECF2D0CCA64E2BCD53EEAA575CE1F7689A4",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/google/go-jsonnet/v0.21.0/go-jsonnet_Linux_arm64.tar.gz",
+      "checksum": "4A263DA605DBE2EDB99529F495266211062FAC476789F2119408BC223338F1D6",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/google/go-jsonnet/v0.21.0/go-jsonnet_Linux_x86_64.tar.gz",
+      "checksum": "AD3181FDE77726B02D17EB4E72687020BF2CB35B9336CDEAACA4783C7FF104F7",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/google/go-jsonnet/v0.21.0/go-jsonnet_Windows_arm64.tar.gz",
+      "checksum": "5244713590B976D8CB675ABA57434B2FA667663C299FE777A478C01C86E46341",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/google/go-jsonnet/v0.21.0/go-jsonnet_Windows_x86_64.tar.gz",
+      "checksum": "81D71A287EE5DFD0860831EEAC281A7327CE8876D5FE9A8B7E19726DBBC0CE4F",
+      "algorithm": "sha256"
+    },
+    {
       "id": "github_release/github.com/goreleaser/goreleaser/v2.13.3/goreleaser_Darwin_all.tar.gz",
       "checksum": "5516C37779EFB3935D5B213CDA3B0B9025AE94DDBCB51DF6919ACBCDEF4194B0",
       "algorithm": "sha256"
@@ -583,6 +643,36 @@
     {
       "id": "github_release/github.com/grpc/grpc-go/cmd/protoc-gen-go-grpc/v1.6.1/protoc-gen-go-grpc.v1.6.1.windows.arm64.tar.gz",
       "checksum": "4340A5CFBA5704FA719DFA4024F554053E6F51EAEC54FE32BF5E41306020349D",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/kayac/ecspresso/v2.7.1/ecspresso_2.7.1_darwin_amd64.tar.gz",
+      "checksum": "61F0533C1898DDAB47EF412294F7E864992F79F35940E25B95412B06C28CB383",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/kayac/ecspresso/v2.7.1/ecspresso_2.7.1_darwin_arm64.tar.gz",
+      "checksum": "74DB567C0030FF93A66C69F4471AE0A1907174275AE663C80D57E42480C6B089",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/kayac/ecspresso/v2.7.1/ecspresso_2.7.1_linux_amd64.tar.gz",
+      "checksum": "903F7D451358080F80E426D56A9265F072E6A395A733945EBC0EAC3D2C16A0C4",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/kayac/ecspresso/v2.7.1/ecspresso_2.7.1_linux_arm64.tar.gz",
+      "checksum": "E31C64937840E5DC122BD5D3AAB458B3842A4E57F6D162553351DA602BA2A199",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/kayac/ecspresso/v2.7.1/ecspresso_2.7.1_windows_amd64.tar.gz",
+      "checksum": "9B8F4443AFB2F4EF0C6ECDDC926E8844D8171FF73A71284507152D0064BB210B",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/kayac/ecspresso/v2.7.1/ecspresso_2.7.1_windows_arm64.tar.gz",
+      "checksum": "633A47D548366E6BD85E5835E900FA048F29FC8A3F1505E7EE4ECA8B1C76C756",
       "algorithm": "sha256"
     },
     {
@@ -1058,6 +1148,36 @@
     {
       "id": "github_release/github.com/suzuki-shunsuke/ghatm/v1.0.0/ghatm_windows_arm64.zip",
       "checksum": "58721135592547169328CCDAA60B12D20E14575AFE2E2760571BFB19CD9C664D",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/suzuki-shunsuke/pinact/v3.9.0/pinact_darwin_amd64.tar.gz",
+      "checksum": "70F68407A05FA88843FBF9B400D979E6205489EF8AF251DACC21841A07989DF4",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/suzuki-shunsuke/pinact/v3.9.0/pinact_darwin_arm64.tar.gz",
+      "checksum": "23C8A4EDA8FD7949C8CBB1CFE6F3D01279402FE6201E9CB0A90447A5ECFDEF89",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/suzuki-shunsuke/pinact/v3.9.0/pinact_linux_amd64.tar.gz",
+      "checksum": "3829DA718DE38B1E914B974C3E77045A256999AF84789437A7305B09130D8A6A",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/suzuki-shunsuke/pinact/v3.9.0/pinact_linux_arm64.tar.gz",
+      "checksum": "34A957423002662C6289782B571660BEDA6A37449A76D763C8AD8B1B9A500A54",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/suzuki-shunsuke/pinact/v3.9.0/pinact_windows_amd64.zip",
+      "checksum": "B923A567F88417D79CE183E59C2A2372D9CAE9B697A472CE1F95D745932746B1",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/suzuki-shunsuke/pinact/v3.9.0/pinact_windows_arm64.zip",
+      "checksum": "A2DBFBA73410063EE683636EE61CD57C43F130B7DF90442A40F5D57734C73A5A",
       "algorithm": "sha256"
     },
     {

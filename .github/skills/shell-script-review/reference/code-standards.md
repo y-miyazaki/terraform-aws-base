@@ -1,31 +1,31 @@
 ### 2. Code Standards (CODE)
 
-**CODE-01: 配列適切利用**
+**CODE-01: Proper Array Usage**
 
-Check: 空白含むパスや複数値が配列で管理されているか
-Why: 文字列分割・引用符漏れでファイル名分割、予期しない引数展開
-Fix: 配列で複数値管理、`"${array[@]}"`展開
+Check: Are paths with spaces and multiple values managed with arrays?
+Why: String splitting and missing quotes cause filename splitting and unexpected argument expansion
+Fix: Manage multiple values with arrays, use `"${array[@]}"` expansion
 
-**CODE-02: グローバル変数最小化**
+**CODE-02: Minimize Global Variables**
 
-Check: 関数内でlocal宣言が使用されているか
-Why: グローバル変数多用で変数汚染、予期しない動作、デバッグ困難
-Fix: 関数内local宣言、readonly定数、グローバル最小化
+Check: Are local declarations used within functions?
+Why: Excessive global variables cause variable pollution, unexpected behavior, difficult debugging
+Fix: Use local declarations in functions, readonly constants, minimize globals
 
-**CODE-03: Here document 適切利用**
+**CODE-03: Proper Here Document Usage**
 
-Check: 複数行文字列にhere documentが使用されているか
-Why: echo繰り返しでエスケープ複雑化、可読性低下、保守困難
-Fix: `cat <<'EOF'`利用、ヒアドキュメント活用
+Check: Are here documents used for multi-line strings?
+Why: Repeated echo complicates escaping, reduces readability, hinders maintenance
+Fix: Use `cat <<'EOF'`, leverage here documents
 
-**CODE-04: Process substitution 適切利用**
+**CODE-04: Proper Process Substitution Usage**
 
-Check: 一時ファイル不要な箇所でprocess substitutionが使用されているか
-Why: 不要な一時ファイル生成でファイルI/O増、クリーンアップ複雑化
-Fix: `<(command)`、`>(command)`活用
+Check: Is process substitution used where temporary files are unnecessary?
+Why: Unnecessary temporary file generation increases file I/O and complicates cleanup
+Fix: Use `<(command)` and `>(command)`
 
-**CODE-05: 関数単一責任・引数明示**
+**CODE-05: Single Responsibility Functions with Explicit Arguments**
 
-Check: 関数が単一責任で引数を明示的に受け取るか
-Why: 複数責任混在・グローバル変数依存でテスト困難、再利用不可
-Fix: 単一責任分割、引数で入力受取、グローバル依存最小化
+Check: Do functions have single responsibility and accept arguments explicitly?
+Why: Mixed responsibilities and global variable dependencies make testing difficult and prevent reuse
+Fix: Split into single responsibilities, accept input via arguments, minimize global dependencies

@@ -2,28 +2,24 @@
 
 **M-01: Review All .tf Files in Module**
 
-- Problem: Partial file review, missing files
-- Impact: Hidden bugs, inconsistencies, quality degradation
-- Recommendation: Review all `.tf` files in directory
-- Check: All module files reviewed
+Check: Are all module files reviewed?
+Why: Partial file review and missing files cause hidden bugs, inconsistencies, and quality degradation
+Fix: Review all `.tf` files in directory
 
 **M-02: Provider Version Appropriateness**
 
-- Problem: Inappropriate provider versions, forced latest, compatibility issues
-- Impact: Incompatibility, bugs, existing code breakage
-- Recommendation: Specify versions matching project requirements, verify breaking changes
-- Check: Provider versions align with project standards
+Check: Do provider versions align with project standards?
+Why: Inappropriate provider versions, forced latest, and compatibility issues cause incompatibility, bugs, and existing code breakage
+Fix: Specify versions matching project requirements, verify breaking changes
 
 **M-03: Clear Responsibility for locals/variables/outputs**
 
-- Problem: Mixed variables/locals/outputs, unclear responsibilities
-- Impact: Reduced readability, maintainability, understanding difficulty
-- Recommendation: Proper file/block placement by purpose, separation of concerns
-- Check: Clear separation of variables, locals, and outputs
+Check: Is there clear separation of variables, locals, and outputs?
+Why: Mixed variables/locals/outputs and unclear responsibilities cause reduced readability, maintainability, and understanding difficulty
+Fix: Proper file/block placement by purpose, separation of concerns
 
 **M-04: Unified Tags and Naming Prefixes**
 
-- Problem: Inconsistent tags and naming, scattered prefixes
-- Impact: Difficult resource management, cost allocation impossible, search difficulties
-- Recommendation: Centralized management with common variables/locals, use merge function
-- Check: Consistent tagging and naming conventions
+Check: Are tagging and naming conventions consistent?
+Why: Inconsistent tags and naming with scattered prefixes make resource management difficult, cost allocation impossible, and searches difficult
+Fix: Centralized management with common variables/locals, use merge function

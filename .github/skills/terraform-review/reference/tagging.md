@@ -2,14 +2,12 @@
 
 **TAG-01: Name Tag with merge(local.tags, {Name = "..."})**
 
-- Problem: Individual Name tag settings, unused merge function
-- Impact: Lack of consistency, tag management difficulties
-- Recommendation: Use `merge` function for common tags + individual Name
-- Check: Tags use merge pattern with common tags
+Check: Do tags use merge pattern with common tags?
+Why: Individual Name tag settings and unused merge function cause lack of consistency and tag management difficulties
+Fix: Use `merge` function for common tags + individual Name
 
 **TAG-02: Remove Redundant Manual Tags**
 
-- Problem: Duplicate tag definitions, manual tag descriptions
-- Impact: Code redundancy, increased maintenance cost, inconsistency risk
-- Recommendation: Use common tag locals, eliminate duplicates, follow DRY principle
-- Check: No duplicate tag keys; centralized tag management
+Check: Are there no duplicate tag keys; is tag management centralized?
+Why: Duplicate tag definitions and manual tag descriptions cause code redundancy, increased maintenance cost, and inconsistency risk
+Fix: Use common tag locals, eliminate duplicates, follow DRY principle

@@ -2,21 +2,18 @@
 
 **MIG-01: Use moved Block to Avoid Resource Recreation**
 
-- Problem: Resource recreation during refactoring, downtime
-- Impact: Service interruption, data loss, user impact
-- Recommendation: Use `moved` block for state migration, avoid destructive changes
-- Check: Refactors use moved blocks where appropriate
+Check: Do refactors use moved blocks where appropriate?
+Why: Resource recreation during refactoring and downtime cause service interruption, data loss, and user impact
+Fix: Use `moved` block for state migration, avoid destructive changes
 
 **MIG-02: Replace Deprecated Features**
 
-- Problem: Using deprecated features, end-of-life APIs
-- Impact: Future operation failures, security risks
-- Recommendation: Replace with recommended alternatives, verify latest documentation
-- Check: No deprecated features in use
+Check: Are there no deprecated features in use?
+Why: Using deprecated features and end-of-life APIs cause future operation failures and security risks
+Fix: Replace with recommended alternatives, verify latest documentation
 
 **MIG-03: No Commented-Out Resources**
 
-- Problem: Commented-out code, dead code
-- Impact: Reduced readability, confusion
-- Recommendation: Delete unnecessary code, use Git history, cleanup
-- Check: No commented-out resource blocks
+Check: Are there no commented-out resource blocks?
+Why: Commented-out code and dead code cause reduced readability and confusion
+Fix: Delete unnecessary code, use Git history, perform cleanup

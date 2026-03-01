@@ -1,55 +1,55 @@
 ### 5. Security (SEC)
 
-**SEC-01: 入力値検証**
+**SEC-01: Input Validation**
 
-Check: ユーザー入力が正規表現・ホワイトリストで検証されているか
-Why: 入力無検証でコマンドインジェクション、パストラバーサル、データ破壊
-Fix: 入力値正規表現検証、ホワイトリスト、範囲チェック
+Check: Is user input validated with regex patterns or whitelists?
+Why: Unvalidated input enables command injection, path traversal, data corruption
+Fix: Validate input with regex patterns, whitelists, and range checks
 
-**SEC-02: コマンドインジェクション対策**
+**SEC-02: Command Injection Prevention**
 
-Check: 全変数が`"$var"`で引用符されevalが回避されているか
-Why: 変数引用符なし・eval使用で任意コマンド実行、権限昇格、システム侵害
-Fix: 全変数`"$var"`引用符、eval回避、配列利用
+Check: Are all variables quoted with `"$var"` and eval avoided?
+Why: Unquoted variables or eval use enable arbitrary command execution, privilege escalation, system compromise
+Fix: Quote all variables with `"$var"`, avoid eval, use arrays
 
-**SEC-03: パス traversal 対策**
+**SEC-03: Path Traversal Prevention**
 
-Check: パスがrealpath・正規化され許可ディレクトリ制限があるか
-Why: `../`許容でファイルアクセス、データ漏洩、改ざん
-Fix: realpath利用、パス正規化、許可ディレクトリ制限
+Check: Are paths normalized with realpath and restricted to allowed directories?
+Why: Allowing `../` enables unauthorized file access, data leakage, tampering
+Fix: Use realpath, normalize paths, restrict to allowed directories
 
-**SEC-04: 一時ファイル mktemp+trap 削除**
+**SEC-04: Temporary File Cleanup**
 
-Check: 一時ファイルがmktempで作成されtrapで削除されるか
-Why: 固定ファイル名・予測可能パスでシンボリックリンク攻撃、情報漏洩
-Fix: `mktemp -d`利用、trap削除、セキュアパス
+Check: Are temporary files created with mktemp and cleaned up with trap?
+Why: Predictable paths with fixed names enable symlink attacks and information leakage
+Fix: Use `mktemp -d`, clean up with trap, use secure paths
 
-**SEC-05: 権限チェック**
+**SEC-05: Permission Checks**
 
-Check: 必要な権限（root等）がチェックされているか
-Why: 権限未確認で実行失敗、部分的成功、セキュリティリスク
-Fix: `[[ $EUID -eq 0 ]]`確認、適切エラーメッセージ
+Check: Are required permissions (root, etc.) validated before execution?
+Why: Missing permission checks cause execution failures, partial success, security risks
+Fix: Use `[[ $EUID -eq 0 ]]` checks with appropriate error messages
 
-**SEC-06: ログ機密情報マスク**
+**SEC-06: Sensitive Data Masking in Logs**
 
-Check: パスワード・トークンがログ出力前にマスクされているか
-Why: 機密情報ログ出力で認証情報漏洩、監査ログ汚染、セキュリティ侵害
-Fix: 機密変数`***`マスク、ログ出力前フィルタ
+Check: Are passwords and tokens masked before logging?
+Why: Logging sensitive data causes credential leakage, audit log pollution, security compromise
+Fix: Mask sensitive variables with `***`, filter before logging
 
-**SEC-07: 外部コマンド検証**
+**SEC-07: External Command Validation**
 
-Check: 外部コマンドが絶対パスまたはcommand -vで検証されているか
-Why: PATH環境変数依存でコマンド偽装、マルウェア実行、予期しない動作
-Fix: `/usr/bin/`等絶対パス使用、command -v検証
+Check: Are external commands invoked via absolute paths or verified with command -v?
+Why: PATH-dependent invocation enables command hijacking, malware execution, unexpected behavior
+Fix: Use absolute paths like `/usr/bin/`, verify with command -v
 
-**SEC-08: 環境変数汚染回避**
+**SEC-08: Environment Variable Isolation**
 
-Check: 環境変数が明示的に初期化されデフォルト値があるか
-Why: 継承環境変数信頼で予期しない動作、セキュリティバイパス、データ破損
-Fix: 環境変数明示的初期化、デフォルト値設定、検証
+Check: Are environment variables explicitly initialized with defaults?
+Why: Trusting inherited environment variables causes unexpected behavior, security bypass, data corruption
+Fix: Explicitly initialize environment variables, set defaults, validate
 
-**SEC-09: セキュアデフォルト (umask 027)**
+**SEC-09: Secure Defaults (umask 027)**
 
-Check: umask 027が設定され最小権限原則が適用されているか
-Why: デフォルトumaskで情報漏洩、不正アクセス、機密ファイル露出
-Fix: umask 027設定、明示的権限設定、最小権限原則
+Check: Is umask 027 set and least privilege principle applied?
+Why: Default umask settings enable information leakage, unauthorized access, sensitive file exposure
+Fix: Set umask 027, explicitly set permissions, apply least privilege principle

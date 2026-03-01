@@ -1,37 +1,37 @@
 ### 1. Global / Base (G)
 
-**G-01: 機密情報ハードコーディング禁止**
+**G-01: No Hardcoded Secrets**
 
-Check: API Key・パスワード・トークンがソースコードに埋め込まれていないか
-Why: 機密情報埋め込みでセキュリティ侵害、認証情報漏洩、監査違反
-Fix: 環境変数・AWS Secrets Manager利用、定数削除
+Check: Are API keys, passwords, and tokens not embedded in source code?
+Why: Embedded secrets cause security breaches, credential leakage, audit violations
+Fix: Use environment variables or AWS Secrets Manager, remove constants
 
-**G-02: 関数シグネチャ適切**
+**G-02: Appropriate Function Signatures**
 
-Check: 引数数（4個以上）・戻り値型・bool戻り値多用が適切か
-Why: 引数過多・戻り値不明瞭でAPI誤用、可読性低下、保守コスト増大
-Fix: 引数構造体化、named return回避、error戻り値最後配置
+Check: Are argument count (4+), return types, and bool return overuse appropriate?
+Why: Too many arguments and unclear return values cause API misuse, reduced readability, increased maintenance cost
+Fix: Use argument structs, avoid named returns, place error return last
 
-**G-03: 標準ライブラリ活用**
+**G-03: Leverage Standard Library**
 
-Check: 標準ライブラリで実装可能な機能に外部依存していないか
-Why: 不要な外部依存で脆弱性リスク、依存増加、保守負荷増大
-Fix: net/http・encoding/json等標準ライブラリ優先検討
+Check: Are external dependencies avoided for features implementable with standard library?
+Why: Unnecessary external dependencies increase vulnerability risk, dependency count, maintenance burden
+Fix: Prioritize standard library like net/http, encoding/json
 
-**G-04: ログ出力適切レベル**
+**G-04: Appropriate Log Levels**
 
-Check: Debug/Info/Warn/Errorレベルが適切か、構造化ログ使用か
-Why: ログレベル混在・非構造化でトラブルシューティング困難、監視不全
-Fix: 構造化ログライブラリ（zap/zerolog）利用、レベル統一、機密情報マスク
+Check: Are Debug/Info/Warn/Error levels appropriate and structured logging used?
+Why: Mixed log levels and unstructured logs make troubleshooting difficult, monitoring inadequate
+Fix: Use structured logging libraries (zap/zerolog), unify levels, mask sensitive information
 
-**G-05: 宣言順序（ファイルレベル）**
+**G-05: Declaration Order (File Level)**
 
-Check: const→var→type（interface→struct）→func（constructor→methods→helpers）順か
-Why: 宣言順不統一で可読性低下、レビュー時見落としリスク増加
-Fix: ファイルレベルでconst→var→type→func順維持
+Check: Is order const→var→type (interface→struct)→func (constructor→methods→helpers)?
+Why: Inconsistent declaration order reduces readability, increases review oversight risk
+Fix: Maintain const→var→type→func order at file level
 
-**G-06: 宣言順序（グループ内順序）**
+**G-06: Declaration Order (Within Groups)**
 
-Check: 各グループ内がA→Zアルファベット順か（推奨）
-Why: 同カテゴリ内ばらつきで差分追跡困難、不整合、可読性低下
-Fix: グループ内A→Z順（推奨）、関連宣言グループ化許容
+Check: Is each group sorted A→Z alphabetically (recommended)?
+Why: Inconsistency within same category makes diff tracking difficult, causes inconsistencies, reduces readability
+Fix: A→Z order within groups (recommended), allow grouping related declarations

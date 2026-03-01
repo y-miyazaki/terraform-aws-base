@@ -1,37 +1,37 @@
 ### 1. Global / Base (G)
 
-**G-01: SCRIPT_DIR 設定+lib/all.sh source**
+**G-01: Set SCRIPT_DIR and Source lib/all.sh**
 
-Check: SCRIPT_DIRが設定されlib/all.shがsourceされているか
-Why: SCRIPT_DIR未設定・共通ライブラリ未読込で共通関数利用不可、実行ディレクトリ依存
+Check: Is SCRIPT_DIR set and lib/all.sh sourced?
+Why: Missing SCRIPT_DIR and common library prevents using common functions, creates execution directory dependency
 Fix: `SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"; source "${SCRIPT_DIR}/../lib/all.sh"`
 
-**G-02: 機密情報ハードコーディング禁止**
+**G-02: No Hardcoded Secrets**
 
-Check: API Key・パスワード・トークンがスクリプトに埋め込まれていないか
-Why: 機密情報埋め込みでセキュリティ侵害、認証情報漏洩、Git履歴汚染
-Fix: 環境変数・AWS Secrets Manager利用、定数削除
+Check: Are API keys, passwords, and tokens not embedded in scripts?
+Why: Embedded secrets cause security breaches, credential leakage, Git history pollution
+Fix: Use environment variables or AWS Secrets Manager, remove constants
 
-**G-03: 関数順序遵守**
+**G-03: Follow Function Order**
 
-Check: show_usage→parse_arguments→関数a-z順→main最後の順序か
-Why: 関数順序不統一でプロジェクト標準違反、可読性低下、レビュー効率低下
-Fix: show_usage→parse_arguments→関数a-z順→main最後配置
+Check: Is order show_usage→parse_arguments→functions a-z→main last?
+Why: Inconsistent function order violates project standards, reduces readability, lowers review efficiency
+Fix: Place show_usage→parse_arguments→functions a-z→main last
 
-**G-04: デッドコード削除**
+**G-04: Remove Dead Code**
 
-Check: コメントアウトコード・未使用関数・到達不能コードがないか
-Why: デッドコードで保守困難、混乱、不要行数増加
-Fix: git履歴利用、デッドコード削除、TODOコメント適切管理
+Check: Are there no commented code, unused functions, or unreachable code?
+Why: Dead code hinders maintenance, causes confusion, increases unnecessary lines
+Fix: Use git history, remove dead code, manage TODO comments appropriately
 
-**G-05: error_exit 利用エラーハンドリング**
+**G-05: Use error_exit for Error Handling**
 
-Check: エラー時にerror_exit関数を使用しているか
-Why: exit 1直接実行でクリーンアップ未実行、エラーメッセージ不統一、デバッグ困難
-Fix: error_exit関数利用、統一的エラー処理
+Check: Is error_exit function used on errors?
+Why: Direct exit 1 execution skips cleanup, inconsistent error messages, difficult debugging
+Fix: Use error_exit function for unified error handling
 
-**G-06: スクリプト冪等性**
+**G-06: Script Idempotency**
 
-Check: 再実行時にエラーなく動作するか
-Why: 再実行時エラー・副作用残留で運用困難、デプロイ失敗、リトライ不可
-Fix: 存在チェック、冪等操作、状態確認後実行
+Check: Does script run without errors on re-execution?
+Why: Re-execution errors and lingering side effects make operations difficult, cause deployment failures, prevent retries
+Fix: Check existence, use idempotent operations, execute after state verification

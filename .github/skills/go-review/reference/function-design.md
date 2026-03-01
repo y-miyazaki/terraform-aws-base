@@ -1,61 +1,61 @@
 ### 5. Function Design (FUNC)
 
-**FUNC-01: 関数分割適切**
+**FUNC-01: Appropriate Function Splitting**
 
-Check: 単一関数内に複数責任混在・ビジネスとインフラ層混在がないか
-Why: 複数責任混在でテスト困難、再利用不可、保守コスト増
-Fix: 単一責任原則適用、レイヤー分離、ヘルパー関数抽出
+Check: Are there no multiple responsibilities or mixed business/infrastructure layers in single functions?
+Why: Mixed responsibilities make testing difficult, prevent reuse, increase maintenance cost
+Fix: Apply single responsibility principle, separate layers, extract helper functions
 
-**FUNC-02: 引数設計適切**
+**FUNC-02: Appropriate Argument Design**
 
-Check: 位置引数過多・bool引数多用がないか、オプション対応は適切か
-Why: 引数過多・bool多用で呼び出し側誤用、拡張困難
-Fix: Functional Options Pattern利用、構造体引数化
+Check: Are there no excessive positional arguments or bool argument overuse, and are options handled appropriately?
+Why: Too many arguments and bool overuse cause caller misuse, difficult extension
+Fix: Use Functional Options Pattern, convert to struct arguments
 
-**FUNC-03: 戻り値設計**
+**FUNC-03: Return Value Design**
 
-Check: named return最小化・error最後配置・多値返却適切か
-Why: named return多用・error位置不統一でエラーハンドリング漏れ、API不整合
-Fix: named return最小化、error最後配置、戻り値2-3個以内
+Check: Are named returns minimized, error placed last, and multiple returns appropriate?
+Why: Named return overuse and inconsistent error position cause error handling omissions, API inconsistency
+Fix: Minimize named returns, place error last, keep return values to 2-3
 
-**FUNC-04: 純粋関数推奨**
+**FUNC-04: Recommend Pure Functions**
 
-Check: グローバル変数参照・副作用混在・非決定的動作がないか
-Why: 副作用混在でテスト困難、並列実行不可、予測不能
-Fix: 引数で全入力受取、副作用分離、依存性注入
+Check: Are there no global variable references, mixed side effects, or non-deterministic behavior?
+Why: Mixed side effects make testing difficult, prevent parallel execution, unpredictable
+Fix: Accept all inputs via arguments, separate side effects, dependency injection
 
-**FUNC-05: レシーバー設計適切**
+**FUNC-05: Appropriate Receiver Design**
 
-Check: ポインタ/値レシーバー混在・大きな値レシーバーがないか
-Why: レシーバー混在でコピーコスト、変更反映されない、可読性低下
-Fix: ポインタレシーバー原則、レシーバー名1-2文字統一
+Check: Are there no mixed pointer/value receivers or large value receivers?
+Why: Mixed receivers cause copy costs, changes not reflected, reduced readability
+Fix: Pointer receiver principle, unify receiver name to 1-2 characters
 
-**FUNC-06: メソッドセット設計**
+**FUNC-06: Method Set Design**
 
-Check: 関連性低いメソッド混在・God Object化・責任範囲不明確がないか
-Why: メソッド混在で保守困難、テスト範囲肥大、理解コスト増
-Fix: 凝集度高いメソッドセット、型分割、インターフェース分離
+Check: Are there no unrelated methods mixed, God Object formation, or unclear responsibility scope?
+Why: Mixed methods make maintenance difficult, bloat test scope, increase understanding cost
+Fix: Highly cohesive method sets, split types, segregate interfaces
 
-**FUNC-07: 初期化関数適切**
+**FUNC-07: Appropriate Initialization Functions**
 
-Check: New関数がエラー処理・バリデーション実装しているか
-Why: エラー処理無しで不正状態オブジェクト、初期化失敗検知不可
-Fix: NewXxx()でエラー返却、バリデーション実装、Must関数分離
+Check: Do New functions implement error handling and validation?
+Why: Missing error handling creates invalid state objects, initialization failure undetectable
+Fix: Return error from NewXxx(), implement validation, separate Must functions
 
-**FUNC-08: 高次関数活用**
+**FUNC-08: Leverage Higher-Order Functions**
 
-Check: コールバック・関数ポインタが適切に活用されているか
-Why: コールバック未使用で拡張性低下、重複コード、柔軟性欠如
-Fix: 戦略パターン適用、Functional Options、コールバック活用
+Check: Are callbacks and function pointers appropriately utilized?
+Why: Unused callbacks reduce extensibility, duplicate code, lack flexibility
+Fix: Apply strategy pattern, Functional Options, leverage callbacks
 
-**FUNC-09: ジェネリクス適切利用**
+**FUNC-09: Appropriate Generics Usage**
 
-Check: interface{}多用・不要なジェネリクスがないか
-Why: interface{}多用で型安全性欠如、過度なジェネリクスで複雑度増加
-Fix: 型パラメータ適切使用、constraint定義、過度な抽象化回避
+Check: Are there no interface{} overuse or unnecessary generics?
+Why: interface{} overuse lacks type safety, excessive generics increase complexity
+Fix: Appropriate type parameter usage, define constraints, avoid excessive abstraction
 
-**FUNC-10: 関数ドキュメント充実**
+**FUNC-10: Comprehensive Function Documentation**
 
-Check: 全公開関数にgodoc・引数戻り値説明があるか
-Why: godoc未記載でAPI理解困難、誤用増加、保守負荷
-Fix: 全公開関数godoc、引数・戻り値・エラー条件明記
+Check: Do all public functions have godoc with argument and return value descriptions?
+Why: Missing godoc makes API understanding difficult, increases misuse, maintenance burden
+Fix: godoc for all public functions, specify arguments, return values, error conditions

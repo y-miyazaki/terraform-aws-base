@@ -1,0 +1,22 @@
+# Manual ECS deployment workflow for application component in dev environment
+name: cd-wd-application-ecs-dev
+
+on:
+  workflow_dispatch: # Manual deployment workflow
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  ecs-deploy:
+    permissions:
+      contents: read
+      id-token: write
+    uses: ./.github/workflows/reusable-cd-aws-ecs.yaml
+    with:
+      ecs_service_base_dir: "ecs/ecs-service/test-server"
+      environment: "dev"
+    secrets:
+      AWS_IAM_ROLE_ARN: ${{ secrets.AWS_IAM_ROLE_ARN }}
+      AWS_REGION: ${{ secrets.AWS_REGION }}

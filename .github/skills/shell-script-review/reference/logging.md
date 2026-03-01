@@ -1,43 +1,43 @@
 ### 10. Logging (LOG)
 
-**LOG-01: log_message/echo_section 活用**
+**LOG-01: Leverage log_message/echo_section**
 
-Check: log_message・echo_section関数が活用されているか
-Why: echo直接出力でログフォーマット不統一、timestamp欠如、監視困難
-Fix: log_message利用、echo_section区切り、プロジェクト標準遵守
+Check: Are log_message and echo_section functions utilized?
+Why: Direct echo output causes inconsistent log format, missing timestamps, difficult monitoring
+Fix: Use log_message, echo_section separators, follow project standards
 
-**LOG-02: stdout/stderr 分離**
+**LOG-02: Separate stdout/stderr**
 
-Check: エラーが>&2、情報がstdoutに明確分離されているか
-Why: エラーメッセージstdout出力でエラー検知困難、ログ解析困難
-Fix: エラーは`>&2`、情報はstdout、明確分離
+Check: Are errors clearly separated to >&2 and info to stdout?
+Why: Error messages to stdout make error detection difficult, complicate log analysis
+Fix: Errors to `>&2`, info to stdout, clear separation
 
-**LOG-03: ログレベル実装**
+**LOG-03: Implement Log Levels**
 
-Check: INFO・WARN・ERRORのログレベルが実装されているか
-Why: ログレベルなしでログノイズ、重要ログ埋没、監視困難
-Fix: INFO/WARN/ERRORレベル、log_message引数レベル指定
+Check: Are INFO, WARN, ERROR log levels implemented?
+Why: Missing log levels cause log noise, important logs buried, difficult monitoring
+Fix: Implement INFO/WARN/ERROR levels, specify level in log_message argument
 
-**LOG-04: 構造化ログ**
+**LOG-04: Structured Logging**
 
-Check: timestamp・レベル・メッセージの構造化ログ形式か
-Why: 非構造化ログでログ解析困難、時系列追跡不可
-Fix: `[timestamp] [LEVEL] message`形式、構造化ログ
+Check: Is structured log format with timestamp, level, message used?
+Why: Unstructured logs make log analysis difficult, prevent chronological tracking
+Fix: Use `[timestamp] [LEVEL] message` format, structured logging
 
-**LOG-05: 機密情報マスク**
+**LOG-05: Mask Sensitive Information**
 
-Check: パスワード・トークンがログ出力前にマスクされているか
-Why: 機密情報ログ出力で認証情報漏洩、セキュリティリスク
-Fix: 機密変数`***`マスク、ログ出力前フィルタ
+Check: Are passwords and tokens masked before logging?
+Why: Logging sensitive information causes credential leakage, security risks
+Fix: Mask sensitive variables with `***`, filter before logging
 
-**LOG-06: echo_section セクション区切り**
+**LOG-06: Section Separators with echo_section**
 
-Check: echo_sectionで処理単位の区切りがあるか
-Why: セクション区切りなしでログ追跡困難、デバッグ困難
-Fix: echo_section利用、処理単位区切り、視認性向上
+Check: Are processing units separated with echo_section?
+Why: Missing section separators make log tracking difficult, debugging hard
+Fix: Use echo_section, separate processing units, improve visibility
 
-**LOG-07: verbose 実装**
+**LOG-07: Implement verbose**
 
-Check: -v/--verboseオプションで詳細ログ制御があるか
-Why: デバッグログ本番出力でログ肥大化、重要ログ埋没
-Fix: -v/--verboseオプション、条件的詳細ログ、レベル制御
+Check: Is detailed log control available with -v/--verbose option?
+Why: Debug logs in production cause log bloat, important logs buried
+Fix: Add -v/--verbose option, conditional detailed logging, level control

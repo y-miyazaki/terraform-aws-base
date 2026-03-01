@@ -2,21 +2,18 @@
 
 **P-01: Avoid Excessive dynamic Blocks**
 
-- Problem: dynamic block overuse, over-abstraction
-- Impact: Reduced readability, complexity, debugging difficulties
-- Recommendation: Minimal usage, prefer static declarations, prioritize clarity
-- Check: Dynamic blocks used only when necessary
+Check: Are dynamic blocks used only when necessary?
+Why: Dynamic block overuse and over-abstraction cause reduced readability, complexity, and debugging difficulties
+Fix: Use minimally, prefer static declarations, prioritize clarity
 
 **P-02: Stable for_each Keys**
 
-- Problem: Unstable key usage, values prone to change
-- Impact: Resource recreation, unexpected deletion, state inconsistencies
-- Recommendation: Use unchanging unique values as keys, prefer IDs or names
-- Check: for_each keys are stable identifiers
+Check: Are for_each keys stable identifiers?
+Why: Unstable key usage and values prone to change cause resource recreation, unexpected deletion, and state inconsistencies
+Fix: Use unchanging unique values as keys, prefer IDs or names
 
 **P-03: Avoid count = 0/1 Toggle Chains**
 
-- Problem: Complex conditional branching, count chains
-- Impact: Understanding difficulties, bug-prone, maintenance difficulties
-- Recommendation: Simplify logic, split modules, organize conditions
-- Check: Conditional logic is straightforward
+Check: Is conditional logic straightforward?
+Why: Complex conditional branching and count chains cause understanding difficulties, bug-prone code, and maintenance difficulties
+Fix: Simplify logic, split modules, organize conditions

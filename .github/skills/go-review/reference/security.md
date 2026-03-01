@@ -1,49 +1,49 @@
 ### 7. Security (SEC)
 
-**SEC-01: 入力値検証**
+**SEC-01: Input Validation**
 
-Check: 入力値バリデーション・prepared statement・サニタイズ実装があるか
-Why: 入力値無検証・SQL文字列連結でSQL injection・XSS攻撃、データ改ざん
-Fix: prepared statement必須、バリデーション実装、サニタイズ実装
+Check: Are input validation, prepared statements, and sanitization implemented?
+Why: Unvalidated input and SQL string concatenation enable SQL injection, XSS attacks, data tampering
+Fix: Mandatory prepared statements, implement validation, implement sanitization
 
-**SEC-02: 出力値サニタイズ**
+**SEC-02: Output Sanitization**
 
-Check: HTMLエスケープ・JSONインジェクション対策・CRLF injection対策があるか
-Why: エスケープ未実装でXSS脆弱性、レスポンス改ざん、セッションハイジャック
-Fix: html/template利用、出力コンテキスト応じたエスケープ
+Check: Are HTML escaping, JSON injection prevention, and CRLF injection prevention present?
+Why: Missing escaping causes XSS vulnerabilities, response tampering, session hijacking
+Fix: Use html/template, context-appropriate escaping for output
 
-**SEC-03: 暗号化適切**
+**SEC-03: Appropriate Encryption**
 
-Check: TLS 1.2以上・AES-256-GCM・crypto/rand使用されているか
-Why: 平文通信・弱い暗号化で盗聴、中間者攻撃、データ漏洩
-Fix: TLS 1.2以上必須、AES-256-GCM利用、crypto/rand使用
+Check: Are TLS 1.2+, AES-256-GCM, and crypto/rand used?
+Why: Plaintext communication and weak encryption enable eavesdropping, MITM attacks, data leakage
+Fix: Mandatory TLS 1.2+, use AES-256-GCM, use crypto/rand
 
-**SEC-04: 認証・認可実装**
+**SEC-04: Authentication and Authorization Implementation**
 
-Check: 全エンドポイント認証・JWT署名検証・RBAC実装があるか
-Why: 認証スキップ・検証不足で不正アクセス、権限昇格、データ漏洩
-Fix: 全エンドポイント認証必須、JWT署名検証、RBAC実装
+Check: Are all endpoints authenticated, JWT signature verified, and RBAC implemented?
+Why: Skipped authentication and insufficient verification enable unauthorized access, privilege escalation, data leakage
+Fix: Mandatory authentication for all endpoints, JWT signature verification, RBAC implementation
 
-**SEC-05: レート制限・DOS対策**
+**SEC-05: Rate Limiting and DOS Prevention**
 
-Check: rate limiter・タイムアウト設定・リクエストサイズ制限があるか
-Why: リクエスト制限無しでDOS攻撃、サービス停止、リソース枯渇
-Fix: rate limiter実装、タイムアウト設定、リクエストサイズ制限
+Check: Are rate limiters, timeout settings, and request size limits present?
+Why: Missing request limits enable DOS attacks, service outages, resource exhaustion
+Fix: Implement rate limiter, set timeouts, limit request sizes
 
-**SEC-06: ログセキュリティ**
+**SEC-06: Log Security**
 
-Check: 機密情報マスク関数・パスワード/トークンマスクがあるか
-Why: パスワード・トークンログ出力で認証情報漏洩、GDPR違反
-Fix: 機密情報マスク関数実装、構造化ログ、ログローテーション
+Check: Are sensitive information masking functions and password/token masking present?
+Why: Logging passwords and tokens causes credential leakage, GDPR violations
+Fix: Implement sensitive information masking functions, structured logging, log rotation
 
-**SEC-07: 安全デフォルト値**
+**SEC-07: Secure Defaults**
 
-Check: 最小権限原則・本番環境debug無効・明示的CORS設定があるか
-Why: セキュアでないデフォルトでセキュリティ侵害、攻撃成功率上昇
-Fix: 最小権限原則、本番環境debug無効、明示的CORS設定
+Check: Are least privilege principle, production debug disabled, and explicit CORS settings present?
+Why: Insecure defaults cause security breaches, increased attack success rate
+Fix: Least privilege principle, disable production debug, explicit CORS settings
 
-**SEC-08: OWASP準拠**
+**SEC-08: OWASP Compliance**
 
-Check: OWASP Top 10対応・Security Headers設定・CSP設定があるか
-Why: OWASP未対応で既知脆弱性放置、攻撃リスク増大
-Fix: OWASP Top 10チェック、Security Headers設定、定期診断
+Check: Are OWASP Top 10 addressed, Security Headers set, and CSP configured?
+Why: OWASP non-compliance leaves known vulnerabilities, increases attack risk
+Fix: Check OWASP Top 10, set Security Headers, regular assessments

@@ -1,37 +1,25 @@
 ### 1. Global / Base (G)
 
-**G-01: ワークフロー名の明確化**
+**G-01: Clear Workflow Naming**
 
-Check: ワークフロー名が明確で目的を表現しているか
-Why: 名前欠如・不明瞭で実行判別困難、トリアージ遅延
-Fix: 簡潔な`name`設定（例: `terraform/init (audit)`）
+Check: Is the workflow name clear and expressive of its purpose?
+Why: Missing/unclear names make execution identification difficult, delay triage
+Fix: Set concise `name` (e.g., `terraform/init (audit)`)
 
-**G-02: トリガー (on) の限定**
+**G-02: Limit Triggers (on)**
 
-Check: トリガーが適切に絞り込まれているか
-Why: トリガー過度に広く不要実行でコスト増、ノイズ発生
-Fix: `paths`/`types`でトリガー絞り込み
+Check: Are triggers appropriately narrowed down?
+Why: Overly broad triggers cause unnecessary executions, increase costs, generate noise
+Fix: Narrow triggers with `paths`/`types`
 
-**G-03: トップレベル permissions の最小化**
+**G-03: Step Clarification and Order Guarantee**
 
-Check: トップレベルpermissionsが最小権限で明示されているか
-Why: permissions未設定・過剰で侵害時の被害拡大（シークレット露出等）
-Fix: トップレベルで最小権限明示（例: `contents: read`）
+Check: Does each step have a `name` and logical order?
+Why: Unclear steps/mixed order weakens builds, reduces maintainability
+Fix: Add `name`, ensure logical order, separate `uses`/`run` roles
 
-**G-04: ステップの明確化・順序保証**
+**G-04: Explicit Environment and Approval Flow**
 
-Check: 各ステップに`name`があり論理的順序か
-Why: ステップ不明瞭・順序混在でビルド脆弱化、保守性低下
-Fix: `name`付与と論理的順序、`uses`/`run`の役割分離
-
-**G-05: サードパーティアクションのバージョン管理**
-
-Check: 重要アクションがSHA固定されているか
-Why: バージョン未固定で挙動変化、サプライチェーンリスク
-Fix: 重要アクションはSHA固定、定期レビュー、Dependabot監視
-
-**G-06: 環境 (environment) と承認フローの明示**
-
-Check: 本番環境ジョブに`environment`設定と承認があるか
-Why: environment未設定・承認欠落で本番誤実行、シークレット漏洩リスク
-Fix: 重要ジョブに`environment`設定、承認者指定
+Check: Do production jobs have `environment` configuration and approval?
+Why: Missing environment/approval causes accidental production execution, secret leak risks
+Fix: Set `environment` for critical jobs, specify approvers

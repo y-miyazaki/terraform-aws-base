@@ -1,61 +1,61 @@
 ### 11. Documentation (DOC)
 
-**DOC-01: パッケージドキュメント存在**
+**DOC-01: Package Documentation Exists**
 
-Check: package docコメント・パッケージ目的・使用方法記載があるか
-Why: package docコメント欠如でAPI理解困難、誤用増加、オンボーディング遅延
-Fix: package docコメント追加、目的・責任・使用例記載
+Check: Are package doc comments, package purpose, and usage documented?
+Why: Missing package doc comments make API understanding difficult, increase misuse, delay onboarding
+Fix: Add package doc comments, document purpose, responsibility, usage examples
 
-**DOC-02: godoc公開関数ドキュメント**
+**DOC-02: godoc for Public Functions**
 
-Check: 全公開API godoc記載・引数戻り値エラー条件明記があるか
-Why: 公開関数コメントなし・説明不足でAPI使用方法不明、誤用
-Fix: 全公開API godoc記載、引数・戻り値・エラー条件明記
+Check: Are all public APIs documented with godoc, arguments, return values, and error conditions specified?
+Why: Missing or insufficient public function comments make API usage unclear, cause misuse
+Fix: Document all public APIs with godoc, specify arguments, return values, error conditions
 
-**DOC-03: 複雑ロジックコメント**
+**DOC-03: Complex Logic Comments**
 
-Check: Why重視コメント・アルゴリズム説明・前提条件明記があるか
-Why: アルゴリズム説明なし・前提条件不明で理解困難、バグ混入
-Fix: Why重視コメント、アルゴリズム説明、前提条件明記
+Check: Are Why-focused comments, algorithm explanations, and preconditions documented?
+Why: Missing algorithm explanations and unclear preconditions make understanding difficult, introduce bugs
+Fix: Why-focused comments, algorithm explanations, document preconditions
 
-**DOC-04: 構造体フィールドコメント**
+**DOC-04: Struct Field Comments**
 
-Check: 各フィールドコメント・制約デフォルト値必須性明記があるか
-Why: フィールド目的不明・制約条件不明で誤用、バリデーション漏れ
-Fix: 各フィールドコメント、制約・デフォルト値・必須性明記
+Check: Are each field commented with constraints, default values, and required status?
+Why: Unclear field purpose and constraints cause misuse, validation omissions
+Fix: Comment each field, specify constraints, default values, required status
 
-**DOC-05: 定数・変数説明**
+**DOC-05: Constant and Variable Descriptions**
 
-Check: 定数/変数コメント・単位制約理由記載があるか
-Why: magic number・定数目的不明で意図不明、変更影響不明
-Fix: 定数/変数コメント、単位・制約・理由記載
+Check: Are constants/variables commented with units, constraints, and reasons?
+Why: Magic numbers and unclear constant purposes make intent unclear, change impact unknown
+Fix: Comment constants/variables, document units, constraints, reasons
 
-**DOC-06: 英語コメント統一**
+**DOC-06: English Comment Consistency**
 
-Check: 英語統一・文法チェック・簡潔明瞭な記述か
-Why: 日英混在・文法誤りで可読性低下、国際化困難
-Fix: 英語統一、文法チェック、簡潔明瞭な記述
+Check: Are comments unified in English, grammar-checked, and concise?
+Why: Mixed languages and grammar errors reduce readability, make internationalization difficult
+Fix: Unify in English, check grammar, write concisely and clearly
 
-**DOC-07: README.md整備**
+**DOC-07: README.md Maintenance**
 
-Check: 目的前提セットアップ使用例貢献方法記載があるか
-Why: README不足・セットアップ手順不明でオンボーディング遅延、誤った使用
-Fix: 目的・前提・セットアップ・使用例・貢献方法記載
+Check: Are purpose, prerequisites, setup, usage examples, and contribution methods documented?
+Why: Insufficient README and unclear setup procedures delay onboarding, cause incorrect usage
+Fix: Document purpose, prerequisites, setup, usage examples, contribution methods
 
-**DOC-08: API仕様書（OpenAPI）**
+**DOC-08: API Specification (OpenAPI)**
 
-Check: OpenAPI 3.0記述・swag利用・自動生成検証があるか
-Why: API仕様書なし・エンドポイント不明でフロントエンド開発困難、API誤用
-Fix: OpenAPI 3.0記述、swag利用、自動生成・検証
+Check: Are OpenAPI 3.0 descriptions, swag usage, and auto-generation verification present?
+Why: Missing API specs and unclear endpoints make frontend development difficult, cause API misuse
+Fix: Describe with OpenAPI 3.0, use swag, auto-generate and verify
 
-**DOC-09: 運用ドキュメント**
+**DOC-09: Operations Documentation**
 
-Check: デプロイ手順・監視項目・障害対応手順・ログ解析方法記載があるか
-Why: 運用手順不明・トラブルシュート情報なしで運用困難、障害対応遅延
-Fix: 運用ドキュメント整備、デプロイ・監視・障害対応・ログ解析記載
+Check: Are deployment procedures, monitoring items, incident response procedures, and log analysis methods documented?
+Why: Unclear operations procedures and missing troubleshooting info make operations difficult, delay incident response
+Fix: Maintain operations documentation, document deployment, monitoring, incident response, log analysis
 
 **DOC-10: CHANGELOG**
 
-Check: Keep a Changelog形式・セマンティックバージョニング・破壊的変更明記があるか
-Why: 変更履歴なし・破壊的変更不明で影響範囲不明、アップグレード困難
-Fix: Keep a Changelog形式、セマンティックバージョニング、破壊的変更明記
+Check: Are Keep a Changelog format, semantic versioning, and breaking changes documented?
+Why: Missing change history and unclear breaking changes make impact scope unknown, upgrades difficult
+Fix: Keep a Changelog format, semantic versioning, document breaking changes

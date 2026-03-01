@@ -143,15 +143,10 @@ function main {
     validate_dependencies "aws" "jq"
 
     # Check AWS credentials before any AWS CLI usage
-    if ! check_aws_credentials; then
-        error_exit "AWS credentials are not set or invalid."
-    fi
+    check_aws_credentials || error_exit "AWS credentials are not set or invalid."
 
     # Get AWS account ID after credential validation
-    AWS_ACCOUNT_ID=$(get_aws_account_id)
-    if [[ -z "$AWS_ACCOUNT_ID" ]]; then
-        error_exit "Failed to get AWS account ID"
-    fi
+    AWS_ACCOUNT_ID=$(get_aws_account_id) || error_exit "Failed to get AWS account ID"
 
     # Log script start
     echo_section "Starting QuickSight namespace deletion"

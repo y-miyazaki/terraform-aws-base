@@ -47,9 +47,9 @@
     "-v",
     "${localWorkspaceFolder}/env/common/tmp/.gitconfig:/home/vscode/.gitconfig",
     "-v",
-    "${localWorkspaceFolder}/env/common/tmp/.aws:/home/vscode/.aws",
+    "${localWorkspaceFolder}/env/common/tmp/gh:/home/vscode/.config/gh",
     "-v",
-    "${localWorkspaceFolder}/env/common/tmp/gh:/home/vscode/.config/gh"
+    "${localWorkspaceFolder}/env/common/tmp/.aws:/home/vscode/.aws"
   ],
   "postCreateCommand": "/bin/bash env/common/scripts/init.sh",
   "workspaceMount": "",

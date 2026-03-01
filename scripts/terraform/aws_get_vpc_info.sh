@@ -29,7 +29,7 @@ source "${SCRIPT_DIR}/../lib/all.sh"
 # Global variables and default values
 #######################################
 VPC_ID=""
-REGION="${AWS_DEFAULT_REGION:-ap-northeast-1}"
+AWS_REGION="${AWS_REGION:-}"
 
 #######################################
 # show_usage: Display script usage information
@@ -134,7 +134,7 @@ function parse_arguments {
 #######################################
 function check_ec2_instances {
     echo_section "EC2 Instances"
-    if aws ec2 describe-instances --region "$REGION" --filters 'Name=vpc-id,Values='"$VPC_ID" | grep InstanceId; then
+    if aws ec2 describe-instances --region "$AWS_REGION" --filters 'Name=vpc-id,Values='"$VPC_ID" | grep InstanceId; then
         log "INFO" "EC2 instances found"
     else
         log "INFO" "No EC2 instances found"
@@ -163,7 +163,7 @@ function check_ec2_instances {
 #######################################
 function check_nat_gateways {
     echo_section "NAT Gateways"
-    if aws ec2 describe-nat-gateways --region "$REGION" --filter 'Name=vpc-id,Values='"$VPC_ID" | grep NatGatewayId; then
+    if aws ec2 describe-nat-gateways --region "$AWS_REGION" --filter 'Name=vpc-id,Values='"$VPC_ID" | grep NatGatewayId; then
         log "INFO" "NAT gateways found"
     else
         log "INFO" "No NAT gateways found"
@@ -192,7 +192,7 @@ function check_nat_gateways {
 #######################################
 function check_network_interfaces {
     echo_section "Network Interfaces"
-    if aws ec2 describe-network-interfaces --region "$REGION" --filters 'Name=vpc-id,Values='"$VPC_ID" | grep NetworkInterfaceId; then
+    if aws ec2 describe-network-interfaces --region "$AWS_REGION" --filters 'Name=vpc-id,Values='"$VPC_ID" | grep NetworkInterfaceId; then
         log "INFO" "Network interfaces found"
     else
         log "INFO" "No network interfaces found"
@@ -221,7 +221,7 @@ function check_network_interfaces {
 #######################################
 function check_vpn_gateways {
     echo_section "VPN Gateways"
-    if aws ec2 describe-vpn-gateways --region "$REGION" --filters 'Name=attachment.vpc-id,Values='"$VPC_ID" | grep VpnGatewayId; then
+    if aws ec2 describe-vpn-gateways --region "$AWS_REGION" --filters 'Name=attachment.vpc-id,Values='"$VPC_ID" | grep VpnGatewayId; then
         log "INFO" "VPN gateways found"
     else
         log "INFO" "No VPN gateways found"
@@ -250,7 +250,7 @@ function check_vpn_gateways {
 #######################################
 function check_vpc_peering {
     echo_section "VPC Peering Connections"
-    if aws ec2 describe-vpc-peering-connections --region "$REGION" --filters 'Name=requester-vpc-info.vpc-id,Values='"$VPC_ID" | grep VpcPeeringConnectionId; then
+    if aws ec2 describe-vpc-peering-connections --region "$AWS_REGION" --filters 'Name=requester-vpc-info.vpc-id,Values='"$VPC_ID" | grep VpcPeeringConnectionId; then
         log "INFO" "VPC peering connections found"
     else
         log "INFO" "No VPC peering connections found"
@@ -285,14 +285,15 @@ function main {
     validate_dependencies "aws"
 
     # Check AWS credentials before any AWS CLI usage
-    if ! check_aws_credentials; then
-        error_exit "AWS credentials are not set or invalid."
-    fi
+    check_aws_credentials || error_exit "AWS credentials are not set or invalid."
+
+    # Auto-detect AWS_REGION from AWS CLI if not provided
+    AWS_REGION="${AWS_REGION:-$(get_aws_region)}"
 
     # Log script start
     echo_section "VPC Resource Information"
     log "INFO" "Target VPC: $VPC_ID"
-    log "INFO" "Target region: $REGION"
+    log "INFO" "Target region: $AWS_REGION"
 
     # Check all VPC-related resources
     check_vpc_peering

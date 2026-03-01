@@ -1,37 +1,37 @@
 ### 3. Tool Integration (TOOL)
 
-**TOOL-01: PR diff lint (Reviewdog 等) 設定**
+**TOOL-01: PR Diff Lint (Reviewdog, etc.) Configuration**
 
-Check: PRコメント型lintツールが設定されているか
-Why: PR diff lint未設定で問題のレビュー遅延、修正コスト増
-Fix: Reviewdog等でPR上に自動コメント
+Check: Are PR comment-based lint tools configured?
+Why: Missing PR diff lint delays problem review, increases fix costs
+Fix: Auto-comment on PRs with Reviewdog, etc.
 
-**TOOL-02: Reviewdog の reporter 設定**
+**TOOL-02: Reviewdog Reporter Configuration**
 
-Check: Reviewdogの`reporter`が適切に設定されているか
-Why: reporter未指定で可視化不足、対応漏れリスク
-Fix: `reporter: github-pr-review`などで見える化
+Check: Is Reviewdog's `reporter` properly configured?
+Why: Unspecified reporter reduces visibility, risks missed responses
+Fix: Improve visibility with `reporter: github-pr-review`, etc.
 
-**TOOL-03: カバレッジ報告のトークン管理**
+**TOOL-03: Coverage Report Token Management**
 
-Check: カバレッジトークンがシークレット化され最小権限か
-Why: トークン不適切管理でトークン漏洩、報告失敗
-Fix: トークンのシークレット化、最小権限化、成功確認
+Check: Are coverage tokens secretized with minimal permissions?
+Why: Improper token management causes token leaks, report failures
+Fix: Secretize tokens, minimize permissions, verify success
 
-**TOOL-04: Artifact の命名と保護**
+**TOOL-04: Artifact Naming and Protection**
 
-Check: アーティファクト命名規約があり機密情報が除外されているか
-Why: 命名・保持未整備でストレージ肥大化、機密露出リスク
-Fix: 命名規約と`retention-days`設定、機密除外
+Check: Are artifact naming conventions established and sensitive information excluded?
+Why: Missing naming/retention causes storage bloat, sensitive exposure risks
+Fix: Establish naming conventions, set `retention-days`, exclude sensitive data
 
-**TOOL-05: Artifact 保持期間とローテーション**
+**TOOL-05: Artifact Retention Period and Rotation**
 
-Check: アーティファクトに適切な`retention-days`が設定されているか
-Why: 保持期間未設定・過長でストレージ浪費、古い情報露出
-Fix: `retention-days`設定と定期クリーンアップ
+Check: Is appropriate `retention-days` set for artifacts?
+Why: Missing/excessive retention wastes storage, exposes old information
+Fix: Set `retention-days`, implement periodic cleanup
 
-**TOOL-06: actions/cache のキー設計**
+**TOOL-06: actions/cache Key Design**
 
-Check: キャッシュキーが安定ハッシュで設計され`restore-keys`があるか
-Why: キャッシュキー設計不備でキャッシュミス、再構築、時間増加
-Fix: `runner.os`プレフィックス＋安定ハッシュ、`restore-keys`設定
+Check: Are cache keys designed with stable hashes and `restore-keys` present?
+Why: Poor cache key design causes cache misses, rebuilds, increased time
+Fix: Use `runner.os` prefix + stable hash, set `restore-keys`

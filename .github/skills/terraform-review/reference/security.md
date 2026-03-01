@@ -4,35 +4,30 @@
 
 **SEC-01: KMS Encryption (SNS/S3/Logs/StateMachines) [AWS-specific]**
 
-- Problem: Missing encryption, plaintext data storage
-- Impact: Data leak risk, compliance violations, audit failures
-- Recommendation: Enable CMK/AWS managed key encryption, set kms_key_id
-- Check: Encryption enabled for sensitive resources
+Check: Is encryption enabled for sensitive resources?
+Why: Missing encryption and plaintext data storage cause data leak risk, compliance violations, and audit failures
+Fix: Enable CMK/AWS managed key encryption, set kms_key_id
 
 **SEC-02: IAM Least Privilege**
 
-- Problem: Excessive permissions, wildcard (\*) overuse
-- Impact: Increased damage on breach, privilege escalation, information leakage
-- Recommendation: Limit to necessary actions/resources, document reason for `*` usage
-- Check: IAM policies follow least privilege; wildcards justified
+Check: Do IAM policies follow least privilege; are wildcards justified?
+Why: Excessive permissions and wildcard (\*) overuse increase damage on breach, enable privilege escalation, and cause information leakage
+Fix: Limit to necessary actions/resources, document reason for `*` usage
 
 **SEC-03: Resource Policy with Condition**
 
-- Problem: Insufficient resource policy restrictions, missing Condition
-- Impact: Unintended source access, unauthorized use, security risks
-- Recommendation: Add `Condition` block with `SourceArn`/`SourceAccount` restrictions
-- Check: Resource policies (SNS, SQS) include appropriate conditions
+Check: Do resource policies (SNS, SQS) include appropriate conditions?
+Why: Insufficient resource policy restrictions and missing Condition blocks allow unintended source access, unauthorized use, and security risks
+Fix: Add `Condition` block with `SourceArn`/`SourceAccount` restrictions
 
 **SEC-04: No Plaintext Secrets**
 
-- Problem: Plaintext secrets in code, hardcoded credentials
-- Impact: Leak risk, Git history persistence, security breach
-- Recommendation: Use Secrets Manager/SSM Parameter Store, reference via data sources
-- Check: All secrets retrieved from secure stores
+Check: Are all secrets retrieved from secure stores?
+Why: Plaintext secrets in code and hardcoded credentials cause leak risk, Git history persistence, and security breaches
+Fix: Use Secrets Manager/SSM Parameter Store, reference via data sources
 
 **SEC-05: Appropriate Logging Configuration**
 
-- Problem: Inadequate logging, disabled log output, improper retention
-- Impact: No audit trail, troubleshooting difficulties, compliance violations
-- Recommendation: Proper log output/retention settings, CloudWatch Logs integration
-- Check: CloudTrail, CloudWatch Logs properly configured
+Check: Are CloudTrail and CloudWatch Logs properly configured?
+Why: Inadequate logging, disabled log output, and improper retention leave no audit trail, create troubleshooting difficulties, and cause compliance violations
+Fix: Configure proper log output/retention settings, integrate CloudWatch Logs

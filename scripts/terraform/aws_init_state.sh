@@ -36,7 +36,7 @@ source "${SCRIPT_DIR}/../lib/all.sh"
 IS_BUCKET_AUTO_HASH=0
 BUCKET=""
 REGION=""
-AWS_ID=""
+AWS_ACCOUNT_ID=""
 
 #######################################
 # show_usage: Display script usage information
@@ -137,7 +137,7 @@ function parse_arguments {
 # Global Variables:
 #   SCRIPT_DIR - Script directory path
 #   BUCKET - S3 bucket name
-#   AWS_ID - AWS account ID
+#   AWS_ACCOUNT_ID - AWS account ID
 #
 # Returns:
 #   Exits with error if policy application fails
@@ -154,7 +154,7 @@ function apply_bucket_policy {
     if [ -f "${policy_template}" ]; then
         log "INFO" "Creating bucket policy from template"
         local policy
-        policy=$(sed "s/BUCKET_NAME/${BUCKET}/g; s/AWS_ACCOUNT_ID/${AWS_ID}/g" "${policy_template}")
+        policy=$(sed "s/BUCKET_NAME/${BUCKET}/g; s/AWS_ACCOUNT_ID/${AWS_ACCOUNT_ID}/g" "${policy_template}")
 
         if ! echo "$policy" | aws s3api put-bucket-policy --bucket "${BUCKET}" --policy file:///dev/stdin; then
             error_exit "Failed to apply bucket policy"
@@ -287,7 +287,7 @@ function create_s3_bucket {
 # Global Variables:
 #   BUCKET - S3 bucket name
 #   REGION - AWS region
-#   AWS_ID - AWS account ID
+#   AWS_ACCOUNT_ID - AWS account ID
 #
 # Returns:
 #   Outputs completion information to stdout
@@ -302,7 +302,7 @@ function display_completion_summary {
     echo ""
     echo "Bucket name:    ${BUCKET}"
     echo "AWS region:     ${REGION}"
-    echo "AWS account:    ${AWS_ID}"
+    echo "AWS account:    ${AWS_ACCOUNT_ID}"
     echo ""
     echo "To use this state bucket in Terraform, add the following backend configuration:"
     echo ""
@@ -346,33 +346,6 @@ function generate_bucket_name {
         BUCKET="${BUCKET}-${random_hash}"
         log "INFO" "Generated bucket name: $BUCKET"
     fi
-}
-
-#######################################
-# get_aws_account_info: Get AWS account information
-#
-# Description:
-#   Retrieves the AWS account ID using the get_aws_account_id function
-#
-# Arguments:
-#   None
-#
-# Global Variables:
-#   AWS_ID - Set to the retrieved AWS account ID
-#
-# Returns:
-#   Exits with error if account ID cannot be retrieved
-#
-# Usage:
-#   get_aws_account_info
-#
-#######################################
-function get_aws_account_info {
-    echo_section "Retrieving AWS Account information"
-    if ! AWS_ID=$(get_aws_account_id); then
-        error_exit "Failed to retrieve AWS Account ID. Check your AWS credentials."
-    fi
-    log "INFO" "AWS Account ID: ${AWS_ID}"
 }
 
 #######################################
@@ -420,7 +393,7 @@ function verify_bucket_config {
 #   BUCKET - S3 bucket name
 #   REGION - AWS region
 #   IS_BUCKET_AUTO_HASH - Flag for hash suffix
-#   AWS_ID - AWS account ID
+#   AWS_ACCOUNT_ID - AWS account ID
 #
 # Returns:
 #   Exits with status 0 on success, non-zero on failure
@@ -437,15 +410,14 @@ function main {
     validate_dependencies "aws" "jq"
 
     # Check AWS credentials before any AWS CLI usage
-    if ! check_aws_credentials; then
-        error_exit "AWS credentials are not set or invalid."
-    fi
+    check_aws_credentials || error_exit "AWS credentials are not set or invalid."
 
     # Generate unique bucket name if requested
     generate_bucket_name
 
-    # Get AWS account information
-    get_aws_account_info
+    # Get AWS account ID
+    AWS_ACCOUNT_ID=$(get_aws_account_id) || error_exit "Failed to retrieve AWS account ID. Check your AWS credentials."
+    log "INFO" "AWS Account ID: ${AWS_ACCOUNT_ID}"
 
     # Create S3 bucket
     create_s3_bucket

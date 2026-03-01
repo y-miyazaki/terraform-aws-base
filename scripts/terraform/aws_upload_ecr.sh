@@ -2,12 +2,18 @@
 #######################################
 # Description: Upload Docker image to AWS ECR with authentication and build support
 #
+# Prerequisites:
+#   - For build mode (no -i option): Dockerfile must exist at specified path
+#   - For existing image mode (-i option): Docker image must exist locally
+#   - AWS credentials must be configured (aws sts get-caller-identity must work)
+#
 # Usage: ./aws_upload_ecr.sh [options] <repository_name>
 #   options:
 #     -h, --help       Display this help message
 #     -v, --verbose    Enable verbose output
 #     -d, --dry-run    Run in dry-run mode (no changes made)
-#     -r, --region     AWS region (default: $AWS_DEFAULT_REGION or ap-northeast-1)
+#     -r, --region     AWS region (default: auto-detected via aws configure get region)
+#     -i, --image      Existing image to upload (skips build, format: image:tag)
 #     -p, --platform   Docker platform (default: linux/amd64)
 #     -t, --tag        Image tag (default: latest)
 #     -f, --file       Dockerfile path (default: ./Dockerfile)
@@ -35,9 +41,10 @@ source "${SCRIPT_DIR}/../lib/all.sh"
 #######################################
 # Global variables and default values
 #######################################
-AWS_REGION="${AWS_DEFAULT_REGION:-ap-northeast-1}"
+AWS_REGION="${AWS_REGION:-}"
 VERBOSE=false
 DRY_RUN=false
+EXISTING_IMAGE=""
 DOCKER_PLATFORM="linux/amd64"
 IMAGE_TAG="latest"
 DOCKERFILE_PATH="./Dockerfile"
@@ -66,20 +73,40 @@ Usage: $(basename "$0") [options] <repository_name>
 
 Description: Upload Docker image to AWS ECR with authentication and build support
 
+Prerequisites:
+  Build mode (no -i option):
+    - Dockerfile must exist at specified path (default: ./Dockerfile)
+    - Execute script from directory containing Dockerfile or use -f/-c options
+  Existing image mode (-i option):
+    - Docker image must exist locally
+  Both modes:
+    - AWS credentials must be configured
+
 Options:
   -h, --help       Display this help message
   -v, --verbose    Enable verbose output
   -d, --dry-run    Run in dry-run mode (no changes made)
-  -r, --region     AWS region (default: \$AWS_DEFAULT_REGION or ap-northeast-1)
+  -r, --region     AWS region (default: auto-detected via aws configure)
+  -i, --image      Existing image to upload (skips build, format: image:tag)
   -p, --platform   Docker platform (default: linux/amd64)
   -t, --tag        Image tag (default: latest)
   -f, --file       Dockerfile path (default: ./Dockerfile)
   -c, --context    Build context path (default: .)
 
 Examples:
+  # Build and upload new image (requires Dockerfile in current directory)
   $(basename "$0") my-app-repo
+
+  # Upload existing local image
+  $(basename "$0") -i my-app:v1.0.0 my-app-repo
+
+  # Build with custom Dockerfile and region
   $(basename "$0") -r us-east-1 -t v1.0.0 my-app-repo
-  $(basename "$0") -p linux/arm64 -d my-app-repo
+
+  # Build with custom platform
+  $(basename "$0") -p linux/arm64 my-app-repo
+
+  # Build with custom Dockerfile and context path
   $(basename "$0") -f ./docker/Dockerfile -c ./docker my-app-repo
 EOF
     exit 0
@@ -98,6 +125,7 @@ EOF
 #   AWS_REGION - Set to specified AWS region
 #   VERBOSE - Set to true if verbose mode enabled
 #   DRY_RUN - Set to true if dry-run mode enabled
+#   EXISTING_IMAGE - Set to existing image name if specified
 #   DOCKER_PLATFORM - Set to specified Docker platform
 #   IMAGE_TAG - Set to specified image tag
 #   DOCKERFILE_PATH - Set to specified Dockerfile path
@@ -128,6 +156,10 @@ function parse_arguments {
                 ;;
             -r | --region)
                 AWS_REGION="$2"
+                shift 2
+                ;;
+            -i | --image)
+                EXISTING_IMAGE="$2"
                 shift 2
                 ;;
             -p | --platform)
@@ -193,9 +225,7 @@ function authenticate_ecr {
     local registry_url
 
     log "INFO" "Getting AWS account ID..."
-    if ! account_id=$(get_aws_account_id); then
-        error_exit "Failed to get AWS account ID"
-    fi
+    account_id=$(get_aws_account_id) || error_exit "Failed to get AWS account ID"
 
     registry_url="${account_id}.dkr.ecr.${AWS_REGION}.amazonaws.com"
 
@@ -286,6 +316,91 @@ function build_docker_image {
 }
 
 #######################################
+# validate_build_requirements: Validate that build requirements are met
+#
+# Description:
+#   Validates that Dockerfile exists and build context is accessible
+#
+# Arguments:
+#   None
+#
+# Global Variables:
+#   DOCKERFILE_PATH - Path to Dockerfile to validate
+#   BUILD_CONTEXT - Build context path to validate
+#
+# Returns:
+#   Exits with error if validation fails
+#
+# Usage:
+#   validate_build_requirements
+#
+#######################################
+function validate_build_requirements {
+    if [[ ! -f "$DOCKERFILE_PATH" ]]; then
+        error_exit "Dockerfile not found at: $DOCKERFILE_PATH\nPlease ensure Dockerfile exists or use -f option to specify correct path"
+    fi
+
+    if [[ ! -d "$BUILD_CONTEXT" ]]; then
+        error_exit "Build context directory not found at: $BUILD_CONTEXT\nPlease ensure directory exists or use -c option to specify correct path"
+    fi
+
+    log "INFO" "Validated build requirements: Dockerfile: $DOCKERFILE_PATH, Context: $BUILD_CONTEXT"
+}
+
+#######################################
+# tag_existing_image: Tag an existing Docker image for ECR
+#
+# Description:
+#   Tags an existing local Docker image with ECR registry URL and pushes it to ECR
+#   without rebuilding
+#
+# Arguments:
+#   $1 - Repository name
+#   $2 - ECR registry URL
+#   $3 - Existing image name (format: image:tag)
+#
+# Global Variables:
+#   IMAGE_TAG - Image tag to use in ECR (default: latest)
+#   DRY_RUN - Whether to run in dry-run mode
+#
+# Returns:
+#   Outputs the full image name (registry/repository:tag)
+#
+# Usage:
+#   full_image_name=$(tag_existing_image "$repo" "$registry_url" "$existing_image")
+#
+#######################################
+function tag_existing_image {
+    local repository_name="$1"
+    local registry_url="$2"
+    local existing_image="$3"
+    local full_image_name="${registry_url}/${repository_name}:${IMAGE_TAG}"
+
+    log "INFO" "Tagging existing Docker image for ECR upload"
+    log "INFO" "Source image: $existing_image"
+    log "INFO" "Target image: $full_image_name"
+
+    if [[ "$DRY_RUN" == "true" ]]; then
+        log "INFO" "DRY RUN: Would tag image '$existing_image' as '$full_image_name'"
+        echo "$full_image_name"
+        return 0
+    fi
+
+    # Verify source image exists
+    if ! docker image inspect "$existing_image" > /dev/null 2>&1; then
+        error_exit "Source image not found: $existing_image"
+    fi
+
+    # Tag the existing image for ECR
+    if ! docker tag "$existing_image" "$full_image_name"; then
+        error_exit "Failed to tag Docker image"
+    fi
+
+    log "INFO" "Docker image tagged successfully: $full_image_name"
+    echo "$full_image_name"
+}
+
+#######################################
 # push_docker_image: Push Docker image to ECR
 #
 # Description:
@@ -357,23 +472,27 @@ function main {
     validate_dependencies "aws" "docker" "jq"
 
     # Check AWS credentials before any AWS CLI usage
-    if ! check_aws_credentials; then
-        error_exit "AWS credentials are not set or invalid. Please configure your AWS CLI credentials."
-    fi
+    check_aws_credentials || error_exit "AWS credentials are not set or invalid. Please configure your AWS CLI credentials."
 
-    # Confirm AWS account ID after credential validation
-    if ! get_aws_account_id > /dev/null 2>&1; then
-        error_exit "Unable to retrieve AWS account ID. Please check your credentials and permissions."
-    fi
+    # Auto-detect AWS_REGION from AWS CLI if not provided
+    AWS_REGION="${AWS_REGION:-$(get_aws_region)}"
 
     # Log script start
     echo_section "Starting ECR upload process"
     log "INFO" "Repository: $REPOSITORY_NAME"
     log "INFO" "Region: $AWS_REGION"
-    log "INFO" "Platform: $DOCKER_PLATFORM"
-    log "INFO" "Tag: $IMAGE_TAG"
-    log "INFO" "Dockerfile: $DOCKERFILE_PATH"
-    log "INFO" "Build context: $BUILD_CONTEXT"
+
+    if [[ -z "$EXISTING_IMAGE" ]]; then
+        log "INFO" "Mode: Build and upload"
+        log "INFO" "Platform: $DOCKER_PLATFORM"
+        log "INFO" "Tag: $IMAGE_TAG"
+        log "INFO" "Dockerfile: $DOCKERFILE_PATH"
+        log "INFO" "Build context: $BUILD_CONTEXT"
+    else
+        log "INFO" "Mode: Use existing image"
+        log "INFO" "Existing image: $EXISTING_IMAGE"
+        log "INFO" "ECR tag: $IMAGE_TAG"
+    fi
 
     if [[ "$DRY_RUN" == "true" ]]; then
         log "INFO" "Running in dry-run mode, no changes will be made"
@@ -382,13 +501,23 @@ function main {
     # Set AWS region
     export AWS_DEFAULT_REGION="$AWS_REGION"
 
+    # Validate requirements before proceeding
+    if [[ -z "$EXISTING_IMAGE" ]]; then
+        # Build mode: validate Dockerfile and context
+        validate_build_requirements
+    fi
+
     # Step 1: Authenticate to ECR and get registry URL
     local registry_url
     registry_url=$(authenticate_ecr)
 
-    # Step 2: Build and tag Docker image
+    # Step 2: Build or tag existing image
     local full_image_name
-    full_image_name=$(build_docker_image "$REPOSITORY_NAME" "$registry_url")
+    if [[ -z "$EXISTING_IMAGE" ]]; then
+        full_image_name=$(build_docker_image "$REPOSITORY_NAME" "$registry_url")
+    else
+        full_image_name=$(tag_existing_image "$REPOSITORY_NAME" "$registry_url" "$EXISTING_IMAGE")
+    fi
 
     # Step 3: Push image to ECR (ECR repository will be created automatically if it doesn't exist)
     push_docker_image "$full_image_name"

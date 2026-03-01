@@ -2,15 +2,13 @@
 
 **CI-01: plan Diff Intentional (No Unintended Changes)**
 
-- Problem: Unintended diff generation, drift, configuration inconsistencies
-- Impact: Unexpected change application, resource recreation
-- Recommendation: Scrutinize `plan` results, resolve diffs, verify state consistency
-- Note: Expected diffs excluded: provider version upgrades, resource reordering, computed attributes
-- Check: All plan diffs are intentional and documented
+Check: Are all plan diffs intentional and documented?
+Why: Unintended diff generation, drift, and configuration inconsistencies cause unexpected change application and resource recreation
+Fix: Scrutinize `plan` results, resolve diffs, verify state consistency
+Note: Expected diffs excluded: provider version upgrades, resource reordering, computed attributes
 
 **CI-02: New Resources Clearly Justified**
 
-- Problem: Unnecessary resource creation, unclear requirements
-- Impact: Cost increase, security risks, management burden
-- Recommendation: Create only necessary resources based on requirements, provide justification
-- Check: New resources have clear business justification
+Check: Do new resources have clear business justification?
+Why: Unnecessary resource creation and unclear requirements cause cost increase, security risks, and management burden
+Fix: Create only necessary resources based on requirements, provide justification

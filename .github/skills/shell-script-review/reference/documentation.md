@@ -1,55 +1,55 @@
 ### 8. Documentation (DOC)
 
-**DOC-01: ヘッダー標準形式**
+**DOC-01: Standard Header Format**
 
-Check: ファイルヘッダーにDescription/Usage/Design Rulesがあるか
-Why: ヘッダーなしでスクリプト目的不明、使用方法不明、オンボーディング遅延
-Fix: 標準ヘッダー追加、Description/Usage/Design Rules記載
+Check: Does file header contain Description/Usage/Design Rules?
+Why: Missing header makes script purpose unclear, usage unknown, delays onboarding
+Fix: Add standard header with Description/Usage/Design Rules
 
-**DOC-02: show_usage 必須**
+**DOC-02: show_usage Required**
 
-Check: show_usage関数が実装されているか
-Why: -h/--helpオプションなしでユーザビリティ低下、問い合わせ増
-Fix: show_usage関数、Usage/Options/Examples、exit 0
+Check: Is show_usage function implemented?
+Why: Missing -h/--help option reduces usability and increases support requests
+Fix: Implement show_usage function with Usage/Options/Examples, exit 0
 
-**DOC-03: 関数区切り+コメント**
+**DOC-03: Function Separators and Comments**
 
-Check: 関数前に`#######`区切りと目的・引数・戻り値コメントがあるか
-Why: 関数境界不明確でレビュー効率低下、保守困難
-Fix: 関数前`#######`区切り、目的・引数・戻り値コメント
+Check: Do functions have `#######` separator and purpose/arguments/return comments?
+Why: Unclear function boundaries reduce review efficiency and hinder maintenance
+Fix: Add `#######` separator before functions, document purpose/arguments/return values
 
-**DOC-04: 複雑ロジックコメント**
+**DOC-04: Complex Logic Comments**
 
-Check: 複雑なアルゴリズムにWhyコメントがあるか
-Why: アルゴリズム説明なしで理解困難、保守困難、バグ混入
-Fix: Why重視コメント、複雑処理説明、前提明記
+Check: Do complex algorithms have Why comments?
+Why: Missing algorithm explanations make understanding difficult, hinder maintenance, introduce bugs
+Fix: Focus on Why comments, explain complex processing, document assumptions
 
-**DOC-05: 変数説明**
+**DOC-05: Variable Documentation**
 
-Check: グローバル変数に目的・単位・制約コメントがあるか
-Why: 変数目的不明で誤用、バグ混入、保守困難
-Fix: グローバル変数コメント、単位・デフォルト値・制約記載
+Check: Do global variables have purpose/unit/constraint comments?
+Why: Unclear variable purpose causes misuse, bugs, difficult maintenance
+Fix: Comment global variables with unit/default value/constraints
 
-**DOC-06: 英語コメント統一**
+**DOC-06: English Comment Consistency**
 
-Check: すべてのコメントが英語で統一されているか
-Why: 日英混在で可読性低下、一貫性欠如、プロフェッショナル性欠如
-Fix: 英語コメント統一、簡潔明瞭記述
+Check: Are all comments consistently in English?
+Why: Mixed languages reduce readability, lack consistency, appear unprofessional
+Fix: Standardize on English comments, write concisely and clearly
 
-**DOC-07: README.md 整備**
+**DOC-07: README.md Maintenance**
 
-Check: README.mdに目的・前提・セットアップ・使用例が記載されているか
-Why: README不足でオンボーディング遅延、誤った実行、質問増加
-Fix: 目的・前提・セットアップ・使用例・トラブルシュート記載
+Check: Does README.md document purpose/prerequisites/setup/usage examples?
+Why: Insufficient README delays onboarding, causes incorrect execution, increases questions
+Fix: Document purpose/prerequisites/setup/usage examples/troubleshooting
 
-**DOC-08: エラーメッセージ文書化**
+**DOC-08: Error Message Documentation**
 
-Check: エラーコードと解決方法が文書化されているか
-Why: エラーコード未定義でトラブルシュート困難、ユーザー困惑
-Fix: エラーコード一覧、原因・対処法記載
+Check: Are error codes and resolution methods documented?
+Why: Undefined error codes make troubleshooting difficult and confuse users
+Fix: List error codes with causes and solutions
 
-**DOC-09: 変更履歴 CHANGELOG**
+**DOC-09: CHANGELOG History**
 
-Check: CHANGELOG.mdが整備され破壊的変更が明記されているか
-Why: 変更履歴なしで変更追跡困難、影響範囲不明、ユーザー混乱
-Fix: CHANGELOG.md作成、Keep a Changelog形式、破壊的変更明記
+Check: Is CHANGELOG.md maintained with breaking changes documented?
+Why: Missing change history makes tracking difficult, impact unclear, confuses users
+Fix: Create CHANGELOG.md in Keep a Changelog format, document breaking changes

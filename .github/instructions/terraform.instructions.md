@@ -36,12 +36,8 @@ description: "AI Assistant Instructions for Terraform"
 
 ### Code Modification Guidelines
 
-#### 必須手順
-
-1. `terraform fmt`フォーマット
-2. `terraform validate`検証
-3. `tflint`静的解析
-4. `trivy config`セキュリティスキャン
+- 検証は [terraform-validation Skill](../skills/terraform-validation/SKILL.md) を優先し、`validate.sh` を使用する
+- 個別コマンド（`terraform fmt`/`terraform validate`/`tflint`/`trivy`）はデバッグ時のみ使用
 
 #### Variables/Outputs
 

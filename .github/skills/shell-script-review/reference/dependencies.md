@@ -1,25 +1,25 @@
 ### 9. Dependencies (DEP)
 
-**DEP-01: lib/all.sh 活用**
+**DEP-01: Leverage lib/all.sh**
 
-Check: lib/all.shがsourceされ共通関数が利用されているか
-Why: 共通ライブラリ未使用でコード重複、保守コスト増、品質ばらつき
-Fix: lib/all.sh source、error_exit/log_message等共通関数利用
+Check: Is lib/all.sh sourced and common functions utilized?
+Why: Not using common library causes code duplication, increased maintenance cost, quality inconsistency
+Fix: Source lib/all.sh, use common functions like error_exit/log_message
 
-**DEP-02: validate_dependencies 利用**
+**DEP-02: Use validate_dependencies**
 
-Check: validate_dependencies関数が呼び出されているか
-Why: 必須コマンド未確認でスクリプト途中失敗、ユーザー困惑
-Fix: validate_dependencies呼出、必須コマンド明示
+Check: Is validate_dependencies function called?
+Why: Not checking required commands causes mid-script failures and user confusion
+Fix: Call validate_dependencies, explicitly list required commands
 
-**DEP-03: 必須コマンド明示**
+**DEP-03: Document Required Commands**
 
-Check: READMEに依存コマンドが明示されているか
-Why: 依存コマンド不明で実行失敗、環境構築困難、オンボーディング遅延
-Fix: README依存記載、validate_dependencies実装
+Check: Are dependent commands documented in README?
+Why: Unclear dependencies cause execution failures, difficult environment setup, delayed onboarding
+Fix: Document dependencies in README, implement validate_dependencies
 
-**DEP-04: コマンド存在確認**
+**DEP-04: Command Existence Check**
 
-Check: command -vで存在確認され明確なエラーメッセージがあるか
-Why: コマンド存在確認なしで実行時エラー、エラーメッセージ不明瞭
-Fix: command -v確認、明確エラーメッセージ、インストール手順提示
+Check: Are commands verified with command -v with clear error messages?
+Why: Missing command checks cause runtime errors with unclear messages
+Fix: Use command -v checks, provide clear error messages, show installation instructions
