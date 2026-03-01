@@ -2,63 +2,54 @@
 
 **G-01: Variables/Outputs/Module Usage**
 
-- Problem: Incorrect variable/output usage, undocumented module interfaces
-- Impact: Unexpected configurations, errors, missed breaking changes
-- Recommendation: Use context7/fetch_webpage to verify latest module documentation, use correct interfaces
-- Check: External modules reference latest documentation
+Check: Do external modules reference latest documentation?
+Why: Incorrect variable/output usage and undocumented module interfaces cause unexpected configurations, errors, and missed breaking changes
+Fix: Use context7/fetch_webpage to verify latest module documentation, use correct interfaces
 
 **G-02: Secret Hardcoding Prohibition**
 
-- Problem: Hardcoded credentials, passwords, tokens in code
-- Impact: Information leakage, Git history contamination, security breach
-- Recommendation: Use variables, AWS Secrets Manager, or SSM Parameter Store
-- Check: No plaintext secrets in .tf files
+Check: Are there no plaintext secrets in .tf files?
+Why: Hardcoded credentials, passwords, and tokens cause information leakage, Git history contamination, and security breaches
+Fix: Use variables, AWS Secrets Manager, or SSM Parameter Store
 
 **G-03: External Module Versioning**
 
-- Problem: Unspecified or outdated module versions, vulnerabilities
-- Impact: Unexpected breaking changes, security risks, lack of reproducibility
-- Recommendation: Check GitHub releases, pin to semantic versions
-- Check: All external modules have explicit version constraints
+Check: Do all external modules have explicit version constraints?
+Why: Unspecified or outdated module versions cause unexpected breaking changes, security risks, and lack of reproducibility
+Fix: Check GitHub releases, pin to semantic versions
 
 **G-04: Provider Version Constraints**
 
-- Problem: Unpinned provider versions, overly broad version ranges
-- Impact: Breaking changes causing failures, lack of reproducibility
-- Recommendation: Use `required_providers` block with appropriate version constraints (>= lower, < upper)
-- Check: Provider versions are explicitly constrained
+Check: Are provider versions explicitly constrained?
+Why: Unpinned provider versions and overly broad version ranges cause breaking changes, failures, and lack of reproducibility
+Fix: Use `required_providers` block with appropriate version constraints (>= lower, < upper)
 
 **G-05: for_each/count with Post-Apply Values**
 
-- Problem: Using resource attributes determined after apply in for_each/count keys
-- Impact: Plan-time errors ("value depends on resource attributes..."), parallel apply issues
-- Recommendation: Use pre-determined values (var, local, data source known attributes)
-- Check: for_each/count keys are known at plan time
+Check: Are for_each/count keys known at plan time?
+Why: Using resource attributes determined after apply in for_each/count keys causes plan-time errors ("value depends on resource attributes...") and parallel apply issues
+Fix: Use pre-determined values (var, local, data source known attributes)
 
 **G-06: Prefer for_each over count**
 
-- Problem: List order-dependent count usage, index shift risks
-- Impact: Unexpected resource recreation, destructive changes on reordering
-- Recommendation: Use for_each with unique keys; count acceptable only for toggle (0/1)
-- Check: for_each used instead of count except for enable/disable flags
+Check: Is for_each used instead of count except for enable/disable flags?
+Why: List order-dependent count usage creates index shift risks, causing unexpected resource recreation and destructive changes on reordering
+Fix: Use for_each with unique keys; count acceptable only for toggle (0/1)
 
 **G-07: Module Argument Validity**
 
-- Problem: Missing required arguments, type mismatches, misused defaults
-- Impact: Module malfunction, runtime errors, unintended behavior
-- Recommendation: Verify module README/variables.tf, set correct types and values
-- Check: All required module arguments provided correctly
+Check: Are all required module arguments provided correctly?
+Why: Missing required arguments, type mismatches, and misused defaults cause module malfunction, runtime errors, and unintended behavior
+Fix: Verify module README/variables.tf, set correct types and values
 
 **G-08: Module Output Usage**
 
-- Problem: Unused outputs defined, needed outputs missing
-- Impact: Integration issues, code bloat, reduced readability
-- Recommendation: Output only necessary values, remove unreferenced outputs
-- Check: Outputs match actual usage patterns
+Check: Do outputs match actual usage patterns?
+Why: Unused outputs defined and needed outputs missing cause integration issues, code bloat, and reduced readability
+Fix: Output only necessary values, remove unreferenced outputs
 
 **G-09: tfsec → trivy Migration**
 
-- Problem: Using deprecated tfsec, missing latest vulnerability detection
-- Impact: Missed security vulnerabilities, reduced CI/CD quality
-- Recommendation: Migrate to Trivy, integrate into CI/CD pipeline
-- Check: No tfsec references; trivy in use
+Check: Are there no tfsec references; is trivy in use?
+Why: Using deprecated tfsec causes missed security vulnerabilities and reduced CI/CD quality
+Fix: Migrate to Trivy, integrate into CI/CD pipeline

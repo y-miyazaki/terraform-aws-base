@@ -1,55 +1,55 @@
 ### 6. Error Handling (ERR)
 
-**ERR-01: エラーラップ適切**
+**ERR-01: Appropriate Error Wrapping**
 
-Check: fmt.Errorf("%w", err)でエラーラップしているか、コンテキスト情報があるか
-Why: エラー文字列のみ返却でデバッグ困難、スタックトレース欠如、根本原因不明
-Fix: fmt.Errorf("%w", err)でラップ、コンテキスト情報追加
+Check: Are errors wrapped with fmt.Errorf("%w", err) and context information included?
+Why: Returning only error strings makes debugging difficult, lacks stack traces, root cause unclear
+Fix: Wrap with fmt.Errorf("%w", err), add context information
 
-**ERR-02: カスタムエラー適切定義**
+**ERR-02: Appropriate Custom Error Definition**
 
-Check: sentinel error定義・errors.Is/As対応カスタムエラーがあるか
-Why: 文字列エラーのみでエラー処理分岐困難、リトライ判定不可
-Fix: errors.Is/As対応カスタムエラー定義、sentinel error定義、errors.Is判定
+Check: Are sentinel errors defined and custom errors compatible with errors.Is/As?
+Why: String-only errors make error handling branching difficult, retry determination impossible
+Fix: Define custom errors compatible with errors.Is/As, define sentinel errors, use errors.Is checks
 
-**ERR-03: パニック回避・復旧**
+**ERR-03: Avoid and Recover from Panics**
 
-Check: panicが致命的エラーのみか、defer+recover実装があるか
-Why: panic多用・recover未実装でアプリケーション突然終了、データ不整合
-Fix: panic致命的エラーのみ、defer+recover実装、通常エラーはerror返却
+Check: Are panics only for fatal errors and defer+recover implemented?
+Why: Panic overuse and missing recover cause sudden application termination, data inconsistency
+Fix: Panic only for fatal errors, implement defer+recover, return error for normal errors
 
-**ERR-04: ログエラー情報適切**
+**ERR-04: Appropriate Error Log Information**
 
-Check: エラーログレベル統一・スタックトレース記録・機密情報マスクがあるか
-Why: ログレベル不統一・機密情報含有で障害解析困難、セキュリティリスク
-Fix: Error/Warnレベル統一、スタックトレース記録、機密情報マスク
+Check: Are error log levels unified, stack traces recorded, and sensitive information masked?
+Why: Inconsistent log levels and sensitive information make failure analysis difficult, security risks
+Fix: Unify Error/Warn levels, record stack traces, mask sensitive information
 
-**ERR-05: 上位層エラー伝播**
+**ERR-05: Error Propagation to Upper Layers**
 
-Check: エラー握り潰しがないか、エラーコンテキスト保持されているか
-Why: エラー握り潰しで障害検知不可、根本原因追跡不可
-Fix: エラー必ず返却、コンテキスト保持してラップ、適切なログ記録
+Check: Are errors not swallowed and error context preserved?
+Why: Swallowed errors prevent failure detection, root cause tracking impossible
+Fix: Always return errors, wrap preserving context, appropriate logging
 
-**ERR-06: エラーハンドリング戦略**
+**ERR-06: Error Handling Strategy**
 
-Check: エラー分類定義・リトライロジック・Fail Fast実装があるか
-Why: エラー処理方針不統一でリトライ欠如、障害拡大、復旧遅延
-Fix: エラー分類定義、リトライ可能エラー識別、Circuit Breaker実装
+Check: Are error classifications defined, retry logic, and Fail Fast implemented?
+Why: Inconsistent error handling policies cause missing retries, failure expansion, delayed recovery
+Fix: Define error classifications, identify retryable errors, implement Circuit Breaker
 
-**ERR-07: 外部依存エラー処理**
+**ERR-07: External Dependency Error Handling**
 
-Check: タイムアウト設定・リトライ実装・エラー分類があるか
-Why: タイムアウト未設定・リトライ未実装で無限待機、障害伝播
-Fix: context timeout設定、exponential backoff、一時/恒久エラー分類
+Check: Are timeouts set, retries implemented, and errors classified?
+Why: Missing timeouts and retries cause infinite waits, failure propagation
+Fix: Set context timeout, exponential backoff, classify transient/permanent errors
 
-**ERR-08: バリデーションエラー**
+**ERR-08: Validation Errors**
 
-Check: 入力検証・フィールド単位エラー・ユーザーフレンドリーメッセージがあるか
-Why: 入力検証不足・エラーメッセージ不明瞭でサポートコスト増、ユーザー困惑
-Fix: struct tagバリデーション実装、フィールド単位エラー、明確なメッセージ
+Check: Are input validations, field-level errors, and user-friendly messages present?
+Why: Insufficient input validation and unclear error messages increase support costs, confuse users
+Fix: Implement struct tag validation, field-level errors, clear messages
 
-**ERR-09: エラーメッセージセキュリティ**
+**ERR-09: Error Message Security**
 
-Check: 内部実装露出・スタックトレース外部公開・SQL文露出がないか
-Why: 内部情報露出で情報漏洩、攻撃手がかり提供、セキュリティリスク
-Fix: ユーザー向けメッセージと内部ログ分離、詳細情報非公開
+Check: Are there no internal implementation exposure, external stack trace disclosure, or SQL statement exposure?
+Why: Internal information exposure causes information leakage, provides attack clues, security risks
+Fix: Separate user-facing messages and internal logs, don't disclose detailed information

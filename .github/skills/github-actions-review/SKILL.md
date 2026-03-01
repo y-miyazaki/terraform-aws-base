@@ -8,24 +8,6 @@ license: MIT
 
 This skill provides comprehensive guidance for reviewing GitHub Actions Workflow configurations to ensure correctness, security, and best practices compliance.
 
-## Output Language
-
-**IMPORTANT**: Always respond in Japanese (日本語) when performing code reviews。
-
-**日本語で記述する要素**:
-
-- All explanatory text (説明文)
-- Problem descriptions (問題の説明)
-- Impact assessments (影響の評価)
-- Recommendations (推奨事項)
-- Check results (チェック結果)
-
-**英語で記述する要素**:
-
-- File paths (ファイルパス)
-- Code snippets (コードスニペット)
-- Technical identifiers (action names, variable names, secret names)
-
 ## When to Use This Skill
 
 This skill is applicable for:
@@ -77,7 +59,7 @@ Review results must be output in structured format:
    - Display only failed review items
    - Format: `ItemID ItemName: ❌ Fail`
    - Purpose: Highlight issues requiring attention
-   - If all checks pass, output "該当する指摘事項はありません"
+   - If all checks pass, output "No issues found"
 
 2. **Issues** (Detected problems)
    - Display details for each failed item
@@ -92,29 +74,29 @@ Review results must be output in structured format:
 ### Output Format Example
 
 ```markdown
-# GitHub Actions Workflow Code Review結果
+# GitHub Actions Workflow Code Review Result
 
 ## Checks
 
-- SEC-03 pull_request_target の慎重な利用: ❌ Fail
+- SEC-03 Careful pull_request_target Usage: ❌ Fail
 
 ## Issues
 
-**該当する指摘事項はありません** (if all checks pass)
+**No issues found** (if all checks pass)
 
 **OR**
 
-1. SEC-03: pull_request_target の慎重な利用
+1. SEC-03: Careful Use of pull_request_target
    - File: `.github/workflows/ci.yml` L23
-   - Problem: pull_request_targetを使用していますが、適切な保護がありません
-   - Impact: 外部PRからのコード実行で任意コード実行・シークレット露出の可能性
-   - Recommendation: pull_requestに変更、またはif条件でフォーク検証を追加してください
+   - Problem: Using pull_request_target without proper protections
+   - Impact: Arbitrary code execution and secret exposure from external PRs possible
+   - Recommendation: Switch to pull_request or add fork validation in if conditions
 
-2. PERF-02: 並列実行の活用
+2. PERF-02: Work Reduction with Caching
    - File: `.github/workflows/test.yml` L45-60
-   - Problem: 順次実行で並列化可能なジョブがあります
-   - Impact: CI/CD時間が長く開発速度が低下
-   - Recommendation: matrixまたは並列ジョブで実行してください
+   - Problem: Dependencies fetched on every run without caching
+   - Impact: Increased execution time and unnecessary network usage
+   - Recommendation: Add actions/cache for dependency caching with appropriate restore-keys
 ```
 
 ## Available Review Categories
@@ -132,11 +114,11 @@ Review categories are organized by domain. Claude will read the relevant categor
 
 When performing code reviews:
 
-- **建設的・具体的に**: コード例を含む推奨事項、公式ドキュメント参照
-- **コンテキスト考慮**: PR目的と要件理解、トレードオフ検討
-- **優先度明確化**: "must fix"と"nice to have"の区別
-- **セキュリティ見落とし防止**: SEC-\*項目は特に注意深く
-- **自動チェック優先**: actionlint/ghalint/zizmor への過度な焦点回避
+- **Constructive and specific**: Include code examples and official documentation references
+- **Context-aware**: Understand PR purpose and requirements, consider tradeoffs
+- **Clear priorities**: Distinguish between "must fix" and "nice to have"
+- **Prevent security oversights**: Pay special attention to SEC-\* items
+- **Prioritize automation**: Avoid excessive focus on actionlint/ghalint/zizmor
 
 ## Summary
 

@@ -8,22 +8,6 @@ license: MIT
 
 This skill provides comprehensive guidance for reviewing Terraform code to ensure correctness, security, maintainability, and best practices compliance.
 
-## Output Language
-
-**IMPORTANT**: Always respond in Japanese (日本語) when performing code reviews, including:
-
-- All explanatory text
-- Problem descriptions (問題の説明)
-- Impact assessments (影響の評価)
-- Recommendations (推奨事項)
-- Check results (チェック結果)
-
-Keep only the following in English:
-
-- File paths (ファイルパス)
-- Code snippets (コードスニペット)
-- Technical identifiers (variable names, resource names, module names, etc.)
-
 ## When to Use This Skill
 
 This skill is applicable for:
@@ -78,7 +62,7 @@ Review results must be output in structured format:
    - Display only failed review items
    - Format: `ItemID ItemName: ❌ Fail`
    - Purpose: Highlight issues requiring attention
-   - If all checks pass, output "該当する指摘事項はありません"
+   - If all checks pass, output "No issues found"
 
 2. **Issues** (Detected problems)
    - Display details for each failed item
@@ -93,7 +77,7 @@ Review results must be output in structured format:
 ### Output Format Example
 
 ```markdown
-# Terraform Code Review結果
+# Terraform Code Review Result
 
 ## Checks
 
@@ -101,21 +85,21 @@ Review results must be output in structured format:
 
 ## Issues
 
-**該当する指摘事項はありません** (if all checks pass)
+**No issues found** (if all checks pass)
 
 **OR**
 
 1. G-02: Secret Hardcoding Prohibition
    - File: `terraform/modules/api/main.tf` L45
-   - Problem: ハードコードされたパスワードが検出されました
-   - Impact: セキュリティリスク、Git履歴への機密情報混入
-   - Recommendation: variableまたはAWS Secrets Managerを使用してください
+   - Problem: Hardcoded password detected
+   - Impact: Security risk, secrets in Git history
+   - Recommendation: Use variable or AWS Secrets Manager
 
 2. SEC-03: Resource Policy with Condition
    - File: `terraform/base/s3.tf` L12-15
-   - Problem: S3バケットポリシーにCondition句がありません
-   - Impact: 意図しないアクセス許可の可能性
-   - Recommendation: `aws:SecureTransport` Conditionを追加してください
+   - Problem: S3 bucket policy missing condition clause
+   - Impact: Potential unintended access permissions
+   - Recommendation: Add `aws:SecureTransport` condition
 ```
 
 ## Available Review Categories
@@ -146,13 +130,13 @@ Review categories are organized by domain. Claude will read the relevant categor
 
 When performing code reviews:
 
-- **建設的・具体的に**: コード例を含む推奨事項、参考リンク提供
-- **コンテキスト考慮**: PR目的と要件理解、トレードオフ検討
-- **優先度明確化**: "must fix"と"nice to have"の区別
-- **MCP ツール活用**: context7 でモジュールドキュメント確認、serena でプロジェクト構造確認
-- **自動チェック優先**: 構文エラーや terraform fmt/validate/tflint/trivy への過度な焦点回避
-- **セキュリティ見落とし防止**: SEC-\* 項目は特に注意深く
-- **AWS 固有項目の注意**: AWS 固有のチェック項目は他クラウド環境では要調整
+- **Constructive and specific**: Include code examples and reference links
+- **Context-aware**: Understand PR purpose and requirements, consider tradeoffs
+- **Clear priorities**: Distinguish between "must fix" and "nice to have"
+- **Leverage MCP tools**: Use context7 for module docs, serena for project structure
+- **Prioritize automation**: Avoid excessive focus on syntax errors and terraform fmt/validate/tflint/trivy
+- **Prevent security oversights**: Pay special attention to SEC-\* items
+- **Note AWS context**: AWS-specific checks may need adjustment for other cloud environments
 
 ## Summary
 

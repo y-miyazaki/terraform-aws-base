@@ -2,28 +2,24 @@
 
 **STATE-01: Remote Backend with Encryption (SSE) + DynamoDB Lock**
 
-- Problem: Insufficient state protection, no encryption, missing lock mechanism
-- Impact: Conflicts, corruption, information leak risk
-- Recommendation: Enable S3 encryption + DynamoDB lock, set versioning
-- Check: Backend configured with encryption and locking
+Check: Is backend configured with encryption and locking?
+Why: Insufficient state protection, no encryption, and missing lock mechanism cause conflicts, corruption, and information leak risk
+Fix: Enable S3 encryption + DynamoDB lock, set versioning
 
 **STATE-02: No Credentials in Backend Configuration**
 
-- Problem: Credentials in backend config, hardcoded access keys
-- Impact: Leak risk, security breach, Git history contamination
-- Recommendation: Use environment variables, IAM roles, profiles
-- Check: No hardcoded credentials in backend blocks
+Check: Are there no hardcoded credentials in backend blocks?
+Why: Credentials in backend config and hardcoded access keys cause leak risk, security breach, and Git history contamination
+Fix: Use environment variables, IAM roles, profiles
 
 **STATE-03: No Workspace (Unless Documented)**
 
-- Problem: Inappropriate workspace usage, ambiguous environment separation
-- Impact: Environment confusion, misdeployment
-- Recommendation: Recommend directory-based environment separation, document workspace usage policy
-- Check: Workspaces not used or policy is documented
+Check: Are workspaces not used or is policy documented?
+Why: Inappropriate workspace usage and ambiguous environment separation cause environment confusion and misdeployment
+Fix: Recommend directory-based environment separation, document workspace usage policy
 
 **STATE-04: terraform state Manual Operations Documented**
 
-- Problem: Manual operations as black box, no records
-- Impact: Operational risk, non-reproducible, troubleshooting difficulties
-- Recommendation: Record operation procedures/reasons, manage change history
-- Check: State modifications are documented
+Check: Are state modifications documented?
+Why: Manual operations as black box and no records cause operational risk, non-reproducible operations, and troubleshooting difficulties
+Fix: Record operation procedures/reasons, manage change history

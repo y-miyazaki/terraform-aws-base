@@ -1,0 +1,395 @@
+# Reusable workflow for ECS CI
+# - Scans ecs_service_base_dir for service subdirectories containing ecspresso.jsonnet
+# - Checks .jsonnet formatting with jsonnetfmt (per service, via matrix)
+# - Verifies ECS service configuration with ecspresso verify (per service, via matrix)
+# - Optionally dry-runs ecschedule for scheduled task verification
+name: reusable-ci-aws-ecs
+
+on:
+  workflow_call:
+    inputs:
+      ecs_scheduled_task_base_dir:
+        default: ""
+        description: "Base directory containing ecschedule config (e.g., ecs/ecschedule/backend). Leave empty to skip"
+        required: false
+        type: string
+      ecschedule_config:
+        default: "ecschedule.jsonnet"
+        description: "ecschedule config filename (e.g. ecschedule.jsonnet)"
+        required: false
+        type: string
+      ecschedule_version:
+        default: "v0.17.2"
+        description: "ecschedule version (e.g. v0.17.2)"
+        required: false
+        type: string
+      ecs_service_base_dir:
+        description: "Base directory containing ecspresso service subdirectories (e.g., ecs/ecs-service)"
+        required: true
+        type: string
+      ecspresso_config:
+        default: "ecspresso.jsonnet"
+        description: "ecspresso config filename (e.g. ecspresso.jsonnet)"
+        required: false
+        type: string
+      ecspresso_version:
+        default: "v2.7.1"
+        description: "ecspresso version (e.g. v2.7.1)"
+        required: false
+        type: string
+      environment:
+        description: "Target environment (dev, qa, stg, prd)"
+        required: true
+        type: string
+      jsonnet_checksum:
+        default: "ad3181fde77726b02d17eb4e72687020bf2cb35b9336cdeaaca4783c7ff104f7" # pragma: allowlist secret
+        description: "SHA256 checksum for go-jsonnet release tarball (Linux_x86_64)"
+        required: false
+        type: string
+      jsonnet_version:
+        default: "v0.21.0"
+        description: "go-jsonnet version (e.g. v0.21.0)"
+        required: false
+        type: string
+    secrets:
+      AWS_IAM_ROLE_ARN:
+        required: true
+      AWS_REGION:
+        required: true
+
+permissions: {}
+
+env:
+  ECSCHEDULE_BASE_DIR: ${{ inputs.ecs_scheduled_task_base_dir }}
+  ECSCHEDULE_CONFIG: ${{ inputs.ecschedule_config }}
+  ECSPRESSO_BASE_DIR: ${{ inputs.ecs_service_base_dir }}
+  ECSPRESSO_CONFIG: ${{ inputs.ecspresso_config }}
+  ENVIRONMENT: ${{ inputs.environment }}
+  JSONNET_CHECKSUM: ${{ inputs.jsonnet_checksum }}
+  JSONNET_VERSION: ${{ inputs.jsonnet_version }}
+
+jobs:
+  scan:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    outputs:
+      service_matrix: ${{ steps.generate_matrix.outputs.service_matrix }}
+      has_scheduled_tasks: ${{ steps.generate_matrix.outputs.has_scheduled_tasks }}
+      scheduled_task_matrix: ${{ steps.generate_matrix.outputs.scheduled_task_matrix }}
+    steps:
+      - name: Checkout Code
+        timeout-minutes: 5
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+
+      - name: Scan ECS definitions
+        timeout-minutes: 5
+        id: generate_matrix
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          # Validate ecspresso base directory
+          if [[ ! -d "$ECSPRESSO_BASE_DIR" ]]; then
+            echo "Error: ecspresso base directory '$ECSPRESSO_BASE_DIR' does not exist"
+            exit 1
+          fi
+
+          # Scan for service directories containing $ECSPRESSO_CONFIG
+          service_items=()
+          while IFS= read -r config_file; do
+            service_dir=$(dirname "$config_file")
+            service_name=$(basename "$service_dir")
+            service_name_json=$(jq -rn --arg v "$service_name" '$v | @json')
+            service_dir_json=$(jq -rn --arg v "$service_dir" '$v | @json')
+            service_items+=("{\"name\":${service_name_json},\"path\":${service_dir_json}}")
+          done < <(find "$ECSPRESSO_BASE_DIR" -maxdepth 2 -name "$ECSPRESSO_CONFIG" -type f | sort)
+
+          if [[ ${#service_items[@]} -eq 0 ]]; then
+            echo "Error: No ${ECSPRESSO_CONFIG} found in $ECSPRESSO_BASE_DIR"
+            exit 1
+          fi
+
+          # Build service matrix JSON
+          service_matrix="["
+          for i in "${!service_items[@]}"; do
+            if [[ $i -gt 0 ]]; then
+              service_matrix+=","
+            fi
+            service_matrix+="${service_items[$i]}"
+          done
+          service_matrix+="]"
+
+          echo "service_matrix=${service_matrix}" >> "$GITHUB_OUTPUT"
+
+          # Scan for scheduled task directories containing ecschedule config
+          scheduled_task_items=()
+          has_scheduled_tasks="false"
+          if [[ -n "$ECSCHEDULE_BASE_DIR" && -d "$ECSCHEDULE_BASE_DIR" ]]; then
+            while IFS= read -r config_file; do
+              batch_dir=$(dirname "$config_file")
+              batch_name=$(basename "$batch_dir")
+              batch_name_json=$(jq -rn --arg v "$batch_name" '$v | @json')
+              batch_dir_json=$(jq -rn --arg v "$batch_dir" '$v | @json')
+              scheduled_task_items+=('{"name":'"${batch_name_json}"',"path":'"${batch_dir_json}"'}')
+            done < <(find "$ECSCHEDULE_BASE_DIR" -maxdepth 2 -name "$ECSCHEDULE_CONFIG" -type f | sort)
+          fi
+
+          scheduled_task_matrix="[]"
+          if [[ ${#scheduled_task_items[@]} -gt 0 ]]; then
+            has_scheduled_tasks="true"
+            scheduled_task_matrix="["
+            for i in "${!scheduled_task_items[@]}"; do
+              if [[ $i -gt 0 ]]; then scheduled_task_matrix+=","; fi
+              scheduled_task_matrix+="${scheduled_task_items[$i]}"
+            done
+            scheduled_task_matrix+="]"
+          fi
+
+          echo "has_scheduled_tasks=${has_scheduled_tasks}" >> "$GITHUB_OUTPUT"
+          echo "scheduled_task_matrix=${scheduled_task_matrix}" >> "$GITHUB_OUTPUT"
+          echo "Generated service matrix: ${service_matrix}"
+          echo "Has scheduled tasks: ${has_scheduled_tasks}"
+          echo "Scheduled task matrix: ${scheduled_task_matrix}"
+
+  lint:
+    needs: scan
+    name: Jsonnet Format Check (${{ matrix.name }})
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    strategy:
+      fail-fast: false
+      matrix:
+        include: ${{ fromJson(needs.scan.outputs.service_matrix) }}
+    steps:
+      - name: Checkout Code
+        timeout-minutes: 5
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+
+      - name: Setup jsonnetfmt
+        timeout-minutes: 5
+        uses: ./.github/actions/install-github-release
+        with:
+          asset_pattern: go-jsonnet_Linux_x86_64.tar.gz
+          binary: jsonnetfmt
+          checksum: ${{ env.JSONNET_CHECKSUM }}
+          repo: google/go-jsonnet
+          version: ${{ env.JSONNET_VERSION }}
+
+      - name: Exec jsonnetfmt check
+        timeout-minutes: 5
+        shell: bash
+        env:
+          SERVICE_PATH: ${{ matrix.path }}
+        run: |
+          set -euo pipefail
+          echo "Checking jsonnet formatting in ${SERVICE_PATH}..."
+          mapfile -t files < <(find "${SERVICE_PATH}" -name '*.jsonnet' -type f | sort)
+          if [[ ${#files[@]} -eq 0 ]]; then
+            echo "No .jsonnet files found in ${SERVICE_PATH}"
+            exit 0
+          fi
+          failed=()
+          for f in "${files[@]}"; do
+            if ! jsonnetfmt --test "$f" 2>/dev/null; then
+              failed+=("$f")
+            fi
+          done
+          if [[ ${#failed[@]} -gt 0 ]]; then
+            echo "Error: The following files are not formatted (run: jsonnetfmt -i <file>):"
+            printf '  %s\n' "${failed[@]}"
+            exit 1
+          fi
+          echo "All ${#files[@]} .jsonnet file(s) are properly formatted"
+
+      - name: Summary
+        if: always()
+        uses: ./.github/actions/summary
+        with:
+          artifacts: |
+            (none)
+          params: |
+            service: ${{ matrix.name }}
+            service_path: ${{ matrix.path }}
+            environment: ${{ env.ENVIRONMENT }}
+            jsonnet_version: ${{ env.JSONNET_VERSION }}
+          status: "${{ job.status }}"
+          title: "ECS CI: Jsonnet Format (${{ matrix.name }})"
+
+  verify-ecs-service:
+    needs: scan
+    name: ecspresso Verify (${{ matrix.name }})
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    environment:
+      name: ${{ inputs.environment }}
+    permissions:
+      contents: read
+      id-token: write
+    strategy:
+      fail-fast: false
+      matrix:
+        include: ${{ fromJson(needs.scan.outputs.service_matrix) }}
+    steps:
+      - name: Checkout Code
+        timeout-minutes: 5
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+
+      - name: Setup AWS Credentials
+        timeout-minutes: 5
+        uses: aws-actions/configure-aws-credentials@8df5847569e6427dd6c4fb1cf565c83acfa8afa7 # v6.0.0
+        with:
+          aws-region: ${{ secrets.AWS_REGION }}
+          role-to-assume: ${{ secrets.AWS_IAM_ROLE_ARN }}
+
+      - name: Install ecspresso
+        timeout-minutes: 5
+        uses: kayac/ecspresso@323fc2729b80c0820d7a6b01f5eda2f95ef3bb34 # v2.7.1
+        with:
+          version: ${{ inputs.ecspresso_version }}
+
+      - name: Exec ecspresso verify
+        timeout-minutes: 10
+        shell: bash
+        env:
+          SERVICE_PATH: ${{ matrix.path }}
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+        run: |
+          set -euo pipefail
+          ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
+          echo "Running ecspresso verify for ${SERVICE_PATH} (env: ${ENVIRONMENT})..."
+          cd "${SERVICE_PATH}"
+          ecspresso verify \
+            --config "${ECSPRESSO_CONFIG}" \
+            --ext-str ACCOUNT_ID="${ACCOUNT_ID}" \
+            --ext-str AWS_REGION="${AWS_REGION}" \
+            --ext-str ENV="${ENVIRONMENT}" \
+            --ext-str NAME="${{ matrix.name }}"
+          echo "ecspresso verify passed"
+
+      - name: Summary
+        if: always()
+        uses: ./.github/actions/summary
+        with:
+          artifacts: |
+            (none)
+          params: |
+            service: ${{ matrix.name }}
+            service_path: ${{ matrix.path }}
+            ecspresso_version: ${{ inputs.ecspresso_version }}
+            environment: ${{ env.ENVIRONMENT }}
+          status: "${{ job.status }}"
+          title: "ECS CI: ecspresso verify (${{ matrix.name }})"
+
+  verify-ecs-scheduled-tasks:
+    needs: scan
+    name: Scheduled Task Verify (${{ matrix.name }})
+    if: needs.scan.outputs.has_scheduled_tasks == 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        include: ${{ fromJson(needs.scan.outputs.scheduled_task_matrix) }}
+    environment:
+      name: ${{ inputs.environment }}
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - name: Checkout Code
+        timeout-minutes: 5
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+
+      - name: Setup AWS Credentials
+        timeout-minutes: 5
+        uses: aws-actions/configure-aws-credentials@8df5847569e6427dd6c4fb1cf565c83acfa8afa7 # v6.0.0
+        with:
+          aws-region: ${{ secrets.AWS_REGION }}
+          role-to-assume: ${{ secrets.AWS_IAM_ROLE_ARN }}
+
+      - name: Setup jsonnet
+        timeout-minutes: 5
+        uses: ./.github/actions/install-github-release
+        with:
+          asset_pattern: go-jsonnet_Linux_x86_64.tar.gz
+          binary: jsonnet
+          checksum: ${{ env.JSONNET_CHECKSUM }}
+          repo: google/go-jsonnet
+          version: ${{ env.JSONNET_VERSION }}
+
+      - name: Install ecspresso
+        timeout-minutes: 5
+        uses: kayac/ecspresso@323fc2729b80c0820d7a6b01f5eda2f95ef3bb34 # v2.7.1
+        with:
+          version: ${{ inputs.ecspresso_version }}
+
+      - name: Install ecschedule
+        timeout-minutes: 5
+        uses: Songmu/ecschedule@f7cf72e12885168815ae575166aee38b055066d0 # v0.17.2
+        with:
+          version: ${{ inputs.ecschedule_version }}
+
+      - name: Verify Scheduled Task
+        timeout-minutes: 10
+        shell: bash
+        env:
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+          BATCH_PATH: ${{ matrix.path }}
+        run: |
+          set -euo pipefail
+          ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
+          echo "Verifying scheduled task ${{ matrix.name }} (env: ${ENVIRONMENT})..."
+          cd "${BATCH_PATH}"
+
+          # Pre-render ecschedule Jsonnet (ecschedule does not support --ext-str)
+          TMP_CONFIG=$(mktemp /tmp/ecschedule-XXXXXX.json)
+          trap 'rm -f "$TMP_CONFIG"' EXIT
+          jsonnet \
+            -V ACCOUNT_ID="${ACCOUNT_ID}" \
+            -V AWS_REGION="${AWS_REGION}" \
+            -V ENV="${ENVIRONMENT}" \
+            -V NAME="${{ matrix.name }}" \
+            "${ECSCHEDULE_CONFIG}" > "$TMP_CONFIG"
+
+          # Verify EventBridge rules (CI: show diff without applying)
+          # NOTE: ecschedule v0.17.2 diff -u has known behavior of reporting role field changes
+          # even when both local and remote contain the same role
+          echo "Running ecschedule diff for ${{ matrix.name }}..."
+          ecschedule -conf "$TMP_CONFIG" diff -all -u 2>&1 || true
+
+          # Verify task definition config against ECS
+          echo "Running ecspresso verify for ${{ matrix.name }}..."
+          ecspresso verify \
+            --config "${ECSPRESSO_CONFIG}" \
+            --ext-str ACCOUNT_ID="${ACCOUNT_ID}" \
+            --ext-str AWS_REGION="${AWS_REGION}" \
+            --ext-str ENV="${ENVIRONMENT}" \
+            --ext-str NAME="${{ matrix.name }}"
+          echo "Verification passed"
+
+      - name: Summary
+        if: always()
+        uses: ./.github/actions/summary
+        with:
+          artifacts: |
+            (none)
+          params: |
+            batch: ${{ matrix.name }}
+            batch_path: ${{ matrix.path }}
+            ecschedule_version: ${{ inputs.ecschedule_version }}
+            ecspresso_version: ${{ inputs.ecspresso_version }}
+            environment: ${{ env.ENVIRONMENT }}
+          status: "${{ job.status }}"
+          title: "ECS CI: Scheduled Task Verify (${{ matrix.name }})"

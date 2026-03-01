@@ -67,11 +67,8 @@ Route53/WAF 可視化:
 
 ### Code Modification Guidelines
 
-検証手順:
-
-1. `yamllint`構文チェック
-2. `awsdac -d <yaml> -o <png>`生成
-3. 画像確認
+- 検証は [diagram-as-code-validation Skill](../skills/diagram-as-code-validation/SKILL.md) の Required Validation Steps を優先
+- 詳細コマンドオプションはデバッグ時のみ使用
 
 ### MCP Tool Usage (awsdac-mcp-server)
 

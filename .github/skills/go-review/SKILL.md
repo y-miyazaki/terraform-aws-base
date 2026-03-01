@@ -8,22 +8,6 @@ license: MIT
 
 This skill provides comprehensive guidance for reviewing Go code to ensure correctness, security, performance, and best practices compliance.
 
-## Output Language
-
-**IMPORTANT**: Always respond in Japanese (日本語) when performing code reviews, including:
-
-- All explanatory text
-- Problem descriptions (問題の説明)
-- Impact assessments (影響の評価)
-- Recommendations (推奨事項)
-- Check results (チェック結果)
-
-Keep only the following in English:
-
-- File paths (ファイルパス)
-- Code snippets (コードスニペット)
-- Technical identifiers (function names, variable names, package names, etc.)
-
 ## When to Use This Skill
 
 This skill is applicable for:
@@ -77,7 +61,7 @@ Review results must be output in structured format:
    - Display only failed review items
    - Format: `ItemID ItemName: ❌ Fail`
    - Purpose: Highlight issues requiring attention
-   - If all checks pass, output "該当する指摘事項はありません"
+   - If all checks pass, output "No issues found"
 
 2. **Issues** (Detected problems)
    - Display details for each failed item
@@ -92,7 +76,7 @@ Review results must be output in structured format:
 ### Output Format Example
 
 ```markdown
-# Go Code Review結果
+# Go Code Review Result
 
 ## Checks
 
@@ -100,21 +84,21 @@ Review results must be output in structured format:
 
 ## Issues
 
-**該当する指摘事項はありません** (if all checks pass)
+**No issues found** (if all checks pass)
 
 **OR**
 
-1. ERR-01: エラーラップ適切
+1. ERR-01: Error Wrapping
    - File: `pkg/service/processor.go` L45
-   - Problem: エラー文字列のみ返却、スタックトレース欠如
-   - Impact: デバッグ困難、エラー発生箇所特定不可
-   - Recommendation: `fmt.Errorf("failed to process: %w", err)` でラップ
+   - Problem: Error string returned without stack trace
+   - Impact: Difficult debugging, unable to identify error location
+   - Recommendation: Wrap with `fmt.Errorf("failed to process: %w", err)`
 
-2. CTX-01: public APIでcontext受け取り
+2. CTX-01: Public API Context Handling
    - File: `internal/handler/api.go` L23
-   - Problem: ProcessData関数がcontext.Contextを受け取っていない
-   - Impact: タイムアウト制御不可、キャンセル伝播不可、テスト困難
-   - Recommendation: `func ProcessData(ctx context.Context, data []byte) error` に変更
+   - Problem: ProcessData function doesn't accept context.Context
+   - Impact: No timeout control, no cancellation propagation, difficult testing
+   - Recommendation: Change to `func ProcessData(ctx context.Context, data []byte) error`
 ```
 
 ## Available Review Categories
@@ -138,13 +122,13 @@ Review categories are organized by domain. Claude will read the relevant categor
 
 When performing code reviews:
 
-- **建設的・具体的に**: コード例を含む推奨事項、共通ライブラリ参照
-- **コンテキスト考慮**: PR目的と要件理解、トレードオフ検討
-- **優先度明確化**: "must fix"と"nice to have"の区別
-- **MCPツール活用**: serenaでプロジェクト構造確認、grep_searchでパターン検索
-- **自動チェック優先**: 構文エラーやgo fmt/vet/golangci-lintへの過度な焦点回避
-- **セキュリティ見落とし防止**: SEC-\*項目は特に注意深く
-- **Go idiomsの重視**: effective Go、common mistakesに準拠
+- **Constructive and specific**: Include code examples and common patterns
+- **Context-aware**: Understand PR purpose and requirements, consider tradeoffs
+- **Clear priorities**: Distinguish between "must fix" and "nice to have"
+- **Leverage MCP tools**: Use serena for project structure, grep_search for patterns
+- **Prioritize automation**: Avoid excessive focus on syntax errors and go fmt/vet/golangci-lint
+- **Prevent security oversights**: Pay special attention to SEC-\* items
+- **Respect Go idioms**: Follow Effective Go and common patterns
 
 ## Summary
 

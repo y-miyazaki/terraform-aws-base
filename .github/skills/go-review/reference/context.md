@@ -1,25 +1,25 @@
 ### 2. Context Handling (CTX)
 
-**CTX-01: public APIでcontext受け取り**
+**CTX-01: Accept context in public APIs**
 
-Check: public関数・メソッドがcontext.Contextを第1引数で受け取るか
-Why: context未使用でタイムアウト制御不可、キャンセル伝播不可、テスト困難
-Fix: 全public API第1引数にcontext.Context追加、ctx変数名統一
+Check: Do public functions and methods accept context.Context as first argument?
+Why: Missing context prevents timeout control, cancellation propagation, difficult testing
+Fix: Add context.Context as first argument to all public APIs, unify ctx variable name
 
-**CTX-02: context.Background()/TODO()乱用回避**
+**CTX-02: Avoid context.Background()/TODO() Overuse**
 
-Check: context.Background()多用・context.TODO()放置がないか
-Why: Background乱用でタイムアウト・キャンセル伝播せず、グレースフルシャットダウン不可
-Fix: main/init以外でBackground回避、受け取ったcontext伝播、TODO一時的のみ
+Check: Are there no excessive context.Background() uses or lingering context.TODO()?
+Why: Background overuse prevents timeout and cancellation propagation, no graceful shutdown
+Fix: Avoid Background outside main/init, propagate received context, use TODO temporarily only
 
-**CTX-03: goroutineへcontext伝播**
+**CTX-03: Propagate context to goroutines**
 
-Check: goroutine起動時にcontextが渡されているか
-Why: context未渡しでgoroutineリーク、キャンセル伝播なし、リソース枯渇
-Fix: goroutine起動時必ずcontext渡す、context.Done()監視
+Check: Is context passed when launching goroutines?
+Why: Missing context causes goroutine leaks, no cancellation propagation, resource exhaustion
+Fix: Always pass context when launching goroutines, monitor context.Done()
 
-**CTX-04: cancel適切呼び出し**
+**CTX-04: Appropriate cancel Invocation**
 
-Check: WithCancel/WithTimeoutのcancelがdefer呼び出されているか
-Why: cancel未呼出でリソースリーク、goroutineリーク、メモリ増加
-Fix: defer cancel()必須、WithTimeoutでもdefer推奨
+Check: Is cancel from WithCancel/WithTimeout called with defer?
+Why: Uncalled cancel causes resource leaks, goroutine leaks, memory growth
+Fix: Mandatory defer cancel(), recommend defer even with WithTimeout

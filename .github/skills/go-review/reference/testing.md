@@ -1,49 +1,49 @@
 ### 9. Testing (TEST)
 
-**TEST-01: テーブル駆動テスト**
+**TEST-01: Table-Driven Tests**
 
-Check: []struct形式テーブル駆動・subtests利用・エッジケース網羅されているか
-Why: テストケース重複・Go イディオム違反でテスト漏れ、保守コスト増
-Fix: []struct形式テーブル駆動、subtests利用、エッジケース網羅
+Check: Are []struct format table-driven tests, subtests, and edge cases covered?
+Why: Duplicate test cases and Go idiom violations cause test omissions, increased maintenance cost
+Fix: []struct format table-driven, use subtests, cover edge cases
 
-**TEST-02: testify利用・テスト設計**
+**TEST-02: testify Usage and Test Design**
 
-Check: assert/require適切利用・testable API設計・time/rand注入されているか
-Why: testify過度依存・testable でないAPI・time/randomness直接使用で外部依存増、テスト不安定
-Fix: testify依存プロジェクト方針決定、テスト可能性考慮、time.Now/randインターフェース注入
+Check: Are assert/require appropriately used, testable API designed, and time/rand injected?
+Why: Excessive testify dependency, untestable APIs, and direct time/randomness usage increase external dependencies, unstable tests
+Fix: Decide testify dependency project policy, consider testability, inject time.Now/rand interfaces
 
-**TEST-03: モック適切利用**
+**TEST-03: Appropriate Mock Usage**
 
-Check: gomock/testify mock利用・インターフェース分離・依存性注入があるか
-Why: 外部依存実呼出でテスト不安定、実行時間長、本番影響
-Fix: gomock/testify mock利用、インターフェース分離、依存性注入
+Check: Are gomock/testify mock used, interfaces segregated, and dependency injection present?
+Why: Real calls to external dependencies cause unstable tests, long execution time, production impact
+Fix: Use gomock/testify mock, segregate interfaces, dependency injection
 
-**TEST-04: テストヘルパー分離**
+**TEST-04: Separate Test Helpers**
 
-Check: testing_test.go分離・共通ヘルパー関数・fixture管理があるか
-Why: テストコード重複・setup/teardown散在で保守困難、テスト追加コスト増
-Fix: testing_test.go分離、共通ヘルパー関数、fixture管理
+Check: Are testing_test.go separated, common helper functions, and fixture management present?
+Why: Duplicate test code and scattered setup/teardown make maintenance difficult, increase test addition cost
+Fix: Separate testing_test.go, common helper functions, fixture management
 
-**TEST-05: ベンチマークテスト**
+**TEST-05: Benchmark Tests**
 
-Check: Benchmark関数・benchstat比較・CI組込があるか
-Why: パフォーマンス回帰検知不可・最適化効果不明でパフォーマンス劣化
-Fix: \*\_test.go内Benchmark関数、benchstat比較、CI組込
+Check: Are Benchmark functions, benchstat comparisons, and CI integration present?
+Why: Undetectable performance regressions and unclear optimization effects cause performance degradation
+Fix: Benchmark functions in *_test.go, benchstat comparison, CI integration
 
-**TEST-06: 統合テスト分離**
+**TEST-06: Separate Integration Tests**
 
-Check: build tag分離・// +build integration・並列実行設定があるか
-Why: ユニット/統合テスト混在・実行時間長でCI/CD遅延、フィードバック遅延
-Fix: build tag分離、// +build integration、並列実行設定
+Check: Are build tags separated, // +build integration, and parallel execution configured?
+Why: Mixed unit/integration tests and long execution time delay CI/CD, feedback
+Fix: Separate build tags, // +build integration, configure parallel execution
 
-**TEST-07: テストデータ管理**
+**TEST-07: Test Data Management**
 
-Check: testdata/ディレクトリ活用・factory パターン・Golden File Testingがあるか
-Why: テストデータハードコード・fixture未管理でテスト脆弱性、データ不整合
-Fix: testdata/ディレクトリ活用、factory パターン、Golden File Testing
+Check: Are testdata/ directory utilized, factory pattern, and Golden File Testing present?
+Why: Hardcoded test data and unmanaged fixtures cause test fragility, data inconsistency
+Fix: Utilize testdata/ directory, factory pattern, Golden File Testing
 
-**TEST-08: テスト並列実行効率**
+**TEST-08: Efficient Test Parallel Execution**
 
-Check: t.Parallel()使用・-race -parallel指定・並列安全実装があるか
-Why: t.Parallel()未使用・テスト実行時間長でCI時間増、開発速度低下
-Fix: t.Parallel()追加、-race -parallel指定、並列安全実装
+Check: Are t.Parallel() used, -race -parallel specified, and parallel-safe implementation present?
+Why: Unused t.Parallel() and long test execution time increase CI time, reduce development velocity
+Fix: Add t.Parallel(), specify -race -parallel, parallel-safe implementation

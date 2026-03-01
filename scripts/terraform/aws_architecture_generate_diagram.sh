@@ -7,7 +7,7 @@
 #     -h, --help        Display this help message
 #     -v, --verbose     Enable verbose output
 #     -d, --dry-run     Show what would be done without executing
-#     -r, --region     AWS region to use (default: $AWS_DEFAULT_REGION or ap-northeast-1)
+#     -r, --region      AWS region to use (default: auto-detected via aws configure get region)
 #     -o, --output      Output diagram file (default: aws_architecture_diagram.png)
 #     -f, --format      Output format (png, svg, pdf) (default: png)
 #     --git             Commit and push diagram to git (default: no git operation)
@@ -54,7 +54,7 @@ export VERBOSE
 DRY_RUN=false
 OUTPUT_FILE="aws_architecture_diagram.png"
 OUTPUT_FORMAT="png"
-AWS_REGION="${AWS_DEFAULT_REGION:-ap-northeast-1}"
+AWS_REGION="${AWS_REGION:-}"
 GIT_COMMIT=false
 TEMP_YAML_FILE="auto_generated_aws_dac.yaml"
 REGIONS_TO_CHECK=()
@@ -107,7 +107,7 @@ Options:
   -h, --help        Display this help message
   -v, --verbose     Enable verbose output
   -d, --dry-run     Show what would be done without executing
-  -r, --region      AWS region to query (default: \$AWS_DEFAULT_REGION or ap-northeast-1)
+  -r, --region      AWS region to query (default: auto-detected via aws configure)
   -o, --output      Output diagram file (default: aws_architecture_diagram.png)
   -f, --format      Output format (png, svg, pdf) (default: png)
   --git             Commit and push diagram to git (default: no git operation)
@@ -1234,9 +1234,10 @@ function main {
     validate_dependencies "aws" "jq" "awsdac"
 
     # Check AWS credentials before any AWS CLI usage
-    if ! check_aws_credentials; then
-        error_exit "AWS credentials are not set or invalid."
-    fi
+    check_aws_credentials || error_exit "AWS credentials are not set or invalid."
+
+    # Auto-detect AWS_REGION from AWS CLI if not provided
+    AWS_REGION="${AWS_REGION:-$(get_aws_region)}"
 
     # Initialize regions to check based on AWS_REGION
     initialize_regions

@@ -1,25 +1,25 @@
 ### 5. Performance (PERF)
 
-**PERF-01: matrix 活用による並列化**
+**PERF-01: Parallelization with Matrix**
 
-Check: 複数環境テストで`matrix`が活用されているか
-Why: matrix未活用で冗長、実行時間増加
-Fix: `matrix`導入による並列化
+Check: Is `matrix` utilized for multi-environment testing?
+Why: Not using matrix causes redundancy, increases execution time
+Fix: Introduce parallelization with `matrix`
 
-**PERF-02: キャッシュによる作業短縮**
+**PERF-02: Work Reduction with Caching**
 
-Check: 依存関係に適切なキャッシュが設定されているか
-Why: 依存キャッシュ未利用で毎回の再取得、時間増
-Fix: 適切パスのキャッシュと`restore-keys`設計
+Check: Is appropriate caching configured for dependencies?
+Why: Not using dependency caching causes repeated fetching, increases time
+Fix: Cache appropriate paths, design `restore-keys`
 
-**PERF-03: 冗長ステップの削除**
+**PERF-03: Remove Redundant Steps**
 
-Check: ステップの重複がないか
-Why: ステップ重複で不要実行、時間/コスト増
-Fix: ステップ集約、共有化
+Check: Are there duplicate steps?
+Why: Duplicate steps cause unnecessary execution, increase time/cost
+Fix: Consolidate steps, share common logic
 
-**PERF-04: concurrency 設定による古い実行キャンセル**
+**PERF-04: Cancel Old Executions with Concurrency**
 
-Check: `concurrency`設定で古い実行がキャンセルされるか
-Why: 重複実行によるリソース浪費、遅延
-Fix: `concurrency`設定で古い実行のキャンセル
+Check: Does `concurrency` configuration cancel old executions?
+Why: Duplicate executions waste resources, cause delays
+Fix: Configure `concurrency` to cancel old executions

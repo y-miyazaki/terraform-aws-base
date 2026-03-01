@@ -7,7 +7,7 @@
 #     -h, --help       Display this help message
 #     -v, --verbose    Enable verbose output
 #     -d, --dry-run    Run in dry-run mode (no changes made)
-#     -r, --region     AWS region to use (default: $AWS_DEFAULT_REGION or ap-northeast-1)
+#     -r, --region     AWS region to use (default: auto-detected via aws configure get region)
 #     -c, --categories Comma-separated list of categories to collect (optional)
 #     -o, --output     Output CSV file (default: aws_runtime_versions.csv)
 #
@@ -60,7 +60,7 @@ VERBOSE=false
 export VERBOSE
 DRY_RUN=false
 OUTPUT_FILE="aws_runtime_versions.csv"
-AWS_REGION="${AWS_DEFAULT_REGION:-ap-northeast-1}"
+AWS_REGION="${AWS_REGION:-}"
 CATEGORIES=""
 
 # Categories of services to collect runtime/engine versions
@@ -157,7 +157,7 @@ Options:
   -h, --help       Display this help message
   -v, --verbose    Enable verbose output
   -d, --dry-run    Run in dry-run mode (no changes made)
-  -r, --region     AWS region to query (default: \$AWS_DEFAULT_REGION or ap-northeast-1)
+  -r, --region     AWS region to query (default: auto-detected via aws configure)
   -c, --categories Comma-separated list of categories to collect (optional)
   -o, --output     Output CSV file (default: aws_runtime_versions.csv)
 
@@ -521,9 +521,10 @@ function main {
     validate_dependencies "aws" "jq"
 
     # Check AWS credentials before any AWS CLI usage
-    if ! check_aws_credentials; then
-        error_exit "AWS credentials are not set or invalid."
-    fi
+    check_aws_credentials || error_exit "AWS credentials are not set or invalid."
+
+    # Auto-detect AWS_REGION from AWS CLI if not provided
+    AWS_REGION="${AWS_REGION:-$(get_aws_region)}"
 
     log "INFO" "Starting AWS runtime version collection"
     log "INFO" "Output file: $OUTPUT_FILE"

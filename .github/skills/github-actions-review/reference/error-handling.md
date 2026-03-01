@@ -1,25 +1,25 @@
 ### 2. Error Handling (ERR)
 
-**ERR-01: continue-on-error の慎重利用**
+**ERR-01: Careful Use of continue-on-error**
 
-Check: `continue-on-error`使用が根拠明示され限定的か
-Why: `continue-on-error`多用で隠れた失敗の見落とし
-Fix: 使用は限定的、根拠コメント明示
+Check: Is `continue-on-error` usage justified and limited?
+Why: Overusing `continue-on-error` causes hidden failures to be overlooked
+Fix: Limit usage, explicitly document justification in comments
 
-**ERR-02: 失敗時の後処理の準備**
+**ERR-02: Failure Post-Processing Preparation**
 
-Check: 失敗時の後処理（ログ収集・クリーンアップ）が整備されているか
-Why: 失敗時の後処理未整備で解析困難、リソース残留
-Fix: `if: failure()`でログ・アーティファクト収集とクリーンアップ
+Check: Is post-processing (log collection, cleanup) prepared for failures?
+Why: Missing failure post-processing makes analysis difficult, leaves resources behind
+Fix: Collect logs/artifacts and perform cleanup with `if: failure()`
 
-**ERR-03: 障害通知の統合**
+**ERR-03: Failure Notification Integration**
 
-Check: 重要ジョブ失敗時の通知が設定されているか
-Why: 障害通知未整備で失敗の見逃し、対応遅延
-Fix: Slack/Email通知導入、重要度別集約
+Check: Are notifications configured for critical job failures?
+Why: Missing failure notifications cause failures to be missed, delay response
+Fix: Implement Slack/Email notifications, aggregate by severity
 
-**ERR-04: ジョブタイムアウトの設定**
+**ERR-04: Job Timeout Configuration**
 
-Check: 各ジョブに適切な`timeout-minutes`が設定されているか
-Why: タイムアウト未設定でランナー浪費、CI停滞
-Fix: 適切な`timeout-minutes`設定
+Check: Is appropriate `timeout-minutes` set for each job?
+Why: Missing timeout settings waste runners, stall CI
+Fix: Set appropriate `timeout-minutes`

@@ -1,46 +1,46 @@
 ### 12. Dependencies (DEP)
 
-**DEP-01: 直接依存明示**
+**DEP-01: Explicit Direct Dependencies**
 
-Check: 直接依存go.mod明示・バージョン固定・定期更新されているか
-Why: 間接依存に依存・バージョン固定なしでビルド不安定、予期しない動作
-Fix: 直接依存go.mod明示、バージョン固定、定期更新
+Check: Are direct dependencies explicitly in go.mod, versions pinned, and regularly updated?
+Why: Depending on indirect dependencies and unpinned versions cause unstable builds, unexpected behavior
+Fix: Explicitly list direct dependencies in go.mod, pin versions, regular updates
 
-**DEP-02: 依存更新戦略**
+**DEP-02: Dependency Update Strategy**
 
-Check: 定期的go get -u・Renovate/Dependabot導入・更新方針策定があるか
-Why: 依存更新なし・脆弱性放置でセキュリティリスク、技術的負債
-Fix: 定期的go get -u、Renovate/Dependabot導入、更新方針策定
+Check: Are regular go get -u, Renovate/Dependabot adoption, and update policies established?
+Why: No dependency updates and neglected vulnerabilities cause security risks, technical debt
+Fix: Regular go get -u, adopt Renovate/Dependabot, establish update policy
 
-**DEP-03: vendor管理（必要時のみ）**
+**DEP-03: vendor Management (Only When Necessary)**
 
-Check: 必要時のみvendor・.gitignore設定・モジュールプロキシ活用されているか
-Why: vendor不要使用・コミット漏れでリポジトリサイズ増、CI時間増
-Fix: 必要時のみvendor、.gitignore設定、モジュールプロキシ活用
+Check: Is vendor only when necessary, .gitignore configured, and module proxy utilized?
+Why: Unnecessary vendor use and missing commits increase repository size, CI time
+Fix: vendor only when necessary, configure .gitignore, utilize module proxy
 
-**DEP-04: 標準ライブラリ優先**
+**DEP-04: Prioritize Standard Library**
 
-Check: 標準ライブラリ優先検討・最小依存原則・依存理由明確化されているか
-Why: 標準で可能な機能の外部依存で脆弱性リスク増、保守コスト増
-Fix: 標準ライブラリ優先検討、最小依存原則、依存理由明確化
+Check: Is standard library prioritized, minimal dependency principle followed, and dependency reasons clarified?
+Why: External dependencies for standard-implementable features increase vulnerability risk, maintenance cost
+Fix: Prioritize standard library, follow minimal dependency principle, clarify dependency reasons
 
-**DEP-05: AWS SDKバージョン管理**
+**DEP-05: AWS SDK Version Management**
 
-Check: AWS SDK v2移行・最新版利用・非推奨API置換されているか
-Why: AWS SDK古いバージョン・v1/v2混在で新機能使用不可、非推奨警告
-Fix: AWS SDK v2移行、最新版利用、非推奨API置換
+Check: Are AWS SDK v2 migration, latest version usage, and deprecated API replacement done?
+Why: Old AWS SDK versions and v1/v2 mixing prevent new feature usage, deprecated warnings
+Fix: Migrate to AWS SDK v2, use latest version, replace deprecated APIs
 
-**DEP-06: 開発依存分離**
+**DEP-06: Separate Development Dependencies**
 
-Check: //go:build tools利用・開発依存明確化・本番除外されているか
-Why: 開発依存が本番依存・不要依存含有でセキュリティリスク、デプロイサイズ増
-Fix: //go:build tools利用、開発依存明確化、本番除外
+Check: Are //go:build tools used, development dependencies clarified, and production excluded?
+Why: Development dependencies in production and unnecessary dependencies cause security risks, increased deployment size
+Fix: Use //go:build tools, clarify development dependencies, exclude from production
 
-**DEP-07: ライセンス互換性**
+**DEP-07: License Compatibility**
 
-Check: go-licenses活用・ライセンス一覧生成・互換性確認されているか
-Why: ライセンス未確認・GPL等制限ライブラリで法的リスク、商用利用不可
-Fix: go-licenses活用、ライセンス一覧生成、互換性確認
+Check: Are go-licenses utilized, license lists generated, and compatibility verified?
+Why: Unverified licenses and restrictive libraries like GPL cause legal risks, commercial use impossible
+Fix: Utilize go-licenses, generate license lists, verify compatibility
 
 ## Best Practices
 

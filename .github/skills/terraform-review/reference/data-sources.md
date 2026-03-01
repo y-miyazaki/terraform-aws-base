@@ -8,28 +8,24 @@
 
 **DATA-01: Reconsider data sources (Replace with Static Values)**
 
-- Problem: Unnecessary data source references, replaceable with static values
-- Impact: External dependencies, increased execution time
-- Recommendation: Consider static value replacement, use data sources only when needed
-- Check: Data sources are justified
+Check: Are data sources justified?
+Why: Unnecessary data source references and replaceable with static values cause external dependencies and increased execution time
+Fix: Consider static value replacement, use data sources only when needed
 
 **DATA-02: Document import Procedures**
 
-- Problem: Unclear import background, undocumented procedures
-- Impact: Management difficulties, non-reproducible
-- Recommendation: Document procedures, record in comments, manage change history
-- Check: Import operations are documented
+Check: Are import operations documented?
+Why: Unclear import background and undocumented procedures cause management difficulties and non-reproducible operations
+Fix: Document procedures, record in comments, manage change history
 
 **DATA-03: Externalize IDs/ARNs as Variables**
 
-- Problem: Hardcoded IDs/ARNs, environment dependence
-- Impact: Difficult environment portability, multi-account incompatibility
-- Recommendation: Define as variables, separate tfvars, environment-independent design
-- Check: Cross-environment references use variables
+Check: Do cross-environment references use variables?
+Why: Hardcoded IDs/ARNs and environment dependence cause difficult environment portability and multi-account incompatibility
+Fix: Define as variables, separate tfvars, use environment-independent design
 
 **DATA-04: Remove Unused data sources**
 
-- Problem: Unused data sources, dead code
-- Impact: Wasted API calls, increased execution time
-- Recommendation: Remove unused data sources, periodic cleanup
-- Check: All data sources are referenced
+Check: Are all data sources referenced?
+Why: Unused data sources and dead code cause wasted API calls and increased execution time
+Fix: Remove unused data sources, perform periodic cleanup

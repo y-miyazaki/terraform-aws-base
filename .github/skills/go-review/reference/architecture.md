@@ -1,61 +1,61 @@
 ### 10. Architecture (ARCH)
 
-**ARCH-01: レイヤー分離**
+**ARCH-01: Layer Separation**
 
-Check: handler/usecase/repository分離・ビジネスとインフラ層分離されているか
-Why: ビジネスロジックとインフラ層混在でテスト困難、技術スタック変更困難
-Fix: Clean Architecture適用、handler/usecase/repository分離
+Check: Are handler/usecase/repository separated and business/infrastructure layers separated?
+Why: Mixed business logic and infrastructure layers make testing difficult, technology stack changes difficult
+Fix: Apply Clean Architecture, separate handler/usecase/repository
 
-**ARCH-02: 依存性注入**
+**ARCH-02: Dependency Injection**
 
-Check: コンストラクタ注入・wire/dig活用・インターフェース依存があるか
-Why: グローバル変数依存・ハードコーディング依存でモック不可、並列テスト不可
-Fix: コンストラクタ注入、wire/dig活用、インターフェース依存
+Check: Are constructor injection, wire/dig utilization, and interface dependencies present?
+Why: Global variable dependencies and hardcoded dependencies prevent mocking, parallel testing
+Fix: Constructor injection, leverage wire/dig, depend on interfaces
 
-**ARCH-03: ドメイン駆動設計**
+**ARCH-03: Domain-Driven Design**
 
-Check: 集約ルート定義・Value Object活用・Repository抽象化があるか
-Why: 貧血ドメインモデル・ビジネスロジック散在で整合性保証困難
-Fix: 集約ルート定義、Value Object活用、Repository抽象化
+Check: Are aggregate roots defined, Value Objects utilized, and Repositories abstracted?
+Why: Anemic domain models and scattered business logic make consistency guarantees difficult
+Fix: Define aggregate roots, utilize Value Objects, abstract Repositories
 
-**ARCH-04: SOLID原則**
+**ARCH-04: SOLID Principles**
 
-Check: SRP/OCP/LSP/ISP/DIP適用・インターフェース分離・抽象化されているか
-Why: 単一責任違反・依存関係逆転なしで変更影響範囲拡大、拡張困難
-Fix: SOLID原則適用、インターフェース分離、抽象化
+Check: Are SRP/OCP/LSP/ISP/DIP applied, interfaces segregated, and abstractions used?
+Why: Single responsibility violations and no dependency inversion expand change impact scope, make extension difficult
+Fix: Apply SOLID principles, segregate interfaces, use abstractions
 
-**ARCH-05: パッケージ構成適切**
+**ARCH-05: Appropriate Package Structure**
 
-Check: 循環依存なし・標準layout準拠・internal/活用されているか
-Why: 循環依存・パッケージ肥大化でビルド困難、理解困難
-Fix: 依存方向制御、標準layout準拠、internal/活用
+Check: Are there no circular dependencies, standard layout compliance, and internal/ utilization?
+Why: Circular dependencies and package bloat make builds difficult, understanding difficult
+Fix: Control dependency direction, comply with standard layout, utilize internal/
 
-**ARCH-06: 設定管理統一**
+**ARCH-06: Unified Configuration Management**
 
-Check: viper/envconfig利用・config構造体集約・環境変数優先されているか
-Why: 設定値散在・環境別設定未分離で設定漏れ、環境間不整合
-Fix: viper/envconfig利用、config構造体集約、環境変数優先
+Check: Are viper/envconfig used, config structs consolidated, and environment variables prioritized?
+Why: Scattered config values and unseparated environment configs cause config omissions, cross-environment inconsistencies
+Fix: Use viper/envconfig, consolidate config structs, prioritize environment variables
 
-**ARCH-07: ログ管理統一**
+**ARCH-07: Unified Log Management**
 
-Check: zap/zerolog統一・structured logging・trace ID伝播があるか
-Why: ログライブラリ混在・フォーマット不統一でログ解析困難、監視困難
-Fix: zap/zerolog統一、structured logging、trace ID伝播
+Check: Are zap/zerolog unified, structured logging used, and trace ID propagated?
+Why: Mixed logging libraries and inconsistent formats make log analysis difficult, monitoring difficult
+Fix: Unify on zap/zerolog, use structured logging, propagate trace IDs
 
-**ARCH-08: エラー管理統一**
+**ARCH-08: Unified Error Management**
 
-Check: エラーパッケージ集約・エラーコード体系定義・標準化されているか
-Why: エラーハンドリング方針不統一・エラーコード未定義で運用困難
-Fix: エラーパッケージ集約、エラーコード体系定義、標準化
+Check: Are error packages consolidated, error code systems defined, and standardized?
+Why: Inconsistent error handling policies and undefined error codes make operations difficult
+Fix: Consolidate error packages, define error code system, standardize
 
-**ARCH-09: 外部連携抽象化**
+**ARCH-09: External Integration Abstraction**
 
-Check: アダプタパターン・インターフェース定義・抽象化層実装があるか
-Why: 外部API直接呼出・抽象化層なしでベンダーロックイン、テスト困難
-Fix: アダプタパターン、インターフェース定義、抽象化層実装
+Check: Are adapter patterns, interface definitions, and abstraction layers implemented?
+Why: Direct external API calls and no abstraction layer cause vendor lock-in, difficult testing
+Fix: Adapter pattern, define interfaces, implement abstraction layer
 
-**ARCH-10: モジュール設計**
+**ARCH-10: Module Design**
 
-Check: 境界明確化・疎結合・高凝集・公開API最小化されているか
-Why: モジュール境界不明確・過度な凝集/結合で変更影響大、スケール困難
-Fix: 境界明確化、疎結合・高凝集、公開API最小化
+Check: Are boundaries clear, loosely coupled, highly cohesive, and public APIs minimized?
+Why: Unclear module boundaries and excessive cohesion/coupling cause large change impact, difficult scaling
+Fix: Clarify boundaries, loose coupling and high cohesion, minimize public APIs

@@ -8,22 +8,6 @@ license: MIT
 
 This skill provides comprehensive guidance for reviewing Shell Script code to ensure correctness, security, maintainability, and best practices compliance.
 
-## Output Language
-
-**IMPORTANT**: Always respond in Japanese (日本語) when performing code reviews, including:
-
-- All explanatory text
-- Problem descriptions (問題の説明)
-- Impact assessments (影響の評価)
-- Recommendations (推奨事項)
-- Check results (チェック結果)
-
-Keep only the following in English:
-
-- File paths (ファイルパス)
-- Code snippets (コードスニペット)
-- Technical identifiers (function names, variable names, command names, etc.)
-
 ## When to Use This Skill
 
 This skill is applicable for:
@@ -76,7 +60,7 @@ Review results must be output in structured format:
    - Display only failed review items
    - Format: `ItemID ItemName: ❌ Fail`
    - Purpose: Highlight issues requiring attention
-   - If all checks pass, output "該当する指摘事項はありません"
+   - If all checks pass, output "No issues found"
 
 2. **Issues** (Detected problems)
    - Display details for each failed item
@@ -91,29 +75,29 @@ Review results must be output in structured format:
 ### Output Format Example
 
 ```markdown
-# Shell Script Code Review結果
+# Shell Script Code Review Result
 
 ## Checks
 
-- SEC-01 入力値検証: ❌ Fail
+- SEC-01 Input Validation: ❌ Fail
 
 ## Issues
 
-**該当する指摘事項はありません** (if all checks pass)
+**No issues found** (if all checks pass)
 
 **OR**
 
-1. SEC-01: 入力値検証
+1. SEC-01: Input Validation
    - File: `scripts/deploy.sh` L23
-   - Problem: ユーザー入力を検証せずに直接コマンドに使用
-   - Impact: コマンドインジェクションのリスク
-   - Recommendation: 入力値を正規表現で検証、許可リストで確認してください
+   - Problem: User input used directly in command without validation
+   - Impact: Command injection risk
+   - Recommendation: Validate input with regex patterns and allowlist confirmation
 
-2. ERR-03: error_exit使用
+2. ERR-03: error_exit Usage
    - File: `scripts/backup.sh` L45
-   - Problem: エラー時にecho+exit 1を使用、共通関数未使用
-   - Impact: 一貫性のないエラーハンドリング、ログ欠如
-   - Recommendation: `error_exit "バックアップ失敗"` を使用してください
+   - Problem: Using echo+exit 1 on error instead of common function
+   - Impact: Inconsistent error handling, missing logging
+   - Recommendation: Use `error_exit "backup failed"` instead
 ```
 
 ## Available Review Categories
@@ -135,13 +119,13 @@ Review categories are organized by domain. Claude will read the relevant categor
 
 When performing code reviews:
 
-- **建設的・具体的に**: コード例を含む推奨事項、共通ライブラリ参照
-- **コンテキスト考慮**: PR目的と要件理解、トレードオフ検討
-- **優先度明確化**: "must fix"と"nice to have"の区別
-- **MCPツール活用**: serenaでプロジェクト構造確認、grep_searchでパターン検索
-- **自動チェック優先**: 構文エラーやshellcheckへの過度な焦点回避
-- **セキュリティ見落とし防止**: SEC-\*項目は特に注意深く
-- **プロジェクト標準遵守**: lib/all.sh共通ライブラリ活用を重視
+- **Constructive and specific**: Include code examples and common library references
+- **Context-aware**: Understand PR purpose and requirements, consider tradeoffs
+- **Clear priorities**: Distinguish between "must fix" and "nice to have"
+- **Leverage MCP tools**: Use serena for project structure, grep_search for patterns
+- **Prioritize automation**: Avoid excessive focus on syntax errors and shellcheck
+- **Prevent security oversights**: Pay special attention to SEC-\* items
+- **Respect project standards**: Emphasize common library usage (lib/all.sh)
 
 ## Summary
 

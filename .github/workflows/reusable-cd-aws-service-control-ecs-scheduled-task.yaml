@@ -44,10 +44,11 @@ on:
       AWS_REGION:
         required: true
 
+permissions: {}
+
 env:
   ACTION: ${{ inputs.action }}
   AUTO_DISCOVER: ${{ inputs.auto_discover }}
-  ENVIRONMENT: ${{ inputs.environment }}
   EXCLUDE_PATTERNS: ${{ inputs.exclude_patterns }}
   INCLUDE_PATTERNS: ${{ inputs.include_patterns }}
   SCHEDULED_TASKS: ${{ inputs.scheduled_tasks }}
@@ -62,16 +63,10 @@ jobs:
       contents: read
       id-token: write
     outputs:
-      discovered_tasks: ${{ steps.discover.outputs.discovered_tasks }}
       discovered_tasks_b64: ${{ steps.discover.outputs.discovered_tasks_b64 }}
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-        with:
-          persist-credentials: false
-
       - name: Setup AWS Credentials
-        uses: aws-actions/configure-aws-credentials@61815dcd50bd041e203e49132bacad1fd04d2708 # v5.1.1
+        uses: aws-actions/configure-aws-credentials@8df5847569e6427dd6c4fb1cf565c83acfa8afa7 # v6.0.0
         with:
           aws-region: ${{ secrets.AWS_REGION }}
           role-to-assume: ${{ secrets.AWS_IAM_ROLE_ARN }}
@@ -271,13 +266,8 @@ jobs:
       matrix:
         task: ${{ fromJSON(needs.validate.outputs.target_tasks) }}
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-        with:
-          persist-credentials: false
-
       - name: Setup AWS Credentials
-        uses: aws-actions/configure-aws-credentials@61815dcd50bd041e203e49132bacad1fd04d2708 # v5.1.1
+        uses: aws-actions/configure-aws-credentials@8df5847569e6427dd6c4fb1cf565c83acfa8afa7 # v6.0.0
         with:
           aws-region: ${{ secrets.AWS_REGION }}
           role-to-assume: ${{ secrets.AWS_IAM_ROLE_ARN }}

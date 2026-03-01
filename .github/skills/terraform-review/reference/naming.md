@@ -2,21 +2,18 @@
 
 **N-01: English Comments**
 
-- Problem: Mixed language comments, policy violations
-- Impact: Global team collaboration difficulties, lack of consistency
-- Recommendation: Write comments in English, follow project policy
-- Check: All comments are in English
+Check: Are all comments in English?
+Why: Mixed language comments and policy violations cause global team collaboration difficulties and lack of consistency
+Fix: Write comments in English, follow project policy
 
 **N-02: Module Header (Purpose/Overview)**
 
-- Problem: Missing module description, no header comments
-- Impact: Unclear usage, slow onboarding, maintenance difficulties
-- Recommendation: Add header comment at file beginning (purpose, overview, usage example)
-- Check: Module files have descriptive headers
+Check: Do module files have descriptive headers?
+Why: Missing module description and no header comments make usage unclear, slow onboarding, and create maintenance difficulties
+Fix: Add header comment at file beginning (purpose, overview, usage example)
 
 **N-03: Important Resource Explanation Comments**
 
-- Problem: Insufficient complex configuration explanations, unclear intent
-- Impact: Reduced maintainability, understanding difficulties
-- Recommendation: Add intent/reason comments, explain complex logic
-- Check: Complex configurations are well-commented
+Check: Are complex configurations well-commented?
+Why: Insufficient complex configuration explanations and unclear intent cause reduced maintainability and understanding difficulties
+Fix: Add intent/reason comments, explain complex logic

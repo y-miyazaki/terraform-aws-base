@@ -1,43 +1,43 @@
 ### 4. Error Handling (ERR)
 
-**ERR-01: trap 設定**
+**ERR-01: Trap Configuration**
 
-Check: trapでEXIT・ERR・INT・TERMが設定されているか
-Why: trap未設定でクリーンアップなし、リソースリーク、一時ファイル残留
-Fix: `trap 'cleanup' EXIT ERR`設定、cleanup関数実装
+Check: Are trap handlers set for EXIT, ERR, INT, TERM?
+Why: Missing traps prevent cleanup, causing resource leaks and temporary file remnants
+Fix: Set `trap 'cleanup' EXIT ERR`, implement cleanup function
 
-**ERR-02: 終了コード確認**
+**ERR-02: Exit Code Checking**
 
-Check: コマンド終了コードが適切に確認されているか
-Why: 終了コード未確認・`|| true`多用で障害検知不可、サイレント失敗
-Fix: `$?`確認、`|| error_exit`、適切エラーハンドリング
+Check: Are command exit codes properly checked?
+Why: Not checking exit codes or overusing `|| true` prevents failure detection, causing silent failures
+Fix: Check `$?`, use `|| error_exit`, apply proper error handling
 
-**ERR-03: エラーメッセージ明確**
+**ERR-03: Clear Error Messages**
 
-Check: エラーメッセージがコンテキスト情報と行番号を含むか
-Why: 不明瞭メッセージでデバッグ困難、問題特定遅延、ユーザー困惑
-Fix: 明確メッセージ、変数値出力、`"${BASH_SOURCE}:${LINENO}"`追加
+Check: Do error messages include context information and line numbers?
+Why: Unclear messages make debugging difficult, delay problem identification, confuse users
+Fix: Use clear messages, output variable values, add `"${BASH_SOURCE}:${LINENO}"`
 
-**ERR-04: クリーンアップ処理**
+**ERR-04: Resource Cleanup**
 
-Check: cleanup関数で一時ファイル・プロセス・ロックが解放されるか
-Why: クリーンアップなしでディスクリーク、プロセスリーク、デッドロック
-Fix: cleanup関数、trap設定、確実リソース解放
+Check: Does cleanup function release temporary files, processes, and locks?
+Why: Missing cleanup causes disk leaks, process leaks, deadlocks
+Fix: Implement cleanup function, set trap, ensure resource release
 
-**ERR-05: リトライ戦略**
+**ERR-05: Retry Strategy**
 
-Check: 一時的エラーに対するリトライ戦略があるか
-Why: リトライなしで運用負荷、自動復旧不可、可用性低下
-Fix: リトライループ、exponential backoff、最大試行回数
+Check: Is there a retry strategy for transient errors?
+Why: No retry strategy increases operational burden, prevents auto-recovery, reduces availability
+Fix: Implement retry loop, use exponential backoff, set max retry count
 
-**ERR-06: 部分的失敗許容**
+**ERR-06: Partial Failure Tolerance**
 
-Check: 許容エラーでset +e一時解除が明示的か
-Why: `set -e`環境で`|| true`乱用、可読性低下、意図不明
-Fix: `set +e; command; set -e`、明示的エラー許容
+Check: Is `set +e` explicitly used for acceptable errors?
+Why: Overusing `|| true` in `set -e` context reduces readability and obscures intent
+Fix: Use `set +e; command; set -e`, explicitly document error tolerance
 
-**ERR-07: エラーログ記録**
+**ERR-07: Error Logging**
 
-Check: エラーがログファイルに永続記録されるか
-Why: エラー出力のみで障害履歴不明、トレンド分析不可、事後調査困難
-Fix: エラーログファイル記録、timestamp付与、ログローテーション
+Check: Are errors persistently logged to a log file?
+Why: Output-only errors make failure history unclear, prevent trend analysis, hinder post-incident investigation
+Fix: Log errors to file with timestamps, implement log rotation

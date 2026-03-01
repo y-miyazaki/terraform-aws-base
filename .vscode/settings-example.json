@@ -71,10 +71,18 @@
     "sound": "on",
     "announcement": "auto"
   },
+  "chat.agent.codeBlockProgress": true,
   "chat.agent.enabled": true,
   "chat.agent.maxRequests": 200,
-  "chat.agentSessionsViewLocation": "view",
-  "chat.emptyState.history.enabled": true,
+  "chat.agentSessionProjection.enabled": true,
+  "chat.agentSkillsLocations": {
+    ".github/skills": true,
+    ".agents/skills": true,
+    ".claude/skills": true,
+    "~/.copilot/skills": true,
+    "~/.agents/skills": true,
+    "~/.claude/skills": true
+  },
   "chat.tools.todos.showWidget": true,
   "chat.useAgentSkills": true,
   "chat.mcp.access": "all",
@@ -93,6 +101,7 @@
     "git commit": false,
     "git checkout": false
   },
+  "chat.viewSessions.enabled": true,
   "editor.inlineSuggest.enabled": true,
   "github.copilot.chat.agent.autoFix": true,
   "github.copilot.chat.codeGeneration.useInstructionFiles": true,
@@ -110,10 +119,14 @@
     "go": true,
     "javascript": true,
     "markdown": true,
-    "plaintext": true,
+    "plaintext": false,
     "python": true,
-    "typescriptreact": true
+    "typescriptreact": true,
+    "yaml": false,
+    "env": false,
+    "dotenv": false
   },
+  // Security: Exclude sensitive files from search/indexing (affects Copilot context)
   "github.copilot.nextEditSuggestions.enabled": true,
   "github.copilot.nextEditSuggestions.fixes": true,
   // ------------------------------------------------------------
@@ -137,6 +150,32 @@
   // ------------------------------------------------------------
   "files.associations": {
     "tfvars": "Terraform"
+  },
+  "files.exclude": {
+    "**/.env.local": true,
+    "**/.env.*.local": true,
+    "**/secrets/**": true,
+    "**/*.key": true,
+    "**/*.pem": true,
+    "**/*.p12": true,
+    "**/*.pfx": true
+  },
+  "search.exclude": {
+    "**/.env*": true,
+    "**/secrets/**": true,
+    "**/credentials/**": true,
+    "**/*.key": true,
+    "**/*.pem": true,
+    "**/*.p12": true,
+    "**/*.pfx": true,
+    "**/terraform.tfvars": true,
+    "**/.aws/credentials": true,
+    "**/.ssh/id_*": true
+  },
+  "files.watcherExclude": {
+    "**/.env*": true,
+    "**/secrets/**": true,
+    "**/credentials/**": true
   },
   // ------------------------------------------------------------
   // for Golang
@@ -274,6 +313,13 @@
   //  ------------------------------------------------------------
   "[json]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  // ------------------------------------------------------------
+  // for Jsonnet
+  // ------------------------------------------------------------
+  "[jsonnet]": {
+    "editor.defaultFormatter": "Grafana.vscode-jsonnet",
+    "editor.formatOnSave": true
   },
   // ------------------------------------------------------------
   // for Markdown
