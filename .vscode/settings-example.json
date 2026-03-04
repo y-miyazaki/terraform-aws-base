@@ -83,8 +83,7 @@
     "~/.agents/skills": true,
     "~/.claude/skills": true
   },
-  "chat.tools.todos.showWidget": true,
-  "chat.useAgentSkills": true,
+  "chat.checkpoints.showFileChanges": true,
   "chat.mcp.access": "all",
   "chat.mcp.autostart": "onlyNew",
   "chat.mcp.discovery.enabled": {
@@ -101,6 +100,8 @@
     "git commit": false,
     "git checkout": false
   },
+  "chat.tools.todos.showWidget": true,
+  "chat.useAgentSkills": true,
   "chat.viewSessions.enabled": true,
   "editor.inlineSuggest.enabled": true,
   "github.copilot.chat.agent.autoFix": true,

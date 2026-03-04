@@ -24,7 +24,6 @@ No modules.
 | [aws_config_config_rule.cloudfront-associated-with-waf](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/config_config_rule) | resource |
 | [aws_config_config_rule.cloudfront-custom-ssl-certificate](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/config_config_rule) | resource |
 | [aws_config_config_rule.cloudfront-default-root-object-configured](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/config_config_rule) | resource |
-| [aws_config_config_rule.cloudfront-origin-access-identity-enabled](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/config_config_rule) | resource |
 | [aws_config_config_rule.cloudfront-origin-failover-enabled](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/config_config_rule) | resource |
 | [aws_config_config_rule.cloudfront-sni-enabled](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/config_config_rule) | resource |
 | [aws_config_config_rule.cloudfront-viewer-policy-https](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/config_config_rule) | resource |
