@@ -366,10 +366,17 @@ function run_security_audit {
 
             if [[ "$FIX_MODE" == "true" ]]; then
                 log "INFO" "  🔧 Attempting to fix vulnerabilities..."
-                if npm audit fix; then
+                local fix_output
+                if fix_output=$(npm audit fix 2>&1); then
                     log "INFO" "  ✅ Vulnerabilities fixed"
+                    if [[ "$VERBOSE" == "true" ]]; then
+                        echo "$fix_output"
+                    fi
                 else
                     log "WARN" "  ⚠️  Some vulnerabilities could not be auto-fixed"
+                    if [[ "$VERBOSE" == "true" ]]; then
+                        echo "$fix_output"
+                    fi
                 fi
             fi
         else
@@ -566,7 +573,7 @@ function validate_project {
 }
 
 #######################################
-# main: Main validation function
+# main: Main process
 #
 # Description:
 #   Main entry point for the validation script

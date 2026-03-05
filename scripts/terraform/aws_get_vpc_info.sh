@@ -258,7 +258,7 @@ function check_vpc_peering {
 }
 
 #######################################
-# main: Script entry point
+# main: Main process
 #
 # Description:
 #   Main function to execute the script logic for retrieving VPC resource information

@@ -31,7 +31,6 @@ module "aws_cloudwatch_events_health" {
 # Create Lambda function
 # https://registry.terraform.io/modules/terraform-aws-modules/lambda/aws/latest
 #--------------------------------------------------------------
-# tfsec:ignore:aws-lambda-enable-tracing
 module "lambda_function_health" {
   source  = "terraform-aws-modules/lambda/aws"
   version = "8.4.0"
@@ -82,8 +81,4 @@ module "lambda_function_health" {
   vpc_subnet_ids                = var.common_lambda.vpc.is_enabled ? var.common_lambda.vpc.create_vpc ? module.lambda_vpc.private_subnets : var.common_lambda.vpc.exists.private_subnets : []
 
   tags = var.tags
-
-  depends_on = [
-    module.lambda_vpc
-  ]
 }

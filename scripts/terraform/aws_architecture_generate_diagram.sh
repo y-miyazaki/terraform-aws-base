@@ -1194,7 +1194,7 @@ function update_git_repository {
 }
 
 #######################################
-# main: Main execution function
+# main: Main process
 #
 # Description:
 #   Main execution function

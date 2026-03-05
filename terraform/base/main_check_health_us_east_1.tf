@@ -42,7 +42,6 @@ module "aws_cloudwatch_events_health_us_east_1" {
 #
 # NOTE: Skip creation if default region is already us-east-1 to avoid duplication
 #--------------------------------------------------------------
-# tfsec:ignore:aws-lambda-enable-tracing
 module "lambda_function_health_us_east_1" {
   source  = "terraform-aws-modules/lambda/aws"
   version = "8.4.0"
@@ -58,7 +57,7 @@ module "lambda_function_health_us_east_1" {
       principal           = "events.amazonaws.com"
       qualifier           = null
       source_account      = null
-      source_arn          = module.aws_cloudwatch_events_health.arn
+      source_arn          = module.aws_cloudwatch_events_health_us_east_1.arn
       statement_id        = "HealthDetection"
       statement_id_prefix = null
     }
@@ -96,8 +95,4 @@ module "lambda_function_health_us_east_1" {
   vpc_subnet_ids                = var.common_lambda.vpc.is_enabled ? var.common_lambda.vpc.create_vpc ? module.lambda_vpc_us_east_1.private_subnets : var.common_lambda.vpc.exists.private_subnets : []
 
   tags = var.tags
-
-  depends_on = [
-    module.lambda_vpc_us_east_1
-  ]
 }

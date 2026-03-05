@@ -201,7 +201,7 @@ function build_lambda_functions {
 }
 
 #######################################
-# main: Main execution function
+# main: Main process
 #
 # Description:
 #   Main entry point that orchestrates the build process

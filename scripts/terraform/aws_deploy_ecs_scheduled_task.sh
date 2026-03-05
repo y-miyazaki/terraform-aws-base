@@ -323,7 +323,7 @@ function run_scheduled_task {
 }
 
 #######################################
-# main: Script entry point
+# main: Main process
 #
 # Description:
 #   Main function to execute the ECS scheduled task deployment workflow.

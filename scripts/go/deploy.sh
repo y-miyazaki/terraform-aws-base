@@ -169,7 +169,7 @@ function validate_arguments {
 }
 
 #######################################
-# main: Main execution function
+# main: Main process
 #
 # Description:
 #   Main entry point that orchestrates the deployment process

@@ -7,6 +7,7 @@ Common guidelines for AI-assisted development. Project-specific overrides define
 - **Documentation files** (instructions, prompt, SKILL.md): 日本語（章名のみ英語）
 - **Generated code and comments**: English only
 - **Chat/Agent interaction**: 日本語で質問・回答、コード例は英語で記載
+- **Commit messages**: 英語で簡潔に、変更内容を明確に表現
 
 ## Core Principles
 
@@ -29,6 +30,7 @@ Common guidelines for AI-assisted development. Project-specific overrides define
 - **Markdown**: Headings、lists、code blocks は Markdown 記法に従う。File references は workspace-relative paths で記載
 - **Code Examples**: 言語固有の慣例に従う。長いスニペットは段階的に説明
 - **Response Length**: Simple queries は 1-3 sentences（コード外）。Complex tasks は必要な detail のみ。ツール呼び出し後は簡潔に
+- **Clarity & Precision**: 冗長・曖昧表現禁止。"appropriately", "as needed", "etc.", "depending on context" などの曖昧な表現を使用せず、具体的条件と明確な指示を記載
 
 ### Error Handling & Edge Cases
 

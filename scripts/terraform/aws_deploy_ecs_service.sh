@@ -286,7 +286,7 @@ function verify_service {
 }
 
 #######################################
-# main: Script entry point
+# main: Main process
 #
 # Description:
 #   Main function to execute the ECS service deployment workflow

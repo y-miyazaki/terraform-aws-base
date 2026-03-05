@@ -437,7 +437,7 @@ function push_docker_image {
 }
 
 #######################################
-# main: Script entry point
+# main: Main process
 #
 # Description:
 #   Main function to execute the script logic for uploading Docker image to ECR

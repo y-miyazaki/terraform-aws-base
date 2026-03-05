@@ -149,7 +149,7 @@ function run_tests {
 }
 
 #######################################
-# main: Main function
+# main: Main process
 #
 # Description:
 #   Main entry point that orchestrates the testing process for Node.js modules

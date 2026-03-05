@@ -1,0 +1,444 @@
+## PR Body Writing Guidelines
+
+Guidelines for manually writing or refining PR Body content after using `pr_fetch.sh` or `pr_overview.sh`.
+
+## File Link Format
+
+**Critical Rule**: Always use full URLs with correct branch references in PR Body file links.
+
+### Correct Format
+
+```markdown
+[filename.ext](https://github.com/owner/repo/blob/BRANCH_NAME/path/to/filename.ext)
+```
+
+**Example**:
+```markdown
+[handler.js](https://github.com/owner/repo/blob/feature-branch/src/handlers/handler.js)
+```
+
+### Incorrect Format
+
+❌ **Relative paths** (points to base branch, not PR branch):
+```markdown
+[handler.js](src/handlers/handler.js)
+```
+
+❌ **Without branch specification**:
+```markdown
+[handler.js](/src/handlers/handler.js)
+```
+
+### Why This Matters
+
+When a PR uses `feature-branch` → `main`:
+- Relative paths resolve to `main` branch
+- Changes in `feature-branch` are not visible
+- Links return 404 or show wrong file version
+
+**Solution**: Use `blob/feature-branch` in URLs to point to PR source branch.
+
+### Implementation
+
+**Step 1**: Get PR branch information:
+```bash
+.github/skills/github-pr-overview/scripts/pr_fetch.sh <PR_NUMBER> --repo owner/repo | jq '.metadata | {headRefName, baseRefName}'
+```
+
+**Step 2**: Construct file URLs:
+```
+https://github.com/{owner}/{repo}/blob/{headRefName}/{file_path}
+```
+
+**Step 3**: Update links in PR Body:
+```markdown
+**[handler.js](https://github.com/owner/repo/blob/feature-branch/src/handler.js)** (+59 lines)
+```
+
+## Content Organization Principles
+
+### Priority When Multiple Topics
+
+When PR contains multiple types of changes:
+
+1. **Core changes first** - Main functionality, critical configurations, core logic
+2. **Supporting changes second** - CI/CD, tooling, scripts, automation
+3. **Documentation third** - README, guides, comments
+4. **Other changes last** - Config files, dependency updates, minor tweaks
+
+### Detail Level
+
+**High detail** (dedicated sections with examples):
+- New features or major functionality changes
+- Architecture or design changes
+- Security-related modifications
+- Breaking changes or migrations
+- Database/data model changes
+
+**Medium detail** (subsections with key points):
+- CI/CD workflow additions/changes
+- New tool or library integrations
+- Refactoring with significant impact
+- Performance optimizations
+
+**Bullet points only**:
+- Documentation updates
+- Config file tweaks
+- Dependency updates
+- Minor bug fixes
+- Code style improvements
+
+### Example Structure
+
+For PR with multiple types of changes:
+
+```markdown
+## Changes
+
+### 1. Core Functionality ⭐ Main Changes
+
+#### New Files (X files, Y lines)
+
+**[module.ext](https://github.com/owner/repo/blob/branch/path/module.ext)** (+N lines)
+- Purpose and functionality
+- Key components
+- Integration points
+
+**[handler.ext](https://github.com/owner/repo/blob/branch/path/handler.ext)** (+M lines)
+- Responsibility
+- API or interface details
+
+#### Modified Files
+
+**[config.ext](https://github.com/owner/repo/blob/branch/path/config.ext)** (+A/-B lines)
+- Changes description
+- Impact on existing functionality
+
+### 2. Supporting Changes
+
+#### CI/CD
+
+**[workflow.yaml](https://github.com/owner/repo/blob/branch/.github/workflows/workflow.yaml)**
+- Purpose and triggers
+- Key steps
+
+#### Tooling
+
+**[script.sh](https://github.com/owner/repo/blob/branch/scripts/script.sh)**
+- Automation added
+
+### 3. Other Changes (Bullet Points)
+
+**Documentation**:
+- [README.md](...): Updated setup instructions
+- [CONTRIBUTING.md](...): Added guidelines
+
+**Configuration**:
+- .editorconfig: Code style settings
+- package.json: Dependency updates
+```
+
+## File Change Notation
+
+Use consistent notation for file changes:
+
+```markdown
+**[filename.ext](URL)** (+ADD/-DELETE lines)
+```
+
+**Examples**:
+- `(+59 lines)` - New file or only additions
+- `(+28/-13 lines)` - Modifications
+- `(複数コミット)` or `(multiple commits)` - Many small changes
+- `(renamed from old_name.ext)` - File renamed
+
+## Architecture Diagrams
+
+For significant architectural changes, include ASCII diagrams:
+
+**Example 1: Component Flow**
+```
+User Request
+    ↓
+API Gateway
+    ↓
+Request Handler
+├─ Validator
+├─ Business Logic
+└─ Data Access
+    ↓
+Database / External API
+```
+
+**Example 2: Module Dependencies**
+```
+┌─────────────┐
+│   Frontend  │
+└──────┬──────┘
+       ↓
+┌─────────────┐
+│     API     │
+└──────┬──────┘
+       ↓
+┌─────────────┬─────────────┐
+│   Service A │   Service B │
+└─────────────┴─────────────┘
+```
+
+Keep diagrams:
+- **Simple**: Focus on key components only
+- **Hierarchical**: Clear flow from top to bottom or left to right
+- **Labeled**: Include component names and key interactions
+
+## Security Considerations Section
+
+When changes involve security, include:
+
+1. **Data Protection**: Encryption methods, secure storage approaches
+2. **Access Control**: Authentication, authorization, principle of least privilege
+3. **Secrets Management**: How sensitive data (credentials, keys, tokens) are handled
+4. **Known Issues**: Temporary workarounds or technical debt with improvement plan
+5. **Validation**: Input validation, sanitization, security testing performed
+
+**Example**:
+```markdown
+#### Security
+
+- **Data Protection**: Sensitive data encrypted at rest and in transit
+- **Access Control**: Role-based access control implemented
+- **Secrets Management**: All credentials stored in secure vault
+- **Validation**: Input sanitization for all user-provided data
+- **⚠️ Known Issue**: API key in config file (temporary)
+  - Current: Hardcoded in `config.json`
+  - Planned: Migrate to environment variables by Q2
+```
+
+## Operational Considerations Section
+
+For changes affecting operations, include relevant details:
+
+### Deployment
+
+```markdown
+#### Deployment
+
+**Prerequisites**:
+- [ ] Required dependencies installed
+- [ ] Configuration files updated
+- [ ] Database migrations prepared (if applicable)
+- [ ] Backward compatibility verified
+
+**Steps**:
+```bash
+# Example deployment commands
+npm run build
+npm run migrate
+npm run deploy
+```
+
+**Rollback Plan**: Revert to previous version using `git revert` or deployment tool rollback
+```
+
+### Testing and Validation
+
+```markdown
+#### Testing
+
+**Automated Tests**:
+- Unit tests: 95% coverage
+- Integration tests: All passing
+- E2E tests: Critical paths verified
+
+**Manual Verification**:
+- [ ] Feature X tested in staging
+- [ ] Performance benchmarked
+- [ ] Edge cases validated
+```
+
+### Monitoring (if applicable)
+
+```markdown
+#### Monitoring
+
+**Key Metrics**:
+- Response time: < 200ms (p95)
+- Error rate: < 0.1%
+- Resource utilization: Within normal range
+
+**Logs**: Check application logs for errors or warnings
+**Alerts**: Configured for critical thresholds
+```
+
+## General PR Body Template
+
+Use this template as a starting point, adapting sections based on PR type and complexity:
+
+```markdown
+## Overview
+
+Brief description focusing on the main purpose and changes.
+
+**Main Purpose**:
+- Primary goal or feature
+- Key improvements or fixes
+- Integration with existing systems
+
+**Scope**: N files changed, M additions, P deletions
+
+---
+
+## Changes
+
+### 1. [Main Change Category] ⭐ Main Changes
+
+#### New Files (X files, Y lines)
+
+**[file1.ext](https://github.com/owner/repo/blob/branch/path/file1.ext)** (+N lines)
+- Purpose and functionality
+- Key components
+- Dependencies or integrations
+
+**[file2.ext](https://github.com/owner/repo/blob/branch/path/file2.ext)** (+M lines)
+- Responsibility
+- API or interface details
+
+#### Modified Files
+
+**[file3.ext](https://github.com/owner/repo/blob/branch/path/file3.ext)** (+A/-B lines)
+- Changes description
+- Reason for modification
+- Impact on existing functionality
+
+#### Architecture (if applicable)
+
+```
+[ASCII diagram showing component relationships]
+```
+
+#### Security (if applicable)
+
+- Data protection measures
+- Access control changes
+- Secrets management approach
+- Known issues with mitigation plan
+
+### 2. [Supporting Changes Category]
+
+Brief description or bullet points
+
+**[supporting-file.ext](https://github.com/owner/repo/blob/branch/path)**
+- Purpose
+
+### 3. Other Changes
+
+**Documentation**:
+- [README.md](...): Description of updates
+- [CONTRIBUTING.md](...): Updates made
+
+**Configuration**:
+- .config-file: Brief description
+- package.json: Dependency updates
+
+---
+
+## Testing
+
+**Automated**:
+- [ ] Unit tests pass
+- [ ] Integration tests pass
+- [ ] Coverage maintained or improved
+
+**Manual**:
+- [ ] Feature tested in [environment]
+- [ ] Edge cases verified
+- [ ] Performance acceptable
+
+---
+
+## Type of Change
+
+- [x] Feature: New functionality
+- [ ] Bug Fix: Corrects existing issue
+- [x] Refactor: Code structure improvement
+- [x] Documentation: Updates to docs
+- [x] Configuration: Settings or build changes
+- [ ] Test: Test additions or updates
+- [ ] Performance: Performance improvements
+- [ ] Security: Security-related changes
+
+---
+
+## Checklist
+
+- [x] Code follows project conventions
+- [x] Self-documenting with clear comments
+- [x] All tests pass locally
+- [x] Documentation updated
+- [x] No breaking changes (or breaking changes documented)
+
+---
+
+## Important Notes (if applicable)
+
+### Deployment Instructions
+
+[Detailed steps if deployment is non-trivial...]
+
+### Known Limitations
+
+[Issues or technical debt with remediation plan...]
+
+### Next Steps
+
+1. Phase 1: [Initial rollout plan]
+2. Phase 2: [Follow-up improvements]
+3. Phase 3: [Future enhancements]
+
+---
+
+**Additional Information**: [Link to detailed documentation, design docs, or PR comments]
+```
+
+## Adapting the Template
+
+**For Small PRs** (bug fixes, minor updates):
+- Simplify Overview
+- Use bullet points for Changes
+- Skip Architecture diagrams
+- Minimal Testing section
+
+**For Large PRs** (features, refactors):
+- Detailed Overview with context
+- Multiple Change categories with subsections
+- Include Architecture diagrams
+- Comprehensive Testing details
+- Deployment instructions
+- Known issues and next steps
+
+**For Documentation PRs**:
+- Focus on what's documented and why
+- Include "Before/After" comparisons if helpful
+- Skip irrelevant sections (Architecture, Testing)
+
+**For Configuration/CI/CD PRs**:
+- Explain what's automated or configured
+- Include usage examples
+- Document expected behavior changes
+
+## Best Practices Summary
+
+**DO**:
+- Use full GitHub URLs with branch specification for all file links
+- Organize Changes section by logical grouping (core → supporting → documentation)
+- Include architecture diagrams for complex features
+- Document security considerations explicitly
+- Provide deployment steps for non-trivial changes
+- Adapt template to PR size and complexity
+
+**DON'T**:
+- Use relative file paths
+- Omit branch name in file URLs
+- Mix unrelated changes without clear categorization
+- Assume deployment process is obvious
+- Skip security or operational impact discussion when relevant
+- Create overly detailed Bodies for simple changes

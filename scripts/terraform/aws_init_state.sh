@@ -381,7 +381,7 @@ function verify_bucket_config {
 }
 
 #######################################
-# main: Script entry point
+# main: Main process
 #
 # Description:
 #   Main function to execute the script logic for creating Terraform state bucket

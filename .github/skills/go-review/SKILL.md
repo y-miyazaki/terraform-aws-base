@@ -4,23 +4,140 @@ description: Go code review for correctness, security, performance, and best pra
 license: MIT
 ---
 
-# Go Code Review
+## Purpose
+
+Conducts code review of Go source files for correctness, security, performance, and best practices using manual review of design decisions and patterns.
 
 This skill provides comprehensive guidance for reviewing Go code to ensure correctness, security, performance, and best practices compliance.
 
 ## When to Use This Skill
 
-This skill is applicable for:
+Recommended usage:
 
-- Performing code reviews on Go pull requests
-- Checking Go code before merging
-- Ensuring security and best practices adherence
-- Validating design decisions and architecture patterns
-- Performance and concurrency review
+- After automated checks (go fmt, go vet, golangci-lint, go test, govulncheck) pass
+- During pull request code review process
+- Before merging Go code changes
+- When evaluating design decisions or architecture patterns
+- For security review of sensitive code paths
+- When assessing concurrency patterns or performance implications
 
-**Note**: Linting and auto-checkable items (syntax errors, formatting, golangci-lint) are excluded from this review as they should be caught by validation scripts or CI/CD pipelines.
+## Input Specification
 
-## Review Process
+This skill expects:
+
+- Go source code files (required) - `.go` files in the PR
+- PR description and linked issues (required) - Context for understanding changes
+- Automated check results (required) - go fmt, go vet, golangci-lint, go test, govulncheck status
+- Related tests and documentation (optional) - Test files and README updates
+
+Format:
+
+- Go files: Valid Go syntax
+- PR context: Markdown text describing purpose and changes
+- Check results: Pass/fail status from CI/CD pipeline or validation script
+
+## Output Specification
+
+**Output format (MANDATORY)** - Use this exact structure:
+
+- ## Checks section: List of failed review items only (ItemID ItemName: ❌ Fail)
+- ## Issues section: Numbered list of detected problems with details
+- Each issue includes: Item ID + Name, File path + line number, Problem description, Impact assessment, Specific recommendation with code example
+- If all checks pass: "No issues found"
+
+See reference/common-output-format.md for detailed format specification and examples.
+
+## Execution Scope
+
+**How to use this skill**:
+
+- This skill provides manual review guidance requiring human/AI judgment
+- Reviewer reads Go source files and systematically applies review checklist items from [reference/common-checklist.md](reference/common-checklist.md)
+- **Prerequisites**: Automated validation must pass before manual review
+  - Run go-validation first to ensure fmt/vet/lint/test/security checks pass
+- **When to use**: After automated checks pass, for design decisions, concurrency patterns, and best practices requiring judgment
+
+**What this skill does**:
+
+- Review design decisions and architecture patterns requiring human judgment
+- Check context.Context propagation and cancellation patterns
+- Validate concurrency patterns (goroutines, channels, mutexes)
+- Assess error handling and wrapping strategies
+- Verify security patterns (input validation, crypto usage, SQL injection prevention)
+- Evaluate performance considerations (allocations, string operations)
+- Review test quality and coverage
+- Check interface design and dependency injection
+
+What this skill does NOT do (Out of Scope):
+
+- Check syntax errors or formatting (use go fmt/vet for that)
+- Run linters (use golangci-lint for that)
+- Execute tests (use go test for that)
+- Check for vulnerabilities (use govulncheck for that)
+- Modify code files automatically
+- Approve or merge pull requests
+- Review non-Go files in the PR
+- Perform runtime profiling or benchmarking
+
+## Constraints
+
+Prerequisites:
+
+- Automated checks (go fmt, go vet, golangci-lint, go test, govulncheck) must pass before manual review
+- Go files must have valid syntax
+- PR description and context must be available
+- Reviewer must have access to reference documentation
+
+Limitations:
+
+- Review focuses on design patterns and best practices, not syntax
+- Cannot validate actual runtime behavior or performance
+- Assumes familiarity with Go idioms and Effective Go guidelines
+- Reference documentation required for detailed category checks
+- Test coverage analysis requires test execution results
+
+## Failure Behavior
+
+Error handling:
+
+- Automated checks failed: Request fixes before starting manual review, output message listing failed checks
+- Missing PR context: Request PR description and linked issues, cannot proceed without context
+- Invalid Go syntax: Refer to go fmt/vet errors, do not proceed with manual review
+- Inaccessible reference files: Output warning, proceed with available knowledge only
+- Ambiguous design pattern: Flag as potential issue with recommendation to clarify intent or add comments
+
+Error reporting format:
+
+- Clear indication of blocking issues vs. recommendations
+- Specific file paths and line numbers for all issues
+- Code examples for recommended fixes following Go idioms
+- References to Effective Go or official Go documentation
+
+## Reference Files Guide
+
+When using this skill with an agent, reference the following files via @-mention for detailed guidance:
+
+**Standard Components**:
+
+- **common-checklist.md** - Go code review checklist
+- **common-output-format.md** - Review report format specification
+
+**Category Details**:
+
+- **category-architecture.md** - Architecture patterns detailed guide
+- **category-code-standards.md** - Code standards guide
+- **category-concurrency.md** - Concurrency patterns detailed guide
+- **category-context.md** - Context usage patterns detailed guide
+- **category-dependencies.md** - Dependency management guide
+- **category-documentation.md** - Documentation standards
+- **category-error-handling.md** - Error handling patterns detailed guide
+- **category-function-design.md** - Function design guide
+- **category-global.md** - Overall design patterns
+- **category-performance.md** - Performance optimization guide
+- **category-security.md** - Security patterns detailed guide
+- **category-testing.md** - Test design guide
+
+## Workflow
 
 ### Step 1: Understand Context
 
@@ -105,18 +222,18 @@ Review results must be output in structured format:
 
 Review categories are organized by domain. Claude will read the relevant category file(s) based on the code being reviewed.
 
-**Global & Base**: Package structure, imports, naming basics → [reference/global.md](reference/global.md)
-**Context Handling**: context.Context propagation, timeout, cancellation → [reference/context.md](reference/context.md)
-**Concurrency**: Goroutines, channels, mutexes, race conditions → [reference/concurrency.md](reference/concurrency.md)
-**Code Standards**: Naming, style, idioms, simplicity → [reference/code-standards.md](reference/code-standards.md)
-**Function Design**: Function signatures, parameters, return values → [reference/function-design.md](reference/function-design.md)
-**Error Handling**: Error types, wrapping, sentinel errors → [reference/error-handling.md](reference/error-handling.md)
-**Security**: Input validation, crypto, SQL injection, secrets → [reference/security.md](reference/security.md)
-**Performance**: Allocations, string concatenation, preallocation → [reference/performance.md](reference/performance.md)
-**Testing**: Test structure, table-driven tests, mocking, coverage → [reference/testing.md](reference/testing.md)
-**Architecture**: Package design, interfaces, dependency injection → [reference/architecture.md](reference/architecture.md)
-**Documentation**: godoc, comments, examples → [reference/documentation.md](reference/documentation.md)
-**Dependencies**: Module management, versioning, security → [reference/dependencies.md](reference/dependencies.md)
+**Global & Base**: Package structure, imports, naming basics → [reference/category-global.md](reference/category-global.md)
+**Context Handling**: context.Context propagation, timeout, cancellation → [reference/category-context.md](reference/category-context.md)
+**Concurrency**: Goroutines, channels, mutexes, race conditions → [reference/category-concurrency.md](reference/category-concurrency.md)
+**Code Standards**: Naming, style, idioms, simplicity → [reference/category-code-standards.md](reference/category-code-standards.md)
+**Function Design**: Function signatures, parameters, return values → [reference/category-function-design.md](reference/category-function-design.md)
+**Error Handling**: Error types, wrapping, sentinel errors → [reference/category-error-handling.md](reference/category-error-handling.md)
+**Security**: Input validation, crypto, SQL injection, secrets → [reference/category-security.md](reference/category-security.md)
+**Performance**: Allocations, string concatenation, preallocation → [reference/category-performance.md](reference/category-performance.md)
+**Testing**: Test structure, table-driven tests, mocking, coverage → [reference/category-testing.md](reference/category-testing.md)
+**Architecture**: Package design, interfaces, dependency injection → [reference/category-architecture.md](reference/category-architecture.md)
+**Documentation**: godoc, comments, examples → [reference/category-documentation.md](reference/category-documentation.md)
+**Dependencies**: Module management, versioning, security → [reference/category-dependencies.md](reference/category-dependencies.md)
 
 ## Best Practices
 
@@ -129,16 +246,5 @@ When performing code reviews:
 - **Prioritize automation**: Avoid excessive focus on syntax errors and go fmt/vet/golangci-lint
 - **Prevent security oversights**: Pay special attention to SEC-\* items
 - **Respect Go idioms**: Follow Effective Go and common patterns
-
-## Summary
-
-This skill provides:
-
-1. **Comprehensive review guidelines** - 12 categories covering all aspects
-2. **Structured output format** - Consistent, parseable review results
-3. **Clear process** - Step-by-step review workflow
-4. **Prioritization** - Critical vs. minor issues
-5. **Actionable recommendations** - Specific fix suggestions with code examples
-6. **Domain-specific organization** - Load only relevant categories for efficient token usage
 
 For detailed checks in each category, refer to the corresponding file in the [reference/](reference/) directory.

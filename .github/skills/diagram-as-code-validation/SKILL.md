@@ -1,300 +1,173 @@
 ---
 name: diagram-as-code-validation
-description: Use yamllint and awsdac for DAC validation. This skill provides the validation workflow for AWS architecture diagrams. Detailed command options are for debugging only.
+description: Validates AWS Diagram as Code (DAC) YAML files using yamllint and awsdac. Use for syntax checking, diagram generation, and structure verification. Always use the 3-step validation workflow.
 license: MIT
 ---
 
-# Diagram as Code Validation
+## Purpose
+
+Validates AWS Diagram as Code (DAC) YAML files using yamllint and awsdac for syntax checking, diagram generation, and structure verification.
 
 This skill provides guidance for validating Diagram as Code (DAC) YAML files and generating AWS architecture diagrams.
 
 ## When to Use This Skill
 
-This skill is applicable for:
+Recommended usage:
 
-- Validating DAC YAML syntax
-- Generating PNG diagrams from YAML
-- Verifying diagram structure and correctness
-- Ensuring all resources are properly linked
-- Debugging diagram generation failures
+- After editing DAC YAML files
+- Before committing diagram changes
+- When generating diagrams for multiple environments
+- For debugging diagram generation failures
+- During architecture review processes
 
-## Validation Commands
+## Input Specification
 
-### ⚠️ Required Validation Steps
+This skill expects:
 
-**Always use these commands for validation.** Detailed command options below are for debugging specific failures.
+- DAC YAML file(s) (required) - AWS architecture diagram definitions
+- Output PNG filename (required for generation)
+- yamllint configuration file (optional) - `.yamllint` if custom rules needed
+- Environment identifier (optional) - For multi-environment diagrams (dev/stg/prd)
 
-Follow these steps to validate DAC files:
+Format:
 
-```bash
-# 1. YAML syntax check
-yamllint aws_architecture_diagram.yaml
+- YAML file: Valid YAML syntax with DAC structure (Canvas, Resources, Links)
+- Output filename: String ending in `.png`
+- Environment: String identifier (e.g., "dev", "stg", "prd")
 
-# 2. Generate diagram
-awsdac -d aws_architecture_diagram.yaml -o diagram.png
+## Output Specification
 
-# 3. Verify output
-file diagram.png
+Structured validation results and generated artifacts:
+
+- yamllint output: List of syntax errors with line numbers, or success confirmation
+- awsdac output: PNG diagram file or error messages with specific failure reasons
+- file verification: File type confirmation and size information
+
+Success output format:
+
+```
+✓ YAML syntax valid
+✓ Diagram generated: diagram.png (XXX KB)
+✓ File type: PNG image data
 ```
 
-### When to Use Additional Command Options
+Error output format:
 
-Use detailed command options **only** for:
-
-- Debugging specific validation failures
-- Testing with custom configurations
-- Batch processing multiple files
-
-**For normal validation, use the required steps above.**
-
-### Debugging Reference: Command Options
-
-#### 1. YAML Syntax Check
-
-**Purpose**: Verify YAML syntax is valid
-
-```bash
-# Check single file
-yamllint aws_architecture_diagram.yaml
-
-# Check all DAC files
-yamllint aws_architecture_diagram*.yaml
-
-# Check with specific config
-yamllint -c .yamllint aws_architecture_diagram.yaml
+```
+✗ yamllint: Line X: [error description]
+✗ awsdac: [specific failure reason]
 ```
 
-**What it checks**:
+See reference/common-output-format.md for detailed format specification and examples.
 
-- YAML syntax errors
-- Indentation issues
-- Invalid characters
-- Structural problems
+## Execution Scope
 
-#### 2. Generate Diagram
+**How to use this skill**:
 
-**Purpose**: Create PNG from YAML and validate structure
+- **Primary method**: Always use `scripts/validate.sh` for comprehensive validation
+- Script executes yamllint and awsdac in recommended order with proper configuration
+- **Manual invocation**: Individual tool commands available for debugging (see reference/troubleshooting.md)
+- **Automated CI/CD**: Integrate validate.sh into CI pipeline for automated checks
 
-```bash
-# Generate diagram
-awsdac -d aws_architecture_diagram.yaml -o diagram.png
+**What this skill does**:
 
-# Generate with specific environment
-awsdac -d aws_architecture_diagram_prd.yaml -o diagram_prd.png
-```
+- Validate YAML syntax using yamllint
+- Generate PNG diagrams from YAML using awsdac
+- Verify diagram structure and resource hierarchy
+- Check link validity (source/target references)
+- Confirm output file generation
 
-**What it validates**:
+What this skill does NOT do (Out of Scope):
 
-- All resources are reachable from Canvas
-- Links have valid source and target
-- Resource types are recognized
-- Hierarchy is correct
+- Modify YAML files automatically
+- Fix diagram layout issues
+- Validate AWS resource configurations (use terraform-validation for that)
+- Check actual AWS infrastructure state
+- Generate diagrams in formats other than PNG
+- Perform security scanning of AWS resources
 
-#### 3. Verify Output
+## Constraints
 
-**Purpose**: Confirm PNG was generated successfully
+Prerequisites:
 
-```bash
-# Check file type
-file diagram.png
+- yamllint installed and available in PATH
+- awsdac installed and available in PATH
+- YAML file follows DAC structure (Canvas, Resources, Links)
+- Write permission to output directory
 
-# View file size
-ls -lh diagram.png
+Limitations:
 
-# Open for visual inspection
-open diagram.png  # macOS
-xdg-open diagram.png  # Linux
-```
+- Only validates YAML syntax and DAC structure, not AWS resource validity
+- PNG generation requires valid resource hierarchy from Canvas
+- Large diagrams (>100 resources) may have layout issues
+- MCP tool (awsdac-mcp-server) requires separate installation and may not be available
 
-## Validation Checklist
+## Failure Behavior
 
-### Structure Validation
+Error handling:
 
-- [ ] **YAML syntax is valid** - No yamllint errors
-- [ ] **All Resources reachable from Canvas** - Proper hierarchy
-- [ ] **Links have valid Source/Target** - All referenced resources exist
-- [ ] **Titles are understandable** - Clear, descriptive names
-- [ ] **Environment name in Region Title** - e.g., "ap-northeast-1 (Production)"
-- [ ] **VPC/Subnet hierarchy is accurate** - Proper nesting
+- YAML syntax error: yamllint outputs error with line number, exit without diagram generation
+- Invalid resource reference: awsdac outputs error message, no PNG created
+- Missing required fields: awsdac outputs specific field error, no PNG created
+- File write error: Output error message about permissions, no PNG created
+- Invalid hierarchy: awsdac outputs reachability error, no PNG created
 
-### Content Validation
+Error reporting format:
 
-- [ ] **Resource types are correct** - Match AWS service types
-- [ ] **Links represent actual connections** - Accurate architecture
-- [ ] **Stacks are properly organized** - Logical grouping
-- [ ] **Labels are descriptive** - e.g., "HTTPS", "SQL"
+- Standard error output with specific error messages
+- Exit code: 0=success, non-zero=error
+- Error messages include line numbers and field names when applicable
 
-## Common Validation Failures
+## Reference Files Guide
 
-### yamllint failures
+When using this skill with an agent, reference the following files via @-mention for detailed guidance:
 
-**Common issues**:
+**Standard Components**:
 
-- Indentation errors
-- Missing colons
-- Invalid YAML structure
-- Trailing spaces
+- **common-checklist.md** - DAC YAML validation checklist
+- **common-output-format.md** - Validation result report format specification
 
-**Fix**: Correct YAML syntax according to error message
+## Validation Script Usage
 
-### awsdac generation failures
+**Always use the validation script. Do not run individual commands.**
 
-**Common issues**:
-
-- Invalid resource references
-- Missing required fields
-- Incorrect resource types
-- Broken hierarchy
-
-**Fix**: Review error message and correct YAML structure
-
-### Visual issues
-
-**Common problems**:
-
-- Resources overlapping
-- Links crossing unnecessarily
-- Poor layout
-- Missing connections
-
-**Fix**: Adjust resource positions or link types
-
-## Validation Workflow
-
-### Before Committing
-
-1. **Edit YAML** - Make diagram changes
-
-2. **Check syntax**:
-
-   ```bash
-   yamllint aws_architecture_diagram.yaml
-   ```
-
-3. **Generate diagram**:
-
-   ```bash
-   awsdac -d aws_architecture_diagram.yaml -o diagram.png
-   ```
-
-4. **Visual inspection** - Open PNG and verify:
-   - All resources are present
-   - Connections are correct
-   - Layout is clear
-   - Labels are readable
-
-5. **Fix issues** - Adjust YAML as needed
-
-6. **Regenerate** - Repeat until diagram is correct
-
-7. **Commit** - Commit both YAML and PNG
-
-## Generation Test
-
-### Quick Test
+### Usage
 
 ```bash
-# Generate to temporary file and verify
-awsdac -d aws_architecture_diagram.yaml -o test.png && \
-file test.png && \
-rm -f test.png
+# Full validation of all DAC files
+bash diagram-as-code-validation/scripts/validate.sh
+
+# Validate specific YAML file
+bash diagram-as-code-validation/scripts/validate.sh ./aws_architecture_diagram.yaml
+
+# Validate specific directory
+bash diagram-as-code-validation/scripts/validate.sh ./diagrams/
 ```
 
-### Full Test
+### What the Script Does
 
-```bash
-# Generate all environment diagrams
-for env in dev stg prd; do
-    awsdac -d aws_architecture_diagram_${env}.yaml \
-           -o aws_architecture_diagram_${env}.png
-done
-```
+The validation script performs all checks in the correct order:
 
-## MCP Tool Usage
+1. **yamllint** - YAML syntax validation
+2. **awsdac** - Diagram generation and structure verification
+3. **File verification** - Output confirmation and integrity check
 
-### Using awsdac-mcp-server
+## Validation Requirements
 
-```bash
-# 1. Get format information
-mcp_awsdac-mcp-se_getDiagramAsCodeFormat
+Before committing DAC changes:
 
-# 2. Generate diagram to file
-mcp_awsdac-mcp-se_generateDiagramToFile
+- [ ] YAML syntax is valid (yamllint passes)
+- [ ] Diagram generates successfully (awsdac passes)
+- [ ] PNG output file created and verified
+- [ ] All resource links are valid (no dangling references)
+- [ ] Canvas hierarchy is correct
 
-# 3. Get Base64 output (for display)
-mcp_awsdac-mcp-se_generateDiagram
-```
+## Workflow
 
-## Best Practices
+1. **Make changes** - Edit YAML DAC files
+2. **Run validation**: `bash diagram-as-code-validation/scripts/validate.sh`
+3. **Fix issues** - Address any YAML or structure errors
+4. **Verify diagram** - Check generated PNG visually
+5. **Commit** - Only when validation passes
 
-### Validation Frequency
-
-- Run `yamllint` after every YAML edit
-- Generate PNG after structural changes
-- Visual inspection before committing
-- Regenerate all environments before release
-
-## Security Validation
-
-### Security Checklist
-
-- [ ] No sensitive information in YAML
-- [ ] No IP addresses or account IDs
-- [ ] No internal hostnames
-- [ ] Titles use generic names
-- [ ] Diagram reviewed before public sharing
-
-### Sensitive Information
-
-**Avoid including**:
-
-- Specific IP addresses
-- AWS account IDs
-- Internal domain names
-- Proprietary service names
-- Security group details
-
-**Use instead**:
-
-- Generic labels ("Private Subnet")
-- Service types ("RDS Aurora")
-- Standard ports ("443", "3306")
-- General descriptions
-
-## Quick Reference
-
-### Essential Commands
-
-```bash
-# Validate YAML
-yamllint aws_architecture_diagram.yaml
-
-# Generate diagram
-awsdac -d aws_architecture_diagram.yaml -o diagram.png
-
-# Quick test
-awsdac -d aws_architecture_diagram.yaml -o test.png && \
-file test.png && rm -f test.png
-```
-
-### Validation Checklist
-
-Before committing:
-
-- [ ] yamllint passes (`yamllint aws_architecture_diagram.yaml`)
-- [ ] awsdac generates successfully (`awsdac -d ... -o ...`)
-- [ ] Visual layout is clear
-- [ ] No sensitive information
-- [ ] Environment name in title
-
-## Summary
-
-DAC validation ensures accurate architecture diagrams:
-
-1. **Validate YAML syntax** - Use `yamllint`
-2. **Generate diagrams** - Use `awsdac`
-3. **Visual inspection** - Verify correctness
-4. **Check structure** - Ensure proper hierarchy
-5. **Verify links** - Confirm connections
-6. **Remove sensitive data** - Protect confidential information
-7. **Validate before committing** - Never commit invalid diagrams
+Detailed command options for troubleshooting are in [reference/common-individual-commands.md](reference/common-individual-commands.md).

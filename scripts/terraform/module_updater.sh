@@ -1444,7 +1444,7 @@ function validate_terraform_with_plan_comparison {
 }
 
 #######################################
-# main: Main execution function
+# main: Main process
 #
 # Description:
 #   Main execution function

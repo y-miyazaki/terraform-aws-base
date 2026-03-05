@@ -490,7 +490,7 @@ function output_csv_data {
 }
 
 #######################################
-# main: Script entry point
+# main: Main process
 #
 # Description:
 #   Main function to execute the script logic for collecting AWS runtime versions

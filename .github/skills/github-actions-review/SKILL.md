@@ -4,23 +4,127 @@ description: GitHub Actions Workflow code review for correctness, security, and 
 license: MIT
 ---
 
-# GitHub Actions Workflow Code Review
+## Purpose
 
-This skill provides comprehensive guidance for reviewing GitHub Actions Workflow configurations to ensure correctness, security, and best practices compliance.
+Provide comprehensive guidance for reviewing GitHub Actions workflow configurations to ensure correctness, security, and best practices compliance.
 
 ## When to Use This Skill
 
-This skill is applicable for:
+Recommended usage:
 
-- Performing code reviews on GitHub Actions Workflow pull requests
-- Checking workflow configurations before merging
-- Ensuring security and compliance standards
-- Validating best practices adherence
-- Architecture and design review
+- After automated checks (actionlint, ghalint, zizmor) pass
+- During pull request code review process
+- Before merging workflow changes
+- When evaluating security implications of workflow modifications
+- For architecture and design review of complex workflows
 
-**Note**: Linting and auto-checkable items (YAML syntax, runs-on missing, step names) are excluded from this review as they should be caught by actionlint/yamllint in CI/CD pipelines.
+## Input Specification
 
-## Review Process
+This skill expects:
+
+- GitHub Actions Workflow YAML file(s) (required) - Files in `.github/workflows/` directory
+- PR description and linked issues (required) - Context for understanding changes
+- Automated check results (required) - actionlint, ghalint, zizmor status
+- Related documentation (optional) - README or workflow documentation updates
+
+Format:
+
+- Workflow files: Valid YAML with GitHub Actions syntax
+- PR context: Markdown text describing purpose and changes
+- Check results: Pass/fail status from CI/CD pipeline
+
+## Output Specification
+
+**Output format (MANDATORY)** - Use this exact structure:
+
+- ## Checks section: List of failed review items only (ItemID ItemName: ❌ Fail)
+- ## Issues section: Numbered list of detected problems with details
+- Each issue includes: Item ID + Name, File path + line number, Problem description, Impact assessment, Specific recommendation with code example
+- If all checks pass: "No issues found"
+
+See reference/common-output-format.md for detailed format specification and examples.
+
+## Execution Scope
+
+**How to use this skill**:
+
+- This skill provides manual review guidance requiring human/AI judgment
+- Reviewer reads workflow files and systematically applies review checklist items from [reference/common-checklist.md](reference/common-checklist.md)
+- **Prerequisites**: Automated validation must pass before manual review
+  - Run github-actions-validation first to ensure syntax/linting/security checks pass
+- **When to use**: After automated checks pass, for design decisions, security patterns, and best practices requiring judgment
+
+**What this skill does**:
+
+- Review workflow design decisions requiring human judgment
+- Check security patterns (pull_request_target, secrets handling)
+- Validate best practices adherence
+- Assess performance optimizations (caching, parallelization)
+- Verify error handling patterns
+- Evaluate tool integration approaches
+
+What this skill does NOT do (Out of Scope):
+
+- Check YAML syntax errors (use actionlint for that)
+- Validate runs-on or step names (use actionlint/yamllint for that)
+- Test workflow execution
+- Modify workflow files automatically
+- Approve or merge pull requests
+- Check non-workflow files in the PR
+- Perform automated security scanning (use zizmor for that)
+
+## Constraints
+
+Prerequisites:
+
+- Automated checks (actionlint, ghalint, zizmor) must pass before manual review
+- Workflow files must be valid YAML
+- PR description and context must be available
+- Reviewer must have access to reference documentation
+
+Limitations:
+
+- Review focuses on design and security patterns, not syntax
+- Cannot validate actual workflow execution behavior
+- Assumes familiarity with GitHub Actions concepts
+- Reference documentation required for detailed category checks
+
+## Failure Behavior
+
+Error handling:
+
+- Automated checks failed: Request fixes before starting manual review, output message listing failed checks
+- Missing PR context: Request PR description and linked issues, cannot proceed without context
+- Invalid YAML syntax: Refer to actionlint errors, do not proceed with manual review
+- Inaccessible reference files: Output warning, proceed with available knowledge only
+- Ambiguous security pattern: Flag as potential issue with recommendation to clarify intent
+
+Error reporting format:
+
+- Clear indication of blocking issues vs. recommendations
+- Specific file paths and line numbers for all issues
+- Code examples for recommended fixes
+- References to official GitHub Actions documentation
+
+## Reference Files Guide
+
+When using this skill with an agent, reference the following files via @-mention for detailed guidance:
+
+**Standard Components**:
+
+- **common-checklist.md** - GitHub Actions review checklist
+- **common-output-format.md** - Review report format specification
+
+**Category Details**:
+
+- **category-best-practices.md** - Best practices detailed guide
+- **category-error-handling.md** - Error handling patterns detailed guide
+- **category-global.md** - Workflow-level configuration patterns detailed guide
+- **category-performance.md** - Performance optimization guide
+- **category-security.md** - Security checks detailed guide (SEC-01 through SEC-07)
+- **category-tool-integration.md** - GitHub Actions tool integration patterns detailed guide
+
+## Workflow
 
 ### Step 1: Understand Context
 
@@ -103,12 +207,15 @@ Review results must be output in structured format:
 
 Review categories are organized by domain. Claude will read the relevant category file(s) based on the workflow being reviewed.
 
-**Global & Base**: Workflow names and triggers → [reference/global.md](reference/global.md)
-**Error Handling**: continue-on-error patterns → [reference/error-handling.md](reference/error-handling.md)
-**Tool Integration**: Actions and composite actions → [reference/tool-integration.md](reference/tool-integration.md)
-**Security**: pull_request_target and secrets → [reference/security.md](reference/security.md)
-**Performance**: Caching and parallelization → [reference/performance.md](reference/performance.md)
-**Best Practices**: Reusability and maintainability → [reference/best-practices.md](reference/best-practices.md)
+**Checklist**: Complete review checklist → [reference/common-checklist.md](reference/common-checklist.md)
+**Output Format Reference**: Canonical report template → [reference/common-output-format.md](reference/common-output-format.md)
+
+**Global & Base**: Workflow names and triggers → [reference/category-global.md](reference/category-global.md)
+**Error Handling**: continue-on-error patterns → [reference/category-error-handling.md](reference/category-error-handling.md)
+**Tool Integration**: Actions and composite actions → [reference/category-tool-integration.md](reference/category-tool-integration.md)
+**Security**: pull_request_target and secrets → [reference/category-security.md](reference/category-security.md)
+**Performance**: Caching and parallelization → [reference/category-performance.md](reference/category-performance.md)
+**Best Practices**: Reusability and maintainability → [reference/category-best-practices.md](reference/category-best-practices.md)
 
 ## Best Practices
 
@@ -119,16 +226,5 @@ When performing code reviews:
 - **Clear priorities**: Distinguish between "must fix" and "nice to have"
 - **Prevent security oversights**: Pay special attention to SEC-\* items
 - **Prioritize automation**: Avoid excessive focus on actionlint/ghalint/zizmor
-
-## Summary
-
-This skill provides:
-
-1. **Comprehensive review guidelines** - 6 categories covering all aspects
-2. **Structured output format** - Consistent, parseable review results
-3. **Clear process** - Step-by-step review workflow
-4. **Prioritization** - Critical vs. minor issues
-5. **Actionable recommendations** - Specific fix suggestions with code examples
-6. **Domain-specific organization** - Load only relevant categories for efficient token usage
 
 For detailed checks in each category, refer to the corresponding file in the [reference/](reference/) directory.
