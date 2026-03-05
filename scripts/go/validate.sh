@@ -712,7 +712,7 @@ function run_race_tests {
 }
 
 #######################################
-# main: Main execution function
+# main: Main process
 #
 # Description:
 #   Main entry point that orchestrates all code quality checks

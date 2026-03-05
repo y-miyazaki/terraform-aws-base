@@ -245,7 +245,7 @@ function process_dlq_information {
 }
 
 #######################################
-# main: Script entry point
+# main: Main process
 #
 # Description:
 #   Main function to execute the script logic for retrieving SQS DLQ information

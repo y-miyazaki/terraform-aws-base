@@ -4,25 +4,140 @@ description: Shell Script code review for correctness, security, maintainability
 license: MIT
 ---
 
-# Shell Script Code Review
+## Purpose
+
+Conducts code review of shell scripts for correctness, security, maintainability, and best practices using manual review of design decisions and security patterns.
 
 This skill provides comprehensive guidance for reviewing Shell Script code to ensure correctness, security, maintainability, and best practices compliance.
 
 ## When to Use This Skill
 
-This skill is applicable for:
+Recommended usage:
 
-- Performing code reviews on shell script pull requests
-- Checking shell scripts before merging
-- Ensuring security and best practices adherence
-- Validating design decisions and error handling patterns
-- Security and maintainability review
+- After automated checks (bash -n, shellcheck) pass
+- During pull request code review process
+- Before merging shell script changes
+- When evaluating security implications of script modifications
+- For design review of complex scripts or error handling patterns
+- When assessing common library usage compliance
 
-**Note**: This guide assumes bash-based shell scripts with common library usage (lib/all.sh).
+## Input Specification
 
-**Note**: Linting and auto-checkable items (syntax errors, shellcheck warnings) are excluded from this review as they should be caught by validation scripts or CI/CD pipelines.
+This skill expects:
 
-## Review Process
+- Shell script file(s) (required) - `.sh` files in the PR
+- PR description and linked issues (required) - Context for understanding changes
+- Automated check results (required) - bash -n and shellcheck status
+- Common library files (optional) - lib/all.sh for project-specific patterns
+- Related documentation (optional) - README or script documentation updates
+
+Format:
+
+- Shell scripts: Valid bash syntax with `.sh` extension
+- PR context: Markdown text describing purpose and changes
+- Check results: Pass/fail status from CI/CD pipeline or validation script
+- Common library: Bash source file with shared functions
+
+## Output Specification
+
+**Output format (MANDATORY)** - Use this exact structure:
+
+- ## Checks section: List of failed review items only (ItemID ItemName: ❌ Fail)
+- ## Issues section: Numbered list of detected problems with details
+- Each issue includes: Item ID + Name, File path + line number, Problem description, Impact assessment, Specific recommendation with code example
+- If all checks pass: "No issues found"
+
+See reference/common-output-format.md for detailed format specification and examples.
+
+## Execution Scope
+
+**How to use this skill**:
+
+- This skill provides manual review guidance requiring human/AI judgment
+- Reviewer reads shell scripts and systematically applies review checklist items from [reference/common-checklist.md](reference/common-checklist.md)
+- **Prerequisites**: Automated validation must pass before manual review
+  - Run shell-script-validation first to ensure syntax/shellcheck checks pass
+- **When to use**: After automated checks pass, for design decisions, security patterns, and best practices requiring judgment
+
+**What this skill does**:
+
+- Review design decisions and error handling patterns requiring human judgment
+- Check security patterns (input validation, path traversal, privilege escalation)
+- Validate common library usage (lib/all.sh functions)
+- Assess error handling (error_exit, cleanup trap, error checking)
+- Verify code standards (naming, quoting, script template compliance)
+- Evaluate performance considerations (command efficiency, unnecessary forks)
+- Review test quality and coverage
+- Check documentation completeness
+
+What this skill does NOT do (Out of Scope):
+
+- Check syntax errors (use bash -n for that)
+- Run static analysis (use shellcheck for that)
+- Execute scripts for testing
+- Modify script files automatically
+- Approve or merge pull requests
+- Review non-shell-script files in the PR
+- Validate external command availability (use dependency checks for that)
+
+## Constraints
+
+Prerequisites:
+
+- Automated checks (bash -n, shellcheck) must pass before manual review
+- Shell scripts must have valid bash syntax
+- PR description and context must be available
+- Reviewer must have access to reference documentation
+- Common library (lib/all.sh) should be available for pattern validation
+
+Limitations:
+
+- Review focuses on design patterns and security, not syntax
+- Cannot validate actual script execution behavior
+- Assumes bash-based scripts (not sh, zsh, or other shells)
+- Reference documentation required for detailed category checks
+- Cannot detect runtime logic errors
+
+## Failure Behavior
+
+Error handling:
+
+- Automated checks failed: Request fixes before starting manual review, output message listing failed checks
+- Missing PR context: Request PR description and linked issues, cannot proceed without context
+- Invalid bash syntax: Refer to bash -n or shellcheck errors, do not proceed with manual review
+- Inaccessible reference files: Output warning, proceed with available knowledge only
+- Ambiguous security pattern: Flag as potential issue with recommendation to clarify intent or add validation
+
+Error reporting format:
+
+- Clear indication of blocking issues vs. recommendations
+- Specific file paths and line numbers for all issues
+- Code examples for recommended fixes using common library functions
+- References to lib/all.sh or project standards when applicable
+
+## Reference Files Guide
+
+When using this skill with an agent, reference the following files via @-mention for detailed guidance:
+
+**Standard Components**:
+
+- **common-checklist.md** - Shell script review checklist
+- **common-output-format.md** - Review report format specification
+
+**Category Details**:
+
+- **category-code-standards.md** - Code standards guide
+- **category-dependencies.md** - Dependency management guide
+- **category-documentation.md** - Documentation standards
+- **category-error-handling.md** - Error handling patterns detailed guide
+- **category-function-design.md** - Function design guide
+- **category-global.md** - Overall design patterns
+- **category-logging.md** - Logging standards guide
+- **category-performance.md** - Performance optimization guide
+- **category-security.md** - Security patterns detailed guide
+- **category-testing.md** - Test design guide
+
+## Workflow
 
 ### Step 1: Understand Context
 
@@ -104,16 +219,16 @@ Review results must be output in structured format:
 
 Review categories are organized by domain. Claude will read the relevant category file(s) based on the code being reviewed.
 
-**Global & Base**: SCRIPT_DIR, lib/all.sh source, basic structure → [reference/global.md](reference/global.md)
-**Code Standards**: Naming, quoting, script template compliance → [reference/code-standards.md](reference/code-standards.md)
-**Function Design**: Function structure, parameters, return values → [reference/function-design.md](reference/function-design.md)
-**Error Handling**: error_exit, cleanup trap, error checking → [reference/error-handling.md](reference/error-handling.md)
-**Security**: Input validation, path traversal, privilege escalation → [reference/security.md](reference/security.md)
-**Performance**: Command efficiency, unnecessary forks, pipelines → [reference/performance.md](reference/performance.md)
-**Testing**: Unit tests, mock functions, bats usage → [reference/testing.md](reference/testing.md)
-**Documentation**: Function docstrings, usage examples, comments → [reference/documentation.md](reference/documentation.md)
-**Dependencies**: External commands, version requirements, aqua → [reference/dependencies.md](reference/dependencies.md)
-**Logging**: log_info, log_warn, log_error usage → [reference/logging.md](reference/logging.md)
+**Global & Base**: SCRIPT_DIR, lib/all.sh source, basic structure → [reference/category-global.md](reference/category-global.md)
+**Code Standards**: Naming, quoting, script template compliance → [reference/category-code-standards.md](reference/category-code-standards.md)
+**Function Design**: Function structure, parameters, return values → [reference/category-function-design.md](reference/category-function-design.md)
+**Error Handling**: error_exit, cleanup trap, error checking → [reference/category-error-handling.md](reference/category-error-handling.md)
+**Security**: Input validation, path traversal, privilege escalation → [reference/category-security.md](reference/category-security.md)
+**Performance**: Command efficiency, unnecessary forks, pipelines → [reference/category-performance.md](reference/category-performance.md)
+**Testing**: Unit tests, mock functions, bats usage → [reference/category-testing.md](reference/category-testing.md)
+**Documentation**: Function docstrings, usage examples, comments → [reference/category-documentation.md](reference/category-documentation.md)
+**Dependencies**: External commands, version requirements, aqua → [reference/category-dependencies.md](reference/category-dependencies.md)
+**Logging**: log_info, log_warn, log_error usage → [reference/category-logging.md](reference/category-logging.md)
 
 ## Best Practices
 
@@ -126,16 +241,3 @@ When performing code reviews:
 - **Prioritize automation**: Avoid excessive focus on syntax errors and shellcheck
 - **Prevent security oversights**: Pay special attention to SEC-\* items
 - **Respect project standards**: Emphasize common library usage (lib/all.sh)
-
-## Summary
-
-This skill provides:
-
-1. **Comprehensive review guidelines** - 10 categories covering all aspects
-2. **Structured output format** - Consistent, parseable review results
-3. **Clear process** - Step-by-step review workflow
-4. **Prioritization** - Critical vs. minor issues
-5. **Actionable recommendations** - Specific fix suggestions with code examples
-6. **Domain-specific organization** - Load only relevant categories for efficient token usage
-
-For detailed checks in each category, refer to the corresponding file in the [reference/](reference/) directory.

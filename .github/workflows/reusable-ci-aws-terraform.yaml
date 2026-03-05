@@ -219,9 +219,9 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
 
-      # https://github.com/aquasecurity/trivy-action/tree/0.33.1/?tab=readme-ov-file#inputs
+      # https://github.com/aquasecurity/trivy-action/?tab=readme-ov-file#inputs
       - name: Exec Trivy Vulnerability Scan
-        uses: aquasecurity/trivy-action@c1824fd6edce30d7ab345a9989de00bbd46ef284 # 0.34.0
+        uses: aquasecurity/trivy-action@97e0b3872f55f89b95b2f65b3dbab56962816478 # 0.34.2
         with:
           exit-code: 1
           format: table
@@ -231,9 +231,9 @@ jobs:
           severity: HIGH,CRITICAL
           trivy-config: trivy.yaml
 
-      # https://github.com/aquasecurity/trivy-action/tree/0.33.1/?tab=readme-ov-file#inputs
+      # https://github.com/aquasecurity/trivy-action/?tab=readme-ov-file#inputs
       - name: Exec Trivy Generate SBOM (CycloneDX)
-        uses: aquasecurity/trivy-action@c1824fd6edce30d7ab345a9989de00bbd46ef284 # 0.34.0
+        uses: aquasecurity/trivy-action@97e0b3872f55f89b95b2f65b3dbab56962816478 # 0.34.2
         with:
           exit-code: 0
           format: cyclonedx

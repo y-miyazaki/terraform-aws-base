@@ -135,7 +135,7 @@ jobs:
 
       - name: Determine repository visibility
         id: repo_visibility
-        uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8
+        uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8.0.0
         with:
           script: |
             const { data } = await github.rest.repos.get({
@@ -177,9 +177,9 @@ jobs:
           path: ${{ env.GO_PROJECT_PATH }}/security
           retention-days: 30
 
-      # https://github.com/aquasecurity/trivy-action/tree/0.33.1/?tab=readme-ov-file#inputs
+      # https://github.com/aquasecurity/trivy-action/?tab=readme-ov-file#inputs
       - name: Exec Trivy Vulnerability Scan
-        uses: aquasecurity/trivy-action@c1824fd6edce30d7ab345a9989de00bbd46ef284 # 0.34.0
+        uses: aquasecurity/trivy-action@97e0b3872f55f89b95b2f65b3dbab56962816478 # 0.34.2
         with:
           exit-code: 1
           format: table
@@ -189,9 +189,9 @@ jobs:
           severity: HIGH,CRITICAL
           trivy-config: trivy.yaml
 
-      # https://github.com/aquasecurity/trivy-action/tree/0.33.1/?tab=readme-ov-file#inputs
+      # https://github.com/aquasecurity/trivy-action/?tab=readme-ov-file#inputs
       - name: Exec Trivy Generate SBOM (CycloneDX)
-        uses: aquasecurity/trivy-action@c1824fd6edce30d7ab345a9989de00bbd46ef284 # 0.34.0
+        uses: aquasecurity/trivy-action@97e0b3872f55f89b95b2f65b3dbab56962816478 # 0.34.2
         with:
           exit-code: 0
           format: cyclonedx
@@ -245,7 +245,7 @@ jobs:
 
       - name: Post PR failure comment
         if: failure() && github.event_name == 'pull_request' && github.actor != 'dependabot[bot]'
-        uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8
+        uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8.0.0
         with:
           script: |
             const runUrl = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;

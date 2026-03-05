@@ -180,7 +180,7 @@ function validate_and_prepare {
 }
 
 #######################################
-# main: Script entry point
+# main: Main process
 #
 # Description:
 #   Main function to execute the script logic for Terraform integration testing

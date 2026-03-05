@@ -120,7 +120,7 @@ function delete_quicksight_namespaces {
 }
 
 #######################################
-# main: Main execution function
+# main: Main process
 #
 # Description:
 #   Main entry point that orchestrates the QuickSight namespace deletion process

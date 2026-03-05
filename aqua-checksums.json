@@ -191,6 +191,31 @@
       "algorithm": "sha256"
     },
     {
+      "id": "github_release/github.com/aquasecurity/trivy/v0.69.3/trivy_0.69.3_Linux-64bit.tar.gz",
+      "checksum": "1816B632DFE529869C740C0913E36BD1629CB7688BD5634F4A858C1D57C88B75",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/aquasecurity/trivy/v0.69.3/trivy_0.69.3_Linux-ARM64.tar.gz",
+      "checksum": "7E3924A974E912E57B4A99F65ECE7931F8079584DAE12EB7845024F97087BDFD",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/aquasecurity/trivy/v0.69.3/trivy_0.69.3_macOS-64bit.tar.gz",
+      "checksum": "FEC4A9F7569B624DD9D044FCA019E5DA69E032700EDBB1D7318972C448EC2F4E",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/aquasecurity/trivy/v0.69.3/trivy_0.69.3_macOS-ARM64.tar.gz",
+      "checksum": "A2F2179AFD4F8BB265CA3C7AEFB56A666BC4A9A411663BC0F22C3549FBC643A5",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/aquasecurity/trivy/v0.69.3/trivy_0.69.3_windows-64bit.zip",
+      "checksum": "74362DC711383255308230ECBEB587EB1E4E83A8D332BE5B0259AFAC6E0C2224",
+      "algorithm": "sha256"
+    },
+    {
       "id": "github_release/github.com/bufbuild/buf/v1.60.0/buf-Darwin-arm64.tar.gz",
       "checksum": "31187D9C3005F71556E6BABEDB5CA851FD4F87299A1158AC2115442F3640952E",
       "algorithm": "sha256"

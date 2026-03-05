@@ -404,7 +404,7 @@ function run_recursive_validation {
 }
 
 #######################################
-# main: Script entry point
+# main: Main process
 #
 # Description:
 #   Main function to execute the script logic for recursive Terraform validation
