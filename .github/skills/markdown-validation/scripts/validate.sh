@@ -1,11 +1,11 @@
 #!/bin/bash
 #######################################
-# Description: Deterministic Markdown validation for files and directories
+# Description: Markdown validation for files and directories (syntax and links)
 #
 # Usage: ./validate.sh [PATH]
 #   arguments:
 #     PATH           Path to target Markdown file or directory (optional)
-#                    Default: /workspace
+#                    Default: .
 #
 # Output:
 # - Human-readable validation results (terminal output)
@@ -19,6 +19,10 @@
 # Dependencies:
 # - bash (POSIX bash, /bin/bash)
 # - find (standard Unix utility)
+# - node (Node.js runtime for CLI tools)
+# - npm (Node.js package manager)
+# - markdownlint (Node.js CLI, installed via npm)
+# - markdown-link-check (Node.js CLI, installed via npm)
 #######################################
 
 set -euo pipefail
@@ -33,7 +37,7 @@ export SCRIPT_DIR
 # shellcheck disable=SC1091
 source "${SCRIPT_DIR}/lib/all.sh"
 
-TARGET_PATH="/workspace"
+TARGET_PATH="."
 declare -a check_names=()
 declare -a check_statuses=()
 declare -a check_details=()
@@ -248,9 +252,13 @@ function validate_markdown_files {
         else
             local file
             local link_failed=false
+            local failing_file=""
+            local failing_output=""
             for file in "${markdown_files[@]}"; do
-                if ! markdown-link-check "${file}" > /dev/null 2>&1; then
+                if ! failing_output="$(markdown-link-check "${file}" 2>&1)"; then
                     link_failed=true
+                    failing_file="${file}"
+                    echo "${failing_output}"
                     break
                 fi
             done
@@ -258,7 +266,12 @@ function validate_markdown_files {
             if [[ "${link_failed}" == true ]]; then
                 check_names+=("Markdown Links")
                 check_statuses+=("FAIL")
-                check_details+=("markdown-link-check validation failed")
+                if [[ -n "${failing_output}" ]]; then
+                    failing_output="${failing_output//$'\n'/ }"
+                    check_details+=("markdown-link-check failed for ${failing_file}: ${failing_output}")
+                else
+                    check_details+=("markdown-link-check validation failed for ${failing_file}")
+                fi
                 echo "✗ Some Markdown links are broken"
             else
                 check_names+=("Markdown Links")
