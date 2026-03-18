@@ -1,4 +1,4 @@
-# PR Overview - Troubleshooting Guide
+## PR Overview - Troubleshooting Guide
 
 ## ⚠️ Common Issues & Solutions
 
@@ -76,7 +76,7 @@ GraphQL error: Access Denied
    gh pr view <PR_NUMBER> \
      --repo <OWNER>/<REPO> \
      --json comments \
-     --jq '.comments[] | select(.body | contains("<!-- github-pr-overview:v1 -->"))'
+     --jq '.comments[] | select(.body | contains("<!-- github-pr-body:v1 -->"))'
    ```
 
 3. **For creation failure**: Verify comment file exists and contains valid markdown
@@ -113,7 +113,7 @@ GraphQL error: Could not resolve to a node with global ID of type 'IssueComment'
 ```bash
 # Extract and verify comment ID
 COMMENT_ID=$(gh pr view 123 --repo owner/repo --json comments \
-  --jq '.comments[] | select(.body | contains("<!-- github-pr-overview:v1 -->")) | .id')
+  --jq '.comments[] | select(.body | contains("<!-- github-pr-body:v1 -->")) | .id')
 
 # Must start with IC_
 echo "$COMMENT_ID"
@@ -171,7 +171,7 @@ body_text=$(printf '%s\n' 'This is a "quoted" value')
 
 ### Issue: Marker not preserved in comment
 
-**Symptom**: `<!-- github-pr-overview:v1 -->` marker disappears after manual edit or update
+**Symptom**: `<!-- github-pr-body:v1 -->` marker disappears after manual edit or update
 
 **Cause**: Manual editing removed marker or update operation didn't preserve it
 
@@ -274,7 +274,7 @@ GraphQL error: API rate limit exceeded
 
 ---
 
-## pr_overview.sh Script - Specific Errors
+## pr_body.sh Script - Specific Errors
 
 ### Error: "PR #XXX not found in OWNER/REPO"
 
@@ -293,7 +293,7 @@ ERROR: PR #123 not found in owner/repo
 1. Verify PR number: `gh pr view <NUMBER> --repo <OWNER>/<REPO>`
 2. Check repository name: `git remote -v`
 3. Verify access: `gh repo view <OWNER>/<REPO>`
-4. Explicitly specify repository: `./pr_overview.sh 123 --repo owner/repo`
+4. Explicitly specify repository: `./pr_body.sh 123 --repo owner/repo`
 
 ---
 
@@ -318,7 +318,7 @@ ERROR: Could not determine repository. Use --repo OWNER/REPO
 
 2. Manually specify repository:
    ```bash
-   ./pr_overview.sh 123 --repo owner/repo
+   ./pr_body.sh 123 --repo owner/repo
    ```
 
 3. Fix git remote if needed:
@@ -338,8 +338,8 @@ ERROR: Invalid argument: invalid-arg
 **Cause**: Invalid option or argument passed to script
 
 **Solutions**:
-1. Check allowed options: `./pr_overview.sh -h`
-2. PR_NUMBER must be numeric: `./pr_overview.sh 123` (not `PR-123`)
+1. Check allowed options: `./pr_body.sh -h`
+2. PR_NUMBER must be numeric: `./pr_body.sh 123` (not `PR-123`)
 3. Repository format: `--repo owner/repo` (with forward slash)
 4. Valid flags: `--verbose`, `--dry-run`, `--repo`
 
@@ -355,8 +355,8 @@ ERROR: PR_NUMBER is required
 **Solution**:
 Specify PR number as first argument:
 ```bash
-./pr_overview.sh 123                    # Correct
-./pr_overview.sh                        # Error: missing PR number
+./pr_body.sh 123                    # Correct
+./pr_body.sh                        # Error: missing PR number
 ```
 
 ---
@@ -378,7 +378,7 @@ ERROR: Failed to update comment
 **Troubleshooting**:
 1. Check GitHub status: `gh status`
 2. Verify authentication: `gh auth status`
-3. Run with verbose output: `./pr_overview.sh 123 -v --dry-run`
+3. Run with verbose output: `./pr_body.sh 123 -v --dry-run`
 4. Check temporary file:
    ```bash
    ls -la /tmp/pr_overview_comment_*.md

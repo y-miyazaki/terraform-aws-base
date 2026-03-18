@@ -1,0 +1,192 @@
+# Reusable workflow: generate AWS batch schedules and upload as zip artifact
+# This workflow can be called by other workflows to generate schedule outputs with absc
+name: reusable-cd-aws-batch-schedules
+
+on:
+  workflow_call:
+    inputs:
+      absc_checksum:
+        description: "SHA256 checksum for absc release tarball"
+        required: false
+        type: string
+        default: "7283b52f567e8c49d5074b54cc0e6f726ccfa4fe595d7dcdb34bec6e58244177" # pragma: allowlist secret
+      absc_version:
+        description: "absc version to use (e.g. v1.0.1)"
+        required: false
+        type: string
+        default: "v1.0.2"
+      environment:
+        description: "Target environment (dev, qa, stg, prd, etc.)"
+        required: true
+        type: string
+      lookback_hours:
+        description: "Execution history lookback hours"
+        required: false
+        type: number
+        default: 24
+      max_concurrency:
+        description: "Max concurrent resource collectors"
+        required: false
+        type: number
+        default: 5
+      max_results:
+        description: "Max executions/jobs per target"
+        required: false
+        type: number
+        default: 50
+      output_dir:
+        description: "Output base directory where schedules are written"
+        required: false
+        type: string
+        default: "./output"
+      region:
+        description: "AWS region to query (optional, comma-separated accepted)"
+        required: false
+        type: string
+        default: ""
+      timezone:
+        description: "IANA timezone"
+        required: false
+        type: string
+        default: "UTC"
+    outputs:
+      artifact_name:
+        description: "Name of the uploaded artifact"
+        value: ${{ jobs.generate-batch-schedules.outputs.artifact_name }}
+    secrets:
+      AWS_IAM_ROLE_ARN:
+        required: true
+      AWS_REGION:
+        required: true
+
+env:
+  ABSC_CHECKSUM: ${{ inputs.absc_checksum }}
+  ABSC_VERSION: ${{ inputs.absc_version }}
+  ENVIRONMENT: ${{ inputs.environment }}
+  LOOKBACK_HOURS: ${{ inputs.lookback_hours }}
+  MAX_CONCURRENCY: ${{ inputs.max_concurrency }}
+  MAX_RESULTS: ${{ inputs.max_results }}
+  OUTPUT_DIR: ${{ inputs.output_dir }}
+  REGION: ${{ inputs.region }}
+  TIMEZONE: ${{ inputs.timezone }}
+
+jobs:
+  generate-batch-schedules:
+    if: ${{ github.actor != 'dependabot[bot]' }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    concurrency:
+      group: aws-batch-schedules-${{ inputs.environment }}
+      cancel-in-progress: false
+    environment:
+      name: ${{ inputs.environment }}
+    permissions:
+      contents: read
+      id-token: write
+    outputs:
+      artifact_name: ${{ steps.setup-parameters.outputs.artifact_name }}
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+
+      - name: Setup AWS Credentials
+        uses: aws-actions/configure-aws-credentials@8df5847569e6427dd6c4fb1cf565c83acfa8afa7 # v6.0.0
+        with:
+          aws-region: ${{ secrets.AWS_REGION }}
+          role-to-assume: ${{ secrets.AWS_IAM_ROLE_ARN }}
+
+      - name: Download and install absc
+        uses: ./.github/actions/install-github-release
+        with:
+          asset_pattern: "absc-linux-amd64.tar.gz"
+          binary: absc
+          checksum: ${{ env.ABSC_CHECKSUM }}
+          repo: y-miyazaki/absc
+          strip_v_prefix: "true"
+          version: ${{ env.ABSC_VERSION }}
+
+      - name: Setup Parameters
+        id: setup-parameters
+        shell: bash
+        run: | # pragma: allowlist secret
+          set -euo pipefail
+
+          ARTIFACT_BASE="batch-schedules-${ENVIRONMENT}"
+          ARTIFACT_NAME="${ARTIFACT_BASE}.zip"
+          OUTDIR="${OUTPUT_DIR}"
+
+          {
+            echo "ARTIFACT_BASE=${ARTIFACT_BASE}"
+            echo "ARTIFACT_NAME=${ARTIFACT_NAME}"
+            echo "OUTDIR=${OUTDIR}"
+          } >> "$GITHUB_ENV"
+
+          {
+            echo "artifact_base=${ARTIFACT_BASE}"
+            echo "artifact_name=${ARTIFACT_NAME}"
+            echo "outdir=${OUTDIR}"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Exec absc to collect batch schedules
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          CMD=(absc -D "$OUTDIR" --lookback-hours "$LOOKBACK_HOURS" --max-concurrency "$MAX_CONCURRENCY" --max-results "$MAX_RESULTS" --timezone "$TIMEZONE")
+          if [[ -n "$REGION" ]]; then
+            CMD+=( -r "$REGION" )
+          fi
+
+          printf 'Running: %s\n' "${CMD[*]}"
+          "${CMD[@]}"
+
+      - name: Prepare artifact structure
+        id: prepare-artifact-structure
+        run: |
+          set -euo pipefail
+
+          mkdir -p artifact-output/"${ARTIFACT_BASE}"
+          mv "$OUTDIR"/* "artifact-output/${ARTIFACT_BASE}/" || true
+
+          echo "Artifact structure:"
+          ls -lR artifact-output/
+
+      - name: Create zip archive
+        run: |
+          set -euo pipefail
+
+          cd artifact-output
+          zip -r ../"${ARTIFACT_NAME}" "${ARTIFACT_BASE}" -x "*.git/*"
+          cd ..
+
+          echo "Archive created successfully: ${ARTIFACT_NAME}"
+          ls -lh "${ARTIFACT_NAME}"
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
+        with:
+          name: ${{ steps.setup-parameters.outputs.artifact_name }}
+          path: ${{ steps.setup-parameters.outputs.artifact_name }}
+          retention-days: 30
+
+      - name: Summary
+        if: always()
+        uses: ./.github/actions/summary
+        with:
+          artifacts: |
+            ${{ steps.setup-parameters.outputs.artifact_name }}
+          outputs: |
+            artifact_name: ${{ steps.setup-parameters.outputs.artifact_name }}
+          params: |
+            absc_version: ${{ inputs.absc_version }}
+            environment: ${{ inputs.environment }}
+            lookback_hours: ${{ inputs.lookback_hours }}
+            max_concurrency: ${{ inputs.max_concurrency }}
+            max_results: ${{ inputs.max_results }}
+            output_dir: ${{ inputs.output_dir }}
+            region: ${{ inputs.region }}
+            timezone: ${{ inputs.timezone }}
+          status: "${{ job.status }}"
+          title: "AWS Batch Schedules (${{ env.ENVIRONMENT }})"

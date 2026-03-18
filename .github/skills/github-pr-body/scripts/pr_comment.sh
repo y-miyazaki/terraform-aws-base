@@ -64,7 +64,7 @@ Examples:
   $(basename "$0") 123 comment.md --dry-run
 
 Note:
-  - Detects existing comment by: <!-- github-pr-overview:v1 --> marker
+  - Detects existing comment by: <!-- github-pr-body:v1 --> marker
   - Updates existing comment if found, creates new otherwise
   - Requires gh CLI with repo:write scope
 EOF
@@ -95,7 +95,7 @@ function find_existing_comment {
     gh pr view "$PR_NUMBER" \
         --repo "$REPOSITORY" \
         --json comments \
-        --jq '.comments[] | select(.body | contains("<!-- github-pr-overview:v1 -->")) | .id' \
+        --jq '.comments[] | select(.body | contains("<!-- github-pr-body:v1 -->") or contains("<!-- github-pr-overview:v1 -->")) | .id' \
         2> /dev/null || echo ""
 }
 

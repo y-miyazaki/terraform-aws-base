@@ -9,12 +9,12 @@ on:
         description: "SHA256 checksum for arc release tarball"
         required: false
         type: string
-        default: "9c34323caf1f5c4a39f96d7daa7574200f7ed86a6781cdcf6097a122925b1aa5" # pragma: allowlist secret
+        default: "fc503dcba4bb88bb3e434efbdc5e279f16af8c4c49c33ad9716abe7e8e432fc0" # pragma: allowlist secret
       arc_version:
-        description: "arc version to use (e.g. v1.0.6)"
+        description: "arc version to use (e.g. v1.0.8)"
         required: false
         type: string
-        default: "v1.0.6"
+        default: "v1.0.8"
       categories:
         description: "Comma-separated categories to limit collection (optional)"
         required: false
@@ -159,7 +159,7 @@ jobs:
           ls -lh "${ARTIFACT_NAME}"
 
       - name: Upload Artifact
-        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
         with:
           name: ${{ steps.setup-parameters.outputs.artifact_name }}
           path: ${{ steps.setup-parameters.outputs.artifact_name }}

@@ -1,0 +1,50 @@
+# CI workflow for base component in prd environment
+name: ci-push-go
+
+on:
+  push:
+    branches:
+      - "main"
+      - "master"
+      - "hotfix/**"
+      - "release/**"
+      - "develop"
+      - "feature/**"
+    paths:
+      - ".github/workflows/ci-push-go.yaml"
+      - ".github/workflows/reusable-ci-go.yaml"
+      - "cmd/**"
+      - "internal/**"
+      - "go.mod"
+      - "go.sum"
+      - ".golangci.yaml"
+      - "trivy.yaml"
+  pull_request:
+    branches:
+      - "main"
+      - "master"
+      - "hotfix/**"
+      - "release/**"
+      - "develop"
+      - "feature/**"
+    paths:
+      - ".github/workflows/ci-push-go.yaml"
+      - ".github/workflows/reusable-ci-go.yaml"
+      - "cmd/**"
+      - "internal/**"
+      - "go.mod"
+      - "go.sum"
+      - ".golangci.yaml"
+      - "trivy.yaml"
+
+jobs:
+  go-ci:
+    uses: ./.github/workflows/reusable-ci-go.yaml
+    with:
+      environment: "base"
+      component: "absc"
+      go_project_path: "."
+    permissions:
+      contents: read
+      id-token: write
+      pull-requests: write

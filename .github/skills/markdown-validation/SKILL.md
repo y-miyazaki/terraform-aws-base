@@ -10,6 +10,8 @@ Validates Markdown documentation for syntax correctness, link validity, and form
 
 This skill provides guidance for validating Markdown documentation to ensure quality, correctness, and adherence to standards.
 
+SKILL.md structural requirements are handled by `agent-skills-review`, not by this skill.
+
 ## When to Use This Skill
 
 Recommended usage:
@@ -174,8 +176,8 @@ Before committing Markdown changes:
 
 1. **Make changes** - Edit Markdown files
 2. **Run validation**: `bash markdown-validation/scripts/validate.sh`
-3. **Auto-fix issues**: `bash markdown-validation/scripts/validate.sh --fix`
-4. **Fix remaining issues** - Address link errors or structural problems
+3. **Fix issues** - Address markdownlint or link-check failures
+4. **Re-run validation** - Confirm all checks pass
 5. **Commit** - Only when validation passes
 
 Detailed command options for troubleshooting are in [reference/common-individual-commands.md](reference/common-individual-commands.md).

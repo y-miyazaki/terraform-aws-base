@@ -101,5 +101,5 @@ fi
 # Use built-in ripgrep
 export USE_BUILTIN_RIPGREP="1"
 # XDG dirs under .vscode
-export XDG_CONFIG_HOME="$COPILOT_BASE/config"
+export XDG_CONFIG_HOME="/home/${USER}/.config"
 export XDG_STATE_HOME="$COPILOT_BASE/state"

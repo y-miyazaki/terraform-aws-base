@@ -11,9 +11,10 @@ Technical implementation and design decisions for the PR Body update system.
 The script uses **idempotent section replacement** without markers:
 
 1. **Identifies sections** by regex: `/^## (Overview|Changes)$/`
-2. **Replaces** entire section from header to next section header or end
-3. **Preserves** all other sections below `## Changes`
+2. **Replaces** entire section from header to next H2 section header
+3. **Preserves** all other H2 sections (except `## Overview` and `## Changes`)
 4. **Safe for re-runs**: Multiple runs produce identical results
+5. **Template-tolerant**: Works regardless of section order in template
 
 ### Template Structure
 
@@ -57,7 +58,7 @@ The script uses **idempotent section replacement** without markers:
 - [x] New feature
 ```
 
-**Key Point**: Sections below `## Changes` are preserved exactly.
+**Key Point**: All H2 sections except `## Overview` and `## Changes` are preserved exactly, regardless of their position in PR Body.
 
 ---
 
@@ -86,8 +87,8 @@ For each file:
 
 For PRs with 100+ files:
 - **Grouping**: Files grouped by category
-- **Pagination**: "See GitHub web UI for full list" message included
-- **Summary**: Total count provided to avoid overwhelming display
+- **Pagination**: All files fetched via paginated API calls
+- **Summary**: Total count provided to keep body readable
 
 ---
 
@@ -95,11 +96,12 @@ For PRs with 100+ files:
 
 ### GitHub API Calls
 
-| Operation      | Method      | Endpoint                                     | Purpose                                        |
-| -------------- | ----------- | -------------------------------------------- | ---------------------------------------------- |
-| Fetch PR       | REST        | `GET /repos/{owner}/{repo}/pulls/{number}`   | Retrieve PR metadata, title, body, file list   |
-| Update Body    | REST        | `PATCH /repos/{owner}/{repo}/pulls/{number}` | Update PR description field                    |
-| Parse Template | Local regex | N/A                                          | Extract sections from PULL_REQUEST_TEMPLATE.md |
+| Operation      | Method      | Endpoint                                         | Purpose                                          |
+| -------------- | ----------- | ------------------------------------------------ | ------------------------------------------------ |
+| Fetch PR       | REST        | `GET /repos/{owner}/{repo}/pulls/{number}`       | Retrieve PR metadata (title/body/stats/branches) |
+| Fetch PR Files | REST        | `GET /repos/{owner}/{repo}/pulls/{number}/files` | Retrieve full file list with pagination          |
+| Update Body    | REST        | `PATCH /repos/{owner}/{repo}/pulls/{number}`     | Update PR description field                      |
+| Parse Template | Local regex | N/A                                              | Extract sections from PULL_REQUEST_TEMPLATE.md   |
 
 ### Rate Limiting
 
@@ -155,11 +157,11 @@ For PRs with 100+ files:
 
 ```bash
 # Run 1
-pr_overview.sh 123 --repo owner/repo
+pr_body.sh 123 --repo owner/repo
 # Result: Body updated with auto-generated sections
 
 # Run 2 (same PR, same commits)
-pr_overview.sh 123 --repo owner/repo
+pr_body.sh 123 --repo owner/repo
 # Result: Identical content (verified by checksum)
 ```
 

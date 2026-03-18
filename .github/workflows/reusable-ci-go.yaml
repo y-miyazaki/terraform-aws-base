@@ -25,12 +25,12 @@ on:
         description: "Go version to use for setup-go and linting"
         required: false
         type: string
-        default: "1.25.4"
+        default: "1.25.8"
       golangci_lint_version:
         description: "golangci-lint version to use"
         required: false
         type: string
-        default: "v2.6.2"
+        default: "v2.11.3"
       govulncheck_version:
         description: "govulncheck version to use"
         required: false
@@ -65,7 +65,7 @@ jobs:
           persist-credentials: false
 
       - name: Setup Go
-        uses: actions/setup-go@7a3fe6cf4cb3a834922a1244abfce67bcef6a0c5 # v6.2.0
+        uses: actions/setup-go@4b73464bb391d4059bd26b0524d20df3927bd417 # v6.3.0
         with:
           cache: false
           go-version: ${{ env.GO_VERSION }}
@@ -127,7 +127,7 @@ jobs:
         working-directory: ${{ env.GO_PROJECT_PATH }}
 
       - name: Upload Coverage Artifact
-        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
         with:
           name: coverage-${{ env.COMPONENT }}-${{ env.ENVIRONMENT }}
           path: ${{ env.GO_PROJECT_PATH }}/coverage
@@ -171,7 +171,7 @@ jobs:
           govulncheck ./... > "security/govulncheck-${COMPONENT}-${ENVIRONMENT}.txt" || true
 
       - name: Upload govulncheck Artifact
-        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
         with:
           name: govulncheck-${{ env.COMPONENT }}-${{ env.ENVIRONMENT }}
           path: ${{ env.GO_PROJECT_PATH }}/security
@@ -179,7 +179,7 @@ jobs:
 
       # https://github.com/aquasecurity/trivy-action/?tab=readme-ov-file#inputs
       - name: Exec Trivy Vulnerability Scan
-        uses: aquasecurity/trivy-action@97e0b3872f55f89b95b2f65b3dbab56962816478 # 0.34.2
+        uses: aquasecurity/trivy-action@57a97c7e7821a5776cebc9bb87c984fa69cba8f1 # 0.35.0
         with:
           exit-code: 1
           format: table
@@ -191,7 +191,7 @@ jobs:
 
       # https://github.com/aquasecurity/trivy-action/?tab=readme-ov-file#inputs
       - name: Exec Trivy Generate SBOM (CycloneDX)
-        uses: aquasecurity/trivy-action@97e0b3872f55f89b95b2f65b3dbab56962816478 # 0.34.2
+        uses: aquasecurity/trivy-action@57a97c7e7821a5776cebc9bb87c984fa69cba8f1 # 0.35.0
         with:
           exit-code: 0
           format: cyclonedx
@@ -200,7 +200,7 @@ jobs:
           scan-type: "fs"
 
       - name: Upload SBOM Artifact
-        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
         with:
           name: sbom-${{ env.COMPONENT }}-${{ env.ENVIRONMENT }}
           path: ${{ env.GO_PROJECT_PATH }}/sbom-${{ env.COMPONENT }}-${{ env.ENVIRONMENT }}.json
@@ -215,7 +215,7 @@ jobs:
 
       - name: Exec GolangCI-Lint via reviewdog (PR inline comments)
         if: github.event_name == 'pull_request' && github.actor != 'dependabot[bot]'
-        uses: reviewdog/action-golangci-lint@f9bba13753278f6a73b27a56a3ffb1bfda90ed71 # v2.8.0
+        uses: reviewdog/action-golangci-lint@c76cceaaab89abe74e649d2e34c6c9adc26662d2 # v2.10.0
         with:
           cache: false
           fail_level: error
