@@ -1,4 +1,4 @@
-# Terraform Validation - Individual Commands Reference
+## Terraform Validation - Individual Commands Reference
 
 ## ⚠️ For Debugging Only
 

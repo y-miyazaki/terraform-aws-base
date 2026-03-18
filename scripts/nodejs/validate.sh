@@ -143,8 +143,8 @@ function parse_arguments {
 
     # Set default target directory
     if [[ -z "${TARGET_DIR:-}" ]]; then
-        TARGET_DIR="/workspace/nodejs"
-        log "INFO" "No target specified, will auto-detect Node.js projects from $TARGET_DIR"
+        TARGET_DIR="$(pwd)"
+        log "INFO" "No target specified, will auto-detect Node.js projects from current directory: $TARGET_DIR"
     else
         if [[ ! -d "$TARGET_DIR" ]]; then
             error_exit "Target directory does not exist: $TARGET_DIR"
@@ -343,54 +343,63 @@ function run_security_audit {
     fi
 
     local audit_output
-    local audit_status
+    local audit_status=0
 
     audit_output=$(npm audit --audit-level=moderate 2>&1) || audit_status=$?
 
-    if [[ ${audit_status:-0} -eq 0 ]]; then
+    if [[ $audit_status -eq 0 ]]; then
         log "INFO" "  ✅ No security vulnerabilities found"
         popd > /dev/null
         return 0
-    else
-        # Count vulnerabilities
-        local vuln_count
-        vuln_count=$(echo "$audit_output" | grep -E "^[0-9]+ vulnerabilities" | awk '{print $1}' || echo "0")
+    fi
 
-        if [[ "$vuln_count" -gt 0 ]]; then
-            log "ERROR" "  ❌ Security vulnerabilities found: $vuln_count"
-            AUDIT_VULNERABILITIES=$((AUDIT_VULNERABILITIES + vuln_count))
-
+    if [[ "$FIX_MODE" == "true" ]]; then
+        log "INFO" "  🔧 Attempting to fix vulnerabilities..."
+        local fix_output
+        if fix_output=$(npm audit fix 2>&1); then
             if [[ "$VERBOSE" == "true" ]]; then
-                echo "$audit_output"
+                echo "$fix_output"
             fi
 
-            if [[ "$FIX_MODE" == "true" ]]; then
-                log "INFO" "  🔧 Attempting to fix vulnerabilities..."
-                local fix_output
-                if fix_output=$(npm audit fix 2>&1); then
-                    log "INFO" "  ✅ Vulnerabilities fixed"
-                    if [[ "$VERBOSE" == "true" ]]; then
-                        echo "$fix_output"
-                    fi
-                else
-                    log "WARN" "  ⚠️  Some vulnerabilities could not be auto-fixed"
-                    if [[ "$VERBOSE" == "true" ]]; then
-                        echo "$fix_output"
-                    fi
-                fi
+            # Re-run audit and accept success when vulnerabilities are resolved.
+            local post_fix_output
+            local post_fix_status=0
+            post_fix_output=$(npm audit --audit-level=moderate 2>&1) || post_fix_status=$?
+
+            if [[ $post_fix_status -eq 0 ]]; then
+                log "INFO" "  ✅ Vulnerabilities fixed"
+                popd > /dev/null
+                return 0
             fi
+
+            audit_output="$post_fix_output"
         else
-            log "WARN" "  ⚠️  Security vulnerabilities found - review npm audit output"
+            log "WARN" "  ⚠️  Some vulnerabilities could not be auto-fixed"
             if [[ "$VERBOSE" == "true" ]]; then
-                echo "$audit_output"
+                echo "$fix_output"
             fi
         fi
-
-        AUDIT_FAILED=1
-        EXIT_CODE=1
-        popd > /dev/null
-        return 1
     fi
+
+    # Count remaining vulnerabilities from the latest audit output.
+    local vuln_count
+    vuln_count=$(echo "$audit_output" | grep -E "^[0-9]+ vulnerabilities" | awk '{print $1}' || echo "0")
+
+    if [[ "$vuln_count" -gt 0 ]]; then
+        log "ERROR" "  ❌ Security vulnerabilities found: $vuln_count"
+        AUDIT_VULNERABILITIES=$((AUDIT_VULNERABILITIES + vuln_count))
+    else
+        log "WARN" "  ⚠️  Security audit failed - review npm audit output"
+    fi
+
+    if [[ "$VERBOSE" == "true" ]]; then
+        echo "$audit_output"
+    fi
+
+    AUDIT_FAILED=1
+    EXIT_CODE=1
+    popd > /dev/null
+    return 1
 }
 
 #######################################

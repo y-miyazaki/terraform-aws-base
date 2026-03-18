@@ -1,15 +1,15 @@
 ## Command Reference
 
-Complete reference for scripts in the github-pr-overview skill.
+Complete reference for scripts in the github-pr-body skill.
 
 ---
 
 ## Script Overview
 
-| Script           | Purpose                                     | When to Use                                 |
-| ---------------- | ------------------------------------------- | ------------------------------------------- |
-| `pr_fetch.sh`    | Fetch and analyze PR data                   | Always first - consolidates data collection |
-| `pr_overview.sh` | Update PR Body with auto-generated sections | After analysis, for automatic Body updates  |
+| Script        | Purpose                                     | When to Use                                 |
+| ------------- | ------------------------------------------- | ------------------------------------------- |
+| `pr_fetch.sh` | Fetch and analyze PR data                   | Always first - consolidates data collection |
+| `pr_body.sh`  | Update PR Body with auto-generated sections | After analysis, for automatic Body updates  |
 
 ---
 
@@ -19,23 +19,23 @@ Complete reference for scripts in the github-pr-overview skill.
 
 ```bash
 # Fetch PR metadata, file classifications, and template sections
-.github/skills/github-pr-overview/scripts/pr_fetch.sh <PR#> --repo owner/repo
+.github/skills/github-pr-body/scripts/pr_fetch.sh <PR#> --repo owner/repo
 ```
 
 ### Options
 
 ```bash
 # Output in JSON format (default)
-.github/skills/github-pr-overview/scripts/pr_fetch.sh <PR#> --repo owner/repo --format json
+.github/skills/github-pr-body/scripts/pr_fetch.sh <PR#> --repo owner/repo --format json
 
 # Output in YAML format
-.github/skills/github-pr-overview/scripts/pr_fetch.sh <PR#> --repo owner/repo --format yaml
+.github/skills/github-pr-body/scripts/pr_fetch.sh <PR#> --repo owner/repo --format yaml
 
 # Auto-detect repo from git remote (no --repo needed)
-.github/skills/github-pr-overview/scripts/pr_fetch.sh <PR#>
+.github/skills/github-pr-body/scripts/pr_fetch.sh <PR#>
 
 # Help message
-.github/skills/github-pr-overview/scripts/pr_fetch.sh --help
+.github/skills/github-pr-body/scripts/pr_fetch.sh --help
 ```
 
 ### Parameters
@@ -89,7 +89,7 @@ Complete reference for scripts in the github-pr-overview skill.
 
 **Example 1: Analyze PR and print summary**
 ```bash
-.github/skills/github-pr-overview/scripts/pr_fetch.sh 311 --repo owner/repo \\
+.github/skills/github-pr-body/scripts/pr_fetch.sh 311 --repo owner/repo \\
   | jq '.classified_files | map({type, count: (.files | length), additions: (.files | map(.additions) | add)})'
 
 # Output:
@@ -101,13 +101,13 @@ Complete reference for scripts in the github-pr-overview skill.
 
 **Example 2: Extract Terraform changes**
 ```bash
-.github/skills/github-pr-overview/scripts/pr_fetch.sh 311 --repo owner/repo \\
+.github/skills/github-pr-body/scripts/pr_fetch.sh 311 --repo owner/repo \\
   | jq '.classified_files[] | select(.type == "Config") | .files[] | select(.path | contains("terraform"))'
 ```
 
 **Example 3: Save analysis for later processing**
 ```bash
-.github/skills/github-pr-overview/scripts/pr_fetch.sh 311 --repo owner/repo > pr_analysis.json
+.github/skills/github-pr-body/scripts/pr_fetch.sh 311 --repo owner/repo > pr_analysis.json
 # Use pr_analysis.json for downstream processing or manual refinement
 ```
 
@@ -120,40 +120,41 @@ Complete reference for scripts in the github-pr-overview skill.
 
 ---
 
-## pr_overview.sh - PR Body Update
+## pr_body.sh - PR Body Update
 
 ### Basic Command
 
 ```bash
 # Update PR Body with auto-generated sections
-.github/skills/github-pr-overview/scripts/pr_overview.sh <PR#> --repo owner/repo
+.github/skills/github-pr-body/scripts/pr_body.sh <PR#> --repo owner/repo
 ```
 
 ### Options
 
 ```bash
 # Preview changes before applying (dry-run mode)
-.github/skills/github-pr-overview/scripts/pr_overview.sh <PR#> --repo owner/repo --dry-run
+.github/skills/github-pr-body/scripts/pr_body.sh <PR#> --repo owner/repo --dry-run
 
 # Verbose output for debugging
-.github/skills/github-pr-overview/scripts/pr_overview.sh <PR#> --repo owner/repo --verbose
+.github/skills/github-pr-body/scripts/pr_body.sh <PR#> --repo owner/repo --verbose
 
 # Auto-detect repo from git remote (no --repo needed)
-.github/skills/github-pr-overview/scripts/pr_overview.sh <PR#>
+.github/skills/github-pr-body/scripts/pr_body.sh <PR#>
 ```
 
-### Parameters for pr_overview.sh
+### Parameters for pr_body.sh
 
-| Parameter   | Required | Format       | Description                                                                 |
-| ----------- | -------- | ------------ | --------------------------------------------------------------------------- |
-| `<PR#>`     | Yes      | Numeric      | GitHub PR number (e.g., `123`)                                              |
-| `--repo`    | No*      | `owner/repo` | Repository in GitHub format. Auto-detected from git remote if omitted.      |
-| `--dry-run` | No       | Flag         | Preview changes without applying. Useful for verification before execution. |
-| `--verbose` | No       | Flag         | Enable SCRIPT_VERBOSE=1 for debugging output.                               |
+| Parameter         | Required | Format       | Description                                                                 |
+| ----------------- | -------- | ------------ | --------------------------------------------------------------------------- |
+| `<PR#>`           | Yes      | Numeric      | GitHub PR number (e.g., `123`)                                              |
+| `--repo`          | No*      | `owner/repo` | Repository in GitHub format. Auto-detected from git remote if omitted.      |
+| `--overview-file` | No       | File path    | Path to AI-generated Overview content file. If omitted, generates baseline. |
+| `--dry-run`       | No       | Flag         | Preview changes without applying. Useful for verification before execution. |
+| `--verbose`       | No       | Flag         | Enable SCRIPT_VERBOSE=1 for debugging output.                               |
 
 *Auto-detected from git remote if not provided.
 
-### Exit Codes for pr_overview.sh
+### Exit Codes for pr_body.sh
 
 | Code | Meaning          | Action                                                                  |
 | ---- | ---------------- | ----------------------------------------------------------------------- |
@@ -222,14 +223,14 @@ jq --version
 
 ```bash
 # See detailed execution steps
-.github/skills/github-pr-overview/scripts/pr_overview.sh 123 --repo owner/repo --verbose 2>&1 | tee debug.log
+.github/skills/github-pr-body/scripts/pr_body.sh 123 --repo owner/repo --verbose 2>&1 | tee debug.log
 ```
 
 ### Dry-Run First
 
 ```bash
 # Preview exactly what will be changed
-.github/skills/github-pr-overview/scripts/pr_overview.sh 123 --repo owner/repo --dry-run
+.github/skills/github-pr-body/scripts/pr_body.sh 123 --repo owner/repo --dry-run
 ```
 
 ### Check Current PR State

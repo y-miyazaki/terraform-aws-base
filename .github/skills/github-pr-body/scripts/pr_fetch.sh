@@ -2,17 +2,17 @@
 #######################################
 # Description: Fetch and parse PR metadata
 #
-# Usage: ./pr-fetch.sh <PR_NUMBER> [--repo OWNER/REPO] [--format json|yaml]
+# Usage: ./pr_fetch.sh <PR_NUMBER> [--repo OWNER/REPO] [--format json]
 #   --repo       Repository in owner/repo format (default: auto-detect from git)
-#   --format     Output format: json (default) or yaml
+#   --format     Output format: json (default)
 #   -h, --help   Display this help message
 #
 # Output: JSON with PR metadata including files, statistics, template sections
 #
 # Examples:
-#   ./pr-fetch.sh 123
-#   ./pr-fetch.sh 123 --repo owner/repo
-#   ./pr-fetch.sh 123 --format yaml
+#   ./pr_fetch.sh 123
+#   ./pr_fetch.sh 123 --repo owner/repo
+#   ./pr_fetch.sh 123 --format json
 #######################################
 
 set -euo pipefail
@@ -50,14 +50,14 @@ Arguments:
   PR_NUMBER              GitHub PR number
 
 Options:
-  --repo OWNER/REPO      Repository (default: auto-detect from git)
-  --format FORMAT        Output format: json or yaml (default: json)
-  -h, --help             Display this help message
+    --repo OWNER/REPO      Repository (default: auto-detect from git)
+    --format FORMAT        Output format: json (default: json)
+    -h, --help             Display this help message
 
 Examples:
-  $(basename "$0") 123
-  $(basename "$0") 123 --repo owner/repo
-  $(basename "$0") 123 --format yaml
+    $(basename "$0") 123
+    $(basename "$0") 123 --repo owner/repo
+    $(basename "$0") 123 --format json
 
 Output contains:
   - PR metadata (title, body, branches, statistics)
@@ -91,8 +91,20 @@ function fetch_pr_metadata {
     log "INFO" "Fetching PR #$PR_NUMBER metadata from $REPOSITORY"
 
     gh pr view "$PR_NUMBER" --repo "$REPOSITORY" \
-        --json title,body,additions,deletions,files,baseRefName,headRefName,state \
+        --json title,body,additions,deletions,baseRefName,headRefName,state \
         --jq '.'
+}
+
+#######################################
+# fetch_pr_files_paginated: Fetch all PR files via GitHub API pagination
+#######################################
+function fetch_pr_files_paginated {
+    log "INFO" "Fetching all files for PR #$PR_NUMBER via paginated API"
+
+    gh api --paginate \
+        -H "Accept: application/vnd.github+json" \
+        "repos/$REPOSITORY/pulls/$PR_NUMBER/files?per_page=100" \
+        | jq -s 'add | map({path: .filename, additions: .additions, deletions: .deletions})'
 }
 
 #######################################
@@ -145,6 +157,7 @@ function classify_files {
             .type = "Other"
         end
     ) |
+    sort_by(.type) |
     group_by(.type) |
     map(
         {
@@ -172,6 +185,9 @@ function parse_arguments {
                 ;;
             --format)
                 OUTPUT_FORMAT="$2"
+                if [[ "$OUTPUT_FORMAT" != "json" ]]; then
+                    error_exit "Unsupported format: $OUTPUT_FORMAT (supported: json)"
+                fi
                 shift 2
                 ;;
             *)
@@ -211,6 +227,10 @@ function main {
     local pr_metadata
     pr_metadata=$(fetch_pr_metadata)
 
+    # Fetch all PR files (avoid gh pr view files truncation on large PRs)
+    local files_json
+    files_json=$(fetch_pr_files_paginated)
+
     local pr_body
     pr_body=$(echo "$pr_metadata" | jq -r '.body // empty')
 
@@ -219,9 +239,6 @@ function main {
     template_sections=$(parse_template_sections "$pr_body")
 
     # Classify files
-    local files_json
-    files_json=$(echo "$pr_metadata" | jq '.files')
-
     local classified_files
     classified_files=$(classify_files "$files_json")
 
@@ -229,10 +246,11 @@ function main {
     local result
     result=$(echo "$pr_metadata" \
         | jq \
+            --argjson files "$files_json" \
             --argjson template "$template_sections" \
             --argjson classified "$classified_files" \
             '{
-                metadata: .,
+                metadata: (. + {files: $files}),
                 template: $template,
                 classified_files: $classified
             }')
@@ -241,9 +259,6 @@ function main {
     case "$OUTPUT_FORMAT" in
         json)
             echo "$result"
-            ;;
-        yaml)
-            echo "$result" | jq -r 'to_entries | .[] | "\(.key):\n\(.value | @json)"'
             ;;
         *)
             error_exit "Unknown format: $OUTPUT_FORMAT"

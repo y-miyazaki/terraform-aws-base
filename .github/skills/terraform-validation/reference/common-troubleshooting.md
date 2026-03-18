@@ -1,4 +1,4 @@
-# Terraform Validation - Troubleshooting Guide
+## Terraform Validation - Troubleshooting Guide
 
 ## terraform fmt Failures
 

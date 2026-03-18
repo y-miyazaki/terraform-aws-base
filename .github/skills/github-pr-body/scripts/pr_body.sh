@@ -1,22 +1,24 @@
 #!/bin/bash
 #######################################
-# Description: Update PR Body sections based on template structure
+# Description: Update PR Body sections with AI-generated or baseline content
 #
-# Usage: ./pr_overview.sh <PR_NUMBER> [--repo OWNER/REPO] [--verbose] [--dry-run]
-#   --repo       Repository in owner/repo format (default: auto-detect from git)
-#   --verbose    Enable verbose output (SCRIPT_VERBOSE=1)
-#   --dry-run    Show what would be done without making changes
+# Usage: ./pr_body.sh <PR_NUMBER> [--repo OWNER/REPO] [--overview-file FILE] [--verbose] [--dry-run]
+#   --repo           Repository in owner/repo format (default: auto-detect from git)
+#   --overview-file  Path to AI-generated Overview content file (optional)
+#   --verbose        Enable verbose output (SCRIPT_VERBOSE=1)
+#   --dry-run        Show what would be done without making changes
 #
 # Behavior:
-#   - Generates PR Body sections: ## Overview, ## Changes, ## Type of Change
-#   - Updates (overwrites) PR Body sections matching PULL_REQUEST_TEMPLATE.md structure
-#   - Ignores existing PR Body content (template structure is definitive)
-#   - Multiple executions: always overwrites (no markers needed, idempotent)
+#   - Updates PR Body sections: ## Overview (from file or baseline), ## Changes
+#   - Replaces only generated sections and preserves other existing sections
+#   - Overview: uses --overview-file content if provided, otherwise generates baseline
+#   - Changes: always generated from deterministic file classification
+#   - Multiple executions are idempotent
 #
 # Examples:
-#   ./pr_overview.sh 123
-#   ./pr_overview.sh 123 --repo octocat/Hello-World
-#   ./pr_overview.sh 123 --verbose --dry-run
+#   ./pr_body.sh 123 --overview-file /tmp/ai_overview.md
+#   ./pr_body.sh 123 --repo octocat/Hello-World
+#   ./pr_body.sh 123 --verbose --dry-run
 #######################################
 
 set -euo pipefail
@@ -39,7 +41,9 @@ source "${SCRIPT_DIR}/lib/all.sh"
 #######################################
 PR_NUMBER=""
 REPOSITORY=""
+OVERVIEW_FILE=""
 DRY_RUN="false"
+CHANGES_LIST_THRESHOLD=30
 BODY_FILE="/tmp/pr_body_$$.md"
 TMP_FILES=()
 
@@ -97,25 +101,27 @@ function show_usage {
     cat << EOF
 Usage: $(basename "$0") <PR_NUMBER> [options]
 
-Description: Update PR Body sections based on PULL_REQUEST_TEMPLATE.md structure
+Description: Update PR Body sections with AI-generated or baseline content
 
 Arguments:
-  PR_NUMBER              GitHub PR number
+  PR_NUMBER                 GitHub PR number
 
 Options:
-  --repo OWNER/REPO      Repository (default: auto-detect from git)
-  --verbose             Enable verbose output
-  --dry-run             Show what would be done
-  -h, --help            Display this help message
+  --repo OWNER/REPO         Repository (default: auto-detect from git)
+  --overview-file FILE      Path to AI-generated Overview content (optional)
+  --verbose                 Enable verbose output
+  --dry-run                 Show what would be done
+  -h, --help                Display this help message
 
 Behavior:
-  - Generates PR Body sections: ## Overview, ## Changes, ## Type of Change
-  - Overwrites matching sections in PR Body (template structure is definitive)
-  - Ignores existing PR content (always regenerates from scratch)
+  - Updates PR Body sections: ## Overview, ## Changes
+  - Overview: uses --overview-file content if provided, otherwise generates baseline
+  - Changes: always generated from deterministic file classification
+  - Replaces generated sections and preserves other existing sections
   - Idempotent: multiple executions produce same result
 
 Examples:
-  $(basename "$0") 123
+  $(basename "$0") 123 --overview-file /tmp/ai_overview.md
   $(basename "$0") 123 --repo owner/repo
   $(basename "$0") 123 --verbose --dry-run
 
@@ -321,15 +327,32 @@ function classify_file_changes {
 #######################################
 function generate_changes_section {
     local classified_json="$1"
+    local threshold="${2:-$CHANGES_LIST_THRESHOLD}"
 
-    echo "$classified_json" | jq -r '
-    .[] |
-    "### " + .type + "\n" +
-    (.files |
-    map("- **\(.path)**: +\(.additions) / -\(.deletions) lines") |
-    join("\n")) +
-    "\n"
-    '
+    local total_files
+    total_files=$(echo "$classified_json" | jq '[.[].files | length] | add // 0')
+
+    if ((total_files > threshold)); then
+        echo "_Changes list is summarized because total changed files exceed ${threshold}._"
+        echo ""
+
+        echo "$classified_json" | jq -r '
+        .[] |
+        "### " + .type + " (" + ((.files | length) | tostring) + " files, +" + (([.files[].additions] | add // 0) | tostring) + " / -" + (([.files[].deletions] | add // 0) | tostring) + " lines)\n" +
+        ((.files | .[0:5] | map("- **\(.path)**: +\(.additions) / -\(.deletions) lines") | join("\n"))) +
+        (if (.files | length) > 5 then "\n- ... and " + (((.files | length) - 5) | tostring) + " more files" else "" end) +
+        "\n"
+        '
+    else
+        echo "$classified_json" | jq -r '
+        .[] |
+        "### " + .type + "\n" +
+        (.files |
+        map("- **\(.path)**: +\(.additions) / -\(.deletions) lines") |
+        join("\n")) +
+        "\n"
+        '
+    fi
 }
 
 #######################################
@@ -361,79 +384,62 @@ function generate_changes_section {
 #######################################
 function generate_body_sections {
     local pr_title
-    local pr_body
     local pr_info
     local pr_additions
     local pr_deletions
-    local template_sections
-    local overview_text
-    local changes_text
+    local pr_base_ref
+    local pr_head_ref
+    local pr_file_count
     local files_json
     local classified_changes
 
     log "INFO" "Analyzing PR #$PR_NUMBER"
 
-    # Fetch PR metadata with full detail
-    pr_info=$(gh pr view "$PR_NUMBER" --repo "$REPOSITORY" \
-        --json title,body,additions,deletions,files --jq '.')
+    # Fetch PR metadata via pr_fetch.sh to avoid file truncation on large PRs
+    pr_info=$("${SCRIPT_DIR}/pr_fetch.sh" "$PR_NUMBER" --repo "$REPOSITORY" --format json)
 
-    pr_title=$(echo "$pr_info" | jq -r '.title')
-    pr_body=$(echo "$pr_info" | jq -r '.body // empty')
-    pr_additions=$(echo "$pr_info" | jq -r '.additions')
-    pr_deletions=$(echo "$pr_info" | jq -r '.deletions')
-
-    # Parse template sections for context (ignore existing content)
-    template_sections=$(parse_template_sections "$pr_body")
-
-    local overview_text_raw
-    local changes_text_raw
-    overview_text_raw=$(echo "$template_sections" | jq -r '.overview // empty')
-    changes_text_raw=$(echo "$template_sections" | jq -r '.changes // empty')
+    pr_title=$(echo "$pr_info" | jq -r '.metadata.title')
+    pr_additions=$(echo "$pr_info" | jq -r '.metadata.additions')
+    pr_deletions=$(echo "$pr_info" | jq -r '.metadata.deletions')
+    pr_base_ref=$(echo "$pr_info" | jq -r '.metadata.baseRefName')
+    pr_head_ref=$(echo "$pr_info" | jq -r '.metadata.headRefName')
+    pr_file_count=$(echo "$pr_info" | jq -r '.metadata.files | length')
 
     # Extract and classify file changes
-    files_json=$(echo "$pr_info" | jq '.files')
+    files_json=$(echo "$pr_info" | jq '.metadata.files')
 
     classified_changes=$(classify_file_changes "$files_json")
-
-    # Check if PR body has meaningful content
-    overview_text=$(echo "$overview_text_raw" | tr -d '[:space:]')
-    changes_text=$(echo "$changes_text_raw" | tr -d '[:space:]')
-    local has_content="false"
-    if [[ -n "$overview_text" ]] || [[ -n "$changes_text" ]]; then
-        has_content="true"
-    fi
-
-    # Warn if PR body is empty or template-only
-    if [[ "$has_content" == "false" ]]; then
-        log "WARN" "PR body appears to be empty or contains only template placeholders"
-        log "WARN" "Generated sections will have limited detail"
-        log "WARN" "For comprehensive PR overview, consider:"
-        log "WARN" "  1. Fill out the PR template sections (Overview, Changes)"
-        log "WARN" "  2. Use AI Agent to manually analyze PR and generate detailed content"
-    fi
 
     # Generate body sections
     {
         echo "## Overview"
         echo ""
-        if [[ -n "$overview_text" ]]; then
-            echo "$overview_text_raw" | head -10
+
+        # Use overview file if provided, otherwise generate baseline
+        if [[ -n "$OVERVIEW_FILE" ]]; then
+            if [[ ! -f "$OVERVIEW_FILE" ]]; then
+                error_exit "Overview file not found: $OVERVIEW_FILE"
+            fi
+            log "INFO" "Using Overview content from: $OVERVIEW_FILE"
+            cat "$OVERVIEW_FILE"
+            echo ""
         else
+            log "INFO" "Generating baseline Overview (no --overview-file provided)"
             echo "**Title**: $pr_title"
             echo ""
+            echo "**Branch**: $pr_head_ref -> $pr_base_ref"
+            echo ""
+            echo "**Stats**: $pr_file_count files changed (+$pr_additions / -$pr_deletions lines)"
+            echo ""
             echo "_This section was auto-generated._"
-            echo "_For detailed analysis, please update the PR description with context and rationale._"
+            echo ""
         fi
-        echo ""
+
         echo "## Changes"
         echo ""
-        if [[ -n "$changes_text" ]]; then
-            echo "$changes_text_raw"
-        else
-            generate_changes_section "$classified_changes"
-            echo ""
-            echo "**Summary**: $(echo "$pr_info" | jq '.files | length') files changed (+$pr_additions / -$pr_deletions lines)"
-        fi
+        generate_changes_section "$classified_changes"
+        echo ""
+        echo "**Summary**: $pr_file_count files changed (+$pr_additions / -$pr_deletions lines)"
     } > "$BODY_FILE"
 
     TMP_FILES+=("$BODY_FILE")
@@ -477,14 +483,31 @@ function update_pr_body {
 
     log "INFO" "Rebuilding PR body with generated sections"
 
-    # Extract sections after ## Changes (preserve everything after ## Changes)
-    # This keeps: ## Testing, ## Type of Change, ## Checklist, ## Additional Notes
-    remaining_sections=$(echo "$current_body" | awk '/^## Testing/,EOF {print}')
+    # Preserve existing sections except auto-generated ones.
+    # This avoids hard dependency on a specific template section order.
+    remaining_sections=$(echo "$current_body" | awk '
+        BEGIN { in_h2 = 0; skip = 0 }
+        /^##[[:space:]]+/ {
+            in_h2 = 1
+            if ($0 == "## Overview" || $0 == "## Changes") {
+                skip = 1
+                next
+            }
+            skip = 0
+        }
+        {
+            if (in_h2 == 1 && skip == 0) {
+                print
+            }
+        }
+    ')
 
-    # Build new body (without top-level "# Overview", start directly with ## sections)
+    # Build new body (start with generated sections, append preserved sections if any)
     new_body=$(cat "$BODY_FILE")
-    new_body+=$'\n'
-    new_body+="$remaining_sections"
+    if [[ -n "${remaining_sections//[[:space:]]/}" ]]; then
+        new_body+=$'\n'
+        new_body+="$remaining_sections"
+    fi
 
     if [[ "$DRY_RUN" == "true" ]]; then
         log "INFO" "DRY-RUN MODE"
@@ -536,6 +559,10 @@ function parse_arguments {
                 ;;
             --repo)
                 REPOSITORY="$2"
+                shift 2
+                ;;
+            --overview-file)
+                OVERVIEW_FILE="$2"
                 shift 2
                 ;;
             --verbose)

@@ -115,17 +115,12 @@ function execute_command {
 
     log "DEBUG" "Executing: $*"
 
-    # Execute the command. Support two calling styles:
-    # 1) execute_command cmd arg1 arg2 ...  --> safe, runs the command directly
-    # 2) execute_command "cmd arg1 arg2"   --> common in older scripts; run via bash -lc
-    if [[ $# -eq 1 ]]; then
-        # Single-string command (may contain spaces/options) — run under bash -lc so
-        # shell parsing behaves as the caller expects.
-        bash -lc "$1"
-    else
-        # Multi-argument safe execution
-        "${@}"
+    # Execute the command in multi-argument style only to avoid injection risks.
+    if [[ $# -lt 2 ]]; then
+        error_exit "execute_command requires command and arguments as separate parameters"
     fi
+
+    "${@}"
 }
 
 #######################################

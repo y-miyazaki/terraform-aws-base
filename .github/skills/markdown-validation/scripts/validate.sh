@@ -1,26 +1,24 @@
 #!/bin/bash
 #######################################
-# Description: Deterministic validation for github-actions-review SKILL.md
+# Description: Deterministic Markdown validation for files and directories
 #
-# Usage: ./validate.sh [SKILL.md]
+# Usage: ./validate.sh [PATH]
 #   arguments:
-#     SKILL.md       Path to target SKILL.md file (optional)
-#                    Default: ../SKILL.md
+#     PATH           Path to target Markdown file or directory (optional)
+#                    Default: /workspace
 #
 # Output:
 # - Human-readable validation results (terminal output)
 # - JSON format output for machine parsing
 #
 # Design Rules:
-# - Validate YAML frontmatter syntax only (not Markdown body)
-# - Validate required sections and YAML frontmatter fields
-# - Validate word count threshold and directory structure
+# - Validate markdown syntax with markdownlint
+# - Validate markdown links with markdown-link-check
 # - Exit with non-zero status when any check fails
 #
 # Dependencies:
 # - bash (POSIX bash, /bin/bash)
-# - awk, grep, wc, mktemp (standard Unix utilities)
-# - yamllint (optional, for frontmatter YAML syntax)
+# - find (standard Unix utility)
 #######################################
 
 set -euo pipefail
@@ -35,19 +33,17 @@ export SCRIPT_DIR
 # shellcheck disable=SC1091
 source "${SCRIPT_DIR}/lib/all.sh"
 
-SKILL_FILE="${SCRIPT_DIR}/../SKILL.md"
-TMP_FRONTMATTER=""
+TARGET_PATH="/workspace"
 declare -a check_names=()
 declare -a check_statuses=()
 declare -a check_details=()
-declare -a required_sections=("Purpose" "Input Specification" "Output Specification" "Execution Scope" "Constraints" "Failure Behavior")
-declare -a required_fields=("name" "description" "license")
+declare -a markdown_files=()
 
 #######################################
-# cleanup: Remove temporary files
+# cleanup: Cleanup hook
 #
 # Description:
-#   Removes the temporary frontmatter file when script exits
+#   No-op cleanup placeholder to keep trap behavior consistent
 #
 # Arguments:
 #   None
@@ -60,9 +56,7 @@ declare -a required_fields=("name" "description" "license")
 #
 #######################################
 function cleanup {
-    if [[ -n "${TMP_FRONTMATTER}" ]] && [[ -f "${TMP_FRONTMATTER}" ]]; then
-        rm -f "${TMP_FRONTMATTER}"
-    fi
+    true
 }
 
 #######################################
@@ -83,26 +77,23 @@ function cleanup {
 #######################################
 function show_usage {
     cat << 'EOF'
-Usage: validate.sh [SKILL.md]
+Usage: validate.sh [PATH]
 
 Description:
-  Deterministic validation for github-actions-review SKILL.md.
+    Deterministic Markdown validation for files and directories.
 
 Arguments:
-  SKILL.md    Optional path to target SKILL.md
-              Default: ../SKILL.md
+    PATH        Optional path to target Markdown file or directory
+                            Default: /workspace
 
 Validation Checks:
-  - YAML frontmatter syntax (yamllint, if installed)
-  - Structural completeness (required H2 sections)
-  - YAML frontmatter fields (name, description, license)
-  - Word count threshold (< 5000)
-  - Resource separation (scripts/ and reference/)
+    - Markdown syntax (markdownlint)
+    - Markdown links (markdown-link-check)
 
 Examples:
   ./validate.sh
-  ./validate.sh ../SKILL.md
-  ./validate.sh /workspace/.github/skills/github-actions-review/SKILL.md
+    ./validate.sh /workspace/README.md
+    ./validate.sh /workspace/docs/
 EOF
     exit 0
 }
@@ -111,13 +102,13 @@ EOF
 # parse_arguments: Parse and validate command line arguments
 #
 # Description:
-#   Parses optional SKILL.md argument and validates target path
+#   Parses optional PATH argument and validates target path
 #
 # Arguments:
 #   $@ - Command line arguments
 #
 # Global Variables:
-#   SKILL_FILE - Normalized target file path
+#   TARGET_PATH - Normalized target path
 #
 # Returns:
 #   Exits with error when input is invalid
@@ -136,271 +127,48 @@ function parse_arguments {
     fi
 
     if [[ $# -eq 1 ]]; then
-        SKILL_FILE="$1"
+        TARGET_PATH="$1"
     fi
 
-    if [[ ! -f "${SKILL_FILE}" ]]; then
-        error_exit "Error: File not found: ${SKILL_FILE}"
+    if [[ ! -e "${TARGET_PATH}" ]]; then
+        error_exit "Error: Path not found: ${TARGET_PATH}"
     fi
 
-    SKILL_FILE="$(realpath "${SKILL_FILE}")"
-
-    if [[ ! "${SKILL_FILE}" =~ /.github/skills/.*/SKILL\.md$ ]]; then
-        error_exit "Error: File must match .github/skills/*/SKILL.md: ${SKILL_FILE}"
-    fi
+    TARGET_PATH="$(realpath "${TARGET_PATH}")"
 }
 
 #######################################
-# check_frontmatter_exists: Verify YAML frontmatter markers
+# collect_markdown_files: Resolve markdown files from target input
 #
 # Description:
-#   Checks whether the file starts with YAML frontmatter markers
-#
-# Arguments:
-#   None
-#
-# Returns:
-#   None (stores check result)
-#
-# Usage:
-#   check_frontmatter_exists
-#
-#######################################
-function check_frontmatter_exists {
-    local marker_count
-    marker_count=$(grep -c '^---$' "${SKILL_FILE}" || true)
-
-    if [[ "${marker_count}" -ge 2 ]]; then
-        check_names+=("YAML Frontmatter Markers")
-        check_statuses+=("PASS")
-        check_details+=("")
-        echo "✓ YAML frontmatter markers found"
-    else
-        check_names+=("YAML Frontmatter Markers")
-        check_statuses+=("FAIL")
-        check_details+=("missing frontmatter markers")
-        echo "✗ YAML frontmatter markers missing"
-    fi
-}
-
-#######################################
-# check_yaml_syntax: Validate YAML frontmatter syntax
-#
-# Description:
-#   Extracts only frontmatter and runs yamllint against the extracted YAML
+#   Populates markdown_files based on TARGET_PATH (file or directory)
 #
 # Arguments:
 #   None
 #
 # Global Variables:
-#   TMP_FRONTMATTER - Temporary frontmatter file path
+#   TARGET_PATH - Source path to scan
+#   markdown_files - Resolved markdown file list
 #
 # Returns:
-#   None (stores check result)
+#   Exits with error when a file target is not .md
 #
 # Usage:
-#   check_yaml_syntax
+#   collect_markdown_files
 #
 #######################################
-function check_yaml_syntax {
-    if ! command -v yamllint > /dev/null 2>&1; then
-        check_names+=("YAML Frontmatter Syntax")
-        check_statuses+=("SKIP")
-        check_details+=("yamllint not installed")
-        echo "⊘ YAML frontmatter syntax skipped (yamllint not found)"
+function collect_markdown_files {
+    markdown_files=()
+
+    if [[ -f "${TARGET_PATH}" ]]; then
+        if [[ "${TARGET_PATH}" != *.md ]]; then
+            error_exit "Error: File must have .md extension: ${TARGET_PATH}"
+        fi
+        markdown_files=("${TARGET_PATH}")
         return
     fi
 
-    local workspace_tmp
-    workspace_tmp="/workspace/tmp"
-    mkdir -p "${workspace_tmp}"
-    TMP_FRONTMATTER="$(mktemp "${workspace_tmp}/github-actions-review-frontmatter.XXXXXX.yaml")"
-
-    awk '
-        BEGIN { in_frontmatter=0; marker_count=0 }
-        /^---$/ {
-            marker_count++
-            if (marker_count == 1) { in_frontmatter=1; next }
-            if (marker_count == 2) { in_frontmatter=0; exit }
-        }
-        in_frontmatter == 1 { print }
-    ' "${SKILL_FILE}" > "${TMP_FRONTMATTER}"
-
-    if [[ ! -s "${TMP_FRONTMATTER}" ]]; then
-        check_names+=("YAML Frontmatter Syntax")
-        check_statuses+=("FAIL")
-        check_details+=("empty frontmatter")
-        echo "✗ YAML frontmatter syntax invalid (empty frontmatter)"
-        return
-    fi
-
-    if yamllint -d '{extends: default, rules: {document-start: disable, line-length: disable}}' "${TMP_FRONTMATTER}" > /dev/null 2>&1; then
-        check_names+=("YAML Frontmatter Syntax")
-        check_statuses+=("PASS")
-        check_details+=("")
-        echo "✓ YAML frontmatter syntax valid"
-    else
-        local yaml_errors
-        yaml_errors=$(yamllint -d '{extends: default, rules: {document-start: disable, line-length: disable}}' "${TMP_FRONTMATTER}" 2>&1 || true)
-        check_names+=("YAML Frontmatter Syntax")
-        check_statuses+=("FAIL")
-        check_details+=("${yaml_errors}")
-        echo "✗ YAML frontmatter syntax invalid"
-    fi
-}
-
-#######################################
-# check_required_sections: Verify required H2 sections
-#
-# Description:
-#   Ensures all required sections are present in SKILL.md
-#
-# Arguments:
-#   None
-#
-# Returns:
-#   None (stores check result)
-#
-# Usage:
-#   check_required_sections
-#
-#######################################
-function check_required_sections {
-    local missing_sections=()
-    local section
-
-    for section in "${required_sections[@]}"; do
-        if ! grep -q "^## ${section}$" "${SKILL_FILE}"; then
-            missing_sections+=("${section}")
-        fi
-    done
-
-    if [[ ${#missing_sections[@]} -eq 0 ]]; then
-        check_names+=("Structural Completeness")
-        check_statuses+=("PASS")
-        check_details+=("")
-        echo "✓ Required sections found"
-    else
-        check_names+=("Structural Completeness")
-        check_statuses+=("FAIL")
-        check_details+=("${missing_sections[*]}")
-        echo "✗ Missing sections: ${missing_sections[*]}"
-    fi
-}
-
-#######################################
-# check_yaml_fields: Verify required frontmatter fields
-#
-# Description:
-#   Verifies required YAML frontmatter fields exist
-#
-# Arguments:
-#   None
-#
-# Returns:
-#   None (stores check result)
-#
-# Usage:
-#   check_yaml_fields
-#
-#######################################
-function check_yaml_fields {
-    local missing_fields=()
-    local field
-
-    for field in "${required_fields[@]}"; do
-        if ! grep -q "^${field}:" "${SKILL_FILE}"; then
-            missing_fields+=("${field}")
-        fi
-    done
-
-    if [[ ${#missing_fields[@]} -eq 0 ]]; then
-        check_names+=("YAML Frontmatter Fields")
-        check_statuses+=("PASS")
-        check_details+=("")
-        echo "✓ YAML frontmatter fields valid"
-    else
-        check_names+=("YAML Frontmatter Fields")
-        check_statuses+=("FAIL")
-        check_details+=("${missing_fields[*]}")
-        echo "✗ Missing YAML fields: ${missing_fields[*]}"
-    fi
-}
-
-#######################################
-# check_word_count: Validate progressive disclosure threshold
-#
-# Description:
-#   Ensures SKILL.md word count is lower than 5000 words
-#
-# Arguments:
-#   None
-#
-# Returns:
-#   None (stores check result)
-#
-# Usage:
-#   check_word_count
-#
-#######################################
-function check_word_count {
-    local word_count
-    word_count=$(wc -w < "${SKILL_FILE}")
-
-    if [[ "${word_count}" -lt 5000 ]]; then
-        check_names+=("Progressive Disclosure")
-        check_statuses+=("PASS")
-        check_details+=("${word_count}")
-        echo "✓ Word count within limit (${word_count} < 5000)"
-    else
-        check_names+=("Progressive Disclosure")
-        check_statuses+=("FAIL")
-        check_details+=("${word_count}")
-        echo "✗ Word count exceeds limit (${word_count} >= 5000)"
-    fi
-}
-
-#######################################
-# check_resource_separation: Verify required resource directories
-#
-# Description:
-#   Ensures scripts/ and reference/ directories exist under skill directory
-#
-# Arguments:
-#   None
-#
-# Returns:
-#   None (stores check result)
-#
-# Usage:
-#   check_resource_separation
-#
-#######################################
-function check_resource_separation {
-    local skill_dir
-    local missing_dirs=()
-
-    skill_dir="$(dirname "${SKILL_FILE}")"
-
-    if [[ ! -d "${skill_dir}/scripts" ]]; then
-        missing_dirs+=("scripts/")
-    fi
-
-    if [[ ! -d "${skill_dir}/reference" ]]; then
-        missing_dirs+=("reference/")
-    fi
-
-    if [[ ${#missing_dirs[@]} -eq 0 ]]; then
-        check_names+=("Resource Separation")
-        check_statuses+=("PASS")
-        check_details+=("")
-        echo "✓ Required directories found (scripts/, reference/)"
-    else
-        check_names+=("Resource Separation")
-        check_statuses+=("FAIL")
-        check_details+=("${missing_dirs[*]}")
-        echo "✗ Missing directories: ${missing_dirs[*]}"
-    fi
+    mapfile -t markdown_files < <(find "${TARGET_PATH}" -type f -name "*.md" ! -path "*/node_modules/*" ! -path "*/.git/*" | sort)
 }
 
 #######################################
@@ -438,26 +206,24 @@ function check_resource_separation {
 #
 #######################################
 function validate_markdown_files {
+    collect_markdown_files
+
     if ! command -v markdownlint > /dev/null 2>&1; then
         check_names+=("Markdown Syntax")
         check_statuses+=("SKIP")
         check_details+=("markdownlint not installed")
         echo "⊘ Markdown syntax validation skipped (markdownlint not found)"
     else
-        # Check Markdown files in workspace
-        local -a md_files=()
-        mapfile -t md_files < <(find /workspace -maxdepth 2 -name "*.md" -type f ! -path "*/node_modules/*" ! -path "*/.git/*" 2> /dev/null | head -10)
-
-        if [[ ${#md_files[@]} -eq 0 ]]; then
+        if [[ ${#markdown_files[@]} -eq 0 ]]; then
             check_names+=("Markdown Syntax")
             check_statuses+=("SKIP")
             check_details+=("no Markdown files found")
             echo "⊘ Markdown syntax validation skipped (no .md files found)"
         else
-            if markdownlint "${md_files[@]}" > /dev/null 2>&1; then
+            if markdownlint "${markdown_files[@]}" > /dev/null 2>&1; then
                 check_names+=("Markdown Syntax")
                 check_statuses+=("PASS")
-                check_details+=("")
+                check_details+=("${#markdown_files[@]} files")
                 echo "✓ Markdown files pass markdownlint"
             else
                 check_names+=("Markdown Syntax")
@@ -474,24 +240,32 @@ function validate_markdown_files {
         check_details+=("markdown-link-check not installed")
         echo "⊘ Markdown link validation skipped (markdown-link-check not found)"
     else
-        # Try checking main README
-        if [[ -f /workspace/README.md ]]; then
-            if markdown-link-check /workspace/README.md > /dev/null 2>&1; then
-                check_names+=("Markdown Links")
-                check_statuses+=("PASS")
-                check_details+=("")
-                echo "✓ Markdown links are valid"
-            else
+        if [[ ${#markdown_files[@]} -eq 0 ]]; then
+            check_names+=("Markdown Links")
+            check_statuses+=("SKIP")
+            check_details+=("no Markdown files found")
+            echo "⊘ Markdown link validation skipped (no .md files found)"
+        else
+            local file
+            local link_failed=false
+            for file in "${markdown_files[@]}"; do
+                if ! markdown-link-check "${file}" > /dev/null 2>&1; then
+                    link_failed=true
+                    break
+                fi
+            done
+
+            if [[ "${link_failed}" == true ]]; then
                 check_names+=("Markdown Links")
                 check_statuses+=("FAIL")
                 check_details+=("markdown-link-check validation failed")
                 echo "✗ Some Markdown links are broken"
+            else
+                check_names+=("Markdown Links")
+                check_statuses+=("PASS")
+                check_details+=("${#markdown_files[@]} files")
+                echo "✓ Markdown links are valid"
             fi
-        else
-            check_names+=("Markdown Links")
-            check_statuses+=("SKIP")
-            check_details+=("no README.md found")
-            echo "⊘ Markdown link validation skipped (no README.md found)"
         fi
     fi
 }
@@ -545,12 +319,6 @@ function main {
 
     parse_arguments "$@"
 
-    check_frontmatter_exists
-    check_yaml_syntax
-    check_required_sections
-    check_yaml_fields
-    check_word_count
-    check_resource_separation
     validate_markdown_files
 
     local overall_status="PASS"

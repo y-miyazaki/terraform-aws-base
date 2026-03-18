@@ -26,7 +26,7 @@ on:
         required: false
         type: string
       go_version:
-        default: "1.25.4"
+        default: "1.25.8"
         description: "Go version to use for building"
         required: false
         type: string
@@ -142,7 +142,7 @@ jobs:
           token: ${{ github.token }}
 
       - name: Setup Go
-        uses: actions/setup-go@7a3fe6cf4cb3a834922a1244abfce67bcef6a0c5 # v6.2.0
+        uses: actions/setup-go@4b73464bb391d4059bd26b0524d20df3927bd417 # v6.3.0
         with:
           cache: false
           go-version: ${{ env.GO_VERSION }}
@@ -208,7 +208,7 @@ jobs:
 
       - name: Upload artifacts
         if: always()
-        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
         with:
           if-no-files-found: warn
           name: goreleaser-dist-${{ env.COMPONENT }}-${{ steps.check-tag.outputs.version }}

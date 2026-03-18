@@ -1,6 +1,6 @@
 ---
-name: github-pr-overview
-description: Automated PR Body section updater. Always use pr_fetch.sh or pr_overview.sh scripts. Updates PR Body sections (## Overview, ## Changes) with auto-generated content. Generates structured, idempotent updates that preserve other template sections.
+name: github-pr-body
+description: Automated PR Body section updater. Always use pr_fetch.sh or pr_body.sh scripts. Updates PR Body sections (## Overview, ## Changes) with auto-generated content. Generates structured, idempotent updates that preserve other template sections.
 license: MIT
 ---
 
@@ -38,10 +38,20 @@ Format:
 Structured Markdown format PR Body:
 
 - ## Overview section: Auto-generated summary of PR purpose
-- ## Changes section: File change list by classification (Config, Docs, Code, Tests, Scripts, Assets)
+- ## Changes section: File change list by classification (Config, Docs, Feature, Test, Other)
 - Each file entry: Filename + line changes (+X / -Y lines)
 - Summary subsection: Total file count and line changes
 - Other sections (Related Issues, Testing, Deployment Notes, Breaking Changes): Preserved from original
+
+Overview generation policy (deterministic):
+
+- Generate metadata-only baseline (`Title`, `Branch`, `Stats`) when using script alone
+- **For manual/AI refinement**: Focus on change summary, exclude metadata
+  - ❌ Exclude: Branch names, file counts, line counts (visible in GitHub UI)
+  - ✅ Include: What was changed, why it's necessary, what improves
+- Keep script output deterministic and template-tolerant
+- Do not generate narrative reasoning (`why`, `risk`) in script logic
+- Add domain or release-risk context only during manual refinement
 
 See "Output Format" section for example output.
 
@@ -51,7 +61,7 @@ See reference/common-output-format.md for detailed format specification and exam
 
 **How to use this skill**:
 
-- **Primary method**: Use `scripts/pr_overview.sh <PR_NUMBER>` to update PR Body sections
+- **Primary method**: Use `scripts/pr_body.sh <PR_NUMBER>` to update PR Body sections
 - Script fetches PR details, generates Overview/Changes sections, and updates PR Body
 - **Alternative**: Use `scripts/pr_fetch.sh <PR_NUMBER>` for read-only PR information retrieval
 - **GitKraken MCP**: Available on explicit request for alternative GitHub API access
@@ -71,20 +81,28 @@ What this skill does NOT do (Out of Scope):
 - Modify file contents
 - Automatically use GitKraken MCP (only on explicit request)
 - Execute individual `gh` commands (except for debugging)
+- Add language-specific or domain-specific narratives directly in script logic
+
+Domain-specific enrichment policy:
+
+- Keep `pr_body.sh` generic and deterministic
+- Use external review skills/agents for domain-specific analysis
+- Apply those insights through manual refinement of PR Body after running `pr_body.sh`
 
 ## Constraints
 
 Prerequisites:
 
 - GitHub CLI (`gh`) installed and authenticated
-- PR Body already has PULL_REQUEST_TEMPLATE.md structure
+- Existing PR Body has `##` section structure
 - Write permission to repository
-- Scripts exist at `.github/skills/github-pr-overview/scripts/`
+- Scripts exist at `.github/skills/github-pr-body/scripts/`
 
 Limitations:
 
 - GitKraken MCP requires separate authentication and availability is not guaranteed
 - Large file changes (>1000 files) may result in longer execution time
+- PR file lists are fetched with pagination; large PRs can take longer but are not truncated
 
 ## Failure Behavior
 
@@ -132,7 +150,7 @@ Step 1: pr_fetch.sh (REQUIRED)
      ↓ Analyzes PR metadata, file classifications
      ↓ Outputs JSON with all PR data
      ↓
-Step 2: pr_overview.sh (OPTIONAL)
+Step 2: pr_body.sh (OPTIONAL)
      ↓ Auto-generates ## Overview and ## Changes
      ↓ Preserves all other sections
      ↓
@@ -144,13 +162,13 @@ Step 3: Manual Refinement (OPTIONAL)
 
 ```bash
 # Step 1: Analyze PR (Required, outputs JSON)
-.github/skills/github-pr-overview/scripts/pr_fetch.sh <PR_NUMBER> --repo owner/repo
+.github/skills/github-pr-body/scripts/pr_fetch.sh <PR_NUMBER> --repo owner/repo
 
-# Step 2a: Preview changes (dry-run, no updates)
-.github/skills/github-pr-overview/scripts/pr_overview.sh <PR_NUMBER> --repo owner/repo --dry-run
+# Step 2: Apply changes (updates PR Body)
+.github/skills/github-pr-body/scripts/pr_body.sh <PR_NUMBER> --repo owner/repo
 
-# Step 2b: Apply changes (updates PR Body)
-.github/skills/github-pr-overview/scripts/pr_overview.sh <PR_NUMBER> --repo owner/repo
+# Step 2 (Alternative): With AI-generated Overview content
+.github/skills/github-pr-body/scripts/pr_body.sh <PR_NUMBER> --repo owner/repo --overview-file /tmp/overview.md
 ```
 
 ### Idempotent Execution
@@ -182,10 +200,11 @@ After Step 1 or Step 2, AI Agent can:
    - ✅ All metadata, file classifications, template sections included
    - 🎯 **Recommended for AI Agents** before analysis or body updates
 
-2. **`pr_overview.sh`** - Use after `pr_fetch.sh` to update Body
+2. **`pr_body.sh`** - Use after `pr_fetch.sh` to update Body
    - ✅ Auto-generates `## Overview` and `## Changes`
    - ✅ Calls `pr_fetch.sh` internally
    - ✅ Preserves all other template sections
+   - ✅ Accepts `--overview-file` for AI-generated Overview content (optional)
    - ⏱️ More resource-intensive (rewrites entire Body)
 
 3. **Individual `gh` commands** - Avoid (use only for debugging)
@@ -197,7 +216,7 @@ After Step 1 or Step 2, AI Agent can:
    - ⚠️ Requires separate authentication
    - ⚠️ Not guaranteed available
 
-**⚠️ Critical Rule**: Always use `pr_fetch.sh` or `pr_overview.sh`. Never use individual `gh` commands unless debugging.
+**⚠️ Critical Rule**: Always use `pr_fetch.sh` or `pr_body.sh`. Never use individual `gh` commands unless debugging.
 
 ## Output Format
 
@@ -206,7 +225,11 @@ After Step 1 or Step 2, AI Agent can:
 ```markdown
 ## Overview
 
-[Auto-generated summary from PR title and metadata]
+**Title**: [PR title]
+
+**Branch**: [head] -> [base]
+
+**Stats**: [N files changed (+A / -D lines)]
 
 ## Changes
 
@@ -257,7 +280,7 @@ After Step 1 or Step 2, AI Agent can:
 
 ```bash
 # After opening PR with template filled
-.github/skills/github-pr-overview/scripts/pr_overview.sh 123 --repo owner/repo
+.github/skills/github-pr-body/scripts/pr_body.sh 123 --repo owner/repo
 
 # Result: ## Overview and ## Changes populated automatically
 ```
@@ -270,6 +293,6 @@ For complete workflow scenarios, see **[Agent Workflows](reference/category-agen
 
 **Purpose**: Auto-populate PR Body `## Overview` and `## Changes` sections based on PR metadata and file analysis.
 
-**Quick Command**: `.github/skills/github-pr-overview/scripts/pr_overview.sh <PR#> --repo owner/repo`
+**Quick Command**: `.github/skills/github-pr-body/scripts/pr_body.sh <PR#> --repo owner/repo`
 
 **Result**: PR Body sections auto-generated and ready for manual refinement if needed.
