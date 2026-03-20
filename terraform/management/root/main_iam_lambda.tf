@@ -47,18 +47,10 @@ locals {
           Sid = "AllowOrganizations"
           Action = [
             "organizations:ListAccounts",
-          ]
-          Effect   = "Allow"
-          Resource = "*"
-        },
-        # Note: Organizations API access required for account-level metadata in multi-account setups
-        {
-          Sid = "AllowOrganizationsDescribeAccount"
-          Action = [
             "organizations:DescribeAccount",
           ]
           Effect   = "Allow"
-          Resource = "arn:aws:organizations::*:account/*"
+          Resource = "*"
         },
         {
           Sid = "AllowSupports"

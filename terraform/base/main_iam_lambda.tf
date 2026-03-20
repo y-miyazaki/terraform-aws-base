@@ -71,7 +71,7 @@ locals {
             "organizations:DescribeAccount",
           ]
           Effect   = "Allow"
-          Resource = "arn:aws:organizations::*:account/*"
+          Resource = "*"
         },
         {
           Sid = "AllowSupports"
