@@ -31,6 +31,7 @@ on:
         description: "SHA256 checksum for tfcmt release tarball"
         required: false
         type: string
+        # To get checksum: curl -sL "https://github.com/suzuki-shunsuke/tfcmt/releases/download/v4.14.13/tfcmt_linux_amd64.tar.gz" | sha256sum | awk '{print $1}'
         default: "475e3fb36765b10fec5c7a199f86116f6ef764340f96d6baa2becf609418b760" # pragma: allowlist secret
       tfcmt_version:
         description: "tfcmt (tfcmt) version to use for PR plan comments"

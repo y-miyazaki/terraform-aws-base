@@ -12,6 +12,7 @@ on:
         description: "SHA256 checksum for actionlint release tarball"
         required: false
         type: string
+        # To get checksum: curl -sL "https://github.com/rhysd/actionlint/releases/download/v1.7.9/actionlint_linux_amd64.tar.gz" | sha256sum | awk '{print $1}'
         default: "233b280d05e100837f4af1433c7b40a5dcb306e3aa68fb4f17f8a7f45a7df7b4" # pragma: allowlist secret
       actionlint_version:
         description: "actionlint version to use"
@@ -22,6 +23,7 @@ on:
         description: "SHA256 checksum for ghalint release tarball"
         required: false
         type: string
+        # To get checksum: curl -sL "https://github.com/suzuki-shunsuke/ghalint/releases/download/v1.5.4/ghalint_linux_amd64.tar.gz" | sha256sum | awk '{print $1}'
         default: "977555b7142cc057aad4663679772510a9ed3f1687f26f2359d18bb6b67314fe" # pragma: allowlist secret
       ghalint_version:
         description: "ghalint version to use"
