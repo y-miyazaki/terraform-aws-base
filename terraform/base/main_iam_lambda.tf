@@ -33,7 +33,7 @@ locals {
         {
           Sid = "AllowBudgets"
           Action = [
-            "ce:GetCostAndUsage"
+            "ce:GetCostAndUsage",
           ]
           Effect   = "Allow"
           Resource = "arn:aws:ce:us-east-1:${data.aws_caller_identity.current.account_id}:/GetCostAndUsage"
@@ -42,7 +42,7 @@ locals {
           Sid = "AllowIamPasswordExpired"
           Action = [
             "iam:GetUser",
-            "iam:ListUsers"
+            "iam:ListUsers",
           ]
           Effect   = "Allow"
           Resource = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:*"
@@ -51,7 +51,7 @@ locals {
           Sid = "AllowIamPasswordExpired2"
           Action = [
             "iam:GenerateCredentialReport",
-            "iam:GetCredentialReport"
+            "iam:GetCredentialReport",
           ]
           Effect   = "Allow"
           Resource = "*"
@@ -59,15 +59,24 @@ locals {
         {
           Sid = "AllowKinesisDataFirehoseCloudwatchLogsProcessor"
           Action = [
-            "firehose:PutRecordBatch"
+            "firehose:PutRecordBatch",
           ]
           Effect   = "Allow"
           Resource = "arn:aws:firehose:${var.region}:${data.aws_caller_identity.current.account_id}:deliverystream/*"
         },
+        # Note: Organizations API access required for account-level metadata in multi-account setups
+        {
+          Sid = "AllowOrganizationsDescribeAccount"
+          Action = [
+            "organizations:DescribeAccount",
+          ]
+          Effect   = "Allow"
+          Resource = "arn:aws:organizations::*:account/*"
+        },
         {
           Sid = "AllowSupports"
           Action = [
-            "support:*"
+            "support:*",
           ]
           Effect   = "Allow"
           Resource = "*"

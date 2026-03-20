@@ -20,7 +20,7 @@ locals {
         Statement = [
           {
             Action = [
-              "lambda:InvokeFunction"
+              "lambda:InvokeFunction",
             ]
             Effect   = "Allow"
             Resource = "*"

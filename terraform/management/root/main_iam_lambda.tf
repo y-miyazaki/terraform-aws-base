@@ -30,7 +30,7 @@ locals {
         {
           Sid = "AllowBudgets"
           Action = [
-            "ce:GetCostAndUsage"
+            "ce:GetCostAndUsage",
           ]
           Effect   = "Allow"
           Resource = "arn:aws:ce:us-east-1:${data.aws_caller_identity.current.account_id}:/GetCostAndUsage"
@@ -38,7 +38,7 @@ locals {
         {
           Sid = "AllowBudgetsBedrock"
           Action = [
-            "bedrock:InvokeModel"
+            "bedrock:InvokeModel",
           ]
           Effect   = "Allow"
           Resource = "arn:aws:bedrock:*::foundation-model/*"
@@ -46,15 +46,24 @@ locals {
         {
           Sid = "AllowOrganizations"
           Action = [
-            "organizations:ListAccounts"
+            "organizations:ListAccounts",
           ]
           Effect   = "Allow"
           Resource = "*"
         },
+        # Note: Organizations API access required for account-level metadata in multi-account setups
+        {
+          Sid = "AllowOrganizationsDescribeAccount"
+          Action = [
+            "organizations:DescribeAccount",
+          ]
+          Effect   = "Allow"
+          Resource = "arn:aws:organizations::*:account/*"
+        },
         {
           Sid = "AllowSupports"
           Action = [
-            "support:*"
+            "support:*",
           ]
           Effect   = "Allow"
           Resource = "*"
