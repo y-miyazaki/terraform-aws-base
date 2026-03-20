@@ -59,7 +59,7 @@ resource "aws_iam_policy" "this" {
         Action = [
           "acm:DescribeCertificate",
           "acm:ListCertificates",
-          "acm:GetCertificate"
+          "acm:GetCertificate",
         ]
         Resource = "*"
       },
@@ -83,7 +83,7 @@ resource "aws_iam_policy" "this" {
           "ec2:DescribeVpcs",
           "ec2:ModifyInstanceAttribute",
           "ec2:ModifyNetworkInterfaceAttribute",
-          "ec2:RevokeSecurityGroupIngress"
+          "ec2:RevokeSecurityGroupIngress",
         ]
         Resource = "*"
       },
@@ -122,7 +122,7 @@ resource "aws_iam_policy" "this" {
           "elasticloadbalancing:SetIpAddressType",
           "elasticloadbalancing:SetSecurityGroups",
           "elasticloadbalancing:SetSubnets",
-          "elasticloadbalancing:SetWebAcl"
+          "elasticloadbalancing:SetWebAcl",
         ]
         Resource = "*"
       },
@@ -131,7 +131,7 @@ resource "aws_iam_policy" "this" {
         Action = [
           "iam:CreateServiceLinkedRole",
           "iam:GetServerCertificate",
-          "iam:ListServerCertificates"
+          "iam:ListServerCertificates",
         ]
         Resource = "*"
       },
@@ -146,7 +146,7 @@ resource "aws_iam_policy" "this" {
           "waf-regional:GetWebACLForResource",
           "waf-regional:GetWebACL",
           "waf-regional:AssociateWebACL",
-          "waf-regional:DisassociateWebACL"
+          "waf-regional:DisassociateWebACL",
         ]
         Resource = "*"
       },
@@ -166,7 +166,7 @@ resource "aws_iam_policy" "this" {
           "wafv2:GetWebACL",
           "wafv2:GetWebACLForResource",
           "wafv2:AssociateWebACL",
-          "wafv2:DisassociateWebACL"
+          "wafv2:DisassociateWebACL",
         ]
         Resource = "*"
       },
@@ -178,7 +178,7 @@ resource "aws_iam_policy" "this" {
           "shield:DeleteProtection",
           "shield:CreateProtection",
           "shield:DescribeSubscription",
-          "shield:ListProtections"
+          "shield:ListProtections",
         ]
         Resource = "*"
       }

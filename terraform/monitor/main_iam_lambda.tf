@@ -33,7 +33,7 @@ locals {
             "s3:DeleteObject",
             "s3:GetObject",
             "s3:ListBucket",
-            "s3:PutObject"
+            "s3:PutObject",
           ]
           Effect = "Allow"
           Resource = [
@@ -44,7 +44,7 @@ locals {
         {
           Sid = "AllowKinesisDataFirehoseCloudwatchLogsProcessor"
           Action = [
-            "firehose:PutRecordBatch"
+            "firehose:PutRecordBatch",
           ]
           Effect   = "Allow"
           Resource = "arn:aws:firehose:*:${data.aws_caller_identity.current.account_id}:deliverystream/*"
@@ -55,7 +55,7 @@ locals {
             "logs:GetLogEvents",
             "logs:FilterLogEvents",
             "logs:DescribeLogStreams",
-            "logs:DescribeLogGroups"
+            "logs:DescribeLogGroups",
           ]
           Effect   = "Allow"
           Resource = "arn:aws:logs:*:*:log-group:/aws/rds/*"
@@ -65,7 +65,7 @@ locals {
           Action = [
             "dynamodb:PutItem",
             "dynamodb:GetItem",
-            "dynamodb:DeleteItem"
+            "dynamodb:DeleteItem",
           ]
           Effect   = "Allow"
           Resource = "arn:aws:dynamodb:*:*:table/${var.name_prefix}monitor-log"
@@ -80,11 +80,20 @@ locals {
           Effect   = "Allow"
           Resource = "arn:aws:kms:*:${data.aws_caller_identity.current.account_id}:key/*"
         },
+        # Note: Organizations API access required for account-level metadata in multi-account setups
+        {
+          Sid = "AllowOrganizationsDescribeAccount"
+          Action = [
+            "organizations:DescribeAccount",
+          ]
+          Effect   = "Allow"
+          Resource = "arn:aws:organizations::*:account/*"
+        },
         # Note: AWS Support API does not support resource-level permissions
         {
           Sid = "AllowSupports"
           Action = [
-            "support:*"
+            "support:*",
           ]
           Effect   = "Allow"
           Resource = "*"

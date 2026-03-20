@@ -109,7 +109,7 @@ resource "aws_iam_policy" "this" {
           "iam:ListUsers",
           "iam:ListVirtualMFADevices",
           "iam:GetAccountPasswordPolicy",
-          "iam:GetAccountSummary"
+          "iam:GetAccountSummary",
         ]
         Resource = "*"
       },
@@ -134,14 +134,16 @@ resource "aws_iam_policy" "this" {
           "iam:GetSSHPublicKey",
           "iam:DeleteSSHPublicKey",
           "iam:UpdateSSHPublicKey",
-          "iam:UploadSSHPublicKey"
+          "iam:UploadSSHPublicKey",
         ]
         Resource = "arn:aws:iam::*:user/$${aws:username}"
       },
       {
         Sid    = "AllowIndividualUserToListOnlyTheirOwnMFA"
         Effect = "Allow"
-        Action = ["iam:ListMFADevices"]
+        Action = [
+          "iam:ListMFADevices",
+        ]
         Resource = [
           "arn:aws:iam::*:mfa/*",
           "arn:aws:iam::*:user/$${aws:username}"
@@ -154,7 +156,7 @@ resource "aws_iam_policy" "this" {
           "iam:CreateVirtualMFADevice",
           "iam:DeleteVirtualMFADevice",
           "iam:EnableMFADevice",
-          "iam:ResyncMFADevice"
+          "iam:ResyncMFADevice",
         ]
         Resource = [
           "arn:aws:iam::*:mfa/*",
@@ -164,7 +166,9 @@ resource "aws_iam_policy" "this" {
       {
         Sid    = "AllowIndividualUserToDeactivateOnlyTheirOwnMFAOnlyWhenUsingMFA"
         Effect = "Allow"
-        Action = ["iam:DeactivateMFADevice"]
+        Action = [
+          "iam:DeactivateMFADevice",
+        ]
         Resource = [
           "arn:aws:iam::*:mfa/*",
           "arn:aws:iam::*:user/$${aws:username}"

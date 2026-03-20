@@ -735,7 +735,7 @@ resource "aws_iam_policy" "this" {
         Sid    = "AWSCloudTrailCreateLogStream"
         Effect = "Allow"
         Action = [
-          "logs:CreateLogStream"
+          "logs:CreateLogStream",
         ]
         Resource = [
           "arn:aws:logs:${var.region}:${var.account_id}:log-group:${aws_cloudwatch_log_group.this[0].name}:log-stream:*"
@@ -745,7 +745,7 @@ resource "aws_iam_policy" "this" {
         Sid    = "AWSCloudTrailPutLogEvents"
         Effect = "Allow"
         Action = [
-          "logs:PutLogEvents"
+          "logs:PutLogEvents",
         ]
         Resource = [
           "arn:aws:logs:${var.region}:${var.account_id}:log-group:${aws_cloudwatch_log_group.this[0].name}:log-stream:*"

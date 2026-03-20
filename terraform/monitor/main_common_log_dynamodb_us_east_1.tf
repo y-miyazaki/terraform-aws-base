@@ -50,7 +50,7 @@ module "dynamodb_table_monitor_log_us_east_1" {
           "dynamodb:BatchWriteItem",
           "dynamodb:BatchGetItem",
           "dynamodb:Query",
-          "dynamodb:Scan"
+          "dynamodb:Scan",
         ]
         Resource = [
           "arn:aws:dynamodb:us-east-1:${data.aws_caller_identity.current.account_id}:table/${var.name_prefix}monitor-log"
