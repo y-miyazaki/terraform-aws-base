@@ -40,7 +40,7 @@ resource "aws_scheduler_schedule" "stop" {
   flexible_time_window {
     mode = "OFF"
   }
-  name                = substr("${var.name_prefix}${coalesce(try(each.value.instance_name, null), each.value.instance_id)}-stop-ec2-instance", 0, 63)
+  name                = substr("${var.name_prefix}${coalesce(try(each.value.instance_name, null), each.value.instance_id)}-stop-ec2-instance-scheduler", 0, 63)
   schedule_expression = each.value.schedule_expression_stop
   state               = "ENABLED"
   target {
@@ -69,7 +69,7 @@ resource "aws_scheduler_schedule" "start" {
   flexible_time_window {
     mode = "OFF"
   }
-  name                = substr("${var.name_prefix}${coalesce(try(each.value.instance_name, null), each.value.instance_id)}-start-ec2-instance", 0, 63)
+  name                = substr("${var.name_prefix}${coalesce(try(each.value.instance_name, null), each.value.instance_id)}-start-ec2-instance-scheduler", 0, 63)
   schedule_expression = each.value.schedule_expression_start
   state               = "ENABLED"
   target {
