@@ -87,7 +87,7 @@ locals {
             "organizations:DescribeAccount",
           ]
           Effect   = "Allow"
-          Resource = "arn:aws:organizations::*:account/*"
+          Resource = "*"
         },
         # Note: AWS Support API does not support resource-level permissions
         {

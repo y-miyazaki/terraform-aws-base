@@ -565,9 +565,9 @@ function run_golangci_lint {
         LINT_FAILED=1
         # Count issues
         if [[ -f "$lint_output" ]]; then
-            LINT_ISSUES_COUNT=$(grep -cE '^\S+\.go:' "$lint_output" 2> /dev/null || echo 0)
-            # Normalize to first token (avoid any unexpected whitespace/newlines)
-            LINT_ISSUES_COUNT=$(echo "$LINT_ISSUES_COUNT" | awk '{print $1}')
+            LINT_ISSUES_COUNT=$(grep -cE '^\S+\.go:' "$lint_output" 2> /dev/null || true)
+            # Normalize to a single integer token even when grep prints 0 and exits 1.
+            LINT_ISSUES_COUNT=$(printf '%s\n' "$LINT_ISSUES_COUNT" | awk 'NR == 1 {print $1; exit}')
         else
             LINT_ISSUES_COUNT=0
         fi
@@ -671,9 +671,9 @@ function run_tests {
         EXIT_CODE=1
         TEST_FAILED=1
         # Count failed tests
-        TEST_FAIL_COUNT=$(grep -c '^--- FAIL:' "$test_output" 2> /dev/null || echo 0)
-        # Normalize to a single integer token to prevent arithmetic parsing errors
-        TEST_FAIL_COUNT=$(echo "$TEST_FAIL_COUNT" | awk '{print $1}')
+        TEST_FAIL_COUNT=$(grep -c '^--- FAIL:' "$test_output" 2> /dev/null || true)
+        # Normalize to a single integer token even when grep prints 0 and exits 1.
+        TEST_FAIL_COUNT=$(printf '%s\n' "$TEST_FAIL_COUNT" | awk 'NR == 1 {print $1; exit}')
     fi
     rm -f "$test_output"
 }
