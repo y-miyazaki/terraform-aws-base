@@ -9,13 +9,13 @@ on:
         description: "SHA256 checksum for arc release tarball"
         required: false
         type: string
-        # To get checksum: curl -sL "https://github.com/y-miyazaki/arc/releases/download/v1.0.8/arc-linux-amd64.tar.gz" | sha256sum | awk '{print $1}'
-        default: "fc503dcba4bb88bb3e434efbdc5e279f16af8c4c49c33ad9716abe7e8e432fc0" # pragma: allowlist secret
+        # To get checksum: curl -sL "https://github.com/y-miyazaki/arc/releases/download/v1.0.9/arc-linux-amd64.tar.gz" | sha256sum | awk '{print $1}'
+        default: "b4b85c195ce7053d7d3ed8f63f3a0b3f1899850d0be924f615f88322e19f4b80" # pragma: allowlist secret
       arc_version:
-        description: "arc version to use (e.g. v1.0.8)"
+        description: "arc version to use (e.g. v1.0.9)"
         required: false
         type: string
-        default: "v1.0.8"
+        default: "v1.0.9"
       categories:
         description: "Comma-separated categories to limit collection (optional)"
         required: false
