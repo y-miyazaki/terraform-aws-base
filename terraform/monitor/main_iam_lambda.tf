@@ -89,6 +89,15 @@ locals {
           Effect   = "Allow"
           Resource = "*"
         },
+        # Note: Account API access required for account-level metadata in single-account setups
+        {
+          Sid = "AllowAccountGetAccountInformation"
+          Action = [
+            "account:GetAccountInformation",
+          ]
+          Effect   = "Allow"
+          Resource = "*"
+        },
         # Note: AWS Support API does not support resource-level permissions
         {
           Sid = "AllowSupports"

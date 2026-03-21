@@ -35,6 +35,9 @@ Common guidelines for AI-assisted development. Project-specific overrides define
 ## Execution Protocol
 
 - **Task Triage**: 依頼を `Question / Investigation / Implementation / Review` に分類してから着手する
+- **Instruction Re-read Rule**:
+  - コンテキスト圧縮・要約・長時間セッション等で指示が欠落した可能性がある場合、作業再開前に `.github/copilot-instructions.md` と該当する `.github/instructions/*.instructions.md` を再読する
+  - 再読後に、適用対象（applyTo）と今回の編集対象の整合を確認してから実装する
 - **Exploration Budget**:
   - 調査・探索は最大3回まで
   - 2回試行して進展がない場合は戦略変更またはユーザー確認
