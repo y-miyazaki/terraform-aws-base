@@ -103,7 +103,7 @@ function run_additional_checks {
     # Run tflint if available
     if command -v tflint &> /dev/null; then
         log "INFO" "Running tflint with module support..."
-        if ! execute_command "tflint --module"; then
+        if ! execute_command tflint --module; then
             log "WARN" "tflint found issues that should be addressed."
         fi
     else
@@ -113,7 +113,7 @@ function run_additional_checks {
     # Run trivy security scan
     if command -v trivy &> /dev/null; then
         log "INFO" "Running trivy security scan..."
-        if ! execute_command "trivy fs . --format table"; then
+        if ! execute_command trivy fs . --format table; then
             log "WARN" "trivy found security issues that should be addressed."
         fi
     else

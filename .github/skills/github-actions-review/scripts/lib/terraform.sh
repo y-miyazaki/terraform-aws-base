@@ -278,7 +278,9 @@ function terraform_select_workspace {
     # Check if workspace exists, create if it doesn't
     if ! terraform workspace select "$workspace" 2> /dev/null; then
         log "INFO" "Creating new workspace: $workspace"
-        execute_command_string "terraform workspace new '$workspace'"
+        if ! execute_command terraform workspace new "$workspace"; then
+            error_exit "Failed to create Terraform workspace: $workspace"
+        fi
     fi
 
     log "INFO" "Switched to workspace: $workspace"
@@ -421,7 +423,9 @@ function validate_terraform_env {
 
     # Create plugin cache directory
     if [[ -n "${TF_PLUGIN_CACHE_DIR}" ]]; then
-        execute_command_string "mkdir -p '${TF_PLUGIN_CACHE_DIR}'"
+        if ! execute_command mkdir -p -- "${TF_PLUGIN_CACHE_DIR}"; then
+            error_exit "Failed to create Terraform plugin cache directory: ${TF_PLUGIN_CACHE_DIR}"
+        fi
         log "INFO" "Terraform plugin cache directory: ${TF_PLUGIN_CACHE_DIR}"
     fi
 

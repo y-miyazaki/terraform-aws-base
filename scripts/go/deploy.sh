@@ -91,7 +91,7 @@ EOF
 #######################################
 function build_project {
     log "INFO" "Building project..."
-    if ! execute_command "make build"; then
+    if ! execute_command make build; then
         error_exit "Failed to build project"
     fi
 }
@@ -116,7 +116,7 @@ function deploy_to_aws {
     local stage="$1"
 
     log "INFO" "Deploying to AWS ($stage)..."
-    if ! execute_command "make deploy STAGE=${stage}"; then
+    if ! execute_command make deploy "STAGE=${stage}"; then
         error_exit "Failed to deploy to $stage environment"
     fi
 }
@@ -139,7 +139,7 @@ function deploy_to_aws {
 #######################################
 function install_dependencies {
     log "INFO" "Installing dependencies..."
-    if ! execute_command "npm ci"; then
+    if ! execute_command npm ci; then
         error_exit "Failed to install dependencies"
     fi
 }

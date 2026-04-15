@@ -113,7 +113,7 @@ function build_docker_image {
     local image_name="$2"
 
     log "INFO" "Building Docker image '${image_name}'..."
-    if ! execute_command "docker build -t ${image_name} --build-arg MODULE_NAME=${module_name} ."; then
+    if ! execute_command docker build -t "${image_name}" --build-arg "MODULE_NAME=${module_name}" .; then
         error_exit "Failed to build Docker image"
     fi
 }
@@ -138,7 +138,7 @@ function run_tests {
     local image_name="$1"
 
     log "INFO" "Running tests..."
-    if ! execute_command "docker run --rm ${image_name}"; then
+    if ! execute_command docker run --rm "${image_name}"; then
         local test_exit_code=$?
         log "ERROR" "Tests failed (exit code: $test_exit_code)"
         return $test_exit_code
