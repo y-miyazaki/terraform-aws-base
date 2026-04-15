@@ -11,11 +11,11 @@ resource "aws_iam_role" "this" {
     Version = "2012-10-17"
     Statement = [
       {
-        Action = "sts:AssumeRole"
         Effect = "Allow"
         Principal = {
           Service = "vpc-flow-logs.amazonaws.com"
         }
+        Action = "sts:AssumeRole"
       }
     ]
   })
@@ -40,6 +40,7 @@ resource "aws_iam_policy" "this" {
     Version = "2012-10-17"
     Statement = [
       {
+        Effect = "Allow"
         Action = [
           "logs:CreateLogGroup",
           "logs:CreateLogStream",
@@ -47,8 +48,9 @@ resource "aws_iam_policy" "this" {
           "logs:DescribeLogStreams",
           "logs:PutLogEvents",
         ]
-        Effect   = "Allow"
-        Resource = "*"
+        Resource = [
+          "*",
+        ]
       }
     ]
   })

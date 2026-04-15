@@ -19,30 +19,34 @@ locals {
         Version = "2012-10-17"
         Statement = [
           {
-            Sid = "AllowEC2Operations"
+            Sid    = "AllowEC2Operations"
+            Effect = "Allow"
             Action = [
               "ec2:StartInstances",
               "ec2:StopInstances",
             ]
-            Effect   = "Allow"
-            Resource = "arn:aws:ec2:*:${data.aws_caller_identity.current.account_id}:instance/*"
+            Resource = [
+              "arn:aws:ec2:*:${data.aws_caller_identity.current.account_id}:instance/*",
+            ]
           },
           {
-            Sid = "AllowECSServiceOperations"
+            Sid    = "AllowECSServiceOperations"
+            Effect = "Allow"
             Action = [
               "ecs:UpdateService",
             ]
-            Effect   = "Allow"
-            Resource = "arn:aws:ecs:*:${data.aws_caller_identity.current.account_id}:service/*/*"
+            Resource = [
+              "arn:aws:ecs:*:${data.aws_caller_identity.current.account_id}:service/*/*",
+            ]
           },
           {
-            Sid = "AllowApplicationAutoScalingOperations"
+            Sid    = "AllowApplicationAutoScalingOperations"
+            Effect = "Allow"
             Action = [
               "application-autoscaling:RegisterScalableTarget",
               "cloudwatch:DescribeAlarms",
               "ecs:DescribeServices",
             ]
-            Effect = "Allow"
             Resource = [
               "arn:aws:application-autoscaling:*:${data.aws_caller_identity.current.account_id}:scalable-target/*",
               "arn:aws:cloudwatch:*:${data.aws_caller_identity.current.account_id}:alarm:*",
@@ -50,56 +54,68 @@ locals {
             ]
           },
           {
-            Sid = "AllowRDSClusterOperations"
+            Sid    = "AllowRDSClusterOperations"
+            Effect = "Allow"
             Action = [
               "rds:StartDBCluster",
               "rds:StopDBCluster",
             ]
-            Effect   = "Allow"
-            Resource = "arn:aws:rds:*:${data.aws_caller_identity.current.account_id}:cluster:*"
+            Resource = [
+              "arn:aws:rds:*:${data.aws_caller_identity.current.account_id}:cluster:*",
+            ]
           },
           {
-            Sid = "AllowRedshiftClusterOperations"
+            Sid    = "AllowRedshiftClusterOperations"
+            Effect = "Allow"
             Action = [
               "redshift:ResumeCluster",
               "redshift:PauseCluster",
             ]
-            Effect   = "Allow"
-            Resource = "arn:aws:redshift:*:${data.aws_caller_identity.current.account_id}:cluster:*"
+            Resource = [
+              "arn:aws:redshift:*:${data.aws_caller_identity.current.account_id}:cluster:*",
+            ]
           },
           # Note: ec2:DescribeVpcs does not support resource-level permissions
           {
-            Sid = "AllowEC2DescribeVpcs"
+            Sid    = "AllowEC2DescribeVpcs"
+            Effect = "Allow"
             Action = [
               "ec2:DescribeVpcs",
             ]
-            Effect   = "Allow"
-            Resource = "*"
+            Resource = [
+              "*",
+            ]
           },
           {
-            Sid = "AllowEventBridgeRuleOperations"
+            Sid    = "AllowEventBridgeRuleOperations"
+            Effect = "Allow"
             Action = [
               "events:EnableRule",
               "events:DisableRule",
             ]
-            Effect   = "Allow"
-            Resource = "arn:aws:events:*:${data.aws_caller_identity.current.account_id}:rule/*"
+            Resource = [
+              "arn:aws:events:*:${data.aws_caller_identity.current.account_id}:rule/*",
+            ]
           },
           {
-            Sid = "AllowBatchJobQueueOperations"
+            Sid    = "AllowBatchJobQueueOperations"
+            Effect = "Allow"
             Action = [
               "batch:UpdateJobQueue",
             ]
-            Effect   = "Allow"
-            Resource = "arn:aws:batch:*:${data.aws_caller_identity.current.account_id}:job-queue/*"
+            Resource = [
+              "arn:aws:batch:*:${data.aws_caller_identity.current.account_id}:job-queue/*",
+            ]
           },
           {
-            Sid = "AllowLambdaInvoke"
+            Sid    = "AllowLambdaInvoke"
+            Effect = "Allow"
             Action = [
               "lambda:InvokeFunction",
             ]
-            Effect   = "Allow"
-            Resource = "arn:aws:lambda:*:${data.aws_caller_identity.current.account_id}:function:*"
+            Resource = [
+              "arn:aws:lambda:*:${data.aws_caller_identity.current.account_id}:function:*",
+            ]
           }
         ]
       })

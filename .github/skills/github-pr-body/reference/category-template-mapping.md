@@ -5,9 +5,10 @@
 **Important**: This document originally described hypothetical agent-based template mapping logic. The current `pr_body.sh` script does NOT implement intelligent template parsing or semantic mapping.
 
 **Actual script behavior**:
-- Generates metadata-only baseline for `## Overview` section (Title, Branch, Stats)
+- Generates metadata-only baseline for `## Overview` section (Title, Branch, Stats) unless caller provides `--overview-file`
 - Generates file list for `## Changes` section (grouped by deterministic pattern-based classification)
-- Preserves all other H2 sections as-is (does not read or interpret them)
+- Rebuilds other sections in template order and preserves template comments for AI completion
+- Does not interpret chapter meaning or generate section prose beyond deterministic baseline output
 
 **This document is retained for**:
 - Understanding historical design intent
@@ -22,23 +23,23 @@
 
 Current script behavior: Always generates the same baseline output structure regardless of template presence or format.
 
-### Decision Tree (Conceptual - Not Implemented)
+### Decision Tree (Conceptual - AI Completion Layer)
 
-The following decision tree describes hypothetical agent logic that is NOT implemented:
+The following decision tree describes the AI completion layer that runs after the deterministic shell scripts:
 
 ```
 1. Does PULL_REQUEST_TEMPLATE.md exist in repo?
    ├─ YES → Load template and extract structure
-   │        ├─ Extract section headers and field names
-   │        ├─ Map sections to Output Format
-   │        └─ Use mapped structure for comment
+   │        ├─ Script: rebuild deterministic baseline in template order
+   │        ├─ AI: read section comments and Example / checkbox guidance
+   │        └─ AI: generate chapter content using that guidance
    │
-   └─ NO → Use Default Format (Overview + Changes)
-           ├─ Create standalone comment with standard sections
-           └─ No template alignment needed
+   └─ NO → Use deterministic baseline only
+           ├─ Script: generate Overview + Changes
+           └─ AI: avoid inventing unsupported structure
 ```
 
-**Actual script behavior**: Template presence/absence does not affect output format.
+**Actual script behavior**: Template presence affects section order and comment preservation, but not semantic prose generation.
 
 ### Template Loading (Conceptual - Not Implemented)
 
@@ -69,15 +70,15 @@ fi
 
 This repository uses `.github/PULL_REQUEST_TEMPLATE.md` with the following structure:
 
-| Template Section             | Required? | Purpose                       | Script Behavior                                       | Empty Behavior                             |
-| ---------------------------- | --------- | ----------------------------- | ----------------------------------------------------- | ------------------------------------------ |
-| **Overview**                 | ✅ YES     | High-level change summary     | → **Overview** section (metadata-only baseline)       | Generates metadata with title/branch/stats |
-| **Related Issues**           | No        | Links to GitHub issues        | Preserved in original PR Body section                 | Preserved as-is                            |
-| **Changes**                  | ✅ YES     | Technical modifications       | → **Changes** section (file list with classification) | Generates file list with line counts       |
-| **Testing**                  | No        | Test coverage and methods     | Preserved in original PR Body section                 | Preserved as-is                            |
-| **Type of Change** (8 types) | No        | Change categorization         | NOT used by script (informational for reviewers only) | Preserved as-is                            |
-| **Checklist**                | No        | Quality/convention compliance | Preserved in original PR Body section                 | Preserved as-is                            |
-| **Additional Notes**         | No        | Extra context                 | Preserved in original PR Body section                 | Preserved as-is                            |
+| Template Section             | Required? | Purpose                       | Script Behavior                                     | AI Completion Behavior                                  |
+| ---------------------------- | --------- | ----------------------------- | --------------------------------------------------- | ------------------------------------------------------- |
+| **Overview**                 | ✅ YES     | High-level change summary     | Deterministic baseline or `--overview-file` content | Refine or replace using comment guidance                |
+| **Related Issues**           | No        | Links to GitHub issues        | Preserve template section structure                 | Generate visible content if guidance indicates it       |
+| **Changes**                  | ✅ YES     | Technical modifications       | File list with classification                       | Optionally refine prose around generated structure      |
+| **Testing**                  | No        | Test coverage and methods     | Preserve template section structure                 | Generate visible content using Example or checklist     |
+| **Type of Change** (8 types) | No        | Change categorization         | Preserve template section structure                 | Select checkboxes based on PR meaning                   |
+| **Checklist**                | No        | Quality/convention compliance | Preserve template section structure                 | Update checkboxes based on validation and reviewer data |
+| **Additional Notes**         | No        | Extra context                 | Preserve template section structure                 | Generate content when example or PR context warrants it |
 
 ### Type of Change (Informational Only)
 
@@ -94,7 +95,9 @@ The template defines 8 change types for reviewer/author reference:
 | 🚀 Performance: Performance improvement  | Indicates performance optimization (informational) |
 | 🔒 Security: Security-related change     | Indicates security-related changes (informational) |
 
-**Script Behavior**: The automated script does NOT read Type of Change checkboxes. File classification is deterministic and pattern-based (file extension and path only).
+**Script Behavior**: The automated script does NOT select Type of Change checkboxes. File classification is deterministic and pattern-based (file extension and path only).
+
+**AI Completion Behavior**: Read the checkbox guidance in the template comment and select the matching items based on PR intent.
 
 ### Template Section Detail
 
@@ -115,8 +118,13 @@ Include:
 
 **Script behavior**:
 - Script generates metadata-only baseline: Title, Branch, Stats
-- Script does NOT extract or interpret template content
-- Manual refinement adds context after script execution
+- Script preserves template guidance comments
+- Script does NOT interpret template content semantically
+
+**AI completion behavior**:
+- Read the guidance comment and Example block
+- Produce visible content in the same format
+- Replace metadata-only baseline when richer Overview content is available
 
 **Generated baseline**:
 ```markdown
@@ -148,8 +156,11 @@ Format (one per section):
 **Script behavior**:
 - Script generates file list grouped by classification (Config, Docs, Feature, Test, Other)
 - Each file shows path + line changes (+X / -Y lines)
-- Script does NOT extract or interpret template content
-- Manual refinement adds technical details after script execution
+- Script preserves template guidance comments
+
+**AI completion behavior**:
+- Read the Example block and produce any additional prose or grouping required by the template
+- Keep deterministic file list unless a manual editorial change is explicitly desired
 
 **Generated baseline**:
 ```markdown
@@ -176,19 +187,21 @@ Example: Closes #123, Related to #456
 ```
 
 **Script behavior**:
-- Script does NOT modify this section
-- Preserved exactly as authored/edited manually
+- Script preserves this section in template order
+
+**AI completion behavior**:
+- Fill issue links when PR context or linked issues are known
 
 #### 4-7. Other Sections (Optional, Preserved)
 
-These sections are preserved in PR Body as-is:
+These sections are preserved in PR Body as template-ordered placeholders by the script:
 
-- **Testing**: Test coverage details (preserved, not generated)
-- **Type of Change**: Change categorization (preserved, not used by script)
-- **Checklist**: PR quality checks (preserved, not generated)
-- **Additional Notes**: Extra context (preserved, not generated)
+- **Testing**: Test coverage details (preserved for AI completion)
+- **Type of Change**: Change categorization (preserved for AI completion)
+- **Checklist**: PR quality checks (preserved for AI completion)
+- **Additional Notes**: Extra context (preserved for AI completion)
 
-**Script does NOT modify or read these sections**. They remain exactly as authored/edited manually.
+**Script does NOT generate semantic content for these sections**. AI completion reads their comments and Examples to create visible content when required.
 
 ### Example: Script Execution Result
 
@@ -249,9 +262,9 @@ Closes #456
 ```
 
 **Key Points**:
-- Only `## Overview` and `## Changes` were replaced
-- Other sections (`Type of Change`, `Related Issues`, `Testing`) preserved exactly
-- Manual refinement can now add context to Overview/Changes
+- `## Overview` and `## Changes` are always regenerated deterministically
+- Other sections preserve visible content and restore template comments when empty
+- AI completion adds context after baseline generation
 
 ---
 
@@ -409,4 +422,4 @@ VPC and Security Groups modules; backward-compatible; safe to deploy
 ## Reference
 
 - [GitHub Creating PR Templates](https://docs.github.com/en/communities/using-templates-to-encourage-useful-issues-and-pull-requests/creating-a-pull-request-template-for-your-repository)
-- [Best Practices for PR Templates](https://github.blog/2021-04-20-github-now-supports-pull-request-templates/)
+- Best practice: keep section comments explicit and machine-readable so AI completion can follow them consistently.

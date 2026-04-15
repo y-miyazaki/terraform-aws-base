@@ -124,6 +124,41 @@ function execute_command {
 }
 
 #######################################
+# execute_command_string: Execute shell command string
+#
+# Description:
+#   Executes a prebuilt command string through bash parsing.
+#   Use this only for internally constructed commands where argument-array
+#   execution is not practical.
+#
+# Arguments:
+#   $1 - Command string to execute
+#
+# Returns:
+#   Command exit code (or 0 in dry-run mode)
+#
+# Usage:
+#   execute_command_string "terraform fmt -check -diff"
+#
+#######################################
+function execute_command_string {
+    local command_string="$1"
+
+    if [[ -z "$command_string" ]]; then
+        error_exit "execute_command_string requires a command string"
+    fi
+
+    if is_dry_run; then
+        echo "DRY-RUN: Would execute: ${command_string}" >&2
+        return 0
+    fi
+
+    log "DEBUG" "Executing shell command: ${command_string}"
+
+    bash -lc "$command_string"
+}
+
+#######################################
 # get_start_time: Get current time for timing measurements
 #
 # Description:

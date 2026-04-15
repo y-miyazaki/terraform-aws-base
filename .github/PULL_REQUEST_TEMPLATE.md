@@ -106,6 +106,10 @@ Example:
 
 ## Type of Change
 
+<!--
+Select the type of change that best describes this PR. You can check multiple boxes if applicable.
+
+Example:
 - [ ] ✨ Feature: New functionality added
 - [ ] 🐛 Bug Fix: Issue resolution
 - [ ] ♻️ Refactor: Code structure improvements
@@ -114,14 +118,20 @@ Example:
 - [ ] 🧪 Test: New/updated tests
 - [ ] 🚀 Performance: Performance improvement
 - [ ] 🔒 Security: Security-related change
+-->
 
 ## Checklist
 
+<!--
+Ensure your PR meets the following requirements. Check all that apply.
+
+Example:
 - [ ] Changes follow project conventions (language, formatting, naming)
 - [ ] Code is self-documenting with clear comments where needed
 - [ ] All tests pass locally
 - [ ] Documentation updated if applicable
 - [ ] Breaking changes clearly documented
+-->
 
 ## Additional Notes
 

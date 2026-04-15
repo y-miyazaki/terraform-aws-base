@@ -111,7 +111,9 @@ resource "aws_iam_policy" "this" {
           "iam:GetAccountPasswordPolicy",
           "iam:GetAccountSummary",
         ]
-        Resource = "*"
+        Resource = [
+          "*",
+        ]
       },
       {
         Sid    = "AllowIndividualUserToSeeAndManageOnlyTheirOwnAccountInformation"
@@ -136,7 +138,9 @@ resource "aws_iam_policy" "this" {
           "iam:UpdateSSHPublicKey",
           "iam:UploadSSHPublicKey",
         ]
-        Resource = "arn:aws:iam::*:user/$${aws:username}"
+        Resource = [
+          "arn:aws:iam::*:user/$${aws:username}",
+        ]
       },
       {
         Sid    = "AllowIndividualUserToListOnlyTheirOwnMFA"
@@ -199,7 +203,9 @@ resource "aws_iam_policy" "this" {
           "iam:CreateLoginProfile",
           "iam:ChangePassword"
         ]
-        Resource = "*"
+        Resource = [
+          "*",
+        ]
         Condition = {
           BoolIfExists = {
             "aws:MultiFactorAuthPresent" = "false"

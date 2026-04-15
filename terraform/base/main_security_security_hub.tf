@@ -6,7 +6,7 @@
 #--------------------------------------------------------------
 module "aws_security_securityhub" {
   source     = "../../modules/aws/security/securityhub"
-  is_enabled = var.security_securityhub.is_enabled && !var.use_control_tower
+  is_enabled = var.security_securityhub.is_enabled && !local.control_tower_managed_services.securityhub
 
   # aws_securityhub_member
   aws_securityhub_member = var.security_securityhub.aws_securityhub_member

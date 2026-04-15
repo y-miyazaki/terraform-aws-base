@@ -13,12 +13,29 @@ module "oidc_github" {
   version = "2.0.2"
   create  = var.oidc_github.is_enabled
 
-  dangerously_attach_admin_policy = var.oidc_github.dangerously_attach_admin_policy
   attach_read_only_policy         = var.oidc_github.attach_read_only_policy
   create_oidc_provider            = var.oidc_github.create_oidc_provider
+  dangerously_attach_admin_policy = var.oidc_github.dangerously_attach_admin_policy
   github_repositories             = var.oidc_github.github_repositories
-  iam_role_name                   = format("%s%s", var.name_prefix, var.oidc_github.iam_role_name)
-  iam_role_path                   = var.oidc_github.iam_role_path
+  iam_role_inline_policies = {
+    format("%s%s", var.name_prefix, "oidc-github-inline-policy") = jsonencode({
+      Version = "2012-10-17"
+      Statement = [
+        {
+          Sid    = "AllowAccountGetAccountInformation"
+          Effect = "Allow"
+          Action = [
+            "account:GetAccountInformation",
+          ]
+          Resource = [
+            "arn:aws:account::${data.aws_caller_identity.current.account_id}:account",
+          ]
+        },
+      ]
+    })
+  }
+  iam_role_name = format("%s%s", var.name_prefix, var.oidc_github.iam_role_name)
+  iam_role_path = var.oidc_github.iam_role_path
 
   tags = var.tags
 }

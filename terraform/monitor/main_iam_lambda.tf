@@ -13,7 +13,8 @@ locals {
       Version = "2012-10-17"
       Statement = [
         {
-          Sid = "AllowCloudWatchLogs"
+          Sid    = "AllowCloudWatchLogs"
+          Effect = "Allow"
           Action = [
             "logs:CreateLogGroup",
             "logs:CreateLogStream",
@@ -24,88 +25,103 @@ locals {
             "logs:PutLogEvents",
             "logs:PutRetentionPolicy",
           ]
-          Effect   = "Allow"
-          Resource = "arn:aws:logs:*:${data.aws_caller_identity.current.account_id}:log-group:*"
+          Resource = [
+            "arn:aws:logs:*:${data.aws_caller_identity.current.account_id}:log-group:*",
+          ]
         },
         {
-          Sid = "AllowS3FullAccess"
+          Sid    = "AllowS3FullAccess"
+          Effect = "Allow"
           Action = [
             "s3:DeleteObject",
             "s3:GetObject",
             "s3:ListBucket",
             "s3:PutObject",
           ]
-          Effect = "Allow"
           Resource = [
             module.s3_application_log.s3_bucket_arn,
             "${module.s3_application_log.s3_bucket_arn}/*"
           ]
         },
         {
-          Sid = "AllowKinesisDataFirehoseCloudwatchLogsProcessor"
+          Sid    = "AllowKinesisDataFirehoseCloudwatchLogsProcessor"
+          Effect = "Allow"
           Action = [
             "firehose:PutRecordBatch",
           ]
-          Effect   = "Allow"
-          Resource = "arn:aws:firehose:*:${data.aws_caller_identity.current.account_id}:deliverystream/*"
+          Resource = [
+            "arn:aws:firehose:*:${data.aws_caller_identity.current.account_id}:deliverystream/*"
+          ]
         },
         {
-          Sid = "AllowPostgreSQLSlowQuery"
+          Sid    = "AllowPostgreSQLSlowQuery"
+          Effect = "Allow"
           Action = [
             "logs:GetLogEvents",
             "logs:FilterLogEvents",
             "logs:DescribeLogStreams",
             "logs:DescribeLogGroups",
           ]
-          Effect   = "Allow"
-          Resource = "arn:aws:logs:*:*:log-group:/aws/rds/*"
+          Resource = [
+            "arn:aws:logs:*:*:log-group:/aws/rds/*",
+          ]
         },
         {
-          Sid = "AllowDynamoDB"
+          Sid    = "AllowDynamoDB"
+          Effect = "Allow"
           Action = [
             "dynamodb:PutItem",
             "dynamodb:GetItem",
             "dynamodb:DeleteItem",
           ]
-          Effect   = "Allow"
-          Resource = "arn:aws:dynamodb:*:*:table/${var.name_prefix}monitor-log"
+          Resource = [
+            "arn:aws:dynamodb:*:*:table/${var.name_prefix}monitor-log",
+          ]
         },
         # Note: KMS key access required for decrypting CloudWatch Logs, S3 objects, and Kinesis streams
         {
-          Sid = "AllowKMSDecrypt"
+          Sid    = "AllowKMSDecrypt"
+          Effect = "Allow"
           Action = [
             "kms:Decrypt",
             "kms:GenerateDataKey*",
           ]
-          Effect   = "Allow"
-          Resource = "arn:aws:kms:*:${data.aws_caller_identity.current.account_id}:key/*"
+          Resource = [
+            "arn:aws:kms:*:${data.aws_caller_identity.current.account_id}:key/*",
+          ]
         },
         # Note: Organizations API access required for account-level metadata in multi-account setups
         {
-          Sid = "AllowOrganizationsDescribeAccount"
+          Sid    = "AllowOrganizationsDescribeAccount"
+          Effect = "Allow"
           Action = [
             "organizations:DescribeAccount",
           ]
-          Effect   = "Allow"
-          Resource = "*"
+          Resource = [
+            "*",
+          ]
         },
         # Note: Account API access required for account-level metadata in single-account setups
         {
-          Sid = "AllowAccountGetAccountInformation"
+          Sid    = "AllowAccountGetAccountInformation"
+          Effect = "Allow"
           Action = [
             "account:GetAccountInformation",
           ]
-          Effect   = "Allow"
-          Resource = "*"
+          Resource = [
+            "arn:aws:account::${data.aws_caller_identity.current.account_id}:account",
+          ]
         },
         # Note: AWS Support API does not support resource-level permissions
         {
-          Sid = "AllowSupports"
+          Sid    = "AllowSupports"
+          Effect = "Allow"
           Action = [
             "support:*",
           ]
-          Effect   = "Allow"
-          Resource = "*"
+          Resource = [
+            "*",
+          ]
         }
       ]
     })

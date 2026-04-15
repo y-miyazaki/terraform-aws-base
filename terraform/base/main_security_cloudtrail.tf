@@ -42,7 +42,7 @@ locals {
 #--------------------------------------------------------------
 module "aws_security_cloudtrail_v4" {
   source     = "../../modules/aws/security/cloudtrail/cloudtrail-v4"
-  is_enabled = var.security_cloudtrail.is_enabled && !var.use_control_tower
+  is_enabled = var.security_cloudtrail.is_enabled && !local.control_tower_managed_services.cloudtrail
 
   is_s3_enabled              = var.security_cloudtrail.is_s3_enabled
   aws_sns_topic              = local.aws_sns_topic_cloudtrail
@@ -79,14 +79,14 @@ module "aws_security_cloudtrail_v4" {
 #--------------------------------------------------------------
 module "aws_cloudwatch_alarm_cloudtrail" {
   source     = "../../modules/aws/cloudwatch/alarm/log"
-  is_enabled = var.security_cloudtrail.is_enabled && !var.use_control_tower
+  is_enabled = var.security_cloudtrail.is_enabled && !local.control_tower_managed_services.cloudtrail
 
-  alarm_actions                     = var.security_cloudtrail.is_enabled && !var.use_control_tower ? [module.aws_security_cloudtrail_v4.sns_topic_arn] : []
-  ok_actions                        = var.security_cloudtrail.is_enabled && !var.use_control_tower ? [module.aws_security_cloudtrail_v4.sns_topic_arn] : []
+  alarm_actions                     = var.security_cloudtrail.is_enabled && !local.control_tower_managed_services.cloudtrail ? [module.aws_security_cloudtrail_v4.sns_topic_arn] : []
+  ok_actions                        = var.security_cloudtrail.is_enabled && !local.control_tower_managed_services.cloudtrail ? [module.aws_security_cloudtrail_v4.sns_topic_arn] : []
   create_auto_log_group_names       = false
   auto_log_group_names_exclude_list = []
   auto_log_group_names_include_list = []
-  log_group_names                   = var.security_cloudtrail.is_enabled && !var.use_control_tower ? [module.aws_security_cloudtrail_v4.log_group_name] : []
+  log_group_names                   = var.security_cloudtrail.is_enabled && !local.control_tower_managed_services.cloudtrail ? [module.aws_security_cloudtrail_v4.log_group_name] : []
   name_prefix                       = var.name_prefix
   aws_cloudwatch_log_metric_filter  = var.security_cloudtrail.aws_cloudwatch_log_metric_filter
   aws_cloudwatch_metric_alarm       = var.security_cloudtrail.aws_cloudwatch_metric_alarm
@@ -102,7 +102,7 @@ module "aws_cloudwatch_alarm_cloudtrail" {
 module "lambda_function_cloudtrail" {
   source  = "terraform-aws-modules/lambda/aws"
   version = "8.7.0"
-  create  = var.security_cloudtrail.is_enabled && !var.use_control_tower
+  create  = var.security_cloudtrail.is_enabled && !local.control_tower_managed_services.cloudtrail
 
   allowed_triggers = {
     trigger = {

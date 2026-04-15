@@ -11,11 +11,11 @@ resource "aws_iam_role" "ecs" {
     Version = "2012-10-17"
     Statement = [
       {
-        Action = "sts:AssumeRole"
         Effect = "Allow"
         Principal = {
           Service = "ecs.amazonaws.com"
         }
+        Action = "sts:AssumeRole"
       }
     ]
   })
@@ -46,11 +46,11 @@ resource "aws_iam_role" "ecs_tasks" {
     Version = "2012-10-17"
     Statement = [
       {
-        Action = "sts:AssumeRole"
         Effect = "Allow"
         Principal = {
           Service = "ecs-tasks.amazonaws.com"
         }
+        Action = "sts:AssumeRole"
       }
     ]
   })
@@ -80,11 +80,11 @@ resource "aws_iam_role" "events" {
     Version = "2012-10-17"
     Statement = [
       {
-        Action = "sts:AssumeRole"
         Effect = "Allow"
         Principal = {
           Service = "events.amazonaws.com"
         }
+        Action = "sts:AssumeRole"
       }
     ]
   })

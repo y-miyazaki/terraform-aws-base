@@ -61,7 +61,9 @@ resource "aws_iam_policy" "this" {
           "acm:ListCertificates",
           "acm:GetCertificate",
         ]
-        Resource = "*"
+        Resource = [
+          "*",
+        ]
       },
       {
         Effect = "Allow"
@@ -85,7 +87,9 @@ resource "aws_iam_policy" "this" {
           "ec2:ModifyNetworkInterfaceAttribute",
           "ec2:RevokeSecurityGroupIngress",
         ]
-        Resource = "*"
+        Resource = [
+          "*",
+        ]
       },
       {
         Effect = "Allow"
@@ -124,7 +128,9 @@ resource "aws_iam_policy" "this" {
           "elasticloadbalancing:SetSubnets",
           "elasticloadbalancing:SetWebAcl",
         ]
-        Resource = "*"
+        Resource = [
+          "*",
+        ]
       },
       {
         Effect = "Allow"
@@ -133,12 +139,16 @@ resource "aws_iam_policy" "this" {
           "iam:GetServerCertificate",
           "iam:ListServerCertificates",
         ]
-        Resource = "*"
+        Resource = [
+          "*",
+        ]
       },
       {
-        Effect   = "Allow"
-        Action   = ["cognito-idp:DescribeUserPoolClient"]
-        Resource = "*"
+        Effect = "Allow"
+        Action = ["cognito-idp:DescribeUserPoolClient"]
+        Resource = [
+          "*",
+        ]
       },
       {
         Effect = "Allow"
@@ -148,17 +158,23 @@ resource "aws_iam_policy" "this" {
           "waf-regional:AssociateWebACL",
           "waf-regional:DisassociateWebACL",
         ]
-        Resource = "*"
+        Resource = [
+          "*",
+        ]
       },
       {
-        Effect   = "Allow"
-        Action   = ["tag:GetResources", "tag:TagResources"]
-        Resource = "*"
+        Effect = "Allow"
+        Action = ["tag:GetResources", "tag:TagResources"]
+        Resource = [
+          "*",
+        ]
       },
       {
-        Effect   = "Allow"
-        Action   = ["waf:GetWebACL"]
-        Resource = "*"
+        Effect = "Allow"
+        Action = ["waf:GetWebACL"]
+        Resource = [
+          "*",
+        ]
       },
       {
         Effect = "Allow"
@@ -168,7 +184,9 @@ resource "aws_iam_policy" "this" {
           "wafv2:AssociateWebACL",
           "wafv2:DisassociateWebACL",
         ]
-        Resource = "*"
+        Resource = [
+          "*",
+        ]
       },
       {
         Effect = "Allow"
@@ -180,7 +198,9 @@ resource "aws_iam_policy" "this" {
           "shield:DescribeSubscription",
           "shield:ListProtections",
         ]
-        Resource = "*"
+        Resource = [
+          "*",
+        ]
       }
     ]
   })

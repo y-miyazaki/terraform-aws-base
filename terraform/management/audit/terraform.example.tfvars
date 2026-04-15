@@ -142,7 +142,7 @@ oidc_github = {
 # - Security Hub: $0.0010 per security check per region per month
 # - GuardDuty: ~$1.00 per GB of logs analyzed (VPC Flow Logs, DNS logs, CloudTrail events)
 #
-# NOTICE: GuardDuty is automatically disabled if use_control_tower=true.
+# NOTICE: GuardDuty is automatically disabled if control_tower.managed_services.guardduty = true.
 #--------------------------------------------------------------
 security_notification = {
   # TODO: need to set slack_channel_id for settings of AWS SecurityHub Notification(Slack).
@@ -153,7 +153,7 @@ security_notification = {
   # GuardDuty
   # Amazon GuardDuty is a threat detection service that continuously monitors your AWS accounts and workloads for malicious activity and
   # delivers detailed security findings for visibility and remediation.
-  # Notice: This option is automatically disabled if use_control_tower=true.
+  # Notice: This option is automatically disabled if control_tower.managed_services.guardduty = true.
   # COST CONSIDERATION: ~$1.00 per GB of logs analyzed
   #--------------------------------------------------------------
   guardduty = {

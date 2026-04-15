@@ -8,13 +8,14 @@ Technical implementation and design decisions for the PR Body update system.
 
 ### Section Replacement Strategy
 
-The script uses **idempotent section replacement** without markers:
+The script uses **idempotent template reconstruction** without markers:
 
-1. **Identifies sections** by regex: `/^## (Overview|Changes)$/`
-2. **Replaces** entire section from header to next H2 section header
-3. **Preserves** all other H2 sections (except `## Overview` and `## Changes`)
-4. **Safe for re-runs**: Multiple runs produce identical results
-5. **Template-tolerant**: Works regardless of section order in template
+1. **Parses template order** from `.github/PULL_REQUEST_TEMPLATE.md`
+2. **Rebuilds** the PR body using deterministic `## Overview` and `## Changes` output
+3. **Preserves** visible content in other sections when already present
+4. **Restores** template comments and empty sections when visible content is absent
+5. **Safe for re-runs**: Multiple runs produce identical baseline output
+6. **Template-tolerant**: Follows template order instead of assuming fixed section positions
 
 ### Template Structure
 
@@ -41,24 +42,31 @@ The script uses **idempotent section replacement** without markers:
 **After Update**:
 ```markdown
 ## Overview
-[New auto-generated content]
+<!-- template guidance comment -->
 
-## Changes
-[New auto-generated file list]
+[New deterministic baseline or caller-provided overview]
 
 ## Related Issues
+<!-- template guidance comment -->
 - #456
 - #789
 
+## Changes
+<!-- template guidance comment -->
+
+[New auto-generated file list]
+
 ## Testing
+<!-- template guidance comment -->
 - Tested locally with `npm test`
 
 ## Type of Change
+<!-- template guidance comment -->
 - [ ] Bug fix
 - [x] New feature
 ```
 
-**Key Point**: All H2 sections except `## Overview` and `## Changes` are preserved exactly, regardless of their position in PR Body.
+**Key Point**: `## Overview` and `## Changes` are always regenerated, while other sections retain visible content and recover template comments when empty.
 
 ---
 
@@ -150,8 +158,9 @@ For PRs with 100+ files:
 
 1. **Deterministic metadata**: GitHub PR info always the same for given PR# + commit SHA
 2. **Deterministic classification**: File patterns always produce same category
-3. **Deterministic formatting**: Output always follows same template format
-4. **No markers needed**: Section replacement by header, not by comment markers
+3. **Deterministic formatting**: Output follows the same template-derived section order
+4. **Template reconstruction**: Empty sections are restored from the same template comments every time
+5. **No markers needed**: Section replacement by structure, not by comment markers
 
 ### Test Case
 
@@ -180,7 +189,7 @@ pr_body.sh 123 --repo owner/repo
 - PR Body is the primary documentation location
 - Authors already customizing Body sections
 - Idempotent without markers
-- Easier for manual refinement post-generation
+- Easier for AI completion or manual refinement after baseline generation
 
 ### Why No Third-Party Tools
 
@@ -199,6 +208,7 @@ pr_body.sh 123 --repo owner/repo
 3. **Body Size Limit**: GitHub enforces 65,536 character limit
 4. **File Name Only**: Classification based on file name patterns, not content inspection
 5. **No CI/CD State**: Does not integrate with CI/CD build status or test results
+6. **No Semantic Generation**: Script does not infer section meaning from template comments; that belongs to AI completion
 
 ---
 

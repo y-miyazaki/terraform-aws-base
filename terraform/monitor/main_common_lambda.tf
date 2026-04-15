@@ -189,8 +189,12 @@ module "aws_sns_subscription_lambda_ses" {
           Principal = {
             Service = "ses.amazonaws.com"
           }
-          Action   = "SNS:Publish"
-          Resource = "arn:aws:sns:${var.region}:${data.aws_caller_identity.current.account_id}:${var.name_prefix}${var.common_lambda.ses.aws_sns_topic.name}"
+          Action = [
+            "SNS:Publish",
+          ]
+          Resource = [
+            "arn:aws:sns:${var.region}:${data.aws_caller_identity.current.account_id}:${var.name_prefix}${var.common_lambda.ses.aws_sns_topic.name}",
+          ]
           Condition = {
             StringEquals = {
               "AWS:SourceAccount" = data.aws_caller_identity.current.account_id

@@ -1,25 +1,45 @@
-# Output Format
+# Output Format Specification
 
-Use the following report structure for GitHub PR overview output.
+Use the following report structure for review and validation output.
 
 ```markdown
-# GitHub PR Overview Update Result
+# <Result Title>
 
-## Status
+## Checks Summary
+- Total checks: <number>
+- Passed: <count>
+- Failed: <count>
+- Deferred: <count>
 
-## Updated Sections
+## Checks (Failed/Deferred Only)
+- <ItemID> <ItemName>: ❌ Fail
+- <ItemID> <ItemName>: ⊘ Deferred (<explicit reason>)
 
-- Overview: ✅ Updated
-- Changes: ✅ Updated
-
-## Sample Output
-
-[Generated PR Body content showing structured updates]
+## Issues
+1. <ItemID>: <ItemName>
+   - File: <path>#L<line>
+   - Problem: <specific issue>
+   - Impact: <scope and severity>
+   - Recommendation: <specific fix>
 ```
 
 ## Rules
 
-- Output shows which PR Body sections were updated.
-- Preserve other template sections unmodified.
-- Updates must be idempotent (running twice produces same result).
-- If no sections updated, indicate "No sections required update".
+- Keep full evaluation data for all checks internally using fixed ItemIDs from `reference/common-checklist.md`.
+- In human-readable output, display only:
+  - `## Checks Summary` (counts), and
+  - `## Checks (Failed/Deferred Only)`.
+- Do not list passed checks in `## Checks (Failed/Deferred Only)`.
+- Keep ItemIDs fixed and sorted in checklist order.
+- `## Issues` must always contain full details for each failed or deferred check.
+- If there are no failed or deferred checks:
+  - In `## Checks (Failed/Deferred Only)`, output `No failed or deferred checks`.
+  - In `## Issues`, output `No issues found`.
+
+## Status Symbols
+
+| Symbol | Meaning  | When to Use                                             |
+| ------ | -------- | ------------------------------------------------------- |
+| ✅      | Pass     | Check verified correct (counted in summary only)        |
+| ❌      | Fail     | Check failed, issue identified                          |
+| ⊘      | Deferred | Check not yet evaluable due to explicit prerequisite gap |

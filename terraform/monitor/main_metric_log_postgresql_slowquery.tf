@@ -1,4 +1,3 @@
-
 #--------------------------------------------------------------
 # Provides a CloudWatch Log Metric Filter And Alarm resource.
 #--------------------------------------------------------------
@@ -51,7 +50,7 @@ resource "aws_scheduler_schedule" "postgresql_slowquery" {
 module "lambda_function_postgresql_slowquery" {
   source  = "terraform-aws-modules/lambda/aws"
   version = "8.7.0"
-  create  = try(var.metric_log_postgresql_slowquery.is_enabled_report, true)
+  create  = var.metric_log_postgresql_slowquery.is_enabled_report
 
   allowed_triggers = {
     trigger = {

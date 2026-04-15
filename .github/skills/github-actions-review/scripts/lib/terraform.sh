@@ -63,7 +63,7 @@ function terraform_apply {
         apply_cmd="$apply_cmd --auto-approve"
     fi
 
-    if ! execute_command "$apply_cmd"; then
+    if ! execute_command_string "$apply_cmd"; then
         error_exit "Failed to apply Terraform configuration"
     fi
 
@@ -106,7 +106,7 @@ function terraform_destroy {
         destroy_cmd="$destroy_cmd --auto-approve"
     fi
 
-    if ! execute_command "$destroy_cmd"; then
+    if ! execute_command_string "$destroy_cmd"; then
         error_exit "Failed to destroy Terraform resources"
     fi
 
@@ -154,7 +154,7 @@ function terraform_format {
 
     if [[ "$check_mode" == "check" ]]; then
         echo_section "Terraform format check"
-        if execute_command "terraform fmt -check -diff"; then
+        if execute_command_string "terraform fmt -check -diff"; then
             log "INFO" "Terraform files are properly formatted"
             return 0
         else
@@ -163,7 +163,7 @@ function terraform_format {
         fi
     else
         echo_section "Terraform format"
-        execute_command "terraform fmt -recursive"
+        execute_command_string "terraform fmt -recursive"
         log "INFO" "Terraform files formatted"
     fi
 }
@@ -202,7 +202,7 @@ function terraform_init {
         init_cmd="$init_cmd $additional_options"
     fi
 
-    if ! execute_command "$init_cmd"; then
+    if ! execute_command_string "$init_cmd"; then
         error_exit "Failed to initialize Terraform"
     fi
 
@@ -245,7 +245,7 @@ function terraform_plan {
         plan_cmd="$plan_cmd $additional_options"
     fi
 
-    if ! execute_command "$plan_cmd"; then
+    if ! execute_command_string "$plan_cmd"; then
         error_exit "Failed to create Terraform plan"
     fi
 
@@ -278,7 +278,7 @@ function terraform_select_workspace {
     # Check if workspace exists, create if it doesn't
     if ! terraform workspace select "$workspace" 2> /dev/null; then
         log "INFO" "Creating new workspace: $workspace"
-        execute_command "terraform workspace new '$workspace'"
+        execute_command_string "terraform workspace new '$workspace'"
     fi
 
     log "INFO" "Switched to workspace: $workspace"
@@ -303,7 +303,7 @@ function terraform_select_workspace {
 function terraform_validate {
     echo_section "Terraform validation"
 
-    if ! execute_command "terraform validate"; then
+    if ! execute_command_string "terraform validate"; then
         error_exit "Terraform configuration validation failed"
     fi
 
@@ -336,7 +336,7 @@ function terraform_lint {
         lint_cmd="$lint_cmd --recursive"
     fi
 
-    if ! execute_command "$lint_cmd"; then
+    if ! execute_command_string "$lint_cmd"; then
         error_exit "tflint found issues in Terraform configuration"
     fi
 
@@ -421,7 +421,7 @@ function validate_terraform_env {
 
     # Create plugin cache directory
     if [[ -n "${TF_PLUGIN_CACHE_DIR}" ]]; then
-        execute_command "mkdir -p '${TF_PLUGIN_CACHE_DIR}'"
+        execute_command_string "mkdir -p '${TF_PLUGIN_CACHE_DIR}'"
         log "INFO" "Terraform plugin cache directory: ${TF_PLUGIN_CACHE_DIR}"
     fi
 

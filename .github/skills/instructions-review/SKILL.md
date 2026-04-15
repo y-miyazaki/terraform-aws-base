@@ -27,7 +27,7 @@ This skill expects:
 
 - Instructions file(s) (required) - `.github/instructions/*.instructions.md` files
 - Reference files for comparison (optional) - go.instructions.md, github-actions-workflow.instructions.md
-- aqua.yaml file (required) - For tool coverage validation
+- aqua.yaml file (optional) - For optional tool coverage context
 - PR description and context (optional) - Understanding purpose of changes
 
 Format:
@@ -40,10 +40,11 @@ Format:
 
 **Output format (MANDATORY)** - Use this exact structure:
 
-- ## Checks section: List of all review items with Pass (✅) or Fail (❌) status
-- ## Issues section: Numbered list of failed items only with details
-- Each issue includes: Item ID + Name, Problem description, Impact assessment, Specific recommendation
-- If all checks pass: "None ✅" in Issues section
+- ## Checks Summary section: Total/Passed/Failed/Deferred counts
+- ## Checks (Failed/Deferred Only) section: Show only ❌ and ⊘ items in checklist order
+- ## Issues section: Numbered list with full details for each failed or deferred item
+- Keep full evaluation data for all checks internally using fixed ItemIDs from reference/common-checklist.md
+- If there are no failed or deferred checks: output "No failed or deferred checks" in Checks and "No issues found" in Issues
 
 See reference/common-output-format.md for detailed format specification and examples.
 
@@ -53,7 +54,8 @@ See reference/common-output-format.md for detailed format specification and exam
 
 - This skill provides manual review guidance requiring human/AI judgment
 - Reviewer reads .instructions.md files and systematically applies review checklist items from reference/checklist.md
-- **Prerequisites**: Files must have valid YAML front matter and Markdown syntax
+- **Boundary**: Focus on quality, structure, consistency, and practical usability checks that require human/AI judgment
+- **Out-of-scope boundary**: Do not execute validation tools from this review skill
 - **When to use**: Review .github/instructions/\*.instructions.md files for structure, completeness, consistency, and practical usability
 
 **What this skill does**:
@@ -88,16 +90,16 @@ What this skill does NOT do (Out of Scope):
 
 Prerequisites:
 
-- Instructions files must have YAML front matter
-- aqua.yaml must exist for tool coverage validation
+- Instructions files are available for review
+- aqua.yaml is optional when checking tool coverage documentation
 - Reference files (go.instructions.md, github-actions-workflow.instructions.md) should be available for consistency checks
 - Reviewer must understand the 4-chapter structure requirement
 
 Limitations:
 
-- Cannot validate if commands actually execute correctly
+- Cannot validate command execution behavior from this review skill
 - Consistency checks require multiple files for comparison
-- Tool coverage validation depends on aqua.yaml accuracy
+- Tool coverage checks depend on optional aqua.yaml accuracy when provided
 - Cannot assess technical accuracy of content (requires domain expertise)
 - Line count ranges are guidelines, not strict requirements
 
@@ -110,7 +112,7 @@ Error handling:
 - Insufficient validation commands (<3): Flag as IMPORTANT (TEST-02), inadequate coverage
 - Missing security chapter: Flag as CRITICAL (STRUCT-01), security gap
 - Inconsistent chapter order: Flag as IMPORTANT (CONS-01), reduces usability
-- Missing aqua.yaml: Output warning, skip tool coverage validation (TEST-05, COMP-03)
+- Missing aqua.yaml: Output info, skip optional tool coverage checks (TEST-05, COMP-03)
 
 Error reporting format:
 
@@ -165,17 +167,20 @@ Document issues using Check+Why+Fix format with actionable recommendations.
 
 ### Checks
 
-List all review items with Pass/Fail status:
+Display condensed check status:
 
 ```
-- G-01 Front Matter: ✅ Pass
-- STRUCT-01 Four Required Chapters: ❌ Fail
-...
+- Total checks: <number>
+- Passed: <count>
+- Failed: <count>
+- Deferred: <count>
+
+- <Failed/Deferred ItemID> <ItemName>: ❌/⊘
 ```
 
 ### Issues
 
-Document only failed items with:
+Document failed or deferred items with full details:
 
 1. **Item ID + Item Name**
    - Problem: Problem description
@@ -189,12 +194,17 @@ Document only failed items with:
 ```markdown
 # Instructions Review Result
 
-## Checks
+## Checks Summary
 
-- G-01 Front Matter: ✅ Pass
+- Total checks: 26
+- Passed: 24
 - STRUCT-01 Four Required Chapters: ❌ Fail
+- Failed: 2
+- Deferred: 0
+
+## Checks (Failed/Deferred Only)
+
 - TEST-02 Command Count: ❌ Fail
-  ...
 
 ## Issues
 

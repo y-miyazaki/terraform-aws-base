@@ -33,7 +33,7 @@ locals {
 #--------------------------------------------------------------
 module "aws_security_config_create_v4" {
   source     = "../../modules/aws/security/config/create-v4"
-  is_enabled = var.security_config.is_enabled && !var.use_control_tower
+  is_enabled = var.security_config.is_enabled && !local.control_tower_managed_services.config
 
   is_s3_enabled                     = var.security_config.is_s3_enabled
   aws_config_configuration_recorder = local.aws_config_configuration_recorder_config
@@ -63,7 +63,7 @@ module "aws_security_config_create_v4" {
 #--------------------------------------------------------------
 module "aws_security_config_ssm_automation" {
   source     = "../../modules/aws/security/config/ssm_automation"
-  is_enabled = var.security_config.is_enabled && !var.use_control_tower
+  is_enabled = var.security_config.is_enabled && !local.control_tower_managed_services.config
 
   aws_iam_role   = local.aws_iam_role_ssm_automation
   aws_iam_policy = local.aws_iam_policy_ssm_automation
@@ -76,7 +76,7 @@ module "aws_security_config_ssm_automation" {
 #--------------------------------------------------------------
 module "aws_security_config_rule_api_gateway" {
   source     = "../../modules/aws/security/config/rule/api_gateway"
-  is_enabled = var.security_config.is_enabled && !var.use_control_tower
+  is_enabled = var.security_config.is_enabled && !local.control_tower_managed_services.config
 
   name_prefix = var.name_prefix
 
@@ -92,7 +92,7 @@ module "aws_security_config_rule_api_gateway" {
 #--------------------------------------------------------------
 module "aws_security_config_rule_rds" {
   source     = "../../modules/aws/security/config/rule/rds"
-  is_enabled = var.security_config.is_enabled && !var.use_control_tower
+  is_enabled = var.security_config.is_enabled && !local.control_tower_managed_services.config
 
   name_prefix = var.name_prefix
 
@@ -108,7 +108,7 @@ module "aws_security_config_rule_rds" {
 #--------------------------------------------------------------
 module "aws_security_config_rule_load_balancer" {
   source     = "../../modules/aws/security/config/rule/load_balancer"
-  is_enabled = var.security_config.is_enabled && !var.use_control_tower
+  is_enabled = var.security_config.is_enabled && !local.control_tower_managed_services.config
 
   name_prefix = var.name_prefix
 
@@ -124,7 +124,7 @@ module "aws_security_config_rule_load_balancer" {
 #--------------------------------------------------------------
 module "aws_security_config_rule_ec2" {
   source     = "../../modules/aws/security/config/rule/ec2"
-  is_enabled = var.security_config.is_enabled && !var.use_control_tower
+  is_enabled = var.security_config.is_enabled && !local.control_tower_managed_services.config
 
   name_prefix                                 = var.name_prefix
   ssm_automation_assume_role_arn              = module.aws_security_config_ssm_automation.role_arn
@@ -142,7 +142,7 @@ module "aws_security_config_rule_ec2" {
 #--------------------------------------------------------------
 module "aws_security_config_rule_s3" {
   source     = "../../modules/aws/security/config/rule/s3"
-  is_enabled = var.security_config.is_enabled && !var.use_control_tower
+  is_enabled = var.security_config.is_enabled && !local.control_tower_managed_services.config
 
   name_prefix                                = var.name_prefix
   ssm_automation_assume_role_arn             = module.aws_security_config_ssm_automation.role_arn
@@ -169,7 +169,7 @@ module "aws_security_config_rule_s3" {
 module "lambda_function_config" {
   source  = "terraform-aws-modules/lambda/aws"
   version = "8.7.0"
-  create  = var.security_config.is_enabled && !var.use_control_tower
+  create  = var.security_config.is_enabled && !local.control_tower_managed_services.config
 
   allowed_triggers = {
     trigger = {

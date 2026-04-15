@@ -11,6 +11,10 @@
 !.vscode/settings-example.json
 tmp
 
+# AI
+.amazonq
+.kiro
+
 # env
 .env
 env/common/tmp/**

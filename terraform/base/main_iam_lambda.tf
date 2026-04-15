@@ -16,7 +16,8 @@ locals {
       Version = "2012-10-17"
       Statement = [
         {
-          Sid = "AllowCloudWatchLogs"
+          Sid    = "AllowCloudWatchLogs"
+          Effect = "Allow"
           Action = [
             "logs:CreateLogGroup",
             "logs:CreateLogStream",
@@ -27,68 +28,83 @@ locals {
             "logs:PutLogEvents",
             "logs:PutRetentionPolicy",
           ]
-          Effect   = "Allow"
-          Resource = "arn:aws:logs:*:${data.aws_caller_identity.current.account_id}:log-group:*"
+          Resource = [
+            "arn:aws:logs:*:${data.aws_caller_identity.current.account_id}:log-group:*",
+          ]
         },
         {
-          Sid = "AllowBudgets"
+          Sid    = "AllowBudgets"
+          Effect = "Allow"
           Action = [
             "ce:GetCostAndUsage",
           ]
-          Effect   = "Allow"
-          Resource = "arn:aws:ce:us-east-1:${data.aws_caller_identity.current.account_id}:/GetCostAndUsage"
+          Resource = [
+            "arn:aws:ce:us-east-1:${data.aws_caller_identity.current.account_id}:/GetCostAndUsage",
+          ]
         },
         {
-          Sid = "AllowIamPasswordExpired"
+          Sid    = "AllowIamPasswordExpired"
+          Effect = "Allow"
           Action = [
             "iam:GetUser",
             "iam:ListUsers",
           ]
-          Effect   = "Allow"
-          Resource = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:*"
+          Resource = [
+            "arn:aws:iam::${data.aws_caller_identity.current.account_id}:*",
+          ]
         },
         {
-          Sid = "AllowIamPasswordExpired2"
+          Sid    = "AllowIamPasswordExpired2"
+          Effect = "Allow"
           Action = [
             "iam:GenerateCredentialReport",
             "iam:GetCredentialReport",
           ]
-          Effect   = "Allow"
-          Resource = "*"
+          Resource = [
+            "*",
+          ]
         },
         {
-          Sid = "AllowKinesisDataFirehoseCloudwatchLogsProcessor"
+          Sid    = "AllowKinesisDataFirehoseCloudwatchLogsProcessor"
+          Effect = "Allow"
           Action = [
             "firehose:PutRecordBatch",
           ]
-          Effect   = "Allow"
-          Resource = "arn:aws:firehose:${var.region}:${data.aws_caller_identity.current.account_id}:deliverystream/*"
+          Resource = [
+            "arn:aws:firehose:${var.region}:${data.aws_caller_identity.current.account_id}:deliverystream/*",
+          ]
         },
         # Note: Organizations API access required for account-level metadata in multi-account setups
         {
-          Sid = "AllowOrganizationsDescribeAccount"
+          Sid    = "AllowOrganizationsDescribeAccount"
+          Effect = "Allow"
           Action = [
             "organizations:DescribeAccount",
           ]
-          Effect   = "Allow"
-          Resource = "*"
+          Resource = [
+            "*",
+          ]
         },
         # Note: Account API access required for account-level metadata in single-account setups
         {
-          Sid = "AllowAccountGetAccountInformation"
+          Sid    = "AllowAccountGetAccountInformation"
+          Effect = "Allow"
           Action = [
             "account:GetAccountInformation",
           ]
-          Effect   = "Allow"
-          Resource = "*"
+          Resource = [
+            "arn:aws:account::${data.aws_caller_identity.current.account_id}:account",
+          ]
         },
         {
-          Sid = "AllowSupports"
+          Sid    = "AllowSupports"
+          Effect = "Allow"
           Action = [
             "support:*",
           ]
-          Effect   = "Allow"
-          Resource = "*"
+          Resource = [
+            "*",
+          ]
         }
       ]
     })

@@ -8,13 +8,13 @@
 #--------------------------------------------------------------
 data "aws_iam_policy_document" "this" {
   statement {
-    sid = "AWSELBWrite"
+    sid    = "AWSELBWrite"
+    effect = "Allow"
     principals {
       type = "AWS"
       # https://docs.aws.amazon.com/ja_jp/elasticloadbalancing/latest/classic/enable-access-logs.html
       identifiers = ["arn:aws:iam::${var.elb_account_id}:root"]
     }
-    effect = "Allow"
     actions = [
       "s3:PutObject",
     ]
@@ -23,12 +23,12 @@ data "aws_iam_policy_document" "this" {
     ]
   }
   statement {
-    sid = "AWSLogDeliveryWrite"
+    sid    = "AWSLogDeliveryWrite"
+    effect = "Allow"
     principals {
       type        = "Service"
       identifiers = ["delivery.logs.amazonaws.com"]
     }
-    effect = "Allow"
     actions = [
       "s3:PutObject",
     ]

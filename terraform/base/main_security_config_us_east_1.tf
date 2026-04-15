@@ -26,7 +26,7 @@ locals {
 #--------------------------------------------------------------
 module "aws_security_config_create_v4_us_east_1" {
   source     = "../../modules/aws/security/config/create-v4"
-  is_enabled = !local.is_default_region_us_east_1 && var.security_config_us_east_1.is_enabled && !var.use_control_tower
+  is_enabled = !local.is_default_region_us_east_1 && var.security_config_us_east_1.is_enabled && !local.control_tower_managed_services.config
   providers = {
     aws = aws.us-east-1
   }
@@ -59,7 +59,7 @@ module "aws_security_config_create_v4_us_east_1" {
 #--------------------------------------------------------------
 module "aws_security_config_rule_cloudfront_us_east_1" {
   source     = "../../modules/aws/security/config/rule/cloudfront"
-  is_enabled = !local.is_default_region_us_east_1 && var.security_config_us_east_1.is_enabled && !var.use_control_tower
+  is_enabled = !local.is_default_region_us_east_1 && var.security_config_us_east_1.is_enabled && !local.control_tower_managed_services.config
   providers = {
     aws = aws.us-east-1
   }
@@ -88,7 +88,7 @@ module "lambda_function_config_us_east_1" {
     aws = aws.us-east-1
   }
   # Skip if default region is us-east-1
-  create = !local.is_default_region_us_east_1 && var.security_config_us_east_1.is_enabled
+  create = !local.is_default_region_us_east_1 && var.security_config_us_east_1.is_enabled && !local.control_tower_managed_services.config
 
   allowed_triggers = {
     trigger = {
@@ -131,7 +131,7 @@ module "lambda_function_config_us_east_1" {
   runtime                       = "provided.al2023"
   timeout                       = 300
   tracing_mode                  = "PassThrough"
-  vpc_security_group_ids        = var.common_lambda.vpc.is_enabled ? var.common_lambda.vpc.create_vpc ? [module.lambda_vpc_us_east_1.default_security_group_id] : [var.common_lambda.vpc.exists.security_group_id_east_1] : []
+  vpc_security_group_ids        = var.common_lambda.vpc.is_enabled ? var.common_lambda.vpc.create_vpc ? [module.lambda_vpc_us_east_1.default_security_group_id] : [var.common_lambda.vpc.exists.security_group_id_us_east_1] : []
   vpc_subnet_ids                = var.common_lambda.vpc.is_enabled ? var.common_lambda.vpc.create_vpc ? module.lambda_vpc_us_east_1.private_subnets : var.common_lambda.vpc.exists.private_subnets_us_east_1 : []
 
   tags = var.tags

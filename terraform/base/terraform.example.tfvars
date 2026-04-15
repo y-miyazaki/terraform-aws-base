@@ -12,14 +12,22 @@
 #--------------------------------------------------------------
 
 #--------------------------------------------------------------
-# Check use Control Tower
-# If you are using Control Tower, set use_control_tower to true. If you set it to true, some options will be ignored.
-# CRITICAL SETTING: This affects which security services are automatically disabled
-# AWS Control Tower provides automated setup of a multi-account AWS environment with best practices.
-# When enabled, services like GuardDuty, SecurityHub, Config, and CloudTrail are managed by Control Tower.
+# Control Tower and organization-managed security services
+# Use this object to define whether Control Tower is enabled and which
+# services are centrally managed outside this base stack.
+# If managed_services.<service> is omitted, it falls back to is_enabled.
 #--------------------------------------------------------------
-# TODO: need to change use Control Tower.
-use_control_tower = false
+# TODO: need to change Control Tower settings.
+control_tower = {
+  is_enabled = false
+  managed_services = {
+    cloudtrail           = false
+    config               = false
+    guardduty            = false
+    iam_password_expired = false
+    securityhub          = false
+  }
+}
 #--------------------------------------------------------------
 # Default Tags for Resources
 # A tag that is set globally for the resources used.
@@ -280,7 +288,7 @@ compute_optimizer = {
 # GuardDuty
 # Amazon GuardDuty is a threat detection service that continuously monitors your AWS accounts and workloads for malicious activity and
 # delivers detailed security findings for visibility and remediation.
-# Notice: This option is automatically disabled if use_control_tower=true.
+# Notice: This option is automatically disabled if control_tower.managed_services.guardduty=true.
 # COST CONSIDERATION: ~$1.00 per GB of logs analyzed
 #--------------------------------------------------------------
 guardduty = {
@@ -331,7 +339,7 @@ trusted_advisor = {
 #--------------------------------------------------------------
 # IAM password expired
 # A list of target users will be automatically notified in Slack 10 days before the IAM password expires.
-# Notice: This option is automatically disabled if use_control_tower=true.
+# Notice: This option is automatically disabled if control_tower.managed_services.iam_password_expired=true.
 #--------------------------------------------------------------
 iam_password_expired = {
   # TODO: need to set is_enabled for settings of IAM password expired.
@@ -1597,7 +1605,7 @@ common_log = {
   #--------------------------------------------------------------
   # S3 for CloudTrail
   # https://registry.terraform.io/modules/terraform-aws-modules/s3-bucket/aws/latest
-  # Notice: This option is automatically disabled if use_control_tower=true.
+  # Notice: This option is automatically disabled if control_tower.managed_services.cloudtrail=true.
   #--------------------------------------------------------------
   s3_cloudtrail = {
     bucket = "aws-log-cloudtrail"
@@ -1678,7 +1686,7 @@ security_athena = {
 
 #--------------------------------------------------------------
 # Security:CloudTrail
-# Notice: This option is automatically disabled if use_control_tower=true.
+# Notice: This option is automatically disabled if control_tower.managed_services.cloudtrail=true.
 #--------------------------------------------------------------
 security_cloudtrail = {
   # TODO: need to set is_enabled for settings of CloudTrail.
@@ -1835,7 +1843,7 @@ PATTERN
 
 #--------------------------------------------------------------
 # Security:AWS Config
-# Notice: This option is automatically disabled if use_control_tower=true.
+# Notice: This option is automatically disabled if control_tower.managed_services.config=true.
 #--------------------------------------------------------------
 security_config = {
   # TODO: need to set is_enabled for settings of AWS Config.
@@ -1975,7 +1983,7 @@ security_config = {
 
 #--------------------------------------------------------------
 # Security:AWS Config(us-east-1(CloudFront))
-# Notice: This option is automatically disabled if use_control_tower=true.
+# Notice: This option is automatically disabled if control_tower.managed_services.config=true.
 #--------------------------------------------------------------
 security_config_us_east_1 = {
   # TODO: need to set is_enabled for settings of AWS Config.
@@ -2127,7 +2135,7 @@ security_ebs = {
 # Amazon GuardDuty provides intelligent threat detection for your AWS environment.
 # Continuously monitors for malicious activity and unauthorized behavior using machine learning.
 # Detects reconnaissance, instance compromise, account compromise, and bucket compromise.
-# Notice: This option is automatically disabled if use_control_tower=true.
+# Notice: This option is automatically disabled if control_tower.managed_services.guardduty=true.
 #--------------------------------------------------------------
 security_guardduty = {
   # TODO: need to set is_enabled for settings of GuardDuty. Even if GuardDuty is already set, it must be set to false.
@@ -2197,7 +2205,7 @@ security_s3 = {
 # AWS Security Hub provides a comprehensive view of security alerts and compliance status.
 # Aggregates findings from GuardDuty, Inspector, Macie, IAM Access Analyzer, and AWS Config.
 # Enables security standards compliance checks (CIS AWS Foundations, PCI DSS, AWS Foundational Security Best Practices).
-# Notice: This option is automatically disabled if use_control_tower=true.
+# Notice: This option is automatically disabled if control_tower.managed_services.securityhub=true.
 #--------------------------------------------------------------
 security_securityhub = {
   # TODO: need to set is_enabled for settings of SecurityHub.
