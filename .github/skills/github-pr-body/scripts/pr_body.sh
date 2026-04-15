@@ -467,7 +467,7 @@ function extract_h2_section {
     local markdown_text="$1"
     local heading="$2"
 
-    echo "$markdown_text" | awk -v target_heading="$heading" '
+    printf '%s\n' "$markdown_text" | awk -v target_heading="$heading" '
         {
             line = $0
             sub(/\r$/, "", line)
@@ -506,7 +506,7 @@ function extract_h2_section {
 function extract_overview_template_body {
     local markdown_text="$1"
 
-    echo "$markdown_text" | awk '
+    printf '%s\n' "$markdown_text" | awk '
         {
             line = $0
             sub(/\r$/, "", line)
@@ -543,7 +543,7 @@ function extract_overview_template_body {
 function section_body_without_heading {
     local section_text="$1"
 
-    echo "$section_text" | awk '
+    printf '%s\n' "$section_text" | awk '
         NR == 1 { next }
         {
             line = $0
@@ -575,7 +575,7 @@ function section_body_without_heading {
 function section_has_visible_content {
     local section_text="$1"
 
-    echo "$section_text" | awk '
+    printf '%s\n' "$section_text" | awk '
         BEGIN { in_comment = 0; found = 0 }
         NR == 1 { next }
         {
@@ -681,6 +681,7 @@ function update_pr_body {
     local section
     local current_section
     local template_section
+    local template_headings=""
 
     log "INFO" "Fetching current PR body"
 
@@ -741,6 +742,7 @@ function update_pr_body {
 
     # Rebuild all template H2 sections in template order.
     while IFS= read -r heading; do
+        template_headings+="$heading"$'\n'
         section=""
 
         if [[ "$heading" == "## Changes" ]]; then
@@ -761,7 +763,28 @@ function update_pr_body {
             new_body+="$section"
         fi
     done < <(
-        echo "$template_body" | awk '
+        printf '%s\n' "$template_body" | awk '
+            {
+                line = $0
+                sub(/\r$/, "", line)
+            }
+            line ~ /^##[[:space:]]+/ {
+                print line
+            }
+        '
+    )
+
+    # Preserve non-template H2 sections already present in current PR body.
+    while IFS= read -r heading; do
+        if ! printf '%s\n' "$template_headings" | grep -Fxq -- "$heading"; then
+            current_section=$(extract_h2_section "$current_body" "$heading")
+            if [[ -n "${current_section//[[:space:]]/}" ]]; then
+                new_body+=$'\n\n'
+                new_body+="$current_section"
+            fi
+        fi
+    done < <(
+        printf '%s\n' "$current_body" | awk '
             {
                 line = $0
                 sub(/\r$/, "", line)
@@ -778,7 +801,7 @@ function update_pr_body {
         log "INFO" ""
         log "INFO" "New body:"
         log "INFO" "---"
-        echo "$new_body" >&2
+        printf '%s\n' "$new_body" >&2
         log "INFO" "---"
     else
         log "INFO" "Updating PR #$PR_NUMBER body"

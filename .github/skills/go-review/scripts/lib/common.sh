@@ -155,7 +155,7 @@ function execute_command_string {
 
     log "DEBUG" "Executing shell command: ${command_string}"
 
-    bash -lc "$command_string"
+    bash -c -- "$command_string"
 }
 
 #######################################
