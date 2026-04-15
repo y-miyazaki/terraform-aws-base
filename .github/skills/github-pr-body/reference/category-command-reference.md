@@ -6,10 +6,19 @@ Complete reference for scripts in the github-pr-body skill.
 
 ## Script Overview
 
-| Script        | Purpose                                     | When to Use                                 |
-| ------------- | ------------------------------------------- | ------------------------------------------- |
-| `pr_fetch.sh` | Fetch and analyze PR data                   | Always first - consolidates data collection |
-| `pr_body.sh`  | Update PR Body with auto-generated sections | After analysis, for automatic Body updates  |
+| Script        | Purpose                                             | When to Use                                 |
+| ------------- | --------------------------------------------------- | ------------------------------------------- |
+| `pr_fetch.sh` | Fetch and analyze PR data                           | Always first - consolidates data collection |
+| `pr_body.sh`  | Update PR Body with deterministic baseline sections | After analysis, before AI completion        |
+
+---
+
+## Recommended Execution Order
+
+1. Run `pr_fetch.sh` to collect all PR data.
+2. Run `pr_body.sh` to write the deterministic baseline body.
+3. Run AI completion outside the shell script to fill sections using `PULL_REQUEST_TEMPLATE.md` comments and Examples.
+4. Optionally re-run `pr_body.sh` with `--overview-file` when AI-generated Overview content is ready.
 
 ---
 
@@ -125,7 +134,7 @@ Complete reference for scripts in the github-pr-body skill.
 ### Basic Command
 
 ```bash
-# Update PR Body with auto-generated sections
+# Update PR Body with deterministic baseline sections
 .github/skills/github-pr-body/scripts/pr_body.sh <PR#> --repo owner/repo
 ```
 
@@ -160,6 +169,15 @@ Complete reference for scripts in the github-pr-body skill.
 | ---- | ---------------- | ----------------------------------------------------------------------- |
 | `0`  | Success          | Body updated successfully OR --dry-run preview shown                    |
 | `1`  | Validation Error | PR not found, missing deps, auth issues, etc. Check output for details. |
+
+### AI Completion Contract
+
+`pr_body.sh` does not generate semantic content for non-deterministic sections.
+
+- Use `pr_body.sh` to write the baseline body structure.
+- Use AI to read `PULL_REQUEST_TEMPLATE.md` comments and generate visible chapter content.
+- Use `--overview-file` only to inject caller-prepared Overview content.
+- Do not add section-specific semantic rules into the shell script.
 
 ### Error: `PR #XXX not found`
 

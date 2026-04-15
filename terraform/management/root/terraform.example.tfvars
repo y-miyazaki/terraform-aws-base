@@ -391,7 +391,9 @@ organizations_policy = {
           "wellarchitected:*",
           "xray:*",
         ],
-        Resource = "*",
+        Resource = [
+          "*",
+        ]
         Condition = {
           StringNotEquals = {
             "aws:RequestedRegion" = [

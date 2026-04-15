@@ -268,9 +268,9 @@ GraphQL error: API rate limit exceeded
 ## Reference
 
 **When scripts reference helper functions**:
-- [graphql-api-commands.md](graphql-api-commands.md) - GraphQL mutation reference
-- [template-mapping.md](template-mapping.md) - Template structure mapping
-- [change-classification.md](change-classification.md) - Change type classification
+- [category-command-reference.md](category-command-reference.md) - GraphQL mutation reference
+- [category-template-mapping.md](category-template-mapping.md) - Template structure mapping
+- [category-change-classification.md](category-change-classification.md) - Change type classification
 
 ---
 

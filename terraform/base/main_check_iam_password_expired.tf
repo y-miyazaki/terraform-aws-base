@@ -16,7 +16,7 @@
 #--------------------------------------------------------------
 module "aws_cloudwatch_events_iam_password_expired" {
   source     = "../../modules/aws/cloudwatch/events/iam_password_expired"
-  is_enabled = var.iam_password_expired.is_enabled && !var.use_control_tower
+  is_enabled = var.iam_password_expired.is_enabled && !local.control_tower_managed_services.iam_password_expired
 
   aws_cloudwatch_event_rule = {
     name                = "${var.name_prefix}${try(var.iam_password_expired.aws_cloudwatch_event_rule.name, "iam-password-expired-cloudwatch-event-rule")}"
@@ -39,7 +39,7 @@ module "aws_cloudwatch_events_iam_password_expired" {
 module "lambda_function_iam_password_expired" {
   source  = "terraform-aws-modules/lambda/aws"
   version = "8.7.0"
-  create  = var.iam_password_expired.is_enabled && !var.use_control_tower
+  create  = var.iam_password_expired.is_enabled && !local.control_tower_managed_services.iam_password_expired
 
   allowed_triggers = {
     trigger = {

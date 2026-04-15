@@ -3,7 +3,7 @@ name: agent-skills-review
 description: >
   SKILL.md files review for structural requirements, quality standards, and design patterns.
   Use for manual review of .github/skills/*/SKILL.md files checking content quality, specification completeness, and implementation feasibility.
-  Prerequisites: yamllint pass + scripts/validate.sh execution.
+   Focus on manual checks that require human/AI judgment.
 license: MIT
 ---
 
@@ -47,9 +47,10 @@ Structured markdown review report:
 
 - This skill provides manual review guidance requiring human/AI judgment
 - Reviewer reads SKILL.md files and systematically applies review checklist items from reference/checklist.md
-- **Prerequisites**: YAML frontmatter must pass yamllint and scripts/validate.sh must execute successfully
-  - Run `yamllint` on frontmatter first
-  - Run `scripts/validate.sh` to verify structural requirements
+- **Boundary**:
+  - Focus only on checks that require human/AI judgment
+  - Treat deterministic validation automation as out of scope for this review skill
+  - Do not run yamllint or scripts/validate.sh from this review skill
 - **When to use**: Review .github/skills/\*/SKILL.md files for quality, specification completeness, and design pattern compliance
 
 **What this skill does**:
@@ -68,8 +69,10 @@ Structured markdown review report:
    - P-01: Design Pattern Compliance
    - P-02: Output Format Compliance
 3. **Report Generation**
-   - Checks section: All items displayed as ✅/❌
-   - Issues section: Failed items only with full details
+   - Checks Summary section: Total/Passed/Failed/Deferred counts
+   - Checks (Failed/Deferred Only) section: Show only ❌ and ⊘ items in checklist order
+   - Issues section: Failed or deferred items only with full details
+   - Full evaluation data for all checks is retained internally using fixed ItemIDs
 
 **Out of Scope**:
 
@@ -87,7 +90,7 @@ This skill embodies the philosophy it recommends by implementing it in practice:
 - Judgment-based checks (semantic evaluation, design decisions) → Manual review for human/AI strengths
 - Result: Token efficiency + verification quality combined
 
-Implementation: scripts/validate.sh executes automated checks first (YAML syntax, 9 required sections, frontmatter fields, word count <5,000, directory structure, mandatory reference files), then manual review focuses on judgment-based evaluation, achieving context optimization and verification credibility.
+Implementation: deterministic checks are delegated to validation tooling, and this review workflow focuses on judgment-based evaluation, achieving context optimization and verification credibility.
 
 **Key principles**:
 
@@ -102,8 +105,8 @@ See reference/common-output-format.md for detailed format specification and exam
 **Prerequisites**:
 
 1. SKILL.md must have YAML front matter (name, description, license)
-2. YAML frontmatter passes yamllint validation
-3. Script validation passes (bash -n, shellcheck)
+2. Target SKILL.md and required references are available
+3. Understanding of role boundaries between validation and review workflows
 4. Understanding of agent-skills.instructions.md Structural Requirements required
 5. Access to reference files (structure.md, quality.md, patterns.md) available
 
@@ -117,7 +120,6 @@ See reference/common-output-format.md for detailed format specification and exam
 
 **Error Handling**:
 
-- Automated check failures → Stop, report issue, request re-validation before proceeding
 - Missing required section → **CRITICAL** severity (structural violation, cannot merge)
 - Missing YAML frontmatter field → **CRITICAL** severity
 - Non-structured output format → **CRITICAL** severity
@@ -145,24 +147,21 @@ When using this skill with an agent, reference the following files via @-mention
 - **category-quality.md** - Quality standards (Q-01 through Q-06) detailed guide
 - **category-structure.md** - Structure requirements (S-01 through S-02) detailed guide
 
-## Checks
+## Checks Summary
 
-- S-01 Structural Completeness: ✅ or ❌
-- S-02 YAML Frontmatter Fields: ✅ or ❌
-- Q-01 Output is Truly Structured: ✅ or ❌
-- Q-02 Scope Boundaries: ✅ or ❌
-- Q-03 Execution Determinism: ✅ or ❌
-- Q-04 Input/Output Specificity: ✅ or ❌
-- Q-05 Constraints Clarity: ✅ or ❌
-- Q-06 No Implicit Inference: ✅ or ❌
-- Q-07 Progressive Disclosure: ✅ or ❌
-- Q-08 Resource Separation: ✅ or ❌
-- P-01 Design Pattern Compliance: ✅ or ❌
-- P-02 Output Format Compliance: ✅ or ❌
+- Total checks: <number>
+- Passed: <count>
+- Failed: <count>
+- Deferred: <count>
+
+## Checks (Failed/Deferred Only)
+
+- <ItemID> <ItemName>: ❌ Fail
+- <ItemID> <ItemName>: ⊘ Deferred (<explicit reason>)
 
 ## Issues
 
-[Failed items only with details, "None ✅" if all pass]
+[Failed or deferred items only with details, "No issues found" if none]
 
 1. CheckID: Item Name
    - File: path#L###
@@ -180,11 +179,13 @@ When using this skill with an agent, reference the following files via @-mention
 - Understand purpose, scope, background from PR/skill description
 - Review agent-skills.instructions.md requirements
 
-### Step 2: Structure Validation
+### Step 2: Confirm Review Boundary
 
-- Execute validation script: `bash scripts/validate.sh <SKILL.md>`
-- Verify output shows structural checks passed
-- Fix any structural issues (missing sections, YAML fields, directories) before proceeding
+- Focus on manual checks only:
+  - Structure clarity and instruction quality
+  - Design pattern compliance and specificity
+  - Deterministic workflow documentation quality
+- Do not execute validation tools in this review workflow
 
 ### Step 3: Systematic Manual Review
 
@@ -194,6 +195,7 @@ When using this skill with an agent, reference the following files via @-mention
 
 ### Step 4: Report Generation
 
-- Checks section: All 12 items displayed as ✅/❌
-- Issues section: Failed items only with full details ("None ✅" if all pass)
+- Checks Summary section: Total/Passed/Failed/Deferred counts
+- Checks (Failed/Deferred Only) section: only ❌ and ⊘ items
+- Issues section: Failed or deferred items only with full details ("No issues found" if none)
 - Output: Structured markdown format per Output Specification

@@ -280,7 +280,7 @@ function run_formatting_check {
 #######################################
 function run_security_scan {
     echo_section "Running security scan with trivy"
-    if ! execute_command "trivy fs . --format table"; then
+    if ! execute_command_string "trivy fs . --format table"; then
         log "ERROR" "trivy found security issues"
         SECURITY_FAILED=1
         EXIT_CODE=1
@@ -322,7 +322,7 @@ function process_terraform_directory {
     pushd "$dir" > /dev/null || return 1
 
     # Step 1: Initialize Terraform (backend disabled for validation)
-    if ! execute_command "terraform init -backend=false"; then
+    if ! execute_command_string "terraform init -backend=false"; then
         log "ERROR" "Failed to initialize Terraform for $dir"
         failed=1
     fi
@@ -338,7 +338,7 @@ function process_terraform_directory {
     # Step 4: Generate documentation (terraform-docs) if requested
     if [[ "$GENERATE_DOCS" == "true" ]]; then
         log "INFO" "Generating documentation (terraform-docs)"
-        if ! execute_command "terraform-docs markdown --output-file README.md ./"; then
+        if ! execute_command_string "terraform-docs markdown --output-file README.md ./"; then
             log "WARN" "Failed to generate documentation for $dir"
             DOCS_FAILED=1
             # We don't fail the whole script just for docs unless EXIT_CODE should be 1

@@ -19,7 +19,6 @@ Recommended usage:
 - Ensuring security and compliance standards
 - Validating best practices adherence
 - Architecture and design review
-- After automated checks (terraform fmt/validate/tflint/trivy) pass
 
 ## Input Specification
 
@@ -27,24 +26,24 @@ This skill expects:
 
 - Terraform files (required) - `.tf` files in the PR
 - PR description and linked issues (required) - Context for understanding changes
-- Automated check results (required) - terraform fmt, terraform validate, tflint, trivy status
 - Related documentation (optional) - README or Terraform documentation updates
 
 Format:
 
-- Terraform files: Valid HCL syntax
+- Terraform files: Target Terraform files under review
 - PR context: Markdown text describing purpose and changes
-- Check results: Pass/fail status from CI/CD pipeline or validation script
+- Optional validation context: Summary of validation outcomes when provided
 - Environment: Specify target environment (dev/staging/production)
 
 ## Output Specification
 
 **Output format (MANDATORY)** - Use this exact structure:
 
-- ## Checks section: List of failed review items only (ItemID ItemName: ❌ Fail)
-- ## Issues section: Numbered list of detected problems with details
-- Each issue includes: Item ID + Name, File path + line number, Problem description, Impact assessment, Specific recommendation with code example
-- If all checks pass: "No issues found"
+- ## Checks Summary section: Total/Passed/Failed/Deferred counts
+- ## Checks (Failed/Deferred Only) section: Show only ❌ and ⊘ items in checklist order
+- ## Issues section: Numbered list with full details for each failed or deferred item
+- Keep full evaluation data for all checks internally using fixed ItemIDs from reference/common-checklist.md
+- If there are no failed or deferred checks: output "No failed or deferred checks" in Checks and "No issues found" in Issues
 
 See reference/common-output-format.md for detailed format specification and examples.
 
@@ -54,9 +53,11 @@ See reference/common-output-format.md for detailed format specification and exam
 
 - This skill provides manual review guidance requiring human/AI judgment
 - Reviewer reads Terraform configurations and systematically applies review checklist items from [reference/common-checklist.md](reference/common-checklist.md)
-- **Prerequisites**: Automated validation must pass before manual review
-  - Run terraform-validation first to ensure fmt/validate/lint/security checks pass
-- **When to use**: After automated checks pass, for design decisions, security patterns, and best practices requiring judgment
+- **Boundary**:
+  - Focus only on checks that require human/AI judgment
+  - Treat syntax/lint/security automation as out of scope for this review skill
+  - Do not run terraform-validation from this review skill
+- **When to use**: For design decisions, security patterns, and best practices requiring judgment
 
 **What this skill does**:
 
@@ -77,6 +78,7 @@ What this skill does NOT do (Out of Scope):
 - Check syntax errors (use terraform validate for that)
 - Run linting (use tflint for that)
 - Perform security scanning (use trivy config for that)
+- Execute terraform fmt/validate/tflint/trivy commands from this review skill
 - Execute terraform plan or apply
 - Modify Terraform files automatically
 - Approve or merge pull requests
@@ -87,8 +89,7 @@ What this skill does NOT do (Out of Scope):
 
 Prerequisites:
 
-- Automated checks (terraform fmt, terraform validate, tflint, trivy config) must pass before manual review
-- Terraform files must have valid HCL syntax
+- PR context and Terraform files are available
 - PR description and context must be available
 - Reviewer must have access to reference documentation
 - AWS-based Terraform (other providers may need adjustment)
@@ -105,9 +106,8 @@ Limitations:
 
 Error handling:
 
-- Automated checks failed: Request fixes before starting manual review, output message listing failed checks
 - Missing PR context: Request PR description and linked issues, cannot proceed without context
-- Invalid Terraform syntax: Refer to terraform validate or tflint errors, do not proceed with manual review
+- Invalid Terraform syntax: Record as validation concern and continue reviewing judgment-based items when possible
 - Inaccessible reference files: Output warning, proceed with available knowledge only
 - Ambiguous design decision: Flag as potential issue with recommendation to clarify intent or add comments
 
@@ -129,7 +129,6 @@ When using this skill with an agent, reference the following files via @-mention
 
 **Category Details**:
 
-- **category-ci-lint.md** - tflint configuration checks detailed guide
 - **category-compliance.md** - Compliance patterns detailed guide
 - **category-cost.md** - Cost optimization guide
 - **category-data-sources.md** - Data source design guide
@@ -160,16 +159,15 @@ Before starting the review:
 - Check if this is new infrastructure or modification
 - Verify which environment (dev/staging/production) is affected
 
-### Step 2: Automated Checks First
+### Step 2: Confirm Review Boundary
 
-Verify automated checks have passed:
+Focus on manual checks only:
 
-- `terraform fmt -check`
-- `terraform validate`
-- `tflint`
-- `trivy config`
+- Design and architecture decisions
+- Security and policy patterns requiring judgment
+- Maintainability and operability concerns
 
-If automated checks fail, request fixes before manual review.
+Do not execute validation tools in this review workflow.
 
 ### Step 3: Systematic Review
 
@@ -177,7 +175,7 @@ Review categories systematically based on the changes. Use the reference documen
 
 ### Step 4: Report Issues
 
-Report issues following the Output Format below, including only failed checks with specific recommendations.
+Report issues following the Output Format below, using Checks Summary + Failed/Deferred-only Checks + full Issues details.
 
 ## Output Format
 
@@ -186,13 +184,13 @@ Review results must be output in structured format:
 ### Output Elements
 
 1. **Checks** (Review items checklist)
-   - Display only failed review items
-   - Format: `ItemID ItemName: ❌ Fail`
-   - Purpose: Highlight issues requiring attention
-   - If all checks pass, output "No issues found"
+   - Display `Checks Summary` with Total/Passed/Failed/Deferred counts
+   - Display `Checks (Failed/Deferred Only)` for ❌ and ⊘ items only
+   - Keep ItemIDs fixed and sorted in checklist order
+   - If there are no failed or deferred checks, output "No failed or deferred checks"
 
 2. **Issues** (Detected problems)
-   - Display details for each failed item
+   - Display details for each failed or deferred item
    - Numbered list format for each problem
    - Each issue includes:
      - Item ID + Item Name
@@ -206,13 +204,20 @@ Review results must be output in structured format:
 ```markdown
 # Terraform Code Review Result
 
-## Checks
+## Checks Summary
+
+- Total checks: 42
+- Passed: 41
+- Failed: 1
+- Deferred: 0
+
+## Checks (Failed/Deferred Only)
 
 - G-02 Secret Hardcoding Prohibition: ❌ Fail
 
 ## Issues
 
-**No issues found** (if all checks pass)
+**No issues found** (if all checks pass and there are no deferred checks)
 
 **OR**
 
@@ -243,7 +248,6 @@ Review categories are organized by domain. Claude will read the relevant categor
 **Events & Observability**: Monitoring, alerting, logging → [reference/category-events.md](reference/category-events.md)
 **Versioning**: Immutable versioning strategies → [reference/category-versioning.md](reference/category-versioning.md)
 **Naming & Documentation**: Naming conventions, comments → [reference/category-naming.md](reference/category-naming.md)
-**CI & Lint**: Pre-commit hooks, CI/CD integration → [reference/category-ci-lint.md](reference/category-ci-lint.md)
 **Patterns**: Design patterns and anti-patterns → [reference/category-patterns.md](reference/category-patterns.md)
 **State & Backend**: State management, backend configuration → [reference/category-state.md](reference/category-state.md)
 **Compliance & Policy**: OPA policies, compliance standards → [reference/category-compliance.md](reference/category-compliance.md)

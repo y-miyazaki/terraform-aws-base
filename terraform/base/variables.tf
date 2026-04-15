@@ -1,5 +1,24 @@
-variable "use_control_tower" {
-  type = bool
+variable "control_tower" {
+  description = <<-EOT
+    Control Tower and organization-managed security services configuration.
+
+    Use this object to describe whether Control Tower is enabled and which
+    services are centrally managed outside this base stack.
+
+    When managed_services.<service> is omitted, it falls back to is_enabled.
+  EOT
+  type = object({
+    is_enabled = bool
+    managed_services = optional(object({
+      cloudtrail           = optional(bool)
+      config               = optional(bool)
+      guardduty            = optional(bool)
+      iam_password_expired = optional(bool)
+      securityhub          = optional(bool)
+    }))
+  })
+  default  = null
+  nullable = true
 }
 variable "tags" {
   type = map(any)

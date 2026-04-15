@@ -579,7 +579,9 @@ organizations_policy = {
           "support:*",
           # Add other global services as needed
         ]
-        Resource = "*"
+        Resource = [
+          "*",
+        ]
         Condition = {
           StringNotEquals = {
             "aws:RequestedRegion" = [
@@ -756,7 +758,9 @@ organizations_policy = {
           "support:*",
           # Add other global services as needed
         ]
-        Resource = "*"
+        Resource = [
+"*",
+]
         Condition = {
           StringNotEquals = {
             "aws:RequestedRegion" = [

@@ -12,6 +12,10 @@ data "aws_iam_policy_document" "this" {
   statement {
     sid    = "denyInsecureTransport"
     effect = "Deny"
+    principals {
+      type        = "*"
+      identifiers = ["*"]
+    }
     actions = [
       "s3:*",
     ]
@@ -19,10 +23,6 @@ data "aws_iam_policy_document" "this" {
       "arn:aws:s3:::${var.bucket}",
       "arn:aws:s3:::${var.bucket}/*",
     ]
-    principals {
-      type        = "*"
-      identifiers = ["*"]
-    }
     condition {
       test     = "Bool"
       variable = "aws:SecureTransport"

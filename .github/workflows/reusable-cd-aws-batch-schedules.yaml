@@ -9,22 +9,22 @@ on:
         description: "SHA256 checksum for absc release tarball"
         required: false
         type: string
-        # To get checksum: curl -sL "https://github.com/y-miyazaki/absc/releases/download/v1.0.7/absc-linux-amd64.tar.gz" | sha256sum | awk '{print $1}'
-        default: "462f159dccb4d150cb39ed16b98752a3f1c1ff76b8ba0a4d86522aa8e698d12e" # pragma: allowlist secret
+        # To get checksum: curl -sL "https://github.com/y-miyazaki/absc/releases/download/v1.0.14/absc-linux-amd64.tar.gz" | sha256sum | awk '{print $1}'
+        default: "e7dd5a7031bc6097e1ed55f18356c0b037e97a982f3a28cb454e84cb02bbbc0d" # pragma: allowlist secret
       absc_version:
-        description: "absc version to use (e.g. v1.0.7)"
+        description: "absc version to use (e.g. v1.0.14)"
         required: false
         type: string
-        default: "v1.0.7"
+        default: "v1.0.14"
       environment:
         description: "Target environment (dev, qa, stg, prd, etc.)"
         required: true
         type: string
-      lookback_hours:
-        description: "Execution history lookback hours"
+      days_ago:
+        description: "Calendar day offset (0=today, 1=yesterday)"
         required: false
         type: number
-        default: 24
+        default: 1
       max_concurrency:
         description: "Max concurrent resource collectors"
         required: false
@@ -64,7 +64,7 @@ env:
   ABSC_CHECKSUM: ${{ inputs.absc_checksum }}
   ABSC_VERSION: ${{ inputs.absc_version }}
   ENVIRONMENT: ${{ inputs.environment }}
-  LOOKBACK_HOURS: ${{ inputs.lookback_hours }}
+  DAYS_AGO: ${{ inputs.days_ago }}
   MAX_CONCURRENCY: ${{ inputs.max_concurrency }}
   MAX_RESULTS: ${{ inputs.max_results }}
   OUTPUT_DIR: ${{ inputs.output_dir }}
@@ -93,7 +93,7 @@ jobs:
           persist-credentials: false
 
       - name: Setup AWS Credentials
-        uses: aws-actions/configure-aws-credentials@8df5847569e6427dd6c4fb1cf565c83acfa8afa7 # v6.0.0
+        uses: aws-actions/configure-aws-credentials@ec61189d14ec14c8efccab744f656cffd0e33f37 # v6.1.0
         with:
           aws-region: ${{ secrets.AWS_REGION }}
           role-to-assume: ${{ secrets.AWS_IAM_ROLE_ARN }}
@@ -135,7 +135,7 @@ jobs:
         run: |
           set -euo pipefail
 
-          CMD=(absc -D "$OUTDIR" --lookback-hours "$LOOKBACK_HOURS" --max-concurrency "$MAX_CONCURRENCY" --max-results "$MAX_RESULTS" --timezone "$TIMEZONE")
+          CMD=(absc -D "$OUTDIR" --days-ago "$DAYS_AGO" --max-concurrency "$MAX_CONCURRENCY" --max-results "$MAX_RESULTS" --timezone "$TIMEZONE")
           if [[ -n "$REGION" ]]; then
             CMD+=( -r "$REGION" )
           fi
@@ -183,7 +183,7 @@ jobs:
           params: |
             absc_version: ${{ inputs.absc_version }}
             environment: ${{ inputs.environment }}
-            lookback_hours: ${{ inputs.lookback_hours }}
+            days_ago: ${{ inputs.days_ago }}
             max_concurrency: ${{ inputs.max_concurrency }}
             max_results: ${{ inputs.max_results }}
             output_dir: ${{ inputs.output_dir }}

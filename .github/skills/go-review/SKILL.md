@@ -14,7 +14,6 @@ This skill provides comprehensive guidance for reviewing Go code to ensure corre
 
 Recommended usage:
 
-- After automated checks (go fmt, go vet, golangci-lint, go test, govulncheck) pass
 - During pull request code review process
 - Before merging Go code changes
 - When evaluating design decisions or architecture patterns
@@ -27,23 +26,23 @@ This skill expects:
 
 - Go source code files (required) - `.go` files in the PR
 - PR description and linked issues (required) - Context for understanding changes
-- Automated check results (required) - go fmt, go vet, golangci-lint, go test, govulncheck status
 - Related tests and documentation (optional) - Test files and README updates
 
 Format:
 
-- Go files: Valid Go syntax
+- Go files: Target Go files under review
 - PR context: Markdown text describing purpose and changes
-- Check results: Pass/fail status from CI/CD pipeline or validation script
+- Optional validation context: Summary of validation outcomes when provided
 
 ## Output Specification
 
 **Output format (MANDATORY)** - Use this exact structure:
 
-- ## Checks section: List of failed review items only (ItemID ItemName: ❌ Fail)
-- ## Issues section: Numbered list of detected problems with details
-- Each issue includes: Item ID + Name, File path + line number, Problem description, Impact assessment, Specific recommendation with code example
-- If all checks pass: "No issues found"
+- ## Checks Summary section: Total/Passed/Failed/Deferred counts
+- ## Checks (Failed/Deferred Only) section: Show only ❌ and ⊘ items in checklist order
+- ## Issues section: Numbered list with full details for each failed or deferred item
+- Keep full evaluation data for all checks internally using fixed ItemIDs from reference/common-checklist.md
+- If there are no failed or deferred checks: output "No failed or deferred checks" in Checks and "No issues found" in Issues
 
 See reference/common-output-format.md for detailed format specification and examples.
 
@@ -53,9 +52,11 @@ See reference/common-output-format.md for detailed format specification and exam
 
 - This skill provides manual review guidance requiring human/AI judgment
 - Reviewer reads Go source files and systematically applies review checklist items from [reference/common-checklist.md](reference/common-checklist.md)
-- **Prerequisites**: Automated validation must pass before manual review
-  - Run go-validation first to ensure fmt/vet/lint/test/security checks pass
-- **When to use**: After automated checks pass, for design decisions, concurrency patterns, and best practices requiring judgment
+- **Boundary**:
+  - Focus only on checks that require human/AI judgment
+  - Treat formatting/lint/test/security automation as out of scope for this review skill
+  - Do not run go-validation from this review skill
+- **When to use**: For design decisions, concurrency patterns, and best practices requiring judgment
 
 **What this skill does**:
 
@@ -74,6 +75,7 @@ What this skill does NOT do (Out of Scope):
 - Run linters (use golangci-lint for that)
 - Execute tests (use go test for that)
 - Check for vulnerabilities (use govulncheck for that)
+- Execute go fmt/go vet/golangci-lint/go test/govulncheck commands from this review skill
 - Modify code files automatically
 - Approve or merge pull requests
 - Review non-Go files in the PR
@@ -83,8 +85,7 @@ What this skill does NOT do (Out of Scope):
 
 Prerequisites:
 
-- Automated checks (go fmt, go vet, golangci-lint, go test, govulncheck) must pass before manual review
-- Go files must have valid syntax
+- PR context and Go files are available
 - PR description and context must be available
 - Reviewer must have access to reference documentation
 
@@ -100,9 +101,8 @@ Limitations:
 
 Error handling:
 
-- Automated checks failed: Request fixes before starting manual review, output message listing failed checks
 - Missing PR context: Request PR description and linked issues, cannot proceed without context
-- Invalid Go syntax: Refer to go fmt/vet errors, do not proceed with manual review
+- Invalid Go syntax: Record as validation concern and continue reviewing judgment-based items when possible
 - Inaccessible reference files: Output warning, proceed with available knowledge only
 - Ambiguous design pattern: Flag as potential issue with recommendation to clarify intent or add comments
 
@@ -148,17 +148,15 @@ Before starting the review:
 - Check if this is new feature, bug fix, or refactoring
 - Review related tests and documentation updates
 
-### Step 2: Automated Checks First
+### Step 2: Confirm Review Boundary
 
-Verify automated validation has passed:
+Focus on manual checks only:
 
-- `go fmt`
-- `go vet`
-- `golangci-lint`
-- `go test -race -cover`
-- `govulncheck`
+- Architecture and API design decisions
+- Concurrency and cancellation safety patterns
+- Error-handling quality and maintainability
 
-If automated checks fail, request fixes before manual review.
+Do not execute validation tools in this review workflow.
 
 ### Step 3: Systematic Review
 
@@ -166,7 +164,7 @@ Review categories systematically based on the changes. Use the reference documen
 
 ### Step 4: Report Issues
 
-Report issues following the Output Format below, including only failed checks with specific recommendations.
+Report issues following the Output Format below, using Checks Summary + Failed/Deferred-only Checks + full Issues details.
 
 ## Output Format
 
@@ -175,13 +173,13 @@ Review results must be output in structured format:
 ### Output Elements
 
 1. **Checks** (Review items checklist)
-   - Display only failed review items
-   - Format: `ItemID ItemName: ❌ Fail`
-   - Purpose: Highlight issues requiring attention
-   - If all checks pass, output "No issues found"
+   - Display `Checks Summary` with Total/Passed/Failed/Deferred counts
+   - Display `Checks (Failed/Deferred Only)` for ❌ and ⊘ items only
+   - Keep ItemIDs fixed and sorted in checklist order
+   - If there are no failed or deferred checks, output "No failed or deferred checks"
 
 2. **Issues** (Detected problems)
-   - Display details for each failed item
+   - Display details for each failed or deferred item
    - Numbered list format for each problem
    - Each issue includes:
      - Item ID + Item Name
@@ -195,13 +193,21 @@ Review results must be output in structured format:
 ```markdown
 # Go Code Review Result
 
-## Checks
+## Checks Summary
+
+- Total checks: 34
+- Passed: 32
+- Failed: 1
+- Deferred: 1
+
+## Checks (Failed/Deferred Only)
 
 - ERR-01 Error Wrapping: ❌ Fail
+- CTX-02 Context Timeout Handling: ⊘ Deferred (awaiting API timeout policy decision)
 
 ## Issues
 
-**No issues found** (if all checks pass)
+**No issues found** (if all checks pass and there are no deferred checks)
 
 **OR**
 

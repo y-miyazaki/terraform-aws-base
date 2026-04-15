@@ -14,7 +14,6 @@ This skill provides comprehensive guidance for reviewing Shell Script code to en
 
 Recommended usage:
 
-- After automated checks (bash -n, shellcheck) pass
 - During pull request code review process
 - Before merging shell script changes
 - When evaluating security implications of script modifications
@@ -27,25 +26,25 @@ This skill expects:
 
 - Shell script file(s) (required) - `.sh` files in the PR
 - PR description and linked issues (required) - Context for understanding changes
-- Automated check results (required) - bash -n and shellcheck status
 - Common library files (optional) - lib/all.sh for project-specific patterns
 - Related documentation (optional) - README or script documentation updates
 
 Format:
 
-- Shell scripts: Valid bash syntax with `.sh` extension
+- Shell scripts: Target shell script files with `.sh` extension
 - PR context: Markdown text describing purpose and changes
-- Check results: Pass/fail status from CI/CD pipeline or validation script
+- Optional validation context: Summary of validation outcomes when provided
 - Common library: Bash source file with shared functions
 
 ## Output Specification
 
 **Output format (MANDATORY)** - Use this exact structure:
 
-- ## Checks section: List of failed review items only (ItemID ItemName: ❌ Fail)
-- ## Issues section: Numbered list of detected problems with details
-- Each issue includes: Item ID + Name, File path + line number, Problem description, Impact assessment, Specific recommendation with code example
-- If all checks pass: "No issues found"
+- ## Checks Summary section: Total/Passed/Failed/Deferred counts
+- ## Checks (Failed/Deferred Only) section: Show only ❌ and ⊘ items in checklist order
+- ## Issues section: Numbered list with full details for each failed or deferred item
+- Keep full evaluation data for all checks internally using fixed ItemIDs from reference/common-checklist.md
+- If there are no failed or deferred checks: output "No failed or deferred checks" in Checks and "No issues found" in Issues
 
 See reference/common-output-format.md for detailed format specification and examples.
 
@@ -55,9 +54,11 @@ See reference/common-output-format.md for detailed format specification and exam
 
 - This skill provides manual review guidance requiring human/AI judgment
 - Reviewer reads shell scripts and systematically applies review checklist items from [reference/common-checklist.md](reference/common-checklist.md)
-- **Prerequisites**: Automated validation must pass before manual review
-  - Run shell-script-validation first to ensure syntax/shellcheck checks pass
-- **When to use**: After automated checks pass, for design decisions, security patterns, and best practices requiring judgment
+- **Boundary**:
+  - Focus only on checks that require human/AI judgment
+  - Treat syntax/static-analysis automation as out of scope for this review skill
+  - Do not run shell-script-validation from this review skill
+- **When to use**: For design decisions, security patterns, and best practices requiring judgment
 
 **What this skill does**:
 
@@ -74,6 +75,7 @@ What this skill does NOT do (Out of Scope):
 
 - Check syntax errors (use bash -n for that)
 - Run static analysis (use shellcheck for that)
+- Execute bash -n/shellcheck commands from this review skill
 - Execute scripts for testing
 - Modify script files automatically
 - Approve or merge pull requests
@@ -84,8 +86,7 @@ What this skill does NOT do (Out of Scope):
 
 Prerequisites:
 
-- Automated checks (bash -n, shellcheck) must pass before manual review
-- Shell scripts must have valid bash syntax
+- PR context and shell script files are available
 - PR description and context must be available
 - Reviewer must have access to reference documentation
 - Common library (lib/all.sh) should be available for pattern validation
@@ -102,9 +103,8 @@ Limitations:
 
 Error handling:
 
-- Automated checks failed: Request fixes before starting manual review, output message listing failed checks
 - Missing PR context: Request PR description and linked issues, cannot proceed without context
-- Invalid bash syntax: Refer to bash -n or shellcheck errors, do not proceed with manual review
+- Invalid bash syntax: Record as validation concern and continue reviewing judgment-based items when possible
 - Inaccessible reference files: Output warning, proceed with available knowledge only
 - Ambiguous security pattern: Flag as potential issue with recommendation to clarify intent or add validation
 
@@ -148,14 +148,15 @@ Before starting the review:
 - Check if this is new script, enhancement, or bug fix
 - Verify related documentation updates
 
-### Step 2: Automated Checks First
+### Step 2: Confirm Review Boundary
 
-Verify automated validation has passed:
+Focus on manual checks only:
 
-- `bash -n` (syntax check)
-- `shellcheck` (static analysis)
+- Security patterns and misuse risks
+- Error-handling design and script maintainability
+- Project-specific conventions and architecture consistency
 
-If automated checks fail, request fixes before manual review.
+Do not execute validation tools in this review workflow.
 
 ### Step 3: Systematic Review
 
@@ -163,7 +164,7 @@ Review categories systematically based on the changes. Use the reference documen
 
 ### Step 4: Report Issues
 
-Report issues following the Output Format below, including only failed checks with specific recommendations.
+Report issues following the Output Format below, using Checks Summary + Failed/Deferred-only Checks + full Issues details.
 
 ## Output Format
 
@@ -172,13 +173,13 @@ Review results must be output in structured format:
 ### Output Elements
 
 1. **Checks** (Review items checklist)
-   - Display only failed review items
-   - Format: `ItemID ItemName: ❌ Fail`
-   - Purpose: Highlight issues requiring attention
-   - If all checks pass, output "No issues found"
+   - Display `Checks Summary` with Total/Passed/Failed/Deferred counts
+   - Display `Checks (Failed/Deferred Only)` for ❌ and ⊘ items only
+   - Keep ItemIDs fixed and sorted in checklist order
+   - If there are no failed or deferred checks, output "No failed or deferred checks"
 
 2. **Issues** (Detected problems)
-   - Display details for each failed item
+   - Display details for each failed or deferred item
    - Numbered list format for each problem
    - Each issue includes:
      - Item ID + Item Name
@@ -192,13 +193,20 @@ Review results must be output in structured format:
 ```markdown
 # Shell Script Code Review Result
 
-## Checks
+## Checks Summary
+
+- Total checks: 30
+- Passed: 29
+- Failed: 1
+- Deferred: 0
+
+## Checks (Failed/Deferred Only)
 
 - SEC-01 Input Validation: ❌ Fail
 
 ## Issues
 
-**No issues found** (if all checks pass)
+**No issues found** (if all checks pass and there are no deferred checks)
 
 **OR**
 

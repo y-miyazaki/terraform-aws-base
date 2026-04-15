@@ -30,7 +30,7 @@ If you need to adjust the parameters, you can do so by yourself by searching TOD
     - [Available Override Functions](#available-override-functions)
     - [Benefits of Centralized Configuration](#benefits-of-centralized-configuration-1)
   - [is\_enabled](#is_enabled)
-  - [use\_control\_tower](#use_control_tower)
+  - [control\_tower](#control_tower)
   - [Environment-Specific Configuration Examples](#environment-specific-configuration-examples)
     - [Development Environment](#development-environment)
     - [Production Environment](#production-environment)
@@ -1129,7 +1129,7 @@ compute_optimizer = {
 # GuardDuty
 # Amazon GuardDuty is a threat detection service that continuously monitors your AWS accounts and workloads for malicious activity and
 # delivers detailed security findings for visibility and remediation.
-# Notice: This option is automatically disabled if use_control_tower=true.
+# Notice: This option is automatically disabled if control_tower.managed_services.guardduty=true.
 # COST CONSIDERATION: ~$1.00 per GB of logs analyzed
 #--------------------------------------------------------------
 guardduty = {
@@ -1173,7 +1173,7 @@ trusted_advisor = {
 #--------------------------------------------------------------
 # IAM password expired
 # A list of target users will be automatically notified in Slack 10 days before the IAM password expires.
-# Notice: This option is automatically disabled if use_control_tower=true.
+# Notice: This option is automatically disabled if control_tower.managed_services.iam_password_expired=true.
 #--------------------------------------------------------------
 iam_password_expired = {
   # TODO: need to set is_enabled for settings of IAM password expired.
@@ -1213,7 +1213,7 @@ security_athena = {
 ```terraform
 #--------------------------------------------------------------
 # Security:CloudTrail
-# Notice: This option is automatically disabled if use_control_tower=true.
+# Notice: This option is automatically disabled if control_tower.managed_services.cloudtrail=true.
 #--------------------------------------------------------------
 security_cloudtrail = {
   # TODO: need to set is_enabled for settings of CloudTrail.
@@ -1225,7 +1225,7 @@ security_cloudtrail = {
 ```terraform
 #--------------------------------------------------------------
 # Security:AWS Config
-# Notice: This option is automatically disabled if use_control_tower=true.
+# Notice: This option is automatically disabled if control_tower.managed_services.config=true.
 #--------------------------------------------------------------
 security_config = {
   # TODO: need to set is_enabled for settings of AWS Config.
@@ -1237,7 +1237,7 @@ security_config = {
 ```terraform
 #--------------------------------------------------------------
 # Security:AWS Config(us-east-1(CloudFront))
-# Notice: This option is automatically disabled if use_control_tower=true.
+# Notice: This option is automatically disabled if control_tower.managed_services.config=true.
 #--------------------------------------------------------------
 security_config_us_east_1 = {
   # TODO: need to set is_enabled for settings of AWS Config.
@@ -1286,7 +1286,7 @@ security_ebs = {
 # Amazon GuardDuty provides intelligent threat detection for your AWS environment.
 # Continuously monitors for malicious activity and unauthorized behavior using machine learning.
 # Detects reconnaissance, instance compromise, account compromise, and bucket compromise.
-# Notice: This option is automatically disabled if use_control_tower=true.
+# Notice: This option is automatically disabled if control_tower.managed_services.guardduty=true.
 #--------------------------------------------------------------
 security_guardduty = {
   # TODO: need to set is_enabled for settings of GuardDuty.
@@ -1329,7 +1329,7 @@ security_s3 = {
 # AWS Security Hub provides a comprehensive view of security alerts and compliance status.
 # Aggregates findings from GuardDuty, Inspector, Macie, IAM Access Analyzer, and AWS Config.
 # Enables security standards compliance checks (CIS AWS Foundations, PCI DSS, AWS Foundational Security Best Practices).
-# Notice: This option is automatically disabled if use_control_tower=true.
+# Notice: This option is automatically disabled if control_tower.managed_services.securityhub=true.
 #--------------------------------------------------------------
 security_securityhub = {
   # TODO: need to set is_enabled for settings of SecurityHub.
@@ -1350,25 +1350,34 @@ security_ssm_automation = {
   is_enabled = true
 ```
 
-### use_control_tower
+### control_tower
 
-If you are using AWS Control Tower to manage your AWS Organization, you should set this option to `true`.
+Use this object when AWS Control Tower and organization-managed security services are part of your environment design.
 
-When enabled, several security services will be automatically disabled as they are already managed by Control Tower.
+`control_tower.is_enabled` describes whether Control Tower is enabled in the environment.
+`control_tower.managed_services` controls which services are treated as centrally managed outside this base stack. When a service flag is omitted, it falls back to `control_tower.is_enabled`.
 
 ```terraform
 #--------------------------------------------------------------
-# Check use Control Tower
-# If you are using Control Tower, set use_control_tower to true. If you set it to true, some options will be ignored.
-# CRITICAL SETTING: This affects which security services are automatically disabled
-# AWS Control Tower provides automated setup of a multi-account AWS environment with best practices.
-# When enabled, services like GuardDuty, SecurityHub, Config, and CloudTrail are managed by Control Tower.
+# Control Tower and organization-managed security services
+# Use this object to define whether Control Tower is enabled and which
+# services are centrally managed outside this base stack.
+# If managed_services.<service> is omitted, it falls back to is_enabled.
 #--------------------------------------------------------------
-# TODO: need to change use Control Tower.
-use_control_tower = false
+# TODO: need to change Control Tower settings.
+control_tower = {
+  is_enabled = false
+  managed_services = {
+    cloudtrail           = false
+    config               = false
+    guardduty            = false
+    iam_password_expired = false
+    securityhub          = false
+  }
+}
 ```
 
-Setting `use_control_tower=true` will automatically disable the following services to avoid conflicts:
+By default, setting `control_tower.is_enabled = true` will treat the following services as organization-managed unless you override them individually:
 
 - CloudTrail
 - GuardDuty
@@ -1376,14 +1385,16 @@ Setting `use_control_tower=true` will automatically disable the following servic
 - AWS Config (both regional and us-east-1)
 - IAM password expiration notifications
 
-This helps prevent duplicate configurations and potential conflicts between your Terraform-managed resources and those managed by AWS Control Tower.
+This helps prevent duplicate configurations and potential conflicts between Terraform-managed resources and centrally managed services, while still allowing service-by-service overrides during migration.
 
 ### Environment-Specific Configuration Examples
 
 #### Development Environment
 ```terraform
 # Development environment - minimal security, cost-effective settings
-use_control_tower = false
+control_tower = {
+  is_enabled = false
+}
 
 # Enable only essential services
 guardduty = {
@@ -1411,7 +1422,9 @@ budgets = {
 #### Production Environment
 ```terraform
 # Production environment - full security and compliance
-use_control_tower = true  # If using Control Tower
+control_tower = {
+  is_enabled = true
+}  # If using Control Tower
 
 # Enable all security services
 guardduty = {
@@ -1439,7 +1452,9 @@ budgets = {
 #### Staging Environment
 ```terraform
 # Staging environment - moderate security, testing-focused
-use_control_tower = false
+control_tower = {
+  is_enabled = false
+}
 
 # Selective security services
 guardduty = {
@@ -1466,31 +1481,31 @@ budgets = {
 
 ## Configuration Validation
 
-| Category                        | Item                                                                                    | Status |
-| ------------------------------- | --------------------------------------------------------------------------------------- | ------ |
-| Security Services Validation    | If `use_control_tower = true`, verify that conflicting services are disabled            | [ ]    |
-| Security Services Validation    | `security_config.is_enabled = false` (when using Control Tower)                         | [ ]    |
-| Security Services Validation    | `security_cloudtrail.is_enabled = false` (when using Control Tower)                     | [ ]    |
-| Security Services Validation    | `guardduty.is_enabled = false` (when using Control Tower)                               | [ ]    |
-| Security Services Validation    | `security_securityhub.is_enabled = false` (when using Control Tower)                    | [ ]    |
-| Security Services Validation    | If `use_control_tower = false`, consider enabling security services based on your needs | [ ]    |
-| Security Services Validation    | Verify IAM roles and policies are correctly configured for enabled services             | [ ]    |
-| Budget Validation               | Set appropriate `limit_amount` based on your environment                                | [ ]    |
-| Budget Validation               | Development: $50-200/month                                                              | [ ]    |
-| Budget Validation               | Staging: $200-500/month                                                                 | [ ]    |
-| Budget Validation               | Production: $500+/month                                                                 | [ ]    |
-| Budget Validation               | Configure at least one email address for budget notifications                           | [ ]    |
-| Budget Validation               | Test budget alerts with a low threshold first                                           | [ ]    |
-| Environment-Specific Validation | Development: Minimal services enabled, cost-optimized settings                          | [ ]    |
-| Environment-Specific Validation | Staging: Moderate security, testing-friendly configuration                              | [ ]    |
-| Environment-Specific Validation | Production: Full security, comprehensive monitoring, strict thresholds                  | [ ]    |
-| Cost Optimization Validation    | Disable unused services to reduce costs                                                 | [ ]    |
-| Cost Optimization Validation    | Set appropriate retention periods for logs                                              | [ ]    |
-| Cost Optimization Validation    | Configure monitoring intervals based on criticality                                     | [ ]    |
-| Cost Optimization Validation    | Review KMS key rotation settings                                                        | [ ]    |
-| Slack Integration Validation    | Verify Slack OAuth token is valid and has required permissions                          | [ ]    |
-| Slack Integration Validation    | Confirm channel ID is correct and bot has access                                        | [ ]    |
-| Slack Integration Validation    | Test notifications with a simple alert first                                            | [ ]    |
+| Category                        | Item                                                                                                    | Status |
+| ------------------------------- | ------------------------------------------------------------------------------------------------------- | ------ |
+| Security Services Validation    | If `control_tower.is_enabled = true`, verify that centrally managed services are configured as intended | [ ]    |
+| Security Services Validation    | `security_config.is_enabled = false` (when using Control Tower)                                         | [ ]    |
+| Security Services Validation    | `security_cloudtrail.is_enabled = false` (when using Control Tower)                                     | [ ]    |
+| Security Services Validation    | `guardduty.is_enabled = false` (when using Control Tower)                                               | [ ]    |
+| Security Services Validation    | `security_securityhub.is_enabled = false` (when using Control Tower)                                    | [ ]    |
+| Security Services Validation    | If `control_tower.is_enabled = false`, consider enabling security services based on your needs          | [ ]    |
+| Security Services Validation    | Verify IAM roles and policies are correctly configured for enabled services                             | [ ]    |
+| Budget Validation               | Set appropriate `limit_amount` based on your environment                                                | [ ]    |
+| Budget Validation               | Development: $50-200/month                                                                              | [ ]    |
+| Budget Validation               | Staging: $200-500/month                                                                                 | [ ]    |
+| Budget Validation               | Production: $500+/month                                                                                 | [ ]    |
+| Budget Validation               | Configure at least one email address for budget notifications                                           | [ ]    |
+| Budget Validation               | Test budget alerts with a low threshold first                                                           | [ ]    |
+| Environment-Specific Validation | Development: Minimal services enabled, cost-optimized settings                                          | [ ]    |
+| Environment-Specific Validation | Staging: Moderate security, testing-friendly configuration                                              | [ ]    |
+| Environment-Specific Validation | Production: Full security, comprehensive monitoring, strict thresholds                                  | [ ]    |
+| Cost Optimization Validation    | Disable unused services to reduce costs                                                                 | [ ]    |
+| Cost Optimization Validation    | Set appropriate retention periods for logs                                                              | [ ]    |
+| Cost Optimization Validation    | Configure monitoring intervals based on criticality                                                     | [ ]    |
+| Cost Optimization Validation    | Review KMS key rotation settings                                                                        | [ ]    |
+| Slack Integration Validation    | Verify Slack OAuth token is valid and has required permissions                                          | [ ]    |
+| Slack Integration Validation    | Confirm channel ID is correct and bot has access                                                        | [ ]    |
+| Slack Integration Validation    | Test notifications with a simple alert first                                                            | [ ]    |
 
 ## Related Documents
 

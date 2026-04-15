@@ -446,6 +446,199 @@ function generate_body_sections {
 }
 
 #######################################
+# extract_h2_section: Extract an H2 section from markdown text
+#
+# Description:
+#   Extracts a section starting at a specific H2 heading and ending
+#   before the next H2 heading. Handles CRLF line endings.
+#
+# Arguments:
+#   $1 - Markdown text
+#   $2 - H2 heading text (for example: "## Changes")
+#
+# Returns:
+#   Outputs the matched section or empty output if not found
+#
+# Usage:
+#   section=$(extract_h2_section "$markdown" "## Changes")
+#
+#######################################
+function extract_h2_section {
+    local markdown_text="$1"
+    local heading="$2"
+
+    echo "$markdown_text" | awk -v target_heading="$heading" '
+        {
+            line = $0
+            sub(/\r$/, "", line)
+        }
+        line == target_heading {
+            in_section = 1
+            print line
+            next
+        }
+        in_section == 1 && line ~ /^##[[:space:]]+/ {
+            exit
+        }
+        in_section == 1 {
+            print line
+        }
+    '
+}
+
+#######################################
+# extract_overview_template_body: Extract template body under # Overview
+#
+# Description:
+#   Extracts all lines after '# Overview' until the first H2 heading.
+#   Used to preserve guidance comments from PULL_REQUEST_TEMPLATE.md.
+#
+# Arguments:
+#   $1 - Template markdown text
+#
+# Returns:
+#   Outputs extracted body text
+#
+# Usage:
+#   body=$(extract_overview_template_body "$template_body")
+#
+#######################################
+function extract_overview_template_body {
+    local markdown_text="$1"
+
+    echo "$markdown_text" | awk '
+        {
+            line = $0
+            sub(/\r$/, "", line)
+        }
+        line == "# Overview" {
+            in_overview = 1
+            next
+        }
+        in_overview == 1 && line ~ /^##[[:space:]]+/ {
+            exit
+        }
+        in_overview == 1 {
+            print line
+        }
+    '
+}
+
+#######################################
+# section_body_without_heading: Remove first heading line from section
+#
+# Description:
+#   Removes the first line from section text and keeps remaining content.
+#
+# Arguments:
+#   $1 - Section markdown text
+#
+# Returns:
+#   Outputs section body without heading
+#
+# Usage:
+#   body=$(section_body_without_heading "$section")
+#
+#######################################
+function section_body_without_heading {
+    local section_text="$1"
+
+    echo "$section_text" | awk '
+        NR == 1 { next }
+        {
+            line = $0
+            sub(/\r$/, "", line)
+            print line
+        }
+    '
+}
+
+#######################################
+# section_has_visible_content: Check if section has non-comment content
+#
+# Description:
+#   Returns success when a section contains visible markdown content
+#   other than heading, blank lines, or HTML comments.
+#
+# Arguments:
+#   $1 - Section markdown text
+#
+# Returns:
+#   0 if visible content exists, 1 otherwise
+#
+# Usage:
+#   if section_has_visible_content "$section"; then
+#       echo "has visible content"
+#   fi
+#
+#######################################
+function section_has_visible_content {
+    local section_text="$1"
+
+    echo "$section_text" | awk '
+        BEGIN { in_comment = 0; found = 0 }
+        NR == 1 { next }
+        {
+            line = $0
+            sub(/\r$/, "", line)
+
+            if (line ~ /^<!--[[:space:]]*$/) {
+                in_comment = 1
+                next
+            }
+
+            if (in_comment == 1 && line ~ /-->[[:space:]]*$/) {
+                in_comment = 0
+                next
+            }
+
+            if (in_comment == 1) {
+                next
+            }
+
+            if (line ~ /^[[:space:]]*$/) {
+                next
+            }
+
+            found = 1
+            exit
+        }
+        END {
+            if (found == 1) {
+                exit 0
+            }
+            exit 1
+        }
+    '
+}
+
+#######################################
+# build_fallback_section: Build deterministic fallback section content
+#
+# Description:
+#   Returns the template section unchanged for empty sections.
+#   Semantic completion is handled by a separate AI refinement step.
+#
+# Arguments:
+#   $1 - H2 heading text (for example: "## Testing")
+#   $2 - Template section markdown text
+#
+# Returns:
+#   Outputs section markdown
+#
+# Usage:
+#   fallback=$(build_fallback_section "## Testing" "$template_section")
+#
+#######################################
+function build_fallback_section {
+    local heading="$1"
+    local template_section="$2"
+
+    # Keep the interface stable while preserving template structure.
+    printf '%s\n' "$template_section"
+}
+
+#######################################
 # update_pr_body: Update PR Body sections (## Overview, ## Changes)
 #
 # Description:
@@ -473,41 +666,111 @@ function generate_body_sections {
 #######################################
 function update_pr_body {
     local current_body
+    local generated_body
+    local generated_overview
+    local generated_changes
+    local generated_overview_body
+    local generated_changes_body
+    local template_file
+    local template_body
+    local template_overview_body
+    local template_changes_section
+    local template_changes_body
     local new_body
-    local remaining_sections
+    local heading
+    local section
+    local current_section
+    local template_section
 
     log "INFO" "Fetching current PR body"
 
     # Fetch current PR body
     current_body=$(gh pr view "$PR_NUMBER" --repo "$REPOSITORY" --json body --jq '.body // ""')
 
-    log "INFO" "Rebuilding PR body with generated sections"
+    log "INFO" "Rebuilding PR body from PULL_REQUEST_TEMPLATE.md"
 
-    # Preserve existing sections except auto-generated ones.
-    # This avoids hard dependency on a specific template section order.
-    remaining_sections=$(echo "$current_body" | awk '
-        BEGIN { in_h2 = 0; skip = 0 }
-        /^##[[:space:]]+/ {
-            in_h2 = 1
-            if ($0 == "## Overview" || $0 == "## Changes") {
-                skip = 1
-                next
-            }
-            skip = 0
-        }
-        {
-            if (in_h2 == 1 && skip == 0) {
-                print
-            }
-        }
-    ')
+    generated_body=$(cat "$BODY_FILE")
+    generated_overview=$(extract_h2_section "$generated_body" "## Overview")
+    generated_changes=$(extract_h2_section "$generated_body" "## Changes")
 
-    # Build new body (start with generated sections, append preserved sections if any)
-    new_body=$(cat "$BODY_FILE")
-    if [[ -n "${remaining_sections//[[:space:]]/}" ]]; then
-        new_body+=$'\n'
-        new_body+="$remaining_sections"
+    if [[ -z "${generated_overview//[[:space:]]/}" ]]; then
+        error_exit "Generated body is missing ## Overview section"
     fi
+
+    if [[ -z "${generated_changes//[[:space:]]/}" ]]; then
+        error_exit "Generated body is missing ## Changes section"
+    fi
+
+    template_file="$(git rev-parse --show-toplevel)/.github/PULL_REQUEST_TEMPLATE.md"
+    if [[ ! -f "$template_file" ]]; then
+        error_exit "Template file not found: $template_file"
+    fi
+
+    template_body=$(cat "$template_file")
+
+    # Preserve template guidance comments for generated sections.
+    template_overview_body=$(extract_overview_template_body "$template_body")
+    template_changes_section=$(extract_h2_section "$template_body" "## Changes")
+    template_changes_body=$(section_body_without_heading "$template_changes_section")
+
+    generated_overview_body=$(section_body_without_heading "$generated_overview")
+    generated_changes_body=$(section_body_without_heading "$generated_changes")
+
+    generated_overview="## Overview"
+    if [[ -n "${template_overview_body//[[:space:]]/}" ]]; then
+        generated_overview+=$'\n\n'
+        generated_overview+="$template_overview_body"
+    fi
+    if [[ -n "${generated_overview_body//[[:space:]]/}" ]]; then
+        generated_overview+=$'\n\n'
+        generated_overview+="$generated_overview_body"
+    fi
+
+    generated_changes="## Changes"
+    if [[ -n "${template_changes_body//[[:space:]]/}" ]]; then
+        generated_changes+=$'\n\n'
+        generated_changes+="$template_changes_body"
+    fi
+    if [[ -n "${generated_changes_body//[[:space:]]/}" ]]; then
+        generated_changes+=$'\n\n'
+        generated_changes+="$generated_changes_body"
+    fi
+
+    # Always place auto-generated Overview first.
+    new_body="$generated_overview"
+
+    # Rebuild all template H2 sections in template order.
+    while IFS= read -r heading; do
+        section=""
+
+        if [[ "$heading" == "## Changes" ]]; then
+            section="$generated_changes"
+        else
+            current_section=$(extract_h2_section "$current_body" "$heading")
+
+            if [[ -n "${current_section//[[:space:]]/}" ]] && section_has_visible_content "$current_section"; then
+                section="$current_section"
+            else
+                template_section=$(extract_h2_section "$template_body" "$heading")
+                section=$(build_fallback_section "$heading" "$template_section")
+            fi
+        fi
+
+        if [[ -n "${section//[[:space:]]/}" ]]; then
+            new_body+=$'\n\n'
+            new_body+="$section"
+        fi
+    done < <(
+        echo "$template_body" | awk '
+            {
+                line = $0
+                sub(/\r$/, "", line)
+            }
+            line ~ /^##[[:space:]]+/ {
+                print line
+            }
+        '
+    )
 
     if [[ "$DRY_RUN" == "true" ]]; then
         log "INFO" "DRY-RUN MODE"

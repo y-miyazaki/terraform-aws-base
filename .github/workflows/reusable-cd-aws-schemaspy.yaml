@@ -207,7 +207,7 @@ jobs:
 
       - name: Setup AWS Credentials
         if: ${{ env.USE_SSM == 'true' || env.USE_SECRETS_MANAGER == 'true' || env.USE_BASTION == 'true' }} # pragma: allowlist secret
-        uses: aws-actions/configure-aws-credentials@8df5847569e6427dd6c4fb1cf565c83acfa8afa7 # v6.0.0
+        uses: aws-actions/configure-aws-credentials@ec61189d14ec14c8efccab744f656cffd0e33f37 # v6.1.0
         with:
           aws-region: ${{ secrets.AWS_REGION }}
           role-to-assume: ${{ secrets.AWS_IAM_ROLE_ARN }}
@@ -484,7 +484,7 @@ jobs:
 
       - name: Cache SchemaSpy and JDBC Drivers
         id: cache-schemaspy
-        uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306 # v5.0.3
+        uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
         with:
           # Cache key includes SchemaSpy and JDBC/SDK versions so changes to any artifact invalidate cache
           key: schemaspy-${{ env.SCHEMASPY_VERSION }}-mysql-${{ env.JDBC_VERSION_MYSQL }}-pg-${{ env.JDBC_VERSION_POSTGRESQL }}-rs-${{ env.JDBC_VERSION_REDSHIFT }}-aws-${{ env.AWS_SDK_CORE_VERSION }}-v1
