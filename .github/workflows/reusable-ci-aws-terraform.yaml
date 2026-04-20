@@ -112,14 +112,14 @@ jobs:
           echo "key=terraform-init-${ENVIRONMENT}-${COMPONENT}-${{ runner.os }}-${{ hashFiles(format('{0}/terraform.{1}.tfbackend', env.TERRAFORM_PATH, env.ENVIRONMENT), format('{0}/.terraform.lock.hcl', env.TERRAFORM_PATH), format('{0}/**/*.tf', env.TERRAFORM_PATH), 'modules/**/*.tf') }}" >> "$GITHUB_OUTPUT"
 
       - name: Cache Terraform plugin cache
-        uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
+        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
         with:
           key: ${{ steps.compute-plugin-cache-key.outputs.key }}
           path: |
             ~/.terraform.d/plugin-cache
 
       - name: Cache Terraform init
-        uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
+        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
         with:
           key: ${{ steps.compute-init-cache-key.outputs.key }}
           path: |
@@ -175,7 +175,7 @@ jobs:
 
       - name: Restore Cache Terraform plugin cache
         id: restore-terraform-plugin-cache
-        uses: actions/cache/restore@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
+        uses: actions/cache/restore@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
         with:
           path: |
             ~/.terraform.d/plugin-cache
@@ -183,7 +183,7 @@ jobs:
 
       - name: Restore Cache Terraform init
         id: restore-terraform-init
-        uses: actions/cache/restore@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
+        uses: actions/cache/restore@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
         with:
           path: |
             ${{ env.TERRAFORM_PATH }}/.terraform
@@ -285,7 +285,7 @@ jobs:
 
       - name: Restore Cache Terraform plugin cache
         id: restore-terraform-plugin-cache
-        uses: actions/cache/restore@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
+        uses: actions/cache/restore@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
         with:
           key: ${{ needs.init.outputs.tf_plugin_cache_key }}
           path: |
@@ -293,7 +293,7 @@ jobs:
 
       - name: Restore Cache Terraform init
         id: restore-terraform-init
-        uses: actions/cache/restore@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
+        uses: actions/cache/restore@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
         with:
           key: ${{ needs.init.outputs.tf_init_cache_key }}
           path: |

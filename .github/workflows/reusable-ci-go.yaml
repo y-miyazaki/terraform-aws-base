@@ -81,7 +81,7 @@ jobs:
           } >> "$GITHUB_OUTPUT"
 
       - name: Cache Go build and module caches
-        uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
+        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
         with:
           key: go-cache-${{ env.ENVIRONMENT }}-${{ env.COMPONENT }}-${{ runner.os }}-${{ env.GO_VERSION }}-${{ hashFiles(format('{0}/go.mod', env.GO_PROJECT_PATH), format('{0}/go.sum', env.GO_PROJECT_PATH)) }}
           path: |
