@@ -14,21 +14,24 @@
 # - Service limit warnings
 # - Fault tolerance best practices
 #--------------------------------------------------------------
-module "aws_cloudwatch_events_trusted_advisor" {
-  source     = "../../modules/aws/cloudwatch/events/trusted_advisor"
-  is_enabled = var.trusted_advisor.is_enabled
+resource "aws_scheduler_schedule" "trusted_advisor" {
+  count = var.trusted_advisor.is_enabled ? 1 : 0
 
-  aws_cloudwatch_event_rule = {
-    name                = "${var.name_prefix}${try(var.trusted_advisor.aws_cloudwatch_event_rule.name, "trusted-advisor-cloudwatch-event-rule")}"
-    schedule_expression = try(var.trusted_advisor.aws_cloudwatch_event_rule.schedule_expression, "cron(0 0 * * ? *)")
-    description         = try(var.trusted_advisor.aws_cloudwatch_event_rule.description, null)
-    state               = try(var.trusted_advisor.aws_cloudwatch_event_rule.state, "ENABLED")
+  name        = "${var.name_prefix}${var.trusted_advisor.aws_eventbridge_schedule.name}"
+  description = var.trusted_advisor.aws_eventbridge_schedule.description
+  flexible_time_window {
+    mode = "OFF"
   }
-  aws_cloudwatch_event_target = {
-    arn = module.lambda_function_trusted_advisor.lambda_function_arn
+  schedule_expression = var.trusted_advisor.aws_eventbridge_schedule.schedule_expression
+  state               = "ENABLED"
+  target {
+    arn      = module.lambda_function_trusted_advisor.lambda_function_arn
+    role_arn = module.aws_iam_role_eventbridge.arn
+    retry_policy {
+      maximum_event_age_in_seconds = 3600
+      maximum_retry_attempts       = 3
+    }
   }
-
-  tags = var.tags
 }
 
 #--------------------------------------------------------------
@@ -45,10 +48,10 @@ module "lambda_function_trusted_advisor" {
     trigger = {
       action              = "lambda:InvokeFunction"
       event_source_token  = null
-      principal           = "events.amazonaws.com"
+      principal           = "scheduler.amazonaws.com"
       qualifier           = null
       source_account      = null
-      source_arn          = module.aws_cloudwatch_events_trusted_advisor.arn
+      source_arn          = try(aws_scheduler_schedule.trusted_advisor[0].arn, null)
       statement_id        = "TrustedAdvisorDetection"
       statement_id_prefix = null
     }
@@ -69,11 +72,11 @@ module "lambda_function_trusted_advisor" {
     SLACK_OAUTH_ACCESS_TOKEN = coalesce(try(var.slack.override.trusted_advisor.oauth_access_token, null), var.slack.oauth_access_token)
     SLACK_CHANNEL_ID         = coalesce(try(var.slack.override.trusted_advisor.channel_id, null), var.slack.channel_id)
   }
-  function_name                 = "${var.name_prefix}cloudwatch-event-trusted-advisor"
-  handler                       = "cloudwatch_event_trusted_advisor_to_slack"
+  function_name                 = "${var.name_prefix}cloudwatch-schedule-trusted-advisor-to-slack"
+  handler                       = "cloudwatch_schedule_trusted_advisor_to_slack"
   lambda_role                   = module.aws_iam_role_lambda.arn
   layers                        = []
-  local_existing_package        = "../../lambda/outputs/go_cloudwatch_event_trusted_advisor_to_slack.zip"
+  local_existing_package        = "../../lambda/outputs/go_cloudwatch_schedule_trusted_advisor_to_slack.zip"
   logging_application_log_level = "WARN"
   logging_log_format            = "JSON"
   logging_system_log_level      = "WARN"

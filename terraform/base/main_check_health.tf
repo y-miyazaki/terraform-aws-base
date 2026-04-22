@@ -64,7 +64,7 @@ module "lambda_function_health" {
     SLACK_OAUTH_ACCESS_TOKEN = coalesce(try(var.slack.override.health.oauth_access_token, null), var.slack.oauth_access_token)
     SLACK_CHANNEL_ID         = coalesce(try(var.slack.override.health.channel_id, null), var.slack.channel_id)
   }
-  function_name                 = "${var.name_prefix}cloudwatch-event-health"
+  function_name                 = "${var.name_prefix}cloudwatch-event-health-to-slack"
   handler                       = "cloudwatch_event_health_to_slack"
   lambda_role                   = module.aws_iam_role_lambda.arn
   layers                        = []

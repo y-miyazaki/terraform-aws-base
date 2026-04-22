@@ -245,6 +245,9 @@ cloudwatch_log_group = {
     # common_lambda_vpc_flow_log = {
     #   retention_in_days = 7
     # }
+    # metric_log_application = {
+    #   retention_in_days = 14
+    # }
     # metric_log_postgresql_slowquery = {
     #   retention_in_days = 14
     # }
@@ -268,6 +271,7 @@ For the monitor environment, the following services support CloudWatch Log Group
 | `common_lambda_step_functions`           | Step Functions execution notifications          | 14 days               |
 | `common_lambda_step_functions_us_east_1` | Step Functions notifications for us-east-1 jobs | 14 days               |
 | `common_lambda_vpc_flow_log`             | VPC Flow Logs processing pipeline               | 7 days                |
+| `metric_log_application`                 | Application errors report Lambda                | 14 days               |
 | `metric_log_postgresql_slowquery`        | PostgreSQL slow query analyzer                  | 14-30 days            |
 
 #### Benefits of Centralized Configuration
@@ -401,6 +405,7 @@ slack = {
   # - common_lambda_metric: Kinesis Data Firehose CloudWatch Logs Processor
   # - step_functions: Step Functions Log to Slack
   # - cloudwatch_event_ec2: EC2 Events to Slack
+  # - metric_log_application: Application Errors Report to Slack
   # - metric_log_postgresql_slowquery: PostgreSQL Slow Query to Slack
   # - apigateway_report_csp: API Gateway CSP Reports to Slack
   # -----------------------------------------------------------
@@ -423,6 +428,9 @@ slack = {
     #   channel_id         = "C0XXXXXXXXX"
     # }
     # common_lambda_step_functions = {
+    #   channel_id         = "C0XXXXXXXXX"
+    # }
+    # metric_log_application = {
     #   channel_id         = "C0XXXXXXXXX"
     # }
     # metric_log_postgresql_slowquery = {
@@ -474,6 +482,7 @@ slack = {
 | `common_lambda_metric`            | Kinesis Data Firehose metrics and logs     |
 | `common_lambda_ses`               | CloudWatch Alarms via SES to Slack         |
 | `common_lambda_step_functions`    | Step Functions execution logs              |
+| `metric_log_application`          | Application errors report                 |
 | `metric_log_postgresql_slowquery` | PostgreSQL slow query alerts               |
 
 #### Benefits of Centralized Configuration
@@ -536,19 +545,45 @@ The variable for each function has is_enabled. If you do not want to use it as a
     is_enabled = false
   ```
 
-- Log:PostgreSQL
+- Log:Application Errors Report
 
   ```terraform
   #--------------------------------------------------------------
-  # Log:PostgreSQL
-  # The filter function of CloudWatchLogs can be used to check specified logs
-  # with specified filter patterns. Those that hit the filter pattern will be
-  # notified by Slack via Lambda.
-  #
-  # Filter logs related to PostgreSQL.
+  # Log:Application Errors Report
+  # Periodically aggregates application error logs and sends a summary report to Slack.
+  # Uses EventBridge Scheduler to trigger a Lambda function that queries CloudWatch Logs.
   #--------------------------------------------------------------
+  metric_log_application_report = {
+    # TODO: need to set is_enabled for settings of application errors report every day.
+    is_enabled = false
+  ```
+
+- Log:PostgreSQL
+
+  ```terraform
   metric_log_postgresql = {
     # TODO: need to set is_enabled for settings of postgresql log.
+    is_enabled = false
+  ```
+
+- Log:PostgreSQL slow query
+
+  ```terraform
+  metric_log_postgresql_slowquery = {
+    # TODO: need to set is_enabled for settings of postgresql slow query alert every time.
+    is_enabled = false
+  ```
+
+- Log:PostgreSQL slow query report
+
+  ```terraform
+  #--------------------------------------------------------------
+  # Log:PostgreSQL slow query report
+  # Periodically aggregates PostgreSQL slow query logs and sends a summary report to Slack.
+  # Uses EventBridge Scheduler to trigger a Lambda function that queries CloudWatch Logs.
+  #--------------------------------------------------------------
+  metric_log_postgresql_slowquery_report = {
+    # TODO: need to set is_enabled for settings of postgresql slow queries report every day.
     is_enabled = false
   ```
 

@@ -233,9 +233,13 @@ Reference: [What is Amazon CloudWatch Logs?](https://docs.aws.amazon.com/AmazonC
 
 The filter function of CloudWatchLogs can be used to check specified logs with specified filter patterns. Those that hit the filter pattern will be notified by Slack via Lambda.
 
+In addition, a daily report function is available that aggregates application error logs and sends a summary to Slack via EventBridge Scheduler.
+
 #### Log:PostgreSQL
 
 The filter function of CloudWatchLogs can be used to check specified logs with specified filter patterns. Those that hit the filter pattern will be notified by Slack via Lambda.
+
+In addition, a daily report function is available that aggregates PostgreSQL slow query logs and sends a summary to Slack via EventBridge Scheduler.
 
 ### Metrics
 

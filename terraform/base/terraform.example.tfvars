@@ -28,6 +28,7 @@ control_tower = {
     securityhub          = false
   }
 }
+
 #--------------------------------------------------------------
 # Default Tags for Resources
 # A tag that is set globally for the resources used.
@@ -57,6 +58,7 @@ tags = {
 # Example: If name_prefix="myproject-", resources will be named "myproject-vpc", "myproject-lambda", etc.
 #--------------------------------------------------------------
 name_prefix = "base-"
+
 #--------------------------------------------------------------
 # Default Region for Resources
 # Specifies the primary AWS region where most resources will be deployed.
@@ -65,6 +67,16 @@ name_prefix = "base-"
 #--------------------------------------------------------------
 # TODO: need to change region.
 region = "ap-northeast-1"
+
+#--------------------------------------------------------------
+# us-east-1 Region Resources
+# Set is_enabled to false to skip creating all us-east-1 specific resources.
+# When the default region is us-east-1, these resources are automatically skipped
+# regardless of this setting to avoid duplication.
+#--------------------------------------------------------------
+us_east_1 = {
+  is_enabled = true
+}
 
 #--------------------------------------------------------------
 # CloudWatch Log Group Configuration
@@ -328,11 +340,10 @@ trusted_advisor = {
   # TODO: need to set is_enabled for settings of Trusted Advisor.
   // If you are not in a business or enterprise plan with a support plan, set is_enable to false as notifications will fail. If not, set it to true.
   is_enabled = false
-  aws_cloudwatch_event_rule = {
-    name                = "trusted-advisor-cloudwatch-event-rule"
+  aws_eventbridge_schedule = {
+    name                = "trusted-advisor-eventbridge-scheduler"
     schedule_expression = "cron(0 0 * * ? *)"
-    description         = "This cloudwatch event used for Trusted Advisor."
-    state               = "ENABLED"
+    description         = "This eventbridge scheduler called trusted advisor lambda function."
   }
 }
 
@@ -344,11 +355,10 @@ trusted_advisor = {
 iam_password_expired = {
   # TODO: need to set is_enabled for settings of IAM password expired.
   is_enabled = false
-  aws_cloudwatch_event_rule = {
-    name                = "iam-password-expired-cloudwatch-event-rule"
+  aws_eventbridge_schedule = {
+    name                = "iam-password-expired-eventbridge-scheduler"
     schedule_expression = "cron(0 0 * * ? *)"
-    description         = "This cloudwatch event used for IAM password expired."
-    state               = "ENABLED"
+    description         = "This eventbridge scheduler called iam password expired lambda function."
   }
 }
 
@@ -1591,6 +1601,8 @@ common_log = {
     restrict_public_buckets = true
     server_side_encryption_configuration = {
       rule = {
+        bucket_key_enabled       = false
+        blocked_encryption_types = ["NONE"]
         apply_server_side_encryption_by_default = {
           sse_algorithm     = "AES256"
           kms_master_key_id = null
@@ -1646,6 +1658,8 @@ common_log = {
     restrict_public_buckets = true
     server_side_encryption_configuration = {
       rule = {
+        bucket_key_enabled       = false
+        blocked_encryption_types = ["NONE"]
         apply_server_side_encryption_by_default = {
           sse_algorithm     = "AES256"
           kms_master_key_id = null
@@ -1775,6 +1789,8 @@ PATTERN
   #       {
   #         rule = [
   #           {
+  #             bucket_key_enabled       = false
+  #             blocked_encryption_types = ["NONE"]
   #             apply_server_side_encryption_by_default = [
   #               {
   #                 sse_algorithm     = "AES256"
@@ -1906,6 +1922,8 @@ security_config = {
   #       {
   #         rule = [
   #           {
+  #             bucket_key_enabled       = false
+  #             blocked_encryption_types = ["NONE"]
   #             apply_server_side_encryption_by_default = [
   #               {
   #                 sse_algorithm     = "AES256"
@@ -2046,6 +2064,8 @@ security_config_us_east_1 = {
   #       {
   #         rule = [
   #           {
+  #             bucket_key_enabled       = false
+  #             blocked_encryption_types = ["NONE"]
   #             apply_server_side_encryption_by_default = [
   #               {
   #                 sse_algorithm     = "AES256"
@@ -2139,6 +2159,22 @@ security_ebs = {
 #--------------------------------------------------------------
 security_guardduty = {
   # TODO: need to set is_enabled for settings of GuardDuty. Even if GuardDuty is already set, it must be set to false.
+  is_enabled = false
+  aws_guardduty_detector = {
+    # TODO: need to set enabled for settings of GuardDuty Detector.
+    enable                       = false
+    finding_publishing_frequency = "FIFTEEN_MINUTES"
+  }
+  aws_guardduty_member = [
+  ]
+}
+
+#--------------------------------------------------------------
+# Security:GuardDuty(us-east-1)
+# Notice: This option is automatically disabled if control_tower.managed_services.guardduty=true.
+#--------------------------------------------------------------
+security_guardduty_us_east_1 = {
+  # TODO: need to set is_enabled for settings of GuardDuty(us-east-1). Even if GuardDuty is already set, it must be set to false.
   is_enabled = false
   aws_guardduty_detector = {
     # TODO: need to set enabled for settings of GuardDuty Detector.

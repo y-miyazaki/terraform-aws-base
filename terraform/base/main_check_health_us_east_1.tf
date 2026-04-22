@@ -18,7 +18,7 @@
 #--------------------------------------------------------------
 module "aws_cloudwatch_events_health_us_east_1" {
   source     = "../../modules/aws/cloudwatch/events/health"
-  is_enabled = !local.is_default_region_us_east_1 && var.health.is_enabled
+  is_enabled = local.is_enabled_us_east_1 && var.health.is_enabled
   providers = {
     aws = aws.us-east-1
   }
@@ -45,7 +45,7 @@ module "aws_cloudwatch_events_health_us_east_1" {
 module "lambda_function_health_us_east_1" {
   source  = "terraform-aws-modules/lambda/aws"
   version = "8.7.0"
-  create  = !local.is_default_region_us_east_1 && var.health.is_enabled
+  create  = local.is_enabled_us_east_1 && var.health.is_enabled
   providers = {
     aws = aws.us-east-1
   }
@@ -78,7 +78,7 @@ module "lambda_function_health_us_east_1" {
     SLACK_OAUTH_ACCESS_TOKEN = coalesce(try(var.slack.override.health.oauth_access_token, null), var.slack.oauth_access_token)
     SLACK_CHANNEL_ID         = coalesce(try(var.slack.override.health.channel_id, null), var.slack.channel_id)
   }
-  function_name                 = "${var.name_prefix}cloudwatch-event-health"
+  function_name                 = "${var.name_prefix}cloudwatch-event-health-to-slack"
   handler                       = "cloudwatch_event_health_to_slack"
   lambda_role                   = module.aws_iam_role_lambda.arn
   layers                        = []

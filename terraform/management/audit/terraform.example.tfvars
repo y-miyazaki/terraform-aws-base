@@ -38,6 +38,7 @@ tags = {
 # Example: If name_prefix="myproject-", resources will be named "myproject-vpc", "myproject-lambda", etc.
 #--------------------------------------------------------------
 name_prefix = "base-"
+
 #--------------------------------------------------------------
 # Default Region for Resources
 # Specifies the primary AWS region where most resources will be deployed.
@@ -46,6 +47,16 @@ name_prefix = "base-"
 #--------------------------------------------------------------
 # TODO: need to change region.
 region = "ap-northeast-1"
+
+#--------------------------------------------------------------
+# us-east-1 Region Resources
+# Set is_enabled to false to skip creating all us-east-1 specific resources.
+# When the default region is us-east-1, these resources are automatically skipped
+# regardless of this setting to avoid duplication.
+#--------------------------------------------------------------
+us_east_1 = {
+  is_enabled = true
+}
 
 #--------------------------------------------------------------
 # CloudWatch Log Group Configuration
@@ -181,6 +192,8 @@ security_notification = {
 guardduty_organization = {
   # TODO: need to set is_enabled for settings of AWS GuardDuty Organization.
   is_enabled = false
+  # Set to true to create a new GuardDuty detector if no detector exists in this region.
+  create_detector = false
   # TODO: need to set auto_enable_organization_members for settings of AWS GuardDuty Organization.
   auto_enable_organization_members = "ALL"
   features = {
@@ -201,15 +214,65 @@ guardduty_organization = {
       auto_enable = "ALL"
       additional_configurations = [
         {
-          name        = "EKS_ADDON_MANAGEMENT"
+          name        = "ECS_FARGATE_AGENT_MANAGEMENT"
           auto_enable = "ALL"
         },
+        {
+          name        = "EC2_AGENT_MANAGEMENT"
+          auto_enable = "ALL"
+        },
+        {
+          name        = "EKS_ADDON_MANAGEMENT"
+          auto_enable = "ALL"
+        }
+      ]
+    }
+    S3_DATA_EVENTS = {
+      auto_enable = "ALL"
+    }
+  }
+}
+
+#--------------------------------------------------------------
+# GuardDuty Organization (us-east-1)
+# This configures the GuardDuty settings for the entire
+# AWS Organization to use a central model in us-east-1.
+#--------------------------------------------------------------
+guardduty_organization_us_east_1 = {
+  # TODO: need to set is_enabled for settings of AWS GuardDuty Organization(us-east-1).
+  is_enabled = false
+  # Set to true to create a new GuardDuty detector in us-east-1 (no existing detector from Control Tower).
+  # Detector was created by Terraform since it did not exist in us-east-1.
+  create_detector = true
+  # TODO: need to set auto_enable_organization_members for settings of AWS GuardDuty Organization(us-east-1).
+  auto_enable_organization_members = "ALL"
+  features = {
+    # https://docs.aws.amazon.com/guardduty/latest/APIReference/API_DetectorFeatureConfiguration.html
+    EBS_MALWARE_PROTECTION = {
+      auto_enable = "ALL"
+    }
+    EKS_AUDIT_LOGS = {
+      auto_enable = "ALL"
+    }
+    LAMBDA_NETWORK_LOGS = {
+      auto_enable = "ALL"
+    }
+    RDS_LOGIN_EVENTS = {
+      auto_enable = "ALL"
+    }
+    RUNTIME_MONITORING = {
+      auto_enable = "ALL"
+      additional_configurations = [
         {
           name        = "ECS_FARGATE_AGENT_MANAGEMENT"
           auto_enable = "ALL"
         },
         {
           name        = "EC2_AGENT_MANAGEMENT"
+          auto_enable = "ALL"
+        },
+        {
+          name        = "EKS_ADDON_MANAGEMENT"
           auto_enable = "ALL"
         }
       ]
@@ -233,7 +296,7 @@ inspector2_organization = {
     default = {
       account_ids = [
         "123456789012",
-        "345678901234"
+        "123456789012"
       ]
       resource_types = [
         "EC2",
@@ -245,7 +308,7 @@ inspector2_organization = {
     }
     other = {
       account_ids = [
-        "567890123456",
+        "123456789012",
       ]
       resource_types = [
         "EC2",
@@ -254,6 +317,26 @@ inspector2_organization = {
     }
   }
   # TODO: need to set is_enabled_configuration for settings of AWS Inspector2.
+  is_enabled_configuration = false
+  configuration = {
+    auto_enable_ec2             = false
+    auto_enable_ecr             = false
+    auto_enable_lambda          = false
+    auto_enable_lambda_code     = false
+    auto_enable_code_repository = false
+  }
+}
+
+#--------------------------------------------------------------
+# Amazon Inspector2 Organization (us-east-1)
+# AWS Inspector2 configurations for vulnerability management and security assessment in us-east-1.
+#--------------------------------------------------------------
+inspector2_organization_us_east_1 = {
+  # TODO: need to set is_enabled for settings of AWS Inspector2(us-east-1).
+  is_enabled = false
+
+  enabler = {}
+  # TODO: need to set is_enabled_configuration for settings of AWS Inspector2(us-east-1).
   is_enabled_configuration = false
   configuration = {
     auto_enable_ec2             = false
@@ -283,6 +366,37 @@ securityhub_organization = {
       "arn:aws:securityhub:{any region}::standards/cis-aws-foundations-benchmark/v/5.0.0"
     ]
     # TODO: need to set disabled_control_identifiers for settings of AWS SecurityHub Organization.
+    # https://docs.aws.amazon.com/ja_jp/securityhub/latest/userguide/securityhub-controls-reference.html
+    security_controls_configuration = {
+      disabled_control_identifiers = [
+        # "RDS.13",
+      ]
+    }
+  }
+  configuration_policy_name = "securityhub-configuration-policy"
+  linking_mode              = "ALL_REGIONS"
+  target_id                 = "r-xxxxxx"
+}
+
+#--------------------------------------------------------------
+# SecurityHub Organization (us-east-1)
+# AWS Security Hub central configuration for organization-wide settings in us-east-1.
+#--------------------------------------------------------------
+securityhub_organization_us_east_1 = {
+  # TODO: need to set is_enabled for settings of AWS SecurityHub Organization(us-east-1).
+  is_enabled = false
+  # TODO: need to set is_enabled_finding_aggregator for settings of Security Hub finding aggregator(us-east-1).
+  is_enabled_finding_aggregator = false
+  configuration_policy = {
+    service_enabled = true
+    name            = "securityhub-configuration-policy"
+    # TODO: need to set enabled_standard_arns for settings of AWS SecurityHub Organization(us-east-1).
+    # https://docs.aws.amazon.com/ja_jp/securityhub/latest/userguide/cis-aws-foundations-benchmark.html
+    enabled_standard_arns = [
+      "arn:aws:securityhub:us-east-1::standards/aws-foundational-security-best-practices/v/1.0.0",
+      "arn:aws:securityhub:us-east-1::standards/cis-aws-foundations-benchmark/v/5.0.0"
+    ]
+    # TODO: need to set disabled_control_identifiers for settings of AWS SecurityHub Organization(us-east-1).
     # https://docs.aws.amazon.com/ja_jp/securityhub/latest/userguide/securityhub-controls-reference.html
     security_controls_configuration = {
       disabled_control_identifiers = [

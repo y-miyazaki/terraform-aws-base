@@ -29,7 +29,6 @@
         "automatalabs.copilot-mcp",
         "github.copilot",
         "github.copilot-chat",
-        "amazonwebservices.amazon-q-vscode",
         // for Shell Script environment
         "foxundermoon.shell-format",
         "timonwong.shellcheck",

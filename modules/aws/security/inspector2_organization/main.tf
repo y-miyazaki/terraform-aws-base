@@ -17,6 +17,21 @@ resource "aws_inspector2_delegated_admin_account" "this" {
 }
 
 #--------------------------------------------------------------
+# Member account association
+# - Associate member accounts with Inspector2 before enabling scanning.
+# - Automatically derived from enabler account_ids.
+#--------------------------------------------------------------
+locals {
+  member_account_ids = var.is_enabled ? toset(flatten([for k, v in var.enabler : v.account_ids])) : toset([])
+}
+
+resource "aws_inspector2_member_association" "this" {
+  for_each = local.member_account_ids
+
+  account_id = each.value
+}
+
+#--------------------------------------------------------------
 # Enabler for Amazon Inspector scanning in specified accounts
 # - Must be executed in the Organization's Administrator account
 # - Accepts account_ids and resource_types (EC2, ECR, LAMBDA, LAMBDA_CODE, CODE_REPOSITORY)
@@ -26,6 +41,8 @@ resource "aws_inspector2_enabler" "this" {
 
   account_ids    = each.value.account_ids
   resource_types = each.value.resource_types
+
+  depends_on = [aws_inspector2_member_association.this]
 }
 #--------------------------------------------------------------
 # Organization-level configuration for Inspector2 auto-enabling new accounts

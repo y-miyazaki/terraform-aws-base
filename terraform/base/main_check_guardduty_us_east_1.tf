@@ -11,7 +11,7 @@
 #--------------------------------------------------------------
 module "aws_cloudwatch_events_guardduty_us_east_1" {
   source     = "../../modules/aws/cloudwatch/events/guardduty"
-  is_enabled = !local.is_default_region_us_east_1 && var.guardduty.is_enabled && !local.control_tower_managed_services.guardduty
+  is_enabled = local.is_enabled_us_east_1 && var.guardduty.is_enabled && !local.control_tower_managed_services.guardduty
   providers = {
     aws = aws.us-east-1
   }
@@ -36,7 +36,7 @@ module "aws_cloudwatch_events_guardduty_us_east_1" {
 module "lambda_function_guardduty_us_east_1" {
   source  = "terraform-aws-modules/lambda/aws"
   version = "8.7.0"
-  create  = !local.is_default_region_us_east_1 && var.guardduty.is_enabled && !local.control_tower_managed_services.guardduty
+  create  = local.is_enabled_us_east_1 && var.guardduty.is_enabled && !local.control_tower_managed_services.guardduty
   providers = {
     aws = aws.us-east-1
   }
@@ -69,7 +69,7 @@ module "lambda_function_guardduty_us_east_1" {
     SLACK_OAUTH_ACCESS_TOKEN = coalesce(try(var.slack.override.guardduty.oauth_access_token, null), var.slack.oauth_access_token)
     SLACK_CHANNEL_ID         = coalesce(try(var.slack.override.guardduty.channel_id, null), var.slack.channel_id)
   }
-  function_name                 = "${var.name_prefix}cloudwatch-event-guardduty"
+  function_name                 = "${var.name_prefix}cloudwatch-event-guardduty-to-slack"
   handler                       = "cloudwatch_event_guardduty_to_slack"
   lambda_role                   = module.aws_iam_role_lambda.arn
   layers                        = []

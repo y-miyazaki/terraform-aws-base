@@ -7,6 +7,15 @@ variable "name_prefix" {
 variable "region" {
   type = string
 }
+variable "us_east_1" {
+  description = "Configuration for us-east-1 region resources. Set is_enabled to false to skip all us-east-1 resources."
+  type = object({
+    is_enabled = bool
+  })
+  default = {
+    is_enabled = true
+  }
+}
 variable "cloudwatch_log_group" {
   description = <<-EOT
     Common CloudWatch Log Group configuration for all services.
@@ -50,6 +59,9 @@ variable "cloudwatch_log_group" {
         retention_in_days = optional(number)
       }))
       common_lambda_vpc_flow_log = optional(object({
+        retention_in_days = optional(number)
+      }))
+      metric_log_application = optional(object({
         retention_in_days = optional(number)
       }))
       metric_log_postgresql_slowquery = optional(object({
@@ -105,6 +117,10 @@ variable "slack" {
         oauth_access_token = optional(string)
         channel_id         = optional(string)
       }))
+      metric_log_application = optional(object({
+        oauth_access_token = optional(string)
+        channel_id         = optional(string)
+      }))
       metric_log_postgresql_slowquery = optional(object({
         oauth_access_token = optional(string)
         channel_id         = optional(string)
@@ -132,6 +148,10 @@ variable "metric_log_application" {
   type        = any
   description = "CloudWatch Logs (Application) resources on AWS"
 }
+variable "metric_log_application_report" {
+  type        = any
+  description = "CloudWatch Logs (Application) errors report resources on AWS"
+}
 # TODO: ex
 variable "metric_log_step_functions" {
   type        = any
@@ -155,7 +175,11 @@ variable "metric_log_postgresql" {
 }
 variable "metric_log_postgresql_slowquery" {
   type        = any
-  description = "CloudWatch Logs (PostgreSQL) resources on AWS"
+  description = "CloudWatch Logs (PostgreSQL slow query) resources on AWS"
+}
+variable "metric_log_postgresql_slowquery_report" {
+  type        = any
+  description = "CloudWatch Logs (PostgreSQL slow query) report resources on AWS"
 }
 variable "metric_resource_api_gateway" {
   type        = any
@@ -195,7 +219,7 @@ variable "metric_resource_nat_gateway" {
 }
 variable "metric_resource_rds_cluster" {
   type        = any
-  description = "CloudWatch event(RDS) resources on AWS"
+  description = "CloudWatch metric resource(RDS) resources on AWS"
 }
 variable "metric_resource_redshift" {
   type        = any

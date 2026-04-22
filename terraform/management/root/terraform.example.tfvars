@@ -38,6 +38,7 @@ tags = {
 # Example: If name_prefix="myproject-", resources will be named "myproject-vpc", "myproject-lambda", etc.
 #--------------------------------------------------------------
 name_prefix = "base-"
+
 #--------------------------------------------------------------
 # Default Region for Resources
 # Specifies the primary AWS region where most resources will be deployed.
@@ -46,6 +47,16 @@ name_prefix = "base-"
 #--------------------------------------------------------------
 # TODO: need to change region.
 region = "ap-northeast-1"
+
+#--------------------------------------------------------------
+# us-east-1 Region Resources
+# Set is_enabled to false to skip creating all us-east-1 specific resources.
+# When the default region is us-east-1, these resources are automatically skipped
+# regardless of this setting to avoid duplication.
+#--------------------------------------------------------------
+us_east_1 = {
+  is_enabled = true
+}
 
 #--------------------------------------------------------------
 # CloudWatch Log Group Configuration

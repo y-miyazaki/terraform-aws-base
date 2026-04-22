@@ -26,8 +26,8 @@
 #--------------------------------------------------------------
 module "lambda_vpc_us_east_1" {
   source     = "terraform-aws-modules/vpc/aws"
-  version    = "6.6.0"
-  create_vpc = !local.is_default_region_us_east_1 && var.common_lambda.vpc.is_enabled && var.common_lambda.vpc.create_vpc
+  version    = "6.6.1"
+  create_vpc = local.is_enabled_us_east_1 && var.common_lambda.vpc.is_enabled && var.common_lambda.vpc.create_vpc
   providers = {
     aws = aws.us-east-1
   }

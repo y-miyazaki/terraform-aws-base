@@ -4,7 +4,7 @@
 #--------------------------------------------------------------
 module "log_delivery_application_us_east_1" {
   source     = "../../modules/aws/cloudwatch/delivery"
-  is_enabled = !local.is_default_region_us_east_1 && var.delivery_log_us_east_1.is_enabled
+  is_enabled = local.is_enabled_us_east_1 && var.delivery_log_us_east_1.is_enabled
   providers = {
     aws = aws.us-east-1
   }
@@ -18,7 +18,7 @@ module "log_delivery_application_us_east_1" {
   distribution                      = "Random"
 
   s3_bucket_arn        = module.s3_application_log.s3_bucket_arn
-  lambda_processor_arn = !local.is_default_region_us_east_1 ? module.aws_lambda_create_lambda_kinesis_data_firehose_cloudwatch_logs_processor_us_east_1.lambda_function_arn : null
+  lambda_processor_arn = local.is_enabled_us_east_1 ? module.aws_lambda_create_lambda_kinesis_data_firehose_cloudwatch_logs_processor_us_east_1.lambda_function_arn : null
 
   aws_kinesis_firehose_delivery_stream = merge(var.delivery_log_us_east_1.aws_kinesis_firehose_delivery_stream, {
     server_side_encryption = {

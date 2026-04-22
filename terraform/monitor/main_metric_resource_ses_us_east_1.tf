@@ -7,7 +7,7 @@
 #--------------------------------------------------------------
 module "aws_metric_ses_us_east_1" {
   source     = "../../modules/aws/metric/ses"
-  is_enabled = !local.is_default_region_us_east_1 && var.metric_resource_ses.is_enabled
+  is_enabled = local.is_enabled_us_east_1 && var.metric_resource_ses.is_enabled
   providers = {
     aws = aws.us-east-1
   }

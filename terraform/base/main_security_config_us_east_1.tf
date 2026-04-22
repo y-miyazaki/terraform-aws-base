@@ -26,7 +26,7 @@ locals {
 #--------------------------------------------------------------
 module "aws_security_config_create_v4_us_east_1" {
   source     = "../../modules/aws/security/config/create-v4"
-  is_enabled = !local.is_default_region_us_east_1 && var.security_config_us_east_1.is_enabled && !local.control_tower_managed_services.config
+  is_enabled = local.is_enabled_us_east_1 && var.security_config_us_east_1.is_enabled && !local.control_tower_managed_services.config
   providers = {
     aws = aws.us-east-1
   }
@@ -59,7 +59,7 @@ module "aws_security_config_create_v4_us_east_1" {
 #--------------------------------------------------------------
 module "aws_security_config_rule_cloudfront_us_east_1" {
   source     = "../../modules/aws/security/config/rule/cloudfront"
-  is_enabled = !local.is_default_region_us_east_1 && var.security_config_us_east_1.is_enabled && !local.control_tower_managed_services.config
+  is_enabled = local.is_enabled_us_east_1 && var.security_config_us_east_1.is_enabled && !local.control_tower_managed_services.config
   providers = {
     aws = aws.us-east-1
   }
@@ -88,7 +88,7 @@ module "lambda_function_config_us_east_1" {
     aws = aws.us-east-1
   }
   # Skip if default region is us-east-1
-  create = !local.is_default_region_us_east_1 && var.security_config_us_east_1.is_enabled && !local.control_tower_managed_services.config
+  create = local.is_enabled_us_east_1 && var.security_config_us_east_1.is_enabled && !local.control_tower_managed_services.config
 
   allowed_triggers = {
     trigger = {
@@ -118,7 +118,7 @@ module "lambda_function_config_us_east_1" {
     SLACK_OAUTH_ACCESS_TOKEN = coalesce(try(var.slack.override.security_config.oauth_access_token, null), var.slack.oauth_access_token)
     SLACK_CHANNEL_ID         = coalesce(try(var.slack.override.security_config.channel_id, null), var.slack.channel_id)
   }
-  function_name                 = "${var.name_prefix}cloudwatch-event-config"
+  function_name                 = "${var.name_prefix}cloudwatch-event-config-to-slack"
   handler                       = "cloudwatch_event_config_to_slack"
   lambda_role                   = module.aws_iam_role_lambda.arn
   layers                        = []

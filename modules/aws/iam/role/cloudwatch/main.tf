@@ -42,6 +42,16 @@ data "aws_iam_policy_document" "this" {
       "arn:aws:firehose:${var.region}:${var.account_id}:deliverystream/*"
     ]
   }
+  statement {
+    effect = "Allow"
+    actions = [
+      "kms:Decrypt",
+      "kms:GenerateDataKey*",
+    ]
+    resources = [
+      "arn:aws:kms:${var.region}:${var.account_id}:key/*"
+    ]
+  }
 }
 
 #--------------------------------------------------------------

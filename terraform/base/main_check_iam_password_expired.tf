@@ -14,21 +14,24 @@
 # - Users with expired passwords
 # - Upcoming password expiration warnings
 #--------------------------------------------------------------
-module "aws_cloudwatch_events_iam_password_expired" {
-  source     = "../../modules/aws/cloudwatch/events/iam_password_expired"
-  is_enabled = var.iam_password_expired.is_enabled && !local.control_tower_managed_services.iam_password_expired
+resource "aws_scheduler_schedule" "iam_password_expired" {
+  count = var.iam_password_expired.is_enabled && !local.control_tower_managed_services.iam_password_expired ? 1 : 0
 
-  aws_cloudwatch_event_rule = {
-    name                = "${var.name_prefix}${try(var.iam_password_expired.aws_cloudwatch_event_rule.name, "iam-password-expired-cloudwatch-event-rule")}"
-    schedule_expression = try(var.iam_password_expired.aws_cloudwatch_event_rule.schedule_expression, "cron(0 0 * * ? *)")
-    description         = try(var.iam_password_expired.aws_cloudwatch_event_rule.description, null)
-    state               = try(var.iam_password_expired.aws_cloudwatch_event_rule.state, "ENABLED")
+  name        = "${var.name_prefix}${var.iam_password_expired.aws_eventbridge_schedule.name}"
+  description = var.iam_password_expired.aws_eventbridge_schedule.description
+  flexible_time_window {
+    mode = "OFF"
   }
-  aws_cloudwatch_event_target = {
-    arn = module.lambda_function_iam_password_expired.lambda_function_arn
+  schedule_expression = var.iam_password_expired.aws_eventbridge_schedule.schedule_expression
+  state               = "ENABLED"
+  target {
+    arn      = module.lambda_function_iam_password_expired.lambda_function_arn
+    role_arn = module.aws_iam_role_eventbridge.arn
+    retry_policy {
+      maximum_event_age_in_seconds = 3600
+      maximum_retry_attempts       = 3
+    }
   }
-
-  tags = var.tags
 }
 
 #--------------------------------------------------------------
@@ -45,10 +48,10 @@ module "lambda_function_iam_password_expired" {
     trigger = {
       action              = "lambda:InvokeFunction"
       event_source_token  = null
-      principal           = "events.amazonaws.com"
+      principal           = "scheduler.amazonaws.com"
       qualifier           = null
       source_account      = null
-      source_arn          = module.aws_cloudwatch_events_iam_password_expired.arn
+      source_arn          = try(aws_scheduler_schedule.iam_password_expired[0].arn, null)
       statement_id        = "IAMPasswordExpiredDetection"
       statement_id_prefix = null
     }
@@ -69,11 +72,11 @@ module "lambda_function_iam_password_expired" {
     SLACK_OAUTH_ACCESS_TOKEN = coalesce(try(var.slack.override.iam_password_expired.oauth_access_token, null), var.slack.oauth_access_token)
     SLACK_CHANNEL_ID         = coalesce(try(var.slack.override.iam_password_expired.channel_id, null), var.slack.channel_id)
   }
-  function_name                 = "${var.name_prefix}cloudwatch-event-iam-password-expired"
-  handler                       = "cloudwatch_event_iam_password_expired_to_slack"
+  function_name                 = "${var.name_prefix}cloudwatch-schedule-iam-password-expired-to-slack"
+  handler                       = "cloudwatch_schedule_iam_password_expired_to_slack"
   lambda_role                   = module.aws_iam_role_lambda.arn
   layers                        = []
-  local_existing_package        = "../../lambda/outputs/go_cloudwatch_event_iam_password_expired_to_slack.zip"
+  local_existing_package        = "../../lambda/outputs/go_cloudwatch_schedule_iam_password_expired_to_slack.zip"
   logging_application_log_level = "WARN"
   logging_log_format            = "JSON"
   logging_system_log_level      = "WARN"

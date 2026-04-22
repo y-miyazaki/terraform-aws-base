@@ -7,6 +7,15 @@ variable "name_prefix" {
 variable "region" {
   type = string
 }
+variable "us_east_1" {
+  description = "Configuration for us-east-1 region resources. Set is_enabled to false to skip all us-east-1 resources."
+  type = object({
+    is_enabled = bool
+  })
+  default = {
+    is_enabled = true
+  }
+}
 variable "cloudwatch_log_group" {
   description = <<-EOT
     Common CloudWatch Log Group configuration for all services.
@@ -46,9 +55,18 @@ variable "security_notification" {
 variable "guardduty_organization" {
   type = any
 }
+variable "guardduty_organization_us_east_1" {
+  type = any
+}
 variable "inspector2_organization" {
   type = any
 }
+variable "inspector2_organization_us_east_1" {
+  type = any
+}
 variable "securityhub_organization" {
+  type = any
+}
+variable "securityhub_organization_us_east_1" {
   type = any
 }
