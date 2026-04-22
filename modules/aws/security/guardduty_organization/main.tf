@@ -17,11 +17,27 @@ resource "aws_guardduty_organization_admin_account" "this" {
 }
 
 #--------------------------------------------------------------
-# GuardDuty Detector (Data Source)
-# - Get existing GuardDuty detector (managed by Control Tower).
+# GuardDuty Detector
+# - Use existing detector if available, otherwise create a new one.
+# - Set create_detector = true when no detector exists in the target region.
 #--------------------------------------------------------------
 data "aws_guardduty_detector" "existing" {
-  count = var.is_enabled ? 1 : 0
+  count = var.is_enabled && !var.create_detector ? 1 : 0
+}
+
+resource "aws_guardduty_detector" "this" {
+  count = var.is_enabled && var.create_detector ? 1 : 0
+
+  enable                       = true
+  finding_publishing_frequency = "FIFTEEN_MINUTES"
+
+  tags = var.tags
+}
+
+locals {
+  detector_id = var.is_enabled ? (
+    var.create_detector ? aws_guardduty_detector.this[0].id : data.aws_guardduty_detector.existing[0].id
+  ) : null
 }
 
 #--------------------------------------------------------------
@@ -32,9 +48,9 @@ resource "aws_guardduty_organization_configuration" "this" {
   count = var.is_enabled ? 1 : 0
 
   auto_enable_organization_members = var.auto_enable_organization_members
-  detector_id                      = data.aws_guardduty_detector.existing[0].id
+  detector_id                      = local.detector_id
 
-  depends_on = [aws_guardduty_organization_admin_account.this]
+  depends_on = [aws_guardduty_organization_admin_account.this, aws_guardduty_detector.this]
 }
 
 #--------------------------------------------------------------
@@ -45,7 +61,7 @@ resource "aws_guardduty_organization_configuration" "this" {
 resource "aws_guardduty_organization_configuration_feature" "this" {
   for_each = var.is_enabled ? var.features : {}
 
-  detector_id = data.aws_guardduty_detector.existing[0].id
+  detector_id = local.detector_id
   name        = each.key
   auto_enable = each.value.auto_enable
 

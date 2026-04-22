@@ -7,7 +7,7 @@
 #--------------------------------------------------------------
 module "aws_cloudwatch_alarm_log_waf_us_east_1" {
   source     = "../../modules/aws/cloudwatch/alarm/log"
-  is_enabled = !local.is_default_region_us_east_1 && var.metric_log_waf_us_east_1.is_enabled
+  is_enabled = local.is_enabled_us_east_1 && var.metric_log_waf_us_east_1.is_enabled
   providers = {
     aws = aws.us-east-1
   }

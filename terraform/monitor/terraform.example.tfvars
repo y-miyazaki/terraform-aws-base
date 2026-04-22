@@ -39,6 +39,7 @@ tags = {
 # Example: If name_prefix="myproject-", resources will be named "myproject-vpc", "myproject-lambda", etc.
 #--------------------------------------------------------------
 name_prefix = "base-"
+
 #--------------------------------------------------------------
 # Default Region for Resources
 # Specifies the primary AWS region where most resources will be deployed.
@@ -47,6 +48,16 @@ name_prefix = "base-"
 #--------------------------------------------------------------
 # TODO: need to change region.
 region = "ap-northeast-1"
+
+#--------------------------------------------------------------
+# us-east-1 Region Resources
+# Set is_enabled to false to skip creating all us-east-1 specific resources.
+# When the default region is us-east-1, these resources are automatically skipped
+# regardless of this setting to avoid duplication.
+#--------------------------------------------------------------
+us_east_1 = {
+  is_enabled = true
+}
 
 #--------------------------------------------------------------
 # CloudWatch Log Group Configuration
@@ -95,6 +106,9 @@ cloudwatch_log_group = {
     # common_lambda_vpc_flow_log = {
     #   retention_in_days = 7
     # }
+    # metric_log_application = {
+    #   retention_in_days = 14
+    # }
     # metric_log_postgresql_slowquery = {
     #   retention_in_days = 14
     # }
@@ -132,6 +146,7 @@ slack = {
   # - common_lambda_metric: Kinesis Data Firehose CloudWatch Logs Processor
   # - step_functions: Step Functions Log to Slack
   # - cloudwatch_event_ec2: EC2 Events to Slack
+  # - metric_log_application: Application Errors Report to Slack
   # - metric_log_postgresql_slowquery: PostgreSQL Slow Query to Slack
   # - apigateway_report_csp: API Gateway CSP Reports to Slack
   # -----------------------------------------------------------
@@ -160,6 +175,9 @@ slack = {
     #   channel_id         = "C0XXXXXXXXX"
     # }
     # common_lambda_step_functions = {
+    #   channel_id         = "C0XXXXXXXXX"
+    # }
+    # metric_log_application = {
     #   channel_id         = "C0XXXXXXXXX"
     # }
     # metric_log_postgresql_slowquery = {
@@ -235,6 +253,8 @@ common_log = {
     restrict_public_buckets = true
     server_side_encryption_configuration = {
       rule = {
+        bucket_key_enabled       = false
+        blocked_encryption_types = ["NONE"]
         apply_server_side_encryption_by_default = {
           sse_algorithm     = "AES256"
           kms_master_key_id = null
@@ -613,7 +633,7 @@ metric_log_application = {
     name = "application-logs-error"
     # TODO: need to change pattern for application log.
     pattern = <<PATTERN
-[( msg="*\"ERROR\"*" || msg="*\"error\"*" || msg="*\"FATAL\"*" || msg="*\"fatal\"*" || msg="*\"PANIC\"*" || msg="*\"panic\"*" || msg="*\"CRITICAL\"*" || msg="*\"critical\"*" || msg="*AccessDenied*" || msg="*ERROR*" || msg="*Failed\"*" || msg="*Aborted\"*" || msg="*TimedOut\"*" || msg="*FailStateEntered\"*") && ( msg!="*'PAUSED'*" && msg!=%"level": ?"(debug|info|warn|warning)"% && msg!="{\"header\":*")]
+[( msg="*\"ERROR\"*" || msg="*\"error\"*" || msg="*\"FATAL\"*" || msg="*\"fatal\"*" || msg="*\"PANIC\"*" || msg="*\"panic\"*" || msg="*\"CRITICAL\"*" || msg="*\"critical\"*" || msg="*AccessDenied*" || msg="*ERROR*" || msg="*Failed\"*" || msg="*Aborted\"*" || msg="*TimedOut\"*" || msg="*FailStateEntered\"*") && ( msg!="*ExecutionSucceeded\"*" && msg!="*'PAUSED'*" && msg!=%"level": ?"(debug|info|warn|warning)"% && msg!="{\"header\":*")]
 PATTERN
 
     metric_transformation = [
@@ -639,6 +659,32 @@ PATTERN
     treat_missing_data  = "notBreaching"
   }
 }
+
+#--------------------------------------------------------------
+# Log:Application Errors Report
+# Periodically aggregates application error logs and sends a summary report to Slack.
+# Uses EventBridge Scheduler to trigger a Lambda function that queries CloudWatch Logs.
+#--------------------------------------------------------------
+metric_log_application_report = {
+  # TODO: need to set is_enabled for settings of application errors report every day.
+  #      If you want to set report, set is_enabled = true.
+  is_enabled = false
+  aws_eventbridge_schedule = {
+    name                = "application-errors-eventbridge-scheduler"
+    schedule_expression = "cron(0 0 * * ? *)" # Every day at 00:00 UTC
+    description         = "This eventbridge scheduler called application errors lambda function."
+  }
+  aws_lambda_function = {
+    environment = {
+      # TODO: need to change OUTPUT_MODE. csv, html, both are available, but html is recommended for readability.
+      OUTPUT_MODE = "html"
+      # TODO: need to change TIMEZONE.
+      # https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
+      TIMEZONE = "Asia/Tokyo"
+    }
+  }
+}
+
 # TODO: ex
 #--------------------------------------------------------------
 # Log:Step Functions
@@ -921,12 +967,9 @@ PATTERN
 # Filter logs related to PostgreSQL.
 #--------------------------------------------------------------
 metric_log_postgresql_slowquery = {
-  # TODO: need to set is_enabled_alert for settings of postgresql slow query alert every time.
-  #      If you want to set alert, set is_enabled_alert = true.
-  is_enabled_alert = false
-  # TODO: need to set is_enabled_report for settings of postgresql slow queries report every day.
-  #      If you want to set report, set is_enabled_report = true.
-  is_enabled_report = true
+  # TODO: need to set is_enabled for settings of postgresql slow query alert every time.
+  #      If you want to set alert, set is_enabled = true.
+  is_enabled = false
 
   # TODO: need to add log_group_name for postgresql.
   #       check log group name for postgresql.
@@ -965,6 +1008,17 @@ PATTERN
     dimensions          = null
     treat_missing_data  = "notBreaching"
   }
+}
+
+#--------------------------------------------------------------
+# Log:PostgreSQL slow query report
+# Periodically aggregates PostgreSQL slow query logs and sends a summary report to Slack.
+# Uses EventBridge Scheduler to trigger a Lambda function that queries CloudWatch Logs.
+#--------------------------------------------------------------
+metric_log_postgresql_slowquery_report = {
+  # TODO: need to set is_enabled for settings of postgresql slow queries report every day.
+  #      If you want to set report, set is_enabled = true.
+  is_enabled = true
   aws_eventbridge_schedule = {
     name                = "postgresql-slowquery-eventbridge-scheduler"
     schedule_expression = "cron(0 0 * * ? *)" # Every day at 00:00 UTC
@@ -1930,7 +1984,7 @@ metric_resource_redshift = {
     database_connections         = 100
     # (Required) HealthStatus threshold (HEALTHY(1)/UNHEALTHY(0))
     enabled_health_status = true
-    health_status         = 1
+    health_status         = 0
     # (Required) MaintenanceMode threshold (unit=Count(ON(1)/OFF(0)))
     enabled_maintenance_mode = true
     maintenance_mode         = 1

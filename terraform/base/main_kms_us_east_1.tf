@@ -6,7 +6,7 @@ module "kms_key_us_east_1" {
 
   source  = "terraform-aws-modules/kms/aws"
   version = "4.2.0"
-  create  = each.value.is_enabled
+  create  = local.is_enabled_us_east_1 && each.value.is_enabled
   providers = {
     aws = aws.us-east-1
   }

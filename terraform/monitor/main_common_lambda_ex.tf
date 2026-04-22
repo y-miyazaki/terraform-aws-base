@@ -62,7 +62,7 @@ module "aws_lambda_create_lambda_step_functions_log" {
     SLACK_OAUTH_ACCESS_TOKEN = coalesce(try(var.slack.override.common_lambda_step_functions.oauth_access_token, null), var.slack.oauth_access_token)
     SLACK_CHANNEL_ID         = coalesce(try(var.slack.override.common_lambda_step_functions.channel_id, null), var.slack.channel_id)
   }
-  function_name                 = "${var.name_prefix}cloudwatch-alarm-step-functions-log"
+  function_name                 = "${var.name_prefix}cloudwatch-alarm-step-functions-to-sns-to-slack"
   handler                       = "cloudwatch_alarm_to_sns_to_slack"
   lambda_role                   = module.aws_iam_role_lambda.arn
   layers                        = []

@@ -61,7 +61,7 @@ module "lambda_function_cloudwatch_event_ec2" {
     SLACK_OAUTH_ACCESS_TOKEN = coalesce(try(var.slack.override.cloudwatch_event_ec2.oauth_access_token, null), var.slack.oauth_access_token)
     SLACK_CHANNEL_ID         = coalesce(try(var.slack.override.cloudwatch_event_ec2.channel_id, null), var.slack.channel_id)
   }, var.cloudwatch_event_ec2.aws_lambda_function.environment)
-  function_name                 = "${var.name_prefix}cloudwatch-event-ec2"
+  function_name                 = "${var.name_prefix}cloudwatch-event-ec2-to-slack"
   handler                       = "cloudwatch_event_ec2_to_slack"
   lambda_role                   = module.aws_iam_role_lambda.arn
   layers                        = []

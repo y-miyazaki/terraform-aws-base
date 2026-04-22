@@ -4,7 +4,7 @@
 # NOTE: Skip creation if default region is us-east-1 to avoid duplication
 #--------------------------------------------------------------
 module "aws_sns_subscription_lambda_metric_us_east_1" {
-  count = !local.is_default_region_us_east_1 ? 1 : 0
+  count = local.is_enabled_us_east_1 ? 1 : 0
 
   source = "../../modules/aws/sns/subscription"
   providers = {
@@ -39,7 +39,7 @@ module "aws_sns_subscription_lambda_metric_us_east_1" {
 module "aws_lambda_create_lambda_metric_us_east_1" {
   source  = "terraform-aws-modules/lambda/aws"
   version = "8.7.0"
-  create  = !local.is_default_region_us_east_1
+  create  = local.is_enabled_us_east_1
   providers = {
     aws = aws.us-east-1
   }
@@ -73,7 +73,7 @@ module "aws_lambda_create_lambda_metric_us_east_1" {
     SLACK_OAUTH_ACCESS_TOKEN = coalesce(try(var.slack.override.common_lambda_metric.oauth_access_token, null), var.slack.oauth_access_token)
     SLACK_CHANNEL_ID         = coalesce(try(var.slack.override.common_lambda_metric.channel_id, null), var.slack.channel_id)
   }, var.common_lambda.metric.aws_lambda_function.environment)
-  function_name                 = "${var.name_prefix}cloudwatch-alarm-metric"
+  function_name                 = "${var.name_prefix}cloudwatch-alarm-metric-to-sns-to-slack"
   handler                       = "cloudwatch_alarm_to_sns_to_slack"
   lambda_role                   = module.aws_iam_role_lambda.arn
   layers                        = []
@@ -102,7 +102,7 @@ module "aws_lambda_create_lambda_metric_us_east_1" {
 # NOTE: Skip creation if default region is us-east-1 to avoid duplication
 #--------------------------------------------------------------
 module "aws_sns_subscription_lambda_log_us_east_1" {
-  count = !local.is_default_region_us_east_1 ? 1 : 0
+  count = local.is_enabled_us_east_1 ? 1 : 0
 
   source = "../../modules/aws/sns/subscription"
   providers = {
@@ -137,7 +137,7 @@ module "aws_sns_subscription_lambda_log_us_east_1" {
 module "aws_lambda_create_lambda_log_us_east_1" {
   source  = "terraform-aws-modules/lambda/aws"
   version = "8.7.0"
-  create  = !local.is_default_region_us_east_1
+  create  = local.is_enabled_us_east_1
   providers = {
     aws = aws.us-east-1
   }
@@ -170,7 +170,7 @@ module "aws_lambda_create_lambda_log_us_east_1" {
     SLACK_OAUTH_ACCESS_TOKEN = coalesce(try(var.slack.override.common_lambda_log.oauth_access_token, null), var.slack.oauth_access_token)
     SLACK_CHANNEL_ID         = coalesce(try(var.slack.override.common_lambda_log.channel_id, null), var.slack.channel_id)
   }
-  function_name                 = "${var.name_prefix}cloudwatch-alarm-log"
+  function_name                 = "${var.name_prefix}cloudwatch-alarm-log-to-sns-to-slack"
   handler                       = "cloudwatch_alarm_to_sns_to_slack"
   lambda_role                   = module.aws_iam_role_lambda.arn
   layers                        = []
@@ -199,7 +199,7 @@ module "aws_lambda_create_lambda_log_us_east_1" {
 # NOTE: Skip creation if default region is us-east-1 to avoid duplication
 #--------------------------------------------------------------
 module "aws_sns_subscription_lambda_ses_us_east_1" {
-  count = !local.is_default_region_us_east_1 ? 1 : 0
+  count = local.is_enabled_us_east_1 ? 1 : 0
 
   source = "../../modules/aws/sns/subscription"
   providers = {
@@ -260,7 +260,7 @@ module "aws_sns_subscription_lambda_ses_us_east_1" {
 module "aws_lambda_create_lambda_ses_us_east_1" {
   source  = "terraform-aws-modules/lambda/aws"
   version = "8.7.0"
-  create  = !local.is_default_region_us_east_1
+  create  = local.is_enabled_us_east_1
   providers = {
     aws = aws.us-east-1
   }
@@ -294,7 +294,7 @@ module "aws_lambda_create_lambda_ses_us_east_1" {
     SLACK_OAUTH_ACCESS_TOKEN = coalesce(try(var.slack.override.common_lambda_ses.oauth_access_token, null), var.slack.oauth_access_token)
     SLACK_CHANNEL_ID         = coalesce(try(var.slack.override.common_lambda_ses.channel_id, null), var.slack.channel_id)
   }, var.common_lambda.ses.aws_lambda_function.environment)
-  function_name                 = "${var.name_prefix}cloudwatch-alarm-ses"
+  function_name                 = "${var.name_prefix}cloudwatch-alarm-ses-to-sns-to-slack"
   handler                       = "cloudwatch_alarm_to_sns_ses_to_slack"
   lambda_role                   = module.aws_iam_role_lambda.arn
   layers                        = []
@@ -326,7 +326,7 @@ module "aws_lambda_create_lambda_ses_us_east_1" {
 module "aws_lambda_create_lambda_kinesis_data_firehose_cloudwatch_logs_processor_us_east_1" {
   source  = "terraform-aws-modules/lambda/aws"
   version = "8.7.0"
-  create  = !local.is_default_region_us_east_1
+  create  = local.is_enabled_us_east_1
   providers = {
     aws = aws.us-east-1
   }
@@ -394,7 +394,7 @@ module "aws_lambda_create_lambda_s3_notification_s3_object_created_for_athena_us
   providers = {
     aws = aws.us-east-1
   }
-  create = !local.is_default_region_us_east_1
+  create = local.is_enabled_us_east_1
 
   allowed_triggers = {
     trigger = {

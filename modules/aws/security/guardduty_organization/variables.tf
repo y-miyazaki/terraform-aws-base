@@ -10,6 +10,18 @@ variable "is_enabled_admin" {
   default     = false
 }
 
+variable "create_detector" {
+  description = "Whether to create a new GuardDuty detector. Set to true when no detector exists in the target region."
+  type        = bool
+  default     = false
+}
+
+variable "tags" {
+  description = "Tags to apply to created resources"
+  type        = map(any)
+  default     = {}
+}
+
 variable "admin_account_id" {
   description = "AWS account ID to designate as the GuardDuty organization admin account"
   type        = string

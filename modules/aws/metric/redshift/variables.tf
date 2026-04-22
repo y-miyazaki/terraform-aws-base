@@ -127,7 +127,7 @@ variable "threshold" {
     database_connections         = 100
     # (Required) HealthStatus threshold (HEALTHY(1)/UNHEALTHY(0))
     enabled_health_status = true
-    health_status         = 1
+    health_status         = 0
     # (Required) MaintenanceMode threshold (unit=Count(ON(1)/OFF(0)))
     enabled_maintenance_mode = true
     maintenance_mode         = 1

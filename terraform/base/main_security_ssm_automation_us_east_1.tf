@@ -8,7 +8,7 @@
 #--------------------------------------------------------------
 module "aws_security_ssm_automation_us_east_1" {
   source     = "../../modules/aws/security/ssm_automation"
-  is_enabled = var.security_ssm_automation.is_enabled
+  is_enabled = local.is_enabled_us_east_1 && var.security_ssm_automation.is_enabled
   providers = {
     aws = aws.us-east-1
   }

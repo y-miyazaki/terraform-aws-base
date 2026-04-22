@@ -5,7 +5,7 @@ output "admin_account_id" {
 
 output "detector_id" {
   description = "The ID of the GuardDuty detector"
-  value       = try(data.aws_guardduty_detector.existing[0].id, null)
+  value       = try(local.detector_id, null)
 }
 
 output "organization_configuration_id" {

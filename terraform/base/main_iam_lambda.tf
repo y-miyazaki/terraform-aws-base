@@ -74,6 +74,17 @@ locals {
             "arn:aws:firehose:${var.region}:${data.aws_caller_identity.current.account_id}:deliverystream/*",
           ]
         },
+        {
+          Sid    = "AllowKMSForFirehoseSSE"
+          Effect = "Allow"
+          Action = [
+            "kms:Decrypt",
+            "kms:GenerateDataKey*",
+          ]
+          Resource = [
+            "arn:aws:kms:${var.region}:${data.aws_caller_identity.current.account_id}:key/*",
+          ]
+        },
         # Note: Organizations API access required for account-level metadata in multi-account setups
         {
           Sid    = "AllowOrganizationsDescribeAccount"

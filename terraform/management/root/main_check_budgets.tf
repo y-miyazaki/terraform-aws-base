@@ -59,7 +59,7 @@ module "lambda_function_budgets" {
       principal           = "scheduler.amazonaws.com"
       qualifier           = null
       source_account      = null
-      source_arn          = null
+      source_arn          = try(aws_scheduler_schedule.budgets[0].arn, null)
       statement_id        = "BudgetsDetection"
       statement_id_prefix = null
     }
@@ -80,11 +80,11 @@ module "lambda_function_budgets" {
     SLACK_OAUTH_ACCESS_TOKEN = coalesce(try(var.slack.override.budgets.oauth_access_token, null), var.slack.oauth_access_token)
     SLACK_CHANNEL_ID         = coalesce(try(var.slack.override.budgets.channel_id, null), var.slack.channel_id)
   }, var.budgets.aws_lambda_function.environment)
-  function_name                 = "${var.name_prefix}cloudwatch-event-budgets-all"
-  handler                       = "cloudwatch_event_budgets_to_slack"
+  function_name                 = "${var.name_prefix}cloudwatch-schedule-budgets-all-to-slack"
+  handler                       = "cloudwatch_schedule_budgets_all_to_slack"
   lambda_role                   = module.aws_iam_role_lambda.arn
   layers                        = []
-  local_existing_package        = "../../../lambda/outputs/go_cloudwatch_event_budgets_all_to_slack.zip"
+  local_existing_package        = "../../../lambda/outputs/go_cloudwatch_schedule_budgets_all_to_slack.zip"
   logging_application_log_level = "WARN"
   logging_log_format            = "JSON"
   logging_system_log_level      = "WARN"

@@ -8,7 +8,7 @@
 #--------------------------------------------------------------
 module "aws_security_ebs_us_east_1" {
   source     = "../../modules/aws/security/ebs"
-  is_enabled = var.security_ebs.is_enabled
+  is_enabled = local.is_enabled_us_east_1 && var.security_ebs.is_enabled
   providers = {
     aws = aws.us-east-1
   }

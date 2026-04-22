@@ -6,7 +6,7 @@
 #--------------------------------------------------------------
 module "aws_security_athena_us_east_1" {
   source     = "../../modules/aws/security/athena"
-  is_enabled = !local.is_default_region_us_east_1 && var.security_athena.is_enabled
+  is_enabled = local.is_enabled_us_east_1 && var.security_athena.is_enabled
   providers = {
     aws = aws.us-east-1
   }

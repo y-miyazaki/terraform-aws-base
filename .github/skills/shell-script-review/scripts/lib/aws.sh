@@ -31,7 +31,7 @@ fi
 #   $@ - AWS CLI command and arguments
 #
 # Returns:
-#   0 on success, 1 on error (outputs command result to stdout)
+#   0 on success, non-zero on error (outputs command result to stdout)
 #
 # Usage:
 #   result=$(aws_safe_exec aws s3 ls)

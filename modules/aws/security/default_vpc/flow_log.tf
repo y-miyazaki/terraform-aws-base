@@ -2,7 +2,7 @@
 # CloudWatch Log Group for flow log
 #--------------------------------------------------------------
 resource "aws_cloudwatch_log_group" "this" {
-  count = var.is_enabled && var.is_enabled_flow_logs ? 1 : 0
+  count = local.is_active && var.is_enabled_flow_logs ? 1 : 0
 
   name              = var.aws_cloudwatch_log_group.name
   retention_in_days = var.aws_cloudwatch_log_group.retention_in_days
@@ -19,7 +19,7 @@ resource "aws_cloudwatch_log_group" "this" {
 # Provides an IAM role.
 #--------------------------------------------------------------
 resource "aws_iam_role" "this" {
-  count = var.is_enabled && var.is_enabled_flow_logs ? 1 : 0
+  count = local.is_active && var.is_enabled_flow_logs ? 1 : 0
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
@@ -47,7 +47,7 @@ resource "aws_iam_role" "this" {
 #--------------------------------------------------------------
 #tfsec:ignore:AWS099
 data "aws_iam_policy_document" "this" {
-  count = var.is_enabled && var.is_enabled_flow_logs ? 1 : 0
+  count = local.is_active && var.is_enabled_flow_logs ? 1 : 0
 
   statement {
     effect = "Allow"
@@ -71,7 +71,7 @@ data "aws_iam_policy_document" "this" {
 #--------------------------------------------------------------
 #tfsec:ignore:AWS099
 resource "aws_iam_policy" "this" {
-  count = var.is_enabled && var.is_enabled_flow_logs ? 1 : 0
+  count = local.is_active && var.is_enabled_flow_logs ? 1 : 0
 
   description = try(var.aws_iam_policy.description, null)
   name        = var.aws_iam_policy.name
@@ -85,7 +85,7 @@ resource "aws_iam_policy" "this" {
 # Attaches a Managed IAM Policy to an IAM role
 #--------------------------------------------------------------
 resource "aws_iam_role_policy_attachment" "this" {
-  count = var.is_enabled && var.is_enabled_flow_logs ? 1 : 0
+  count = local.is_active && var.is_enabled_flow_logs ? 1 : 0
 
   role       = aws_iam_role.this[0].name
   policy_arn = aws_iam_policy.this[0].arn
@@ -95,7 +95,7 @@ resource "aws_iam_role_policy_attachment" "this" {
 # Provides a resource to manage a default security group. This resource can manage the default security group of the default or a non-default VPC.
 #--------------------------------------------------------------
 resource "aws_flow_log" "this" {
-  count = var.is_enabled && var.is_enabled_flow_logs ? 1 : 0
+  count = local.is_active && var.is_enabled_flow_logs ? 1 : 0
 
   log_destination = aws_cloudwatch_log_group.this[0].arn
   iam_role_arn    = aws_iam_role.this[0].arn

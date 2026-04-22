@@ -199,7 +199,7 @@ module "lambda_function_config" {
     SLACK_OAUTH_ACCESS_TOKEN = coalesce(try(var.slack.override.security_config.oauth_access_token, null), var.slack.oauth_access_token)
     SLACK_CHANNEL_ID         = coalesce(try(var.slack.override.security_config.channel_id, null), var.slack.channel_id)
   }
-  function_name                 = "${var.name_prefix}cloudwatch-event-config"
+  function_name                 = "${var.name_prefix}cloudwatch-event-config-to-slack"
   handler                       = "cloudwatch_event_config_to_slack"
   lambda_role                   = module.aws_iam_role_lambda.arn
   layers                        = []

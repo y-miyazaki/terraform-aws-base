@@ -7,7 +7,7 @@
 #--------------------------------------------------------------
 module "aws_metric_cloudfront" {
   source     = "../../modules/aws/metric/cloudfront"
-  is_enabled = !local.is_default_region_us_east_1 && var.metric_resource_cloudfront.is_enabled
+  is_enabled = local.is_enabled_us_east_1 && var.metric_resource_cloudfront.is_enabled
   providers = {
     aws = aws.us-east-1
   }

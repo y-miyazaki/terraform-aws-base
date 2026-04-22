@@ -20,7 +20,7 @@ locals {
 #tfsec:ignore:aws-s3-enable-versioning
 module "s3_log" {
   source        = "terraform-aws-modules/s3-bucket/aws"
-  version       = "5.10.0"
+  version       = "5.12.0"
   create_bucket = var.common_log.s3_log.create_bucket
 
   grant = [
@@ -111,7 +111,7 @@ data "aws_iam_policy_document" "s3_log_combined" {
 #tfsec:ignore:aws-s3-enable-versioning
 module "s3_cloudtrail" {
   source        = "terraform-aws-modules/s3-bucket/aws"
-  version       = "5.10.0"
+  version       = "5.12.0"
   create_bucket = var.common_log.s3_cloudtrail.create_bucket && !local.control_tower_managed_services.cloudtrail
 
   attach_access_log_delivery_policy         = true
