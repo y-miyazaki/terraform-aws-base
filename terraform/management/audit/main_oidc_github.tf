@@ -10,7 +10,7 @@
 #--------------------------------------------------------------
 module "oidc_github" {
   source  = "unfunco/oidc-github/aws"
-  version = "2.0.2"
+  version = "3.0.0"
   create  = var.oidc_github.is_enabled
 
   attach_read_only_policy         = var.oidc_github.attach_read_only_policy
