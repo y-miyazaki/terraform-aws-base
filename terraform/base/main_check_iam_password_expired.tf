@@ -6,16 +6,13 @@
 # passwords and send notifications to Slack. This helps maintain security
 # compliance by ensuring users update their passwords regularly.
 #
-# Note: This monitoring is disabled when AWS Control Tower is enabled,
-# as Control Tower provides its own password policy management.
-#
 # This monitors:
 # - Password expiration dates
 # - Users with expired passwords
 # - Upcoming password expiration warnings
 #--------------------------------------------------------------
 resource "aws_scheduler_schedule" "iam_password_expired" {
-  count = var.iam_password_expired.is_enabled && !local.control_tower_managed_services.iam_password_expired ? 1 : 0
+  count = var.iam_password_expired.is_enabled ? 1 : 0
 
   name        = "${var.name_prefix}${var.iam_password_expired.aws_eventbridge_schedule.name}"
   description = var.iam_password_expired.aws_eventbridge_schedule.description

@@ -12,6 +12,15 @@
 #     --no-plan                  Skip plan/validation (no plan mode)
 #   arguments:
 #     terraform_directory        Target Terraform directory to process
+#
+# Output:
+# - Module update results and validation status to stdout
+# - Summary report of updated modules
+#
+# Design Rules:
+# - Updates modules one at a time with individual validation
+# - Creates baseline plans before updates for comparison
+# - Rolls back on validation failure
 #######################################
 
 # Error handling: exit on error, unset variable, or failed pipeline

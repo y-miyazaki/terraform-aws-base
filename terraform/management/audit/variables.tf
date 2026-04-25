@@ -70,3 +70,15 @@ variable "securityhub_organization" {
 variable "securityhub_organization_us_east_1" {
   type = any
 }
+variable "access_analyzer_organization" {
+  type = object({
+    is_enabled    = bool
+    analyzer_name = string
+  })
+}
+variable "access_analyzer_organization_us_east_1" {
+  type = object({
+    is_enabled    = bool
+    analyzer_name = string
+  })
+}

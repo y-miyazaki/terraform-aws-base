@@ -1,12 +1,21 @@
 #!/bin/bash
 #######################################
 # Description: List RDS DB cluster identifiers as JSON
-# Usage: ./list.sh
-#   -h, --help    Display this help message
 #
-# This script queries AWS RDS and outputs cluster identifiers.
+# Usage: ./list.sh [options]
+#   options:
+#     -h, --help    Display this help message
+#
+# Output:
+# - JSON object with "list_db_cluster_identifier" key (comma-separated cluster IDs)
+# - Used by Terraform external data source
+#
+# Design Rules:
+# - Must output valid JSON for Terraform external data source consumption
+# - All values in output must be strings
 #######################################
 
+# Error handling: exit on error, unset variable, or failed pipeline
 set -euo pipefail
 
 #######################################
@@ -39,6 +48,20 @@ EOF
 
 #######################################
 # main: Main execution function
+#
+# Description:
+#   Queries AWS RDS to list DB cluster identifiers
+#   and outputs the result as JSON.
+#
+# Arguments:
+#   $@ - Command line arguments
+#
+# Returns:
+#   0 on success, 1 on failure
+#
+# Usage:
+#   main "$@"
+#
 #######################################
 function main {
     while [[ $# -gt 0 ]]; do
@@ -74,4 +97,7 @@ function main {
     jq -n --arg list "$joined" '{list_db_cluster_identifier: $list}'
 }
 
-main "$@"
+# Only call main if script is executed directly
+if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
+    main "$@"
+fi

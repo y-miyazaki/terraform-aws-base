@@ -9,6 +9,13 @@
 # - Script syntax validation
 # - Permission validation
 # - Configuration validation
+#
+# Output:
+# - None (library file, sourced by other scripts)
+#
+# Design Rules:
+# - Requires common.sh to be loaded first
+# - All validation functions return 0 on success, 1 on failure
 #######################################
 
 # Ensure common.sh is loaded for logging functions

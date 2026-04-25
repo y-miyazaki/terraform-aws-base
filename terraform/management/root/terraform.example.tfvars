@@ -163,11 +163,11 @@ oidc_github = {
   # TODO: Flag to enable/disable the attachment of the AdministratorAccess policy.
   dangerously_attach_admin_policy = true
   # TODO: Flag to enable/disable the attachment of the ReadOnly policy.
-  attach_read_only_policy = false
+  iam_role_policy_names = []
   # TODO: Flag to enable/disable the creation of the GitHub OIDC provider.
   create_oidc_provider = true
-  # TODO: Set the org/repo of the GitHub repository to github_repositories.
-  github_repositories = [
+  # TODO: Set the org/repo of the GitHub repository to github_subjects.
+  github_subjects = [
     # "your-repository/repository-name",
   ]
   iam_role_name = "oidc-github-role"

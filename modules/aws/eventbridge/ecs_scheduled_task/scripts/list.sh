@@ -1,14 +1,21 @@
 #!/bin/bash
 #######################################
 # Description: List EventBridge rules targeting ECS tasks mapped by "ClusterName/TaskDefinitionFamily"
-# Usage: ./list.sh
-#   -h, --help    Display this help message
 #
-# This script queries AWS EventBridge and outputs a JSON map where:
-#   Key: "ClusterName/TaskDefinitionFamily"
-#   Value: "RuleName1,RuleName2,..." (Comma-separated if multiple rules target the same task)
+# Usage: ./list.sh [options]
+#   options:
+#     -h, --help    Display this help message
+#
+# Output:
+# - JSON object where keys are "ClusterName/TaskDefinitionFamily" and values are comma-separated rule names
+# - Used by Terraform external data source
+#
+# Design Rules:
+# - Must output valid JSON for Terraform external data source consumption
+# - All values in output must be strings
 #######################################
 
+# Error handling: exit on error, unset variable, or failed pipeline
 set -euo pipefail
 
 #######################################
@@ -41,6 +48,20 @@ EOF
 
 #######################################
 # main: Main execution function
+#
+# Description:
+#   Queries AWS EventBridge to list rules targeting ECS tasks,
+#   maps them by cluster/task definition family, and outputs as JSON.
+#
+# Arguments:
+#   $@ - Command line arguments
+#
+# Returns:
+#   0 on success, 1 on failure
+#
+# Usage:
+#   main "$@"
+#
 #######################################
 function main {
     while [[ $# -gt 0 ]]; do
@@ -123,4 +144,7 @@ function main {
     " "$tmp_file"
 }
 
-main "$@"
+# Only call main if script is executed directly
+if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
+    main "$@"
+fi

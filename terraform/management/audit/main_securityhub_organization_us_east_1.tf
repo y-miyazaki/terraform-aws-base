@@ -5,7 +5,7 @@
 #--------------------------------------------------------------
 module "securityhub_organization_us_east_1" {
   source     = "../../../modules/aws/security/securityhub_organization"
-  is_enabled = local.is_enabled_us_east_1 && var.securityhub_organization_us_east_1.is_enabled
+  is_enabled = local.is_enabled_us_east_1 && var.securityhub_organization_us_east_1.is_enabled && local.is_delegated_admin.securityhub
   providers = {
     aws = aws.us-east-1
   }

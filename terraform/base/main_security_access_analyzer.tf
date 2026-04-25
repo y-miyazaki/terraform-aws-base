@@ -6,7 +6,7 @@
 #--------------------------------------------------------------
 module "aws_security_access_analyzer" {
   source     = "../../modules/aws/security/access_analyzer"
-  is_enabled = var.security_access_analyzer.is_enabled
+  is_enabled = var.security_access_analyzer.is_enabled && !local.control_tower_managed_services.access_analyzer
 
   analyzer_name = "${var.name_prefix}${var.security_access_analyzer.aws_accessanalyzer_analyzer.analyzer_name}"
   type          = var.security_access_analyzer.aws_accessanalyzer_analyzer.type

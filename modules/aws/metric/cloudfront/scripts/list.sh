@@ -6,7 +6,13 @@
 #   options:
 #   -h, --help    Display this help message
 #
-# This script queries AWS CloudFront and outputs distribution IDs and domains in JSON format.
+# Output:
+# - JSON object with "list_distribution" and "list_domain" keys (comma-separated)
+# - Used by Terraform external data source
+#
+# Design Rules:
+# - Must output valid JSON for Terraform external data source consumption
+# - All values in output must be strings
 #######################################
 
 # Error handling: exit on error, unset variable, or failed pipeline

@@ -117,11 +117,11 @@ oidc_github = {
   # TODO: Flag to enable/disable the attachment of the AdministratorAccess policy.
   dangerously_attach_admin_policy = true
   # TODO: Flag to enable/disable the attachment of the ReadOnly policy.
-  attach_read_only_policy = false
+  iam_role_policy_names = []
   # TODO: Flag to enable/disable the creation of the GitHub OIDC provider.
   create_oidc_provider = true
-  # TODO: Set the org/repo of the GitHub repository to github_repositories.
-  github_repositories = [
+  # TODO: Set the org/repo of the GitHub repository to github_subjects.
+  github_subjects = [
     # "your-repository/repository-name",
   ]
   iam_role_name = "oidc-github-role"
@@ -407,4 +407,25 @@ securityhub_organization_us_east_1 = {
   configuration_policy_name = "securityhub-configuration-policy"
   linking_mode              = "ALL_REGIONS"
   target_id                 = "r-xxxxxx"
+}
+
+#--------------------------------------------------------------
+# Access Analyzer Organization
+# AWS IAM Access Analyzer central configuration for organization-wide access analysis.
+# Enables organization-wide settings for identifying resources shared with external entities.
+#--------------------------------------------------------------
+access_analyzer_organization = {
+  # TODO: need to set is_enabled for settings of AWS Access Analyzer Organization.
+  is_enabled    = false
+  analyzer_name = "aws-access-analyzer"
+}
+
+#--------------------------------------------------------------
+# Access Analyzer Organization (us-east-1)
+# AWS IAM Access Analyzer central configuration for organization-wide access analysis in us-east-1.
+#--------------------------------------------------------------
+access_analyzer_organization_us_east_1 = {
+  # TODO: need to set is_enabled for settings of AWS Access Analyzer Organization(us-east-1).
+  is_enabled    = false
+  analyzer_name = "aws-access-analyzer"
 }

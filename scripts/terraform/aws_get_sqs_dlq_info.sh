@@ -5,6 +5,13 @@
 # Usage: ./aws_sqs_dlq.sh [options]
 #   options:
 #     -h, --help    Display this help message
+#
+# Output:
+# - SQS DLQ information in Terraform configuration format to stdout
+#
+# Design Rules:
+# - Outputs Terraform-compatible HCL format
+# - Queries all SQS queues and identifies DLQ relationships
 #######################################
 
 # Error handling: exit on error, unset variable, or failed pipeline

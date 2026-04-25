@@ -3,6 +3,13 @@
 # Description: CSV processing utility functions for shell scripts
 #
 # Usage: source /path/to/scripts/lib/csv.sh
+#
+# Output:
+# - None (library file, sourced by other scripts)
+#
+# Design Rules:
+# - Handles quoted fields containing commas and newlines
+# - All output values are CSV-safe
 #######################################
 
 #######################################

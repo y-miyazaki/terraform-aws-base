@@ -7,6 +7,13 @@
 #     -h, --help    Display this help message
 #   arguments:
 #     VPC_ID        VPC ID to query resources for
+#
+# Output:
+# - VPC resource information (EC2, NAT Gateways, ENIs, VPN, Peering) to stdout
+#
+# Design Rules:
+# - Queries multiple AWS services for VPC-related resources
+# - Validates VPC ID before querying
 #######################################
 
 # Error handling: exit on error, unset variable, or failed pipeline

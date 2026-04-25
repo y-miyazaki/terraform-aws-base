@@ -6,6 +6,13 @@
 # to simplify library loading and prevent missing imports
 #
 # Usage: source "${SCRIPT_DIR}/lib/all.sh"
+#
+# Output:
+# - None (library file, sourced by other scripts)
+#
+# Design Rules:
+# - Must be idempotent (guard against multiple loading)
+# - Must source all individual libraries in correct dependency order
 #######################################
 
 # Prevent multiple loading

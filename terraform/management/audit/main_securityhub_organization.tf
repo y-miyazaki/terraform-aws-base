@@ -5,7 +5,7 @@
 #--------------------------------------------------------------
 module "securityhub_organization" {
   source     = "../../../modules/aws/security/securityhub_organization"
-  is_enabled = var.securityhub_organization.is_enabled
+  is_enabled = var.securityhub_organization.is_enabled && local.is_delegated_admin.securityhub
   # Security Hub organization admin account designation is always disabled, because the management account is used as the admin account.
   is_enabled_admin              = false
   is_enabled_finding_aggregator = var.securityhub_organization.is_enabled_finding_aggregator

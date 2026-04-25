@@ -17,7 +17,6 @@ locals {
 # S3 for log.
 # https://registry.terraform.io/modules/terraform-aws-modules/s3-bucket/aws/latest
 #--------------------------------------------------------------
-#tfsec:ignore:aws-s3-enable-versioning
 module "s3_log" {
   source        = "terraform-aws-modules/s3-bucket/aws"
   version       = "5.12.0"
@@ -108,7 +107,6 @@ data "aws_iam_policy_document" "s3_log_combined" {
 # S3 for cloudtrail.
 # https://registry.terraform.io/modules/terraform-aws-modules/s3-bucket/aws/latest
 #--------------------------------------------------------------
-#tfsec:ignore:aws-s3-enable-versioning
 module "s3_cloudtrail" {
   source        = "terraform-aws-modules/s3-bucket/aws"
   version       = "5.12.0"
