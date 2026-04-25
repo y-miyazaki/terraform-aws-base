@@ -359,10 +359,11 @@ module "aws_lambda_create_lambda_kinesis_data_firehose_cloudwatch_logs_processor
     SLACK_OAUTH_ACCESS_TOKEN = coalesce(try(var.slack.override.common_lambda_kinesis_data_firehose_cloudwatch_logs_processor.oauth_access_token, null), var.slack.oauth_access_token)
     SLACK_CHANNEL_ID         = coalesce(try(var.slack.override.common_lambda_kinesis_data_firehose_cloudwatch_logs_processor.channel_id, null), var.slack.channel_id)
   }, var.common_lambda.metric.aws_lambda_function.environment)
-  function_name                 = "${var.name_prefix}kinesis-data-firehose-cloudwatch-logs-processor"
-  handler                       = "index.handler"
-  lambda_role                   = module.aws_iam_role_lambda.arn
-  layers                        = []
+  function_name = "${var.name_prefix}kinesis-data-firehose-cloudwatch-logs-processor"
+  handler       = "index.handler"
+  lambda_role   = module.aws_iam_role_lambda.arn
+  layers        = []
+  # cd /workspace/nodejs/kinesis_data_firehose_cloudwatch_logs_processor && npm install && zip -r /workspace/lambda/outputs/nodejs_kinesis_data_firehose_cloudwatch_logs_processor.zip .
   local_existing_package        = "../../lambda/outputs/nodejs_kinesis_data_firehose_cloudwatch_logs_processor.zip"
   logging_application_log_level = "WARN"
   logging_log_format            = "JSON"
@@ -419,10 +420,11 @@ module "aws_lambda_create_lambda_s3_notification_s3_object_created_for_athena_us
   environment_variables = {
     TARGET_KEY_PREFIX = "Logs/CloudFront/"
   }
-  function_name                 = "${var.name_prefix}s3-notification-s3-object-created-for-athena"
-  handler                       = "index.handler"
-  lambda_role                   = module.aws_iam_role_lambda.arn
-  layers                        = []
+  function_name = "${var.name_prefix}s3-notification-s3-object-created-for-athena"
+  handler       = "index.handler"
+  lambda_role   = module.aws_iam_role_lambda.arn
+  layers        = []
+  # cd /workspace/nodejs/s3_notification_s3_object_created_for_athena && npm install && zip -r /workspace/lambda/outputs/nodejs_s3_notification_s3_object_created_for_athena.zip .
   local_existing_package        = "../../lambda/outputs/nodejs_s3_notification_s3_object_created_for_athena.zip"
   logging_application_log_level = "INFO"
   logging_log_format            = "JSON"

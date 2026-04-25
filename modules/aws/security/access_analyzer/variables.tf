@@ -20,3 +20,8 @@ variable "type" {
   description = "(Optional) Type of Analyzer. Valid values are ACCOUNT or ORGANIZATION. Defaults to ACCOUNT."
   default     = null
 }
+variable "region" {
+  type        = string
+  description = "(Optional) AWS region for the analyzer check script. If not set, uses the provider's default region."
+  default     = ""
+}

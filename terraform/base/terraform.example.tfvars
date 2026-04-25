@@ -16,16 +16,41 @@
 # Use this object to define whether Control Tower is enabled and which
 # services are centrally managed outside this base stack.
 # If managed_services.<service> is omitted, it falls back to is_enabled.
+#
+# Verification: Run the following AWS CLI commands from the management (root) account
+# to check whether each service is centrally managed by Control Tower or Organizations.
+#
+# Control Tower landing zone:
+#   aws controltower list-landing-zones
+#
+# Delegated administrators per service (run from root account).
+# If DelegatedAdministrators[] is non-empty, the service is delegated
+# to another account (typically the audit account) and the corresponding
+# managed_services flag should be set to true.
+#   aws organizations list-delegated-administrators --service-principal access-analyzer.amazonaws.com
+#   aws organizations list-delegated-administrators --service-principal config.amazonaws.com
+#   aws organizations list-delegated-administrators --service-principal guardduty.amazonaws.com
+#   aws organizations list-delegated-administrators --service-principal securityhub.amazonaws.com
+#
+# CloudTrail is managed directly by Control Tower on the root account (not via delegated admin).
+# Verify with (run from root account):
+#   aws cloudtrail describe-trails --query 'trailList[?IsOrganizationTrail==`true`].Name'
 #--------------------------------------------------------------
 # TODO: need to change Control Tower settings.
 control_tower = {
+  # aws controltower list-landing-zones (run from root account)
   is_enabled = false
   managed_services = {
-    cloudtrail           = false
-    config               = false
-    guardduty            = false
-    iam_password_expired = false
-    securityhub          = false
+    # aws organizations list-delegated-administrators --service-principal access-analyzer.amazonaws.com
+    access_analyzer = false
+    # aws cloudtrail describe-trails --query 'trailList[?IsOrganizationTrail==`true`].Name' (run from root account)
+    cloudtrail = false
+    # aws organizations list-delegated-administrators --service-principal config.amazonaws.com
+    config = false
+    # aws organizations list-delegated-administrators --service-principal guardduty.amazonaws.com
+    guardduty = false
+    # aws organizations list-delegated-administrators --service-principal securityhub.amazonaws.com
+    securityhub = false
   }
 }
 
@@ -210,11 +235,11 @@ oidc_github = {
   # TODO: Flag to enable/disable the attachment of the AdministratorAccess policy.
   dangerously_attach_admin_policy = true
   # TODO: Flag to enable/disable the attachment of the ReadOnly policy.
-  attach_read_only_policy = false
+  iam_role_policy_names = []
   # TODO: Flag to enable/disable the creation of the GitHub OIDC provider.
   create_oidc_provider = true
-  # TODO: Set the org/repo of the GitHub repository to github_repositories.
-  github_repositories = [
+  # TODO: Set the org/repo of the GitHub repository to github_subjects.
+  github_subjects = [
     # "your-repository/repository-name",
   ]
   iam_role_name = "oidc-github-role"
@@ -350,7 +375,6 @@ trusted_advisor = {
 #--------------------------------------------------------------
 # IAM password expired
 # A list of target users will be automatically notified in Slack 10 days before the IAM password expires.
-# Notice: This option is automatically disabled if control_tower.managed_services.iam_password_expired=true.
 #--------------------------------------------------------------
 iam_password_expired = {
   # TODO: need to set is_enabled for settings of IAM password expired.
@@ -1677,6 +1701,7 @@ common_log = {
 # AWS IAM Access Analyzer helps identify resources in your organization and accounts that are shared with external entities.
 # Analyzes resource-based policies and generates findings for resources with public or cross-account access.
 # Helps ensure that only intended access to resources is allowed.
+# Notice: This option is automatically disabled if control_tower.managed_services.access_analyzer=true.
 #--------------------------------------------------------------
 security_access_analyzer = {
   # TODO: need to set is_enabled for settings of Access Analyzer.
@@ -2148,6 +2173,26 @@ security_ebs = {
   is_enabled_ebs_encryption_by_default = true
   # TODO: need to set is_enabled for blocking public access to EBS snapshots
   is_enabled_ebs_public_snapshot_block_access = true
+}
+
+#--------------------------------------------------------------
+# Security:EC2 Instance Metadata Defaults
+# Enforce IMDSv2 as the default for all new EC2 instances at the account level.
+# Security Hub: EC2.8 - EC2 instances should use IMDSv2
+#--------------------------------------------------------------
+security_ec2_metadata = {
+  # TODO: need to set is_enabled for EC2 Instance Metadata security controls
+  is_enabled = true
+}
+
+#--------------------------------------------------------------
+# Security:ECR Account Settings
+# Enforce ECR account-level security defaults.
+# Migrates basic scan type to AWS native scanning technology.
+#--------------------------------------------------------------
+security_ecr = {
+  # TODO: need to set is_enabled for ECR account security controls
+  is_enabled = true
 }
 
 #--------------------------------------------------------------

@@ -846,6 +846,36 @@
       "algorithm": "sha256"
     },
     {
+      "id": "github_release/github.com/jamesWoolfenden/pike/v0.3.99/pike_0.3.99_darwin_amd64.tar.gz",
+      "checksum": "BE2B066A768EB28C6B82BD6B010EBCE952B557BECBC08DA4BE49D022805F95ED",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/jamesWoolfenden/pike/v0.3.99/pike_0.3.99_darwin_arm64.tar.gz",
+      "checksum": "C792CC1578B534A1EAA8154460EC9AED4FC2083C579496DDAB769625FCDF0BFF",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/jamesWoolfenden/pike/v0.3.99/pike_0.3.99_linux_amd64.tar.gz",
+      "checksum": "814E4244277FB4D8FF0DF6F481D9C9F40D44AB8E8B076F95EC4A5F6517943DFE",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/jamesWoolfenden/pike/v0.3.99/pike_0.3.99_linux_arm64.tar.gz",
+      "checksum": "DB0352841645E040B0F7B7B057E19842916C9D9CE7AD4CDB7F55553ECA810B5A",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/jamesWoolfenden/pike/v0.3.99/pike_0.3.99_windows_amd64.zip",
+      "checksum": "1E889AD112DA62171C8E9916CD11D00E8550D3BDD0C5F8FC585DFF89A257E614",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/jamesWoolfenden/pike/v0.3.99/pike_0.3.99_windows_arm64.zip",
+      "checksum": "DCAA32740AB0DFEF4801A25507C80CC34C63D04FE161E8D07F9B40FCBFA25077",
+      "algorithm": "sha256"
+    },
+    {
       "id": "github_release/github.com/kayac/ecspresso/v2.7.1/ecspresso_2.7.1_darwin_amd64.tar.gz",
       "checksum": "61F0533C1898DDAB47EF412294F7E864992F79F35940E25B95412B06C28CB383",
       "algorithm": "sha256"

@@ -61,8 +61,10 @@ module "lambda_vpc_us_east_1" {
   flow_log_file_format                            = var.common_lambda.vpc.new.flow_log_file_format
 
   # Disable default resource management
-  manage_default_vpc            = false
-  manage_default_security_group = false
+  manage_default_vpc             = false
+  manage_default_security_group  = true
+  default_security_group_ingress = []
+  default_security_group_egress  = []
 
   tags = var.tags
 }

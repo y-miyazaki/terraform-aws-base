@@ -10,6 +10,13 @@
 # - Resource ARN parsing utilities
 # - AWS region and account utilities
 # - AWS credentials validation (check_aws_credentials)
+#
+# Output:
+# - None (library file, sourced by other scripts)
+#
+# Design Rules:
+# - Requires common.sh to be loaded first
+# - Requires aws CLI and jq as external dependencies
 #######################################
 
 # Ensure common.sh is loaded for logging functions

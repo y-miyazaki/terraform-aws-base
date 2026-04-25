@@ -10,13 +10,14 @@
 #--------------------------------------------------------------
 module "oidc_github" {
   source  = "unfunco/oidc-github/aws"
-  version = "2.0.2"
+  version = "3.0.0"
   create  = var.oidc_github.is_enabled
 
-  attach_read_only_policy         = var.oidc_github.attach_read_only_policy
   create_oidc_provider            = var.oidc_github.create_oidc_provider
   dangerously_attach_admin_policy = var.oidc_github.dangerously_attach_admin_policy
-  github_repositories             = var.oidc_github.github_repositories
+  default_subject                 = "*"
+  github_subjects                 = var.oidc_github.github_subjects
+  iam_role_policy_names           = var.oidc_github.iam_role_policy_names
   iam_role_inline_policies = {
     format("%s%s", var.name_prefix, "oidc-github-inline-policy") = jsonencode({
       Version = "2012-10-17"

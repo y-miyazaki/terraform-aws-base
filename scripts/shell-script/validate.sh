@@ -25,6 +25,10 @@
 # Examples:
 #   ./scripts/validate.sh
 #   ./scripts/validate.sh --dry-run --verbose
+#
+# Output:
+# - Validation results for each script to stdout
+# - Exit code 0 if all checks pass, non-zero otherwise
 #######################################
 
 #######################################

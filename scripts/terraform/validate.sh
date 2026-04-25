@@ -16,6 +16,10 @@
 #   - Uses terraform.sh library functions for consistency
 #   - Runs tflint recursively before validation
 #   - Follows common parse_arguments pattern used in other scripts
+#
+# Output:
+# - Exit code 0 if all checks pass, non-zero otherwise
+# - Detailed check results to stderr
 #######################################
 
 # Error handling: exit on error, unset variable, or failed pipeline

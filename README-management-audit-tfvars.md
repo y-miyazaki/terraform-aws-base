@@ -23,6 +23,8 @@ This environment focuses on security monitoring including Security Hub, GuardDut
   - [oidc\_github](#oidc_github)
   - [security](#security)
 - [Environment-Specific Configuration Examples](#environment-specific-configuration-examples)
+  - [Delegated Administrator Verification](#delegated-administrator-verification)
+  - [Access Analyzer Organization](#access-analyzer-organization)
 - [Configuration Validation Checklist](#configuration-validation-checklist)
 - [Related Documents](#related-documents)
 
@@ -285,11 +287,11 @@ oidc_github = {
   # TODO: Flag to enable/disable the attachment of the AdministratorAccess policy.
   dangerously_attach_admin_policy = true
   # TODO: Flag to enable/disable the attachment of the ReadOnly policy.
-  attach_read_only_policy = false
+  iam_role_policy_names = []
   # TODO: Flag to enable/disable the creation of the GitHub OIDC provider.
   create_oidc_provider = true
-  # TODO: Set the org/repo of the GitHub repository to github_repositories.
-  github_repositories = [
+  # TODO: Set the org/repo of the GitHub repository to github_subjects.
+  github_subjects = [
     # "your-org/security-automation-repo",
   ]
   iam_role_name = "oidc-github-role"
@@ -385,6 +387,46 @@ security = {
 
 ## Environment-Specific Configuration Examples
 
+### Delegated Administrator Verification
+
+This audit environment assumes the account is a **delegated administrator** for organization-level security services. Terraform automatically verifies delegation status at plan time using `aws organizations list-delegated-services-for-account`. If the account is not delegated for a service, the corresponding resources are skipped.
+
+Verify delegation status manually (run from audit account):
+
+```sh
+aws organizations list-delegated-services-for-account --account-id <AUDIT_ACCOUNT_ID>
+```
+
+### Access Analyzer Organization
+
+AWS IAM Access Analyzer with ORGANIZATION type analyzes resource policies across all accounts in the organization from the delegated administrator (audit) account.
+
+- If an ORGANIZATION-type analyzer already exists (e.g., created via console or Control Tower), Terraform skips creation to avoid conflicts
+- The check script (`check_organization_analyzer.sh`) queries the target region via `--region` flag to correctly detect existing analyzers per region
+- The `region` parameter must be passed to the module for multi-region deployments so the check script queries the correct region
+- ACCOUNT-type analyzers in member accounts (base) should be disabled via `control_tower.managed_services.access_analyzer = true`
+
+**Multi-region behavior:**
+
+| Region | Module | region parameter |
+| --- | --- | --- |
+| Default (e.g., ap-northeast-1) | `access_analyzer_organization` | `var.region` |
+| us-east-1 | `access_analyzer_organization_us_east_1` | `"us-east-1"` (hardcoded) |
+
+The check script receives the region via Terraform's `data "external"` query input and excludes the Terraform-managed analyzer name from the existence check. This prevents false positives where Terraform's own analyzer triggers the skip logic.
+
+```terraform
+access_analyzer_organization = {
+  is_enabled    = true
+  analyzer_name = "aws-access-analyzer"
+}
+
+access_analyzer_organization_us_east_1 = {
+  is_enabled    = true
+  analyzer_name = "aws-access-analyzer"
+}
+```
+
 For audit environments, focus on security monitoring and compliance:
 
 ```hcl
@@ -421,9 +463,9 @@ kms = {
 oidc_github = {
   is_enabled                      = true
   dangerously_attach_admin_policy = false  # Use least privilege in production
-  attach_read_only_policy         = true
+  iam_role_policy_names           = ["ReadOnlyAccess"]
   create_oidc_provider            = true
-  github_repositories = [
+  github_subjects = [
     "your-org/security-automation-repo",
   ]
   iam_role_name = "oidc-github-audit-role"
@@ -435,10 +477,13 @@ oidc_github = {
 
 | Category                        | Item                                                     | Status |
 | ------------------------------- | -------------------------------------------------------- | ------ |
-| Security Services Validation    | Slack channel and team IDs are correctly set             | [ ]    |
-| Security Services Validation    | Security Hub is enabled for compliance monitoring        | [ ]    |
-| Security Services Validation    | GuardDuty is enabled for threat detection                | [ ]    |
-| Security Services Validation    | CloudWatch log retention meets compliance requirements   | [ ]    |
+| Security Services Validation    | Slack channel and team IDs are correctly set                                                          | [ ]    |
+| Security Services Validation    | Security Hub is enabled for compliance monitoring                                                     | [ ]    |
+| Security Services Validation    | GuardDuty is enabled for threat detection                                                             | [ ]    |
+| Security Services Validation    | Access Analyzer Organization is enabled for cross-account access analysis                             | [ ]    |
+| Security Services Validation    | CloudWatch log retention meets compliance requirements                                                | [ ]    |
+| Delegated Admin Validation      | Account is delegated administrator for required services (access-analyzer, guardduty, securityhub)    | [ ]    |
+| Delegated Admin Validation      | Base accounts have `control_tower.managed_services.access_analyzer = true` to disable ACCOUNT analyzers | [ ]    |
 | GitHub Integration Validation   | OIDC provider settings are correct                       | [ ]    |
 | GitHub Integration Validation   | GitHub repositories list is populated                    | [ ]    |
 | GitHub Integration Validation   | IAM policies follow least privilege principle            | [ ]    |

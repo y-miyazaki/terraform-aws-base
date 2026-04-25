@@ -12,6 +12,15 @@
 #     -e, --env ENV          Target environment: dev, qa, stg, prd (default: dev)
 #     -p, --path PATH        Path to ECS service directory (required)
 #     -r, --region REGION    AWS region (default: auto-detected via aws configure get region)
+#
+# Output:
+# - ECS service deployment status to stdout
+# - Exit code 0 on success, non-zero on failure
+#
+# Design Rules:
+# - Uses ecspresso for ECS service management
+# - Validates AWS credentials and region before deployment
+# - Supports deploy, destroy, and verify actions
 #######################################
 
 # Error handling: exit on error, unset variable, or failed pipeline

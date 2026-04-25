@@ -5,7 +5,7 @@
 #--------------------------------------------------------------
 module "guardduty_organization" {
   source     = "../../../modules/aws/security/guardduty_organization"
-  is_enabled = var.guardduty_organization.is_enabled
+  is_enabled = var.guardduty_organization.is_enabled && local.is_delegated_admin.guardduty
   # GuardDuty organization admin account designation is always disabled, because the management account is used as the admin account.
   is_enabled_admin = false
   # Set to true to create a new GuardDuty detector if no detector exists in this region.

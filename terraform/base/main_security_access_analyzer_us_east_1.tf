@@ -6,7 +6,7 @@
 #--------------------------------------------------------------
 module "aws_security_access_analyzer_us_east_1" {
   source     = "../../modules/aws/security/access_analyzer"
-  is_enabled = local.is_enabled_us_east_1 && var.security_access_analyzer.is_enabled
+  is_enabled = local.is_enabled_us_east_1 && var.security_access_analyzer.is_enabled && !local.control_tower_managed_services.access_analyzer
   providers = {
     aws = aws.us-east-1
   }

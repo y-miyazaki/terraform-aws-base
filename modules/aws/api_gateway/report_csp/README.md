@@ -16,7 +16,7 @@
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_aws_lambda_create_lambda_report_csp"></a> [aws\_lambda\_create\_lambda\_report\_csp](#module\_aws\_lambda\_create\_lambda\_report\_csp) | terraform-aws-modules/lambda/aws | 8.1.0 |
+| <a name="module_aws_lambda_create_lambda_report_csp"></a> [aws\_lambda\_create\_lambda\_report\_csp](#module\_aws\_lambda\_create\_lambda\_report\_csp) | terraform-aws-modules/lambda/aws | 8.7.0 |
 
 ## Resources
 

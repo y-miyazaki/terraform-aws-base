@@ -11,6 +11,13 @@
 # - Help/usage display functions
 # - Dependency validation
 # - Section headers for organized output
+#
+# Output:
+# - None (library file, sourced by other scripts)
+#
+# Design Rules:
+# - No external dependencies (base library)
+# - All functions must be safe to call from any script
 #######################################
 
 #######################################

@@ -9,6 +9,13 @@
 # - Standard Terraform workflow operations
 # - Backend configuration management
 # - Plugin cache management
+#
+# Output:
+# - None (library file, sourced by other scripts)
+#
+# Design Rules:
+# - Requires common.sh to be loaded first
+# - Requires terraform CLI as external dependency
 #######################################
 
 # Ensure common.sh is loaded for logging functions

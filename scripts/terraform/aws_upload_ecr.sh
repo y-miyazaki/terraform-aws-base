@@ -20,6 +20,15 @@
 #     -c, --context    Build context path (default: .)
 #   arguments:
 #     repository_name  Name of the ECR repository to upload to
+#
+# Output:
+# - Docker image pushed to ECR repository
+# - ECR image URI to stdout
+#
+# Design Rules:
+# - Authenticates to ECR before any push operation
+# - Supports both build-and-push and tag-and-push workflows
+# - Validates AWS credentials before proceeding
 #######################################
 
 # Error handling: exit on error, unset variable, or failed pipeline

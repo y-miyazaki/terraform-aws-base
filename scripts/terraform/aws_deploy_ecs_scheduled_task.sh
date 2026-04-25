@@ -14,7 +14,7 @@
 #     -p, --path PATH        Path to ECS scheduled task directory (required)
 #     -r, --region REGION    AWS region (default: auto-detected via aws configure get region)
 #
-# Design rules:
+# Design Rules:
 #   - Rule 1: Render Jsonnet to JSON first (ecschedule does not support --ext-str)
 #   - Rule 2: Clean up temp files on exit via trap
 #   - Rule 3: Check diffs before deploying; skip if no changes to avoid unnecessary
@@ -24,6 +24,10 @@
 #   - Rule 5: Script-level diff checking limits to ECS configs/templates only.
 #             For script deployment tracking across multiple services/tasks, use
 #             CI/CD workflow which detects scripts/ changes via git diff
+#
+# Output:
+# - Task definition registration and EventBridge rule status to stdout
+# - Exit code 0 on success, non-zero on failure
 #######################################
 
 # Error handling: exit on error, unset variable, or failed pipeline

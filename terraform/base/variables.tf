@@ -10,11 +10,11 @@ variable "control_tower" {
   type = object({
     is_enabled = bool
     managed_services = optional(object({
-      cloudtrail           = optional(bool)
-      config               = optional(bool)
-      guardduty            = optional(bool)
-      iam_password_expired = optional(bool)
-      securityhub          = optional(bool)
+      access_analyzer = optional(bool)
+      cloudtrail      = optional(bool)
+      config          = optional(bool)
+      guardduty       = optional(bool)
+      securityhub     = optional(bool)
     }))
   })
   default  = null
@@ -212,6 +212,16 @@ variable "security_default_vpc" {
 }
 variable "security_ebs" {
   type = any
+}
+variable "security_ec2_metadata" {
+  type = object({
+    is_enabled = bool
+  })
+}
+variable "security_ecr" {
+  type = object({
+    is_enabled = bool
+  })
 }
 variable "security_guardduty" {
   type = any

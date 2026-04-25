@@ -5,12 +5,14 @@
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | ~>1.4 |
 | <a name="requirement_aws"></a> [aws](#requirement\_aws) | ~>6.0 |
+| <a name="requirement_external"></a> [external](#requirement\_external) | ~>2.0 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
 | <a name="provider_aws"></a> [aws](#provider\_aws) | 6.8.0 |
+| <a name="provider_external"></a> [external](#provider\_external) | 2.3.5 |
 
 ## Modules
 
@@ -21,6 +23,7 @@ No modules.
 | Name | Type |
 |------|------|
 | [aws_accessanalyzer_analyzer.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/accessanalyzer_analyzer) | resource |
+| [external_external.organization_analyzer_exists](https://registry.terraform.io/providers/hashicorp/external/latest/docs/data-sources/external) | data source |
 
 ## Inputs
 
@@ -28,6 +31,7 @@ No modules.
 |------|-------------|------|---------|:--------:|
 | <a name="input_analyzer_name"></a> [analyzer\_name](#input\_analyzer\_name) | (Required) Name of the Analyzer. | `string` | n/a | yes |
 | <a name="input_is_enabled"></a> [is\_enabled](#input\_is\_enabled) | (Optional) A boolean flag to enable/disable settings of Access Analyzer. Defaults true. | `bool` | `true` | no |
+| <a name="input_region"></a> [region](#input\_region) | (Optional) AWS region for the analyzer check script. If not set, uses the provider's default region. | `string` | `""` | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | (Optional) Key-value map of resource tags. | `map(any)` | `null` | no |
 | <a name="input_type"></a> [type](#input\_type) | (Optional) Type of Analyzer. Valid values are ACCOUNT or ORGANIZATION. Defaults to ACCOUNT. | `string` | `null` | no |
 

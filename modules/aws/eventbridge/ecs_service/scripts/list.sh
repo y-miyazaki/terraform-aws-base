@@ -6,7 +6,14 @@
 #   options:
 #   -h, --help    Display this help message
 #
-# This script queries AWS ECS and outputs cluster/service pairs with desired counts in JSON format.
+# Output:
+# - JSON object with "list_ecs_cluster", "list_ecs_service", "list_desired_count",
+#   "list_has_autoscaling", "list_autoscaling_min", "list_autoscaling_max" keys (comma-separated)
+# - Used by Terraform external data source
+#
+# Design Rules:
+# - Must output valid JSON for Terraform external data source consumption
+# - All values in output must be strings
 #######################################
 
 # Error handling: exit on error, unset variable, or failed pipeline

@@ -6,7 +6,13 @@
 #   options:
 #   -h, --help    Display this help message
 #
-# This script queries AWS SQS and outputs queue names in JSON format.
+# Output:
+# - JSON object with "list" key (comma-separated queue names)
+# - Used by Terraform external data source
+#
+# Design Rules:
+# - Must output valid JSON for Terraform external data source consumption
+# - All values in output must be strings
 #######################################
 
 # Error handling: exit on error, unset variable, or failed pipeline
