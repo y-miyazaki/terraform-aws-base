@@ -254,7 +254,7 @@ jobs:
 
       - name: Install ecspresso
         timeout-minutes: 5
-        uses: kayac/ecspresso@d4d5193102a5fb45e84fa8fd0fc9a524a7bf8893 # v2.8.0
+        uses: kayac/ecspresso@cf8f36d3b343338262eb11f76d32c7ad8b68e737 # v2.8.1
         with:
           version: ${{ inputs.ecspresso_version }}
 
@@ -332,7 +332,7 @@ jobs:
 
       - name: Install ecspresso
         timeout-minutes: 5
-        uses: kayac/ecspresso@d4d5193102a5fb45e84fa8fd0fc9a524a7bf8893 # v2.8.0
+        uses: kayac/ecspresso@cf8f36d3b343338262eb11f76d32c7ad8b68e737 # v2.8.1
         with:
           version: ${{ inputs.ecspresso_version }}
 
