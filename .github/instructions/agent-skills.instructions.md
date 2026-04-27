@@ -5,7 +5,10 @@ description: "AI Assistant Instructions for Agent Skills Development"
 
 # AI Assistant Instructions for Agent Skills
 
-**言語ポリシー**: 全て英語
+## Scope
+
+- 対象は `.github/skills/**/SKILL.md` のメタ仕様定義であり、通常のコード系 instructions とは目的が異なる
+- 本ファイルは SKILL 設計規約を定義するため、共通 4 章テンプレートの例外として扱う
 
 ## Skill Structural Requirements (Mandatory)
 

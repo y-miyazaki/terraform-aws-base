@@ -4,8 +4,8 @@ Common guidelines for AI-assisted development. Project-specific overrides define
 
 ## Language and Formatting Standards
 
-- **Documentation files** (instructions, prompt): 日本語（章名のみ英語）
-- **Documentation files** (README, other document): English only
+- **Instruction/Prompt files**: 日本語（章名のみ英語）
+- **Repository documents** (README, docs/, CONTRIBUTING など): English only
 - **Generated code and comments**: English only
 - **Chat/Agent interaction**: 日本語で質問・回答、コード例は英語で記載
 - **Commit messages**: 英語で簡潔に、変更内容を明確に表現
@@ -13,6 +13,12 @@ Common guidelines for AI-assisted development. Project-specific overrides define
 ## Core Principles
 
 - **優先順位**: 共通ルールより `.github/instructions/*.instructions.md` の path-specific 指示を優先
+  - 複数の path-specific 指示が競合する場合は、より具体的な `applyTo` を優先
+  - 具体性が同等で判断不能な場合は安全側に倒し、作業を停止してユーザー確認
+- **Instructions Structure Policy**:
+  - `.github/instructions/*.instructions.md` は原則 `Standards` → `Guidelines` → `Testing and Validation` → `Security Guidelines` の順で記載
+  - 複数ファイルで共通する運用（検証入口・例外時対応）は章名と記述スタイルをできる限り揃える
+  - `agent-skills.instructions.md` は SKILL メタ仕様のため上記章テンプレートの例外とする
 - **Memory 活用**:
   - 作業前に README・設計書・設定ファイルなどリポジトリ内情報を優先的に確認
   - 会話メモリは補助的に扱い、重要な判断はコード・設定を根拠とする
@@ -47,7 +53,9 @@ Common guidelines for AI-assisted development. Project-specific overrides define
   - それ以外は順次実行にフォールバック
 
 - **Verification Contract**:
-  - コード変更: test / build / lint / 実行確認のいずれかを必須実施
+  - コード変更: 最低 `lint + test` を必須実施（テストが存在しない場合は理由を明示）
+  - 実行バイナリ/配布物に影響する変更: `build` を追加実施
+  - 実行時挙動に影響する変更: 実行確認を追加実施
   - 設定変更: 構文・影響範囲の検証を必須
   - 未実施の場合は安全である理由を明示
 
@@ -75,6 +83,10 @@ Common guidelines for AI-assisted development. Project-specific overrides define
 
 - **Dependency Awareness**:
   - 変更前に upstream / downstream への影響を確認する
+
+- **Uncovered File Types**:
+  - path-specific instructions が存在しないファイル種別（例: 汎用 YAML）は、当該ツールの一般ベストプラクティスに従う
+  - 重要変更で判断が割れる場合は、専用 instructions 追加を優先提案する
 
 ## General Development Standards
 

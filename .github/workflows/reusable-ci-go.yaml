@@ -25,7 +25,7 @@ on:
         description: "Go version to use for setup-go and linting"
         required: false
         type: string
-        default: "1.25.8"
+        default: "1.25.9"
       golangci_lint_version:
         description: "golangci-lint version to use"
         required: false

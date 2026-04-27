@@ -1,11 +1,13 @@
 ---
-applyTo: "**/*.yaml,**/aws_architecture_diagram*.{yaml,yml,png}"
+applyTo: "**/aws_architecture_diagram*.yaml,**/aws_architecture_diagram*.yml,**/aws_architecture_diagram*.png"
 description: "AI Assistant Instructions for Diagram as Code (DAC)"
 ---
 
 # AI Assistant Instructions for Diagram as Code
 
-**言語ポリシー**: ドキュメント日本語、コード・コメント英語
+## Scope
+
+- 対象は `aws_architecture_diagram*.yaml|yml|png` と、その生成・検証運用に限定する
 
 | File/Pattern                    | Purpose                |
 | ------------------------------- | ---------------------- |
@@ -73,13 +75,13 @@ Route53/WAF 可視化:
 ### MCP Tool Usage (awsdac-mcp-server)
 
 ```bash
-# 1. フォーマット情報取得
+# 1. 新規作成・形式確認時に使用
 mcp_awsdac-mcp-se_getDiagramAsCodeFormat
 
-# 2. PNG生成（ファイル保存）
+# 2. 出力物検証・保存時に使用
 mcp_awsdac-mcp-se_generateDiagramToFile
 
-# 3. Base64取得（表示可能クライアント用）
+# 3. プレビュー表示時に使用
 mcp_awsdac-mcp-se_generateDiagram
 ```
 
@@ -93,3 +95,9 @@ mcp_awsdac-mcp-se_generateDiagram
 ## Testing and Validation
 
 **詳細ガイド**: [diagram-as-code-validation Skill](../skills/diagram-as-code-validation/SKILL.md) を参照（検証手順・図生成トラブルシューティング・セキュリティチェック）
+
+## Security Guidelines
+
+- 機密情報（ARN/Account ID/内部ドメイン等）をコメント・Title・Label に直接記載しない
+- 外部入力由来のテキストをそのまま図要素に反映しない（整形・検証を先に実施）
+- 生成物（PNG/YAML）公開時は公開可能な環境情報のみ含むことを確認する

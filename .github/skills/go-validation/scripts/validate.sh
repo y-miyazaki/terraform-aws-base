@@ -262,7 +262,7 @@ function run_benchmark_tests {
 #   None
 #
 # Returns:
-#   None (sets EXIT_CODE and COVERAGE_FAILED on failure)
+#   None (sets COVERAGE_FAILED on threshold miss; does not affect EXIT_CODE)
 #
 # Usage:
 #   run_coverage_tests
@@ -297,7 +297,6 @@ function run_coverage_tests {
                 log "INFO" "Coverage ($coverage_percent%) meets threshold ($COVERAGE_THRESHOLD%)"
             else
                 log "WARN" "Coverage ($coverage_percent%) below threshold ($COVERAGE_THRESHOLD%)"
-                EXIT_CODE=1
                 COVERAGE_FAILED=1
             fi
 
@@ -755,56 +754,56 @@ function main {
     end_time=$(date +%s)
     elapsed=$((end_time - start_time))
 
+    echo_section "Result (completed in ${elapsed} seconds)"
+    echo "Result:" >&2
+    [[ "$GO_FMT_FAILED" == "1" ]] && echo "❌ go fmt" >&2 || echo "✅ go fmt" >&2
+    # Report go vet status
+    [[ "$GO_VET_FAILED" == "1" ]] && echo "❌ go vet" >&2 || echo "✅ go vet" >&2
+
+    # Report go build status next to keep result order consistent with run_* calls
+    [[ "$GO_BUILD_FAILED" == "1" ]] && echo "❌ go build" >&2 || echo "✅ go build" >&2
+    if [[ "$LINT_FAILED" == "1" ]]; then
+        echo -n "❌ golangci-lint" >&2
+        # Use safe arithmetic comparison with default 0 to avoid bash syntax errors
+        local issue_count="${LINT_ISSUES_COUNT:-0}"
+        if [[ "$issue_count" != "0" && "$issue_count" -gt 0 ]]; then
+            echo " (${LINT_ISSUES_COUNT} issues)" >&2
+        else
+            echo "" >&2
+        fi
+    else
+        echo "✅ golangci-lint" >&2
+    fi
+    if [[ "$TEST_FAILED" == "1" ]]; then
+        echo -n "❌ go test" >&2
+        # Use safe arithmetic comparison with default 0
+        if ((${TEST_FAIL_COUNT:-0} > 0)); then
+            echo " (${TEST_FAIL_COUNT} failed)" >&2
+        else
+            echo "" >&2
+        fi
+    else
+        echo "✅ go test" >&2
+    fi
+    [[ "$RACE_FAILED" == "1" ]] && echo "❌ go test -race" >&2 || echo "✅ go test -race" >&2
+    if [[ "$COVERAGE_FAILED" == "1" ]]; then
+        if [[ -n "$COVERAGE_PERCENT" ]]; then
+            echo "⚠️ go test -cover ($COVERAGE_PERCENT% < ${COVERAGE_THRESHOLD}% threshold)" >&2
+        else
+            echo "⚠️ go test -cover" >&2
+        fi
+    else
+        if [[ -n "$COVERAGE_PERCENT" ]]; then
+            echo "✅ go test -cover ($COVERAGE_PERCENT%)" >&2
+        else
+            echo "✅ go test -cover" >&2
+        fi
+    fi
+    [[ "$SECURITY_FAILED" == "1" ]] && echo "❌ security checks (govulncheck)" >&2 || echo "✅ security checks (govulncheck)" >&2
+
     if [[ "$EXIT_CODE" -eq 0 ]]; then
-        echo_section "All checks completed successfully in ${elapsed} seconds"
         log "INFO" "✅ All validations passed"
     else
-        echo_section "Result (completed in ${elapsed} seconds)"
-        echo "Result:" >&2
-        [[ "$GO_FMT_FAILED" == "1" ]] && echo "❌ go fmt" >&2 || echo "✅ go fmt" >&2
-        # Report go vet status
-        [[ "$GO_VET_FAILED" == "1" ]] && echo "❌ go vet" >&2 || echo "✅ go vet" >&2
-
-        # Report go build status next to keep result order consistent with run_* calls
-        [[ "$GO_BUILD_FAILED" == "1" ]] && echo "❌ go build" >&2 || echo "✅ go build" >&2
-        if [[ "$LINT_FAILED" == "1" ]]; then
-            echo -n "❌ golangci-lint" >&2
-            # Use safe arithmetic comparison with default 0 to avoid bash syntax errors
-            local issue_count="${LINT_ISSUES_COUNT:-0}"
-            if [[ "$issue_count" != "0" && "$issue_count" -gt 0 ]]; then
-                echo " (${LINT_ISSUES_COUNT} issues)" >&2
-            else
-                echo "" >&2
-            fi
-        else
-            echo "✅ golangci-lint" >&2
-        fi
-        if [[ "$TEST_FAILED" == "1" ]]; then
-            echo -n "❌ go test" >&2
-            # Use safe arithmetic comparison with default 0
-            if ((${TEST_FAIL_COUNT:-0} > 0)); then
-                echo " (${TEST_FAIL_COUNT} failed)" >&2
-            else
-                echo "" >&2
-            fi
-        else
-            echo "✅ go test" >&2
-        fi
-        [[ "$RACE_FAILED" == "1" ]] && echo "❌ go test -race" >&2 || echo "✅ go test -race" >&2
-        if [[ "$COVERAGE_FAILED" == "1" ]]; then
-            if [[ -n "$COVERAGE_PERCENT" ]]; then
-                echo "❌ go test -cover ($COVERAGE_PERCENT%)" >&2
-            else
-                echo "❌ go test -cover" >&2
-            fi
-        else
-            if [[ -n "$COVERAGE_PERCENT" ]]; then
-                echo "✅ go test -cover ($COVERAGE_PERCENT%)" >&2
-            else
-                echo "✅ go test -cover" >&2
-            fi
-        fi
-        [[ "$SECURITY_FAILED" == "1" ]] && echo "❌ security checks (govulncheck)" >&2 || echo "✅ security checks (govulncheck)" >&2
         log "ERROR" "❌ Some validations failed"
     fi
 

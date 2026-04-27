@@ -5,7 +5,9 @@ description: "AI Assistant Instructions for Terraform"
 
 # AI Assistant Instructions for Terraform
 
-**言語ポリシー**: ドキュメント日本語、コード・コメント英語
+## Scope
+
+- 対象は Terraform 定義（`*.tf`、`*.tfvars`、`*.hcl`）の設計・修正・検証に限定する
 
 ## Standards
 
@@ -57,7 +59,7 @@ description: "AI Assistant Instructions for Terraform"
 - `moved`ブロックでリソース再作成回避
 - deprecated 機能置換
 - コメントアウトリソース削除
-- terraform resource を使う場合、terraform repository を Fetch して調査
+- Terraform リソース利用時は Terraform Registry の provider docs を確認し、Arguments/Attributes/Import 制約を先に確定する
 
 #### Modules
 
@@ -113,3 +115,9 @@ AWS provider 優先:
 ## Testing and Validation
 
 **詳細ガイド**: [terraform-validation Skill](../skills/terraform-validation/SKILL.md) を参照（検証手順・トラブルシューティング・セキュリティチェック）
+
+## Security Guidelines
+
+- シークレットは tfvars/コードへ直接記載せず、Secret Manager/SSM Parameter Store を使用する
+- IAM 権限は最小権限を維持し、ワイルドカード使用時は理由を明記する
+- 暗号化・監査ログ・公開範囲（Public Access）に関する設定はデフォルト安全側を維持する

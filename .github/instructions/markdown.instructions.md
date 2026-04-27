@@ -1,23 +1,20 @@
 ---
-applyTo: "**/*.md"
+applyTo: "README.md,CONTRIBUTING.md,docs/**/*.md"
 description: "AI Assistant Instructions for Markdown Documentation"
 ---
 
 # AI Assistant Instructions for Markdown
 
-**言語ポリシー**: ドキュメント日本語、コード・コメント英語
+## Scope
+
+- 対象は `README.md`、`CONTRIBUTING.md`、`docs/**/*.md` のドキュメント整備に限定する
 
 ## Standards
 
-### Markdown Standards
+### Repository Documentation Scope
 
-GitHub Markdown 準拠:
-
-- 見出し: `#`階層（H1→H2→H3 順）
-- コードブロック: 言語指定（\`\`\`bash）
-- リンク: `[text](url)`、相対パス可
-- 画像: `![alt](url)`
-- 表: header + separator + rows
+- この instructions は Markdown 記法の一般論ではなく、リポジトリ内ドキュメント運用ルールに限定する
+- 構文/リンク/フォーマットの一般チェックは [markdown-validation Skill](../skills/markdown-validation/SKILL.md) に委譲する
 
 ## Guidelines
 
@@ -54,11 +51,8 @@ README.md 構成:
 
 ### Code Modification Guidelines
 
-Markdown 検証:
-
-- リンク切れチェック
-- 表整形確認
-- コードブロック言語指定確認
+- 変更後は [markdown-validation Skill](../skills/markdown-validation/SKILL.md) の検証手順を優先
+- リンク切れ・表整形・コードブロック言語指定の個別確認はデバッグ時または失敗分析時に実施
 
 ### MCP Tool Usage
 
@@ -70,3 +64,9 @@ Markdown 検証:
 ## Testing and Validation
 
 **詳細ガイド**: [markdown-validation Skill](../skills/markdown-validation/SKILL.md) を参照（検証手順・一般的なエラー修正・セキュリティガイドライン）
+
+## Security Guidelines
+
+- ドキュメントに機密情報（トークン・鍵・内部URL・個人情報）を記載しない
+- コマンド例は破壊的操作を既定にしない（必要時は注意書きを付与）
+- 外部リンクは信頼できる一次情報を優先し、不明な短縮URLを避ける

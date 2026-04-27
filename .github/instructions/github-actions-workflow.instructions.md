@@ -5,19 +5,13 @@ description: "AI Assistant Instructions for GitHub Actions Workflows"
 
 # AI Assistant Instructions for GitHub Actions
 
-**言語ポリシー**: ドキュメント日本語、コード・コメント英語
+## Scope
+
+- 対象は `.github/workflows/*.yml|yaml` の設計・修正・検証に限定する
 
 ## Standards
 
 ### Workflow Standards
-
-必須要素:
-
-- `name`: ワークフロー名
-- `on`: トリガー条件
-- `permissions`: 最小権限（`contents: read`）
-- `jobs.<job_id>.runs-on`: ランナー指定
-- `jobs.<job_id>.steps`: ステップリスト
 
 キー記載順序:
 
@@ -41,15 +35,6 @@ description: "AI Assistant Instructions for GitHub Actions Workflows"
   ```
 
 ## Guidelines
-
-### Workflow Design Patterns
-
-基本パターン:
-
-- CI: コミット時 lint・test・build
-- CD: main マージ時デプロイ
-- Schedule: cron 定期実行
-- Manual: workflow_dispatch 手動実行
 
 ### Tool Integration
 
@@ -82,15 +67,12 @@ Artifact:
 - `permissions`明示的設定
 - シークレット: `${{ secrets.NAME }}`
 - Public repo: fork PR 制限
+- サードパーティ Action は commit SHA pin を推奨（許容例外がある場合は理由をコメントで残す）
 
 ### Code Modification Guidelines
 
-検証手順:
-
-1. YAML 構文チェック
-2. アクション最新バージョン確認
-3. `permissions`設定確認
-4. Secret 変数存在確認
+- 変更後は [github-actions-validation Skill](../skills/github-actions-validation/SKILL.md) の validate.sh 実行を優先
+- YAML 構文・Action version・`permissions`・Secret 設定の個別確認はデバッグ時または失敗分析時に実施
 
 ### Error Handling
 
@@ -174,3 +156,9 @@ on:
 ## Testing and Validation
 
 **詳細ガイド**: [github-actions-validation Skill](../skills/github-actions-validation/SKILL.md) を参照（検証手順・セキュリティベストプラクティス・トラブルシューティング）
+
+## Security Guidelines
+
+- `permissions` は最小権限を維持し、不要な `write` 権限を付与しない
+- Secret は `${{ secrets.* }}` 経由のみで参照し、ログ出力しない
+- サードパーティ Action は commit SHA pin を優先し、例外時は理由をコメントに残す

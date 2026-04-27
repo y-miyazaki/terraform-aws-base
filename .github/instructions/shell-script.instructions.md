@@ -1,11 +1,13 @@
 ---
-applyTo: "**/*.sh,scripts/**"
+applyTo: "**/*.sh"
 description: "AI Assistant Instructions for Shell Script"
 ---
 
 # AI Assistant Instructions for Shell Script
 
-**言語ポリシー**: ドキュメント日本語、コード・コメント英語
+## Scope
+
+- 対象は Shell Script（`*.sh`）の実装・修正・検証に限定する
 
 | Directory/File      | Purpose                     |
 | ------------------- | --------------------------- |
@@ -133,7 +135,8 @@ VAR_NAME="default_value"
 
 ### Code Modification Guidelines
 
-**詳細ガイド**: [shell-script-validation Skill](../skills/shell-script-validation/SKILL.md) を参照（検証手順・Batsテスト標準・トラブルシューティング）
+- 変更後は [shell-script-validation Skill](../skills/shell-script-validation/SKILL.md) の validate.sh 実行を優先
+- 個別コマンドはデバッグ時のみ使用
 
 ### MCP Tool Usage
 
@@ -147,3 +150,9 @@ VAR_NAME="default_value"
 ## Testing and Validation
 
 **詳細ガイド**: [shell-script-validation Skill](../skills/shell-script-validation/SKILL.md) を参照（検証手順・Batsテスト標準・トラブルシューティング）
+
+## Security Guidelines
+
+- `set -euo pipefail` と安全なデフォルト（`umask` 等）を維持し、無効化しない
+- 秘密情報は環境変数または Secret 管理経由で扱い、標準出力・ログに出さない
+- 破壊的コマンド実行前には対象確認とガード条件を置き、誤実行を防止する
