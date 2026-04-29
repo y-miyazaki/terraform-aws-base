@@ -42,11 +42,13 @@ Examples:
 
 ## Q-05: Constraints Clarity
 
-Check: Are prerequisites (tools, versions, environment) and limitations (scope, thresholds) explicit with numeric values where applicable?
-Why: Explicit constraints prevent misuse in incompatible environments, set clear expectations, and enable automation to validate preconditions.
+Check: Are project-specific, non-obvious constraints documented while self-evident constraints are omitted?
+Why: Self-evident constraints (e.g., "tool must be installed") waste tokens and add noise. Project-specific constraints (e.g., "coverage threshold 80%", "AWS-only") are what the agent wouldn't know without being told.
 Examples:
-- ✅ "Prerequisites: Git initialized, Python 3.8+. Limitations: AWS-only, max file 100MB"
-- ❌ "Standard dependencies", "Handle appropriately", "Normal environment"
+- ✅ "Test coverage threshold: 80%" (project-specific, non-obvious)
+- ✅ No Constraints section when all prerequisites are self-evident (tool installation, file existence)
+- ❌ "Go toolchain installed and available in PATH" (self-evident, Claude already knows)
+- ❌ "Cannot validate code that doesn't compile" (self-evident)
 
 ---
 
@@ -57,3 +59,19 @@ Why: Implicit inference forces humans/AI to guess intent, causing inconsistency 
 Examples:
 - ✅ "If config missing, fail with error M001", "Returns exit code 1 on validation failure"
 - ❌ "Handle appropriately", "Use reasonable defaults", "Depending on context"
+
+---
+
+## BP-03: Token Efficiency
+
+Check: Does SKILL.md avoid content that Claude already knows, minimizing redundancy with frontmatter and reference files?
+Why: Every token competes for context window attention. Redundant content dilutes the agent's focus on project-specific instructions. Claude's official best practice: "Would the agent get this wrong without this instruction? If no, cut it."
+Examples:
+- ✅ No Purpose section (duplicates description field)
+- ✅ No When to Use section (duplicates description "Use when..." trigger)
+- ✅ No self-evident Constraints section
+- ✅ No general Failure Behavior section (standard tool behavior)
+- ✅ No Available Review Categories section (duplicates Reference Files Guide)
+- ❌ Purpose section that restates the description
+- ❌ Constraints listing "Go toolchain installed", "Files must exist"
+- ❌ Failure Behavior listing standard exit codes and error messages

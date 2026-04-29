@@ -25,7 +25,7 @@ Use the following report structure for review and validation output.
 
 ## Rules
 
-- Keep full evaluation data for all checks internally using fixed ItemIDs from `reference/common-checklist.md`.
+- Keep full evaluation data for all checks internally using fixed ItemIDs from `references/common-checklist.md`.
 - In human-readable output, display only:
   - `## Checks Summary` (counts), and
   - `## Checks (Failed/Deferred Only)`.

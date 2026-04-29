@@ -50,7 +50,7 @@ SKILL_FILE=""
 declare -a check_names=()
 declare -a check_statuses=()
 declare -a check_details_json=()
-declare -a required_sections=("Purpose" "When to Use This Skill" "Input Specification" "Output Specification" "Execution Scope" "Constraints" "Failure Behavior" "Reference Files Guide" "Workflow")
+declare -a required_sections=("Input" "Output Specification" "Execution Scope" "Reference Files Guide" "Workflow" "Output Format" "Best Practices")
 declare -a required_fields=("name" "description" "license")
 
 #######################################
@@ -81,11 +81,14 @@ Arguments:
                  Must match pattern: .github/skills/*/SKILL.md
 
 Validation Checks:
-  - Structural Completeness: 9 required sections exist
+  - Structural Completeness: 7 required sections exist
   - YAML Frontmatter Fields: name, description, license fields present
+  - Description Quality: third person, Use when trigger, no implementation instructions
+  - Metadata Fields: author and version present
   - Progressive Disclosure: word count < 5,000
-  - Resource Separation: scripts/ and reference/ directories exist
+  - Resource Separation: scripts/ and references/ directories exist
   - Reference Mandatory Files: common-checklist.md and common-output-format.md exist
+  - Reference Triggers: trigger conditions present in Reference Files Guide
 
 Output Format:
   - Human-readable colored terminal output
@@ -226,9 +229,9 @@ function check_yaml_syntax {
 #######################################
 #
 # Description:
-#   Verifies that SKILL.md contains all 9 required sections:
-#   Purpose, When to Use This Skill, Input Specification, Output Specification,
-#   Execution Scope, Constraints, Failure Behavior, Reference Files Guide, Workflow
+#   Verifies that SKILL.md contains all 7 required sections:
+#   Input, Output Specification, Execution Scope,
+#   Reference Files Guide, Workflow, Output Format, Best Practices
 #
 # Arguments:
 #   None (uses global SKILL_FILE)
@@ -362,7 +365,7 @@ function check_progressive_disclosure {
 # check_resource_separation: Check directory structure
 #
 # Description:
-#   Verifies that skill directory contains scripts/ and reference/ directories
+#   Verifies that skill directory contains scripts/ and references/ directories
 #   for proper resource organization
 #
 # Arguments:
@@ -387,17 +390,17 @@ function check_resource_separation {
     local reference_exists=0
 
     [[ -d "$skill_dir/scripts" ]] && scripts_exists=1
-    [[ -d "$skill_dir/reference" ]] && reference_exists=1
+    [[ -d "$skill_dir/references" ]] && reference_exists=1
 
     if [[ "$scripts_exists" -eq 1 ]] && [[ "$reference_exists" -eq 1 ]]; then
-        echo "✓ Required directories present (scripts/, reference/)"
+        echo "✓ Required directories present (scripts/, references/)"
         check_names+=("Resource Separation")
         check_statuses+=("PASS")
         check_details_json+=("")
     else
         local missing_dirs=()
         [[ "$scripts_exists" -eq 0 ]] && missing_dirs+=("scripts/")
-        [[ "$reference_exists" -eq 0 ]] && missing_dirs+=("reference/")
+        [[ "$reference_exists" -eq 0 ]] && missing_dirs+=("references/")
 
         echo "✗ Missing directories: ${missing_dirs[*]}"
         check_names+=("Resource Separation")
@@ -410,7 +413,7 @@ function check_resource_separation {
 # check_reference_mandatory_files: Check mandatory reference files
 #
 # Description:
-#   Verifies that reference/ directory contains mandatory files:
+#   Verifies that references/ directory contains mandatory files:
 #   common-checklist.md and common-output-format.md
 #
 # Arguments:
@@ -432,14 +435,14 @@ function check_resource_separation {
 function check_reference_mandatory_files {
     local skill_dir
     skill_dir="$(dirname "$SKILL_FILE")"
-    local ref_dir="$skill_dir/reference"
+    local ref_dir="$skill_dir/references"
 
-    # Skip if reference/ directory doesn't exist (already checked by check_resource_separation)
+    # Skip if references/ directory doesn't exist (already checked by check_resource_separation)
     if [[ ! -d "$ref_dir" ]]; then
-        echo "⊘ Reference mandatory files check skipped (reference/ directory not found)"
+        echo "⊘ Reference mandatory files check skipped (references/ directory not found)"
         check_names+=("Reference Mandatory Files")
         check_statuses+=("SKIP")
-        check_details_json+=("reference/ directory not found")
+        check_details_json+=("references/ directory not found")
         return
     fi
 
@@ -457,6 +460,122 @@ function check_reference_mandatory_files {
         check_names+=("Reference Mandatory Files")
         check_statuses+=("FAIL")
         check_details_json+=("${missing_files[*]}")
+    fi
+}
+
+#######################################
+# check_description_quality: Check description field best practices
+#######################################
+function check_description_quality {
+    local issues=()
+
+    # Extract description from frontmatter
+    local desc
+    desc=$(awk '/^---$/{ n++; next } n==1 && /^description:/{found=1; sub(/^description: *>?-? */, ""); buf=$0; next} found && /^  /{sub(/^  +/, ""); buf=buf " " $0; next} found{found=0} n==2{exit} END{print buf}' "$SKILL_FILE")
+
+    # Check third person (should not start with "Use for" or imperative)
+    if echo "$desc" | grep -qiP '^\s*Use for\b'; then
+        issues+=("not third person")
+    fi
+
+    # Check "Use when" trigger exists
+    if ! echo "$desc" | grep -qi 'Use when'; then
+        issues+=("missing Use when trigger")
+    fi
+
+    # Check no implementation instructions
+    if echo "$desc" | grep -qiP 'Always use|For troubleshooting|Individual commands'; then
+        issues+=("contains implementation instructions")
+    fi
+
+    # Check length <= 1024
+    local desc_len=${#desc}
+    if [[ "$desc_len" -gt 1024 ]]; then
+        issues+=("exceeds 1024 chars ($desc_len)")
+    fi
+
+    if [[ ${#issues[@]} -eq 0 ]]; then
+        echo "✓ Description quality valid"
+        check_names+=("Description Quality")
+        check_statuses+=("PASS")
+        check_details_json+=("")
+    else
+        echo "✗ Description issues: ${issues[*]}"
+        check_names+=("Description Quality")
+        check_statuses+=("FAIL")
+        check_details_json+=("${issues[*]}")
+    fi
+}
+
+#######################################
+# check_metadata_fields: Check metadata author and version
+#######################################
+function check_metadata_fields {
+    local missing=()
+
+    if ! grep -q '^\s*author:' "$SKILL_FILE" 2> /dev/null; then
+        missing+=("metadata.author")
+    fi
+    if ! grep -q '^\s*version:' "$SKILL_FILE" 2> /dev/null; then
+        missing+=("metadata.version")
+    fi
+
+    if [[ ${#missing[@]} -eq 0 ]]; then
+        echo "✓ Metadata fields present (author, version)"
+        check_names+=("Metadata Fields")
+        check_statuses+=("PASS")
+        check_details_json+=("")
+    else
+        echo "✗ Missing metadata: ${missing[*]}"
+        check_names+=("Metadata Fields")
+        check_statuses+=("FAIL")
+        check_details_json+=("${missing[*]}")
+    fi
+}
+
+#######################################
+# check_reference_triggers: Check Reference Files Guide has trigger conditions
+#######################################
+function check_reference_triggers {
+    # Extract Reference Files Guide section
+    local ref_section
+    ref_section=$(sed -n '/^## Reference Files Guide$/,/^## /p' "$SKILL_FILE" | head -n -1)
+
+    if [[ -z "$ref_section" ]]; then
+        echo "⊘ Reference trigger check skipped (no Reference Files Guide section)"
+        check_names+=("Reference Triggers")
+        check_statuses+=("SKIP")
+        check_details_json+=("no Reference Files Guide section")
+        return
+    fi
+
+    local issues=()
+
+    # Check for "(always read)" annotation
+    if ! echo "$ref_section" | grep -q 'always read'; then
+        issues+=("missing (always read) annotation")
+    fi
+
+    # Check for "Read when" triggers in category entries
+    local category_lines
+    category_lines=$(echo "$ref_section" | grep -c 'category-' || true)
+    local trigger_lines
+    trigger_lines=$(echo "$ref_section" | grep -c 'Read when' || true)
+
+    if [[ "$category_lines" -gt 0 ]] && [[ "$trigger_lines" -eq 0 ]]; then
+        issues+=("category files missing Read when triggers")
+    fi
+
+    if [[ ${#issues[@]} -eq 0 ]]; then
+        echo "✓ Reference trigger conditions present"
+        check_names+=("Reference Triggers")
+        check_statuses+=("PASS")
+        check_details_json+=("")
+    else
+        echo "✗ Reference trigger issues: ${issues[*]}"
+        check_names+=("Reference Triggers")
+        check_statuses+=("FAIL")
+        check_details_json+=("${issues[*]}")
     fi
 }
 
@@ -550,9 +669,12 @@ function main {
     check_yaml_syntax
     check_structural_completeness
     check_yaml_frontmatter
+    check_description_quality
+    check_metadata_fields
     check_progressive_disclosure
     check_resource_separation
     check_reference_mandatory_files
+    check_reference_triggers
 
     echo ""
     echo_section "JSON Output"

@@ -37,6 +37,10 @@ on:
       - ".golangci.yaml"
       - "trivy.yaml"
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   go-ci:
     uses: ./.github/workflows/reusable-ci-go.yaml

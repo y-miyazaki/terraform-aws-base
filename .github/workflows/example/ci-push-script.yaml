@@ -27,6 +27,10 @@ on:
       - ".github/workflows/ci-push-script.yaml"
       - ".github/workflows/reusable-ci-script.yaml"
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   script-ci:
     uses: ./.github/workflows/reusable-ci-script.yaml

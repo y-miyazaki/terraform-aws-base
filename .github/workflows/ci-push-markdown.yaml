@@ -29,6 +29,10 @@ on:
       - ".github/workflows/ci-push-markdown.yaml"
       - ".github/workflows/reusable-ci-markdown.yaml"
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   markdown-ci:
     uses: ./.github/workflows/reusable-ci-markdown.yaml

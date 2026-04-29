@@ -1,6 +1,5 @@
+# CI workflow for shell scripts
 name: ci-push-script
-
-# CI workflow for shell scripts — caller for reusable-ci-script.yaml
 
 on:
   push:
@@ -27,6 +26,10 @@ on:
       - "**/*.sh"
       - ".github/workflows/ci-push-script.yaml"
       - ".github/workflows/reusable-ci-script.yaml"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   script-ci:

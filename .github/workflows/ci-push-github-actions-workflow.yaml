@@ -33,6 +33,10 @@ on:
       - "**/action.yml"
       - "**/action.yaml"
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   github-actions-workflow-ci:
     uses: ./.github/workflows/reusable-ci-github-actions-workflow.yaml

@@ -99,7 +99,7 @@ Validation Checks:
   - Structural completeness (required H2 sections)
   - YAML frontmatter fields (name, description, license)
   - Word count threshold (< 5000)
-  - Resource separation (scripts/ and reference/)
+  - Resource separation (scripts/ and references/)
 
 Examples:
   ./validate.sh
@@ -366,7 +366,7 @@ function check_word_count {
 # check_resource_separation: Verify required resource directories
 #
 # Description:
-#   Ensures scripts/ and reference/ directories exist under skill directory
+#   Ensures scripts/ and references/ directories exist under skill directory
 #
 # Arguments:
 #   None
@@ -389,14 +389,14 @@ function check_resource_separation {
     fi
 
     if [[ ! -d "${skill_dir}/reference" ]]; then
-        missing_dirs+=("reference/")
+        missing_dirs+=("references/")
     fi
 
     if [[ ${#missing_dirs[@]} -eq 0 ]]; then
         check_names+=("Resource Separation")
         check_statuses+=("PASS")
         check_details+=("")
-        echo "✓ Required directories found (scripts/, reference/)"
+        echo "✓ Required directories found (scripts/, references/)"
     else
         check_names+=("Resource Separation")
         check_statuses+=("FAIL")
