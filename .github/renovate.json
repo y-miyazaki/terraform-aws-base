@@ -1,0 +1,95 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended",
+    "github>aquaproj/aqua-renovate-config#2.2.1"
+  ],
+  "timezone": "Asia/Tokyo",
+  "dependencyDashboard": true,
+  "separateMajorMinor": true,
+  "prConcurrentLimit": 10,
+  "minimumReleaseAge": "7 days",
+  "labels": ["dependencies"],
+  "packageRules": [
+    {
+      "description": "[matchManagers: dockerfile] Update Dockerfile base images daily",
+      "matchManagers": ["dockerfile"],
+      "schedule": ["every day"],
+      "commitMessagePrefix": "renovate(docker):",
+      "labels": ["dependencies", "docker"],
+      "enabled": false
+    },
+    {
+      "description": "[matchManagers: github-actions] Update GitHub Actions weekly on Monday at 4am",
+      "matchManagers": ["github-actions"],
+      "schedule": ["every monday at 4am"],
+      "commitMessagePrefix": "renovate(github-actions):",
+      "labels": ["dependencies", "github-actions"]
+    },
+    {
+      "description": "[matchManagers: gomod] Update Go module dependencies daily",
+      "matchManagers": ["gomod"],
+      "schedule": ["every day"],
+      "commitMessagePrefix": "renovate(gomod):",
+      "labels": ["dependencies", "gomod"],
+      "enabled": false
+    },
+    {
+      "description": "[matchManagers: npm] Update npm packages daily",
+      "matchManagers": ["npm"],
+      "schedule": ["every day"],
+      "commitMessagePrefix": "renovate(npm):",
+      "labels": ["dependencies", "npm"],
+      "enabled": false
+    },
+    {
+      "description": "[matchManagers: npm, matchUpdateTypes: major] Skip npm major version updates to avoid breaking changes",
+      "matchManagers": ["npm"],
+      "matchUpdateTypes": ["major"],
+      "enabled": false
+    },
+    {
+      "description": "[matchManagers: regex, matchFileNames: aqua.yaml] Update aqua packages weekly on Monday at 4am",
+      "matchManagers": ["regex"],
+      "matchFileNames": ["aqua.yaml"],
+      "schedule": ["every monday at 4am"],
+      "commitMessagePrefix": "renovate(aqua):",
+      "labels": ["dependencies", "aqua"]
+    },
+    {
+      "description": "[matchManagers: terraform] Update Terraform providers and modules daily in configured infrastructure paths",
+      "matchManagers": ["terraform"],
+      "matchFileNames": [
+        "modules/aws/**",
+        "terraform/application/**",
+        "terraform/base/**",
+        "terraform/management/audit/**",
+        "terraform/management/root/**",
+        "terraform/monitor/**"
+      ],
+      "schedule": ["every day"],
+      "commitMessagePrefix": "renovate(terraform):",
+      "labels": ["dependencies", "terraform"],
+      "enabled": false
+    },
+    {
+      "description": "[matchPackageNames: aquaproj/aqua-registry] Limit aqua-registry updates to weekly on Monday at 4am to reduce noise from frequent releases",
+      "matchPackageNames": ["aquaproj/aqua-registry"],
+      "schedule": ["every monday at 4am"]
+    },
+    {
+      "description": "[matchUpdateTypes: patch, pin, digest] Auto-merge low-risk updates after checks pass",
+      "matchUpdateTypes": ["patch", "pin", "digest"],
+      "automerge": true,
+      "automergeType": "pr",
+      "platformAutomerge": false,
+      "addLabels": ["automerge"]
+    },
+    {
+      "description": "[matchUpdateTypes: minor, major] Require review for minor and major updates",
+      "matchUpdateTypes": ["minor", "major"],
+      "automerge": false,
+      "addLabels": ["needs-review"]
+    }
+  ]
+}

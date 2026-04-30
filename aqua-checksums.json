@@ -216,6 +216,26 @@
       "algorithm": "sha256"
     },
     {
+      "id": "github_release/github.com/aws/aws-sam-cli/v1.159.1/aws-sam-cli-linux-arm64.zip",
+      "checksum": "AB69A93B352C3F45889C2471B436FBE9496FAC5BF87F38C050E9AB8BC1C9054A",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/aws/aws-sam-cli/v1.159.1/aws-sam-cli-linux-x86_64.zip",
+      "checksum": "6ADC2DB5D8C507FDEAEB9A65A8470F3E9B24FAF0D1F68ABC9B02EFB2B51EFFBE",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/aws/aws-sam-cli/v1.159.1/aws-sam-cli-macos-arm64.pkg",
+      "checksum": "F8264710D5FDB503E7F309DAB95A9A3BEB8D4123360050C56525554E4D2DC2F5",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/aws/aws-sam-cli/v1.159.1/aws-sam-cli-macos-x86_64.pkg",
+      "checksum": "C64C3EF3180EDDDD1D4DB6B91E284026A5A296CA9CA1DD5CBA0FEBB9575A08E8",
+      "algorithm": "sha256"
+    },
+    {
       "id": "github_release/github.com/bufbuild/buf/v1.60.0/buf-Darwin-arm64.tar.gz",
       "checksum": "31187D9C3005F71556E6BABEDB5CA851FD4F87299A1158AC2115442F3640952E",
       "algorithm": "sha256"

@@ -200,7 +200,7 @@ function apply_scheduled_task {
     if td_diff=$(ecspresso diff \
         --config ecspresso.jsonnet \
         --ext-str ENV="$ENV" \
-        --ext-str SCHEDULED_TASK="$SCHEDULED_TASK_NAME" \
+        --ext-str NAME="$SCHEDULED_TASK_NAME" \
         --ext-str ACCOUNT_ID="$ACCOUNT_ID" \
         --ext-str AWS_REGION="$AWS_REGION" 2>&1); then
         # Filter out log messages to get actual diff content
@@ -246,7 +246,7 @@ function apply_scheduled_task {
         ecspresso register \
             --config ecspresso.jsonnet \
             --ext-str ENV="$ENV" \
-            --ext-str SCHEDULED_TASK="$SCHEDULED_TASK_NAME" \
+            --ext-str NAME="$SCHEDULED_TASK_NAME" \
             --ext-str ACCOUNT_ID="$ACCOUNT_ID" \
             --ext-str AWS_REGION="$AWS_REGION"
         log "INFO" "Task definition registered"
@@ -289,7 +289,7 @@ function diff_scheduled_task {
     ecspresso diff \
         --config ecspresso.jsonnet \
         --ext-str ENV="$ENV" \
-        --ext-str SCHEDULED_TASK="$SCHEDULED_TASK_NAME" \
+        --ext-str NAME="$SCHEDULED_TASK_NAME" \
         --ext-str ACCOUNT_ID="$ACCOUNT_ID" \
         --ext-str AWS_REGION="$AWS_REGION" \
         || log "INFO" "(task definition not yet registered)"
@@ -378,6 +378,10 @@ function main {
     # Change to task directory so ecspresso and ecschedule can find their config files
     cd "${abs_path}"
 
+    # Resolve scheduled task name from directory name (matches registry.jsonnet key)
+    SCHEDULED_TASK_NAME=$(basename "${abs_path}")
+    log "INFO" "Scheduled task name: ${SCHEDULED_TASK_NAME}"
+
     # Render Jsonnet to a temporary JSON file
     # ecschedule does not support --ext-str; rendering is handled here by the jsonnet CLI
     # ecspresso supports --ext-str natively, so no pre-rendering is needed for task definitions
@@ -388,15 +392,10 @@ function main {
     echo_section "Rendering configs: ENV=${ENV}"
     jsonnet \
         -V ENV="$ENV" \
+        -V NAME="$SCHEDULED_TASK_NAME" \
         -V ACCOUNT_ID="$ACCOUNT_ID" \
         -V AWS_REGION="$AWS_REGION" \
         ecschedule.jsonnet > "${tmp_config}"
-
-    SCHEDULED_TASK_NAME=$(jq -r '.batch_name' "${tmp_config}")
-    if [[ -z "$SCHEDULED_TASK_NAME" || "$SCHEDULED_TASK_NAME" == "null" ]]; then
-        error_exit "batch_name is missing in ecschedule.jsonnet output"
-    fi
-    log "INFO" "Scheduled task name: ${SCHEDULED_TASK_NAME}"
 
     case "$ACTION" in
         apply)

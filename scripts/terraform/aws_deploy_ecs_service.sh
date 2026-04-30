@@ -185,7 +185,7 @@ function deploy_service {
     if diff_output=$(ecspresso diff \
         --config ecspresso.jsonnet \
         --ext-str ENV="$ENV" \
-        --ext-str SERVICE="$SERVICE_NAME" \
+        --ext-str NAME="$SERVICE_NAME" \
         --ext-str ACCOUNT_ID="$ACCOUNT_ID" \
         --ext-str AWS_REGION="$AWS_REGION" 2>&1 || true); then
         # Filter out log messages to get actual diff content
@@ -205,23 +205,24 @@ function deploy_service {
 
     echo_section "Deploying ECS service"
 
-    # Read auto-scaling config from the environment-specific jsonnet
-    local env_config min_capacity max_capacity
-    env_config=$(jsonnet \
+    # Read auto-scaling config via service-config.entry.jsonnet (includes globalConfig defaults)
+    local service_config min_capacity max_capacity
+    service_config=$(jsonnet \
         -V ENV="$ENV" \
+        -V NAME="$SERVICE_NAME" \
         -V ACCOUNT_ID="$ACCOUNT_ID" \
         -V AWS_REGION="$AWS_REGION" \
-        "env/${ENV}.jsonnet")
+        "../../templates/service-config.entry.jsonnet")
 
-    min_capacity=$(echo "$env_config" | jq -r '.auto_scaling.min_capacity')
-    max_capacity=$(echo "$env_config" | jq -r '.auto_scaling.max_capacity')
+    min_capacity=$(echo "$service_config" | jq -r '.auto_scaling.min_capacity')
+    max_capacity=$(echo "$service_config" | jq -r '.auto_scaling.max_capacity')
 
     log "INFO" "Auto-scaling: min=${min_capacity}, max=${max_capacity}"
 
     ecspresso deploy \
         --config ecspresso.jsonnet \
         --ext-str ENV="$ENV" \
-        --ext-str SERVICE="$SERVICE_NAME" \
+        --ext-str NAME="$SERVICE_NAME" \
         --ext-str ACCOUNT_ID="$ACCOUNT_ID" \
         --ext-str AWS_REGION="$AWS_REGION" \
         --auto-scaling-min="$min_capacity" \
@@ -255,7 +256,7 @@ function destroy_service {
     ecspresso destroy \
         --config ecspresso.jsonnet \
         --ext-str ENV="$ENV" \
-        --ext-str SERVICE="$SERVICE_NAME" \
+        --ext-str NAME="$SERVICE_NAME" \
         --ext-str ACCOUNT_ID="$ACCOUNT_ID" \
         --ext-str AWS_REGION="$AWS_REGION"
 
@@ -287,7 +288,7 @@ function verify_service {
     ecspresso verify \
         --config ecspresso.jsonnet \
         --ext-str ENV="$ENV" \
-        --ext-str SERVICE="$SERVICE_NAME" \
+        --ext-str NAME="$SERVICE_NAME" \
         --ext-str ACCOUNT_ID="$ACCOUNT_ID" \
         --ext-str AWS_REGION="$AWS_REGION"
 
@@ -343,18 +344,8 @@ function main {
     # Change to service directory so ecspresso can find ecspresso.jsonnet and env/
     cd "${abs_path}"
 
-    # Resolve service name from the environment-specific jsonnet
-    local env_config
-    env_config=$(jsonnet \
-        -V ENV="$ENV" \
-        -V ACCOUNT_ID="$ACCOUNT_ID" \
-        -V AWS_REGION="$AWS_REGION" \
-        "env/${ENV}.jsonnet")
-
-    SERVICE_NAME=$(echo "$env_config" | jq -r '.service_name')
-    if [[ -z "$SERVICE_NAME" || "$SERVICE_NAME" == "null" ]]; then
-        error_exit "service_name is missing in env/${ENV}.jsonnet"
-    fi
+    # Resolve service name from directory name (matches registry.jsonnet key)
+    SERVICE_NAME=$(basename "${abs_path}")
     log "INFO" "Service name: ${SERVICE_NAME}"
 
     case "$ACTION" in

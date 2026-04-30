@@ -5,10 +5,13 @@ repos:
     rev: v6.0.0
     hooks:
       - id: trailing-whitespace
-        exclude: README..*.md
+        exclude: README.*.md
       - id: end-of-file-fixer
         exclude: '(^\.devcontainer/devcontainer-lock\.json$)'
       - id: check-yaml
+        exclude: '^lambda/template\.yaml$'
+      - id: check-merge-conflict
+      - id: check-case-conflict
       - id: check-added-large-files
         args: ["--maxkb=10240"]
       - id: detect-aws-credentials
@@ -22,7 +25,7 @@ repos:
         # Exclude go test file and gitleaks config and any terraform.*.tfvars files in any directory
         exclude: '(.*_test.go|.gitleaks.toml|aqua-checksums.json|(?:^|/)(?:.*/)?terraform\.[^.]+\.tfvars$)'
   - repo: https://github.com/gitleaks/gitleaks
-    rev: v8.24.2
+    rev: v8.30.1
     hooks:
       - id: gitleaks
   # --------------------------------------------------------------
@@ -61,36 +64,44 @@ repos:
         types: [yaml]
         files: ^\.github/workflows/.*\.(ya?ml)$
   - repo: https://github.com/zizmorcore/zizmor-pre-commit
-    rev: v1.22.0 # https://github.com/zizmorcore/zizmor-pre-commit/releases
+    rev: v1.24.1 # https://github.com/zizmorcore/zizmor-pre-commit/releases
     hooks:
       # Run the linter.
       - id: zizmor
   # --------------------------------------------------------------
+  # For Markdown
+  # --------------------------------------------------------------
+  - repo: https://github.com/igorshubovych/markdownlint-cli
+    rev: v0.48.0 # https://github.com/igorshubovych/markdownlint-cli/releases
+    hooks:
+      - id: markdownlint
+        files: ^(README.md|docs/.*.md)$
+  # --------------------------------------------------------------
   # For Jsonnet
   # --------------------------------------------------------------
   # - repo: https://github.com/google/go-jsonnet
-  #   rev: v0.21.0 # https://github.com/google/go-jsonnet/releases
+  #   rev: v0.22.0 # https://github.com/google/go-jsonnet/releases
   #   hooks:
   #     - id: jsonnet-format
   #     - id: jsonnet-lint
   # --------------------------------------------------------------
   # For Go
   # --------------------------------------------------------------
-  - repo: local
-    hooks:
-      - id: golangci-lint
-        name: golangci-lint
-        description: Fast linters runner for Go.
-        entry: golangci-lint run --max-same-issues=0 --max-issues-per-linter=0 --config=.golangci.yaml --fix
-        exclude: ^(.*_test.go|tmp/.*\.go)$
-        language: golang
-        pass_filenames: false
-        types: [go]
+  # - repo: local
+  #   hooks:
+  #     - id: golangci-lint
+  #       name: golangci-lint
+  #       description: Fast linters runner for Go.
+  #       entry: golangci-lint run --max-same-issues=0 --max-issues-per-linter=0 --config=.golangci.yaml --fix
+  #       exclude: ^(.*_test.go|tmp/.*\.go)$
+  #       language: golang
+  #       pass_filenames: false
+  #       types: [go]
   # --------------------------------------------------------------
   # For SQL
   # --------------------------------------------------------------
   # - repo: https://github.com/sqlfluff/sqlfluff
-  #   rev: 4.0.4 # https://github.com/sqlfluff/sqlfluff/releases
+  #   rev: 4.1.0 # https://github.com/sqlfluff/sqlfluff/releases
   #   hooks:
   #     - id: sqlfluff-lint
   #       args: [--dialect, mysql]
@@ -99,18 +110,16 @@ repos:
   # --------------------------------------------------------------
   # For Terraform
   # --------------------------------------------------------------
-  # - repo: https://github.com/antonbabenko/pre-commit-terraform
-  #   rev: v1.105.0 # https://github.com/antonbabenko/pre-commit-terraform/releases
-  #   hooks:
-  #     - id: terraform_fmt
-  #     - id: terraform_tflint
-  #       args:
-  #         - --args=-f=compact
-  #         - --args=--chdir=/workspace/modules
-  #         - --args=--no-color
-  #         - --args=--call-module-type=all
-  #     - id: terraform_trivy
-  #       args:
-  #         - --args=--format=table
-  #         - --args=--skip-dirs="**/.terraform"
-  #         - --args=--config="/workspace/trivy.yaml"
+  - repo: https://github.com/antonbabenko/pre-commit-terraform
+    rev: v1.105.0 # https://github.com/antonbabenko/pre-commit-terraform/releases
+    hooks:
+      - id: terraform_fmt
+      - id: terraform_validate
+      - id: terraform_tflint
+        args:
+          - --args=--no-color
+      - id: terraform_trivy
+        args:
+          - --args=--config=/workspace/trivy.yaml
+          - --args=--format=table
+          - --args=--skip-dirs=**/.terraform
