@@ -1,6 +1,6 @@
 # Output Format Specification
 
-Use the following report structure for review and validation output.
+Use the following report structure for review output.
 
 ```markdown
 # <Result Title>
@@ -32,14 +32,16 @@ Use the following report structure for review and validation output.
 - Do not list passed checks in `## Checks (Failed/Deferred Only)`.
 - Keep ItemIDs fixed and sorted in checklist order.
 - `## Issues` must always contain full details for each failed or deferred check.
+- Treat this file as the canonical output contract for this skill.
+- Keep `Output Specification` in SKILL.md as a summary and avoid duplicating this full format there.
 - If there are no failed or deferred checks:
   - In `## Checks (Failed/Deferred Only)`, output `No failed or deferred checks`.
   - In `## Issues`, output `No issues found`.
 
 ## Status Symbols
 
-| Symbol | Meaning  | When to Use                                             |
-| ------ | -------- | ------------------------------------------------------- |
-| ✅      | Pass     | Check verified correct (counted in summary only)        |
-| ❌      | Fail     | Check failed, issue identified                          |
+| Symbol | Meaning  | When to Use                                              |
+| ------ | -------- | -------------------------------------------------------- |
+| ✅      | Pass     | Check verified correct (counted in summary only)         |
+| ❌      | Fail     | Check failed, issue identified                           |
 | ⊘      | Deferred | Check not yet evaluable due to explicit prerequisite gap |

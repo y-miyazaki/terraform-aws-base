@@ -27,7 +27,9 @@ See [references/common-output-format.md](references/common-output-format.md) for
 - **Always use `scripts/validate.sh`** for comprehensive validation. Do not run individual commands.
 - Script executes all tools in recommended order with proper configuration
 - Individual tool commands available for debugging only (see [references/common-individual-commands.md](references/common-individual-commands.md))
-- **Do not review code design decisions** (use go-review for that)
+- **Do not review code design decisions** — use go-review for architecture, patterns, and logic review
+- **Do not modify source files** except formatting corrections applied by `--fix`
+- **Do not create or delete files** — validation only reports issues; never generate test files or scaffolding
 - Test coverage threshold: 80%
 
 ## Reference Files Guide
@@ -70,18 +72,6 @@ bash go-validation/scripts/validate.sh --verbose
 4. **`golangci-lint`** - Comprehensive linting (30+ linters)
 5. **`go test -v -race -cover`** - Run tests with race detection and coverage
 6. **`govulncheck`** - Security vulnerability scanning
-
-## Output Format
-
-```
-✓ go mod tidy: Dependencies verified
-✓ go fmt: All files formatted
-✓ go vet: No issues found
-✓ golangci-lint: No issues found
-✓ go test: All tests passed (coverage: XX%)
-✓ govulncheck: No vulnerabilities found
-All validations passed
-```
 
 ## Best Practices
 

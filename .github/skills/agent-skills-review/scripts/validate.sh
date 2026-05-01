@@ -50,7 +50,7 @@ SKILL_FILE=""
 declare -a check_names=()
 declare -a check_statuses=()
 declare -a check_details_json=()
-declare -a required_sections=("Input" "Output Specification" "Execution Scope" "Reference Files Guide" "Workflow" "Output Format" "Best Practices")
+declare -a required_sections=("Input" "Output Specification" "Execution Scope" "Reference Files Guide" "Workflow" "Best Practices")
 declare -a required_fields=("name" "description" "license")
 
 #######################################
@@ -81,7 +81,7 @@ Arguments:
                  Must match pattern: .github/skills/*/SKILL.md
 
 Validation Checks:
-  - Structural Completeness: 7 required sections exist
+    - Structural Completeness: 6 required sections exist
   - YAML Frontmatter Fields: name, description, license fields present
   - Description Quality: third person, Use when trigger, no implementation instructions
   - Metadata Fields: author and version present
@@ -229,9 +229,9 @@ function check_yaml_syntax {
 #######################################
 #
 # Description:
-#   Verifies that SKILL.md contains all 7 required sections:
+#   Verifies that SKILL.md contains all 6 required sections:
 #   Input, Output Specification, Execution Scope,
-#   Reference Files Guide, Workflow, Output Format, Best Practices
+#   Reference Files Guide, Workflow, Best Practices
 #
 # Arguments:
 #   None (uses global SKILL_FILE)

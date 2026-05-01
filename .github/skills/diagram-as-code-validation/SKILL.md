@@ -36,6 +36,8 @@ See [references/common-output-format.md](references/common-output-format.md) for
 
 - [common-checklist.md](references/common-checklist.md) - Validation checklist with ItemIDs
 - [common-output-format.md](references/common-output-format.md) - Report format specification
+- [common-troubleshooting.md](references/common-troubleshooting.md) - Read when yamllint/awsdac/file verification fails unexpectedly
+- [common-individual-commands.md](references/common-individual-commands.md) - Read when debugging yamllint or awsdac directly
 
 ## Workflow
 
@@ -59,14 +61,6 @@ bash diagram-as-code-validation/scripts/validate.sh ./diagrams/
 3. **File verification** - Output confirmation and integrity check
 
 Detailed command options for troubleshooting are in [references/common-individual-commands.md](references/common-individual-commands.md).
-
-## Output Format
-
-```
-✓ YAML syntax valid
-✓ Diagram generated: diagram.png (XXX KB)
-✓ File type: PNG image data
-```
 
 ## Best Practices
 

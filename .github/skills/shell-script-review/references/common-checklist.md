@@ -1,4 +1,4 @@
-# Shell Script Code Review Checklist
+# Shell Script Review Checklist
 
 ## Global & Base
 

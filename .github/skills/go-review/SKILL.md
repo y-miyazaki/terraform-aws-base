@@ -18,7 +18,7 @@ metadata:
 
 ## Output Specification
 
-**Output format (MANDATORY)** - Use this exact structure:
+**Structured output (MANDATORY)** - Use this exact structure:
 
 - Checks Summary: Total/Passed/Failed/Deferred counts
 - Checks (Failed/Deferred Only): Show only ❌ and ⊘ items in checklist order
@@ -59,41 +59,21 @@ See [references/common-output-format.md](references/common-output-format.md) for
 
 ## Workflow
 
-1. **Understand Context** - Read PR description, linked issues, and determine change type (feature/bugfix/refactor)
-2. **Systematic Review** - Apply checklist categories relevant to the changes, loading reference files as needed
-3. **Report Issues** - Output in the format below
+### Step 1: Understand Context
 
-## Output Format
+Read PR description, linked issues, and determine change type (feature/bugfix/refactor).
 
-```markdown
-# Go Code Review Result
+### Step 2: Automated Checks First
 
-## Checks Summary
+Confirm go-validation has been run (go fmt, go vet, golangci-lint, go test, govulncheck). If not, request execution before proceeding with review.
 
-- Total checks: 34
-- Passed: 32
-- Failed: 1
-- Deferred: 1
+### Step 3: Systematic Review
 
-## Checks (Failed/Deferred Only)
+Apply checklist categories relevant to the changes, loading reference files as needed.
 
-- ERR-01 Error Wrapping: ❌ Fail
-- CTX-02 Context Timeout Handling: ⊘ Deferred (awaiting API timeout policy decision)
+### Step 4: Report Issues
 
-## Issues
-
-1. ERR-01: Error Wrapping
-   - File: `pkg/service/processor.go` L45
-   - Problem: Error string returned without stack trace
-   - Impact: Difficult debugging, unable to identify error location
-   - Recommendation: Wrap with `fmt.Errorf("failed to process: %w", err)`
-
-2. CTX-01: Public API Context Handling
-   - File: `internal/handler/api.go` L23
-   - Problem: ProcessData function doesn't accept context.Context
-   - Impact: No timeout control, no cancellation propagation, difficult testing
-   - Recommendation: Change to `func ProcessData(ctx context.Context, data []byte) error`
-```
+Output according to [references/common-output-format.md](references/common-output-format.md).
 
 ## Best Practices
 

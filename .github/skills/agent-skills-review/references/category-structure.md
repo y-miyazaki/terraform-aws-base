@@ -2,7 +2,7 @@
 
 ## S-01: Structural Completeness
 
-Check: Does SKILL.md have all 7 required sections at ## heading level?
+Check: Does SKILL.md have all 6 required sections at ## heading level?
 Why: Complete structure ensures all required information exists for quality evaluation. Missing sections make skill incomplete and non-reviewable.
 
 Required sections:
@@ -11,8 +11,7 @@ Required sections:
 3. Execution Scope
 4. Reference Files Guide
 5. Workflow
-6. Output Format
-7. Best Practices
+6. Best Practices
 
 Sections removed by design (redundant with frontmatter description or self-evident to Claude):
 - Purpose (duplicates description field)
@@ -21,8 +20,8 @@ Sections removed by design (redundant with frontmatter description or self-evide
 - Failure Behavior (standard tool behavior)
 
 Examples:
-- ✅ All 7 sections present
-- ❌ Missing "Workflow" → only 6/7 sections → FAIL
+- ✅ All 6 required sections present
+- ❌ Missing "Workflow" → only 5/6 sections → FAIL
 
 ---
 

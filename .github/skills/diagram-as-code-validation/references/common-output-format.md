@@ -1,45 +1,42 @@
 # Output Format Specification
 
-Use the following report structure for review and validation output.
+Use the following report structure for validation output.
 
 ```markdown
-# <Result Title>
+# Validation Result: <target>
 
-## Checks Summary
-- Total checks: <number>
-- Passed: <count>
-- Failed: <count>
-- Deferred: <count>
+## Summary
+- Status: ✅ PASS | ❌ FAIL
+- Tools run: <count>
+- Tools passed: <count>
+- Tools failed: <count>
 
-## Checks (Failed/Deferred Only)
-- <ItemID> <ItemName>: ❌ Fail
-- <ItemID> <ItemName>: ⊘ Deferred (<explicit reason>)
+## Tool Results
 
-## Issues
-1. <ItemID>: <ItemName>
-   - File: <path>#L<line>
-   - Problem: <specific issue>
-   - Impact: <scope and severity>
-   - Recommendation: <specific fix>
+| Tool        | Status          | Message                    |
+| ----------- | --------------- | -------------------------- |
+| <tool-name> | ✅ Pass / ❌ Fail | OK / <brief error summary> |
+
+## Error Details
+
+### <Tool Name>
+```
+<Full command output>
+```
 ```
 
 ## Rules
 
-- Keep full evaluation data for all checks internally using fixed ItemIDs from `references/common-checklist.md`.
-- In human-readable output, display only:
-  - `## Checks Summary` (counts), and
-  - `## Checks (Failed/Deferred Only)`.
-- Do not list passed checks in `## Checks (Failed/Deferred Only)`.
-- Keep ItemIDs fixed and sorted in checklist order.
-- `## Issues` must always contain full details for each failed or deferred check.
-- If there are no failed or deferred checks:
-  - In `## Checks (Failed/Deferred Only)`, output `No failed or deferred checks`.
-  - In `## Issues`, output `No issues found`.
+- Run tools in the execution order: yamllint → awsdac → file verification
+- Stop execution on the first tool failure (fail-fast).
+- In `## Tool Results`, list only tools that were actually run.
+- In `## Error Details`, include only failed tools with their full output.
+- If all tools pass: write "All validations passed." in Summary; omit `## Error Details`.
+- Status is ❌ FAIL if any tool exits with a non-zero exit code.
 
 ## Status Symbols
 
-| Symbol | Meaning  | When to Use                                             |
-| ------ | -------- | ------------------------------------------------------- |
-| ✅      | Pass     | Check verified correct (counted in summary only)        |
-| ❌      | Fail     | Check failed, issue identified                          |
-| ⊘      | Deferred | Check not yet evaluable due to explicit prerequisite gap |
+| Symbol | Meaning | When to Use                     |
+| ------ | ------- | ------------------------------- |
+| ✅      | Pass    | Tool exited 0 (no issues found) |
+| ❌      | Fail    | Tool exited non-zero            |

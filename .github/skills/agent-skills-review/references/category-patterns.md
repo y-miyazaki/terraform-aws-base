@@ -28,10 +28,13 @@ Examples:
 
 ---
 
-## P-02: Output Format Compliance
+## P-02: Output Contract Compliance
 
-Check: Are outputs structured (## Checks [ItemID: ✅/❌ per line], ## Issues [numbered list with ID/File#Line/Problem/Impact/Recommendation])? For review skills, is output-format.md present with examples?
-Why: Structured output enables parsing, automation, and consistent evaluation. Review skills require output-format.md for explicit format documentation.
+Check: Does the skill define a structured, skill-appropriate output contract across Output Specification and common-output-format.md without contradiction or role overlap?
+Why: Structured output enables parsing, automation, and consistent evaluation. The exact structure may differ by skill type, but the contract must remain explicit and consistent.
 Examples:
-- ✅ "## Checks\n- Q-01: ✅\n- Q-02: ❌\n## Issues\n1. Q-02: Scope\n   - File: path#L45\n   - Problem: ...\n   - Impact: ...\n   - Recommendation: ..." + output-format.md exists
-- ❌ "Issue found: X seems wrong. Fix it." (free text) or review skill missing output-format.md
+- ✅ Review skill: "## Checks Summary" + "## Issues" with a matching common-output-format.md
+- ✅ Validation skill: tool/result summary in Output Specification and detailed report schema in common-output-format.md
+- ✅ Automation skill: PR Body or JSON schema described in Output Specification, with matching template details in common-output-format.md
+- ❌ Output Specification says PR Body, but common-output-format.md defines Checks/Issues report
+- ❌ common-output-format.md exists but only repeats vague prose without concrete structure

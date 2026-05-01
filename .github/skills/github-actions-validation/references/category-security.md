@@ -1,62 +1,119 @@
-## Security Best Practices
+## GitHub Actions Validation - Security Remediation Guide
 
-### Permissions
+Use this guide when `ghalint` or `zizmor` reports security findings.
 
-Always set minimal permissions:
+## Common Findings and Fixes
+
+### Overly Broad Permissions
+
+**Typical finding**:
+- Missing `permissions` block
+- Write permissions granted globally without need
+
+**Fix**:
 
 ```yaml
 permissions:
-  contents: read # Read-only by default
-  pull-requests: write # Only when needed
+  contents: read
+
+jobs:
+  release:
+    permissions:
+      contents: write
+      packages: write
 ```
 
-### Secrets Management
+Set minimal workflow-level permissions, then elevate per job only when required.
+
+### Unpinned Third-Party Actions
+
+**Typical finding**:
+- `uses: org/action@vX` without SHA pinning
+
+**Fix**:
 
 ```yaml
-# ✅ Good - Use secrets properly
+- uses: actions/setup-node@60edb5dd545a775178f52524783378180af0d1f8 # v4.0.2
+```
+
+Pin third-party actions to full commit SHA and optionally keep the version comment for readability.
+
+### Unsafe pull_request_target Usage
+
+**Typical finding**:
+- `pull_request_target` workflow runs untrusted fork code with privileged token or secrets
+
+**Fix**:
+
+```yaml
+on:
+  pull_request_target:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  safe-metadata-check:
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: read
+    steps:
+      - name: Validate metadata only
+        run: echo "No checkout of fork code in privileged context"
+```
+
+Avoid checking out and executing fork code in privileged `pull_request_target` jobs.
+
+### Secret Exposure in Logs
+
+**Typical finding**:
+- Secret-like values echoed in `run` steps
+- Tokens passed via command-line arguments and printed
+
+**Fix**:
+
+```yaml
 env:
-  API_KEY: ${{ secrets.API_KEY }}
+  API_TOKEN: ${{ secrets.API_TOKEN }}
 
-# ❌ Bad - Don't echo secrets
-run: echo ${{ secrets.API_KEY }}
+steps:
+  - name: Call API safely
+    run: |
+      curl -sSf -H "Authorization: Bearer $API_TOKEN" https://example.invalid/api
 ```
 
-### Actions Checkout
+Never print secrets and avoid debugging flags that dump full environment values.
+
+### Missing Timeouts
+
+**Typical finding**:
+- Job or step can hang indefinitely
+
+**Fix**:
 
 ```yaml
-# ✅ Good - Secure checkout
-- uses: actions/checkout@v4
-  with:
-    persist-credentials: false
-
-# ❌ Bad - Insecure checkout
-- uses: actions/checkout@v4
-```
-
-### Timeout Settings
-
-```yaml
-# ✅ Good - Timeouts configured
 jobs:
   build:
     timeout-minutes: 30
     steps:
-      - name: Build
+      - name: Test
         timeout-minutes: 10
-
-# ❌ Bad - No timeouts
-jobs:
-  build:
-    steps:
-      - name: Build
+        run: npm test
 ```
 
-### Third-party Actions
+## Revalidation Commands
 
-```yaml
-# ✅ Good - Pinned to SHA
-- uses: actions/setup-node@60edb5dd545a775178f52524783378180af0d1f8 # v4.0.2
+After applying fixes, rerun the standard validation script:
 
-# ❌ Bad - Unpinned version
-- uses: actions/setup-node@v4
+```bash
+bash github-actions-validation/scripts/validate.sh
 ```
+
+For targeted checks:
+
+```bash
+bash github-actions-validation/scripts/validate.sh ./.github/workflows/
+```
+
+## Escalation Rule
+
+- Do not merge workflows with unresolved high-risk `zizmor` findings.
+- If an exception is required, document justification and compensating controls in PR review.

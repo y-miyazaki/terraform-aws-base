@@ -1,35 +1,41 @@
 # Terraform Validation Checklist
 
-## Syntax
+## Execution Order
 
-- SYNTAX-01: terraform validate pass
-- SYNTAX-02: Valid HCL syntax
-- SYNTAX-03: No parsing errors
-- SYNTAX-04: Resource syntax correct
+Run tools in this order (fail-fast: stop on first failure):
 
-## Formatting
+1. `terraform fmt` — formatting compliance
+2. `terraform validate` — HCL syntax and schema validation
+3. `tflint` — linting and provider-specific rule checks
+4. `trivy config` — security misconfiguration scan
 
-- FMT-01: terraform fmt compliance
-- FMT-02: Consistent indentation
-- FMT-03: Proper spacing
+## Checks by Tool
 
-## Linting
+### terraform fmt
+- FMT-01: All .tf files are formatted per `terraform fmt` standard
+- FMT-02: Consistent indentation (2-space) throughout
+- FMT-03: Argument alignment follows canonical style
 
-- LINT-01: tflint pass
-- LINT-02: No style violations
-- LINT-03: AWS provider rules pass
-- LINT-04: Custom rules compliance
+### terraform validate
+- SYNTAX-01: HCL parses without errors
+- SYNTAX-02: All referenced variables and modules resolve
+- SYNTAX-03: Resource and data source schemas are valid
+- SYNTAX-04: No missing required arguments
 
-## Security
+### tflint
+- LINT-01: All enabled rules pass with zero findings
+- LINT-02: AWS provider-specific rules pass
+- LINT-03: No deprecated resource types or argument names
+- LINT-04: Custom ruleset (`.tflint.hcl`) compliance verified
 
-- SEC-01: trivy config pass
-- SEC-02: No security issues
-- SEC-03: No hardcoded secrets
-- SEC-04: Policy compliance
+### trivy config
+- SEC-01: No HIGH or CRITICAL severity misconfigurations
+- SEC-02: No hardcoded secrets detected
+- SEC-03: IAM policies comply with least-privilege principles
+- SEC-04: Suppressed findings have documented justifications
 
-## Module Validation
+## Pass Criteria
 
-- MOD-01: Module syntax valid
-- MOD-02: Variables defined
-- MOD-03: Outputs valid
-- MOD-04: Module references correct
+- All tools exit with code 0
+- No errors or warnings above configured thresholds
+- See [common-output-format.md](common-output-format.md) for output structure

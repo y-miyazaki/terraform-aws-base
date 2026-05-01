@@ -35,3 +35,21 @@ Fix: Maintain const→var→type→func order at file level
 Check: Is each group sorted A→Z alphabetically (recommended)?
 Why: Inconsistency within same category makes diff tracking difficult, causes inconsistencies, reduces readability
 Fix: A→Z order within groups (recommended), allow grouping related declarations
+
+**G-07: Restrict init() Complexity**
+
+Check: Does init() avoid panics, external I/O, and non-trivial side effects? Is it minimal and deterministic?
+Why: Complex init() hides initialization failures, causes unpredictable startup order across packages, and makes unit testing difficult
+Fix: Limit init() to simple variable assignments; move complex initialization to explicit constructors or main()
+
+**G-08: Zero Value Design**
+
+Check: Are types designed so their zero value is a valid and useful state where possible?
+Why: Types with unusable zero values require mandatory initialization guards and cause subtle nil-dereference bugs when forgotten
+Fix: Design structs so the zero value represents a valid empty state (e.g., sync.Mutex zero value is an unlocked mutex); document when zero value is not valid
+
+**G-09: Defensive Copy at Boundaries**
+
+Check: Are slices and maps copied when accepting from or returning to external callers?
+Why: Shared references to slices/maps allow external callers to mutate internal state, violating encapsulation and causing hard-to-reproduce data corruption
+Fix: Copy incoming slices/maps before storing in structs; return copies rather than direct internal references to callers

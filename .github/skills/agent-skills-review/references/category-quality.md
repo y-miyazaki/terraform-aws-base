@@ -5,7 +5,7 @@
 Check: Is the output format definition implementable and parseable (JSON schema / Markdown structure explicitly defined with example)?
 Why: Unstructured output prevents tool automation, integration, and parsing. AI/humans cannot reliably extract results without explicit format definition.
 Examples:
-- ✅ "Markdown structure: ## Checks [- ItemID: ✅/❌] + ## Issues [1. ItemID: Problem, Impact, Recommendation]"
+- ✅ "Markdown structure: ## Checks Summary + ## Issues" or "JSON schema: {status, errors[], warnings[]}"
 - ❌ "Output will be a comprehensive report" (no structure defined)
 
 ---
@@ -35,7 +35,8 @@ Examples:
 Check: Are Input/Output formats explicitly defined with schema/structure + concrete examples (no vague "appropriately", "as needed", "etc." expressions)?
 Why: Vague format specifications make integration impossible, create ambiguity, and prevent tool automation. AI/humans cannot implement against vague specs.
 Examples:
-- ✅ "Input: JSON {name, status}. Output: Markdown sections ## Checks, ## Issues"
+- ✅ "Input: JSON {name, status}. Output: Markdown sections ## Overview and ## Changes"
+- ✅ "Input: PR number. Output contract summarized in Output Specification and detailed in references/common-output-format.md"
 - ❌ "Input as needed", "Output: comprehensive report", "etc."
 
 ---

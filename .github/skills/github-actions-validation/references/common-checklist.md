@@ -1,36 +1,36 @@
 # GitHub Actions Validation Checklist
 
-## Syntax Validation
+## Execution Order
 
-- SYNTAX-01: Valid YAML structure
-- SYNTAX-02: No parsing errors
-- SYNTAX-03: Required fields present
-- SYNTAX-04: Proper indentation
+Run tools in this order (fail-fast: stop on first failure):
 
-## Security Checks
+1. `actionlint` — YAML syntax and GitHub Actions schema validation
+2. `ghalint` — GitHub Actions best practice and policy checks
+3. `zizmor` — security-focused static analysis
 
-- SEC-01: Secret handling correct
-- SEC-02: Permissions minimized
-- SEC-03: Third-party actions verified
-- SEC-04: No hardcoded credentials
+## Checks by Tool
 
-## Best Practices
+### actionlint
+- ACT-01: Valid YAML structure and no parse errors
+- ACT-02: GitHub Actions schema fields are correct (on, jobs, steps)
+- ACT-03: Expression syntax (`${{ }}`) is valid
+- ACT-04: Runner labels are recognized
+- ACT-05: Job dependency (`needs`) references are resolvable
 
-- BP-01: Workflow naming clear
-- BP-02: Job dependencies explicit
-- BP-03: Step ordering correct
-- BP-04: Timeout values set
-- BP-05: Error handling configured
+### ghalint
+- GH-01: Job-level permissions are explicitly scoped
+- GH-02: `actions/checkout` is present before code operations
+- GH-03: Workflow-level and job-level settings comply with policy
+- GH-04: No prohibited action patterns detected
 
-## Triggers & Conditions
+### zizmor
+- ZIZ-01: No script injection vulnerabilities (untrusted input in `run:`)
+- ZIZ-02: Third-party actions pinned to full commit SHA
+- ZIZ-03: No hardcoded secrets or tokens in workflow files
+- ZIZ-04: `pull_request_target` usage is safe from fork-based attacks
 
-- TRIG-01: Trigger scope appropriate
-- TRIG-02: Conditions clear
-- TRIG-03: Concurrency configured (if needed)
-- TRIG-04: Matrix strategy valid
+## Pass Criteria
 
-## Tool Integration
-
-- TOOL-01: actionlint pass
-- TOOL-02: ghalint pass
-- TOOL-03: zizmor pass
+- All tools exit with code 0
+- No errors or warnings above configured thresholds
+- See [common-output-format.md](common-output-format.md) for output structure

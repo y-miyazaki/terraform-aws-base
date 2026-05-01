@@ -78,10 +78,10 @@ Step 4: Manual Review (optional) → Human reviews and adjusts
 
 ### Idempotent Execution
 
-| Section | Behavior | Details |
-|---|---|---|
-| `## Overview` | Always replaced | Deterministic baseline or `--overview-file` content |
-| `## Changes` | Always replaced | Auto-generated from file analysis on each run |
+| Section            | Behavior            | Details                                                       |
+| ------------------ | ------------------- | ------------------------------------------------------------- |
+| `## Overview`      | Always replaced     | Deterministic baseline or `--overview-file` content           |
+| `## Changes`       | Always replaced     | Auto-generated from file analysis on each run                 |
 | All other sections | Preserve or restore | Preserve visible content; restore template for empty sections |
 
 ### AI Completion Step
@@ -94,27 +94,6 @@ After Step 2, AI completion must:
 - Keep sections empty only when template guidance is absent
 
 **Key principle**: Steps 1-2 are deterministic. Semantic interpretation belongs to Step 3.
-
-## Output Format
-
-```markdown
-## Overview
-
-[AI-completed or baseline overview]
-
-## Changes
-
-### Config
-
-- **file1.yaml**: +10 / -5 lines
-- **file2.tf**: +20 / -3 lines
-
-### Docs
-
-- **README.md**: +15 / -2 lines
-
-**Summary**: 3 files changed (+45 / -10 lines)
-```
 
 ## Best Practices
 

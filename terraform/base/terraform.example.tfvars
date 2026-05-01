@@ -1630,7 +1630,7 @@ common_log = {
     server_side_encryption_configuration = {
       rule = {
         bucket_key_enabled       = false
-        blocked_encryption_types = ["NONE", "SSE-C"]
+        blocked_encryption_types = ["SSE-C"]
         apply_server_side_encryption_by_default = {
           sse_algorithm     = "AES256"
           kms_master_key_id = null
@@ -1687,7 +1687,7 @@ common_log = {
     server_side_encryption_configuration = {
       rule = {
         bucket_key_enabled       = false
-        blocked_encryption_types = ["NONE", "SSE-C"]
+        blocked_encryption_types = ["SSE-C"]
         apply_server_side_encryption_by_default = {
           sse_algorithm     = "AES256"
           kms_master_key_id = null
@@ -1819,7 +1819,7 @@ PATTERN
   #         rule = [
   #           {
   #             bucket_key_enabled       = false
-  #             blocked_encryption_types = ["NONE", "SSE-C"]
+  #             blocked_encryption_types = ["SSE-C"]
   #             apply_server_side_encryption_by_default = [
   #               {
   #                 sse_algorithm     = "AES256"
@@ -1952,7 +1952,7 @@ security_config = {
   #         rule = [
   #           {
   #             bucket_key_enabled       = false
-  #             blocked_encryption_types = ["NONE", "SSE-C"]
+  #             blocked_encryption_types = ["SSE-C"]
   #             apply_server_side_encryption_by_default = [
   #               {
   #                 sse_algorithm     = "AES256"
@@ -2094,7 +2094,7 @@ security_config_us_east_1 = {
   #         rule = [
   #           {
   #             bucket_key_enabled       = false
-  #             blocked_encryption_types = ["NONE", "SSE-C"]
+  #             blocked_encryption_types = ["SSE-C"]
   #             apply_server_side_encryption_by_default = [
   #               {
   #                 sse_algorithm     = "AES256"

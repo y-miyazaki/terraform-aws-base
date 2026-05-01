@@ -19,12 +19,12 @@ bash .github/skills/agent-skills-review/scripts/validate.sh SKILL.md
 
 ### Automated Checks Status
 - [ ] YAML Syntax → validated by validate.sh
-- [ ] Structural Completeness (7 sections) → validated by validate.sh
-- [ ] YAML Frontmatter Fields → validated by validate.sh
+- [ ] S-01 Structural Completeness (6 required sections) → validated by validate.sh
+- [ ] S-02 YAML Frontmatter Fields → validated by validate.sh
 - [ ] Description Quality → validated by validate.sh
 - [ ] Metadata Fields → validated by validate.sh
-- [ ] Progressive Disclosure → validated by validate.sh
-- [ ] Resource Separation → validated by validate.sh
+- [ ] Q-07 Progressive Disclosure → validated by validate.sh
+- [ ] Q-08 Resource Separation → validated by validate.sh
 - [ ] Reference Mandatory Files → validated by validate.sh
 - [ ] Reference Trigger Conditions → validated by validate.sh
 
@@ -33,15 +33,19 @@ bash .github/skills/agent-skills-review/scripts/validate.sh SKILL.md
 ### Structure Checks (Reference: references/category-structure.md)
 
 #### S-01: Section Order
-- [ ] All 7 required sections present:
+- [ ] All 6 required sections present:
   1. Input
   2. Output Specification
   3. Execution Scope
   4. Reference Files Guide
   5. Workflow
-  6. Output Format
-  7. Best Practices
+  6. Best Practices
 - **PASS** if all sections present, **FAIL** if any section missing
+
+#### S-02: YAML Frontmatter Fields
+- [ ] `name`, `description`, `license` fields present in frontmatter
+- [ ] `metadata.author` and `metadata.version` present
+- **PASS** if all required and recommended fields are present, **FAIL** if required fields are missing
 
 #### S-03: Reference Files Header Level Consistency
 - [ ] `common-checklist.md`: Starts with H1 (`#`)
@@ -99,13 +103,12 @@ bash .github/skills/agent-skills-review/scripts/validate.sh SKILL.md
 - [ ] references/ directory populated with category-specific files (Review) or troubleshooting files (Validation)
 - **PASS** if workflow matches skill type pattern
 
-#### P-02: Output Format Compliance
-- [ ] Output Specification explicitly defines: ## Checks section format
-- [ ] Output Specification explicitly defines: ## Issues section structure
-- [ ] Example output shows both Checks and Issues sections
-- [ ] Issues section includes: CheckID, ItemName, File#Line, Problem, Impact, Recommendation
-- [ ] Recommendations are concrete (code/config examples), not generic
-- **PASS** if all 5 ✅
+#### P-02: Output Contract Compliance
+- [ ] Output Specification clearly states what the skill returns and how `common-output-format.md` refines it
+- [ ] `references/common-output-format.md` defines a structured output contract appropriate to the skill type (Review / Validation / Automation)
+- [ ] Output structure is concrete and parseable (section names, fields, or schema are explicit)
+- [ ] Recommendations or example fields are concrete, not generic
+- **PASS** if all required items are satisfied
 
 ### Best Practice Checks (Reference: references/category-structure.md, references/category-quality.md)
 
@@ -134,13 +137,13 @@ bash .github/skills/agent-skills-review/scripts/validate.sh SKILL.md
 
 ## Summary Scoring
 
-| Category          | Checks                                                          | Pass Threshold | Your Score |
-| ----------------- | --------------------------------------------------------------- | -------------- | ---------- |
-| **Automated**     | 9 (YAML, Structure, Fields, Desc, Meta, WordCount, Dirs, Refs, Triggers) | 9/9   | ___ / 9    |
-| **Quality**       | 6 (Q-01~Q-06)                                                  | 5+/6           | ___ / 6    |
-| **Pattern**       | 2 (P-01, P-02)                                                 | 2/2            | ___ / 2    |
-| **Best Practice** | 3 (BP-01~BP-03)                                                | 2+/3           | ___ / 3    |
-| **TOTAL**         | 20                                                              | 18/20          | ___ / 20   |
+| Category          | Checks                                                                   | Pass Threshold | Your Score |
+| ----------------- | ------------------------------------------------------------------------ | -------------- | ---------- |
+| **Automated**     | 9 (YAML, Structure, Fields, Desc, Meta, WordCount, Dirs, Refs, Triggers) | 9/9            | ___ / 9    |
+| **Quality**       | 6 (Q-01~Q-06)                                                            | 5+/6           | ___ / 6    |
+| **Pattern**       | 2 (P-01, P-02)                                                           | 2/2            | ___ / 2    |
+| **Best Practice** | 3 (BP-01~BP-03)                                                          | 2+/3           | ___ / 3    |
+| **TOTAL**         | 20                                                                       | 18/20          | ___ / 20   |
 
 ### Overall Status
 - **✅ PASS**: 18+ / 20 pass (2 ENHANCEMENT allowed)
@@ -153,27 +156,27 @@ bash .github/skills/agent-skills-review/scripts/validate.sh SKILL.md
 
 For detailed evaluation criteria, refer to:
 
-| Check ID                    | Reference File              |
-| --------------------------- | --------------------------- |
-| S-01, S-02, Q-07, Q-08     | references/category-structure.md |
-| BP-01, BP-02                | references/category-structure.md |
-| Q-01 ~ Q-06, BP-03         | references/category-quality.md   |
-| P-01, P-02                  | references/category-patterns.md  |
-| Output examples             | references/common-output-format.md |
+| Check ID               | Reference File                     |
+| ---------------------- | ---------------------------------- |
+| S-01, S-02, Q-07, Q-08 | references/category-structure.md   |
+| BP-01, BP-02           | references/category-structure.md   |
+| Q-01 ~ Q-06, BP-03     | references/category-quality.md     |
+| P-01, P-02             | references/category-patterns.md    |
+| Output examples        | references/common-output-format.md |
 
 ---
 
 ## Common Failure Patterns & Fixes
 
-| Pattern                  | Detection              | Fix                                                   |
-| ------------------------ | ---------------------- | ----------------------------------------------------- |
-| Invalid YAML syntax      | validate.sh YAML check | Fix indentation and YAML structure in frontmatter     |
-| Missing sections         | validate.sh S-01 check | Add all 7 required ## sections                        |
-| Vague output definition  | Q-01 (manual check)    | Add explicit JSON schema or markdown structure        |
-| No explicit Out of Scope | Q-02 (manual check)    | Add "## Out of Scope" list with "does NOT" statements |
-| Free-text instructions   | Q-06 (manual check)    | Replace "Handle X appropriately" with "If X, do Y"    |
-| Missing review flow      | P-01 (manual check)    | Add "## Review Flow" with Step 1/2/3/4                |
-| Non-structured output    | P-02 (manual check)    | Add example output with ## Checks + ## Issues format  |
+| Pattern                  | Detection              | Fix                                                                                          |
+| ------------------------ | ---------------------- | -------------------------------------------------------------------------------------------- |
+| Invalid YAML syntax      | validate.sh YAML check | Fix indentation and YAML structure in frontmatter                                            |
+| Missing sections         | validate.sh S-01 check | Add all 7 required ## sections                                                               |
+| Vague output definition  | Q-01 (manual check)    | Add explicit JSON schema or markdown structure                                               |
+| No explicit Out of Scope | Q-02 (manual check)    | Add "## Out of Scope" list with "does NOT" statements                                        |
+| Free-text instructions   | Q-06 (manual check)    | Replace "Handle X appropriately" with "If X, do Y"                                           |
+| Missing review flow      | P-01 (manual check)    | Add "## Review Flow" with Step 1/2/3/4                                                       |
+| Non-structured output    | P-02 (manual check)    | Define structured output in common-output-format.md and summarize it in Output Specification |
 
 ---
 

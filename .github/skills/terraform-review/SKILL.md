@@ -19,7 +19,7 @@ metadata:
 
 ## Output Specification
 
-**Output format (MANDATORY)** - Use this exact structure:
+**Structured output (MANDATORY)** - Use this exact structure:
 
 - Checks Summary: Total/Passed/Failed/Deferred counts
 - Checks (Failed/Deferred Only): Show only ❌ and ⊘ items in checklist order
@@ -46,6 +46,7 @@ See [references/common-output-format.md](references/common-output-format.md) for
 
 **Category Details** (read when reviewing related code):
 
+- [category-ci-lint.md](references/category-ci-lint.md) - Read when reviewing CI plan diffs, lint findings, or pipeline validation expectations
 - [category-compliance.md](references/category-compliance.md) - Read when reviewing OPA policies or compliance standards
 - [category-cost.md](references/category-cost.md) - Read when reviewing resource sizing, lifecycle policies, or cost optimization
 - [category-data-sources.md](references/category-data-sources.md) - Read when reviewing data source usage or imports
@@ -67,40 +68,21 @@ See [references/common-output-format.md](references/common-output-format.md) for
 
 ## Workflow
 
-1. **Understand Context** - Read PR description, linked issues, and determine target environment
-2. **Systematic Review** - Apply checklist categories relevant to the changes, loading reference files as needed
-3. **Report Issues** - Output in the format below
+### Step 1: Understand Context
 
-## Output Format
+Read PR description, linked issues, and determine target environment.
 
-```markdown
-# Terraform Code Review Result
+### Step 2: Automated Checks First
 
-## Checks Summary
+Confirm terraform-validation has been run (`terraform fmt -check`, `terraform validate`, `tflint`, `trivy config`). If execution is missing or failing, request rerun before semantic review.
 
-- Total checks: 42
-- Passed: 41
-- Failed: 1
-- Deferred: 0
+### Step 3: Systematic Review
 
-## Checks (Failed/Deferred Only)
+Apply checklist categories relevant to the changes, loading reference files as needed.
 
-- G-02 Secret Hardcoding Prohibition: ❌ Fail
+### Step 4: Report Issues
 
-## Issues
-
-1. G-02: Secret Hardcoding Prohibition
-   - File: `terraform/modules/api/main.tf` L45
-   - Problem: Hardcoded password detected
-   - Impact: Security risk, secrets in Git history
-   - Recommendation: Use variable or AWS Secrets Manager
-
-2. SEC-03: Resource Policy with Condition
-   - File: `terraform/base/s3.tf` L12-15
-   - Problem: S3 bucket policy missing condition clause
-   - Impact: Potential unintended access permissions
-   - Recommendation: Add `aws:SecureTransport` condition
-```
+Output according to [references/common-output-format.md](references/common-output-format.md).
 
 ## Best Practices
 

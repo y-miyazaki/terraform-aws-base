@@ -60,15 +60,6 @@ bash github-actions-validation/scripts/validate.sh ./.github/workflows/
 2. **ghalint** - Security and configuration validation
 3. **zizmor** - GitHub Actions security scanner
 
-## Output Format
-
-```
-✓ actionlint: No issues found
-✓ ghalint: No issues found
-✓ zizmor: No issues found
-All validations passed
-```
-
 ## Best Practices
 
 - Run validation before every workflow commit

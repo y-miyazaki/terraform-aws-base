@@ -66,15 +66,6 @@ bash shell-script-validation/scripts/validate.sh -v -f
 2. **`shellcheck`** - Comprehensive static analysis and best practice enforcement
 3. **Project standards** - Verify script template compliance
 
-## Output Format
-
-```
-✓ bash -n: Syntax valid
-✓ shellcheck: No issues found
-✓ Project standards: Compliant
-All validations passed
-```
-
 ## Best Practices
 
 - Run validation before every commit

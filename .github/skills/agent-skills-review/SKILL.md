@@ -17,13 +17,11 @@ metadata:
 
 ## Output Specification
 
-**Output format (MANDATORY)** - Use this exact structure:
+Output a structured Markdown review report for Agent Skills.
 
-- Checks Summary: Total/Passed/Failed/Deferred counts
-- Checks (Failed/Deferred Only): Show only ❌ and ⊘ items in checklist order
-- Issues: Numbered list with full details for each failed or deferred item
 - Use fixed ItemIDs from [references/common-checklist.md](references/common-checklist.md)
-- If all pass: "No failed or deferred checks" / "No issues found"
+- Follow the full output contract in [references/common-output-format.md](references/common-output-format.md)
+- If all pass, report that no failed or deferred checks were found
 
 See [references/common-output-format.md](references/common-output-format.md) for detailed format specification.
 
@@ -41,7 +39,7 @@ See [references/common-output-format.md](references/common-output-format.md) for
 **Standard Components** (always read):
 
 - [common-checklist.md](references/common-checklist.md) - Complete review checklist (S-01 through BP-03)
-- [common-output-format.md](references/common-output-format.md) - Report format specification
+- [common-output-format.md](references/common-output-format.md) - This review skill's own report format specification
 
 **Category Details** (read when reviewing related aspects):
 
@@ -51,41 +49,21 @@ See [references/common-output-format.md](references/common-output-format.md) for
 
 ## Workflow
 
-1. **Understand Context** - Read PR description, understand skill purpose and target background
-2. **Systematic Review** - Apply quality checks (Q-01–Q-06) and pattern checks (P-01–P-02) using reference files
-3. **Report Issues** - Output in the format below
+### Step 1: Understand Context
 
-## Output Format
+Read PR description and target skill purpose.
 
-```markdown
-# Agent Skills Review Result
+### Step 2: Automated Checks First
 
-## Checks Summary
+Confirm deterministic checks from `scripts/validate.sh` have been run. If execution is missing or failing, request rerun before semantic review.
 
-- Total checks: 10
-- Passed: 8
-- Failed: 2
-- Deferred: 0
+### Step 3: Systematic Review
 
-## Checks (Failed/Deferred Only)
+Apply quality checks (Q-01–Q-06) and pattern checks (P-01–P-02) using reference files. Confirm that `common-output-format.md` matches the target skill's actual output contract.
 
-- S-01 Section Order and Completeness: ❌ Fail
-- Q-02 Scope Boundaries: ❌ Fail
+### Step 4: Report Issues
 
-## Issues
-
-1. S-01: Section Order and Completeness
-   - File: `.github/skills/example-skill/SKILL.md`
-   - Problem: Missing "Execution Scope" section
-   - Impact: Skill cannot clearly communicate what it does and does not do
-   - Recommendation: Add `## Execution Scope` section
-
-2. Q-02: Scope Boundaries
-   - File: `.github/skills/example-skill/SKILL.md` L45
-   - Problem: Out of Scope boundary unclear between this skill and related validation skill
-   - Impact: Agent may attempt to run validation tools during review
-   - Recommendation: Add explicit exclusion line for related validation skill
-```
+Output according to [references/common-output-format.md](references/common-output-format.md).
 
 ## Best Practices
 

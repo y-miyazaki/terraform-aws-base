@@ -1,36 +1,31 @@
 # Markdown Validation Checklist
 
-## Syntax
+## Execution Order
 
-- SYNTAX-01: Valid Markdown structure
-- SYNTAX-02: No syntax errors
-- SYNTAX-03: Proper heading hierarchy
-- SYNTAX-04: Code block syntax correct
+Run tools in this order (fail-fast: stop on first failure):
 
-## Formatting
+1. `markdownlint` — Markdown syntax and style enforcement
+2. `markdown-link-check` — broken link detection
 
-- FMT-01: Consistent indentation
-- FMT-02: Line length reasonable
-- FMT-03: List formatting consistent
-- FMT-04: Table formatting valid
+## Checks by Tool
 
-## Links
+### markdownlint
+- MDL-01: Heading hierarchy is consistent (no skipped levels)
+- MDL-02: No trailing spaces or hard tabs
+- MDL-03: Code blocks have language specifiers where applicable
+- MDL-04: List marker style is consistent within a file
+- MDL-05: Blank line rules around headings and code blocks followed
+- MDL-06: Table formatting is valid
+- MDL-07: No bare URLs (use `[text](url)` format)
 
-- LINK-01: No broken links
-- LINK-02: Correct relative paths
-- LINK-03: External URLs accessible
-- LINK-04: Anchor links valid
+### markdown-link-check
+- LINK-01: All relative file paths resolve to existing files
+- LINK-02: All anchor (`#`) references match headings in the target file
+- LINK-03: External URLs return HTTP 2xx (non-redirected)
+- LINK-04: No dead links from renamed or deleted files
 
-## Style
+## Pass Criteria
 
-- STYLE-01: No trailing spaces
-- STYLE-02: Proper blank lines
-- STYLE-03: Consistent punctuation
-- STYLE-04: No undefined references
-
-## Content
-
-- CONTENT-01: Spelling correct
-- CONTENT-02: Grammar check pass
-- CONTENT-03: Consistent terminology
-- CONTENT-04: Clarity and readability
+- All tools exit with code 0
+- No errors or warnings above configured thresholds
+- See [common-output-format.md](common-output-format.md) for output structure

@@ -1,29 +1,24 @@
-# GitHub PR Overview Checklist
+# GitHub PR Body Checklist
 
-## Structure
+## Pre-conditions
 
-- STRUCT-01: PR Body has template sections
-- STRUCT-02: Overview section present
-- STRUCT-03: Changes section present
-- STRUCT-04: Section ordering correct
+- PRECOND-01: Target PR exists and is accessible via `gh pr view`
+- PRECOND-02: `gh` CLI is authenticated (`gh auth status` returns 0)
+- PRECOND-03: Script at `scripts/github/update-pr-body.sh` is executable
 
-## Content
+## Execution Steps
 
-- CONTENT-01: Overview describes purpose
-- CONTENT-02: Changes lists modifications
-- CONTENT-03: Impact assessment included
-- CONTENT-04: Related issues linked
+- STEP-01: Fetch current PR body from GitHub (`gh pr view --json body`)
+- STEP-02: Classify file changes by type (Terraform, Go, workflow, docs, etc.)
+- STEP-03: Generate `## Overview` content (or use `--overview-file` if provided)
+- STEP-04: Generate `## Changes` list with file classifications
+- STEP-05: Update PR body via `gh pr edit --body`
 
-## Consistency
+## Output Verification
 
-- CONS-01: Section formatting consistent
-- CONS-02: Terminology used correctly
-- CONS-03: Links are valid
-- CONS-04: No section duplication
+- OUT-01: `## Overview` section is present and non-empty
+- OUT-02: `## Changes` section is present with at least one entry
+- OUT-03: Other existing PR body sections are preserved unchanged
+- OUT-04: Operation is idempotent (re-running produces the same result)
 
-## Automation
-
-- AUTO-01: Updates are idempotent
-- AUTO-02: Existing content preserved
-- AUTO-03: Generation is deterministic
-- AUTO-04: No formatting conflicts
+See [common-output-format.md](common-output-format.md) for PR body output structure.

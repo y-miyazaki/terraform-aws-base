@@ -19,7 +19,7 @@ metadata:
 
 ## Output Specification
 
-**Output format (MANDATORY)** - Use this exact structure:
+**Structured output (MANDATORY)** - Use this exact structure:
 
 - Checks Summary: Total/Passed/Failed/Deferred counts
 - Checks (Failed/Deferred Only): Show only ❌ and ⊘ items in checklist order
@@ -57,39 +57,21 @@ See [references/common-output-format.md](references/common-output-format.md) for
 
 ## Workflow
 
-1. **Verify Structure** - Confirm 4 required chapters exist in correct order
-2. **Systematic Review** - Review by priority: 🔴 Critical (STRUCT, COMP) → 🟡 Important (STD, GUIDE, TEST, SEC) → 🟢 Enhancement (QUAL, CONS)
-3. **Report Issues** - Output in the format below
+### Step 1: Understand Context
 
-## Output Format
+Read PR description and identify target `.instructions.md` files and `applyTo` scope.
 
-```markdown
-# Instructions Review Result
+### Step 2: Automated Checks First
 
-## Checks Summary
+Confirm deterministic checks for structure and file consistency have been run when available. If execution is missing or failing, request rerun before semantic review.
 
-- Total checks: 26
-- Passed: 24
-- Failed: 2
-- Deferred: 0
+### Step 3: Systematic Review
 
-## Checks (Failed/Deferred Only)
+Verify required chapter order, then review by priority: Critical (STRUCT, COMP) -> Important (STD, GUIDE, TEST, SEC) -> Enhancement (QUAL, CONS).
 
-- STRUCT-01 Four Required Chapters: ❌ Fail
-- TEST-02 Command Count: ❌ Fail
+### Step 4: Report Issues
 
-## Issues
-
-1. STRUCT-01: Four Required Chapters
-   - Problem: Security Guidelines chapter missing
-   - Impact: Missing security guidelines, incomplete standardization
-   - Recommendation: Add Security Guidelines chapter covering secrets management and best practices
-
-2. TEST-02: Command Count
-   - Problem: Only 2 validation commands documented
-   - Impact: Reduced test coverage, insufficient quality assurance
-   - Recommendation: Review aqua.yaml and expand to minimum 3 items
-```
+Output according to [references/common-output-format.md](references/common-output-format.md).
 
 ## Best Practices
 

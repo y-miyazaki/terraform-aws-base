@@ -35,3 +35,21 @@ Fix: defer outside loops, immediate Close(), value copying
 Check: Are nil checks, out-of-bounds prevention, and map race condition measures present?
 Why: Missing nil checks and out-of-bounds access cause panics, map races cause data corruption
 Fix: len checks, nil checks, use sync.Map or sync.RWMutex
+
+**CODE-07: Error String Format**
+
+Check: Do error strings start with a lowercase letter and have no trailing punctuation?
+Why: Error strings are often concatenated (e.g., fmt.Errorf("context: %w", err)), so starting with a capital letter or ending with punctuation produces awkward messages like "context: Connection refused."
+Fix: Use lowercase start and no trailing period/exclamation: errors.New("connection refused") not errors.New("Connection refused.")
+
+**CODE-08: Import Grouping**
+
+Check: Are imports organized into 3 groups: stdlib / external packages / internal packages, separated by blank lines?
+Why: Mixed import groups reduce readability and make dependency classification unclear at a glance
+Fix: Use goimports or manually split into stdlib, external, internal groups separated by blank lines
+
+**CODE-09: Avoid Naked Returns in Long Functions**
+
+Check: Are naked returns (bare return statements with named return values) avoided in functions longer than ~10 lines?
+Why: Naked returns in long functions make it difficult to trace what values are being returned, hurting readability
+Fix: Use explicit return values in functions longer than ~10 lines; named returns are acceptable only in short functions or defer-based error-annotation patterns

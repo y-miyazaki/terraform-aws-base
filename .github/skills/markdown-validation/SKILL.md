@@ -38,6 +38,8 @@ See [references/common-output-format.md](references/common-output-format.md) for
 
 - [common-checklist.md](references/common-checklist.md) - Validation checklist with ItemIDs
 - [common-output-format.md](references/common-output-format.md) - Report format specification
+- [common-troubleshooting.md](references/common-troubleshooting.md) - Read when markdownlint or link checks fail unexpectedly
+- [common-individual-commands.md](references/common-individual-commands.md) - Read when debugging markdownlint or markdown-link-check directly
 
 ## Workflow
 
@@ -60,14 +62,6 @@ bash markdown-validation/scripts/validate.sh ./docs/
 2. **markdown-link-check** - Broken link detection
 
 Detailed command options for troubleshooting are in [references/common-individual-commands.md](references/common-individual-commands.md).
-
-## Output Format
-
-```
-✓ markdownlint: No issues found
-✓ markdown-link-check: All links valid
-All validations passed
-```
 
 ## Best Practices
 

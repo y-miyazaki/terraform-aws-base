@@ -1,6 +1,6 @@
 # GitHub Actions Review Checklist
 
-## Global
+## Global & Base
 
 - G-01: Clear workflow naming
 - G-02: Trigger scope is limited

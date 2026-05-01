@@ -1,4 +1,4 @@
-# Terraform Code Review Checklist
+# Terraform Review Checklist
 
 ## Global & Base
 

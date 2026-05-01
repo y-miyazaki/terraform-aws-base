@@ -67,16 +67,6 @@ bash terraform-validation/scripts/validate.sh --verbose
 3. **`tflint`** - Static analysis and best practice enforcement
 4. **`trivy config`** - Security vulnerability scanning
 
-## Output Format
-
-```
-✓ terraform fmt: All files formatted
-✓ terraform validate: Configuration valid
-✓ tflint: No issues found
-✓ trivy config: No vulnerabilities found
-All validations passed
-```
-
 ## Best Practices
 
 - Run full validation before every commit

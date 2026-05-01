@@ -1,29 +1,35 @@
 # Diagram as Code (DAC) Validation Checklist
 
-## YAML Syntax
+## Execution Order
 
-- YAML-01: Valid YAML structure
-- YAML-02: No syntax errors
-- YAML-03: Proper indentation
-- YAML-04: Quoted strings where needed
+Run tools in this order (fail-fast: stop on first failure):
 
-## DAC Structure
+1. `yamllint` — YAML syntax and formatting check
+2. `awsdac` — DAC schema validation and PNG generation
+3. File verification — confirm output PNG exists and is non-empty
 
-- DAC-01: Canvas definition
-- DAC-02: Resources block
-- DAC-03: Links definition
-- DAC-04: Environment variables
+## Checks by Tool
 
-## Diagram Validation
+### yamllint
+- YAML-01: File parses as valid YAML without errors
+- YAML-02: Indentation is consistent (2-space)
+- YAML-03: No duplicate keys at any level
+- YAML-04: Trailing spaces and document-end markers comply with `.yamllint` config
 
-- DIAG-01: AWS resource types valid
-- DIAG-02: Resource IDs unique
-- DIAG-03: Link endpoints exist
-- DIAG-04: Diagram generates successfully
+### awsdac
+- DAC-01: Top-level `Diagram` block is present with required fields
+- DAC-02: All referenced AWS resource types are recognized by awsdac
+- DAC-03: Resource IDs are unique within the diagram
+- DAC-04: All `Links` endpoints reference declared resource IDs
+- DAC-05: `awsdac` exits with code 0 and produces a PNG file
 
-## Output
+### File verification
+- FILE-01: Output PNG file exists at the expected path
+- FILE-02: PNG file size is greater than 0 bytes
+- FILE-03: Output filename matches the input YAML filename (extension replaced)
 
-- OUT-01: PNG file created
-- OUT-02: Diagram renders correctly
-- OUT-03: All resources visible
-- OUT-04: Layout is readable
+## Pass Criteria
+
+- All tools exit with code 0
+- No errors or warnings above configured thresholds
+- See [common-output-format.md](common-output-format.md) for output structure

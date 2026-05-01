@@ -1,6 +1,6 @@
 #!/bin/bash
 #######################################
-# Description: Deterministic validation for github-actions-review SKILL.md
+# Description: Deterministic validation for instructions-review SKILL.md
 #
 # Usage: ./validate.sh [SKILL.md]
 #   arguments:
@@ -40,7 +40,7 @@ TMP_FRONTMATTER=""
 declare -a check_names=()
 declare -a check_statuses=()
 declare -a check_details=()
-declare -a required_sections=("Purpose" "Input Specification" "Output Specification" "Execution Scope" "Constraints" "Failure Behavior")
+declare -a required_sections=("Input" "Output Specification" "Execution Scope" "Reference Files Guide" "Workflow" "Best Practices")
 declare -a required_fields=("name" "description" "license")
 
 #######################################
@@ -86,7 +86,7 @@ function show_usage {
 Usage: validate.sh [SKILL.md]
 
 Description:
-  Deterministic validation for github-actions-review SKILL.md.
+  Deterministic validation for instructions-review SKILL.md.
 
 Arguments:
   SKILL.md    Optional path to target SKILL.md
@@ -102,7 +102,7 @@ Validation Checks:
 Examples:
   ./validate.sh
   ./validate.sh ../SKILL.md
-  ./validate.sh /workspace/.github/skills/github-actions-review/SKILL.md
+  ./validate.sh /workspace/.github/skills/instructions-review/SKILL.md
 EOF
     exit 0
 }
@@ -386,7 +386,7 @@ function check_resource_separation {
         missing_dirs+=("scripts/")
     fi
 
-    if [[ ! -d "${skill_dir}/reference" ]]; then
+    if [[ ! -d "${skill_dir}/references" ]]; then
         missing_dirs+=("references/")
     fi
 

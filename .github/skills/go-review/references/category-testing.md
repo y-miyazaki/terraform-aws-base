@@ -47,3 +47,9 @@ Fix: Utilize testdata/ directory, factory pattern, Golden File Testing
 Check: Are t.Parallel() used, -race -parallel specified, and parallel-safe implementation present?
 Why: Unused t.Parallel() and long test execution time increase CI time, reduce development velocity
 Fix: Add t.Parallel(), specify -race -parallel, parallel-safe implementation
+
+**TEST-09: Use t.Helper() in Test Helpers**
+
+Check: Do test helper functions call t.Helper() as their first statement?
+Why: Without t.Helper(), test failure line numbers point to the helper function body rather than the test call site, making failures harder to trace and diagnose
+Fix: Add t.Helper() as the first line of every test helper function that calls t.Fatal/t.Error/t.Log
