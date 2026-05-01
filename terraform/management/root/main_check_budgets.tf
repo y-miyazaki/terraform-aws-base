@@ -9,12 +9,12 @@ module "aws_budgets_create_v4" {
   is_enabled = var.budgets.is_enabled
 
   aws_budgets_budget = {
-    name         = "${var.name_prefix}${try(var.budgets.aws_budgets_budget.name, "budgets-monthly")}"
+    name         = "${var.name_prefix}${var.budgets.aws_budgets_budget.name}"
     budget_type  = "COST"
-    cost_filter  = try(var.budgets.aws_budgets_budget.cost_filter, [])
+    cost_filter  = var.budgets.aws_budgets_budget.cost_filter
     cost_types   = []
     limit_amount = var.budgets.aws_budgets_budget.limit_amount
-    time_unit    = try(var.budgets.aws_budgets_budget.time_unit, "MONTHLY")
+    time_unit    = var.budgets.aws_budgets_budget.time_unit
     notification = var.budgets.aws_budgets_budget.notification
   }
 }

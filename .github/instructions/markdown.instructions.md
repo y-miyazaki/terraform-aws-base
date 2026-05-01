@@ -63,6 +63,23 @@ README.md 構成:
 
 ## Testing and Validation
 
+**エントリポイント（推奨）**:
+
+```bash
+# 全検証を実行
+bash .github/skills/markdown-validation/scripts/validate.sh
+```
+
+**個別実行（デバッグ時）**:
+
+```bash
+# Markdown 構文チェック
+markdownlint docs/
+
+# リンク検証
+markdown-link-check README.md
+```
+
 **詳細ガイド**: [markdown-validation Skill](../skills/markdown-validation/SKILL.md) を参照（検証手順・一般的なエラー修正・セキュリティガイドライン）
 
 ## Security Guidelines

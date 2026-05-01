@@ -3,7 +3,7 @@
 
 This guide covers the Terraform configuration for the **Management Audit** environment. The example configuration file is [terraform.example.tfvars for audit](terraform/management/audit/terraform.example.tfvars).
 
-This environment focuses on security monitoring including Security Hub, GuardDuty, and CloudTrail audit logging.
+This environment focuses on security monitoring including Security Hub, GuardDuty, Macie, and CloudTrail audit logging.
 
 <!-- omit in toc -->
 ## Table of Contents
@@ -408,10 +408,10 @@ AWS IAM Access Analyzer with ORGANIZATION type analyzes resource policies across
 
 **Multi-region behavior:**
 
-| Region | Module | region parameter |
-| --- | --- | --- |
-| Default (e.g., ap-northeast-1) | `access_analyzer_organization` | `var.region` |
-| us-east-1 | `access_analyzer_organization_us_east_1` | `"us-east-1"` (hardcoded) |
+| Region                         | Module                                   | region parameter          |
+| ------------------------------ | ---------------------------------------- | ------------------------- |
+| Default (e.g., ap-northeast-1) | `access_analyzer_organization`           | `var.region`              |
+| us-east-1                      | `access_analyzer_organization_us_east_1` | `"us-east-1"` (hardcoded) |
 
 The check script receives the region via Terraform's `data "external"` query input and excludes the Terraform-managed analyzer name from the existence check. This prevents false positives where Terraform's own analyzer triggers the skip logic.
 
@@ -475,26 +475,26 @@ oidc_github = {
 
 ## Configuration Validation Checklist
 
-| Category                        | Item                                                     | Status |
-| ------------------------------- | -------------------------------------------------------- | ------ |
-| Security Services Validation    | Slack channel and team IDs are correctly set                                                          | [ ]    |
-| Security Services Validation    | Security Hub is enabled for compliance monitoring                                                     | [ ]    |
-| Security Services Validation    | GuardDuty is enabled for threat detection                                                             | [ ]    |
-| Security Services Validation    | Access Analyzer Organization is enabled for cross-account access analysis                             | [ ]    |
-| Security Services Validation    | CloudWatch log retention meets compliance requirements                                                | [ ]    |
-| Delegated Admin Validation      | Account is delegated administrator for required services (access-analyzer, guardduty, securityhub)    | [ ]    |
+| Category                        | Item                                                                                                    | Status |
+| ------------------------------- | ------------------------------------------------------------------------------------------------------- | ------ |
+| Security Services Validation    | Slack channel and team IDs are correctly set                                                            | [ ]    |
+| Security Services Validation    | Security Hub is enabled for compliance monitoring                                                       | [ ]    |
+| Security Services Validation    | GuardDuty is enabled for threat detection                                                               | [ ]    |
+| Security Services Validation    | Access Analyzer Organization is enabled for cross-account access analysis                               | [ ]    |
+| Security Services Validation    | CloudWatch log retention meets compliance requirements                                                  | [ ]    |
+| Delegated Admin Validation      | Account is delegated administrator for required services (access-analyzer, guardduty, securityhub)      | [ ]    |
 | Delegated Admin Validation      | Base accounts have `control_tower.managed_services.access_analyzer = true` to disable ACCOUNT analyzers | [ ]    |
-| GitHub Integration Validation   | OIDC provider settings are correct                       | [ ]    |
-| GitHub Integration Validation   | GitHub repositories list is populated                    | [ ]    |
-| GitHub Integration Validation   | IAM policies follow least privilege principle            | [ ]    |
-| GitHub Integration Validation   | Admin policy is disabled for production environments     | [ ]    |
-| Environment-Specific Validation | Tags reflect the audit environment                       | [ ]    |
-| Environment-Specific Validation | Resource names use appropriate prefixes (e.g., "audit-") | [ ]    |
-| Environment-Specific Validation | Region settings match deployment requirements            | [ ]    |
-| KMS Configuration Validation    | KMS key rotation is enabled                              | [ ]    |
-| KMS Configuration Validation    | Deletion window is set appropriately                     | [ ]    |
-| AWS Chatbot Prerequisites       | Slack workspace integration is configured in AWS Chatbot | [ ]    |
-| AWS Chatbot Prerequisites       | OAuth tokens are obtained from Slack                     | [ ]    |
+| GitHub Integration Validation   | OIDC provider settings are correct                                                                      | [ ]    |
+| GitHub Integration Validation   | GitHub repositories list is populated                                                                   | [ ]    |
+| GitHub Integration Validation   | IAM policies follow least privilege principle                                                           | [ ]    |
+| GitHub Integration Validation   | Admin policy is disabled for production environments                                                    | [ ]    |
+| Environment-Specific Validation | Tags reflect the audit environment                                                                      | [ ]    |
+| Environment-Specific Validation | Resource names use appropriate prefixes (e.g., "audit-")                                                | [ ]    |
+| Environment-Specific Validation | Region settings match deployment requirements                                                           | [ ]    |
+| KMS Configuration Validation    | KMS key rotation is enabled                                                                             | [ ]    |
+| KMS Configuration Validation    | Deletion window is set appropriately                                                                    | [ ]    |
+| AWS Chatbot Prerequisites       | Slack workspace integration is configured in AWS Chatbot                                                | [ ]    |
+| AWS Chatbot Prerequisites       | OAuth tokens are obtained from Slack                                                                    | [ ]    |
 
 ## Related Documents
 

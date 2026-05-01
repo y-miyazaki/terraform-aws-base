@@ -3,7 +3,7 @@
 #--------------------------------------------------------------
 module "inspector2_organization_us_east_1" {
   source     = "../../../modules/aws/security/inspector2_organization"
-  is_enabled = local.is_enabled_us_east_1 && try(var.inspector2_organization_us_east_1.is_enabled, false) && local.is_delegated_admin.inspector2
+  is_enabled = local.is_enabled_us_east_1 && var.inspector2_organization_us_east_1.is_enabled && local.is_delegated_admin.inspector2
   providers = {
     aws = aws.us-east-1
   }

@@ -155,6 +155,26 @@ on:
 
 ## Testing and Validation
 
+**エントリポイント（推奨）**:
+
+```bash
+# 全検証を実行
+bash .github/skills/github-actions-validation/scripts/validate.sh
+```
+
+**個別実行（デバッグ時）**:
+
+```bash
+# 構文・ベストプラクティス検証
+actionlint
+
+# セキュリティポリシー検証
+ghalint run
+
+# セキュリティ脆弱性スキャン
+zizmor .github/workflows/
+```
+
 **詳細ガイド**: [github-actions-validation Skill](../skills/github-actions-validation/SKILL.md) を参照（検証手順・セキュリティベストプラクティス・トラブルシューティング）
 
 ## Security Guidelines

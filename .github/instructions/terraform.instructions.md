@@ -114,6 +114,29 @@ AWS provider 優先:
 
 ## Testing and Validation
 
+**エントリポイント（推奨）**:
+
+```bash
+# 全検証を実行
+bash .github/skills/terraform-validation/scripts/validate.sh
+```
+
+**個別実行（デバッグ時）**:
+
+```bash
+# フォーマット確認
+terraform fmt -check -recursive
+
+# 構文・設定検証
+terraform validate
+
+# リント
+tflint --recursive
+
+# セキュリティスキャン
+trivy config .
+```
+
 **詳細ガイド**: [terraform-validation Skill](../skills/terraform-validation/SKILL.md) を参照（検証手順・トラブルシューティング・セキュリティチェック）
 
 ## Security Guidelines

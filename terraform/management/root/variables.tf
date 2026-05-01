@@ -1,5 +1,5 @@
 variable "tags" {
-  type = map(any)
+  type = map(string)
 }
 variable "name_prefix" {
   type = string
@@ -89,20 +89,156 @@ variable "slack" {
   #   sensitive = true
 }
 variable "kms" {
-  type = any
+  type = map(object({
+    description             = string
+    deletion_window_in_days = number
+    is_enabled              = bool
+  }))
 }
 variable "oidc_github" {
-  type = any
+  type = object({
+    is_enabled                      = bool
+    dangerously_attach_admin_policy = bool
+    iam_role_policy_names           = list(string)
+    create_oidc_provider            = bool
+    github_subjects                 = list(string)
+    iam_role_name                   = string
+    iam_role_path                   = string
+  })
 }
 variable "budgets" {
-  type = any
+  type = object({
+    is_enabled = bool
+    aws_budgets_budget = object({
+      name         = string
+      limit_amount = string
+      time_unit    = optional(string, "MONTHLY")
+      cost_filter  = optional(list(any), [])
+      notification = list(object({
+        comparison_operator        = string
+        threshold                  = string
+        threshold_type             = string
+        notification_type          = string
+        subscriber_email_addresses = list(string)
+        subscriber_sns_topic_arns  = optional(list(string))
+      }))
+    })
+    aws_eventbridge_schedule = object({
+      name                = string
+      schedule_expression = string
+      description         = string
+    })
+    aws_lambda_function = object({
+      environment = map(string)
+    })
+  })
 }
 variable "common_lambda" {
-  type = any
+  type = object({
+    vpc = object({
+      is_enabled = bool
+      create_vpc = bool
+      exists = optional(object({
+        private_subnets             = list(string)
+        security_group_id           = string
+        private_subnets_us_east_1   = optional(list(string), [])
+        security_group_id_us_east_1 = optional(string, "")
+      }))
+      new = optional(object({
+        name                                      = string
+        cidr                                      = string
+        azs                                       = list(string)
+        azs_us_east_1                             = optional(list(string), [])
+        private_subnets                           = list(string)
+        public_subnets                            = list(string)
+        enable_dns_support                        = bool
+        enable_dns_hostnames                      = bool
+        enable_nat_gateway                        = bool
+        single_nat_gateway                        = bool
+        one_nat_gateway_per_az                    = bool
+        enable_vpn_gateway                        = bool
+        enable_flow_log                           = bool
+        create_flow_log_cloudwatch_log_group      = bool
+        create_flow_log_cloudwatch_iam_role       = bool
+        flow_log_max_aggregation_interval         = number
+        flow_log_cloudwatch_log_group_name_prefix = string
+        flow_log_file_format                      = string
+      }))
+    })
+    aws_iam_role = optional(object({
+      description = optional(string)
+      name        = string
+      path        = string
+    }))
+    aws_iam_policy = optional(object({
+      description = optional(string)
+      name        = string
+      path        = string
+    }))
+  })
 }
 variable "organizations_policy" {
-  type = any
+  type = object({
+    policy = object({
+      Version   = string
+      Statement = list(any)
+    })
+  })
 }
 variable "security_cloudtrail" {
-  type = any
+  type = object({
+    is_enabled = bool
+    aws_cloudwatch_log = optional(map(object({
+      aws_cloudwatch_log_metric_filter = object({
+        name    = string
+        pattern = string
+        metric_transformation = list(object({
+          name      = string
+          namespace = string
+          value     = string
+        }))
+      })
+      aws_cloudwatch_metric_alarm = object({
+        alarm_name          = string
+        comparison_operator = string
+        evaluation_periods  = number
+        period              = number
+        statistic           = string
+        threshold           = number
+        threshold_metric_id = optional(string)
+        actions_enabled     = bool
+        alarm_description   = string
+        datapoints_to_alarm = number
+        dimensions          = optional(map(string))
+        treat_missing_data  = string
+      })
+    })), {})
+    aws_sns_topic = optional(object({
+      name                                     = string
+      name_prefix                              = optional(string)
+      display_name                             = optional(string)
+      delivery_policy                          = optional(string)
+      application_success_feedback_role_arn    = optional(string)
+      application_success_feedback_sample_rate = optional(number)
+      application_failure_feedback_role_arn    = optional(string)
+      http_success_feedback_role_arn           = optional(string)
+      http_success_feedback_sample_rate        = optional(number)
+      http_failure_feedback_role_arn           = optional(string)
+      lambda_success_feedback_role_arn         = optional(string)
+      lambda_success_feedback_sample_rate      = optional(number)
+      lambda_failure_feedback_role_arn         = optional(string)
+      sqs_success_feedback_role_arn            = optional(string)
+      sqs_success_feedback_sample_rate         = optional(number)
+      sqs_failure_feedback_role_arn            = optional(string)
+    }))
+    aws_sns_topic_subscription = optional(object({
+      protocol                        = string
+      endpoint_auto_confirms          = optional(bool, false)
+      confirmation_timeout_in_minutes = optional(number)
+      raw_message_delivery            = optional(bool)
+      filter_policy                   = optional(string)
+      delivery_policy                 = optional(string)
+      redrive_policy                  = optional(string)
+    }))
+  })
 }

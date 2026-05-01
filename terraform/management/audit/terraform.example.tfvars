@@ -185,6 +185,27 @@ security_notification = {
 }
 
 #--------------------------------------------------------------
+# Access Analyzer Organization
+# AWS IAM Access Analyzer central configuration for organization-wide access analysis.
+# Enables organization-wide settings for identifying resources shared with external entities.
+#--------------------------------------------------------------
+access_analyzer_organization = {
+  # TODO: need to set is_enabled for settings of AWS Access Analyzer Organization.
+  is_enabled    = false
+  analyzer_name = "aws-access-analyzer"
+}
+
+#--------------------------------------------------------------
+# Access Analyzer Organization (us-east-1)
+# AWS IAM Access Analyzer central configuration for organization-wide access analysis in us-east-1.
+#--------------------------------------------------------------
+access_analyzer_organization_us_east_1 = {
+  # TODO: need to set is_enabled for settings of AWS Access Analyzer Organization(us-east-1).
+  is_enabled    = false
+  analyzer_name = "aws-access-analyzer"
+}
+
+#--------------------------------------------------------------
 # GuardDuty Organization
 # AWS GuardDuty central configuration for organization-wide threat detection.
 # Enables organization-wide settings for automated threat detection and response.
@@ -348,6 +369,41 @@ inspector2_organization_us_east_1 = {
 }
 
 #--------------------------------------------------------------
+# Macie Organization
+# Amazon Macie central configuration for organization-wide sensitive data discovery.
+#--------------------------------------------------------------
+macie_organization = {
+  # TODO: need to set is_enabled for settings of AWS Macie Organization.
+  is_enabled = false
+  # TODO: need to set auto_enable for settings of AWS Macie Organization.
+  auto_enable = true
+  # TODO: need to set status for settings of AWS Macie account.
+  status = "ENABLED"
+  # TODO: need to set finding_publishing_frequency for settings of AWS Macie account.
+  finding_publishing_frequency = "FIFTEEN_MINUTES"
+  classification_jobs          = []
+  findings_filters             = []
+}
+
+#--------------------------------------------------------------
+# Macie Organization (us-east-1)
+# This configures the Macie settings for the entire
+# AWS Organization to use a central model in us-east-1.
+#--------------------------------------------------------------
+macie_organization_us_east_1 = {
+  # TODO: need to set is_enabled for settings of AWS Macie Organization(us-east-1).
+  is_enabled = false
+  # TODO: need to set auto_enable for settings of AWS Macie Organization(us-east-1).
+  auto_enable = true
+  # TODO: need to set status for settings of AWS Macie account(us-east-1).
+  status = "ENABLED"
+  # TODO: need to set finding_publishing_frequency for settings of AWS Macie account(us-east-1).
+  finding_publishing_frequency = "FIFTEEN_MINUTES"
+  classification_jobs          = []
+  findings_filters             = []
+}
+
+#--------------------------------------------------------------
 # SecurityHub Organization
 # AWS Security Hub central configuration for organization-wide settings.
 #--------------------------------------------------------------
@@ -407,25 +463,4 @@ securityhub_organization_us_east_1 = {
   configuration_policy_name = "securityhub-configuration-policy"
   linking_mode              = "ALL_REGIONS"
   target_id                 = "r-xxxxxx"
-}
-
-#--------------------------------------------------------------
-# Access Analyzer Organization
-# AWS IAM Access Analyzer central configuration for organization-wide access analysis.
-# Enables organization-wide settings for identifying resources shared with external entities.
-#--------------------------------------------------------------
-access_analyzer_organization = {
-  # TODO: need to set is_enabled for settings of AWS Access Analyzer Organization.
-  is_enabled    = false
-  analyzer_name = "aws-access-analyzer"
-}
-
-#--------------------------------------------------------------
-# Access Analyzer Organization (us-east-1)
-# AWS IAM Access Analyzer central configuration for organization-wide access analysis in us-east-1.
-#--------------------------------------------------------------
-access_analyzer_organization_us_east_1 = {
-  # TODO: need to set is_enabled for settings of AWS Access Analyzer Organization(us-east-1).
-  is_enabled    = false
-  analyzer_name = "aws-access-analyzer"
 }

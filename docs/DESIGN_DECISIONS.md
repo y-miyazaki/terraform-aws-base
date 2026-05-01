@@ -72,12 +72,14 @@ Organization Root Account
   └── Delegated Admin: Audit Account
         ├── SecurityHub Organization (config policy + finding aggregator)
         ├── GuardDuty Organization (detector + feature config)
+        ├── Macie Organization (auto-enable for organization members)
         ├── Inspector2 Organization (member association + enabler)
         └── Access Analyzer Organization (ORGANIZATION type analyzer)
 
 Each Member Account (via base/ terraform):
   ├── SecurityHub (member, managed by org policy)
   ├── GuardDuty (member detector, managed by org config)
+  ├── Macie (account-level enablement, managed by org config)
   ├── Config (recorder + rules)
   ├── Default VPC hardening
   ├── EBS default encryption + snapshot public access block
@@ -111,5 +113,4 @@ The following are intentionally out of scope for this baseline repository:
 | WAF / Shield | Project-specific rules; managed in application repositories |
 | VPC creation | Removed (`vpc/create` deleted); application repositories manage VPCs |
 | Route 53 DNSSEC | Hosted Zone-specific; managed where Hosted Zones are defined |
-| Macie | Cost-sensitive; enable per-project based on data classification needs |
 | ECR repository settings (scan_on_push) | Per-repository; managed in application repositories |

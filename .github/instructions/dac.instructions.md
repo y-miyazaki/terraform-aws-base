@@ -94,6 +94,23 @@ mcp_awsdac-mcp-se_generateDiagram
 
 ## Testing and Validation
 
+**エントリポイント（推奨）**:
+
+```bash
+# 全検証を実行
+bash .github/skills/diagram-as-code-validation/scripts/validate.sh
+```
+
+**個別実行（デバッグ時）**:
+
+```bash
+# YAML 構文チェック
+yamllint aws_architecture_diagram.yaml
+
+# 図生成（PNG 出力）
+awsdac aws_architecture_diagram.yaml
+```
+
 **詳細ガイド**: [diagram-as-code-validation Skill](../skills/diagram-as-code-validation/SKILL.md) を参照（検証手順・図生成トラブルシューティング・セキュリティチェック）
 
 ## Security Guidelines

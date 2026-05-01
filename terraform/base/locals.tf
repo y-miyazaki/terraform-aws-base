@@ -15,6 +15,8 @@ locals {
     cloudtrail      = coalesce(try(var.control_tower.managed_services.cloudtrail, null), local.is_control_tower_enabled)
     config          = coalesce(try(var.control_tower.managed_services.config, null), local.is_control_tower_enabled)
     guardduty       = coalesce(try(var.control_tower.managed_services.guardduty, null), local.is_control_tower_enabled)
+    inspector2      = coalesce(try(var.control_tower.managed_services.inspector2, null), local.is_control_tower_enabled)
+    macie           = coalesce(try(var.control_tower.managed_services.macie, null), local.is_control_tower_enabled)
     securityhub     = coalesce(try(var.control_tower.managed_services.securityhub, null), local.is_control_tower_enabled)
   }
 }

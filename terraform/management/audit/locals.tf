@@ -13,6 +13,7 @@ locals {
     access_analyzer = contains(local.delegated_service_principals, "access-analyzer.amazonaws.com")
     guardduty       = contains(local.delegated_service_principals, "guardduty.amazonaws.com")
     inspector2      = contains(local.delegated_service_principals, "inspector2.amazonaws.com")
+    macie           = contains(local.delegated_service_principals, "macie.amazonaws.com")
     securityhub     = contains(local.delegated_service_principals, "securityhub.amazonaws.com")
   }
 }

@@ -18,55 +18,41 @@ description: "AI Assistant Instructions for Agent Skills Development"
 
 以下のセクションは記載された順序でSKILL.md内に配置すること（H2レベル `##`）:
 
-1. **Purpose** (descriptionフィールドに単一文で記載)
-   - スキルが何をするか
-   - いつ使用するか
-
-2. **When to Use This Skill**
-   - スキルを使用すべき状況
-   - 推奨タイミング
-   - 例: "Editing Terraform files", "Before committing changes", "During code review"
-
-3. **Input Specification**
+1. **Input**
    - スキルが期待する情報/ファイル
    - 形式要件
    - 例: "カレントディレクトリのTerraformファイルを期待" または "PR説明とリンクされたissueが必要"
 
-4. **Output Specification**
+2. **Output Specification**
    - スキルが生成するもの
    - 形式要件（可能な限り構造化フォーマット必須）
    - 構造化フォーマットで出力を定義: markdownセクション、JSONスキーマ、テーブル
    - 自由形式の記述的出力を避ける
+   - `references/common-output-format.md` を使う場合、ここでは「何を返すか」を要約し、詳細構造はそちらに委譲
    - 例: "ChecksとIssuesセクションを持つmarkdownレビューレポートを出力" または "JSON形式で返却: {status, errors[], warnings[]}"
 
-5. **Execution Scope**
+3. **Execution Scope**
    - スキルが行うこと
    - スキルが行わないこと（Out of Scope）
    - Out of Scope には外部ツール委譲を明記: yamllint/markdownlint等での構文チェック、word count計測、ディレクトリ存在確認等の deterministic check
    - 例: "スコープ外: YAML/Markdown構文エラーはyamllint/markdownlint委譲。対象ディレクトリ外のファイル変更不可。依存関係バージョン変更不可。"
 
-6. **Constraints**
-   - 制限と境界
-   - 前提条件
-   - 例: "AWS基盤のTerraformを想定。自動チェックが先に通過している必要がある。"
-
-7. **Failure Behavior**
-   - エラーの処理方法
-   - 検証失敗時に報告する内容
-   - 例: "検証失敗時、エラーを報告してパッケージ作成せずに終了"
-
-8. **Reference Files Guide**
+4. **Reference Files Guide**
    - Agent利用時に @-mention で参照可能な reference ファイルのリスト
    - Standard Components (common-_) と Category Details (category-_) に分類
    - 各ファイルに簡潔な説明を付記
    - 例: "When using this skill with an agent, reference the following files as needed via @-mention:"
 
-9. **Workflow**
+5. **Workflow**
    - スキル実行の具体的な手順・フロー
    - Validation型: ステップ番号付きの手順（1. Make changes → 2. Run validation → ... → 5. Commit）
    - Review型: Step 1〜Step 4 のサブセクション構造（Step 1: Understand Context, Step 2: Automated Checks First, Step 3: Systematic Review, Step 4: Report Issues）
    - 実行順序と各ステップの明確な説明
    - 例: "1. **Make changes** - Edit files\n2. **Run validation**: `bash script/validate.sh`\n3. **Fix issues** - Address failures\n4. **Commit** - Only when validation passes"
+
+6. **Best Practices**
+   - そのスキル固有の実践上の注意点を短く列挙
+   - 実行順序、再実行性、関連スキルとの境界、よくある誤用の防止策を含めてもよい
 
 ### Execution Determinism Rules
 
@@ -105,7 +91,11 @@ description: "AI Assistant Instructions for Agent Skills Development"
 Agent Skills全体で推奨される標準的なreference構成。内容はスキル固有だが、すべてのスキルで同じ名前を使用する:
 
 - `common-checklist.md` ★必須: スキル固有のチェック項目リスト（ItemID形式: ERR-01, SEC-01等）
-- `common-output-format.md` ★必須: 標準化された出力フォーマット仕様（`## Checks` / `## Issues` 構造）
+- `common-output-format.md` ★必須: そのスキルが AI に期待する出力形式を定義する仕様ファイル
+  - スキル固有の正本として扱う
+  - Review/Validation 系では Checks/Issues 形式を定義してよい
+  - Automation 系では PR Body、JSON、表形式など別構造を定義してよい
+  - `Output Specification` は要約、`common-output-format.md` は詳細仕様として分担する
 - `common-troubleshooting.md`: トラブルシューティングガイド（Validation型スキル推奨）
 - `common-individual-commands.md`: 個別ツールコマンド実行方法（Validation型スキル推奨、デバッグ用）
 
@@ -167,6 +157,12 @@ reference/
 ### Priority Principle
 
 **Clarity > DRY**: 明確性が保たれる場合のみ冗長性を回避
+
+### Output Contract Source of Truth
+
+- `references/common-output-format.md` を各スキルの出力契約の正本として扱う
+- `Output Specification` は出力内容の要約に留める
+- 同一情報を `Output Specification` と `references/common-output-format.md` に重複記載しない
 
 ## Guidelines
 
@@ -271,7 +267,7 @@ Agent Skills 作成・修正時、以下を優先順位順に確認:
 
 ### Critical (マージ前に必ず修正)
 
-1. **Structural Completeness**: 必須セクションすべて存在（Purpose, Input, Output, Scope, Constraints, Failure Behavior）
+1. **Structural Completeness**: 必須セクションすべて存在（Input, Output Specification, Execution Scope, Reference Files Guide, Workflow, Best Practices）
 2. **Ambiguity (Critical)**: 不明確条件を明示的条件に置換
 3. **Writing Style**: 命令形/不定詞形式使用（"you should"無）
 4. **Out-of-Scope Definition**: 明示的に「やらないこと」を定義
@@ -281,12 +277,12 @@ Agent Skills 作成・修正時、以下を優先順位順に確認:
 5. **Ambiguity (Important)**: 曖昧表現を具体的指示に置換
 6. **Specificity**: 手続き的指示には数値閾値、明示的条件、具体的API参照のいずれかを含む
 7. **Progressive Disclosure**: SKILL.md < 5,000単語（超過時はreferences/へ移動）
-8. **Input/Output Format**: 入力・出力の形式を明示的に定義
+8. **Input/Output Format**: 入力形式と出力契約を明示的に定義
 9. **Single Canonical Path**: 複数の実装経路がある場合、選択基準を明示
 
 ### Recommended (可能な場合に修正)
 
-10. **Redundancy**: 不要重複削除（Clarity > DRY原則に従う）
+10. **Redundancy**: 不要重複削除（Clarity > DRY原則に従う）。特に `Output Specification` / `common-output-format.md` の重複を避ける
 11. **Consistency**: 確立パターン遵守
 12. **Resource Separation**: scripts/references/assets 適切分離
 

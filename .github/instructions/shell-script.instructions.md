@@ -133,6 +133,21 @@ VAR_NAME="default_value"
 - クリーンアップ: `trap`設定
 - エラーメッセージ明確化
 
+### Performance
+
+- `for f in $(ls)` を避け、glob（`for f in ./*.sh`）を使用してサブシェルと単語分割を防ぐ
+- ループ内でのサブシェル（`$(...)`）生成を最小化し、結果を変数にキャッシュする
+- ビルトイン（`[[ ]]`、`printf`、`read`）を外部コマンドより優先する
+- ファイル内容の読み込みには `$(cat file)` でなく `< file` リダイレクトを使用する
+
+### Anti-Patterns
+
+- **`for f in $(ls)`**: 単語分割とファイル名のグロブ展開に脆弱。glob（`for f in ./*.sh`）を使用すること
+- **非クォート変数**: `$VAR` → `"$VAR"` （スペース・改行・グロブ展開を防止）
+- **`[ ]` の使用**: 単語分割と演算子の挙動差が生じる。`[[ ]]` を使用すること
+- **`cd` 後の無チェック操作**: `cd /path || error_exit "..."` または `cd /path && rm -rf ./*` 形式でチェーンすること
+- **`ls` 出力のパース**: ls 出力をパースしない。`find` または glob を使用すること
+
 ### Code Modification Guidelines
 
 - 変更後は [shell-script-validation Skill](../skills/shell-script-validation/SKILL.md) の validate.sh 実行を優先
@@ -148,6 +163,26 @@ VAR_NAME="default_value"
 - `validate_dependencies`: コマンド存在確認
 
 ## Testing and Validation
+
+**エントリポイント（推奨）**:
+
+```bash
+# 全検証を実行
+bash .github/skills/shell-script-validation/scripts/validate.sh
+```
+
+**個別実行（デバッグ時）**:
+
+```bash
+# 構文チェック
+bash -n script.sh
+
+# 静的解析
+shellcheck script.sh
+
+# Bats テスト
+bats test/bats/
+```
 
 **詳細ガイド**: [shell-script-validation Skill](../skills/shell-script-validation/SKILL.md) を参照（検証手順・Batsテスト標準・トラブルシューティング）
 

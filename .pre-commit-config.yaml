@@ -114,7 +114,6 @@ repos:
     rev: v1.105.0 # https://github.com/antonbabenko/pre-commit-terraform/releases
     hooks:
       - id: terraform_fmt
-      - id: terraform_validate
       - id: terraform_tflint
         args:
           - --args=--no-color

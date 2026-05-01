@@ -49,6 +49,10 @@ control_tower = {
     config = false
     # aws organizations list-delegated-administrators --service-principal guardduty.amazonaws.com
     guardduty = false
+    # aws organizations list-delegated-administrators --service-principal inspector2.amazonaws.com
+    inspector2 = false
+    # aws organizations list-delegated-administrators --service-principal macie.amazonaws.com
+    macie = false
     # aws organizations list-delegated-administrators --service-principal securityhub.amazonaws.com
     securityhub = false
   }
@@ -1626,7 +1630,7 @@ common_log = {
     server_side_encryption_configuration = {
       rule = {
         bucket_key_enabled       = false
-        blocked_encryption_types = ["NONE"]
+        blocked_encryption_types = ["NONE", "SSE-C"]
         apply_server_side_encryption_by_default = {
           sse_algorithm     = "AES256"
           kms_master_key_id = null
@@ -1683,7 +1687,7 @@ common_log = {
     server_side_encryption_configuration = {
       rule = {
         bucket_key_enabled       = false
-        blocked_encryption_types = ["NONE"]
+        blocked_encryption_types = ["NONE", "SSE-C"]
         apply_server_side_encryption_by_default = {
           sse_algorithm     = "AES256"
           kms_master_key_id = null
@@ -1815,7 +1819,7 @@ PATTERN
   #         rule = [
   #           {
   #             bucket_key_enabled       = false
-  #             blocked_encryption_types = ["NONE"]
+  #             blocked_encryption_types = ["NONE", "SSE-C"]
   #             apply_server_side_encryption_by_default = [
   #               {
   #                 sse_algorithm     = "AES256"
@@ -1948,7 +1952,7 @@ security_config = {
   #         rule = [
   #           {
   #             bucket_key_enabled       = false
-  #             blocked_encryption_types = ["NONE"]
+  #             blocked_encryption_types = ["NONE", "SSE-C"]
   #             apply_server_side_encryption_by_default = [
   #               {
   #                 sse_algorithm     = "AES256"
@@ -2090,7 +2094,7 @@ security_config_us_east_1 = {
   #         rule = [
   #           {
   #             bucket_key_enabled       = false
-  #             blocked_encryption_types = ["NONE"]
+  #             blocked_encryption_types = ["NONE", "SSE-C"]
   #             apply_server_side_encryption_by_default = [
   #               {
   #                 sse_algorithm     = "AES256"
@@ -2262,6 +2266,96 @@ security_iam = {
     name        = "security-support-role"
     path        = "/"
   }
+}
+
+#--------------------------------------------------------------
+# Security:Inspector2
+# Amazon Inspector v2 automatically discovers and scans EC2 instances, container images, and Lambda functions
+# for software vulnerabilities and unintended network exposure.
+# Notice: This option is automatically disabled if control_tower.managed_services.inspector2=true.
+#--------------------------------------------------------------
+security_inspector2 = {
+  # TODO: need to set is_enabled for settings of Inspector2.
+  is_enabled = false
+  # TODO: need to set resource_types for settings of Inspector2.
+  # Valid values: EC2, ECR, LAMBDA, LAMBDA_CODE, CODE_REPOSITORY
+  resource_types = ["EC2", "ECR", "LAMBDA", "LAMBDA_CODE"]
+}
+
+#--------------------------------------------------------------
+# Security:Inspector2 (us-east-1)
+# Notice: This option is automatically disabled if control_tower.managed_services.inspector2=true.
+#--------------------------------------------------------------
+security_inspector2_us_east_1 = {
+  # TODO: need to set is_enabled for settings of Inspector2(us-east-1).
+  is_enabled = false
+  # TODO: need to set resource_types for settings of Inspector2(us-east-1).
+  resource_types = ["EC2", "ECR", "LAMBDA", "LAMBDA_CODE"]
+}
+
+#--------------------------------------------------------------
+# Security:Macie
+# Amazon Macie discovers and protects sensitive data in S3 using automated discovery and ML-based classification.
+# Notice: This option is automatically disabled if control_tower.managed_services.macie=true.
+#--------------------------------------------------------------
+security_macie = {
+  # TODO: need to set is_enabled for settings of Macie.
+  is_enabled = false
+  # TODO: need to set status for settings of Macie account.
+  status = "ENABLED"
+  # TODO: need to set finding_publishing_frequency for settings of Macie account.
+  finding_publishing_frequency = "FIFTEEN_MINUTES"
+  # Classification jobs for sensitive data discovery in S3 buckets.
+  # Each job requires: name, job_type (ONE_TIME or SCHEDULED), and s3_job_definition.
+  # Example:
+  # classification_jobs = [
+  #   {
+  #     name     = "sensitive-data-scan"
+  #     job_type = "ONE_TIME"
+  #     s3_job_definition = {
+  #       bucket_definitions = [
+  #         {
+  #           account_id = "123456789012"
+  #           buckets    = ["my-bucket"]
+  #         }
+  #       ]
+  #     }
+  #   }
+  # ]
+  classification_jobs = []
+  # Findings filters to suppress or archive specific Macie findings.
+  # Each filter requires: name, action (ARCHIVE or NOOP), and finding_criteria.
+  # Example:
+  # findings_filters = [
+  #   {
+  #     name   = "suppress-info-findings"
+  #     action = "ARCHIVE"
+  #     finding_criteria = {
+  #       criterion = [
+  #         {
+  #           field = "severity.description"
+  #           eq    = ["Low"]
+  #         }
+  #       ]
+  #     }
+  #   }
+  # ]
+  findings_filters = []
+}
+
+#--------------------------------------------------------------
+# Security:Macie (us-east-1)
+# Notice: This option is automatically disabled if control_tower.managed_services.macie=true.
+#--------------------------------------------------------------
+security_macie_us_east_1 = {
+  # TODO: need to set is_enabled for settings of Macie(us-east-1).
+  is_enabled = false
+  # TODO: need to set status for settings of Macie account(us-east-1).
+  status = "ENABLED"
+  # TODO: need to set finding_publishing_frequency for settings of Macie account(us-east-1).
+  finding_publishing_frequency = "FIFTEEN_MINUTES"
+  classification_jobs          = []
+  findings_filters             = []
 }
 
 #--------------------------------------------------------------

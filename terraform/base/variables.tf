@@ -14,6 +14,8 @@ variable "control_tower" {
       cloudtrail      = optional(bool)
       config          = optional(bool)
       guardduty       = optional(bool)
+      inspector2      = optional(bool)
+      macie           = optional(bool)
       securityhub     = optional(bool)
     }))
   })
@@ -230,6 +232,18 @@ variable "security_guardduty_us_east_1" {
   type = any
 }
 variable "security_iam" {
+  type = any
+}
+variable "security_inspector2" {
+  type = any
+}
+variable "security_inspector2_us_east_1" {
+  type = any
+}
+variable "security_macie" {
+  type = any
+}
+variable "security_macie_us_east_1" {
   type = any
 }
 variable "security_s3" {
