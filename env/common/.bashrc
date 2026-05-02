@@ -81,25 +81,41 @@ fi
 #######################################
 # Copilot / VSCode environment defaults (do not place secrets directly in this file)
 export COPILOT_BASE="/workspace/.copilot"
-# Allow Copilot to use all instructions
+# Allow Copilot to use all permissions (tools/paths/urls)
 export COPILOT_ALLOW_ALL="1"
-# Custom instructions directory (colon-separated allowed)
-export COPILOT_CUSTOM_INSTRUCTIONS_DIRS="/workspace/.github/instructions"
-# Default model
+# Default model (can be overridden by --model flag or /model command)
 export COPILOT_MODEL="gpt-5-mini"
-# Load tokens from files if present (safer than embedding them here)
+# Additional directories to search for custom instructions files (comma-separated)
+export COPILOT_CUSTOM_INSTRUCTIONS_DIRS="/workspace/.github/instructions"
+# Use bundled ripgrep (set to "false" to use ripgrep from PATH instead)
+export USE_BUILTIN_RIPGREP="true"
+
+# Token resolution:
+#   copilot CLI: COPILOT_GITHUB_TOKEN > GH_TOKEN > GITHUB_TOKEN > stored credentials
+#   gh CLI:      GH_TOKEN > stored credentials (managed by gh auth login)
+# Using COPILOT_GITHUB_TOKEN for copilot-only token, GH_TOKEN for gh CLI,
+# keeping them separate so each tool can use a different token if needed.
+
+# Copilot-specific token (file takes precedence; gives copilot CLI its own identity)
 if [ -f "${COPILOT_BASE}/copilot_github_token" ]; then
     export COPILOT_GITHUB_TOKEN="$(cat "${COPILOT_BASE}/copilot_github_token")"
 fi
-if [ -f "${COPILOT_BASE}/gh_token" ]; then
+
+# GH_TOKEN: prefer gh credential store; fall back to file for headless/CI environments
+if command -v gh > /dev/null 2>&1 && gh auth status > /dev/null 2>&1; then
+    export GH_TOKEN="$(gh auth token 2> /dev/null)"
+elif [ -f "${COPILOT_BASE}/gh_token" ]; then
     export GH_TOKEN="$(cat "${COPILOT_BASE}/gh_token")"
 fi
-# Do not overwrite existing GITHUB_TOKEN; load from file only if not set
-if [ -z "${GITHUB_TOKEN-}" ] && [ -f "${COPILOT_BASE}/github_token" ]; then
-    export GITHUB_TOKEN="$(cat "${COPILOT_BASE}/github_token")"
+
+# GITHUB_TOKEN: same strategy — prefer gh, fall back to file only if not already set
+if [ -z "${GITHUB_TOKEN-}" ]; then
+    if command -v gh > /dev/null 2>&1 && gh auth status > /dev/null 2>&1; then
+        export GITHUB_TOKEN="$(gh auth token 2> /dev/null)"
+    elif [ -f "${COPILOT_BASE}/github_token" ]; then
+        export GITHUB_TOKEN="$(cat "${COPILOT_BASE}/github_token")"
+    fi
 fi
-# Use built-in ripgrep
-export USE_BUILTIN_RIPGREP="1"
-# XDG dirs under .vscode
+
+# XDG dirs
 export XDG_CONFIG_HOME="/home/${USER}/.config"
-export XDG_STATE_HOME="$COPILOT_BASE/state"

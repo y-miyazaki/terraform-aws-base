@@ -49,7 +49,10 @@
     "-v",
     "${localWorkspaceFolder}/env/common/tmp/gh:/home/vscode/.config/gh",
     "-v",
-    "${localWorkspaceFolder}/env/common/tmp/.aws:/home/vscode/.aws"
+    "${localWorkspaceFolder}/env/common/tmp/.aws:/home/vscode/.aws",
+    "-v",
+    "${localWorkspaceFolder}/env/common/tmp/.kiro:/home/vscode/.local/share/kiro-cli"
+
   ],
   "postCreateCommand": "/bin/bash env/common/scripts/init.sh",
   "workspaceMount": "",
