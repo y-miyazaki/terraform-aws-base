@@ -426,6 +426,7 @@ securityhub_organization = {
     security_controls_configuration = {
       disabled_control_identifiers = [
         # "RDS.13",
+        # "IAM.19", # for IAM 1.19 Access Analyzer already covers this control.
       ]
     }
   }
@@ -457,6 +458,7 @@ securityhub_organization_us_east_1 = {
     security_controls_configuration = {
       disabled_control_identifiers = [
         # "RDS.13",
+        # "IAM.19", # for IAM 1.19 Access Analyzer already covers this control.
       ]
     }
   }
