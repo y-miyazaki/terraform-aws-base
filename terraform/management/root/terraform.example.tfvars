@@ -444,7 +444,7 @@ organizations_policy = {
 #--------------------------------------------------------------
 security_cloudtrail = {
   # TODO: need to set is_enabled for settings of CloudTrail.
-  is_enabled = false
+  is_enabled = true
   aws_cloudwatch_log = {
     cloudtrail_logs_terminate = {
       aws_cloudwatch_log_metric_filter = {

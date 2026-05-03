@@ -231,6 +231,10 @@ You should be aware that the score will not be accurate until you re-evaluate it
 
 ![SecurityHub Score](image/security_hub_security_score.png)
 
+For a detailed mapping of CIS AWS Foundations Benchmark controls to the modules in this repository, see [CIS Benchmark Compliance Matrix](./docs/cis_benchmark.md).
+
+For AWS security service coverage including services not yet implemented and their reasons, see [Security Coverage](./docs/security_coverage.md).
+
 #### Security:SSM Automation
 
 Configures AWS Systems Manager Automation documents for automated remediation of security findings. This enables automatic response to specific security issues detected by Config rules and Security Hub.

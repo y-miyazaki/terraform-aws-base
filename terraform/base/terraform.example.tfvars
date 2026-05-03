@@ -334,7 +334,7 @@ compute_optimizer = {
 #--------------------------------------------------------------
 guardduty = {
   # TODO: need to set is_enabled for settings of AWS GuardDuty.
-  is_enabled = false
+  is_enabled = true
   aws_cloudwatch_event_rule = {
     name        = "guardduty-cloudwatch-event-rule"
     description = "This cloudwatch event used for GuardDuty."
@@ -1733,7 +1733,7 @@ security_athena = {
 #--------------------------------------------------------------
 security_cloudtrail = {
   # TODO: need to set is_enabled for settings of CloudTrail.
-  is_enabled = false
+  is_enabled = true
   # TODO: need to set is_s3_enabled for settings of New S3 Bucket.
   is_s3_enabled = false
   aws_iam_role = {
@@ -1892,7 +1892,7 @@ PATTERN
 #--------------------------------------------------------------
 security_config = {
   # TODO: need to set is_enabled for settings of AWS Config.
-  is_enabled = false
+  is_enabled = true
   # TODO: need to set is_s3_enabled for settings of New S3 Bucket.
   is_s3_enabled = false
   aws_config_configuration_recorder = {
@@ -2034,7 +2034,7 @@ security_config = {
 #--------------------------------------------------------------
 security_config_us_east_1 = {
   # TODO: need to set is_enabled for settings of AWS Config.
-  is_enabled = false
+  is_enabled = true
   # TODO: need to set is_s3_enabled for settings of New S3 Bucket.
   is_s3_enabled = false
   aws_config_configuration_recorder = {
@@ -2208,10 +2208,10 @@ security_ecr = {
 #--------------------------------------------------------------
 security_guardduty = {
   # TODO: need to set is_enabled for settings of GuardDuty. Even if GuardDuty is already set, it must be set to false.
-  is_enabled = false
+  is_enabled = true
   aws_guardduty_detector = {
     # TODO: need to set enabled for settings of GuardDuty Detector.
-    enable                       = false
+    enable                       = true
     finding_publishing_frequency = "FIFTEEN_MINUTES"
   }
   aws_guardduty_member = [
@@ -2224,10 +2224,10 @@ security_guardduty = {
 #--------------------------------------------------------------
 security_guardduty_us_east_1 = {
   # TODO: need to set is_enabled for settings of GuardDuty(us-east-1). Even if GuardDuty is already set, it must be set to false.
-  is_enabled = false
+  is_enabled = true
   aws_guardduty_detector = {
     # TODO: need to set enabled for settings of GuardDuty Detector.
-    enable                       = false
+    enable                       = true
     finding_publishing_frequency = "FIFTEEN_MINUTES"
   }
   aws_guardduty_member = [
@@ -2276,7 +2276,7 @@ security_iam = {
 #--------------------------------------------------------------
 security_inspector2 = {
   # TODO: need to set is_enabled for settings of Inspector2.
-  is_enabled = false
+  is_enabled = true
   # TODO: need to set resource_types for settings of Inspector2.
   # Valid values: EC2, ECR, LAMBDA, LAMBDA_CODE, CODE_REPOSITORY
   resource_types = ["EC2", "ECR", "LAMBDA", "LAMBDA_CODE"]
@@ -2288,7 +2288,7 @@ security_inspector2 = {
 #--------------------------------------------------------------
 security_inspector2_us_east_1 = {
   # TODO: need to set is_enabled for settings of Inspector2(us-east-1).
-  is_enabled = false
+  is_enabled = true
   # TODO: need to set resource_types for settings of Inspector2(us-east-1).
   resource_types = ["EC2", "ECR", "LAMBDA", "LAMBDA_CODE"]
 }
@@ -2300,7 +2300,7 @@ security_inspector2_us_east_1 = {
 #--------------------------------------------------------------
 security_macie = {
   # TODO: need to set is_enabled for settings of Macie.
-  is_enabled = false
+  is_enabled = true
   # TODO: need to set status for settings of Macie account.
   status = "ENABLED"
   # TODO: need to set finding_publishing_frequency for settings of Macie account.
@@ -2349,7 +2349,7 @@ security_macie = {
 #--------------------------------------------------------------
 security_macie_us_east_1 = {
   # TODO: need to set is_enabled for settings of Macie(us-east-1).
-  is_enabled = false
+  is_enabled = true
   # TODO: need to set status for settings of Macie account(us-east-1).
   status = "ENABLED"
   # TODO: need to set finding_publishing_frequency for settings of Macie account(us-east-1).
@@ -2384,7 +2384,7 @@ security_s3 = {
 #--------------------------------------------------------------
 security_securityhub = {
   # TODO: need to set is_enabled for settings of SecurityHub.
-  is_enabled = false
+  is_enabled = true
   aws_securityhub_member = {
   }
   # TODO: need to change product_subscription.

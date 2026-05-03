@@ -24,7 +24,7 @@ bash .github/skills/agent-skills-review/scripts/validate.sh SKILL.md
 - [ ] Description Quality → validated by validate.sh
 - [ ] Metadata Fields → validated by validate.sh
 - [ ] Q-07 Progressive Disclosure → validated by validate.sh
-- [ ] Q-08 Resource Separation → validated by validate.sh
+- [ ] Q-08 Resource Separation → validated by validate.sh (references/ required for all skills; scripts/ required for validation skills)
 - [ ] Reference Mandatory Files → validated by validate.sh
 - [ ] Reference Trigger Conditions → validated by validate.sh
 

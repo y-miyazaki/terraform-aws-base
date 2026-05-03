@@ -169,7 +169,7 @@ security_notification = {
   #--------------------------------------------------------------
   guardduty = {
     # TODO: need to set is_enabled for settings of AWS GuardDuty.
-    is_enabled = false
+    is_enabled = true
   }
   #--------------------------------------------------------------
   # Security:SecurityHub
@@ -180,7 +180,7 @@ security_notification = {
   #--------------------------------------------------------------
   securityhub = {
     # TODO: need to set is_enabled for settings of AWS SecurityHub.
-    is_enabled = false
+    is_enabled = true
   }
 }
 
@@ -191,7 +191,7 @@ security_notification = {
 #--------------------------------------------------------------
 access_analyzer_organization = {
   # TODO: need to set is_enabled for settings of AWS Access Analyzer Organization.
-  is_enabled    = false
+  is_enabled    = true
   analyzer_name = "aws-access-analyzer"
 }
 
@@ -201,7 +201,7 @@ access_analyzer_organization = {
 #--------------------------------------------------------------
 access_analyzer_organization_us_east_1 = {
   # TODO: need to set is_enabled for settings of AWS Access Analyzer Organization(us-east-1).
-  is_enabled    = false
+  is_enabled    = true
   analyzer_name = "aws-access-analyzer"
 }
 
@@ -212,7 +212,7 @@ access_analyzer_organization_us_east_1 = {
 #--------------------------------------------------------------
 guardduty_organization = {
   # TODO: need to set is_enabled for settings of AWS GuardDuty Organization.
-  is_enabled = false
+  is_enabled = true
   # Set to true to create a new GuardDuty detector if no detector exists in this region.
   create_detector = false
   # TODO: need to set auto_enable_organization_members for settings of AWS GuardDuty Organization.
@@ -261,7 +261,7 @@ guardduty_organization = {
 #--------------------------------------------------------------
 guardduty_organization_us_east_1 = {
   # TODO: need to set is_enabled for settings of AWS GuardDuty Organization(us-east-1).
-  is_enabled = false
+  is_enabled = true
   # Set to true to create a new GuardDuty detector in us-east-1 (no existing detector from Control Tower).
   # Detector was created by Terraform since it did not exist in us-east-1.
   create_detector = true
@@ -311,7 +311,7 @@ guardduty_organization_us_east_1 = {
 #--------------------------------------------------------------
 inspector2_organization = {
   # TODO: need to set is_enabled for settings of AWS Inspector2.
-  is_enabled = false
+  is_enabled = true
 
   enabler = {
     default = {
@@ -338,7 +338,7 @@ inspector2_organization = {
     }
   }
   # TODO: need to set is_enabled_configuration for settings of AWS Inspector2.
-  is_enabled_configuration = false
+  is_enabled_configuration = true
   configuration = {
     auto_enable_ec2             = false
     auto_enable_ecr             = false
@@ -354,11 +354,11 @@ inspector2_organization = {
 #--------------------------------------------------------------
 inspector2_organization_us_east_1 = {
   # TODO: need to set is_enabled for settings of AWS Inspector2(us-east-1).
-  is_enabled = false
+  is_enabled = true
 
   enabler = {}
   # TODO: need to set is_enabled_configuration for settings of AWS Inspector2(us-east-1).
-  is_enabled_configuration = false
+  is_enabled_configuration = true
   configuration = {
     auto_enable_ec2             = false
     auto_enable_ecr             = false
@@ -374,7 +374,7 @@ inspector2_organization_us_east_1 = {
 #--------------------------------------------------------------
 macie_organization = {
   # TODO: need to set is_enabled for settings of AWS Macie Organization.
-  is_enabled = false
+  is_enabled = true
   # TODO: need to set auto_enable for settings of AWS Macie Organization.
   auto_enable = true
   # TODO: need to set status for settings of AWS Macie account.
@@ -392,7 +392,7 @@ macie_organization = {
 #--------------------------------------------------------------
 macie_organization_us_east_1 = {
   # TODO: need to set is_enabled for settings of AWS Macie Organization(us-east-1).
-  is_enabled = false
+  is_enabled = true
   # TODO: need to set auto_enable for settings of AWS Macie Organization(us-east-1).
   auto_enable = true
   # TODO: need to set status for settings of AWS Macie account(us-east-1).
@@ -409,9 +409,9 @@ macie_organization_us_east_1 = {
 #--------------------------------------------------------------
 securityhub_organization = {
   # TODO: need to set is_enabled for settings of AWS SecurityHub Organization.
-  is_enabled = false
+  is_enabled = true
   # TODO: need to set is_enabled_finding_aggregator for settings of Security Hub finding aggregator.
-  is_enabled_finding_aggregator = false
+  is_enabled_finding_aggregator = true
   configuration_policy = {
     service_enabled = true
     name            = "securityhub-configuration-policy"
@@ -441,9 +441,9 @@ securityhub_organization = {
 #--------------------------------------------------------------
 securityhub_organization_us_east_1 = {
   # TODO: need to set is_enabled for settings of AWS SecurityHub Organization(us-east-1).
-  is_enabled = false
+  is_enabled = true
   # TODO: need to set is_enabled_finding_aggregator for settings of Security Hub finding aggregator(us-east-1).
-  is_enabled_finding_aggregator = false
+  is_enabled_finding_aggregator = true
   configuration_policy = {
     service_enabled = true
     name            = "securityhub-configuration-policy"

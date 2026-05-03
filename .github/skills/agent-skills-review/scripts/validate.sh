@@ -47,6 +47,7 @@ source "${SCRIPT_DIR}/lib/all.sh"
 # Global variables and default values
 #######################################
 SKILL_FILE=""
+SKILL_TYPE="automation"
 declare -a check_names=()
 declare -a check_statuses=()
 declare -a check_details_json=()
@@ -86,7 +87,7 @@ Validation Checks:
   - Description Quality: third person, Use when trigger, no implementation instructions
   - Metadata Fields: author and version present
   - Progressive Disclosure: word count < 5,000
-  - Resource Separation: scripts/ and references/ directories exist
+    - Resource Separation: references/ is required; scripts/ is required for validation skills only
   - Reference Mandatory Files: common-checklist.md and common-output-format.md exist
   - Reference Triggers: trigger conditions present in Reference Files Guide
 
@@ -149,6 +150,46 @@ function parse_arguments {
     # Validate path matches expected pattern (SEC-01)
     if [[ ! "$SKILL_FILE" =~ /.github/skills/.*/SKILL\.md$ ]]; then
         error_exit "Error: File must be in .github/skills/*/SKILL.md structure: $SKILL_FILE"
+    fi
+}
+
+#######################################
+# detect_skill_type: Detect skill type from frontmatter name
+#
+# Description:
+#   Classifies skill type as validation, review, or automation
+#   using SKILL.md frontmatter name.
+#
+# Arguments:
+#   None (uses global SKILL_FILE)
+#
+# Global Variables:
+#   SKILL_FILE - Path to SKILL.md file
+#   SKILL_TYPE - Skill type classification
+#
+# Returns:
+#   None (updates SKILL_TYPE)
+#
+#######################################
+function detect_skill_type {
+    local skill_name=""
+
+    skill_name=$(awk '
+        /^---$/ { marker++; next }
+        marker == 1 && /^name:[[:space:]]*/ {
+            sub(/^name:[[:space:]]*/, "")
+            print
+            exit
+        }
+        marker == 2 { exit }
+    ' "$SKILL_FILE")
+
+    if [[ "$skill_name" =~ -validation$ ]]; then
+        SKILL_TYPE="validation"
+    elif [[ "$skill_name" =~ -review$ ]]; then
+        SKILL_TYPE="review"
+    else
+        SKILL_TYPE="automation"
     fi
 }
 
@@ -365,8 +406,8 @@ function check_progressive_disclosure {
 # check_resource_separation: Check directory structure
 #
 # Description:
-#   Verifies that skill directory contains scripts/ and references/ directories
-#   for proper resource organization
+#   Verifies that skill directory contains references/ for all skills.
+#   Requires scripts/ directory only for validation skills.
 #
 # Arguments:
 #   None (uses global SKILL_FILE)
@@ -392,17 +433,27 @@ function check_resource_separation {
     [[ -d "$skill_dir/scripts" ]] && scripts_exists=1
     [[ -d "$skill_dir/references" ]] && reference_exists=1
 
-    if [[ "$scripts_exists" -eq 1 ]] && [[ "$reference_exists" -eq 1 ]]; then
-        echo "✓ Required directories present (scripts/, references/)"
+    if [[ "$reference_exists" -eq 1 ]] && [[ "$SKILL_TYPE" != "validation" || "$scripts_exists" -eq 1 ]]; then
+        if [[ "$SKILL_TYPE" == "validation" ]]; then
+            echo "✓ Required directories present (scripts/, references/) for validation skill"
+        else
+            echo "✓ Required directories present (references/; scripts/ optional for ${SKILL_TYPE} skill)"
+        fi
         check_names+=("Resource Separation")
         check_statuses+=("PASS")
         check_details_json+=("")
     else
         local missing_dirs=()
-        [[ "$scripts_exists" -eq 0 ]] && missing_dirs+=("scripts/")
+        if [[ "$SKILL_TYPE" == "validation" ]] && [[ "$scripts_exists" -eq 0 ]]; then
+            missing_dirs+=("scripts/")
+        fi
         [[ "$reference_exists" -eq 0 ]] && missing_dirs+=("references/")
 
-        echo "✗ Missing directories: ${missing_dirs[*]}"
+        if [[ "$SKILL_TYPE" == "validation" ]]; then
+            echo "✗ Missing directories for validation skill: ${missing_dirs[*]}"
+        else
+            echo "✗ Missing directories: ${missing_dirs[*]}"
+        fi
         check_names+=("Resource Separation")
         check_statuses+=("FAIL")
         check_details_json+=("${missing_dirs[*]}")
@@ -662,8 +713,10 @@ function main {
 
     # Parse and validate arguments
     parse_arguments "$@"
+    detect_skill_type
 
     echo_section "Validating SKILL.md: $SKILL_FILE"
+    echo "Skill type detected: $SKILL_TYPE"
 
     # Run all checks
     check_yaml_syntax
