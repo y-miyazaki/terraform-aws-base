@@ -587,6 +587,49 @@ The variable for each function has is_enabled. If you do not want to use it as a
     is_enabled = false
   ```
 
+- Log:MySQL slow query
+
+  ```terraform
+  #--------------------------------------------------------------
+  # Log:MySQL slow query
+  # The filter function of CloudWatchLogs can be used to check MySQL slow query logs
+  # with specified filter patterns. Those that hit the filter pattern will be
+  # notified by Slack via Lambda.
+  #--------------------------------------------------------------
+  metric_log_mysql_slowquery = {
+    # TODO: need to set is_enabled for settings of mysql slow query log.
+    is_enabled = false
+  ```
+
+- Log:WAF
+
+  ```terraform
+  #--------------------------------------------------------------
+  # Log:WAF
+  # The filter function of CloudWatchLogs can be used to check AWS WAF logs
+  # with specified filter patterns. Those that hit the filter pattern will be
+  # notified by Slack via Lambda.
+  # Both default region and us-east-1 configurations are available.
+  #--------------------------------------------------------------
+  metric_log_waf = {
+    # TODO: need to set is_enabled for settings of WAF log.
+    is_enabled = false
+  ```
+
+- Log:Step Functions
+
+  ```terraform
+  #--------------------------------------------------------------
+  # Log:Step Functions
+  # The filter function of CloudWatchLogs can be used to check Step Functions
+  # execution logs with specified filter patterns. Those that hit the filter
+  # pattern will be notified by Slack via Lambda.
+  #--------------------------------------------------------------
+  metric_log_step_functions = {
+    # TODO: need to set is_enabled for settings of Step Functions log.
+    is_enabled = false
+  ```
+
 - Metrics:API Gateway
 
   ```terraform
@@ -830,6 +873,32 @@ The variable for each function has is_enabled. If you do not want to use it as a
   #--------------------------------------------------------------
   metric_resource_sqs_dlq = {
     # TODO: need to set is_enabled for Metric of SQS(DLQ).
+    is_enabled = false
+  ```
+
+- Metrics:SNS
+
+  ```terraform
+  #--------------------------------------------------------------
+  # Metrics:SNS
+  # Monitors SNS delivery failures and message counts.
+  # Sends notifications via Slack if the specified threshold is exceeded.
+  #--------------------------------------------------------------
+  metric_resource_sns = {
+    # TODO: need to set is_enabled for Metric of SNS.
+    is_enabled = false
+  ```
+
+- Delivery Log
+
+  ```terraform
+  #--------------------------------------------------------------
+  # Delivery Log
+  # Configures CloudWatch Logs delivery to S3 for long-term storage and analysis.
+  # Both default region and us-east-1 configurations are available.
+  #--------------------------------------------------------------
+  delivery_log = {
+    # TODO: need to set is_enabled for settings of delivery log.
     is_enabled = false
   ```
 

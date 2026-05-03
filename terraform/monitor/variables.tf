@@ -155,7 +155,7 @@ variable "metric_log_application_report" {
 # TODO: ex
 variable "metric_log_step_functions" {
   type        = any
-  description = "CloudWatch Logs (Step Functrions) resources on AWS"
+  description = "CloudWatch Logs (Step Functions) resources on AWS"
 }
 variable "metric_log_waf" {
   type        = any

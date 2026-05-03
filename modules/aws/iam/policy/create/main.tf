@@ -1,15 +1,12 @@
 #--------------------------------------------------------------
 # Module: aws/iam/policy/create
 # Purpose: Create a managed IAM policy from either a template file or inline policy document definition.
-# Notes: Adds unified tagging local; future improvement: deprecate template_file data source in favor of templatefile() function.
 #--------------------------------------------------------------
 #--------------------------------------------------------------
 # Create Template
-# TODO 0.12.x and later, can use the template function.
 #--------------------------------------------------------------
-data "template_file" "this" {
-  template = var.template != null ? file(var.template) : null
-  vars     = var.vars
+locals {
+  template_rendered = var.template != null ? templatefile(var.template, var.vars != null ? var.vars : {}) : null
 }
 
 #--------------------------------------------------------------
@@ -66,7 +63,7 @@ resource "aws_iam_policy" "this" {
   description = var.description
   name        = var.name
   path        = var.path
-  policy      = var.template != null ? data.template_file.this.rendered : data.aws_iam_policy_document.this.json
+  policy      = var.template != null ? local.template_rendered : data.aws_iam_policy_document.this.json
 
   tags = var.tags
 }

@@ -473,6 +473,107 @@ oidc_github = {
 }
 ```
 
+### security_notification
+
+Configures Slack notification settings for security services (GuardDuty and Security Hub) via AWS Chatbot. Includes `slack_channel_id`, `slack_team_id`, and per-service `is_enabled` flags.
+
+```terraform
+security_notification = {
+  slack_channel_id = "C0XXXXXXXXX"
+  slack_team_id    = "xxxxxxxxxxx"
+  guardduty = {
+    is_enabled = false
+  }
+  securityhub = {
+    is_enabled = false
+  }
+}
+```
+
+### GuardDuty Organization
+
+Configures GuardDuty at the organization level from the delegated administrator (audit) account. Enables threat detection features across all member accounts including EBS malware protection, EKS audit logs, Lambda network logs, RDS login events, runtime monitoring, and S3 data events.
+
+Both default region and us-east-1 configurations are available via `guardduty_organization` and `guardduty_organization_us_east_1`.
+
+```terraform
+guardduty_organization = {
+  is_enabled                       = false
+  create_detector                  = false
+  auto_enable_organization_members = "ALL"
+  features = {
+    EBS_MALWARE_PROTECTION = { auto_enable = "ALL" }
+    EKS_AUDIT_LOGS         = { auto_enable = "ALL" }
+    LAMBDA_NETWORK_LOGS    = { auto_enable = "ALL" }
+    RDS_LOGIN_EVENTS       = { auto_enable = "ALL" }
+    RUNTIME_MONITORING     = { auto_enable = "ALL", additional_configurations = [...] }
+    S3_DATA_EVENTS         = { auto_enable = "ALL" }
+  }
+}
+```
+
+### Inspector2 Organization
+
+Configures Amazon Inspector2 at the organization level for automated vulnerability scanning. Supports EC2, ECR, Lambda, Lambda code, and code repository scanning across member accounts.
+
+Both default region and us-east-1 configurations are available via `inspector2_organization` and `inspector2_organization_us_east_1`.
+
+```terraform
+inspector2_organization = {
+  is_enabled = false
+  enabler = {
+    default = {
+      account_ids    = ["123456789012"]
+      resource_types = ["EC2", "ECR", "LAMBDA", "LAMBDA_CODE", "CODE_REPOSITORY"]
+    }
+  }
+}
+```
+
+### Macie Organization
+
+Configures Amazon Macie at the organization level for sensitive data discovery across S3 buckets. Supports auto-enable for new member accounts, classification jobs, and findings filters.
+
+Both default region and us-east-1 configurations are available via `macie_organization` and `macie_organization_us_east_1`.
+
+```terraform
+macie_organization = {
+  is_enabled                   = false
+  auto_enable                  = true
+  status                       = "ENABLED"
+  finding_publishing_frequency = "FIFTEEN_MINUTES"
+  classification_jobs          = []
+  findings_filters             = []
+}
+```
+
+### SecurityHub Organization
+
+Configures AWS Security Hub at the organization level with configuration policies and finding aggregation. Supports security standards (AWS Foundational Security Best Practices, CIS AWS Foundations Benchmark) and control customization.
+
+Both default region and us-east-1 configurations are available via `securityhub_organization` and `securityhub_organization_us_east_1`.
+
+```terraform
+securityhub_organization = {
+  is_enabled                    = false
+  is_enabled_finding_aggregator = false
+  configuration_policy = {
+    service_enabled = true
+    name            = "securityhub-configuration-policy"
+    enabled_standard_arns = [
+      "arn:aws:securityhub:{any region}::standards/aws-foundational-security-best-practices/v/1.0.0",
+      "arn:aws:securityhub:{any region}::standards/cis-aws-foundations-benchmark/v/5.0.0"
+    ]
+    security_controls_configuration = {
+      disabled_control_identifiers = []
+    }
+  }
+  configuration_policy_name = "securityhub-configuration-policy"
+  linking_mode              = "ALL_REGIONS"
+  target_id                 = "r-xxxxxx"
+}
+```
+
 ## Configuration Validation Checklist
 
 | Category                        | Item                                                                                                    | Status |

@@ -26,7 +26,6 @@ Basically, it is designed to be turned on and off for each setting and function 
 
 <!-- omit in toc -->
 ## Table of Contents
-
 - [Requirements](#requirements)
 - [Directory Structure](#directory-structure)
 - [Architecture](#architecture)
@@ -36,34 +35,60 @@ Basically, it is designed to be turned on and off for each setting and function 
     - [Management:Audit](#managementaudit)
     - [Management:Root](#managementroot)
   - [Security](#security)
+    - [Security:Access Analyzer](#securityaccess-analyzer)
+    - [Security:Athena (Security)](#securityathena-security)
     - [Security:CloudTrail](#securitycloudtrail)
     - [Security:Config](#securityconfig)
+    - [Security:Default VPC](#securitydefault-vpc)
+    - [Security:EBS](#securityebs)
+    - [Security:EC2 Metadata (IMDSv2)](#securityec2-metadata-imdsv2)
+    - [Security:ECR](#securityecr)
     - [Security:GuardDuty](#securityguardduty)
+    - [Security:Inspector2](#securityinspector2)
+    - [Security:Macie](#securitymacie)
     - [Security:Security Hub](#securitysecurity-hub)
+    - [Security:SSM Automation](#securityssm-automation)
   - [Other](#other)
+    - [Other:AWS Support App](#otheraws-support-app)
     - [Other:Budgets](#otherbudgets)
     - [Other:Compute Optimizer](#othercompute-optimizer)
+    - [Other:Health Events](#otherhealth-events)
     - [Other:IAM group policy](#otheriam-group-policy)
+    - [Other:IAM Password Expired](#otheriam-password-expired)
     - [Other:IAM User and Group](#otheriam-user-and-group)
+    - [Other:OIDC GitHub](#otheroidc-github)
     - [Other:Resource Groups](#otherresource-groups)
     - [Other:Trusted Advisor](#othertrusted-advisor)
 - [Monitor](#monitor)
   - [Log](#log)
     - [Log:Application](#logapplication)
+    - [Log:MySQL](#logmysql)
     - [Log:PostgreSQL](#logpostgresql)
+    - [Log:Step Functions](#logstep-functions)
+    - [Log:WAF](#logwaf)
   - [Metrics](#metrics)
     - [Metrics:API Gateway](#metricsapi-gateway)
     - [Metrics:CloudFront](#metricscloudfront)
     - [Metrics:EC2](#metricsec2)
+    - [Metrics:ECS Container Insights](#metricsecs-container-insights)
     - [Metrics:ElastiCache](#metricselasticache)
     - [Metrics:ELB (ALB/NLB)](#metricselb-albnlb)
+    - [Metrics:EventBridge Scheduler](#metricseventbridge-scheduler)
     - [Metrics:Lambda](#metricslambda)
     - [Metrics:NAT Gateway](#metricsnat-gateway)
     - [Metrics:RDS](#metricsrds)
+    - [Metrics:Redshift](#metricsredshift)
     - [Metrics:SES](#metricsses)
+    - [Metrics:SNS](#metricssns)
+    - [Metrics:SQS](#metricssqs)
     - [Metrics:Synthetics Canary](#metricssynthetics-canary)
   - [CloudWatch Events(EventBridge)](#cloudwatch-eventseventbridge)
+    - [CloudWatch Events:Batch](#cloudwatch-eventsbatch)
     - [CloudWatch Events:EC2](#cloudwatch-eventsec2)
+    - [CloudWatch Events:ECS Scheduled Task](#cloudwatch-eventsecs-scheduled-task)
+    - [CloudWatch Events:ECS Service](#cloudwatch-eventsecs-service)
+    - [CloudWatch Events:RDS Cluster](#cloudwatch-eventsrds-cluster)
+    - [CloudWatch Events:Redshift](#cloudwatch-eventsredshift)
   - [Athena](#athena)
     - [Athena: Named Query](#athena-named-query)
     - [Athena: CloudFront](#athena-cloudfront)
@@ -84,6 +109,7 @@ Basically, it is designed to be turned on and off for each setting and function 
 | --------------------------- | --------------------------------------------------------------------------------------------- |
 | .github/                    | GitHub Actions workflows and related configurations.                                          |
 | .vscode/                    | VS Code workspace settings and extensions.                                                    |
+| docs/                       | Architecture, design decisions, and module catalog documentation.                             |
 | env/                        | Contains environment-specific configurations and devcontainer settings for local development. |
 | lambda/                     | Lambda function outputs and related files.                                                    |
 | modules/                    | Reusable Terraform modules for AWS services like EC2, S3, IAM, etc.                           |
@@ -99,7 +125,7 @@ Basically, it is designed to be turned on and off for each setting and function 
 | .editorconfig               | Editor configuration for consistent coding styles.                                            |
 | .gitignore                  | Git ignore rules for the repository.                                                          |
 | .gitleaks.toml              | Configuration for Gitleaks secret scanning.                                                   |
-| .markdownlint.json          | Configuration for markdownlint.                                                               |
+| .markdownlint.yaml          | Configuration for markdownlint.                                                               |
 | .pre-commit-config.yaml     | Configuration for pre-commit hooks.                                                           |
 | .textlintrc.json            | Configuration for textlint.                                                                   |
 | trivy-secret.yaml           | Configuration for Trivy secret scanning.                                                      |
@@ -123,13 +149,21 @@ This is a description of [Terraform's Management](./terraform/management/). The 
 
 #### Management:Audit
 
-The audit configuration focuses on security auditing tools and notifications. It includes settings for Chatbot (for Slack notifications), GuardDuty (threat detection), and Security Hub (security compliance). This allows centralized monitoring and alerting for security events across the organization.
+The audit configuration focuses on security auditing tools and notifications. It includes settings for Chatbot (for Slack notifications), GuardDuty (threat detection), Security Hub (security compliance), Access Analyzer (external access detection), Inspector2 (vulnerability scanning), and Macie (sensitive data discovery). This allows centralized monitoring and alerting for security events across the organization.
 
 #### Management:Root
 
-The root configuration manages organizational-level resources and policies. It includes budgets for cost monitoring, Lambda functions for automation, CloudTrail for auditing, and organizational policies. This ensures consistent governance and compliance at the root account level.
+The root configuration manages organizational-level resources and policies. It includes budgets for cost monitoring, Lambda functions for automation, CloudTrail for auditing, organizational policies, and OIDC GitHub integration for CI/CD. This ensures consistent governance and compliance at the root account level.
 
 ### Security
+
+#### Security:Access Analyzer
+
+AWS IAM Access Analyzer helps you identify resources in your organization and accounts that are shared with an external entity. This enables you to identify unintended access to your resources and data.
+
+#### Security:Athena (Security)
+
+Creates an Athena workgroup dedicated to security queries, enabling SQL-based analysis of security-related logs stored in S3 (e.g., CloudTrail logs).
 
 #### Security:CloudTrail
 
@@ -149,6 +183,22 @@ You will be notified with a message similar to the following.
 
 ![Config](image/slack_config.png)
 
+#### Security:Default VPC
+
+Default VPC hardening ensures that the default VPC in each region is secured by removing default rules and applying restrictive configurations. This includes disabling default security group rules and enabling VPC Flow Logs for monitoring.
+
+#### Security:EBS
+
+Manages EBS account-level security defaults including EBS Encryption by Default and public snapshot access blocking. This ensures all new EBS volumes are encrypted and prevents accidental public exposure of snapshots.
+
+#### Security:EC2 Metadata (IMDSv2)
+
+Enforces Instance Metadata Service Version 2 (IMDSv2) at the account level via `aws_ec2_instance_metadata_defaults`. This sets `http_tokens = "required"` so all new EC2 instances default to IMDSv2 without needing per-instance configuration. (Security Hub: EC2.8)
+
+#### Security:ECR
+
+Configures ECR account-level security defaults by setting the basic scan type to `AWS_NATIVE`, which uses AWS's native scanning technology for container image vulnerability scanning.
+
 #### Security:GuardDuty
 
 Amazon GuardDuty is a threat detection service that continuously monitors for malicious or unauthorized activity in order to protect AWS accounts, workloads, and data stored in Amazon S3.
@@ -157,6 +207,14 @@ After configuring the Slack channel, adding the Slack app, and setting the OAuth
 You will be notified with a message similar to the following.
 
 ![GuardDuty](image/slack_guardduty.png)
+
+#### Security:Inspector2
+
+Amazon Inspector is an automated vulnerability management service that continually scans AWS workloads for software vulnerabilities and unintended network exposure. Inspector2 supports scanning for EC2 instances, container images in ECR, and Lambda functions.
+
+#### Security:Macie
+
+Amazon Macie is a data security service that uses machine learning and pattern matching to discover and help protect your sensitive data stored in Amazon S3. Macie automatically detects sensitive data such as personally identifiable information (PII) and financial data.
 
 #### Security:Security Hub
 
@@ -173,7 +231,15 @@ You should be aware that the score will not be accurate until you re-evaluate it
 
 ![SecurityHub Score](image/security_hub_security_score.png)
 
+#### Security:SSM Automation
+
+Configures AWS Systems Manager Automation documents for automated remediation of security findings. This enables automatic response to specific security issues detected by Config rules and Security Hub.
+
 ### Other
+
+#### Other:AWS Support App
+
+Creates the IAM role and policy required for AWS Support App integration. This role enables AWS Support App to access support cases and provide notifications through Slack.
 
 #### Other:Budgets
 
@@ -188,6 +254,10 @@ After configuring the Slack channel, adding the Slack app, and setting the OAuth
 
 AWS Compute Optimizer recommends optimal AWS resources for your workloads to reduce costs and improve performance by using machine learning to analyze historical utilization metrics. Over-provisioning resources can lead to unnecessary infrastructure cost, and under-provisioning resources can lead to poor application performance. Compute Optimizer helps you choose optimal configurations for three types of AWS resources: Amazon EC2 instances, Amazon EBS volumes, and AWS Lambda functions, based on your utilization data.
 
+#### Other:Health Events
+
+Configures EventBridge (CloudWatch Events) to monitor AWS Health events and send notifications to Slack. AWS Health provides alerts about AWS service events that may affect your resources, including scheduled maintenance events, service disruptions, and resource-specific health notifications.
+
 #### Other:IAM group policy
 
 You can set the policy to assign to IAM groups. You can also make the virtual MFA setting mandatory as a base policy.  
@@ -195,12 +265,22 @@ You can also configure the IAM Switch Role.
 
 ![IAM Group Policy](image/iam_group_policy.png)
 
+#### Other:IAM Password Expired
+
+Configures EventBridge Scheduler to check for expired or expiring IAM user passwords and send notifications to Slack. This helps maintain security compliance by ensuring users update their passwords regularly.
+
+![IAM Password Expired](image/slack_iam_password_expired.png)
+
 #### Other:IAM User and Group
 
 You can create an IAM User and Group.
 
 ![IAM User](image/iam_user.png)
 ![IAM Group](image/iam_group.png)
+
+#### Other:OIDC GitHub
+
+Configures GitHub Actions as an IAM OIDC identity provider in AWS. This allows GitHub Actions workflows to authenticate with AWS without storing long-lived credentials, using OpenID Connect federation.
 
 #### Other:Resource Groups
 
@@ -235,11 +315,23 @@ The filter function of CloudWatchLogs can be used to check specified logs with s
 
 In addition, a daily report function is available that aggregates application error logs and sends a summary to Slack via EventBridge Scheduler.
 
+#### Log:MySQL
+
+The filter function of CloudWatchLogs can be used to check MySQL slow query logs with specified filter patterns. Those that hit the filter pattern will be notified by Slack via Lambda.
+
 #### Log:PostgreSQL
 
 The filter function of CloudWatchLogs can be used to check specified logs with specified filter patterns. Those that hit the filter pattern will be notified by Slack via Lambda.
 
 In addition, a daily report function is available that aggregates PostgreSQL slow query logs and sends a summary to Slack via EventBridge Scheduler.
+
+#### Log:Step Functions
+
+The filter function of CloudWatchLogs can be used to check Step Functions execution logs with specified filter patterns. Those that hit the filter pattern will be notified by Slack via Lambda.
+
+#### Log:WAF
+
+The filter function of CloudWatchLogs can be used to check AWS WAF logs with specified filter patterns. Those that hit the filter pattern will be notified by Slack via Lambda.
 
 ### Metrics
 
@@ -265,6 +357,12 @@ Metrics about EC2 will be checked and you will be notified via Slack if the spec
   
 Reference: [Monitoring use with CloudWatch Metrics](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/viewing_metrics_with_cloudwatch.html)
 
+#### Metrics:ECS Container Insights
+
+Metrics about ECS using Container Insights will be checked and you will be notified via Slack if the specified threshold is exceeded. Monitors CPU utilization, memory utilization, and running task count for ECS services.
+
+Reference: [Using Container Insights](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/ContainerInsights.html)
+
 #### Metrics:ElastiCache
 
 Metrics about ElastiCache will be checked and you will be notified via Slack if the specified threshold is exceeded.  
@@ -276,6 +374,12 @@ Reference: [Monitoring use with CloudWatch Metrics](https://docs.aws.amazon.com/
 Metrics about ELB (both ALB and NLB) will be checked and you will be notified via Slack if the specified threshold is exceeded.
 
 Reference: [CloudWatch metrics for your Application Load Balancer](https://docs.aws.amazon.com/elasticloadbalancing/latest/application/load-balancer-cloudwatch-metrics.html)
+
+#### Metrics:EventBridge Scheduler
+
+Metrics about EventBridge Scheduler will be checked and you will be notified via Slack if the specified threshold is exceeded. Monitors invocation counts, failures, and throttles.
+
+Reference: [Monitoring Amazon EventBridge Scheduler](https://docs.aws.amazon.com/scheduler/latest/UserGuide/monitoring-overview.html)
 
 #### Metrics:Lambda
 
@@ -295,11 +399,29 @@ Metrics about RDS will be checked and you will be notified via Slack if the spec
   
 Reference: [Monitoring Amazon RDS metrics with Amazon CloudWatch](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/monitoring-cloudwatch.html)
 
+#### Metrics:Redshift
+
+Metrics about Redshift will be checked and you will be notified via Slack if the specified threshold is exceeded. Monitors CPU utilization, disk space, and connection counts.
+
+Reference: [Monitoring Amazon Redshift using CloudWatch metrics](https://docs.aws.amazon.com/redshift/latest/mgmt/metrics-listing.html)
+
 #### Metrics:SES
 
 Metrics about SES will be checked and you will be notified via Slack if the specified threshold is exceeded.  
   
 Reference: [Retrieving Amazon SES event data from CloudWatch](https://docs.aws.amazon.com/ses/latest/dg/event-publishing-retrieving-cloudwatch.html)
+
+#### Metrics:SNS
+
+Metrics about SNS will be checked and you will be notified via Slack if the specified threshold is exceeded. Monitors delivery failures and message counts.
+
+Reference: [Monitoring Amazon SNS topics using CloudWatch](https://docs.aws.amazon.com/sns/latest/dg/sns-monitoring-using-cloudwatch.html)
+
+#### Metrics:SQS
+
+Metrics about SQS will be checked and you will be notified via Slack if the specified threshold is exceeded. Monitors queue depth, age of oldest message, and dead-letter queue metrics.
+
+Reference: [Available CloudWatch metrics for Amazon SQS](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-available-cloudwatch-metrics.html)
 
 #### Metrics:Synthetics Canary
 
@@ -316,6 +438,10 @@ Amazon EventBridge is a serverless event bus service that you can use to connect
 
 Reference: [What Is Amazon EventBridge?](https://docs.aws.amazon.com/eventbridge/latest/userguide/eb-what-is.html)
 
+#### CloudWatch Events:Batch
+
+AWS Batch job events are monitored via EventBridge Scheduler. This includes job state changes (SUBMITTED, PENDING, RUNNABLE, STARTING, RUNNING, SUCCEEDED, FAILED).
+
 #### CloudWatch Events:EC2
 
 The following events are monitored.
@@ -324,6 +450,22 @@ The following events are monitored.
   https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/rebalance-recommendations.html
 - EC2 Spot Instance Interruption Warning  
   https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/spot-instance-termination-notices.html
+
+#### CloudWatch Events:ECS Scheduled Task
+
+ECS scheduled task events are monitored via EventBridge Scheduler. This tracks scheduled task execution status and failures.
+
+#### CloudWatch Events:ECS Service
+
+ECS service events are monitored via EventBridge Scheduler. This includes service deployment state changes, task placement failures, and service steady state notifications.
+
+#### CloudWatch Events:RDS Cluster
+
+RDS Aurora cluster events are monitored via EventBridge Scheduler. This includes failover events, maintenance notifications, and configuration changes.
+
+#### CloudWatch Events:Redshift
+
+Redshift cluster events are monitored via EventBridge Scheduler. This includes cluster maintenance events, snapshot events, and configuration changes.
 
 ### Athena
 

@@ -6,7 +6,6 @@ If you need to adjust the parameters, you can do so by yourself by searching TOD
 
 <!-- omit in toc -->
 ## Table of Contents
-
 - [Initial setting](#initial-setting)
 - [Requirements](#requirements)
   - [region](#region)
@@ -1368,6 +1367,33 @@ security_securityhub = {
 security_ssm_automation = {
   # TODO: need to set is_enabled for settings of SSM Automation.
   is_enabled = true
+```
+
+- Security:Inspector2
+
+Amazon Inspector2 automated vulnerability management for EC2, ECR, and Lambda. Both default region and us-east-1 configurations are available.
+
+```terraform
+security_inspector2 = {
+  # TODO: need to set is_enabled for settings of Inspector2.
+  is_enabled = false
+  resource_types = ["EC2", "ECR", "LAMBDA", "LAMBDA_CODE"]
+}
+```
+
+- Security:Macie
+
+Amazon Macie sensitive data discovery for S3 buckets. Both default region and us-east-1 configurations are available.
+
+```terraform
+security_macie = {
+  # TODO: need to set is_enabled for settings of Macie.
+  is_enabled                   = false
+  status                       = "ENABLED"
+  finding_publishing_frequency = "FIFTEEN_MINUTES"
+  classification_jobs          = []
+  findings_filters             = []
+}
 ```
 
 ### control_tower
