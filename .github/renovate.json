@@ -14,7 +14,7 @@
     {
       "description": "[matchManagers: dockerfile] Update Dockerfile base images daily",
       "matchManagers": ["dockerfile"],
-      "schedule": ["every day"],
+      "schedule": ["at any time"],
       "commitMessagePrefix": "renovate(docker):",
       "labels": ["dependencies", "docker"],
       "enabled": false
@@ -22,14 +22,14 @@
     {
       "description": "[matchManagers: github-actions] Update GitHub Actions weekly on Monday at 4am",
       "matchManagers": ["github-actions"],
-      "schedule": ["every monday at 4am"],
+      "schedule": ["before 5am on monday"],
       "commitMessagePrefix": "renovate(github-actions):",
       "labels": ["dependencies", "github-actions"]
     },
     {
       "description": "[matchManagers: gomod] Update Go module dependencies daily",
       "matchManagers": ["gomod"],
-      "schedule": ["every day"],
+      "schedule": ["at any time"],
       "commitMessagePrefix": "renovate(gomod):",
       "labels": ["dependencies", "gomod"],
       "enabled": false
@@ -37,7 +37,7 @@
     {
       "description": "[matchManagers: npm] Update npm packages daily",
       "matchManagers": ["npm"],
-      "schedule": ["every day"],
+      "schedule": ["at any time"],
       "commitMessagePrefix": "renovate(npm):",
       "labels": ["dependencies", "npm"],
       "enabled": false
@@ -52,7 +52,7 @@
       "description": "[matchManagers: regex, matchFileNames: aqua.yaml] Update aqua packages weekly on Monday at 4am",
       "matchManagers": ["regex"],
       "matchFileNames": ["aqua.yaml"],
-      "schedule": ["every monday at 4am"],
+      "schedule": ["before 5am on monday"],
       "commitMessagePrefix": "renovate(aqua):",
       "labels": ["dependencies", "aqua"]
     },
@@ -67,7 +67,7 @@
         "terraform/management/root/**",
         "terraform/monitor/**"
       ],
-      "schedule": ["every day"],
+      "schedule": ["at any time"],
       "commitMessagePrefix": "renovate(terraform):",
       "labels": ["dependencies", "terraform"],
       "enabled": false
@@ -75,7 +75,7 @@
     {
       "description": "[matchPackageNames: aquaproj/aqua-registry] Limit aqua-registry updates to weekly on Monday at 4am to reduce noise from frequent releases",
       "matchPackageNames": ["aquaproj/aqua-registry"],
-      "schedule": ["every monday at 4am"]
+      "schedule": ["before 5am on monday"]
     },
     {
       "description": "[matchUpdateTypes: patch, pin, digest] Auto-merge low-risk updates after checks pass",
