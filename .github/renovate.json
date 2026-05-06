@@ -17,14 +17,15 @@
       "schedule": ["at any time"],
       "commitMessagePrefix": "renovate(docker):",
       "labels": ["dependencies", "docker"],
-      "enabled": false
+      "enabled": true
     },
     {
       "description": "[matchManagers: github-actions] Update GitHub Actions weekly on Monday at 4am",
       "matchManagers": ["github-actions"],
       "schedule": ["before 5am on monday"],
       "commitMessagePrefix": "renovate(github-actions):",
-      "labels": ["dependencies", "github-actions"]
+      "labels": ["dependencies", "github-actions"],
+      "enabled": true
     },
     {
       "description": "[matchManagers: gomod] Update Go module dependencies daily",
@@ -54,7 +55,8 @@
       "matchFileNames": ["aqua.yaml"],
       "schedule": ["before 5am on monday"],
       "commitMessagePrefix": "renovate(aqua):",
-      "labels": ["dependencies", "aqua"]
+      "labels": ["dependencies", "aqua"],
+      "enabled": true
     },
     {
       "description": "[matchManagers: terraform] Update Terraform providers and modules daily in configured infrastructure paths",
@@ -70,7 +72,7 @@
       "schedule": ["at any time"],
       "commitMessagePrefix": "renovate(terraform):",
       "labels": ["dependencies", "terraform"],
-      "enabled": false
+      "enabled": true
     },
     {
       "description": "[matchPackageNames: aquaproj/aqua-registry] Limit aqua-registry updates to weekly on Monday at 4am to reduce noise from frequent releases",
