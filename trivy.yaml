@@ -34,6 +34,7 @@ scan:
   # Default is empty
   skip-files:
     - nodejs/Dockerfile
+    - .gitleaks.yaml
 
 #--------------------------------------------------------------
 # Misconfiguration Options

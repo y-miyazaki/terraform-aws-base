@@ -33,6 +33,7 @@
       "schedule": ["at any time"],
       "commitMessagePrefix": "renovate(gomod):",
       "labels": ["dependencies", "gomod"],
+      "postUpdateOptions": ["gomodTidy"],
       "enabled": false
     },
     {
