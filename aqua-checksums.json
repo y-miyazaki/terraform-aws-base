@@ -2526,6 +2526,31 @@
       "algorithm": "sha256"
     },
     {
+      "id": "http/releases.hashicorp.com/terraform/1.15.0/terraform_1.15.0_darwin_amd64.zip",
+      "checksum": "E0871FF6D8A477ED07FDB5A4A4CA4325325E35C95B4930E7CCDEAE242DBA897D",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "http/releases.hashicorp.com/terraform/1.15.0/terraform_1.15.0_darwin_arm64.zip",
+      "checksum": "F2E52766A58F1E26E83200B4B4E5FE813C827786D20FA7AA01D9BCC1E9918B26",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "http/releases.hashicorp.com/terraform/1.15.0/terraform_1.15.0_linux_amd64.zip",
+      "checksum": "DCD4B31225DD960404F744315C0C3823A7DEEDA43BCA0256A17FC762092D7E1B",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "http/releases.hashicorp.com/terraform/1.15.0/terraform_1.15.0_linux_arm64.zip",
+      "checksum": "7D9B8AB81790771B5C872C06A8982BC25B66971928DCCB244FE0A41E2451770A",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "http/releases.hashicorp.com/terraform/1.15.0/terraform_1.15.0_windows_amd64.zip",
+      "checksum": "98CA429D4808BF7DD30FC2051FB7E74DE0032411D914AD656869C778DEF942BB",
+      "algorithm": "sha256"
+    },
+    {
       "id": "http/s3.amazonaws.com/session-manager-downloads/plugin/1.2.764.0/mac/sessionmanager-bundle.zip",
       "checksum": "A4E4C3A66E93C2C8D360516188E7650B8BD1F79CBD03A76E3B8A280B1C6C947D",
       "algorithm": "sha256"
