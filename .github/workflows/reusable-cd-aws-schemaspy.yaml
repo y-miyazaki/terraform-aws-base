@@ -207,7 +207,7 @@ jobs:
 
       - name: Setup AWS Credentials
         if: ${{ env.USE_SSM == 'true' || env.USE_SECRETS_MANAGER == 'true' || env.USE_BASTION == 'true' }} # pragma: allowlist secret
-        uses: aws-actions/configure-aws-credentials@ec61189d14ec14c8efccab744f656cffd0e33f37 # v6.1.0
+        uses: aws-actions/configure-aws-credentials@d979d5b3a71173a29b74b5b88418bfda9437d885 # v6.1.1
         with:
           aws-region: ${{ secrets.AWS_REGION }}
           role-to-assume: ${{ secrets.AWS_IAM_ROLE_ARN }}

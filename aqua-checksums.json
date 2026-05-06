@@ -116,6 +116,36 @@
       "algorithm": "sha256"
     },
     {
+      "id": "github_release/github.com/air-verse/air/v1.65.1/air_1.65.1_darwin_amd64.tar.gz",
+      "checksum": "53663079579B8E358119B7798838022E9023867B4F0C8B2BF63D4BD2F949B14A",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/air-verse/air/v1.65.1/air_1.65.1_darwin_arm64.tar.gz",
+      "checksum": "AF80D7858254FF18B91FBE85E992933C11AE7E931FCA847741AD8160AD6DFF4D",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/air-verse/air/v1.65.1/air_1.65.1_linux_amd64.tar.gz",
+      "checksum": "B6305247EFD2F1B7606E7CBC3038DD60F556028D5396A0132D7890E0EEBF0DEC",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/air-verse/air/v1.65.1/air_1.65.1_linux_arm64.tar.gz",
+      "checksum": "6A4CD96847515CEBF3758C175C9AE70F7B6457888F65E29FA9F81C87E402E254",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/air-verse/air/v1.65.1/air_1.65.1_windows_amd64.tar.gz",
+      "checksum": "E045E0CDCAEF2B3A375CF985C7CDC60C12CCFBD10143B2A5D3275AC3AE0A6722",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/air-verse/air/v1.65.1/air_1.65.1_windows_arm64.tar.gz",
+      "checksum": "DC5CAFF84B584F1315EBFA9A0D2BFE421E9CE2EE05B0E3F055A782F4660112AC",
+      "algorithm": "sha256"
+    },
+    {
       "id": "github_release/github.com/aquasecurity/trivy/v0.67.2/trivy_0.67.2_Linux-64bit.tar.gz",
       "checksum": "546511A5514AFC813C0B72E4ABEEA2C16A32228A13A1E5114D927C190E76B1F9",
       "algorithm": "sha256"
@@ -213,6 +243,31 @@
     {
       "id": "github_release/github.com/aquasecurity/trivy/v0.69.3/trivy_0.69.3_windows-64bit.zip",
       "checksum": "74362DC711383255308230ECBEB587EB1E4E83A8D332BE5B0259AFAC6E0C2224",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/aquasecurity/trivy/v0.70.0/trivy_0.70.0_Linux-64bit.tar.gz",
+      "checksum": "8B4376D5D6BEFE5C24D503F10FF136D9E0C49F9127A4279FD110B727929A5AA9",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/aquasecurity/trivy/v0.70.0/trivy_0.70.0_Linux-ARM64.tar.gz",
+      "checksum": "2F6BB988B553A1BBAC6BDD1CE890F5E412439564E17522B88A4541B4F364FC8D",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/aquasecurity/trivy/v0.70.0/trivy_0.70.0_macOS-64bit.tar.gz",
+      "checksum": "52D531452B19E7593DA29366007D02A810E1E0080D02F9CF6A1AFB46C35AAA93",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/aquasecurity/trivy/v0.70.0/trivy_0.70.0_macOS-ARM64.tar.gz",
+      "checksum": "68E543C51DCC96E1C344053A4FDE9660CF602C25565D9F09DC17DD41E13B838A",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/aquasecurity/trivy/v0.70.0/trivy_0.70.0_windows-64bit.zip",
+      "checksum": "EEA5442EAB86F9E26CD718D7618D43899E72A83767619E8BEE47911BDDBFB825",
       "algorithm": "sha256"
     },
     {
@@ -326,6 +381,36 @@
       "algorithm": "sha256"
     },
     {
+      "id": "github_release/github.com/bufbuild/buf/v1.68.4/buf-Darwin-arm64.tar.gz",
+      "checksum": "ECC19E911E286EB7BF631F9F082FA1E2E86160608E4FA94DEB9DFF3568ADC2F2",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/bufbuild/buf/v1.68.4/buf-Darwin-x86_64.tar.gz",
+      "checksum": "974A31E0E7F4A6C63D305F81A394C3C38A2D3ECBAB55FE8C5F6EE6DA5E2745D2",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/bufbuild/buf/v1.68.4/buf-Linux-aarch64.tar.gz",
+      "checksum": "99E2C63CF6ED3230837C005240BD9318E8CEA47961EED7F8ED768DEB14F32F44",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/bufbuild/buf/v1.68.4/buf-Linux-x86_64.tar.gz",
+      "checksum": "1ED9EAAB096EF2F32D4182C1E0C97DDF78CFACF209A8EABF7836E00B425A7706",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/bufbuild/buf/v1.68.4/buf-Windows-arm64.zip",
+      "checksum": "999468E8FBCAE9BB197195D7D93A2EBF8C6ED33B594C52813B24633BD15D22DE",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/bufbuild/buf/v1.68.4/buf-Windows-x86_64.zip",
+      "checksum": "36A9367D1BBA1ED0C28C60EB99B24F93D16323AED050A335D05033509BCBD322",
+      "algorithm": "sha256"
+    },
+    {
       "id": "github_release/github.com/cli/cli/v2.83.1/gh_2.83.1_linux_amd64.tar.gz",
       "checksum": "1C5252D4CE3DB07B51C01FF0B909583DA6364FF3FDC06D0C2E75E62DC0380A34",
       "algorithm": "sha256"
@@ -416,6 +501,36 @@
       "algorithm": "sha256"
     },
     {
+      "id": "github_release/github.com/cli/cli/v2.92.0/gh_2.92.0_linux_amd64.tar.gz",
+      "checksum": "B57848131BDF0C229CD35E1F2A51AA718199858B2E728410B37E89A428943EC4",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/cli/cli/v2.92.0/gh_2.92.0_linux_arm64.tar.gz",
+      "checksum": "C2248526DD0160C08D3FCCCA2332C3C1A07C15A78B23978E77735F1B5A18CFEE",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/cli/cli/v2.92.0/gh_2.92.0_macOS_amd64.zip",
+      "checksum": "AE9BB327AB0D91071BDADA79F8F14034A2A0F19B0E001835A782EAFA519D2AF0",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/cli/cli/v2.92.0/gh_2.92.0_macOS_arm64.zip",
+      "checksum": "B11C54F6BD7D15ED6590475079E5B2FCF36F45D3991A80041B29C9D0CC1F1D07",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/cli/cli/v2.92.0/gh_2.92.0_windows_amd64.zip",
+      "checksum": "B6A8DF3C8C6B9C80F290906387673BC4D272840F3789C5650E0E4E6E75522785",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/cli/cli/v2.92.0/gh_2.92.0_windows_arm64.zip",
+      "checksum": "FA4DA50182F6D37A0555B4B48E828C57B1B23CBBD1A7E3A9CE6B65513F13836C",
+      "algorithm": "sha256"
+    },
+    {
       "id": "github_release/github.com/getsops/sops/v3.11.0/sops-v3.11.0.amd64.exe",
       "checksum": "F3D74D83006954F0D8CF770AD7E5380504270DED5A62F33EB2548CE5461AF3B3",
       "algorithm": "sha256"
@@ -476,6 +591,36 @@
       "algorithm": "sha256"
     },
     {
+      "id": "github_release/github.com/getsops/sops/v3.12.2/sops-v3.12.2.amd64.exe",
+      "checksum": "5E777B1854AB2A6271D8F66375970E1FE3EEA838251C309DE151D16A2BDF13A2",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/getsops/sops/v3.12.2/sops-v3.12.2.arm64.exe",
+      "checksum": "BFC95CE0426E78A9DD13A8EF32DB61B0587F45660530CB00ADCDD374BA84FD9E",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/getsops/sops/v3.12.2/sops-v3.12.2.darwin.amd64",
+      "checksum": "767C0DCB42E052FD6F2AC17D4473ECA6F5FC4910E2B70127F1308D86C606C022",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/getsops/sops/v3.12.2/sops-v3.12.2.darwin.arm64",
+      "checksum": "284EDC64ACF91CA249F227FFA2B444632656E4E1AC02BAA26BED7051A7D51CE5",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/getsops/sops/v3.12.2/sops-v3.12.2.linux.amd64",
+      "checksum": "14E2E1BA3BEF31E74B70CF0B674F6443C80F6C5F3DF15D05FFC57C34851B4998",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/getsops/sops/v3.12.2/sops-v3.12.2.linux.arm64",
+      "checksum": "F66DE6F528DCA946E910D74FA36A62A7714C11D0DB16BD3C9BD8ACF73B66704B",
+      "algorithm": "sha256"
+    },
+    {
       "id": "github_release/github.com/github/copilot-cli/v0.0.402/copilot-darwin-arm64.tar.gz",
       "checksum": "5D352F1561AE3F4DCE125B250397BC759C9B1ADA749E82E05066AD90391F49FF",
       "algorithm": "sha256"
@@ -503,6 +648,66 @@
     {
       "id": "github_release/github.com/github/copilot-cli/v0.0.402/copilot-win32-x64.zip",
       "checksum": "F63E2EF5AAF14DB57F6302D9EE4C824B8CC0117429F8745E3170C64A42CC7467",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/github/copilot-cli/v1.0.40/copilot-darwin-arm64.tar.gz",
+      "checksum": "866C967D1F0404BBCA678C1EF439043A06E5912F08650BE82EA4C19595886AE3",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/github/copilot-cli/v1.0.40/copilot-darwin-x64.tar.gz",
+      "checksum": "91B3FF64C5D4706DA4A5D9ACA019544FEFC8D29685495CA69648A2E6B6A22E45",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/github/copilot-cli/v1.0.40/copilot-linux-arm64.tar.gz",
+      "checksum": "3F13BE3A2A20B46D12F0E0A1215021D565C2E14252327EBB71ACA20ED30AC00B",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/github/copilot-cli/v1.0.40/copilot-linux-x64.tar.gz",
+      "checksum": "113945F763C0F7ABC95F7A0405E429C5857AA0A8422B41300048B2DF9906CCF6",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/github/copilot-cli/v1.0.40/copilot-win32-arm64.zip",
+      "checksum": "29FA1A85375C5E97F7E6D9C1E1F79D73536D276E3C7B67BA76743D1AA10D5FED",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/github/copilot-cli/v1.0.40/copilot-win32-x64.zip",
+      "checksum": "6A6969D58BDA5D576821407ED592158C072560CC8D3E53D1E206650EDF85768F",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/github/copilot-cli/v1.0.41/copilot-darwin-arm64.tar.gz",
+      "checksum": "458448DB454DC28250C2B83C08E2881D871B1C9973669AC564FF81AD76DFF0BA",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/github/copilot-cli/v1.0.41/copilot-darwin-x64.tar.gz",
+      "checksum": "0C5DEBA04F9FD3644FFC7016069D966B1288B9F2734706BAD532F0DC102ADD44",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/github/copilot-cli/v1.0.41/copilot-linux-arm64.tar.gz",
+      "checksum": "7D5B77CE0CF8B1EB1E58C507216199FC51CFA4FB987BD6ED46CC32483EB7FA57",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/github/copilot-cli/v1.0.41/copilot-linux-x64.tar.gz",
+      "checksum": "EEAD744DBC46591110CEDE7F078CDCA0708ECC673E43FC7572E01D292BB5DDFB",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/github/copilot-cli/v1.0.41/copilot-win32-arm64.zip",
+      "checksum": "72C3D42528B341F4713B953B727E576E7C3CB2E61610563F7747C777F4259A50",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/github/copilot-cli/v1.0.41/copilot-win32-x64.zip",
+      "checksum": "8FF84EC2C8964DB514BFCB2B49AE9D6B451FF9CC8A2374AE155E10AC11D3BAB6",
       "algorithm": "sha256"
     },
     {
@@ -586,6 +791,61 @@
       "algorithm": "sha256"
     },
     {
+      "id": "github_release/github.com/gitleaks/gitleaks/v8.30.1/gitleaks_8.30.1_darwin_arm64.tar.gz",
+      "checksum": "B40AB0AE55C505963E365F271A8D3846EFBC170AA17F2607F13DF610A9AEB6A5",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/gitleaks/gitleaks/v8.30.1/gitleaks_8.30.1_darwin_x64.tar.gz",
+      "checksum": "DFE101A4DB2255FC85120AC7F3D25E4342C3C20CF749F2C20A18081AF1952709",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/gitleaks/gitleaks/v8.30.1/gitleaks_8.30.1_linux_arm64.tar.gz",
+      "checksum": "E4A487EE7CCD7D3A7F7EC08657610AA3606637DAB924210B3AEE62570FB4B080",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/gitleaks/gitleaks/v8.30.1/gitleaks_8.30.1_linux_x64.tar.gz",
+      "checksum": "551F6FC83EA457D62A0D98237CBAD105AF8D557003051F41F3E7CA7B3F2470EB",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/gitleaks/gitleaks/v8.30.1/gitleaks_8.30.1_windows_x64.zip",
+      "checksum": "D29144DEFF3A68AA93CED33DDDF84B7FDC26070ADD4AA0F4513094C8332AFC4E",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/go-delve/delve/v1.26.3/dlv_1.26.3_darwin_amd64.tar.gz",
+      "checksum": "6827A438473167A1E0805B4546E5BF2D53401530F694DEB35E41C6E7B46E27C8",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/go-delve/delve/v1.26.3/dlv_1.26.3_darwin_arm64.tar.gz",
+      "checksum": "7F28483A42F0A911F29B236AA40D24D7099F1B0EC54C56C4D439A6903D478A3D",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/go-delve/delve/v1.26.3/dlv_1.26.3_linux_amd64.tar.gz",
+      "checksum": "CDD4D6B2A638D8F26468D82A76B766DF594641490BEA566629305D90FBCCC06E",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/go-delve/delve/v1.26.3/dlv_1.26.3_linux_arm64.tar.gz",
+      "checksum": "5B03FD74895D676C4435BEC1AADE0863BE1489A4BE1BB5C9269C6EF389BF5D2D",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/go-delve/delve/v1.26.3/dlv_1.26.3_windows_amd64.zip",
+      "checksum": "F9E15B8F3628E4C7BFE481011BEA458DF754D0E75C6FF4AB01C71294165950FD",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/go-delve/delve/v1.26.3/dlv_1.26.3_windows_arm64.zip",
+      "checksum": "906E942B9FE00FC43770151F378B2E3CFF2777030D70E338E7B51ED77CEB588B",
+      "algorithm": "sha256"
+    },
+    {
       "id": "github_release/github.com/go-swagger/go-swagger/v0.33.1/swagger_darwin_amd64",
       "checksum": "96ACC02B6FB96576FA25BBFEC9AD2D7BC8C3C489E53CD7059D27F42B6CEEBA2E",
       "algorithm": "sha256"
@@ -608,6 +868,31 @@
     {
       "id": "github_release/github.com/go-swagger/go-swagger/v0.33.1/swagger_windows_amd64.exe",
       "checksum": "0FE476D2F689F229496EEF1C22AA8751A511532AD17F5671AADFE6AA4C2C5BF0",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/go-swagger/go-swagger/v0.33.2/swagger_0.33.2_Darwin_arm64.tar.gz",
+      "checksum": "0C43816A8F6939BB4F2816B3295AE48F5A014C8468D359406FEC7C6C03A1E83B",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/go-swagger/go-swagger/v0.33.2/swagger_0.33.2_Darwin_x86_64.tar.gz",
+      "checksum": "ACACD8FAE78B80B9A4FFC316D236F46FC75C86E14B3FA5235ED793AAC9E3464C",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/go-swagger/go-swagger/v0.33.2/swagger_0.33.2_Linux_arm64.tar.gz",
+      "checksum": "4A0F3A471BEE19B4590FE0CD55A88F127132558A89BE5BD42549A5C6DBD517D2",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/go-swagger/go-swagger/v0.33.2/swagger_0.33.2_Linux_x86_64.tar.gz",
+      "checksum": "66B7C068D7ECD50E973FB20E123161EEC98134AA25A46AB96DF0AD679D9B16E9",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/go-swagger/go-swagger/v0.33.2/swagger_0.33.2_Windows_x86_64.zip",
+      "checksum": "F043F99D843A3127A3C7837431FE7CCBD64CFE24F48ECBCF9EED35D3D2F84BB2",
       "algorithm": "sha256"
     },
     {
@@ -638,6 +923,36 @@
     {
       "id": "github_release/github.com/golangci/golangci-lint/v2.11.3/golangci-lint-2.11.3-windows-arm64.zip",
       "checksum": "0B7C9A10E4481AA14383403892E1C58502078989866DFCB34CE0B68FB00D1176",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/golangci/golangci-lint/v2.11.4/golangci-lint-2.11.4-darwin-amd64.tar.gz",
+      "checksum": "C900D4048DB75D1EDFD550FD11CF6A9B3008E7CAA8E119FCDDBC700412D63E60",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/golangci/golangci-lint/v2.11.4/golangci-lint-2.11.4-darwin-arm64.tar.gz",
+      "checksum": "02DB2A2DAE8B26812E53B0688A6F617E3EF1F489790E829EA22862CF76945675",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/golangci/golangci-lint/v2.11.4/golangci-lint-2.11.4-linux-amd64.tar.gz",
+      "checksum": "200C5B7503F67B59A6743CCF32133026C174E272B930EE79AA2AA6F37ACA7EF1",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/golangci/golangci-lint/v2.11.4/golangci-lint-2.11.4-linux-arm64.tar.gz",
+      "checksum": "3BCFA2E6F3D32B2BF5CD75EAA876447507025E0303698633F722A05331988DB4",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/golangci/golangci-lint/v2.11.4/golangci-lint-2.11.4-windows-amd64.zip",
+      "checksum": "4932CFCA5E75BF60FE1C576EDF459E5E809E6644664A068185D64B84AF3FAD9E",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/golangci/golangci-lint/v2.11.4/golangci-lint-2.11.4-windows-arm64.zip",
+      "checksum": "FA90179D6377F224798B56BFA308DCD7D62BF28A7AA6889FB180F35B290E3413",
       "algorithm": "sha256"
     },
     {
@@ -731,6 +1046,36 @@
       "algorithm": "sha256"
     },
     {
+      "id": "github_release/github.com/google/go-jsonnet/v0.22.0/go-jsonnet_0.22.0_darwin_amd64.tar.gz",
+      "checksum": "2ADA40ECE13E8B4E1F37C06315783110C84B496963B0B8B90809DAF69DF7DFC9",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/google/go-jsonnet/v0.22.0/go-jsonnet_0.22.0_darwin_arm64.tar.gz",
+      "checksum": "112534191B6E27F2AE01BB80C6AB82950FB7BF5772E2E81C5472F59A069700F5",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/google/go-jsonnet/v0.22.0/go-jsonnet_0.22.0_linux_amd64.tar.gz",
+      "checksum": "E87A93EA44E34DA92C15636205C7F2240BF3AC92D00CCB855DBB4E7E03EA6941",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/google/go-jsonnet/v0.22.0/go-jsonnet_0.22.0_linux_arm64.tar.gz",
+      "checksum": "3016B049254CB92548BA99304B6F44EC3795E6173F908E3CE3C5ADD57243FE20",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/google/go-jsonnet/v0.22.0/go-jsonnet_0.22.0_windows_amd64.tar.gz",
+      "checksum": "277B83DDBE836A627DCDE0655720AA42B02277FDF3A9CDAEBEEF2A53E98599B1",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/google/go-jsonnet/v0.22.0/go-jsonnet_0.22.0_windows_arm64.tar.gz",
+      "checksum": "663D4B9258E201CE9471A02E329167027E68BF4063192A937D83D8B6BAC8B044",
+      "algorithm": "sha256"
+    },
+    {
       "id": "github_release/github.com/goreleaser/goreleaser/v2.13.3/goreleaser_Darwin_all.tar.gz",
       "checksum": "5516C37779EFB3935D5B213CDA3B0B9025AE94DDBCB51DF6919ACBCDEF4194B0",
       "algorithm": "sha256"
@@ -778,6 +1123,31 @@
     {
       "id": "github_release/github.com/goreleaser/goreleaser/v2.14.3/goreleaser_Windows_x86_64.zip",
       "checksum": "3DEEA8FF471AA258A2D99F3E5302971D7028647AE8DDAF103257A8113E485A31",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/goreleaser/goreleaser/v2.15.4/goreleaser_Darwin_all.tar.gz",
+      "checksum": "82D730F3366350C90D7E5DF3CF9E8E425FD1C84BF7D7E3E564F92D97C5EA9EA4",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/goreleaser/goreleaser/v2.15.4/goreleaser_Linux_arm64.tar.gz",
+      "checksum": "DE01CA1497571E9B348413CD2E7F74BE49B8D57696AE386F7EEDD06176544A88",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/goreleaser/goreleaser/v2.15.4/goreleaser_Linux_x86_64.tar.gz",
+      "checksum": "AAE00C71A4A6D55E08CCE9273A1516BDCE33C1E07CFFB7E502FA6FEC4377DEDE",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/goreleaser/goreleaser/v2.15.4/goreleaser_Windows_arm64.zip",
+      "checksum": "10227D9DE3EB846F0E58529C22E75DCBD713B67879A7F83912DE7ABE658C5FD7",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/goreleaser/goreleaser/v2.15.4/goreleaser_Windows_x86_64.zip",
+      "checksum": "146695F49717DFD79D64D5D6F4B1D25E2B56D73E723BBF68A8DC13CE5CF69693",
       "algorithm": "sha256"
     },
     {
@@ -896,6 +1266,66 @@
       "algorithm": "sha256"
     },
     {
+      "id": "github_release/github.com/jamesWoolfenden/pike/v0.4.0/pike_0.4.0_darwin_amd64.tar.gz",
+      "checksum": "841E94AFE82E6D8529C36B744B01491F26EE23D136192F7A1AFD85343EF44120",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/jamesWoolfenden/pike/v0.4.0/pike_0.4.0_darwin_arm64.tar.gz",
+      "checksum": "96EE246509ADA1F71A52D9D9771DE40088050260D65CF51DE416BACA971356B4",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/jamesWoolfenden/pike/v0.4.0/pike_0.4.0_linux_amd64.tar.gz",
+      "checksum": "F6290D79FF41509D29F8519CFD41ED693FF301ADE4C1E40D71CE151F90FE63D5",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/jamesWoolfenden/pike/v0.4.0/pike_0.4.0_linux_arm64.tar.gz",
+      "checksum": "D03C9142DA46ACD1AC33B37FCD731C74F3FB2B526D5884AB4D215AF30BF3FB5F",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/jamesWoolfenden/pike/v0.4.0/pike_0.4.0_windows_amd64.zip",
+      "checksum": "430D350B19B62ADA4BC8E0D1C092C4731FB10D250D3FC46EA0429D1729C6F8CC",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/jamesWoolfenden/pike/v0.4.0/pike_0.4.0_windows_arm64.zip",
+      "checksum": "F5FBCF94DCDD5D4596FFC5704EFBB3CFDDBF3C7D8B71A32F7197DDA4B70B64ED",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/jamesWoolfenden/pike/v0.4.1/pike_0.4.1_darwin_amd64.tar.gz",
+      "checksum": "32F5B045D6E03221D01A837748EAC38806033F5E8498C7DA9EA1DFD1A7153DC3",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/jamesWoolfenden/pike/v0.4.1/pike_0.4.1_darwin_arm64.tar.gz",
+      "checksum": "CCCB3FC86010DFB1D2CBB2FC6080FE34EA501F7F7B28DBA4736523EBE443E197",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/jamesWoolfenden/pike/v0.4.1/pike_0.4.1_linux_amd64.tar.gz",
+      "checksum": "17F32AC32A51A98E878EED1F007AAF97FBF1BB9DF091E70215846E1BE5072612",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/jamesWoolfenden/pike/v0.4.1/pike_0.4.1_linux_arm64.tar.gz",
+      "checksum": "BF231B5CE82454BB8DD2F73328C77CA4164476E6D34E5A71CDB7C9972F6C7BE2",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/jamesWoolfenden/pike/v0.4.1/pike_0.4.1_windows_amd64.zip",
+      "checksum": "509FFA15CC3B85838C8AEF810A3209F0FB33C96D1E7229D43123E6334553EB7C",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/jamesWoolfenden/pike/v0.4.1/pike_0.4.1_windows_arm64.zip",
+      "checksum": "E4F1A8CD4AAF3C5BE63B35BFB74C671935637D32B7D884C715141EFDFB26E3E2",
+      "algorithm": "sha256"
+    },
+    {
       "id": "github_release/github.com/kayac/ecspresso/v2.7.1/ecspresso_2.7.1_darwin_amd64.tar.gz",
       "checksum": "61F0533C1898DDAB47EF412294F7E864992F79F35940E25B95412B06C28CB383",
       "algorithm": "sha256"
@@ -923,6 +1353,36 @@
     {
       "id": "github_release/github.com/kayac/ecspresso/v2.7.1/ecspresso_2.7.1_windows_arm64.tar.gz",
       "checksum": "633A47D548366E6BD85E5835E900FA048F29FC8A3F1505E7EE4ECA8B1C76C756",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/kayac/ecspresso/v2.8.3/ecspresso_2.8.3_darwin_amd64.tar.gz",
+      "checksum": "8CBA50771D7F743958D325120E1CE5DCA0E128B5CB143E9C63C7D2A4E2A5C40A",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/kayac/ecspresso/v2.8.3/ecspresso_2.8.3_darwin_arm64.tar.gz",
+      "checksum": "849FE537457ACE45A9556A4B3CBD447051DC425A6E6AAB65F06C081673EBE17D",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/kayac/ecspresso/v2.8.3/ecspresso_2.8.3_linux_amd64.tar.gz",
+      "checksum": "2BD4EC3364924FD974AAEAD5791A9FCAD3F4D1B9A30BF01B0A4F042EBAC79AB0",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/kayac/ecspresso/v2.8.3/ecspresso_2.8.3_linux_arm64.tar.gz",
+      "checksum": "EAFF105CDFFF563FB1C4EE34B7754B1559214C8F185FFD533D78D814DB068B0D",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/kayac/ecspresso/v2.8.3/ecspresso_2.8.3_windows_amd64.tar.gz",
+      "checksum": "AE06B2C4FC7D4C904A12E304B5B89D444258AE3822276E6C01D97ED0CB6039D5",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/kayac/ecspresso/v2.8.3/ecspresso_2.8.3_windows_arm64.tar.gz",
+      "checksum": "319F8E7FD0F39EE41A9DE131507DC0A6D49B33BD77CDEE3BBC1CA162B5C10BA4",
       "algorithm": "sha256"
     },
     {
@@ -1018,6 +1478,11 @@
     {
       "id": "github_release/github.com/pre-commit/pre-commit/v4.5.1/pre-commit-4.5.1.pyz",
       "checksum": "19D00BA35CBF9C04DC3736CD8BB641E8633F3EDDD4CEDDE71809574AE68A2CD1",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/pre-commit/pre-commit/v4.6.0/pre-commit-4.6.0.pyz",
+      "checksum": "EA8A0C84902E48C1875558F2F362ED8476773AA5FC8C16C5D8F2ACC2A2830A65",
       "algorithm": "sha256"
     },
     {
@@ -1156,6 +1621,31 @@
       "algorithm": "sha256"
     },
     {
+      "id": "github_release/github.com/protocolbuffers/protobuf/v34.1/protoc-34.1-linux-aarch_64.zip",
+      "checksum": "31C5E9E3C7BF013CF41FB97765EE255C140024A6B175B6CC9B64BEDDD7C23BA7",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/protocolbuffers/protobuf/v34.1/protoc-34.1-linux-x86_64.zip",
+      "checksum": "AF27EA66CD26938FE48587804CA7D4817457A08350021A1C6E23A27CCC8C6904",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/protocolbuffers/protobuf/v34.1/protoc-34.1-osx-aarch_64.zip",
+      "checksum": "2C7E92B8B578916937DF132B3032E2E8E6C170862ECF7A8333094A6F3D03650C",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/protocolbuffers/protobuf/v34.1/protoc-34.1-osx-x86_64.zip",
+      "checksum": "AB124429C1F49951F03B6C0C0E911FEC04E2C7C20DE5C935E0CDE7353BBD016C",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/protocolbuffers/protobuf/v34.1/protoc-34.1-win64.zip",
+      "checksum": "6D7EBDC75E9C1F0026D4FB28F17EF1D0AAE77D36744D83A9E052D79BA493724F",
+      "algorithm": "sha256"
+    },
+    {
       "id": "github_release/github.com/rhysd/actionlint/v1.7.10/actionlint_1.7.10_darwin_amd64.tar.gz",
       "checksum": "16782C41F2AF264DB80F855EE5D09164CA98FC78EDF3BCD0F46EECFF279682BA",
       "algorithm": "sha256"
@@ -1213,6 +1703,36 @@
     {
       "id": "github_release/github.com/rhysd/actionlint/v1.7.11/actionlint_1.7.11_windows_arm64.zip",
       "checksum": "4900EB60E084604850935705306305F0BB0CA532E07C2B4AE642917142ABA75D",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/rhysd/actionlint/v1.7.12/actionlint_1.7.12_darwin_amd64.tar.gz",
+      "checksum": "5B44C3BC2255115C9B69E30EFC0FECDF498FDB63C5D58E17084FD5F16324C644",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/rhysd/actionlint/v1.7.12/actionlint_1.7.12_darwin_arm64.tar.gz",
+      "checksum": "ABA9CED2DEE8D27FECCA3DC7FEB1A7F9A52CAEFA1EB46F3271EA66B6E0E6953F",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/rhysd/actionlint/v1.7.12/actionlint_1.7.12_linux_amd64.tar.gz",
+      "checksum": "8ACA8DB96F1B94770F1B0D72B6DDDCB1EBB8123CB3712530B08CC387B349A3D8",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/rhysd/actionlint/v1.7.12/actionlint_1.7.12_linux_arm64.tar.gz",
+      "checksum": "325E971B6BA9BFA504672E29BE93C24981EEB1C07576D730E9F7C8805AFFF0C6",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/rhysd/actionlint/v1.7.12/actionlint_1.7.12_windows_amd64.zip",
+      "checksum": "6E7241B51E6817EA6A047693D8E6FED13B31819C9A0DD6C5A726E1592D22F6E9",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/rhysd/actionlint/v1.7.12/actionlint_1.7.12_windows_arm64.zip",
+      "checksum": "CADCF7EA4EFE3A68728893813643CEBE1185E5B1D4BE5B96245F65C9A4D5EA41",
       "algorithm": "sha256"
     },
     {
@@ -1396,6 +1916,36 @@
       "algorithm": "sha256"
     },
     {
+      "id": "github_release/github.com/suzuki-shunsuke/ghalint/v1.5.6/ghalint_1.5.6_darwin_amd64.tar.gz",
+      "checksum": "D2A0E8605333068065DCF4C9B7B7A24891EDA1750AC01FB755DFBA426A390883",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/suzuki-shunsuke/ghalint/v1.5.6/ghalint_1.5.6_darwin_arm64.tar.gz",
+      "checksum": "1262CAC411E27B4653E6B66B7B06580EBCC2026FDD903E12E6CB0E4591639DE6",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/suzuki-shunsuke/ghalint/v1.5.6/ghalint_1.5.6_linux_amd64.tar.gz",
+      "checksum": "98EE0E3330DE7286F470D1E89C03FF7CE70D7A5998BA0F15969C400447BE579C",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/suzuki-shunsuke/ghalint/v1.5.6/ghalint_1.5.6_linux_arm64.tar.gz",
+      "checksum": "203A22C70B40BB161626973AD2A8DD06AEB736699FC8E03DD425DEE8FF3406E6",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/suzuki-shunsuke/ghalint/v1.5.6/ghalint_1.5.6_windows_amd64.zip",
+      "checksum": "109EA9B39C8E263CEF924BD3B4FE5505964204F934CA60D986F4090D01A99BA5",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/suzuki-shunsuke/ghalint/v1.5.6/ghalint_1.5.6_windows_arm64.zip",
+      "checksum": "C1219CAE104EA418A1CB4E7A02526A3FAD384C0788FA3540A86B316BB074D0D8",
+      "algorithm": "sha256"
+    },
+    {
       "id": "github_release/github.com/suzuki-shunsuke/ghatm/v0.3.7/ghatm_darwin_amd64.tar.gz",
       "checksum": "207CC87B84046B6457DF55FECCC6AF20F0F073FD7DB5AFFC05B3D00B95C553C7",
       "algorithm": "sha256"
@@ -1486,6 +2036,36 @@
       "algorithm": "sha256"
     },
     {
+      "id": "github_release/github.com/suzuki-shunsuke/pinact/v3.9.2/pinact_darwin_amd64.tar.gz",
+      "checksum": "5FACBCD8CD4E20FB88C4EF3ACE9C54B7D295735563634EF4373694CD286BE67A",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/suzuki-shunsuke/pinact/v3.9.2/pinact_darwin_arm64.tar.gz",
+      "checksum": "4A6B481B16B7BB67153F96AAF60CBE61D3A739BDCE35B1CB3FD3DE5372F58C31",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/suzuki-shunsuke/pinact/v3.9.2/pinact_linux_amd64.tar.gz",
+      "checksum": "6ADCC8A2217E4114E0841F8BCA0CDDF9958A9C52E3E89760C35B791CDBA1A916",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/suzuki-shunsuke/pinact/v3.9.2/pinact_linux_arm64.tar.gz",
+      "checksum": "468BF7AFD0F22B30ECB17FCF02F76D8B5C3BCA59BB85A29017D7DAEBDE96B33F",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/suzuki-shunsuke/pinact/v3.9.2/pinact_windows_amd64.zip",
+      "checksum": "A7F82E352EB4F706ADDFB864A7C4853F34BDCFC604EBEF8733ADECBBBACAAEEF",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/suzuki-shunsuke/pinact/v3.9.2/pinact_windows_arm64.zip",
+      "checksum": "654FB709F95755202C0C85354217F0A6E56721136B4841B2FCE9B9D568843DE5",
+      "algorithm": "sha256"
+    },
+    {
       "id": "github_release/github.com/swaggo/swag/v1.16.6/swag_1.16.6_Darwin_arm64.tar.gz",
       "checksum": "B8A96C65827DA71BE18BF47EA212B14DF17F6CD6726651834A08749E78CAD2AD",
       "algorithm": "sha256"
@@ -1566,6 +2146,36 @@
       "algorithm": "sha256"
     },
     {
+      "id": "github_release/github.com/terraform-docs/terraform-docs/v0.22.0/terraform-docs-v0.22.0-darwin-amd64.tar.gz",
+      "checksum": "797ED9AFAAAFDE69F33F8CFA00602E7C57249C63C58B014122A69726584EB8EF",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/terraform-docs/terraform-docs/v0.22.0/terraform-docs-v0.22.0-darwin-arm64.tar.gz",
+      "checksum": "A8A698C8C1BD0A77189FD15A6F9AC9D99445B1E22F5376A8F7C830FA7407592D",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/terraform-docs/terraform-docs/v0.22.0/terraform-docs-v0.22.0-linux-amd64.tar.gz",
+      "checksum": "8EC66616777C66F3E622AF4F2853E8AE399F38908AD4B262C9C526DD42501369",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/terraform-docs/terraform-docs/v0.22.0/terraform-docs-v0.22.0-linux-arm64.tar.gz",
+      "checksum": "4FECCD471E0595546271BDE7AABD275A5C1A5B055D6CD89C2678B38CED1376F6",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/terraform-docs/terraform-docs/v0.22.0/terraform-docs-v0.22.0-windows-amd64.zip",
+      "checksum": "23F6539F10EF5C34F73A7CCFEB7474EA82BC3E591E46E59C994B10F54BE83025",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/terraform-docs/terraform-docs/v0.22.0/terraform-docs-v0.22.0-windows-arm64.zip",
+      "checksum": "952C3A3B28BEBB18BF7FDA8F130B4A64F567693F73E78301791BC89739560716",
+      "algorithm": "sha256"
+    },
+    {
       "id": "github_release/github.com/terraform-linters/tflint/v0.60.0/tflint_darwin_amd64.zip",
       "checksum": "256F70AD2C9963690BCCC31FFDA6BE0159F1C5F857B46773B70D01D56B711280",
       "algorithm": "sha256"
@@ -1613,6 +2223,31 @@
     {
       "id": "github_release/github.com/terraform-linters/tflint/v0.61.0/tflint_windows_amd64.zip",
       "checksum": "F114A26A519F580A9D27204B1210BA5869ED8219D7E23A732D41774D612AF3B0",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/terraform-linters/tflint/v0.62.0/tflint_darwin_amd64.zip",
+      "checksum": "6AA1DEFAAC89EAB227008301AF399225AFD9EE6F124D13E570323CF588491B8A",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/terraform-linters/tflint/v0.62.0/tflint_darwin_arm64.zip",
+      "checksum": "56064A392E688F51C893A0D3BC1470FDF523F8D579080C718D026F1692613419",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/terraform-linters/tflint/v0.62.0/tflint_linux_amd64.zip",
+      "checksum": "000400D7F4C2236D9ED4B35FEC3EE95617C3747571593CC6138169FC78CC226A",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/terraform-linters/tflint/v0.62.0/tflint_linux_arm64.zip",
+      "checksum": "064206EC85ADAF90F637C880EB3CD5A8E07DDCE09E4DA7C813EB362CB794F95F",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/terraform-linters/tflint/v0.62.0/tflint_windows_amd64.zip",
+      "checksum": "D2B28CAF4F312805EDD06C7AEDE494135D1BABB301DB32E9B68994D2038936E4",
       "algorithm": "sha256"
     },
     {
@@ -1691,6 +2326,31 @@
       "algorithm": "sha256"
     },
     {
+      "id": "github_release/github.com/zizmorcore/zizmor/v1.24.1/zizmor-aarch64-apple-darwin.tar.gz",
+      "checksum": "FC4EA59E18BC028DDDB5F710B16DBC361B01FF1E7A20C03B8E5778366CA9F4E1",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/zizmorcore/zizmor/v1.24.1/zizmor-aarch64-unknown-linux-gnu.tar.gz",
+      "checksum": "D66E37EF8A375FB07939C630EBF9709A6E0F20242BDC3FAF672A7ED97E0B768D",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/zizmorcore/zizmor/v1.24.1/zizmor-x86_64-apple-darwin.tar.gz",
+      "checksum": "721BA70D7FCA753AEEF1A4EE959A9BC20C55784D4FAA6C56E66129A2611FD52F",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/zizmorcore/zizmor/v1.24.1/zizmor-x86_64-pc-windows-msvc.zip",
+      "checksum": "B777EC2CB1098139BA74B32E30D11ED149C69AB692D23788C466D4A31704BD4B",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/zizmorcore/zizmor/v1.24.1/zizmor-x86_64-unknown-linux-gnu.tar.gz",
+      "checksum": "A8000F3C683319A523D3B20DF0E75457BA591F049CFCBFA98966631B56733C03",
+      "algorithm": "sha256"
+    },
+    {
       "id": "http/awscli.amazonaws.com/AWSCLIV2-2.31.37.pkg",
       "checksum": "D3AF9971F3454052B7CBCEF208E8A1972A961657FF8E1734D65A1EB3399F66C5",
       "algorithm": "sha256"
@@ -1698,6 +2358,16 @@
     {
       "id": "http/awscli.amazonaws.com/AWSCLIV2-2.33.15.pkg",
       "checksum": "D81D446B44E13BD4E3D0DE9A5225F0F1ED50CE9AF21D35EC846FDBEF9E2821E8",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "http/awscli.amazonaws.com/AWSCLIV2-2.34.38.pkg",
+      "checksum": "BD6989398D5434AA23932AEEA07E5E7016FBAF5341AEE6B9CF179E954CF527E7",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "http/awscli.amazonaws.com/AWSCLIV2-2.34.43.pkg",
+      "checksum": "8F4348E1924D7DADE123876DF94E069B04D9C9908ADA02346B9D4152918DCEFB",
       "algorithm": "sha256"
     },
     {
@@ -1716,6 +2386,16 @@
       "algorithm": "sha256"
     },
     {
+      "id": "http/awscli.amazonaws.com/awscli-exe-linux-aarch64-2.34.38.zip",
+      "checksum": "7D2285DC07A6A85AC29D48897C6D6B1F09B3893FC23BE1D891B27A368D397731",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "http/awscli.amazonaws.com/awscli-exe-linux-aarch64-2.34.43.zip",
+      "checksum": "8B3B2C2F483AD2D1EF4E25F592F4060F235B6B4D5D5A8B006D922D71680883B9",
+      "algorithm": "sha256"
+    },
+    {
       "id": "http/awscli.amazonaws.com/awscli-exe-linux-aarch64-2.34.9.zip",
       "checksum": "8FE570DAC640882FD8E386A0D73A7E32DDB6BEF303C7273F25A30698BABFFA28",
       "algorithm": "sha256"
@@ -1728,6 +2408,16 @@
     {
       "id": "http/awscli.amazonaws.com/awscli-exe-linux-x86_64-2.33.15.zip",
       "checksum": "847E42096FCC3EF1ED37EE325E03131F9606F61B669F8355283A875E1AEBA1A8",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "http/awscli.amazonaws.com/awscli-exe-linux-x86_64-2.34.38.zip",
+      "checksum": "3995024376A981F1B3CA232A2CB4112E62ADB3F9DD023AAD4985201302D117FD",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "http/awscli.amazonaws.com/awscli-exe-linux-x86_64-2.34.43.zip",
+      "checksum": "822BD52EFA310541D26526280D6AD17B03A8386CA97E3EF9A2D988348D6C52AA",
       "algorithm": "sha256"
     },
     {
@@ -1811,6 +2501,31 @@
       "algorithm": "sha256"
     },
     {
+      "id": "http/releases.hashicorp.com/terraform/1.14.9/terraform_1.14.9_darwin_amd64.zip",
+      "checksum": "C15326E1AF102D2767D40208A0157D1402057F80192991F56803B66457304CF3",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "http/releases.hashicorp.com/terraform/1.14.9/terraform_1.14.9_darwin_arm64.zip",
+      "checksum": "5BC0B11B7A63C8984A41D82523356DF46F7833C2E9651A39A7F8919422DE5CDE",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "http/releases.hashicorp.com/terraform/1.14.9/terraform_1.14.9_linux_amd64.zip",
+      "checksum": "2E5CFFC20A0B48A67A76268723BD5A10B8666F69B2AA4F04906E206726BEDD63",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "http/releases.hashicorp.com/terraform/1.14.9/terraform_1.14.9_linux_arm64.zip",
+      "checksum": "863002085B886453795D9FF4B8989B8468784478150B70BA8A1DF3E3AD66DA99",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "http/releases.hashicorp.com/terraform/1.14.9/terraform_1.14.9_windows_amd64.zip",
+      "checksum": "5518B04EA610115B17B427B57D8EC1D50A42A2AD63AB2D7A453B788D6C804D14",
+      "algorithm": "sha256"
+    },
+    {
       "id": "http/s3.amazonaws.com/session-manager-downloads/plugin/1.2.764.0/mac/sessionmanager-bundle.zip",
       "checksum": "A4E4C3A66E93C2C8D360516188E7650B8BD1F79CBD03A76E3B8A280B1C6C947D",
       "algorithm": "sha256"
@@ -1838,6 +2553,11 @@
     {
       "id": "registries/github_content/github.com/aquaproj/aqua-registry/v4.485.0/registry.yaml",
       "checksum": "09C57834BDA41FA7F96873FB0F1DF8B22A97EBDC744B4AABF932F52EFA85E1874C432A412DEF4B381DDFF872B3AA223CC7FD8DB20D7B19FB0C321A956F5B2EB6",
+      "algorithm": "sha512"
+    },
+    {
+      "id": "registries/github_content/github.com/aquaproj/aqua-registry/v4.501.0/registry.yaml",
+      "checksum": "30E021034B82F30463C89E6D928BCB342F68461616F3FBEDFF5F0A1C138C99E226F826FF25ED14BDE9D45AD2990574CC2AD652D37B5A78C88C91D91A81EF4E3C",
       "algorithm": "sha512"
     }
   ]

@@ -172,14 +172,14 @@ jobs:
 
       - name: Setup AWS Credentials
         timeout-minutes: 5
-        uses: aws-actions/configure-aws-credentials@ec61189d14ec14c8efccab744f656cffd0e33f37 # v6.1.0
+        uses: aws-actions/configure-aws-credentials@d979d5b3a71173a29b74b5b88418bfda9437d885 # v6.1.1
         with:
           aws-region: ${{ secrets.AWS_REGION }}
           role-to-assume: ${{ secrets.AWS_IAM_ROLE_ARN }}
 
       - name: Install ecspresso
         timeout-minutes: 5
-        uses: kayac/ecspresso@cf8f36d3b343338262eb11f76d32c7ad8b68e737 # v2.8.1
+        uses: kayac/ecspresso@31b27e71a464a773484fc73cf5eb0a25c4723038 # v2.8.3
         with:
           version: ${{ inputs.ecspresso_version }}
 
@@ -270,7 +270,7 @@ jobs:
 
       - name: Setup AWS Credentials
         timeout-minutes: 5
-        uses: aws-actions/configure-aws-credentials@ec61189d14ec14c8efccab744f656cffd0e33f37 # v6.1.0
+        uses: aws-actions/configure-aws-credentials@d979d5b3a71173a29b74b5b88418bfda9437d885 # v6.1.1
         with:
           aws-region: ${{ secrets.AWS_REGION }}
           role-to-assume: ${{ secrets.AWS_IAM_ROLE_ARN }}
@@ -287,7 +287,7 @@ jobs:
 
       - name: Install ecspresso
         timeout-minutes: 5
-        uses: kayac/ecspresso@cf8f36d3b343338262eb11f76d32c7ad8b68e737 # v2.8.1
+        uses: kayac/ecspresso@31b27e71a464a773484fc73cf5eb0a25c4723038 # v2.8.3
         with:
           version: ${{ inputs.ecspresso_version }}
 
