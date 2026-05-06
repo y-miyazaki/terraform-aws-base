@@ -8,7 +8,7 @@ checksum:
     - all
 registries:
   - type: standard
-    ref: v4.501.0 # renovate: depName=aquaproj/aqua-registry
+    ref: v4.501.0 # renovate: depName=aquaproj/aqua-registry datasource=github-tags
 packages:
   # Utility tools
   - name: BurntSushi/ripgrep@15.1.0 # grep alternative
