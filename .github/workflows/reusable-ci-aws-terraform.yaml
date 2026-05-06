@@ -119,6 +119,7 @@ jobs:
             ~/.terraform.d/plugin-cache
 
       - name: Cache Terraform init
+        id: cache-terraform-init
         uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
         with:
           key: ${{ steps.compute-init-cache-key.outputs.key }}
@@ -128,13 +129,10 @@ jobs:
 
       - name: Exec Terraform init
         id: init
+        if: steps.cache-terraform-init.outputs.cache-hit != 'true'
         run: |
-          if [ ! -d "${TERRAFORM_PATH}/.terraform" ]; then
-            echo "Cache miss or incomplete modules - initializing Terraform for ${COMPONENT}"
-            terraform -chdir="${TERRAFORM_PATH}" init -reconfigure -backend-config=terraform."${ENVIRONMENT}".tfbackend
-          else
-            echo "Cache hit - skipping Terraform init for ${COMPONENT}"
-          fi
+          echo "Cache miss or incomplete modules - initializing Terraform for ${COMPONENT}"
+          terraform -chdir="${TERRAFORM_PATH}" init -reconfigure -backend-config=terraform."${ENVIRONMENT}".tfbackend
 
   lint:
     if: ${{ github.actor != 'dependabot[bot]' }}
@@ -192,13 +190,10 @@ jobs:
 
       - name: Exec Terraform init
         id: init
+        if: steps.restore-terraform-init.outputs.cache-hit != 'true'
         run: |
-          if [ ! -d "${TERRAFORM_PATH}/.terraform" ]; then
-            echo "Cache miss or incomplete modules - initializing Terraform for ${COMPONENT}"
-            terraform -chdir="${TERRAFORM_PATH}" init -backend=false -reconfigure
-          else
-            echo "Cache hit - skipping Terraform init for ${COMPONENT}"
-          fi
+          echo "Cache miss or incomplete modules - initializing Terraform for ${COMPONENT}"
+          terraform -chdir="${TERRAFORM_PATH}" init -backend=false -reconfigure
 
       - name: Exec Terraform fmt check
         run: |
@@ -219,6 +214,21 @@ jobs:
           tflint -f compact --chdir "${TERRAFORM_PATH}" --var-file="terraform.${ENVIRONMENT}.tfvars"
         env:
           GITHUB_TOKEN: ${{ github.token }}
+
+  security:
+    if: ${{ github.actor != 'dependabot[bot]' }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    needs: init
+    environment:
+      name: ${{ inputs.environment }}
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
 
       # https://github.com/aquasecurity/trivy-action/?tab=readme-ov-file#inputs
       - name: Exec Trivy Vulnerability Scan
@@ -253,7 +263,7 @@ jobs:
     if: ${{ github.actor != 'dependabot[bot]' }}
     runs-on: ubuntu-24.04
     timeout-minutes: 60
-    needs: [init, lint]
+    needs: [init, lint, security]
     environment:
       name: ${{ inputs.environment }}
     permissions:
@@ -302,13 +312,10 @@ jobs:
 
       - name: Exec Terraform init
         id: init
+        if: steps.restore-terraform-init.outputs.cache-hit != 'true'
         run: |
-          if [ ! -d "${TERRAFORM_PATH}/.terraform" ]; then
-            echo "Cache miss or incomplete modules - initializing Terraform for ${COMPONENT}"
-            terraform -chdir="${TERRAFORM_PATH}" init -reconfigure -backend-config=terraform."${ENVIRONMENT}".tfbackend
-          else
-            echo "Cache hit - skipping Terraform init for ${COMPONENT}"
-          fi
+          echo "Cache miss or incomplete modules - initializing Terraform for ${COMPONENT}"
+          terraform -chdir="${TERRAFORM_PATH}" init -reconfigure -backend-config=terraform."${ENVIRONMENT}".tfbackend
 
       - name: Setup tfcmt
         if: ${{ github.event_name == 'pull_request' }}
@@ -348,7 +355,7 @@ jobs:
         uses: ./.github/actions/summary
         with:
           artifacts: |
-            sbom-${{ env.COMPONENT }}-${{ env.ENVIRONMENT }}
+            (none)
           outputs: |
             (none)
           params: |

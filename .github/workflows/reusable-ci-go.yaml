@@ -48,7 +48,7 @@ env:
   PR_BASE_REF: ${{ github.event.pull_request.base.ref }}
 
 jobs:
-  lint:
+  precheck:
     runs-on: ubuntu-24.04
     timeout-minutes: 30
     environment:
@@ -91,10 +91,6 @@ jobs:
             go-cache-${{ env.ENVIRONMENT }}-${{ env.COMPONENT }}-${{ runner.os }}-${{ env.GO_VERSION }}-
             go-cache-${{ env.ENVIRONMENT }}-${{ env.COMPONENT }}-${{ runner.os }}-
 
-      - name: Download Go Modules
-        run: go mod download
-        working-directory: ${{ env.GO_PROJECT_PATH }}
-
       - name: Exec gofmt
         run: |
           cd "${GO_PROJECT_PATH}"
@@ -119,7 +115,63 @@ jobs:
             exit 1
           fi
 
+  ci:
+    needs: precheck
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        task: [test, lint, security]
+    environment:
+      name: ${{ inputs.environment }}
+    permissions:
+      contents: read
+      id-token: write
+      pull-requests: write
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Setup Go
+        uses: actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c # v6.4.0
+        with:
+          cache: false
+          go-version: ${{ env.GO_VERSION }}
+
+      - name: Determine Go cache paths
+        id: go-cache-paths
+        working-directory: ${{ env.GO_PROJECT_PATH }}
+        run: |
+          # Write outputs in a single grouped redirect to avoid multiple >> usage
+          {
+            echo "gomodcache=$(go env GOMODCACHE)"
+            echo "gocache=$(go env GOCACHE)"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Cache Go build and module caches
+        id: go-cache
+        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
+        with:
+          key: go-cache-${{ env.ENVIRONMENT }}-${{ env.COMPONENT }}-${{ runner.os }}-${{ env.GO_VERSION }}-${{ matrix.task }}-${{ hashFiles(format('{0}/go.mod', env.GO_PROJECT_PATH), format('{0}/go.sum', env.GO_PROJECT_PATH)) }}
+          path: |
+            ${{ steps.go-cache-paths.outputs.gomodcache }}
+            ${{ steps.go-cache-paths.outputs.gocache }}
+          restore-keys: |
+            go-cache-${{ env.ENVIRONMENT }}-${{ env.COMPONENT }}-${{ runner.os }}-${{ env.GO_VERSION }}-${{ matrix.task }}-
+            go-cache-${{ env.ENVIRONMENT }}-${{ env.COMPONENT }}-${{ runner.os }}-${{ env.GO_VERSION }}-
+            go-cache-${{ env.ENVIRONMENT }}-${{ env.COMPONENT }}-${{ runner.os }}-
+
+      - name: Download Go Modules
+        if: steps.go-cache.outputs.cache-hit != 'true'
+        run: go mod download
+        working-directory: ${{ env.GO_PROJECT_PATH }}
+
       - name: Exec Go Tests (with race + coverage)
+        if: matrix.task == 'test'
         run: |
           mkdir -p coverage
           go test ./... -race -count=1 -covermode=atomic -coverprofile=coverage/coverage.out
@@ -127,6 +179,7 @@ jobs:
         working-directory: ${{ env.GO_PROJECT_PATH }}
 
       - name: Upload Coverage Artifact
+        if: matrix.task == 'test'
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: coverage-${{ env.COMPONENT }}-${{ env.ENVIRONMENT }}
@@ -134,6 +187,7 @@ jobs:
           retention-days: 30
 
       - name: Determine repository visibility
+        if: matrix.task == 'test'
         id: repo_visibility
         uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
         with:
@@ -147,7 +201,7 @@ jobs:
 
       - name: Upload to Codecov
         # Run upload only when repo is public OR codecov_token is provided
-        if: ${{ (steps.repo_visibility.outputs.result != 'true') || (env.CODECOV_TOKEN != '') }}
+        if: ${{ matrix.task == 'test' && ((steps.repo_visibility.outputs.result != 'true') || (env.CODECOV_TOKEN != '')) }}
         uses: codecov/codecov-action@57e3a136b779b570ffcdbf80b3bdc90e7fab3de2 # v6.0.0
         with:
           fail_ci_if_error: false
@@ -156,11 +210,13 @@ jobs:
           use_oidc: true
 
       - name: Setup govulncheck
+        if: matrix.task == 'security'
         working-directory: ${{ env.GO_PROJECT_PATH }}
         run: go install "golang.org/x/vuln/cmd/govulncheck@${GOVULNCHECK_VERSION}"
 
       # Do not fail the job on vulnerabilities; save reports as artifacts instead
       - name: Exec govulncheck (no-fail, save artifacts)
+        if: matrix.task == 'security'
         working-directory: ${{ env.GO_PROJECT_PATH }}
         continue-on-error: true
         run: |
@@ -171,6 +227,7 @@ jobs:
           govulncheck ./... > "security/govulncheck-${COMPONENT}-${ENVIRONMENT}.txt" || true
 
       - name: Upload govulncheck Artifact
+        if: matrix.task == 'security'
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: govulncheck-${{ env.COMPONENT }}-${{ env.ENVIRONMENT }}
@@ -179,6 +236,7 @@ jobs:
 
       # https://github.com/aquasecurity/trivy-action/?tab=readme-ov-file#inputs
       - name: Exec Trivy Vulnerability Scan
+        if: matrix.task == 'security'
         uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
         with:
           exit-code: 1
@@ -191,6 +249,7 @@ jobs:
 
       # https://github.com/aquasecurity/trivy-action/?tab=readme-ov-file#inputs
       - name: Exec Trivy Generate SBOM (CycloneDX)
+        if: matrix.task == 'security'
         uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
         with:
           exit-code: 0
@@ -200,6 +259,7 @@ jobs:
           scan-type: "fs"
 
       - name: Upload SBOM Artifact
+        if: matrix.task == 'security'
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: sbom-${{ env.COMPONENT }}-${{ env.ENVIRONMENT }}
@@ -207,14 +267,14 @@ jobs:
           retention-days: 30
 
       - name: Configure git auth
-        if: github.event_name == 'pull_request'
+        if: matrix.task == 'lint' && github.event_name == 'pull_request'
         uses: ./.github/actions/git-auth
         with:
           operation: configure
           token: ${{ github.token }}
 
       - name: Exec GolangCI-Lint via reviewdog (PR inline comments)
-        if: github.event_name == 'pull_request' && github.actor != 'dependabot[bot]'
+        if: matrix.task == 'lint' && github.event_name == 'pull_request' && github.actor != 'dependabot[bot]'
         uses: reviewdog/action-golangci-lint@c76cceaaab89abe74e649d2e34c6c9adc26662d2 # v2.10.0
         with:
           cache: false
@@ -229,7 +289,7 @@ jobs:
           workdir: ${{ env.GO_PROJECT_PATH }}
 
       - name: Exec Enforce golangci-lint (non-PR)
-        if: github.event_name != 'pull_request'
+        if: matrix.task == 'lint' && github.event_name != 'pull_request'
         uses: golangci/golangci-lint-action@1e7e51e771db61008b38414a730f564565cf7c20 # v9.2.0
         with:
           args: --config=.golangci.yaml --max-same-issues=0 --max-issues-per-linter=0
@@ -237,14 +297,14 @@ jobs:
           working-directory: ${{ env.GO_PROJECT_PATH }}
 
       - name: Clear git auth
-        if: always() && github.event_name == 'pull_request'
+        if: always() && matrix.task == 'lint' && github.event_name == 'pull_request'
         uses: ./.github/actions/git-auth
         with:
           operation: clear
           token: ${{ github.token }}
 
       - name: Post PR failure comment
-        if: failure() && github.event_name == 'pull_request' && github.actor != 'dependabot[bot]'
+        if: failure() && matrix.task == 'lint' && github.event_name == 'pull_request' && github.actor != 'dependabot[bot]'
         uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
         with:
           script: |
@@ -267,11 +327,25 @@ jobs:
             });
 
       - name: Summary
-        if: always()
+        if: always() && matrix.task == 'test'
         uses: ./.github/actions/summary
         with:
           artifacts: |
             coverage-${{ env.COMPONENT }}-${{ env.ENVIRONMENT }}
+          outputs: |
+            (none)
+          params: |
+            component: ${{ env.COMPONENT }}
+            environment: ${{ env.ENVIRONMENT }}
+            task: ${{ matrix.task }}
+          status: "${{ job.status }}"
+          title: "${{ format('Go CI: {0} ({1})', env.COMPONENT, matrix.task) }}"
+
+      - name: Summary
+        if: always() && matrix.task == 'security'
+        uses: ./.github/actions/summary
+        with:
+          artifacts: |
             govulncheck-${{ env.COMPONENT }}-${{ env.ENVIRONMENT }}
             sbom-${{ env.COMPONENT }}-${{ env.ENVIRONMENT }}
           outputs: |
@@ -279,5 +353,21 @@ jobs:
           params: |
             component: ${{ env.COMPONENT }}
             environment: ${{ env.ENVIRONMENT }}
+            task: ${{ matrix.task }}
           status: "${{ job.status }}"
-          title: "${{ format('Go CI: {0}', env.COMPONENT) }}"
+          title: "${{ format('Go CI: {0} ({1})', env.COMPONENT, matrix.task) }}"
+
+      - name: Summary
+        if: always() && matrix.task == 'lint'
+        uses: ./.github/actions/summary
+        with:
+          artifacts: |
+            (none)
+          outputs: |
+            (none)
+          params: |
+            component: ${{ env.COMPONENT }}
+            environment: ${{ env.ENVIRONMENT }}
+            task: ${{ matrix.task }}
+          status: "${{ job.status }}"
+          title: "${{ format('Go CI: {0} ({1})', env.COMPONENT, matrix.task) }}"
