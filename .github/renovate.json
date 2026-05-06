@@ -85,7 +85,7 @@
       "matchUpdateTypes": ["patch", "pin", "digest"],
       "automerge": true,
       "automergeType": "pr",
-      "platformAutomerge": false,
+      "platformAutomerge": true,
       "addLabels": ["automerge"]
     },
     {
