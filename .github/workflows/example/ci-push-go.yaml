@@ -46,7 +46,7 @@ jobs:
     uses: ./.github/workflows/reusable-ci-go.yaml
     with:
       environment: "base"
-      component: "absc"
+      component: "base"
       go_project_path: "."
     permissions:
       contents: read
