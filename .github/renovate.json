@@ -89,8 +89,17 @@
       "addLabels": ["automerge"]
     },
     {
-      "description": "[matchUpdateTypes: minor, major] Require review for minor and major updates",
-      "matchUpdateTypes": ["minor", "major"],
+      "description": "[matchManagers: dockerfile, github-actions, gomod, npm, regex; matchUpdateTypes: minor] Auto-merge non-terraform minor updates after checks pass",
+      "matchManagers": ["dockerfile", "github-actions", "gomod", "npm", "regex"],
+      "matchUpdateTypes": ["minor"],
+      "automerge": true,
+      "automergeType": "pr",
+      "platformAutomerge": true,
+      "addLabels": ["automerge"]
+    },
+    {
+      "description": "[matchUpdateTypes: major] Require review for major updates",
+      "matchUpdateTypes": ["major"],
       "automerge": false,
       "addLabels": ["needs-review"]
     }
