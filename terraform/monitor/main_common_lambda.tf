@@ -31,7 +31,7 @@ module "aws_sns_subscription_lambda_metric" {
 #--------------------------------------------------------------
 module "aws_lambda_create_lambda_metric" {
   source  = "terraform-aws-modules/lambda/aws"
-  version = "8.7.0"
+  version = "8.8.0"
 
   allowed_triggers = {
     trigger = {
@@ -118,7 +118,7 @@ module "aws_sns_subscription_lambda_log" {
 #--------------------------------------------------------------
 module "aws_lambda_create_lambda_log" {
   source  = "terraform-aws-modules/lambda/aws"
-  version = "8.7.0"
+  version = "8.8.0"
 
   allowed_triggers = {
     trigger = {
@@ -231,7 +231,7 @@ module "aws_sns_subscription_lambda_ses" {
 # tfsec:ignore:aws-lambda-enable-tracing
 module "aws_lambda_create_lambda_ses" {
   source  = "terraform-aws-modules/lambda/aws"
-  version = "8.7.0"
+  version = "8.8.0"
 
   allowed_triggers = {
     trigger = {
@@ -292,7 +292,7 @@ module "aws_lambda_create_lambda_ses" {
 #--------------------------------------------------------------
 module "aws_lambda_create_lambda_kinesis_data_firehose_cloudwatch_logs_processor" {
   source  = "terraform-aws-modules/lambda/aws"
-  version = "8.7.0"
+  version = "8.8.0"
 
   allowed_triggers = {
     trigger = {
@@ -353,7 +353,7 @@ module "aws_lambda_create_lambda_kinesis_data_firehose_cloudwatch_logs_processor
 #--------------------------------------------------------------
 module "aws_lambda_create_lambda_s3_notification_s3_object_created_for_athena" {
   source  = "terraform-aws-modules/lambda/aws"
-  version = "8.7.0"
+  version = "8.8.0"
 
   allowed_triggers = {
     trigger = {

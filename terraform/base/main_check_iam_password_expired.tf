@@ -38,7 +38,7 @@ resource "aws_scheduler_schedule" "iam_password_expired" {
 # tfsec:ignore:aws-lambda-enable-tracing
 module "lambda_function_iam_password_expired" {
   source  = "terraform-aws-modules/lambda/aws"
-  version = "8.7.0"
+  version = "8.8.0"
   create  = var.iam_password_expired.is_enabled && !local.control_tower_managed_services.iam_password_expired
 
   allowed_triggers = {

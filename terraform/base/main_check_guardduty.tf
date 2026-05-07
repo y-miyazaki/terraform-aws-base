@@ -35,7 +35,7 @@ module "aws_cloudwatch_events_guardduty" {
 # tfsec:ignore:aws-lambda-enable-tracing
 module "lambda_function_guardduty" {
   source  = "terraform-aws-modules/lambda/aws"
-  version = "8.7.0"
+  version = "8.8.0"
   create  = var.guardduty.is_enabled && !local.control_tower_managed_services.guardduty
 
   allowed_triggers = {

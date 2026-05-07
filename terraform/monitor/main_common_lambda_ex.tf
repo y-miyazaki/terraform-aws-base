@@ -32,7 +32,7 @@ module "aws_sns_subscription_lambda_step_functions_log" {
 # tfsec:ignore:aws-lambda-enable-tracing
 module "aws_lambda_create_lambda_step_functions_log" {
   source  = "terraform-aws-modules/lambda/aws"
-  version = "8.7.0"
+  version = "8.8.0"
 
   allowed_triggers = {
     trigger = {

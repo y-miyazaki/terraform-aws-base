@@ -82,7 +82,7 @@ resource "aws_api_gateway_stage" "this" {
 #--------------------------------------------------------------
 module "aws_lambda_create_lambda_report_csp" {
   source  = "terraform-aws-modules/lambda/aws"
-  version = "8.7.0"
+  version = "8.8.0"
   create  = var.is_enabled
 
   allowed_triggers = var.is_enabled ? {
