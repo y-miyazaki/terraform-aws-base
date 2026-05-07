@@ -7,6 +7,7 @@ Type model:
 
 - Core types: `specification`, `architecture`, `design_decisions`, `design`, `troubleshooting`, `general`
 - Extension types: `module_catalog`, `monitoring`, `performance`, `security_coverage`, `maintenance_notes`, `improvements`
+- Variant templates: see `category-templates-terraform.md` and `category-templates-go.md`
 - Project-defined custom types: add a dedicated template section or use `general` as fallback
 
 ---
@@ -51,9 +52,9 @@ design, account structure, <relevant layout>, and key design decisions.
 - **<Component A>** — <role>
 - **<Component B>** — <role>
 
-## <Terraform / Module Layout>
+## <Project Layout>
 
-<Directory tree and explanation.>
+<Directory structure and explanation.>
 
 ## Key Design Decisions
 
