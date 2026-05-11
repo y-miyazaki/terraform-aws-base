@@ -35,7 +35,7 @@ module "aws_cloudwatch_events_guardduty_us_east_1" {
 # tfsec:ignore:aws-lambda-enable-tracing
 module "lambda_function_guardduty_us_east_1" {
   source  = "terraform-aws-modules/lambda/aws"
-  version = "8.7.0"
+  version = "8.8.0"
   create  = local.is_enabled_us_east_1 && var.guardduty.is_enabled && !local.control_tower_managed_services.guardduty
   providers = {
     aws = aws.us-east-1

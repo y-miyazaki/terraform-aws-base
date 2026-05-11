@@ -682,7 +682,7 @@
     },
     {
       "id": "github_release/github.com/github/copilot-cli/v1.0.40/copilot-darwin-arm64.tar.gz",
-      "checksum": "866C967D1F0404BBCA678C1EF439043A06E5912F08650BE82EA4C19595886AE3",
+      "checksum": "866C967D1F0404BBCA678C1EF439043A06E5.13.08650BE82EA4C19595886AE3",
       "algorithm": "sha256"
     },
     {
@@ -772,7 +772,7 @@
     },
     {
       "id": "github_release/github.com/gitleaks/gitleaks/v8.29.0/gitleaks_8.29.0_darwin_arm64.tar.gz",
-      "checksum": "E85FA832EA341FB05485BF483E55E9D421F473348F0EDE51B5212E0E5C19B7C4",
+      "checksum": "E85FA832EA341FB05485BF483E55E9D421F473348F0EDE51B5.13.0E5C19B7C4",
       "algorithm": "sha256"
     },
     {
@@ -1387,7 +1387,7 @@
     },
     {
       "id": "github_release/github.com/kayac/ecspresso/v2.7.1/ecspresso_2.7.1_darwin_amd64.tar.gz",
-      "checksum": "61F0533C1898DDAB47EF412294F7E864992F79F35940E25B95412B06C28CB383",
+      "checksum": "61F0533C1898DDAB47EF412294F7E864992F79F35940E25B95.13.06C28CB383",
       "algorithm": "sha256"
     },
     {

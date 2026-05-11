@@ -28,7 +28,7 @@ resource "aws_scheduler_schedule" "application_errors" {
 # tfsec:ignore:aws-lambda-enable-tracing
 module "lambda_function_application_errors" {
   source  = "terraform-aws-modules/lambda/aws"
-  version = "8.7.0"
+  version = "8.8.0"
   create  = var.metric_log_application_report.is_enabled
 
   allowed_triggers = {

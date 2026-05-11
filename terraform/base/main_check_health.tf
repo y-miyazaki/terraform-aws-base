@@ -33,7 +33,7 @@ module "aws_cloudwatch_events_health" {
 #--------------------------------------------------------------
 module "lambda_function_health" {
   source  = "terraform-aws-modules/lambda/aws"
-  version = "8.7.0"
+  version = "8.8.0"
   create  = var.health.is_enabled
 
   allowed_triggers = {
