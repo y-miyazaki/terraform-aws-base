@@ -14,42 +14,43 @@ packages:
   - name: BurntSushi/ripgrep@15.1.0 # grep alternative
   - name: google/go-jsonnet@v0.22.0 # Jsonnet command-line tool
   # Security related tools
-  - name: pre-commit/pre-commit@v4.6.0 # pre-commit framework
-  - name: gitleaks/gitleaks@v8.30.1 # secret scanner
   - name: aquasecurity/trivy@v0.70.0 # vulnerability scanner
+  - name: gitleaks/gitleaks@v8.30.1 # secret scanner
+  - name: pre-commit/pre-commit@v4.6.0 # pre-commit framework
   # AWS related tools
   - name: aws/aws-cli@2.34.43 # AWS CLI
+  - name: aws/aws-sam-cli@v1.159.1 # SAM CLI tool
   - name: kayac/ecspresso@v2.8.3 # ECS deployment tool
   - name: Songmu/ecschedule@v0.17.2 # ECS scheduled tasks deployment tool
-  - name: aws/aws-sam-cli@v1.159.1 # SAM CLI tool
   # GitHub related tools
   - name: cli/cli@v2.92.0 # GitHub CLI
   - name: github/copilot-cli@v1.0.41 # GitHub Copilot CLI
   - name: rhysd/actionlint@v1.7.12 # GitHub Actions linter
-  - name: suzuki-shunsuke/disable-checkout-persist-credentials@v1.0.0 # GitHub Actions settings persist-credentials
+  - name: suzuki-shunsuke/disable-checkout-persist-credentials@v1.0.0 # disable persist-credentials in checkout action
   - name: suzuki-shunsuke/ghalint@v1.5.6 # GitHub Actions linter
-  - name: suzuki-shunsuke/ghatm@v1.0.0 # GitHub Actions settings timeout-minutes
+  - name: suzuki-shunsuke/ghatm@v1.0.0 # auto-set timeout-minutes for GitHub Actions jobs
   - name: suzuki-shunsuke/pinact@v3.9.2 # GitHub Actions pinning tool
-  - name: zizmorcore/zizmor@v1.24.1 # GitHub Actions settings concurrency
+  - name: zizmorcore/zizmor@v1.24.1 # GitHub Actions security auditor
   # Go related tools
-  - name: protocolbuffers/protobuf-go/protoc-gen-go@v1.36.11 # protobuf code generator
-  - name: grpc/grpc-go/protoc-gen-go-grpc@cmd/protoc-gen-go-grpc/v1.6.1 # gRPC code generator
-  - name: bufbuild/buf@v1.69.0 # protobuf linter and formatter
-  - name: protocolbuffers/protobuf/protoc@v34.1 # protobuf compiler
-  - name: oapi-codegen/oapi-codegen@v2.7.0 # OpenAPI code generator
-  - name: go-delve/delve@v1.26.3 # debugger
-  - name: golangci/golangci-lint@v2.12.1 # linter
-  - name: mvdan/gofumpt@v0.9.2 # code formatter(vs gofmt)
   - name: air-verse/air@v1.65.1 # live reload
-  - name: golang/vuln/govulncheck@v1.3.0 # vulnerability scanner
-  - name: swaggo/swag@v1.16.6 # API documentation generator
+  - name: bufbuild/buf@v1.69.0 # protobuf linter and formatter
+  - name: go-delve/delve@v1.26.3 # debugger
   - name: go-swagger/go-swagger@v0.33.2 # API documentation generator
-  - name: ko-build/ko@v0.18.1 # container builder
-  - name: goreleaser/goreleaser@v2.15.4 # release automation
   - name: golang.org/x/tools/gopls@v0.21.1 # Go language server
+  - name: golang/vuln/govulncheck@v1.3.0 # vulnerability scanner
+  - name: golangci/golangci-lint@v2.12.1 # linter
+  - name: goreleaser/goreleaser@v2.15.4 # release automation
+  - name: grpc/grpc-go/protoc-gen-go-grpc@cmd/protoc-gen-go-grpc/v1.6.1 # gRPC code generator
+  - name: ko-build/ko@v0.18.1 # container builder
+  - name: mvdan/gofumpt@v0.9.2 # code formatter(vs gofmt)
+  - name: oapi-codegen/oapi-codegen@v2.7.0 # OpenAPI code generator
+  - name: protocolbuffers/protobuf-go/protoc-gen-go@v1.36.11 # protobuf code generator
+  - name: protocolbuffers/protobuf/protoc@v34.1 # protobuf compiler
+  - name: swaggo/swag@v1.16.6 # API documentation generator
+  - name: vektra/mockery@v3.7.0 # mock code generator for interfaces
   # Terraform related tools
-  - name: hashicorp/terraform@v1.15.1 # terraform
-  - name: terraform-linters/tflint@v0.62.0 # linter
-  - name: terraform-docs/terraform-docs@v0.22.0 # documentation generator
   - name: getsops/sops@v3.12.2 # encryption tool
-  - name: jamesWoolfenden/pike@v0.4.1
+  - name: hashicorp/terraform@v1.15.1 # infrastructure as code
+  - name: jamesWoolfenden/pike@v0.4.1 # generate minimum IAM policy from Terraform
+  - name: terraform-docs/terraform-docs@v0.22.0 # documentation generator
+  - name: terraform-linters/tflint@v0.62.0 # linter

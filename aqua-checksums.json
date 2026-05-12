@@ -682,7 +682,7 @@
     },
     {
       "id": "github_release/github.com/github/copilot-cli/v1.0.40/copilot-darwin-arm64.tar.gz",
-      "checksum": "866C967D1F0404BBCA678C1EF439043A06E5.13.08650BE82EA4C19595886AE3",
+      "checksum": "866C967D1F0404BBCA678C1EF439043A06E5912F08650BE82EA4C19595886AE3",
       "algorithm": "sha256"
     },
     {
@@ -772,7 +772,7 @@
     },
     {
       "id": "github_release/github.com/gitleaks/gitleaks/v8.29.0/gitleaks_8.29.0_darwin_arm64.tar.gz",
-      "checksum": "E85FA832EA341FB05485BF483E55E9D421F473348F0EDE51B5.13.0E5C19B7C4",
+      "checksum": "E85FA832EA341FB05485BF483E55E9D421F473348F0EDE51B5212E0E5C19B7C4",
       "algorithm": "sha256"
     },
     {
@@ -1387,7 +1387,7 @@
     },
     {
       "id": "github_release/github.com/kayac/ecspresso/v2.7.1/ecspresso_2.7.1_darwin_amd64.tar.gz",
-      "checksum": "61F0533C1898DDAB47EF412294F7E864992F79F35940E25B95.13.06C28CB383",
+      "checksum": "61F0533C1898DDAB47EF412294F7E864992F79F35940E25B95412B06C28CB383",
       "algorithm": "sha256"
     },
     {
@@ -2308,6 +2308,36 @@
     {
       "id": "github_release/github.com/terraform-linters/tflint/v0.62.0/tflint_windows_amd64.zip",
       "checksum": "D2B28CAF4F312805EDD06C7AEDE494135D1BABB301DB32E9B68994D2038936E4",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/vektra/mockery/v3.7.0/mockery_3.7.0_Darwin_arm64.tar.gz",
+      "checksum": "C0A8EA54D602C071775D1692321D385903CCC80BD2D1AE9F230539A195643D7D",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/vektra/mockery/v3.7.0/mockery_3.7.0_Darwin_x86_64.tar.gz",
+      "checksum": "36E7357FD160689A9A8AE57726E099761159845E2749BA31091589853A5A894D",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/vektra/mockery/v3.7.0/mockery_3.7.0_Linux_arm64.tar.gz",
+      "checksum": "94DAB8C6D8421630DA51FE950B4F0F1180E5BEF6022A3A5B3FE537ACACE94741",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/vektra/mockery/v3.7.0/mockery_3.7.0_Linux_x86_64.tar.gz",
+      "checksum": "5E10597D9741D7B8CDA699F044B24C9E8B51467DCE413E79516D7CD9373C2896",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/vektra/mockery/v3.7.0/mockery_3.7.0_Windows_arm64.tar.gz",
+      "checksum": "E5AA67577FD00472A32ABB2892738C601798FF50A08BAF9D85A66554CC0E2955",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/vektra/mockery/v3.7.0/mockery_3.7.0_Windows_x86_64.tar.gz",
+      "checksum": "76D524AD1740CD02ED621D90015F538FDB53CF6CD4A1AD4D289DB017FB69BD0E",
       "algorithm": "sha256"
     },
     {
