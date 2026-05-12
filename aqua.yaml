@@ -51,6 +51,6 @@ packages:
   # Terraform related tools
   - name: getsops/sops@v3.12.2 # encryption tool
   - name: hashicorp/terraform@v1.15.1 # infrastructure as code
-  - name: jamesWoolfenden/pike@v0.4.1 # generate minimum IAM policy from Terraform
+  - name: jamesWoolfenden/pike@v0.4.5 # generate minimum IAM policy from Terraform
   - name: terraform-docs/terraform-docs@v0.22.0 # documentation generator
   - name: terraform-linters/tflint@v0.62.0 # linter
