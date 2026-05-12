@@ -342,7 +342,7 @@ function process_terraform_directory {
     # Step 4: Generate documentation (terraform-docs) if requested
     if [[ "$GENERATE_DOCS" == "true" ]]; then
         log "INFO" "Generating documentation (terraform-docs)"
-        if ! execute_command_string "terraform-docs markdown --output-file README.md ./"; then
+        if ! execute_command_string "terraform-docs markdown table --output-file README.md ./"; then
             log "WARN" "Failed to generate documentation for $dir"
             DOCS_FAILED=1
             # We don't fail the whole script just for docs unless EXIT_CODE should be 1
