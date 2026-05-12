@@ -14,19 +14,19 @@ on:
         required: true
         type: string
       plan:
+        default: false
         description: "Execute terraform plan"
         required: false
         type: boolean
-        default: false
       terraform_path:
         description: "Path to terraform configuration"
         required: true
         type: string
       terraform_version:
+        default: "1.12.2"
         description: "Terraform version to use"
         required: false
         type: string
-        default: "1.12.2"
     secrets:
       AWS_IAM_ROLE_ARN:
         required: true

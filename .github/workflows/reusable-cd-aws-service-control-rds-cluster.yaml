@@ -10,34 +10,34 @@ on:
         required: true
         type: string
       auto_discover:
+        default: false
         description: "Automatically discover RDS clusters (if true, clusters input is ignored)"
         required: false
         type: boolean
-        default: false
       clusters:
+        default: "[]"
         description: "JSON array of RDS cluster identifiers to control ['cluster-1', 'cluster-2']"
         required: false
         type: string
-        default: "[]"
       environment:
         description: "Target environment (dev, qa, stg, prd, etc.)"
         required: true
         type: string
       exclude_patterns:
+        default: "[]"
         description: "JSON array of patterns to exclude from auto-discovery (partial match on cluster identifier) ['pattern1', 'pattern2']"
         required: false
         type: string
-        default: "[]"
       include_patterns:
+        default: "[]"
         description: "JSON array of patterns to include in auto-discovery (partial match). If empty, all are included ['pattern1', 'pattern2']"
         required: false
         type: string
-        default: "[]"
       wait_for_stable:
+        default: true
         description: "Wait for cluster to reach desired state after operation (set to false to skip waiting)"
         required: false
         type: boolean
-        default: true
     secrets:
       AWS_IAM_ROLE_ARN:
         required: true

@@ -22,20 +22,20 @@ on:
         required: true
         type: string
       go_version:
+        default: "1.25.9"
         description: "Go version to use for setup-go and linting"
         required: false
         type: string
-        default: "1.25.9"
       golangci_lint_version:
+        default: "v2.11.3"
         description: "golangci-lint version to use"
         required: false
         type: string
-        default: "v2.11.3"
       govulncheck_version:
+        default: "v1.1.4"
         description: "govulncheck version to use"
         required: false
         type: string
-        default: "v1.1.4"
 
 env:
   CODECOV_TOKEN: ${{ inputs.codecov_token }}

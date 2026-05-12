@@ -1,3 +1,3 @@
 {
-  "extends": ["github>y-miyazaki/config"]
+  "extends": ["github>y-miyazaki/config//renovate/default"]
 }

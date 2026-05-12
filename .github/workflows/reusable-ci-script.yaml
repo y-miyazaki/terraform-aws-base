@@ -9,25 +9,25 @@ on:
   workflow_call:
     inputs:
       fail_level:
+        default: "warning"
         description: "Otherwise, exit code 1 for reviewdog if it finds at least 1 issue with severity greater than or equal to the given level. Possible values: [none,any,info,warning,error]"
         required: false
         type: string
-        default: "warning"
       fail_on_warnings:
+        default: false
         description: "When true, treat warnings as failures for selected steps (boolean)."
         required: false
         type: boolean
-        default: false
       script_path:
+        default: ""
         description: "Comma-separated glob(s) of script files to check. If empty, all **/*.sh are checked"
         required: false
         type: string
-        default: ""
       shellcheck_version:
+        default: "0.10.0"
         description: "ShellCheck version to use"
         required: false
         type: string
-        default: "0.10.0"
 
 env:
   FAIL_LEVEL: ${{ inputs.fail_level }}

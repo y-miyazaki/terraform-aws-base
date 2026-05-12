@@ -10,49 +10,49 @@ on:
         required: true
         type: string
       auto_discover:
+        default: false
         description: "Automatically discover ECS services (if true, services input is ignored)"
         required: false
         type: boolean
-        default: false
       autoscaling_max_capacity:
+        default: 10
         description: "Maximum capacity for autoscaling when starting services (set to 0 to use discovered value)"
         required: false
         type: number
-        default: 10
       autoscaling_min_capacity:
+        default: 1
         description: "Minimum capacity for autoscaling when starting services (set to 0 to skip autoscaling adjustment)"
         required: false
         type: number
-        default: 1
       default_desired_count:
+        default: 1
         description: "Default desired count for starting services (used when auto-discovering or not specified)"
         required: false
         type: number
-        default: 1
       environment:
         description: "Target environment (dev, qa, stg, prd, etc.)"
         required: true
         type: string
       exclude_patterns:
+        default: "[]"
         description: "JSON array of patterns to exclude from auto-discovery (partial match on cluster or service name) ['pattern1', 'pattern2']"
         required: false
         type: string
-        default: "[]"
       include_patterns:
+        default: "[]"
         description: "JSON array of patterns to include in auto-discovery (partial match). If empty, all are included ['pattern1', 'pattern2']"
         required: false
         type: string
-        default: "[]"
       services:
+        default: "[]"
         description: "JSON array of ECS services to control [{cluster: 'name', service: 'name', desired_count: 1}]"
         required: false
         type: string
-        default: "[]"
       wait_for_stable:
+        default: true
         description: "Wait for service to reach stable state after operation (set to false to skip waiting)"
         required: false
         type: boolean
-        default: true
     secrets:
       AWS_IAM_ROLE_ARN:
         required: true

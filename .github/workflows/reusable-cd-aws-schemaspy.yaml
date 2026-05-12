@@ -7,61 +7,61 @@ on:
     inputs:
       # Bastion Configuration
       bastion_instance_id:
+        default: ""
         description: "EC2 Bastion instance ID (auto-detected if not specified and use_bastion=true)"
         required: false
         type: string
-        default: ""
       bastion_local_port:
+        default: ""
         description: "Local port for SSM port forwarding (default: 13306 for mysql, 15432 for pgsql or pgsql11, 15439 for redshift)"
         required: false
         type: string
-        default: ""
       bastion_tag_name:
+        default: "*bastion*"
         description: "EC2 tag Name filter for Bastion auto-detection (default: '*bastion*')"
         required: false
         type: string
-        default: "*bastion*"
 
       # Database Connection (Direct Parameters - No AWS Required)
       db_host:
+        default: ""
         description: "[Direct] Database host (only if use_secrets_manager=false and use_ssm=false)" # pragma: allowlist secret
         required: false
         type: string
-        default: ""
       db_name:
+        default: ""
         description: "[Direct] Database name (only if use_secrets_manager=false and use_ssm=false)" # pragma: allowlist secret
         required: false
         type: string
-        default: ""
       db_password:
+        default: ""
         description: "[Direct] Database password (only if use_secrets_manager=false and use_ssm=false)" # pragma: allowlist secret
         required: false
         type: string
-        default: ""
       db_port:
+        default: ""
         description: "[Direct] Database port (only if use_secrets_manager=false and use_ssm=false)" # pragma: allowlist secret
         required: false
         type: string
-        default: ""
       db_ssl_mode:
+        default: "require"
         description: "Database SSL mode. PostgreSQL: require|verify-full|verify-ca|disable (default: require). MySQL: true|false. Redshift: true|false."
         required: false
         type: string
-        default: "require"
       db_threads:
+        default: "3"
         description: "Number of database threads for parallel processing (default: 3 for stability) (https://docs.aws.amazon.com/redshift/latest/mgmt/jdbc20-download-driver.html)"
         required: false
         type: string
-        default: "3"
       db_type:
         description: "Database type (pgsql, pgsql11, redshift, mysql, etc.)"
         required: true
         type: string
       db_username:
+        default: ""
         description: "[Direct] Database username (only if use_secrets_manager=false and use_ssm=false)" # pragma: allowlist secret
         required: false
         type: string
-        default: ""
 
       # Environment Configuration
       environment:
@@ -71,78 +71,78 @@ on:
 
       # JSON Key Mapping (for Secrets Manager and SSM JSON parameters)
       json_key_database_name:
+        default: "dbname"
         description: "JSON key for database name (default: 'database')"
         required: false
         type: string
-        default: "dbname"
       json_key_host:
+        default: "host"
         description: "JSON key for host (default: 'host')"
         required: false
         type: string
-        default: "host"
       json_key_password:
+        default: "password"
         description: "JSON key for password (default: 'password')"
         required: false
         type: string
-        default: "password"
       json_key_port:
+        default: "port"
         description: "JSON key for port (default: 'port')"
         required: false
         type: string
-        default: "port"
       json_key_username:
+        default: "username"
         description: "JSON key for username (default: 'username')"
         required: false
         type: string
-        default: "username"
 
       # Systems Manager Parameter Store Configuration
       parameter_store_name:
+        default: ""
         description: "[SSM Parameter Store] Parameter name containing JSON with all DB connection info (only if use_ssm=true)"
         required: false
         type: string
-        default: ""
 
       # SchemaSpy Configuration
       schema_name:
+        default: ""
         description: "Database schema name to document (optional: if empty, -all flag is used to document all schemas)"
         required: false
         type: string
-        default: ""
       schemaspy_imageformat:
+        default: "svg"
         description: "SchemaSpy image format (png, svg, etc.)"
         required: false
         type: string
-        default: "svg"
       schemaspy_version:
+        default: "7.0.2"
         description: "SchemaSpy version to use"
         required: false
         type: string
-        default: "7.0.2"
 
       # Secrets Manager Configuration
       secrets_manager_secret_id:
+        default: ""
         description: "[Secrets Manager] Secret ID containing JSON with DB connection info (only if use_secrets_manager=true)" # pragma: allowlist secret
         required: false
         type: string
-        default: ""
 
       # Use Flags (Boolean Controls)
       use_bastion:
+        default: false
         description: "Whether to use EC2 Bastion server for database connection"
         required: false
         type: boolean
-        default: false
       use_secrets_manager:
+        default: true
         description: "Whether to use AWS Secrets Manager for credentials"
         required: false
         type: boolean
-        default: true
       use_ssm:
+        default: false
         description: "Whether to use AWS Systems Manager Parameter Store for credentials"
         required: false
         type: boolean
-        default: false
     outputs:
       artifact_name:
         description: "Name of the uploaded artifact"

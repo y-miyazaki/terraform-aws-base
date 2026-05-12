@@ -14,10 +14,10 @@ on:
         required: false
         type: string
       dockerfile:
+        default: "Dockerfile"
         description: "Dockerfile path"
         required: false
         type: string
-        default: "Dockerfile"
       ecr_registry:
         description: "Target ECR registry URL (e.g. 123456789012.dkr.ecr.ap-northeast-1.amazonaws.com). If empty, uses login output."
         required: false
@@ -39,10 +39,10 @@ on:
         required: false
         type: string
       platform:
+        default: "linux/arm64"
         description: "Docker build platform(s) (e.g. linux/arm64 or linux/amd64,linux/arm64)"
         required: false
         type: string
-        default: "linux/arm64"
     secrets:
       AWS_IAM_ROLE_ARN:
         required: true

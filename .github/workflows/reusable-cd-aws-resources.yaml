@@ -6,35 +6,35 @@ on:
   workflow_call:
     inputs:
       arc_checksum:
+        default: "85ea298d9f37c7371ca77826e811985103686bf9b418e9262506442171496c76" # pragma: allowlist secret
+        # To get checksum: curl -sL "https://github.com/y-miyazaki/arc/releases/download/v1.0.12/arc-linux-amd64.tar.gz" | sha256sum | awk '{print $1}'
         description: "SHA256 checksum for arc release tarball"
         required: false
         type: string
-        # To get checksum: curl -sL "https://github.com/y-miyazaki/arc/releases/download/v1.0.12/arc-linux-amd64.tar.gz" | sha256sum | awk '{print $1}'
-        default: "85ea298d9f37c7371ca77826e811985103686bf9b418e9262506442171496c76" # pragma: allowlist secret
       arc_version:
-        description: "arc version to use (e.g. v1.0.12)"
+        default: "v1.0.12"
+        description: "arc version to use"
         required: false
         type: string
-        default: "v1.0.12"
       categories:
+        default: ""
         description: "Comma-separated categories to limit collection (optional)"
         required: false
         type: string
-        default: ""
       environment:
         description: "Target environment (dev, qa, stg, prd, etc.)"
         required: true
         type: string
       output_dir:
+        default: "./output"
         description: "Output directory where CSVs will be written"
         required: false
         type: string
-        default: "./output"
       region:
+        default: ""
         description: "AWS region to query (optional)"
         required: false
         type: string
-        default: ""
     outputs:
       artifact_name:
         description: "Name of the uploaded artifact"

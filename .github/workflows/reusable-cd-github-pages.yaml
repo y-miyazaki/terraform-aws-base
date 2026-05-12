@@ -15,15 +15,15 @@ on:
         required: true
         type: string
       index_title:
+        default: "Documentation"
         description: "Title for the index page (default: 'Documentation')"
         required: false
         type: string
-        default: "Documentation"
       index_description:
+        default: "Select an item to view documentation"
         description: "Description for the index page (default: 'Select an item to view documentation')"
         required: false
         type: string
-        default: "Select an item to view documentation"
 
 env:
   ARTIFACTS: ${{ inputs.artifacts }}

@@ -38,6 +38,7 @@ on:
         type: string
       jsonnet_checksum:
         default: "ad3181fde77726b02d17eb4e72687020bf2cb35b9336cdeaaca4783c7ff104f7" # pragma: allowlist secret
+        # To get checksum: curl -sL "https://github.com/google/go-jsonnet/releases/download/v0.21.0/go-jsonnet_Linux_x86_64.tar.gz" | sha256sum | awk '{print $1}'
         description: "SHA256 checksum for go-jsonnet release tarball (Linux_x86_64)"
         required: false
         type: string

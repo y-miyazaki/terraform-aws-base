@@ -6,50 +6,50 @@ on:
   workflow_call:
     inputs:
       absc_checksum:
+        default: "6f5c79d460a978a854f61701666c589cf7369a54987696361d2a85152d347c27" # pragma: allowlist secret
+        # To get checksum: curl -sL "https://github.com/y-miyazaki/absc/releases/download/v1.0.16/absc-linux-amd64.tar.gz" | sha256sum | awk '{print $1}'
         description: "SHA256 checksum for absc release tarball"
         required: false
         type: string
-        # To get checksum: curl -sL "https://github.com/y-miyazaki/absc/releases/download/v1.0.16/absc-linux-amd64.tar.gz" | sha256sum | awk '{print $1}'
-        default: "6f5c79d460a978a854f61701666c589cf7369a54987696361d2a85152d347c27" # pragma: allowlist secret
       absc_version:
+        default: "v1.0.16"
         description: "absc version to use (e.g. v1.0.16)"
         required: false
         type: string
-        default: "v1.0.16"
       environment:
         description: "Target environment (dev, qa, stg, prd, etc.)"
         required: true
         type: string
       days_ago:
+        default: 1
         description: "Calendar day offset (0=today, 1=yesterday)"
         required: false
         type: number
-        default: 1
       max_concurrency:
+        default: 5
         description: "Max concurrent resource collectors"
         required: false
         type: number
-        default: 5
       max_results:
+        default: 288
         description: "Max executions/jobs per target"
         required: false
         type: number
-        default: 288
       output_dir:
+        default: "./output"
         description: "Output base directory where schedules are written"
         required: false
         type: string
-        default: "./output"
       region:
+        default: ""
         description: "AWS region to query (optional, comma-separated accepted)"
         required: false
         type: string
-        default: ""
       timezone:
+        default: "UTC"
         description: "IANA timezone"
         required: false
         type: string
-        default: "UTC"
     outputs:
       artifact_name:
         description: "Name of the uploaded artifact"
