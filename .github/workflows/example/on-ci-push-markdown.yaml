@@ -35,7 +35,7 @@ concurrency:
 
 jobs:
   markdown-ci:
-    uses: y-miyazaki/config/.github/workflows/ci-markdown.yaml@v1.0.0
+    uses: y-miyazaki/config/.github/workflows/ci-markdown.yaml@a8e6939a2ab5dd05676ab72622305f63d15fcabc # v1.0.0
     with:
       component: "base"
       environment: "markdown"
