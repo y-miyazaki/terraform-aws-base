@@ -2,14 +2,14 @@
 ## Requirements
 
 | Name | Version |
-|------|---------|
+| ---- | ------- |
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | ~>1.4 |
-| <a name="requirement_aws"></a> [aws](#requirement\_aws) | ~>6.0 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | ~> 6.0 |
 
 ## Providers
 
 | Name | Version |
-|------|---------|
+| ---- | ------- |
 | <a name="provider_aws"></a> [aws](#provider\_aws) | 6.43.0 |
 
 ## Modules
@@ -19,7 +19,7 @@ No modules.
 ## Resources
 
 | Name | Type |
-|------|------|
+| ---- | ---- |
 | [aws_macie2_account.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/macie2_account) | resource |
 | [aws_macie2_classification_job.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/macie2_classification_job) | resource |
 | [aws_macie2_findings_filter.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/macie2_findings_filter) | resource |
@@ -29,7 +29,7 @@ No modules.
 ## Inputs
 
 | Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:--------:|
+| ---- | ----------- | ---- | ------- | :------: |
 | <a name="input_admin_account_id"></a> [admin\_account\_id](#input\_admin\_account\_id) | AWS account ID to designate as the Macie organization admin account | `string` | n/a | yes |
 | <a name="input_auto_enable"></a> [auto\_enable](#input\_auto\_enable) | Whether to enable Macie automatically for new organization members | `bool` | `true` | no |
 | <a name="input_classification_jobs"></a> [classification\_jobs](#input\_classification\_jobs) | (Optional) List of classification job configurations. Each item requires name, job\_type, and s3\_job\_definition. | `any` | `[]` | no |
@@ -43,7 +43,7 @@ No modules.
 ## Outputs
 
 | Name | Description |
-|------|-------------|
+| ---- | ----------- |
 | <a name="output_account_id"></a> [account\_id](#output\_account\_id) | The ID of the Macie account |
 | <a name="output_classification_job_ids"></a> [classification\_job\_ids](#output\_classification\_job\_ids) | Map of classification job names to their IDs |
 | <a name="output_findings_filter_arns"></a> [findings\_filter\_arns](#output\_findings\_filter\_arns) | Map of findings filter names to their ARNs |

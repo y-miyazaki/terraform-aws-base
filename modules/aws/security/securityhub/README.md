@@ -2,14 +2,14 @@
 ## Requirements
 
 | Name | Version |
-|------|---------|
+| ---- | ------- |
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | ~>1.4 |
-| <a name="requirement_aws"></a> [aws](#requirement\_aws) | ~>6.0 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | ~> 6.0 |
 
 ## Providers
 
 | Name | Version |
-|------|---------|
+| ---- | ------- |
 | <a name="provider_aws"></a> [aws](#provider\_aws) | 6.8.0 |
 
 ## Modules
@@ -19,7 +19,7 @@ No modules.
 ## Resources
 
 | Name | Type |
-|------|------|
+| ---- | ---- |
 | [aws_securityhub_account.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/securityhub_account) | resource |
 | [aws_securityhub_action_target.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/securityhub_action_target) | resource |
 | [aws_securityhub_member.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/securityhub_member) | resource |
@@ -31,7 +31,7 @@ No modules.
 ## Inputs
 
 | Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:--------:|
+| ---- | ----------- | ---- | ------- | :------: |
 | <a name="input_aws_securityhub_action_target"></a> [aws\_securityhub\_action\_target](#input\_aws\_securityhub\_action\_target) | (Optional) Creates Security Hub custom action. | <pre>object({<br/>    name        = string<br/>    identifier  = string<br/>    description = string<br/>  })</pre> | <pre>{<br/>  "description": "This is custom action sends selected findings to event",<br/>  "identifier": "SendToEvent",<br/>  "name": "Send notification"<br/>}</pre> | no |
 | <a name="input_aws_securityhub_member"></a> [aws\_securityhub\_member](#input\_aws\_securityhub\_member) | (Optional) list of Security Hub member resource. | `map(any)` | `null` | no |
 | <a name="input_aws_securityhub_product_subscription"></a> [aws\_securityhub\_product\_subscription](#input\_aws\_securityhub\_product\_subscription) | (Optional) The ARN of the product that generates findings that you want to import into Security Hub - see below. | `map(any)` | `null` | no |

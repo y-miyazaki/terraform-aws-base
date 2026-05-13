@@ -90,7 +90,7 @@ locals {
 ## Requirements
 
 | Name | Version |
-|------|---------|
+| ---- | ------- |
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.9.0 |
 
 ## Providers
@@ -108,7 +108,7 @@ No resources.
 ## Inputs
 
 | Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:--------:|
+| ---- | ----------- | ---- | ------- | :------: |
 | <a name="input_auto_schedules_exclude_list"></a> [auto\_schedules\_exclude\_list](#input\_auto\_schedules\_exclude\_list) | Exclude filter list | `list(string)` | `[]` | no |
 | <a name="input_auto_schedules_include_list"></a> [auto\_schedules\_include\_list](#input\_auto\_schedules\_include\_list) | Include filter list (empty = include all) | `list(string)` | `[]` | no |
 | <a name="input_create_auto_schedules"></a> [create\_auto\_schedules](#input\_create\_auto\_schedules) | Whether to create auto-discovered schedules (true) or use manual schedules (false) | `bool` | `false` | no |
@@ -122,7 +122,7 @@ No resources.
 ## Outputs
 
 | Name | Description |
-|------|-------------|
+| ---- | ----------- |
 | <a name="output_debug_manual_schedules_with_defaults"></a> [debug\_manual\_schedules\_with\_defaults](#output\_debug\_manual\_schedules\_with\_defaults) | Debug: manual\_schedules\_with\_defaults |
 | <a name="output_debug_schedule_expression_start"></a> [debug\_schedule\_expression\_start](#output\_debug\_schedule\_expression\_start) | Debug: var.schedule\_expression\_start value |
 | <a name="output_debug_schedule_expression_stop"></a> [debug\_schedule\_expression\_stop](#output\_debug\_schedule\_expression\_stop) | Debug: var.schedule\_expression\_stop value |

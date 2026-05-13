@@ -2,26 +2,26 @@
 ## Requirements
 
 | Name | Version |
-|------|---------|
+| ---- | ------- |
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | ~>1.4 |
-| <a name="requirement_aws"></a> [aws](#requirement\_aws) | ~>6.0 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | ~> 6.0 |
 
 ## Providers
 
 | Name | Version |
-|------|---------|
+| ---- | ------- |
 | <a name="provider_aws"></a> [aws](#provider\_aws) | 6.28.0 |
 
 ## Modules
 
 | Name | Source | Version |
-|------|--------|---------|
+| ---- | ------ | ------- |
 | <a name="module_s3"></a> [s3](#module\_s3) | terraform-aws-modules/s3-bucket/aws | 5.10.0 |
 
 ## Resources
 
 | Name | Type |
-|------|------|
+| ---- | ---- |
 | [aws_cloudwatch_event_rule.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_event_rule) | resource |
 | [aws_cloudwatch_event_target.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_event_target) | resource |
 | [aws_config_configuration_recorder.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/config_configuration_recorder) | resource |
@@ -33,7 +33,7 @@
 ## Inputs
 
 | Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:--------:|
+| ---- | ----------- | ---- | ------- | :------: |
 | <a name="input_aws_cloudwatch_event_rule"></a> [aws\_cloudwatch\_event\_rule](#input\_aws\_cloudwatch\_event\_rule) | (Optional) Provides an EventBridge Rule resource. | <pre>object(<br/>    {<br/>      # (Required) The name of the rule. If omitted, Terraform will assign a random, unique name. Conflicts with name_prefix.<br/>      name = string<br/>      # (Optional) The description of the rule.<br/>      description = optional(string)<br/>    }<br/>  )</pre> | <pre>{<br/>  "description": "This cloudwatch event used for Config.",<br/>  "name": "security-config-cloudwatch-event-rule"<br/>}</pre> | no |
 | <a name="input_aws_cloudwatch_event_target"></a> [aws\_cloudwatch\_event\_target](#input\_aws\_cloudwatch\_event\_target) | (Required) Provides an EventBridge Target resource. | <pre>object(<br/>    {<br/>      # (Required) The Amazon Resource Name (ARN) associated of the target.<br/>      arn = string<br/>    }<br/>  )</pre> | n/a | yes |
 | <a name="input_aws_config_configuration_recorder"></a> [aws\_config\_configuration\_recorder](#input\_aws\_config\_configuration\_recorder) | (Required) The aws\_config\_configuration\_recorder resource. | <pre>object(<br/>    {<br/>      name            = string<br/>      recording_group = list(any)<br/>    }<br/>  )</pre> | n/a | yes |
@@ -49,7 +49,7 @@
 ## Outputs
 
 | Name | Description |
-|------|-------------|
+| ---- | ----------- |
 | <a name="output_arn"></a> [arn](#output\_arn) | The Amazon Resource Name (ARN) of the rule |
 | <a name="output_config_role_name"></a> [config\_role\_name](#output\_config\_role\_name) | Role name of the Config |
 | <a name="output_id"></a> [id](#output\_id) | Name of the recorder |

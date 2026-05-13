@@ -2,26 +2,26 @@
 ## Requirements
 
 | Name | Version |
-|------|---------|
+| ---- | ------- |
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | ~>1.4 |
-| <a name="requirement_aws"></a> [aws](#requirement\_aws) | ~>6.0 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | ~> 6.0 |
 
 ## Providers
 
 | Name | Version |
-|------|---------|
+| ---- | ------- |
 | <a name="provider_aws"></a> [aws](#provider\_aws) | 6.28.0 |
 
 ## Modules
 
 | Name | Source | Version |
-|------|--------|---------|
+| ---- | ------ | ------- |
 | <a name="module_s3"></a> [s3](#module\_s3) | terraform-aws-modules/s3-bucket/aws | 5.10.0 |
 
 ## Resources
 
 | Name | Type |
-|------|------|
+| ---- | ---- |
 | [aws_cloudtrail.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudtrail) | resource |
 | [aws_cloudwatch_log_group.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_log_group) | resource |
 | [aws_cloudwatch_log_metric_filter.cis_3_1](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_log_metric_filter) | resource |
@@ -61,7 +61,7 @@
 ## Inputs
 
 | Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:--------:|
+| ---- | ----------- | ---- | ------- | :------: |
 | <a name="input_account_id"></a> [account\_id](#input\_account\_id) | (Required) AWS account ID for member account. | `string` | n/a | yes |
 | <a name="input_aws_cloudtrail"></a> [aws\_cloudtrail](#input\_aws\_cloudtrail) | (Optional) The resource of aws\_cloudtrail. | <pre>object(<br/>    {<br/>      # Name of the trail.<br/>      name = string<br/>      # Enables logging for the trail. Defaults to true. Setting this to false will pause logging.<br/>      enable_logging = bool<br/>      # Whether the trail is publishing events from global services such as IAM to the log files. Defaults to true.<br/>      include_global_service_events = bool<br/>      # Whether the trail is created in the current region or in all regions. Defaults to false.<br/>      is_multi_region_trail = bool<br/>      # Whether the trail is an AWS Organizations trail. Organization trails log events for the master account and all member accounts. Can only be created in the organization master account. Defaults to false.<br/>      is_organization_trail = bool<br/>      # Enables logging for the trail. Defaults to true. Setting this to false will pause logging.<br/>      enable_log_file_validation = bool<br/>      # Configuration block of an event selector for enabling data event logging. See details below. Please note the CloudTrail limits when configuring these.<br/>      event_selector = list(any)<br/>      # Configuration block for identifying unusual operational activity. See details below.<br/>      insight_selector = list(any)<br/>    }<br/>  )</pre> | <pre>{<br/>  "enable_log_file_validation": true,<br/>  "enable_logging": true,<br/>  "event_selector": [<br/>    {<br/>      "data_resource": [<br/>        {<br/>          "type": "AWS::S3::Object",<br/>          "values": [<br/>            "arn:aws:s3:::"<br/>          ]<br/>        }<br/>      ],<br/>      "include_management_events": true,<br/>      "read_write_type": "All"<br/>    }<br/>  ],<br/>  "include_global_service_events": true,<br/>  "insight_selector": [<br/>    {<br/>      "insight_type": "ApiCallRateInsight"<br/>    }<br/>  ],<br/>  "is_multi_region_trail": true,<br/>  "is_organization_trail": false,<br/>  "name": "cloudtrail"<br/>}</pre> | no |
 | <a name="input_aws_cloudwatch_log_group"></a> [aws\_cloudwatch\_log\_group](#input\_aws\_cloudwatch\_log\_group) | (Required) The resource of aws\_cloudwatch\_log\_group. | <pre>object(<br/>    {<br/>      # The name of the log group. If omitted, Terraform will assign a random, unique name.<br/>      name = string<br/>      # Specifies the number of days you want to retain log events in the specified log group. Possible values are: 1, 3, 5, 7, 14, 30, 60, 90, 120, 150, 180, 365, 400, 545, 731, 1827, 3653, and 0. If you select 0, the events in the log group are always retained and never expire.<br/>      retention_in_days = number<br/>    }<br/>  )</pre> | n/a | yes |
@@ -82,7 +82,7 @@
 ## Outputs
 
 | Name | Description |
-|------|-------------|
+| ---- | ----------- |
 | <a name="output_log_group_name"></a> [log\_group\_name](#output\_log\_group\_name) | The Name of the Log Group |
 | <a name="output_sns_topic_arn"></a> [sns\_topic\_arn](#output\_sns\_topic\_arn) | The ARN of the SNS topic, as a more obvious property (clone of id) |
 <!-- END_TF_DOCS -->

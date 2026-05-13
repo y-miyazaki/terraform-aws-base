@@ -64,9 +64,9 @@ locals {
 ## Requirements
 
 | Name | Version |
-|------|---------|
+| ---- | ------- |
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | ~>1.4 |
-| <a name="requirement_aws"></a> [aws](#requirement\_aws) | ~>6.0 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | ~> 6.0 |
 
 ## Providers
 
@@ -83,7 +83,7 @@ No resources.
 ## Inputs
 
 | Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:--------:|
+| ---- | ----------- | ---- | ------- | :------: |
 | <a name="input_create_auto"></a> [create\_auto](#input\_create\_auto) | Whether to create auto-discovered resources (true) or use manual dimensions (false) | `bool` | `false` | no |
 | <a name="input_exclude_list"></a> [exclude\_list](#input\_exclude\_list) | Exclude filter list | `list(string)` | `[]` | no |
 | <a name="input_include_list"></a> [include\_list](#input\_include\_list) | Include filter list (empty = include all) | `list(string)` | `[]` | no |
@@ -94,7 +94,7 @@ No resources.
 ## Outputs
 
 | Name | Description |
-|------|-------------|
+| ---- | ----------- |
 | <a name="output_filtered_list"></a> [filtered\_list](#output\_filtered\_list) | Filtered list after applying include/exclude patterns with null safety |
 | <a name="output_safe_manual_dimensions"></a> [safe\_manual\_dimensions](#output\_safe\_manual\_dimensions) | Manual dimensions with null safety applied |
 | <a name="output_should_use_auto"></a> [should\_use\_auto](#output\_should\_use\_auto) | Whether to use auto-discovered dimensions (true) or manual (false) |

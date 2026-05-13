@@ -2,28 +2,28 @@
 ## Requirements
 
 | Name | Version |
-|------|---------|
+| ---- | ------- |
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | ~>1.4 |
-| <a name="requirement_aws"></a> [aws](#requirement\_aws) | ~>6.0 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | ~> 6.0 |
 | <a name="requirement_external"></a> [external](#requirement\_external) | ~>2.3.2 |
 
 ## Providers
 
 | Name | Version |
-|------|---------|
+| ---- | ------- |
 | <a name="provider_aws"></a> [aws](#provider\_aws) | 6.28.0 |
 | <a name="provider_external"></a> [external](#provider\_external) | 2.3.5 |
 
 ## Modules
 
 | Name | Source | Version |
-|------|--------|---------|
+| ---- | ------ | ------- |
 | <a name="module_scheduler_helper"></a> [scheduler\_helper](#module\_scheduler\_helper) | ../../_internal/eventbridge_scheduler_helper | n/a |
 
 ## Resources
 
 | Name | Type |
-|------|------|
+| ---- | ---- |
 | [aws_scheduler_schedule.start](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/scheduler_schedule) | resource |
 | [aws_scheduler_schedule.start_autoscaling](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/scheduler_schedule) | resource |
 | [aws_scheduler_schedule.stop](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/scheduler_schedule) | resource |
@@ -33,7 +33,7 @@
 ## Inputs
 
 | Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:--------:|
+| ---- | ----------- | ---- | ------- | :------: |
 | <a name="input_auto_schedules_exclude_list"></a> [auto\_schedules\_exclude\_list](#input\_auto\_schedules\_exclude\_list) | (Optional) List of patterns to exclude from auto-discovery (partial match on cluster or service name). | `list(string)` | `[]` | no |
 | <a name="input_auto_schedules_include_list"></a> [auto\_schedules\_include\_list](#input\_auto\_schedules\_include\_list) | (Optional) List of patterns to include in auto-discovery (partial match). If empty, all are included. | `list(string)` | `[]` | no |
 | <a name="input_autoscaling_max_capacity"></a> [autoscaling\_max\_capacity](#input\_autoscaling\_max\_capacity) | (Optional) Default maximum capacity for Application Auto Scaling when starting ECS services. Set to 0 to skip autoscaling adjustment. | `number` | `0` | no |
@@ -53,7 +53,7 @@
 ## Outputs
 
 | Name | Description |
-|------|-------------|
+| ---- | ----------- |
 | <a name="output_debug_scheduler_helper_manual_schedules_with_defaults"></a> [debug\_scheduler\_helper\_manual\_schedules\_with\_defaults](#output\_debug\_scheduler\_helper\_manual\_schedules\_with\_defaults) | Debug: scheduler\_helper's manual\_schedules\_with\_defaults |
 | <a name="output_debug_scheduler_helper_schedule_expression_start"></a> [debug\_scheduler\_helper\_schedule\_expression\_start](#output\_debug\_scheduler\_helper\_schedule\_expression\_start) | Debug: scheduler\_helper's var.schedule\_expression\_start |
 | <a name="output_debug_scheduler_helper_schedule_expression_stop"></a> [debug\_scheduler\_helper\_schedule\_expression\_stop](#output\_debug\_scheduler\_helper\_schedule\_expression\_stop) | Debug: scheduler\_helper's var.schedule\_expression\_stop |

@@ -2,14 +2,14 @@
 ## Requirements
 
 | Name | Version |
-|------|---------|
+| ---- | ------- |
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | ~>1.4 |
-| <a name="requirement_aws"></a> [aws](#requirement\_aws) | ~>6.0 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | ~> 6.0 |
 
 ## Providers
 
 | Name | Version |
-|------|---------|
+| ---- | ------- |
 | <a name="provider_aws"></a> [aws](#provider\_aws) | 6.8.0 |
 
 ## Modules
@@ -19,7 +19,7 @@ No modules.
 ## Resources
 
 | Name | Type |
-|------|------|
+| ---- | ---- |
 | [aws_chatbot_slack_channel_configuration.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/chatbot_slack_channel_configuration) | resource |
 | [aws_iam_policy.securityhub](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_policy) | resource |
 | [aws_iam_role.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role) | resource |
@@ -30,7 +30,7 @@ No modules.
 ## Inputs
 
 | Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:--------:|
+| ---- | ----------- | ---- | ------- | :------: |
 | <a name="input_logging_level"></a> [logging\_level](#input\_logging\_level) | (Optional) Specifies the logging level for this configuration: ERROR, INFO or NONE. | `string` | `"ERROR"` | no |
 | <a name="input_name"></a> [name](#input\_name) | (Required) Base name prefix for all Chatbot related resources. | `string` | n/a | yes |
 | <a name="input_slack_channel_id"></a> [slack\_channel\_id](#input\_slack\_channel\_id) | (Required) Set the Slack channel ID. | `string` | n/a | yes |
@@ -41,7 +41,7 @@ No modules.
 ## Outputs
 
 | Name | Description |
-|------|-------------|
+| ---- | ----------- |
 | <a name="output_chatbot_iam_role_arn"></a> [chatbot\_iam\_role\_arn](#output\_chatbot\_iam\_role\_arn) | ARN of the IAM role assumed by AWS Chatbot. |
 | <a name="output_chatbot_securityhub_policy_arn"></a> [chatbot\_securityhub\_policy\_arn](#output\_chatbot\_securityhub\_policy\_arn) | ARN of the custom SecurityHub IAM policy attached to the Chatbot role. |
 | <a name="output_slack_channel_configuration_name"></a> [slack\_channel\_configuration\_name](#output\_slack\_channel\_configuration\_name) | Name of the Chatbot Slack channel configuration. |

@@ -2,14 +2,14 @@
 ## Requirements
 
 | Name | Version |
-|------|---------|
+| ---- | ------- |
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | ~>1.4 |
-| <a name="requirement_aws"></a> [aws](#requirement\_aws) | ~>6.0 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | ~> 6.0 |
 
 ## Providers
 
 | Name | Version |
-|------|---------|
+| ---- | ------- |
 | <a name="provider_aws"></a> [aws](#provider\_aws) | 6.8.0 |
 
 ## Modules
@@ -19,7 +19,7 @@ No modules.
 ## Resources
 
 | Name | Type |
-|------|------|
+| ---- | ---- |
 | [aws_iam_policy.events](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_policy) | resource |
 | [aws_iam_role.ecs](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role) | resource |
 | [aws_iam_role.ecs_tasks](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role) | resource |
@@ -33,7 +33,7 @@ No modules.
 ## Inputs
 
 | Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:--------:|
+| ---- | ----------- | ---- | ------- | :------: |
 | <a name="input_aws_iam_policy"></a> [aws\_iam\_policy](#input\_aws\_iam\_policy) | (Optional) Provides an IAM policy. | <pre>object(<br/>    {<br/>      events = object({<br/>        # Description of the IAM policy.<br/>        description = optional(string)<br/>        # The name of the policy. If omitted, Terraform will assign a random, unique name.<br/>        name = string<br/>        # Path in which to create the policy. See IAM Identifiers for more information.<br/>        path = optional(string)<br/>        }<br/>      )<br/>    }<br/>  )</pre> | <pre>{<br/>  "events": {<br/>    "description": "IAM policy for ECS.",<br/>    "name": "ecs-policy",<br/>    "path": "/"<br/>  }<br/>}</pre> | no |
 | <a name="input_aws_iam_role"></a> [aws\_iam\_role](#input\_aws\_iam\_role) | (Optional) Provides an IAM role. | <pre>object(<br/>    {<br/>      ecs = object({<br/>        # Description of the role.<br/>        description = optional(string)<br/>        # Friendly name of the role. If omitted, Terraform will assign a random, unique name. See IAM Identifiers for more information.<br/>        name = string<br/>        # Path to the role. See IAM Identifiers for more information.<br/>        path = optional(string)<br/>        }<br/>      )<br/>      ecs_tasks = object({<br/>        # Description of the role.<br/>        description = optional(string)<br/>        # Friendly name of the role. If omitted, Terraform will assign a random, unique name. See IAM Identifiers for more information.<br/>        name = string<br/>        # Path to the role. See IAM Identifiers for more information.<br/>        path = optional(string)<br/>        }<br/>      )<br/>      events = object({<br/>        # Description of the role.<br/>        description = optional(string)<br/>        # Friendly name of the role. If omitted, Terraform will assign a random, unique name. See IAM Identifiers for more information.<br/>        name = string<br/>        # Path to the role. See IAM Identifiers for more information.<br/>        path = optional(string)<br/>        }<br/>      )<br/>    }<br/>  )</pre> | <pre>{<br/>  "ecs": {<br/>    "description": "IAM role for ECS.",<br/>    "name": "ecs-role",<br/>    "path": "/"<br/>  },<br/>  "ecs_tasks": {<br/>    "description": "IAM role for ECS Task.",<br/>    "name": "ecs-tasks-role",<br/>    "path": "/"<br/>  },<br/>  "events": {<br/>    "description": "IAM role for Events.",<br/>    "name": "events-role",<br/>    "path": "/"<br/>  }<br/>}</pre> | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | (Optional) Key-value mapping of tags for the IAM role | `map(any)` | `null` | no |
@@ -41,7 +41,7 @@ No modules.
 ## Outputs
 
 | Name | Description |
-|------|-------------|
+| ---- | ----------- |
 | <a name="output_ecs_arn"></a> [ecs\_arn](#output\_ecs\_arn) | Amazon Resource Name (ARN) specifying the role. |
 | <a name="output_ecs_name"></a> [ecs\_name](#output\_ecs\_name) | Name of the role. |
 | <a name="output_ecs_tasks_arn"></a> [ecs\_tasks\_arn](#output\_ecs\_tasks\_arn) | Amazon Resource Name (ARN) specifying the role. |

@@ -244,20 +244,20 @@ No direct resources are created by this module. All resources are managed by sub
 ## Requirements
 
 | Name | Version |
-|------|---------|
+| ---- | ------- |
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | ~>1.4 |
-| <a name="requirement_aws"></a> [aws](#requirement\_aws) | ~>6.0 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | ~> 6.0 |
 
 ## Providers
 
 | Name | Version |
-|------|---------|
+| ---- | ------- |
 | <a name="provider_aws"></a> [aws](#provider\_aws) | 6.14.1 |
 
 ## Modules
 
 | Name | Source | Version |
-|------|--------|---------|
+| ---- | ------ | ------- |
 | <a name="module_aws_cloudwatch_subscription"></a> [aws\_cloudwatch\_subscription](#module\_aws\_cloudwatch\_subscription) | ../subscription | n/a |
 | <a name="module_aws_kinesis_firehose_s3"></a> [aws\_kinesis\_firehose\_s3](#module\_aws\_kinesis\_firehose\_s3) | ../../kinesis/firehose/s3 | n/a |
 | <a name="module_filter"></a> [filter](#module\_filter) | ../../_internal/auto_discovery_filter | n/a |
@@ -265,13 +265,13 @@ No direct resources are created by this module. All resources are managed by sub
 ## Resources
 
 | Name | Type |
-|------|------|
+| ---- | ---- |
 | [aws_cloudwatch_log_groups.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/cloudwatch_log_groups) | data source |
 
 ## Inputs
 
 | Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:--------:|
+| ---- | ----------- | ---- | ------- | :------: |
 | <a name="input_account_id"></a> [account\_id](#input\_account\_id) | (Required) AWS account ID. | `string` | n/a | yes |
 | <a name="input_auto_log_group_names_exclude_list"></a> [auto\_log\_group\_names\_exclude\_list](#input\_auto\_log\_group\_names\_exclude\_list) | (Optional) If create\_auto\_log\_group\_names is set to true, a list of log group name will be automatically registered, but at that time, specify the log group name you want to exclude using partial match. | `list(string)` | `[]` | no |
 | <a name="input_auto_log_group_names_include_list"></a> [auto\_log\_group\_names\_include\_list](#input\_auto\_log\_group\_names\_include\_list) | (Optional) If create\_auto\_log\_group\_names is set to true and this list is not empty, only log group names matching any of these patterns (partial match) will be included. | `list(string)` | `[]` | no |
@@ -294,7 +294,7 @@ No direct resources are created by this module. All resources are managed by sub
 ## Outputs
 
 | Name | Description |
-|------|-------------|
+| ---- | ----------- |
 | <a name="output_iam_role_kinesis_firehose_arn"></a> [iam\_role\_kinesis\_firehose\_arn](#output\_iam\_role\_kinesis\_firehose\_arn) | ARN of the IAM role for Kinesis Firehose. |
 | <a name="output_kinesis_firehose_delivery_stream_arns"></a> [kinesis\_firehose\_delivery\_stream\_arns](#output\_kinesis\_firehose\_delivery\_stream\_arns) | ARNs of the Kinesis Firehose delivery streams. |
 <!-- END_TF_DOCS -->

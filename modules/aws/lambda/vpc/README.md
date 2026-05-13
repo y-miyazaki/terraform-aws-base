@@ -2,14 +2,14 @@
 ## Requirements
 
 | Name | Version |
-|------|---------|
+| ---- | ------- |
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | ~>1.4 |
-| <a name="requirement_aws"></a> [aws](#requirement\_aws) | ~>6.0 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | ~> 6.0 |
 
 ## Providers
 
 | Name | Version |
-|------|---------|
+| ---- | ------- |
 | <a name="provider_aws"></a> [aws](#provider\_aws) | 6.8.0 |
 
 ## Modules
@@ -19,7 +19,7 @@ No modules.
 ## Resources
 
 | Name | Type |
-|------|------|
+| ---- | ---- |
 | [aws_iam_policy.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_policy) | resource |
 | [aws_iam_role.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role) | resource |
 | [aws_iam_role_policy_attachment.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy_attachment) | resource |
@@ -30,7 +30,7 @@ No modules.
 ## Inputs
 
 | Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:--------:|
+| ---- | ----------- | ---- | ------- | :------: |
 | <a name="input_aws_iam_policy"></a> [aws\_iam\_policy](#input\_aws\_iam\_policy) | (Required) The resource of aws\_iam\_policy. | <pre>object(<br/>    {<br/>      # Description of the IAM policy.<br/>      description = optional(string)<br/>      # The name of the policy. If omitted, Terraform will assign a random, unique name.<br/>      name = string<br/>      # Path in which to create the policy. See IAM Identifiers for more information.<br/>      path = optional(string)<br/>      # The policy document. This is a JSON formatted string. For more information about building AWS IAM policy documents with Terraform, see the AWS IAM Policy Document Guide.<br/>      policy = string<br/>    }<br/>  )</pre> | n/a | yes |
 | <a name="input_aws_iam_role"></a> [aws\_iam\_role](#input\_aws\_iam\_role) | (Required) The resource of aws\_iam\_role. | <pre>object(<br/>    {<br/>      # Policy that grants an entity permission to assume the role.<br/>      assume_role_policy = string<br/>      # Description of the role.<br/>      description = optional(string)<br/>      # Friendly name of the role. If omitted, Terraform will assign a random, unique name. See IAM Identifiers for more information.<br/>      name = string<br/>      # Path to the role. See IAM Identifiers for more information.<br/>      path = optional(string)<br/>    }<br/>  )</pre> | n/a | yes |
 | <a name="input_aws_route_table_association"></a> [aws\_route\_table\_association](#input\_aws\_route\_table\_association) | (Required) Provides a resource to create an association between a route table and a subnet or a route table and an internet gateway or virtual private gateway. | <pre>object({<br/>    # The ID of the routing table to associate with.<br/>    route_table_id = string<br/>    }<br/>  )</pre> | n/a | yes |
@@ -41,7 +41,7 @@ No modules.
 ## Outputs
 
 | Name | Description |
-|------|-------------|
+| ---- | ----------- |
 | <a name="output_role_arn"></a> [role\_arn](#output\_role\_arn) | The Amazon Resource Name (ARN) specifying the role. |
 | <a name="output_role_id"></a> [role\_id](#output\_role\_id) | The name of the role. |
 | <a name="output_role_name"></a> [role\_name](#output\_role\_name) | The name of the role. |

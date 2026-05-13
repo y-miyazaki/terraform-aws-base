@@ -2,26 +2,26 @@
 ## Requirements
 
 | Name | Version |
-|------|---------|
+| ---- | ------- |
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | ~>1.4 |
-| <a name="requirement_aws"></a> [aws](#requirement\_aws) | ~>6.0 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | ~> 6.0 |
 
 ## Providers
 
 | Name | Version |
-|------|---------|
+| ---- | ------- |
 | <a name="provider_aws"></a> [aws](#provider\_aws) | 6.42.0 |
 
 ## Modules
 
 | Name | Source | Version |
-|------|--------|---------|
-| <a name="module_aws_lambda_create_lambda_report_csp"></a> [aws\_lambda\_create\_lambda\_report\_csp](#module\_aws\_lambda\_create\_lambda\_report\_csp) | terraform-aws-modules/lambda/aws | 8.7.0 |
+| ---- | ------ | ------- |
+| <a name="module_aws_lambda_create_lambda_report_csp"></a> [aws\_lambda\_create\_lambda\_report\_csp](#module\_aws\_lambda\_create\_lambda\_report\_csp) | terraform-aws-modules/lambda/aws | 8.8.0 |
 
 ## Resources
 
 | Name | Type |
-|------|------|
+| ---- | ---- |
 | [aws_api_gateway_deployment.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/api_gateway_deployment) | resource |
 | [aws_api_gateway_integration.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/api_gateway_integration) | resource |
 | [aws_api_gateway_method.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/api_gateway_method) | resource |
@@ -31,7 +31,7 @@
 ## Inputs
 
 | Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:--------:|
+| ---- | ----------- | ---- | ------- | :------: |
 | <a name="input_access_log_settings"></a> [access\_log\_settings](#input\_access\_log\_settings) | (Optional) | `map(any)` | `{}` | no |
 | <a name="input_aws_api_gateway_rest_api_execution_arn"></a> [aws\_api\_gateway\_rest\_api\_execution\_arn](#input\_aws\_api\_gateway\_rest\_api\_execution\_arn) | (Required) Execution ARN part to be used in lambda\_permission's source\_arn when allowing API Gateway to invoke a Lambda function. | `string` | n/a | yes |
 | <a name="input_aws_api_gateway_rest_api_id"></a> [aws\_api\_gateway\_rest\_api\_id](#input\_aws\_api\_gateway\_rest\_api\_id) | (Required) ID of the REST API. | `string` | n/a | yes |
@@ -47,6 +47,6 @@
 ## Outputs
 
 | Name | Description |
-|------|-------------|
+| ---- | ----------- |
 | <a name="output_endpoint"></a> [endpoint](#output\_endpoint) | Outputs the Endpoint of the API. |
 <!-- END_TF_DOCS -->

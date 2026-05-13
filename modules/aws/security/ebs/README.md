@@ -2,14 +2,14 @@
 ## Requirements
 
 | Name | Version |
-|------|---------|
+| ---- | ------- |
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | ~>1.4 |
-| <a name="requirement_aws"></a> [aws](#requirement\_aws) | ~>6.0 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | ~> 6.0 |
 
 ## Providers
 
 | Name | Version |
-|------|---------|
+| ---- | ------- |
 | <a name="provider_aws"></a> [aws](#provider\_aws) | 6.8.0 |
 
 ## Modules
@@ -19,14 +19,14 @@ No modules.
 ## Resources
 
 | Name | Type |
-|------|------|
+| ---- | ---- |
 | [aws_ebs_encryption_by_default.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ebs_encryption_by_default) | resource |
 | [aws_ebs_snapshot_block_public_access.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ebs_snapshot_block_public_access) | resource |
 
 ## Inputs
 
 | Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:--------:|
+| ---- | ----------- | ---- | ------- | :------: |
 | <a name="input_is_enabled"></a> [is\_enabled](#input\_is\_enabled) | (Optional) A boolean flag to enable/disable settings of EBS. Defaults true. | `bool` | `true` | no |
 | <a name="input_is_enabled_ebs_encryption_by_default"></a> [is\_enabled\_ebs\_encryption\_by\_default](#input\_is\_enabled\_ebs\_encryption\_by\_default) | (Optional) A boolean flag to enable/disable default EBS encryption at the account level. Defaults false. | `bool` | `true` | no |
 | <a name="input_is_enabled_ebs_public_snapshot_block_access"></a> [is\_enabled\_ebs\_public\_snapshot\_block\_access](#input\_is\_enabled\_ebs\_public\_snapshot\_block\_access) | (Optional) A boolean flag to enable/disable blocking public access to EBS snapshots. Defaults false. | `bool` | `true` | no |

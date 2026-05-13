@@ -2,16 +2,16 @@
 ## Requirements
 
 | Name | Version |
-|------|---------|
+| ---- | ------- |
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | ~>1.4 |
-| <a name="requirement_aws"></a> [aws](#requirement\_aws) | ~>6.0 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | ~> 6.0 |
 | <a name="requirement_null"></a> [null](#requirement\_null) | ~>3.2.1 |
 | <a name="requirement_template"></a> [template](#requirement\_template) | ~>2.2.0 |
 
 ## Providers
 
 | Name | Version |
-|------|---------|
+| ---- | ------- |
 | <a name="provider_aws"></a> [aws](#provider\_aws) | 6.8.0 |
 | <a name="provider_null"></a> [null](#provider\_null) | 3.2.4 |
 | <a name="provider_template"></a> [template](#provider\_template) | 2.2.0 |
@@ -23,7 +23,7 @@ No modules.
 ## Resources
 
 | Name | Type |
-|------|------|
+| ---- | ---- |
 | [aws_athena_database.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/athena_database) | resource |
 | [aws_athena_named_query.cloudfront_query_1week_error](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/athena_named_query) | resource |
 | [aws_athena_named_query.ses_query_bounce_all_1week](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/athena_named_query) | resource |
@@ -46,7 +46,7 @@ No modules.
 ## Inputs
 
 | Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:--------:|
+| ---- | ----------- | ---- | ------- | :------: |
 | <a name="input_cloudfront_log_bucket"></a> [cloudfront\_log\_bucket](#input\_cloudfront\_log\_bucket) | (Required) Specify the bucket where the CloudFront logs are located. s3://{bucket name}/{bucket prefix} | `string` | n/a | yes |
 | <a name="input_cloudfront_table_name"></a> [cloudfront\_table\_name](#input\_cloudfront\_table\_name) | (Optional) Specify the name of the CloudFront table to be created in Athena. | `string` | `"cloudfront_logs"` | no |
 | <a name="input_database_acl_configuration"></a> [database\_acl\_configuration](#input\_database\_acl\_configuration) | (Optional) That an Amazon S3 canned ACL should be set to control ownership of stored query results. See ACL Configuration below. | `any` | `{}` | no |

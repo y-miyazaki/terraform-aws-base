@@ -2,7 +2,7 @@
 ## Requirements
 
 | Name | Version |
-|------|---------|
+| ---- | ------- |
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | ~>1.4 |
 
 ## Providers
@@ -20,7 +20,7 @@ No resources.
 ## Inputs
 
 | Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:--------:|
+| ---- | ----------- | ---- | ------- | :------: |
 | <a name="input_base_threshold"></a> [base\_threshold](#input\_base\_threshold) | Base threshold object containing default values for all metrics | `any` | n/a | yes |
 | <a name="input_create_auto"></a> [create\_auto](#input\_create\_auto) | Whether to create auto-discovered resources (true) or use manual dimensions (false) | `bool` | `false` | no |
 | <a name="input_dimension_key"></a> [dimension\_key](#input\_dimension\_key) | The primary dimension key name (e.g., 'QueueName' for SQS, 'DBClusterIdentifier' for RDS) | `string` | n/a | yes |
@@ -34,7 +34,7 @@ No resources.
 ## Outputs
 
 | Name | Description |
-|------|-------------|
+| ---- | ----------- |
 | <a name="output_effective_thresholds"></a> [effective\_thresholds](#output\_effective\_thresholds) | Map of resource name to effective threshold (base merged with overrides). Key matches list keys. |
 | <a name="output_filtered_list"></a> [filtered\_list](#output\_filtered\_list) | Filtered list after applying include/exclude patterns with null safety (for backward compatibility) |
 | <a name="output_list"></a> [list](#output\_list) | Map of resources for for\_each usage. Key is dimension value, value contains 'name' and 'dimensions'. |
