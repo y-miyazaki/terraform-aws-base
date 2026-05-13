@@ -1,0 +1,72 @@
+name: reusable-ci-aqua-update-checksum
+
+on:
+  workflow_call:
+    inputs:
+      aqua_version:
+        default: "v2.55.2"
+        description: "aqua version to use"
+        required: false
+        type: string
+    secrets:
+      BOT_APP_ID:
+        description: "GitHub App ID for private/internal repositories"
+        required: false
+      BOT_APP_PRIVATE_KEY:
+        description: "GitHub App private key for private/internal repositories"
+        required: false
+
+permissions: {}
+
+jobs:
+  update-checksum:
+    if: ${{ github.actor != 'dependabot[bot]' }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+
+    permissions:
+      contents: read
+
+    concurrency:
+      group: aqua-update-checksum-${{ github.repository }}-${{ github.ref }}
+      cancel-in-progress: true
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+          ref: ${{ github.head_ref || github.ref_name }}
+
+      - name: Install aqua
+        uses: aquaproj/aqua-installer@5e54e5cee8a95ee2ce7c04cb993da6dfad13e59c # v3.1.2
+        with:
+          aqua_version: ${{ inputs.aqua_version }}
+
+      - name: Fix aqua-checksums.json
+        run: aqua upc -prune
+
+      - name: Commit (autofix.ci for public repos)
+        if: github.event.repository.visibility == 'public'
+        uses: autofix-ci/action@c5b2d67aa2274e7b5a18224e8171550871fc7e4a # v1.3.4
+
+      - name: Generate GitHub App Token (private/internal repos)
+        if: github.event.repository.visibility != 'public'
+        id: app-token
+        uses: actions/create-github-app-token@d72941d797fd3113feb6b93fd0dec494b13a2547 # v1.12.0
+        with:
+          app-id: ${{ secrets.BOT_APP_ID }}
+          private-key: ${{ secrets.BOT_APP_PRIVATE_KEY }}
+          permission-contents: write
+
+      - name: Commit changes (private/internal repos)
+        if: github.event.repository.visibility != 'public'
+        uses: stefanzweifel/git-auto-commit-action@b863ae1933cb653a53c021fe36dbb774e1fb9403 # v5.2.0
+        with:
+          commit_message: "chore(ci): update aqua checksums"
+          commit_user_name: "checksum-bot[app]"
+          commit_user_email: "41898282+github-actions[bot]@users.noreply.github.com"
+          branch: ${{ github.head_ref || github.ref_name }}
+          file_pattern: aqua-checksums.json
+        env:
+          GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
