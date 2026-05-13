@@ -1,5 +1,5 @@
 # CI workflow for Markdown files
-name: ci-push-markdown
+name: on-ci-push-markdown
 
 on:
   push:
@@ -13,8 +13,8 @@ on:
     paths:
       - "**/*.md"
       - ".markdownlint.yaml"
-      - ".github/workflows/ci-push-markdown.yaml"
-      - ".github/workflows/reusable-ci-markdown.yaml"
+      - ".github/workflows/on-ci-push-markdown.yaml"
+      - ".github/workflows/ci-markdown.yaml"
   pull_request:
     branches:
       - "main"
@@ -26,8 +26,8 @@ on:
     paths:
       - "**/*.md"
       - ".markdownlint.yaml"
-      - ".github/workflows/ci-push-markdown.yaml"
-      - ".github/workflows/reusable-ci-markdown.yaml"
+      - ".github/workflows/on-ci-push-markdown.yaml"
+      - ".github/workflows/ci-markdown.yaml"
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -35,7 +35,7 @@ concurrency:
 
 jobs:
   markdown-ci:
-    uses: ./.github/workflows/reusable-ci-markdown.yaml
+    uses: y-miyazaki/config/.github/workflows/ci-markdown.yaml@v1.0.0
     with:
       component: "base"
       environment: "markdown"

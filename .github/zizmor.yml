@@ -12,10 +12,10 @@ rules:
   # The context comes from trusted workflow step output, not external input
   template-injection:
     ignore:
-      - reusable-cd-aws-go-registry.yaml
+      - cd-aws-go-registry.yaml
 
   # Ignore cache-poisoning in Go release workflow
   # Go module/build cache doesn't affect release artifacts produced by goreleaser
   cache-poisoning:
     ignore:
-      - reusable-cd-go-releaser.yaml
+      - cd-go-releaser.yaml

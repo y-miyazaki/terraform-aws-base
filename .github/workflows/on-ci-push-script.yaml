@@ -1,5 +1,5 @@
 # CI workflow for shell scripts
-name: ci-push-script
+name: on-ci-push-script
 
 on:
   push:
@@ -12,8 +12,8 @@ on:
       - "feature/**"
     paths:
       - "**/*.sh"
-      - ".github/workflows/ci-push-script.yaml"
-      - ".github/workflows/reusable-ci-script.yaml"
+      - ".github/workflows/on-ci-push-script.yaml"
+      - ".github/workflows/ci-script.yaml"
   pull_request:
     branches:
       - "main"
@@ -24,8 +24,8 @@ on:
       - "feature/**"
     paths:
       - "**/*.sh"
-      - ".github/workflows/ci-push-script.yaml"
-      - ".github/workflows/reusable-ci-script.yaml"
+      - ".github/workflows/on-ci-push-script.yaml"
+      - ".github/workflows/ci-script.yaml"
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -33,7 +33,7 @@ concurrency:
 
 jobs:
   script-ci:
-    uses: ./.github/workflows/reusable-ci-script.yaml
+    uses: y-miyazaki/config/.github/workflows/ci-script.yaml@v1.0.0
     with:
       script_path: "**/*.sh"
     permissions:

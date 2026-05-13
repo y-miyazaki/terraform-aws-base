@@ -4,16 +4,16 @@
 # 3. Create the following secrets (repository or environment):
 #    - BOT_APP_ID: The GitHub App's App ID
 #    - BOT_APP_PRIVATE_KEY: The GitHub App's private key (PEM format)
-name: ci-push-aqua-update-checksum
+name: on-ci-push-aqua-update-checksum
 
 on:
-  pull_request:
+  push:
     paths:
       - "aqua.yaml"
       - "aqua/*.yaml"
       - "aqua-checksums.json"
-      - ".github/workflows/ci-push-aqua-update-checksum.yaml"
-      - ".github/workflows/reusable-ci-aqua-update-checksum.yaml"
+      - ".github/workflows/on-ci-push-aqua-update-checksum.yaml"
+      - ".github/workflows/ci-aqua-update-checksum.yaml"
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -21,7 +21,7 @@ concurrency:
 
 jobs:
   aqua-update-checksum:
-    uses: ./.github/workflows/reusable-ci-aqua-update-checksum.yaml
+    uses: y-miyazaki/config/.github/workflows/ci-aqua-update-checksum.yaml@v1.0.0
     permissions:
       contents: read
     with:
