@@ -19,7 +19,7 @@ on:
         required: false
         type: string
       ecschedule_version:
-        default: "v0.17.2"
+        default: "v0.18.2"
         description: "ecschedule version (e.g. v0.17.2)"
         required: false
         type: string
@@ -33,7 +33,7 @@ on:
         required: false
         type: string
       ecspresso_version:
-        default: "v2.7.1"
+        default: "v2.8.3"
         description: "ecspresso version (e.g. v2.7.1)"
         required: false
         type: string
@@ -338,7 +338,7 @@ jobs:
 
       - name: Install ecschedule
         timeout-minutes: 5
-        uses: Songmu/ecschedule@f7cf72e12885168815ae575166aee38b055066d0 # v0.17.2
+        uses: Songmu/ecschedule@e52320a6cfe60d7c6320b6843925fbdbeb9c25de # v0.18.2
         with:
           version: ${{ inputs.ecschedule_version }}
 

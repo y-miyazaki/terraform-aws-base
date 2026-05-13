@@ -36,7 +36,7 @@ on:
         required: false
         type: string
       goreleaser_version:
-        default: "v2.6.1"
+        default: "v2.15.4"
         description: "GoReleaser version to use"
         required: false
         type: string

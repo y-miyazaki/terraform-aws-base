@@ -1,3 +1,9 @@
+# Usage: This workflow requires a GitHub App for auto-committing checksum updates.
+# 1. Create a GitHub App with "Contents: Read & Write" repository permission.
+# 2. Install the App on the target repository (or organization).
+# 3. Create the following secrets (repository or environment):
+#    - BOT_APP_ID: The GitHub App's App ID
+#    - BOT_APP_PRIVATE_KEY: The GitHub App's private key (PEM format)
 name: ci-push-aqua-update-checksum
 
 on:
@@ -21,5 +27,5 @@ jobs:
     with:
       environment: "default"
     secrets:
-      BOT_APP_ID: ${{ secrets.BOT_APP_ID }}
-      BOT_APP_PRIVATE_KEY: ${{ secrets.BOT_APP_PRIVATE_KEY }}
+      BOT_APP_ID: ${{ secrets.MAINTENANCE_BOT_APP_ID }}
+      BOT_APP_PRIVATE_KEY: ${{ secrets.MAINTENANCE_BOT_APP_PRIVATE_KEY }}

@@ -24,7 +24,7 @@ on:
         required: false
         type: string
       shellcheck_version:
-        default: "0.10.0"
+        default: "0.11.0"
         description: "ShellCheck version to use"
         required: false
         type: string

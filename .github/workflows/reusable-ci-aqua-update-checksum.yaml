@@ -1,3 +1,9 @@
+# Usage: This workflow requires a GitHub App for auto-committing checksum updates.
+# 1. Create a GitHub App with "Contents: Read & Write" repository permission.
+# 2. Install the App on the target repository (or organization).
+# 3. Create the following secrets (repository or environment):
+#    - BOT_APP_ID: The GitHub App's App ID
+#    - BOT_APP_PRIVATE_KEY: The GitHub App's private key (PEM format)
 name: reusable-ci-aqua-update-checksum
 
 on:
@@ -14,11 +20,11 @@ on:
         type: string
     secrets:
       BOT_APP_ID:
-        description: "GitHub App ID for private/internal repositories"
-        required: false
+        description: "GitHub App ID for auto commit"
+        required: true
       BOT_APP_PRIVATE_KEY:
-        description: "GitHub App private key for private/internal repositories"
-        required: false
+        description: "GitHub App private key for auto commit"
+        required: true
 
 permissions: {}
 
@@ -44,34 +50,49 @@ jobs:
           ref: ${{ github.head_ref || github.ref_name }}
 
       - name: Install aqua
-        uses: aquaproj/aqua-installer@5e54e5cee8a95ee2ce7c04cb993da6dfad13e59c # v3.1.2
+        uses: aquaproj/aqua-installer@11dd79b4e498d471a9385aa9fb7f62bb5f52a73c # v4.0.4
         with:
           aqua_version: ${{ inputs.aqua_version }}
 
       - name: Fix aqua-checksums.json
         run: aqua upc -prune
 
-      - name: Commit (autofix.ci for public repos)
-        if: github.event.repository.visibility == 'public'
-        uses: autofix-ci/action@c5b2d67aa2274e7b5a18224e8171550871fc7e4a # v1.3.4
-
-      - name: Generate GitHub App Token (private/internal repos)
-        if: github.event.repository.visibility != 'public'
+      - name: Generate GitHub App Token
         id: app-token
-        uses: actions/create-github-app-token@d72941d797fd3113feb6b93fd0dec494b13a2547 # v1.12.0
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
         with:
           app-id: ${{ secrets.BOT_APP_ID }}
           private-key: ${{ secrets.BOT_APP_PRIVATE_KEY }}
           permission-contents: write
 
-      - name: Commit changes (private/internal repos)
-        if: github.event.repository.visibility != 'public'
-        uses: stefanzweifel/git-auto-commit-action@b863ae1933cb653a53c021fe36dbb774e1fb9403 # v5.2.0
+      - name: Configure git auth
+        uses: ./.github/actions/git-auth
+        with:
+          operation: configure
+          token: ${{ steps.app-token.outputs.token }}
+
+      - name: Commit changes
+        uses: stefanzweifel/git-auto-commit-action@04702edda442b2e678b25b537cec683a1493fcb9 # v7.1.0
         with:
           commit_message: "chore(ci): update aqua checksums"
-          commit_user_name: "checksum-bot[app]"
+          commit_user_name: "repo-maintenance-bot[app]"
           commit_user_email: "41898282+github-actions[bot]@users.noreply.github.com"
           branch: ${{ github.head_ref || github.ref_name }}
           file_pattern: aqua-checksums.json
-        env:
-          GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
+
+      - name: Clear git auth
+        if: always()
+        uses: ./.github/actions/git-auth
+        with:
+          operation: clear
+          token: ${{ steps.app-token.outputs.token }}
+
+      - name: Summary
+        if: always()
+        uses: ./.github/actions/summary
+        with:
+          params: |
+            aqua_version: ${{ inputs.aqua_version }}
+            environment: ${{ inputs.environment }}
+          status: "${{ job.status }}"
+          title: "Aqua Update Checksum"
