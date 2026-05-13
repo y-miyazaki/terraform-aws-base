@@ -8,7 +8,7 @@
     "test": "node test-local.js"
   },
   "dependencies": {
-    "@aws-sdk/client-s3": "3.1035.0"
+    "@aws-sdk/client-s3": "3.1045.0"
   },
   "overrides": {
     "fast-xml-parser": "5.7.3"
