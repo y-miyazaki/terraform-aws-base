@@ -42,7 +42,7 @@ packages:
   - name: goreleaser/goreleaser@v2.15.4 # release automation
   - name: grpc/grpc-go/protoc-gen-go-grpc@cmd/protoc-gen-go-grpc/v1.6.1 # gRPC code generator
   - name: ko-build/ko@v0.18.1 # container builder
-  - name: mvdan/gofumpt@v0.9.2 # code formatter(vs gofmt)
+  - name: mvdan/gofumpt@v0.10.0 # code formatter(vs gofmt)
   - name: oapi-codegen/oapi-codegen@v2.7.0 # OpenAPI code generator
   - name: protocolbuffers/protobuf-go/protoc-gen-go@v1.36.11 # protobuf code generator
   - name: protocolbuffers/protobuf/protoc@v34.1 # protobuf compiler
