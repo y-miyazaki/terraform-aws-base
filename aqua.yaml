@@ -21,7 +21,7 @@ packages:
   - name: aws/aws-cli@2.34.45 # AWS CLI
   - name: aws/aws-sam-cli@v1.159.1 # SAM CLI tool
   - name: kayac/ecspresso@v2.8.3 # ECS deployment tool
-  - name: Songmu/ecschedule@v0.17.2 # ECS scheduled tasks deployment tool
+  - name: Songmu/ecschedule@v0.18.2 # ECS scheduled tasks deployment tool
   # GitHub related tools
   - name: cli/cli@v2.92.0 # GitHub CLI
   - name: github/copilot-cli@v1.0.46 # GitHub Copilot CLI
@@ -50,7 +50,7 @@ packages:
   - name: vektra/mockery@v3.7.0 # mock code generator for interfaces
   # Terraform related tools
   - name: getsops/sops@v3.13.0 # encryption tool
-  - name: hashicorp/terraform@v1.15.1 # infrastructure as code
+  - name: hashicorp/terraform@v1.15.2 # infrastructure as code
   # - name: jamesWoolfenden/pike@v0.4.5 # generate minimum IAM policy from Terraform
   - name: terraform-docs/terraform-docs@v0.24.0 # documentation generator
   - name: terraform-linters/tflint@v0.62.0 # linter
