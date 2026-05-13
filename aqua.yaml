@@ -50,7 +50,7 @@ packages:
   - name: vektra/mockery@v3.7.0 # mock code generator for interfaces
   # Terraform related tools
   - name: getsops/sops@v3.13.0 # encryption tool
-  - name: hashicorp/terraform@v1.15.2 # infrastructure as code
+  - name: hashicorp/terraform@v1.15.3 # infrastructure as code
   # - name: jamesWoolfenden/pike@v0.4.5 # generate minimum IAM policy from Terraform
   - name: terraform-docs/terraform-docs@v0.24.0 # documentation generator
   - name: terraform-linters/tflint@v0.62.0 # linter
