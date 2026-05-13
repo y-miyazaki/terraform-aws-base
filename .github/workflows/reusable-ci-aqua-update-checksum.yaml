@@ -8,6 +8,10 @@ on:
         description: "aqua version to use"
         required: false
         type: string
+      environment:
+        description: "Target environment"
+        required: true
+        type: string
     secrets:
       BOT_APP_ID:
         description: "GitHub App ID for private/internal repositories"
@@ -23,6 +27,7 @@ jobs:
     if: ${{ github.actor != 'dependabot[bot]' }}
     runs-on: ubuntu-24.04
     timeout-minutes: 10
+    environment: ${{ inputs.environment }}
 
     permissions:
       contents: read
