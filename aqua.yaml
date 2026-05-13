@@ -38,7 +38,7 @@ packages:
   - name: go-swagger/go-swagger@v0.33.2 # API documentation generator
   - name: golang.org/x/tools/gopls@v0.21.1 # Go language server
   - name: golang/vuln/govulncheck@v1.3.0 # vulnerability scanner
-  - name: golangci/golangci-lint@v2.12.1 # linter
+  - name: golangci/golangci-lint@v2.12.2 # linter
   - name: goreleaser/goreleaser@v2.15.4 # release automation
   - name: grpc/grpc-go/protoc-gen-go-grpc@cmd/protoc-gen-go-grpc/v1.6.1 # gRPC code generator
   - name: ko-build/ko@v0.18.1 # container builder
