@@ -29,7 +29,7 @@ packages:
   - name: suzuki-shunsuke/disable-checkout-persist-credentials@v1.0.0 # disable persist-credentials in checkout action
   - name: suzuki-shunsuke/ghalint@v1.5.6 # GitHub Actions linter
   - name: suzuki-shunsuke/ghatm@v1.0.0 # auto-set timeout-minutes for GitHub Actions jobs
-  - name: suzuki-shunsuke/pinact@v3.9.2 # GitHub Actions pinning tool
+  - name: suzuki-shunsuke/pinact@v3.10.0 # GitHub Actions pinning tool
   - name: zizmorcore/zizmor@v1.24.1 # GitHub Actions security auditor
   # Go related tools
   - name: air-verse/air@v1.65.1 # live reload
