@@ -2,7 +2,7 @@
 # 1. Create a GitHub App with "Contents: Read & Write" repository permission.
 # 2. Install the App on the target repository (or organization).
 # 3. Create the following secrets (repository or environment):
-#    - BOT_APP_ID: The GitHub App's App ID
+#    - BOT_APP_CLIENT_ID: The GitHub App's Client ID
 #    - BOT_APP_PRIVATE_KEY: The GitHub App's private key (PEM format)
 name: on-ci-push-aqua-update-checksum
 
@@ -21,11 +21,11 @@ concurrency:
 
 jobs:
   aqua-update-checksum:
-    uses: y-miyazaki/config/.github/workflows/ci-aqua-update-checksum.yaml@6b09c1551e5376a4e2a8bca0356c182ecdfb454e # v1.0.1
+    uses: y-miyazaki/config/.github/workflows/ci-aqua-update-checksum.yaml@30e3dfdccc765f7b9a447d091a293efab584434d # v1.0.2
     permissions:
       contents: read
     with:
       environment: "default"
     secrets:
-      BOT_APP_ID: ${{ secrets.MAINTENANCE_BOT_APP_ID }}
       BOT_APP_PRIVATE_KEY: ${{ secrets.MAINTENANCE_BOT_APP_PRIVATE_KEY }}
+      BOT_APP_CLIENT_ID: ${{ secrets.MAINTENANCE_BOT_APP_CLIENT_ID }}
