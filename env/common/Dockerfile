@@ -11,7 +11,7 @@ ARG USER=vscode
 ARG WORKDIR=/workspace
 
 # version(base)
-ARG AQUA_VERSION=v2.55.2 # https://github.com/aquaproj/aqua/releases
+ARG AQUA_VERSION=v2.58.1 # https://github.com/aquaproj/aqua/releases
 ARG AWSDAC_VERSION=v0.22.4 # https://github.com/awslabs/diagram-as-code/releases
 ARG AWSP_VERSION=0.2.0 # https://www.npmjs.com/package/awsp
 ARG AWS_MFA_VERSION=0.0.12 # https://pypi.org/project/aws-mfa/
