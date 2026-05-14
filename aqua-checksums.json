@@ -111,23 +111,23 @@
       "algorithm": "sha256"
     },
     {
-      "id": "github_release/github.com/aws/aws-sam-cli/v1.159.1/aws-sam-cli-linux-arm64.zip",
-      "checksum": "AB69A93B352C3F45889C2471B436FBE9496FAC5BF87F38C050E9AB8BC1C9054A",
+      "id": "github_release/github.com/aws/aws-sam-cli/v1.160.0/aws-sam-cli-linux-arm64.zip",
+      "checksum": "C7BDDD37290806A9625C43FF0A38E5129E8C463E16541DA0D8AA1323EA65587E",
       "algorithm": "sha256"
     },
     {
-      "id": "github_release/github.com/aws/aws-sam-cli/v1.159.1/aws-sam-cli-linux-x86_64.zip",
-      "checksum": "6ADC2DB5D8C507FDEAEB9A65A8470F3E9B24FAF0D1F68ABC9B02EFB2B51EFFBE",
+      "id": "github_release/github.com/aws/aws-sam-cli/v1.160.0/aws-sam-cli-linux-x86_64.zip",
+      "checksum": "5092099A61BFDC7BC2FD564841ECC6663C9ACFDF475865635169FD0CED1A8542",
       "algorithm": "sha256"
     },
     {
-      "id": "github_release/github.com/aws/aws-sam-cli/v1.159.1/aws-sam-cli-macos-arm64.pkg",
-      "checksum": "F8264710D5FDB503E7F309DAB95A9A3BEB8D4123360050C56525554E4D2DC2F5",
+      "id": "github_release/github.com/aws/aws-sam-cli/v1.160.0/aws-sam-cli-macos-arm64.pkg",
+      "checksum": "C54B0C922BBD339B450EED4D7D07EB520B2E723B35E62822DC6DD06F7CB865A6",
       "algorithm": "sha256"
     },
     {
-      "id": "github_release/github.com/aws/aws-sam-cli/v1.159.1/aws-sam-cli-macos-x86_64.pkg",
-      "checksum": "C64C3EF3180EDDDD1D4DB6B91E284026A5A296CA9CA1DD5CBA0FEBB9575A08E8",
+      "id": "github_release/github.com/aws/aws-sam-cli/v1.160.0/aws-sam-cli-macos-x86_64.pkg",
+      "checksum": "B80DB731D058349D5C6C3F99A8A15AD5998953887130B897BE1BC779293BDA7F",
       "algorithm": "sha256"
     },
     {
