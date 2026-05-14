@@ -19,7 +19,7 @@ packages:
   - name: pre-commit/pre-commit@v4.6.0 # pre-commit framework
   # AWS related tools
   - name: aws/aws-cli@2.34.45 # AWS CLI
-  - name: aws/aws-sam-cli@v1.159.1 # SAM CLI tool
+  - name: aws/aws-sam-cli@v1.160.0 # SAM CLI tool
   - name: kayac/ecspresso@v2.8.3 # ECS deployment tool
   - name: Songmu/ecschedule@v0.18.2 # ECS scheduled tasks deployment tool
   # GitHub related tools
