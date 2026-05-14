@@ -41,13 +41,39 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+permissions:
+  contents: read
+  id-token: write
+  pull-requests: write
+
 jobs:
+  detect-go-version:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    permissions:
+      contents: read
+    outputs:
+      go-version: ${{ steps.read-go-version.outputs.version }}
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+
+      - name: Read go version from go.mod
+        id: read-go-version
+        run: |
+          GO_VERSION=$(grep -E '^go ' go.mod | awk '{print $2}')
+          echo "version=$GO_VERSION" >> "$GITHUB_OUTPUT"
+
   go-ci:
+    needs: detect-go-version
     uses: y-miyazaki/config/.github/workflows/ci-go.yaml@6b09c1551e5376a4e2a8bca0356c182ecdfb454e # v1.0.1
     with:
       environment: "base"
       component: "base"
       go_project_path: "."
+      go_version: ${{ needs.detect-go-version.outputs.go-version }}
     permissions:
       contents: read
       id-token: write
