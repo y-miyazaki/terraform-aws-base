@@ -34,8 +34,19 @@
         "timonwong.shellcheck",
         "mads-hartmann.bash-ide-vscode",
         "rogalmic.bash-debug",
+        // for Go environment
+        "golang.go",
+        "windmilleng.vscode-go-autotest",
+        "timvaneker.serverless-snippets",
+        "bufbuild.vscode-buf",
+        // for Jsonnet environment
+        "grafana.vscode-jsonnet",
         // for terraform extensions
-        "hashicorp.terraform"
+        "hashicorp.terraform",
+        // for Python environment
+        "charliermarsh.ruff",
+        "ms-python.mypy-type-checker",
+        "ms-python.python"
       ]
     }
   },
@@ -52,7 +63,6 @@
     "${localWorkspaceFolder}/env/common/tmp/.aws:/home/vscode/.aws",
     "-v",
     "${localWorkspaceFolder}/env/common/tmp/.kiro:/home/vscode/.local/share/kiro-cli"
-
   ],
   "postCreateCommand": "/bin/bash env/common/scripts/init.sh",
   "workspaceMount": "",
