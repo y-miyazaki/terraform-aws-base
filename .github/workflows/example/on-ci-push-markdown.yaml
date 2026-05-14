@@ -12,6 +12,7 @@ on:
       - "feature/**"
     paths:
       - "**/*.md"
+      - "docs/**/*.md"
       - ".markdownlint.yaml"
       - ".github/workflows/on-ci-push-markdown.yaml"
       - ".github/workflows/ci-markdown.yaml"
@@ -25,6 +26,7 @@ on:
       - "feature/**"
     paths:
       - "**/*.md"
+      - "docs/**/*.md"
       - ".markdownlint.yaml"
       - ".github/workflows/on-ci-push-markdown.yaml"
       - ".github/workflows/ci-markdown.yaml"
@@ -36,9 +38,6 @@ concurrency:
 jobs:
   markdown-ci:
     uses: y-miyazaki/config/.github/workflows/ci-markdown.yaml@760cde0cc108082323466cbbf1d089019d75b513 # v1.0.3
-    with:
-      component: "base"
-      environment: "markdown"
     permissions:
       contents: read
       pull-requests: write
