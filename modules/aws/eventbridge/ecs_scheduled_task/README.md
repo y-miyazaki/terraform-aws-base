@@ -5,7 +5,7 @@
 | ---- | ------- |
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | ~>1.4 |
 | <a name="requirement_aws"></a> [aws](#requirement\_aws) | ~> 6.0 |
-| <a name="requirement_external"></a> [external](#requirement\_external) | ~>2.3 |
+| <a name="requirement_external"></a> [external](#requirement\_external) | ~> 2.3 |
 
 ## Providers
 
