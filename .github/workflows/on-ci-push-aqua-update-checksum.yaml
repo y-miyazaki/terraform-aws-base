@@ -12,8 +12,6 @@ on:
       - "aqua.yaml"
       - "aqua/*.yaml"
       - "aqua-checksums.json"
-      - ".github/workflows/on-ci-push-aqua-update-checksum.yaml"
-      - ".github/workflows/ci-aqua-update-checksum.yaml"
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -21,7 +19,7 @@ concurrency:
 
 jobs:
   aqua-update-checksum:
-    uses: y-miyazaki/config/.github/workflows/ci-aqua-update-checksum.yaml@760cde0cc108082323466cbbf1d089019d75b513 # v1.0.3
+    uses: y-miyazaki/config/.github/workflows/ci-aqua-update-checksum.yaml@4d5104b3af3d62cc3afa960f5c9f99ae95699979 # v1.0.6
     permissions:
       contents: read
     with:

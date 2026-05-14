@@ -11,8 +11,6 @@ on:
       - "develop"
       - "feature/**"
     paths:
-      - ".github/workflows/on-ci-push-go.yaml"
-      - ".github/workflows/ci-go.yaml"
       - "cmd/**"
       - "internal/**"
       - "go.mod"
@@ -28,8 +26,6 @@ on:
       - "develop"
       - "feature/**"
     paths:
-      - ".github/workflows/on-ci-push-go.yaml"
-      - ".github/workflows/ci-go.yaml"
       - "cmd/**"
       - "internal/**"
       - "go.mod"
@@ -68,7 +64,7 @@ jobs:
 
   go-ci:
     needs: detect-go-version
-    uses: y-miyazaki/config/.github/workflows/ci-go.yaml@760cde0cc108082323466cbbf1d089019d75b513 # v1.0.3
+    uses: y-miyazaki/config/.github/workflows/ci-go.yaml@4d5104b3af3d62cc3afa960f5c9f99ae95699979 # v1.0.6
     with:
       environment: "base"
       component: "base"

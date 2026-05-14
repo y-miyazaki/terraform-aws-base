@@ -14,8 +14,6 @@ on:
       - "**/*.md"
       - "docs/**/*.md"
       - ".markdownlint.yaml"
-      - ".github/workflows/on-ci-push-markdown.yaml"
-      - ".github/workflows/ci-markdown.yaml"
   pull_request:
     branches:
       - "main"
@@ -28,8 +26,6 @@ on:
       - "**/*.md"
       - "docs/**/*.md"
       - ".markdownlint.yaml"
-      - ".github/workflows/on-ci-push-markdown.yaml"
-      - ".github/workflows/ci-markdown.yaml"
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -37,7 +33,9 @@ concurrency:
 
 jobs:
   markdown-ci:
-    uses: y-miyazaki/config/.github/workflows/ci-markdown.yaml@760cde0cc108082323466cbbf1d089019d75b513 # v1.0.3
+    uses: y-miyazaki/config/.github/workflows/ci-markdown.yaml@4d5104b3af3d62cc3afa960f5c9f99ae95699979 # v1.0.6
     permissions:
       contents: read
       pull-requests: write
+    with:
+      markdownlint_flags: "README*.md docs/**/*.md"

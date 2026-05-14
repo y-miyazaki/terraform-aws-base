@@ -12,8 +12,6 @@ on:
       - "feature/**"
     paths:
       - "**/*.sh"
-      - ".github/workflows/on-ci-push-shell-script.yaml"
-      - ".github/workflows/ci-shell-script.yaml"
   pull_request:
     branches:
       - "main"
@@ -24,8 +22,6 @@ on:
       - "feature/**"
     paths:
       - "**/*.sh"
-      - ".github/workflows/on-ci-push-shell-script.yaml"
-      - ".github/workflows/ci-shell-script.yaml"
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -33,7 +29,7 @@ concurrency:
 
 jobs:
   shell-script-ci:
-    uses: y-miyazaki/config/.github/workflows/ci-shell-script.yaml@760cde0cc108082323466cbbf1d089019d75b513 # v1.0.3
+    uses: y-miyazaki/config/.github/workflows/ci-shell-script.yaml@4d5104b3af3d62cc3afa960f5c9f99ae95699979 # v1.0.6
     with:
       script_path: "**/*.sh"
     permissions:
