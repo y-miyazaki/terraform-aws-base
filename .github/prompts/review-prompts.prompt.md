@@ -189,7 +189,7 @@
     現在の行数:
 
 - review-terraform.prompt.md: 162 行 ✅
-- review-script.prompt.md: 150 行 ✅
+- review-shell-script.prompt.md: 150 行 ✅
 - review-go.prompt.md: 164 行 ✅
 - review-github-actions-workflow.prompt.md: 88 行 ✅（カテゴリ少ないため適切）
 
@@ -473,7 +473,7 @@ PY
 
 - **review-terraform.prompt.md** (162 行): 全 20 カテゴリ詳細、バランス版
 - **review-go.prompt.md** (164 行): 10 カテゴリ、Problem/Impact/Recommendation 構造
-- **review-script.prompt.md** (150 行): カテゴリ番号修正済み、統一構造
+- **review-shell-script.prompt.md** (150 行): カテゴリ番号修正済み、統一構造
 
 ## Version History
 

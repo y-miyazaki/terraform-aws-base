@@ -34,7 +34,7 @@
 1. Retry validation
 2. If endpoint is flaky but valid, define ignore pattern in `.markdown-link-check.json`
 
-### Validation Script Issues
+### Validation Shell Script Issues
 
 **Issue**: `command not found` for markdownlint or markdown-link-check
 

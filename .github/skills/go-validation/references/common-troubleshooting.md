@@ -36,10 +36,10 @@
     - [Issue: Known vulnerability found](#issue-known-vulnerability-found)
     - [Issue: Indirect dependency vulnerability](#issue-indirect-dependency-vulnerability)
     - [Issue: No patch available](#issue-no-patch-available)
-  - [Validation Script Issues](#validation-script-issues)
-    - [Issue: Script not found](#issue-script-not-found)
+  - [Validation Shell Script Issues](#validation-shell-script-issues)
+    - [Issue: Shell Script not found](#issue-shell-script-not-found)
     - [Issue: Permission denied](#issue-permission-denied)
-    - [Issue: Command not found in script](#issue-command-not-found-in-script)
+    - [Issue: Command not found in shell script](#issue-command-not-found-in-shell-script)
   - [Summary](#summary)
 
 ## Overview
@@ -516,9 +516,9 @@ No fix available for CVE-2024-5678
 3. Monitor for updates
 4. Check if vulnerability affects your usage
 
-## Validation Script Issues
+## Validation Shell Script Issues
 
-### Issue: Script not found
+### Issue: Shell Script not found
 
 ```
 bash: go-validation/scripts/validate.sh: No such file or directory
@@ -551,7 +551,7 @@ chmod +x .github/skills/go-validation/scripts/validate.sh
 bash .github/skills/go-validation/scripts/validate.sh
 ```
 
-### Issue: Command not found in script
+### Issue: Command not found in shell script
 
 ```
 line 42: golangci-lint: command not found
