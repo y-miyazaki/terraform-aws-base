@@ -1,5 +1,5 @@
-# Manual ECS deployment workflow for application component in dev environment
-name: cd-wd-application-ecs-dev
+# Manual workflow: ECS deployment (application, dev)
+name: on-cd-wd-application-ecs-dev
 
 on:
   workflow_dispatch: # Manual deployment workflow

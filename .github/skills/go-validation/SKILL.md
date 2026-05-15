@@ -1,7 +1,7 @@
 ---
 name: go-validation
 description: >-
-  Validates Go source code for formatting, linting, testing, and security using go fmt, go vet,
+  Validates Go source code for formatting, linting, testing, and security using gofumpt, go vet,
   golangci-lint, go test, and govulncheck. Use when committing Go code, running CI validation,
   debugging test failures, or checking for security vulnerabilities in Go projects.
 license: Apache-2.0
@@ -18,7 +18,7 @@ metadata:
 
 ## Output Specification
 
-Structured validation results from six tools in execution order: go mod tidy → go fmt → go vet → golangci-lint → go test → govulncheck.
+Structured validation results from six tools in execution order: go mod tidy → gofumpt → go vet → golangci-lint → go test → govulncheck.
 
 See [references/common-output-format.md](references/common-output-format.md) for detailed format specification.
 
@@ -39,7 +39,7 @@ See [references/common-output-format.md](references/common-output-format.md) for
 - [common-checklist.md](references/common-checklist.md) - Validation checklist with ItemIDs
 - [common-output-format.md](references/common-output-format.md) - Report format specification
 - [common-troubleshooting.md](references/common-troubleshooting.md) - Read when validation fails with unexpected errors
-- [common-individual-commands.md](references/common-individual-commands.md) - Read when debugging a specific tool (go fmt/vet/lint/test/govulncheck)
+- [common-individual-commands.md](references/common-individual-commands.md) - Read when debugging a specific tool (gofumpt/vet/lint/test/govulncheck)
 
 **Category Details** (read when investigating specific failures):
 
@@ -67,7 +67,7 @@ bash go-validation/scripts/validate.sh --verbose
 ### What the Script Does
 
 1. **`go mod tidy`** - Clean up and verify dependencies
-2. **`go fmt`** - Format Go code
+2. **`gofumpt`** - Format Go code
 3. **`go vet`** - Static analysis for suspicious constructs
 4. **`golangci-lint`** - Comprehensive linting (30+ linters)
 5. **`go test -v -race -cover`** - Run tests with race detection and coverage

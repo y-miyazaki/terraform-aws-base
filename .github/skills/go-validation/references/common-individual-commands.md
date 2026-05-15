@@ -7,7 +7,7 @@
   - [⚠️ For Debugging Only](#️-for-debugging-only)
   - [Commands Overview](#commands-overview)
   - [1. go mod tidy](#1-go-mod-tidy)
-  - [2. go fmt](#2-go-fmt)
+  - [2. gofumpt](#2-gofumpt)
   - [3. go vet](#3-go-vet)
   - [4. golangci-lint](#4-golangci-lint)
   - [5. go test](#5-go-test)
@@ -38,7 +38,7 @@ Use individual commands **only** when:
 
 The validation script runs these commands in order:
 1. go mod tidy
-2. go fmt
+2. gofumpt
 3. go vet
 4. golangci-lint
 5. go test -v -race -cover
@@ -67,25 +67,26 @@ go mod verify
 - Corrupted go.mod or go.sum
 - Invalid imports
 
-## 2. go fmt
+## 2. gofumpt
 
-**Purpose**: Format Go code
+**Purpose**: Format Go code (stricter than go fmt)
 
 ```bash
-# Format all files
-go fmt ./...
+# Check all files
+gofumpt -l ./...
+
+# Format all files (fix mode)
+gofumpt -w ./...
 
 # Format specific file
-go fmt path/to/file.go
-
-# Format recursively
-go fmt ./pkg/...
+gofumpt -w path/to/file.go
 ```
 
 **What it checks**:
 - Consistent indentation
 - Proper spacing
 - Canonical formatting
+- Stricter rules (e.g. no empty lines at start/end of blocks)
 
 **Common failures**:
 - Parse errors in code

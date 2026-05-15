@@ -1,4 +1,4 @@
-# CI workflow for Markdown files
+# CI workflow: Markdown lint on push/PR
 name: on-ci-push-markdown
 
 on:

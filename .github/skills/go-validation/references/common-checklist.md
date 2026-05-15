@@ -5,7 +5,7 @@
 Run tools in this order (fail-fast: stop on first failure):
 
 1. `go mod tidy` — dependency consistency check
-2. `go fmt` — formatting compliance
+2. `gofumpt` — formatting compliance
 3. `go vet` — static analysis
 4. `golangci-lint` — linting and style checks
 5. `go test` — unit tests and race condition detection
@@ -17,7 +17,7 @@ Run tools in this order (fail-fast: stop on first failure):
 - MOD-01: go.mod and go.sum are consistent with source imports
 - MOD-02: No extraneous or missing dependencies
 
-### go fmt
+### gofumpt
 - FMT-01: All .go files are gofumpt-formatted
 - FMT-02: Import blocks organized per goimports conventions
 

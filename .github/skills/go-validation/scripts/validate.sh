@@ -373,10 +373,10 @@ function has_go_files {
 }
 
 #######################################
-# run_go_fmt: Run go fmt
+# run_gofumpt: Run gofumpt
 #
 # Description:
-#   Runs go fmt to format Go code or checks formatting compliance
+#   Runs gofumpt to format Go code or checks formatting compliance
 #
 # Arguments:
 #   None
@@ -385,18 +385,17 @@ function has_go_files {
 #   None (sets EXIT_CODE and GO_FMT_FAILED on failure)
 #
 # Usage:
-#   run_go_fmt
+#   run_gofumpt
 #
 #######################################
-function run_go_fmt {
-    echo_section "Running go fmt"
+function run_gofumpt {
+    echo_section "Running gofumpt"
 
     if [[ "$DRY_RUN" == "true" ]]; then
-        log "INFO" "DRY-RUN: Would run 'go fmt $TARGET_PATTERN'"
+        log "INFO" "DRY-RUN: Would run 'gofumpt $TARGET_PATTERN'"
         return 0
     fi
 
-    # Use gofumpt instead of gofmt for stricter formatting
     if [[ "$FIX_MODE" == "true" ]]; then
         log "INFO" "Automatically formatting files..."
         if gofumpt -w "$TARGET_PATTERN"; then
@@ -739,7 +738,7 @@ function main {
     log "INFO" "Dry-run mode: $DRY_RUN"
     log "INFO" "Fix mode: $FIX_MODE"
     run_go_mod_tidy
-    run_go_fmt
+    run_gofumpt
     run_go_vet
     run_go_build
     run_golangci_lint

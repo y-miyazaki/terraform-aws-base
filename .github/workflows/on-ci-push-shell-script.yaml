@@ -1,4 +1,4 @@
-# CI workflow for shell scripts
+# CI workflow: Shell script lint on push/PR
 name: on-ci-push-shell-script
 
 on:

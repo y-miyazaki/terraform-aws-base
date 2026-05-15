@@ -1,4 +1,4 @@
-# CI workflow for base component in prd environment
+# CI workflow: Go CI on push/PR
 name: on-ci-push-go
 
 on:

@@ -1,3 +1,4 @@
+# CI workflow: Aqua checksum update on push
 # Usage: This workflow requires a GitHub App for auto-committing checksum updates.
 # 1. Create a GitHub App with "Contents: Read & Write" repository permission.
 # 2. Install the App on the target repository (or organization).

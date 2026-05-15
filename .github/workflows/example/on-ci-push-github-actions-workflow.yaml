@@ -1,4 +1,4 @@
-# CI workflow for GitHub Actions workflows and actions
+# CI workflow: GitHub Actions workflow lint on push/PR
 name: on-ci-push-github-actions-workflow
 
 on:

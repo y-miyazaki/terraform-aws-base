@@ -9,7 +9,7 @@
     - [Issue: Incompatible dependency versions](#issue-incompatible-dependency-versions)
     - [Issue: Corrupted go.sum](#issue-corrupted-gosum)
     - [Issue: Replace directives not working](#issue-replace-directives-not-working)
-  - [go fmt Failures](#go-fmt-failures)
+  - [gofumpt Failures](#gofumpt-failures)
     - [Issue: Parse errors](#issue-parse-errors)
     - [Issue: File permissions](#issue-file-permissions)
   - [go vet Failures](#go-vet-failures)
@@ -81,7 +81,7 @@ replacement module without version must be directory path
 1. Use absolute or relative path: `replace example.com/pkg => ./local/pkg`
 2. Or specify version: `replace example.com/pkg => example.com/pkg v1.0.0`
 
-## go fmt Failures
+## gofumpt Failures
 
 ### Issue: Parse errors
 

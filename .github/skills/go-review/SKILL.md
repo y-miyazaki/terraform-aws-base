@@ -32,7 +32,7 @@ See [references/common-output-format.md](references/common-output-format.md) for
 
 - Systematically apply review checklist from [references/common-checklist.md](references/common-checklist.md)
 - Focus only on checks requiring human/AI judgment (design, concurrency, security patterns)
-- **Do not run go-validation or execute go fmt/vet/golangci-lint/go test/govulncheck**
+- **Do not run go-validation or execute gofumpt/go vet/golangci-lint/go test/govulncheck**
 - Do not modify code files or approve/merge PRs
 
 ## Reference Files Guide
@@ -65,7 +65,7 @@ Read PR description, linked issues, and determine change type (feature/bugfix/re
 
 ### Step 2: Automated Checks First
 
-Confirm go-validation has been run (go fmt, go vet, golangci-lint, go test, govulncheck). If not, request execution before proceeding with review.
+Confirm go-validation has been run (gofumpt, go vet, golangci-lint, go test, govulncheck). If not, request execution before proceeding with review.
 
 ### Step 3: Systematic Review
 

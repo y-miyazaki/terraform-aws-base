@@ -1,0 +1,66 @@
+# Manual workflow: Go application release with GoReleaser
+# Allows manual release creation by specifying a version.
+name: on-cd-wd-go-releaser
+
+on:
+  workflow_dispatch:
+    inputs:
+      create_tag:
+        description: "Create git tag if it doesn't exist"
+        required: false
+        type: boolean
+        default: true
+      draft:
+        description: "Create a draft release"
+        required: false
+        type: boolean
+        default: false
+      prerelease:
+        description: "Mark as prerelease"
+        required: false
+        type: boolean
+        default: false
+      version:
+        description: "Release version (e.g. v1.0.0, v1.0.0-beta.1). Must start with 'v' and follow semantic versioning."
+        required: true
+        type: string
+
+permissions:
+  contents: write
+  id-token: write
+
+jobs:
+  detect-go-version:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    permissions:
+      contents: read
+    outputs:
+      go-version: ${{ steps.read-go-version.outputs.version }}
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+
+      - name: Read go version from go.mod
+        id: read-go-version
+        run: |
+          GO_VERSION=$(grep -E '^go ' go.mod | awk '{print $2}')
+          echo "version=$GO_VERSION" >> "$GITHUB_OUTPUT"
+
+  release:
+    name: Release base
+    needs: detect-go-version
+    uses: y-miyazaki/config/.github/workflows/cd-go-releaser.yaml@4d5104b3af3d62cc3afa960f5c9f99ae95699979 # v1.0.6
+    with:
+      component: base
+      create_tag: ${{ inputs.create_tag }}
+      draft: ${{ inputs.draft }}
+      go_project_path: "."
+      go_version: ${{ needs.detect-go-version.outputs.go-version }}
+      prerelease: ${{ inputs.prerelease == true && 'true' || 'auto' }}
+      version: ${{ inputs.version }}
+    permissions:
+      contents: write
+      id-token: write
