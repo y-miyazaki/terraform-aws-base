@@ -42,8 +42,6 @@ The script uses **idempotent template reconstruction** without markers:
 **After Update**:
 ```markdown
 ## Overview
-<!-- template guidance comment -->
-
 [New deterministic baseline or caller-provided overview]
 
 ## Related Issues
@@ -66,7 +64,7 @@ The script uses **idempotent template reconstruction** without markers:
 - [x] New feature
 ```
 
-**Key Point**: `## Overview` and `## Changes` are always regenerated, while other sections retain visible content and recover template comments when empty.
+**Key Point**: `## Overview` is always regenerated from deterministic output without template comment injection. Other sections retain visible content and recover template comments when empty. `## Changes` remains script-generated.
 
 ---
 

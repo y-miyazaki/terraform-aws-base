@@ -6,10 +6,10 @@ Complete reference for scripts in the github-pr-body skill.
 
 ## Script Overview
 
-| Script        | Purpose                                             | When to Use                                 |
-| ------------- | --------------------------------------------------- | ------------------------------------------- |
-| `pr_fetch.sh` | Fetch and analyze PR data                           | Always first - consolidates data collection |
-| `pr_body.sh`  | Update PR Body with deterministic baseline sections | After analysis, before AI completion        |
+| Script        | Purpose                                                                           | When to Use                                    |
+| ------------- | --------------------------------------------------------------------------------- | ---------------------------------------------- |
+| `pr_fetch.sh` | Fetch and analyze PR data                                                         | Always first - consolidates data collection    |
+| `pr_body.sh`  | Update PR Body with deterministic baseline sections or apply a complete body file | After analysis, before and after AI completion |
 
 ---
 
@@ -18,7 +18,8 @@ Complete reference for scripts in the github-pr-body skill.
 1. Run `pr_fetch.sh` to collect all PR data.
 2. Run `pr_body.sh` to write the deterministic baseline body.
 3. Run AI completion outside the shell script to fill sections using `PULL_REQUEST_TEMPLATE.md` comments and Examples.
-4. Optionally re-run `pr_body.sh` with `--overview-file` when AI-generated Overview content is ready.
+4. Save the completed PR body to a file.
+5. Apply the completed PR body with `pr_body.sh --body-file`.
 
 ---
 
@@ -147,19 +148,22 @@ Complete reference for scripts in the github-pr-body skill.
 # Verbose output for debugging
 .github/skills/github-pr-body/scripts/pr_body.sh <PR#> --repo owner/repo --verbose
 
+# Apply a fully AI-completed PR body file
+.github/skills/github-pr-body/scripts/pr_body.sh <PR#> --repo owner/repo --body-file /tmp/completed_pr_body.md
+
 # Auto-detect repo from git remote (no --repo needed)
 .github/skills/github-pr-body/scripts/pr_body.sh <PR#>
 ```
 
 ### Parameters for pr_body.sh
 
-| Parameter         | Required | Format       | Description                                                                 |
-| ----------------- | -------- | ------------ | --------------------------------------------------------------------------- |
-| `<PR#>`           | Yes      | Numeric      | GitHub PR number (e.g., `123`)                                              |
-| `--repo`          | No*      | `owner/repo` | Repository in GitHub format. Auto-detected from git remote if omitted.      |
-| `--overview-file` | No       | File path    | Path to AI-generated Overview content file. If omitted, generates baseline. |
-| `--dry-run`       | No       | Flag         | Preview changes without applying. Useful for verification before execution. |
-| `--verbose`       | No       | Flag         | Enable SCRIPT_VERBOSE=1 for debugging output.                               |
+| Parameter     | Required | Format       | Description                                                                 |
+| ------------- | -------- | ------------ | --------------------------------------------------------------------------- |
+| `<PR#>`       | Yes      | Numeric      | GitHub PR number (e.g., `123`)                                              |
+| `--repo`      | No*      | `owner/repo` | Repository in GitHub format. Auto-detected from git remote if omitted.      |
+| `--body-file` | No       | File path    | Path to complete AI-generated PR body file. Applies the full body as-is.    |
+| `--dry-run`   | No       | Flag         | Preview changes without applying. Useful for verification before execution. |
+| `--verbose`   | No       | Flag         | Enable SCRIPT_VERBOSE=1 for debugging output.                               |
 
 *Auto-detected from git remote if not provided.
 
@@ -176,7 +180,7 @@ Complete reference for scripts in the github-pr-body skill.
 
 - Use `pr_body.sh` to write the baseline body structure.
 - Use AI to read `PULL_REQUEST_TEMPLATE.md` comments and generate visible chapter content.
-- Use `--overview-file` only to inject caller-prepared Overview content.
+- Use `--body-file` to apply a complete AI-generated PR body that includes Testing, Type of Change, Checklist, and Additional Notes.
 - Do not add section-specific semantic rules into the shell script.
 
 ### Error: `PR #XXX not found`
@@ -261,11 +265,11 @@ gh pr view 123 --repo owner/repo --json body --jq '.body'
 gh pr view 123 --repo owner/repo --json body --jq '.body' | wc -c
 ```
 
-### Manual PR Body Edit
+### Apply Complete PR Body via Script
 
 ```bash
-# Edit body in local editor
-gh pr edit 123 --repo owner/repo --body-file /path/to/body.md
+# Apply AI-completed body through the supported skill entrypoint
+.github/skills/github-pr-body/scripts/pr_body.sh 123 --repo owner/repo --body-file /path/to/body.md
 ```
 
 ---

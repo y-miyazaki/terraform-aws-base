@@ -21,8 +21,9 @@ metadata:
 
 Structured Markdown PR Body:
 
-- `## Overview`: Auto-generated baseline from PR metadata, or caller-provided AI content via `--overview-file`
+- `## Overview`: Auto-generated deterministic baseline from PR metadata
 - `## Changes`: File change list by classification (Config, Docs, Feature, Test, Other) with line counts
+- `## Testing`, `## Type of Change`, `## Checklist`, `## Additional Notes`: AI-completed visible content applied via `--body-file` when generated
 - All other sections: Existing visible content preserved; empty sections restored from template for AI completion
 - Overview excludes metadata visible in GitHub UI (branch names, file counts); includes what changed and why
 
@@ -59,8 +60,9 @@ See [references/common-output-format.md](references/common-output-format.md) for
 ```
 Step 1: pr_fetch.sh → Analyzes PR metadata, outputs JSON
 Step 2: pr_body.sh  → Rebuilds PR Body with deterministic baseline
-Step 3: AI Completion (recommended) → Fill chapters using template guidance
-Step 4: Manual Review (optional) → Human reviews and adjusts
+Step 3: AI Completion (required for full template coverage) → Fill Testing / Type of Change / Checklist / Additional Notes using template guidance
+Step 4: pr_body.sh --body-file → Apply the complete AI-generated PR body
+Step 5: Manual Review (optional) → Human reviews and adjusts
 ```
 
 ### Quick Commands
@@ -72,15 +74,15 @@ Step 4: Manual Review (optional) → Human reviews and adjusts
 # Step 2: Generate deterministic baseline (updates PR Body)
 .github/skills/github-pr-body/scripts/pr_body.sh <PR_NUMBER> --repo owner/repo
 
-# Step 3: Re-apply with AI-generated Overview content
-.github/skills/github-pr-body/scripts/pr_body.sh <PR_NUMBER> --repo owner/repo --overview-file /tmp/overview.md
+# Step 3: Apply the complete AI-generated PR body
+.github/skills/github-pr-body/scripts/pr_body.sh <PR_NUMBER> --repo owner/repo --body-file /tmp/completed_pr_body.md
 ```
 
 ### Idempotent Execution
 
 | Section            | Behavior            | Details                                                       |
 | ------------------ | ------------------- | ------------------------------------------------------------- |
-| `## Overview`      | Always replaced     | Deterministic baseline or `--overview-file` content           |
+| `## Overview`      | Always replaced     | Deterministic baseline content                                |
 | `## Changes`       | Always replaced     | Auto-generated from file analysis on each run                 |
 | All other sections | Preserve or restore | Preserve visible content; restore template for empty sections |
 
@@ -91,6 +93,8 @@ After Step 2, AI completion must:
 - Read each section comment in `PULL_REQUEST_TEMPLATE.md`
 - Follow `Example:` or checkbox guidance when present
 - Generate content matching the section-specific format
+- Generate visible content for `## Testing`, `## Type of Change`, `## Checklist`, and `## Additional Notes` when the template provides guidance relevant to the PR
+- Apply the completed body with `pr_body.sh --body-file <FILE>` instead of direct `gh` commands
 - Keep sections empty only when template guidance is absent
 
 **Key principle**: Steps 1-2 are deterministic. Semantic interpretation belongs to Step 3.

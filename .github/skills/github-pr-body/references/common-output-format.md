@@ -1,6 +1,6 @@
 # Output Format Specification
 
-Use the following structure for PR Body output.
+Use one of the following structures for PR Body output.
 
 ```markdown
 ## Overview
@@ -16,12 +16,15 @@ Use the following structure for PR Body output.
 - **Other**: `path/to/script.sh` (+N/-M lines)
 ```
 
+For full AI completion after baseline generation, output the complete PR body including template-driven sections such as `## Testing`, `## Type of Change`, `## Checklist`, and `## Additional Notes`.
+
 ## Rules
 
-- Output ONLY the updated `## Overview` and `## Changes` content blocks.
+- Output ONLY the updated `## Overview` and `## Changes` content blocks when preparing baseline-only content.
+- Output the complete PR body when preparing content for `pr_body.sh --body-file`.
 - Preserve all other existing PR body sections verbatim.
 - Restore empty template sections that exist in the PR template but are missing from the current body.
-- If `--overview-file` is provided, use its content for `## Overview` without modification.
+- If `--body-file` is used, include the final visible content for all sections the AI completed.
 - In `## Changes`, classify every changed file by type and include line counts.
 - Omit GitHub UI metadata (branch names, file counts, PR numbers) from `## Overview`.
 - `## Changes` must include at least one entry per changed file.

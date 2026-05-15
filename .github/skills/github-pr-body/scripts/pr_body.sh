@@ -2,21 +2,22 @@
 #######################################
 # Description: Update PR Body sections with AI-generated or baseline content
 #
-# Usage: ./pr_body.sh <PR_NUMBER> [--repo OWNER/REPO] [--overview-file FILE] [--verbose] [--dry-run]
+# Usage: ./pr_body.sh <PR_NUMBER> [--repo OWNER/REPO] [--body-file FILE] [--verbose] [--dry-run]
 #   --repo           Repository in owner/repo format (default: auto-detect from git)
-#   --overview-file  Path to AI-generated Overview content file (optional)
+#   --body-file      Path to complete AI-generated PR body file (optional)
 #   --verbose        Enable verbose output (SCRIPT_VERBOSE=1)
 #   --dry-run        Show what would be done without making changes
 #
 # Behavior:
-#   - Updates PR Body sections: ## Overview (from file or baseline), ## Changes
+#   - Updates PR Body sections: ## Overview, ## Changes
+#   - Applies complete AI-generated PR body when --body-file is provided
 #   - Replaces only generated sections and preserves other existing sections
-#   - Overview: uses --overview-file content if provided, otherwise generates baseline
+#   - Overview: always generates deterministic baseline content
 #   - Changes: always generated from deterministic file classification
 #   - Multiple executions are idempotent
 #
 # Examples:
-#   ./pr_body.sh 123 --overview-file /tmp/ai_overview.md
+#   ./pr_body.sh 123 --body-file /tmp/completed_pr_body.md
 #   ./pr_body.sh 123 --repo octocat/Hello-World
 #   ./pr_body.sh 123 --verbose --dry-run
 #######################################
@@ -41,7 +42,7 @@ source "${SCRIPT_DIR}/lib/all.sh"
 #######################################
 PR_NUMBER=""
 REPOSITORY=""
-OVERVIEW_FILE=""
+COMPLETE_BODY_FILE=""
 DRY_RUN="false"
 CHANGES_LIST_THRESHOLD=30
 BODY_FILE="/tmp/pr_body_$$.md"
@@ -108,20 +109,21 @@ Arguments:
 
 Options:
   --repo OWNER/REPO         Repository (default: auto-detect from git)
-  --overview-file FILE      Path to AI-generated Overview content (optional)
+    --body-file FILE          Path to complete AI-generated PR body (optional)
   --verbose                 Enable verbose output
   --dry-run                 Show what would be done
   -h, --help                Display this help message
 
 Behavior:
   - Updates PR Body sections: ## Overview, ## Changes
-  - Overview: uses --overview-file content if provided, otherwise generates baseline
+    - Applies complete AI-generated PR body when --body-file is provided
+    - Overview: always generates deterministic baseline content
   - Changes: always generated from deterministic file classification
   - Replaces generated sections and preserves other existing sections
   - Idempotent: multiple executions produce same result
 
 Examples:
-  $(basename "$0") 123 --overview-file /tmp/ai_overview.md
+    $(basename "$0") 123 --body-file /tmp/completed_pr_body.md
   $(basename "$0") 123 --repo owner/repo
   $(basename "$0") 123 --verbose --dry-run
 
@@ -415,25 +417,15 @@ function generate_body_sections {
         echo "## Overview"
         echo ""
 
-        # Use overview file if provided, otherwise generate baseline
-        if [[ -n "$OVERVIEW_FILE" ]]; then
-            if [[ ! -f "$OVERVIEW_FILE" ]]; then
-                error_exit "Overview file not found: $OVERVIEW_FILE"
-            fi
-            log "INFO" "Using Overview content from: $OVERVIEW_FILE"
-            cat "$OVERVIEW_FILE"
-            echo ""
-        else
-            log "INFO" "Generating baseline Overview (no --overview-file provided)"
-            echo "**Title**: $pr_title"
-            echo ""
-            echo "**Branch**: $pr_head_ref -> $pr_base_ref"
-            echo ""
-            echo "**Stats**: $pr_file_count files changed (+$pr_additions / -$pr_deletions lines)"
-            echo ""
-            echo "_This section was auto-generated._"
-            echo ""
-        fi
+        log "INFO" "Generating deterministic Overview baseline"
+        echo "**Title**: $pr_title"
+        echo ""
+        echo "**Branch**: $pr_head_ref -> $pr_base_ref"
+        echo ""
+        echo "**Stats**: $pr_file_count files changed (+$pr_additions / -$pr_deletions lines)"
+        echo ""
+        echo "_This section was auto-generated._"
+        echo ""
 
         echo "## Changes"
         echo ""
@@ -481,44 +473,6 @@ function extract_h2_section {
             exit
         }
         in_section == 1 {
-            print line
-        }
-    '
-}
-
-#######################################
-# extract_overview_template_body: Extract template body under # Overview
-#
-# Description:
-#   Extracts all lines after '# Overview' until the first H2 heading.
-#   Used to preserve guidance comments from PULL_REQUEST_TEMPLATE.md.
-#
-# Arguments:
-#   $1 - Template markdown text
-#
-# Returns:
-#   Outputs extracted body text
-#
-# Usage:
-#   body=$(extract_overview_template_body "$template_body")
-#
-#######################################
-function extract_overview_template_body {
-    local markdown_text="$1"
-
-    printf '%s\n' "$markdown_text" | awk '
-        {
-            line = $0
-            sub(/\r$/, "", line)
-        }
-        line == "# Overview" {
-            in_overview = 1
-            next
-        }
-        in_overview == 1 && line ~ /^##[[:space:]]+/ {
-            exit
-        }
-        in_overview == 1 {
             print line
         }
     '
@@ -582,18 +536,32 @@ function section_has_visible_content {
             line = $0
             sub(/\r$/, "", line)
 
-            if (line ~ /^<!--[[:space:]]*$/) {
-                in_comment = 1
-                next
-            }
+            while (1) {
+                if (in_comment == 1) {
+                    if (match(line, /-->/)) {
+                        line = substr(line, RSTART + RLENGTH)
+                        in_comment = 0
+                        continue
+                    }
 
-            if (in_comment == 1 && line ~ /-->[[:space:]]*$/) {
-                in_comment = 0
-                next
-            }
+                    line = ""
+                    break
+                }
 
-            if (in_comment == 1) {
-                next
+                if (match(line, /<!--[[:space:]]*/)) {
+                    prefix = substr(line, 1, RSTART - 1)
+                    suffix = substr(line, RSTART + RLENGTH)
+
+                    if (match(suffix, /-->/)) {
+                        line = prefix substr(suffix, RSTART + RLENGTH)
+                        continue
+                    }
+
+                    line = prefix
+                    in_comment = 1
+                }
+
+                break
             }
 
             if (line ~ /^[[:space:]]*$/) {
@@ -639,6 +607,64 @@ function build_fallback_section {
 }
 
 #######################################
+# apply_complete_pr_body: Apply full PR body from file
+#
+# Description:
+#   Applies a fully AI-completed PR body file to the target PR. This is used
+#   after deterministic baseline generation when the caller has prepared a
+#   complete body that includes sections like Testing, Type of Change,
+#   Checklist, and Additional Notes.
+#
+# Arguments:
+#   None
+#
+# Global Variables:
+#   COMPLETE_BODY_FILE - Path to complete PR body markdown file
+#   PR_NUMBER - GitHub PR number
+#   REPOSITORY - Repository in owner/repo format
+#   DRY_RUN - Enable dry-run mode flag
+#
+# Returns:
+#   None (updates PR or exits with error)
+#
+# Usage:
+#   apply_complete_pr_body
+#
+#######################################
+function apply_complete_pr_body {
+    local complete_body
+
+    if [[ ! -f "$COMPLETE_BODY_FILE" ]]; then
+        error_exit "Body file not found: $COMPLETE_BODY_FILE"
+    fi
+
+    complete_body=$(cat "$COMPLETE_BODY_FILE")
+
+    if [[ -z "${complete_body//[[:space:]]/}" ]]; then
+        error_exit "Body file is empty: $COMPLETE_BODY_FILE"
+    fi
+
+    if [[ "$DRY_RUN" == "true" ]]; then
+        log "INFO" "DRY-RUN MODE"
+        log "INFO" "Would update PR #$PR_NUMBER body from: $COMPLETE_BODY_FILE"
+        log "INFO" ""
+        log "INFO" "New body:"
+        log "INFO" "---"
+        printf '%s\n' "$complete_body" >&2
+        log "INFO" "---"
+        return 0
+    fi
+
+    log "INFO" "Updating PR #$PR_NUMBER body from complete body file"
+
+    gh pr edit "$PR_NUMBER" \
+        --repo "$REPOSITORY" \
+        --body-file "$COMPLETE_BODY_FILE" || error_exit "Failed to update PR body from file"
+
+    log "INFO" "✅ PR body updated successfully from complete body file"
+}
+
+#######################################
 # update_pr_body: Update PR Body sections (## Overview, ## Changes)
 #
 # Description:
@@ -673,7 +699,6 @@ function update_pr_body {
     local generated_changes_body
     local template_file
     local template_body
-    local template_overview_body
     local template_changes_section
     local template_changes_body
     local new_body
@@ -709,8 +734,7 @@ function update_pr_body {
 
     template_body=$(cat "$template_file")
 
-    # Preserve template guidance comments for generated sections.
-    template_overview_body=$(extract_overview_template_body "$template_body")
+    # Preserve template guidance comments only for sections that are restored from the template.
     template_changes_section=$(extract_h2_section "$template_body" "## Changes")
     template_changes_body=$(section_body_without_heading "$template_changes_section")
 
@@ -718,10 +742,6 @@ function update_pr_body {
     generated_changes_body=$(section_body_without_heading "$generated_changes")
 
     generated_overview="## Overview"
-    if [[ -n "${template_overview_body//[[:space:]]/}" ]]; then
-        generated_overview+=$'\n\n'
-        generated_overview+="$template_overview_body"
-    fi
     if [[ -n "${generated_overview_body//[[:space:]]/}" ]]; then
         generated_overview+=$'\n\n'
         generated_overview+="$generated_overview_body"
@@ -847,8 +867,8 @@ function parse_arguments {
                 REPOSITORY="$2"
                 shift 2
                 ;;
-            --overview-file)
-                OVERVIEW_FILE="$2"
+            --body-file)
+                COMPLETE_BODY_FILE="$2"
                 shift 2
                 ;;
             --verbose)
@@ -917,6 +937,11 @@ function main {
 
     # Verify PR exists
     validate_pr_exists
+
+    if [[ -n "$COMPLETE_BODY_FILE" ]]; then
+        apply_complete_pr_body
+        return 0
+    fi
 
     # Generate body sections
     generate_body_sections

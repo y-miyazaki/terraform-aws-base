@@ -5,7 +5,7 @@
 **Important**: This document originally described hypothetical agent-based template mapping logic. The current `pr_body.sh` script does NOT implement intelligent template parsing or semantic mapping.
 
 **Actual script behavior**:
-- Generates metadata-only baseline for `## Overview` section (Title, Branch, Stats) unless caller provides `--overview-file`
+- Generates metadata-only baseline for `## Overview` section (Title, Branch, Stats)
 - Generates file list for `## Changes` section (grouped by deterministic pattern-based classification)
 - Rebuilds other sections in template order and preserves template comments for AI completion
 - Does not interpret chapter meaning or generate section prose beyond deterministic baseline output
@@ -70,15 +70,15 @@ fi
 
 This repository uses `.github/PULL_REQUEST_TEMPLATE.md` with the following structure:
 
-| Template Section             | Required? | Purpose                       | Script Behavior                                     | AI Completion Behavior                                  |
-| ---------------------------- | --------- | ----------------------------- | --------------------------------------------------- | ------------------------------------------------------- |
-| **Overview**                 | ✅ YES     | High-level change summary     | Deterministic baseline or `--overview-file` content | Refine or replace using comment guidance                |
-| **Related Issues**           | No        | Links to GitHub issues        | Preserve template section structure                 | Generate visible content if guidance indicates it       |
-| **Changes**                  | ✅ YES     | Technical modifications       | File list with classification                       | Optionally refine prose around generated structure      |
-| **Testing**                  | No        | Test coverage and methods     | Preserve template section structure                 | Generate visible content using Example or checklist     |
-| **Type of Change** (8 types) | No        | Change categorization         | Preserve template section structure                 | Select checkboxes based on PR meaning                   |
-| **Checklist**                | No        | Quality/convention compliance | Preserve template section structure                 | Update checkboxes based on validation and reviewer data |
-| **Additional Notes**         | No        | Extra context                 | Preserve template section structure                 | Generate content when example or PR context warrants it |
+| Template Section             | Required? | Purpose                       | Script Behavior                     | AI Completion Behavior                                  |
+| ---------------------------- | --------- | ----------------------------- | ----------------------------------- | ------------------------------------------------------- |
+| **Overview**                 | ✅ YES     | High-level change summary     | Deterministic baseline content      | Refine or replace using comment guidance                |
+| **Related Issues**           | No        | Links to GitHub issues        | Preserve template section structure | Generate visible content if guidance indicates it       |
+| **Changes**                  | ✅ YES     | Technical modifications       | File list with classification       | Optionally refine prose around generated structure      |
+| **Testing**                  | No        | Test coverage and methods     | Preserve template section structure | Generate visible content using Example or checklist     |
+| **Type of Change** (8 types) | No        | Change categorization         | Preserve template section structure | Select checkboxes based on PR meaning                   |
+| **Checklist**                | No        | Quality/convention compliance | Preserve template section structure | Update checkboxes based on validation and reviewer data |
+| **Additional Notes**         | No        | Extra context                 | Preserve template section structure | Generate content when example or PR context warrants it |
 
 ### Type of Change (Informational Only)
 
@@ -118,7 +118,6 @@ Include:
 
 **Script behavior**:
 - Script generates metadata-only baseline: Title, Branch, Stats
-- Script preserves template guidance comments
 - Script does NOT interpret template content semantically
 
 **AI completion behavior**:
