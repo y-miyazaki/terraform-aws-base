@@ -182,9 +182,6 @@
   // for Golang
   // https://github.com/golang/vscode-go/blob/master/docs/settings.md
   // ------------------------------------------------------------
-  "go.alternateTools": {
-    "go-langserver": "gopls"
-  },
   "go.coverMode": "default",
   "go.coverOnSave": true,
   "go.coverOnSingleTest": true,
@@ -246,8 +243,6 @@
   // "go.gotoSymbol.ignoreFolders":[], // It will be ignored if you use a language server.
   // "go.gotoSymbol.includeGoroot":false, // It will be ignored if you use a language server.
   // "go.gotoSymbol.includeImports": false, // It will be ignored if you use a language server.
-  "go.inferGopath": false,
-  "go.installDependenciesWhenBuilding": false,
   "go.languageServerFlags": [],
   "go.lintFlags": [
     "-c",
@@ -276,23 +271,37 @@
   "go.testTimeout": "30s",
   "go.toolsEnvVars": {
     "PATH": "/go/bin:${env:PATH}",
-    "GOPATH": "/go",
-    "GO111MODULE": "on"
+    "GOPATH": "/go"
   },
-  "go.toolsGopath": "/go",
   "go.toolsManagement.autoUpdate": true,
   "go.toolsManagement.checkForUpdates": "proxy",
   "go.trace.server": "verbose",
   "go.useLanguageServer": true,
   "go.vetFlags": [],
   "gopls": {
-    "usePlaceholders": true,
     "completeUnimported": true,
+    "gofumpt": true,
+    "usePlaceholders": true,
     "staticcheck": false,
     // "verboseOutput": true,
+    "analyses": {
+      "unusedparams": true,
+      "shadow": true,
+      "nilness": true,
+      "unusedwrite": true
+    },
+    "hints": {
+      "parameterNames": true,
+      "assignVariableTypes": false,
+      "compositeLiteralFields": false,
+      "constantValues": false,
+      "functionTypeParameters": false,
+      "rangeVariableTypes": false
+    },
     "directoryFilters": [
       "-/workspace/.devcontainer",
       "-/workspace/.git",
+      "-/workspace/.github",
       "-/workspace/.serena",
       "-/workspace/.vscode",
       "-/workspace/node_modules",
@@ -304,6 +313,7 @@
     ]
   },
   "[go]": {
+    "editor.defaultFormatter": "golang.go",
     "editor.snippetSuggestions": "bottom",
     "editor.codeActionsOnSave": {
       "source.organizeImports": "always"
@@ -366,33 +376,20 @@
   },
   // ------------------------------------------------------------
   // for Python
+  // https://code.visualstudio.com/docs/python/settings-reference
+  // Note: python.linting.* and python.formatting.* are deprecated.
+  // Use ruff extension or individual linter/formatter extensions instead.
   // ------------------------------------------------------------
-  "python.pythonPath": "/usr/local/bin/python",
-  "python.linting.lintOnSave": true,
-  "python.linting.mypyEnabled": true,
-  "python.linting.pylintEnabled": false,
-  "python.linting.flake8Enabled": true,
-  "python.linting.enabled": true,
-  "python.linting.flake8Args": [
-    "--max-line-length",
-    "120",
-    "--max-complexity",
-    "20"
-  ],
-  "python.formatting.provider": "autopep8",
-  "python.formatting.autopep8Path": "/usr/local/bin/autopep8",
-  "python.formatting.autopep8Args": [
-    "--indent-size=4",
-    "--aggressive",
-    "--aggressive"
-  ],
-  "python.sortImports.path": "/usr/local/bin/isort",
   "python.testing.unittestArgs": ["-v", "-s", ".", "-p", "*test.py"],
   "python.testing.pytestEnabled": false,
-  "python.testing.nosetestsEnabled": false,
   "python.testing.unittestEnabled": true,
-  "python.linting.mypyPath": "/usr/local/bin/mypy",
-  "python.linting.mypyArgs": ["--config-file", "mypy.ini"],
+  "[python]": {
+    "editor.defaultFormatter": "charliermarsh.ruff",
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+      "source.organizeImports.ruff": "always"
+    }
+  },
   // ------------------------------------------------------------
   // for Shell Script
   // ------------------------------------------------------------
@@ -407,7 +404,7 @@
     "**/*.zsh": true,
     "**/*.fish": true
   },
-  "shellcheck.customArgs": ["-x -e SC1091"],
+  "shellcheck.customArgs": ["-x", "-e", "SC1091"],
   "[shellscript]": {
     "editor.defaultFormatter": "foxundermoon.shell-format",
     "editor.formatOnSave": true

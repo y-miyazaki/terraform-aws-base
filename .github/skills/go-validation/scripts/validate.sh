@@ -396,19 +396,19 @@ function run_go_fmt {
         return 0
     fi
 
-    # Use go fmt instead of gofmt for better Go module support
+    # Use gofumpt instead of gofmt for stricter formatting
     if [[ "$FIX_MODE" == "true" ]]; then
         log "INFO" "Automatically formatting files..."
-        if go fmt "$TARGET_PATTERN"; then
+        if gofumpt -w "$TARGET_PATTERN"; then
             log "INFO" "Files formatted successfully"
         else
-            log "ERROR" "go fmt failed"
+            log "ERROR" "gofumpt failed"
             EXIT_CODE=1
             GO_FMT_FAILED=1
         fi
     else
-        # Check formatting using gofmt -l to list files that are not formatted
-        # Use go list + mapfile instead of direct gofmt to avoid word splitting issues
+        # Check formatting using gofumpt -l to list files that are not formatted
+        # Use go list + mapfile instead of direct gofumpt to avoid word splitting issues
         # with complex package patterns and ensure proper handling of module directories
         local fmt_output
         # Safely build argument list from go list output to avoid word splitting
@@ -416,10 +416,10 @@ function run_go_fmt {
         if [[ ${#go_dirs[@]} -eq 0 ]]; then
             fmt_output=""
         else
-            fmt_output=$(gofmt -l "${go_dirs[@]}" 2>&1 || true)
+            fmt_output=$(gofumpt -l "${go_dirs[@]}" 2>&1 || true)
         fi
         if [[ -n "$fmt_output" ]]; then
-            echo "Files that need formatting (gofmt -l):"
+            echo "Files that need formatting (gofumpt -l):"
             echo "$fmt_output"
             log "WARN" "Some files need formatting. Use -f flag to auto-fix"
             EXIT_CODE=1

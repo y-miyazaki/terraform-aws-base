@@ -18,7 +18,7 @@ Run tools in this order (fail-fast: stop on first failure):
 - MOD-02: No extraneous or missing dependencies
 
 ### go fmt
-- FMT-01: All .go files are gofmt-formatted
+- FMT-01: All .go files are gofumpt-formatted
 - FMT-02: Import blocks organized per goimports conventions
 
 ### go vet
