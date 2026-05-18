@@ -3,17 +3,24 @@
 .DS_Store
 .devcontainer/devcontainer.json
 .serena
-.vscode/**
+.vscode
 !.vscode/cspell.json
 !.vscode/cspell-project.txt
-!.vscode/mcp-example.json
-!.vscode/mcp-example-config.json
 !.vscode/settings-example.json
 tmp
 
-# AI
+# AI agents
+.agents
 .amazonq
+.claude
+.cursor
+.github/agents
+.github/instructions
+.github/hooks
+.github/prompts
+.github/skills
 .kiro
+apm_modules/
 
 # env
 .env

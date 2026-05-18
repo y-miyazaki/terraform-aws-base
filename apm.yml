@@ -1,4 +1,4 @@
-name: y-miyazaki-config
+name: config
 version: 1.0.0
 description: Shared agent skills and instructions for Go, Terraform, Shell Script, GitHub Actions, and more
 author: y-miyazaki
@@ -9,12 +9,30 @@ includes: auto
 dependencies:
   apm:
     - git: github.com/y-miyazaki/config
+      path: .apm/packages/common
+      ref: v1.1.3
+    - git: github.com/y-miyazaki/config
+      path: .apm/packages/go
+      ref: v1.1.3
+    - git: github.com/y-miyazaki/config
+      path: .apm/packages/shell-script
+      ref: v1.1.3
+    - git: github.com/y-miyazaki/config
+      path: .apm/packages/terraform
+      ref: v1.1.3
+    - git: github.com/y-miyazaki/config
+      path: .apm/packages/mcp/aws
+      ref: v1.1.3
+    - git: github.com/y-miyazaki/config
       path: .apm/packages/mcp/common
-      ref: v1.1.2
+      ref: v1.1.3
     - git: github.com/y-miyazaki/config
       path: .apm/packages/mcp/performance
-      ref: v1.1.2
+      ref: v1.1.3
     - git: github.com/y-miyazaki/config
-      path: .apm/packages/hooks/performance-hooks
-      ref: v1.1.2
+      path: .apm/packages/mcp/terraform
+      ref: v1.1.3
+    - git: github.com/y-miyazaki/config
+      path: .apm/packages/mcp/terraform-aws
+      ref: v1.1.3
   mcp: []
