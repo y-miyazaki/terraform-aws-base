@@ -1,0 +1,68 @@
+packages:
+  - type: github_release
+    repo_owner: microsoft
+    repo_name: apm
+    asset: apm-{{.OS}}-{{.Arch}}.tar.gz
+    format: tar.gz
+    files:
+      - name: apm
+        src: apm-{{.OS}}-{{.Arch}}/apm
+    overrides:
+      - goos: windows
+        asset: apm-windows-x86_64.zip
+        format: zip
+        files:
+          - name: apm
+            src: apm-windows-x86_64/apm.exe
+    replacements:
+      amd64: x86_64
+    supported_envs:
+      - darwin
+      - linux
+      - windows
+
+  - type: github_release
+
+    repo_owner: microsoft
+    repo_name: waza
+    asset: waza-{{.OS}}-{{.Arch}}
+    format: raw
+    files:
+      - name: waza
+    overrides:
+      - goos: windows
+        asset: waza-windows-{{.Arch}}.exe
+    supported_envs:
+      - darwin
+      - linux
+      - windows
+
+  - type: github_release
+    repo_owner: yvgude
+    repo_name: lean-ctx
+    asset: lean-ctx-{{.Arch}}-{{.OS}}.tar.gz
+    format: tar.gz
+    files:
+      - name: lean-ctx
+    replacements:
+      darwin: apple-darwin
+      linux: unknown-linux-gnu
+      amd64: x86_64
+      arm64: aarch64
+    supported_envs:
+      - darwin
+      - linux
+
+  - type: github_release
+    repo_owner: DeusData
+    repo_name: codebase-memory-mcp
+    asset: codebase-memory-mcp-{{.OS}}-{{.Arch}}.tar.gz
+    format: tar.gz
+    files:
+      - name: codebase-memory-mcp
+    replacements:
+      arm64: arm64
+      amd64: amd64
+    supported_envs:
+      - darwin
+      - linux

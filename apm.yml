@@ -1,0 +1,20 @@
+name: y-miyazaki-config
+version: 1.0.0
+description: Shared agent skills and instructions for Go, Terraform, Shell Script, GitHub Actions, and more
+author: y-miyazaki
+license: Apache-2.0
+target: copilot
+includes: auto
+
+dependencies:
+  apm:
+    - git: github.com/y-miyazaki/config
+      path: .apm/packages/mcp/common
+      ref: v1.1.2
+    - git: github.com/y-miyazaki/config
+      path: .apm/packages/mcp/performance
+      ref: v1.1.2
+    - git: github.com/y-miyazaki/config
+      path: .apm/packages/hooks/performance-hooks
+      ref: v1.1.2
+  mcp: []

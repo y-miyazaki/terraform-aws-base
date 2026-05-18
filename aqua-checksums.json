@@ -26,6 +26,26 @@
       "algorithm": "sha256"
     },
     {
+      "id": "github_release/github.com/DeusData/codebase-memory-mcp/v0.6.1/codebase-memory-mcp-darwin-amd64.tar.gz",
+      "checksum": "A85F8313181C7FFD3A0AC494C0E2BF1B5647F15DE06686F8A0728162BF4326AC",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/DeusData/codebase-memory-mcp/v0.6.1/codebase-memory-mcp-darwin-arm64.tar.gz",
+      "checksum": "3468E5DF340E53DBA2D23CC30BF44210C412DFB2538D7DA992465934BF4980E0",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/DeusData/codebase-memory-mcp/v0.6.1/codebase-memory-mcp-linux-amd64.tar.gz",
+      "checksum": "A24C04FD1FD61B08158E011685CF08D860E3594E4CE057FFDA57D1CC2F4AFDD1",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/DeusData/codebase-memory-mcp/v0.6.1/codebase-memory-mcp-linux-arm64.tar.gz",
+      "checksum": "29811AADC2AA99FB9612683AF30A06D03FCB2BFEFB95C12EA672671827BD111C",
+      "algorithm": "sha256"
+    },
+    {
       "id": "github_release/github.com/Songmu/ecschedule/v0.18.2/ecschedule_v0.18.2_darwin_amd64.zip",
       "checksum": "C15025709BDE0D5F9A1800E971437CAC2768E8A68B0393C677CCB2C05098B3E2",
       "algorithm": "sha256"
@@ -108,6 +128,31 @@
     {
       "id": "github_release/github.com/aquasecurity/trivy/v0.70.0/trivy_0.70.0_windows-64bit.zip",
       "checksum": "EEA5442EAB86F9E26CD718D7618D43899E72A83767619E8BEE47911BDDBFB825",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/astral-sh/uv/0.11.14/uv-aarch64-apple-darwin.tar.gz",
+      "checksum": "4333AF5C0730D94323A7819BBDF87CE92DD07FC857D67FFF0059E0FCA31B5C02",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/astral-sh/uv/0.11.14/uv-aarch64-unknown-linux-musl.tar.gz",
+      "checksum": "D7D3966E46915C5F6932692AAF152A2473EECB1D2517CA4F8E88A07484B380B6",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/astral-sh/uv/0.11.14/uv-x86_64-apple-darwin.tar.gz",
+      "checksum": "9836C1440B0BD6AA5F81793648A339BD01D593B7B8F575DE3B855DAE4AB64654",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/astral-sh/uv/0.11.14/uv-x86_64-pc-windows-msvc.zip",
+      "checksum": "52BA5D19409AAA688A8A1A6EC8DFB6A4817230D20186E75F4006105C3E39A846",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/astral-sh/uv/0.11.14/uv-x86_64-unknown-linux-musl.tar.gz",
+      "checksum": "077D36F45A0CC6D440B653B2D5C53E7731121E99E54B0221267EEC5D1CAE76CE",
       "algorithm": "sha256"
     },
     {
@@ -506,6 +551,61 @@
       "algorithm": "sha256"
     },
     {
+      "id": "github_release/github.com/microsoft/apm/v0.13.0/apm-darwin-arm64.tar.gz",
+      "checksum": "73EE687128CA995BF50C698C0035E73C099E32BDC3D23980580FC62635D1F122",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/microsoft/apm/v0.13.0/apm-darwin-x86_64.tar.gz",
+      "checksum": "DF55F578A485CFD2D96A56AB6519ECEA59BA072879417EDDA543BFD7C9BF6088",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/microsoft/apm/v0.13.0/apm-linux-arm64.tar.gz",
+      "checksum": "5356627B372AB5CC6DF9BB12022BEADAC638E1F809AB1C7781D864D7058674EB",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/microsoft/apm/v0.13.0/apm-linux-x86_64.tar.gz",
+      "checksum": "ED02B1103EF4BC49559A81F7E109B424A49D95CF978515AD224E5EEB701B1F8A",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/microsoft/apm/v0.13.0/apm-windows-x86_64.zip",
+      "checksum": "34D5BBAD9AAE454FDADF5DE6C458EBB44CC0ED8B3E1CC13C8F5C7BC2BDEA96C8",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/microsoft/waza/v0.31.0/waza-darwin-amd64",
+      "checksum": "D5B8B1BF68358142C738179781B44A85E709E4A1CECCF34AB7C13ECA4427DD2E",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/microsoft/waza/v0.31.0/waza-darwin-arm64",
+      "checksum": "80C30AF6B51D78F63950C846845BC525E7878B1CDF68957BAFDD49874FFA15F1",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/microsoft/waza/v0.31.0/waza-linux-amd64",
+      "checksum": "BC3DB0609704D163E90CF7B117F31B21482C0137220066A208714DC31295E7DE",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/microsoft/waza/v0.31.0/waza-linux-arm64",
+      "checksum": "A28A0E7D64A1D482BD3CC7405F8DA9859BFCDE8DBBF6C9144FF051A5C48595F1",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/microsoft/waza/v0.31.0/waza-windows-amd64.exe",
+      "checksum": "7A7D103C6F48E4C8EB22EFAB542366616DBC3AA801CC2E616E8739EF6B378820",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/microsoft/waza/v0.31.0/waza-windows-arm64.exe",
+      "checksum": "D8FD4D72F42F7606675E763B92639DE2AE152C7C084741193228A63A42DB69C5",
+      "algorithm": "sha256"
+    },
+    {
       "id": "github_release/github.com/mvdan/gofumpt/v0.10.0/gofumpt_v0.10.0_darwin_amd64",
       "checksum": "30E5B914A824C3B6BD0480E4F493517012167D380DE74643879C50F4AA0C834E",
       "algorithm": "sha256"
@@ -843,6 +943,26 @@
     {
       "id": "github_release/github.com/vektra/mockery/v3.7.0/mockery_3.7.0_Windows_x86_64.tar.gz",
       "checksum": "76D524AD1740CD02ED621D90015F538FDB53CF6CD4A1AD4D289DB017FB69BD0E",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/yvgude/lean-ctx/v3.6.2/lean-ctx-aarch64-apple-darwin.tar.gz",
+      "checksum": "311127867391A4ABFE5996A150598EA63DB5B296D7AE3F309C15E94DB6144051",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/yvgude/lean-ctx/v3.6.2/lean-ctx-aarch64-unknown-linux-gnu.tar.gz",
+      "checksum": "A00EE0BB2D4FC0BCF5A9C9ACD32E22A23E9EAADABA729777EF15159C69D78C13",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/yvgude/lean-ctx/v3.6.2/lean-ctx-x86_64-apple-darwin.tar.gz",
+      "checksum": "7B2E103C13C2B62E09404FF468A53A590A0EB1F0390985E9DC388855865A63B6",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/yvgude/lean-ctx/v3.6.2/lean-ctx-x86_64-unknown-linux-gnu.tar.gz",
+      "checksum": "8F50728216A54167D638834D94443EE0D4BB79461AF527700885DAF30041EE24",
       "algorithm": "sha256"
     },
     {

@@ -9,8 +9,12 @@ checksum:
 registries:
   - type: standard
     ref: v4.512.0 # renovate: depName=aquaproj/aqua-registry datasource=github-tags
+  - name: local
+    type: local
+    path: aqua-registry.yaml
 packages:
   # Utility tools
+  - name: astral-sh/uv@0.11.14 # uv/uvx
   - name: BurntSushi/ripgrep@15.1.0 # grep alternative
   - name: google/go-jsonnet@v0.22.0 # Jsonnet command-line tool
   # Security related tools
@@ -54,3 +58,12 @@ packages:
   # - name: jamesWoolfenden/pike@v0.4.5 # generate minimum IAM policy from Terraform
   - name: terraform-docs/terraform-docs@v0.24.0 # documentation generator
   - name: terraform-linters/tflint@v0.62.1 # linter
+  # AI agent tools
+  - name: microsoft/apm@v0.13.0
+    registry: local
+  - name: microsoft/waza@v0.31.0
+    registry: local
+  - name: yvgude/lean-ctx@v3.6.2
+    registry: local
+  - name: DeusData/codebase-memory-mcp@v0.6.1
+    registry: local

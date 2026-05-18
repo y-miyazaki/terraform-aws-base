@@ -57,7 +57,7 @@ alias tapply='terraform apply -auto-approve -var-file="terraform.${ENV}.tfvars"'
 #######################################
 # for aqua
 #######################################
-export PATH="$(aqua root-dir)/bin:$PATH"
+export PATH="$(aqua root-dir)/bin:/home/${USER}/bin:$PATH"
 
 # export PYENV_ROOT="/home/${USER}/.pyenv"
 # export PATH="$PYENV_ROOT/bin/:$PATH"
@@ -119,3 +119,9 @@ fi
 
 # XDG dirs
 export XDG_CONFIG_HOME="/home/${USER}/.config"
+
+# lean-ctx shell hook — begin
+if [ -f "/home/${USER}/.config/lean-ctx/shell-hook.bash" ]; then
+    . "/home/${USER}/.config/lean-ctx/shell-hook.bash"
+fi
+# lean-ctx shell hook — end
