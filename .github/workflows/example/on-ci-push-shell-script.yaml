@@ -29,7 +29,7 @@ concurrency:
 
 jobs:
   shell-script-ci:
-    uses: y-miyazaki/config/.github/workflows/ci-shell-script.yaml@@237fbd05581748a6b74dc9cb2f354cadee6d5c88 # v1.1.3
+    uses: y-miyazaki/config/.github/workflows/ci-shell-script.yaml@237fbd05581748a6b74dc9cb2f354cadee6d5c88 # v1.1.3
     with:
       script_path: "**/*.sh"
     permissions:
