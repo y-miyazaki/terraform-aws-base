@@ -75,13 +75,14 @@ setup() {
 }
 
 @test "terraform_select_workspace creates workspace when select fails (dry-run)" {
-    run terraform_select_workspace ""
-    [ "$status" -ne 0 ]
-}
-
-@test "terraform_select_workspace errors when no name provided" {
     DRY_RUN=true
     run terraform_select_workspace "ci-test-ws"
     [ "$status" -eq 0 ]
-    [[ "$output" == *"DRY-RUN: Would execute: terraform workspace new 'ci-test-ws'"* ]]
+    [[ "$output" == *"DRY-RUN: Would execute: terraform workspace new ci-test-ws"* ]]
+}
+
+@test "terraform_select_workspace errors when no name provided" {
+    run terraform_select_workspace ""
+    [ "$status" -ne 0 ]
+    [[ "$output" == *"Workspace name is required"* ]]
 }

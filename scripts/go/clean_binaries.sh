@@ -208,7 +208,9 @@ function remove_binary_files {
             fi
             ((BINARY_COUNT++)) || true
         else
-            [[ "$VERBOSE" == "true" ]] && log "INFO" "Skipped (not binary executable): ${filepath}" || true
+            if [[ "$VERBOSE" == "true" ]]; then
+                log "INFO" "Skipped (not binary executable): ${filepath}"
+            fi
         fi
     done < <(find "$ROOT_DIR" -type f ! -path '*/.git/*' -print0)
 }
@@ -244,7 +246,9 @@ function remove_build_dirs {
             fi
             ((DIR_COUNT++)) || true
         else
-            [[ "$VERBOSE" == "true" ]] && log "INFO" "Not found (skip): ${target}" || true
+            if [[ "$VERBOSE" == "true" ]]; then
+                log "INFO" "Not found (skip): ${target}"
+            fi
         fi
     done
 }
