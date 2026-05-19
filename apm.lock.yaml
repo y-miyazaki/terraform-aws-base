@@ -1,11 +1,11 @@
 lockfile_version: '1'
-generated_at: '2026-05-18T10:48:13.819458+00:00'
+generated_at: '2026-05-19T03:00:27.916381+00:00'
 apm_version: 0.13.0
 dependencies:
 - repo_url: y-miyazaki/config
   host: github.com
-  resolved_commit: 237fbd05581748a6b74dc9cb2f354cadee6d5c88
-  resolved_ref: v1.1.3
+  resolved_commit: 59f3fc2baeb78d374b3f0fdafeb1a07363af4b8c
+  resolved_ref: v1.1.5
   virtual_path: .apm/packages/common
   is_virtual: true
   package_type: apm_package
@@ -17,65 +17,92 @@ dependencies:
   - .agents/skills/github-pr-body
   - .agents/skills/instructions-review
   - .agents/skills/markdown-validation
-  content_hash: sha256:cb5dd8eae9fcc37fd274a21f95bc4e7c0eb68921062828b07de6eaa85841d641
+  - .github/instructions/agent-skills.instructions.md
+  - .github/instructions/github-actions-workflow.instructions.md
+  - .github/instructions/instructions.instructions.md
+  - .github/instructions/markdown.instructions.md
+  deployed_file_hashes:
+    .github/instructions/agent-skills.instructions.md: sha256:ae26dcae884208349329c54464d40cde863091a44dcecc6b9e15a170a961de3b
+    .github/instructions/github-actions-workflow.instructions.md: sha256:84e0abdb8ddf3148ce3ebf52f8358b66ab0db0f869bfcbf1ee7cc3d4355cf5de
+    .github/instructions/instructions.instructions.md: sha256:8f58cc4393e0a552b1d6760bad68d74d78e31add7c33db78acdaf6f34acd3d43
+    .github/instructions/markdown.instructions.md: sha256:efb26dbd741e39c6220e2e6acb219ae70711f9a275d8da873d0eb01305a6926f
+  content_hash: sha256:816dc433eb893ee3706145870fa287c8469c7d1793efd6aa4ea13f56a730b735
 - repo_url: y-miyazaki/config
   host: github.com
-  resolved_commit: 237fbd05581748a6b74dc9cb2f354cadee6d5c88
-  resolved_ref: v1.1.3
+  resolved_commit: 59f3fc2baeb78d374b3f0fdafeb1a07363af4b8c
+  resolved_ref: v1.1.5
   virtual_path: .apm/packages/go
   is_virtual: true
   package_type: apm_package
   deployed_files:
   - .agents/skills/go-review
   - .agents/skills/go-validation
-  content_hash: sha256:3515e9edf8c290a2fd825ceac8f8d68d60d6525bdfefc1f720f3a79f6fe144af
+  - .github/instructions/go.instructions.md
+  deployed_file_hashes:
+    .github/instructions/go.instructions.md: sha256:fdeed46a3f717dc9c84a30729f5734a517908e3aa2b24224c71f8a202527745d
+  content_hash: sha256:c9701214ae6a679ac547de861809155cfa1400acb9aa85f68ac5bf6131d02d9d
 - repo_url: y-miyazaki/config
   host: github.com
-  resolved_commit: 237fbd05581748a6b74dc9cb2f354cadee6d5c88
-  resolved_ref: v1.1.3
+  resolved_commit: 59f3fc2baeb78d374b3f0fdafeb1a07363af4b8c
+  resolved_ref: v1.1.5
+  virtual_path: .apm/packages/mcp/aws
+  is_virtual: true
+  package_type: apm_package
+  content_hash: sha256:b967e0ff87cf10b6658d0053cd6ce5e7d429278b90eb592a1918b5ec5979dd56
+- repo_url: y-miyazaki/config
+  host: github.com
+  resolved_commit: 59f3fc2baeb78d374b3f0fdafeb1a07363af4b8c
+  resolved_ref: v1.1.5
   virtual_path: .apm/packages/mcp/common
   is_virtual: true
   package_type: apm_package
   content_hash: sha256:1a61b9ae7a4e138fc4619fea4888456d0086722ec289b20bd4715ff69b141a8a
 - repo_url: y-miyazaki/config
   host: github.com
-  resolved_commit: 237fbd05581748a6b74dc9cb2f354cadee6d5c88
-  resolved_ref: v1.1.3
+  resolved_commit: 59f3fc2baeb78d374b3f0fdafeb1a07363af4b8c
+  resolved_ref: v1.1.5
   virtual_path: .apm/packages/mcp/performance
   is_virtual: true
   package_type: apm_package
+  deployed_files:
+  - .github/hooks/performance-lean-ctx.json
+  deployed_file_hashes:
+    .github/hooks/performance-lean-ctx.json: sha256:2d28799a2648693e4ffe109d84f5c7c31ce266fab1c292b1f5dd4da043b5c8c5
   content_hash: sha256:e251c8e56f28f6eeeaa7e5566d2e176d389720e3d3d3457a11585627ca2df064
 - repo_url: y-miyazaki/config
   host: github.com
-  resolved_commit: 237fbd05581748a6b74dc9cb2f354cadee6d5c88
-  resolved_ref: v1.1.3
+  resolved_commit: 59f3fc2baeb78d374b3f0fdafeb1a07363af4b8c
+  resolved_ref: v1.1.5
   virtual_path: .apm/packages/mcp/terraform
   is_virtual: true
   package_type: apm_package
   content_hash: sha256:71264ddf569cfc5b3a38f139cc78db835d79160fd8030a9507eb02e08ea5d6f8
 - repo_url: y-miyazaki/config
   host: github.com
-  resolved_commit: 237fbd05581748a6b74dc9cb2f354cadee6d5c88
-  resolved_ref: v1.1.3
+  resolved_commit: 59f3fc2baeb78d374b3f0fdafeb1a07363af4b8c
+  resolved_ref: v1.1.5
   virtual_path: .apm/packages/mcp/terraform-aws
   is_virtual: true
   package_type: apm_package
   content_hash: sha256:cd0e4f8392da805269abc450f8647472ed637fb363bb08cad290071ac686826c
 - repo_url: y-miyazaki/config
   host: github.com
-  resolved_commit: 237fbd05581748a6b74dc9cb2f354cadee6d5c88
-  resolved_ref: v1.1.3
+  resolved_commit: 59f3fc2baeb78d374b3f0fdafeb1a07363af4b8c
+  resolved_ref: v1.1.5
   virtual_path: .apm/packages/shell-script
   is_virtual: true
   package_type: apm_package
   deployed_files:
   - .agents/skills/shell-script-review
   - .agents/skills/shell-script-validation
-  content_hash: sha256:c0c760e9e79ecd16d7ca4548d3432444f0c5b83f5d598f75efad5ce3b896c89b
+  - .github/instructions/shell-script.instructions.md
+  deployed_file_hashes:
+    .github/instructions/shell-script.instructions.md: sha256:98ef866c58d0e6757debcf887a85a39d283fe55eba2c58f35457b440f8d714c4
+  content_hash: sha256:47a5fe465110da98af5c3e849888c619435a08a34521a849b91a08518756570e
 - repo_url: y-miyazaki/config
   host: github.com
-  resolved_commit: 237fbd05581748a6b74dc9cb2f354cadee6d5c88
-  resolved_ref: v1.1.3
+  resolved_commit: 59f3fc2baeb78d374b3f0fdafeb1a07363af4b8c
+  resolved_ref: v1.1.5
   virtual_path: .apm/packages/terraform
   is_virtual: true
   package_type: apm_package
@@ -84,9 +111,14 @@ dependencies:
   - .agents/skills/terraform-validation
   - .github/instructions/terraform.instructions.md
   deployed_file_hashes:
-    .github/instructions/terraform.instructions.md: sha256:301e1b51cdb6bf2546e3681005d05075806cd2d3192585b66df934dc76e13816
-  content_hash: sha256:807866615c5819c46a416e54935010d95d4ba9ca1c625b6d8c555fc914ee911f
+    .github/instructions/terraform.instructions.md: sha256:6701674ed6113d6a22a8f47a97ed6498d81f8fff219933c09428d13bcaab5c61
+  content_hash: sha256:9ae6f57ae409668094f923c484a2ef59578640baf5c53dcbaf17fc167494cbaf
 mcp_servers:
+- aws-documentation-mcp-server
+- aws-knowledge-mcp-server
+- aws-mcp
+- aws-pricing-mcp-server
+- awslabs-aws-api-mcp-server
 - awslabs-terraform-mcp-server
 - codebase-memory-mcp
 - context7
@@ -96,6 +128,47 @@ mcp_servers:
 - lean-ctx
 - playwright
 mcp_configs:
+  aws-documentation-mcp-server:
+    name: aws-documentation-mcp-server
+    transport: stdio
+    args:
+    - awslabs.aws-documentation-mcp-server==1.1.24
+    registry: false
+    command: uvx
+  aws-knowledge-mcp-server:
+    name: aws-knowledge-mcp-server
+    transport: stdio
+    args:
+    - mcp-proxy
+    - --transport
+    - streamablehttp
+    - https://knowledge-mcp.global.api.aws
+    registry: false
+    command: uvx
+  aws-mcp:
+    name: aws-mcp
+    transport: stdio
+    args:
+    - mcp-proxy-for-aws==1.4.2
+    - https://aws-mcp.us-east-1.api.aws/mcp
+    registry: false
+    command: uvx
+  aws-pricing-mcp-server:
+    name: aws-pricing-mcp-server
+    transport: stdio
+    args:
+    - awslabs.aws-pricing-mcp-server==1.0.30
+    registry: false
+    command: uvx
+  awslabs-aws-api-mcp-server:
+    name: awslabs-aws-api-mcp-server
+    transport: stdio
+    env:
+      AWS_REGION: ${AWS_REGION}
+    args:
+    - awslabs.aws-api-mcp-server==1.3.36
+    registry: false
+    command: uvx
   awslabs-terraform-mcp-server:
     name: awslabs-terraform-mcp-server
     transport: stdio

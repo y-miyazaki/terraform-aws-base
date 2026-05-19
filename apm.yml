@@ -8,31 +8,13 @@ includes: auto
 
 dependencies:
   apm:
-    - git: github.com/y-miyazaki/config
-      path: .apm/packages/common
-      ref: v1.1.5
-    - git: github.com/y-miyazaki/config
-      path: .apm/packages/go
-      ref: v1.1.5
-    - git: github.com/y-miyazaki/config
-      path: .apm/packages/shell-script
-      ref: v1.1.5
-    - git: github.com/y-miyazaki/config
-      path: .apm/packages/terraform
-      ref: v1.1.5
-    - git: github.com/y-miyazaki/config
-      path: .apm/packages/mcp/aws
-      ref: v1.1.5
-    - git: github.com/y-miyazaki/config
-      path: .apm/packages/mcp/common
-      ref: v1.1.5
-    - git: github.com/y-miyazaki/config
-      path: .apm/packages/mcp/performance
-      ref: v1.1.5
-    - git: github.com/y-miyazaki/config
-      path: .apm/packages/mcp/terraform
-      ref: v1.1.5
-    - git: github.com/y-miyazaki/config
-      path: .apm/packages/mcp/terraform-aws
-      ref: v1.1.5
+    - github.com/y-miyazaki/config/.apm/packages/common#v1.1.5
+    - github.com/y-miyazaki/config/.apm/packages/go#v1.1.5
+    - github.com/y-miyazaki/config/.apm/packages/shell-script#v1.1.5
+    - github.com/y-miyazaki/config/.apm/packages/terraform#v1.1.5
+    - github.com/y-miyazaki/config/.apm/packages/mcp/aws#v1.1.5
+    - github.com/y-miyazaki/config/.apm/packages/mcp/common#v1.1.5
+    - github.com/y-miyazaki/config/.apm/packages/mcp/performance#v1.1.5
+    - github.com/y-miyazaki/config/.apm/packages/mcp/terraform#v1.1.5
+    - github.com/y-miyazaki/config/.apm/packages/mcp/terraform-aws#v1.1.5
   mcp: []

@@ -576,6 +576,31 @@
       "algorithm": "sha256"
     },
     {
+      "id": "github_release/github.com/microsoft/apm/v0.14.0/apm-darwin-arm64.tar.gz",
+      "checksum": "3BB8B7CE7D4FC68646BFBE96C188E3C0CC278BFE066F68FB52E8929FD0DA3938",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/microsoft/apm/v0.14.0/apm-darwin-x86_64.tar.gz",
+      "checksum": "3F70F6C0985B344973F5BA6004F0BFC02212E547B95FDCE04DEB6D8A3EF7AE6D",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/microsoft/apm/v0.14.0/apm-linux-arm64.tar.gz",
+      "checksum": "3A8340B02851A94760A449D732E5F417B2BA4409689471302AF9C5801851AD72",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/microsoft/apm/v0.14.0/apm-linux-x86_64.tar.gz",
+      "checksum": "5CA7853E4B8858272DA721E1D68548A6C078F7920487298BEF901BD6E709A7D1",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/microsoft/apm/v0.14.0/apm-windows-x86_64.zip",
+      "checksum": "51E3D439863620EA51E00BAB09DCF22CEB2F8E83A1E70CB0EB50E5A02578F728",
+      "algorithm": "sha256"
+    },
+    {
       "id": "github_release/github.com/microsoft/waza/v0.31.0/waza-darwin-amd64",
       "checksum": "D5B8B1BF68358142C738179781B44A85E709E4A1CECCF34AB7C13ECA4427DD2E",
       "algorithm": "sha256"
