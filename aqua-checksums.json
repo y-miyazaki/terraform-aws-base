@@ -551,31 +551,6 @@
       "algorithm": "sha256"
     },
     {
-      "id": "github_release/github.com/microsoft/apm/v0.13.0/apm-darwin-arm64.tar.gz",
-      "checksum": "73EE687128CA995BF50C698C0035E73C099E32BDC3D23980580FC62635D1F122",
-      "algorithm": "sha256"
-    },
-    {
-      "id": "github_release/github.com/microsoft/apm/v0.13.0/apm-darwin-x86_64.tar.gz",
-      "checksum": "DF55F578A485CFD2D96A56AB6519ECEA59BA072879417EDDA543BFD7C9BF6088",
-      "algorithm": "sha256"
-    },
-    {
-      "id": "github_release/github.com/microsoft/apm/v0.13.0/apm-linux-arm64.tar.gz",
-      "checksum": "5356627B372AB5CC6DF9BB12022BEADAC638E1F809AB1C7781D864D7058674EB",
-      "algorithm": "sha256"
-    },
-    {
-      "id": "github_release/github.com/microsoft/apm/v0.13.0/apm-linux-x86_64.tar.gz",
-      "checksum": "ED02B1103EF4BC49559A81F7E109B424A49D95CF978515AD224E5EEB701B1F8A",
-      "algorithm": "sha256"
-    },
-    {
-      "id": "github_release/github.com/microsoft/apm/v0.13.0/apm-windows-x86_64.zip",
-      "checksum": "34D5BBAD9AAE454FDADF5DE6C458EBB44CC0ED8B3E1CC13C8F5C7BC2BDEA96C8",
-      "algorithm": "sha256"
-    },
-    {
       "id": "github_release/github.com/microsoft/apm/v0.14.0/apm-darwin-arm64.tar.gz",
       "checksum": "3BB8B7CE7D4FC68646BFBE96C188E3C0CC278BFE066F68FB52E8929FD0DA3938",
       "algorithm": "sha256"
