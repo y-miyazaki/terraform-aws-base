@@ -1,20 +1,14 @@
 name: config
 version: 1.0.0
-description: Shared agent skills and instructions for Go, Terraform, Shell Script, GitHub Actions, and more
-author: y-miyazaki
+description: agent skills and instructions and mcp
 license: Apache-2.0
 target: copilot
 includes: auto
-
 dependencies:
   apm:
-    - github.com/y-miyazaki/config/.apm/packages/common#v1.1.5
-    - github.com/y-miyazaki/config/.apm/packages/go#v1.1.5
-    - github.com/y-miyazaki/config/.apm/packages/shell-script#v1.1.5
-    - github.com/y-miyazaki/config/.apm/packages/terraform#v1.1.5
-    - github.com/y-miyazaki/config/.apm/packages/mcp/aws#v1.1.5
-    - github.com/y-miyazaki/config/.apm/packages/mcp/common#v1.1.5
-    - github.com/y-miyazaki/config/.apm/packages/mcp/performance#v1.1.5
-    - github.com/y-miyazaki/config/.apm/packages/mcp/terraform#v1.1.5
-    - github.com/y-miyazaki/config/.apm/packages/mcp/terraform-aws#v1.1.5
+    - github.com/y-miyazaki/config/.apm/packages/common#v1.1.6
+    - github.com/y-miyazaki/config/.apm/packages/go#v1.1.6
+    - github.com/y-miyazaki/config/.apm/packages/shell-script#v1.1.6
+    - github.com/y-miyazaki/config/.apm/packages/terraform#v1.1.6
+    - github.com/y-miyazaki/config/.apm/packages/terraform-aws#v1.1.6
   mcp: []
