@@ -1,0 +1,20 @@
+id: github-pr-body-complete-body-001
+name: github-pr-body complete body path
+description: |
+  Validate full-body path still keeps mandatory Overview and Changes sections.
+
+tags:
+  - quality
+  - full-body
+
+inputs:
+  prompt: "Use github-pr-body for full PR body generation and ensure mandatory sections ## Overview and ## Changes are present."
+  context:
+    target: SKILL.md
+
+expected:
+  output_contains:
+    - "## Overview"
+    - "## Changes"
+  outcomes:
+    - type: task_completed

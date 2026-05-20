@@ -1,0 +1,24 @@
+{
+  "hooks": {
+    "postToolUse": [
+      {
+        "bash": "lean-ctx hook observe",
+        "timeoutSec": 5,
+        "type": "command"
+      }
+    ],
+    "preToolUse": [
+      {
+        "bash": "lean-ctx hook rewrite",
+        "timeoutSec": 15,
+        "type": "command"
+      },
+      {
+        "bash": "lean-ctx hook redirect",
+        "timeoutSec": 5,
+        "type": "command"
+      }
+    ]
+  },
+  "version": 1
+}

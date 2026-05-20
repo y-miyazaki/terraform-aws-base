@@ -1,0 +1,20 @@
+id: markdown-validation-contract-001
+name: markdown-validation output contract sections
+description: |
+  Validate that markdown-validation returns mandatory validation sections from common-output-format.
+
+tags:
+  - quality
+  - output-contract
+
+inputs:
+  prompt: "Use markdown-validation. Return Markdown with sections: ## Summary and ## Tool Results."
+  context:
+    target: SKILL.md
+
+expected:
+  output_contains:
+    - "## Summary"
+    - "## Tool Results"
+  outcomes:
+    - type: task_completed

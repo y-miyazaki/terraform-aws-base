@@ -1,0 +1,21 @@
+id: github-actions-review-contract-001
+name: github-actions-review output contract sections
+description: |
+  Validate that github-actions-review returns mandatory review sections from common-output-format.
+
+tags:
+  - quality
+  - output-contract
+
+inputs:
+  prompt: "Use github-actions-review. Return Markdown with sections: ## Checks Summary, ## Checks (Failed/Deferred Only), ## Issues."
+  context:
+    target: SKILL.md
+
+expected:
+  output_contains:
+    - "## Checks Summary"
+    - "## Checks (Failed/Deferred Only)"
+    - "## Issues"
+  outcomes:
+    - type: task_completed

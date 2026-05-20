@@ -1,0 +1,21 @@
+id: instructions-review-contract-001
+name: instructions-review output contract sections
+description: |
+  Validate that instructions-review returns mandatory review sections from common-output-format.
+
+tags:
+  - quality
+  - output-contract
+
+inputs:
+  prompt: "Use instructions-review. Return Markdown with sections: ## Checks Summary, ## Checks (Failed/Deferred Only), ## Issues."
+  context:
+    target: SKILL.md
+
+expected:
+  output_contains:
+    - "## Checks Summary"
+    - "## Checks (Failed/Deferred Only)"
+    - "## Issues"
+  outcomes:
+    - type: task_completed
