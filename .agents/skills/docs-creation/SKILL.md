@@ -3,7 +3,7 @@ name: docs-creation
 description: >-
   Create or update docs files with deterministic matching and templates.
   Use when creating or updating documentation files.
-  Use for specification, architecture, design, troubleshooting, and maintenance docs.
+  Use for README, specification, architecture, design, troubleshooting, and maintenance docs.
 license: Apache-2.0
 metadata:
   author: y-miyazaki
@@ -33,7 +33,7 @@ Use this schema to validate the structured fields extracted from the natural lan
     },
     "document_type": {
       "type": "string",
-      "enum": ["specification", "architecture", "design", "design-decisions", "troubleshooting", "general", "module-catalog", "monitoring", "performance", "security-coverage", "maintenance-notes", "improvements"]
+      "enum": ["readme", "specification", "architecture", "design", "design-decisions", "troubleshooting", "general", "module-catalog", "monitoring", "performance", "security-coverage", "maintenance-notes", "improvements"]
     },
     "profile": {
       "type": "string",
@@ -41,7 +41,7 @@ Use this schema to validate the structured fields extracted from the natural lan
     },
     "target_file": {
       "type": "string",
-      "pattern": "^docs/[a-z0-9-]+\\.md$"
+      "pattern": "^(docs/[a-z0-9-]+\\.md|README\\.md)$"
     }
   },
   "required": ["topic", "document_type", "profile"]
@@ -53,6 +53,7 @@ If extracted structured input does not satisfy this schema, stop before write ac
 ## USE FOR:
 
 - Creating or updating docs under `docs/`
+- Creating or updating `README.md` at repository root
 - Applying templates to specification, architecture, design, troubleshooting, and maintenance docs
 - Generating `docs/index.md` entries for changed docs
 
@@ -66,7 +67,7 @@ If extracted structured input does not satisfy this schema, stop before write ac
 
 - **UTILITY SKILL** for documentation creation and updates
 - Natural-language prompt in, structured fields out
-- Writes only markdown files under `docs/`
+- Writes markdown files under `docs/` or `README.md` at repository root
 
 ## Examples
 
@@ -85,15 +86,16 @@ File rules: see [NC-02](references/common-checklist.md) and [DC-02](references/c
 
 ## Execution Scope
 
-- Writes only to markdown files under `docs/`.
+- Writes only to markdown files under `docs/` or to `README.md` at repository root.
+- `readme` document_type MUST always produce `README.md` at repository root.
 - Do not rename/delete files, add YAML frontmatter, or run markdown linting.
 
 ## Reference Files Guide
 
 - [common-checklist.md](references/common-checklist.md) (always read)
 - [common-output-format.md](references/common-output-format.md) (always read)
-- [document-types](references/category-document-types.md) (always read)
-- common-template: `references/category-templates-common-<document_type>.md` (Read the file matching the resolved `document_type`; e.g., `references/category-templates-common-specification.md` for `specification`)
+- [category-document-types.md](references/category-document-types.md) (always read)
+- common-template: `references/category-templates-common-<document_type>.md` (Read the file matching the resolved `document_type`; contains template)
 - [go-templates](references/category-templates-go.md) (Read when the profile is `go`; overrides `specification` template)
 - [terraform-templates](references/category-templates-terraform.md) (Read when the profile is `terraform`; overrides `specification` template)
 
@@ -102,7 +104,7 @@ File rules: see [NC-02](references/common-checklist.md) and [DC-02](references/c
 1. List markdown files in `docs/`.
 2. Resolve `document_type`: use explicit `document_type` if present; otherwise infer one candidate from [references/category-document-types.md](references/category-document-types.md).
 3. If `document_type` inference is ambiguous or no candidate matches, stop before write actions and ask the user to select one explicit `document_type`.
-4. If no target file provided, resolve deterministic default path using [references/category-document-types.md](references/category-document-types.md); if no deterministic match exists, ask user for an explicit target file path.
+4. If no target file provided, resolve deterministic default path using [references/category-document-types.md](references/category-document-types.md); for `readme` type, always use `README.md` at repository root; if no deterministic match exists, ask user for an explicit target file path.
 5. Select template: use `references/category-templates-go.md` for `go` profile, `references/category-templates-terraform.md` for `terraform` profile; for `default` profile, read `references/category-templates-common-<document_type>.md`.
 6. Run case-insensitive duplicate check; duplicates must fail the run.
 7. Create/update with naming/structure rules from [common-checklist.md](references/common-checklist.md) and valid relative links.
@@ -131,3 +133,4 @@ File rules: see [NC-02](references/common-checklist.md) and [DC-02](references/c
 
 - Run NC-01 duplicate checks before write actions.
 - Keep H1 titles in `docs/`.
+- `readme` document_type MUST always be created for every repository; it is a mandatory document.

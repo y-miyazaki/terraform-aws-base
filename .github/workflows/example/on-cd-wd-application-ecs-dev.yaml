@@ -8,12 +8,16 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+permissions:
+  contents: read
+  id-token: write
+
 jobs:
   ecs-deploy:
     permissions:
       contents: read
       id-token: write
-    uses: y-miyazaki/config/.github/workflows/cd-aws-ecs.yaml@59f3fc2baeb78d374b3f0fdafeb1a07363af4b8c # v1.1.5
+    uses: y-miyazaki/config/.github/workflows/cd-aws-ecs.yaml@88735dfc1dfc25103452611b7de7a1bed8a5cae1 # v1.1.12
     with:
       ecs_service_base_dir: "ecs/ecs-service/test-server"
       environment: "dev"

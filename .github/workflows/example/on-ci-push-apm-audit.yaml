@@ -1,5 +1,5 @@
-# CI workflow: Markdown lint on push/PR
-name: on-ci-push-markdown
+# CI workflow: APM install and audit on push/PR
+name: on-ci-push-apm-audit
 
 on:
   push:
@@ -11,9 +11,11 @@ on:
       - "develop"
       - "feature/**"
     paths:
-      - "**/*.md"
-      - "docs/**/*.md"
-      - ".markdownlint.yaml"
+      - ".apm/**"
+      - ".agents/**"
+      - ".github/**"
+      - "apm.lock.yaml"
+      - "apm.yml"
   pull_request:
     branches:
       - "main"
@@ -23,9 +25,11 @@ on:
       - "develop"
       - "feature/**"
     paths:
-      - "**/*.md"
-      - "docs/**/*.md"
-      - ".markdownlint.yaml"
+      - ".apm/**"
+      - ".agents/**"
+      - ".github/**"
+      - "apm.lock.yaml"
+      - "apm.yml"
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -33,13 +37,9 @@ concurrency:
 
 permissions:
   contents: read
-  pull-requests: write
 
 jobs:
-  markdown-ci:
-    uses: y-miyazaki/config/.github/workflows/ci-markdown.yaml@88735dfc1dfc25103452611b7de7a1bed8a5cae1 # v1.1.12
+  apm-audit:
+    uses: ./.github/workflows/ci-apm-audit.yaml
     permissions:
       contents: read
-      pull-requests: write
-    with:
-      markdownlint_flags: "README*.md docs/**/*.md"

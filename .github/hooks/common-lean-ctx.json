@@ -2,19 +2,19 @@
   "hooks": {
     "postToolUse": [
       {
-        "bash": "lean-ctx hook observe",
+        "bash": "bash -lc 'command -v lean-ctx >/dev/null 2>&1 || exit 0; lean-ctx hook observe'",
         "timeoutSec": 5,
         "type": "command"
       }
     ],
     "preToolUse": [
       {
-        "bash": "lean-ctx hook rewrite",
+        "bash": "bash -lc 'command -v lean-ctx >/dev/null 2>&1 || exit 0; lean-ctx hook rewrite'",
         "timeoutSec": 15,
         "type": "command"
       },
       {
-        "bash": "lean-ctx hook redirect",
+        "bash": "bash -lc 'command -v lean-ctx >/dev/null 2>&1 || exit 0; lean-ctx hook redirect'",
         "timeoutSec": 5,
         "type": "command"
       }
