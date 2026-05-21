@@ -37,13 +37,16 @@ fi
 
 # apm install (optional)
 if command -v apm > /dev/null 2>&1; then
-    apm install || echo "[warn] apm install failed" >&2
+    apm install --frozen || echo "[warn] apm install failed" >&2
 fi
 
 # pre-commit (optional)
 if command -v pre-commit > /dev/null 2>&1; then
     if [ -n "${repo_root}" ]; then
-        pre-commit -C "$repo_root" install || echo "[warn] pre-commit install failed" >&2
+        (
+            cd "$repo_root"
+            pre-commit install
+        ) || echo "[warn] pre-commit install failed" >&2
     fi
 fi
 

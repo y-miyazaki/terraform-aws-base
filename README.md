@@ -231,9 +231,9 @@ You should be aware that the score will not be accurate until you re-evaluate it
 
 ![SecurityHub Score](image/security_hub_security_score.png)
 
-For a detailed mapping of CIS AWS Foundations Benchmark controls to the modules in this repository, see [CIS Benchmark Compliance Matrix](./docs/cis_benchmark.md).
+For a detailed mapping of CIS AWS Foundations Benchmark controls to the modules in this repository, see [CIS Benchmark Compliance Matrix](./docs/cis-benchmark.md).
 
-For AWS security service coverage including services not yet implemented and their reasons, see [Security Coverage](./docs/security_coverage.md).
+For AWS security service coverage including services not yet implemented and their reasons, see [Security Coverage](./docs/security-coverage.md).
 
 #### Security:SSM Automation
 
@@ -498,3 +498,29 @@ When the Athena function is enabled, a table is created for SES and a named quer
 
 Author: Yoshiaki Miyazaki  
 Contact: https://github.com/y-miyazaki
+
+<!-- BEGIN_TF_DOCS -->
+## Requirements
+
+No requirements.
+
+## Providers
+
+No providers.
+
+## Modules
+
+No modules.
+
+## Resources
+
+No resources.
+
+## Inputs
+
+No inputs.
+
+## Outputs
+
+No outputs.
+<!-- END_TF_DOCS -->

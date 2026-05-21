@@ -17,6 +17,8 @@ metadata:
 
 ## Output Specification
 
+Return structured Markdown in accordance with [references/common-output-format.md](references/common-output-format.md).
+
 Structured results in fixed order: terraform fmt, terraform validate, tflint, trivy config.
 
 ## Execution Scope

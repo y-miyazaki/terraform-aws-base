@@ -17,6 +17,8 @@ metadata:
 
 ## Output Specification
 
+Return structured Markdown in accordance with [references/common-output-format.md](references/common-output-format.md).
+
 Return structured review output with `## Checks Summary`, `## Checks (Failed/Deferred Only)`, and `## Issues` using fixed ItemIDs.
 
 ## Execution Scope
@@ -42,9 +44,9 @@ Return structured review output with `## Checks Summary`, `## Checks (Failed/Def
 
 - [common-checklist.md](references/common-checklist.md) (always read)
 - [common-output-format.md](references/common-output-format.md) (always read)
-- [global](references/category-global.md), [errors](references/category-error-handling.md), [security](references/category-security.md)
-- [standards](references/category-code-standards.md), [deps](references/category-dependencies.md), [docs](references/category-documentation.md)
-- [func](references/category-function-design.md), [logging](references/category-logging.md), [perf](references/category-performance.md), [testing](references/category-testing.md)
+- [global](references/category-global.md), [errors](references/category-error-handling.md), [security](references/category-security.md) - Read when reviewing overall quality, error handling, or security.
+- [standards](references/category-code-standards.md), [deps](references/category-dependencies.md), [docs](references/category-documentation.md) - Read when reviewing code standards, dependencies, or documentation.
+- [func](references/category-function-design.md), [logging](references/category-logging.md), [perf](references/category-performance.md), [testing](references/category-testing.md) - Read when reviewing function design, logging, performance, or tests.
 
 ## Workflow
 

@@ -44,9 +44,9 @@
         // for terraform extensions
         "hashicorp.terraform",
         // for Python environment
-        "charliermarsh.ruff",
-        "ms-python.mypy-type-checker",
-        "ms-python.python"
+        // "charliermarsh.ruff",
+        // "ms-python.mypy-type-checker",
+        // "ms-python.python"
       ]
     }
   },

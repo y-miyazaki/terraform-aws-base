@@ -16,6 +16,8 @@ metadata:
 
 ## Output Specification
 
+Return structured Markdown in accordance with [references/common-output-format.md](references/common-output-format.md).
+
 Return structured review output with `## Checks Summary`, `## Checks (Failed/Deferred Only)`, and `## Issues` using fixed ItemIDs.
 
 ## Execution Scope
@@ -41,9 +43,9 @@ Return structured review output with `## Checks Summary`, `## Checks (Failed/Def
 
 - [common-checklist.md](references/common-checklist.md) (always read)
 - [common-output-format.md](references/common-output-format.md) (always read)
-- [global](references/category-global.md), [concurrency](references/category-concurrency.md), [errors](references/category-error-handling.md), [security](references/category-security.md)
-- [arch](references/category-architecture.md), [standards](references/category-code-standards.md), [context](references/category-context.md), [deps](references/category-dependencies.md)
-- [docs](references/category-documentation.md), [func](references/category-function-design.md), [perf](references/category-performance.md), [testing](references/category-testing.md)
+- [global](references/category-global.md), [concurrency](references/category-concurrency.md), [errors](references/category-error-handling.md), [security](references/category-security.md) - Read when reviewing overall quality, concurrency, error handling, or security.
+- [arch](references/category-architecture.md), [standards](references/category-code-standards.md), [context](references/category-context.md), [deps](references/category-dependencies.md) - Read when reviewing architecture, code standards, context usage, or dependencies.
+- [docs](references/category-documentation.md), [func](references/category-function-design.md), [perf](references/category-performance.md), [testing](references/category-testing.md) - Read when reviewing documentation, function design, performance, or tests.
 
 ## Workflow
 

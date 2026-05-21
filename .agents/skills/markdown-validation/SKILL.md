@@ -16,6 +16,8 @@ metadata:
 
 ## Output Specification
 
+Return structured Markdown in accordance with [references/common-output-format.md](references/common-output-format.md).
+
 Structured validation results from two tools: markdownlint → markdown-link-check.
 Return `## Checks Summary`, `## Checks (Failed/Deferred Only)`, and `## Issues`.
 

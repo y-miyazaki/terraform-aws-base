@@ -17,6 +17,8 @@ metadata:
 
 ## Output Specification
 
+Return structured Markdown in accordance with [references/common-output-format.md](references/common-output-format.md).
+
 Structured PR output:
 
 - Baseline mode: update `## Overview` and `## Changes`.
@@ -28,7 +30,6 @@ Structured PR output:
 
 - **Always use `scripts/pr_body.sh` or `scripts/pr_fetch.sh`**. Do not run individual `gh` commands.
 - `pr_body.sh` is deterministic and idempotent.
-- Semantic completion belongs to Step 3, not shell scripts.
 
 ### USE FOR:
 
@@ -46,11 +47,11 @@ Structured PR output:
 
 - [common-checklist.md](references/common-checklist.md) (always read)
 - [common-output-format.md](references/common-output-format.md) (always read)
-- [troubleshooting](references/common-troubleshooting.md)
-- [classification](references/category-change-classification.md)
-- [guidelines](references/category-pr-body-guidelines.md)
-- [workflows](references/category-agent-workflows.md)
-- [implementation](references/category-implementation-details.md)
+- [common-troubleshooting.md](references/common-troubleshooting.md) - Read when fetching PR data or applying body updates fails unexpectedly.
+- [classification](references/category-change-classification.md) - Read when classifying the PR change type.
+- [guidelines](references/category-pr-body-guidelines.md) - Read when applying PR body writing guidelines.
+- [workflows](references/category-agent-workflows.md) - Read when selecting baseline or full-body mode.
+- [implementation](references/category-implementation-details.md) - Read when populating implementation detail sections.
 
 ## Workflow
 
@@ -61,16 +62,16 @@ Structured PR output:
 - Use baseline mode when request scope is summary refresh only.
 - Use full-body mode when request explicitly asks to populate all template sections.
 
-4. For full-body output, generate template-aligned content from validated context (PR metadata, changed file list, and template-required section headings).
-5. Apply full body with `pr_body.sh --body-file <FILE>`.
-6. Confirm success by fetching PR body and verifying required sections are present.
+4. If full-body mode is selected, generate template-aligned content from validated context (PR metadata, changed file list, and template-required section headings); if baseline mode is selected, skip to Step 6.
+5. If full-body mode is selected, apply full body with `pr_body.sh --body-file <FILE>`.
+6. Confirm success by fetching PR body and verifying required sections are present for the selected mode.
 
 ## Error Handling and Troubleshooting
 
 - If `pr_fetch.sh` fails, stop and return command output with auth/repository guidance.
 - If PR is not found, return `status: failed` with PR number and repository.
-- If full-body file generation fails, keep baseline update only and mark full-body step as deferred.
-- If template is missing or malformed, apply baseline-only mode and return deferred reason for template-dependent sections.
+- If full-body file generation fails, keep baseline update only, mark full-body step as deferred, and return `status: success` with warning.
+- If template is missing or malformed, apply baseline-only mode, return deferred reason for template-dependent sections, and return `status: success` with warning.
 
 ## Best Practices
 

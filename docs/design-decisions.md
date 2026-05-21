@@ -1,6 +1,6 @@
 # Design Decisions
 
-Key design decisions and patterns in this repository. Helps AI assistants understand why things are built a certain way and avoid re-investigating known decisions.
+This document records key design decisions, rejected alternatives, and rationale for major patterns in this Terraform baseline repository.
 
 ## External Data Sources for Idempotency
 

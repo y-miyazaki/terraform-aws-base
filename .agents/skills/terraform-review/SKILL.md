@@ -15,6 +15,8 @@ metadata:
 
 ## Output Specification
 
+Return structured Markdown in accordance with [references/common-output-format.md](references/common-output-format.md).
+
 Return review output with `## Checks Summary`, `## Checks (Failed/Deferred Only)`, and `## Issues`.
 Each issue must include file path, risk summary, and remediation guidance.
 
@@ -43,11 +45,11 @@ Each issue must include file path, risk summary, and remediation guidance.
 
 - [common-checklist.md](references/common-checklist.md) (always read)
 - [common-output-format.md](references/common-output-format.md) (always read)
-- [global](references/category-global.md), [security](references/category-security.md), [modules](references/category-modules.md), [state](references/category-state.md)
-- [ci](references/category-ci-lint.md), [compliance](references/category-compliance.md), [cost](references/category-cost.md), [data](references/category-data-sources.md)
-- [dependency](references/category-dependency.md), [events](references/category-events.md), [migration](references/category-migration.md), [naming](references/category-naming.md)
-- [outputs](references/category-outputs.md), [patterns](references/category-patterns.md), [perf](references/category-performance.md), [tagging](references/category-tagging.md)
-- [tfvars](references/category-tfvars.md), [variables](references/category-variables.md), [versioning](references/category-versioning.md)
+- [global](references/category-global.md), [security](references/category-security.md), [modules](references/category-modules.md), [state](references/category-state.md) - Read when reviewing resource structure, security, modules, or state management.
+- [ci](references/category-ci-lint.md), [compliance](references/category-compliance.md), [cost](references/category-cost.md), [data](references/category-data-sources.md) - Read when reviewing CI integration, compliance, cost concerns, or data sources.
+- [dependency](references/category-dependency.md), [events](references/category-events.md), [migration](references/category-migration.md), [naming](references/category-naming.md) - Read when reviewing dependencies, events, migration, or naming conventions.
+- [outputs](references/category-outputs.md), [patterns](references/category-patterns.md), [perf](references/category-performance.md), [tagging](references/category-tagging.md) - Read when reviewing outputs, design patterns, performance, or tagging.
+- [tfvars](references/category-tfvars.md), [variables](references/category-variables.md), [versioning](references/category-versioning.md) - Read when reviewing variable definitions, tfvars, or version constraints.
 
 ## Workflow
 

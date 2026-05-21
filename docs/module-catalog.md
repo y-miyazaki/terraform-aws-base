@@ -1,6 +1,6 @@
 # Module Catalog
 
-All reusable Terraform modules under `modules/aws/`. This document helps AI assistants locate the correct module for a given task.
+This document catalogs all reusable Terraform modules under `modules/aws/`, including their purpose, location, and usage context within the repository.
 
 ## Security Modules
 

@@ -1,6 +1,6 @@
 # Architecture Overview
 
-This document provides structural context for AI assistants. It describes the organization design, account structure, Terraform layout, and key design decisions.
+This document describes the AWS Organization structure, multi-account design, Terraform directory layout, and key architectural patterns used in this baseline infrastructure repository.
 
 ## AWS Organization Structure
 

@@ -17,6 +17,8 @@ metadata:
 
 ## Output Specification
 
+Return structured Markdown in accordance with [references/common-output-format.md](references/common-output-format.md).
+
 Structured validation results from three tools: actionlint → ghalint → zizmor.
 Return `## Checks Summary`, `## Checks (Failed/Deferred Only)`, and `## Issues` with tool-attributed evidence.
 
