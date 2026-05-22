@@ -12,7 +12,7 @@
 # - JSON format output for machine parsing
 #
 # Design Rules:
-# - Validate markdown syntax with markdownlint
+# - Validate markdown syntax with markdownlint-cli2
 # - Validate markdown links with markdown-link-check
 # - Exit with non-zero status when any check fails
 #
@@ -21,7 +21,7 @@
 # - find (standard Unix utility)
 # - node (Node.js runtime for CLI tools)
 # - npm (Node.js package manager)
-# - markdownlint (Node.js CLI, installed via npm)
+# - markdownlint-cli2 (Node.js CLI, installed via npm)
 # - markdown-link-check (Node.js CLI, installed via npm)
 #######################################
 
@@ -91,7 +91,7 @@ Arguments:
                             Default: /workspace
 
 Validation Checks:
-    - Markdown syntax (markdownlint)
+    - Markdown syntax (markdownlint-cli2)
     - Markdown links (markdown-link-check)
 
 Examples:
@@ -193,10 +193,10 @@ function collect_markdown_files {
 #######################################
 
 #######################################
-# validate_markdown_files: Validate Markdown files with markdownlint and markdown-link-check
+# validate_markdown_files: Validate Markdown files with markdownlint-cli2 and markdown-link-check
 #
 # Description:
-#   Runs markdownlint on workspace Markdown files and optionally checks links
+#   Runs markdownlint-cli2 on workspace Markdown files and optionally checks links
 #   Skips if tools are not installed
 #
 # Arguments:
@@ -212,11 +212,11 @@ function collect_markdown_files {
 function validate_markdown_files {
     collect_markdown_files
 
-    if ! command -v markdownlint > /dev/null 2>&1; then
+    if ! command -v markdownlint-cli2 > /dev/null 2>&1; then
         check_names+=("Markdown Syntax")
         check_statuses+=("SKIP")
-        check_details+=("markdownlint not installed")
-        echo "⊘ Markdown syntax validation skipped (markdownlint not found)"
+        check_details+=("markdownlint-cli2 not installed")
+        echo "⊘ Markdown syntax validation skipped (markdownlint-cli2 not found)"
     else
         if [[ ${#markdown_files[@]} -eq 0 ]]; then
             check_names+=("Markdown Syntax")
@@ -224,16 +224,16 @@ function validate_markdown_files {
             check_details+=("no Markdown files found")
             echo "⊘ Markdown syntax validation skipped (no .md files found)"
         else
-            if markdownlint "${markdown_files[@]}" > /dev/null 2>&1; then
+            if markdownlint-cli2 "${markdown_files[@]}" > /dev/null 2>&1; then
                 check_names+=("Markdown Syntax")
                 check_statuses+=("PASS")
                 check_details+=("${#markdown_files[@]} files")
-                echo "✓ Markdown files pass markdownlint"
+                echo "✓ Markdown files pass markdownlint-cli2"
             else
                 check_names+=("Markdown Syntax")
                 check_statuses+=("FAIL")
-                check_details+=("markdownlint validation failed")
-                echo "✗ Markdown files fail markdownlint validation"
+                check_details+=("markdownlint-cli2 validation failed")
+                echo "✗ Markdown files fail markdownlint-cli2 validation"
             fi
         fi
     fi

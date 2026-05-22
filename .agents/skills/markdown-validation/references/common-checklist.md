@@ -4,12 +4,12 @@
 
 Run tools in this order (fail-fast: stop on first failure):
 
-1. `markdownlint` — Markdown syntax and style enforcement
+1. `markdownlint-cli2` — Markdown syntax and style enforcement
 2. `markdown-link-check` — broken link detection
 
 ## Checks by Tool
 
-### markdownlint
+### markdownlint-cli2
 - MDL-01: Heading hierarchy is consistent (no skipped levels)
 - MDL-02: No trailing spaces or hard tabs
 - MDL-03: Code blocks have language specifiers where applicable

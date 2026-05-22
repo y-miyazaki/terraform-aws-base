@@ -71,11 +71,12 @@ repos:
   # --------------------------------------------------------------
   # For Markdown
   # --------------------------------------------------------------
-  - repo: https://github.com/igorshubovych/markdownlint-cli
-    rev: v0.48.0 # https://github.com/igorshubovych/markdownlint-cli/releases
+  - repo: https://github.com/DavidAnson/markdownlint-cli2
+    rev: v0.22.1 # https://github.com/DavidAnson/markdownlint-cli2/releases
     hooks:
-      - id: markdownlint
-        files: ^(README.md|docs/.*.md)$
+      - id: markdownlint-cli2
+        args: ["--fix"]
+        files: \.md$
   # --------------------------------------------------------------
   # For Jsonnet
   # --------------------------------------------------------------

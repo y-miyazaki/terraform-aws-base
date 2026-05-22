@@ -396,9 +396,17 @@ function run_gofumpt {
         return 0
     fi
 
+    # Use go list + mapfile to expand package patterns into actual directories.
+    # gofumpt does not support the package wildcard pattern ./... in the same way gofmt does.
+    mapfile -t go_dirs < <(go list -f '{{.Dir}}' "$TARGET_PATTERN" 2> /dev/null || true)
+    if [[ ${#go_dirs[@]} -eq 0 ]]; then
+        log "INFO" "No Go directories found for gofumpt (pattern=$TARGET_PATTERN)"
+        return 0
+    fi
+
     if [[ "$FIX_MODE" == "true" ]]; then
         log "INFO" "Automatically formatting files..."
-        if gofumpt -w "$TARGET_PATTERN"; then
+        if gofumpt -w "${go_dirs[@]}"; then
             log "INFO" "Files formatted successfully"
         else
             log "ERROR" "gofumpt failed"
@@ -407,16 +415,8 @@ function run_gofumpt {
         fi
     else
         # Check formatting using gofumpt -l to list files that are not formatted
-        # Use go list + mapfile instead of direct gofumpt to avoid word splitting issues
-        # with complex package patterns and ensure proper handling of module directories
         local fmt_output
-        # Safely build argument list from go list output to avoid word splitting
-        mapfile -t go_dirs < <(go list -f '{{.Dir}}' "$TARGET_PATTERN" 2> /dev/null || true)
-        if [[ ${#go_dirs[@]} -eq 0 ]]; then
-            fmt_output=""
-        else
-            fmt_output=$(gofumpt -l "${go_dirs[@]}" 2>&1 || true)
-        fi
+        fmt_output=$(gofumpt -l "${go_dirs[@]}" 2>&1 || true)
         if [[ -n "$fmt_output" ]]; then
             echo "Files that need formatting (gofumpt -l):"
             echo "$fmt_output"
@@ -755,7 +755,7 @@ function main {
 
     echo_section "Result (completed in ${elapsed} seconds)"
     echo "Result:" >&2
-    [[ "$GO_FMT_FAILED" == "1" ]] && echo "❌ go fmt" >&2 || echo "✅ go fmt" >&2
+    [[ "$GO_FMT_FAILED" == "1" ]] && echo "❌ gofumpt" >&2 || echo "✅ gofumpt" >&2
     # Report go vet status
     [[ "$GO_VET_FAILED" == "1" ]] && echo "❌ go vet" >&2 || echo "✅ go vet" >&2
 

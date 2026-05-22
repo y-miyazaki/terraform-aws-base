@@ -10,7 +10,7 @@
   "editor.formatOnSave": true, // format on save
   "editor.fontSize": 16, // font size
   "editor.folding": true, // コードの折りたたみを許可
-  "editor.hover.sticky": false,
+  "editor.hover.sticky": true,
   "editor.insertSpaces": true, // Tabキーで半角スペースを入力
   "editor.letterSpacing": -1, // 文字の間隔を詰める
   "editor.lineNumbers": "on", // 行番号の表示
@@ -27,12 +27,6 @@
   "editor.suggestFontSize": 16, // font size
   // "editor.tabSize": 4, // (.editorconfig) tab size
   "explorer.confirmDragAndDrop": false,
-  "files.autoGuessEncoding": true, // 文字コードを自動判別
-  "files.eol": "\n", // 改行コードをLF(Linux/OSX)にする
-  "files.encoding": "utf8", // 既定の文字コード
-  "files.insertFinalNewline": true, // 有効にすると、ファイルの保存時に最新の行を末尾に挿入します。
-  // "files.trimTrailingWhitespace": true, // (.editorconfig) ファイルの保存時に末尾の空白をトリミング
-  "git.autofetch": true,
   "terminal.integrated.defaultProfile.linux": "bash",
   "terminal.integrated.scrollback": 10000,
   "window.zoomLevel": 0,
@@ -65,7 +59,22 @@
     // "editorLink.activeForeground": "#5555ce"
   },
   // ------------------------------------------------------------
-  // GitHub Copilot
+  // for Diff Editor
+  // ------------------------------------------------------------
+  "diffEditor.ignoreTrimWhitespace": true,
+  "diffEditor.hideUnchangedRegions.enabled": true,
+  // ------------------------------------------------------------
+  // for Git
+  // ------------------------------------------------------------
+  "git.autofetch": true,
+  "git.confirmSync": false,
+  "git.replaceTagsWhenPull": true,
+  // ------------------------------------------------------------
+  // for GitHub Pull Requests
+  // ------------------------------------------------------------
+  "githubPullRequests.pullBranch": "never",
+  // ------------------------------------------------------------
+  // for GitHub Copilot
   // ------------------------------------------------------------
   "accessibility.signals.chatUserActionRequired": {
     "sound": "on",
@@ -85,7 +94,7 @@
   },
   "chat.checkpoints.showFileChanges": true,
   "chat.mcp.access": "all",
-  "chat.mcp.autostart": "onlyNew",
+  "chat.mcp.autostart": "newAndOutdated",
   "chat.mcp.discovery.enabled": {
     "claude-desktop": true,
     "windsurf": true,
@@ -101,6 +110,12 @@
     "git checkout": false
   },
   "chat.tools.todos.showWidget": true,
+  "chat.tools.terminal.autoReplyToPrompts": true,
+  "chat.tools.urls.autoApprove": {
+    "https://code.visualstudio.com": true,
+    "https://github.com/microsoft/vscode/wiki/*": true,
+    "https://*.github.io": true
+  },
   "chat.useAgentSkills": true,
   "chat.viewSessions.enabled": true,
   "editor.inlineSuggest.enabled": true,
@@ -114,24 +129,26 @@
   ],
   "github.copilot.chat.localeOverride": "ja",
   "github.copilot.chat.newWorkspace.useContext7": true,
+  "github.copilot.chat.scopeSelection": true,
   "github.copilot.chat.virtualTools.threshold": 128,
   "github.copilot.enable": {
     "*": true,
+    "dotenv": false,
+    "env": false,
     "go": true,
     "javascript": true,
     "markdown": true,
     "plaintext": false,
     "python": true,
+    "scminput": false,
     "typescriptreact": true,
-    "yaml": false,
-    "env": false,
-    "dotenv": false
+    "yaml": false
   },
   // Security: Exclude sensitive files from search/indexing (affects Copilot context)
   "github.copilot.nextEditSuggestions.enabled": true,
   "github.copilot.nextEditSuggestions.fixes": true,
   // ------------------------------------------------------------
-  // cspell
+  // for cspell
   // ------------------------------------------------------------
   "cSpell.autoFormatConfigFile": true,
   "cSpell.caseSensitive": false,
@@ -147,36 +164,53 @@
   },
   "cSpell.showAutocompleteDirectiveSuggestions": true,
   // ------------------------------------------------------------
-  // files assotiations
+  // for files
   // ------------------------------------------------------------
+  "files.eol": "\n",
   "files.associations": {
     "tfvars": "Terraform"
   },
+  "files.autoGuessEncoding": false,
+  "files.encoding": "utf8",
   "files.exclude": {
-    "**/.env.local": true,
     "**/.env.*.local": true,
+    "**/.env.local": true,
+    "**/credentials/**": true,
+    "**/node_modules": true,
     "**/secrets/**": true,
     "**/*.key": true,
-    "**/*.pem": true,
     "**/*.p12": true,
+    "**/*.pem": true,
     "**/*.pfx": true
   },
+  "files.insertFinalNewline": true,
   "search.exclude": {
-    "**/.env*": true,
-    "**/secrets/**": true,
+    "**/.serena": true,
+    "**/.terraform": true,
+    "**/apm_modules": true,
+    "**/aqua-checksums.json": true,
     "**/credentials/**": true,
+    "**/node_modules": true,
+    "**/output": true,
+    "**/secrets/**": true,
+    "**/tmp": true,
+    "**/vendor": true,
     "**/*.key": true,
-    "**/*.pem": true,
     "**/*.p12": true,
-    "**/*.pfx": true,
-    "**/terraform.tfvars": true,
-    "**/.aws/credentials": true,
-    "**/.ssh/id_*": true
+    "**/*.pem": true,
+    "**/*.pfx": true
   },
   "files.watcherExclude": {
-    "**/.env*": true,
-    "**/secrets/**": true,
-    "**/credentials/**": true
+    "**/.git": true,
+    "**/.serena": true,
+    "**/.terraform": true,
+    "**/apm_modules": true,
+    "**/credentials": true,
+    "**/node_modules": true,
+    "**/output": true,
+    "**/secrets": true,
+    "**/tmp": true,
+    "**/vendor": true
   },
   // ------------------------------------------------------------
   // for Golang
@@ -243,10 +277,16 @@
   // "go.gotoSymbol.ignoreFolders":[], // It will be ignored if you use a language server.
   // "go.gotoSymbol.includeGoroot":false, // It will be ignored if you use a language server.
   // "go.gotoSymbol.includeImports": false, // It will be ignored if you use a language server.
+  "go.inlayHints.parameterNames": true,
+  "go.inlayHints.assignVariableTypes": false,
+  "go.inlayHints.compositeLiteralFields": false,
+  "go.inlayHints.constantValues": false,
+  "go.inlayHints.functionTypeParameters": false,
+  "go.inlayHints.rangeVariableTypes": false,
   "go.languageServerFlags": [],
   "go.lintFlags": [
     "-c",
-    "/workspace/.golangci.yaml",
+    ".golangci.yaml",
     "-v",
     "--max-same-issues",
     "0",
@@ -254,7 +294,7 @@
     "0"
     // "--fast"
   ],
-  "go.lintOnSave": "workspace",
+  "go.lintOnSave": "workspace", // workspace, package, file, off
   "go.lintTool": "golangci-lint",
   "go.playground": {
     "openbrowser": true,
@@ -290,26 +330,24 @@
       "nilness": true,
       "unusedwrite": true
     },
-    "hints": {
-      "parameterNames": true,
-      "assignVariableTypes": false,
-      "compositeLiteralFields": false,
-      "constantValues": false,
-      "functionTypeParameters": false,
-      "rangeVariableTypes": false
-    },
     "directoryFilters": [
-      "-/workspace/.devcontainer",
-      "-/workspace/.git",
-      "-/workspace/.github",
-      "-/workspace/.serena",
-      "-/workspace/.vscode",
-      "-/workspace/node_modules",
-      "-/workspace/output",
-      "-/workspace/tmp",
-      "-/workspace/vendor",
-      "-/mnt/",
-      "-/proc/"
+      "-.agents",
+      "-.apm",
+      "-.copilot",
+      "-.devcontainer",
+      "-.git",
+      "-.github",
+      "-.kiro",
+      "-.serena",
+      "-.terraform",
+      "-.vscode",
+      "-apm_modules",
+      "-coverage",
+      "-node_modules",
+      "-output",
+      "-tmp",
+      "-vendor",
+      "-**/node_modules"
     ]
   },
   "[go]": {
@@ -335,19 +373,29 @@
   // ------------------------------------------------------------
   // for Markdown
   //  ------------------------------------------------------------
+  "markdown.extension.completion.enabled": true,
   "markdownlint.lintWorkspaceGlobs": [
     "**/*.{md,mkd,mdwn,mdown,markdown,markdn,mdtxt,mdtext,workbook}",
     "!**/*.code-search",
-    "!**/bower_components",
-    "!**/node_modules",
     "!**/.git",
-    "!**/vendor",
-    "!modules/**/README.md",
     "!**/.terraform",
-    "!.github/instructions/*.md",
-    "!.github/prompt/*.md",
+    "!**/apm_modules",
+    "!**/bower_components",
+    "!**/credentials",
+    "!**/instructions",
+    "!**/modules/**/README.md",
+    "!**/node_modules",
+    "!**/output",
+    "!**/prompts",
+    "!**/secrets",
+    "!**/tmp",
+    "!**/vendor",
     "!CODEOWNERS"
   ],
+  "[markdown]": {
+    "editor.defaultFormatter": "DavidAnson.vscode-markdownlint",
+    "editor.formatOnSave": true
+  },
   // ------------------------------------------------------------
   // for Terraform
   // https://github.com/hashicorp/vscode-terraform
@@ -387,7 +435,8 @@
     "editor.defaultFormatter": "charliermarsh.ruff",
     "editor.formatOnSave": true,
     "editor.codeActionsOnSave": {
-      "source.organizeImports.ruff": "always"
+      "source.fixAll.ruff": "explicit",
+      "source.organizeImports.ruff": "explicit"
     }
   },
   // ------------------------------------------------------------
@@ -412,5 +461,9 @@
   "[bats]": {
     "editor.defaultFormatter": "foxundermoon.shell-format",
     "editor.formatOnSave": true
-  }
+  },
+  // ------------------------------------------------------------
+  // Telemetry
+  // ------------------------------------------------------------
+  "redhat.telemetry.enabled": false
 }

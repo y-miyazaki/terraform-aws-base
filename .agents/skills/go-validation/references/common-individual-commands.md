@@ -4,24 +4,24 @@
 
 - [Go Validation - Individual Commands Reference](#go-validation---individual-commands-reference)
   - [Contents](#contents)
-  - [⚠️ For Debugging Only](#️-for-debugging-only)
-  - [Commands Overview](#commands-overview)
-  - [1. go mod tidy](#1-go-mod-tidy)
-  - [2. gofumpt](#2-gofumpt)
-  - [3. go vet](#3-go-vet)
-  - [4. golangci-lint](#4-golangci-lint)
-  - [5. go test](#5-go-test)
-  - [6. govulncheck](#6-govulncheck)
-  - [Coverage Analysis Commands](#coverage-analysis-commands)
-    - [Generating Coverage Reports](#generating-coverage-reports)
-    - [Coverage Modes](#coverage-modes)
-    - [Interpreting Coverage Reports](#interpreting-coverage-reports)
-  - [Additional Tools](#additional-tools)
-    - [staticcheck](#staticcheck)
-    - [gosec](#gosec)
-    - [go-critic](#go-critic)
-  - [Profiling Commands](#profiling-commands)
-  - [Summary](#summary)
+- [⚠️ For Debugging Only](#️-for-debugging-only)
+- [Commands Overview](#commands-overview)
+- [1. go mod tidy](#1-go-mod-tidy)
+- [2. gofumpt](#2-gofumpt)
+- [3. go vet](#3-go-vet)
+- [4. golangci-lint](#4-golangci-lint)
+- [5. go test](#5-go-test)
+- [6. govulncheck](#6-govulncheck)
+- [Coverage Analysis Commands](#coverage-analysis-commands)
+  - [Generating Coverage Reports](#generating-coverage-reports)
+  - [Coverage Modes](#coverage-modes)
+  - [Interpreting Coverage Reports](#interpreting-coverage-reports)
+- [Additional Tools](#additional-tools)
+  - [staticcheck](#staticcheck)
+  - [gosec](#gosec)
+  - [go-critic](#go-critic)
+- [Profiling Commands](#profiling-commands)
+- [Summary](#summary)
 
 ## ⚠️ For Debugging Only
 
@@ -30,6 +30,7 @@ This document contains detailed information about individual validation commands
 **Always prefer the validation script:** `bash scripts/validate.sh`
 
 Use individual commands **only** when:
+
 - Debugging specific validation failures reported by the script
 - Understanding what the validation script does internally
 - Developing or improving the validation script itself
@@ -37,6 +38,7 @@ Use individual commands **only** when:
 ## Commands Overview
 
 The validation script runs these commands in order:
+
 1. go mod tidy
 2. gofumpt
 3. go vet
@@ -57,19 +59,21 @@ go mod verify
 ```
 
 **What it checks**:
+
 - Removes unused dependencies
 - Adds missing dependencies
 - Updates go.mod and go.sum files
 - Verifies checksums
 
 **Common failures**:
+
 - Incompatible dependency versions
 - Corrupted go.mod or go.sum
 - Invalid imports
 
 ## 2. gofumpt
 
-**Purpose**: Format Go code (stricter than go fmt)
+**Purpose**: Format Go code (stricter than gofumpt)
 
 ```bash
 # Check all files
@@ -83,12 +87,14 @@ gofumpt -w path/to/file.go
 ```
 
 **What it checks**:
+
 - Consistent indentation
 - Proper spacing
 - Canonical formatting
 - Stricter rules (e.g. no empty lines at start/end of blocks)
 
 **Common failures**:
+
 - Parse errors in code
 - Invalid syntax
 
@@ -105,6 +111,7 @@ go vet ./pkg/mypackage
 ```
 
 **What it checks**:
+
 - Unreachable code
 - Incorrect printf formats
 - Shadowed variables
@@ -113,6 +120,7 @@ go vet ./pkg/mypackage
 - Common mistakes
 
 **Common failures**:
+
 - Printf format mismatches
 - Shadowed loop variables
 - Unreachable code after return
@@ -137,6 +145,7 @@ golangci-lint run ./pkg/...
 ```
 
 **What it checks**:
+
 - Code quality and style
 - Best practices violations
 - Performance issues
@@ -145,6 +154,7 @@ golangci-lint run ./pkg/...
 - Dead code
 
 **Common failures**:
+
 - Unused variables/imports
 - Error return values not checked
 - Inefficient string concatenation
@@ -191,12 +201,14 @@ go test -timeout 30s ./...
 ```
 
 **What it checks**:
+
 - Test correctness
 - Race conditions
 - Code coverage
 - Performance (benchmarks)
 
 **Common failures**:
+
 - Test logic errors
 - Race conditions
 - Insufficient coverage
@@ -215,11 +227,13 @@ govulncheck -json ./...
 ```
 
 **What it checks**:
+
 - Known vulnerabilities in dependencies
 - Go vulnerability database
 - Direct and indirect dependencies
 
 **Common failures**:
+
 - Vulnerable dependencies
 - Outdated packages with known CVEs
 

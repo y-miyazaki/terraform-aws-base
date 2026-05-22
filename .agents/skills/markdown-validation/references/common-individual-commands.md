@@ -2,22 +2,22 @@
 
 **Use these commands only when debugging validation failures.** For normal validation, always use `./scripts/validate.sh`.
 
-### markdownlint
+### markdownlint-cli2
 
 **Purpose**: Validate Markdown syntax and style
 
 ```bash
 # Check all Markdown files
-markdownlint **/*.md
+markdownlint-cli2 **/*.md
 
 # Check specific file
-markdownlint README.md
+markdownlint-cli2 README.md
 
 # Auto-fix issues
-markdownlint --fix **/*.md
+markdownlint-cli2 --fix **/*.md
 
 # Check with custom config
-markdownlint -c .markdownlint.json **/*.md
+markdownlint-cli2 --config .markdownlint-cli2.yaml **/*.md
 ```
 
 **What it checks**:
@@ -56,16 +56,16 @@ markdown-link-check -c .markdown-link-check.json **/*.md
 
 ### Before Committing
 
-1. **Run markdownlint**:
+1. **Run markdownlint-cli2**:
 
    ```bash
-   markdownlint **/*.md
+   markdownlint-cli2 **/*.md
    ```
 
 2. **Fix issues** (auto-fix where possible):
 
    ```bash
-   markdownlint --fix **/*.md
+   markdownlint-cli2 --fix **/*.md
    ```
 
 3. **Check links**:
@@ -90,7 +90,7 @@ markdown-link-check -c .markdown-link-check.json **/*.md
 **Fix**:
 
 ```bash
-markdownlint --fix **/*.md
+markdownlint-cli2 --fix **/*.md
 ```
 
 ### Missing blank line before heading
@@ -151,16 +151,15 @@ markdown-link-check -c .markdown-link-check.json README.md
 
 ## Configuration Files
 
-### .markdownlint.json
+### .markdownlint-cli2.yaml
 
-```json
-{
-  "MD003": "consistent",
-  "MD004": "consistent",
-  "MD024": false,
-  "MD033": false,
-  "line-length": false
-}
+```yaml
+config:
+  MD003: "consistent"
+  MD004: "consistent"
+  MD024: false
+  MD033: false
+  line-length: false
 ```
 
 ### .markdown-link-check.json
@@ -182,10 +181,10 @@ markdown-link-check -c .markdown-link-check.json README.md
 
 ```bash
 # Validate all Markdown
-markdownlint **/*.md
+markdownlint-cli2 **/*.md
 
 # Auto-fix issues
-markdownlint --fix **/*.md
+markdownlint-cli2 --fix **/*.md
 
 # Check links
 markdown-link-check **/*.md
@@ -195,7 +194,7 @@ markdown-link-check **/*.md
 
 Before committing:
 
-- [ ] markdownlint passes with no errors
+- [ ] markdownlint-cli2 passes with no errors
 - [ ] All links are valid (markdown-link-check passes)
 - [ ] Manual review completed
 - [ ] No sensitive information included

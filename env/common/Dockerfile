@@ -64,7 +64,7 @@ RUN curl -fsSL https://deb.nodesource.com/setup_${NODE_VERSION}.x | bash - && \
 
 # Install npm packages
 RUN npm install -g --ignore-scripts \
-    markdownlint-cli@0.46.0 \
+    markdownlint-cli2@0.22.1 \
     markdown-link-check@3.14.2 \
     cspell@9.3.2 \
     textlint@15.4.0 \

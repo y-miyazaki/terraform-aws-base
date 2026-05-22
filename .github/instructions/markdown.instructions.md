@@ -63,7 +63,7 @@ bash <agent-root>/skills/markdown-validation/scripts/validate.sh
 **Individual execution (debugging)**:
 
 ```bash
-markdownlint docs/
+markdownlint-cli2 "docs/**"
 markdown-link-check README.md
 ```
 

@@ -27,7 +27,7 @@ Use the following report structure for validation output.
 
 ## Rules
 
-- Run tools in the execution order: markdownlint → markdown-link-check
+- Run tools in the execution order: markdownlint-cli2 → markdown-link-check
 - Stop execution on the first tool failure (fail-fast).
 - In `## Tool Results`, list only tools that were actually run.
 - In `## Error Details`, include only failed tools with their full output.

@@ -163,7 +163,7 @@ bash <agent-root>/skills/instructions-review/scripts/validate.sh
 **Individual execution (debugging)**:
 
 ```bash
-markdownlint .apm/instructions/
+markdownlint-cli2 ".apm/instructions/**"
 textlint .apm/instructions/
 ```
 

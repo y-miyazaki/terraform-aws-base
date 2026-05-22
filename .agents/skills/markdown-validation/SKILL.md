@@ -1,7 +1,7 @@
 ---
 name: markdown-validation
 description: >-
-  Validate Markdown syntax, formatting, and links using markdownlint and markdown-link-check.
+  Validate Markdown syntax, formatting, and links using markdownlint-cli2 and markdown-link-check.
   Use when committing docs changes, checking broken links, or validating Markdown in pull requests.
 license: Apache-2.0
 metadata:
@@ -12,19 +12,19 @@ metadata:
 ## Input
 
 - Markdown file(s) with `.md` extension (required)
-- Optional: markdownlint config, markdown-link-check config, file pattern (`**/*.md`)
+- Optional: markdownlint-cli2 config, markdown-link-check config, file pattern (`**/*.md`)
 
 ## Output Specification
 
 Return structured Markdown in accordance with [references/common-output-format.md](references/common-output-format.md).
 
-Structured validation results from two tools: markdownlint → markdown-link-check.
+Structured validation results from two tools: markdownlint-cli2 → markdown-link-check.
 Return `## Checks Summary`, `## Checks (Failed/Deferred Only)`, and `## Issues`.
 
 ## Execution Scope
 
 - **Always use `scripts/validate.sh`** for comprehensive validation. Do not run individual commands.
-- Script executes markdownlint and markdown-link-check in order.
+- Script executes markdownlint-cli2 and markdown-link-check in order.
 - **Do not modify Markdown files** (except with --fix flag)
 - External link checking depends on network connectivity
 
@@ -46,7 +46,7 @@ Return `## Checks Summary`, `## Checks (Failed/Deferred Only)`, and `## Issues`.
 
 - [common-checklist.md](references/common-checklist.md) - Validation checklist with ItemIDs
 - [common-output-format.md](references/common-output-format.md) - Report format specification
-- [common-troubleshooting.md](references/common-troubleshooting.md) - Read when markdownlint or link checks fail unexpectedly
+- [common-troubleshooting.md](references/common-troubleshooting.md) - Read when markdownlint-cli2 or link checks fail unexpectedly
 - [common-individual-commands.md](references/common-individual-commands.md) - Read when debugging tools directly
 
 ## Workflow

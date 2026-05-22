@@ -1,6 +1,6 @@
 ## Markdown Validation - Troubleshooting Guide
 
-### markdownlint Failures
+### markdownlint-cli2 Failures
 
 **Issue**: Heading level skipped (for example H1 to H3)
 
@@ -11,7 +11,7 @@
 **Issue**: Line length or list style violations
 
 **Fix**:
-1. Run auto-fix first: `markdownlint --fix **/*.md`
+1. Run auto-fix first: `markdownlint-cli2 --fix **/*.md`
 2. Manually adjust lines that cannot be auto-fixed
 
 ### markdown-link-check Failures
@@ -36,7 +36,7 @@
 
 ### Validation Shell Script Issues
 
-**Issue**: `command not found` for markdownlint or markdown-link-check
+**Issue**: `command not found` for markdownlint-cli2 or markdown-link-check
 
 **Fix**:
 1. Ensure tools are installed in the development environment

@@ -13,7 +13,7 @@ on:
     paths:
       - "**/*.md"
       - "docs/**/*.md"
-      - ".markdownlint.yaml"
+      - ".markdownlint-cli2.yaml"
   pull_request:
     branches:
       - "main"
@@ -25,7 +25,7 @@ on:
     paths:
       - "**/*.md"
       - "docs/**/*.md"
-      - ".markdownlint.yaml"
+      - ".markdownlint-cli2.yaml"
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -37,7 +37,7 @@ permissions:
 
 jobs:
   markdown-ci:
-    uses: y-miyazaki/config/.github/workflows/ci-markdown.yaml@88735dfc1dfc25103452611b7de7a1bed8a5cae1 # v1.1.12
+    uses: y-miyazaki/config/.github/workflows/ci-markdown.yaml@d9148bff13ab9dae067cfcf5fae44d32f5feb688 # v1.1.13
     permissions:
       contents: read
       pull-requests: write
