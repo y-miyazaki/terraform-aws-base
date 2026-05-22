@@ -156,23 +156,23 @@
       "algorithm": "sha256"
     },
     {
-      "id": "github_release/github.com/aws/aws-sam-cli/v1.160.0/aws-sam-cli-linux-arm64.zip",
-      "checksum": "C7BDDD37290806A9625C43FF0A38E5129E8C463E16541DA0D8AA1323EA65587E",
+      "id": "github_release/github.com/aws/aws-sam-cli/v1.160.1/aws-sam-cli-linux-arm64.zip",
+      "checksum": "859650E5078D60CC83AD0B325E55240B2B8F3B1B883DA64D5095E450429E2BEC",
       "algorithm": "sha256"
     },
     {
-      "id": "github_release/github.com/aws/aws-sam-cli/v1.160.0/aws-sam-cli-linux-x86_64.zip",
-      "checksum": "5092099A61BFDC7BC2FD564841ECC6663C9ACFDF475865635169FD0CED1A8542",
+      "id": "github_release/github.com/aws/aws-sam-cli/v1.160.1/aws-sam-cli-linux-x86_64.zip",
+      "checksum": "1EF94FECFBD6C7EC0DB897027918B9EFE7897B58EF82845D90E952A0476A845B",
       "algorithm": "sha256"
     },
     {
-      "id": "github_release/github.com/aws/aws-sam-cli/v1.160.0/aws-sam-cli-macos-arm64.pkg",
-      "checksum": "C54B0C922BBD339B450EED4D7D07EB520B2E723B35E62822DC6DD06F7CB865A6",
+      "id": "github_release/github.com/aws/aws-sam-cli/v1.160.1/aws-sam-cli-macos-arm64.pkg",
+      "checksum": "AF64980F9E6FE1022CD388770B4524CC683A38E04DAA5CB9045B7DDA312223D8",
       "algorithm": "sha256"
     },
     {
-      "id": "github_release/github.com/aws/aws-sam-cli/v1.160.0/aws-sam-cli-macos-x86_64.pkg",
-      "checksum": "B80DB731D058349D5C6C3F99A8A15AD5998953887130B897BE1BC779293BDA7F",
+      "id": "github_release/github.com/aws/aws-sam-cli/v1.160.1/aws-sam-cli-macos-x86_64.pkg",
+      "checksum": "9CC4A6353D33E9B09D27B24AD8A246C0CC574F95C1BFC67A0C0C1E7C41647E36",
       "algorithm": "sha256"
     },
     {
@@ -548,31 +548,6 @@
     {
       "id": "github_release/github.com/ko-build/ko/v0.18.1/ko_0.18.1_Windows_x86_64.tar.gz",
       "checksum": "D15C5E391279A2222D4D659AC53047E08D70E21FEA54B2133F0A5C25A1F1F694",
-      "algorithm": "sha256"
-    },
-    {
-      "id": "github_release/github.com/microsoft/apm/v0.13.0/apm-darwin-arm64.tar.gz",
-      "checksum": "73EE687128CA995BF50C698C0035E73C099E32BDC3D23980580FC62635D1F122",
-      "algorithm": "sha256"
-    },
-    {
-      "id": "github_release/github.com/microsoft/apm/v0.13.0/apm-darwin-x86_64.tar.gz",
-      "checksum": "DF55F578A485CFD2D96A56AB6519ECEA59BA072879417EDDA543BFD7C9BF6088",
-      "algorithm": "sha256"
-    },
-    {
-      "id": "github_release/github.com/microsoft/apm/v0.13.0/apm-linux-arm64.tar.gz",
-      "checksum": "5356627B372AB5CC6DF9BB12022BEADAC638E1F809AB1C7781D864D7058674EB",
-      "algorithm": "sha256"
-    },
-    {
-      "id": "github_release/github.com/microsoft/apm/v0.13.0/apm-linux-x86_64.tar.gz",
-      "checksum": "ED02B1103EF4BC49559A81F7E109B424A49D95CF978515AD224E5EEB701B1F8A",
-      "algorithm": "sha256"
-    },
-    {
-      "id": "github_release/github.com/microsoft/apm/v0.13.0/apm-windows-x86_64.zip",
-      "checksum": "34D5BBAD9AAE454FDADF5DE6C458EBB44CC0ED8B3E1CC13C8F5C7BC2BDEA96C8",
       "algorithm": "sha256"
     },
     {
