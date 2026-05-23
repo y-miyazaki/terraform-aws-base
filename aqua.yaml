@@ -24,7 +24,7 @@ packages:
   # AWS related tools
   - name: aws/aws-cli@2.34.48 # AWS CLI
   - name: aws/aws-sam-cli@v1.160.1 # SAM CLI tool
-  - name: kayac/ecspresso@v2.8.3 # ECS deployment tool
+  - name: kayac/ecspresso@v2.8.4 # ECS deployment tool
   - name: Songmu/ecschedule@v0.18.2 # ECS scheduled tasks deployment tool
   # GitHub related tools
   - name: cli/cli@v2.92.0 # GitHub CLI
