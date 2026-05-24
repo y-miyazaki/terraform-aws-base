@@ -4,7 +4,7 @@
 
 Check: Do goroutines terminate properly and monitor context.Done()?
 Why: Unterminated goroutines cause memory leaks, resource exhaustion, performance degradation
-Fix: Clarify termination conditions, monitor context.Done(), use WaitGroup, verify with pprof
+Fix: Clarify termination conditions, monitor context.Done(), use explicit completion signaling, verify with pprof
 
 **CON-02 (SHOULD): Clarify channel close Responsibility**
 
@@ -20,9 +20,9 @@ Fix: Select based on use case, justify buffered size, recommend buffered for asy
 
 **CON-04 (SHOULD): Appropriate sync primitives Usage**
 
-Check: Are sync.Mutex/RWMutex/WaitGroup/atomic used appropriately?
-Why: Mutex copying, misuse, negative WaitGroup cause race conditions, deadlocks, data races
-Fix: Pass Mutex by pointer, use RWMutex for read-heavy, match WaitGroup, leverage atomic
+Check: Are synchronization boundaries and ownership rules clear and consistently applied?
+Why: Unclear locking or completion ownership causes race conditions, deadlocks, and hidden coupling
+Fix: Define lock ownership per shared state, avoid mixed synchronization models, and keep synchronization intent explicit
 
 **CON-05 (SHOULD): for+goroutine Variable Capture Issue**
 

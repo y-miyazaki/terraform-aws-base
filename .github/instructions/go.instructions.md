@@ -31,8 +31,8 @@ description: "AI Assistant Instructions for Go Development"
   1. const
   2. var
   3. type（interface → struct）
-  4. func（constructor → public methods → private methods → helpers）
-- **G-06 (SHOULD)**: Keep declarations in alphabetical order inside each section where practical. Place `main` first in the function section.
+  4. func（public APIs first, then related internal helpers in readable groups）
+- **G-06 (SHOULD)**: Keep declaration grouping and naming order consistent inside each section. Place `main` first in the function section.
 
 ### Unexported Helper Placement
 
@@ -96,7 +96,7 @@ description: "AI Assistant Instructions for Go Development"
 - CON-03 (SHOULD): Appropriate buffered/unbuffered channel Selection
   - Check: Is buffered/unbuffered selection appropriate with justified size?
 - CON-04 (SHOULD): Appropriate sync primitives Usage
-  - Check: Are sync.Mutex/RWMutex/WaitGroup/atomic used appropriately?
+  - Check: Are synchronization boundaries and ownership rules clear and consistently applied?
 - CON-05 (SHOULD): for+goroutine Variable Capture Issue
   - Check: Are loop variables not directly referenced in goroutines?
 - CON-06 (SHOULD): data race Detection and Prevention
@@ -106,8 +106,8 @@ description: "AI Assistant Instructions for Go Development"
 
 - CTX-01 (SHOULD): Accept context in public APIs
   - Check: Do public functions and methods accept context.Context as first argument?
-- CTX-02 (SHOULD): Avoid context.Background()/TODO() Overuse
-  - Check: Are there no excessive context.Background() uses or lingering context.TODO()?
+- CTX-02 (SHOULD): Avoid context lifecycle ambiguity
+  - Check: Is context origin and propagation path explicit across layer boundaries?
 - CTX-03 (SHOULD): Propagate context to goroutines
   - Check: Is context passed when launching goroutines?
 - CTX-04 (SHOULD): Appropriate cancel Invocation
@@ -193,7 +193,7 @@ description: "AI Assistant Instructions for Go Development"
 - FUNC-08 (SHOULD): Leverage Higher-Order Functions
   - Check: Are callbacks and function pointers appropriately utilized?
 - FUNC-09 (SHOULD): Appropriate Generics Usage
-  - Check: Are there no interface{} overuse or unnecessary generics?
+  - Check: Are type abstraction boundaries explicit and are generic constraints minimal but sufficient?
 - FUNC-10 (SHOULD): Comprehensive Function Documentation
   - Check: Do all public functions have godoc with argument and return value descriptions?
 
@@ -208,9 +208,9 @@ description: "AI Assistant Instructions for Go Development"
 - G-04 (SHOULD): Appropriate Log Levels
   - Check: Are Debug/Info/Warn/Error levels appropriate and structured logging used?
 - G-05 (MUST): Declaration Order (File Level)
-  - Check: Is order const→var→type (interface→struct)→func (constructor→methods→helpers)?
+  - Check: Is order const→var→type (interface→struct)→func (public APIs and helpers grouped consistently)?
 - G-06 (SHOULD): Declaration Order (Within Groups)
-  - Check: Is each group sorted A→Z alphabetically (recommended)?
+  - Check: Is each group ordered consistently for readability and diff stability?
 - G-07 (SHOULD): Restrict init() Complexity
   - Check: Does init() avoid panics, external I/O, and non-trivial side effects? Is it minimal and deterministic?
 - G-08 (SHOULD): Zero Value Design

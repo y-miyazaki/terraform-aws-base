@@ -46,6 +46,7 @@ metadata:
 - [category-structure.md](references/category-structure.md) - Read when checking required section structure (S-\* checks).
 - [category-quality.md](references/category-quality.md) - Read when evaluating quality language (Q-\* checks).
 - [category-patterns.md](references/category-patterns.md) - Read when reviewing workflow and policy patterns (P-\* checks).
+- [common-troubleshooting.md](references/common-troubleshooting.md) - Read on script failure or missing output
 
 ## Workflow
 
@@ -84,13 +85,3 @@ metadata:
    - Recommendation: <specific fix>
 ```
 
-## Error Handling and Troubleshooting
-
-- If script output is missing, rerun once.
-- If rerun still fails, defer affected checks and include command, exit status, and stderr summary.
-- If only one script fails, do not block reporting from the successful script.
-
-## Best Practices
-
-- Prioritize clarity and determinism over token-only reductions.
-- Prioritize `S-*` and `Q-*` failures before style-only `BP-*` findings.

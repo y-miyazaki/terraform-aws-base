@@ -50,9 +50,9 @@ Fix: Apply strategy pattern, Functional Options, leverage callbacks
 
 **FUNC-09 (SHOULD): Appropriate Generics Usage**
 
-Check: Are there no interface{} overuse or unnecessary generics?
-Why: interface{} overuse lacks type safety, excessive generics increase complexity
-Fix: Appropriate type parameter usage, define constraints, avoid excessive abstraction
+Check: Are type abstraction boundaries explicit and are generic constraints minimal but sufficient?
+Why: Ambiguous type boundaries and over-generalized constraints reduce readability, obscure contracts, and increase maintenance cost
+Fix: Express domain contracts with clear constraints, keep abstraction local to required scope, and avoid speculative generic layers
 
 **FUNC-10 (SHOULD): Comprehensive Function Documentation**
 

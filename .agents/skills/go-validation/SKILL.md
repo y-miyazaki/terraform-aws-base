@@ -64,13 +64,3 @@ Structured validation results in fixed tool order.
 - Command: `bash scripts/validate.sh ./test/go/ --verbose`
 - Output: `## Checks Summary` with per-tool pass/fail and coverage value.
 
-## Error Handling and Troubleshooting
-
-- If `scripts/validate.sh` is missing or non-executable, return `status: failed` with script path.
-- If coverage remains below 80% after retries, return blocking failure with measured coverage value.
-- If a single tool fails repeatedly, report that tool as failed and include last command output summary.
-
-## Best Practices
-
-- Use `--fix` after reviewing diffs.
-- Run full validation before merge.

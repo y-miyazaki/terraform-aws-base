@@ -64,14 +64,3 @@ bash scripts/validate.sh ./scripts/deploy.sh -v
 bash scripts/validate.sh -f
 ```
 
-## Error Handling and Troubleshooting
-
-- If `scripts/validate.sh` is missing or non-executable, return `status: failed` with script path.
-- If checks partially pass, report passed/failed/deferred per tool instead of collapsing to one status.
-
-## Best Practices
-
-- Run validation before every commit
-- Use `-f` only after reviewing proposed changes.
-- Run bats tests separately when changed scripts affect test helpers or executable runtime behavior.
-- Require all checks to pass before merge.

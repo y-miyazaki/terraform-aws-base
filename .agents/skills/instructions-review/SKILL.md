@@ -27,6 +27,7 @@ Always include target file list and deferred reason summary.
 - Focus on quality, structure, consistency, and practical usability requiring human/AI judgment
 - **Do not execute validation commands from this review skill**
 - Do not modify instructions files or approve/merge PRs
+- Keep chapter order and section naming aligned with existing `.instructions.md` files in the same repository.
 
 ### USE FOR:
 
@@ -58,7 +59,3 @@ Always include target file list and deferred reason summary.
 6. Verify required chapter order (Standards → Guidelines → Testing and Validation → Security Guidelines), then review checklist priorities and collect failed/deferred ItemIDs.
 7. Output required report sections per [references/common-output-format.md](references/common-output-format.md).
 
-## Best Practices
-
-- Keep chapter order and section naming aligned with existing `.instructions.md` files in the same repository.
-- Include concrete remediation text with section name and expected change.

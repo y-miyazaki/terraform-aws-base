@@ -14,13 +14,12 @@ description: "AI Assistant Instructions for Agent Skills Development"
 
 ### Required Sections
 
-- **S-01 (MUST)**: Define the following six sections as H2 headings in this exact order - missing sections break execution determinism:
+- **S-01 (MUST)**: Define the following five sections as H2 headings in this exact order - missing sections break execution determinism:
   1. Input
   2. Output Specification
   3. Execution Scope
   4. Reference Files Guide
   5. Workflow
-  6. Best Practices
 
 ### YAML Frontmatter
 
@@ -113,7 +112,7 @@ description: "AI Assistant Instructions for Agent Skills Development"
 ### Structural Checks (S)
 
 - S-01 (MUST): Structural Completeness
-  - Check: Does SKILL.md have all 6 required sections at ## heading level?
+  - Check: Does SKILL.md have all 5 required sections at ## heading level?
 - S-02 (MUST): YAML Frontmatter Fields
   - Check: Does SKILL.md YAML frontmatter have all required fields (name, description, license) and recommended metadata (author, version)?
 - BP-01 (SHOULD): Description Quality

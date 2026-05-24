@@ -50,6 +50,7 @@ Each issue must include file path, risk summary, and remediation guidance.
 - [dependency](references/category-dependency.md), [events](references/category-events.md), [migration](references/category-migration.md), [naming](references/category-naming.md) - Read when reviewing dependencies, events, migration, or naming conventions.
 - [outputs](references/category-outputs.md), [patterns](references/category-patterns.md), [perf](references/category-performance.md), [tagging](references/category-tagging.md) - Read when reviewing outputs, design patterns, performance, or tagging.
 - [tfvars](references/category-tfvars.md), [variables](references/category-variables.md), [versioning](references/category-versioning.md) - Read when reviewing variable definitions, tfvars, or version constraints.
+- [common-troubleshooting.md](references/common-troubleshooting.md) - Read on failure or when evidence is unavailable
 
 ## Workflow
 
@@ -60,9 +61,9 @@ Each issue must include file path, risk summary, and remediation guidance.
 5. If validation output is partial, keep available findings and defer missing-tool checks with explicit tool name.
 6. Review checklist categories touched by changed files and collect failed/deferred items.
 7. If a referenced category file is missing, defer affected checks with the missing file path.
-8. Output required sections per [references/common-output-format.md](references/common-output-format.md).
+8. Output required sections per [references/common-output-format.md](references/common-output-format.md). Prioritize `SEC-*` findings first, then correctness, then maintainability. For conflicting findings, prioritize the higher-severity category and document the conflict in `## Issues`.
 
-## Examples
+### Examples
 
 - Prompt: `Review this Terraform PR and return failed/deferred checks only.`
 - Input context: changed files `terraform/env/prod/main.tf`, `terraform/env/prod/variables.tf`, `terraform/env/prod/terraform.tfvars`; validation log missing `tflint` output.
@@ -70,8 +71,3 @@ Each issue must include file path, risk summary, and remediation guidance.
 - Prompt: `Review this Terraform PR and report security reasoning from existing validation logs.`
 - Output sample: security findings are evaluated from existing logs and code context; no validator commands are executed.
 
-## Best Practices
-
-- Prioritize `SEC-*` findings first, then correctness, then maintainability.
-- For deferred checks, include exact missing evidence and one concrete next action.
-- For conflicting findings, prioritize the higher-severity category and document the conflict in `## Issues`.

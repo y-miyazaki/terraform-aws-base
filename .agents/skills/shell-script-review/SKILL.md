@@ -47,21 +47,12 @@ Return structured review output with `## Checks Summary`, `## Checks (Failed/Def
 - [global](references/category-global.md), [errors](references/category-error-handling.md), [security](references/category-security.md) - Read when reviewing overall quality, error handling, or security.
 - [standards](references/category-code-standards.md), [deps](references/category-dependencies.md), [docs](references/category-documentation.md) - Read when reviewing code standards, dependencies, or documentation.
 - [func](references/category-function-design.md), [logging](references/category-logging.md), [perf](references/category-performance.md), [testing](references/category-testing.md) - Read when reviewing function design, logging, performance, or tests.
+- [common-troubleshooting.md](references/common-troubleshooting.md) - Read on failure or when validation output is unavailable
 
 ## Workflow
 
 1. Read PR context and script intent.
 2. Confirm `shell-script-validation` results exist; if missing, request rerun and defer validator-dependent checks.
 3. Review checklist categories based on changed script paths and PR intent, then collect failed/deferred ItemIDs.
-4. Output required report sections per [references/common-output-format.md](references/common-output-format.md).
+4. Output required report sections per [references/common-output-format.md](references/common-output-format.md). Prioritize `SEC-*` findings first. Include file path, risk type, and concrete remediation for each issue.
 
-## Error Handling and Troubleshooting
-
-- If no shell scripts are changed in PR, return `status: skipped` with reason.
-- If validation output remains unavailable after one rerun request, continue reviewable checks and defer the rest.
-- If reference files are missing, report missing reference path and stop to avoid unverifiable review.
-
-## Best Practices
-
-- Include file path, risk type, and concrete remediation for each issue.
-- Prioritize `SEC-*` findings first.

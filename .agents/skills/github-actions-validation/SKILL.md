@@ -56,13 +56,9 @@ Return `## Checks Summary`, `## Checks (Failed/Deferred Only)`, and `## Issues` 
 
 ## Workflow
 
-```bash
-# Run all validations (recommended before commit)
-bash scripts/validate.sh
-
-# Validate specific directory
-bash scripts/validate.sh ./.github/workflows/
-```
+1. Run `bash scripts/validate.sh` (or `bash scripts/validate.sh <path>` for scoped validation).
+2. Parse script output and map results to checklist ItemIDs.
+3. Report failed/deferred items per [references/common-output-format.md](references/common-output-format.md).
 
 ### Examples
 
@@ -70,13 +66,3 @@ bash scripts/validate.sh ./.github/workflows/
 - Command: `bash scripts/validate.sh ./.github/workflows/`
 - Output: failed/deferred checks mapped to `actionlint`, `ghalint`, or `zizmor`.
 
-## Error Handling and Troubleshooting
-
-- If `scripts/validate.sh` is missing or not executable, return `status: failed` with file path and permission state.
-- If one tool is unavailable, report it as deferred, continue remaining tools when script supports continuation, and record missing binary name.
-- If script exits non-zero, return per-tool results collected before exit and include exit status.
-
-## Best Practices
-
-- Run validation before every workflow commit
-- All checks must pass before considering changes complete

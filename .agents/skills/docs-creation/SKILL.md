@@ -4,133 +4,77 @@ description: >-
   Create or update docs files with deterministic matching and templates.
   Use when creating or updating documentation files.
   Use for README, specification, architecture, design, troubleshooting, and maintenance docs.
+  Use for updating existing manually-created documents to improve quality and consistency.
 license: Apache-2.0
 metadata:
   author: y-miyazaki
-  version: "1.8.4"
+  version: "1.9.0"
 ---
 
 ## Input
 
 - Natural language request describing the topic/purpose (required)
-- Extracted `document_type` (required in internal structured input; infer from the natural language request using [references/category-document-types.md](references/category-document-types.md) when not explicitly provided)
-- Extracted profile: `default`, `go`, or `terraform` (required)
-- Optional target file under `docs/` (if omitted, automatically matched using deterministic logic)
-
-### Internal Structured Input Schema (JSON)
-
-Use this schema to validate the structured fields extracted from the natural language request. Do not require the user to author JSON directly.
-
-```json
-{
-  "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "type": "object",
-  "additionalProperties": false,
-  "properties": {
-    "topic": {
-      "type": "string",
-      "minLength": 3
-    },
-    "document_type": {
-      "type": "string",
-      "enum": ["readme", "specification", "architecture", "design", "design-decisions", "troubleshooting", "general", "module-catalog", "monitoring", "performance", "security-coverage", "maintenance-notes", "improvements"]
-    },
-    "profile": {
-      "type": "string",
-      "enum": ["default", "go", "terraform"]
-    },
-    "target_file": {
-      "type": "string",
-      "pattern": "^(docs/[a-z0-9-]+\\.md|README\\.md)$"
-    }
-  },
-  "required": ["topic", "document_type", "profile"]
-}
-```
-
-If extracted structured input does not satisfy this schema, stop before write actions and return `status: failed` per Output Specification format, including the schema and a valid minimal JSON example in Issues.
-
-## USE FOR:
-
-- Creating or updating docs under `docs/`
-- Creating or updating `README.md` at repository root
-- Applying templates to specification, architecture, design, troubleshooting, and maintenance docs
-- Generating `docs/index.md` entries for changed docs
-
-## DO NOT USE FOR:
-
-- Source code comments or docstrings
-- Non-markdown assets
-- Markdown linting or link checking
-
-## Routing
-
-- **UTILITY SKILL** for documentation creation and updates
-- Natural-language prompt in, structured fields out
-- Writes markdown files under `docs/` or `README.md` at repository root
-
-## Examples
-
-- "Create an architecture doc for this repository"
-- "Update troubleshooting for Terraform validation issues"
+- `document_type`: one of `readme`, `specification`, `architecture`, `design`, `design-decisions`, `troubleshooting`, `tutorial`, `general`, `module-catalog`, `monitoring`, `performance`, `security-coverage`, `maintenance-notes`, `improvements`, `other` (infer from request using [references/category-document-types.md](references/category-document-types.md); defaults to `other` when `target_file` points to an existing file)
+- `profile`: `default`, `go`, or `terraform` (required)
+- `target_file`: path to target `.md` file (optional; required for `other` type)
 
 ## Output Specification
 
-Return structured Markdown in accordance with [references/common-output-format.md](references/common-output-format.md).
-
-Create or update markdown files under `docs/`, then return a report using [references/common-output-format.md](references/common-output-format.md).
-Report must include changed file paths and duplicate-check result.
-Always regenerate `docs/index.md` with relative links and one-line descriptions.
-
-File rules: see [NC-02](references/common-checklist.md) and [DC-02](references/common-checklist.md).
+Return structured report per [references/common-output-format.md](references/common-output-format.md) with changed file paths and duplicate-check result. Regenerate `docs/index.md` only when files under `docs/` are created or updated.
 
 ## Execution Scope
 
-- Writes only to markdown files under `docs/` or to `README.md` at repository root.
-- `readme` document_type MUST always produce `README.md` at repository root.
-- Do not rename/delete files, add YAML frontmatter, or run markdown linting.
+- Writes to markdown files under `docs/`, `README.md` at repository root, or existing files at `target_file` path (for `other` type).
+- `readme` type MUST produce `README.md` at repository root.
+- `general` is for creating new documents outside predefined types (template-driven).
+- `other` is for updating existing documents outside predefined types (structure-preserving).
+- Do not rename/delete files, add YAML frontmatter, or run markdown linting (use markdown-validation skill).
+
+### USE FOR:
+
+- create or update docs under `docs/` or `README.md`
+- update existing manually-created documents (e.g. "Improve the existing CONTRIBUTING.md")
+- apply templates to specification, architecture, design, troubleshooting, tutorial docs
+
+### DO NOT USE FOR:
+
+- source code comments or docstrings
+- non-markdown assets
+- markdown linting or link checking (use markdown-validation skill)
 
 ## Reference Files Guide
 
 - [common-checklist.md](references/common-checklist.md) (always read)
 - [common-output-format.md](references/common-output-format.md) (always read)
 - [category-document-types.md](references/category-document-types.md) (always read)
-- common-template: `references/category-templates-common-<document_type>.md` (Read the file matching the resolved `document_type`; contains template)
-- [go-templates](references/category-templates-go.md) (Read when the profile is `go`; overrides `specification` template)
-- [terraform-templates](references/category-templates-terraform.md) (Read when the profile is `terraform`; overrides `specification` template)
+- [common-troubleshooting.md](references/common-troubleshooting.md) - Read on failure
+- Templates (read the one matching resolved `document_type`):
+  - [category-templates-common-readme.md](references/category-templates-common-readme.md)
+  - [category-templates-common-specification.md](references/category-templates-common-specification.md)
+  - [category-templates-common-architecture.md](references/category-templates-common-architecture.md)
+  - [category-templates-common-design.md](references/category-templates-common-design.md)
+  - [category-templates-common-design-decisions.md](references/category-templates-common-design-decisions.md)
+  - [category-templates-common-troubleshooting.md](references/category-templates-common-troubleshooting.md)
+  - [category-templates-common-tutorial.md](references/category-templates-common-tutorial.md)
+  - [category-templates-common-general.md](references/category-templates-common-general.md)
+  - [category-templates-common-module-catalog.md](references/category-templates-common-module-catalog.md)
+  - [category-templates-common-monitoring.md](references/category-templates-common-monitoring.md)
+  - [category-templates-common-performance.md](references/category-templates-common-performance.md)
+  - [category-templates-common-security-coverage.md](references/category-templates-common-security-coverage.md)
+  - [category-templates-common-maintenance-notes.md](references/category-templates-common-maintenance-notes.md)
+  - [category-templates-common-improvements.md](references/category-templates-common-improvements.md)
+  - [category-templates-common-other.md](references/category-templates-common-other.md)
+- [category-templates-go-specification.md](references/category-templates-go-specification.md) (Read when profile is `go` and `document_type` is `specification`)
+- [category-templates-terraform-specification.md](references/category-templates-terraform-specification.md) (Read when profile is `terraform` and `document_type` is `specification`)
 
 ## Workflow
 
 1. List markdown files in `docs/`.
-2. Resolve `document_type`: use explicit `document_type` if present; otherwise infer one candidate from [references/category-document-types.md](references/category-document-types.md).
-3. If `document_type` inference is ambiguous or no candidate matches, stop before write actions and ask the user to select one explicit `document_type`.
-4. If no target file provided, resolve deterministic default path using [references/category-document-types.md](references/category-document-types.md); for `readme` type, always use `README.md` at repository root; if no deterministic match exists, ask user for an explicit target file path.
-5. Select template: use `references/category-templates-go.md` for `go` profile, `references/category-templates-terraform.md` for `terraform` profile; for `default` profile, read `references/category-templates-common-<document_type>.md`.
-6. Run case-insensitive duplicate check; duplicates must fail the run.
-7. Create/update with naming/structure rules from [common-checklist.md](references/common-checklist.md) and valid relative links.
-8. IF README has docs-index markers, update inside markers; ELSE skip.
-9. Regenerate `docs/index.md` with a list of all files in `docs/` with relative links and one-line descriptions. Format:
-
-```markdown
-# Documentation Index
-
-- [specification.md](specification.md) - Repository specification and structure
-- [architecture.md](architecture.md) - System architecture overview
-```
-
-10. Return report using [references/common-output-format.md](references/common-output-format.md).
-
-## Error Handling and Troubleshooting
-
-- If input JSON schema validation fails, return `status: failed` and include the schema plus a valid minimal JSON example.
-- If `document_type` inference returns multiple candidates or no candidate, stop before write actions and request explicit `document_type`.
-- If `docs/` does not exist, create `docs/` first and continue.
-- If selected template file is missing, fall back to `general` template and record fallback in report.
-- If duplicate check fails, return `status: failed` and stop before write actions.
-- If README markers are malformed, skip marker update and report as deferred with reason.
-
-## Best Practices
-
-- Run NC-01 duplicate checks before write actions.
-- Keep H1 titles in `docs/`.
-- `readme` document_type MUST always be created for every repository; it is a mandatory document.
+2. Resolve `document_type`: use explicit value if present; otherwise infer from [references/category-document-types.md](references/category-document-types.md). If `target_file` is an existing file and type is unspecified, default to `other`. If ambiguous, ask user.
+3. Resolve `target_file`: use [references/category-document-types.md](references/category-document-types.md) default path; `readme` → `README.md`; `other` requires explicit `target_file`. If unresolved, ask user.
+4. Select template per profile and `document_type`. For `document_type=specification`, use profile-specific overrides from [category-templates-go-specification.md](references/category-templates-go-specification.md) or [category-templates-terraform-specification.md](references/category-templates-terraform-specification.md) when applicable.
+5. Run case-insensitive duplicate check (skip for `other` type). Fail on duplicates.
+6. Create/update per [common-checklist.md](references/common-checklist.md). For `other` type, preserve original structure and apply quality improvements.
+7. IF README has docs-index markers, update inside markers; ELSE skip.
+8. Regenerate `docs/index.md` if files under `docs/` changed.
+9. Return report per [references/common-output-format.md](references/common-output-format.md).

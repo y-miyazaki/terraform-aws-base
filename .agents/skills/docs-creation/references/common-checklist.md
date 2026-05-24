@@ -28,6 +28,7 @@
 - [ ] No version numbers in the filename
 - [ ] Extension is `.md`
 - [ ] Numeric prefix used only when documents have a defined reading order
+- **SKIP** for `other` type updating existing files (preserve original filename)
 - **PASS** if all rules satisfied, **FAIL** if any rule violated
 
 ### NC-03: `document_type` Matched
@@ -68,6 +69,6 @@
 
 - [ ] Apply this check using the selected template definition in `references/category-templates-common-<document_type>.md` (and profile-specific overrides when applicable)
 - [ ] For types with technical standard structure (`architecture`, `design`, `module-catalog`, `security-coverage`, `monitoring`, `performance`), include `Overview`, `Prerequisites`, `Architecture/Design`, `Implementation Details`, `Testing/Validation`, `Troubleshooting` (or explicitly mark non-applicable sections)
-- [ ] For types with dedicated workflow style (`specification`, `troubleshooting`, `maintenance-notes`, `improvements`, `design-decisions`, `general`), follow the selected template sections without forcing the technical standard structure
+- [ ] For types with dedicated workflow style (`specification`, `troubleshooting`, `tutorial`, `maintenance-notes`, `improvements`, `design-decisions`, `general`), follow the selected template sections without forcing the technical standard structure
 - **PASS** if the document follows its selected template structure, **FAIL** if required sections for that template are missing without rationale
 - If the project has its own documentation standard, evaluate against project standard first and use this checklist as fallback

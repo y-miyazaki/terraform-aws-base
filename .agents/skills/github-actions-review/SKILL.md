@@ -47,6 +47,7 @@ Return review output with `## Checks Summary`, `## Checks (Failed/Deferred Only)
 - [category-error-handling.md](references/category-error-handling.md) - Read when reviewing failure handling behavior.
 - [category-performance.md](references/category-performance.md) - Read when reviewing execution efficiency.
 - [category-tool-integration.md](references/category-tool-integration.md) - Read when reviewing third-party action usage.
+- [common-troubleshooting.md](references/common-troubleshooting.md) - Read on failure or when evidence is partial
 
 ## Workflow
 
@@ -54,19 +55,10 @@ Return review output with `## Checks Summary`, `## Checks (Failed/Deferred Only)
 2. Confirm `github-actions-validation` results are attached; if missing, request rerun and defer all validator-dependent checks.
 3. Review relevant checklist categories and collect failed/deferred items.
 4. Order issues in output by severity: `SEC-*` first, then correctness, then maintainability.
-5. Output report with the required sections per [references/common-output-format.md](references/common-output-format.md).
+5. Output report with the required sections per [references/common-output-format.md](references/common-output-format.md). Include file path, line reference, and remediation step for each issue.
 
-## Examples
+### Examples
 
 - Prompt: `Review workflow PR and report failed/deferred checks.`
 - Output: `## Checks Summary` + `## Checks (Failed/Deferred Only)` + `## Issues`, with each issue including file path, line, and remediation.
 
-## Error Handling and Troubleshooting
-
-- If evidence is partial, mark affected checks as deferred with explicit reason.
-- If workflow YAML is malformed, report syntax-related review checks as deferred and keep policy/design findings separate.
-
-## Best Practices
-
-- Include file path, line reference, and remediation step for each issue.
-- Keep scope decisions in Workflow step 2 and avoid duplicating them in other sections.

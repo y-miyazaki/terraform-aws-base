@@ -42,8 +42,6 @@ EXIT_CODE=0
 IS_SCOPED=false
 
 # Flags for individual checks
-GO_FMT_FAILED=0
-GO_VET_FAILED=0
 LINT_FAILED=0
 TEST_FAILED=0
 RACE_FAILED=0
@@ -373,63 +371,6 @@ function has_go_files {
 }
 
 #######################################
-# run_gofumpt: Run gofumpt
-#
-# Description:
-#   Runs gofumpt to format Go code or checks formatting compliance
-#
-# Arguments:
-#   None
-#
-# Returns:
-#   None (sets EXIT_CODE and GO_FMT_FAILED on failure)
-#
-# Usage:
-#   run_gofumpt
-#
-#######################################
-function run_gofumpt {
-    echo_section "Running gofumpt"
-
-    if [[ "$DRY_RUN" == "true" ]]; then
-        log "INFO" "DRY-RUN: Would run 'gofumpt $TARGET_PATTERN'"
-        return 0
-    fi
-
-    # Use go list + mapfile to expand package patterns into actual directories.
-    # gofumpt does not support the package wildcard pattern ./... in the same way gofmt does.
-    mapfile -t go_dirs < <(go list -f '{{.Dir}}' "$TARGET_PATTERN" 2> /dev/null || true)
-    if [[ ${#go_dirs[@]} -eq 0 ]]; then
-        log "INFO" "No Go directories found for gofumpt (pattern=$TARGET_PATTERN)"
-        return 0
-    fi
-
-    if [[ "$FIX_MODE" == "true" ]]; then
-        log "INFO" "Automatically formatting files..."
-        if gofumpt -w "${go_dirs[@]}"; then
-            log "INFO" "Files formatted successfully"
-        else
-            log "ERROR" "gofumpt failed"
-            EXIT_CODE=1
-            GO_FMT_FAILED=1
-        fi
-    else
-        # Check formatting using gofumpt -l to list files that are not formatted
-        local fmt_output
-        fmt_output=$(gofumpt -l "${go_dirs[@]}" 2>&1 || true)
-        if [[ -n "$fmt_output" ]]; then
-            echo "Files that need formatting (gofumpt -l):"
-            echo "$fmt_output"
-            log "WARN" "Some files need formatting. Use -f flag to auto-fix"
-            EXIT_CODE=1
-            GO_FMT_FAILED=1
-        else
-            log "INFO" "All files are properly formatted"
-        fi
-    fi
-}
-
-#######################################
 # run_go_mod_tidy: Run go mod tidy
 #
 # Description:
@@ -476,39 +417,6 @@ function run_go_mod_tidy {
         EXIT_CODE=1
     fi
     popd > /dev/null || true
-}
-
-#######################################
-# run_go_vet: Run go vet
-#
-# Description:
-#   Runs go vet to check for common Go programming errors
-#
-# Arguments:
-#   None
-#
-# Returns:
-#   None (sets EXIT_CODE and GO_VET_FAILED on failure)
-#
-# Usage:
-#   run_go_vet
-#
-#######################################
-function run_go_vet {
-    echo_section "Running go vet"
-
-    if [[ "$DRY_RUN" == "true" ]]; then
-        log "INFO" "DRY-RUN: Would run 'go vet $TARGET_PATTERN'"
-        return 0
-    fi
-
-    if go vet "$TARGET_PATTERN"; then
-        log "INFO" "go vet passed"
-    else
-        log "ERROR" "go vet found issues"
-        EXIT_CODE=1
-        GO_VET_FAILED=1
-    fi
 }
 
 #######################################
@@ -738,8 +646,6 @@ function main {
     log "INFO" "Dry-run mode: $DRY_RUN"
     log "INFO" "Fix mode: $FIX_MODE"
     run_go_mod_tidy
-    run_gofumpt
-    run_go_vet
     run_go_build
     run_golangci_lint
     run_tests
@@ -755,11 +661,8 @@ function main {
 
     echo_section "Result (completed in ${elapsed} seconds)"
     echo "Result:" >&2
-    [[ "$GO_FMT_FAILED" == "1" ]] && echo "❌ gofumpt" >&2 || echo "✅ gofumpt" >&2
-    # Report go vet status
-    [[ "$GO_VET_FAILED" == "1" ]] && echo "❌ go vet" >&2 || echo "✅ go vet" >&2
 
-    # Report go build status next to keep result order consistent with run_* calls
+    # Report go build status
     [[ "$GO_BUILD_FAILED" == "1" ]] && echo "❌ go build" >&2 || echo "✅ go build" >&2
     if [[ "$LINT_FAILED" == "1" ]]; then
         echo -n "❌ golangci-lint" >&2

@@ -33,7 +33,7 @@
 
 ## Context Handling (CTX)
 - CTX-01 (SHOULD): Accept context in public APIs
-- CTX-02 (SHOULD): Avoid context.Background()/TODO() Overuse
+- CTX-02 (SHOULD): Avoid context lifecycle ambiguity
 - CTX-03 (SHOULD): Propagate context to goroutines
 - CTX-04 (SHOULD): Appropriate cancel Invocation
 

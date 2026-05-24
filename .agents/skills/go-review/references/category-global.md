@@ -26,15 +26,15 @@ Fix: Use structured logging libraries (zap/zerolog), unify levels, mask sensitiv
 
 **G-05 (MUST): Declaration Order (File Level)**
 
-Check: Is order const→var→type (interface→struct)→func (constructor→methods→helpers)?
+Check: Is order const→var→type (interface→struct)→func (public APIs and helpers grouped consistently)?
 Why: Inconsistent declaration order reduces readability, increases review oversight risk
 Fix: Maintain const→var→type→func order at file level
 
 **G-06 (SHOULD): Declaration Order (Within Groups)**
 
-Check: Is each group sorted A→Z alphabetically (recommended)?
-Why: Inconsistency within same category makes diff tracking difficult, causes inconsistencies, reduces readability
-Fix: A→Z order within groups (recommended), allow grouping related declarations
+Check: Is each group ordered consistently for readability and diff stability?
+Why: Inconsistent local ordering makes review and change tracking harder
+Fix: Define and follow a team-consistent ordering rule per group, while allowing related declaration grouping
 
 **G-07 (SHOULD): Restrict init() Complexity**
 

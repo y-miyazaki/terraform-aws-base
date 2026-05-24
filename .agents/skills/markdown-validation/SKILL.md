@@ -51,16 +51,9 @@ Return `## Checks Summary`, `## Checks (Failed/Deferred Only)`, and `## Issues`.
 
 ## Workflow
 
-```bash
-# Full validation of all Markdown files
-bash scripts/validate.sh
-
-# Validate specific file
-bash scripts/validate.sh ./README.md
-
-# Validate specific directory
-bash scripts/validate.sh ./docs/
-```
+1. Run `bash scripts/validate.sh` (or `bash scripts/validate.sh <path>` for scoped validation).
+2. Parse script output and map results to checklist ItemIDs.
+3. Report failed/deferred items per [references/common-output-format.md](references/common-output-format.md).
 
 ### Examples
 
@@ -68,10 +61,3 @@ bash scripts/validate.sh ./docs/
 - Command: `bash scripts/validate.sh ./docs/`
 - Output: per-tool results with deferred status for network-only link failures.
 
-## Best Practices
-
-- Run validation before every documentation commit
-- Resolve syntax violations and broken links before merge
-- If `scripts/validate.sh` is missing or not executable, return `status: failed` with script path.
-- If network failures affect external links, keep syntax results and mark network-dependent link checks as deferred.
-- If file pattern resolves to zero markdown files, return `status: passed` with `0 files checked`.

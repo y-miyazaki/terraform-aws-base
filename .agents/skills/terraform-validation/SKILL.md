@@ -63,16 +63,3 @@ bash scripts/validate.sh ./terraform/base/
 bash scripts/validate.sh --fix --verbose
 ```
 
-## Error Handling and Troubleshooting
-
-- If `scripts/validate.sh` is missing or non-executable, return `status: failed` with script path.
-- If `tflint` or `trivy` is not installed, mark that tool as deferred with missing binary name and continue remaining checks when possible.
-- If CI and local results differ, report environment difference as deferred with command outputs.
-- If `--fix` changes unexpected files, stop and rerun only after confirming changed files are limited to Terraform formatting updates.
-
-## Best Practices
-
-- Run full validation before every commit
-- Use `--fix` after reviewing diffs.
-- Scope to target directories during development, then run full validation before merge.
-- Require all checks to pass before merge.

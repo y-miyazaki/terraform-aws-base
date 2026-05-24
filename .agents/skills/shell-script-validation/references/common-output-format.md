@@ -2,7 +2,7 @@
 
 Use the following report structure for validation output.
 
-```markdown
+````markdown
 # Validation Result: <target>
 
 ## Summary
@@ -23,7 +23,7 @@ Use the following report structure for validation output.
 ```
 <Full command output>
 ```
-```
+````
 
 ## Rules
 
