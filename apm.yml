@@ -2,14 +2,15 @@ name: config
 version: 1.0.0
 description: agent skills and instructions and mcp
 license: Apache-2.0
-target: copilot
+targets:
+  - copilot
 includes: auto
 dependencies:
   apm:
-    - github.com/y-miyazaki/config/.apm/packages/common#v1.1.15
-    - github.com/y-miyazaki/config/.apm/packages/aws#v1.1.15
-    - github.com/y-miyazaki/config/.apm/packages/go#v1.1.15
-    - github.com/y-miyazaki/config/.apm/packages/shell-script#v1.1.15
-    - github.com/y-miyazaki/config/.apm/packages/terraform#v1.1.15
-    - github.com/y-miyazaki/config/.apm/packages/terraform-aws#v1.1.15
+    - github.com/y-miyazaki/config/.apm/packages/common#v1.1.16
+    - github.com/y-miyazaki/config/.apm/packages/aws#v1.1.16
+    - github.com/y-miyazaki/config/.apm/packages/go#v1.1.16
+    - github.com/y-miyazaki/config/.apm/packages/shell-script#v1.1.16
+    - github.com/y-miyazaki/config/.apm/packages/terraform#v1.1.16
+    - github.com/y-miyazaki/config/.apm/packages/terraform-aws#v1.1.16
   mcp: []
