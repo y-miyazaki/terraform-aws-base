@@ -36,7 +36,7 @@ packages:
   - name: suzuki-shunsuke/pinact@v3.10.1 # GitHub Actions pinning tool
   - name: zizmorcore/zizmor@v1.25.0 # GitHub Actions security auditor
   # Go related tools
-  - name: air-verse/air@v1.65.1 # live reload
+  - name: air-verse/air@v1.65.2 # live reload
   - name: bufbuild/buf@v1.69.0 # protobuf linter and formatter
   - name: go-delve/delve@v1.26.3 # debugger
   - name: go-swagger/go-swagger@v0.33.2 # API documentation generator
