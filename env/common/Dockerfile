@@ -11,11 +11,7 @@ ARG USER=vscode
 ARG WORKDIR=/workspace
 
 # version(base)
-ARG AQUA_VERSION=v2.58.1 # https://github.com/aquaproj/aqua/releases
-ARG AWSDAC_VERSION=v0.22.4 # https://github.com/awslabs/diagram-as-code/releases
-ARG AWSP_VERSION=0.2.0 # https://www.npmjs.com/package/awsp
-ARG AWS_MFA_VERSION=0.0.12 # https://pypi.org/project/aws-mfa/
-ARG NODE_VERSION=24 # https://github.com/nodejs/node/releases
+ARG MISE_VERSION=v2026.5.15 # https://github.com/jdx/mise/releases
 
 #--------------------------------------------------------------
 # ENV
@@ -56,34 +52,15 @@ RUN apt-get update && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
     make openssl git tar curl zip jq groff gcc bison python3 python3-dev python3-pip fish shellcheck shfmt bats yamllint
 
-# Install Node.js
-RUN curl -fsSL https://deb.nodesource.com/setup_${NODE_VERSION}.x | bash - && \
-    apt-get update && \
-    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-    nodejs
-
-# Install npm packages
-RUN npm install -g --ignore-scripts \
-    markdownlint-cli2@0.22.1 \
-    markdown-link-check@3.14.2 \
-    cspell@9.3.2 \
-    textlint@15.4.0 \
-    textlint-rule-preset-ja-technical-writing@12.0.2 \
-    textlint-rule-no-dead-link@6.0.1
-
-# Install aqua
-RUN go install github.com/aquaproj/aqua/v2/cmd/aqua@${AQUA_VERSION}
+# Install mise to a system-wide path so remoteUser=vscode can always resolve it
+RUN curl -fsSL https://mise.run | MISE_VERSION=${MISE_VERSION} MISE_INSTALL_PATH=/usr/local/bin/mise sh && \
+    /usr/local/bin/mise --version
 
 #--------------------------------------------------------------
 # AWS environment
 #--------------------------------------------------------------
-# Install aws-mfa
-# aws-mfa requires system-wide install in devcontainer
-RUN pip3 install --break-system-packages aws-mfa==${AWS_MFA_VERSION} && \
-    # Install awsp
-    npm install -g --ignore-scripts awsp@${AWSP_VERSION} && \
-    # Install Session Manager Plugin: choose package path by TARGETARCH
-    if [ "${TARGETARCH}" = "arm64" ] || [ "${TARGETARCH}" = "aarch64" ]; then \
+# Install Session Manager Plugin: choose package path by TARGETARCH
+RUN if [ "${TARGETARCH}" = "arm64" ] || [ "${TARGETARCH}" = "aarch64" ]; then \
     SSM_ARCH=arm64; \
     else \
     # AWS uses '64bit' in the URL path for x86_64 packages

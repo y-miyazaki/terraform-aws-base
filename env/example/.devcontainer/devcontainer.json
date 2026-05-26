@@ -22,6 +22,7 @@
         "qufiwefefwoyn.inline-sql-syntax",
         "redhat.vscode-yaml",
         "streetsidesoftware.code-spell-checker",
+        "tamasfe.even-better-toml",
         "usernamehw.errorlens",
         "vscode-icons-team.vscode-icons",
         "yzhang.markdown-all-in-one",
@@ -42,7 +43,7 @@
         // for Jsonnet environment
         "grafana.vscode-jsonnet",
         // for terraform extensions
-        "hashicorp.terraform",
+        "hashicorp.terraform"
         // for Python environment
         // "charliermarsh.ruff",
         // "ms-python.mypy-type-checker",

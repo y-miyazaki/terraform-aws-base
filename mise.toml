@@ -1,0 +1,135 @@
+# mise - Dev Tools, Env Vars, Task Runner
+# https://mise.jdx.dev/
+
+[settings]
+activate_aggressive = true # Aggressively activate tools in the current config for all shells and commands; may cause unexpected tool activations but closest to former auto_activate.
+auto_install = true # Auto-install tools when a mise-managed config is entered or evaluated; closest behavior to former lazy_install.
+exec_auto_install = true # Auto-install tools when commands are run via `mise x` / `mise exec`.
+github_attestations = true # Verify GitHub release attestations when a backend supports them.
+lockfile = true # Generate and maintain mise.lock with resolved URLs and checksums.
+locked = false # Require lockfile entries during installs to reduce unexpected upstream changes.
+minimum_release_age = "7d" # Avoid very recent releases to reduce supply-chain risk from rushed or bad publishes.
+not_found_auto_install = true # Try installing missing tools when a command is looked up from the current config.
+provenance_api_failures_fatal = true # Fail installs if provenance verification APIs are unavailable or verification fails.
+slsa = true # Require SLSA provenance checks when a backend supports them.
+trusted_config_paths = [
+  "/workspace/",          # for workspace containers which mount repos to /workspace
+  "/tmp/renovate/repos/", # for Renovate bot which clones repos to /tmp/renovate/repos/
+] # Paths to automatically trust mise.toml files in without prompting; use with caution.
+
+[settings.aqua]
+cosign = true              # Verify cosign signatures for aqua-backed packages when available.
+minisign = true            # Verify minisign signatures for aqua-backed packages when available.
+slsa = true                # Require SLSA provenance checks for aqua-backed packages when available.
+github_attestations = true # Verify GitHub attestations for aqua-backed packages when available.
+
+[tools]
+# Runtime tools
+python = "3.14.5"
+node = "24.16.0"
+pnpm = { version = "11.3.0", depends = ["node"] }
+aqua = "2.59.0"
+
+# Utility tools
+"aqua:astral-sh/uv" = "0.11.15"      # uv/uvx
+"aqua:BurntSushi/ripgrep" = "15.1.0" # grep alternative
+"aqua:google/go-jsonnet" = "0.22.0"  # Jsonnet command-line tool
+"aqua:tamasfe/taplo" = "0.10.0"      # TOML formatter / LSP
+"aqua:jdx/usage" = "3.3.0"           # usage CLI tool for command help and completions
+
+# Security related tools
+"aqua:aquasecurity/trivy" = "0.70.0" # vulnerability scanner
+"aqua:gitleaks/gitleaks" = "8.30.1" # secret scanner
+"pipx:pre-commit" = { version = "4.6.0", depends = [
+  "python",
+] } # pre-commit framework
+"pipx:aws-mfa" = { version = "0.0.12", depends = ["python"] } # AWS MFA helper
+
+# AWS related tools
+"aqua:aws/aws-cli" = "2.34.49"      # AWS CLI
+"aqua:aws/aws-sam-cli" = "1.160.1"  # SAM CLI tool
+"aqua:kayac/ecspresso" = "2.8.4"    # ECS deployment tool
+"aqua:Songmu/ecschedule" = "0.18.2" # ECS scheduled tasks deployment tool
+
+# GitHub related tools
+"aqua:cli/cli" = "2.92.0"                                             # GitHub CLI
+"aqua:github/copilot-cli" = "1.0.49"                                  # GitHub Copilot CLI
+"aqua:rhysd/actionlint" = "1.7.12"                                    # GitHub Actions linter
+"aqua:suzuki-shunsuke/disable-checkout-persist-credentials" = "1.0.0" # disable persist-credentials in checkout action
+"aqua:suzuki-shunsuke/ghalint" = "1.5.6"                              # GitHub Actions linter
+"aqua:suzuki-shunsuke/ghatm" = "1.0.0"                                # auto-set timeout-minutes for GitHub Actions jobs
+"aqua:suzuki-shunsuke/pinact" = "3.10.1"                              # GitHub Actions pinning tool
+"aqua:zizmorcore/zizmor" = "1.25.2"                                   # GitHub Actions security auditor
+
+# Go related tools
+"aqua:air-verse/air" = "1.65.2"         # live reload
+"aqua:bufbuild/buf" = "1.69.0"          # protobuf linter and formatter
+"aqua:go-delve/delve" = "1.26.3"        # debugger
+"aqua:go-swagger/go-swagger" = "0.33.2" # API documentation generator
+# Use go backend for go_install-type packages (aqua backend does not support these).
+"go:golang.org/x/tools/gopls" = "0.21.1"                                # Go language server
+"go:golang.org/x/vuln/cmd/govulncheck" = "1.3.0"                        # vulnerability scanner
+"aqua:golangci/golangci-lint" = "2.12.2"                                # linter
+"aqua:goreleaser/goreleaser" = "2.15.4"                                 # release automation
+"aqua:grpc/grpc-go/protoc-gen-go-grpc" = "1.6.1"                        # gRPC code generator
+"aqua:ko-build/ko" = "0.18.1"                                           # container builder
+"aqua:mvdan/gofumpt" = "0.10.0"                                         # code formatter
+"go:github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen" = "2.7.0" # OpenAPI code generator
+"aqua:protocolbuffers/protobuf-go/protoc-gen-go" = "1.36.11"            # protobuf code generator
+"aqua:protocolbuffers/protobuf/protoc" = "34.1"                         # protobuf compiler
+"aqua:swaggo/swag" = "1.16.6"                                           # API documentation generator
+"aqua:vektra/mockery" = "3.7.0"                                         # mock code generator for interfaces
+
+# Terraform related tools
+"aqua:getsops/sops" = "3.13.1"                  # encryption tool
+"aqua:hashicorp/terraform" = "1.15.3"           # infrastructure as code
+"aqua:terraform-docs/terraform-docs" = "0.24.0" # documentation generator
+"aqua:terraform-linters/tflint" = "0.62.1"      # linter
+
+# Lint / Formatter tools (npm)
+"npm:markdownlint-cli2" = { version = "0.22.1", depends = [
+  "node",
+], install_env = { NPM_CONFIG_IGNORE_SCRIPTS = "true" } } # Markdown linter
+"npm:markdown-link-check" = { version = "3.14.2", depends = [
+  "node",
+], install_env = { NPM_CONFIG_IGNORE_SCRIPTS = "true" } } # Markdown link checker
+"npm:cspell" = { version = "9.3.2", depends = [
+  "node",
+], install_env = { NPM_CONFIG_IGNORE_SCRIPTS = "true" } } # spell checker
+
+# AWS related tools (npm)
+"npm:awsp" = { version = "0.2.0", depends = [
+  "node",
+], install_env = { NPM_CONFIG_IGNORE_SCRIPTS = "true" } } # AWS profile switcher
+
+# AI agent tools
+"github:microsoft/apm" = "0.14.2"               # agent package manager
+"github:microsoft/waza" = "0.33.0"              # agent skill evaluator
+"github:yvgude/lean-ctx" = "v3.6.8"             # context optimizer
+"github:DeusData/codebase-memory-mcp" = "0.6.1" # codebase memory MCP server
+
+[tasks.mise-install]
+description = "Install tools defined in mise.toml"
+alias = ["mi"]
+depends = ["mise-install-core"]
+run = "NPM_CONFIG_IGNORE_SCRIPTS=true mise install --yes"
+
+[tasks.mise-install-core]
+description = "Install core runtimes first"
+alias = ["mic"]
+run = "NPM_CONFIG_IGNORE_SCRIPTS=true mise install --yes python node pnpm aqua"
+
+[tasks.mise-lock]
+description = "Regenerate mise.lock (required after changing tools/settings)"
+alias = ["ml"]
+run = "sh -c 'MISE_LOCKED=0 mise lock'"
+
+[tasks.mise-trust]
+description = "Trust project mise.toml non-interactively"
+alias = ["mt"]
+run = "mise trust --yes /workspace/mise.toml"
+
+[tasks.mise-doctor]
+description = "Run mise doctor checks"
+alias = ["md"]
+run = "mise doctor"

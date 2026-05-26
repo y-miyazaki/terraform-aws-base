@@ -24,8 +24,7 @@ __bash_prompt() {
     local userpart='`export XIT=$? \
         && [ ! -z "${GITHUB_USER}" ] && echo -n "\[\033[0;32m\]@${GITHUB_USER} " || echo -n "\[\033[0;32m\]\u " \
         && [ "$XIT" -ne "0" ] && echo -n "\[\033[1;31m\]➜" || echo -n "\[\033[0m\]➜"`'
-    local aws_profile=$([ ! -z "${AWS_PROFILE}" ] && echo -n "\[\033[0;31m\]${AWS_PROFILE} \[\033[0m\]➜" || echo -n "\[\033[0;31m\](no) \[\033[0m\]➜")
-    # local envpart=`[ ! -z "${ENV}" ] && echo -n "\[\033[0;31m\]${ENV} \[\033[0m\]➜" || echo -n "\[\033[0;31m\](no) \[\033[0m\]➜"`
+    local aws_profile='`[ ! -z "${AWS_PROFILE}" ] && echo -n "\[\033[0;31m\]${AWS_PROFILE} \[\033[0m\]➜" || echo -n "\[\033[0;31m\](no) \[\033[0m\]➜"`'
     local gitbranch='`\
         if [ "$(git config --get codespaces-theme.hide-status 2>/dev/null)" != 1 ]; then \
             export BRANCH=$(git symbolic-ref --short HEAD 2>/dev/null || git rev-parse --short HEAD 2>/dev/null); \
@@ -46,6 +45,38 @@ __bash_prompt
 export PROMPT_DIRTRIM=4
 
 #######################################
+# for aqua
+#######################################
+if command -v aqua > /dev/null 2>&1; then
+    export AQUA_ROOT_DIR="${AQUA_ROOT_DIR:-$(aqua root-dir)}"
+    export PATH="${AQUA_ROOT_DIR}/bin:$HOME/bin:$PATH"
+fi
+
+#######################################
+# for mise
+#######################################
+if command -v mise > /dev/null 2>&1; then
+    eval "$(mise activate bash)"
+    eval "$(mise activate --shims)"
+fi
+
+#######################################
+# for usage
+#######################################
+if command -v usage > /dev/null 2>&1; then
+    # shellcheck source=/dev/null
+    source <(usage g completion-init bash)
+fi
+
+#######################################
+# for lean-ctx
+#######################################
+if [ -f "$HOME/.config/lean-ctx/shell-hook.bash" ]; then
+    # shellcheck source=/dev/null
+    . "$HOME/.config/lean-ctx/shell-hook.bash"
+fi
+
+#######################################
 # for terraform
 #######################################
 export TF_PLUGIN_CACHE_DIR="$HOME/.terraform.d/plugin-cache"
@@ -54,14 +85,6 @@ alias tinitupgrade='terraform init -upgrade -reconfigure -backend-config="terraf
 alias tplan='terraform plan -lock=false -var-file="terraform.${ENV}.tfvars"'
 alias tapply='terraform apply -auto-approve -var-file="terraform.${ENV}.tfvars"'
 
-#######################################
-# for aqua
-#######################################
-export PATH="$(aqua root-dir)/bin:/home/${USER}/bin:$PATH"
-
-# export PYENV_ROOT="/home/${USER}/.pyenv"
-# export PATH="$PYENV_ROOT/bin/:$PATH"
-# eval "$(pyenv init -)"
 #######################################
 # for aws
 #######################################
@@ -97,14 +120,14 @@ export USE_BUILTIN_RIPGREP="true"
 # keeping them separate so each tool can use a different token if needed.
 
 # Copilot-specific token (file takes precedence; gives copilot CLI its own identity)
-if [ -f "${COPILOT_BASE}/copilot_github_token" ]; then
+if [ -f "${COPILOT_BASE}/copilot_github_token" ] && [ "$(stat -c %a "${COPILOT_BASE}/copilot_github_token" 2> /dev/null)" = "600" ]; then
     export COPILOT_GITHUB_TOKEN="$(cat "${COPILOT_BASE}/copilot_github_token")"
 fi
 
 # GH_TOKEN: prefer gh credential store; fall back to file for headless/CI environments
 if command -v gh > /dev/null 2>&1 && gh auth status > /dev/null 2>&1; then
     export GH_TOKEN="$(gh auth token 2> /dev/null)"
-elif [ -f "${COPILOT_BASE}/gh_token" ]; then
+elif [ -f "${COPILOT_BASE}/gh_token" ] && [ "$(stat -c %a "${COPILOT_BASE}/gh_token" 2> /dev/null)" = "600" ]; then
     export GH_TOKEN="$(cat "${COPILOT_BASE}/gh_token")"
 fi
 
@@ -112,16 +135,10 @@ fi
 if [ -z "${GITHUB_TOKEN-}" ]; then
     if command -v gh > /dev/null 2>&1 && gh auth status > /dev/null 2>&1; then
         export GITHUB_TOKEN="$(gh auth token 2> /dev/null)"
-    elif [ -f "${COPILOT_BASE}/github_token" ]; then
+    elif [ -f "${COPILOT_BASE}/github_token" ] && [ "$(stat -c %a "${COPILOT_BASE}/github_token" 2> /dev/null)" = "600" ]; then
         export GITHUB_TOKEN="$(cat "${COPILOT_BASE}/github_token")"
     fi
 fi
 
 # XDG dirs
-export XDG_CONFIG_HOME="/home/${USER}/.config"
-
-# lean-ctx shell hook — begin
-if [ -f "/home/${USER}/.config/lean-ctx/shell-hook.bash" ]; then
-    . "/home/${USER}/.config/lean-ctx/shell-hook.bash"
-fi
-# lean-ctx shell hook — end
+export XDG_CONFIG_HOME="$HOME/.config"

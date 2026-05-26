@@ -28,16 +28,15 @@ This document lists frequent issues found during instructions file reviews and t
 
 **Problem**: Only 1-2 validation commands documented
 
-**Root Cause**: Missing tools from aqua.yaml inventory
+**Root Cause**: Insufficient validation coverage
 
-**Fix**: Review aqua.yaml and add all relevant tools (minimum 3 items)
+**Fix**: Add relevant validation commands (minimum 3 items)
 
 **How to Check**:
-1. Check `aqua.yaml` for available tools
-2. Verify at least 3 validation commands documented
-3. Include tool version and purpose for each
+1. Verify at least 3 validation commands documented
+2. Include tool version and purpose for each
 
-Related checklist IDs: TEST-01, TEST-02, TEST-05, COMP-03
+Related checklist IDs: TEST-01, TEST-02
 
 ## Issue 3: Missing Security Guidelines Chapter
 

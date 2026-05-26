@@ -68,13 +68,7 @@ Check: Executable validation commands are comprehensive
 Why: Missing commands prevent validation and compromise quality assurance
 Fix: Include all executable validation commands
 
-**COMP-03 (SHOULD): Tool Coverage**
-
-Check: All tools in aqua.yaml are documented
-Why: Missing tools cause validation gaps and underutilization
-Fix: Cross-reference with aqua.yaml and include all tools
-
-**COMP-04 (SHOULD): Real Commands**
+**COMP-03 (SHOULD): Real Commands**
 
 Check: Examples are concrete and comprehensive
 Why: Missing examples make validation difficult and lack practicality

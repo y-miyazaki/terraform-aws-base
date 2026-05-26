@@ -106,9 +106,7 @@ description: "AI Assistant Instructions for Writing Instruction Files"
   - Check: All required sections exist
 - COMP-02 (SHOULD): No Missing Commands
   - Check: Executable validation commands are comprehensive
-- COMP-03 (SHOULD): Tool Coverage
-  - Check: All tools in aqua.yaml are documented
-- COMP-04 (SHOULD): Real Commands
+- COMP-03 (SHOULD): Real Commands
   - Check: Examples are concrete and comprehensive
 
 ### Security Guidelines Chapter (SEC)
@@ -138,9 +136,7 @@ description: "AI Assistant Instructions for Writing Instruction Files"
   - Check: Examples are in \`\`\`bash code block format
 - TEST-04 (SHOULD): Validation Items
   - Check: Validation items list is comprehensive
-- TEST-05 (SHOULD): Tool Coverage
-  - Check: All tools in aqua.yaml are covered in validation commands
-- TEST-06 (SHOULD): Real Commands
+- TEST-05 (SHOULD): Real Commands
   - Check: Examples are concrete and actually executable
 
 ### Code Modification Guidelines

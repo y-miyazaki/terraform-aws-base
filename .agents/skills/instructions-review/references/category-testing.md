@@ -26,15 +26,9 @@ Fix: Use \`\`\`bash format for execution examples
 
 Check: Validation items list is comprehensive
 Why: Incomplete list causes missed checks and incomplete validation
-Fix: Enrich validation items and cross-reference with aqua.yaml
+Fix: Enrich validation items
 
-**TEST-05 (SHOULD): Tool Coverage**
-
-Check: All tools in aqua.yaml are covered in validation commands
-Why: Missing tools cause gaps in validation and underutilization of available tools
-Fix: Cross-reference with aqua.yaml and add all tools
-
-**TEST-06 (SHOULD): Real Commands**
+**TEST-05 (SHOULD): Real Commands**
 
 Check: Examples are concrete and actually executable
 Why: Missing examples make validation difficult and cause command errors

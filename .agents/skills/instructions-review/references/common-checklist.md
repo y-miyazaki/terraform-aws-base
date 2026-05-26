@@ -39,8 +39,7 @@
 ## Completeness (COMP)
 - COMP-01 (SHOULD): All Required Sections
 - COMP-02 (SHOULD): No Missing Commands
-- COMP-03 (SHOULD): Tool Coverage
-- COMP-04 (SHOULD): Real Commands
+- COMP-03 (SHOULD): Real Commands
 
 ## Security Guidelines Chapter (SEC)
 - SEC-01 (MUST): Security Items
@@ -58,5 +57,4 @@
 - TEST-02 (MUST): Command Count
 - TEST-03 (MUST): Code Block
 - TEST-04 (SHOULD): Validation Items
-- TEST-05 (SHOULD): Tool Coverage
-- TEST-06 (SHOULD): Real Commands
+- TEST-05 (SHOULD): Real Commands
