@@ -59,7 +59,7 @@ packages:
   - name: terraform-docs/terraform-docs@v0.24.0 # documentation generator
   - name: terraform-linters/tflint@v0.62.1 # linter
   # AI agent tools
-  - name: microsoft/apm@v0.14.0
+  - name: microsoft/apm@v0.14.1
     registry: local
   - name: microsoft/waza@v0.31.0
     registry: local
