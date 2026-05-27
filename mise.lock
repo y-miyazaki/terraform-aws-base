@@ -217,27 +217,26 @@ url = "https://github.com/astral-sh/uv/releases/download/0.11.15/uv-x86_64-pc-wi
 provenance = "github-attestations"
 
 [[tools."aqua:aws/aws-cli"]]
-version = "2.34.49"
+version = "2.34.50"
 backend = "aqua:aws/aws-cli"
 
 [tools."aqua:aws/aws-cli"."platforms.linux-arm64"]
-checksum = "blake3:097be15d95114a5a0eaedc040e371910c55efa0891baf688bc04b20f9f9c8ee5"
-url = "https://awscli.amazonaws.com/awscli-exe-linux-aarch64-2.34.49.zip"
+url = "https://awscli.amazonaws.com/awscli-exe-linux-aarch64-2.34.50.zip"
 
 [tools."aqua:aws/aws-cli"."platforms.linux-arm64-musl"]
-url = "https://awscli.amazonaws.com/awscli-exe-linux-aarch64-2.34.49.zip"
+url = "https://awscli.amazonaws.com/awscli-exe-linux-aarch64-2.34.50.zip"
 
 [tools."aqua:aws/aws-cli"."platforms.linux-x64"]
-url = "https://awscli.amazonaws.com/awscli-exe-linux-x86_64-2.34.49.zip"
+url = "https://awscli.amazonaws.com/awscli-exe-linux-x86_64-2.34.50.zip"
 
 [tools."aqua:aws/aws-cli"."platforms.linux-x64-musl"]
-url = "https://awscli.amazonaws.com/awscli-exe-linux-x86_64-2.34.49.zip"
+url = "https://awscli.amazonaws.com/awscli-exe-linux-x86_64-2.34.50.zip"
 
 [tools."aqua:aws/aws-cli"."platforms.macos-arm64"]
-url = "https://awscli.amazonaws.com/AWSCLIV2-2.34.49.pkg"
+url = "https://awscli.amazonaws.com/AWSCLIV2-2.34.50.pkg"
 
 [tools."aqua:aws/aws-cli"."platforms.macos-x64"]
-url = "https://awscli.amazonaws.com/AWSCLIV2-2.34.49.pkg"
+url = "https://awscli.amazonaws.com/AWSCLIV2-2.34.50.pkg"
 
 [[tools."aqua:aws/aws-sam-cli"]]
 version = "1.160.1"
