@@ -1453,43 +1453,43 @@ url = "https://github.com/microsoft/waza/releases/download/v0.33.0/waza-windows-
 url_api = "https://api.github.com/repos/microsoft/waza/releases/assets/426430180"
 
 [[tools."github:yvgude/lean-ctx"]]
-version = "3.6.9"
+version = "3.6.10"
 backend = "github:yvgude/lean-ctx"
 
 [tools."github:yvgude/lean-ctx"."platforms.linux-arm64"]
-checksum = "sha256:ed70f5c62e12c7ca9be20e7299db0c0d10e99aa6fc408cf1076793ee0bc6a278"
-url = "https://github.com/yvgude/lean-ctx/releases/download/v3.6.9/lean-ctx-aarch64-unknown-linux-gnu.tar.gz"
-url_api = "https://api.github.com/repos/yvgude/lean-ctx/releases/assets/424443988"
+checksum = "sha256:48caca36dd56051f45e84fc35d94ad76072b18c928b088e62091930583c9512d"
+url = "https://github.com/yvgude/lean-ctx/releases/download/v3.6.10/lean-ctx-aarch64-unknown-linux-gnu.tar.gz"
+url_api = "https://api.github.com/repos/yvgude/lean-ctx/releases/assets/424903656"
 
 [tools."github:yvgude/lean-ctx"."platforms.linux-arm64-musl"]
-checksum = "sha256:253a5f44dd3f1be36a7225a7ba48df8d830e8b78e28072efe87a729297bcafd1"
-url = "https://github.com/yvgude/lean-ctx/releases/download/v3.6.9/lean-ctx-aarch64-unknown-linux-musl.tar.gz"
-url_api = "https://api.github.com/repos/yvgude/lean-ctx/releases/assets/424443991"
+checksum = "sha256:be36002d19abe5e59098cb7948393f233b4bf54c0adb7bb11cd274b542600404"
+url = "https://github.com/yvgude/lean-ctx/releases/download/v3.6.10/lean-ctx-aarch64-unknown-linux-musl.tar.gz"
+url_api = "https://api.github.com/repos/yvgude/lean-ctx/releases/assets/424903651"
 
 [tools."github:yvgude/lean-ctx"."platforms.linux-x64"]
-checksum = "sha256:1e00949efa8d2c710d2193c3c862e0c2e5d47b59768ad50b7a7b3223513ac067"
-url = "https://github.com/yvgude/lean-ctx/releases/download/v3.6.9/lean-ctx-x86_64-unknown-linux-gnu.tar.gz"
-url_api = "https://api.github.com/repos/yvgude/lean-ctx/releases/assets/424443987"
+checksum = "sha256:f01d760e5d18e2f353ba1648cef4f083883e6e636c81265655fa5e4041cf7130"
+url = "https://github.com/yvgude/lean-ctx/releases/download/v3.6.10/lean-ctx-x86_64-unknown-linux-gnu.tar.gz"
+url_api = "https://api.github.com/repos/yvgude/lean-ctx/releases/assets/424903653"
 
 [tools."github:yvgude/lean-ctx"."platforms.linux-x64-musl"]
-checksum = "sha256:3e52fd01816e6ed348fe6367528407d1090608be77897128e2c128e0e5988a11"
-url = "https://github.com/yvgude/lean-ctx/releases/download/v3.6.9/lean-ctx-x86_64-unknown-linux-musl.tar.gz"
-url_api = "https://api.github.com/repos/yvgude/lean-ctx/releases/assets/424443994"
+checksum = "sha256:f68e93e168337aa94907644f6002f995f80d6aa7caae9e29454b8f0d2e40ae40"
+url = "https://github.com/yvgude/lean-ctx/releases/download/v3.6.10/lean-ctx-x86_64-unknown-linux-musl.tar.gz"
+url_api = "https://api.github.com/repos/yvgude/lean-ctx/releases/assets/424903655"
 
 [tools."github:yvgude/lean-ctx"."platforms.macos-arm64"]
-checksum = "sha256:2645a06cbb20a77aa49d0d80c6df14f88adc2a15bfa3131fd7a1f24dcdfd3735"
-url = "https://github.com/yvgude/lean-ctx/releases/download/v3.6.9/lean-ctx-aarch64-apple-darwin.tar.gz"
-url_api = "https://api.github.com/repos/yvgude/lean-ctx/releases/assets/424443990"
+checksum = "sha256:809b0a00c004a47ef6b715a33ae48fb0452cb4a84ce492343ed30a9b8a5c5a21"
+url = "https://github.com/yvgude/lean-ctx/releases/download/v3.6.10/lean-ctx-aarch64-apple-darwin.tar.gz"
+url_api = "https://api.github.com/repos/yvgude/lean-ctx/releases/assets/424903660"
 
 [tools."github:yvgude/lean-ctx"."platforms.macos-x64"]
-checksum = "sha256:dc7806d997c394a14ebc7c764c4d86dedbfe7857d7591a9f09dbd6404137b81c"
-url = "https://github.com/yvgude/lean-ctx/releases/download/v3.6.9/lean-ctx-x86_64-apple-darwin.tar.gz"
-url_api = "https://api.github.com/repos/yvgude/lean-ctx/releases/assets/424443993"
+checksum = "sha256:8c6d1381dcdd531d293cb802760c1c4643ad93e0277bce9e646fd4c0318bca14"
+url = "https://github.com/yvgude/lean-ctx/releases/download/v3.6.10/lean-ctx-x86_64-apple-darwin.tar.gz"
+url_api = "https://api.github.com/repos/yvgude/lean-ctx/releases/assets/424903659"
 
 [tools."github:yvgude/lean-ctx"."platforms.windows-x64"]
-checksum = "sha256:6f431179dfcd6897b97efa21bb970ef505ba96a2361f926cc2da9ca335710391"
-url = "https://github.com/yvgude/lean-ctx/releases/download/v3.6.9/lean-ctx-x86_64-pc-windows-msvc.zip"
-url_api = "https://api.github.com/repos/yvgude/lean-ctx/releases/assets/424443992"
+checksum = "sha256:4f2a8c1aeb677bf125963db628d2066ddbc47a38ed448be4c04b34d304198f6a"
+url = "https://github.com/yvgude/lean-ctx/releases/download/v3.6.10/lean-ctx-x86_64-pc-windows-msvc.zip"
+url_api = "https://api.github.com/repos/yvgude/lean-ctx/releases/assets/424903654"
 
 [[tools."go:github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen"]]
 version = "2.7.0"
