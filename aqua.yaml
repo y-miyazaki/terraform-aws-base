@@ -63,7 +63,7 @@ packages:
     registry: local
   - name: microsoft/waza@v0.31.0
     registry: local
-  - name: yvgude/lean-ctx@v3.6.9
+  - name: yvgude/lean-ctx@v3.6.10
     registry: local
   - name: DeusData/codebase-memory-mcp@v0.6.1
     registry: local
