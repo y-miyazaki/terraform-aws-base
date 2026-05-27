@@ -8,16 +8,15 @@ exec_auto_install = true # Auto-install tools when commands are run via `mise x`
 github_attestations = true # Verify GitHub release attestations when a backend supports them.
 lockfile = true # Generate and maintain mise.lock with resolved URLs and checksums.
 locked = true # Require lockfile entries during installs to reduce unexpected upstream changes.
-npm.package_manager = "pnpm" # Package manager to use for npm-based tools; set to null to disable npm tool support.
 minimum_release_age = "7d" # Avoid very recent releases to reduce supply-chain risk from rushed or bad publishes.
 not_found_auto_install = true # Try installing missing tools when a command is looked up from the current config.
-pipx.uvx = true # Install uv/uvx via pipx for better isolation and performance.
 provenance_api_failures_fatal = true # Fail installs if provenance verification APIs are unavailable or verification fails.
 slsa = true # Require SLSA provenance checks when a backend supports them.
 trusted_config_paths = [
   "/workspace/",          # for workspace containers which mount repos to /workspace
   "/tmp/renovate/repos/", # for Renovate bot which clones repos to /tmp/renovate/repos/
 ] # Paths to automatically trust mise.toml files in without prompting; use with caution.
+
 [settings.aqua]
 cosign = true   # Verify cosign signatures for aqua-backed packages when available.
 minisign = true # Verify minisign signatures for aqua-backed packages when available.
@@ -25,6 +24,12 @@ slsa = true     # Require SLSA provenance for aqua-backed packages when availabl
 
 [settings.github]
 slsa = true # Require SLSA provenance for GitHub-hosted packages when available.
+
+[settings.npm]
+package_manager = "pnpm" # Package manager to use for npm-based tools; set to null to disable npm tool support.
+
+[settings.pipx]
+uvx = true # Install uv/uvx via pipx for better isolation and performance.
 
 [tools]
 # Runtime tools
@@ -108,7 +113,7 @@ aqua = "2.59.0"
 # AI agent tools
 "github:microsoft/apm" = "0.14.2"               # agent package manager
 "github:microsoft/waza" = "0.33.0"              # agent skill evaluator
-"github:yvgude/lean-ctx" = "v3.6.10"             # context optimizer
+"github:yvgude/lean-ctx" = "v3.6.9"             # context optimizer
 "github:DeusData/codebase-memory-mcp" = "0.6.1" # codebase memory MCP server
 
 [tasks.mise-install]
