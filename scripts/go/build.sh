@@ -165,22 +165,22 @@ function build_function {
     dir=$(dirname "$file")
     function=$(echo "$dir" | sed -e "s/.*\///g")
 
+    local outdir="bin/${BINDIR}/${function}"
+    mkdir -p "$outdir"
+
     log "INFO" "  Building $function..."
-    env GOOS=linux GOARCH="${ARCH}" go build -ldflags="-s -w" -o bootstrap "$file" || error_exit "Failed to build $function"
+    env GOOS=linux GOARCH="${ARCH}" go build -ldflags="-s -w" -o "${outdir}/bootstrap" "./$dir" || error_exit "Failed to build $function"
 
     log "INFO" "  Packaging $function..."
-    zip outputs/"${BINDIR}"/go_"${function}".zip bootstrap || error_exit "Failed to create zip for $function"
+    zip outputs/"${BINDIR}"/go_"${function}".zip -j "${outdir}/bootstrap" || error_exit "Failed to create zip for $function"
 
     # Get binary size
     if [[ "$VERBOSE" == "true" ]]; then
         local binary_size
-        binary_size=$(du -h bootstrap | cut -f1)
+        binary_size=$(du -h "${outdir}/bootstrap" | cut -f1)
         log "INFO" "  Binary size: $binary_size"
     fi
 
-    log "INFO" "  Moving binary for $function..."
-    mkdir -p bin/"${BINDIR}"/"${function}"
-    mv bootstrap bin/"${BINDIR}"/"${function}"/ || error_exit "Failed to move binary for $function"
     # Informational message should go to stderr so stdout remains clean for capturing the final count
     echo "$function built successfully" >&2
 }

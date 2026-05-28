@@ -22,9 +22,9 @@
 #######################################
 __bash_prompt() {
     local userpart='`export XIT=$? \
-        && [ ! -z "${GITHUB_USER}" ] && echo -n "\[\033[0;32m\]@${GITHUB_USER} " || echo -n "\[\033[0;32m\]\u " \
+        && [ ! -z "${GITHUB_USER-}" ] && echo -n "\[\033[0;32m\]@${GITHUB_USER-} " || echo -n "\[\033[0;32m\]\u " \
         && [ "$XIT" -ne "0" ] && echo -n "\[\033[1;31m\]➜" || echo -n "\[\033[0m\]➜"`'
-    local aws_profile='`[ ! -z "${AWS_PROFILE}" ] && echo -n "\[\033[0;31m\]${AWS_PROFILE} \[\033[0m\]➜" || echo -n "\[\033[0;31m\](no) \[\033[0m\]➜"`'
+    local aws_profile='`[ ! -z "${AWS_PROFILE-}" ] && echo -n "\[\033[0;31m\]${AWS_PROFILE-} \[\033[0m\]➜" || echo -n "\[\033[0;31m\](no) \[\033[0m\]➜"`'
     local gitbranch='`\
         if [ "$(git config --get codespaces-theme.hide-status 2>/dev/null)" != 1 ]; then \
             export BRANCH=$(git symbolic-ref --short HEAD 2>/dev/null || git rev-parse --short HEAD 2>/dev/null); \
@@ -88,7 +88,18 @@ alias tapply='terraform apply -auto-approve -var-file="terraform.${ENV}.tfvars"'
 #######################################
 # for aws
 #######################################
-alias awsp="source _awsp; source ~/.bashrc"
+awsp() {
+    _awsp_prompt "$@"
+
+    local selected_profile
+    selected_profile="$(cat "$HOME/.awsp" 2> /dev/null)"
+
+    if [ -z "$selected_profile" ]; then
+        unset AWS_PROFILE
+    else
+        export AWS_PROFILE="$selected_profile"
+    fi
+}
 alias awsc='eval $(aws configure export-credentials --format env)'
 
 #######################################
