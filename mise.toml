@@ -61,7 +61,7 @@ aqua = "2.59.0"
 
 # GitHub related tools
 "aqua:cli/cli" = "2.92.0"                                             # GitHub CLI
-"aqua:github/copilot-cli" = "1.0.49"                                  # GitHub Copilot CLI
+"aqua:github/copilot-cli" = "1.0.51"                                  # GitHub Copilot CLI
 "aqua:rhysd/actionlint" = "1.7.12"                                    # GitHub Actions linter
 "aqua:suzuki-shunsuke/disable-checkout-persist-credentials" = "1.0.0" # disable persist-credentials in checkout action
 "aqua:suzuki-shunsuke/ghalint" = "1.5.6"                              # GitHub Actions linter
