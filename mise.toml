@@ -70,7 +70,7 @@ aqua = "2.59.0"
 "aqua:zizmorcore/zizmor" = "1.25.2"                                   # GitHub Actions security auditor
 
 # Go related tools
-"aqua:air-verse/air" = "1.65.2"                              # live reload
+"aqua:air-verse/air" = "1.65.3"                              # live reload
 "aqua:bufbuild/buf" = "1.69.0"                               # protobuf linter and formatter
 "aqua:go-delve/delve" = "1.26.3"                             # debugger
 "aqua:go-swagger/go-swagger" = "0.33.2"                      # API documentation generator

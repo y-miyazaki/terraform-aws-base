@@ -107,36 +107,36 @@ checksum = "sha256:b2518029ba514fde61d23d34c71722f2c9980d507ff53a20ceb4e2e0648ce
 url = "https://github.com/Songmu/ecschedule/releases/download/v0.18.2/ecschedule_v0.18.2_windows_amd64.zip"
 
 [[tools."aqua:air-verse/air"]]
-version = "1.65.2"
+version = "1.65.3"
 backend = "aqua:air-verse/air"
 
 [tools."aqua:air-verse/air"."platforms.linux-arm64"]
-checksum = "sha256:2fe12a405530a380351fe62cf15c0c4f7328a649989483d7d46fce9057be2daf"
-url = "https://github.com/air-verse/air/releases/download/v1.65.2/air_1.65.2_linux_arm64.tar.gz"
+checksum = "sha256:f17d43fb67bf09e97b17f7e332b1731efc081206ff1ac61923523853788c5b47"
+url = "https://github.com/air-verse/air/releases/download/v1.65.3/air_1.65.3_linux_arm64.tar.gz"
 
 [tools."aqua:air-verse/air"."platforms.linux-arm64-musl"]
-checksum = "sha256:2fe12a405530a380351fe62cf15c0c4f7328a649989483d7d46fce9057be2daf"
-url = "https://github.com/air-verse/air/releases/download/v1.65.2/air_1.65.2_linux_arm64.tar.gz"
+checksum = "sha256:f17d43fb67bf09e97b17f7e332b1731efc081206ff1ac61923523853788c5b47"
+url = "https://github.com/air-verse/air/releases/download/v1.65.3/air_1.65.3_linux_arm64.tar.gz"
 
 [tools."aqua:air-verse/air"."platforms.linux-x64"]
-checksum = "sha256:b85c99e5a1ae56627a15d5401dbe319cd0fe5402f9fcbd4120299441d229ea6f"
-url = "https://github.com/air-verse/air/releases/download/v1.65.2/air_1.65.2_linux_amd64.tar.gz"
+checksum = "sha256:8f5b198c5d81a59928155581715fbf04be7aa3b807a63609a2694faab8b91ac1"
+url = "https://github.com/air-verse/air/releases/download/v1.65.3/air_1.65.3_linux_amd64.tar.gz"
 
 [tools."aqua:air-verse/air"."platforms.linux-x64-musl"]
-checksum = "sha256:b85c99e5a1ae56627a15d5401dbe319cd0fe5402f9fcbd4120299441d229ea6f"
-url = "https://github.com/air-verse/air/releases/download/v1.65.2/air_1.65.2_linux_amd64.tar.gz"
+checksum = "sha256:8f5b198c5d81a59928155581715fbf04be7aa3b807a63609a2694faab8b91ac1"
+url = "https://github.com/air-verse/air/releases/download/v1.65.3/air_1.65.3_linux_amd64.tar.gz"
 
 [tools."aqua:air-verse/air"."platforms.macos-arm64"]
-checksum = "sha256:84890f5aedd704fb4db2591cbfaa9fdd429d3aa504f67dc0bb0e06ddf73637ee"
-url = "https://github.com/air-verse/air/releases/download/v1.65.2/air_1.65.2_darwin_arm64.tar.gz"
+checksum = "sha256:30526dc9cd0227fa8cd9933ea17666f8abf63dbc183e53d2a721bb4807726f32"
+url = "https://github.com/air-verse/air/releases/download/v1.65.3/air_1.65.3_darwin_arm64.tar.gz"
 
 [tools."aqua:air-verse/air"."platforms.macos-x64"]
-checksum = "sha256:e5a69827b1b509dbe4a9d981eaa3b7549edaef67ce5deec1866a92f4f672c59f"
-url = "https://github.com/air-verse/air/releases/download/v1.65.2/air_1.65.2_darwin_amd64.tar.gz"
+checksum = "sha256:3376ab73901d1620c56bc57b8087d5856c002715b1c71d50574abb343088bf60"
+url = "https://github.com/air-verse/air/releases/download/v1.65.3/air_1.65.3_darwin_amd64.tar.gz"
 
 [tools."aqua:air-verse/air"."platforms.windows-x64"]
-checksum = "sha256:91bd1c008d0f2f7f3fa5f8531fcd8955f8b31029be6270f0abedbf6196e70bac"
-url = "https://github.com/air-verse/air/releases/download/v1.65.2/air_1.65.2_windows_amd64.tar.gz"
+checksum = "sha256:4fa9b2bf1a61a2e9c1f549412d059d175492696c07c131136f146dc1abdacda7"
+url = "https://github.com/air-verse/air/releases/download/v1.65.3/air_1.65.3_windows_amd64.tar.gz"
 
 [[tools."aqua:aquasecurity/trivy"]]
 version = "0.70.0"
