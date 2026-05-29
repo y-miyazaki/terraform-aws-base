@@ -39,7 +39,7 @@ pnpm = { version = "11.3.0", depends = ["node"] }
 aqua = "2.59.0"
 
 # Utility tools
-"aqua:astral-sh/uv" = "0.11.15"      # uv/uvx
+"aqua:astral-sh/uv" = "0.11.16"      # uv/uvx
 "aqua:BurntSushi/ripgrep" = "15.1.0" # grep alternative
 "aqua:google/go-jsonnet" = "0.22.0"  # Jsonnet command-line tool
 "aqua:tamasfe/taplo" = "0.10.0"      # TOML formatter / LSP
