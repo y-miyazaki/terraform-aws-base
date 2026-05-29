@@ -22,7 +22,7 @@ packages:
   - name: gitleaks/gitleaks@v8.30.1 # secret scanner
   - name: pre-commit/pre-commit@v4.6.0 # pre-commit framework
   # AWS related tools
-  - name: aws/aws-cli@2.34.51 # AWS CLI
+  - name: aws/aws-cli@2.34.52 # AWS CLI
   - name: aws/aws-sam-cli@v1.160.1 # SAM CLI tool
   - name: kayac/ecspresso@v2.8.4 # ECS deployment tool
   - name: Songmu/ecschedule@v0.18.2 # ECS scheduled tasks deployment tool
