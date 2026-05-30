@@ -341,6 +341,19 @@ function terraform_lint {
     echo_section "Terraform linting"
 
     local lint_cmd="tflint"
+
+    # Use root .tflint.hcl if it exists and no explicit config is specified
+    local root_config
+    root_config="$(git rev-parse --show-toplevel 2> /dev/null)/.tflint.hcl"
+    if [[ -f "$root_config" ]]; then
+        lint_cmd="$lint_cmd --config=$root_config"
+        # Initialize plugins before linting
+        log "INFO" "Initializing tflint plugins..."
+        if ! execute_command_string "tflint --init --config=$root_config"; then
+            error_exit "tflint --init failed"
+        fi
+    fi
+
     if [[ "$recursive_mode" == "recursive" ]]; then
         lint_cmd="$lint_cmd --recursive"
     fi

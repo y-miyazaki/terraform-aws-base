@@ -399,17 +399,17 @@ func TestEdgeCases(t *testing.T) {
 
 ```bash
 # Generate coverage profile
-go test -coverprofile=/workspace/tmp/coverage.out ./...
+go test -coverprofile=/tmp/coverage.out ./...
 
 # View coverage by function
-go tool cover -func=/workspace/tmp/coverage.out
+go tool cover -func=/tmp/coverage.out
 
 # View coverage in browser
-go tool cover -html=/workspace/tmp/coverage.out -o /workspace/tmp/coverage.html
+go tool cover -html=/tmp/coverage.out -o /tmp/coverage.html
 
 # Check coverage threshold
-go test -coverprofile=/workspace/tmp/coverage.out ./...
-go tool cover -func=/workspace/tmp/coverage.out | grep total | awk '{print $3}'
+go test -coverprofile=/tmp/coverage.out ./...
+go tool cover -func=/tmp/coverage.out | grep total | awk '{print $3}'
 ```
 
 ## Testing Concurrent Code

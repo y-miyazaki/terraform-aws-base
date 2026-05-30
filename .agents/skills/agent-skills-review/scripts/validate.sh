@@ -24,7 +24,7 @@
 #
 # Examples:
 #   ./validate.sh .agents/skills/agent-skills-review/SKILL.md
-#   ./validate.sh /workspace/.kiro/skills/go-validation/SKILL.md
+#   ./validate.sh .kiro/skills/go-validation/SKILL.md
 #######################################
 
 # Error handling: exit on error, unset variable, or failed pipeline
@@ -97,7 +97,7 @@ Output Format:
 
 Examples:
     $(basename "$0") .agents/skills/agent-skills-review/SKILL.md
-    $(basename "$0") /workspace/.kiro/skills/go-validation/SKILL.md
+    $(basename "$0") .kiro/skills/go-validation/SKILL.md
 EOF
     exit 0
 }
@@ -187,8 +187,7 @@ function check_yaml_syntax {
     fi
 
     local tmp_frontmatter
-    mkdir -p /workspace/tmp
-    tmp_frontmatter="$(mktemp /workspace/tmp/agent-skill-frontmatter.XXXXXX.yaml)"
+    tmp_frontmatter="$(mktemp /tmp/agent-skill-frontmatter.XXXXXX.yaml)"
 
     # Extract only frontmatter block between the first two --- markers.
     awk '

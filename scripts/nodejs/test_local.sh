@@ -28,6 +28,7 @@ source "${SCRIPT_DIR}/../lib/all.sh"
 #######################################
 # Global variables and default values
 #######################################
+REPO_ROOT="$(git rev-parse --show-toplevel 2> /dev/null || echo "${SCRIPT_DIR}/../..")"
 
 #######################################
 # show_usage: Display script usage information
@@ -86,7 +87,7 @@ EOF
 function validate_module {
     local module_name="$1"
 
-    if [ ! -d "/workspace/nodejs/${module_name}" ]; then
+    if [ ! -d "${REPO_ROOT}/nodejs/${module_name}" ]; then
         error_exit "Module '${module_name}' not found. Use -h for available modules."
     fi
 }
@@ -181,7 +182,7 @@ function main {
     log "INFO" "Running tests for module '${module_name}'..."
 
     # Change to nodejs directory
-    if ! cd /workspace/nodejs; then
+    if ! cd "${REPO_ROOT}/nodejs"; then
         error_exit "Failed to change to nodejs directory"
     fi
 

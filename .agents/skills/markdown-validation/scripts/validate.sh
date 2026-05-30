@@ -88,7 +88,7 @@ Description:
 
 Arguments:
     PATH        Optional path to target Markdown file or directory
-                            Default: /workspace
+                            Default: . (current directory)
 
 Validation Checks:
     - Markdown syntax (markdownlint-cli2)
@@ -96,8 +96,8 @@ Validation Checks:
 
 Examples:
   ./validate.sh
-    ./validate.sh /workspace/README.md
-    ./validate.sh /workspace/docs/
+    ./validate.sh ./README.md
+    ./validate.sh ./docs/
 EOF
     exit 0
 }

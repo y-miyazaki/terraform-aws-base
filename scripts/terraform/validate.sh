@@ -72,11 +72,11 @@ DOCS_FAILED=0
 #
 #######################################
 function show_usage {
-    cat << EOF
+    cat <<EOF
 Usage: $(basename "$0") [options] [dir1 dir2 ...]
 
 Description: Recursive Terraform validation, formatting check, linting, and security scanning.
-             If no directory arguments are provided it scans the entire workspace (/workspace).
+             If no directory arguments are provided it scans the entire workspace (current directory).
              If one or more directories are provided, only those paths (recursively) are processed.
 
 Options:
@@ -116,26 +116,26 @@ EOF
 function parse_arguments {
     while [[ $# -gt 0 ]]; do
         case $1 in
-            -h | --help)
-                show_usage
-                ;;
-            -v | --verbose)
-                # shellcheck disable=SC2034
-                VERBOSE="true"
-                ;;
-            -d | --generate-docs)
-                GENERATE_DOCS="true"
-                ;;
-            -f | --fix)
-                AUTO_FIX="true"
-                ;;
-            -*)
-                error_exit "Unknown option: $1"
-                ;;
-            *)
-                # Collect target directories
-                TARGET_DIRS+=("$1")
-                ;;
+        -h | --help)
+            show_usage
+            ;;
+        -v | --verbose)
+            # shellcheck disable=SC2034
+            VERBOSE="true"
+            ;;
+        -d | --generate-docs)
+            GENERATE_DOCS="true"
+            ;;
+        -f | --fix)
+            AUTO_FIX="true"
+            ;;
+        -*)
+            error_exit "Unknown option: $1"
+            ;;
+        *)
+            # Collect target directories
+            TARGET_DIRS+=("$1")
+            ;;
         esac
         shift
     done
@@ -167,12 +167,12 @@ function run_tflint_check {
     if [[ ${#TARGET_DIRS[@]} -gt 0 ]]; then
         for target in "${TARGET_DIRS[@]}"; do
             if [[ -d "$target" ]]; then
-                pushd "$target" > /dev/null || continue
+                pushd "$target" >/dev/null || continue
                 log "INFO" "Running tflint in: $target"
                 if ! terraform_lint "recursive"; then
                     failed=1
                 fi
-                popd > /dev/null || true
+                popd >/dev/null || true
             else
                 log "WARN" "Skipping non-existent directory for tflint: $target"
             fi
@@ -223,7 +223,7 @@ function run_formatting_check {
     if [[ ${#TARGET_DIRS[@]} -gt 0 ]]; then
         for target in "${TARGET_DIRS[@]}"; do
             if [[ -d "$target" ]]; then
-                pushd "$target" > /dev/null || continue
+                pushd "$target" >/dev/null || continue
                 if [[ "$AUTO_FIX" == "true" ]]; then
                     log "INFO" "Applying formatting in: $target"
                     if ! terraform_format; then
@@ -235,7 +235,7 @@ function run_formatting_check {
                         failed=1
                     fi
                 fi
-                popd > /dev/null || true
+                popd >/dev/null || true
             else
                 log "WARN" "Skipping non-existent directory for formatting check: $target"
             fi
@@ -323,7 +323,7 @@ function process_terraform_directory {
         return 0
     fi
 
-    pushd "$dir" > /dev/null || return 1
+    pushd "$dir" >/dev/null || return 1
 
     # Step 1: Initialize Terraform (backend disabled for validation)
     if ! execute_command_string "terraform init -backend=false"; then
@@ -349,7 +349,7 @@ function process_terraform_directory {
         fi
     fi
 
-    popd > /dev/null || true
+    popd >/dev/null || true
     return $failed
 }
 

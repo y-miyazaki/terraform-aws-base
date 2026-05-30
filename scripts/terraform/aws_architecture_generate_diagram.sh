@@ -49,6 +49,7 @@ source "${SCRIPT_DIR}/../lib/all.sh"
 #######################################
 # Global variables and default values
 #######################################
+REPO_ROOT="$(git rev-parse --show-toplevel 2> /dev/null || echo "${SCRIPT_DIR}/../..")"
 VERBOSE=false
 export VERBOSE
 DRY_RUN=false
@@ -1246,7 +1247,7 @@ function main {
     echo_section "Starting create AWS Diagram from AWS CLI"
 
     # Change to workspace root
-    cd /workspace || error_exit "Failed to change to workspace directory"
+    cd "${REPO_ROOT}" || error_exit "Failed to change to workspace directory"
 
     # Generate awsdac YAML and diagram
     log "INFO" "Generating awsdac YAML and diagram from AWS CLI"

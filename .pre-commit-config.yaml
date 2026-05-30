@@ -64,7 +64,7 @@ repos:
         types: [yaml]
         files: ^\.github/workflows/.*\.(ya?ml)$
   - repo: https://github.com/zizmorcore/zizmor-pre-commit
-    rev: v1.24.1 # https://github.com/zizmorcore/zizmor-pre-commit/releases
+    rev: v1.25.2 # https://github.com/zizmorcore/zizmor-pre-commit/releases
     hooks:
       # Run the linter.
       - id: zizmor
@@ -117,10 +117,11 @@ repos:
       - id: terraform_fmt
       - id: terraform_tflint
         args:
+          - --args=--config=__GIT_WORKING_DIR__/.tflint.hcl
           - --args=--no-color
       - id: terraform_trivy
         args:
-          - --args=--config=/workspace/trivy.yaml
+          - --args=--config=__GIT_WORKING_DIR__/trivy.yaml
           - --args=--format=table
           - --args=--skip-dirs=**/.terraform
   - repo: https://github.com/terraform-docs/terraform-docs

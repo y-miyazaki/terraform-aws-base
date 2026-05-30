@@ -27,6 +27,7 @@ This environment focuses on organizational governance including budgets, policie
   - [common\_lambda](#common_lambda)
   - [organizations\_policy](#organizations_policy)
   - [security\_cloudtrail](#security_cloudtrail)
+  - [jit\_access](#jit_access)
 - [Configuration Validation Checklist](#configuration-validation-checklist)
 - [Related Documents](#related-documents)
 
@@ -775,6 +776,154 @@ organizations_policy = {
 }
 ```
 
+### jit_access
+
+JIT (Just-In-Time) privileged access system with Slack integration. Provides temporary IAM Identity Center Permission Set assignments with approval workflow and automatic revocation.
+
+For the full system specification, see [docs/jit-access-specification.md](./docs/jit-access-specification.md).
+
+**Prerequisites:**
+
+1. A Slack App configured with the required scopes (see `slack` section below)
+2. Lambda zip file built and placed at `lambda/outputs/go_jit_access.zip`
+3. IAM Identity Center enabled in the account
+
+```terraform
+#--------------------------------------------------------------
+# JIT Access
+# Temporary privileged access system with Slack integration.
+# Manages time-bound IAM Identity Center Permission Set assignments
+# with approval workflow and automatic revocation.
+#
+# PREREQUISITES:
+# 1. Slack App created and configured (see slack section below)
+# 2. Lambda zip built: lambda/outputs/go_jit_access.zip
+# 3. IAM Identity Center enabled in the account
+#
+# For full specification: docs/jit-access-specification.md
+#--------------------------------------------------------------
+jit_access = {
+  is_enabled                  = true
+  cleanup_schedule_expression = "rate(15 minutes)"
+
+  #-----------------------------------------------------------------------------
+  # profiles: Map of JIT access profiles. The key is the profile name shown
+  # in the Slack modal dropdown.
+  #
+  # Fields:
+  #   account_id (string):
+  #     AWS account ID where the Permission Set will be assigned.
+  #     How to get: AWS Console -> Organizations -> Accounts, or
+  #       aws organizations list-accounts --query "Accounts[].{Name:Name,Id:Id}"
+  #
+  #   permission_set_arn (string):
+  #     ARN of the IAM Identity Center Permission Set to assign.
+  #     How to get: AWS Console -> IAM Identity Center -> Permission sets
+  #       -> select the permission set -> copy the ARN, or
+  #       aws sso-admin list-permission-sets \
+  #         --instance-arn <identity-center-instance-arn> \
+  #         --query "PermissionSets" --output text
+  #
+  #   max_duration_minutes (number):
+  #     Maximum allowed access duration in minutes. The user can request
+  #     up to this value in the Slack modal.
+  #
+  #   approvers (list of string):
+  #     Slack User IDs of users who can approve requests for this profile.
+  #     How to get: Open user profile in Slack -> "..." -> "Copy member ID"
+  #
+  #   description (string, optional):
+  #     Human-readable description shown in the Slack modal.
+  #-----------------------------------------------------------------------------
+  profiles = {
+    # Production-AWSAdministratorAccess = {
+    #   account_id           = "123456789012"
+    #   approvers            = ["UXXXXXXXXXX", "UXXXXXXXXXX"]
+    #   description          = "production administrator access"
+    #   max_duration_minutes = 60
+    #   permission_set_arn   = "arn:aws:sso:::permissionSet/ssoins-xxxxxxxxxxxxxxx/ps-xxxxxxxxxxxxxxx"
+    # }
+  }
+
+  slack = {
+    #---------------------------------------------------------------------------
+    # approver_channel_id: Slack channel ID for posting approval notifications.
+    #
+    # How to get:
+    #   1. Open the target channel in Slack
+    #   2. Click the channel name -> open "Channel details"
+    #   3. Copy the "Channel ID" at the bottom (e.g., C014NHZMLV9)
+    #---------------------------------------------------------------------------
+    approver_channel_id = "CXXXXXXXXXX"
+
+    #---------------------------------------------------------------------------
+    # bot_token: Slack Bot User OAuth Token
+    #
+    # How to get:
+    #   1. Go to https://api.slack.com/apps
+    #   2. Select your Slack App (or create one with "Create New App")
+    #   3. Click "OAuth & Permissions" in the left menu
+    #   4. Copy the "Bot User OAuth Token" value (starts with xoxb-)
+    #
+    # Required Bot Token Scopes (OAuth & Permissions -> Scopes -> Bot Token Scopes):
+    #   - chat:write       (send messages)
+    #   - commands         (slash commands)
+    #   - users:read       (read user info)
+    #   - users:read.email (read user email addresses)
+    #---------------------------------------------------------------------------
+    bot_token = "xoxb-xxxxxxxxxxxxx-xxxxxxxxxxxxx-xxxxxxxxxxxxxxxxxxxxxxxx"
+
+    #---------------------------------------------------------------------------
+    # signing_secret: Slack App Signing Secret (for request verification)
+    #
+    # How to get:
+    #   1. Go to https://api.slack.com/apps
+    #   2. Select your Slack App
+    #   3. Click "Basic Information" in the left menu
+    #   4. Under "App Credentials", click "Show" next to "Signing Secret" and copy
+    #---------------------------------------------------------------------------
+    signing_secret = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" # pragma: allowlist secret
+
+    #---------------------------------------------------------------------------
+    # user_mappings: Slack User ID -> Identity Center User ID mapping
+    #
+    # By default, users are resolved by matching their Slack email address to
+    # the Identity Center UserName. Add manual mappings here only for users
+    # whose Slack email does NOT match their Identity Center UserName.
+    #
+    # How to get Slack User ID:
+    #   1. Open the user's profile in Slack
+    #   2. Click "..." (More) -> "Copy member ID" (e.g., U014NHZMLV9)
+    #
+    # How to get Identity Center User ID:
+    #   Option A (Console):
+    #     1. AWS Console -> IAM Identity Center -> Users -> select the user
+    #     2. Copy the "User ID" from the "General information" section
+    #   Option B (CLI):
+    #     aws identitystore list-users \
+    #       --identity-store-id <your-identity-store-id> \
+    #       --filters AttributePath=UserName,AttributeValue=<user-email-address> \
+    #       --region ap-northeast-1 \
+    #       --query "Users[0].UserId" --output text
+    #---------------------------------------------------------------------------
+    user_mappings = {
+      # "U014NHZMLV9" = "xxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+    }
+
+    #---------------------------------------------------------------------------
+    # workflow_secret: Shared secret for Slack Workflow Builder webhook auth.
+    #
+    # Used to authenticate requests to the /workflow/request endpoint.
+    # Set to null to disable (the endpoint will not be created).
+    #
+    # How to generate:
+    #   openssl rand -base64 32
+    #---------------------------------------------------------------------------
+    workflow_secret = null
+  }
+}
+```
+
 ## Configuration Validation Checklist
 
 | Category                        | Item                                                      | Status |
@@ -802,6 +951,12 @@ organizations_policy = {
 | Environment-Specific Validation | Region settings match deployment requirements             | [ ]    |
 | KMS Configuration Validation    | KMS key rotation is enabled                               | [ ]    |
 | KMS Configuration Validation    | Deletion window is set appropriately                      | [ ]    |
+| JIT Access Validation           | Slack App bot_token and signing_secret are set            | [ ]    |
+| JIT Access Validation           | approver_channel_id points to the correct channel         | [ ]    |
+| JIT Access Validation           | At least one profile is defined with valid Permission Set | [ ]    |
+| JIT Access Validation           | Approvers list contains valid Slack User IDs              | [ ]    |
+| JIT Access Validation           | user_mappings configured for mismatched email users       | [ ]    |
+| JIT Access Validation           | Lambda zip exists at lambda/outputs/go_jit_access.zip     | [ ]    |
 | AWS Chatbot Prerequisites       | Slack workspace integration is configured in AWS Chatbot  | [ ]    |
 | AWS Chatbot Prerequisites       | OAuth tokens are obtained from Slack                      | [ ]    |
 
@@ -811,4 +966,5 @@ organizations_policy = {
 - [README-base-tfvars.md](./README-base-tfvars.md) - Base configuration documentation
 - [README-monitor-tfvars.md](./README-monitor-tfvars.md) - Monitor configuration documentation
 - [README.md](./README.md) - Main project documentation
+- [docs/jit-access-specification.md](./docs/jit-access-specification.md) - JIT Access system specification
 - [AWS Chatbot Documentation](https://docs.aws.amazon.com/chatbot/latest/adminguide/slack-setup.html) - Slack setup for AWS Chatbot

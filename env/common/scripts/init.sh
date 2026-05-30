@@ -11,13 +11,16 @@
 #  - Set up GitHub credential helper for repositories with GitHub remotes (if gh is available)
 set -euo pipefail
 
+# Workspace root (resolved from devcontainer env; falls back to /workspace)
+WORKSPACE="${CONTAINER_WORKSPACE_FOLDER:-/workspace}"
+
 uid="$(id -u)"
 gid="$(id -g)"
 repo_root=""
 
 if command -v git > /dev/null 2>&1; then
-    if git -C /workspace rev-parse --show-toplevel > /dev/null 2>&1; then
-        repo_root="$(git -C /workspace rev-parse --show-toplevel 2> /dev/null || true)"
+    if git -C "${WORKSPACE}" rev-parse --show-toplevel > /dev/null 2>&1; then
+        repo_root="$(git -C "${WORKSPACE}" rev-parse --show-toplevel 2> /dev/null || true)"
     else
         repo_root="$(git rev-parse --show-toplevel 2> /dev/null || true)"
     fi
@@ -39,7 +42,7 @@ fi
 if command -v aqua > /dev/null 2>&1; then
     mkdir -p "$HOME/.local/share/aquaproj-aqua" 2> /dev/null || true
     aqua i -l || echo "[warn] aqua lazy install failed" >&2
-    aqua policy allow /workspace/aqua-policy.yaml 2> /dev/null || echo "[warn] aqua policy apply failed" >&2
+    aqua policy allow "${WORKSPACE}/aqua-policy.yaml" 2> /dev/null || echo "[warn] aqua policy apply failed" >&2
 fi
 
 # gh extension install (optional)
@@ -49,8 +52,8 @@ fi
 
 # mise trust (optional)
 if command -v mise > /dev/null 2>&1; then
-    if [ -f /workspace/mise.toml ]; then
-        mise trust --yes /workspace/mise.toml > /dev/null 2>&1 || echo "[warn] mise trust failed" >&2
+    if [ -f "${WORKSPACE}/mise.toml" ]; then
+        mise trust --yes "${WORKSPACE}/mise.toml" > /dev/null 2>&1 || echo "[warn] mise trust failed" >&2
     fi
     mise install || echo "[warn] mise install task failed" >&2
     # mkdir -p "$HOME/.local/share/mise/shims"

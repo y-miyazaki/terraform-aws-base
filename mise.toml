@@ -55,9 +55,9 @@ aqua = "2.59.0"
 
 # AWS related tools
 "aqua:aws/aws-cli" = "2.34.53"      # AWS CLI
-"aqua:aws/aws-sam-cli" = "1.160.1"  # SAM CLI tool
+"aqua:aws/aws-sam-cli" = "1.161.0"  # SAM CLI tool
 "aqua:kayac/ecspresso" = "2.8.4"    # ECS deployment tool
-"aqua:Songmu/ecschedule" = "0.18.2" # ECS scheduled tasks deployment tool
+"aqua:Songmu/ecschedule" = "0.19.0" # ECS scheduled tasks deployment tool
 
 # GitHub related tools
 "aqua:cli/cli" = "2.92.0"                                             # GitHub CLI
@@ -80,7 +80,7 @@ aqua = "2.59.0"
 "aqua:ko-build/ko" = "0.18.1"                                # container builder
 "aqua:mvdan/gofumpt" = "0.10.0"                              # code formatter
 "aqua:protocolbuffers/protobuf-go/protoc-gen-go" = "1.36.11" # protobuf code generator
-"aqua:protocolbuffers/protobuf/protoc" = "34.1"              # protobuf compiler
+"aqua:protocolbuffers/protobuf/protoc" = "35.0"              # protobuf compiler
 "aqua:swaggo/swag" = "1.16.6"                                # API documentation generator
 "aqua:vektra/mockery" = "3.7.0"                              # mock code generator for interfaces
 # Use go backend for go_install-type packages (aqua backend does not support these).

@@ -23,7 +23,7 @@
 #
 # Output:
 # - Generates HTML documentation with ER diagrams in output directory
-# - Default output: /workspace/tmp/schemaspy-{environment}-{db_type}-{db_name}-{timestamp}
+# - Default output: ./tmp/schemaspy-{environment}-{db_type}-{db_name}-{timestamp}
 # - Creates index.html and comprehensive database documentation
 #
 # Design Rules:
@@ -50,6 +50,9 @@ export SCRIPT_DIR
 # shellcheck source=../lib/all.sh
 # shellcheck disable=SC1091
 source "${SCRIPT_DIR}/../lib/all.sh"
+
+# Repository root (portable across environments)
+REPO_ROOT="$(git rev-parse --show-toplevel 2> /dev/null || echo "${SCRIPT_DIR}/../..")"
 
 #######################################
 # Global variables and default values
@@ -114,7 +117,7 @@ Optional Options:
   -d, --dry-run        Show what would be done without executing
   -t, --db-type        Database type (pgsql, pgsql11, mysql, redshift) (default: pgsql11)
   -s, --schema-name    Schema name to document (optional: if not specified, uses -all to document all schemas)
-  -o, --output-dir     Output directory (default: /workspace/tmp/schemaspy-{env}-{type}-{db})
+  -o, --output-dir     Output directory (default: ./tmp/schemaspy-{env}-{type}-{db})
   -p, --local-port     Local port for port forwarding (default: auto-detected by db-type)
   --ssl-mode           SSL mode for database connection (require, verify-full, verify-ca, disable) (default: require)
   --secret-id          AWS Secrets Manager secret ID (default: {environment}/db/credentials)
@@ -302,7 +305,7 @@ validate_parameters() {
 
     # Set default output directory if not specified
     if [ -z "${OUTPUT_DIR}" ]; then
-        OUTPUT_DIR="/workspace/tmp/schemaspy-${ENVIRONMENT}-${DB_TYPE}-${DB_NAME}"
+        OUTPUT_DIR="${REPO_ROOT}/tmp/schemaspy-${ENVIRONMENT}-${DB_TYPE}-${DB_NAME}"
     fi
 
     # Set default local port based on database type if not specified
@@ -558,7 +561,7 @@ start_port_forwarding() {
 download_dependencies() {
     log "INFO" "Checking SchemaSpy and JDBC driver..."
 
-    local cache_dir="/workspace/tmp"
+    local cache_dir="${REPO_ROOT}/tmp"
     SCHEMASPY_JAR="${cache_dir}/schemaspy.jar"
     JDBC_DRIVER="${cache_dir}/${DB_TYPE}-jdbc.jar"
 
@@ -674,7 +677,7 @@ run_schemaspy() {
     case "${DB_TYPE}" in
         redshift)
             # Redshift JDBC driver requires AWS SDK dependencies
-            local aws_sdk_jar="/workspace/tmp/aws-java-sdk-core.jar"
+            local aws_sdk_jar="${REPO_ROOT}/tmp/aws-java-sdk-core.jar"
             if [ ! -f "${aws_sdk_jar}" ]; then
                 log "WARN" "AWS SDK JAR not found, downloading..."
                 curl -sSL -o "${aws_sdk_jar}" "https://repo1.maven.org/maven2/com/amazonaws/aws-java-sdk-core/1.12.529/aws-java-sdk-core-1.12.529.jar"

@@ -14,7 +14,7 @@ variable "user" {
 variable "group" {
   type        = any
   description = "(Optional) Provides an IAM Group."
-  default     = null
+  default     = {}
 }
 variable "name_prefix" {
   type        = string

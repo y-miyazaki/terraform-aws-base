@@ -2,6 +2,7 @@
   "dockerFile": "../env/common/Dockerfile",
   "remoteUser": "vscode",
   "containerEnv": {
+    "CONTAINER_WORKSPACE_FOLDER": "${containerWorkspaceFolder}",
     "LOCAL_WORKSPACE_FOLDER": "${localWorkspaceFolder}"
   },
   "customizations": {

@@ -14,7 +14,7 @@
 #     --skip-schemaspy     Skip SchemaSpy download
 #     --skip-jdbc          Skip JDBC driver download
 #     --schemaspy-version  SchemaSpy version to install (default: 6.2.4)
-#     --install-dir        Installation directory (default: /workspace/tmp)
+#     --install-dir        Installation directory (default: ./tmp)
 #
 # Output:
 # - Installs Java (OpenJDK) if not present
@@ -48,6 +48,9 @@ export SCRIPT_DIR
 # shellcheck disable=SC1091
 source "${SCRIPT_DIR}/../lib/all.sh"
 
+# Repository root (portable across environments)
+REPO_ROOT="$(git rev-parse --show-toplevel 2> /dev/null || echo "${SCRIPT_DIR}/../..")"
+
 #######################################
 # Global variables and default values
 #######################################
@@ -61,7 +64,7 @@ SKIP_GRAPHVIZ=false
 SKIP_SCHEMASPY=false
 SKIP_JDBC=false
 SCHEMASPY_VERSION="7.0.2"
-INSTALL_DIR="/workspace/tmp"
+INSTALL_DIR="${REPO_ROOT}/tmp"
 
 # JDBC driver versions
 JDBC_VERSION_POSTGRESQL="42.7.5"
@@ -104,7 +107,7 @@ Optional Options:
   --skip-schemaspy     Skip SchemaSpy download
   --skip-jdbc          Skip JDBC driver download
   --schemaspy-version  SchemaSpy version (default: 6.2.4)
-  --install-dir        Installation directory (default: /workspace/tmp)
+  --install-dir        Installation directory (default: ./tmp)
 
 Examples:
   $(basename "$0")                          # Install everything with defaults

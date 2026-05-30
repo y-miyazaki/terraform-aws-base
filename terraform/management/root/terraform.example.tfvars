@@ -504,3 +504,133 @@ PATTERN
     redrive_policy                  = null
   }
 }
+
+#--------------------------------------------------------------
+# JIT Access
+# Temporary privileged access system with Slack integration.
+# Manages time-bound IAM Identity Center Permission Set assignments
+# with approval workflow and automatic revocation.
+#--------------------------------------------------------------
+jit_access = {
+  # TODO: Set to true when Slack App and Lambda zip are ready.
+  is_enabled                  = true
+  cleanup_schedule_expression = "rate(15 minutes)"
+  #-----------------------------------------------------------------------------
+  # profiles: Map of JIT access profiles. The key is the profile name shown
+  # in the Slack modal dropdown.
+  #
+  # Fields:
+  #   account_id (string):
+  #     AWS account ID where the Permission Set will be assigned.
+  #     How to get: AWS Console -> Organizations -> Accounts, or
+  #       aws organizations list-accounts --query "Accounts[].{Name:Name,Id:Id}"
+  #
+  #   permission_set_arn (string):
+  #     ARN of the IAM Identity Center Permission Set to assign.
+  #     How to get: AWS Console -> IAM Identity Center -> Permission sets
+  #       -> select the permission set -> copy the ARN, or
+  #       aws sso-admin list-permission-sets \
+  #         --instance-arn <identity-center-instance-arn> \
+  #         --query "PermissionSets" --output text
+  #
+  #   max_duration_minutes (number):
+  #     Maximum allowed access duration in minutes. The user can request
+  #     up to this value in the Slack modal.
+  #
+  #   approvers (list of string):
+  #     Slack User IDs of users who can approve requests for this profile.
+  #     How to get: Open user profile in Slack -> "..." -> "Copy member ID"
+  #
+  #   description (string, optional):
+  #     Human-readable description shown in the Slack modal.
+  #-----------------------------------------------------------------------------
+  profiles = {
+    # Production-AWSAdministratorAccess = {
+    #   account_id           = "123456789012"
+    #   approvers            = ["UXXXXXXXXXX", "UXXXXXXXXXX"]
+    #   description          = "production administrator access"
+    #   max_duration_minutes = 60
+    #   permission_set_arn   = "arn:aws:sso:::permissionSet/ssoins-xxxxxxxxxxxxxxx/ps-xxxxxxxxxxxxxxx"
+    # }
+    # Production-Developer = {
+    #   account_id           = "123456789012"
+    #   approvers            = ["UXXXXXXXXXX", "UXXXXXXXXXX"]
+    #   description          = "production developer access"
+    #   max_duration_minutes = 60
+    #   permission_set_arn   = "arn:aws:sso:::permissionSet/ssoins-xxxxxxxxxxxxxxx/ps-xxxxxxxxxxxxxxx"
+    # }
+  }
+  slack = {
+    #---------------------------------------------------------------------------
+    # approver_channel_id: Slack channel ID for posting approval notifications.
+    #
+    # How to get:
+    #   1. Open the target channel in Slack
+    #   2. Click the channel name -> open "Channel details"
+    #   3. Copy the "Channel ID" at the bottom (e.g., C014NHZMLV9)
+    #---------------------------------------------------------------------------
+    approver_channel_id = "CXXXXXXXXXX"
+
+    #---------------------------------------------------------------------------
+    # bot_token: Slack Bot User OAuth Token
+    #
+    # How to get:
+    #   1. Go to https://api.slack.com/apps
+    #   2. Select your Slack App (or create one with "Create New App")
+    #   3. Click "OAuth & Permissions" in the left menu
+    #   4. Copy the "Bot User OAuth Token" value (starts with xoxb-)
+    #
+    # Required Bot Token Scopes (OAuth & Permissions -> Scopes -> Bot Token Scopes):
+    #   - chat:write       (send messages)
+    #   - commands         (slash commands)
+    #   - users:read       (read user info)
+    #   - users:read.email (read user email addresses)
+    #---------------------------------------------------------------------------
+    bot_token = "xoxb-xxxxxxxxxxxxx-xxxxxxxxxxxxx-xxxxxxxxxxxxxxxxxxxxxxxx"
+
+    #---------------------------------------------------------------------------
+    # signing_secret: Slack App Signing Secret (for request verification)
+    #
+    # How to get:
+    #   1. Go to https://api.slack.com/apps
+    #   2. Select your Slack App
+    #   3. Click "Basic Information" in the left menu
+    #   4. Under "App Credentials", click "Show" next to "Signing Secret" and copy
+    #---------------------------------------------------------------------------
+    signing_secret = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+
+    #---------------------------------------------------------------------------
+    # user_mappings: Slack User ID -> Identity Center User ID mapping
+    #
+    # By default, users are resolved by matching their Slack email address to
+    # the Identity Center UserName. Add manual mappings here only for users
+    # whose Slack email does NOT match their Identity Center UserName.
+    #
+    # How to get Slack User ID:
+    #   1. Open the user's profile in Slack
+    #   2. Click "..." (More) -> "Copy member ID" (e.g., U014NHZMLV9)
+    #
+    # How to get Identity Center User ID:
+    #   Option A (Console):
+    #     1. AWS Console -> IAM Identity Center -> Users -> select the user
+    #     2. Copy the "User ID" from the "General information" section
+    #   Option B (CLI):
+    #     aws identitystore list-users \
+    #       --identity-store-id d-9067a0513b \
+    #       --filters AttributePath=UserName,AttributeValue=<UserName> \
+    #       --region ap-northeast-1 \
+    #       --query "Users[0].UserId" --output text
+    #---------------------------------------------------------------------------
+    user_mappings = {
+      # "UXXXXXXXXXX" = "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+    }
+
+    #---------------------------------------------------------------------------
+    # workflow_secret: Shared secret for Slack Workflow Builder webhook auth.
+    #
+    # Used to authenticate requests to the /workflow/request endpoint.
+    # Set to null to disable (the endpoint will not be created).
+    #---------------------------------------------------------------------------
+    workflow_secret = null
+  }
+}

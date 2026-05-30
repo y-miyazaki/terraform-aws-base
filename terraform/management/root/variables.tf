@@ -46,6 +46,9 @@ variable "cloudwatch_log_group" {
       common_lambda_vpc_flow_log = optional(object({
         retention_in_days = optional(number)
       }))
+      jit_access = optional(object({
+        retention_in_days = optional(number)
+      }))
       security_cloudtrail = optional(object({
         retention_in_days = optional(number)
       }))
@@ -240,5 +243,36 @@ variable "security_cloudtrail" {
       delivery_policy                 = optional(string)
       redrive_policy                  = optional(string)
     }))
+  })
+}
+variable "jit_access" {
+  description = <<-EOT
+    JIT (Just-In-Time) privileged access configuration.
+    Manages temporary IAM Identity Center Permission Set assignments via Slack.
+  EOT
+  type = object({
+    is_enabled = bool
+    slack = object({
+      # Slack channel ID for approval notifications.
+      approver_channel_id = string
+      # Slack Bot OAuth token (xoxb-...).
+      bot_token = string
+      # Slack App signing secret for request verification.
+      signing_secret = string
+      # Slack User ID → Identity Center User ID mapping for users whose Slack email doesn't match Identity Center UserName.
+      user_mappings = optional(map(string), {})
+      # Shared secret for Slack Workflow Builder webhook authentication. Set null to disable.
+      workflow_secret = optional(string)
+    })
+    # Map of JIT access profiles.
+    profiles = map(object({
+      account_id           = string
+      approvers            = list(string)
+      description          = optional(string, "")
+      max_duration_minutes = number
+      permission_set_arn   = string
+    }))
+    # EventBridge schedule expression for cleanup checker.
+    cleanup_schedule_expression = optional(string, "rate(15 minutes)")
   })
 }

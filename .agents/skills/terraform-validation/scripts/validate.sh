@@ -76,7 +76,7 @@ function show_usage {
 Usage: $(basename "$0") [options] [dir1 dir2 ...]
 
 Description: Recursive Terraform validation, formatting check, linting, and security scanning.
-             If no directory arguments are provided it scans the entire workspace (/workspace).
+             If no directory arguments are provided it scans the entire workspace (current directory).
              If one or more directories are provided, only those paths (recursively) are processed.
 
 Options:

@@ -449,8 +449,8 @@ FAIL: Coverage below 80%
 
 1. **Identify uncovered code**:
 ```bash
-go test -coverprofile=/workspace/tmp/coverage.out ./...
-go tool cover -html=/workspace/tmp/coverage.out
+go test -coverprofile=/tmp/coverage.out ./...
+go tool cover -html=/tmp/coverage.out
 ```
 
 2. **Write tests for uncovered functions**:

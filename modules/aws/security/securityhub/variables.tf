@@ -9,12 +9,12 @@ variable "is_enabled" {
 variable "aws_securityhub_member" {
   type        = map(any)
   description = "(Optional) list of Security Hub member resource."
-  default     = null
+  default     = {}
 }
 variable "aws_securityhub_product_subscription" {
   type        = map(any)
   description = "(Optional) The ARN of the product that generates findings that you want to import into Security Hub - see below."
-  default     = null
+  default     = {}
 }
 variable "region" {
   type        = string

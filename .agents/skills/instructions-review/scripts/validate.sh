@@ -102,7 +102,7 @@ Validation Checks:
 Examples:
   ./validate.sh
   ./validate.sh ../SKILL.md
-    ./validate.sh /workspace/.agents/skills/instructions-review/SKILL.md
+    ./validate.sh .agents/skills/instructions-review/SKILL.md
 EOF
     exit 0
 }
@@ -212,7 +212,7 @@ function check_yaml_syntax {
     fi
 
     local workspace_tmp
-    workspace_tmp="/workspace/tmp"
+    workspace_tmp="/tmp"
     mkdir -p "${workspace_tmp}"
     TMP_FRONTMATTER="$(mktemp "${workspace_tmp}/github-actions-review-frontmatter.XXXXXX.yaml")"
 

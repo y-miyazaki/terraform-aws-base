@@ -113,14 +113,17 @@ fi
 #######################################
 # for GitHub Copilot CLI
 #######################################
+# Workspace root (resolved from devcontainer env; falls back to /workspace)
+WORKSPACE="${CONTAINER_WORKSPACE_FOLDER:-/workspace}"
+
 # Copilot / VSCode environment defaults (do not place secrets directly in this file)
-export COPILOT_BASE="/workspace/.copilot"
+export COPILOT_BASE="${WORKSPACE}/.copilot"
 # Allow Copilot to use all permissions (tools/paths/urls)
 export COPILOT_ALLOW_ALL="1"
 # Default model (can be overridden by --model flag or /model command)
 export COPILOT_MODEL="gpt-5-mini"
 # Additional directories to search for custom instructions files (comma-separated)
-export COPILOT_CUSTOM_INSTRUCTIONS_DIRS="/workspace/.github/instructions"
+export COPILOT_CUSTOM_INSTRUCTIONS_DIRS="${WORKSPACE}/.github/instructions"
 # Use bundled ripgrep (set to "false" to use ripgrep from PATH instead)
 export USE_BUILTIN_RIPGREP="true"
 

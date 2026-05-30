@@ -34,6 +34,7 @@ Basically, it is designed to be turned on and off for each setting and function 
   - [Management](#management)
     - [Management:Audit](#managementaudit)
     - [Management:Root](#managementroot)
+  - [JIT Access](#jit-access)
   - [Security](#security)
     - [Security:Access Analyzer](#securityaccess-analyzer)
     - [Security:Athena (Security)](#securityathena-security)
@@ -153,7 +154,20 @@ The audit configuration focuses on security auditing tools and notifications. It
 
 #### Management:Root
 
-The root configuration manages organizational-level resources and policies. It includes budgets for cost monitoring, Lambda functions for automation, CloudTrail for auditing, organizational policies, and OIDC GitHub integration for CI/CD. This ensures consistent governance and compliance at the root account level.
+The root configuration manages organizational-level resources and policies. It includes budgets for cost monitoring, Lambda functions for automation, CloudTrail for auditing, organizational policies, OIDC GitHub integration for CI/CD, and JIT (Just-In-Time) privileged access with Slack-based approval workflow. This ensures consistent governance and compliance at the root account level.
+
+### JIT Access
+
+JIT (Just-In-Time) Access provides temporary privileged access to AWS accounts via Slack. Users request access through a `/jit-access` slash command, approvers review and approve in a designated channel, and the system automatically grants and revokes IAM Identity Center Permission Set assignments based on the requested duration.
+
+Key features:
+- Slack-based request and approval workflow
+- Time-bound Permission Set assignments with automatic revocation
+- Safety net via periodic cleanup checker (EventBridge Scheduler)
+- User mapping fallback for Slack-to-Identity Center resolution
+- Optional Slack Workflow Builder integration
+
+For detailed specification, see [docs/jit-access-specification.md](./docs/jit-access-specification.md).
 
 ### Security
 
