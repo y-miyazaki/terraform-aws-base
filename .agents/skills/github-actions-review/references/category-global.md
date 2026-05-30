@@ -23,3 +23,9 @@ Fix: Add `name`, ensure logical order, separate `uses`/`run` roles
 Check: Do production jobs have `environment` configuration and approval?
 Why: Missing environment/approval causes accidental production execution, secret leak risks
 Fix: Set `environment` for critical jobs, specify approvers
+
+**G-05 (MUST): Alphabetical Key Ordering**
+
+Check: Are keys in `inputs`, `env`, `permissions`, and `with` sorted alphabetically (A-Z)?
+Why: Inconsistent key ordering adds diff noise and makes change detection harder across workflow files
+Fix: Sort all keys alphabetically within `inputs`, `env`, `permissions`, and `with` blocks

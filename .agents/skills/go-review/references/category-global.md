@@ -30,11 +30,11 @@ Check: Is order const→var→type (interface→struct)→func (public APIs and 
 Why: Inconsistent declaration order reduces readability, increases review oversight risk
 Fix: Maintain const→var→type→func order at file level
 
-**G-06 (SHOULD): Declaration Order (Within Groups)**
+**G-06 (MUST): Declaration Order (Within Groups)**
 
-Check: Is each group ordered consistently for readability and diff stability?
-Why: Inconsistent local ordering makes review and change tracking harder
-Fix: Define and follow a team-consistent ordering rule per group, while allowing related declaration grouping
+Check: Is each group sorted alphabetically (A→Z) for readability and diff stability?
+Why: Inconsistent local ordering makes review and change tracking harder, and arbitrary placement increases merge conflicts
+Fix: Sort declarations alphabetically within each const/var/type/func group
 
 **G-07 (SHOULD): Restrict init() Complexity**
 
@@ -42,7 +42,7 @@ Check: Does init() avoid panics, external I/O, and non-trivial side effects? Is 
 Why: Complex init() hides initialization failures, causes unpredictable startup order across packages, and makes unit testing difficult
 Fix: Limit init() to simple variable assignments; move complex initialization to explicit constructors or main()
 
-**G-08 (SHOULD): Zero Value Design**
+**G-08 (MUST): Zero Value Design**
 
 Check: Are types designed so their zero value is a valid and useful state where possible?
 Why: Types with unusable zero values require mandatory initialization guards and cause subtle nil-dereference bugs when forgotten

@@ -21,41 +21,45 @@ description: "AI Assistant Instructions for Terraform"
 - **VERS-01 (MUST)**: Align `required_version` with project standards - version mismatch can risk state corruption.
 - **VERS-02 (MUST)**: Use provider version ranges (`>= lower, < upper`) - unconstrained versions can introduce unexpected plan diffs from breaking changes.
 
+### Key Coding Rules
+
+- **G-05 (MUST)**: Ensure `for_each`/`count` keys are known at plan time — post-apply values cause `terraform plan` failures.
+- **G-06 (MUST)**: Prefer `for_each` over `count` — count index shifts cause unintended resource recreation on removal.
+- **TAG-01 (MUST)**: Use `merge(local.tags, { Name = "..." })` pattern for tags — this ensures consistent tagging across all resources.
+- **COMP-04 (MUST)**: Write IAM policies with `jsonencode()` or `aws_iam_policy_document` — never use inline heredoc JSON strings.
+- **G-02 (MUST)**: Never hardcode secrets in `.tf` or `.tfvars` files — use SSM Parameter Store or Secrets Manager references.
+
+### Key Ordering
+
+- **ORD-01 (MUST)**: Within each resource/module/data block, keep argument keys in alphabetical order (A-Z) — inconsistent ordering adds diff noise and makes change detection harder.
+
 ## Guidelines
 
 ### CI & Lint (CI)
-- CI-01 (SHOULD): plan Diff Intentional (No Unintended Changes)
-  - Check: Are all plan diffs intentional and documented?
+- CI-01 (SHOULD): Minimize Unintended Plan Diffs
+  - Check: Does the code avoid patterns that cause unnecessary plan diffs (e.g., unsorted keys, unstable JSON, computed defaults)?
 - CI-02 (SHOULD): New Resources Clearly Justified
   - Check: Do new resources have clear business justification?
 
 ### Compliance & Policy (COMP)
-- COMP-01 (SHOULD): Organization/Security Hub Governance Alignment
-  - Check: Does configuration align with organizational policies?
-- COMP-02 (SHOULD): trivy Results in Pipeline
-  - Check: Is trivy scan part of CI/CD?
-- COMP-03 (SHOULD): No Default VPC/Open SG/Public S3
-  - Check: Is there no use of default VPC, are security groups restrictive, are S3 buckets private?
-- COMP-04 (SHOULD): IAM Policy with jsonencode or aws_iam_policy_document
-  - Check: Do IAM policies use structured approaches?
+- COMP-03 (MUST): No Default VPC/Open SG/Public S3
+  - Check: Is there no use of default VPC, are security groups restrictive, and are S3 buckets private by default?
+- COMP-04 (MUST): IAM Policy with jsonencode or aws_iam_policy_document
+  - Check: Do IAM policies use jsonencode() or aws_iam_policy_document data source?
 
 ### Cost Optimization (COST)
 - COST-01 (SHOULD): Avoid High-Cost Metrics/Long Retention
-  - Check: Are retention periods and metric collection justified?
-- COST-02 (SHOULD): Mass Resource Creation Cost Justification
-  - Check: Does large-scale resource creation have cost analysis?
-- COST-03 (SHOULD): Minimize Optional Defaults (monitoring/xray/retention)
-  - Check: Are optional features explicitly enabled with justification?
+  - Check: Are retention periods and metric collection explicitly set rather than left at expensive defaults?
+- COST-02 (SHOULD): Minimize Optional Defaults (monitoring/xray/retention)
+  - Check: Are optional features (X-Ray tracing, enhanced monitoring, detailed metrics) explicitly enabled only when needed?
 
 ### Data Sources & Imports (DATA)
-- DATA-01 (SHOULD): Reconsider data sources (Replace with Static Values)
-  - Check: Are data sources justified?
-- DATA-02 (SHOULD): Document import Procedures
-  - Check: Are import operations documented?
-- DATA-03 (SHOULD): Externalize IDs/ARNs as Variables
-  - Check: Do cross-environment references use variables?
-- DATA-04 (SHOULD): Remove Unused data sources
-  - Check: Are all data sources referenced?
+- DATA-01 (SHOULD): Justify Each Data Source
+  - Check: Is each data source necessary, or can the value be passed as a variable?
+- DATA-02 (SHOULD): Externalize IDs/ARNs as Variables
+  - Check: Do cross-environment references use variables rather than hardcoded IDs?
+- DATA-03 (SHOULD): Remove Unused data sources
+  - Check: Are all data sources referenced in at least one resource or output?
 
 ### Dependency & Ordering (DEP)
 - DEP-01 (SHOULD): Minimal depends_on
@@ -78,15 +82,15 @@ description: "AI Assistant Instructions for Terraform"
 ### Global / Base (G)
 - G-01 (SHOULD): Variables/Outputs/Module Usage
   - Check: Do external modules reference latest documentation?
-- G-02 (SHOULD): Secret Hardcoding Prohibition
+- G-02 (MUST): Secret Hardcoding Prohibition
   - Check: Are there no plaintext secrets in .tf files?
 - G-03 (SHOULD): External Module Versioning
   - Check: Do all external modules have explicit version constraints?
 - G-04 (SHOULD): Provider Version Constraints
   - Check: Are provider versions explicitly constrained?
-- G-05 (SHOULD): for_each/count with Post-Apply Values
+- G-05 (MUST): for_each/count with Post-Apply Values
   - Check: Are for_each/count keys known at plan time?
-- G-06 (SHOULD): Prefer for_each over count
+- G-06 (MUST): Prefer for_each over count
   - Check: Is for_each used instead of count except for enable/disable flags?
 - G-07 (SHOULD): Module Argument Validity
   - Check: Are all required module arguments provided correctly?
@@ -138,12 +142,12 @@ description: "AI Assistant Instructions for Terraform"
   - Check: Is conditional logic straightforward?
 
 ### Performance & Limits (PERF)
-- PERF-01 (SHOULD): Avoid Excessive for_each/count Plan Time
-  - Check: Does plan complete in reasonable time?
+- PERF-01 (SHOULD): Avoid Unbounded for_each/count
+  - Check: Are for_each/count driven by bounded, plan-time-known collections rather than unbounded dynamic data?
 - PERF-02 (SHOULD): Reduce Provider Calls
-  - Check: Are data sources not duplicated unnecessarily?
-- PERF-03 (SHOULD): Monitor CloudWatch Event/Alarm Generation
-  - Check: Are alarms meaningful and actionable?
+  - Check: Are data sources not duplicated unnecessarily across files or modules?
+- PERF-03 (SHOULD): Meaningful Alarms Only
+  - Check: Does each alarm have a clear action owner and response procedure?
 
 ### Security (SEC)
 - SEC-01 (SHOULD): KMS Encryption (SNS/S3/Logs/StateMachines) [AWS-specific]
@@ -152,7 +156,7 @@ description: "AI Assistant Instructions for Terraform"
   - Check: Do IAM policies follow least privilege; are wildcards justified?
 - SEC-03 (SHOULD): Resource Policy with Condition
   - Check: Do resource policies (SNS, SQS) include appropriate conditions?
-- SEC-04 (SHOULD): No Plaintext Secrets
+- SEC-04 (MUST): No Plaintext Secrets
   - Check: Are all secrets retrieved from secure stores?
 - SEC-05 (SHOULD): Appropriate Logging Configuration
   - Check: Are CloudTrail and CloudWatch Logs properly configured?
@@ -163,18 +167,16 @@ description: "AI Assistant Instructions for Terraform"
 - STATE-02 (SHOULD): No Credentials in Backend Configuration
   - Check: Are there no hardcoded credentials in backend blocks?
 - STATE-03 (SHOULD): No Workspace (Unless Documented)
-  - Check: Are workspaces not used or is policy documented?
-- STATE-04 (SHOULD): terraform state Manual Operations Documented
-  - Check: Are state modifications documented?
+  - Check: Are workspaces not used, or is workspace usage policy documented in comments?
 
 ### Tagging (TAG)
-- TAG-01 (SHOULD): Name Tag with merge(local.tags, {Name = "..."})
+- TAG-01 (MUST): Name Tag with merge(local.tags, {Name = "..."})
   - Check: Do tags use merge pattern with common tags?
 - TAG-02 (SHOULD): Remove Redundant Manual Tags
   - Check: Are there no duplicate tag keys; is tag management centralized?
 
 ### tfvars (T)
-- T-01 (SHOULD): No Secrets in tfvars
+- T-01 (MUST): No Secrets in tfvars
   - Check: Are there no hardcoded secrets in tfvars files?
 - T-02 (SHOULD): Environment-Specific File Separation
   - Check: Is there clear environment-specific file separation?
@@ -205,7 +207,7 @@ description: "AI Assistant Instructions for Terraform"
 
 ### Code Modification Guidelines
 
-- After changes, prioritize running validate.sh from [terraform-validation Skill](../../apm_modules/y-miyazaki/config/.apm/packages/terraform/.apm/skills/terraform-validation/SKILL.md).
+- After changes, prioritize running validate.sh from terraform-validation skill.
 - Use individual commands only for debugging.
 
 
@@ -226,7 +228,7 @@ tflint --recursive
 trivy config .
 ```
 
-**Detailed guide**: See [terraform-validation Skill](../../apm_modules/y-miyazaki/config/.apm/packages/terraform/.apm/skills/terraform-validation/SKILL.md).
+**Detailed guide**: See terraform-validation skill SKILL.md.
 
 ## Security Guidelines
 

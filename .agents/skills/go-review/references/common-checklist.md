@@ -2,8 +2,8 @@
 
 ## Architecture (ARCH)
 - ARCH-01 (SHOULD): Layer Separation
-- ARCH-02 (SHOULD): Dependency Injection
-- ARCH-03 (SHOULD): Domain-Driven Design
+- ARCH-02 (MUST): Dependency Injection
+- ARCH-03 (SHOULD): Domain Logic Isolation
 - ARCH-04 (SHOULD): SOLID Principles
 - ARCH-05 (SHOULD): Appropriate Package Structure
 - ARCH-06 (SHOULD): Unified Configuration Management
@@ -13,7 +13,7 @@
 - ARCH-10 (SHOULD): Module Design
 
 ## Code Standards (CODE)
-- CODE-01 (SHOULD): Appropriate Interface Design
+- CODE-01 (MUST): Appropriate Interface Design
 - CODE-02 (SHOULD): API/Package Boundary Design
 - CODE-03 (SHOULD): Appropriate Struct Design
 - CODE-04 (SHOULD): Safe Type Assertions
@@ -32,7 +32,7 @@
 - CON-06 (SHOULD): data race Detection and Prevention
 
 ## Context Handling (CTX)
-- CTX-01 (SHOULD): Accept context in public APIs
+- CTX-01 (MUST): Accept context in public APIs
 - CTX-02 (SHOULD): Avoid context lifecycle ambiguity
 - CTX-03 (SHOULD): Propagate context to goroutines
 - CTX-04 (SHOULD): Appropriate cancel Invocation
@@ -48,7 +48,7 @@
 
 ## Documentation (DOC)
 - DOC-01 (SHOULD): Package Documentation Exists
-- DOC-02 (SHOULD): godoc for Public Functions
+- DOC-02 (MUST): godoc for Public Functions
 - DOC-03 (SHOULD): Complex Logic Comments
 - DOC-04 (SHOULD): Struct Field Comments
 - DOC-05 (SHOULD): Constant and Variable Descriptions
@@ -59,7 +59,7 @@
 - DOC-10 (SHOULD): CHANGELOG
 
 ## Error Handling (ERR)
-- ERR-01 (SHOULD): Appropriate Error Wrapping
+- ERR-01 (MUST): Appropriate Error Wrapping
 - ERR-02 (SHOULD): Appropriate Custom Error Definition
 - ERR-03 (SHOULD): Avoid and Recover from Panics
 - ERR-04 (SHOULD): Appropriate Error Log Information
@@ -87,9 +87,9 @@
 - G-03 (SHOULD): Leverage Standard Library
 - G-04 (SHOULD): Appropriate Log Levels
 - G-05 (MUST): Declaration Order (File Level)
-- G-06 (SHOULD): Declaration Order (Within Groups)
+- G-06 (MUST): Declaration Order (Within Groups)
 - G-07 (SHOULD): Restrict init() Complexity
-- G-08 (SHOULD): Zero Value Design
+- G-08 (MUST): Zero Value Design
 - G-09 (SHOULD): Defensive Copy at Boundaries
 
 ## Performance (PERF)

@@ -60,6 +60,8 @@ description: "AI Assistant Instructions for GitHub Actions Workflows"
   - Check: Does each step have a `name` and logical order?
 - G-04 (SHOULD): Explicit Environment and Approval Flow
   - Check: Do production jobs have `environment` configuration and approval?
+- G-05 (MUST): Alphabetical Key Ordering
+  - Check: Are keys in `inputs`, `env`, `permissions`, and `with` sorted alphabetically (A-Z)?
 
 ### Performance (PERF)
 - PERF-01 (SHOULD): Cache Strategy and Invalidation
@@ -72,19 +74,15 @@ description: "AI Assistant Instructions for GitHub Actions Workflows"
   - Check: Are broad triggers, full-repo checkout, and repeated setup steps minimized?
 
 ### Security (SEC)
-- SEC-01 (SHOULD): Explicit Top-Level Permissions
-  - Check: Are top-level permissions explicitly set?
-- SEC-02 (SHOULD): Safe Secret References
+- SEC-01 (SHOULD): Safe Secret References
   - Check: Are secrets referenced only via `${{ secrets.NAME }}` and not directly output?
-- SEC-03 (SHOULD): Careful Use of pull_request_target
+- SEC-02 (SHOULD): Careful Use of pull_request_target
   - Check: Are fork PR restrictions in place when using `pull_request_target`?
-- SEC-04 (SHOULD): Log Masking for Sensitive Information
+- SEC-03 (SHOULD): Log Masking for Sensitive Information
   - Check: Are sensitive values masked with `::add-mask::` or `core.setSecret()`?
-- SEC-05 (SHOULD): Pin Third-Party Actions
-  - Check: Are critical actions pinned to SHA?
-- SEC-06 (SHOULD): Sanitize Environment Variables
+- SEC-04 (SHOULD): Sanitize Environment Variables
   - Check: Are environment variable inputs validated and sanitized?
-- SEC-07 (SHOULD): Guardrails for Public Repositories
+- SEC-05 (SHOULD): Guardrails for Public Repositories
   - Check: Do public repositories have conditional branches like `github.event.repository.private`?
 
 ### Tool Integration (TOOL)
@@ -99,7 +97,7 @@ description: "AI Assistant Instructions for GitHub Actions Workflows"
 
 ### Code Modification Guidelines
 
-- After changes, prioritize running validate.sh from [github-actions-validation Skill](../../apm_modules/y-miyazaki/config/.apm/packages/common/.apm/skills/github-actions-validation/SKILL.md).
+- After changes, prioritize running validate.sh from github-actions-validation skill.
 - Use individual commands only for debugging.
 
 
@@ -124,7 +122,7 @@ ghalint run
 zizmor .github/workflows/
 ```
 
-**Detailed guide**: See [github-actions-validation Skill](../../apm_modules/y-miyazaki/config/.apm/packages/common/.apm/skills/github-actions-validation/SKILL.md).
+**Detailed guide**: See github-actions-validation skill SKILL.md.
 
 ## Security Guidelines
 

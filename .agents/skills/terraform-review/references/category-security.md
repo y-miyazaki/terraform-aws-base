@@ -20,7 +20,7 @@ Check: Do resource policies (SNS, SQS) include appropriate conditions?
 Why: Insufficient resource policy restrictions and missing Condition blocks allow unintended source access, unauthorized use, and security risks
 Fix: Add `Condition` block with `SourceArn`/`SourceAccount` restrictions
 
-**SEC-04 (SHOULD): No Plaintext Secrets**
+**SEC-04 (MUST): No Plaintext Secrets**
 
 Check: Are all secrets retrieved from secure stores?
 Why: Plaintext secrets in code and hardcoded credentials cause leak risk, Git history persistence, and security breaches

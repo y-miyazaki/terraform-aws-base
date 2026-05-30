@@ -1,25 +1,21 @@
 # Terraform Review Checklist
 
 ## CI & Lint (CI)
-- CI-01 (SHOULD): plan Diff Intentional (No Unintended Changes)
+- CI-01 (SHOULD): Minimize Unintended Plan Diffs
 - CI-02 (SHOULD): New Resources Clearly Justified
 
 ## Compliance & Policy (COMP)
-- COMP-01 (SHOULD): Organization/Security Hub Governance Alignment
-- COMP-02 (SHOULD): trivy Results in Pipeline
-- COMP-03 (SHOULD): No Default VPC/Open SG/Public S3
-- COMP-04 (SHOULD): IAM Policy with jsonencode or aws_iam_policy_document
+- COMP-03 (MUST): No Default VPC/Open SG/Public S3
+- COMP-04 (MUST): IAM Policy with jsonencode or aws_iam_policy_document
 
 ## Cost Optimization (COST)
 - COST-01 (SHOULD): Avoid High-Cost Metrics/Long Retention
-- COST-02 (SHOULD): Mass Resource Creation Cost Justification
-- COST-03 (SHOULD): Minimize Optional Defaults (monitoring/xray/retention)
+- COST-02 (SHOULD): Minimize Optional Defaults (monitoring/xray/retention)
 
 ## Data Sources & Imports (DATA)
-- DATA-01 (SHOULD): Reconsider data sources (Replace with Static Values)
-- DATA-02 (SHOULD): Document import Procedures
-- DATA-03 (SHOULD): Externalize IDs/ARNs as Variables
-- DATA-04 (SHOULD): Remove Unused data sources
+- DATA-01 (SHOULD): Justify Each Data Source
+- DATA-02 (SHOULD): Externalize IDs/ARNs as Variables
+- DATA-03 (SHOULD): Remove Unused data sources
 
 ## Dependency & Ordering (DEP)
 - DEP-01 (SHOULD): Minimal depends_on
@@ -34,11 +30,11 @@
 
 ## Global / Base (G)
 - G-01 (SHOULD): Variables/Outputs/Module Usage
-- G-02 (SHOULD): Secret Hardcoding Prohibition
+- G-02 (MUST): Secret Hardcoding Prohibition
 - G-03 (SHOULD): External Module Versioning
 - G-04 (SHOULD): Provider Version Constraints
-- G-05 (SHOULD): for_each/count with Post-Apply Values
-- G-06 (SHOULD): Prefer for_each over count
+- G-05 (MUST): for_each/count with Post-Apply Values
+- G-06 (MUST): Prefer for_each over count
 - G-07 (SHOULD): Module Argument Validity
 - G-08 (SHOULD): Module Output Usage
 - G-09 (SHOULD): tfsec → trivy Migration
@@ -70,29 +66,28 @@
 - P-03 (SHOULD): Avoid count = 0/1 Toggle Chains
 
 ## Performance & Limits (PERF)
-- PERF-01 (SHOULD): Avoid Excessive for_each/count Plan Time
+- PERF-01 (SHOULD): Avoid Unbounded for_each/count
 - PERF-02 (SHOULD): Reduce Provider Calls
-- PERF-03 (SHOULD): Monitor CloudWatch Event/Alarm Generation
+- PERF-03 (SHOULD): Meaningful Alarms Only
 
 ## Security (SEC)
 - SEC-01 (SHOULD): KMS Encryption (SNS/S3/Logs/StateMachines) [AWS-specific]
 - SEC-02 (SHOULD): IAM Least Privilege
 - SEC-03 (SHOULD): Resource Policy with Condition
-- SEC-04 (SHOULD): No Plaintext Secrets
+- SEC-04 (MUST): No Plaintext Secrets
 - SEC-05 (SHOULD): Appropriate Logging Configuration
 
 ## State & Backend (STATE)
 - STATE-01 (SHOULD): Remote Backend with Encryption (SSE) + DynamoDB Lock
 - STATE-02 (SHOULD): No Credentials in Backend Configuration
 - STATE-03 (SHOULD): No Workspace (Unless Documented)
-- STATE-04 (SHOULD): terraform state Manual Operations Documented
 
 ## Tagging (TAG)
-- TAG-01 (SHOULD): Name Tag with merge(local.tags, {Name = "..."})
+- TAG-01 (MUST): Name Tag with merge(local.tags, {Name = "..."})
 - TAG-02 (SHOULD): Remove Redundant Manual Tags
 
 ## tfvars (T)
-- T-01 (SHOULD): No Secrets in tfvars
+- T-01 (MUST): No Secrets in tfvars
 - T-02 (SHOULD): Environment-Specific File Separation
 - T-03 (SHOULD): No Cross-Environment Identifiers
 - T-04 (SHOULD): No Environment Prefix Mixing

@@ -141,7 +141,7 @@ description: "AI Assistant Instructions for Writing Instruction Files"
 
 ### Code Modification Guidelines
 
-- After changes, prioritize running validate.sh from [instructions-review Skill](../../apm_modules/y-miyazaki/config/.apm/packages/common/.apm/skills/instructions-review/SKILL.md).
+- After changes, prioritize running validate.sh from instructions-review skill.
 - When instruction files are updated, always run an instruction quality re-evaluation.
 - Use individual commands only for debugging.
 
@@ -163,7 +163,7 @@ markdownlint-cli2 ".apm/instructions/**"
 textlint .apm/instructions/
 ```
 
-**Detailed guide**: See [instructions-review Skill](../../apm_modules/y-miyazaki/config/.apm/packages/common/.apm/skills/instructions-review/SKILL.md).
+**Detailed guide**: See instructions-review skill SKILL.md.
 
 ## Security Guidelines
 

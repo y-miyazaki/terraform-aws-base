@@ -1,24 +1,12 @@
 ## Dependencies (DEP)
 
-**DEP-01 (SHOULD): Leverage lib/all.sh**
-
-Check: Is lib/all.sh sourced and common functions utilized?
-Why: Not using common library causes code duplication, increased maintenance cost, quality inconsistency
-Fix: Source lib/all.sh, use common functions like error_exit/log_message
-
-**DEP-02 (SHOULD): Use validate_dependencies**
-
-Check: Is validate_dependencies function called?
-Why: Not checking required commands causes mid-script failures and user confusion
-Fix: Call validate_dependencies, explicitly list required commands
-
-**DEP-03 (SHOULD): Document Required Commands**
+**DEP-01 (SHOULD): Document Required Commands**
 
 Check: Are dependent commands documented in README?
 Why: Unclear dependencies cause execution failures, difficult environment setup, delayed onboarding
-Fix: Document dependencies in README, implement validate_dependencies
+Fix: Document dependencies in README
 
-**DEP-04 (SHOULD): Command Existence Check**
+**DEP-02 (SHOULD): Command Existence Check**
 
 Check: Are commands verified with command -v with clear error messages?
 Why: Missing command checks cause runtime errors with unclear messages

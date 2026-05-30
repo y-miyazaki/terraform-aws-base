@@ -1,6 +1,6 @@
 ## Context Handling (CTX)
 
-**CTX-01 (SHOULD): Accept context in public APIs**
+**CTX-01 (MUST): Accept context in public APIs**
 
 Check: Do public functions and methods accept context.Context as first argument?
 Why: Missing context prevents timeout control, cancellation propagation, difficult testing

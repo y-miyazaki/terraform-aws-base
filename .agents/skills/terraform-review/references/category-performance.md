@@ -1,19 +1,19 @@
 ## Performance & Limits (PERF)
 
-**PERF-01 (SHOULD): Avoid Excessive for_each/count Plan Time**
+**PERF-01 (SHOULD): Avoid Unbounded for_each/count**
 
-Check: Does plan complete in reasonable time?
-Why: Increased plan execution time and bulk processing cause reduced development efficiency and CI/CD delays
-Fix: Split state, consider `-target`, use resource grouping
+Check: Are for_each/count driven by bounded, plan-time-known collections rather than unbounded dynamic data?
+Why: Unbounded collections cause slow plans, provider rate limits, and state file bloat
+Fix: Split large resource sets into separate modules/states; use bounded variables with known upper limits
 
 **PERF-02 (SHOULD): Reduce Provider Calls**
 
-Check: Are data sources not duplicated unnecessarily?
-Why: Excessive API calls and duplicate data sources cause rate limit hits and execution delays
-Fix: Cache/share data, leverage locals, minimize data sources
+Check: Are data sources not duplicated unnecessarily across files or modules?
+Why: Duplicate data sources cause redundant API calls and risk rate limit hits
+Fix: Query once and share via locals or module outputs
 
-**PERF-03 (SHOULD): Monitor CloudWatch Event/Alarm Generation**
+**PERF-03 (SHOULD): Meaningful Alarms Only**
 
-Check: Are alarms meaningful and actionable?
-Why: Alarm proliferation and excessive events cause increased noise and critical alarms being buried
-Fix: Monitor only important events, consolidate alarms
+Check: Does each alarm have a clear action owner and response procedure?
+Why: Alarm proliferation buries critical alerts in noise
+Fix: Create alarms only for actionable conditions; consolidate related metrics

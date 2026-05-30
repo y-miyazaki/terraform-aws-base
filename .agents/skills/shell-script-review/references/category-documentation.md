@@ -1,6 +1,6 @@
 ## Documentation (DOC)
 
-**DOC-01 (SHOULD): Standard Header Format**
+**DOC-01 (MUST): Standard Header Format**
 
 Check: Does file header contain Description/Usage/Design Rules?
 Why: Missing header makes script purpose unclear, usage unknown, delays onboarding

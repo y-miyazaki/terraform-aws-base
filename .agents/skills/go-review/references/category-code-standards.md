@@ -1,10 +1,10 @@
 ## Code Standards (CODE)
 
-**CODE-01 (SHOULD): Appropriate Interface Design**
+**CODE-01 (MUST): Appropriate Interface Design**
 
-Check: Are interface method counts (5+) and consumer-side definitions appropriate?
+Check: Are interfaces kept small (1-3 methods) and defined on the consumer side?
 Why: Too many methods and provider-side definitions make mocking difficult, increase test burden, reduce flexibility
-Fix: Small interfaces (1-3 methods), consumer-side interfaces
+Fix: Split interfaces with 5+ methods into focused roles, define interfaces where they are consumed
 
 **CODE-02 (SHOULD): API/Package Boundary Design**
 
@@ -14,9 +14,9 @@ Fix: Minimize public APIs, express responsibility in package names, hide interna
 
 **CODE-03 (SHOULD): Appropriate Struct Design**
 
-Check: Are there no public fields, exposed mutexes, or excessive field counts (20+)?
-Why: Public fields break encapsulation, cause race conditions, reduce readability
-Fix: Make fields private, add getters/setters, split structs
+Check: Are fields with invariants unexported and protected by methods? Are mutexes unexported? Are structs with 20+ fields split?
+Why: Exposing fields that maintain invariants breaks encapsulation and causes race conditions; exported mutexes leak synchronization details
+Fix: Unexport fields that enforce invariants and provide accessor methods. Keep exported fields for DTOs, config structs, and serialization targets. Split large structs by responsibility
 
 **CODE-04 (SHOULD): Safe Type Assertions**
 

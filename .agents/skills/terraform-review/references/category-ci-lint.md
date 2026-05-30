@@ -1,11 +1,10 @@
 ## CI & Lint (CI)
 
-**CI-01 (SHOULD): plan Diff Intentional (No Unintended Changes)**
+**CI-01 (SHOULD): Minimize Unintended Plan Diffs**
 
-Check: Are all plan diffs intentional and documented?
-Why: Unintended diff generation, drift, and configuration inconsistencies cause unexpected change application and resource recreation
-Fix: Scrutinize `plan` results, resolve diffs, verify state consistency
-Note: Expected diffs excluded: provider version upgrades, resource reordering, computed attributes
+Check: Does the code avoid patterns that cause unnecessary plan diffs (e.g., unsorted keys, unstable JSON, computed defaults)?
+Why: Unstable code patterns generate noisy diffs that obscure real changes and increase review burden
+Fix: Use sorted keys in jsonencode, avoid unnecessary computed attributes, keep resource arguments in stable order
 
 **CI-02 (SHOULD): New Resources Clearly Justified**
 

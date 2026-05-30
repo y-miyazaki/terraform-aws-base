@@ -1,6 +1,6 @@
 ## tfvars (T)
 
-**T-01 (SHOULD): No Secrets in tfvars**
+**T-01 (MUST): No Secrets in tfvars**
 
 Check: Are there no hardcoded secrets in tfvars files?
 Why: Secrets in tfvars (passwords, tokens) cause repository leak risk, Git history contamination, and security breaches

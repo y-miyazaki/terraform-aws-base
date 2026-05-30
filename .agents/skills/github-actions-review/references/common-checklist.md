@@ -18,6 +18,7 @@
 - G-02 (SHOULD): Limit Triggers (on)
 - G-03 (SHOULD): Step Clarification and Order Guarantee
 - G-04 (SHOULD): Explicit Environment and Approval Flow
+- G-05 (MUST): Alphabetical Key Ordering
 
 ## Performance (PERF)
 - PERF-01 (SHOULD): Cache Strategy and Invalidation
@@ -26,13 +27,11 @@
 - PERF-04 (SHOULD): Reduce Unnecessary Workload
 
 ## Security (SEC)
-- SEC-01 (SHOULD): Explicit Top-Level Permissions
-- SEC-02 (SHOULD): Safe Secret References
-- SEC-03 (SHOULD): Careful Use of pull_request_target
-- SEC-04 (SHOULD): Log Masking for Sensitive Information
-- SEC-05 (SHOULD): Pin Third-Party Actions
-- SEC-06 (SHOULD): Sanitize Environment Variables
-- SEC-07 (SHOULD): Guardrails for Public Repositories
+- SEC-01 (SHOULD): Safe Secret References
+- SEC-02 (SHOULD): Careful Use of pull_request_target
+- SEC-03 (SHOULD): Log Masking for Sensitive Information
+- SEC-04 (SHOULD): Sanitize Environment Variables
+- SEC-05 (SHOULD): Guardrails for Public Repositories
 
 ## Tool Integration (TOOL)
 - TOOL-01 (SHOULD): Reviewdog Integration for PR Feedback

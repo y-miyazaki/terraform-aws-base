@@ -1,6 +1,6 @@
 ## Error Handling (ERR)
 
-**ERR-01 (SHOULD): Appropriate Error Wrapping**
+**ERR-01 (MUST): Appropriate Error Wrapping**
 
 Check: Are errors wrapped with fmt.Errorf("%w", err) and context information included?
 Why: Returning only error strings makes debugging difficult, lacks stack traces, root cause unclear

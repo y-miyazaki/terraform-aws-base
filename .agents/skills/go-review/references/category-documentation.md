@@ -6,7 +6,7 @@ Check: Are package doc comments, package purpose, and usage documented?
 Why: Missing package doc comments make API understanding difficult, increase misuse, delay onboarding
 Fix: Add package doc comments, document purpose, responsibility, usage examples
 
-**DOC-02 (SHOULD): godoc for Public Functions**
+**DOC-02 (MUST): godoc for Public Functions**
 
 Check: Are all public APIs documented with godoc, arguments, return values, and error conditions specified?
 Why: Missing or insufficient public function comments make API usage unclear, cause misuse

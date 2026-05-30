@@ -6,7 +6,7 @@ Check: Do external modules reference latest documentation?
 Why: Incorrect variable/output usage and undocumented module interfaces cause unexpected configurations, errors, and missed breaking changes
 Fix: Use context7/fetch_webpage to verify latest module documentation, use correct interfaces
 
-**G-02 (SHOULD): Secret Hardcoding Prohibition**
+**G-02 (MUST): Secret Hardcoding Prohibition**
 
 Check: Are there no plaintext secrets in .tf files?
 Why: Hardcoded credentials, passwords, and tokens cause information leakage, Git history contamination, and security breaches
@@ -24,13 +24,13 @@ Check: Are provider versions explicitly constrained?
 Why: Unpinned provider versions and overly broad version ranges cause breaking changes, failures, and lack of reproducibility
 Fix: Use `required_providers` block with appropriate version constraints (>= lower, < upper)
 
-**G-05 (SHOULD): for_each/count with Post-Apply Values**
+**G-05 (MUST): for_each/count with Post-Apply Values**
 
 Check: Are for_each/count keys known at plan time?
 Why: Using resource attributes determined after apply in for_each/count keys causes plan-time errors ("value depends on resource attributes...") and parallel apply issues
 Fix: Use pre-determined values (var, local, data source known attributes)
 
-**G-06 (SHOULD): Prefer for_each over count**
+**G-06 (MUST): Prefer for_each over count**
 
 Check: Is for_each used instead of count except for enable/disable flags?
 Why: List order-dependent count usage creates index shift risks, causing unexpected resource recreation and destructive changes on reordering

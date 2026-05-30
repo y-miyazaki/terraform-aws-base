@@ -15,24 +15,29 @@ description: "AI Assistant Instructions for Go Development"
 
 | Component | Rule       | Example          |
 | --------- | ---------- | ---------------- |
-| Interface | er suffix  | UserRepository   |
+| Interface (single-method) | -er suffix  | Reader, Closer   |
+| Interface (multi-method)  | role name   | UserRepository   |
 | File name | snake_case | event_handler.go |
 
 ### Core Go Conventions
 
-- **S-01 (MUST)**: Add GoDoc-style comments to public APIs - package, public functions, methods, and structs are in scope.
-- **S-02 (MUST)**: Use lowercase single-word names for packages - this preserves readability and import consistency.
-- **S-03 (MUST)**: Prohibit ignored errors (`_` assignment) - allow exceptions only with explicit rationale.
-- **S-04 (MUST)**: Prefer error wrapping with `fmt.Errorf(... %w ...)` - keep causal tracing available to callers.
+- **S-01 (MUST)**: Add GoDoc-style comments to all exported symbols (packages, functions, methods, types).
+- **S-02 (MUST)**: Use lowercase single-word package names.
+- **S-03 (MUST)**: Handle every returned error explicitly — `_` assignment is prohibited unless justified with a comment.
+- **S-04 (MUST)**: Wrap errors with `fmt.Errorf("context: %w", err)` to preserve causal chain.
+- **S-05 (MUST)**: Accept `context.Context` as the first parameter in all exported functions that perform I/O or may block.
+- **S-06 (MUST)**: Keep interfaces small (1–3 methods) and define them on the consumer side.
+- **S-07 (MUST)**: Design types so their zero value is valid and useful where possible.
+- **S-08 (MUST)**: Pass dependencies as interface arguments in constructors — do not rely on package-level variables.
 
 ### File Declaration Order
 
-- **G-05 (MUST)**: Enforce declaration order within each file - inconsistent order reduces code navigability:
+- **G-05 (MUST)**: Enforce declaration order within each file:
   1. const
   2. var
   3. type（interface → struct）
-  4. func（public APIs first, then related internal helpers in readable groups）
-- **G-06 (SHOULD)**: Keep declaration grouping and naming order consistent inside each section. Place `main` first in the function section.
+  4. func（constructor → public methods → private methods → helpers）
+- **G-06 (MUST)**: Sort declarations alphabetically within each group — this ensures stable diffs and predictable navigation.
 
 ### Unexported Helper Placement
 
@@ -44,13 +49,12 @@ description: "AI Assistant Instructions for Go Development"
 ## Guidelines
 
 ### Architecture (ARCH)
-
 - ARCH-01 (SHOULD): Layer Separation
   - Check: Are handler/usecase/repository separated and business/infrastructure layers separated?
-- ARCH-02 (SHOULD): Dependency Injection
-  - Check: Are constructor injection, wire/dig utilization, and interface dependencies present?
-- ARCH-03 (SHOULD): Domain-Driven Design
-  - Check: Are aggregate roots defined, Value Objects utilized, and Repositories abstracted?
+- ARCH-02 (MUST): Dependency Injection
+  - Check: Are dependencies passed via constructor arguments as interfaces rather than accessed as global variables?
+- ARCH-03 (SHOULD): Domain Logic Isolation
+  - Check: Is business logic free from infrastructure concerns (DB, HTTP, external APIs)?
 - ARCH-04 (SHOULD): SOLID Principles
   - Check: Are SRP/OCP/LSP/ISP/DIP applied, interfaces segregated, and abstractions used?
 - ARCH-05 (SHOULD): Appropriate Package Structure
@@ -67,13 +71,12 @@ description: "AI Assistant Instructions for Go Development"
   - Check: Are boundaries clear, loosely coupled, highly cohesive, and public APIs minimized?
 
 ### Code Standards (CODE)
-
-- CODE-01 (SHOULD): Appropriate Interface Design
-  - Check: Are interface method counts (5+) and consumer-side definitions appropriate?
+- CODE-01 (MUST): Appropriate Interface Design
+  - Check: Are interfaces kept small (1-3 methods) and defined on the consumer side?
 - CODE-02 (SHOULD): API/Package Boundary Design
   - Check: Are there no excessive exports, unclear package name responsibilities, or unused internal/?
 - CODE-03 (SHOULD): Appropriate Struct Design
-  - Check: Are there no public fields, exposed mutexes, or excessive field counts (20+)?
+  - Check: Are fields with invariants unexported and protected by methods? Are mutexes unexported? Are structs with 20+ fields split?
 - CODE-04 (SHOULD): Safe Type Assertions
   - Check: Do type assertions have ok checks (v, ok := i.(string) format)?
 - CODE-05 (SHOULD): Appropriate defer Usage
@@ -88,7 +91,6 @@ description: "AI Assistant Instructions for Go Development"
   - Check: Are naked returns (bare return statements with named return values) avoided in functions longer than ~10 lines?
 
 ### Concurrency (CON)
-
 - CON-01 (SHOULD): Avoid goroutine Leaks
   - Check: Do goroutines terminate properly and monitor context.Done()?
 - CON-02 (SHOULD): Clarify channel close Responsibility
@@ -103,8 +105,7 @@ description: "AI Assistant Instructions for Go Development"
   - Check: Is go test -race executed and shared memory protected with sync?
 
 ### Context Handling (CTX)
-
-- CTX-01 (SHOULD): Accept context in public APIs
+- CTX-01 (MUST): Accept context in public APIs
   - Check: Do public functions and methods accept context.Context as first argument?
 - CTX-02 (SHOULD): Avoid context lifecycle ambiguity
   - Check: Is context origin and propagation path explicit across layer boundaries?
@@ -114,7 +115,6 @@ description: "AI Assistant Instructions for Go Development"
   - Check: Is cancel from WithCancel/WithTimeout called with defer?
 
 ### Dependencies (DEP)
-
 - DEP-01 (SHOULD): Explicit Direct Dependencies
   - Check: Are direct dependencies explicitly in go.mod, versions pinned, and regularly updated?
 - DEP-02 (SHOULD): Dependency Update Strategy
@@ -131,10 +131,9 @@ description: "AI Assistant Instructions for Go Development"
   - Check: Are go-licenses utilized, license lists generated, and compatibility verified?
 
 ### Documentation (DOC)
-
 - DOC-01 (SHOULD): Package Documentation Exists
   - Check: Are package doc comments, package purpose, and usage documented?
-- DOC-02 (SHOULD): godoc for Public Functions
+- DOC-02 (MUST): godoc for Public Functions
   - Check: Are all public APIs documented with godoc, arguments, return values, and error conditions specified?
 - DOC-03 (SHOULD): Complex Logic Comments
   - Check: Are Why-focused comments, algorithm explanations, and preconditions documented?
@@ -154,8 +153,7 @@ description: "AI Assistant Instructions for Go Development"
   - Check: Are Keep a Changelog format, semantic versioning, and breaking changes documented?
 
 ### Error Handling (ERR)
-
-- ERR-01 (SHOULD): Appropriate Error Wrapping
+- ERR-01 (MUST): Appropriate Error Wrapping
   - Check: Are errors wrapped with fmt.Errorf("%w", err) and context information included?
 - ERR-02 (SHOULD): Appropriate Custom Error Definition
   - Check: Are sentinel errors defined and custom errors compatible with errors.Is/As?
@@ -175,7 +173,6 @@ description: "AI Assistant Instructions for Go Development"
   - Check: Are there no internal implementation exposure, external stack trace disclosure, or SQL statement exposure?
 
 ### Function Design (FUNC)
-
 - FUNC-01 (SHOULD): Appropriate Function Splitting
   - Check: Are there no multiple responsibilities or mixed business/infrastructure layers in single functions?
 - FUNC-02 (SHOULD): Appropriate Argument Design
@@ -198,7 +195,6 @@ description: "AI Assistant Instructions for Go Development"
   - Check: Do all public functions have godoc with argument and return value descriptions?
 
 ### Global / Base (G)
-
 - G-01 (SHOULD): No Hardcoded Secrets
   - Check: Are API keys, passwords, and tokens not embedded in source code?
 - G-02 (SHOULD): Appropriate Function Signatures
@@ -209,17 +205,16 @@ description: "AI Assistant Instructions for Go Development"
   - Check: Are Debug/Info/Warn/Error levels appropriate and structured logging used?
 - G-05 (MUST): Declaration Order (File Level)
   - Check: Is order const→var→type (interface→struct)→func (public APIs and helpers grouped consistently)?
-- G-06 (SHOULD): Declaration Order (Within Groups)
-  - Check: Is each group ordered consistently for readability and diff stability?
+- G-06 (MUST): Declaration Order (Within Groups)
+  - Check: Is each group sorted alphabetically (A→Z) for readability and diff stability?
 - G-07 (SHOULD): Restrict init() Complexity
   - Check: Does init() avoid panics, external I/O, and non-trivial side effects? Is it minimal and deterministic?
-- G-08 (SHOULD): Zero Value Design
+- G-08 (MUST): Zero Value Design
   - Check: Are types designed so their zero value is a valid and useful state where possible?
 - G-09 (SHOULD): Defensive Copy at Boundaries
   - Check: Are slices and maps copied when accepting from or returning to external callers?
 
 ### Performance (PERF)
-
 - PERF-01 (SHOULD): Memory Optimization
   - Check: Are slice capacity pre-allocated, map initial capacity specified, and sync.Pool utilized?
 - PERF-02 (SHOULD): CPU Optimization
@@ -242,7 +237,6 @@ description: "AI Assistant Instructions for Go Development"
   - Check: Are critical paths identified, high-frequency processing optimized, and before/after measured?
 
 ### Security (SEC)
-
 - SEC-01 (SHOULD): Input Validation
   - Check: Are input validation, prepared statements, and sanitization implemented?
 - SEC-02 (SHOULD): Output Sanitization
@@ -261,7 +255,6 @@ description: "AI Assistant Instructions for Go Development"
   - Check: Are OWASP Top 10 addressed, Security Headers set, and CSP configured?
 
 ### Testing (TEST)
-
 - TEST-01 (SHOULD): Table-Driven Tests
   - Check: Are []struct format table-driven tests, subtests, and edge cases covered?
 - TEST-02 (SHOULD): testify Usage and Test Design
@@ -283,8 +276,9 @@ description: "AI Assistant Instructions for Go Development"
 
 ### Code Modification Guidelines
 
-- After changes, prioritize running validate.sh from [go-validation Skill](../../apm_modules/y-miyazaki/config/.apm/packages/go/.apm/skills/go-validation/SKILL.md).
+- After changes, prioritize running validate.sh from go-validation skill.
 - Use individual commands (gofumpt/go vet/go test/golangci-lint) only for debugging.
+
 
 ## Testing and Validation
 
@@ -308,7 +302,7 @@ golangci-lint run ./...
 go test -race -cover ./...
 ```
 
-**Detailed guide**: See [go-validation Skill](../../apm_modules/y-miyazaki/config/.apm/packages/go/.apm/skills/go-validation/SKILL.md).
+**Detailed guide**: See go-validation skill SKILL.md.
 
 ## Security Guidelines
 

@@ -82,14 +82,12 @@ description: "AI Assistant Instructions for Agent Skills Development"
 ## Guidelines
 
 ### Pattern Checks (P)
-
 - P-01 (SHOULD): Design Pattern Compliance
   - Check: Does SKILL.md define a deterministic execution pattern with explicit flow, boundaries, and references?
 - P-02 (SHOULD): Output Contract Compliance
   - Check: Does the skill define a structured output contract across Output Specification and common-output-format.md without contradiction?
 
 ### Quality Checks (Q)
-
 - Q-01 (SHOULD): Output is Truly Structured
   - Check: Is the output format definition implementable and parseable (JSON schema / Markdown structure explicitly defined with example)?
 - Q-02 (SHOULD): Scope Boundaries
@@ -110,7 +108,6 @@ description: "AI Assistant Instructions for Agent Skills Development"
   - Check: If token reduction is applied, are behavior-defining instructions preserved?
 
 ### Structural Checks (S)
-
 - S-01 (MUST): Structural Completeness
   - Check: Does SKILL.md have all 5 required sections at ## heading level?
 - S-02 (MUST): YAML Frontmatter Fields
@@ -128,8 +125,9 @@ description: "AI Assistant Instructions for Agent Skills Development"
 
 ### Code Modification Guidelines
 
-- After changes, prioritize running validate.sh from [agent-skills-review Skill](../../apm_modules/y-miyazaki/config/.apm/packages/common/.apm/skills/agent-skills-review/SKILL.md).
+- After changes, prioritize running validate.sh from agent-skills-review skill.
 - Use individual commands only for debugging.
+
 
 ## Testing and Validation
 
@@ -154,7 +152,7 @@ waza run <skill-name>/eval.yaml
 waza tokens count <skill-name>/SKILL.md
 ```
 
-**Detailed guide**: See [agent-skills-review Skill](../../apm_modules/y-miyazaki/config/.apm/packages/common/.apm/skills/agent-skills-review/SKILL.md).
+**Detailed guide**: See agent-skills-review skill SKILL.md.
 
 ## Security Guidelines
 

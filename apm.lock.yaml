@@ -1,19 +1,19 @@
 lockfile_version: '1'
-generated_at: '2026-05-30T06:33:29.084849+00:00'
+generated_at: '2026-05-30T11:42:08.745475+00:00'
 apm_version: 0.14.0
 dependencies:
 - repo_url: y-miyazaki/config
   host: github.com
-  resolved_commit: ef4b653a927987fafd8849d53e2787e8f3020a3b
-  resolved_ref: v1.1.19
+  resolved_commit: 633b853b8832f3db2ca819d675b49271c3ce027b
+  resolved_ref: v1.1.20
   virtual_path: .apm/packages/aws
   is_virtual: true
   package_type: apm_package
   content_hash: sha256:e79bc9c3b1d62b34e939720f4f6a93d362dc79f1f2398de6a52107d723e82e03
 - repo_url: y-miyazaki/config
   host: github.com
-  resolved_commit: ef4b653a927987fafd8849d53e2787e8f3020a3b
-  resolved_ref: v1.1.19
+  resolved_commit: 633b853b8832f3db2ca819d675b49271c3ce027b
+  resolved_ref: v1.1.20
   virtual_path: .apm/packages/common
   is_virtual: true
   package_type: apm_package
@@ -25,6 +25,9 @@ dependencies:
   - .agents/skills/github-pr-body
   - .agents/skills/instructions-review
   - .agents/skills/markdown-validation
+  - .github/hooks/common-github-actions-actionlint.json
+  - .github/hooks/common-github-actions-ghalint.json
+  - .github/hooks/common-github-actions-zizmor.json
   - .github/hooks/common-lean-ctx.json
   - .github/hooks/common-markdownlint-cli2.json
   - .github/instructions/agent-skills.instructions.md
@@ -32,17 +35,20 @@ dependencies:
   - .github/instructions/instructions.instructions.md
   - .github/instructions/markdown.instructions.md
   deployed_file_hashes:
+    .github/hooks/common-github-actions-actionlint.json: sha256:bf9fb5170a781b1378a7fec249a9d31807ee5027e84f82077746b94230781134
+    .github/hooks/common-github-actions-ghalint.json: sha256:cc6a2c06a24b436bad009e73b2d06f4a96747c29987a59f581b6d92d9068e63c
+    .github/hooks/common-github-actions-zizmor.json: sha256:4ad79520c68b1e585651f9d5ac0d9abe33c57b2df33626f66bff5c575ffdea2a
     .github/hooks/common-lean-ctx.json: sha256:30f187840c795acc257b22328f7bd3cd0ab78eb086a8c6e04f9792c18d4b2a7e
     .github/hooks/common-markdownlint-cli2.json: sha256:5a8f69cbf2e60aad7475b5855729f344ded69ba70010405f3c8e4e5f5061e3ec
-    .github/instructions/agent-skills.instructions.md: sha256:3743a744acb9dc83c703709776d4afd3af4a973623d01c8a9cb68dca11cd31ab
-    .github/instructions/github-actions-workflow.instructions.md: sha256:84e0abdb8ddf3148ce3ebf52f8358b66ab0db0f869bfcbf1ee7cc3d4355cf5de
-    .github/instructions/instructions.instructions.md: sha256:c0b0a691427a8d66df02e7a4a84acacb6aa0d9f9792795c8b1b988ffc1a86729
-    .github/instructions/markdown.instructions.md: sha256:2636c2e441877674d1d6d65be395be735cafbc839af3f3eb8c30e71eb3109226
-  content_hash: sha256:93aadd153c3abf60ac184ecb7d3f8f038e595b695259b4ee1585b9bb4b4f31c2
+    .github/instructions/agent-skills.instructions.md: sha256:7a31441c7594be682daad8b4a98f40d8cb9e62691d03ee6e84952c1453a983e8
+    .github/instructions/github-actions-workflow.instructions.md: sha256:5585dd66938fcded0dcb7e860a87db7cad43a1817b08388a023ce7c912674621
+    .github/instructions/instructions.instructions.md: sha256:c939a6f85d2f400bd384c337272db99dc6bbfdc9a601c484aa7ccf17fdc05a6b
+    .github/instructions/markdown.instructions.md: sha256:b6cf5bd99203c7e4ed9f4f63a587f04fb0888e5da9012e78956d433b74284cb3
+  content_hash: sha256:ea558155d6a882ddf219787586ea86a24d2112b9e94789d43abd8a8ebe3db315
 - repo_url: y-miyazaki/config
   host: github.com
-  resolved_commit: ef4b653a927987fafd8849d53e2787e8f3020a3b
-  resolved_ref: v1.1.19
+  resolved_commit: 633b853b8832f3db2ca819d675b49271c3ce027b
+  resolved_ref: v1.1.20
   virtual_path: .apm/packages/go
   is_virtual: true
   package_type: apm_package
@@ -53,12 +59,12 @@ dependencies:
   - .github/instructions/go.instructions.md
   deployed_file_hashes:
     .github/hooks/go-golangci-lint.json: sha256:5023d21f574b5478520b3308b50d9207c813e42f9a0e38cbcc906db9c0955462
-    .github/instructions/go.instructions.md: sha256:c51949b3e87424bfb15122e0f3153dedb708eff897b569a473dd3b56dae5c4ca
-  content_hash: sha256:933cc908de5be0d4145f871f9f22f48f30eb4fed673b22c80393618a1d0bf148
+    .github/instructions/go.instructions.md: sha256:d941102daef01ede943c3837318d1d6b23340a2008252468e4e123450f038de6
+  content_hash: sha256:6234c159b6e4ad0a8f337af10fca4d61e03126eb53e1c419a9a7ddab135084d3
 - repo_url: y-miyazaki/config
   host: github.com
-  resolved_commit: ef4b653a927987fafd8849d53e2787e8f3020a3b
-  resolved_ref: v1.1.19
+  resolved_commit: 633b853b8832f3db2ca819d675b49271c3ce027b
+  resolved_ref: v1.1.20
   virtual_path: .apm/packages/shell-script
   is_virtual: true
   package_type: apm_package
@@ -71,12 +77,12 @@ dependencies:
   deployed_file_hashes:
     .github/hooks/shell-script-shellcheck.json: sha256:4e9c4634d6b9e3bce629f4ff0af8cf78c31a92b690cf37b1ff9b85d3bf114a26
     .github/hooks/shell-script-shfmt.json: sha256:50cd9a52cef467c379c986ef4809891ec4bfc5edeceb239948ed69eb1f4cbe47
-    .github/instructions/shell-script.instructions.md: sha256:98ef866c58d0e6757debcf887a85a39d283fe55eba2c58f35457b440f8d714c4
-  content_hash: sha256:94fdbaebb73835b9f4080074c502cec170a8eb5a5779d6471ae06506c358bb1f
+    .github/instructions/shell-script.instructions.md: sha256:7cffbe5657c7441b6f542cc8231777cf615217e543298952ed0bf360e4094815
+  content_hash: sha256:dfd230f7196f96d055c81608493c5a9022ce7d137e264b6b8cffe023ea4f39f0
 - repo_url: y-miyazaki/config
   host: github.com
-  resolved_commit: ef4b653a927987fafd8849d53e2787e8f3020a3b
-  resolved_ref: v1.1.19
+  resolved_commit: 633b853b8832f3db2ca819d675b49271c3ce027b
+  resolved_ref: v1.1.20
   virtual_path: .apm/packages/terraform
   is_virtual: true
   package_type: apm_package
@@ -91,12 +97,12 @@ dependencies:
     .github/hooks/terraform-terraform-fmt.json: sha256:6096cf4c332a752f7908649b9814242863caef762a0dd3e21d8f86aa5739fad6
     .github/hooks/terraform-terraform-validate.json: sha256:6c93283a881b1811bd1e7c3d1e7cf7f3c6fe754b6d8d370c953646c0ef3de9c7
     .github/hooks/terraform-tflint.json: sha256:707a1c14f47bcfd9ee7fbb44ba3cd9ad6e3717b8baac2dd5390c0721529e1675
-    .github/instructions/terraform.instructions.md: sha256:6701674ed6113d6a22a8f47a97ed6498d81f8fff219933c09428d13bcaab5c61
-  content_hash: sha256:29c363aa8de0f0798eaf5f1ffcc8ca08d741890c914b5c9982391408a607f06a
+    .github/instructions/terraform.instructions.md: sha256:f674c6cea2b7bbcda986d18258c20cba138ac844b14c0d469581925421c2ee59
+  content_hash: sha256:51c04555ff3d2c9c43df289941141630d90a0233485e8c65aebdd6397ff0b77d
 - repo_url: y-miyazaki/config
   host: github.com
-  resolved_commit: ef4b653a927987fafd8849d53e2787e8f3020a3b
-  resolved_ref: v1.1.19
+  resolved_commit: 633b853b8832f3db2ca819d675b49271c3ce027b
+  resolved_ref: v1.1.20
   virtual_path: .apm/packages/terraform-aws
   is_virtual: true
   package_type: apm_package

@@ -22,21 +22,9 @@ Fix: Implement show_usage function with Usage/Options/Examples, exit 0
 
 Check: Do functions properly set return values via return codes or echo output?
 Why: Missing return values prevent error handling, conditional branching, failure detection
-Fix: Set return 0/1, use echo output, leverage `|| error_exit`
+Fix: Set return 0/1, use echo output
 
-**FUNC-05 (SHOULD): Leverage Common Library**
-
-Check: Are common functions from lib/all.sh utilized?
-Why: Code duplication and inconsistent error handling increase maintenance cost, cause inconsistencies, reduce quality
-Fix: Use lib/all.sh functions, follow project standards
-
-**FUNC-06 (SHOULD): validate_dependencies Function**
-
-Check: Is required command existence check implemented in validate_dependencies function?
-Why: Not checking required commands causes mid-script failures and user confusion
-Fix: Implement validate_dependencies, use command -v checks, provide clear errors
-
-**FUNC-07 (SHOULD): Implement main Function**
+**FUNC-05 (SHOULD): Implement main Function**
 
 Check: Is main function implemented with minimized global scope processing?
 Why: Global scope processing makes structure unclear, debugging difficult, unit testing impossible

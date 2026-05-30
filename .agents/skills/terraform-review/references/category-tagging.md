@@ -1,6 +1,6 @@
 ## Tagging (TAG)
 
-**TAG-01 (SHOULD): Name Tag with merge(local.tags, {Name = "..."})**
+**TAG-01 (MUST): Name Tag with merge(local.tags, {Name = "..."})**
 
 Check: Do tags use merge pattern with common tags?
 Why: Individual Name tag settings and unused merge function cause lack of consistency and tag management difficulties

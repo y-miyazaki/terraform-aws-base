@@ -26,9 +26,9 @@ Required in-file order:
 
 1. shebang + header comments (DOC-01)
 2. `set -euo pipefail` + secure defaults（`umask 027`, `export LC_ALL=C.UTF-8`）
-3. `SCRIPT_DIR` setup + common library sourcing (G-01)
+3. `SCRIPT_DIR` setup (G-01)
 4. global variable definitions
-5. function definitions: `show_usage` / `parse_arguments` -> other functions in a-z order -> `main` last
+5. function definitions: `show_usage` / `parse_arguments` -> other functions in a-z order (G-03) -> `main` last
 6. entry point: `if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then main "$@"; fi`
 
 ### Function Documentation
@@ -58,17 +58,13 @@ Required in-file order:
   - Check: Do functions have single responsibility and accept arguments explicitly?
 
 ### Dependencies (DEP)
-- DEP-01 (SHOULD): Leverage lib/all.sh
-  - Check: Is lib/all.sh sourced and common functions utilized?
-- DEP-02 (SHOULD): Use validate_dependencies
-  - Check: Is validate_dependencies function called?
-- DEP-03 (SHOULD): Document Required Commands
+- DEP-01 (SHOULD): Document Required Commands
   - Check: Are dependent commands documented in README?
-- DEP-04 (SHOULD): Command Existence Check
+- DEP-02 (SHOULD): Command Existence Check
   - Check: Are commands verified with command -v with clear error messages?
 
 ### Documentation (DOC)
-- DOC-01 (SHOULD): Standard Header Format
+- DOC-01 (MUST): Standard Header Format
   - Check: Does file header contain Description/Usage/Design Rules?
 - DOC-02 (SHOULD): show_usage Required
   - Check: Is show_usage function implemented?
@@ -112,41 +108,31 @@ Required in-file order:
   - Check: Does show_usage function include Usage/Options/Examples and exit 0?
 - FUNC-04 (SHOULD): Return Value Design
   - Check: Do functions properly set return values via return codes or echo output?
-- FUNC-05 (SHOULD): Leverage Common Library
-  - Check: Are common functions from lib/all.sh utilized?
-- FUNC-06 (SHOULD): validate_dependencies Function
-  - Check: Is required command existence check implemented in validate_dependencies function?
-- FUNC-07 (SHOULD): Implement main Function
+- FUNC-05 (SHOULD): Implement main Function
   - Check: Is main function implemented with minimized global scope processing?
 
 ### Global / Base (G)
-- G-01 (SHOULD): Set SCRIPT_DIR and Source lib/all.sh
-  - Check: Is SCRIPT_DIR set and lib/all.sh sourced?
+- G-01 (MUST): Set SCRIPT_DIR
+  - Check: Is SCRIPT_DIR set for reliable relative path resolution?
 - G-02 (SHOULD): No Hardcoded Secrets
   - Check: Are API keys, passwords, and tokens not embedded in scripts?
-- G-03 (SHOULD): Follow Function Order
+- G-03 (MUST): Follow Function Order
   - Check: Is order show_usage→parse_arguments→functions a-z→main last?
 - G-04 (SHOULD): Remove Dead Code
   - Check: Are there no commented code, unused functions, or unreachable code?
-- G-05 (SHOULD): Use error_exit for Error Handling
-  - Check: Is error_exit function used on errors?
-- G-06 (SHOULD): Script Idempotency
+- G-05 (SHOULD): Script Idempotency
   - Check: Does script run without errors on re-execution?
 
 ### Logging (LOG)
-- LOG-01 (SHOULD): Leverage log_message/echo_section
-  - Check: Are log_message and echo_section functions utilized?
-- LOG-02 (SHOULD): Separate stdout/stderr
+- LOG-01 (SHOULD): Separate stdout/stderr
   - Check: Are errors clearly separated to >&2 and info to stdout?
-- LOG-03 (SHOULD): Implement Log Levels
+- LOG-02 (SHOULD): Implement Log Levels
   - Check: Are INFO, WARN, ERROR log levels implemented?
-- LOG-04 (SHOULD): Structured Logging
+- LOG-03 (SHOULD): Structured Logging
   - Check: Is structured log format with timestamp, level, message used?
-- LOG-05 (SHOULD): Mask Sensitive Information
+- LOG-04 (SHOULD): Mask Sensitive Information
   - Check: Are passwords and tokens masked before logging?
-- LOG-06 (SHOULD): Section Separators with echo_section
-  - Check: Are processing units separated with echo_section?
-- LOG-07 (SHOULD): Implement verbose
+- LOG-05 (SHOULD): Implement verbose
   - Check: Is detailed log control available with -v/--verbose option?
 
 ### Performance (PERF)
@@ -201,7 +187,7 @@ Required in-file order:
 
 ### Code Modification Guidelines
 
-- After changes, prioritize running validate.sh from [shell-script-validation Skill](../../apm_modules/y-miyazaki/config/.apm/packages/shell-script/.apm/skills/shell-script-validation/SKILL.md).
+- After changes, prioritize running validate.sh from shell-script-validation skill.
 - Use individual commands only for debugging.
 
 
@@ -221,7 +207,7 @@ shellcheck script.sh
 bats test/bats/
 ```
 
-**Detailed guide**: See [shell-script-validation Skill](../../apm_modules/y-miyazaki/config/.apm/packages/shell-script/.apm/skills/shell-script-validation/SKILL.md).
+**Detailed guide**: See shell-script-validation skill SKILL.md.
 
 ## Security Guidelines
 

@@ -8,13 +8,11 @@
 - CODE-05 (SHOULD): Single Responsibility Functions with Explicit Arguments
 
 ## Dependencies (DEP)
-- DEP-01 (SHOULD): Leverage lib/all.sh
-- DEP-02 (SHOULD): Use validate_dependencies
-- DEP-03 (SHOULD): Document Required Commands
-- DEP-04 (SHOULD): Command Existence Check
+- DEP-01 (SHOULD): Document Required Commands
+- DEP-02 (SHOULD): Command Existence Check
 
 ## Documentation (DOC)
-- DOC-01 (SHOULD): Standard Header Format
+- DOC-01 (MUST): Standard Header Format
 - DOC-02 (SHOULD): show_usage Required
 - DOC-03 (SHOULD): Function Separators and Comments
 - DOC-04 (SHOULD): Complex Logic Comments
@@ -38,26 +36,21 @@
 - FUNC-02 (SHOULD): Standardize parse_arguments
 - FUNC-03 (SHOULD): Implement show_usage
 - FUNC-04 (SHOULD): Return Value Design
-- FUNC-05 (SHOULD): Leverage Common Library
-- FUNC-06 (SHOULD): validate_dependencies Function
-- FUNC-07 (SHOULD): Implement main Function
+- FUNC-05 (SHOULD): Implement main Function
 
 ## Global / Base (G)
-- G-01 (SHOULD): Set SCRIPT_DIR and Source lib/all.sh
+- G-01 (MUST): Set SCRIPT_DIR
 - G-02 (SHOULD): No Hardcoded Secrets
-- G-03 (SHOULD): Follow Function Order
+- G-03 (MUST): Follow Function Order
 - G-04 (SHOULD): Remove Dead Code
-- G-05 (SHOULD): Use error_exit for Error Handling
-- G-06 (SHOULD): Script Idempotency
+- G-05 (SHOULD): Script Idempotency
 
 ## Logging (LOG)
-- LOG-01 (SHOULD): Leverage log_message/echo_section
-- LOG-02 (SHOULD): Separate stdout/stderr
-- LOG-03 (SHOULD): Implement Log Levels
-- LOG-04 (SHOULD): Structured Logging
-- LOG-05 (SHOULD): Mask Sensitive Information
-- LOG-06 (SHOULD): Section Separators with echo_section
-- LOG-07 (SHOULD): Implement verbose
+- LOG-01 (SHOULD): Separate stdout/stderr
+- LOG-02 (SHOULD): Implement Log Levels
+- LOG-03 (SHOULD): Structured Logging
+- LOG-04 (SHOULD): Mask Sensitive Information
+- LOG-05 (SHOULD): Implement verbose
 
 ## Performance (PERF)
 - PERF-01 (SHOULD): Minimize External Commands

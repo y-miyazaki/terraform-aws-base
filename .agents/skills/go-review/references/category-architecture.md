@@ -6,17 +6,17 @@ Check: Are handler/usecase/repository separated and business/infrastructure laye
 Why: Mixed business logic and infrastructure layers make testing difficult, technology stack changes difficult
 Fix: Apply Clean Architecture, separate handler/usecase/repository
 
-**ARCH-02 (SHOULD): Dependency Injection**
+**ARCH-02 (MUST): Dependency Injection**
 
-Check: Are constructor injection, wire/dig utilization, and interface dependencies present?
+Check: Are dependencies passed via constructor arguments as interfaces rather than accessed as global variables?
 Why: Global variable dependencies and hardcoded dependencies prevent mocking, parallel testing
-Fix: Constructor injection, leverage wire/dig, depend on interfaces
+Fix: Accept dependencies as interface arguments in constructors; use wire/dig only when constructor graphs become complex
 
-**ARCH-03 (SHOULD): Domain-Driven Design**
+**ARCH-03 (SHOULD): Domain Logic Isolation**
 
-Check: Are aggregate roots defined, Value Objects utilized, and Repositories abstracted?
-Why: Anemic domain models and scattered business logic make consistency guarantees difficult
-Fix: Define aggregate roots, utilize Value Objects, abstract Repositories
+Check: Is business logic free from infrastructure concerns (DB, HTTP, external APIs)?
+Why: Scattered business logic mixed with infrastructure makes testing difficult and technology changes expensive
+Fix: Keep domain logic in pure Go types and functions; access infrastructure through interfaces defined in the domain layer
 
 **ARCH-04 (SHOULD): SOLID Principles**
 

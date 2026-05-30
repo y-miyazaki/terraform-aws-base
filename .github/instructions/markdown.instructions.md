@@ -49,7 +49,7 @@ description: "AI Assistant Instructions for Markdown Documentation"
 
 ### Code Modification Guidelines
 
-- After changes, prioritize the validation workflow from [markdown-validation Skill](../../apm_modules/y-miyazaki/config/.apm/packages/common/.apm/skills/markdown-validation/SKILL.md).
+- After changes, prioritize the validation workflow from markdown-validation skill.
 - Use individual checks for broken links and table formatting only during debugging.
 
 ## Testing and Validation
@@ -67,7 +67,7 @@ markdownlint-cli2 "docs/**"
 markdown-link-check README.md
 ```
 
-**Detailed guide**: See [markdown-validation Skill](../../apm_modules/y-miyazaki/config/.apm/packages/common/.apm/skills/markdown-validation/SKILL.md).
+**Detailed guide**: See markdown-validation skill SKILL.md.
 
 ## Security Guidelines
 

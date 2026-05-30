@@ -3,23 +3,17 @@
 **STATE-01 (SHOULD): Remote Backend with Encryption (SSE) + DynamoDB Lock**
 
 Check: Is backend configured with encryption and locking?
-Why: Insufficient state protection, no encryption, and missing lock mechanism cause conflicts, corruption, and information leak risk
+Why: Unprotected state risks data leakage and concurrent modification corruption
 Fix: Enable S3 encryption + DynamoDB lock, set versioning
 
 **STATE-02 (SHOULD): No Credentials in Backend Configuration**
 
 Check: Are there no hardcoded credentials in backend blocks?
-Why: Credentials in backend config and hardcoded access keys cause leak risk, security breach, and Git history contamination
-Fix: Use environment variables, IAM roles, profiles
+Why: Credentials in backend config leak via Git history and violate security policies
+Fix: Use environment variables, IAM roles, or profiles
 
 **STATE-03 (SHOULD): No Workspace (Unless Documented)**
 
-Check: Are workspaces not used or is policy documented?
-Why: Inappropriate workspace usage and ambiguous environment separation cause environment confusion and misdeployment
-Fix: Recommend directory-based environment separation, document workspace usage policy
-
-**STATE-04 (SHOULD): terraform state Manual Operations Documented**
-
-Check: Are state modifications documented?
-Why: Manual operations as black box and no records cause operational risk, non-reproducible operations, and troubleshooting difficulties
-Fix: Record operation procedures/reasons, manage change history
+Check: Are workspaces not used, or is workspace usage policy documented in comments?
+Why: Inappropriate workspace usage causes environment confusion and misdeployment
+Fix: Prefer directory-based environment separation; if workspaces are used, document the rationale
