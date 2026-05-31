@@ -2,11 +2,10 @@
 
 ## General (G)
 - G-01 (MUST): Front Matter
-- G-02 (MUST): Language Policy
-- G-03 (MUST): Title
+- G-02 (MUST): Title
 
 ## Structure (STRUCT)
-- STRUCT-01 (MUST): Four Required Chapters Exist
+- STRUCT-01 (MUST): Five Required Chapters Exist
 - STRUCT-02 (MUST): Chapter Order Unified
 - STRUCT-03 (MUST): Heading Levels Appropriate
 - STRUCT-04 (MUST): Standards Chapter Subsections
@@ -54,7 +53,6 @@
 
 ## Testing and Validation Chapter (TEST)
 - TEST-01 (MUST): Validation Commands
-- TEST-02 (MUST): Command Count
-- TEST-03 (MUST): Code Block
-- TEST-04 (SHOULD): Validation Items
-- TEST-05 (SHOULD): Real Commands
+- TEST-02 (MUST): Code Block Format
+- TEST-03 (SHOULD): Validation Items
+- TEST-04 (SHOULD): Real Commands

@@ -101,3 +101,26 @@ Examples:
 - ✅ Workflow still deterministic with numbered steps or explicit IF/THEN branches
 - ✅ At least one concrete example remains
 - ❌ Token-only edit removed trigger clarity or deleted examples
+
+---
+
+**Q-10 (SHOULD): Error Handling Completeness**
+
+Check: Does the Workflow define what happens when things go wrong — with explicit severity (recoverable/fatal/blocking) and action for each failure mode?
+Why: Skills without error handling cause agents to silently fail or hallucinate recovery paths. Explicit error tables make behavior predictable and debuggable.
+Examples:
+- ✅ Error handling table with columns: Condition | Severity | Action
+- ✅ At least fatal (stop) and recoverable (fallback + continue) cases defined
+- ❌ Only "read troubleshooting.md on failure" with no inline guidance
+- ❌ No mention of what happens when inputs are invalid or dependencies are missing
+
+---
+
+**Q-11 (SHOULD): Input Parameter Consistency**
+
+Check: Are parameters marked "required" truly required (no default fallback), and parameters with defaults marked as optional?
+Why: Contradictions between "required" and "use X when unsure" confuse agents and create inconsistent behavior. Parameters with sensible defaults should be optional.
+Examples:
+- ✅ "profile: `default`, `go`, or `terraform` (defaults to `default`; affects X only)"
+- ✅ "target_file: path (required for `other` and `general` types)" — conditionally required is explicit
+- ❌ "profile: required" but also "use default when unsure" — contradicts required semantics

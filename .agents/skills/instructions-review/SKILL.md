@@ -18,7 +18,22 @@ metadata:
 
 Return structured Markdown in accordance with [references/common-output-format.md](references/common-output-format.md).
 
-Return structured review output with `## Checks Summary`, `## Checks (Failed/Deferred Only)`, and `## Issues` using fixed ItemIDs.
+Minimal inline contract (fallback only — use `common-output-format.md` when available):
+
+```markdown
+## Checks Summary
+- Total: <n>, Passed: <n>, Failed: <n>, Deferred: <n>
+
+## Checks (Failed/Deferred Only)
+| ItemID | Status | Evidence | Fix |
+
+## Issues
+1. <ItemID>: <title>
+   - File: <path>#L<line>
+   - Problem: <specific>
+   - Recommendation: <fix>
+```
+
 Always include target file list and deferred reason summary.
 
 ## Execution Scope
@@ -39,23 +54,50 @@ Always include target file list and deferred reason summary.
 
 - create new instruction files from scratch
 - run syntax/security validation tooling
-- review general markdown docs outside `.instructions.md`
+- review general markdown docs outside `**/instructions/*.instructions.md` (e.g., README.md, docs/*.md — use markdown-validation or docs-creation instead)
 
 ## Reference Files Guide
 
 - [common-checklist.md](references/common-checklist.md) (always read)
 - [common-output-format.md](references/common-output-format.md) (always read)
 - [common-troubleshooting.md](references/common-troubleshooting.md) - Read when checks fail unexpectedly.
-- [global](references/category-global.md), [testing](references/category-testing.md), [security](references/category-security.md) - Read when reviewing overall quality, testing instructions, or security guidelines.
-- [quality](references/category-quality.md), [guidelines](references/category-guidelines.md), [standards](references/category-standards.md) - Read when reviewing quality criteria, authoring guidelines, or compliance standards.
+- [category-global.md](references/category-global.md), [category-testing.md](references/category-testing.md), [category-security.md](references/category-security.md) - Read when reviewing overall quality, testing instructions, or security guidelines.
+- [category-quality.md](references/category-quality.md), [category-guidelines.md](references/category-guidelines.md), [category-standards.md](references/category-standards.md) - Read when reviewing quality criteria, authoring guidelines, or compliance standards.
+- When uncertain which categories apply, default to: category-global, category-quality, category-standards.
 
 ## Workflow
 
 1. Read PR context and identify target instruction files.
 2. Confirm pre-existing deterministic check artifacts (`waza check` and relevant validation logs) are available; if missing, request rerun once.
-3. If target file does not exist, return `status: failed` for that file and continue remaining targets.
+3. If target file does not exist, return `status: failed` for that file and continue remaining targets. Process all target files independently — one failure does not stop the review of others.
 4. If deterministic artifacts remain unavailable after one rerun request, defer check-dependent items with explicit reason.
 5. If PR context is unavailable, run file-only review and mark PR-context checks as deferred.
-6. Verify required chapter order (Standards → Guidelines → Testing and Validation → Security Guidelines), then review checklist priorities and collect failed/deferred ItemIDs.
+6. Verify required chapter order (Scope → Standards → Guidelines → Testing and Validation → Security Guidelines), then review checklist priorities and collect failed/deferred ItemIDs.
 7. Output required report sections per [references/common-output-format.md](references/common-output-format.md).
+
+### Severity and Status Rules
+
+| Status | When to use |
+|---|---|
+| Failed | Check evaluated and issue confirmed with concrete evidence (file + line or missing element) |
+| Deferred | Check cannot be evaluated — validation artifacts missing, category file unavailable, or PR context absent |
+| Passed | Check evaluated and no issue found (counted in summary only) |
+
+Key evaluation criteria (inline summary of common-checklist):
+- **Structure**: 5 H2 chapters in correct order (Scope → Standards → Guidelines → Testing and Validation → Security Guidelines)
+- **Guidelines format**: H3 headings with category IDs, rule bullets with `(LEVEL)`, `Check:` child bullets
+- **Code Modification Guidelines**: must exist in every file
+- **No empty sections**: every H3 must have content
+
+### Error Handling
+
+| Condition | Severity | Action |
+|---|---|---|
+| `common-checklist.md` unavailable | Fatal | Stop, report missing dependency |
+| `common-output-format.md` unavailable | Recoverable | Use inline output contract |
+| Category reference file missing | Recoverable | Defer checks from that category, note missing file in report |
+| All category files missing | Fatal | Stop, report "no evaluation criteria available" |
+| Target `.instructions.md` does not exist | Recoverable | Report `status: failed` for that file, continue remaining targets |
+| All target files missing | Fatal | Stop, report "no reviewable instruction files found" |
+| Validation artifacts missing after one rerun request | Recoverable | Defer artifact-dependent checks with explicit reason |
 

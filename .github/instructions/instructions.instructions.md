@@ -27,8 +27,7 @@ description: "AI Assistant Instructions for Writing Instruction Files"
 ### Structure
 
 - **G-01 (MUST)**: Include `applyTo` and `description` in Front Matter - missing fields prevent automatic application.
-- **G-02 (MUST)**: Use English consistently in body text, code examples, table headers, Front Matter, and Rule IDs - mixed language rules reduce consistency.
-- **G-03 (MUST)**: Use H1 title format `# AI Assistant Instructions for <target>` - this preserves discoverability and consistency.
+- **G-02 (MUST)**: Use H1 title format `# AI Assistant Instructions for <target>` - this preserves discoverability and consistency.
 - **STRUCT-01 (MUST)**: Keep the five-chapter structure (Scope -> Standards -> Guidelines -> Testing and Validation -> Security Guidelines) - missing chapters create information gaps.
 - **STRUCT-02 (MUST)**: Keep chapter order strict - inconsistent ordering makes file-to-file comparison harder.
 - **STRUCT-03 (MUST)**: Use H2 for chapters and H3 for subsections; minimize H4 and deeper levels - deep hierarchies degrade AI structural recognition.
@@ -42,16 +41,14 @@ description: "AI Assistant Instructions for Writing Instruction Files"
 ### General (G)
 - G-01 (MUST): Front Matter
   - Check: Front Matter contains applyTo and description fields
-- G-02 (MUST): Language Policy
-  - Check: Language policy is documented
-- G-03 (MUST): Title
+- G-02 (MUST): Title
   - Check: Title clearly indicates purpose
 
 ### Structure (STRUCT)
-- STRUCT-01 (MUST): Four Required Chapters Exist
-  - Check: Standards, Guidelines, Testing and Validation, and Security Guidelines chapters exist
+- STRUCT-01 (MUST): Five Required Chapters Exist
+  - Check: Scope, Standards, Guidelines, Testing and Validation, and Security Guidelines chapters exist
 - STRUCT-02 (MUST): Chapter Order Unified
-  - Check: Chapters follow Standards → Guidelines → Testing → Security order
+  - Check: Chapters follow Scope → Standards → Guidelines → Testing and Validation → Security Guidelines order
 - STRUCT-03 (MUST): Heading Levels Appropriate
   - Check: Heading hierarchy properly uses H2 (chapters) → H3 (subsections)
 - STRUCT-04 (MUST): Standards Chapter Subsections
@@ -130,13 +127,11 @@ description: "AI Assistant Instructions for Writing Instruction Files"
 ### Testing and Validation Chapter (TEST)
 - TEST-01 (MUST): Validation Commands
   - Check: Executable validation commands are documented
-- TEST-02 (MUST): Command Count
-  - Check: At least 3 validation commands are documented
-- TEST-03 (MUST): Code Block
+- TEST-02 (MUST): Code Block Format
   - Check: Examples are in \`\`\`bash code block format
-- TEST-04 (SHOULD): Validation Items
+- TEST-03 (SHOULD): Validation Items
   - Check: Validation items list is comprehensive
-- TEST-05 (SHOULD): Real Commands
+- TEST-04 (SHOULD): Real Commands
   - Check: Examples are concrete and actually executable
 
 ### Code Modification Guidelines

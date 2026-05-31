@@ -17,7 +17,21 @@ metadata:
 
 Return structured Markdown in accordance with [references/common-output-format.md](references/common-output-format.md).
 
-Return review output with `## Checks Summary`, `## Checks (Failed/Deferred Only)`, and `## Issues`.
+Minimal inline contract (used if reference file is unavailable):
+
+```markdown
+## Checks Summary
+- Total: <n>, Passed: <n>, Failed: <n>, Deferred: <n>
+
+## Checks (Failed/Deferred Only)
+| ItemID | Status | Evidence | Fix |
+
+## Issues
+1. <ItemID>: <title>
+   - File: <path>#L<line>
+   - Problem: <specific>
+   - Recommendation: <fix>
+```
 
 ## Execution Scope
 
@@ -52,7 +66,7 @@ Return review output with `## Checks Summary`, `## Checks (Failed/Deferred Only)
 ## Workflow
 
 1. Read PR context and workflow intent; extract events, `permissions`, secret usage, and external action references.
-2. Confirm `github-actions-validation` results are attached; if missing, request rerun and defer all validator-dependent checks.
+2. Confirm `github-actions-validation` results are attached. If missing, inform user that validation should run first, then proceed with partial review: evaluate security and permissions checks directly from YAML, defer syntax/lint-dependent checks (mark as `Deferred` with reason "validation evidence unavailable").
 3. Review relevant checklist categories and collect failed/deferred items.
 4. Order issues in output by severity: `SEC-*` first, then correctness, then maintainability.
 5. Output report with the required sections per [references/common-output-format.md](references/common-output-format.md). Include file path, line reference, and remediation step for each issue.
@@ -61,4 +75,13 @@ Return review output with `## Checks Summary`, `## Checks (Failed/Deferred Only)
 
 - Prompt: `Review workflow PR and report failed/deferred checks.`
 - Output: `## Checks Summary` + `## Checks (Failed/Deferred Only)` + `## Issues`, with each issue including file path, line, and remediation.
+
+### Error Handling
+
+| Condition | Severity | Action |
+|---|---|---|
+| `github-actions-validation` output missing | Recoverable | Defer lint-dependent checks, review security/permissions directly |
+| `common-checklist.md` unavailable | Fatal | Stop, report missing dependency |
+| `common-output-format.md` unavailable | Recoverable | Use inline output contract |
+| PR contains no workflow YAML files | Recoverable | Report "no reviewable workflows" and stop |
 

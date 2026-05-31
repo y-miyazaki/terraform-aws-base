@@ -13,8 +13,14 @@ description: "AI Assistant Instructions for Terraform"
 
 ### Naming Conventions
 
-- All components (resource, variable, output, local, module): snake_case
-- File names: snake_case (for example, `main_vpc.tf`, `variables.tf`)
+| Component | Rule       | Example        |
+| --------- | ---------- | -------------- |
+| Resource  | snake_case | aws_s3_bucket  |
+| Variable  | snake_case | vpc_cidr_block |
+| Output    | snake_case | instance_id    |
+| Local     | snake_case | common_tags    |
+| Module    | snake_case | vpc_module     |
+| File name | snake_case | main_vpc.tf    |
 
 ### Versioning
 

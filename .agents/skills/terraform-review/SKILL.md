@@ -17,13 +17,29 @@ metadata:
 
 Return structured Markdown in accordance with [references/common-output-format.md](references/common-output-format.md).
 
-Return review output with `## Checks Summary`, `## Checks (Failed/Deferred Only)`, and `## Issues`.
+Minimal inline contract (used if reference file is unavailable):
+
+```markdown
+## Checks Summary
+- Total: <n>, Passed: <n>, Failed: <n>, Deferred: <n>
+
+## Checks (Failed/Deferred Only)
+| ItemID | Status | Evidence | Fix |
+
+## Issues
+1. <ItemID>: <title>
+   - File: <path>#L<line>
+   - Problem: <specific>
+   - Recommendation: <fix>
+```
+
 Each issue must include file path, risk summary, and remediation guidance.
 
 ## Execution Scope
 
 - Apply review checklist from [references/common-checklist.md](references/common-checklist.md)
-- **Do not run terraform-validation or execute terraform fmt/validate/tflint/trivy**
+- **Do not execute validation tools** (`terraform fmt`, `terraform validate`, `tflint`, `trivy`, or `terraform-validation` skill scripts)
+- This skill consumes pre-existing validation output logs as input — it does not produce them
 - Do not modify Terraform files or approve/merge PRs
 - Scope includes Terraform only; Terragrunt files are out of scope.
 - Scope assumes a single repository context.
@@ -31,31 +47,32 @@ Each issue must include file path, risk summary, and remediation guidance.
 
 ### USE FOR:
 
-- review Terraform PRs using `terraform-validation` logs, or defer validator-dependent checks if logs are missing
-- assess security, module design, and architecture trade-offs in Terraform changes
-- evaluate cross-module risks across Terraform environments
+- reviewing Terraform PRs for security, architecture, and module design issues
+- assessing cross-module risks and environment-specific concerns in Terraform changes
+- evaluating Terraform changes when validation output logs are available or partially available
 
 ### DO NOT USE FOR:
 
-- run deterministic validators (`terraform fmt/validate`, `tflint`, `trivy`)
-- implement new Terraform resources as code changes
-- execute any CLI validation workflow as a substitute for this review skill
+- executing validation tools (`terraform fmt/validate`, `tflint`, `trivy`) — use `terraform-validation` skill
+- implementing new Terraform resources as code changes
+- running any CLI validation workflow
 
 ## Reference Files Guide
 
 - [common-checklist.md](references/common-checklist.md) (always read)
 - [common-output-format.md](references/common-output-format.md) (always read)
-- [global](references/category-global.md), [security](references/category-security.md), [modules](references/category-modules.md), [state](references/category-state.md) - Read when reviewing resource structure, security, modules, or state management.
-- [ci](references/category-ci-lint.md), [compliance](references/category-compliance.md), [cost](references/category-cost.md), [data](references/category-data-sources.md) - Read when reviewing CI integration, compliance, cost concerns, or data sources.
-- [dependency](references/category-dependency.md), [events](references/category-events.md), [migration](references/category-migration.md), [naming](references/category-naming.md) - Read when reviewing dependencies, events, migration, or naming conventions.
-- [outputs](references/category-outputs.md), [patterns](references/category-patterns.md), [perf](references/category-performance.md), [tagging](references/category-tagging.md) - Read when reviewing outputs, design patterns, performance, or tagging.
-- [tfvars](references/category-tfvars.md), [variables](references/category-variables.md), [versioning](references/category-versioning.md) - Read when reviewing variable definitions, tfvars, or version constraints.
+- [category-global.md](references/category-global.md), [category-security.md](references/category-security.md), [category-modules.md](references/category-modules.md), [category-state.md](references/category-state.md) - Read when reviewing resource structure, security, modules, or state management.
+- [category-ci-lint.md](references/category-ci-lint.md), [category-compliance.md](references/category-compliance.md), [category-cost.md](references/category-cost.md), [category-data-sources.md](references/category-data-sources.md) - Read when reviewing CI integration, compliance, cost concerns, or data sources.
+- [category-dependency.md](references/category-dependency.md), [category-events.md](references/category-events.md), [category-migration.md](references/category-migration.md), [category-naming.md](references/category-naming.md) - Read when reviewing dependencies, events, migration, or naming conventions.
+- [category-outputs.md](references/category-outputs.md), [category-patterns.md](references/category-patterns.md), [category-performance.md](references/category-performance.md), [category-tagging.md](references/category-tagging.md) - Read when reviewing outputs, design patterns, performance, or tagging.
+- [category-tfvars.md](references/category-tfvars.md), [category-variables.md](references/category-variables.md), [category-versioning.md](references/category-versioning.md) - Read when reviewing variable definitions, tfvars, or version constraints.
+- When uncertain which categories apply, default to: category-security, category-global, category-modules, category-state.
 - [common-troubleshooting.md](references/common-troubleshooting.md) - Read on failure or when evidence is unavailable
 
 ## Workflow
 
 1. Read PR context and module scope.
-2. Confirm `terraform-validation` results (stdout/stderr logs from `<agent-root>/skills/terraform-validation/scripts/validate.sh`); if missing, request rerun by posting: `Please run terraform-validation and share output logs.`, then defer validator-dependent checks.
+2. Check if `terraform-validation` output logs exist (pre-generated by the `terraform-validation` skill or CI). If logs are missing, inform user: "Validation logs are needed for a complete review. Please run the terraform-validation skill and share output." Then proceed with partial review: evaluate security and architecture checks directly from `.tf` source, defer tool-dependent checks.
 3. If PR context is unavailable, review file diffs only and defer PR-context-dependent checks.
 4. If changed files contain no `.tf` or `.tfvars`, return `status: skipped` with reason `no Terraform review target`.
 5. If validation output is partial, keep available findings and defer missing-tool checks with explicit tool name.

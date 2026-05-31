@@ -25,3 +25,15 @@ Examples:
 - ❌ Output Specification and common-output-format.md define conflicting formats
 - ❌ common-output-format.md only contains vague prose
 - ❌ P-02 omits [common-output-format.md](./common-output-format.md) because it appears in Reference Files Guide
+
+---
+
+**P-03 (SHOULD): Context Gathering Before Output**
+
+Check: For skills that generate or modify content (docs, code, configs), does the Workflow include an explicit step to read relevant source material before writing?
+Why: Skills that write without reading produce generic, low-value output. Explicit context-gathering steps with per-type guidance ensure output is grounded in project-specific facts.
+Examples:
+- ✅ "Step 4: Gather context — read X for type A, read Y for type B" with concrete file types listed
+- ✅ Sufficiency threshold defined (e.g., "proceed when at least N sections can be populated with facts")
+- ❌ Workflow jumps from input resolution directly to template application with no reading step
+- ❌ "Read relevant files" without specifying which files for which input types

@@ -33,7 +33,8 @@ This document lists frequent issues found during instructions file reviews and t
 **Fix**: Add relevant validation commands (minimum 3 items)
 
 **How to Check**:
-1. Verify at least 3 validation commands documented
+1. Verify validation commands are documented
+2. Verify commands are in ```bash code block format
 2. Include tool version and purpose for each
 
 Related checklist IDs: TEST-01, TEST-02
