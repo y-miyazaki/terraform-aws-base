@@ -119,6 +119,7 @@ repos:
         args:
           - --args=--config=__GIT_WORKING_DIR__/.tflint.hcl
           - --args=--no-color
+          - --args=--fix
       - id: terraform_trivy
         args:
           - --args=--config=__GIT_WORKING_DIR__/trivy.yaml
