@@ -629,36 +629,8 @@ url = "https://github.com/goreleaser/goreleaser/releases/download/v2.15.4/gorele
 provenance = "github-attestations"
 
 [[tools."aqua:grpc/grpc-go/protoc-gen-go-grpc"]]
-version = "1.6.1"
+version = "1.81.1"
 backend = "aqua:grpc/grpc-go/protoc-gen-go-grpc"
-
-[tools."aqua:grpc/grpc-go/protoc-gen-go-grpc"."platforms.linux-arm64"]
-checksum = "sha256:71f64c5448fe57425002e77a3b85a317dc1ffb276c094ca19f9be3cf3dba066d"
-url = "https://github.com/grpc/grpc-go/releases/download/cmd/protoc-gen-go-grpc/v1.6.1/protoc-gen-go-grpc.v1.6.1.linux.arm64.tar.gz"
-
-[tools."aqua:grpc/grpc-go/protoc-gen-go-grpc"."platforms.linux-arm64-musl"]
-checksum = "sha256:71f64c5448fe57425002e77a3b85a317dc1ffb276c094ca19f9be3cf3dba066d"
-url = "https://github.com/grpc/grpc-go/releases/download/cmd/protoc-gen-go-grpc/v1.6.1/protoc-gen-go-grpc.v1.6.1.linux.arm64.tar.gz"
-
-[tools."aqua:grpc/grpc-go/protoc-gen-go-grpc"."platforms.linux-x64"]
-checksum = "sha256:d422c203a0f4f050d647c58a11b8854535956b6c9aa655dd8a50b976a2b552f9"
-url = "https://github.com/grpc/grpc-go/releases/download/cmd/protoc-gen-go-grpc/v1.6.1/protoc-gen-go-grpc.v1.6.1.linux.amd64.tar.gz"
-
-[tools."aqua:grpc/grpc-go/protoc-gen-go-grpc"."platforms.linux-x64-musl"]
-checksum = "sha256:d422c203a0f4f050d647c58a11b8854535956b6c9aa655dd8a50b976a2b552f9"
-url = "https://github.com/grpc/grpc-go/releases/download/cmd/protoc-gen-go-grpc/v1.6.1/protoc-gen-go-grpc.v1.6.1.linux.amd64.tar.gz"
-
-[tools."aqua:grpc/grpc-go/protoc-gen-go-grpc"."platforms.macos-arm64"]
-checksum = "sha256:55d96d01811710865b0531de287d60699b89c54d81c6127f07bf492a3ad08809"
-url = "https://github.com/grpc/grpc-go/releases/download/cmd/protoc-gen-go-grpc/v1.6.1/protoc-gen-go-grpc.v1.6.1.darwin.arm64.tar.gz"
-
-[tools."aqua:grpc/grpc-go/protoc-gen-go-grpc"."platforms.macos-x64"]
-checksum = "sha256:a3e45283e7cf0006078996bc870d0388cd22ac88b84811ea67ff8e793adf8b7c"
-url = "https://github.com/grpc/grpc-go/releases/download/cmd/protoc-gen-go-grpc/v1.6.1/protoc-gen-go-grpc.v1.6.1.darwin.amd64.tar.gz"
-
-[tools."aqua:grpc/grpc-go/protoc-gen-go-grpc"."platforms.windows-x64"]
-checksum = "sha256:250bffb33af3a64cf628cda08b554e287067a0c776cd7b039865dcf8a598df32"
-url = "https://github.com/grpc/grpc-go/releases/download/cmd/protoc-gen-go-grpc/v1.6.1/protoc-gen-go-grpc.v1.6.1.windows.amd64.tar.gz"
 
 [[tools."aqua:hashicorp/terraform"]]
 version = "1.15.4"
