@@ -180,11 +180,11 @@ aws logs filter-log-events \
 1. Verify Lambda execution in CloudWatch Logs.
 2. Check Slack app token validity.
 3. Confirm the Slack channel still exists and the app is a member.
-4. See [troubleshooting.md](./troubleshooting.md) for detailed resolution steps.
+4. See [troubleshooting.md](../how-to/troubleshooting.md) for detailed resolution steps.
 
 ## Cross-References
 
 - [specification.md](./specification.md) — Module contracts for metric modules
 - [module-catalog.md](./module-catalog.md) — Full list of monitoring modules
-- [architecture.md](./architecture.md) — Overall system structure
-- [troubleshooting.md](./troubleshooting.md) — Common issues and resolutions
+- [architecture.md](../explanation/architecture.md) — Overall system structure
+- [troubleshooting.md](../how-to/troubleshooting.md) — Common issues and resolutions

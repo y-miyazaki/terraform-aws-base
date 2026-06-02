@@ -1,7 +1,7 @@
 <!-- omit in toc -->
 # Management Audit Environment Terraform Configuration Guide
 
-This guide covers the Terraform configuration for the **Management Audit** environment. The example configuration file is [terraform.example.tfvars for audit](terraform/management/audit/terraform.example.tfvars).
+This guide covers the Terraform configuration for the **Management Audit** environment. The example configuration file is [terraform.example.tfvars for audit](../../terraform/management/audit/terraform.example.tfvars).
 
 This environment focuses on security monitoring including Security Hub, GuardDuty, Macie, and CloudTrail audit logging.
 
@@ -30,7 +30,7 @@ This environment focuses on security monitoring including Security Hub, GuardDut
 
 ## Initial Setting
 
-This section describes the initial settings for running [management audit Terraform](./terraform/management/audit/). If an item has already been addressed, please skip to the next section.
+This section describes the initial settings for running [management audit Terraform](../../terraform/management/audit/). If an item has already been addressed, please skip to the next section.
 
 **Remove the access key from the root account**
 
@@ -80,7 +80,7 @@ region: ap-northeast-1
 
 **terraform.{environment}.tfvars file to configure for each environment**
 
-You need to rename the linked file [terraform.example.tfvars for audit](terraform/management/audit/terraform.example.tfvars) and change each variable for your environment.
+You need to rename the linked file [terraform.example.tfvars for audit](../../terraform/management/audit/terraform.example.tfvars) and change each variable for your environment.
 
 The variables that need to be changed are marked with TODO comments; search for them in TODO.
 
@@ -599,8 +599,8 @@ securityhub_organization = {
 
 ## Related Documents
 
-- [README-management-root-tfvars.md](./README-management-root-tfvars.md) - Root environment configuration documentation
-- [README-base-tfvars.md](./README-base-tfvars.md) - Base configuration documentation
-- [README-monitor-tfvars.md](./README-monitor-tfvars.md) - Monitor configuration documentation
-- [README.md](./README.md) - Main project documentation
+- [Management root tfvars configuration guide](./configure-management-root-tfvars.md) - Root environment configuration documentation
+- [Base tfvars configuration guide](./configure-base-tfvars.md) - Base configuration documentation
+- [Monitor tfvars configuration guide](./configure-monitor-tfvars.md) - Monitor configuration documentation
+- [Repository overview](../../README.md) - Main project documentation
 - [AWS Chatbot Documentation](https://docs.aws.amazon.com/chatbot/latest/adminguide/slack-setup.html) - Slack setup for AWS Chatbot

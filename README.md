@@ -12,17 +12,17 @@ Basically, it is designed to be turned on and off for each setting and function 
 
 - base  
   [terraform/base/terraform.example.tfvars](./terraform/base/terraform.example.tfvars)  
-  Document: [README-base-tfvars.md](./README-base-tfvars.md)
+  Document: [README-base-tfvars.md](./docs/how-to/configure-base-tfvars.md)
 
 - management  
   [terraform/management/audit/terraform.example.tfvars](./terraform/management/audit/terraform.example.tfvars)  
-  Document: [README-management-audit-tfvars.md](./README-management-audit-tfvars.md)  
+  Document: [README-management-audit-tfvars.md](./docs/how-to/configure-management-audit-tfvars.md)  
   [terraform/management/root/terraform.example.tfvars](./terraform/management/root/terraform.example.tfvars)  
-  Document: [README-management-root-tfvars.md](./README-management-root-tfvars.md)
+  Document: [README-management-root-tfvars.md](./docs/how-to/configure-management-root-tfvars.md)
 
 - monitor  
   [terraform/monitor/terraform.example.tfvars](./terraform/monitor/terraform.example.tfvars)  
-  Document: [README-monitor-tfvars.md](./README-monitor-tfvars.md)
+  Document: [README-monitor-tfvars.md](./docs/how-to/configure-monitor-tfvars.md)
 
 <!-- omit in toc -->
 ## Table of Contents
@@ -167,7 +167,7 @@ Key features:
 - User mapping fallback for Slack-to-Identity Center resolution
 - Optional Slack Workflow Builder integration
 
-For detailed specification, see [docs/jit-access-specification.md](./docs/jit-access-specification.md).
+For detailed specification, see [JIT Access Specification](./docs/reference/jit-access-specification.md).
 
 ### Security
 
@@ -245,9 +245,9 @@ You should be aware that the score will not be accurate until you re-evaluate it
 
 ![SecurityHub Score](image/security_hub_security_score.png)
 
-For a detailed mapping of CIS AWS Foundations Benchmark controls to the modules in this repository, see [CIS Benchmark Compliance Matrix](./docs/cis-benchmark.md).
+For a detailed mapping of CIS AWS Foundations Benchmark controls to the modules in this repository, see [CIS Benchmark Compliance Matrix](./docs/reference/cis-benchmark.md).
 
-For AWS security service coverage including services not yet implemented and their reasons, see [Security Coverage](./docs/security-coverage.md).
+For AWS security service coverage including services not yet implemented and their reasons, see [Security Coverage](./docs/reference/security-coverage.md).
 
 #### Security:SSM Automation
 

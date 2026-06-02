@@ -69,7 +69,7 @@ This section describes how to use a VS Code devcontainer to create a reproducibl
 
 ### Setting
 
-Since there is a devcontainer setting in [env/example](env/example), modify this file and build the local environment.
+Since there is a devcontainer setting in [env/example](../../env/example), modify this file and build the local environment.
 
 ### Create Local Development Environment
 

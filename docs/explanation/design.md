@@ -199,5 +199,5 @@ provider "aws" {
 ## Cross-References
 
 - [architecture.md](./architecture.md) — Account structure and Terraform directory layout
-- [module-catalog.md](./module-catalog.md) — Index of all reusable modules with purpose and inputs
+- [module-catalog.md](../reference/module-catalog.md) — Index of all reusable modules with purpose and inputs
 - [design-decisions.md](./design-decisions.md) — Specific decisions: KMS key policy, external data sources, Access Analyzer patterns

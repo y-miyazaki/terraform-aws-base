@@ -5,7 +5,7 @@ repos:
     rev: v6.0.0
     hooks:
       - id: trailing-whitespace
-        exclude: README.*.md
+        exclude: .*.md
       - id: end-of-file-fixer
         exclude: '(^\.devcontainer/devcontainer-lock\.json$)'
       - id: check-yaml

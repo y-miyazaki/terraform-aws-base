@@ -6,9 +6,10 @@ globs:
 
 # Ignore patterns
 ignores:
-  - ".github/CODEOWNERS"
   - "*.yaml"
   - "*.yml"
+  - "**/.copilot/**"
+  - "**/.github/CODEOWNERS"
   - "**/.terraform/**"
   - "**/apm_modules/**"
   - "**/bower_components/**"
@@ -20,7 +21,6 @@ ignores:
   - "**/secrets/**"
   - "**/tmp/**"
   - "**/vendor/**"
-
 # Rule configuration
 config:
   # Disable all problematic rules for technical documentation

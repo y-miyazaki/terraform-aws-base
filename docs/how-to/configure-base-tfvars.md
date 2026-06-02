@@ -1,7 +1,7 @@
 <!-- omit in toc -->
 # Base Terraform Configuration Guide
 
-The example is [terraform.example.tfvars](terraform/base/terraform.example.tfvars). The following is a list of things that must be modified and things that should be modified when doing terraform apply for the first time.
+The example is [terraform.example.tfvars](../../terraform/base/terraform.example.tfvars). The following is a list of things that must be modified and things that should be modified when doing terraform apply for the first time.
 If you need to adjust the parameters, you can do so by yourself by searching TODO.
 
 <!-- omit in toc -->
@@ -39,7 +39,7 @@ If you need to adjust the parameters, you can do so by yourself by searching TOD
 
 ## Initial setting
 
-This section describes the initial settings for running [Base's Terraform](./terraform/base/). If an item has already been addressed, please skip to the next section.
+This section describes the initial settings for running [Base's Terraform](../../terraform/base/). If an item has already been addressed, please skip to the next section.
 
 - **Remove the access key from the root account**
 
@@ -99,7 +99,7 @@ region: ap-northeast-1
 
 - **terraform.{environment}.tfvars file to configure for each environment**
 
-  You need to rename the linked file [terraform.example.tfvars](terraform/base/terraform.example.tfvars) and change each variable for your environment. The variables that need to be changed are marked with TODO comments; search for them in TODO.
+  You need to rename the linked file [terraform.example.tfvars](../../terraform/base/terraform.example.tfvars) and change each variable for your environment. The variables that need to be changed are marked with TODO comments; search for them in TODO.
 
 - **Running Terraform**
 
@@ -1581,10 +1581,10 @@ budgets = {
 
 ## Related Documents
 
-- [README-monitor-tfvars.md](./README-monitor-tfvars.md) - Monitor configuration documentation
-- [README-management-root-tfvars.md](./README-management-root-tfvars.md) - Management root environment configuration
-- [README-management-audit-tfvars.md](./README-management-audit-tfvars.md) - Management audit environment configuration
-- [README.md](./README.md) - Main project documentation
+- [Monitor tfvars configuration guide](./configure-monitor-tfvars.md) - Monitor configuration documentation
+- [Management root tfvars configuration guide](./configure-management-root-tfvars.md) - Management root environment configuration
+- [Management audit tfvars configuration guide](./configure-management-audit-tfvars.md) - Management audit environment configuration
+- [Repository overview](../../README.md) - Main project documentation
 - [AWS Control Tower User Guide](https://docs.aws.amazon.com/controltower/latest/userguide/)
 - [Terraform AWS Provider Documentation](https://registry.terraform.io/providers/hashicorp/aws/latest/docs)
 - [AWS Security Best Practices](https://aws.amazon.com/architecture/security-identity-compliance/)

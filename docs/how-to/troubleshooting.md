@@ -70,7 +70,7 @@ aws accessanalyzer list-analyzers --type ORGANIZATION --region <region>
 
 **Cause**: CloudTrail KMS key uses `Principal: {"AWS": "*"}` with condition constraints. Access Analyzer flags this as public access.
 
-**Resolution**: This is expected behavior. Archive the finding. See [design-decisions.md](./design-decisions.md) for the KMS key policy rationale.
+**Resolution**: This is expected behavior. Archive the finding. See [design-decisions.md](../explanation/design-decisions.md) for the KMS key policy rationale.
 
 **Prevention**: Document expected findings in team runbooks and archive them systematically.
 
@@ -154,6 +154,6 @@ tflint --recursive
 
 ## Cross-References
 
-- [specification.md](./specification.md) — Validation and safety checks
-- [architecture.md](./architecture.md) — Directory layout and multi-region pattern
-- [design-decisions.md](./design-decisions.md) — Rationale for expected Access Analyzer findings
+- [specification.md](../reference/specification.md) — Validation and safety checks
+- [architecture.md](../explanation/architecture.md) — Directory layout and multi-region pattern
+- [design-decisions.md](../explanation/design-decisions.md) — Rationale for expected Access Analyzer findings
