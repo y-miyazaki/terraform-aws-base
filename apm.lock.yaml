@@ -1,19 +1,19 @@
 lockfile_version: '1'
-generated_at: '2026-06-02T03:50:41.274678+00:00'
-apm_version: 0.14.2
+generated_at: '2026-06-02T05:46:25.578022+00:00'
+apm_version: 0.14.0
 dependencies:
 - repo_url: y-miyazaki/config
   host: github.com
-  resolved_commit: fa6999b0c97b944d50b09cb4bfc7aa19589fe892
-  resolved_ref: v1.1.23
+  resolved_commit: b04c30428b9382bf5d453226aafe6c78dfe028b4
+  resolved_ref: v1.1.24
   virtual_path: .apm/packages/aws
   is_virtual: true
   package_type: apm_package
   content_hash: sha256:e79bc9c3b1d62b34e939720f4f6a93d362dc79f1f2398de6a52107d723e82e03
 - repo_url: y-miyazaki/config
   host: github.com
-  resolved_commit: fa6999b0c97b944d50b09cb4bfc7aa19589fe892
-  resolved_ref: v1.1.23
+  resolved_commit: b04c30428b9382bf5d453226aafe6c78dfe028b4
+  resolved_ref: v1.1.24
   virtual_path: .apm/packages/common
   is_virtual: true
   package_type: apm_package
@@ -29,6 +29,7 @@ dependencies:
   - .github/hooks/common-github-actions-ghalint.json
   - .github/hooks/common-github-actions-zizmor.json
   - .github/hooks/common-lean-ctx.json
+  - .github/hooks/common-markdown-link-check.json
   - .github/hooks/common-markdownlint-cli2.json
   - .github/instructions/agent-skills.instructions.md
   - .github/instructions/github-actions-workflow.instructions.md
@@ -39,16 +40,17 @@ dependencies:
     .github/hooks/common-github-actions-ghalint.json: sha256:cc6a2c06a24b436bad009e73b2d06f4a96747c29987a59f581b6d92d9068e63c
     .github/hooks/common-github-actions-zizmor.json: sha256:4ad79520c68b1e585651f9d5ac0d9abe33c57b2df33626f66bff5c575ffdea2a
     .github/hooks/common-lean-ctx.json: sha256:30f187840c795acc257b22328f7bd3cd0ab78eb086a8c6e04f9792c18d4b2a7e
+    .github/hooks/common-markdown-link-check.json: sha256:179e35c6e023e908837e49366e7078c0bd340b741d3d2b59b2bac1b8af8934d8
     .github/hooks/common-markdownlint-cli2.json: sha256:5a8f69cbf2e60aad7475b5855729f344ded69ba70010405f3c8e4e5f5061e3ec
     .github/instructions/agent-skills.instructions.md: sha256:c4d6fbf162ea92229232615e967c5e5d004bd8f442354b7c85ee6ecd45cfb557
     .github/instructions/github-actions-workflow.instructions.md: sha256:5585dd66938fcded0dcb7e860a87db7cad43a1817b08388a023ce7c912674621
-    .github/instructions/instructions.instructions.md: sha256:6e29597165f539e30974603b04416db334f92df8e2a3f05247f1bc7871dc9b21
-    .github/instructions/markdown.instructions.md: sha256:350ed7ecc1a368256e2ecc0a143a61db72e18f5e7261d655e04fcad822f9f782
-  content_hash: sha256:10d2aea7ebb860d630d21c83b7a3897577a8c2e0f005df05ce933fb93492c1a3
+    .github/instructions/instructions.instructions.md: sha256:d700d5d3f3af6caaebd92f99e02c1d066c3dad9bc9d031c4e25c3c5d2bebd850
+    .github/instructions/markdown.instructions.md: sha256:84d9e10189f1aff629779e96101f92bdda63c6a90d1a1ad4875a6e1281b22d6d
+  content_hash: sha256:2d0a052a7c8f85810b1b4ceee8112cbc12aefa8fd7700d7eee5e0d03bd0b659a
 - repo_url: y-miyazaki/config
   host: github.com
-  resolved_commit: fa6999b0c97b944d50b09cb4bfc7aa19589fe892
-  resolved_ref: v1.1.23
+  resolved_commit: b04c30428b9382bf5d453226aafe6c78dfe028b4
+  resolved_ref: v1.1.24
   virtual_path: .apm/packages/go
   is_virtual: true
   package_type: apm_package
@@ -63,8 +65,8 @@ dependencies:
   content_hash: sha256:201d709b425587283dbc61cd42c9619de2a00129788f5530891a5fcec358f2ee
 - repo_url: y-miyazaki/config
   host: github.com
-  resolved_commit: fa6999b0c97b944d50b09cb4bfc7aa19589fe892
-  resolved_ref: v1.1.23
+  resolved_commit: b04c30428b9382bf5d453226aafe6c78dfe028b4
+  resolved_ref: v1.1.24
   virtual_path: .apm/packages/shell-script
   is_virtual: true
   package_type: apm_package
@@ -81,8 +83,8 @@ dependencies:
   content_hash: sha256:00bdbbae5a4c44bfc2ead5c32d43197283dbf402ee14acd12deb00f0987ac426
 - repo_url: y-miyazaki/config
   host: github.com
-  resolved_commit: fa6999b0c97b944d50b09cb4bfc7aa19589fe892
-  resolved_ref: v1.1.23
+  resolved_commit: b04c30428b9382bf5d453226aafe6c78dfe028b4
+  resolved_ref: v1.1.24
   virtual_path: .apm/packages/terraform
   is_virtual: true
   package_type: apm_package
@@ -101,8 +103,8 @@ dependencies:
   content_hash: sha256:f82b7b6558a248f21f131f7f76a035c3f74bfabac6fc5e894f709c9c468a6aed
 - repo_url: y-miyazaki/config
   host: github.com
-  resolved_commit: fa6999b0c97b944d50b09cb4bfc7aa19589fe892
-  resolved_ref: v1.1.23
+  resolved_commit: b04c30428b9382bf5d453226aafe6c78dfe028b4
+  resolved_ref: v1.1.24
   virtual_path: .apm/packages/terraform-aws
   is_virtual: true
   package_type: apm_package

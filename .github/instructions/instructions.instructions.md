@@ -13,9 +13,9 @@ description: "AI Assistant Instructions for Writing Instruction Files"
 
 ### Naming Conventions
 
-| Component | Rule                                     | Example                              |
-| --------- | ---------------------------------------- | ------------------------------------ |
-| File      | `<target>.instructions.md`               | `go.instructions.md`                 |
+| Component | Rule                                       | Example                              |
+| --------- | ------------------------------------------ | ------------------------------------ |
+| File      | `<target>.instructions.md`                 | `go.instructions.md`                 |
 | Title     | `# AI Assistant Instructions for <target>` | `# AI Assistant Instructions for Go` |
 
 ### Standards Content
@@ -39,12 +39,14 @@ description: "AI Assistant Instructions for Writing Instruction Files"
 ## Guidelines
 
 ### General (G)
+
 - G-01 (MUST): Front Matter
   - Check: Front Matter contains applyTo and description fields
 - G-02 (MUST): Title
   - Check: Title clearly indicates purpose
 
 ### Structure (STRUCT)
+
 - STRUCT-01 (MUST): Five Required Chapters Exist
   - Check: Scope, Standards, Guidelines, Testing and Validation, and Security Guidelines chapters exist
 - STRUCT-02 (MUST): Chapter Order Unified
@@ -59,6 +61,7 @@ description: "AI Assistant Instructions for Writing Instruction Files"
   - Check: Do H3 headings use `### Name（LEVEL）` format for rule sections, and `### Name` for process/declaration sections?
 
 ### Guidelines Chapter (GUIDE)
+
 - GUIDE-01 (SHOULD): Documentation and Comments
   - Check: Comment and documentation conventions are documented
 - GUIDE-02 (SHOULD): Code Modification Guidelines
@@ -79,6 +82,7 @@ description: "AI Assistant Instructions for Writing Instruction Files"
   - Check: Are there no ID-less bullet rules in the Guidelines chapter?
 
 ### Content Quality (QUAL)
+
 - QUAL-01 (SHOULD): Conciseness
   - Check: Content is concise without redundant expressions
 - QUAL-02 (SHOULD): Practical Examples
@@ -89,6 +93,7 @@ description: "AI Assistant Instructions for Writing Instruction Files"
   - Check: Large code examples are avoided for high token efficiency
 
 ### Consistency (CONS)
+
 - CONS-01 (SHOULD): Chapter Order
   - Check: Chapter order is consistent across all instructions files
 - CONS-02 (SHOULD): Section Names
@@ -99,6 +104,7 @@ description: "AI Assistant Instructions for Writing Instruction Files"
   - Check: Table and list formats are consistent with other instructions files
 
 ### Completeness (COMP)
+
 - COMP-01 (SHOULD): All Required Sections
   - Check: All required sections exist
 - COMP-02 (SHOULD): No Missing Commands
@@ -107,6 +113,7 @@ description: "AI Assistant Instructions for Writing Instruction Files"
   - Check: Examples are concrete and comprehensive
 
 ### Security Guidelines Chapter (SEC)
+
 - SEC-01 (MUST): Security Items
   - Check: Security items are documented
 - SEC-02 (MUST): Secrets Management
@@ -117,6 +124,7 @@ description: "AI Assistant Instructions for Writing Instruction Files"
   - Check: YAML/code examples are included (where applicable)
 
 ### Standards Chapter (STD)
+
 - STD-01 (MUST): Naming Conventions
   - Check: Naming conventions are documented per component
 - STD-02 (SHOULD): Tool Standards
@@ -125,6 +133,7 @@ description: "AI Assistant Instructions for Writing Instruction Files"
   - Check: Documentation level matches other instructions files
 
 ### Testing and Validation Chapter (TEST)
+
 - TEST-01 (MUST): Validation Commands
   - Check: Executable validation commands are documented
 - TEST-02 (MUST): Code Block Format
@@ -140,10 +149,9 @@ description: "AI Assistant Instructions for Writing Instruction Files"
 - When instruction files are updated, always run an instruction quality re-evaluation.
 - Use individual commands only for debugging.
 
-
 ## Testing and Validation
 
-- This chapter should contain only execution procedures (entry point, individual runs, reference links), while review criteria (TEST-*) are consolidated in Guidelines.
+- This chapter should contain only execution procedures (entry point, individual runs, reference links), while review criteria (TEST-\*) are consolidated in Guidelines.
 
 **Entry point (recommended)**:
 
@@ -162,6 +170,6 @@ textlint .apm/instructions/
 
 ## Security Guidelines
 
-- This chapter should contain only operational security practices, while security review criteria (SEC-*) are consolidated in Guidelines.
+- This chapter should contain only operational security practices, while security review criteria (SEC-\*) are consolidated in Guidelines.
 - Do not include real secrets (tokens, keys, credentials) in instruction files.
 - Do not make destructive operations the default in command examples; add explicit warnings when needed.

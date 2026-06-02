@@ -57,7 +57,7 @@ bash <agent-root>/skills/markdown-validation/scripts/validate.sh
 
 ```bash
 markdownlint-cli2 "docs/**"
-markdown-link-check README.md
+markdown-link-check --quiet README.md
 ```
 
 **Detailed guide**: See markdown-validation skill SKILL.md.
