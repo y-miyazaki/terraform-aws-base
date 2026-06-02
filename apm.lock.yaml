@@ -1,5 +1,5 @@
 lockfile_version: '1'
-generated_at: '2026-06-02T05:46:25.578022+00:00'
+generated_at: '2026-06-02T05:47:25.048239+00:00'
 apm_version: 0.14.0
 dependencies:
 - repo_url: y-miyazaki/config

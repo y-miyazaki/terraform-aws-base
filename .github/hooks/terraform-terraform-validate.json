@@ -1,0 +1,12 @@
+{
+  "hooks": {
+    "postToolUse": [
+      {
+        "type": "command",
+        "bash": "bash -lc 'command -v terraform >/dev/null 2>&1 || exit 0; root=$(git rev-parse --show-toplevel 2>/dev/null) || exit 0; cd \"$root\" || exit 0; mapfile -t files < <({ git diff --name-only --diff-filter=ACMR -- \"*.tf\" \"*.tfvars\" \"*.hcl\"; git diff --cached --name-only --diff-filter=ACMR -- \"*.tf\" \"*.tfvars\" \"*.hcl\"; git ls-files --others --exclude-standard -- \"*.tf\" \"*.tfvars\" \"*.hcl\"; } | awk \"NF\" | sort -u); [[ ${#files[@]} -eq 0 ]] && exit 0; declare -A seen; dirs=(); for f in \"${files[@]}\"; do d=$(dirname \"$f\"); [[ -n \"${seen[$d]}\" ]] && continue; seen[$d]=1; dirs+=(\"$d\"); done; for dir in \"${dirs[@]}\"; do [[ -d \"$dir\" ]] || continue; terraform -chdir=\"$dir\" validate -no-color; done'",
+        "timeoutSec": 120
+      }
+    ]
+  },
+  "version": 1
+}

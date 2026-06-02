@@ -1,25 +1,17 @@
 # root
-.copilot/**
 .DS_Store
 .devcontainer/devcontainer.json
-.serena
-.vscode
+.vscode/**
 !.vscode/cspell.json
-# !.vscode/cspell-project.txt
+!.vscode/cspell-project.txt
+!.vscode/mcp.json
 !.vscode/settings-example.json
 tmp
 
-# AI agents
-.agents
-.amazonq
-.claude
-.cursor
-.github/agents
-.github/instructions
-.github/hooks
-.github/prompts
-.github/skills
+# AI
+.copilot
 .kiro
+.serena
 apm_modules/
 
 # env
@@ -39,20 +31,20 @@ modules/**/.terraform.lock.hcl
 # tfvars files
 *.tfvars
 !terraform.example.tfvars
-# !terraform.dev.tfvars
-# !terraform.qa.tfvars
-# !terraform.stg.tfvars
-# !terraform.prd.tfvars
-# !terraform.root.tfvars
-# !terraform.audit.tfvars
+!terraform.dev.tfvars
+!terraform.qa.tfvars
+!terraform.stg.tfvars
+!terraform.prd.tfvars
+!terraform.root.tfvars
+!terraform.audit.tfvars
 *.tfbackend
 !terraform.example.tfbackend
-# !terraform.dev.tfbackend
-# !terraform.qa.tfbackend
-# !terraform.stg.tfbackend
-# !terraform.prd.tfbackend
-# !terraform.root.tfbackend
-# !terraform.audit.tfbackend
+!terraform.dev.tfbackend
+!terraform.qa.tfbackend
+!terraform.stg.tfbackend
+!terraform.prd.tfbackend
+!terraform.root.tfbackend
+!terraform.audit.tfbackend
 
 # go
 bin
@@ -68,7 +60,6 @@ coverage.html
 node_modules
 outputs
 !lambda/outputs
-!nodejs/*/nodejs/node_modules
 
 # python
 __pycache__

@@ -1,0 +1,12 @@
+{
+  "hooks": {
+    "postToolUse": [
+      {
+        "type": "command",
+        "bash": "bash -lc 'command -v terraform >/dev/null 2>&1 || exit 0; root=$(git rev-parse --show-toplevel 2>/dev/null) || exit 0; cd \"$root\" || exit 0; terraform fmt -recursive'",
+        "timeoutSec": 120
+      }
+    ]
+  },
+  "version": 1
+}
