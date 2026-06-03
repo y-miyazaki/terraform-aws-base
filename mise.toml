@@ -101,7 +101,7 @@ aqua = "v2.59.1"
 "npm:markdown-link-check" = { version = "3.14.2", depends = [
   "node",
 ], install_env = { NPM_CONFIG_IGNORE_SCRIPTS = "true" } } # Markdown link checker
-"npm:cspell" = { version = "10.0.0", depends = [
+"npm:cspell" = { version = "10.0.1", depends = [
   "node",
 ], install_env = { NPM_CONFIG_IGNORE_SCRIPTS = "true" } } # spell checker
 
