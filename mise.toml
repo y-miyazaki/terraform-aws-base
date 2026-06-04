@@ -71,7 +71,7 @@ aqua = "v2.59.1"
 
 # Go related tools
 "aqua:air-verse/air" = "1.65.3"                              # live reload
-"aqua:bufbuild/buf" = "1.69.0"                               # protobuf linter and formatter
+"aqua:bufbuild/buf" = "1.70.0"                               # protobuf linter and formatter
 "aqua:go-delve/delve" = "1.26.3"                             # debugger
 "aqua:go-swagger/go-swagger" = "0.33.2"                      # API documentation generator
 "aqua:golangci/golangci-lint" = "2.12.2"                     # linter
