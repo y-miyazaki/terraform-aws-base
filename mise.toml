@@ -60,7 +60,7 @@ aqua = "v2.59.1"
 "aqua:Songmu/ecschedule" = "0.19.0" # ECS scheduled tasks deployment tool
 
 # GitHub related tools
-"aqua:cli/cli" = "2.92.0"                                             # GitHub CLI
+"aqua:cli/cli" = "2.93.0"                                             # GitHub CLI
 "aqua:github/copilot-cli" = "1.0.54"                                  # GitHub Copilot CLI
 "aqua:rhysd/actionlint" = "1.7.12"                                    # GitHub Actions linter
 "aqua:suzuki-shunsuke/disable-checkout-persist-credentials" = "1.0.0" # disable persist-credentials in checkout action
