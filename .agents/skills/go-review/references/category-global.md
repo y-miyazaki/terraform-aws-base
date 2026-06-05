@@ -24,31 +24,19 @@ Check: Are Debug/Info/Warn/Error levels appropriate and structured logging used?
 Why: Mixed log levels and unstructured logs make troubleshooting difficult, monitoring inadequate
 Fix: Use structured logging libraries (zap/zerolog), unify levels, mask sensitive information
 
-**G-05 (MUST): Declaration Order (File Level)**
-
-Check: Is order const→var→type (interface→struct)→func (public APIs and helpers grouped consistently)?
-Why: Inconsistent declaration order reduces readability, increases review oversight risk
-Fix: Maintain const→var→type→func order at file level
-
-**G-06 (MUST): Declaration Order (Within Groups)**
-
-Check: Is each group sorted alphabetically (A→Z) for readability and diff stability?
-Why: Inconsistent local ordering makes review and change tracking harder, and arbitrary placement increases merge conflicts
-Fix: Sort declarations alphabetically within each const/var/type/func group
-
-**G-07 (SHOULD): Restrict init() Complexity**
+**G-05 (SHOULD): Restrict init() Complexity**
 
 Check: Does init() avoid panics, external I/O, and non-trivial side effects? Is it minimal and deterministic?
 Why: Complex init() hides initialization failures, causes unpredictable startup order across packages, and makes unit testing difficult
 Fix: Limit init() to simple variable assignments; move complex initialization to explicit constructors or main()
 
-**G-08 (MUST): Zero Value Design**
+**G-06 (MUST): Zero Value Design**
 
 Check: Are types designed so their zero value is a valid and useful state where possible?
 Why: Types with unusable zero values require mandatory initialization guards and cause subtle nil-dereference bugs when forgotten
 Fix: Design structs so the zero value represents a valid empty state (e.g., sync.Mutex zero value is an unlocked mutex); document when zero value is not valid
 
-**G-09 (SHOULD): Defensive Copy at Boundaries**
+**G-07 (SHOULD): Defensive Copy at Boundaries**
 
 Check: Are slices and maps copied when accepting from or returning to external callers?
 Why: Shared references to slices/maps allow external callers to mutate internal state, violating encapsulation and causing hard-to-reproduce data corruption

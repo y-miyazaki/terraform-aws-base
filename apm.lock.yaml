@@ -1,19 +1,19 @@
 lockfile_version: '1'
-generated_at: '2026-06-02T05:36:24.314403+00:00'
+generated_at: '2026-06-05T07:10:48.927614+00:00'
 apm_version: 0.14.0
 dependencies:
 - repo_url: y-miyazaki/config
   host: github.com
-  resolved_commit: b04c30428b9382bf5d453226aafe6c78dfe028b4
-  resolved_ref: v1.1.24
+  resolved_commit: 5e0f7c3db470a24f81623e403ae066591e1eb3a5
+  resolved_ref: v1.1.26
   virtual_path: .apm/packages/aws
   is_virtual: true
   package_type: apm_package
   content_hash: sha256:e79bc9c3b1d62b34e939720f4f6a93d362dc79f1f2398de6a52107d723e82e03
 - repo_url: y-miyazaki/config
   host: github.com
-  resolved_commit: b04c30428b9382bf5d453226aafe6c78dfe028b4
-  resolved_ref: v1.1.24
+  resolved_commit: 5e0f7c3db470a24f81623e403ae066591e1eb3a5
+  resolved_ref: v1.1.26
   virtual_path: .apm/packages/common
   is_virtual: true
   package_type: apm_package
@@ -49,8 +49,8 @@ dependencies:
   content_hash: sha256:2d0a052a7c8f85810b1b4ceee8112cbc12aefa8fd7700d7eee5e0d03bd0b659a
 - repo_url: y-miyazaki/config
   host: github.com
-  resolved_commit: b04c30428b9382bf5d453226aafe6c78dfe028b4
-  resolved_ref: v1.1.24
+  resolved_commit: 5e0f7c3db470a24f81623e403ae066591e1eb3a5
+  resolved_ref: v1.1.26
   virtual_path: .apm/packages/go
   is_virtual: true
   package_type: apm_package
@@ -61,12 +61,12 @@ dependencies:
   - .github/instructions/go.instructions.md
   deployed_file_hashes:
     .github/hooks/go-golangci-lint.json: sha256:5023d21f574b5478520b3308b50d9207c813e42f9a0e38cbcc906db9c0955462
-    .github/instructions/go.instructions.md: sha256:d941102daef01ede943c3837318d1d6b23340a2008252468e4e123450f038de6
-  content_hash: sha256:201d709b425587283dbc61cd42c9619de2a00129788f5530891a5fcec358f2ee
+    .github/instructions/go.instructions.md: sha256:e51bd95a7fb1cef5c32ab54a48cd354452d5c7da0acc7a622ea332ce01c137a2
+  content_hash: sha256:3739bdd1256291d6b3e72da92ece68ffb3be1295c5f1db4b1bae3da5a08d0c52
 - repo_url: y-miyazaki/config
   host: github.com
-  resolved_commit: b04c30428b9382bf5d453226aafe6c78dfe028b4
-  resolved_ref: v1.1.24
+  resolved_commit: 5e0f7c3db470a24f81623e403ae066591e1eb3a5
+  resolved_ref: v1.1.26
   virtual_path: .apm/packages/shell-script
   is_virtual: true
   package_type: apm_package
@@ -83,8 +83,8 @@ dependencies:
   content_hash: sha256:00bdbbae5a4c44bfc2ead5c32d43197283dbf402ee14acd12deb00f0987ac426
 - repo_url: y-miyazaki/config
   host: github.com
-  resolved_commit: b04c30428b9382bf5d453226aafe6c78dfe028b4
-  resolved_ref: v1.1.24
+  resolved_commit: 5e0f7c3db470a24f81623e403ae066591e1eb3a5
+  resolved_ref: v1.1.26
   virtual_path: .apm/packages/terraform
   is_virtual: true
   package_type: apm_package
@@ -92,19 +92,17 @@ dependencies:
   - .agents/skills/terraform-review
   - .agents/skills/terraform-validation
   - .github/hooks/terraform-terraform-fmt.json
-  - .github/hooks/terraform-terraform-validate.json
   - .github/hooks/terraform-tflint.json
   - .github/instructions/terraform.instructions.md
   deployed_file_hashes:
     .github/hooks/terraform-terraform-fmt.json: sha256:6096cf4c332a752f7908649b9814242863caef762a0dd3e21d8f86aa5739fad6
-    .github/hooks/terraform-terraform-validate.json: sha256:6c93283a881b1811bd1e7c3d1e7cf7f3c6fe754b6d8d370c953646c0ef3de9c7
     .github/hooks/terraform-tflint.json: sha256:707a1c14f47bcfd9ee7fbb44ba3cd9ad6e3717b8baac2dd5390c0721529e1675
     .github/instructions/terraform.instructions.md: sha256:997a103c30ce17920fc400373cc25dd1c1908cb4ef727d6493966087163448e4
-  content_hash: sha256:f82b7b6558a248f21f131f7f76a035c3f74bfabac6fc5e894f709c9c468a6aed
+  content_hash: sha256:17773d952a5aac8c769a4bb62276a89e03efb3dbe505641674e1cffb02d3248b
 - repo_url: y-miyazaki/config
   host: github.com
-  resolved_commit: b04c30428b9382bf5d453226aafe6c78dfe028b4
-  resolved_ref: v1.1.24
+  resolved_commit: 5e0f7c3db470a24f81623e403ae066591e1eb3a5
+  resolved_ref: v1.1.26
   virtual_path: .apm/packages/terraform-aws
   is_virtual: true
   package_type: apm_package

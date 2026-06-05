@@ -51,6 +51,9 @@
       ]
     }
   },
+  "mounts": [
+    "source=devcontainer-home-vscode-local,target=/home/vscode/.local,type=volume"
+  ],
   "runArgs": [
     "--add-host=host.docker.internal:host-gateway",
     "-v",

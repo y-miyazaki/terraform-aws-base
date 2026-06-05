@@ -86,11 +86,9 @@
 - G-02 (SHOULD): Appropriate Function Signatures
 - G-03 (SHOULD): Leverage Standard Library
 - G-04 (SHOULD): Appropriate Log Levels
-- G-05 (MUST): Declaration Order (File Level)
-- G-06 (MUST): Declaration Order (Within Groups)
-- G-07 (SHOULD): Restrict init() Complexity
-- G-08 (MUST): Zero Value Design
-- G-09 (SHOULD): Defensive Copy at Boundaries
+- G-05 (SHOULD): Restrict init() Complexity
+- G-06 (MUST): Zero Value Design
+- G-07 (SHOULD): Defensive Copy at Boundaries
 
 ## Performance (PERF)
 - PERF-01 (SHOULD): Memory Optimization

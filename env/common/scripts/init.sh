@@ -26,43 +26,75 @@ if command -v git > /dev/null 2>&1; then
     fi
 fi
 
+if [ -z "${repo_root}" ]; then
+    repo_root="${WORKSPACE}"
+fi
+
+#######################################
 # Adjust ownership (only if paths exist)
+#######################################
 if [ -e "$HOME/.aws" ]; then sudo chown -R "$uid":"$gid" "$HOME/.aws" || true; fi
 if [ -e "$HOME/.gitconfig" ]; then sudo chown -R "$uid":"$gid" "$HOME/.gitconfig" || true; fi
 if [ -e "$HOME/.local" ]; then sudo chown -R "$uid":"$gid" "$HOME/.local" || true; fi
 if [ -e "$HOME/.ssh" ]; then sudo chown -R "$uid":"$gid" "$HOME/.ssh" || true; fi
 chmod 600 "$HOME/.ssh"/id_* 2> /dev/null || true
 
-# apm install (optional)
-if command -v apm > /dev/null 2>&1; then
-    apm install --frozen || echo "[warn] apm install failed" >&2
-fi
-
-# aqua lazy install (optional)
-if command -v aqua > /dev/null 2>&1; then
-    mkdir -p "$HOME/.local/share/aquaproj-aqua" 2> /dev/null || true
-    aqua i -l || echo "[warn] aqua lazy install failed" >&2
-    aqua policy allow "${WORKSPACE}/aqua-policy.yaml" 2> /dev/null || echo "[warn] aqua policy apply failed" >&2
-fi
-
-# gh extension install (optional)
-if command -v gh > /dev/null 2>&1; then
-    gh extension install github/gh-aw || echo "[warn] gh extension install failed" >&2
-fi
-
+#######################################
 # mise trust (optional)
+#######################################
 if command -v mise > /dev/null 2>&1; then
-    if [ -f "${WORKSPACE}/mise.toml" ]; then
-        mise trust --yes "${WORKSPACE}/mise.toml" > /dev/null 2>&1 || echo "[warn] mise trust failed" >&2
+    if [ -f "${repo_root}/mise.toml" ]; then
+        (
+            cd "$repo_root"
+            mise trust --yes "${repo_root}/mise.toml" > /dev/null 2>&1 || echo "[warn] mise trust failed" >&2
+            mise install || echo "[warn] mise install task failed" >&2
+            mise reshim --yes || echo "[warn] mise reshim failed" >&2
+        )
     fi
-    mise install || echo "[warn] mise install task failed" >&2
-    # mkdir -p "$HOME/.local/share/mise/shims"
-    # mise reshim > /dev/null 2>&1 || echo "[warn] mise reshim failed" >&2
 fi
 
+#######################################
+# apm install (optional)
+#######################################
+if command -v apm > /dev/null 2>&1; then
+    # apm.yml is expected to be in the workspace root; if it doesn't exist, apm install will still work but with no packages
+    if [ -f "${repo_root}/apm.yml" ]; then
+        (
+            cd "$repo_root"
+            apm install --frozen || echo "[warn] apm install failed" >&2
+        )
+    fi
+fi
+
+#######################################
+# aqua lazy install (optional)
+#######################################
+if command -v aqua > /dev/null 2>&1; then
+    # aqua.yaml is expected to be in the workspace root; if it doesn't exist, lazy install will still work but policy application will be skipped
+    if [ -f "${repo_root}/aqua.yaml" ]; then
+        (
+            cd "$repo_root"
+            mkdir -p "$HOME/.local/share/aquaproj-aqua" 2> /dev/null || true
+            aqua i -l || echo "[warn] aqua lazy install failed" >&2
+            aqua policy allow "${repo_root}/aqua-policy.yaml" 2> /dev/null || echo "[warn] aqua policy apply failed" >&2
+        )
+    fi
+fi
+
+#######################################
+# gh extension install (optional)
+#######################################
+if command -v gh > /dev/null 2>&1; then
+    if ! gh extension list 2> /dev/null | grep -q "github/gh-aw"; then
+        gh extension install github/gh-aw || echo "[warn] gh extension install failed" >&2
+    fi
+fi
+
+#######################################
 # pre-commit (optional)
+#######################################
 if command -v pre-commit > /dev/null 2>&1; then
-    if [ -n "${repo_root}" ]; then
+    if [ -f "${repo_root}/.pre-commit-config.yaml" ]; then
         (
             cd "$repo_root"
             pre-commit install
@@ -70,10 +102,24 @@ if command -v pre-commit > /dev/null 2>&1; then
     fi
 fi
 
-# terraform cache & version
+#######################################
+# terraform (optional)
+#######################################
 mkdir -p "$HOME/.terraform.d/plugin-cache"
 
+if command -v tflint > /dev/null 2>&1; then
+    # tflint repository initialization (optional)
+    if [ -f "${repo_root}/.tflint.hcl" ]; then
+        (
+            cd "$repo_root"
+            tflint --init || echo "[warn] tflint init failed" >&2
+        )
+    fi
+fi
+
+#######################################
 # GitHub credential helper (simple)
+#######################################
 if command -v git > /dev/null 2>&1 && [ -n "${repo_root}" ]; then
     origin_url=$(git -C "$repo_root" remote get-url origin 2> /dev/null || true)
     if echo "$origin_url" | grep -Eq '^https://github.com/' && command -v gh > /dev/null 2>&1; then

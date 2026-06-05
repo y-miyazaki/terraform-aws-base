@@ -464,7 +464,7 @@
   },
   "shellcheck.customArgs": ["-x", "-e", "SC1091"],
   "[shellscript]": {
-    "editor.defaultFormatter": "mads-hartmann.bash-ide-vscode",
+    "editor.defaultFormatter": "foxundermoon.shell-format",
     "editor.formatOnSave": true
   },
   "[bats]": {

@@ -30,15 +30,6 @@ description: "AI Assistant Instructions for Go Development"
 - **S-07 (MUST)**: Design types so their zero value is valid and useful where possible.
 - **S-08 (MUST)**: Pass dependencies as interface arguments in constructors — do not rely on package-level variables.
 
-### File Declaration Order
-
-- **G-05 (MUST)**: Enforce declaration order within each file:
-  1. const
-  2. var
-  3. type（interface → struct）
-  4. func（constructor → public methods → private methods → helpers）
-- **G-06 (MUST)**: Sort declarations alphabetically within each group — this ensures stable diffs and predictable navigation.
-
 ### Unexported Helper Placement
 
 | Condition                             | Preferred placement              |
@@ -203,15 +194,11 @@ description: "AI Assistant Instructions for Go Development"
   - Check: Are external dependencies avoided for features implementable with standard library?
 - G-04 (SHOULD): Appropriate Log Levels
   - Check: Are Debug/Info/Warn/Error levels appropriate and structured logging used?
-- G-05 (MUST): Declaration Order (File Level)
-  - Check: Is order const→var→type (interface→struct)→func (public APIs and helpers grouped consistently)?
-- G-06 (MUST): Declaration Order (Within Groups)
-  - Check: Is each group sorted alphabetically (A→Z) for readability and diff stability?
-- G-07 (SHOULD): Restrict init() Complexity
+- G-05 (SHOULD): Restrict init() Complexity
   - Check: Does init() avoid panics, external I/O, and non-trivial side effects? Is it minimal and deterministic?
-- G-08 (MUST): Zero Value Design
+- G-06 (MUST): Zero Value Design
   - Check: Are types designed so their zero value is a valid and useful state where possible?
-- G-09 (SHOULD): Defensive Copy at Boundaries
+- G-07 (SHOULD): Defensive Copy at Boundaries
   - Check: Are slices and maps copied when accepting from or returning to external callers?
 
 ### Performance (PERF)

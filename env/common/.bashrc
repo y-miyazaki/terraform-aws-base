@@ -1,3 +1,4 @@
+# shellcheck shell=bash
 # ~/.bashrc: executed by bash(1) for non-login shells.
 
 # Note: PS1 and umask are already set in /etc/profile. You should not
@@ -21,10 +22,13 @@
 # Codespaces bash prompt theme
 #######################################
 __bash_prompt() {
+    # shellcheck disable=SC2016
     local userpart='`export XIT=$? \
         && [ ! -z "${GITHUB_USER-}" ] && echo -n "\[\033[0;32m\]@${GITHUB_USER-} " || echo -n "\[\033[0;32m\]\u " \
         && [ "$XIT" -ne "0" ] && echo -n "\[\033[1;31m\]➜" || echo -n "\[\033[0m\]➜"`'
+    # shellcheck disable=SC2016
     local aws_profile='`[ ! -z "${AWS_PROFILE-}" ] && echo -n "\[\033[0;31m\]${AWS_PROFILE-} \[\033[0m\]➜" || echo -n "\[\033[0;31m\](no) \[\033[0m\]➜"`'
+    # shellcheck disable=SC2016
     local gitbranch='`\
         if [ "$(git config --get codespaces-theme.hide-status 2>/dev/null)" != 1 ]; then \
             export BRANCH=$(git symbolic-ref --short HEAD 2>/dev/null || git rev-parse --short HEAD 2>/dev/null); \
@@ -107,6 +111,7 @@ alias awsc='eval $(aws configure export-credentials --format env)'
 #######################################
 complete -C 'aws_completer' aws
 if [ -f /etc/bash_completion ]; then
+    # shellcheck source=/dev/null
     . /etc/bash_completion
 fi
 
@@ -135,22 +140,27 @@ export USE_BUILTIN_RIPGREP="true"
 
 # Copilot-specific token (file takes precedence; gives copilot CLI its own identity)
 if [ -f "${COPILOT_BASE}/copilot_github_token" ] && [ "$(stat -c %a "${COPILOT_BASE}/copilot_github_token" 2> /dev/null)" = "600" ]; then
-    export COPILOT_GITHUB_TOKEN="$(cat "${COPILOT_BASE}/copilot_github_token")"
+    COPILOT_GITHUB_TOKEN="$(cat "${COPILOT_BASE}/copilot_github_token")"
+    export COPILOT_GITHUB_TOKEN
 fi
 
 # GH_TOKEN: prefer gh credential store; fall back to file for headless/CI environments
 if command -v gh > /dev/null 2>&1 && gh auth status > /dev/null 2>&1; then
-    export GH_TOKEN="$(gh auth token 2> /dev/null)"
+    GH_TOKEN="$(gh auth token 2> /dev/null)"
+    export GH_TOKEN
 elif [ -f "${COPILOT_BASE}/gh_token" ] && [ "$(stat -c %a "${COPILOT_BASE}/gh_token" 2> /dev/null)" = "600" ]; then
-    export GH_TOKEN="$(cat "${COPILOT_BASE}/gh_token")"
+    GH_TOKEN="$(cat "${COPILOT_BASE}/gh_token")"
+    export GH_TOKEN
 fi
 
 # GITHUB_TOKEN: same strategy — prefer gh, fall back to file only if not already set
 if [ -z "${GITHUB_TOKEN-}" ]; then
     if command -v gh > /dev/null 2>&1 && gh auth status > /dev/null 2>&1; then
-        export GITHUB_TOKEN="$(gh auth token 2> /dev/null)"
+        GITHUB_TOKEN="$(gh auth token 2> /dev/null)"
+        export GITHUB_TOKEN
     elif [ -f "${COPILOT_BASE}/github_token" ] && [ "$(stat -c %a "${COPILOT_BASE}/github_token" 2> /dev/null)" = "600" ]; then
-        export GITHUB_TOKEN="$(cat "${COPILOT_BASE}/github_token")"
+        GITHUB_TOKEN="$(cat "${COPILOT_BASE}/github_token")"
+        export GITHUB_TOKEN
     fi
 fi
 
