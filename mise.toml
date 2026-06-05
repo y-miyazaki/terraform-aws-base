@@ -35,7 +35,7 @@ uvx = true # Install uv/uvx via pipx for better isolation and performance.
 # Runtime tools
 python = "3.14.5"
 node = "24.16.0"
-pnpm = { version = "11.5.0", depends = ["node"] }
+pnpm = { version = "11.5.1", depends = ["node"] }
 aqua = "v2.59.1"
 
 # Utility tools
