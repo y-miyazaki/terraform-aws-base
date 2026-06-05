@@ -1,0 +1,67 @@
+# =============================================================================
+# .copilotignore
+# Base: .gitignore contents (already excluded from git, but explicit for Copilot)
+# Additional: files tracked by git but too large/noisy for Copilot context
+# =============================================================================
+
+# ─── From .gitignore (same exclusions) ───────────────────────────────────────
+
+# root
+.DS_Store
+tmp
+
+# AI
+.copilot
+.kiro
+.serena
+apm_modules/
+
+# env
+.env
+env/common/tmp/**
+
+# terraform
+builds
+**/.terraform/*
+**/.terraform.d/*
+*.tfstate
+*.tfstate.*
+*.tfvars
+*.tfbackend
+
+# go
+bin
+coverage
+dist
+vendor
+output
+.serverless
+cover.out
+coverage.html
+
+# node
+node_modules
+
+# python
+__pycache__
+.Python
+.venv
+
+# ─── Additional: tracked by git but excluded from Copilot context ────────────
+
+# Lock files (large, auto-generated, no reasoning value)
+mise.lock
+apm.lock.yaml
+package-lock.json
+yarn.lock
+go.sum
+.terraform.lock.hcl
+
+# Large auto-generated config (>90KB each)
+.golangci.yaml
+.gitleaks.toml
+
+# Pre-commit configs (repetitive, low context value)
+.pre-commit-config-go.yaml
+.pre-commit-config-terraform.yaml
+.pre-commit-config-sql-mysql.yaml

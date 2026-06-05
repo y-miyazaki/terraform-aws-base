@@ -1,0 +1,71 @@
+# ============================================================
+# Line endings — enforce LF for all text files
+# ============================================================
+* text=auto eol=lf
+
+# ============================================================
+# Explicitly mark text file types
+# ============================================================
+*.go text diff=golang
+*.sh text eol=lf diff=bash
+*.bash text eol=lf diff=bash
+*.tf text eol=lf diff=terraform
+*.hcl text eol=lf diff=terraform
+*.md text eol=lf diff=markdown
+*.yaml text eol=lf
+*.yml text eol=lf
+*.toml text eol=lf
+*.json text eol=lf
+*.sql text eol=lf
+*.py text eol=lf diff=python
+*.js text eol=lf
+*.ts text eol=lf
+*.html text eol=lf diff=html
+*.css text eol=lf
+
+# Shell-related
+Makefile text eol=lf
+Dockerfile text eol=lf
+
+# Config files
+.editorconfig text eol=lf
+.gitattributes text eol=lf
+.gitignore text eol=lf
+.env.* text eol=lf
+
+# ============================================================
+# Binary files — do not diff or merge
+# ============================================================
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.svg binary
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.eot binary
+*.zip binary
+*.tar.gz binary
+*.gz binary
+
+# ============================================================
+# Generated / lock files — reduce diff noise and merge conflicts
+# ============================================================
+.github/workflows/*.lock.yml linguist-generated=true merge=ours
+mise.lock linguist-generated=true merge=ours
+apm.lock.yaml linguist-generated=true merge=ours
+apm.lock.yml linguist-generated=true merge=ours
+package-lock.json linguist-generated=true merge=ours
+yarn.lock linguist-generated=true merge=ours
+.terraform.lock.hcl linguist-generated=true merge=ours
+go.sum linguist-generated=true merge=ours
+
+# ============================================================
+# Linguist overrides — exclude from language stats
+# ============================================================
+apm_modules/** linguist-vendored=true
+test/** linguist-detectable=false
+tmp/** linguist-detectable=false
+output/** linguist-generated=true

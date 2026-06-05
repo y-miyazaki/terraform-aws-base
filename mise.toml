@@ -35,11 +35,11 @@ uvx = true # Install uv/uvx via pipx for better isolation and performance.
 # Runtime tools
 python = "3.14.5"
 node = "24.16.0"
-pnpm = { version = "11.4.0", depends = ["node"] }
+pnpm = { version = "11.5.0", depends = ["node"] }
 aqua = "v2.59.1"
 
 # Utility tools
-"aqua:astral-sh/uv" = "0.11.16"      # uv/uvx
+"aqua:astral-sh/uv" = "0.11.17"      # uv/uvx
 "aqua:BurntSushi/ripgrep" = "15.1.0" # grep alternative
 "aqua:google/go-jsonnet" = "0.22.0"  # Jsonnet command-line tool
 "aqua:tamasfe/taplo" = "0.10.0"      # TOML formatter / LSP
@@ -54,28 +54,28 @@ aqua = "v2.59.1"
 "pipx:aws-mfa" = { version = "0.0.12", depends = ["python"] } # AWS MFA helper
 
 # AWS related tools
-"aqua:aws/aws-cli" = "2.34.55"      # AWS CLI
+"aqua:aws/aws-cli" = "2.34.56"      # AWS CLI
 "aqua:aws/aws-sam-cli" = "1.161.0"  # SAM CLI tool
 "aqua:kayac/ecspresso" = "2.8.4"    # ECS deployment tool
 "aqua:Songmu/ecschedule" = "0.19.0" # ECS scheduled tasks deployment tool
 
 # GitHub related tools
-"aqua:cli/cli" = "2.92.0"                                             # GitHub CLI
-"aqua:github/copilot-cli" = "1.0.54"                                  # GitHub Copilot CLI
+"aqua:cli/cli" = "2.93.0"                                             # GitHub CLI
+"aqua:github/copilot-cli" = "1.0.55"                                  # GitHub Copilot CLI
 "aqua:rhysd/actionlint" = "1.7.12"                                    # GitHub Actions linter
 "aqua:suzuki-shunsuke/disable-checkout-persist-credentials" = "1.0.0" # disable persist-credentials in checkout action
 "aqua:suzuki-shunsuke/ghalint" = "1.5.6"                              # GitHub Actions linter
 "aqua:suzuki-shunsuke/ghatm" = "1.0.0"                                # auto-set timeout-minutes for GitHub Actions jobs
-"aqua:suzuki-shunsuke/pinact" = "3.10.1"                              # GitHub Actions pinning tool
+"aqua:suzuki-shunsuke/pinact" = "4.0.0"                              # GitHub Actions pinning tool
 "aqua:zizmorcore/zizmor" = "1.25.2"                                   # GitHub Actions security auditor
 
 # Go related tools
 "aqua:air-verse/air" = "1.65.3"                              # live reload
-"aqua:bufbuild/buf" = "1.69.0"                               # protobuf linter and formatter
+"aqua:bufbuild/buf" = "1.70.0"                               # protobuf linter and formatter
 "aqua:go-delve/delve" = "1.26.3"                             # debugger
 "aqua:go-swagger/go-swagger" = "0.33.2"                      # API documentation generator
 "aqua:golangci/golangci-lint" = "2.12.2"                     # linter
-"aqua:goreleaser/goreleaser" = "2.15.4"                      # release automation
+"aqua:goreleaser/goreleaser" = "2.16.0"                      # release automation
 "aqua:grpc/grpc-go/protoc-gen-go-grpc" = "1.6.1"             # gRPC code generator
 "aqua:ko-build/ko" = "0.18.1"                                # container builder
 "aqua:mvdan/gofumpt" = "0.10.0"                              # code formatter
@@ -111,9 +111,9 @@ aqua = "v2.59.1"
 ], install_env = { NPM_CONFIG_IGNORE_SCRIPTS = "true" } } # AWS profile switcher
 
 # AI agent tools
-"github:microsoft/apm" = "0.14.2"               # agent package manager
+"github:microsoft/apm" = "v0.16.0"               # agent package manager
 "github:microsoft/waza" = "0.33.0"              # agent skill evaluator
-"github:yvgude/lean-ctx" = "v3.6.21"             # context optimizer
+"github:yvgude/lean-ctx" = "v3.6.23"            # context optimizer
 "github:DeusData/codebase-memory-mcp" = "0.6.1" # codebase memory MCP server
 
 [tasks.mise-install]

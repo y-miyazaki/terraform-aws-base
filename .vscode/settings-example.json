@@ -92,7 +92,10 @@
     "~/.agents/skills": true,
     "~/.claude/skills": true
   },
+  "chat.autopilot.enabled": true,
+  "chat.checkpoints.enabled": true,
   "chat.checkpoints.showFileChanges": true,
+  "chat.contextUsage.enabled": true,
   "chat.mcp.access": "all",
   "chat.mcp.autostart": "newAndOutdated",
   "chat.mcp.discovery.enabled": {
@@ -116,7 +119,15 @@
     "https://github.com/microsoft/vscode/wiki/*": true,
     "https://*.github.io": true
   },
+  // Agent Skills are pre-defined capabilities that can be invoked by agents to perform specific tasks or functions. They are designed to enhance the functionality of agents by allowing them to execute specific actions or access certain information when triggered during a chat session.
   "chat.useAgentSkills": true,
+  "chat.useAgentsMdFile": true,
+  "chat.useNestedAgentsMdFiles": true,
+  // Hooks are custom functions that can be triggered at specific points during a chat session, such as before sending a message or after receiving a response. They allow you to extend the functionality of the chat by executing custom code in response to certain events.
+  "chat.useHooks": true,
+  "chat.hookFilesLocations": {
+    ".github/hooks": true
+  },
   "chat.viewSessions.enabled": true,
   "editor.inlineSuggest.enabled": true,
   "github.copilot.chat.agent.autoFix": true,
@@ -403,9 +414,7 @@
   "terraform.codelens.referenceCount": true,
   "terraform.experimentalFeatures.prefillRequiredFields": true,
   "terraform.experimentalFeatures.validateOnSave": true,
-  "terraform.languageServer.enabled": true,
-  "terraform.languageServer.external": true,
-  "terraform.languageServer.args": ["serve"],
+  "terraform.languageServer.enable": true,
   "terraform.languageServer.ignoreSingleFileWarning": true,
   "terraform.validation.enableEnhancedValidation": true,
   "[terraform]": {
