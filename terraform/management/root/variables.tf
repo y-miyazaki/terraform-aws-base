@@ -180,14 +180,6 @@ variable "common_lambda" {
     }))
   })
 }
-variable "organizations_policy" {
-  type = object({
-    policy = object({
-      Version   = string
-      Statement = list(any)
-    })
-  })
-}
 variable "security_cloudtrail" {
   type = object({
     is_enabled = bool

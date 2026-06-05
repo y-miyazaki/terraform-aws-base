@@ -10,7 +10,7 @@
 
 | Name | Version |
 | ---- | ------- |
-| <a name="provider_aws"></a> [aws](#provider\_aws) | 6.8.0 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | 6.47.0 |
 
 ## Modules
 
@@ -36,7 +36,7 @@ No modules.
 
 | Name | Description | Type | Default | Required |
 | ---- | ----------- | ---- | ------- | :------: |
-| <a name="input_group"></a> [group](#input\_group) | (Optional) Provides an IAM Group. | `any` | `null` | no |
+| <a name="input_group"></a> [group](#input\_group) | (Optional) Provides an IAM Group. | `any` | `{}` | no |
 | <a name="input_is_enabled"></a> [is\_enabled](#input\_is\_enabled) | (Optional) Whether to create IAM resources. Set to false to disable the entire module. | `bool` | `true` | no |
 | <a name="input_name_prefix"></a> [name\_prefix](#input\_name\_prefix) | (Optional) Prefix of policy name . | `string` | `""` | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | (Optional) A mapping of tags to assign to the resource. | `map(any)` | `null` | no |

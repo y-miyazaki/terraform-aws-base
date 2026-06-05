@@ -549,14 +549,14 @@ jit_access = {
     #   account_id           = "123456789012"
     #   approvers            = ["UXXXXXXXXXX", "UXXXXXXXXXX"]
     #   description          = "production administrator access"
-    #   max_duration_minutes = 60
+    #   max_duration_minutes = 240
     #   permission_set_arn   = "arn:aws:sso:::permissionSet/ssoins-xxxxxxxxxxxxxxx/ps-xxxxxxxxxxxxxxx"
     # }
     # Production-Developer = {
     #   account_id           = "123456789012"
     #   approvers            = ["UXXXXXXXXXX", "UXXXXXXXXXX"]
     #   description          = "production developer access"
-    #   max_duration_minutes = 60
+    #   max_duration_minutes = 240
     #   permission_set_arn   = "arn:aws:sso:::permissionSet/ssoins-xxxxxxxxxxxxxxx/ps-xxxxxxxxxxxxxxx"
     # }
   }
