@@ -67,6 +67,7 @@ function get_changed_dirs {
 #
 #######################################
 function main {
+    command -v jq > /dev/null 2>&1 || exit 0
     command -v tflint > /dev/null 2>&1 || exit 0
 
     local root

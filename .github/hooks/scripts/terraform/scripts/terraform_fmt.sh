@@ -40,6 +40,7 @@ export SCRIPT_DIR
 #
 #######################################
 function main {
+    command -v jq > /dev/null 2>&1 || exit 0
     command -v terraform > /dev/null 2>&1 || exit 0
 
     local root

@@ -217,6 +217,7 @@ function report_failure {
 #
 #######################################
 function main {
+    command -v jq > /dev/null 2>&1 || exit 0
     command -v ghalint > /dev/null 2>&1 || exit 0
 
     local root

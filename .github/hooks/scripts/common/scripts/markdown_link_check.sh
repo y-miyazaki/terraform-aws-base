@@ -216,6 +216,7 @@ function report_failure {
 #
 #######################################
 function main {
+    command -v jq > /dev/null 2>&1 || exit 0
     command -v markdown-link-check > /dev/null 2>&1 || exit 0
 
     local root
