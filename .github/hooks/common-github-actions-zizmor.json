@@ -1,9 +1,9 @@
 {
   "hooks": {
-    "postToolUse": [
+    "agentStop": [
       {
         "type": "command",
-        "bash": "bash -lc 'command -v zizmor >/dev/null 2>&1 || exit 0; root=$(git rev-parse --show-toplevel 2>/dev/null) || exit 0; cd \"$root\" || exit 0; mapfile -t files < <({ git diff --name-only --diff-filter=ACMR -- \".github/workflows/*.yml\" \".github/workflows/*.yaml\"; git diff --cached --name-only --diff-filter=ACMR -- \".github/workflows/*.yml\" \".github/workflows/*.yaml\"; git ls-files --others --exclude-standard -- \".github/workflows/*.yml\" \".github/workflows/*.yaml\"; } | awk \"NF\" | sort -u); [[ ${#files[@]} -eq 0 ]] && exit 0; zizmor \"${files[@]}\"'",
+        "bash": ".github/hooks/scripts/common/scripts/zizmor.sh",
         "timeoutSec": 60
       }
     ]

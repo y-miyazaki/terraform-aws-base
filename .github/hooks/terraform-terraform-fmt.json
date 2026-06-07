@@ -3,7 +3,7 @@
     "postToolUse": [
       {
         "type": "command",
-        "bash": "bash -lc 'command -v terraform >/dev/null 2>&1 || exit 0; root=$(git rev-parse --show-toplevel 2>/dev/null) || exit 0; cd \"$root\" || exit 0; terraform fmt -recursive'",
+        "bash": ".github/hooks/scripts/terraform/scripts/terraform_fmt.sh",
         "timeoutSec": 120
       }
     ]

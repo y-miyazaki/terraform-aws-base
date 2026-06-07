@@ -8,7 +8,7 @@ repos:
         args: ["--maxkb=10240"]
       - id: check-case-conflict
       - id: check-json
-        exclude: '(^.*(\.devcontainer/devcontainer\.json|settings\.json|settings-example\.json)$)'
+        exclude: '(^.*(\.devcontainer/devcontainer(-lock)?\.json|settings\.json|settings-example\.json)$)'
       - id: check-merge-conflict
       - id: check-symlinks
       - id: check-toml
@@ -20,10 +20,10 @@ repos:
         args: [--allow-missing-credentials]
       - id: detect-private-key
       - id: end-of-file-fixer
-        exclude: '(^\.devcontainer/devcontainer-lock\.json$)'
+        exclude: '(^.*(\.devcontainer/devcontainer(-lock)?\.json|settings\.json|settings-example\.json)$)'
       - id: pretty-format-json
         args: [--autofix, --no-sort-keys]
-        exclude: '(^.*(\.devcontainer/devcontainer\.json|settings\.json|settings-example\.json)$)'
+        exclude: '(^.*(\.devcontainer/devcontainer(-lock)?\.json|settings\.json|settings-example\.json)$)'
       - id: requirements-txt-fixer
       - id: trailing-whitespace
         args: [--markdown-linebreak-ext=md]
@@ -77,7 +77,7 @@ repos:
   #       types: [yaml]
   #       files: ^\.github/workflows/.*\.(ya?ml)$
   - repo: https://github.com/zizmorcore/zizmor-pre-commit
-    rev: v1.25.2 # https://github.com/zizmorcore/zizmor-pre-commit/releases
+    rev: v1.25.2
     hooks:
       # Run the linter.
       - id: zizmor
@@ -85,7 +85,7 @@ repos:
   # For Markdown
   # --------------------------------------------------------------
   - repo: https://github.com/DavidAnson/markdownlint-cli2
-    rev: v0.22.1 # https://github.com/DavidAnson/markdownlint-cli2/releases
+    rev: v0.22.1
     hooks:
       - id: markdownlint-cli2
         args: ["--fix"]
@@ -99,7 +99,7 @@ repos:
   # For Jsonnet
   # --------------------------------------------------------------
   # - repo: https://github.com/google/go-jsonnet
-  #   rev: v0.22.0 # https://github.com/google/go-jsonnet/releases
+  #   rev: v0.22.0
   #   hooks:
   #     - id: jsonnet-format
   #     - id: jsonnet-lint
@@ -120,7 +120,7 @@ repos:
   # For SQL
   # --------------------------------------------------------------
   # - repo: https://github.com/sqlfluff/sqlfluff
-  #   rev: 4.1.0 # https://github.com/sqlfluff/sqlfluff/releases
+  #   rev: 4.1.0
   #   hooks:
   #     - id: sqlfluff-lint
   #       args: [--dialect, mysql]
@@ -130,7 +130,7 @@ repos:
   # For Terraform
   # --------------------------------------------------------------
   - repo: https://github.com/antonbabenko/pre-commit-terraform
-    rev: v1.105.0 # https://github.com/antonbabenko/pre-commit-terraform/releases
+    rev: v1.105.0
     hooks:
       - id: terraform_fmt
       - id: terraform_tflint
@@ -144,7 +144,7 @@ repos:
           - --args=--format=table
           - --args=--skip-dirs=**/.terraform
   - repo: https://github.com/terraform-docs/terraform-docs
-    rev: "v0.24.0"
+    rev: v0.24.0
     hooks:
       - id: terraform-docs-go
         args:
@@ -159,7 +159,7 @@ repos:
             "terraform",
           ]
   - repo: https://github.com/terraform-docs/terraform-docs
-    rev: "v0.24.0"
+    rev: v0.24.0
     hooks:
       - id: terraform-docs-go
         args:
