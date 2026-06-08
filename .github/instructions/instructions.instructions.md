@@ -33,8 +33,8 @@ description: "AI Assistant Instructions for Writing Instruction Files"
 - **STRUCT-03 (MUST)**: Use H2 for chapters and H3 for subsections; minimize H4 and deeper levels - deep hierarchies degrade AI structural recognition.
 - **STRUCT-04 (MUST)**: Start the Standards chapter with `### Naming Conventions` - this is the unified starting point across files.
 - **STRUCT-05 (MUST)**: Order Guidelines as domain rules -> Anti-Patterns -> Code Modification Guidelines - this keeps priority order clear.
-- **STRUCT-06 (MUST)**: Use H3 heading format `### Name (LEVEL)` for rule sections or `### Name` for declaration/process sections - do not include ID ranges in headings.
-- **STRUCT-07 (MUST)**: Keep only operational procedures in `## Testing and Validation` and `## Security Guidelines`; keep review criteria (`TEST-*`, `SEC-*`) only in Guidelines - duplicate definitions hurt maintainability and consistency.
+- **STRUCT-06 (MUST)**: In the Guidelines chapter, use H3 heading format `### Name (LEVEL)` for rule sections or `### Name` for declaration/process sections - do not include ID ranges in headings.
+- **STRUCT-07 (MUST)**: Keep `## Testing and Validation` and `## Security Guidelines` concise with operational procedures and essential guardrails only; keep detailed review criteria (`TEST-*`, `SEC-*`) in Guidelines - duplicate definitions hurt maintainability and consistency.
 
 ## Guidelines
 
@@ -57,69 +57,51 @@ description: "AI Assistant Instructions for Writing Instruction Files"
   - Check: Does the Standards chapter have Naming Conventions subsection first, followed by tool-specific standards?
 - STRUCT-05 (MUST): Guidelines Chapter Subsections
   - Check: Does the Guidelines chapter have domain rules first, followed by Anti-Patterns, then Code Modification Guidelines?
-- STRUCT-06 (MUST): H3 Heading Format
-  - Check: Do H3 headings use `### Name（LEVEL）` format for rule sections, and `### Name` for process/declaration sections?
+- STRUCT-06 (MUST): H3 Heading Format in Guidelines
+  - Check: In the Guidelines chapter, do H3 headings use `### Name (LEVEL)` format for rule sections, and `### Name` for process/declaration sections?
 
 ### Guidelines Chapter (GUIDE)
 
-- GUIDE-01 (SHOULD): Documentation and Comments
-  - Check: Comment and documentation conventions are documented
-- GUIDE-02 (SHOULD): Code Modification Guidelines
+- GUIDE-01 (SHOULD): Code Modification Guidelines
   - Check: Modification procedures and validation methods are clearly documented
-- GUIDE-03 (SHOULD): Tool Usage
+- GUIDE-02 (SHOULD): Tool Usage
   - Check: MCP Tool usage examples are documented
-- GUIDE-04 (SHOULD): Error Handling
-  - Check: Error handling policy is documented
-- GUIDE-05 (SHOULD): Performance Considerations
-  - Check: Performance guidelines are documented where applicable
-- GUIDE-06 (SHOULD): Best Practices
-  - Check: Best practices specific to the technology are documented
-- GUIDE-07 (SHOULD): Common Patterns
-  - Check: Common code patterns and idioms are documented
-- GUIDE-08 (SHOULD): Anti-Patterns
+- GUIDE-03 (SHOULD): Anti-Patterns
   - Check: Common anti-patterns and pitfalls are documented
-- GUIDE-09 (SHOULD): No ID-less Bullet Rules in Guidelines
+- GUIDE-04 (SHOULD): No ID-less Bullet Rules in Guidelines
   - Check: Are there no ID-less bullet rules in the Guidelines chapter?
 
 ### Content Quality (QUAL)
 
-- QUAL-01 (SHOULD): Conciseness
-  - Check: Content is concise without redundant expressions
-- QUAL-02 (SHOULD): Practical Examples
+- QUAL-01 (SHOULD): Practical Examples
   - Check: Practical code examples are included
-- QUAL-03 (SHOULD): No Redundancy
+- QUAL-02 (SHOULD): No Redundancy
   - Check: No duplicate content
-- QUAL-04 (SHOULD): Token Efficiency
+- QUAL-03 (SHOULD): Token Efficiency
   - Check: Large code examples are avoided for high token efficiency
 
 ### Consistency (CONS)
 
-- CONS-01 (SHOULD): Chapter Order
-  - Check: Chapter order is consistent across all instructions files
-- CONS-02 (SHOULD): Section Names
+- CONS-01 (SHOULD): Section Names
   - Check: Section names are consistent with other instructions files
-- CONS-03 (SHOULD): Detail Level
-  - Check: Documentation detail level matches other instructions files
-- CONS-04 (SHOULD): Format
+- CONS-02 (SHOULD): Format
   - Check: Table and list formats are consistent with other instructions files
 
 ### Completeness (COMP)
 
-- COMP-01 (SHOULD): All Required Sections
-  - Check: All required sections exist
-- COMP-02 (SHOULD): No Missing Commands
+- COMP-01 (SHOULD): No Missing Commands
   - Check: Executable validation commands are comprehensive
-- COMP-03 (SHOULD): Real Commands
+- COMP-02 (SHOULD): Real Commands
   - Check: Examples are concrete and comprehensive
 
 ### Security Guidelines Chapter (SEC)
 
-- SEC-01 (MUST): Security Items
-  - Check: Security items are documented
+- SEC-01 (MUST): Tool-Undetectable Risks Documented
+  - Check: Are security practices that automated tools (gitleaks, detect-secrets) cannot detect documented (e.g., destructive command defaults, untrusted link sources)?
 - SEC-02 (MUST): Secrets Management
-  - Check: Secrets management policy is documented
-- SEC-03 (MUST): Best Practices
-  - Check: Concrete security best practices are documented
+  - Check: Is a policy against embedding secrets in instruction files documented?
+- SEC-03 (MUST): Scope Limited to Document Safety
+  - Check: Are security items limited to documentation-specific risks rather than duplicating what CI/pre-commit tools enforce?
 - SEC-04 (SHOULD): Examples
   - Check: YAML/code examples are included (where applicable)
 
@@ -129,8 +111,6 @@ description: "AI Assistant Instructions for Writing Instruction Files"
   - Check: Naming conventions are documented per component
 - STD-02 (SHOULD): Tool Standards
   - Check: Tool conventions are documented
-- STD-03 (MUST): Consistency
-  - Check: Documentation level matches other instructions files
 
 ### Testing and Validation Chapter (TEST)
 
@@ -151,8 +131,6 @@ description: "AI Assistant Instructions for Writing Instruction Files"
 
 ## Testing and Validation
 
-- This chapter should contain only execution procedures (entry point, individual runs, reference links), while review criteria (TEST-\*) are consolidated in Guidelines.
-
 **Entry point (recommended)**:
 
 ```bash
@@ -170,6 +148,5 @@ textlint .apm/instructions/
 
 ## Security Guidelines
 
-- This chapter should contain only operational security practices, while security review criteria (SEC-\*) are consolidated in Guidelines.
 - Do not include real secrets (tokens, keys, credentials) in instruction files.
 - Do not make destructive operations the default in command examples; add explicit warnings when needed.

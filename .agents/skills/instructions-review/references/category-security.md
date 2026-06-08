@@ -4,23 +4,23 @@ This file contains review checks specific to the Security Guidelines chapter of 
 
 ## Security Guidelines Chapter (SEC)
 
-**SEC-01 (MUST): Security Items**
+**SEC-01 (MUST): Tool-Undetectable Risks Documented**
 
-Check: Security items are documented
-Why: Missing items lead to overlooked vulnerabilities and increased security risk
-Fix: Add required security items
+Check: Are security practices that automated tools (gitleaks, detect-secrets) cannot detect documented (e.g., destructive command defaults, untrusted link sources)?
+Why: Automated scanners handle secrets and credentials; instructions must cover risks that require human/AI judgment
+Fix: Document security items that CI/pre-commit cannot detect (unsafe defaults, link trust, privilege assumptions)
 
 **SEC-02 (MUST): Secrets Management**
 
-Check: Secrets management policy is documented
+Check: Is a policy against embedding secrets in instruction files documented?
 Why: Missing guidelines risk credential leakage and authentication information exposure
-Fix: Document secrets management policy (environment variables, Secrets Manager, etc.)
+Fix: Document that secrets must not appear in instruction files (reference environment variables or secret managers)
 
-**SEC-03 (MUST): Best Practices**
+**SEC-03 (MUST): Scope Limited to Document Safety**
 
-Check: Concrete security best practices are documented
-Why: Missing specifics encourage incorrect implementation and obscure standards
-Fix: Add concrete best practices with examples
+Check: Are security items limited to documentation-specific risks rather than duplicating what CI/pre-commit tools enforce?
+Why: Duplicating tool-enforceable rules bloats instructions and creates false sense of coverage
+Fix: Remove items already enforced by gitleaks/detect-secrets/CI and keep only document-safety concerns
 
 **SEC-04 (SHOULD): Examples**
 

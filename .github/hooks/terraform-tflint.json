@@ -1,6 +1,6 @@
 {
   "hooks": {
-    "postToolUse": [
+    "agentStop": [
       {
         "type": "command",
         "bash": ".github/hooks/scripts/terraform/scripts/tflint.sh",

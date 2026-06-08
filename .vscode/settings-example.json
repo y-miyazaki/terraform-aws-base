@@ -385,6 +385,8 @@
   // for Markdown
   //  ------------------------------------------------------------
   "markdown.extension.completion.enabled": true,
+  "markdown.extension.tableFormatter.enabled": true,
+  "markdown.extension.toc.updateOnSave": true,
   "markdownlint.lintWorkspaceGlobs": [
     "**/*.{md,mkd,mdwn,mdown,markdown,markdn,mdtxt,mdtext,workbook}",
     "!**/*.code-search",

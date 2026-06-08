@@ -55,14 +55,41 @@ Structured PR output:
 
 ## Workflow
 
-1. Run `pr_fetch.sh` to collect PR metadata.
-2. Run `pr_body.sh` to build deterministic baseline (`## Overview`, `## Changes`).
+1. Fetch PR metadata:
+   ```bash
+   scripts/pr_fetch.sh <PR_NUMBER> --repo <OWNER/REPO>
+   ```
+   Parse JSON output to obtain: title, body, file list, additions/deletions, headRefName, baseRefName.
+
+2. Generate deterministic baseline (`## Overview`, `## Changes`):
+   ```bash
+   scripts/pr_body.sh <PR_NUMBER> --repo <OWNER/REPO> --dry-run
+   ```
+   Review dry-run output. If acceptable, apply:
+   ```bash
+   scripts/pr_body.sh <PR_NUMBER> --repo <OWNER/REPO>
+   ```
+
 3. Select mode:
+   - Baseline mode: request scope is summary refresh only → skip to Step 6.
+   - Full-body mode: request explicitly asks to populate all template sections → continue to Step 4.
 
-- Use baseline mode when request scope is summary refresh only.
-- Use full-body mode when request explicitly asks to populate all template sections.
+4. Generate AI-completed content (full-body mode only):
+   1. Read `.github/PULL_REQUEST_TEMPLATE.md` from the repository.
+   2. For each H2 section in the template:
+      - If the section comment contains an `Example:` block, follow that structure to generate visible content.
+      - If the section comment contains checkbox guidance, generate or update checkbox lines in the same format.
+      - If the section has no guidance, preserve the section heading and template comment without inventing content.
+   3. Keep `## Overview` and `## Changes` content from Step 2 output.
+   4. Write the complete PR body (all sections) to a temporary file (e.g., `/tmp/completed_pr_body.md`).
 
-4. If full-body mode is selected, generate template-aligned content from validated context (PR metadata, changed file list, and template-required section headings); if baseline mode is selected, skip to Step 6.
-5. If full-body mode is selected, apply full body with `pr_body.sh --body-file <FILE>`.
-6. Confirm success by fetching PR body and verifying required sections are present for the selected mode.
+5. Apply full body (full-body mode only):
+   ```bash
+   scripts/pr_body.sh <PR_NUMBER> --repo <OWNER/REPO> --body-file /tmp/completed_pr_body.md
+   ```
 
+6. Verify success:
+   ```bash
+   gh pr view <PR_NUMBER> --repo <OWNER/REPO> --json body --jq '.body'
+   ```
+   Confirm `## Overview` and `## Changes` sections are present and non-empty. In full-body mode, confirm `## Testing`, `## Type of Change`, `## Checklist`, and `## Additional Notes` contain visible content.

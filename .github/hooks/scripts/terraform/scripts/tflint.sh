@@ -1,15 +1,16 @@
 #!/bin/bash
 #######################################
-# Description: Post-tool-use hook for tflint.
-#              Lints changed Terraform files and exits 2 on failure
-#              for agent environments.
+# Description: Hook for tflint.
+#              Lints and fixes changed Terraform files and reports failures
+#              in the appropriate format for the active AI agent.
 #
 # Usage: Called by apm hook runner (not invoked directly).
+#        Receives hook event JSON via stdin.
 #
 # Design Rules:
 #   - Exit 0 if tool not found or no changed files (silent skip)
-#   - Exit 2 on lint failure (agent error signal)
-#   - POSIX-safe variable scoping (no pipe+while)
+#   - Call report_failure on lint failure (agent-aware error signal)
+#   - Supports Kiro CLI, Claude Code, Copilot CLI, Cursor, Antigravity, VS Code
 #######################################
 
 # Error handling: exit on error, unset variable, or failed pipeline
@@ -22,6 +23,13 @@ export LC_ALL=C.UTF-8
 # Get script directory for reliable relative path resolution
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 export SCRIPT_DIR
+
+# Capture stdin (hook event JSON) for agent detection.
+# Pipe is consumed once; must be read before any other stdin operation.
+HOOK_STDIN_DATA=""
+if [[ ! -t 0 ]]; then
+    HOOK_STDIN_DATA=$(cat)
+fi
 
 #######################################
 # get_changed_dirs: Collect unique directories containing changed Terraform files
@@ -50,17 +58,118 @@ function get_changed_dirs {
 }
 
 #######################################
+# report_failure: Emit error in the format the current agent expects, then exit.
+#
+# Description:
+#   Identifies the AI agent from HOOK_STDIN_DATA structure, then returns
+#   the agent-specific response format for Stop events.
+#
+# Arguments:
+#   $1 - reason: Human-readable description of what failed and how to fix it
+#
+# Returns:
+#   Does not return. Exits with 0 (JSON block) or 2 (stderr).
+#
+# Usage:
+#   report_failure "tflint found issues: ..."
+#
+#######################################
+function report_failure {
+    local reason="$1"
+    local agent=""
+    local hook_event=""
+
+    # Step 1: Detect agent (agent-first strategy)
+    if [[ -n "$HOOK_STDIN_DATA" ]]; then
+        if echo "$HOOK_STDIN_DATA" | jq -e ".terminationReason" > /dev/null 2>&1; then
+            agent="antigravity"
+        elif echo "$HOOK_STDIN_DATA" | jq -e ".toolCall" > /dev/null 2>&1; then
+            agent="antigravity"
+        elif echo "$HOOK_STDIN_DATA" | jq -e 'has("stop_hook_active") or has("tool_use_id")' > /dev/null 2>&1; then
+            agent="vscode"
+            hook_event=$(echo "$HOOK_STDIN_DATA" | jq -r '.hook_event_name // "Stop"' 2> /dev/null)
+        elif [[ -n "${GITHUB_COPILOT_API_TOKEN:-}" ]] \
+            || echo "$HOOK_STDIN_DATA" | jq -e '.transcriptPath // .stopReason // .stop_reason // .toolResult // .tool_result' > /dev/null 2>&1; then
+            agent="copilot"
+            hook_event=$(echo "$HOOK_STDIN_DATA" | jq -r '.hook_event_name // "agentStop"' 2> /dev/null)
+        elif echo "$HOOK_STDIN_DATA" | jq -e '.hook_event_name' > /dev/null 2>&1 \
+            && echo "$HOOK_STDIN_DATA" | jq -r '.hook_event_name' 2> /dev/null | grep -qE '^(stop|postToolUse|preToolUse|agentSpawn|userPromptSubmit)$'; then
+            agent="kiro"
+            hook_event=$(echo "$HOOK_STDIN_DATA" | jq -r '.hook_event_name' 2> /dev/null)
+        elif echo "$HOOK_STDIN_DATA" | jq -e ".hook_event_name" > /dev/null 2>&1; then
+            agent="claude_code"
+            hook_event=$(echo "$HOOK_STDIN_DATA" | jq -r '.hook_event_name' 2> /dev/null)
+        fi
+    fi
+
+    if [[ -z "$agent" && -n "${GITHUB_COPILOT_API_TOKEN:-}" ]]; then
+        agent="copilot"
+    fi
+
+    # Step 2: Build response per agent spec
+    case "$agent" in
+        kiro)
+            if [[ "$hook_event" == "stop" ]]; then
+                jq -n --arg reason "$reason" '{decision: "block", reason: $reason}'
+                exit 0
+            else
+                echo "$reason" >&2
+                exit 2
+            fi
+            ;;
+        claude_code)
+            if [[ "$hook_event" == "Stop" ]]; then
+                jq -n --arg reason "$reason" '{decision: "block", reason: $reason}'
+                exit 0
+            else
+                echo "$reason" >&2
+                exit 2
+            fi
+            ;;
+        vscode)
+            if [[ "$hook_event" == "Stop" ]]; then
+                jq -n --arg reason "$reason" '{hookSpecificOutput: {hookEventName: "Stop", decision: "block", reason: $reason}}'
+                exit 0
+            else
+                echo "$reason" >&2
+                exit 2
+            fi
+            ;;
+        copilot)
+            case "$hook_event" in
+                Stop | agentStop)
+                    jq -n --arg reason "$reason" '{decision: "block", reason: $reason}'
+                    exit 0
+                    ;;
+                *)
+                    echo "$reason" >&2
+                    exit 2
+                    ;;
+            esac
+            ;;
+        antigravity)
+            jq -n --arg reason "$reason" '{decision: "continue", reason: $reason}'
+            exit 0
+            ;;
+        *)
+            echo "$reason" >&2
+            exit 2
+            ;;
+    esac
+}
+
+#######################################
 # main: Entry point
 #
 # Description:
 #   Runs tflint on each directory containing changed Terraform files.
-#   Exits 0 on skip/success, exits 2 on lint failure.
+#   Collects failures and calls report_failure with a summary.
 #
 # Arguments:
 #   None
 #
 # Returns:
-#   0 on success or skip, 2 on lint failure
+#   0 on success or skip
 #
 # Usage:
 #   main
@@ -82,14 +191,20 @@ function main {
     fi
 
     local fails=0
+    local output=""
     for dir in "${dirs[@]}"; do
         [[ -n "$dir" && -d "$dir" ]] || continue
         tflint --init --chdir "$dir" > /dev/null 2>&1 || true
-        tflint --fix --chdir "$dir" || fails=$((fails + 1))
+        local result
+        result=$(tflint --fix --chdir "$dir" 2>&1) || {
+            fails=$((fails + 1))
+            output+="${result}"$'\n'
+        }
     done
 
     if [[ "$fails" -gt 0 ]]; then
-        exit 2
+        report_failure "tflint found issues in Terraform code:
+${output}"
     fi
 }
 

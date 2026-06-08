@@ -3,7 +3,7 @@ applyTo: ".github/workflows/**/*.yaml,.github/workflows/**/*.yml"
 description: "AI Assistant Instructions for GitHub Actions Workflows"
 ---
 
-# AI Assistant Instructions for GitHub Actions
+# AI Assistant Instructions for GitHub Actions Workflows
 
 ## Scope
 

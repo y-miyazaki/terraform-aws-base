@@ -40,6 +40,6 @@ permissions:
 
 jobs:
   apm-audit:
-    uses: y-miyazaki/config/.github/workflows/ci-apm-audit.yaml@a2eb06e242820ab92be1976087dc3a9321fa4349 # v1.1.25
+    uses: y-miyazaki/config/.github/workflows/ci-apm-audit.yaml@7448092c8cc878883da82c07daa5dec3e31aee4b # v1.1.31
     permissions:
       contents: read

@@ -36,10 +36,22 @@ Required in-file order:
 ```bash
 #######################################
 # function_name: concise description (one line)
+#
+# Description:
+#   Detailed explanation of what the function does.
+#
 # Arguments:
 #   $1 - description of argument 1
+#
+# Global Variables:
+#   VAR_NAME - description of global variable set or used
+#
 # Returns:
-#   exit code description
+#   exit code or output description
+#
+# Usage:
+#   function_name "arg1"
+#
 #######################################
 ```
 

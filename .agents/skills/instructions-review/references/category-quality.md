@@ -4,25 +4,19 @@ This file contains review checks for content quality, cross-file consistency, an
 
 ## Content Quality (QUAL)
 
-**QUAL-01 (SHOULD): Conciseness**
-
-Check: Content is concise without redundant expressions
-Why: Redundancy reduces token efficiency and readability
-Fix: Use shorter sentences, remove unnecessary explanations
-
-**QUAL-02 (SHOULD): Practical Examples**
+**QUAL-01 (SHOULD): Practical Examples**
 
 Check: Practical code examples are included
 Why: Missing examples reduce usability and hinder understanding
 Fix: Add practical code examples
 
-**QUAL-03 (SHOULD): No Redundancy**
+**QUAL-02 (SHOULD): No Redundancy**
 
 Check: No duplicate content
 Why: Duplication reduces maintainability and risks inconsistencies
 Fix: Remove duplicates and use references instead
 
-**QUAL-04 (SHOULD): Token Efficiency**
+**QUAL-03 (SHOULD): Token Efficiency**
 
 Check: Large code examples are avoided for high token efficiency
 Why: Large examples waste tokens and increase costs
@@ -30,25 +24,13 @@ Fix: Remove large examples, use minimal necessary examples
 
 ## Consistency (CONS)
 
-**CONS-01 (SHOULD): Chapter Order**
-
-Check: Chapter order is consistent across all instructions files
-Why: Inconsistent chapters make cross-file comparison difficult and increase learning cost
-Fix: Standardize chapter order (Standards → Guidelines → Testing → Security)
-
-**CONS-02 (SHOULD): Section Names**
+**CONS-01 (SHOULD): Section Names**
 
 Check: Section names are consistent with other instructions files
 Why: Inconsistent names make them harder to find and hinder standardization
 Fix: Unify section names and verify against reference files
 
-**CONS-03 (SHOULD): Detail Level**
-
-Check: Documentation detail level matches other instructions files
-Why: Differing levels hinder standardization and create imbalances
-Fix: Align detail levels and follow reference file standards
-
-**CONS-04 (SHOULD): Format**
+**CONS-02 (SHOULD): Format**
 
 Check: Table and list formats are consistent with other instructions files
 Why: Format variations cause reading errors and reduce readability
@@ -56,19 +38,13 @@ Fix: Standardize table and list formats
 
 ## Completeness (COMP)
 
-**COMP-01 (SHOULD): All Required Sections**
-
-Check: All required sections exist
-Why: Missing sections lead to incomplete reviews and information gaps
-Fix: Ensure all required sections are present
-
-**COMP-02 (SHOULD): No Missing Commands**
+**COMP-01 (SHOULD): No Missing Commands**
 
 Check: Executable validation commands are comprehensive
 Why: Missing commands prevent validation and compromise quality assurance
 Fix: Include all executable validation commands
 
-**COMP-03 (SHOULD): Real Commands**
+**COMP-02 (SHOULD): Real Commands**
 
 Check: Examples are concrete and comprehensive
 Why: Missing examples make validation difficult and lack practicality

@@ -8,7 +8,7 @@ description: "AI Assistant Instructions for Agent Skills Development"
 ## Scope
 
 - Scope is limited to designing and updating `skills/**/SKILL.md` and `references/*.md`.
-- This file defines SKILL authoring standards and is treated as an exception to the common four-chapter template.
+- This file defines SKILL authoring standards and is treated as an exception to the common template (five-chapter structure with Naming Conventions first in Standards is overridden by domain-specific Required Sections ordering).
 
 ## Standards
 

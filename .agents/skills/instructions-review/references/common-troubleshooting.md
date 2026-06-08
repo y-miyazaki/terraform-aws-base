@@ -69,7 +69,7 @@ Related checklist IDs: STRUCT-01, SEC-01, SEC-02
 3. Expand thin sections to match peer detail level
 4. Ensure consistent code example quality
 
-Related checklist IDs: STD-03, CONS-03, QUAL-02
+Related checklist IDs: STD-03, CONS-02, QUAL-01
 
 ## Issue 5: Output Report Format Drift
 
@@ -82,4 +82,4 @@ Related checklist IDs: STD-03, CONS-03, QUAL-02
 2. Ensure failed/deferred items use fixed ItemIDs from `references/common-checklist.md`
 3. Keep passed checks only in summary counts
 
-Related checklist IDs: QUAL-03, CONS-04
+Related checklist IDs: QUAL-02, CONS-02
