@@ -178,42 +178,42 @@ url = "https://github.com/aquasecurity/trivy/releases/download/v0.70.0/trivy_0.7
 provenance = "cosign"
 
 [[tools."aqua:astral-sh/uv"]]
-version = "0.11.17"
+version = "0.11.18"
 backend = "aqua:astral-sh/uv"
 
 [tools."aqua:astral-sh/uv"."platforms.linux-arm64"]
-checksum = "sha256:9e5eaf16ffad968fc689f18c2733ace914ed417d4e5572e92d807fd51a90228c"
-url = "https://github.com/astral-sh/uv/releases/download/0.11.17/uv-aarch64-unknown-linux-musl.tar.gz"
+checksum = "sha256:6d895725333680bf7633ad635baff8e49dc45d3b52e00b2b3adf6ced41f2ebe2"
+url = "https://github.com/astral-sh/uv/releases/download/0.11.18/uv-aarch64-unknown-linux-musl.tar.gz"
 provenance = "github-attestations"
 
 [tools."aqua:astral-sh/uv"."platforms.linux-arm64-musl"]
-checksum = "sha256:9e5eaf16ffad968fc689f18c2733ace914ed417d4e5572e92d807fd51a90228c"
-url = "https://github.com/astral-sh/uv/releases/download/0.11.17/uv-aarch64-unknown-linux-musl.tar.gz"
+checksum = "sha256:6d895725333680bf7633ad635baff8e49dc45d3b52e00b2b3adf6ced41f2ebe2"
+url = "https://github.com/astral-sh/uv/releases/download/0.11.18/uv-aarch64-unknown-linux-musl.tar.gz"
 provenance = "github-attestations"
 
 [tools."aqua:astral-sh/uv"."platforms.linux-x64"]
-checksum = "sha256:4231a429d4e0f7c1937d8916658c08a7706cd7872afebeb87203a18c2e0dc28e"
-url = "https://github.com/astral-sh/uv/releases/download/0.11.17/uv-x86_64-unknown-linux-musl.tar.gz"
+checksum = "sha256:a095a969fc8357f42e35652e0554525a47a29010ddb814bd82650c2ffa7d6d62"
+url = "https://github.com/astral-sh/uv/releases/download/0.11.18/uv-x86_64-unknown-linux-musl.tar.gz"
 provenance = "github-attestations"
 
 [tools."aqua:astral-sh/uv"."platforms.linux-x64-musl"]
-checksum = "sha256:4231a429d4e0f7c1937d8916658c08a7706cd7872afebeb87203a18c2e0dc28e"
-url = "https://github.com/astral-sh/uv/releases/download/0.11.17/uv-x86_64-unknown-linux-musl.tar.gz"
+checksum = "sha256:a095a969fc8357f42e35652e0554525a47a29010ddb814bd82650c2ffa7d6d62"
+url = "https://github.com/astral-sh/uv/releases/download/0.11.18/uv-x86_64-unknown-linux-musl.tar.gz"
 provenance = "github-attestations"
 
 [tools."aqua:astral-sh/uv"."platforms.macos-arm64"]
-checksum = "sha256:2a162f6b90ff3691a2f9cae1622e066a3ce592e110f66670cdcc841324b28226"
-url = "https://github.com/astral-sh/uv/releases/download/0.11.17/uv-aarch64-apple-darwin.tar.gz"
+checksum = "sha256:1a7adf8dadae3b55853115d13a8bf564d219597ad13824b93b213706933863e5"
+url = "https://github.com/astral-sh/uv/releases/download/0.11.18/uv-aarch64-apple-darwin.tar.gz"
 provenance = "github-attestations"
 
 [tools."aqua:astral-sh/uv"."platforms.macos-x64"]
-checksum = "sha256:6c66e41eaf4d15abeda58d3f268161b6e3f742d98390341b174a7cfc1b48841d"
-url = "https://github.com/astral-sh/uv/releases/download/0.11.17/uv-x86_64-apple-darwin.tar.gz"
+checksum = "sha256:00a61e3db99b53c927a7e6c4ccdccb898aa3253d07928822211e9dc570a25661"
+url = "https://github.com/astral-sh/uv/releases/download/0.11.18/uv-x86_64-apple-darwin.tar.gz"
 provenance = "github-attestations"
 
 [tools."aqua:astral-sh/uv"."platforms.windows-x64"]
-checksum = "sha256:35fc29e03e62f3cda769bc12773f3cb70ce305d0d36c0d8bd0c117dd0b3fcd14"
-url = "https://github.com/astral-sh/uv/releases/download/0.11.17/uv-x86_64-pc-windows-msvc.zip"
+checksum = "sha256:bf8e0021336b7c77bd80a078b612125f385b08f541437edaea8c8ca9e574db0d"
+url = "https://github.com/astral-sh/uv/releases/download/0.11.18/uv-x86_64-pc-windows-msvc.zip"
 provenance = "github-attestations"
 
 [[tools."aqua:aws/aws-cli"]]
