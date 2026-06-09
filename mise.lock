@@ -1328,49 +1328,49 @@ url = "https://github.com/zizmorcore/zizmor/releases/download/v1.25.2/zizmor-x86
 provenance = "github-attestations"
 
 [[tools."github:DeusData/codebase-memory-mcp"]]
-version = "0.6.1"
+version = "0.7.0"
 backend = "github:DeusData/codebase-memory-mcp"
 
 [tools."github:DeusData/codebase-memory-mcp"."platforms.linux-arm64"]
-checksum = "sha256:29811aadc2aa99fb9612683af30a06d03fcb2bfefb95c12ea672671827bd111c"
-url = "https://github.com/DeusData/codebase-memory-mcp/releases/download/v0.6.1/codebase-memory-mcp-linux-arm64.tar.gz"
-url_api = "https://api.github.com/repos/DeusData/codebase-memory-mcp/releases/assets/412178884"
+checksum = "sha256:57cf094d9213e69284f0f2e7a1d6119d4c933448e160f57b4fb2b0f0f9f0127a"
+url = "https://github.com/DeusData/codebase-memory-mcp/releases/download/v0.7.0/codebase-memory-mcp-linux-arm64.tar.gz"
+url_api = "https://api.github.com/repos/DeusData/codebase-memory-mcp/releases/assets/433451400"
 provenance = "github-attestations"
 
 [tools."github:DeusData/codebase-memory-mcp"."platforms.linux-arm64-musl"]
-checksum = "sha256:29811aadc2aa99fb9612683af30a06d03fcb2bfefb95c12ea672671827bd111c"
-url = "https://github.com/DeusData/codebase-memory-mcp/releases/download/v0.6.1/codebase-memory-mcp-linux-arm64.tar.gz"
-url_api = "https://api.github.com/repos/DeusData/codebase-memory-mcp/releases/assets/412178884"
+checksum = "sha256:57cf094d9213e69284f0f2e7a1d6119d4c933448e160f57b4fb2b0f0f9f0127a"
+url = "https://github.com/DeusData/codebase-memory-mcp/releases/download/v0.7.0/codebase-memory-mcp-linux-arm64.tar.gz"
+url_api = "https://api.github.com/repos/DeusData/codebase-memory-mcp/releases/assets/433451400"
 provenance = "github-attestations"
 
 [tools."github:DeusData/codebase-memory-mcp"."platforms.linux-x64"]
-checksum = "sha256:a24c04fd1fd61b08158e011685cf08d860e3594e4ce057ffda57d1cc2f4afdd1"
-url = "https://github.com/DeusData/codebase-memory-mcp/releases/download/v0.6.1/codebase-memory-mcp-linux-amd64.tar.gz"
-url_api = "https://api.github.com/repos/DeusData/codebase-memory-mcp/releases/assets/412178879"
+checksum = "sha256:ed3d79c4a6dd9193511e3ec9098639fb72a596145fc2733351dca4c0d93a2444"
+url = "https://github.com/DeusData/codebase-memory-mcp/releases/download/v0.7.0/codebase-memory-mcp-linux-amd64.tar.gz"
+url_api = "https://api.github.com/repos/DeusData/codebase-memory-mcp/releases/assets/433451402"
 provenance = "github-attestations"
 
 [tools."github:DeusData/codebase-memory-mcp"."platforms.linux-x64-musl"]
-checksum = "sha256:a24c04fd1fd61b08158e011685cf08d860e3594e4ce057ffda57d1cc2f4afdd1"
-url = "https://github.com/DeusData/codebase-memory-mcp/releases/download/v0.6.1/codebase-memory-mcp-linux-amd64.tar.gz"
-url_api = "https://api.github.com/repos/DeusData/codebase-memory-mcp/releases/assets/412178879"
+checksum = "sha256:ed3d79c4a6dd9193511e3ec9098639fb72a596145fc2733351dca4c0d93a2444"
+url = "https://github.com/DeusData/codebase-memory-mcp/releases/download/v0.7.0/codebase-memory-mcp-linux-amd64.tar.gz"
+url_api = "https://api.github.com/repos/DeusData/codebase-memory-mcp/releases/assets/433451402"
 provenance = "github-attestations"
 
 [tools."github:DeusData/codebase-memory-mcp"."platforms.macos-arm64"]
-checksum = "sha256:3468e5df340e53dba2d23cc30bf44210c412dfb2538d7da992465934bf4980e0"
-url = "https://github.com/DeusData/codebase-memory-mcp/releases/download/v0.6.1/codebase-memory-mcp-darwin-arm64.tar.gz"
-url_api = "https://api.github.com/repos/DeusData/codebase-memory-mcp/releases/assets/412178885"
+checksum = "sha256:09d2f5366731a0db55064f08df56a163bb016e41449844425477bfb8047e2ffb"
+url = "https://github.com/DeusData/codebase-memory-mcp/releases/download/v0.7.0/codebase-memory-mcp-darwin-arm64.tar.gz"
+url_api = "https://api.github.com/repos/DeusData/codebase-memory-mcp/releases/assets/433451398"
 provenance = "github-attestations"
 
 [tools."github:DeusData/codebase-memory-mcp"."platforms.macos-x64"]
-checksum = "sha256:a85f8313181c7ffd3a0ac494c0e2bf1b5647f15de06686f8a0728162bf4326ac"
-url = "https://github.com/DeusData/codebase-memory-mcp/releases/download/v0.6.1/codebase-memory-mcp-darwin-amd64.tar.gz"
-url_api = "https://api.github.com/repos/DeusData/codebase-memory-mcp/releases/assets/412178881"
+checksum = "sha256:3da984d704e59dbaf332c1a3f9914836923f619da1514d7dc257813b911aa946"
+url = "https://github.com/DeusData/codebase-memory-mcp/releases/download/v0.7.0/codebase-memory-mcp-darwin-amd64.tar.gz"
+url_api = "https://api.github.com/repos/DeusData/codebase-memory-mcp/releases/assets/433451401"
 provenance = "github-attestations"
 
 [tools."github:DeusData/codebase-memory-mcp"."platforms.windows-x64"]
-checksum = "sha256:e331f84f2ec760d179025b16b440b0f14282e83f2432318969dc69dde8ffffd0"
-url = "https://github.com/DeusData/codebase-memory-mcp/releases/download/v0.6.1/codebase-memory-mcp-windows-amd64.zip"
-url_api = "https://api.github.com/repos/DeusData/codebase-memory-mcp/releases/assets/412178887"
+checksum = "sha256:b07f8d65a97df52b6c2be028aa9f01801fbc309ffa3934e31641e1dd4e2f4e83"
+url = "https://github.com/DeusData/codebase-memory-mcp/releases/download/v0.7.0/codebase-memory-mcp-windows-amd64.zip"
+url_api = "https://api.github.com/repos/DeusData/codebase-memory-mcp/releases/assets/433451407"
 provenance = "github-attestations"
 
 [[tools."github:microsoft/apm"]]
