@@ -487,36 +487,36 @@ checksum = "sha256:f9e15b8f3628e4c7bfe481011bea458df754d0e75c6ff4ab01c7129416595
 url = "https://github.com/go-delve/delve/releases/download/v1.26.3/dlv_1.26.3_windows_amd64.zip"
 
 [[tools."aqua:go-swagger/go-swagger"]]
-version = "0.33.2"
+version = "0.34.0"
 backend = "aqua:go-swagger/go-swagger"
 
 [tools."aqua:go-swagger/go-swagger"."platforms.linux-arm64"]
-checksum = "sha256:4a0f3a471bee19b4590fe0cd55a88f127132558a89be5bd42549a5c6dbd517d2"
-url = "https://github.com/go-swagger/go-swagger/releases/download/v0.33.2/swagger_0.33.2_Linux_arm64.tar.gz"
+checksum = "sha256:d2f8fcae837f2a2fcbeb27ed130b0105af5c1886e17229c40862bdd9dee955d2"
+url = "https://github.com/go-swagger/go-swagger/releases/download/v0.34.0/swagger_0.34.0_Linux_arm64.tar.gz"
 
 [tools."aqua:go-swagger/go-swagger"."platforms.linux-arm64-musl"]
-checksum = "sha256:4a0f3a471bee19b4590fe0cd55a88f127132558a89be5bd42549a5c6dbd517d2"
-url = "https://github.com/go-swagger/go-swagger/releases/download/v0.33.2/swagger_0.33.2_Linux_arm64.tar.gz"
+checksum = "sha256:d2f8fcae837f2a2fcbeb27ed130b0105af5c1886e17229c40862bdd9dee955d2"
+url = "https://github.com/go-swagger/go-swagger/releases/download/v0.34.0/swagger_0.34.0_Linux_arm64.tar.gz"
 
 [tools."aqua:go-swagger/go-swagger"."platforms.linux-x64"]
-checksum = "sha256:66b7c068d7ecd50e973fb20e123161eec98134aa25a46ab96df0ad679d9b16e9"
-url = "https://github.com/go-swagger/go-swagger/releases/download/v0.33.2/swagger_0.33.2_Linux_x86_64.tar.gz"
+checksum = "sha256:2c08d922d160ca01e365529712514fa0c1f3be45cd91700a24cd210cef1190a0"
+url = "https://github.com/go-swagger/go-swagger/releases/download/v0.34.0/swagger_0.34.0_Linux_x86_64.tar.gz"
 
 [tools."aqua:go-swagger/go-swagger"."platforms.linux-x64-musl"]
-checksum = "sha256:66b7c068d7ecd50e973fb20e123161eec98134aa25a46ab96df0ad679d9b16e9"
-url = "https://github.com/go-swagger/go-swagger/releases/download/v0.33.2/swagger_0.33.2_Linux_x86_64.tar.gz"
+checksum = "sha256:2c08d922d160ca01e365529712514fa0c1f3be45cd91700a24cd210cef1190a0"
+url = "https://github.com/go-swagger/go-swagger/releases/download/v0.34.0/swagger_0.34.0_Linux_x86_64.tar.gz"
 
 [tools."aqua:go-swagger/go-swagger"."platforms.macos-arm64"]
-checksum = "sha256:0c43816a8f6939bb4f2816b3295ae48f5a014c8468d359406fec7c6c03a1e83b"
-url = "https://github.com/go-swagger/go-swagger/releases/download/v0.33.2/swagger_0.33.2_Darwin_arm64.tar.gz"
+checksum = "sha256:25d9d5a7941efb561222b36baedf0e92b0bdf2a120844cb29edeb8e88882c23d"
+url = "https://github.com/go-swagger/go-swagger/releases/download/v0.34.0/swagger_0.34.0_Darwin_arm64.tar.gz"
 
 [tools."aqua:go-swagger/go-swagger"."platforms.macos-x64"]
-checksum = "sha256:acacd8fae78b80b9a4ffc316d236f46fc75c86e14b3fa5235ed793aac9e3464c"
-url = "https://github.com/go-swagger/go-swagger/releases/download/v0.33.2/swagger_0.33.2_Darwin_x86_64.tar.gz"
+checksum = "sha256:099d995e7436bedcab523b59f5b49afbe0e7fb042fc8b98132fbd17c2efa61fc"
+url = "https://github.com/go-swagger/go-swagger/releases/download/v0.34.0/swagger_0.34.0_Darwin_x86_64.tar.gz"
 
 [tools."aqua:go-swagger/go-swagger"."platforms.windows-x64"]
-checksum = "sha256:f043f99d843a3127a3c7837431fe7ccbd64cfe24f48ecbcf9eed35d3d2f84bb2"
-url = "https://github.com/go-swagger/go-swagger/releases/download/v0.33.2/swagger_0.33.2_Windows_x86_64.zip"
+checksum = "sha256:8ff776e466497dc18e1e558efc2262bc5fe961aabfd21e2823f3aeb2e2e12c32"
+url = "https://github.com/go-swagger/go-swagger/releases/download/v0.34.0/swagger_0.34.0_Windows_x86_64.zip"
 
 [[tools."aqua:golangci/golangci-lint"]]
 version = "2.12.2"
@@ -693,36 +693,36 @@ checksum = "sha256:2f652dd854af7b7fbb51301afc55b5ef1d3f6e287be7889d4cc3818df891c
 url = "https://releases.hashicorp.com/terraform/1.15.5/terraform_1.15.5_windows_amd64.zip"
 
 [[tools."aqua:jdx/usage"]]
-version = "3.3.0"
+version = "3.4.0"
 backend = "aqua:jdx/usage"
 
 [tools."aqua:jdx/usage"."platforms.linux-arm64"]
-checksum = "sha256:55a0c94c35bb9e2c5cbc223973667cd450759cd3410d4c5836ef2fdfd95adc57"
-url = "https://github.com/jdx/usage/releases/download/v3.3.0/usage-aarch64-unknown-linux-musl.tar.gz"
+checksum = "sha256:5cea2993383ccbbdbf9693bec484c47fc3cbcff75ec167618e1e775e5df9ba19"
+url = "https://github.com/jdx/usage/releases/download/v3.4.0/usage-aarch64-unknown-linux-musl.tar.gz"
 
 [tools."aqua:jdx/usage"."platforms.linux-arm64-musl"]
-checksum = "sha256:55a0c94c35bb9e2c5cbc223973667cd450759cd3410d4c5836ef2fdfd95adc57"
-url = "https://github.com/jdx/usage/releases/download/v3.3.0/usage-aarch64-unknown-linux-musl.tar.gz"
+checksum = "sha256:5cea2993383ccbbdbf9693bec484c47fc3cbcff75ec167618e1e775e5df9ba19"
+url = "https://github.com/jdx/usage/releases/download/v3.4.0/usage-aarch64-unknown-linux-musl.tar.gz"
 
 [tools."aqua:jdx/usage"."platforms.linux-x64"]
-checksum = "sha256:9a4316d633243aa54308ff3bf6970923b18c105dea34fbc3009d51889e1dd03f"
-url = "https://github.com/jdx/usage/releases/download/v3.3.0/usage-x86_64-unknown-linux-musl.tar.gz"
+checksum = "sha256:1a54260df50f1764bc8cbabf8763f2a6314c5025d3b06b512d02898eb28768b3"
+url = "https://github.com/jdx/usage/releases/download/v3.4.0/usage-x86_64-unknown-linux-musl.tar.gz"
 
 [tools."aqua:jdx/usage"."platforms.linux-x64-musl"]
-checksum = "sha256:9a4316d633243aa54308ff3bf6970923b18c105dea34fbc3009d51889e1dd03f"
-url = "https://github.com/jdx/usage/releases/download/v3.3.0/usage-x86_64-unknown-linux-musl.tar.gz"
+checksum = "sha256:1a54260df50f1764bc8cbabf8763f2a6314c5025d3b06b512d02898eb28768b3"
+url = "https://github.com/jdx/usage/releases/download/v3.4.0/usage-x86_64-unknown-linux-musl.tar.gz"
 
 [tools."aqua:jdx/usage"."platforms.macos-arm64"]
-checksum = "sha256:ab6c69a6541e18ffca7bd950dd4cc867ea9267d0f91115c13aa650cde6634d62"
-url = "https://github.com/jdx/usage/releases/download/v3.3.0/usage-universal-apple-darwin.tar.gz"
+checksum = "sha256:e9f7cd9038fec6352eaa001903414edc95bb77386a9573fde21be17991f3f719"
+url = "https://github.com/jdx/usage/releases/download/v3.4.0/usage-universal-apple-darwin.tar.gz"
 
 [tools."aqua:jdx/usage"."platforms.macos-x64"]
-checksum = "sha256:ab6c69a6541e18ffca7bd950dd4cc867ea9267d0f91115c13aa650cde6634d62"
-url = "https://github.com/jdx/usage/releases/download/v3.3.0/usage-universal-apple-darwin.tar.gz"
+checksum = "sha256:e9f7cd9038fec6352eaa001903414edc95bb77386a9573fde21be17991f3f719"
+url = "https://github.com/jdx/usage/releases/download/v3.4.0/usage-universal-apple-darwin.tar.gz"
 
 [tools."aqua:jdx/usage"."platforms.windows-x64"]
-checksum = "sha256:628b8743d552f2cff2dee2b783a4827ef555409def3fb9ec536117d96cda2018"
-url = "https://github.com/jdx/usage/releases/download/v3.3.0/usage-x86_64-pc-windows-msvc.zip"
+checksum = "sha256:2272ad0d264b99986ef8e3d537f774f046db5fe096e8a9375fbb1482f0934e8c"
+url = "https://github.com/jdx/usage/releases/download/v3.4.0/usage-x86_64-pc-windows-msvc.zip"
 
 [[tools."aqua:kayac/ecspresso"]]
 version = "2.8.4"
@@ -1328,89 +1328,89 @@ url = "https://github.com/zizmorcore/zizmor/releases/download/v1.25.2/zizmor-x86
 provenance = "github-attestations"
 
 [[tools."github:DeusData/codebase-memory-mcp"]]
-version = "0.6.1"
+version = "0.7.0"
 backend = "github:DeusData/codebase-memory-mcp"
 
 [tools."github:DeusData/codebase-memory-mcp"."platforms.linux-arm64"]
-checksum = "sha256:29811aadc2aa99fb9612683af30a06d03fcb2bfefb95c12ea672671827bd111c"
-url = "https://github.com/DeusData/codebase-memory-mcp/releases/download/v0.6.1/codebase-memory-mcp-linux-arm64.tar.gz"
-url_api = "https://api.github.com/repos/DeusData/codebase-memory-mcp/releases/assets/412178884"
+checksum = "sha256:57cf094d9213e69284f0f2e7a1d6119d4c933448e160f57b4fb2b0f0f9f0127a"
+url = "https://github.com/DeusData/codebase-memory-mcp/releases/download/v0.7.0/codebase-memory-mcp-linux-arm64.tar.gz"
+url_api = "https://api.github.com/repos/DeusData/codebase-memory-mcp/releases/assets/433451400"
 provenance = "github-attestations"
 
 [tools."github:DeusData/codebase-memory-mcp"."platforms.linux-arm64-musl"]
-checksum = "sha256:29811aadc2aa99fb9612683af30a06d03fcb2bfefb95c12ea672671827bd111c"
-url = "https://github.com/DeusData/codebase-memory-mcp/releases/download/v0.6.1/codebase-memory-mcp-linux-arm64.tar.gz"
-url_api = "https://api.github.com/repos/DeusData/codebase-memory-mcp/releases/assets/412178884"
+checksum = "sha256:57cf094d9213e69284f0f2e7a1d6119d4c933448e160f57b4fb2b0f0f9f0127a"
+url = "https://github.com/DeusData/codebase-memory-mcp/releases/download/v0.7.0/codebase-memory-mcp-linux-arm64.tar.gz"
+url_api = "https://api.github.com/repos/DeusData/codebase-memory-mcp/releases/assets/433451400"
 provenance = "github-attestations"
 
 [tools."github:DeusData/codebase-memory-mcp"."platforms.linux-x64"]
-checksum = "sha256:a24c04fd1fd61b08158e011685cf08d860e3594e4ce057ffda57d1cc2f4afdd1"
-url = "https://github.com/DeusData/codebase-memory-mcp/releases/download/v0.6.1/codebase-memory-mcp-linux-amd64.tar.gz"
-url_api = "https://api.github.com/repos/DeusData/codebase-memory-mcp/releases/assets/412178879"
+checksum = "sha256:ed3d79c4a6dd9193511e3ec9098639fb72a596145fc2733351dca4c0d93a2444"
+url = "https://github.com/DeusData/codebase-memory-mcp/releases/download/v0.7.0/codebase-memory-mcp-linux-amd64.tar.gz"
+url_api = "https://api.github.com/repos/DeusData/codebase-memory-mcp/releases/assets/433451402"
 provenance = "github-attestations"
 
 [tools."github:DeusData/codebase-memory-mcp"."platforms.linux-x64-musl"]
-checksum = "sha256:a24c04fd1fd61b08158e011685cf08d860e3594e4ce057ffda57d1cc2f4afdd1"
-url = "https://github.com/DeusData/codebase-memory-mcp/releases/download/v0.6.1/codebase-memory-mcp-linux-amd64.tar.gz"
-url_api = "https://api.github.com/repos/DeusData/codebase-memory-mcp/releases/assets/412178879"
+checksum = "sha256:ed3d79c4a6dd9193511e3ec9098639fb72a596145fc2733351dca4c0d93a2444"
+url = "https://github.com/DeusData/codebase-memory-mcp/releases/download/v0.7.0/codebase-memory-mcp-linux-amd64.tar.gz"
+url_api = "https://api.github.com/repos/DeusData/codebase-memory-mcp/releases/assets/433451402"
 provenance = "github-attestations"
 
 [tools."github:DeusData/codebase-memory-mcp"."platforms.macos-arm64"]
-checksum = "sha256:3468e5df340e53dba2d23cc30bf44210c412dfb2538d7da992465934bf4980e0"
-url = "https://github.com/DeusData/codebase-memory-mcp/releases/download/v0.6.1/codebase-memory-mcp-darwin-arm64.tar.gz"
-url_api = "https://api.github.com/repos/DeusData/codebase-memory-mcp/releases/assets/412178885"
+checksum = "sha256:09d2f5366731a0db55064f08df56a163bb016e41449844425477bfb8047e2ffb"
+url = "https://github.com/DeusData/codebase-memory-mcp/releases/download/v0.7.0/codebase-memory-mcp-darwin-arm64.tar.gz"
+url_api = "https://api.github.com/repos/DeusData/codebase-memory-mcp/releases/assets/433451398"
 provenance = "github-attestations"
 
 [tools."github:DeusData/codebase-memory-mcp"."platforms.macos-x64"]
-checksum = "sha256:a85f8313181c7ffd3a0ac494c0e2bf1b5647f15de06686f8a0728162bf4326ac"
-url = "https://github.com/DeusData/codebase-memory-mcp/releases/download/v0.6.1/codebase-memory-mcp-darwin-amd64.tar.gz"
-url_api = "https://api.github.com/repos/DeusData/codebase-memory-mcp/releases/assets/412178881"
+checksum = "sha256:3da984d704e59dbaf332c1a3f9914836923f619da1514d7dc257813b911aa946"
+url = "https://github.com/DeusData/codebase-memory-mcp/releases/download/v0.7.0/codebase-memory-mcp-darwin-amd64.tar.gz"
+url_api = "https://api.github.com/repos/DeusData/codebase-memory-mcp/releases/assets/433451401"
 provenance = "github-attestations"
 
 [tools."github:DeusData/codebase-memory-mcp"."platforms.windows-x64"]
-checksum = "sha256:e331f84f2ec760d179025b16b440b0f14282e83f2432318969dc69dde8ffffd0"
-url = "https://github.com/DeusData/codebase-memory-mcp/releases/download/v0.6.1/codebase-memory-mcp-windows-amd64.zip"
-url_api = "https://api.github.com/repos/DeusData/codebase-memory-mcp/releases/assets/412178887"
+checksum = "sha256:b07f8d65a97df52b6c2be028aa9f01801fbc309ffa3934e31641e1dd4e2f4e83"
+url = "https://github.com/DeusData/codebase-memory-mcp/releases/download/v0.7.0/codebase-memory-mcp-windows-amd64.zip"
+url_api = "https://api.github.com/repos/DeusData/codebase-memory-mcp/releases/assets/433451407"
 provenance = "github-attestations"
 
 [[tools."github:microsoft/apm"]]
-version = "0.16.0"
+version = "0.16.1"
 backend = "github:microsoft/apm"
 
 [tools."github:microsoft/apm"."platforms.linux-arm64"]
-checksum = "sha256:b30c8a48a47bab0416df47f3e017075fbb44999721e2a76d4ada20e99db49999"
-url = "https://github.com/microsoft/apm/releases/download/v0.16.0/apm-linux-arm64.tar.gz"
-url_api = "https://api.github.com/repos/microsoft/apm/releases/assets/432088194"
+checksum = "sha256:c41bad9fcc55180295fd7efc54a088543ee9498cb8934344916fc9bd3609d797"
+url = "https://github.com/microsoft/apm/releases/download/v0.16.1/apm-linux-arm64.tar.gz"
+url_api = "https://api.github.com/repos/microsoft/apm/releases/assets/435453765"
 
 [tools."github:microsoft/apm"."platforms.linux-arm64-musl"]
-checksum = "sha256:b30c8a48a47bab0416df47f3e017075fbb44999721e2a76d4ada20e99db49999"
-url = "https://github.com/microsoft/apm/releases/download/v0.16.0/apm-linux-arm64.tar.gz"
-url_api = "https://api.github.com/repos/microsoft/apm/releases/assets/432088194"
+checksum = "sha256:c41bad9fcc55180295fd7efc54a088543ee9498cb8934344916fc9bd3609d797"
+url = "https://github.com/microsoft/apm/releases/download/v0.16.1/apm-linux-arm64.tar.gz"
+url_api = "https://api.github.com/repos/microsoft/apm/releases/assets/435453765"
 
 [tools."github:microsoft/apm"."platforms.linux-x64"]
-checksum = "sha256:2b6ace79257328a9599b2569f4751e5e372e21aeada9e90b423d51df95f24f4d"
-url = "https://github.com/microsoft/apm/releases/download/v0.16.0/apm-linux-x86_64.tar.gz"
-url_api = "https://api.github.com/repos/microsoft/apm/releases/assets/432088197"
+checksum = "sha256:7e3c7aae3972398885d85edfaeb4134ff06d79c9ff63d161873e3407e8a7729c"
+url = "https://github.com/microsoft/apm/releases/download/v0.16.1/apm-linux-x86_64.tar.gz"
+url_api = "https://api.github.com/repos/microsoft/apm/releases/assets/435453760"
 
 [tools."github:microsoft/apm"."platforms.linux-x64-musl"]
-checksum = "sha256:2b6ace79257328a9599b2569f4751e5e372e21aeada9e90b423d51df95f24f4d"
-url = "https://github.com/microsoft/apm/releases/download/v0.16.0/apm-linux-x86_64.tar.gz"
-url_api = "https://api.github.com/repos/microsoft/apm/releases/assets/432088197"
+checksum = "sha256:7e3c7aae3972398885d85edfaeb4134ff06d79c9ff63d161873e3407e8a7729c"
+url = "https://github.com/microsoft/apm/releases/download/v0.16.1/apm-linux-x86_64.tar.gz"
+url_api = "https://api.github.com/repos/microsoft/apm/releases/assets/435453760"
 
 [tools."github:microsoft/apm"."platforms.macos-arm64"]
-checksum = "sha256:f990cca0396658807622e03f23c4e801b1f9dfbf9c06503e0ae77516c514c701"
-url = "https://github.com/microsoft/apm/releases/download/v0.16.0/apm-darwin-arm64.tar.gz"
-url_api = "https://api.github.com/repos/microsoft/apm/releases/assets/432088191"
+checksum = "sha256:57771452f017aba208351ab1d0b384273c463faf2bb4516c94eba422a4fe028d"
+url = "https://github.com/microsoft/apm/releases/download/v0.16.1/apm-darwin-arm64.tar.gz"
+url_api = "https://api.github.com/repos/microsoft/apm/releases/assets/435453764"
 
 [tools."github:microsoft/apm"."platforms.macos-x64"]
-checksum = "sha256:4abb16fe99bc6954ae64305f2da7ff2e984ba39b50e643ddd324e4aa23dc6797"
-url = "https://github.com/microsoft/apm/releases/download/v0.16.0/apm-darwin-x86_64.tar.gz"
-url_api = "https://api.github.com/repos/microsoft/apm/releases/assets/432088198"
+checksum = "sha256:96f04ea961ea0bf3885906fb6475695347a6de5d6ff2c46d3e641453e7c68ae9"
+url = "https://github.com/microsoft/apm/releases/download/v0.16.1/apm-darwin-x86_64.tar.gz"
+url_api = "https://api.github.com/repos/microsoft/apm/releases/assets/435453766"
 
 [tools."github:microsoft/apm"."platforms.windows-x64"]
-checksum = "sha256:74dbd4b0cca1c3d2d9e5d4ba3b02c6ce30046a7dd2b97a9cc951e7afe78d661d"
-url = "https://github.com/microsoft/apm/releases/download/v0.16.0/apm-windows-x86_64.zip"
-url_api = "https://api.github.com/repos/microsoft/apm/releases/assets/432088199"
+checksum = "sha256:35ca70b778a5f2d1201f5dc034b183dc46b281e454ccb027cbbe18d1f156fe08"
+url = "https://github.com/microsoft/apm/releases/download/v0.16.1/apm-windows-x86_64.zip"
+url_api = "https://api.github.com/repos/microsoft/apm/releases/assets/435453767"
 
 [[tools."github:microsoft/waza"]]
 version = "0.33.0"

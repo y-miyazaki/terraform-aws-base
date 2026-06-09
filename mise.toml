@@ -43,7 +43,7 @@ aqua = "v2.59.1"
 "aqua:BurntSushi/ripgrep" = "15.1.0" # grep alternative
 "aqua:google/go-jsonnet" = "0.22.0"  # Jsonnet command-line tool
 "aqua:tamasfe/taplo" = "0.10.0"      # TOML formatter / LSP
-"aqua:jdx/usage" = "3.3.0"           # usage CLI tool for command help and completions
+"aqua:jdx/usage" = "3.4.0"           # usage CLI tool for command help and completions
 
 # Security related tools
 "aqua:aquasecurity/trivy" = "0.70.0" # vulnerability scanner
@@ -73,7 +73,7 @@ aqua = "v2.59.1"
 "aqua:air-verse/air" = "1.65.3"                              # live reload
 "aqua:bufbuild/buf" = "1.70.0"                               # protobuf linter and formatter
 "aqua:go-delve/delve" = "1.26.3"                             # debugger
-"aqua:go-swagger/go-swagger" = "0.33.2"                      # API documentation generator
+"aqua:go-swagger/go-swagger" = "0.34.0"                      # API documentation generator
 "aqua:golangci/golangci-lint" = "2.12.2"                     # linter
 "aqua:goreleaser/goreleaser" = "2.16.0"                      # release automation
 "aqua:grpc/grpc-go/protoc-gen-go-grpc" = "1.6.1"             # gRPC code generator
@@ -111,10 +111,10 @@ aqua = "v2.59.1"
 ], install_env = { NPM_CONFIG_IGNORE_SCRIPTS = "true" } } # AWS profile switcher
 
 # AI agent tools
-"github:microsoft/apm" = "v0.16.0"               # agent package manager
+"github:microsoft/apm" = "v0.16.1"               # agent package manager
 "github:microsoft/waza" = "0.33.0"              # agent skill evaluator
 "github:yvgude/lean-ctx" = "v3.6.26"            # context optimizer
-"github:DeusData/codebase-memory-mcp" = "0.6.1" # codebase memory MCP server
+"github:DeusData/codebase-memory-mcp" = "v0.7.0" # codebase memory MCP server
 
 [tasks.mise-install]
 description = "Install tools defined in mise.toml"
