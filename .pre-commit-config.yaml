@@ -19,6 +19,7 @@ repos:
       - id: detect-aws-credentials
         args: [--allow-missing-credentials]
       - id: detect-private-key
+        exclude: '(?:^|/)(?:.*/)?terraform\.[^.]+\.tfvars$'
       - id: end-of-file-fixer
         exclude: '(^.*(\.devcontainer/devcontainer(-lock)?\.json|settings\.json|settings-example\.json)$)'
       - id: pretty-format-json
@@ -38,6 +39,7 @@ repos:
     rev: v8.30.1
     hooks:
       - id: gitleaks
+        args: ["--config=.gitleaks.toml"]
   # --------------------------------------------------------------
   # For Shell Script
   # --------------------------------------------------------------
