@@ -43,7 +43,7 @@ aqua = "v2.59.1"
 "aqua:BurntSushi/ripgrep" = "15.1.0" # grep alternative
 "aqua:google/go-jsonnet" = "0.22.0"  # Jsonnet command-line tool
 "aqua:tamasfe/taplo" = "0.10.0"      # TOML formatter / LSP
-"aqua:jdx/usage" = "3.3.0"           # usage CLI tool for command help and completions
+"aqua:jdx/usage" = "3.4.0"           # usage CLI tool for command help and completions
 
 # Security related tools
 "aqua:aquasecurity/trivy" = "0.70.0" # vulnerability scanner
