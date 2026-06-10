@@ -165,6 +165,11 @@ function report_failure {
 #   Runs tflint on each directory containing changed Terraform files.
 #   Collects failures and calls report_failure with a summary.
 #
+#   Config resolution: module-local .tflint.hcl takes priority, falling
+#   back to repository root .tflint.hcl. This matches the CI workflow
+#   config resolution strategy. pre-commit cannot implement this due to
+#   tool constraints and uses root config only.
+#
 # Arguments:
 #   None
 #
