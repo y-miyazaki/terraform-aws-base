@@ -92,7 +92,7 @@ aqua = "v2.59.1"
 "aqua:getsops/sops" = "3.13.1"                  # encryption tool
 "aqua:hashicorp/terraform" = "1.15.5"           # infrastructure as code
 "aqua:terraform-docs/terraform-docs" = "0.24.0" # documentation generator
-"aqua:terraform-linters/tflint" = "0.62.1"      # linter
+"aqua:terraform-linters/tflint" = "0.63.0"      # linter
 
 # Lint / Formatter tools (npm)
 "npm:markdownlint-cli2" = { version = "0.22.1", depends = [
