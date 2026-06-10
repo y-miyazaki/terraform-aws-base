@@ -266,5 +266,7 @@ variable "jit_access" {
     }))
     # EventBridge schedule expression for cleanup checker.
     cleanup_schedule_expression = optional(string, "rate(15 minutes)")
+    # Timezone for Lambda (TZ environment variable).
+    timezone = optional(string, "UTC")
   })
 }

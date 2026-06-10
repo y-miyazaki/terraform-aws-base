@@ -260,6 +260,7 @@ module "lambda_jit_access" {
       SLACK_BOT_TOKEN      = var.slack.bot_token
       SLACK_SIGNING_SECRET = var.slack.signing_secret
       SSM_PARAMETER_PREFIX = var.ssm_parameter_prefix
+      TZ                   = var.timezone
     },
     var.slack.workflow_secret != null ? { WORKFLOW_SECRET = var.slack.workflow_secret } : {},
   )
@@ -278,57 +279,189 @@ module "lambda_jit_access" {
 }
 
 #--------------------------------------------------------------
-# API Gateway: Slack webhook endpoint
+# API Gateway: Slack webhook endpoint (REST API for WAF support)
 #--------------------------------------------------------------
-resource "aws_apigatewayv2_api" "slack" {
-  name          = "${var.name_prefix}jit-access-slack"
-  protocol_type = "HTTP"
-  description   = "JIT Access Slack webhook endpoint"
+resource "aws_api_gateway_rest_api" "slack" {
+  name        = "${var.name_prefix}jit-access-slack"
+  description = "JIT Access Slack webhook endpoint"
+
+  endpoint_configuration {
+    types = ["REGIONAL"]
+  }
 
   tags = var.tags
 }
 
-resource "aws_apigatewayv2_stage" "default" {
-  api_id      = aws_apigatewayv2_api.slack.id
-  name        = "$default"
-  auto_deploy = true
-
-  tags = var.tags
+#--- /slack resource ---
+resource "aws_api_gateway_resource" "slack" {
+  parent_id   = aws_api_gateway_rest_api.slack.root_resource_id
+  path_part   = "slack"
+  rest_api_id = aws_api_gateway_rest_api.slack.id
 }
 
-resource "aws_apigatewayv2_integration" "slack_handler" {
-  api_id                 = aws_apigatewayv2_api.slack.id
-  integration_type       = "AWS_PROXY"
-  integration_uri        = module.lambda_jit_access.lambda_function_arn
-  payload_format_version = "2.0"
+#--- /slack/commands ---
+resource "aws_api_gateway_resource" "slack_commands" {
+  parent_id   = aws_api_gateway_resource.slack.id
+  path_part   = "commands"
+  rest_api_id = aws_api_gateway_rest_api.slack.id
 }
 
-resource "aws_apigatewayv2_route" "slack_commands" {
-  api_id    = aws_apigatewayv2_api.slack.id
-  route_key = "POST /slack/commands"
-  target    = "integrations/${aws_apigatewayv2_integration.slack_handler.id}"
+resource "aws_api_gateway_method" "slack_commands" {
+  authorization = "NONE"
+  http_method   = "POST"
+  resource_id   = aws_api_gateway_resource.slack_commands.id
+  rest_api_id   = aws_api_gateway_rest_api.slack.id
 }
 
-resource "aws_apigatewayv2_route" "slack_interactions" {
-  api_id    = aws_apigatewayv2_api.slack.id
-  route_key = "POST /slack/interactions"
-  target    = "integrations/${aws_apigatewayv2_integration.slack_handler.id}"
+resource "aws_api_gateway_integration" "slack_commands" {
+  http_method             = aws_api_gateway_method.slack_commands.http_method
+  integration_http_method = "POST"
+  resource_id             = aws_api_gateway_resource.slack_commands.id
+  rest_api_id             = aws_api_gateway_rest_api.slack.id
+  type                    = "AWS_PROXY"
+  uri                     = module.lambda_jit_access.lambda_function_invoke_arn
 }
 
-resource "aws_apigatewayv2_route" "workflow_request" {
+#--- /slack/interactions ---
+resource "aws_api_gateway_resource" "slack_interactions" {
+  parent_id   = aws_api_gateway_resource.slack.id
+  path_part   = "interactions"
+  rest_api_id = aws_api_gateway_rest_api.slack.id
+}
+
+resource "aws_api_gateway_method" "slack_interactions" {
+  authorization = "NONE"
+  http_method   = "POST"
+  resource_id   = aws_api_gateway_resource.slack_interactions.id
+  rest_api_id   = aws_api_gateway_rest_api.slack.id
+}
+
+resource "aws_api_gateway_integration" "slack_interactions" {
+  http_method             = aws_api_gateway_method.slack_interactions.http_method
+  integration_http_method = "POST"
+  resource_id             = aws_api_gateway_resource.slack_interactions.id
+  rest_api_id             = aws_api_gateway_rest_api.slack.id
+  type                    = "AWS_PROXY"
+  uri                     = module.lambda_jit_access.lambda_function_invoke_arn
+}
+
+#--- /workflow resource ---
+resource "aws_api_gateway_resource" "workflow" {
   count = var.slack.workflow_secret != null ? 1 : 0
 
-  api_id    = aws_apigatewayv2_api.slack.id
-  route_key = "POST /workflow/request"
-  target    = "integrations/${aws_apigatewayv2_integration.slack_handler.id}"
+  parent_id   = aws_api_gateway_rest_api.slack.root_resource_id
+  path_part   = "workflow"
+  rest_api_id = aws_api_gateway_rest_api.slack.id
 }
 
+#--- /workflow/request ---
+resource "aws_api_gateway_resource" "workflow_request" {
+  count = var.slack.workflow_secret != null ? 1 : 0
+
+  parent_id   = aws_api_gateway_resource.workflow[0].id
+  path_part   = "request"
+  rest_api_id = aws_api_gateway_rest_api.slack.id
+}
+
+resource "aws_api_gateway_method" "workflow_request" {
+  count = var.slack.workflow_secret != null ? 1 : 0
+
+  authorization = "NONE"
+  http_method   = "POST"
+  resource_id   = aws_api_gateway_resource.workflow_request[0].id
+  rest_api_id   = aws_api_gateway_rest_api.slack.id
+}
+
+resource "aws_api_gateway_integration" "workflow_request" {
+  count = var.slack.workflow_secret != null ? 1 : 0
+
+  http_method             = aws_api_gateway_method.workflow_request[0].http_method
+  integration_http_method = "POST"
+  resource_id             = aws_api_gateway_resource.workflow_request[0].id
+  rest_api_id             = aws_api_gateway_rest_api.slack.id
+  type                    = "AWS_PROXY"
+  uri                     = module.lambda_jit_access.lambda_function_invoke_arn
+}
+
+#--- Deployment & Stage ---
+resource "aws_api_gateway_deployment" "this" {
+  rest_api_id = aws_api_gateway_rest_api.slack.id
+
+  triggers = {
+    redeployment = sha1(jsonencode([
+      aws_api_gateway_resource.slack.id,
+      aws_api_gateway_resource.slack_commands.id,
+      aws_api_gateway_resource.slack_interactions.id,
+      aws_api_gateway_method.slack_commands.id,
+      aws_api_gateway_method.slack_interactions.id,
+      aws_api_gateway_integration.slack_commands.id,
+      aws_api_gateway_integration.slack_interactions.id,
+    ]))
+  }
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
+resource "aws_api_gateway_stage" "this" {
+  deployment_id = aws_api_gateway_deployment.this.id
+  rest_api_id   = aws_api_gateway_rest_api.slack.id
+  stage_name    = "v1"
+
+  access_log_settings {
+    destination_arn = aws_cloudwatch_log_group.api_gateway.arn
+    format = jsonencode({
+      httpMethod     = "$context.httpMethod"
+      ip             = "$context.identity.sourceIp"
+      protocol       = "$context.protocol"
+      requestId      = "$context.requestId"
+      requestTime    = "$context.requestTime"
+      responseLength = "$context.responseLength"
+      resourcePath   = "$context.resourcePath"
+      status         = "$context.status"
+    })
+  }
+
+  tags = var.tags
+}
+
+resource "aws_api_gateway_method_settings" "this" {
+  method_path = "*/*"
+  rest_api_id = aws_api_gateway_rest_api.slack.id
+  stage_name  = aws_api_gateway_stage.this.stage_name
+
+  settings {
+    throttling_burst_limit = 50
+    throttling_rate_limit  = 100
+  }
+}
+
+resource "aws_cloudwatch_log_group" "api_gateway" {
+  name              = "/aws/apigateway/${var.name_prefix}jit-access-slack"
+  kms_key_id        = var.kms_key_arn
+  retention_in_days = var.lambda_log_retention_days
+
+  tags = var.tags
+}
+
+#--- Lambda permission ---
 resource "aws_lambda_permission" "api_gateway" {
-  statement_id  = "AllowAPIGatewayInvoke"
   action        = "lambda:InvokeFunction"
   function_name = module.lambda_jit_access.lambda_function_name
   principal     = "apigateway.amazonaws.com"
-  source_arn    = "${aws_apigatewayv2_api.slack.execution_arn}/*/*"
+  source_arn    = "${aws_api_gateway_rest_api.slack.execution_arn}/*/*/*"
+  statement_id  = "AllowAPIGatewayInvoke"
+}
+
+#--------------------------------------------------------------
+# WAFv2: Web ACL association for API Gateway
+#--------------------------------------------------------------
+resource "aws_wafv2_web_acl_association" "api_gateway" {
+  count = var.waf_enabled ? 1 : 0
+
+  resource_arn = aws_api_gateway_stage.this.arn
+  web_acl_arn  = var.waf_web_acl_arn
 }
 
 #--------------------------------------------------------------

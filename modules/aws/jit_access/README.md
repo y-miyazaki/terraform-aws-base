@@ -10,7 +10,7 @@
 
 | Name | Version |
 | ---- | ------- |
-| <a name="provider_aws"></a> [aws](#provider\_aws) | 6.47.0 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | 6.49.0 |
 
 ## Modules
 
@@ -24,12 +24,22 @@
 
 | Name | Type |
 | ---- | ---- |
-| [aws_apigatewayv2_api.slack](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/apigatewayv2_api) | resource |
-| [aws_apigatewayv2_integration.slack_handler](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/apigatewayv2_integration) | resource |
-| [aws_apigatewayv2_route.slack_commands](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/apigatewayv2_route) | resource |
-| [aws_apigatewayv2_route.slack_interactions](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/apigatewayv2_route) | resource |
-| [aws_apigatewayv2_route.workflow_request](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/apigatewayv2_route) | resource |
-| [aws_apigatewayv2_stage.default](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/apigatewayv2_stage) | resource |
+| [aws_api_gateway_deployment.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/api_gateway_deployment) | resource |
+| [aws_api_gateway_integration.slack_commands](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/api_gateway_integration) | resource |
+| [aws_api_gateway_integration.slack_interactions](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/api_gateway_integration) | resource |
+| [aws_api_gateway_integration.workflow_request](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/api_gateway_integration) | resource |
+| [aws_api_gateway_method.slack_commands](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/api_gateway_method) | resource |
+| [aws_api_gateway_method.slack_interactions](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/api_gateway_method) | resource |
+| [aws_api_gateway_method.workflow_request](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/api_gateway_method) | resource |
+| [aws_api_gateway_method_settings.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/api_gateway_method_settings) | resource |
+| [aws_api_gateway_resource.slack](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/api_gateway_resource) | resource |
+| [aws_api_gateway_resource.slack_commands](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/api_gateway_resource) | resource |
+| [aws_api_gateway_resource.slack_interactions](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/api_gateway_resource) | resource |
+| [aws_api_gateway_resource.workflow](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/api_gateway_resource) | resource |
+| [aws_api_gateway_resource.workflow_request](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/api_gateway_resource) | resource |
+| [aws_api_gateway_rest_api.slack](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/api_gateway_rest_api) | resource |
+| [aws_api_gateway_stage.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/api_gateway_stage) | resource |
+| [aws_cloudwatch_log_group.api_gateway](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_log_group) | resource |
 | [aws_cloudwatch_metric_alarm.dlq_messages](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_metric_alarm) | resource |
 | [aws_iam_role.lambda](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role) | resource |
 | [aws_iam_role.scheduler](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role) | resource |
@@ -45,6 +55,7 @@
 | [aws_ssm_parameter.profiles](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ssm_parameter) | resource |
 | [aws_ssm_parameter.state_machine_arn](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ssm_parameter) | resource |
 | [aws_ssm_parameter.user_mapping](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ssm_parameter) | resource |
+| [aws_wafv2_web_acl_association.api_gateway](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/wafv2_web_acl_association) | resource |
 | [aws_ssoadmin_instances.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/ssoadmin_instances) | data source |
 
 ## Inputs
@@ -62,7 +73,10 @@
 | <a name="input_slack"></a> [slack](#input\_slack) | (Required) Slack App credentials and configuration. | <pre>object({<br/>    # (Required) Slack signing secret for request verification.<br/>    signing_secret = string<br/>    # (Required) Slack bot OAuth token.<br/>    bot_token = string<br/>    # (Required) Slack channel ID for approval notifications.<br/>    approver_channel_id = string<br/>    # (Optional) Shared secret for authenticating Slack Workflow Builder webhook requests via x-workflow-secret header. When null, the /workflow/request endpoint is not created.<br/>    workflow_secret = optional(string)<br/>    # (Optional) Slack User ID → Identity Center User ID mapping. Required only for users whose Slack email does not match Identity Center UserName.<br/>    user_mappings = optional(map(string), {})<br/>  })</pre> | n/a | yes |
 | <a name="input_ssm_parameter_prefix"></a> [ssm\_parameter\_prefix](#input\_ssm\_parameter\_prefix) | (Optional) SSM Parameter Store prefix for JIT access configuration. | `string` | `"/jit-access"` | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | (Optional) A mapping of tags to assign to the resource. | `map(any)` | `null` | no |
+| <a name="input_timezone"></a> [timezone](#input\_timezone) | (Optional) Timezone for Lambda functions (TZ environment variable). | `string` | `"UTC"` | no |
 | <a name="input_vpc_config"></a> [vpc\_config](#input\_vpc\_config) | (Optional) VPC configuration for Lambda functions. Set to null to disable VPC. | <pre>object({<br/>    # (Required) List of subnet IDs for Lambda VPC configuration.<br/>    subnet_ids = list(string)<br/>    # (Required) List of security group IDs for Lambda VPC configuration.<br/>    security_group_ids = list(string)<br/>  })</pre> | `null` | no |
+| <a name="input_waf_enabled"></a> [waf\_enabled](#input\_waf\_enabled) | (Optional) Whether to associate a WAFv2 Web ACL with the API Gateway stage. | `bool` | `false` | no |
+| <a name="input_waf_web_acl_arn"></a> [waf\_web\_acl\_arn](#input\_waf\_web\_acl\_arn) | (Optional) ARN of the WAFv2 Web ACL to associate with the API Gateway stage. Required when waf\_enabled is true. | `string` | `null` | no |
 
 ## Outputs
 
@@ -76,5 +90,6 @@
 | <a name="output_lambda_function_arn"></a> [lambda\_function\_arn](#output\_lambda\_function\_arn) | The ARN of the JIT Access Lambda function |
 | <a name="output_lambda_function_name"></a> [lambda\_function\_name](#output\_lambda\_function\_name) | The name of the JIT Access Lambda function |
 | <a name="output_lambda_role_arn"></a> [lambda\_role\_arn](#output\_lambda\_role\_arn) | The ARN of the Lambda execution IAM role |
+| <a name="output_slack_app_manifest"></a> [slack\_app\_manifest](#output\_slack\_app\_manifest) | Slack App Manifest YAML for app registration. Copy to Slack App settings. |
 | <a name="output_state_machine_arn"></a> [state\_machine\_arn](#output\_state\_machine\_arn) | The ARN of the Step Functions state machine |
 <!-- END_TF_DOCS -->

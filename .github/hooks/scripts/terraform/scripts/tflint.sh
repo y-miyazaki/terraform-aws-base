@@ -194,9 +194,22 @@ function main {
     local output=""
     for dir in "${dirs[@]}"; do
         [[ -n "$dir" && -d "$dir" ]] || continue
-        tflint --init --chdir "$dir" > /dev/null 2>&1 || true
+
+        local config_arg=""
+        if [[ -f "${dir}/.tflint.hcl" ]]; then
+            config_arg="--config=${dir}/.tflint.hcl"
+        elif [[ -f "${root}/.tflint.hcl" ]]; then
+            config_arg="--config=${root}/.tflint.hcl"
+        fi
+
+        local -a config_args=()
+        if [[ -n "$config_arg" ]]; then
+            config_args=("$config_arg")
+        fi
+
+        tflint --init --chdir "$dir" "${config_args[@]}" > /dev/null 2>&1 || true
         local result
-        result=$(tflint --fix --chdir "$dir" 2>&1) || {
+        result=$(tflint --fix --chdir "$dir" "${config_args[@]}" 2>&1) || {
             fails=$((fails + 1))
             output+="${result}"$'\n'
         }

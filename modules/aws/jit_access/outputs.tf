@@ -3,7 +3,7 @@
 #--------------------------------------------------------------
 output "api_gateway_endpoint" {
   description = "The API Gateway endpoint URL for Slack webhook configuration"
-  value       = aws_apigatewayv2_api.slack.api_endpoint
+  value       = aws_api_gateway_stage.this.invoke_url
 }
 output "dynamodb_table_name" {
   description = "The name of the DynamoDB requests table"
@@ -36,4 +36,34 @@ output "dlq_url" {
 output "lambda_role_arn" {
   description = "The ARN of the Lambda execution IAM role"
   value       = aws_iam_role.lambda.arn
+}
+output "slack_app_manifest" {
+  description = "Slack App Manifest YAML for app registration. Copy to Slack App settings."
+  value       = <<-YAML
+    display_information:
+      name: JIT Access
+      description: Temporary privileged access management
+    features:
+      bot_user:
+        display_name: JIT Access
+        always_online: true
+      slash_commands:
+        - command: /jit-access
+          url: ${aws_api_gateway_stage.this.invoke_url}/slack/commands
+          description: Request temporary privileged access
+          usage_hint: (opens a modal)
+    oauth_config:
+      scopes:
+        bot:
+          - chat:write
+          - commands
+          - users:read
+          - users:read.email
+    settings:
+      interactivity:
+        is_enabled: true
+        request_url: ${aws_api_gateway_stage.this.invoke_url}/slack/interactions
+      org_deploy_enabled: false
+      socket_mode_enabled: false
+  YAML
 }

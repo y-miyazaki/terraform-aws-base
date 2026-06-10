@@ -64,6 +64,11 @@ variable "lambda_timeout" {
   description = "(Optional) Timeout in seconds for Lambda functions."
   default     = 300
 }
+variable "timezone" {
+  type        = string
+  description = "(Optional) Timezone for Lambda functions (TZ environment variable)."
+  default     = "UTC"
+}
 variable "kms_key_arn" {
   type        = string
   description = "(Optional) KMS key ARN for encrypting CloudWatch Logs and DynamoDB."
@@ -77,6 +82,16 @@ variable "vpc_config" {
     security_group_ids = list(string)
   })
   description = "(Optional) VPC configuration for Lambda functions. Set to null to disable VPC."
+  default     = null
+}
+variable "waf_enabled" {
+  type        = bool
+  description = "(Optional) Whether to associate a WAFv2 Web ACL with the API Gateway stage."
+  default     = false
+}
+variable "waf_web_acl_arn" {
+  type        = string
+  description = "(Optional) ARN of the WAFv2 Web ACL to associate with the API Gateway stage. Required when waf_enabled is true."
   default     = null
 }
 variable "tags" {

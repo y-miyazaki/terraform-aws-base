@@ -597,7 +597,7 @@ jit_access = {
     #   3. Click "Basic Information" in the left menu
     #   4. Under "App Credentials", click "Show" next to "Signing Secret" and copy
     #---------------------------------------------------------------------------
-    signing_secret = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+    signing_secret = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" # pragma: allowlist secret
 
     #---------------------------------------------------------------------------
     # user_mappings: Slack User ID -> Identity Center User ID mapping
@@ -633,4 +633,5 @@ jit_access = {
     #---------------------------------------------------------------------------
     workflow_secret = null
   }
+  timezone = "UTC"
 }
