@@ -2,7 +2,7 @@
 
 ## Architecture (ARCH)
 - ARCH-01 (SHOULD): Layer Separation
-- ARCH-02 (MUST): Dependency Injection
+- ARCH-02 (SHOULD): Dependency Injection
 - ARCH-03 (SHOULD): Domain Logic Isolation
 - ARCH-04 (SHOULD): SOLID Principles
 - ARCH-05 (SHOULD): Appropriate Package Structure
@@ -87,7 +87,7 @@
 - G-03 (SHOULD): Leverage Standard Library
 - G-04 (SHOULD): Appropriate Log Levels
 - G-05 (SHOULD): Restrict init() Complexity
-- G-06 (MUST): Zero Value Design
+- G-06 (SHOULD): Zero Value Design
 - G-07 (SHOULD): Defensive Copy at Boundaries
 
 ## Performance (PERF)

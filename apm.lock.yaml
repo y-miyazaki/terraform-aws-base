@@ -1,19 +1,19 @@
 lockfile_version: '1'
-generated_at: '2026-06-10T11:30:16.325276+00:00'
+generated_at: '2026-06-11T06:09:33.407209+00:00'
 apm_version: 0.14.0
 dependencies:
 - repo_url: y-miyazaki/config
   host: github.com
-  resolved_commit: b503440f52c7c321fc4f640e1ce52e1c53d6c183
-  resolved_ref: v1.1.34
+  resolved_commit: c5dc3a91a9b4ecd7514edceb0429ed26c073b01b
+  resolved_ref: v1.1.36
   virtual_path: .apm/packages/aws
   is_virtual: true
   package_type: apm_package
-  content_hash: sha256:e79bc9c3b1d62b34e939720f4f6a93d362dc79f1f2398de6a52107d723e82e03
+  content_hash: sha256:2908905e050d4ae61c5e87efa25152acad706fd3b3fb52eba25f54b57aa751c1
 - repo_url: y-miyazaki/config
   host: github.com
-  resolved_commit: b503440f52c7c321fc4f640e1ce52e1c53d6c183
-  resolved_ref: v1.1.34
+  resolved_commit: c5dc3a91a9b4ecd7514edceb0429ed26c073b01b
+  resolved_ref: v1.1.36
   virtual_path: .apm/packages/common
   is_virtual: true
   package_type: apm_package
@@ -53,14 +53,14 @@ dependencies:
     .github/hooks/scripts/common/scripts/markdownlint_cli2.sh: sha256:8d7288d49b50f53deefecf6273e74dca9db131a8d7055d89d21c2e5305b1121d
     .github/hooks/scripts/common/scripts/zizmor.sh: sha256:f0f541d98759f7d287745a52fcf6cfd29335cfe3b4c1a299ee3b7f88bca8994b
     .github/instructions/agent-skills.instructions.md: sha256:ea9c6af427e4f927940924e32e307da7cb8bf265afa4b2f939eaa233dc451182
-    .github/instructions/github-actions-workflow.instructions.md: sha256:42ca9bd31449a6536a955dfb476f077fc0595f09298005d41c6a670330279002
+    .github/instructions/github-actions-workflow.instructions.md: sha256:1ee01b48b75a3c9d8f8a85e8aae3d8d5c7f1f1056c5063b1c408419fa855df85
     .github/instructions/instructions.instructions.md: sha256:343784c153e77cae5eb1d031de4f11d07655c6bd91ae39da1773d4e97becfe60
     .github/instructions/markdown.instructions.md: sha256:fa7f8346e8c81c05854cb22ee86f3ac9e97a46127148db942c74f922f576a773
-  content_hash: sha256:b1ff472e7b346df43d4764570c57152b11feddc49b03bd7c9b99a584ceb77c5a
+  content_hash: sha256:977cf3ea35020fe6fe2bd0b16aa993f64ceb94314684328254a43553f6f8dc46
 - repo_url: y-miyazaki/config
   host: github.com
-  resolved_commit: b503440f52c7c321fc4f640e1ce52e1c53d6c183
-  resolved_ref: v1.1.34
+  resolved_commit: c5dc3a91a9b4ecd7514edceb0429ed26c073b01b
+  resolved_ref: v1.1.36
   virtual_path: .apm/packages/go
   is_virtual: true
   package_type: apm_package
@@ -73,12 +73,12 @@ dependencies:
   deployed_file_hashes:
     .github/hooks/go-golangci-lint.json: sha256:ca22a5418f86ac6515b439f675c0b98c3d663cddc5579257995471a2a6078d21
     .github/hooks/scripts/go/scripts/golangci_lint.sh: sha256:884226ecdabfc7ecc987fe4e6171240f4dbf4227d61a06b98f1868728ba2480c
-    .github/instructions/go.instructions.md: sha256:e51bd95a7fb1cef5c32ab54a48cd354452d5c7da0acc7a622ea332ce01c137a2
-  content_hash: sha256:8f7a6f57d12757991fb3b35a6e6db8a53985cc8a1f3eb1dd84d8cea6b4fdf7ae
+    .github/instructions/go.instructions.md: sha256:a5d2c45b51b403729febfb062c3ce2ae9746780043f1e65006378bccaeb146c9
+  content_hash: sha256:b6a8fd61911deb55eed4850dc05d079a5a64a54ef53e003fac8f3c468acf3980
 - repo_url: y-miyazaki/config
   host: github.com
-  resolved_commit: b503440f52c7c321fc4f640e1ce52e1c53d6c183
-  resolved_ref: v1.1.34
+  resolved_commit: c5dc3a91a9b4ecd7514edceb0429ed26c073b01b
+  resolved_ref: v1.1.36
   virtual_path: .apm/packages/shell-script
   is_virtual: true
   package_type: apm_package
@@ -96,11 +96,11 @@ dependencies:
     .github/hooks/shell-script-shellcheck.json: sha256:f41996681f91a2ee708a16be8661aebc614d4d955cef97c3cb49325cce723a81
     .github/hooks/shell-script-shfmt.json: sha256:f6e957ad363f8b3b8507e131e8a8ffe1399fde864bcf95bf00d060afc4c8ac2e
     .github/instructions/shell-script.instructions.md: sha256:55cd85eb429d2ca7af192054bd468151fbf84382a4fe1cf9f5b55fcaf6892d4a
-  content_hash: sha256:3230116d290cce7480ab7aee4817660fa158a2c3027e5e6520e3700e0521c00e
+  content_hash: sha256:6527cb43a09b5eb76369c42dba4c768b80e82d6e363c6ff42cd4daaa35bfc493
 - repo_url: y-miyazaki/config
   host: github.com
-  resolved_commit: b503440f52c7c321fc4f640e1ce52e1c53d6c183
-  resolved_ref: v1.1.34
+  resolved_commit: c5dc3a91a9b4ecd7514edceb0429ed26c073b01b
+  resolved_ref: v1.1.36
   virtual_path: .apm/packages/terraform
   is_virtual: true
   package_type: apm_package
@@ -118,11 +118,11 @@ dependencies:
     .github/hooks/terraform-terraform-fmt.json: sha256:6823a9225cde5b7a83fcaa3fad40f643aa279127b67696981b190aecf3103e0f
     .github/hooks/terraform-tflint.json: sha256:7ba0d8fffe3d509323a393f35407c83c6e3e1b480ccf3c62a9b8148f25d856d4
     .github/instructions/terraform.instructions.md: sha256:997a103c30ce17920fc400373cc25dd1c1908cb4ef727d6493966087163448e4
-  content_hash: sha256:aa4fba3c27f453ae10879193557a4a292125d015c5aefdb15a70b44c75c15a14
+  content_hash: sha256:9b7365daa3cb15707d5f916b0699e0fb3bc83b4f80aec46a2c8c74fc7bb1c089
 - repo_url: y-miyazaki/config
   host: github.com
-  resolved_commit: b503440f52c7c321fc4f640e1ce52e1c53d6c183
-  resolved_ref: v1.1.34
+  resolved_commit: c5dc3a91a9b4ecd7514edceb0429ed26c073b01b
+  resolved_ref: v1.1.36
   virtual_path: .apm/packages/terraform-aws
   is_virtual: true
   package_type: apm_package
@@ -153,9 +153,6 @@ mcp_configs:
     name: aws-knowledge-mcp-server
     transport: stdio
     args:
-    - mcp-compressor==0.19.8
-    - --
-    - uvx
     - mcp-proxy==0.12.0
     - --transport
     - streamablehttp
@@ -166,9 +163,6 @@ mcp_configs:
     name: aws-mcp
     transport: stdio
     args:
-    - mcp-compressor==0.19.8
-    - --
-    - uvx
     - mcp-proxy-for-aws==1.4.2
     - https://aws-mcp.us-east-1.api.aws/mcp
     registry: false

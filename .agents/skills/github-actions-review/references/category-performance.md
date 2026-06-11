@@ -14,9 +14,9 @@ Fix: Tune matrix dimensions and parallelism based on critical path and cost.
 
 **PERF-03 (SHOULD): Concurrency Control**
 
-Check: Is `concurrency` configured to cancel redundant in-progress runs on same branch/context?
+Check: Is `concurrency` configured to cancel redundant in-progress runs on same branch/context? Skip this check for reusable workflows (`workflow_call`), where concurrency is the caller's responsibility.
 Why: Missing concurrency controls wastes runners and delays important builds.
-Fix: Add concurrency group with `cancel-in-progress: true` where appropriate.
+Fix: Add concurrency group with `cancel-in-progress: true` where appropriate. For reusable workflows, document concurrency expectations for callers.
 
 **PERF-04 (SHOULD): Reduce Unnecessary Workload**
 

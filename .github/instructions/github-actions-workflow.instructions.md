@@ -39,7 +39,7 @@ description: "AI Assistant Instructions for GitHub Actions Workflows"
 - BP-04 (SHOULD): Simplify Conditional Branches
   - Check: Are `if` expressions concise and understandable?
 - BP-05 (SHOULD): Limit Environment Variable Scope
-  - Check: Is `env` defined with minimal scope?
+  - Check: Are secrets or sensitive values exposed at broader scope than necessary? Non-sensitive configuration values at top-level for readability are acceptable.
 
 ### Error Handling (ERR)
 - ERR-01 (SHOULD): Careful Use of continue-on-error
@@ -69,7 +69,7 @@ description: "AI Assistant Instructions for GitHub Actions Workflows"
 - PERF-02 (SHOULD): Matrix/Parallel Execution Balance
   - Check: Is matrix or parallel execution used where beneficial without excessive runner cost?
 - PERF-03 (SHOULD): Concurrency Control
-  - Check: Is `concurrency` configured to cancel redundant in-progress runs on same branch/context?
+  - Check: Is `concurrency` configured to cancel redundant in-progress runs on same branch/context? Skip for reusable workflows (`workflow_call`), where concurrency is the caller's responsibility.
 - PERF-04 (SHOULD): Reduce Unnecessary Workload
   - Check: Are broad triggers, full-repo checkout, and repeated setup steps minimized?
 

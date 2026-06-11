@@ -6,9 +6,9 @@ Check: Are handler/usecase/repository separated and business/infrastructure laye
 Why: Mixed business logic and infrastructure layers make testing difficult, technology stack changes difficult
 Fix: Apply Clean Architecture, separate handler/usecase/repository
 
-**ARCH-02 (MUST): Dependency Injection**
+**ARCH-02 (SHOULD): Dependency Injection**
 
-Check: Are dependencies passed via constructor arguments as interfaces rather than accessed as global variables?
+Check: Are dependencies passed via constructor arguments as interfaces rather than accessed as global variables? (Package-level variables are acceptable in single-binary Lambda/CLI tools when interfaces are defined and tests use save/restore helpers.)
 Why: Global variable dependencies and hardcoded dependencies prevent mocking, parallel testing
 Fix: Accept dependencies as interface arguments in constructors; use wire/dig only when constructor graphs become complex
 

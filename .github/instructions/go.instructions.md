@@ -28,7 +28,7 @@ description: "AI Assistant Instructions for Go Development"
 - **S-05 (MUST)**: Accept `context.Context` as the first parameter in all exported functions that perform I/O or may block.
 - **S-06 (MUST)**: Keep interfaces small (1–3 methods) and define them on the consumer side.
 - **S-07 (MUST)**: Design types so their zero value is valid and useful where possible.
-- **S-08 (MUST)**: Pass dependencies as interface arguments in constructors — do not rely on package-level variables.
+- **S-08 (MUST)**: Pass dependencies as interface arguments in constructors — do not rely on package-level variables. (Single-binary Lambda/CLI tools may use package-level variables when interfaces are defined and tests use save/restore helpers.)
 
 ### Unexported Helper Placement
 
@@ -42,8 +42,8 @@ description: "AI Assistant Instructions for Go Development"
 ### Architecture (ARCH)
 - ARCH-01 (SHOULD): Layer Separation
   - Check: Are handler/usecase/repository separated and business/infrastructure layers separated?
-- ARCH-02 (MUST): Dependency Injection
-  - Check: Are dependencies passed via constructor arguments as interfaces rather than accessed as global variables?
+- ARCH-02 (SHOULD): Dependency Injection
+  - Check: Are dependencies passed via constructor arguments as interfaces rather than accessed as global variables? (Package-level variables are acceptable in single-binary Lambda/CLI tools when interfaces are defined and tests use save/restore helpers.)
 - ARCH-03 (SHOULD): Domain Logic Isolation
   - Check: Is business logic free from infrastructure concerns (DB, HTTP, external APIs)?
 - ARCH-04 (SHOULD): SOLID Principles
@@ -196,8 +196,8 @@ description: "AI Assistant Instructions for Go Development"
   - Check: Are Debug/Info/Warn/Error levels appropriate and structured logging used?
 - G-05 (SHOULD): Restrict init() Complexity
   - Check: Does init() avoid panics, external I/O, and non-trivial side effects? Is it minimal and deterministic?
-- G-06 (MUST): Zero Value Design
-  - Check: Are types designed so their zero value is a valid and useful state where possible?
+- G-06 (SHOULD): Zero Value Design
+  - Check: Are types designed so their zero value is a valid and useful state where possible? (Types requiring mandatory initialization such as DB clients or config structs are exempt when documented.)
 - G-07 (SHOULD): Defensive Copy at Boundaries
   - Check: Are slices and maps copied when accepting from or returning to external callers?
 

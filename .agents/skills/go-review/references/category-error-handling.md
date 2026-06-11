@@ -8,9 +8,9 @@ Fix: Wrap with fmt.Errorf("%w", err), add context information
 
 **ERR-02 (SHOULD): Appropriate Custom Error Definition**
 
-Check: Are sentinel errors defined and custom errors compatible with errors.Is/As?
-Why: String-only errors make error handling branching difficult, retry determination impossible
-Fix: Define custom errors compatible with errors.Is/As, define sentinel errors, use errors.Is checks
+Check: Are sentinel errors defined with distinct semantics, not reused across unrelated failure modes? Are custom errors compatible with errors.Is/As?
+Why: Reusing a sentinel error for unrelated conditions (e.g., using ErrNotFound for both "user not found" and "invalid input") defeats programmatic error handling and obscures root cause
+Fix: Define distinct sentinel errors per failure category; ensure custom errors implement Unwrap for errors.Is/As compatibility
 
 **ERR-03 (SHOULD): Avoid and Recover from Panics**
 

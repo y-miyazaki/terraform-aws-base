@@ -26,6 +26,6 @@ Fix: Simplify `if`, add intent comments
 
 **BP-05 (SHOULD): Limit Environment Variable Scope**
 
-Check: Is `env` defined with minimal scope?
-Why: Excessive env scope causes unexpected behavior, secret exposure
-Fix: Use minimal scope `env`, utilize outputs/inputs
+Check: Are secrets or sensitive values exposed at broader scope than necessary? Non-sensitive configuration values at top-level for readability are acceptable.
+Why: Secrets at excessive scope risk accidental exposure via logs or downstream steps.
+Fix: Keep secrets and sensitive values at minimal scope. Non-sensitive settings may remain at top-level when organized for clarity.

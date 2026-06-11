@@ -30,9 +30,9 @@ Check: Does init() avoid panics, external I/O, and non-trivial side effects? Is 
 Why: Complex init() hides initialization failures, causes unpredictable startup order across packages, and makes unit testing difficult
 Fix: Limit init() to simple variable assignments; move complex initialization to explicit constructors or main()
 
-**G-06 (MUST): Zero Value Design**
+**G-06 (SHOULD): Zero Value Design**
 
-Check: Are types designed so their zero value is a valid and useful state where possible?
+Check: Are types designed so their zero value is a valid and useful state where possible? (Types requiring mandatory initialization such as DB clients or config structs are exempt when documented.)
 Why: Types with unusable zero values require mandatory initialization guards and cause subtle nil-dereference bugs when forgotten
 Fix: Design structs so the zero value represents a valid empty state (e.g., sync.Mutex zero value is an unlocked mutex); document when zero value is not valid
 
