@@ -86,7 +86,7 @@ aqua = "v2.59.1"
 # Use go backend for go_install-type packages (aqua backend does not support these).
 "go:golang.org/x/tools/gopls" = "v0.22.0"                               # Go language server
 "go:golang.org/x/vuln/cmd/govulncheck" = "1.3.0"                        # vulnerability scanner
-"go:github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen" = "2.7.0" # OpenAPI code generator
+"go:github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen" = "v2.7.1" # OpenAPI code generator
 
 # Terraform related tools
 "aqua:getsops/sops" = "3.13.1"                  # encryption tool
