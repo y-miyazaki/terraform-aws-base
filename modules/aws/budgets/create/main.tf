@@ -1,5 +1,5 @@
 #--------------------------------------------------------------
-# Module: aws/budgets/create-v4
+# Module: aws/budgets/create
 # Purpose: Create an AWS Budgets cost or usage budget with optional filters, cost types, and notifications.
 # Notes: Supports multiple notification blocks; no tagging (service not taggable); future improvement: add support for usage and RI/SP types validation.
 #--------------------------------------------------------------

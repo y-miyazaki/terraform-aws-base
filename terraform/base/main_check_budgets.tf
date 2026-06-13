@@ -6,7 +6,7 @@
 # Creates budget alerts and integrates with Lambda for Slack notifications.
 #--------------------------------------------------------------
 module "aws_budgets_create_v4" {
-  source     = "../../modules/aws/budgets/create-v4"
+  source     = "../../modules/aws/budgets/create"
   is_enabled = var.budgets.is_enabled
 
   aws_budgets_budget = {

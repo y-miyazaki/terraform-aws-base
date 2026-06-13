@@ -5,7 +5,7 @@
 # Provides a resource to manage CloudWatch Rule and CloudWatch Events.
 #--------------------------------------------------------------
 module "aws_budgets_create_v4" {
-  source     = "../../../modules/aws/budgets/create-v4"
+  source     = "../../../modules/aws/budgets/create"
   is_enabled = var.budgets.is_enabled
 
   aws_budgets_budget = {

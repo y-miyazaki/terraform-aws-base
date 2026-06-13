@@ -7,10 +7,10 @@ targets:
 includes: auto
 dependencies:
   apm:
-    - github.com/y-miyazaki/config/.apm/packages/common#v1.1.36
-    - github.com/y-miyazaki/config/.apm/packages/aws#v1.1.36
-    - github.com/y-miyazaki/config/.apm/packages/go#v1.1.36
-    - github.com/y-miyazaki/config/.apm/packages/shell-script#v1.1.36
-    - github.com/y-miyazaki/config/.apm/packages/terraform#v1.1.36
-    - github.com/y-miyazaki/config/.apm/packages/terraform-aws#v1.1.36
+    - github.com/y-miyazaki/config/.apm/packages/common#v1.1.37
+    - github.com/y-miyazaki/config/.apm/packages/aws#v1.1.37
+    - github.com/y-miyazaki/config/.apm/packages/go#v1.1.37
+    - github.com/y-miyazaki/config/.apm/packages/shell-script#v1.1.37
+    - github.com/y-miyazaki/config/.apm/packages/terraform#v1.1.37
+    - github.com/y-miyazaki/config/.apm/packages/terraform-aws#v1.1.37
   mcp: []

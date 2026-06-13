@@ -195,7 +195,6 @@ resource "aws_iam_role_policy" "lambda" {
         Sid    = "IdentityStore"
         Effect = "Allow"
         Action = [
-          "identitystore:ListUsers",
           "identitystore:GetUserId",
         ]
         Resource = "*"

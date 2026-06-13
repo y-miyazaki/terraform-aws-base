@@ -25,7 +25,7 @@ locals {
 # NOTE: Skip creation if default region is already us-east-1 to avoid duplication
 #--------------------------------------------------------------
 module "aws_security_config_create_v4_us_east_1" {
-  source     = "../../modules/aws/security/config/create-v4"
+  source     = "../../modules/aws/security/config/create"
   is_enabled = local.is_enabled_us_east_1 && var.security_config_us_east_1.is_enabled && !local.control_tower_managed_services.config
   providers = {
     aws = aws.us-east-1

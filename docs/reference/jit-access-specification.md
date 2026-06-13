@@ -91,10 +91,11 @@ active  -> revoked                             (early revocation)
              │ (Slack signature verification)
              ▼
 ┌─────────────────────────┐
-│ API Gateway (HTTP)      │
+│ API Gateway (REST)      │
 │  POST /slack/commands   │
 │  POST /slack/interact   │
 │  POST /workflow/request │
+│  + WAFv2 Web ACL (opt)  │
 └────────────┬────────────┘
              │ Immediate 200 -> async processing
              ▼
@@ -134,6 +135,7 @@ active  -> revoked                             (early revocation)
 - Single Lambda function handles all actions (routed by `action` parameter or HTTP event)
 - DynamoDB on-demand billing (PAY_PER_REQUEST)
 - Step Functions STANDARD type (one execution per approved request)
+- API Gateway REST API with REGIONAL endpoint (chosen over HTTP API for WAFv2 support)
 
 ### Observability
 
@@ -320,6 +322,8 @@ in both the Terraform `workflow_secret` variable and the Workflow Builder webhoo
 - Only listed approvers can perform Approve/Reject actions
 - Workflow Builder endpoint authenticated via shared secret header
 - Bot token and signing secret stored as sensitive Terraform variables
+- API Gateway uses REST API (not HTTP API) to support WAFv2 Web ACL association
+- WAFv2 Web ACL association is optional (`waf_enabled` + `waf_web_acl_arn` variables)
 
 ## Terraform Module Structure
 
@@ -346,7 +350,7 @@ Single Lambda function with action-based routing:
 
 ## AWS Services Used
 
-- API Gateway (HTTP)
+- API Gateway (REST, REGIONAL endpoint)
 - Lambda (Go, arm64)
 - DynamoDB (on-demand)
 - Step Functions (STANDARD)
@@ -355,62 +359,46 @@ Single Lambda function with action-based routing:
 - EventBridge Scheduler
 - CloudWatch Alarms
 - SQS (Dead Letter Queue)
+- WAFv2 (optional, Web ACL association)
 - KMS (optional, for encryption)
 
 ## Slack App Setup
 
-### 1. Create Slack App
+Use the App Manifest output from Terraform to create and configure the Slack App.
+
+### Prerequisites
+
+- Terraform apply completed with `jit_access_slack_app_manifest` output available
+- Admin permissions on the target Slack workspace
+
+### 1. Get App Manifest from Terraform Output
+
+```bash
+terraform output -raw jit_access_slack_app_manifest
+```
+
+The output contains the API Gateway URLs pre-populated — no manual URL substitution required.
+
+### 2. Create Slack App from Manifest
 
 1. Go to https://api.slack.com/apps
-2. Click "Create New App" -> "From scratch"
-3. App Name: `JIT Access` (or your preferred name)
-4. Workspace: select target workspace
-5. Click "Create App"
+2. Click "Create New App" -> "From an app manifest"
+3. Select target workspace
+4. Paste the Terraform output YAML as-is
+5. Review settings and click "Create"
 
-### 2. Get Signing Secret
+### 3. Get Signing Secret
 
 1. Navigate to "Basic Information" -> "App Credentials"
 2. Copy **Signing Secret** -> set as Terraform `slack.signing_secret`
 
-### 3. Configure Bot Token Scopes
-
-Navigate to "OAuth & Permissions" -> "Scopes" -> "Bot Token Scopes" and add:
-
-| Scope              | Purpose                          |
-| ------------------ | -------------------------------- |
-| `chat:write`       | Post approval and result messages |
-| `commands`         | Register slash commands           |
-| `users:read`       | Read user info (email)           |
-| `users:read.email` | Read user email for mapping      |
-
-### 4. Get Bot Token
+### 4. Install App and Get Bot Token
 
 1. Navigate to "OAuth & Permissions" -> "Install to Workspace"
 2. Authorize permissions
 3. Copy **Bot User OAuth Token** (`xoxb-...`) -> set as Terraform `slack.bot_token`
 
-### 5. Register Slash Command
-
-Navigate to "Slash Commands" -> "Create New Command":
-
-| Field             | Value                                          |
-| ----------------- | ---------------------------------------------- |
-| Command           | `/jit-access`                                  |
-| Request URL       | `{API Gateway endpoint}/slack/commands`         |
-| Short Description | `Request temporary privileged access`          |
-| Usage Hint        | `(opens a modal)`                              |
-
-The Request URL is available from the `api_gateway_endpoint` Terraform output after apply.
-
-### 6. Enable Interactivity
-
-Navigate to "Interactivity & Shortcuts" -> Toggle ON:
-
-| Field       | Value                                              |
-| ----------- | -------------------------------------------------- |
-| Request URL | `{API Gateway endpoint}/slack/interactions`        |
-
-### 7. Invite Bot to Channel
+### 5. Invite Bot to Channel
 
 Invite the bot to the approval notification channel:
 
@@ -418,39 +406,17 @@ Invite the bot to the approval notification channel:
 /invite @JIT Access
 ```
 
-### 8. App Manifest (Reference)
+### Updating the Manifest
 
-For bulk import of App settings:
+When API Gateway URLs change (e.g., stage recreation, resource path changes),
+the Slack App manifest must be updated to point to the new endpoints:
 
-```yaml
-display_information:
-  name: JIT Access
-  description: Temporary privileged access management
-features:
-  bot_user:
-    display_name: JIT Access
-    always_online: true
-  slash_commands:
-    - command: /jit-access
-      url: https://{api-id}.execute-api.{region}.amazonaws.com/slack/commands
-      description: Request temporary privileged access
-      usage_hint: (opens a modal)
-oauth_config:
-  scopes:
-    bot:
-      - chat:write
-      - commands
-      - users:read
-      - users:read.email
-settings:
-  interactivity:
-    is_enabled: true
-    request_url: https://{api-id}.execute-api.{region}.amazonaws.com/slack/interactions
-  org_deploy_enabled: false
-  socket_mode_enabled: false
-```
+1. Run `terraform output -raw jit_access_slack_app_manifest` to get the updated YAML
+2. In the Slack App management console, navigate to "App Manifest" and overwrite with the new YAML
 
-Replace `{api-id}` and `{region}` with values from the `api_gateway_endpoint` Terraform output.
+Note: The Terraform-generated manifest controls only URL endpoints, slash command
+definitions, and OAuth scopes. Other Slack App settings (display name, icons, etc.)
+are managed directly in the Slack console.
 
 ## Future Enhancements (v2+)
 

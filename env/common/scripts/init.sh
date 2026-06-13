@@ -131,4 +131,13 @@ if command -v git > /dev/null 2>&1 && [ -n "${repo_root}" ]; then
     fi
 fi
 
+#######################################
+# Codebase Memory MCP indexing (optional)
+#######################################
+if command -v codebase-memory-mcp > /dev/null 2>&1; then
+    codebase-memory-mcp cli index_repository '{"repo_path": "'"${repo_root}"'"}' || echo "[warn] codebase-memory-mcp indexing failed" >&2
+    codebase-memory-mcp config set auto_index true
+    codebase-memory-mcp config set auto_index_limit 50000
+fi
+
 exit 0

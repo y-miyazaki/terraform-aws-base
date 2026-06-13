@@ -32,7 +32,7 @@ locals {
 # Provides AWS Config.
 #--------------------------------------------------------------
 module "aws_security_config_create_v4" {
-  source     = "../../modules/aws/security/config/create-v4"
+  source     = "../../modules/aws/security/config/create"
   is_enabled = var.security_config.is_enabled && !local.control_tower_managed_services.config
 
   is_s3_enabled                     = var.security_config.is_s3_enabled

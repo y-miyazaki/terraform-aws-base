@@ -3,7 +3,7 @@
 # https://newreleases.io/project/github/hashicorp/terraform-provider-aws/release/v3.28.0
 #--------------------------------------------------------------
 terraform {
-  required_version = "~>1.4"
+  required_version = ">= 1.5.7"
   required_providers {
     aws = {
       source  = "hashicorp/aws"

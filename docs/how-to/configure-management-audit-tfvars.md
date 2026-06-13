@@ -1,505 +1,110 @@
-<!-- omit in toc -->
-# Management Audit Environment Terraform Configuration Guide
+# Management Audit Terraform Configuration Guide
 
-This guide covers the Terraform configuration for the **Management Audit** environment. The example configuration file is [terraform.example.tfvars for audit](../../terraform/management/audit/terraform.example.tfvars).
+## Overview
 
-This environment focuses on security monitoring including Security Hub, GuardDuty, Macie, and CloudTrail audit logging.
+Configuration for the **Audit account** in an AWS Control Tower landing zone. This account serves as the delegated administrator for organization-wide security services.
 
-<!-- omit in toc -->
-## Table of Contents
+**Stack:** `terraform/management/audit/`
+**Example file:** [terraform.example.tfvars](../../terraform/management/audit/terraform.example.tfvars)
+**Initial setup:** See [initial-setup.md](./initial-setup.md)
 
-- [Initial Setting](#initial-setting)
-- [Requirements](#requirements)
-  - [region](#region)
-  - [slack\_channel\_id](#slack_channel_id)
-  - [slack\_team\_id](#slack_team_id)
-- [Not Requirements](#not-requirements)
-  - [tags](#tags)
-  - [name\_prefix](#name_prefix)
-  - [kms](#kms)
-  - [cloudwatch\_log\_group](#cloudwatch_log_group)
-    - [Centralized Configuration Pattern](#centralized-configuration-pattern)
-    - [Benefits of Centralized Configuration](#benefits-of-centralized-configuration)
-  - [oidc\_github](#oidc_github)
-  - [security](#security)
-- [Environment-Specific Configuration Examples](#environment-specific-configuration-examples)
-  - [Delegated Administrator Verification](#delegated-administrator-verification)
-  - [Access Analyzer Organization](#access-analyzer-organization)
-- [Configuration Validation Checklist](#configuration-validation-checklist)
-- [Related Documents](#related-documents)
+**What it configures:**
 
-## Initial Setting
+| Service | Purpose |
+|---------|---------|
+| Security Hub | Centralized compliance dashboard |
+| GuardDuty | Organization-wide threat detection |
+| Macie | Sensitive data discovery across S3 |
+| Access Analyzer | Organization-level external access analysis |
+| Inspector2 | Vulnerability scanning (EC2, ECR, Lambda) |
+| AWS Chatbot | Slack notifications for security findings |
 
-This section describes the initial settings for running [management audit Terraform](../../terraform/management/audit/). If an item has already been addressed, please skip to the next section.
+**Relationship to other stacks:**
+- Member accounts (`base`) should set `control_tower.managed_services.*` to disable services managed here
+- Management root handles organizational policies and budgets, not security delegation
 
-**Remove the access key from the root account**
+## Required Settings
 
-Since this is a security issue, remove the access key from the root account from the management console.
+| Variable | Description | Example |
+|----------|-------------|---------|
+| `region` | Primary AWS region | `"ap-northeast-1"` |
+| `security.slack_channel_id` | Slack channel for security notifications | `"C0XXXXXXXXX"` |
+| `security.slack_team_id` | Slack workspace ID | `"xxxxxxxxxxx"` |
 
-**Manual creation of IAM user and IAM group to run Terraform**
+## Optional Settings
 
-Create an IAM user and an IAM group from the management console in order to run Terraform.
+### Tags and Naming
 
-Create an IAM group (pseudonym: deploy). Attach AdministratorAccess as the policy.
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `tags.env` | Environment name | `"audit"` |
+| `tags.service` | Service/project name | `"security-audit"` |
+| `name_prefix` | Resource name prefix | `"audit-"` |
 
-Create an IAM user (pseudonym: terraform), giving it only Programmatic access for Access Type, and add it to the IAM group (pseudonym: deploy).
-
-**Create an S3 to store the Terraform State**
-
-Create an S3 from the management console to manage the Terraform State.
-
-However, if you have an environment where you can run the aws command and profile already configured, you can create an S3 by running the following command.
-
-```sh
-$ ./scripts/terraform/aws_init_state.sh -h
-
-This command creates a S3 Bucket for Terraform State.
-You can also add random hash to bucket name suffix.
-
-Usage:
-    aws_init_state.sh -r {region} -b {bucket name} -p {profile}[<options>]
-    aws_init_state.sh -r ap-northeast-1 -b terraform-state
-    aws_init_state.sh -r ap-northeast-1 -b terraform-state -p default -s
-
-Options:
-    -b {bucket name}          S3 bucket name
-    -p {aws profile name}     Name of AWS profile
-    -r {region}               S3 region
-    -s                        If set, a random hash will suffix bucket name.
-    -h                        Usage aws_init_state.sh
-
-$ ./scripts/terraform/aws_init_state.sh -r ap-northeast-1 -b base-terraform-state- -p default -s
-~
-~
-~
---------------------------------------------------------------
-bucket_name: base-terraform-state-xxxxxxxxxx
-region: ap-northeast-1
---------------------------------------------------------------
-```
-
-**terraform.{environment}.tfvars file to configure for each environment**
-
-You need to rename the linked file [terraform.example.tfvars for audit](../../terraform/management/audit/terraform.example.tfvars) and change each variable for your environment.
-
-The variables that need to be changed are marked with TODO comments; search for them in TODO.
-
-**Running Terraform**
-
-Run the terraform command: terraform init followed by terraform apply.
-
-You may find that terraform apply fails due to conflicts or other problems, so run it again and it will succeed.
-
-```sh
-bash-5.1# terraform init
-There are some problems with the CLI configuration:
-
-Error: The specified plugin cache dir /root/.terraform.d/plugin-cache cannot be opened: stat /root/.terraform.d/plugin-cache: no such file or directory
-```
-
-## Requirements
-
-The following items must be modified; terraform apply may fail if you run it as an example.
-
-### region
-
-Select the region where you want to create the resource.
-
-```terraform
-#--------------------------------------------------------------
-# Default Region for Resources
-# Specifies the primary AWS region where most resources will be deployed.
-# Some services like CloudFront require resources in us-east-1 regardless of this setting.
-# Common regions: ap-northeast-1 (Tokyo), us-east-1 (N. Virginia), eu-west-1 (Ireland)
-#--------------------------------------------------------------
-# TODO: need to change region.
-region = "ap-northeast-1"
-```
-
-### slack_channel_id
-
-Slack channel ID for security notifications. Required for Security Hub and other alerting features.
-
-```terraform
-security = {
-  # TODO: need to set slack_channel_id for settings of AWS SecurityHub Notification(Slack).
-  slack_channel_id = "C0XXXXXXXXX"
-  # TODO: need to set slack_team_id for settings of AWS SecurityHub Notification(Slack).
-  slack_team_id = "xxxxxxxxxxx"
-}
-```
-
-### slack_team_id
-
-Slack team/workspace ID for notifications.
-
-See the `slack_channel_id` configuration above.
-
-## Not Requirements
-
-Although terraform apply will succeed without fixing the following items, the following is a list of things that should be changed for each environment.
-
-### tags
-
-You can leave the following as it is without any problem. However, if you want to add TAGs to the resources according to your environment, please modify the following.
-
-These tags are automatically applied to all resources created by this Terraform configuration. Common tags help with cost allocation, resource organization, and compliance tracking.
-
-```terraform
-#--------------------------------------------------------------
-# Default Tags for Resources
-# A tag that is set globally for the resources used.
-# These tags are automatically applied to all resources created by this Terraform configuration.
-# Common tags help with cost allocation, resource organization, and compliance tracking.
-#--------------------------------------------------------------
-# TODO: need to change tags.
-tags = {
-  # TODO: need to change env.
-  # Environment name for resource identification and cost allocation
-  # Examples: "dev", "stg", "prd", "audit", "root"
-  env = "audit"
-  # TODO: need to change service.
-  # Service/project name for resource grouping and identification
-  # This should match your project name, job name, or product name
-  service = "security-audit"
-  # Map Program (optional)
-  # Uncomment and set if you have a Migration Acceleration Program (MAP) assessment ID
-  # This helps track resources for AWS migration programs
-  # map-migrated = "xxxxxxxxxxxxx"
-}
-```
-
-### name_prefix
-
-Used as a prefix for resource names. This prefix helps identify resources belonging to this project and environment.
-
-Example: If `name_prefix="audit-"`, resources will be named `"audit-sns"`, `"audit-lambda"`, etc.
-
-```terraform
-#--------------------------------------------------------------
-# Name prefix
-# It is used as a prefix attached to various resource names.
-# This prefix helps identify resources belonging to this project and environment.
-# Example: If name_prefix="myproject-", resources will be named "myproject-vpc", "myproject-lambda", etc.
-#--------------------------------------------------------------
-name_prefix = "audit-"
-```
-
-### kms
-
-KMS key configuration for SNS encryption in audit environment.
-
-AWS Key Management Service for encrypting SNS topics and other sensitive data. Key rotation is enabled by default for enhanced security. Deletion window allows recovery if key is accidentally deleted.
-
-```terraform
-#--------------------------------------------------------------
-# KMS
-# AWS Key Management Service for encrypting SNS topics and other sensitive data.
-# Key rotation is enabled by default for enhanced security.
-# Deletion window allows recovery if key is accidentally deleted.
-#--------------------------------------------------------------
-kms = {
-  sns = {
-    description             = "This key used for SNS."
-    deletion_window_in_days = 7
-    is_enabled              = true
-    enable_key_rotation     = true
-    alias_name              = "audit-sns"
-  }
-}
-```
-
-### cloudwatch_log_group
-
-**IMPORTANT: CloudWatch Log Group configuration has been centralized for easier management.**
-
-Instead of configuring retention periods for each Lambda function individually, you can now manage them centrally with service-specific overrides when needed.
-
-#### Centralized Configuration Pattern
-
-```terraform
-#--------------------------------------------------------------
-# CloudWatch Log Group Configuration
-# Common CloudWatch Log Group settings for all services.
-# This configuration is applied globally but can be overridden per service.
-#
-# Priority order (higher priority overrides lower):
-# 1. cloudwatch_log_group.override.<service_name>.retention_in_days (highest priority)
-# 2. cloudwatch_log_group.retention_in_days (lowest priority - common default)
-#
-# retention_in_days: How long logs are kept before automatic deletion
-# Common values: 1, 3, 5, 7, 14, 30, 60, 90, 120, 150, 180, 365, 400, 545, 731, 1827, 3653
-# COST CONSIDERATION: Longer retention = higher CloudWatch Logs storage costs
-#
-# Use cloudwatch_log_group.override for centralized management.
-#--------------------------------------------------------------
-# TODO: need to change cloudwatch_log_group settings.
-cloudwatch_log_group = {
-  # Default retention period for all services (in days)
-  retention_in_days = 14
-  # Default KMS key ID for log encryption (null = use AWS managed key)
-  kms_key_id = null
-
-  # Optional: Override settings for specific services
-  # Uncomment and configure as needed
-  override = {
-    # common_lambda_vpc_flow_log = {
-    #   retention_in_days = 7
-    # }
-  }
-}
-```
-
-**Note**: The legacy `cloudwatch_log_group_retention_in_days` parameter is still supported for backward compatibility but is deprecated. Please migrate to the new `cloudwatch_log_group` configuration.
-
-#### Benefits of Centralized Configuration
-
-✅ **Single Source of Truth**: Define retention period once, apply everywhere
-
-✅ **Flexible Overrides**: Set different retention for specific services
-
-✅ **Easy Maintenance**: Update retention policies without modifying multiple configurations
-
-✅ **Cost Optimization**: Easily identify and adjust services with long retention periods
-
-✅ **Consistent Encryption**: Optionally use a common KMS key for all log encryption
-
-### oidc_github
-
-Configuration for GitHub Actions OIDC provider integration. Allows GitHub Actions workflows to authenticate with AWS without storing long-lived credentials.
-
-**SECURITY WARNING**: `dangerously_attach_admin_policy` should be `false` in production! Use least privilege principles and attach only necessary policies.
-
-```terraform
-#--------------------------------------------------------------
-# OpenID Connect for AWS and GitHub Actions
-# Terraform module to configure GitHub Actions as an IAM OIDC identity provider in AWS.
-# Allows GitHub Actions workflows to authenticate with AWS without storing long-lived credentials.
-# The target ARN is output(oidc_github_iam_role_arn) for the target ARN.
-# ex) oidc_github_iam_role_arn = "arn:aws:iam::{aws_account_id}:role/{iam_role_name}"
-#
-# SECURITY WARNING: dangerously_attach_admin_policy should be false in production!
-# Use least privilege principles and attach only necessary policies.
-#--------------------------------------------------------------
-oidc_github = {
-  # TODO: need to set is_enabled for settings of IAM OIDC for GitHub Actions.
-  is_enabled = true
-  # TODO: Flag to enable/disable the attachment of the AdministratorAccess policy.
-  dangerously_attach_admin_policy = true
-  # TODO: Flag to enable/disable the attachment of the ReadOnly policy.
-  iam_role_policy_names = []
-  # TODO: Flag to enable/disable the creation of the GitHub OIDC provider.
-  create_oidc_provider = true
-  # TODO: Set the org/repo of the GitHub repository to github_subjects.
-  github_subjects = [
-    # "your-org/security-automation-repo",
-  ]
-  iam_role_name = "oidc-github-role"
-  iam_role_path = "/"
-}
-```
-
-### security
-
-Security-related configurations including Security Hub and GuardDuty.
-
-**AWS SECURITY HUB:**
-- Provides centralized security findings from AWS services and partner products
-- Continuously monitors your environment for security best practices
-- Generates security scores and compliance reports
-
-**AWS GUARDDUTY:**
-- Intelligent threat detection for AWS accounts and workloads
-- Monitors for malicious activity and unauthorized behavior
-- Analyzes CloudTrail events, VPC Flow Logs, and DNS logs
-
-**IMPORTANT:** Before using AWS Chatbot for Slack notifications:
-1. Create a Slack app in your workspace
-2. Obtain OAuth access token (starts with xoxb-)
-3. Get your Slack channel ID (format: C0XXXXXXXXX)
-4. Configure AWS Chatbot with your Slack workspace
-
-For detailed setup instructions: [AWS Chatbot Documentation](https://docs.aws.amazon.com/chatbot/latest/adminguide/slack-setup.html)
-
-**Cost Consideration:**
-- Security Hub: $0.0010 per security check per region per month
-- GuardDuty: ~$1.00 per GB of logs analyzed (VPC Flow Logs, DNS logs, CloudTrail events)
-
-**Notice:** GuardDuty is automatically disabled if `use_control_tower=true`.
-
-```terraform
-#--------------------------------------------------------------
-# Security
-# Security-related configurations including Security Hub and GuardDuty.
-#
-# AWS SECURITY HUB:
-# - Provides centralized security findings from AWS services and partner products
-# - Continuously monitors your environment for security best practices
-# - Generates security scores and compliance reports
-#
-# AWS GUARDDUTY:
-# - Intelligent threat detection for AWS accounts and workloads
-# - Monitors for malicious activity and unauthorized behavior
-# - Analyzes CloudTrail events, VPC Flow Logs, and DNS logs
-#
-# IMPORTANT: Before using AWS Chatbot for Slack notifications:
-# 1. Create a Slack app in your workspace
-# 2. Obtain OAuth access token (starts with xoxb-)
-# 3. Get your Slack channel ID (format: C0XXXXXXXXX)
-# 4. Configure AWS Chatbot with your Slack workspace
-# For detailed setup instructions: https://docs.aws.amazon.com/chatbot/latest/adminguide/slack-setup.html
-#
-# COST CONSIDERATIONS:
-# - Security Hub: $0.0010 per security check per region per month
-# - GuardDuty: ~$1.00 per GB of logs analyzed (VPC Flow Logs, DNS logs, CloudTrail events)
-#
-# NOTICE: GuardDuty is automatically disabled if use_control_tower=true.
-#--------------------------------------------------------------
-security = {
-  #--------------------------------------------------------------
-  # Security:SecurityHub
-  #--------------------------------------------------------------
-  # NOTE: Before using Chatbot functionality for Slack notifications, you must create a Slack client.
-  # This involves setting up a Slack app and obtaining the necessary OAuth tokens and permissions.
-  # For detailed setup instructions, refer to AWS Chatbot documentation:
-  # https://docs.aws.amazon.com/chatbot/latest/adminguide/slack-setup.html
-  # TODO: need to set slack_channel_id for settings of AWS SecurityHub Notification(Slack).
-  slack_channel_id = "C0XXXXXXXXX"
-  # TODO: need to set slack_team_id for settings of AWS SecurityHub Notification(Slack).
-  slack_team_id = "xxxxxxxxxxx"
-  securityhub = {
-    # TODO: need to set is_enabled for settings of AWS SecurityHub.
-    is_enabled = true
-  }
-  #--------------------------------------------------------------
-  # GuardDuty
-  # Amazon GuardDuty is a threat detection service that continuously monitors your AWS accounts and workloads for malicious activity and
-  # delivers detailed security findings for visibility and remediation.
-  # Notice: This option is automatically disabled if use_control_tower=true.
-  # COST CONSIDERATION: ~$1.00 per GB of logs analyzed
-  #--------------------------------------------------------------
-  guardduty = {
-    # TODO: need to set is_enabled for settings of AWS GuardDuty.
-    is_enabled = true
-  }
-}
-```
-
-## Environment-Specific Configuration Examples
-
-### Delegated Administrator Verification
-
-This audit environment assumes the account is a **delegated administrator** for organization-level security services. Terraform automatically verifies delegation status at plan time using `aws organizations list-delegated-services-for-account`. If the account is not delegated for a service, the corresponding resources are skipped.
-
-Verify delegation status manually (run from audit account):
-
-```sh
-aws organizations list-delegated-services-for-account --account-id <AUDIT_ACCOUNT_ID>
-```
-
-### Access Analyzer Organization
-
-AWS IAM Access Analyzer with ORGANIZATION type analyzes resource policies across all accounts in the organization from the delegated administrator (audit) account.
-
-- If an ORGANIZATION-type analyzer already exists (e.g., created via console or Control Tower), Terraform skips creation to avoid conflicts
-- The check script (`check_organization_analyzer.sh`) queries the target region via `--region` flag to correctly detect existing analyzers per region
-- The `region` parameter must be passed to the module for multi-region deployments so the check script queries the correct region
-- ACCOUNT-type analyzers in member accounts (base) should be disabled via `control_tower.managed_services.access_analyzer = true`
-
-**Multi-region behavior:**
-
-| Region                         | Module                                   | region parameter          |
-| ------------------------------ | ---------------------------------------- | ------------------------- |
-| Default (e.g., ap-northeast-1) | `access_analyzer_organization`           | `var.region`              |
-| us-east-1                      | `access_analyzer_organization_us_east_1` | `"us-east-1"` (hardcoded) |
-
-The check script receives the region via Terraform's `data "external"` query input and excludes the Terraform-managed analyzer name from the existence check. This prevents false positives where Terraform's own analyzer triggers the skip logic.
-
-```terraform
-access_analyzer_organization = {
-  is_enabled    = true
-  analyzer_name = "aws-access-analyzer"
-}
-
-access_analyzer_organization_us_east_1 = {
-  is_enabled    = true
-  analyzer_name = "aws-access-analyzer"
-}
-```
-
-For audit environments, focus on security monitoring and compliance:
+### KMS
 
 ```hcl
-# Tags for audit environment
-tags = {
-  env     = "audit"
-  service = "security-audit"
-}
-
-# Security services configuration
-security = {
-  slack_channel_id = "C1234567890"  # Your actual Slack channel ID
-  slack_team_id    = "T1234567890"  # Your actual Slack team ID
-  securityhub = {
-    is_enabled = true  # Enable for compliance monitoring
-  }
-  guardduty = {
-    is_enabled = true  # Enable for threat detection
-  }
-}
-
-# KMS configuration for audit environment
 kms = {
-  sns = {
-    description             = "This key used for SNS."
-    deletion_window_in_days = 7
-    is_enabled              = true
-    enable_key_rotation     = true
-    alias_name              = "audit-sns"
-  }
+  description             = "This key used for SNS."
+  deletion_window_in_days = 7
+  enable_key_rotation     = true
+  alias_name              = "audit-sns"
 }
+```
 
-# GitHub Actions OIDC configuration
+### CloudWatch Log Groups
+
+Same centralized pattern as other stacks. See [base configuration](./configure-base-tfvars.md#cloudwatch-log-groups) for detailed explanation.
+
+```hcl
+cloudwatch_log_group = {
+  retention_in_days = 14
+  kms_key_id       = null
+  override = {}
+}
+```
+
+### OIDC GitHub
+
+```hcl
 oidc_github = {
   is_enabled                      = true
-  dangerously_attach_admin_policy = false  # Use least privilege in production
+  dangerously_attach_admin_policy = false  # Use false in production!
   iam_role_policy_names           = ["ReadOnlyAccess"]
   create_oidc_provider            = true
-  github_subjects = [
-    "your-org/security-automation-repo",
-  ]
-  iam_role_name = "oidc-github-audit-role"
-  iam_role_path = "/"
+  github_subjects                 = ["your-org/security-automation-repo"]
+  iam_role_name                   = "oidc-github-audit-role"
+  iam_role_path                   = "/"
 }
 ```
 
-### security_notification
+### Security Services
 
-Configures Slack notification settings for security services (GuardDuty and Security Hub) via AWS Chatbot. Includes `slack_channel_id`, `slack_team_id`, and per-service `is_enabled` flags.
+#### Security Hub Organization
 
-```terraform
-security_notification = {
-  slack_channel_id = "C0XXXXXXXXX"
-  slack_team_id    = "xxxxxxxxxxx"
-  guardduty = {
-    is_enabled = false
+```hcl
+securityhub_organization = {
+  is_enabled_finding_aggregator = false
+  configuration_policy = {
+    service_enabled = true
+    name            = "securityhub-configuration-policy"
+    enabled_standard_arns = [
+      "arn:aws:securityhub:{region}::standards/aws-foundational-security-best-practices/v/1.0.0",
+      "arn:aws:securityhub:{region}::standards/cis-aws-foundations-benchmark/v/5.0.0"
+    ]
+    security_controls_configuration = { disabled_control_identifiers = [] }
   }
-  securityhub = {
-    is_enabled = false
-  }
+  linking_mode = "ALL_REGIONS"
+  target_id    = "r-xxxxxx"
 }
 ```
 
-### GuardDuty Organization
+#### GuardDuty Organization
 
-Configures GuardDuty at the organization level from the delegated administrator (audit) account. Enables threat detection features across all member accounts including EBS malware protection, EKS audit logs, Lambda network logs, RDS login events, runtime monitoring, and S3 data events.
+Enables threat detection features across all member accounts.
 
-Both default region and us-east-1 configurations are available via `guardduty_organization` and `guardduty_organization_us_east_1`.
-
-```terraform
+```hcl
 guardduty_organization = {
-  is_enabled                       = false
-  create_detector                  = false
   auto_enable_organization_members = "ALL"
   features = {
     EBS_MALWARE_PROTECTION = { auto_enable = "ALL" }
@@ -512,13 +117,11 @@ guardduty_organization = {
 }
 ```
 
-### Inspector2 Organization
+Both default region and us-east-1 configurations are available via `guardduty_organization_us_east_1`.
 
-Configures Amazon Inspector2 at the organization level for automated vulnerability scanning. Supports EC2, ECR, Lambda, Lambda code, and code repository scanning across member accounts.
+#### Inspector2 Organization
 
-Both default region and us-east-1 configurations are available via `inspector2_organization` and `inspector2_organization_us_east_1`.
-
-```terraform
+```hcl
 inspector2_organization = {
   is_enabled = false
   enabler = {
@@ -530,16 +133,10 @@ inspector2_organization = {
 }
 ```
 
-### Macie Organization
+#### Macie Organization
 
-Configures Amazon Macie at the organization level for sensitive data discovery across S3 buckets. Supports auto-enable for new member accounts, classification jobs, and findings filters.
-
-Both default region and us-east-1 configurations are available via `macie_organization` and `macie_organization_us_east_1`.
-
-```terraform
+```hcl
 macie_organization = {
-  is_enabled                   = false
-  auto_enable                  = true
   status                       = "ENABLED"
   finding_publishing_frequency = "FIFTEEN_MINUTES"
   classification_jobs          = []
@@ -547,60 +144,57 @@ macie_organization = {
 }
 ```
 
-### SecurityHub Organization
+#### Access Analyzer Organization
 
-Configures AWS Security Hub at the organization level with configuration policies and finding aggregation. Supports security standards (AWS Foundational Security Best Practices, CIS AWS Foundations Benchmark) and control customization.
+ORGANIZATION-type analyzer for cross-account access analysis.
 
-Both default region and us-east-1 configurations are available via `securityhub_organization` and `securityhub_organization_us_east_1`.
-
-```terraform
-securityhub_organization = {
-  is_enabled                    = false
-  is_enabled_finding_aggregator = false
-  configuration_policy = {
-    service_enabled = true
-    name            = "securityhub-configuration-policy"
-    enabled_standard_arns = [
-      "arn:aws:securityhub:{any region}::standards/aws-foundational-security-best-practices/v/1.0.0",
-      "arn:aws:securityhub:{any region}::standards/cis-aws-foundations-benchmark/v/5.0.0"
-    ]
-    security_controls_configuration = {
-      disabled_control_identifiers = []
-    }
-  }
-  configuration_policy_name = "securityhub-configuration-policy"
-  linking_mode              = "ALL_REGIONS"
-  target_id                 = "r-xxxxxx"
+```hcl
+access_analyzer_organization = {
+  is_enabled    = true
+  analyzer_name = "aws-access-analyzer"
 }
 ```
 
-## Configuration Validation Checklist
+> **Note:** If an ORGANIZATION-type analyzer already exists (e.g., from Control Tower), Terraform skips creation to avoid conflicts. Multi-region: use `access_analyzer_organization_us_east_1` for us-east-1.
 
-| Category                        | Item                                                                                                    | Status |
-| ------------------------------- | ------------------------------------------------------------------------------------------------------- | ------ |
-| Security Services Validation    | Slack channel and team IDs are correctly set                                                            | [ ]    |
-| Security Services Validation    | Security Hub is enabled for compliance monitoring                                                       | [ ]    |
-| Security Services Validation    | GuardDuty is enabled for threat detection                                                               | [ ]    |
-| Security Services Validation    | Access Analyzer Organization is enabled for cross-account access analysis                               | [ ]    |
-| Security Services Validation    | CloudWatch log retention meets compliance requirements                                                  | [ ]    |
-| Delegated Admin Validation      | Account is delegated administrator for required services (access-analyzer, guardduty, securityhub)      | [ ]    |
-| Delegated Admin Validation      | Base accounts have `control_tower.managed_services.access_analyzer = true` to disable ACCOUNT analyzers | [ ]    |
-| GitHub Integration Validation   | OIDC provider settings are correct                                                                      | [ ]    |
-| GitHub Integration Validation   | GitHub repositories list is populated                                                                   | [ ]    |
-| GitHub Integration Validation   | IAM policies follow least privilege principle                                                           | [ ]    |
-| GitHub Integration Validation   | Admin policy is disabled for production environments                                                    | [ ]    |
-| Environment-Specific Validation | Tags reflect the audit environment                                                                      | [ ]    |
-| Environment-Specific Validation | Resource names use appropriate prefixes (e.g., "audit-")                                                | [ ]    |
-| Environment-Specific Validation | Region settings match deployment requirements                                                           | [ ]    |
-| KMS Configuration Validation    | KMS key rotation is enabled                                                                             | [ ]    |
-| KMS Configuration Validation    | Deletion window is set appropriately                                                                    | [ ]    |
-| AWS Chatbot Prerequisites       | Slack workspace integration is configured in AWS Chatbot                                                | [ ]    |
-| AWS Chatbot Prerequisites       | OAuth tokens are obtained from Slack                                                                    | [ ]    |
+#### Security Notifications (Chatbot)
+
+```hcl
+security_notification = {
+  slack_channel_id = "C0XXXXXXXXX"
+  slack_team_id    = "xxxxxxxxxxx"
+  guardduty    = { is_enabled = true }
+  securityhub  = { is_enabled = true }
+}
+```
+
+### Delegated Administrator Verification
+
+Run from the audit account to confirm delegation status:
+
+```bash
+aws organizations list-delegated-services-for-account --account-id <AUDIT_ACCOUNT_ID>
+```
+
+## Validation Checklist
+
+| Category | Check |
+|----------|-------|
+| Security | Slack channel and team IDs correctly set |
+| Security | Security Hub enabled for compliance |
+| Security | GuardDuty enabled for threat detection |
+| Security | Access Analyzer Organization enabled |
+| Delegation | Account is delegated admin for required services |
+| Delegation | Base accounts have `control_tower.managed_services.access_analyzer = true` |
+| GitHub | OIDC settings correct, repositories listed |
+| GitHub | Admin policy disabled for production |
+| KMS | Key rotation enabled |
+| Chatbot | Slack workspace integration configured in AWS Chatbot |
 
 ## Related Documents
 
-- [Management root tfvars configuration guide](./configure-management-root-tfvars.md) - Root environment configuration documentation
-- [Base tfvars configuration guide](./configure-base-tfvars.md) - Base configuration documentation
-- [Monitor tfvars configuration guide](./configure-monitor-tfvars.md) - Monitor configuration documentation
-- [Repository overview](../../README.md) - Main project documentation
-- [AWS Chatbot Documentation](https://docs.aws.amazon.com/chatbot/latest/adminguide/slack-setup.html) - Slack setup for AWS Chatbot
+- [Initial Setup](./initial-setup.md) — S3 state bucket, IAM user creation
+- [Management Root Configuration](./configure-management-root-tfvars.md) — Root account
+- [Base Configuration](./configure-base-tfvars.md) — Member accounts
+- [AWS Chatbot Documentation](https://docs.aws.amazon.com/chatbot/latest/adminguide/slack-setup.html) — Slack setup
+- [Troubleshooting](./troubleshooting.md) — Common issues and resolution

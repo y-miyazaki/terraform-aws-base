@@ -77,14 +77,6 @@
         "mcp"
       ]
     },
-    "playwright": {
-      "type": "stdio",
-      "command": "npx",
-      "args": [
-        "-y",
-        "@playwright/mcp@0.0.75"
-      ]
-    },
     "hashicorp-terraform-mcp-server": {
       "type": "stdio",
       "command": "npx",

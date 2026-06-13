@@ -217,26 +217,26 @@ url = "https://github.com/astral-sh/uv/releases/download/0.11.19/uv-x86_64-pc-wi
 provenance = "github-attestations"
 
 [[tools."aqua:aws/aws-cli"]]
-version = "2.34.61"
+version = "2.34.63"
 backend = "aqua:aws/aws-cli"
 
 [tools."aqua:aws/aws-cli"."platforms.linux-arm64"]
-url = "https://awscli.amazonaws.com/awscli-exe-linux-aarch64-2.34.61.zip"
+url = "https://awscli.amazonaws.com/awscli-exe-linux-aarch64-2.34.63.zip"
 
 [tools."aqua:aws/aws-cli"."platforms.linux-arm64-musl"]
-url = "https://awscli.amazonaws.com/awscli-exe-linux-aarch64-2.34.61.zip"
+url = "https://awscli.amazonaws.com/awscli-exe-linux-aarch64-2.34.63.zip"
 
 [tools."aqua:aws/aws-cli"."platforms.linux-x64"]
-url = "https://awscli.amazonaws.com/awscli-exe-linux-x86_64-2.34.61.zip"
+url = "https://awscli.amazonaws.com/awscli-exe-linux-x86_64-2.34.63.zip"
 
 [tools."aqua:aws/aws-cli"."platforms.linux-x64-musl"]
-url = "https://awscli.amazonaws.com/awscli-exe-linux-x86_64-2.34.61.zip"
+url = "https://awscli.amazonaws.com/awscli-exe-linux-x86_64-2.34.63.zip"
 
 [tools."aqua:aws/aws-cli"."platforms.macos-arm64"]
-url = "https://awscli.amazonaws.com/AWSCLIV2-2.34.61.pkg"
+url = "https://awscli.amazonaws.com/AWSCLIV2-2.34.63.pkg"
 
 [tools."aqua:aws/aws-cli"."platforms.macos-x64"]
-url = "https://awscli.amazonaws.com/AWSCLIV2-2.34.61.pkg"
+url = "https://awscli.amazonaws.com/AWSCLIV2-2.34.63.pkg"
 
 [[tools."aqua:aws/aws-sam-cli"]]
 version = "1.161.1"
@@ -391,36 +391,36 @@ url = "https://github.com/getsops/sops/releases/download/v3.13.1/sops-v3.13.1.am
 url = "https://github.com/getsops/sops/releases/download/v3.13.1/sops-v3.13.1.intoto.jsonl"
 
 [[tools."aqua:github/copilot-cli"]]
-version = "1.0.59"
+version = "1.0.60"
 backend = "aqua:github/copilot-cli"
 
 [tools."aqua:github/copilot-cli"."platforms.linux-arm64"]
-checksum = "sha256:409d93d289e220e4d156696f9052eba313fe1c423da38bedd34a52ad9fd2efa1"
-url = "https://github.com/github/copilot-cli/releases/download/v1.0.59/copilot-linux-arm64.tar.gz"
+checksum = "sha256:1ac48cd687b047fe2c549f3f8a440b31e8b5d8188a91dd8ba1e46500d37dc435"
+url = "https://github.com/github/copilot-cli/releases/download/v1.0.60/copilot-linux-arm64.tar.gz"
 
 [tools."aqua:github/copilot-cli"."platforms.linux-arm64-musl"]
-checksum = "sha256:409d93d289e220e4d156696f9052eba313fe1c423da38bedd34a52ad9fd2efa1"
-url = "https://github.com/github/copilot-cli/releases/download/v1.0.59/copilot-linux-arm64.tar.gz"
+checksum = "sha256:1ac48cd687b047fe2c549f3f8a440b31e8b5d8188a91dd8ba1e46500d37dc435"
+url = "https://github.com/github/copilot-cli/releases/download/v1.0.60/copilot-linux-arm64.tar.gz"
 
 [tools."aqua:github/copilot-cli"."platforms.linux-x64"]
-checksum = "sha256:44c1f29b2ab2b51ee9d6fab8b930919186ba908bb760e02da3fe3065408bf625"
-url = "https://github.com/github/copilot-cli/releases/download/v1.0.59/copilot-linux-x64.tar.gz"
+checksum = "sha256:bcbc762b86b3997586883a92995ee0cc1ae35fa80c1f62250b7eb15f02b1bcc3"
+url = "https://github.com/github/copilot-cli/releases/download/v1.0.60/copilot-linux-x64.tar.gz"
 
 [tools."aqua:github/copilot-cli"."platforms.linux-x64-musl"]
-checksum = "sha256:44c1f29b2ab2b51ee9d6fab8b930919186ba908bb760e02da3fe3065408bf625"
-url = "https://github.com/github/copilot-cli/releases/download/v1.0.59/copilot-linux-x64.tar.gz"
+checksum = "sha256:bcbc762b86b3997586883a92995ee0cc1ae35fa80c1f62250b7eb15f02b1bcc3"
+url = "https://github.com/github/copilot-cli/releases/download/v1.0.60/copilot-linux-x64.tar.gz"
 
 [tools."aqua:github/copilot-cli"."platforms.macos-arm64"]
-checksum = "sha256:a7316b98659f0340a2c904395e7fa2add7e41ed99e688a0b29404dd8861a8d99"
-url = "https://github.com/github/copilot-cli/releases/download/v1.0.59/copilot-darwin-arm64.tar.gz"
+checksum = "sha256:815c3ad12961be822a547d65213aacc2996cdb70c94a47e8589ca3ee31991f12"
+url = "https://github.com/github/copilot-cli/releases/download/v1.0.60/copilot-darwin-arm64.tar.gz"
 
 [tools."aqua:github/copilot-cli"."platforms.macos-x64"]
-checksum = "sha256:58f01c456628a60d00971700b25a5e54caa8483df81251676067fe0ddf98264e"
-url = "https://github.com/github/copilot-cli/releases/download/v1.0.59/copilot-darwin-x64.tar.gz"
+checksum = "sha256:7e817f4ad7f551a275088a8ce44fec6df2a0466247fa5bc8b099232bfcf75d97"
+url = "https://github.com/github/copilot-cli/releases/download/v1.0.60/copilot-darwin-x64.tar.gz"
 
 [tools."aqua:github/copilot-cli"."platforms.windows-x64"]
-checksum = "sha256:05973d523c4c303a226cf65cbad297fc58107e1a356145ad1463f889b64d6e3f"
-url = "https://github.com/github/copilot-cli/releases/download/v1.0.59/copilot-win32-x64.zip"
+checksum = "sha256:1343c3b919311bd9c34f827fe47176fd0b976a6a585368041745954b99b1288b"
+url = "https://github.com/github/copilot-cli/releases/download/v1.0.60/copilot-win32-x64.zip"
 
 [[tools."aqua:gitleaks/gitleaks"]]
 version = "8.30.1"
@@ -487,36 +487,36 @@ checksum = "sha256:f9e15b8f3628e4c7bfe481011bea458df754d0e75c6ff4ab01c7129416595
 url = "https://github.com/go-delve/delve/releases/download/v1.26.3/dlv_1.26.3_windows_amd64.zip"
 
 [[tools."aqua:go-swagger/go-swagger"]]
-version = "0.34.0"
+version = "0.34.1"
 backend = "aqua:go-swagger/go-swagger"
 
 [tools."aqua:go-swagger/go-swagger"."platforms.linux-arm64"]
-checksum = "sha256:d2f8fcae837f2a2fcbeb27ed130b0105af5c1886e17229c40862bdd9dee955d2"
-url = "https://github.com/go-swagger/go-swagger/releases/download/v0.34.0/swagger_0.34.0_Linux_arm64.tar.gz"
+checksum = "sha256:46af99cba9c5d9a606717c0c8bc7cf7bd68c67470b5d5a35eeb2f9eca0a5179a"
+url = "https://github.com/go-swagger/go-swagger/releases/download/v0.34.1/swagger_0.34.1_Linux_arm64.tar.gz"
 
 [tools."aqua:go-swagger/go-swagger"."platforms.linux-arm64-musl"]
-checksum = "sha256:d2f8fcae837f2a2fcbeb27ed130b0105af5c1886e17229c40862bdd9dee955d2"
-url = "https://github.com/go-swagger/go-swagger/releases/download/v0.34.0/swagger_0.34.0_Linux_arm64.tar.gz"
+checksum = "sha256:46af99cba9c5d9a606717c0c8bc7cf7bd68c67470b5d5a35eeb2f9eca0a5179a"
+url = "https://github.com/go-swagger/go-swagger/releases/download/v0.34.1/swagger_0.34.1_Linux_arm64.tar.gz"
 
 [tools."aqua:go-swagger/go-swagger"."platforms.linux-x64"]
-checksum = "sha256:2c08d922d160ca01e365529712514fa0c1f3be45cd91700a24cd210cef1190a0"
-url = "https://github.com/go-swagger/go-swagger/releases/download/v0.34.0/swagger_0.34.0_Linux_x86_64.tar.gz"
+checksum = "sha256:b54f95678f72a26252d54c11460119c6a383aa19ce2e3052c60665614beadb7c"
+url = "https://github.com/go-swagger/go-swagger/releases/download/v0.34.1/swagger_0.34.1_Linux_x86_64.tar.gz"
 
 [tools."aqua:go-swagger/go-swagger"."platforms.linux-x64-musl"]
-checksum = "sha256:2c08d922d160ca01e365529712514fa0c1f3be45cd91700a24cd210cef1190a0"
-url = "https://github.com/go-swagger/go-swagger/releases/download/v0.34.0/swagger_0.34.0_Linux_x86_64.tar.gz"
+checksum = "sha256:b54f95678f72a26252d54c11460119c6a383aa19ce2e3052c60665614beadb7c"
+url = "https://github.com/go-swagger/go-swagger/releases/download/v0.34.1/swagger_0.34.1_Linux_x86_64.tar.gz"
 
 [tools."aqua:go-swagger/go-swagger"."platforms.macos-arm64"]
-checksum = "sha256:25d9d5a7941efb561222b36baedf0e92b0bdf2a120844cb29edeb8e88882c23d"
-url = "https://github.com/go-swagger/go-swagger/releases/download/v0.34.0/swagger_0.34.0_Darwin_arm64.tar.gz"
+checksum = "sha256:4775e3964f92181e7f1dcf8886766a20c5b9ef2a0c060075f1d0521d42b523b6"
+url = "https://github.com/go-swagger/go-swagger/releases/download/v0.34.1/swagger_0.34.1_Darwin_arm64.tar.gz"
 
 [tools."aqua:go-swagger/go-swagger"."platforms.macos-x64"]
-checksum = "sha256:099d995e7436bedcab523b59f5b49afbe0e7fb042fc8b98132fbd17c2efa61fc"
-url = "https://github.com/go-swagger/go-swagger/releases/download/v0.34.0/swagger_0.34.0_Darwin_x86_64.tar.gz"
+checksum = "sha256:ad657a74255296848ec07eaa4be928fd2a25fca5c279c9adabc3f1bd80c07292"
+url = "https://github.com/go-swagger/go-swagger/releases/download/v0.34.1/swagger_0.34.1_Darwin_x86_64.tar.gz"
 
 [tools."aqua:go-swagger/go-swagger"."platforms.windows-x64"]
-checksum = "sha256:8ff776e466497dc18e1e558efc2262bc5fe961aabfd21e2823f3aeb2e2e12c32"
-url = "https://github.com/go-swagger/go-swagger/releases/download/v0.34.0/swagger_0.34.0_Windows_x86_64.zip"
+checksum = "sha256:b8af039b7530e2d34212c507109f33cf1319439aa5ec82e3cb22a2c20c763624"
+url = "https://github.com/go-swagger/go-swagger/releases/download/v0.34.1/swagger_0.34.1_Windows_x86_64.zip"
 
 [[tools."aqua:golangci/golangci-lint"]]
 version = "2.12.2"
@@ -1229,36 +1229,36 @@ checksum = "sha256:afc02cbdf63726d3e5fb26a077ca1f24acd4820d7e44c21b03a3e030f9266
 url = "https://github.com/terraform-docs/terraform-docs/releases/download/v0.24.0/terraform-docs-v0.24.0-windows-amd64.zip"
 
 [[tools."aqua:terraform-linters/tflint"]]
-version = "0.63.0"
+version = "0.63.1"
 backend = "aqua:terraform-linters/tflint"
 
 [tools."aqua:terraform-linters/tflint"."platforms.linux-arm64"]
-checksum = "sha256:68685faae176e92bae350927715e597ca14e1f1916d934f1af6c9a8124048e30"
-url = "https://github.com/terraform-linters/tflint/releases/download/v0.63.0/tflint_linux_arm64.zip"
+checksum = "sha256:6d858ca7f11858c3fe3c5e29cc746823abccb55e2d2e2da130fa7ad7ea4eecb8"
+url = "https://github.com/terraform-linters/tflint/releases/download/v0.63.1/tflint_linux_arm64.zip"
 
 [tools."aqua:terraform-linters/tflint"."platforms.linux-arm64-musl"]
-checksum = "sha256:68685faae176e92bae350927715e597ca14e1f1916d934f1af6c9a8124048e30"
-url = "https://github.com/terraform-linters/tflint/releases/download/v0.63.0/tflint_linux_arm64.zip"
+checksum = "sha256:6d858ca7f11858c3fe3c5e29cc746823abccb55e2d2e2da130fa7ad7ea4eecb8"
+url = "https://github.com/terraform-linters/tflint/releases/download/v0.63.1/tflint_linux_arm64.zip"
 
 [tools."aqua:terraform-linters/tflint"."platforms.linux-x64"]
-checksum = "sha256:a99e98d62cdfcb53bf7c262d235a77cf8a9995e32b0fbf54ac0e01b37a1ab0ca"
-url = "https://github.com/terraform-linters/tflint/releases/download/v0.63.0/tflint_linux_amd64.zip"
+checksum = "sha256:8441a7d97df20431f19c9b9d27ff4c63e308c964e86660bc7cc0cf7bbe0725e8"
+url = "https://github.com/terraform-linters/tflint/releases/download/v0.63.1/tflint_linux_amd64.zip"
 
 [tools."aqua:terraform-linters/tflint"."platforms.linux-x64-musl"]
-checksum = "sha256:a99e98d62cdfcb53bf7c262d235a77cf8a9995e32b0fbf54ac0e01b37a1ab0ca"
-url = "https://github.com/terraform-linters/tflint/releases/download/v0.63.0/tflint_linux_amd64.zip"
+checksum = "sha256:8441a7d97df20431f19c9b9d27ff4c63e308c964e86660bc7cc0cf7bbe0725e8"
+url = "https://github.com/terraform-linters/tflint/releases/download/v0.63.1/tflint_linux_amd64.zip"
 
 [tools."aqua:terraform-linters/tflint"."platforms.macos-arm64"]
-checksum = "sha256:bf365c514904796d773241da7f04b138e141c5d441ecb8b220cfae8ea35257bb"
-url = "https://github.com/terraform-linters/tflint/releases/download/v0.63.0/tflint_darwin_arm64.zip"
+checksum = "sha256:6aab157b22367dcab1635b370e98d6e791d9b40b021d4f9baef010d88f53e16b"
+url = "https://github.com/terraform-linters/tflint/releases/download/v0.63.1/tflint_darwin_arm64.zip"
 
 [tools."aqua:terraform-linters/tflint"."platforms.macos-x64"]
-checksum = "sha256:537f8a1aa121ce7532c38cd54c59d4724258420781fc9201fc48384b1afc730d"
-url = "https://github.com/terraform-linters/tflint/releases/download/v0.63.0/tflint_darwin_amd64.zip"
+checksum = "sha256:1a22782473e4a01f0dd23edc649bed4420655a9e3459ffc06951e698eed7ad01"
+url = "https://github.com/terraform-linters/tflint/releases/download/v0.63.1/tflint_darwin_amd64.zip"
 
 [tools."aqua:terraform-linters/tflint"."platforms.windows-x64"]
-checksum = "sha256:de41fa9f690fa05fbd24e2e90f87e3690a31ac72068d7bc249a003e35501cfa7"
-url = "https://github.com/terraform-linters/tflint/releases/download/v0.63.0/tflint_windows_amd64.zip"
+checksum = "sha256:5fbfb643b83c4ad489bde15a0e0d46e53dc9aa8dfa76d25da3c4bd2698a41a19"
+url = "https://github.com/terraform-linters/tflint/releases/download/v0.63.1/tflint_windows_amd64.zip"
 
 [[tools."aqua:vektra/mockery"]]
 version = "3.7.0"
@@ -1374,43 +1374,43 @@ url_api = "https://api.github.com/repos/DeusData/codebase-memory-mcp/releases/as
 provenance = "github-attestations"
 
 [[tools."github:microsoft/apm"]]
-version = "0.16.1"
+version = "0.18.0"
 backend = "github:microsoft/apm"
 
 [tools."github:microsoft/apm"."platforms.linux-arm64"]
-checksum = "sha256:c41bad9fcc55180295fd7efc54a088543ee9498cb8934344916fc9bd3609d797"
-url = "https://github.com/microsoft/apm/releases/download/v0.16.1/apm-linux-arm64.tar.gz"
-url_api = "https://api.github.com/repos/microsoft/apm/releases/assets/435453765"
+checksum = "sha256:dee91b530ec2a28832cd52dda3c303ba3647c726b2caf90f2f53118c4a79e993"
+url = "https://github.com/microsoft/apm/releases/download/v0.18.0/apm-linux-arm64.tar.gz"
+url_api = "https://api.github.com/repos/microsoft/apm/releases/assets/438411429"
 
 [tools."github:microsoft/apm"."platforms.linux-arm64-musl"]
-checksum = "sha256:c41bad9fcc55180295fd7efc54a088543ee9498cb8934344916fc9bd3609d797"
-url = "https://github.com/microsoft/apm/releases/download/v0.16.1/apm-linux-arm64.tar.gz"
-url_api = "https://api.github.com/repos/microsoft/apm/releases/assets/435453765"
+checksum = "sha256:dee91b530ec2a28832cd52dda3c303ba3647c726b2caf90f2f53118c4a79e993"
+url = "https://github.com/microsoft/apm/releases/download/v0.18.0/apm-linux-arm64.tar.gz"
+url_api = "https://api.github.com/repos/microsoft/apm/releases/assets/438411429"
 
 [tools."github:microsoft/apm"."platforms.linux-x64"]
-checksum = "sha256:7e3c7aae3972398885d85edfaeb4134ff06d79c9ff63d161873e3407e8a7729c"
-url = "https://github.com/microsoft/apm/releases/download/v0.16.1/apm-linux-x86_64.tar.gz"
-url_api = "https://api.github.com/repos/microsoft/apm/releases/assets/435453760"
+checksum = "sha256:9724f09627243bd5a1aeb7cb07616469718e36d20dd4430d0e6ee5a3046ab09a"
+url = "https://github.com/microsoft/apm/releases/download/v0.18.0/apm-linux-x86_64.tar.gz"
+url_api = "https://api.github.com/repos/microsoft/apm/releases/assets/438411430"
 
 [tools."github:microsoft/apm"."platforms.linux-x64-musl"]
-checksum = "sha256:7e3c7aae3972398885d85edfaeb4134ff06d79c9ff63d161873e3407e8a7729c"
-url = "https://github.com/microsoft/apm/releases/download/v0.16.1/apm-linux-x86_64.tar.gz"
-url_api = "https://api.github.com/repos/microsoft/apm/releases/assets/435453760"
+checksum = "sha256:9724f09627243bd5a1aeb7cb07616469718e36d20dd4430d0e6ee5a3046ab09a"
+url = "https://github.com/microsoft/apm/releases/download/v0.18.0/apm-linux-x86_64.tar.gz"
+url_api = "https://api.github.com/repos/microsoft/apm/releases/assets/438411430"
 
 [tools."github:microsoft/apm"."platforms.macos-arm64"]
-checksum = "sha256:57771452f017aba208351ab1d0b384273c463faf2bb4516c94eba422a4fe028d"
-url = "https://github.com/microsoft/apm/releases/download/v0.16.1/apm-darwin-arm64.tar.gz"
-url_api = "https://api.github.com/repos/microsoft/apm/releases/assets/435453764"
+checksum = "sha256:6a22511e16559e54d96fcc11fb8599dc5c2ffb79cff136560a4d46d45b4cd099"
+url = "https://github.com/microsoft/apm/releases/download/v0.18.0/apm-darwin-arm64.tar.gz"
+url_api = "https://api.github.com/repos/microsoft/apm/releases/assets/438411431"
 
 [tools."github:microsoft/apm"."platforms.macos-x64"]
-checksum = "sha256:96f04ea961ea0bf3885906fb6475695347a6de5d6ff2c46d3e641453e7c68ae9"
-url = "https://github.com/microsoft/apm/releases/download/v0.16.1/apm-darwin-x86_64.tar.gz"
-url_api = "https://api.github.com/repos/microsoft/apm/releases/assets/435453766"
+checksum = "sha256:e2702a163182f771d81927371f5978bfe3ca051a8d7509db35c0814513636b58"
+url = "https://github.com/microsoft/apm/releases/download/v0.18.0/apm-darwin-x86_64.tar.gz"
+url_api = "https://api.github.com/repos/microsoft/apm/releases/assets/438411428"
 
 [tools."github:microsoft/apm"."platforms.windows-x64"]
-checksum = "sha256:35ca70b778a5f2d1201f5dc034b183dc46b281e454ccb027cbbe18d1f156fe08"
-url = "https://github.com/microsoft/apm/releases/download/v0.16.1/apm-windows-x86_64.zip"
-url_api = "https://api.github.com/repos/microsoft/apm/releases/assets/435453767"
+checksum = "sha256:713fcf1613fc190a01485ddbc5cd07aee8cfd942e87e04489e989ee0a4691e5e"
+url = "https://github.com/microsoft/apm/releases/download/v0.18.0/apm-windows-x86_64.zip"
+url_api = "https://api.github.com/repos/microsoft/apm/releases/assets/438411427"
 
 [[tools."github:microsoft/waza"]]
 version = "0.33.0"
@@ -1452,46 +1452,46 @@ url = "https://github.com/microsoft/waza/releases/download/v0.33.0/waza-windows-
 url_api = "https://api.github.com/repos/microsoft/waza/releases/assets/426430180"
 
 [[tools."github:yvgude/lean-ctx"]]
-version = "3.7.1"
+version = "3.7.4"
 backend = "github:yvgude/lean-ctx"
 
 [tools."github:yvgude/lean-ctx"."platforms.linux-arm64"]
-checksum = "sha256:723c14ea626a8a5c97021a13f941fd39ca1a8da1485d7d492d1327d32983435e"
-url = "https://github.com/yvgude/lean-ctx/releases/download/v3.7.1/lean-ctx-aarch64-unknown-linux-gnu.tar.gz"
-url_api = "https://api.github.com/repos/yvgude/lean-ctx/releases/assets/437021410"
+checksum = "sha256:b83971ae0eb20c384e2f499fe771b453df0c8cb8f0d2a9aa44cdbaaa5c575a6d"
+url = "https://github.com/yvgude/lean-ctx/releases/download/v3.7.4/lean-ctx-aarch64-unknown-linux-gnu.tar.gz"
+url_api = "https://api.github.com/repos/yvgude/lean-ctx/releases/assets/439820316"
 
 [tools."github:yvgude/lean-ctx"."platforms.linux-arm64-musl"]
-checksum = "sha256:9eb50fa6238c0a328dad62e694cc9fca275165caaccd585719ee198b1b89929c"
-url = "https://github.com/yvgude/lean-ctx/releases/download/v3.7.1/lean-ctx-aarch64-unknown-linux-musl.tar.gz"
-url_api = "https://api.github.com/repos/yvgude/lean-ctx/releases/assets/437021403"
+checksum = "sha256:27d238260ddbac01a8c2fc369650e392549c234da4b83ce0d692443d2a033fd9"
+url = "https://github.com/yvgude/lean-ctx/releases/download/v3.7.4/lean-ctx-aarch64-unknown-linux-musl.tar.gz"
+url_api = "https://api.github.com/repos/yvgude/lean-ctx/releases/assets/439820315"
 
 [tools."github:yvgude/lean-ctx"."platforms.linux-x64"]
-checksum = "sha256:a518fc094148d1901260e55dd2e02f137c6e5359f47455a64ad5c465a251b858"
-url = "https://github.com/yvgude/lean-ctx/releases/download/v3.7.1/lean-ctx-x86_64-unknown-linux-gnu.tar.gz"
-url_api = "https://api.github.com/repos/yvgude/lean-ctx/releases/assets/437021409"
+checksum = "sha256:878dff4b243f7022bf27485ae2808a160390c30286502859305e658aad173b51"
+url = "https://github.com/yvgude/lean-ctx/releases/download/v3.7.4/lean-ctx-x86_64-unknown-linux-gnu.tar.gz"
+url_api = "https://api.github.com/repos/yvgude/lean-ctx/releases/assets/439820317"
 
 [tools."github:yvgude/lean-ctx"."platforms.linux-x64-musl"]
-checksum = "sha256:e106d853a70af7029f355be307d2cfed2ffa06ed158ee2cebbc334edd781351a"
-url = "https://github.com/yvgude/lean-ctx/releases/download/v3.7.1/lean-ctx-x86_64-unknown-linux-musl.tar.gz"
-url_api = "https://api.github.com/repos/yvgude/lean-ctx/releases/assets/437021404"
+checksum = "sha256:71e7d4cdd822fc0b62a0d4c794d4d3c24305bce48ff6d908a6e9b491d32fecdd"
+url = "https://github.com/yvgude/lean-ctx/releases/download/v3.7.4/lean-ctx-x86_64-unknown-linux-musl.tar.gz"
+url_api = "https://api.github.com/repos/yvgude/lean-ctx/releases/assets/439820312"
 
 [tools."github:yvgude/lean-ctx"."platforms.macos-arm64"]
-checksum = "sha256:c7353c04cfa29615db9a2d8f8f4042743d09da020cd0098cf562d9e325e47dbb"
-url = "https://github.com/yvgude/lean-ctx/releases/download/v3.7.1/lean-ctx-aarch64-apple-darwin.tar.gz"
-url_api = "https://api.github.com/repos/yvgude/lean-ctx/releases/assets/437021415"
+checksum = "sha256:b3054000b10a9b6a3652c018eeff6a81285b9bcfa6ea1ba0889bed68962433ce"
+url = "https://github.com/yvgude/lean-ctx/releases/download/v3.7.4/lean-ctx-aarch64-apple-darwin.tar.gz"
+url_api = "https://api.github.com/repos/yvgude/lean-ctx/releases/assets/439820320"
 
 [tools."github:yvgude/lean-ctx"."platforms.macos-x64"]
-checksum = "sha256:61dccf215f2f95846af76e29ed8ddaa986c7cedd4a62ba40e1bb1098082a32e9"
-url = "https://github.com/yvgude/lean-ctx/releases/download/v3.7.1/lean-ctx-x86_64-apple-darwin.tar.gz"
-url_api = "https://api.github.com/repos/yvgude/lean-ctx/releases/assets/437021405"
+checksum = "sha256:097d8af364704173294dc119c276ddf878b2bbbe8eab0b194ce16137047867f3"
+url = "https://github.com/yvgude/lean-ctx/releases/download/v3.7.4/lean-ctx-x86_64-apple-darwin.tar.gz"
+url_api = "https://api.github.com/repos/yvgude/lean-ctx/releases/assets/439820319"
 
 [tools."github:yvgude/lean-ctx"."platforms.windows-x64"]
-checksum = "sha256:2250a6d5d86d8228eb2bb888d3ccfa55779e69804fed5ecdcf24ab91704d8d2f"
-url = "https://github.com/yvgude/lean-ctx/releases/download/v3.7.1/lean-ctx-x86_64-pc-windows-msvc.zip"
-url_api = "https://api.github.com/repos/yvgude/lean-ctx/releases/assets/437021413"
+checksum = "sha256:10e2e64a3f88e922417b5a879c34f415c51a6d5849d4f17000687852edc3c725"
+url = "https://github.com/yvgude/lean-ctx/releases/download/v3.7.4/lean-ctx-x86_64-pc-windows-msvc.zip"
+url_api = "https://api.github.com/repos/yvgude/lean-ctx/releases/assets/439820318"
 
 [[tools."go:github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen"]]
-version = "2.7.0"
+version = "2.7.1"
 backend = "go:github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen"
 
 [[tools."go:golang.org/x/tools/gopls"]]

@@ -24,9 +24,9 @@ module "log_delivery" {
     "/aws/lambda/my-function",
     "/aws/rds/cluster/my-db/slowquery"
   ]
-  
+
   s3_bucket_arn = "arn:aws:s3:::my-log-bucket"
-  
+
   aws_kinesis_firehose_delivery_stream = {
     buffering_size     = 5
     buffering_interval = 60
@@ -37,26 +37,26 @@ module "log_delivery" {
       key_type = "AWS_OWNED_CMK"
     }
   }
-  
+
   aws_iam_role_cloudwatch_logs = {
     name = "cloudwatch-logs-role"
   }
-  
+
   aws_iam_policy_cloudwatch_logs = {
     name = "cloudwatch-logs-policy"
   }
-  
+
   aws_iam_role_kinesis_firehose = {
     name = "kinesis-firehose-role"
   }
-  
+
   aws_iam_policy_kinesis_firehose = {
     name = "kinesis-firehose-policy"
   }
-  
+
   account_id = "123456789012"
   region     = "ap-northeast-1"
-  
+
   tags = {
     Environment = "production"
     Terraform   = "true"
@@ -72,21 +72,21 @@ module "log_delivery_auto" {
   is_enabled              = true
   name_prefix             = "example-"
   create_auto_log_group_names = true
-  
+
   # Optional: Include only log groups matching these patterns
   auto_log_group_names_include_list = [
     "/aws/lambda/",
     "/aws/rds/"
   ]
-  
+
   # Optional: Exclude log groups matching these patterns
   auto_log_group_names_exclude_list = [
     "/aws/lambda/test-",
     "/aws/rds/audit"
   ]
-  
+
   s3_bucket_arn = "arn:aws:s3:::my-log-bucket"
-  
+
   aws_kinesis_firehose_delivery_stream = {
     buffering_size     = 5
     buffering_interval = 60
@@ -97,26 +97,26 @@ module "log_delivery_auto" {
       key_type = "AWS_OWNED_CMK"
     }
   }
-  
+
   aws_iam_role_cloudwatch_logs = {
     name = "cloudwatch-logs-role"
   }
-  
+
   aws_iam_policy_cloudwatch_logs = {
     name = "cloudwatch-logs-policy"
   }
-  
+
   aws_iam_role_kinesis_firehose = {
     name = "kinesis-firehose-role"
   }
-  
+
   aws_iam_policy_kinesis_firehose = {
     name = "kinesis-firehose-policy"
   }
-  
+
   account_id = "123456789012"
   region     = "ap-northeast-1"
-  
+
   tags = {
     Environment = "production"
     Terraform   = "true"
@@ -132,17 +132,17 @@ module "log_delivery_with_processing" {
   is_enabled     = true
   name_prefix    = "example-"
   log_group_names = ["/aws/lambda/my-function"]
-  
+
   s3_bucket_arn        = "arn:aws:s3:::my-log-bucket"
   lambda_processor_arn = "arn:aws:lambda:ap-northeast-1:123456789012:function:log-processor"
-  
+
   aws_kinesis_firehose_delivery_stream = {
     buffering_size                  = 5
     buffering_interval              = 60
     lambda_buffer_size_mb           = "2"
     lambda_buffer_interval_seconds  = 900
   }
-  
+
   # ... other required variables
 }
 ```
@@ -155,17 +155,17 @@ module "log_delivery_encrypted" {
   is_enabled     = true
   name_prefix    = "example-"
   log_group_names = ["/aws/lambda/my-function"]
-  
+
   s3_bucket_arn = "arn:aws:s3:::my-log-bucket"
   kms_key_arn   = "arn:aws:kms:ap-northeast-1:123456789012:key/12345678-1234-1234-1234-123456789012"
-  
+
   aws_kinesis_firehose_delivery_stream = {
     server_side_encryption = {
       enabled  = true
       key_type = "CUSTOMER_MANAGED_CMK"
     }
   }
-  
+
   # ... other required variables
 }
 ```
@@ -245,7 +245,7 @@ No direct resources are created by this module. All resources are managed by sub
 
 | Name | Version |
 | ---- | ------- |
-| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | ~>1.4 |
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.5.7 |
 | <a name="requirement_aws"></a> [aws](#requirement\_aws) | ~> 6.0 |
 
 ## Providers

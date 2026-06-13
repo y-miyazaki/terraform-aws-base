@@ -41,7 +41,7 @@ locals {
 # Provides a CloudTrail.
 #--------------------------------------------------------------
 module "aws_security_cloudtrail_v4" {
-  source     = "../../modules/aws/security/cloudtrail/cloudtrail-v4"
+  source     = "../../modules/aws/security/cloudtrail/cloudtrail"
   is_enabled = var.security_cloudtrail.is_enabled && !local.control_tower_managed_services.cloudtrail
 
   is_s3_enabled              = var.security_cloudtrail.is_s3_enabled

@@ -80,7 +80,7 @@ Each metric module creates CloudWatch alarms + SNS notification for a specific A
 | iam/role                         | iam/role                         | IAM role creation                           |
 | iam/policy                       | iam/policy                       | IAM policy creation                         |
 | iam/switch_role                  | iam/switch_role                  | Cross-account switch role                   |
-| budgets/create-v4                | budgets/create-v4                | AWS Budgets with Slack notification         |
+| budgets/create                | budgets/create                | AWS Budgets with Slack notification         |
 | lambda/vpc                       | lambda/vpc                       | Lambda in VPC with ENI management           |
 | chatbot/create                   | chatbot/create                   | AWS Chatbot Slack integration               |
 | chatbot/security                 | chatbot/security                 | Security event to Chatbot routing           |
