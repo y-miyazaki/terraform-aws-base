@@ -14,11 +14,11 @@ Configuration for **member accounts** (individual AWS accounts where workloads r
 
 These must be changed before `terraform apply` — the example values will cause failures.
 
-| Variable | Description | Example |
-|----------|-------------|---------|
+| Variable (tfvars path) | Description | Example |
+|------------------------|-------------|---------|
 | `region` | Primary AWS region for resources | `"ap-northeast-1"` |
-| `support_iam_role_principal_arns` | IAM principals for Support role (CIS 1.20) | `["arn:aws:iam::123456789012:root"]` |
-| `subscriber_email_addresses` | Email for budget threshold notifications | `["you@example.com"]` |
+| `security_iam.support_iam_role_principal_arns` | IAM principals for Support role (CIS 1.20) | `["arn:aws:iam::123456789012:root"]` |
+| `budgets.aws_budgets_budget.notification[].subscriber_email_addresses` | Email for budget threshold notifications | `["you@example.com"]` |
 
 ## Optional Settings
 
@@ -26,7 +26,7 @@ These have sensible defaults but should be customized per environment.
 
 ### Tags and Naming
 
-| Variable | Description | Default |
+| Variable (tfvars path) | Description | Default |
 |----------|-------------|---------|
 | `tags.env` | Environment name for cost allocation | `"example"` |
 | `tags.service` | Service/project name | `"base"` |
@@ -106,7 +106,7 @@ slack = {
 
 Each feature has an `is_enabled` flag. Set to `false` to disable.
 
-| Feature | Variable | Default | Notes |
+| Feature | Variable (tfvars path) | Default | Notes |
 |---------|----------|---------|-------|
 | OIDC GitHub | `oidc_github.is_enabled` | `true` | GitHub Actions OIDC provider |
 | Budgets | `budgets.is_enabled` | `true` | Cost alerts |
@@ -208,14 +208,14 @@ Key points:
 
 ## Environment Examples
 
-| Setting | Development | Staging | Production |
+| Setting (tfvars path) | Development | Staging | Production |
 |---------|-------------|---------|------------|
-| `budgets.limit_amount` | `"50.0"` | `"200.0"` | `"500.0"` |
+| `budgets.aws_budgets_budget.limit_amount` | `"50.0"` | `"200.0"` | `"500.0"` |
 | `guardduty.is_enabled` | `false` | `true` | `true` |
 | `security_config.is_enabled` | `false` | `false` | `true` |
 | `security_cloudtrail.is_enabled` | `false` | `true` | `true` |
 | `cloudwatch_log_group.retention_in_days` | `7` | `14` | `14` |
-| CloudTrail retention override | `30` | `90` | `365` |
+| `cloudwatch_log_group.override.security_cloudtrail.retention_in_days` | `30` | `90` | `365` |
 | `control_tower.is_enabled` | `false` | `false` | `true` |
 
 ## Validation Checklist

@@ -12,7 +12,7 @@ Configuration for **monitoring and observability**. Sets up CloudWatch alarms, l
 
 ## Required Settings
 
-| Variable | Description | Example |
+| Variable (tfvars path) | Description | Example |
 |----------|-------------|---------|
 | `region` | Primary AWS region | `"ap-northeast-1"` |
 
@@ -20,7 +20,7 @@ Configuration for **monitoring and observability**. Sets up CloudWatch alarms, l
 
 ### Tags and Naming
 
-| Variable | Description | Default |
+| Variable (tfvars path) | Description | Default |
 |----------|-------------|---------|
 | `tags.env` | Environment name | `"example"` |
 | `tags.service` | Service/project name | `"base"` |
@@ -98,7 +98,7 @@ slack = {
 
 CloudWatch alarms that notify when thresholds are exceeded.
 
-| Feature | Variable | Default | Reference |
+| Feature | Variable (tfvars path) | Default | Reference |
 |---------|----------|---------|-----------|
 | API Gateway | `metric_resource_api_gateway.is_enabled` | `false` | [Docs](https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-metrics-and-dimensions.html) |
 | CloudFront | `metric_resource_cloudfront.is_enabled` | `false` | [Docs](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/monitoring-using-cloudwatch.html) |
@@ -120,7 +120,7 @@ CloudWatch alarms that notify when thresholds are exceeded.
 
 CloudWatch Logs metric filters with Lambda → Slack notification.
 
-| Feature | Variable | Default | Daily Report |
+| Feature | Variable (tfvars path) | Default | Daily Report |
 |---------|----------|---------|--------------|
 | Application | `metric_log_application.is_enabled` | `false` | `metric_log_application_report` |
 | MySQL slow query | `metric_log_mysql_slowquery.is_enabled` | `false` | — |
@@ -131,7 +131,7 @@ CloudWatch Logs metric filters with Lambda → Slack notification.
 
 #### EventBridge Events
 
-| Feature | Variable | Default |
+| Feature | Variable (tfvars path) | Default |
 |---------|----------|---------|
 | EC2 (Spot/Rebalance) | `cloudwatch_event_ec2.is_enabled` | `false` |
 
@@ -162,14 +162,14 @@ Set to `true` to disable services conflicting with Control Tower. Automatically 
 
 ## Environment Examples
 
-| Setting | Development | Staging | Production |
+| Setting (tfvars path) | Development | Staging | Production |
 |---------|-------------|---------|------------|
-| `metric_resource_lambda` | `false` | `true` (errors ≤ 1) | `true` (errors = 0) |
-| `metric_resource_rds_cluster` | `false` | `true` (CPU ≤ 80%) | `true` (CPU ≤ 70%) |
-| `metric_log_application` | `true` | `true` | `true` |
-| `athena` | `false` | `false` | `true` |
+| `metric_resource_lambda.is_enabled` | `false` | `true` (errors ≤ 1) | `true` (errors = 0) |
+| `metric_resource_rds_cluster.is_enabled` | `false` | `true` (CPU ≤ 80%) | `true` (CPU ≤ 70%) |
+| `metric_log_application.is_enabled` | `true` | `true` | `true` |
+| `athena.is_enabled` | `false` | `false` | `true` |
 | `cloudwatch_log_group.retention_in_days` | `7` | `14` | `14` |
-| Monitoring intervals | Relaxed | Standard | Strict |
+| Monitoring intervals (per-alarm `period`) | Relaxed | Standard | Strict |
 
 ## Validation Checklist
 

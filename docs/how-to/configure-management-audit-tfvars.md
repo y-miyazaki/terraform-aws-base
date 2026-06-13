@@ -25,7 +25,7 @@ Configuration for the **Audit account** in an AWS Control Tower landing zone. Th
 
 ## Required Settings
 
-| Variable | Description | Example |
+| Variable (tfvars path) | Description | Example |
 |----------|-------------|---------|
 | `region` | Primary AWS region | `"ap-northeast-1"` |
 | `security.slack_channel_id` | Slack channel for security notifications | `"C0XXXXXXXXX"` |
@@ -35,7 +35,7 @@ Configuration for the **Audit account** in an AWS Control Tower landing zone. Th
 
 ### Tags and Naming
 
-| Variable | Description | Default |
+| Variable (tfvars path) | Description | Default |
 |----------|-------------|---------|
 | `tags.env` | Environment name | `"audit"` |
 | `tags.service` | Service/project name | `"security-audit"` |

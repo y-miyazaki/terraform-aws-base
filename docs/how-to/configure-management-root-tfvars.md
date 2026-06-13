@@ -26,7 +26,7 @@ Configuration for the **Management (Root) account** — the top-level account th
 
 ## Required Settings
 
-| Variable | Description | Example |
+| Variable (tfvars path) | Description | Example |
 |----------|-------------|---------|
 | `region` | Primary AWS region | `"ap-northeast-1"` |
 | `subscriber_email_addresses` | Email(s) for budget notifications | `["admin@example.com"]` |
@@ -35,7 +35,7 @@ Configuration for the **Management (Root) account** — the top-level account th
 
 ### Tags and Naming
 
-| Variable | Description | Default |
+| Variable (tfvars path) | Description | Default |
 |----------|-------------|---------|
 | `tags.env` | Environment name | `"root"` |
 | `tags.service` | Service/project name | `"management"` |

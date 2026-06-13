@@ -1,19 +1,19 @@
 lockfile_version: '1'
-generated_at: '2026-06-13T04:47:52.853556+00:00'
+generated_at: '2026-06-11T06:06:58.334586+00:00'
 apm_version: 0.14.0
 dependencies:
 - repo_url: y-miyazaki/config
   host: github.com
-  resolved_commit: cd498a0b7d7d69468d24398fa39daa87c767f76a
-  resolved_ref: v1.1.37
+  resolved_commit: c5dc3a91a9b4ecd7514edceb0429ed26c073b01b
+  resolved_ref: v1.1.36
   virtual_path: .apm/packages/aws
   is_virtual: true
   package_type: apm_package
   content_hash: sha256:2908905e050d4ae61c5e87efa25152acad706fd3b3fb52eba25f54b57aa751c1
 - repo_url: y-miyazaki/config
   host: github.com
-  resolved_commit: cd498a0b7d7d69468d24398fa39daa87c767f76a
-  resolved_ref: v1.1.37
+  resolved_commit: c5dc3a91a9b4ecd7514edceb0429ed26c073b01b
+  resolved_ref: v1.1.36
   virtual_path: .apm/packages/common
   is_virtual: true
   package_type: apm_package
@@ -56,11 +56,11 @@ dependencies:
     .github/instructions/github-actions-workflow.instructions.md: sha256:1ee01b48b75a3c9d8f8a85e8aae3d8d5c7f1f1056c5063b1c408419fa855df85
     .github/instructions/instructions.instructions.md: sha256:343784c153e77cae5eb1d031de4f11d07655c6bd91ae39da1773d4e97becfe60
     .github/instructions/markdown.instructions.md: sha256:fa7f8346e8c81c05854cb22ee86f3ac9e97a46127148db942c74f922f576a773
-  content_hash: sha256:110fa38216aba3de33ea2961e68bcb78e9af6459eb0514fb77e921c5a341d2be
+  content_hash: sha256:977cf3ea35020fe6fe2bd0b16aa993f64ceb94314684328254a43553f6f8dc46
 - repo_url: y-miyazaki/config
   host: github.com
-  resolved_commit: cd498a0b7d7d69468d24398fa39daa87c767f76a
-  resolved_ref: v1.1.37
+  resolved_commit: c5dc3a91a9b4ecd7514edceb0429ed26c073b01b
+  resolved_ref: v1.1.36
   virtual_path: .apm/packages/go
   is_virtual: true
   package_type: apm_package
@@ -77,8 +77,8 @@ dependencies:
   content_hash: sha256:b6a8fd61911deb55eed4850dc05d079a5a64a54ef53e003fac8f3c468acf3980
 - repo_url: y-miyazaki/config
   host: github.com
-  resolved_commit: cd498a0b7d7d69468d24398fa39daa87c767f76a
-  resolved_ref: v1.1.37
+  resolved_commit: c5dc3a91a9b4ecd7514edceb0429ed26c073b01b
+  resolved_ref: v1.1.36
   virtual_path: .apm/packages/shell-script
   is_virtual: true
   package_type: apm_package
@@ -99,8 +99,8 @@ dependencies:
   content_hash: sha256:6527cb43a09b5eb76369c42dba4c768b80e82d6e363c6ff42cd4daaa35bfc493
 - repo_url: y-miyazaki/config
   host: github.com
-  resolved_commit: cd498a0b7d7d69468d24398fa39daa87c767f76a
-  resolved_ref: v1.1.37
+  resolved_commit: c5dc3a91a9b4ecd7514edceb0429ed26c073b01b
+  resolved_ref: v1.1.36
   virtual_path: .apm/packages/terraform
   is_virtual: true
   package_type: apm_package
@@ -121,8 +121,8 @@ dependencies:
   content_hash: sha256:9b7365daa3cb15707d5f916b0699e0fb3bc83b4f80aec46a2c8c74fc7bb1c089
 - repo_url: y-miyazaki/config
   host: github.com
-  resolved_commit: cd498a0b7d7d69468d24398fa39daa87c767f76a
-  resolved_ref: v1.1.37
+  resolved_commit: c5dc3a91a9b4ecd7514edceb0429ed26c073b01b
+  resolved_ref: v1.1.36
   virtual_path: .apm/packages/terraform-aws
   is_virtual: true
   package_type: apm_package
@@ -140,6 +140,7 @@ mcp_servers:
 - github
 - hashicorp-terraform-mcp-server
 - lean-ctx
+- playwright
 mcp_configs:
   aws-documentation-mcp-server:
     name: aws-documentation-mcp-server
@@ -237,3 +238,11 @@ mcp_configs:
     - mcp
     registry: false
     command: lean-ctx
+  playwright:
+    name: playwright
+    transport: stdio
+    args:
+    - -y
+    - '@playwright/mcp@0.0.75'
+    registry: false
+    command: npx
