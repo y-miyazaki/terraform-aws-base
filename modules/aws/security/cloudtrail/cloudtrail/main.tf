@@ -773,7 +773,7 @@ resource "aws_iam_role_policy_attachment" "this" {
 #--------------------------------------------------------------
 module "s3" {
   source        = "terraform-aws-modules/s3-bucket/aws"
-  version       = "5.13.0"
+  version       = "5.14.0"
   create_bucket = local.is_s3_enabled
 
   attach_access_log_delivery_policy         = true

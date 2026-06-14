@@ -34,15 +34,22 @@ Each feature is toggled on/off via `terraform.example.tfvars`. The directory is 
 
 ## Quick Start
 
-1. Copy and edit tfvars:
+1. Clone the repository:
+
+   ```bash
+   git clone https://github.com/y-miyazaki/terraform-aws-base.git
+   cd terraform-aws-base
+   ```
+
+2. Copy and edit tfvars:
 
    ```bash
    cp terraform/base/terraform.example.tfvars terraform/base/terraform.tfvars
    ```
 
-2. Configure features — see [Configuration Guide](./docs/how-to/configure-base-tfvars.md)
+3. Configure features — see [Configuration Guide](./docs/how-to/configure-base-tfvars.md)
 
-3. Apply:
+4. Apply:
 
    ```bash
    terraform -chdir=terraform/base init
@@ -53,7 +60,8 @@ Each feature is toggled on/off via `terraform.example.tfvars`. The directory is 
 ## Requirements
 
 - [Terraform](https://www.terraform.io/)
-- [Slack](https://slack.com/) — OAuthToken and ChannelID for notifications ([Getting Started](https://slack.dev/node-slack-sdk/getting-started))
+- [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html) — configured with credentials (`aws configure` or environment variables)
+- [Slack](https://slack.com/) — OAuthToken and ChannelID for notifications ([Creating a Slack App](https://api.slack.com/start/quickstart))
 
 ## Architecture
 
