@@ -54,7 +54,7 @@ aqua = "v2.59.1"
 "pipx:aws-mfa" = { version = "0.0.12", depends = ["python"] } # AWS MFA helper
 
 # AWS related tools
-"aqua:aws/aws-cli" = "2.34.63"      # AWS CLI
+"aqua:aws/aws-cli" = "2.34.64"      # AWS CLI
 "aqua:aws/aws-sam-cli" = "1.161.1"  # SAM CLI tool
 "aqua:kayac/ecspresso" = "2.8.4"    # ECS deployment tool
 "aqua:Songmu/ecschedule" = "0.19.0" # ECS scheduled tasks deployment tool
