@@ -66,7 +66,7 @@ aqua = "v2.59.1"
 "aqua:suzuki-shunsuke/disable-checkout-persist-credentials" = "1.0.0" # disable persist-credentials in checkout action
 "aqua:suzuki-shunsuke/ghalint" = "1.5.6"                              # GitHub Actions linter
 "aqua:suzuki-shunsuke/ghatm" = "1.0.0"                                # auto-set timeout-minutes for GitHub Actions jobs
-"aqua:suzuki-shunsuke/pinact" = "4.0.0"                              # GitHub Actions pinning tool
+"aqua:suzuki-shunsuke/pinact" = "4.1.0"                              # GitHub Actions pinning tool
 "aqua:zizmorcore/zizmor" = "1.25.2"                                   # GitHub Actions security auditor
 
 # Go related tools
