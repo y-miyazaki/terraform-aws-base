@@ -907,8 +907,8 @@ iam = {
               "s3:DeleteObject",
             ]
             resources = [
-              "arn:aws:s3:::dev-*",
-              "arn:aws:s3:::dev-*/*",
+              "arn:aws:s3:::example-*",
+              "arn:aws:s3:::example-*/*",
               "arn:aws:s3:::base-*/*/Athena/*",
             ]
           },
@@ -1506,12 +1506,6 @@ common_lambda = {
         "subnet-xxxxxxxxxxxxxxxxx",
       ]
       security_group_id = "sg-xxxxxxxxxxxxxxxxx"
-      private_subnets_us_east_1 = [
-        "subnet-xxxxxxxxxxxxxxxxx",
-        "subnet-xxxxxxxxxxxxxxxxx",
-        "subnet-xxxxxxxxxxxxxxxxx",
-      ]
-      security_group_id_us_east_1 = "sg-xxxxxxxxxxxxxxxxx"
     }
     # TODO: To specify a new VPC to be set up for Lambda, please set the following information.
     # If var.common_lambda.vpc.is_enabled = true and var.common_lambda.vpc.create_vpc = true,

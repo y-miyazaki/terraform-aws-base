@@ -160,7 +160,6 @@ variable "common_lambda" {
       new = optional(object({
         name                                      = string
         cidr                                      = string
-        azs                                       = optional(list(string), [])
         private_subnets                           = list(string)
         public_subnets                            = list(string)
         enable_dns_support                        = bool

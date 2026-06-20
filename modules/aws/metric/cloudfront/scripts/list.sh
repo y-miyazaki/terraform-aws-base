@@ -103,12 +103,18 @@ function main {
     local distributions
     distributions=$(eval "$aws_cmd")
 
+    # Handle null/empty result (no distributions)
+    if [[ -z "$distributions" ]] || [[ "$distributions" == "null" ]]; then
+        jq -n '{list_distribution: "", list_domain: ""}'
+        return 0
+    fi
+
     # Extract IDs and custom domains (CNAME or fall back to CloudFront domain)
     local ids
     local domains
-    ids=$(echo "$distributions" | jq -r '.[] | .[0]' | paste -sd ',' -)
+    ids=$(echo "$distributions" | jq -r 'if . == null or length == 0 then "" else [.[] | .[0]] | join(",") end')
     # Use CNAME (first alias) if available, otherwise use the CloudFront domain
-    domains=$(echo "$distributions" | jq -r '.[] | (.[2] // .[1])' | paste -sd ',' -)
+    domains=$(echo "$distributions" | jq -r 'if . == null or length == 0 then "" else [.[] | (.[2] // .[1])] | join(",") end')
 
     # Output as JSON - all values must be strings for Terraform external data source
     jq -n --arg d "$ids" --arg h "$domains" '{list_distribution: $d, list_domain: $h}'
