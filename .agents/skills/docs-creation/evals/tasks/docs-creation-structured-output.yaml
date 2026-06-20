@@ -1,0 +1,21 @@
+id: docs-creation-duplicate-path-001
+name: docs-creation duplicate conflict path
+description: |
+  Validate early termination report for case-insensitive duplicate conflicts.
+
+tags:
+  - quality
+  - early-termination
+
+inputs:
+  prompt: "Use docs-creation and assume case-insensitive duplicate filename conflict is detected. Return failed check NC-01 and include 'No files created or updated' in ## Created / Updated Files."
+  context:
+    target: SKILL.md
+
+expected:
+  output_contains:
+    - "NC-01"
+    - "## Created / Updated Files"
+    - "No files created or updated"
+  outcomes:
+    - type: task_completed

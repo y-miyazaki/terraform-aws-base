@@ -1,0 +1,21 @@
+id: agent-skills-review-itemid-001
+name: agent-skills-review itemid path
+description: |
+  Validate failed-check output includes checklist item IDs and issue details.
+
+tags:
+  - quality
+  - itemid
+
+inputs:
+  prompt: "Use agent-skills-review. Return sections ## Checks (Failed/Deferred Only) and ## Issues. Report only failed/deferred checks and include ItemIDs in both sections (for example S-01 or Q-09)."
+  context:
+    target: SKILL.md
+
+expected:
+  output_contains:
+    - "## Checks (Failed/Deferred Only)"
+    - "## Issues"
+    - "S-"
+  outcomes:
+    - type: task_completed

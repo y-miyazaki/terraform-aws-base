@@ -1,0 +1,16 @@
+{
+  "hooks": {
+    "Stop": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".github/hooks/scripts/common-hooks-claude/scripts/markdownlint_cli2.sh",
+            "timeout": 120
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,167 @@
+---
+description: AI Assistant Instructions for Agent Skills Development
+globs: "**/skills/**/SKILL.md,**/skills/**/references/*.md"
+---
+
+# AI Assistant Instructions for Agent Skills
+
+## Scope
+
+- Scope is limited to designing and updating `skills/**/SKILL.md` and `references/*.md`.
+- This file defines SKILL authoring standards and is treated as an exception to the common template (five-chapter structure with Naming Conventions first in Standards is overridden by domain-specific Required Sections ordering).
+
+## Standards
+
+### Required Sections
+
+- **S-01 (MUST)**: Define the following five sections as H2 headings in this exact order - missing sections break execution determinism:
+  1. Input
+  2. Output Specification
+  3. Execution Scope
+  4. Reference Files Guide
+  5. Workflow
+
+### YAML Frontmatter
+
+- **S-02 (MUST)**: Include `name`, `description`, `license`, `metadata.author`, and `metadata.version` - missing fields prevent the plugin system from recognizing the skill.
+
+### Reference Header Levels
+
+- **S-03 (MUST)**: Keep header levels consistent - inconsistent levels break section recognition for AI agents:
+  - `common-checklist.md` / `common-output-format.md`: H1（`#`）
+  - `common-troubleshooting.md` / `common-individual-commands.md`: H2（`##`）
+  - `category-*.md`: H2（`##`）
+
+### Naming Conventions
+
+| Component      | Rule       | Example             |
+| -------------- | ---------- | ------------------- |
+| Skill name     | kebab-case | go-review           |
+| Reference file | kebab-case | common-checklist.md |
+| Script file    | snake_case | validate.sh         |
+
+### Agent Root Canonical List
+
+- **S-06 (MUST)**: Use `<agent-root>` placeholder for portable paths; do not hardcode `.github/skills`.
+- Canonical `agent-root` list (single source of truth): `.github`, `.agents`, `.claude`, `.cursor`, `cursor`, `.kiro`, `kiro`.
+- Keep markdown examples portable by using `<agent-root>` in paths.
+- Preferred markdown path forms:
+  - Cross-skill path: `<agent-root>/skills/<skill-name>/...`
+  - In-skill path: `scripts/...`
+
+### Reference Files Matrix
+
+| File Name                       | Required | Purpose                                 | Load Trigger |
+| ------------------------------- | -------- | --------------------------------------- | ------------ |
+| `common-checklist.md`           | Yes      | Canonical checklist with fixed Item IDs | Always       |
+| `common-output-format.md`       | Yes      | Canonical output contract               | Always       |
+| `common-troubleshooting.md`     | No       | Failure diagnostics and rerun procedure | On failure   |
+| `common-individual-commands.md` | No       | Debug-only command catalog              | On debugging |
+| `category-*.md`                 | No       | Domain-specific review criteria         | Per category |
+
+### Priority Principle
+
+- **S-04 (MUST)**: Prioritize Clarity over DRY - when deduplication introduces ambiguity, keep the clearer wording.
+
+### Output Contract Source of Truth
+
+- **S-05 (MUST)**: Treat `references/common-output-format.md` as the source of truth for output contracts - keep `Output Specification` as a summary and avoid duplicate definitions.
+
+### Writing Style
+
+- **Q-06 (MUST)**: Use imperative/infinitive phrasing - "You should" lowers execution precision for AI agents:
+  - ❌ `You should do X` / `You need to check Y`
+  - ✅ `Do X` / `Check Y` / `To accomplish X, do Y`
+
+### Forbidden Expressions
+
+- **Q-04a (MUST)**: Prohibit vague expressions that cannot be translated into concrete actions by AI:
+  - EN: appropriately, as needed, if possible, preferably, etc., and so on
+  - JP equivalents: "appropriately", "as needed", "where possible", "depending on context", "etc."
+
+## Guidelines
+
+### Pattern Checks (P)
+- P-01 (SHOULD): Design Pattern Compliance
+  - Check: Does SKILL.md define a deterministic execution pattern with explicit flow, boundaries, and references?
+- P-02 (SHOULD): Output Contract Compliance
+  - Check: Does the skill define a structured output contract across Output Specification and common-output-format.md without contradiction?
+- P-03 (SHOULD): Context Gathering Before Output
+  - Check: For skills that generate or modify content, does the Workflow include an explicit step to read relevant source material before writing?
+
+### Quality Checks (Q)
+- Q-01 (SHOULD): Output is Truly Structured
+  - Check: Is the output format definition implementable and parseable (JSON schema / Markdown structure explicitly defined with example)?
+- Q-02 (SHOULD): Scope Boundaries
+  - Check: Is Execution Scope split into "What this skill does" (action list) + "Out of Scope" (explicit non-actions with tool delegation)?
+- Q-03 (SHOULD): Execution Determinism
+  - Check: Is execution path single/canonical OR are conditional branches explicitly defined (IF condition → path A, ELSE → path B)?
+- Q-04 (SHOULD): Input/Output Specificity
+  - Check: Are Input/Output formats explicitly defined with schema/structure + concrete examples (no vague "appropriately", "as needed", "etc." expressions)?
+- Q-05 (SHOULD): Constraints Clarity
+  - Check: Are project-specific, non-obvious constraints documented while self-evident constraints are omitted?
+- Q-06 (MUST): No Implicit Inference
+  - Check: Are all instructions imperative and explicit with concrete conditions (no vague "appropriately", "depending on context", "reasonable")?
+- Q-09 (SHOULD): Token Hard Gate
+  - Check: Does the review include `waza check` evidence and confirm Token Budget is 500 tokens or less?
+- Q-10 (SHOULD): Error Handling Completeness
+  - Check: Does the Workflow define failure modes with explicit severity (recoverable/fatal/blocking) and action for each?
+- Q-11 (SHOULD): Input Parameter Consistency
+  - Check: Are parameters marked "required" truly required (no default fallback), and parameters with defaults marked as optional?
+- BP-03 (SHOULD): Token Efficiency
+  - Check: Does SKILL.md avoid content that Claude already knows, minimizing redundancy with frontmatter and reference files?
+- BP-04 (SHOULD): Anti-Overtrimming Guardrail
+  - Check: If token reduction is applied, are behavior-defining instructions preserved?
+
+### Structural Checks (S)
+- S-01 (MUST): Structural Completeness
+  - Check: Does SKILL.md have all 5 required sections at ## heading level?
+- S-02 (MUST): YAML Frontmatter Fields
+  - Check: Does SKILL.md YAML frontmatter have all required fields (name, description, license) and recommended metadata (author, version)?
+- BP-01 (SHOULD): Description Quality
+  - Check: Does the description field follow best practices for skill discovery (third person, "Use when..." trigger, no implementation instructions)?
+- BP-02 (SHOULD): Reference Trigger Conditions
+  - Check: Does Reference Files Guide specify when to load each reference file (not just what it contains)?
+- Q-07 (SHOULD): Progressive Disclosure (Soft Guard)
+  - Check: Is SKILL.md concise and compatible with token budget, using word count as a supplemental signal?
+- Q-08 (SHOULD): Resource Separation
+  - Check: Does skill directory contain `references/` and the mandatory common reference files? `scripts/` is optional but required when executable logic is provided.
+- S-03 (MUST): Reference Files Header Level Consistency
+  - Check: Do references/ files follow consistent header level standards?
+
+### Code Modification Guidelines
+
+- After changes, prioritize running validate.sh from agent-skills-review skill.
+- Use individual commands only for debugging.
+
+
+## Testing and Validation
+
+Operational rules:
+
+- Automate deterministic checks (existence checks, quantitative checks, and file presence checks) in `scripts/`.
+- Evaluate judgment-based checks (semantic review, design assessment, and context-sensitive decisions) in the review skill.
+- Determine overall quality from both deterministic checks and judgment-based checks.
+
+**Entry point (recommended)**:
+
+```bash
+bash <agent-root>/skills/agent-skills-review/scripts/validate.sh SKILL.md
+bash <agent-root>/skills/agent-skills-review/scripts/validate_waza.sh <skill-name>
+```
+
+**Individual execution (debugging)**:
+
+```bash
+waza check <skill-name>
+waza run <skill-name>/eval.yaml
+waza tokens count <skill-name>/SKILL.md
+```
+
+**Detailed guide**: See agent-skills-review skill SKILL.md.
+
+## Security Guidelines
+
+- Do not include raw secret values or credentials in SKILL.md or references.
+- Validate inputs in `scripts/` code and prevent arbitrary path operations.
+- Sanitize arguments when invoking external tools to prevent command injection.

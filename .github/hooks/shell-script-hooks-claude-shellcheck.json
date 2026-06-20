@@ -1,0 +1,16 @@
+{
+  "hooks": {
+    "Stop": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".github/hooks/scripts/shell-script-hooks-claude/scripts/shellcheck.sh",
+            "timeout": 120
+          }
+        ]
+      }
+    ]
+  }
+}

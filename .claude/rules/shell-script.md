@@ -1,0 +1,228 @@
+---
+paths:
+  - "**/*.sh"
+---
+
+# AI Assistant Instructions for Shell Script
+
+## Scope
+
+- Scope is limited to implementing, updating, and validating Shell scripts (`*.sh`).
+
+## Standards
+
+### Naming Conventions
+
+| Component | Rule             | Example                  |
+| --------- | ---------------- | ------------------------ |
+| File      | snake_case       | deploy_terraform.sh      |
+| Function  | snake_case       | show_usage, log_message  |
+| Variable  | snake_case       | script_name, error_count |
+| Constant  | UPPER_SNAKE_CASE | DEFAULT_TIMEOUT          |
+
+### Script Structure
+
+Required in-file order:
+
+1. shebang + header comments (DOC-01)
+2. `set -euo pipefail` + secure defaults（`umask 027`, `export LC_ALL=C.UTF-8`）
+3. `SCRIPT_DIR` setup (G-01)
+4. global variable definitions
+5. function definitions: `show_usage` / `parse_arguments` -> other functions in a-z order (G-03) -> `main` last
+6. entry point: `if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then main "$@"; fi`
+
+### Function Documentation
+
+```bash
+#######################################
+# function_name: concise description (one line)
+#
+# Description:
+#   Detailed explanation of what the function does.
+#
+# Arguments:
+#   $1 - description of argument 1
+#
+# Global Variables:
+#   VAR_NAME - description of global variable set or used
+#
+# Returns:
+#   exit code or output description
+#
+# Usage:
+#   function_name "arg1"
+#
+#######################################
+```
+
+## Guidelines
+
+### Code Standards (CODE)
+- CODE-01 (SHOULD): Proper Array Usage
+  - Check: Are paths with spaces and multiple values managed with arrays?
+- CODE-02 (SHOULD): Minimize Global Variables
+  - Check: Are local declarations used within functions?
+- CODE-03 (SHOULD): Proper Here Document Usage
+  - Check: Are here documents used for multi-line strings?
+- CODE-04 (SHOULD): Proper Process Substitution Usage
+  - Check: Is process substitution used where temporary files are unnecessary?
+- CODE-05 (SHOULD): Single Responsibility Functions with Explicit Arguments
+  - Check: Do functions have single responsibility and accept arguments explicitly?
+
+### Dependencies (DEP)
+- DEP-01 (SHOULD): Document Required Commands
+  - Check: Are dependent commands documented in README?
+- DEP-02 (SHOULD): Command Existence Check
+  - Check: Are commands verified with command -v with clear error messages?
+
+### Documentation (DOC)
+- DOC-01 (MUST): Standard Header Format
+  - Check: Does file header contain Description/Usage/Design Rules?
+- DOC-02 (SHOULD): show_usage Required
+  - Check: Is show_usage function implemented?
+- DOC-03 (SHOULD): Function Separators and Comments
+  - Check: Do functions have `#######` separator and purpose/arguments/return comments?
+- DOC-04 (SHOULD): Complex Logic Comments
+  - Check: Do complex algorithms have Why comments?
+- DOC-05 (SHOULD): Variable Documentation
+  - Check: Do global variables have purpose/unit/constraint comments?
+- DOC-06 (SHOULD): English Comment Consistency
+  - Check: Are all comments consistently in English?
+- DOC-07 (SHOULD): README.md Maintenance
+  - Check: Does README.md document purpose/prerequisites/setup/usage examples?
+- DOC-08 (SHOULD): Error Message Documentation
+  - Check: Are error codes and resolution methods documented?
+- DOC-09 (SHOULD): CHANGELOG History
+  - Check: Is CHANGELOG.md maintained with breaking changes documented?
+
+### Error Handling (ERR)
+- ERR-01 (SHOULD): Trap Configuration
+  - Check: Are trap handlers set for EXIT, ERR, INT, TERM?
+- ERR-02 (SHOULD): Exit Code Checking
+  - Check: Are command exit codes properly checked?
+- ERR-03 (SHOULD): Clear Error Messages
+  - Check: Do error messages include context information and line numbers?
+- ERR-04 (SHOULD): Resource Cleanup
+  - Check: Does cleanup function release temporary files, processes, and locks?
+- ERR-05 (SHOULD): Retry Strategy
+  - Check: Is there a retry strategy for transient errors?
+- ERR-06 (SHOULD): Partial Failure Tolerance
+  - Check: Is `set +e` explicitly used for acceptable errors?
+- ERR-07 (SHOULD): Error Logging
+  - Check: Are errors persistently logged to a log file?
+
+### Function Design (FUNC)
+- FUNC-01 (SHOULD): Functions Under 50 Lines Recommended
+  - Check: Are functions 50 lines or less?
+- FUNC-02 (SHOULD): Standardize parse_arguments
+  - Check: Is parse_arguments standardized with getopts and case statements?
+- FUNC-03 (SHOULD): Implement show_usage
+  - Check: Does show_usage function include Usage/Options/Examples and exit 0?
+- FUNC-04 (SHOULD): Return Value Design
+  - Check: Do functions properly set return values via return codes or echo output?
+- FUNC-05 (SHOULD): Implement main Function
+  - Check: Is main function implemented with minimized global scope processing?
+
+### Global / Base (G)
+- G-01 (MUST): Set SCRIPT_DIR
+  - Check: Is SCRIPT_DIR set for reliable relative path resolution?
+- G-02 (SHOULD): No Hardcoded Secrets
+  - Check: Are API keys, passwords, and tokens not embedded in scripts?
+- G-03 (MUST): Follow Function Order
+  - Check: Is order show_usage→parse_arguments→functions a-z→main last?
+- G-04 (SHOULD): Remove Dead Code
+  - Check: Are there no commented code, unused functions, or unreachable code?
+- G-05 (SHOULD): Script Idempotency
+  - Check: Does script run without errors on re-execution?
+
+### Logging (LOG)
+- LOG-01 (SHOULD): Separate stdout/stderr
+  - Check: Are errors clearly separated to >&2 and info to stdout?
+- LOG-02 (SHOULD): Implement Log Levels
+  - Check: Are INFO, WARN, ERROR log levels implemented?
+- LOG-03 (SHOULD): Structured Logging
+  - Check: Is structured log format with timestamp, level, message used?
+- LOG-04 (SHOULD): Mask Sensitive Information
+  - Check: Are passwords and tokens masked before logging?
+- LOG-05 (SHOULD): Implement verbose
+  - Check: Is detailed log control available with -v/--verbose option?
+
+### Performance (PERF)
+- PERF-01 (SHOULD): Minimize External Commands
+  - Check: Are external commands in loops minimized and Bash built-ins prioritized?
+- PERF-02 (SHOULD): Reduce Subshells
+  - Check: Are unnecessary `()` reduced and `{}` used instead?
+- PERF-03 (SHOULD): Optimize File I/O
+  - Check: Are files read in bulk and buffering utilized?
+- PERF-04 (SHOULD): Efficient Loops
+  - Check: Is `while IFS= read -r` used and inefficient loops avoided?
+- PERF-05 (SHOULD): Optimize String Processing
+  - Check: Is Bash parameter expansion utilized and sed/awk overuse avoided?
+- PERF-06 (SHOULD): Optimize Conditional Branching
+  - Check: Are early return and short-circuit evaluation used with shallow nesting?
+- PERF-07 (SHOULD): Leverage Parallel Execution
+  - Check: Are `&` and `xargs -P` utilized for parallelizable processing?
+- PERF-08 (SHOULD): Caching Strategy
+  - Check: Are identical processing results stored in variables and cached?
+- PERF-09 (SHOULD): Resource Limits (ulimit)
+  - Check: Are resource limits set with ulimit?
+- PERF-10 (SHOULD): Profiling
+  - Check: Are performance bottlenecks identified with set -x and time?
+
+### Security (SEC)
+- SEC-01 (SHOULD): Input Validation
+  - Check: Is user input validated with regex patterns or whitelists?
+- SEC-02 (SHOULD): Command Injection Prevention
+  - Check: Are all variables quoted with `"$var"` and eval avoided?
+- SEC-03 (SHOULD): Path Traversal Prevention
+  - Check: Are paths normalized with realpath and restricted to allowed directories?
+- SEC-04 (SHOULD): Temporary File Cleanup
+  - Check: Are temporary files created with mktemp and cleaned up with trap?
+- SEC-05 (SHOULD): Permission Checks
+  - Check: Are required permissions (root, etc.) validated before execution?
+- SEC-06 (SHOULD): Sensitive Data Masking in Logs
+  - Check: Are passwords and tokens masked before logging?
+- SEC-07 (SHOULD): External Command Validation
+  - Check: Are external commands invoked via absolute paths or verified with command -v?
+- SEC-08 (SHOULD): Environment Variable Isolation
+  - Check: Are environment variables explicitly initialized with defaults?
+- SEC-09 (SHOULD): Secure Defaults (umask 027)
+  - Check: Is umask 027 set and least privilege principle applied?
+
+### Testing (TEST)
+- TEST-01 (SHOULD): Implement Unit Tests
+  - Check: Are unit tests implemented with Bats?
+- TEST-02 (SHOULD): Bats Test Functions in a-z Order
+  - Check: Are test functions placed in a-z order after setup/teardown?
+- TEST-03 (SHOULD): CI/CD Integration
+  - Check: Are tests integrated into CI/CD like GitHub Actions?
+
+### Code Modification Guidelines
+
+- After changes, prioritize running validate.sh from shell-script-validation skill.
+- Use individual commands only for debugging.
+
+
+## Testing and Validation
+
+**Entry point (recommended)**:
+
+```bash
+bash <agent-root>/skills/shell-script-validation/scripts/validate.sh
+```
+
+**Individual execution (debugging)**:
+
+```bash
+bash -n script.sh
+shellcheck script.sh
+bats test/bats/
+```
+
+**Detailed guide**: See shell-script-validation skill SKILL.md.
+
+## Security Guidelines
+
+- Keep `set -euo pipefail` and safe defaults (`umask`, etc.) enabled; do not disable them.
+- Handle sensitive information through environment variables or secret management, and never print it to stdout/logs.
+- Add target confirmation and guard conditions before destructive commands to prevent accidental execution.

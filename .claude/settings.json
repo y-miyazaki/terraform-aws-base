@@ -238,6 +238,76 @@
             "timeout": 120
           }
         ]
+      },
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/Users/ymiyazaki/workspace/terraform-aws-base/.claude/hooks/common-hooks-claude/scripts/actionlint.sh",
+            "timeout": 60
+          }
+        ]
+      },
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/Users/ymiyazaki/workspace/terraform-aws-base/.claude/hooks/common-hooks-claude/scripts/ghalint.sh",
+            "timeout": 60
+          }
+        ]
+      },
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/Users/ymiyazaki/workspace/terraform-aws-base/.claude/hooks/common-hooks-claude/scripts/zizmor.sh",
+            "timeout": 60
+          }
+        ]
+      },
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/Users/ymiyazaki/workspace/terraform-aws-base/.claude/hooks/common-hooks-claude/scripts/markdown_link_check.sh",
+            "timeout": 240
+          }
+        ]
+      },
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/Users/ymiyazaki/workspace/terraform-aws-base/.claude/hooks/common-hooks-claude/scripts/markdownlint_cli2.sh",
+            "timeout": 120
+          }
+        ]
+      },
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/Users/ymiyazaki/workspace/terraform-aws-base/.claude/hooks/shell-script-hooks-claude/scripts/shellcheck.sh",
+            "timeout": 120
+          }
+        ]
+      },
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/Users/ymiyazaki/workspace/terraform-aws-base/.claude/hooks/terraform-hooks-claude/scripts/tflint.sh",
+            "timeout": 120
+          }
+        ]
       }
     ],
     "PostToolUse": [
@@ -260,9 +330,59 @@
             "timeout": 120
           }
         ]
+      },
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "command -v lean-ctx >/dev/null 2>&1 || exit 0; lean-ctx hook observe",
+            "timeout": 5
+          }
+        ]
+      },
+      {
+        "matcher": "Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/Users/ymiyazaki/workspace/terraform-aws-base/.claude/hooks/shell-script-hooks-claude/scripts/shfmt.sh",
+            "timeout": 120
+          }
+        ]
+      },
+      {
+        "matcher": "Edit|Write|Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/Users/ymiyazaki/workspace/terraform-aws-base/.claude/hooks/terraform-hooks-claude/scripts/terraform_fmt.sh",
+            "timeout": 120
+          }
+        ]
       }
     ],
     "PreToolUse": [
+      {
+        "matcher": "Bash|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "command -v lean-ctx >/dev/null 2>&1 || exit 0; lean-ctx hook rewrite",
+            "timeout": 15
+          }
+        ]
+      },
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "command -v lean-ctx >/dev/null 2>&1 || exit 0; lean-ctx hook redirect",
+            "timeout": 5
+          }
+        ]
+      },
       {
         "matcher": "Bash|Write",
         "hooks": [

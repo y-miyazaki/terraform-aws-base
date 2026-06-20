@@ -1,0 +1,21 @@
+id: docs-creation-no-fail-001
+name: docs-creation no-fail path
+description: |
+  Validate no-failure report path keeps required placeholders.
+
+tags:
+  - quality
+  - no-fail
+
+inputs:
+  prompt: "Use docs-creation and assume all checks pass. In ## Checks (Failed Only) output 'No failed checks'. In ## Issues output 'No issues found'."
+  context:
+    target: SKILL.md
+
+expected:
+  output_contains:
+    - "## Checks (Failed Only)"
+    - "No failed checks"
+    - "No issues found"
+  outcomes:
+    - type: task_completed

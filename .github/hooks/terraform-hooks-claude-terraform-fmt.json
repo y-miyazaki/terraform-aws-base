@@ -1,0 +1,16 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write|Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".github/hooks/scripts/terraform-hooks-claude/scripts/terraform_fmt.sh",
+            "timeout": 120
+          }
+        ]
+      }
+    ]
+  }
+}

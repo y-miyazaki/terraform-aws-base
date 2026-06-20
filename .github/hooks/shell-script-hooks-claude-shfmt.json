@@ -1,0 +1,16 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".github/hooks/scripts/shell-script-hooks-claude/scripts/shfmt.sh",
+            "timeout": 120
+          }
+        ]
+      }
+    ]
+  }
+}

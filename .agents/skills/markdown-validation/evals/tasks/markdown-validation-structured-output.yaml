@@ -1,0 +1,21 @@
+id: markdown-validation-failure-details-001
+name: markdown-validation failure details path
+description: |
+  Validate failed validation output includes error details section.
+
+tags:
+  - quality
+  - error-details
+
+inputs:
+  prompt: "Use markdown-validation. Assume one tool fails and return sections ## Summary, ## Tool Results, ## Error Details."
+  context:
+    target: SKILL.md
+
+expected:
+  output_contains:
+    - "## Summary"
+    - "## Tool Results"
+    - "## Error Details"
+  outcomes:
+    - type: task_completed

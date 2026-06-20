@@ -1,0 +1,21 @@
+id: terraform-validation-all-pass-001
+name: terraform-validation all-pass path
+description: |
+  Validate all-pass output includes required success statement.
+
+tags:
+  - quality
+  - all-pass
+
+inputs:
+  prompt: "Use terraform-validation. Assume all tools pass. Return ## Summary and ## Tool Results, and include 'All validations passed.' in Summary."
+  context:
+    target: SKILL.md
+
+expected:
+  output_contains:
+    - "## Summary"
+    - "## Tool Results"
+    - "All validations passed."
+  outcomes:
+    - type: task_completed

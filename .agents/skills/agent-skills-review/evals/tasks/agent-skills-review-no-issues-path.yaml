@@ -1,0 +1,21 @@
+id: agent-skills-review-no-issues-001
+name: agent-skills-review no-issues path
+description: |
+  Validate no-issue reporting path keeps required summary and issue placeholders.
+
+tags:
+  - quality
+  - no-issues
+
+inputs:
+  prompt: "Use agent-skills-review and assume there are no failed or deferred checks. Return sections ## Checks Summary, ## Checks (Failed/Deferred Only), ## Issues. In checks section include 'No failed or deferred checks'. In issues section include 'No issues found'."
+  context:
+    target: SKILL.md
+
+expected:
+  output_contains:
+    - "## Checks Summary"
+    - "No failed or deferred checks"
+    - "No issues found"
+  outcomes:
+    - type: task_completed

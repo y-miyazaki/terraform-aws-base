@@ -1,0 +1,43 @@
+name: agent-skills-review-eval
+description: |
+  Evaluation suite for agent-skills-review.
+  Verifies trigger relevance and structured review output contract.
+skill: agent-skills-review
+version: "1.0"
+
+config:
+  trials_per_task: 5
+  timeout_seconds: 180
+  parallel: false
+  executor: mock
+  model: claude-sonnet-4-20250514
+
+metrics:
+  - name: task_completion
+    weight: 1.0
+    threshold: 0.8
+    description: Verify evaluation task completes successfully.
+
+graders:
+  - type: code
+    name: has_structured_output
+    weight: 1.0
+    config:
+      assertions:
+        - "len(output) > 20"
+  - type: text
+    name: no_error_markers
+    weight: 0.5
+    config:
+      regex_match:
+        - "."
+  - type: behavior
+    name: bounded_runtime
+    weight: 0.5
+    config:
+      max_tool_calls: 30
+      max_tokens: 120000
+      max_duration_ms: 180000
+
+tasks:
+  - "evals/tasks/*.yaml"

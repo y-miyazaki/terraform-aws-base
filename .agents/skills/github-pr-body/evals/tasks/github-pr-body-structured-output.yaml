@@ -1,0 +1,20 @@
+id: github-pr-body-classification-001
+name: github-pr-body classification path
+description: |
+  Validate changes section includes classified entries.
+
+tags:
+  - quality
+  - classification
+
+inputs:
+  prompt: "Use github-pr-body. In ## Changes, classify changed files with labels such as Config, Docs, Feature, Test, or Other and include one entry."
+  context:
+    target: SKILL.md
+
+expected:
+  output_contains:
+    - "## Changes"
+    - "changed files"
+  outcomes:
+    - type: task_completed

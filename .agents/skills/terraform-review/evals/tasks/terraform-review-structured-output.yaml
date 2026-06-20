@@ -1,0 +1,21 @@
+id: terraform-review-itemid-001
+name: terraform-review itemid path
+description: |
+  Validate failed/deferred reporting includes fixed checklist ItemIDs and issue details.
+
+tags:
+  - quality
+  - itemid
+
+inputs:
+  prompt: "Use terraform-review. Report at least one failed check with ItemID in ## Checks (Failed/Deferred Only) and include matching ItemID in ## Issues (for example SEC-01 or Q-02)."
+  context:
+    target: SKILL.md
+
+expected:
+  output_contains:
+    - "## Checks (Failed/Deferred Only)"
+    - "## Issues"
+    - "-01"
+  outcomes:
+    - type: task_completed
