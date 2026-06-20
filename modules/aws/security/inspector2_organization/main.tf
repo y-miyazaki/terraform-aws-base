@@ -4,6 +4,14 @@
 # Use only in your organization's admin (delegated) account.
 # Default is false to avoid accidental organization-wide enablement.
 #--------------------------------------------------------------
+data "aws_region" "current" {}
+
+#--------------------------------------------------------------
+# Locals
+#--------------------------------------------------------------
+locals {
+  region = coalesce(var.region, data.aws_region.current.region)
+}
 
 #--------------------------------------------------------------
 # Delegated admin account
@@ -13,6 +21,7 @@
 resource "aws_inspector2_delegated_admin_account" "this" {
   count = var.is_enabled && var.is_enabled_delegated_admin ? 1 : 0
 
+  region     = local.region
   account_id = var.delegated_admin_account_id
 }
 
@@ -28,6 +37,7 @@ locals {
 resource "aws_inspector2_member_association" "this" {
   for_each = local.member_account_ids
 
+  region     = local.region
   account_id = each.value
 }
 
@@ -39,6 +49,7 @@ resource "aws_inspector2_member_association" "this" {
 resource "aws_inspector2_enabler" "this" {
   for_each = var.is_enabled ? var.enabler : {}
 
+  region         = local.region
   account_ids    = each.value.account_ids
   resource_types = each.value.resource_types
 
@@ -52,6 +63,7 @@ resource "aws_inspector2_enabler" "this" {
 resource "aws_inspector2_organization_configuration" "this" {
   count = var.is_enabled && var.is_enabled_configuration ? 1 : 0
 
+  region = local.region
   auto_enable {
     ec2             = var.configuration.auto_enable_ec2
     ecr             = var.configuration.auto_enable_ecr

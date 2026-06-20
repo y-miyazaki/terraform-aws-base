@@ -6,6 +6,7 @@ variable "is_vpc" {
   description = "(Optional) If you are deploying Lambda inside a VPC, set to true."
   default     = false
 }
+
 variable "aws_iam_role" {
   type = object(
     {
@@ -24,6 +25,7 @@ variable "aws_iam_role" {
     path        = "/"
   }
 }
+
 variable "aws_iam_policy" {
   type = object(
     {
@@ -45,6 +47,7 @@ variable "aws_iam_policy" {
     policy      = null
   }
 }
+
 variable "tags" {
   type        = map(any)
   description = "(Optional) A mapping of tags to assign to the resource."

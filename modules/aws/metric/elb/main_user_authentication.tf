@@ -13,6 +13,7 @@ resource "aws_cloudwatch_metric_alarm" "elb_auth_error" {
     if var.is_enabled && local.effective_thresholds[k].enabled_elb_auth_error
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-alb-${each.value.name}-elb-auth-error"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -43,6 +44,7 @@ resource "aws_cloudwatch_metric_alarm" "elb_auth_failure" {
     if var.is_enabled && local.effective_thresholds[k].enabled_elb_auth_failure
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-alb-${each.value.name}-elb-auth-failure"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -73,6 +75,7 @@ resource "aws_cloudwatch_metric_alarm" "elb_auth_latency" {
     if var.is_enabled && local.effective_thresholds[k].enabled_elb_auth_latency
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-alb-${each.value.name}-elb-auth-latency"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -103,6 +106,7 @@ resource "aws_cloudwatch_metric_alarm" "elb_auth_refresh_token_success" {
     if var.is_enabled && local.effective_thresholds[k].enabled_elb_auth_refresh_token_success
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-alb-${each.value.name}-elb-auth-refresh-token-success"
   comparison_operator       = "LessThanThreshold"
   evaluation_periods        = 1
@@ -133,6 +137,7 @@ resource "aws_cloudwatch_metric_alarm" "elb_auth_success" {
     if var.is_enabled && local.effective_thresholds[k].enabled_elb_auth_success
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-alb-${each.value.name}-elb-auth-success"
   comparison_operator       = "LessThanThreshold"
   evaluation_periods        = 1
@@ -163,6 +168,7 @@ resource "aws_cloudwatch_metric_alarm" "elb_auth_user_claims_size_exceeded" {
     if var.is_enabled && local.effective_thresholds[k].enabled_elb_auth_user_claims_size_exceeded
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-alb-${each.value.name}-elb-auth-user-claims-size-exceeded"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1

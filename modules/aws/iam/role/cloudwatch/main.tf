@@ -3,6 +3,15 @@
 # Purpose: Create IAM role and policy for CloudWatch Logs subscription delivery to Firehose.
 # Notes: Unified tagging applied; future improvement: restrict Firehose resource ARNs to specific streams and add condition keys.
 #--------------------------------------------------------------
+data "aws_region" "current" {}
+
+#--------------------------------------------------------------
+# Locals
+#--------------------------------------------------------------
+locals {
+  region = coalesce(var.region, data.aws_region.current.region)
+}
+
 #--------------------------------------------------------------
 # Provides an IAM role.
 #--------------------------------------------------------------
@@ -13,7 +22,7 @@ resource "aws_iam_role" "this" {
       {
         Effect = "Allow"
         Principal = {
-          Service = "logs.${var.region}.amazonaws.com"
+          Service = "logs.${local.region}.amazonaws.com"
         }
         Action = "sts:AssumeRole"
       }
@@ -39,7 +48,7 @@ data "aws_iam_policy_document" "this" {
       "firehose:PutRecordBatch"
     ]
     resources = [
-      "arn:aws:firehose:${var.region}:${var.account_id}:deliverystream/*"
+      "arn:aws:firehose:${local.region}:${var.account_id}:deliverystream/*"
     ]
   }
   statement {
@@ -49,7 +58,7 @@ data "aws_iam_policy_document" "this" {
       "kms:GenerateDataKey*",
     ]
     resources = [
-      "arn:aws:kms:${var.region}:${var.account_id}:key/*"
+      "arn:aws:kms:${local.region}:${var.account_id}:key/*"
     ]
   }
 }

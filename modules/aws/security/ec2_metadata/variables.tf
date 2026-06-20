@@ -7,6 +7,12 @@ variable "is_enabled" {
   default     = true
 }
 
+variable "region" {
+  type        = string
+  description = "(Optional) AWS region for EC2 metadata resources."
+  default     = null
+}
+
 variable "http_tokens" {
   type        = string
   description = "(Optional) Whether IMDSv2 is required. Valid values: required, optional, no-preference. Defaults to required."

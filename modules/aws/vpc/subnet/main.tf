@@ -6,6 +6,14 @@
 #--------------------------------------------------------------
 # Locals
 #--------------------------------------------------------------
+data "aws_region" "current" {}
+
+#--------------------------------------------------------------
+# Locals
+#--------------------------------------------------------------
+locals {
+  region = coalesce(var.region, data.aws_region.current.region)
+}
 locals {
   name_prefix = trimsuffix(var.name_prefix, "-")
 }
@@ -16,6 +24,7 @@ locals {
 resource "aws_subnet" "this" {
   count = length(var.aws_subnet)
 
+  region                  = local.region
   availability_zone       = try(var.aws_subnet[count.index].availability_zone)
   cidr_block              = try(var.aws_subnet[count.index].cidr_block)
   map_public_ip_on_launch = try(var.aws_subnet[count.index].map_public_ip_on_launch, false)
@@ -31,6 +40,7 @@ resource "aws_subnet" "this" {
 resource "aws_route_table_association" "this" {
   count = length(var.aws_subnet)
 
+  region         = local.region
   subnet_id      = element(aws_subnet.this[*].id, count.index)
   route_table_id = try(var.aws_route_table_association.route_table_id)
 }

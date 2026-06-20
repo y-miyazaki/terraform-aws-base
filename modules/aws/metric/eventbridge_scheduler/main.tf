@@ -3,13 +3,24 @@
 # Purpose: Provide CloudWatch metric alarms for EventBridge Scheduler operational metrics (invocation attempts, errors, throttles, drops).
 # Notes: Supports multiple schedule groups via dimension expansion; unified tagging applied; future improvement: add percentage-based error rate alarms.
 #--------------------------------------------------------------
+data "aws_region" "current" {}
+
 #--------------------------------------------------------------
-# metric_helper module for combining dimensions and threshold overrides
+# Locals
+#--------------------------------------------------------------
+locals {
+  region = coalesce(var.region, data.aws_region.current.region)
+}
+
+#--------------------------------------------------------------
+# Auto-discovery metric filter module
 #--------------------------------------------------------------
 module "metric_helper" {
   source = "../../_internal/metric_helper"
 
-  create_auto        = var.create_auto_dimensions
+  is_enabled  = var.is_enabled
+  create_auto = var.create_auto_dimensions
+
   source_list        = local.list_schedule_group
   include_list       = var.auto_dimensions_include_list
   exclude_list       = var.auto_dimensions_exclude_list
@@ -38,6 +49,7 @@ resource "aws_cloudwatch_metric_alarm" "invocation_attempt_count" {
     if local.effective_thresholds[k].enabled_invocation_attempt_count
   } : {}
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-eventbridge-scheduler-${each.key}-invocation-attempt-count"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -68,6 +80,7 @@ resource "aws_cloudwatch_metric_alarm" "target_error_count" {
     if local.effective_thresholds[k].enabled_target_error_count
   } : {}
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-eventbridge-scheduler-${each.key}-target-error-count"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -98,6 +111,7 @@ resource "aws_cloudwatch_metric_alarm" "target_error_throttled_count" {
     if local.effective_thresholds[k].enabled_target_error_throttled_count
   } : {}
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-eventbridge-scheduler-${each.key}-target-error-throttled-count"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -128,6 +142,7 @@ resource "aws_cloudwatch_metric_alarm" "invocation_dropped_count" {
     if local.effective_thresholds[k].enabled_invocation_dropped_count
   } : {}
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-eventbridge-scheduler-${each.key}-invocation-dropped-count"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -158,6 +173,7 @@ resource "aws_cloudwatch_metric_alarm" "invocation_throttle_count" {
     if local.effective_thresholds[k].enabled_invocation_throttle_count
   } : {}
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-eventbridge-scheduler-${each.key}-invocation-throttle-count"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1

@@ -6,7 +6,17 @@
 #--------------------------------------------------------------
 # Provides an SNS topic resource
 #--------------------------------------------------------------
+data "aws_region" "current" {}
+
+#--------------------------------------------------------------
+# Locals
+#--------------------------------------------------------------
+locals {
+  region = coalesce(var.region, data.aws_region.current.region)
+}
+
 resource "aws_sns_topic" "this" {
+  region                                   = local.region
   name                                     = try(var.aws_sns_topic.name, null)
   name_prefix                              = try(var.aws_sns_topic.name_prefix, null)
   display_name                             = try(var.aws_sns_topic.display_name, null)
@@ -35,6 +45,7 @@ resource "aws_sns_topic" "this" {
 # This resource allows you to automatically place messages sent to SNS topics in SQS queues, send them as HTTP(S) POST requests to a given endpoint, send SMS messages, or notify devices / applications. The most likely use case for Terraform users will probably be SQS queues.
 #--------------------------------------------------------------
 resource "aws_sns_topic_subscription" "this" {
+  region                          = local.region
   topic_arn                       = aws_sns_topic.this.arn
   protocol                        = try(var.aws_sns_topic_subscription.protocol, null)
   endpoint                        = try(var.aws_sns_topic_subscription.endpoint, null)

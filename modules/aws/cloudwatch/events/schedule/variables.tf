@@ -16,6 +16,7 @@ variable "aws_cloudwatch_event_rule" {
   )
   description = "(Required) Provides an EventBridge Rule resource."
 }
+
 variable "aws_cloudwatch_event_target" {
   type = object(
     {
@@ -51,8 +52,15 @@ variable "aws_cloudwatch_event_target" {
   )
   description = "(Required) Provides an EventBridge Target resource."
 }
+
 variable "tags" {
   type        = map(any)
   description = "tags - (Optional) A mapping of tags to assign to the resource."
+  default     = null
+}
+
+variable "region" {
+  type        = string
+  description = "(Optional) AWS region. Defaults to provider region."
   default     = null
 }

@@ -6,14 +6,24 @@
 #        are included but will report notBreaching for standard queues.
 #        Fair queue metrics (ApproximateNumberOfNoisyGroups, *InQuietGroups) are included for completeness.
 #--------------------------------------------------------------
+data "aws_region" "current" {}
+
 #--------------------------------------------------------------
-# Metric helper module (auto-discovery filter + threshold override)
+# Locals
+#--------------------------------------------------------------
+locals {
+  region = coalesce(var.region, data.aws_region.current.region)
+}
+
+#--------------------------------------------------------------
+# Auto-discovery metric filter module
 #--------------------------------------------------------------
 module "helper" {
-  source     = "../../_internal/metric_helper"
-  is_enabled = var.is_enabled
+  source = "../../_internal/metric_helper"
 
-  create_auto        = var.create_auto_dimensions
+  is_enabled  = var.is_enabled
+  create_auto = var.create_auto_dimensions
+
   source_list        = var.create_auto_dimensions && length(data.external.list) > 0 ? split(",", data.external.list[0].result.list) : []
   include_list       = var.auto_dimensions_include_list
   exclude_list       = var.auto_dimensions_exclude_list
@@ -44,6 +54,7 @@ resource "aws_cloudwatch_metric_alarm" "approximate_age_of_oldest_message" {
     if var.is_enabled && local.effective_thresholds[k].enabled_approximate_age_of_oldest_message
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-sqs-${each.value.name}-approximate-age-of-oldest-message"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -74,6 +85,7 @@ resource "aws_cloudwatch_metric_alarm" "approximate_age_of_oldest_message_in_qui
     if var.is_enabled && local.effective_thresholds[k].enabled_approximate_age_of_oldest_message_in_quiet_groups
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-sqs-${each.value.name}-approximate-age-of-oldest-message-in-quiet-groups"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -104,6 +116,7 @@ resource "aws_cloudwatch_metric_alarm" "approximate_number_of_groups_with_inflig
     if var.is_enabled && local.effective_thresholds[k].enabled_approximate_number_of_groups_with_inflight_messages
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-sqs-${each.value.name}-approximate-number-of-groups-with-inflight-messages"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -134,6 +147,7 @@ resource "aws_cloudwatch_metric_alarm" "approximate_number_of_messages_delayed" 
     if var.is_enabled && local.effective_thresholds[k].enabled_approximate_number_of_messages_delayed
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-sqs-${each.value.name}-approximate-number-of-messages-delayed"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -164,6 +178,7 @@ resource "aws_cloudwatch_metric_alarm" "approximate_number_of_messages_delayed_i
     if var.is_enabled && local.effective_thresholds[k].enabled_approximate_number_of_messages_delayed_in_quiet_groups
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-sqs-${each.value.name}-approximate-number-of-messages-delayed-in-quiet-groups"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -194,6 +209,7 @@ resource "aws_cloudwatch_metric_alarm" "approximate_number_of_messages_not_visib
     if var.is_enabled && local.effective_thresholds[k].enabled_approximate_number_of_messages_not_visible
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-sqs-${each.value.name}-approximate-number-of-messages-not-visible"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -224,6 +240,7 @@ resource "aws_cloudwatch_metric_alarm" "approximate_number_of_messages_not_visib
     if var.is_enabled && local.effective_thresholds[k].enabled_approximate_number_of_messages_not_visible_in_quiet_groups
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-sqs-${each.value.name}-approximate-number-of-messages-not-visible-in-quiet-groups"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -254,6 +271,7 @@ resource "aws_cloudwatch_metric_alarm" "approximate_number_of_messages_visible" 
     if var.is_enabled && local.effective_thresholds[k].enabled_approximate_number_of_messages_visible
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-sqs-${each.value.name}-approximate-number-of-messages-visible"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -284,6 +302,7 @@ resource "aws_cloudwatch_metric_alarm" "approximate_number_of_messages_visible_i
     if var.is_enabled && local.effective_thresholds[k].enabled_approximate_number_of_messages_visible_in_quiet_groups
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-sqs-${each.value.name}-approximate-number-of-messages-visible-in-quiet-groups"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -314,6 +333,7 @@ resource "aws_cloudwatch_metric_alarm" "approximate_number_of_noisy_groups" {
     if var.is_enabled && local.effective_thresholds[k].enabled_approximate_number_of_noisy_groups
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-sqs-${each.value.name}-approximate-number-of-noisy-groups"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -344,6 +364,7 @@ resource "aws_cloudwatch_metric_alarm" "number_of_deduplicated_sent_messages" {
     if var.is_enabled && local.effective_thresholds[k].enabled_number_of_deduplicated_sent_messages
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-sqs-${each.value.name}-number-of-deduplicated-sent-messages"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -374,6 +395,7 @@ resource "aws_cloudwatch_metric_alarm" "number_of_empty_receives" {
     if var.is_enabled && local.effective_thresholds[k].enabled_number_of_empty_receives
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-sqs-${each.value.name}-number-of-empty-receives"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -404,6 +426,7 @@ resource "aws_cloudwatch_metric_alarm" "number_of_messages_deleted" {
     if var.is_enabled && local.effective_thresholds[k].enabled_number_of_messages_deleted
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-sqs-${each.value.name}-number-of-messages-deleted"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -434,6 +457,7 @@ resource "aws_cloudwatch_metric_alarm" "number_of_messages_received" {
     if var.is_enabled && local.effective_thresholds[k].enabled_number_of_messages_received
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-sqs-${each.value.name}-number-of-messages-received"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -464,6 +488,7 @@ resource "aws_cloudwatch_metric_alarm" "number_of_messages_sent" {
     if var.is_enabled && local.effective_thresholds[k].enabled_number_of_messages_sent
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-sqs-${each.value.name}-number-of-messages-sent"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -494,6 +519,7 @@ resource "aws_cloudwatch_metric_alarm" "sent_message_size" {
     if var.is_enabled && local.effective_thresholds[k].enabled_sent_message_size
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-sqs-${each.value.name}-sent-message-size"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1

@@ -3,6 +3,15 @@
 # Purpose: Attach S3 bucket policy to enable ELB and log delivery service to write access logs.
 # Notes: Includes ACL enforcement for log delivery; future improvement: regionalize ELB account ID mapping via data source.
 #--------------------------------------------------------------
+data "aws_region" "current" {}
+
+#--------------------------------------------------------------
+# Locals
+#--------------------------------------------------------------
+locals {
+  region = coalesce(var.region, data.aws_region.current.region)
+}
+
 #--------------------------------------------------------------
 # Generates an IAM policy document in JSON format for use with resources that expect policy documents such as aws_iam_policy.
 #--------------------------------------------------------------
@@ -64,6 +73,7 @@ data "aws_iam_policy_document" "this" {
 resource "aws_s3_bucket_policy" "this" {
   count = var.attach_bucket_policy ? 1 : 0
 
+  region = local.region
   bucket = var.bucket
   policy = data.aws_iam_policy_document.this.json
 }

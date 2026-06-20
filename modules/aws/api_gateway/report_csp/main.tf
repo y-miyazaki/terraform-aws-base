@@ -3,12 +3,22 @@
 # Purpose: Expose a POST /report-csp endpoint via API Gateway integrated with a Lambda to send CSP violation reports to Slack.
 # Notes: Adds deployment and stage with optional access logs; tagging to be unified via future refactor (currently passed through); future improvement: enable access logging and WAF association.
 #--------------------------------------------------------------
+data "aws_region" "current" {}
+
+#--------------------------------------------------------------
+# Locals
+#--------------------------------------------------------------
+locals {
+  region = coalesce(var.region, data.aws_region.current.region)
+}
+
 #--------------------------------------------------------------
 # Provides an API Gateway Resource.
 #--------------------------------------------------------------
 resource "aws_api_gateway_resource" "this" {
   count = var.is_enabled ? 1 : 0
 
+  region      = local.region
   rest_api_id = var.aws_api_gateway_rest_api_id
   parent_id   = var.aws_api_gateway_rest_api_root_resource_id
   path_part   = "report-csp"
@@ -20,6 +30,7 @@ resource "aws_api_gateway_resource" "this" {
 resource "aws_api_gateway_method" "this" {
   count = var.is_enabled ? 1 : 0
 
+  region        = local.region
   rest_api_id   = var.aws_api_gateway_rest_api_id
   resource_id   = aws_api_gateway_resource.this[0].id
   http_method   = "POST"
@@ -37,6 +48,7 @@ resource "aws_api_gateway_method" "this" {
 resource "aws_api_gateway_deployment" "this" {
   count = var.is_enabled ? 1 : 0
 
+  region      = local.region
   rest_api_id = var.aws_api_gateway_rest_api_id
   triggers = {
     redeployment = sha1(jsonencode([
@@ -63,6 +75,7 @@ resource "aws_api_gateway_deployment" "this" {
 resource "aws_api_gateway_stage" "this" {
   count = var.is_enabled ? 1 : 0
 
+  region        = local.region
   deployment_id = aws_api_gateway_deployment.this[0].id
   rest_api_id   = var.aws_api_gateway_rest_api_id
   stage_name    = "base"
@@ -83,7 +96,9 @@ resource "aws_api_gateway_stage" "this" {
 module "aws_lambda_create_lambda_report_csp" {
   source  = "terraform-aws-modules/lambda/aws"
   version = "8.8.0"
-  create  = var.is_enabled
+
+  create = var.is_enabled
+  region = local.region
 
   allowed_triggers = var.is_enabled ? {
     trigger = {
@@ -131,6 +146,7 @@ module "aws_lambda_create_lambda_report_csp" {
 resource "aws_api_gateway_integration" "this" {
   count = var.is_enabled ? 1 : 0
 
+  region                  = local.region
   rest_api_id             = var.aws_api_gateway_rest_api_id
   resource_id             = aws_api_gateway_method.this[0].resource_id
   http_method             = aws_api_gateway_method.this[0].http_method

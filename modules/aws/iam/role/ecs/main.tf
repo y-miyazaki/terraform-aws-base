@@ -4,7 +4,7 @@
 # Notes: Unified tagging applied; future improvement: restrict wildcard permissions and parameterize managed policy ARNs; consider least-privilege for RunTask.
 #--------------------------------------------------------------
 #--------------------------------------------------------------
-# role: ecs.amazonaws.com
+# Provides an IAM role.
 #--------------------------------------------------------------
 resource "aws_iam_role" "ecs" {
   assume_role_policy = jsonencode({
@@ -38,8 +38,7 @@ resource "aws_iam_role_policy_attachment" "ecs" {
 }
 
 #--------------------------------------------------------------
-# role: ecs-tasks.amazonaws.com
-# https://docs.aws.amazon.com/ja_jp/AmazonECS/latest/developerguide/task_execution_IAM_role.html
+# Provides an IAM role.
 #--------------------------------------------------------------
 resource "aws_iam_role" "ecs_tasks" {
   assume_role_policy = jsonencode({
@@ -73,7 +72,7 @@ resource "aws_iam_role_policy_attachment" "ecs_tasks" {
 }
 
 #--------------------------------------------------------------
-# events.amazonaws.com
+# Provides an IAM role.
 #--------------------------------------------------------------
 resource "aws_iam_role" "events" {
   assume_role_policy = jsonencode({

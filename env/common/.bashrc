@@ -57,19 +57,18 @@ if command -v aqua > /dev/null 2>&1; then
 fi
 
 #######################################
-# for mise
+# for Claude
 #######################################
-if command -v mise > /dev/null 2>&1; then
-    eval "$(mise activate bash)"
-    eval "$(mise activate --shims)"
+if command -v claude > /dev/null 2>&1; then
+    export CLAUDE_CODE_NO_FLICKER=1
 fi
 
 #######################################
-# for usage
+# for headroom
 #######################################
-if command -v usage > /dev/null 2>&1; then
-    # shellcheck source=/dev/null
-    source <(usage g completion-init bash)
+if command -v headroom > /dev/null 2>&1; then
+    export HEADROOM_TELEMETRY=off
+    export HEADROOM_OUTPUT_SHAPER=1
 fi
 
 #######################################
@@ -81,6 +80,14 @@ if [ -f "$HOME/.config/lean-ctx/shell-hook.bash" ]; then
 fi
 
 #######################################
+# for mise
+#######################################
+if command -v mise > /dev/null 2>&1; then
+    eval "$(mise activate bash)"
+    eval "$(mise activate --shims)"
+fi
+
+#######################################
 # for terraform
 #######################################
 export TF_PLUGIN_CACHE_DIR="$HOME/.terraform.d/plugin-cache"
@@ -88,6 +95,14 @@ alias tinit='terraform init -reconfigure -backend-config="terraform.${ENV}.tfbac
 alias tinitupgrade='terraform init -upgrade -reconfigure -backend-config="terraform.${ENV}.tfbackend"'
 alias tplan='terraform plan -lock=false -var-file="terraform.${ENV}.tfvars"'
 alias tapply='terraform apply -auto-approve -var-file="terraform.${ENV}.tfvars"'
+
+#######################################
+# for usage
+#######################################
+if command -v usage > /dev/null 2>&1; then
+    # shellcheck source=/dev/null
+    source <(usage g completion-init bash)
+fi
 
 #######################################
 # for aws

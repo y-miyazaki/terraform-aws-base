@@ -31,6 +31,7 @@ No modules.
 | ---- | ----------- | ---- | ------- | :------: |
 | <a name="input_is_enabled"></a> [is\_enabled](#input\_is\_enabled) | (Optional) A boolean flag to enable/disable settings of Athena. Defaults true. | `bool` | `true` | no |
 | <a name="input_output_location"></a> [output\_location](#input\_output\_location) | (Optional) The location in Amazon S3 where your query results are stored, such as s3://path/to/query/bucket/. | `string` | `null` | no |
+| <a name="input_region"></a> [region](#input\_region) | (Optional) AWS region for Athena resources. | `string` | `null` | no |
 | <a name="input_workgroup"></a> [workgroup](#input\_workgroup) | (Option) Name of the WorkGroup(primary). | `string` | `"primary"` | no |
 
 ## Outputs

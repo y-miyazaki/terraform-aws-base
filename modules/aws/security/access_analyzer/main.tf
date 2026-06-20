@@ -5,6 +5,14 @@
 # When type is "ORGANIZATION", checks if an analyzer already exists
 # to avoid conflicts with manually or Control Tower created analyzers.
 #--------------------------------------------------------------
+data "aws_region" "current" {}
+
+#--------------------------------------------------------------
+# Locals
+#--------------------------------------------------------------
+locals {
+  region = coalesce(var.region, data.aws_region.current.region)
+}
 
 #--------------------------------------------------------------
 # Check if an ORGANIZATION-type analyzer already exists.
@@ -19,7 +27,7 @@ data "external" "organization_analyzer_exists" {
   program = ["bash", "${path.module}/scripts/check_organization_analyzer.sh"]
   query = {
     analyzer_name = var.analyzer_name
-    region        = var.region
+    region        = local.region
   }
 }
 
@@ -34,6 +42,7 @@ locals {
 resource "aws_accessanalyzer_analyzer" "this" {
   count = local.create ? 1 : 0
 
+  region        = local.region
   analyzer_name = var.analyzer_name
   type          = var.type
 

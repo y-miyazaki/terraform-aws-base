@@ -52,8 +52,15 @@ variable "aws_cloudwatch_metric_alarm" {
   description = "(Optional) aws_cloudwatch_metric_alarm."
   default     = []
 }
+
 variable "tags" {
   type        = map(any)
   description = "(Optional) A mapping of tags to assign to the resource."
+  default     = null
+}
+
+variable "region" {
+  type        = string
+  description = "(Optional) AWS region. Defaults to provider region."
   default     = null
 }

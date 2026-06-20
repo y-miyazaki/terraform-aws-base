@@ -6,32 +6,39 @@ variable "is_enabled" {
   description = "(Optional) Whether to create resources. Set to false to disable the entire module."
   default     = true
 }
+
 variable "name_prefix" {
   type        = string
   description = "(Optional) Name prefix of all resources."
   default     = ""
 }
+
 variable "aws_api_gateway_rest_api_id" {
   type        = string
   description = "(Required) ID of the REST API."
 }
+
 variable "aws_api_gateway_rest_api_root_resource_id" {
   type        = string
   description = "(Required) Resource ID of the REST API's root."
 }
+
 variable "aws_api_gateway_rest_api_execution_arn" {
   type        = string
   description = "(Required) Execution ARN part to be used in lambda_permission's source_arn when allowing API Gateway to invoke a Lambda function."
 }
+
 variable "role_arn" {
   type        = string
   description = "(Required) IAM Role arn used by Lambda."
 }
+
 variable "vpc_config" {
   type        = list(any)
   description = "(Optional) aws_lambda_function Configuration block."
   default     = []
 }
+
 variable "lambda_function_aws_cloudwatch_log_group" {
   type = object(
     {
@@ -47,18 +54,27 @@ variable "lambda_function_aws_cloudwatch_log_group" {
     kms_key_id        = null
   }
 }
+
 variable "lambda_function_environment" {
   type        = map(string)
   description = "(Optional) Configuration block."
   default     = {}
 }
+
 variable "tags" {
   type        = map(any)
   description = "(Optional) Key-value map of resource tags for the workgroup. If configured with a provider default_tags configuration block present, tags with matching keys will overwrite those defined at the provider-level."
   default     = null
 }
+
 variable "access_log_settings" {
   type        = map(any)
   description = "(Optional)"
   default     = {}
+}
+
+variable "region" {
+  type        = string
+  description = "(Optional) AWS region. Defaults to provider region."
+  default     = null
 }

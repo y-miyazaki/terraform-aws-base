@@ -14,6 +14,7 @@ resource "aws_cloudwatch_metric_alarm" "mitigated_host_count" {
     if var.is_enabled && local.effective_thresholds[k].enabled_mitigated_host_count && contains(keys(v.dimensions), "TargetGroup")
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-alb-${each.value.name}-mitigated-host-count"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -44,6 +45,7 @@ resource "aws_cloudwatch_metric_alarm" "target_control_request_count" {
     if var.is_enabled && local.effective_thresholds[k].enabled_target_control_request_count
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-alb-${each.value.name}-target-control-request-count"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -74,6 +76,7 @@ resource "aws_cloudwatch_metric_alarm" "target_optimizer_anomaly_score" {
     if var.is_enabled && local.effective_thresholds[k].enabled_target_optimizer_anomaly_score
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-alb-${each.value.name}-target-optimizer-anomaly-score"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -103,6 +106,7 @@ resource "aws_cloudwatch_metric_alarm" "target_control_request_reject_count" {
     if var.is_enabled && local.effective_thresholds[k].enabled_target_control_request_reject_count
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-alb-${each.value.name}-target-control-request-reject-count"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -133,6 +137,7 @@ resource "aws_cloudwatch_metric_alarm" "target_control_active_channel_count" {
     if var.is_enabled && local.effective_thresholds[k].enabled_target_control_active_channel_count
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-alb-${each.value.name}-target-control-active-channel-count"
   comparison_operator       = "LessThanThreshold"
   evaluation_periods        = 1
@@ -163,6 +168,7 @@ resource "aws_cloudwatch_metric_alarm" "target_control_channel_error_count" {
     if var.is_enabled && local.effective_thresholds[k].enabled_target_control_channel_error_count
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-alb-${each.value.name}-target-control-channel-error-count"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -193,6 +199,7 @@ resource "aws_cloudwatch_metric_alarm" "target_control_new_channel_count" {
     if var.is_enabled && local.effective_thresholds[k].enabled_target_control_new_channel_count
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-alb-${each.value.name}-target-control-new-channel-count"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -223,6 +230,7 @@ resource "aws_cloudwatch_metric_alarm" "target_control_work_queue_length" {
     if var.is_enabled && local.effective_thresholds[k].enabled_target_control_work_queue_length
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-alb-${each.value.name}-target-control-work-queue-length"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -253,6 +261,7 @@ resource "aws_cloudwatch_metric_alarm" "target_control_processed_bytes" {
     if var.is_enabled && local.effective_thresholds[k].enabled_target_control_processed_bytes
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-alb-${each.value.name}-target-control-processed-bytes"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1

@@ -6,6 +6,7 @@ variable "is_enabled" {
   description = "(Optional) A boolean flag to enable/disable Trusted Advisor. Defaults true."
   default     = true
 }
+
 variable "aws_iam_role" {
   type = object(
     {
@@ -23,6 +24,7 @@ variable "aws_iam_role" {
   )
   description = "(Required) Provides an IAM role."
 }
+
 variable "aws_iam_policy" {
   type = object(
     {
@@ -39,16 +41,19 @@ variable "aws_iam_policy" {
   description = "(Optional) Provides an IAM policy."
   default     = null
 }
+
 variable "policy" {
   type        = list(any)
   description = "(Optional) Provides an IAM policy."
   default     = []
 }
+
 variable "name_prefix" {
   type        = string
   description = "(Optional) Prefix of policy name ."
   default     = ""
 }
+
 variable "tags" {
   type        = map(any)
   description = "(Optional) A mapping of tags to assign to the resource."

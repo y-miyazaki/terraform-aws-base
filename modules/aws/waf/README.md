@@ -24,6 +24,7 @@ No modules.
 | [aws_wafv2_web_acl.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/wafv2_web_acl) | resource |
 | [aws_wafv2_web_acl_association.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/wafv2_web_acl_association) | resource |
 | [aws_wafv2_web_acl_logging_configuration.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/wafv2_web_acl_logging_configuration) | resource |
+| [aws_region.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/region) | data source |
 
 ## Inputs
 
@@ -34,6 +35,7 @@ No modules.
 | <a name="input_description"></a> [description](#input\_description) | (Optional) Description of the Web ACL. | `string` | `null` | no |
 | <a name="input_logging"></a> [logging](#input\_logging) | (Optional) Logging configuration. Set enabled=true to create CloudWatch Log Group and logging configuration. | <pre>object({<br/>    enabled             = optional(bool, false)<br/>    log_group_name      = optional(string)<br/>    retention_in_days   = optional(number, 14)<br/>    kms_key_id          = optional(string)<br/>    redacted_fields     = optional(list(any), [])<br/>    logging_filter      = optional(any, {})<br/>    log_destination_arn = optional(string)<br/>  })</pre> | `{}` | no |
 | <a name="input_name"></a> [name](#input\_name) | (Required) Name of the WAFv2 Web ACL. | `string` | n/a | yes |
+| <a name="input_region"></a> [region](#input\_region) | (Optional) AWS region. Defaults to provider region. | `string` | `null` | no |
 | <a name="input_resource_arns"></a> [resource\_arns](#input\_resource\_arns) | (Optional) Map of resource ARNs to associate the Web ACL with. Key is a stable identifier, value is the ARN. | `map(string)` | `{}` | no |
 | <a name="input_rules"></a> [rules](#input\_rules) | (Optional) List of WAF rule definitions. Supports managed\_rule\_group\_statement, rate\_based\_statement, and custom statements. | `any` | `[]` | no |
 | <a name="input_scope"></a> [scope](#input\_scope) | (Required) Scope of the Web ACL. Valid values: CLOUDFRONT, REGIONAL. | `string` | `"REGIONAL"` | no |

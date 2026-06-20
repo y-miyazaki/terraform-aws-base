@@ -1,6 +1,11 @@
 #--------------------------------------------------------------
 # module variables
 #--------------------------------------------------------------
+variable "region" {
+  type        = string
+  description = "AWS region where Macie resources will be deployed"
+}
+
 variable "is_enabled" {
   type        = bool
   description = "(Optional) A boolean flag to enable/disable Macie account configuration. Defaults true."

@@ -14,6 +14,7 @@ resource "aws_cloudwatch_metric_alarm" "lambda_internal_error" {
     if var.is_enabled && local.effective_thresholds[k].enabled_lambda_internal_error && contains(keys(v.dimensions), "TargetGroup")
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-alb-${each.value.name}-lambda-internal-error"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -45,6 +46,7 @@ resource "aws_cloudwatch_metric_alarm" "lambda_target_processed_bytes" {
     if var.is_enabled && local.effective_thresholds[k].enabled_lambda_target_processed_bytes && !contains(keys(v.dimensions), "AvailabilityZone")
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-alb-${each.value.name}-lambda-target-processed-bytes"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -76,6 +78,7 @@ resource "aws_cloudwatch_metric_alarm" "lambda_user_error" {
     if var.is_enabled && local.effective_thresholds[k].enabled_lambda_user_error && contains(keys(v.dimensions), "TargetGroup")
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-alb-${each.value.name}-lambda-user-error"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1

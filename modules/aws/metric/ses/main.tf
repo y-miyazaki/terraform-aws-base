@@ -6,6 +6,14 @@
 #--------------------------------------------------------------
 # Locals
 #--------------------------------------------------------------
+data "aws_region" "current" {}
+
+#--------------------------------------------------------------
+# Locals
+#--------------------------------------------------------------
+locals {
+  region = coalesce(var.region, data.aws_region.current.region)
+}
 locals {
   url           = "https://docs.aws.amazon.com/ses/latest/DeveloperGuide/monitor-sending-activity.html"
   count         = length(var.dimensions) > 0 ? length(var.dimensions) : 1
@@ -19,6 +27,7 @@ locals {
 resource "aws_cloudwatch_metric_alarm" "reputation_bouncerate" {
   count = var.is_enabled && var.threshold.enabled_reputation_bouncerate ? local.count : 0
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-ses-reputation-bouncerate"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -46,6 +55,7 @@ resource "aws_cloudwatch_metric_alarm" "reputation_bouncerate" {
 resource "aws_cloudwatch_metric_alarm" "reputation_complaintrate" {
   count = var.is_enabled && var.threshold.enabled_reputation_complaintrate ? local.count : 0
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-ses-reputation-complaintrate"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -73,6 +83,7 @@ resource "aws_cloudwatch_metric_alarm" "reputation_complaintrate" {
 resource "aws_cloudwatch_metric_alarm" "reject" {
   count = var.is_enabled && var.threshold.enabled_reject ? local.count : 0
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-ses-reject"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -100,6 +111,7 @@ resource "aws_cloudwatch_metric_alarm" "reject" {
 resource "aws_cloudwatch_metric_alarm" "bounce" {
   count = var.is_enabled && var.threshold.enabled_bounce ? local.count : 0
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-ses-bounce"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -127,6 +139,7 @@ resource "aws_cloudwatch_metric_alarm" "bounce" {
 resource "aws_cloudwatch_metric_alarm" "complaint" {
   count = var.is_enabled && var.threshold.enabled_complaint ? local.count : 0
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-ses-complaint"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -154,6 +167,7 @@ resource "aws_cloudwatch_metric_alarm" "complaint" {
 resource "aws_cloudwatch_metric_alarm" "send" {
   count = var.is_enabled && var.threshold.enabled_send ? local.count : 0
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-ses-send"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -181,6 +195,7 @@ resource "aws_cloudwatch_metric_alarm" "send" {
 resource "aws_cloudwatch_metric_alarm" "delivery" {
   count = var.is_enabled && var.threshold.enabled_delivery ? local.count : 0
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-ses-delivery"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1

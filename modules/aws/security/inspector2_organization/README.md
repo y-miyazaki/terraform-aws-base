@@ -24,6 +24,7 @@ No modules.
 | [aws_inspector2_enabler.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/inspector2_enabler) | resource |
 | [aws_inspector2_member_association.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/inspector2_member_association) | resource |
 | [aws_inspector2_organization_configuration.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/inspector2_organization_configuration) | resource |
+| [aws_region.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/region) | data source |
 
 ## Inputs
 
@@ -35,6 +36,7 @@ No modules.
 | <a name="input_is_enabled"></a> [is\_enabled](#input\_is\_enabled) | (Optional) Module-level toggle. Default false to prevent accidental org-wide enablement. | `bool` | `true` | no |
 | <a name="input_is_enabled_configuration"></a> [is\_enabled\_configuration](#input\_is\_enabled\_configuration) | (Optional) Enable organization-level configurations for auto-enabling new accounts. | `bool` | `false` | no |
 | <a name="input_is_enabled_delegated_admin"></a> [is\_enabled\_delegated\_admin](#input\_is\_enabled\_delegated\_admin) | (Optional) Enable delegated admin account configuration for Inspector2. | `bool` | `false` | no |
+| <a name="input_region"></a> [region](#input\_region) | (Optional) AWS region. Defaults to provider region. | `string` | `null` | no |
 
 ## Outputs
 

@@ -25,6 +25,7 @@ variable "aws_cloudwatch_event_rule" {
     error_message = "Either schedule_expression or event_pattern must be specified in aws_cloudwatch_event_rule."
   }
 }
+
 variable "aws_cloudwatch_event_target" {
   type = object({
     # (Optional) The event bus to associate with the rule. If omitted the default event bus is used.
@@ -58,8 +59,15 @@ variable "aws_cloudwatch_event_target" {
   })
   description = "(Required) EventBridge target definition (single target with optional nested configuration blocks)."
 }
+
 variable "tags" {
   type        = map(any)
   description = "tags - (Optional) A mapping of tags to assign to the resource."
+  default     = null
+}
+
+variable "region" {
+  type        = string
+  description = "(Optional) AWS region. Defaults to provider region."
   default     = null
 }

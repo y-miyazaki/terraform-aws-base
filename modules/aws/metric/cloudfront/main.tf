@@ -3,14 +3,24 @@
 # Purpose: Provide CloudWatch metric alarms for CloudFront distributions (error rates, cache performance, latency) with optional auto-discovery.
 # Notes: Unified tagging; auto discovery gathers distributions & domains; uses local-exec for realtime metrics subscription lifecycle.
 #--------------------------------------------------------------
+data "aws_region" "current" {}
+
 #--------------------------------------------------------------
-# Auto-discovery filter module
+# Locals
+#--------------------------------------------------------------
+locals {
+  region = coalesce(var.region, data.aws_region.current.region)
+}
+
+#--------------------------------------------------------------
+# Auto-discovery metric filter module
 #--------------------------------------------------------------
 module "helper" {
-  source     = "../../_internal/metric_helper"
-  is_enabled = var.is_enabled
+  source = "../../_internal/metric_helper"
 
-  create_auto        = var.create_auto_dimensions
+  is_enabled  = var.is_enabled
+  create_auto = var.create_auto_dimensions
+
   source_list        = var.create_auto_dimensions && length(data.external.list) > 0 ? split(",", data.external.list[0].result.list_distribution) : []
   include_list       = var.auto_dimensions_include_list
   exclude_list       = var.auto_dimensions_exclude_list
@@ -64,6 +74,7 @@ resource "aws_cloudwatch_metric_alarm" "cache_hit_rate" {
     if var.is_enabled && local.effective_thresholds[k].enabled_cache_hit_rate
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-cloudfront-${each.value.name}-cache-hit-rate"
   comparison_operator       = "LessThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -94,6 +105,7 @@ resource "aws_cloudwatch_metric_alarm" "error_401_rate" {
     if var.is_enabled && local.effective_thresholds[k].enabled_error_401_rate
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-cloudfront-${each.value.name}-error-401-rate"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -124,6 +136,7 @@ resource "aws_cloudwatch_metric_alarm" "error_403_rate" {
     if var.is_enabled && local.effective_thresholds[k].enabled_error_403_rate
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-cloudfront-${each.value.name}-error-403-rate"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -154,6 +167,7 @@ resource "aws_cloudwatch_metric_alarm" "error_404_rate" {
     if var.is_enabled && local.effective_thresholds[k].enabled_error_404_rate
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-cloudfront-${each.value.name}-error-404-rate"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -184,6 +198,7 @@ resource "aws_cloudwatch_metric_alarm" "error_502_rate" {
     if var.is_enabled && local.effective_thresholds[k].enabled_error_502_rate
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-cloudfront-${each.value.name}-error-502-rate"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -214,6 +229,7 @@ resource "aws_cloudwatch_metric_alarm" "error_503_rate" {
     if var.is_enabled && local.effective_thresholds[k].enabled_error_503_rate
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-cloudfront-${each.value.name}-error-503-rate"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -244,6 +260,7 @@ resource "aws_cloudwatch_metric_alarm" "error_504_rate" {
     if var.is_enabled && local.effective_thresholds[k].enabled_error_504_rate
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-cloudfront-${each.value.name}-error-504-rate"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -274,6 +291,7 @@ resource "aws_cloudwatch_metric_alarm" "origin_latency" {
     if var.is_enabled && local.effective_thresholds[k].enabled_origin_latency
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-cloudfront-${each.value.name}-origin-latency"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1

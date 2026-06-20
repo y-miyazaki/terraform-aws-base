@@ -32,3 +32,9 @@ variable "tags" {
   description = "(Optional) Key-value map of resource tags."
   default     = null
 }
+
+variable "region" {
+  type        = string
+  description = "(Optional) AWS region. Defaults to provider region."
+  default     = null
+}

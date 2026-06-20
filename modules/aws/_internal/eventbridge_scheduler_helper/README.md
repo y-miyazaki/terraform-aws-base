@@ -92,10 +92,13 @@ locals {
 | Name | Version |
 | ---- | ------- |
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.9.0 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 6.0 |
 
 ## Providers
 
-No providers.
+| Name | Version |
+| ---- | ------- |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | >= 6.0 |
 
 ## Modules
 
@@ -103,7 +106,9 @@ No modules.
 
 ## Resources
 
-No resources.
+| Name | Type |
+| ---- | ---- |
+| [aws_region.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/region) | data source |
 
 ## Inputs
 
@@ -115,6 +120,7 @@ No resources.
 | <a name="input_is_enabled"></a> [is\_enabled](#input\_is\_enabled) | Master switch to enable/disable the entire module | `bool` | `true` | no |
 | <a name="input_manual_schedules"></a> [manual\_schedules](#input\_manual\_schedules) | Manual schedules map (when create\_auto\_schedules = false) | `map(any)` | `{}` | no |
 | <a name="input_primary_key"></a> [primary\_key](#input\_primary\_key) | The primary key name to use for filtering (e.g., 'instance\_id' for EC2, 'db\_cluster\_identifier' for RDS, 'ecs\_service' for ECS) | `string` | n/a | yes |
+| <a name="input_region"></a> [region](#input\_region) | (Optional) AWS region. Defaults to provider region. | `string` | `null` | no |
 | <a name="input_schedule_expression_start"></a> [schedule\_expression\_start](#input\_schedule\_expression\_start) | Default start schedule expression to apply when a schedule omits it | `string` | `null` | no |
 | <a name="input_schedule_expression_stop"></a> [schedule\_expression\_stop](#input\_schedule\_expression\_stop) | Default stop schedule expression to apply when a schedule omits it | `string` | `null` | no |
 | <a name="input_source_schedules"></a> [source\_schedules](#input\_source\_schedules) | Source schedules map to filter (from caller's data processing logic) | `map(any)` | `{}` | no |

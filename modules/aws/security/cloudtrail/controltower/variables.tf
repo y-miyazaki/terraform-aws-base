@@ -6,6 +6,7 @@ variable "is_enabled" {
   description = "(Optional) A boolean flag to enable/disable settings of CloudTrail. Defaults true."
   default     = true
 }
+
 variable "aws_sns_topic" {
   type = object(
     {
@@ -45,6 +46,7 @@ variable "aws_sns_topic" {
   )
   description = "(Required) The resource of aws_sns_topic."
 }
+
 variable "aws_sns_topic_subscription" {
   type = object(
     {
@@ -68,22 +70,32 @@ variable "aws_sns_topic_subscription" {
   )
   description = "(Required) The resource of aws_sns_topic_subscription."
 }
+
 variable "cloudtrail_log_group_name" {
   type        = string
   description = "(Optional) CloudTrail log group name."
   default     = "aws-controltower/CloudTrailLogs"
 }
+
 variable "cis_name_prefix" {
   type        = string
   description = "(Required) CloudWatch Filter/Alarm name prefix."
 }
+
 variable "sns_kms_master_key_id" {
   type        = string
   description = "(Optional) The KMS master key."
   default     = null
 }
+
 variable "tags" {
   type        = map(any)
   description = "(Optional) Key-value map of resource tags."
+  default     = null
+}
+
+variable "region" {
+  type        = string
+  description = "(Optional) AWS region. Defaults to provider region."
   default     = null
 }

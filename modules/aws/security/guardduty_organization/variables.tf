@@ -44,3 +44,9 @@ variable "features" {
   }))
   default = {}
 }
+
+variable "region" {
+  type        = string
+  description = "(Optional) AWS region. Defaults to provider region."
+  default     = null
+}

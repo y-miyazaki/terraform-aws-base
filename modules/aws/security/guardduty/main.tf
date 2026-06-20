@@ -3,12 +3,22 @@
 # Purpose: Provision and optionally invite member accounts to AWS GuardDuty for continuous threat detection and monitoring.
 # Notes: Member invite accepter assumes detector primary account; future improvement: add organization-wide auto-enable and tag standardization (tags local already present).
 #--------------------------------------------------------------
+data "aws_region" "current" {}
+
+#--------------------------------------------------------------
+# Locals
+#--------------------------------------------------------------
+locals {
+  region = coalesce(var.region, data.aws_region.current.region)
+}
+
 #--------------------------------------------------------------
 # Provides a resource to manage a GuardDuty detector.
 #--------------------------------------------------------------
 resource "aws_guardduty_detector" "this" {
   count = var.is_enabled ? 1 : 0
 
+  region                       = local.region
   enable                       = var.aws_guardduty_detector.enable
   finding_publishing_frequency = var.aws_guardduty_detector.finding_publishing_frequency
 
@@ -21,6 +31,7 @@ resource "aws_guardduty_detector" "this" {
 resource "aws_guardduty_member" "this" {
   count = var.is_enabled ? length(var.aws_guardduty_member) : 0
 
+  region                     = local.region
   account_id                 = var.aws_guardduty_member[count.index].account_id
   detector_id                = aws_guardduty_detector.this[0].id
   email                      = var.aws_guardduty_member[count.index].email
@@ -35,6 +46,7 @@ resource "aws_guardduty_member" "this" {
 resource "aws_guardduty_invite_accepter" "this" {
   count = var.is_enabled ? 1 : 0
 
+  region            = local.region
   detector_id       = aws_guardduty_detector.this[0].id
   master_account_id = aws_guardduty_detector.this[0].account_id
 }

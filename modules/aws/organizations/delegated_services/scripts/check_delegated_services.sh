@@ -2,8 +2,9 @@
 #######################################
 # Description: List delegated service principals for the specified AWS account
 #
-# Usage: ./check_delegated_services.sh <account-id>
+# Usage: ./check_delegated_services.sh <account-id> [region]
 #   account-id: AWS account ID to check
+#   region:     (Optional) AWS region. Defaults to current AWS region if not specified
 #
 # Output:
 # - JSON object with "principals" key containing a JSON array of service principal strings
@@ -27,7 +28,7 @@ set -euo pipefail
 #   None
 #
 # Returns:
-#   Exit code 0
+#   None (outputs to stdout)
 #
 # Usage:
 #   show_usage
@@ -35,17 +36,19 @@ set -euo pipefail
 #######################################
 function show_usage {
     cat << EOF
-Usage: $(basename "$0") <account-id>
+Usage: $(basename "$0") <account-id> [region]
 
 Description: List delegated service principals for the specified AWS account.
 
 Arguments:
   account-id    AWS account ID to check
+  region        (Optional) AWS region. Defaults to current AWS region if not specified
 
 Options:
   -h, --help    Display this help message
 
 Example: $(basename "$0") 123456789012
+Example: $(basename "$0") 123456789012 us-east-1
 EOF
     exit 0
 }
@@ -54,17 +57,17 @@ EOF
 # main: Main execution function
 #
 # Description:
-#   Queries AWS Organizations to list delegated service principals
-#   for the specified account and outputs the result as JSON.
+#   Queries AWS Batch to list job queue names
+#   and outputs the result as JSON.
 #
 # Arguments:
-#   $1 - AWS account ID to check
+#   $@ - Command line arguments
 #
 # Returns:
 #   0 on success, 1 on failure
 #
 # Usage:
-#   main "123456789012"
+#   main "$@"
 #
 #######################################
 function main {
@@ -74,30 +77,37 @@ function main {
         show_usage
     fi
 
-    case $1 in
+    case "$1" in
         -h | --help)
             show_usage
             ;;
     esac
 
     local account_id="$1"
+    local region="${2:-}" # Optional region parameter
 
     # Validate dependencies
     if ! command -v aws > /dev/null 2>&1; then
         echo "ERROR: aws CLI is required" >&2
         exit 1
     fi
+
     if ! command -v jq > /dev/null 2>&1; then
         echo "ERROR: jq is required" >&2
         exit 1
     fi
 
+    # Build AWS CLI command
+    local aws_cmd="aws organizations list-delegated-services-for-account --account-id \"$account_id\" --query 'DelegatedServices[].ServicePrincipal' --output json"
+
+    # Add region if provided
+    if [[ -n "$region" ]]; then
+        aws_cmd="$aws_cmd --region \"$region\""
+    fi
+
     # Get delegated service principals
     local principals
-    principals=$(aws organizations list-delegated-services-for-account \
-        --account-id "$account_id" \
-        --query 'DelegatedServices[].ServicePrincipal' \
-        --output json)
+    principals=$(eval "$aws_cmd")
 
     # External data source requires all values to be strings
     # Convert JSON array to a JSON-safe string value using jq

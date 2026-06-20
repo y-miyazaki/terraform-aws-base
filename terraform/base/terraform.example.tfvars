@@ -89,22 +89,21 @@ tags = {
 name_prefix = "base-"
 
 #--------------------------------------------------------------
-# Default Region for Resources
-# Specifies the primary AWS region where most resources will be deployed.
-# Some services like CloudFront require resources in us-east-1 regardless of this setting.
-# Common regions: ap-northeast-1 (Tokyo), us-east-1 (N. Virginia), eu-west-1 (Ireland)
+# Region Configuration
+# - global:  Global resources (CloudFront, Route53, WAF, ACM) — must be us-east-1
+# - primary: Development and operations base region (fallback for provider)
+# - targets: All regions where regional resources are deployed
+#
+# Common regions:
+# https://docs.aws.amazon.com/global-infrastructure/latest/regions/aws-regions.html
 #--------------------------------------------------------------
-# TODO: need to change region.
-region = "ap-northeast-1"
-
-#--------------------------------------------------------------
-# us-east-1 Region Resources
-# Set is_enabled to false to skip creating all us-east-1 specific resources.
-# When the default region is us-east-1, these resources are automatically skipped
-# regardless of this setting to avoid duplication.
-#--------------------------------------------------------------
-us_east_1 = {
-  is_enabled = true
+region = {
+  # TODO: Global resources (CloudFront, Route53, WAF, ACM) — must be us-east-1
+  global = "us-east-1"
+  # TODO: Development and operations base region (fallback for provider)
+  primary = "ap-northeast-1"
+  # TODO: All regions where regional resources are deployed
+  targets = ["ap-northeast-1", "us-east-1"]
 }
 
 #--------------------------------------------------------------
@@ -1520,16 +1519,6 @@ common_lambda = {
     new = {
       name = "vpc-lambda"
       cidr = "10.0.0.0/16"
-      azs = [
-        "ap-northeast-1a",
-        "ap-northeast-1c",
-        "ap-northeast-1d",
-      ]
-      azs_us_east_1 = [
-        "us-east-1a",
-        "us-east-1b",
-        "us-east-1c",
-      ]
       private_subnets = [
         "10.0.1.0/24",
         "10.0.2.0/24",
@@ -2029,112 +2018,6 @@ security_config = {
 }
 
 #--------------------------------------------------------------
-# Security:AWS Config(us-east-1(CloudFront))
-# Notice: This option is automatically disabled if control_tower.managed_services.config=true.
-#--------------------------------------------------------------
-security_config_us_east_1 = {
-  # TODO: need to set is_enabled for settings of AWS Config.
-  is_enabled = true
-  # TODO: need to set is_s3_enabled for settings of New S3 Bucket.
-  is_s3_enabled = false
-  aws_config_configuration_recorder = {
-    name = "aws-config-us-east-1-configuration-recorder"
-    recording_group = [
-      {
-        all_supported                 = true
-        include_global_resource_types = true
-      }
-    ]
-  }
-  aws_iam_role = {
-    description = "IAM role for AWS Config."
-    name        = "security-config-us-east-1-role"
-    path        = "/"
-  }
-  #   aws_s3_bucket = {
-  #     # Random suffix is automatically added to the bucket name.
-  #     bucket        = "aws-config"
-  #     force_destroy = true
-  #     versioning = [
-  #       {
-  #         enabled = true
-  #       }
-  #     ]
-  #     logging = []
-  #     lifecycle_rule = [
-  #       {
-  #         id                                     = "default"
-  #         abort_incomplete_multipart_upload_days = 7
-  #         enabled                                = true
-  #         prefix                                 = null
-  #         expiration = [
-  #           {
-  #             # TODO: need to change days. default 3years.
-  #             # Adjust retention period based on your compliance requirements
-  #             days                         = 1095
-  #             expired_object_delete_marker = null
-  #           }
-  #         ]
-  #         transition = [
-  #           {
-  #             days          = 30
-  #             storage_class = "ONEZONE_IA"
-  #           }
-  #         ]
-  #         noncurrent_version_expiration = [
-  #           {
-  #             days = 30
-  #           }
-  #         ]
-  #       }
-  #     ]
-  #     replication_configuration = []
-  #     server_side_encryption_configuration = [
-  #       {
-  #         rule = [
-  #           {
-  #             bucket_key_enabled       = false
-  #             blocked_encryption_types = ["SSE-C"]
-  #             apply_server_side_encryption_by_default = [
-  #               {
-  #                 sse_algorithm     = "AES256"
-  #                 kms_master_key_id = null
-  #               }
-  #             ]
-  #           }
-  #         ]
-  #       }
-  #     ]
-  #     object_lock_configuration = []
-  #   }
-  aws_config_delivery_channel = {
-    name          = "aws-config-us-east-1-delivery-channel"
-    sns_topic_arn = null
-    snapshot_delivery_properties = [
-      {
-        delivery_frequency = "Three_Hours"
-      }
-    ]
-  }
-  aws_config_configuration_recorder_status = {
-    is_enabled = true
-  }
-  aws_cloudwatch_event_rule = {
-    name        = "security-config-us-east-1-cloudwatch-event-rule"
-    description = "This cloudwatch event used for Config."
-  }
-  # TODO: If you want to automatically remediation resources, please modify the following.
-  # AWS Config allows you to remediate noncompliant resources that are evaluated by AWS Config Rules. AWS Config applies remediation using AWS Systems Manager Automation documents.
-  # https://docs.aws.amazon.com/config/latest/developerguide/remediation.html
-  remediation = {
-    cloudfront = {
-      # TODO: If true, it will change the viewer protocol policy to redirect-to-https.
-      is_enable_cloudfront_viewer_policy_https = true
-    }
-  }
-}
-
-#--------------------------------------------------------------
 # Security:Default VPC
 # Security configuration for the default VPC in each region.
 # Enables VPC Flow Logs for network traffic monitoring and analysis.
@@ -2186,7 +2069,10 @@ security_ebs = {
 #--------------------------------------------------------------
 security_ec2_metadata = {
   # TODO: need to set is_enabled for EC2 Instance Metadata security controls
-  is_enabled = true
+  is_enabled                  = true
+  http_endpoint               = "enabled"
+  http_put_response_hop_limit = 1
+  http_tokens                 = "required"
 }
 
 #--------------------------------------------------------------
@@ -2208,22 +2094,6 @@ security_ecr = {
 #--------------------------------------------------------------
 security_guardduty = {
   # TODO: need to set is_enabled for settings of GuardDuty. Even if GuardDuty is already set, it must be set to false.
-  is_enabled = true
-  aws_guardduty_detector = {
-    # TODO: need to set enabled for settings of GuardDuty Detector.
-    enable                       = true
-    finding_publishing_frequency = "FIFTEEN_MINUTES"
-  }
-  aws_guardduty_member = [
-  ]
-}
-
-#--------------------------------------------------------------
-# Security:GuardDuty(us-east-1)
-# Notice: This option is automatically disabled if control_tower.managed_services.guardduty=true.
-#--------------------------------------------------------------
-security_guardduty_us_east_1 = {
-  # TODO: need to set is_enabled for settings of GuardDuty(us-east-1). Even if GuardDuty is already set, it must be set to false.
   is_enabled = true
   aws_guardduty_detector = {
     # TODO: need to set enabled for settings of GuardDuty Detector.
@@ -2283,17 +2153,6 @@ security_inspector2 = {
 }
 
 #--------------------------------------------------------------
-# Security:Inspector2 (us-east-1)
-# Notice: This option is automatically disabled if control_tower.managed_services.inspector2=true.
-#--------------------------------------------------------------
-security_inspector2_us_east_1 = {
-  # TODO: need to set is_enabled for settings of Inspector2(us-east-1).
-  is_enabled = true
-  # TODO: need to set resource_types for settings of Inspector2(us-east-1).
-  resource_types = ["EC2", "ECR", "LAMBDA", "LAMBDA_CODE"]
-}
-
-#--------------------------------------------------------------
 # Security:Macie
 # Amazon Macie discovers and protects sensitive data in S3 using automated discovery and ML-based classification.
 # Notice: This option is automatically disabled if control_tower.managed_services.macie=true.
@@ -2341,21 +2200,6 @@ security_macie = {
   #   }
   # ]
   findings_filters = []
-}
-
-#--------------------------------------------------------------
-# Security:Macie (us-east-1)
-# Notice: This option is automatically disabled if control_tower.managed_services.macie=true.
-#--------------------------------------------------------------
-security_macie_us_east_1 = {
-  # TODO: need to set is_enabled for settings of Macie(us-east-1).
-  is_enabled = true
-  # TODO: need to set status for settings of Macie account(us-east-1).
-  status = "ENABLED"
-  # TODO: need to set finding_publishing_frequency for settings of Macie account(us-east-1).
-  finding_publishing_frequency = "FIFTEEN_MINUTES"
-  classification_jobs          = []
-  findings_filters             = []
 }
 
 #--------------------------------------------------------------

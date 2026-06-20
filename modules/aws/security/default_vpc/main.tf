@@ -3,8 +3,18 @@
 # Purpose: Manage default VPC baseline resources (VPC, route table, network ACL, security group, subnets, optional EC2 interface endpoint) for governance or transitional hardening.
 # Notes: Uses default VPC constructs which are generally discouraged in production; future improvement: optionally skip creation and enforce deletion, plus parameterize endpoint services.
 #--------------------------------------------------------------
+data "aws_region" "current" {}
+
+#--------------------------------------------------------------
+# Locals
+#--------------------------------------------------------------
+locals {
+  region = coalesce(var.region, data.aws_region.current.region)
+}
+
 data "aws_availability_zones" "this" {
-  state = "available"
+  state  = "available"
+  region = local.region
 }
 
 #--------------------------------------------------------------
@@ -13,6 +23,8 @@ data "aws_availability_zones" "this" {
 #--------------------------------------------------------------
 data "aws_vpcs" "default" {
   count = var.is_enabled ? 1 : 0
+
+  region = local.region
 
   filter {
     name   = "isDefault"
@@ -32,6 +44,8 @@ locals {
 resource "aws_default_vpc" "this" {
   count = local.is_active ? 1 : 0
 
+  region = local.region
+
   tags = var.tags
 }
 
@@ -41,6 +55,7 @@ resource "aws_default_vpc" "this" {
 resource "aws_default_route_table" "this" {
   count = local.is_active ? 1 : 0
 
+  region                 = local.region
   default_route_table_id = aws_default_vpc.this[0].default_route_table_id
 
   tags = var.tags
@@ -52,6 +67,7 @@ resource "aws_default_route_table" "this" {
 resource "aws_default_network_acl" "this" {
   count = local.is_active ? 1 : 0
 
+  region                 = local.region
   default_network_acl_id = aws_default_vpc.this[0].default_network_acl_id
 
   tags = var.tags
@@ -67,6 +83,7 @@ resource "aws_default_network_acl" "this" {
 resource "aws_default_security_group" "this" {
   count = local.is_active ? 1 : 0
 
+  region = local.region
   vpc_id = aws_default_vpc.this[0].id
 
   tags = var.tags
@@ -79,6 +96,7 @@ resource "aws_default_security_group" "this" {
 resource "aws_default_subnet" "this" {
   count = local.is_active ? length(data.aws_availability_zones.this.names) : 0
 
+  region                  = local.region
   map_public_ip_on_launch = false
   availability_zone       = data.aws_availability_zones.this.names[count.index]
 
@@ -92,7 +110,8 @@ resource "aws_default_subnet" "this" {
 resource "aws_vpc_endpoint" "this" {
   count = local.is_active && var.is_enabled_vpc_end_point ? 1 : 0
 
-  service_name = "com.amazonaws.${var.region}.ec2"
+  region       = local.region
+  service_name = "com.amazonaws.${local.region}.ec2"
   vpc_id       = aws_default_vpc.this[0].id
   #  auto_accept         = var.auto_accept
   #  policy              = var.policy

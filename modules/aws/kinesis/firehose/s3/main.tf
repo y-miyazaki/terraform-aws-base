@@ -3,10 +3,13 @@
 # Purpose: Create Kinesis Firehose delivery streams targeting S3 with optional encryption, processing, and backup configuration.
 # Notes: Assumes uniform first stream values for IAM policy scoping; future improvement: per-stream policy generation.
 #--------------------------------------------------------------
+data "aws_region" "current" {}
+
 #--------------------------------------------------------------
 # Locals
 #--------------------------------------------------------------
 locals {
+  region = coalesce(var.region, data.aws_region.current.region)
   aws_kinesis_firehose_delivery_stream = {
     for k, v in var.aws_kinesis_firehose_delivery_stream : v.name => v
   }
@@ -18,7 +21,8 @@ locals {
 resource "aws_kinesis_firehose_delivery_stream" "this" {
   for_each = local.aws_kinesis_firehose_delivery_stream
 
-  name = each.value.name
+  region = local.region
+  name   = each.value.name
   dynamic "server_side_encryption" {
     for_each = try(each.value.server_side_encryption, [])
 
@@ -163,7 +167,7 @@ data "aws_iam_policy_document" "this" {
       "kinesis:ListShards",
     ]
     resources = [
-      "arn:aws:kinesis:${var.region}:${var.account_id}:stream/*",
+      "arn:aws:kinesis:${local.region}:${var.account_id}:stream/*",
     ]
   }
   statement {
@@ -174,13 +178,13 @@ data "aws_iam_policy_document" "this" {
     ]
     #tfsec:ignore:AWS099
     resources = [
-      "arn:aws:kms:${var.region}:${var.account_id}:key/*",
+      "arn:aws:kms:${local.region}:${var.account_id}:key/*",
     ]
     condition {
       test     = "StringEquals"
       variable = "kms:ViaService"
       values = [
-        "s3.${var.region}.amazonaws.com"
+        "s3.${local.region}.amazonaws.com"
       ]
     }
     condition {
@@ -199,7 +203,7 @@ data "aws_iam_policy_document" "this" {
     ]
     #tfsec:ignore:AWS099
     resources = [
-      "arn:aws:logs:${var.region}:${var.account_id}:log-group/*",
+      "arn:aws:logs:${local.region}:${var.account_id}:log-group/*",
     ]
   }
   statement {
@@ -210,7 +214,7 @@ data "aws_iam_policy_document" "this" {
     ]
     #tfsec:ignore:AWS099
     resources = [
-      "arn:aws:lambda:${var.region}:${var.account_id}:function:*",
+      "arn:aws:lambda:${local.region}:${var.account_id}:function:*",
     ]
   }
 }

@@ -6,7 +6,13 @@
 #--------------------------------------------------------------
 # Locals
 #--------------------------------------------------------------
+data "aws_region" "current" {}
+
+#--------------------------------------------------------------
+# Locals
+#--------------------------------------------------------------
 locals {
+  region      = coalesce(var.region, data.aws_region.current.region)
   name_prefix = var.name_prefix == "" ? "" : "${trimsuffix(var.name_prefix, "-")}-"
 }
 
@@ -48,6 +54,7 @@ locals {
 resource "aws_config_config_rule" "alb-waf-enabled" {
   count = var.is_enabled ? 1 : 0
 
+  region      = local.region
   name        = "${local.name_prefix}alb-waf-enabled"
   description = "Checks if Web Application Firewall (WAF) is enabled on Application Load Balancers (ALBs). This rule is NON_COMPLIANT if key: waf.enabled is set to false."
   source {
@@ -80,6 +87,7 @@ resource "aws_config_config_rule" "alb-waf-enabled" {
 resource "aws_config_config_rule" "elb-acm-certificate-required" {
   count = var.is_enabled ? 1 : 0
 
+  region      = local.region
   name        = "${local.name_prefix}elb-acm-certificate-required"
   description = "This rule checks whether the Elastic Load Balancer(s) uses SSL certificates provided by AWS Certificate Manager. You must use an SSL or HTTPS listener with your Elastic Load Balancer to use this rule."
   source {
@@ -96,6 +104,7 @@ resource "aws_config_config_rule" "elb-acm-certificate-required" {
 resource "aws_config_config_rule" "elb-cross-zone-load-balancing-enabled" {
   count = var.is_enabled ? 1 : 0
 
+  region      = local.region
   name        = "${local.name_prefix}elb-cross-zone-load-balancing-enabled"
   description = "Checks if cross-zone load balancing is enabled for the Classic Load Balancers (CLBs). This rule is NON_COMPLIANT if cross-zone load balancing is not enabled for a CLB."
   source {

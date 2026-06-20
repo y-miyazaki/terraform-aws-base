@@ -84,12 +84,12 @@ All monitoring resources are toggled via `is_enabled` flags in `terraform/monito
 
 ### Multi-Region Support
 
-Monitoring resources that require `us-east-1` coverage (e.g., CloudFront metrics, WAF global logs) use the dual-module pattern:
+Monitoring resources use AWS Provider v6's `region` attribute for explicit region placement:
 
-- `main_metric_resource_cloudfront.tf` — default region
-- `main_metric_resource_ses_us_east_1.tf` — us-east-1 variant
+- Regional monitors: `for_each = toset(var.region.targets)` with `region = each.value`
+- Global monitors (e.g., CloudFront metrics): `region = var.region.global`
 
-Controlled by `us_east_1.is_enabled` and guarded against duplication when the primary region is already `us-east-1`.
+No provider aliases or dual-file patterns are used. See [ADR-0001](../adr/0001-multi-region-terraform-architecture.md) for the architecture decision.
 
 ### Lambda Notification Functions
 
@@ -98,11 +98,11 @@ Lambda functions handle Slack message formatting and delivery:
 - **Standard Lambda** — Direct invocation from CloudWatch/EventBridge
 - **VPC Lambda** — For functions requiring VPC access (e.g., internal endpoint checks)
 
-Lambda configurations are split across:
+Lambda configurations are placed based on the service they support:
 
-- `main_common_lambda.tf` — Default region Lambda resources
-- `main_common_lambda_us_east_1.tf` — us-east-1 Lambda resources
-- `main_common_lambda_vpc.tf` — VPC-attached Lambda resources
+- Global service Lambda: `main_central_*.tf` with `region = var.region.global`
+- Regional service Lambda: `main_regional_*.tf` with `region = each.value`
+- Lambda VPC: `main_central_lambda_vpc.tf` with `region = var.region.global`
 
 ### Daily Report Functions
 

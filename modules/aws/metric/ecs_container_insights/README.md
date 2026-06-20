@@ -26,6 +26,7 @@ No modules.
 | [aws_cloudwatch_metric_alarm.network_tx_bytes](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_metric_alarm) | resource |
 | [aws_cloudwatch_metric_alarm.storage_read_bytes](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_metric_alarm) | resource |
 | [aws_cloudwatch_metric_alarm.storage_write_bytes](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_metric_alarm) | resource |
+| [aws_region.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/region) | data source |
 
 ## Inputs
 
@@ -37,6 +38,7 @@ No modules.
 | <a name="input_name_prefix"></a> [name\_prefix](#input\_name\_prefix) | (Required) CloudWatch Filter/Alarm name prefix. | `string` | n/a | yes |
 | <a name="input_ok_actions"></a> [ok\_actions](#input\_ok\_actions) | (Optional) The list of actions to execute when this alarm transitions into an OK state from any other state. Each action is specified as an Amazon Resource Name (ARN). | `list(string)` | `null` | no |
 | <a name="input_period"></a> [period](#input\_period) | (Optional) The period in seconds over which the specified statistic is applied. | `number` | `300` | no |
+| <a name="input_region"></a> [region](#input\_region) | (Optional) AWS region. Defaults to provider region. | `string` | `null` | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | (Optional) Key-value map of resource tags. | `map(any)` | `null` | no |
 | <a name="input_threshold"></a> [threshold](#input\_threshold) | (Optional) Set the threshold for each Metric in ECS Container Insights. | <pre>object({<br/>    # (Required) CpuUtilized/CpuReserved threshold (unit=Percent)<br/>    enabled_cpu_utilization = bool<br/>    cpu_utilization         = number<br/>    # (Required) MemoryUtilized/MemoryReserved threshold (unit=Percent)<br/>    enabled_memory_utilization = bool<br/>    memory_utilization         = number<br/>    # (Optional) NetworkRxBytes threshold (unit=Bytes/Second)<br/>    enabled_network_rx_bytes = bool<br/>    network_rx_bytes         = number<br/>    # (Optional) NetworkTxBytes threshold (unit=Bytes/Second)<br/>    enabled_network_tx_bytes = bool<br/>    network_tx_bytes         = number<br/>    # (Optional) StorageReadBytes threshold (unit=Bytes)<br/>    enabled_storage_read_bytes = bool<br/>    storage_read_bytes         = number<br/>    # (Optional) StorageWriteBytes threshold (unit=Bytes)<br/>    enabled_storage_write_bytes = bool<br/>    storage_write_bytes         = number<br/>    }<br/>  )</pre> | <pre>{<br/>  "cpu_utilization": 80,<br/>  "enabled_cpu_utilization": true,<br/>  "enabled_memory_utilization": true,<br/>  "enabled_network_rx_bytes": false,<br/>  "enabled_network_tx_bytes": false,<br/>  "enabled_storage_read_bytes": false,<br/>  "enabled_storage_write_bytes": false,<br/>  "memory_utilization": 80,<br/>  "network_rx_bytes": 10485760,<br/>  "network_tx_bytes": 10485760,<br/>  "storage_read_bytes": 104857600,<br/>  "storage_write_bytes": 104857600<br/>}</pre> | no |
 

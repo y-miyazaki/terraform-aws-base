@@ -107,18 +107,11 @@ terraform apply -var-file=terraform.<env>.tfvars
 
 ## Multi-Region Resource Duplication When Region is us-east-1
 
-**Cause**: When the primary region is `us-east-1`, the `_us_east_1` variant resources would duplicate the primary resources.
+**Cause**: Central services (`main_central_*.tf`) should deploy once. If they accidentally use `for_each` over targets, resources get duplicated.
 
-**Resolution**: This is handled automatically by the guard in `locals.tf`:
+**Resolution**: Ensure `var.region.global` is not included in `var.region.targets` for services that should only exist once (e.g., Budgets Scheduler, Trusted Advisor Lambda). Regional services (`main_regional_*.tf`) use `for_each = toset(var.region.targets)` and deploy to all target regions — this is expected behavior, not duplication.
 
-```hcl
-locals {
-  is_default_region_us_east_1 = var.region == "us-east-1"
-  is_enabled_us_east_1        = !local.is_default_region_us_east_1 && var.us_east_1.is_enabled
-}
-```
-
-If duplication occurs, verify that `var.region` is correctly set in the tfvars file.
+If a global service (Scheduler/Lambda) is accidentally deployed to multiple regions, verify the file uses `region = var.region.global` instead of iterating over targets.
 
 ## Slack Notifications Not Arriving
 

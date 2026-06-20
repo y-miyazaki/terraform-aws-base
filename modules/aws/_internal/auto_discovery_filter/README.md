@@ -70,7 +70,9 @@ locals {
 
 ## Providers
 
-No providers.
+| Name | Version |
+| ---- | ------- |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | 6.16.0 |
 
 ## Modules
 
@@ -78,7 +80,9 @@ No modules.
 
 ## Resources
 
-No resources.
+| Name | Type |
+| ---- | ---- |
+| [aws_region.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/region) | data source |
 
 ## Inputs
 
@@ -89,6 +93,7 @@ No resources.
 | <a name="input_include_list"></a> [include\_list](#input\_include\_list) | Include filter list (empty = include all) | `list(string)` | `[]` | no |
 | <a name="input_is_enabled"></a> [is\_enabled](#input\_is\_enabled) | Master switch to enable/disable the entire module | `bool` | `true` | no |
 | <a name="input_manual_dimensions"></a> [manual\_dimensions](#input\_manual\_dimensions) | Manual dimensions list (when create\_auto = false) | `any` | `null` | no |
+| <a name="input_region"></a> [region](#input\_region) | (Optional) AWS region. Defaults to provider region. | `string` | `null` | no |
 | <a name="input_source_list"></a> [source\_list](#input\_source\_list) | Source list to filter (from data source or external script) | `list(string)` | `[]` | no |
 
 ## Outputs

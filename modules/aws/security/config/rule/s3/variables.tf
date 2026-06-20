@@ -1,16 +1,23 @@
 #--------------------------------------------------------------
 # module variables
 #--------------------------------------------------------------
+variable "region" {
+  type        = string
+  description = "AWS region where Config resources will be deployed"
+}
+
 variable "is_enabled" {
   type        = bool
   description = "(Optional) A boolean flag to enable/disable AWS Config. Defaults true."
   default     = true
 }
+
 variable "name_prefix" {
   type        = string
   description = "(Optional) Prefix of config name."
   default     = ""
 }
+
 variable "ssm_automation_assume_role_arn" {
   type        = string
   description = "(Required) AssumeRole arn in SSM Automation"
@@ -21,6 +28,7 @@ variable "is_configure_s3_bucket_public_access_block" {
   description = "(Optional) If true, configures the Amazon Simple Storage Service (Amazon S3) public access block settings for an Amazon S3 bucket based on the values you specify."
   default     = false
 }
+
 variable "configure_s3_bucket_public_access_block" {
   type = object(
     {
@@ -48,21 +56,25 @@ variable "is_disable_s3_bucket_public_read_write" {
   description = "(Optional) If true, public read/write of the S3 bucket will be disabled."
   default     = false
 }
+
 variable "is_enabled_s3_bucket_encryption" {
   type        = bool
   description = "(Optional) If true, Enable encryption for an Amazon Simple Storage Service (Amazon S3) bucket (encrypt the contents of the bucket)."
   default     = false
 }
+
 variable "enabled_s3_bucket_encryption_sse_algorithm" {
   type        = string
   description = "(Optional) Server-side encryption algorithm to use for the default encryption."
   default     = "AES256"
 }
+
 variable "is_restrict_bucket_ssl_requests_only" {
   type        = bool
   description = "(Optional) If true, bucket policy statement that explicitly denies HTTP requests to the Amazon S3 bucket you specify."
   default     = false
 }
+
 variable "is_configure_s3_bucket_versioning" {
   type        = bool
   description = "(Optional) If true, it will enable S3 bucket versioning."
@@ -85,6 +97,7 @@ variable "is_configure_s3_bucket_versioning" {
 #     }
 #   }
 # }
+
 variable "tags" {
   type        = map(any)
   description = "(Optional) Key-value map of resource tags."

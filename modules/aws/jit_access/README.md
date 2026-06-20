@@ -56,6 +56,7 @@
 | [aws_ssm_parameter.state_machine_arn](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ssm_parameter) | resource |
 | [aws_ssm_parameter.user_mapping](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ssm_parameter) | resource |
 | [aws_wafv2_web_acl_association.api_gateway](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/wafv2_web_acl_association) | resource |
+| [aws_region.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/region) | data source |
 | [aws_ssoadmin_instances.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/ssoadmin_instances) | data source |
 
 ## Inputs
@@ -70,6 +71,7 @@
 | <a name="input_lambda_zip_base_path"></a> [lambda\_zip\_base\_path](#input\_lambda\_zip\_base\_path) | (Required) Base path to Lambda zip files (e.g., ../../lambda/outputs). | `string` | n/a | yes |
 | <a name="input_name_prefix"></a> [name\_prefix](#input\_name\_prefix) | (Required) Prefix for all resource names. | `string` | n/a | yes |
 | <a name="input_profiles"></a> [profiles](#input\_profiles) | (Required) Map of JIT access profiles. Key is the profile name. | <pre>map(object({<br/>    # (Required) AWS account ID for the permission set assignment.<br/>    account_id = string<br/>    # (Required) Permission Set ARN to assign.<br/>    permission_set_arn = string<br/>    # (Required) Maximum allowed duration in minutes.<br/>    max_duration_minutes = number<br/>    # (Required) List of Slack user IDs who can approve requests for this profile.<br/>    approvers = list(string)<br/>    # (Optional) Human-readable description of this profile.<br/>    description = optional(string, "")<br/>  }))</pre> | n/a | yes |
+| <a name="input_region"></a> [region](#input\_region) | (Optional) AWS region. Defaults to provider region. | `string` | `null` | no |
 | <a name="input_slack"></a> [slack](#input\_slack) | (Required) Slack App credentials and configuration. | <pre>object({<br/>    # (Required) Slack signing secret for request verification.<br/>    signing_secret = string<br/>    # (Required) Slack bot OAuth token.<br/>    bot_token = string<br/>    # (Required) Slack channel ID for approval notifications.<br/>    approver_channel_id = string<br/>    # (Optional) Shared secret for authenticating Slack Workflow Builder webhook requests via x-workflow-secret header. When null, the /workflow/request endpoint is not created.<br/>    workflow_secret = optional(string)<br/>    # (Optional) Slack User ID → Identity Center User ID mapping. Required only for users whose Slack email does not match Identity Center UserName.<br/>    user_mappings = optional(map(string), {})<br/>  })</pre> | n/a | yes |
 | <a name="input_ssm_parameter_prefix"></a> [ssm\_parameter\_prefix](#input\_ssm\_parameter\_prefix) | (Optional) SSM Parameter Store prefix for JIT access configuration. | `string` | `"/jit-access"` | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | (Optional) A mapping of tags to assign to the resource. | `map(any)` | `null` | no |

@@ -50,14 +50,25 @@ Each directory is an independent Terraform root module with its own state:
 
 ## Multi-Region Pattern
 
-Services requiring us-east-1 coverage use a dual-module pattern:
+AWS Provider v6's resource-level `region` attribute enables multi-region deployment without provider aliases. All resources explicitly declare their target region:
 
 ```text
-main_<service>.tf              → default region (var.region)
-main_<service>_us_east_1.tf    → us-east-1 (provider alias: aws.us-east-1)
+main_regional_*   → for_each = toset(var.region.targets), region = each.value
+main_central_*    → region = var.region.global or var.region.primary (single location)
+main_common_*     → shared data sources (no region)
 ```
 
-Controlled by `us_east_1.is_enabled` in tfvars. If default region is already us-east-1, the `_us_east_1` variant is automatically skipped via `locals.is_enabled_us_east_1`.
+Region configuration is managed as a single `region` object in tfvars:
+
+```hcl
+region = {
+  global  = "us-east-1"          # AWS-constrained global resources
+  primary = "ap-northeast-1"     # Development base, provider fallback
+  targets = ["ap-northeast-1", "us-east-1"]  # All deployment regions
+}
+```
+
+The default provider uses `var.region.primary` as a safety fallback only — all resources must set `region` explicitly.
 
 ## Feature Toggle Pattern
 

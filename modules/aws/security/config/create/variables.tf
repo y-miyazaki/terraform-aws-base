@@ -1,16 +1,23 @@
 #--------------------------------------------------------------
 # module variables
 #--------------------------------------------------------------
+variable "region" {
+  type        = string
+  description = "AWS region where Config resources will be deployed"
+}
+
 variable "is_enabled" {
   type        = bool
   description = "(Optional) A boolean flag to enable/disable AWS Config. Defaults true."
   default     = true
 }
+
 variable "is_s3_enabled" {
   type        = bool
   description = "(Optional) A boolean flag to enable/disable S3 Bucket. Defaults false."
   default     = false
 }
+
 variable "aws_config_configuration_recorder" {
   type = object(
     {
@@ -39,6 +46,7 @@ variable "aws_iam_role" {
     path        = "/"
   }
 }
+
 variable "s3_bucket" {
   type = object(
     {
@@ -59,6 +67,7 @@ variable "s3_bucket" {
     versioning                           = {}
   }
 }
+
 variable "aws_s3_bucket_existing" {
   type = object(
     {
@@ -91,6 +100,7 @@ variable "aws_config_configuration_recorder_status" {
   )
   description = "(Required) The aws_config_configuration_recorder_status resource."
 }
+
 variable "aws_cloudwatch_event_rule" {
   type = object(
     {
@@ -106,6 +116,7 @@ variable "aws_cloudwatch_event_rule" {
     description = "This cloudwatch event used for Config."
   }
 }
+
 variable "aws_cloudwatch_event_target" {
   type = object(
     {
@@ -115,6 +126,7 @@ variable "aws_cloudwatch_event_target" {
   )
   description = "(Required) Provides an EventBridge Target resource."
 }
+
 variable "tags" {
   type        = map(any)
   description = "(Optional) Key-value map of resource tags."

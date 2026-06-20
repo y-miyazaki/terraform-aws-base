@@ -22,6 +22,7 @@ No modules.
 | ---- | ---- |
 | [aws_cloudwatch_event_rule.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_event_rule) | resource |
 | [aws_cloudwatch_event_target.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_event_target) | resource |
+| [aws_region.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/region) | data source |
 
 ## Inputs
 
@@ -30,6 +31,7 @@ No modules.
 | <a name="input_aws_cloudwatch_event_rule"></a> [aws\_cloudwatch\_event\_rule](#input\_aws\_cloudwatch\_event\_rule) | (Optional) Provides an EventBridge Rule resource. | <pre>object(<br/>    {<br/>      # (Required) The name of the rule. If omitted, Terraform will assign a random, unique name. Conflicts with name_prefix.<br/>      name = string<br/>      # (Optional) The description of the rule.<br/>      description = optional(string)<br/>    }<br/>  )</pre> | <pre>{<br/>  "description": "This cloudwatch event used for Health.",<br/>  "is_enabled": true,<br/>  "name": "health-cloudwatch-event-rule",<br/>  "role_arn": null<br/>}</pre> | no |
 | <a name="input_aws_cloudwatch_event_target"></a> [aws\_cloudwatch\_event\_target](#input\_aws\_cloudwatch\_event\_target) | (Required) Provides an EventBridge Target resource. | <pre>object(<br/>    {<br/>      # (Required) The Amazon Resource Name (ARN) associated of the target.<br/>      arn = string<br/>    }<br/>  )</pre> | n/a | yes |
 | <a name="input_is_enabled"></a> [is\_enabled](#input\_is\_enabled) | (Optional) A boolean flag to enable/disable settings of Health. Defaults true. | `bool` | `true` | no |
+| <a name="input_region"></a> [region](#input\_region) | (Optional) AWS region for Health resources. | `string` | `null` | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | (Optional) Key-value map of resource tags. | `map(any)` | `null` | no |
 
 ## Outputs

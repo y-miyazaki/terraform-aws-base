@@ -6,6 +6,13 @@ variable "is_enabled" {
   description = "(Optional) A boolean flag to enable/disable settings of GuardDuty. Defaults true."
   default     = true
 }
+
+variable "region" {
+  type        = string
+  description = "(Optional) AWS region for GuardDuty resources."
+  default     = null
+}
+
 variable "aws_cloudwatch_event_rule" {
   type = object(
     {
@@ -21,6 +28,7 @@ variable "aws_cloudwatch_event_rule" {
     description = "This cloudwatch event used for GuardDuty."
   }
 }
+
 variable "aws_cloudwatch_event_target" {
   type = object(
     {
@@ -30,6 +38,7 @@ variable "aws_cloudwatch_event_target" {
   )
   description = "(Required) Provides an EventBridge Target resource."
 }
+
 variable "tags" {
   type        = map(any)
   description = "(Optional) Key-value map of resource tags."

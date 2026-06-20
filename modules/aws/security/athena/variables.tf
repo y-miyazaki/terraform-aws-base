@@ -6,6 +6,13 @@ variable "is_enabled" {
   description = "(Optional) A boolean flag to enable/disable settings of Athena. Defaults true."
   default     = true
 }
+
+variable "region" {
+  type        = string
+  description = "(Optional) AWS region for Athena resources."
+  default     = null
+}
+
 variable "workgroup" {
   type        = string
   description = "(Option) Name of the WorkGroup(primary)."

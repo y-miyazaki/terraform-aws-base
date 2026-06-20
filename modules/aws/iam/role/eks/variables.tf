@@ -38,6 +38,7 @@ variable "aws_iam_role" {
     }
   }
 }
+
 variable "aws_iam_policy" {
   type = object(
     {
@@ -61,6 +62,7 @@ variable "aws_iam_policy" {
     }
   }
 }
+
 variable "aws_iam_instance_profile" {
   type = object(
     {
@@ -81,6 +83,7 @@ variable "aws_iam_instance_profile" {
     }
   }
 }
+
 variable "tags" {
   type        = map(any)
   description = "(Optional) Key-value mapping of tags for the IAM role"

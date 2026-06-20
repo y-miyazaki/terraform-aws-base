@@ -3,10 +3,13 @@
 # Purpose: Deploy a CloudWatch Synthetics Canary with optional IAM role, VPC config, schedule, run configuration, and environment variable management via local-exec.
 # Notes: Env variable updates handled by null_resource + AWS CLI; future enhancement: replace local-exec with native provider support when available and support multiple canaries.
 #--------------------------------------------------------------
+data "aws_region" "current" {}
+
 #--------------------------------------------------------------
 # Locals
 #--------------------------------------------------------------
 locals {
+  region                        = coalesce(var.region, data.aws_region.current.region)
   set_canary_run_config_command = "aws synthetics update-canary --name ${var.aws_synthetics_canary.name} --run-config '${jsonencode({ TimeoutInSeconds : var.aws_synthetics_canary.run_config[0].timeout_in_seconds, MemoryInMB : var.aws_synthetics_canary.run_config[0].memory_in_mb, ActiveTracing : var.aws_synthetics_canary.run_config[0].active_tracing, EnvironmentVariables : var.aws_synthetics_canary.env })}'"
 }
 
@@ -51,7 +54,7 @@ data "aws_iam_policy_document" "this" {
       "s3:GetObject",
     ]
     resources = [
-      "${var.s3_bucket_arn}/*/canary/${var.region}/${var.aws_synthetics_canary.name}/*"
+      "${var.s3_bucket_arn}/*/canary/${local.region}/${var.aws_synthetics_canary.name}/*"
     ]
   }
   statement {
@@ -73,7 +76,7 @@ data "aws_iam_policy_document" "this" {
       "logs:PutLogEvents",
     ]
     resources = [
-      "arn:aws:logs:${var.region}:${var.account_id}:log-group:/aws/lambda/*"
+      "arn:aws:logs:${local.region}:${var.account_id}:log-group:/aws/lambda/*"
     ]
   }
   statement {
@@ -137,6 +140,7 @@ resource "aws_iam_role_policy_attachment" "this" {
 resource "aws_synthetics_canary" "this" {
   count = var.is_enabled ? 1 : 0
 
+  region               = local.region
   artifact_s3_location = var.aws_synthetics_canary.artifact_s3_location
   execution_role_arn   = var.aws_synthetics_canary.execution_role_arn == null ? aws_iam_role.this[0].arn : var.aws_synthetics_canary.execution_role_arn
   handler              = var.aws_synthetics_canary.handler
@@ -195,6 +199,7 @@ resource "aws_synthetics_canary" "this" {
     aws_iam_role_policy_attachment.this
   ]
 }
+
 resource "null_resource" "add_environment_variables_to_canary" {
   count = var.is_enabled ? 1 : 0
 

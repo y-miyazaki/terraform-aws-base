@@ -7,6 +7,12 @@ variable "is_enabled" {
   default     = true
 }
 
+variable "region" {
+  type        = string
+  description = "(Optional) AWS region for EBS resources."
+  default     = null
+}
+
 variable "is_enabled_ebs_encryption_by_default" {
   type        = bool
   description = "(Optional) A boolean flag to enable/disable default EBS encryption at the account level. Defaults false."

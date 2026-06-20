@@ -40,22 +40,18 @@ tags = {
 name_prefix = "base-"
 
 #--------------------------------------------------------------
-# Default Region for Resources
-# Specifies the primary AWS region where most resources will be deployed.
-# Some services like CloudFront require resources in us-east-1 regardless of this setting.
-# Common regions: ap-northeast-1 (Tokyo), us-east-1 (N. Virginia), eu-west-1 (Ireland)
+# Region Configuration
+# - global:  Global resources (CloudFront, WAF, ACM) — must be us-east-1
+# - primary: Development and operations base region (fallback for provider)
+# - targets: All regions where resources are deployed
 #--------------------------------------------------------------
-# TODO: need to change region.
-region = "ap-northeast-1"
-
-#--------------------------------------------------------------
-# us-east-1 Region Resources
-# Set is_enabled to false to skip creating all us-east-1 specific resources.
-# When the default region is us-east-1, these resources are automatically skipped
-# regardless of this setting to avoid duplication.
-#--------------------------------------------------------------
-us_east_1 = {
-  is_enabled = true
+region = {
+  # TODO: Global resources (CloudFront, Route53, WAF, ACM) — must be us-east-1
+  global = "us-east-1"
+  # TODO: Development and operations base region (fallback for provider)
+  primary = "ap-northeast-1"
+  # TODO: All regions where resources are deployed
+  targets = ["ap-northeast-1", "us-east-1"]
 }
 
 #--------------------------------------------------------------
@@ -261,12 +257,6 @@ common_lambda = {
         "subnet-xxxxxxxxxxxxxxxxx",
       ]
       security_group_id = "sg-xxxxxxxxxxxxxxxxx"
-      private_subnets_us_east_1 = [
-        "subnet-xxxxxxxxxxxxxxxxx",
-        "subnet-xxxxxxxxxxxxxxxxx",
-        "subnet-xxxxxxxxxxxxxxxxx",
-      ]
-      security_group_id_us_east_1 = "sg-xxxxxxxxxxxxxxxxx"
     }
     # TODO: To specify a new VPC to be set up for Lambda, please set the following information.
     # If var.common_lambda.vpc.is_enabled = true and var.common_lambda.vpc.create_vpc = true,
@@ -274,16 +264,6 @@ common_lambda = {
     new = {
       name = "vpc-lambda"
       cidr = "10.0.0.0/16"
-      azs = [
-        "ap-northeast-1a",
-        "ap-northeast-1c",
-        "ap-northeast-1d",
-      ]
-      azs_us_east_1 = [
-        "us-east-1a",
-        "us-east-1b",
-        "us-east-1c",
-      ]
       private_subnets = [
         "10.0.1.0/24",
         "10.0.2.0/24",
@@ -510,6 +490,16 @@ PATTERN
 # Temporary privileged access system with Slack integration.
 # Manages time-bound IAM Identity Center Permission Set assignments
 # with approval workflow and automatic revocation.
+#
+# SETUP REQUIREMENTS:
+# 1. Create a Slack App (see spec.md for detailed steps)
+# 2. Configure Identity Center instance ARN and Identity Store ID
+# 3. Define profiles with Permission Set ARNs and approvers
+#
+# SECURITY NOTES:
+# - signing_secret and bot_token should be stored in a secure location
+# - approvers list should be kept minimal (least privilege)
+# - max_duration_minutes should be set to the minimum required time
 #--------------------------------------------------------------
 jit_access = {
   # TODO: Set to true when Slack App and Lambda zip are ready.
@@ -616,7 +606,7 @@ jit_access = {
     #     2. Copy the "User ID" from the "General information" section
     #   Option B (CLI):
     #     aws identitystore list-users \
-    #       --identity-store-id d-9067a0513b \
+    #       --identity-store-id d-xxxxxxxx \
     #       --filters AttributePath=UserName,AttributeValue=<UserName> \
     #       --region ap-northeast-1 \
     #       --query "Users[0].UserId" --output text

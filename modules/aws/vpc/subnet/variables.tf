@@ -5,6 +5,7 @@ variable "name_prefix" {
   type        = string
   description = "(Required, Forces new resource) Creates a tag name beginning with the specified prefix."
 }
+
 variable "aws_subnet" {
   type = list(object({
     # The AZ for the subnet.
@@ -22,6 +23,7 @@ variable "aws_subnet" {
   )
   description = "(Required) Provides an VPC subnet resource."
 }
+
 variable "aws_route_table_association" {
   type = object({
     # The ID of the routing table to associate with.
@@ -30,8 +32,15 @@ variable "aws_route_table_association" {
   )
   description = "(Required) Provides a resource to create an association between a route table and a subnet or a route table and an internet gateway or virtual private gateway."
 }
+
 variable "tags" {
   type        = map(any)
   description = "(Optional) A mapping of tags to assign to the resource."
+  default     = null
+}
+
+variable "region" {
+  type        = string
+  description = "(Optional) AWS region. Defaults to provider region."
   default     = null
 }

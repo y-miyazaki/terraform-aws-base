@@ -6,6 +6,7 @@ variable "is_enabled" {
   description = "(Optional) A boolean flag to enable/disable AWS SSM Automation. Defaults true."
   default     = true
 }
+
 variable "aws_iam_role" {
   type = object(
     {
@@ -24,6 +25,7 @@ variable "aws_iam_role" {
     path        = "/"
   }
 }
+
 variable "aws_iam_policy" {
   type = object(
     {
@@ -42,6 +44,7 @@ variable "aws_iam_policy" {
     path        = "/"
   }
 }
+
 variable "tags" {
   type        = map(any)
   description = "(Optional) Key-value map of resource tags."

@@ -6,26 +6,31 @@ variable "is_enabled" {
   description = "(Optional) A boolean flag to enable/disable settings of ElastiCache. Defaults true."
   default     = true
 }
+
 variable "create_auto_dimensions" {
   type        = bool
   description = "(Optional) A boolean flag to enable/disable automatic discovery of ElastiCache clusters. When true, automatically fetches all cluster IDs. Defaults false."
   default     = false
 }
+
 variable "auto_dimensions_exclude_list" {
   type        = list(string)
   description = "(Optional) List of patterns to exclude from auto-discovered ElastiCache clusters. Supports substring matching."
   default     = []
 }
+
 variable "auto_dimensions_include_list" {
   type        = list(string)
   description = "(Optional) List of patterns to include from auto-discovered ElastiCache clusters. If empty, includes all. Supports substring matching."
   default     = []
 }
+
 variable "period" {
   type        = number
   description = "(Optional) The period in seconds over which the specified statistic is applied."
   default     = 300
 }
+
 variable "threshold" {
   type = object({
     # AuthenticationFailures threshold (unit=Count)
@@ -179,6 +184,7 @@ variable "threshold" {
     traffic_management_active                  = 1
   }
 }
+
 variable "threshold_override" {
   type = map(object({
     # (Optional) AuthenticationFailures threshold (unit=Count)
@@ -272,31 +278,43 @@ variable "threshold_override" {
   description = "(Optional) Override thresholds for specific resources. Key is the CacheClusterId."
   default     = {}
 }
+
 variable "dimensions" {
   type        = list(map(any))
   description = "(Optional) The dimensions for the alarm's associated metric. For the list of available dimensions see the AWS documentation here. Required when create_auto_dimensions is false."
   default     = []
 }
+
 variable "name_prefix" {
   type        = string
   description = "(Required) CloudWatch Filter/Alarm name prefix."
 }
+
 variable "alarm_actions" {
   type        = list(string)
   description = "(Required) The list of actions to execute when this alarm transitions into an ALARM state from any other state. Each action is specified as an Amazon Resource Name (ARN)."
 }
+
 variable "ok_actions" {
   type        = list(string)
   description = "(Optional) The list of actions to execute when this alarm transitions into an OK state from any other state. Each action is specified as an Amazon Resource Name (ARN)."
   default     = []
 }
+
 variable "insufficient_data_actions" {
   type        = list(string)
   description = "(Optional) The list of actions to execute when this alarm transitions into an INSUFFICIENT_DATA state from any other state. Each action is specified as an Amazon Resource Name (ARN)."
   default     = []
 }
+
 variable "tags" {
   type        = map(any)
   description = "(Optional) Key-value map of resource tags."
+  default     = null
+}
+
+variable "region" {
+  type        = string
+  description = "(Optional) AWS region. Defaults to provider region."
   default     = null
 }

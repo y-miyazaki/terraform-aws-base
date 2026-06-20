@@ -6,11 +6,13 @@ variable "is_enabled" {
   description = "(Optional) A boolean flag to enable/disable settings of CloudTrail. Defaults true."
   default     = true
 }
+
 variable "is_s3_enabled" {
   type        = bool
   description = "(Optional) A boolean flag to enable/disable S3 Bucket. Defaults false."
   default     = false
 }
+
 variable "aws_sns_topic" {
   type = object(
     {
@@ -50,6 +52,7 @@ variable "aws_sns_topic" {
   )
   description = "(Required) The resource of aws_sns_topic."
 }
+
 variable "aws_sns_topic_subscription" {
   type = object(
     {
@@ -73,6 +76,7 @@ variable "aws_sns_topic_subscription" {
   )
   description = "(Required) The resource of aws_sns_topic_subscription."
 }
+
 variable "aws_cloudwatch_log_group" {
   type = object(
     {
@@ -84,6 +88,7 @@ variable "aws_cloudwatch_log_group" {
   )
   description = "(Required) The resource of aws_cloudwatch_log_group."
 }
+
 variable "aws_iam_role" {
   type = object(
     {
@@ -102,6 +107,7 @@ variable "aws_iam_role" {
     path        = "/"
   }
 }
+
 variable "aws_iam_policy" {
   type = object(
     {
@@ -120,6 +126,7 @@ variable "aws_iam_policy" {
     path        = "/"
   }
 }
+
 variable "s3_bucket" {
   type = object(
     {
@@ -140,6 +147,7 @@ variable "s3_bucket" {
     versioning                           = {}
   }
 }
+
 variable "aws_s3_bucket_existing" {
   type = object(
     {
@@ -201,28 +209,34 @@ variable "aws_cloudtrail" {
     ]
   }
 }
+
 variable "cis_name_prefix" {
   type        = string
   description = "(Required) CloudWatch Filter/Alarm name prefix."
 }
+
 variable "account_id" {
   type        = string
   description = "(Required) AWS account ID for member account."
 }
+
 variable "region" {
   type        = string
   description = "(Required) The region name."
 }
+
 variable "cloudtrail_kms_master_key_id" {
   type        = string
   description = "(Optional) The KMS master key for CloudTrail."
   default     = null
 }
+
 variable "sns_kms_master_key_id" {
   type        = string
   description = "(Optional) The KMS master key for SNS."
   default     = null
 }
+
 variable "tags" {
   type        = map(any)
   description = "(Optional) Key-value map of resource tags."

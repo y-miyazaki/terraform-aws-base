@@ -35,9 +35,9 @@ data "aws_iam_policy_document" "this" {
   }
 }
 
-#--------------------------------------------------------------------------------------------------
-# Generates an IAM policy document in JSON format for use with resources that expect policy documents such as aws_iam_policy.
-#--------------------------------------------------------------------------------------------------
+#--------------------------------------------------------------
+# Provides an IAM role.
+#--------------------------------------------------------------
 resource "aws_iam_role" "this" {
   count = var.is_enabled && var.aws_iam_role != null ? 1 : 0
 

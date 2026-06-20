@@ -6,6 +6,7 @@ variable "is_enabled" {
   description = "(Optional) A boolean flag to enable/disable AWS Config. Defaults true."
   default     = true
 }
+
 variable "aws_config_config_rule" {
   type = list(object(
     {
@@ -30,5 +31,11 @@ variable "aws_config_config_rule" {
 variable "tags" {
   type        = map(any)
   description = "(Optional) Key-value map of resource tags."
+  default     = null
+}
+
+variable "region" {
+  type        = string
+  description = "(Optional) AWS region. Defaults to provider region."
   default     = null
 }

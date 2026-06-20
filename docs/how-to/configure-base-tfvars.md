@@ -16,7 +16,9 @@ These must be changed before `terraform apply` — the example values will cause
 
 | Variable (tfvars path) | Description | Example |
 |------------------------|-------------|---------|
-| `region` | Primary AWS region for resources | `"ap-northeast-1"` |
+| `region.primary` | Primary AWS region for development and provider fallback | `"ap-northeast-1"` |
+| `region.global` | Region for global resources (CloudFront, WAF, ACM) | `"us-east-1"` |
+| `region.targets` | All regions where regional resources are deployed | `["ap-northeast-1", "us-east-1"]` |
 | `security_iam.support_iam_role_principal_arns` | IAM principals for Support role (CIS 1.20) | `["arn:aws:iam::123456789012:root"]` |
 | `budgets.aws_budgets_budget.notification[].subscriber_email_addresses` | Email for budget threshold notifications | `["you@example.com"]` |
 
@@ -58,11 +60,9 @@ cloudwatch_log_group = {
 | `common_lambda_vpc_flow_log` | VPC Flow Logs processing | 7 days |
 | `guardduty` | GuardDuty findings | 30 days |
 | `health` | AWS Health events (regional) | 14 days |
-| `health_us_east_1` | AWS Health events (global) | 14 days |
 | `iam_password_expired` | Password expiration notifications | 14 days |
 | `security_cloudtrail` | CloudTrail audit logs | 90 days |
 | `security_config` | Config compliance (regional) | 30 days |
-| `security_config_us_east_1` | Config compliance (us-east-1) | 30 days |
 | `security_securityhub` | Security Hub findings | 30 days |
 | `trusted_advisor` | Trusted Advisor recommendations | 14 days |
 
@@ -97,7 +97,6 @@ slack = {
 | `iam_password_expired` | Password expiration warnings |
 | `security_cloudtrail` | CloudTrail security events |
 | `security_config` | Config compliance changes |
-| `security_config_us_east_1` | Config for CloudFront (us-east-1) |
 | `trusted_advisor` | Trusted Advisor checks |
 
 </details>

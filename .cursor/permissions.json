@@ -1,0 +1,35 @@
+{
+  "mcpAllowlist": [
+    "*:*"
+  ],
+  "terminalAllowlist": [
+    "actionlint",
+    "apm",
+    "ghalint",
+    "git add",
+    "git diff",
+    "git log",
+    "git status",
+    "go test",
+    "golangci-lint",
+    "markdown-link-check",
+    "markdownlint-cli2",
+    "npm run",
+    "npm test",
+    "shellcheck",
+    "shfmt"
+  ],
+  "autoRun": {
+    "allow_instructions": [
+      "Read-only commands such as listing files, viewing diffs, and checking status are fine.",
+      "Running linters, formatters, and test suites is always acceptable."
+    ],
+    "block_instructions": [
+      "Any command that installs packages (npm install, pip install, go get, etc.).",
+      "Destructive git operations: git push, git reset --hard, git clean -f, git rebase, git branch -D.",
+      "Commands that delete files recursively (rm -rf).",
+      "Commands that use sudo or curl/wget to download executables.",
+      "Any command that modifies .env files, credentials, or secrets."
+    ]
+  }
+}

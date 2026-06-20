@@ -117,7 +117,7 @@ guardduty_organization = {
 }
 ```
 
-Both default region and us-east-1 configurations are available via `guardduty_organization_us_east_1`.
+All target regions are configured via a single `guardduty_organization` variable with `for_each = toset(var.region.targets)`.
 
 #### Inspector2 Organization
 
@@ -155,7 +155,7 @@ access_analyzer_organization = {
 }
 ```
 
-> **Note:** If an ORGANIZATION-type analyzer already exists (e.g., from Control Tower), Terraform skips creation to avoid conflicts. Multi-region: use `access_analyzer_organization_us_east_1` for us-east-1.
+> **Note:** If an ORGANIZATION-type analyzer already exists (e.g., from Control Tower), Terraform skips creation to avoid conflicts. Multi-region deployment is automatic via `for_each = toset(var.region.targets)`.
 
 #### Security Notifications (Chatbot)
 

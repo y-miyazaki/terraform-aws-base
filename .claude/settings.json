@@ -1,0 +1,288 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "permissions": {
+    "allow": [
+      "Bash(actionlint *)",
+      "Bash(apm *)",
+      "Bash(ghalint *)",
+      "Bash(git add *)",
+      "Bash(git diff *)",
+      "Bash(git log *)",
+      "Bash(git status)",
+      "Bash(go test *)",
+      "Bash(golangci-lint *)",
+      "Bash(markdown-link-check *)",
+      "Bash(markdownlint-cli2 *)",
+      "Bash(npm run *)",
+      "Bash(npm test *)",
+      "Bash(shellcheck *)",
+      "Bash(shfmt *)",
+      "Read(**/*.go)",
+      "Read(**/*.js)",
+      "Read(**/*.json)",
+      "Read(**/*.md)",
+      "Read(**/*.py)",
+      "Read(**/*.sh)",
+      "Read(**/*.tf)",
+      "Read(**/*.tfvars)",
+      "Read(**/*.ts)",
+      "Read(**/*.yaml)",
+      "Read(**/*.yml)",
+      "Read(./.apm/**)",
+      "Read(./.claude/**)",
+      "Read(./.devcontainer/**)",
+      "Read(./.env.example)",
+      "Read(./.github/**)",
+      "Read(./.vscode/**)",
+      "Read(./cmd/**)",
+      "Read(./docs/**)",
+      "Read(./lib/**)",
+      "Read(./pkg/**)",
+      "Read(./scripts/**)",
+      "Read(./src/**)",
+      "Read(./test/**)",
+      "Read(./tests/**)",
+      "Read(Makefile)",
+      "Write(**/*.go)",
+      "Write(**/*.js)",
+      "Write(**/*.md)",
+      "Write(**/*.py)",
+      "Write(**/*.sh)",
+      "Write(**/*.tf)",
+      "Write(**/*.tfvars)",
+      "Write(**/*.ts)",
+      "Write(**/*.yaml)",
+      "Write(**/*.yml)",
+      "Write(./.apm/**)",
+      "Write(./cmd/**)",
+      "Write(./docs/**)",
+      "Write(./lib/**)",
+      "Write(./pkg/**)",
+      "Write(./scripts/**)",
+      "Write(./src/**)",
+      "Write(./test/**)",
+      "Write(./tests/**)"
+    ],
+    "deny": [
+      "Bash(bundle install *)",
+      "Bash(cargo install *)",
+      "Bash(composer install *)",
+      "Bash(curl *)",
+      "Bash(go get *)",
+      "Bash(go mod download *)",
+      "Bash(mix deps.get *)",
+      "Bash(npm install *)",
+      "Bash(pip install *)",
+      "Bash(pnpm install *)",
+      "Bash(poetry install *)",
+      "Bash(rm -rf *)",
+      "Bash(sudo *)",
+      "Bash(wget *)",
+      "Bash(yarn *)",
+      "Read(**/credentials/**)",
+      "Read(**/*.crt)",
+      "Read(**/*.key)",
+      "Read(**/*.p12)",
+      "Read(**/*.pem)",
+      "Read(**/*.pfx)",
+      "Read(**/*.tfstate)",
+      "Read(**/*.tfstate.*)",
+      "Read(**/*.tfbackend)",
+      "Read(**/.env.*.local)",
+      "Read(**/.env.local)",
+      "Read(./.astro/**)",
+      "Read(./.env)",
+      "Read(./.env.*)",
+      "Read(./.next/**)",
+      "Read(./.nuxt/**)",
+      "Read(./.svelte-kit/**)",
+      "Read(./.yarn/**)",
+      "Read(./env/common/tmp/**)",
+      "Read(./secrets/**)",
+      "Read(./temp/**)",
+      "Read(./tmp/**)",
+      "Read(~/.aws/credentials)",
+      "Read(~/.azure/**)",
+      "Read(~/.config/gcloud/**)",
+      "Read(~/.docker/config.json)",
+      "Read(~/.helm/**)",
+      "Read(~/.kube/config)",
+      "Read(~/.ssh/id_*)",
+      "Read(~/.terraform.d/credentials.tfrc.json)",
+      "Write(**/credentials/**)",
+      "Write(**/*.crt)",
+      "Write(**/*.key)",
+      "Write(**/*.p12)",
+      "Write(**/*.pem)",
+      "Write(**/*.pfx)",
+      "Write(**/*.tfstate)",
+      "Write(**/*.tfstate.*)",
+      "Write(**/*.tfbackend)",
+      "Write(./.env)",
+      "Write(./.env.*)",
+      "Write(./secrets/**)",
+      "Write(~/**)"
+    ],
+    "ask": [
+      "Bash(git branch -D *)",
+      "Bash(git checkout *)",
+      "Bash(git clean -f *)",
+      "Bash(git commit *)",
+      "Bash(git push *)",
+      "Bash(git rebase *)",
+      "Bash(git reset --hard *)",
+      "Bash(npm publish *)",
+      "Write(.claude/settings.json)",
+      "Write(.editorconfig)",
+      "Write(.eslintrc*)",
+      "Write(.github/workflows/**)",
+      "Write(.gitleaks.toml)",
+      "Write(.golangci.yaml)",
+      "Write(.prettierrc*)",
+      "Write(AGENTS.md)",
+      "Write(CLAUDE.md)",
+      "Write(docker-compose*.yml)",
+      "Write(Dockerfile)",
+      "Write(go.mod)",
+      "Write(jest.config.*)",
+      "Write(Makefile)",
+      "Write(mise.toml)",
+      "Write(package.json)",
+      "Write(renovate.json)",
+      "Write(terraform.*.tfvars)",
+      "Write(tsconfig.json)"
+    ]
+  },
+  "attribution": {
+    "commit": "Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>",
+    "pr": "\ud83e\udd16 Generated with [Claude Code](https://claude.com/claude-code)"
+  },
+  "autoCompactEnabled": true,
+  "cleanupPeriodDays": 30,
+  "fileCheckpointingEnabled": true,
+  "includeGitInstructions": true,
+  "respectGitignore": true,
+  "statusLine": {
+    "type": "command",
+    "command": "~/.claude/statusline.sh",
+    "padding": 2
+  },
+  "hooks": {
+    "Stop": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".claude/hooks/common-hooks-claude/scripts/actionlint.sh",
+            "timeout": 60
+          }
+        ]
+      },
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".claude/hooks/common-hooks-claude/scripts/ghalint.sh",
+            "timeout": 60
+          }
+        ]
+      },
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".claude/hooks/common-hooks-claude/scripts/zizmor.sh",
+            "timeout": 60
+          }
+        ]
+      },
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".claude/hooks/common-hooks-claude/scripts/markdown_link_check.sh",
+            "timeout": 240
+          }
+        ]
+      },
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".claude/hooks/common-hooks-claude/scripts/markdownlint_cli2.sh",
+            "timeout": 120
+          }
+        ]
+      },
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".claude/hooks/go-hooks-claude/scripts/golangci_lint.sh",
+            "timeout": 120
+          }
+        ]
+      },
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".claude/hooks/shell-script-hooks-claude/scripts/shellcheck.sh",
+            "timeout": 120
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "command -v lean-ctx >/dev/null 2>&1 || exit 0; lean-ctx hook observe",
+            "timeout": 5
+          }
+        ]
+      },
+      {
+        "matcher": "Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".claude/hooks/shell-script-hooks-claude/scripts/shfmt.sh",
+            "timeout": 120
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Bash|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "command -v lean-ctx >/dev/null 2>&1 || exit 0; lean-ctx hook rewrite",
+            "timeout": 15
+          }
+        ]
+      },
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "command -v lean-ctx >/dev/null 2>&1 || exit 0; lean-ctx hook redirect",
+            "timeout": 5
+          }
+        ]
+      }
+    ]
+  }
+}

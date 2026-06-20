@@ -3,6 +3,9 @@
 # Purpose: Create IAM role for AWS Chatbot (Slack) with optional SecurityHub update permissions.
 # Notes: Unified tagging applied; future improvement: parameterize additional managed policies.
 #--------------------------------------------------------------
+#--------------------------------------------------------------
+# Provides an IAM role.
+#--------------------------------------------------------------
 resource "aws_iam_role" "this" {
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
@@ -33,6 +36,7 @@ data "aws_iam_policy_document" "securityhub" {
     resources = ["*"]
   }
 }
+
 resource "aws_iam_policy" "securityhub" {
   name        = "${var.name}-chatbot-securityhub-policy"
   description = "securityhub policy for AWS Q(Chatbot)."
@@ -43,6 +47,7 @@ resource "aws_iam_role_policy_attachment" "aws_resource_explorer_read_only_acces
   role       = aws_iam_role.this.name
   policy_arn = "arn:aws:iam::aws:policy/AWSResourceExplorerReadOnlyAccess"
 }
+
 resource "aws_iam_role_policy_attachment" "securityhub" {
   role       = aws_iam_role.this.name
   policy_arn = aws_iam_policy.securityhub.arn

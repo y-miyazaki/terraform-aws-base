@@ -28,7 +28,7 @@ set -euo pipefail
 #   None
 #
 # Returns:
-#   Exit code 0
+#   None (outputs to stdout)
 #
 # Usage:
 #   show_usage

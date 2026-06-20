@@ -3,6 +3,15 @@
 # Purpose: Create IAM role and policy for Kinesis Firehose delivery stream with access to S3, Kinesis, KMS, CloudWatch Logs, and Lambda transforms.
 # Notes: Unified tagging applied; future improvement: narrow wildcard resources (streams, keys, functions) to specific ARNs.
 #--------------------------------------------------------------
+data "aws_region" "current" {}
+
+#--------------------------------------------------------------
+# Locals
+#--------------------------------------------------------------
+locals {
+  region = coalesce(var.region, data.aws_region.current.region)
+}
+
 #--------------------------------------------------------------
 # Provides an IAM role.
 #--------------------------------------------------------------
@@ -57,7 +66,7 @@ data "aws_iam_policy_document" "this" {
       "kinesis:ListShards",
     ]
     resources = [
-      "arn:aws:kinesis:${var.region}:${var.account_id}:stream/*",
+      "arn:aws:kinesis:${local.region}:${var.account_id}:stream/*",
     ]
   }
   statement {
@@ -68,7 +77,7 @@ data "aws_iam_policy_document" "this" {
     ]
     #tfsec:ignore:AWS099
     resources = [
-      "arn:aws:kms:${var.region}:${var.account_id}:key/*",
+      "arn:aws:kms:${local.region}:${var.account_id}:key/*",
     ]
   }
   statement {
@@ -77,7 +86,7 @@ data "aws_iam_policy_document" "this" {
       "logs:PutLogEvents"
     ]
     resources = [
-      "arn:aws:logs:${var.region}:${var.account_id}:log-group/*",
+      "arn:aws:logs:${local.region}:${var.account_id}:log-group/*",
     ]
   }
   statement {
@@ -88,7 +97,7 @@ data "aws_iam_policy_document" "this" {
     ]
     #tfsec:ignore:AWS099
     resources = [
-      "arn:aws:lambda:${var.region}:${var.account_id}:function:*",
+      "arn:aws:lambda:${local.region}:${var.account_id}:function:*",
     ]
   }
 }

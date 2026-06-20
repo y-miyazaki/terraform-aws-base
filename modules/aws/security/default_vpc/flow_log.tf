@@ -4,6 +4,7 @@
 resource "aws_cloudwatch_log_group" "this" {
   count = local.is_active && var.is_enabled_flow_logs ? 1 : 0
 
+  region            = local.region
   name              = var.aws_cloudwatch_log_group.name
   retention_in_days = var.aws_cloudwatch_log_group.retention_in_days
   kms_key_id        = try(var.aws_cloudwatch_log_group.kms_key_id, null)
@@ -97,6 +98,7 @@ resource "aws_iam_role_policy_attachment" "this" {
 resource "aws_flow_log" "this" {
   count = local.is_active && var.is_enabled_flow_logs ? 1 : 0
 
+  region          = local.region
   log_destination = aws_cloudwatch_log_group.this[0].arn
   iam_role_arn    = aws_iam_role.this[0].arn
   vpc_id          = aws_default_vpc.this[0].id

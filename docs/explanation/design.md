@@ -11,10 +11,10 @@ Each Terraform root module (`terraform/base/`, `terraform/management/audit/`, `t
 ```text
 terraform/<layer>/
 ├── main_provider.tf              # Terraform and provider version constraints
-├── main_common_data.tf           # Shared data sources (caller identity, region)
-├── main_common_log.tf            # Common CloudWatch Log Group configuration
-├── main_<service>.tf             # One file per AWS service/module call
-├── main_<service>_us_east_1.tf   # us-east-1 regional counterpart (when needed)
+├── main_common_data.tf           # Shared data sources (caller identity)
+├── main_central_log.tf           # Log buckets (region = var.region.primary)
+├── main_regional_*.tf            # Multi-region services (for_each = var.region.targets)
+├── main_central_*.tf             # Single-location services (region = var.region.global or primary)
 ├── locals.tf                     # Derived values and flag computation
 ├── variables.tf                  # All input variable declarations
 ├── terraform.<env>.tfvars        # Environment-specific variable values
@@ -22,7 +22,7 @@ terraform/<layer>/
 └── .tflint.hcl                   # TFLint configuration
 ```
 
-**File naming rule**: One `main_<service>.tf` file per logical service group. Cross-region resources append `_us_east_1` suffix rather than duplicating the primary file.
+**File naming rule**: One `main_<service>.tf` file per logical service group. File prefixes: `main_regional_*` (multi-region), `main_central_*` (single location), `main_common_*` (data sources).
 
 ### Module Directory Structure
 
@@ -67,20 +67,23 @@ locals {
 
 If `managed_services.<service>` is omitted in the tfvars, it falls back to the top-level `is_enabled` flag.
 
-### Multi-Region Pattern (us-east-1)
+### Multi-Region Pattern
 
-Several AWS services require resources in `us-east-1` regardless of the primary region (e.g., CloudFront metrics, WAF global, ACM for CloudFront). The convention is:
+AWS Provider v6 supports `region` at the resource level. All resources in `terraform/base` explicitly declare their region — no provider aliases are used.
 
-- Primary region resources: `main_<service>.tf` using `provider "aws" {}`
-- us-east-1 resources: `main_<service>_us_east_1.tf` using `provider "aws" { alias = "us-east-1" }`
-- Guard to avoid duplication when primary region is already `us-east-1`:
+- Regional resources: `main_regional_*.tf` using `for_each = toset(var.region.targets)`
+- Central resources: `main_central_*.tf` using `region = var.region.global` or `var.region.primary`
+- Common data sources: `main_common_*.tf` (no region — data lookups only)
 
 ```hcl
-locals {
-  is_default_region_us_east_1 = var.region == "us-east-1"
-  is_enabled_us_east_1        = !local.is_default_region_us_east_1 && var.us_east_1.is_enabled
+region = {
+  global  = "us-east-1"          # CloudFront, WAF, ACM — AWS constraint
+  primary = "ap-northeast-1"     # Development base, log aggregation
+  targets = ["ap-northeast-1", "us-east-1"]
 }
 ```
+
+Global services (IAM, Compute Optimizer, OIDC) are regionless and do not require `region`.
 
 ## Variable Design
 
@@ -185,16 +188,20 @@ terraform apply -var-file=terraform.<env>.tfvars
 
 ## Provider Configuration
 
-All root modules declare `required_version = ">=1.12"` and pin the AWS provider to `~>6.0`. Tags are injected globally via `default_tags` on the provider to avoid per-resource tag repetition:
+All root modules declare `required_version = ">=1.12"` and pin the AWS provider to `~>6.0`. Tags are injected globally via `default_tags` on the provider to avoid per-resource tag repetition.
+
+In `terraform/base`, the default provider uses `var.region.primary` as a safety fallback. All resources must explicitly set `region` — the provider region is never relied upon intentionally:
 
 ```hcl
 provider "aws" {
-  region = var.region
+  region = var.region.primary
   default_tags {
     tags = var.tags
   }
 }
 ```
+
+No provider aliases are defined. The `alias = "global"` and `alias = "us-east-1"` patterns have been removed.
 
 ## Cross-References
 

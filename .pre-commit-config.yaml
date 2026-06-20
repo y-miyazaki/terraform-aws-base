@@ -21,7 +21,7 @@ repos:
       - id: detect-private-key
         exclude: '(?:^|/)(?:.*/)?terraform\.(?!example\.)[^.]+\.tfvars$'
       - id: end-of-file-fixer
-        exclude: '(^.*(\.devcontainer/devcontainer(-lock)?\.json|settings\.json|settings-example\.json)$)'
+        exclude: '(^.*(\.devcontainer/devcontainer(-lock)?\.json|settings\.json|settings-example\.json|.*\.md)$)'
       - id: pretty-format-json
         args: [--autofix, --no-sort-keys]
         exclude: '(^.*(\.devcontainer/devcontainer(-lock)?\.json|settings\.json|settings-example\.json)$)'

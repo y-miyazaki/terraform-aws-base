@@ -21,6 +21,7 @@ No modules.
 | Name | Type |
 | ---- | ---- |
 | [aws_config_config_rule.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/config_config_rule) | resource |
+| [aws_region.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/region) | data source |
 
 ## Inputs
 
@@ -28,6 +29,7 @@ No modules.
 | ---- | ----------- | ---- | ------- | :------: |
 | <a name="input_aws_config_config_rule"></a> [aws\_config\_config\_rule](#input\_aws\_config\_config\_rule) | (Required) Provides an AWS Config Rule. | <pre>list(object(<br/>    {<br/>      # (Required) The name of the rule<br/>      name = string<br/>      # (Optional) Description of the rule<br/>      description = string<br/>      # (Optional) A string in JSON format that is passed to the AWS Config rule Lambda function.<br/>      input_parameters = string<br/>      # (Optional) The maximum frequency with which AWS Config runs evaluations for a rule.<br/>      maximum_execution_frequency = string<br/>      # (Optional) Scope defines which resources can trigger an evaluation for the rule as documented below.<br/>      scope = any<br/>      # (Required) Source specifies the rule owner, the rule identifier, and the notifications that cause the function to evaluate your AWS resources as documented below.<br/>      source = any<br/>    }<br/>    )<br/>  )</pre> | n/a | yes |
 | <a name="input_is_enabled"></a> [is\_enabled](#input\_is\_enabled) | (Optional) A boolean flag to enable/disable AWS Config. Defaults true. | `bool` | `true` | no |
+| <a name="input_region"></a> [region](#input\_region) | (Optional) AWS region. Defaults to provider region. | `string` | `null` | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | (Optional) Key-value map of resource tags. | `map(any)` | `null` | no |
 
 ## Outputs

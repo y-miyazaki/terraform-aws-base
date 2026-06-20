@@ -1,0 +1,131 @@
+# .claudeignore
+# Claude Code context exclusion: files/directories that should not be indexed
+# Purpose: reduce token usage, exclude secrets/generated content, improve performance
+
+# === AI tool configs (low value as context) ===
+.copilot/
+.cursor/hooks/
+.cursor/permissions.json
+.cursor/hooks.json
+.cursor/cli.json
+.kiro/
+.serena/
+apm_modules/
+
+# === APM generated/temporary ===
+apm.lock.yaml
+apm_modules/
+
+# === Large auto-generated config ===
+.gitleaks.toml
+.golangci.yaml
+
+# === Lock files (large, auto-generated) ===
+.terraform.lock.hcl
+aqua-checksums.json
+go.sum
+mise.lock
+package-lock.json
+pnpm-lock.yaml
+yarn.lock
+
+# === Dependencies ===
+node_modules/
+vendor/
+
+# === Build artifacts ===
+bin/
+build/
+builds/
+dist/
+output/
+target/
+*.pyc
+*.pyo
+__pycache__/
+
+# === Modern Frontend / Meta-Frameworks ===
+.astro/
+.next/
+.nuxt/
+.svelte-kit/
+.yarn/
+
+# === Test coverage ===
+coverage/
+coverage.html
+cover.out
+htmlcov/
+.coverage
+
+# === Terraform ===
+.terraform/
+.terraform.d/
+*.tfstate
+*.tfstate.*
+*.tfstate.backup
+*.tfbackend
+
+# === Temporary / Cache ===
+tmp/
+temp/
+.cache/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.swp
+*.swo
+*~
+
+# === OS files ===
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# === Logs ===
+*.log
+logs/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# === Secrets / Credentials ===
+.env
+.env.*
+!.env.example
+**/.env.*.local
+**/.env.local
+**/credentials/
+**/env/common/tmp/
+**/secrets/
+**/*.key
+**/*.p12
+**/*.pem
+**/*.pfx
+**/*.crt
+
+# === Python ===
+.Python
+.venv/
+venv/
+ENV/
+env/
+*.egg-info/
+.eggs/
+
+# === Go ===
+.serverless/
+
+# === IDE ===
+.idea/
+.vscode/
+*.iml
+
+# === Git ===
+.git/
+
+# === Reports (often large) ===
+docs/report/
+
+# === Development environment artifacts ===
+env/common/tmp/

@@ -6,6 +6,14 @@
 # Notes: Internal helper module for eventbridge/scheduler modules; not intended for direct use.
 #        Follows metric_helper pattern: resource-specific parsing is done by caller.
 #--------------------------------------------------------------
+data "aws_region" "current" {}
+
+#--------------------------------------------------------------
+# Locals
+#--------------------------------------------------------------
+locals {
+  region = coalesce(var.region, data.aws_region.current.region)
+}
 
 #--------------------------------------------------------------
 # Locals - Core filtering and schedule generation logic

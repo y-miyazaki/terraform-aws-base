@@ -1,67 +1,78 @@
-# root
+# === AI tool configs ===
+# Personal settings (never commit)
+.claude/memory/
+.claude/settings.local.json
+.claude/tmp/
+
+# AI tools with no project-specific configs (directories fully excluded)
+.copilot
+.kiro
+.serena
+apm_modules/
+
+# === Go ===
+.serverless
+bin
+cover.out
+coverage
+coverage.html
+dist
+output
+vendor
+
+# === Modern Frontend / Meta-Frameworks ===
+.astro
+.next
+.nuxt
+.svelte-kit
+.yarn
+
+# === Node ===
+node_modules
+outputs
+!lambda/outputs
+
+# === OS / Temp ===
 .DS_Store
+tmp
+
+# === Python ===
+.Python
+.venv
+__pycache__
+
+# === Secrets / Credentials ===
+.env
+env/common/tmp/**
+
+# === Terraform ===
+*.tfbackend
+!terraform.audit.tfbackend
+!terraform.dev.tfbackend
+!terraform.example.tfbackend
+!terraform.prd.tfbackend
+!terraform.qa.tfbackend
+!terraform.root.tfbackend
+!terraform.stg.tfbackend
+*.tfstate
+*.tfstate.*
+*.tfvars
+!terraform.audit.tfvars
+!terraform.dev.tfvars
+!terraform.example.tfvars
+!terraform.prd.tfvars
+!terraform.qa.tfvars
+!terraform.root.tfvars
+!terraform.stg.tfvars
+**/.terraform/*
+**/.terraform.d/*
+builds
+modules/**/.terraform.lock.hcl
+
+# === Root (project-specific) ===
 .devcontainer/devcontainer.json
 .vscode/**
 !.vscode/cspell.json
 !.vscode/cspell-project.txt
 !.vscode/mcp.json
 !.vscode/settings-example.json
-tmp
-
-# AI
-.copilot
-.kiro
-.serena
-apm_modules/
-
-# env
-.env
-env/common/tmp/**
-
-# terraform
-builds
-# terraform modules
-**/.terraform/*
-**/.terraform.d/*
-# Lock files - exclude from modules, but keep in root configurations
-modules/**/.terraform.lock.hcl
-# .tfstate files
-*.tfstate
-*.tfstate.*
-# tfvars files
-*.tfvars
-!terraform.example.tfvars
-!terraform.dev.tfvars
-!terraform.qa.tfvars
-!terraform.stg.tfvars
-!terraform.prd.tfvars
-!terraform.root.tfvars
-!terraform.audit.tfvars
-*.tfbackend
-!terraform.example.tfbackend
-!terraform.dev.tfbackend
-!terraform.qa.tfbackend
-!terraform.stg.tfbackend
-!terraform.prd.tfbackend
-!terraform.root.tfbackend
-!terraform.audit.tfbackend
-
-# go
-bin
-coverage
-dist
-vendor
-output
-.serverless
-cover.out
-coverage.html
-
-# node
-node_modules
-outputs
-!lambda/outputs
-
-# python
-__pycache__
-.Python
-.venv

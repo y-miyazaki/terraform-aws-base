@@ -1,7 +1,6 @@
 #--------------------------------------------------------------
 # Variables for auto_discovery_filter internal module
 #--------------------------------------------------------------
-
 variable "is_enabled" {
   description = "Master switch to enable/disable the entire module"
   type        = bool
@@ -35,5 +34,11 @@ variable "exclude_list" {
 variable "manual_dimensions" {
   description = "Manual dimensions list (when create_auto = false)"
   type        = any
+  default     = null
+}
+
+variable "region" {
+  type        = string
+  description = "(Optional) AWS region. Defaults to provider region."
   default     = null
 }

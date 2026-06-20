@@ -18,6 +18,7 @@ variable "aws_subnet" {
   )
   description = "(Required) Provides an VPC subnet resource."
 }
+
 variable "aws_route_table_association" {
   type = object({
     # The ID of the routing table to associate with.
@@ -26,6 +27,7 @@ variable "aws_route_table_association" {
   )
   description = "(Required) Provides a resource to create an association between a route table and a subnet or a route table and an internet gateway or virtual private gateway."
 }
+
 variable "aws_security_group" {
   type = object(
     {
@@ -35,6 +37,7 @@ variable "aws_security_group" {
   )
   description = "(Required) Provides a security group resource."
 }
+
 variable "aws_iam_role" {
   type = object(
     {
@@ -50,6 +53,7 @@ variable "aws_iam_role" {
   )
   description = "(Required) The resource of aws_iam_role."
 }
+
 variable "aws_iam_policy" {
   type = object(
     {
@@ -65,8 +69,15 @@ variable "aws_iam_policy" {
   )
   description = "(Required) The resource of aws_iam_policy."
 }
+
 variable "tags" {
   type        = map(any)
   description = "(Optional) A mapping of tags to assign to the resource."
+  default     = null
+}
+
+variable "region" {
+  type        = string
+  description = "(Optional) AWS region. Defaults to provider region."
   default     = null
 }

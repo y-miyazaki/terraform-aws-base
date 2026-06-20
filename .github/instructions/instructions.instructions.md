@@ -1,5 +1,5 @@
 ---
-applyTo: "**/instructions/*.instructions.md"
+applyTo: "**/instructions/*.instructions.md,**/.cursor/rules/*.mdc,**/.kiro/steering/*.md,**/.claude/**/*.md"
 description: "AI Assistant Instructions for Writing Instruction Files"
 ---
 
@@ -7,7 +7,7 @@ description: "AI Assistant Instructions for Writing Instruction Files"
 
 ## Scope
 
-- Scope is limited to creating and updating `**/instructions/*.instructions.md` files.
+- Scope is limited to creating and updating instruction/rule files (`**/instructions/*.instructions.md`, `.cursor/rules/*.mdc`, `.kiro/steering/*.md`, `.claude/**/*.md`).
 
 ## Standards
 

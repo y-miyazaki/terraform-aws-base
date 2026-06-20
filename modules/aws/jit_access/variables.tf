@@ -5,10 +5,12 @@ variable "name_prefix" {
   type        = string
   description = "(Required) Prefix for all resource names."
 }
+
 variable "lambda_zip_base_path" {
   type        = string
   description = "(Required) Base path to Lambda zip files (e.g., ../../lambda/outputs)."
 }
+
 variable "slack" {
   type = object({
     # (Required) Slack signing secret for request verification.
@@ -24,11 +26,13 @@ variable "slack" {
   })
   description = "(Required) Slack App credentials and configuration."
 }
+
 variable "ssm_parameter_prefix" {
   type        = string
   description = "(Optional) SSM Parameter Store prefix for JIT access configuration."
   default     = "/jit-access"
 }
+
 variable "profiles" {
   type = map(object({
     # (Required) AWS account ID for the permission set assignment.
@@ -44,36 +48,43 @@ variable "profiles" {
   }))
   description = "(Required) Map of JIT access profiles. Key is the profile name."
 }
+
 variable "cleanup_schedule_expression" {
   type        = string
   description = "(Optional) EventBridge schedule expression for the cleanup checker."
   default     = "rate(15 minutes)"
 }
+
 variable "lambda_log_retention_days" {
   type        = number
   description = "(Optional) CloudWatch Logs retention in days for Lambda functions."
   default     = 30
 }
+
 variable "lambda_memory_size" {
   type        = number
   description = "(Optional) Memory size in MB for Lambda functions."
   default     = 128
 }
+
 variable "lambda_timeout" {
   type        = number
   description = "(Optional) Timeout in seconds for Lambda functions."
   default     = 300
 }
+
 variable "timezone" {
   type        = string
   description = "(Optional) Timezone for Lambda functions (TZ environment variable)."
   default     = "UTC"
 }
+
 variable "kms_key_arn" {
   type        = string
   description = "(Optional) KMS key ARN for encrypting CloudWatch Logs and DynamoDB."
   default     = null
 }
+
 variable "vpc_config" {
   type = object({
     # (Required) List of subnet IDs for Lambda VPC configuration.
@@ -84,18 +95,27 @@ variable "vpc_config" {
   description = "(Optional) VPC configuration for Lambda functions. Set to null to disable VPC."
   default     = null
 }
+
 variable "waf_enabled" {
   type        = bool
   description = "(Optional) Whether to associate a WAFv2 Web ACL with the API Gateway stage."
   default     = false
 }
+
 variable "waf_web_acl_arn" {
   type        = string
   description = "(Optional) ARN of the WAFv2 Web ACL to associate with the API Gateway stage. Required when waf_enabled is true."
   default     = null
 }
+
 variable "tags" {
   type        = map(any)
   description = "(Optional) A mapping of tags to assign to the resource."
+  default     = null
+}
+
+variable "region" {
+  type        = string
+  description = "(Optional) AWS region. Defaults to provider region."
   default     = null
 }

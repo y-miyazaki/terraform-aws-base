@@ -3,14 +3,24 @@
 # Purpose: Provide CloudWatch metric alarms for Elastic Load Balancers (ALB/NLB) with optional auto-discovery.
 # Notes: Unified tagging; thresholds configurable; auto discovery filters via include/exclude lists; supports both ALB and NLB.
 #--------------------------------------------------------------
+data "aws_region" "current" {}
+
 #--------------------------------------------------------------
-# Auto-discovery filter module
+# Locals
+#--------------------------------------------------------------
+locals {
+  region = coalesce(var.region, data.aws_region.current.region)
+}
+
+#--------------------------------------------------------------
+# Auto-discovery metric filter module
 #--------------------------------------------------------------
 module "helper" {
-  source     = "../../_internal/metric_helper"
-  is_enabled = var.is_enabled
+  source = "../../_internal/metric_helper"
 
-  create_auto        = var.create_auto_dimensions
+  is_enabled  = var.is_enabled
+  create_auto = var.create_auto_dimensions
+
   source_list        = data.aws_lbs.this.arns
   include_list       = var.auto_dimensions_include_list
   exclude_list       = var.auto_dimensions_exclude_list

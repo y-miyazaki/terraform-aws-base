@@ -35,6 +35,7 @@ No modules.
 | [aws_config_remediation_configuration.s3-bucket-server-side-encryption-enabled](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/config_remediation_configuration) | resource |
 | [aws_config_remediation_configuration.s3-bucket-ssl-requests-only](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/config_remediation_configuration) | resource |
 | [aws_config_remediation_configuration.s3-bucket-versioning-enabled](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/config_remediation_configuration) | resource |
+| [aws_region.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/region) | data source |
 
 ## Inputs
 
@@ -49,6 +50,7 @@ No modules.
 | <a name="input_is_enabled_s3_bucket_encryption"></a> [is\_enabled\_s3\_bucket\_encryption](#input\_is\_enabled\_s3\_bucket\_encryption) | (Optional) If true, Enable encryption for an Amazon Simple Storage Service (Amazon S3) bucket (encrypt the contents of the bucket). | `bool` | `false` | no |
 | <a name="input_is_restrict_bucket_ssl_requests_only"></a> [is\_restrict\_bucket\_ssl\_requests\_only](#input\_is\_restrict\_bucket\_ssl\_requests\_only) | (Optional) If true, bucket policy statement that explicitly denies HTTP requests to the Amazon S3 bucket you specify. | `bool` | `false` | no |
 | <a name="input_name_prefix"></a> [name\_prefix](#input\_name\_prefix) | (Optional) Prefix of config name. | `string` | `""` | no |
+| <a name="input_region"></a> [region](#input\_region) | AWS region where Config resources will be deployed | `string` | n/a | yes |
 | <a name="input_ssm_automation_assume_role_arn"></a> [ssm\_automation\_assume\_role\_arn](#input\_ssm\_automation\_assume\_role\_arn) | (Required) AssumeRole arn in SSM Automation | `string` | n/a | yes |
 | <a name="input_tags"></a> [tags](#input\_tags) | (Optional) Key-value map of resource tags. | `map(any)` | `null` | no |
 

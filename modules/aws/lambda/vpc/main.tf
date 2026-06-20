@@ -6,9 +6,19 @@
 #--------------------------------------------------------------
 # Provides an VPC subnet resource.
 #--------------------------------------------------------------
+data "aws_region" "current" {}
+
+#--------------------------------------------------------------
+# Locals
+#--------------------------------------------------------------
+locals {
+  region = coalesce(var.region, data.aws_region.current.region)
+}
+
 resource "aws_subnet" "this" {
   count = length(var.aws_subnet)
 
+  region                  = local.region
   availability_zone       = try(var.aws_subnet[count.index].availability_zone)
   cidr_block              = try(var.aws_subnet[count.index].cidr_block)
   map_public_ip_on_launch = try(var.aws_subnet[count.index].map_public_ip_on_launch, false)
@@ -24,6 +34,7 @@ resource "aws_subnet" "this" {
 resource "aws_route_table_association" "this" {
   count = length(var.aws_subnet)
 
+  region         = local.region
   subnet_id      = element(aws_subnet.this[*].id, count.index)
   route_table_id = try(var.aws_route_table_association.route_table_id)
 }
@@ -33,6 +44,7 @@ resource "aws_route_table_association" "this" {
 #--------------------------------------------------------------
 # tfsec:ignore:aws-ec2-no-public-egress-sgr
 resource "aws_security_group" "this" {
+  region      = local.region
   name        = try(var.aws_security_group.name)
   vpc_id      = try(var.aws_subnet[0].vpc_id)
   description = "Allow inbound/outbound traffic"

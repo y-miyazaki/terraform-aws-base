@@ -4,6 +4,14 @@
 #          admin account and features). Designed to be called from
 #          the organization management account.
 #--------------------------------------------------------------
+data "aws_region" "current" {}
+
+#--------------------------------------------------------------
+# Locals
+#--------------------------------------------------------------
+locals {
+  region = coalesce(var.region, data.aws_region.current.region)
+}
 
 #--------------------------------------------------------------
 # GuardDuty Organization Admin Account
@@ -13,6 +21,7 @@
 resource "aws_guardduty_organization_admin_account" "this" {
   count = var.is_enabled && var.is_enabled_admin ? 1 : 0
 
+  region           = local.region
   admin_account_id = var.admin_account_id
 }
 
@@ -28,6 +37,7 @@ data "aws_guardduty_detector" "existing" {
 resource "aws_guardduty_detector" "this" {
   count = var.is_enabled && var.create_detector ? 1 : 0
 
+  region                       = local.region
   enable                       = true
   finding_publishing_frequency = "FIFTEEN_MINUTES"
 
@@ -47,6 +57,7 @@ locals {
 resource "aws_guardduty_organization_configuration" "this" {
   count = var.is_enabled ? 1 : 0
 
+  region                           = local.region
   auto_enable_organization_members = var.auto_enable_organization_members
   detector_id                      = local.detector_id
 
@@ -61,6 +72,7 @@ resource "aws_guardduty_organization_configuration" "this" {
 resource "aws_guardduty_organization_configuration_feature" "this" {
   for_each = var.is_enabled ? var.features : {}
 
+  region      = local.region
   detector_id = local.detector_id
   name        = each.key
   auto_enable = each.value.auto_enable

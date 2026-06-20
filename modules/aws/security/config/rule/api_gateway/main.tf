@@ -6,7 +6,13 @@
 #--------------------------------------------------------------
 # Locals
 #--------------------------------------------------------------
+data "aws_region" "current" {}
+
+#--------------------------------------------------------------
+# Locals
+#--------------------------------------------------------------
 locals {
+  region      = coalesce(var.region, data.aws_region.current.region)
   name_prefix = var.name_prefix == "" ? "" : "${trimsuffix(var.name_prefix, "-")}-"
 }
 
@@ -32,6 +38,7 @@ locals {
 resource "aws_config_config_rule" "api-gw-xray-enabled" {
   count = var.is_enabled ? 1 : 0
 
+  region      = local.region
   name        = "${local.name_prefix}api-gw-xray-enabled"
   description = "Checks if AWS X-Ray tracing is enabled on Amazon API Gateway REST APIs. The rule is COMPLIANT if X-Ray tracing is enabled and NON_COMPLIANT otherwise."
   source {

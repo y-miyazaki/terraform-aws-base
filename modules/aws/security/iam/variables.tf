@@ -6,6 +6,7 @@ variable "is_enabled" {
   description = "(Optional) A boolean flag to enable/disable IAM security. Defaults true."
   default     = true
 }
+
 variable "aws_iam_account_password_policy" {
   type = object(
     {
@@ -42,10 +43,12 @@ variable "aws_iam_account_password_policy" {
     require_uppercase_characters   = true
   }
 }
+
 variable "support_iam_role_principal_arns" {
   type        = list(any)
   description = "(Required) iam role principal arn."
 }
+
 variable "aws_iam_role" {
   type = object(
     {
@@ -64,6 +67,7 @@ variable "aws_iam_role" {
     path        = "/"
   }
 }
+
 variable "tags" {
   type        = map(any)
   description = "(Optional) Key-value map of resource tags."

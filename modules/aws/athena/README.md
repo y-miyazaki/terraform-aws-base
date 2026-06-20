@@ -33,6 +33,7 @@ No modules.
 | [null_resource.cloudfront_create_table](https://registry.terraform.io/providers/hashicorp/null/latest/docs/resources/resource) | resource |
 | [null_resource.ses_create_table](https://registry.terraform.io/providers/hashicorp/null/latest/docs/resources/resource) | resource |
 | [null_resource.ses_create_view](https://registry.terraform.io/providers/hashicorp/null/latest/docs/resources/resource) | resource |
+| [aws_region.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/region) | data source |
 | [template_file.cloudfront_create_table](https://registry.terraform.io/providers/hashicorp/template/latest/docs/data-sources/file) | data source |
 | [template_file.cloudfront_drop_table](https://registry.terraform.io/providers/hashicorp/template/latest/docs/data-sources/file) | data source |
 | [template_file.cloudfront_query_1week_error](https://registry.terraform.io/providers/hashicorp/template/latest/docs/data-sources/file) | data source |
@@ -60,6 +61,7 @@ No modules.
 | <a name="input_enabled_ses"></a> [enabled\_ses](#input\_enabled\_ses) | (Optional) To check SES logs with Athena, specify true. | `bool` | `false` | no |
 | <a name="input_is_enabled"></a> [is\_enabled](#input\_is\_enabled) | (Optional) Whether to create Athena resources. Set to false to disable the entire module. | `bool` | `true` | no |
 | <a name="input_name_prefix"></a> [name\_prefix](#input\_name\_prefix) | (Optional) Name prefix of all resources. | `string` | `""` | no |
+| <a name="input_region"></a> [region](#input\_region) | (Optional) AWS region. Defaults to provider region. | `string` | `null` | no |
 | <a name="input_ses_log_bucket"></a> [ses\_log\_bucket](#input\_ses\_log\_bucket) | (Required) Specify the bucket where the SES logs are located. s3://{bucket name}/{bucket prefix} | `string` | n/a | yes |
 | <a name="input_ses_table_name"></a> [ses\_table\_name](#input\_ses\_table\_name) | (Optional) Specify the name of the SES table to be created in Athena. | `string` | `"ses_logs"` | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | (Optional) Key-value map of resource tags for the workgroup. If configured with a provider default\_tags configuration block present, tags with matching keys will overwrite those defined at the provider-level. | `map(any)` | `null` | no |

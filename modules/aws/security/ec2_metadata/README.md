@@ -21,6 +21,7 @@ No modules.
 | Name | Type |
 | ---- | ---- |
 | [aws_ec2_instance_metadata_defaults.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ec2_instance_metadata_defaults) | resource |
+| [aws_region.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/region) | data source |
 
 ## Inputs
 
@@ -30,6 +31,7 @@ No modules.
 | <a name="input_http_put_response_hop_limit"></a> [http\_put\_response\_hop\_limit](#input\_http\_put\_response\_hop\_limit) | (Optional) The maximum number of hops that the metadata token can travel. Valid values: -1 (no-preference), 1-64. Defaults to 2. | `number` | `2` | no |
 | <a name="input_http_tokens"></a> [http\_tokens](#input\_http\_tokens) | (Optional) Whether IMDSv2 is required. Valid values: required, optional, no-preference. Defaults to required. | `string` | `"required"` | no |
 | <a name="input_is_enabled"></a> [is\_enabled](#input\_is\_enabled) | (Optional) A boolean flag to enable/disable EC2 metadata defaults. Defaults true. | `bool` | `true` | no |
+| <a name="input_region"></a> [region](#input\_region) | (Optional) AWS region for EC2 metadata resources. | `string` | `null` | no |
 
 ## Outputs
 

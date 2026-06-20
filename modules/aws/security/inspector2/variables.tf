@@ -1,6 +1,11 @@
 #--------------------------------------------------------------
 # module variables
 #--------------------------------------------------------------
+variable "region" {
+  type        = string
+  description = "AWS region where Inspector2 will be enabled"
+}
+
 variable "is_enabled" {
   type        = bool
   description = "(Optional) A boolean flag to enable/disable Inspector2 account configuration. Defaults true."

@@ -267,6 +267,7 @@ No direct resources are created by this module. All resources are managed by sub
 | Name | Type |
 | ---- | ---- |
 | [aws_cloudwatch_log_groups.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/cloudwatch_log_groups) | data source |
+| [aws_region.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/region) | data source |
 
 ## Inputs
 

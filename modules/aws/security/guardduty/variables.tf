@@ -1,11 +1,17 @@
 #--------------------------------------------------------------
 # module variables
 #--------------------------------------------------------------
+variable "region" {
+  type        = string
+  description = "(Required) AWS region for this GuardDuty detector. Enables multi-region deployments."
+}
+
 variable "is_enabled" {
   type        = bool
   description = "(Optional) A boolean flag to enable/disable settings of GuardDuty. Defaults true."
   default     = true
 }
+
 variable "aws_guardduty_detector" {
   type = object(
     {
@@ -15,6 +21,7 @@ variable "aws_guardduty_detector" {
   )
   description = "(Required) The resource of aws_guardduty_detector."
 }
+
 variable "aws_guardduty_member" {
   type = list(object(
     {
@@ -27,6 +34,7 @@ variable "aws_guardduty_member" {
   ))
   description = "(Required) The resource of aws_guardduty_member."
 }
+
 variable "tags" {
   type        = map(any)
   description = "(Optional) Key-value map of resource tags."

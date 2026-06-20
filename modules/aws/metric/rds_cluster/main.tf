@@ -6,14 +6,24 @@
 #--------------------------------------------------------------
 # Locals
 #--------------------------------------------------------------
+data "aws_region" "current" {}
+
 #--------------------------------------------------------------
-# Auto-discovery filter module
+# Locals
+#--------------------------------------------------------------
+locals {
+  region = coalesce(var.region, data.aws_region.current.region)
+}
+
+#--------------------------------------------------------------
+# Auto-discovery metric filter module
 #--------------------------------------------------------------
 module "helper" {
-  source     = "../../_internal/metric_helper"
-  is_enabled = var.is_enabled
+  source = "../../_internal/metric_helper"
 
-  create_auto        = var.create_auto_dimensions
+  is_enabled  = var.is_enabled
+  create_auto = var.create_auto_dimensions
+
   source_list        = data.aws_rds_clusters.this.cluster_identifiers
   include_list       = var.auto_dimensions_include_list
   exclude_list       = var.auto_dimensions_exclude_list
@@ -41,6 +51,7 @@ locals {
 resource "aws_cloudwatch_metric_alarm" "commit_latency" {
   for_each = var.is_enabled && var.threshold.enabled_commit_latency && var.is_aurora && (var.is_mysql || var.is_postgresql) ? local.list : {}
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-rds-cluster-${each.value.name}-commit-latency"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -68,6 +79,7 @@ resource "aws_cloudwatch_metric_alarm" "commit_latency" {
 resource "aws_cloudwatch_metric_alarm" "cpu_credit_balance" {
   for_each = var.is_enabled && var.threshold.enabled_cpu_credit_balance && length(regexall("(t2|t3)", var.db_instance_class)) > 0 ? local.list : {}
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-rds-cluster-${each.value.name}-cpu-credit-balance"
   comparison_operator       = "LessThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -98,6 +110,7 @@ resource "aws_cloudwatch_metric_alarm" "cpu_utilization" {
     if var.is_enabled && local.effective_thresholds[k].enabled_cpu_utilization
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-rds-cluster-${each.value.name}-cpu-utilization"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -128,6 +141,7 @@ resource "aws_cloudwatch_metric_alarm" "database_connections" {
     if var.is_enabled && local.effective_thresholds[k].enabled_database_connections
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-rds-cluster-${each.value.name}-database-connections"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -155,6 +169,7 @@ resource "aws_cloudwatch_metric_alarm" "database_connections" {
 resource "aws_cloudwatch_metric_alarm" "deadlocks" {
   for_each = var.is_enabled && var.threshold.enabled_deadlocks && var.is_aurora && (var.is_mysql || var.is_postgresql) ? local.list : {}
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-rds-cluster-${each.value.name}-deadlocks"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -182,6 +197,7 @@ resource "aws_cloudwatch_metric_alarm" "deadlocks" {
 resource "aws_cloudwatch_metric_alarm" "delete_latency" {
   for_each = var.is_enabled && var.threshold.enabled_delete_latency && var.is_aurora && var.is_mysql ? local.list : {}
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-rds-cluster-${each.value.name}-delete-latency"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -212,6 +228,7 @@ resource "aws_cloudwatch_metric_alarm" "disk_queue_depth" {
     if var.is_enabled && local.effective_thresholds[k].enabled_disk_queue_depth
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-rds-cluster-${each.value.name}-disk-queue-depth"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -239,6 +256,7 @@ resource "aws_cloudwatch_metric_alarm" "disk_queue_depth" {
 resource "aws_cloudwatch_metric_alarm" "freeable_memory" {
   for_each = var.is_enabled && var.threshold.enabled_freeable_memory && var.is_aurora && var.is_mysql ? local.list : {}
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-rds-cluster-${each.value.name}-freeable-memory"
   comparison_operator       = "LessThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -269,6 +287,7 @@ resource "aws_cloudwatch_metric_alarm" "read_latency" {
     if var.is_enabled && local.effective_thresholds[k].enabled_read_latency
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-rds-cluster-${each.value.name}-read-latency"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -299,6 +318,7 @@ resource "aws_cloudwatch_metric_alarm" "write_latency" {
     if var.is_enabled && local.effective_thresholds[k].enabled_write_latency
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-rds-cluster-${each.value.name}-write-latency"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -326,6 +346,7 @@ resource "aws_cloudwatch_metric_alarm" "write_latency" {
 resource "aws_cloudwatch_metric_alarm" "aurora_replica_lag" {
   for_each = var.is_enabled && var.threshold.enabled_aurora_replica_lag && var.is_aurora ? local.list : {}
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-rds-cluster-${each.value.name}-aurora-replica-lag"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -356,6 +377,7 @@ resource "aws_cloudwatch_metric_alarm" "buffer_cache_hit_ratio" {
     if var.is_enabled && local.effective_thresholds[k].enabled_buffer_cache_hit_ratio
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-rds-cluster-${each.value.name}-buffer-cache-hit-ratio"
   comparison_operator       = "LessThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -386,6 +408,7 @@ resource "aws_cloudwatch_metric_alarm" "engine_uptime" {
     if var.is_enabled && local.effective_thresholds[k].enabled_engine_uptime
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-rds-cluster-${each.value.name}-engine-uptime"
   comparison_operator       = "LessThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -416,6 +439,7 @@ resource "aws_cloudwatch_metric_alarm" "free_local_storage" {
     if var.is_enabled && local.effective_thresholds[k].enabled_free_local_storage
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-rds-cluster-${each.value.name}-free-local-storage"
   comparison_operator       = "LessThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -446,6 +470,7 @@ resource "aws_cloudwatch_metric_alarm" "network_receive_throughput" {
     if var.is_enabled && local.effective_thresholds[k].enabled_network_receive_throughput
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-rds-cluster-${each.value.name}-network-receive-throughput"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -476,6 +501,7 @@ resource "aws_cloudwatch_metric_alarm" "network_transmit_throughput" {
     if var.is_enabled && local.effective_thresholds[k].enabled_network_transmit_throughput
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-rds-cluster-${each.value.name}-network-transmit-throughput"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -506,6 +532,7 @@ resource "aws_cloudwatch_metric_alarm" "read_iops" {
     if var.is_enabled && local.effective_thresholds[k].enabled_read_iops
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-rds-cluster-${each.value.name}-read-iops"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -536,6 +563,7 @@ resource "aws_cloudwatch_metric_alarm" "read_throughput" {
     if var.is_enabled && local.effective_thresholds[k].enabled_read_throughput
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-rds-cluster-${each.value.name}-read-throughput"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -566,6 +594,7 @@ resource "aws_cloudwatch_metric_alarm" "write_iops" {
     if var.is_enabled && local.effective_thresholds[k].enabled_write_iops
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-rds-cluster-${each.value.name}-write-iops"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -596,6 +625,7 @@ resource "aws_cloudwatch_metric_alarm" "write_throughput" {
     if var.is_enabled && local.effective_thresholds[k].enabled_write_throughput
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-rds-cluster-${each.value.name}-write-throughput"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1

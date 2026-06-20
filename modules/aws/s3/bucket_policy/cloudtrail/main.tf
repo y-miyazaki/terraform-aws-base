@@ -50,6 +50,7 @@ data "aws_iam_policy_document" "this" {
 resource "aws_s3_bucket_policy" "this" {
   count = var.attach_bucket_policy ? 1 : 0
 
+  region = local.region
   bucket = var.bucket
   policy = data.aws_iam_policy_document.this.json
 }

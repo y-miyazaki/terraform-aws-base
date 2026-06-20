@@ -19,6 +19,7 @@ variable "aws_iam_role" {
     path        = "/"
   }
 }
+
 variable "aws_iam_policy" {
   type = object(
     {
@@ -34,6 +35,7 @@ variable "aws_iam_policy" {
   )
   description = "(Required) Provides an IAM policy."
 }
+
 variable "tags" {
   type        = map(any)
   description = "(Optional) A mapping of tags to assign to the resource."

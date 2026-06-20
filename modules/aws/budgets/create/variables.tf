@@ -77,3 +77,9 @@ variable "aws_budgets_budget" {
   })
   description = "(Required) AWS Budgets configuration object. Only 'name' and 'limit_amount' are mandatory; all other attributes are optional."
 }
+
+variable "region" {
+  type        = string
+  description = "(Optional) AWS region. Defaults to provider region."
+  default     = null
+}

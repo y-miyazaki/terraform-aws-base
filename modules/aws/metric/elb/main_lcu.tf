@@ -14,6 +14,7 @@ resource "aws_cloudwatch_metric_alarm" "consumed_lcus" {
     if var.is_enabled && local.effective_thresholds[k].enabled_consumed_lcus && !contains(keys(v.dimensions), "AvailabilityZone")
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-alb-${each.value.name}-consumed-lcus"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -45,6 +46,7 @@ resource "aws_cloudwatch_metric_alarm" "peak_lcus" {
     if var.is_enabled && local.effective_thresholds[k].enabled_peak_lcus && !contains(keys(v.dimensions), "AvailabilityZone")
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-alb-${each.value.name}-peak-lcus"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -76,6 +78,7 @@ resource "aws_cloudwatch_metric_alarm" "reserved_lcus" {
     if var.is_enabled && local.effective_thresholds[k].enabled_reserved_lcus && !contains(keys(v.dimensions), "AvailabilityZone")
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-alb-${each.value.name}-reserved-lcus"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1

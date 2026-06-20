@@ -3,14 +3,33 @@ version: 1.0.0
 description: agent skills and instructions and mcp
 license: Apache-2.0
 targets:
-  - copilot
+  - claude
 includes: auto
 dependencies:
   apm:
-    - github.com/y-miyazaki/config/.apm/packages/common#v1.1.37
-    - github.com/y-miyazaki/config/.apm/packages/aws#v1.1.37
-    - github.com/y-miyazaki/config/.apm/packages/go#v1.1.37
-    - github.com/y-miyazaki/config/.apm/packages/shell-script#v1.1.37
-    - github.com/y-miyazaki/config/.apm/packages/terraform#v1.1.37
-    - github.com/y-miyazaki/config/.apm/packages/terraform-aws#v1.1.37
+    - github.com/y-miyazaki/config/.apm/packages/common#v1.2.0
+    - github.com/y-miyazaki/config/.apm/packages/common-hooks-claude#v1.2.0
+    # - github.com/y-miyazaki/config/.apm/packages/common-hooks-copilot#v1.2.0
+    # - github.com/y-miyazaki/config/.apm/packages/common-hooks-cursor#v1.2.0
+    - github.com/y-miyazaki/config/.apm/packages/aws#v1.2.0
+    # - github.com/y-miyazaki/config/.apm/packages/go#v1.2.0
+    # - github.com/y-miyazaki/config/.apm/packages/go-hooks-claude#v1.2.0
+    # - github.com/y-miyazaki/config/.apm/packages/go-hooks-copilot#v1.2.0
+    # - github.com/y-miyazaki/config/.apm/packages/go-hooks-cursor#v1.2.0
+    - github.com/y-miyazaki/config/.apm/packages/shell-script#v1.2.0
+    - github.com/y-miyazaki/config/.apm/packages/shell-script-hooks-claude#v1.2.0
+    # - github.com/y-miyazaki/config/.apm/packages/shell-script-hooks-copilot#v1.2.0
+    # - github.com/y-miyazaki/config/.apm/packages/shell-script-hooks-cursor#v1.2.0
+    - github.com/y-miyazaki/config/.apm/packages/terraform#v1.2.0
+    - github.com/y-miyazaki/config/.apm/packages/terraform-hooks-claude#v1.2.0
+    # - github.com/y-miyazaki/config/.apm/packages/terraform-hooks-copilot#v1.2.0
+    # - github.com/y-miyazaki/config/.apm/packages/terraform-hooks-cursor#v1.2.0
+    - github.com/y-miyazaki/config/.apm/packages/terraform-aws#v1.2.0
   mcp: []
+
+scripts:
+  postinstall: |
+    # Fix local .cursor/hooks.json (legacy, for non-global installs)
+    if [ -f .cursor/hooks.json ]; then
+      jq '. + {"version": 1}' .cursor/hooks.json > .cursor/hooks.json.tmp && mv .cursor/hooks.json.tmp .cursor/hooks.json
+    fi

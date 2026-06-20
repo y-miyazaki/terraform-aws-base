@@ -19,6 +19,7 @@ variable "aws_iam_role" {
     path        = "/"
   }
 }
+
 variable "aws_iam_instance_profile" {
   type = object(
     {
@@ -34,6 +35,7 @@ variable "aws_iam_instance_profile" {
     path = "/"
   }
 }
+
 variable "tags" {
   type        = map(any)
   description = "(Optional) Key-value mapping of tags for the IAM role"

@@ -27,6 +27,7 @@
 | [aws_api_gateway_method.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/api_gateway_method) | resource |
 | [aws_api_gateway_resource.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/api_gateway_resource) | resource |
 | [aws_api_gateway_stage.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/api_gateway_stage) | resource |
+| [aws_region.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/region) | data source |
 
 ## Inputs
 
@@ -40,6 +41,7 @@
 | <a name="input_lambda_function_aws_cloudwatch_log_group"></a> [lambda\_function\_aws\_cloudwatch\_log\_group](#input\_lambda\_function\_aws\_cloudwatch\_log\_group) | (Optional) The aws\_cloudwatch\_log\_group. | <pre>object(<br/>    {<br/>      # Specifies the number of days you want to retain log events in the specified log group. Possible values are: 1, 3, 5, 7, 14, 30, 60, 90, 120, 150, 180, 365, 400, 545, 731, 1827, 3653, and 0. If you select 0, the events in the log group are always retained and never expire.<br/>      retention_in_days = number<br/>      # The ARN of the KMS Key to use when encrypting log data. Please note, after the AWS KMS CMK is disassociated from the log group, AWS CloudWatch Logs stops encrypting newly ingested data for the log group. All previously ingested data remains encrypted, and AWS CloudWatch Logs requires permissions for the CMK whenever the encrypted data is requested.<br/>      kms_key_id = string<br/>    }<br/>  )</pre> | <pre>{<br/>  "kms_key_id": null,<br/>  "retention_in_days": 14<br/>}</pre> | no |
 | <a name="input_lambda_function_environment"></a> [lambda\_function\_environment](#input\_lambda\_function\_environment) | (Optional) Configuration block. | `map(string)` | `{}` | no |
 | <a name="input_name_prefix"></a> [name\_prefix](#input\_name\_prefix) | (Optional) Name prefix of all resources. | `string` | `""` | no |
+| <a name="input_region"></a> [region](#input\_region) | (Optional) AWS region. Defaults to provider region. | `string` | `null` | no |
 | <a name="input_role_arn"></a> [role\_arn](#input\_role\_arn) | (Required) IAM Role arn used by Lambda. | `string` | n/a | yes |
 | <a name="input_tags"></a> [tags](#input\_tags) | (Optional) Key-value map of resource tags for the workgroup. If configured with a provider default\_tags configuration block present, tags with matching keys will overwrite those defined at the provider-level. | `map(any)` | `null` | no |
 | <a name="input_vpc_config"></a> [vpc\_config](#input\_vpc\_config) | (Optional) aws\_lambda\_function Configuration block. | `list(any)` | `[]` | no |

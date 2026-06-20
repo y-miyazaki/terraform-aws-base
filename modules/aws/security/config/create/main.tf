@@ -3,13 +3,16 @@
 # Purpose: Provision AWS Config recorder, delivery channel (optional S3 bucket), status management, and EventBridge rule/target for non-compliance alerts.
 # Notes: Assumes optional creation of dedicated S3 bucket; future improvement: granular toggles for EventBridge rule and recorder components.
 #--------------------------------------------------------------
+data "aws_region" "current" {}
+
 #--------------------------------------------------------------
 # Locals
 #--------------------------------------------------------------
 locals {
+  region        = coalesce(var.region, data.aws_region.current.region)
   is_s3_enabled = var.is_enabled && var.is_s3_enabled
-  bucket_id     = local.is_s3_enabled ? module.s3.s3_bucket_id : var.aws_s3_bucket_existing.bucket_id
-  #   bucket_arn    = local.is_s3_enabled ? module.s3.s3_bucket_arn : var.aws_s3_bucket_existing.bucket_arn
+  bucket_id     = local.is_s3_enabled ? module.s3[0].s3_bucket_id : try(var.aws_s3_bucket_existing.bucket_id, null)
+  #   bucket_arn    = local.is_s3_enabled ? module.s3[0].s3_bucket_arn : try(var.aws_s3_bucket_existing.bucket_arn, null)
 }
 
 #--------------------------------------------------------------
@@ -56,6 +59,7 @@ resource "aws_iam_role_policy_attachment" "config" {
 resource "aws_config_configuration_recorder" "this" {
   count = var.is_enabled ? 1 : 0
 
+  region   = local.region
   name     = var.aws_config_configuration_recorder.name
   role_arn = aws_iam_role.config[0].arn
   dynamic "recording_group" {
@@ -78,9 +82,11 @@ resource "aws_config_configuration_recorder" "this" {
 # https://registry.terraform.io/modules/terraform-aws-modules/s3-bucket/aws/latest
 #--------------------------------------------------------------
 module "s3" {
-  source        = "terraform-aws-modules/s3-bucket/aws"
-  version       = "5.14.0"
+  source  = "terraform-aws-modules/s3-bucket/aws"
+  version = "5.14.0"
+
   create_bucket = local.is_s3_enabled
+  region        = local.region
 
   attach_access_log_delivery_policy         = true
   attach_analytics_destination_policy       = false
@@ -120,6 +126,7 @@ module "s3" {
 resource "aws_config_delivery_channel" "this" {
   count = var.is_enabled ? 1 : 0
 
+  region         = local.region
   name           = var.aws_config_delivery_channel.name
   s3_bucket_name = local.bucket_id
   sns_topic_arn  = try(var.aws_config_delivery_channel.sns_topic_arn, null)
@@ -142,6 +149,7 @@ resource "aws_config_delivery_channel" "this" {
 resource "aws_config_configuration_recorder_status" "this" {
   count = var.is_enabled ? 1 : 0
 
+  region     = local.region
   name       = aws_config_configuration_recorder.this[0].name
   is_enabled = var.aws_config_configuration_recorder_status.is_enabled
 
@@ -157,6 +165,7 @@ resource "aws_config_configuration_recorder_status" "this" {
 resource "aws_cloudwatch_event_rule" "this" {
   count = var.is_enabled ? 1 : 0
 
+  region      = local.region
   description = var.aws_cloudwatch_event_rule.description
   # event_pattern: https://aws.amazon.com/jp/premiumsupport/knowledge-center/config-resource-non-compliant/
   event_pattern = jsonencode({
@@ -189,8 +198,9 @@ resource "aws_cloudwatch_event_rule" "this" {
 resource "aws_cloudwatch_event_target" "this" {
   count = var.is_enabled ? 1 : 0
 
-  rule = aws_cloudwatch_event_rule.this[0].name
-  arn  = var.aws_cloudwatch_event_target.arn
+  region = local.region
+  rule   = aws_cloudwatch_event_rule.this[0].name
+  arn    = var.aws_cloudwatch_event_target.arn
 
   depends_on = [
     aws_cloudwatch_event_rule.this

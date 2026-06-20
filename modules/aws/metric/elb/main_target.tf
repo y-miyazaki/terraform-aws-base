@@ -13,6 +13,7 @@ resource "aws_cloudwatch_metric_alarm" "httpcode_target_4xx_count" {
     if var.is_enabled && local.effective_thresholds[k].enabled_httpcode_4xx_count
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-alb-${each.value.name}-httpcode-target-4xx-count"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -43,6 +44,7 @@ resource "aws_cloudwatch_metric_alarm" "httpcode_target_5xx_count" {
     if var.is_enabled && local.effective_thresholds[k].enabled_httpcode_5xx_count
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-alb-${each.value.name}-httpcode-target-5xx-count"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -73,6 +75,7 @@ resource "aws_cloudwatch_metric_alarm" "target_response_time" {
     if var.is_enabled && local.effective_thresholds[k].enabled_target_response_time
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-alb-${each.value.name}-target-response-time"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -103,6 +106,7 @@ resource "aws_cloudwatch_metric_alarm" "target_tls_negotiation_error_count" {
     if var.is_enabled && local.effective_thresholds[k].enabled_target_tls_negotiation_error_count
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-alb-${each.value.name}-target-tls-negotiation-error-count"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -134,6 +138,7 @@ resource "aws_cloudwatch_metric_alarm" "unhealthy_host_count" {
     if var.is_enabled && local.effective_thresholds[k].enabled_unhealthy_host_count && contains(keys(v.dimensions), "TargetGroup")
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-alb-${each.value.name}-unhealthy-host-count"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -165,6 +170,7 @@ resource "aws_cloudwatch_metric_alarm" "healthy_host_count" {
     if var.is_enabled && local.effective_thresholds[k].enabled_healthy_host_count && contains(keys(v.dimensions), "TargetGroup")
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-alb-${each.value.name}-healthy-host-count"
   comparison_operator       = "LessThanThreshold"
   evaluation_periods        = 1
@@ -195,6 +201,7 @@ resource "aws_cloudwatch_metric_alarm" "httpcode_target_2xx_count" {
     if var.is_enabled && local.effective_thresholds[k].enabled_httpcode_target_2xx_count
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-alb-${each.value.name}-httpcode-target-2xx-count"
   comparison_operator       = "LessThanThreshold"
   evaluation_periods        = 1
@@ -225,6 +232,7 @@ resource "aws_cloudwatch_metric_alarm" "httpcode_target_3xx_count" {
     if var.is_enabled && local.effective_thresholds[k].enabled_httpcode_target_3xx_count
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-alb-${each.value.name}-httpcode-target-3xx-count"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -256,6 +264,7 @@ resource "aws_cloudwatch_metric_alarm" "request_count_per_target" {
     if var.is_enabled && local.effective_thresholds[k].enabled_request_count_per_target && contains(keys(v.dimensions), "TargetGroup")
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-alb-${each.value.name}-request-count-per-target"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -286,6 +295,7 @@ resource "aws_cloudwatch_metric_alarm" "target_connection_error_count" {
     if var.is_enabled && local.effective_thresholds[k].enabled_target_connection_error_count
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-alb-${each.value.name}-target-connection-error-count"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -317,6 +327,7 @@ resource "aws_cloudwatch_metric_alarm" "anomalous_host_count" {
     if var.is_enabled && local.effective_thresholds[k].enabled_anomalous_host_count && contains(keys(v.dimensions), "TargetGroup")
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-alb-${each.value.name}-anomalous-host-count"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -348,6 +359,7 @@ resource "aws_cloudwatch_metric_alarm" "zonal_shifted_host_count" {
     if var.is_enabled && local.effective_thresholds[k].enabled_zonal_shifted_host_count && contains(keys(v.dimensions), "TargetGroup")
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-alb-${each.value.name}-zonal-shifted-host-count"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1

@@ -25,6 +25,7 @@ No modules.
 | [aws_securityhub_finding_aggregator.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/securityhub_finding_aggregator) | resource |
 | [aws_securityhub_organization_admin_account.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/securityhub_organization_admin_account) | resource |
 | [aws_securityhub_organization_configuration.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/securityhub_organization_configuration) | resource |
+| [aws_region.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/region) | data source |
 
 ## Inputs
 
@@ -38,6 +39,7 @@ No modules.
 | <a name="input_is_enabled_admin"></a> [is\_enabled\_admin](#input\_is\_enabled\_admin) | (Optional) Enable Security Hub organization admin account designation. | `bool` | `false` | no |
 | <a name="input_is_enabled_finding_aggregator"></a> [is\_enabled\_finding\_aggregator](#input\_is\_enabled\_finding\_aggregator) | (Optional) Enable Security Hub finding aggregator. | `bool` | `false` | no |
 | <a name="input_linking_mode"></a> [linking\_mode](#input\_linking\_mode) | (Optional) The finding aggregator linking mode. Valid values are ALL\_REGIONS and SINGLE\_REGION. Default is ALL\_REGIONS. | `string` | `"ALL_REGIONS"` | no |
+| <a name="input_region"></a> [region](#input\_region) | (Optional) AWS region. Defaults to provider region. | `string` | `null` | no |
 | <a name="input_target_id"></a> [target\_id](#input\_target\_id) | (Required) Target ID for the configuration policy association | `string` | n/a | yes |
 
 ## Outputs

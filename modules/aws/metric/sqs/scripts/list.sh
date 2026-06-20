@@ -2,9 +2,8 @@
 #######################################
 # Description: List SQS queue names as a JSON object
 #
-# Usage: ./list.sh [options]
-#   options:
-#   -h, --help    Display this help message
+# Usage: ./list.sh [region]
+#   region: (Optional) AWS region
 #
 # Output:
 # - JSON object with "list" key (comma-separated queue names)
@@ -36,14 +35,18 @@ set -euo pipefail
 #######################################
 function show_usage {
     cat << EOF
-Usage: $(basename "$0") [options]
+Usage: $(basename "$0") [region]
 
 Description: List SQS queue names as a JSON object.
+
+Arguments:
+  region        (Optional) AWS region
 
 Options:
   -h, --help    Display this help message
 
 Example: $(basename "$0")
+Example: $(basename "$0") us-east-1
 EOF
     exit 0
 }
@@ -68,18 +71,14 @@ EOF
 #
 #######################################
 function main {
+    local region="${1:-}" # Optional region parameter
+
     # Parse arguments
-    while [[ $# -gt 0 ]]; do
-        case $1 in
-            -h | --help)
-                show_usage
-                ;;
-            *)
-                echo "Unknown option: $1" >&2
-                show_usage
-                ;;
-        esac
-    done
+    case "$region" in
+        -h | --help)
+            show_usage
+            ;;
+    esac
 
     # Validate dependencies
     if ! command -v aws > /dev/null 2>&1; then
@@ -91,28 +90,27 @@ function main {
         exit 1
     fi
 
-    # Get SQS queue names (extract queue name from URL)
-    mapfile -t list < <(
-        aws sqs list-queues --query 'QueueUrls[]' --output text | tr '\t' '\n' | while read -r url; do
-            # Extract queue name from URL (https://sqs.region.amazonaws.com/account-id/queue-name)
-            echo "${url##*/}"
-        done
-    )
+    # Build AWS CLI command
+    local aws_cmd="aws sqs list-queues --query 'QueueUrls[]' --output json"
 
-    # Output as JSON
-    if [[ ${#list[@]} -eq 0 ]]; then
-        echo '{"list": ""}'
-        exit 0
+    # Add region if provided
+    if [[ -n "$region" ]]; then
+        aws_cmd="$aws_cmd --region \"$region\""
     fi
 
-    joined=$(
-        IFS=,
-        echo "${list[*]}"
-    )
-    echo "{\"list\": \"$joined\"}"
+    # Get SQS queue URLs
+    local list
+    list=$(eval "$aws_cmd")
+
+    # Extract queue names from URLs and convert to comma-separated string
+    local joined
+    joined=$(echo "$list" | jq -r 'if . == null then "" else [.[] | split("/") | last] | join(",") end')
+
+    # Output as JSON - all values must be strings for Terraform external data source
+    jq -n --arg l "$joined" '{list: $l}'
 }
 
 # Only call main if script is executed directly
-if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
+if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
     main "$@"
 fi

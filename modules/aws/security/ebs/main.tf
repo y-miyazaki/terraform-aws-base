@@ -7,6 +7,14 @@
 # See: README.md (tfdocs) in this module for requirements, inputs and examples.
 # Inputs: `is_enabled`, `is_enabled_ebs_encryption_by_default`, `is_enabled_ebs_public_snapshot_block_access`, `state`
 #--------------------------------------------------------------
+data "aws_region" "current" {}
+
+#--------------------------------------------------------------
+# Locals
+#--------------------------------------------------------------
+locals {
+  region = coalesce(var.region, data.aws_region.current.region)
+}
 
 #--------------------------------------------------------------
 # Provides a resource to manage whether default EBS encryption is enabled for your AWS account in the current AWS region.
@@ -16,6 +24,7 @@
 resource "aws_ebs_encryption_by_default" "this" {
   count = var.is_enabled && var.is_enabled_ebs_encryption_by_default ? 1 : 0
 
+  region  = local.region
   enabled = true
 }
 
@@ -26,5 +35,6 @@ resource "aws_ebs_encryption_by_default" "this" {
 resource "aws_ebs_snapshot_block_public_access" "this" {
   count = var.is_enabled && var.is_enabled_ebs_public_snapshot_block_access ? 1 : 0
 
-  state = var.state
+  region = local.region
+  state  = var.state
 }

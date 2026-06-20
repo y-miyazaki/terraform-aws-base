@@ -6,11 +6,20 @@
 #--------------------------------------------------------------
 # eventbridge_scheduler_helper module for schedule filtering
 #--------------------------------------------------------------
+data "aws_region" "current" {}
+
+#--------------------------------------------------------------
+# Locals
+#--------------------------------------------------------------
+locals {
+  region = coalesce(var.region, data.aws_region.current.region)
+}
 module "scheduler_helper" {
   source = "../../_internal/eventbridge_scheduler_helper"
 
-  is_enabled                  = var.is_enabled
-  create_auto_schedules       = var.create_auto_schedules
+  is_enabled            = var.is_enabled
+  create_auto_schedules = var.create_auto_schedules
+
   source_schedules            = local.auto_discovered_schedules
   auto_schedules_include_list = var.auto_schedules_include_list
   auto_schedules_exclude_list = var.auto_schedules_exclude_list
@@ -36,6 +45,7 @@ resource "aws_scheduler_schedule" "stop" {
     if var.is_enabled && v.schedule_expression_stop != null
   }
 
+  region      = local.region
   description = try(each.value.description, var.description, "Disable AWS Batch job queue ${each.value.job_queue}")
   flexible_time_window {
     mode = "OFF"
@@ -68,6 +78,7 @@ resource "aws_scheduler_schedule" "start" {
     if var.is_enabled && v.schedule_expression_start != null
   }
 
+  region      = local.region
   description = try(each.value.description, var.description, "Enable AWS Batch job queue ${each.value.job_queue}")
   flexible_time_window {
     mode = "OFF"

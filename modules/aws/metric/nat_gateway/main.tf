@@ -3,14 +3,24 @@
 # Purpose: Provide CloudWatch metric alarms for NAT Gateways with optional auto-discovery (bytes, packets, connections, errors).
 # Notes: Unified tagging; auto discovery filters NAT Gateways via exclude/include list.
 #--------------------------------------------------------------
+data "aws_region" "current" {}
+
 #--------------------------------------------------------------
-# Auto-discovery filter module
+# Locals
+#--------------------------------------------------------------
+locals {
+  region = coalesce(var.region, data.aws_region.current.region)
+}
+
+#--------------------------------------------------------------
+# Auto-discovery metric filter module
 #--------------------------------------------------------------
 module "helper" {
-  source     = "../../_internal/metric_helper"
-  is_enabled = var.is_enabled
+  source = "../../_internal/metric_helper"
 
-  create_auto        = var.create_auto_dimensions
+  is_enabled  = var.is_enabled
+  create_auto = var.create_auto_dimensions
+
   source_list        = data.aws_nat_gateways.this.ids
   include_list       = var.auto_dimensions_include_list
   exclude_list       = var.auto_dimensions_exclude_list
@@ -41,6 +51,7 @@ resource "aws_cloudwatch_metric_alarm" "active_connection_count" {
     if var.is_enabled && local.effective_thresholds[k].enabled_active_connection_count
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-nat-gateway-${each.value.name}-active-connection-count"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -71,6 +82,7 @@ resource "aws_cloudwatch_metric_alarm" "bytes_out_to_destination" {
     if var.is_enabled && local.effective_thresholds[k].enabled_bytes_out_to_destination
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-nat-gateway-${each.value.name}-bytes-out-to-destination"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -101,6 +113,7 @@ resource "aws_cloudwatch_metric_alarm" "bytes_in_from_source" {
     if var.is_enabled && local.effective_thresholds[k].enabled_bytes_in_from_source
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-nat-gateway-${each.value.name}-bytes-in-from-source"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -131,6 +144,7 @@ resource "aws_cloudwatch_metric_alarm" "bytes_in_from_destination" {
     if var.is_enabled && local.effective_thresholds[k].enabled_bytes_in_from_destination
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-nat-gateway-${each.value.name}-bytes-in-from-destination"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -161,6 +175,7 @@ resource "aws_cloudwatch_metric_alarm" "bytes_out_to_source" {
     if var.is_enabled && local.effective_thresholds[k].enabled_bytes_out_to_source
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-nat-gateway-${each.value.name}-bytes-out-to-source"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -191,6 +206,7 @@ resource "aws_cloudwatch_metric_alarm" "connection_attempt_count" {
     if var.is_enabled && local.effective_thresholds[k].enabled_connection_attempt_count
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-nat-gateway-${each.value.name}-connection-attempt-count"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -221,6 +237,7 @@ resource "aws_cloudwatch_metric_alarm" "connection_established_count" {
     if var.is_enabled && local.effective_thresholds[k].enabled_connection_established_count
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-nat-gateway-${each.value.name}-connection-established-count"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -251,6 +268,7 @@ resource "aws_cloudwatch_metric_alarm" "error_port_allocation" {
     if var.is_enabled && local.effective_thresholds[k].enabled_error_port_allocation
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-nat-gateway-${each.value.name}-error-port-allocation"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -281,6 +299,7 @@ resource "aws_cloudwatch_metric_alarm" "idle_timeout_count" {
     if var.is_enabled && local.effective_thresholds[k].enabled_idle_timeout_count
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-nat-gateway-${each.value.name}-idle-timeout-count"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -311,6 +330,7 @@ resource "aws_cloudwatch_metric_alarm" "packets_drop_count" {
     if var.is_enabled && local.effective_thresholds[k].enabled_packets_drop_count
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-nat-gateway-${each.value.name}-packets-drop-count"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -341,6 +361,7 @@ resource "aws_cloudwatch_metric_alarm" "packets_in_from_destination" {
     if var.is_enabled && local.effective_thresholds[k].enabled_packets_in_from_destination
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-nat-gateway-${each.value.name}-packets-in-from-destination"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -371,6 +392,7 @@ resource "aws_cloudwatch_metric_alarm" "packets_in_from_source" {
     if var.is_enabled && local.effective_thresholds[k].enabled_packets_in_from_source
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-nat-gateway-${each.value.name}-packets-in-from-source"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -401,6 +423,7 @@ resource "aws_cloudwatch_metric_alarm" "packets_out_to_destination" {
     if var.is_enabled && local.effective_thresholds[k].enabled_packets_out_to_destination
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-nat-gateway-${each.value.name}-packets-out-to-destination"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -431,6 +454,7 @@ resource "aws_cloudwatch_metric_alarm" "packets_out_to_source" {
     if var.is_enabled && local.effective_thresholds[k].enabled_packets_out_to_source
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-nat-gateway-${each.value.name}-packets-out-to-source"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -461,6 +485,7 @@ resource "aws_cloudwatch_metric_alarm" "peak_bytes_per_second" {
     if var.is_enabled && local.effective_thresholds[k].enabled_peak_bytes_per_second
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-nat-gateway-${each.value.name}-peak-bytes-per-second"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -491,6 +516,7 @@ resource "aws_cloudwatch_metric_alarm" "peak_packets_per_second" {
     if var.is_enabled && local.effective_thresholds[k].enabled_peak_packets_per_second
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-nat-gateway-${each.value.name}-peak-packets-per-second"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1

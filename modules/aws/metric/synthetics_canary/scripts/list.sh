@@ -2,9 +2,8 @@
 #######################################
 # Description: List Synthetics Canary names as a JSON object
 #
-# Usage: ./list.sh [options]
-#   options:
-#   -h, --help    Display this help message
+# Usage: ./list.sh [region]
+#   region: (Optional) AWS region
 #
 # Output:
 # - JSON object with "list" key (comma-separated canary names)
@@ -36,14 +35,18 @@ set -euo pipefail
 #######################################
 function show_usage {
     cat << EOF
-Usage: $(basename "$0") [options]
+Usage: $(basename "$0") [region]
 
 Description: List Synthetics Canary names as a JSON object.
+
+Arguments:
+  region        (Optional) AWS region
 
 Options:
   -h, --help    Display this help message
 
 Example: $(basename "$0")
+Example: $(basename "$0") us-east-1
 EOF
     exit 0
 }
@@ -52,13 +55,11 @@ EOF
 # main: Main execution function
 #
 # Description:
-#   Main execution function
+#   Queries AWS Batch to list job queue names
+#   and outputs the result as JSON.
 #
 # Arguments:
 #   $@ - Command line arguments
-#
-# Global Variables:
-#   None
 #
 # Returns:
 #   0 on success, 1 on failure
@@ -68,44 +69,44 @@ EOF
 #
 #######################################
 function main {
+    local region="${1:-}" # Optional region parameter
+
     # Parse arguments
-    while [[ $# -gt 0 ]]; do
-        case $1 in
-            -h | --help)
-                show_usage
-                ;;
-            *)
-                echo "Unknown option: $1" >&2
-                show_usage
-                ;;
-        esac
-    done
+    case "$region" in
+        -h | --help)
+            show_usage
+            ;;
+    esac
 
     # Validate dependencies
     if ! command -v aws > /dev/null 2>&1; then
         echo "ERROR: aws CLI is required" >&2
         exit 1
     fi
+
     if ! command -v jq > /dev/null 2>&1; then
         echo "ERROR: jq is required" >&2
         exit 1
     fi
 
-    # Get Synthetics Canary names
-    mapfile -t list < <(aws synthetics describe-canaries | jq -r '.Canaries[].Name')
+    # Build AWS CLI command
+    local aws_cmd="aws synthetics describe-canaries --query 'Canaries[].Name' --output json"
 
-    # Output as JSON
-    if [[ ${#list[@]} -eq 0 ]]; then
-        echo '{"list": ""}'
-        exit 0
+    # Add region if provided
+    if [[ -n "$region" ]]; then
+        aws_cmd="$aws_cmd --region \"$region\""
     fi
 
-    # Join with comma, safely
-    joined=$(
-        IFS=,
-        echo "${list[*]}"
-    )
-    echo "{\"list\": \"$joined\"}"
+    # Get Synthetics Canary names
+    local list
+    list=$(eval "$aws_cmd")
+
+    # Convert JSON array to comma-separated string
+    local joined
+    joined=$(echo "$list" | jq -r 'join(",")')
+
+    # Output as JSON - all values must be strings for Terraform external data source
+    jq -n --arg l "$joined" '{list: $l}'
 }
 
 # Only call main if script is executed directly

@@ -26,6 +26,7 @@ No modules.
 | [aws_iam_role_policy_attachment.aws_resource_explorer_read_only_access](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy_attachment) | resource |
 | [aws_iam_role_policy_attachment.securityhub](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy_attachment) | resource |
 | [aws_iam_policy_document.securityhub](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
+| [aws_region.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/region) | data source |
 
 ## Inputs
 
@@ -33,6 +34,7 @@ No modules.
 | ---- | ----------- | ---- | ------- | :------: |
 | <a name="input_logging_level"></a> [logging\_level](#input\_logging\_level) | (Optional) Specifies the logging level for this configuration: ERROR, INFO or NONE. | `string` | `"ERROR"` | no |
 | <a name="input_name"></a> [name](#input\_name) | (Required) Base name prefix for all Chatbot related resources. | `string` | n/a | yes |
+| <a name="input_region"></a> [region](#input\_region) | (Optional) AWS region. Defaults to provider region. | `string` | `null` | no |
 | <a name="input_slack_channel_id"></a> [slack\_channel\_id](#input\_slack\_channel\_id) | (Required) Set the Slack channel ID. | `string` | n/a | yes |
 | <a name="input_slack_team_id"></a> [slack\_team\_id](#input\_slack\_team\_id) | (Required) Set the Slack workspace ID. | `string` | n/a | yes |
 | <a name="input_sns_topic_arns"></a> [sns\_topic\_arns](#input\_sns\_topic\_arns) | (Required) Specify the SNS topic ARNs to notify Chatbot. | `list(string)` | n/a | yes |

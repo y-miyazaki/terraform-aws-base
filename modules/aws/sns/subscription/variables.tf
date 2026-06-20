@@ -42,6 +42,7 @@ variable "aws_sns_topic" {
   )
   description = "(Required) The resource of aws_sns_topic."
 }
+
 variable "aws_sns_topic_subscription" {
   type = object(
     {
@@ -65,13 +66,21 @@ variable "aws_sns_topic_subscription" {
   )
   description = "(Required) The resource of aws_sns_topic_subscription."
 }
+
 variable "kms_master_key_id" {
   type        = string
   description = "(Optional) The KMS master key."
   default     = null
 }
+
 variable "tags" {
   type        = map(any)
   description = "(Optional) Key-value map of resource tags."
+  default     = null
+}
+
+variable "region" {
+  type        = string
+  description = "(Optional) AWS region. Defaults to provider region."
   default     = null
 }

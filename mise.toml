@@ -32,89 +32,90 @@ package_manager = "pnpm" # Package manager to use for npm-based tools; set to nu
 uvx = true # Install uv/uvx via pipx for better isolation and performance.
 
 [tools]
-# Runtime tools
-python = "3.14.5"
+# A Runtime tools
+aqua = "v2.60.0"
 node = "24.16.0"
-pnpm = { version = "11.5.3", depends = ["node"] }
-aqua = "v2.59.1"
+pnpm = { version = "11.7.0", depends = ["node"] }
+python = "3.14.6"
 
-# Utility tools
-"aqua:astral-sh/uv" = "0.11.19"      # uv/uvx
-"aqua:BurntSushi/ripgrep" = "15.1.0" # grep alternative
-"aqua:google/go-jsonnet" = "0.22.0"  # Jsonnet command-line tool
-"aqua:tamasfe/taplo" = "0.10.0"      # TOML formatter / LSP
-"aqua:jdx/usage" = "3.4.0"           # usage CLI tool for command help and completions
-
-# Security related tools
-"aqua:aquasecurity/trivy" = "0.71.0" # vulnerability scanner
-"aqua:gitleaks/gitleaks" = "8.30.1" # secret scanner
-"pipx:pre-commit" = { version = "4.6.0", depends = [
-  "python",
-] } # pre-commit framework
-"pipx:aws-mfa" = { version = "0.0.12", depends = ["python"] } # AWS MFA helper
+# AI agent tools
+"github:microsoft/apm" = "v0.20.0"               # agent package manager
+"npm:@anthropic-ai/claude-code" = { version = "2.1.179", depends = [
+  "node",
+], install_env = { NPM_CONFIG_IGNORE_SCRIPTS = "false" }, postinstall = "node $(find $MISE_TOOL_INSTALL_PATH -name 'install.cjs' -path '*/@anthropic-ai/claude-code/*' | head -1)" } # Claude Code CLI
+"github:DeusData/codebase-memory-mcp" = "v0.7.0" # codebase memory MCP server
+"aqua:github/copilot-cli" = "1.0.61"             # GitHub Copilot CLI
+"pipx:headroom-ai" = { version = "0.26.0", extras = "proxy,mcp,bedrock", depends = ["python"] }
+"github:yvgude/lean-ctx" = "v3.7.5"              # context optimizer
+"github:microsoft/waza" = "0.33.0"               # agent skill evaluator
 
 # AWS related tools
-"aqua:aws/aws-cli" = "2.34.64"      # AWS CLI
-"aqua:aws/aws-sam-cli" = "1.161.1"  # SAM CLI tool
-"aqua:kayac/ecspresso" = "2.8.4"    # ECS deployment tool
-"aqua:Songmu/ecschedule" = "0.19.0" # ECS scheduled tasks deployment tool
-
-# GitHub related tools
-"aqua:cli/cli" = "2.93.0"                                             # GitHub CLI
-"aqua:github/copilot-cli" = "1.0.61"                                  # GitHub Copilot CLI
-"aqua:rhysd/actionlint" = "1.7.12"                                    # GitHub Actions linter
-"aqua:suzuki-shunsuke/disable-checkout-persist-credentials" = "1.0.0" # disable persist-credentials in checkout action
-"aqua:suzuki-shunsuke/ghalint" = "1.5.6"                              # GitHub Actions linter
-"aqua:suzuki-shunsuke/ghatm" = "1.0.0"                                # auto-set timeout-minutes for GitHub Actions jobs
-"aqua:suzuki-shunsuke/pinact" = "4.0.0"                              # GitHub Actions pinning tool
-"aqua:zizmorcore/zizmor" = "1.25.2"                                   # GitHub Actions security auditor
-
-# Go related tools
-"aqua:air-verse/air" = "1.65.3"                              # live reload
-"aqua:bufbuild/buf" = "1.70.0"                               # protobuf linter and formatter
-"aqua:go-delve/delve" = "1.26.3"                             # debugger
-"aqua:go-swagger/go-swagger" = "0.34.1"                      # API documentation generator
-"aqua:golangci/golangci-lint" = "2.12.2"                     # linter
-"aqua:goreleaser/goreleaser" = "2.16.0"                      # release automation
-"aqua:grpc/grpc-go/protoc-gen-go-grpc" = "1.6.1"             # gRPC code generator
-"aqua:ko-build/ko" = "0.18.1"                                # container builder
-"aqua:mvdan/gofumpt" = "0.10.0"                              # code formatter
-"aqua:protocolbuffers/protobuf-go/protoc-gen-go" = "1.36.11" # protobuf code generator
-"aqua:protocolbuffers/protobuf/protoc" = "35.0"              # protobuf compiler
-"aqua:swaggo/swag" = "1.16.6"                                # API documentation generator
-"aqua:vektra/mockery" = "3.7.0"                              # mock code generator for interfaces
-# Use go backend for go_install-type packages (aqua backend does not support these).
-"go:golang.org/x/tools/gopls" = "v0.22.0"                               # Go language server
-"go:golang.org/x/vuln/cmd/govulncheck" = "1.3.0"                        # vulnerability scanner
-"go:github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen" = "v2.7.1" # OpenAPI code generator
-
-# Terraform related tools
-"aqua:getsops/sops" = "3.13.1"                  # encryption tool
-"aqua:hashicorp/terraform" = "1.15.5"           # infrastructure as code
-"aqua:terraform-docs/terraform-docs" = "0.24.0" # documentation generator
-"aqua:terraform-linters/tflint" = "0.63.1"      # linter
-
-# Lint / Formatter tools (npm)
-"npm:markdownlint-cli2" = { version = "0.22.1", depends = [
-  "node",
-], install_env = { NPM_CONFIG_IGNORE_SCRIPTS = "true" } } # Markdown linter
-"npm:markdown-link-check" = { version = "3.14.2", depends = [
-  "node",
-], install_env = { NPM_CONFIG_IGNORE_SCRIPTS = "true" } } # Markdown link checker
-"npm:cspell" = { version = "10.0.1", depends = [
-  "node",
-], install_env = { NPM_CONFIG_IGNORE_SCRIPTS = "true" } } # spell checker
-
-# AWS related tools (npm)
+"aqua:aws/aws-cli" = "2.35.4"      # AWS CLI
+"aqua:aws/aws-sam-cli" = "1.162.1"  # SAM CLI tool
 "npm:awsp" = { version = "0.2.0", depends = [
   "node",
 ], install_env = { NPM_CONFIG_IGNORE_SCRIPTS = "true" } } # AWS profile switcher
+"aqua:kayac/ecspresso" = "2.8.4"    # ECS deployment tool
+"aqua:Songmu/ecschedule" = "0.19.0" # ECS scheduled tasks deployment tool
+"pipx:aws-mfa" = { version = "0.0.12", depends = ["python"] } # AWS MFA helper
 
-# AI agent tools
-"github:microsoft/apm" = "v0.18.0"               # agent package manager
-"github:microsoft/waza" = "0.33.0"              # agent skill evaluator
-"github:yvgude/lean-ctx" = "v3.7.5"            # context optimizer
-"github:DeusData/codebase-memory-mcp" = "v0.7.0" # codebase memory MCP server
+# GitHub related tools
+"aqua:rhysd/actionlint" = "1.7.12"                                    # GitHub Actions linter
+"aqua:suzuki-shunsuke/disable-checkout-persist-credentials" = "1.0.0" # disable persist-credentials in checkout action
+"aqua:cli/cli" = "2.94.0"                                             # GitHub CLI (gh)
+"aqua:suzuki-shunsuke/ghalint" = "1.5.6"                              # GitHub Actions linter
+"aqua:suzuki-shunsuke/ghatm" = "1.0.0"                                # auto-set timeout-minutes for GitHub Actions jobs
+"aqua:suzuki-shunsuke/pinact" = "4.1.0"                               # GitHub Actions pinning tool
+"aqua:zizmorcore/zizmor" = "1.25.2"                                   # GitHub Actions security auditor
+
+# Go related tools
+"aqua:air-verse/air" = "1.65.3"                                           # live reload
+"aqua:bufbuild/buf" = "1.70.0"                                            # protobuf linter and formatter
+"aqua:go-delve/delve" = "1.26.3"                                          # debugger
+"aqua:mvdan/gofumpt" = "0.10.0"                                           # code formatter
+"aqua:golangci/golangci-lint" = "2.12.2"                                  # linter
+"aqua:goreleaser/goreleaser" = "2.16.0"                                   # release automation
+"go:golang.org/x/tools/gopls" = "v0.22.0"                                 # Go language server
+"go:golang.org/x/vuln/cmd/govulncheck" = "1.3.0"                          # vulnerability scanner
+"aqua:ko-build/ko" = "0.18.1"                                             # container builder
+"aqua:vektra/mockery" = "3.7.1"                                           # mock code generator for interfaces
+"go:github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen" = "v2.7.1"  # OpenAPI code generator
+"aqua:protocolbuffers/protobuf/protoc" = "35.0"                            # protobuf compiler
+"aqua:protocolbuffers/protobuf-go/protoc-gen-go" = "1.36.11"              # protobuf code generator
+"aqua:grpc/grpc-go/protoc-gen-go-grpc" = "1.6.1"                          # gRPC code generator
+"aqua:swaggo/swag" = "1.16.6"                                             # API documentation generator
+"aqua:go-swagger/go-swagger" = "0.34.1"                                   # API documentation generator (swagger)
+
+# Lint / Formatter tools
+"npm:cspell" = { version = "10.0.1", depends = [
+  "node",
+], install_env = { NPM_CONFIG_IGNORE_SCRIPTS = "true" } } # spell checker
+"npm:markdown-link-check" = { version = "3.14.2", depends = [
+  "node",
+], install_env = { NPM_CONFIG_IGNORE_SCRIPTS = "true" } } # Markdown link checker
+"npm:markdownlint-cli2" = { version = "0.22.1", depends = [
+  "node",
+], install_env = { NPM_CONFIG_IGNORE_SCRIPTS = "true" } } # Markdown linter
+
+# Security related tools
+"aqua:gitleaks/gitleaks" = "8.30.1"  # secret scanner
+"pipx:pre-commit" = { version = "4.6.0", depends = [
+  "python",
+] } # pre-commit framework
+"aqua:aquasecurity/trivy" = "0.71.0" # vulnerability scanner
+
+# Terraform related tools
+"aqua:getsops/sops" = "3.13.1"                  # encryption tool
+"aqua:hashicorp/terraform" = "1.15.6"           # infrastructure as code
+"aqua:terraform-docs/terraform-docs" = "0.24.0" # documentation generator
+"aqua:terraform-linters/tflint" = "0.63.1"      # linter
+
+# Utility tools
+"aqua:google/go-jsonnet" = "0.22.0"  # Jsonnet command-line tool
+"aqua:BurntSushi/ripgrep" = "15.1.0" # grep alternative (rg)
+"aqua:tamasfe/taplo" = "0.10.0"      # TOML formatter / LSP
+"aqua:jdx/usage" = "3.4.0"           # usage CLI tool for command help and completions
+"aqua:astral-sh/uv" = "0.11.21"      # uv/uvx
 
 [tasks.mise-install]
 description = "Install tools defined in mise.toml"

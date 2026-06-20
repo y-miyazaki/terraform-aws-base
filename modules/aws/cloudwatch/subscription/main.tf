@@ -3,10 +3,13 @@
 # Purpose: Create CloudWatch Logs subscription filters forwarding log events to destinations (e.g., Kinesis Firehose) with supporting IAM role and policy.
 # Notes: Uses unified tagging; role trust limited to logs service in specific region; future improvement: parameterize destination service types.
 #--------------------------------------------------------------
+data "aws_region" "current" {}
+
 #--------------------------------------------------------------
 # Locals
 #--------------------------------------------------------------
 locals {
+  region = coalesce(var.region, data.aws_region.current.region)
   aws_cloudwatch_log_subscription_filter = {
     for k, v in var.aws_cloudwatch_log_subscription_filter : v.name => v
   }
@@ -22,7 +25,7 @@ resource "aws_iam_role" "this" {
       {
         Effect = "Allow"
         Principal = {
-          Service = "logs.${var.region}.amazonaws.com"
+          Service = "logs.${local.region}.amazonaws.com"
         }
         Action = "sts:AssumeRole"
       }
@@ -49,7 +52,7 @@ data "aws_iam_policy_document" "this" {
       "firehose:PutRecordBatch",
     ]
     resources = [
-      "arn:aws:firehose:${var.region}:${var.account_id}:deliverystream/*"
+      "arn:aws:firehose:${local.region}:${var.account_id}:deliverystream/*"
     ]
   }
   statement {
@@ -59,7 +62,7 @@ data "aws_iam_policy_document" "this" {
       "kms:GenerateDataKey*",
     ]
     resources = [
-      "arn:aws:kms:${var.region}:${var.account_id}:key/*"
+      "arn:aws:kms:${local.region}:${var.account_id}:key/*"
     ]
   }
 
@@ -91,6 +94,7 @@ resource "aws_iam_role_policy_attachment" "this" {
 resource "aws_cloudwatch_log_subscription_filter" "this" {
   for_each = local.aws_cloudwatch_log_subscription_filter
 
+  region          = local.region
   name            = each.value.name
   destination_arn = each.value.destination_arn
   filter_pattern  = try(each.value.filter_pattern, null)

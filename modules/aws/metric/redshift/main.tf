@@ -3,14 +3,24 @@
 # Purpose: Provide CloudWatch metric alarms for Amazon Redshift clusters (performance, storage, query, WLM, and resource utilization).
 # Notes: Includes auto-discovery of clusters via external script when enabled; unified tagging pattern applied; future improvement: replace external data source with native data source when possible.
 #--------------------------------------------------------------
+data "aws_region" "current" {}
+
 #--------------------------------------------------------------
-# Auto-discovery filter module
+# Locals
+#--------------------------------------------------------------
+locals {
+  region = coalesce(var.region, data.aws_region.current.region)
+}
+
+#--------------------------------------------------------------
+# Auto-discovery metric filter module
 #--------------------------------------------------------------
 module "helper" {
-  source     = "../../_internal/metric_helper"
-  is_enabled = var.is_enabled
+  source = "../../_internal/metric_helper"
 
-  create_auto        = var.create_auto_dimensions
+  is_enabled  = var.is_enabled
+  create_auto = var.create_auto_dimensions
+
   source_list        = var.create_auto_dimensions && length(data.external.list) > 0 ? split(",", data.external.list[0].result.list) : []
   include_list       = var.auto_dimensions_include_list
   exclude_list       = var.auto_dimensions_exclude_list
@@ -41,6 +51,7 @@ resource "aws_cloudwatch_metric_alarm" "commit_queue_length" {
     if var.is_enabled && local.effective_thresholds[k].enabled_commit_queue_length
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-redshift-${each.value.name}-commit-queue-length"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -71,6 +82,7 @@ resource "aws_cloudwatch_metric_alarm" "concurrency_scaling_active_clusters" {
     if var.is_enabled && local.effective_thresholds[k].enabled_concurrency_scaling_active_clusters
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-redshift-${each.value.name}-concurrency-scaling-active-clusters"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -101,6 +113,7 @@ resource "aws_cloudwatch_metric_alarm" "concurrency_scaling_seconds" {
     if var.is_enabled && local.effective_thresholds[k].enabled_concurrency_scaling_seconds
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-redshift-${each.value.name}-concurrency-scaling-seconds"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -131,6 +144,7 @@ resource "aws_cloudwatch_metric_alarm" "cpu_utilization" {
     if var.is_enabled && local.effective_thresholds[k].enabled_cpu_utilization
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-redshift-${each.value.name}-cpu-utilization"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -161,6 +175,7 @@ resource "aws_cloudwatch_metric_alarm" "database_connections" {
     if var.is_enabled && local.effective_thresholds[k].enabled_database_connections
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-redshift-${each.value.name}-database-connections"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -191,6 +206,7 @@ resource "aws_cloudwatch_metric_alarm" "health_status" {
     if var.is_enabled && local.effective_thresholds[k].enabled_health_status
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-redshift-${each.value.name}-health-status"
   comparison_operator       = "LessThanThreshold"
   evaluation_periods        = 1
@@ -221,6 +237,7 @@ resource "aws_cloudwatch_metric_alarm" "maintenance_mode" {
     if var.is_enabled && local.effective_thresholds[k].enabled_maintenance_mode
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-redshift-${each.value.name}-maintenance-mode"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -251,6 +268,7 @@ resource "aws_cloudwatch_metric_alarm" "max_configured_concurrency_scaling_clust
     if var.is_enabled && local.effective_thresholds[k].enabled_max_configured_concurrency_scaling_clusters
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-redshift-${each.value.name}-max-configured-concurrency-scaling-clusters"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -281,6 +299,7 @@ resource "aws_cloudwatch_metric_alarm" "network_receive_throughput" {
     if var.is_enabled && local.effective_thresholds[k].enabled_network_receive_throughput
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-redshift-${each.value.name}-network-receive-throughput"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -311,6 +330,7 @@ resource "aws_cloudwatch_metric_alarm" "num_exceeded_schema_quotas" {
     if var.is_enabled && local.effective_thresholds[k].enabled_num_exceeded_schema_quotas
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-redshift-${each.value.name}-num-exceeded-schema-quotas"
   comparison_operator       = "GreaterThanThreshold"
   evaluation_periods        = 1
@@ -341,6 +361,7 @@ resource "aws_cloudwatch_metric_alarm" "network_transmit_throughput" {
     if var.is_enabled && local.effective_thresholds[k].enabled_network_transmit_throughput
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-redshift-${each.value.name}-network-transmit-throughput"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -371,6 +392,7 @@ resource "aws_cloudwatch_metric_alarm" "percentage_disk_space_used" {
     if var.is_enabled && local.effective_thresholds[k].enabled_percentage_disk_space_used
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-redshift-${each.value.name}-percentage-disk-space-used"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -401,6 +423,7 @@ resource "aws_cloudwatch_metric_alarm" "percentage_quota_used" {
     if var.is_enabled && local.effective_thresholds[k].enabled_percentage_quota_used
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-redshift-${each.value.name}-percentage-quota-used"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -431,6 +454,7 @@ resource "aws_cloudwatch_metric_alarm" "queries_completed_per_second" {
     if var.is_enabled && local.effective_thresholds[k].enabled_queries_completed_per_second
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-redshift-${each.value.name}-queries-completed-per-second"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -461,6 +485,7 @@ resource "aws_cloudwatch_metric_alarm" "query_duration" {
     if var.is_enabled && local.effective_thresholds[k].enabled_query_duration
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-redshift-${each.value.name}-query-duration"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -491,6 +516,7 @@ resource "aws_cloudwatch_metric_alarm" "query_runtime_breakdown" {
     if var.is_enabled && local.effective_thresholds[k].enabled_query_runtime_breakdown
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-redshift-${each.value.name}-query-runtime-breakdown"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -521,6 +547,7 @@ resource "aws_cloudwatch_metric_alarm" "read_iops" {
     if var.is_enabled && local.effective_thresholds[k].enabled_read_iops
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-redshift-${each.value.name}-read-iops"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -551,6 +578,7 @@ resource "aws_cloudwatch_metric_alarm" "read_latency" {
     if var.is_enabled && local.effective_thresholds[k].enabled_read_latency
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-redshift-${each.value.name}-read-latency"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -581,6 +609,7 @@ resource "aws_cloudwatch_metric_alarm" "read_throughput" {
     if var.is_enabled && local.effective_thresholds[k].enabled_read_throughput
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-redshift-${each.value.name}-read-throughput"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -611,6 +640,7 @@ resource "aws_cloudwatch_metric_alarm" "redshift_managed_storage_total_capacity"
     if var.is_enabled && local.effective_thresholds[k].enabled_redshift_managed_storage_total_capacity
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-redshift-${each.value.name}-redshift-managed-storage-total-capacity"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -641,6 +671,7 @@ resource "aws_cloudwatch_metric_alarm" "schema_quota" {
     if var.is_enabled && local.effective_thresholds[k].enabled_schema_quota
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-redshift-${each.value.name}-schema-quota"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -671,6 +702,7 @@ resource "aws_cloudwatch_metric_alarm" "storage_used" {
     if var.is_enabled && local.effective_thresholds[k].enabled_storage_used
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-redshift-${each.value.name}-storage-used"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -701,6 +733,7 @@ resource "aws_cloudwatch_metric_alarm" "total_table_count" {
     if var.is_enabled && local.effective_thresholds[k].enabled_total_table_count
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-redshift-${each.value.name}-total-table-count"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -731,6 +764,7 @@ resource "aws_cloudwatch_metric_alarm" "wlm_queue_length" {
     if var.is_enabled && local.effective_thresholds[k].enabled_wlm_queue_length
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-redshift-${each.value.name}-wlm-queue-length"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -763,6 +797,7 @@ resource "aws_cloudwatch_metric_alarm" "wlm_queue_wait_time" {
     if var.is_enabled && local.effective_thresholds[k].enabled_wlm_queue_wait_time
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-redshift-${each.value.name}-wlm-queue-wait-time"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -795,6 +830,7 @@ resource "aws_cloudwatch_metric_alarm" "wlm_queries_completed_per_second" {
     if var.is_enabled && local.effective_thresholds[k].enabled_wlm_queries_completed_per_second
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-redshift-${each.value.name}-enabled-wlm-queries-completed-per-second"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -827,6 +863,7 @@ resource "aws_cloudwatch_metric_alarm" "wlm_query_duration" {
     if var.is_enabled && local.effective_thresholds[k].enabled_wlm_query_duration
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-redshift-${each.value.name}-wlm-query-duration"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -859,6 +896,7 @@ resource "aws_cloudwatch_metric_alarm" "wlm_running_queries" {
     if var.is_enabled && local.effective_thresholds[k].enabled_wlm_running_queries
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-redshift-${each.value.name}-wlm-running-queries"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -891,6 +929,7 @@ resource "aws_cloudwatch_metric_alarm" "write_iops" {
     if var.is_enabled && local.effective_thresholds[k].enabled_write_iops
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-redshift-${each.value.name}-write-iops"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -921,6 +960,7 @@ resource "aws_cloudwatch_metric_alarm" "write_latency" {
     if var.is_enabled && local.effective_thresholds[k].enabled_write_latency
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-redshift-${each.value.name}-write-latency"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -951,6 +991,7 @@ resource "aws_cloudwatch_metric_alarm" "write_throughput" {
     if var.is_enabled && local.effective_thresholds[k].enabled_write_throughput
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-redshift-${each.value.name}-write-throughput"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1

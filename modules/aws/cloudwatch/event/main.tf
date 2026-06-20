@@ -6,7 +6,17 @@
 #--------------------------------------------------------------
 # Provides an EventBridge Rule resource.
 #--------------------------------------------------------------
+data "aws_region" "current" {}
+
+#--------------------------------------------------------------
+# Locals
+#--------------------------------------------------------------
+locals {
+  region = coalesce(var.region, data.aws_region.current.region)
+}
+
 resource "aws_cloudwatch_event_rule" "this" {
+  region              = local.region
   description         = try(var.aws_cloudwatch_event_rule.description, null)
   event_pattern       = try(var.aws_cloudwatch_event_rule.event_pattern, null)
   name                = try(var.aws_cloudwatch_event_rule.name, null)
@@ -21,6 +31,7 @@ resource "aws_cloudwatch_event_rule" "this" {
 # Provides an EventBridge Target resource.
 #--------------------------------------------------------------
 resource "aws_cloudwatch_event_target" "this" {
+  region     = local.region
   rule       = aws_cloudwatch_event_rule.this.name
   target_id  = try(var.aws_cloudwatch_event_target.target_id, null)
   arn        = try(var.aws_cloudwatch_event_target.arn, null)

@@ -5,10 +5,12 @@ variable "account_id" {
   type        = string
   description = "(Required) The AWS account ID."
 }
+
 variable "region" {
   type        = string
   description = "(Required) The AWS region."
 }
+
 variable "aws_iam_role" {
   type = object(
     {
@@ -27,6 +29,7 @@ variable "aws_iam_role" {
     path        = "/"
   }
 }
+
 variable "aws_iam_policy" {
   type = object(
     {
@@ -45,10 +48,12 @@ variable "aws_iam_policy" {
     path        = "/"
   }
 }
+
 variable "bucket_arn" {
   type        = string
   description = "(Required) The s3 bucket arn."
 }
+
 variable "tags" {
   type        = map(any)
   description = "(Optional) A mapping of tags to assign to the resource."

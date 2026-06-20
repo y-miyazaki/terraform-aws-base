@@ -6,13 +6,15 @@
 # Notes: Lambda zip files are built in a separate repository and placed in
 #        lambda/outputs/. This module references them via local_existing_package.
 #--------------------------------------------------------------
-
-#--------------------------------------------------------------
-# Data: IAM Identity Center instance (one per account)
-#--------------------------------------------------------------
+data "aws_region" "current" {}
 data "aws_ssoadmin_instances" "this" {}
 
+#--------------------------------------------------------------
+# Locals
+#--------------------------------------------------------------
 locals {
+  region = coalesce(var.region, data.aws_region.current.region)
+  # Data: IAM Identity Center instance (one per account)
   identity_center_arn = tolist(data.aws_ssoadmin_instances.this.arns)[0]
   identity_store_id   = tolist(data.aws_ssoadmin_instances.this.identity_store_ids)[0]
 }
@@ -24,6 +26,8 @@ locals {
 module "dynamodb_table_requests" {
   source  = "terraform-aws-modules/dynamodb-table/aws"
   version = "5.5.0"
+
+  region = local.region
 
   name                = "${var.name_prefix}jit-access-requests"
   autoscaling_enabled = false
@@ -80,17 +84,19 @@ module "dynamodb_table_requests" {
 # SSM Parameter Store: profiles configuration
 #--------------------------------------------------------------
 resource "aws_ssm_parameter" "approver_channel" {
-  name  = "${var.ssm_parameter_prefix}/config/approver-channel"
-  type  = "String"
-  value = var.slack.approver_channel_id
+  region = local.region
+  name   = "${var.ssm_parameter_prefix}/config/approver-channel"
+  type   = "String"
+  value  = var.slack.approver_channel_id
 
   tags = var.tags
 }
 
 resource "aws_ssm_parameter" "state_machine_arn" {
-  name  = "${var.ssm_parameter_prefix}/config/state-machine-arn"
-  type  = "String"
-  value = module.step_functions.state_machine_arn
+  region = local.region
+  name   = "${var.ssm_parameter_prefix}/config/state-machine-arn"
+  type   = "String"
+  value  = module.step_functions.state_machine_arn
 
   tags = var.tags
 }
@@ -98,8 +104,9 @@ resource "aws_ssm_parameter" "state_machine_arn" {
 resource "aws_ssm_parameter" "profiles" {
   for_each = var.profiles
 
-  name = "${var.ssm_parameter_prefix}/config/profiles/${each.key}"
-  type = "String"
+  region = local.region
+  name   = "${var.ssm_parameter_prefix}/config/profiles/${each.key}"
+  type   = "String"
   value = jsonencode({
     account_id           = each.value.account_id
     permission_set_arn   = each.value.permission_set_arn
@@ -114,15 +121,16 @@ resource "aws_ssm_parameter" "profiles" {
 resource "aws_ssm_parameter" "user_mapping" {
   for_each = var.slack.user_mappings
 
-  name  = "${var.ssm_parameter_prefix}/user-mapping/${each.key}"
-  type  = "String"
-  value = each.value
+  region = local.region
+  name   = "${var.ssm_parameter_prefix}/user-mapping/${each.key}"
+  type   = "String"
+  value  = each.value
 
   tags = var.tags
 }
 
 #--------------------------------------------------------------
-# IAM Role: Lambda execution role
+# Provides an IAM role.
 #--------------------------------------------------------------
 resource "aws_iam_role" "lambda" {
   name = "${var.name_prefix}jit-access-lambda"
@@ -241,6 +249,8 @@ module "lambda_jit_access" {
   source  = "terraform-aws-modules/lambda/aws"
   version = "8.8.0"
 
+  region = local.region
+
   architectures                     = ["arm64"]
   cloudwatch_logs_kms_key_id        = var.kms_key_arn
   cloudwatch_logs_retention_in_days = var.lambda_log_retention_days
@@ -281,6 +291,7 @@ module "lambda_jit_access" {
 # API Gateway: Slack webhook endpoint (REST API for WAF support)
 #--------------------------------------------------------------
 resource "aws_api_gateway_rest_api" "slack" {
+  region      = local.region
   name        = "${var.name_prefix}jit-access-slack"
   description = "JIT Access Slack webhook endpoint"
 
@@ -293,6 +304,7 @@ resource "aws_api_gateway_rest_api" "slack" {
 
 #--- /slack resource ---
 resource "aws_api_gateway_resource" "slack" {
+  region      = local.region
   parent_id   = aws_api_gateway_rest_api.slack.root_resource_id
   path_part   = "slack"
   rest_api_id = aws_api_gateway_rest_api.slack.id
@@ -300,12 +312,14 @@ resource "aws_api_gateway_resource" "slack" {
 
 #--- /slack/commands ---
 resource "aws_api_gateway_resource" "slack_commands" {
+  region      = local.region
   parent_id   = aws_api_gateway_resource.slack.id
   path_part   = "commands"
   rest_api_id = aws_api_gateway_rest_api.slack.id
 }
 
 resource "aws_api_gateway_method" "slack_commands" {
+  region        = local.region
   authorization = "NONE"
   http_method   = "POST"
   resource_id   = aws_api_gateway_resource.slack_commands.id
@@ -313,6 +327,7 @@ resource "aws_api_gateway_method" "slack_commands" {
 }
 
 resource "aws_api_gateway_integration" "slack_commands" {
+  region                  = local.region
   http_method             = aws_api_gateway_method.slack_commands.http_method
   integration_http_method = "POST"
   resource_id             = aws_api_gateway_resource.slack_commands.id
@@ -323,12 +338,14 @@ resource "aws_api_gateway_integration" "slack_commands" {
 
 #--- /slack/interactions ---
 resource "aws_api_gateway_resource" "slack_interactions" {
+  region      = local.region
   parent_id   = aws_api_gateway_resource.slack.id
   path_part   = "interactions"
   rest_api_id = aws_api_gateway_rest_api.slack.id
 }
 
 resource "aws_api_gateway_method" "slack_interactions" {
+  region        = local.region
   authorization = "NONE"
   http_method   = "POST"
   resource_id   = aws_api_gateway_resource.slack_interactions.id
@@ -336,6 +353,7 @@ resource "aws_api_gateway_method" "slack_interactions" {
 }
 
 resource "aws_api_gateway_integration" "slack_interactions" {
+  region                  = local.region
   http_method             = aws_api_gateway_method.slack_interactions.http_method
   integration_http_method = "POST"
   resource_id             = aws_api_gateway_resource.slack_interactions.id
@@ -348,6 +366,7 @@ resource "aws_api_gateway_integration" "slack_interactions" {
 resource "aws_api_gateway_resource" "workflow" {
   count = var.slack.workflow_secret != null ? 1 : 0
 
+  region      = local.region
   parent_id   = aws_api_gateway_rest_api.slack.root_resource_id
   path_part   = "workflow"
   rest_api_id = aws_api_gateway_rest_api.slack.id
@@ -357,6 +376,7 @@ resource "aws_api_gateway_resource" "workflow" {
 resource "aws_api_gateway_resource" "workflow_request" {
   count = var.slack.workflow_secret != null ? 1 : 0
 
+  region      = local.region
   parent_id   = aws_api_gateway_resource.workflow[0].id
   path_part   = "request"
   rest_api_id = aws_api_gateway_rest_api.slack.id
@@ -365,6 +385,7 @@ resource "aws_api_gateway_resource" "workflow_request" {
 resource "aws_api_gateway_method" "workflow_request" {
   count = var.slack.workflow_secret != null ? 1 : 0
 
+  region        = local.region
   authorization = "NONE"
   http_method   = "POST"
   resource_id   = aws_api_gateway_resource.workflow_request[0].id
@@ -374,6 +395,7 @@ resource "aws_api_gateway_method" "workflow_request" {
 resource "aws_api_gateway_integration" "workflow_request" {
   count = var.slack.workflow_secret != null ? 1 : 0
 
+  region                  = local.region
   http_method             = aws_api_gateway_method.workflow_request[0].http_method
   integration_http_method = "POST"
   resource_id             = aws_api_gateway_resource.workflow_request[0].id
@@ -384,6 +406,7 @@ resource "aws_api_gateway_integration" "workflow_request" {
 
 #--- Deployment & Stage ---
 resource "aws_api_gateway_deployment" "this" {
+  region      = local.region
   rest_api_id = aws_api_gateway_rest_api.slack.id
 
   triggers = {
@@ -404,6 +427,7 @@ resource "aws_api_gateway_deployment" "this" {
 }
 
 resource "aws_api_gateway_stage" "this" {
+  region        = local.region
   deployment_id = aws_api_gateway_deployment.this.id
   rest_api_id   = aws_api_gateway_rest_api.slack.id
   stage_name    = "v1"
@@ -426,6 +450,7 @@ resource "aws_api_gateway_stage" "this" {
 }
 
 resource "aws_api_gateway_method_settings" "this" {
+  region      = local.region
   method_path = "*/*"
   rest_api_id = aws_api_gateway_rest_api.slack.id
   stage_name  = aws_api_gateway_stage.this.stage_name
@@ -437,6 +462,7 @@ resource "aws_api_gateway_method_settings" "this" {
 }
 
 resource "aws_cloudwatch_log_group" "api_gateway" {
+  region            = local.region
   name              = "/aws/apigateway/${var.name_prefix}jit-access-slack"
   kms_key_id        = var.kms_key_arn
   retention_in_days = var.lambda_log_retention_days
@@ -446,6 +472,7 @@ resource "aws_cloudwatch_log_group" "api_gateway" {
 
 #--- Lambda permission ---
 resource "aws_lambda_permission" "api_gateway" {
+  region        = local.region
   action        = "lambda:InvokeFunction"
   function_name = module.lambda_jit_access.lambda_function_name
   principal     = "apigateway.amazonaws.com"
@@ -459,11 +486,13 @@ resource "aws_lambda_permission" "api_gateway" {
 resource "aws_wafv2_web_acl_association" "api_gateway" {
   count = var.waf_enabled ? 1 : 0
 
+  region       = local.region
   resource_arn = aws_api_gateway_stage.this.arn
   web_acl_arn  = var.waf_web_acl_arn
 }
 
 #--------------------------------------------------------------
+# Provides an IAM role.
 # Step Functions: JIT Access Workflow
 # https://registry.terraform.io/modules/terraform-aws-modules/step-functions/aws/latest
 #--------------------------------------------------------------
@@ -520,6 +549,8 @@ resource "aws_iam_role_policy" "sfn" {
 module "step_functions" {
   source  = "terraform-aws-modules/step-functions/aws"
   version = "5.1.0"
+
+  region = local.region
 
   cloudwatch_log_group_kms_key_id        = var.kms_key_arn
   cloudwatch_log_group_name              = "/aws/sfn/${var.name_prefix}jit-access-sfn"
@@ -618,6 +649,7 @@ module "step_functions" {
 }
 
 #--------------------------------------------------------------
+# Provides an IAM role.
 # EventBridge Scheduler: Cleanup checker
 #--------------------------------------------------------------
 resource "aws_iam_role" "scheduler" {
@@ -650,6 +682,7 @@ resource "aws_iam_role_policy" "scheduler" {
 }
 
 resource "aws_scheduler_schedule" "cleanup" {
+  region     = local.region
   name       = "${var.name_prefix}jit-access-cleanup"
   group_name = "default"
 
@@ -670,6 +703,7 @@ resource "aws_scheduler_schedule" "cleanup" {
 # SQS Dead Letter Queue: revoke failures
 #--------------------------------------------------------------
 resource "aws_sqs_queue" "dlq" {
+  region                     = local.region
   name                       = "${var.name_prefix}jit-access-dlq"
   message_retention_seconds  = 1209600
   visibility_timeout_seconds = 300
@@ -682,6 +716,7 @@ resource "aws_sqs_queue" "dlq" {
 # CloudWatch Alarm: DLQ messages (revoke failure alert)
 #--------------------------------------------------------------
 resource "aws_cloudwatch_metric_alarm" "dlq_messages" {
+  region              = local.region
   alarm_name          = "${var.name_prefix}jit-access-dlq-messages"
   alarm_description   = "JIT Access: Messages in DLQ indicate revoke failures requiring manual intervention"
   comparison_operator = "GreaterThanThreshold"

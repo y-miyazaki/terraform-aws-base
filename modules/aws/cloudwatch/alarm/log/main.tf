@@ -3,14 +3,20 @@
 # Purpose: Create CloudWatch Logs metric filters and corresponding metric alarms with optional auto-discovery of log groups.
 # Notes: Builds dynamic names per log group; unified tagging applied; future improvement: allow multiple transformations per filter with for_each.
 #--------------------------------------------------------------
-#--------------------------------------------------------------
-# Auto-discovery filter module
-#--------------------------------------------------------------
-module "filter" {
-  source     = "../../../_internal/auto_discovery_filter"
-  is_enabled = var.is_enabled
+data "aws_region" "current" {}
 
-  create_auto       = var.create_auto_log_group_names
+#--------------------------------------------------------------
+# Locals
+#--------------------------------------------------------------
+locals {
+  region = coalesce(var.region, data.aws_region.current.region)
+}
+module "filter" {
+  source = "../../../_internal/auto_discovery_filter"
+
+  is_enabled  = var.is_enabled
+  create_auto = var.create_auto_log_group_names
+
   source_list       = data.aws_cloudwatch_log_groups.this.log_group_names
   include_list      = var.auto_log_group_names_include_list
   exclude_list      = var.auto_log_group_names_exclude_list
@@ -44,6 +50,7 @@ locals {
 resource "aws_cloudwatch_log_metric_filter" "this" {
   for_each = var.is_enabled ? local.list : {}
 
+  region         = local.region
   name           = each.value.metric_filter_name
   pattern        = var.aws_cloudwatch_log_metric_filter.pattern
   log_group_name = each.key
@@ -66,6 +73,7 @@ resource "aws_cloudwatch_log_metric_filter" "this" {
 resource "aws_cloudwatch_metric_alarm" "this" {
   for_each = var.is_enabled ? local.list : {}
 
+  region                                = local.region
   alarm_name                            = each.value.metric_alarm_name
   comparison_operator                   = var.aws_cloudwatch_metric_alarm.comparison_operator
   evaluation_periods                    = var.aws_cloudwatch_metric_alarm.evaluation_periods

@@ -3,12 +3,22 @@
 # Purpose: Provision generic CloudWatch metric alarms from a list input supporting dimensions, metric math, and extended settings.
 # Notes: Wrapper for multiple alarms using count; unified tagging applied; future improvement: migrate to for_each keyed by alarm_name to avoid index drift.
 #--------------------------------------------------------------
+data "aws_region" "current" {}
+
+#--------------------------------------------------------------
+# Locals
+#--------------------------------------------------------------
+locals {
+  region = coalesce(var.region, data.aws_region.current.region)
+}
+
 #--------------------------------------------------------------
 # Provides a CloudWatch Metric Alarm resource.
 #--------------------------------------------------------------
 resource "aws_cloudwatch_metric_alarm" "this" {
   count = length(var.aws_cloudwatch_metric_alarm)
 
+  region                                = local.region
   alarm_name                            = try(var.aws_cloudwatch_metric_alarm[count.index].alarm_name)
   comparison_operator                   = try(var.aws_cloudwatch_metric_alarm[count.index].comparison_operator, null)
   evaluation_periods                    = try(var.aws_cloudwatch_metric_alarm[count.index].evaluation_periods, null)

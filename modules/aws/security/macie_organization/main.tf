@@ -2,9 +2,19 @@
 # Module: aws/security/macie_organization
 # Purpose: Configure Amazon Macie for organization-wide management.
 #--------------------------------------------------------------
+data "aws_region" "current" {}
+
+#--------------------------------------------------------------
+# Locals
+#--------------------------------------------------------------
+locals {
+  region = coalesce(var.region, data.aws_region.current.region)
+}
+
 resource "aws_macie2_account" "this" {
   count = var.is_enabled ? 1 : 0
 
+  region                       = local.region
   status                       = var.status
   finding_publishing_frequency = var.finding_publishing_frequency
 }
@@ -12,6 +22,7 @@ resource "aws_macie2_account" "this" {
 resource "aws_macie2_organization_admin_account" "this" {
   count = var.is_enabled && var.is_enabled_admin ? 1 : 0
 
+  region           = local.region
   admin_account_id = var.admin_account_id
 
   depends_on = [aws_macie2_account.this]
@@ -20,6 +31,7 @@ resource "aws_macie2_organization_admin_account" "this" {
 resource "aws_macie2_organization_configuration" "this" {
   count = var.is_enabled ? 1 : 0
 
+  region      = local.region
   auto_enable = var.auto_enable
 
   depends_on = [
@@ -34,6 +46,7 @@ resource "aws_macie2_organization_configuration" "this" {
 resource "aws_macie2_classification_job" "this" {
   for_each = var.is_enabled ? { for job in var.classification_jobs : job.name => job } : {}
 
+  region                     = local.region
   job_type                   = each.value.job_type
   name                       = each.value.name
   description                = try(each.value.description, null)
@@ -213,6 +226,7 @@ resource "aws_macie2_classification_job" "this" {
 resource "aws_macie2_findings_filter" "this" {
   for_each = var.is_enabled ? { for filter in var.findings_filters : filter.name => filter } : {}
 
+  region      = local.region
   name        = each.value.name
   action      = each.value.action
   description = try(each.value.description, null)

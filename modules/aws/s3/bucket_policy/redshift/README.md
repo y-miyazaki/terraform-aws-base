@@ -22,6 +22,7 @@ No modules.
 | ---- | ---- |
 | [aws_s3_bucket_policy.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket_policy) | resource |
 | [aws_iam_policy_document.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
+| [aws_region.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/region) | data source |
 
 ## Inputs
 
@@ -29,6 +30,7 @@ No modules.
 | ---- | ----------- | ---- | ------- | :------: |
 | <a name="input_attach_bucket_policy"></a> [attach\_bucket\_policy](#input\_attach\_bucket\_policy) | (Optional) Controls if S3 bucket should have bucket policy attached (set to true to use value of policy as bucket policy). | `bool` | `false` | no |
 | <a name="input_bucket"></a> [bucket](#input\_bucket) | (Required) The S3 bucket name. | `string` | n/a | yes |
+| <a name="input_region"></a> [region](#input\_region) | (Optional) AWS region for the analyzer check script. If not set, uses the provider's default region. | `string` | `""` | no |
 
 ## Outputs
 

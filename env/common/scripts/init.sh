@@ -40,6 +40,15 @@ if [ -e "$HOME/.ssh" ]; then sudo chown -R "$uid":"$gid" "$HOME/.ssh" || true; f
 chmod 600 "$HOME/.ssh"/id_* 2> /dev/null || true
 
 #######################################
+# Claude (optional)
+#######################################
+if command -v claude > /dev/null 2>&1; then
+    if [ -f "${repo_root}/.claude/scripts/statusline.sh" ]; then
+        cp -rp "${repo_root}/.claude/scripts/statusline.sh" ~/.claude/
+    fi
+fi
+
+#######################################
 # mise trust (optional)
 #######################################
 if command -v mise > /dev/null 2>&1; then
@@ -49,6 +58,7 @@ if command -v mise > /dev/null 2>&1; then
             mise trust --yes "${repo_root}/mise.toml" > /dev/null 2>&1 || echo "[warn] mise trust failed" >&2
             mise install || echo "[warn] mise install task failed" >&2
             mise reshim --yes || echo "[warn] mise reshim failed" >&2
+            mise prune --yes || echo "[warn] mise prune failed" >&2
         )
     fi
 fi
@@ -62,6 +72,7 @@ if command -v apm > /dev/null 2>&1; then
         (
             cd "$repo_root"
             apm install --frozen || echo "[warn] apm install failed" >&2
+            apm run postinstall || echo "[warn] apm run failed" >&2
         )
     fi
 fi

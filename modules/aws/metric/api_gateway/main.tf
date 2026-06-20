@@ -3,14 +3,24 @@
 # Purpose: Provide CloudWatch metric alarms for API Gateway (errors, latency) with optional auto-discovery of APIs.
 # Notes: Unified tagging applied; thresholds and dimensions configurable; auto discovery excludes patterns via exclude list.
 #--------------------------------------------------------------
+data "aws_region" "current" {}
+
 #--------------------------------------------------------------
-# Auto-discovery filter module
+# Locals
+#--------------------------------------------------------------
+locals {
+  region = coalesce(var.region, data.aws_region.current.region)
+}
+
+#--------------------------------------------------------------
+# Auto-discovery metric filter module
 #--------------------------------------------------------------
 module "helper" {
-  source     = "../../_internal/metric_helper"
-  is_enabled = var.is_enabled
+  source = "../../_internal/metric_helper"
 
-  create_auto        = var.create_auto_dimensions
+  is_enabled  = var.is_enabled
+  create_auto = var.create_auto_dimensions
+
   source_list        = var.create_auto_dimensions && length(data.external.list) > 0 ? [for v in split(",", data.external.list[0].result.list) : split(":", v)[length(split(":", v)) - 1]] : []
   include_list       = var.auto_dimensions_include_list
   exclude_list       = var.auto_dimensions_exclude_list
@@ -38,6 +48,7 @@ locals {
 resource "aws_cloudwatch_metric_alarm" "error_4xx" {
   for_each = var.is_enabled && var.threshold.enabled_error4XX ? local.list : {}
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-api-gateway-${each.value.name}-4xx-error"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -89,6 +100,7 @@ resource "aws_cloudwatch_metric_alarm" "error_4xx" {
 resource "aws_cloudwatch_metric_alarm" "error_5xx" {
   for_each = var.is_enabled && var.threshold.enabled_error5XX ? local.list : {}
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-api-gateway-${each.value.name}-5xx-error"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -143,6 +155,7 @@ resource "aws_cloudwatch_metric_alarm" "latency" {
     if var.is_enabled && local.effective_thresholds[k].enabled_latency
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-api-gateway-${each.value.name}-latency"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -173,6 +186,7 @@ resource "aws_cloudwatch_metric_alarm" "integration_latency" {
     if var.is_enabled && local.effective_thresholds[k].enabled_integration_latency
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-api-gateway-${each.value.name}-integration-latency"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1

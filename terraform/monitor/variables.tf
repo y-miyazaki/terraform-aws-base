@@ -1,21 +1,28 @@
 variable "tags" {
   type = map(any)
 }
+
 variable "name_prefix" {
   type = string
 }
+
 variable "region" {
-  type = string
-}
-variable "us_east_1" {
-  description = "Configuration for us-east-1 region resources. Set is_enabled to false to skip all us-east-1 resources."
+  description = "Region configuration for multi-region deployment"
   type = object({
-    is_enabled = bool
+    global  = string
+    primary = string
+    targets = list(string)
   })
-  default = {
-    is_enabled = true
+  validation {
+    condition     = length(var.region.targets) > 0
+    error_message = "region.targets must contain at least one region"
+  }
+  validation {
+    condition     = contains(var.region.targets, var.region.primary)
+    error_message = "region.primary must be included in region.targets"
   }
 }
+
 variable "cloudwatch_log_group" {
   description = <<-EOT
     Common CloudWatch Log Group configuration for all services.
@@ -70,6 +77,7 @@ variable "cloudwatch_log_group" {
     }))
   })
 }
+
 variable "slack" {
   description = <<-EOT
     Common Slack configuration for all Lambda functions.
@@ -129,25 +137,32 @@ variable "slack" {
   })
   #   sensitive = true
 }
+
 variable "kms" {
   type = any
 }
+
 variable "common_lambda" {
   type = any
 }
+
 variable "common_log" {
   type = any
 }
+
 variable "delivery_log" {
   type = any
 }
+
 variable "delivery_log_us_east_1" {
   type = any
 }
+
 variable "metric_log_application" {
   type        = any
   description = "CloudWatch Logs (Application) resources on AWS"
 }
+
 variable "metric_log_application_report" {
   type        = any
   description = "CloudWatch Logs (Application) errors report resources on AWS"
@@ -157,102 +172,127 @@ variable "metric_log_step_functions" {
   type        = any
   description = "CloudWatch Logs (Step Functions) resources on AWS"
 }
+
 variable "metric_log_waf" {
   type        = any
   description = "CloudWatch Logs (WAF) resources on AWS"
 }
+
 variable "metric_log_waf_us_east_1" {
   type        = any
   description = "CloudWatch Logs (WAF) resources on AWS in us-east-1"
 }
+
 variable "metric_log_mysql_slowquery" {
   type        = any
   description = "CloudWatch Logs (MySQL slow query) resources on AWS"
 }
+
 variable "metric_log_postgresql" {
   type        = any
   description = "CloudWatch Logs (PostgreSQL) resources on AWS"
 }
+
 variable "metric_log_postgresql_slowquery" {
   type        = any
   description = "CloudWatch Logs (PostgreSQL slow query) resources on AWS"
 }
+
 variable "metric_log_postgresql_slowquery_report" {
   type        = any
   description = "CloudWatch Logs (PostgreSQL slow query) report resources on AWS"
 }
+
 variable "metric_resource_api_gateway" {
   type        = any
   description = "CloudWatch metric resource(API Gateway) resources on AWS"
 }
+
 variable "metric_resource_cloudfront" {
   type        = any
   description = "CloudWatch metric resource(CloudFront) resources on AWS"
 }
+
 variable "metric_resource_ec2" {
   type        = any
   description = "CloudWatch metric resource(EC2) resources on AWS"
 }
+
 variable "metric_resource_ecs_container_insights" {
   type        = any
   description = "CloudWatch metric resource(ECS/ContainerInsights) resources on AWS"
 }
+
 variable "metric_resource_elasticache" {
   type        = any
   description = "CloudWatch event(ElastiCache) resources on AWS"
 }
+
 variable "metric_resource_elb" {
   type        = any
   description = "CloudWatch metric resource(ELB - ALB/NLB) resources on AWS"
 }
+
 variable "metric_resource_eventbridge_scheduler" {
   type        = any
   description = "CloudWatch event(EventBridge Scheduler) resources on AWS"
 }
+
 variable "metric_resource_lambda" {
   type        = any
   description = "CloudWatch event(Lambda) resources on AWS"
 }
+
 variable "metric_resource_nat_gateway" {
   type        = any
   description = "CloudWatch metric resource(NAT Gateway) resources on AWS"
 }
+
 variable "metric_resource_rds_cluster" {
   type        = any
   description = "CloudWatch metric resource(RDS) resources on AWS"
 }
+
 variable "metric_resource_redshift" {
   type        = any
   description = "CloudWatch event(Redshift) resources on AWS"
 }
+
 variable "metric_resource_ses" {
   type        = any
   description = "CloudWatch event(SES) resources on AWS"
 }
+
 variable "metric_resource_sns" {
   type        = any
   description = "CloudWatch event(SNS) resources on AWS"
 }
+
 variable "metric_resource_sqs" {
   type        = any
   description = "CloudWatch event(SQS) resources on AWS"
 }
+
 variable "cloudwatch_event_ec2" {
   type        = any
   description = "CloudWatch event(EC2) resources on AWS"
 }
+
 variable "metric_synthetics_canary" {
   type        = any
   description = "Synthetics canary resources on AWS. Map of function name to configuration (e.g., heartbeat, linkcheck)"
 }
+
 variable "athena" {
   type        = any
   description = "Athena resources on AWS"
 }
+
 variable "report_csp" {
   type        = any
   description = "API Gateway resources on AWS"
 }
+
 variable "eventbridge" {
   type        = any
   description = "EventBridge resources on AWS"

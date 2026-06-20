@@ -22,24 +22,32 @@ variable "control_tower" {
   default  = null
   nullable = true
 }
+
 variable "tags" {
   type = map(any)
 }
+
 variable "name_prefix" {
   type = string
 }
+
 variable "region" {
-  type = string
-}
-variable "us_east_1" {
-  description = "Configuration for us-east-1 region resources. Set is_enabled to false to skip all us-east-1 resources."
+  description = "Region configuration for multi-region deployment"
   type = object({
-    is_enabled = bool
+    global  = string
+    primary = string
+    targets = list(string)
   })
-  default = {
-    is_enabled = true
+  validation {
+    condition     = length(var.region.targets) > 0
+    error_message = "region.targets must contain at least one region"
+  }
+  validation {
+    condition     = contains(var.region.targets, var.region.primary)
+    error_message = "region.primary must be included in region.targets"
   }
 }
+
 variable "cloudwatch_log_group" {
   description = <<-EOT
     Common CloudWatch Log Group configuration for all services.
@@ -97,6 +105,7 @@ variable "cloudwatch_log_group" {
     }))
   })
 }
+
 variable "slack" {
   description = <<-EOT
     Common Slack configuration for all Lambda functions.
@@ -157,39 +166,51 @@ variable "slack" {
   })
   #   sensitive = true
 }
+
 variable "kms" {
   type = any
 }
+
 variable "oidc_github" {
   type = any
 }
+
 variable "resource_groups" {
   type = any
 }
+
 variable "budgets" {
   type = any
 }
+
 variable "compute_optimizer" {
   type = any
 }
+
 variable "guardduty" {
   type = any
 }
+
 variable "health" {
   type = any
 }
+
 variable "trusted_advisor" {
   type = any
 }
+
 variable "iam_password_expired" {
   type = any
 }
+
 variable "iam" {
   type = any
 }
+
 variable "common_lambda" {
   type = any
 }
+
 variable "common_log" {
   type = any
 }
@@ -197,61 +218,63 @@ variable "common_log" {
 variable "security_access_analyzer" {
   type = any
 }
+
 variable "security_athena" {
   type = any
 }
+
 variable "security_cloudtrail" {
   type = any
 }
+
 variable "security_config" {
   type = any
 }
-variable "security_config_us_east_1" {
-  type = any
-}
+
 variable "security_default_vpc" {
   type = any
 }
+
 variable "security_ebs" {
   type = any
 }
+
 variable "security_ec2_metadata" {
   type = object({
     is_enabled = bool
   })
 }
+
 variable "security_ecr" {
   type = object({
     is_enabled = bool
   })
 }
+
 variable "security_guardduty" {
   type = any
 }
-variable "security_guardduty_us_east_1" {
-  type = any
-}
+
 variable "security_iam" {
   type = any
 }
+
 variable "security_inspector2" {
   type = any
 }
-variable "security_inspector2_us_east_1" {
-  type = any
-}
+
 variable "security_macie" {
   type = any
 }
-variable "security_macie_us_east_1" {
-  type = any
-}
+
 variable "security_s3" {
   type = any
 }
+
 variable "security_securityhub" {
   type = any
 }
+
 variable "security_ssm_automation" {
   type = any
 }

@@ -2,9 +2,22 @@
 # Module: aws/security/macie
 # Purpose: Enable Amazon Macie at the account level.
 #--------------------------------------------------------------
+data "aws_region" "current" {}
+
+#--------------------------------------------------------------
+# Locals
+#--------------------------------------------------------------
+locals {
+  region = coalesce(var.region, data.aws_region.current.region)
+}
+
+#--------------------------------------------------------------
+# Provides a resource to manage an AWS Macie Account.
+#--------------------------------------------------------------
 resource "aws_macie2_account" "this" {
   count = var.is_enabled ? 1 : 0
 
+  region                       = local.region
   status                       = var.status
   finding_publishing_frequency = var.finding_publishing_frequency
 }
@@ -15,6 +28,7 @@ resource "aws_macie2_account" "this" {
 resource "aws_macie2_classification_job" "this" {
   for_each = var.is_enabled ? { for job in var.classification_jobs : job.name => job } : {}
 
+  region                     = local.region
   job_type                   = each.value.job_type
   name                       = each.value.name
   description                = try(each.value.description, null)
@@ -194,6 +208,7 @@ resource "aws_macie2_classification_job" "this" {
 resource "aws_macie2_findings_filter" "this" {
   for_each = var.is_enabled ? { for filter in var.findings_filters : filter.name => filter } : {}
 
+  region      = local.region
   name        = each.value.name
   action      = each.value.action
   description = try(each.value.description, null)

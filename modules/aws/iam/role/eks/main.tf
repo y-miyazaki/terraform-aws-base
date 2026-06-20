@@ -5,7 +5,6 @@
 #--------------------------------------------------------------
 #--------------------------------------------------------------
 # Provides an IAM role.
-# role: eks.amazonaws.com
 #--------------------------------------------------------------
 resource "aws_iam_role" "eks" {
   assume_role_policy = jsonencode({
@@ -49,7 +48,6 @@ resource "aws_iam_role_policy_attachment" "eks_service" {
 
 #--------------------------------------------------------------
 # Provides an IAM role.
-# role: eks.amazonaws.com
 #--------------------------------------------------------------
 resource "aws_iam_role" "eks_worker_node" {
   assume_role_policy = jsonencode({

@@ -6,7 +6,13 @@
 #--------------------------------------------------------------
 # Locals
 #--------------------------------------------------------------
+data "aws_region" "current" {}
+
+#--------------------------------------------------------------
+# Locals
+#--------------------------------------------------------------
 locals {
+  region      = coalesce(var.region, data.aws_region.current.region)
   name_prefix = var.name_prefix == "" ? "" : "${trimsuffix(var.name_prefix, "-")}-"
 }
 
@@ -76,6 +82,7 @@ locals {
 resource "aws_config_config_rule" "ebs-optimized-instance" {
   count = var.is_enabled ? 1 : 0
 
+  region      = local.region
   name        = "${local.name_prefix}ebs-optimized-instance"
   description = "Checks whether EBS optimization is enabled for your EC2 instances that can be EBS-optimized."
   source {
@@ -140,6 +147,7 @@ resource "aws_config_config_rule" "ebs-optimized-instance" {
 resource "aws_config_config_rule" "ec2-instance-detailed-monitoring-enabled" {
   count = var.is_enabled ? 1 : 0
 
+  region      = local.region
   name        = "${local.name_prefix}ec2-instance-detailed-monitoring-enabled"
   description = "Checks whether detailed monitoring is enabled for EC2 instances."
   source {
@@ -188,6 +196,7 @@ resource "aws_config_config_rule" "ec2-instance-detailed-monitoring-enabled" {
 resource "aws_config_config_rule" "ec2-instance-profile-attached" {
   count = var.is_enabled ? 1 : 0
 
+  region      = local.region
   name        = "${local.name_prefix}ec2-instance-profile-attached"
   description = "Checks if an Amazon Elastic Compute Cloud (Amazon EC2) instance has an Identity and Access Management (IAM) profile attached to it. This rule is NON_COMPLIANT if no IAM profile is attached to the Amazon EC2 instance."
   source {
@@ -204,6 +213,7 @@ resource "aws_config_config_rule" "ec2-instance-profile-attached" {
 resource "aws_config_config_rule" "ec2-instances-in-vpc" {
   count = var.is_enabled ? 1 : 0
 
+  region      = local.region
   name        = "${local.name_prefix}ec2-instances-in-vpc"
   description = "Checks whether your EC2 instances belong to a virtual private cloud (VPC)."
   source {
@@ -346,6 +356,7 @@ resource "aws_config_config_rule" "ec2-instances-in-vpc" {
 resource "aws_config_config_rule" "ec2-volume-inuse-check" {
   count = var.is_enabled ? 1 : 0
 
+  region      = local.region
   name        = "${local.name_prefix}ec2-volume-inuse-check"
   description = "Checks whether EBS volumes are attached to EC2 instances."
   source {
@@ -394,6 +405,7 @@ resource "aws_config_config_rule" "ec2-volume-inuse-check" {
 resource "aws_config_config_rule" "restricted-common-ports" {
   count = var.is_enabled ? 1 : 0
 
+  region           = local.region
   name             = "${local.name_prefix}restricted-common-ports"
   description      = "Checks whether security groups that are in use disallow unrestricted incoming TCP traffic to the specified ports."
   input_parameters = jsonencode(var.restricted_common_ports.input_parameters)
@@ -411,6 +423,7 @@ resource "aws_config_config_rule" "restricted-common-ports" {
 resource "aws_config_config_rule" "restricted-ssh" {
   count = var.is_enabled ? 1 : 0
 
+  region      = local.region
   name        = "${local.name_prefix}restricted-ssh"
   description = "Checks whether security groups that are in use disallow unrestricted incoming SSH traffic."
   source {
@@ -427,6 +440,7 @@ resource "aws_config_config_rule" "restricted-ssh" {
 resource "aws_config_remediation_configuration" "restricted-ssh" {
   count = var.is_enabled && var.is_disable_public_access_for_security_group ? 1 : 0
 
+  region           = local.region
   config_rule_name = aws_config_config_rule.restricted-ssh[0].name
   target_type      = "SSM_DOCUMENT"
   # https://docs.aws.amazon.com/systems-manager-automation-runbooks/latest/userguide/automation-aws-disablepublicaccessforsecuritygroup.html

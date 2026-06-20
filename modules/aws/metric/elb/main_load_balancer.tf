@@ -13,6 +13,7 @@ resource "aws_cloudwatch_metric_alarm" "active_connection_count" {
     if var.is_enabled && local.effective_thresholds[k].enabled_active_connection_count
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-alb-${each.value.name}-active-connection-count"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -43,6 +44,7 @@ resource "aws_cloudwatch_metric_alarm" "client_tls_negotiation_error_count" {
     if var.is_enabled && local.effective_thresholds[k].enabled_client_tls_negotiation_error_count
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-alb-${each.value.name}-client-tls-negotiation-error-count"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -73,6 +75,7 @@ resource "aws_cloudwatch_metric_alarm" "desync_mitigation_mode_non_compliant_req
     if var.is_enabled && local.effective_thresholds[k].enabled_desync_mitigation_mode_non_compliant_request_count
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-alb-${each.value.name}-desync-mitigation-mode-non-compliant-request-count"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -104,6 +107,7 @@ resource "aws_cloudwatch_metric_alarm" "dropped_invalid_header_request_count" {
     if var.is_enabled && local.effective_thresholds[k].enabled_dropped_invalid_header_request_count && contains(keys(v.dimensions), "AvailabilityZone")
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-alb-${each.value.name}-dropped-invalid-header-request-count"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -135,6 +139,7 @@ resource "aws_cloudwatch_metric_alarm" "forwarded_invalid_header_request_count" 
     if var.is_enabled && local.effective_thresholds[k].enabled_forwarded_invalid_header_request_count && contains(keys(v.dimensions), "AvailabilityZone")
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-alb-${each.value.name}-forwarded-invalid-header-request-count"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -165,6 +170,7 @@ resource "aws_cloudwatch_metric_alarm" "grpc_request_count" {
     if var.is_enabled && local.effective_thresholds[k].enabled_grpc_request_count
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-alb-${each.value.name}-grpc-request-count"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -195,6 +201,7 @@ resource "aws_cloudwatch_metric_alarm" "http_fixed_response_count" {
     if var.is_enabled && local.effective_thresholds[k].enabled_http_fixed_response_count
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-alb-${each.value.name}-http-fixed-response-count"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -225,6 +232,7 @@ resource "aws_cloudwatch_metric_alarm" "http_redirect_count" {
     if var.is_enabled && local.effective_thresholds[k].enabled_http_redirect_count
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-alb-${each.value.name}-http-redirect-count"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -255,6 +263,7 @@ resource "aws_cloudwatch_metric_alarm" "http_redirect_url_limit_exceeded_count" 
     if var.is_enabled && local.effective_thresholds[k].enabled_http_redirect_url_limit_exceeded_count
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-alb-${each.value.name}-http-redirect-url-limit-exceeded-count"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -285,6 +294,7 @@ resource "aws_cloudwatch_metric_alarm" "httpcode_elb_3xx_count" {
     if var.is_enabled && local.effective_thresholds[k].enabled_httpcode_elb_3xx_count
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-alb-${each.value.name}-httpcode-elb-3xx-count"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -315,6 +325,7 @@ resource "aws_cloudwatch_metric_alarm" "httpcode_elb_4xx_count" {
     if var.is_enabled && local.effective_thresholds[k].enabled_httpcode_elb_4xx_count
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-alb-${each.value.name}-httpcode-elb-4xx-count"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -345,6 +356,7 @@ resource "aws_cloudwatch_metric_alarm" "httpcode_elb_5xx_count" {
     if var.is_enabled && local.effective_thresholds[k].enabled_httpcode_elb_5xx_count
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-alb-${each.value.name}-httpcode-elb-5xx-count"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -375,6 +387,7 @@ resource "aws_cloudwatch_metric_alarm" "httpcode_elb_500_count" {
     if var.is_enabled && local.effective_thresholds[k].enabled_httpcode_elb_500_count
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-alb-${each.value.name}-httpcode-elb-500-count"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -405,6 +418,7 @@ resource "aws_cloudwatch_metric_alarm" "httpcode_elb_502_count" {
     if var.is_enabled && local.effective_thresholds[k].enabled_httpcode_elb_502_count
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-alb-${each.value.name}-httpcode-elb-502-count"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -435,6 +449,7 @@ resource "aws_cloudwatch_metric_alarm" "httpcode_elb_503_count" {
     if var.is_enabled && local.effective_thresholds[k].enabled_httpcode_elb_503_count
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-alb-${each.value.name}-httpcode-elb-503-count"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -465,6 +480,7 @@ resource "aws_cloudwatch_metric_alarm" "httpcode_elb_504_count" {
     if var.is_enabled && local.effective_thresholds[k].enabled_httpcode_elb_504_count
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-alb-${each.value.name}-httpcode-elb-504-count"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -495,6 +511,7 @@ resource "aws_cloudwatch_metric_alarm" "ipv6_processed_bytes" {
     if var.is_enabled && local.effective_thresholds[k].enabled_ipv6_processed_bytes
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-alb-${each.value.name}-ipv6-processed-bytes"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -525,6 +542,7 @@ resource "aws_cloudwatch_metric_alarm" "ipv6_request_count" {
     if var.is_enabled && local.effective_thresholds[k].enabled_ipv6_request_count
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-alb-${each.value.name}-ipv6-request-count"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -555,6 +573,7 @@ resource "aws_cloudwatch_metric_alarm" "new_connection_count" {
     if var.is_enabled && local.effective_thresholds[k].enabled_new_connection_count
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-alb-${each.value.name}-new-connection-count"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -585,6 +604,7 @@ resource "aws_cloudwatch_metric_alarm" "processed_bytes" {
     if var.is_enabled && local.effective_thresholds[k].enabled_processed_bytes
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-alb-${each.value.name}-processed-bytes"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -615,6 +635,7 @@ resource "aws_cloudwatch_metric_alarm" "rejected_connection_count" {
     if var.is_enabled && local.effective_thresholds[k].enabled_rejected_connection_count
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-alb-${each.value.name}-rejected-connection-count"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -645,6 +666,7 @@ resource "aws_cloudwatch_metric_alarm" "request_count" {
     if var.is_enabled && local.effective_thresholds[k].enabled_request_count
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-alb-${each.value.name}-request-count"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -676,6 +698,7 @@ resource "aws_cloudwatch_metric_alarm" "rule_evaluations" {
     if var.is_enabled && local.effective_thresholds[k].enabled_rule_evaluations && !contains(keys(v.dimensions), "AvailabilityZone")
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-alb-${each.value.name}-rule-evaluations"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -706,6 +729,7 @@ resource "aws_cloudwatch_metric_alarm" "non_sticky_request_count" {
     if var.is_enabled && local.effective_thresholds[k].enabled_non_sticky_request_count
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-alb-${each.value.name}-non-sticky-request-count"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -736,6 +760,7 @@ resource "aws_cloudwatch_metric_alarm" "standard_processed_bytes" {
     if var.is_enabled && local.effective_thresholds[k].enabled_standard_processed_bytes
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-alb-${each.value.name}-standard-processed-bytes"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1

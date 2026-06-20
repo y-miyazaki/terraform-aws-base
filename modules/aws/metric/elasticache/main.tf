@@ -3,14 +3,24 @@
 # Purpose: Provide CloudWatch metric alarms for ElastiCache (Redis) clusters across multiple performance and security dimensions.
 # Notes: Unified tagging; supports multiple cluster dimensions; uses metric math for cache hit rate; supports auto-discovery of clusters.
 #--------------------------------------------------------------
+data "aws_region" "current" {}
+
 #--------------------------------------------------------------
-# Auto-discovery filter module
+# Locals
+#--------------------------------------------------------------
+locals {
+  region = coalesce(var.region, data.aws_region.current.region)
+}
+
+#--------------------------------------------------------------
+# Auto-discovery metric filter module
 #--------------------------------------------------------------
 module "helper" {
-  source     = "../../_internal/metric_helper"
-  is_enabled = var.is_enabled
+  source = "../../_internal/metric_helper"
 
-  create_auto        = var.create_auto_dimensions
+  is_enabled  = var.is_enabled
+  create_auto = var.create_auto_dimensions
+
   source_list        = var.create_auto_dimensions && length(data.external.list) > 0 ? split(",", data.external.list[0].result.list) : []
   include_list       = var.auto_dimensions_include_list
   exclude_list       = var.auto_dimensions_exclude_list
@@ -41,6 +51,7 @@ resource "aws_cloudwatch_metric_alarm" "authentication_failures" {
     if var.is_enabled && local.effective_thresholds[k].enabled_authentication_failures
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-elasticache-${each.value.name}-authentication-failures"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -71,6 +82,7 @@ resource "aws_cloudwatch_metric_alarm" "cache_hit_rate" {
     if var.is_enabled && local.effective_thresholds[k].enabled_cache_hit_rate
   }
 
+  region              = local.region
   alarm_name          = "${var.name_prefix}metric-elasticache-${each.value.name}-cache-hit-rate"
   comparison_operator = "LessThanOrEqualToThreshold"
   evaluation_periods  = 1
@@ -122,6 +134,7 @@ resource "aws_cloudwatch_metric_alarm" "command_authorization_failures" {
     if var.is_enabled && local.effective_thresholds[k].enabled_command_authorization_failures
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-elasticache-${each.value.name}-command-authorization-failures"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -152,6 +165,7 @@ resource "aws_cloudwatch_metric_alarm" "curr_connections" {
     if var.is_enabled && local.effective_thresholds[k].enabled_curr_connections
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-elasticache-${each.value.name}-curr-connections"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -182,6 +196,7 @@ resource "aws_cloudwatch_metric_alarm" "database_memory_usage_percentage" {
     if var.is_enabled && local.effective_thresholds[k].enabled_database_memory_usage_percentage
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-elasticache-${each.value.name}-database-memory-usage-percentage"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -212,6 +227,7 @@ resource "aws_cloudwatch_metric_alarm" "engine_cpu_utilization" {
     if var.is_enabled && local.effective_thresholds[k].enabled_engine_cpu_utilization
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-elasticache-${each.value.name}-engine-cpu-utilization"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -242,6 +258,7 @@ resource "aws_cloudwatch_metric_alarm" "error_count" {
     if var.is_enabled && local.effective_thresholds[k].enabled_error_count
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-elasticache-${each.value.name}-error-count"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -272,6 +289,7 @@ resource "aws_cloudwatch_metric_alarm" "evictions" {
     if var.is_enabled && local.effective_thresholds[k].enabled_evictions
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-elasticache-${each.value.name}-evictions"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -301,6 +319,7 @@ resource "aws_cloudwatch_metric_alarm" "iam_authentication_expirations" {
     if var.is_enabled && local.effective_thresholds[k].enabled_iam_authentication_expirations
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-elasticache-${each.value.name}-iam-authentication-expirations"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -331,6 +350,7 @@ resource "aws_cloudwatch_metric_alarm" "iam_authentication_throttling" {
     if var.is_enabled && local.effective_thresholds[k].enabled_iam_authentication_throttling
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-elasticache-${each.value.name}-iam-authentication-throttling"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -361,6 +381,7 @@ resource "aws_cloudwatch_metric_alarm" "key_authorization_failures" {
     if var.is_enabled && local.effective_thresholds[k].enabled_key_authorization_failures
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-elasticache-${each.value.name}-key-authorization-failures"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -391,6 +412,7 @@ resource "aws_cloudwatch_metric_alarm" "memory_fragmentation_ratio" {
     if var.is_enabled && local.effective_thresholds[k].enabled_memory_fragmentation_ratio
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-elasticache-${each.value.name}-memory-fragmentation-ratio"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -420,6 +442,7 @@ resource "aws_cloudwatch_metric_alarm" "new_connections" {
     if var.is_enabled && local.effective_thresholds[k].enabled_new_connections
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-elasticache-${each.value.name}-new-connections"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -450,6 +473,7 @@ resource "aws_cloudwatch_metric_alarm" "replication_bytes" {
     if var.is_enabled && local.effective_thresholds[k].enabled_replication_bytes
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-elasticache-${each.value.name}-replication-bytes"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -480,6 +504,7 @@ resource "aws_cloudwatch_metric_alarm" "replication_lag" {
     if var.is_enabled && local.effective_thresholds[k].enabled_replication_lag
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-elasticache-${each.value.name}-replication-lag"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -510,6 +535,7 @@ resource "aws_cloudwatch_metric_alarm" "save_in_progress" {
     if var.is_enabled && local.effective_thresholds[k].enabled_save_in_progress
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-elasticache-${each.value.name}-save-in-progress"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -539,6 +565,7 @@ resource "aws_cloudwatch_metric_alarm" "successful_read_request_latency" {
     if var.is_enabled && local.effective_thresholds[k].enabled_successful_read_request_latency
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-elasticache-${each.value.name}-successful-read-request-latency"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -569,6 +596,7 @@ resource "aws_cloudwatch_metric_alarm" "successful_write_request_latency" {
     if var.is_enabled && local.effective_thresholds[k].enabled_successful_write_request_latency
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-elasticache-${each.value.name}-successful-write-request-latency"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -599,6 +627,7 @@ resource "aws_cloudwatch_metric_alarm" "swap_usage" {
     if var.is_enabled && local.effective_thresholds[k].enabled_swap_usage
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-elasticache-${each.value.name}-swap-usage"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -629,6 +658,7 @@ resource "aws_cloudwatch_metric_alarm" "traffic_management_active" {
     if var.is_enabled && local.effective_thresholds[k].enabled_traffic_management_active
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-elasticache-${each.value.name}-traffic-management-active"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -659,6 +689,7 @@ resource "aws_cloudwatch_metric_alarm" "cpu_utilization" {
     if var.is_enabled && local.effective_thresholds[k].enabled_cpu_utilization
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-elasticache-${each.value.name}-cpu-utilization"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -689,6 +720,7 @@ resource "aws_cloudwatch_metric_alarm" "bytes_used_for_cache" {
     if var.is_enabled && local.effective_thresholds[k].enabled_bytes_used_for_cache
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-elasticache-${each.value.name}-bytes-used-for-cache"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -719,6 +751,7 @@ resource "aws_cloudwatch_metric_alarm" "freeable_memory" {
     if var.is_enabled && local.effective_thresholds[k].enabled_freeable_memory
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-elasticache-${each.value.name}-freeable-memory"
   comparison_operator       = "LessThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -749,6 +782,7 @@ resource "aws_cloudwatch_metric_alarm" "cache_hits" {
     if var.is_enabled && local.effective_thresholds[k].enabled_cache_hits
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-elasticache-${each.value.name}-cache-hits"
   comparison_operator       = "LessThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -779,6 +813,7 @@ resource "aws_cloudwatch_metric_alarm" "cache_misses" {
     if var.is_enabled && local.effective_thresholds[k].enabled_cache_misses
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-elasticache-${each.value.name}-cache-misses"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -809,6 +844,7 @@ resource "aws_cloudwatch_metric_alarm" "curr_items" {
     if var.is_enabled && local.effective_thresholds[k].enabled_curr_items
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-elasticache-${each.value.name}-curr-items"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -839,6 +875,7 @@ resource "aws_cloudwatch_metric_alarm" "network_bytes_in" {
     if var.is_enabled && local.effective_thresholds[k].enabled_network_bytes_in
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-elasticache-${each.value.name}-network-bytes-in"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -869,6 +906,7 @@ resource "aws_cloudwatch_metric_alarm" "network_bytes_out" {
     if var.is_enabled && local.effective_thresholds[k].enabled_network_bytes_out
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-elasticache-${each.value.name}-network-bytes-out"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -900,6 +938,7 @@ resource "aws_cloudwatch_metric_alarm" "database_capacity_usage_percentage" {
     if var.is_enabled && local.effective_thresholds[k].enabled_database_capacity_usage_percentage
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-elasticache-${each.value.name}-database-capacity-usage-percentage"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1

@@ -3,15 +3,23 @@
 # Purpose: Provide CloudWatch metric alarms for Synthetics Canary success rates, duration, and HTTP status metrics with optional auto-discovery.
 # Notes: Supports multiple canaries via auto-discovery or manual dimensions; unified tagging applied; uses for_each for stable resource references.
 #--------------------------------------------------------------
-#--------------------------------------------------------------
-# Auto-discovery filter module
-#--------------------------------------------------------------
-module "filter" {
-  source     = "../../_internal/auto_discovery_filter"
-  is_enabled = var.is_enabled
+data "aws_region" "current" {}
 
-  create_auto       = var.create_auto_dimensions
+#--------------------------------------------------------------
+# Locals
+#--------------------------------------------------------------
+locals {
+  region = coalesce(var.region, data.aws_region.current.region)
+}
+
+module "filter" {
+  source = "../../_internal/auto_discovery_filter"
+
+  is_enabled  = var.is_enabled
+  create_auto = var.create_auto_dimensions
+
   source_list       = var.create_auto_dimensions && length(data.external.list) > 0 ? split(",", data.external.list[0].result.list) : []
+  region            = local.region
   include_list      = var.auto_dimensions_include_list
   exclude_list      = var.auto_dimensions_exclude_list
   manual_dimensions = var.dimensions
@@ -49,6 +57,7 @@ locals {
 resource "aws_cloudwatch_metric_alarm" "http_2xx" {
   for_each = var.is_enabled && var.threshold.enabled_2xx ? local.list : {}
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-synthetics-canary-${each.value.name}-2xx"
   comparison_operator       = "LessThanThreshold"
   evaluation_periods        = 1
@@ -76,6 +85,7 @@ resource "aws_cloudwatch_metric_alarm" "http_2xx" {
 resource "aws_cloudwatch_metric_alarm" "http_4xx" {
   for_each = var.is_enabled && var.threshold.enabled_4xx ? local.list : {}
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-synthetics-canary-${each.value.name}-4xx"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -103,6 +113,7 @@ resource "aws_cloudwatch_metric_alarm" "http_4xx" {
 resource "aws_cloudwatch_metric_alarm" "http_5xx" {
   for_each = var.is_enabled && var.threshold.enabled_5xx ? local.list : {}
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-synthetics-canary-${each.value.name}-5xx"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -130,6 +141,7 @@ resource "aws_cloudwatch_metric_alarm" "http_5xx" {
 resource "aws_cloudwatch_metric_alarm" "duration" {
   for_each = var.is_enabled && var.threshold.enabled_duration ? local.list : {}
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-synthetics-canary-${each.value.name}-duration"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -157,6 +169,7 @@ resource "aws_cloudwatch_metric_alarm" "duration" {
 resource "aws_cloudwatch_metric_alarm" "duration_dry_run" {
   for_each = var.is_enabled && var.threshold.enabled_duration_dry_run ? local.list : {}
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-synthetics-canary-${each.value.name}-duration-dry-run"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -184,6 +197,7 @@ resource "aws_cloudwatch_metric_alarm" "duration_dry_run" {
 resource "aws_cloudwatch_metric_alarm" "failed" {
   for_each = var.is_enabled && var.threshold.enabled_failed ? local.list : {}
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-synthetics-canary-${each.value.name}-failed"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -211,6 +225,7 @@ resource "aws_cloudwatch_metric_alarm" "failed" {
 resource "aws_cloudwatch_metric_alarm" "failed_requests" {
   for_each = var.is_enabled && var.threshold.enabled_failed_requests ? local.list : {}
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-synthetics-canary-${each.value.name}-failed-requests"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -238,6 +253,7 @@ resource "aws_cloudwatch_metric_alarm" "failed_requests" {
 resource "aws_cloudwatch_metric_alarm" "success_percent" {
   for_each = var.is_enabled && var.threshold.enabled_success_percent ? local.list : {}
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-synthetics-canary-${each.value.name}-success-percent"
   comparison_operator       = "LessThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -265,6 +281,7 @@ resource "aws_cloudwatch_metric_alarm" "success_percent" {
 resource "aws_cloudwatch_metric_alarm" "success_percent_dry_run" {
   for_each = var.is_enabled && var.threshold.enabled_success_percent_dry_run ? local.list : {}
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-synthetics-canary-${each.value.name}-success-percent-dry-run"
   comparison_operator       = "LessThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -292,6 +309,7 @@ resource "aws_cloudwatch_metric_alarm" "success_percent_dry_run" {
 resource "aws_cloudwatch_metric_alarm" "success_percent_with_retries" {
   for_each = var.is_enabled && var.threshold.enabled_success_percent_with_retries ? local.list : {}
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-synthetics-canary-${each.value.name}-success-percent-with-retries"
   comparison_operator       = "LessThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -319,6 +337,7 @@ resource "aws_cloudwatch_metric_alarm" "success_percent_with_retries" {
 resource "aws_cloudwatch_metric_alarm" "visual_monitoring_success_percent" {
   for_each = var.is_enabled && var.threshold.enabled_visual_monitoring_success_percent ? local.list : {}
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-synthetics-canary-${each.value.name}-visual-monitoring-success-percent"
   comparison_operator       = "LessThanOrEqualToThreshold"
   evaluation_periods        = 1

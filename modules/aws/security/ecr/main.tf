@@ -4,10 +4,19 @@
 # - Migrate basic scan type to AWS native scanning technology.
 # Reference: https://docs.aws.amazon.com/AmazonECR/latest/userguide/image-scanning.html
 #--------------------------------------------------------------
+data "aws_region" "current" {}
+
+#--------------------------------------------------------------
+# Locals
+#--------------------------------------------------------------
+locals {
+  region = coalesce(var.region, data.aws_region.current.region)
+}
 
 resource "aws_ecr_account_setting" "basic_scan_type" {
   count = var.is_enabled ? 1 : 0
 
-  name  = "BASIC_SCAN_TYPE_VERSION"
-  value = "AWS_NATIVE"
+  region = local.region
+  name   = "BASIC_SCAN_TYPE_VERSION"
+  value  = "AWS_NATIVE"
 }

@@ -6,7 +6,13 @@
 #--------------------------------------------------------------
 # Locals
 #--------------------------------------------------------------
+data "aws_region" "current" {}
+
+#--------------------------------------------------------------
+# Locals
+#--------------------------------------------------------------
 locals {
+  region      = coalesce(var.region, data.aws_region.current.region)
   name_prefix = var.name_prefix == "" ? "" : "${trimsuffix(var.name_prefix, "-")}-"
 }
 
@@ -16,6 +22,7 @@ locals {
 resource "aws_config_config_rule" "cloudfront-accesslogs-enabled" {
   count = var.is_enabled ? 1 : 0
 
+  region      = local.region
   name        = "${local.name_prefix}cloudfront-accesslogs-enabled"
   description = "Checks if Amazon CloudFront distributions are configured to capture information from Amazon Simple Storage Service (Amazon S3) server access logs. This rule is NON_COMPLIANT if a CloudFront distribution does not have logging configured."
   source {
@@ -32,6 +39,7 @@ resource "aws_config_config_rule" "cloudfront-accesslogs-enabled" {
 resource "aws_config_config_rule" "cloudfront-associated-with-waf" {
   count = var.is_enabled ? 1 : 0
 
+  region      = local.region
   name        = "${local.name_prefix}cloudfront-associated-with-waf"
   description = "Checks if Amazon CloudFront distributions are associated with either WAF or WAFv2 web access control lists (ACLs). This rule is NON_COMPLIANT if a CloudFront distribution is not associated with a web ACL."
   source {
@@ -48,6 +56,7 @@ resource "aws_config_config_rule" "cloudfront-associated-with-waf" {
 resource "aws_config_config_rule" "cloudfront-custom-ssl-certificate" {
   count = var.is_enabled ? 1 : 0
 
+  region      = local.region
   name        = "${local.name_prefix}cloudfront-custom-ssl-certificate"
   description = "Checks if the certificate associated with an Amazon CloudFront distribution is the default Secure Sockets Layer (SSL) certificate. This rule is NON_COMPLIANT if a CloudFront distribution uses the default SSL certificate."
   source {
@@ -64,6 +73,7 @@ resource "aws_config_config_rule" "cloudfront-custom-ssl-certificate" {
 resource "aws_config_config_rule" "cloudfront-default-root-object-configured" {
   count = var.is_enabled ? 1 : 0
 
+  region      = local.region
   name        = "${local.name_prefix}cloudfront-default-root-object-configured"
   description = "Checks if an Amazon CloudFront distribution is configured to return a specific object that is the default root object. The rule is NON_COMPLIANT if Amazon CloudFront distribution does not have a default root object configured."
   source {
@@ -80,6 +90,7 @@ resource "aws_config_config_rule" "cloudfront-default-root-object-configured" {
 resource "aws_config_config_rule" "cloudfront-origin-failover-enabled" {
   count = var.is_enabled ? 1 : 0
 
+  region      = local.region
   name        = "${local.name_prefix}cloudfront-origin-failover-enabled"
   description = "Checks whether an origin group is configured for the distribution of at least 2 origins in the origin group for Amazon CloudFront. This rule is NON_COMPLIANT if there are no origin groups for the distribution."
   source {
@@ -96,6 +107,7 @@ resource "aws_config_config_rule" "cloudfront-origin-failover-enabled" {
 resource "aws_config_config_rule" "cloudfront-sni-enabled" {
   count = var.is_enabled ? 1 : 0
 
+  region      = local.region
   name        = "${local.name_prefix}cloudfront-sni-enabled"
   description = "Checks if Amazon CloudFront distributions are using a custom SSL certificate and are configured to use SNI to serve HTTPS requests. This rule is NON_COMPLIANT if a custom SSL certificate is associated but the SSL support method is a dedicated IP address."
   source {
@@ -112,6 +124,7 @@ resource "aws_config_config_rule" "cloudfront-sni-enabled" {
 resource "aws_config_config_rule" "cloudfront-viewer-policy-https" {
   count = var.is_enabled ? 1 : 0
 
+  region      = local.region
   name        = "${local.name_prefix}cloudfront-viewer-policy-https"
   description = "Checks whether your Amazon CloudFront distributions use HTTPS (directly or via a redirection). The rule is NON_COMPLIANT if the value of ViewerProtocolPolicy is set to 'allow-all' for the defaultCacheBehavior or for the cacheBehaviors."
   source {
@@ -128,6 +141,7 @@ resource "aws_config_config_rule" "cloudfront-viewer-policy-https" {
 resource "aws_config_remediation_configuration" "cloudfront-viewer-policy-https" {
   count = var.is_enabled && var.is_enable_cloudfront_viewer_policy_https ? 1 : 0
 
+  region           = local.region
   config_rule_name = aws_config_config_rule.cloudfront-viewer-policy-https[0].name
   target_type      = "SSM_DOCUMENT"
   # https://docs.aws.amazon.com/systems-manager-automation-runbooks/latest/userguide/automation-aws-enable-cloudfront-viewer-policy.html

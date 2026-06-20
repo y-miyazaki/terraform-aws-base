@@ -5,20 +5,27 @@
 #--------------------------------------------------------------
 data "aws_region" "current" {}
 
+#--------------------------------------------------------------
+# Locals
+#--------------------------------------------------------------
+locals {
+  region = coalesce(var.region, data.aws_region.current.region)
+}
+
 resource "null_resource" "athena_primary_workgroup_encryptionoption" {
   count = var.is_enabled ? 1 : 0
 
   triggers = {
     workgroup       = var.workgroup
     output_location = var.output_location
-    region          = data.aws_region.current.region
+    region          = local.region
   }
 
   provisioner "local-exec" {
     command = <<-EOF
       aws athena update-work-group \
         --work-group "${var.workgroup}" \
-        --region ${data.aws_region.current.region} \
+        --region ${local.region} \
         --configuration-updates '${jsonencode({
     EnforceWorkGroupConfiguration   = true
     PublishCloudWatchMetricsEnabled = true

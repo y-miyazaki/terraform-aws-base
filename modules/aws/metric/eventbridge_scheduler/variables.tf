@@ -6,11 +6,13 @@ variable "is_enabled" {
   description = "(Optional) A boolean flag to enable/disable settings of EventBridge Scheduler. Defaults true."
   default     = true
 }
+
 variable "period" {
   type        = number
   description = "(Optional) The period in seconds over which the specified statistic is applied."
   default     = 300
 }
+
 variable "threshold" {
   type = object({
     # InvocationAttemptCount threshold (unit=Count)
@@ -49,6 +51,7 @@ variable "threshold" {
     invocation_dropped_count             = 1
   }
 }
+
 variable "threshold_override" {
   type = map(object({
     enabled_invocation_attempt_count     = optional(bool)
@@ -65,6 +68,7 @@ variable "threshold_override" {
   description = "(Optional) Per-schedule-group threshold overrides. Key is the schedule group name."
   default     = {}
 }
+
 variable "dimensions" {
   type        = list(map(any))
   description = "(Optional) The dimensions for the alarm's associated metric. For the list of available dimensions see the AWS documentation here."
@@ -78,36 +82,49 @@ variable "create_auto_dimensions" {
   description = "(Optional) Create dimensions automatically from EventBridge Scheduler schedule groups."
   default     = false
 }
+
 variable "auto_dimensions_exclude_list" {
   type        = list(string)
   description = "(Optional) List of schedule group names to exclude from auto-discovered dimensions."
   default     = []
 }
+
 variable "auto_dimensions_include_list" {
   type        = list(string)
   description = "(Optional) List of schedule group names to include in auto-discovered dimensions. If empty, all discovered schedule groups are included."
   default     = []
 }
+
 variable "name_prefix" {
   type        = string
   description = "(Required) CloudWatch Filter/Alarm name prefix."
 }
+
 variable "alarm_actions" {
   type        = list(string)
   description = "(Required) The list of actions to execute when this alarm transitions into an ALARM state from any other state. Each action is specified as an Amazon Resource Name (ARN)."
 }
+
 variable "ok_actions" {
   type        = list(string)
   description = "(Optional) The list of actions to execute when this alarm transitions into an OK state from any other state. Each action is specified as an Amazon Resource Name (ARN)."
   default     = []
 }
+
 variable "insufficient_data_actions" {
   type        = list(string)
   description = "(Optional) The list of actions to execute when this alarm transitions into an INSUFFICIENT_DATA state from any other state. Each action is specified as an Amazon Resource Name (ARN)."
   default     = []
 }
+
 variable "tags" {
   type        = map(any)
   description = "(Optional) Key-value map of resource tags."
+  default     = null
+}
+
+variable "region" {
+  type        = string
+  description = "(Optional) AWS region. Defaults to provider region."
   default     = null
 }

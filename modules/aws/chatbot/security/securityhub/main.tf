@@ -3,6 +3,14 @@
 # Purpose: Ingest Security Hub findings (non-PASSED, NEW, CRITICAL/HIGH) via EventBridge, notify Slack (SNS + Chatbot) and update findings workflow using Step Functions.
 # Notes: Multiple IAM roles/policies for events and step functions; unified tagging applied; future improvement: externalize Step Functions definition and severity thresholds.
 #--------------------------------------------------------------
+data "aws_region" "current" {}
+
+#--------------------------------------------------------------
+# Locals
+#--------------------------------------------------------------
+locals {
+  region = coalesce(var.region, data.aws_region.current.region)
+}
 
 #--------------------------------------------------------------
 # IAM Role for EventBridge(Step Functions)
@@ -17,6 +25,9 @@ data "aws_iam_policy_document" "eventbridge_assume_role" {
   }
 }
 
+#--------------------------------------------------------------
+# Provides an IAM role.
+#--------------------------------------------------------------
 resource "aws_iam_role" "eventbridge" {
   count = var.is_enabled ? 1 : 0
 
@@ -70,6 +81,9 @@ data "aws_iam_policy_document" "step_functions_assume_role" {
   }
 }
 
+#--------------------------------------------------------------
+# Provides an IAM role.
+#--------------------------------------------------------------
 resource "aws_iam_role" "step_functions" {
   count = var.is_enabled ? 1 : 0
 
@@ -120,6 +134,7 @@ resource "aws_iam_policy" "step_functions" {
 
   tags = merge(var.tags, { Name = "${var.name_prefix}security-securityhub-step-functions-policy" })
 }
+
 resource "aws_iam_role_policy_attachment" "step_functions" {
   count = var.is_enabled ? 1 : 0
 
@@ -133,6 +148,7 @@ resource "aws_iam_role_policy_attachment" "step_functions" {
 resource "aws_cloudwatch_event_rule" "securityhub" {
   count = var.is_enabled ? 1 : 0
 
+  region      = local.region
   description = "This cloudwatch event used for SecurityHub."
   event_pattern = jsonencode({
     source = [
@@ -192,6 +208,7 @@ data "aws_iam_policy_document" "sns_topic" {
 resource "aws_sns_topic" "this" {
   count = var.is_enabled ? 1 : 0
 
+  region            = local.region
   name              = "${var.name_prefix}security-securityhub-chatbot-slack-topic"
   kms_master_key_id = var.kms_master_key_id
 
@@ -201,6 +218,7 @@ resource "aws_sns_topic" "this" {
 resource "aws_sns_topic_policy" "this" {
   count = var.is_enabled ? 1 : 0
 
+  region = local.region
   arn    = aws_sns_topic.this[0].arn
   policy = data.aws_iam_policy_document.sns_topic.json
 }
@@ -213,6 +231,7 @@ resource "aws_sns_topic_policy" "this" {
 resource "aws_cloudwatch_event_target" "sns_publish" {
   count = var.is_enabled ? 1 : 0
 
+  region    = local.region
   rule      = aws_cloudwatch_event_rule.securityhub[0].name
   target_id = aws_sns_topic.this[0].name
   arn       = aws_sns_topic.this[0].arn
@@ -221,6 +240,7 @@ resource "aws_cloudwatch_event_target" "sns_publish" {
 resource "aws_cloudwatch_event_target" "step_functions" {
   count = var.is_enabled ? 1 : 0
 
+  region   = local.region
   rule     = aws_cloudwatch_event_rule.securityhub[0].name
   arn      = module.step_functions[0].state_machine_arn
   role_arn = aws_iam_role.eventbridge[0].arn
@@ -235,6 +255,8 @@ module "step_functions" {
 
   source  = "terraform-aws-modules/step-functions/aws"
   version = "5.1.0"
+
+  region = local.region
 
   cloudwatch_log_group_kms_key_id        = var.cloudwatch_log_group_kms_key_id
   cloudwatch_log_group_name              = "/aws/sfn/${var.name_prefix}securityhub-update-findings-sfn"

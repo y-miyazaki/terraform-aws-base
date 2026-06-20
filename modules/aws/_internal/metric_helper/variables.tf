@@ -1,7 +1,6 @@
 #--------------------------------------------------------------
 # Variables for metric_helper internal module
 #--------------------------------------------------------------
-
 variable "is_enabled" {
   description = "Master switch to enable/disable the entire module"
   type        = bool
@@ -52,4 +51,10 @@ variable "threshold_override" {
   description = "Map of resource name to threshold overrides. Key is the dimension value (exact match), value is an object with optional threshold attributes to override."
   type        = any
   default     = {}
+}
+
+variable "region" {
+  type        = string
+  description = "(Optional) AWS region. Defaults to provider region."
+  default     = null
 }

@@ -6,6 +6,7 @@ variable "is_enabled" {
   description = "(Optional) A boolean flag to enable/disable Synthetics Canary. Defaults true."
   default     = true
 }
+
 variable "aws_iam_role" {
   type = object(
     {
@@ -24,16 +25,19 @@ variable "aws_iam_role" {
     path        = "/"
   }
 }
+
 variable "account_id" {
   type        = string
   description = "(Optional) AWS account ID for member account. Set only if aws_synthetics_canary.execution_role_arn is not specified."
   default     = null
 }
+
 variable "region" {
   type        = string
   description = "(Optional) Specify the region in which Synthetics Canary will be run. Set only if aws_synthetics_canary.execution_role_arn is not specified."
   default     = null
 }
+
 variable "s3_bucket_arn" {
   type        = string
   description = "(Optional) Specify the ARN of the S3Bucket where the Artifact will be placed. Set only if aws_synthetics_canary.execution_role_arn is not specified."
@@ -110,6 +114,7 @@ variable "aws_synthetics_canary" {
   )
   description = "(Required) aws_synthetics_canary."
 }
+
 variable "tags" {
   type        = map(any)
   description = "(Optional) Key-value map of resource tags. If configured with a provider default_tags configuration block present, tags with matching keys will overwrite those defined at the provider-level."

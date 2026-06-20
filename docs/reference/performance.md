@@ -29,15 +29,15 @@ Prefer a common retention value from [README-base-tfvars.md](../how-to/configure
 
 #### Impact
 
-When a feature is enabled in the primary region and again in `us-east-1`, plan and apply time increase and the account accumulates duplicate resources.
+When `var.region.targets` includes many regions, plan and apply time increase proportionally for regional services.
 
 #### Cause
 
-The architecture uses a dual-module pattern for some services with a `us_east_1` toggle and a guard that skips the secondary copy when the primary region is already `us-east-1`.
+Regional services (`main_regional_*.tf`) deploy to every region in `var.region.targets`. Global services (`main_central_*.tf`) deploy once to `var.region.global`.
 
 #### Mitigation
 
-Set `us_east_1.is_enabled` only for services that truly need the secondary region, and verify the guard logic described in [docs/architecture.md](../explanation/architecture.md).
+Only include regions in `var.region.targets` that genuinely need the service. Account-wide services (Budgets, Trusted Advisor) are already limited to a single deployment via `region = var.region.global`.
 
 ### JIT access revocation latency
 
@@ -73,7 +73,7 @@ Enable only the thresholds that are meaningful for the cluster class and workloa
 | --------- | ------ | -------- |
 | `cloudwatch_log_group.retention_in_days` | Controls the default log retention period for all services | Longer retention increases storage cost and review volume |
 | `cloudwatch_log_group.override.<service>.retention_in_days` | Tunes retention for a single service without changing the global default | Adds configuration complexity and per-service drift risk |
-| `us_east_1.is_enabled` | Controls whether the secondary region resources are created | Broader coverage increases plan/apply time and resource count |
+| `region.targets` | Controls which regions receive regional resources | More regions increase plan/apply time and resource count |
 | `cleanup_schedule_expression` | Controls how often stale JIT assignments are checked | Shorter intervals reduce stale access time but increase scheduler activity |
 | `enabled_*` threshold flags in Redshift monitoring | Controls which alarms exist for each cluster | More enabled checks improve visibility but increase noise and maintenance cost |
 

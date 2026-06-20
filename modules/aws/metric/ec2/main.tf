@@ -3,14 +3,24 @@
 # Purpose: Provide CloudWatch metric alarms for EC2 instances with optional auto-discovery (CPU, credits, metadata token use, status checks).
 # Notes: Unified tagging; auto discovery filters instances via exclude list.
 #--------------------------------------------------------------
+data "aws_region" "current" {}
+
 #--------------------------------------------------------------
-# Auto-discovery filter module
+# Locals
+#--------------------------------------------------------------
+locals {
+  region = coalesce(var.region, data.aws_region.current.region)
+}
+
+#--------------------------------------------------------------
+# Auto-discovery metric filter module
 #--------------------------------------------------------------
 module "helper" {
-  source     = "../../_internal/metric_helper"
-  is_enabled = var.is_enabled
+  source = "../../_internal/metric_helper"
 
-  create_auto        = var.create_auto_dimensions
+  is_enabled  = var.is_enabled
+  create_auto = var.create_auto_dimensions
+
   source_list        = data.aws_instances.this.ids
   include_list       = var.auto_dimensions_include_list
   exclude_list       = var.auto_dimensions_exclude_list
@@ -41,6 +51,7 @@ resource "aws_cloudwatch_metric_alarm" "cpu_credit_balance" {
     if var.is_enabled && local.effective_thresholds[k].enabled_cpu_credit_balance
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-ec2-${each.value.name}-cpu-credit-balance"
   comparison_operator       = "LessThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -71,6 +82,7 @@ resource "aws_cloudwatch_metric_alarm" "cpu_credit_usage" {
     if var.is_enabled && local.effective_thresholds[k].enabled_cpu_credit_usage
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-ec2-${each.value.name}-cpu-credit-usage"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -101,6 +113,7 @@ resource "aws_cloudwatch_metric_alarm" "cpu_utilization" {
     if var.is_enabled && local.effective_thresholds[k].enabled_cpu_utilization
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-ec2-${each.value.name}-cpu-utilization"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -131,6 +144,7 @@ resource "aws_cloudwatch_metric_alarm" "cpu_surplus_credit_balance" {
     if var.is_enabled && local.effective_thresholds[k].enabled_cpu_surplus_credit_balance
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-ec2-${each.value.name}-cpu-surplus-credit-balance"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -161,6 +175,7 @@ resource "aws_cloudwatch_metric_alarm" "cpu_surplus_credits_charged" {
     if var.is_enabled && local.effective_thresholds[k].enabled_cpu_surplus_credits_charged
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-ec2-${each.value.name}-cpu-surplus-credits-charged"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -191,6 +206,7 @@ resource "aws_cloudwatch_metric_alarm" "dedicated_host_cpu_utilization" {
     if var.is_enabled && local.effective_thresholds[k].enabled_dedicated_host_cpu_utilization
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-ec2-${each.value.name}-dedicated-host-cpu-utilization"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -221,6 +237,7 @@ resource "aws_cloudwatch_metric_alarm" "disk_read_bytes" {
     if var.is_enabled && local.effective_thresholds[k].enabled_disk_read_bytes
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-ec2-${each.value.name}-disk-read-bytes"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -251,6 +268,7 @@ resource "aws_cloudwatch_metric_alarm" "disk_read_ops" {
     if var.is_enabled && local.effective_thresholds[k].enabled_disk_read_ops
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-ec2-${each.value.name}-disk-read-ops"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -281,6 +299,7 @@ resource "aws_cloudwatch_metric_alarm" "disk_write_bytes" {
     if var.is_enabled && local.effective_thresholds[k].enabled_disk_write_bytes
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-ec2-${each.value.name}-disk-write-bytes"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -311,6 +330,7 @@ resource "aws_cloudwatch_metric_alarm" "disk_write_ops" {
     if var.is_enabled && local.effective_thresholds[k].enabled_disk_write_ops
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-ec2-${each.value.name}-disk-write-ops"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -341,6 +361,7 @@ resource "aws_cloudwatch_metric_alarm" "ebs_byte_balance_percent" {
     if var.is_enabled && local.effective_thresholds[k].enabled_ebs_byte_balance_percent
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-ec2-${each.value.name}-ebs-byte-balance-percent"
   comparison_operator       = "LessThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -371,6 +392,7 @@ resource "aws_cloudwatch_metric_alarm" "ebs_io_balance_percent" {
     if var.is_enabled && local.effective_thresholds[k].enabled_ebs_io_balance_percent
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-ec2-${each.value.name}-ebs-io-balance-percent"
   comparison_operator       = "LessThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -401,6 +423,7 @@ resource "aws_cloudwatch_metric_alarm" "ebs_read_bytes" {
     if var.is_enabled && local.effective_thresholds[k].enabled_ebs_read_bytes
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-ec2-${each.value.name}-ebs-read-bytes"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -431,6 +454,7 @@ resource "aws_cloudwatch_metric_alarm" "ebs_read_ops" {
     if var.is_enabled && local.effective_thresholds[k].enabled_ebs_read_ops
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-ec2-${each.value.name}-ebs-read-ops"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -461,6 +485,7 @@ resource "aws_cloudwatch_metric_alarm" "ebs_write_bytes" {
     if var.is_enabled && local.effective_thresholds[k].enabled_ebs_write_bytes
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-ec2-${each.value.name}-ebs-write-bytes"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -491,6 +516,7 @@ resource "aws_cloudwatch_metric_alarm" "ebs_write_ops" {
     if var.is_enabled && local.effective_thresholds[k].enabled_ebs_write_ops
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-ec2-${each.value.name}-ebs-write-ops"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -521,6 +547,7 @@ resource "aws_cloudwatch_metric_alarm" "metadata_no_token" {
     if var.is_enabled && local.effective_thresholds[k].enabled_metadata_no_token
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-ec2-${each.value.name}-metadata-no-token"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -551,6 +578,7 @@ resource "aws_cloudwatch_metric_alarm" "metadata_no_token_rejected" {
     if var.is_enabled && local.effective_thresholds[k].enabled_metadata_no_token_rejected
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-ec2-${each.value.name}-metadata-no-token-rejected"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -581,6 +609,7 @@ resource "aws_cloudwatch_metric_alarm" "network_in" {
     if var.is_enabled && local.effective_thresholds[k].enabled_network_in
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-ec2-${each.value.name}-network-in"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -611,6 +640,7 @@ resource "aws_cloudwatch_metric_alarm" "network_out" {
     if var.is_enabled && local.effective_thresholds[k].enabled_network_out
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-ec2-${each.value.name}-network-out"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -641,6 +671,7 @@ resource "aws_cloudwatch_metric_alarm" "network_packets_in" {
     if var.is_enabled && local.effective_thresholds[k].enabled_network_packets_in
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-ec2-${each.value.name}-network-packets-in"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -671,6 +702,7 @@ resource "aws_cloudwatch_metric_alarm" "network_packets_out" {
     if var.is_enabled && local.effective_thresholds[k].enabled_network_packets_out
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-ec2-${each.value.name}-network-packets-out"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -701,6 +733,7 @@ resource "aws_cloudwatch_metric_alarm" "status_check_failed" {
     if var.is_enabled && local.effective_thresholds[k].enabled_status_check_failed
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-ec2-${each.value.name}-status-check-failed"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -731,6 +764,7 @@ resource "aws_cloudwatch_metric_alarm" "status_check_failed_attached_ebs" {
     if var.is_enabled && local.effective_thresholds[k].enabled_status_check_failed_attached_ebs
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-ec2-${each.value.name}-status-check-failed-attached-ebs"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -761,6 +795,7 @@ resource "aws_cloudwatch_metric_alarm" "status_check_failed_instance" {
     if var.is_enabled && local.effective_thresholds[k].enabled_status_check_failed_instance
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-ec2-${each.value.name}-status-check-failed-instance"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -791,6 +826,7 @@ resource "aws_cloudwatch_metric_alarm" "status_check_failed_system" {
     if var.is_enabled && local.effective_thresholds[k].enabled_status_check_failed_system
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-ec2-${each.value.name}-status-check-failed-system"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -821,6 +857,7 @@ resource "aws_cloudwatch_metric_alarm" "instance_ebs_iops_exceeded_check" {
     if var.is_enabled && local.effective_thresholds[k].enabled_instance_ebs_iops_exceeded_check
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-ec2-${each.value.name}-instance-ebs-iops-exceeded-check"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -851,6 +888,7 @@ resource "aws_cloudwatch_metric_alarm" "instance_ebs_throughput_exceeded_check" 
     if var.is_enabled && local.effective_thresholds[k].enabled_instance_ebs_throughput_exceeded_check
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-ec2-${each.value.name}-instance-ebs-throughput-exceeded-check"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1

@@ -19,6 +19,7 @@ variable "aws_iam_role" {
     path        = "/"
   }
 }
+
 variable "aws_iam_policy" {
   type = object(
     {
@@ -37,14 +38,17 @@ variable "aws_iam_policy" {
     path        = "/"
   }
 }
+
 variable "open_connect_provider_arn" {
   type        = string
   description = "(Required) The ARN assigned by AWS for open connect provider."
 }
+
 variable "cluster_identity_oidc_issuer_url" {
   type        = string
   description = "(Required) Issuer URL for the OpenID Connect identity provider."
 }
+
 variable "tags" {
   type        = map(any)
   description = "(Optional) Key-value mapping of tags for the IAM role"

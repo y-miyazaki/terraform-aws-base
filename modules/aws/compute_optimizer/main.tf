@@ -3,9 +3,6 @@
 # Purpose: Enable or disable AWS Compute Optimizer enrollment using local-exec provisioners.
 # Notes: Uses local-exec to call AWS CLI; future improvement could replace imperative actions with native resources if exposed.
 #--------------------------------------------------------------
-#--------------------------------------------------------------
-# Provides an Compute Optimizer.
-#--------------------------------------------------------------
 resource "null_resource" "this" {
   count = var.is_enabled ? 1 : 0
 

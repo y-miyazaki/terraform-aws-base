@@ -3,10 +3,13 @@
 # Purpose: Provision CloudTrail with optional dedicated S3 bucket, CloudWatch log integration, CIS metric filters/alarms, and SNS notifications.
 # Notes: Extensive CIS coverage (3.1-3.14); future improvement: parameterize CIS control enablement flags individually.
 #--------------------------------------------------------------
+data "aws_region" "current" {}
+
 #--------------------------------------------------------------
 # Locals
 #--------------------------------------------------------------
 locals {
+  region        = coalesce(var.region, data.aws_region.current.region)
   is_s3_enabled = var.is_enabled && var.is_s3_enabled
   bucket_id     = local.is_s3_enabled ? module.s3.s3_bucket_id : var.aws_s3_bucket_existing.bucket_id
   #   bucket_arn    = local.is_s3_enabled ? module.s3.s3_bucket_arn : var.aws_s3_bucket_existing.bucket_arn
@@ -18,6 +21,7 @@ locals {
 resource "aws_sns_topic" "this" {
   count = var.is_enabled ? 1 : 0
 
+  region                                   = local.region
   name                                     = try(var.aws_sns_topic.name, null)
   name_prefix                              = try(var.aws_sns_topic.name_prefix, null)
   display_name                             = try(var.aws_sns_topic.display_name, null)
@@ -48,6 +52,7 @@ resource "aws_sns_topic" "this" {
 resource "aws_sns_topic_subscription" "this" {
   count = var.is_enabled ? 1 : 0
 
+  region                          = local.region
   topic_arn                       = aws_sns_topic.this[0].arn
   protocol                        = try(var.aws_sns_topic_subscription.protocol, null)
   endpoint                        = try(var.aws_sns_topic_subscription.endpoint, null)
@@ -65,6 +70,7 @@ resource "aws_sns_topic_subscription" "this" {
 resource "aws_cloudwatch_log_group" "this" {
   count = var.is_enabled ? 1 : 0
 
+  region            = local.region
   name              = var.aws_cloudwatch_log_group.name
   retention_in_days = var.aws_cloudwatch_log_group.retention_in_days
   kms_key_id        = try(var.aws_cloudwatch_log_group.kms_key_id, null)
@@ -79,7 +85,8 @@ resource "aws_cloudwatch_log_group" "this" {
 resource "aws_cloudwatch_log_metric_filter" "cis_3_1" {
   count = var.is_enabled ? 1 : 0
 
-  name = "${var.cis_name_prefix}cloudtrail-logs-unauthorized-operation-api"
+  region = local.region
+  name   = "${var.cis_name_prefix}cloudtrail-logs-unauthorized-operation-api"
   # noise list:
   # - assumed-role/AWSServiceRoleFor*
   # - assumed-role/AIOpsRole*
@@ -101,6 +108,7 @@ PATTERN
 resource "aws_cloudwatch_metric_alarm" "cis_3_1" {
   count = var.is_enabled ? 1 : 0
 
+  region                    = local.region
   alarm_name                = "${var.cis_name_prefix}cloudtrail-logs-unauthorized-operation-api"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -126,6 +134,7 @@ resource "aws_cloudwatch_metric_alarm" "cis_3_1" {
 resource "aws_cloudwatch_log_metric_filter" "cis_3_2" {
   count = 0
 
+  region         = local.region
   name           = "${var.cis_name_prefix}cloudtrail-logs-mfa"
   pattern        = <<PATTERN
 {($.eventName="ConsoleLogin") && ($.additionalEventData.MFAUsed!="Yes") && ($.userIdentity.type="IAMUser") && ($.responseElements.ConsoleLogin="Success")}
@@ -145,6 +154,7 @@ PATTERN
 resource "aws_cloudwatch_metric_alarm" "cis_3_2" {
   count = 0
 
+  region                    = local.region
   alarm_name                = "${var.cis_name_prefix}cloudtrail-logs-mfa"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -170,6 +180,7 @@ resource "aws_cloudwatch_metric_alarm" "cis_3_2" {
 resource "aws_cloudwatch_log_metric_filter" "cis_3_3" {
   count = var.is_enabled ? 1 : 0
 
+  region         = local.region
   name           = "${var.cis_name_prefix}cloudtrail-logs-root"
   pattern        = <<PATTERN
 {$.userIdentity.type="Root" && $.userIdentity.invokedBy NOT EXISTS && $.eventType !="AwsServiceEvent"}
@@ -189,6 +200,7 @@ PATTERN
 resource "aws_cloudwatch_metric_alarm" "cis_3_3" {
   count = var.is_enabled ? 1 : 0
 
+  region                    = local.region
   alarm_name                = "${var.cis_name_prefix}cloudtrail-logs-root"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -214,6 +226,7 @@ resource "aws_cloudwatch_metric_alarm" "cis_3_3" {
 resource "aws_cloudwatch_log_metric_filter" "cis_3_4" {
   count = var.is_enabled ? 1 : 0
 
+  region         = local.region
   name           = "${var.cis_name_prefix}cloudtrail-logs-iam-policy"
   pattern        = <<PATTERN
 {($.eventName=DeleteGroupPolicy) || ($.eventName=DeleteRolePolicy) || ($.eventName=DeleteUserPolicy) || ($.eventName=PutGroupPolicy) || ($.eventName=PutRolePolicy) || ($.eventName=PutUserPolicy) || ($.eventName=CreatePolicy) || ($.eventName=DeletePolicy) || ($.eventName=CreatePolicyVersion) || ($.eventName=DeletePolicyVersion) || ($.eventName=AttachRolePolicy) || ($.eventName=DetachRolePolicy) || ($.eventName=AttachUserPolicy) || ($.eventName=DetachUserPolicy) || ($.eventName=AttachGroupPolicy) || ($.eventName=DetachGroupPolicy)}
@@ -233,6 +246,7 @@ PATTERN
 resource "aws_cloudwatch_metric_alarm" "cis_3_4" {
   count = var.is_enabled ? 1 : 0
 
+  region                    = local.region
   alarm_name                = "${var.cis_name_prefix}cloudtrail-logs-iam-policy"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -258,6 +272,7 @@ resource "aws_cloudwatch_metric_alarm" "cis_3_4" {
 resource "aws_cloudwatch_log_metric_filter" "cis_3_5" {
   count = var.is_enabled ? 1 : 0
 
+  region         = local.region
   name           = "${var.cis_name_prefix}cloudtrail-logs-cloudtrail"
   pattern        = <<PATTERN
 {($.eventName=CreateTrail) || ($.eventName=UpdateTrail) || ($.eventName=DeleteTrail) || ($.eventName=StartLogging) || ($.eventName=StopLogging)}
@@ -277,6 +292,7 @@ PATTERN
 resource "aws_cloudwatch_metric_alarm" "cis_3_5" {
   count = var.is_enabled ? 1 : 0
 
+  region                    = local.region
   alarm_name                = "${var.cis_name_prefix}cloudtrail-logs-cloudtrail"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -302,6 +318,7 @@ resource "aws_cloudwatch_metric_alarm" "cis_3_5" {
 resource "aws_cloudwatch_log_metric_filter" "cis_3_6" {
   count = var.is_enabled ? 1 : 0
 
+  region         = local.region
   name           = "${var.cis_name_prefix}cloudtrail-logs-failed-authentication"
   pattern        = <<PATTERN
 {($.eventName=ConsoleLogin) && ($.errorMessage="Failed authentication")}
@@ -321,6 +338,7 @@ PATTERN
 resource "aws_cloudwatch_metric_alarm" "cis_3_6" {
   count = var.is_enabled ? 1 : 0
 
+  region                    = local.region
   alarm_name                = "${var.cis_name_prefix}cloudtrail-logs-failed-authentication"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -346,6 +364,7 @@ resource "aws_cloudwatch_metric_alarm" "cis_3_6" {
 resource "aws_cloudwatch_log_metric_filter" "cis_3_7" {
   count = var.is_enabled ? 1 : 0
 
+  region         = local.region
   name           = "${var.cis_name_prefix}cloudtrail-logs-cmk"
   pattern        = <<PATTERN
 {($.eventSource=kms.amazonaws.com) && (($.eventName=DisableKey) || ($.eventName=ScheduleKeyDeletion))}
@@ -365,6 +384,7 @@ PATTERN
 resource "aws_cloudwatch_metric_alarm" "cis_3_7" {
   count = var.is_enabled ? 1 : 0
 
+  region                    = local.region
   alarm_name                = "${var.cis_name_prefix}cloudtrail-logs-cmk"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -390,6 +410,7 @@ resource "aws_cloudwatch_metric_alarm" "cis_3_7" {
 resource "aws_cloudwatch_log_metric_filter" "cis_3_8" {
   count = var.is_enabled ? 1 : 0
 
+  region         = local.region
   name           = "${var.cis_name_prefix}cloudtrail-logs-s3-bucket-policy"
   pattern        = <<PATTERN
 {($.eventSource=s3.amazonaws.com) && (($.eventName=PutBucketAcl) || ($.eventName=PutBucketPolicy) || ($.eventName=PutBucketCors) || ($.eventName=PutBucketLifecycle) || ($.eventName=PutBucketReplication) || ($.eventName=DeleteBucketPolicy) || ($.eventName=DeleteBucketCors) || ($.eventName=DeleteBucketLifecycle) || ($.eventName=DeleteBucketReplication))}
@@ -409,6 +430,7 @@ PATTERN
 resource "aws_cloudwatch_metric_alarm" "cis_3_8" {
   count = var.is_enabled ? 1 : 0
 
+  region                    = local.region
   alarm_name                = "${var.cis_name_prefix}cloudtrail-logs-s3-bucket-policy"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -434,6 +456,7 @@ resource "aws_cloudwatch_metric_alarm" "cis_3_8" {
 resource "aws_cloudwatch_log_metric_filter" "cis_3_9" {
   count = var.is_enabled ? 1 : 0
 
+  region         = local.region
   name           = "${var.cis_name_prefix}cloudtrail-logs-config"
   pattern        = <<PATTERN
 {($.eventSource=config.amazonaws.com) && (($.eventName=StopConfigurationRecorder) || ($.eventName=DeleteDeliveryChannel) || ($.eventName=PutDeliveryChannel) || ($.eventName=PutConfigurationRecorder))}
@@ -453,6 +476,7 @@ PATTERN
 resource "aws_cloudwatch_metric_alarm" "cis_3_9" {
   count = var.is_enabled ? 1 : 0
 
+  region                    = local.region
   alarm_name                = "${var.cis_name_prefix}cloudtrail-logs-config"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -478,6 +502,7 @@ resource "aws_cloudwatch_metric_alarm" "cis_3_9" {
 resource "aws_cloudwatch_log_metric_filter" "cis_3_10" {
   count = var.is_enabled ? 1 : 0
 
+  region         = local.region
   name           = "${var.cis_name_prefix}cloudtrail-logs-security-group"
   pattern        = <<PATTERN
 {($.eventName=AuthorizeSecurityGroupIngress) || ($.eventName=AuthorizeSecurityGroupEgress) || ($.eventName=RevokeSecurityGroupIngress) || ($.eventName=RevokeSecurityGroupEgress) || ($.eventName=CreateSecurityGroup) || ($.eventName=DeleteSecurityGroup)}
@@ -497,6 +522,7 @@ PATTERN
 resource "aws_cloudwatch_metric_alarm" "cis_3_10" {
   count = var.is_enabled ? 1 : 0
 
+  region                    = local.region
   alarm_name                = "${var.cis_name_prefix}cloudtrail-logs-security-group"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -522,6 +548,7 @@ resource "aws_cloudwatch_metric_alarm" "cis_3_10" {
 resource "aws_cloudwatch_log_metric_filter" "cis_3_11" {
   count = var.is_enabled ? 1 : 0
 
+  region         = local.region
   name           = "${var.cis_name_prefix}cloudtrail-logs-nacl"
   pattern        = <<PATTERN
 {($.eventName=CreateNetworkAcl) || ($.eventName=CreateNetworkAclEntry) || ($.eventName=DeleteNetworkAcl) || ($.eventName=DeleteNetworkAclEntry) || ($.eventName=ReplaceNetworkAclEntry) || ($.eventName=ReplaceNetworkAclAssociation)}
@@ -541,6 +568,7 @@ PATTERN
 resource "aws_cloudwatch_metric_alarm" "cis_3_11" {
   count = var.is_enabled ? 1 : 0
 
+  region                    = local.region
   alarm_name                = "${var.cis_name_prefix}cloudtrail-logs-nacl"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -566,6 +594,7 @@ resource "aws_cloudwatch_metric_alarm" "cis_3_11" {
 resource "aws_cloudwatch_log_metric_filter" "cis_3_12" {
   count = var.is_enabled ? 1 : 0
 
+  region         = local.region
   name           = "${var.cis_name_prefix}cloudtrail-logs-network-gateways"
   pattern        = <<PATTERN
 {($.eventName=CreateCustomerGateway) || ($.eventName=DeleteCustomerGateway) || ($.eventName=AttachInternetGateway) || ($.eventName=CreateInternetGateway) || ($.eventName=DeleteInternetGateway) || ($.eventName=DetachInternetGateway)}
@@ -585,6 +614,7 @@ PATTERN
 resource "aws_cloudwatch_metric_alarm" "cis_3_12" {
   count = var.is_enabled ? 1 : 0
 
+  region                    = local.region
   alarm_name                = "${var.cis_name_prefix}cloudtrail-logs-network-gateways"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -610,6 +640,7 @@ resource "aws_cloudwatch_metric_alarm" "cis_3_12" {
 resource "aws_cloudwatch_log_metric_filter" "cis_3_13" {
   count = var.is_enabled ? 1 : 0
 
+  region         = local.region
   name           = "${var.cis_name_prefix}cloudtrail-logs-route-table"
   pattern        = <<PATTERN
 {($.eventName=CreateRoute) || ($.eventName=CreateRouteTable) || ($.eventName=ReplaceRoute) || ($.eventName=ReplaceRouteTableAssociation) || ($.eventName=DeleteRouteTable) || ($.eventName=DeleteRoute) || ($.eventName=DisassociateRouteTable)}
@@ -629,6 +660,7 @@ PATTERN
 resource "aws_cloudwatch_metric_alarm" "cis_3_13" {
   count = var.is_enabled ? 1 : 0
 
+  region                    = local.region
   alarm_name                = "${var.cis_name_prefix}cloudtrail-logs-route-table"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -654,6 +686,7 @@ resource "aws_cloudwatch_metric_alarm" "cis_3_13" {
 resource "aws_cloudwatch_log_metric_filter" "cis_3_14" {
   count = var.is_enabled ? 1 : 0
 
+  region         = local.region
   name           = "${var.cis_name_prefix}cloudtrail-logs-vpc"
   pattern        = <<PATTERN
 {($.eventName=CreateVpc) || ($.eventName=DeleteVpc) || ($.eventName=ModifyVpcAttribute) || ($.eventName=AcceptVpcPeeringConnection) || ($.eventName=CreateVpcPeeringConnection) || ($.eventName=DeleteVpcPeeringConnection) || ($.eventName=RejectVpcPeeringConnection) || ($.eventName=AttachClassicLinkVpc) || ($.eventName=DetachClassicLinkVpc) || ($.eventName=DisableVpcClassicLink) || ($.eventName=EnableVpcClassicLink)}
@@ -673,6 +706,7 @@ PATTERN
 resource "aws_cloudwatch_metric_alarm" "cis_3_14" {
   count = var.is_enabled ? 1 : 0
 
+  region                    = local.region
   alarm_name                = "${var.cis_name_prefix}cloudtrail-logs-vpc"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -738,7 +772,7 @@ resource "aws_iam_policy" "this" {
           "logs:CreateLogStream",
         ]
         Resource = [
-          "arn:aws:logs:${var.region}:${var.account_id}:log-group:${aws_cloudwatch_log_group.this[0].name}:log-stream:*"
+          "arn:aws:logs:${local.region}:${var.account_id}:log-group:${aws_cloudwatch_log_group.this[0].name}:log-stream:*"
         ]
       },
       {
@@ -748,7 +782,7 @@ resource "aws_iam_policy" "this" {
           "logs:PutLogEvents",
         ]
         Resource = [
-          "arn:aws:logs:${var.region}:${var.account_id}:log-group:${aws_cloudwatch_log_group.this[0].name}:log-stream:*"
+          "arn:aws:logs:${local.region}:${var.account_id}:log-group:${aws_cloudwatch_log_group.this[0].name}:log-stream:*"
         ]
       }
     ]
@@ -772,9 +806,11 @@ resource "aws_iam_role_policy_attachment" "this" {
 # https://registry.terraform.io/modules/terraform-aws-modules/s3-bucket/aws/latest
 #--------------------------------------------------------------
 module "s3" {
-  source        = "terraform-aws-modules/s3-bucket/aws"
-  version       = "5.14.0"
+  source  = "terraform-aws-modules/s3-bucket/aws"
+  version = "5.14.0"
+
   create_bucket = local.is_s3_enabled
+  region        = local.region
 
   attach_access_log_delivery_policy         = true
   attach_analytics_destination_policy       = false
@@ -814,6 +850,7 @@ module "s3" {
 resource "aws_cloudtrail" "this" {
   count = var.is_enabled ? 1 : 0
 
+  region                        = local.region
   name                          = var.aws_cloudtrail.name
   s3_bucket_name                = local.bucket_id
   s3_key_prefix                 = try(var.aws_cloudtrail.s3_key_prefix, null)

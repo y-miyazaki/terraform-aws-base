@@ -6,6 +6,7 @@ variable "is_enabled" {
   description = "(Optional) A boolean flag to enable/disable settings of EC2. Defaults true."
   default     = true
 }
+
 variable "aws_cloudwatch_event_rule" {
   type = object(
     {
@@ -23,6 +24,7 @@ variable "aws_cloudwatch_event_rule" {
     is_enabled  = true
   }
 }
+
 variable "aws_cloudwatch_event_target" {
   type = object(
     {
@@ -32,8 +34,15 @@ variable "aws_cloudwatch_event_target" {
   )
   description = "(Required) Provides an EventBridge Target resource."
 }
+
 variable "tags" {
   type        = map(any)
   description = "(Optional) Key-value map of resource tags."
+  default     = null
+}
+
+variable "region" {
+  type        = string
+  description = "(Optional) AWS region. Defaults to provider region."
   default     = null
 }

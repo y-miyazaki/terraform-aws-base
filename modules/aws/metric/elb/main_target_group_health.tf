@@ -14,6 +14,7 @@ resource "aws_cloudwatch_metric_alarm" "healthy_state_dns" {
     if var.is_enabled && local.effective_thresholds[k].enabled_healthy_state_dns && contains(keys(v.dimensions), "TargetGroup")
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-alb-${each.value.name}-healthy-state-dns"
   comparison_operator       = "LessThanThreshold"
   evaluation_periods        = 1
@@ -45,6 +46,7 @@ resource "aws_cloudwatch_metric_alarm" "healthy_state_routing" {
     if var.is_enabled && local.effective_thresholds[k].enabled_healthy_state_routing && contains(keys(v.dimensions), "TargetGroup")
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-alb-${each.value.name}-healthy-state-routing"
   comparison_operator       = "LessThanThreshold"
   evaluation_periods        = 1
@@ -76,6 +78,7 @@ resource "aws_cloudwatch_metric_alarm" "unhealthy_state_dns" {
     if var.is_enabled && local.effective_thresholds[k].enabled_unhealthy_state_dns && contains(keys(v.dimensions), "TargetGroup")
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-alb-${each.value.name}-unhealthy-state-dns"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -107,6 +110,7 @@ resource "aws_cloudwatch_metric_alarm" "unhealthy_state_routing" {
     if var.is_enabled && local.effective_thresholds[k].enabled_unhealthy_state_routing && contains(keys(v.dimensions), "TargetGroup")
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-alb-${each.value.name}-unhealthy-state-routing"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -138,6 +142,7 @@ resource "aws_cloudwatch_metric_alarm" "unhealthy_routing_request_count" {
     if var.is_enabled && local.effective_thresholds[k].enabled_unhealthy_routing_request_count && contains(keys(v.dimensions), "TargetGroup")
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-alb-${each.value.name}-unhealthy-routing-request-count"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1

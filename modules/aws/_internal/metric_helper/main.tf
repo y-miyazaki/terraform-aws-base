@@ -7,6 +7,14 @@
 # Notes: Internal helper module for metric modules; not intended for direct use.
 #        Replaces auto_discovery_filter with additional threshold_override support.
 #--------------------------------------------------------------
+data "aws_region" "current" {}
+
+#--------------------------------------------------------------
+# Locals
+#--------------------------------------------------------------
+locals {
+  region = coalesce(var.region, data.aws_region.current.region)
+}
 
 #--------------------------------------------------------------
 # Locals - Core filtering and list generation logic

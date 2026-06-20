@@ -1,13 +1,12 @@
 #!/bin/bash
 #######################################
-# Description: List EventBridge Scheduler schedule group names as a JSON object
+# Description: List EventBridge Scheduler schedule groups as a JSON object
 #
-# Usage: ./list.sh [options]
-#   options:
-#   -h, --help    Display this help message
+# Usage: ./list.sh [region]
+#   region: (Optional) AWS region
 #
 # Output:
-# - JSON object with "list_schedule_group" key (comma-separated schedule group names)
+# - JSON object with "list_schedule_group" key (comma-separated group names)
 # - Used by Terraform external data source
 #
 # Design Rules:
@@ -19,106 +18,98 @@
 set -euo pipefail
 
 #######################################
-# show_usage: Display usage information
+# show_usage: Display script usage information
 #
 # Description:
-#   Display usage information
+#   Displays usage information for the script, including options and examples
 #
 # Arguments:
 #   None
 #
-# Global Variables:
-#   None
-#
 # Returns:
-#   None
+#   None (outputs to stdout)
 #
 # Usage:
 #   show_usage
 #
 #######################################
-show_usage() {
-    cat << USAGE
-Usage: $(basename "$0") [OPTIONS]
+function show_usage {
+    cat << EOF
+Usage: $(basename "$0") [region]
 
-Description:
-  List EventBridge Scheduler schedule group names as a JSON object.
+Description: List EventBridge Scheduler schedule groups as a JSON object.
+
+Arguments:
+  region        (Optional) AWS region
 
 Options:
   -h, --help    Display this help message
 
-Output Format:
-  JSON object with key "list_schedule_group" containing comma-separated schedule group names.
-  Example: {"list_schedule_group": "default,my-group"}
-
-USAGE
+Example: $(basename "$0")
+Example: $(basename "$0") us-east-1
+EOF
     exit 0
 }
 
 #######################################
-# list_schedule_groups: List schedule group names
+# main: Main execution function
 #
 # Description:
-#   Query AWS EventBridge Scheduler to get all schedule group names
+#   Queries AWS Batch to list job queue names
+#   and outputs the result as JSON.
 #
 # Arguments:
-#   None
-#
-# Global Variables:
-#   None
+#   $@ - Command line arguments
 #
 # Returns:
-#   Comma-separated list of schedule group names
-#
-# Usage:
-#   list_schedule_groups
-#
-#######################################
-list_schedule_groups() {
-    # Get all schedule groups and extract names
-    aws scheduler list-schedule-groups --query 'ScheduleGroups[].Name' --output text 2> /dev/null | tr '\t' ',' || echo ""
-}
-
-#######################################
-# main: Main function
-#
-# Description:
-#   Main function to process arguments and execute logic
-#
-# Arguments:
-#   $@: Command line arguments
-#
-# Global Variables:
-#   None
-#
-# Returns:
-#   0 on success, 1 on error
+#   0 on success, 1 on failure
 #
 # Usage:
 #   main "$@"
 #
 #######################################
-main() {
-    # Process arguments
-    while [[ $# -gt 0 ]]; do
-        case "$1" in
-            -h | --help)
-                show_usage
-                ;;
-            *)
-                echo "Unknown option: $1" >&2
-                show_usage
-                ;;
-        esac
-    done
+function main {
+    local region="${1:-}" # Optional region parameter
 
-    # Get schedule group list
-    local schedule_groups
-    schedule_groups=$(list_schedule_groups)
+    # Parse arguments
+    case "$region" in
+        -h | --help)
+            show_usage
+            ;;
+    esac
 
-    # Output as JSON (required format for Terraform external data source)
-    printf '{"list_schedule_group": "%s"}\n' "$schedule_groups"
+    # Validate dependencies
+    if ! command -v aws > /dev/null 2>&1; then
+        echo "ERROR: aws CLI is required" >&2
+        exit 1
+    fi
+
+    if ! command -v jq > /dev/null 2>&1; then
+        echo "ERROR: jq is required" >&2
+        exit 1
+    fi
+
+    # Build AWS CLI command
+    local aws_cmd="aws scheduler list-schedule-groups --query 'ScheduleGroups[].Name' --output json"
+
+    # Add region if provided
+    if [[ -n "$region" ]]; then
+        aws_cmd="$aws_cmd --region \"$region\""
+    fi
+
+    # Get EventBridge Scheduler group names
+    local list
+    list=$(eval "$aws_cmd")
+
+    # Convert JSON array to comma-separated string
+    local joined
+    joined=$(echo "$list" | jq -r 'join(",")')
+
+    # Output as JSON - all values must be strings for Terraform external data source
+    jq -n --arg l "$joined" '{list_schedule_group: $l}'
 }
 
-# Execute main function
-main "$@"
+# Only call main if script is executed directly
+if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
+    main "$@"
+fi

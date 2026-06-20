@@ -3,6 +3,15 @@
 # Purpose: Attach S3 bucket policy permitting Amazon Redshift to read/write objects (UNLOAD/ANALYZE operations).
 # Notes: Broad access to entire bucket; future improvement: narrow object prefixes based on variable inputs.
 #--------------------------------------------------------------
+data "aws_region" "current" {}
+
+#--------------------------------------------------------------
+# Locals
+#--------------------------------------------------------------
+locals {
+  region = coalesce(var.region, data.aws_region.current.region)
+}
+
 #--------------------------------------------------------------
 # Generates an IAM policy document in JSON format for use with resources that expect policy documents such as aws_iam_policy.
 #--------------------------------------------------------------
@@ -33,6 +42,7 @@ data "aws_iam_policy_document" "this" {
 resource "aws_s3_bucket_policy" "this" {
   count = var.attach_bucket_policy ? 1 : 0
 
+  region = local.region
   bucket = var.bucket
   policy = data.aws_iam_policy_document.this.json
 }

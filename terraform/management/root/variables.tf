@@ -1,21 +1,28 @@
 variable "tags" {
   type = map(string)
 }
+
 variable "name_prefix" {
   type = string
 }
+
 variable "region" {
-  type = string
-}
-variable "us_east_1" {
-  description = "Configuration for us-east-1 region resources. Set is_enabled to false to skip all us-east-1 resources."
+  description = "Region configuration for multi-region deployment"
   type = object({
-    is_enabled = bool
+    global  = string
+    primary = string
+    targets = list(string)
   })
-  default = {
-    is_enabled = true
+  validation {
+    condition     = length(var.region.targets) > 0
+    error_message = "region.targets must contain at least one region"
+  }
+  validation {
+    condition     = contains(var.region.targets, var.region.primary)
+    error_message = "region.primary must be included in region.targets"
   }
 }
+
 variable "cloudwatch_log_group" {
   description = <<-EOT
     Common CloudWatch Log Group configuration for all services.
@@ -55,6 +62,7 @@ variable "cloudwatch_log_group" {
     }))
   })
 }
+
 variable "slack" {
   description = <<-EOT
     Common Slack configuration for all Lambda functions.
@@ -91,6 +99,7 @@ variable "slack" {
   })
   #   sensitive = true
 }
+
 variable "kms" {
   type = map(object({
     description             = string
@@ -98,6 +107,7 @@ variable "kms" {
     is_enabled              = bool
   }))
 }
+
 variable "oidc_github" {
   type = object({
     is_enabled                      = bool
@@ -109,6 +119,7 @@ variable "oidc_github" {
     iam_role_path                   = string
   })
 }
+
 variable "budgets" {
   type = object({
     is_enabled = bool
@@ -136,22 +147,20 @@ variable "budgets" {
     })
   })
 }
+
 variable "common_lambda" {
   type = object({
     vpc = object({
       is_enabled = bool
       create_vpc = bool
       exists = optional(object({
-        private_subnets             = list(string)
-        security_group_id           = string
-        private_subnets_us_east_1   = optional(list(string), [])
-        security_group_id_us_east_1 = optional(string, "")
+        private_subnets   = list(string)
+        security_group_id = string
       }))
       new = optional(object({
         name                                      = string
         cidr                                      = string
-        azs                                       = list(string)
-        azs_us_east_1                             = optional(list(string), [])
+        azs                                       = optional(list(string), [])
         private_subnets                           = list(string)
         public_subnets                            = list(string)
         enable_dns_support                        = bool
@@ -180,6 +189,7 @@ variable "common_lambda" {
     }))
   })
 }
+
 variable "security_cloudtrail" {
   type = object({
     is_enabled = bool
@@ -237,6 +247,7 @@ variable "security_cloudtrail" {
     }))
   })
 }
+
 variable "jit_access" {
   description = <<-EOT
     JIT (Just-In-Time) privileged access configuration.

@@ -23,6 +23,7 @@ No modules.
 | [aws_guardduty_detector.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/guardduty_detector) | resource |
 | [aws_guardduty_invite_accepter.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/guardduty_invite_accepter) | resource |
 | [aws_guardduty_member.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/guardduty_member) | resource |
+| [aws_region.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/region) | data source |
 
 ## Inputs
 
@@ -31,6 +32,7 @@ No modules.
 | <a name="input_aws_guardduty_detector"></a> [aws\_guardduty\_detector](#input\_aws\_guardduty\_detector) | (Required) The resource of aws\_guardduty\_detector. | <pre>object(<br/>    {<br/>      enable                       = bool<br/>      finding_publishing_frequency = string<br/>    }<br/>  )</pre> | n/a | yes |
 | <a name="input_aws_guardduty_member"></a> [aws\_guardduty\_member](#input\_aws\_guardduty\_member) | (Required) The resource of aws\_guardduty\_member. | <pre>list(object(<br/>    {<br/>      account_id                 = string<br/>      email                      = string<br/>      invite                     = bool<br/>      invitation_message         = string<br/>      disable_email_notification = bool<br/>    }<br/>  ))</pre> | n/a | yes |
 | <a name="input_is_enabled"></a> [is\_enabled](#input\_is\_enabled) | (Optional) A boolean flag to enable/disable settings of GuardDuty. Defaults true. | `bool` | `true` | no |
+| <a name="input_region"></a> [region](#input\_region) | (Required) AWS region for this GuardDuty detector. Enables multi-region deployments. | `string` | n/a | yes |
 | <a name="input_tags"></a> [tags](#input\_tags) | (Optional) Key-value map of resource tags. | `map(any)` | `null` | no |
 
 ## Outputs

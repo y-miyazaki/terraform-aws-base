@@ -6,9 +6,19 @@
 #--------------------------------------------------------------
 # Provides an AWS Config Rule.
 #--------------------------------------------------------------
+data "aws_region" "current" {}
+
+#--------------------------------------------------------------
+# Locals
+#--------------------------------------------------------------
+locals {
+  region = coalesce(var.region, data.aws_region.current.region)
+}
+
 resource "aws_config_config_rule" "this" {
   count = var.is_enabled ? 1 : 0
 
+  region                      = local.region
   name                        = var.aws_config_config_rule[count.index].name
   description                 = var.aws_config_config_rule[count.index].description
   input_parameters            = var.aws_config_config_rule[count.index].input_parameters

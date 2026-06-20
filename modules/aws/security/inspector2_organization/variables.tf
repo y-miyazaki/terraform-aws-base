@@ -6,21 +6,25 @@ variable "is_enabled" {
   type        = bool
   default     = true
 }
+
 variable "is_enabled_delegated_admin" {
   description = "(Optional) Enable delegated admin account configuration for Inspector2."
   type        = bool
   default     = false
 }
+
 variable "is_enabled_configuration" {
   description = "(Optional) Enable organization-level configurations for auto-enabling new accounts."
   type        = bool
   default     = false
 }
+
 variable "delegated_admin_account_id" {
   description = "(Optional) Account ID to designate as delegated admin for Inspector2. Leave empty to skip."
   type        = string
   default     = ""
 }
+
 variable "enabler" {
   description = "(Optional) Map of enabler configurations for specified accounts and resource types."
   type = map(object({
@@ -29,6 +33,7 @@ variable "enabler" {
   }))
   default = {}
 }
+
 variable "configuration" {
   description = "(Optional) Map of auto-enable configurations for new accounts."
   type = object({
@@ -50,4 +55,10 @@ variable "configuration" {
     # (Required) Auto-enable code repository scanning for new accounts
     auto_enable_code_repository = false
   }
+}
+
+variable "region" {
+  type        = string
+  description = "(Optional) AWS region. Defaults to provider region."
+  default     = null
 }

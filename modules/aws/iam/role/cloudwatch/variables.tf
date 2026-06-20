@@ -19,6 +19,7 @@ variable "aws_iam_role" {
     path        = "/"
   }
 }
+
 variable "aws_iam_policy" {
   type = object(
     {
@@ -37,14 +38,17 @@ variable "aws_iam_policy" {
     path        = "/"
   }
 }
+
 variable "account_id" {
   type        = string
   description = "(Required) AWS account ID for member account."
 }
+
 variable "region" {
   type        = string
   description = "(Required) Specify the region."
 }
+
 variable "tags" {
   type        = map(any)
   description = "(Optional) A mapping of tags to assign to the resource."

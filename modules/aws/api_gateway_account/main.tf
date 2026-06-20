@@ -3,6 +3,18 @@
 # Purpose: Account-level API Gateway settings (singleton per AWS account).
 #          Configures CloudWatch Logs role for REST API access logging.
 #--------------------------------------------------------------
+data "aws_region" "current" {}
+
+#--------------------------------------------------------------
+# Locals
+#--------------------------------------------------------------
+locals {
+  region = coalesce(var.region, data.aws_region.current.region)
+}
+
+#--------------------------------------------------------------
+# Provides an IAM role.
+#--------------------------------------------------------------
 resource "aws_iam_role" "this" {
   name = "${var.name_prefix}api-gateway-cloudwatch"
   assume_role_policy = jsonencode({
@@ -25,6 +37,7 @@ resource "aws_iam_role_policy_attachment" "this" {
 }
 
 resource "aws_api_gateway_account" "this" {
+  region              = local.region
   cloudwatch_role_arn = aws_iam_role.this.arn
 
   depends_on = [aws_iam_role_policy_attachment.this]

@@ -1,7 +1,6 @@
 #--------------------------------------------------------------
 # Variables for eventbridge_scheduler_helper internal module
 #--------------------------------------------------------------
-
 variable "is_enabled" {
   description = "Master switch to enable/disable the entire module"
   type        = bool
@@ -53,4 +52,10 @@ variable "schedule_expression_stop" {
 variable "primary_key" {
   description = "The primary key name to use for filtering (e.g., 'instance_id' for EC2, 'db_cluster_identifier' for RDS, 'ecs_service' for ECS)"
   type        = string
+}
+
+variable "region" {
+  type        = string
+  description = "(Optional) AWS region. Defaults to provider region."
+  default     = null
 }

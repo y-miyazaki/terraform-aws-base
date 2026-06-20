@@ -3,6 +3,9 @@
 # Purpose: Create IAM role for AWS Support App (Support Center integration) with appropriate trust policy and managed policy attachment.
 # Notes: Unified tagging applied; future improvement: allow additional policy attachments and path customization.
 #--------------------------------------------------------------
+#--------------------------------------------------------------
+# Provides an IAM role.
+#--------------------------------------------------------------
 resource "aws_iam_role" "this" {
   assume_role_policy = jsonencode({
     Version = "2012-10-17"

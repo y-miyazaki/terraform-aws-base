@@ -1,5 +1,6 @@
 #--------------------------------------------------------------
-# Terraform Provider
+# Terraform Provider Configuration
+# All resources MUST explicitly set region; this provider is a safety fallback only.
 #--------------------------------------------------------------
 terraform {
   required_version = ">= 1.12"
@@ -17,20 +18,9 @@ terraform {
   }
 }
 
-#--------------------------------------------------------------
-# AWS Provider
-# access key and secret key should not use.
-#--------------------------------------------------------------
+# Default provider — fallback to primary region.
 provider "aws" {
-  region = var.region
-  default_tags {
-    tags = var.tags
-  }
-}
-# Need to add aws provider(us-east-1) for CloudFront Metric.
-provider "aws" {
-  region = "us-east-1"
-  alias  = "us-east-1"
+  region = var.region.primary
   default_tags {
     tags = var.tags
   }

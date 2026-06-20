@@ -8,9 +8,19 @@
 # https://docs.aws.amazon.com/ja_jp/AWSEC2/latest/UserGuide/spot-interruptions.html
 # https://docs.aws.amazon.com/ja_jp/AWSEC2/latest/UserGuide/rebalance-recommendations.html
 #--------------------------------------------------------------
+data "aws_region" "current" {}
+
+#--------------------------------------------------------------
+# Locals
+#--------------------------------------------------------------
+locals {
+  region = coalesce(var.region, data.aws_region.current.region)
+}
+
 resource "aws_cloudwatch_event_rule" "this" {
   count = var.is_enabled ? 1 : 0
 
+  region      = local.region
   description = try(var.aws_cloudwatch_event_rule.description, "This cloudwatch event used for EC2.")
   event_pattern = jsonencode({
     source = [
@@ -33,8 +43,9 @@ resource "aws_cloudwatch_event_rule" "this" {
 resource "aws_cloudwatch_event_target" "this" {
   count = var.is_enabled ? 1 : 0
 
-  rule = aws_cloudwatch_event_rule.this[0].name
-  arn  = try(var.aws_cloudwatch_event_target.arn, null)
+  region = local.region
+  rule   = aws_cloudwatch_event_rule.this[0].name
+  arn    = try(var.aws_cloudwatch_event_target.arn, null)
 
   depends_on = [
     aws_cloudwatch_event_rule.this

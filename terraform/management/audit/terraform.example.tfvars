@@ -41,21 +41,18 @@ name_prefix = "base-"
 
 #--------------------------------------------------------------
 # Default Region for Resources
-# Specifies the primary AWS region where most resources will be deployed.
-# Some services like CloudFront require resources in us-east-1 regardless of this setting.
-# Common regions: ap-northeast-1 (Tokyo), us-east-1 (N. Virginia), eu-west-1 (Ireland)
+# Region Configuration
+# - global:  Global resources (CloudFront, WAF, ACM) — must be us-east-1
+# - primary: Development and operations base region (fallback for provider)
+# - targets: All regions where organization security services are deployed
 #--------------------------------------------------------------
-# TODO: need to change region.
-region = "ap-northeast-1"
-
-#--------------------------------------------------------------
-# us-east-1 Region Resources
-# Set is_enabled to false to skip creating all us-east-1 specific resources.
-# When the default region is us-east-1, these resources are automatically skipped
-# regardless of this setting to avoid duplication.
-#--------------------------------------------------------------
-us_east_1 = {
-  is_enabled = true
+region = {
+  # TODO: Global resources (CloudFront, Route53, WAF, ACM) — must be us-east-1
+  global = "us-east-1"
+  # TODO: Development and operations base region (fallback for provider)
+  primary = "ap-northeast-1"
+  # TODO: All regions where organization security services are deployed
+  targets = ["ap-northeast-1", "us-east-1"]
 }
 
 #--------------------------------------------------------------
@@ -196,16 +193,6 @@ access_analyzer_organization = {
 }
 
 #--------------------------------------------------------------
-# Access Analyzer Organization (us-east-1)
-# AWS IAM Access Analyzer central configuration for organization-wide access analysis in us-east-1.
-#--------------------------------------------------------------
-access_analyzer_organization_us_east_1 = {
-  # TODO: need to set is_enabled for settings of AWS Access Analyzer Organization(us-east-1).
-  is_enabled    = true
-  analyzer_name = "aws-access-analyzer"
-}
-
-#--------------------------------------------------------------
 # GuardDuty Organization
 # AWS GuardDuty central configuration for organization-wide threat detection.
 # Enables organization-wide settings for automated threat detection and response.
@@ -216,56 +203,6 @@ guardduty_organization = {
   # Set to true to create a new GuardDuty detector if no detector exists in this region.
   create_detector = false
   # TODO: need to set auto_enable_organization_members for settings of AWS GuardDuty Organization.
-  auto_enable_organization_members = "ALL"
-  features = {
-    # https://docs.aws.amazon.com/guardduty/latest/APIReference/API_DetectorFeatureConfiguration.html
-    EBS_MALWARE_PROTECTION = {
-      auto_enable = "ALL"
-    }
-    EKS_AUDIT_LOGS = {
-      auto_enable = "ALL"
-    }
-    LAMBDA_NETWORK_LOGS = {
-      auto_enable = "ALL"
-    }
-    RDS_LOGIN_EVENTS = {
-      auto_enable = "ALL"
-    }
-    RUNTIME_MONITORING = {
-      auto_enable = "ALL"
-      additional_configurations = [
-        {
-          name        = "ECS_FARGATE_AGENT_MANAGEMENT"
-          auto_enable = "ALL"
-        },
-        {
-          name        = "EC2_AGENT_MANAGEMENT"
-          auto_enable = "ALL"
-        },
-        {
-          name        = "EKS_ADDON_MANAGEMENT"
-          auto_enable = "ALL"
-        }
-      ]
-    }
-    S3_DATA_EVENTS = {
-      auto_enable = "ALL"
-    }
-  }
-}
-
-#--------------------------------------------------------------
-# GuardDuty Organization (us-east-1)
-# This configures the GuardDuty settings for the entire
-# AWS Organization to use a central model in us-east-1.
-#--------------------------------------------------------------
-guardduty_organization_us_east_1 = {
-  # TODO: need to set is_enabled for settings of AWS GuardDuty Organization(us-east-1).
-  is_enabled = true
-  # Set to true to create a new GuardDuty detector in us-east-1 (no existing detector from Control Tower).
-  # Detector was created by Terraform since it did not exist in us-east-1.
-  create_detector = true
-  # TODO: need to set auto_enable_organization_members for settings of AWS GuardDuty Organization(us-east-1).
   auto_enable_organization_members = "ALL"
   features = {
     # https://docs.aws.amazon.com/guardduty/latest/APIReference/API_DetectorFeatureConfiguration.html
@@ -349,26 +286,6 @@ inspector2_organization = {
 }
 
 #--------------------------------------------------------------
-# Amazon Inspector2 Organization (us-east-1)
-# AWS Inspector2 configurations for vulnerability management and security assessment in us-east-1.
-#--------------------------------------------------------------
-inspector2_organization_us_east_1 = {
-  # TODO: need to set is_enabled for settings of AWS Inspector2(us-east-1).
-  is_enabled = true
-
-  enabler = {}
-  # TODO: need to set is_enabled_configuration for settings of AWS Inspector2(us-east-1).
-  is_enabled_configuration = true
-  configuration = {
-    auto_enable_ec2             = false
-    auto_enable_ecr             = false
-    auto_enable_lambda          = false
-    auto_enable_lambda_code     = false
-    auto_enable_code_repository = false
-  }
-}
-
-#--------------------------------------------------------------
 # Macie Organization
 # Amazon Macie central configuration for organization-wide sensitive data discovery.
 #--------------------------------------------------------------
@@ -380,24 +297,6 @@ macie_organization = {
   # TODO: need to set status for settings of AWS Macie account.
   status = "ENABLED"
   # TODO: need to set finding_publishing_frequency for settings of AWS Macie account.
-  finding_publishing_frequency = "FIFTEEN_MINUTES"
-  classification_jobs          = []
-  findings_filters             = []
-}
-
-#--------------------------------------------------------------
-# Macie Organization (us-east-1)
-# This configures the Macie settings for the entire
-# AWS Organization to use a central model in us-east-1.
-#--------------------------------------------------------------
-macie_organization_us_east_1 = {
-  # TODO: need to set is_enabled for settings of AWS Macie Organization(us-east-1).
-  is_enabled = true
-  # TODO: need to set auto_enable for settings of AWS Macie Organization(us-east-1).
-  auto_enable = true
-  # TODO: need to set status for settings of AWS Macie account(us-east-1).
-  status = "ENABLED"
-  # TODO: need to set finding_publishing_frequency for settings of AWS Macie account(us-east-1).
   finding_publishing_frequency = "FIFTEEN_MINUTES"
   classification_jobs          = []
   findings_filters             = []
@@ -422,38 +321,6 @@ securityhub_organization = {
       "arn:aws:securityhub:{any region}::standards/cis-aws-foundations-benchmark/v/5.0.0"
     ]
     # TODO: need to set disabled_control_identifiers for settings of AWS SecurityHub Organization.
-    # https://docs.aws.amazon.com/ja_jp/securityhub/latest/userguide/securityhub-controls-reference.html
-    security_controls_configuration = {
-      disabled_control_identifiers = [
-        # "RDS.13",
-        # "IAM.28", # for IAM Access Analyzer external access analyzer should be enabled
-      ]
-    }
-  }
-  configuration_policy_name = "securityhub-configuration-policy"
-  linking_mode              = "ALL_REGIONS"
-  target_id                 = "r-xxxxxx"
-}
-
-#--------------------------------------------------------------
-# SecurityHub Organization (us-east-1)
-# AWS Security Hub central configuration for organization-wide settings in us-east-1.
-#--------------------------------------------------------------
-securityhub_organization_us_east_1 = {
-  # TODO: need to set is_enabled for settings of AWS SecurityHub Organization(us-east-1).
-  is_enabled = true
-  # TODO: need to set is_enabled_finding_aggregator for settings of Security Hub finding aggregator(us-east-1).
-  is_enabled_finding_aggregator = true
-  configuration_policy = {
-    service_enabled = true
-    name            = "securityhub-configuration-policy"
-    # TODO: need to set enabled_standard_arns for settings of AWS SecurityHub Organization(us-east-1).
-    # https://docs.aws.amazon.com/ja_jp/securityhub/latest/userguide/cis-aws-foundations-benchmark.html
-    enabled_standard_arns = [
-      "arn:aws:securityhub:us-east-1::standards/aws-foundational-security-best-practices/v/1.0.0",
-      "arn:aws:securityhub:us-east-1::standards/cis-aws-foundations-benchmark/v/5.0.0"
-    ]
-    # TODO: need to set disabled_control_identifiers for settings of AWS SecurityHub Organization(us-east-1).
     # https://docs.aws.amazon.com/ja_jp/securityhub/latest/userguide/securityhub-controls-reference.html
     security_controls_configuration = {
       disabled_control_identifiers = [

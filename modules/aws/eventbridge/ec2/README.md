@@ -26,6 +26,7 @@
 | [aws_scheduler_schedule.stop](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/scheduler_schedule) | resource |
 | [aws_instance.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/instance) | data source |
 | [aws_instances.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/instances) | data source |
+| [aws_region.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/region) | data source |
 
 ## Inputs
 
@@ -37,6 +38,7 @@
 | <a name="input_description"></a> [description](#input\_description) | (Optional) Default description for schedules. | `string` | `null` | no |
 | <a name="input_is_enabled"></a> [is\_enabled](#input\_is\_enabled) | (Optional) A boolean flag to enable/disable EC2 instance schedules. | `bool` | `true` | no |
 | <a name="input_name_prefix"></a> [name\_prefix](#input\_name\_prefix) | (Optional) Creates a unique name beginning with the specified prefix. | `string` | `null` | no |
+| <a name="input_region"></a> [region](#input\_region) | (Optional) AWS region. Defaults to provider region. | `string` | `null` | no |
 | <a name="input_retry_max_age_seconds"></a> [retry\_max\_age\_seconds](#input\_retry\_max\_age\_seconds) | (Optional) Maximum age of a request that EventBridge Scheduler sends to a target for processing. | `number` | `3600` | no |
 | <a name="input_retry_max_attempts"></a> [retry\_max\_attempts](#input\_retry\_max\_attempts) | (Optional) Maximum number of retry attempts to make before the request fails. | `number` | `3` | no |
 | <a name="input_role_arn"></a> [role\_arn](#input\_role\_arn) | (Required) ARN of the IAM role that EventBridge Scheduler will use for this target. | `string` | n/a | yes |

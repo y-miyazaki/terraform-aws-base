@@ -3,10 +3,13 @@
 # Purpose: Attach S3 bucket policy allowing AWS Config service and specified roles to deliver configuration snapshots.
 # Notes: Dynamically builds principals for config delivery; future improvement: enforce non-empty role list with validation.
 #--------------------------------------------------------------
+data "aws_region" "current" {}
+
 #--------------------------------------------------------------
 # Locals
 #--------------------------------------------------------------
 locals {
+  region               = coalesce(var.region, data.aws_region.current.region)
   temp_resource_config = []
   resource_config = flatten([
     for v in var.config_role_names : concat(local.temp_resource_config, [
@@ -90,6 +93,7 @@ data "aws_iam_policy_document" "this" {
 resource "aws_s3_bucket_policy" "this" {
   count = length(local.resource_config) > 1 && var.attach_bucket_policy ? 1 : 0
 
+  region = local.region
   bucket = var.bucket
   policy = data.aws_iam_policy_document.this[0].json
 }

@@ -6,6 +6,14 @@
 #--------------------------------------------------------------
 # Locals
 #--------------------------------------------------------------
+data "aws_region" "current" {}
+
+#--------------------------------------------------------------
+# Locals
+#--------------------------------------------------------------
+locals {
+  region = coalesce(var.region, data.aws_region.current.region)
+}
 locals {
   url   = "https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/Container-Insights-metrics-ECS.html"
   count = length(var.dimensions) > 0 ? length(var.dimensions) : 1
@@ -26,6 +34,7 @@ locals {
 resource "aws_cloudwatch_metric_alarm" "cpu_utilization" {
   count = var.is_enabled && var.threshold.enabled_cpu_utilization ? local.count : 0
 
+  region              = local.region
   alarm_name          = "${var.name_prefix}metric-ecs-container-insights-${local.names[count.index].name}cpu-utilization"
   comparison_operator = "GreaterThanOrEqualToThreshold"
   evaluation_periods  = 1
@@ -72,6 +81,7 @@ resource "aws_cloudwatch_metric_alarm" "cpu_utilization" {
 resource "aws_cloudwatch_metric_alarm" "memory_utilization" {
   count = var.is_enabled && var.threshold.enabled_memory_utilization ? local.count : 0
 
+  region              = local.region
   alarm_name          = "${var.name_prefix}metric-ecs-container-insights-${local.names[count.index].name}memory-utilization"
   comparison_operator = "GreaterThanOrEqualToThreshold"
   evaluation_periods  = 1
@@ -118,6 +128,7 @@ resource "aws_cloudwatch_metric_alarm" "memory_utilization" {
 resource "aws_cloudwatch_metric_alarm" "network_rx_bytes" {
   count = var.is_enabled && var.threshold.enabled_network_rx_bytes ? local.count : 0
 
+  region              = local.region
   alarm_name          = "${var.name_prefix}metric-ecs-container-insights-${local.names[count.index].name}network-rx-bytes"
   comparison_operator = "GreaterThanOrEqualToThreshold"
   evaluation_periods  = 1
@@ -144,6 +155,7 @@ resource "aws_cloudwatch_metric_alarm" "network_rx_bytes" {
 resource "aws_cloudwatch_metric_alarm" "network_tx_bytes" {
   count = var.is_enabled && var.threshold.enabled_network_tx_bytes ? local.count : 0
 
+  region              = local.region
   alarm_name          = "${var.name_prefix}metric-ecs-container-insights-${local.names[count.index].name}network-tx-bytes"
   comparison_operator = "GreaterThanOrEqualToThreshold"
   evaluation_periods  = 1
@@ -170,6 +182,7 @@ resource "aws_cloudwatch_metric_alarm" "network_tx_bytes" {
 resource "aws_cloudwatch_metric_alarm" "storage_read_bytes" {
   count = var.is_enabled && var.threshold.enabled_storage_read_bytes ? local.count : 0
 
+  region              = local.region
   alarm_name          = "${var.name_prefix}metric-ecs-container-insights-${local.names[count.index].name}storage-read-bytes"
   comparison_operator = "GreaterThanOrEqualToThreshold"
   evaluation_periods  = 1
@@ -196,6 +209,7 @@ resource "aws_cloudwatch_metric_alarm" "storage_read_bytes" {
 resource "aws_cloudwatch_metric_alarm" "storage_write_bytes" {
   count = var.is_enabled && var.threshold.enabled_storage_write_bytes ? local.count : 0
 
+  region              = local.region
   alarm_name          = "${var.name_prefix}metric-ecs-container-insights-${local.names[count.index].name}storage-write-bytes"
   comparison_operator = "GreaterThanOrEqualToThreshold"
   evaluation_periods  = 1

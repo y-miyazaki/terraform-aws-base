@@ -3,11 +3,13 @@
 # Purpose: Provide common auto-discovery filtering logic with null safety and include/exclude patterns.
 # Notes: Internal helper module for metric and CloudWatch modules; not intended for direct use.
 #--------------------------------------------------------------
+data "aws_region" "current" {}
 
 #--------------------------------------------------------------
-# Locals - Core filtering logic
+# Locals
 #--------------------------------------------------------------
 locals {
+  region = coalesce(var.region, data.aws_region.current.region)
   # Apply null safety to source list
   safe_source_list = var.source_list != null ? var.source_list : []
 

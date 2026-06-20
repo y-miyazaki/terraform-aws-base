@@ -3,6 +3,15 @@
 # Purpose: Attach S3 bucket policy restricting access to a specific VPC Endpoint.
 # Notes: Uses Deny with StringNotEquals on aws:SourceVpce; future improvement: support multiple VPCE IDs list.
 #--------------------------------------------------------------
+data "aws_region" "current" {}
+
+#--------------------------------------------------------------
+# Locals
+#--------------------------------------------------------------
+locals {
+  region = coalesce(var.region, data.aws_region.current.region)
+}
+
 #--------------------------------------------------------------
 # Generates an IAM policy document in JSON format for use with resources that expect policy documents such as aws_iam_policy.
 #--------------------------------------------------------------
@@ -36,6 +45,7 @@ data "aws_iam_policy_document" "this" {
 resource "aws_s3_bucket_policy" "this" {
   count = var.attach_bucket_policy && var.bucket != null ? 1 : 0
 
+  region = local.region
   bucket = var.bucket
   policy = data.aws_iam_policy_document.this.json
 }

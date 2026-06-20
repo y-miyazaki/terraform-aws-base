@@ -25,6 +25,7 @@ No modules.
 | [aws_macie2_findings_filter.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/macie2_findings_filter) | resource |
 | [aws_macie2_organization_admin_account.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/macie2_organization_admin_account) | resource |
 | [aws_macie2_organization_configuration.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/macie2_organization_configuration) | resource |
+| [aws_region.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/region) | data source |
 
 ## Inputs
 
@@ -37,6 +38,7 @@ No modules.
 | <a name="input_findings_filters"></a> [findings\_filters](#input\_findings\_filters) | (Optional) List of findings filter configurations. Each item requires name, action, and finding\_criteria. | `any` | `[]` | no |
 | <a name="input_is_enabled"></a> [is\_enabled](#input\_is\_enabled) | Whether to enable Macie organization configuration | `bool` | `false` | no |
 | <a name="input_is_enabled_admin"></a> [is\_enabled\_admin](#input\_is\_enabled\_admin) | Whether to enable Macie organization admin account designation | `bool` | `false` | no |
+| <a name="input_region"></a> [region](#input\_region) | (Optional) AWS region. Defaults to provider region. | `string` | `null` | no |
 | <a name="input_status"></a> [status](#input\_status) | Status for the Macie account. Valid values are ENABLED or PAUSED. | `string` | `"ENABLED"` | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | Tags to apply to classification jobs and findings filters | `map(string)` | `{}` | no |
 

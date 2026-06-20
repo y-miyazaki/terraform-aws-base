@@ -5,6 +5,14 @@
 #          Inspired by umotif-public/terraform-aws-waf-webaclv2,
 #          simplified and modernized for AWS provider v6.
 #--------------------------------------------------------------
+data "aws_region" "current" {}
+
+#--------------------------------------------------------------
+# Locals
+#--------------------------------------------------------------
+locals {
+  region = coalesce(var.region, data.aws_region.current.region)
+}
 
 #--------------------------------------------------------------
 # CloudWatch Log Group for WAF logging
@@ -12,6 +20,7 @@
 resource "aws_cloudwatch_log_group" "this" {
   count = var.logging.enabled && var.logging.log_destination_arn == null ? 1 : 0
 
+  region            = local.region
   name              = coalesce(var.logging.log_group_name, "aws-waf-logs-${var.name}")
   kms_key_id        = var.logging.kms_key_id
   retention_in_days = var.logging.retention_in_days
@@ -23,6 +32,7 @@ resource "aws_cloudwatch_log_group" "this" {
 # WAFv2 Web ACL
 #--------------------------------------------------------------
 resource "aws_wafv2_web_acl" "this" {
+  region      = local.region
   name        = var.name
   description = var.description
   scope       = var.scope
@@ -173,6 +183,7 @@ resource "aws_wafv2_web_acl" "this" {
 resource "aws_wafv2_web_acl_association" "this" {
   for_each = var.resource_arns
 
+  region       = local.region
   resource_arn = each.value
   web_acl_arn  = aws_wafv2_web_acl.this.arn
 }
@@ -183,6 +194,7 @@ resource "aws_wafv2_web_acl_association" "this" {
 resource "aws_wafv2_web_acl_logging_configuration" "this" {
   count = var.logging.enabled ? 1 : 0
 
+  region                  = local.region
   log_destination_configs = [coalesce(var.logging.log_destination_arn, try(aws_cloudwatch_log_group.this[0].arn, null))]
   resource_arn            = aws_wafv2_web_acl.this.arn
 

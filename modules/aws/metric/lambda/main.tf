@@ -3,14 +3,24 @@
 # Purpose: Provide CloudWatch metric alarms for Lambda functions (concurrency, duration, errors, throttles) with optional auto-discovery.
 # Notes: Unified tagging; auto discovery filters functions via exclude list.
 #--------------------------------------------------------------
+data "aws_region" "current" {}
+
 #--------------------------------------------------------------
-# Metric helper module
+# Locals
+#--------------------------------------------------------------
+locals {
+  region = coalesce(var.region, data.aws_region.current.region)
+}
+
+#--------------------------------------------------------------
+# Auto-discovery metric filter module
 #--------------------------------------------------------------
 module "helper" {
-  source     = "../../_internal/metric_helper"
-  is_enabled = var.is_enabled
+  source = "../../_internal/metric_helper"
 
-  create_auto        = var.create_auto_dimensions
+  is_enabled  = var.is_enabled
+  create_auto = var.create_auto_dimensions
+
   source_list        = data.aws_lambda_functions.this.function_names
   include_list       = var.auto_dimensions_include_list
   exclude_list       = var.auto_dimensions_exclude_list
@@ -41,6 +51,7 @@ resource "aws_cloudwatch_metric_alarm" "async_event_age" {
     if var.is_enabled && local.effective_thresholds[k].enabled_async_event_age
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-lambda-${each.value.name}-async-event-age"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -71,6 +82,7 @@ resource "aws_cloudwatch_metric_alarm" "async_events_dropped" {
     if var.is_enabled && local.effective_thresholds[k].enabled_async_events_dropped
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-lambda-${each.value.name}-async-events-dropped"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -101,6 +113,7 @@ resource "aws_cloudwatch_metric_alarm" "async_events_received" {
     if var.is_enabled && local.effective_thresholds[k].enabled_async_events_received
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-lambda-${each.value.name}-async-events-received"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -131,6 +144,7 @@ resource "aws_cloudwatch_metric_alarm" "claimed_account_concurrency" {
     if var.is_enabled && local.effective_thresholds[k].enabled_claimed_account_concurrency
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-lambda-${each.value.name}-claimed-account-concurrency"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -161,6 +175,7 @@ resource "aws_cloudwatch_metric_alarm" "concurrent_executions" {
     if var.is_enabled && local.effective_thresholds[k].enabled_concurrent_executions
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-lambda-${each.value.name}-concurrent-executions"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -191,6 +206,7 @@ resource "aws_cloudwatch_metric_alarm" "dead_letter_errors" {
     if var.is_enabled && local.effective_thresholds[k].enabled_dead_letter_errors
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-lambda-${each.value.name}-dead-letter-errors"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -221,6 +237,7 @@ resource "aws_cloudwatch_metric_alarm" "destination_delivery_failures" {
     if var.is_enabled && local.effective_thresholds[k].enabled_destination_delivery_failures
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-lambda-${each.value.name}-destination-delivery-failures"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -251,6 +268,7 @@ resource "aws_cloudwatch_metric_alarm" "duration" {
     if var.is_enabled && local.effective_thresholds[k].enabled_duration
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-lambda-${each.value.name}-duration"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -281,6 +299,7 @@ resource "aws_cloudwatch_metric_alarm" "errors" {
     if var.is_enabled && local.effective_thresholds[k].enabled_errors
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-lambda-${each.value.name}-errors"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -311,6 +330,7 @@ resource "aws_cloudwatch_metric_alarm" "invocations" {
     if var.is_enabled && local.effective_thresholds[k].enabled_invocations
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-lambda-${each.value.name}-invocations"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -341,6 +361,7 @@ resource "aws_cloudwatch_metric_alarm" "iterator_age" {
     if var.is_enabled && local.effective_thresholds[k].enabled_iterator_age
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-lambda-${each.value.name}-iterator-age"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -371,6 +392,7 @@ resource "aws_cloudwatch_metric_alarm" "offset_lag" {
     if var.is_enabled && local.effective_thresholds[k].enabled_offset_lag
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-lambda-${each.value.name}-offset-lag"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -401,6 +423,7 @@ resource "aws_cloudwatch_metric_alarm" "post_runtime_extensions_duration" {
     if var.is_enabled && local.effective_thresholds[k].enabled_post_runtime_extensions_duration
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-lambda-${each.value.name}-post-runtime-extensions-duration"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -431,6 +454,7 @@ resource "aws_cloudwatch_metric_alarm" "provisioned_concurrent_executions" {
     if var.is_enabled && local.effective_thresholds[k].enabled_provisioned_concurrent_executions
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-lambda-${each.value.name}-provisioned-concurrent-executions"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -461,6 +485,7 @@ resource "aws_cloudwatch_metric_alarm" "provisioned_concurrency_invocations" {
     if var.is_enabled && local.effective_thresholds[k].enabled_provisioned_concurrency_invocations
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-lambda-${each.value.name}-provisioned-concurrency-invocations"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -491,6 +516,7 @@ resource "aws_cloudwatch_metric_alarm" "provisioned_concurrency_spillover_invoca
     if var.is_enabled && local.effective_thresholds[k].enabled_provisioned_concurrency_spillover_invocations
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-lambda-${each.value.name}-provisioned-concurrency-spillover-invocations"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -521,6 +547,7 @@ resource "aws_cloudwatch_metric_alarm" "provisioned_concurrency_utilization" {
     if var.is_enabled && local.effective_thresholds[k].enabled_provisioned_concurrency_utilization
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-lambda-${each.value.name}-provisioned-concurrency-utilization"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -551,6 +578,7 @@ resource "aws_cloudwatch_metric_alarm" "recursive_invocations_dropped" {
     if var.is_enabled && local.effective_thresholds[k].enabled_recursive_invocations_dropped
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-lambda-${each.value.name}-recursive-invocations-dropped"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -581,6 +609,7 @@ resource "aws_cloudwatch_metric_alarm" "throttles" {
     if var.is_enabled && local.effective_thresholds[k].enabled_throttles
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-lambda-${each.value.name}-throttles"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -611,6 +640,7 @@ resource "aws_cloudwatch_metric_alarm" "unreserved_concurrent_executions" {
     if var.is_enabled && local.effective_thresholds[k].enabled_unreserved_concurrent_executions
   }
 
+  region                    = local.region
   alarm_name                = "${var.name_prefix}metric-lambda-${each.value.name}-unreserved-concurrent-executions"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1

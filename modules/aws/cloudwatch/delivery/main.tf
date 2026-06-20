@@ -3,10 +3,13 @@
 # Purpose: Create CloudWatch Logs subscription filters and Kinesis Firehose delivery streams for log delivery to S3.
 # Notes: Supports multiple log groups with automatic name transformation and Lambda processing integration.
 #--------------------------------------------------------------
+data "aws_region" "current" {}
+
 #--------------------------------------------------------------
 # Locals
 #--------------------------------------------------------------
 locals {
+  region = coalesce(var.region, data.aws_region.current.region)
   # Default exclude patterns to prevent log loops
   default_exclude_patterns = [
     "kinesis-data-firehose-cloudwatch-logs-processor"
@@ -17,13 +20,14 @@ locals {
 }
 
 #--------------------------------------------------------------
-# Auto-discovery filter module
+# Auto-discovery metric filter module
 #--------------------------------------------------------------
 module "filter" {
-  source     = "../../_internal/auto_discovery_filter"
-  is_enabled = var.is_enabled
+  source = "../../_internal/auto_discovery_filter"
 
-  create_auto       = var.create_auto_log_group_names
+  is_enabled  = var.is_enabled
+  create_auto = var.create_auto_log_group_names
+
   source_list       = data.aws_cloudwatch_log_groups.this.log_group_names
   include_list      = var.auto_log_group_names_include_list
   exclude_list      = local.merged_exclude_list
@@ -116,7 +120,9 @@ locals {
 module "aws_cloudwatch_subscription" {
   count = var.is_enabled ? 1 : 0
 
-  source                                 = "../subscription"
+  source = "../subscription"
+
+  region                                 = local.region
   aws_cloudwatch_log_subscription_filter = local.aws_cloudwatch_log_subscription_filter
   aws_iam_role = merge(var.aws_iam_role_cloudwatch_logs, {
     name = "${var.name_prefix}${var.aws_iam_role_cloudwatch_logs.name}"
@@ -125,7 +131,6 @@ module "aws_cloudwatch_subscription" {
     name = "${var.name_prefix}${var.aws_iam_policy_cloudwatch_logs.name}"
   })
   account_id = var.account_id
-  region     = var.region
 
   tags = var.tags
 }
@@ -136,9 +141,11 @@ module "aws_cloudwatch_subscription" {
 module "aws_kinesis_firehose_s3" {
   count = var.is_enabled ? 1 : 0
 
-  source                               = "../../kinesis/firehose/s3"
+  source = "../../kinesis/firehose/s3"
+
+  region = local.region
+
   account_id                           = var.account_id
-  region                               = var.region
   aws_kinesis_firehose_delivery_stream = local.aws_kinesis_firehose_delivery_stream
   aws_iam_role = merge(var.aws_iam_role_kinesis_firehose, {
     name = "${var.name_prefix}${var.aws_iam_role_kinesis_firehose.name}"

@@ -10,3 +10,6 @@ terraform {
     }
   }
 }
+
+# Note: With AWS Provider v6+, resources can specify region directly
+# No provider configuration needed here - caller supplies region via variable

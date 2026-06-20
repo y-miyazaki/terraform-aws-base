@@ -74,7 +74,55 @@
   // ------------------------------------------------------------
   "githubPullRequests.pullBranch": "never",
   // ------------------------------------------------------------
-  // for GitHub Copilot
+  // for AI Assistant (Cursor)
+  // ------------------------------------------------------------
+  "cursor.general.globalCursorIgnoreList": [
+    // Secrets / Credentials
+    "**/.env",
+    "**/.env.*",
+    "**/credentials/**",
+    "**/secrets/**",
+    "**/*.key",
+    "**/*.p12",
+    "**/*.pem",
+    "**/*.pfx",
+    // AI tool configs
+    "**/.copilot",
+    "**/.kiro",
+    "**/.serena",
+    "**/apm_modules",
+    // Terraform
+    "**/.terraform",
+    "**/.terraform.d",
+    "**/*.tfstate",
+    "**/*.tfstate.*",
+    "**/builds",
+    // Go / Node / Python
+    "**/bin",
+    "**/coverage",
+    "**/dist",
+    "**/vendor",
+    "**/output",
+    "**/node_modules",
+    "**/__pycache__",
+    "**/.venv",
+    // Temp
+    "**/tmp",
+    // Lock files
+    "**/go.sum",
+    "**/package-lock.json",
+    "**/yarn.lock",
+    "**/.terraform.lock.hcl",
+    "**/mise.lock",
+    "**/apm.lock.yaml",
+    // Large auto-generated config
+    "**/.golangci.yaml",
+    "**/.gitleaks.toml",
+    "**/aqua-checksums.json"
+  ],
+  "cursor-retrieval.canAttemptGithubLogin": true,
+  // ------------------------------------------------------------
+  // for AI Assistant (GitHub Copilot)
   // ------------------------------------------------------------
   "accessibility.signals.chatUserActionRequired": {
     "sound": "on",
@@ -196,32 +244,56 @@
   },
   "files.insertFinalNewline": true,
   "search.exclude": {
-    "**/.serena": true,
-    "**/.terraform": true,
-    "**/apm_modules": true,
-    "**/aqua-checksums.json": true,
+    // Security
     "**/credentials/**": true,
-    "**/node_modules": true,
-    "**/output": true,
     "**/secrets/**": true,
-    "**/tmp": true,
-    "**/vendor": true,
     "**/*.key": true,
     "**/*.p12": true,
     "**/*.pem": true,
-    "**/*.pfx": true
+    "**/*.pfx": true,
+    // AI tool configs
+    "**/.copilot": true,
+    "**/.kiro": true,
+    "**/.serena": true,
+    "**/apm_modules": true,
+    // Terraform
+    "**/.terraform": true,
+    // Go / Node / Python
+    "**/node_modules": true,
+    "**/vendor": true,
+    "**/output": true,
+    "**/coverage": true,
+    "**/__pycache__": true,
+    "**/.venv": true,
+    // Temp / Generated
+    "**/tmp": true,
+    "**/dist": true,
+    "**/aqua-checksums.json": true,
+    // Lock files
+    "**/go.sum": true,
+    "**/package-lock.json": true,
+    "**/yarn.lock": true,
+    "**/.terraform.lock.hcl": true,
+    "**/mise.lock": true,
+    "**/apm.lock.yaml": true
   },
   "files.watcherExclude": {
     "**/.git": true,
+    "**/.copilot": true,
+    "**/.kiro": true,
     "**/.serena": true,
     "**/.terraform": true,
     "**/apm_modules": true,
+    "**/coverage": true,
     "**/credentials": true,
+    "**/dist": true,
     "**/node_modules": true,
     "**/output": true,
     "**/secrets": true,
     "**/tmp": true,
-    "**/vendor": true
+    "**/vendor": true,
+    "**/.venv": true,
+    "**/__pycache__": true
   },
   // ------------------------------------------------------------
   // for Golang
@@ -353,7 +425,9 @@
       "-.terraform",
       "-.vscode",
       "-apm_modules",
+      "-builds",
       "-coverage",
+      "-dist",
       "-node_modules",
       "-output",
       "-tmp",

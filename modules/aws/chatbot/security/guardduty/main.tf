@@ -6,9 +6,19 @@
 #--------------------------------------------------------------
 # Provides an EventBridge Rule resource.
 #--------------------------------------------------------------
+data "aws_region" "current" {}
+
+#--------------------------------------------------------------
+# Locals
+#--------------------------------------------------------------
+locals {
+  region = coalesce(var.region, data.aws_region.current.region)
+}
+
 resource "aws_cloudwatch_event_rule" "this" {
   count = var.is_enabled ? 1 : 0
 
+  region      = local.region
   description = "This cloudwatch event used for GuardDuty."
   event_pattern = jsonencode({
     source = [
@@ -43,6 +53,7 @@ data "aws_iam_policy_document" "sns_topic" {
 resource "aws_sns_topic" "this" {
   count = var.is_enabled ? 1 : 0
 
+  region            = local.region
   name              = "${var.name_prefix}security-guardduty-chatbot-slack-topic"
   kms_master_key_id = var.kms_master_key_id
 
@@ -52,6 +63,7 @@ resource "aws_sns_topic" "this" {
 resource "aws_sns_topic_policy" "this" {
   count = var.is_enabled ? 1 : 0
 
+  region = local.region
   arn    = aws_sns_topic.this[0].arn
   policy = data.aws_iam_policy_document.sns_topic.json
 }
@@ -63,6 +75,7 @@ resource "aws_sns_topic_policy" "this" {
 resource "aws_cloudwatch_event_target" "sns_publish" {
   count = var.is_enabled ? 1 : 0
 
+  region    = local.region
   rule      = aws_cloudwatch_event_rule.this[0].name
   target_id = aws_sns_topic.this[0].name
   arn       = aws_sns_topic.this[0].arn
