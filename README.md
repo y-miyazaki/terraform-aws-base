@@ -3,9 +3,15 @@
 
 ![Terraform](https://img.shields.io/badge/terraform-%235835CC.svg?style=for-the-badge&logo=terraform&logoColor=white)
 
-Terraform baseline configuration for AWS accounts — security, IAM, cost management, logging, and monitoring.
+Production-ready Terraform stacks for AWS account baselines — security, IAM, cost management, logging, and monitoring, all deployable by toggling `terraform.tfvars`.
 
-Each feature is toggled on/off via `terraform.example.tfvars`. The directory is divided into three stacks:
+## Why
+
+Setting up a secure and observable AWS account from scratch requires configuring dozens of services (GuardDuty, Security Hub, Config, CloudTrail, budgets, alarms, etc.) — a process that is repetitive, error-prone, and hard to keep consistent across environments. This project solves that by packaging AWS best-practice configurations into reusable, toggle-driven Terraform stacks so you can achieve compliance and monitoring coverage in minutes, not weeks.
+
+## Overview
+
+Each feature is toggled on/off via `terraform.example.tfvars`. The directory is divided into four stacks:
 
 | Stack | Purpose | Configuration |
 |-------|---------|---------------|
@@ -17,6 +23,8 @@ Each feature is toggled on/off via `terraform.example.tfvars`. The directory is 
 <!-- omit in toc -->
 ## Table of Contents
 
+- [Why](#why)
+- [Overview](#overview)
 - [Quick Start](#quick-start)
 - [Requirements](#requirements)
 - [Architecture](#architecture)
