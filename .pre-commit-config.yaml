@@ -14,7 +14,7 @@ repos:
       - id: check-toml
       - id: check-xml
       - id: check-yaml
-        exclude: '^lambda/template\.yaml$'
+        exclude: '^(lambda/template\.yaml|mkdocs\.yml)$'
       - id: destroyed-symlinks
       - id: detect-aws-credentials
         args: [--allow-missing-credentials]

@@ -1,0 +1,22 @@
+id: docs-creation-contract-001
+name: docs-creation output contract sections
+description: |
+  Validate docs-creation returns required creation report sections.
+
+tags:
+  - quality
+  - output-contract
+
+inputs:
+  prompt: "Use docs-creation. Return sections: ## Summary, ## Checks (Failed Only), ## Created / Updated Files, ## Issues."
+  context:
+    target: SKILL.md
+
+expected:
+  output_contains:
+    - "## Summary"
+    - "## Checks (Failed Only)"
+    - "## Created / Updated Files"
+    - "## Issues"
+  outcomes:
+    - type: task_completed

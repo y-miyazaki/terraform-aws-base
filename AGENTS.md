@@ -1,7 +1,7 @@
 # AGENTS.md
 
-Operational constitution for AI-assisted development agents.
-This file is the always-loaded kernel. Detailed standards are in [docs/agents/](docs/agents/).
+Behavioral rules for AI agents.
+Project-specific rules are defined in [docs/agents/](docs/agents/).
 
 ---
 
@@ -30,7 +30,7 @@ You MUST explicitly state the following in your final response to complete the t
 
 ## Extended Standards (Dynamic Loading)
 
-You MUST load and read the relevant file using your file-viewing tool BEFORE starting the corresponding task:
+You MUST read the relevant file before starting the corresponding task:
 
 - [execution-protocol.md](docs/agents/execution-protocol.md) — Load before planning, task classification, or budget allocation.
 - [verification.md](docs/agents/verification.md) — Load before running tests or performing verification.

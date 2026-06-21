@@ -1,0 +1,20 @@
+id: terraform-validation-contract-001
+name: terraform-validation output contract sections
+description: |
+  Validate that terraform-validation returns mandatory validation sections from common-output-format.
+
+tags:
+  - quality
+  - output-contract
+
+inputs:
+  prompt: "Use terraform-validation. Return Markdown with sections: ## Summary and ## Tool Results."
+  context:
+    target: SKILL.md
+
+expected:
+  output_contains:
+    - "## Summary"
+    - "## Tool Results"
+  outcomes:
+    - type: task_completed

@@ -20,6 +20,9 @@ dist
 output
 vendor
 
+# === MkDocs ===
+site
+
 # === Modern Frontend / Meta-Frameworks ===
 .astro
 .next

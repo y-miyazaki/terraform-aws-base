@@ -1,0 +1,21 @@
+id: github-actions-review-no-issues-001
+name: github-actions-review no-issues path
+description: |
+  Validate no-issue path keeps required placeholders and section structure.
+
+tags:
+  - quality
+  - no-issues
+
+inputs:
+  prompt: "Use github-actions-review and assume no failed or deferred checks. Return ## Checks Summary, ## Checks (Failed/Deferred Only), ## Issues. In failed/deferred section output 'No failed or deferred checks'. In issues output 'No issues found'."
+  context:
+    target: SKILL.md
+
+expected:
+  output_contains:
+    - "## Checks Summary"
+    - "No failed or deferred checks"
+    - "No issues found"
+  outcomes:
+    - type: task_completed

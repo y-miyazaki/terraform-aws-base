@@ -1,0 +1,21 @@
+id: agent-skills-review-basic-001
+name: agent-skills-review basic smoke test
+description: |
+  Validate that agent-skills-review can be invoked and returns a structured report.
+
+tags:
+  - skill-smoke
+  - trigger-positive
+
+inputs:
+  prompt: "Use agent-skills-review to review SKILL.md. Return Markdown with exactly these sections: ## Checks Summary, ## Checks (Failed/Deferred Only), ## Issues."
+  context:
+    target: SKILL.md
+
+expected:
+  output_contains:
+    - "## Checks Summary"
+    - "## Checks (Failed/Deferred Only)"
+    - "## Issues"
+  outcomes:
+    - type: task_completed

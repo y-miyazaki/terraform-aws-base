@@ -37,6 +37,8 @@ globs: "README.md,CONTRIBUTING.md,docs/**/*.md"
   - Check: Can the information be added to an existing document before creating a new file or directory?
 - DOC-06 (SHOULD): Preserve Rationale
   - Check: When simplifying documentation, is important context or rationale preserved?
+- DOC-07 (MUST): Use Relative Path Links in docs/
+  - Check: Are cross-references within `docs/` written as relative Markdown links (e.g., `[Specification](../reference/specification.md)`) instead of inline code paths (e.g., `` `docs/reference/specification.md` ``)? MkDocs resolves relative links into navigable site links automatically.
 
 ### Terminology and Consistency (TERM)
 - TERM-01 (MUST): Use Official Product Names
