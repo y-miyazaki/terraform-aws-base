@@ -44,7 +44,7 @@ python = "3.14.6"
   "node",
 ], install_env = { NPM_CONFIG_IGNORE_SCRIPTS = "false" }, postinstall = "node $(find $MISE_TOOL_INSTALL_PATH -name 'install.cjs' -path '*/@anthropic-ai/claude-code/*' | head -1)" } # Claude Code CLI
 "github:DeusData/codebase-memory-mcp" = "v0.7.0" # codebase memory MCP server
-"aqua:github/copilot-cli" = "1.0.61"             # GitHub Copilot CLI
+"aqua:github/copilot-cli" = "1.0.62"             # GitHub Copilot CLI
 "pipx:headroom-ai" = { version = "0.26.0", extras = "proxy,mcp,bedrock", depends = ["python"] }
 "github:yvgude/lean-ctx" = "v3.7.5"              # context optimizer
 "github:microsoft/waza" = "0.33.0"               # agent skill evaluator
