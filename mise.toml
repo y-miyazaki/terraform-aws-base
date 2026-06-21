@@ -40,7 +40,7 @@ python = "3.14.6"
 
 # AI agent tools
 "github:microsoft/apm" = "v0.20.0"               # agent package manager
-"npm:@anthropic-ai/claude-code" = { version = "2.1.179", depends = [
+"npm:@anthropic-ai/claude-code" = { version = "2.1.181", depends = [
   "node",
 ], install_env = { NPM_CONFIG_IGNORE_SCRIPTS = "false" }, postinstall = "node $(find $MISE_TOOL_INSTALL_PATH -name 'install.cjs' -path '*/@anthropic-ai/claude-code/*' | head -1)" } # Claude Code CLI
 "github:DeusData/codebase-memory-mcp" = "v0.7.0" # codebase memory MCP server
