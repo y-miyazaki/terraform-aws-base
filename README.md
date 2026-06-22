@@ -6,7 +6,9 @@ Production-ready Terraform stacks for AWS account baselines — security, IAM, c
 
 **[Documentation](https://y-miyazaki.github.io/terraform-aws-base/)** · **[Quick Start](https://y-miyazaki.github.io/terraform-aws-base/tutorials/baseline-quickstart/)** · **[Architecture](https://y-miyazaki.github.io/terraform-aws-base/explanation/architecture/)** · **[Module Catalog](https://y-miyazaki.github.io/terraform-aws-base/reference/module-catalog/)**
 
-## Why　AWS Base Terraform Infrastructure
+---
+
+## Why AWS Base Terraform Infrastructure
 
 Setting up a secure and observable AWS account from scratch requires configuring dozens of services (GuardDuty, Security Hub, Config, CloudTrail, budgets, alarms, etc.) — a process that is repetitive, error-prone, and hard to keep consistent across environments. This project solves that by packaging AWS best-practice configurations into reusable, toggle-driven Terraform stacks so you can achieve compliance and monitoring coverage in minutes, not weeks.
 
