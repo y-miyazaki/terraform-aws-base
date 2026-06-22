@@ -1,11 +1,12 @@
-<!-- omit in toc -->
 # AWS Base Terraform Infrastructure
 
 ![Terraform](https://img.shields.io/badge/terraform-%235835CC.svg?style=for-the-badge&logo=terraform&logoColor=white)
 
 Production-ready Terraform stacks for AWS account baselines — security, IAM, cost management, logging, and monitoring, all deployable by toggling `terraform.tfvars`.
 
-## Why
+**[Documentation](https://y-miyazaki.github.io/terraform-aws-base/)** · **[Quick Start](https://y-miyazaki.github.io/terraform-aws-base/tutorials/baseline-quickstart/)** · **[Architecture](https://y-miyazaki.github.io/terraform-aws-base/explanation/architecture/)** · **[Module Catalog](https://y-miyazaki.github.io/terraform-aws-base/reference/module-catalog/)**
+
+## Why　AWS Base Terraform Infrastructure
 
 Setting up a secure and observable AWS account from scratch requires configuring dozens of services (GuardDuty, Security Hub, Config, CloudTrail, budgets, alarms, etc.) — a process that is repetitive, error-prone, and hard to keep consistent across environments. This project solves that by packaging AWS best-practice configurations into reusable, toggle-driven Terraform stacks so you can achieve compliance and monitoring coverage in minutes, not weeks.
 
@@ -15,30 +16,10 @@ Each feature is toggled on/off via `terraform.example.tfvars`. The directory is 
 
 | Stack | Purpose | Configuration |
 |-------|---------|---------------|
-| [base](./terraform/base) | Core security, IAM, cost controls | [tfvars guide](./docs/how-to/configure-base-tfvars.md) |
-| [management/audit](./terraform/management/audit) | Organization-level security monitoring | [tfvars guide](./docs/how-to/configure-management-audit-tfvars.md) |
-| [management/root](./terraform/management/root) | Root account governance and policies | [tfvars guide](./docs/how-to/configure-management-root-tfvars.md) |
-| [monitor](./terraform/monitor) | CloudWatch metrics, logs, events | [tfvars guide](./docs/how-to/configure-monitor-tfvars.md) |
-
-<!-- omit in toc -->
-## Table of Contents
-
-- [Why](#why)
-- [Overview](#overview)
-- [Quick Start](#quick-start)
-- [Requirements](#requirements)
-- [Architecture](#architecture)
-- [Features](#features)
-  - [Security](#security)
-  - [Management](#management)
-  - [Other](#other)
-  - [Monitoring: Metrics](#monitoring-metrics)
-  - [Monitoring: Logs](#monitoring-logs)
-  - [Monitoring: Events](#monitoring-events)
-  - [Monitoring: Athena](#monitoring-athena)
-- [Directory Structure](#directory-structure)
-- [Documentation](#documentation)
-- [Author Information](#author-information)
+| [base](./terraform/base) | Core security, IAM, cost controls | [tfvars guide](https://y-miyazaki.github.io/terraform-aws-base/how-to/configure-base-tfvars/) |
+| [management/audit](./terraform/management/audit) | Organization-level security monitoring | [tfvars guide](https://y-miyazaki.github.io/terraform-aws-base/how-to/configure-management-audit-tfvars/) |
+| [management/root](./terraform/management/root) | Root account governance and policies | [tfvars guide](https://y-miyazaki.github.io/terraform-aws-base/how-to/configure-management-root-tfvars/) |
+| [monitor](./terraform/monitor) | CloudWatch metrics, logs, events | [tfvars guide](https://y-miyazaki.github.io/terraform-aws-base/how-to/configure-monitor-tfvars/) |
 
 ## Quick Start
 
@@ -55,7 +36,7 @@ Each feature is toggled on/off via `terraform.example.tfvars`. The directory is 
    cp terraform/base/terraform.example.tfvars terraform/base/terraform.tfvars
    ```
 
-3. Configure features — see [Configuration Guide](./docs/how-to/configure-base-tfvars.md)
+3. Configure features — see [Configuration Guide](https://y-miyazaki.github.io/terraform-aws-base/how-to/configure-base-tfvars/)
 
 4. Apply:
 
@@ -81,7 +62,7 @@ The architecture when all elements are enabled is shown below. Each resource can
 
 ### Security
 
-For detailed descriptions and Slack notification examples, see [Features: Base](./docs/reference/features-base.md#security).
+For detailed descriptions and Slack notification examples, see [Features: Base](https://y-miyazaki.github.io/terraform-aws-base/reference/features-base/#security).
 
 | Feature | Description | Reference |
 |---------|-------------|-----------|
@@ -99,7 +80,7 @@ For detailed descriptions and Slack notification examples, see [Features: Base](
 | Security Hub | Centralized security posture and compliance | [Docs](https://docs.aws.amazon.com/securityhub/latest/userguide/) |
 | SSM Automation | Automated remediation of security findings | [Docs](https://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-automation.html) |
 
-Related: [CIS Benchmark Compliance Matrix](./docs/reference/cis-benchmark.md) · [Security Coverage](./docs/reference/security-coverage.md)
+Related: [CIS Benchmark Compliance Matrix](https://y-miyazaki.github.io/terraform-aws-base/reference/cis-benchmark/) · [Security Coverage](https://y-miyazaki.github.io/terraform-aws-base/reference/security-coverage/)
 
 ### Management
 
@@ -117,11 +98,11 @@ Related: [CIS Benchmark Compliance Matrix](./docs/reference/cis-benchmark.md) ·
 | OIDC GitHub | root | CI/CD authentication via OIDC federation |
 | JIT Access | root | Temporary privileged access via Slack approval |
 
-For JIT Access details, see [JIT Access Specification](./docs/reference/jit-access-specification.md).
+For JIT Access details, see [JIT Access Specification](https://y-miyazaki.github.io/terraform-aws-base/reference/jit-access-specification/).
 
 ### Other
 
-For detailed descriptions, see [Features: Base](./docs/reference/features-base.md#other).
+For detailed descriptions, see [Features: Base](https://y-miyazaki.github.io/terraform-aws-base/reference/features-base/#other).
 
 | Feature | Description |
 |---------|-------------|
@@ -138,7 +119,7 @@ For detailed descriptions, see [Features: Base](./docs/reference/features-base.m
 
 ### Monitoring: Metrics
 
-For detailed descriptions, see [Features: Monitor](./docs/reference/features-monitor.md). Alarms notify via SNS → Lambda → Slack when thresholds are exceeded.
+For detailed descriptions, see [Features: Monitor](https://y-miyazaki.github.io/terraform-aws-base/reference/features-monitor/). Alarms notify via SNS → Lambda → Slack when thresholds are exceeded.
 
 | Service | Metrics Monitored | Reference |
 |---------|-------------------|-----------|
@@ -211,16 +192,7 @@ Named queries for ad-hoc log analysis in S3.
 
 ## Documentation
 
-Full documentation follows the [Diataxis](https://diataxis.fr/) framework:
-
-| Category | Contents |
-|----------|----------|
-| [Tutorials](./docs/tutorials/) | Learning-oriented walkthroughs (e.g., [Quickstart](./docs/tutorials/baseline-quickstart.md)) |
-| [How-To](./docs/how-to/) | Task-oriented guides (e.g., [Troubleshooting](./docs/how-to/troubleshooting.md)) |
-| [Reference](./docs/reference/) | Technical descriptions (e.g., [Module Catalog](./docs/reference/module-catalog.md), [Monitoring](./docs/reference/monitoring.md)) |
-| [Explanation](./docs/explanation/) | Design decisions and architecture (e.g., [Architecture](./docs/explanation/architecture.md)) |
-
-See [docs/index.md](./docs/index.md) for the complete index.
+Full documentation is available at **<https://y-miyazaki.github.io/terraform-aws-base/>**.
 
 ## Author Information
 

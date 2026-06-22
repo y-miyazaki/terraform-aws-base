@@ -1,11 +1,9 @@
-<!-- omit in toc -->
 # Terraform for Infrastructure
 
 This repository contains [Terraform](https://developer.hashicorp.com/terraform) configurations for managing AWS infrastructure resources used in the project. It focuses on Infrastructure as Code (IaC) practices to ensure reproducible, version-controlled deployments.
 
 The project is structured to manage multiple environments and components, including base infrastructure, management resources, and monitoring setups. It leverages reusable modules for AWS services such as IAM, KMS, CloudTrail, Security Hub, GuardDuty, CloudWatch, Lambda, S3, VPC, and more.
 
-<!-- omit in toc -->
 ## Key Components
 
 - **Base Infrastructure (`terraform/base/`)**  
@@ -18,19 +16,6 @@ The project is structured to manage multiple environments and components, includ
     Manages root-level resources such as budgets, Lambda functions, CloudTrail, and organizational policies.
 - **Monitoring and Metrics (`terraform/monitor/`)**  
   Provides comprehensive monitoring solutions, including CloudWatch metrics and logs for various AWS services (e.g., EC2, RDS, Lambda, ELB (ALB/NLB), API Gateway, CloudFront, SES, SQS), Athena for query-based analytics, Synthetics Canary for endpoint monitoring, and EventBridge for event-driven automation.
-
-<!-- omit in toc -->
-## Table of Contents
-
-- [Requirements](#requirements)
-- [Directory Structure](#directory-structure)
-- [Local development environment (devcontainer)](#local-development-environment-devcontainer)
-  - [Setting](#setting)
-  - [Create Local Development Environment](#create-local-development-environment)
-- [Commands](#commands)
-- [Troubleshooting](#troubleshooting)
-  - [Common Issues](#common-issues)
-  - [Getting Help](#getting-help)
 
 ## Requirements
 
