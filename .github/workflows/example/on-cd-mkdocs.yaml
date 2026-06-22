@@ -23,6 +23,7 @@ jobs:
     with:
       artifact_name: mkdocs-site
       config_file: mkdocs.yml
+      pip_packages: mkdocs-material mdx-truly-sane-lists
 
   deploy:
     needs: build
