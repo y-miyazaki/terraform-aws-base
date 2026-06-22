@@ -24,7 +24,7 @@ _Task-oriented guides for specific goals._
 
 _Information-oriented technical descriptions._
 
-- [CIS AWS Foundations Benchmark Compliance Matrix](reference/cis-benchmark.md) - CIS AWS Foundations Benchmark compliance matrix
+- [Security Hub Controls Compliance Matrix](reference/security-hub-controls.md) - Security Hub controls compliance matrix
 - [Base Features Detail](reference/features-base.md) - Detailed descriptions for base stack features (security, IAM, cost)
 - [Monitor Features Detail](reference/features-monitor.md) - Detailed descriptions for monitor stack features (logs, metrics, events)
 - [JIT Access System Specification](reference/jit-access-specification.md) - JIT privileged access system with Slack integration, approval workflow, and auto-revocation

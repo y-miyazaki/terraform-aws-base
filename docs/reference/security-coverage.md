@@ -4,7 +4,7 @@
 
 Services implemented in this repository and notable AWS security services not yet covered.
 
-For CIS AWS Foundations Benchmark control mapping, see [CIS AWS Foundations Benchmark Compliance Matrix](./cis-benchmark.md).
+For Security Hub control mapping, see [Security Hub Controls Compliance Matrix](./security-hub-controls.md).
 
 ## Layer Definitions
 

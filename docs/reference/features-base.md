@@ -74,7 +74,7 @@ The following is the security score when only this Terraform is applied.
 
 ![SecurityHub Score](../image/security_hub_security_score.png)
 
-For a detailed mapping of CIS controls, see [CIS AWS Foundations Benchmark Compliance Matrix](./cis-benchmark.md).
+For a detailed mapping of Security Hub controls, see [Security Hub Controls Compliance Matrix](./security-hub-controls.md).
 For security service coverage, see [AWS Security Services Coverage](./security-coverage.md).
 
 ### SSM Automation

@@ -54,7 +54,7 @@ nav:
       - Troubleshooting: how-to/troubleshooting.md
   - Reference:
       - Specification: reference/specification.md
-      - CIS Benchmark: reference/cis-benchmark.md
+      - Security Hub Controls: reference/security-hub-controls.md
       - Features Base: reference/features-base.md
       - Features Monitor: reference/features-monitor.md
       - JIT Access Specification: reference/jit-access-specification.md

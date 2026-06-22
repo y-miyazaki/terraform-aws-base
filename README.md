@@ -82,7 +82,7 @@ For detailed descriptions and Slack notification examples, see [Features: Base](
 | Security Hub | Centralized security posture and compliance | [Docs](https://docs.aws.amazon.com/securityhub/latest/userguide/) |
 | SSM Automation | Automated remediation of security findings | [Docs](https://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-automation.html) |
 
-Related: [CIS Benchmark Compliance Matrix](https://y-miyazaki.github.io/terraform-aws-base/reference/cis-benchmark/) · [Security Coverage](https://y-miyazaki.github.io/terraform-aws-base/reference/security-coverage/)
+Related: [Security Hub Controls Compliance Matrix](docs/reference/security-hub-controls.md) · [Security Coverage](docs/reference/security-coverage.md)
 
 ### Management
 
