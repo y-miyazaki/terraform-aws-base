@@ -89,7 +89,7 @@ Monitoring resources use AWS Provider v6's `region` attribute for explicit regio
 - Regional monitors: `for_each = toset(var.region.targets)` with `region = each.value`
 - Global monitors (e.g., CloudFront metrics): `region = var.region.global`
 
-No provider aliases or dual-file patterns are used. See [ADR-0001](../adr/0001-multi-region-terraform-architecture.md) for the architecture decision.
+No provider aliases or dual-file patterns are used. See [ADR-0001: Multi-Region Terraform Architecture Using AWS Provider v6 Region Attribute](../adr/0001-multi-region-terraform-architecture.md) for the architecture decision.
 
 ### Lambda Notification Functions
 
@@ -180,11 +180,11 @@ aws logs filter-log-events \
 1. Verify Lambda execution in CloudWatch Logs.
 2. Check Slack app token validity.
 3. Confirm the Slack channel still exists and the app is a member.
-4. See [troubleshooting.md](../how-to/troubleshooting.md) for detailed resolution steps.
+4. See [Troubleshooting](../how-to/troubleshooting.md) for detailed resolution steps.
 
 ## Cross-References
 
-- [specification.md](./specification.md) — Module contracts for metric modules
-- [module-catalog.md](./module-catalog.md) — Full list of monitoring modules
-- [architecture.md](../explanation/architecture.md) — Overall system structure
-- [troubleshooting.md](../how-to/troubleshooting.md) — Common issues and resolutions
+- [Terraform Specification](./specification.md) — Module contracts for metric modules
+- [Module Catalog](./module-catalog.md) — Full list of monitoring modules
+- [Architecture Overview](../explanation/architecture.md) — Overall system structure
+- [Troubleshooting](../how-to/troubleshooting.md) — Common issues and resolutions

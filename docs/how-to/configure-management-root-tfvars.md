@@ -5,8 +5,8 @@
 Configuration for the **Management (Root) account** — the top-level account that owns the AWS Organization.
 
 **Stack:** `terraform/management/root/`
-**Example file:** [terraform.example.tfvars](../../terraform/management/root/terraform.example.tfvars)
-**Initial setup:** See [initial-setup.md](./initial-setup.md)
+**Example file:** [terraform.example.tfvars](https://github.com/y-miyazaki/terraform-aws-base/blob/main/terraform/management/root/terraform.example.tfvars)
+**Initial setup:** See [Initial Setup (Common)](./initial-setup.md)
 
 **What it configures:**
 
@@ -43,9 +43,9 @@ Configuration for the **Management (Root) account** — the top-level account th
 
 ### CloudWatch Log Groups
 
-Same centralized pattern as other stacks. See [base configuration](./configure-base-tfvars.md#cloudwatch-log-groups) for detailed explanation.
+Same centralized pattern as other stacks. See [Base Terraform Configuration Guide](./configure-base-tfvars.md#cloudwatch-log-groups) for detailed explanation.
 
-<details>
+<details markdown>
 <summary>Available override services</summary>
 
 | Service Name | Description | Recommended |
@@ -167,7 +167,7 @@ security_cloudtrail = {
 
 ### Lambda VPC Configuration
 
-Same pattern as other stacks. See [base configuration](./configure-base-tfvars.md#lambda-vpc-configuration).
+Same pattern as other stacks. See [Base Terraform Configuration Guide](./configure-base-tfvars.md#lambda-vpc-configuration).
 
 ### JIT Access
 
@@ -178,7 +178,7 @@ Just-In-Time privileged access via Slack with automatic revocation.
 2. Lambda zip at `lambda/outputs/go_jit_access.zip`
 3. IAM Identity Center enabled
 
-**Full specification:** [JIT Access Specification](../reference/jit-access-specification.md)
+**Full specification:** [JIT Access System Specification](../reference/jit-access-specification.md)
 
 ```hcl
 jit_access = {
@@ -200,7 +200,7 @@ jit_access = {
 }
 ```
 
-<details>
+<details markdown>
 <summary>How to get required values</summary>
 
 | Value | How to Get |
@@ -235,8 +235,8 @@ jit_access = {
 
 ## Related Documents
 
-- [Initial Setup](./initial-setup.md) — S3 state bucket, IAM user creation
-- [Management Audit Configuration](./configure-management-audit-tfvars.md) — Audit account
-- [Base Configuration](./configure-base-tfvars.md) — Member accounts
-- [JIT Access Specification](../reference/jit-access-specification.md) — Full system specification
+- [Initial Setup (Common)](./initial-setup.md) — S3 state bucket, IAM user creation
+- [Management Audit Terraform Configuration Guide](./configure-management-audit-tfvars.md) — Audit account
+- [Base Terraform Configuration Guide](./configure-base-tfvars.md) — Member accounts
+- [JIT Access System Specification](../reference/jit-access-specification.md) — Full system specification
 - [Troubleshooting](./troubleshooting.md) — Common issues and resolution

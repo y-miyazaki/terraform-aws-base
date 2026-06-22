@@ -126,10 +126,10 @@ Resources requiring extra review before apply:
 
 ## Related Documentation
 
-- [architecture.md](../explanation/architecture.md) — Account structure and Terraform directory layout
-- [design.md](../explanation/design.md) — Module conventions, variable patterns, and naming rules
-- [design-decisions.md](../explanation/design-decisions.md) — Rationale for major patterns and rejected alternatives
-- [module-catalog.md](./module-catalog.md) — Full module index with purpose and location
-- [security-coverage.md](./security-coverage.md) — Security service coverage matrix
-- [monitoring.md](./monitoring.md) — Alert configuration and operational runbooks
-- [troubleshooting.md](../how-to/troubleshooting.md) — Common issues and recovery steps
+- [Architecture Overview](../explanation/architecture.md) — Account structure and Terraform directory layout
+- [Design Document — Terraform Modules and Root Configurations](../explanation/design.md) — Module conventions, variable patterns, and naming rules
+- [Design Decisions](../explanation/design-decisions.md) — Rationale for major patterns and rejected alternatives
+- [Module Catalog](./module-catalog.md) — Full module index with purpose and location
+- [AWS Security Services Coverage](./security-coverage.md) — Security service coverage matrix
+- [Monitoring](./monitoring.md) — Alert configuration and operational runbooks
+- [Troubleshooting](../how-to/troubleshooting.md) — Common issues and recovery steps

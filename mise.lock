@@ -693,36 +693,36 @@ checksum = "sha256:56b4d3a157e346f8fc1e94254d0a944e6fec81f58ddd43eb274b8e0ebb56e
 url = "https://releases.hashicorp.com/terraform/1.15.6/terraform_1.15.6_windows_amd64.zip"
 
 [[tools."aqua:jdx/usage"]]
-version = "3.4.0"
+version = "3.5.0"
 backend = "aqua:jdx/usage"
 
 [tools."aqua:jdx/usage"."platforms.linux-arm64"]
-checksum = "sha256:5cea2993383ccbbdbf9693bec484c47fc3cbcff75ec167618e1e775e5df9ba19"
-url = "https://github.com/jdx/usage/releases/download/v3.4.0/usage-aarch64-unknown-linux-musl.tar.gz"
+checksum = "sha256:a0aab1ecbae1bc48aa3aac6ebb508f5df44a77122bb8d6ea23b86ee9fd699518"
+url = "https://github.com/jdx/usage/releases/download/v3.5.0/usage-aarch64-unknown-linux-musl.tar.gz"
 
 [tools."aqua:jdx/usage"."platforms.linux-arm64-musl"]
-checksum = "sha256:5cea2993383ccbbdbf9693bec484c47fc3cbcff75ec167618e1e775e5df9ba19"
-url = "https://github.com/jdx/usage/releases/download/v3.4.0/usage-aarch64-unknown-linux-musl.tar.gz"
+checksum = "sha256:a0aab1ecbae1bc48aa3aac6ebb508f5df44a77122bb8d6ea23b86ee9fd699518"
+url = "https://github.com/jdx/usage/releases/download/v3.5.0/usage-aarch64-unknown-linux-musl.tar.gz"
 
 [tools."aqua:jdx/usage"."platforms.linux-x64"]
-checksum = "sha256:1a54260df50f1764bc8cbabf8763f2a6314c5025d3b06b512d02898eb28768b3"
-url = "https://github.com/jdx/usage/releases/download/v3.4.0/usage-x86_64-unknown-linux-musl.tar.gz"
+checksum = "sha256:d686d7acff1fc5ffd04be2fefccd342564648d353609fab81e22a3672446c4f0"
+url = "https://github.com/jdx/usage/releases/download/v3.5.0/usage-x86_64-unknown-linux-musl.tar.gz"
 
 [tools."aqua:jdx/usage"."platforms.linux-x64-musl"]
-checksum = "sha256:1a54260df50f1764bc8cbabf8763f2a6314c5025d3b06b512d02898eb28768b3"
-url = "https://github.com/jdx/usage/releases/download/v3.4.0/usage-x86_64-unknown-linux-musl.tar.gz"
+checksum = "sha256:d686d7acff1fc5ffd04be2fefccd342564648d353609fab81e22a3672446c4f0"
+url = "https://github.com/jdx/usage/releases/download/v3.5.0/usage-x86_64-unknown-linux-musl.tar.gz"
 
 [tools."aqua:jdx/usage"."platforms.macos-arm64"]
-checksum = "sha256:e9f7cd9038fec6352eaa001903414edc95bb77386a9573fde21be17991f3f719"
-url = "https://github.com/jdx/usage/releases/download/v3.4.0/usage-universal-apple-darwin.tar.gz"
+checksum = "sha256:dcb1022d2e6cbe0070e3259a48a5e058ca64ecc707b6901b929b388b95bb322c"
+url = "https://github.com/jdx/usage/releases/download/v3.5.0/usage-universal-apple-darwin.tar.gz"
 
 [tools."aqua:jdx/usage"."platforms.macos-x64"]
-checksum = "sha256:e9f7cd9038fec6352eaa001903414edc95bb77386a9573fde21be17991f3f719"
-url = "https://github.com/jdx/usage/releases/download/v3.4.0/usage-universal-apple-darwin.tar.gz"
+checksum = "sha256:dcb1022d2e6cbe0070e3259a48a5e058ca64ecc707b6901b929b388b95bb322c"
+url = "https://github.com/jdx/usage/releases/download/v3.5.0/usage-universal-apple-darwin.tar.gz"
 
 [tools."aqua:jdx/usage"."platforms.windows-x64"]
-checksum = "sha256:2272ad0d264b99986ef8e3d537f774f046db5fe096e8a9375fbb1482f0934e8c"
-url = "https://github.com/jdx/usage/releases/download/v3.4.0/usage-x86_64-pc-windows-msvc.zip"
+checksum = "sha256:4647b8894520c4ab8d8424950fd7bddd2b76aa6c71bdedc90b2464985ab3b8cd"
+url = "https://github.com/jdx/usage/releases/download/v3.5.0/usage-x86_64-pc-windows-msvc.zip"
 
 [[tools."aqua:kayac/ecspresso"]]
 version = "2.8.4"
@@ -874,36 +874,36 @@ checksum = "sha256:045cac56df5fae04912d39b1e9f8e568f8a1eaf0adc800a6e8bfbe97fd1be
 url = "https://github.com/protocolbuffers/protobuf-go/releases/download/v1.36.11/protoc-gen-go.v1.36.11.windows.amd64.zip"
 
 [[tools."aqua:protocolbuffers/protobuf/protoc"]]
-version = "35.0"
+version = "35.1"
 backend = "aqua:protocolbuffers/protobuf/protoc"
 
 [tools."aqua:protocolbuffers/protobuf/protoc"."platforms.linux-arm64"]
-checksum = "sha256:36b518ac14d90351cc6598228ed2bbe5afe4e357b1af470b07e0ec1609875de2"
-url = "https://github.com/protocolbuffers/protobuf/releases/download/v35.0/protoc-35.0-linux-aarch_64.zip"
+checksum = "sha256:01bf9d08808c7f96678b63f4bd8efa559bb4f83d5a7a270d5edaf507f9d5d9cf"
+url = "https://github.com/protocolbuffers/protobuf/releases/download/v35.1/protoc-35.1-linux-aarch_64.zip"
 
 [tools."aqua:protocolbuffers/protobuf/protoc"."platforms.linux-arm64-musl"]
-checksum = "sha256:36b518ac14d90351cc6598228ed2bbe5afe4e357b1af470b07e0ec1609875de2"
-url = "https://github.com/protocolbuffers/protobuf/releases/download/v35.0/protoc-35.0-linux-aarch_64.zip"
+checksum = "sha256:01bf9d08808c7f96678b63f4bd8efa559bb4f83d5a7a270d5edaf507f9d5d9cf"
+url = "https://github.com/protocolbuffers/protobuf/releases/download/v35.1/protoc-35.1-linux-aarch_64.zip"
 
 [tools."aqua:protocolbuffers/protobuf/protoc"."platforms.linux-x64"]
-checksum = "sha256:a45cda0989c17dd950db55f6fbe1e5814c50fda08e87aa422980ac1f89dddbbc"
-url = "https://github.com/protocolbuffers/protobuf/releases/download/v35.0/protoc-35.0-linux-x86_64.zip"
+checksum = "sha256:6930ebf62bd4ea607b98fff052596c6ee564b9835b4ce172c75a3f53ae9d91b7"
+url = "https://github.com/protocolbuffers/protobuf/releases/download/v35.1/protoc-35.1-linux-x86_64.zip"
 
 [tools."aqua:protocolbuffers/protobuf/protoc"."platforms.linux-x64-musl"]
-checksum = "sha256:a45cda0989c17dd950db55f6fbe1e5814c50fda08e87aa422980ac1f89dddbbc"
-url = "https://github.com/protocolbuffers/protobuf/releases/download/v35.0/protoc-35.0-linux-x86_64.zip"
+checksum = "sha256:6930ebf62bd4ea607b98fff052596c6ee564b9835b4ce172c75a3f53ae9d91b7"
+url = "https://github.com/protocolbuffers/protobuf/releases/download/v35.1/protoc-35.1-linux-x86_64.zip"
 
 [tools."aqua:protocolbuffers/protobuf/protoc"."platforms.macos-arm64"]
-checksum = "sha256:45444963204757fd3e2fbe304bc1fdadfb488d8556ff099c4cc06575eab88976"
-url = "https://github.com/protocolbuffers/protobuf/releases/download/v35.0/protoc-35.0-osx-aarch_64.zip"
+checksum = "sha256:193289af0470c6a1aada357d4fba0bbf8d78bfaac8b5e42ca30af2ef75583de2"
+url = "https://github.com/protocolbuffers/protobuf/releases/download/v35.1/protoc-35.1-osx-aarch_64.zip"
 
 [tools."aqua:protocolbuffers/protobuf/protoc"."platforms.macos-x64"]
-checksum = "sha256:3580c2d115fccb5b0239960c8f70f8da14787b1973a46b2f39c315ad71c11e01"
-url = "https://github.com/protocolbuffers/protobuf/releases/download/v35.0/protoc-35.0-osx-x86_64.zip"
+checksum = "sha256:537d73604a344ded6fc94e98e07e529d4fe3e4a0b09e59905353950fafc2a1f7"
+url = "https://github.com/protocolbuffers/protobuf/releases/download/v35.1/protoc-35.1-osx-x86_64.zip"
 
 [tools."aqua:protocolbuffers/protobuf/protoc"."platforms.windows-x64"]
-checksum = "sha256:d1cede9e308cc3eb072392af1c02ccae4bdd3d2f374ec2970dbd8cdfdaa91363"
-url = "https://github.com/protocolbuffers/protobuf/releases/download/v35.0/protoc-35.0-win64.zip"
+checksum = "sha256:5d3ff218d7d91eea95f7569bcb5a98f3030f8996d44151279d9772edcff76082"
+url = "https://github.com/protocolbuffers/protobuf/releases/download/v35.1/protoc-35.1-win64.zip"
 
 [[tools."aqua:rhysd/actionlint"]]
 version = "1.7.12"
@@ -1175,7 +1175,6 @@ version = "0.10.0"
 backend = "aqua:tamasfe/taplo"
 
 [tools."aqua:tamasfe/taplo"."platforms.linux-arm64"]
-checksum = "blake3:7f7a3ddaa5acf0bc243fc1134dc68a94a39b2bef91000f7866dd90e4bd670b5e"
 url = "https://github.com/tamasfe/taplo/releases/download/0.10.0/taplo-linux-aarch64.gz"
 
 [tools."aqua:tamasfe/taplo"."platforms.linux-arm64-musl"]
@@ -1328,53 +1327,53 @@ url = "https://github.com/zizmorcore/zizmor/releases/download/v1.25.2/zizmor-x86
 provenance = "github-attestations"
 
 [[tools."github:DeusData/codebase-memory-mcp"]]
-version = "0.7.0"
+version = "0.8.1"
 backend = "github:DeusData/codebase-memory-mcp"
 
 [tools."github:DeusData/codebase-memory-mcp"."platforms.linux-arm64"]
-checksum = "sha256:57cf094d9213e69284f0f2e7a1d6119d4c933448e160f57b4fb2b0f0f9f0127a"
-url = "https://github.com/DeusData/codebase-memory-mcp/releases/download/v0.7.0/codebase-memory-mcp-linux-arm64.tar.gz"
-url_api = "https://api.github.com/repos/DeusData/codebase-memory-mcp/releases/assets/433451400"
+checksum = "sha256:d2f842d1365da5c35d9c5796f57a821c9745267350994346735e1e6e04d46091"
+url = "https://github.com/DeusData/codebase-memory-mcp/releases/download/v0.8.1/codebase-memory-mcp-linux-arm64.tar.gz"
+url_api = "https://api.github.com/repos/DeusData/codebase-memory-mcp/releases/assets/445409933"
 provenance = "github-attestations"
 
 [tools."github:DeusData/codebase-memory-mcp"."platforms.linux-arm64-musl"]
-checksum = "sha256:57cf094d9213e69284f0f2e7a1d6119d4c933448e160f57b4fb2b0f0f9f0127a"
-url = "https://github.com/DeusData/codebase-memory-mcp/releases/download/v0.7.0/codebase-memory-mcp-linux-arm64.tar.gz"
-url_api = "https://api.github.com/repos/DeusData/codebase-memory-mcp/releases/assets/433451400"
+checksum = "sha256:d2f842d1365da5c35d9c5796f57a821c9745267350994346735e1e6e04d46091"
+url = "https://github.com/DeusData/codebase-memory-mcp/releases/download/v0.8.1/codebase-memory-mcp-linux-arm64.tar.gz"
+url_api = "https://api.github.com/repos/DeusData/codebase-memory-mcp/releases/assets/445409933"
 provenance = "github-attestations"
 
 [tools."github:DeusData/codebase-memory-mcp"."platforms.linux-x64"]
-checksum = "sha256:ed3d79c4a6dd9193511e3ec9098639fb72a596145fc2733351dca4c0d93a2444"
-url = "https://github.com/DeusData/codebase-memory-mcp/releases/download/v0.7.0/codebase-memory-mcp-linux-amd64.tar.gz"
-url_api = "https://api.github.com/repos/DeusData/codebase-memory-mcp/releases/assets/433451402"
+checksum = "sha256:dbd3b92ea870ef240b63059f26bda15015f76ef9978931bebc3a0f9d09470973"
+url = "https://github.com/DeusData/codebase-memory-mcp/releases/download/v0.8.1/codebase-memory-mcp-linux-amd64.tar.gz"
+url_api = "https://api.github.com/repos/DeusData/codebase-memory-mcp/releases/assets/445409926"
 provenance = "github-attestations"
 
 [tools."github:DeusData/codebase-memory-mcp"."platforms.linux-x64-musl"]
-checksum = "sha256:ed3d79c4a6dd9193511e3ec9098639fb72a596145fc2733351dca4c0d93a2444"
-url = "https://github.com/DeusData/codebase-memory-mcp/releases/download/v0.7.0/codebase-memory-mcp-linux-amd64.tar.gz"
-url_api = "https://api.github.com/repos/DeusData/codebase-memory-mcp/releases/assets/433451402"
+checksum = "sha256:dbd3b92ea870ef240b63059f26bda15015f76ef9978931bebc3a0f9d09470973"
+url = "https://github.com/DeusData/codebase-memory-mcp/releases/download/v0.8.1/codebase-memory-mcp-linux-amd64.tar.gz"
+url_api = "https://api.github.com/repos/DeusData/codebase-memory-mcp/releases/assets/445409926"
 provenance = "github-attestations"
 
 [tools."github:DeusData/codebase-memory-mcp"."platforms.macos-arm64"]
-checksum = "sha256:09d2f5366731a0db55064f08df56a163bb016e41449844425477bfb8047e2ffb"
-url = "https://github.com/DeusData/codebase-memory-mcp/releases/download/v0.7.0/codebase-memory-mcp-darwin-arm64.tar.gz"
-url_api = "https://api.github.com/repos/DeusData/codebase-memory-mcp/releases/assets/433451398"
+checksum = "sha256:fbd047509852021b5446a11141bcb0a3d1dcaebf6e5112460960f29f052c1c58"
+url = "https://github.com/DeusData/codebase-memory-mcp/releases/download/v0.8.1/codebase-memory-mcp-darwin-arm64.tar.gz"
+url_api = "https://api.github.com/repos/DeusData/codebase-memory-mcp/releases/assets/445409921"
 provenance = "github-attestations"
 
 [tools."github:DeusData/codebase-memory-mcp"."platforms.macos-x64"]
-checksum = "sha256:3da984d704e59dbaf332c1a3f9914836923f619da1514d7dc257813b911aa946"
-url = "https://github.com/DeusData/codebase-memory-mcp/releases/download/v0.7.0/codebase-memory-mcp-darwin-amd64.tar.gz"
-url_api = "https://api.github.com/repos/DeusData/codebase-memory-mcp/releases/assets/433451401"
+checksum = "sha256:fb62da3016ea12b948351208759b5c083fb1446cf6e78d6db8b7cd28fe86fd54"
+url = "https://github.com/DeusData/codebase-memory-mcp/releases/download/v0.8.1/codebase-memory-mcp-darwin-amd64.tar.gz"
+url_api = "https://api.github.com/repos/DeusData/codebase-memory-mcp/releases/assets/445409925"
 provenance = "github-attestations"
 
 [tools."github:DeusData/codebase-memory-mcp"."platforms.windows-x64"]
-checksum = "sha256:b07f8d65a97df52b6c2be028aa9f01801fbc309ffa3934e31641e1dd4e2f4e83"
-url = "https://github.com/DeusData/codebase-memory-mcp/releases/download/v0.7.0/codebase-memory-mcp-windows-amd64.zip"
-url_api = "https://api.github.com/repos/DeusData/codebase-memory-mcp/releases/assets/433451407"
+checksum = "sha256:a602ad090ed3f49d86c55472f73f27ad7055222806a82358f2e08513e027f00f"
+url = "https://github.com/DeusData/codebase-memory-mcp/releases/download/v0.8.1/codebase-memory-mcp-windows-amd64.zip"
+url_api = "https://api.github.com/repos/DeusData/codebase-memory-mcp/releases/assets/445409929"
 provenance = "github-attestations"
 
 [[tools."github:microsoft/apm"]]
-version = "v0.20.0"
+version = "0.20.0"
 backend = "github:microsoft/apm"
 
 [tools."github:microsoft/apm"."platforms.linux-arm64"]
@@ -1452,43 +1451,43 @@ url = "https://github.com/microsoft/waza/releases/download/v0.33.0/waza-windows-
 url_api = "https://api.github.com/repos/microsoft/waza/releases/assets/426430180"
 
 [[tools."github:yvgude/lean-ctx"]]
-version = "3.7.5"
+version = "3.8.5"
 backend = "github:yvgude/lean-ctx"
 
 [tools."github:yvgude/lean-ctx"."platforms.linux-arm64"]
-checksum = "sha256:04e97dc7d1fb71f6de89618c4dc90495e41ede5f7c7a0ae50622a318ea5ab3d9"
-url = "https://github.com/yvgude/lean-ctx/releases/download/v3.7.5/lean-ctx-aarch64-unknown-linux-gnu.tar.gz"
-url_api = "https://api.github.com/repos/yvgude/lean-ctx/releases/assets/440143052"
+checksum = "sha256:4c887f42b951d1696c7cad3898444f1f3a172f1dcd60b992fc677dc33e9b3707"
+url = "https://github.com/yvgude/lean-ctx/releases/download/v3.8.5/lean-ctx-aarch64-unknown-linux-gnu.tar.gz"
+url_api = "https://api.github.com/repos/yvgude/lean-ctx/releases/assets/447638956"
 
 [tools."github:yvgude/lean-ctx"."platforms.linux-arm64-musl"]
-checksum = "sha256:a9afb42c175dc3c9e506117fc100ba644d030e805f36913105917ccad85a4280"
-url = "https://github.com/yvgude/lean-ctx/releases/download/v3.7.5/lean-ctx-aarch64-unknown-linux-musl.tar.gz"
-url_api = "https://api.github.com/repos/yvgude/lean-ctx/releases/assets/440143049"
+checksum = "sha256:37c1e81eda57201c6d8bf03bda0c29f649551c871a1931b504da1e14d1753ddb"
+url = "https://github.com/yvgude/lean-ctx/releases/download/v3.8.5/lean-ctx-aarch64-unknown-linux-musl.tar.gz"
+url_api = "https://api.github.com/repos/yvgude/lean-ctx/releases/assets/447638957"
 
 [tools."github:yvgude/lean-ctx"."platforms.linux-x64"]
-checksum = "sha256:c586afe64114142bae360b5c27f3618d2fbe4f82ba4b3e0642096f33b268e4d3"
-url = "https://github.com/yvgude/lean-ctx/releases/download/v3.7.5/lean-ctx-x86_64-unknown-linux-gnu.tar.gz"
-url_api = "https://api.github.com/repos/yvgude/lean-ctx/releases/assets/440143050"
+checksum = "sha256:7f226ea0fd7d94a4675cab3459e7c3a867a5d9242cb05aac98b0df006f9d8211"
+url = "https://github.com/yvgude/lean-ctx/releases/download/v3.8.5/lean-ctx-x86_64-unknown-linux-gnu.tar.gz"
+url_api = "https://api.github.com/repos/yvgude/lean-ctx/releases/assets/447638961"
 
 [tools."github:yvgude/lean-ctx"."platforms.linux-x64-musl"]
-checksum = "sha256:bcfc7b89826b5ee0ca074a622d4a1824c11fbc3278cf00bff9eb4e90b1898d18"
-url = "https://github.com/yvgude/lean-ctx/releases/download/v3.7.5/lean-ctx-x86_64-unknown-linux-musl.tar.gz"
-url_api = "https://api.github.com/repos/yvgude/lean-ctx/releases/assets/440143048"
+checksum = "sha256:989d6f9489456598f109db86a4dcdbed8e1bb01584893830c9ed9ad1e68ff09f"
+url = "https://github.com/yvgude/lean-ctx/releases/download/v3.8.5/lean-ctx-x86_64-unknown-linux-musl.tar.gz"
+url_api = "https://api.github.com/repos/yvgude/lean-ctx/releases/assets/447638958"
 
 [tools."github:yvgude/lean-ctx"."platforms.macos-arm64"]
-checksum = "sha256:bfa57fb733396de827eb0f78243bfe8fae2455267d4f11311ff35d4318e23d77"
-url = "https://github.com/yvgude/lean-ctx/releases/download/v3.7.5/lean-ctx-aarch64-apple-darwin.tar.gz"
-url_api = "https://api.github.com/repos/yvgude/lean-ctx/releases/assets/440143051"
+checksum = "sha256:3319ce9d089a6cea803158ff8c4484fc0d63e41daa5e021d750afb12412ea0fe"
+url = "https://github.com/yvgude/lean-ctx/releases/download/v3.8.5/lean-ctx-aarch64-apple-darwin.tar.gz"
+url_api = "https://api.github.com/repos/yvgude/lean-ctx/releases/assets/447638954"
 
 [tools."github:yvgude/lean-ctx"."platforms.macos-x64"]
-checksum = "sha256:6f4751bc62d4a72de33c7fe4ff10361ae7cea9a4c86dbce1063d74f9ba53b536"
-url = "https://github.com/yvgude/lean-ctx/releases/download/v3.7.5/lean-ctx-x86_64-apple-darwin.tar.gz"
-url_api = "https://api.github.com/repos/yvgude/lean-ctx/releases/assets/440143047"
+checksum = "sha256:5d602d4ce574269f471256e79eb02bec8529e0fdf585bd86d019b1c3f46fa84f"
+url = "https://github.com/yvgude/lean-ctx/releases/download/v3.8.5/lean-ctx-x86_64-apple-darwin.tar.gz"
+url_api = "https://api.github.com/repos/yvgude/lean-ctx/releases/assets/447638953"
 
 [tools."github:yvgude/lean-ctx"."platforms.windows-x64"]
-checksum = "sha256:be3c85ea7b0da697d064c2df53e88080b53749023dbf575469016d2e59004856"
-url = "https://github.com/yvgude/lean-ctx/releases/download/v3.7.5/lean-ctx-x86_64-pc-windows-msvc.zip"
-url_api = "https://api.github.com/repos/yvgude/lean-ctx/releases/assets/440143053"
+checksum = "sha256:669ab0b62193cfe6891143a5bf2fd84fb559c9f8881965e3c77e2130eb200947"
+url = "https://github.com/yvgude/lean-ctx/releases/download/v3.8.5/lean-ctx-x86_64-pc-windows-msvc.zip"
+url_api = "https://api.github.com/repos/yvgude/lean-ctx/releases/assets/447638960"
 
 [[tools."go:github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen"]]
 version = "2.7.1"
@@ -1535,7 +1534,7 @@ checksum = "sha256:edaca9bd58ec8e92037dac4e877d52f6b8f430b81c18b57e264b4e2fb111c
 url = "https://nodejs.org/dist/v24.16.0/node-v24.16.0-win-x64.zip"
 
 [[tools."npm:@anthropic-ai/claude-code"]]
-version = "2.1.177"
+version = "2.1.181"
 backend = "npm:@anthropic-ai/claude-code"
 
 [[tools."npm:awsp"]]
@@ -1565,42 +1564,46 @@ backend = "pipx:headroom-ai"
 [tools."pipx:headroom-ai".options]
 extras = "proxy,mcp,bedrock"
 
+[[tools."pipx:mkdocs"]]
+version = "1.6.1"
+backend = "pipx:mkdocs"
+
 [[tools."pipx:pre-commit"]]
 version = "4.6.0"
 backend = "pipx:pre-commit"
 
 [[tools.pnpm]]
-version = "11.7.0"
+version = "11.8.0"
 backend = "aqua:pnpm/pnpm"
 
 [tools.pnpm."platforms.linux-arm64"]
-checksum = "sha256:a110731cf0f46cf89eb5659b42c9f5c3a2361d30087e2eed921c8378b1fe64a0"
-url = "https://github.com/pnpm/pnpm/releases/download/v11.7.0/pnpm-linux-arm64.tar.gz"
+checksum = "sha256:251222a30b3dcf6bc1c30c44fe3fdcd0bd4b2b06dd29f6a549647e56fa51548c"
+url = "https://github.com/pnpm/pnpm/releases/download/v11.8.0/pnpm-linux-arm64.tar.gz"
 provenance = "github-attestations"
 
 [tools.pnpm."platforms.linux-arm64-musl"]
-checksum = "sha256:9c82a83d0fa6dbcd4757f7846f20e73f77d451d6282b32602d9f933b5e2f4052"
-url = "https://github.com/pnpm/pnpm/releases/download/v11.7.0/pnpm-linux-arm64-musl.tar.gz"
+checksum = "sha256:dbc5077793d76d6318ea9a0b9c250327b12afaab4473b02549ee232f2d7b55b3"
+url = "https://github.com/pnpm/pnpm/releases/download/v11.8.0/pnpm-linux-arm64-musl.tar.gz"
 provenance = "github-attestations"
 
 [tools.pnpm."platforms.linux-x64"]
-checksum = "sha256:752e31654c6f24bc945db784d12831b80b29f533b43105575ce30dd3c8658609"
-url = "https://github.com/pnpm/pnpm/releases/download/v11.7.0/pnpm-linux-x64.tar.gz"
+checksum = "sha256:86b9aa5362b06cc61f5e829e41614ffda2fbda09993b8e84176feaa3c97b9532"
+url = "https://github.com/pnpm/pnpm/releases/download/v11.8.0/pnpm-linux-x64.tar.gz"
 provenance = "github-attestations"
 
 [tools.pnpm."platforms.linux-x64-musl"]
-checksum = "sha256:6fa3052e350a1aceeeac90c9f9b59ed048312cab04b34c0472b018e71b243885"
-url = "https://github.com/pnpm/pnpm/releases/download/v11.7.0/pnpm-linux-x64-musl.tar.gz"
+checksum = "sha256:c22f99ca91ec4bab1f37114ed3eacc23e68da72573f42e72ebfafaeaa1131167"
+url = "https://github.com/pnpm/pnpm/releases/download/v11.8.0/pnpm-linux-x64-musl.tar.gz"
 provenance = "github-attestations"
 
 [tools.pnpm."platforms.macos-arm64"]
-checksum = "sha256:97d077cca1225ae6ab492e5b6d0e6737ab7149c34813e70f25f67c6c2bf274a2"
-url = "https://github.com/pnpm/pnpm/releases/download/v11.7.0/pnpm-darwin-arm64.tar.gz"
+checksum = "sha256:7c9ef7523abf1190a2fde2b81dd652260d1679ba471c09950e8a08fa772c06e2"
+url = "https://github.com/pnpm/pnpm/releases/download/v11.8.0/pnpm-darwin-arm64.tar.gz"
 provenance = "github-attestations"
 
 [tools.pnpm."platforms.windows-x64"]
-checksum = "sha256:08acc088646c1dbf3030984918266058d23c5acf4c518dc7502bd539fc99c280"
-url = "https://github.com/pnpm/pnpm/releases/download/v11.7.0/pnpm-win32-x64.zip"
+checksum = "sha256:8cf6951ade777eeb7e4665fdcaefe77942724b217690eb3fa2f0b27c67b4310c"
+url = "https://github.com/pnpm/pnpm/releases/download/v11.8.0/pnpm-win32-x64.zip"
 provenance = "github-attestations"
 
 [[tools.python]]

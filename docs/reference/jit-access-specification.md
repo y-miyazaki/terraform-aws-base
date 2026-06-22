@@ -381,7 +381,7 @@ The output contains the API Gateway URLs pre-populated — no manual URL substit
 
 ### 2. Create Slack App from Manifest
 
-1. Go to https://api.slack.com/apps
+1. Go to [Slack App Management](https://api.slack.com/apps)
 2. Click "Create New App" -> "From an app manifest"
 3. Select target workspace
 4. Paste the Terraform output YAML as-is

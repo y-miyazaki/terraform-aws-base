@@ -1,0 +1,72 @@
+site_name: AWS Base Terraform Infrastructure
+site_description: Terraform baseline for AWS accounts covering security, IAM, cost management, logging, and monitoring.
+docs_dir: docs
+
+theme:
+  name: material
+  features:
+    - navigation.tabs
+    - navigation.indexes
+    - navigation.expand
+    - navigation.top
+    - search.highlight
+    - search.suggest
+    - content.code.copy
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+
+markdown_extensions:
+  - admonition
+  - md_in_html
+  - mdx_truly_sane_lists
+  - pymdownx.details
+  - pymdownx.superfences
+  - toc:
+      permalink: true
+      separator: "-"
+      slugify: !!python/object/apply:pymdownx.slugs.slugify
+        kwds:
+          case: lower
+
+plugins:
+  - search
+
+nav:
+  - Home: index.md
+  - Tutorials:
+      - Baseline Quickstart: tutorials/baseline-quickstart.md
+  - How-To:
+      - Initial Setup: how-to/initial-setup.md
+      - Configure Base tfvars: how-to/configure-base-tfvars.md
+      - Configure Monitor tfvars: how-to/configure-monitor-tfvars.md
+      - Configure Management Audit tfvars: how-to/configure-management-audit-tfvars.md
+      - Configure Management Root tfvars: how-to/configure-management-root-tfvars.md
+      - Configure Development Environment: how-to/configure-development-environment.md
+      - Troubleshooting: how-to/troubleshooting.md
+  - Reference:
+      - Specification: reference/specification.md
+      - CIS Benchmark: reference/cis-benchmark.md
+      - Features Base: reference/features-base.md
+      - Features Monitor: reference/features-monitor.md
+      - JIT Access Specification: reference/jit-access-specification.md
+      - Module Catalog: reference/module-catalog.md
+      - Monitoring: reference/monitoring.md
+      - Performance: reference/performance.md
+      - Security Coverage: reference/security-coverage.md
+  - Explanation:
+      - Architecture: explanation/architecture.md
+      - Design: explanation/design.md
+      - Design Decisions: explanation/design-decisions.md
+  - ADR:
+      - Overview: adr/README.md
+      - "0001: Multi-Region Terraform Architecture": adr/0001-multi-region-terraform-architecture.md
+      - "0002: Global vs Regional Resource Classification": adr/0002-global-vs-regional-resource-classification.md

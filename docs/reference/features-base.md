@@ -1,6 +1,6 @@
 # Base Features Detail
 
-Detailed descriptions for features managed by `terraform/base/`. For configuration, see [configure-base-tfvars.md](../how-to/configure-base-tfvars.md).
+Detailed descriptions for features managed by `terraform/base/`. For configuration, see [Base Terraform Configuration Guide](../how-to/configure-base-tfvars.md).
 
 ## Security
 
@@ -18,7 +18,7 @@ AWS CloudTrail is a service for governance, compliance, operational and risk aud
 
 After configuring the Slack channel, adding the Slack app, and setting the OAuthToken, Slack notifications will be sent.
 
-![CloudTrail](../../image/slack_cloudtrail.png)
+![CloudTrail](../image/slack_cloudtrail.png)
 
 ### Config
 
@@ -26,7 +26,7 @@ AWS Config is a service that allows you to evaluate, audit, and review the confi
 
 After configuring the Slack channel, adding the Slack app, and setting the OAuthToken, Slack notifications will be sent.
 
-![Config](../../image/slack_config.png)
+![Config](../image/slack_config.png)
 
 ### Default VPC
 
@@ -50,7 +50,7 @@ Amazon GuardDuty is a threat detection service that continuously monitors for ma
 
 After configuring the Slack channel, adding the Slack app, and setting the OAuthToken, Slack notifications will be sent.
 
-![GuardDuty](../../image/slack_guardduty.png)
+![GuardDuty](../image/slack_guardduty.png)
 
 ### Inspector2
 
@@ -72,10 +72,10 @@ The three security standards addressed:
 
 The following is the security score when only this Terraform is applied.
 
-![SecurityHub Score](../../image/security_hub_security_score.png)
+![SecurityHub Score](../image/security_hub_security_score.png)
 
-For a detailed mapping of CIS controls, see [CIS Benchmark Compliance Matrix](./cis-benchmark.md).
-For security service coverage, see [Security Coverage](./security-coverage.md).
+For a detailed mapping of CIS controls, see [CIS AWS Foundations Benchmark Compliance Matrix](./cis-benchmark.md).
+For security service coverage, see [AWS Security Services Coverage](./security-coverage.md).
 
 ### SSM Automation
 
@@ -93,8 +93,8 @@ AWS Budgets provides the ability to set up custom budgets and be alerted when co
 
 After configuring the Slack channel, adding the Slack app, and setting the OAuthToken, you will receive Slack notifications at the specified time (default is 18:00 JST daily). An email will also be sent if the specified cost limit is exceeded.
 
-![Budgets](../../image/slack_budgets.png)
-![Budgets All](../../image/slack_budgets_all.png)
+![Budgets](../image/slack_budgets.png)
+![Budgets All](../image/slack_budgets_all.png)
 
 ### Compute Optimizer
 
@@ -108,20 +108,20 @@ Configures EventBridge to monitor AWS Health events and send notifications to Sl
 
 You can set the policy to assign to IAM groups. You can also make the virtual MFA setting mandatory as a base policy. You can also configure the IAM Switch Role.
 
-![IAM Group Policy](../../image/iam_group_policy.png)
+![IAM Group Policy](../image/iam_group_policy.png)
 
 ### IAM Password Expired
 
 Configures EventBridge Scheduler to check for expired or expiring IAM user passwords and send notifications to Slack.
 
-![IAM Password Expired](../../image/slack_iam_password_expired.png)
+![IAM Password Expired](../image/slack_iam_password_expired.png)
 
 ### IAM User and Group
 
 You can create an IAM User and Group.
 
-![IAM User](../../image/iam_user.png)
-![IAM Group](../../image/iam_group.png)
+![IAM User](../image/iam_user.png)
+![IAM Group](../image/iam_group.png)
 
 ### OIDC GitHub
 
@@ -131,10 +131,10 @@ Configures GitHub Actions as an IAM OIDC identity provider in AWS. This allows G
 
 All resources created in Terraform will have the same TAG, and Resource Groups will be filtered by that TAG.
 
-![Resource Groups](../../image/resource_groups.png)
+![Resource Groups](../image/resource_groups.png)
 
 ### Trusted Advisor
 
 AWS Trusted Advisor provides guidance on how to follow AWS best practices. After configuring Slack, you will receive notifications at the specified time (default is 9:00 JST daily). Requires the Business or Enterprise support plan (default setting is false).
 
-![Trusted Advisor](../../image/slack_trusted_advisor.png)
+![Trusted Advisor](../image/slack_trusted_advisor.png)

@@ -35,7 +35,7 @@ uvx = true # Install uv/uvx via pipx for better isolation and performance.
 # A Runtime tools
 aqua = "v2.60.0"
 node = "24.16.0"
-pnpm = { version = "11.7.0", depends = ["node"] }
+pnpm = { version = "11.8.0", depends = ["node"] }
 python = "3.14.6"
 
 # AI agent tools
@@ -43,10 +43,10 @@ python = "3.14.6"
 "npm:@anthropic-ai/claude-code" = { version = "2.1.181", depends = [
   "node",
 ], install_env = { NPM_CONFIG_IGNORE_SCRIPTS = "false" }, postinstall = "node $(find $MISE_TOOL_INSTALL_PATH -name 'install.cjs' -path '*/@anthropic-ai/claude-code/*' | head -1)" } # Claude Code CLI
-"github:DeusData/codebase-memory-mcp" = "v0.7.0" # codebase memory MCP server
+"github:DeusData/codebase-memory-mcp" = "v0.8.1" # codebase memory MCP server
 "aqua:github/copilot-cli" = "1.0.62"             # GitHub Copilot CLI
 "pipx:headroom-ai" = { version = "0.26.0", extras = "proxy,mcp,bedrock", depends = ["python"] }
-"github:yvgude/lean-ctx" = "v3.7.5"              # context optimizer
+"github:yvgude/lean-ctx" = "v3.8.5"              # context optimizer
 "github:microsoft/waza" = "0.33.0"               # agent skill evaluator
 
 # AWS related tools
@@ -80,7 +80,7 @@ python = "3.14.6"
 "aqua:ko-build/ko" = "0.18.1"                                             # container builder
 "aqua:vektra/mockery" = "3.7.1"                                           # mock code generator for interfaces
 "go:github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen" = "v2.7.1"  # OpenAPI code generator
-"aqua:protocolbuffers/protobuf/protoc" = "35.0"                            # protobuf compiler
+"aqua:protocolbuffers/protobuf/protoc" = "35.1"                            # protobuf compiler
 "aqua:protocolbuffers/protobuf-go/protoc-gen-go" = "1.36.11"              # protobuf code generator
 "aqua:grpc/grpc-go/protoc-gen-go-grpc" = "1.6.1"                          # gRPC code generator
 "aqua:swaggo/swag" = "1.16.6"                                             # API documentation generator
@@ -112,9 +112,10 @@ python = "3.14.6"
 
 # Utility tools
 "aqua:google/go-jsonnet" = "0.22.0"  # Jsonnet command-line tool
+"pipx:mkdocs" = { version = "1.6.1", depends = ["python"], postinstall = "uv pip install --python $MISE_TOOL_INSTALL_PATH/mkdocs/bin/python mkdocs-material mdx-truly-sane-lists" } # MkDocs with Material theme
 "aqua:BurntSushi/ripgrep" = "15.1.0" # grep alternative (rg)
 "aqua:tamasfe/taplo" = "0.10.0"      # TOML formatter / LSP
-"aqua:jdx/usage" = "3.4.0"           # usage CLI tool for command help and completions
+"aqua:jdx/usage" = "3.5.0"           # usage CLI tool for command help and completions
 "aqua:astral-sh/uv" = "0.11.21"      # uv/uvx
 
 [tasks.mise-install]

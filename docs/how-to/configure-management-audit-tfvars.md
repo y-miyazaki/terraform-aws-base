@@ -5,8 +5,8 @@
 Configuration for the **Audit account** in an AWS Control Tower landing zone. This account serves as the delegated administrator for organization-wide security services.
 
 **Stack:** `terraform/management/audit/`
-**Example file:** [terraform.example.tfvars](../../terraform/management/audit/terraform.example.tfvars)
-**Initial setup:** See [initial-setup.md](./initial-setup.md)
+**Example file:** [terraform.example.tfvars](https://github.com/y-miyazaki/terraform-aws-base/blob/main/terraform/management/audit/terraform.example.tfvars)
+**Initial setup:** See [Initial Setup (Common)](./initial-setup.md)
 
 **What it configures:**
 
@@ -54,7 +54,7 @@ kms = {
 
 ### CloudWatch Log Groups
 
-Same centralized pattern as other stacks. See [base configuration](./configure-base-tfvars.md#cloudwatch-log-groups) for detailed explanation.
+Same centralized pattern as other stacks. See [Base Terraform Configuration Guide](./configure-base-tfvars.md#cloudwatch-log-groups) for detailed explanation.
 
 ```hcl
 cloudwatch_log_group = {
@@ -193,8 +193,8 @@ aws organizations list-delegated-services-for-account --account-id <AUDIT_ACCOUN
 
 ## Related Documents
 
-- [Initial Setup](./initial-setup.md) — S3 state bucket, IAM user creation
-- [Management Root Configuration](./configure-management-root-tfvars.md) — Root account
-- [Base Configuration](./configure-base-tfvars.md) — Member accounts
+- [Initial Setup (Common)](./initial-setup.md) — S3 state bucket, IAM user creation
+- [Management Root Terraform Configuration Guide](./configure-management-root-tfvars.md) — Root account
+- [Base Terraform Configuration Guide](./configure-base-tfvars.md) — Member accounts
 - [AWS Chatbot Documentation](https://docs.aws.amazon.com/chatbot/latest/adminguide/slack-setup.html) — Slack setup
 - [Troubleshooting](./troubleshooting.md) — Common issues and resolution

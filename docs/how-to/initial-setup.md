@@ -45,7 +45,7 @@ terraform -chdir=terraform/{stack} apply -var-file=terraform.tfvars
 
 ## Next Steps
 
-- [Configure base tfvars](./configure-base-tfvars.md)
-- [Configure monitor tfvars](./configure-monitor-tfvars.md)
-- [Configure management/audit tfvars](./configure-management-audit-tfvars.md)
-- [Configure management/root tfvars](./configure-management-root-tfvars.md)
+- [Base Terraform Configuration Guide](./configure-base-tfvars.md)
+- [Monitor Terraform Configuration Guide](./configure-monitor-tfvars.md)
+- [Management Audit Terraform Configuration Guide](./configure-management-audit-tfvars.md)
+- [Management Root Terraform Configuration Guide](./configure-management-root-tfvars.md)

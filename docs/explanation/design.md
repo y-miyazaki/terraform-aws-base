@@ -205,6 +205,6 @@ No provider aliases are defined. The `alias = "global"` and `alias = "us-east-1"
 
 ## Cross-References
 
-- [architecture.md](./architecture.md) — Account structure and Terraform directory layout
-- [module-catalog.md](../reference/module-catalog.md) — Index of all reusable modules with purpose and inputs
-- [design-decisions.md](./design-decisions.md) — Specific decisions: KMS key policy, external data sources, Access Analyzer patterns
+- [Architecture Overview](./architecture.md) — Account structure and Terraform directory layout
+- [Module Catalog](../reference/module-catalog.md) — Index of all reusable modules with purpose and inputs
+- [Design Decisions](./design-decisions.md) — Specific decisions: KMS key policy, external data sources, Access Analyzer patterns

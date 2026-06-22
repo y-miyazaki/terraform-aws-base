@@ -69,7 +69,7 @@ This section describes how to use a VS Code devcontainer to create a reproducibl
 
 ### Setting
 
-Since there is a devcontainer setting in [env/example](../../env/example), modify this file and build the local environment.
+Since there is a devcontainer setting in [env/example](https://github.com/y-miyazaki/terraform-aws-base/tree/main/env/example), modify this file and build the local environment.
 
 ### Create Local Development Environment
 
@@ -81,7 +81,7 @@ Since there is a devcontainer setting in [env/example](../../env/example), modif
     mkdir -p env/common/tmp/gh
     touch env/common/tmp/.gitconfig
     cp -p env/example/.devcontainer/devcontainer.json .devcontainer/devcontainer.json
-    cp -p env/example/.aws/config env/common/tmp/.aws/config 
+    cp -p env/example/.aws/config env/common/tmp/.aws/config
     ```
 
 - Fix .aws/config  
@@ -92,7 +92,7 @@ Since there is a devcontainer setting in [env/example](../../env/example), modif
     cat env/common/tmp/.aws/config
     ```
 
-    ```
+    ```ini
     [profile default]
     region = ap-northeast-1
 
@@ -121,7 +121,7 @@ Since there is a devcontainer setting in [env/example](../../env/example), modif
     cat env/common/tmp/.gitconfig
     ```
 
-    ```
+    ```ini
     [user]
         name = Your Name
         email = your.email@example.com
@@ -141,7 +141,7 @@ Since there is a devcontainer setting in [env/example](../../env/example), modif
     After launching the devcontainer, run the following command to log in to [GitHub CLI](https://cli.github.com/).  
     If you have already logged in, you can skip this step.  
     If you are using 2FA, please set it up according to the instructions.  
-    For more information, please refer to the official documentation: https://cli.github.com/manual/gh_auth_login
+    For more information, refer to the [GitHub CLI auth login documentation](https://cli.github.com/manual/gh_auth_login).
 
     ```bash
     gh auth login
@@ -150,14 +150,14 @@ Since there is a devcontainer setting in [env/example](../../env/example), modif
 - AWS SSO login  
     After launching the devcontainer, run the following command to log in to AWS SSO.  
     If you have already logged in, you can skip this step.  
-    For more information, please refer to the official documentation: https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-sso.html
+    For more information, refer to the [AWS CLI SSO configuration guide](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-sso.html).
 
     ```bash
       vscode ➜ (no) ➜ /workspace (develop ✗) $ awsp
       AWS Profile Switcher
       ? Choose a profile dev
 
-      The SSO session associated with this profile has expired or is otherwise invalid. To refresh this SSO session run aws sso login with the corresponding profile.    
+      The SSO session associated with this profile has expired or is otherwise invalid. To refresh this SSO session run aws sso login with the corresponding profile.  
 
       vscode ➜ dev ➜ /workspace (develop ✗) $ aws sso login
       Attempting to automatically open the SSO authorization page in your default browser.

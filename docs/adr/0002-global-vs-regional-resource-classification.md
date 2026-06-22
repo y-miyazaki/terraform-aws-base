@@ -110,7 +110,7 @@ module "lambda_function_budgets" {
 
 ## References
 
-- [ADR-0001](./0001-multi-region-terraform-architecture.md) — Multi-Region Architecture
+- [ADR-0001: Multi-Region Terraform Architecture Using AWS Provider v6 Region Attribute](./0001-multi-region-terraform-architecture.md) — Multi-Region Architecture
 - [AWS Provider v6 Documentation](https://registry.terraform.io/providers/hashicorp/aws/latest/docs)
 
 ---

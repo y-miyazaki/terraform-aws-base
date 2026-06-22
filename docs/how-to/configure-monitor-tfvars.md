@@ -5,8 +5,8 @@
 Configuration for **monitoring and observability**. Sets up CloudWatch alarms, log filters, EventBridge rules, and Athena queries with Slack notifications.
 
 **Stack:** `terraform/monitor/`
-**Example file:** [terraform.example.tfvars](../../terraform/monitor/terraform.example.tfvars)
-**Initial setup:** See [initial-setup.md](./initial-setup.md)
+**Example file:** [terraform.example.tfvars](https://github.com/y-miyazaki/terraform-aws-base/blob/main/terraform/monitor/terraform.example.tfvars)
+**Initial setup:** See [Initial Setup (Common)](./initial-setup.md)
 
 **Control Tower note:** Set `use_control_tower = true` to avoid conflicts with Control Tower-managed log groups.
 
@@ -41,7 +41,7 @@ cloudwatch_log_group = {
 }
 ```
 
-<details>
+<details markdown>
 <summary>Available override services</summary>
 
 | Service Name | Description | Recommended |
@@ -76,7 +76,7 @@ slack = {
 }
 ```
 
-<details>
+<details markdown>
 <summary>Available override functions</summary>
 
 | Function Name | Description |
@@ -188,9 +188,9 @@ Set to `true` to disable services conflicting with Control Tower. Automatically 
 
 ## Related Documents
 
-- [Initial Setup](./initial-setup.md) — S3 state bucket, IAM user creation
-- [Base Configuration](./configure-base-tfvars.md) — Base stack
-- [Management Root Configuration](./configure-management-root-tfvars.md) — Root account
-- [Management Audit Configuration](./configure-management-audit-tfvars.md) — Audit account
-- [Monitoring Reference](../reference/monitoring.md) — Alert architecture and runbooks
+- [Initial Setup (Common)](./initial-setup.md) — S3 state bucket, IAM user creation
+- [Base Terraform Configuration Guide](./configure-base-tfvars.md) — Base stack
+- [Management Root Terraform Configuration Guide](./configure-management-root-tfvars.md) — Root account
+- [Management Audit Terraform Configuration Guide](./configure-management-audit-tfvars.md) — Audit account
+- [Monitoring](../reference/monitoring.md) — Alert architecture and runbooks
 - [Troubleshooting](./troubleshooting.md) — Common issues and resolution

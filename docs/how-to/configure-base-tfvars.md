@@ -5,8 +5,8 @@
 Configuration for **member accounts** (individual AWS accounts where workloads run). Manages account-level security baselines, IAM, and optional integrations.
 
 **Stack:** `terraform/base/`
-**Example file:** [terraform.example.tfvars](../../terraform/base/terraform.example.tfvars)
-**Initial setup:** See [initial-setup.md](./initial-setup.md)
+**Example file:** [terraform.example.tfvars](https://github.com/y-miyazaki/terraform-aws-base/blob/main/terraform/base/terraform.example.tfvars)
+**Initial setup:** See [Initial Setup (Common)](./initial-setup.md)
 
 **Control Tower integration:** Set `control_tower.is_enabled = true` to disable security services that are centrally managed by the management/audit account.
 
@@ -51,7 +51,7 @@ cloudwatch_log_group = {
 
 **Priority order:** `override.<service>` > `retention_in_days` (default)
 
-<details>
+<details markdown>
 <summary>Available override services</summary>
 
 | Service Name | Description | Recommended Retention |
@@ -86,7 +86,7 @@ slack = {
 
 **Priority order:** `override.<function>` > `channel_id` (default)
 
-<details>
+<details markdown>
 <summary>Available override functions</summary>
 
 | Function Name | Description |
@@ -148,7 +148,7 @@ control_tower = {
 
 When `is_enabled = true`, services not explicitly overridden in `managed_services` are treated as organization-managed and automatically disabled in this stack.
 
-<details>
+<details markdown>
 <summary>Verification commands (run from root account)</summary>
 
 ```bash
@@ -182,7 +182,7 @@ common_lambda = {
 
 ### IAM Users, Groups, and Switch Role
 
-<details>
+<details markdown>
 <summary>IAM configuration structure</summary>
 
 ```hcl
@@ -232,8 +232,8 @@ Key points:
 
 ## Related Documents
 
-- [Initial Setup](./initial-setup.md) — S3 state bucket, IAM user creation
-- [Monitor Configuration](./configure-monitor-tfvars.md) — Monitoring stack
-- [Management Root Configuration](./configure-management-root-tfvars.md) — Root account
-- [Management Audit Configuration](./configure-management-audit-tfvars.md) — Audit account
+- [Initial Setup (Common)](./initial-setup.md) — S3 state bucket, IAM user creation
+- [Monitor Terraform Configuration Guide](./configure-monitor-tfvars.md) — Monitoring stack
+- [Management Root Terraform Configuration Guide](./configure-management-root-tfvars.md) — Root account
+- [Management Audit Terraform Configuration Guide](./configure-management-audit-tfvars.md) — Audit account
 - [Troubleshooting](./troubleshooting.md) — Common issues and resolution

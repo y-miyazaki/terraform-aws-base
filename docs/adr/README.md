@@ -35,7 +35,7 @@ We follow the [MADR (Markdown Any Decision Record)](https://adr.github.io/madr/)
 - Affects: All resource deployments in `terraform/base`
 - Risk: Low (explicit region on every resource)
 
-**See**: [Full ADR-0001](./0001-multi-region-terraform-architecture.md)
+**See**: [ADR-0001: Multi-Region Terraform Architecture Using AWS Provider v6 Region Attribute](./0001-multi-region-terraform-architecture.md)
 
 ### ADR-0002: Global vs Regional Resource Classification
 
@@ -43,7 +43,7 @@ We follow the [MADR (Markdown Any Decision Record)](https://adr.github.io/madr/)
 
 **Summary**: Classifies resources into Regional, Global, Common, and Regionless tiers based on AWS service behavior. Prevents data duplication by ensuring account-wide services (Budgets, Trusted Advisor) run once from `var.region.global`.
 
-**See**: [Full ADR-0002](./0002-global-vs-regional-resource-classification.md)
+**See**: [ADR-0002: Global vs Regional Resource Classification](./0002-global-vs-regional-resource-classification.md)
 
 ---
 

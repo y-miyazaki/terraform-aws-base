@@ -127,7 +127,7 @@ region = {
 ## References
 
 - [AWS Provider v6 Release Notes](https://registry.terraform.io/providers/hashicorp/aws/latest/docs)
-- [ADR-0002](./0002-global-vs-regional-resource-classification.md) — Global vs Regional Resource Classification
+- [ADR-0002: Global vs Regional Resource Classification](./0002-global-vs-regional-resource-classification.md) — Global vs Regional Resource Classification
 
 ---
 

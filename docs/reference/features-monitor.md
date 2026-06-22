@@ -1,6 +1,6 @@
 # Monitor Features Detail
 
-Detailed descriptions for features managed by `terraform/monitor/`. For configuration, see [configure-monitor-tfvars.md](../how-to/configure-monitor-tfvars.md).
+Detailed descriptions for features managed by `terraform/monitor/`. For configuration, see [Monitor Terraform Configuration Guide](../how-to/configure-monitor-tfvars.md).
 
 ## Log Monitoring
 
@@ -81,7 +81,7 @@ Reference: [What is Amazon Athena?](https://docs.aws.amazon.com/athena/latest/ug
 
 Named Query is an Amazon Athena feature that allows you to name and save SQL queries and call them from the console.
 
-![Named Query](../../image/athena_named_query.png)
+![Named Query](../image/athena_named_query.png)
 
 ### CloudFront
 
@@ -89,10 +89,10 @@ If you are using CloudFront to store your standard logs in S3, you can retrieve 
 
 Reference: [Configuring and using standard logs](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/AccessLogs.html)
 
-![CloudFront](../../image/athena_cloudfront.png)
+![CloudFront](../image/athena_cloudfront.png)
 
 ### SES
 
 If you are using SES to store your standard logs in S3, you can retrieve the logs from Athena using SQL. When the Athena function is enabled, a table is created for SES and a named query is created for easy searching.
 
-![SES](../../image/athena_ses.png)
+![SES](../image/athena_ses.png)

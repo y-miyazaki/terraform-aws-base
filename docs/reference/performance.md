@@ -23,7 +23,7 @@ The base and monitor stacks centralize log retention in `cloudwatch_log_group`, 
 
 #### Mitigation
 
-Prefer a common retention value from [README-base-tfvars.md](../how-to/configure-base-tfvars.md) and only add per-service overrides when there is a concrete retention requirement.
+Prefer a common retention value from [Base Terraform Configuration Guide](../how-to/configure-base-tfvars.md) and only add per-service overrides when there is a concrete retention requirement.
 
 ### Multi-region resource duplication
 
@@ -51,7 +51,7 @@ The cleanup checker in the JIT access module is scheduled through EventBridge an
 
 #### Mitigation
 
-Adjust `cleanup_schedule_expression` in [modules/aws/jit_access/variables.tf](../../modules/aws/jit_access/variables.tf) if a shorter revocation window is required.
+Adjust `cleanup_schedule_expression` in [modules/aws/jit_access/variables.tf](https://github.com/y-miyazaki/terraform-aws-base/blob/main/modules/aws/jit_access/variables.tf) if a shorter revocation window is required.
 
 ### Redshift monitoring fan-out
 
@@ -65,7 +65,7 @@ The Redshift metric module exposes many thresholds, including maintenance mode, 
 
 #### Mitigation
 
-Enable only the thresholds that are meaningful for the cluster class and workload. See [modules/aws/metric/redshift/variables.tf](../../modules/aws/metric/redshift/variables.tf) for the available switches.
+Enable only the thresholds that are meaningful for the cluster class and workload. See [modules/aws/metric/redshift/variables.tf](https://github.com/y-miyazaki/terraform-aws-base/blob/main/modules/aws/metric/redshift/variables.tf) for the available switches.
 
 ## Tuning Guidance
 
@@ -79,6 +79,6 @@ Enable only the thresholds that are meaningful for the cluster class and workloa
 
 ## Related Documents
 
-- [monitoring.md](../reference/monitoring.md) - Alert definitions and operational runbooks.
-- [specification.md](../reference/specification.md) - Repository-wide lifecycle and safety expectations.
-- [design-decisions.md](../explanation/design-decisions.md) - Why some settings are intentionally conservative.
+- [Monitoring](../reference/monitoring.md) - Alert definitions and operational runbooks.
+- [Terraform Specification](../reference/specification.md) - Repository-wide lifecycle and safety expectations.
+- [Design Decisions](../explanation/design-decisions.md) - Why some settings are intentionally conservative.

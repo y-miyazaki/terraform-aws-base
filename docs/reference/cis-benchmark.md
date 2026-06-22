@@ -10,7 +10,7 @@ For the full version comparison table, see [Mapping of controls to CIS requireme
 Reference:
 - [CIS AWS Foundations Benchmark - AWS Security Hub](https://docs.aws.amazon.com/securityhub/latest/userguide/cis-aws-foundations-benchmark.html)
 
-For AWS security service coverage (GuardDuty, Inspector, Macie, etc.), see [security-coverage.md](./security-coverage.md).
+For AWS security service coverage (GuardDuty, Inspector, Macie, etc.), see [AWS Security Services Coverage](./security-coverage.md).
 
 ## Legend
 
