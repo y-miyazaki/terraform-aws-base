@@ -50,7 +50,7 @@ python = "3.14.6"
 "github:microsoft/waza" = "0.33.0"               # agent skill evaluator
 
 # AWS related tools
-"aqua:aws/aws-cli" = "2.35.5"      # AWS CLI
+"aqua:aws/aws-cli" = "2.35.6"      # AWS CLI
 "aqua:aws/aws-sam-cli" = "1.162.1"  # SAM CLI tool
 "npm:awsp" = { version = "0.2.0", depends = [
   "node",
