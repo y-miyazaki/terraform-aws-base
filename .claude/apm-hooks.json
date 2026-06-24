@@ -91,17 +91,6 @@
   ],
   "PostToolUse": [
     {
-      "matcher": "Write",
-      "hooks": [
-        {
-          "type": "command",
-          "command": ".claude/hooks/shell-script-hooks-claude/scripts/shfmt.sh",
-          "timeout": 120
-        }
-      ],
-      "_apm_source": "shell-script-hooks-claude"
-    },
-    {
       "matcher": "",
       "hooks": [
         {
@@ -111,6 +100,17 @@
         }
       ],
       "_apm_source": "common-hooks-claude"
+    },
+    {
+      "matcher": "Write",
+      "hooks": [
+        {
+          "type": "command",
+          "command": ".claude/hooks/shell-script-hooks-claude/scripts/shfmt.sh",
+          "timeout": 120
+        }
+      ],
+      "_apm_source": "shell-script-hooks-claude"
     },
     {
       "matcher": "Edit|Write|Bash",

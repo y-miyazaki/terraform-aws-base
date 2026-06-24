@@ -1,11 +1,11 @@
 lockfile_version: '1'
-generated_at: '2026-06-24T05:33:58.236657+00:00'
+generated_at: '2026-06-24T05:45:49.646511+00:00'
 apm_version: 0.21.0
 dependencies:
 - repo_url: y-miyazaki/config
   host: github.com
-  resolved_commit: 2031e72e30be6dcea0b413e831df82b75a867a77
-  resolved_ref: v1.4.4
+  resolved_commit: b92c65f70e5ed824c29ee4cd02e551da99c4d5e0
+  resolved_ref: v1.4.5
   virtual_path: .apm/packages/aws
   is_virtual: true
   package_type: apm_package
@@ -13,8 +13,8 @@ dependencies:
   declared_license: Apache-2.0
 - repo_url: y-miyazaki/config
   host: github.com
-  resolved_commit: 2031e72e30be6dcea0b413e831df82b75a867a77
-  resolved_ref: v1.4.4
+  resolved_commit: b92c65f70e5ed824c29ee4cd02e551da99c4d5e0
+  resolved_ref: v1.4.5
   virtual_path: .apm/packages/common
   is_virtual: true
   package_type: apm_package
@@ -372,8 +372,8 @@ dependencies:
   declared_license: Apache-2.0
 - repo_url: y-miyazaki/config
   host: github.com
-  resolved_commit: 2031e72e30be6dcea0b413e831df82b75a867a77
-  resolved_ref: v1.4.4
+  resolved_commit: b92c65f70e5ed824c29ee4cd02e551da99c4d5e0
+  resolved_ref: v1.4.5
   virtual_path: .apm/packages/common-hooks-claude
   is_virtual: true
   package_type: apm_package
@@ -395,8 +395,8 @@ dependencies:
   declared_license: Apache-2.0
 - repo_url: y-miyazaki/config
   host: github.com
-  resolved_commit: 2031e72e30be6dcea0b413e831df82b75a867a77
-  resolved_ref: v1.4.4
+  resolved_commit: b92c65f70e5ed824c29ee4cd02e551da99c4d5e0
+  resolved_ref: v1.4.5
   virtual_path: .apm/packages/shell-script
   is_virtual: true
   package_type: apm_package
@@ -498,8 +498,8 @@ dependencies:
   declared_license: Apache-2.0
 - repo_url: y-miyazaki/config
   host: github.com
-  resolved_commit: 2031e72e30be6dcea0b413e831df82b75a867a77
-  resolved_ref: v1.4.4
+  resolved_commit: b92c65f70e5ed824c29ee4cd02e551da99c4d5e0
+  resolved_ref: v1.4.5
   virtual_path: .apm/packages/shell-script-hooks-claude
   is_virtual: true
   package_type: apm_package
@@ -513,8 +513,8 @@ dependencies:
   declared_license: Apache-2.0
 - repo_url: y-miyazaki/config
   host: github.com
-  resolved_commit: 2031e72e30be6dcea0b413e831df82b75a867a77
-  resolved_ref: v1.4.4
+  resolved_commit: b92c65f70e5ed824c29ee4cd02e551da99c4d5e0
+  resolved_ref: v1.4.5
   virtual_path: .apm/packages/terraform
   is_virtual: true
   package_type: apm_package
@@ -634,8 +634,8 @@ dependencies:
   declared_license: Apache-2.0
 - repo_url: y-miyazaki/config
   host: github.com
-  resolved_commit: 2031e72e30be6dcea0b413e831df82b75a867a77
-  resolved_ref: v1.4.4
+  resolved_commit: b92c65f70e5ed824c29ee4cd02e551da99c4d5e0
+  resolved_ref: v1.4.5
   virtual_path: .apm/packages/terraform-aws
   is_virtual: true
   package_type: apm_package
@@ -643,8 +643,8 @@ dependencies:
   declared_license: Apache-2.0
 - repo_url: y-miyazaki/config
   host: github.com
-  resolved_commit: 2031e72e30be6dcea0b413e831df82b75a867a77
-  resolved_ref: v1.4.4
+  resolved_commit: b92c65f70e5ed824c29ee4cd02e551da99c4d5e0
+  resolved_ref: v1.4.5
   virtual_path: .apm/packages/terraform-hooks-claude
   is_virtual: true
   package_type: apm_package

@@ -174,6 +174,16 @@
         "hooks": [
           {
             "type": "command",
+            "command": ".claude/hooks/go-hooks-claude/scripts/golangci_lint.sh",
+            "timeout": 120
+          }
+        ]
+      },
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
             "command": ".claude/hooks/common-hooks-claude/scripts/actionlint.sh",
             "timeout": 60
           }
@@ -215,16 +225,6 @@
           {
             "type": "command",
             "command": ".claude/hooks/common-hooks-claude/scripts/markdownlint_cli2.sh",
-            "timeout": 120
-          }
-        ]
-      },
-      {
-        "matcher": "",
-        "hooks": [
-          {
-            "type": "command",
-            "command": ".claude/hooks/go-hooks-claude/scripts/golangci_lint.sh",
             "timeout": 120
           }
         ]
@@ -322,22 +322,22 @@
     ],
     "PostToolUse": [
       {
-        "matcher": "Write",
-        "hooks": [
-          {
-            "type": "command",
-            "command": ".claude/hooks/shell-script-hooks-claude/scripts/shfmt.sh",
-            "timeout": 120
-          }
-        ]
-      },
-      {
         "matcher": "",
         "hooks": [
           {
             "type": "command",
             "command": "command -v lean-ctx >/dev/null 2>&1 || exit 0; lean-ctx hook observe",
             "timeout": 5
+          }
+        ]
+      },
+      {
+        "matcher": "Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".claude/hooks/shell-script-hooks-claude/scripts/shfmt.sh",
+            "timeout": 120
           }
         ]
       },
