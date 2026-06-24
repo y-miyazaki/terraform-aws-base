@@ -267,36 +267,43 @@ checksum = "sha256:0cb829869f4240e3df0f2d52683457320d83db44c8505927f211924bcb202
 url = "https://github.com/aws/aws-sam-cli/releases/download/v1.162.1/aws-sam-cli-macos-x86_64.pkg"
 
 [[tools."aqua:bufbuild/buf"]]
-version = "1.70.0"
+version = "1.71.0"
 backend = "aqua:bufbuild/buf"
 
 [tools."aqua:bufbuild/buf"."platforms.linux-arm64"]
-checksum = "sha256:ff3c79a6bb44c41a8053ec0d863234cee82378ea4c29ed5292c852dbf829fec0"
-url = "https://github.com/bufbuild/buf/releases/download/v1.70.0/buf-Linux-aarch64.tar.gz"
+checksum = "sha256:b34722f849d14c7f4551d293e2d9608952d05340e98f7f3709ad50d61771340e"
+url = "https://github.com/bufbuild/buf/releases/download/v1.71.0/buf-Linux-aarch64.tar.gz"
+provenance = "minisign"
 
 [tools."aqua:bufbuild/buf"."platforms.linux-arm64-musl"]
-checksum = "sha256:ff3c79a6bb44c41a8053ec0d863234cee82378ea4c29ed5292c852dbf829fec0"
-url = "https://github.com/bufbuild/buf/releases/download/v1.70.0/buf-Linux-aarch64.tar.gz"
+checksum = "sha256:b34722f849d14c7f4551d293e2d9608952d05340e98f7f3709ad50d61771340e"
+url = "https://github.com/bufbuild/buf/releases/download/v1.71.0/buf-Linux-aarch64.tar.gz"
+provenance = "minisign"
 
 [tools."aqua:bufbuild/buf"."platforms.linux-x64"]
-checksum = "sha256:18498bdadbdce80792ce08c2c59e0c49f157aa3f5d9b0f9c6e3db795be208b9d"
-url = "https://github.com/bufbuild/buf/releases/download/v1.70.0/buf-Linux-x86_64.tar.gz"
+checksum = "sha256:1b941e33c62614944c35396bf0e7a197ec6e94e09ac1ce719667dd1bbb372ff5"
+url = "https://github.com/bufbuild/buf/releases/download/v1.71.0/buf-Linux-x86_64.tar.gz"
+provenance = "minisign"
 
 [tools."aqua:bufbuild/buf"."platforms.linux-x64-musl"]
-checksum = "sha256:18498bdadbdce80792ce08c2c59e0c49f157aa3f5d9b0f9c6e3db795be208b9d"
-url = "https://github.com/bufbuild/buf/releases/download/v1.70.0/buf-Linux-x86_64.tar.gz"
+checksum = "sha256:1b941e33c62614944c35396bf0e7a197ec6e94e09ac1ce719667dd1bbb372ff5"
+url = "https://github.com/bufbuild/buf/releases/download/v1.71.0/buf-Linux-x86_64.tar.gz"
+provenance = "minisign"
 
 [tools."aqua:bufbuild/buf"."platforms.macos-arm64"]
-checksum = "sha256:9cec23658df093d50f3318580e17f1e309d45b817927f22e9de30f78f3d4d45b"
-url = "https://github.com/bufbuild/buf/releases/download/v1.70.0/buf-Darwin-arm64.tar.gz"
+checksum = "sha256:96151a0d44343d05930976069cc5d4bec7736cc920304816a2745906e822170d"
+url = "https://github.com/bufbuild/buf/releases/download/v1.71.0/buf-Darwin-arm64.tar.gz"
+provenance = "minisign"
 
 [tools."aqua:bufbuild/buf"."platforms.macos-x64"]
-checksum = "sha256:ebeed1af15bcb145c35c5e51eadc8fe0bdba9311e08fd6abca8c23294929d20b"
-url = "https://github.com/bufbuild/buf/releases/download/v1.70.0/buf-Darwin-x86_64.tar.gz"
+checksum = "sha256:217f4963af6e90e04dfc767adc5e9ccb4fe876ba1100abdecfc4302bc37ed419"
+url = "https://github.com/bufbuild/buf/releases/download/v1.71.0/buf-Darwin-x86_64.tar.gz"
+provenance = "minisign"
 
 [tools."aqua:bufbuild/buf"."platforms.windows-x64"]
-checksum = "sha256:96422e4313efe2741946f31f57ab4000c440b48d14936992ab98e94c16322f6f"
-url = "https://github.com/bufbuild/buf/releases/download/v1.70.0/buf-Windows-x86_64.zip"
+checksum = "sha256:f51dd473b9f5ce549877ac4ca13ff8a3b4678d13db5ae69ab0ae2b11b55d2fba"
+url = "https://github.com/bufbuild/buf/releases/download/v1.71.0/buf-Windows-x86_64.zip"
+provenance = "minisign"
 
 [[tools."aqua:cli/cli"]]
 version = "2.94.0"
