@@ -46,7 +46,7 @@ python = "3.14.6"
 "github:DeusData/codebase-memory-mcp" = "v0.8.1" # codebase memory MCP server
 "aqua:github/copilot-cli" = "1.0.63"             # GitHub Copilot CLI
 "pipx:headroom-ai" = { version = "0.26.0", extras = "proxy,mcp,bedrock", depends = ["python"] }
-"github:yvgude/lean-ctx" = "v3.8.7"              # context optimizer
+"github:yvgude/lean-ctx" = "v3.8.8"              # context optimizer
 "github:microsoft/waza" = "0.33.0"               # agent skill evaluator
 
 # AWS related tools
