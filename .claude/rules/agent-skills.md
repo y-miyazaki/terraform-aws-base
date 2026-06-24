@@ -1,6 +1,7 @@
 ---
 paths:
-  - "**/skills/**/SKILL.md,**/skills/**/references/*.md"
+  - "**/skills/**/SKILL.md"
+  - "**/skills/**/references/*.md"
 ---
 
 # AI Assistant Instructions for Agent Skills

@@ -1,6 +1,8 @@
 ---
 paths:
-  - "**/*.tf,**/*.tfvars,**/*.hcl"
+  - "**/*.tf"
+  - "**/*.tfvars"
+  - "**/*.hcl"
 ---
 
 # AI Assistant Instructions for Terraform

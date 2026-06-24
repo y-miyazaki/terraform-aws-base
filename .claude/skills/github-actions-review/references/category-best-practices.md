@@ -29,3 +29,9 @@ Fix: Simplify `if`, add intent comments
 Check: Are secrets or sensitive values exposed at broader scope than necessary? Non-sensitive configuration values at top-level for readability are acceptable.
 Why: Secrets at excessive scope risk accidental exposure via logs or downstream steps.
 Fix: Keep secrets and sensitive values at minimal scope. Non-sensitive settings may remain at top-level when organized for clarity.
+
+**BP-06 (SHOULD): Explicit Action Input Values for Critical Settings**
+
+Check: Are action inputs that affect security, caching, or core behavior specified explicitly in `with` blocks, even when matching the action's default value?
+Why: Implicit defaults for critical settings hide intent and break silently when upstream actions change their defaults.
+Fix: Specify inputs that affect security, caching, or core behavior explicitly in `with` blocks.

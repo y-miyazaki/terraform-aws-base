@@ -1,6 +1,7 @@
 ---
 paths:
-  - ".github/workflows/**/*.yaml,.github/workflows/**/*.yml"
+  - ".github/workflows/**/*.yaml"
+  - ".github/workflows/**/*.yml"
 ---
 
 # AI Assistant Instructions for GitHub Actions Workflows
@@ -40,6 +41,8 @@ paths:
   - Check: Are `if` expressions concise and understandable?
 - BP-05 (SHOULD): Limit Environment Variable Scope
   - Check: Are secrets or sensitive values exposed at broader scope than necessary? Non-sensitive configuration values at top-level for readability are acceptable.
+- BP-06 (SHOULD): Explicit Action Input Values for Critical Settings
+  - Check: Are action inputs that affect security, caching, or core behavior specified explicitly in `with` blocks, even when matching the action's default value?
 
 ### Error Handling (ERR)
 - ERR-01 (SHOULD): Careful Use of continue-on-error

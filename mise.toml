@@ -12,10 +12,6 @@ minimum_release_age = "7d" # Avoid very recent releases to reduce supply-chain r
 not_found_auto_install = true # Try installing missing tools when a command is looked up from the current config.
 provenance_api_failures_fatal = true # Fail installs if provenance verification APIs are unavailable or verification fails.
 slsa = true # Require SLSA provenance checks when a backend supports them.
-trusted_config_paths = [
-  "/workspace/",          # for workspace containers which mount repos to /workspace
-  "/tmp/renovate/repos/", # for Renovate bot which clones repos to /tmp/renovate/repos/
-] # Paths to automatically trust mise.toml files in without prompting; use with caution.
 
 [settings.aqua]
 cosign = true   # Verify cosign signatures for aqua-backed packages when available.
@@ -34,13 +30,13 @@ uvx = true # Install uv/uvx via pipx for better isolation and performance.
 [tools]
 # A Runtime tools
 aqua = "v2.60.1"
-node = "24.16.0"
+node = "24.17.0"
 pnpm = { version = "11.8.0", depends = ["node"] }
 python = "3.14.6"
 
 # AI agent tools
 "github:microsoft/apm" = "v0.20.0"               # agent package manager
-"npm:@anthropic-ai/claude-code" = { version = "2.1.185", depends = [
+"npm:@anthropic-ai/claude-code" = { version = "2.1.181", depends = [
   "node",
 ], install_env = { NPM_CONFIG_IGNORE_SCRIPTS = "false" }, postinstall = "node $(find $MISE_TOOL_INSTALL_PATH -name 'install.cjs' -path '*/@anthropic-ai/claude-code/*' | head -1)" } # Claude Code CLI
 "github:DeusData/codebase-memory-mcp" = "v0.8.1" # codebase memory MCP server
@@ -70,7 +66,7 @@ python = "3.14.6"
 
 # Go related tools
 "aqua:air-verse/air" = "1.65.3"                                           # live reload
-"aqua:bufbuild/buf" = "1.70.0"                                            # protobuf linter and formatter
+"aqua:bufbuild/buf" = "1.71.0"                                            # protobuf linter and formatter
 "aqua:go-delve/delve" = "1.26.3"                                          # debugger
 "aqua:mvdan/gofumpt" = "0.10.0"                                           # code formatter
 "aqua:golangci/golangci-lint" = "2.12.2"                                  # linter
@@ -115,7 +111,7 @@ python = "3.14.6"
 "pipx:mkdocs" = { version = "1.6.1", depends = ["python"], postinstall = "uv pip install --python $MISE_TOOL_INSTALL_PATH/mkdocs/bin/python mkdocs-material mdx-truly-sane-lists" } # MkDocs with Material theme
 "aqua:BurntSushi/ripgrep" = "15.1.0" # grep alternative (rg)
 "aqua:tamasfe/taplo" = "0.10.0"      # TOML formatter / LSP
-"aqua:jdx/usage" = "3.5.0"           # usage CLI tool for command help and completions
+"aqua:jdx/usage" = "3.5.2"           # usage CLI tool for command help and completions
 "aqua:astral-sh/uv" = "0.11.21"      # uv/uvx
 
 [tasks.mise-install]

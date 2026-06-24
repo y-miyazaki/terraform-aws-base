@@ -1,0 +1,21 @@
+id: docs-updater-contract-001
+name: docs-updater output contract sections
+description: |
+  Validate that docs-updater returns mandatory report sections from common-output-format.
+
+tags:
+  - quality
+  - output-contract
+
+inputs:
+  prompt: "Use docs-updater. Return Markdown with sections: ## Summary, ## Changes, ## Skipped Items."
+  context:
+    scope: staged
+
+expected:
+  output_contains:
+    - "## Summary"
+    - "## Changes"
+    - "## Skipped Items"
+  outcomes:
+    - type: task_completed

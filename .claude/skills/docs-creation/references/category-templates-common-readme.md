@@ -7,77 +7,67 @@ Remove sections that cannot be populated with concrete information.
 ````markdown
 # <Repository Name>
 
-<!-- Answer: What does this repository do? In 1-3 sentences. Source: read package config, main entry point, existing description. -->
+<!-- Answer: Badges (CI status, coverage, version, license). Optional but recommended for OSS. Source: read CI workflows, package config. -->
+
+<!-- Answer: 1-3 sentence description of what this repository does. Source: read package config, main entry point. -->
+
+<!-- Answer: Hero links to documentation, tutorials, getting started. Place immediately after description. Source: read docs/ structure. -->
 
 README is the repository entry point for humans and AI assistants.
 
 Focus on:
-- repository identification and purpose
-- quick operational entry points
-- high-level navigation
-- contributor guidance
+- immediate identification of what this repository is
+- quick navigation to documentation and getting started
+- minimal self-contained content (delegate details to docs/)
 
 Avoid:
-- duplicating docs/ content
-- embedding large generated tables
+- duplicating docs/ content in README
+- embedding large generated tables or catalogs
 - exhaustive configuration references
-- implementation-specific details
+- manual TOC (GitHub renders section navigation automatically)
 
-## Status
+## Key Features (Optional)
 
-<!-- Answer: What is the maturity and primary stack? Source: read package config, CI status. -->
-
-| Item              | Value |
-| ----------------- | ----- |
-| Lifecycle         |       |
-| Primary Stack     |       |
-| Deployment Target |       |
-
-## Repository Purpose
-
-<!-- Answer: What does this repo manage? Who operates it? What are the boundaries? Source: read top-level structure and package description. -->
+<!-- Answer: What are 3-6 distinguishing capabilities? Use bold + one-line description per item. Source: read package config, main modules. Remove this section for internal/utility repositories. -->
 
 ## Quick Start
 
-<!-- Answer: What are the 3-5 commands to get started? Source: read Makefile, scripts/, CI setup steps. -->
+<!-- Answer: What are the 3-5 commands to get from zero to working? Source: read Makefile, scripts/, CI setup steps. -->
 
 ### Prerequisites
 
-<!-- list from devcontainer, Dockerfile, or CI setup -->
+<!-- Answer: What tools, versions, and permissions does the reader need before starting? Source: read devcontainer, mise.toml, Dockerfile. -->
 
-### Common Commands
+### Install
 
 ```sh
-# from Makefile or scripts/
+# minimal install commands
 ```
 
-## Repository Structure
+## Documentation
 
-<!-- Answer: What are the major directories and their purpose? Source: read top-level directory listing. -->
+<!-- Answer: Where is the full documentation? Prefer a single link to the docs site or docs/index.md. Add a brief category table only if no docs site exists. Source: read docs/ directory. -->
 
-| Path     | Purpose |
-| -------- | ------- |
+## Repository Structure (Optional)
 
-## Documentation Index
+<!-- Answer: What are the major directories and their purpose? Use only for repositories where structure is non-obvious. Source: read top-level directory listing. -->
 
-<!-- Answer: What docs exist and where? Source: read docs/ directory. -->
+| Path | Purpose |
+| ---- | ------- |
 
-| Document                              | Purpose                     |
-| ------------------------------------- | --------------------------- |
-| `docs/index.md`                       | Documentation catalog       |
-| `docs/explanation/architecture.md`    | System architecture         |
-| `docs/explanation/design-decisions.md` | Architectural rationale     |
-| `docs/how-to/troubleshooting.md`      | Operational troubleshooting |
+## Contributing
 
-## Contribution Guidance
+<!-- Answer: How do people contribute? Keep brief; link to CONTRIBUTING.md for details. Source: read CONTRIBUTING.md, PR templates. -->
 
-<!-- Answer: How do people contribute? Source: read CONTRIBUTING.md, AGENTS.md, PR templates. -->
+## License
+
+<!-- Answer: What license? One line with link to LICENSE file. Source: read LICENSE. -->
 
 ## Decision Prompts
 
 Consider:
-- Can a new contributor understand repository purpose within 2 minutes?
-- Are common workflows discoverable?
-- Are deep details delegated to specialized docs?
-- Does README avoid becoming a duplicate of docs/?
+- Can a reader understand what this repository does within 10 seconds?
+- Is Quick Start reachable without scrolling on a standard screen?
+- Are details delegated to docs/ rather than embedded in README?
+- Does README work as a portal, not an encyclopedia?
 ````

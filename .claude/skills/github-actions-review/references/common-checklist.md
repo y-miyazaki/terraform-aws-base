@@ -6,6 +6,7 @@
 - BP-03 (SHOULD): Explicit Job Dependencies
 - BP-04 (SHOULD): Simplify Conditional Branches
 - BP-05 (SHOULD): Limit Environment Variable Scope
+- BP-06 (SHOULD): Explicit Action Input Values for Critical Settings
 
 ## Error Handling (ERR)
 - ERR-01 (SHOULD): Careful Use of continue-on-error

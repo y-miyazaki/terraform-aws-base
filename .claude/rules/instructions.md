@@ -1,6 +1,9 @@
 ---
 paths:
-  - "**/instructions/*.instructions.md,**/.cursor/rules/*.mdc,**/.kiro/steering/*.md,**/.claude/**/*.md"
+  - "**/instructions/*.instructions.md"
+  - "**/.cursor/rules/*.mdc"
+  - "**/.kiro/steering/*.md"
+  - "**/.claude/**/*.md"
 ---
 
 # AI Assistant Instructions for Instruction Files
