@@ -1,3 +1,13 @@
-{
-  "extends": ["github>y-miyazaki/config//renovate/default"]
-}
+  {
+    "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+    "extends": [
+      "github>y-miyazaki/config//renovate/default"
+    ],
+    "packageRules": [
+      {
+        "description": "Disable mise/mise.toml updates (cost reduction)",
+        "matchManagers": ["mise"],
+        "enabled": false
+      }
+    ]
+  }
