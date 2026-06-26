@@ -27,6 +27,7 @@ scan:
     - ".git/"
     - ".serena/"
     - "env/"
+    - "output"
     - "test/"
     - "tmp/"
     - "**/.terraform/**/*"

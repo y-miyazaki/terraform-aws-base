@@ -19,7 +19,7 @@ repos:
       - id: detect-aws-credentials
         args: [--allow-missing-credentials]
       - id: detect-private-key
-        exclude: '(?:^|/)(?:.*/)?terraform\.(?!example\.)[^.]+\.tfvars$'
+        exclude: '(?:^|/)(?:.*/)?terraform\.[^.]+\.tfvars$'
       - id: end-of-file-fixer
         exclude: '(^.*(\.devcontainer/devcontainer(-lock)?\.json|settings\.json|settings-example\.json|.*\.md)$)'
       - id: pretty-format-json
@@ -58,6 +58,15 @@ repos:
         entry: shfmt -w -i 4 -ci -bn -sr
         types: [shell]
   # --------------------------------------------------------------
+  # For Commit Message
+  # --------------------------------------------------------------
+  # - repo: https://github.com/alessandrojcm/commitlint-pre-commit-hook
+  #   rev: v9.25.0
+  #   hooks:
+  #     - id: commitlint
+  #       stages: [commit-msg]
+  #       additional_dependencies: ["@commitlint/config-conventional"]
+  # --------------------------------------------------------------
   # For GitHub Actions
   # --------------------------------------------------------------
   - repo: local
@@ -69,20 +78,41 @@ repos:
         entry: actionlint -color=false
         types: [yaml]
         files: ^\.github/workflows/.*\.(ya?ml)$
-  # - repo: local
-  #   hooks:
-  #     - id: ghalint
-  #       name: ghalint
-  #       description: GitHub Actions workflow linter.
-  #       language: system
-  #       entry: ghalint run --log-color never
-  #       types: [yaml]
-  #       files: ^\.github/workflows/.*\.(ya?ml)$
+  - repo: local
+    hooks:
+      - id: ghalint
+        name: ghalint
+        description: GitHub Actions workflow linter.
+        language: system
+        entry: ghalint run --log-color never
+        types: [yaml]
+        files: ^\.github/workflows/.*\.(ya?ml)$
   - repo: https://github.com/zizmorcore/zizmor-pre-commit
     rev: v1.25.2
     hooks:
       # Run the linter.
       - id: zizmor
+  # --------------------------------------------------------------
+  # For Go
+  # --------------------------------------------------------------
+  # - repo: local
+  #   hooks:
+  #     - id: golangci-lint
+  #       name: golangci-lint
+  #       description: Fast linters runner for Go.
+  #       entry: golangci-lint run --max-same-issues=0 --max-issues-per-linter=0 --fix
+  #       exclude: ^(.*_test.go|tmp/.*\.go)$
+  #       language: system
+  #       pass_filenames: false
+  #       types: [go]
+  # --------------------------------------------------------------
+  # For Jsonnet
+  # --------------------------------------------------------------
+  # - repo: https://github.com/google/go-jsonnet
+  #   rev: v0.22.0
+  #   hooks:
+  #     - id: jsonnet-format
+  #     - id: jsonnet-lint
   # --------------------------------------------------------------
   # For Markdown
   # --------------------------------------------------------------
@@ -97,27 +127,6 @@ repos:
     hooks:
       - id: markdown-link-check
         args: [--quiet]
-  # --------------------------------------------------------------
-  # For Jsonnet
-  # --------------------------------------------------------------
-  # - repo: https://github.com/google/go-jsonnet
-  #   rev: v0.22.0
-  #   hooks:
-  #     - id: jsonnet-format
-  #     - id: jsonnet-lint
-  # --------------------------------------------------------------
-  # For Go
-  # --------------------------------------------------------------
-  # - repo: local
-  #   hooks:
-  #     - id: golangci-lint
-  #       name: golangci-lint
-  #       description: Fast linters runner for Go.
-  #       entry: golangci-lint run --max-same-issues=0 --max-issues-per-linter=0 --config=.golangci.yaml --fix
-  #       exclude: ^(.*_test.go|tmp/.*\.go)$
-  #       language: system
-  #       pass_filenames: false
-  #       types: [go]
   # --------------------------------------------------------------
   # For SQL
   # --------------------------------------------------------------
