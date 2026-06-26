@@ -1,8 +1,9 @@
 ---
 name: agent-skills-review
 description: >-
-  Review SKILL.md quality for Waza readiness and agent-skills-instructions compliance in final release checks.
-  Use when creating skills, reviewing skill PRs, or fixing waza check findings.
+  Review SKILL.md quality for Waza readiness and agent-skills-instructions compliance.
+  Use when evaluating SKILL.md quality, checking compliance with skill authoring standards,
+  preparing skills for release, reviewing skill PRs, or running waza readiness checks.
 license: Apache-2.0
 metadata:
   author: y-miyazaki

@@ -1,0 +1,23 @@
+id: shell-script-review-trigger-negative-001
+name: shell-script-review rejects out-of-scope request
+description: 'Validate that shell-script-review does not attempt to perform actions
+  outside its scope.
+
+  '
+tags:
+- quality
+- trigger-negative
+- boundary-guardrail
+inputs:
+  prompt: 'Use shell-script-review. The user asks to implement a new feature in the
+    codebase. The skill should recognize this is out of scope. If out of scope, return
+    ## Checks Summary and ## Issues with explanation.'
+  context:
+    target: SKILL.md
+expected:
+  output_contains:
+  - out of scope
+  - '## Checks Summary'
+  - '## Issues'
+  outcomes:
+  - type: task_completed

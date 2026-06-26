@@ -26,6 +26,8 @@ Fix: Set `environment` for critical jobs, specify approvers
 
 **G-05 (MUST): Alphabetical Key Ordering**
 
+Note: This check is deterministic and should be enforced by `github-actions-validation` (linting), not by human review. Included here for reference only — do not evaluate in review output.
+
 Check: Are keys in `inputs`, `env`, `permissions`, and `with` sorted alphabetically (A-Z)?
 Why: Inconsistent key ordering adds diff noise and makes change detection harder across workflow files
 Fix: Sort all keys alphabetically within `inputs`, `env`, `permissions`, and `with` blocks

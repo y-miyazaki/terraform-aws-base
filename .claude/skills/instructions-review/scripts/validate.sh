@@ -40,7 +40,7 @@ TMP_FRONTMATTER=""
 declare -a check_names=()
 declare -a check_statuses=()
 declare -a check_details=()
-declare -a required_sections=("Input" "Output Specification" "Execution Scope" "Reference Files Guide" "Workflow" "Best Practices")
+declare -a required_sections=("Input" "Output Specification" "Execution Scope" "Reference Files Guide" "Workflow")
 declare -a required_fields=("name" "description" "license")
 
 #######################################

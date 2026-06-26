@@ -1,0 +1,22 @@
+id: github-pr-body-trigger-negative-001
+name: github-pr-body rejects code review requests
+description: 'Validate that github-pr-body does not perform code review.
+
+  '
+tags:
+- quality
+- trigger-negative
+- boundary-guardrail
+inputs:
+  prompt: 'Use github-pr-body. The user asks ''review this code for security issues''.
+    This is a review request, not PR body generation. If out of scope, return ## Overview
+    with explanation. Include ## Changes section.'
+  context:
+    target: SKILL.md
+expected:
+  output_contains:
+  - out of scope
+  - '## Overview'
+  - '## Changes'
+  outcomes:
+  - type: task_completed

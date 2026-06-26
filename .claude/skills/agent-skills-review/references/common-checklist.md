@@ -3,6 +3,7 @@
 ## Pattern Checks (P)
 - P-01 (SHOULD): Design Pattern Compliance
 - P-02 (SHOULD): Output Contract Compliance
+- P-03 (SHOULD): Context Gathering Before Output
 
 ## Quality Checks (Q)
 - Q-01 (SHOULD): Output is Truly Structured
@@ -12,6 +13,8 @@
 - Q-05 (SHOULD): Constraints Clarity
 - Q-06 (MUST): No Implicit Inference
 - Q-09 (SHOULD): Token Hard Gate
+- Q-10 (SHOULD): Error Handling Completeness
+- Q-11 (SHOULD): Input Parameter Consistency
 - BP-03 (SHOULD): Token Efficiency
 - BP-04 (SHOULD): Anti-Overtrimming Guardrail
 

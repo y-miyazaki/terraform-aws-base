@@ -50,7 +50,7 @@ SKILL_FILE=""
 declare -a check_names=()
 declare -a check_statuses=()
 declare -a check_details_json=()
-declare -a required_sections=("Input" "Output Specification" "Execution Scope" "Reference Files Guide" "Workflow" "Best Practices")
+declare -a required_sections=("Input" "Output Specification" "Execution Scope" "Reference Files Guide" "Workflow")
 declare -a required_fields=("name" "description" "license")
 
 #######################################
@@ -82,7 +82,7 @@ Arguments:
                                  agent-root: .github, .agents, .claude, .cursor, cursor, .kiro, kiro
 
 Validation Checks:
-    - Structural Completeness: 6 required sections exist
+    - Structural Completeness: 5 required sections exist
   - YAML Frontmatter Fields: name, description, license fields present
   - Description Quality: third person, Use when trigger, no implementation instructions
   - Metadata Fields: author and version present
@@ -229,9 +229,9 @@ function check_yaml_syntax {
 #######################################
 #
 # Description:
-#   Verifies that SKILL.md contains all 6 required sections:
+#   Verifies that SKILL.md contains all 5 required sections:
 #   Input, Output Specification, Execution Scope,
-#   Reference Files Guide, Workflow, Best Practices
+#   Reference Files Guide, Workflow
 #
 # Arguments:
 #   None (uses global SKILL_FILE)
@@ -649,7 +649,9 @@ EOF
 ,
 EOF
 
-        printf '    {"check": "%s", "status": "%s", "detail": "%s"}' "$check" "$status" "$detail"
+        local escaped_detail
+        escaped_detail="$(json_escape "$detail")"
+        printf '    {"check": "%s", "status": "%s", "detail": "%s"}' "$check" "$status" "$escaped_detail"
     done
 
     # Output JSON footer

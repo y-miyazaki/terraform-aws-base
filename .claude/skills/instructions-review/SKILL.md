@@ -101,3 +101,7 @@ Key evaluation criteria (inline summary of common-checklist):
 | All target files missing | Fatal | Stop, report "no reviewable instruction files found" |
 | Validation artifacts missing after one rerun request | Recoverable | Defer artifact-dependent checks with explicit reason |
 
+### Examples
+
+- Prompt: `Review instructions files and report issues`
+- Result: Structured report with per-file Checks Summary, failed/deferred items with severity and fix suggestions.

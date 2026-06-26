@@ -39,6 +39,6 @@ concurrency:
 
 jobs:
   github-actions-workflow-ci:
-    uses: y-miyazaki/config/.github/workflows/ci-github-actions-workflow.yaml@b92c65f70e5ed824c29ee4cd02e551da99c4d5e0 # v1.4.5
+    uses: y-miyazaki/config/.github/workflows/ci-github-actions-workflow.yaml@2beceecca6abd9406d83a0c1c4fdd0e87e348acc # v1.5.0
     permissions:
       contents: read

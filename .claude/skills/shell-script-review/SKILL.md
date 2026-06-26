@@ -80,3 +80,8 @@ Minimal inline contract (used if reference file is unavailable):
 | `common-output-format.md` unavailable | Recoverable | Use inline output contract |
 | PR contains only non-shell files | Recoverable | Report "no reviewable shell scripts" and stop |
 
+
+### Examples
+
+- Prompt: `Review shell script changes for security and style`
+- Result: Structured report with per-file checks, failed items with severity/fix suggestions.

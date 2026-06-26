@@ -52,7 +52,7 @@ jobs:
       go-version: ${{ steps.read-go-version.outputs.version }}
     steps:
       - name: Checkout Code
-        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
           persist-credentials: false
 
@@ -64,7 +64,7 @@ jobs:
 
   go-ci:
     needs: detect-go-version
-    uses: y-miyazaki/config/.github/workflows/ci-go.yaml@b92c65f70e5ed824c29ee4cd02e551da99c4d5e0 # v1.4.5
+    uses: y-miyazaki/config/.github/workflows/ci-go.yaml@2beceecca6abd9406d83a0c1c4fdd0e87e348acc # v1.5.0
     with:
       component: "base"
       go_project_path: "."

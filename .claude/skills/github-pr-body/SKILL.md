@@ -93,3 +93,8 @@ Structured PR output:
    gh pr view <PR_NUMBER> --repo <OWNER/REPO> --json body --jq '.body'
    ```
    Confirm `## Overview` and `## Changes` sections are present and non-empty. In full-body mode, confirm `## Testing`, `## Type of Change`, `## Checklist`, and `## Additional Notes` contain visible content.
+
+### Examples
+
+- Prompt: `Generate PR body for PR #42 in owner/repo`
+- Result: PR description populated with Overview, Changes, Testing, and Checklist sections from diff analysis.

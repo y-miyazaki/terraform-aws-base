@@ -1,0 +1,22 @@
+id: github-actions-validation-partial-failure-001
+name: github-actions-validation partial tool failure path
+description: 'Validate that when one tool succeeds and another fails, both results
+  are reported.
+
+  '
+tags:
+- quality
+- partial-failure
+- edge-case
+inputs:
+  prompt: 'Use github-actions-validation. Assume one validation tool passes and another
+    fails with actionlint syntax errors in a workflow. Return ## Summary, ## Tool
+    Results showing mixed pass/fail status.'
+  context:
+    target: SKILL.md
+expected:
+  output_contains:
+  - '## Summary'
+  - '## Tool Results'
+  outcomes:
+  - type: task_completed

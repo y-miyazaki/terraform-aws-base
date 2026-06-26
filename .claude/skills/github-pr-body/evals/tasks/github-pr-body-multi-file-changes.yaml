@@ -1,0 +1,24 @@
+id: github-pr-body-multi-file-001
+name: github-pr-body handles multi-file PR
+description: |
+  Validate that a PR with changes across multiple categories produces classified entries.
+
+tags:
+  - quality
+  - multi-file
+  - edge-case
+
+inputs:
+  prompt: "Use github-pr-body. Assume the PR has changes in .github/workflows/ci.yaml (Config), docs/setup.md (Docs), and src/handler.go (Feature). Return ## Overview and ## Changes with classified entries for each."
+  context:
+    target: SKILL.md
+
+expected:
+  output_contains:
+    - "## Overview"
+    - "## Changes"
+    - "Config"
+    - "Docs"
+    - "Feature"
+  outcomes:
+    - type: task_completed

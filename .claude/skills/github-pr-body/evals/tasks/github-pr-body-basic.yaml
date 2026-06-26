@@ -1,20 +1,19 @@
 id: github-pr-body-contract-001
 name: github-pr-body output contract sections
-description: |
-  Validate github-pr-body returns mandatory baseline sections.
+description: 'Validate github-pr-body returns mandatory baseline sections.
 
+  '
 tags:
-  - quality
-  - output-contract
-
+- quality
+- output-contract
 inputs:
-  prompt: "Use github-pr-body and return baseline content with sections ## Overview and ## Changes."
+  prompt: 'Use github-pr-body and return baseline content with sections ## Overview
+    and ## Changes.'
   context:
     target: SKILL.md
-
 expected:
   output_contains:
-    - "## Overview"
-    - "## Changes"
+  - '## Overview'
+  - '## Changes'
   outcomes:
-    - type: task_completed
+  - type: task_completed

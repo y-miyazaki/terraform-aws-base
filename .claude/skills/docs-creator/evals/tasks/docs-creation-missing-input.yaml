@@ -1,0 +1,22 @@
+id: docs-creation-missing-input-001
+name: docs-creation handles missing required input
+description: 'Validate that docs-creation reports an error when mandatory input is
+  missing.
+
+  '
+tags:
+- quality
+- error-path
+- edge-case
+inputs:
+  prompt: 'Use docs-creation. Assume the target type is not specified and cannot be
+    inferred. Return ## Summary with ''Status: failed'' and reason for failure. Include
+    ## Issues section.'
+  context:
+    target: SKILL.md
+expected:
+  output_contains:
+  - '## Summary'
+  - 'Status: failed'
+  outcomes:
+  - type: task_completed

@@ -23,6 +23,7 @@ Fix: Mask logs with `core.setSecret()`/`::add-mask::`
 Check: Are environment variable inputs validated and sanitized?
 Why: Unvalidated environment variable inputs risk injection, information leaks
 Fix: Validate and sanitize inputs, prohibit direct shell passing of PR values
+Note: Apply only to untrusted (external) inputs — values from PR titles/bodies, issue comments, branch names, or user-controlled workflow_dispatch inputs. Internally generated values (step outputs from prior controlled steps in the same workflow) are trusted and do not require sanitization.
 
 **SEC-05 (SHOULD): Guardrails for Public Repositories**
 
