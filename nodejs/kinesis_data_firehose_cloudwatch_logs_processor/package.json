@@ -8,8 +8,8 @@
     "test": "node test-local.js"
   },
   "dependencies": {
-    "@aws-sdk/client-firehose": "3.1066.0",
-    "@aws-sdk/client-kinesis": "3.1066.0"
+    "@aws-sdk/client-firehose": "3.1075.0",
+    "@aws-sdk/client-kinesis": "3.1075.0"
   },
   "overrides": {
     "fast-xml-parser": "5.8.0"
