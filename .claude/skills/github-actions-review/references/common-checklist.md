@@ -19,6 +19,7 @@
 - G-02 (SHOULD): Limit Triggers (on)
 - G-03 (SHOULD): Step Clarification and Order Guarantee
 - G-04 (SHOULD): Explicit Environment and Approval Flow
+- G-05 (MUST): Alphabetical Key Ordering
 
 ## Performance (PERF)
 - PERF-01 (SHOULD): Cache Strategy and Invalidation

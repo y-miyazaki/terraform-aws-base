@@ -124,3 +124,14 @@ Examples:
 - ✅ "profile: `default`, `go`, or `terraform` (defaults to `default`; affects X only)"
 - ✅ "target_file: path (required for `other` and `general` types)" — conditionally required is explicit
 - ❌ "profile: required" but also "use default when unsure" — contradicts required semantics
+
+---
+
+**Q-12 (SHOULD): Cross-Section Consistency**
+
+Check: Are definitions across sections (Input, Output Specification, Workflow, Reference Files Guide) free of mutual contradiction?
+Why: Contradictions between sections (e.g., Input declares a parameter optional but Workflow treats it as required) cause non-deterministic agent behavior
+Examples:
+- ✅ Input says "profile: optional (default: default)" and Workflow uses fallback logic when profile is absent
+- ❌ Input says "required" but Workflow says "skip if not provided"
+- ❌ Output Specification defines a field that common-output-format.md omits

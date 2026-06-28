@@ -87,7 +87,7 @@ Validation Checks:
   - Description Quality: third person, Use when trigger, no implementation instructions
   - Metadata Fields: author and version present
     - Progressive Disclosure (soft guard): word count monitoring for readability
-    - Resource Separation: references/ is required; scripts/ is optional
+    - Resource Separation: references/ is recommended (SHOULD); scripts/ is optional
   - Reference Mandatory Files: common-checklist.md and common-output-format.md exist
   - Reference Triggers: trigger conditions present in Reference Files Guide
 
@@ -402,10 +402,10 @@ function check_resource_separation {
         check_statuses+=("PASS")
         check_details_json+=("")
     else
-        echo "✗ Missing directories: references/"
+        echo "⚠ Missing directories: references/ (SHOULD)"
         check_names+=("Resource Separation")
-        check_statuses+=("FAIL")
-        check_details_json+=("references/")
+        check_statuses+=("SKIP")
+        check_details_json+=("references/ not found (SHOULD)")
     fi
 }
 
@@ -551,16 +551,16 @@ function check_reference_triggers {
 
     local issues=()
 
-    # Check for "(always read)" annotation
-    if ! echo "$ref_section" | grep -q 'always read'; then
+    # Check for "(always read)" or "Always read" annotation (case-insensitive)
+    if ! echo "$ref_section" | grep -qi 'always read'; then
         issues+=("missing (always read) annotation")
     fi
 
-    # Check for "Read when" triggers in category entries
+    # Check for "Read when" or "Always read" triggers in category entries
     local category_lines
     category_lines=$(echo "$ref_section" | grep -c 'category-' || true)
     local trigger_lines
-    trigger_lines=$(echo "$ref_section" | grep -c 'Read when' || true)
+    trigger_lines=$(echo "$ref_section" | grep -ciE 'Read when|Always read' || true)
 
     if [[ "$category_lines" -gt 0 ]] && [[ "$trigger_lines" -eq 0 ]]; then
         issues+=("category files missing Read when triggers")

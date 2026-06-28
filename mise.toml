@@ -36,17 +36,17 @@ python = "3.14.6"
 
 # AI agent tools
 "github:microsoft/apm" = "v0.21.0"               # agent package manager
-"npm:@anthropic-ai/claude-code" = { version = "2.1.181", depends = [
+"npm:@anthropic-ai/claude-code" = { version = "2.1.191", depends = [
   "node",
 ], install_env = { NPM_CONFIG_IGNORE_SCRIPTS = "false" }, postinstall = "node $(find $MISE_TOOL_INSTALL_PATH -name 'install.cjs' -path '*/@anthropic-ai/claude-code/*' | head -1)" } # Claude Code CLI
 "github:DeusData/codebase-memory-mcp" = "v0.8.1" # codebase memory MCP server
 "aqua:github/copilot-cli" = "1.0.63"             # GitHub Copilot CLI
 "pipx:headroom-ai" = { version = "0.26.0", extras = "proxy,mcp,bedrock", depends = ["python"] }
-"github:yvgude/lean-ctx" = "v3.8.9"              # context optimizer
+"github:yvgude/lean-ctx" = "v3.8.11"              # context optimizer
 "github:microsoft/waza" = "v0.37.0"               # agent skill evaluator
 
 # AWS related tools
-"aqua:aws/aws-cli" = "2.35.8"      # AWS CLI
+"aqua:aws/aws-cli" = "2.35.9"      # AWS CLI
 "aqua:aws/aws-sam-cli" = "1.162.1"  # SAM CLI tool
 "npm:awsp" = { version = "0.2.0", depends = [
   "node",
@@ -98,7 +98,7 @@ python = "3.14.6"
 "pipx:pre-commit" = { version = "4.6.0", depends = [
   "python",
 ] } # pre-commit framework
-"aqua:aquasecurity/trivy" = "0.71.1" # vulnerability scanner
+"aqua:aquasecurity/trivy" = "0.71.2" # vulnerability scanner
 
 # Terraform related tools
 "aqua:getsops/sops" = "3.13.1"                  # encryption tool
@@ -112,7 +112,7 @@ python = "3.14.6"
 "aqua:BurntSushi/ripgrep" = "15.1.0" # grep alternative (rg)
 "aqua:tamasfe/taplo" = "0.10.0"      # TOML formatter / LSP
 "aqua:jdx/usage" = "3.5.2"           # usage CLI tool for command help and completions
-"aqua:astral-sh/uv" = "0.11.22"      # uv/uvx
+"aqua:astral-sh/uv" = "0.11.23"      # uv/uvx
 
 [tasks.mise-install]
 description = "Install tools defined in mise.toml"

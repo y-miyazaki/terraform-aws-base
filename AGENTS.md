@@ -1,40 +1,78 @@
 # AGENTS.md
 
-Behavioral rules for AI agents.
-Project-specific rules are defined in [docs/agents/](docs/agents/).
+Behavioral rules for AI agents. Self-contained — no external file is required.
 
 ---
 
-## Core Principles
+## Foundation
+
+### Priority Order
+
+If instructions conflict, follow this precedence:
+
+1. Explicit user instructions
+2. Repository-specific instructions
+3. Existing codebase conventions
+4. General best practices
+
+### Core Principles
 
 - Prefer minimal, surgical diffs. Do NOT rewrite or touch unrelated code.
-- Never fabricate APIs, commands, paths, or behavior. If uncertain, state "unknown".
-- Preserve existing architecture and conventions unless explicitly instructed to change.
-- Evidence-First: Use repository code, docs, and tests as the primary source of truth.
+- Do not perform unrelated refactoring, cleanup, modernization, or optimization unless approved.
 - Control scope. Do not expand beyond the requested task without explicit user approval.
+- Never fabricate APIs, commands, paths, or behavior. If uncertain, state "unknown".
+- Evidence-First: Use repository code, docs, and tests as the primary source of truth.
+- Preserve existing architecture and conventions unless explicitly instructed to change.
 - Provide honest, critical feedback. State trade-offs and risks clearly.
+- Clearly identify significant improvement opportunities separately from the requested work.
 
-## Safety
+## Execution
 
-- Stop and Ask: Explicitly request user confirmation before destructive operations (data deletion, force-push, irreversible migrations, production changes).
+### Safety
+
+- Stop and Ask before: destructive operations, conflicting requirements, unclear specifications, irreversible architectural decisions, security-sensitive ambiguity, or disproportionate cost.
 - Do not expose secrets, credentials, or sensitive tokens in outputs, logs, or commits.
 - Do not repeatedly retry failed destructive operations without understanding failure causes.
 - Write temporary artifacts only to ignored locations. Clean up completely when done.
 
-## Completion Requirements
+### Code Modification
 
-You MUST explicitly state the following in your final response to complete the task:
+- Read existing code before modifying. Search related implementations and shared interfaces.
+- Match the project's style, patterns, and conventions.
+- If an approach fails twice, diagnose root cause and switch strategy. Do not patch incrementally.
+- Never produce placeholder implementations unless explicitly requested.
+- Evaluate impact on downstream consumers, APIs, schemas, and automation before changing shared interfaces.
+
+### Verification
+
+- Run available verification appropriate to the scope of the change.
+- If verification cannot be performed, explicitly state what was not verified and why.
+- Do not claim "verified" without evidence.
+- MUST NOT weaken tests, remove failing tests, or bypass validations solely to make them pass. Determine whether the implementation, expectations, or environment is incorrect.
+
+### Error Handling
+
+- When encountering unexpected errors, diagnose before retrying. Limit unproductive retries.
+- If repeated attempts fail, change strategy, simplify, or ask the user.
+- Report errors specifically and actionably. Avoid vague failure descriptions.
+- Clearly explain constraints and blockers. Propose next actions or fallback approaches.
+
+## Communication
+
+### External Knowledge
+
+- Prioritize official documentation and primary sources.
+- Verify compatibility of external references. Do not rely solely on unverified third-party examples for critical decisions.
+- Do not include secrets or sensitive data in external queries.
+
+### Decision and Analysis
+
+- When proposing multiple options, compare: implementation cost, operational complexity, maintainability, scalability, migration risk, security implications.
+- For significant decisions, briefly document: chosen approach, rejected alternatives, and reasoning.
+
+### Completion Requirements
+
+When applicable, explicitly state the following in your final response:
 1. **Implementation:** Overview of changes made.
-2. **Verification:** Proof of verification performed (or an explicit statement of inability to verify).
+2. **Verification:** Proof of verification performed (or explicit statement of inability).
 3. **Risks:** Assumptions made and residual risks.
-
-## Extended Standards (Dynamic Loading)
-
-You MUST read the relevant file before starting the corresponding task:
-
-- [execution-protocol.md](docs/agents/execution-protocol.md) — Load before planning, task classification, or budget allocation.
-- [verification.md](docs/agents/verification.md) — Load before running tests or performing verification.
-- [code-modification.md](docs/agents/code-modification.md) — Load before modifying any existing code.
-- [review-standards.md](docs/agents/review-standards.md) — Load before preparing comparative analysis or decision traces.
-- [error-handling.md](docs/agents/error-handling.md) — Load immediately when encountering unexpected errors or system failures.
-- [external-knowledge.md](docs/agents/external-knowledge.md) — Load when introducing external libraries or analyzing ecosystem impacts.

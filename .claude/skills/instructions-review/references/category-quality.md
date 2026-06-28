@@ -36,6 +36,12 @@ Check: Table and list formats are consistent with other instructions files
 Why: Format variations cause reading errors and reduce readability
 Fix: Standardize table and list formats
 
+**CONS-03 (SHOULD): Internal Consistency**
+
+Check: Do Standards templates, Guidelines checks, and code examples within the same file agree with each other without contradiction?
+Why: Contradictions between sections (e.g., a template missing a field that a Check requires) cause agents to produce inconsistent output
+Fix: Cross-reference Standards definitions against Guidelines checks and resolve discrepancies
+
 ## Completeness (COMP)
 
 **COMP-01 (SHOULD): No Missing Commands**

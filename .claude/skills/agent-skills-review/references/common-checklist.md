@@ -13,10 +13,11 @@
 - Q-05 (SHOULD): Constraints Clarity
 - Q-06 (MUST): No Implicit Inference
 - Q-09 (SHOULD): Token Hard Gate
-- Q-10 (SHOULD): Error Handling Completeness
-- Q-11 (SHOULD): Input Parameter Consistency
 - BP-03 (SHOULD): Token Efficiency
 - BP-04 (SHOULD): Anti-Overtrimming Guardrail
+- Q-10 (SHOULD): Error Handling Completeness
+- Q-11 (SHOULD): Input Parameter Consistency
+- Q-12 (SHOULD): Cross-Section Consistency
 
 ## Structural Checks (S)
 - S-01 (MUST): Structural Completeness

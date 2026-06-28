@@ -26,6 +26,7 @@
 ## Consistency (CONS)
 - CONS-01 (SHOULD): Section Names
 - CONS-02 (SHOULD): Format
+- CONS-03 (SHOULD): Internal Consistency
 
 ## Completeness (COMP)
 - COMP-01 (SHOULD): No Missing Commands
@@ -40,6 +41,7 @@
 ## Standards Chapter (STD)
 - STD-01 (MUST): Naming Conventions
 - STD-02 (SHOULD): Tool Standards
+- STD-03 (MUST): Consistency
 
 ## Testing and Validation Chapter (TEST)
 - TEST-01 (MUST): Validation Commands

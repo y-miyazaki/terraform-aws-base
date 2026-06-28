@@ -8,7 +8,7 @@ Fix: Restrict `continue-on-error` to optional checks and document rationale.
 
 **ERR-02 (SHOULD): Failure and Always Guards for Cleanup/Notify**
 
-Check: Are `if: failure()` and `if: always()` used appropriately for cleanup, artifact upload, and notifications?
+Check: Are `if: failure()` and `if: always()` used for cleanup, artifact upload, and notifications where step failure must not skip them?
 Why: Missing failure-path handling reduces observability and leaves environments in inconsistent state.
 Fix: Add explicit guard conditions for failure handling and always-run housekeeping.
 

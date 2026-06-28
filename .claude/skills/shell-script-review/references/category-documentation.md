@@ -14,9 +14,9 @@ Fix: Implement show_usage function with Usage/Options/Examples, exit 0
 
 **DOC-03 (SHOULD): Function Separators and Comments**
 
-Check: Do functions have `#######` separator and purpose/arguments/return comments?
+Check: Do functions have `#######` separator and Description/Arguments/Global Variables/Returns sections?
 Why: Unclear function boundaries reduce review efficiency and hinder maintenance
-Fix: Add `#######` separator before functions, document purpose/arguments/return values
+Fix: Add `#######` separator before functions, document Description/Arguments/Global Variables/Returns with `None` for non-applicable sections
 
 **DOC-04 (SHOULD): Complex Logic Comments**
 

@@ -8,7 +8,7 @@ Fix: Set concise `name` (e.g., `terraform/init (audit)`)
 
 **G-02 (SHOULD): Limit Triggers (on)**
 
-Check: Are triggers appropriately narrowed down?
+Check: Are triggers limited to specific branches, paths, or event types rather than triggering on all pushes/PRs?
 Why: Overly broad triggers cause unnecessary executions, increase costs, generate noise
 Fix: Narrow triggers with `paths`/`types`
 

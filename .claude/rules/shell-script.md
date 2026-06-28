@@ -31,6 +31,26 @@ Required in-file order:
 5. function definitions: `show_usage` / `parse_arguments` -> other functions in a-z order (G-03) -> `main` last
 6. entry point: `if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then main "$@"; fi`
 
+### Header Comment Format
+
+```bash
+#!/bin/bash
+#######################################
+# Description:
+#   What this script does (one paragraph).
+#
+# Usage:
+#   bash script_name.sh [OPTIONS] [args]
+#
+# Design Rules:
+#   - Key design constraint 1.
+#
+# Output:
+#   Description of output (include when script generates artifacts).
+#
+#######################################
+```
+
 ### Function Documentation
 
 ```bash
@@ -38,7 +58,7 @@ Required in-file order:
 # function_name: concise description (one line)
 #
 # Description:
-#   Detailed explanation of what the function does.
+#   What this function does (one paragraph).
 #
 # Arguments:
 #   $1 - description of argument 1
@@ -49,11 +69,10 @@ Required in-file order:
 # Returns:
 #   exit code or output description
 #
-# Usage:
-#   function_name "arg1"
-#
 #######################################
 ```
+
+Write `None` for sections that do not apply. Do not omit sections.
 
 ## Guidelines
 
@@ -81,7 +100,7 @@ Required in-file order:
 - DOC-02 (SHOULD): show_usage Required
   - Check: Is show_usage function implemented?
 - DOC-03 (SHOULD): Function Separators and Comments
-  - Check: Do functions have `#######` separator and purpose/arguments/return comments?
+  - Check: Do functions have `#######` separator and Description/Arguments/Global Variables/Returns sections?
 - DOC-04 (SHOULD): Complex Logic Comments
   - Check: Do complex algorithms have Why comments?
 - DOC-05 (SHOULD): Variable Documentation
@@ -115,7 +134,7 @@ Required in-file order:
 - FUNC-01 (SHOULD): Functions Under 50 Lines Recommended
   - Check: Are functions 50 lines or less?
 - FUNC-02 (SHOULD): Standardize parse_arguments
-  - Check: Is parse_arguments standardized with getopts and case statements?
+  - Check: Is parse_arguments standardized with while + case statements?
 - FUNC-03 (SHOULD): Implement show_usage
   - Check: Does show_usage function include Usage/Options/Examples and exit 0?
 - FUNC-04 (SHOULD): Return Value Design

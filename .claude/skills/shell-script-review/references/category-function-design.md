@@ -8,9 +8,9 @@ Fix: Extract helper functions, apply single responsibility principle, aim for un
 
 **FUNC-02 (SHOULD): Standardize parse_arguments**
 
-Check: Is parse_arguments standardized with getopts and case statements?
+Check: Is parse_arguments standardized with while + case statements?
 Why: Duplicated and inconsistent argument parsing makes adding options difficult and introduces bugs
-Fix: Use getopts, standard case statement pattern, support -h|--help
+Fix: Use while [[ $# -gt 0 ]] + case pattern, support -h|--help and long options
 
 **FUNC-03 (SHOULD): Implement show_usage**
 

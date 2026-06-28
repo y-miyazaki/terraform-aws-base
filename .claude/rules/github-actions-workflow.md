@@ -49,7 +49,7 @@ paths:
 - ERR-01 (SHOULD): Careful Use of continue-on-error
   - Check: Is `continue-on-error` used only for non-critical steps with explicit justification?
 - ERR-02 (SHOULD): Failure and Always Guards for Cleanup/Notify
-  - Check: Are `if: failure()` and `if: always()` used appropriately for cleanup, artifact upload, and notifications?
+  - Check: Are `if: failure()` and `if: always()` used for cleanup, artifact upload, and notifications where step failure must not skip them?
 - ERR-03 (SHOULD): Timeout Configuration
   - Check: Are `timeout-minutes` values set for jobs or long-running steps?
 - ERR-04 (SHOULD): Retry Strategy for Flaky Integrations
@@ -59,7 +59,7 @@ paths:
 - G-01 (SHOULD): Clear Workflow Naming
   - Check: Is the workflow name clear and expressive of its purpose?
 - G-02 (SHOULD): Limit Triggers (on)
-  - Check: Are triggers appropriately narrowed down?
+  - Check: Are triggers limited to specific branches, paths, or event types rather than triggering on all pushes/PRs?
 - G-03 (SHOULD): Step Clarification and Order Guarantee
   - Check: Does each step have a `name` and logical order?
 - G-04 (SHOULD): Explicit Environment and Approval Flow
@@ -73,7 +73,7 @@ paths:
 - PERF-02 (SHOULD): Matrix/Parallel Execution Balance
   - Check: Is matrix or parallel execution used where beneficial without excessive runner cost?
 - PERF-03 (SHOULD): Concurrency Control
-  - Check: Is `concurrency` configured to cancel redundant in-progress runs on same branch/context? Skip for reusable workflows (`workflow_call`), where concurrency is the caller's responsibility.
+  - Check: Is `concurrency` configured to cancel redundant in-progress runs on same branch/context? Skip this check for reusable workflows (`workflow_call`), where concurrency is the caller's responsibility.
 - PERF-04 (SHOULD): Reduce Unnecessary Workload
   - Check: Are broad triggers, full-repo checkout, and repeated setup steps minimized?
 
@@ -85,7 +85,7 @@ paths:
 - SEC-03 (SHOULD): Log Masking for Sensitive Information
   - Check: Are sensitive values masked with `::add-mask::` or `core.setSecret()`?
 - SEC-04 (SHOULD): Sanitize Environment Variables
-  - Check: Are untrusted environment variable inputs (PR titles/bodies, issue comments, branch names, user-controlled workflow_dispatch inputs) validated and sanitized? Internally generated values from prior controlled steps are trusted.
+  - Check: Are environment variable inputs validated and sanitized?
 - SEC-05 (SHOULD): Guardrails for Public Repositories
   - Check: Do public repositories have conditional branches like `github.event.repository.private`?
 
@@ -93,7 +93,7 @@ paths:
 - TOOL-01 (SHOULD): Reviewdog Integration for PR Feedback
   - Check: Is reviewdog integrated where lint results should be surfaced on pull requests?
 - TOOL-02 (SHOULD): Codecov Coverage Upload Strategy
-  - Check: Is Codecov usage configured appropriately for repository visibility and token requirements?
+  - Check: Is Codecov configured with token for private repos, and without token for public repos where the Codecov app is installed?
 - TOOL-03 (SHOULD): Artifact Retention Configuration
   - Check: Are uploaded artifacts configured with explicit retention periods appropriate for use case?
 - TOOL-04 (SHOULD): Cache Key and Restore Strategy

@@ -139,104 +139,104 @@ checksum = "sha256:4fa9b2bf1a61a2e9c1f549412d059d175492696c07c131136f146dc1abdac
 url = "https://github.com/air-verse/air/releases/download/v1.65.3/air_1.65.3_windows_amd64.tar.gz"
 
 [[tools."aqua:aquasecurity/trivy"]]
-version = "0.71.1"
+version = "0.71.2"
 backend = "aqua:aquasecurity/trivy"
 
 [tools."aqua:aquasecurity/trivy"."platforms.linux-arm64"]
-checksum = "sha256:a7daaee66817d67a4963e8f9ddf15f5238ee021b55d3cd8695b1b7801afd34a7"
-url = "https://github.com/aquasecurity/trivy/releases/download/v0.71.1/trivy_0.71.1_Linux-ARM64.tar.gz"
+checksum = "sha256:fe1c7106e15a5365d485b098a8c338f91e3b7ba71cb0e4963b98a3a098763cfc"
+url = "https://github.com/aquasecurity/trivy/releases/download/v0.71.2/trivy_0.71.2_Linux-ARM64.tar.gz"
 provenance = "cosign"
 
 [tools."aqua:aquasecurity/trivy"."platforms.linux-arm64-musl"]
-checksum = "sha256:a7daaee66817d67a4963e8f9ddf15f5238ee021b55d3cd8695b1b7801afd34a7"
-url = "https://github.com/aquasecurity/trivy/releases/download/v0.71.1/trivy_0.71.1_Linux-ARM64.tar.gz"
+checksum = "sha256:fe1c7106e15a5365d485b098a8c338f91e3b7ba71cb0e4963b98a3a098763cfc"
+url = "https://github.com/aquasecurity/trivy/releases/download/v0.71.2/trivy_0.71.2_Linux-ARM64.tar.gz"
 provenance = "cosign"
 
 [tools."aqua:aquasecurity/trivy"."platforms.linux-x64"]
-checksum = "sha256:3cbae37cd440cd8676e5ce9207fe460b5641c7579a17e9d00f8894928c41a88d"
-url = "https://github.com/aquasecurity/trivy/releases/download/v0.71.1/trivy_0.71.1_Linux-64bit.tar.gz"
+checksum = "sha256:0510e71e2fd39bf863856d499c8dc19feb4e7336546394c502a8f5cc7ab27460"
+url = "https://github.com/aquasecurity/trivy/releases/download/v0.71.2/trivy_0.71.2_Linux-64bit.tar.gz"
 provenance = "cosign"
 
 [tools."aqua:aquasecurity/trivy"."platforms.linux-x64-musl"]
-checksum = "sha256:3cbae37cd440cd8676e5ce9207fe460b5641c7579a17e9d00f8894928c41a88d"
-url = "https://github.com/aquasecurity/trivy/releases/download/v0.71.1/trivy_0.71.1_Linux-64bit.tar.gz"
+checksum = "sha256:0510e71e2fd39bf863856d499c8dc19feb4e7336546394c502a8f5cc7ab27460"
+url = "https://github.com/aquasecurity/trivy/releases/download/v0.71.2/trivy_0.71.2_Linux-64bit.tar.gz"
 provenance = "cosign"
 
 [tools."aqua:aquasecurity/trivy"."platforms.macos-arm64"]
-checksum = "sha256:5eb3576d4a41c9fa274dc8a62b2e6baebb2bf423eda908ed36d81d574e293c48"
-url = "https://github.com/aquasecurity/trivy/releases/download/v0.71.1/trivy_0.71.1_macOS-ARM64.tar.gz"
+checksum = "sha256:a9f585cad53542a54ef286b5fa4199d081e5a061f8894635bdf3ce2608ece7a9"
+url = "https://github.com/aquasecurity/trivy/releases/download/v0.71.2/trivy_0.71.2_macOS-ARM64.tar.gz"
 provenance = "cosign"
 
 [tools."aqua:aquasecurity/trivy"."platforms.macos-x64"]
-checksum = "sha256:de123352f519c6310d5471b5271b029c02b04f3cce33597b87f60064e1760a3f"
-url = "https://github.com/aquasecurity/trivy/releases/download/v0.71.1/trivy_0.71.1_macOS-64bit.tar.gz"
+checksum = "sha256:c27bcf4ddd281aecb7267eb5df804ec49ac0f8fa23fe018d33932e17f30a38bf"
+url = "https://github.com/aquasecurity/trivy/releases/download/v0.71.2/trivy_0.71.2_macOS-64bit.tar.gz"
 provenance = "cosign"
 
 [tools."aqua:aquasecurity/trivy"."platforms.windows-x64"]
-checksum = "sha256:ba67daf06923f52938812d1af134b3193e22b3bc7a525743b9f2a3ded7ab5904"
-url = "https://github.com/aquasecurity/trivy/releases/download/v0.71.1/trivy_0.71.1_windows-64bit.zip"
+checksum = "sha256:ea31c2a927382410cfa2b4eb5970aed62308cf28902e1d167ea36bbfa0515095"
+url = "https://github.com/aquasecurity/trivy/releases/download/v0.71.2/trivy_0.71.2_windows-64bit.zip"
 provenance = "cosign"
 
 [[tools."aqua:astral-sh/uv"]]
-version = "0.11.22"
+version = "0.11.23"
 backend = "aqua:astral-sh/uv"
 
 [tools."aqua:astral-sh/uv"."platforms.linux-arm64"]
-checksum = "sha256:bc28063fe57e76a2d632d804cae9c602f8aded1d99f41025d7fefeb66b10befd"
-url = "https://github.com/astral-sh/uv/releases/download/0.11.22/uv-aarch64-unknown-linux-musl.tar.gz"
+checksum = "sha256:80efb615b78c1e5721e5858135cd3499609b26741220332c843bd58936053bc6"
+url = "https://github.com/astral-sh/uv/releases/download/0.11.23/uv-aarch64-unknown-linux-musl.tar.gz"
 provenance = "github-attestations"
 
 [tools."aqua:astral-sh/uv"."platforms.linux-arm64-musl"]
-checksum = "sha256:bc28063fe57e76a2d632d804cae9c602f8aded1d99f41025d7fefeb66b10befd"
-url = "https://github.com/astral-sh/uv/releases/download/0.11.22/uv-aarch64-unknown-linux-musl.tar.gz"
+checksum = "sha256:80efb615b78c1e5721e5858135cd3499609b26741220332c843bd58936053bc6"
+url = "https://github.com/astral-sh/uv/releases/download/0.11.23/uv-aarch64-unknown-linux-musl.tar.gz"
 provenance = "github-attestations"
 
 [tools."aqua:astral-sh/uv"."platforms.linux-x64"]
-checksum = "sha256:b80bd6952ee11b920b5ab2a35dbccddc364f579e5f2e028d115848cdaa72963e"
-url = "https://github.com/astral-sh/uv/releases/download/0.11.22/uv-x86_64-unknown-linux-musl.tar.gz"
+checksum = "sha256:6be47081100ff1ce0ac7e85ba2ac12e32f2ffa6f946d78bf7f24ee9ce3a46181"
+url = "https://github.com/astral-sh/uv/releases/download/0.11.23/uv-x86_64-unknown-linux-musl.tar.gz"
 provenance = "github-attestations"
 
 [tools."aqua:astral-sh/uv"."platforms.linux-x64-musl"]
-checksum = "sha256:b80bd6952ee11b920b5ab2a35dbccddc364f579e5f2e028d115848cdaa72963e"
-url = "https://github.com/astral-sh/uv/releases/download/0.11.22/uv-x86_64-unknown-linux-musl.tar.gz"
+checksum = "sha256:6be47081100ff1ce0ac7e85ba2ac12e32f2ffa6f946d78bf7f24ee9ce3a46181"
+url = "https://github.com/astral-sh/uv/releases/download/0.11.23/uv-x86_64-unknown-linux-musl.tar.gz"
 provenance = "github-attestations"
 
 [tools."aqua:astral-sh/uv"."platforms.macos-arm64"]
-checksum = "sha256:97a45e2ff8d5ea262623eed57ec2d9c468a42d74496d5c3c3eef11340235bd7f"
-url = "https://github.com/astral-sh/uv/releases/download/0.11.22/uv-aarch64-apple-darwin.tar.gz"
+checksum = "sha256:71ef9de85db820749b3b12b7585624ee279e9c5afcbc6f8236bc3d628c4305b0"
+url = "https://github.com/astral-sh/uv/releases/download/0.11.23/uv-aarch64-apple-darwin.tar.gz"
 provenance = "github-attestations"
 
 [tools."aqua:astral-sh/uv"."platforms.macos-x64"]
-checksum = "sha256:9490033dc405b4afc8fa5f9ecd5cc1793e80c727a8c42c32ad456778720d39f2"
-url = "https://github.com/astral-sh/uv/releases/download/0.11.22/uv-x86_64-apple-darwin.tar.gz"
+checksum = "sha256:7a88155033cc469bba5bd5a24212e355eb92e3e2a276320b669ec576296c1e25"
+url = "https://github.com/astral-sh/uv/releases/download/0.11.23/uv-x86_64-apple-darwin.tar.gz"
 provenance = "github-attestations"
 
 [tools."aqua:astral-sh/uv"."platforms.windows-x64"]
-checksum = "sha256:b56939bac92d29996d351647f7c6f15b31cc69cf952d06d136de3e1e62eb64d1"
-url = "https://github.com/astral-sh/uv/releases/download/0.11.22/uv-x86_64-pc-windows-msvc.zip"
+checksum = "sha256:02ad29f07e674d68726ba3bb1ff25b335d83515756e2b1a194bb56c3cc30e07c"
+url = "https://github.com/astral-sh/uv/releases/download/0.11.23/uv-x86_64-pc-windows-msvc.zip"
 provenance = "github-attestations"
 
 [[tools."aqua:aws/aws-cli"]]
-version = "2.35.8"
+version = "2.35.9"
 backend = "aqua:aws/aws-cli"
 
 [tools."aqua:aws/aws-cli"."platforms.linux-arm64"]
-url = "https://awscli.amazonaws.com/awscli-exe-linux-aarch64-2.35.8.zip"
+url = "https://awscli.amazonaws.com/awscli-exe-linux-aarch64-2.35.9.zip"
 
 [tools."aqua:aws/aws-cli"."platforms.linux-arm64-musl"]
-url = "https://awscli.amazonaws.com/awscli-exe-linux-aarch64-2.35.8.zip"
+url = "https://awscli.amazonaws.com/awscli-exe-linux-aarch64-2.35.9.zip"
 
 [tools."aqua:aws/aws-cli"."platforms.linux-x64"]
-url = "https://awscli.amazonaws.com/awscli-exe-linux-x86_64-2.35.8.zip"
+url = "https://awscli.amazonaws.com/awscli-exe-linux-x86_64-2.35.9.zip"
 
 [tools."aqua:aws/aws-cli"."platforms.linux-x64-musl"]
-url = "https://awscli.amazonaws.com/awscli-exe-linux-x86_64-2.35.8.zip"
+url = "https://awscli.amazonaws.com/awscli-exe-linux-x86_64-2.35.9.zip"
 
 [tools."aqua:aws/aws-cli"."platforms.macos-arm64"]
-url = "https://awscli.amazonaws.com/AWSCLIV2-2.35.8.pkg"
+url = "https://awscli.amazonaws.com/AWSCLIV2-2.35.9.pkg"
 
 [tools."aqua:aws/aws-cli"."platforms.macos-x64"]
-url = "https://awscli.amazonaws.com/AWSCLIV2-2.35.8.pkg"
+url = "https://awscli.amazonaws.com/AWSCLIV2-2.35.9.pkg"
 
 [[tools."aqua:aws/aws-sam-cli"]]
 version = "1.162.1"
@@ -1465,43 +1465,43 @@ url = "https://github.com/microsoft/waza/releases/download/v0.37.0/waza-windows-
 url_api = "https://api.github.com/repos/microsoft/waza/releases/assets/451462080"
 
 [[tools."github:yvgude/lean-ctx"]]
-version = "3.8.9"
+version = "3.8.11"
 backend = "github:yvgude/lean-ctx"
 
 [tools."github:yvgude/lean-ctx"."platforms.linux-arm64"]
-checksum = "sha256:742645bedca60450dc4c5b1a5a921f2987c08dbce95fb94759a10dfdd2213052"
-url = "https://github.com/yvgude/lean-ctx/releases/download/v3.8.9/lean-ctx-aarch64-unknown-linux-gnu.tar.gz"
-url_api = "https://api.github.com/repos/yvgude/lean-ctx/releases/assets/451260069"
+checksum = "sha256:add02ccdd07138fa11d33e71411b851480adb07051581b5e9456b3df98d98025"
+url = "https://github.com/yvgude/lean-ctx/releases/download/v3.8.11/lean-ctx-aarch64-unknown-linux-gnu.tar.gz"
+url_api = "https://api.github.com/repos/yvgude/lean-ctx/releases/assets/452943665"
 
 [tools."github:yvgude/lean-ctx"."platforms.linux-arm64-musl"]
-checksum = "sha256:b129ae0f2e041293b4b5ef7658839faa6c864ee9f6d9f3f39d219a1784867ee5"
-url = "https://github.com/yvgude/lean-ctx/releases/download/v3.8.9/lean-ctx-aarch64-unknown-linux-musl.tar.gz"
-url_api = "https://api.github.com/repos/yvgude/lean-ctx/releases/assets/451260074"
+checksum = "sha256:67d048bc5838f0a03634d0beea7ed16f7c0230d2737e89fed88156539775c176"
+url = "https://github.com/yvgude/lean-ctx/releases/download/v3.8.11/lean-ctx-aarch64-unknown-linux-musl.tar.gz"
+url_api = "https://api.github.com/repos/yvgude/lean-ctx/releases/assets/452943672"
 
 [tools."github:yvgude/lean-ctx"."platforms.linux-x64"]
-checksum = "sha256:d2467310260497a84c6017bef287bda2f38d2836e54c0671c37e0e95ae8ed23b"
-url = "https://github.com/yvgude/lean-ctx/releases/download/v3.8.9/lean-ctx-x86_64-unknown-linux-gnu.tar.gz"
-url_api = "https://api.github.com/repos/yvgude/lean-ctx/releases/assets/451260073"
+checksum = "sha256:fab37f84639b677deed6613c7c324e13c395adf4c28e6e0dc2ba27f58e5b417c"
+url = "https://github.com/yvgude/lean-ctx/releases/download/v3.8.11/lean-ctx-x86_64-unknown-linux-gnu.tar.gz"
+url_api = "https://api.github.com/repos/yvgude/lean-ctx/releases/assets/452943664"
 
 [tools."github:yvgude/lean-ctx"."platforms.linux-x64-musl"]
-checksum = "sha256:2f10629e4a948dc9ec399f90f5d65e426dcf611025ff4955e8f3e5ea18525981"
-url = "https://github.com/yvgude/lean-ctx/releases/download/v3.8.9/lean-ctx-x86_64-unknown-linux-musl.tar.gz"
-url_api = "https://api.github.com/repos/yvgude/lean-ctx/releases/assets/451260067"
+checksum = "sha256:1752a5fe9f1f5f83bd98e73a4c4abd559c8d79600e079f00cd5214304fca4d64"
+url = "https://github.com/yvgude/lean-ctx/releases/download/v3.8.11/lean-ctx-x86_64-unknown-linux-musl.tar.gz"
+url_api = "https://api.github.com/repos/yvgude/lean-ctx/releases/assets/452943669"
 
 [tools."github:yvgude/lean-ctx"."platforms.macos-arm64"]
-checksum = "sha256:bfc42d221fc4b23432a447afc93e744581c9c0887b81b0c361588e431fe19171"
-url = "https://github.com/yvgude/lean-ctx/releases/download/v3.8.9/lean-ctx-aarch64-apple-darwin.tar.gz"
-url_api = "https://api.github.com/repos/yvgude/lean-ctx/releases/assets/451260068"
+checksum = "sha256:e3756f7b4e9196e1ecfdd024adcb49a556c5de2543948e16523fa827b5174d99"
+url = "https://github.com/yvgude/lean-ctx/releases/download/v3.8.11/lean-ctx-aarch64-apple-darwin.tar.gz"
+url_api = "https://api.github.com/repos/yvgude/lean-ctx/releases/assets/452943666"
 
 [tools."github:yvgude/lean-ctx"."platforms.macos-x64"]
-checksum = "sha256:9040c898821792500d921d3e4e3ce41ae97c5ee80d4f4a250ae2ecd72ebed20b"
-url = "https://github.com/yvgude/lean-ctx/releases/download/v3.8.9/lean-ctx-x86_64-apple-darwin.tar.gz"
-url_api = "https://api.github.com/repos/yvgude/lean-ctx/releases/assets/451260066"
+checksum = "sha256:ef4a2b3f3251bfc591168c0da708344ef37d12fb47ab8e5e408755231cfd0a7f"
+url = "https://github.com/yvgude/lean-ctx/releases/download/v3.8.11/lean-ctx-x86_64-apple-darwin.tar.gz"
+url_api = "https://api.github.com/repos/yvgude/lean-ctx/releases/assets/452943671"
 
 [tools."github:yvgude/lean-ctx"."platforms.windows-x64"]
-checksum = "sha256:e8f70176fb4ae9485c98ef3e48878d120e26d38ec07d5281b6be28068363efdf"
-url = "https://github.com/yvgude/lean-ctx/releases/download/v3.8.9/lean-ctx-x86_64-pc-windows-msvc.zip"
-url_api = "https://api.github.com/repos/yvgude/lean-ctx/releases/assets/451260076"
+checksum = "sha256:ff7f0083fdb379b774c9d8b4fc7e81a70793aabc80512607f4c7ee4b3bbf8514"
+url = "https://github.com/yvgude/lean-ctx/releases/download/v3.8.11/lean-ctx-x86_64-pc-windows-msvc.zip"
+url_api = "https://api.github.com/repos/yvgude/lean-ctx/releases/assets/452943668"
 
 [[tools."go:github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen"]]
 version = "2.7.1"
@@ -1548,7 +1548,7 @@ checksum = "sha256:f2aa33b35b75aca5f3f7b85675a6f6423201053e9381911e64961f3bda252
 url = "https://nodejs.org/dist/v24.17.0/node-v24.17.0-win-x64.zip"
 
 [[tools."npm:@anthropic-ai/claude-code"]]
-version = "2.1.181"
+version = "2.1.191"
 backend = "npm:@anthropic-ai/claude-code"
 
 [[tools."npm:awsp"]]

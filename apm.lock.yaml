@@ -1,11 +1,11 @@
 lockfile_version: '1'
-generated_at: '2026-06-26T05:58:16.923944+00:00'
+generated_at: '2026-06-28T04:11:17.648695+00:00'
 apm_version: 0.21.0
 dependencies:
 - repo_url: y-miyazaki/config
   host: github.com
-  resolved_commit: 2beceecca6abd9406d83a0c1c4fdd0e87e348acc
-  resolved_ref: v1.5.0
+  resolved_commit: 818e1f8aa9771e41af357bad06d1176e40ed59ee
+  resolved_ref: v1.5.1
   virtual_path: .apm/packages/aws
   is_virtual: true
   package_type: apm_package
@@ -13,8 +13,8 @@ dependencies:
   declared_license: Apache-2.0
 - repo_url: y-miyazaki/config
   host: github.com
-  resolved_commit: 2beceecca6abd9406d83a0c1c4fdd0e87e348acc
-  resolved_ref: v1.5.0
+  resolved_commit: 818e1f8aa9771e41af357bad06d1176e40ed59ee
+  resolved_ref: v1.5.1
   virtual_path: .apm/packages/common
   is_virtual: true
   package_type: apm_package
@@ -198,9 +198,9 @@ dependencies:
   - .claude/skills/markdown-validation/scripts/lib/validation.sh
   - .claude/skills/markdown-validation/scripts/validate.sh
   deployed_file_hashes:
-    .claude/rules/agent-skills.md: sha256:a9fc2d789720a66972692deb24c4f65ca04ae9cb76a6126096d2184dcd04c46e
-    .claude/rules/github-actions-workflow.md: sha256:81c9449ed590f83d7d257abb1b4881a8e49016e89382ca88b58a99128375a80d
-    .claude/rules/instructions.md: sha256:8e16a38941833e8aca7e3b94a2e867c15c8da58c061934ff21601268d5fed1be
+    .claude/rules/agent-skills.md: sha256:5527422bc712c18e9de6a93e7030fb8c8c96b436c947fb7d028a26e72bed4499
+    .claude/rules/github-actions-workflow.md: sha256:cf295db5b338cdc18987a02dc0d2de49f4d1ab5e67ae955d43e9c7eb8a506117
+    .claude/rules/instructions.md: sha256:3e142e4e28175fa827304bb1003b212f55bcc648a8fc22ddda39269859f6923a
     .claude/rules/markdown.md: sha256:5792df753a3dea37d8beb9e5a0cc2986262aec023246d413f779a7fc5cfaac9d
     .claude/skills/agent-skills-review/SKILL.md: sha256:f7a40e209c306630bb8eaf34d46163624970ec1ef485b1574f50222794370b0e
     .claude/skills/agent-skills-review/eval.yaml: sha256:f8bb90c27407af6a9e1ab5fd13a6378ffbbbb0b662b95e15b8b07257e8a5b336
@@ -211,10 +211,10 @@ dependencies:
     .claude/skills/agent-skills-review/evals/tasks/agent-skills-review-trigger-negative.yaml: sha256:f29fba6ebab8e57859a294cf2d04a517f5726f2dc926cc42240667e3362ed94a
     .claude/skills/agent-skills-review/evals/tasks/review-skill-basic.yaml: sha256:81061e7aa758d645907e48223f536782593f28b5e140c180fce396bc981720ce
     .claude/skills/agent-skills-review/references/category-patterns.md: sha256:00efbc79bfe6bf819283fb5a11926656563c3c92f3c08a680a525fcc9c808feb
-    .claude/skills/agent-skills-review/references/category-quality.md: sha256:33f39b38388db1335d3d8c85a0b94ebefbf4559d89cfc0a01672a4108918e934
+    .claude/skills/agent-skills-review/references/category-quality.md: sha256:ea147ed880e63009b5ebf874562909006a1afe9dea9f2ba4ccea796532449fdb
     .claude/skills/agent-skills-review/references/category-structure.md: sha256:7428aa27c52db1cf05893265a8aa74105b8c4ec83c617f21f362b05240b6f8e4
-    .claude/skills/agent-skills-review/references/common-checklist.md: sha256:79382f27a008651d345695ed0f40f110482790e2dee8eefdac5b602f41f84ab3
-    .claude/skills/agent-skills-review/references/common-output-format.md: sha256:4d9883e2ad48cb7b7835767b1423c0566da1c79d0786cd46c6fdc2e788373512
+    .claude/skills/agent-skills-review/references/common-checklist.md: sha256:816c77b68ea068a0909cd5a64975177e0be3357ee5ca09f812940e1fd435644e
+    .claude/skills/agent-skills-review/references/common-output-format.md: sha256:849e7cc352ac97374592ad6f86522fd2c96c6b524e701235414814b343a8bff1
     .claude/skills/agent-skills-review/references/common-troubleshooting.md: sha256:5dbb882894876af04f588e84dcf7e48147384d0bf7f2daa26750665c8a1ea90c
     .claude/skills/agent-skills-review/scripts/lib/all.sh: sha256:f6aa62b17de3935f921d04005ca439b3d3a637a86551ed2a7d442761d6d83786
     .claude/skills/agent-skills-review/scripts/lib/aws.sh: sha256:e949fb9cc8ebde36123160624d3dc6f4fc4e29d0cde67101c2310507e44b0386
@@ -223,7 +223,7 @@ dependencies:
     .claude/skills/agent-skills-review/scripts/lib/json.sh: sha256:12d1c78f5190c1a748a7a1c1f8eb5b816a2bf919c9eaeef3a92815e7422eb832
     .claude/skills/agent-skills-review/scripts/lib/terraform.sh: sha256:1d034f19426d3d635d46c2f27e96d4308eb6b07574028c51de7299b258edd7da
     .claude/skills/agent-skills-review/scripts/lib/validation.sh: sha256:ee2be940117c00e6a681186e02e05188786bf98aa52bd74ff1586eb474a98648
-    .claude/skills/agent-skills-review/scripts/validate.sh: sha256:081c2fb2856b5aed924e9011d63d233ff7e459a0838942497d5679c3f1ebe7fa
+    .claude/skills/agent-skills-review/scripts/validate.sh: sha256:3b3a65052b7f44cc9d183fd58d157fa1a5d5263bf241ff8876fb85ed3d805c4c
     .claude/skills/agent-skills-review/scripts/validate_waza.sh: sha256:9b933b61a9879b124fe5d8ec6ce3686b5145e34823321a569b9cc4f5eb63122b
     .claude/skills/docs-creator/SKILL.md: sha256:7dda23abafd6f1fdf07670da386ac03d027f0b4fa440113fd5d90a4a54c8a000
     .claude/skills/docs-creator/eval.yaml: sha256:9213bac4f0fcb1decec43bb917d03e71c89172f85e9a9863390cd2b1be1230e6
@@ -262,13 +262,13 @@ dependencies:
     .claude/skills/github-actions-review/evals/tasks/github-actions-review-structured-output.yaml: sha256:aa418d5725ea9ddf733e0f873321728c315c65acc52832f8cc793bf1d8d5190b
     .claude/skills/github-actions-review/evals/tasks/github-actions-review-trigger-negative.yaml: sha256:3d7a9a1988905a88d77fbf73934b5d0dc871230b84d540abbec1c60a5d3e0f64
     .claude/skills/github-actions-review/references/category-best-practices.md: sha256:5b6f74376253fed89f5490fde98610a0f451a0f3eba728975c06ace6684cdbc7
-    .claude/skills/github-actions-review/references/category-error-handling.md: sha256:31fc3b2b626a2793a23815368bd2a3786a198d4daf134a0492c734b298142013
-    .claude/skills/github-actions-review/references/category-global.md: sha256:bb3a8a32f9c74f4f53a629fbb02df3e88834166bdba5ad9c490c33f3ad8b3b07
+    .claude/skills/github-actions-review/references/category-error-handling.md: sha256:ea1f001607311eeaabff8e873dd75c8de8e33e1d3a55c45dbbdc283dfd13e4a6
+    .claude/skills/github-actions-review/references/category-global.md: sha256:398ade88659d5a582c5b007b87b8471b98c943437946df6b11343d8448091af3
     .claude/skills/github-actions-review/references/category-performance.md: sha256:df93c1e0febf60fd7754265f309b8ec95155934a4a749088c96efddd838e73d0
     .claude/skills/github-actions-review/references/category-security.md: sha256:11f6e000eb2a248932e540d1ce682b178b31d51102355a2335466335ec1b9af7
-    .claude/skills/github-actions-review/references/category-tool-integration.md: sha256:97afac7d2942168dab8f1c7caa3c4f93364914d2e90bd0d68af09994243c45b7
-    .claude/skills/github-actions-review/references/common-checklist.md: sha256:388c71ca20bd626fa1b1dee178b7ee8c469d61409e2508e44ccf21dd05ae973e
-    .claude/skills/github-actions-review/references/common-output-format.md: sha256:4d9883e2ad48cb7b7835767b1423c0566da1c79d0786cd46c6fdc2e788373512
+    .claude/skills/github-actions-review/references/category-tool-integration.md: sha256:74d267baca919e90ede5ee647b0fb9957a807786f224928b69ebb59d56a6bc4f
+    .claude/skills/github-actions-review/references/common-checklist.md: sha256:78133a3884faea71d7cd97433079d7af5ee789aee7b84a111430dda9c974f6ae
+    .claude/skills/github-actions-review/references/common-output-format.md: sha256:849e7cc352ac97374592ad6f86522fd2c96c6b524e701235414814b343a8bff1
     .claude/skills/github-actions-review/references/common-troubleshooting.md: sha256:2eb61d3296bd3adc85e4e250d74fec87f9037aa7ca762bd377b90cd9ff438272
     .claude/skills/github-actions-review/scripts/lib/all.sh: sha256:f6aa62b17de3935f921d04005ca439b3d3a637a86551ed2a7d442761d6d83786
     .claude/skills/github-actions-review/scripts/lib/aws.sh: sha256:e949fb9cc8ebde36123160624d3dc6f4fc4e29d0cde67101c2310507e44b0386
@@ -334,12 +334,12 @@ dependencies:
     .claude/skills/instructions-review/evals/tasks/instructions-review-trigger-negative.yaml: sha256:8becd3ec36e2c14e08e22b39ec6f36cd6c968d6228b0906a82abc8f5cd15e0ed
     .claude/skills/instructions-review/references/category-global.md: sha256:a65b78b4d8f57b2845ae84738e1a855d56639992c3887ca9e39901ec02e1a03f
     .claude/skills/instructions-review/references/category-guidelines.md: sha256:2f0f53e4902b044e2651f5c1b8922fc318ef4ef0053850c4cb44644b5b029515
-    .claude/skills/instructions-review/references/category-quality.md: sha256:2a4366f5cf495723ec8c30779f47edfc78234938a061cd4004e2333d10c86d6e
+    .claude/skills/instructions-review/references/category-quality.md: sha256:bd744b65214d526ee0f8ce311c361f8a46ab9a6e2799792dfb30b1a4f4141fd0
     .claude/skills/instructions-review/references/category-security.md: sha256:a0112bd6603b9a00e2082092496bcecbac0662b34d30bbde129c266b05bc5bf3
     .claude/skills/instructions-review/references/category-standards.md: sha256:121080ce10b86568a0bdb365dfdc551ff3c26ffe6a5644e90a670b4c0610ed1b
     .claude/skills/instructions-review/references/category-testing.md: sha256:bbc105c28a3288680b7d7393042159ee677f8919725b71ccc44ce1afa2ecad0c
-    .claude/skills/instructions-review/references/common-checklist.md: sha256:eebafb1847a58ad6d309b4d8df28605f3afa90bc9dfdc185b74ef5b8663e52d5
-    .claude/skills/instructions-review/references/common-output-format.md: sha256:78a3de0c920d8b406573c17442a88d7fcb70789950372cb6a137a8660c040fff
+    .claude/skills/instructions-review/references/common-checklist.md: sha256:6a9b4ec1423b0a8a60e8a1493375fd89192210886c3838b67454e267b60f5706
+    .claude/skills/instructions-review/references/common-output-format.md: sha256:849e7cc352ac97374592ad6f86522fd2c96c6b524e701235414814b343a8bff1
     .claude/skills/instructions-review/references/common-troubleshooting.md: sha256:9aeba281319b9d54547b1a65eec4161334eee2c95de554bd02f19c247c68ab38
     .claude/skills/instructions-review/scripts/lib/all.sh: sha256:f6aa62b17de3935f921d04005ca439b3d3a637a86551ed2a7d442761d6d83786
     .claude/skills/instructions-review/scripts/lib/aws.sh: sha256:e949fb9cc8ebde36123160624d3dc6f4fc4e29d0cde67101c2310507e44b0386
@@ -368,12 +368,12 @@ dependencies:
     .claude/skills/markdown-validation/scripts/lib/terraform.sh: sha256:1d034f19426d3d635d46c2f27e96d4308eb6b07574028c51de7299b258edd7da
     .claude/skills/markdown-validation/scripts/lib/validation.sh: sha256:ee2be940117c00e6a681186e02e05188786bf98aa52bd74ff1586eb474a98648
     .claude/skills/markdown-validation/scripts/validate.sh: sha256:477a3d2d30af874d0013a50a0b4ec9b97ef717138c80d946770ef7e44a0078d1
-  content_hash: sha256:928446254476daa9accf8fd71ccb12c433a89dd232a8bfae2cd2933a42b074df
+  content_hash: sha256:961b1586668745408cf65fd09d01c9479d5d329e597d364ba004070796a128fe
   declared_license: Apache-2.0
 - repo_url: y-miyazaki/config
   host: github.com
-  resolved_commit: 2beceecca6abd9406d83a0c1c4fdd0e87e348acc
-  resolved_ref: v1.5.0
+  resolved_commit: 818e1f8aa9771e41af357bad06d1176e40ed59ee
+  resolved_ref: v1.5.1
   virtual_path: .apm/packages/common-hooks-claude
   is_virtual: true
   package_type: apm_package
@@ -395,8 +395,8 @@ dependencies:
   declared_license: Apache-2.0
 - repo_url: y-miyazaki/config
   host: github.com
-  resolved_commit: 2beceecca6abd9406d83a0c1c4fdd0e87e348acc
-  resolved_ref: v1.5.0
+  resolved_commit: 818e1f8aa9771e41af357bad06d1176e40ed59ee
+  resolved_ref: v1.5.1
   virtual_path: .apm/packages/shell-script
   is_virtual: true
   package_type: apm_package
@@ -453,7 +453,7 @@ dependencies:
   - .claude/skills/shell-script-validation/scripts/lib/validation.sh
   - .claude/skills/shell-script-validation/scripts/validate.sh
   deployed_file_hashes:
-    .claude/rules/shell-script.md: sha256:27b185f1042f36a87124f8fafd211191465ba4934881689685e03d9fac6641e1
+    .claude/rules/shell-script.md: sha256:bda93bedda2a80c2768ec4b226b2082b646ae3208e0b58ee15fe825e74139bf0
     .claude/skills/shell-script-review/SKILL.md: sha256:de20d643b23e312fbb6a2e19188c2cfc30b70f1121e842d60551599893c068db
     .claude/skills/shell-script-review/eval.yaml: sha256:f763afd922b139bd59672a143454b777717fef2f7953a6fbf4e9b12476be70f3
     .claude/skills/shell-script-review/evals/tasks/shell-script-review-basic.yaml: sha256:fa2696cd038fd0590c9e2efab53b6611241484a41cb939dc7d02dcd0487e6e81
@@ -463,16 +463,16 @@ dependencies:
     .claude/skills/shell-script-review/evals/tasks/shell-script-review-trigger-negative.yaml: sha256:eb25ed12e51be55d2f91b3c5b207d625821bafe923593dc041f573561b895587
     .claude/skills/shell-script-review/references/category-code-standards.md: sha256:9d35630b91eeac2f9749d7185a1edf8969aff5cadcc5e2f732aad243988023f2
     .claude/skills/shell-script-review/references/category-dependencies.md: sha256:56b4ffb6a4c1206d98c1ab96389aab1cfed8e653246fa6d9c4794630ae2abe2e
-    .claude/skills/shell-script-review/references/category-documentation.md: sha256:9ac5045d4e811958b593c96d900ffa4f1d6ef1432befe54a8c2aa9f85c3d4bbb
+    .claude/skills/shell-script-review/references/category-documentation.md: sha256:309d2e69967df2dec41b658574035174af91eb0fb620145f7813922e7a649892
     .claude/skills/shell-script-review/references/category-error-handling.md: sha256:0f833238541ea3bbe77d3833a561449b8de681d3503db830131ef51f91b7c043
-    .claude/skills/shell-script-review/references/category-function-design.md: sha256:d8df5e79c42a9a92a8fcd2c0fd2dd1be52fc85c9f9180df6f505593231d3e007
+    .claude/skills/shell-script-review/references/category-function-design.md: sha256:fa7189704d81aa6450bfb1ec98c744a01b05bdfe40c8c5a0e39bb8ca400d2a77
     .claude/skills/shell-script-review/references/category-global.md: sha256:7073b952449ee34266f6b0e9fe1bd3ca7a96d7fbce64f77a36751f90991a6ebb
     .claude/skills/shell-script-review/references/category-logging.md: sha256:a130d527d875ebed099b087cf836e3cf5970b44da7cd5ca308878a40128baa4c
     .claude/skills/shell-script-review/references/category-performance.md: sha256:762ed81ee5b8dd9910f651676c74d68a2430901f68380a178ba2176b0b34abbe
     .claude/skills/shell-script-review/references/category-security.md: sha256:e5ca34532fbf5d11fcc1c791e83d71e670485c39e16f943ac1ddfb48fc885a16
     .claude/skills/shell-script-review/references/category-testing.md: sha256:acc096fa8eaa90ace92c1a3c64e63c29f5cdae71eff066c40f8616f888370c2f
     .claude/skills/shell-script-review/references/common-checklist.md: sha256:0162d0e5cc871101cb887dae0e739adf05ba34625511388b9ee4746a2babcbc0
-    .claude/skills/shell-script-review/references/common-output-format.md: sha256:4d9883e2ad48cb7b7835767b1423c0566da1c79d0786cd46c6fdc2e788373512
+    .claude/skills/shell-script-review/references/common-output-format.md: sha256:849e7cc352ac97374592ad6f86522fd2c96c6b524e701235414814b343a8bff1
     .claude/skills/shell-script-review/references/common-troubleshooting.md: sha256:fa4bc89706e6c30ea58d4b882ee85f001b0ae832618f98648ab465274a17305f
     .claude/skills/shell-script-review/scripts/lib/all.sh: sha256:f6aa62b17de3935f921d04005ca439b3d3a637a86551ed2a7d442761d6d83786
     .claude/skills/shell-script-review/scripts/lib/aws.sh: sha256:e949fb9cc8ebde36123160624d3dc6f4fc4e29d0cde67101c2310507e44b0386
@@ -502,12 +502,12 @@ dependencies:
     .claude/skills/shell-script-validation/scripts/lib/terraform.sh: sha256:1d034f19426d3d635d46c2f27e96d4308eb6b07574028c51de7299b258edd7da
     .claude/skills/shell-script-validation/scripts/lib/validation.sh: sha256:ee2be940117c00e6a681186e02e05188786bf98aa52bd74ff1586eb474a98648
     .claude/skills/shell-script-validation/scripts/validate.sh: sha256:6f29681dfb85aecbb01d36a1742185b63c52ca901f416f116671cba291ebe5dd
-  content_hash: sha256:6ccaf12aa80f530225fe685b869d48b4d1d70d355427a963a763facb78f7d465
+  content_hash: sha256:1d2b150bdf6fd46df9d77e6bdcfc84411cbea51f5411fd2426c4c42f2a92c97a
   declared_license: Apache-2.0
 - repo_url: y-miyazaki/config
   host: github.com
-  resolved_commit: 2beceecca6abd9406d83a0c1c4fdd0e87e348acc
-  resolved_ref: v1.5.0
+  resolved_commit: 818e1f8aa9771e41af357bad06d1176e40ed59ee
+  resolved_ref: v1.5.1
   virtual_path: .apm/packages/shell-script-hooks-claude
   is_virtual: true
   package_type: apm_package
@@ -521,8 +521,8 @@ dependencies:
   declared_license: Apache-2.0
 - repo_url: y-miyazaki/config
   host: github.com
-  resolved_commit: 2beceecca6abd9406d83a0c1c4fdd0e87e348acc
-  resolved_ref: v1.5.0
+  resolved_commit: 818e1f8aa9771e41af357bad06d1176e40ed59ee
+  resolved_ref: v1.5.1
   virtual_path: .apm/packages/terraform
   is_virtual: true
   package_type: apm_package
@@ -616,7 +616,7 @@ dependencies:
     .claude/skills/terraform-review/references/category-variables.md: sha256:1c4e58ee9da84d514204f840cf7c8f6a77e2f8e60901ff0a47778d4493f98557
     .claude/skills/terraform-review/references/category-versioning.md: sha256:a83f47a5b5a08d3f5017e9871aa5ec96256e92a176fc17f88a38b08ad9b363d7
     .claude/skills/terraform-review/references/common-checklist.md: sha256:f27030ec987bdb3f8f8da38dbf5f72678dcf630bd7101648caabcbc0b3732117
-    .claude/skills/terraform-review/references/common-output-format.md: sha256:4d9883e2ad48cb7b7835767b1423c0566da1c79d0786cd46c6fdc2e788373512
+    .claude/skills/terraform-review/references/common-output-format.md: sha256:849e7cc352ac97374592ad6f86522fd2c96c6b524e701235414814b343a8bff1
     .claude/skills/terraform-review/references/common-troubleshooting.md: sha256:926bd2851061a93d682050f71eb3c92835fa0024227348ee622e14e73af6dc2d
     .claude/skills/terraform-review/scripts/lib/all.sh: sha256:f6aa62b17de3935f921d04005ca439b3d3a637a86551ed2a7d442761d6d83786
     .claude/skills/terraform-review/scripts/lib/aws.sh: sha256:e949fb9cc8ebde36123160624d3dc6f4fc4e29d0cde67101c2310507e44b0386
@@ -646,12 +646,12 @@ dependencies:
     .claude/skills/terraform-validation/scripts/lib/terraform.sh: sha256:1d034f19426d3d635d46c2f27e96d4308eb6b07574028c51de7299b258edd7da
     .claude/skills/terraform-validation/scripts/lib/validation.sh: sha256:ee2be940117c00e6a681186e02e05188786bf98aa52bd74ff1586eb474a98648
     .claude/skills/terraform-validation/scripts/validate.sh: sha256:c288a9f2961c27a7afd44002ffb3cd281126b2c5ca54bac72affa262a5dde771
-  content_hash: sha256:4af8669b06d7b1cbba068d63d703ede3b0d8c2f2472d69bcff90db1fc53faf9d
+  content_hash: sha256:01914ad00560d17cbad1dca71a1b7116938e7dc8c31a2e2cf60d252ff1f49013
   declared_license: Apache-2.0
 - repo_url: y-miyazaki/config
   host: github.com
-  resolved_commit: 2beceecca6abd9406d83a0c1c4fdd0e87e348acc
-  resolved_ref: v1.5.0
+  resolved_commit: 818e1f8aa9771e41af357bad06d1176e40ed59ee
+  resolved_ref: v1.5.1
   virtual_path: .apm/packages/terraform-aws
   is_virtual: true
   package_type: apm_package
@@ -659,8 +659,8 @@ dependencies:
   declared_license: Apache-2.0
 - repo_url: y-miyazaki/config
   host: github.com
-  resolved_commit: 2beceecca6abd9406d83a0c1c4fdd0e87e348acc
-  resolved_ref: v1.5.0
+  resolved_commit: 818e1f8aa9771e41af357bad06d1176e40ed59ee
+  resolved_ref: v1.5.1
   virtual_path: .apm/packages/terraform-hooks-claude
   is_virtual: true
   package_type: apm_package

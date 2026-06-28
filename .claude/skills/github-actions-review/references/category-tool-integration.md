@@ -8,7 +8,7 @@ Fix: Add reviewdog integration for lint outputs and use repository token safely.
 
 **TOOL-02 (SHOULD): Codecov Coverage Upload Strategy**
 
-Check: Is Codecov usage configured appropriately for repository visibility and token requirements?
+Check: Is Codecov configured with token for private repos, and without token for public repos where the Codecov app is installed?
 Why: Incorrect Codecov configuration causes silent coverage gaps or failed uploads.
 Fix: Configure Codecov with proper token strategy for public/private repositories.
 
