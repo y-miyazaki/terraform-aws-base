@@ -15,7 +15,7 @@ locals {
 #--------------------------------------------------------------
 module "s3_log" {
   source  = "terraform-aws-modules/s3-bucket/aws"
-  version = "5.14.0"
+  version = "5.14.1"
 
   create_bucket = var.common_log.s3_log.create_bucket
   region        = var.region.primary
@@ -111,7 +111,7 @@ data "aws_iam_policy_document" "s3_log_combined" {
 #--------------------------------------------------------------
 module "s3_cloudtrail" {
   source  = "terraform-aws-modules/s3-bucket/aws"
-  version = "5.14.0"
+  version = "5.14.1"
 
   create_bucket = var.common_log.s3_cloudtrail.create_bucket && !local.control_tower_managed_services.cloudtrail
   region        = var.region.primary
