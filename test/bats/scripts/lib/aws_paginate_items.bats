@@ -124,8 +124,8 @@ EOF
     [ "$status" -eq 0 ]
     # Unquote values using jq -r and assert both names exist
     jq_out=$(printf "%s\n" "$output" | jq -r '.')
-    [[ "$jq_out" == *"table1"* ]]
-    [[ "$jq_out" == *"table2"* ]]
+    [[ $jq_out == *"table1"* ]]
+    [[ $jq_out == *"table2"* ]]
 }
 
 @test "aws_paginate_items handles S3 list-objects-v2 ContinuationToken pagination" {
@@ -165,5 +165,5 @@ EOF
 
     run aws_retry_exec aws cognito-idp list-user-pools --region us-east-1
     [ "$status" -eq 0 ]
-    [[ "$output" == *"ok"* ]]
+    [[ $output == *"ok"* ]]
 }

@@ -13,8 +13,8 @@ setup() {
     run execute_command echo hi_there
     [ "$status" -eq 0 ]
     # Should include the debug log line about Executing and the command output
-    [[ "$output" == *"Executing: echo hi_there"* ]]
-    [[ "$output" == *"hi_there"* ]]
+    [[ $output == *"Executing: echo hi_there"* ]]
+    [[ $output == *"hi_there"* ]]
 }
 
 @test "execute_command in dry-run mode only logs planned command" {
@@ -22,7 +22,7 @@ setup() {
     run execute_command echo hello world
     [ "$status" -eq 0 ]
     # Use substring match to avoid regex quoting issues
-    [[ "$output" == *"DRY-RUN: Would execute: echo hello world"* ]]
+    [[ $output == *"DRY-RUN: Would execute: echo hello world"* ]]
 }
 
 @test "is_dry_run returns non-zero when DRY_RUN is false/unset" {
@@ -41,5 +41,5 @@ setup() {
     unset VERBOSE
     run log ERROR "fatal"
     [ "$status" -eq 0 ]
-    [[ "$output" == *"[ERROR] fatal"* ]]
+    [[ $output == *"[ERROR] fatal"* ]]
 }

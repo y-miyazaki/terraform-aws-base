@@ -156,7 +156,7 @@ THINKING=$(echo "$input" | jq -r '.thinking.enabled // empty')
 
 # Output style
 STYLE_DISPLAY=""
-[[ -n "$OUTPUT_STYLE" ]] && STYLE_DISPLAY=" │ 🎨 ${C_PEACH}${OUTPUT_STYLE}${RESET}"
+[[ -n $OUTPUT_STYLE ]] && STYLE_DISPLAY=" │ 🎨 ${C_PEACH}${OUTPUT_STYLE}${RESET}"
 
 # Directory (shorten $HOME to ~). Built with a case match rather than
 # ${CURRENT_DIR/$HOME/~}: bash 5.2+ tilde-expands the replacement, turning ~
@@ -173,19 +173,19 @@ GIT_DISPLAY=""
 cd "$CURRENT_DIR" 2> /dev/null || return
 if git rev-parse --git-dir > /dev/null 2>&1; then
     BRANCH=$(git branch --show-current 2> /dev/null)
-    [[ -n "$BRANCH" ]] && GIT_DISPLAY="${C_LATTE_GREEN}🌿(${BRANCH})${RESET}"
+    [[ -n $BRANCH ]] && GIT_DISPLAY="${C_LATTE_GREEN}🌿(${BRANCH})${RESET}"
 
     STAGED=$(git diff --cached --name-only 2> /dev/null | wc -l | tr -d ' ')
     UNSTAGED=$(git diff --name-only 2> /dev/null | wc -l | tr -d ' ')
     UNTRACKED=$(git ls-files --others --exclude-standard 2> /dev/null | wc -l | tr -d ' ')
 
-    if [[ "$STAGED" -eq 0 && "$UNSTAGED" -eq 0 && "$UNTRACKED" -eq 0 ]]; then
+    if [[ $STAGED -eq 0 && $UNSTAGED -eq 0 && $UNTRACKED -eq 0 ]]; then
         GIT_DISPLAY="${GIT_DISPLAY}${C_GREEN}✅${RESET}"
     else
         STATUS=""
-        [[ "$STAGED" -gt 0 ]] && STATUS="${STATUS}+"
-        [[ "$UNSTAGED" -gt 0 ]] && STATUS="${STATUS}!"
-        [[ "$UNTRACKED" -gt 0 ]] && STATUS="${STATUS}?"
+        [[ $STAGED -gt 0 ]] && STATUS="${STATUS}+"
+        [[ $UNSTAGED -gt 0 ]] && STATUS="${STATUS}!"
+        [[ $UNTRACKED -gt 0 ]] && STATUS="${STATUS}?"
         GIT_DISPLAY="${GIT_DISPLAY}${C_LATTE_YELLOW}📝${STATUS}${RESET}"
     fi
 fi
@@ -198,12 +198,12 @@ LINE1="${MODEL_DISPLAY}${STYLE_DISPLAY} │ ${DIR_DISPLAY} ${GIT_DISPLAY}"
 
 # Context
 CONTEXT_PERCENT=0
-if [[ "$CURRENT_USAGE" != "null" && -n "$CURRENT_USAGE" ]]; then
+if [[ $CURRENT_USAGE != "null" && -n $CURRENT_USAGE ]]; then
     INPUT_TOKENS=$(echo "$CURRENT_USAGE" | jq -r '.input_tokens // 0')
     CACHE_CREATE=$(echo "$CURRENT_USAGE" | jq -r '.cache_creation_input_tokens // 0')
     CACHE_READ=$(echo "$CURRENT_USAGE" | jq -r '.cache_read_input_tokens // 0')
     CURRENT_TOKENS=$((INPUT_TOKENS + CACHE_CREATE + CACHE_READ))
-    [[ "$CONTEXT_SIZE" -gt 0 ]] && CONTEXT_PERCENT=$((CURRENT_TOKENS * 100 / CONTEXT_SIZE))
+    [[ $CONTEXT_SIZE -gt 0 ]] && CONTEXT_PERCENT=$((CURRENT_TOKENS * 100 / CONTEXT_SIZE))
 fi
 
 CTX_BAR=$(generate_bar "$CONTEXT_PERCENT" 10 "context")
@@ -213,7 +213,7 @@ CTX_DISPLAY="🧠 ${C_PINK}Context${RESET} ${CTX_BAR} ${BOLD}\033[38;2;${CTX_END
 # Format 5H reset as "1h2m"
 format_time_remaining() {
     local reset_epoch="$1"
-    [[ -z "$reset_epoch" || "$reset_epoch" == "null" ]] && return
+    [[ -z $reset_epoch || $reset_epoch == "null" ]] && return
     local now_epoch
     now_epoch=$(date +%s)
     local remaining=$((reset_epoch - now_epoch))
@@ -227,11 +227,11 @@ format_time_remaining() {
 _date_fmt() {
     local epoch="$1" fmt="$2"
     local out=""
-    out=$(date -j -f "%s" "$epoch" "+$fmt" 2> /dev/null) && [[ -n "$out" ]] && {
+    out=$(date -j -f "%s" "$epoch" "+$fmt" 2> /dev/null) && [[ -n $out ]] && {
         echo "$out"
         return
     }
-    out=$(date -r "$epoch" "+$fmt" 2> /dev/null) && [[ -n "$out" ]] && {
+    out=$(date -r "$epoch" "+$fmt" 2> /dev/null) && [[ -n $out ]] && {
         echo "$out"
         return
     }
@@ -241,12 +241,12 @@ _date_fmt() {
 # Format 7D reset as "Mon"
 format_reset_day() {
     local reset_epoch="$1"
-    [[ -z "$reset_epoch" || "$reset_epoch" == "null" ]] && return
+    [[ -z $reset_epoch || $reset_epoch == "null" ]] && return
     _date_fmt "$reset_epoch" "%a"
 }
 
 # Usage from rate_limits
-if [[ -n "$FIVE_HOUR_PCT" ]]; then
+if [[ -n $FIVE_HOUR_PCT ]]; then
     FIVE_HOUR=$(printf "%.0f" "$FIVE_HOUR_PCT")
     SEVEN_DAY=$(printf "%.0f" "${SEVEN_DAY_PCT:-0}")
 

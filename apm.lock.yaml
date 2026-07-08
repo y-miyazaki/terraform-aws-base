@@ -1,24 +1,20 @@
 lockfile_version: '1'
-generated_at: '2026-07-08T11:22:13.623724+00:00'
-apm_version: 0.23.1
+generated_at: '2026-07-08T11:48:48.345504+00:00'
+apm_version: 0.21.0
 dependencies:
 - repo_url: y-miyazaki/config
-  name: config-aws
   host: github.com
-  resolved_commit: 1047f4324e82da4e7ef9e94f9d46d33778dd75af
-  resolved_ref: v1.7.1
-  version: 1.0.0
+  resolved_commit: 2be7e7726d1b0c94bbe093e3ea79b075a3d8d8d4
+  resolved_ref: v1.7.2
   virtual_path: .apm/packages/aws
   is_virtual: true
   package_type: apm_package
   content_hash: sha256:2908905e050d4ae61c5e87efa25152acad706fd3b3fb52eba25f54b57aa751c1
   declared_license: Apache-2.0
 - repo_url: y-miyazaki/config
-  name: config-common
   host: github.com
-  resolved_commit: 1047f4324e82da4e7ef9e94f9d46d33778dd75af
-  resolved_ref: v1.7.1
-  version: 1.0.0
+  resolved_commit: 2be7e7726d1b0c94bbe093e3ea79b075a3d8d8d4
+  resolved_ref: v1.7.2
   virtual_path: .apm/packages/common
   is_virtual: true
   package_type: apm_package
@@ -502,7 +498,7 @@ dependencies:
     .agents/skills/github-pr-body/scripts/pr_body.sh: sha256:5b42a6ca0cb59c721195493c922f7201c7a36de07497a46fba540bfbf152bb47
     .agents/skills/github-pr-body/scripts/pr_comment.sh: sha256:478dd9ee8cd7f115f25caa51a1042cb7f6228a9e8daf0b7e7592d0d2c968a40d
     .agents/skills/github-pr-body/scripts/pr_fetch.sh: sha256:06be39b4214fb346c8905dddaae2c4fad33c162077bdb1db799c7a00d7159a7a
-    .agents/skills/github-pr-body/test/bats/github_pr_body.bats: sha256:8a6a1e2ec9442a3a1f9d51da6bfd58f4f1768ae74f8934fd0306e9f3412e6b98
+    .agents/skills/github-pr-body/test/bats/github_pr_body.bats: sha256:0f9541aad36442ce2b67cff3730085c50493c7b27e37210134e04f3617aaabcc
     .agents/skills/instructions-review/SKILL.md: sha256:fc2b59281fa2dee003af297b4af64052cec981c2cd5000c33d9bbe776d30ca6d
     .agents/skills/instructions-review/eval.yaml: sha256:c7539e5092fe4bd2ae7fab62d58e76d7aba78c514fbf36181315595320cbe985
     .agents/skills/instructions-review/evals/tasks/instructions-review-basic.yaml: sha256:b03d87ed4ac12c77c4d701098b9102e71b9ba494e3e0ff911f9af726e404c5da
@@ -672,7 +668,7 @@ dependencies:
     .claude/skills/github-pr-body/scripts/pr_body.sh: sha256:5b42a6ca0cb59c721195493c922f7201c7a36de07497a46fba540bfbf152bb47
     .claude/skills/github-pr-body/scripts/pr_comment.sh: sha256:478dd9ee8cd7f115f25caa51a1042cb7f6228a9e8daf0b7e7592d0d2c968a40d
     .claude/skills/github-pr-body/scripts/pr_fetch.sh: sha256:06be39b4214fb346c8905dddaae2c4fad33c162077bdb1db799c7a00d7159a7a
-    .claude/skills/github-pr-body/test/bats/github_pr_body.bats: sha256:8a6a1e2ec9442a3a1f9d51da6bfd58f4f1768ae74f8934fd0306e9f3412e6b98
+    .claude/skills/github-pr-body/test/bats/github_pr_body.bats: sha256:0f9541aad36442ce2b67cff3730085c50493c7b27e37210134e04f3617aaabcc
     .claude/skills/instructions-review/SKILL.md: sha256:fc2b59281fa2dee003af297b4af64052cec981c2cd5000c33d9bbe776d30ca6d
     .claude/skills/instructions-review/eval.yaml: sha256:c7539e5092fe4bd2ae7fab62d58e76d7aba78c514fbf36181315595320cbe985
     .claude/skills/instructions-review/evals/tasks/instructions-review-basic.yaml: sha256:b03d87ed4ac12c77c4d701098b9102e71b9ba494e3e0ff911f9af726e404c5da
@@ -720,14 +716,12 @@ dependencies:
     .cursor/rules/github-actions-workflow.mdc: sha256:874dae7a451190d3d400db2a543b353b0eb10520bc7b32ee5964df094141a306
     .cursor/rules/instructions.mdc: sha256:a112f30b2922d231bacc8ba0fe4e964fd6ae1c9b077a87fc64e41aa2fdb6aeaa
     .cursor/rules/markdown.mdc: sha256:aff6b9cd995b9e3dff7d6ee55263844e41cb217a295f13b9e8437a915fc1ccc2
-  content_hash: sha256:9ea9848fb8b59e0c0b0c711f76a76f822bb6af04cf08b55ff1cc091a926f2c14
+  content_hash: sha256:81a0bf992906126350939378f9f5601612dc2151d49c16972a3fa690cdaee3e3
   declared_license: Apache-2.0
 - repo_url: y-miyazaki/config
-  name: common-hooks-claude
   host: github.com
-  resolved_commit: 1047f4324e82da4e7ef9e94f9d46d33778dd75af
-  resolved_ref: v1.7.1
-  version: 1.0.0
+  resolved_commit: 2be7e7726d1b0c94bbe093e3ea79b075a3d8d8d4
+  resolved_ref: v1.7.2
   virtual_path: .apm/packages/common-hooks-claude
   is_virtual: true
   package_type: apm_package
@@ -760,11 +754,9 @@ dependencies:
   content_hash: sha256:245a692cbc952d38b4b947265f0d17e0bc78c6077ce3ab272768b58c8ed40bcc
   declared_license: Apache-2.0
 - repo_url: y-miyazaki/config
-  name: common-hooks-cursor
   host: github.com
-  resolved_commit: 1047f4324e82da4e7ef9e94f9d46d33778dd75af
-  resolved_ref: v1.7.1
-  version: 1.0.0
+  resolved_commit: 2be7e7726d1b0c94bbe093e3ea79b075a3d8d8d4
+  resolved_ref: v1.7.2
   virtual_path: .apm/packages/common-hooks-cursor
   is_virtual: true
   package_type: apm_package
@@ -797,11 +789,9 @@ dependencies:
   content_hash: sha256:89d8c6838d4d3fd09dc288fb645c1ab0829568c52111f79c4e4191be78fe5bb5
   declared_license: Apache-2.0
 - repo_url: y-miyazaki/config
-  name: config-shell-script
   host: github.com
-  resolved_commit: 1047f4324e82da4e7ef9e94f9d46d33778dd75af
-  resolved_ref: v1.7.1
-  version: 1.0.0
+  resolved_commit: 2be7e7726d1b0c94bbe093e3ea79b075a3d8d8d4
+  resolved_ref: v1.7.2
   virtual_path: .apm/packages/shell-script
   is_virtual: true
   package_type: apm_package
@@ -1010,11 +1000,9 @@ dependencies:
   content_hash: sha256:26b043ca03b5e7d47f84e70acf9b5ef0e11a9455ae4397ad0e1c758b05502f5f
   declared_license: Apache-2.0
 - repo_url: y-miyazaki/config
-  name: shell-script-hooks-claude
   host: github.com
-  resolved_commit: 1047f4324e82da4e7ef9e94f9d46d33778dd75af
-  resolved_ref: v1.7.1
-  version: 1.0.0
+  resolved_commit: 2be7e7726d1b0c94bbe093e3ea79b075a3d8d8d4
+  resolved_ref: v1.7.2
   virtual_path: .apm/packages/shell-script-hooks-claude
   is_virtual: true
   package_type: apm_package
@@ -1031,11 +1019,9 @@ dependencies:
   content_hash: sha256:94fb95926a30ef0404627770239270283b859098c54b6fcb83ee2138929569e3
   declared_license: Apache-2.0
 - repo_url: y-miyazaki/config
-  name: shell-script-hooks-cursor
   host: github.com
-  resolved_commit: 1047f4324e82da4e7ef9e94f9d46d33778dd75af
-  resolved_ref: v1.7.1
-  version: 1.0.0
+  resolved_commit: 2be7e7726d1b0c94bbe093e3ea79b075a3d8d8d4
+  resolved_ref: v1.7.2
   virtual_path: .apm/packages/shell-script-hooks-cursor
   is_virtual: true
   package_type: apm_package
@@ -1052,11 +1038,9 @@ dependencies:
   content_hash: sha256:5825ef6134a82a879a58f03222d6f1df3b4a17510c00846a79f1d72bf8df40f5
   declared_license: Apache-2.0
 - repo_url: y-miyazaki/config
-  name: config-terraform
   host: github.com
-  resolved_commit: 1047f4324e82da4e7ef9e94f9d46d33778dd75af
-  resolved_ref: v1.7.1
-  version: 1.0.0
+  resolved_commit: 2be7e7726d1b0c94bbe093e3ea79b075a3d8d8d4
+  resolved_ref: v1.7.2
   virtual_path: .apm/packages/terraform
   is_virtual: true
   package_type: apm_package
@@ -1301,22 +1285,18 @@ dependencies:
   content_hash: sha256:0b1eaf6496c38d55baf372ef9336ec70e898b45855671474948c7ad1d2bad7d7
   declared_license: Apache-2.0
 - repo_url: y-miyazaki/config
-  name: config-terraform-aws
   host: github.com
-  resolved_commit: 1047f4324e82da4e7ef9e94f9d46d33778dd75af
-  resolved_ref: v1.7.1
-  version: 1.0.0
+  resolved_commit: 2be7e7726d1b0c94bbe093e3ea79b075a3d8d8d4
+  resolved_ref: v1.7.2
   virtual_path: .apm/packages/terraform-aws
   is_virtual: true
   package_type: apm_package
   content_hash: sha256:f2ab3e9287aa43d7d5ed6632cd5f84a2f30afb1439ad172ce246bad2707791e5
   declared_license: Apache-2.0
 - repo_url: y-miyazaki/config
-  name: terraform-hooks-claude
   host: github.com
-  resolved_commit: 1047f4324e82da4e7ef9e94f9d46d33778dd75af
-  resolved_ref: v1.7.1
-  version: 1.0.0
+  resolved_commit: 2be7e7726d1b0c94bbe093e3ea79b075a3d8d8d4
+  resolved_ref: v1.7.2
   virtual_path: .apm/packages/terraform-hooks-claude
   is_virtual: true
   package_type: apm_package
@@ -1333,11 +1313,9 @@ dependencies:
   content_hash: sha256:871512db63114be2c64b7a5c51db18710818fa918f0bdcaafb304442ccab5bfc
   declared_license: Apache-2.0
 - repo_url: y-miyazaki/config
-  name: terraform-hooks-cursor
   host: github.com
-  resolved_commit: 1047f4324e82da4e7ef9e94f9d46d33778dd75af
-  resolved_ref: v1.7.1
-  version: 1.0.0
+  resolved_commit: 2be7e7726d1b0c94bbe093e3ea79b075a3d8d8d4
+  resolved_ref: v1.7.2
   virtual_path: .apm/packages/terraform-hooks-cursor
   is_virtual: true
   package_type: apm_package

@@ -91,20 +91,20 @@ EOF
 @test "format_aws_timestamp converts seconds" {
     run format_aws_timestamp 1609459200
     [ "$status" -eq 0 ]
-    [[ "$output" == 2021* ]]
+    [[ $output == 2021* ]]
 }
 
 @test "format_aws_timestamp handles milliseconds" {
     run format_aws_timestamp 1609459200000
     [ "$status" -eq 0 ]
-    [[ "$output" == 2021* ]]
+    [[ $output == 2021* ]]
 }
 
 @test "parse_arn returns json with components" {
     run parse_arn "arn:aws:ec2:us-east-1:123456789012:instance/i-0123456789abcdef0"
     [ "$status" -eq 0 ]
-    [[ "$output" =~ '"service": "ec2"' ]]
-    [[ "$output" =~ '"region": "us-east-1"' ]]
+    [[ $output =~ '"service": "ec2"' ]]
+    [[ $output =~ '"region": "us-east-1"' ]]
 }
 
 @test "get_resource_name_from_arn extracts resource name" {

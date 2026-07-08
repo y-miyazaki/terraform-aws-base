@@ -17,7 +17,7 @@ EOF
 }
 
 function mock_aws_teardown() {
-    if [[ -n "${MOCK_DIR:-}" && -d "$MOCK_DIR" ]]; then
+    if [[ -n ${MOCK_DIR:-} && -d $MOCK_DIR ]]; then
         rm -rf "$MOCK_DIR"
         unset MOCK_DIR
     fi

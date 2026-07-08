@@ -34,13 +34,13 @@ teardown() {
 @test "artifact_dir_for creates sanitized directory path" {
     run artifact_dir_for "/workspace/terraform/base"
     [ "$status" -eq 0 ]
-    [[ "$output" == *"workspace__terraform__base"* ]]
+    [[ $output == *"workspace__terraform__base"* ]]
 }
 
 @test "artifact_dir_for strips leading slash and replaces separators" {
     run artifact_dir_for "/a/b/c"
     [ "$status" -eq 0 ]
-    [[ "$output" == *"a__b__c"* ]]
+    [[ $output == *"a__b__c"* ]]
 }
 
 @test "extract_modules_from_file extracts source and version pairs" {
@@ -59,8 +59,8 @@ module "s3" {
 EOF
     run extract_modules_from_file "$TEST_TMPDIR/test.tf"
     [ "$status" -eq 0 ]
-    [[ "$output" == *"terraform-aws-modules/vpc/aws||5.1.0||"* ]]
-    [[ "$output" == *"terraform-aws-modules/s3-bucket/aws||3.15.1||"* ]]
+    [[ $output == *"terraform-aws-modules/vpc/aws||5.1.0||"* ]]
+    [[ $output == *"terraform-aws-modules/s3-bucket/aws||3.15.1||"* ]]
 }
 
 @test "extract_modules_from_file ignores local modules without version" {
@@ -91,8 +91,8 @@ output "id" {
 EOF
     run find_terraform_modules "$TEST_TMPDIR/project" "false"
     [ "$status" -eq 0 ]
-    [[ "$output" == *"main.tf"* ]]
-    [[ "$output" != *"outputs.tf"* ]]
+    [[ $output == *"main.tf"* ]]
+    [[ $output != *"outputs.tf"* ]]
 }
 
 @test "find_terraform_project_root finds directory with versions.tf" {
@@ -102,5 +102,5 @@ EOF
 
     run find_terraform_project_root "$TEST_TMPDIR/root/sub/main.tf"
     [ "$status" -eq 0 ]
-    [[ "$output" == *"$TEST_TMPDIR/root"* ]]
+    [[ $output == *"$TEST_TMPDIR/root"* ]]
 }

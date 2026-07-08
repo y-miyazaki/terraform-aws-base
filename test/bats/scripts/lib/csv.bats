@@ -28,14 +28,14 @@ setup() {
     PRESERVE_NEWLINES=true
     run normalize_csv_value $'Line1\nLine2'
     [ "$status" -eq 0 ]
-    [[ "$output" == *$'Line1\nLine2'* ]]
+    [[ $output == *$'Line1\nLine2'* ]]
 }
 
 @test "make_csv_safe wraps with quotes when comma present" {
     unset PRESERVE_NEWLINES
     run make_csv_safe "foo,bar"
     [ "$status" -eq 0 ]
-    [[ "$output" == '"foo,bar"' ]]
+    [[ $output == '"foo,bar"' ]]
 }
 
 @test "csv_sort sorts rows by region/subcategory/etc" {
@@ -43,5 +43,5 @@ setup() {
     run csv_sort "$input"
     [ "$status" -eq 0 ]
     # output should have regA row first
-    [[ "$output" == *"regA,name1"* || "$output" == *"regA,name1"* ]]
+    [[ $output == *"regA,name1"* || $output == *"regA,name1"* ]]
 }

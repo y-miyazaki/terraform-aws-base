@@ -10,7 +10,7 @@ setup() {
     missing="/tmp/nonexistentdir.$RANDOM"
     run validate_directory_exists "$missing" "TestDir"
     [ "$status" -ne 0 ]
-    [[ "$output" == *"TestDir not found"* || "$output" == *"not found"* ]]
+    [[ $output == *"TestDir not found"* || $output == *"not found"* ]]
 }
 
 @test "validate_directory_exists succeeds for existing dir" {
@@ -24,7 +24,7 @@ setup() {
     missing="/tmp/nonexistent.$RANDOM"
     run validate_file_exists "$missing" "TestFile"
     [ "$status" -ne 0 ]
-    [[ "$output" == *"TestFile not found"* || "$output" == *"not found"* ]]
+    [[ $output == *"TestFile not found"* || $output == *"not found"* ]]
 }
 
 @test "validate_file_exists succeeds for existing readable file" {
@@ -56,7 +56,7 @@ EOF
     chmod 644 "$tmpf"
     run validate_script_syntax "$tmpf"
     [ "$status" -ne 0 ]
-    [[ "$output" == *"Script syntax error"* || "$output" == *"syntax"* ]]
+    [[ $output == *"Script syntax error"* || $output == *"syntax"* ]]
     rm -f "$tmpf"
 }
 

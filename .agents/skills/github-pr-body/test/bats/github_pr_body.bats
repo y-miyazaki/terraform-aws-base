@@ -89,9 +89,9 @@ EOF
     run cat "$BODY_FILE"
 
     [ "$status" -eq 0 ]
-    [[ "$output" == *"## Overview"* ]]
-    [[ "$output" == *"**Title**:"* ]]
-    [[ "$output" == *"_This section was auto-generated._"* ]]
+    [[ $output == *"## Overview"* ]]
+    [[ $output == *"**Title**:"* ]]
+    [[ $output == *"_This section was auto-generated._"* ]]
 }
 
 @test "apply_complete_pr_body previews the full AI-completed body" {
@@ -100,7 +100,7 @@ EOF
     run apply_complete_pr_body
 
     [ "$status" -eq 0 ]
-    [[ "$output" == *"Completed AI overview."* ]]
-    [[ "$output" == *"Ran terraform validate for application modules."* ]]
-    [[ "$output" == *"Documentation updated if applicable"* ]]
+    [[ $output == *"Completed AI overview."* ]]
+    [[ $output == *"Ran terraform validate for application modules."* ]]
+    [[ $output == *"Documentation updated if applicable"* ]]
 }

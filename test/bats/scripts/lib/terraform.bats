@@ -10,14 +10,14 @@ setup() {
     DRY_RUN=true
     run terraform_format check
     [ "$status" -eq 0 ]
-    [[ "$output" == *"DRY-RUN: Would execute: terraform fmt -check -diff"* ]]
+    [[ $output == *"DRY-RUN: Would execute: terraform fmt -check -diff"* ]]
 }
 
 @test "terraform_apply without plan uses var file (dry-run)" {
     DRY_RUN=true
     run terraform_format
     [ "$status" -eq 0 ]
-    [[ "$output" == *"DRY-RUN: Would execute: terraform fmt -recursive"* ]]
+    [[ $output == *"DRY-RUN: Would execute: terraform fmt -recursive"* ]]
 }
 
 @test "terraform_destroy uses var file (dry-run)" {
@@ -78,11 +78,11 @@ setup() {
     DRY_RUN=true
     run terraform_select_workspace "ci-test-ws"
     [ "$status" -eq 0 ]
-    [[ "$output" == *"DRY-RUN: Would execute: terraform workspace new ci-test-ws"* ]]
+    [[ $output == *"DRY-RUN: Would execute: terraform workspace new ci-test-ws"* ]]
 }
 
 @test "terraform_select_workspace errors when no name provided" {
     run terraform_select_workspace ""
     [ "$status" -ne 0 ]
-    [[ "$output" == *"Workspace name is required"* ]]
+    [[ $output == *"Workspace name is required"* ]]
 }
