@@ -55,7 +55,7 @@ repos:
         name: shfmt
         description: Shell script formatter.
         language: system
-        entry: shfmt -w -i 4 -ci -bn -sr
+        entry: shfmt -w -s -i 4 -ci -bn -sr
         types: [shell]
   # --------------------------------------------------------------
   # For Commit Message

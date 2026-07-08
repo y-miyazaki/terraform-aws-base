@@ -239,7 +239,7 @@ function main {
     fi
 
     local result
-    result=$(shfmt -w -i 4 -ci -bn -sr "${files[@]}" 2>&1) || report_failure "shfmt found formatting issues in shell scripts:
+    result=$(shfmt -w -s -i 4 -ci -bn -sr "${files[@]}" 2>&1) || report_failure "shfmt found formatting issues in shell scripts:
 ${result}"
 }
 

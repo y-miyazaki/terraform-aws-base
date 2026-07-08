@@ -527,7 +527,7 @@
   // ------------------------------------------------------------
   // for Shell Script
   // ------------------------------------------------------------
-  "shellformat.flag": "-i 4 -ci -bn -sr",
+  "shellformat.flag": "-s -i 4 -ci -bn -sr",
   "shellformat.path": "shfmt",
   "shellformat.effectLanguages": ["shellscript", "bats"],
   "shellcheck.enable": true,

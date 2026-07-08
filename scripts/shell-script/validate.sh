@@ -251,7 +251,7 @@ function auto_fix_formatting {
     custom_log "DEBUG" "Auto-fixing formatting for: $script_name"
 
     if command -v shfmt &> /dev/null; then
-        if shfmt -w -i 4 -ci -bn -sr "$script" 2> /dev/null; then
+        if shfmt -w -s -i 4 -ci -bn -sr "$script" 2> /dev/null; then
             custom_log "INFO" "✅ Formatted with shfmt: $script_name"
             return 0
         else
