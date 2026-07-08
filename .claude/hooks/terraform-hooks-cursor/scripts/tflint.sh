@@ -80,7 +80,7 @@ function report_failure {
     local hook_event=""
 
     # Step 1: Detect agent (agent-first strategy)
-    if [[ -n "$HOOK_STDIN_DATA" ]]; then
+    if [[ -n $HOOK_STDIN_DATA ]]; then
         # 1. Antigravity (highest priority - unique fields)
         if echo "$HOOK_STDIN_DATA" | jq -e ".terminationReason" > /dev/null 2>&1; then
             agent="antigravity"
@@ -107,7 +107,7 @@ function report_failure {
             fi
 
         # 3. Copilot CLI (env var or Copilot-unique fields, no hook_event_name)
-        elif [[ -n "${GITHUB_COPILOT_API_TOKEN:-}" ]] \
+        elif [[ -n ${GITHUB_COPILOT_API_TOKEN:-} ]] \
             || echo "$HOOK_STDIN_DATA" | jq -e '.transcriptPath // .stopReason // .stop_reason // .toolResult // .tool_result' > /dev/null 2>&1; then
             agent="copilot"
             if echo "$HOOK_STDIN_DATA" | jq -e ".stopReason" > /dev/null 2>&1; then
@@ -129,7 +129,7 @@ function report_failure {
         fi
     fi
 
-    if [[ -z "$agent" && -n "${GITHUB_COPILOT_API_TOKEN:-}" ]]; then
+    if [[ -z $agent && -n ${GITHUB_COPILOT_API_TOKEN:-} ]]; then
         agent="copilot"
     fi
 
@@ -140,7 +140,7 @@ function report_failure {
             exit 0
             ;;
         claude_code)
-            if [[ "$hook_event" == "Stop" ]]; then
+            if [[ $hook_event == "Stop" ]]; then
                 jq -n --arg reason "$reason" '{decision: "block", reason: $reason}'
                 exit 0
             else
@@ -165,7 +165,7 @@ function report_failure {
             exit 2
             ;;
         kiro)
-            if [[ "$hook_event" == "stop" ]]; then
+            if [[ $hook_event == "stop" ]]; then
                 jq -n --arg reason "$reason" '{decision: "block", reason: $reason}'
                 exit 0
             else
@@ -174,7 +174,7 @@ function report_failure {
             fi
             ;;
         vscode)
-            if [[ "$hook_event" == "Stop" ]]; then
+            if [[ $hook_event == "Stop" ]]; then
                 jq -n --arg reason "$reason" '{hookSpecificOutput: {hookEventName: "Stop", decision: "block", reason: $reason}}'
                 exit 0
             else
@@ -229,7 +229,7 @@ function main {
     local fails=0
     local output=""
     for dir in "${dirs[@]}"; do
-        [[ -n "$dir" && -d "$dir" ]] || continue
+        [[ -n $dir && -d $dir ]] || continue
 
         local config_arg=""
         if [[ -f "${dir}/.tflint.hcl" ]]; then
@@ -239,7 +239,7 @@ function main {
         fi
 
         local -a config_args=()
-        if [[ -n "$config_arg" ]]; then
+        if [[ -n $config_arg ]]; then
             config_args=("$config_arg")
         fi
 
@@ -251,12 +251,12 @@ function main {
         }
     done
 
-    if [[ "$fails" -gt 0 ]]; then
+    if [[ $fails -gt 0 ]]; then
         report_failure "tflint found issues in Terraform code:
 ${output}"
     fi
 }
 
-if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
+if [[ ${BASH_SOURCE[0]} == "${0}" ]]; then
     main "$@"
 fi

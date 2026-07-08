@@ -16,7 +16,7 @@
 #######################################
 
 # Prevent multiple loading
-if [[ "${_LIB_ALL_LOADED:-}" == "true" ]]; then
+if [[ ${_LIB_ALL_LOADED:-} == "true" ]]; then
     return 0
 fi
 _LIB_ALL_LOADED=true

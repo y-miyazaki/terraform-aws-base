@@ -621,16 +621,16 @@ run_schemaspy() {
             ;;
         redshift)
             if [ "${SSL_MODE}" == "disable" ]; then
-                conn_props="ssl\\=false"
+                conn_props='ssl\=false'
             else
-                conn_props="ssl\\=true"
+                conn_props='ssl\=true'
             fi
             ;;
         mysql)
             if [ "${SSL_MODE}" == "disable" ]; then
-                conn_props="useSSL\\=false"
+                conn_props='useSSL\=false'
             else
-                conn_props="useSSL\\=true"
+                conn_props='useSSL\=true'
             fi
             ;;
     esac
@@ -825,6 +825,6 @@ main() {
 }
 
 # Script entry point
-if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
+if [[ ${BASH_SOURCE[0]} == "${0}" ]]; then
     main "$@"
 fi

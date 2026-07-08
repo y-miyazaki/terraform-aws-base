@@ -134,7 +134,7 @@ function parse_arguments {
                 error_exit "Unknown option: $1"
                 ;;
             *)
-                if [[ -z "$ROOT_DIR" ]]; then
+                if [[ -z $ROOT_DIR ]]; then
                     ROOT_DIR="$1"
                 else
                     error_exit "Unexpected argument: $1"
@@ -145,11 +145,11 @@ function parse_arguments {
     done
 
     # Resolve root directory: argument > git root > pwd
-    if [[ -z "$ROOT_DIR" ]]; then
+    if [[ -z $ROOT_DIR ]]; then
         ROOT_DIR="$(git rev-parse --show-toplevel 2> /dev/null || pwd)"
     fi
 
-    if [[ ! -d "$ROOT_DIR" ]]; then
+    if [[ ! -d $ROOT_DIR ]]; then
         error_exit "Root directory not found: $ROOT_DIR"
     fi
 }
@@ -218,7 +218,7 @@ function is_binary_executable {
 function print_summary {
     echo_section "Summary"
     local mode_label="Removed"
-    [[ "$DRY_RUN" == "true" ]] && mode_label="Would remove"
+    [[ $DRY_RUN == "true" ]] && mode_label="Would remove"
 
     log "INFO" "${mode_label} ${BINARY_COUNT} binary file(s)"
     log "INFO" "${mode_label} ${DIR_COUNT} build directory/-ies"
@@ -249,7 +249,7 @@ function remove_binary_files {
 
     while IFS= read -r -d '' filepath; do
         if is_binary_executable "$filepath"; then
-            if [[ "$DRY_RUN" == "true" ]]; then
+            if [[ $DRY_RUN == "true" ]]; then
                 log "INFO" "DRY-RUN: Would remove binary: ${filepath}"
             else
                 rm -f "$filepath"
@@ -257,7 +257,7 @@ function remove_binary_files {
             fi
             ((BINARY_COUNT++)) || true
         else
-            if [[ "$VERBOSE" == "true" ]]; then
+            if [[ $VERBOSE == "true" ]]; then
                 log "INFO" "Skipped (not binary executable): ${filepath}"
             fi
         fi
@@ -290,8 +290,8 @@ function remove_build_dirs {
 
     for dir in "${BUILD_DIRS[@]}"; do
         local target="${ROOT_DIR}/${dir}"
-        if [[ -d "$target" ]]; then
-            if [[ "$DRY_RUN" == "true" ]]; then
+        if [[ -d $target ]]; then
+            if [[ $DRY_RUN == "true" ]]; then
                 log "INFO" "DRY-RUN: Would remove directory: ${target}"
             else
                 rm -rf "$target"
@@ -299,7 +299,7 @@ function remove_build_dirs {
             fi
             ((DIR_COUNT++)) || true
         else
-            if [[ "$VERBOSE" == "true" ]]; then
+            if [[ $VERBOSE == "true" ]]; then
                 log "INFO" "Not found (skip): ${target}"
             fi
         fi
@@ -326,13 +326,13 @@ function main {
     parse_arguments "$@"
 
     log "INFO" "Root directory: ${ROOT_DIR}"
-    [[ "$DRY_RUN" == "true" ]] && log "INFO" "Mode: dry-run (no files will be deleted)"
+    [[ $DRY_RUN == "true" ]] && log "INFO" "Mode: dry-run (no files will be deleted)"
 
     remove_build_dirs
     remove_binary_files
     print_summary
 }
 
-if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
+if [[ ${BASH_SOURCE[0]} == "${0}" ]]; then
     main "$@"
 fi

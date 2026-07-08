@@ -201,7 +201,7 @@ function analyze_functions {
     local script_name
     script_name="$(basename "$script")"
 
-    if [[ "$VERBOSE" != "true" ]]; then
+    if [[ $VERBOSE != "true" ]]; then
         return 0
     fi
 
@@ -210,7 +210,7 @@ function analyze_functions {
     local functions
     functions=$(grep -n "^function\|^[a-zA-Z_][a-zA-Z0-9_]*\s*()" "$script" 2> /dev/null | head -10)
 
-    if [[ -n "$functions" ]]; then
+    if [[ -n $functions ]]; then
         custom_log "INFO" "Functions found in $script_name:"
         echo "$functions" | while IFS= read -r func; do
             echo "  $func"
@@ -244,7 +244,7 @@ function auto_fix_formatting {
     local script_name
     script_name="$(basename "$script")"
 
-    if [[ "$AUTO_FIX" != "true" ]]; then
+    if [[ $AUTO_FIX != "true" ]]; then
         return 0
     fi
 
@@ -288,7 +288,7 @@ function auto_fix_shellcheck {
     local script_name
     script_name="$(basename "$script")"
 
-    if [[ "$AUTO_FIX" != "true" ]]; then
+    if [[ $AUTO_FIX != "true" ]]; then
         return 0
     fi
 
@@ -297,7 +297,7 @@ function auto_fix_shellcheck {
     # Get shellcheck suggestions in diff format for auto-fixable issues
     local shellcheck_fixes
     if shellcheck_fixes=$(shellcheck -e SC1091 -f diff "$script" 2> /dev/null); then
-        if [[ -n "$shellcheck_fixes" ]]; then
+        if [[ -n $shellcheck_fixes ]]; then
             # Apply the diff patches
             if echo "$shellcheck_fixes" | patch -p1 --silent 2> /dev/null; then
                 custom_log "INFO" "✅ Applied shellcheck fixes: $script_name"
@@ -336,7 +336,7 @@ function check_complexity {
     local script_name
     script_name="$(basename "$script")"
 
-    if [[ "$VERBOSE" != "true" ]]; then
+    if [[ $VERBOSE != "true" ]]; then
         return 0
     fi
 
@@ -394,7 +394,7 @@ function check_complexity {
 #
 #######################################
 function custom_echo_section {
-    if [[ "$QUIET" != "true" ]]; then
+    if [[ $QUIET != "true" ]]; then
         echo_section "$1"
     fi
 }
@@ -425,7 +425,7 @@ function custom_log {
     local message=$2
 
     # Handle quiet mode
-    if [[ "$QUIET" == "true" ]] && [[ "$level" == "INFO" || "$level" == "DEBUG" ]]; then
+    if [[ $QUIET == "true" ]] && [[ $level == "INFO" || $level == "DEBUG" ]]; then
         return 0
     fi
 
@@ -433,7 +433,7 @@ function custom_log {
     log "$level" "$message"
 
     # Increment warning counter for WARN level
-    if [[ "$level" == "WARN" ]]; then
+    if [[ $level == "WARN" ]]; then
         WARNINGS_COUNT=$((WARNINGS_COUNT + 1))
     fi
 }
@@ -492,40 +492,40 @@ function find_shell_scripts {
 
     for search_path in "${SEARCH_PATHS[@]}"; do
         local resolved_search_path
-        if [[ "$search_path" == /* ]]; then
+        if [[ $search_path == /* ]]; then
             resolved_search_path="$search_path"
         else
             resolved_search_path="$WORKSPACE_ROOT/$search_path"
         fi
 
-        if [[ -f "$resolved_search_path" ]]; then
+        if [[ -f $resolved_search_path ]]; then
             # Direct file path specified
             custom_log "DEBUG" "Adding file: $resolved_search_path" >&2
             scripts+=("$resolved_search_path")
-        elif [[ -d "$resolved_search_path" ]]; then
+        elif [[ -d $resolved_search_path ]]; then
             # Send debug log to stderr to avoid interfering with function output
             custom_log "DEBUG" "Searching for scripts in: $resolved_search_path" >&2
 
             # Find files with .sh extension
             while IFS= read -r -d '' script; do
                 # Double-check it's a file (not directory)
-                if [[ -f "$script" ]]; then
+                if [[ -f $script ]]; then
                     scripts+=("$script")
                 fi
             done < <(find "$resolved_search_path" -type f -name "*.sh" -print0 2> /dev/null)
 
             # Find files with shell shebang but no .sh extension
             while IFS= read -r -d '' script; do
-                if [[ -f "$script" ]] && head -1 "$script" 2> /dev/null | grep -q "^#!/.*sh"; then
+                if [[ -f $script ]] && head -1 "$script" 2> /dev/null | grep -q "^#!/.*sh"; then
                     # Only add if not already in scripts array
                     local already_added=false
                     for existing in "${scripts[@]}"; do
-                        if [[ "$existing" == "$script" ]]; then
+                        if [[ $existing == "$script" ]]; then
                             already_added=true
                             break
                         fi
                     done
-                    if [[ "$already_added" == "false" ]]; then
+                    if [[ $already_added == "false" ]]; then
                         scripts+=("$script")
                     fi
                 fi
@@ -538,7 +538,7 @@ function find_shell_scripts {
 
     # Output only valid files, filtered again to ensure no directories slip through
     for script in "${scripts[@]}"; do
-        if [[ -f "$script" && ! -d "$script" ]]; then
+        if [[ -f $script && ! -d $script ]]; then
             echo "$script"
         fi
     done | sort -u
@@ -565,7 +565,7 @@ function find_shell_scripts {
 #
 #######################################
 function generate_recommendations {
-    if [[ "$VERBOSE" != "true" ]]; then
+    if [[ $VERBOSE != "true" ]]; then
         return 0
     fi
 
@@ -694,7 +694,7 @@ function run_bats_tests {
         bats_bin="bats-core"
     fi
 
-    if [[ -z "$bats_bin" ]]; then
+    if [[ -z $bats_bin ]]; then
         custom_log "WARN" "Bats not found; skipping Bats tests"
         return 0
     fi
@@ -756,7 +756,7 @@ function run_shellcheck {
         return 0
     else
         custom_log "WARN" "⚠️  Shellcheck issues found: $script"
-        if [[ "$VERBOSE" == "true" ]]; then
+        if [[ $VERBOSE == "true" ]]; then
             echo "Shellcheck output:"
             # shellcheck disable=SC2001
             echo "$shellcheck_output" | sed 's/^/  /'
@@ -791,12 +791,12 @@ function validate_permissions {
 
     custom_log "DEBUG" "Validating permissions for: $script_name"
 
-    if [[ -x "$script" ]]; then
+    if [[ -x $script ]]; then
         custom_log "DEBUG" "✅ Script is executable: $script_name"
         return 0
     else
         custom_log "WARN" "⚠️  Script is not executable: $script_name"
-        if [[ "$AUTO_FIX" == "true" ]]; then
+        if [[ $AUTO_FIX == "true" ]]; then
             custom_log "INFO" "Auto-fixing permissions for: $script_name"
             chmod +x "$script"
             custom_log "INFO" "✅ Made executable: $script_name"
@@ -846,14 +846,14 @@ function validate_script {
     custom_log "INFO" "Validating script: $relative_path"
 
     # Skip if it's a directory (should not happen after filtering, but safety check)
-    if [[ -d "$script" ]]; then
+    if [[ -d $script ]]; then
         custom_log "DEBUG" "Skipping directory: $script_name"
         TOTAL_SCRIPTS=$((TOTAL_SCRIPTS - 1)) # Don't count directories
         return 0
     fi
 
     # Check if file exists and is readable
-    if [[ ! -f "$script" ]] || [[ ! -r "$script" ]]; then
+    if [[ ! -f $script ]] || [[ ! -r $script ]]; then
         custom_log "ERROR" "❌ Script not accessible: $script_name"
         FAILED_SCRIPTS_LIST+=("$relative_path (not accessible)")
         FAILED_SCRIPTS=$((FAILED_SCRIPTS + 1))
@@ -892,7 +892,7 @@ function validate_script {
     check_complexity "$script"
 
     # Update counters and arrays
-    if [[ "$validation_passed" == "true" ]]; then
+    if [[ $validation_passed == "true" ]]; then
         custom_log "INFO" "✅ All validations passed: $script_name"
         PASSED_SCRIPTS_LIST+=("$relative_path")
         PASSED_SCRIPTS=$((PASSED_SCRIPTS + 1))
@@ -903,7 +903,7 @@ function validate_script {
     fi
 
     # Track warnings separately
-    if [[ "$shellcheck_passed" == "false" ]] && [[ "$validation_passed" == "true" ]]; then
+    if [[ $shellcheck_passed == "false" ]] && [[ $validation_passed == "true" ]]; then
         WARNING_SCRIPTS_LIST+=("$relative_path (shellcheck warnings)")
     fi
 }
@@ -937,15 +937,15 @@ function validate_shebang {
     local first_line
     first_line=$(head -1 "$script" 2> /dev/null)
 
-    if [[ "$first_line" =~ ^#!/.*sh ]]; then
+    if [[ $first_line =~ ^#!/.*sh ]]; then
         custom_log "DEBUG" "✅ Valid shebang: $script_name ($first_line)"
         return 0
-    elif [[ "$first_line" =~ ^#! ]]; then
+    elif [[ $first_line =~ ^#! ]]; then
         custom_log "WARN" "⚠️  Non-shell shebang: $script_name ($first_line)"
         return 1
     else
         custom_log "WARN" "⚠️  Missing or invalid shebang: $script_name"
-        if [[ "$AUTO_FIX" == "true" ]]; then
+        if [[ $AUTO_FIX == "true" ]]; then
             custom_log "INFO" "Auto-fixing shebang for: $script_name"
             # Create backup and add shebang with error handling
             if ! cp "$script" "$script.bak"; then
@@ -1009,7 +1009,7 @@ function validate_syntax {
         local error_output
         error_output=$(bash -n "$script" 2>&1)
         custom_log "ERROR" "❌ Syntax validation failed: $script_name"
-        if [[ "$VERBOSE" == "true" ]]; then
+        if [[ $VERBOSE == "true" ]]; then
             echo "Syntax errors:"
             # shellcheck disable=SC2001
             echo "$error_output" | sed 's/^/  /'
@@ -1111,6 +1111,6 @@ function main {
 }
 
 # Only call main function if script is executed directly, not sourced
-if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
+if [[ ${BASH_SOURCE[0]} == "$0" ]]; then
     main "$@"
 fi

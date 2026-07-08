@@ -123,7 +123,7 @@ EOF
 #######################################
 function parse_arguments {
     # Handle help flag
-    if [[ $# -eq 0 ]] || [[ "${1:-}" == "-h" ]] || [[ "${1:-}" == "--help" ]]; then
+    if [[ $# -eq 0 ]] || [[ ${1:-} == "-h" ]] || [[ ${1:-} == "--help" ]]; then
         show_usage
     fi
 
@@ -135,12 +135,12 @@ function parse_arguments {
     local input_path="$1"
 
     # Validate file existence before normalization
-    if [[ ! -f "$input_path" ]]; then
+    if [[ ! -f $input_path ]]; then
         error_exit "Error: File not found: $input_path"
     fi
 
     # Validate file extension
-    if [[ ! "$input_path" =~ \.md$ ]]; then
+    if [[ ! $input_path =~ \.md$ ]]; then
         error_exit "Error: File must have .md extension: $input_path"
     fi
 
@@ -148,7 +148,7 @@ function parse_arguments {
     SKILL_FILE="$(realpath "$input_path")"
 
     # Validate path matches expected pattern (SEC-01)
-    if [[ ! "$SKILL_FILE" =~ /(\.github|\.agents|\.claude|\.cursor|cursor|\.kiro|kiro)/skills/.*/SKILL\.md$ ]]; then
+    if [[ ! $SKILL_FILE =~ /(\.github|\.agents|\.claude|\.cursor|cursor|\.kiro|kiro)/skills/.*/SKILL\.md$ ]]; then
         error_exit "Error: File must match <agent-root>/skills/*/SKILL.md where agent-root is one of .github,.agents,.claude,.cursor,cursor,.kiro,kiro: $SKILL_FILE"
     fi
 }
@@ -200,7 +200,7 @@ function check_yaml_syntax {
         in_frontmatter == 1 { print }
     ' "$SKILL_FILE" > "$tmp_frontmatter"
 
-    if [[ ! -s "$tmp_frontmatter" ]]; then
+    if [[ ! -s $tmp_frontmatter ]]; then
         rm -f "$tmp_frontmatter"
         echo "✗ YAML syntax errors detected"
         check_names+=("YAML Syntax")
@@ -348,7 +348,7 @@ function check_progressive_disclosure {
     word_count=$(wc -w < "$SKILL_FILE" 2> /dev/null || echo "0")
     local limit=5000
 
-    if [[ "$word_count" -lt "$limit" ]]; then
+    if [[ $word_count -lt $limit ]]; then
         echo "✓ Word count within limit ($word_count < $limit)"
         check_names+=("Progressive Disclosure")
         check_statuses+=("PASS")
@@ -392,8 +392,8 @@ function check_resource_separation {
     [[ -d "$skill_dir/scripts" ]] && scripts_exists=1
     [[ -d "$skill_dir/references" ]] && reference_exists=1
 
-    if [[ "$reference_exists" -eq 1 ]]; then
-        if [[ "$scripts_exists" -eq 1 ]]; then
+    if [[ $reference_exists -eq 1 ]]; then
+        if [[ $scripts_exists -eq 1 ]]; then
             echo "✓ Required directories present (references/; scripts/ available)"
         else
             echo "✓ Required directories present (references/; scripts/ optional)"
@@ -438,7 +438,7 @@ function check_reference_mandatory_files {
     local ref_dir="$skill_dir/references"
 
     # Skip if references/ directory doesn't exist (already checked by check_resource_separation)
-    if [[ ! -d "$ref_dir" ]]; then
+    if [[ ! -d $ref_dir ]]; then
         echo "⊘ Reference mandatory files check skipped (references/ directory not found)"
         check_names+=("Reference Mandatory Files")
         check_statuses+=("SKIP")
@@ -490,7 +490,7 @@ function check_description_quality {
 
     # Check length <= 1024
     local desc_len=${#desc}
-    if [[ "$desc_len" -gt 1024 ]]; then
+    if [[ $desc_len -gt 1024 ]]; then
         issues+=("exceeds 1024 chars ($desc_len)")
     fi
 
@@ -541,7 +541,7 @@ function check_reference_triggers {
     local ref_section
     ref_section=$(sed -n '/^## Reference Files Guide$/,/^## /p' "$SKILL_FILE" | head -n -1)
 
-    if [[ -z "$ref_section" ]]; then
+    if [[ -z $ref_section ]]; then
         echo "⊘ Reference trigger check skipped (no Reference Files Guide section)"
         check_names+=("Reference Triggers")
         check_statuses+=("SKIP")
@@ -562,7 +562,7 @@ function check_reference_triggers {
     local trigger_lines
     trigger_lines=$(echo "$ref_section" | grep -ciE 'Read when|Always read' || true)
 
-    if [[ "$category_lines" -gt 0 ]] && [[ "$trigger_lines" -eq 0 ]]; then
+    if [[ $category_lines -gt 0 ]] && [[ $trigger_lines -eq 0 ]]; then
         issues+=("category files missing Read when triggers")
     fi
 
@@ -629,7 +629,7 @@ function output_json {
 
     # Determine overall status
     for status in "${check_statuses[@]}"; do
-        [[ "$status" == "FAIL" ]] && overall_status="FAIL"
+        [[ $status == "FAIL" ]] && overall_status="FAIL"
     done
 
     # Output JSON header
@@ -710,6 +710,6 @@ function main {
 }
 
 # Entry point: only execute main if script is run directly (not sourced)
-if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
+if [[ ${BASH_SOURCE[0]} == "${0}" ]]; then
     main "$@"
 fi

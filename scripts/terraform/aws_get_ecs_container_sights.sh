@@ -120,13 +120,13 @@ function extract_unique_families {
         # Add family only if it doesn't already exist in the array
         local family_exists=false
         for existing_family in "${unique_families[@]}"; do
-            if [[ "$existing_family" == "$family" ]]; then
+            if [[ $existing_family == "$family" ]]; then
                 family_exists=true
                 break
             fi
         done
 
-        if [[ "$family_exists" == "false" ]]; then
+        if [[ $family_exists == "false" ]]; then
             unique_families+=("$family")
         fi
     done
@@ -270,6 +270,6 @@ function main {
 }
 
 # Only call main function if script is executed directly, not sourced
-if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
+if [[ ${BASH_SOURCE[0]} == "$0" ]]; then
     main "$@"
 fi

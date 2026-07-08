@@ -81,7 +81,7 @@ function get_repository_from_git {
     local remote_url
     remote_url=$(git remote get-url origin)
 
-    if [[ "$remote_url" =~ github\.com[:/]([^/]+)/(.+?)(.git)?$ ]]; then
+    if [[ $remote_url =~ github\.com[:/]([^/]+)/(.+?)(.git)?$ ]]; then
         echo "${BASH_REMATCH[1]}/${BASH_REMATCH[2]%.git}"
     else
         return 1
@@ -147,9 +147,9 @@ function manage_comment {
     local comment_id
     comment_id=$(find_existing_comment)
 
-    if [[ "$DRY_RUN" == "true" ]]; then
+    if [[ $DRY_RUN == "true" ]]; then
         log "INFO" "DRY-RUN MODE"
-        if [[ -n "$comment_id" ]]; then
+        if [[ -n $comment_id ]]; then
             log "INFO" "Would update existing comment $comment_id"
         else
             log "INFO" "Would create new comment"
@@ -160,7 +160,7 @@ function manage_comment {
         cat "$COMMENT_FILE" >&2
         log "INFO" "---"
     else
-        if [[ -n "$comment_id" ]]; then
+        if [[ -n $comment_id ]]; then
             update_comment "$comment_id"
         else
             create_comment
@@ -187,9 +187,9 @@ function parse_arguments {
                 shift
                 ;;
             *)
-                if [[ -z "$PR_NUMBER" ]] && [[ "$1" =~ ^[0-9]+$ ]]; then
+                if [[ -z $PR_NUMBER ]] && [[ $1 =~ ^[0-9]+$ ]]; then
                     PR_NUMBER="$1"
-                elif [[ -z "$COMMENT_FILE" ]] && [[ -f "$1" ]]; then
+                elif [[ -z $COMMENT_FILE ]] && [[ -f $1 ]]; then
                     COMMENT_FILE="$1"
                 else
                     error_exit "Invalid argument: $1"
@@ -199,13 +199,13 @@ function parse_arguments {
         esac
     done
 
-    if [[ -z "$PR_NUMBER" ]]; then
+    if [[ -z $PR_NUMBER ]]; then
         error_exit "PR_NUMBER is required"
     fi
-    if [[ -z "$COMMENT_FILE" ]]; then
+    if [[ -z $COMMENT_FILE ]]; then
         error_exit "COMMENT_FILE is required"
     fi
-    if [[ ! -f "$COMMENT_FILE" ]]; then
+    if [[ ! -f $COMMENT_FILE ]]; then
         error_exit "Comment file not found: $COMMENT_FILE"
     fi
 }
@@ -217,7 +217,7 @@ function main {
     parse_arguments "$@"
 
     # Auto-detect repository if not provided
-    if [[ -z "$REPOSITORY" ]]; then
+    if [[ -z $REPOSITORY ]]; then
         log "DEBUG" "Auto-detecting repository from git remote"
         if ! REPOSITORY=$(get_repository_from_git); then
             error_exit "Could not determine repository. Use --repo OWNER/REPO"
@@ -236,6 +236,6 @@ function main {
     manage_comment
 }
 
-if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
+if [[ ${BASH_SOURCE[0]} == "${0}" ]]; then
     main "$@"
 fi

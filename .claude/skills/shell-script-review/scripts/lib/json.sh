@@ -57,7 +57,7 @@ function json_string_array {
     # Filter out empty strings
     local -a filtered=()
     for i in "${!items[@]}"; do
-        if [[ -n "${items[i]}" ]]; then
+        if [[ -n ${items[i]} ]]; then
             filtered+=("${items[i]}")
         fi
     done

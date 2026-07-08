@@ -136,7 +136,7 @@ function parse_arguments {
         esac
     done
 
-    if [[ "${SCOPE}" != "staged" && "${SCOPE}" != "all" && "${SCOPE}" != "range" ]]; then
+    if [[ ${SCOPE} != "staged" && ${SCOPE} != "all" && ${SCOPE} != "range" ]]; then
         json_object_start
         json_field_string "status" "error" ","
         json_field_string "message" "--scope must be staged, all, or range" ""
@@ -144,7 +144,7 @@ function parse_arguments {
         exit 0
     fi
 
-    if [[ "${SCOPE}" == "range" && -z "${SINCE_REF}" ]]; then
+    if [[ ${SCOPE} == "range" && -z ${SINCE_REF} ]]; then
         json_object_start
         json_field_string "status" "error" ","
         json_field_string "message" "--scope range requires --since <ref>" ""
@@ -183,15 +183,15 @@ function collect_changes {
 
     local diff_ref
 
-    if [[ "${SCOPE}" == "range" ]]; then
+    if [[ ${SCOPE} == "range" ]]; then
         diff_ref="${SINCE_REF}..HEAD"
     else
         local use_head="false"
 
-        if [[ "${SCOPE}" == "staged" ]]; then
+        if [[ ${SCOPE} == "staged" ]]; then
             local staged_count
             staged_count="$(git diff --cached --name-only 2> /dev/null | wc -l)"
-            if [[ "${staged_count}" -eq 0 ]]; then
+            if [[ ${staged_count} -eq 0 ]]; then
                 use_head="true"
             fi
         else
@@ -199,7 +199,7 @@ function collect_changes {
         fi
 
         diff_ref="--cached"
-        if [[ "${use_head}" == "true" ]]; then
+        if [[ ${use_head} == "true" ]]; then
             diff_ref="HEAD"
         fi
     fi
@@ -211,17 +211,17 @@ function collect_changes {
     mapfile -t rename_lines < <(git diff "${diff_ref}" -M --diff-filter=R --name-status 2> /dev/null || true)
     local line
     for line in "${rename_lines[@]}"; do
-        [[ -z "${line}" ]] && continue
+        [[ -z ${line} ]] && continue
         local old new
         old="$(echo "${line}" | cut -f2)"
         new="$(echo "${line}" | cut -f3)"
-        if [[ -n "${old}" && -n "${new}" ]]; then
+        if [[ -n ${old} && -n ${new} ]]; then
             RENAMED_FILES+=("${old}->${new}")
         fi
     done
 
     # Include untracked files only for 'all' scope (not range)
-    if [[ "${SCOPE}" == "all" ]]; then
+    if [[ ${SCOPE} == "all" ]]; then
         local untracked
         mapfile -t untracked < <(git ls-files --others --exclude-standard 2> /dev/null || true)
         CHANGED_FILES+=("${untracked[@]}")
@@ -263,7 +263,7 @@ function collect_affected_docs {
 
     local file
     for file in "${all_files[@]}"; do
-        [[ -z "${file}" ]] && continue
+        [[ -z ${file} ]] && continue
         case "${file}" in
             *.md) ;; # markdown-only changes checked below
             *)
@@ -274,21 +274,21 @@ function collect_affected_docs {
     done
 
     # Markdown renames or deletions can break cross-references
-    if [[ "${has_relevant_change}" == "false" ]]; then
+    if [[ ${has_relevant_change} == "false" ]]; then
         if [[ ${#DELETED_FILES[@]} -gt 0 || ${#RENAMED_FILES[@]} -gt 0 ]]; then
             local item
             for item in "${DELETED_FILES[@]}"; do
-                [[ "${item}" == *.md ]] && has_relevant_change="true" && break
+                [[ ${item} == *.md ]] && has_relevant_change="true" && break
             done
-            if [[ "${has_relevant_change}" == "false" ]]; then
+            if [[ ${has_relevant_change} == "false" ]]; then
                 for item in "${RENAMED_FILES[@]}"; do
-                    [[ "${item}" == *.md* ]] && has_relevant_change="true" && break
+                    [[ ${item} == *.md* ]] && has_relevant_change="true" && break
                 done
             fi
         fi
     fi
 
-    if [[ "${has_relevant_change}" == "false" ]]; then
+    if [[ ${has_relevant_change} == "false" ]]; then
         return
     fi
 
@@ -376,6 +376,6 @@ function main {
     output_json
 }
 
-if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
+if [[ ${BASH_SOURCE[0]} == "${0}" ]]; then
     main "$@"
 fi

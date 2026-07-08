@@ -64,7 +64,7 @@ function report_failure {
     local agent=""
     local hook_event=""
 
-    if [[ -n "$HOOK_STDIN_DATA" ]]; then
+    if [[ -n $HOOK_STDIN_DATA ]]; then
         if echo "$HOOK_STDIN_DATA" | jq -e ".terminationReason" > /dev/null 2>&1; then
             agent="antigravity"
         elif echo "$HOOK_STDIN_DATA" | jq -e ".toolCall" > /dev/null 2>&1; then
@@ -80,7 +80,7 @@ function report_failure {
             else
                 agent="claude_code"
             fi
-        elif [[ -n "${GITHUB_COPILOT_API_TOKEN:-}" ]] \
+        elif [[ -n ${GITHUB_COPILOT_API_TOKEN:-} ]] \
             || echo "$HOOK_STDIN_DATA" | jq -e '.transcriptPath // .stopReason // .stop_reason // .toolResult // .tool_result' > /dev/null 2>&1; then
             agent="copilot"
             if echo "$HOOK_STDIN_DATA" | jq -e ".stopReason" > /dev/null 2>&1; then
@@ -100,7 +100,7 @@ function report_failure {
         fi
     fi
 
-    if [[ -z "$agent" && -n "${GITHUB_COPILOT_API_TOKEN:-}" ]]; then
+    if [[ -z $agent && -n ${GITHUB_COPILOT_API_TOKEN:-} ]]; then
         agent="copilot"
     fi
 
@@ -110,10 +110,10 @@ function report_failure {
             exit 0
             ;;
         claude_code)
-            if [[ "$hook_event" == "Stop" ]]; then
+            if [[ $hook_event == "Stop" ]]; then
                 jq -n --arg reason "$reason" '{decision: "block", reason: $reason}'
                 exit 0
-            elif [[ "$hook_event" == "PostToolUse" ]]; then
+            elif [[ $hook_event == "PostToolUse" ]]; then
                 jq -n --arg ctx "$reason" '{hookSpecificOutput: {hookEventName: "PostToolUse", additionalContext: $ctx}}'
                 exit 0
             else
@@ -142,7 +142,7 @@ function report_failure {
             exit 2
             ;;
         kiro)
-            if [[ "$hook_event" == "stop" ]]; then
+            if [[ $hook_event == "stop" ]]; then
                 jq -n --arg reason "$reason" '{decision: "block", reason: $reason}'
                 exit 0
             else
@@ -151,10 +151,10 @@ function report_failure {
             fi
             ;;
         vscode)
-            if [[ "$hook_event" == "Stop" ]]; then
+            if [[ $hook_event == "Stop" ]]; then
                 jq -n --arg reason "$reason" '{hookSpecificOutput: {hookEventName: "Stop", decision: "block", reason: $reason}}'
                 exit 0
-            elif [[ "$hook_event" == "PostToolUse" ]]; then
+            elif [[ $hook_event == "PostToolUse" ]]; then
                 jq -n --arg reason "$reason" '{decision: "block", reason: $reason, hookSpecificOutput: {hookEventName: "PostToolUse", additionalContext: $reason}}'
                 exit 0
             else
@@ -209,7 +209,7 @@ function main {
 
     local file=""
     for file in "${files[@]}"; do
-        [[ -f "$file" ]] || continue
+        [[ -f $file ]] || continue
         mkdir -p "${scan_dir}/$(dirname "$file")"
         cp "$file" "${scan_dir}/${file}"
     done
@@ -222,6 +222,6 @@ ${result}"
     fi
 }
 
-if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
+if [[ ${BASH_SOURCE[0]} == "${0}" ]]; then
     main "$@"
 fi

@@ -77,7 +77,7 @@ function get_repository_from_git {
     local remote_url
     remote_url=$(git remote get-url origin)
 
-    if [[ "$remote_url" =~ github\.com[:/]([^/]+)/(.+?)(.git)?$ ]]; then
+    if [[ $remote_url =~ github\.com[:/]([^/]+)/(.+?)(.git)?$ ]]; then
         echo "${BASH_REMATCH[1]}/${BASH_REMATCH[2]%.git}"
     else
         return 1
@@ -185,13 +185,13 @@ function parse_arguments {
                 ;;
             --format)
                 OUTPUT_FORMAT="$2"
-                if [[ "$OUTPUT_FORMAT" != "json" ]]; then
+                if [[ $OUTPUT_FORMAT != "json" ]]; then
                     error_exit "Unsupported format: $OUTPUT_FORMAT (supported: json)"
                 fi
                 shift 2
                 ;;
             *)
-                if [[ -z "$PR_NUMBER" ]] && [[ "$1" =~ ^[0-9]+$ ]]; then
+                if [[ -z $PR_NUMBER ]] && [[ $1 =~ ^[0-9]+$ ]]; then
                     PR_NUMBER="$1"
                 else
                     error_exit "Invalid argument: $1"
@@ -201,7 +201,7 @@ function parse_arguments {
         esac
     done
 
-    if [[ -z "$PR_NUMBER" ]]; then
+    if [[ -z $PR_NUMBER ]]; then
         error_exit "PR_NUMBER is required"
     fi
 }
@@ -213,7 +213,7 @@ function main {
     parse_arguments "$@"
 
     # Auto-detect repository if not provided
-    if [[ -z "$REPOSITORY" ]]; then
+    if [[ -z $REPOSITORY ]]; then
         log "DEBUG" "Auto-detecting repository from git remote"
         if ! REPOSITORY=$(get_repository_from_git); then
             error_exit "Could not determine repository. Use --repo OWNER/REPO"
@@ -266,6 +266,6 @@ function main {
     esac
 }
 
-if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
+if [[ ${BASH_SOURCE[0]} == "${0}" ]]; then
     main "$@"
 fi

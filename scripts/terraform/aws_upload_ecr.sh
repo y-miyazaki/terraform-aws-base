@@ -192,7 +192,7 @@ function parse_arguments {
                 ;;
             *)
                 # Process repository name
-                if [[ -z "${REPOSITORY_NAME}" ]]; then
+                if [[ -z ${REPOSITORY_NAME} ]]; then
                     REPOSITORY_NAME="$1"
                 else
                     error_exit "Unexpected argument: $1"
@@ -203,7 +203,7 @@ function parse_arguments {
     done
 
     # Validate required arguments
-    if [[ -z "${REPOSITORY_NAME}" ]]; then
+    if [[ -z ${REPOSITORY_NAME} ]]; then
         echo "Error: Repository name is required" >&2
         show_usage
     fi
@@ -243,7 +243,7 @@ function authenticate_ecr {
 
     log "INFO" "Authenticating Docker to ECR registry: $registry_url"
 
-    if [[ "$DRY_RUN" == "true" ]]; then
+    if [[ $DRY_RUN == "true" ]]; then
         log "INFO" "DRY RUN: Would authenticate to ECR registry: $registry_url"
         return 0
     fi
@@ -307,7 +307,7 @@ function build_docker_image {
     log "INFO" "Dockerfile: $DOCKERFILE_PATH"
     log "INFO" "Build context: $BUILD_CONTEXT"
 
-    if [[ "$DRY_RUN" == "true" ]]; then
+    if [[ $DRY_RUN == "true" ]]; then
         log "INFO" "DRY RUN: Would build and tag Docker image: $full_image_name"
         log "INFO" "DRY RUN: Would use Dockerfile: $DOCKERFILE_PATH"
         log "INFO" "DRY RUN: Would use build context: $BUILD_CONTEXT"
@@ -348,7 +348,7 @@ function push_docker_image {
 
     log "INFO" "Pushing Docker image to ECR: $full_image_name"
 
-    if [[ "$DRY_RUN" == "true" ]]; then
+    if [[ $DRY_RUN == "true" ]]; then
         log "INFO" "DRY RUN: Would push Docker image: $full_image_name"
         return 0
     fi
@@ -393,7 +393,7 @@ function tag_existing_image {
     log "INFO" "Source image: $existing_image"
     log "INFO" "Target image: $full_image_name"
 
-    if [[ "$DRY_RUN" == "true" ]]; then
+    if [[ $DRY_RUN == "true" ]]; then
         log "INFO" "DRY RUN: Would tag image '$existing_image' as '$full_image_name'"
         echo "$full_image_name"
         return 0
@@ -434,11 +434,11 @@ function tag_existing_image {
 #
 #######################################
 function validate_build_requirements {
-    if [[ ! -f "$DOCKERFILE_PATH" ]]; then
+    if [[ ! -f $DOCKERFILE_PATH ]]; then
         error_exit "Dockerfile not found at: $DOCKERFILE_PATH\nPlease ensure Dockerfile exists or use -f option to specify correct path"
     fi
 
-    if [[ ! -d "$BUILD_CONTEXT" ]]; then
+    if [[ ! -d $BUILD_CONTEXT ]]; then
         error_exit "Build context directory not found at: $BUILD_CONTEXT\nPlease ensure directory exists or use -c option to specify correct path"
     fi
 
@@ -491,7 +491,7 @@ function main {
     log "INFO" "Repository: $REPOSITORY_NAME"
     log "INFO" "Region: $AWS_REGION"
 
-    if [[ -z "$EXISTING_IMAGE" ]]; then
+    if [[ -z $EXISTING_IMAGE ]]; then
         log "INFO" "Mode: Build and upload"
         log "INFO" "Platform: $DOCKER_PLATFORM"
         log "INFO" "Tag: $IMAGE_TAG"
@@ -503,7 +503,7 @@ function main {
         log "INFO" "ECR tag: $IMAGE_TAG"
     fi
 
-    if [[ "$DRY_RUN" == "true" ]]; then
+    if [[ $DRY_RUN == "true" ]]; then
         log "INFO" "Running in dry-run mode, no changes will be made"
     fi
 
@@ -511,7 +511,7 @@ function main {
     export AWS_DEFAULT_REGION="$AWS_REGION"
 
     # Validate requirements before proceeding
-    if [[ -z "$EXISTING_IMAGE" ]]; then
+    if [[ -z $EXISTING_IMAGE ]]; then
         # Build mode: validate Dockerfile and context
         validate_build_requirements
     fi
@@ -522,7 +522,7 @@ function main {
 
     # Step 2: Build or tag existing image
     local full_image_name
-    if [[ -z "$EXISTING_IMAGE" ]]; then
+    if [[ -z $EXISTING_IMAGE ]]; then
         full_image_name=$(build_docker_image "$REPOSITORY_NAME" "$registry_url")
     else
         full_image_name=$(tag_existing_image "$REPOSITORY_NAME" "$registry_url" "$EXISTING_IMAGE")
@@ -541,6 +541,6 @@ function main {
 }
 
 # Only call main function if script is executed directly, not sourced
-if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
+if [[ ${BASH_SOURCE[0]} == "$0" ]]; then
     main "$@"
 fi

@@ -166,7 +166,7 @@ function run_tflint_check {
     local failed=0
     if [[ ${#TARGET_DIRS[@]} -gt 0 ]]; then
         for target in "${TARGET_DIRS[@]}"; do
-            if [[ -d "$target" ]]; then
+            if [[ -d $target ]]; then
                 pushd "$target" > /dev/null || continue
                 log "INFO" "Running tflint in: $target"
                 if ! terraform_lint "recursive"; then
@@ -213,7 +213,7 @@ function run_tflint_check {
 #
 #######################################
 function run_formatting_check {
-    if [[ "$AUTO_FIX" == "true" ]]; then
+    if [[ $AUTO_FIX == "true" ]]; then
         echo_section "Auto-fixing Terraform formatting"
     else
         echo_section "Checking Terraform formatting"
@@ -222,9 +222,9 @@ function run_formatting_check {
 
     if [[ ${#TARGET_DIRS[@]} -gt 0 ]]; then
         for target in "${TARGET_DIRS[@]}"; do
-            if [[ -d "$target" ]]; then
+            if [[ -d $target ]]; then
                 pushd "$target" > /dev/null || continue
-                if [[ "$AUTO_FIX" == "true" ]]; then
+                if [[ $AUTO_FIX == "true" ]]; then
                     log "INFO" "Applying formatting in: $target"
                     if ! terraform_format; then
                         failed=1
@@ -241,7 +241,7 @@ function run_formatting_check {
             fi
         done
     else
-        if [[ "$AUTO_FIX" == "true" ]]; then
+        if [[ $AUTO_FIX == "true" ]]; then
             log "INFO" "Applying formatting in entire workspace"
             if ! terraform_format; then
                 failed=1
@@ -318,7 +318,7 @@ function process_terraform_directory {
 
     log "INFO" ">>> Investigating Terraform directory: $dir"
 
-    if [[ ! -d "$dir" ]]; then
+    if [[ ! -d $dir ]]; then
         log "WARN" "Directory disappeared, skipping: $dir"
         return 0
     fi
@@ -340,7 +340,7 @@ function process_terraform_directory {
     fi
 
     # Step 4: Generate documentation (terraform-docs) if requested
-    if [[ "$GENERATE_DOCS" == "true" ]]; then
+    if [[ $GENERATE_DOCS == "true" ]]; then
         log "INFO" "Generating documentation (terraform-docs)"
         if ! execute_command_string "terraform-docs markdown table --output-file README.md ./"; then
             log "WARN" "Failed to generate documentation for $dir"
@@ -378,7 +378,7 @@ function run_recursive_validation {
 
     if [[ ${#TARGET_DIRS[@]} -gt 0 ]]; then
         for target in "${TARGET_DIRS[@]}"; do
-            if [[ ! -d "$target" ]]; then
+            if [[ ! -d $target ]]; then
                 continue
             fi
             log "INFO" "Searching for Terraform modules in: $target"
@@ -432,7 +432,7 @@ function main {
 
     # Validate required dependencies
     local required_tools=("terraform" "tflint" "trivy")
-    if [[ "$GENERATE_DOCS" == "true" ]]; then
+    if [[ $GENERATE_DOCS == "true" ]]; then
         required_tools+=("terraform-docs")
     fi
     validate_dependencies "${required_tools[@]}"
@@ -449,16 +449,16 @@ function main {
     end_time=$(date +%s)
     elapsed=$((end_time - start_time))
 
-    if [[ "$EXIT_CODE" -eq 0 ]]; then
+    if [[ $EXIT_CODE -eq 0 ]]; then
         echo_section "All checks completed successfully in ${elapsed} seconds"
         log "INFO" "✅ All validations passed"
     else
         echo_section "Result (completed in ${elapsed} seconds)"
-        [[ "$TFLINT_FAILED" == "1" ]] && echo "❌ tflint" >&2 || echo "✅ tflint" >&2
-        [[ "$VALIDATE_FAILED" == "1" ]] && echo "❌ terraform validate" >&2 || echo "✅ terraform validate" >&2
-        [[ "$FMT_FAILED" == "1" ]] && echo "❌ terraform fmt" >&2 || echo "✅ terraform fmt" >&2
-        [[ "$SECURITY_FAILED" == "1" ]] && echo "❌ security scan (trivy)" >&2 || echo "✅ security scan (trivy)" >&2
-        [[ "$DOCS_FAILED" == "1" ]] && echo "⚠️  terraform-docs" >&2
+        [[ $TFLINT_FAILED == "1" ]] && echo "❌ tflint" >&2 || echo "✅ tflint" >&2
+        [[ $VALIDATE_FAILED == "1" ]] && echo "❌ terraform validate" >&2 || echo "✅ terraform validate" >&2
+        [[ $FMT_FAILED == "1" ]] && echo "❌ terraform fmt" >&2 || echo "✅ terraform fmt" >&2
+        [[ $SECURITY_FAILED == "1" ]] && echo "❌ security scan (trivy)" >&2 || echo "✅ security scan (trivy)" >&2
+        [[ $DOCS_FAILED == "1" ]] && echo "⚠️  terraform-docs" >&2
         log "ERROR" "❌ Some validations failed"
     fi
 
@@ -466,6 +466,6 @@ function main {
 }
 
 # Only call main function if script is executed directly, not sourced
-if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
+if [[ ${BASH_SOURCE[0]} == "$0" ]]; then
     main "$@"
 fi

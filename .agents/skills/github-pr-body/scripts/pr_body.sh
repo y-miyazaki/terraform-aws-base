@@ -73,7 +73,7 @@ TMP_FILES=()
 function cleanup {
     # Remove temporary files
     for file in "${TMP_FILES[@]}"; do
-        if [[ -f "$file" ]]; then
+        if [[ -f $file ]]; then
             rm -f "$file"
         fi
     done
@@ -161,7 +161,7 @@ function get_repository_from_git {
 
     # Extract owner/repo from git URL
     # Handles both HTTPS (github.com/owner/repo.git) and SSH (github.com:owner/repo.git) formats
-    if [[ "$remote_url" =~ github\.com[:/]([^/]+)/(.+?)(.git)?$ ]]; then
+    if [[ $remote_url =~ github\.com[:/]([^/]+)/(.+?)(.git)?$ ]]; then
         echo "${BASH_REMATCH[1]}/${BASH_REMATCH[2]%.git}"
     else
         return 1
@@ -634,17 +634,17 @@ function build_fallback_section {
 function apply_complete_pr_body {
     local complete_body
 
-    if [[ ! -f "$COMPLETE_BODY_FILE" ]]; then
+    if [[ ! -f $COMPLETE_BODY_FILE ]]; then
         error_exit "Body file not found: $COMPLETE_BODY_FILE"
     fi
 
     complete_body=$(cat "$COMPLETE_BODY_FILE")
 
-    if [[ -z "${complete_body//[[:space:]]/}" ]]; then
+    if [[ -z ${complete_body//[[:space:]]/} ]]; then
         error_exit "Body file is empty: $COMPLETE_BODY_FILE"
     fi
 
-    if [[ "$DRY_RUN" == "true" ]]; then
+    if [[ $DRY_RUN == "true" ]]; then
         log "INFO" "DRY-RUN MODE"
         log "INFO" "Would update PR #$PR_NUMBER body from: $COMPLETE_BODY_FILE"
         log "INFO" ""
@@ -719,16 +719,16 @@ function update_pr_body {
     generated_overview=$(extract_h2_section "$generated_body" "## Overview")
     generated_changes=$(extract_h2_section "$generated_body" "## Changes")
 
-    if [[ -z "${generated_overview//[[:space:]]/}" ]]; then
+    if [[ -z ${generated_overview//[[:space:]]/} ]]; then
         error_exit "Generated body is missing ## Overview section"
     fi
 
-    if [[ -z "${generated_changes//[[:space:]]/}" ]]; then
+    if [[ -z ${generated_changes//[[:space:]]/} ]]; then
         error_exit "Generated body is missing ## Changes section"
     fi
 
     template_file="$(git rev-parse --show-toplevel)/.github/PULL_REQUEST_TEMPLATE.md"
-    if [[ ! -f "$template_file" ]]; then
+    if [[ ! -f $template_file ]]; then
         error_exit "Template file not found: $template_file"
     fi
 
@@ -742,17 +742,17 @@ function update_pr_body {
     generated_changes_body=$(section_body_without_heading "$generated_changes")
 
     generated_overview="## Overview"
-    if [[ -n "${generated_overview_body//[[:space:]]/}" ]]; then
+    if [[ -n ${generated_overview_body//[[:space:]]/} ]]; then
         generated_overview+=$'\n\n'
         generated_overview+="$generated_overview_body"
     fi
 
     generated_changes="## Changes"
-    if [[ -n "${template_changes_body//[[:space:]]/}" ]]; then
+    if [[ -n ${template_changes_body//[[:space:]]/} ]]; then
         generated_changes+=$'\n\n'
         generated_changes+="$template_changes_body"
     fi
-    if [[ -n "${generated_changes_body//[[:space:]]/}" ]]; then
+    if [[ -n ${generated_changes_body//[[:space:]]/} ]]; then
         generated_changes+=$'\n\n'
         generated_changes+="$generated_changes_body"
     fi
@@ -765,12 +765,12 @@ function update_pr_body {
         template_headings+="$heading"$'\n'
         section=""
 
-        if [[ "$heading" == "## Changes" ]]; then
+        if [[ $heading == "## Changes" ]]; then
             section="$generated_changes"
         else
             current_section=$(extract_h2_section "$current_body" "$heading")
 
-            if [[ -n "${current_section//[[:space:]]/}" ]] && section_has_visible_content "$current_section"; then
+            if [[ -n ${current_section//[[:space:]]/} ]] && section_has_visible_content "$current_section"; then
                 section="$current_section"
             else
                 template_section=$(extract_h2_section "$template_body" "$heading")
@@ -778,7 +778,7 @@ function update_pr_body {
             fi
         fi
 
-        if [[ -n "${section//[[:space:]]/}" ]]; then
+        if [[ -n ${section//[[:space:]]/} ]]; then
             new_body+=$'\n\n'
             new_body+="$section"
         fi
@@ -798,7 +798,7 @@ function update_pr_body {
     while IFS= read -r heading; do
         if ! printf '%s\n' "$template_headings" | grep -Fxq -- "$heading"; then
             current_section=$(extract_h2_section "$current_body" "$heading")
-            if [[ -n "${current_section//[[:space:]]/}" ]]; then
+            if [[ -n ${current_section//[[:space:]]/} ]]; then
                 new_body+=$'\n\n'
                 new_body+="$current_section"
             fi
@@ -815,7 +815,7 @@ function update_pr_body {
         '
     )
 
-    if [[ "$DRY_RUN" == "true" ]]; then
+    if [[ $DRY_RUN == "true" ]]; then
         log "INFO" "DRY-RUN MODE"
         log "INFO" "Would update PR #$PR_NUMBER body"
         log "INFO" ""
@@ -880,7 +880,7 @@ function parse_arguments {
                 shift
                 ;;
             *)
-                if [[ -z "$PR_NUMBER" ]] && [[ "$1" =~ ^[0-9]+$ ]]; then
+                if [[ -z $PR_NUMBER ]] && [[ $1 =~ ^[0-9]+$ ]]; then
                     PR_NUMBER="$1"
                 else
                     error_exit "Invalid argument: $1"
@@ -891,7 +891,7 @@ function parse_arguments {
     done
 
     # Validate required arguments
-    if [[ -z "$PR_NUMBER" ]]; then
+    if [[ -z $PR_NUMBER ]]; then
         error_exit "PR_NUMBER is required"
     fi
 }
@@ -924,7 +924,7 @@ function main {
     parse_arguments "$@"
 
     # Auto-detect repository if not provided
-    if [[ -z "$REPOSITORY" ]]; then
+    if [[ -z $REPOSITORY ]]; then
         log "DEBUG" "Auto-detecting repository from git remote"
         if ! REPOSITORY=$(get_repository_from_git); then
             error_exit "Could not determine repository. Use --repo OWNER/REPO"
@@ -938,7 +938,7 @@ function main {
     # Verify PR exists
     validate_pr_exists
 
-    if [[ -n "$COMPLETE_BODY_FILE" ]]; then
+    if [[ -n $COMPLETE_BODY_FILE ]]; then
         apply_complete_pr_body
         return 0
     fi
@@ -949,11 +949,11 @@ function main {
     # Update PR Body
     update_pr_body
 
-    if [[ "$DRY_RUN" != "true" ]]; then
+    if [[ $DRY_RUN != "true" ]]; then
         log "INFO" "✅ PR Body updated successfully"
     fi
 }
 
-if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
+if [[ ${BASH_SOURCE[0]} == "${0}" ]]; then
     main "$@"
 fi

@@ -60,7 +60,7 @@ declare -a required_fields=("name" "description" "license")
 #
 #######################################
 function cleanup {
-    if [[ -n "${TMP_FRONTMATTER}" ]] && [[ -f "${TMP_FRONTMATTER}" ]]; then
+    if [[ -n ${TMP_FRONTMATTER} ]] && [[ -f ${TMP_FRONTMATTER} ]]; then
         rm -f "${TMP_FRONTMATTER}"
     fi
 }
@@ -127,7 +127,7 @@ EOF
 #
 #######################################
 function parse_arguments {
-    if [[ "${1:-}" == "-h" ]] || [[ "${1:-}" == "--help" ]]; then
+    if [[ ${1:-} == "-h" ]] || [[ ${1:-} == "--help" ]]; then
         show_usage
     fi
 
@@ -139,13 +139,13 @@ function parse_arguments {
         SKILL_FILE="$1"
     fi
 
-    if [[ ! -f "${SKILL_FILE}" ]]; then
+    if [[ ! -f ${SKILL_FILE} ]]; then
         error_exit "Error: File not found: ${SKILL_FILE}"
     fi
 
     SKILL_FILE="$(realpath "${SKILL_FILE}")"
 
-    if [[ ! "${SKILL_FILE}" =~ /(\.github|\.agents|\.claude|\.cursor|cursor|\.kiro|kiro)/skills/.*/SKILL\.md$ ]]; then
+    if [[ ! ${SKILL_FILE} =~ /(\.github|\.agents|\.claude|\.cursor|cursor|\.kiro|kiro)/skills/.*/SKILL\.md$ ]]; then
         error_exit "Error: File must match <agent-root>/skills/*/SKILL.md where agent-root is one of .github,.agents,.claude,.cursor,cursor,.kiro,kiro: ${SKILL_FILE}"
     fi
 }
@@ -170,7 +170,7 @@ function check_frontmatter_exists {
     local marker_count
     marker_count=$(grep -c '^---$' "${SKILL_FILE}" || true)
 
-    if [[ "${marker_count}" -ge 2 ]]; then
+    if [[ ${marker_count} -ge 2 ]]; then
         check_names+=("YAML Frontmatter Markers")
         check_statuses+=("PASS")
         check_details+=("")
@@ -226,7 +226,7 @@ function check_yaml_syntax {
         in_frontmatter == 1 { print }
     ' "${SKILL_FILE}" > "${TMP_FRONTMATTER}"
 
-    if [[ ! -s "${TMP_FRONTMATTER}" ]]; then
+    if [[ ! -s ${TMP_FRONTMATTER} ]]; then
         check_names+=("YAML Frontmatter Syntax")
         check_statuses+=("FAIL")
         check_details+=("empty frontmatter")
@@ -347,7 +347,7 @@ function check_word_count {
     local word_count
     word_count=$(wc -w < "${SKILL_FILE}")
 
-    if [[ "${word_count}" -lt 5000 ]]; then
+    if [[ ${word_count} -lt 5000 ]]; then
         check_names+=("Progressive Disclosure")
         check_statuses+=("PASS")
         check_details+=("${word_count}")
@@ -432,7 +432,7 @@ function print_json_results {
 
     for i in "${!check_names[@]}"; do
         local comma=""
-        if [[ "${i}" -lt $((${#check_names[@]} - 1)) ]]; then
+        if [[ ${i} -lt $((${#check_names[@]} - 1)) ]]; then
             comma=","
         fi
 
@@ -479,7 +479,7 @@ function main {
     local overall_status="PASS"
     local status
     for status in "${check_statuses[@]}"; do
-        if [[ "${status}" == "FAIL" ]]; then
+        if [[ ${status} == "FAIL" ]]; then
             overall_status="FAIL"
             break
         fi
@@ -487,13 +487,13 @@ function main {
 
     print_json_results "${overall_status}"
 
-    if [[ "${overall_status}" == "FAIL" ]]; then
+    if [[ ${overall_status} == "FAIL" ]]; then
         exit 1
     fi
 
     exit 0
 }
 
-if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
+if [[ ${BASH_SOURCE[0]} == "${0}" ]]; then
     main "$@"
 fi

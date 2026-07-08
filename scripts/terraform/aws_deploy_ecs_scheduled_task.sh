@@ -157,12 +157,12 @@ function parse_arguments {
     done
 
     # Validate required arguments
-    if [[ -z "${TASK_PATH}" ]]; then
+    if [[ -z ${TASK_PATH} ]]; then
         echo "Error: --path is required" >&2
         show_usage
     fi
 
-    if [[ "$ACTION" == "run" && -z "${RULE_NAME}" ]]; then
+    if [[ $ACTION == "run" && -z ${RULE_NAME} ]]; then
         echo "Error: --rule-name is required for the run action" >&2
         show_usage
     fi
@@ -205,7 +205,7 @@ function apply_scheduled_task {
         --ext-str AWS_REGION="$AWS_REGION" 2>&1); then
         # Filter out log messages to get actual diff content
         actual_td_diff=$(echo "$td_diff" | grep -v "^\[" | grep -v "^20[0-9][0-9]" | grep -v "^\s*$" || true)
-        if [[ -n "$actual_td_diff" ]]; then
+        if [[ -n $actual_td_diff ]]; then
             td_changed=true
             echo "$actual_td_diff"
         else
@@ -223,7 +223,7 @@ function apply_scheduled_task {
     local schedule_changed=false schedule_diff actual_schedule_diff
     if schedule_diff=$(ecschedule -conf "$tmp_config" diff -all -u 2>&1); then
         actual_schedule_diff=$(echo "$schedule_diff" | grep -v "^\[" | grep -v "^20[0-9][0-9]" | grep -v "^\s*$" || true)
-        if [[ -n "$actual_schedule_diff" ]]; then
+        if [[ -n $actual_schedule_diff ]]; then
             schedule_changed=true
             echo "$actual_schedule_diff"
         else
@@ -234,14 +234,14 @@ function apply_scheduled_task {
         log "INFO" "EventBridge rules: diff failed, will apply"
     fi
 
-    if [[ "$td_changed" == "false" && "$schedule_changed" == "false" ]]; then
+    if [[ $td_changed == "false" && $schedule_changed == "false" ]]; then
         log "INFO" "No changes detected, skipping deploy"
         return 0
     fi
 
     # Step 2: Register task definition via ecspresso if changed
     # ecschedule apply requires the task definition to already exist in ECS
-    if [[ "$td_changed" == "true" ]]; then
+    if [[ $td_changed == "true" ]]; then
         echo_section "Registering task definition (ecspresso register)"
         ecspresso register \
             --config ecspresso.jsonnet \
@@ -253,7 +253,7 @@ function apply_scheduled_task {
     fi
 
     # Step 3: Apply EventBridge rules via ecschedule if changed
-    if [[ "$schedule_changed" == "true" ]]; then
+    if [[ $schedule_changed == "true" ]]; then
         echo_section "Applying EventBridge rules (ecschedule apply)"
         ecschedule -conf "$tmp_config" apply -all -prune
         log "INFO" "Apply completed"
@@ -416,6 +416,6 @@ function main {
 }
 
 # Only call main function if script is executed directly, not sourced
-if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
+if [[ ${BASH_SOURCE[0]} == "$0" ]]; then
     main "$@"
 fi

@@ -53,20 +53,20 @@ function terraform_apply {
     echo_section "Terraform apply"
 
     local apply_cmd
-    if [[ -n "$plan_file" && -f "$plan_file" ]]; then
+    if [[ -n $plan_file && -f $plan_file ]]; then
         # Apply from plan file
         apply_cmd="terraform apply $plan_file"
     else
         # Direct apply with variables
         local var_file="terraform.${env_name}.tfvars"
-        if [[ ! -f "$var_file" ]]; then
+        if [[ ! -f $var_file ]]; then
             error_exit "Variables file not found: $var_file"
         fi
         apply_cmd="terraform apply -var-file=$var_file"
     fi
 
     # Add auto-approve if specified
-    if [[ "$auto_approve" == "auto-approve" ]]; then
+    if [[ $auto_approve == "auto-approve" ]]; then
         apply_cmd="$apply_cmd --auto-approve"
     fi
 
@@ -102,14 +102,14 @@ function terraform_destroy {
     echo_section "Terraform destroy"
 
     # Check if variables file exists
-    if [[ ! -f "$var_file" ]]; then
+    if [[ ! -f $var_file ]]; then
         error_exit "Variables file not found: $var_file"
     fi
 
     local destroy_cmd="terraform destroy -var-file=$var_file"
 
     # Add auto-approve if specified
-    if [[ "$auto_approve" == "auto-approve" ]]; then
+    if [[ $auto_approve == "auto-approve" ]]; then
         destroy_cmd="$destroy_cmd --auto-approve"
     fi
 
@@ -159,7 +159,7 @@ function terraform_get_workspace {
 function terraform_format {
     local check_mode="${1:-}"
 
-    if [[ "$check_mode" == "check" ]]; then
+    if [[ $check_mode == "check" ]]; then
         echo_section "Terraform format check"
         if execute_command_string "terraform fmt -check -diff"; then
             log "INFO" "Terraform files are properly formatted"
@@ -200,12 +200,12 @@ function terraform_init {
     echo_section "Terraform initialization"
 
     # Check if backend config file exists
-    if [[ ! -f "$backend_config" ]]; then
+    if [[ ! -f $backend_config ]]; then
         error_exit "Backend configuration file not found: $backend_config"
     fi
 
     local init_cmd="terraform init -reconfigure -backend-config=$backend_config"
-    if [[ -n "$additional_options" ]]; then
+    if [[ -n $additional_options ]]; then
         init_cmd="$init_cmd $additional_options"
     fi
 
@@ -243,12 +243,12 @@ function terraform_plan {
     echo_section "Terraform plan"
 
     # Check if variables file exists
-    if [[ ! -f "$var_file" ]]; then
+    if [[ ! -f $var_file ]]; then
         error_exit "Variables file not found: $var_file"
     fi
 
     local plan_cmd="terraform plan -out=$plan_file -var-file=$var_file"
-    if [[ -n "$additional_options" ]]; then
+    if [[ -n $additional_options ]]; then
         plan_cmd="$plan_cmd $additional_options"
     fi
 
@@ -278,7 +278,7 @@ function terraform_plan {
 function terraform_select_workspace {
     local workspace="$1"
 
-    if [[ -z "$workspace" ]]; then
+    if [[ -z $workspace ]]; then
         error_exit "Workspace name is required"
     fi
 
@@ -345,7 +345,7 @@ function terraform_lint {
     # Use root .tflint.hcl if it exists and no explicit config is specified
     local root_config
     root_config="$(git rev-parse --show-toplevel 2> /dev/null)/.tflint.hcl"
-    if [[ -f "$root_config" ]]; then
+    if [[ -f $root_config ]]; then
         lint_cmd="$lint_cmd --config=$root_config"
         # Initialize plugins before linting
         log "INFO" "Initializing tflint plugins..."
@@ -354,7 +354,7 @@ function terraform_lint {
         fi
     fi
 
-    if [[ "$recursive_mode" == "recursive" ]]; then
+    if [[ $recursive_mode == "recursive" ]]; then
         lint_cmd="$lint_cmd --recursive"
     fi
 
@@ -442,7 +442,7 @@ function validate_terraform_env {
     validate_dependencies "terraform"
 
     # Create plugin cache directory
-    if [[ -n "${TF_PLUGIN_CACHE_DIR}" ]]; then
+    if [[ -n ${TF_PLUGIN_CACHE_DIR} ]]; then
         if ! execute_command mkdir -p -- "${TF_PLUGIN_CACHE_DIR}"; then
             error_exit "Failed to create Terraform plugin cache directory: ${TF_PLUGIN_CACHE_DIR}"
         fi

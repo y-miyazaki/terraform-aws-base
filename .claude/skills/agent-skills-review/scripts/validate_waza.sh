@@ -119,7 +119,7 @@ function parse_arguments {
                 error_exit "Unknown option: $1"
                 ;;
             *)
-                if [[ -n "$TARGET_INPUT" ]]; then
+                if [[ -n $TARGET_INPUT ]]; then
                     error_exit "Unexpected argument: $1"
                 fi
                 TARGET_INPUT="$1"
@@ -128,7 +128,7 @@ function parse_arguments {
         esac
     done
 
-    if [[ -z "$TARGET_INPUT" ]]; then
+    if [[ -z $TARGET_INPUT ]]; then
         error_exit "Target skill is required. Use -h for usage."
     fi
 }
@@ -154,14 +154,14 @@ function parse_arguments {
 #
 #######################################
 function resolve_target_skill {
-    if [[ "$TARGET_INPUT" == *.md ]]; then
+    if [[ $TARGET_INPUT == *.md ]]; then
         local target_path
-        if [[ ! -f "$TARGET_INPUT" ]]; then
+        if [[ ! -f $TARGET_INPUT ]]; then
             error_exit "SKILL.md file not found: $TARGET_INPUT"
         fi
 
         target_path="$(realpath "$TARGET_INPUT")"
-        if [[ ! "$target_path" =~ /(\.github|\.agents|\.claude|\.cursor|cursor|\.kiro|kiro)/skills/([^/]+)/SKILL\.md$ ]]; then
+        if [[ ! $target_path =~ /(\.github|\.agents|\.claude|\.cursor|cursor|\.kiro|kiro)/skills/([^/]+)/SKILL\.md$ ]]; then
             error_exit "Path must match <agent-root>/skills/*/SKILL.md where agent-root is one of .github,.agents,.claude,.cursor,cursor,.kiro,kiro: $target_path"
         fi
 
@@ -177,11 +177,11 @@ function resolve_target_skill {
     SKILL_FILE="${SKILLS_ROOT}/${TARGET_SKILL_NAME}/SKILL.md"
     EVAL_FILE="${SKILLS_ROOT}/${TARGET_SKILL_NAME}/eval.yaml"
 
-    if [[ ! -f "${SKILL_FILE}" ]]; then
+    if [[ ! -f ${SKILL_FILE} ]]; then
         error_exit "SKILL.md not found: ${SKILL_FILE}"
     fi
 
-    if [[ ! -f "${EVAL_FILE}" ]]; then
+    if [[ ! -f ${EVAL_FILE} ]]; then
         error_exit "eval.yaml not found: ${EVAL_FILE}"
     fi
 }
@@ -205,7 +205,7 @@ function resolve_target_skill {
 function run_waza_check {
     echo_section "Running waza check for ${TARGET_SKILL_NAME}"
 
-    if [[ "$VERBOSE" == "true" ]]; then
+    if [[ $VERBOSE == "true" ]]; then
         log "INFO" "Using waza executable from PATH"
         log "INFO" "Working directory: ${SKILLS_ROOT}"
     fi
@@ -292,6 +292,6 @@ function main {
 }
 
 # Entry point: only execute main if script is run directly (not sourced)
-if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
+if [[ ${BASH_SOURCE[0]} == "${0}" ]]; then
     main "$@"
 fi

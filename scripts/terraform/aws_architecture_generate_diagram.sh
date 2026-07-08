@@ -268,7 +268,7 @@ function generate_diagram {
     fi
 
     # Use OUTPUT_FORMAT if awsdac supports format option
-    if [[ "$VERBOSE" == "true" ]]; then
+    if [[ $VERBOSE == "true" ]]; then
         awsdac -d "$yaml_file" -o "$out_file" --verbose || {
             error_exit "Failed to generate diagram with awsdac"
         }
@@ -310,7 +310,7 @@ function generate_generic_resources {
     local output_mode=${3:-"yaml"}
 
     # Check if resource has configuration
-    if [[ -z "${RESOURCE_CONFIGS[$resource_name]:-}" ]]; then
+    if [[ -z ${RESOURCE_CONFIGS[$resource_name]:-} ]]; then
         log "WARN" "No configuration found for resource: $resource_name"
         return 0
     fi
@@ -324,7 +324,7 @@ function generate_generic_resources {
         "yaml" | *)
             for region in "${REGIONS_TO_CHECK[@]}"; do
                 # Skip region-specific check for global services
-                if [[ "$region_specific" == "false" && "$region" != "${REGIONS_TO_CHECK[0]}" ]]; then
+                if [[ $region_specific == "false" && $region != "${REGIONS_TO_CHECK[0]}" ]]; then
                     continue
                 fi
 
@@ -336,7 +336,7 @@ function generate_generic_resources {
                     case "$aws_service" in
                         "ec2")
                             # Only get EC2 instances not in VPC (standalone EC2-Classic instances)
-                            resources=$(aws ec2 describe-instances --region "$region" --query "Reservations[].Instances[?State.Name==\`running\` && VpcId==null]" --output json 2> /dev/null || echo '[]')
+                            resources=$(aws ec2 describe-instances --region "$region" --query "Reservations[].Instances[?State.Name=='running' && VpcId==null]" --output json 2> /dev/null || echo '[]')
                             resources=$(echo "$resources" | jq -c 'flatten')
                             ;;
                         "rds")
@@ -365,7 +365,7 @@ function generate_generic_resources {
 
                 # Count and collect resource names
                 while IFS= read -r resource_data; do
-                    if [[ "$resource_data" != "null" && "$resource_data" != "" ]]; then
+                    if [[ $resource_data != "null" && $resource_data != "" ]]; then
                         local resource_name_value
                         case "$aws_service" in
                             "ecs")
@@ -382,7 +382,7 @@ function generate_generic_resources {
                                 ;;
                         esac
 
-                        if [[ -n "$resource_name_value" && "$resource_name_value" != "null" ]]; then
+                        if [[ -n $resource_name_value && $resource_name_value != "null" ]]; then
                             resource_names+=("$resource_name_value")
                             resource_count=$((resource_count + 1))
                         fi
@@ -458,7 +458,7 @@ function generate_stack_children {
     if declare -f "$generate_function" > /dev/null; then
         # Use custom function if exists
         stack_lines=$(${generate_function} "" "stacks")
-    elif [[ -n "${HIERARCHICAL_CONFIGS[$category]:-}" ]]; then
+    elif [[ -n ${HIERARCHICAL_CONFIGS[$category]:-} ]]; then
         # Use hierarchical function for hierarchical resources
         case "$category" in
             "lambda_nonvpc")
@@ -471,7 +471,7 @@ function generate_stack_children {
                 stack_lines="${category^}Stack:${category^} Resources"
                 ;;
         esac
-    elif [[ -n "${RESOURCE_CONFIGS[$category]:-}" ]]; then
+    elif [[ -n ${RESOURCE_CONFIGS[$category]:-} ]]; then
         # Use generic function for configured resources
         stack_lines=$(generate_generic_resources "$category" "" "stacks")
     else
@@ -481,7 +481,7 @@ function generate_stack_children {
 
     # Process each stack line
     while IFS=':' read -r stack_name title_suffix; do
-        if [[ -n "$stack_name" && -n "$title_suffix" ]]; then
+        if [[ -n $stack_name && -n $title_suffix ]]; then
             echo "        - ${stack_name}_${safe_region}"
         fi
     done <<< "$stack_lines"
@@ -536,11 +536,11 @@ function generate_vpc_hierarchical_resources {
 
                 # First pass: collect all VPCs
                 while IFS= read -r vpc_info; do
-                    if [[ "$vpc_info" != "null" && "$vpc_info" != "" ]]; then
+                    if [[ $vpc_info != "null" && $vpc_info != "" ]]; then
                         local vpc_id
                         vpc_id=$(echo "$vpc_info" | jq -r '.VpcId // ""')
 
-                        if [[ -n "$vpc_id" && "$vpc_id" != "null" ]]; then
+                        if [[ -n $vpc_id && $vpc_id != "null" ]]; then
                             vpc_data+=("$vpc_info")
                             vpc_count=$((vpc_count + 1))
                         fi
@@ -574,7 +574,7 @@ EOF
 
                         # Try to get VPC name from tags
                         vpc_name=$(echo "$vpc_info" | jq -r '.Tags[]? | select(.Key=="Name") | .Value // ""' 2> /dev/null || echo "")
-                        if [[ -z "$vpc_name" || "$vpc_name" == "null" ]]; then
+                        if [[ -z $vpc_name || $vpc_name == "null" ]]; then
                             vpc_name="$vpc_id"
                         fi
 
@@ -587,11 +587,11 @@ EOF
 
                         # Collect subnet information
                         while IFS= read -r subnet_info; do
-                            if [[ "$subnet_info" != "null" && "$subnet_info" != "" ]]; then
+                            if [[ $subnet_info != "null" && $subnet_info != "" ]]; then
                                 local subnet_id
                                 subnet_id=$(echo "$subnet_info" | jq -r '.SubnetId // ""')
 
-                                if [[ -n "$subnet_id" && "$subnet_id" != "null" ]]; then
+                                if [[ -n $subnet_id && $subnet_id != "null" ]]; then
                                     subnet_children+=("Subnet_${safe_region}_${vpc_counter}_${subnet_counter}")
                                     subnet_counter=$((subnet_counter + 1))
                                 fi
@@ -617,17 +617,17 @@ EOF
                         # Generate subnet definitions with EC2 children
                         subnet_counter=1
                         while IFS= read -r subnet_info; do
-                            if [[ "$subnet_info" != "null" && "$subnet_info" != "" ]]; then
+                            if [[ $subnet_info != "null" && $subnet_info != "" ]]; then
                                 local subnet_id
                                 local subnet_name
                                 local availability_zone
                                 subnet_id=$(echo "$subnet_info" | jq -r '.SubnetId // ""')
                                 availability_zone=$(echo "$subnet_info" | jq -r '.AvailabilityZone // ""')
 
-                                if [[ -n "$subnet_id" && "$subnet_id" != "null" ]]; then
+                                if [[ -n $subnet_id && $subnet_id != "null" ]]; then
                                     # Try to get subnet name from tags
                                     subnet_name=$(echo "$subnet_info" | jq -r '.Tags[]? | select(.Key=="Name") | .Value // ""' 2> /dev/null || echo "")
-                                    if [[ -z "$subnet_name" || "$subnet_name" == "null" ]]; then
+                                    if [[ -z $subnet_name || $subnet_name == "null" ]]; then
                                         subnet_name="$subnet_id ($availability_zone)"
                                     fi
 
@@ -646,11 +646,11 @@ EOF
 
                                     # Collect EC2 instances in this subnet
                                     while IFS= read -r instance_info; do
-                                        if [[ "$instance_info" != "null" && "$instance_info" != "" ]]; then
+                                        if [[ $instance_info != "null" && $instance_info != "" ]]; then
                                             local instance_id
                                             instance_id=$(echo "$instance_info" | jq -r '.InstanceId // ""')
 
-                                            if [[ -n "$instance_id" && "$instance_id" != "null" ]]; then
+                                            if [[ -n $instance_id && $instance_id != "null" ]]; then
                                                 ec2_children+=("EC2Hierarchical_${safe_region}_${vpc_counter}_${subnet_counter}_${ec2_counter}")
                                                 ec2_counter=$((ec2_counter + 1))
                                             fi
@@ -661,22 +661,22 @@ EOF
                                     while IFS= read -r function_base64; do
                                         local function_json
                                         function_json=$(echo "$function_base64" | base64 --decode 2> /dev/null)
-                                        [[ -z "$function_json" ]] && continue
+                                        [[ -z $function_json ]] && continue
 
                                         local function_name
                                         function_name=$(echo "$function_json" | jq -r '.FunctionName // empty')
-                                        [[ -z "$function_name" ]] && continue
+                                        [[ -z $function_name ]] && continue
 
                                         # Check if Lambda is in this VPC
                                         local lambda_vpc_config
                                         lambda_vpc_config=$(echo "$function_json" | jq -r '.VpcConfig // empty')
 
-                                        if [[ -n "$lambda_vpc_config" && "$lambda_vpc_config" != "null" && "$lambda_vpc_config" != "{}" ]]; then
+                                        if [[ -n $lambda_vpc_config && $lambda_vpc_config != "null" && $lambda_vpc_config != "{}" ]]; then
                                             local lambda_vpc_id
                                             lambda_vpc_id=$(echo "$function_json" | jq -r '.VpcConfig.VpcId // empty')
 
                                             # Check if Lambda is in current VPC
-                                            if [[ "$lambda_vpc_id" == "$vpc_id" ]]; then
+                                            if [[ $lambda_vpc_id == "$vpc_id" ]]; then
                                                 lambda_children+=("LambdaVPC_${safe_region}_${vpc_counter}_${lambda_counter}:$function_name")
                                                 lambda_counter=$((lambda_counter + 1))
                                             fi
@@ -713,17 +713,17 @@ EOF
                                     # Generate EC2 instance definitions
                                     ec2_counter=1
                                     while IFS= read -r instance_info; do
-                                        if [[ "$instance_info" != "null" && "$instance_info" != "" ]]; then
+                                        if [[ $instance_info != "null" && $instance_info != "" ]]; then
                                             local instance_id
                                             local instance_name
                                             local instance_type
                                             instance_id=$(echo "$instance_info" | jq -r '.InstanceId // ""')
                                             instance_type=$(echo "$instance_info" | jq -r '.InstanceType // ""')
 
-                                            if [[ -n "$instance_id" && "$instance_id" != "null" ]]; then
+                                            if [[ -n $instance_id && $instance_id != "null" ]]; then
                                                 # Try to get instance name from tags
                                                 instance_name=$(echo "$instance_info" | jq -r '.Tags[]? | select(.Key=="Name") | .Value // ""' 2> /dev/null || echo "")
-                                                if [[ -z "$instance_name" || "$instance_name" == "null" ]]; then
+                                                if [[ -z $instance_name || $instance_name == "null" ]]; then
                                                     instance_name="$instance_id ($instance_type)"
                                                 fi
 
@@ -860,26 +860,26 @@ generate_lambda_nonvpc_hierarchical_resources() {
         while IFS= read -r function_base64; do
             local function_json
             function_json=$(echo "$function_base64" | base64 --decode 2> /dev/null)
-            [[ -z "$function_json" ]] && continue
+            [[ -z $function_json ]] && continue
 
             local function_name
             function_name=$(echo "$function_json" | jq -r '.FunctionName // empty')
-            [[ -z "$function_name" ]] && continue
+            [[ -z $function_name ]] && continue
 
             # Check VPC configuration
             local vpc_config
             vpc_config=$(echo "$function_json" | jq -r '.VpcConfig // empty')
 
             local is_vpc=false
-            if [[ -n "$vpc_config" && "$vpc_config" != "null" && "$vpc_config" != "{}" ]]; then
+            if [[ -n $vpc_config && $vpc_config != "null" && $vpc_config != "{}" ]]; then
                 local vpc_id
                 vpc_id=$(echo "$function_json" | jq -r '.VpcConfig.VpcId // empty')
-                if [[ -n "$vpc_id" && "$vpc_id" != "null" ]]; then
+                if [[ -n $vpc_id && $vpc_id != "null" ]]; then
                     is_vpc=true
                 fi
             fi
 
-            if [[ "$is_vpc" != true ]]; then
+            if [[ $is_vpc != true ]]; then
                 nonvpc_functions+=("$function_name")
             fi
         done < <(echo "$functions_json" | jq -r '.Functions[]? | @base64')
@@ -949,23 +949,23 @@ generate_s3_hierarchical_resources() {
         while IFS= read -r bucket_base64; do
             local bucket_json
             bucket_json=$(echo "$bucket_base64" | base64 --decode 2> /dev/null)
-            [[ -z "$bucket_json" ]] && continue
+            [[ -z $bucket_json ]] && continue
 
             local bucket_name
             bucket_name=$(echo "$bucket_json" | jq -r '.Name // empty')
-            [[ -z "$bucket_name" ]] && continue
+            [[ -z $bucket_name ]] && continue
 
             # Get bucket location
             local bucket_region
             bucket_region=$(aws s3api get-bucket-location --bucket "$bucket_name" 2> /dev/null | jq -r '.LocationConstraint // "us-east-1"')
 
             # Handle us-east-1 special case
-            if [[ "$bucket_region" == "null" || -z "$bucket_region" ]]; then
+            if [[ $bucket_region == "null" || -z $bucket_region ]]; then
                 bucket_region="us-east-1"
             fi
 
             # Filter by region
-            if [[ "$bucket_region" == "$region" ]]; then
+            if [[ $bucket_region == "$region" ]]; then
                 region_buckets+=("$bucket_name")
             fi
         done < <(echo "$buckets_json" | jq -r '.Buckets[]? | @base64')
@@ -1022,7 +1022,7 @@ EOF
 #######################################
 function initialize_regions {
     REGIONS_TO_CHECK=("$AWS_REGION")
-    if [[ "$AWS_REGION" != "us-east-1" ]]; then
+    if [[ $AWS_REGION != "us-east-1" ]]; then
         REGIONS_TO_CHECK+=("us-east-1")
     fi
     log "INFO" "Regions to check: ${REGIONS_TO_CHECK[*]}"
@@ -1108,10 +1108,10 @@ EOF
         if declare -f "$generate_function" > /dev/null; then
             # Use custom function if exists
             ${generate_function} "aws_cli" "yaml"
-        elif [[ -n "${HIERARCHICAL_CONFIGS[$category]:-}" ]]; then
+        elif [[ -n ${HIERARCHICAL_CONFIGS[$category]:-} ]]; then
             # Use hierarchical function for hierarchical resources
             generate_hierarchical_resources "$category"
-        elif [[ -n "${RESOURCE_CONFIGS[$category]:-}" ]]; then
+        elif [[ -n ${RESOURCE_CONFIGS[$category]:-} ]]; then
             # Use generic function for configured resources
             generate_generic_resources "$category" "aws_cli" "yaml"
         else
@@ -1158,8 +1158,8 @@ EOF
 function update_git_repository {
     local diagram_file=$1
 
-    if [[ "$GIT_COMMIT" != "true" ]]; then
-        if [[ "$VERBOSE" == "true" ]]; then
+    if [[ $GIT_COMMIT != "true" ]]; then
+        if [[ $VERBOSE == "true" ]]; then
             log "INFO" "Git integration disabled, skipping repository update"
         fi
         return 0
@@ -1184,7 +1184,7 @@ function update_git_repository {
     }
 
     # Push if we're in CI/CD environment
-    if [[ -n "${CI:-}" || -n "${GITHUB_ACTIONS:-}" || -n "${GITLAB_CI:-}" ]]; then
+    if [[ -n ${CI:-} || -n ${GITHUB_ACTIONS:-} || -n ${GITLAB_CI:-} ]]; then
         log "INFO" "CI/CD environment detected, pushing changes"
         git push || {
             error_exit "Failed to push changes to git repository"
@@ -1223,7 +1223,7 @@ function main {
     parse_arguments "$@"
 
     # Handle dry-run mode
-    if [[ "$DRY_RUN" == "true" ]]; then
+    if [[ $DRY_RUN == "true" ]]; then
         log "INFO" "[DRY RUN] Would generate diagram"
         log "INFO" "[DRY RUN] Output file: $OUTPUT_FILE"
         log "INFO" "[DRY RUN] Git commit: $GIT_COMMIT"
@@ -1269,6 +1269,6 @@ function main {
 }
 
 # Script entry point
-if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
+if [[ ${BASH_SOURCE[0]} == "${0}" ]]; then
     main "$@"
 fi

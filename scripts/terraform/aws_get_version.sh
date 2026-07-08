@@ -257,7 +257,7 @@ function collect_glue_versions {
     local header="Category,SubCategory,SubSubCcategory,Name,Region,Is_Latest,Status,End_of_Support,End_of_Life"
 
     # Return header if requested
-    if [[ "$region" == "header" ]]; then
+    if [[ $region == "header" ]]; then
         echo "$header"
         return 0
     fi
@@ -267,10 +267,10 @@ function collect_glue_versions {
     # Process each version entry from global GLUE_DATA
     while IFS='|' read -r version status end_of_support_date end_of_life_date is_latest_version; do
         # Skip empty lines
-        [[ -z "$version" ]] && continue
+        [[ -z $version ]] && continue
 
         local is_latest=""
-        if [[ "$is_latest_version" == "true" ]]; then
+        if [[ $is_latest_version == "true" ]]; then
             is_latest="Yes"
         fi
 
@@ -304,7 +304,7 @@ function collect_lambda_versions {
     local header="Category,SubCategory,SubSubCcategory,Name,Region,Is_Latest,Status,Deprecation_Date,Block_Function_Create,Block_Function_Update"
 
     # Return header if requested
-    if [[ "$region" == "header" ]]; then
+    if [[ $region == "header" ]]; then
         echo "$header"
         return 0
     fi
@@ -314,10 +314,10 @@ function collect_lambda_versions {
     # Process each runtime entry from global LAMBDA_DATA
     while IFS='|' read -r family runtime status deprecation_date block_create_date block_update_date is_latest_in_family; do
         # Skip empty lines
-        [[ -z "$family" ]] && continue
+        [[ -z $family ]] && continue
 
         local is_latest=""
-        if [[ "$is_latest_in_family" == "true" ]]; then
+        if [[ $is_latest_in_family == "true" ]]; then
             is_latest="Yes"
         fi
 
@@ -351,7 +351,7 @@ function collect_rds_versions {
     local header="Category,SubCategory,SubSubCcategory,Name,Region,Is_Latest,Status,Deprecation_Date,EOL_Date"
 
     # Return header if requested
-    if [[ "$region" == "header" ]]; then
+    if [[ $region == "header" ]]; then
         echo "$header"
         return 0
     fi
@@ -371,15 +371,15 @@ function collect_rds_versions {
 
         # Process each version with AWS API data
         while IFS= read -r version_data; do
-            [[ -z "$version_data" ]] && continue
+            [[ -z $version_data ]] && continue
 
             local version status
             version=$(extract_jq_value "$version_data" '.EngineVersion')
             status=$(extract_jq_value "$version_data" '.Status')
 
-            if [[ -n "$version" && "$version" != "N/A" ]]; then
+            if [[ -n $version && $version != "N/A" ]]; then
                 local is_latest=""
-                if [[ "$version" == "$latest_version" ]]; then
+                if [[ $version == "$latest_version" ]]; then
                     is_latest="Yes"
                 fi
 
@@ -438,7 +438,7 @@ function collect_runtime_versions {
     # Check if this category should maintain grouping structure (no sorting)
     local sort_output="true"
     for no_sort_category in "${NO_SORT_CATEGORIES[@]}"; do
-        if [[ "$category" == "$no_sort_category" ]]; then
+        if [[ $category == "$no_sort_category" ]]; then
             sort_output="false"
             break
         fi
@@ -475,10 +475,10 @@ function output_csv_data {
     local buffer=$3
     local sort_output=${4:-"true"} # Use explicit parameter or default to true
 
-    if [[ -n "$buffer" ]]; then
+    if [[ -n $buffer ]]; then
         {
             echo "$header"
-            if [[ "$sort_output" == "true" ]]; then
+            if [[ $sort_output == "true" ]]; then
                 printf "%b" "$buffer" | sort
             else
                 printf "%b" "$buffer"
@@ -530,7 +530,7 @@ function main {
     log "INFO" "Output file: $OUTPUT_FILE"
     log "INFO" "AWS region: $AWS_REGION"
 
-    if [[ "$DRY_RUN" == "true" ]]; then
+    if [[ $DRY_RUN == "true" ]]; then
         log "INFO" "Running in dry-run mode, no changes will be made"
         return 0
     fi
@@ -540,7 +540,7 @@ function main {
 
     # Determine which categories to process
     local categories_to_process=()
-    if [[ -n "$CATEGORIES" ]]; then
+    if [[ -n $CATEGORIES ]]; then
         # Split comma-separated categories into array
         IFS=',' read -ra categories_to_process <<< "$CATEGORIES"
         log "INFO" "Processing specified categories: ${categories_to_process[*]}"
@@ -549,12 +549,12 @@ function main {
         for category in "${categories_to_process[@]}"; do
             local valid_category=false
             for valid in "${RUNTIME_CATEGORIES[@]}"; do
-                if [[ "$category" == "$valid" ]]; then
+                if [[ $category == "$valid" ]]; then
                     valid_category=true
                     break
                 fi
             done
-            if [[ "$valid_category" == "false" ]]; then
+            if [[ $valid_category == "false" ]]; then
                 error_exit "Invalid category: $category. Valid categories are: ${RUNTIME_CATEGORIES[*]}"
             fi
         done
@@ -583,6 +583,6 @@ function main {
 }
 
 # Script entry point
-if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
+if [[ ${BASH_SOURCE[0]} == "${0}" ]]; then
     main "$@"
 fi

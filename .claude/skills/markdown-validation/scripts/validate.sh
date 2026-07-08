@@ -122,7 +122,7 @@ EOF
 #
 #######################################
 function parse_arguments {
-    if [[ "${1:-}" == "-h" ]] || [[ "${1:-}" == "--help" ]]; then
+    if [[ ${1:-} == "-h" ]] || [[ ${1:-} == "--help" ]]; then
         show_usage
     fi
 
@@ -134,7 +134,7 @@ function parse_arguments {
         TARGET_PATH="$1"
     fi
 
-    if [[ ! -e "${TARGET_PATH}" ]]; then
+    if [[ ! -e ${TARGET_PATH} ]]; then
         error_exit "Error: Path not found: ${TARGET_PATH}"
     fi
 
@@ -164,8 +164,8 @@ function parse_arguments {
 function collect_markdown_files {
     markdown_files=()
 
-    if [[ -f "${TARGET_PATH}" ]]; then
-        if [[ "${TARGET_PATH}" != *.md ]]; then
+    if [[ -f ${TARGET_PATH} ]]; then
+        if [[ ${TARGET_PATH} != *.md ]]; then
             error_exit "Error: File must have .md extension: ${TARGET_PATH}"
         fi
         markdown_files=("${TARGET_PATH}")
@@ -263,10 +263,10 @@ function validate_markdown_files {
                 fi
             done
 
-            if [[ "${link_failed}" == true ]]; then
+            if [[ ${link_failed} == true ]]; then
                 check_names+=("Markdown Links")
                 check_statuses+=("FAIL")
-                if [[ -n "${failing_output}" ]]; then
+                if [[ -n ${failing_output} ]]; then
                     failing_output="${failing_output//$'\n'/ }"
                     check_details+=("markdown-link-check failed for ${failing_file}: ${failing_output}")
                 else
@@ -295,7 +295,7 @@ function print_json_results {
 
     for i in "${!check_names[@]}"; do
         local comma=""
-        if [[ "${i}" -lt $((${#check_names[@]} - 1)) ]]; then
+        if [[ ${i} -lt $((${#check_names[@]} - 1)) ]]; then
             comma=","
         fi
 
@@ -337,7 +337,7 @@ function main {
     local overall_status="PASS"
     local status
     for status in "${check_statuses[@]}"; do
-        if [[ "${status}" == "FAIL" ]]; then
+        if [[ ${status} == "FAIL" ]]; then
             overall_status="FAIL"
             break
         fi
@@ -345,13 +345,13 @@ function main {
 
     print_json_results "${overall_status}"
 
-    if [[ "${overall_status}" == "FAIL" ]]; then
+    if [[ ${overall_status} == "FAIL" ]]; then
         exit 1
     fi
 
     exit 0
 }
 
-if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
+if [[ ${BASH_SOURCE[0]} == "${0}" ]]; then
     main "$@"
 fi

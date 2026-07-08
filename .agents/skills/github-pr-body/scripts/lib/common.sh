@@ -151,7 +151,7 @@ function execute_command {
 function execute_command_string {
     local command_string="$1"
 
-    if [[ -z "$command_string" ]]; then
+    if [[ -z $command_string ]]; then
         error_exit "execute_command_string requires a command string"
     fi
 
@@ -202,7 +202,7 @@ function get_start_time {
 #
 #######################################
 function is_dry_run {
-    [[ "${DRY_RUN:-false}" == "true" ]]
+    [[ ${DRY_RUN:-false} == "true" ]]
 }
 
 #######################################
@@ -226,7 +226,7 @@ function log {
     local level="$1"
     local message="$2"
 
-    if [[ "$level" == "ERROR" ]] || [[ "$level" == "WARN" ]] || [[ "${VERBOSE:-false}" == "true" ]]; then
+    if [[ $level == "ERROR" ]] || [[ $level == "WARN" ]] || [[ ${VERBOSE:-false} == "true" ]]; then
         echo "[$(date +'%Y-%m-%d %H:%M:%S')] [$level] $message" >&2
     fi
     return 0
@@ -286,7 +286,7 @@ function validate_env_vars {
     local missing_vars=()
 
     for var in "${required_vars[@]}"; do
-        if [[ -z "${!var:-}" ]]; then
+        if [[ -z ${!var:-} ]]; then
             missing_vars+=("$var")
         fi
     done

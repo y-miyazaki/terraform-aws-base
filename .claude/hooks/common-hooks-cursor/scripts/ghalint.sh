@@ -56,7 +56,7 @@ function has_changed_workflows {
         git diff --cached --name-only --diff-filter=ACMR -- .github/workflows/*.yml .github/workflows/*.yaml 2> /dev/null || true
         git ls-files --others --exclude-standard -- .github/workflows/*.yml .github/workflows/*.yaml 2> /dev/null || true
     } | awk 'NF' | head -1)
-    [[ -n "$files" ]]
+    [[ -n $files ]]
 }
 
 #######################################
@@ -88,7 +88,7 @@ function report_failure {
     local hook_event=""
 
     # Step 1: Detect agent (agent-first strategy)
-    if [[ -n "$HOOK_STDIN_DATA" ]]; then
+    if [[ -n $HOOK_STDIN_DATA ]]; then
         # 1. Antigravity (highest priority - unique fields)
         if echo "$HOOK_STDIN_DATA" | jq -e ".terminationReason" > /dev/null 2>&1; then
             agent="antigravity"
@@ -115,7 +115,7 @@ function report_failure {
             fi
 
         # 3. Copilot CLI (env var or Copilot-unique fields, no hook_event_name)
-        elif [[ -n "${GITHUB_COPILOT_API_TOKEN:-}" ]] \
+        elif [[ -n ${GITHUB_COPILOT_API_TOKEN:-} ]] \
             || echo "$HOOK_STDIN_DATA" | jq -e '.transcriptPath // .stopReason // .stop_reason // .toolResult // .tool_result' > /dev/null 2>&1; then
             agent="copilot"
             if echo "$HOOK_STDIN_DATA" | jq -e ".stopReason" > /dev/null 2>&1; then
@@ -138,7 +138,7 @@ function report_failure {
     fi
 
     # Final fallback:    # Final fallback: env var check
-    if [[ -z "$agent" && -n "${GITHUB_COPILOT_API_TOKEN:-}" ]]; then
+    if [[ -z $agent && -n ${GITHUB_COPILOT_API_TOKEN:-} ]]; then
         agent="copilot"
     fi
 
@@ -149,10 +149,10 @@ function report_failure {
             exit 0
             ;;
         claude_code)
-            if [[ "$hook_event" == "Stop" ]]; then
+            if [[ $hook_event == "Stop" ]]; then
                 jq -n --arg reason "$reason" '{decision: "block", reason: $reason}'
                 exit 0
-            elif [[ "$hook_event" == "PostToolUse" ]]; then
+            elif [[ $hook_event == "PostToolUse" ]]; then
                 jq -n --arg ctx "$reason" '{hookSpecificOutput: {hookEventName: "PostToolUse", additionalContext: $ctx}}'
                 exit 0
             else
@@ -181,7 +181,7 @@ function report_failure {
             exit 2
             ;;
         kiro)
-            if [[ "$hook_event" == "stop" ]]; then
+            if [[ $hook_event == "stop" ]]; then
                 jq -n --arg reason "$reason" '{decision: "block", reason: $reason}'
                 exit 0
             else
@@ -190,10 +190,10 @@ function report_failure {
             fi
             ;;
         vscode)
-            if [[ "$hook_event" == "Stop" ]]; then
+            if [[ $hook_event == "Stop" ]]; then
                 jq -n --arg reason "$reason" '{hookSpecificOutput: {hookEventName: "Stop", decision: "block", reason: $reason}}'
                 exit 0
-            elif [[ "$hook_event" == "PostToolUse" ]]; then
+            elif [[ $hook_event == "PostToolUse" ]]; then
                 jq -n --arg reason "$reason" '{decision: "block", reason: $reason, hookSpecificOutput: {hookEventName: "PostToolUse", additionalContext: $reason}}'
                 exit 0
             else
@@ -240,6 +240,6 @@ function main {
 ${result}"
 }
 
-if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
+if [[ ${BASH_SOURCE[0]} == "${0}" ]]; then
     main "$@"
 fi

@@ -102,7 +102,7 @@ function parse_arguments {
                 ;;
             *)
                 # Process VPC ID
-                if [[ -z "${VPC_ID:-}" ]]; then
+                if [[ -z ${VPC_ID:-} ]]; then
                     VPC_ID="$1"
                 else
                     error_exit "Unexpected argument: $1"
@@ -113,7 +113,7 @@ function parse_arguments {
     done
 
     # Validate required arguments
-    if [[ -z "${VPC_ID:-}" ]]; then
+    if [[ -z ${VPC_ID:-} ]]; then
         echo "Error: VPC ID is required" >&2
         show_usage
     fi
@@ -314,6 +314,6 @@ function main {
 }
 
 # Only call main function if script is executed directly, not sourced
-if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
+if [[ ${BASH_SOURCE[0]} == "$0" ]]; then
     main "$@"
 fi

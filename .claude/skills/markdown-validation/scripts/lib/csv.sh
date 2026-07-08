@@ -98,11 +98,11 @@ function make_csv_safe {
     value=$(echo "$value" | sed 's/[[:blank:]]\{2,\}/ /g' | sed 's/^[[:blank:]]*//;s/[[:blank:]]*$//')
 
     # If value contains commas, wrap in quotes and escape internal quotes
-    if [[ "$value" == *","* ]]; then
+    if [[ $value == *","* ]]; then
         # Escape existing quotes by doubling them
         value=${value//\"/\"\"}
         value="\"$value\""
-    elif [[ "$value" == *"\""* ]] || [[ "$value" == *$'\n'* ]] || [[ "$value" =~ ^[[:blank:]]*$ ]]; then
+    elif [[ $value == *"\""* ]] || [[ $value == *$'\n'* ]] || [[ $value =~ ^[[:blank:]]*$ ]]; then
         # Escape existing quotes by doubling them
         value=${value//\"/\"\"}
         value="\"$value\""
@@ -136,13 +136,13 @@ function normalize_csv_value {
     local default_value="${2:-""}"
 
     # Treat empty/null as empty string
-    if [[ -z "$value" || "$value" == "null" ]]; then
+    if [[ -z $value || $value == "null" ]]; then
         echo "$default_value"
         return
     fi
 
     # Quote if contains comma, quote, or newline
-    if [[ "$value" == *","* || "$value" == *"\""* || "$value" == *$'\n'* ]]; then
+    if [[ $value == *","* || $value == *"\""* || $value == *$'\n'* ]]; then
         value="${value//\"/\"\"}"
         echo "\"$value\""
     else

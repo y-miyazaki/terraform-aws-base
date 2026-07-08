@@ -83,11 +83,11 @@ function validate_directory_exists {
     local dir_path="$1"
     local description="${2:-Directory}"
 
-    if [[ ! -d "$dir_path" ]]; then
+    if [[ ! -d $dir_path ]]; then
         error_exit "$description not found: $dir_path"
     fi
 
-    if [[ ! -r "$dir_path" ]]; then
+    if [[ ! -r $dir_path ]]; then
         error_exit "$description is not accessible: $dir_path"
     fi
 
@@ -115,11 +115,11 @@ function validate_file_exists {
     local file_path="$1"
     local description="${2:-File}"
 
-    if [[ ! -f "$file_path" ]]; then
+    if [[ ! -f $file_path ]]; then
         error_exit "$description not found: $file_path"
     fi
 
-    if [[ ! -r "$file_path" ]]; then
+    if [[ ! -r $file_path ]]; then
         error_exit "$description is not readable: $file_path"
     fi
 
@@ -152,7 +152,7 @@ function validate_file_permissions {
     local current_perms
     current_perms=$(stat -c "%a" "$file_path" 2> /dev/null)
 
-    if [[ "$current_perms" == "$required_perms" ]]; then
+    if [[ $current_perms == "$required_perms" ]]; then
         log "DEBUG" "File permissions correct ($current_perms): $file_path"
         return 0
     else
@@ -305,7 +305,7 @@ function validate_script_executable {
 
     validate_file_exists "$script_path" "Script file"
 
-    if [[ -x "$script_path" ]]; then
+    if [[ -x $script_path ]]; then
         log "DEBUG" "Script is executable: $script_path"
         return 0
     else
@@ -338,7 +338,7 @@ function validate_script_syntax {
     # Check if file has shebang
     local first_line
     first_line=$(head -n1 "$script_path")
-    if [[ ! "$first_line" =~ ^#! ]]; then
+    if [[ ! $first_line =~ ^#! ]]; then
         log "WARN" "Script missing shebang: $script_path"
     fi
 

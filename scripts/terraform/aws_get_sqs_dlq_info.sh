@@ -232,13 +232,13 @@ function process_dlq_information {
                         # Add DLQ name only if it doesn't already exist in the array
                         dlq_exists=false
                         for existing_dlq in "${dlqs[@]}"; do
-                            if [[ "$existing_dlq" == "$dlq_name" ]]; then
+                            if [[ $existing_dlq == "$dlq_name" ]]; then
                                 dlq_exists=true
                                 break
                             fi
                         done
 
-                        if [[ "$dlq_exists" == "false" ]]; then
+                        if [[ $dlq_exists == "false" ]]; then
                             dlqs+=("$dlq_name")
                         fi
                     fi
@@ -304,6 +304,6 @@ function main {
 }
 
 # Only call main function if script is executed directly, not sourced
-if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
+if [[ ${BASH_SOURCE[0]} == "$0" ]]; then
     main "$@"
 fi

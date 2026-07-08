@@ -149,7 +149,7 @@ function validate_actionlint {
     local start_time
     start_time=$(date +%s)
 
-    if [[ "$VERBOSE" == true ]]; then
+    if [[ $VERBOSE == true ]]; then
         log INFO "Validating workflow syntax and best practices with actionlint"
     fi
 
@@ -181,7 +181,7 @@ function validate_ghalint {
     local start_time
     start_time=$(date +%s)
 
-    if [[ "$VERBOSE" == true ]]; then
+    if [[ $VERBOSE == true ]]; then
         log INFO "Validating workflow security and configuration with ghalint"
     fi
 
@@ -213,14 +213,14 @@ function validate_zizmor {
     local start_time
     start_time=$(date +%s)
 
-    if [[ "$VERBOSE" == true ]]; then
+    if [[ $VERBOSE == true ]]; then
         log INFO "Scanning for GitHub Actions security issues with zizmor"
     fi
 
     # zizmor scans the entire repository, so we use the parent directory of workflows
     local repo_root
     repo_root="$(dirname "${WORKFLOWS_DIR}")"
-    if [[ "$repo_root" == "." && "$WORKFLOWS_DIR" == ".github/workflows" ]]; then
+    if [[ $repo_root == "." && $WORKFLOWS_DIR == ".github/workflows" ]]; then
         repo_root="."
     fi
 
@@ -271,12 +271,12 @@ function main {
 
     echo_section "All validations completed successfully"
 
-    if [[ "$QUIET" == false ]]; then
+    if [[ $QUIET == false ]]; then
         log INFO "GitHub Actions workflows are valid and secure"
     fi
 }
 
 # Only call main function if script is executed directly, not sourced
-if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
+if [[ ${BASH_SOURCE[0]} == "$0" ]]; then
     main "$@"
 fi

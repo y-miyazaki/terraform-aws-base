@@ -144,7 +144,7 @@ function parse_arguments {
     done
 
     # Validate required arguments
-    if [[ -z "${SERVICE_PATH}" ]]; then
+    if [[ -z ${SERVICE_PATH} ]]; then
         echo "Error: --path is required" >&2
         show_usage
     fi
@@ -192,7 +192,7 @@ function deploy_service {
         local actual_diff
         actual_diff=$(echo "$diff_output" | grep -v "^\[" | grep -v "^20[0-9][0-9]" | grep -v "^\s*$" || true)
 
-        if [[ -z "$actual_diff" ]]; then
+        if [[ -z $actual_diff ]]; then
             log "INFO" "Service definition: no changes detected, skipping deploy"
             return 0
         else
@@ -367,6 +367,6 @@ function main {
 }
 
 # Only call main function if script is executed directly, not sourced
-if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
+if [[ ${BASH_SOURCE[0]} == "$0" ]]; then
     main "$@"
 fi

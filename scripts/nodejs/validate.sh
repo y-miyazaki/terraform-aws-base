@@ -131,7 +131,7 @@ function parse_arguments {
                 error_exit "Unknown option: $1"
                 ;;
             *)
-                if [[ -z "${TARGET_DIR:-}" ]]; then
+                if [[ -z ${TARGET_DIR:-} ]]; then
                     TARGET_DIR="$1"
                 else
                     error_exit "Unexpected argument: $1"
@@ -142,11 +142,11 @@ function parse_arguments {
     done
 
     # Set default target directory
-    if [[ -z "${TARGET_DIR:-}" ]]; then
+    if [[ -z ${TARGET_DIR:-} ]]; then
         TARGET_DIR="$(pwd)"
         log "INFO" "No target specified, will auto-detect Node.js projects from current directory: $TARGET_DIR"
     else
-        if [[ ! -d "$TARGET_DIR" ]]; then
+        if [[ ! -d $TARGET_DIR ]]; then
             error_exit "Target directory does not exist: $TARGET_DIR"
         fi
         IS_SCOPED=true
@@ -280,13 +280,13 @@ function run_npm_install {
 
     pushd "$project_dir" > /dev/null || return 1
 
-    if [[ "$DRY_RUN" == "true" ]]; then
+    if [[ $DRY_RUN == "true" ]]; then
         log "INFO" "  🔍 [DRY-RUN] Would run: npm install"
         popd > /dev/null
         return 0
     fi
 
-    if [[ "$VERBOSE" == "true" ]]; then
+    if [[ $VERBOSE == "true" ]]; then
         if npm install; then
             log "INFO" "  ✅ Dependencies installed"
             popd > /dev/null
@@ -337,7 +337,7 @@ function run_outdated_check {
 
     pushd "$project_dir" > /dev/null || return 1
 
-    if [[ "$DRY_RUN" == "true" ]]; then
+    if [[ $DRY_RUN == "true" ]]; then
         log "INFO" "  🔍 [DRY-RUN] Would run: npm outdated"
         popd > /dev/null
         return 0
@@ -347,7 +347,7 @@ function run_outdated_check {
     if outdated_output=$(npm outdated 2>&1); then
         log "INFO" "  ✅ All packages are up to date"
     else
-        if [[ "$VERBOSE" == "true" ]]; then
+        if [[ $VERBOSE == "true" ]]; then
             log "INFO" "  ℹ️  Some packages have updates available:"
             echo "$outdated_output"
         else
@@ -387,7 +387,7 @@ function run_security_audit {
 
     pushd "$project_dir" > /dev/null || return 1
 
-    if [[ "$DRY_RUN" == "true" ]]; then
+    if [[ $DRY_RUN == "true" ]]; then
         log "INFO" "  🔍 [DRY-RUN] Would run: npm audit"
         popd > /dev/null
         return 0
@@ -404,11 +404,11 @@ function run_security_audit {
         return 0
     fi
 
-    if [[ "$FIX_MODE" == "true" ]]; then
+    if [[ $FIX_MODE == "true" ]]; then
         log "INFO" "  🔧 Attempting to fix vulnerabilities..."
         local fix_output
         if fix_output=$(npm audit fix 2>&1); then
-            if [[ "$VERBOSE" == "true" ]]; then
+            if [[ $VERBOSE == "true" ]]; then
                 echo "$fix_output"
             fi
 
@@ -426,7 +426,7 @@ function run_security_audit {
             audit_output="$post_fix_output"
         else
             log "WARN" "  ⚠️  Some vulnerabilities could not be auto-fixed"
-            if [[ "$VERBOSE" == "true" ]]; then
+            if [[ $VERBOSE == "true" ]]; then
                 echo "$fix_output"
             fi
         fi
@@ -436,14 +436,14 @@ function run_security_audit {
     local vuln_count
     vuln_count=$(echo "$audit_output" | grep -E "^[0-9]+ vulnerabilities" | awk '{print $1}' || echo "0")
 
-    if [[ "$vuln_count" -gt 0 ]]; then
+    if [[ $vuln_count -gt 0 ]]; then
         log "ERROR" "  ❌ Security vulnerabilities found: $vuln_count"
         AUDIT_VULNERABILITIES=$((AUDIT_VULNERABILITIES + vuln_count))
     else
         log "WARN" "  ⚠️  Security audit failed - review npm audit output"
     fi
 
-    if [[ "$VERBOSE" == "true" ]]; then
+    if [[ $VERBOSE == "true" ]]; then
         echo "$audit_output"
     fi
 
@@ -483,13 +483,13 @@ function run_tests {
         return 0
     fi
 
-    if [[ "$DRY_RUN" == "true" ]]; then
+    if [[ $DRY_RUN == "true" ]]; then
         log "INFO" "  🔍 [DRY-RUN] Would run: npm test"
         popd > /dev/null
         return 0
     fi
 
-    if [[ "$VERBOSE" == "true" ]]; then
+    if [[ $VERBOSE == "true" ]]; then
         if npm test; then
             log "INFO" "  ✅ All tests passed"
             popd > /dev/null
@@ -651,16 +651,16 @@ function main {
         echo ""
     fi
 
-    if [[ "$EXIT_CODE" -eq 0 ]]; then
+    if [[ $EXIT_CODE -eq 0 ]]; then
         echo_section "All checks completed successfully in ${elapsed} seconds"
         log "INFO" "✅ All validations passed"
     else
         echo_section "Result (completed in ${elapsed} seconds)"
         echo "Result:" >&2
-        [[ "$INSTALL_FAILED" == "1" ]] && echo "❌ npm install" >&2 || echo "✅ npm install" >&2
-        [[ "$LOCKFILE_FAILED" == "1" ]] && echo "❌ package-lock.json" >&2 || echo "✅ package-lock.json" >&2
-        [[ "$SYNC_FAILED" == "1" ]] && echo "❌ package sync" >&2 || echo "✅ package sync" >&2
-        if [[ "$AUDIT_FAILED" == "1" ]]; then
+        [[ $INSTALL_FAILED == "1" ]] && echo "❌ npm install" >&2 || echo "✅ npm install" >&2
+        [[ $LOCKFILE_FAILED == "1" ]] && echo "❌ package-lock.json" >&2 || echo "✅ package-lock.json" >&2
+        [[ $SYNC_FAILED == "1" ]] && echo "❌ package sync" >&2 || echo "✅ package sync" >&2
+        if [[ $AUDIT_FAILED == "1" ]]; then
             if [[ $AUDIT_VULNERABILITIES -gt 0 ]]; then
                 echo "❌ security audit ($AUDIT_VULNERABILITIES vulnerabilities)" >&2
             else
@@ -669,7 +669,7 @@ function main {
         else
             echo "✅ security audit" >&2
         fi
-        [[ "$TEST_FAILED" == "1" ]] && echo "❌ tests" >&2 || echo "✅ tests" >&2
+        [[ $TEST_FAILED == "1" ]] && echo "❌ tests" >&2 || echo "✅ tests" >&2
         log "ERROR" "❌ Some validations failed"
     fi
 
@@ -677,6 +677,6 @@ function main {
 }
 
 # Only call main function if script is executed directly, not sourced
-if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
+if [[ ${BASH_SOURCE[0]} == "$0" ]]; then
     main "$@"
 fi

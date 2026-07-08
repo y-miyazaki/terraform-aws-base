@@ -142,7 +142,7 @@ function parse_arguments {
     done
 
     # Validate required arguments
-    if [[ -z "${LAMBDA_PATH}" ]]; then
+    if [[ -z ${LAMBDA_PATH} ]]; then
         echo "Error: --path is required" >&2
         show_usage
     fi
@@ -221,6 +221,6 @@ function main {
 }
 
 # Only call main function if script is executed directly, not sourced
-if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
+if [[ ${BASH_SOURCE[0]} == "${0}" ]]; then
     main "$@"
 fi

@@ -137,7 +137,7 @@ function parse_arguments {
                 error_exit "Unknown option: $1"
                 ;;
             *)
-                if [[ -z "${TARGET_DIR:-}" ]]; then
+                if [[ -z ${TARGET_DIR:-} ]]; then
                     TARGET_DIR="$1"
                 else
                     error_exit "Unexpected argument: $1"
@@ -146,14 +146,14 @@ function parse_arguments {
                 ;;
         esac
     done
-    if [[ -z "${TARGET_DIR:-}" ]]; then
+    if [[ -z ${TARGET_DIR:-} ]]; then
         TARGET_DIR="."
         log "INFO" "No target specified, will auto-detect Go directories from current location"
     fi
-    if [[ "$TARGET_DIR" != "./..." && ! -d "$TARGET_DIR" && "$TARGET_DIR" != "." ]]; then
+    if [[ $TARGET_DIR != "./..." && ! -d $TARGET_DIR && $TARGET_DIR != "." ]]; then
         error_exit "Target directory does not exist: $TARGET_DIR"
     fi
-    if [[ "$TARGET_DIR" != "." && "$TARGET_DIR" != "./..." ]]; then
+    if [[ $TARGET_DIR != "." && $TARGET_DIR != "./..." ]]; then
         IS_SCOPED=true
     fi
 }
@@ -180,16 +180,16 @@ function determine_target_pattern {
     local base_dir=${1:-.}
 
     # If ./... is specified, use it as-is
-    if [[ "$base_dir" == "./..." ]]; then
+    if [[ $base_dir == "./..." ]]; then
         echo "./..."
         return 0
     fi
 
     # If a specific directory is provided and it exists
-    if [[ -d "$base_dir" && "$base_dir" != "." ]]; then
+    if [[ -d $base_dir && $base_dir != "." ]]; then
         local go_files_count
         go_files_count=$(has_go_files "$base_dir")
-        if [[ "$go_files_count" -gt 0 ]]; then
+        if [[ $go_files_count -gt 0 ]]; then
             echo "$base_dir/..."
             return 0
         fi
@@ -199,7 +199,7 @@ function determine_target_pattern {
     local go_files_count
     go_files_count=$(find . -name "*.go" -not -path "./vendor/*" -not -path "./.*" | wc -l)
 
-    if [[ "$go_files_count" -eq 0 ]]; then
+    if [[ $go_files_count -eq 0 ]]; then
         error_exit "No Go files found in $base_dir or its subdirectories"
     fi
 
@@ -247,7 +247,7 @@ function has_go_files {
 function run_benchmark_tests {
     echo_section "Running benchmark tests"
 
-    if [[ "$DRY_RUN" == "true" ]]; then
+    if [[ $DRY_RUN == "true" ]]; then
         log "INFO" "DRY-RUN: Would run benchmark tests"
         return 0
     fi
@@ -256,11 +256,11 @@ function run_benchmark_tests {
     local has_benchmarks
     has_benchmarks=$(find . -name "*_test.go" -not -path "./vendor/*" -not -path "./.*" -exec grep -l "func Benchmark" {} + 2> /dev/null | head -1 || true)
 
-    if [[ -n "$has_benchmarks" ]]; then
+    if [[ -n $has_benchmarks ]]; then
         log "INFO" "Running benchmark tests..."
         if go test -bench=. -benchmem "$TARGET_PATTERN" > /dev/null 2>&1; then
             log "INFO" "Benchmark tests completed"
-            if [[ "$VERBOSE" == "true" ]]; then
+            if [[ $VERBOSE == "true" ]]; then
                 go test -bench=. -benchmem "$TARGET_PATTERN"
             fi
         else
@@ -290,7 +290,7 @@ function run_benchmark_tests {
 function run_coverage_tests {
     echo_section "Running coverage tests"
 
-    if [[ "$DRY_RUN" == "true" ]]; then
+    if [[ $DRY_RUN == "true" ]]; then
         log "INFO" "DRY-RUN: Would run coverage tests for $TARGET_PATTERN"
         return 0
     fi
@@ -308,7 +308,7 @@ function run_coverage_tests {
         coverage_percent=${coverage_output%\%}
         COVERAGE_PERCENT="$coverage_percent"
 
-        if [[ -n "$coverage_percent" ]]; then
+        if [[ -n $coverage_percent ]]; then
             echo "Coverage: ${coverage_percent}%"
 
             # Compare coverage using awk for better compatibility
@@ -319,7 +319,7 @@ function run_coverage_tests {
                 COVERAGE_FAILED=1
             fi
 
-            if [[ "$VERBOSE" == "true" ]]; then
+            if [[ $VERBOSE == "true" ]]; then
                 echo "Detailed coverage report:"
                 go tool cover -func="$coverage_file"
             fi
@@ -355,7 +355,7 @@ function run_coverage_tests {
 function run_go_build {
     echo_section "Running go build"
 
-    if [[ "$DRY_RUN" == "true" ]]; then
+    if [[ $DRY_RUN == "true" ]]; then
         log "INFO" "DRY-RUN: Would run 'go build \"$TARGET_PATTERN\"'"
         return 0
     fi
@@ -389,18 +389,18 @@ function run_go_build {
 function run_golangci_lint {
     echo_section "Running golangci-lint"
 
-    if [[ "$DRY_RUN" == "true" ]]; then
+    if [[ $DRY_RUN == "true" ]]; then
         log "INFO" "DRY-RUN: Would run 'golangci-lint run $TARGET_PATTERN'"
         return 0
     fi
 
     local lint_args=("run" "--disable" "gocognit")
 
-    if [[ "$FIX_MODE" == "true" ]]; then
+    if [[ $FIX_MODE == "true" ]]; then
         lint_args+=("--fix")
     fi
 
-    if [[ "$VERBOSE" == "true" ]]; then
+    if [[ $VERBOSE == "true" ]]; then
         lint_args+=("-v")
     fi
 
@@ -421,7 +421,7 @@ function run_golangci_lint {
         EXIT_CODE=1
         LINT_FAILED=1
         # Count issues
-        if [[ -f "$lint_output" ]]; then
+        if [[ -f $lint_output ]]; then
             LINT_ISSUES_COUNT=$(grep -cE '^\S+\.go:' "$lint_output" 2> /dev/null || true)
             # Normalize to a single integer token even when grep prints 0 and exits 1.
             LINT_ISSUES_COUNT=$(printf '%s\n' "$LINT_ISSUES_COUNT" | awk 'NR == 1 {print $1; exit}')
@@ -429,7 +429,7 @@ function run_golangci_lint {
             LINT_ISSUES_COUNT=0
         fi
         # Ensure it's a valid number
-        if ! [[ "$LINT_ISSUES_COUNT" =~ ^[0-9]+$ ]]; then
+        if ! [[ $LINT_ISSUES_COUNT =~ ^[0-9]+$ ]]; then
             LINT_ISSUES_COUNT=0
         fi
     fi
@@ -455,14 +455,14 @@ function run_golangci_lint {
 function run_go_mod_tidy {
     echo_section "Running go mod tidy"
 
-    if [[ "$DRY_RUN" == "true" ]]; then
+    if [[ $DRY_RUN == "true" ]]; then
         log "INFO" "DRY-RUN: Would run 'go mod tidy'"
         return 0
     fi
 
     # 特定ディレクトリ指定時はそのディレクトリ内に go.mod がある場合のみ実行
     local mod_dir="."
-    if [[ "$IS_SCOPED" == "true" ]]; then
+    if [[ $IS_SCOPED == "true" ]]; then
         if [[ -f "$TARGET_DIR/go.mod" ]]; then
             mod_dir="$TARGET_DIR"
         else
@@ -507,7 +507,7 @@ function run_go_mod_tidy {
 function run_race_tests {
     echo_section "Running race condition tests"
 
-    if [[ "$DRY_RUN" == "true" ]]; then
+    if [[ $DRY_RUN == "true" ]]; then
         log "INFO" "DRY-RUN: Would run 'CGO_ENABLED=1 go test -race $TARGET_PATTERN'"
         return 0
     fi
@@ -540,13 +540,13 @@ function run_race_tests {
 function run_security_checks {
     echo_section "Running security checks"
 
-    if [[ "$DRY_RUN" == "true" ]]; then
+    if [[ $DRY_RUN == "true" ]]; then
         log "INFO" "DRY-RUN: Would run security checks"
         return 0
     fi
 
     local search_root="."
-    if [[ "$IS_SCOPED" == "true" ]]; then
+    if [[ $IS_SCOPED == "true" ]]; then
         search_root="$TARGET_DIR"
     fi
 
@@ -585,14 +585,14 @@ function run_security_checks {
 function run_tests {
     echo_section "Running go test"
 
-    if [[ "$DRY_RUN" == "true" ]]; then
+    if [[ $DRY_RUN == "true" ]]; then
         log "INFO" "DRY-RUN: Would run 'go test -v $TARGET_PATTERN'"
         return 0
     fi
 
     local test_args=("-v")
 
-    if [[ "$VERBOSE" == "true" ]]; then
+    if [[ $VERBOSE == "true" ]]; then
         test_args+=("-x")
     fi
 
@@ -655,7 +655,7 @@ function main {
     run_race_tests
     run_coverage_tests
     run_security_checks
-    if [[ "$VERBOSE" == "true" ]]; then
+    if [[ $VERBOSE == "true" ]]; then
         run_benchmark_tests
     fi
     # Record end time and calculate elapsed time
@@ -666,12 +666,12 @@ function main {
     echo "Result:" >&2
 
     # Report go build status
-    [[ "$GO_BUILD_FAILED" == "1" ]] && echo "❌ go build" >&2 || echo "✅ go build" >&2
-    if [[ "$LINT_FAILED" == "1" ]]; then
+    [[ $GO_BUILD_FAILED == "1" ]] && echo "❌ go build" >&2 || echo "✅ go build" >&2
+    if [[ $LINT_FAILED == "1" ]]; then
         echo -n "❌ golangci-lint" >&2
         # Use safe arithmetic comparison with default 0 to avoid bash syntax errors
         local issue_count="${LINT_ISSUES_COUNT:-0}"
-        if [[ "$issue_count" != "0" && "$issue_count" -gt 0 ]]; then
+        if [[ $issue_count != "0" && $issue_count -gt 0 ]]; then
             echo " (${LINT_ISSUES_COUNT} issues)" >&2
         else
             echo "" >&2
@@ -679,7 +679,7 @@ function main {
     else
         echo "✅ golangci-lint" >&2
     fi
-    if [[ "$TEST_FAILED" == "1" ]]; then
+    if [[ $TEST_FAILED == "1" ]]; then
         echo -n "❌ go test" >&2
         # Use safe arithmetic comparison with default 0
         if ((${TEST_FAIL_COUNT:-0} > 0)); then
@@ -690,23 +690,23 @@ function main {
     else
         echo "✅ go test" >&2
     fi
-    [[ "$RACE_FAILED" == "1" ]] && echo "❌ go test -race" >&2 || echo "✅ go test -race" >&2
-    if [[ "$COVERAGE_FAILED" == "1" ]]; then
-        if [[ -n "$COVERAGE_PERCENT" ]]; then
+    [[ $RACE_FAILED == "1" ]] && echo "❌ go test -race" >&2 || echo "✅ go test -race" >&2
+    if [[ $COVERAGE_FAILED == "1" ]]; then
+        if [[ -n $COVERAGE_PERCENT ]]; then
             echo "⚠️ go test -cover ($COVERAGE_PERCENT% < ${COVERAGE_THRESHOLD}% threshold)" >&2
         else
             echo "⚠️ go test -cover" >&2
         fi
     else
-        if [[ -n "$COVERAGE_PERCENT" ]]; then
+        if [[ -n $COVERAGE_PERCENT ]]; then
             echo "✅ go test -cover ($COVERAGE_PERCENT%)" >&2
         else
             echo "✅ go test -cover" >&2
         fi
     fi
-    [[ "$SECURITY_FAILED" == "1" ]] && echo "❌ security checks (govulncheck)" >&2 || echo "✅ security checks (govulncheck)" >&2
+    [[ $SECURITY_FAILED == "1" ]] && echo "❌ security checks (govulncheck)" >&2 || echo "✅ security checks (govulncheck)" >&2
 
-    if [[ "$EXIT_CODE" -eq 0 ]]; then
+    if [[ $EXIT_CODE -eq 0 ]]; then
         log "INFO" "✅ All validations passed"
     else
         log "ERROR" "❌ Some validations failed"
@@ -716,6 +716,6 @@ function main {
 }
 
 # Only call main function if script is executed directly, not sourced
-if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
+if [[ ${BASH_SOURCE[0]} == "$0" ]]; then
     main "$@"
 fi

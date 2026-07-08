@@ -115,11 +115,11 @@ function parse_arguments {
                 ;;
             *)
                 # Process positional arguments
-                if [[ -z "$DIR" ]]; then
+                if [[ -z $DIR ]]; then
                     DIR="$1"
-                elif [[ -z "$BINDIR" ]]; then
+                elif [[ -z $BINDIR ]]; then
                     BINDIR="$1"
-                elif [[ "$ARCH" == "arm64" ]]; then
+                elif [[ $ARCH == "arm64" ]]; then
                     ARCH="$1"
                 else
                     error_exit "Unexpected argument: $1"
@@ -130,13 +130,13 @@ function parse_arguments {
     done
 
     # Validate required arguments
-    if [[ -z "$DIR" ]] || [[ -z "$BINDIR" ]]; then
+    if [[ -z $DIR ]] || [[ -z $BINDIR ]]; then
         echo "Error: Missing required arguments" >&2
         show_usage
     fi
 
     # Validate directory exists
-    if [[ ! -d "$DIR" ]]; then
+    if [[ ! -d $DIR ]]; then
         error_exit "Source directory does not exist: $DIR"
     fi
 }
@@ -175,7 +175,7 @@ function build_function {
     zip outputs/"${BINDIR}"/go_"${function}".zip -j "${outdir}/bootstrap" || error_exit "Failed to create zip for $function"
 
     # Get binary size
-    if [[ "$VERBOSE" == "true" ]]; then
+    if [[ $VERBOSE == "true" ]]; then
         local binary_size
         binary_size=$(du -h "${outdir}/bootstrap" | cut -f1)
         log "INFO" "  Binary size: $binary_size"
@@ -208,11 +208,11 @@ function build_lambda_functions {
 
     echo_section "Building Lambda functions"
     log "INFO" "Target: $DIR -> $BINDIR ($ARCH)"
-    if [[ "$PARALLEL" == "true" ]]; then
+    if [[ $PARALLEL == "true" ]]; then
         log "INFO" "Parallel build enabled"
     fi
 
-    if [[ "$PARALLEL" == "true" && $(command -v parallel) ]]; then
+    if [[ $PARALLEL == "true" && $(command -v parallel) ]]; then
         # Use GNU parallel if available and parallel build is enabled
         export -f build_function log error_exit echo_section
         export BINDIR ARCH VERBOSE
@@ -383,6 +383,6 @@ function main {
 }
 
 # Only call main function if script is executed directly, not sourced
-if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
+if [[ ${BASH_SOURCE[0]} == "$0" ]]; then
     main "$@"
 fi

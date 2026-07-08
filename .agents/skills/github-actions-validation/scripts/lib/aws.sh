@@ -105,7 +105,7 @@ function aws_retry_exec {
     # aws_retry_exec [max_retries] <cmd...>
     # If first argument is a positive integer, treat it as max_retries.
     local max_retries=3
-    if [[ $# -gt 0 && "$1" =~ ^[0-9]+$ ]]; then
+    if [[ $# -gt 0 && $1 =~ ^[0-9]+$ ]]; then
         max_retries="$1"
         shift
     fi
@@ -129,10 +129,10 @@ function aws_retry_exec {
         # Try to extract the ErrorName via text parsing first, then fall back to JSON Error.Code.
         local non_retryable_error
         non_retryable_error=$(echo "$output" | sed -n 's/.*An error occurred (\([^)]*\)).*/\1/p' 2> /dev/null || true)
-        if [[ -z "$non_retryable_error" ]]; then
+        if [[ -z $non_retryable_error ]]; then
             non_retryable_error=$(echo "$output" | jq -r '.Error.Code // empty' 2> /dev/null || true)
         fi
-        if [[ -n "$non_retryable_error" ]]; then
+        if [[ -n $non_retryable_error ]]; then
             case "$non_retryable_error" in
                 AccessDenied* | UnauthorizedOperation | Unauthorized* | Validation* | InvalidParameter* | InvalidArgument* | MissingParameter* | BadRequest* | ResourceNotFound* | NoSuchKey | NotFound*)
                     log "ERROR" "aws_retry_exec: non-retryable error detected ($non_retryable_error). Aborting: ${cmd[*]}" >&2
@@ -183,12 +183,12 @@ function aws_paginate_items {
 
     while true; do
         # Try preferring --max-results; fall back to --max-items if unsupported
-        if [[ ${cmd_args[1]:-} == "dynamodb" && ("${cmd_args[2]:-}" == "list-tables" || "${cmd_args[2]:-}" == "list-global-tables") ]]; then
+        if [[ ${cmd_args[1]:-} == "dynamodb" && (${cmd_args[2]:-} == "list-tables" || ${cmd_args[2]:-} == "list-global-tables") ]]; then
             # Special-case DynamoDB pagination which uses ExclusiveStartTableName/ExclusiveStartGlobalTableName and
             # returns LastEvaluatedTableName/LastEvaluatedGlobalTableName. We handle both list-tables and list-global-tables.
             local start_param
             local last_eval_key
-            if [[ "${cmd_args[2]}" == "list-global-tables" ]]; then
+            if [[ ${cmd_args[2]} == "list-global-tables" ]]; then
                 start_param="--exclusive-start-global-table-name"
                 last_eval_key='.LastEvaluatedGlobalTableName'
             else
@@ -196,60 +196,60 @@ function aws_paginate_items {
                 last_eval_key='.LastEvaluatedTableName'
             fi
 
-            if [[ -n "$next_token" ]]; then
+            if [[ -n $next_token ]]; then
                 out=$(aws_retry_exec "${cmd_args[@]}" "$start_param" "$next_token" --output json 2> /dev/null || echo '{}')
             else
                 out=$(aws_retry_exec "${cmd_args[@]}" --output json 2> /dev/null || echo '{}')
             fi
 
             # Print each array item (if present) as a compact JSON object line
-            if [[ -n "$out" ]]; then
+            if [[ -n $out ]]; then
                 echo "$out" | jq -c ".${jq_key}[]?" 2> /dev/null || true
             fi
 
             next_token="$(echo "$out" | jq -r "$last_eval_key // empty" 2> /dev/null || true)"
-            if [[ -z "$next_token" ]]; then
+            if [[ -z $next_token ]]; then
                 break
             fi
             continue
         fi
 
         # Special-case S3 list-objects-v2 which uses ContinuationToken
-        if [[ ${cmd_args[1]:-} == "s3api" && "${cmd_args[2]:-}" == "list-objects-v2" ]]; then
-            if [[ -n "$next_token" ]]; then
+        if [[ ${cmd_args[1]:-} == "s3api" && ${cmd_args[2]:-} == "list-objects-v2" ]]; then
+            if [[ -n $next_token ]]; then
                 out=$(aws_retry_exec "${cmd_args[@]}" --continuation-token "$next_token" --output json 2> /dev/null || echo '{}')
             else
                 out=$(aws_retry_exec "${cmd_args[@]}" --output json 2> /dev/null || echo '{}')
             fi
 
-            if [[ -n "$out" ]]; then
+            if [[ -n $out ]]; then
                 echo "$out" | jq -c ".${jq_key}[]?" 2> /dev/null || true
             fi
 
             next_token="$(echo "$out" | jq -r '.NextContinuationToken // empty' 2> /dev/null || true)"
-            if [[ -z "$next_token" ]]; then
+            if [[ -z $next_token ]]; then
                 break
             fi
             continue
         fi
 
         if [[ $use_max_results -eq 1 ]]; then
-            if [[ -n "$next_token" ]]; then
+            if [[ -n $next_token ]]; then
                 out=$(aws_retry_exec 1 "${cmd_args[@]}" --max-results "$max_results" --next-token "$next_token" --output json 2> /dev/null || echo '{}')
             else
                 out=$(aws_retry_exec 1 "${cmd_args[@]}" --max-results "$max_results" --output json 2> /dev/null || echo '{}')
             fi
             # If call failed and produced no JSON, try --max-items in the next pass
-            if [[ -z "$out" || "$out" == "{}" ]]; then
+            if [[ -z $out || $out == "{}" ]]; then
                 use_max_results=0
-                if [[ -n "$next_token" ]]; then
+                if [[ -n $next_token ]]; then
                     out=$(aws_retry_exec 1 "${cmd_args[@]}" --max-items "$max_results" --starting-token "$next_token" --output json 2> /dev/null || echo '{}')
                 else
                     out=$(aws_retry_exec 1 "${cmd_args[@]}" --max-items "$max_results" --output json 2> /dev/null || echo '{}')
                 fi
             fi
         else
-            if [[ -n "$next_token" ]]; then
+            if [[ -n $next_token ]]; then
                 out=$(aws_retry_exec 1 "${cmd_args[@]}" --max-items "$max_results" --starting-token "$next_token" --output json 2> /dev/null || echo '{}')
             else
                 out=$(aws_retry_exec 1 "${cmd_args[@]}" --max-items "$max_results" --output json 2> /dev/null || echo '{}')
@@ -257,13 +257,13 @@ function aws_paginate_items {
         fi
 
         # Print each array item (if present) as a compact JSON object line
-        if [[ -n "$out" ]]; then
+        if [[ -n $out ]]; then
             echo "$out" | jq -c ".${jq_key}[]?" 2> /dev/null || true
         fi
 
         # Use common token names used by AWS (NextToken, NextMarker, NextContinuationToken)
         next_token="$(echo "$out" | jq -r '.NextToken // .NextMarker // .NextContinuationToken // empty' 2> /dev/null || true)"
-        if [[ -z "$next_token" ]]; then
+        if [[ -z $next_token ]]; then
             break
         fi
     done
@@ -289,7 +289,7 @@ function aws_paginate_items {
 function check_aws_credentials {
     local identity
     identity=$(aws sts get-caller-identity --query 'Arn' --output text 2> /dev/null)
-    if [[ -z "$identity" || "$identity" == "null" ]]; then
+    if [[ -z $identity || $identity == "null" ]]; then
         log "ERROR" "AWS credentials are not set or invalid."
         return 1
     fi
@@ -323,7 +323,7 @@ function extract_jq_array {
     local separator="${4:-,}"
 
     # Handle empty JSON data
-    if [[ -z "$json_data" || "$json_data" == "null" ]]; then
+    if [[ -z $json_data || $json_data == "null" ]]; then
         echo "$default_value"
         return 0
     fi
@@ -332,11 +332,11 @@ function extract_jq_array {
     local result
     if result=$(echo "$json_data" | jq -r "${jq_query} | if type == \"array\" then join(\"${separator}\") else . end" 2> /dev/null); then
         # Handle null, empty, or array results
-        if [[ -z "$result" || "$result" == "null" || "$result" == "[]" ]]; then
+        if [[ -z $result || $result == "null" || $result == "[]" ]]; then
             echo "$default_value"
         else
             # For comma separator, wrap result in double quotes for CSV compatibility
-            if [[ "$separator" == "," ]]; then
+            if [[ $separator == "," ]]; then
                 echo "\"$result\""
             else
                 echo "$result"
@@ -372,7 +372,7 @@ function extract_jq_value {
     local default_value="${3:-N/A}"
 
     # Handle empty JSON data
-    if [[ -z "$json_data" || "$json_data" == "null" ]]; then
+    if [[ -z $json_data || $json_data == "null" ]]; then
         echo "$default_value"
         return 0
     fi
@@ -381,7 +381,7 @@ function extract_jq_value {
     local result
     if result=$(echo "$json_data" | jq -r "$jq_query" 2> /dev/null); then
         # Handle null or empty results
-        if [[ -z "$result" || "$result" == "null" ]]; then
+        if [[ -z $result || $result == "null" ]]; then
             echo "$default_value"
         else
             echo "$result"
@@ -412,7 +412,7 @@ function format_aws_timestamp {
     local timestamp="$1"
 
     # Handle empty or non-numeric input
-    if [[ ! "$timestamp" =~ ^[0-9]+$ ]]; then
+    if [[ ! $timestamp =~ ^[0-9]+$ ]]; then
         echo "N/A"
         return 0
     fi
@@ -478,7 +478,7 @@ function get_aws_region {
     local region_from_aws
     # aws configure get region returns empty string (exit 0) when not set, so capture value and test
     region_from_aws=$(aws configure get region 2> /dev/null || true)
-    if [[ -n "$region_from_aws" ]]; then
+    if [[ -n $region_from_aws ]]; then
         echo "$region_from_aws"
         return 0
     fi
@@ -486,7 +486,7 @@ function get_aws_region {
     # Try to get from instance metadata if running on EC2
     local region_from_meta
     region_from_meta=$(curl -s --max-time 2 http://169.254.169.254/latest/meta-data/placement/region 2> /dev/null || true)
-    if [[ -n "$region_from_meta" ]]; then
+    if [[ -n $region_from_meta ]]; then
         echo "$region_from_meta"
         return 0
     fi
@@ -515,27 +515,27 @@ function get_kms_name {
     local kms_identifier="$1"
     local region="${2:-$(get_aws_region)}"
 
-    if [[ -z "$kms_identifier" || "$kms_identifier" == "N/A" ]]; then
+    if [[ -z $kms_identifier || $kms_identifier == "N/A" ]]; then
         echo "N/A"
         return 1
     fi
 
     # If this is an alias ARN (arn:aws:kms:...:alias/...), just return the alias part
-    if [[ "$kms_identifier" == *":alias/"* ]]; then
+    if [[ $kms_identifier == *":alias/"* ]]; then
         echo "${kms_identifier##*:}"
         return 0
     fi
 
     # If this is a key ARN (arn:aws:kms:...:key/<id>), extract the key id
     local key_id="$kms_identifier"
-    if [[ "$kms_identifier" == arn:aws:kms:*:*:key/* ]]; then
+    if [[ $kms_identifier == arn:aws:kms:*:*:key/* ]]; then
         key_id="${kms_identifier##*/}"
     fi
 
     # Try to describe the key to verify it exists (and obtain the canonical KeyId)
     local key_meta
     key_meta=$(aws_safe_exec "aws kms describe-key --key-id '$key_id' --region '$region' --output json" 2> /dev/null || echo '{}')
-    if [[ "$key_meta" != "{}" ]]; then
+    if [[ $key_meta != "{}" ]]; then
         key_id=$(echo "$key_meta" | jq -r '.KeyMetadata.KeyId' 2> /dev/null || echo "$key_id")
     fi
 
@@ -544,13 +544,13 @@ function get_kms_name {
     # Use aws_paginate_items to reliably handle pagination and transient errors
     aliases_out=$(aws_paginate_items 'Aliases' aws kms list-aliases --key-id "$key_id" --region "$region" 2> /dev/null | jq -s '{Aliases: .}' 2> /dev/null || echo '{}')
     alias_name=$(echo "$aliases_out" | jq -r '.Aliases[]?.AliasName' 2> /dev/null | head -n1 || true)
-    if [[ -n "$alias_name" && "$alias_name" != "null" ]]; then
+    if [[ -n $alias_name && $alias_name != "null" ]]; then
         echo "$alias_name"
         return 0
     fi
 
     # As a last resort, return the KeyId or the original identifier
-    if [[ -n "$key_id" ]]; then
+    if [[ -n $key_id ]]; then
         echo "$key_id"
         return 0
     fi
@@ -580,13 +580,13 @@ function get_security_group_name {
     local sg_id="$1"
     local region="${2:-$(get_aws_region)}"
 
-    if [[ -z "$sg_id" ]]; then
+    if [[ -z $sg_id ]]; then
         echo "N/A"
         return 1
     fi
 
     # Only attempt to resolve well-formed SG IDs
-    if [[ ! "$sg_id" =~ ^sg-[0-9a-fA-F]+$ ]]; then
+    if [[ ! $sg_id =~ ^sg-[0-9a-fA-F]+$ ]]; then
         # Not an SG id; return as-is
         echo "$sg_id"
         return 0
@@ -599,7 +599,7 @@ function get_security_group_name {
         local sg_name
         # Prefer Tag 'Name' if present (case-insensitive), otherwise GroupName
         sg_name=$(echo "$out" | jq -r '.SecurityGroups[0] | (.Tags[]? | select(.Key|ascii_downcase=="name") | .Value) // .GroupName // ""' 2> /dev/null || true)
-        if [[ -n "$sg_name" ]]; then
+        if [[ -n $sg_name ]]; then
             echo "$sg_name"
             return 0
         fi
@@ -634,13 +634,13 @@ function get_subnet_name {
     local subnet_id="$1"
     local region="${2:-$(get_aws_region)}"
 
-    if [[ -z "$subnet_id" ]]; then
+    if [[ -z $subnet_id ]]; then
         echo "N/A"
         return 1
     fi
 
     # Only attempt to resolve well-formed Subnet IDs
-    if [[ ! "$subnet_id" =~ ^subnet-[0-9a-fA-F]+$ ]]; then
+    if [[ ! $subnet_id =~ ^subnet-[0-9a-fA-F]+$ ]]; then
         # Not a Subnet id; return as-is
         echo "$subnet_id"
         return 0
@@ -653,7 +653,7 @@ function get_subnet_name {
         # Some tools/taggers may use 'name' or different casings, so use ascii_downcase
         local subnet_name
         subnet_name=$(echo "$out" | jq -r '.Subnets[0] | (.Tags[]? | select(.Key|ascii_downcase=="name") | .Value) // .SubnetId // ""' 2> /dev/null || true)
-        if [[ -n "$subnet_name" ]]; then
+        if [[ -n $subnet_name ]]; then
             echo "$subnet_name"
             return 0
         fi
@@ -692,10 +692,10 @@ function get_resource_name_from_arn {
     fi
 
     # Handle different resource formats
-    if [[ "$resource_part" == */* ]]; then
+    if [[ $resource_part == */* ]]; then
         # Format: resource-type/resource-name
         echo "${resource_part##*/}"
-    elif [[ "$resource_part" == *:* ]]; then
+    elif [[ $resource_part == *:* ]]; then
         # Format: resource-type:resource-name
         echo "${resource_part##*:}"
     else
@@ -725,13 +725,13 @@ function get_vpc_name {
     local vpc_id="$1"
     local region="${2:-$(get_aws_region)}"
 
-    if [[ -z "$vpc_id" ]]; then
+    if [[ -z $vpc_id ]]; then
         echo "N/A"
         return 1
     fi
 
     # Only attempt to resolve well-formed VPC IDs
-    if [[ ! "$vpc_id" =~ ^vpc-[0-9a-fA-F]+$ ]]; then
+    if [[ ! $vpc_id =~ ^vpc-[0-9a-fA-F]+$ ]]; then
         # Not a VPC id; return as-is
         echo "$vpc_id"
         return 0
@@ -744,7 +744,7 @@ function get_vpc_name {
         # The Name tag sometimes uses different casings (e.g. "name"), so use ascii_downcase
         local vpc_name
         vpc_name=$(echo "$out" | jq -r '.Vpcs[0] | (.Tags[]? | select(.Key|ascii_downcase=="name") | .Value) // .VpcId // ""' 2> /dev/null || true)
-        if [[ -n "$vpc_name" ]]; then
+        if [[ -n $vpc_name ]]; then
             echo "$vpc_name"
             return 0
         fi
@@ -807,7 +807,7 @@ function get_waf_name {
     local waf_arn="$1"
     local region="${2:-$(get_aws_region)}"
 
-    if [[ -z "$waf_arn" || "$waf_arn" == "N/A" ]]; then
+    if [[ -z $waf_arn || $waf_arn == "N/A" ]]; then
         echo "N/A"
         return 1
     fi
@@ -815,7 +815,7 @@ function get_waf_name {
     # Try to extract the name directly from ARN: /webacl/<name>/...
     local waf_name
     waf_name=$(echo "$waf_arn" | sed -n 's#.*/webacl/\([^/]*\)/.*#\1#p' || true)
-    if [[ -n "$waf_name" ]]; then
+    if [[ -n $waf_name ]]; then
         echo "$waf_name"
         return 0
     fi
@@ -825,7 +825,7 @@ function get_waf_name {
         local out
         # WAF CLOUDFRONT scope is global and should be queried in us-east-1 for reliability
         local list_region
-        if [[ "$scope" == "CLOUDFRONT" ]]; then
+        if [[ $scope == "CLOUDFRONT" ]]; then
             list_region="us-east-1"
         else
             list_region="$region"
@@ -833,7 +833,7 @@ function get_waf_name {
 
         out=$(aws wafv2 list-web-acls --scope "$scope" --region "$list_region" --output json 2> /dev/null || echo '{}')
         waf_name=$(echo "$out" | jq -r --arg arn "$waf_arn" '.WebACLs[]? | select(.ARN==$arn) | .Name' 2> /dev/null || true)
-        if [[ -n "$waf_name" && "$waf_name" != "null" ]]; then
+        if [[ -n $waf_name && $waf_name != "null" ]]; then
             echo "$waf_name"
             return 0
         fi
@@ -922,7 +922,7 @@ function parse_arn {
     local arn="$1"
 
     # Validate ARN format
-    if [[ ! "$arn" =~ ^arn:aws[^:]*:[^:]*:[^:]*:[^:]*:.+ ]]; then
+    if [[ ! $arn =~ ^arn:aws[^:]*:[^:]*:[^:]*:[^:]*:.+ ]]; then
         log "ERROR" "Invalid ARN format: $arn"
         return 1
     fi

@@ -136,8 +136,8 @@ function sync_one_skill {
     local skill_name
     skill_name="$(basename "$(dirname "${target_scripts}")")"
 
-    if [[ "${CHECK_MODE}" == "true" ]]; then
-        if [[ ! -d "${target_lib}" ]]; then
+    if [[ ${CHECK_MODE} == "true" ]]; then
+        if [[ ! -d ${target_lib} ]]; then
             echo "  DRIFT: ${skill_name} (lib/ missing)"
             DRIFT_COUNT=$((DRIFT_COUNT + 1))
             return
@@ -173,17 +173,17 @@ function sync_one_skill {
 function main {
     parse_arguments "$@"
 
-    if [[ ! -d "${SOURCE_LIB}" ]]; then
+    if [[ ! -d ${SOURCE_LIB} ]]; then
         echo "ERROR: Source lib not found: ${SOURCE_LIB}" >&2
         exit 1
     fi
 
-    if [[ ! -d "${PACKAGES_DIR}" ]]; then
+    if [[ ! -d ${PACKAGES_DIR} ]]; then
         echo "ERROR: Packages directory not found: ${PACKAGES_DIR}" >&2
         exit 1
     fi
 
-    if [[ "${CHECK_MODE}" == "true" ]]; then
+    if [[ ${CHECK_MODE} == "true" ]]; then
         echo "Checking lib drift..."
     else
         echo "Syncing scripts/lib to all skills..."
@@ -195,7 +195,7 @@ function main {
     done < <(find "${PACKAGES_DIR}" -path "*/.apm/skills/*/scripts" -type d | sort)
 
     echo ""
-    if [[ "${CHECK_MODE}" == "true" ]]; then
+    if [[ ${CHECK_MODE} == "true" ]]; then
         if [[ ${DRIFT_COUNT} -gt 0 ]]; then
             echo "FAIL: ${DRIFT_COUNT} skill(s) have drifted lib/. Run: bash scripts/sync_skill_lib.sh"
             exit 1
@@ -209,6 +209,6 @@ function main {
     fi
 }
 
-if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
+if [[ ${BASH_SOURCE[0]} == "${0}" ]]; then
     main "$@"
 fi

@@ -180,7 +180,7 @@ function parse_arguments {
                 ;;
             -*) error_exit "Unknown option: $1" ;;
             *)
-                if [[ -z "$TERRAFORM_DIR" ]]; then
+                if [[ -z $TERRAFORM_DIR ]]; then
                     TERRAFORM_DIR="$1"
                 else
                     error_exit "Unexpected argument: $1"
@@ -190,13 +190,13 @@ function parse_arguments {
         esac
     done
 
-    if [[ -z "$TERRAFORM_DIR" ]]; then
+    if [[ -z $TERRAFORM_DIR ]]; then
         echo "Error: Terraform directory is required" >&2
         show_usage
     fi
 
     TERRAFORM_DIR=$(realpath "$TERRAFORM_DIR")
-    if [[ ! -d "$TERRAFORM_DIR" ]]; then
+    if [[ ! -d $TERRAFORM_DIR ]]; then
         error_exit "Terraform directory does not exist: $TERRAFORM_DIR"
     fi
 }
@@ -254,7 +254,7 @@ function backup_file {
     local project_dir
     project_dir=$(find_terraform_project_root "$file" 2> /dev/null || true)
     local proj_artifacts
-    if [[ -n "$project_dir" ]]; then
+    if [[ -n $project_dir ]]; then
         proj_artifacts=$(artifact_dir_for "$project_dir")
     else
         proj_artifacts="$BACKUP_DIR"
@@ -295,7 +295,7 @@ function cleanup_all_artifacts {
 
     # Cleanup backup directories
     # Remove any runtime backup directory created during this run
-    if [[ -n "$BACKUP_DIR" ]] && [[ -d "$BACKUP_DIR" ]]; then
+    if [[ -n $BACKUP_DIR ]] && [[ -d $BACKUP_DIR ]]; then
         log "INFO" "Removing backup directory: $BACKUP_DIR"
         rm -rf "$BACKUP_DIR"
     fi
@@ -305,7 +305,7 @@ function cleanup_all_artifacts {
     readarray -t backup_dirs < <(find "$TERRAFORM_DIR" -type d -name ".terraform_backups" 2> /dev/null || true)
 
     for backup_dir in "${backup_dirs[@]}"; do
-        if [[ -d "$backup_dir" ]]; then
+        if [[ -d $backup_dir ]]; then
             log "INFO" "Removing backup directory: $backup_dir"
             rm -rf "$backup_dir"
         fi
@@ -314,27 +314,27 @@ function cleanup_all_artifacts {
     # Also remove legacy backup directories named .terraform_module_backups for compatibility
     readarray -t backup_dirs < <(find "$TERRAFORM_DIR" -type d -name ".terraform_module_backups" 2> /dev/null || true)
     for backup_dir in "${backup_dirs[@]}"; do
-        if [[ -d "$backup_dir" ]]; then
+        if [[ -d $backup_dir ]]; then
             log "INFO" "Removing legacy backup directory: $backup_dir"
             rm -rf "$backup_dir"
         fi
     done
 
-    if [[ "$NO_PLAN" == "true" ]]; then
+    if [[ $NO_PLAN == "true" ]]; then
         log "INFO" "--no-plan specified: Skipping plan file cleanup."
         return
     fi
 
     # Cleanup plan comparison files in all terraform directories
     local terraform_dirs
-    if [[ "$RECURSIVE_SEARCH" == "true" ]]; then
+    if [[ $RECURSIVE_SEARCH == "true" ]]; then
         readarray -t terraform_dirs < <(find "$TERRAFORM_DIR" -name "*.tf" -type f -exec dirname {} \; 2> /dev/null | sort -u)
     else
         terraform_dirs=("$TERRAFORM_DIR")
     fi
 
     for dir in "${terraform_dirs[@]}"; do
-        if [[ -d "$dir" ]]; then
+        if [[ -d $dir ]]; then
             cd "$dir" || continue
             local plan_files=(
                 .terraform_baseline.plan .terraform_baseline.log .terraform_baseline.txt
@@ -343,7 +343,7 @@ function cleanup_all_artifacts {
             )
 
             for file in "${plan_files[@]}"; do
-                if [[ -f "$file" ]]; then
+                if [[ -f $file ]]; then
                     rm -f "$file"
                 fi
             done
@@ -488,7 +488,7 @@ function create_baseline_plan {
     local backend_config="terraform.${env}.tfbackend"
     local init_options=()
 
-    if [[ -f "$backend_config" ]]; then
+    if [[ -f $backend_config ]]; then
         init_options+=("-reconfigure" "-backend-config=$backend_config")
     fi
 
@@ -496,7 +496,7 @@ function create_baseline_plan {
     if ! terraform init "${init_options[@]}" > /dev/null 2>&1; then
         set +x
         log "ERROR" "Initial terraform init failed"
-        if [[ "$VERBOSE" == "true" ]]; then
+        if [[ $VERBOSE == "true" ]]; then
             log "ERROR" "Init error - running in verbose mode"
             # shellcheck disable=SC2086
             terraform init "${init_options[@]}"
@@ -508,7 +508,7 @@ function create_baseline_plan {
     # Create baseline plan and write artifacts to the backup artifacts dir for this project
     local tfvars_file="terraform.${env}.tfvars"
     local plan_options=""
-    if [[ -f "$tfvars_file" ]]; then
+    if [[ -f $tfvars_file ]]; then
         plan_options="-var-file=$tfvars_file"
     fi
 
@@ -519,13 +519,13 @@ function create_baseline_plan {
     local baseline_log_file="${proj_artifacts}/.terraform_baseline.log"
 
     local baseline_plan_command="terraform plan -lock=false -out=${baseline_plan_file}"
-    if [[ -n "$plan_options" ]]; then
+    if [[ -n $plan_options ]]; then
         baseline_plan_command="$baseline_plan_command $plan_options"
     fi
 
     if ! $baseline_plan_command > "${baseline_log_file}" 2>&1; then
         log "ERROR" "Failed to create baseline plan"
-        if [[ "$VERBOSE" == "true" ]]; then
+        if [[ $VERBOSE == "true" ]]; then
             echo_section "BASELINE PLAN ERROR OUTPUT"
             log "ERROR" "Command failed: $baseline_plan_command"
             log "ERROR" "Error details:"
@@ -659,7 +659,7 @@ function find_terraform_modules {
     local dir="$1"
     local search_recursive="${2:-false}"
 
-    if [[ "$search_recursive" == "true" ]]; then
+    if [[ $search_recursive == "true" ]]; then
         # Use anchored, more precise pattern and avoid aborting on grep non-zero statuses
         find "$dir" -name "*.tf" -type f -not -path "*/.terraform/*" \
             -exec grep -l "$MODULE_PATTERN_GREP" {} \; 2> /dev/null || true
@@ -692,7 +692,7 @@ function find_terraform_project_root {
     current_dir=$(dirname "$file_path")
 
     # Look for terraform configuration files that indicate a project root
-    while [[ "$current_dir" != "/" ]]; do
+    while [[ $current_dir != "/" ]]; do
         # Check for backend config files or variables files
         if [[ -f "$current_dir/terraform.dev.tfbackend" ]] || [[ -f "$current_dir/terraform.dev.tfvars" ]] || [[ -f "$current_dir/main.tf" ]]; then
             echo "$current_dir"
@@ -736,23 +736,23 @@ function get_latest_version {
     local base_module="$module_source"
 
     # Return cached result if available
-    if [[ -n "${LATEST_VERSION_CACHE[$module_source]:-}" ]]; then
+    if [[ -n ${LATEST_VERSION_CACHE[$module_source]:-} ]]; then
         echo "${LATEST_VERSION_CACHE[$module_source]}"
         return 0
     fi
 
     # Skip non-registry sources (git/https, ssh, local paths)
-    if [[ "$module_source" =~ ^git:: ]] \
-        || [[ "$module_source" =~ ^(https?|ssh)://.*\.git(/|$) ]] \
-        || [[ "$module_source" =~ ^(github\.com|git@) ]] \
-        || [[ "$module_source" =~ ^(~|/|\./|\.\./) ]]; then
+    if [[ $module_source =~ ^git:: ]] \
+        || [[ $module_source =~ ^(https?|ssh)://.*\.git(/|$) ]] \
+        || [[ $module_source =~ ^(github\.com|git@) ]] \
+        || [[ $module_source =~ ^(~|/|\./|\.\./) ]]; then
         LATEST_VERSION_CACHE[$module_source]="unknown"
         echo "unknown"
         return 0
     fi
 
     # Handle submodules
-    if [[ "$module_source" =~ ^(.+)//modules/ ]]; then
+    if [[ $module_source =~ ^(.+)//modules/ ]]; then
         base_module="${BASH_REMATCH[1]}"
     fi
 
@@ -770,7 +770,7 @@ function get_latest_version {
             | sort_by(split(".")|map(tonumber? // 0))
             | last
         ' 2> /dev/null || echo "")
-        if [[ -n "$latest" && "$latest" != "null" ]]; then
+        if [[ -n $latest && $latest != "null" ]]; then
             LATEST_VERSION_CACHE[$module_source]="$latest"
             echo "$latest"
             return 0
@@ -780,7 +780,7 @@ function get_latest_version {
     # Fallback to module base endpoint (may include .version for some registries)
     if response=$(timeout 12s curl -sf --connect-timeout 5 --max-time 10 "$api_base" 2> /dev/null); then
         latest=$(echo "$response" | jq -r '(.version // empty) // empty' 2> /dev/null || echo "")
-        if [[ -n "$latest" && "$latest" != "null" ]]; then
+        if [[ -n $latest && $latest != "null" ]]; then
             LATEST_VERSION_CACHE[$module_source]="$latest"
             echo "$latest"
             return 0
@@ -878,7 +878,7 @@ function process_batch_module_updates {
 
     echo_section "Batch Module Updates ($total_modules modules)"
 
-    if [[ "$NO_PLAN" != "true" ]]; then
+    if [[ $NO_PLAN != "true" ]]; then
         # Create baseline plans for all affected projects
         create_baseline_plans_for_projects
     else
@@ -913,8 +913,8 @@ function process_batch_module_updates {
             fi
         done
 
-        if [[ "$update_success" == "true" ]]; then
-            if [[ "$NO_PLAN" != "true" ]]; then
+        if [[ $update_success == "true" ]]; then
+            if [[ $NO_PLAN != "true" ]]; then
                 # Validate all affected projects
                 if validate_all_affected_projects "${files_array[@]}"; then
                     UPDATED_MODULES=$((UPDATED_MODULES + 1))
@@ -971,7 +971,7 @@ function process_single_module_update {
     local current_version="$3"
     local latest_version="$4"
 
-    if [[ "$DRY_RUN" == "true" ]]; then
+    if [[ $DRY_RUN == "true" ]]; then
         #    echo "📦 Would update: $module_source: $current_version -> $latest_version in $(basename "$file")"
         UPDATED_MODULES=$((UPDATED_MODULES + 1))
         return 0
@@ -1008,7 +1008,7 @@ function process_terraform_directory {
     }
 
     # Setup backup directory for actual updates
-    if [[ "$DRY_RUN" == "false" ]] && [[ "$CHECK_ONLY" == "false" ]]; then
+    if [[ $DRY_RUN == "false" ]] && [[ $CHECK_ONLY == "false" ]]; then
         setup_backup_directory
     fi
 
@@ -1034,14 +1034,14 @@ function process_terraform_directory {
         local modules_info
         # Guard against awk non-zero exit with set -e
         modules_info="$(extract_modules_from_file "$file" || true)"
-        if [[ "$VERBOSE" == "true" ]]; then
+        if [[ $VERBOSE == "true" ]]; then
             echo "[DEBUG] modules_info for $file:" >&2
             echo "$modules_info" >&2
         fi
         while IFS= read -r module_line; do
-            [[ -z "$module_line" ]] && continue
+            [[ -z $module_line ]] && continue
             TOTAL_MODULES=$((TOTAL_MODULES + 1))
-            if [[ "$VERBOSE" == "true" ]]; then
+            if [[ $VERBOSE == "true" ]]; then
                 echo "[DEBUG] TOTAL_MODULES incremented: $TOTAL_MODULES ($module_line)" >&2
             fi
 
@@ -1051,7 +1051,7 @@ function process_terraform_directory {
 
             log "INFO" "Found module: $module_source (current: $current_version)"
 
-            if [[ "$CHECK_ONLY" == "true" ]]; then
+            if [[ $CHECK_ONLY == "true" ]]; then
                 echo "📦 Found: $module_source (current: $current_version) in $file_basename"
                 continue
             fi
@@ -1060,12 +1060,12 @@ function process_terraform_directory {
             local latest_version
             latest_version=$(get_latest_version "$module_source")
 
-            if [[ "$latest_version" == "unknown" ]]; then
+            if [[ $latest_version == "unknown" ]]; then
                 log "WARN" "Could not determine latest version for $module_source; skipping"
                 continue
             fi
 
-            if [[ "$current_version" == "$latest_version" ]]; then
+            if [[ $current_version == "$latest_version" ]]; then
                 log "INFO" "Module $module_source is already up to date ($current_version)"
                 continue
             fi
@@ -1079,7 +1079,7 @@ function process_terraform_directory {
     done
 
     # After scanning all files, process batch updates
-    if [[ "$DRY_RUN" == "false" ]] && [[ "$CHECK_ONLY" == "false" ]]; then
+    if [[ $DRY_RUN == "false" ]] && [[ $CHECK_ONLY == "false" ]]; then
         process_batch_module_updates
     fi
 
@@ -1116,26 +1116,26 @@ function rollback_module_files {
         # Try project-specific artifact dir first
         local project_dir
         project_dir=$(find_terraform_project_root "$file" 2> /dev/null || true)
-        if [[ -n "$project_dir" ]]; then
+        if [[ -n $project_dir ]]; then
             local proj_artifacts
             proj_artifacts=$(artifact_dir_for "$project_dir")
-            if [[ -d "$proj_artifacts" ]]; then
+            if [[ -d $proj_artifacts ]]; then
                 # pick the newest backup by mtime
                 target_backup=$(find "$proj_artifacts" -maxdepth 1 -type f -name "$(basename "$file").*.bak" -printf '%T@ %p\n' 2> /dev/null | sort -n | awk '{print $2}' | tail -n1 || true)
             fi
         fi
 
         # Fallback: search runtime BACKUP_DIR
-        if [[ -z "$target_backup" && -n "$BACKUP_DIR" && -d "$BACKUP_DIR" ]]; then
+        if [[ -z $target_backup && -n $BACKUP_DIR && -d $BACKUP_DIR ]]; then
             target_backup=$(find "$BACKUP_DIR" -maxdepth 2 -type f -name "$(basename "$file").*.bak" -printf '%T@ %p\n' 2> /dev/null | sort -n | awk '{print $2}' | tail -n1 || true)
         fi
 
         # Legacy fallback
-        if [[ -z "$target_backup" ]]; then
+        if [[ -z $target_backup ]]; then
             target_backup=$(find "$TERRAFORM_DIR" -type d -name ".terraform_module_backups" -exec find {} -maxdepth 1 -type f -name "$(basename "$file").*.bak" -printf '%T@ %p\n' \; 2> /dev/null | sort -n | awk '{print $2}' | tail -n1 || true)
         fi
 
-        if [[ -n "$target_backup" && -f "$target_backup" ]]; then
+        if [[ -n $target_backup && -f $target_backup ]]; then
             cp "$target_backup" "$file"
             log "INFO" "Rolled back $module_source in $(basename "$file") (from $target_backup)"
         else
@@ -1258,13 +1258,13 @@ function validate_all_affected_projects {
         # Check if project_dir already exists in array
         local dir_exists=false
         for existing_dir in "${project_dirs_to_validate[@]}"; do
-            if [[ "$existing_dir" == "$project_dir" ]]; then
+            if [[ $existing_dir == "$project_dir" ]]; then
                 dir_exists=true
                 break
             fi
         done
 
-        if [[ "$dir_exists" == "false" ]]; then
+        if [[ $dir_exists == "false" ]]; then
             project_dirs_to_validate+=("$project_dir")
         fi
     done
@@ -1272,7 +1272,7 @@ function validate_all_affected_projects {
     # Validate each project
     for project_dir in "${project_dirs_to_validate[@]}"; do
         # Skip validation if baseline plan could not be created for this project
-        if [[ -z "${BASELINE_CREATED_MAP[$project_dir]:-}" ]]; then
+        if [[ -z ${BASELINE_CREATED_MAP[$project_dir]:-} ]]; then
             log "WARN" "Skipping validation for project (no baseline): $project_dir"
             continue
         fi
@@ -1324,7 +1324,7 @@ function validate_terraform_with_plan_comparison {
     local backend_config="terraform.${env}.tfbackend"
     local init_options=("-input=false" "-upgrade")
 
-    if [[ -f "$backend_config" ]]; then
+    if [[ -f $backend_config ]]; then
         init_options+=("-reconfigure" "-backend-config=$backend_config")
     fi
 
@@ -1335,7 +1335,7 @@ function validate_terraform_with_plan_comparison {
     local init_log_file="${proj_artifacts}/.terraform_init.log"
     if ! terraform init "${init_options[@]}" > "${init_log_file}" 2>&1; then
         log "ERROR" "Terraform init failed after module update"
-        if [[ "$VERBOSE" == "true" ]]; then
+        if [[ $VERBOSE == "true" ]]; then
             echo_section "TERRAFORM INIT ERROR OUTPUT"
             log "ERROR" "Init command failed with options: ${init_options[*]}"
             log "ERROR" "Error details:"
@@ -1348,7 +1348,7 @@ function validate_terraform_with_plan_comparison {
     # Validate syntax after init
     if ! terraform validate > .terraform_validate.log 2>&1; then
         log "ERROR" "Terraform syntax validation failed"
-        if [[ "$VERBOSE" == "true" ]]; then
+        if [[ $VERBOSE == "true" ]]; then
             echo_section "TERRAFORM VALIDATE ERROR OUTPUT"
             log "ERROR" "Validation failed, error details:"
             cat .terraform_validate.log
@@ -1360,7 +1360,7 @@ function validate_terraform_with_plan_comparison {
     # Create current plan and compare with baseline; place artifacts into project artifacts dir
     local tfvars_file="terraform.${env}.tfvars"
     local plan_options=""
-    if [[ -f "$tfvars_file" ]]; then
+    if [[ -f $tfvars_file ]]; then
         plan_options="-var-file=$tfvars_file"
     fi
 
@@ -1370,13 +1370,13 @@ function validate_terraform_with_plan_comparison {
     local current_log_file="${proj_artifacts}/.terraform_current.log"
 
     local current_plan_command="terraform plan -lock=false -out=${current_plan_file}"
-    if [[ -n "$plan_options" ]]; then
+    if [[ -n $plan_options ]]; then
         current_plan_command="$current_plan_command $plan_options"
     fi
 
     if ! $current_plan_command > "${current_log_file}" 2>&1; then
         log "ERROR" "Failed to create current plan"
-        if [[ "$VERBOSE" == "true" ]]; then
+        if [[ $VERBOSE == "true" ]]; then
             echo_section "CURRENT PLAN ERROR OUTPUT"
             log "ERROR" "Command failed: $current_plan_command"
             log "ERROR" "Error details:"
@@ -1399,7 +1399,7 @@ function validate_terraform_with_plan_comparison {
         return 0
     else
         log "WARN" "⚠️  Infrastructure changes detected between baseline and current plan"
-        if [[ "$VERBOSE" == "true" ]]; then
+        if [[ $VERBOSE == "true" ]]; then
             echo_section "TERRAFORM SHOW DIFFERENCES DETECTED"
             log "INFO" "Detailed plan content differences (baseline vs current):"
             echo ""
@@ -1485,9 +1485,9 @@ function main {
     log "INFO" "Target directory: $TERRAFORM_DIR"
     log "INFO" "Recursive search: $RECURSIVE_SEARCH"
     log "INFO" "Mode: $(
-        if [[ "$CHECK_ONLY" == "true" ]]; then
+        if [[ $CHECK_ONLY == "true" ]]; then
             echo "CHECK-ONLY"
-        elif [[ "$DRY_RUN" == "true" ]]; then
+        elif [[ $DRY_RUN == "true" ]]; then
             echo "DRY-RUN"
         else
             echo "UPDATE"
@@ -1517,6 +1517,6 @@ function main {
     fi
 }
 
-if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
+if [[ ${BASH_SOURCE[0]} == "$0" ]]; then
     main "$@"
 fi
