@@ -57,6 +57,48 @@ BUILD_DIRS=(
 )
 
 #######################################
+# show_usage: Display script usage information
+#
+# Description:
+#   Displays usage information for the script, including options and examples
+#
+# Arguments:
+#   None
+#
+# Global Variables:
+#   None
+#
+# Returns:
+#   None (outputs to stdout)
+#
+#######################################
+function show_usage {
+    cat << EOF
+Usage: $(basename "$0") [options] [root_dir]
+
+Description: Remove Go build binary artifacts from the repository.
+             Recursively scans for ELF/Mach-O/PE executables and removes them,
+             along with common build output directories (bin/, dist/, builds/).
+
+Options:
+  -h, --help      Display this help message
+  -v, --verbose   Enable verbose output
+  -d, --dry-run   Show files that would be removed without deleting
+
+Arguments:
+  root_dir        Root directory to scan
+                  If not provided, uses git repository root or current directory
+
+Examples:
+  $(basename "$0")                        # Remove binaries from git root
+  $(basename "$0") --dry-run              # Preview what would be removed
+  $(basename "$0") --verbose              # Remove with detailed output
+  $(basename "$0") /path/to/repo          # Remove from specific directory
+EOF
+    exit 0
+}
+
+#######################################
 # parse_arguments: Parse command line arguments
 #
 # Description:
@@ -65,11 +107,13 @@ BUILD_DIRS=(
 # Arguments:
 #   $@ - All command line arguments passed to the script
 #
+# Global Variables:
+#   ROOT_DIR - Root directory to scan
+#   VERBOSE - Enable verbose output
+#   DRY_RUN - Enable dry-run mode
+#
 # Returns:
 #   None (sets global variables ROOT_DIR, VERBOSE, DRY_RUN)
-#
-# Usage:
-#   parse_arguments "$@"
 #
 #######################################
 function parse_arguments {
@@ -111,48 +155,6 @@ function parse_arguments {
 }
 
 #######################################
-# print_summary: Print cleanup summary
-#
-# Description:
-#   Displays a summary of removed (or would-be-removed) files and directories
-#
-# Arguments:
-#   None (reads global BINARY_COUNT, DIR_COUNT, DRY_RUN)
-#
-# Returns:
-#   None (outputs to stderr via log)
-#
-# Usage:
-#   print_summary
-#
-#######################################
-function print_summary {
-    echo_section "Summary"
-    local mode_label="Removed"
-    [[ "$DRY_RUN" == "true" ]] && mode_label="Would remove"
-
-    log "INFO" "${mode_label} ${BINARY_COUNT} binary file(s)"
-    log "INFO" "${mode_label} ${DIR_COUNT} build directory/-ies"
-}
-
-#######################################
-# remove_binary_files: Recursively find and remove ELF/Mach-O/PE binary executables
-#
-# Description:
-#   Walks ROOT_DIR recursively, identifies binary executables via `file` command,
-#   and removes them. .git/ is excluded.
-#
-# Arguments:
-#   None (uses global ROOT_DIR, DRY_RUN, VERBOSE)
-#
-# Returns:
-#   None (increments BINARY_COUNT)
-#
-# Usage:
-#   remove_binary_files
-#
-#######################################
-#######################################
 # is_binary_executable: Detect if a file is a binary executable
 #
 # Description:
@@ -163,11 +165,11 @@ function print_summary {
 # Arguments:
 #   $1 - File path to check
 #
+# Global Variables:
+#   None
+#
 # Returns:
 #   0 if file is a binary executable, 1 otherwise
-#
-# Usage:
-#   if is_binary_executable "/path/to/file"; then ...
 #
 #######################################
 function is_binary_executable {
@@ -195,6 +197,53 @@ function is_binary_executable {
     return 1
 }
 
+#######################################
+# print_summary: Print cleanup summary
+#
+# Description:
+#   Displays a summary of removed (or would-be-removed) files and directories
+#
+# Arguments:
+#   None
+#
+# Global Variables:
+#   BINARY_COUNT - Number of binary files removed
+#   DIR_COUNT - Number of directories removed
+#   DRY_RUN - Whether running in dry-run mode
+#
+# Returns:
+#   None (outputs to stderr via log)
+#
+#######################################
+function print_summary {
+    echo_section "Summary"
+    local mode_label="Removed"
+    [[ "$DRY_RUN" == "true" ]] && mode_label="Would remove"
+
+    log "INFO" "${mode_label} ${BINARY_COUNT} binary file(s)"
+    log "INFO" "${mode_label} ${DIR_COUNT} build directory/-ies"
+}
+
+#######################################
+# remove_binary_files: Recursively find and remove ELF/Mach-O/PE binary executables
+#
+# Description:
+#   Walks ROOT_DIR recursively, identifies binary executables via `file` command,
+#   and removes them. .git/ is excluded.
+#
+# Arguments:
+#   None
+#
+# Global Variables:
+#   ROOT_DIR - Root directory to scan
+#   DRY_RUN - Whether running in dry-run mode
+#   VERBOSE - Whether to show verbose output
+#   BINARY_COUNT - Incremented for each binary found
+#
+# Returns:
+#   None (increments BINARY_COUNT)
+#
+#######################################
 function remove_binary_files {
     echo_section "Scanning for binary executables"
 
@@ -223,13 +272,17 @@ function remove_binary_files {
 #   relative to ROOT_DIR.
 #
 # Arguments:
-#   None (uses global ROOT_DIR, BUILD_DIRS, DRY_RUN, VERBOSE)
+#   None
+#
+# Global Variables:
+#   ROOT_DIR - Root directory to scan
+#   BUILD_DIRS - Array of directories to remove
+#   DRY_RUN - Whether running in dry-run mode
+#   VERBOSE - Whether to show verbose output
+#   DIR_COUNT - Incremented for each directory removed
 #
 # Returns:
 #   None (increments DIR_COUNT)
-#
-# Usage:
-#   remove_build_dirs
 #
 #######################################
 function remove_build_dirs {
@@ -254,48 +307,6 @@ function remove_build_dirs {
 }
 
 #######################################
-# show_usage: Display script usage information
-#
-# Description:
-#   Displays usage information for the script, including options and examples
-#
-# Arguments:
-#   None
-#
-# Returns:
-#   None (outputs to stdout)
-#
-# Usage:
-#   show_usage
-#
-#######################################
-function show_usage {
-    cat << EOF
-Usage: $(basename "$0") [options] [root_dir]
-
-Description: Remove Go build binary artifacts from the repository.
-             Recursively scans for ELF/Mach-O/PE executables and removes them,
-             along with common build output directories (bin/, dist/, builds/).
-
-Options:
-  -h, --help      Display this help message
-  -v, --verbose   Enable verbose output
-  -d, --dry-run   Show files that would be removed without deleting
-
-Arguments:
-  root_dir        Root directory to scan
-                  If not provided, uses git repository root or current directory
-
-Examples:
-  $(basename "$0")                        # Remove binaries from git root
-  $(basename "$0") --dry-run              # Preview what would be removed
-  $(basename "$0") --verbose              # Remove with detailed output
-  $(basename "$0") /path/to/repo          # Remove from specific directory
-EOF
-    exit 0
-}
-
-#######################################
 # main: Main function
 #
 # Description:
@@ -304,11 +315,11 @@ EOF
 # Arguments:
 #   $@ - All command line arguments
 #
+# Global Variables:
+#   None
+#
 # Returns:
 #   0 on success
-#
-# Usage:
-#   main "$@"
 #
 #######################################
 function main {

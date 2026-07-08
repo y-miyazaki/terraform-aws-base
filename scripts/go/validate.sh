@@ -208,6 +208,27 @@ function determine_target_pattern {
 }
 
 #######################################
+# has_go_files: Check if directory contains Go files
+#
+# Description:
+#   Checks if the specified directory contains any Go files
+#
+# Arguments:
+#   $1 - Directory path to check
+#
+# Global Variables:
+#   None
+#
+# Returns:
+#   Number of Go files found (integer)
+#
+#######################################
+function has_go_files {
+    local dir=$1
+    find "$dir" -name "*.go" 2> /dev/null | wc -l
+}
+
+#######################################
 # run_benchmark_tests: Run benchmark tests
 #
 # Description:
@@ -350,76 +371,6 @@ function run_go_build {
 }
 
 #######################################
-# has_go_files: Check if directory contains Go files
-#
-# Description:
-#   Checks if the specified directory contains any Go files
-#
-# Arguments:
-#   $1 - Directory path to check
-#
-# Returns:
-#   Number of Go files found (integer)
-#
-# Usage:
-#   count=$(has_go_files "/path/to/dir")
-#
-#######################################
-function has_go_files {
-    local dir=$1
-    find "$dir" -name "*.go" 2> /dev/null | wc -l
-}
-
-#######################################
-# run_go_mod_tidy: Run go mod tidy
-#
-# Description:
-#   Runs go mod tidy to clean up the go.mod and go.sum files
-#
-# Arguments:
-#   None
-#
-# Returns:
-#   None (sets EXIT_CODE on failure)
-#
-# Usage:
-#   run_go_mod_tidy
-#
-#######################################
-function run_go_mod_tidy {
-    echo_section "Running go mod tidy"
-
-    if [[ "$DRY_RUN" == "true" ]]; then
-        log "INFO" "DRY-RUN: Would run 'go mod tidy'"
-        return 0
-    fi
-
-    # 特定ディレクトリ指定時はそのディレクトリ内に go.mod がある場合のみ実行
-    local mod_dir="."
-    if [[ "$IS_SCOPED" == "true" ]]; then
-        if [[ -f "$TARGET_DIR/go.mod" ]]; then
-            mod_dir="$TARGET_DIR"
-        else
-            log "INFO" "Skipping go mod tidy (no go.mod in scoped directory: $TARGET_DIR)"
-            return 0
-        fi
-    fi
-
-    pushd "$mod_dir" > /dev/null || {
-        log "ERROR" "Failed to change directory to: $mod_dir"
-        EXIT_CODE=1
-        return 1
-    }
-    if go mod tidy; then
-        log "INFO" "go mod tidy completed successfully (dir=$mod_dir)"
-    else
-        log "ERROR" "go mod tidy failed (dir=$mod_dir)"
-        EXIT_CODE=1
-    fi
-    popd > /dev/null || true
-}
-
-#######################################
 # run_golangci_lint: Run golangci-lint
 #
 # Description:
@@ -483,6 +434,91 @@ function run_golangci_lint {
         fi
     fi
     rm -f "$lint_output"
+}
+
+#######################################
+# run_go_mod_tidy: Run go mod tidy
+#
+# Description:
+#   Runs go mod tidy to clean up the go.mod and go.sum files
+#
+# Arguments:
+#   None
+#
+# Returns:
+#   None (sets EXIT_CODE on failure)
+#
+# Usage:
+#   run_go_mod_tidy
+#
+#######################################
+function run_go_mod_tidy {
+    echo_section "Running go mod tidy"
+
+    if [[ "$DRY_RUN" == "true" ]]; then
+        log "INFO" "DRY-RUN: Would run 'go mod tidy'"
+        return 0
+    fi
+
+    # 特定ディレクトリ指定時はそのディレクトリ内に go.mod がある場合のみ実行
+    local mod_dir="."
+    if [[ "$IS_SCOPED" == "true" ]]; then
+        if [[ -f "$TARGET_DIR/go.mod" ]]; then
+            mod_dir="$TARGET_DIR"
+        else
+            log "INFO" "Skipping go mod tidy (no go.mod in scoped directory: $TARGET_DIR)"
+            return 0
+        fi
+    fi
+
+    pushd "$mod_dir" > /dev/null || {
+        log "ERROR" "Failed to change directory to: $mod_dir"
+        EXIT_CODE=1
+        return 1
+    }
+    if go mod tidy; then
+        log "INFO" "go mod tidy completed successfully (dir=$mod_dir)"
+    else
+        log "ERROR" "go mod tidy failed (dir=$mod_dir)"
+        EXIT_CODE=1
+    fi
+    popd > /dev/null || true
+}
+
+#######################################
+# run_race_tests: Run race condition tests
+#
+# Description:
+#   Runs go test with race detection enabled
+#
+# Arguments:
+#   None
+#
+# Global Variables:
+#   DRY_RUN - Whether running in dry-run mode
+#   TARGET_PATTERN - Go package pattern to test
+#   EXIT_CODE - Set to 1 on failure
+#   RACE_FAILED - Set to 1 on failure
+#
+# Returns:
+#   None (sets EXIT_CODE and RACE_FAILED on failure)
+#
+#######################################
+function run_race_tests {
+    echo_section "Running race condition tests"
+
+    if [[ "$DRY_RUN" == "true" ]]; then
+        log "INFO" "DRY-RUN: Would run 'CGO_ENABLED=1 go test -race $TARGET_PATTERN'"
+        return 0
+    fi
+
+    if CGO_ENABLED=1 go test -race "$TARGET_PATTERN"; then
+        log "INFO" "Race condition tests passed"
+    else
+        log "ERROR" "Race condition tests failed"
+        EXIT_CODE=1
+        RACE_FAILED=1
+    fi
 }
 
 #######################################
@@ -582,39 +618,6 @@ function run_tests {
         TEST_FAIL_COUNT=$(printf '%s\n' "$TEST_FAIL_COUNT" | awk 'NR == 1 {print $1; exit}')
     fi
     rm -f "$test_output"
-}
-
-#######################################
-# run_race_tests: Run race condition tests
-#
-# Description:
-#   Runs go test with race detection enabled
-#
-# Arguments:
-#   None
-#
-# Returns:
-#   None (sets EXIT_CODE and RACE_FAILED on failure)
-#
-# Usage:
-#   run_race_tests
-#
-#######################################
-function run_race_tests {
-    echo_section "Running race condition tests"
-
-    if [[ "$DRY_RUN" == "true" ]]; then
-        log "INFO" "DRY-RUN: Would run 'CGO_ENABLED=1 go test -race $TARGET_PATTERN'"
-        return 0
-    fi
-
-    if CGO_ENABLED=1 go test -race "$TARGET_PATTERN"; then
-        log "INFO" "Race condition tests passed"
-    else
-        log "ERROR" "Race condition tests failed"
-        EXIT_CODE=1
-        RACE_FAILED=1
-    fi
 }
 
 #######################################

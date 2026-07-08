@@ -69,30 +69,6 @@ EOF
 }
 
 #######################################
-# validate_module: Validate module exists
-#
-# Description:
-#   Checks that the specified Node.js module directory exists
-#
-# Arguments:
-#   $1 - Module name
-#
-# Returns:
-#   None (exits on validation failure)
-#
-# Usage:
-#   validate_module "kinesis_data_firehose_cloudwatch_logs_processor"
-#
-#######################################
-function validate_module {
-    local module_name="$1"
-
-    if [ ! -d "${REPO_ROOT}/nodejs/${module_name}" ]; then
-        error_exit "Module '${module_name}' not found. Use -h for available modules."
-    fi
-}
-
-#######################################
 # build_docker_image: Build docker image
 #
 # Description:
@@ -102,11 +78,11 @@ function validate_module {
 #   $1 - Module name
 #   $2 - Docker image name
 #
+# Global Variables:
+#   None
+#
 # Returns:
 #   None (exits on build failure)
-#
-# Usage:
-#   build_docker_image "module_name" "image_name"
 #
 #######################################
 function build_docker_image {
@@ -128,11 +104,11 @@ function build_docker_image {
 # Arguments:
 #   $1 - Docker image name
 #
+# Global Variables:
+#   None
+#
 # Returns:
 #   Test exit code (0 on success, non-zero on failure)
-#
-# Usage:
-#   run_tests "image_name"
 #
 #######################################
 function run_tests {
@@ -147,6 +123,30 @@ function run_tests {
 
     log "INFO" "Tests completed successfully"
     return 0
+}
+
+#######################################
+# validate_module: Validate module exists
+#
+# Description:
+#   Checks that the specified Node.js module directory exists
+#
+# Arguments:
+#   $1 - Module name
+#
+# Global Variables:
+#   REPO_ROOT - Repository root directory
+#
+# Returns:
+#   None (exits on validation failure)
+#
+#######################################
+function validate_module {
+    local module_name="$1"
+
+    if [ ! -d "${REPO_ROOT}/nodejs/${module_name}" ]; then
+        error_exit "Module '${module_name}' not found. Use -h for available modules."
+    fi
 }
 
 #######################################

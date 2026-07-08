@@ -325,35 +325,39 @@ function build_docker_image {
 }
 
 #######################################
-# validate_build_requirements: Validate that build requirements are met
+# push_docker_image: Push Docker image to ECR
 #
 # Description:
-#   Validates that Dockerfile exists and build context is accessible
+#   Pushes the built Docker image to AWS ECR
 #
 # Arguments:
-#   None
+#   $1 - Full image name (registry/repository:tag)
 #
 # Global Variables:
-#   DOCKERFILE_PATH - Path to Dockerfile to validate
-#   BUILD_CONTEXT - Build context path to validate
+#   DRY_RUN - Whether to run in dry-run mode
 #
 # Returns:
-#   Exits with error if validation fails
+#   None
 #
 # Usage:
-#   validate_build_requirements
+#   push_docker_image "$full_image_name"
 #
 #######################################
-function validate_build_requirements {
-    if [[ ! -f "$DOCKERFILE_PATH" ]]; then
-        error_exit "Dockerfile not found at: $DOCKERFILE_PATH\nPlease ensure Dockerfile exists or use -f option to specify correct path"
+function push_docker_image {
+    local full_image_name="$1"
+
+    log "INFO" "Pushing Docker image to ECR: $full_image_name"
+
+    if [[ "$DRY_RUN" == "true" ]]; then
+        log "INFO" "DRY RUN: Would push Docker image: $full_image_name"
+        return 0
     fi
 
-    if [[ ! -d "$BUILD_CONTEXT" ]]; then
-        error_exit "Build context directory not found at: $BUILD_CONTEXT\nPlease ensure directory exists or use -c option to specify correct path"
+    if ! docker push "$full_image_name"; then
+        error_exit "Failed to push Docker image to ECR"
     fi
 
-    log "INFO" "Validated build requirements: Dockerfile: $DOCKERFILE_PATH, Context: $BUILD_CONTEXT"
+    log "INFO" "Docker image pushed successfully: $full_image_name"
 }
 
 #######################################
@@ -410,39 +414,35 @@ function tag_existing_image {
 }
 
 #######################################
-# push_docker_image: Push Docker image to ECR
+# validate_build_requirements: Validate that build requirements are met
 #
 # Description:
-#   Pushes the built Docker image to AWS ECR
+#   Validates that Dockerfile exists and build context is accessible
 #
 # Arguments:
-#   $1 - Full image name (registry/repository:tag)
-#
-# Global Variables:
-#   DRY_RUN - Whether to run in dry-run mode
-#
-# Returns:
 #   None
 #
+# Global Variables:
+#   DOCKERFILE_PATH - Path to Dockerfile to validate
+#   BUILD_CONTEXT - Build context path to validate
+#
+# Returns:
+#   Exits with error if validation fails
+#
 # Usage:
-#   push_docker_image "$full_image_name"
+#   validate_build_requirements
 #
 #######################################
-function push_docker_image {
-    local full_image_name="$1"
-
-    log "INFO" "Pushing Docker image to ECR: $full_image_name"
-
-    if [[ "$DRY_RUN" == "true" ]]; then
-        log "INFO" "DRY RUN: Would push Docker image: $full_image_name"
-        return 0
+function validate_build_requirements {
+    if [[ ! -f "$DOCKERFILE_PATH" ]]; then
+        error_exit "Dockerfile not found at: $DOCKERFILE_PATH\nPlease ensure Dockerfile exists or use -f option to specify correct path"
     fi
 
-    if ! docker push "$full_image_name"; then
-        error_exit "Failed to push Docker image to ECR"
+    if [[ ! -d "$BUILD_CONTEXT" ]]; then
+        error_exit "Build context directory not found at: $BUILD_CONTEXT\nPlease ensure directory exists or use -c option to specify correct path"
     fi
 
-    log "INFO" "Docker image pushed successfully: $full_image_name"
+    log "INFO" "Validated build requirements: Dockerfile: $DOCKERFILE_PATH, Context: $BUILD_CONTEXT"
 }
 
 #######################################

@@ -64,15 +64,15 @@ DOCS_FAILED=0
 # Arguments:
 #   None
 #
+# Global Variables:
+#   None
+#
 # Returns:
 #   None (outputs to stdout)
 #
-# Usage:
-#   show_usage
-#
 #######################################
 function show_usage {
-    cat <<EOF
+    cat << EOF
 Usage: $(basename "$0") [options] [dir1 dir2 ...]
 
 Description: Recursive Terraform validation, formatting check, linting, and security scanning.
@@ -105,92 +105,97 @@ EOF
 #
 # Global Variables:
 #   TARGET_DIRS - Array of target directories to process
+#   VERBOSE - Enable verbose output
+#   GENERATE_DOCS - Whether to generate terraform-docs
+#   AUTO_FIX - Whether to auto-fix formatting
 #
 # Returns:
-#   Exits with error if unknown options are provided
-#
-# Usage:
-#   parse_arguments "$@"
+#   None (sets global variables)
 #
 #######################################
 function parse_arguments {
     while [[ $# -gt 0 ]]; do
         case $1 in
-        -h | --help)
-            show_usage
-            ;;
-        -v | --verbose)
-            # shellcheck disable=SC2034
-            VERBOSE="true"
-            ;;
-        -d | --generate-docs)
-            GENERATE_DOCS="true"
-            ;;
-        -f | --fix)
-            AUTO_FIX="true"
-            ;;
-        -*)
-            error_exit "Unknown option: $1"
-            ;;
-        *)
-            # Collect target directories
-            TARGET_DIRS+=("$1")
-            ;;
+            -h | --help)
+                show_usage
+                ;;
+            -v | --verbose)
+                # shellcheck disable=SC2034
+                VERBOSE="true"
+                ;;
+            -d | --generate-docs)
+                GENERATE_DOCS="true"
+                ;;
+            -f | --fix)
+                AUTO_FIX="true"
+                ;;
+            -*)
+                error_exit "Unknown option: $1"
+                ;;
+            *)
+                # Collect target directories
+                TARGET_DIRS+=("$1")
+                ;;
         esac
         shift
     done
 }
 
 #######################################
-# run_tflint_check: Run tflint recursively
+# process_terraform_directory: Process single terraform directory
 #
 # Description:
-#   Runs tflint recursively on all Terraform directories
+#   Processes a single Terraform directory with validation, linting, and documentation generation
 #
 # Arguments:
-#   None
+#   $1 - Directory path to process
 #
 # Global Variables:
-#   TARGET_DIRS - Array of target directories (if scoped)
+#   GENERATE_DOCS - Whether to generate terraform-docs
+#   DOCS_FAILED - Set to 1 on documentation generation failure
 #
 # Returns:
-#   Exits with error if tflint finds issues
-#
-# Usage:
-#   run_tflint_check
+#   0 on success, 1 on failure
 #
 #######################################
-function run_tflint_check {
-    echo_section "Running tflint (recursive)"
-
+function process_terraform_directory {
+    local dir="$1"
     local failed=0
-    if [[ ${#TARGET_DIRS[@]} -gt 0 ]]; then
-        for target in "${TARGET_DIRS[@]}"; do
-            if [[ -d "$target" ]]; then
-                pushd "$target" >/dev/null || continue
-                log "INFO" "Running tflint in: $target"
-                if ! terraform_lint "recursive"; then
-                    failed=1
-                fi
-                popd >/dev/null || true
-            else
-                log "WARN" "Skipping non-existent directory for tflint: $target"
-            fi
-        done
-    else
-        log "INFO" "Running tflint recursively in entire workspace"
-        if ! terraform_lint "recursive"; then
+
+    log "INFO" ">>> Investigating Terraform directory: $dir"
+
+    if [[ ! -d "$dir" ]]; then
+        log "WARN" "Directory disappeared, skipping: $dir"
+        return 0
+    fi
+
+    pushd "$dir" > /dev/null || return 1
+
+    # Step 1: Initialize Terraform (backend disabled for validation)
+    if ! execute_command_string "terraform init -backend=false"; then
+        log "ERROR" "Failed to initialize Terraform for $dir"
+        failed=1
+    fi
+
+    # Step 2: Validate Terraform configuration
+    if [[ $failed -eq 0 ]]; then
+        if ! terraform_validate; then
+            log "ERROR" "Terraform validation failed for $dir"
             failed=1
         fi
     fi
 
-    if [[ $failed -eq 1 ]]; then
-        log "ERROR" "tflint found issues"
-        TFLINT_FAILED=1
-        EXIT_CODE=1
-    else
-        log "INFO" "tflint passed"
+    # Step 3: Generate documentation (terraform-docs) if requested
+    if [[ "$GENERATE_DOCS" == "true" ]]; then
+        log "INFO" "Generating documentation (terraform-docs)"
+        if ! execute_command_string "terraform-docs markdown table --output-file README.md ./"; then
+            log "WARN" "Failed to generate documentation for $dir"
+            DOCS_FAILED=1
+        fi
     fi
+
+    popd > /dev/null || true
+    return $failed
 }
 
 #######################################
@@ -204,12 +209,12 @@ function run_tflint_check {
 #
 # Global Variables:
 #   TARGET_DIRS - Array of target directories (if scoped)
+#   AUTO_FIX - Whether to auto-fix formatting
+#   FMT_FAILED - Set to 1 on failure
+#   EXIT_CODE - Set to 1 on failure
 #
 # Returns:
-#   Exits with error if formatting issues are found
-#
-# Usage:
-#   run_formatting_check
+#   None
 #
 #######################################
 function run_formatting_check {
@@ -223,7 +228,7 @@ function run_formatting_check {
     if [[ ${#TARGET_DIRS[@]} -gt 0 ]]; then
         for target in "${TARGET_DIRS[@]}"; do
             if [[ -d "$target" ]]; then
-                pushd "$target" >/dev/null || continue
+                pushd "$target" > /dev/null || continue
                 if [[ "$AUTO_FIX" == "true" ]]; then
                     log "INFO" "Applying formatting in: $target"
                     if ! terraform_format; then
@@ -235,7 +240,7 @@ function run_formatting_check {
                         failed=1
                     fi
                 fi
-                popd >/dev/null || true
+                popd > /dev/null || true
             else
                 log "WARN" "Skipping non-existent directory for formatting check: $target"
             fi
@@ -264,96 +269,6 @@ function run_formatting_check {
 }
 
 #######################################
-# run_security_scan: Run security scan
-#
-# Description:
-#   Runs security scan using trivy if available
-#
-# Arguments:
-#   None
-#
-# Global Variables:
-#   None
-#
-# Returns:
-#   Exits with error if security issues are found
-#
-# Usage:
-#   run_security_scan
-#
-#######################################
-function run_security_scan {
-    echo_section "Running security scan with trivy"
-    if ! execute_command_string "trivy fs . --format table"; then
-        log "ERROR" "trivy found security issues"
-        SECURITY_FAILED=1
-        EXIT_CODE=1
-    else
-        log "INFO" "Security scan passed"
-    fi
-}
-
-#######################################
-# process_terraform_directory: Process single terraform directory
-#
-# Description:
-#   Processes a single Terraform directory with validation, linting, and documentation generation
-#
-# Arguments:
-#   $1 - Directory path to process
-#
-# Global Variables:
-#   None
-#
-# Returns:
-#   Exits with error if any validation step fails
-#
-# Usage:
-#   process_terraform_directory "$dir"
-#
-#######################################
-function process_terraform_directory {
-    local dir="$1"
-    local failed=0
-
-    log "INFO" ">>> Investigating Terraform directory: $dir"
-
-    if [[ ! -d "$dir" ]]; then
-        log "WARN" "Directory disappeared, skipping: $dir"
-        return 0
-    fi
-
-    pushd "$dir" >/dev/null || return 1
-
-    # Step 1: Initialize Terraform (backend disabled for validation)
-    if ! execute_command_string "terraform init -backend=false"; then
-        log "ERROR" "Failed to initialize Terraform for $dir"
-        failed=1
-    fi
-
-    # Step 2: Validate Terraform configuration
-    if [[ $failed -eq 0 ]]; then
-        if ! terraform_validate; then
-            log "ERROR" "Terraform validation failed for $dir"
-            failed=1
-        fi
-    fi
-
-    # Step 4: Generate documentation (terraform-docs) if requested
-    if [[ "$GENERATE_DOCS" == "true" ]]; then
-        log "INFO" "Generating documentation (terraform-docs)"
-        if ! execute_command_string "terraform-docs markdown table --output-file README.md ./"; then
-            log "WARN" "Failed to generate documentation for $dir"
-            DOCS_FAILED=1
-            # We don't fail the whole script just for docs unless EXIT_CODE should be 1
-        fi
-    fi
-
-    popd >/dev/null || true
-    return $failed
-}
-
-#######################################
 # run_recursive_validation: Run recursive terraform validation
 #
 # Description:
@@ -364,12 +279,11 @@ function process_terraform_directory {
 #
 # Global Variables:
 #   TARGET_DIRS - Array of target directories (if scoped)
+#   VALIDATE_FAILED - Set to 1 on failure
+#   EXIT_CODE - Set to 1 on failure
 #
 # Returns:
 #   None
-#
-# Usage:
-#   run_recursive_validation
 #
 #######################################
 function run_recursive_validation {
@@ -408,6 +322,85 @@ function run_recursive_validation {
 }
 
 #######################################
+# run_security_scan: Run security scan
+#
+# Description:
+#   Runs security scan using trivy if available
+#
+# Arguments:
+#   None
+#
+# Global Variables:
+#   SECURITY_FAILED - Set to 1 on failure
+#   EXIT_CODE - Set to 1 on failure
+#
+# Returns:
+#   None
+#
+#######################################
+function run_security_scan {
+    echo_section "Running security scan with trivy"
+    if ! execute_command_string "trivy fs . --format table"; then
+        log "ERROR" "trivy found security issues"
+        SECURITY_FAILED=1
+        EXIT_CODE=1
+    else
+        log "INFO" "Security scan passed"
+    fi
+}
+
+#######################################
+# run_tflint_check: Run tflint recursively
+#
+# Description:
+#   Runs tflint recursively on all Terraform directories
+#
+# Arguments:
+#   None
+#
+# Global Variables:
+#   TARGET_DIRS - Array of target directories (if scoped)
+#   TFLINT_FAILED - Set to 1 on failure
+#   EXIT_CODE - Set to 1 on failure
+#
+# Returns:
+#   None
+#
+#######################################
+function run_tflint_check {
+    echo_section "Running tflint (recursive)"
+
+    local failed=0
+    if [[ ${#TARGET_DIRS[@]} -gt 0 ]]; then
+        for target in "${TARGET_DIRS[@]}"; do
+            if [[ -d "$target" ]]; then
+                pushd "$target" > /dev/null || continue
+                log "INFO" "Running tflint in: $target"
+                if ! terraform_lint "recursive"; then
+                    failed=1
+                fi
+                popd > /dev/null || true
+            else
+                log "WARN" "Skipping non-existent directory for tflint: $target"
+            fi
+        done
+    else
+        log "INFO" "Running tflint recursively in entire workspace"
+        if ! terraform_lint "recursive"; then
+            failed=1
+        fi
+    fi
+
+    if [[ $failed -eq 1 ]]; then
+        log "ERROR" "tflint found issues"
+        TFLINT_FAILED=1
+        EXIT_CODE=1
+    else
+        log "INFO" "tflint passed"
+    fi
+}
+
+#######################################
 # main: Main process
 #
 # Description:
@@ -418,12 +411,10 @@ function run_recursive_validation {
 #
 # Global Variables:
 #   TARGET_DIRS - Array of target directories to process
+#   EXIT_CODE - Overall exit code
 #
 # Returns:
-#   Exits with status 0 on success, non-zero on failure
-#
-# Usage:
-#   main "$@"
+#   None (exits with appropriate status code)
 #
 #######################################
 function main {

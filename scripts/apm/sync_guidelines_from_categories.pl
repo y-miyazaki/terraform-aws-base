@@ -20,28 +20,28 @@ my %map = (
 
 my %code_mod_guidelines = (
   'agent-skills-review' => [
-    '- After changes, prioritize running validate.sh from [agent-skills-review Skill](../skills/agent-skills-review/SKILL.md).',
+    '- After changes, prioritize running validate.sh from agent-skills-review skill.',
     '- Use individual commands only for debugging.',
   ],
   'github-actions-review' => [
-    '- After changes, prioritize running validate.sh from [github-actions-validation Skill](../skills/github-actions-validation/SKILL.md).',
+    '- After changes, prioritize running validate.sh from github-actions-validation skill.',
     '- Use individual commands only for debugging.',
   ],
   'go-review' => [
-    '- After changes, prioritize running validate.sh from [go-validation Skill](../skills/go-validation/SKILL.md).',
+    '- After changes, prioritize running validate.sh from go-validation skill.',
     '- Use individual commands (gofumpt/go vet/go test/golangci-lint) only for debugging.',
   ],
   'instructions-review' => [
-    '- After changes, prioritize running validate.sh from [instructions-review Skill](../skills/instructions-review/SKILL.md).',
+    '- After changes, prioritize running validate.sh from instructions-review skill.',
     '- When instruction files are updated, always run an instruction quality re-evaluation.',
     '- Use individual commands only for debugging.',
   ],
   'shell-script-review' => [
-    '- After changes, prioritize running validate.sh from [shell-script-validation Skill](../skills/shell-script-validation/SKILL.md).',
+    '- After changes, prioritize running validate.sh from shell-script-validation skill.',
     '- Use individual commands only for debugging.',
   ],
   'terraform-review' => [
-    '- After changes, prioritize running validate.sh from [terraform-validation Skill](../skills/terraform-validation/SKILL.md).',
+    '- After changes, prioritize running validate.sh from terraform-validation skill.',
     '- Use individual commands only for debugging.',
   ],
 );

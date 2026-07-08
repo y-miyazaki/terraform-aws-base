@@ -39,3 +39,6 @@ source "${LIB_DIR}/terraform.sh"
 
 # shellcheck source=./validation.sh
 source "${LIB_DIR}/validation.sh"
+
+# shellcheck source=./json.sh
+source "${LIB_DIR}/json.sh"

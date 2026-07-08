@@ -154,6 +154,78 @@ function parse_arguments {
 }
 
 #######################################
+# check_package_lockfile: Check if package-lock.json exists and is in sync
+#
+# Description:
+#   Validates the existence of package-lock.json and checks synchronization with package.json
+#
+# Arguments:
+#   $1 - Project directory
+#
+# Global Variables:
+#   LOCKFILE_FAILED - Set to 1 on failure
+#
+# Returns:
+#   0 if lockfile exists and is in sync, 1 otherwise
+#
+#######################################
+function check_package_lockfile {
+    local project_dir=$1
+    local status=0
+
+    if [[ ! -f "$project_dir/package-lock.json" ]]; then
+        log "WARN" "  ⚠️  package-lock.json not found"
+        log "WARN" "      This could indicate security risk - packages may install different versions"
+        LOCKFILE_FAILED=1
+        status=1
+    else
+        log "INFO" "  ✅ package-lock.json found"
+    fi
+
+    return $status
+}
+
+#######################################
+# check_package_sync: Check if package.json and package-lock.json are in sync
+#
+# Description:
+#   Uses npm ci --dry-run to verify synchronization between package files
+#
+# Arguments:
+#   $1 - Project directory
+#
+# Global Variables:
+#   SYNC_FAILED - Set to 1 on failure
+#
+# Returns:
+#   0 if files are in sync, 1 otherwise
+#
+#######################################
+function check_package_sync {
+    local project_dir=$1
+
+    log "INFO" "  📦 Verifying package.json and package-lock.json sync..."
+
+    if [[ ! -f "$project_dir/package-lock.json" ]]; then
+        log "WARN" "  ⚠️  Skipping sync check (no package-lock.json)"
+        return 1
+    fi
+
+    pushd "$project_dir" > /dev/null || return 1
+
+    if npm ci --dry-run > /dev/null 2>&1; then
+        log "INFO" "  ✅ Package files are in sync"
+        popd > /dev/null
+        return 0
+    else
+        log "WARN" "  ⚠️  package.json and package-lock.json may be out of sync"
+        SYNC_FAILED=1
+        popd > /dev/null
+        return 1
+    fi
+}
+
+#######################################
 # find_nodejs_projects: Find all Node.js projects in target directory
 #
 # Description:
@@ -183,78 +255,6 @@ function find_nodejs_projects {
         ! -path "*/build/*" | while read -r pkg_json; do
         dirname "$pkg_json"
     done
-}
-
-#######################################
-# check_package_lockfile: Check if package-lock.json exists and is in sync
-#
-# Description:
-#   Validates the existence of package-lock.json and checks synchronization with package.json
-#
-# Arguments:
-#   $1 - Project directory
-#
-# Returns:
-#   0 if lockfile exists and is in sync, 1 otherwise
-#
-# Usage:
-#   check_package_lockfile "/path/to/project"
-#
-#######################################
-function check_package_lockfile {
-    local project_dir=$1
-    local status=0
-
-    if [[ ! -f "$project_dir/package-lock.json" ]]; then
-        log "WARN" "  ⚠️  package-lock.json not found"
-        log "WARN" "      This could indicate security risk - packages may install different versions"
-        LOCKFILE_FAILED=1
-        status=1
-    else
-        log "INFO" "  ✅ package-lock.json found"
-    fi
-
-    return $status
-}
-
-#######################################
-# check_package_sync: Check if package.json and package-lock.json are in sync
-#
-# Description:
-#   Uses npm ci --dry-run to verify synchronization between package files
-#
-# Arguments:
-#   $1 - Project directory
-#
-# Returns:
-#   0 if files are in sync, 1 otherwise
-#
-# Usage:
-#   check_package_sync "/path/to/project"
-#
-#######################################
-function check_package_sync {
-    local project_dir=$1
-
-    log "INFO" "  📦 Verifying package.json and package-lock.json sync..."
-
-    if [[ ! -f "$project_dir/package-lock.json" ]]; then
-        log "WARN" "  ⚠️  Skipping sync check (no package-lock.json)"
-        return 1
-    fi
-
-    pushd "$project_dir" > /dev/null || return 1
-
-    if npm ci --dry-run > /dev/null 2>&1; then
-        log "INFO" "  ✅ Package files are in sync"
-        popd > /dev/null
-        return 0
-    else
-        log "WARN" "  ⚠️  package.json and package-lock.json may be out of sync"
-        SYNC_FAILED=1
-        popd > /dev/null
-        return 1
-    fi
 }
 
 #######################################
@@ -314,6 +314,52 @@ function run_npm_install {
 }
 
 #######################################
+# run_outdated_check: Check for outdated packages
+#
+# Description:
+#   Checks if any packages have newer versions available
+#
+# Arguments:
+#   $1 - Project directory
+#
+# Global Variables:
+#   DRY_RUN - Whether running in dry-run mode
+#   VERBOSE - Whether to show verbose output
+#
+# Returns:
+#   Always returns 0 (informational only)
+#
+#######################################
+function run_outdated_check {
+    local project_dir=$1
+
+    log "INFO" "  📅 Checking for outdated packages..."
+
+    pushd "$project_dir" > /dev/null || return 1
+
+    if [[ "$DRY_RUN" == "true" ]]; then
+        log "INFO" "  🔍 [DRY-RUN] Would run: npm outdated"
+        popd > /dev/null
+        return 0
+    fi
+
+    local outdated_output
+    if outdated_output=$(npm outdated 2>&1); then
+        log "INFO" "  ✅ All packages are up to date"
+    else
+        if [[ "$VERBOSE" == "true" ]]; then
+            log "INFO" "  ℹ️  Some packages have updates available:"
+            echo "$outdated_output"
+        else
+            log "INFO" "  ℹ️  Some packages have updates available (run with -v for details)"
+        fi
+    fi
+
+    popd > /dev/null
+    return 0
+}
+
+#######################################
 # run_security_audit: Run npm audit for security vulnerabilities
 #
 # Description:
@@ -322,11 +368,16 @@ function run_npm_install {
 # Arguments:
 #   $1 - Project directory
 #
+# Global Variables:
+#   DRY_RUN - Whether running in dry-run mode
+#   FIX_MODE - Whether to attempt auto-fix
+#   VERBOSE - Whether to show verbose output
+#   AUDIT_VULNERABILITIES - Incremented with vulnerability count
+#   AUDIT_FAILED - Set to 1 on failure
+#   EXIT_CODE - Set to 1 on failure
+#
 # Returns:
 #   0 if no vulnerabilities found, 1 otherwise
-#
-# Usage:
-#   run_security_audit "/path/to/project"
 #
 #######################################
 function run_security_audit {
@@ -400,51 +451,6 @@ function run_security_audit {
     EXIT_CODE=1
     popd > /dev/null
     return 1
-}
-
-#######################################
-# run_outdated_check: Check for outdated packages
-#
-# Description:
-#   Checks if any packages have newer versions available
-#
-# Arguments:
-#   $1 - Project directory
-#
-# Returns:
-#   Always returns 0 (informational only)
-#
-# Usage:
-#   run_outdated_check "/path/to/project"
-#
-#######################################
-function run_outdated_check {
-    local project_dir=$1
-
-    log "INFO" "  📅 Checking for outdated packages..."
-
-    pushd "$project_dir" > /dev/null || return 1
-
-    if [[ "$DRY_RUN" == "true" ]]; then
-        log "INFO" "  🔍 [DRY-RUN] Would run: npm outdated"
-        popd > /dev/null
-        return 0
-    fi
-
-    local outdated_output
-    if outdated_output=$(npm outdated 2>&1); then
-        log "INFO" "  ✅ All packages are up to date"
-    else
-        if [[ "$VERBOSE" == "true" ]]; then
-            log "INFO" "  ℹ️  Some packages have updates available:"
-            echo "$outdated_output"
-        else
-            log "INFO" "  ℹ️  Some packages have updates available (run with -v for details)"
-        fi
-    fi
-
-    popd > /dev/null
-    return 0
 }
 
 #######################################
