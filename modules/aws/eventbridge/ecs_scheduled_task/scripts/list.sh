@@ -87,9 +87,10 @@ function main {
 
     # Get all enabled rule names
     # Note: --state option is not supported in list-rules, so filter in query
+    # shellcheck disable=SC2016
     rules=$(aws events list-rules --query 'Rules[?State==`ENABLED`].Name' --output text 2> /dev/null || echo "")
 
-    if [[ -z "$rules" ]]; then
+    if [[ -z $rules ]]; then
         echo '{}'
         exit 0
     fi
@@ -105,11 +106,12 @@ function main {
         # Get targets for the rule
         # We look for targets that have EcsParameters and return: RoleArn(ClusterArn) + TaskDefinitionArn
         # Output format: ClusterArn|TaskDefinitionArn
+        # shellcheck disable=SC2016
         targets=$(aws events list-targets-by-rule --rule "$rule" \
             --query 'Targets[?EcsParameters!=`null`].[Arn, EcsParameters.TaskDefinitionArn]' \
             --output text | tr '\t' '|')
 
-        if [[ -n "$targets" ]]; then
+        if [[ -n $targets ]]; then
             while read -r line; do
                 cluster_arn=$(echo "$line" | cut -d'|' -f1)
                 task_def_arn=$(echo "$line" | cut -d'|' -f2)
@@ -122,7 +124,7 @@ function main {
                 # Extract family (remove :revision)
                 task_family=$(echo "$task_def_arn" | awk -F'/' '{print $NF}' | cut -d':' -f1)
 
-                if [[ -n "$cluster_name" && -n "$task_family" ]]; then
+                if [[ -n $cluster_name && -n $task_family ]]; then
                     echo "$cluster_name/$task_family=$rule" >> "$tmp_file"
                 fi
             done <<< "$targets"
@@ -133,18 +135,18 @@ function main {
     # If multiple rules populate the same key, we define the behavior here.
     # We will join them with commas.
 
-    jq -n -R "
-        [inputs | split(\"=\")] |
+    jq -n -R '
+        [inputs | split("=")] |
         group_by(.[0]) |
         map({
             key: .[0][0],
-            value: (map(.[1]) | join(\",\"))
+            value: (map(.[1]) | join(","))
         }) |
         from_entries
-    " "$tmp_file"
+    ' "$tmp_file"
 }
 
 # Only call main if script is executed directly
-if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
+if [[ ${BASH_SOURCE[0]} == "$0" ]]; then
     main "$@"
 fi

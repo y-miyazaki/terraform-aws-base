@@ -95,7 +95,7 @@ function main {
 
     # Build region flag if provided
     local region_flag=()
-    if [[ -n "$region" ]]; then
+    if [[ -n $region ]]; then
         region_flag=(--region "$region")
     fi
 
@@ -104,7 +104,7 @@ function main {
     count=$(aws accessanalyzer list-analyzers --type ORGANIZATION "${region_flag[@]}" \
         --query "length(analyzers[?name!='${analyzer_name}'])" --output text)
 
-    if [[ "$count" -gt 0 ]]; then
+    if [[ $count -gt 0 ]]; then
         echo '{"exists": "true"}'
     else
         echo '{"exists": "false"}'
@@ -112,6 +112,6 @@ function main {
 }
 
 # Only call main if script is executed directly
-if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
+if [[ ${BASH_SOURCE[0]} == "$0" ]]; then
     main "$@"
 fi

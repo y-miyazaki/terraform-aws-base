@@ -93,7 +93,7 @@ function main {
     local aws_cmd="aws apigateway get-rest-apis --query 'items[].name' --output json"
 
     # Add region if provided
-    if [[ -n "$region" ]]; then
+    if [[ -n $region ]]; then
         aws_cmd="$aws_cmd --region \"$region\""
     fi
 
@@ -110,6 +110,6 @@ function main {
 }
 
 # Only call main if script is executed directly
-if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
+if [[ ${BASH_SOURCE[0]} == "$0" ]]; then
     main "$@"
 fi

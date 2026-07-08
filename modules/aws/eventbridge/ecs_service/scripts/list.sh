@@ -106,7 +106,7 @@ function main {
     # Iterate through each cluster
     for cluster_arn in "${clusters[@]}"; do
         # Skip if empty
-        [[ -z "$cluster_arn" ]] && continue
+        [[ -z $cluster_arn ]] && continue
 
         # Extract cluster name from ARN
         cluster_name=$(basename "$cluster_arn")
@@ -117,7 +117,7 @@ function main {
         # Iterate through each service
         for service_arn in "${services[@]}"; do
             # Skip if empty
-            [[ -z "$service_arn" ]] && continue
+            [[ -z $service_arn ]] && continue
 
             # Extract service name from ARN
             service_name=$(basename "$service_arn")
@@ -130,7 +130,7 @@ function main {
                 --output text 2> /dev/null || echo "1")
 
             # Default to 1 if empty or None
-            if [[ -z "$desired_count" || "$desired_count" == "None" ]]; then
+            if [[ -z $desired_count || $desired_count == "None" ]]; then
                 desired_count=1
             fi
 
@@ -144,13 +144,13 @@ function main {
                 --output text 2> /dev/null || echo "")
 
             # Parse AutoScaling min/max capacity and set flag
-            if [[ -n "$autoscaling_info" && "$autoscaling_info" != "None" ]]; then
+            if [[ -n $autoscaling_info && $autoscaling_info != "None" ]]; then
                 has_autoscaling="1"
                 autoscaling_min=$(echo "$autoscaling_info" | awk '{print $1}')
                 autoscaling_max=$(echo "$autoscaling_info" | awk '{print $2}')
                 # Handle case where min/max are empty or None
-                [[ -z "$autoscaling_min" || "$autoscaling_min" == "None" ]] && autoscaling_min="0"
-                [[ -z "$autoscaling_max" || "$autoscaling_max" == "None" ]] && autoscaling_max="0"
+                [[ -z $autoscaling_min || $autoscaling_min == "None" ]] && autoscaling_min="0"
+                [[ -z $autoscaling_max || $autoscaling_max == "None" ]] && autoscaling_max="0"
             else
                 has_autoscaling="0"
                 autoscaling_min="0"
@@ -204,6 +204,6 @@ function main {
 }
 
 # Only call main if script is executed directly
-if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
+if [[ ${BASH_SOURCE[0]} == "$0" ]]; then
     main "$@"
 fi

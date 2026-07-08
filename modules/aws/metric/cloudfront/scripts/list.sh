@@ -95,7 +95,7 @@ function main {
     local aws_cmd="aws cloudfront list-distributions --query 'DistributionList.Items[].[Id,DomainName,Aliases.Items[0]]' --output json"
 
     # Add region if provided (CloudFront is global, but we keep the parameter for consistency)
-    if [[ -n "$region" ]]; then
+    if [[ -n $region ]]; then
         aws_cmd="$aws_cmd --region \"$region\""
     fi
 
@@ -104,7 +104,7 @@ function main {
     distributions=$(eval "$aws_cmd")
 
     # Handle null/empty result (no distributions)
-    if [[ -z "$distributions" ]] || [[ "$distributions" == "null" ]]; then
+    if [[ -z $distributions ]] || [[ $distributions == "null" ]]; then
         jq -n '{list_distribution: "", list_domain: ""}'
         return 0
     fi
@@ -121,6 +121,6 @@ function main {
 }
 
 # Only call main if script is executed directly
-if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
+if [[ ${BASH_SOURCE[0]} == "$0" ]]; then
     main "$@"
 fi
