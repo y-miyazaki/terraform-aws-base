@@ -352,6 +352,10 @@
         ]
       },
       {
+        "command": "command -v lean-ctx >/dev/null 2>&1 || exit 0; lean-ctx hook observe",
+        "timeoutSec": 5
+      },
+      {
         "matcher": "Write",
         "hooks": [
           {
@@ -370,10 +374,6 @@
             "timeout": 120
           }
         ]
-      },
-      {
-        "command": "command -v lean-ctx >/dev/null 2>&1 || exit 0; lean-ctx hook observe",
-        "timeoutSec": 5
       },
       {
         "command": ".claude/hooks/terraform-hooks-cursor/scripts/terraform_fmt.sh",

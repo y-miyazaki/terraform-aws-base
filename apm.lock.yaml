@@ -1,5 +1,5 @@
 lockfile_version: '1'
-generated_at: '2026-07-08T11:14:54.429789+00:00'
+generated_at: '2026-07-08T11:25:11.682564+00:00'
 apm_version: 0.21.0
 dependencies:
 - repo_url: y-miyazaki/config
@@ -722,6 +722,41 @@ dependencies:
   host: github.com
   resolved_commit: 1047f4324e82da4e7ef9e94f9d46d33778dd75af
   resolved_ref: v1.7.1
+  virtual_path: .apm/packages/common-hooks-claude
+  is_virtual: true
+  package_type: apm_package
+  deployed_files:
+  - .claude/hooks/common-hooks-claude/scripts/actionlint.sh
+  - .claude/hooks/common-hooks-claude/scripts/ghalint.sh
+  - .claude/hooks/common-hooks-claude/scripts/gitleaks.sh
+  - .claude/hooks/common-hooks-claude/scripts/markdown_link_check.sh
+  - .claude/hooks/common-hooks-claude/scripts/markdownlint_cli2.sh
+  - .claude/hooks/common-hooks-claude/scripts/zizmor.sh
+  - .cursor/hooks/common-hooks-claude/scripts/actionlint.sh
+  - .cursor/hooks/common-hooks-claude/scripts/ghalint.sh
+  - .cursor/hooks/common-hooks-claude/scripts/gitleaks.sh
+  - .cursor/hooks/common-hooks-claude/scripts/markdown_link_check.sh
+  - .cursor/hooks/common-hooks-claude/scripts/markdownlint_cli2.sh
+  - .cursor/hooks/common-hooks-claude/scripts/zizmor.sh
+  deployed_file_hashes:
+    .claude/hooks/common-hooks-claude/scripts/actionlint.sh: sha256:17607e5e2c06f3d2c4e4a08816b66c7dbae063c654da1591b63b5143361e0c71
+    .claude/hooks/common-hooks-claude/scripts/ghalint.sh: sha256:ff3dcd819b5c43f340ff168ea8eb13677f3c6469ce2f1e8e792542ab8327f63d
+    .claude/hooks/common-hooks-claude/scripts/gitleaks.sh: sha256:855654d32d3572643472ef687230b74cb0ebf3ee2a303812d3395a1d5442a793
+    .claude/hooks/common-hooks-claude/scripts/markdown_link_check.sh: sha256:eee45220c508cbb9dc5bf72dcfe41d32d3ba55af7ad1b212d5b1fada30a4288a
+    .claude/hooks/common-hooks-claude/scripts/markdownlint_cli2.sh: sha256:58db65f55873073b756d398f2155722be2193eb5e63e39b337394232cb5eaa0a
+    .claude/hooks/common-hooks-claude/scripts/zizmor.sh: sha256:36d60cc2d619432f0a079a65fcd1dec640af3f239459067d5bdb42c5b970f10e
+    .cursor/hooks/common-hooks-claude/scripts/actionlint.sh: sha256:17607e5e2c06f3d2c4e4a08816b66c7dbae063c654da1591b63b5143361e0c71
+    .cursor/hooks/common-hooks-claude/scripts/ghalint.sh: sha256:ff3dcd819b5c43f340ff168ea8eb13677f3c6469ce2f1e8e792542ab8327f63d
+    .cursor/hooks/common-hooks-claude/scripts/gitleaks.sh: sha256:855654d32d3572643472ef687230b74cb0ebf3ee2a303812d3395a1d5442a793
+    .cursor/hooks/common-hooks-claude/scripts/markdown_link_check.sh: sha256:eee45220c508cbb9dc5bf72dcfe41d32d3ba55af7ad1b212d5b1fada30a4288a
+    .cursor/hooks/common-hooks-claude/scripts/markdownlint_cli2.sh: sha256:58db65f55873073b756d398f2155722be2193eb5e63e39b337394232cb5eaa0a
+    .cursor/hooks/common-hooks-claude/scripts/zizmor.sh: sha256:36d60cc2d619432f0a079a65fcd1dec640af3f239459067d5bdb42c5b970f10e
+  content_hash: sha256:245a692cbc952d38b4b947265f0d17e0bc78c6077ce3ab272768b58c8ed40bcc
+  declared_license: Apache-2.0
+- repo_url: y-miyazaki/config
+  host: github.com
+  resolved_commit: 1047f4324e82da4e7ef9e94f9d46d33778dd75af
+  resolved_ref: v1.7.1
   virtual_path: .apm/packages/common-hooks-cursor
   is_virtual: true
   package_type: apm_package
@@ -963,6 +998,25 @@ dependencies:
     .claude/skills/shell-script-validation/scripts/validate.sh: sha256:561d91717c529ce2531a4ff2593301d55b87d93fbd9645541d78d0d0933add41
     .cursor/rules/shell-script.mdc: sha256:2e153a9e835ad4ef8193e11c3adcf831a97cc1441a6f0e47b3dcdc30df5f4fc6
   content_hash: sha256:26b043ca03b5e7d47f84e70acf9b5ef0e11a9455ae4397ad0e1c758b05502f5f
+  declared_license: Apache-2.0
+- repo_url: y-miyazaki/config
+  host: github.com
+  resolved_commit: 1047f4324e82da4e7ef9e94f9d46d33778dd75af
+  resolved_ref: v1.7.1
+  virtual_path: .apm/packages/shell-script-hooks-claude
+  is_virtual: true
+  package_type: apm_package
+  deployed_files:
+  - .claude/hooks/shell-script-hooks-claude/scripts/shellcheck.sh
+  - .claude/hooks/shell-script-hooks-claude/scripts/shfmt.sh
+  - .cursor/hooks/shell-script-hooks-claude/scripts/shellcheck.sh
+  - .cursor/hooks/shell-script-hooks-claude/scripts/shfmt.sh
+  deployed_file_hashes:
+    .claude/hooks/shell-script-hooks-claude/scripts/shellcheck.sh: sha256:d98d94d4ea99773d2efc7502f811d03329257ba198d58ef7151f985c6b5f00ed
+    .claude/hooks/shell-script-hooks-claude/scripts/shfmt.sh: sha256:98f7539e6d9a7ea596018fb07ef5fbfe59c908a2d46e5c138cbec9467885d2b8
+    .cursor/hooks/shell-script-hooks-claude/scripts/shellcheck.sh: sha256:d98d94d4ea99773d2efc7502f811d03329257ba198d58ef7151f985c6b5f00ed
+    .cursor/hooks/shell-script-hooks-claude/scripts/shfmt.sh: sha256:98f7539e6d9a7ea596018fb07ef5fbfe59c908a2d46e5c138cbec9467885d2b8
+  content_hash: sha256:94fb95926a30ef0404627770239270283b859098c54b6fcb83ee2138929569e3
   declared_license: Apache-2.0
 - repo_url: y-miyazaki/config
   host: github.com
@@ -1238,6 +1292,25 @@ dependencies:
   is_virtual: true
   package_type: apm_package
   content_hash: sha256:f2ab3e9287aa43d7d5ed6632cd5f84a2f30afb1439ad172ce246bad2707791e5
+  declared_license: Apache-2.0
+- repo_url: y-miyazaki/config
+  host: github.com
+  resolved_commit: 1047f4324e82da4e7ef9e94f9d46d33778dd75af
+  resolved_ref: v1.7.1
+  virtual_path: .apm/packages/terraform-hooks-claude
+  is_virtual: true
+  package_type: apm_package
+  deployed_files:
+  - .claude/hooks/terraform-hooks-claude/scripts/terraform_fmt.sh
+  - .claude/hooks/terraform-hooks-claude/scripts/tflint.sh
+  - .cursor/hooks/terraform-hooks-claude/scripts/terraform_fmt.sh
+  - .cursor/hooks/terraform-hooks-claude/scripts/tflint.sh
+  deployed_file_hashes:
+    .claude/hooks/terraform-hooks-claude/scripts/terraform_fmt.sh: sha256:711c05823ec6944059ea31280efd88e8c92bd8d07af9a55d7d9db5e472af0d7a
+    .claude/hooks/terraform-hooks-claude/scripts/tflint.sh: sha256:f08d908c2da8a92539c5cf19182e75660c788630e943dc82acf07a77993bf4d3
+    .cursor/hooks/terraform-hooks-claude/scripts/terraform_fmt.sh: sha256:711c05823ec6944059ea31280efd88e8c92bd8d07af9a55d7d9db5e472af0d7a
+    .cursor/hooks/terraform-hooks-claude/scripts/tflint.sh: sha256:f08d908c2da8a92539c5cf19182e75660c788630e943dc82acf07a77993bf4d3
+  content_hash: sha256:871512db63114be2c64b7a5c51db18710818fa918f0bdcaafb304442ccab5bfc
   declared_license: Apache-2.0
 - repo_url: y-miyazaki/config
   host: github.com

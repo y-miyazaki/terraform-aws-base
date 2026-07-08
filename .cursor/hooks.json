@@ -72,6 +72,155 @@
         "timeoutSec": 120,
         "_apm_source": "shell-script-hooks-cursor"
       }
+    ],
+    "Stop": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".cursor/hooks/common-hooks-claude/scripts/actionlint.sh",
+            "timeout": 60
+          }
+        ],
+        "_apm_source": "common-hooks-claude"
+      },
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".cursor/hooks/common-hooks-claude/scripts/ghalint.sh",
+            "timeout": 60
+          }
+        ],
+        "_apm_source": "common-hooks-claude"
+      },
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".cursor/hooks/common-hooks-claude/scripts/zizmor.sh",
+            "timeout": 60
+          }
+        ],
+        "_apm_source": "common-hooks-claude"
+      },
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".cursor/hooks/common-hooks-claude/scripts/gitleaks.sh",
+            "timeout": 60
+          }
+        ],
+        "_apm_source": "common-hooks-claude"
+      },
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".cursor/hooks/common-hooks-claude/scripts/markdown_link_check.sh",
+            "timeout": 240
+          }
+        ],
+        "_apm_source": "common-hooks-claude"
+      },
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".cursor/hooks/common-hooks-claude/scripts/markdownlint_cli2.sh",
+            "timeout": 120
+          }
+        ],
+        "_apm_source": "common-hooks-claude"
+      },
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".cursor/hooks/shell-script-hooks-claude/scripts/shellcheck.sh",
+            "timeout": 120
+          }
+        ],
+        "_apm_source": "shell-script-hooks-claude"
+      },
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".cursor/hooks/terraform-hooks-claude/scripts/tflint.sh",
+            "timeout": 120
+          }
+        ],
+        "_apm_source": "terraform-hooks-claude"
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "command -v lean-ctx >/dev/null 2>&1 || exit 0; lean-ctx hook observe",
+            "timeout": 5
+          }
+        ],
+        "_apm_source": "common-hooks-claude"
+      },
+      {
+        "matcher": "Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".cursor/hooks/shell-script-hooks-claude/scripts/shfmt.sh",
+            "timeout": 120
+          }
+        ],
+        "_apm_source": "shell-script-hooks-claude"
+      },
+      {
+        "matcher": "Edit|Write|Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".cursor/hooks/terraform-hooks-claude/scripts/terraform_fmt.sh",
+            "timeout": 120
+          }
+        ],
+        "_apm_source": "terraform-hooks-claude"
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Bash|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "command -v lean-ctx >/dev/null 2>&1 || exit 0; lean-ctx hook rewrite",
+            "timeout": 15
+          }
+        ],
+        "_apm_source": "common-hooks-claude"
+      },
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "command -v lean-ctx >/dev/null 2>&1 || exit 0; lean-ctx hook redirect",
+            "timeout": 5
+          }
+        ],
+        "_apm_source": "common-hooks-claude"
+      }
     ]
   },
   "version": 1

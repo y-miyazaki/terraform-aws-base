@@ -113,6 +113,11 @@
       "_apm_source": "shell-script-hooks-claude"
     },
     {
+      "command": "command -v lean-ctx >/dev/null 2>&1 || exit 0; lean-ctx hook observe",
+      "timeoutSec": 5,
+      "_apm_source": "common-hooks-cursor"
+    },
+    {
       "matcher": "Edit|Write|Bash",
       "hooks": [
         {
@@ -122,11 +127,6 @@
         }
       ],
       "_apm_source": "terraform-hooks-claude"
-    },
-    {
-      "command": "command -v lean-ctx >/dev/null 2>&1 || exit 0; lean-ctx hook observe",
-      "timeoutSec": 5,
-      "_apm_source": "common-hooks-cursor"
     },
     {
       "command": ".claude/hooks/terraform-hooks-cursor/scripts/terraform_fmt.sh",
