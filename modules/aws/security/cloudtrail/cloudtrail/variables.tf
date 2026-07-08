@@ -210,7 +210,7 @@ variable "aws_cloudtrail" {
   }
 }
 
-variable "cis_name_prefix" {
+variable "cloudwatch_name_prefix" {
   type        = string
   description = "(Required) CloudWatch Filter/Alarm name prefix."
 }

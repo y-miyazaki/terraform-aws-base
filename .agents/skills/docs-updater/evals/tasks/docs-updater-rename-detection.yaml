@@ -1,0 +1,24 @@
+id: docs-updater-rename-001
+name: docs-updater rename detection
+description: |
+  Validate that renamed files trigger documentation path updates in affected docs and mkdocs.yml.
+
+tags:
+  - quality
+  - rename-path
+  - edge-case
+
+inputs:
+  prompt: "Use docs-updater. Assume git detected a rename from '.github/workflows/ci-build.yaml' to '.github/workflows/ci-build-deploy.yaml'. Return ## Summary with 'Status: updated', ## Changes showing the updated file paths, and ## Skipped Items."
+  context:
+    scope: staged
+
+expected:
+  output_contains:
+    - "## Summary"
+    - "Status: updated"
+    - "## Changes"
+    - "ci-build-deploy"
+    - "## Skipped Items"
+  outcomes:
+    - type: task_completed

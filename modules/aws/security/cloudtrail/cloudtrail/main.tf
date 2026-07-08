@@ -1,7 +1,7 @@
 #--------------------------------------------------------------
 # Module: aws/security/cloudtrail/cloudtrail
 # Purpose: Provision CloudTrail with optional dedicated S3 bucket, CloudWatch log integration, CIS metric filters/alarms, and SNS notifications.
-# Notes: Extensive CIS coverage (3.1-3.14); future improvement: parameterize CIS control enablement flags individually.
+# Notes: Extensive CloudWatch coverage (CloudWatch.1-CloudWatch.14); future improvement: parameterize CloudWatch control enablement flags individually.
 #--------------------------------------------------------------
 data "aws_region" "current" {}
 
@@ -79,14 +79,60 @@ resource "aws_cloudwatch_log_group" "this" {
 }
 
 #--------------------------------------------------------------
-# (CIS.3.1) Provides a CloudWatch Log Metric Filter resource.
-# https://docs.aws.amazon.com/securityhub/latest/userguide/securityhub-cis-controls.html#cis-3.1-remediation
+# (CloudWatch.1) Provides a CloudWatch Log Metric Filter resource.
+# https://docs.aws.amazon.com/securityhub/latest/userguide/cloudwatch-controls.html#cloudwatch-1-remediation
 #--------------------------------------------------------------
-resource "aws_cloudwatch_log_metric_filter" "cis_3_1" {
+resource "aws_cloudwatch_log_metric_filter" "cloudwatch_1" {
+  count = var.is_enabled ? 1 : 0
+
+  region         = local.region
+  name           = "${var.cloudwatch_name_prefix}cloudwatch-1-root"
+  pattern        = <<PATTERN
+{$.userIdentity.type="Root" && $.userIdentity.invokedBy NOT EXISTS && $.eventType !="AwsServiceEvent"}
+PATTERN
+  log_group_name = aws_cloudwatch_log_group.this[0].name
+  metric_transformation {
+    name      = "${var.cloudwatch_name_prefix}cloudwatch-1-root"
+    namespace = "CloudTrail"
+    value     = "1"
+  }
+}
+
+#--------------------------------------------------------------
+# (CloudWatch.1) Provides a CloudWatch Metric Alarm resource.
+# https://docs.aws.amazon.com/securityhub/latest/userguide/cloudwatch-controls.html#cloudwatch-1-remediation
+#--------------------------------------------------------------
+resource "aws_cloudwatch_metric_alarm" "cloudwatch_1" {
+  count = var.is_enabled ? 1 : 0
+
+  region                    = local.region
+  alarm_name                = "${var.cloudwatch_name_prefix}cloudwatch-1-root"
+  comparison_operator       = "GreaterThanOrEqualToThreshold"
+  evaluation_periods        = 1
+  metric_name               = aws_cloudwatch_log_metric_filter.cloudwatch_1[0].id
+  namespace                 = aws_cloudwatch_log_metric_filter.cloudwatch_1[0].metric_transformation[0].namespace
+  period                    = 300
+  statistic                 = "Sum"
+  threshold                 = 1
+  actions_enabled           = true
+  alarm_actions             = [aws_sns_topic.this[0].arn]
+  alarm_description         = "[CloudWatch.1] Real-time monitoring of API calls can be achieved by directing CloudTrail Logs to CloudWatch Logs and establishing corresponding metric filters and alarms. It is recommended that a metric filter and alarm be established for root login attempts."
+  ok_actions                = [aws_sns_topic.this[0].arn]
+  insufficient_data_actions = []
+  treat_missing_data        = "notBreaching"
+
+  tags = var.tags
+}
+
+#--------------------------------------------------------------
+# (CloudWatch.2) Provides a CloudWatch Log Metric Filter resource.
+# https://docs.aws.amazon.com/securityhub/latest/userguide/cloudwatch-controls.html#cloudwatch-2-remediation
+#--------------------------------------------------------------
+resource "aws_cloudwatch_log_metric_filter" "cloudwatch_2" {
   count = var.is_enabled ? 1 : 0
 
   region = local.region
-  name   = "${var.cis_name_prefix}cloudtrail-logs-unauthorized-operation-api"
+  name   = "${var.cloudwatch_name_prefix}cloudwatch-2-unauthorized-operation-api"
   # noise list:
   # - assumed-role/AWSServiceRoleFor*
   # - assumed-role/AIOpsRole*
@@ -95,31 +141,31 @@ resource "aws_cloudwatch_log_metric_filter" "cis_3_1" {
 PATTERN
   log_group_name = aws_cloudwatch_log_group.this[0].name
   metric_transformation {
-    name      = "${var.cis_name_prefix}cloudtrail-logs-unauthorized-operation-api"
+    name      = "${var.cloudwatch_name_prefix}cloudwatch-2-unauthorized-operation-api"
     namespace = "CloudTrail"
     value     = "1"
   }
 }
 
 #--------------------------------------------------------------
-# (CIS.3.1) Provides a CloudWatch Metric Alarm resource.
-# https://docs.aws.amazon.com/securityhub/latest/userguide/securityhub-cis-controls.html#cis-3.1-remediation
+# (CloudWatch.2) Provides a CloudWatch Metric Alarm resource.
+# https://docs.aws.amazon.com/securityhub/latest/userguide/cloudwatch-controls.html#cloudwatch-2-remediation
 #--------------------------------------------------------------
-resource "aws_cloudwatch_metric_alarm" "cis_3_1" {
+resource "aws_cloudwatch_metric_alarm" "cloudwatch_2" {
   count = var.is_enabled ? 1 : 0
 
   region                    = local.region
-  alarm_name                = "${var.cis_name_prefix}cloudtrail-logs-unauthorized-operation-api"
+  alarm_name                = "${var.cloudwatch_name_prefix}cloudwatch-2-unauthorized-operation-api"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
-  metric_name               = aws_cloudwatch_log_metric_filter.cis_3_1[0].id
-  namespace                 = aws_cloudwatch_log_metric_filter.cis_3_1[0].metric_transformation[0].namespace
+  metric_name               = aws_cloudwatch_log_metric_filter.cloudwatch_2[0].id
+  namespace                 = aws_cloudwatch_log_metric_filter.cloudwatch_2[0].metric_transformation[0].namespace
   period                    = 300
   statistic                 = "Sum"
   threshold                 = 1
   actions_enabled           = true
   alarm_actions             = [aws_sns_topic.this[0].arn]
-  alarm_description         = "[CIS.3.1] Real-time monitoring of API calls can be achieved by directing CloudTrail Logs to CloudWatch Logs and establishing corresponding metric filters and alarms. It is recommended that a metric filter and alarm be established for unauthorized API calls."
+  alarm_description         = "[CloudWatch.2] Real-time monitoring of API calls can be achieved by directing CloudTrail Logs to CloudWatch Logs and establishing corresponding metric filters and alarms. It is recommended that a metric filter and alarm be established for unauthorized API calls."
   ok_actions                = [aws_sns_topic.this[0].arn]
   insufficient_data_actions = []
   treat_missing_data        = "notBreaching"
@@ -128,44 +174,44 @@ resource "aws_cloudwatch_metric_alarm" "cis_3_1" {
 }
 
 #--------------------------------------------------------------
-# (CIS.3.2) Provides a CloudWatch Log Metric Filter resource.
-# https://docs.aws.amazon.com/securityhub/latest/userguide/securityhub-cis-controls.html#cis-3.2-remediation
+# (CloudWatch.3) Provides a CloudWatch Log Metric Filter resource.
+# https://docs.aws.amazon.com/securityhub/latest/userguide/cloudwatch-controls.html#cloudwatch-3-remediation
 #--------------------------------------------------------------
-resource "aws_cloudwatch_log_metric_filter" "cis_3_2" {
+resource "aws_cloudwatch_log_metric_filter" "cloudwatch_3" {
   count = 0
 
   region         = local.region
-  name           = "${var.cis_name_prefix}cloudtrail-logs-mfa"
+  name           = "${var.cloudwatch_name_prefix}cloudwatch-3-mfa"
   pattern        = <<PATTERN
 {($.eventName="ConsoleLogin") && ($.additionalEventData.MFAUsed!="Yes") && ($.userIdentity.type="IAMUser") && ($.responseElements.ConsoleLogin="Success")}
 PATTERN
   log_group_name = aws_cloudwatch_log_group.this[0].name
   metric_transformation {
-    name      = "${var.cis_name_prefix}cloudtrail-logs-mfa"
+    name      = "${var.cloudwatch_name_prefix}cloudwatch-3-mfa"
     namespace = "CloudTrail"
     value     = "1"
   }
 }
 
 #--------------------------------------------------------------
-# (CIS.3.2) Provides a CloudWatch Metric Alarm resource.
-# https://docs.aws.amazon.com/securityhub/latest/userguide/securityhub-cis-controls.html#cis-3.2-remediation
+# (CloudWatch.3) Provides a CloudWatch Metric Alarm resource.
+# https://docs.aws.amazon.com/securityhub/latest/userguide/cloudwatch-controls.html#cloudwatch-3-remediation
 #--------------------------------------------------------------
-resource "aws_cloudwatch_metric_alarm" "cis_3_2" {
+resource "aws_cloudwatch_metric_alarm" "cloudwatch_3" {
   count = 0
 
   region                    = local.region
-  alarm_name                = "${var.cis_name_prefix}cloudtrail-logs-mfa"
+  alarm_name                = "${var.cloudwatch_name_prefix}cloudwatch-3-mfa"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
-  metric_name               = aws_cloudwatch_log_metric_filter.cis_3_2[0].id
-  namespace                 = aws_cloudwatch_log_metric_filter.cis_3_2[0].metric_transformation[0].namespace
+  metric_name               = aws_cloudwatch_log_metric_filter.cloudwatch_3[0].id
+  namespace                 = aws_cloudwatch_log_metric_filter.cloudwatch_3[0].metric_transformation[0].namespace
   period                    = 300
   statistic                 = "Sum"
   threshold                 = 1
   actions_enabled           = true
   alarm_actions             = [aws_sns_topic.this[0].arn]
-  alarm_description         = "[CIS.3.2] Real-time monitoring of API calls can be achieved by directing CloudTrail Logs to CloudWatch Logs and establishing corresponding metric filters and alarms. It is recommended that a metric filter and alarm be established for console logins that are not protected by multi-factor authentication (MFA)."
+  alarm_description         = "[CloudWatch.3] Real-time monitoring of API calls can be achieved by directing CloudTrail Logs to CloudWatch Logs and establishing corresponding metric filters and alarms. It is recommended that a metric filter and alarm be established for console logins that are not protected by multi-factor authentication (MFA)."
   ok_actions                = [aws_sns_topic.this[0].arn]
   insufficient_data_actions = []
   treat_missing_data        = "notBreaching"
@@ -174,90 +220,44 @@ resource "aws_cloudwatch_metric_alarm" "cis_3_2" {
 }
 
 #--------------------------------------------------------------
-# (CIS.3.3) Provides a CloudWatch Log Metric Filter resource.
-# https://docs.aws.amazon.com/securityhub/latest/userguide/securityhub-cis-controls.html#cis-3.3-remediation
+# (CloudWatch.4) Provides a CloudWatch Log Metric Filter resource.
+# https://docs.aws.amazon.com/securityhub/latest/userguide/cloudwatch-controls.html#cloudwatch-4-remediation
 #--------------------------------------------------------------
-resource "aws_cloudwatch_log_metric_filter" "cis_3_3" {
+resource "aws_cloudwatch_log_metric_filter" "cloudwatch_4" {
   count = var.is_enabled ? 1 : 0
 
   region         = local.region
-  name           = "${var.cis_name_prefix}cloudtrail-logs-root"
-  pattern        = <<PATTERN
-{$.userIdentity.type="Root" && $.userIdentity.invokedBy NOT EXISTS && $.eventType !="AwsServiceEvent"}
-PATTERN
-  log_group_name = aws_cloudwatch_log_group.this[0].name
-  metric_transformation {
-    name      = "${var.cis_name_prefix}cloudtrail-logs-root"
-    namespace = "CloudTrail"
-    value     = "1"
-  }
-}
-
-#--------------------------------------------------------------
-# (CIS.3.3) Provides a CloudWatch Metric Alarm resource.
-# https://docs.aws.amazon.com/securityhub/latest/userguide/securityhub-cis-controls.html#cis-3.3-remediation
-#--------------------------------------------------------------
-resource "aws_cloudwatch_metric_alarm" "cis_3_3" {
-  count = var.is_enabled ? 1 : 0
-
-  region                    = local.region
-  alarm_name                = "${var.cis_name_prefix}cloudtrail-logs-root"
-  comparison_operator       = "GreaterThanOrEqualToThreshold"
-  evaluation_periods        = 1
-  metric_name               = aws_cloudwatch_log_metric_filter.cis_3_3[0].id
-  namespace                 = aws_cloudwatch_log_metric_filter.cis_3_3[0].metric_transformation[0].namespace
-  period                    = 300
-  statistic                 = "Sum"
-  threshold                 = 1
-  actions_enabled           = true
-  alarm_actions             = [aws_sns_topic.this[0].arn]
-  alarm_description         = "[CIS.3.3] Real-time monitoring of API calls can be achieved by directing CloudTrail Logs to CloudWatch Logs and establishing corresponding metric filters and alarms. It is recommended that a metric filter and alarm be established for root login attempts."
-  ok_actions                = [aws_sns_topic.this[0].arn]
-  insufficient_data_actions = []
-  treat_missing_data        = "notBreaching"
-
-  tags = var.tags
-}
-
-#--------------------------------------------------------------
-# (CIS.3.4) Provides a CloudWatch Log Metric Filter resource.
-# https://docs.aws.amazon.com/securityhub/latest/userguide/securityhub-cis-controls.html#securityhub-cis-controls-3.4
-#--------------------------------------------------------------
-resource "aws_cloudwatch_log_metric_filter" "cis_3_4" {
-  count = var.is_enabled ? 1 : 0
-
-  region         = local.region
-  name           = "${var.cis_name_prefix}cloudtrail-logs-iam-policy"
+  name           = "${var.cloudwatch_name_prefix}cloudwatch-4-iam-policy"
   pattern        = <<PATTERN
 {($.eventName=DeleteGroupPolicy) || ($.eventName=DeleteRolePolicy) || ($.eventName=DeleteUserPolicy) || ($.eventName=PutGroupPolicy) || ($.eventName=PutRolePolicy) || ($.eventName=PutUserPolicy) || ($.eventName=CreatePolicy) || ($.eventName=DeletePolicy) || ($.eventName=CreatePolicyVersion) || ($.eventName=DeletePolicyVersion) || ($.eventName=AttachRolePolicy) || ($.eventName=DetachRolePolicy) || ($.eventName=AttachUserPolicy) || ($.eventName=DetachUserPolicy) || ($.eventName=AttachGroupPolicy) || ($.eventName=DetachGroupPolicy)}
 PATTERN
   log_group_name = aws_cloudwatch_log_group.this[0].name
   metric_transformation {
-    name      = "${var.cis_name_prefix}cloudtrail-logs-iam-policy"
+    name      = "${var.cloudwatch_name_prefix}cloudwatch-4-iam-policy"
     namespace = "CloudTrail"
     value     = "1"
   }
 }
 
 #--------------------------------------------------------------
-# (CIS.3.4) Provides a CloudWatch Metric Alarm resource.
-# https://docs.aws.amazon.com/securityhub/latest/userguide/securityhub-cis-controls.html#securityhub-cis-controls-3.4
+# (CloudWatch.4) Provides a CloudWatch Metric Alarm resource.
+# https://docs.aws.amazon.com/securityhub/latest/userguide/cloudwatch-controls.html#cloudwatch-4-remediation
 #--------------------------------------------------------------
-resource "aws_cloudwatch_metric_alarm" "cis_3_4" {
+resource "aws_cloudwatch_metric_alarm" "cloudwatch_4" {
   count = var.is_enabled ? 1 : 0
 
   region                    = local.region
-  alarm_name                = "${var.cis_name_prefix}cloudtrail-logs-iam-policy"
+  alarm_name                = "${var.cloudwatch_name_prefix}cloudwatch-4-iam-policy"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
-  metric_name               = aws_cloudwatch_log_metric_filter.cis_3_4[0].id
-  namespace                 = aws_cloudwatch_log_metric_filter.cis_3_4[0].metric_transformation[0].namespace
+  metric_name               = aws_cloudwatch_log_metric_filter.cloudwatch_4[0].id
+  namespace                 = aws_cloudwatch_log_metric_filter.cloudwatch_4[0].metric_transformation[0].namespace
   period                    = 300
   statistic                 = "Sum"
   threshold                 = 1
   actions_enabled           = true
   alarm_actions             = [aws_sns_topic.this[0].arn]
-  alarm_description         = "[CIS.3.4] Real-time monitoring of API calls can be achieved by directing CloudTrail Logs to CloudWatch Logs and establishing corresponding metric filters and alarms. It is recommended that a metric filter and alarm be established changes made to Identity and Access Management (IAM) policies."
+  alarm_description         = "[CloudWatch.4] Real-time monitoring of API calls can be achieved by directing CloudTrail Logs to CloudWatch Logs and establishing corresponding metric filters and alarms. It is recommended that a metric filter and alarm be established changes made to Identity and Access Management (IAM) policies."
   ok_actions                = [aws_sns_topic.this[0].arn]
   insufficient_data_actions = []
   treat_missing_data        = "notBreaching"
@@ -266,44 +266,44 @@ resource "aws_cloudwatch_metric_alarm" "cis_3_4" {
 }
 
 #--------------------------------------------------------------
-# (CIS.3.5) Provides a CloudWatch Log Metric Filter resource.
-# https://docs.aws.amazon.com/securityhub/latest/userguide/securityhub-cis-controls.html#securityhub-cis-controls-3.5
+# (CloudWatch.5) Provides a CloudWatch Log Metric Filter resource.
+# https://docs.aws.amazon.com/securityhub/latest/userguide/cloudwatch-controls.html#cloudwatch-5-remediation
 #--------------------------------------------------------------
-resource "aws_cloudwatch_log_metric_filter" "cis_3_5" {
+resource "aws_cloudwatch_log_metric_filter" "cloudwatch_5" {
   count = var.is_enabled ? 1 : 0
 
   region         = local.region
-  name           = "${var.cis_name_prefix}cloudtrail-logs-cloudtrail"
+  name           = "${var.cloudwatch_name_prefix}cloudwatch-5-cloudtrail"
   pattern        = <<PATTERN
 {($.eventName=CreateTrail) || ($.eventName=UpdateTrail) || ($.eventName=DeleteTrail) || ($.eventName=StartLogging) || ($.eventName=StopLogging)}
 PATTERN
   log_group_name = aws_cloudwatch_log_group.this[0].name
   metric_transformation {
-    name      = "${var.cis_name_prefix}cloudtrail-logs-cloudtrail"
+    name      = "${var.cloudwatch_name_prefix}cloudwatch-5-cloudtrail"
     namespace = "CloudTrail"
     value     = "1"
   }
 }
 
 #--------------------------------------------------------------
-# (CIS.3.5) Provides a CloudWatch Metric Alarm resource.
-# https://docs.aws.amazon.com/securityhub/latest/userguide/securityhub-cis-controls.html#securityhub-cis-controls-3.5
+# (CloudWatch.5) Provides a CloudWatch Metric Alarm resource.
+# https://docs.aws.amazon.com/securityhub/latest/userguide/cloudwatch-controls.html#cloudwatch-5-remediation
 #--------------------------------------------------------------
-resource "aws_cloudwatch_metric_alarm" "cis_3_5" {
+resource "aws_cloudwatch_metric_alarm" "cloudwatch_5" {
   count = var.is_enabled ? 1 : 0
 
   region                    = local.region
-  alarm_name                = "${var.cis_name_prefix}cloudtrail-logs-cloudtrail"
+  alarm_name                = "${var.cloudwatch_name_prefix}cloudwatch-5-cloudtrail"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
-  metric_name               = aws_cloudwatch_log_metric_filter.cis_3_5[0].id
-  namespace                 = aws_cloudwatch_log_metric_filter.cis_3_5[0].metric_transformation[0].namespace
+  metric_name               = aws_cloudwatch_log_metric_filter.cloudwatch_5[0].id
+  namespace                 = aws_cloudwatch_log_metric_filter.cloudwatch_5[0].metric_transformation[0].namespace
   period                    = 300
   statistic                 = "Sum"
   threshold                 = 1
   actions_enabled           = true
   alarm_actions             = [aws_sns_topic.this[0].arn]
-  alarm_description         = "[CIS.3.5] Real-time monitoring of API calls can be achieved by directing CloudTrail Logs to CloudWatch Logs and establishing corresponding metric filters and alarms. It is recommended that a metric filter and alarm be established for detecting changes to CloudTrail's configurations."
+  alarm_description         = "[CloudWatch.5] Real-time monitoring of API calls can be achieved by directing CloudTrail Logs to CloudWatch Logs and establishing corresponding metric filters and alarms. It is recommended that a metric filter and alarm be established for detecting changes to CloudTrail's configurations."
   ok_actions                = [aws_sns_topic.this[0].arn]
   insufficient_data_actions = []
   treat_missing_data        = "notBreaching"
@@ -312,44 +312,44 @@ resource "aws_cloudwatch_metric_alarm" "cis_3_5" {
 }
 
 #--------------------------------------------------------------
-# (CIS.3.6) Provides a CloudWatch Log Metric Filter resource.
-# https://docs.aws.amazon.com/securityhub/latest/userguide/securityhub-cis-controls.html#cis-3.6-remediation
+# (CloudWatch.6) Provides a CloudWatch Log Metric Filter resource.
+# https://docs.aws.amazon.com/securityhub/latest/userguide/cloudwatch-controls.html#cloudwatch-6-remediation
 #--------------------------------------------------------------
-resource "aws_cloudwatch_log_metric_filter" "cis_3_6" {
+resource "aws_cloudwatch_log_metric_filter" "cloudwatch_6" {
   count = var.is_enabled ? 1 : 0
 
   region         = local.region
-  name           = "${var.cis_name_prefix}cloudtrail-logs-failed-authentication"
+  name           = "${var.cloudwatch_name_prefix}cloudwatch-6-failed-authentication"
   pattern        = <<PATTERN
 {($.eventName=ConsoleLogin) && ($.errorMessage="Failed authentication")}
 PATTERN
   log_group_name = aws_cloudwatch_log_group.this[0].name
   metric_transformation {
-    name      = "${var.cis_name_prefix}cloudtrail-logs-failed-authentication"
+    name      = "${var.cloudwatch_name_prefix}cloudwatch-6-failed-authentication"
     namespace = "CloudTrail"
     value     = "1"
   }
 }
 
 #--------------------------------------------------------------
-# (CIS.3.6) Provides a CloudWatch Metric Alarm resource.
-# https://docs.aws.amazon.com/securityhub/latest/userguide/securityhub-cis-controls.html#cis-3.6-remediation
+# (CloudWatch.6) Provides a CloudWatch Metric Alarm resource.
+# https://docs.aws.amazon.com/securityhub/latest/userguide/cloudwatch-controls.html#cloudwatch-6-remediation
 #--------------------------------------------------------------
-resource "aws_cloudwatch_metric_alarm" "cis_3_6" {
+resource "aws_cloudwatch_metric_alarm" "cloudwatch_6" {
   count = var.is_enabled ? 1 : 0
 
   region                    = local.region
-  alarm_name                = "${var.cis_name_prefix}cloudtrail-logs-failed-authentication"
+  alarm_name                = "${var.cloudwatch_name_prefix}cloudwatch-6-failed-authentication"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
-  metric_name               = aws_cloudwatch_log_metric_filter.cis_3_6[0].id
-  namespace                 = aws_cloudwatch_log_metric_filter.cis_3_6[0].metric_transformation[0].namespace
+  metric_name               = aws_cloudwatch_log_metric_filter.cloudwatch_6[0].id
+  namespace                 = aws_cloudwatch_log_metric_filter.cloudwatch_6[0].metric_transformation[0].namespace
   period                    = 300
   statistic                 = "Sum"
   threshold                 = 1
   actions_enabled           = true
   alarm_actions             = [aws_sns_topic.this[0].arn]
-  alarm_description         = "[CIS.3.6] Real-time monitoring of API calls can be achieved by directing CloudTrail Logs to CloudWatch Logs and establishing corresponding metric filters and alarms. It is recommended that a metric filter and alarm be established for failed console authentication attempts."
+  alarm_description         = "[CloudWatch.6] Real-time monitoring of API calls can be achieved by directing CloudTrail Logs to CloudWatch Logs and establishing corresponding metric filters and alarms. It is recommended that a metric filter and alarm be established for failed console authentication attempts."
   ok_actions                = [aws_sns_topic.this[0].arn]
   insufficient_data_actions = []
   treat_missing_data        = "notBreaching"
@@ -358,44 +358,44 @@ resource "aws_cloudwatch_metric_alarm" "cis_3_6" {
 }
 
 #--------------------------------------------------------------
-# (CIS.3.7) Provides a CloudWatch Log Metric Filter resource.
-# https://docs.aws.amazon.com/securityhub/latest/userguide/securityhub-cis-controls.html#cis-3.7-remediation
+# (CloudWatch.7) Provides a CloudWatch Log Metric Filter resource.
+# https://docs.aws.amazon.com/securityhub/latest/userguide/cloudwatch-controls.html#cloudwatch-7-remediation
 #--------------------------------------------------------------
-resource "aws_cloudwatch_log_metric_filter" "cis_3_7" {
+resource "aws_cloudwatch_log_metric_filter" "cloudwatch_7" {
   count = var.is_enabled ? 1 : 0
 
   region         = local.region
-  name           = "${var.cis_name_prefix}cloudtrail-logs-cmk"
+  name           = "${var.cloudwatch_name_prefix}cloudwatch-7-cmk"
   pattern        = <<PATTERN
 {($.eventSource=kms.amazonaws.com) && (($.eventName=DisableKey) || ($.eventName=ScheduleKeyDeletion))}
 PATTERN
   log_group_name = aws_cloudwatch_log_group.this[0].name
   metric_transformation {
-    name      = "${var.cis_name_prefix}cloudtrail-logs-cmk"
+    name      = "${var.cloudwatch_name_prefix}cloudwatch-7-cmk"
     namespace = "CloudTrail"
     value     = "1"
   }
 }
 
 #--------------------------------------------------------------
-# (CIS.3.7) Provides a CloudWatch Metric Alarm resource.
-# https://docs.aws.amazon.com/securityhub/latest/userguide/securityhub-cis-controls.html#cis-3.7-remediation
+# (CloudWatch.7) Provides a CloudWatch Metric Alarm resource.
+# https://docs.aws.amazon.com/securityhub/latest/userguide/cloudwatch-controls.html#cloudwatch-7-remediation
 #--------------------------------------------------------------
-resource "aws_cloudwatch_metric_alarm" "cis_3_7" {
+resource "aws_cloudwatch_metric_alarm" "cloudwatch_7" {
   count = var.is_enabled ? 1 : 0
 
   region                    = local.region
-  alarm_name                = "${var.cis_name_prefix}cloudtrail-logs-cmk"
+  alarm_name                = "${var.cloudwatch_name_prefix}cloudwatch-7-cmk"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
-  metric_name               = aws_cloudwatch_log_metric_filter.cis_3_7[0].id
-  namespace                 = aws_cloudwatch_log_metric_filter.cis_3_7[0].metric_transformation[0].namespace
+  metric_name               = aws_cloudwatch_log_metric_filter.cloudwatch_7[0].id
+  namespace                 = aws_cloudwatch_log_metric_filter.cloudwatch_7[0].metric_transformation[0].namespace
   period                    = 300
   statistic                 = "Sum"
   threshold                 = 1
   actions_enabled           = true
   alarm_actions             = [aws_sns_topic.this[0].arn]
-  alarm_description         = "[CIS.3.7] Real-time monitoring of API calls can be achieved by directing CloudTrail Logs to CloudWatch Logs and establishing corresponding metric filters and alarms. It is recommended that a metric filter and alarm be established for customer created CMKs which have changed state to disabled or scheduled deletion."
+  alarm_description         = "[CloudWatch.7] Real-time monitoring of API calls can be achieved by directing CloudTrail Logs to CloudWatch Logs and establishing corresponding metric filters and alarms. It is recommended that a metric filter and alarm be established for customer created CMKs which have changed state to disabled or scheduled deletion."
   ok_actions                = [aws_sns_topic.this[0].arn]
   insufficient_data_actions = []
   treat_missing_data        = "notBreaching"
@@ -404,44 +404,44 @@ resource "aws_cloudwatch_metric_alarm" "cis_3_7" {
 }
 
 #--------------------------------------------------------------
-# (CIS.3.8) Provides a CloudWatch Log Metric Filter resource.
-# https://docs.aws.amazon.com/securityhub/latest/userguide/securityhub-cis-controls.html#cis-3.8-remediation
+# (CloudWatch.8) Provides a CloudWatch Log Metric Filter resource.
+# https://docs.aws.amazon.com/securityhub/latest/userguide/cloudwatch-controls.html#cloudwatch-8-remediation
 #--------------------------------------------------------------
-resource "aws_cloudwatch_log_metric_filter" "cis_3_8" {
+resource "aws_cloudwatch_log_metric_filter" "cloudwatch_8" {
   count = var.is_enabled ? 1 : 0
 
   region         = local.region
-  name           = "${var.cis_name_prefix}cloudtrail-logs-s3-bucket-policy"
+  name           = "${var.cloudwatch_name_prefix}cloudwatch-8-s3-bucket-policy"
   pattern        = <<PATTERN
 {($.eventSource=s3.amazonaws.com) && (($.eventName=PutBucketAcl) || ($.eventName=PutBucketPolicy) || ($.eventName=PutBucketCors) || ($.eventName=PutBucketLifecycle) || ($.eventName=PutBucketReplication) || ($.eventName=DeleteBucketPolicy) || ($.eventName=DeleteBucketCors) || ($.eventName=DeleteBucketLifecycle) || ($.eventName=DeleteBucketReplication))}
 PATTERN
   log_group_name = aws_cloudwatch_log_group.this[0].name
   metric_transformation {
-    name      = "${var.cis_name_prefix}cloudtrail-logs-s3-bucket-policy"
+    name      = "${var.cloudwatch_name_prefix}cloudwatch-8-s3-bucket-policy"
     namespace = "CloudTrail"
     value     = "1"
   }
 }
 
 #--------------------------------------------------------------
-# (CIS.3.8) Provides a CloudWatch Metric Alarm resource.
-# https://docs.aws.amazon.com/securityhub/latest/userguide/securityhub-cis-controls.html#cis-3.8-remediation
+# (CloudWatch.8) Provides a CloudWatch Metric Alarm resource.
+# https://docs.aws.amazon.com/securityhub/latest/userguide/cloudwatch-controls.html#cloudwatch-8-remediation
 #--------------------------------------------------------------
-resource "aws_cloudwatch_metric_alarm" "cis_3_8" {
+resource "aws_cloudwatch_metric_alarm" "cloudwatch_8" {
   count = var.is_enabled ? 1 : 0
 
   region                    = local.region
-  alarm_name                = "${var.cis_name_prefix}cloudtrail-logs-s3-bucket-policy"
+  alarm_name                = "${var.cloudwatch_name_prefix}cloudwatch-8-s3-bucket-policy"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
-  metric_name               = aws_cloudwatch_log_metric_filter.cis_3_8[0].id
-  namespace                 = aws_cloudwatch_log_metric_filter.cis_3_8[0].metric_transformation[0].namespace
+  metric_name               = aws_cloudwatch_log_metric_filter.cloudwatch_8[0].id
+  namespace                 = aws_cloudwatch_log_metric_filter.cloudwatch_8[0].metric_transformation[0].namespace
   period                    = 300
   statistic                 = "Sum"
   threshold                 = 1
   actions_enabled           = true
   alarm_actions             = [aws_sns_topic.this[0].arn]
-  alarm_description         = "[CIS.3.8] Real-time monitoring of API calls can be achieved by directing CloudTrail Logs to CloudWatch Logs and establishing corresponding metric filters and alarms. It is recommended that a metric filter and alarm be established for changes to S3 bucket policies."
+  alarm_description         = "[CloudWatch.8] Real-time monitoring of API calls can be achieved by directing CloudTrail Logs to CloudWatch Logs and establishing corresponding metric filters and alarms. It is recommended that a metric filter and alarm be established for changes to S3 bucket policies."
   ok_actions                = [aws_sns_topic.this[0].arn]
   insufficient_data_actions = []
   treat_missing_data        = "notBreaching"
@@ -450,44 +450,44 @@ resource "aws_cloudwatch_metric_alarm" "cis_3_8" {
 }
 
 #--------------------------------------------------------------
-# (CIS.3.9) Provides a CloudWatch Log Metric Filter resource.
-# https://docs.aws.amazon.com/securityhub/latest/userguide/securityhub-cis-controls.html#securityhub-cis-controls-3.9
+# (CloudWatch.9) Provides a CloudWatch Log Metric Filter resource.
+# https://docs.aws.amazon.com/securityhub/latest/userguide/cloudwatch-controls.html#cloudwatch-9-remediation
 #--------------------------------------------------------------
-resource "aws_cloudwatch_log_metric_filter" "cis_3_9" {
+resource "aws_cloudwatch_log_metric_filter" "cloudwatch_9" {
   count = var.is_enabled ? 1 : 0
 
   region         = local.region
-  name           = "${var.cis_name_prefix}cloudtrail-logs-config"
+  name           = "${var.cloudwatch_name_prefix}cloudwatch-9-config"
   pattern        = <<PATTERN
 {($.eventSource=config.amazonaws.com) && (($.eventName=StopConfigurationRecorder) || ($.eventName=DeleteDeliveryChannel) || ($.eventName=PutDeliveryChannel) || ($.eventName=PutConfigurationRecorder))}
 PATTERN
   log_group_name = aws_cloudwatch_log_group.this[0].name
   metric_transformation {
-    name      = "${var.cis_name_prefix}cloudtrail-logs-config"
+    name      = "${var.cloudwatch_name_prefix}cloudwatch-9-config"
     namespace = "CloudTrail"
     value     = "1"
   }
 }
 
 #--------------------------------------------------------------
-# (CIS.3.9) Provides a CloudWatch Metric Alarm resource.
-# https://docs.aws.amazon.com/securityhub/latest/userguide/securityhub-cis-controls.html#securityhub-cis-controls-3.9
+# (CloudWatch.9) Provides a CloudWatch Metric Alarm resource.
+# https://docs.aws.amazon.com/securityhub/latest/userguide/cloudwatch-controls.html#cloudwatch-9-remediation
 #--------------------------------------------------------------
-resource "aws_cloudwatch_metric_alarm" "cis_3_9" {
+resource "aws_cloudwatch_metric_alarm" "cloudwatch_9" {
   count = var.is_enabled ? 1 : 0
 
   region                    = local.region
-  alarm_name                = "${var.cis_name_prefix}cloudtrail-logs-config"
+  alarm_name                = "${var.cloudwatch_name_prefix}cloudwatch-9-config"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
-  metric_name               = aws_cloudwatch_log_metric_filter.cis_3_9[0].id
-  namespace                 = aws_cloudwatch_log_metric_filter.cis_3_9[0].metric_transformation[0].namespace
+  metric_name               = aws_cloudwatch_log_metric_filter.cloudwatch_9[0].id
+  namespace                 = aws_cloudwatch_log_metric_filter.cloudwatch_9[0].metric_transformation[0].namespace
   period                    = 300
   statistic                 = "Sum"
   threshold                 = 1
   actions_enabled           = true
   alarm_actions             = [aws_sns_topic.this[0].arn]
-  alarm_description         = "[CIS.3.9] Real-time monitoring of API calls can be achieved by directing CloudTrail Logs to CloudWatch Logs and establishing corresponding metric filters and alarms. It is recommended that a metric filter and alarm be established for detecting changes to CloudTrail's configurations"
+  alarm_description         = "[CloudWatch.9] Real-time monitoring of API calls can be achieved by directing CloudTrail Logs to CloudWatch Logs and establishing corresponding metric filters and alarms. It is recommended that a metric filter and alarm be established for detecting changes to CloudTrail's configurations"
   ok_actions                = [aws_sns_topic.this[0].arn]
   insufficient_data_actions = []
   treat_missing_data        = "notBreaching"
@@ -496,44 +496,44 @@ resource "aws_cloudwatch_metric_alarm" "cis_3_9" {
 }
 
 #--------------------------------------------------------------
-# (CIS.3.10) Provides a CloudWatch Log Metric Filter resource.
-# https://docs.aws.amazon.com/securityhub/latest/userguide/securityhub-cis-controls.html#securityhub-cis-controls-3.10
+# (CloudWatch.10) Provides a CloudWatch Log Metric Filter resource.
+# https://docs.aws.amazon.com/securityhub/latest/userguide/cloudwatch-controls.html#cloudwatch-10-remediation
 #--------------------------------------------------------------
-resource "aws_cloudwatch_log_metric_filter" "cis_3_10" {
+resource "aws_cloudwatch_log_metric_filter" "cloudwatch_10" {
   count = var.is_enabled ? 1 : 0
 
   region         = local.region
-  name           = "${var.cis_name_prefix}cloudtrail-logs-security-group"
+  name           = "${var.cloudwatch_name_prefix}cloudwatch-10-security-group"
   pattern        = <<PATTERN
 {($.eventName=AuthorizeSecurityGroupIngress) || ($.eventName=AuthorizeSecurityGroupEgress) || ($.eventName=RevokeSecurityGroupIngress) || ($.eventName=RevokeSecurityGroupEgress) || ($.eventName=CreateSecurityGroup) || ($.eventName=DeleteSecurityGroup)}
 PATTERN
   log_group_name = aws_cloudwatch_log_group.this[0].name
   metric_transformation {
-    name      = "${var.cis_name_prefix}cloudtrail-logs-security-group"
+    name      = "${var.cloudwatch_name_prefix}cloudwatch-10-security-group"
     namespace = "CloudTrail"
     value     = "1"
   }
 }
 
 #--------------------------------------------------------------
-# (CIS.3.10) Provides a CloudWatch Metric Alarm resource.
-# https://docs.aws.amazon.com/securityhub/latest/userguide/securityhub-cis-controls.html#securityhub-cis-controls-3.10
+# (CloudWatch.10) Provides a CloudWatch Metric Alarm resource.
+# https://docs.aws.amazon.com/securityhub/latest/userguide/cloudwatch-controls.html#cloudwatch-10-remediation
 #--------------------------------------------------------------
-resource "aws_cloudwatch_metric_alarm" "cis_3_10" {
+resource "aws_cloudwatch_metric_alarm" "cloudwatch_10" {
   count = var.is_enabled ? 1 : 0
 
   region                    = local.region
-  alarm_name                = "${var.cis_name_prefix}cloudtrail-logs-security-group"
+  alarm_name                = "${var.cloudwatch_name_prefix}cloudwatch-10-security-group"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
-  metric_name               = aws_cloudwatch_log_metric_filter.cis_3_10[0].id
-  namespace                 = aws_cloudwatch_log_metric_filter.cis_3_10[0].metric_transformation[0].namespace
+  metric_name               = aws_cloudwatch_log_metric_filter.cloudwatch_10[0].id
+  namespace                 = aws_cloudwatch_log_metric_filter.cloudwatch_10[0].metric_transformation[0].namespace
   period                    = 300
   statistic                 = "Sum"
   threshold                 = 1
   actions_enabled           = true
   alarm_actions             = [aws_sns_topic.this[0].arn]
-  alarm_description         = "[CIS.3.10] Real-time monitoring of API calls can be achieved by directing CloudTrail Logs to CloudWatch Logs and establishing corresponding metric filters and alarms. Security Groups are a stateful packet filter that controls ingress and egress traffic within a VPC. It is recommended that a metric filter and alarm be established changes to Security Groups."
+  alarm_description         = "[CloudWatch.10] Real-time monitoring of API calls can be achieved by directing CloudTrail Logs to CloudWatch Logs and establishing corresponding metric filters and alarms. Security Groups are a stateful packet filter that controls ingress and egress traffic within a VPC. It is recommended that a metric filter and alarm be established changes to Security Groups."
   ok_actions                = [aws_sns_topic.this[0].arn]
   insufficient_data_actions = []
   treat_missing_data        = "notBreaching"
@@ -542,44 +542,44 @@ resource "aws_cloudwatch_metric_alarm" "cis_3_10" {
 }
 
 #--------------------------------------------------------------
-# (CIS.3.11) Provides a CloudWatch Log Metric Filter resource.
-# https://docs.aws.amazon.com/securityhub/latest/userguide/securityhub-cis-controls.html#cis-3.11-remediation
+# (CloudWatch.11) Provides a CloudWatch Log Metric Filter resource.
+# https://docs.aws.amazon.com/securityhub/latest/userguide/cloudwatch-controls.html#cloudwatch-11-remediation
 #--------------------------------------------------------------
-resource "aws_cloudwatch_log_metric_filter" "cis_3_11" {
+resource "aws_cloudwatch_log_metric_filter" "cloudwatch_11" {
   count = var.is_enabled ? 1 : 0
 
   region         = local.region
-  name           = "${var.cis_name_prefix}cloudtrail-logs-nacl"
+  name           = "${var.cloudwatch_name_prefix}cloudwatch-11-nacl"
   pattern        = <<PATTERN
 {($.eventName=CreateNetworkAcl) || ($.eventName=CreateNetworkAclEntry) || ($.eventName=DeleteNetworkAcl) || ($.eventName=DeleteNetworkAclEntry) || ($.eventName=ReplaceNetworkAclEntry) || ($.eventName=ReplaceNetworkAclAssociation)}
 PATTERN
   log_group_name = aws_cloudwatch_log_group.this[0].name
   metric_transformation {
-    name      = "${var.cis_name_prefix}cloudtrail-logs-nacl"
+    name      = "${var.cloudwatch_name_prefix}cloudwatch-11-nacl"
     namespace = "CloudTrail"
     value     = "1"
   }
 }
 
 #--------------------------------------------------------------
-# (CIS.3.11) Provides a CloudWatch Metric Alarm resource.
-# https://docs.aws.amazon.com/securityhub/latest/userguide/securityhub-cis-controls.html#cis-3.11-remediation
+# (CloudWatch.11) Provides a CloudWatch Metric Alarm resource.
+# https://docs.aws.amazon.com/securityhub/latest/userguide/cloudwatch-controls.html#cloudwatch-11-remediation
 #--------------------------------------------------------------
-resource "aws_cloudwatch_metric_alarm" "cis_3_11" {
+resource "aws_cloudwatch_metric_alarm" "cloudwatch_11" {
   count = var.is_enabled ? 1 : 0
 
   region                    = local.region
-  alarm_name                = "${var.cis_name_prefix}cloudtrail-logs-nacl"
+  alarm_name                = "${var.cloudwatch_name_prefix}cloudwatch-11-nacl"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
-  metric_name               = aws_cloudwatch_log_metric_filter.cis_3_11[0].id
-  namespace                 = aws_cloudwatch_log_metric_filter.cis_3_11[0].metric_transformation[0].namespace
+  metric_name               = aws_cloudwatch_log_metric_filter.cloudwatch_11[0].id
+  namespace                 = aws_cloudwatch_log_metric_filter.cloudwatch_11[0].metric_transformation[0].namespace
   period                    = 300
   statistic                 = "Sum"
   threshold                 = 1
   actions_enabled           = true
   alarm_actions             = [aws_sns_topic.this[0].arn]
-  alarm_description         = "[CIS.3.11] Real-time monitoring of API calls can be achieved by directing CloudTrail Logs to CloudWatch Logs and establishing corresponding metric filters and alarms. NACLs are used as a stateless packet filter to control ingress and egress traffic for subnets within a VPC. It is recommended that a metric filter and alarm be established for changes made to NACLs."
+  alarm_description         = "[CloudWatch.11] Real-time monitoring of API calls can be achieved by directing CloudTrail Logs to CloudWatch Logs and establishing corresponding metric filters and alarms. NACLs are used as a stateless packet filter to control ingress and egress traffic for subnets within a VPC. It is recommended that a metric filter and alarm be established for changes made to NACLs."
   ok_actions                = [aws_sns_topic.this[0].arn]
   insufficient_data_actions = []
   treat_missing_data        = "notBreaching"
@@ -588,44 +588,44 @@ resource "aws_cloudwatch_metric_alarm" "cis_3_11" {
 }
 
 #--------------------------------------------------------------
-# (CIS.3.12) Provides a CloudWatch Log Metric Filter resource.
-# https://docs.aws.amazon.com/securityhub/latest/userguide/securityhub-cis-controls.html#cis-3.12-remediation
+# (CloudWatch.12) Provides a CloudWatch Log Metric Filter resource.
+# https://docs.aws.amazon.com/securityhub/latest/userguide/cloudwatch-controls.html#cloudwatch-12-remediation
 #--------------------------------------------------------------
-resource "aws_cloudwatch_log_metric_filter" "cis_3_12" {
+resource "aws_cloudwatch_log_metric_filter" "cloudwatch_12" {
   count = var.is_enabled ? 1 : 0
 
   region         = local.region
-  name           = "${var.cis_name_prefix}cloudtrail-logs-network-gateways"
+  name           = "${var.cloudwatch_name_prefix}cloudwatch-12-network-gateways"
   pattern        = <<PATTERN
 {($.eventName=CreateCustomerGateway) || ($.eventName=DeleteCustomerGateway) || ($.eventName=AttachInternetGateway) || ($.eventName=CreateInternetGateway) || ($.eventName=DeleteInternetGateway) || ($.eventName=DetachInternetGateway)}
 PATTERN
   log_group_name = aws_cloudwatch_log_group.this[0].name
   metric_transformation {
-    name      = "${var.cis_name_prefix}cloudtrail-logs-network-gateways"
+    name      = "${var.cloudwatch_name_prefix}cloudwatch-12-network-gateways"
     namespace = "CloudTrail"
     value     = "1"
   }
 }
 
 #--------------------------------------------------------------
-# (CIS.3.12) Provides a CloudWatch Metric Alarm resource.
-# https://docs.aws.amazon.com/securityhub/latest/userguide/securityhub-cis-controls.html#cis-3.12-remediation
+# (CloudWatch.12) Provides a CloudWatch Metric Alarm resource.
+# https://docs.aws.amazon.com/securityhub/latest/userguide/cloudwatch-controls.html#cloudwatch-12-remediation
 #--------------------------------------------------------------
-resource "aws_cloudwatch_metric_alarm" "cis_3_12" {
+resource "aws_cloudwatch_metric_alarm" "cloudwatch_12" {
   count = var.is_enabled ? 1 : 0
 
   region                    = local.region
-  alarm_name                = "${var.cis_name_prefix}cloudtrail-logs-network-gateways"
+  alarm_name                = "${var.cloudwatch_name_prefix}cloudwatch-12-network-gateways"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
-  metric_name               = aws_cloudwatch_log_metric_filter.cis_3_12[0].id
-  namespace                 = aws_cloudwatch_log_metric_filter.cis_3_12[0].metric_transformation[0].namespace
+  metric_name               = aws_cloudwatch_log_metric_filter.cloudwatch_12[0].id
+  namespace                 = aws_cloudwatch_log_metric_filter.cloudwatch_12[0].metric_transformation[0].namespace
   period                    = 300
   statistic                 = "Sum"
   threshold                 = 1
   actions_enabled           = true
   alarm_actions             = [aws_sns_topic.this[0].arn]
-  alarm_description         = "[CIS.3.12] Real-time monitoring of API calls can be achieved by directing CloudTrail Logs to CloudWatch Logs and establishing corresponding metric filters and alarms. Network gateways are required to send/receive traffic to a destination outside of a VPC. It is recommended that a metric filter and alarm be established for changes to network gateways."
+  alarm_description         = "[CloudWatch.12] Real-time monitoring of API calls can be achieved by directing CloudTrail Logs to CloudWatch Logs and establishing corresponding metric filters and alarms. Network gateways are required to send/receive traffic to a destination outside of a VPC. It is recommended that a metric filter and alarm be established for changes to network gateways."
   ok_actions                = [aws_sns_topic.this[0].arn]
   insufficient_data_actions = []
   treat_missing_data        = "notBreaching"
@@ -634,44 +634,44 @@ resource "aws_cloudwatch_metric_alarm" "cis_3_12" {
 }
 
 #--------------------------------------------------------------
-# (CIS.3.13) Provides a CloudWatch Log Metric Filter resource.
-# https://docs.aws.amazon.com/securityhub/latest/userguide/securityhub-cis-controls.html#cis-3.13-remediation
+# (CloudWatch.13) Provides a CloudWatch Log Metric Filter resource.
+# https://docs.aws.amazon.com/securityhub/latest/userguide/cloudwatch-controls.html#cloudwatch-13-remediation
 #--------------------------------------------------------------
-resource "aws_cloudwatch_log_metric_filter" "cis_3_13" {
+resource "aws_cloudwatch_log_metric_filter" "cloudwatch_13" {
   count = var.is_enabled ? 1 : 0
 
   region         = local.region
-  name           = "${var.cis_name_prefix}cloudtrail-logs-route-table"
+  name           = "${var.cloudwatch_name_prefix}cloudwatch-13-route-table"
   pattern        = <<PATTERN
 {($.eventName=CreateRoute) || ($.eventName=CreateRouteTable) || ($.eventName=ReplaceRoute) || ($.eventName=ReplaceRouteTableAssociation) || ($.eventName=DeleteRouteTable) || ($.eventName=DeleteRoute) || ($.eventName=DisassociateRouteTable)}
 PATTERN
   log_group_name = aws_cloudwatch_log_group.this[0].name
   metric_transformation {
-    name      = "${var.cis_name_prefix}cloudtrail-logs-route-table"
+    name      = "${var.cloudwatch_name_prefix}cloudwatch-13-route-table"
     namespace = "CloudTrail"
     value     = "1"
   }
 }
 
 #--------------------------------------------------------------
-# (CIS.3.13) Provides a CloudWatch Metric Alarm resource.
-# https://docs.aws.amazon.com/securityhub/latest/userguide/securityhub-cis-controls.html#cis-3.13-remediation
+# (CloudWatch.13) Provides a CloudWatch Metric Alarm resource.
+# https://docs.aws.amazon.com/securityhub/latest/userguide/cloudwatch-controls.html#cloudwatch-13-remediation
 #--------------------------------------------------------------
-resource "aws_cloudwatch_metric_alarm" "cis_3_13" {
+resource "aws_cloudwatch_metric_alarm" "cloudwatch_13" {
   count = var.is_enabled ? 1 : 0
 
   region                    = local.region
-  alarm_name                = "${var.cis_name_prefix}cloudtrail-logs-route-table"
+  alarm_name                = "${var.cloudwatch_name_prefix}cloudwatch-13-route-table"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
-  metric_name               = aws_cloudwatch_log_metric_filter.cis_3_13[0].id
-  namespace                 = aws_cloudwatch_log_metric_filter.cis_3_13[0].metric_transformation[0].namespace
+  metric_name               = aws_cloudwatch_log_metric_filter.cloudwatch_13[0].id
+  namespace                 = aws_cloudwatch_log_metric_filter.cloudwatch_13[0].metric_transformation[0].namespace
   period                    = 300
   statistic                 = "Sum"
   threshold                 = 1
   actions_enabled           = true
   alarm_actions             = [aws_sns_topic.this[0].arn]
-  alarm_description         = "[CIS.3.13] Real-time monitoring of API calls can be achieved by directing CloudTrail Logs to CloudWatch Logs and establishing corresponding metric filters and alarms. Routing tables are used to route network traffic between subnets and to network gateways. It is recommended that a metric filter and alarm be established for changes to route tables."
+  alarm_description         = "[CloudWatch.13] Real-time monitoring of API calls can be achieved by directing CloudTrail Logs to CloudWatch Logs and establishing corresponding metric filters and alarms. Routing tables are used to route network traffic between subnets and to network gateways. It is recommended that a metric filter and alarm be established for changes to route tables."
   ok_actions                = [aws_sns_topic.this[0].arn]
   insufficient_data_actions = []
   treat_missing_data        = "notBreaching"
@@ -680,44 +680,44 @@ resource "aws_cloudwatch_metric_alarm" "cis_3_13" {
 }
 
 #--------------------------------------------------------------
-# (CIS.3.14) Provides a CloudWatch Log Metric Filter resource.
-# https://docs.aws.amazon.com/securityhub/latest/userguide/securityhub-cis-controls.html#cis-3.14-remediation
+# (CloudWatch.14) Provides a CloudWatch Log Metric Filter resource.
+# https://docs.aws.amazon.com/securityhub/latest/userguide/cloudwatch-controls.html#cloudwatch-14-remediation
 #--------------------------------------------------------------
-resource "aws_cloudwatch_log_metric_filter" "cis_3_14" {
+resource "aws_cloudwatch_log_metric_filter" "cloudwatch_14" {
   count = var.is_enabled ? 1 : 0
 
   region         = local.region
-  name           = "${var.cis_name_prefix}cloudtrail-logs-vpc"
+  name           = "${var.cloudwatch_name_prefix}cloudwatch-14-vpc"
   pattern        = <<PATTERN
 {($.eventName=CreateVpc) || ($.eventName=DeleteVpc) || ($.eventName=ModifyVpcAttribute) || ($.eventName=AcceptVpcPeeringConnection) || ($.eventName=CreateVpcPeeringConnection) || ($.eventName=DeleteVpcPeeringConnection) || ($.eventName=RejectVpcPeeringConnection) || ($.eventName=AttachClassicLinkVpc) || ($.eventName=DetachClassicLinkVpc) || ($.eventName=DisableVpcClassicLink) || ($.eventName=EnableVpcClassicLink)}
 PATTERN
   log_group_name = aws_cloudwatch_log_group.this[0].name
   metric_transformation {
-    name      = "${var.cis_name_prefix}cloudtrail-logs-vpc"
+    name      = "${var.cloudwatch_name_prefix}cloudwatch-14-vpc"
     namespace = "CloudTrail"
     value     = "1"
   }
 }
 
 #--------------------------------------------------------------
-# (CIS.3.14) Provides a CloudWatch Metric Alarm resource.
-# https://docs.aws.amazon.com/securityhub/latest/userguide/securityhub-cis-controls.html#cis-3.14-remediation
+# (CloudWatch.14) Provides a CloudWatch Metric Alarm resource.
+# https://docs.aws.amazon.com/securityhub/latest/userguide/cloudwatch-controls.html#cloudwatch-14-remediation
 #--------------------------------------------------------------
-resource "aws_cloudwatch_metric_alarm" "cis_3_14" {
+resource "aws_cloudwatch_metric_alarm" "cloudwatch_14" {
   count = var.is_enabled ? 1 : 0
 
   region                    = local.region
-  alarm_name                = "${var.cis_name_prefix}cloudtrail-logs-vpc"
+  alarm_name                = "${var.cloudwatch_name_prefix}cloudwatch-14-vpc"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
-  metric_name               = aws_cloudwatch_log_metric_filter.cis_3_14[0].id
-  namespace                 = aws_cloudwatch_log_metric_filter.cis_3_14[0].metric_transformation[0].namespace
+  metric_name               = aws_cloudwatch_log_metric_filter.cloudwatch_14[0].id
+  namespace                 = aws_cloudwatch_log_metric_filter.cloudwatch_14[0].metric_transformation[0].namespace
   period                    = 300
   statistic                 = "Sum"
   threshold                 = 1
   actions_enabled           = true
   alarm_actions             = [aws_sns_topic.this[0].arn]
-  alarm_description         = "[CIS.3.14] Real-time monitoring of API calls can be achieved by directing CloudTrail Logs to CloudWatch Logs and establishing corresponding metric filters and alarms. It is possible to have more than 1 VPC within an account, in addition it is also possible to create a peer connection between 2 VPCs enabling network traffic to route between VPCs. It is recommended that a metric filter and alarm be established for changes made to VPCs."
+  alarm_description         = "[CloudWatch.14] Real-time monitoring of API calls can be achieved by directing CloudTrail Logs to CloudWatch Logs and establishing corresponding metric filters and alarms. It is possible to have more than 1 VPC within an account, in addition it is also possible to create a peer connection between 2 VPCs enabling network traffic to route between VPCs. It is recommended that a metric filter and alarm be established for changes made to VPCs."
   ok_actions                = [aws_sns_topic.this[0].arn]
   insufficient_data_actions = []
   treat_missing_data        = "notBreaching"

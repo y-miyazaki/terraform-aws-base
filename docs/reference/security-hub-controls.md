@@ -63,20 +63,20 @@ These controls are from CIS v1.2/v1.4 Section 4. They were removed from CIS v3.0
 
 | Control ID | Description | Scope | Status | Metric Filter | Notes |
 | --- | --- | --- | --- | --- | --- |
-| CloudWatch.1 | Log metric filter and alarm for usage of 'root' user | Base | ✅ | `cis_3_3` | |
-| CloudWatch.2 | Log metric filter and alarm for unauthorized API calls | Base | ✅ | `cis_3_1` | |
-| CloudWatch.3 | Log metric filter and alarm for Console sign-in without MFA | Base | ⚠️ | `cis_3_2` | Disabled (`count = 0`). Enable if not using SSO. |
-| CloudWatch.4 | Log metric filter and alarm for IAM policy changes | Base | ✅ | `cis_3_4` | |
-| CloudWatch.5 | Log metric filter and alarm for CloudTrail configuration changes | Base | ✅ | `cis_3_5` | |
-| CloudWatch.6 | Log metric filter and alarm for Console authentication failures | Base | ✅ | `cis_3_6` | |
-| CloudWatch.7 | Log metric filter and alarm for disabling/deletion of CMKs | Base | ✅ | `cis_3_7` | |
-| CloudWatch.8 | Log metric filter and alarm for S3 bucket policy changes | Base | ✅ | `cis_3_8` | |
-| CloudWatch.9 | Log metric filter and alarm for AWS Config configuration changes | Base | ✅ | `cis_3_9` | |
-| CloudWatch.10 | Log metric filter and alarm for security group changes | Base | ✅ | `cis_3_10` | |
-| CloudWatch.11 | Log metric filter and alarm for NACL changes | Base | ✅ | `cis_3_11` | |
-| CloudWatch.12 | Log metric filter and alarm for network gateway changes | Base | ✅ | `cis_3_12` | |
-| CloudWatch.13 | Log metric filter and alarm for route table changes | Base | ✅ | `cis_3_13` | |
-| CloudWatch.14 | Log metric filter and alarm for VPC changes | Base | ✅ | `cis_3_14` | |
+| CloudWatch.1 | Log metric filter and alarm for usage of 'root' user | Base | ✅ | `cloudwatch_1` | |
+| CloudWatch.2 | Log metric filter and alarm for unauthorized API calls | Base | ✅ | `cloudwatch_2` | |
+| CloudWatch.3 | Log metric filter and alarm for Console sign-in without MFA | Base | ⚠️ | `cloudwatch_3` | Disabled (`count = 0`). Enable if not using SSO. |
+| CloudWatch.4 | Log metric filter and alarm for IAM policy changes | Base | ✅ | `cloudwatch_4` | |
+| CloudWatch.5 | Log metric filter and alarm for CloudTrail configuration changes | Base | ✅ | `cloudwatch_5` | |
+| CloudWatch.6 | Log metric filter and alarm for Console authentication failures | Base | ✅ | `cloudwatch_6` | |
+| CloudWatch.7 | Log metric filter and alarm for disabling/deletion of CMKs | Base | ✅ | `cloudwatch_7` | |
+| CloudWatch.8 | Log metric filter and alarm for S3 bucket policy changes | Base | ✅ | `cloudwatch_8` | |
+| CloudWatch.9 | Log metric filter and alarm for AWS Config configuration changes | Base | ✅ | `cloudwatch_9` | |
+| CloudWatch.10 | Log metric filter and alarm for security group changes | Base | ✅ | `cloudwatch_10` | |
+| CloudWatch.11 | Log metric filter and alarm for NACL changes | Base | ✅ | `cloudwatch_11` | |
+| CloudWatch.12 | Log metric filter and alarm for network gateway changes | Base | ✅ | `cloudwatch_12` | |
+| CloudWatch.13 | Log metric filter and alarm for route table changes | Base | ✅ | `cloudwatch_13` | |
+| CloudWatch.14 | Log metric filter and alarm for VPC changes | Base | ✅ | `cloudwatch_14` | |
 | CloudWatch.15 | CloudWatch alarms should have specified actions configured | Workload | — | — | Per-alarm configuration. |
 | CloudWatch.16 | CloudWatch log groups should be retained for at least 1 year | Workload | — | — | Per-log-group configuration. |
 | CloudWatch.17 | CloudWatch alarm actions should be activated | Workload | — | — | Per-alarm configuration. |

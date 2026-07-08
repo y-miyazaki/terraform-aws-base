@@ -244,6 +244,10 @@ variable "security_cloudtrail" {
       delivery_policy                 = optional(string)
       redrive_policy                  = optional(string)
     }))
+    cloudwatch_2_event_exclusions = optional(list(object({
+      event_source = string
+      event_name   = string
+    })), [])
   })
 }
 

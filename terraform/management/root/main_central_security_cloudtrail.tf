@@ -24,10 +24,11 @@ module "aws_security_cloudtrail_controltower" {
   is_enabled = var.security_cloudtrail.is_enabled
   region     = var.region.primary
 
-  aws_sns_topic              = local.aws_sns_topic_cloudtrail
-  aws_sns_topic_subscription = local.aws_sns_topic_subscription_cloudtrail
-  cis_name_prefix            = var.name_prefix
-  sns_kms_master_key_id      = module.kms_key["root"].key_id
+  aws_sns_topic                 = local.aws_sns_topic_cloudtrail
+  aws_sns_topic_subscription    = local.aws_sns_topic_subscription_cloudtrail
+  cloudwatch_2_event_exclusions = var.security_cloudtrail.cloudwatch_2_event_exclusions
+  cloudwatch_name_prefix        = var.name_prefix
+  sns_kms_master_key_id         = module.kms_key["root"].key_id
 
   tags = var.tags
 }

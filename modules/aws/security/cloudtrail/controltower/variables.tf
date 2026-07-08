@@ -77,7 +77,16 @@ variable "cloudtrail_log_group_name" {
   default     = "aws-controltower/CloudTrailLogs"
 }
 
-variable "cis_name_prefix" {
+variable "cloudwatch_2_event_exclusions" {
+  type = list(object({
+    event_source = string
+    event_name   = string
+  }))
+  description = "(Optional) eventSource and eventName combinations to exclude from CloudWatch.2 unauthorized API call detection."
+  default     = []
+}
+
+variable "cloudwatch_name_prefix" {
   type        = string
   description = "(Required) CloudWatch Filter/Alarm name prefix."
 }

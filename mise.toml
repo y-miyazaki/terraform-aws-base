@@ -8,7 +8,7 @@ exec_auto_install = true # Auto-install tools when commands are run via `mise x`
 github_attestations = true # Verify GitHub release attestations when a backend supports them.
 lockfile = true # Generate and maintain mise.lock with resolved URLs and checksums.
 locked = true # Require lockfile entries during installs to reduce unexpected upstream changes.
-minimum_release_age = "7d" # Avoid very recent releases to reduce supply-chain risk from rushed or bad publishes.
+# minimum_release_age = "7d" # Avoid very recent releases to reduce supply-chain risk from rushed or bad publishes.
 not_found_auto_install = true # Try installing missing tools when a command is looked up from the current config.
 provenance_api_failures_fatal = true # Fail installs if provenance verification APIs are unavailable or verification fails.
 slsa = true # Require SLSA provenance checks when a backend supports them.
@@ -30,23 +30,21 @@ uvx = true # Install uv/uvx via pipx for better isolation and performance.
 [tools]
 # A Runtime tools
 aqua = "v2.60.1"
-node = "24.17.0"
-pnpm = { version = "11.8.0", depends = ["node"] }
+node = "24.18.0"
+pnpm = { version = "11.9.0", depends = ["node"] }
 python = "3.14.6"
 
 # AI agent tools
-"github:microsoft/apm" = "v0.21.0"               # agent package manager
-"npm:@anthropic-ai/claude-code" = { version = "2.1.191", depends = [
-  "node",
-], install_env = { NPM_CONFIG_IGNORE_SCRIPTS = "false" }, postinstall = "node $(find $MISE_TOOL_INSTALL_PATH -name 'install.cjs' -path '*/@anthropic-ai/claude-code/*' | head -1)" } # Claude Code CLI
+"github:microsoft/apm" = "v0.23.1"               # agent package manager
+claude = "2.1.197"                               # Claude Code CLI
 "github:DeusData/codebase-memory-mcp" = "v0.8.1" # codebase memory MCP server
-"aqua:github/copilot-cli" = "1.0.63"             # GitHub Copilot CLI
-"pipx:headroom-ai" = { version = "0.26.0", extras = "proxy,mcp,bedrock", depends = ["python"] }
-"github:yvgude/lean-ctx" = "v3.8.11"              # context optimizer
-"github:microsoft/waza" = "v0.37.0"               # agent skill evaluator
+"aqua:github/copilot-cli" = "1.0.67"             # GitHub Copilot CLI
+"pipx:headroom-ai" = { version = "0.28.0", extras = "proxy,mcp,bedrock", depends = ["python"] }
+"github:yvgude/lean-ctx" = "v3.8.18"              # context optimizer
+"github:microsoft/waza" = "v0.38.0"               # agent skill evaluator
 
 # AWS related tools
-"aqua:aws/aws-cli" = "2.35.9"      # AWS CLI
+"aqua:aws/aws-cli" = "2.35.13"      # AWS CLI
 "aqua:aws/aws-sam-cli" = "1.162.1"  # SAM CLI tool
 "npm:awsp" = { version = "0.2.0", depends = [
   "node",
@@ -62,25 +60,25 @@ python = "3.14.6"
 "aqua:suzuki-shunsuke/ghalint" = "1.5.6"                              # GitHub Actions linter
 "aqua:suzuki-shunsuke/ghatm" = "1.0.0"                                # auto-set timeout-minutes for GitHub Actions jobs
 "aqua:suzuki-shunsuke/pinact" = "4.1.0"                               # GitHub Actions pinning tool
-"aqua:zizmorcore/zizmor" = "1.25.2"                                   # GitHub Actions security auditor
+"aqua:zizmorcore/zizmor" = "1.26.1"                                   # GitHub Actions security auditor
 
 # Go related tools
 "aqua:air-verse/air" = "1.65.3"                                           # live reload
 "aqua:bufbuild/buf" = "1.71.0"                                            # protobuf linter and formatter
-"aqua:go-delve/delve" = "1.26.3"                                          # debugger
+"aqua:go-delve/delve" = "1.27.0"                                          # debugger
 "aqua:mvdan/gofumpt" = "0.10.0"                                           # code formatter
 "aqua:golangci/golangci-lint" = "2.12.2"                                  # linter
 "aqua:goreleaser/goreleaser" = "2.16.0"                                   # release automation
 "go:golang.org/x/tools/gopls" = "v0.22.0"                                 # Go language server
 "go:golang.org/x/vuln/cmd/govulncheck" = "1.3.0"                          # vulnerability scanner
-"aqua:ko-build/ko" = "0.18.1"                                             # container builder
+"aqua:ko-build/ko" = "0.19.1"                                             # container builder
 "aqua:vektra/mockery" = "3.7.1"                                           # mock code generator for interfaces
 "go:github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen" = "v2.7.1"  # OpenAPI code generator
 "aqua:protocolbuffers/protobuf/protoc" = "35.1"                            # protobuf compiler
 "aqua:protocolbuffers/protobuf-go/protoc-gen-go" = "1.36.11"              # protobuf code generator
 "aqua:grpc/grpc-go/protoc-gen-go-grpc" = "1.6.1"                          # gRPC code generator
 "aqua:swaggo/swag" = "1.16.6"                                             # API documentation generator
-"aqua:go-swagger/go-swagger" = "0.34.1"                                   # API documentation generator (swagger)
+"aqua:go-swagger/go-swagger" = "0.35.0"                                   # API documentation generator (swagger)
 
 # Lint / Formatter tools
 "npm:cspell" = { version = "10.0.1", depends = [
@@ -89,7 +87,7 @@ python = "3.14.6"
 "npm:markdown-link-check" = { version = "3.14.2", depends = [
   "node",
 ], install_env = { NPM_CONFIG_IGNORE_SCRIPTS = "true" } } # Markdown link checker
-"npm:markdownlint-cli2" = { version = "0.22.1", depends = [
+"npm:markdownlint-cli2" = { version = "0.23.0", depends = [
   "node",
 ], install_env = { NPM_CONFIG_IGNORE_SCRIPTS = "true" } } # Markdown linter
 
@@ -98,11 +96,11 @@ python = "3.14.6"
 "pipx:pre-commit" = { version = "4.6.0", depends = [
   "python",
 ] } # pre-commit framework
-"aqua:aquasecurity/trivy" = "0.71.2" # vulnerability scanner
+"aqua:aquasecurity/trivy" = "0.72.0" # vulnerability scanner
 
 # Terraform related tools
-"aqua:getsops/sops" = "3.13.1"                  # encryption tool
-"aqua:hashicorp/terraform" = "1.15.6"           # infrastructure as code
+"aqua:getsops/sops" = "3.13.2"                  # encryption tool
+"aqua:hashicorp/terraform" = "1.15.7"           # infrastructure as code
 "aqua:terraform-docs/terraform-docs" = "0.24.0" # documentation generator
 "aqua:terraform-linters/tflint" = "0.63.1"      # linter
 
@@ -111,8 +109,8 @@ python = "3.14.6"
 "pipx:mkdocs" = { version = "1.6.1", depends = ["python"], postinstall = "uv pip install --python $MISE_TOOL_INSTALL_PATH/mkdocs/bin/python mkdocs-material mdx-truly-sane-lists" } # MkDocs with Material theme
 "aqua:BurntSushi/ripgrep" = "15.1.0" # grep alternative (rg)
 "aqua:tamasfe/taplo" = "0.10.0"      # TOML formatter / LSP
-"aqua:jdx/usage" = "3.5.2"           # usage CLI tool for command help and completions
-"aqua:astral-sh/uv" = "0.11.23"      # uv/uvx
+"aqua:jdx/usage" = "3.5.3"           # usage CLI tool for command help and completions
+"aqua:astral-sh/uv" = "0.11.26"      # uv/uvx
 
 [tasks.mise-install]
 description = "Install tools defined in mise.toml"

@@ -425,6 +425,39 @@ organizations_policy = {
 security_cloudtrail = {
   # TODO: need to set is_enabled for settings of CloudTrail.
   is_enabled = true
+  # TODO: need to set cloudwatch_2_event_exclusions exclude alert logs.
+  # It is best to exclude items such as APIs automatically requested via the console screen, as they act as noise.
+  # https://docs.aws.amazon.com/securityhub/latest/userguide/cloudwatch-controls.html#cloudwatch-2
+  cloudwatch_2_event_exclusions = [
+    {
+      event_name   = "ListRecommendedActions"
+      event_source = "bcm-recommended-actions.amazonaws.com"
+    },
+    {
+      event_name   = "GetConsoleActionSetEnforced"
+      event_source = "ce.amazonaws.com"
+    },
+    {
+      event_name   = "ListProfiles"
+      event_source = "codewhisperer.amazonaws.com"
+    },
+    {
+      event_name   = "ListSyslogConfigurations"
+      event_source = "logs.amazonaws.com"
+    },
+    {
+      event_name   = "List*"
+      event_source = "organizations.amazonaws.com"
+    },
+    {
+      event_name   = "GetBucketVersioning"
+      event_source = "s3.amazonaws.com"
+    },
+    {
+      event_name   = "GetBucketOwnershipControls"
+      event_source = "s3.amazonaws.com"
+    },
+  ]
   aws_cloudwatch_log = {
     cloudtrail_logs_terminate = {
       aws_cloudwatch_log_metric_filter = {

@@ -63,7 +63,7 @@ module "aws_security_cloudtrail" {
     bucket_arn = module.s3_cloudtrail.s3_bucket_arn
   }
   aws_cloudtrail               = local.aws_cloudtrail_cloudtrail
-  cis_name_prefix              = var.name_prefix
+  cloudwatch_name_prefix       = var.name_prefix
   cloudtrail_kms_master_key_id = module.kms_key[var.region.global].key_id
   sns_kms_master_key_id        = module.kms_key[var.region.global].key_id
   account_id                   = data.aws_caller_identity.current.account_id

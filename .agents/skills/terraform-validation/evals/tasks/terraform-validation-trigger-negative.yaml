@@ -1,0 +1,21 @@
+id: terraform-validation-trigger-negative-001
+name: terraform-validation rejects design review requests
+description: 'Validate that terraform-validation does not perform architecture review.
+
+  '
+tags:
+- quality
+- trigger-negative
+- boundary-guardrail
+inputs:
+  prompt: 'Use terraform-validation. The user asks for Terraform module architecture
+    recommendations. This is out of scope (validation only). If out of scope, return
+    ## Summary with explanation. Include ## Tool Results.'
+  context:
+    target: SKILL.md
+expected:
+  output_contains:
+  - out of scope
+  - '## Summary'
+  outcomes:
+  - type: task_completed
