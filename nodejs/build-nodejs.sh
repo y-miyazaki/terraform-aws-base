@@ -25,7 +25,7 @@ for dir in "$NODEJS_DIR"/*; do
 
         # Create zip file
         # Check if this is a Synthetics Canary project (starts with synthetics_canary_)
-        if [[ "$project_name" == synthetics_canary_* ]]; then
+        if [[ $project_name == synthetics_canary_* ]]; then
             # For Synthetics Canary projects (syn-nodejs-puppeteer-11.0+)
             # Package structure: index.js at root level
             echo "  Creating Synthetics Canary zip from root directory..."
