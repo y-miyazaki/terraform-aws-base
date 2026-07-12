@@ -32,6 +32,7 @@ paths:
 ## Guidelines
 
 ### Best Practices (BP)
+
 - BP-01 (SHOULD): Reusable Workflow Design
   - Check: Are common processes extracted into reusable workflows or composite actions?
 - BP-02 (SHOULD): DRY Principle for Duplication Reduction
@@ -46,6 +47,7 @@ paths:
   - Check: Are action inputs that affect security, caching, or core behavior specified explicitly in `with` blocks, even when matching the action's default value?
 
 ### Error Handling (ERR)
+
 - ERR-01 (SHOULD): Careful Use of continue-on-error
   - Check: Is `continue-on-error` used only for non-critical steps with explicit justification?
 - ERR-02 (SHOULD): Failure and Always Guards for Cleanup/Notify
@@ -56,6 +58,7 @@ paths:
   - Check: Is retry logic configured for transient external failures (network/service instability)?
 
 ### Global / Base (G)
+
 - G-01 (SHOULD): Clear Workflow Naming
   - Check: Is the workflow name clear and expressive of its purpose?
 - G-02 (SHOULD): Limit Triggers (on)
@@ -68,6 +71,7 @@ paths:
   - Check: Are keys in `inputs`, `env`, `permissions`, and `with` sorted alphabetically (A-Z)?
 
 ### Performance (PERF)
+
 - PERF-01 (SHOULD): Cache Strategy and Invalidation
   - Check: Are cache keys deterministic and invalidated by dependency changes?
 - PERF-02 (SHOULD): Matrix/Parallel Execution Balance
@@ -78,6 +82,7 @@ paths:
   - Check: Are broad triggers, full-repo checkout, and repeated setup steps minimized?
 
 ### Security (SEC)
+
 - SEC-01 (SHOULD): Safe Secret References
   - Check: Are secrets referenced only via `${{ secrets.NAME }}` and not directly output?
 - SEC-02 (SHOULD): Careful Use of pull_request_target
@@ -90,6 +95,7 @@ paths:
   - Check: Do public repositories have conditional branches like `github.event.repository.private`?
 
 ### Tool Integration (TOOL)
+
 - TOOL-01 (SHOULD): Reviewdog Integration for PR Feedback
   - Check: Is reviewdog integrated where lint results should be surfaced on pull requests?
 - TOOL-02 (SHOULD): Codecov Coverage Upload Strategy
@@ -103,7 +109,6 @@ paths:
 
 - After changes, prioritize running validate.sh from github-actions-validation skill.
 - Use individual commands only for debugging.
-
 
 ## Testing and Validation
 

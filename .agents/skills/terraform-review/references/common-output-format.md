@@ -6,16 +6,19 @@ Use the following report structure for review and validation output.
 # <Result Title>
 
 ## Checks Summary
+
 - Total checks: <number>
 - Passed: <count>
 - Failed: <count>
 - Deferred: <count>
 
 ## Checks (Failed/Deferred Only)
+
 - <ItemID> <ItemName>: ❌ Fail
 - <ItemID> <ItemName>: ⊘ Deferred (<explicit reason>)
 
 ## Issues
+
 1. <ItemID>: <ItemName>
    - File: <path>#L<line>
    - Problem: <specific issue>
@@ -33,6 +36,7 @@ but strategically concerning. State what is not obvious from the
 individual check results.>
 
 ## Good Practices
+
 - <Specific praise for well-done aspects: good abstractions, thorough
   error handling, clean separation of concerns, effective testing, etc.>
 ```
@@ -77,8 +81,8 @@ individual check results.>
 
 ## Status Symbols
 
-| Symbol | Meaning  | When to Use                                             |
-| ------ | -------- | ------------------------------------------------------- |
-| ✅      | Pass     | Check verified correct (counted in summary only)        |
-| ❌      | Fail     | Check failed, issue identified                          |
+| Symbol | Meaning  | When to Use                                              |
+| ------ | -------- | -------------------------------------------------------- |
+| ✅     | Pass     | Check verified correct (counted in summary only)         |
+| ❌     | Fail     | Check failed, issue identified                           |
 | ⊘      | Deferred | Check not yet evaluable due to explicit prerequisite gap |

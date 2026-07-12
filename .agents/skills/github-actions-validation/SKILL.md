@@ -65,4 +65,3 @@ Return `## Checks Summary`, `## Checks (Failed/Deferred Only)`, and `## Issues` 
 - Prompt: `Validate workflows and report only failed checks with ItemIDs.`
 - Command: `bash scripts/validate.sh ./.github/workflows/`
 - Output: failed/deferred checks mapped to `actionlint`, `ghalint`, or `zizmor`.
-

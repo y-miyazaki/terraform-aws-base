@@ -231,54 +231,60 @@ url_api = "https://api.github.com/repos/astral-sh/uv/releases/assets/462248287"
 provenance = "github-attestations"
 
 [[tools."aqua:aws/aws-cli"]]
-version = "2.35.13"
+version = "2.35.15"
 backend = "aqua:aws/aws-cli"
 
 [tools."aqua:aws/aws-cli"."platforms.linux-arm64"]
-url = "https://awscli.amazonaws.com/awscli-exe-linux-aarch64-2.35.13.zip"
+url = "https://awscli.amazonaws.com/awscli-exe-linux-aarch64-2.35.15.zip"
 
 [tools."aqua:aws/aws-cli"."platforms.linux-arm64-musl"]
-url = "https://awscli.amazonaws.com/awscli-exe-linux-aarch64-2.35.13.zip"
+url = "https://awscli.amazonaws.com/awscli-exe-linux-aarch64-2.35.15.zip"
 
 [tools."aqua:aws/aws-cli"."platforms.linux-x64"]
-url = "https://awscli.amazonaws.com/awscli-exe-linux-x86_64-2.35.13.zip"
+url = "https://awscli.amazonaws.com/awscli-exe-linux-x86_64-2.35.15.zip"
 
 [tools."aqua:aws/aws-cli"."platforms.linux-x64-musl"]
-url = "https://awscli.amazonaws.com/awscli-exe-linux-x86_64-2.35.13.zip"
+url = "https://awscli.amazonaws.com/awscli-exe-linux-x86_64-2.35.15.zip"
 
 [tools."aqua:aws/aws-cli"."platforms.macos-arm64"]
-url = "https://awscli.amazonaws.com/AWSCLIV2-2.35.13.pkg"
+url = "https://awscli.amazonaws.com/AWSCLIV2-2.35.15.pkg"
 
 [tools."aqua:aws/aws-cli"."platforms.macos-x64"]
-url = "https://awscli.amazonaws.com/AWSCLIV2-2.35.13.pkg"
+url = "https://awscli.amazonaws.com/AWSCLIV2-2.35.15.pkg"
 
 [[tools."aqua:aws/aws-sam-cli"]]
-version = "1.162.1"
+version = "1.163.0"
 backend = "aqua:aws/aws-sam-cli"
 
 [tools."aqua:aws/aws-sam-cli"."platforms.linux-arm64"]
-checksum = "sha256:c37ad26f63a88b9fa9985e01a7a52c6d359be4298b3e02a823f8d242c7572911"
-url = "https://github.com/aws/aws-sam-cli/releases/download/v1.162.1/aws-sam-cli-linux-arm64.zip"
+checksum = "sha256:e58f69c2019fdb1b05f7aeab939a1a1d504a4f1184da94818942d10a43c50acf"
+url = "https://github.com/aws/aws-sam-cli/releases/download/v1.163.0/aws-sam-cli-linux-arm64.zip"
+url_api = "https://api.github.com/repos/aws/aws-sam-cli/releases/assets/463845610"
 
 [tools."aqua:aws/aws-sam-cli"."platforms.linux-arm64-musl"]
-checksum = "sha256:c37ad26f63a88b9fa9985e01a7a52c6d359be4298b3e02a823f8d242c7572911"
-url = "https://github.com/aws/aws-sam-cli/releases/download/v1.162.1/aws-sam-cli-linux-arm64.zip"
+checksum = "sha256:e58f69c2019fdb1b05f7aeab939a1a1d504a4f1184da94818942d10a43c50acf"
+url = "https://github.com/aws/aws-sam-cli/releases/download/v1.163.0/aws-sam-cli-linux-arm64.zip"
+url_api = "https://api.github.com/repos/aws/aws-sam-cli/releases/assets/463845610"
 
 [tools."aqua:aws/aws-sam-cli"."platforms.linux-x64"]
-checksum = "sha256:3c59630df5981ad0c251819eb637336fc452c6afc33acfc0dc086cf12a17e88b"
-url = "https://github.com/aws/aws-sam-cli/releases/download/v1.162.1/aws-sam-cli-linux-x86_64.zip"
+checksum = "sha256:3f12863f45da82bc2ad1fb837444cca57450bd07fef73449b917362ef2f5ab70"
+url = "https://github.com/aws/aws-sam-cli/releases/download/v1.163.0/aws-sam-cli-linux-x86_64.zip"
+url_api = "https://api.github.com/repos/aws/aws-sam-cli/releases/assets/463845559"
 
 [tools."aqua:aws/aws-sam-cli"."platforms.linux-x64-musl"]
-checksum = "sha256:3c59630df5981ad0c251819eb637336fc452c6afc33acfc0dc086cf12a17e88b"
-url = "https://github.com/aws/aws-sam-cli/releases/download/v1.162.1/aws-sam-cli-linux-x86_64.zip"
+checksum = "sha256:3f12863f45da82bc2ad1fb837444cca57450bd07fef73449b917362ef2f5ab70"
+url = "https://github.com/aws/aws-sam-cli/releases/download/v1.163.0/aws-sam-cli-linux-x86_64.zip"
+url_api = "https://api.github.com/repos/aws/aws-sam-cli/releases/assets/463845559"
 
 [tools."aqua:aws/aws-sam-cli"."platforms.macos-arm64"]
-checksum = "sha256:09ea8722d2fb44bd6417e06678c6a8b8e627f49118497b108f65be57e682b26d"
-url = "https://github.com/aws/aws-sam-cli/releases/download/v1.162.1/aws-sam-cli-macos-arm64.pkg"
+checksum = "sha256:45fc72463c7b7b82da3e60df25fb018a1241e8706e209316a092be3c9366ba45"
+url = "https://github.com/aws/aws-sam-cli/releases/download/v1.163.0/aws-sam-cli-macos-arm64.pkg"
+url_api = "https://api.github.com/repos/aws/aws-sam-cli/releases/assets/463845494"
 
 [tools."aqua:aws/aws-sam-cli"."platforms.macos-x64"]
-checksum = "sha256:0cb829869f4240e3df0f2d52683457320d83db44c8505927f211924bcb20298f"
-url = "https://github.com/aws/aws-sam-cli/releases/download/v1.162.1/aws-sam-cli-macos-x86_64.pkg"
+checksum = "sha256:3a6295ad9aea5cd49806cc5860aa7d49661ffeab9e503a8e8523058eabab21a9"
+url = "https://github.com/aws/aws-sam-cli/releases/download/v1.163.0/aws-sam-cli-macos-x86_64.pkg"
+url_api = "https://api.github.com/repos/aws/aws-sam-cli/releases/assets/463845662"
 
 [[tools."aqua:bufbuild/buf"]]
 version = "1.71.0"
@@ -320,42 +326,49 @@ url = "https://github.com/bufbuild/buf/releases/download/v1.71.0/buf-Windows-x86
 provenance = "minisign"
 
 [[tools."aqua:cli/cli"]]
-version = "2.95.0"
+version = "2.96.0"
 backend = "aqua:cli/cli"
 
 [tools."aqua:cli/cli"."platforms.linux-arm64"]
-checksum = "sha256:d41e0b3b6218e5741c8bb4db39b16e53a59e0e06299a8489bd38f623ef7ebaae"
-url = "https://github.com/cli/cli/releases/download/v2.95.0/gh_2.95.0_linux_arm64.tar.gz"
+checksum = "sha256:06f86ec7103d41993b76cd78072f43595c34aaa56506d971d9860e67140bf909"
+url = "https://github.com/cli/cli/releases/download/v2.96.0/gh_2.96.0_linux_arm64.tar.gz"
+url_api = "https://api.github.com/repos/cli/cli/releases/assets/464728549"
 provenance = "github-attestations"
 
 [tools."aqua:cli/cli"."platforms.linux-arm64-musl"]
-checksum = "sha256:d41e0b3b6218e5741c8bb4db39b16e53a59e0e06299a8489bd38f623ef7ebaae"
-url = "https://github.com/cli/cli/releases/download/v2.95.0/gh_2.95.0_linux_arm64.tar.gz"
+checksum = "sha256:06f86ec7103d41993b76cd78072f43595c34aaa56506d971d9860e67140bf909"
+url = "https://github.com/cli/cli/releases/download/v2.96.0/gh_2.96.0_linux_arm64.tar.gz"
+url_api = "https://api.github.com/repos/cli/cli/releases/assets/464728549"
 provenance = "github-attestations"
 
 [tools."aqua:cli/cli"."platforms.linux-x64"]
-checksum = "sha256:25d1e4729e8808c9ed3d613e96ebd3f3e44446f2d368c89d878a71a36ddb3d8c"
-url = "https://github.com/cli/cli/releases/download/v2.95.0/gh_2.95.0_linux_amd64.tar.gz"
+checksum = "sha256:83d5c2ccad5498f58bf6368acb1ab32588cf43ab3a4b1c301bf36328b1c8bd60"
+url = "https://github.com/cli/cli/releases/download/v2.96.0/gh_2.96.0_linux_amd64.tar.gz"
+url_api = "https://api.github.com/repos/cli/cli/releases/assets/464728543"
 provenance = "github-attestations"
 
 [tools."aqua:cli/cli"."platforms.linux-x64-musl"]
-checksum = "sha256:25d1e4729e8808c9ed3d613e96ebd3f3e44446f2d368c89d878a71a36ddb3d8c"
-url = "https://github.com/cli/cli/releases/download/v2.95.0/gh_2.95.0_linux_amd64.tar.gz"
+checksum = "sha256:83d5c2ccad5498f58bf6368acb1ab32588cf43ab3a4b1c301bf36328b1c8bd60"
+url = "https://github.com/cli/cli/releases/download/v2.96.0/gh_2.96.0_linux_amd64.tar.gz"
+url_api = "https://api.github.com/repos/cli/cli/releases/assets/464728543"
 provenance = "github-attestations"
 
 [tools."aqua:cli/cli"."platforms.macos-arm64"]
-checksum = "sha256:3677f9c27965825f9c7d50395473c134edaea4b484373ef6b25de653570a0489"
-url = "https://github.com/cli/cli/releases/download/v2.95.0/gh_2.95.0_macOS_arm64.zip"
+checksum = "sha256:f23a0c37d963aacc3bed703ccbd59b41c5ca22101fab7f00eb2b7cad23aba463"
+url = "https://github.com/cli/cli/releases/download/v2.96.0/gh_2.96.0_macOS_arm64.zip"
+url_api = "https://api.github.com/repos/cli/cli/releases/assets/464728562"
 provenance = "github-attestations"
 
 [tools."aqua:cli/cli"."platforms.macos-x64"]
-checksum = "sha256:985707e9ac60c95ed51cddd808c338b481abe69fffa77e9d6547c3750045f77e"
-url = "https://github.com/cli/cli/releases/download/v2.95.0/gh_2.95.0_macOS_amd64.zip"
+checksum = "sha256:4bd449df9ad639391bc62b8032546f0fe9edcd8526e06682a4f88abd8c5d163c"
+url = "https://github.com/cli/cli/releases/download/v2.96.0/gh_2.96.0_macOS_amd64.zip"
+url_api = "https://api.github.com/repos/cli/cli/releases/assets/464728560"
 provenance = "github-attestations"
 
 [tools."aqua:cli/cli"."platforms.windows-x64"]
-checksum = "sha256:19a7154161ada9cfaa9e57edb752ecc679b75c391a62e4f7b586eea1df30b5bb"
-url = "https://github.com/cli/cli/releases/download/v2.95.0/gh_2.95.0_windows_amd64.zip"
+checksum = "sha256:c2d6acc935cd2f00e2144d7e036d5cd82e6b6bd5594e8c75aa75ef2a4ed6aac3"
+url = "https://github.com/cli/cli/releases/download/v2.96.0/gh_2.96.0_windows_amd64.zip"
+url_api = "https://api.github.com/repos/cli/cli/releases/assets/464728577"
 provenance = "github-attestations"
 
 [[tools."aqua:getsops/sops"]]
@@ -419,43 +432,43 @@ url_api = "https://api.github.com/repos/getsops/sops/releases/assets/461838690"
 url = "https://github.com/getsops/sops/releases/download/v3.13.2/sops-v3.13.2.intoto.jsonl"
 
 [[tools."aqua:github/copilot-cli"]]
-version = "1.0.67"
+version = "1.0.68"
 backend = "aqua:github/copilot-cli"
 
 [tools."aqua:github/copilot-cli"."platforms.linux-arm64"]
-checksum = "sha256:f8d9d6c7b54bfd5a98200e67a3439ef3278061f8131520497107626a763c3f63"
-url = "https://github.com/github/copilot-cli/releases/download/v1.0.67/copilot-linux-arm64.tar.gz"
-url_api = "https://api.github.com/repos/github/copilot-cli/releases/assets/462569592"
+checksum = "sha256:df0c3ff9c5da91d2811a7bd9d86aef9fc04edab729c7103eab6b8519173ed301"
+url = "https://github.com/github/copilot-cli/releases/download/v1.0.68/copilot-linux-arm64.tar.gz"
+url_api = "https://api.github.com/repos/github/copilot-cli/releases/assets/463629544"
 
 [tools."aqua:github/copilot-cli"."platforms.linux-arm64-musl"]
-checksum = "sha256:f8d9d6c7b54bfd5a98200e67a3439ef3278061f8131520497107626a763c3f63"
-url = "https://github.com/github/copilot-cli/releases/download/v1.0.67/copilot-linux-arm64.tar.gz"
-url_api = "https://api.github.com/repos/github/copilot-cli/releases/assets/462569592"
+checksum = "sha256:df0c3ff9c5da91d2811a7bd9d86aef9fc04edab729c7103eab6b8519173ed301"
+url = "https://github.com/github/copilot-cli/releases/download/v1.0.68/copilot-linux-arm64.tar.gz"
+url_api = "https://api.github.com/repos/github/copilot-cli/releases/assets/463629544"
 
 [tools."aqua:github/copilot-cli"."platforms.linux-x64"]
-checksum = "sha256:c6d251de20d14415ebd6af00bfb6a8e3854094b49fa49fb7f3df2bfa64f6db3b"
-url = "https://github.com/github/copilot-cli/releases/download/v1.0.67/copilot-linux-x64.tar.gz"
-url_api = "https://api.github.com/repos/github/copilot-cli/releases/assets/462569681"
+checksum = "sha256:b9531ebf40c2e4c084e5204c9875924a036647bb7f014c4651cf1da2a2053f88"
+url = "https://github.com/github/copilot-cli/releases/download/v1.0.68/copilot-linux-x64.tar.gz"
+url_api = "https://api.github.com/repos/github/copilot-cli/releases/assets/463629565"
 
 [tools."aqua:github/copilot-cli"."platforms.linux-x64-musl"]
-checksum = "sha256:c6d251de20d14415ebd6af00bfb6a8e3854094b49fa49fb7f3df2bfa64f6db3b"
-url = "https://github.com/github/copilot-cli/releases/download/v1.0.67/copilot-linux-x64.tar.gz"
-url_api = "https://api.github.com/repos/github/copilot-cli/releases/assets/462569681"
+checksum = "sha256:b9531ebf40c2e4c084e5204c9875924a036647bb7f014c4651cf1da2a2053f88"
+url = "https://github.com/github/copilot-cli/releases/download/v1.0.68/copilot-linux-x64.tar.gz"
+url_api = "https://api.github.com/repos/github/copilot-cli/releases/assets/463629565"
 
 [tools."aqua:github/copilot-cli"."platforms.macos-arm64"]
-checksum = "sha256:9cd1bca37e379697cedfd99ace8dfd4d8ab7119a0f834efa0f48ea8729c1e301"
-url = "https://github.com/github/copilot-cli/releases/download/v1.0.67/copilot-darwin-arm64.tar.gz"
-url_api = "https://api.github.com/repos/github/copilot-cli/releases/assets/462569593"
+checksum = "sha256:5c792cb638f32b43e791ac567c11583eb0b01fd7dee6d3c08ca230504d32d6f0"
+url = "https://github.com/github/copilot-cli/releases/download/v1.0.68/copilot-darwin-arm64.tar.gz"
+url_api = "https://api.github.com/repos/github/copilot-cli/releases/assets/463629537"
 
 [tools."aqua:github/copilot-cli"."platforms.macos-x64"]
-checksum = "sha256:11ad0d7335da1fa89325d332608191b9e13767b5f434ad1b7458eaac3580662d"
-url = "https://github.com/github/copilot-cli/releases/download/v1.0.67/copilot-darwin-x64.tar.gz"
-url_api = "https://api.github.com/repos/github/copilot-cli/releases/assets/462569589"
+checksum = "sha256:c6ed295c6e923fdd230462f6cc75fd9ee602f55e7b9d4c166a0596018c0a7235"
+url = "https://github.com/github/copilot-cli/releases/download/v1.0.68/copilot-darwin-x64.tar.gz"
+url_api = "https://api.github.com/repos/github/copilot-cli/releases/assets/463629538"
 
 [tools."aqua:github/copilot-cli"."platforms.windows-x64"]
-checksum = "sha256:53477f67bfd74d5c39b86f1b0c06808383070d1b4d91f382d718081a1a1d9426"
-url = "https://github.com/github/copilot-cli/releases/download/v1.0.67/copilot-win32-x64.zip"
-url_api = "https://api.github.com/repos/github/copilot-cli/releases/assets/462569591"
+checksum = "sha256:967bf3bbbbe9b4bdbf63d9c07a4e98250fb5ac181f12116f8c2bea166f84a020"
+url = "https://github.com/github/copilot-cli/releases/download/v1.0.68/copilot-win32-x64.zip"
+url_api = "https://api.github.com/repos/github/copilot-cli/releases/assets/463629540"
 
 [[tools."aqua:gitleaks/gitleaks"]]
 version = "8.30.1"
@@ -604,42 +617,49 @@ checksum = "sha256:277b83ddbe836a627dcde0655720aa42b02277fdf3a9cdaebeef2a53e9859
 url = "https://github.com/google/go-jsonnet/releases/download/v0.22.0/go-jsonnet_0.22.0_windows_amd64.tar.gz"
 
 [[tools."aqua:goreleaser/goreleaser"]]
-version = "2.16.0"
+version = "2.17.0"
 backend = "aqua:goreleaser/goreleaser"
 
 [tools."aqua:goreleaser/goreleaser"."platforms.linux-arm64"]
-checksum = "sha256:0102d974373fcdeb77042d1f5897caffa193be36620fdc6c1da43a01ef8e10d3"
-url = "https://github.com/goreleaser/goreleaser/releases/download/v2.16.0/goreleaser_Linux_arm64.tar.gz"
+checksum = "sha256:75f93fc0e25d10d8535ffd0e4abcf39d6784a2467ba453d479ae513729a9ebbf"
+url = "https://github.com/goreleaser/goreleaser/releases/download/v2.17.0/goreleaser_Linux_arm64.tar.gz"
+url_api = "https://api.github.com/repos/goreleaser/goreleaser/releases/assets/466714135"
 provenance = "github-attestations"
 
 [tools."aqua:goreleaser/goreleaser"."platforms.linux-arm64-musl"]
-checksum = "sha256:0102d974373fcdeb77042d1f5897caffa193be36620fdc6c1da43a01ef8e10d3"
-url = "https://github.com/goreleaser/goreleaser/releases/download/v2.16.0/goreleaser_Linux_arm64.tar.gz"
+checksum = "sha256:75f93fc0e25d10d8535ffd0e4abcf39d6784a2467ba453d479ae513729a9ebbf"
+url = "https://github.com/goreleaser/goreleaser/releases/download/v2.17.0/goreleaser_Linux_arm64.tar.gz"
+url_api = "https://api.github.com/repos/goreleaser/goreleaser/releases/assets/466714135"
 provenance = "github-attestations"
 
 [tools."aqua:goreleaser/goreleaser"."platforms.linux-x64"]
-checksum = "sha256:eaae05b5eba07533bd0f06846b68c808399504784df00c62eb219541fc04e5e2"
-url = "https://github.com/goreleaser/goreleaser/releases/download/v2.16.0/goreleaser_Linux_x86_64.tar.gz"
+checksum = "sha256:dde10e2d5a13cef969c0eec00c74f359c0ac306d702b1bd291ad9337b4e54c1d"
+url = "https://github.com/goreleaser/goreleaser/releases/download/v2.17.0/goreleaser_Linux_x86_64.tar.gz"
+url_api = "https://api.github.com/repos/goreleaser/goreleaser/releases/assets/466714136"
 provenance = "github-attestations"
 
 [tools."aqua:goreleaser/goreleaser"."platforms.linux-x64-musl"]
-checksum = "sha256:eaae05b5eba07533bd0f06846b68c808399504784df00c62eb219541fc04e5e2"
-url = "https://github.com/goreleaser/goreleaser/releases/download/v2.16.0/goreleaser_Linux_x86_64.tar.gz"
+checksum = "sha256:dde10e2d5a13cef969c0eec00c74f359c0ac306d702b1bd291ad9337b4e54c1d"
+url = "https://github.com/goreleaser/goreleaser/releases/download/v2.17.0/goreleaser_Linux_x86_64.tar.gz"
+url_api = "https://api.github.com/repos/goreleaser/goreleaser/releases/assets/466714136"
 provenance = "github-attestations"
 
 [tools."aqua:goreleaser/goreleaser"."platforms.macos-arm64"]
-checksum = "sha256:6a102e4d588fd3553a9ac7321ca6023a9f205843f4861ca35bd337dfa9e72ece"
-url = "https://github.com/goreleaser/goreleaser/releases/download/v2.16.0/goreleaser_Darwin_all.tar.gz"
+checksum = "sha256:4106ff54bcaa1d387d3317047169da28aed6ce36c8e035e76cf35ba349db06ef"
+url = "https://github.com/goreleaser/goreleaser/releases/download/v2.17.0/goreleaser_Darwin_all.tar.gz"
+url_api = "https://api.github.com/repos/goreleaser/goreleaser/releases/assets/466714160"
 provenance = "github-attestations"
 
 [tools."aqua:goreleaser/goreleaser"."platforms.macos-x64"]
-checksum = "sha256:6a102e4d588fd3553a9ac7321ca6023a9f205843f4861ca35bd337dfa9e72ece"
-url = "https://github.com/goreleaser/goreleaser/releases/download/v2.16.0/goreleaser_Darwin_all.tar.gz"
+checksum = "sha256:4106ff54bcaa1d387d3317047169da28aed6ce36c8e035e76cf35ba349db06ef"
+url = "https://github.com/goreleaser/goreleaser/releases/download/v2.17.0/goreleaser_Darwin_all.tar.gz"
+url_api = "https://api.github.com/repos/goreleaser/goreleaser/releases/assets/466714160"
 provenance = "github-attestations"
 
 [tools."aqua:goreleaser/goreleaser"."platforms.windows-x64"]
-checksum = "sha256:6fe5eda11f0bcac8069aff3ef3dcb0b11816c9e95f89773595564697a5278bc9"
-url = "https://github.com/goreleaser/goreleaser/releases/download/v2.16.0/goreleaser_Windows_x86_64.zip"
+checksum = "sha256:427f2928d798f9affa5ddd2412e354f90ecf9e2ba541b3e0767570eb1121482b"
+url = "https://github.com/goreleaser/goreleaser/releases/download/v2.17.0/goreleaser_Windows_x86_64.zip"
+url_api = "https://api.github.com/repos/goreleaser/goreleaser/releases/assets/466714129"
 provenance = "github-attestations"
 
 [[tools."aqua:grpc/grpc-go/protoc-gen-go-grpc"]]
@@ -1355,26 +1375,26 @@ url = "https://github.com/zizmorcore/zizmor/releases/download/v1.26.1/zizmor-x86
 provenance = "github-attestations"
 
 [[tools.claude]]
-version = "2.1.197"
+version = "2.1.201"
 backend = "aqua:anthropics/claude-code"
 
 [tools.claude."platforms.linux-arm64"]
-url = "https://storage.googleapis.com/claude-code-dist-86c565f3-f756-42ad-8dfa-d59b1c096819/claude-code-releases/2.1.197/linux-arm64/claude"
+url = "https://storage.googleapis.com/claude-code-dist-86c565f3-f756-42ad-8dfa-d59b1c096819/claude-code-releases/2.1.201/linux-arm64/claude"
 
 [tools.claude."platforms.linux-arm64-musl"]
-url = "https://storage.googleapis.com/claude-code-dist-86c565f3-f756-42ad-8dfa-d59b1c096819/claude-code-releases/2.1.197/linux-arm64-musl/claude"
+url = "https://storage.googleapis.com/claude-code-dist-86c565f3-f756-42ad-8dfa-d59b1c096819/claude-code-releases/2.1.201/linux-arm64-musl/claude"
 
 [tools.claude."platforms.linux-x64"]
-url = "https://storage.googleapis.com/claude-code-dist-86c565f3-f756-42ad-8dfa-d59b1c096819/claude-code-releases/2.1.197/linux-x64/claude"
+url = "https://storage.googleapis.com/claude-code-dist-86c565f3-f756-42ad-8dfa-d59b1c096819/claude-code-releases/2.1.201/linux-x64/claude"
 
 [tools.claude."platforms.linux-x64-musl"]
-url = "https://storage.googleapis.com/claude-code-dist-86c565f3-f756-42ad-8dfa-d59b1c096819/claude-code-releases/2.1.197/linux-x64-musl/claude"
+url = "https://storage.googleapis.com/claude-code-dist-86c565f3-f756-42ad-8dfa-d59b1c096819/claude-code-releases/2.1.201/linux-x64-musl/claude"
 
 [tools.claude."platforms.macos-arm64"]
-url = "https://storage.googleapis.com/claude-code-dist-86c565f3-f756-42ad-8dfa-d59b1c096819/claude-code-releases/2.1.197/darwin-arm64/claude"
+url = "https://storage.googleapis.com/claude-code-dist-86c565f3-f756-42ad-8dfa-d59b1c096819/claude-code-releases/2.1.201/darwin-arm64/claude"
 
 [tools.claude."platforms.macos-x64"]
-url = "https://storage.googleapis.com/claude-code-dist-86c565f3-f756-42ad-8dfa-d59b1c096819/claude-code-releases/2.1.197/darwin-x64/claude"
+url = "https://storage.googleapis.com/claude-code-dist-86c565f3-f756-42ad-8dfa-d59b1c096819/claude-code-releases/2.1.201/darwin-x64/claude"
 
 [[tools."github:DeusData/codebase-memory-mcp"]]
 version = "0.8.1"
@@ -1423,43 +1443,43 @@ url_api = "https://api.github.com/repos/DeusData/codebase-memory-mcp/releases/as
 provenance = "github-attestations"
 
 [[tools."github:microsoft/apm"]]
-version = "0.23.1"
+version = "0.24.0"
 backend = "github:microsoft/apm"
 
 [tools."github:microsoft/apm"."platforms.linux-arm64"]
-checksum = "sha256:6b8805bb29ab75ede1ac5f4c395d71998161bfc52c884c4395c2c71e3c625631"
-url = "https://github.com/microsoft/apm/releases/download/v0.23.1/apm-linux-arm64.tar.gz"
-url_api = "https://api.github.com/repos/microsoft/apm/releases/assets/462118376"
+checksum = "sha256:4314cadabf78a3776a3b22d276c01c45e1db644498e05d8ea5437015521d6c0b"
+url = "https://github.com/microsoft/apm/releases/download/v0.24.0/apm-linux-arm64.tar.gz"
+url_api = "https://api.github.com/repos/microsoft/apm/releases/assets/467124798"
 
 [tools."github:microsoft/apm"."platforms.linux-arm64-musl"]
-checksum = "sha256:6b8805bb29ab75ede1ac5f4c395d71998161bfc52c884c4395c2c71e3c625631"
-url = "https://github.com/microsoft/apm/releases/download/v0.23.1/apm-linux-arm64.tar.gz"
-url_api = "https://api.github.com/repos/microsoft/apm/releases/assets/462118376"
+checksum = "sha256:4314cadabf78a3776a3b22d276c01c45e1db644498e05d8ea5437015521d6c0b"
+url = "https://github.com/microsoft/apm/releases/download/v0.24.0/apm-linux-arm64.tar.gz"
+url_api = "https://api.github.com/repos/microsoft/apm/releases/assets/467124798"
 
 [tools."github:microsoft/apm"."platforms.linux-x64"]
-checksum = "sha256:d37330e1d662a46fe5c510350731da9f5716626b7ebf2eab7b7368148e15f17e"
-url = "https://github.com/microsoft/apm/releases/download/v0.23.1/apm-linux-x86_64.tar.gz"
-url_api = "https://api.github.com/repos/microsoft/apm/releases/assets/462118372"
+checksum = "sha256:54b58a212d66e0de0b71068e7b3b23169af872183de10bc0fc29e006354d63eb"
+url = "https://github.com/microsoft/apm/releases/download/v0.24.0/apm-linux-x86_64.tar.gz"
+url_api = "https://api.github.com/repos/microsoft/apm/releases/assets/467124799"
 
 [tools."github:microsoft/apm"."platforms.linux-x64-musl"]
-checksum = "sha256:d37330e1d662a46fe5c510350731da9f5716626b7ebf2eab7b7368148e15f17e"
-url = "https://github.com/microsoft/apm/releases/download/v0.23.1/apm-linux-x86_64.tar.gz"
-url_api = "https://api.github.com/repos/microsoft/apm/releases/assets/462118372"
+checksum = "sha256:54b58a212d66e0de0b71068e7b3b23169af872183de10bc0fc29e006354d63eb"
+url = "https://github.com/microsoft/apm/releases/download/v0.24.0/apm-linux-x86_64.tar.gz"
+url_api = "https://api.github.com/repos/microsoft/apm/releases/assets/467124799"
 
 [tools."github:microsoft/apm"."platforms.macos-arm64"]
-checksum = "sha256:87e8feb2135cbfb8c537ad01d67f2306f048041ba648b5680f2988744af9b69f"
-url = "https://github.com/microsoft/apm/releases/download/v0.23.1/apm-darwin-arm64.tar.gz"
-url_api = "https://api.github.com/repos/microsoft/apm/releases/assets/462118375"
+checksum = "sha256:09a87baa5a527ea14064962bd549e8e6baf4e527bd259b54ce0d25f7757e5baf"
+url = "https://github.com/microsoft/apm/releases/download/v0.24.0/apm-darwin-arm64.tar.gz"
+url_api = "https://api.github.com/repos/microsoft/apm/releases/assets/467124802"
 
 [tools."github:microsoft/apm"."platforms.macos-x64"]
-checksum = "sha256:90f5f1f987f117e9d020f5682f852f4bf759fe1a31f0313522d52d01fec8bf08"
-url = "https://github.com/microsoft/apm/releases/download/v0.23.1/apm-darwin-x86_64.tar.gz"
-url_api = "https://api.github.com/repos/microsoft/apm/releases/assets/462118374"
+checksum = "sha256:feee0ca5c1f7b25ef7320f1d7ea384bc29771ce21e0ef0d28aa6b5d11cee9c06"
+url = "https://github.com/microsoft/apm/releases/download/v0.24.0/apm-darwin-x86_64.tar.gz"
+url_api = "https://api.github.com/repos/microsoft/apm/releases/assets/467124801"
 
 [tools."github:microsoft/apm"."platforms.windows-x64"]
-checksum = "sha256:18fd8c67ba762318fa7699bda3505e07960284626d2670202b801133c20d2cbc"
-url = "https://github.com/microsoft/apm/releases/download/v0.23.1/apm-windows-x86_64.zip"
-url_api = "https://api.github.com/repos/microsoft/apm/releases/assets/462118378"
+checksum = "sha256:68d690b7b582d1f017ba39b295956e60b6e5e06e2ef0f6778392bb4be48a718d"
+url = "https://github.com/microsoft/apm/releases/download/v0.24.0/apm-windows-x86_64.zip"
+url_api = "https://api.github.com/repos/microsoft/apm/releases/assets/467124806"
 
 [[tools."github:microsoft/waza"]]
 version = "0.38.0"
@@ -1599,12 +1619,16 @@ backend = "npm:markdown-link-check"
 version = "0.23.0"
 backend = "npm:markdownlint-cli2"
 
+[[tools."npm:prettier"]]
+version = "3.9.5"
+backend = "npm:prettier"
+
 [[tools."pipx:aws-mfa"]]
 version = "0.0.12"
 backend = "pipx:aws-mfa"
 
 [[tools."pipx:headroom-ai"]]
-version = "0.28.0"
+version = "0.30.0"
 backend = "pipx:headroom-ai"
 
 [tools."pipx:headroom-ai".options]
@@ -1619,43 +1643,43 @@ version = "4.6.0"
 backend = "pipx:pre-commit"
 
 [[tools.pnpm]]
-version = "11.9.0"
+version = "11.10.0"
 backend = "aqua:pnpm/pnpm"
 
 [tools.pnpm."platforms.linux-arm64"]
-checksum = "sha256:7981d0109fffdf8f15b838243240c8c9f9114dd4b7111d4227c1453522d75b61"
-url = "https://github.com/pnpm/pnpm/releases/download/v11.9.0/pnpm-linux-arm64.tar.gz"
-url_api = "https://api.github.com/repos/pnpm/pnpm/releases/assets/455748044"
+checksum = "sha256:7da014033800db506095d8d5eb15c4b1df7aa9cc6a4992634e4d59c3985e720b"
+url = "https://github.com/pnpm/pnpm/releases/download/v11.10.0/pnpm-linux-arm64.tar.gz"
+url_api = "https://api.github.com/repos/pnpm/pnpm/releases/assets/466571515"
 provenance = "github-attestations"
 
 [tools.pnpm."platforms.linux-arm64-musl"]
-checksum = "sha256:3622d3010d6af601190e7b63994fb0fe297e805699145aec949f4879f2672fb5"
-url = "https://github.com/pnpm/pnpm/releases/download/v11.9.0/pnpm-linux-arm64-musl.tar.gz"
-url_api = "https://api.github.com/repos/pnpm/pnpm/releases/assets/455748040"
+checksum = "sha256:f3ff9b9041616c627d8b86b395d932fe703e6066e6e47c133fa525dfb5f39cc4"
+url = "https://github.com/pnpm/pnpm/releases/download/v11.10.0/pnpm-linux-arm64-musl.tar.gz"
+url_api = "https://api.github.com/repos/pnpm/pnpm/releases/assets/466571513"
 provenance = "github-attestations"
 
 [tools.pnpm."platforms.linux-x64"]
-checksum = "sha256:8d987d82585453bcf260ea5d0bae346d298f1a5e71bcde8d99976521408ad895"
-url = "https://github.com/pnpm/pnpm/releases/download/v11.9.0/pnpm-linux-x64.tar.gz"
-url_api = "https://api.github.com/repos/pnpm/pnpm/releases/assets/455748039"
+checksum = "sha256:cf22c9f1ba90f67c9a5cfb1cbe9c2087cf4c3a5c409dad738c1f8a38b8137666"
+url = "https://github.com/pnpm/pnpm/releases/download/v11.10.0/pnpm-linux-x64.tar.gz"
+url_api = "https://api.github.com/repos/pnpm/pnpm/releases/assets/466571518"
 provenance = "github-attestations"
 
 [tools.pnpm."platforms.linux-x64-musl"]
-checksum = "sha256:655fcf2609e3145cfd7c2f05113429523706d0a618f2957eaa6c3562f6a5998b"
-url = "https://github.com/pnpm/pnpm/releases/download/v11.9.0/pnpm-linux-x64-musl.tar.gz"
-url_api = "https://api.github.com/repos/pnpm/pnpm/releases/assets/455748037"
+checksum = "sha256:ce68f57e8479d69aca120ab6dedf21a1560a885fcf3e9e5ef3333a08fd6ef6e9"
+url = "https://github.com/pnpm/pnpm/releases/download/v11.10.0/pnpm-linux-x64-musl.tar.gz"
+url_api = "https://api.github.com/repos/pnpm/pnpm/releases/assets/466571516"
 provenance = "github-attestations"
 
 [tools.pnpm."platforms.macos-arm64"]
-checksum = "sha256:ca6f98a8911ec975509464026205e2b54aed74cecd36c5ae9932e5997bd7de2a"
-url = "https://github.com/pnpm/pnpm/releases/download/v11.9.0/pnpm-darwin-arm64.tar.gz"
-url_api = "https://api.github.com/repos/pnpm/pnpm/releases/assets/455748038"
+checksum = "sha256:d0d8a55b47dbe07a80d13fec7ee5af9bdca36187e61f9562d72d81dd637178c4"
+url = "https://github.com/pnpm/pnpm/releases/download/v11.10.0/pnpm-darwin-arm64.tar.gz"
+url_api = "https://api.github.com/repos/pnpm/pnpm/releases/assets/466571520"
 provenance = "github-attestations"
 
 [tools.pnpm."platforms.windows-x64"]
-checksum = "sha256:82c130717a59f237c49e8eaa8a7ed75c1d8d351a5b6dedeee3196b8e1b597c6e"
-url = "https://github.com/pnpm/pnpm/releases/download/v11.9.0/pnpm-win32-x64.zip"
-url_api = "https://api.github.com/repos/pnpm/pnpm/releases/assets/455748043"
+checksum = "sha256:bb25e88285354cd2510a481859e5695b68f5def16f22e4ffb7aa76a87af4f700"
+url = "https://github.com/pnpm/pnpm/releases/download/v11.10.0/pnpm-win32-x64.zip"
+url_api = "https://api.github.com/repos/pnpm/pnpm/releases/assets/466571521"
 provenance = "github-attestations"
 
 [[tools.python]]

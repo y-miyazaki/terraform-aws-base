@@ -4,21 +4,24 @@
 # docs-updater Result
 
 ## Summary
+
 - Status: <updated | skipped | exceeded-scope>
 - Files updated: <count>
 - Files skipped: <count>
 
 ## Changes
 
-| File | Action | Detail |
-|------|--------|--------|
+| File             | Action  | Detail                              |
+| ---------------- | ------- | ----------------------------------- |
 | `path/to/doc.md` | Updated | Replaced old workflow path with new |
-| `mkdocs.yml` | Updated | Added nav entry under Tutorials |
+| `mkdocs.yml`     | Updated | Added nav entry under Tutorials     |
 
 ## Skipped Items
+
 - <count> files: <shared reason>
 
 ## Recommendations
+
 - <actionable suggestion if scope was exceeded>
 ```
 

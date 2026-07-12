@@ -1,23 +1,25 @@
 id: docs-creation-trigger-negative-001
 name: docs-creation rejects documentation update requests
-description: 'Validate that docs-creation does not handle update requests (those belong
+description:
+  "Validate that docs-creation does not handle update requests (those belong
   to docs-updater).
 
-  '
+  "
 tags:
-- quality
-- trigger-negative
-- boundary-guardrail
+  - quality
+  - trigger-negative
+  - boundary-guardrail
 inputs:
-  prompt: 'Use docs-creation. The user says ''update the existing README.md to reflect
-    the new API endpoint''. This is an update, not creation. The skill should indicate
+  prompt:
+    "Use docs-creation. The user says 'update the existing README.md to reflect
+    the new API endpoint'. This is an update, not creation. The skill should indicate
     this is out of scope. If out of scope, return ## Summary with explanation. Include
-    ## Issues section. Include ## Created.'
+    ## Issues section. Include ## Created."
   context:
     target: SKILL.md
 expected:
   output_contains:
-  - out of scope
-  - '## Summary'
+    - out of scope
+    - "## Summary"
   outcomes:
-  - type: task_completed
+    - type: task_completed

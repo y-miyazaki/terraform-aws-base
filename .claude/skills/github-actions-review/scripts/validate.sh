@@ -52,6 +52,9 @@ declare -a required_fields=("name" "description" "license")
 # Arguments:
 #   None
 #
+# Global Variables:
+#   None
+#
 # Returns:
 #   None
 #
@@ -72,6 +75,9 @@ function cleanup {
 #   Prints usage, options, and examples
 #
 # Arguments:
+#   None
+#
+# Global Variables:
 #   None
 #
 # Returns:
@@ -157,6 +163,9 @@ function parse_arguments {
 #   Checks whether the file starts with YAML frontmatter markers
 #
 # Arguments:
+#   None
+#
+# Global Variables:
 #   None
 #
 # Returns:
@@ -258,6 +267,9 @@ function check_yaml_syntax {
 # Arguments:
 #   None
 #
+# Global Variables:
+#   None
+#
 # Returns:
 #   None (stores check result)
 #
@@ -295,6 +307,9 @@ function check_required_sections {
 #   Verifies required YAML frontmatter fields exist
 #
 # Arguments:
+#   None
+#
+# Global Variables:
 #   None
 #
 # Returns:
@@ -336,6 +351,9 @@ function check_yaml_fields {
 # Arguments:
 #   None
 #
+# Global Variables:
+#   None
+#
 # Returns:
 #   None (stores check result)
 #
@@ -367,6 +385,9 @@ function check_word_count {
 #   Ensures scripts/ and references/ directories exist under skill directory
 #
 # Arguments:
+#   None
+#
+# Global Variables:
 #   None
 #
 # Returns:
@@ -412,6 +433,9 @@ function check_resource_separation {
 # Arguments:
 #   $1 - Overall status (PASS/FAIL)
 #
+# Global Variables:
+#   None
+#
 # Returns:
 #   None
 #
@@ -456,6 +480,9 @@ function print_json_results {
 #
 # Arguments:
 #   $@ - Command line arguments
+#
+# Global Variables:
+#   None
 #
 # Returns:
 #   0 when all checks pass, 1 otherwise

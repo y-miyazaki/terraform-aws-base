@@ -52,6 +52,9 @@ declare -a AFFECTED_DOCS=()
 # Arguments:
 #   None
 #
+# Global Variables:
+#   None
+#
 # Returns:
 #   Exits with code 0
 #
@@ -326,6 +329,9 @@ function collect_affected_docs {
 # Arguments:
 #   None
 #
+# Global Variables:
+#   None
+#
 # Returns:
 #   None
 #
@@ -361,6 +367,9 @@ function output_json {
 #
 # Arguments:
 #   $@ - Command line arguments
+#
+# Global Variables:
+#   None
 #
 # Returns:
 #   0 always

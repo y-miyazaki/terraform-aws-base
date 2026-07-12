@@ -22,12 +22,15 @@ Minimal inline contract (used if reference file is unavailable):
 
 ```markdown
 ## Checks Summary
+
 - Total: <n>, Passed: <n>, Failed: <n>, Deferred: <n>
 
 ## Checks (Failed/Deferred Only)
+
 | ItemID | Status | Evidence | Fix |
 
 ## Issues
+
 1. <ItemID>: <title>
    - File: <path>#L<line>
    - Problem: <specific>
@@ -79,10 +82,9 @@ Minimal inline contract (used if reference file is unavailable):
 
 ### Error Handling
 
-| Condition | Severity | Action |
-|---|---|---|
+| Condition                                  | Severity    | Action                                                            |
+| ------------------------------------------ | ----------- | ----------------------------------------------------------------- |
 | `github-actions-validation` output missing | Recoverable | Defer lint-dependent checks, review security/permissions directly |
-| `common-checklist.md` unavailable | Fatal | Stop, report missing dependency |
-| `common-output-format.md` unavailable | Recoverable | Use inline output contract |
-| PR contains no workflow YAML files | Recoverable | Report "no reviewable workflows" and stop |
-
+| `common-checklist.md` unavailable          | Fatal       | Stop, report missing dependency                                   |
+| `common-output-format.md` unavailable      | Recoverable | Use inline output contract                                        |
+| PR contains no workflow YAML files         | Recoverable | Report "no reviewable workflows" and stop                         |

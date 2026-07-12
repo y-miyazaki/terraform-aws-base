@@ -1,23 +1,25 @@
 id: terraform-review-trigger-negative-001
 name: terraform-review rejects non-terraform requests
-description: 'Validate that terraform-review does not attempt to review non-Terraform
+description:
+  "Validate that terraform-review does not attempt to review non-Terraform
   code.
 
-  '
+  "
 tags:
-- quality
-- trigger-negative
-- boundary-guardrail
+  - quality
+  - trigger-negative
+  - boundary-guardrail
 inputs:
-  prompt: 'Use terraform-review. The user asks to review a Python script. This is
+  prompt:
+    "Use terraform-review. The user asks to review a Python script. This is
     out of scope for terraform review. If out of scope, return ## Checks Summary and
-    ## Issues with explanation.'
+    ## Issues with explanation."
   context:
     target: SKILL.md
 expected:
   output_contains:
-  - out of scope
-  - '## Checks Summary'
-  - '## Issues'
+    - out of scope
+    - "## Checks Summary"
+    - "## Issues"
   outcomes:
-  - type: task_completed
+    - type: task_completed

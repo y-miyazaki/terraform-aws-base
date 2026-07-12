@@ -50,6 +50,9 @@ MIN_VERSION="1.25"
 # Arguments:
 #   None
 #
+# Global Variables:
+#   None
+#
 # Returns:
 #   None (outputs to stdout)
 #
@@ -88,6 +91,9 @@ EOF
 #
 # Arguments:
 #   $@ - All command line arguments passed to the script
+#
+# Global Variables:
+#   None
 #
 # Returns:
 #   None (sets global variables DIR, BINDIR, ARCH, PARALLEL, VERBOSE)
@@ -150,6 +156,9 @@ function parse_arguments {
 # Arguments:
 #   $1 - Path to the main.go file
 #
+# Global Variables:
+#   None
+#
 # Returns:
 #   None
 #
@@ -193,6 +202,9 @@ function build_function {
 #
 # Arguments:
 #   $1 - Newline-separated list of main.go file paths
+#
+# Global Variables:
+#   None
 #
 # Returns:
 #   Number of functions built (integer)
@@ -239,6 +251,9 @@ function build_lambda_functions {
 # Arguments:
 #   None
 #
+# Global Variables:
+#   None
+#
 # Returns:
 #   Newline-separated list of main.go file paths (to stdout)
 #
@@ -271,6 +286,9 @@ function find_lambda_functions {
 #   Sets up the build environment by updating dependencies and creating output directories
 #
 # Arguments:
+#   None
+#
+# Global Variables:
 #   None
 #
 # Returns:
@@ -309,6 +327,9 @@ function prepare_build_environment {
 # Arguments:
 #   None
 #
+# Global Variables:
+#   None
+#
 # Returns:
 #   None
 #
@@ -340,6 +361,9 @@ function validate_go_environment {
 #
 # Arguments:
 #   $@ - All command line arguments passed to the script
+#
+# Global Variables:
+#   None
 #
 # Returns:
 #   None (exits with appropriate status code)

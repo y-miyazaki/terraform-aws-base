@@ -66,6 +66,9 @@ TASK_PATH=""
 # Arguments:
 #   None
 #
+# Global Variables:
+#   None
+#
 # Returns:
 #   None (outputs to stdout, then exits with status 0)
 #

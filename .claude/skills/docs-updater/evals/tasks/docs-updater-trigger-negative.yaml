@@ -1,22 +1,24 @@
 id: docs-updater-trigger-negative-001
 name: docs-updater ignores test-only changes
-description: 'Validate that changes limited to test files do not trigger documentation
+description:
+  "Validate that changes limited to test files do not trigger documentation
   updates.
 
-  '
+  "
 tags:
-- quality
-- trigger-negative
-- boundary-guardrail
+  - quality
+  - trigger-negative
+  - boundary-guardrail
 inputs:
-  prompt: 'Use docs-updater. Assume the only changed files are internal test files
+  prompt:
+    "Use docs-updater. Assume the only changed files are internal test files
     (e.g., pkg/handler/handler_test.go, pkg/service/service_test.go). Return ## Summary
-    with ''Status: skipped'' and reason.'
+    with 'Status: skipped' and reason."
   context:
     scope: staged
 expected:
   output_contains:
-  - '## Summary'
-  - 'Status: skipped'
+    - "## Summary"
+    - "Status: skipped"
   outcomes:
-  - type: task_completed
+    - type: task_completed

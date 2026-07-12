@@ -4,6 +4,12 @@
     "allow": [
       "Bash(actionlint *)",
       "Bash(apm *)",
+      "Bash(cat *)",
+      "Bash(cd *)",
+      "Bash(command *)",
+      "Bash(diff *)",
+      "Bash(echo *)",
+      "Bash(find *)",
       "Bash(ghalint *)",
       "Bash(git add *)",
       "Bash(git diff *)",
@@ -11,12 +17,19 @@
       "Bash(git status)",
       "Bash(go test *)",
       "Bash(golangci-lint *)",
+      "Bash(head *)",
+      "Bash(jq *)",
+      "Bash(ls *)",
       "Bash(markdown-link-check *)",
       "Bash(markdownlint-cli2 *)",
       "Bash(npm run *)",
       "Bash(npm test *)",
+      "Bash(rg *)",
       "Bash(shellcheck *)",
       "Bash(shfmt *)",
+      "Bash(tail *)",
+      "Bash(which *)",
+      "Bash(zizmor *)",
       "Read(**/*.go)",
       "Read(**/*.js)",
       "Read(**/*.json)",
@@ -214,66 +227,6 @@
         "hooks": [
           {
             "type": "command",
-            "command": ".claude/hooks/common-hooks-claude/scripts/markdown_link_check.sh",
-            "timeout": 240
-          }
-        ]
-      },
-      {
-        "matcher": "",
-        "hooks": [
-          {
-            "type": "command",
-            "command": ".claude/hooks/common-hooks-claude/scripts/markdownlint_cli2.sh",
-            "timeout": 120
-          }
-        ]
-      },
-      {
-        "matcher": "",
-        "hooks": [
-          {
-            "type": "command",
-            "command": ".claude/hooks/shell-script-hooks-claude/scripts/shellcheck.sh",
-            "timeout": 120
-          }
-        ]
-      },
-      {
-        "matcher": "",
-        "hooks": [
-          {
-            "type": "command",
-            "command": ".claude/hooks/common-hooks-claude/scripts/actionlint.sh",
-            "timeout": 60
-          }
-        ]
-      },
-      {
-        "matcher": "",
-        "hooks": [
-          {
-            "type": "command",
-            "command": ".claude/hooks/common-hooks-claude/scripts/ghalint.sh",
-            "timeout": 60
-          }
-        ]
-      },
-      {
-        "matcher": "",
-        "hooks": [
-          {
-            "type": "command",
-            "command": ".claude/hooks/common-hooks-claude/scripts/zizmor.sh",
-            "timeout": 60
-          }
-        ]
-      },
-      {
-        "matcher": "",
-        "hooks": [
-          {
-            "type": "command",
             "command": ".claude/hooks/common-hooks-claude/scripts/gitleaks.sh",
             "timeout": 60
           }
@@ -321,26 +274,6 @@
       }
     ],
     "PostToolUse": [
-      {
-        "matcher": "",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "command -v lean-ctx >/dev/null 2>&1 || exit 0; lean-ctx hook observe",
-            "timeout": 5
-          }
-        ]
-      },
-      {
-        "matcher": "Write",
-        "hooks": [
-          {
-            "type": "command",
-            "command": ".claude/hooks/shell-script-hooks-claude/scripts/shfmt.sh",
-            "timeout": 120
-          }
-        ]
-      },
       {
         "matcher": "",
         "hooks": [
@@ -402,26 +335,6 @@
         ]
       },
       {
-        "matcher": "Bash|Write",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "command -v lean-ctx >/dev/null 2>&1 || exit 0; lean-ctx hook rewrite",
-            "timeout": 15
-          }
-        ]
-      },
-      {
-        "matcher": "",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "command -v lean-ctx >/dev/null 2>&1 || exit 0; lean-ctx hook redirect",
-            "timeout": 5
-          }
-        ]
-      },
-      {
         "command": "command -v lean-ctx >/dev/null 2>&1 || exit 0; lean-ctx hook rewrite",
         "timeoutSec": 15
       },
@@ -431,6 +344,10 @@
       }
     ],
     "stop": [
+      {
+        "command": ".claude/hooks/go-hooks-cursor/scripts/golangci_lint.sh",
+        "timeoutSec": 120
+      },
       {
         "command": ".claude/hooks/common-hooks-cursor/scripts/actionlint.sh",
         "timeoutSec": 60

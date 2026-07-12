@@ -1,11 +1,13 @@
 # Agent Skills Review Checklist
 
 ## Pattern Checks (P)
+
 - P-01 (SHOULD): Design Pattern Compliance
 - P-02 (SHOULD): Output Contract Compliance
 - P-03 (SHOULD): Context Gathering Before Output
 
 ## Quality Checks (Q)
+
 - Q-01 (SHOULD): Output is Truly Structured
 - Q-02 (SHOULD): Scope Boundaries
 - Q-03 (SHOULD): Execution Determinism
@@ -20,6 +22,7 @@
 - Q-12 (SHOULD): Cross-Section Consistency
 
 ## Structural Checks (S)
+
 - S-01 (MUST): Structural Completeness
 - S-02 (MUST): YAML Frontmatter Fields
 - BP-01 (SHOULD): Description Quality

@@ -1,24 +1,26 @@
 id: terraform-review-specific-check-001
 name: terraform-review detects specific violation
-description: 'Validate that terraform-review detects hardcoded credentials and reports
+description:
+  "Validate that terraform-review detects hardcoded credentials and reports
   correct ItemID.
 
-  '
+  "
 tags:
-- quality
-- specific-check
-- edge-case
+  - quality
+  - specific-check
+  - edge-case
 inputs:
-  prompt: 'Use terraform-review. Assume the target has hardcoded AWS access keys in
+  prompt:
+    "Use terraform-review. Assume the target has hardcoded AWS access keys in
     a provider block. Report SEC-01 as failed in ## Checks (Failed/Deferred Only)
-    and include evidence in ## Checks Summary, ## Issues.'
+    and include evidence in ## Checks Summary, ## Issues."
   context:
     target: SKILL.md
 expected:
   output_contains:
-  - '## Checks Summary'
-  - '## Checks (Failed/Deferred Only)'
-  - SEC-01
-  - '## Issues'
+    - "## Checks Summary"
+    - "## Checks (Failed/Deferred Only)"
+    - SEC-01
+    - "## Issues"
   outcomes:
-  - type: task_completed
+    - type: task_completed

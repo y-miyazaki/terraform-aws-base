@@ -20,46 +20,61 @@ The script uses **idempotent template reconstruction** without markers:
 ### Template Structure
 
 **Before Update**:
+
 ```markdown
 ## Overview
+
 [Manual content or auto-generated from previous run]
 
 ## Changes
+
 [Manual content or auto-generated from previous run]
 
 ## Related Issues
+
 - #456
 - #789
 
 ## Testing
+
 - Tested locally with `npm test`
 
 ## Type of Change
+
 - [ ] Bug fix
 - [x] New feature
 ```
 
 **After Update**:
+
 ```markdown
 ## Overview
+
 [New deterministic baseline or caller-provided overview]
 
 ## Related Issues
+
 <!-- template guidance comment -->
+
 - #456
 - #789
 
 ## Changes
+
 <!-- template guidance comment -->
 
 [New auto-generated file list]
 
 ## Testing
+
 <!-- template guidance comment -->
+
 - Tested locally with `npm test`
 
 ## Type of Change
+
 <!-- template guidance comment -->
+
 - [ ] Bug fix
 - [x] New feature
 ```
@@ -85,6 +100,7 @@ Files are classified into one of 6 categories based on name patterns:
 ### Statistics Tracking
 
 For each file:
+
 - **Additions**: `+N` (number of added lines)
 - **Deletions**: `-N` (number of removed lines)
 - **Total change**: Addition and deletion counts
@@ -92,6 +108,7 @@ For each file:
 ### Large PR Handling
 
 For PRs with 100+ files:
+
 - **Grouping**: Files grouped by category
 - **Pagination**: All files fetched via paginated API calls
 - **Summary**: Total count provided to keep body readable
@@ -179,11 +196,13 @@ pr_body.sh 123 --repo owner/repo
 ### Why Body Update (Not Comments)
 
 **Alternatives Considered**:
+
 1. PR Comments: Harder to maintain, requires markers, difficult to track multiple versions
 2. Status Checks: Not suitable for human-readable information
 3. Labels: Too limited for detailed change information
 
 **Selected Approach (Body Update)**:
+
 - PR Body is the primary documentation location
 - Authors already customizing Body sections
 - Idempotent without markers
@@ -192,6 +211,7 @@ pr_body.sh 123 --repo owner/repo
 ### Why No Third-Party Tools
 
 **Constraints**:
+
 - Must work in GitHub-only environments (no additional dependencies)
 - Must use only `gh` CLI (standard GitHub tool)
 - Must support Japanese and multi-language enhancements

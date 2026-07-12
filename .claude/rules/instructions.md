@@ -42,12 +42,14 @@ paths:
 ## Guidelines
 
 ### General (G)
+
 - G-01 (MUST): Front Matter
   - Check: Front Matter contains applyTo and description fields
 - G-02 (MUST): Title
   - Check: Title clearly indicates purpose
 
 ### Structure (STRUCT)
+
 - STRUCT-01 (MUST): Five Required Chapters Exist
   - Check: Scope, Standards, Guidelines, Testing and Validation, and Security Guidelines chapters exist
 - STRUCT-02 (MUST): Chapter Order Unified
@@ -62,6 +64,7 @@ paths:
   - Check: Do H3 headings use `### Name（LEVEL）` format for rule sections, and `### Name` for process/declaration sections?
 
 ### Guidelines Chapter (GUIDE)
+
 - GUIDE-01 (SHOULD): Code Modification Guidelines
   - Check: Modification procedures and validation methods are clearly documented
 - GUIDE-02 (SHOULD): Tool Usage
@@ -72,6 +75,7 @@ paths:
   - Check: Are there no ID-less bullet rules in the Guidelines chapter?
 
 ### Content Quality (QUAL)
+
 - QUAL-01 (SHOULD): Practical Examples
   - Check: Practical code examples are included
 - QUAL-02 (SHOULD): No Redundancy
@@ -80,6 +84,7 @@ paths:
   - Check: Large code examples are avoided for high token efficiency
 
 ### Consistency (CONS)
+
 - CONS-01 (SHOULD): Section Names
   - Check: Section names are consistent with other instructions files
 - CONS-02 (SHOULD): Format
@@ -88,12 +93,14 @@ paths:
   - Check: Do Standards templates, Guidelines checks, and code examples within the same file agree with each other without contradiction?
 
 ### Completeness (COMP)
+
 - COMP-01 (SHOULD): No Missing Commands
   - Check: Executable validation commands are comprehensive
 - COMP-02 (SHOULD): Real Commands
   - Check: Examples are concrete and comprehensive
 
 ### Security Guidelines Chapter (SEC)
+
 - SEC-01 (MUST): Tool-Undetectable Risks Documented
   - Check: Are security practices that automated tools (gitleaks, detect-secrets) cannot detect documented (e.g., destructive command defaults, untrusted link sources)?
 - SEC-02 (MUST): Secrets Management
@@ -104,6 +111,7 @@ paths:
   - Check: YAML/code examples are included (where applicable)
 
 ### Standards Chapter (STD)
+
 - STD-01 (MUST): Naming Conventions
   - Check: Naming conventions are documented per component
 - STD-02 (SHOULD): Tool Standards
@@ -112,6 +120,7 @@ paths:
   - Check: Documentation level matches other instructions files
 
 ### Testing and Validation Chapter (TEST)
+
 - TEST-01 (MUST): Validation Commands
   - Check: Executable validation commands are documented
 - TEST-02 (MUST): Code Block Format
@@ -126,7 +135,6 @@ paths:
 - After changes, prioritize running validate.sh from instructions-review skill.
 - When instruction files are updated, always run an instruction quality re-evaluation.
 - Use individual commands only for debugging.
-
 
 ## Testing and Validation
 

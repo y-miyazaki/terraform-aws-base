@@ -29,6 +29,9 @@
 # Arguments:
 #   $1 - Section title
 #
+# Global Variables:
+#   None
+#
 # Returns:
 #   None (outputs to stderr)
 #
@@ -51,6 +54,9 @@ function echo_section {
 # Arguments:
 #   $1 - Section title
 #   $2 - Start time (epoch seconds)
+#
+# Global Variables:
+#   None
 #
 # Returns:
 #   None (outputs to stderr)
@@ -81,6 +87,9 @@ function end_echo_section {
 #   $1 - Error message
 #   $2 - Exit code (optional, defaults to 1)
 #
+# Global Variables:
+#   None
+#
 # Returns:
 #   Exits with specified code (never returns)
 #
@@ -103,6 +112,9 @@ function error_exit {
 #
 # Arguments:
 #   $@ - Command to execute
+#
+# Global Variables:
+#   None
 #
 # Returns:
 #   Command exit code (or 0 in dry-run mode)
@@ -141,6 +153,9 @@ function execute_command {
 # Arguments:
 #   $1 - Command string to execute
 #
+# Global Variables:
+#   None
+#
 # Returns:
 #   Command exit code (or 0 in dry-run mode)
 #
@@ -174,6 +189,9 @@ function execute_command_string {
 # Arguments:
 #   None
 #
+# Global Variables:
+#   None
+#
 # Returns:
 #   Current epoch time in seconds (to stdout)
 #
@@ -192,6 +210,9 @@ function get_start_time {
 #   Checks if the script is running in dry-run mode
 #
 # Arguments:
+#   None
+#
+# Global Variables:
 #   None
 #
 # Returns:
@@ -214,6 +235,9 @@ function is_dry_run {
 # Arguments:
 #   $1 - Log level (INFO, WARN, ERROR, DEBUG)
 #   $2 - Log message
+#
+# Global Variables:
+#   None
 #
 # Returns:
 #   0 always (outputs to stderr when level matches)
@@ -240,6 +264,9 @@ function log {
 #
 # Arguments:
 #   $@ - List of required tools/commands
+#
+# Global Variables:
+#   None
 #
 # Returns:
 #   None (exits on missing dependencies)
@@ -273,6 +300,9 @@ function validate_dependencies {
 #
 # Arguments:
 #   $@ - List of required environment variable names
+#
+# Global Variables:
+#   None
 #
 # Returns:
 #   None (exits on missing variables)

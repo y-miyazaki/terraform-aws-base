@@ -48,12 +48,12 @@ Template:
 [2-4 sentence summary of what changed and why]
 
 - Core Fixes:
-    - [specific change 1]
-    - [specific change 2]
+  - [specific change 1]
+  - [specific change 2]
 - Scope:
-    - [affected modules/files/environments]
+  - [affected modules/files/environments]
 - Risk / Deployment Note:
-    - [deployment or compatibility note]
+  - [deployment or compatibility note]
 ```
 
 ## File Link Format
@@ -67,6 +67,7 @@ Template:
 ```
 
 **Example**:
+
 ```markdown
 [handler.js](https://github.com/owner/repo/blob/feature-branch/src/handlers/handler.js)
 ```
@@ -74,11 +75,13 @@ Template:
 ### Incorrect Format
 
 ❌ **Relative paths** (points to base branch, not PR branch):
+
 ```markdown
 [handler.js](src/handlers/handler.js)
 ```
 
 ❌ **Without branch specification**:
+
 ```markdown
 [handler.js](/src/handlers/handler.js)
 ```
@@ -86,6 +89,7 @@ Template:
 ### Why This Matters
 
 When a PR uses `feature-branch` → `main`:
+
 - Relative paths resolve to `main` branch
 - Changes in `feature-branch` are not visible
 - Links return 404 or show wrong file version
@@ -95,16 +99,19 @@ When a PR uses `feature-branch` → `main`:
 ### Implementation
 
 **Step 1**: Get PR branch information:
+
 ```bash
 scripts/pr_fetch.sh <PR_NUMBER> --repo owner/repo | jq '.metadata | {headRefName, baseRefName}'
 ```
 
 **Step 2**: Construct file URLs:
+
 ```
 https://github.com/{owner}/{repo}/blob/{headRefName}/{file_path}
 ```
 
 **Step 3**: Update links in PR Body:
+
 ```markdown
 **[handler.js](https://github.com/owner/repo/blob/feature-branch/src/handler.js)** (+59 lines)
 ```
@@ -131,6 +138,7 @@ When `PULL_REQUEST_TEMPLATE.md` contains a chapter, aim to leave that chapter wi
 ### Detail Level
 
 **High detail** (dedicated sections with examples):
+
 - New features or major functionality changes
 - Architecture or design changes
 - Security-related modifications
@@ -138,12 +146,14 @@ When `PULL_REQUEST_TEMPLATE.md` contains a chapter, aim to leave that chapter wi
 - Database/data model changes
 
 **Medium detail** (subsections with key points):
+
 - CI/CD workflow additions/changes
 - New tool or library integrations
 - Refactoring with significant impact
 - Performance optimizations
 
 **Bullet points only**:
+
 - Documentation updates
 - Config file tweaks
 - Dependency updates
@@ -162,17 +172,20 @@ For PR with multiple types of changes:
 #### New Files (X files, Y lines)
 
 **[module.ext](https://github.com/owner/repo/blob/branch/path/module.ext)** (+N lines)
+
 - Purpose and functionality
 - Key components
 - Integration points
 
 **[handler.ext](https://github.com/owner/repo/blob/branch/path/handler.ext)** (+M lines)
+
 - Responsibility
 - API or interface details
 
 #### Modified Files
 
 **[config.ext](https://github.com/owner/repo/blob/branch/path/config.ext)** (+A/-B lines)
+
 - Changes description
 - Impact on existing functionality
 
@@ -181,21 +194,25 @@ For PR with multiple types of changes:
 #### CI/CD
 
 **[workflow.yaml](https://github.com/owner/repo/blob/branch/.github/workflows/workflow.yaml)**
+
 - Purpose and triggers
 - Key steps
 
 #### Tooling
 
 **[script.sh](https://github.com/owner/repo/blob/branch/scripts/script.sh)**
+
 - Automation added
 
 ### 3. Other Changes (Bullet Points)
 
 **Documentation**:
+
 - [README.md](...): Updated setup instructions
 - [CONTRIBUTING.md](...): Added guidelines
 
 **Configuration**:
+
 - .editorconfig: Code style settings
 - package.json: Dependency updates
 ```
@@ -209,6 +226,7 @@ Use consistent notation for file changes:
 ```
 
 **Examples**:
+
 - `(+59 lines)` - New file or only additions
 - `(+28/-13 lines)` - Modifications
 - `(multiple commits)` - Many small changes
@@ -219,6 +237,7 @@ Use consistent notation for file changes:
 For significant architectural changes, include ASCII diagrams:
 
 **Example 1: Component Flow**
+
 ```
 User Request
     ↓
@@ -233,6 +252,7 @@ Database / External API
 ```
 
 **Example 2: Module Dependencies**
+
 ```
 ┌─────────────┐
 │   Frontend  │
@@ -248,6 +268,7 @@ Database / External API
 ```
 
 Keep diagrams:
+
 - **Simple**: Focus on key components only
 - **Hierarchical**: Clear flow from top to bottom or left to right
 - **Labeled**: Include component names and key interactions
@@ -263,6 +284,7 @@ When changes involve security, include:
 5. **Validation**: Input validation, sanitization, security testing performed
 
 **Example**:
+
 ```markdown
 #### Security
 
@@ -281,25 +303,29 @@ For changes affecting operations, include relevant details:
 
 ### Deployment
 
-```markdown
+````markdown
 #### Deployment
 
 **Prerequisites**:
+
 - [ ] Required dependencies installed
 - [ ] Configuration files updated
 - [ ] Database migrations prepared (if applicable)
 - [ ] Backward compatibility verified
 
 **Steps**:
+
 ```bash
 # Example deployment commands
 npm run build
 npm run migrate
 npm run deploy
 ```
+````
 
 **Rollback Plan**: Revert to previous version using `git revert` or deployment tool rollback
-```
+
+````
 
 ### Testing and Validation
 
@@ -315,7 +341,7 @@ npm run deploy
 - [ ] Feature X tested in staging
 - [ ] Performance benchmarked
 - [ ] Edge cases validated
-```
+````
 
 ### Monitoring (if applicable)
 
@@ -323,6 +349,7 @@ npm run deploy
 #### Monitoring
 
 **Key Metrics**:
+
 - Response time: < 200ms (p95)
 - Error rate: < 0.1%
 - Resource utilization: Within normal range
@@ -341,6 +368,7 @@ Use this template as a starting point, adapting sections based on PR type and co
 Brief description focusing on the main purpose and changes.
 
 **Main Purpose**:
+
 - Primary goal or feature
 - Key improvements or fixes
 - Integration with existing systems
@@ -356,25 +384,29 @@ Brief description focusing on the main purpose and changes.
 #### New Files (X files, Y lines)
 
 **[file1.ext](https://github.com/owner/repo/blob/branch/path/file1.ext)** (+N lines)
+
 - Purpose and functionality
 - Key components
 - Dependencies or integrations
 
 **[file2.ext](https://github.com/owner/repo/blob/branch/path/file2.ext)** (+M lines)
+
 - Responsibility
 - API or interface details
 
 #### Modified Files
 
 **[file3.ext](https://github.com/owner/repo/blob/branch/path/file3.ext)** (+A/-B lines)
+
 - Changes description
 - Reason for modification
 - Impact on existing functionality
 
 #### Architecture (if applicable)
-
 ```
+
 [ASCII diagram showing component relationships]
+
 ```
 
 #### Security (if applicable)
@@ -464,12 +496,14 @@ Brief description or bullet points
 ## Adapting the Template
 
 **For Small PRs** (bug fixes, minor updates):
+
 - Simplify Overview
 - Use bullet points for Changes
 - Skip Architecture diagrams
 - Minimal Testing section
 
 **For Large PRs** (features, refactors):
+
 - Detailed Overview with context
 - Multiple Change categories with subsections
 - Include Architecture diagrams
@@ -478,11 +512,13 @@ Brief description or bullet points
 - Known issues and next steps
 
 **For Documentation PRs**:
+
 - Focus on what's documented and why
 - Include "Before/After" comparisons if helpful
 - Skip irrelevant sections (Architecture, Testing)
 
 **For Configuration/CI/CD PRs**:
+
 - Explain what's automated or configured
 - Include usage examples
 - Document expected behavior changes
@@ -490,6 +526,7 @@ Brief description or bullet points
 ## Best Practices Summary
 
 **DO**:
+
 - Use full GitHub URLs with branch specification for all file links
 - Organize Changes section by logical grouping (core → supporting → documentation)
 - Include architecture diagrams for complex features
@@ -498,6 +535,7 @@ Brief description or bullet points
 - Adapt template to PR size and complexity
 
 **DON'T**:
+
 - Use relative file paths
 - Omit branch name in file URLs
 - Mix unrelated changes without clear categorization

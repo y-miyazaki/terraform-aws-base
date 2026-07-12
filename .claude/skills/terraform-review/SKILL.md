@@ -21,12 +21,15 @@ Minimal inline contract (used if reference file is unavailable):
 
 ```markdown
 ## Checks Summary
+
 - Total: <n>, Passed: <n>, Failed: <n>, Deferred: <n>
 
 ## Checks (Failed/Deferred Only)
+
 | ItemID | Status | Evidence | Fix |
 
 ## Issues
+
 1. <ItemID>: <title>
    - File: <path>#L<line>
    - Problem: <specific>
@@ -87,4 +90,3 @@ Each issue must include file path, risk summary, and remediation guidance.
 - Output sample: `## Checks Summary` with deferred count, `## Checks (Failed/Deferred Only)` including deferred `tflint` check with reason `missing terraform-validation output`, and `## Issues` ordered by `SEC-*`, correctness, maintainability.
 - Prompt: `Review this Terraform PR and report security reasoning from existing validation logs.`
 - Output sample: security findings are evaluated from existing logs and code context; no validator commands are executed.
-

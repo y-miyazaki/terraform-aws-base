@@ -9,6 +9,7 @@
 ## terraform validate Failures
 
 **Common issues**:
+
 - Missing required arguments
 - Invalid resource references
 - Type mismatches
@@ -18,6 +19,7 @@
 ## tflint Failures
 
 **Common issues**:
+
 - Deprecated syntax
 - Best practice violations
 
@@ -26,6 +28,7 @@
 ## trivy config Failures
 
 **Common security issues**:
+
 - Unencrypted S3 buckets
 - Overly permissive IAM policies
 - Missing KMS encryption

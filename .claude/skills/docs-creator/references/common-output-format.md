@@ -4,19 +4,21 @@
 # docs-creator Result
 
 ## Summary
+
 - Status: <created | updated | blocked>
 - Files created: <count>
 - Files updated: <count>
 
 ## Changes
 
-| File | Action | Detail |
-|------|--------|--------|
-| `docs/explanation/caching.md` | Created | Architecture overview for caching layer |
-| `docs/index.md` | Regenerated | Added new entry |
-| `mkdocs.yml` | Updated | Added nav entry under Explanation |
+| File                          | Action      | Detail                                  |
+| ----------------------------- | ----------- | --------------------------------------- |
+| `docs/explanation/caching.md` | Created     | Architecture overview for caching layer |
+| `docs/index.md`               | Regenerated | Added new entry                         |
+| `mkdocs.yml`                  | Updated     | Added nav entry under Explanation       |
 
 ## Notes
+
 - <any skipped steps or recommendations>
 ```
 

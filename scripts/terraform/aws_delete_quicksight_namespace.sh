@@ -37,6 +37,9 @@ AWS_ACCOUNT_ID=""
 # Arguments:
 #   None
 #
+# Global Variables:
+#   None
+#
 # Returns:
 #   None (outputs to stdout)
 #
@@ -66,6 +69,9 @@ EOF
 #
 # Arguments:
 #   $@ - All command line arguments passed to the script
+#
+# Global Variables:
+#   None
 #
 # Returns:
 #   None (exits on error or help)
@@ -99,6 +105,9 @@ function parse_arguments {
 # Arguments:
 #   None
 #
+# Global Variables:
+#   None
+#
 # Returns:
 #   None
 #
@@ -127,6 +136,9 @@ function delete_quicksight_namespaces {
 #
 # Arguments:
 #   $@ - All command line arguments passed to the script
+#
+# Global Variables:
+#   None
 #
 # Returns:
 #   None (exits with appropriate status code)

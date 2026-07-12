@@ -69,6 +69,9 @@ REPOSITORY_NAME=""
 # Arguments:
 #   None
 #
+# Global Variables:
+#   None
+#
 # Returns:
 #   None (outputs to stdout)
 #

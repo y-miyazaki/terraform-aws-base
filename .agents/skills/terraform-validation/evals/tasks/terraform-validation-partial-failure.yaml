@@ -1,22 +1,24 @@
 id: terraform-validation-partial-failure-001
 name: terraform-validation partial tool failure path
-description: 'Validate that when terraform fmt passes but terraform validate fails,
+description:
+  "Validate that when terraform fmt passes but terraform validate fails,
   both results are reported.
 
-  '
+  "
 tags:
-- quality
-- partial-failure
-- edge-case
+  - quality
+  - partial-failure
+  - edge-case
 inputs:
-  prompt: 'Use terraform-validation. Assume terraform fmt passes but terraform validate
+  prompt:
+    "Use terraform-validation. Assume terraform fmt passes but terraform validate
     fails with an invalid resource reference. Return ## Summary, ## Tool Results showing
-    mixed pass/fail.'
+    mixed pass/fail."
   context:
     target: SKILL.md
 expected:
   output_contains:
-  - '## Summary'
-  - '## Tool Results'
+    - "## Summary"
+    - "## Tool Results"
   outcomes:
-  - type: task_completed
+    - type: task_completed

@@ -37,6 +37,9 @@ fi
 # Arguments:
 #   $@ - AWS CLI command and arguments
 #
+# Global Variables:
+#   None
+#
 # Returns:
 #   0 on success, non-zero on error (outputs command result to stdout)
 #
@@ -93,6 +96,9 @@ function aws_safe_exec {
 # Arguments:
 #   $1 - max retries (optional, defaults to 3)
 #   $@ - AWS CLI command and arguments
+#
+# Global Variables:
+#   None
 #
 # Returns:
 #   0 on success, non-zero on final failure (outputs command result to stdout)
@@ -163,6 +169,9 @@ function aws_retry_exec {
 # Arguments:
 #   $1 - jq array key for extracting items
 #   $@ - AWS CLI command and arguments
+#
+# Global Variables:
+#   None
 #
 # Returns:
 #   None (outputs each JSON array item line-by-line to stdout)
@@ -279,6 +288,9 @@ function aws_paginate_items {
 # Arguments:
 #   None
 #
+# Global Variables:
+#   None
+#
 # Returns:
 #   0 if credentials are valid, 1 if invalid
 #
@@ -308,6 +320,9 @@ function check_aws_credentials {
 #   $2 - jq query for array
 #   $3 - default value (optional, defaults to "N/A")
 #   $4 - separator (optional, defaults to ",")
+#
+# Global Variables:
+#   None
 #
 # Returns:
 #   Comma-separated values or custom separator-separated values (to stdout)
@@ -359,6 +374,9 @@ function extract_jq_array {
 #   $2 - jq query
 #   $3 - default value (optional, defaults to "N/A")
 #
+# Global Variables:
+#   None
+#
 # Returns:
 #   Extracted value or default (to stdout)
 #
@@ -401,6 +419,9 @@ function extract_jq_value {
 # Arguments:
 #   $1 - Unix timestamp (seconds or milliseconds)
 #
+# Global Variables:
+#   None
+#
 # Returns:
 #   Formatted date string (YYYY-MM-DD HH:MM:SS) or "N/A" (to stdout)
 #
@@ -440,6 +461,9 @@ function format_aws_timestamp {
 # Arguments:
 #   None
 #
+# Global Variables:
+#   None
+#
 # Returns:
 #   AWS account ID (to stdout) or exits on error
 #
@@ -464,6 +488,9 @@ function get_aws_account_id {
 #   Determines the current AWS region from configuration or instance metadata
 #
 # Arguments:
+#   None
+#
+# Global Variables:
 #   None
 #
 # Returns:
@@ -503,6 +530,9 @@ function get_aws_region {
 # Arguments:
 #   $1 - KMS Key ARN or Key ID
 #   $2 - AWS region (optional, defaults to current region)
+#
+# Global Variables:
+#   None
 #
 # Returns:
 #   KMS alias/name or original input (to stdout)
@@ -569,6 +599,9 @@ function get_kms_name {
 #   $1 - Security Group ID
 #   $2 - AWS region (optional, defaults to current region)
 #
+# Global Variables:
+#   None
+#
 # Returns:
 #   Security Group name or original ID (to stdout)
 #
@@ -623,6 +656,9 @@ function get_security_group_name {
 #   $1 - Subnet ID
 #   $2 - AWS region (optional, defaults to current region)
 #
+# Global Variables:
+#   None
+#
 # Returns:
 #   Subnet name or original ID (to stdout)
 #
@@ -676,6 +712,9 @@ function get_subnet_name {
 # Arguments:
 #   $1 - AWS ARN
 #
+# Global Variables:
+#   None
+#
 # Returns:
 #   Resource name (to stdout) or exits on error
 #
@@ -713,6 +752,9 @@ function get_resource_name_from_arn {
 # Arguments:
 #   $1 - VPC ID
 #   $2 - AWS region (optional, defaults to current region)
+#
+# Global Variables:
+#   None
 #
 # Returns:
 #   VPC name or original ID (to stdout)
@@ -768,6 +810,9 @@ function get_vpc_name {
 #   $1 - Resource ARN
 #   $2 - AWS region
 #
+# Global Variables:
+#   None
+#
 # Returns:
 #   WAF Web ACL ARN or "N/A" (to stdout)
 #
@@ -795,6 +840,9 @@ function get_waf_association {
 # Arguments:
 #   $1 - WAF WebACL ARN
 #   $2 - AWS region (optional, defaults to current region)
+#
+# Global Variables:
+#   None
 #
 # Returns:
 #   WebACL Name or ARN (to stdout)
@@ -854,6 +902,9 @@ function get_waf_name {
 #   $1 - AWS service name
 #   $2 - AWS region (optional, defaults to current region)
 #
+# Global Variables:
+#   None
+#
 # Returns:
 #   0 if service is available, 1 if not
 #
@@ -911,6 +962,9 @@ function is_service_available_in_region {
 # Arguments:
 #   $1 - AWS ARN
 #
+# Global Variables:
+#   None
+#
 # Returns:
 #   JSON object with ARN components (to stdout) or exits on error
 #
@@ -953,6 +1007,9 @@ function parse_arn {
 #   Validates that AWS CLI is properly configured and accessible
 #
 # Arguments:
+#   None
+#
+# Global Variables:
 #   None
 #
 # Returns:

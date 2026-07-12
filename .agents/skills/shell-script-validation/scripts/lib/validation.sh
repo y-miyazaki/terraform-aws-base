@@ -37,6 +37,9 @@ fi
 #   $1 - Configuration file path
 #   $2 - Format type (json, yaml, ini, etc.)
 #
+# Global Variables:
+#   None
+#
 # Returns:
 #   0 if valid, 1 if invalid
 #
@@ -72,6 +75,9 @@ function validate_config_format {
 #   $1 - Directory path
 #   $2 - Description (optional, for error messages)
 #
+# Global Variables:
+#   None
+#
 # Returns:
 #   None (exits on validation failure)
 #
@@ -104,6 +110,9 @@ function validate_directory_exists {
 #   $1 - File path
 #   $2 - Description (optional, for error messages)
 #
+# Global Variables:
+#   None
+#
 # Returns:
 #   None (exits on validation failure)
 #
@@ -135,6 +144,9 @@ function validate_file_exists {
 # Arguments:
 #   $1 - File path
 #   $2 - Required permissions (e.g., "755", "644")
+#
+# Global Variables:
+#   None
 #
 # Returns:
 #   0 if permissions are correct, 1 if incorrect
@@ -171,6 +183,9 @@ function validate_file_permissions {
 #   $1 - Directory path
 #   $2 - File extension (e.g., "sh", "json", "tf")
 #   $3 - Validation function name
+#
+# Global Variables:
+#   None
 #
 # Returns:
 #   0 if all files are valid, 1 if any file is invalid
@@ -223,6 +238,9 @@ function validate_files_in_directory {
 # Arguments:
 #   $1 - JSON file path
 #
+# Global Variables:
+#   None
+#
 # Returns:
 #   0 if valid JSON, 1 if invalid
 #
@@ -253,6 +271,9 @@ function validate_json_file {
 # Arguments:
 #   $1 - Host/URL to test
 #   $2 - Timeout in seconds (optional, defaults to 5)
+#
+# Global Variables:
+#   None
 #
 # Returns:
 #   0 if reachable, 1 if not reachable
@@ -293,6 +314,9 @@ function validate_network_connectivity {
 # Arguments:
 #   $1 - Script file path
 #
+# Global Variables:
+#   None
+#
 # Returns:
 #   0 if executable, 1 if not executable
 #
@@ -322,6 +346,9 @@ function validate_script_executable {
 #
 # Arguments:
 #   $1 - Script file path
+#
+# Global Variables:
+#   None
 #
 # Returns:
 #   0 if syntax is valid, 1 if invalid
@@ -363,6 +390,9 @@ function validate_script_syntax {
 #   $2 - Port
 #   $3 - Timeout in seconds (optional, defaults to 3)
 #
+# Global Variables:
+#   None
+#
 # Returns:
 #   0 if port is open, 1 if closed or unreachable
 #
@@ -402,6 +432,9 @@ function validate_port_availability {
 #
 # Arguments:
 #   $1 - YAML file path
+#
+# Global Variables:
+#   None
 #
 # Returns:
 #   0 if valid YAML, 1 if invalid

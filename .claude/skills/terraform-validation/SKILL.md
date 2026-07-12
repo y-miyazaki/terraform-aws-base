@@ -62,4 +62,3 @@ bash scripts/validate.sh
 bash scripts/validate.sh ./terraform/base/
 bash scripts/validate.sh --fix --verbose
 ```
-

@@ -2,14 +2,15 @@
 
 Directory layout follows [Diataxis](https://diataxis.fr/).
 
-| Quadrant | Directory | Purpose | Characteristics |
-|---|---|---|---|
-| Tutorial | `docs/tutorials/` | Learning-oriented | Step-by-step, single happy path, builds understanding |
-| How-To | `docs/how-to/` | Task-oriented | Solves a specific problem, assumes knowledge |
-| Reference | `docs/reference/` | Information-oriented | Describes the system accurately, structured for lookup |
+| Quadrant    | Directory           | Purpose                | Characteristics                                        |
+| ----------- | ------------------- | ---------------------- | ------------------------------------------------------ |
+| Tutorial    | `docs/tutorials/`   | Learning-oriented      | Step-by-step, single happy path, builds understanding  |
+| How-To      | `docs/how-to/`      | Task-oriented          | Solves a specific problem, assumes knowledge           |
+| Reference   | `docs/reference/`   | Information-oriented   | Describes the system accurately, structured for lookup |
 | Explanation | `docs/explanation/` | Understanding-oriented | Why things are the way they are, background, decisions |
 
 Special cases:
+
 - `README.md` → repository root (not under docs/)
 - Files that don't fit a quadrant → ask user for explicit `target_file`
 

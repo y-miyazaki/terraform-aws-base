@@ -61,6 +61,9 @@ PROJECTS_FAILED=0
 # Arguments:
 #   None
 #
+# Global Variables:
+#   None
+#
 # Returns:
 #   None (outputs to stdout)
 #
@@ -101,6 +104,9 @@ EOF
 #
 # Arguments:
 #   $@ - All command line arguments passed to the script
+#
+# Global Variables:
+#   None
 #
 # Returns:
 #   None (sets global variables)
@@ -235,6 +241,9 @@ function check_package_sync {
 # Arguments:
 #   $1 - Base directory to search (optional, defaults to TARGET_DIR)
 #
+# Global Variables:
+#   None
+#
 # Returns:
 #   Array of project directories (to stdout, one per line)
 #
@@ -265,6 +274,9 @@ function find_nodejs_projects {
 #
 # Arguments:
 #   $1 - Project directory
+#
+# Global Variables:
+#   None
 #
 # Returns:
 #   0 on success, 1 on failure
@@ -462,6 +474,9 @@ function run_security_audit {
 # Arguments:
 #   $1 - Project directory
 #
+# Global Variables:
+#   None
+#
 # Returns:
 #   0 if tests pass, 1 if tests fail or not defined
 #
@@ -524,6 +539,9 @@ function run_tests {
 #
 # Arguments:
 #   $1 - Project directory
+#
+# Global Variables:
+#   None
 #
 # Returns:
 #   0 if all checks pass, 1 if any check fails
@@ -596,6 +614,9 @@ function validate_project {
 #
 # Arguments:
 #   $@ - All command line arguments
+#
+# Global Variables:
+#   None
 #
 # Returns:
 #   None (exits with appropriate status code)

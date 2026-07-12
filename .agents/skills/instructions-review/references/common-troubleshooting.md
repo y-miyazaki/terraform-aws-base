@@ -11,6 +11,7 @@ This document lists frequent issues found during instructions file reviews and t
 **Fix**: Extract as independent chapter, place before Security Guidelines
 
 **Example**:
+
 ```yaml
 # ❌ Incorrect
 - name: Guidelines
@@ -33,9 +34,10 @@ This document lists frequent issues found during instructions file reviews and t
 **Fix**: Add relevant validation commands (minimum 3 items)
 
 **How to Check**:
+
 1. Verify validation commands are documented
 2. Verify commands are in ```bash code block format
-2. Include tool version and purpose for each
+3. Include tool version and purpose for each
 
 Related checklist IDs: TEST-01, TEST-02
 
@@ -48,6 +50,7 @@ Related checklist IDs: TEST-01, TEST-02
 **Fix**: Add chapter covering secrets management and best practices
 
 **Required Topics**:
+
 - Secrets management (environment variables, config files)
 - Credential handling
 - Sensitive data patterns
@@ -64,6 +67,7 @@ Related checklist IDs: STRUCT-01, SEC-01, SEC-02
 **Fix**: Review other files and expand to equivalent detail level
 
 **How to Standardize**:
+
 1. Compare section lengths with peer instructions files
 2. Check if all standard topics are covered
 3. Expand thin sections to match peer detail level
@@ -78,6 +82,7 @@ Related checklist IDs: STD-03, CONS-02, QUAL-01
 **Root Cause**: Reviewer used ad-hoc reporting instead of `common-output-format.md`
 
 **Fix**:
+
 1. Reformat report using `references/common-output-format.md`
 2. Ensure failed/deferred items use fixed ItemIDs from `references/common-checklist.md`
 3. Keep passed checks only in summary counts

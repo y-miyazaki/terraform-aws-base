@@ -86,6 +86,9 @@ trap 'echo "[ERROR] Aborted while processing: ${CURRENT_FILE_BEING_SCANNED:-N/A}
 # Arguments:
 #   None
 #
+# Global Variables:
+#   None
+#
 # Returns:
 #   None (outputs to stdout)
 #
@@ -240,6 +243,9 @@ function artifact_dir_for {
 # Arguments:
 #   $1 - Path to file to backup
 #
+# Global Variables:
+#   None
+#
 # Returns:
 #   Path to the created backup file
 #
@@ -366,6 +372,9 @@ function cleanup_all_artifacts {
 #
 # Arguments:
 #   $1 - Path to Terraform directory to clean
+#
+# Global Variables:
+#   None
 #
 # Returns:
 #   0 on success
@@ -596,6 +605,9 @@ function create_baseline_plans_for_projects {
 # Arguments:
 #   $1 - Path to Terraform file to parse
 #
+# Global Variables:
+#   None
+#
 # Returns:
 #   Lines in format "source||version||filename"
 #
@@ -648,6 +660,9 @@ function extract_modules_from_file {
 #   $1 - Directory to search in
 #   $2 - Whether to search recursively (true/false, default: false)
 #
+# Global Variables:
+#   None
+#
 # Returns:
 #   List of file paths containing module declarations
 #
@@ -678,6 +693,9 @@ function find_terraform_modules {
 #
 # Arguments:
 #   $1 - Path to a file within the Terraform project
+#
+# Global Variables:
+#   None
 #
 # Returns:
 #   Path to the Terraform project root directory
@@ -723,6 +741,9 @@ function find_terraform_project_root {
 #
 # Arguments:
 #   $1 - Module source URL/path
+#
+# Global Variables:
+#   None
 #
 # Returns:
 #   Latest version string or "unknown" if unable to determine
@@ -958,6 +979,9 @@ function process_batch_module_updates {
 #   $3 - Current version string
 #   $4 - Latest version string
 #
+# Global Variables:
+#   None
+#
 # Returns:
 #   0 on success
 #
@@ -990,6 +1014,9 @@ function process_single_module_update {
 #
 # Arguments:
 #   $1 - Path to Terraform directory to process
+#
+# Global Variables:
+#   None
 #
 # Returns:
 #   0 on success
@@ -1098,6 +1125,9 @@ function process_terraform_directory {
 #   $1 - Module source identifier
 #   $@ - List of file paths to rollback
 #
+# Global Variables:
+#   None
+#
 # Returns:
 #   0 on success
 #
@@ -1184,6 +1214,9 @@ function setup_backup_directory {
 #   $2 - Module source identifier
 #   $3 - Current version string
 #   $4 - New version string
+#
+# Global Variables:
+#   None
 #
 # Returns:
 #   0 on success, 1 on failure

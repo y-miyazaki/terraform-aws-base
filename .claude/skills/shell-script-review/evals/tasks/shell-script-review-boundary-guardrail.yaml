@@ -1,23 +1,25 @@
 id: shell-script-review-no-issues-001
 name: shell-script-review no-issues path
-description: 'Validate no-issue path keeps required placeholders and section structure.
+description:
+  "Validate no-issue path keeps required placeholders and section structure.
 
-  '
+  "
 tags:
-- quality
-- no-issues
+  - quality
+  - no-issues
 inputs:
-  prompt: 'Use shell-script-review and assume no failed or deferred checks. Return
+  prompt:
+    "Use shell-script-review and assume no failed or deferred checks. Return
     ## Checks Summary, ## Checks (Failed/Deferred Only), ## Issues. In failed/deferred
-    section output ''No failed or deferred checks''. In issues output ''No issues
-    found''.'
+    section output 'No failed or deferred checks'. In issues output 'No issues
+    found'."
   context:
     target: SKILL.md
 expected:
   output_contains:
-  - '## Checks Summary'
-  - No failed or deferred checks
-  - No issues found
-  - '## Issues'
+    - "## Checks Summary"
+    - No failed or deferred checks
+    - No issues found
+    - "## Issues"
   outcomes:
-  - type: task_completed
+    - type: task_completed

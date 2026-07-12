@@ -53,10 +53,10 @@ scripts/pr_fetch.sh --help
 | Parameter  | Required | Format       | Description                                                            |
 | ---------- | -------- | ------------ | ---------------------------------------------------------------------- |
 | `<PR#>`    | Yes      | Numeric      | GitHub PR number (e.g., `123`)                                         |
-| `--repo`   | No*      | `owner/repo` | Repository in GitHub format. Auto-detected from git remote if omitted. |
+| `--repo`   | No\*     | `owner/repo` | Repository in GitHub format. Auto-detected from git remote if omitted. |
 | `--format` | No       | `json\|yaml` | Output format (default: `json`). Recommended: `json` for parsing       |
 
-*Auto-detected from git remote if not provided.
+\*Auto-detected from git remote if not provided.
 
 ### Output Structure
 
@@ -98,6 +98,7 @@ scripts/pr_fetch.sh --help
 ### Usage Examples
 
 **Example 1: Analyze PR and print summary**
+
 ```bash
 scripts/pr_fetch.sh 311 --repo owner/repo \\
   | jq '.classified_files | map({type, count: (.files | length), additions: (.files | map(.additions) | add)})'
@@ -110,12 +111,14 @@ scripts/pr_fetch.sh 311 --repo owner/repo \\
 ```
 
 **Example 2: Extract Terraform changes**
+
 ```bash
 scripts/pr_fetch.sh 311 --repo owner/repo \\
   | jq '.classified_files[] | select(.type == "Config") | .files[] | select(.path | contains("terraform"))'
 ```
 
 **Example 3: Save analysis for later processing**
+
 ```bash
 scripts/pr_fetch.sh 311 --repo owner/repo > pr_analysis.json
 # Use pr_analysis.json for downstream processing or manual refinement
@@ -160,12 +163,12 @@ scripts/pr_body.sh <PR#>
 | Parameter     | Required | Format       | Description                                                                 |
 | ------------- | -------- | ------------ | --------------------------------------------------------------------------- |
 | `<PR#>`       | Yes      | Numeric      | GitHub PR number (e.g., `123`)                                              |
-| `--repo`      | No*      | `owner/repo` | Repository in GitHub format. Auto-detected from git remote if omitted.      |
+| `--repo`      | No\*     | `owner/repo` | Repository in GitHub format. Auto-detected from git remote if omitted.      |
 | `--body-file` | No       | File path    | Path to complete AI-generated PR body file. Applies the full body as-is.    |
 | `--dry-run`   | No       | Flag         | Preview changes without applying. Useful for verification before execution. |
 | `--verbose`   | No       | Flag         | Enable SCRIPT_VERBOSE=1 for debugging output.                               |
 
-*Auto-detected from git remote if not provided.
+\*Auto-detected from git remote if not provided.
 
 ### Exit Codes for pr_body.sh
 
@@ -188,6 +191,7 @@ scripts/pr_body.sh <PR#>
 **Cause**: PR number doesn't exist in repository or wrong repository specified
 
 **Recovery**:
+
 1. Verify PR number is correct: `gh pr list --repo owner/repo`
 2. Verify repository format: Use `owner/repo` (not `owner-repo`, not full URL)
 3. Verify repository access: `gh repo view owner/repo`
@@ -197,6 +201,7 @@ scripts/pr_body.sh <PR#>
 **Cause**: `gh` CLI not authenticated or missing `repo:write` scope
 
 **Recovery**:
+
 1. Authenticate: `gh auth login`
 2. Select "GitHub.com" for hostname
 3. Select "HTTPS" for protocol
@@ -208,6 +213,7 @@ scripts/pr_body.sh <PR#>
 **Cause**: Missing `jq` JSON processor dependency
 
 **Recovery**
+
 ```bash
 # Debian/Ubuntu
 sudo apt-get install -y jq
@@ -224,6 +230,7 @@ jq --version
 **Cause**: Repository doesn't have PR template
 
 **Recovery**:
+
 1. Create template at `.github/PULL_REQUEST_TEMPLATE.md`
 2. Or run script in location with existing template
 3. Or provide template structure before running
@@ -233,6 +240,7 @@ jq --version
 **Cause**: PR Body content too large or malformed (GitHub API limit)
 
 **Recovery**:
+
 1. Check body size: Should be < 65,536 characters
 2. Run with `--verbose` to see generated content size
 3. Split large changes into separate PRs if needed

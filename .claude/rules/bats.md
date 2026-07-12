@@ -1,0 +1,138 @@
+---
+paths:
+  - "**/*.bats"
+---
+
+# AI Assistant Instructions for Bats
+
+## Scope
+
+- Scope is limited to authoring and updating Bats suites (`*.bats`) under `test/bats/` and package-local skill test directories.
+- Shell script implementation rules remain in `shell-script.instructions.md`; this file defines test-suite conventions only.
+
+## Standards
+
+### Naming Conventions
+
+| Component        | Rule                                              | Example                                    |
+| ---------------- | ------------------------------------------------- | ------------------------------------------ |
+| Suite file       | snake_case; mirror source path under `test/bats/` | `detect_changes.bats`                      |
+| Support helper   | snake_case `.bash` under `test/bats/support/`     | `common.bash`, `aws_mock.bash`             |
+| `@test` name     | Descriptive sentence (lowercase)                  | `parse_commit_subject accepts feat commit` |
+| Package constant | UPPER_SNAKE_CASE                                  | `DETECT_SCRIPT`, `LEDGER_FILE`             |
+
+### Suite File Structure
+
+Required order for every `test/bats/**/*.bats` file:
+
+1. `#!/usr/bin/env bats`
+2. Header comment: `# Tests for <repo-relative path>`
+3. Walk-up preamble that loads `test/bats/support/common.bash` (identical block in every suite)
+4. Target constants (`DETECT_SCRIPT`, `TARGET_LIB`, …) when needed
+5. `setup()` — source script(s), export env, create temp state
+6. `teardown()` — when `setup()` creates temp files or dirs
+7. `@test` functions in a-z order by test description
+
+Walk-up preamble (copy verbatim):
+
+```bash
+_bats_support="$(dirname "${BATS_TEST_FILENAME}")"
+while [[ ! -f "${_bats_support}/support/common.bash" ]]; do
+    _bats_support="$(dirname "${_bats_support}")"
+done
+# shellcheck disable=SC1091
+source "${_bats_support}/support/common.bash"
+```
+
+### Support Library
+
+| File                            | Role                                                                                                   |
+| ------------------------------- | ------------------------------------------------------------------------------------------------------ |
+| `test/bats/support/common.bash` | Shared helpers: `bats_source_rel`, `bats_source_apm_skill`, `apm_skill_script_path`, `git_test_repo_*` |
+| `test/bats/support/*.bash`      | Domain mocks (for example `aws_mock.bash`); load via `$(bats_support_dir)/…`                           |
+
+Suites run with cwd = repository root (see `shell-script-validation/scripts/validate.sh`).
+
+## Guidelines
+
+### File Layout (BAT)
+
+- BAT-01 (MUST): Mirror Source Path
+  - Check: Is the suite placed under `test/bats/` with the same relative path as the script or library under test?
+- BAT-02 (MUST): Load common.bash
+  - Check: Does the file use the walk-up preamble before `setup()`?
+- BAT-03 (MUST): Header Target Path
+  - Check: Does the header comment name the repo-relative path of the script or library under test?
+- BAT-04 (SHOULD): APM Loop Detect Suites
+  - Check: Are loop detect scripts tested under `test/bats/.apm/packages/<package>/`?
+
+### Setup and Teardown (SETUP)
+
+- SETUP-01 (MUST): Source in setup()
+  - Check: Are targets sourced with `bats_source_rel` or `bats_source_apm_skill` inside `setup()`, not ad hoc per test?
+- SETUP-02 (MUST): Teardown Temp State
+  - Check: Does `teardown()` remove files or directories created in `setup()` (`mktemp`, `.loop/*`, mock bins)?
+- SETUP-03 (SHOULD): Export Before Source
+  - Check: Are environment variables exported before sourcing when the sourced script reads them at load time?
+
+### Test Design (TEST)
+
+- TEST-01 (SHOULD): Unit vs Integration Split
+  - Check: Are pure functions tested by calling them after `setup()` sources the script, and CLI flows tested via `bash "${SCRIPT}"`?
+- TEST-02 (SHOULD): Git Fixture Helpers
+  - Check: Do repo-scoped integration tests use `git_test_repo_setup`, `git_test_repo_commit`, and `git_test_repo_run`?
+- TEST-03 (MUST): run Subshell for Repo cwd
+  - Check: Are integration commands wrapped in `git_test_repo_run` or `bash -c "cd … && …"` — never bare `cd` before `run`?
+- TEST-04 (SHOULD): Test Order
+  - Check: Are `@test` blocks ordered a-z by description (after `setup`/`teardown`)?
+- TEST-05 (SHOULD): No Duplicate Source
+  - Check: Is the target script sourced once in `setup()` without redundant `source` inside individual tests?
+
+### Git Log Parsing (GIT)
+
+- GIT-01 (MUST): Newline in git log Format
+  - Check: When parsing `git log --pretty=format:` with `while read`, does the format end with `%n` so the final record is readable?
+
+### Mocking (MOCK)
+
+- MOCK-01 (SHOULD): Centralize CLI Mocks
+  - Check: Are external CLI mocks placed under `BATS_TEST_TMPDIR` or `test/bats/support/` helpers, with `PATH` prepended in the test?
+
+### Anti-Patterns
+
+- Bare `cd "${TEST_REPO}"` immediately before `run` — `run` executes in a subshell that resets cwd
+- Mixing relative script paths in integration tests without `apm_skill_script_path` / `bats_workspace_root`
+- Inconsistent headers (`Tests for loop-foo` vs `Tests for .apm/packages/...`) — always use full repo-relative path
+- Real secrets or live tokens in fixtures — use placeholders and assert redaction behavior
+- Skipping `teardown()` when `setup()` writes under `.loop/` or `mktemp` paths
+
+### Code Modification Guidelines
+
+- Add or update suites under `test/bats/` mirroring the changed script path.
+- Reuse `test/bats/support/common.bash`; extend support helpers instead of copying preamble logic.
+- After changes, run `bats -r test/bats` and `shell-script-validation` `validate.sh` (runs the full Bats tree).
+- Shell script DOC/header rules remain in `shell-script.instructions.md`; do not duplicate them here.
+
+## Testing and Validation
+
+**Entry point (recommended)**:
+
+```bash
+bats -r test/bats
+bash <agent-root>/skills/shell-script-validation/scripts/validate.sh
+```
+
+**Individual execution (debugging)**:
+
+```bash
+bats test/bats/.apm/packages/loop-docs-triage/detect_changes.bats
+bats test/bats/scripts/lib/common.bats -f "render_template"
+```
+
+**Detailed guide**: See `shell-script-validation` skill SKILL.md. Suite conventions are defined in this file; shell script authoring rules are in `shell-script.instructions.md`.
+
+## Security Guidelines
+
+- Do not embed real API keys, tokens, or credentials in `@test` fixtures — use obvious placeholders and verify sanitization/redaction where applicable.
+- Write temporary artifacts only under `BATS_TEST_TMPDIR`, `mktemp`, or ignored paths; remove them in `teardown()`.
+- Do not make destructive host paths the default in examples (avoid `rm -rf /` patterns); scope file operations to test fixtures.

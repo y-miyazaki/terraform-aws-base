@@ -7,6 +7,7 @@ Use this guide when `ghalint` or `zizmor` reports security findings.
 ### Overly Broad Permissions
 
 **Typical finding**:
+
 - Missing `permissions` block
 - Write permissions granted globally without need
 
@@ -28,6 +29,7 @@ Set minimal workflow-level permissions, then elevate per job only when required.
 ### Unpinned Third-Party Actions
 
 **Typical finding**:
+
 - `uses: org/action@vX` without SHA pinning
 
 **Fix**:
@@ -41,6 +43,7 @@ Pin third-party actions to full commit SHA and optionally keep the version comme
 ### Unsafe pull_request_target Usage
 
 **Typical finding**:
+
 - `pull_request_target` workflow runs untrusted fork code with privileged token or secrets
 
 **Fix**:
@@ -65,6 +68,7 @@ Avoid checking out and executing fork code in privileged `pull_request_target` j
 ### Secret Exposure in Logs
 
 **Typical finding**:
+
 - Secret-like values echoed in `run` steps
 - Tokens passed via command-line arguments and printed
 
@@ -85,6 +89,7 @@ Never print secrets and avoid debugging flags that dump full environment values.
 ### Missing Timeouts
 
 **Typical finding**:
+
 - Job or step can hang indefinitely
 
 **Fix**:

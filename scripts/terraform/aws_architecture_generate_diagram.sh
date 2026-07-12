@@ -91,6 +91,9 @@ AWS_RESOURCE_CATEGORIES=(
 # Arguments:
 #   None
 #
+# Global Variables:
+#   None
+#
 # Returns:
 #   None (outputs to stdout)
 #

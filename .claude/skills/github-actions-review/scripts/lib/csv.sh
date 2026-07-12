@@ -21,6 +21,9 @@
 # Arguments:
 #   $1 - CSV data to sort
 #
+# Global Variables:
+#   None
+#
 # Returns:
 #   Sorted CSV data (to stdout)
 #
@@ -76,6 +79,9 @@ except Exception as e:
 # Arguments:
 #   $1 - value to make CSV-safe
 #
+# Global Variables:
+#   None
+#
 # Returns:
 #   CSV-safe value with proper quoting and escaping (to stdout)
 #
@@ -123,6 +129,9 @@ function make_csv_safe {
 #
 # Arguments:
 #   $1 - value to normalize
+#
+# Global Variables:
+#   None
 #
 # Returns:
 #   CSV-safe value; quoted when needed (to stdout)

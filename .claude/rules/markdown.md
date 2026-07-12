@@ -26,6 +26,7 @@ paths:
 ## Guidelines
 
 ### Structure and Formatting (DOC)
+
 - DOC-00 (MUST): Preserve Existing Structure
   - Check: Does the change modify only the relevant section without unnecessary reorganization?
 - DOC-01 (SHOULD): Document Splitting
@@ -44,6 +45,7 @@ paths:
   - ❌ `[click here](../reference/adr.md)` (generic label)
 
 ### Terminology and Consistency (TERM)
+
 - TERM-01 (MUST): Use Official Product Names
   - Check: Are product names written in their official form (e.g., PostgreSQL not postgres/Postgres, GitHub Actions not github actions, Terraform not terraform in prose)?
 - TERM-02 (SHOULD): Consistent Terminology Within Context
@@ -57,7 +59,7 @@ paths:
 - TERM-06 (SHOULD): Prefer Active Voice in Procedures
   - Check: Are instructions written in active voice with a clear actor (e.g., "Run the script" not "The script should be run")?
 - TERM-07 (SHOULD): Specify Code Block Language
-  - Check: Do fenced code blocks include a language identifier (e.g., ```bash,```json, ```yaml)?
+  - Check: Do fenced code blocks include a language identifier (e.g., `bash,`json, ```yaml)?
 - TERM-08 (SHOULD): Verify Against Repository State
   - Check: Are commands, file paths, and documented behaviors consistent with the current repository contents?
 - TERM-09 (MUST): Do Not Invent Documentation
@@ -68,6 +70,7 @@ paths:
   - Check: Before listing step-by-step instructions or commands, are required tools, permissions, and environmental states clearly stated?
 
 ### Writing Style (STYLE)
+
 - STYLE-01 (SHOULD): One Idea per Sentence
   - Check: Does each sentence convey a single idea? Split compound sentences joined by "and", "but", or "which" into separate sentences when they address distinct points.
 - STYLE-02 (SHOULD): Eliminate Filler Words and Weak Verbs

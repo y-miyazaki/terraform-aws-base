@@ -56,25 +56,32 @@ Structured PR output:
 ## Workflow
 
 1. Fetch PR metadata:
+
    ```bash
    scripts/pr_fetch.sh <PR_NUMBER> --repo <OWNER/REPO>
    ```
+
    Parse JSON output to obtain: title, body, file list, additions/deletions, headRefName, baseRefName.
 
 2. Generate deterministic baseline (`## Overview`, `## Changes`):
+
    ```bash
    scripts/pr_body.sh <PR_NUMBER> --repo <OWNER/REPO> --dry-run
    ```
+
    Review dry-run output. If acceptable, apply:
+
    ```bash
    scripts/pr_body.sh <PR_NUMBER> --repo <OWNER/REPO>
    ```
 
 3. Select mode:
+
    - Baseline mode: request scope is summary refresh only → skip to Step 6.
    - Full-body mode: request explicitly asks to populate all template sections → continue to Step 4.
 
 4. Generate AI-completed content (full-body mode only):
+
    1. Read `.github/PULL_REQUEST_TEMPLATE.md` from the repository.
    2. For each H2 section in the template:
       - If the section comment contains an `Example:` block, follow that structure to generate visible content.
@@ -84,6 +91,7 @@ Structured PR output:
    4. Write the complete PR body (all sections) to a temporary file (e.g., `/tmp/completed_pr_body.md`).
 
 5. Apply full body (full-body mode only):
+
    ```bash
    scripts/pr_body.sh <PR_NUMBER> --repo <OWNER/REPO> --body-file /tmp/completed_pr_body.md
    ```

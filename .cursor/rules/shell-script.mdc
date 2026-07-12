@@ -8,6 +8,7 @@ globs: "**/*.sh"
 ## Scope
 
 - Scope is limited to implementing, updating, and validating Shell scripts (`*.sh`).
+- Bats suites (`*.bats`) follow `bats.instructions.md` in this package.
 
 ## Standards
 
@@ -22,7 +23,7 @@ globs: "**/*.sh"
 
 ### Script Structure
 
-Required in-file order:
+Required in-file order for **executable entry scripts** (invoked directly or via `bash lib/*.sh`):
 
 1. shebang + header comments (DOC-01)
 2. `set -euo pipefail` + secure defaults（`umask 027`, `export LC_ALL=C.UTF-8`）
@@ -30,6 +31,17 @@ Required in-file order:
 4. global variable definitions
 5. function definitions: `show_usage` / `parse_arguments` -> other functions in a-z order (G-03) -> `main` last
 6. entry point: `if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then main "$@"; fi`
+
+### Sourced library files
+
+Applies to `source`d modules (for example `.github/actions/*/lib/*.sh`, `scripts/lib/*.sh`):
+
+- Omit items 2, 3, 5 (`show_usage` / `parse_arguments` / `main`), and 6 from the executable list above
+- Match the enclosing directory's existing `lib/` style; for GitHub Actions loop libraries use `.github/actions/loop-execute/lib/rejections.sh` as the reference
+- Keep the `#######################################` file header and per-function separator blocks
+- List functions in a-z order (G-03)
+- Every function doc block must include **Arguments**, **Global Variables**, and **Returns** (`None` when a section does not apply)
+- When refactoring logic, **do not remove** header or function comment blocks to save tokens
 
 ### Header Comment Format
 
@@ -72,11 +84,12 @@ Required in-file order:
 #######################################
 ```
 
-Write `None` for sections that do not apply. Do not omit sections.
+Write `None` for sections that do not apply. **Do not omit sections** — especially `Global Variables`; when a function reads or writes no caller globals, write `Global Variables:` followed by `None`.
 
 ## Guidelines
 
 ### Code Standards (CODE)
+
 - CODE-01 (SHOULD): Proper Array Usage
   - Check: Are paths with spaces and multiple values managed with arrays?
 - CODE-02 (SHOULD): Minimize Global Variables
@@ -89,18 +102,21 @@ Write `None` for sections that do not apply. Do not omit sections.
   - Check: Do functions have single responsibility and accept arguments explicitly?
 
 ### Dependencies (DEP)
+
 - DEP-01 (SHOULD): Document Required Commands
   - Check: Are dependent commands documented in README?
 - DEP-02 (SHOULD): Command Existence Check
   - Check: Are commands verified with command -v with clear error messages?
 
 ### Documentation (DOC)
+
 - DOC-01 (MUST): Standard Header Format
   - Check: Does file header contain Description/Usage/Design Rules?
 - DOC-02 (SHOULD): show_usage Required
   - Check: Is show_usage function implemented?
 - DOC-03 (SHOULD): Function Separators and Comments
-  - Check: Do functions have `#######` separator and Description/Arguments/Global Variables/Returns sections?
+  - Check: Do functions have `#######################################` separator and Description/Arguments/Global Variables/Returns sections?
+  - Check: Is `Global Variables` present on every function (with `None` when no caller globals are read or written)?
 - DOC-04 (SHOULD): Complex Logic Comments
   - Check: Do complex algorithms have Why comments?
 - DOC-05 (SHOULD): Variable Documentation
@@ -115,6 +131,7 @@ Write `None` for sections that do not apply. Do not omit sections.
   - Check: Is CHANGELOG.md maintained with breaking changes documented?
 
 ### Error Handling (ERR)
+
 - ERR-01 (SHOULD): Trap Configuration
   - Check: Are trap handlers set for EXIT, ERR, INT, TERM?
 - ERR-02 (SHOULD): Exit Code Checking
@@ -131,6 +148,7 @@ Write `None` for sections that do not apply. Do not omit sections.
   - Check: Are errors persistently logged to a log file?
 
 ### Function Design (FUNC)
+
 - FUNC-01 (SHOULD): Functions Under 50 Lines Recommended
   - Check: Are functions 50 lines or less?
 - FUNC-02 (SHOULD): Standardize parse_arguments
@@ -143,6 +161,7 @@ Write `None` for sections that do not apply. Do not omit sections.
   - Check: Is main function implemented with minimized global scope processing?
 
 ### Global / Base (G)
+
 - G-01 (MUST): Set SCRIPT_DIR
   - Check: Is SCRIPT_DIR set for reliable relative path resolution?
 - G-02 (SHOULD): No Hardcoded Secrets
@@ -155,6 +174,7 @@ Write `None` for sections that do not apply. Do not omit sections.
   - Check: Does script run without errors on re-execution?
 
 ### Logging (LOG)
+
 - LOG-01 (SHOULD): Separate stdout/stderr
   - Check: Are errors clearly separated to >&2 and info to stdout?
 - LOG-02 (SHOULD): Implement Log Levels
@@ -167,6 +187,7 @@ Write `None` for sections that do not apply. Do not omit sections.
   - Check: Is detailed log control available with -v/--verbose option?
 
 ### Performance (PERF)
+
 - PERF-01 (SHOULD): Minimize External Commands
   - Check: Are external commands in loops minimized and Bash built-ins prioritized?
 - PERF-02 (SHOULD): Reduce Subshells
@@ -189,6 +210,7 @@ Write `None` for sections that do not apply. Do not omit sections.
   - Check: Are performance bottlenecks identified with set -x and time?
 
 ### Security (SEC)
+
 - SEC-01 (SHOULD): Input Validation
   - Check: Is user input validated with regex patterns or whitelists?
 - SEC-02 (SHOULD): Command Injection Prevention
@@ -209,20 +231,31 @@ Write `None` for sections that do not apply. Do not omit sections.
   - Check: Is umask 027 set and least privilege principle applied?
 
 ### Testing (TEST)
+
 - TEST-01 (SHOULD): Implement Unit Tests
-  - Check: Are unit tests implemented with Bats?
+  - Check: Are unit tests implemented with Bats per `bats.instructions.md`?
 - TEST-02 (SHOULD): Bats Test Functions in a-z Order
-  - Check: Are test functions placed in a-z order after setup/teardown?
+  - Check: Are `@test` functions placed in a-z order after setup/teardown (see `bats.instructions.md`)?
 - TEST-03 (SHOULD): CI/CD Integration
   - Check: Are tests integrated into CI/CD like GitHub Actions?
+
+### Anti-Patterns
+
+- Applying executable-script requirements (`set -euo pipefail`, `main`, entry guard) to sourced library files
+- Removing DOC comment blocks to shorten a diff — use shell-script-review conventions instead
+- Omitting the `Global Variables` section when a function uses only locals — write `None` instead
+- Introducing a new comment style in one `lib/*.sh` file while siblings use the loop/action library format
 
 ### Code Modification Guidelines
 
 - After changes, prioritize running validate.sh from shell-script-validation skill.
 - Use individual commands only for debugging.
-
+- Comment and header conventions (DOC-\*) are authoring guidelines — not enforced by validate.sh. Use shell-script-review for judgment on documentation quality.
+- When editing a sourced `lib/*.sh` file, preserve comment structure and match sibling files in the same directory; never strip `#######################################` blocks or function doc sections during logic fixes.
 
 ## Testing and Validation
+
+`shell-script-validation` runs automated checks only: `bash -n`, shellcheck, shebang, and permissions. It does **not** enforce DOC-\* comment format or header separator style.
 
 **Entry point (recommended)**:
 
@@ -235,10 +268,10 @@ bash <agent-root>/skills/shell-script-validation/scripts/validate.sh
 ```bash
 bash -n script.sh
 shellcheck script.sh
-bats test/bats/
+bats -r test/bats
 ```
 
-**Detailed guide**: See shell-script-validation skill SKILL.md.
+**Detailed guide**: See shell-script-validation skill SKILL.md. For Bats suite layout and helpers, see `bats.instructions.md`. For comment/header conventions, see shell-script-review skill.
 
 ## Security Guidelines
 

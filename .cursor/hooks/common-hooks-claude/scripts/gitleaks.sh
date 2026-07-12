@@ -37,6 +37,9 @@ fi
 # Arguments:
 #   None
 #
+# Global Variables:
+#   None
+#
 # Returns:
 #   Newline-separated unique file list to stdout
 #######################################
@@ -55,6 +58,9 @@ function get_changed_files {
 #
 # Arguments:
 #   $1 - reason: Human-readable description of what failed
+#
+# Global Variables:
+#   None
 #
 # Returns:
 #   Does not return. Exits with 0 (JSON block) or 2 (stderr).
@@ -138,8 +144,13 @@ function report_failure {
             esac
             ;;
         cursor)
-            echo "$reason" >&2
-            exit 2
+            if [[ $hook_event == "stop" ]]; then
+                jq -n --arg reason "$reason" '{followup_message: $reason}'
+                exit 0
+            else
+                echo "$reason" >&2
+                exit 2
+            fi
             ;;
         kiro)
             if [[ $hook_event == "stop" ]]; then
@@ -177,6 +188,9 @@ function report_failure {
 #   Calls report_failure if secrets are found.
 #
 # Arguments:
+#   None
+#
+# Global Variables:
 #   None
 #
 # Returns:

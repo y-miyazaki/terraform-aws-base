@@ -31,21 +31,21 @@ uvx = true # Install uv/uvx via pipx for better isolation and performance.
 # A Runtime tools
 aqua = "v2.60.1"
 node = "24.18.0"
-pnpm = { version = "11.9.0", depends = ["node"] }
+pnpm = { version = "11.10.0", depends = ["node"] }
 python = "3.14.6"
 
 # AI agent tools
-"github:microsoft/apm" = "v0.23.1"               # agent package manager
-claude = "2.1.197"                               # Claude Code CLI
+"github:microsoft/apm" = "v0.24.0"               # agent package manager
+claude = "2.1.201"                               # Claude Code CLI
 "github:DeusData/codebase-memory-mcp" = "v0.8.1" # codebase memory MCP server
-"aqua:github/copilot-cli" = "1.0.67"             # GitHub Copilot CLI
-"pipx:headroom-ai" = { version = "0.28.0", extras = "proxy,mcp,bedrock", depends = ["python"] }
+"aqua:github/copilot-cli" = "1.0.68"             # GitHub Copilot CLI
+"pipx:headroom-ai" = { version = "0.30.0", extras = "proxy,mcp,bedrock", depends = ["python"] }
 "github:yvgude/lean-ctx" = "v3.8.18"              # context optimizer
 "github:microsoft/waza" = "v0.38.0"               # agent skill evaluator
 
 # AWS related tools
-"aqua:aws/aws-cli" = "2.35.13"      # AWS CLI
-"aqua:aws/aws-sam-cli" = "1.162.1"  # SAM CLI tool
+"aqua:aws/aws-cli" = "2.35.15"      # AWS CLI
+"aqua:aws/aws-sam-cli" = "1.163.0"  # SAM CLI tool
 "npm:awsp" = { version = "0.2.0", depends = [
   "node",
 ], install_env = { NPM_CONFIG_IGNORE_SCRIPTS = "true" } } # AWS profile switcher
@@ -56,7 +56,7 @@ claude = "2.1.197"                               # Claude Code CLI
 # GitHub related tools
 "aqua:rhysd/actionlint" = "1.7.12"                                    # GitHub Actions linter
 "aqua:suzuki-shunsuke/disable-checkout-persist-credentials" = "1.0.0" # disable persist-credentials in checkout action
-"aqua:cli/cli" = "2.95.0"                                             # GitHub CLI (gh)
+"aqua:cli/cli" = "2.96.0"                                             # GitHub CLI (gh)
 "aqua:suzuki-shunsuke/ghalint" = "1.5.6"                              # GitHub Actions linter
 "aqua:suzuki-shunsuke/ghatm" = "1.0.0"                                # auto-set timeout-minutes for GitHub Actions jobs
 "aqua:suzuki-shunsuke/pinact" = "4.1.0"                               # GitHub Actions pinning tool
@@ -68,7 +68,7 @@ claude = "2.1.197"                               # Claude Code CLI
 "aqua:go-delve/delve" = "1.27.0"                                          # debugger
 "aqua:mvdan/gofumpt" = "0.10.0"                                           # code formatter
 "aqua:golangci/golangci-lint" = "2.12.2"                                  # linter
-"aqua:goreleaser/goreleaser" = "2.16.0"                                   # release automation
+"aqua:goreleaser/goreleaser" = "2.17.0"                                   # release automation
 "go:golang.org/x/tools/gopls" = "v0.22.0"                                 # Go language server
 "go:golang.org/x/vuln/cmd/govulncheck" = "1.3.0"                          # vulnerability scanner
 "aqua:ko-build/ko" = "0.19.1"                                             # container builder
@@ -90,6 +90,9 @@ claude = "2.1.197"                               # Claude Code CLI
 "npm:markdownlint-cli2" = { version = "0.23.0", depends = [
   "node",
 ], install_env = { NPM_CONFIG_IGNORE_SCRIPTS = "true" } } # Markdown linter
+"npm:prettier" = { version = "3.9.5", depends = [
+  "node",
+], install_env = { NPM_CONFIG_IGNORE_SCRIPTS = "true" } } # Code formatter
 
 # Security related tools
 "aqua:gitleaks/gitleaks" = "8.30.1"  # secret scanner

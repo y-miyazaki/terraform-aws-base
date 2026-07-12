@@ -19,6 +19,9 @@
 # Arguments:
 #   $1 - String to escape
 #
+# Global Variables:
+#   None
+#
 # Returns:
 #   JSON-safe escaped string (to stdout)
 #
@@ -40,6 +43,9 @@ function json_escape {
 #
 # Arguments:
 #   $@ - Array elements (pass as "${array[@]}")
+#
+# Global Variables:
+#   None
 #
 # Returns:
 #   JSON array string (to stdout)
@@ -89,6 +95,9 @@ function json_string_array {
 # Arguments:
 #   $1 - Indent level (optional, default 0)
 #
+# Global Variables:
+#   None
+#
 # Returns:
 #   None (outputs to stdout)
 #
@@ -104,6 +113,9 @@ function json_object_start {
 # json_object_end: Print closing brace
 #
 # Arguments:
+#   None
+#
+# Global Variables:
 #   None
 #
 # Returns:
@@ -124,6 +136,9 @@ function json_object_end {
 #   $1 - Key name
 #   $2 - String value
 #   $3 - Trailing comma ("," or "", default ",")
+#
+# Global Variables:
+#   None
 #
 # Returns:
 #   None (outputs to stdout)
@@ -150,6 +165,9 @@ function json_field_string {
 #   $2 - Boolean value ("true" or "false")
 #   $3 - Trailing comma ("," or "", default ",")
 #
+# Global Variables:
+#   None
+#
 # Returns:
 #   None (outputs to stdout)
 #
@@ -171,6 +189,9 @@ function json_field_bool {
 #   $1 - Key name
 #   $2 - JSON array string (from json_string_array)
 #   $3 - Trailing comma ("," or "", default ",")
+#
+# Global Variables:
+#   None
 #
 # Returns:
 #   None (outputs to stdout)

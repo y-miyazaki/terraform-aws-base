@@ -91,6 +91,9 @@ trap cleanup EXIT
 # Arguments:
 #   None
 #
+# Global Variables:
+#   None
+#
 # Returns:
 #   Exits with status 0 after display
 #
@@ -274,6 +277,9 @@ function parse_template_sections {
 # Arguments:
 #   $1 - JSON array of file objects from gh pr view
 #
+# Global Variables:
+#   None
+#
 # Returns:
 #   Outputs JSON with files grouped by classification
 #
@@ -319,6 +325,9 @@ function classify_file_changes {
 #
 # Arguments:
 #   $1 - JSON with classified files
+#
+# Global Variables:
+#   None
 #
 # Returns:
 #   Outputs markdown for Changes section
@@ -448,6 +457,9 @@ function generate_body_sections {
 #   $1 - Markdown text
 #   $2 - H2 heading text (for example: "## Changes")
 #
+# Global Variables:
+#   None
+#
 # Returns:
 #   Outputs the matched section or empty output if not found
 #
@@ -487,6 +499,9 @@ function extract_h2_section {
 # Arguments:
 #   $1 - Section markdown text
 #
+# Global Variables:
+#   None
+#
 # Returns:
 #   Outputs section body without heading
 #
@@ -516,6 +531,9 @@ function section_body_without_heading {
 #
 # Arguments:
 #   $1 - Section markdown text
+#
+# Global Variables:
+#   None
 #
 # Returns:
 #   0 if visible content exists, 1 otherwise
@@ -590,6 +608,9 @@ function section_has_visible_content {
 # Arguments:
 #   $1 - H2 heading text (for example: "## Testing")
 #   $2 - Template section markdown text
+#
+# Global Variables:
+#   None
 #
 # Returns:
 #   Outputs section markdown

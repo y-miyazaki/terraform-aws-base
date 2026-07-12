@@ -1,24 +1,26 @@
 id: instructions-review-specific-check-001
 name: instructions-review detects specific violation
-description: 'Validate that instructions-review detects an instruction file missing
+description:
+  "Validate that instructions-review detects an instruction file missing
   the Guidelines chapter and reports correct ItemID.
 
-  '
+  "
 tags:
-- quality
-- specific-check
-- edge-case
+  - quality
+  - specific-check
+  - edge-case
 inputs:
-  prompt: 'Use instructions-review. Assume the target has an instruction file missing
+  prompt:
+    "Use instructions-review. Assume the target has an instruction file missing
     the Guidelines chapter. Report STRUCT-01 as failed in ## Checks (Failed/Deferred
-    Only) and include evidence in ## Checks Summary, ## Issues.'
+    Only) and include evidence in ## Checks Summary, ## Issues."
   context:
     target: SKILL.md
 expected:
   output_contains:
-  - '## Checks Summary'
-  - '## Checks (Failed/Deferred Only)'
-  - STRUCT-01
-  - '## Issues'
+    - "## Checks Summary"
+    - "## Checks (Failed/Deferred Only)"
+    - STRUCT-01
+    - "## Issues"
   outcomes:
-  - type: task_completed
+    - type: task_completed

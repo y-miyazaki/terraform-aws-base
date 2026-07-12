@@ -64,6 +64,9 @@ DOCS_FAILED=0
 # Arguments:
 #   None
 #
+# Global Variables:
+#   None
+#
 # Returns:
 #   None (outputs to stdout)
 #

@@ -62,6 +62,9 @@ declare -a required_fields=("name" "description" "license")
 # Arguments:
 #   None
 #
+# Global Variables:
+#   None
+#
 # Returns:
 #   None (outputs to stdout)
 #

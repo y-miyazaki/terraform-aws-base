@@ -32,6 +32,9 @@ export SCRIPT_DIR
 # Arguments:
 #   None
 #
+# Global Variables:
+#   None
+#
 # Returns:
 #   0 on success or skip, 2 on failure
 #

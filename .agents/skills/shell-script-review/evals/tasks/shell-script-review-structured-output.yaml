@@ -1,23 +1,25 @@
 id: shell-script-review-itemid-001
 name: shell-script-review itemid path
-description: 'Validate failed/deferred reporting includes fixed checklist ItemIDs
+description:
+  "Validate failed/deferred reporting includes fixed checklist ItemIDs
   and issue details.
 
-  '
+  "
 tags:
-- quality
-- itemid
+  - quality
+  - itemid
 inputs:
-  prompt: 'Use shell-script-review. Report at least one failed check with ItemID in
+  prompt:
+    "Use shell-script-review. Report at least one failed check with ItemID in
     ## Checks (Failed/Deferred Only) and include matching ItemID in ## Checks Summary,
-    ## Issues (for example SEC-01 or Q-02).'
+    ## Issues (for example SEC-01 or Q-02)."
   context:
     target: SKILL.md
 expected:
   output_contains:
-  - '## Checks Summary'
-  - '## Checks (Failed/Deferred Only)'
-  - '## Issues'
-  - '-01'
+    - "## Checks Summary"
+    - "## Checks (Failed/Deferred Only)"
+    - "## Issues"
+    - "-01"
   outcomes:
-  - type: task_completed
+    - type: task_completed

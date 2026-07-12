@@ -42,6 +42,9 @@ fi
 # Arguments:
 #   None
 #
+# Global Variables:
+#   None
+#
 # Returns:
 #   Newline-separated unique file list to stdout
 #
@@ -50,10 +53,12 @@ fi
 #
 #######################################
 function get_changed_files {
+    local -a shell_ext_globs=('*.sh' '*.bats' '*.bash')
+
     {
-        git diff --name-only --diff-filter=ACMR -- '*.sh' 2> /dev/null || true
-        git diff --cached --name-only --diff-filter=ACMR -- '*.sh' 2> /dev/null || true
-        git ls-files --others --exclude-standard -- '*.sh' 2> /dev/null || true
+        git diff --name-only --diff-filter=ACMR -- "${shell_ext_globs[@]}" 2> /dev/null || true
+        git diff --cached --name-only --diff-filter=ACMR -- "${shell_ext_globs[@]}" 2> /dev/null || true
+        git ls-files --others --exclude-standard -- "${shell_ext_globs[@]}" 2> /dev/null || true
     } | awk 'NF' | sort -u
 }
 
@@ -67,11 +72,14 @@ function get_changed_files {
 #     - Claude Code: Stop → {"decision":"block"}, PostToolUse → hookSpecificOutput
 #     - GitHub Copilot: agentStop → {"decision":"block"}, postToolUse → additionalContext
 #     - Antigravity: Stop → {"decision":"continue","reason":"..."}
-#     - Cursor: exit 2 + stderr (afterFileEdit, stop etc.)
+#     - Cursor: stop → followup_message, other events → exit 2 + stderr
 #     - unknown: exit 2 + stderr
 #
 # Arguments:
 #   $1 - reason: Human-readable description of what failed and how to fix it
+#
+# Global Variables:
+#   None
 #
 # Returns:
 #   Does not return. Exits with 0 (JSON block) or 2 (stderr).
@@ -98,15 +106,18 @@ function report_failure {
             hook_event=$(echo "$HOOK_STDIN_DATA" | jq -r '.hook_event_name' 2> /dev/null)
 
             # Check event name pattern to determine agent type
-            if echo "$hook_event" | grep -qE '^(Stop|PostToolUse|PreToolUse)$'; then
+            if echo "$HOOK_STDIN_DATA" | jq -e '.cursor_version // .generation_id // .workspace_roots' > /dev/null 2>&1; then
+                # Cursor stop shares hook_event_name "stop" with Kiro; use Cursor-only stdin fields
+                agent="cursor"
+            elif echo "$hook_event" | grep -qE '^(afterFileEdit|beforeShellExecution|beforeMCPExecution|beforeReadFile)$'; then
+                # camelCase with Cursor-only event names
+                agent="cursor"
+            elif echo "$hook_event" | grep -qE '^(Stop|PostToolUse|PreToolUse)$'; then
                 # PascalCase = Claude Code
                 agent="claude_code"
             elif echo "$hook_event" | grep -qE '^(stop|postToolUse|preToolUse|agentSpawn|userPromptSubmit)$'; then
                 # camelCase with Kiro values = Kiro
                 agent="kiro"
-            elif echo "$hook_event" | grep -qE '^(afterFileEdit|beforeShellExecution|beforeMCPExecution|beforeReadFile|stop)$'; then
-                # camelCase with Cursor values = Cursor
-                agent="cursor"
             else
                 # Default to Claude Code for unknown PascalCase
                 agent="claude_code"
@@ -175,8 +186,13 @@ function report_failure {
             esac
             ;;
         cursor)
-            echo "$reason" >&2
-            exit 2
+            if [[ $hook_event == "stop" ]]; then
+                jq -n --arg reason "$reason" '{followup_message: $reason}'
+                exit 0
+            else
+                echo "$reason" >&2
+                exit 2
+            fi
             ;;
         kiro)
             if [[ $hook_event == "stop" ]]; then
@@ -214,6 +230,9 @@ function report_failure {
 #   Calls report_failure if formatting issues are found.
 #
 # Arguments:
+#   None
+#
+# Global Variables:
 #   None
 #
 # Returns:

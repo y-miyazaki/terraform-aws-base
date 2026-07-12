@@ -11,6 +11,7 @@ Run tools in this order (fail-fast: stop on first failure):
 ## Checks by Tool
 
 ### actionlint
+
 - ACT-01: Valid YAML structure and no parse errors
 - ACT-02: GitHub Actions schema fields are correct (on, jobs, steps)
 - ACT-03: Expression syntax (`${{ }}`) is valid
@@ -18,12 +19,14 @@ Run tools in this order (fail-fast: stop on first failure):
 - ACT-05: Job dependency (`needs`) references are resolvable
 
 ### ghalint
+
 - GH-01: Job-level permissions are explicitly scoped
 - GH-02: `actions/checkout` is present before code operations
 - GH-03: Workflow-level and job-level settings comply with policy
 - GH-04: No prohibited action patterns detected
 
 ### zizmor
+
 - ZIZ-01: No script injection vulnerabilities (untrusted input in `run:`)
 - ZIZ-02: Third-party actions pinned to full commit SHA
 - ZIZ-03: No hardcoded secrets or tokens in workflow files

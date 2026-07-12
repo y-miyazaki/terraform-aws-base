@@ -52,6 +52,9 @@ declare -a markdown_files=()
 # Arguments:
 #   None
 #
+# Global Variables:
+#   None
+#
 # Returns:
 #   None
 #
@@ -70,6 +73,9 @@ function cleanup {
 #   Prints usage, options, and examples
 #
 # Arguments:
+#   None
+#
+# Global Variables:
 #   None
 #
 # Returns:
@@ -184,6 +190,9 @@ function collect_markdown_files {
 # Arguments:
 #   $1 - Overall status (PASS/FAIL)
 #
+# Global Variables:
+#   None
+#
 # Returns:
 #   None
 #
@@ -200,6 +209,9 @@ function collect_markdown_files {
 #   Skips if tools are not installed
 #
 # Arguments:
+#   None
+#
+# Global Variables:
 #   None
 #
 # Returns:
@@ -319,6 +331,9 @@ function print_json_results {
 #
 # Arguments:
 #   $@ - Command line arguments
+#
+# Global Variables:
+#   None
 #
 # Returns:
 #   0 when all checks pass, 1 otherwise

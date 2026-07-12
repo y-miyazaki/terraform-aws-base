@@ -10,6 +10,7 @@ Run tools in this order (fail-fast: stop on first failure):
 ## Checks by Tool
 
 ### markdownlint-cli2
+
 - MDL-01: Heading hierarchy is consistent (no skipped levels)
 - MDL-02: No trailing spaces or hard tabs
 - MDL-03: Code blocks have language specifiers where applicable
@@ -19,6 +20,7 @@ Run tools in this order (fail-fast: stop on first failure):
 - MDL-07: No bare URLs (use `[text](url)` format)
 
 ### markdown-link-check
+
 - LINK-01: All relative file paths resolve to existing files
 - LINK-02: All anchor (`#`) references match headings in the target file
 - LINK-03: External URLs return HTTP 2xx (non-redirected)

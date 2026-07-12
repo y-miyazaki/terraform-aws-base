@@ -65,6 +65,9 @@ COVERAGE_PERCENT=""
 # Arguments:
 #   None
 #
+# Global Variables:
+#   None
+#
 # Returns:
 #   None (outputs to stdout)
 #
@@ -107,6 +110,9 @@ EOF
 #
 # Arguments:
 #   $@ - All command line arguments passed to the script
+#
+# Global Variables:
+#   None
 #
 # Returns:
 #   None (sets global variables)
@@ -168,6 +174,9 @@ function parse_arguments {
 #
 # Arguments:
 #   $1 - Base directory (optional, defaults to current directory)
+#
+# Global Variables:
+#   None
 #
 # Returns:
 #   Target pattern string (to stdout)
@@ -237,6 +246,9 @@ function has_go_files {
 # Arguments:
 #   None
 #
+# Global Variables:
+#   None
+#
 # Returns:
 #   None
 #
@@ -278,6 +290,9 @@ function run_benchmark_tests {
 #   Runs go test with coverage analysis and checks against threshold
 #
 # Arguments:
+#   None
+#
+# Global Variables:
 #   None
 #
 # Returns:
@@ -345,6 +360,9 @@ function run_coverage_tests {
 # Arguments:
 #   None
 #
+# Global Variables:
+#   None
+#
 # Returns:
 #   None (sets EXIT_CODE and GO_BUILD_FAILED on failure)
 #
@@ -377,6 +395,9 @@ function run_go_build {
 #   Runs golangci-lint to perform comprehensive code linting
 #
 # Arguments:
+#   None
+#
+# Global Variables:
 #   None
 #
 # Returns:
@@ -443,6 +464,9 @@ function run_golangci_lint {
 #   Runs go mod tidy to clean up the go.mod and go.sum files
 #
 # Arguments:
+#   None
+#
+# Global Variables:
 #   None
 #
 # Returns:
@@ -530,6 +554,9 @@ function run_race_tests {
 # Arguments:
 #   None
 #
+# Global Variables:
+#   None
+#
 # Returns:
 #   None (sets EXIT_CODE and SECURITY_FAILED on failure)
 #
@@ -573,6 +600,9 @@ function run_security_checks {
 #   Runs go test to execute unit tests
 #
 # Arguments:
+#   None
+#
+# Global Variables:
 #   None
 #
 # Returns:
@@ -628,6 +658,9 @@ function run_tests {
 #
 # Arguments:
 #   $@ - All command line arguments passed to the script
+#
+# Global Variables:
+#   None
 #
 # Returns:
 #   None (exits with appropriate status code)

@@ -1,24 +1,26 @@
 id: shell-script-review-specific-check-001
 name: shell-script-review detects specific violation
-description: 'Validate that shell-script-review detects a script with unquoted variable
+description:
+  "Validate that shell-script-review detects a script with unquoted variable
   expansion and reports correct ItemID.
 
-  '
+  "
 tags:
-- quality
-- specific-check
-- edge-case
+  - quality
+  - specific-check
+  - edge-case
 inputs:
-  prompt: 'Use shell-script-review. Assume the target has a script with unquoted variable
+  prompt:
+    "Use shell-script-review. Assume the target has a script with unquoted variable
     expansion. Report SEC-02 as failed in ## Checks (Failed/Deferred Only) and include
-    evidence in ## Checks Summary, ## Issues.'
+    evidence in ## Checks Summary, ## Issues."
   context:
     target: SKILL.md
 expected:
   output_contains:
-  - '## Checks Summary'
-  - '## Checks (Failed/Deferred Only)'
-  - SEC-02
-  - '## Issues'
+    - "## Checks Summary"
+    - "## Checks (Failed/Deferred Only)"
+    - SEC-02
+    - "## Issues"
   outcomes:
-  - type: task_completed
+    - type: task_completed

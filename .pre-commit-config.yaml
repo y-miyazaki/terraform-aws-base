@@ -19,12 +19,9 @@ repos:
       - id: detect-aws-credentials
         args: [--allow-missing-credentials]
       - id: detect-private-key
-        exclude: '(?:^|/)(?:.*/)?terraform\.[^.]+\.tfvars$'
+        exclude: '(?:^|/)(?:.*/)?terraform\.(?!example\.)[^.]+\.tfvars$'
       - id: end-of-file-fixer
         exclude: '(^.*(\.devcontainer/devcontainer(-lock)?\.json|settings\.json|settings-example\.json|.*\.md)$)'
-      - id: pretty-format-json
-        args: [--autofix, --no-sort-keys]
-        exclude: '(^.*(\.devcontainer/devcontainer(-lock)?\.json|settings\.json|settings-example\.json)$)'
       - id: requirements-txt-fixer
       - id: trailing-whitespace
         args: [--markdown-linebreak-ext=md]
@@ -50,13 +47,13 @@ repos:
         description: Shell script static analysis tool.
         language: system
         entry: shellcheck
-        types: [shell]
+        files: \.(sh|bats)$
       - id: shfmt
         name: shfmt
         description: Shell script formatter.
         language: system
         entry: shfmt -w -s -i 4 -ci -bn -sr
-        types: [shell]
+        files: \.(sh|bats)$
   # --------------------------------------------------------------
   # For Commit Message
   # --------------------------------------------------------------
@@ -127,6 +124,18 @@ repos:
     hooks:
       - id: markdown-link-check
         args: [--quiet]
+  # --------------------------------------------------------------
+  # For Prettier
+  # --------------------------------------------------------------
+  - repo: local
+    hooks:
+      - id: prettier
+        name: prettier
+        description: Code formatter (respects .editorconfig).
+        entry: prettier --write --ignore-unknown
+        exclude: '(^.*(\.devcontainer/devcontainer(-lock)?\.json|settings\.json|settings-example\.json|apm\.lock\.yaml|mise\.lock)$)'
+        files: \.(cjs|css|html|js|json|jsonc|jsx|md|mjs|tsx?|ya?ml)$
+        language: system
   # --------------------------------------------------------------
   # For SQL
   # --------------------------------------------------------------

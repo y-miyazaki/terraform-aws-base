@@ -1,22 +1,24 @@
 id: markdown-validation-partial-failure-001
 name: markdown-validation partial tool failure path
-description: 'Validate that when one tool succeeds and another fails, both results
+description:
+  "Validate that when one tool succeeds and another fails, both results
   are reported.
 
-  '
+  "
 tags:
-- quality
-- partial-failure
-- edge-case
+  - quality
+  - partial-failure
+  - edge-case
 inputs:
-  prompt: 'Use markdown-validation. Assume one validation tool passes and another
+  prompt:
+    "Use markdown-validation. Assume one validation tool passes and another
     fails with markdownlint violations in a doc file. Return ## Summary, ## Tool Results
-    showing mixed pass/fail status.'
+    showing mixed pass/fail status."
   context:
     target: SKILL.md
 expected:
   output_contains:
-  - '## Summary'
-  - '## Tool Results'
+    - "## Summary"
+    - "## Tool Results"
   outcomes:
-  - type: task_completed
+    - type: task_completed

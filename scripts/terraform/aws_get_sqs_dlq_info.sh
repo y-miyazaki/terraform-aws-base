@@ -43,6 +43,9 @@ source "${SCRIPT_DIR}/../lib/all.sh"
 # Arguments:
 #   None
 #
+# Global Variables:
+#   None
+#
 # Returns:
 #   None (outputs to stdout)
 #

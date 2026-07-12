@@ -1,24 +1,26 @@
 id: agent-skills-review-token-warning-001
 name: agent-skills-review token budget warning
-description: 'Validate that token count exceeding 500 is reported as a warning with
+description:
+  "Validate that token count exceeding 500 is reported as a warning with
   Q-09 ItemID.
 
-  '
+  "
 tags:
-- quality
-- token-gate
-- edge-case
+  - quality
+  - token-gate
+  - edge-case
 inputs:
-  prompt: 'Use agent-skills-review. Assume the target SKILL.md exceeds 500 tokens
+  prompt:
+    "Use agent-skills-review. Assume the target SKILL.md exceeds 500 tokens
     (e.g., 612 tokens). Report Q-09 as failed in ## Checks (Failed/Deferred Only)
-    and include token count evidence in ## Checks Summary, ## Issues.'
+    and include token count evidence in ## Checks Summary, ## Issues."
   context:
     target: SKILL.md
 expected:
   output_contains:
-  - '## Checks Summary'
-  - '## Checks (Failed/Deferred Only)'
-  - Q-09
-  - '## Issues'
+    - "## Checks Summary"
+    - "## Checks (Failed/Deferred Only)"
+    - Q-09
+    - "## Issues"
   outcomes:
-  - type: task_completed
+    - type: task_completed

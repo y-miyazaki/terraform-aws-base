@@ -1,8 +1,9 @@
 #!/bin/bash
 #######################################
 # Description: Hook for zizmor.
-#              Scans changed GitHub Actions workflow files for security issues
-#              and reports failures in the appropriate format for the active AI agent.
+#              Scans the .github tree when workflows, actions, or dependabot
+#              files change (aligned with pre-commit zizmor scope) and reports
+#              failures in the appropriate format for the active AI agent.
 #
 # Usage: Called by apm hook runner (not invoked directly).
 #        Receives hook event JSON via stdin.
@@ -32,14 +33,18 @@ if [[ ! -t 0 ]]; then
 fi
 
 #######################################
-# get_changed_files: Collect changed GitHub Actions workflow files from git
+# get_changed_files: Collect changed GitHub Actions inputs from git
 #
 # Description:
-#   Gathers modified/added/untracked workflow files from git.
+#   Gathers modified/added/untracked YAML under .github/workflows/,
+#   .github/actions/, and .github/dependabot.{yml,yaml}.
 #   Each git command is guarded with || true to prevent pipefail
 #   from terminating the script.
 #
 # Arguments:
+#   None
+#
+# Global Variables:
 #   None
 #
 # Returns:
@@ -51,10 +56,10 @@ fi
 #######################################
 function get_changed_files {
     {
-        git diff --name-only --diff-filter=ACMR -- .github/workflows/*.yml .github/workflows/*.yaml 2> /dev/null || true
-        git diff --cached --name-only --diff-filter=ACMR -- .github/workflows/*.yml .github/workflows/*.yaml 2> /dev/null || true
-        git ls-files --others --exclude-standard -- .github/workflows/*.yml .github/workflows/*.yaml 2> /dev/null || true
-    } | awk 'NF' | sort -u
+        git diff --name-only --diff-filter=ACMR -- .github/workflows/ .github/actions/ .github/dependabot.yml .github/dependabot.yaml 2> /dev/null || true
+        git diff --cached --name-only --diff-filter=ACMR -- .github/workflows/ .github/actions/ .github/dependabot.yml .github/dependabot.yaml 2> /dev/null || true
+        git ls-files --others --exclude-standard -- .github/workflows/ .github/actions/ .github/dependabot.yml .github/dependabot.yaml 2> /dev/null || true
+    } | awk 'NF && /\.(yml|yaml)$/' | sort -u
 }
 
 #######################################
@@ -67,11 +72,14 @@ function get_changed_files {
 #     - Claude Code: Stop → {"decision":"block"}, PostToolUse → hookSpecificOutput
 #     - GitHub Copilot: agentStop → {"decision":"block"}, postToolUse → additionalContext
 #     - Antigravity: Stop → {"decision":"continue","reason":"..."}
-#     - Cursor: exit 2 + stderr (afterFileEdit, stop etc.)
+#     - Cursor: stop → followup_message, other events → exit 2 + stderr
 #     - unknown: exit 2 + stderr
 #
 # Arguments:
 #   $1 - reason: Human-readable description of what failed and how to fix it
+#
+# Global Variables:
+#   None
 #
 # Returns:
 #   Does not return. Exits with 0 (JSON block) or 2 (stderr).
@@ -98,15 +106,18 @@ function report_failure {
             hook_event=$(echo "$HOOK_STDIN_DATA" | jq -r '.hook_event_name' 2> /dev/null)
 
             # Check event name pattern to determine agent type
-            if echo "$hook_event" | grep -qE '^(Stop|PostToolUse|PreToolUse)$'; then
+            if echo "$HOOK_STDIN_DATA" | jq -e '.cursor_version // .generation_id // .workspace_roots' > /dev/null 2>&1; then
+                # Cursor stop shares hook_event_name "stop" with Kiro; use Cursor-only stdin fields
+                agent="cursor"
+            elif echo "$hook_event" | grep -qE '^(afterFileEdit|beforeShellExecution|beforeMCPExecution|beforeReadFile)$'; then
+                # camelCase with Cursor-only event names
+                agent="cursor"
+            elif echo "$hook_event" | grep -qE '^(Stop|PostToolUse|PreToolUse)$'; then
                 # PascalCase = Claude Code
                 agent="claude_code"
             elif echo "$hook_event" | grep -qE '^(stop|postToolUse|preToolUse|agentSpawn|userPromptSubmit)$'; then
                 # camelCase with Kiro values = Kiro
                 agent="kiro"
-            elif echo "$hook_event" | grep -qE '^(afterFileEdit|beforeShellExecution|beforeMCPExecution|beforeReadFile|stop)$'; then
-                # camelCase with Cursor values = Cursor
-                agent="cursor"
             else
                 # Default to Claude Code for unknown PascalCase
                 agent="claude_code"
@@ -175,8 +186,13 @@ function report_failure {
             esac
             ;;
         cursor)
-            echo "$reason" >&2
-            exit 2
+            if [[ $hook_event == "stop" ]]; then
+                jq -n --arg reason "$reason" '{followup_message: $reason}'
+                exit 0
+            else
+                echo "$reason" >&2
+                exit 2
+            fi
             ;;
         kiro)
             if [[ $hook_event == "stop" ]]; then
@@ -207,13 +223,53 @@ function report_failure {
 }
 
 #######################################
+# has_zizmor_reportable_findings: Detect actionable zizmor output
+#
+# Description:
+#   Returns success when zizmor exited non-zero or printed unsuppressed
+#   diagnostics. zizmor may exit 0 while still printing help/error/warning
+#   lines (e.g. low severity), matching pre-commit display behavior.
+#
+# Arguments:
+#   $1 - result: Captured zizmor stdout/stderr
+#   $2 - exit_code: zizmor exit code
+#
+# Global Variables:
+#   None
+#
+# Returns:
+#   0 when findings should be reported, 1 otherwise
+#
+# Usage:
+#   has_zizmor_reportable_findings "$result" "$exit_code"
+#
+#######################################
+function has_zizmor_reportable_findings {
+    local result="$1"
+    local exit_code="$2"
+
+    if ((exit_code != 0)); then
+        return 0
+    fi
+
+    if echo "$result" | grep -qE '^(help|error|warning)\['; then
+        return 0
+    fi
+
+    return 1
+}
+
+#######################################
 # main: Entry point
 #
 # Description:
-#   Runs zizmor on changed workflow files.
-#   Calls report_failure if security issues are found.
+#   Runs zizmor on .github when workflows, actions, or dependabot files change.
+#   Calls report_failure when zizmor reports actionable findings.
 #
 # Arguments:
+#   None
+#
+# Global Variables:
 #   None
 #
 # Returns:
@@ -238,9 +294,16 @@ function main {
         exit 0
     fi
 
-    local result
-    result=$(zizmor "${files[@]}" 2>&1) || report_failure "zizmor found security issues in GitHub Actions workflows:
+    local result exit_code
+    set +e
+    result=$(zizmor --no-progress .github 2>&1)
+    exit_code=$?
+    set -e
+
+    if has_zizmor_reportable_findings "$result" "$exit_code"; then
+        report_failure "zizmor found security issues in GitHub Actions workflows or composite actions:
 ${result}"
+    fi
 }
 
 if [[ ${BASH_SOURCE[0]} == "${0}" ]]; then

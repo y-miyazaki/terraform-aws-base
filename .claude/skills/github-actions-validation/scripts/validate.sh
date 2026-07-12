@@ -52,6 +52,9 @@ source "${SCRIPT_DIR}/lib/all.sh"
 # Arguments:
 #   None
 #
+# Global Variables:
+#   None
+#
 # Returns:
 #   None (outputs to stdout)
 #
@@ -137,6 +140,9 @@ function parse_arguments {
 # Arguments:
 #   None
 #
+# Global Variables:
+#   None
+#
 # Returns:
 #   0 on success, 1 on failure
 #
@@ -169,6 +175,9 @@ function validate_actionlint {
 # Arguments:
 #   None
 #
+# Global Variables:
+#   None
+#
 # Returns:
 #   0 on success, 1 on failure
 #
@@ -199,6 +208,9 @@ function validate_ghalint {
 #   Runs zizmor to scan for GitHub Actions security issues
 #
 # Arguments:
+#   None
+#
+# Global Variables:
 #   None
 #
 # Returns:

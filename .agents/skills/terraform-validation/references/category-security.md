@@ -14,6 +14,7 @@ Use this guide when `trivy config` reports security findings.
 ### Public S3 Bucket Access
 
 **Typical finding**:
+
 - Bucket policy allows public principals (`"Principal": "*"`)
 - Public access block is not fully enabled
 
@@ -32,6 +33,7 @@ resource "aws_s3_bucket_public_access_block" "this" {
 ### Missing Encryption at Rest
 
 **Typical finding**:
+
 - S3/EBS/RDS/log targets missing encryption settings
 
 **Fix**:
@@ -52,6 +54,7 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "this" {
 ### Overly Permissive IAM Policies
 
 **Typical finding**:
+
 - Wildcards in `Action` or `Resource` without strict conditions
 
 **Fix**:
@@ -72,6 +75,7 @@ data "aws_iam_policy_document" "least_privilege" {
 ### Security Group Open to Internet
 
 **Typical finding**:
+
 - Inbound rules expose sensitive ports to `0.0.0.0/0`
 
 **Fix**:

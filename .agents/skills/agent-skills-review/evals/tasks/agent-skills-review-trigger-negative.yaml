@@ -1,24 +1,26 @@
 id: agent-skills-review-trigger-negative-001
 name: agent-skills-review does not trigger for runtime debugging
-description: 'Validate that agent-skills-review correctly identifies out-of-scope
+description:
+  "Validate that agent-skills-review correctly identifies out-of-scope
   requests.
 
-  '
+  "
 tags:
-- quality
-- trigger-negative
-- boundary-guardrail
+  - quality
+  - trigger-negative
+  - boundary-guardrail
 inputs:
-  prompt: 'Use agent-skills-review. The user asks to debug a Go application runtime
+  prompt:
+    "Use agent-skills-review. The user asks to debug a Go application runtime
     panic. The skill should recognize this is out of scope and indicate it cannot
     help with runtime debugging. If out of scope, return ## Checks Summary and ##
-    Issues with explanation.'
+    Issues with explanation."
   context:
     target: SKILL.md
 expected:
   output_contains:
-  - out of scope
-  - '## Checks Summary'
-  - '## Issues'
+    - out of scope
+    - "## Checks Summary"
+    - "## Issues"
   outcomes:
-  - type: task_completed
+    - type: task_completed

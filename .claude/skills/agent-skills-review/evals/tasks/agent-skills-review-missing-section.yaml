@@ -1,25 +1,27 @@
 id: agent-skills-review-missing-section-001
 name: agent-skills-review detects missing required section
-description: 'Validate that a SKILL.md missing a required section (e.g., Workflow)
+description:
+  "Validate that a SKILL.md missing a required section (e.g., Workflow)
   is reported as S-01 failure.
 
-  '
+  "
 tags:
-- quality
-- structural-check
-- edge-case
+  - quality
+  - structural-check
+  - edge-case
 inputs:
-  prompt: 'Use agent-skills-review. Assume the target SKILL.md is missing the ''##
-    Workflow'' section. Report S-01 as failed in ## Checks (Failed/Deferred Only)
-    with evidence in ## Checks Summary, ## Issues.'
+  prompt:
+    "Use agent-skills-review. Assume the target SKILL.md is missing the '##
+    Workflow' section. Report S-01 as failed in ## Checks (Failed/Deferred Only)
+    with evidence in ## Checks Summary, ## Issues."
   context:
     target: SKILL.md
 expected:
   output_contains:
-  - '## Checks Summary'
-  - '## Checks (Failed/Deferred Only)'
-  - S-01
-  - '## Issues'
-  - Workflow
+    - "## Checks Summary"
+    - "## Checks (Failed/Deferred Only)"
+    - S-01
+    - "## Issues"
+    - Workflow
   outcomes:
-  - type: task_completed
+    - type: task_completed

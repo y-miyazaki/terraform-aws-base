@@ -22,12 +22,15 @@ Minimal inline contract (fallback only — use `common-output-format.md` when av
 
 ```markdown
 ## Checks Summary
+
 - Total: <n>, Passed: <n>, Failed: <n>, Deferred: <n>
 
 ## Checks (Failed/Deferred Only)
+
 | ItemID | Status | Evidence | Fix |
 
 ## Issues
+
 1. <ItemID>: <title>
    - File: <path>#L<line>
    - Problem: <specific>
@@ -54,7 +57,7 @@ Always include target file list and deferred reason summary.
 
 - create new instruction files from scratch
 - run syntax/security validation tooling
-- review general markdown docs outside `**/instructions/*.instructions.md` (e.g., README.md, docs/*.md — use markdown-validation or docs-creation instead)
+- review general markdown docs outside `**/instructions/*.instructions.md` (e.g., README.md, docs/\*.md — use markdown-validation or docs-creation instead)
 
 ## Reference Files Guide
 
@@ -77,13 +80,14 @@ Always include target file list and deferred reason summary.
 
 ### Severity and Status Rules
 
-| Status | When to use |
-|---|---|
-| Failed | Check evaluated and issue confirmed with concrete evidence (file + line or missing element) |
+| Status   | When to use                                                                                               |
+| -------- | --------------------------------------------------------------------------------------------------------- |
+| Failed   | Check evaluated and issue confirmed with concrete evidence (file + line or missing element)               |
 | Deferred | Check cannot be evaluated — validation artifacts missing, category file unavailable, or PR context absent |
-| Passed | Check evaluated and no issue found (counted in summary only) |
+| Passed   | Check evaluated and no issue found (counted in summary only)                                              |
 
 Key evaluation criteria (inline summary of common-checklist):
+
 - **Structure**: 5 H2 chapters in correct order (Scope → Standards → Guidelines → Testing and Validation → Security Guidelines)
 - **Guidelines format**: H3 headings with category IDs, rule bullets with `(LEVEL)`, `Check:` child bullets
 - **Code Modification Guidelines**: must exist in every file
@@ -91,15 +95,15 @@ Key evaluation criteria (inline summary of common-checklist):
 
 ### Error Handling
 
-| Condition | Severity | Action |
-|---|---|---|
-| `common-checklist.md` unavailable | Fatal | Stop, report missing dependency |
-| `common-output-format.md` unavailable | Recoverable | Use inline output contract |
-| Category reference file missing | Recoverable | Defer checks from that category, note missing file in report |
-| All category files missing | Fatal | Stop, report "no evaluation criteria available" |
-| Target `.instructions.md` does not exist | Recoverable | Report `status: failed` for that file, continue remaining targets |
-| All target files missing | Fatal | Stop, report "no reviewable instruction files found" |
-| Validation artifacts missing after one rerun request | Recoverable | Defer artifact-dependent checks with explicit reason |
+| Condition                                            | Severity    | Action                                                            |
+| ---------------------------------------------------- | ----------- | ----------------------------------------------------------------- |
+| `common-checklist.md` unavailable                    | Fatal       | Stop, report missing dependency                                   |
+| `common-output-format.md` unavailable                | Recoverable | Use inline output contract                                        |
+| Category reference file missing                      | Recoverable | Defer checks from that category, note missing file in report      |
+| All category files missing                           | Fatal       | Stop, report "no evaluation criteria available"                   |
+| Target `.instructions.md` does not exist             | Recoverable | Report `status: failed` for that file, continue remaining targets |
+| All target files missing                             | Fatal       | Stop, report "no reviewable instruction files found"              |
+| Validation artifacts missing after one rerun request | Recoverable | Defer artifact-dependent checks with explicit reason              |
 
 ### Examples
 

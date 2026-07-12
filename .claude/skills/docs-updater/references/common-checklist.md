@@ -76,6 +76,7 @@ _Understanding-oriented discussion of concepts and decisions._
 ```
 
 Rules:
+
 - Omit empty quadrant sections (no placeholder text for missing categories)
 - List files alphabetically within each section
 - Description is the document's H1 title or first sentence of purpose paragraph

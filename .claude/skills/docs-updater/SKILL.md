@@ -56,6 +56,7 @@ Target: root `*.md`, `docs/**/*.md`, nested `**/README.md` (excluding generated 
 4. For matched files, identify: dead references (deleted paths), stale paths (renames), missing entries (additions belonging in existing lists/tables).
 
 5. Apply minimal, structure-preserving updates:
+
    - Do not reorder, rewrite, or add sections.
    - Respect Diataxis placement for mkdocs.yml nav entries.
    - Table/list entries: maintain existing format and sort order.
@@ -64,6 +65,7 @@ Target: root `*.md`, `docs/**/*.md`, nested `**/README.md` (excluding generated 
 6. If any `docs/` file is created, deleted, or renamed, regenerate `docs/index.md` per [common-checklist.md](references/common-checklist.md).
 
 7. **Scope guards** — report "exceeded-scope" and recommend docs-creator if:
+
    - A single file's diff exceeds 500 changed lines
    - Changes would affect >3 H2 sections of one document
    - The required update is a rewrite rather than a patch
@@ -72,13 +74,13 @@ Target: root `*.md`, `docs/**/*.md`, nested `**/README.md` (excluding generated 
 
 ### Error Handling
 
-| Condition | Severity | Action |
-|---|---|---|
-| No git repository | Fatal | Stop |
-| Empty diff | Info | Report skip, exit |
-| Affected doc file missing | Recoverable | Skip, note in report |
-| Exceeds scope | Recoverable | Stop for that file, recommend docs-creator |
-| mkdocs.yml missing | Recoverable | Skip nav update |
+| Condition                 | Severity    | Action                                     |
+| ------------------------- | ----------- | ------------------------------------------ |
+| No git repository         | Fatal       | Stop                                       |
+| Empty diff                | Info        | Report skip, exit                          |
+| Affected doc file missing | Recoverable | Skip, note in report                       |
+| Exceeds scope             | Recoverable | Stop for that file, recommend docs-creator |
+| mkdocs.yml missing        | Recoverable | Skip nav update                            |
 
 ### Examples
 

@@ -1,23 +1,25 @@
 id: github-actions-review-trigger-negative-001
 name: github-actions-review rejects out-of-scope request
-description: 'Validate that github-actions-review does not attempt to perform actions
+description:
+  "Validate that github-actions-review does not attempt to perform actions
   outside its scope.
 
-  '
+  "
 tags:
-- quality
-- trigger-negative
-- boundary-guardrail
+  - quality
+  - trigger-negative
+  - boundary-guardrail
 inputs:
-  prompt: 'Use github-actions-review. The user asks to implement a new feature in
+  prompt:
+    "Use github-actions-review. The user asks to implement a new feature in
     the codebase. The skill should recognize this is out of scope. If out of scope,
-    return ## Checks Summary and ## Issues with explanation.'
+    return ## Checks Summary and ## Issues with explanation."
   context:
     target: SKILL.md
 expected:
   output_contains:
-  - out of scope
-  - '## Checks Summary'
-  - '## Issues'
+    - out of scope
+    - "## Checks Summary"
+    - "## Issues"
   outcomes:
-  - type: task_completed
+    - type: task_completed

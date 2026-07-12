@@ -6,6 +6,7 @@ Use the following report structure for validation output.
 # Validation Result: <target>
 
 ## Summary
+
 - Status: ✅ PASS | ❌ FAIL
 - Tools run: <count>
 - Tools passed: <count>
@@ -13,13 +14,14 @@ Use the following report structure for validation output.
 
 ## Tool Results
 
-| Tool        | Status          | Message                    |
-| ----------- | --------------- | -------------------------- |
+| Tool        | Status            | Message                    |
+| ----------- | ----------------- | -------------------------- |
 | <tool-name> | ✅ Pass / ❌ Fail | OK / <brief error summary> |
 
 ## Error Details
 
 ### <Tool Name>
+
 ```
 <Full command output>
 ```
@@ -38,5 +40,5 @@ Use the following report structure for validation output.
 
 | Symbol | Meaning | When to Use                     |
 | ------ | ------- | ------------------------------- |
-| ✅      | Pass    | Tool exited 0 (no issues found) |
-| ❌      | Fail    | Tool exited non-zero            |
+| ✅     | Pass    | Tool exited 0 (no issues found) |
+| ❌     | Fail    | Tool exited non-zero            |

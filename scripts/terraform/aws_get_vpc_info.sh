@@ -47,6 +47,9 @@ AWS_REGION="${AWS_REGION:-}"
 # Arguments:
 #   None
 #
+# Global Variables:
+#   None
+#
 # Returns:
 #   None (outputs to stdout)
 #

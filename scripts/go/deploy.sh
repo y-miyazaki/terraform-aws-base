@@ -40,6 +40,9 @@ source "${SCRIPT_DIR}/../lib/all.sh"
 # Arguments:
 #   $1 - Error message to display (optional)
 #
+# Global Variables:
+#   None
+#
 # Returns:
 #   None (outputs to stdout and exits with code 1)
 #
@@ -82,6 +85,9 @@ EOF
 # Arguments:
 #   None
 #
+# Global Variables:
+#   None
+#
 # Returns:
 #   None (exits on failure)
 #
@@ -104,6 +110,9 @@ function build_project {
 #
 # Arguments:
 #   $1 - Deployment stage (dev, staging, prod)
+#
+# Global Variables:
+#   None
 #
 # Returns:
 #   None (exits on failure)
@@ -130,6 +139,9 @@ function deploy_to_aws {
 # Arguments:
 #   None
 #
+# Global Variables:
+#   None
+#
 # Returns:
 #   None (exits on failure)
 #
@@ -152,6 +164,9 @@ function install_dependencies {
 #
 # Arguments:
 #   $1 - Deployment stage
+#
+# Global Variables:
+#   None
 #
 # Returns:
 #   None (exits on validation failure)
@@ -176,6 +191,9 @@ function validate_arguments {
 #
 # Arguments:
 #   $@ - All command line arguments passed to the script
+#
+# Global Variables:
+#   None
 #
 # Returns:
 #   None (exits with appropriate status code)

@@ -33,16 +33,17 @@ If none of the above apply to a candidate document, skip it.
 
 ## Match Patterns
 
-| Change type | What to search for in docs |
-|---|---|
-| Deleted file | Path or basename appearing in links, tables, lists |
-| Renamed file | Old path/name that needs replacing with new |
-| Added file | Whether it belongs in an existing catalog (table, list, nav) |
-| Added docs/ file | mkdocs.yml nav entry + docs/index.md regeneration |
+| Change type      | What to search for in docs                                   |
+| ---------------- | ------------------------------------------------------------ |
+| Deleted file     | Path or basename appearing in links, tables, lists           |
+| Renamed file     | Old path/name that needs replacing with new                  |
+| Added file       | Whether it belongs in an existing catalog (table, list, nav) |
+| Added docs/ file | mkdocs.yml nav entry + docs/index.md regeneration            |
 
 ## Skip Conditions
 
 Set `skip: true` when:
+
 - Only markdown files changed (no source files) AND no markdown renames/deletions occurred
 - Only test files or internal refactoring changed
 - Changes are in generated directories (`.agents/`, `.cursor/`, etc.)

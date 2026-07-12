@@ -56,6 +56,9 @@ SKILLS_ROOT="$(cd "${SKILL_DIR}/.." && pwd)"
 # Arguments:
 #   None
 #
+# Global Variables:
+#   None
+#
 # Returns:
 #   None (outputs to stdout)
 #
@@ -195,6 +198,9 @@ function resolve_target_skill {
 # Arguments:
 #   None (uses resolved globals)
 #
+# Global Variables:
+#   None
+#
 # Returns:
 #   Exits with non-zero status if waza check fails
 #
@@ -225,6 +231,9 @@ function run_waza_check {
 # Arguments:
 #   None (uses resolved globals)
 #
+# Global Variables:
+#   None
+#
 # Returns:
 #   Exits with non-zero status if waza run fails
 #
@@ -250,6 +259,9 @@ function run_waza_eval {
 # Arguments:
 #   None (uses resolved globals)
 #
+# Global Variables:
+#   None
+#
 # Returns:
 #   Exits with non-zero status if token counting fails
 #
@@ -274,6 +286,9 @@ function run_waza_tokens_count {
 #
 # Arguments:
 #   $@ - Command line arguments
+#
+# Global Variables:
+#   None
 #
 # Returns:
 #   0 on success, non-zero on failure

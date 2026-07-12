@@ -53,6 +53,9 @@ SYNC_COUNT=0
 # Arguments:
 #   None
 #
+# Global Variables:
+#   None
+#
 # Returns:
 #   Exits with code 0
 #
@@ -162,6 +165,9 @@ function sync_one_skill {
 #
 # Arguments:
 #   $@ - Command line arguments
+#
+# Global Variables:
+#   None
 #
 # Returns:
 #   0 if all in sync, 1 if drift detected in check mode

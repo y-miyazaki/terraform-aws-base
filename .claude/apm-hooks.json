@@ -38,6 +38,17 @@
       "hooks": [
         {
           "type": "command",
+          "command": ".claude/hooks/common-hooks-claude/scripts/gitleaks.sh",
+          "timeout": 60
+        }
+      ],
+      "_apm_source": "common-hooks-claude"
+    },
+    {
+      "matcher": "",
+      "hooks": [
+        {
+          "type": "command",
           "command": ".claude/hooks/common-hooks-claude/scripts/markdown_link_check.sh",
           "timeout": 240
         }
@@ -71,17 +82,6 @@
       "hooks": [
         {
           "type": "command",
-          "command": ".claude/hooks/common-hooks-claude/scripts/gitleaks.sh",
-          "timeout": 60
-        }
-      ],
-      "_apm_source": "common-hooks-claude"
-    },
-    {
-      "matcher": "",
-      "hooks": [
-        {
-          "type": "command",
           "command": ".claude/hooks/terraform-hooks-claude/scripts/tflint.sh",
           "timeout": 120
         }
@@ -102,6 +102,11 @@
       "_apm_source": "common-hooks-claude"
     },
     {
+      "command": "command -v lean-ctx >/dev/null 2>&1 || exit 0; lean-ctx hook observe",
+      "timeoutSec": 5,
+      "_apm_source": "common-hooks-cursor"
+    },
+    {
       "matcher": "Write",
       "hooks": [
         {
@@ -111,11 +116,6 @@
         }
       ],
       "_apm_source": "shell-script-hooks-claude"
-    },
-    {
-      "command": "command -v lean-ctx >/dev/null 2>&1 || exit 0; lean-ctx hook observe",
-      "timeoutSec": 5,
-      "_apm_source": "common-hooks-cursor"
     },
     {
       "matcher": "Edit|Write|Bash",

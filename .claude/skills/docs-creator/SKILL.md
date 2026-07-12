@@ -55,6 +55,7 @@ Return structured report per [references/common-output-format.md](references/com
 4. **Gather context**: read relevant source files to populate with project-specific content. The document should be self-sufficient — a reader understands the system without reading source code. Remove sections that cannot be populated rather than leaving filler.
 
 5. **Write or update**:
+
    - New: structure content per Diataxis quadrant intent.
    - Existing: preserve original structure. Additions at end of sections. Restructuring requires explicit user request.
    - Cross-references: relative paths with `.md` extension.
@@ -69,12 +70,12 @@ Return structured report per [references/common-output-format.md](references/com
 
 ### Error Handling
 
-| Condition | Severity | Action |
-|---|---|---|
-| `docs/` missing | Recoverable | Create directory, continue |
-| Ambiguous intent | Blocking | Ask user |
-| mkdocs.yml missing | Recoverable | Skip nav update |
-| README markers malformed | Recoverable | Skip, note in report |
+| Condition                | Severity    | Action                     |
+| ------------------------ | ----------- | -------------------------- |
+| `docs/` missing          | Recoverable | Create directory, continue |
+| Ambiguous intent         | Blocking    | Ask user                   |
+| mkdocs.yml missing       | Recoverable | Skip nav update            |
+| README markers malformed | Recoverable | Skip, note in report       |
 
 ### Examples
 

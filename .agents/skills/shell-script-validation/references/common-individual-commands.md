@@ -7,12 +7,14 @@ Always prefer: `bash scripts/validate.sh`
 ## Commands
 
 ### bash -n
+
 ```bash
 # Syntax check
 bash -n script.sh
 ```
 
 ### shellcheck
+
 ```bash
 # Static analysis
 shellcheck script.sh

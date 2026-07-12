@@ -1,22 +1,24 @@
 id: markdown-validation-trigger-negative-001
 name: markdown-validation rejects non-validation request
-description: 'Validate that markdown-validation does not attempt to perform code review
+description:
+  "Validate that markdown-validation does not attempt to perform code review
   or feature implementation.
 
-  '
+  "
 tags:
-- quality
-- trigger-negative
-- boundary-guardrail
+  - quality
+  - trigger-negative
+  - boundary-guardrail
 inputs:
-  prompt: 'Use markdown-validation. The user asks for a code review with design suggestions.
+  prompt:
+    "Use markdown-validation. The user asks for a code review with design suggestions.
     The skill should recognize this is out of scope (validation only, not review).
-    If out of scope, return ## Summary with explanation. Include ## Tool Results.'
+    If out of scope, return ## Summary with explanation. Include ## Tool Results."
   context:
     target: SKILL.md
 expected:
   output_contains:
-  - out of scope
-  - '## Summary'
+    - out of scope
+    - "## Summary"
   outcomes:
-  - type: task_completed
+    - type: task_completed

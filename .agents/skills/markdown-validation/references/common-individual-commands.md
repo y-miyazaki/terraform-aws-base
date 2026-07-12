@@ -75,6 +75,7 @@ markdown-link-check -c .markdown-link-check.json **/*.md
    ```
 
 4. **Manual review**:
+
    - Verify all links are correct
    - Check for proper formatting
    - Ensure consistency across documents
@@ -101,11 +102,12 @@ markdownlint-cli2 --fix **/*.md
 
 ```markdown
 Some content
-## Heading  # ✗ Missing blank line
+
+## Heading # ✗ Missing blank line
 
 Some content
 
-## Heading  # ✓ Correct
+## Heading # ✓ Correct
 ```
 
 **Fix**: Add blank lines before headings
@@ -118,11 +120,14 @@ Some content
 
 ```markdown
 # Heading 1
-### Heading 3  # ✗ Skipped H2
+
+### Heading 3 # ✗ Skipped H2
 
 # Heading 1
+
 ## Heading 2
-### Heading 3  # ✓ Correct
+
+### Heading 3 # ✓ Correct
 ```
 
 **Fix**: Use sequential heading levels

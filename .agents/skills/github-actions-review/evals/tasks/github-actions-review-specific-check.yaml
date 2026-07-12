@@ -1,24 +1,26 @@
 id: github-actions-review-specific-check-001
 name: github-actions-review detects specific violation
-description: 'Validate that github-actions-review detects a workflow missing permissions
+description:
+  "Validate that github-actions-review detects a workflow missing permissions
   declarations and reports correct ItemID.
 
-  '
+  "
 tags:
-- quality
-- specific-check
-- edge-case
+  - quality
+  - specific-check
+  - edge-case
 inputs:
-  prompt: 'Use github-actions-review. Assume the target has a workflow missing permissions
+  prompt:
+    "Use github-actions-review. Assume the target has a workflow missing permissions
     declarations. Report SEC-01 as failed in ## Checks (Failed/Deferred Only) and
-    include evidence in ## Checks Summary, ## Issues.'
+    include evidence in ## Checks Summary, ## Issues."
   context:
     target: SKILL.md
 expected:
   output_contains:
-  - '## Checks Summary'
-  - '## Checks (Failed/Deferred Only)'
-  - SEC-01
-  - '## Issues'
+    - "## Checks Summary"
+    - "## Checks (Failed/Deferred Only)"
+    - SEC-01
+    - "## Issues"
   outcomes:
-  - type: task_completed
+    - type: task_completed
