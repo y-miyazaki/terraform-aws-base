@@ -1,10 +1,17 @@
 #!/usr/bin/env bats
+# shellcheck disable=SC2030,SC2031,SC2034,SC2154
 
 # Tests for .github/actions/loop-execute/lib/usage.sh
 
+_bats_support="$(dirname "${BATS_TEST_FILENAME}")"
+while [[ ! -f "${_bats_support}/support/common.bash" ]]; do
+    _bats_support="$(dirname "${_bats_support}")"
+done
+# shellcheck disable=SC1091
+source "${_bats_support}/support/common.bash"
+
 setup() {
-    # shellcheck disable=SC1091
-    source ".github/actions/loop-execute/lib/usage.sh"
+    bats_source_rel ".github/actions/loop-execute/lib/usage.sh"
     reset_usage_totals
 }
 
@@ -70,7 +77,8 @@ setup() {
     is_cursor_stream_json_file test/fixtures/loop-execute/cursor-stream-json-usage.ndjson
     tmpf="$(mktemp)"
     echo "plain text output" > "${tmpf}"
-    ! is_cursor_stream_json_file "${tmpf}"
+    run is_cursor_stream_json_file "${tmpf}"
+    [ "$status" -ne 0 ]
     rm -f "${tmpf}"
 }
 

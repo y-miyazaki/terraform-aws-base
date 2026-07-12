@@ -1,9 +1,17 @@
 #!/usr/bin/env bats
+# shellcheck disable=SC2030,SC2031,SC2034,SC2154
 
 # Tests for .github/actions/loop-execute/lib/paths.sh
 
+_bats_support="$(dirname "${BATS_TEST_FILENAME}")"
+while [[ ! -f "${_bats_support}/support/common.bash" ]]; do
+    _bats_support="$(dirname "${_bats_support}")"
+done
+# shellcheck disable=SC1091
+source "${_bats_support}/support/common.bash"
+
 setup() {
-    source ".github/actions/loop-execute/lib/paths.sh"
+    bats_source_rel ".github/actions/loop-execute/lib/paths.sh"
 }
 
 @test "collect_allowlist_violations returns nothing when allowlist unset" {

@@ -1,9 +1,16 @@
 #!/usr/bin/env bats
+# shellcheck disable=SC2030,SC2031,SC2034,SC2154
 
-# Tests for .apm/packages/loop-ci-sweeper loop-ci-sweeper update_run_ledger.sh
+# Tests for .apm/packages/loop-ci-sweeper/.apm/skills/loop-ci-sweeper/scripts/update_run_ledger.sh
 
-LEDGER_DIR=".apm/packages/loop-ci-sweeper/.apm/skills/loop-ci-sweeper/scripts"
-LEDGER_SCRIPT="${LEDGER_DIR}/update_run_ledger.sh"
+_bats_support="$(dirname "${BATS_TEST_FILENAME}")"
+while [[ ! -f "${_bats_support}/support/common.bash" ]]; do
+    _bats_support="$(dirname "${_bats_support}")"
+done
+# shellcheck disable=SC1091
+source "${_bats_support}/support/common.bash"
+
+LEDGER_SCRIPT="$(apm_skill_script_path loop-ci-sweeper update_run_ledger.sh)"
 
 setup() {
     mkdir -p .loop
@@ -13,7 +20,7 @@ setup() {
 }
 
 teardown() {
-    rm -f "${LEDGER_FILE}"
+    rm -f "${LEDGER_FILE:-}"
 }
 
 @test "update_run_ledger resolves head_sha from TARGET_JSON head_sha field" {

@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
-# Helper utilities to mock the `aws` CLI for bats tests
-# Provide setup/teardown functions and a convenience function to write
-# a mock aws script to the mock bin.
+# Mock aws CLI helpers for bats tests.
+# Load via: source "$(bats_support_dir)/aws_mock.bash" (after common.bash).
 
 function mock_aws_setup() {
     MOCK_DIR=$(mktemp -d)

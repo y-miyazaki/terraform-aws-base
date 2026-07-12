@@ -1,0 +1,1 @@
+cd $HOME/workspace/config && git fetch && git rev-parse v1.8.9 && cd ..

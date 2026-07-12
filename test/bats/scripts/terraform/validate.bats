@@ -1,6 +1,14 @@
 #!/usr/bin/env bats
+# shellcheck disable=SC2030,SC2031,SC2034,SC2154
 
-# Tests for scripts/terraform/validate.sh (argument parsing)
+# Tests for scripts/terraform/validate.sh
+
+_bats_support="$(dirname "${BATS_TEST_FILENAME}")"
+while [[ ! -f "${_bats_support}/support/common.bash" ]]; do
+    _bats_support="$(dirname "${_bats_support}")"
+done
+# shellcheck disable=SC1091
+source "${_bats_support}/support/common.bash"
 
 setup() {
     export VERBOSE=false
@@ -8,8 +16,7 @@ setup() {
     export AUTO_FIX=false
     TARGET_DIRS=()
 
-    # shellcheck disable=SC1091
-    source "scripts/lib/all.sh"
+    bats_source_rel "scripts/lib/all.sh"
 
     # Source only the parse_arguments function (avoid main execution)
     eval "$(sed -n '/^function parse_arguments/,/^}/p' scripts/terraform/validate.sh)"

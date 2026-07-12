@@ -1,10 +1,19 @@
 #!/usr/bin/env bats
+# shellcheck disable=SC2030,SC2031,SC2034,SC2154
 
-# Tests for aws_paginate_items and aws_retry_exec in scripts/lib/aws.sh
+# Tests for scripts/lib/aws.sh (aws_paginate_items and aws_retry_exec)
+
+_bats_support="$(dirname "${BATS_TEST_FILENAME}")"
+while [[ ! -f "${_bats_support}/support/common.bash" ]]; do
+    _bats_support="$(dirname "${_bats_support}")"
+done
+# shellcheck disable=SC1091
+source "${_bats_support}/support/common.bash"
 
 setup() {
-    source "scripts/lib/aws.sh"
-    source "test/bats/support/aws_mock.bash"
+    bats_source_rel "scripts/lib/aws.sh"
+    # shellcheck disable=SC1091
+    source "$(bats_support_dir)/aws_mock.bash"
     mock_aws_setup
 }
 
@@ -34,8 +43,8 @@ EOF
     run aws_paginate_items 'UserPools' aws cognito-idp list-user-pools --region us-east-1
     [ "$status" -eq 0 ]
     # Count lines of output
-    lines=$(printf "%s\n" "$output" | grep -c '^')
-    [ "$lines" -eq 2 ]
+    line_count=$(printf "%s\n" "$output" | grep -c '^')
+    [ "$line_count" -eq 2 ]
 }
 
 @test "aws_paginate_items paginates with NextToken" {
@@ -51,8 +60,8 @@ EOF
 
     run aws_paginate_items 'UserPools' aws cognito-idp list-user-pools --region us-east-1
     [ "$status" -eq 0 ]
-    lines=$(printf "%s\n" "$output" | grep -c '^')
-    [ "$lines" -eq 2 ]
+    line_count=$(printf "%s\n" "$output" | grep -c '^')
+    [ "$line_count" -eq 2 ]
 }
 
 @test "aws_paginate_items handles CloudFront NextMarker pagination" {
@@ -68,9 +77,9 @@ EOF
 
     run aws_paginate_items 'DistributionList.Items' aws cloudfront list-distributions --region us-east-1
     [ "$status" -eq 0 ]
-    lines=$(printf "%s
+    line_count=$(printf "%s
 " "$output" | grep -c '^')
-    [ "$lines" -eq 2 ]
+    [ "$line_count" -eq 2 ]
 }
 
 @test "aws_paginate_items handles DynamoDB LastEvaluatedTableName pagination" {
@@ -86,9 +95,9 @@ EOF
 
     run aws_paginate_items 'TableNames' aws dynamodb list-tables --region us-east-1
     [ "$status" -eq 0 ]
-    lines=$(printf "%s
+    line_count=$(printf "%s
 " "$output" | grep -c '^')
-    [ "$lines" -eq 2 ]
+    [ "$line_count" -eq 2 ]
 }
 
 @test "aws_paginate_items handles DynamoDB list-global-tables pagination" {
@@ -104,9 +113,9 @@ EOF
 
     run aws_paginate_items 'GlobalTables' aws dynamodb list-global-tables --region us-east-1
     [ "$status" -eq 0 ]
-    lines=$(printf "%s
+    line_count=$(printf "%s
 " "$output" | grep -c '^')
-    [ "$lines" -eq 2 ]
+    [ "$line_count" -eq 2 ]
 }
 
 @test "aws_paginate_items values can be unquoted with jq -r for primitive arrays (DynamoDB TableNames)" {
@@ -141,9 +150,9 @@ EOF
 
     run aws_paginate_items 'Contents' aws s3api list-objects-v2 --bucket my-bucket --region us-east-1
     [ "$status" -eq 0 ]
-    lines=$(printf "%s
+    line_count=$(printf "%s
 " "$output" | grep -c '^')
-    [ "$lines" -eq 2 ]
+    [ "$line_count" -eq 2 ]
 }
 
 @test "aws_retry_exec retries on failure and succeeds" {
