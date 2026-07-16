@@ -18,10 +18,6 @@ set -euo pipefail
 umask 027
 export LC_ALL=C.UTF-8
 
-# Get script directory for reliable relative path resolution
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-export SCRIPT_DIR
-
 #######################################
 # main: Entry point
 #

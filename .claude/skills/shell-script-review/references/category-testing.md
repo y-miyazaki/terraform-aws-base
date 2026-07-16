@@ -4,11 +4,11 @@
 
 Check: When adding or materially changing a shell script or sourced library, is a matching Bats suite added or updated in the same change?
 Why: Production and test code diverge when tests are deferred; regressions reach CI or production (see [Google eng-practices: Keep related test code in the same CL](https://google.github.io/eng-practices/review/developer/small-cls.html#test_code))
-Fix: Mirror the script path under test/bats/, follow bats.instructions.md, and run bats before submitting
+Fix: Mirror the script path under test/bats/, follow companion Bats rules (stem `bats`), and run bats before submitting
 
 **TEST-01 (MUST): Implement Unit Tests**
 
-Check: Are unit tests implemented with Bats per bats.instructions.md?
+Check: Are unit tests implemented with Bats per companion Bats rules (stem `bats`)?
 Why: Missing tests cause regressions, bug introduction, difficult CI/CD
 Fix: Introduce Bats, create tests under test/bats/, automate
 

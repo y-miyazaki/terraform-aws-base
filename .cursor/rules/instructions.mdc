@@ -4,34 +4,45 @@ globs:
   - "**/instructions/*.instructions.md"
   - "**/.cursor/rules/*.mdc"
   - "**/.kiro/steering/*.md"
-  - "**/.claude/**/*.md"
+  - "**/.claude/rules/*.md"
 ---
 
 # AI Assistant Instructions for Instruction Files
 
 ## Scope
 
-- Scope is limited to creating and updating instruction/rule files (`**/instructions/*.instructions.md`, `.cursor/rules/*.mdc`, `.kiro/steering/*.md`, `.claude/**/*.md`).
+- Scope covers creating and updating instruction/rule files: package sources (`**/instructions/*.instructions.md`) and distributed targets (`.cursor/rules/*.mdc`, `.kiro/steering/*.md`, `.claude/rules/*.md`).
+- G-03 (MUST): Keep `applyTo` globs precise to those rule paths — do not use broad trees such as `.claude/**/*.md` that also match skills and unrelated markdown.
+- G-04 (MUST): In agent-facing cross-links, use stem-based wording (`companion X rules (stem \`x\`)`) — never bareuctions.md` filenames that disappear after `apm install`.
+- G-05 (MUST): When a companion instruction must guide production-file edits (for example tests paired with source), include those production globs in `applyTo` so the rules inject at edit time.
 
 ## Standards
 
 ### Naming Conventions
 
-| Component | Rule                                       | Example                              |
-| --------- | ------------------------------------------ | ------------------------------------ |
-| File      | `<target>.instructions.md`                 | `go.instructions.md`                 |
-| Title     | `# AI Assistant Instructions for <target>` | `# AI Assistant Instructions for Go` |
+| Component                    | Rule                                              | Example                                      |
+| ---------------------------- | ------------------------------------------------- | -------------------------------------------- |
+| Package source file          | `<stem>.instructions.md`                          | `go.instructions.md`, `bats.instructions.md` |
+| Cursor (after `apm install`) | `.cursor/rules/<stem>.mdc`                        | `go.mdc`, `bats.mdc`                         |
+| Claude (after `apm install`) | `.claude/rules/<stem>.md`                         | `go.md`, `bats.md`                           |
+| Kiro (after `apm install`)   | `.kiro/steering/<stem>.md`                        | `go.md`                                      |
+| Title                        | `# AI Assistant Instructions for <target>`        | `# AI Assistant Instructions for Go`         |
+| Agent-facing cross-link      | Companion wording with stem — not source filename | `companion Bats rules (stem \`bats\`)`       |
 
 ### Standards Content
 
 - **STD-01 (MUST)**: A Naming Conventions table exists - without it, component naming becomes inconsistent.
 - **STD-02 (SHOULD)**: Tool-specific standards are documented when applicable.
 - **STD-03 (MUST)**: The documentation level matches other instruction files - inconsistent granularity makes cross-file comparison difficult.
+- **STD-04 (MUST)**: When instructions are APM-distributed, Naming Conventions document the source stem → Cursor / Claude / Kiro path mapping so agents can resolve companions after install.
 
 ### Structure
 
 - **G-01 (MUST)**: Include `applyTo` and `description` in Front Matter - missing fields prevent automatic application.
 - **G-02 (MUST)**: Use H1 title format `# AI Assistant Instructions for <target>` - this preserves discoverability and consistency.
+- **G-03 (MUST)**: Keep `applyTo` globs precise to intended instruction/rule paths after distribution (for example `.claude/rules/*.md`, not `.claude/**/*.md`).
+- **G-04 (MUST)**: Use stem-based portable cross-references in agent-facing text; do not cite bare `*.instructions.md` filenames as runtime paths.
+- **G-05 (MUST)**: Companion instructions that must apply during production-file edits include those production globs in `applyTo`.
 - **STRUCT-01 (MUST)**: Keep the five-chapter structure (Scope -> Standards -> Guidelines -> Testing and Validation -> Security Guidelines) - missing chapters create information gaps.
 - **STRUCT-02 (MUST)**: Keep chapter order strict - inconsistent ordering makes file-to-file comparison harder.
 - **STRUCT-03 (MUST)**: Use H2 for chapters and H3 for subsections; minimize H4 and deeper levels - deep hierarchies degrade AI structural recognition.
@@ -39,6 +50,7 @@ globs:
 - **STRUCT-05 (MUST)**: Order Guidelines as domain rules -> Anti-Patterns -> Code Modification Guidelines - this keeps priority order clear.
 - **STRUCT-06 (MUST)**: In the Guidelines chapter, use H3 heading format `### Name (LEVEL)` for rule sections or `### Name` for declaration/process sections - do not include ID ranges in headings.
 - **STRUCT-07 (MUST)**: Keep `## Testing and Validation` and `## Security Guidelines` concise with operational procedures and essential guardrails only; keep detailed review criteria (`TEST-*`, `SEC-*`) in Guidelines - duplicate definitions hurt maintainability and consistency.
+- **STRUCT-08 (SHOULD)**: When Guidelines are large, reinforce critical MUST obligations (for example test pairing) with a short Scope bullet so they are not buried.
 
 ## Guidelines
 
@@ -48,6 +60,12 @@ globs:
   - Check: Front Matter contains applyTo and description fields
 - G-02 (MUST): Title
   - Check: Title clearly indicates purpose
+- G-03 (MUST): applyTo Target Precision
+  - Check: Do `applyTo` globs match only intended instruction/rule paths after distribution (for example `.claude/rules/*.md`, not `.claude/**/*.md`)?
+- G-04 (MUST): Portable Cross-References
+  - Check: Do agent-facing cross-links use stem-based wording (`companion X rules (stem \`x\`)`) instead of bareuctions.md` filenames?
+- G-05 (MUST): Companion applyTo Coverage
+  - Check: When a companion instruction must guide production-file edits (for example tests paired with source), does `applyTo` include those production globs?
 
 ### Structure (STRUCT)
 
@@ -63,6 +81,8 @@ globs:
   - Check: Does the Guidelines chapter have domain rules first, followed by Anti-Patterns, then Code Modification Guidelines?
 - STRUCT-06 (MUST): H3 Heading Format
   - Check: Do H3 headings use `### Name（LEVEL）` format for rule sections, and `### Name` for process/declaration sections?
+- STRUCT-08 (SHOULD): Critical MUST in Scope
+  - Check: When Guidelines are large, are critical MUST obligations (for example test pairing) reinforced with a short Scope bullet?
 
 ### Guidelines Chapter (GUIDE)
 
@@ -119,6 +139,8 @@ globs:
   - Check: Tool conventions are documented
 - STD-03 (MUST): Consistency
   - Check: Documentation level matches other instructions files
+- STD-04 (MUST): Distribution Naming Documented
+  - Check: When instructions are APM-distributed, does Naming Conventions document source stem → Cursor `.mdc` / Claude `.md` / Kiro steering mapping?
 
 ### Testing and Validation Chapter (TEST)
 
@@ -135,6 +157,7 @@ globs:
 
 - After changes, prioritize running validate.sh from instructions-review skill.
 - When instruction files are updated, always run an instruction quality re-evaluation.
+- Keep applyTo precise to distributed rule paths; use stem-based companion cross-links (G-03, G-04, G-05).
 - Use individual commands only for debugging.
 
 ## Testing and Validation

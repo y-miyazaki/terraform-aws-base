@@ -2,11 +2,12 @@
 name: shell-script-validation
 description: >-
   Validate shell scripts with bash -n and shellcheck for syntax safety and maintainability checks.
+  Does not enforce Bats suite pairing (TEST-00) — run `bats` and shell-script-review for that.
   Use when committing script changes, running CI validation, or debugging shellcheck findings in PRs.
 license: Apache-2.0
 metadata:
   author: y-miyazaki
-  version: "1.0.0"
+  version: "1.1.0"
 ---
 
 ## Input
@@ -39,6 +40,7 @@ Structured results for bash -n and shellcheck (syntax and lint only).
 - perform architecture/design review of shell scripts
 - modify business logic in scripts as a primary task
 - validate non-shell files
+- enforce Bats suite pairing or suite layout (use `bats` and shell-script-review)
 
 ## Reference Files Guide
 

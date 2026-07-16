@@ -1,17 +1,20 @@
 ---
 name: shell-script-review
 description: >-
-  Review shell scripts for security, correctness, and maintainability with emphasis on operational safety.
-  Use when reviewing shell script PRs requiring judgment beyond static checks.
+  Review shell scripts for security, correctness, maintainability, and Bats suite
+  pairing (TEST-00) with emphasis on operational safety.
+  Use when reviewing shell script PRs requiring judgment beyond static checks,
+  including whether matching `test/bats/` suites were added or updated.
 license: Apache-2.0
 metadata:
   author: y-miyazaki
-  version: "1.0.0"
+  version: "1.1.0"
 ---
 
 ## Input
 
 - Shell script files in PR (required)
+- Related Bats suites under `test/bats/` when present (recommended for TEST-00)
 - PR context with validation evidence reference (required)
 - Validation evidence: latest `shell-script-validation` summary with pass/fail/deferred counts and failed ItemIDs
 
@@ -50,6 +53,7 @@ Minimal inline contract (used if reference file is unavailable):
 - review shell-script PRs after validation output is available
 - assess operational safety and script maintainability risks
 - review security-sensitive script changes requiring judgment
+- verify Bats suite pairing (TEST-00) against companion Bats rules (stem `bats`)
 
 ### DO NOT USE FOR:
 

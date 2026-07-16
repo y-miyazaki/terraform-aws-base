@@ -4,6 +4,9 @@
 
 - G-01 (MUST): Front Matter
 - G-02 (MUST): Title
+- G-03 (MUST): applyTo Target Precision
+- G-04 (MUST): Portable Cross-References
+- G-05 (MUST): Companion applyTo Coverage
 
 ## Structure (STRUCT)
 
@@ -13,6 +16,7 @@
 - STRUCT-04 (MUST): Standards Chapter Subsections
 - STRUCT-05 (MUST): Guidelines Chapter Subsections
 - STRUCT-06 (MUST): H3 Heading Format
+- STRUCT-08 (SHOULD): Critical MUST in Scope
 
 ## Guidelines Chapter (GUIDE)
 
@@ -50,6 +54,7 @@
 - STD-01 (MUST): Naming Conventions
 - STD-02 (SHOULD): Tool Standards
 - STD-03 (MUST): Consistency
+- STD-04 (MUST): Distribution Naming Documented
 
 ## Testing and Validation Chapter (TEST)
 

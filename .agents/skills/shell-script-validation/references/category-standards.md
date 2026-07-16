@@ -2,19 +2,52 @@
 
 ## Required Template
 
+Executable entry scripts that source libraries or resolve relative paths:
+
 ```bash
 #!/bin/bash
+#######################################
+# Description:
+#   What this script does (one paragraph).
+#
+# Usage:
+#   bash script_name.sh [OPTIONS] [args]
+#
+# Design Rules:
+#   - Key design constraint 1.
+#
+# Output:
+#   Description of output (when applicable).
+#
+#######################################
+
+# Error handling: exit on error, unset variable, or failed pipeline
 set -euo pipefail
+
+# Secure defaults
 umask 027
 export LC_ALL=C.UTF-8
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-export SCRIPT_DIR
 
-# shellcheck source=../lib/all.sh
+# shellcheck source=lib/all.sh
 # shellcheck disable=SC1091
-source "${SCRIPT_DIR}/../lib/all.sh"
+source "${SCRIPT_DIR}/lib/all.sh"
+
+#######################################
+# Global variables
+#######################################
 ```
+
+Scripts that use only environment variables or absolute paths omit `SCRIPT_DIR` and the `source` block.
+
+## SCRIPT_DIR (G-01)
+
+- Set `SCRIPT_DIR` only when the script sources libraries or builds paths relative to the script file.
+- Canonical assignment: `SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"`
+- Do not use `export SCRIPT_DIR` unless a child process must read `$SCRIPT_DIR` from the environment.
+- Do not add `# shellcheck disable=SC2034` when `${SCRIPT_DIR}` is referenced in the script.
+- Place after secure defaults and before the `# Global variables` block (or immediately before `source "${SCRIPT_DIR}/..."`).
 
 ## Function Order
 

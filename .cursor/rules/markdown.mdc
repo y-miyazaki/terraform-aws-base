@@ -11,7 +11,7 @@ globs:
 
 ## Scope
 
-- Scope is limited to documentation maintenance for `README.md`, `CONTRIBUTING.md`, and `docs/**/*.md`.
+- Scope covers documentation maintenance for `README.md`, `CONTRIBUTING.md`, `docs/**/*.md`, and `mkdocs.yml` navigation sync.
 - This file defines repository-specific documentation operations rather than general Markdown theory.
 
 ## Standards

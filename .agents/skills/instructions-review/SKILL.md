@@ -1,17 +1,20 @@
 ---
 name: instructions-review
 description: >-
-  Review `.instructions.md` files for structure, consistency, and usability.
-  Use when reviewing instruction PRs or audits.
+  Review instruction and rule files for structure, consistency, applyTo precision,
+  and portable cross-references — package sources (`*.instructions.md`) and APM-distributed
+  targets (`.cursor/rules/*.mdc`, `.claude/rules/*.md`, `.kiro/steering/*.md`).
+  Use when reviewing instruction PRs, audits, or distributed rule changes after `apm install`.
 license: Apache-2.0
 metadata:
   author: y-miyazaki
-  version: "1.0.0"
+  version: "1.1.0"
 ---
 
 ## Input
 
-- Target `<agent-root>/instructions/*.instructions.md` files (required)
+- Target instruction/rule files (required): package sources (`**/instructions/*.instructions.md`) and/or distributed targets (`.cursor/rules/*.mdc`, `.claude/rules/*.md`, `.kiro/steering/*.md`)
+- Prefer package sources under `.apm/packages/**/.apm/instructions/` when both source and generated copies exist
 - PR context (optional)
 
 ## Output Specification
@@ -45,11 +48,12 @@ Always include target file list and deferred reason summary.
 - Focus on quality, structure, consistency, and practical usability requiring human/AI judgment
 - **Do not execute validation commands from this review skill**
 - Do not modify instructions files or approve/merge PRs
-- Keep chapter order and section naming aligned with existing `.instructions.md` files in the same repository.
+- Keep chapter order and section naming aligned with sibling instruction/rule files in the same repository (source or distributed form).
 
 ### USE FOR:
 
-- review existing `.instructions.md` files in PRs
+- review package `*.instructions.md` and distributed Cursor/Claude/Kiro rule files in PRs
+- audit applyTo precision, stem-based cross-references, and companion coverage (G-03, G-04, G-05)
 - audit instruction quality and rule consistency
 - propose review findings without modifying files
 
@@ -57,7 +61,7 @@ Always include target file list and deferred reason summary.
 
 - create new instruction files from scratch
 - run syntax/security validation tooling
-- review general markdown docs outside `**/instructions/*.instructions.md` (e.g., README.md, docs/\*.md — use markdown-validation or docs-creation instead)
+- review general markdown docs outside instruction/rule paths (e.g., README.md, docs/\*.md, skills — use markdown-validation, docs-creator, or agent-skills-review instead)
 
 ## Reference Files Guide
 
@@ -101,11 +105,12 @@ Key evaluation criteria (inline summary of common-checklist):
 | `common-output-format.md` unavailable                | Recoverable | Use inline output contract                                        |
 | Category reference file missing                      | Recoverable | Defer checks from that category, note missing file in report      |
 | All category files missing                           | Fatal       | Stop, report "no evaluation criteria available"                   |
-| Target `.instructions.md` does not exist             | Recoverable | Report `status: failed` for that file, continue remaining targets |
+| Target instruction/rule file does not exist          | Recoverable | Report `status: failed` for that file, continue remaining targets |
 | All target files missing                             | Fatal       | Stop, report "no reviewable instruction files found"              |
 | Validation artifacts missing after one rerun request | Recoverable | Defer artifact-dependent checks with explicit reason              |
 
 ### Examples
 
 - Prompt: `Review instructions files and report issues`
+- Prompt: `Review .cursor/rules/*.mdc applyTo and cross-references`
 - Result: Structured report with per-file Checks Summary, failed/deferred items with severity and fix suggestions.

@@ -1,25 +1,29 @@
 ---
 description: AI Assistant Instructions for Bats Test Suites
-globs: "**/*.bats"
+globs:
+  - "**/*.sh"
+  - "**/*.bats"
 ---
 
 # AI Assistant Instructions for Bats
 
 ## Scope
 
-- Scope is limited to authoring and updating Bats suites (`*.bats`).
-- Shell script implementation rules remain in `shell-script.instructions.md`; this file defines test-suite conventions only.
-- When adding or materially changing a shell script or sourced library, add or update the matching Bats suite in the same change (see `shell-script.instructions.md` TEST-00).
+- Scope covers authoring Bats suites (`*.bats`) and applies when editing Shell scripts (`*.sh`) that require pairing a suite.
+- Shell script implementation rules remain in the companion Shell Script rules (stem `shell-script`); this file defines test-suite conventions only.
+- When adding or materially changing a shell script or sourced library, add or update the matching Bats suite in the same change (see companion Shell Script rules TEST-00).
+- After `apm install`, stem `bats` is distributed as `.cursor/rules/bats.mdc` (Cursor) or `.claude/rules/bats.md` (Claude) — not as `bats.instructions.md`.
 
 ## Standards
 
 ### Naming Conventions
 
-| Component | Rule | Example |
-| Suite file | snake_case; mirror source path under `test/bats/` | `scripts/lib/common.bats` |
-| Support helper | snake_case `.bash` under `test/bats/support/` | `common.bash`, `mock_cli.bash` |
-| `@test` name | Descriptive sentence (lowercase) | `parse_args accepts --verbose flag` |
-| Package constant | UPPER_SNAKE_CASE | `TARGET_SCRIPT`, `FIXTURE_DIR` |
+| Component        | Rule                                              | Example                             |
+| ---------------- | ------------------------------------------------- | ----------------------------------- |
+| Suite file       | snake_case; mirror source path under `test/bats/` | `scripts/lib/common.bats`           |
+| Support helper   | snake_case `.bash` under `test/bats/support/`     | `common.bash`, `mock_cli.bash`      |
+| `@test` name     | Descriptive sentence (lowercase)                  | `parse_args accepts --verbose flag` |
+| Package constant | UPPER_SNAKE_CASE                                  | `TARGET_SCRIPT`, `FIXTURE_DIR`      |
 
 ### Suite File Structure
 
@@ -103,7 +107,7 @@ Prefer [bats-support](https://github.com/bats-core/bats-support) and [bats-asser
 - Add or update suites under `test/bats/` mirroring the changed script path in the same change as the script.
 - Reuse `test/bats/support/` helpers; extend shared support instead of copying preamble logic.
 - After changes, run `bats -r test/bats` and the repository's shell validation entry point (for example `shell-script-validation` `validate.sh` when available).
-- Shell script DOC/header rules remain in `shell-script.instructions.md`; do not duplicate them here.
+- Shell script DOC/header rules remain in the companion Shell Script rules (stem `shell-script`); do not duplicate them here.
 
 ## Testing and Validation
 
@@ -125,7 +129,7 @@ bats test/bats/path/to/script.bats -f "partial test name"
 
 - [bats-core writing tests](https://bats-core.readthedocs.io/en/stable/writing-tests.html)
 - [bats-core tutorial](https://bats-core.readthedocs.io/en/stable/tutorial.html)
-- Suite conventions: this file. Shell script authoring: `shell-script.instructions.md`. Validation workflow: `shell-script-validation` skill SKILL.md.
+- Suite conventions: this file. Shell script authoring: companion Shell Script rules (stem `shell-script`). Validation workflow: `shell-script-validation` skill SKILL.md.
 
 ## Security Guidelines
 

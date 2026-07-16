@@ -26,10 +26,10 @@ Run tools in this order (fail-fast: stop on first failure):
 
 ### Project standards check
 
-- STD-01: `SCRIPT_DIR` is defined using `$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)`
-- STD-02: Common library (`scripts/lib/`) is sourced where required
-- STD-03: `set -euo pipefail` (or equivalent) is present at script top
-- STD-04: Script follows the project's common header template
+- STD-01: When the script sources libraries or resolves relative paths, `SCRIPT_DIR` is set with `$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)` (no `export`, no `SC2034` when referenced)
+- STD-02: Common library (`scripts/lib/` or skill `scripts/lib/`) is sourced where required
+- STD-03: `set -euo pipefail`, `umask 027`, and `export LC_ALL=C.UTF-8` are present at script top (entry scripts)
+- STD-04: Script follows the project's common header template and `# Global variables` block when globals are defined
 
 ## Pass Criteria
 

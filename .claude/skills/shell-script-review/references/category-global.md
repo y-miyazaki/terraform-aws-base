@@ -2,9 +2,9 @@
 
 **G-01 (MUST): Set SCRIPT_DIR**
 
-Check: Is SCRIPT_DIR set for reliable relative path resolution?
-Why: Missing SCRIPT_DIR creates execution directory dependency and breaks relative file references
-Fix: `SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"`
+Check: When the script sources libraries or resolves relative paths, is `SCRIPT_DIR` set?
+Why: Missing `SCRIPT_DIR` breaks relative `source` and path resolution
+Fix: `SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"` — no `export` unless a child process requires it; omit when the script uses only environment variables or absolute paths
 
 **G-02 (SHOULD): No Hardcoded Secrets**
 

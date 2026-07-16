@@ -20,10 +20,6 @@ set -euo pipefail
 umask 027
 export LC_ALL=C.UTF-8
 
-# Get script directory for reliable relative path resolution
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-export SCRIPT_DIR
-
 # Capture stdin (hook event JSON) for agent detection.
 # Pipe is consumed once; must be read before any other stdin operation.
 HOOK_STDIN_DATA=""

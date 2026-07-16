@@ -21,3 +21,9 @@ Fix: Add standard conventions for relevant tools (formatters, linters, etc.)
 Check: Documentation level matches other instructions files
 Why: Cross-file inconsistency increases learning cost and hampers standardization
 Fix: Unify documentation level, verify against reference files
+
+**STD-04 (MUST): Distribution Naming Documented**
+
+Check: When instructions are APM-distributed, does Naming Conventions document source stem → Cursor `.mdc` / Claude `.md` / Kiro steering mapping?
+Why: Agents cannot resolve companion rules if only the package source filename is documented
+Fix: Add rows for package source, Cursor, Claude, and Kiro paths using the shared stem
