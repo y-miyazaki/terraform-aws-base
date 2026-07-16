@@ -7,19 +7,19 @@ paths:
 
 ## Scope
 
-- Scope is limited to authoring and updating Bats suites (`*.bats`) under `test/bats/` and package-local skill test directories.
+- Scope is limited to authoring and updating Bats suites (`*.bats`).
 - Shell script implementation rules remain in `shell-script.instructions.md`; this file defines test-suite conventions only.
+- When adding or materially changing a shell script or sourced library, add or update the matching Bats suite in the same change (see `shell-script.instructions.md` TEST-00).
 
 ## Standards
 
 ### Naming Conventions
 
-| Component        | Rule                                              | Example                                    |
-| ---------------- | ------------------------------------------------- | ------------------------------------------ |
-| Suite file       | snake_case; mirror source path under `test/bats/` | `detect_changes.bats`                      |
-| Support helper   | snake_case `.bash` under `test/bats/support/`     | `common.bash`, `aws_mock.bash`             |
-| `@test` name     | Descriptive sentence (lowercase)                  | `parse_commit_subject accepts feat commit` |
-| Package constant | UPPER_SNAKE_CASE                                  | `DETECT_SCRIPT`, `LEDGER_FILE`             |
+| Component | Rule | Example |
+| Suite file | snake_case; mirror source path under `test/bats/` | `scripts/lib/common.bats` |
+| Support helper | snake_case `.bash` under `test/bats/support/` | `common.bash`, `mock_cli.bash` |
+| `@test` name | Descriptive sentence (lowercase) | `parse_args accepts --verbose flag` |
+| Package constant | UPPER_SNAKE_CASE | `TARGET_SCRIPT`, `FIXTURE_DIR` |
 
 ### Suite File Structure
 
@@ -27,13 +27,13 @@ Required order for every `test/bats/**/*.bats` file:
 
 1. `#!/usr/bin/env bats`
 2. Header comment: `# Tests for <repo-relative path>`
-3. Walk-up preamble that loads `test/bats/support/common.bash` (identical block in every suite)
-4. Target constants (`DETECT_SCRIPT`, `TARGET_LIB`, …) when needed
+3. Optional project support preamble (load `test/bats/support/common.bash` or equivalent when the repository provides it)
+4. Target constants (`TARGET_SCRIPT`, `TARGET_LIB`, …) when needed
 5. `setup()` — source script(s), export env, create temp state
 6. `teardown()` — when `setup()` creates temp files or dirs
 7. `@test` functions in a-z order by test description
 
-Walk-up preamble (copy verbatim):
+When the repository provides `test/bats/support/common.bash`, use a walk-up loader such as:
 
 ```bash
 _bats_support="$(dirname "${BATS_TEST_FILENAME}")"
@@ -46,12 +46,11 @@ source "${_bats_support}/support/common.bash"
 
 ### Support Library
 
-| File                            | Role                                                                                                   |
-| ------------------------------- | ------------------------------------------------------------------------------------------------------ |
-| `test/bats/support/common.bash` | Shared helpers: `bats_source_rel`, `bats_source_apm_skill`, `apm_skill_script_path`, `git_test_repo_*` |
-| `test/bats/support/*.bash`      | Domain mocks (for example `aws_mock.bash`); load via `$(bats_support_dir)/…`                           |
+| File | Role |
+| `test/bats/support/common.bash` | Optional shared helpers (source paths, fixtures, temp dirs) |
+| `test/bats/support/*.bash` | Domain mocks; load from `setup()` or per-test as needed |
 
-Suites run with cwd = repository root (see `shell-script-validation/scripts/validate.sh`).
+Prefer [bats-support](https://github.com/bats-core/bats-support) and [bats-assert](https://github.com/bats-core/bats-assert) when the project adopts them.
 
 ## Guidelines
 
@@ -59,39 +58,32 @@ Suites run with cwd = repository root (see `shell-script-validation/scripts/vali
 
 - BAT-01 (MUST): Mirror Source Path
   - Check: Is the suite placed under `test/bats/` with the same relative path as the script or library under test?
-- BAT-02 (MUST): Load common.bash
-  - Check: Does the file use the walk-up preamble before `setup()`?
-- BAT-03 (MUST): Header Target Path
+- BAT-02 (MUST): Header Target Path
   - Check: Does the header comment name the repo-relative path of the script or library under test?
-- BAT-04 (SHOULD): APM Loop Detect Suites
-  - Check: Are loop detect scripts tested under `test/bats/.apm/packages/<package>/`?
+- BAT-03 (SHOULD): Shared Support Helpers
+  - Check: Are repeated setup paths centralized in `test/bats/support/` instead of copied into every suite?
 
 ### Setup and Teardown (SETUP)
 
 - SETUP-01 (MUST): Source in setup()
-  - Check: Are targets sourced with `bats_source_rel` or `bats_source_apm_skill` inside `setup()`, not ad hoc per test?
+  - Check: Are targets sourced or invoked from `setup()` (or a shared helper), not ad hoc per test?
 - SETUP-02 (MUST): Teardown Temp State
-  - Check: Does `teardown()` remove files or directories created in `setup()` (`mktemp`, `.loop/*`, mock bins)?
+  - Check: Does `teardown()` remove files or directories created in `setup()` (`mktemp`, mock bins, fixture dirs)?
 - SETUP-03 (SHOULD): Export Before Source
   - Check: Are environment variables exported before sourcing when the sourced script reads them at load time?
 
 ### Test Design (TEST)
 
 - TEST-01 (SHOULD): Unit vs Integration Split
-  - Check: Are pure functions tested by calling them after `setup()` sources the script, and CLI flows tested via `bash "${SCRIPT}"`?
-- TEST-02 (SHOULD): Git Fixture Helpers
-  - Check: Do repo-scoped integration tests use `git_test_repo_setup`, `git_test_repo_commit`, and `git_test_repo_run`?
-- TEST-03 (MUST): run Subshell for Repo cwd
-  - Check: Are integration commands wrapped in `git_test_repo_run` or `bash -c "cd … && …"` — never bare `cd` before `run`?
+  - Check: Are pure functions tested after `setup()` sources the script, and CLI flows tested via `run bash "${SCRIPT}" …`?
+- TEST-02 (MUST): Use run for CLI Assertions
+  - Check: Are CLI exit status and output asserted with Bats `run` and `$status` / `$output` (or bats-assert equivalents)?
+- TEST-03 (MUST): Subshell for cwd Changes
+  - Check: Are integration commands that need a different working directory wrapped in `run bash -c 'cd … && …'` or an equivalent helper — never bare `cd` immediately before `run`?
 - TEST-04 (SHOULD): Test Order
   - Check: Are `@test` blocks ordered a-z by description (after `setup`/`teardown`)?
 - TEST-05 (SHOULD): No Duplicate Source
   - Check: Is the target script sourced once in `setup()` without redundant `source` inside individual tests?
-
-### Git Log Parsing (GIT)
-
-- GIT-01 (MUST): Newline in git log Format
-  - Check: When parsing `git log --pretty=format:` with `while read`, does the format end with `%n` so the final record is readable?
 
 ### Mocking (MOCK)
 
@@ -100,17 +92,17 @@ Suites run with cwd = repository root (see `shell-script-validation/scripts/vali
 
 ### Anti-Patterns
 
-- Bare `cd "${TEST_REPO}"` immediately before `run` — `run` executes in a subshell that resets cwd
-- Mixing relative script paths in integration tests without `apm_skill_script_path` / `bats_workspace_root`
-- Inconsistent headers (`Tests for loop-foo` vs `Tests for .apm/packages/...`) — always use full repo-relative path
+- Bare `cd` immediately before `run` — `run` executes in a subshell that resets cwd
+- Mixing relative script paths in integration tests without a repository root helper
+- Inconsistent headers — always use the full repo-relative path under test
 - Real secrets or live tokens in fixtures — use placeholders and assert redaction behavior
-- Skipping `teardown()` when `setup()` writes under `.loop/` or `mktemp` paths
+- Skipping `teardown()` when `setup()` writes temp files or directories
 
 ### Code Modification Guidelines
 
-- Add or update suites under `test/bats/` mirroring the changed script path.
-- Reuse `test/bats/support/common.bash`; extend support helpers instead of copying preamble logic.
-- After changes, run `bats -r test/bats` and `shell-script-validation` `validate.sh` (runs the full Bats tree).
+- Add or update suites under `test/bats/` mirroring the changed script path in the same change as the script.
+- Reuse `test/bats/support/` helpers; extend shared support instead of copying preamble logic.
+- After changes, run `bats -r test/bats` and the repository's shell validation entry point (for example `shell-script-validation` `validate.sh` when available).
 - Shell script DOC/header rules remain in `shell-script.instructions.md`; do not duplicate them here.
 
 ## Testing and Validation
@@ -125,11 +117,15 @@ bash <agent-root>/skills/shell-script-validation/scripts/validate.sh
 **Individual execution (debugging)**:
 
 ```bash
-bats test/bats/.apm/packages/loop-docs-triage/detect_changes.bats
-bats test/bats/scripts/lib/common.bats -f "render_template"
+bats test/bats/path/to/script.bats
+bats test/bats/path/to/script.bats -f "partial test name"
 ```
 
-**Detailed guide**: See `shell-script-validation` skill SKILL.md. Suite conventions are defined in this file; shell script authoring rules are in `shell-script.instructions.md`.
+**References**:
+
+- [bats-core writing tests](https://bats-core.readthedocs.io/en/stable/writing-tests.html)
+- [bats-core tutorial](https://bats-core.readthedocs.io/en/stable/tutorial.html)
+- Suite conventions: this file. Shell script authoring: `shell-script.instructions.md`. Validation workflow: `shell-script-validation` skill SKILL.md.
 
 ## Security Guidelines
 

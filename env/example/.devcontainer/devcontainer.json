@@ -68,6 +68,9 @@
     "${localWorkspaceFolder}/env/common/tmp/.aws:/home/vscode/.aws"
   ],
   "postCreateCommand": "/bin/bash env/common/scripts/init.sh",
+  "remoteEnv": {
+    "PATH": "/home/vscode/.local/share/mise/shims:${containerEnv:PATH}"
+  },
   "workspaceMount": "",
   "workspaceFolder": "/workspace",
   "overrideCommand": false,

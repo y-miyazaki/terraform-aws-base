@@ -31,11 +31,44 @@
 #######################################
 function json_escape {
     local str="$1"
-    str="${str//\\/\\\\}"
-    str="${str//\"/\\\"}"
-    str="${str//$'\n'/\\n}"
-    str="${str//$'\t'/\\t}"
-    printf '%s' "${str}"
+    local i c ord out=""
+    local len=${#str}
+
+    for ((i = 0; i < len; i++)); do
+        c="${str:i:1}"
+        case "${c}" in
+            $'\\')
+                out+=$'\\\\'
+                ;;
+            '"')
+                out+='\"'
+                ;;
+            $'\b')
+                out+='\b'
+                ;;
+            $'\f')
+                out+='\f'
+                ;;
+            $'\n')
+                out+='\n'
+                ;;
+            $'\r')
+                out+='\r'
+                ;;
+            $'\t')
+                out+='\t'
+                ;;
+            *)
+                LC_ALL=C printf -v ord '%d' "'${c}"
+                if ((ord < 32)); then
+                    out+=$(printf '\\u%04x' "${ord}")
+                else
+                    out+="${c}"
+                fi
+                ;;
+        esac
+    done
+    printf '%s' "${out}"
 }
 
 #######################################

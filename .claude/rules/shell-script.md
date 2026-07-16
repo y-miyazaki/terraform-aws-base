@@ -34,11 +34,10 @@ Required in-file order for **executable entry scripts** (invoked directly or via
 
 ### Sourced library files
 
-Applies to `source`d modules (for example `.github/actions/*/lib/*.sh`, `scripts/lib/*.sh`):
+Applies to `source`d modules (for example `lib/*.sh`, `scripts/lib/*.sh`):
 
 - Omit items 2, 3, 5 (`show_usage` / `parse_arguments` / `main`), and 6 from the executable list above
-- Match the enclosing directory's existing `lib/` style; for GitHub Actions loop libraries use `.github/actions/loop-execute/lib/rejections.sh` as the reference
-- Keep the `#######################################` file header and per-function separator blocks
+- Match comment style, separators, and function doc blocks used by sibling files in the same directory
 - List functions in a-z order (G-03)
 - Every function doc block must include **Arguments**, **Global Variables**, and **Returns** (`None` when a section does not apply)
 - When refactoring logic, **do not remove** header or function comment blocks to save tokens
@@ -47,7 +46,6 @@ Applies to `source`d modules (for example `.github/actions/*/lib/*.sh`, `scripts
 
 ```bash
 #!/bin/bash
-#######################################
 # Description:
 #   What this script does (one paragraph).
 #
@@ -60,13 +58,11 @@ Applies to `source`d modules (for example `.github/actions/*/lib/*.sh`, `scripts
 # Output:
 #   Description of output (include when script generates artifacts).
 #
-#######################################
 ```
 
 ### Function Documentation
 
 ```bash
-#######################################
 # function_name: concise description (one line)
 #
 # Description:
@@ -81,12 +77,22 @@ Applies to `source`d modules (for example `.github/actions/*/lib/*.sh`, `scripts
 # Returns:
 #   exit code or output description
 #
-#######################################
 ```
 
 Write `None` for sections that do not apply. **Do not omit sections** — especially `Global Variables`; when a function reads or writes no caller globals, write `Global Variables:` followed by `None`.
 
 ## Guidelines
+
+### Anti-Patterns (AP)
+
+- AP-01 (SHOULD): Executable Rules on Sourced Libraries
+  - Check: Are executable-script requirements (`set -euo pipefail`, `main`, entry guard) avoided on sourced library files?
+- AP-02 (SHOULD): Preserve DOC Comment Blocks
+  - Check: Are header and function DOC blocks kept when refactoring?
+- AP-03 (SHOULD): Global Variables Section Required
+  - Check: Does every function doc block include `Global Variables:` with `None` when no caller globals apply?
+- AP-04 (SHOULD): Consistent Library Comment Style
+  - Check: Do sibling `lib/*.sh` files share the same comment and separator style?
 
 ### Code Standards (CODE)
 
@@ -114,9 +120,8 @@ Write `None` for sections that do not apply. **Do not omit sections** — especi
   - Check: Does file header contain Description/Usage/Design Rules?
 - DOC-02 (SHOULD): show_usage Required
   - Check: Is show_usage function implemented?
-- DOC-03 (SHOULD): Function Separators and Comments
-  - Check: Do functions have `#######################################` separator and Description/Arguments/Global Variables/Returns sections?
-  - Check: Is `Global Variables` present on every function (with `None` when no caller globals are read or written)?
+- DOC-03 (SHOULD): Function Comment Blocks
+  - Check: Does each function include Description, Arguments, Global Variables, and Returns sections, using the same separator or spacing convention as sibling files in the directory?
 - DOC-04 (SHOULD): Complex Logic Comments
   - Check: Do complex algorithms have Why comments?
 - DOC-05 (SHOULD): Variable Documentation
@@ -232,26 +237,20 @@ Write `None` for sections that do not apply. **Do not omit sections** — especi
 
 ### Testing (TEST)
 
-- TEST-01 (SHOULD): Implement Unit Tests
-  - Check: Are unit tests implemented with Bats per `bats.instructions.md`?
+- TEST-00 (MUST): Add Tests With Script Changes
+  - Check: When adding or materially changing a shell script or sourced library, is a matching Bats suite added or updated in the same change?
+- TEST-01 (MUST): Implement Unit Tests
+  - Check: Are unit tests implemented with Bats per bats.instructions.md?
 - TEST-02 (SHOULD): Bats Test Functions in a-z Order
-  - Check: Are `@test` functions placed in a-z order after setup/teardown (see `bats.instructions.md`)?
+  - Check: Are test functions placed in a-z order after setup/teardown?
 - TEST-03 (SHOULD): CI/CD Integration
   - Check: Are tests integrated into CI/CD like GitHub Actions?
 
-### Anti-Patterns
-
-- Applying executable-script requirements (`set -euo pipefail`, `main`, entry guard) to sourced library files
-- Removing DOC comment blocks to shorten a diff — use shell-script-review conventions instead
-- Omitting the `Global Variables` section when a function uses only locals — write `None` instead
-- Introducing a new comment style in one `lib/*.sh` file while siblings use the loop/action library format
-
 ### Code Modification Guidelines
 
+- When adding or changing shell scripts or sourced libraries, add or update matching Bats suites per bats.instructions.md in the same change.
 - After changes, prioritize running validate.sh from shell-script-validation skill.
 - Use individual commands only for debugging.
-- Comment and header conventions (DOC-\*) are authoring guidelines — not enforced by validate.sh. Use shell-script-review for judgment on documentation quality.
-- When editing a sourced `lib/*.sh` file, preserve comment structure and match sibling files in the same directory; never strip `#######################################` blocks or function doc sections during logic fixes.
 
 ## Testing and Validation
 

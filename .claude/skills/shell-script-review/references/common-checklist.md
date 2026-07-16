@@ -1,5 +1,12 @@
 # Shell Script Review Checklist
 
+## Anti-Patterns (AP)
+
+- AP-01 (SHOULD): Executable Rules on Sourced Libraries
+- AP-02 (SHOULD): Preserve DOC Comment Blocks
+- AP-03 (SHOULD): Global Variables Section Required
+- AP-04 (SHOULD): Consistent Library Comment Style
+
 ## Code Standards (CODE)
 
 - CODE-01 (SHOULD): Proper Array Usage
@@ -17,7 +24,7 @@
 
 - DOC-01 (MUST): Standard Header Format
 - DOC-02 (SHOULD): show_usage Required
-- DOC-03 (SHOULD): Function Separators and Comments
+- DOC-03 (SHOULD): Function Comment Blocks
 - DOC-04 (SHOULD): Complex Logic Comments
 - DOC-05 (SHOULD): Variable Documentation
 - DOC-06 (SHOULD): English Comment Consistency
@@ -86,6 +93,7 @@
 
 ## Testing (TEST)
 
-- TEST-01 (SHOULD): Implement Unit Tests
+- TEST-00 (MUST): Add Tests With Script Changes
+- TEST-01 (MUST): Implement Unit Tests
 - TEST-02 (SHOULD): Bats Test Functions in a-z Order
 - TEST-03 (SHOULD): CI/CD Integration
