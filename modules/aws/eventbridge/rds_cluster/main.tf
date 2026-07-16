@@ -50,7 +50,7 @@ resource "aws_scheduler_schedule" "stop" {
   flexible_time_window {
     mode = "OFF"
   }
-  name                = substr("${var.name_prefix}${each.value.db_cluster_identifier}-stop-db-cluster-scheduler", 0, 63)
+  name                = substr("${var.name_prefix}${each.key}-stop-db-cluster-scheduler", 0, 63)
   schedule_expression = each.value.schedule_expression_stop
   state               = "ENABLED"
   target {
@@ -82,7 +82,7 @@ resource "aws_scheduler_schedule" "start" {
   flexible_time_window {
     mode = "OFF"
   }
-  name                = substr("${var.name_prefix}${each.value.db_cluster_identifier}-start-db-cluster-scheduler", 0, 63)
+  name                = substr("${var.name_prefix}${each.key}-start-db-cluster-scheduler", 0, 63)
   schedule_expression = each.value.schedule_expression_start
   state               = "ENABLED"
   target {

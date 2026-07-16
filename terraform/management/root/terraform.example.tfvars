@@ -446,6 +446,10 @@ security_cloudtrail = {
       event_source = "logs.amazonaws.com"
     },
     {
+      event_name   = "PutDashboard"
+      event_source = "monitoring.amazonaws.com"
+    },
+    {
       event_name   = "List*"
       event_source = "organizations.amazonaws.com"
     },

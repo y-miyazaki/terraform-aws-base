@@ -50,7 +50,7 @@ resource "aws_scheduler_schedule" "pause" {
   flexible_time_window {
     mode = "OFF"
   }
-  name                = substr("${var.name_prefix}${each.value.cluster_identifier}-pause-cluster-scheduler", 0, 63)
+  name                = substr("${var.name_prefix}${each.key}-pause-cluster-scheduler", 0, 63)
   schedule_expression = each.value.schedule_expression_stop
   state               = "ENABLED"
   target {
@@ -82,7 +82,7 @@ resource "aws_scheduler_schedule" "resume" {
   flexible_time_window {
     mode = "OFF"
   }
-  name                = substr("${var.name_prefix}${each.value.cluster_identifier}-resume-cluster-scheduler", 0, 63)
+  name                = substr("${var.name_prefix}${each.key}-resume-cluster-scheduler", 0, 63)
   schedule_expression = each.value.schedule_expression_start
   state               = "ENABLED"
   target {

@@ -42,7 +42,7 @@ locals {
 resource "aws_scheduler_schedule" "stop" {
   for_each = {
     for k, v in local.schedules : k => v
-    if var.is_enabled && v.schedule_expression_stop != null && try(v.has_autoscaling, 0) == 0
+    if var.is_enabled && v.schedule_expression_stop != null && coalesce(try(v.has_autoscaling, 0), 0) == 0
   }
 
   region      = local.region
@@ -50,7 +50,7 @@ resource "aws_scheduler_schedule" "stop" {
   flexible_time_window {
     mode = "OFF"
   }
-  name                = substr("${var.name_prefix}${each.value.ecs_service}-stop-ecs-service-scheduler", 0, 63)
+  name                = substr("${var.name_prefix}${each.key}-stop-ecs-service-scheduler", 0, 63)
   schedule_expression = each.value.schedule_expression_stop
   state               = "ENABLED"
   target {
@@ -76,7 +76,7 @@ resource "aws_scheduler_schedule" "stop" {
 resource "aws_scheduler_schedule" "stop_autoscaling" {
   for_each = {
     for k, v in local.schedules : k => v
-    if var.is_enabled && v.schedule_expression_stop != null && try(v.has_autoscaling, 0) == 1
+    if var.is_enabled && v.schedule_expression_stop != null && coalesce(try(v.has_autoscaling, 0), 0) == 1
   }
 
   region      = local.region
@@ -84,7 +84,7 @@ resource "aws_scheduler_schedule" "stop_autoscaling" {
   flexible_time_window {
     mode = "OFF"
   }
-  name                = substr("${var.name_prefix}${each.value.ecs_service}-stop-autoscaling-scheduler", 0, 63)
+  name                = substr("${var.name_prefix}${each.key}-stop-autoscaling-scheduler", 0, 63)
   schedule_expression = each.value.schedule_expression_stop
   state               = "ENABLED"
   target {
@@ -112,7 +112,7 @@ resource "aws_scheduler_schedule" "stop_autoscaling" {
 resource "aws_scheduler_schedule" "start" {
   for_each = {
     for k, v in local.schedules : k => v
-    if var.is_enabled && v.schedule_expression_start != null && try(v.has_autoscaling, 0) == 0
+    if var.is_enabled && v.schedule_expression_start != null && coalesce(try(v.has_autoscaling, 0), 0) == 0
   }
 
   region      = local.region
@@ -120,7 +120,7 @@ resource "aws_scheduler_schedule" "start" {
   flexible_time_window {
     mode = "OFF"
   }
-  name                = substr("${var.name_prefix}${each.value.ecs_service}-start-ecs-service-scheduler", 0, 63)
+  name                = substr("${var.name_prefix}${each.key}-start-ecs-service-scheduler", 0, 63)
   schedule_expression = each.value.schedule_expression_start
   state               = "ENABLED"
   target {
@@ -146,7 +146,7 @@ resource "aws_scheduler_schedule" "start" {
 resource "aws_scheduler_schedule" "start_autoscaling" {
   for_each = {
     for k, v in local.schedules : k => v
-    if var.is_enabled && v.schedule_expression_start != null && try(v.has_autoscaling, 0) == 1
+    if var.is_enabled && v.schedule_expression_start != null && coalesce(try(v.has_autoscaling, 0), 0) == 1
   }
 
   region      = local.region
@@ -154,7 +154,7 @@ resource "aws_scheduler_schedule" "start_autoscaling" {
   flexible_time_window {
     mode = "OFF"
   }
-  name                = substr("${var.name_prefix}${each.value.ecs_service}-start-autoscaling-scheduler", 0, 63)
+  name                = substr("${var.name_prefix}${each.key}-start-autoscaling-scheduler", 0, 63)
   schedule_expression = each.value.schedule_expression_start
   state               = "ENABLED"
   target {

@@ -1,23 +1,23 @@
 lockfile_version: '1'
-generated_at: '2026-07-16T10:38:22.395332+00:00'
+generated_at: '2026-07-16T11:52:29.508317+00:00'
 apm_version: 0.24.1
 dependencies:
 - repo_url: y-miyazaki/config
   name: config-aws
   host: github.com
-  resolved_commit: 7b0e8557d0544acef512cb7e5e81f96abf19bd44
-  resolved_ref: v1.8.28
+  resolved_commit: 0098282039f73bf3aba3a67a02568c0dec11c2a5
+  resolved_ref: v1.8.30
   version: 1.0.0
   virtual_path: .apm/packages/aws
   is_virtual: true
   package_type: apm_package
-  content_hash: sha256:9fa59787331415e5e16b6a7c9df8245a7e041faf783de6a589c1f3526555c500
+  content_hash: sha256:7657f560548045e3a89ae54db8c4a0c4b8da960170fd3a2f9090203388d35dd6
   declared_license: Apache-2.0
 - repo_url: y-miyazaki/config
   name: config-common
   host: github.com
-  resolved_commit: 7b0e8557d0544acef512cb7e5e81f96abf19bd44
-  resolved_ref: v1.8.28
+  resolved_commit: 0098282039f73bf3aba3a67a02568c0dec11c2a5
+  resolved_ref: v1.8.30
   version: 1.0.0
   virtual_path: .apm/packages/common
   is_virtual: true
@@ -725,8 +725,8 @@ dependencies:
 - repo_url: y-miyazaki/config
   name: common-hooks-claude
   host: github.com
-  resolved_commit: 7b0e8557d0544acef512cb7e5e81f96abf19bd44
-  resolved_ref: v1.8.28
+  resolved_commit: 0098282039f73bf3aba3a67a02568c0dec11c2a5
+  resolved_ref: v1.8.30
   version: 1.0.0
   virtual_path: .apm/packages/common-hooks-claude
   is_virtual: true
@@ -762,8 +762,8 @@ dependencies:
 - repo_url: y-miyazaki/config
   name: common-hooks-cursor
   host: github.com
-  resolved_commit: 7b0e8557d0544acef512cb7e5e81f96abf19bd44
-  resolved_ref: v1.8.28
+  resolved_commit: 0098282039f73bf3aba3a67a02568c0dec11c2a5
+  resolved_ref: v1.8.30
   version: 1.0.0
   virtual_path: .apm/packages/common-hooks-cursor
   is_virtual: true
@@ -799,8 +799,8 @@ dependencies:
 - repo_url: y-miyazaki/config
   name: config-shell-script
   host: github.com
-  resolved_commit: 7b0e8557d0544acef512cb7e5e81f96abf19bd44
-  resolved_ref: v1.8.28
+  resolved_commit: 0098282039f73bf3aba3a67a02568c0dec11c2a5
+  resolved_ref: v1.8.30
   version: 1.0.0
   virtual_path: .apm/packages/shell-script
   is_virtual: true
@@ -1020,8 +1020,8 @@ dependencies:
 - repo_url: y-miyazaki/config
   name: shell-script-hooks-claude
   host: github.com
-  resolved_commit: 7b0e8557d0544acef512cb7e5e81f96abf19bd44
-  resolved_ref: v1.8.28
+  resolved_commit: 0098282039f73bf3aba3a67a02568c0dec11c2a5
+  resolved_ref: v1.8.30
   version: 1.0.0
   virtual_path: .apm/packages/shell-script-hooks-claude
   is_virtual: true
@@ -1041,8 +1041,8 @@ dependencies:
 - repo_url: y-miyazaki/config
   name: shell-script-hooks-cursor
   host: github.com
-  resolved_commit: 7b0e8557d0544acef512cb7e5e81f96abf19bd44
-  resolved_ref: v1.8.28
+  resolved_commit: 0098282039f73bf3aba3a67a02568c0dec11c2a5
+  resolved_ref: v1.8.30
   version: 1.0.0
   virtual_path: .apm/packages/shell-script-hooks-cursor
   is_virtual: true
@@ -1062,8 +1062,8 @@ dependencies:
 - repo_url: y-miyazaki/config
   name: config-terraform
   host: github.com
-  resolved_commit: 7b0e8557d0544acef512cb7e5e81f96abf19bd44
-  resolved_ref: v1.8.28
+  resolved_commit: 0098282039f73bf3aba3a67a02568c0dec11c2a5
+  resolved_ref: v1.8.30
   version: 1.0.0
   virtual_path: .apm/packages/terraform
   is_virtual: true
@@ -1311,8 +1311,8 @@ dependencies:
 - repo_url: y-miyazaki/config
   name: config-terraform-aws
   host: github.com
-  resolved_commit: 7b0e8557d0544acef512cb7e5e81f96abf19bd44
-  resolved_ref: v1.8.28
+  resolved_commit: 0098282039f73bf3aba3a67a02568c0dec11c2a5
+  resolved_ref: v1.8.30
   version: 1.0.0
   virtual_path: .apm/packages/terraform-aws
   is_virtual: true
@@ -1322,8 +1322,8 @@ dependencies:
 - repo_url: y-miyazaki/config
   name: terraform-hooks-claude
   host: github.com
-  resolved_commit: 7b0e8557d0544acef512cb7e5e81f96abf19bd44
-  resolved_ref: v1.8.28
+  resolved_commit: 0098282039f73bf3aba3a67a02568c0dec11c2a5
+  resolved_ref: v1.8.30
   version: 1.0.0
   virtual_path: .apm/packages/terraform-hooks-claude
   is_virtual: true
@@ -1343,8 +1343,8 @@ dependencies:
 - repo_url: y-miyazaki/config
   name: terraform-hooks-cursor
   host: github.com
-  resolved_commit: 7b0e8557d0544acef512cb7e5e81f96abf19bd44
-  resolved_ref: v1.8.28
+  resolved_commit: 0098282039f73bf3aba3a67a02568c0dec11c2a5
+  resolved_ref: v1.8.30
   version: 1.0.0
   virtual_path: .apm/packages/terraform-hooks-cursor
   is_virtual: true
@@ -1366,7 +1366,6 @@ mcp_servers:
 - aws-knowledge-mcp-server
 - aws-mcp
 - aws-pricing-mcp-server
-- awslabs-aws-api-mcp-server
 - awslabs-terraform-mcp-server
 - codebase-memory-mcp
 - context7
@@ -1394,26 +1393,14 @@ mcp_configs:
     command: uvx
   aws-mcp:
     name: aws-mcp
-    transport: stdio
-    args:
-    - mcp-proxy-for-aws==1.4.2
-    - https://aws-mcp.us-east-1.api.aws/mcp
+    transport: streamable-http
     registry: false
-    command: uvx
+    url: https://aws-mcp.us-east-1.api.aws/mcp?oauth=initialize
   aws-pricing-mcp-server:
     name: aws-pricing-mcp-server
     transport: stdio
     args:
     - awslabs.aws-pricing-mcp-server==1.0.30
-    registry: false
-    command: uvx
-  awslabs-aws-api-mcp-server:
-    name: awslabs-aws-api-mcp-server
-    transport: stdio
-    env:
-      AWS_REGION: ${AWS_REGION}
-    args:
-    - awslabs.aws-api-mcp-server==1.3.36
     registry: false
     command: uvx
   awslabs-terraform-mcp-server:
@@ -1476,7 +1463,6 @@ mcp_config_provenance:
   aws-knowledge-mcp-server: config-aws
   aws-mcp: config-aws
   aws-pricing-mcp-server: config-aws
-  awslabs-aws-api-mcp-server: config-aws
   awslabs-terraform-mcp-server: config-terraform-aws
   codebase-memory-mcp: config-common
   context7: config-common

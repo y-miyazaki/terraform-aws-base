@@ -8,22 +8,22 @@ targets:
 includes: auto
 dependencies:
   apm:
-    - github.com/y-miyazaki/config/.apm/packages/common#v1.8.28
-    - github.com/y-miyazaki/config/.apm/packages/common-hooks-claude#v1.8.28
-    # - github.com/y-miyazaki/config/.apm/packages/common-hooks-copilot#v1.8.28
-    - github.com/y-miyazaki/config/.apm/packages/common-hooks-cursor#v1.8.28
-    - github.com/y-miyazaki/config/.apm/packages/aws#v1.8.28
-    # - github.com/y-miyazaki/config/.apm/packages/go#v1.8.28
-    # - github.com/y-miyazaki/config/.apm/packages/go-hooks-claude#v1.8.28
-    # - github.com/y-miyazaki/config/.apm/packages/go-hooks-copilot#v1.8.28
-    # - github.com/y-miyazaki/config/.apm/packages/go-hooks-cursor#v1.8.28
-    - github.com/y-miyazaki/config/.apm/packages/shell-script#v1.8.28
-    - github.com/y-miyazaki/config/.apm/packages/shell-script-hooks-claude#v1.8.28
-    # - github.com/y-miyazaki/config/.apm/packages/shell-script-hooks-copilot#v1.8.28
-    - github.com/y-miyazaki/config/.apm/packages/shell-script-hooks-cursor#v1.8.28
-    - github.com/y-miyazaki/config/.apm/packages/terraform#v1.8.28
-    - github.com/y-miyazaki/config/.apm/packages/terraform-hooks-claude#v1.8.28
-    # - github.com/y-miyazaki/config/.apm/packages/terraform-hooks-copilot#v1.8.28
-    - github.com/y-miyazaki/config/.apm/packages/terraform-hooks-cursor#v1.8.28
-    - github.com/y-miyazaki/config/.apm/packages/terraform-aws#v1.8.28
+    - github.com/y-miyazaki/config/.apm/packages/common#v1.8.30
+    - github.com/y-miyazaki/config/.apm/packages/common-hooks-claude#v1.8.30
+    # - github.com/y-miyazaki/config/.apm/packages/common-hooks-copilot#v1.8.30
+    - github.com/y-miyazaki/config/.apm/packages/common-hooks-cursor#v1.8.30
+    - github.com/y-miyazaki/config/.apm/packages/aws#v1.8.30
+    # - github.com/y-miyazaki/config/.apm/packages/go#v1.8.30
+    # - github.com/y-miyazaki/config/.apm/packages/go-hooks-claude#v1.8.30
+    # - github.com/y-miyazaki/config/.apm/packages/go-hooks-copilot#v1.8.30
+    # - github.com/y-miyazaki/config/.apm/packages/go-hooks-cursor#v1.8.30
+    - github.com/y-miyazaki/config/.apm/packages/shell-script#v1.8.30
+    - github.com/y-miyazaki/config/.apm/packages/shell-script-hooks-claude#v1.8.30
+    # - github.com/y-miyazaki/config/.apm/packages/shell-script-hooks-copilot#v1.8.30
+    - github.com/y-miyazaki/config/.apm/packages/shell-script-hooks-cursor#v1.8.30
+    - github.com/y-miyazaki/config/.apm/packages/terraform#v1.8.30
+    - github.com/y-miyazaki/config/.apm/packages/terraform-hooks-claude#v1.8.30
+    # - github.com/y-miyazaki/config/.apm/packages/terraform-hooks-copilot#v1.8.30
+    - github.com/y-miyazaki/config/.apm/packages/terraform-hooks-cursor#v1.8.30
+    - github.com/y-miyazaki/config/.apm/packages/terraform-aws#v1.8.30
   mcp: []
