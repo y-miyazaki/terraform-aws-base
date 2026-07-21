@@ -26,14 +26,17 @@
 # Description:
 #   Displays formatted section headers for organized output
 #
+# Globals:
+#   None
+#
 # Arguments:
 #   $1 - Section title
 #
-# Global Variables:
-#   None
+# Outputs:
+#   Writes to stderr
 #
 # Returns:
-#   None (outputs to stderr)
+#   None
 #
 # Usage:
 #   echo_section "Starting deployment"
@@ -51,15 +54,18 @@ function echo_section {
 # Description:
 #   Displays formatted section footer with elapsed time since start
 #
+# Globals:
+#   None
+#
 # Arguments:
 #   $1 - Section title
 #   $2 - Start time (epoch seconds)
 #
-# Global Variables:
-#   None
+# Outputs:
+#   Writes to stderr
 #
 # Returns:
-#   None (outputs to stderr)
+#   None
 #
 # Usage:
 #   end_echo_section "Deployment" "$start_time"
@@ -83,11 +89,14 @@ function end_echo_section {
 # Description:
 #   Displays an error message and exits the script with specified code
 #
+# Globals:
+#   None
+#
 # Arguments:
 #   $1 - Error message
 #   $2 - Exit code (optional, defaults to 1)
 #
-# Global Variables:
+# Outputs:
 #   None
 #
 # Returns:
@@ -110,10 +119,13 @@ function error_exit {
 # Description:
 #   Executes a command with support for dry-run mode
 #
+# Globals:
+#   None
+#
 # Arguments:
 #   $@ - Command to execute
 #
-# Global Variables:
+# Outputs:
 #   None
 #
 # Returns:
@@ -150,10 +162,13 @@ function execute_command {
 #   Use this only for internally constructed commands where argument-array
 #   execution is not practical.
 #
+# Globals:
+#   None
+#
 # Arguments:
 #   $1 - Command string to execute
 #
-# Global Variables:
+# Outputs:
 #   None
 #
 # Returns:
@@ -186,14 +201,17 @@ function execute_command_string {
 # Description:
 #   Returns the current epoch time for timing measurements
 #
+# Globals:
+#   None
+#
 # Arguments:
 #   None
 #
-# Global Variables:
-#   None
+# Outputs:
+#   Current epoch time in seconds to stdout
 #
 # Returns:
-#   Current epoch time in seconds (to stdout)
+#   0 on success
 #
 # Usage:
 #   start_time=$(get_start_time)
@@ -209,10 +227,13 @@ function get_start_time {
 # Description:
 #   Checks if the script is running in dry-run mode
 #
+# Globals:
+#   None
+#
 # Arguments:
 #   None
 #
-# Global Variables:
+# Outputs:
 #   None
 #
 # Returns:
@@ -232,15 +253,18 @@ function is_dry_run {
 # Description:
 #   Logs messages with timestamp and log level to stderr
 #
+# Globals:
+#   None
+#
 # Arguments:
 #   $1 - Log level (INFO, WARN, ERROR, DEBUG)
 #   $2 - Log message
 #
-# Global Variables:
-#   None
+# Outputs:
+#   Writes to stderr when log level matches
 #
 # Returns:
-#   0 always (outputs to stderr when level matches)
+#   0 always
 #
 # Usage:
 #   log "INFO" "Process completed successfully"
@@ -262,10 +286,13 @@ function log {
 # Description:
 #   Checks that all required command line tools are available in PATH
 #
+# Globals:
+#   None
+#
 # Arguments:
 #   $@ - List of required tools/commands
 #
-# Global Variables:
+# Outputs:
 #   None
 #
 # Returns:
@@ -298,10 +325,13 @@ function validate_dependencies {
 # Description:
 #   Checks that all required environment variables are set
 #
+# Globals:
+#   None
+#
 # Arguments:
 #   $@ - List of required environment variable names
 #
-# Global Variables:
+# Outputs:
 #   None
 #
 # Returns:

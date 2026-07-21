@@ -1,0 +1,90 @@
+# Loop workflow: Changelog maintenance
+# Detects unreleased conventional commits, runs bounded Agent→Verify loop, then finalizes.
+# Design doc: docs/explanation/loop-engineering/workflows/loop-changelog-workflow-design.md
+# Caller inputs: docs/explanation/loop-engineering/workflows/loop-caller-inputs-reference.md
+# Requires repository secret: AGENT_TOKEN (engine API key; see engine input).
+# Pass credentials via secrets: (callee BOT_APP_* / AGENT_TOKEN; remap MAINTENANCE_BOT_*). Optional with.environment for env-scoped secrets inside the reusable.
+name: on-loop-changelog
+
+on:
+  schedule:
+    - cron: "0 10 * * 5"
+  workflow_dispatch: {}
+
+permissions:
+  actions: write
+  contents: write
+  copilot-requests: write # zizmor: ignore[excessive-permissions]
+  pull-requests: write
+
+concurrency:
+  cancel-in-progress: false
+  group: loop-state-main
+  queue: max
+
+jobs:
+  loop:
+    uses: y-miyazaki/config/.github/workflows/ci-loop-caller.yaml@b7dbe0b8b43ebe4e476c2466c858fefd9b7728d9 # v1.8.49
+    with:
+      agent_implementer_max_turns: 5
+      agent_implementer_model: cursor-grok-4.5-low
+      agent_loop_max_attempts: 3
+      agent_verifier_criteria: |
+        ## Criteria for APPROVE
+
+        ALL of the following must be true:
+        1. Changes are limited to the target changelog file only
+        2. New entries appear under `## [Unreleased]` and match the provided commits
+        3. When `repository_url` is provided, each new bullet includes a commit link (`[short-sha](repository_url/commit/sha)`)
+        4. When `compare_url` is provided, `## [Unreleased]` includes at most one `[Full diff](compare_url)` line
+        5. Released version sections are preserved; new `## [x.y.z] - date` sections appear only for versions listed in detect `releases[]`
+        6. Each detect `releases[]` entry has a matching `## [version] - date` section with bullets moved from `## [Unreleased]` for its `commit_shas`
+        7. Release footer links (`[x.y.z]: url`) are added or preserved for new release sections
+        8. No duplicate entries for the same commit subject
+        9. Versions not listed in detect `releases[]` are not invented
+
+        ## Criteria for REJECT
+
+        ANY of the following triggers REJECT:
+        - Changes outside CHANGELOG.md
+        - Missing or incorrect mapping for provided commits
+        - Missing commit links when `repository_url` was provided in detect JSON
+        - Removed or rewritten released sections (except promoting listed commits out of `## [Unreleased]`)
+        - Missing release section for a detect `releases[]` version
+        - Hallucinated release versions or dates
+        - Duplicate or hallucinated entries
+      agent_verifier_max_turns: 3
+      agent_verifier_model: composer-2.5
+      allowlist: CHANGELOG.md
+      branch_match: main
+      branch_state: main
+      budget_max_runs_per_day: 1
+      budget_max_tokens_per_day: 500000
+      detect_domain_env_json: >-
+        {"CHANGELOG_FILE":"CHANGELOG.md","CHANGELOG_MERGE_COMMITS":"false"}
+      detect_script: .agents/skills/loop-changelog/scripts/detect_changelog_commits.sh
+      engine: cursor
+      environment: default
+      finalize_integration: open_pr
+      infer_files_pattern: 'CHANGELOG\.md'
+      loop_name: changelog
+      max_targets_per_schedule: 3
+      no_changes_verdict: REJECT
+      pr_body: ""
+      pr_title: "chore(changelog): update CHANGELOG.md (loop-changelog)"
+      prompt_instructions: |
+        Update the target changelog file using Keep a Changelog section names.
+        Map each provided commit to a single bullet under `## [Unreleased]`.
+        When `repository_url` is present, append a markdown commit link using the full `sha`.
+        When `compare_url` is present, add `[Full diff](compare_url)` once under `## [Unreleased]` if not already there.
+        For each entry in detect `releases[]` that is not yet documented:
+        - Insert `## [version] - date` immediately below `## [Unreleased]` (newest release first among new sections)
+        - Move bullets for that release's `commit_shas` from `## [Unreleased]` into the matching subsections
+        - Add or update footer compare links `[version]: repository_url/compare/previous_tag...tag_sha` when `repository_url` is present
+        Preserve existing released sections; do not invent versions outside detect `releases[]`.
+      pr_enabled: false
+      skill_name: loop-changelog
+    secrets:
+      AGENT_TOKEN: ${{ secrets.AGENT_TOKEN }}
+      BOT_APP_CLIENT_ID: ${{ secrets.MAINTENANCE_BOT_APP_CLIENT_ID }}
+      BOT_APP_PRIVATE_KEY: ${{ secrets.MAINTENANCE_BOT_APP_PRIVATE_KEY }}

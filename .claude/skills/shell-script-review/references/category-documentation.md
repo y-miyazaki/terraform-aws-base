@@ -14,9 +14,10 @@ Fix: Implement show_usage function with Usage/Options/Examples, exit 0
 
 **DOC-03 (SHOULD): Function Comment Blocks**
 
-Check: Does each function include Description, Arguments, Global Variables, and Returns sections, using the same separator or spacing convention as sibling files in the directory?
-Why: Missing sections or inconsistent boundaries reduce review efficiency and hinder maintenance
-Fix: Match sibling file style; document Description/Arguments/Global Variables/Returns with `None` for non-applicable sections
+Check: Does each function include a description line plus `Globals`, `Arguments`, `Outputs`, and `Returns` sections with explicit `None` when a section does not apply, using the same separator convention as sibling files?
+Why: Missing sections or implicit omission reduce review efficiency and hinder maintenance
+Fix: Match sibling file style; document all four API sections per [Google Shell Style Guide — Function Comments](https://google.github.io/styleguide/shellguide.html#s4.2-function-comments)
+Reference: [Google Shell Style Guide — Function Comments](https://google.github.io/styleguide/shellguide.html#s4.2-function-comments)
 
 **DOC-04 (SHOULD): Complex Logic Comments**
 

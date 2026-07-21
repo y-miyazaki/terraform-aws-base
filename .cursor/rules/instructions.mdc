@@ -13,7 +13,7 @@ globs:
 
 - Scope covers creating and updating instruction/rule files: package sources (`**/instructions/*.instructions.md`) and distributed targets (`.cursor/rules/*.mdc`, `.kiro/steering/*.md`, `.claude/rules/*.md`).
 - G-03 (MUST): Keep `applyTo` globs precise to those rule paths — do not use broad trees such as `.claude/**/*.md` that also match skills and unrelated markdown.
-- G-04 (MUST): In agent-facing cross-links, use stem-based wording (`companion X rules (stem \`x\`)`) — never bareuctions.md` filenames that disappear after `apm install`.
+- G-04 (MUST): In agent-facing cross-links, use stem-based wording such as companion X rules (stem `x`) — never bare `*.instructions.md` filenames that disappear after `apm install`.
 - G-05 (MUST): When a companion instruction must guide production-file edits (for example tests paired with source), include those production globs in `applyTo` so the rules inject at edit time.
 
 ## Standards
@@ -27,7 +27,7 @@ globs:
 | Claude (after `apm install`) | `.claude/rules/<stem>.md`                         | `go.md`, `bats.md`                           |
 | Kiro (after `apm install`)   | `.kiro/steering/<stem>.md`                        | `go.md`                                      |
 | Title                        | `# AI Assistant Instructions for <target>`        | `# AI Assistant Instructions for Go`         |
-| Agent-facing cross-link      | Companion wording with stem — not source filename | `companion Bats rules (stem \`bats\`)`       |
+| Agent-facing cross-link      | Companion wording with stem — not source filename | companion Bats rules (stem `bats`)           |
 
 ### Standards Content
 
@@ -49,7 +49,7 @@ globs:
 - **STRUCT-04 (MUST)**: Start the Standards chapter with `### Naming Conventions` - this is the unified starting point across files.
 - **STRUCT-05 (MUST)**: Order Guidelines as domain rules -> Anti-Patterns -> Code Modification Guidelines - this keeps priority order clear.
 - **STRUCT-06 (MUST)**: In the Guidelines chapter, use H3 heading format `### Name (LEVEL)` for rule sections or `### Name` for declaration/process sections - do not include ID ranges in headings.
-- **STRUCT-07 (MUST)**: Keep `## Testing and Validation` and `## Security Guidelines` concise with operational procedures and essential guardrails only; keep detailed review criteria (`TEST-*`, `SEC-*`) in Guidelines - duplicate definitions hurt maintainability and consistency.
+- **STRUCT-07 (MUST)**: Keep `## Testing and Validation` concise: optional on-demand skill pointer and notes for checks not covered by automation; omit always-run command recipes and omit "hooks/pre-commit handle X so do not run Y" explanations; keep detailed review criteria (`TEST-*`, `SEC-*`) in Guidelines - duplicate definitions hurt maintainability and consistency.
 - **STRUCT-08 (SHOULD)**: When Guidelines are large, reinforce critical MUST obligations (for example test pairing) with a short Scope bullet so they are not buried.
 
 ## Guidelines
@@ -63,7 +63,7 @@ globs:
 - G-03 (MUST): applyTo Target Precision
   - Check: Do `applyTo` globs match only intended instruction/rule paths after distribution (for example `.claude/rules/*.md`, not `.claude/**/*.md`)?
 - G-04 (MUST): Portable Cross-References
-  - Check: Do agent-facing cross-links use stem-based wording (`companion X rules (stem \`x\`)`) instead of bareuctions.md` filenames?
+  - Check: Do agent-facing cross-links use stem-based wording such as companion X rules (stem `x`) instead of bare `*.instructions.md` filenames?
 - G-05 (MUST): Companion applyTo Coverage
   - Check: When a companion instruction must guide production-file edits (for example tests paired with source), does `applyTo` include those production globs?
 
@@ -81,13 +81,15 @@ globs:
   - Check: Does the Guidelines chapter have domain rules first, followed by Anti-Patterns, then Code Modification Guidelines?
 - STRUCT-06 (MUST): H3 Heading Format
   - Check: Do H3 headings use `### Name（LEVEL）` format for rule sections, and `### Name` for process/declaration sections?
+- STRUCT-07 (MUST): Concise Testing and Validation Chapter
+  - Check: Is `## Testing and Validation` limited to an optional on-demand skill pointer and notes for checks not covered by automation, without always-run recipes or "hooks/pre-commit handle X so do not run Y" explanations?
 - STRUCT-08 (SHOULD): Critical MUST in Scope
   - Check: When Guidelines are large, are critical MUST obligations (for example test pairing) reinforced with a short Scope bullet?
 
 ### Guidelines Chapter (GUIDE)
 
 - GUIDE-01 (SHOULD): Code Modification Guidelines
-  - Check: Modification procedures and validation methods are clearly documented
+  - Check: Modification procedures are clearly documented; do not embed always-run lint/validate recipes or "hooks handle it, skip lint" explanations
 - GUIDE-02 (SHOULD): Tool Usage
   - Check: MCP Tool usage examples are documented
 - GUIDE-03 (SHOULD): Anti-Patterns
@@ -115,10 +117,10 @@ globs:
 
 ### Completeness (COMP)
 
-- COMP-01 (SHOULD): No Missing Commands
-  - Check: Executable validation commands are comprehensive
-- COMP-02 (SHOULD): Real Commands
-  - Check: Examples are concrete and comprehensive
+- COMP-01 (SHOULD): Validation Ownership Clear
+  - Check: Does Testing and Validation avoid always-run lint recipes, and use at most a short on-demand skill pointer?
+- COMP-02 (SHOULD): Real Pointers
+  - Check: When a skill is referenced, is the skill name concrete rather than vague "run validation"?
 
 ### Security Guidelines Chapter (SEC)
 
@@ -144,38 +146,22 @@ globs:
 
 ### Testing and Validation Chapter (TEST)
 
-- TEST-01 (MUST): Validation Commands
-  - Check: Executable validation commands are documented
-- TEST-02 (MUST): Code Block Format
-  - Check: Examples are in \`\`\`bash code block format
-- TEST-03 (SHOULD): Validation Items
-  - Check: Validation items list is comprehensive
-- TEST-04 (SHOULD): Real Commands
-  - Check: Examples are concrete and actually executable
+- TEST-01 (MUST): No Always-Run Lint Mandates
+  - Check: Does the chapter omit "after every change, run validate.sh / linter X" and omit "hooks/pre-commit handle X so do not run Y"?
+- TEST-02 (SHOULD): On-Demand Skill Pointer
+  - Check: If present, is the skill pointer one short line (skill name / SKILL.md) without command recipe blocks?
+- TEST-03 (SHOULD): Domain-Only Operational Notes
+  - Check: Are any remaining operational notes limited to checks automation does not cover (for example tests, coverage, suite pairing, judgment review)?
 
 ### Code Modification Guidelines
 
-- After changes, prioritize running validate.sh from instructions-review skill.
-- When instruction files are updated, always run an instruction quality re-evaluation.
 - Keep applyTo precise to distributed rule paths; use stem-based companion cross-links (G-03, G-04, G-05).
-- Use individual commands only for debugging.
+- Do not embed always-run lint/validate recipes or "hooks handle it" skip explanations in always-on instructions.
+- When instruction files are updated, re-evaluate instruction quality against this file's STRUCT/TEST rules.
 
 ## Testing and Validation
 
-**Entry point (recommended)**:
-
-```bash
-bash <agent-root>/skills/instructions-review/scripts/validate.sh
-```
-
-**Individual execution (debugging)**:
-
-```bash
-markdownlint-cli2 ".apm/instructions/**"
-textlint .apm/instructions/
-```
-
-**Detailed guide**: See instructions-review skill SKILL.md.
+On-demand validation: see instructions-review skill SKILL.md.
 
 ## Security Guidelines
 

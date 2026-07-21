@@ -25,7 +25,7 @@ export LC_ALL=C.UTF-8
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # Load common library
-# shellcheck source=lib/common.sh
+# shellcheck source=./lib/common.sh
 # shellcheck disable=SC1091
 source "${SCRIPT_DIR}/lib/common.sh"
 
@@ -38,6 +38,19 @@ OUTPUT_FORMAT="json"
 
 #######################################
 # show_usage: Display usage information
+#
+# Arguments:
+#   None
+#
+# Globals:
+#   None
+#
+# Outputs:
+#   Help text to stdout
+#
+# Returns:
+#   Exits with code 0
+#
 #######################################
 function show_usage {
     cat << EOF
@@ -67,6 +80,19 @@ EOF
 
 #######################################
 # get_repository_from_git: Auto-detect repository
+#
+# Arguments:
+#   None
+#
+# Globals:
+#   None
+#
+# Outputs:
+#   owner/repo to stdout when detected
+#
+# Returns:
+#   0 on success, 1 otherwise
+#
 #######################################
 function get_repository_from_git {
     if ! git remote get-url origin &> /dev/null; then
@@ -85,6 +111,19 @@ function get_repository_from_git {
 
 #######################################
 # fetch_pr_metadata: Fetch PR info via gh
+#
+# Arguments:
+#   None
+#
+# Globals:
+#   None
+#
+# Outputs:
+#   None
+#
+# Returns:
+#   None
+#
 #######################################
 function fetch_pr_metadata {
     log "INFO" "Fetching PR #$PR_NUMBER metadata from $REPOSITORY"
@@ -96,6 +135,19 @@ function fetch_pr_metadata {
 
 #######################################
 # fetch_pr_files_paginated: Fetch all PR files via GitHub API pagination
+#
+# Arguments:
+#   None
+#
+# Globals:
+#   None
+#
+# Outputs:
+#   None
+#
+# Returns:
+#   None
+#
 #######################################
 function fetch_pr_files_paginated {
     log "INFO" "Fetching all files for PR #$PR_NUMBER via paginated API"
@@ -108,6 +160,19 @@ function fetch_pr_files_paginated {
 
 #######################################
 # parse_template_sections: Extract template sections
+#
+# Arguments:
+#   None
+#
+# Globals:
+#   None
+#
+# Outputs:
+#   None
+#
+# Returns:
+#   None
+#
 #######################################
 function parse_template_sections {
     local pr_body="$1"
@@ -137,6 +202,19 @@ function parse_template_sections {
 
 #######################################
 # classify_files: Classify files by type
+#
+# Arguments:
+#   None
+#
+# Globals:
+#   None
+#
+# Outputs:
+#   None
+#
+# Returns:
+#   None
+#
 #######################################
 function classify_files {
     local files_json="$1"
@@ -170,6 +248,19 @@ function classify_files {
 
 #######################################
 # parse_arguments: Parse command line
+#
+# Arguments:
+#   $@ - Command line arguments
+
+# Globals:
+#   None
+#
+# Outputs:
+#   None
+#
+# Returns:
+#   None
+#
 #######################################
 function parse_arguments {
     while [[ $# -gt 0 ]]; do
@@ -207,6 +298,19 @@ function parse_arguments {
 
 #######################################
 # main: Main process
+#
+# Arguments:
+#   $@ - Command line arguments
+
+# Globals:
+#   None
+#
+# Outputs:
+#   None
+#
+# Returns:
+#   None
+#
 #######################################
 function main {
     parse_arguments "$@"

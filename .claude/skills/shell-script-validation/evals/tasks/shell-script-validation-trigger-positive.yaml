@@ -1,0 +1,23 @@
+id: shell-script-validation-trigger-positive-001
+name: shell-script-validation trigger positive path
+description: |
+  Validate shell-script-validation is invoked for committing script changes
+  and CI validation reproduction scenarios.
+tags:
+  - quality
+  - trigger-positive
+inputs:
+  prompt: |
+    Use shell-script-validation to validate shell scripts with bash -n and shellcheck for syntax
+    safety and maintainability checks. Does not enforce Bats suite pairing (TEST-00) — run bats
+    and shell-script-review for that. Use when committing script changes, running CI validation,
+    or debugging shellcheck findings in PRs. Return ## Summary and ## Tool Results.
+  context:
+    target: SKILL.md
+expected:
+  output_contains:
+    - "## Summary"
+    - "## Tool Results"
+    - "scripts/validate.sh"
+  outcomes:
+    - type: task_completed

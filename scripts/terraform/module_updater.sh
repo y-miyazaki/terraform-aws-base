@@ -30,9 +30,7 @@ set -euo pipefail
 umask 027
 export LC_ALL=C.UTF-8
 
-# Get script directory for library loading
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-export SCRIPT_DIR
 
 # Load all-in-one library
 # shellcheck source=../lib/all.sh
@@ -83,14 +81,17 @@ trap 'echo "[ERROR] Aborted while processing: ${CURRENT_FILE_BEING_SCANNED:-N/A}
 # Description:
 #   Displays usage information for the script, including options and examples
 #
+# Globals:
+#   None
+#
 # Arguments:
 #   None
 #
-# Global Variables:
-#   None
+# Outputs:
+#   Writes to stdout
 #
 # Returns:
-#   None (outputs to stdout)
+#   None
 #
 # Usage:
 #   show_usage
@@ -137,16 +138,19 @@ EOF
 # Description:
 #   Parse command line arguments
 #
-# Arguments:
-#   $@ - Command line arguments
-#
-# Global Variables:
+# Globals:
 #   VERBOSE - Enable verbose output
 #   DRY_RUN - Run in dry-run mode
 #   CHECK_ONLY - Check only mode
 #   RECURSIVE_SEARCH - Search recursively
 #   NO_PLAN - Skip plan/validation
 #   TERRAFORM_DIR - Target Terraform directory
+#
+# Arguments:
+#   $@ - Command line arguments
+#
+# Outputs:
+#   None
 #
 # Returns:
 #   0 on success, exits on error
@@ -210,11 +214,14 @@ function parse_arguments {
 # Description:
 #   Compute artifact directory for a project
 #
+# Globals:
+#   BACKUP_DIR - Main backup directory
+#
 # Arguments:
 #   $1 - Project directory path
 #
-# Global Variables:
-#   BACKUP_DIR - Main backup directory
+# Outputs:
+#   None
 #
 # Returns:
 #   Path to the artifact directory
@@ -240,10 +247,13 @@ function artifact_dir_for {
 #   Creates a timestamped backup copy of the specified file in the appropriate
 #   backup directory. Uses project-specific artifact directories to avoid collisions.
 #
+# Globals:
+#   None
+#
 # Arguments:
 #   $1 - Path to file to backup
 #
-# Global Variables:
+# Outputs:
 #   None
 #
 # Returns:
@@ -280,14 +290,17 @@ function backup_file {
 #   Removes all backup directories, plan files, and temporary artifacts
 #   created during the module update process.
 #
-# Arguments:
-#   None
-#
-# Global Variables:
+# Globals:
 #   BACKUP_DIR - Main backup directory path
 #   TERRAFORM_DIR - Base terraform directory
 #   RECURSIVE_SEARCH - Whether recursive search was used
 #   NO_PLAN - Whether plan mode was disabled
+#
+# Arguments:
+#   None
+#
+# Outputs:
+#   None
 #
 # Returns:
 #   0 on success
@@ -370,10 +383,13 @@ function cleanup_all_artifacts {
 #   Removes temporary plan files and artifacts created during
 #   the validation process from the specified Terraform directory.
 #
+# Globals:
+#   None
+#
 # Arguments:
 #   $1 - Path to Terraform directory to clean
 #
-# Global Variables:
+# Outputs:
 #   None
 #
 # Returns:
@@ -415,16 +431,19 @@ function cleanup_plan_files {
 # Description:
 #   Collect module information for batch update
 #
+# Globals:
+#   MODULE_FILES_MAP - Map of module source to list of files
+#   MODULE_VERSIONS_MAP - Map of module source to version info
+#   PROJECT_DIRS_MAP - Map of project dir to 1
+#
 # Arguments:
 #   $1 - Path to Terraform file
 #   $2 - Module source identifier
 #   $3 - Current version string
 #   $4 - Latest version string
 #
-# Global Variables:
-#   MODULE_FILES_MAP - Map of module source to list of files
-#   MODULE_VERSIONS_MAP - Map of module source to version info
-#   PROJECT_DIRS_MAP - Map of project dir to 1
+# Outputs:
+#   None
 #
 # Returns:
 #   None
@@ -463,13 +482,16 @@ function collect_module_for_batch_update {
 # Description:
 #   Create baseline terraform plan before module updates
 #
+# Globals:
+#   ENV - Environment variable
+#   DEFAULT_ENV - Default environment
+#
 # Arguments:
 #   $1 - Terraform directory
 #   $2 - Environment (optional)
 #
-# Global Variables:
-#   ENV - Environment variable
-#   DEFAULT_ENV - Default environment
+# Outputs:
+#   None
 #
 # Returns:
 #   0 on success, 1 on failure
@@ -556,14 +578,17 @@ function create_baseline_plan {
 # Description:
 #   Create baseline plans for all affected projects
 #
-# Arguments:
-#   None
-#
-# Global Variables:
+# Globals:
 #   PROJECT_DIRS_MAP - Map of project dir to 1
 #   BASELINE_CREATED_MAP - Map of project dir to baseline creation status
 #   ENV - Environment variable
 #   DEFAULT_ENV - Default environment
+#
+# Arguments:
+#   None
+#
+# Outputs:
+#   None
 #
 # Returns:
 #   None
@@ -602,10 +627,13 @@ function create_baseline_plans_for_projects {
 #   Parses a Terraform file to extract module declarations and their
 #   source/version information using AWK pattern matching.
 #
+# Globals:
+#   None
+#
 # Arguments:
 #   $1 - Path to Terraform file to parse
 #
-# Global Variables:
+# Outputs:
 #   None
 #
 # Returns:
@@ -656,11 +684,14 @@ function extract_modules_from_file {
 #   Searches for .tf files that contain module declarations. Supports both
 #   single directory and recursive search modes.
 #
+# Globals:
+#   None
+#
 # Arguments:
 #   $1 - Directory to search in
 #   $2 - Whether to search recursively (true/false, default: false)
 #
-# Global Variables:
+# Outputs:
 #   None
 #
 # Returns:
@@ -691,10 +722,13 @@ function find_terraform_modules {
 #   Traverses up the directory tree from a given file to find the
 #   Terraform project root by looking for characteristic files.
 #
+# Globals:
+#   None
+#
 # Arguments:
 #   $1 - Path to a file within the Terraform project
 #
-# Global Variables:
+# Outputs:
 #   None
 #
 # Returns:
@@ -739,10 +773,13 @@ function find_terraform_project_root {
 #   Queries the Terraform Registry API to get the latest available version
 #   for a given module source. Supports caching to avoid repeated API calls.
 #
+# Globals:
+#   None
+#
 # Arguments:
 #   $1 - Module source URL/path
 #
-# Global Variables:
+# Outputs:
 #   None
 #
 # Returns:
@@ -820,15 +857,18 @@ function get_latest_version {
 #   Creates a comprehensive summary of the module update process,
 #   showing statistics and lists of successful/failed updates.
 #
-# Arguments:
-#   None
-#
-# Global Variables:
+# Globals:
 #   TOTAL_MODULES - Total modules scanned
 #   UPDATED_MODULES - Number of successfully updated modules
 #   FAILED_MODULES - Number of failed module updates
 #   UPDATED_MODULES_LIST - List of successfully updated modules
 #   FAILED_MODULES_LIST - List of failed modules
+#
+# Arguments:
+#   None
+#
+# Outputs:
+#   None
 #
 # Returns:
 #   0 on success
@@ -869,10 +909,7 @@ function generate_summary_report {
 # Description:
 #   Process all collected modules in batch
 #
-# Arguments:
-#   None
-#
-# Global Variables:
+# Globals:
 #   MODULE_FILES_MAP - Map of module source to list of files
 #   MODULE_VERSIONS_MAP - Map of module source to version info
 #   UPDATED_MODULES - Counter for updated modules
@@ -880,6 +917,12 @@ function generate_summary_report {
 #   UPDATED_MODULES_LIST - List of updated modules
 #   FAILED_MODULES_LIST - List of failed modules
 #   NO_PLAN - Skip plan/validation flag
+#
+# Arguments:
+#   None
+#
+# Outputs:
+#   None
 #
 # Returns:
 #   None
@@ -973,13 +1016,16 @@ function process_batch_module_updates {
 #   In dry-run mode, just counts the update. Otherwise, collects
 #   module information for batch processing.
 #
+# Globals:
+#   None
+#
 # Arguments:
 #   $1 - Path to Terraform file
 #   $2 - Module source identifier
 #   $3 - Current version string
 #   $4 - Latest version string
 #
-# Global Variables:
+# Outputs:
 #   None
 #
 # Returns:
@@ -1012,10 +1058,13 @@ function process_single_module_update {
 #   Main processing function that scans a Terraform directory for modules,
 #   identifies updates, and processes them either individually or in batch.
 #
+# Globals:
+#   None
+#
 # Arguments:
 #   $1 - Path to Terraform directory to process
 #
-# Global Variables:
+# Outputs:
 #   None
 #
 # Returns:
@@ -1121,11 +1170,14 @@ function process_terraform_directory {
 #   Restores files from backup copies when module updates fail.
 #   Searches for appropriate backup files in project-specific directories.
 #
+# Globals:
+#   None
+#
 # Arguments:
 #   $1 - Module source identifier
 #   $@ - List of file paths to rollback
 #
-# Global Variables:
+# Outputs:
 #   None
 #
 # Returns:
@@ -1181,12 +1233,15 @@ function rollback_module_files {
 #   Creates a backup directory with timestamp under the terraform directory
 #   to store original files before making modifications.
 #
+# Globals:
+#   TERRAFORM_DIR - Base terraform directory
+#   BACKUP_DIR - Set to the created backup directory path
+#
 # Arguments:
 #   None
 #
-# Global Variables:
-#   TERRAFORM_DIR - Base terraform directory
-#   BACKUP_DIR - Set to the created backup directory path
+# Outputs:
+#   None
 #
 # Returns:
 #   0 on success
@@ -1209,13 +1264,16 @@ function setup_backup_directory {
 #   Updates the version field of a specific module in a Terraform file.
 #   Creates a backup before making changes and can restore on failure.
 #
+# Globals:
+#   None
+#
 # Arguments:
 #   $1 - Path to Terraform file
 #   $2 - Module source identifier
 #   $3 - Current version string
 #   $4 - New version string
 #
-# Global Variables:
+# Outputs:
 #   None
 #
 # Returns:
@@ -1264,13 +1322,16 @@ function update_module_version {
 # Description:
 #   Validate all affected projects
 #
-# Arguments:
-#   $@ - List of file paths
-#
-# Global Variables:
+# Globals:
 #   BASELINE_CREATED_MAP - Map of project dir to baseline creation status
 #   ENV - Environment variable
 #   DEFAULT_ENV - Default environment
+#
+# Arguments:
+#   $@ - List of file paths
+#
+# Outputs:
+#   None
 #
 # Returns:
 #   0 on success, 1 on failure
@@ -1328,14 +1389,17 @@ function validate_all_affected_projects {
 # Description:
 #   Validate terraform with plan content comparison
 #
+# Globals:
+#   ENV - Environment variable
+#   DEFAULT_ENV - Default environment
+#   VERBOSE - Enable verbose output
+#
 # Arguments:
 #   $1 - Terraform directory
 #   $2 - Environment (optional)
 #
-# Global Variables:
-#   ENV - Environment variable
-#   DEFAULT_ENV - Default environment
-#   VERBOSE - Enable verbose output
+# Outputs:
+#   None
 #
 # Returns:
 #   0 on success, 1 on failure
@@ -1491,15 +1555,18 @@ function validate_terraform_with_plan_comparison {
 # Description:
 #   Main execution function
 #
-# Arguments:
-#   $@ - Command line arguments
-#
-# Global Variables:
+# Globals:
 #   TERRAFORM_DIR - Target Terraform directory
 #   RECURSIVE_SEARCH - Search recursively flag
 #   CHECK_ONLY - Check only mode flag
 #   DRY_RUN - Dry-run mode flag
 #   FAILED_MODULES - Counter for failed modules
+#
+# Arguments:
+#   $@ - Command line arguments
+#
+# Outputs:
+#   None
 #
 # Returns:
 #   0 on success, 1 on failure

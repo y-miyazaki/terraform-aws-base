@@ -54,11 +54,14 @@ SKILLS_ROOT="$(cd "${SKILL_DIR}/.." && pwd)"
 # Arguments:
 #   None
 #
-# Global Variables:
+# Globals:
 #   None
 #
+# Outputs:
+#   Writes to stdout
+#
 # Returns:
-#   None (outputs to stdout)
+#   None
 #
 # Usage:
 #   show_usage
@@ -73,7 +76,7 @@ Description: Run deterministic waza readiness checks for a target skill.
 Arguments:
     skill-name     Skill directory name under <agent-root>/skills (for example: terraform-review)
     SKILL.md       Absolute or relative path to <agent-root>/skills/*/SKILL.md
-                                 agent-root: .github, .agents, .claude, .cursor, cursor, .kiro, kiro
+                                 agent-root: .github, .agents, .claude, .codex, .cursor, cursor, .kiro, kiro
 
 Options:
   -h, --help     Display this help message
@@ -95,9 +98,12 @@ EOF
 # Arguments:
 #   $@ - All command line arguments passed to the script
 #
-# Global Variables:
+# Globals:
 #   VERBOSE - Verbose mode flag
 #   TARGET_INPUT - Raw target input value
+#
+# Outputs:
+#   None
 #
 # Returns:
 #   Exits with error if arguments are invalid
@@ -143,9 +149,12 @@ function parse_arguments {
 # Arguments:
 #   None (uses global TARGET_INPUT)
 #
-# Global Variables:
+# Globals:
 #   TARGET_INPUT - Raw target input value
 #   TARGET_SKILL_NAME - Resolved skill directory name
+#
+# Outputs:
+#   None
 #
 # Returns:
 #   Exits with error if input cannot be resolved to <agent-root>/skills/*
@@ -162,8 +171,8 @@ function resolve_target_skill {
         fi
 
         target_path="$(realpath "$TARGET_INPUT")"
-        if [[ ! $target_path =~ /(\.github|\.agents|\.claude|\.cursor|cursor|\.kiro|kiro)/skills/([^/]+)/SKILL\.md$ ]]; then
-            error_exit "Path must match <agent-root>/skills/*/SKILL.md where agent-root is one of .github,.agents,.claude,.cursor,cursor,.kiro,kiro: $target_path"
+        if [[ ! $target_path =~ /(\.github|\.agents|\.claude|\.codex|\.cursor|cursor|\.kiro|kiro)/skills/([^/]+)/SKILL\.md$ ]]; then
+            error_exit "Path must match <agent-root>/skills/*/SKILL.md where agent-root is one of .github,.agents,.claude,.codex,.cursor,cursor,.kiro,kiro: $target_path"
         fi
 
         TARGET_SKILL_NAME="${BASH_REMATCH[2]}"
@@ -196,7 +205,10 @@ function resolve_target_skill {
 # Arguments:
 #   None (uses resolved globals)
 #
-# Global Variables:
+# Globals:
+#   None
+#
+# Outputs:
 #   None
 #
 # Returns:
@@ -229,7 +241,10 @@ function run_waza_check {
 # Arguments:
 #   None (uses resolved globals)
 #
-# Global Variables:
+# Globals:
+#   None
+#
+# Outputs:
 #   None
 #
 # Returns:
@@ -257,7 +272,10 @@ function run_waza_eval {
 # Arguments:
 #   None (uses resolved globals)
 #
-# Global Variables:
+# Globals:
+#   None
+#
+# Outputs:
 #   None
 #
 # Returns:
@@ -285,7 +303,10 @@ function run_waza_tokens_count {
 # Arguments:
 #   $@ - Command line arguments
 #
-# Global Variables:
+# Globals:
+#   None
+#
+# Outputs:
 #   None
 #
 # Returns:

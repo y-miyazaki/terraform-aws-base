@@ -33,11 +33,15 @@ fi
 # Arguments:
 #   None
 #
-# Global Variables:
+# Globals:
 #   None
 #
-# Returns:
+# Outputs:
 #   Newline-separated unique file list to stdout
+#
+# Returns:
+#   0 on success
+#
 #######################################
 function get_changed_files {
     {
@@ -55,11 +59,15 @@ function get_changed_files {
 # Arguments:
 #   $1 - reason: Human-readable description of what failed
 #
-# Global Variables:
+# Globals:
 #   None
 #
-# Returns:
+# Outputs:
 #   Does not return. Exits with 0 (JSON block) or 2 (stderr).
+#
+# Returns:
+#   0 on success
+#
 #######################################
 function report_failure {
     local reason="$1"
@@ -186,7 +194,10 @@ function report_failure {
 # Arguments:
 #   None
 #
-# Global Variables:
+# Globals:
+#   None
+#
+# Outputs:
 #   None
 #
 # Returns:

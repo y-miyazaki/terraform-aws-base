@@ -4,6 +4,8 @@
     "allow": [
       "Bash(actionlint *)",
       "Bash(apm *)",
+      "Bash(bash *)",
+      "Bash(bats *)",
       "Bash(cat *)",
       "Bash(cd *)",
       "Bash(command *)",
@@ -171,10 +173,17 @@
     "pr": "\ud83e\udd16 Generated with [Claude Code](https://claude.com/claude-code)"
   },
   "autoCompactEnabled": true,
+  "autoMemoryEnabled": true,
+  "autoUpdatesChannel": "stable",
   "cleanupPeriodDays": 30,
+  "env": {
+    "API_TIMEOUT_MS": "1200000",
+    "BASH_DEFAULT_TIMEOUT_MS": "300000"
+  },
   "fileCheckpointingEnabled": true,
   "includeGitInstructions": true,
   "respectGitignore": true,
+  "spinnerTipsEnabled": true,
   "statusLine": {
     "type": "command",
     "command": "~/.claude/statusline.sh",
@@ -183,11 +192,81 @@
   "hooks": {
     "Stop": [
       {
-        "matcher": "",
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".claude/hooks/common-hooks-claude/scripts/actionlint.sh",
+            "timeout": 60
+          }
+        ]
+      },
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".claude/hooks/common-hooks-claude/scripts/ghalint.sh",
+            "timeout": 60
+          }
+        ]
+      },
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".claude/hooks/common-hooks-claude/scripts/zizmor.sh",
+            "timeout": 60
+          }
+        ]
+      },
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".claude/hooks/common-hooks-claude/scripts/gitleaks.sh",
+            "timeout": 60
+          }
+        ]
+      },
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".claude/hooks/common-hooks-claude/scripts/markdown_link_check.sh",
+            "timeout": 240
+          }
+        ]
+      },
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".claude/hooks/common-hooks-claude/scripts/markdownlint_cli2.sh",
+            "timeout": 120
+          }
+        ]
+      },
+      {
+        "matcher": "*",
         "hooks": [
           {
             "type": "command",
             "command": ".claude/hooks/go-hooks-claude/scripts/golangci_lint.sh",
+            "timeout": 120
+          }
+        ]
+      },
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".claude/hooks/shell-script-hooks-claude/scripts/shellcheck.sh",
             "timeout": 120
           }
         ]
@@ -275,6 +354,25 @@
     ],
     "PostToolUse": [
       {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "command -v lean-ctx >/dev/null 2>&1 || exit 0; lean-ctx hook observe",
+            "timeout": 5
+          }
+        ]
+      },
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "command": "command -v lean-ctx >/dev/null 2>&1 || exit 0; lean-ctx hook observe",
+            "timeout": 5
+          }
+        ]
+      },
+      {
         "matcher": "",
         "hooks": [
           {
@@ -315,6 +413,34 @@
     ],
     "PreToolUse": [
       {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "command -v lean-ctx >/dev/null 2>&1 || exit 0; lean-ctx hook redirect",
+            "timeout": 5
+          }
+        ]
+      },
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "command": "command -v lean-ctx >/dev/null 2>&1 || exit 0; lean-ctx hook rewrite",
+            "timeout": 15
+          }
+        ]
+      },
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "command": "command -v lean-ctx >/dev/null 2>&1 || exit 0; lean-ctx hook redirect",
+            "timeout": 5
+          }
+        ]
+      },
+      {
         "matcher": "Bash|Write",
         "hooks": [
           {
@@ -345,8 +471,76 @@
     ],
     "stop": [
       {
-        "command": ".claude/hooks/go-hooks-cursor/scripts/golangci_lint.sh",
-        "timeoutSec": 120
+        "matcher": "*",
+        "hooks": [
+          {
+            "command": ".claude/hooks/common-hooks-cursor/scripts/actionlint.sh",
+            "timeout": 60
+          }
+        ]
+      },
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "command": ".claude/hooks/common-hooks-cursor/scripts/ghalint.sh",
+            "timeout": 60
+          }
+        ]
+      },
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "command": ".claude/hooks/common-hooks-cursor/scripts/zizmor.sh",
+            "timeout": 60
+          }
+        ]
+      },
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "command": ".claude/hooks/common-hooks-cursor/scripts/gitleaks.sh",
+            "timeout": 60
+          }
+        ]
+      },
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "command": ".claude/hooks/common-hooks-cursor/scripts/markdown_link_check.sh",
+            "timeout": 240
+          }
+        ]
+      },
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "command": ".claude/hooks/common-hooks-cursor/scripts/markdownlint_cli2.sh",
+            "timeout": 120
+          }
+        ]
+      },
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "command": ".claude/hooks/go-hooks-cursor/scripts/golangci_lint.sh",
+            "timeout": 120
+          }
+        ]
+      },
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "command": ".claude/hooks/shell-script-hooks-cursor/scripts/shellcheck.sh",
+            "timeout": 120
+          }
+        ]
       },
       {
         "command": ".claude/hooks/common-hooks-cursor/scripts/actionlint.sh",
@@ -382,6 +576,15 @@
       }
     ],
     "afterFileEdit": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "command": ".claude/hooks/shell-script-hooks-cursor/scripts/shfmt.sh",
+            "timeout": 120
+          }
+        ]
+      },
       {
         "command": ".claude/hooks/shell-script-hooks-cursor/scripts/shfmt.sh",
         "timeoutSec": 120

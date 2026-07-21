@@ -50,6 +50,28 @@ if command -v claude > /dev/null 2>&1; then
 fi
 
 #######################################
+# Cursor CLI statusline (optional; config lives in ~/.cursor/cli-config.json)
+#######################################
+if [ -f "${repo_root}/.cursor/statusline.sh" ]; then
+    mkdir -p ~/.cursor
+    cp -p "${repo_root}/.cursor/statusline.sh" ~/.cursor/statusline.sh
+    chmod +x ~/.cursor/statusline.sh
+
+    if command -v jq > /dev/null 2>&1; then
+        statusline_json="{\"command\":\"${HOME}/.cursor/statusline.sh\",\"padding\":2,\"timeoutMs\":5000,\"type\":\"command\",\"updateIntervalMs\":500}"
+        cli_config="${HOME}/.cursor/cli-config.json"
+        if [ -f "${cli_config}" ]; then
+            jq --argjson sl "${statusline_json}" '.statusLine = $sl | .version = (.version // 1)' "${cli_config}" > "${cli_config}.tmp" \
+                && mv "${cli_config}.tmp" "${cli_config}"
+        else
+            jq -n --argjson sl "${statusline_json}" \
+                '{version: 1, editor: {vimMode: false}, permissions: {allow: ["Shell(ls)"], deny: []}, statusLine: $sl}' \
+                > "${cli_config}"
+        fi
+    fi
+fi
+
+#######################################
 # mise trust (optional)
 #######################################
 if command -v mise > /dev/null 2>&1; then
@@ -60,6 +82,16 @@ if command -v mise > /dev/null 2>&1; then
             mise install || echo "[warn] mise install task failed" >&2
             mise reshim --yes || echo "[warn] mise reshim failed" >&2
             mise prune --yes || echo "[warn] mise prune failed" >&2
+            # Expose mise shims on PATH for login shells that do not source .bashrc (e.g. zsh).
+            # Cursor hooks inherit PATH from remoteEnv in devcontainer.json, not from profile.d.
+            mise_shims="${HOME}/.local/share/mise/shims"
+            if [ -d "${mise_shims}" ]; then
+                printf '%s\n' \
+                    '# mise shims on PATH (devcontainer; see .devcontainer/devcontainer.json remoteEnv)' \
+                    "export PATH=\"${mise_shims}:\$PATH\"" \
+                    | sudo tee /etc/profile.d/mise-shims.sh > /dev/null
+                sudo chmod 644 /etc/profile.d/mise-shims.sh
+            fi
         )
     fi
 fi
@@ -76,6 +108,16 @@ if command -v apm > /dev/null 2>&1; then
             apm run postinstall || echo "[warn] apm run failed" >&2
         )
     fi
+fi
+
+#######################################
+# lean-ctx MCP scope (workspace via APM is canonical)
+#######################################
+if command -v lean-ctx > /dev/null 2>&1; then
+    mkdir -p "${HOME}/.config/lean-ctx"
+    lean-ctx config set setup.auto_update_mcp false > /dev/null 2>&1 \
+        || echo "[warn] lean-ctx config set (auto_update_mcp) failed" >&2
+    lean-ctx trust || echo "[warn] lean trust failed" >&2
 fi
 
 #######################################

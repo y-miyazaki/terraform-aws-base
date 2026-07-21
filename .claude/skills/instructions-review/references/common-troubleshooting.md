@@ -25,21 +25,21 @@ This document lists frequent issues found during instructions file reviews and t
   sections: [...]
 ```
 
-## Issue 2: Insufficient Validation Commands
+## Issue 2: Always-On Validation Recipes in Instructions
 
-**Problem**: Only 1-2 validation commands documented
+**Problem**: Testing and Validation embeds `validate.sh` / linter command catalogs or "hooks handle it, skip lint" text
 
-**Root Cause**: Insufficient validation coverage
+**Root Cause**: Treating always-on instructions as the validation launcher
 
-**Fix**: Add relevant validation commands (minimum 3 items)
+**Fix**: Keep at most an on-demand skill pointer; put executable recipes in validation skills; rely on Agent hooks/pre-commit for automated lint
 
 **How to Check**:
 
-1. Verify validation commands are documented
-2. Verify commands are in ```bash code block format
-3. Include tool version and purpose for each
+1. Confirm no "after every change, run …" lint mandates
+2. Confirm no hook-skip explanations
+3. Confirm any skill pointer is one short line without recipe blocks
 
-Related checklist IDs: TEST-01, TEST-02
+Related checklist IDs: TEST-01, TEST-02, STRUCT-07
 
 ## Issue 3: Missing Security Guidelines Chapter
 

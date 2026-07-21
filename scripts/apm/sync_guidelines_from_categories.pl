@@ -20,29 +20,24 @@ my %map = (
 
 my %code_mod_guidelines = (
   'agent-skills-review' => [
-    '- After changes, prioritize running validate.sh from agent-skills-review skill.',
-    '- Use individual commands only for debugging.',
+    '- Automate deterministic checks (existence, quantitative, file presence) in skill `scripts/`; keep judgment-based checks in the review skill workflow.',
   ],
   'github-actions-review' => [
-    '- After changes, prioritize running validate.sh from github-actions-validation skill.',
-    '- Use individual commands only for debugging.',
+    '- Keep `inputs`, `env`, `permissions`, and `with` keys alphabetically ordered (G-05).',
   ],
   'go-review' => [
-    '- After changes, prioritize running validate.sh from go-validation skill.',
-    '- Use individual commands (gofumpt/go vet/go test/golangci-lint) only for debugging.',
+    '- When adding or changing behavior, add or update *_test.go files in the same change.',
   ],
   'instructions-review' => [
-    '- After changes, prioritize running validate.sh from instructions-review skill.',
-    '- When instruction files are updated, always run an instruction quality re-evaluation.',
-    '- Use individual commands only for debugging.',
+    '- Keep applyTo precise to distributed rule paths; use stem-based companion cross-links (G-03, G-04, G-05).',
+    '- Do not embed always-run lint/validate recipes or "hooks handle it" skip explanations in always-on instructions.',
+    '- When instruction files are updated, re-evaluate instruction quality against this file\'s STRUCT/TEST rules.',
   ],
   'shell-script-review' => [
-    '- After changes, prioritize running validate.sh from shell-script-validation skill.',
-    '- Use individual commands only for debugging.',
+    '- When adding or changing shell scripts or sourced libraries, add or update matching Bats suites under test/bats/ (mirror the script path) in the same change; follow companion Bats rules (stem `bats`) for suite layout.',
   ],
   'terraform-review' => [
-    '- After changes, prioritize running validate.sh from terraform-validation skill.',
-    '- Use individual commands only for debugging.',
+    '- Keep argument keys inside resource/module/data blocks alphabetically ordered (ORD-01).',
   ],
 );
 

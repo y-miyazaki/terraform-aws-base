@@ -3,7 +3,8 @@
   "remoteUser": "vscode",
   "containerEnv": {
     "CONTAINER_WORKSPACE_FOLDER": "${containerWorkspaceFolder}",
-    "LOCAL_WORKSPACE_FOLDER": "${localWorkspaceFolder}"
+    "LOCAL_WORKSPACE_FOLDER": "${localWorkspaceFolder}",
+    "BASH_ENV": "/home/vscode/.config/lean-ctx/env.sh"
   },
   "customizations": {
     "vscode": {

@@ -1,0 +1,56 @@
+# Platform workflow: promote pending loop state when a fix PR closes.
+# Design: docs/explanation/loop-engineering/multi-branch-loops-design.md#state-delivery-philosophy
+# Requires MAINTENANCE_BOT_APP_CLIENT_ID and MAINTENANCE_BOT_APP_PRIVATE_KEY (environment: default).
+#
+# Trigger: pull_request_target (not pull_request) so a [skip ci] annotation on the closed
+# PR HEAD cannot suppress this merge-gate handler (GitHub skips pull_request for skip-ci HEADs).
+# Security model (required for zizmor ignore):
+# - Checkout only the PR base ref (never the untrusted head).
+# - Run only trusted composite action / scripts from that base checkout.
+# - Use event payload fields only (number, merged, labels); no head checkout or head script exec.
+# - Job gated on loop-automation label.
+name: on-loop-state-promote
+
+on:
+  pull_request_target: # zizmor: ignore[dangerous-triggers]
+    types: [closed]
+
+permissions:
+  contents: write
+
+concurrency:
+  cancel-in-progress: false
+  group: loop-state-main
+  queue: max
+
+jobs:
+  promote:
+    environment: default
+    if: contains(github.event.pull_request.labels.*.name, 'loop-automation')
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+          # Explicit base ref: do not check out untrusted PR head under pull_request_target.
+          ref: ${{ github.event.pull_request.base.ref }}
+
+      - name: Generate App Bot Token
+        id: app_token
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+        with:
+          client-id: ${{ secrets.MAINTENANCE_BOT_APP_CLIENT_ID }}
+          permission-contents: write
+          permission-pull-requests: write
+          private-key: ${{ secrets.MAINTENANCE_BOT_APP_PRIVATE_KEY }}
+
+      - name: Promote Pending State
+        uses: y-miyazaki/config/.github/actions/loop-state-promote@b7dbe0b8b43ebe4e476c2466c858fefd9b7728d9 # v1.8.49
+        with:
+          merged: ${{ github.event.pull_request.merged && 'true' || 'false' }}
+          pr_number: ${{ github.event.pull_request.number }}
+          state_push_branch: ""
+          token: ${{ steps.app_token.outputs.token }}

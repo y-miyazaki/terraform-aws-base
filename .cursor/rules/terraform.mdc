@@ -235,27 +235,11 @@ globs:
 
 ### Code Modification Guidelines
 
-- After changes, prioritize running validate.sh from terraform-validation skill.
-- Use individual commands only for debugging.
+- Keep argument keys inside resource/module/data blocks alphabetically ordered (ORD-01).
 
 ## Testing and Validation
 
-**Entry point (recommended)**:
-
-```bash
-bash <agent-root>/skills/terraform-validation/scripts/validate.sh
-```
-
-**Individual execution (debugging)**:
-
-```bash
-terraform fmt -check -recursive
-terraform validate
-tflint --recursive
-trivy config .
-```
-
-**Detailed guide**: See terraform-validation skill SKILL.md.
+On-demand validation: see terraform-validation skill SKILL.md.
 
 ## Security Guidelines
 

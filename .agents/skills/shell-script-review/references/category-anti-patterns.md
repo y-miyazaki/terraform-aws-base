@@ -12,11 +12,12 @@ Check: Are header and function DOC blocks kept when refactoring?
 Why: Removing comments to shorten diffs hides API contracts and breaks review expectations
 Fix: Keep DOC blocks; use shell-script-review for documentation quality judgment
 
-**AP-03 (SHOULD): Global Variables Section Required**
+**AP-03 (SHOULD): Globals Section Required**
 
-Check: Does every function doc block include `Global Variables:` with `None` when no caller globals apply?
+Check: Does every function doc block include `Globals:` with `None` when no caller globals apply?
 Why: Omitting the section makes caller side effects unclear
-Fix: Add `Global Variables:` followed by `None` when a function uses only locals
+Fix: Add `Globals:` followed by `None` when a function uses only locals
+Reference: [Google Shell Style Guide — Function Comments](https://google.github.io/styleguide/shellguide.html#s4.2-function-comments)
 
 **AP-04 (SHOULD): Consistent Library Comment Style**
 

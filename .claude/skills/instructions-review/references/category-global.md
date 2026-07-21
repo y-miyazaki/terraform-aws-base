@@ -24,7 +24,7 @@ Fix: Scope `applyTo` to package sources plus distributed rule paths (Cursor `.md
 
 **G-04 (MUST): Portable Cross-References**
 
-Check: Do agent-facing cross-links use stem-based wording (`companion X rules (stem \`x\`)`) instead of bareuctions.md`flnms
+Check: Do agent-facing cross-links use stem-based wording such as companion X rules (stem `x`) instead of bare `*.instructions.md` filenames?
 Why: APM renames instruction files per target (`bats.instructions.md` → `bats.mdc` / `bats.md`); bare source names do not exist at agent runtime
 Fix: Prefer stem-based companion references; document the distribution mapping in Naming Conventions when relevant
 
@@ -71,6 +71,12 @@ Fix: Order subsections as: domain-specific rules → Anti-Patterns → Code Modi
 Check: Do H3 headings use `### Name（LEVEL）` format for rule sections, and `### Name` for process/declaration sections?
 Why: Inconsistent H3 formats make the instruction file type unclear at a glance
 Fix: Use `### Name（MUST）` or `### Name（SHOULD）` for rule groups; use `### Name` for non-rule sections
+
+**STRUCT-07 (MUST): Concise Testing and Validation Chapter**
+
+Check: Is `## Testing and Validation` limited to an optional on-demand skill pointer and notes for checks not covered by automation, without always-run recipes or "hooks/pre-commit handle X so do not run Y" explanations?
+Why: Long validation catalogs and skip-explanations waste always-on tokens; detailed TEST/SEC criteria belong in Guidelines
+Fix: Slim the chapter; keep review criteria IDs in Guidelines only
 
 **STRUCT-08 (SHOULD): Critical MUST in Scope**
 

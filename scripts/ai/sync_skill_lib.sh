@@ -29,9 +29,7 @@ set -euo pipefail
 umask 027
 export LC_ALL=C.UTF-8
 
-# Get script directory for library loading
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-export SCRIPT_DIR
 
 # Load all-in-one library
 # shellcheck source=../lib/all.sh
@@ -50,10 +48,13 @@ SYNC_COUNT=0
 #######################################
 # show_usage: Display usage information
 #
+# Globals:
+#   None
+#
 # Arguments:
 #   None
 #
-# Global Variables:
+# Outputs:
 #   None
 #
 # Returns:
@@ -83,11 +84,14 @@ EOF
 #######################################
 # parse_arguments: Parse command line arguments
 #
+# Globals:
+#   CHECK_MODE - Whether to run in check-only mode
+#
 # Arguments:
 #   $@ - Command line arguments
 #
-# Global Variables:
-#   CHECK_MODE - Whether to run in check-only mode
+# Outputs:
+#   None
 #
 # Returns:
 #   None
@@ -117,14 +121,17 @@ function parse_arguments {
 #######################################
 # sync_one_skill: Sync lib to a single skill's scripts/lib/
 #
-# Arguments:
-#   $1 - Path to skill's scripts/ directory
-#
-# Global Variables:
+# Globals:
 #   SOURCE_LIB - Source lib directory
 #   CHECK_MODE - Check-only flag
 #   DRIFT_COUNT - Incremented on drift
 #   SYNC_COUNT - Incremented on sync
+#
+# Arguments:
+#   $1 - Path to skill's scripts/ directory
+#
+# Outputs:
+#   None
 #
 # Returns:
 #   None
@@ -163,10 +170,13 @@ function sync_one_skill {
 #######################################
 # main: Find all skills with scripts/ and sync lib
 #
+# Globals:
+#   None
+#
 # Arguments:
 #   $@ - Command line arguments
 #
-# Global Variables:
+# Outputs:
 #   None
 #
 # Returns:

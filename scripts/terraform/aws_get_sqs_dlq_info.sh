@@ -21,9 +21,7 @@ set -euo pipefail
 umask 027
 export LC_ALL=C.UTF-8
 
-# Get script directory for library loading
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-export SCRIPT_DIR
 
 # Load all-in-one library
 # shellcheck source=../lib/all.sh
@@ -31,7 +29,7 @@ export SCRIPT_DIR
 source "${SCRIPT_DIR}/../lib/all.sh"
 
 #######################################
-# Global variables and default values
+# Global variables
 #######################################
 
 #######################################
@@ -40,14 +38,17 @@ source "${SCRIPT_DIR}/../lib/all.sh"
 # Description:
 #   Displays usage information for the script, including options and examples
 #
+# Globals:
+#   None
+#
 # Arguments:
 #   None
 #
-# Global Variables:
-#   None
+# Outputs:
+#   Writes to stdout
 #
 # Returns:
-#   None (outputs to stdout)
+#   None
 #
 # Usage:
 #   show_usage
@@ -74,10 +75,13 @@ EOF
 # Description:
 #   Parses command line arguments and options, handling help and unknown options
 #
+# Globals:
+#   None
+#
 # Arguments:
 #   $@ - All command line arguments passed to the script
 #
-# Global Variables:
+# Outputs:
 #   None
 #
 # Returns:
@@ -109,14 +113,17 @@ function parse_arguments {
 # Description:
 #   Generates Terraform configuration format output for DLQ information
 #
+# Globals:
+#   None
+#
 # Arguments:
 #   $@ - Array of DLQ names
 #
-# Global Variables:
-#   None
+# Outputs:
+#   formatted Terraform configuration items as a string
 #
 # Returns:
-#   Outputs formatted Terraform configuration items as a string
+#   0 on success
 #
 # Usage:
 #   terraform_output=$(generate_terraform_output "${dlqs[@]}")
@@ -146,14 +153,17 @@ function generate_terraform_output {
 # Description:
 #   Retrieves all SQS queue URLs from AWS using the AWS CLI and outputs them
 #
+# Globals:
+#   None
+#
 # Arguments:
 #   None
 #
-# Global Variables:
-#   None
+# Outputs:
+#   queue URLs as newline-separated strings, exits with error on failure
 #
 # Returns:
-#   Outputs queue URLs as newline-separated strings, exits with error on failure
+#   0 on success
 #
 # Usage:
 #   queue_urls=$(get_sqs_queues)
@@ -175,14 +185,17 @@ function get_sqs_queues {
 # Description:
 #   Outputs the final formatted result in JSON array format
 #
+# Globals:
+#   None
+#
 # Arguments:
 #   $1 - Formatted items string
 #
-# Global Variables:
-#   None
+# Outputs:
+#   the result to stdout
 #
 # Returns:
-#   Outputs the result to stdout
+#   0 on success
 #
 # Usage:
 #   output_result "$formatted_items"
@@ -203,14 +216,17 @@ function output_result {
 # Description:
 #   Processes SQS queue URLs to extract Dead Letter Queue information from RedrivePolicy
 #
+# Globals:
+#   None
+#
 # Arguments:
 #   $1 - Newline-separated string of SQS queue URLs
 #
-# Global Variables:
-#   None
+# Outputs:
+#   unique DLQ names as newline-separated strings
 #
 # Returns:
-#   Outputs unique DLQ names as newline-separated strings
+#   0 on success
 #
 # Usage:
 #   unique_dlqs=$(process_dlq_information "$queue_urls")
@@ -260,10 +276,13 @@ function process_dlq_information {
 # Description:
 #   Main function to execute the script logic for retrieving SQS DLQ information
 #
+# Globals:
+#   None
+#
 # Arguments:
 #   $@ - All command line arguments passed to the script
 #
-# Global Variables:
+# Outputs:
 #   None
 #
 # Returns:

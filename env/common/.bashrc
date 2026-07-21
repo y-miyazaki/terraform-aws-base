@@ -72,14 +72,6 @@ if command -v headroom > /dev/null 2>&1; then
 fi
 
 #######################################
-# for lean-ctx
-#######################################
-if [ -f "$HOME/.config/lean-ctx/shell-hook.bash" ]; then
-    # shellcheck source=/dev/null
-    . "$HOME/.config/lean-ctx/shell-hook.bash"
-fi
-
-#######################################
 # for mise
 #######################################
 if command -v mise > /dev/null 2>&1; then
@@ -181,3 +173,19 @@ fi
 
 # XDG dirs
 export XDG_CONFIG_HOME="$HOME/.config"
+
+#######################################
+# for lean-ctx
+#######################################
+# lean-ctx shell hook — begin
+if [ -f "/home/vscode/.config/lean-ctx/shell-hook.bash" ]; then
+. "/home/vscode/.config/lean-ctx/shell-hook.bash"
+fi
+# lean-ctx shell hook — end
+
+# >>> lean-ctx agent aliases >>>
+alias claude='LEAN_CTX_AGENT=1 BASH_ENV="$HOME/.bashenv" claude'
+alias codebuddy='LEAN_CTX_AGENT=1 BASH_ENV="$HOME/.bashenv" codebuddy'
+alias codex='LEAN_CTX_AGENT=1 BASH_ENV="$HOME/.bashenv" codex'
+alias gemini='LEAN_CTX_AGENT=1 BASH_ENV="$HOME/.bashenv" gemini'
+# <<< lean-ctx agent aliases <<<

@@ -19,17 +19,15 @@ set -euo pipefail
 umask 027
 export LC_ALL=C.UTF-8
 
-# Get script directory for library loading
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-export SCRIPT_DIR
 
-# Load common libraries - ALWAYS use this pattern
+# Load all-in-one library
 # shellcheck source=../lib/all.sh
 # shellcheck disable=SC1091
 source "${SCRIPT_DIR}/../lib/all.sh"
 
 #######################################
-# Global variables and default values
+# Global variables
 #######################################
 VERBOSE=false
 DRY_RUN=false
@@ -62,14 +60,17 @@ COVERAGE_PERCENT=""
 # Description:
 #   Displays usage information for the script, including options and examples
 #
+# Globals:
+#   None
+#
 # Arguments:
 #   None
 #
-# Global Variables:
-#   None
+# Outputs:
+#   Writes to stdout
 #
 # Returns:
-#   None (outputs to stdout)
+#   None
 #
 # Usage:
 #   show_usage
@@ -108,10 +109,13 @@ EOF
 # Description:
 #   Parses command line arguments and sets global variables accordingly
 #
+# Globals:
+#   None
+#
 # Arguments:
 #   $@ - All command line arguments passed to the script
 #
-# Global Variables:
+# Outputs:
 #   None
 #
 # Returns:
@@ -172,14 +176,17 @@ function parse_arguments {
 # Description:
 #   Determines the appropriate target pattern for Go tools based on the input directory
 #
+# Globals:
+#   None
+#
 # Arguments:
 #   $1 - Base directory (optional, defaults to current directory)
 #
-# Global Variables:
-#   None
+# Outputs:
+#   Target pattern string to stdout
 #
 # Returns:
-#   Target pattern string (to stdout)
+#   0 on success
 #
 # Usage:
 #   pattern=$(determine_target_pattern "/path/to/dir")
@@ -217,36 +224,18 @@ function determine_target_pattern {
 }
 
 #######################################
-# has_go_files: Check if directory contains Go files
-#
-# Description:
-#   Checks if the specified directory contains any Go files
-#
-# Arguments:
-#   $1 - Directory path to check
-#
-# Global Variables:
-#   None
-#
-# Returns:
-#   Number of Go files found (integer)
-#
-#######################################
-function has_go_files {
-    local dir=$1
-    find "$dir" -name "*.go" 2> /dev/null | wc -l
-}
-
-#######################################
 # run_benchmark_tests: Run benchmark tests
 #
 # Description:
 #   Runs benchmark tests if they exist in the codebase
 #
+# Globals:
+#   None
+#
 # Arguments:
 #   None
 #
-# Global Variables:
+# Outputs:
 #   None
 #
 # Returns:
@@ -289,10 +278,13 @@ function run_benchmark_tests {
 # Description:
 #   Runs go test with coverage analysis and checks against threshold
 #
+# Globals:
+#   None
+#
 # Arguments:
 #   None
 #
-# Global Variables:
+# Outputs:
 #   None
 #
 # Returns:
@@ -357,10 +349,13 @@ function run_coverage_tests {
 # Description:
 #   Runs go build to check if the code compiles successfully
 #
+# Globals:
+#   None
+#
 # Arguments:
 #   None
 #
-# Global Variables:
+# Outputs:
 #   None
 #
 # Returns:
@@ -389,15 +384,100 @@ function run_go_build {
 }
 
 #######################################
+# has_go_files: Check if directory contains Go files
+#
+# Description:
+#   Checks if the specified directory contains any Go files
+#
+# Globals:
+#   None
+#
+# Arguments:
+#   $1 - Directory path to check
+#
+# Outputs:
+#   None
+#
+# Returns:
+#   Number of Go files found (integer)
+#
+# Usage:
+#   count=$(has_go_files "/path/to/dir")
+#
+#######################################
+function has_go_files {
+    local dir=$1
+    find "$dir" -name "*.go" 2> /dev/null | wc -l
+}
+
+#######################################
+# run_go_mod_tidy: Run go mod tidy
+#
+# Description:
+#   Runs go mod tidy to clean up the go.mod and go.sum files
+#
+# Globals:
+#   None
+#
+# Arguments:
+#   None
+#
+# Outputs:
+#   None
+#
+# Returns:
+#   None (sets EXIT_CODE on failure)
+#
+# Usage:
+#   run_go_mod_tidy
+#
+#######################################
+function run_go_mod_tidy {
+    echo_section "Running go mod tidy"
+
+    if [[ $DRY_RUN == "true" ]]; then
+        log "INFO" "DRY-RUN: Would run 'go mod tidy'"
+        return 0
+    fi
+
+    # 特定ディレクトリ指定時はそのディレクトリ内に go.mod がある場合のみ実行
+    local mod_dir="."
+    if [[ $IS_SCOPED == "true" ]]; then
+        if [[ -f "$TARGET_DIR/go.mod" ]]; then
+            mod_dir="$TARGET_DIR"
+        else
+            log "INFO" "Skipping go mod tidy (no go.mod in scoped directory: $TARGET_DIR)"
+            return 0
+        fi
+    fi
+
+    pushd "$mod_dir" > /dev/null || {
+        log "ERROR" "Failed to change directory to: $mod_dir"
+        EXIT_CODE=1
+        return 1
+    }
+    if go mod tidy; then
+        log "INFO" "go mod tidy completed successfully (dir=$mod_dir)"
+    else
+        log "ERROR" "go mod tidy failed (dir=$mod_dir)"
+        EXIT_CODE=1
+    fi
+    popd > /dev/null || true
+}
+
+#######################################
 # run_golangci_lint: Run golangci-lint
 #
 # Description:
 #   Runs golangci-lint to perform comprehensive code linting
 #
+# Globals:
+#   None
+#
 # Arguments:
 #   None
 #
-# Global Variables:
+# Outputs:
 #   None
 #
 # Returns:
@@ -458,103 +538,18 @@ function run_golangci_lint {
 }
 
 #######################################
-# run_go_mod_tidy: Run go mod tidy
-#
-# Description:
-#   Runs go mod tidy to clean up the go.mod and go.sum files
-#
-# Arguments:
-#   None
-#
-# Global Variables:
-#   None
-#
-# Returns:
-#   None (sets EXIT_CODE on failure)
-#
-# Usage:
-#   run_go_mod_tidy
-#
-#######################################
-function run_go_mod_tidy {
-    echo_section "Running go mod tidy"
-
-    if [[ $DRY_RUN == "true" ]]; then
-        log "INFO" "DRY-RUN: Would run 'go mod tidy'"
-        return 0
-    fi
-
-    # 特定ディレクトリ指定時はそのディレクトリ内に go.mod がある場合のみ実行
-    local mod_dir="."
-    if [[ $IS_SCOPED == "true" ]]; then
-        if [[ -f "$TARGET_DIR/go.mod" ]]; then
-            mod_dir="$TARGET_DIR"
-        else
-            log "INFO" "Skipping go mod tidy (no go.mod in scoped directory: $TARGET_DIR)"
-            return 0
-        fi
-    fi
-
-    pushd "$mod_dir" > /dev/null || {
-        log "ERROR" "Failed to change directory to: $mod_dir"
-        EXIT_CODE=1
-        return 1
-    }
-    if go mod tidy; then
-        log "INFO" "go mod tidy completed successfully (dir=$mod_dir)"
-    else
-        log "ERROR" "go mod tidy failed (dir=$mod_dir)"
-        EXIT_CODE=1
-    fi
-    popd > /dev/null || true
-}
-
-#######################################
-# run_race_tests: Run race condition tests
-#
-# Description:
-#   Runs go test with race detection enabled
-#
-# Arguments:
-#   None
-#
-# Global Variables:
-#   DRY_RUN - Whether running in dry-run mode
-#   TARGET_PATTERN - Go package pattern to test
-#   EXIT_CODE - Set to 1 on failure
-#   RACE_FAILED - Set to 1 on failure
-#
-# Returns:
-#   None (sets EXIT_CODE and RACE_FAILED on failure)
-#
-#######################################
-function run_race_tests {
-    echo_section "Running race condition tests"
-
-    if [[ $DRY_RUN == "true" ]]; then
-        log "INFO" "DRY-RUN: Would run 'CGO_ENABLED=1 go test -race $TARGET_PATTERN'"
-        return 0
-    fi
-
-    if CGO_ENABLED=1 go test -race "$TARGET_PATTERN"; then
-        log "INFO" "Race condition tests passed"
-    else
-        log "ERROR" "Race condition tests failed"
-        EXIT_CODE=1
-        RACE_FAILED=1
-    fi
-}
-
-#######################################
 # run_security_checks: Run security checks
 #
 # Description:
 #   Runs security vulnerability checks using govulncheck
 #
+# Globals:
+#   None
+#
 # Arguments:
 #   None
 #
-# Global Variables:
+# Outputs:
 #   None
 #
 # Returns:
@@ -599,10 +594,13 @@ function run_security_checks {
 # Description:
 #   Runs go test to execute unit tests
 #
+# Globals:
+#   None
+#
 # Arguments:
 #   None
 #
-# Global Variables:
+# Outputs:
 #   None
 #
 # Returns:
@@ -651,15 +649,57 @@ function run_tests {
 }
 
 #######################################
+# run_race_tests: Run race condition tests
+#
+# Description:
+#   Runs go test with race detection enabled
+#
+# Globals:
+#   None
+#
+# Arguments:
+#   None
+#
+# Outputs:
+#   None
+#
+# Returns:
+#   None (sets EXIT_CODE and RACE_FAILED on failure)
+#
+# Usage:
+#   run_race_tests
+#
+#######################################
+function run_race_tests {
+    echo_section "Running race condition tests"
+
+    if [[ $DRY_RUN == "true" ]]; then
+        log "INFO" "DRY-RUN: Would run 'CGO_ENABLED=1 go test -race $TARGET_PATTERN'"
+        return 0
+    fi
+
+    if CGO_ENABLED=1 go test -race "$TARGET_PATTERN"; then
+        log "INFO" "Race condition tests passed"
+    else
+        log "ERROR" "Race condition tests failed"
+        EXIT_CODE=1
+        RACE_FAILED=1
+    fi
+}
+
+#######################################
 # main: Main process
 #
 # Description:
 #   Main entry point that orchestrates all code quality checks
 #
+# Globals:
+#   None
+#
 # Arguments:
 #   $@ - All command line arguments passed to the script
 #
-# Global Variables:
+# Outputs:
 #   None
 #
 # Returns:

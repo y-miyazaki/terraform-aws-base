@@ -38,11 +38,14 @@ fi
 # Arguments:
 #   None
 #
-# Global Variables:
+# Globals:
 #   None
 #
-# Returns:
+# Outputs:
 #   Newline-separated unique directory list to stdout
+#
+# Returns:
+#   0 on success
 #
 # Usage:
 #   mapfile -t dirs < <(get_changed_dirs)
@@ -66,11 +69,14 @@ function get_changed_dirs {
 # Arguments:
 #   $1 - reason: Human-readable description of what failed and how to fix it
 #
-# Global Variables:
+# Globals:
 #   None
 #
+# Outputs:
+#   Writes JSON to stdout or errors to stderr
+#
 # Returns:
-#   Does not return. Exits with 0 (JSON block) or 2 (stderr).
+#   Exits with 0 or 2
 #
 # Usage:
 #   report_failure "tflint found issues: ..."
@@ -214,7 +220,10 @@ function report_failure {
 # Arguments:
 #   None
 #
-# Global Variables:
+# Globals:
+#   None
+#
+# Outputs:
 #   None
 #
 # Returns:

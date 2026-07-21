@@ -1,0 +1,28 @@
+id: shell-script-validation-canonical-flags-001
+name: shell-script-validation canonical flags path
+description: |
+  Validate that shell-script-validation uses the canonical validate.sh flags
+  `-v -f --check-function-docs` by default.
+tags:
+  - quality
+  - canonical-flags
+  - workflow
+inputs:
+  prompt: |
+    Use shell-script-validation to validate ./scripts/deploy.sh before merge.
+    The shell script path is optional and defaults to workspace root when omitted.
+    State the exact bash scripts/validate.sh command you run, including canonical flags
+    `-v -f --check-function-docs` (always pass all three unless opted out below).
+    Return ## Summary and ## Tool Results.
+  context:
+    target: SKILL.md
+expected:
+  output_contains:
+    - "## Summary"
+    - "## Tool Results"
+    - "-v"
+    - "-f"
+    - "--check-function-docs"
+    - "scripts/validate.sh"
+  outcomes:
+    - type: task_completed

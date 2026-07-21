@@ -93,28 +93,11 @@ globs:
 
 ### Code Modification Guidelines
 
-- After changes, prioritize the validation workflow from markdown-validation skill.
 - When adding, deleting, or renaming files under `docs/`, update the `nav` section in `mkdocs.yml` to keep navigation in sync.
-- Use individual checks for broken links and table formatting only during debugging.
 
 ## Testing and Validation
 
-Markdown checks run automatically via pre-commit hooks on commit. Manual execution is for debugging only.
-
-**Entry point (recommended)**:
-
-```bash
-bash <agent-root>/skills/markdown-validation/scripts/validate.sh
-```
-
-**Individual execution (debugging)**:
-
-```bash
-markdownlint-cli2 "docs/**"
-markdown-link-check --quiet README.md
-```
-
-**Detailed guide**: See markdown-validation skill SKILL.md.
+On-demand validation: see markdown-validation skill SKILL.md.
 
 ## Security Guidelines
 

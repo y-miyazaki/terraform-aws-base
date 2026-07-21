@@ -4,7 +4,7 @@
 
 - AP-01 (SHOULD): Executable Rules on Sourced Libraries
 - AP-02 (SHOULD): Preserve DOC Comment Blocks
-- AP-03 (SHOULD): Global Variables Section Required
+- AP-03 (SHOULD): Globals Section Required
 - AP-04 (SHOULD): Consistent Library Comment Style
 
 ## Code Standards (CODE)

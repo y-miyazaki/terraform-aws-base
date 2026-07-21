@@ -32,7 +32,7 @@ export LC_ALL=C.UTF-8
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # Load all-in-one library
-# shellcheck source=lib/all.sh
+# shellcheck source=./lib/all.sh
 # shellcheck disable=SC1091
 source "${SCRIPT_DIR}/lib/all.sh"
 
@@ -59,8 +59,11 @@ TMP_FILES=()
 # Arguments:
 #   None
 #
-# Global Variables:
+# Globals:
 #   TMP_FILES - Array of temporary file paths to clean up
+#
+# Outputs:
+#   None
 #
 # Returns:
 #   None
@@ -90,11 +93,14 @@ trap cleanup EXIT
 # Arguments:
 #   None
 #
-# Global Variables:
+# Globals:
 #   None
 #
+# Outputs:
+#   Writes to stdout
+#
 # Returns:
-#   Exits with status 0 after display
+#   Exits with status 0
 #
 # Usage:
 #   show_usage
@@ -143,11 +149,14 @@ EOF
 # Arguments:
 #   None
 #
-# Global Variables:
+# Globals:
 #   None
 #
+# Outputs:
+#   repository name (owner/repo) on success, exits with error on failure
+#
 # Returns:
-#   Outputs repository name (owner/repo) on success, exits with error on failure
+#   0 on success
 #
 # Usage:
 #   REPOSITORY=$(get_repository_from_git)
@@ -180,9 +189,12 @@ function get_repository_from_git {
 # Arguments:
 #   None
 #
-# Global Variables:
+# Globals:
 #   PR_NUMBER - GitHub PR number to validate
 #   REPOSITORY - Repository in owner/repo format
+#
+# Outputs:
+#   None
 #
 # Returns:
 #   None (exits with error if PR not found)
@@ -211,11 +223,14 @@ function validate_pr_exists {
 # Arguments:
 #   $1 - PR body text
 #
-# Global Variables:
+# Globals:
 #   None
 #
+# Outputs:
+#   JSON with extracted sections
+#
 # Returns:
-#   Outputs JSON with extracted sections
+#   0 on success
 #
 # Usage:
 #   sections=$(parse_template_sections "$pr_body")
@@ -276,11 +291,14 @@ function parse_template_sections {
 # Arguments:
 #   $1 - JSON array of file objects from gh pr view
 #
-# Global Variables:
+# Globals:
 #   None
 #
+# Outputs:
+#   JSON with files grouped by classification
+#
 # Returns:
-#   Outputs JSON with files grouped by classification
+#   0 on success
 #
 # Usage:
 #   classified=$(classify_file_changes "$files_json")
@@ -325,11 +343,14 @@ function classify_file_changes {
 # Arguments:
 #   $1 - JSON with classified files
 #
-# Global Variables:
+# Globals:
 #   None
 #
+# Outputs:
+#   markdown for Changes section
+#
 # Returns:
-#   Outputs markdown for Changes section
+#   0 on success
 #
 # Usage:
 #   generate_changes_section "$classified_files"
@@ -379,14 +400,17 @@ function generate_changes_section {
 # Arguments:
 #   None
 #
-# Global Variables:
+# Globals:
 #   PR_NUMBER - GitHub PR number
 #   REPOSITORY - Repository in owner/repo format
 #   BODY_FILE - Path to output body file
 #   TMP_FILES - Array to track temporary files
 #
-# Returns:
+# Outputs:
 #   None (writes body sections to BODY_FILE)
+#
+# Returns:
+#   0 on success
 #
 # Usage:
 #   generate_body_sections
@@ -456,11 +480,14 @@ function generate_body_sections {
 #   $1 - Markdown text
 #   $2 - H2 heading text (for example: "## Changes")
 #
-# Global Variables:
+# Globals:
 #   None
 #
+# Outputs:
+#   the matched section or empty output if not found
+#
 # Returns:
-#   Outputs the matched section or empty output if not found
+#   0 on success
 #
 # Usage:
 #   section=$(extract_h2_section "$markdown" "## Changes")
@@ -498,11 +525,14 @@ function extract_h2_section {
 # Arguments:
 #   $1 - Section markdown text
 #
-# Global Variables:
+# Globals:
 #   None
 #
+# Outputs:
+#   section body without heading
+#
 # Returns:
-#   Outputs section body without heading
+#   0 on success
 #
 # Usage:
 #   body=$(section_body_without_heading "$section")
@@ -531,7 +561,10 @@ function section_body_without_heading {
 # Arguments:
 #   $1 - Section markdown text
 #
-# Global Variables:
+# Globals:
+#   None
+#
+# Outputs:
 #   None
 #
 # Returns:
@@ -608,11 +641,14 @@ function section_has_visible_content {
 #   $1 - H2 heading text (for example: "## Testing")
 #   $2 - Template section markdown text
 #
-# Global Variables:
+# Globals:
 #   None
 #
+# Outputs:
+#   section markdown
+#
 # Returns:
-#   Outputs section markdown
+#   0 on success
 #
 # Usage:
 #   fallback=$(build_fallback_section "## Testing" "$template_section")
@@ -638,11 +674,14 @@ function build_fallback_section {
 # Arguments:
 #   None
 #
-# Global Variables:
+# Globals:
 #   COMPLETE_BODY_FILE - Path to complete PR body markdown file
 #   PR_NUMBER - GitHub PR number
 #   REPOSITORY - Repository in owner/repo format
 #   DRY_RUN - Enable dry-run mode flag
+#
+# Outputs:
+#   None
 #
 # Returns:
 #   None (updates PR or exits with error)
@@ -697,11 +736,14 @@ function apply_complete_pr_body {
 # Arguments:
 #   None
 #
-# Global Variables:
+# Globals:
 #   PR_NUMBER - GitHub PR number
 #   REPOSITORY - Repository in owner/repo format
 #   BODY_FILE - Path to generated body sections
 #   DRY_RUN - Enable dry-run mode flag
+#
+# Outputs:
+#   None
 #
 # Returns:
 #   None (updates PR or exits with error)
@@ -864,10 +906,13 @@ function update_pr_body {
 # Arguments:
 #   $@ - All command line arguments passed to the script
 #
-# Global Variables:
+# Globals:
 #   PR_NUMBER - GitHub PR number
 #   REPOSITORY - Repository in owner/repo format
 #   DRY_RUN - Enable dry-run mode
+#
+# Outputs:
+#   None
 #
 # Returns:
 #   None (sets global variables, exits on error)
@@ -927,10 +972,13 @@ function parse_arguments {
 # Arguments:
 #   $@ - All command line arguments passed to the script
 #
-# Global Variables:
+# Globals:
 #   PR_NUMBER - GitHub PR number
 #   REPOSITORY - Repository in owner/repo format (owner/repo)
 #   DRY_RUN - Enable dry-run mode flag
+#
+# Outputs:
+#   None
 #
 # Returns:
 #   Exits with status 0 on success, non-zero on failure

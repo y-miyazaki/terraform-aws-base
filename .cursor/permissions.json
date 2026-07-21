@@ -3,6 +3,8 @@
   "terminalAllowlist": [
     "actionlint",
     "apm",
+    "bash",
+    "bats",
     "cat",
     "cd",
     "command",

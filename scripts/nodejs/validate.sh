@@ -20,9 +20,7 @@ set -euo pipefail
 umask 027
 export LC_ALL=C.UTF-8
 
-# Get script directory for library loading
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-export SCRIPT_DIR
 
 # Load all-in-one library
 # shellcheck source=../lib/all.sh
@@ -30,7 +28,7 @@ export SCRIPT_DIR
 source "${SCRIPT_DIR}/../lib/all.sh"
 
 #######################################
-# Global variables and default values
+# Global variables
 #######################################
 VERBOSE=false
 DRY_RUN=false
@@ -58,14 +56,17 @@ PROJECTS_FAILED=0
 # Description:
 #   Displays usage information for the script, including options and examples
 #
+# Globals:
+#   None
+#
 # Arguments:
 #   None
 #
-# Global Variables:
-#   None
+# Outputs:
+#   Writes to stdout
 #
 # Returns:
-#   None (outputs to stdout)
+#   None
 #
 # Usage:
 #   show_usage
@@ -102,10 +103,13 @@ EOF
 # Description:
 #   Parses command line arguments and sets global variables accordingly
 #
+# Globals:
+#   None
+#
 # Arguments:
 #   $@ - All command line arguments passed to the script
 #
-# Global Variables:
+# Outputs:
 #   None
 #
 # Returns:
@@ -165,11 +169,14 @@ function parse_arguments {
 # Description:
 #   Validates the existence of package-lock.json and checks synchronization with package.json
 #
+# Globals:
+#   LOCKFILE_FAILED - Set to 1 on failure
+#
 # Arguments:
 #   $1 - Project directory
 #
-# Global Variables:
-#   LOCKFILE_FAILED - Set to 1 on failure
+# Outputs:
+#   None
 #
 # Returns:
 #   0 if lockfile exists and is in sync, 1 otherwise
@@ -197,11 +204,14 @@ function check_package_lockfile {
 # Description:
 #   Uses npm ci --dry-run to verify synchronization between package files
 #
+# Globals:
+#   SYNC_FAILED - Set to 1 on failure
+#
 # Arguments:
 #   $1 - Project directory
 #
-# Global Variables:
-#   SYNC_FAILED - Set to 1 on failure
+# Outputs:
+#   None
 #
 # Returns:
 #   0 if files are in sync, 1 otherwise
@@ -238,14 +248,17 @@ function check_package_sync {
 #   Searches for package.json files (excluding node_modules and other common directories) to identify Node.js projects
 #   Only returns directories that are actual project roots (not nested dependencies)
 #
+# Globals:
+#   None
+#
 # Arguments:
 #   $1 - Base directory to search (optional, defaults to TARGET_DIR)
 #
-# Global Variables:
-#   None
+# Outputs:
+#   Array of project directories (to stdout, one per line)
 #
 # Returns:
-#   Array of project directories (to stdout, one per line)
+#   0 on success
 #
 # Usage:
 #   projects=$(find_nodejs_projects "/path/to/dir")
@@ -272,10 +285,13 @@ function find_nodejs_projects {
 # Description:
 #   Installs npm dependencies for the project
 #
+# Globals:
+#   None
+#
 # Arguments:
 #   $1 - Project directory
 #
-# Global Variables:
+# Outputs:
 #   None
 #
 # Returns:
@@ -331,12 +347,15 @@ function run_npm_install {
 # Description:
 #   Checks if any packages have newer versions available
 #
+# Globals:
+#   DRY_RUN - Whether running in dry-run mode
+#   VERBOSE - Whether to show verbose output
+#
 # Arguments:
 #   $1 - Project directory
 #
-# Global Variables:
-#   DRY_RUN - Whether running in dry-run mode
-#   VERBOSE - Whether to show verbose output
+# Outputs:
+#   None
 #
 # Returns:
 #   Always returns 0 (informational only)
@@ -377,16 +396,19 @@ function run_outdated_check {
 # Description:
 #   Checks for known security vulnerabilities in dependencies
 #
-# Arguments:
-#   $1 - Project directory
-#
-# Global Variables:
+# Globals:
 #   DRY_RUN - Whether running in dry-run mode
 #   FIX_MODE - Whether to attempt auto-fix
 #   VERBOSE - Whether to show verbose output
 #   AUDIT_VULNERABILITIES - Incremented with vulnerability count
 #   AUDIT_FAILED - Set to 1 on failure
 #   EXIT_CODE - Set to 1 on failure
+#
+# Arguments:
+#   $1 - Project directory
+#
+# Outputs:
+#   None
 #
 # Returns:
 #   0 if no vulnerabilities found, 1 otherwise
@@ -471,10 +493,13 @@ function run_security_audit {
 # Description:
 #   Executes the test suite defined in package.json
 #
+# Globals:
+#   None
+#
 # Arguments:
 #   $1 - Project directory
 #
-# Global Variables:
+# Outputs:
 #   None
 #
 # Returns:
@@ -537,10 +562,13 @@ function run_tests {
 # Description:
 #   Performs all validation checks on a single Node.js project
 #
+# Globals:
+#   None
+#
 # Arguments:
 #   $1 - Project directory
 #
-# Global Variables:
+# Outputs:
 #   None
 #
 # Returns:
@@ -612,10 +640,13 @@ function validate_project {
 #   Main entry point for the validation script
 #   Coordinates all validation activities
 #
+# Globals:
+#   None
+#
 # Arguments:
 #   $@ - All command line arguments
 #
-# Global Variables:
+# Outputs:
 #   None
 #
 # Returns:

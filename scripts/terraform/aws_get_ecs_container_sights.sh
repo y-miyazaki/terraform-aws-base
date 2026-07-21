@@ -14,9 +14,7 @@ set -euo pipefail
 umask 027
 export LC_ALL=C.UTF-8
 
-# Get script directory for library loading
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-export SCRIPT_DIR
 
 # Load all-in-one library
 # shellcheck source=../lib/all.sh
@@ -24,7 +22,7 @@ export SCRIPT_DIR
 source "${SCRIPT_DIR}/../lib/all.sh"
 
 #######################################
-# Global variables and default values
+# Global variables
 #######################################
 
 #######################################
@@ -33,14 +31,17 @@ source "${SCRIPT_DIR}/../lib/all.sh"
 # Description:
 #   Displays usage information for the script, including options and examples
 #
+# Globals:
+#   None
+#
 # Arguments:
 #   None
 #
-# Global Variables:
-#   None
+# Outputs:
+#   Writes to stdout
 #
 # Returns:
-#   None (outputs to stdout)
+#   None
 #
 # Usage:
 #   show_usage
@@ -67,10 +68,13 @@ EOF
 # Description:
 #   Parses command line arguments and handles help option
 #
+# Globals:
+#   None
+#
 # Arguments:
 #   $@ - All command line arguments passed to the script
 #
-# Global Variables:
+# Outputs:
 #   None
 #
 # Returns:
@@ -102,10 +106,13 @@ function parse_arguments {
 # Description:
 #   Processes task definition ARNs and extracts unique family names
 #
+# Globals:
+#   None
+#
 # Arguments:
 #   $1 - Space-separated string of task definition ARNs
 #
-# Global Variables:
+# Outputs:
 #   None
 #
 # Returns:
@@ -150,10 +157,13 @@ function extract_unique_families {
 # Description:
 #   Formats task definition families into Terraform configuration format
 #
+# Globals:
+#   None
+#
 # Arguments:
 #   $@ - Array of task definition family names
 #
-# Global Variables:
+# Outputs:
 #   None
 #
 # Returns:
@@ -187,10 +197,13 @@ function generate_terraform_output {
 # Description:
 #   Retrieves all ECS task definition ARNs from AWS using AWS CLI
 #
+# Globals:
+#   None
+#
 # Arguments:
 #   None
 #
-# Global Variables:
+# Outputs:
 #   None
 #
 # Returns:
@@ -216,14 +229,17 @@ function get_task_definitions {
 # Description:
 #   Outputs the formatted Terraform configuration in JSON array format
 #
+# Globals:
+#   None
+#
 # Arguments:
 #   $1 - Formatted Terraform configuration items string
 #
-# Global Variables:
-#   None
+# Outputs:
+#   Writes to stdout
 #
 # Returns:
-#   None (outputs to stdout)
+#   None
 #
 # Usage:
 #   output_result "$formatted_items"
@@ -244,10 +260,13 @@ function output_result {
 # Description:
 #   Main entry point that orchestrates the ECS task definition family extraction process
 #
+# Globals:
+#   None
+#
 # Arguments:
 #   $@ - All command line arguments passed to the script
 #
-# Global Variables:
+# Outputs:
 #   None
 #
 # Returns:

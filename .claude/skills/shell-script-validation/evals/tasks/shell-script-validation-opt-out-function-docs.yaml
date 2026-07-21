@@ -1,0 +1,27 @@
+id: shell-script-validation-opt-out-function-docs-001
+name: shell-script-validation opt-out function docs path
+description: |
+  Validate that shell-script-validation omits --check-function-docs only when
+  function header sections are intentionally skipped.
+tags:
+  - quality
+  - opt-out
+  - workflow
+inputs:
+  prompt: |
+    Use shell-script-validation on legacy ./scripts/legacy.sh scripts that intentionally
+    skip Google function header sections. Omit `--check-function-docs` per the skill opt-out.
+    State the exact bash scripts/validate.sh command you run. Return ## Summary and ## Tool Results.
+  context:
+    target: SKILL.md
+expected:
+  output_contains:
+    - "## Summary"
+    - "## Tool Results"
+    - "scripts/validate.sh"
+    - "-v"
+    - "-f"
+  output_not_contains:
+    - "--check-function-docs"
+  outcomes:
+    - type: task_completed

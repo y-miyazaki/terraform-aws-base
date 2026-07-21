@@ -42,3 +42,6 @@ source "${LIB_DIR}/validation.sh"
 
 # shellcheck source=./json.sh
 source "${LIB_DIR}/json.sh"
+
+# shellcheck source=./repo_paths.sh
+source "${LIB_DIR}/repo_paths.sh"

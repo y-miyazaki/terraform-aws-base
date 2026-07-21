@@ -4,26 +4,20 @@ This file contains review checks specific to the Testing and Validation chapter 
 
 ## Testing and Validation Chapter (TEST)
 
-**TEST-01 (MUST): Validation Commands**
+**TEST-01 (MUST): No Always-Run Lint Mandates**
 
-Check: Executable validation commands are documented
-Why: Missing commands prevent automation and compromise quality assurance
-Fix: Document executable validation commands with examples
+Check: Does the chapter omit "after every change, run validate.sh / linter X" and omit "hooks/pre-commit handle X so do not run Y"?
+Why: Always-on lint recipes waste context and fight Agent hooks; skip-explanations are also unused always-on cost
+Fix: Remove always-run recipes and hook-skip explanations; keep at most an on-demand skill pointer and notes for non-automated checks
 
-**TEST-02 (MUST): Code Block Format**
+**TEST-02 (SHOULD): On-Demand Skill Pointer**
 
-Check: Examples are in \`\`\`bash code block format
-Why: Non-code-block examples are difficult to execute and cannot be copy-pasted
-Fix: Use \`\`\`bash format for execution examples
+Check: If present, is the skill pointer one short line (skill name / SKILL.md) without command recipe blocks?
+Why: Long command catalogs belong in validation skills, not always-on instructions
+Fix: Replace recipe blocks with a single skill pointer line
 
-**TEST-03 (SHOULD): Validation Items**
+**TEST-03 (SHOULD): Domain-Only Operational Notes**
 
-Check: Validation items list is comprehensive
-Why: Incomplete list causes missed checks and incomplete validation
-Fix: Enrich validation items
-
-**TEST-04 (SHOULD): Real Commands**
-
-Check: Examples are concrete and actually executable
-Why: Missing examples make validation difficult and cause command errors
-Fix: Provide concrete examples and verify they execute correctly
+Check: Are any remaining operational notes limited to checks automation does not cover (for example tests, coverage, suite pairing, judgment review)?
+Why: Duplicating hook-covered lint guidance in instructions creates drift and token waste
+Fix: Keep only domain notes that hooks/pre-commit do not enforce

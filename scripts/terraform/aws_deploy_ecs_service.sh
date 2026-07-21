@@ -30,9 +30,7 @@ set -euo pipefail
 umask 027
 export LC_ALL=C.UTF-8
 
-# Get script directory for library loading
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-export SCRIPT_DIR
 
 # Load all-in-one library
 # shellcheck source=../lib/all.sh
@@ -40,7 +38,7 @@ export SCRIPT_DIR
 source "${SCRIPT_DIR}/../lib/all.sh"
 
 #######################################
-# Global variables and default values
+# Global variables
 #######################################
 ACTION="deploy"
 ACCOUNT_ID=""
@@ -55,14 +53,17 @@ SERVICE_PATH=""
 # Description:
 #   Displays usage information for the script, including actions, options, and examples
 #
+# Globals:
+#   None
+#
 # Arguments:
 #   None
 #
-# Global Variables:
-#   None
+# Outputs:
+#   Writes to stdout
 #
 # Returns:
-#   None (outputs to stdout, then exits with status 0)
+#   Exits with status 0
 #
 # Usage:
 #   show_usage
@@ -99,14 +100,17 @@ EOF
 # Description:
 #   Parses command line arguments and validates required options
 #
-# Arguments:
-#   $@ - All command line arguments passed to the script
-#
-# Global Variables:
+# Globals:
 #   ACTION       - Set to the provided action (deploy, verify, destroy)
 #   AWS_REGION   - Set to the provided AWS region
 #   ENV          - Set to the provided target environment
 #   SERVICE_PATH - Set to the provided ECS service directory path
+#
+# Arguments:
+#   $@ - All command line arguments passed to the script
+#
+# Outputs:
+#   None
 #
 # Returns:
 #   Exits with error if required options are missing or unknown arguments are given
@@ -163,14 +167,17 @@ function parse_arguments {
 #   Skips deploy if no changes detected (prevents unnecessary task definition
 #   revisions and deployment cycles)
 #
-# Arguments:
-#   None
-#
-# Global Variables:
+# Globals:
 #   ACCOUNT_ID - AWS account ID
 #   AWS_REGION - AWS region
 #   ENV        - Target environment name
 #   SERVICE_NAME - ECS service name
+#
+# Arguments:
+#   None
+#
+# Outputs:
+#   None
 #
 # Returns:
 #   Exits with status 0 if no changes detected, non-zero on failure
@@ -240,13 +247,16 @@ function deploy_service {
 # Description:
 #   Destroys the ECS service using ecspresso destroy
 #
-# Arguments:
-#   None
-#
-# Global Variables:
+# Globals:
 #   ACCOUNT_ID - AWS account ID
 #   AWS_REGION - AWS region
 #   ENV        - Target environment name
+#
+# Arguments:
+#   None
+#
+# Outputs:
+#   None
 #
 # Returns:
 #   Exits with non-zero status on failure
@@ -272,13 +282,16 @@ function destroy_service {
 # Description:
 #   Verifies that the ECS service configuration is valid using ecspresso verify
 #
-# Arguments:
-#   None
-#
-# Global Variables:
+# Globals:
 #   ACCOUNT_ID - AWS account ID
 #   AWS_REGION - AWS region
 #   ENV        - Target environment name
+#
+# Arguments:
+#   None
+#
+# Outputs:
+#   None
 #
 # Returns:
 #   Exits with non-zero status on failure
@@ -304,15 +317,18 @@ function verify_service {
 # Description:
 #   Main function to execute the ECS service deployment workflow
 #
-# Arguments:
-#   $@ - All command line arguments passed to the script
-#
-# Global Variables:
+# Globals:
 #   ACTION       - Action to perform (deploy, verify, destroy)
 #   ACCOUNT_ID   - AWS account ID
 #   AWS_REGION   - AWS region
 #   ENV          - Target environment name
 #   SERVICE_PATH - Path to ECS service directory
+#
+# Arguments:
+#   $@ - All command line arguments passed to the script
+#
+# Outputs:
+#   None
 #
 # Returns:
 #   Exits with status 0 on success, non-zero on failure

@@ -62,11 +62,14 @@ DOCS_FAILED=0
 # Arguments:
 #   None
 #
-# Global Variables:
+# Globals:
 #   None
 #
+# Outputs:
+#   Writes to stdout
+#
 # Returns:
-#   None (outputs to stdout)
+#   None
 #
 # Usage:
 #   show_usage
@@ -104,8 +107,11 @@ EOF
 # Arguments:
 #   $@ - All command line arguments passed to the script
 #
-# Global Variables:
+# Globals:
 #   TARGET_DIRS - Array of target directories to process
+#
+# Outputs:
+#   None
 #
 # Returns:
 #   Exits with error if unknown options are provided
@@ -151,8 +157,11 @@ function parse_arguments {
 # Arguments:
 #   None
 #
-# Global Variables:
+# Globals:
 #   TARGET_DIRS - Array of target directories (if scoped)
+#
+# Outputs:
+#   None
 #
 # Returns:
 #   Exits with error if tflint finds issues
@@ -203,8 +212,11 @@ function run_tflint_check {
 # Arguments:
 #   None
 #
-# Global Variables:
+# Globals:
 #   TARGET_DIRS - Array of target directories (if scoped)
+#
+# Outputs:
+#   None
 #
 # Returns:
 #   Exits with error if formatting issues are found
@@ -273,7 +285,10 @@ function run_formatting_check {
 # Arguments:
 #   None
 #
-# Global Variables:
+# Globals:
+#   None
+#
+# Outputs:
 #   None
 #
 # Returns:
@@ -303,7 +318,10 @@ function run_security_scan {
 # Arguments:
 #   $1 - Directory path to process
 #
-# Global Variables:
+# Globals:
+#   None
+#
+# Outputs:
 #   None
 #
 # Returns:
@@ -363,8 +381,11 @@ function process_terraform_directory {
 # Arguments:
 #   None
 #
-# Global Variables:
+# Globals:
 #   TARGET_DIRS - Array of target directories (if scoped)
+#
+# Outputs:
+#   None
 #
 # Returns:
 #   None
@@ -417,8 +438,11 @@ function run_recursive_validation {
 # Arguments:
 #   $@ - All command line arguments passed to the script
 #
-# Global Variables:
+# Globals:
 #   TARGET_DIRS - Array of target directories to process
+#
+# Outputs:
+#   None
 #
 # Returns:
 #   Exits with status 0 on success, non-zero on failure

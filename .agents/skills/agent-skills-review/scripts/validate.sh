@@ -60,11 +60,14 @@ declare -a required_fields=("name" "description" "license")
 # Arguments:
 #   None
 #
-# Global Variables:
+# Globals:
 #   None
 #
+# Outputs:
+#   Writes to stdout
+#
 # Returns:
-#   None (outputs to stdout)
+#   None
 #
 # Usage:
 #   show_usage
@@ -80,7 +83,7 @@ Description: Deterministic validation for Agent Skills SKILL.md files
 Arguments:
   SKILL.md       Path to SKILL.md file to validate (required)
                                  Must match pattern: <agent-root>/skills/*/SKILL.md
-                                 agent-root: .github, .agents, .claude, .cursor, cursor, .kiro, kiro
+                                 agent-root: .github, .agents, .claude, .codex, .cursor, cursor, .kiro, kiro
 
 Validation Checks:
     - Structural Completeness: 5 required sections exist
@@ -112,8 +115,11 @@ EOF
 # Arguments:
 #   $@ - All command line arguments passed to the script
 #
-# Global Variables:
+# Globals:
 #   SKILL_FILE - Path to SKILL.md file (normalized with realpath)
+#
+# Outputs:
+#   None
 #
 # Returns:
 #   Exits with error if validation fails
@@ -149,8 +155,8 @@ function parse_arguments {
     SKILL_FILE="$(realpath "$input_path")"
 
     # Validate path matches expected pattern (SEC-01)
-    if [[ ! $SKILL_FILE =~ /(\.github|\.agents|\.claude|\.cursor|cursor|\.kiro|kiro)/skills/.*/SKILL\.md$ ]]; then
-        error_exit "Error: File must match <agent-root>/skills/*/SKILL.md where agent-root is one of .github,.agents,.claude,.cursor,cursor,.kiro,kiro: $SKILL_FILE"
+    if [[ ! $SKILL_FILE =~ /(\.github|\.agents|\.claude|\.codex|\.cursor|cursor|\.kiro|kiro)/skills/.*/SKILL\.md$ ]]; then
+        error_exit "Error: File must match <agent-root>/skills/*/SKILL.md where agent-root is one of .github,.agents,.claude,.codex,.cursor,cursor,.kiro,kiro (see agent-skills.instructions.md S-06): $SKILL_FILE"
     fi
 }
 
@@ -164,11 +170,14 @@ function parse_arguments {
 # Arguments:
 #   None (uses global SKILL_FILE)
 #
-# Global Variables:
+# Globals:
 #   SKILL_FILE - Path to SKILL.md file
 #   check_names - Array of check names
 #   check_statuses - Array of check statuses
 #   check_details_json - Array of check details
+#
+# Outputs:
+#   None
 #
 # Returns:
 #   None (stores validation results in arrays)
@@ -228,6 +237,8 @@ function check_yaml_syntax {
 }
 
 #######################################
+# check_structural_completeness: Function implementation
+#
 #
 # Description:
 #   Verifies that SKILL.md contains all 5 required sections:
@@ -237,10 +248,13 @@ function check_yaml_syntax {
 # Arguments:
 #   None (uses global SKILL_FILE)
 #
-# Global Variables:
+# Globals:
 #   SKILL_FILE - Path to SKILL.md file
 #   results - Associative array to store check results
 #   required_sections - Array of required section names
+#
+# Outputs:
+#   None
 #
 # Returns:
 #   None (stores validation results in results array)
@@ -281,10 +295,13 @@ function check_structural_completeness {
 # Arguments:
 #   None (uses global SKILL_FILE)
 #
-# Global Variables:
+# Globals:
 #   SKILL_FILE - Path to SKILL.md file
 #   results - Associative array to store check results
 #   required_fields - Array of required field names
+#
+# Outputs:
+#   None
 #
 # Returns:
 #   None (stores validation results in results array)
@@ -333,9 +350,12 @@ function check_yaml_frontmatter {
 # Arguments:
 #   None (uses global SKILL_FILE)
 #
-# Global Variables:
+# Globals:
 #   SKILL_FILE - Path to SKILL.md file
 #   results - Associative array to store check results
+#
+# Outputs:
+#   None
 #
 # Returns:
 #   None (stores validation results in results array)
@@ -372,9 +392,12 @@ function check_progressive_disclosure {
 # Arguments:
 #   None (uses global SKILL_FILE)
 #
-# Global Variables:
+# Globals:
 #   SKILL_FILE - Path to SKILL.md file
 #   results - Associative array to store check results
+#
+# Outputs:
+#   None
 #
 # Returns:
 #   None (stores validation results in results array)
@@ -420,11 +443,14 @@ function check_resource_separation {
 # Arguments:
 #   None (uses global SKILL_FILE)
 #
-# Global Variables:
+# Globals:
 #   SKILL_FILE - Path to SKILL.md file
 #   check_names - Array of check names
 #   check_statuses - Array of check statuses
 #   check_details_json - Array of check details
+#
+# Outputs:
+#   None
 #
 # Returns:
 #   None (stores validation results in arrays)
@@ -466,6 +492,19 @@ function check_reference_mandatory_files {
 
 #######################################
 # check_description_quality: Check description field best practices
+#
+# Arguments:
+#   None
+#
+# Globals:
+#   None
+#
+# Outputs:
+#   None
+#
+# Returns:
+#   None
+#
 #######################################
 function check_description_quality {
     local issues=()
@@ -510,6 +549,19 @@ function check_description_quality {
 
 #######################################
 # check_metadata_fields: Check metadata author and version
+#
+# Arguments:
+#   None
+#
+# Globals:
+#   None
+#
+# Outputs:
+#   None
+#
+# Returns:
+#   None
+#
 #######################################
 function check_metadata_fields {
     local missing=()
@@ -536,6 +588,19 @@ function check_metadata_fields {
 
 #######################################
 # check_reference_triggers: Check Reference Files Guide has trigger conditions
+#
+# Arguments:
+#   None
+#
+# Globals:
+#   None
+#
+# Outputs:
+#   None
+#
+# Returns:
+#   None
+#
 #######################################
 function check_reference_triggers {
     # Extract Reference Files Guide section
@@ -582,6 +647,19 @@ function check_reference_triggers {
 
 #######################################
 # check_path_conventions: Enforce path conventions and decoupling rules
+#
+# Arguments:
+#   None
+#
+# Globals:
+#   None
+#
+# Outputs:
+#   None
+#
+# Returns:
+#   None
+#
 #######################################
 function check_path_conventions {
     local issues=()
@@ -615,11 +693,14 @@ function check_path_conventions {
 # Arguments:
 #   None (uses global results array)
 #
-# Global Variables:
+# Globals:
 #   results - Associative array containing check results
 #
-# Returns:
+# Outputs:
 #   None (outputs JSON to stdout)
+#
+# Returns:
+#   0 on success
 #
 # Usage:
 #   output_json
@@ -675,8 +756,11 @@ EOF
 # Arguments:
 #   $@ - Command line arguments (SKILL.md file path)
 #
-# Global Variables:
+# Globals:
 #   SKILL_FILE - Set by parse_arguments
+#
+# Outputs:
+#   None
 #
 # Returns:
 #   Exits with 0 on success, 1 on error

@@ -44,9 +44,7 @@ set -euo pipefail
 umask 027
 export LC_ALL=C.UTF-8
 
-# Get script directory for library loading
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-export SCRIPT_DIR
 
 # Load all-in-one library
 # shellcheck source=../lib/all.sh
@@ -54,7 +52,7 @@ export SCRIPT_DIR
 source "${SCRIPT_DIR}/../lib/all.sh"
 
 #######################################
-# Global variables and default values
+# Global variables
 #######################################
 VERBOSE=false
 export VERBOSE
@@ -134,14 +132,17 @@ GLUE_DATA='0.9|deprecated|2022-06-01|2026-04-01|false
 # Description:
 #   Displays usage information for the script, including options and examples
 #
+# Globals:
+#   None
+#
 # Arguments:
 #   None
 #
-# Global Variables:
-#   None
+# Outputs:
+#   Writes help to stdout
 #
 # Returns:
-#   Exits with status 0 after displaying help
+#   Exits with status 0
 #
 # Usage:
 #   show_usage
@@ -179,15 +180,18 @@ EOF
 # Description:
 #   Parses command line arguments and options, setting global variables accordingly
 #
-# Arguments:
-#   $@ - All command line arguments passed to the script
-#
-# Global Variables:
+# Globals:
 #   VERBOSE - Set to true if verbose mode is enabled
 #   DRY_RUN - Set to true if dry-run mode is enabled
 #   OUTPUT_FILE - Set to specified output file path
 #   AWS_REGION - Set to specified AWS region
 #   CATEGORIES - Set to specified categories string
+#
+# Arguments:
+#   $@ - All command line arguments passed to the script
+#
+# Outputs:
+#   None
 #
 # Returns:
 #   Exits with error if unknown arguments are provided
@@ -239,14 +243,17 @@ function parse_arguments {
 # Description:
 #   Collects Glue versions from predefined data and formats as CSV
 #
+# Globals:
+#   GLUE_DATA - Predefined Glue version data
+#
 # Arguments:
 #   $1 - AWS region or "header" for header output
 #
-# Global Variables:
-#   GLUE_DATA - Predefined Glue version data
+# Outputs:
+#   CSV formatted data or header
 #
 # Returns:
-#   Outputs CSV formatted data or header
+#   0 on success
 #
 # Usage:
 #   collect_glue_versions "us-east-1"
@@ -286,14 +293,17 @@ function collect_glue_versions {
 # Description:
 #   Collects Lambda runtime versions from predefined data and formats as CSV
 #
+# Globals:
+#   LAMBDA_DATA - Predefined Lambda runtime data
+#
 # Arguments:
 #   $1 - AWS region or "header" for header output
 #
-# Global Variables:
-#   LAMBDA_DATA - Predefined Lambda runtime data
+# Outputs:
+#   CSV formatted data or header
 #
 # Returns:
-#   Outputs CSV formatted data or header
+#   0 on success
 #
 # Usage:
 #   collect_lambda_versions "us-east-1"
@@ -333,14 +343,17 @@ function collect_lambda_versions {
 # Description:
 #   Collects RDS engine versions using AWS API and formats as CSV
 #
+# Globals:
+#   None
+#
 # Arguments:
 #   $1 - AWS region or "header" for header output
 #
-# Global Variables:
-#   None
+# Outputs:
+#   CSV formatted data or header
 #
 # Returns:
-#   Outputs CSV formatted data or header
+#   0 on success
 #
 # Usage:
 #   collect_rds_versions "us-east-1"
@@ -401,15 +414,18 @@ function collect_rds_versions {
 # Description:
 #   Generic function to collect runtime versions for a specific category across regions
 #
-# Arguments:
-#   $1 - Category name (lambda, glue, rds)
-#
-# Global Variables:
+# Globals:
 #   AWS_REGION - AWS region to query
 #   NO_SORT_CATEGORIES - Categories that should not be sorted
 #
-# Returns:
+# Arguments:
+#   $1 - Category name (lambda, glue, rds)
+#
+# Outputs:
 #   Calls output_csv_data to write results
+#
+# Returns:
+#   0 on success
 #
 # Usage:
 #   collect_runtime_versions "lambda"
@@ -453,14 +469,17 @@ function collect_runtime_versions {
 # Description:
 #   Writes CSV data to the output file with proper header and data formatting, with optional sorting
 #
+# Globals:
+#   OUTPUT_FILE - Path to output CSV file
+#
 # Arguments:
 #   $1 - Runtime/engine category name
 #   $2 - CSV header line
 #   $3 - CSV data buffer
 #   $4 - Whether to sort output (optional, defaults to true)
 #
-# Global Variables:
-#   OUTPUT_FILE - Path to output CSV file
+# Outputs:
+#   None
 #
 # Returns:
 #   0 on success
@@ -495,14 +514,17 @@ function output_csv_data {
 # Description:
 #   Main function to execute the script logic for collecting AWS runtime versions
 #
-# Arguments:
-#   $@ - All command line arguments passed to the script
-#
-# Global Variables:
+# Globals:
 #   OUTPUT_FILE - Output CSV file path
 #   AWS_REGION - AWS region to query
 #   CATEGORIES - Categories to process
 #   DRY_RUN - Whether to run in dry-run mode
+#
+# Arguments:
+#   $@ - All command line arguments passed to the script
+#
+# Outputs:
+#   None
 #
 # Returns:
 #   Exits with status 0 on success, non-zero on failure

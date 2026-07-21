@@ -1,0 +1,79 @@
+# Loop workflow: Documentation triage
+# Detects doc-impacting changes, runs bounded Agent→Verify loop, then finalizes.
+# Design doc: docs/explanation/loop-engineering/workflows/loop-docs-triage-workflow-design.md
+# Caller inputs: docs/explanation/loop-engineering/workflows/loop-caller-inputs-reference.md
+# Requires repository secret: AGENT_TOKEN (engine API key; see engine input).
+# Pass credentials via secrets: (callee BOT_APP_* / AGENT_TOKEN; remap MAINTENANCE_BOT_*). Optional with.environment for env-scoped secrets inside the reusable.
+name: on-loop-docs-triage
+
+on:
+  schedule:
+    - cron: "0 9 * * 1-5"
+  workflow_dispatch: {}
+
+permissions:
+  actions: write
+  contents: write
+  copilot-requests: write # zizmor: ignore[excessive-permissions]
+  pull-requests: write
+
+concurrency:
+  cancel-in-progress: false
+  group: loop-state-main
+  queue: max
+
+jobs:
+  loop:
+    uses: y-miyazaki/config/.github/workflows/ci-loop-caller.yaml@b7dbe0b8b43ebe4e476c2466c858fefd9b7728d9 # v1.8.49
+    with:
+      agent_implementer_max_turns: 5
+      agent_implementer_model: cursor-grok-4.5-low
+      agent_loop_max_attempts: 3
+      agent_verifier_criteria: |
+        ## Criteria for APPROVE
+
+        ALL of the following must be true:
+        1. Changes are limited to documentation files (docs/, README.md, mkdocs.yml nav)
+        2. Content is factually consistent with the codebase
+        3. No sensitive information is exposed
+        4. Changes address the documented triage items
+        5. No duplicate documentation is introduced
+        6. Existing documentation structure is preserved unless explicitly required by triage items
+
+        ## Criteria for REJECT
+
+        ANY of the following triggers REJECT:
+        - Changes outside allowed documentation paths
+        - Factual inaccuracies or hallucinated content
+        - Sensitive data exposure
+        - Gratuitous changes not related to triage items
+        - Duplicate content that restates existing documentation
+        - Unnecessary restructuring of document headings or sections
+      agent_verifier_max_turns: 3
+      agent_verifier_model: composer-2.5
+      allowlist: "docs/**/*.md,README.md,mkdocs.yml"
+      branch_match: main
+      branch_state: main
+      budget_max_runs_per_day: 1
+      budget_max_tokens_per_day: 500000
+      detect_domain_env_json: >-
+        {"DOCS_TRIAGE_DOC_GLOBS":"docs/**/*.md,README.md","DOCS_TRIAGE_EXTRA_FILES":"mkdocs.yml"}
+      detect_script: .agents/skills/loop-docs-triage/scripts/detect_changes.sh
+      engine: cursor
+      environment: default
+      finalize_integration: open_pr
+      infer_files_pattern: '[[:alnum:]_.-]+/[^[:space:],)]+\.(md|yml|yaml)'
+      loop_name: docs-triage
+      max_targets_per_schedule: 3
+      no_changes_verdict: REJECT
+      pr_body: ""
+      pr_title: "fix(docs): automated documentation update (loop-docs-triage)"
+      prompt_instructions: |
+        Edit files directly to address the documented triage findings.
+        Prioritize factual consistency with the codebase and preserve existing documentation structure unless triage items require restructuring.
+      pr_enabled: false
+      skill_name: loop-docs-triage
+    secrets:
+      AGENT_TOKEN: ${{ secrets.AGENT_TOKEN }}
+      BOT_APP_CLIENT_ID: ${{ secrets.MAINTENANCE_BOT_APP_CLIENT_ID }}
+      BOT_APP_PRIVATE_KEY: ${{ secrets.MAINTENANCE_BOT_APP_PRIVATE_KEY }}

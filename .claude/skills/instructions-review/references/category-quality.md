@@ -44,14 +44,14 @@ Fix: Cross-reference Standards definitions against Guidelines checks and resolve
 
 ## Completeness (COMP)
 
-**COMP-01 (SHOULD): No Missing Commands**
+**COMP-01 (SHOULD): Validation Ownership Clear**
 
-Check: Executable validation commands are comprehensive
-Why: Missing commands prevent validation and compromise quality assurance
-Fix: Include all executable validation commands
+Check: Does Testing and Validation avoid always-run lint recipes, and use at most a short on-demand skill pointer?
+Why: Always-on command catalogs duplicate validation skills and Agent hooks
+Fix: Keep Testing and Validation to a skill pointer and non-automated operational notes only
 
-**COMP-02 (SHOULD): Real Commands**
+**COMP-02 (SHOULD): Real Pointers**
 
-Check: Examples are concrete and comprehensive
-Why: Missing examples make validation difficult and lack practicality
-Fix: Provide concrete and comprehensive examples
+Check: When a skill is referenced, is the skill name concrete rather than vague "run validation"?
+Why: Vague pointers leave agents without a discoverable skill entry point
+Fix: Name the validation or review skill explicitly (for example `go-validation` skill SKILL.md)

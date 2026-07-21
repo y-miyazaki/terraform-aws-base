@@ -16,9 +16,7 @@ set -euo pipefail
 umask 027
 export LC_ALL=C.UTF-8
 
-# Get script directory for library loading
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-export SCRIPT_DIR
 
 # Load all-in-one library
 # shellcheck source=../lib/all.sh
@@ -26,7 +24,7 @@ export SCRIPT_DIR
 source "${SCRIPT_DIR}/../lib/all.sh"
 
 #######################################
-# Global variables and default values
+# Global variables
 #######################################
 REPO_ROOT="$(git rev-parse --show-toplevel 2> /dev/null || echo "${SCRIPT_DIR}/../..")"
 
@@ -36,14 +34,17 @@ REPO_ROOT="$(git rev-parse --show-toplevel 2> /dev/null || echo "${SCRIPT_DIR}/.
 # Description:
 #   Displays usage information for the script, including options and examples
 #
+# Globals:
+#   None
+#
 # Arguments:
 #   None
 #
-# Global Variables:
-#   None
+# Outputs:
+#   None (outputs to stdout and exits)
 #
 # Returns:
-#   None (outputs to stdout and exits)
+#   0 on success
 #
 # Usage:
 #   show_usage
@@ -77,11 +78,14 @@ EOF
 # Description:
 #   Builds a Docker image for the specified Node.js module
 #
+# Globals:
+#   None
+#
 # Arguments:
 #   $1 - Module name
 #   $2 - Docker image name
 #
-# Global Variables:
+# Outputs:
 #   None
 #
 # Returns:
@@ -104,10 +108,13 @@ function build_docker_image {
 # Description:
 #   Runs tests for the Node.js module inside a Docker container
 #
+# Globals:
+#   None
+#
 # Arguments:
 #   $1 - Docker image name
 #
-# Global Variables:
+# Outputs:
 #   None
 #
 # Returns:
@@ -134,11 +141,14 @@ function run_tests {
 # Description:
 #   Checks that the specified Node.js module directory exists
 #
+# Globals:
+#   REPO_ROOT - Repository root directory
+#
 # Arguments:
 #   $1 - Module name
 #
-# Global Variables:
-#   REPO_ROOT - Repository root directory
+# Outputs:
+#   None
 #
 # Returns:
 #   None (exits on validation failure)
@@ -158,10 +168,13 @@ function validate_module {
 # Description:
 #   Main entry point that orchestrates the testing process for Node.js modules
 #
+# Globals:
+#   None
+#
 # Arguments:
 #   $1 - Module name (optional, defaults to kinesis_data_firehose_cloudwatch_logs_processor)
 #
-# Global Variables:
+# Outputs:
 #   None
 #
 # Returns:

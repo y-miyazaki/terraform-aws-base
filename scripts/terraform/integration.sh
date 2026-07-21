@@ -14,9 +14,7 @@ set -euo pipefail
 umask 027
 export LC_ALL=C.UTF-8
 
-# Get script directory for library loading
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-export SCRIPT_DIR
 
 # Load all-in-one library
 # shellcheck source=../lib/all.sh
@@ -24,7 +22,7 @@ export SCRIPT_DIR
 source "${SCRIPT_DIR}/../lib/all.sh"
 
 #######################################
-# Global variables and default values
+# Global variables
 #######################################
 
 #######################################
@@ -33,14 +31,17 @@ source "${SCRIPT_DIR}/../lib/all.sh"
 # Description:
 #   Displays usage information for the script, including required environment variables and examples
 #
+# Globals:
+#   None
+#
 # Arguments:
 #   None
 #
-# Global Variables:
-#   None
+# Outputs:
+#   Writes help to stdout
 #
 # Returns:
-#   Exits with status 1 after displaying help
+#   Exits with status 1
 #
 # Usage:
 #   show_usage
@@ -84,10 +85,13 @@ fi
 # Description:
 #   Runs additional checks including tflint linting and trivy security scanning
 #
+# Globals:
+#   None
+#
 # Arguments:
 #   None
 #
-# Global Variables:
+# Outputs:
 #   None
 #
 # Returns:
@@ -127,11 +131,14 @@ function run_additional_checks {
 # Description:
 #   Runs the Terraform workflow for planning (without applying changes)
 #
+# Globals:
+#   ENV - Environment for workflow
+#
 # Arguments:
 #   None
 #
-# Global Variables:
-#   ENV - Environment for workflow
+# Outputs:
+#   None
 #
 # Returns:
 #   None
@@ -150,12 +157,15 @@ function run_terraform_workflow {
 # Description:
 #   Validates Terraform environment and dependencies, then changes to target directory
 #
+# Globals:
+#   ENV - Environment variable
+#   TF_PLUGIN_CACHE_DIR - Terraform plugin cache directory
+#
 # Arguments:
 #   $1 - Target directory path
 #
-# Global Variables:
-#   ENV - Environment variable
-#   TF_PLUGIN_CACHE_DIR - Terraform plugin cache directory
+# Outputs:
+#   None
 #
 # Returns:
 #   Exits with error if validation fails or directory change fails
@@ -185,10 +195,13 @@ function validate_and_prepare {
 # Description:
 #   Main function to execute the script logic for Terraform integration testing
 #
+# Globals:
+#   None
+#
 # Arguments:
 #   $@ - All command line arguments passed to the script
 #
-# Global Variables:
+# Outputs:
 #   None
 #
 # Returns:

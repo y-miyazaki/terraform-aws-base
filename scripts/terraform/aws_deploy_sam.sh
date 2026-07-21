@@ -30,9 +30,7 @@ set -euo pipefail
 umask 027
 export LC_ALL=C.UTF-8
 
-# Get script directory for library loading
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-export SCRIPT_DIR
 
 # Load all-in-one library
 # shellcheck source=../lib/all.sh
@@ -40,7 +38,7 @@ export SCRIPT_DIR
 source "${SCRIPT_DIR}/../lib/all.sh"
 
 #######################################
-# Global variables and default values
+# Global variables
 #######################################
 ACTION="deploy"
 AWS_REGION="${AWS_REGION:-}"
@@ -53,14 +51,17 @@ LAMBDA_PATH=""
 # Description:
 #   Displays usage information for the script, including actions, options, and examples
 #
+# Globals:
+#   None
+#
 # Arguments:
 #   None
 #
-# Global Variables:
-#   None
+# Outputs:
+#   Writes to stdout
 #
 # Returns:
-#   None (outputs to stdout, then exits with status 0)
+#   Exits with status 0
 #
 # Usage:
 #   show_usage
@@ -97,14 +98,17 @@ EOF
 # Description:
 #   Parses command line arguments and validates required options
 #
-# Arguments:
-#   $@ - All command line arguments passed to the script
-#
-# Global Variables:
+# Globals:
 #   ACTION      - Set to the provided action (deploy, validate, delete)
 #   AWS_REGION  - Set to the provided AWS region
 #   ENV         - Set to the provided target environment
 #   LAMBDA_PATH - Set to the provided Lambda project directory path
+#
+# Arguments:
+#   $@ - All command line arguments passed to the script
+#
+# Outputs:
+#   None
 #
 # Returns:
 #   Exits with error if required options are missing or unknown arguments are given
@@ -157,14 +161,17 @@ function parse_arguments {
 # Description:
 #   Main function to execute the Lambda deployment workflow
 #
-# Arguments:
-#   $@ - All command line arguments passed to the script
-#
-# Global Variables:
+# Globals:
 #   ACTION      - Action to perform (deploy, validate, delete)
 #   AWS_REGION  - AWS region
 #   ENV         - Target environment name
 #   LAMBDA_PATH - Path to Lambda project directory
+#
+# Arguments:
+#   $@ - All command line arguments passed to the script
+#
+# Outputs:
+#   None
 #
 # Returns:
 #   Exits with status 0 on success, non-zero on failure

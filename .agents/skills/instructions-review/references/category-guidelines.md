@@ -6,9 +6,9 @@ This file contains review checks specific to the Guidelines chapter of instructi
 
 **GUIDE-01 (SHOULD): Code Modification Guidelines**
 
-Check: Modification procedures and validation methods are clearly documented
-Why: Unclear procedures cause errors and inconsistency, reducing review quality
-Fix: Add clear modification and validation procedures
+Check: Modification procedures are clearly documented; do not embed always-run lint/validate recipes or "hooks handle it, skip lint" explanations
+Why: Always-on validation recipes waste context and fight Agent hooks; unclear modification procedures still cause errors
+Fix: Document domain modification procedures only; defer executable validation to skills and automation
 
 **GUIDE-02 (SHOULD): Tool Usage**
 

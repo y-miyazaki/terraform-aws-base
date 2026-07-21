@@ -18,14 +18,17 @@
 # Description:
 #   Sorts CSV data with proper handling of quoted fields containing commas and newlines
 #
+# Globals:
+#   None
+#
 # Arguments:
 #   $1 - CSV data to sort
 #
-# Global Variables:
-#   None
+# Outputs:
+#   Sorted CSV data to stdout
 #
 # Returns:
-#   Sorted CSV data (to stdout)
+#   0 on success
 #
 # Usage:
 #   sorted_data=$(csv_sort "$csv_data")
@@ -76,14 +79,17 @@ except Exception as e:
 # Description:
 #   Makes values safe for CSV output by handling special characters and quoting
 #
+# Globals:
+#   None
+#
 # Arguments:
 #   $1 - value to make CSV-safe
 #
-# Global Variables:
-#   None
+# Outputs:
+#   CSV-safe value with proper quoting and escaping to stdout
 #
 # Returns:
-#   CSV-safe value with proper quoting and escaping (to stdout)
+#   0 on success
 #
 # Usage:
 #   safe_value=$(make_csv_safe "value,with,commas")
@@ -127,14 +133,17 @@ function make_csv_safe {
 # Description:
 #   Normalizes and quotes a value for safe CSV output with proper escaping
 #
+# Globals:
+#   None
+#
 # Arguments:
 #   $1 - value to normalize
 #
-# Global Variables:
-#   None
+# Outputs:
+#   CSV-safe value; quoted when needed to stdout
 #
 # Returns:
-#   CSV-safe value; quoted when needed (to stdout)
+#   0 on success
 #
 # Usage:
 #   quoted_value=$(normalize_csv_value "value with \"quotes\"")

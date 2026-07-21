@@ -1,0 +1,78 @@
+# Loop workflow: Report technical debt
+# Scans repository mechanical debt signals, classifies findings, and writes a dated report PR.
+# Design doc: docs/explanation/loop-engineering/workflows/loop-report-tech-debt-workflow-design.md
+# Caller inputs: docs/explanation/loop-engineering/workflows/loop-caller-inputs-reference.md
+# Requires repository secret: AGENT_TOKEN (engine API key; see engine input).
+# Pass credentials via secrets: (callee BOT_APP_* / AGENT_TOKEN; remap MAINTENANCE_BOT_*). Optional with.environment for env-scoped secrets inside the reusable.
+name: on-loop-report-tech-debt
+
+on:
+  schedule:
+    - cron: "0 8 * * 1"
+  workflow_dispatch: {}
+
+permissions:
+  actions: write
+  contents: write
+  copilot-requests: write # zizmor: ignore[excessive-permissions]
+  pull-requests: write
+
+concurrency:
+  cancel-in-progress: false
+  group: loop-state-main
+  queue: max
+
+jobs:
+  loop:
+    uses: y-miyazaki/config/.github/workflows/ci-loop-caller.yaml@b7dbe0b8b43ebe4e476c2466c858fefd9b7728d9 # v1.8.49
+    with:
+      agent_implementer_max_turns: 5
+      agent_implementer_model: cursor-grok-4.5-low
+      agent_loop_max_attempts: 3
+      agent_verifier_criteria: |
+        ## Criteria for APPROVE
+
+        ALL of the following must be true:
+        1. Changes are limited to files under `docs/report/report-tech-debt/**/*.md`
+        2. Report content matches the provided detect signals and hotspots
+        3. File paths cited in the report exist in the repository
+        4. Critical + High findings count is at most 25
+        5. No denylist paths were modified
+
+        ## Criteria for REJECT
+
+        ANY of the following triggers REJECT:
+        - No report file written despite non-empty signals
+        - Invented or non-existent file paths in the report
+        - Changes outside the allowlist or modifications to denylist paths
+        - Semantic claims unsupported by cited evidence
+      agent_verifier_max_turns: 3
+      agent_verifier_model: composer-2.5
+      allowlist: docs/report/report-tech-debt/**/*.md
+      branch_match: main
+      branch_state: main
+      budget_max_runs_per_day: 2
+      budget_max_tokens_per_day: 750000
+      denylist: "**/.env,**/credentials*,**/secrets*,**/migration/*.sql,**/infrastructure/**,src/**,.github/**"
+      detect_domain_env_json: "{}"
+      detect_script: .agents/skills/loop-report-tech-debt/scripts/detect_report_tech_debt.sh
+      engine: cursor
+      environment: default
+      infer_files_pattern: 'docs/report/report-tech-debt/[0-9]{4}-[0-9]{2}-[0-9]{2}\.md'
+      level: L2
+      loop_name: report-tech-debt
+      max_targets_per_schedule: 1
+      no_changes_verdict: REJECT
+      pr_body: ""
+      pr_enabled: false
+      pr_title: "docs(report): technical debt report (loop-report-tech-debt)"
+      prompt_instructions: |
+        Classify mechanical debt signals per the skill taxonomy.
+        Write the dated report to `report_file` at L2 within the allowlist.
+        Compare against `previous_report` for resolved, recurring, and regression items.
+        Do not create GitHub Issues.
+      skill_name: loop-report-tech-debt
+    secrets:
+      AGENT_TOKEN: ${{ secrets.AGENT_TOKEN }}
+      BOT_APP_CLIENT_ID: ${{ secrets.MAINTENANCE_BOT_APP_CLIENT_ID }}
+      BOT_APP_PRIVATE_KEY: ${{ secrets.MAINTENANCE_BOT_APP_PRIVATE_KEY }}

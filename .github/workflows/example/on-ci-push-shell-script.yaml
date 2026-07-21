@@ -12,6 +12,7 @@ on:
       - "feature/**"
     paths:
       - "**/*.sh"
+      - "**/*.bats"
   pull_request:
     branches:
       - "main"
@@ -22,6 +23,7 @@ on:
       - "feature/**"
     paths:
       - "**/*.sh"
+      - "**/*.bats"
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -34,9 +36,9 @@ permissions:
 
 jobs:
   shell-script-ci:
-    uses: y-miyazaki/config/.github/workflows/ci-shell-script.yaml@0098282039f73bf3aba3a67a02568c0dec11c2a5 # v1.8.30
+    uses: y-miyazaki/config/.github/workflows/ci-shell-script.yaml@b7dbe0b8b43ebe4e476c2466c858fefd9b7728d9 # v1.8.49
     with:
-      script_path: "**/*.sh"
+      script_path: "**/*.sh,**/*.bats"
     permissions:
       checks: write
       contents: read

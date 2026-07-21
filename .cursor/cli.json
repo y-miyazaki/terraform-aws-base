@@ -3,6 +3,8 @@
     "allow": [
       "Shell(actionlint)",
       "Shell(apm)",
+      "Shell(bash)",
+      "Shell(bats)",
       "Shell(cat)",
       "Shell(cd)",
       "Shell(diff)",

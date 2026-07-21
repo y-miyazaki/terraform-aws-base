@@ -38,7 +38,10 @@ fi
 # Arguments:
 #   None
 #
-# Global Variables:
+# Globals:
+#   None
+#
+# Outputs:
 #   None
 #
 # Returns:
@@ -74,11 +77,14 @@ function has_changed_workflows {
 # Arguments:
 #   $1 - reason: Human-readable description of what failed and how to fix it
 #
-# Global Variables:
+# Globals:
 #   None
 #
+# Outputs:
+#   Writes JSON to stdout or errors to stderr
+#
 # Returns:
-#   Does not return. Exits with 0 (JSON block) or 2 (stderr).
+#   Exits with 0 or 2
 #
 # Usage:
 #   report_failure "ghalint found policy violations: ..."
@@ -228,7 +234,10 @@ function report_failure {
 # Arguments:
 #   None
 #
-# Global Variables:
+# Globals:
+#   None
+#
+# Outputs:
 #   None
 #
 # Returns:

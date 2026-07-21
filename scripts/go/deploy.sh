@@ -18,9 +18,7 @@ set -euo pipefail
 umask 027
 export LC_ALL=C.UTF-8
 
-# Get script directory for library loading
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-export SCRIPT_DIR
 
 # Load all-in-one library
 # shellcheck source=../lib/all.sh
@@ -28,7 +26,7 @@ export SCRIPT_DIR
 source "${SCRIPT_DIR}/../lib/all.sh"
 
 #######################################
-# Global variables and default values
+# Global variables
 #######################################
 
 #######################################
@@ -37,14 +35,17 @@ source "${SCRIPT_DIR}/../lib/all.sh"
 # Description:
 #   Displays usage information for the script, including options and examples
 #
+# Globals:
+#   None
+#
 # Arguments:
 #   $1 - Error message to display (optional)
 #
-# Global Variables:
-#   None
+# Outputs:
+#   Writes to stdout
 #
 # Returns:
-#   None (outputs to stdout and exits with code 1)
+#   Exits with code 1
 #
 # Usage:
 #   show_usage "error message"
@@ -82,10 +83,13 @@ EOF
 # Description:
 #   Builds the Go Lambda project using make build
 #
+# Globals:
+#   None
+#
 # Arguments:
 #   None
 #
-# Global Variables:
+# Outputs:
 #   None
 #
 # Returns:
@@ -108,10 +112,13 @@ function build_project {
 # Description:
 #   Deploys the built Lambda functions to AWS using Serverless Framework
 #
+# Globals:
+#   None
+#
 # Arguments:
 #   $1 - Deployment stage (dev, staging, prod)
 #
-# Global Variables:
+# Outputs:
 #   None
 #
 # Returns:
@@ -136,10 +143,13 @@ function deploy_to_aws {
 # Description:
 #   Installs project dependencies using npm ci
 #
+# Globals:
+#   None
+#
 # Arguments:
 #   None
 #
-# Global Variables:
+# Outputs:
 #   None
 #
 # Returns:
@@ -162,10 +172,13 @@ function install_dependencies {
 # Description:
 #   Validates that required arguments are provided
 #
+# Globals:
+#   None
+#
 # Arguments:
 #   $1 - Deployment stage
 #
-# Global Variables:
+# Outputs:
 #   None
 #
 # Returns:
@@ -189,10 +202,13 @@ function validate_arguments {
 # Description:
 #   Main entry point that orchestrates the deployment process
 #
+# Globals:
+#   None
+#
 # Arguments:
 #   $@ - All command line arguments passed to the script
 #
-# Global Variables:
+# Outputs:
 #   None
 #
 # Returns:

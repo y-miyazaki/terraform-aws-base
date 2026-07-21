@@ -44,7 +44,8 @@ paths:
 ### Agent Root Canonical List
 
 - **S-06 (MUST)**: Use `<agent-root>` placeholder for portable paths; do not hardcode `.github/skills`.
-- Canonical `agent-root` list (single source of truth): `.github`, `.agents`, `.claude`, `.cursor`, `cursor`, `.kiro`, `kiro`.
+- Canonical `agent-root` list (single source of truth): `.github`, `.agents`, `.claude`, `.codex`, `.cursor`, `cursor`, `.kiro`, `kiro`.
+- `.vscode` is editor-local configuration, not an agent-root for skill paths; `scripts/lib/repo_paths.sh` excludes it from repository scans separately.
 - Keep markdown examples portable by using `<agent-root>` in paths.
 - Preferred markdown path forms:
   - Cross-skill path: `<agent-root>/skills/<skill-name>/...`
@@ -137,33 +138,11 @@ paths:
 
 ### Code Modification Guidelines
 
-- After changes, prioritize running validate.sh from agent-skills-review skill.
-- Use individual commands only for debugging.
+- Automate deterministic checks (existence, quantitative, file presence) in skill `scripts/`; keep judgment-based checks in the review skill workflow.
 
 ## Testing and Validation
 
-Operational rules:
-
-- Automate deterministic checks (existence checks, quantitative checks, and file presence checks) in `scripts/`.
-- Evaluate judgment-based checks (semantic review, design assessment, and context-sensitive decisions) in the review skill.
-- Determine overall quality from both deterministic checks and judgment-based checks.
-
-**Entry point (recommended)**:
-
-```bash
-bash <agent-root>/skills/agent-skills-review/scripts/validate.sh SKILL.md
-bash <agent-root>/skills/agent-skills-review/scripts/validate_waza.sh <skill-name>
-```
-
-**Individual execution (debugging)**:
-
-```bash
-waza check <skill-name>
-waza run <skill-name>/eval.yaml
-waza tokens count <skill-name>/SKILL.md
-```
-
-**Detailed guide**: See agent-skills-review skill SKILL.md.
+On-demand validation: see agent-skills-review skill SKILL.md.
 
 ## Security Guidelines
 

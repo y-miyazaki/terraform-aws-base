@@ -1,0 +1,118 @@
+# Loop workflow: CI sweeper
+# Reacts to failed CI workflow runs (workflow_run), runs bounded Agent→Verify loop, then finalizes.
+# Design doc: docs/explanation/loop-engineering/workflows/loop-ci-sweeper-workflow-design.md
+# Caller inputs: docs/explanation/loop-engineering/workflows/loop-caller-inputs-reference.md
+# Requires repository secret: AGENT_TOKEN (engine API key; see engine input).
+# Pass credentials via secrets: (callee BOT_APP_* / AGENT_TOKEN; remap MAINTENANCE_BOT_*). Optional with.environment for env-scoped secrets inside the reusable.
+name: on-loop-ci-sweeper
+
+on:
+  workflow_dispatch: {}
+  workflow_run: # zizmor: ignore[dangerous-triggers]
+    types:
+      - completed
+    workflows:
+      - on-cd-mkdocs
+      - on-ci-push-github-actions-workflow
+      - on-ci-push-markdown
+      - on-ci-push-mise-update-lock
+      - on-ci-push-shell-script
+
+permissions:
+  actions: write
+  contents: write
+  copilot-requests: write # zizmor: ignore[excessive-permissions]
+  pull-requests: write
+
+concurrency:
+  cancel-in-progress: false
+  group: loop-state-main
+  queue: max
+
+jobs:
+  loop:
+    if: >-
+      github.event_name != 'workflow_run' ||
+      github.event.workflow_run.conclusion == 'failure' ||
+      github.event.workflow_run.conclusion == 'startup_failure'
+    uses: y-miyazaki/config/.github/workflows/ci-loop-caller-full-github.yaml@b7dbe0b8b43ebe4e476c2466c858fefd9b7728d9 # v1.8.49
+    with:
+      additional_commit_paths: .loop/state-ci-sweeper-run-ledger.json
+      agent_implementer_max_turns: 8
+      agent_implementer_model: cursor-grok-4.5-low
+      agent_loop_max_attempts: 3
+      agent_verifier_criteria: |
+        ## Criteria for APPROVE
+
+        ALL of the following must be true:
+        1. Changes directly address the specific CI failure described in the detection result
+        2. The diff is minimal — no unrelated refactors, formatting sweeps, or drive-by edits
+        3. No files outside the allowlist were modified
+        4. No denylist paths were touched
+        5. No secrets, credentials, or sensitive values were added or exposed
+        6. The implementer report lists validation commands run and their outcome
+
+        ## Criteria for REJECT
+
+        ANY of the following triggers REJECT:
+        - Symptom-only changes that do not address the logged failure
+        - Changes touching more than five files without clear necessity
+        - Modifications outside the allowlist
+        - Missing validation when the failure type is lint/syntax/test
+        - Fixes for infra/env failures that should have been deferred
+        - Hallucinated paths, commands, or APIs not present in the repository
+        - Diffs whose primary purpose is raising test coverage thresholds (coverage gate failures) — classify Watch, no edit
+        - Diffs whose primary purpose is dependency version bumps or lockfile churn from Renovate/Dependabot-class failures — classify Watch unless a named dependency-repair domain skill is in caller instructions
+      agent_verifier_max_turns: 3
+      agent_verifier_model: composer-2.5
+      allowlist: ".github/**,.apm/packages/**,scripts/**,apm.yml,mise.toml,renovate/**,docs/**/*.md,README.md,mkdocs.yml"
+      branch_match: main
+      branch_state: main
+      budget_max_runs_per_day: 5
+      budget_max_tokens_per_day: 1000000
+      denylist: "**/.env,**/credentials*,**/secrets*,**/migration/*.sql,**/infrastructure/**"
+      # detect_domain_env_json: LEDGER/REJECT_*; workflow_run event keys (EVENT_/HEAD_*/WORKFLOW_*) when present
+      # Keys must stay alphabetically ordered.
+      detect_domain_env_json: |
+        ${{ format(
+          '{{"CI_SWEEPER_EVENT_HEAD_BRANCH":"{0}","CI_SWEEPER_HEAD_BRANCH":"{0}","CI_SWEEPER_HEAD_SHA":"{1}","CI_SWEEPER_LEDGER_FILE":".loop/state-ci-sweeper-run-ledger.json","CI_SWEEPER_REJECT_MAX_RETRIES":"3","CI_SWEEPER_REJECT_RETRY_POLICY":"block","CI_SWEEPER_RUN_URL":"{2}","CI_SWEEPER_WORKFLOW_NAME":"{3}","CI_SWEEPER_WORKFLOW_RUN_ID":"{4}"}}',
+          github.event.workflow_run.head_branch || 'main',
+          github.event.workflow_run.head_sha || github.sha,
+          github.event.workflow_run.html_url || '',
+          github.event.workflow_run.name || '',
+          github.event.workflow_run.id || ''
+        ) }}
+      detect_script: .agents/skills/loop-ci-sweeper/scripts/detect_ci_failures.sh
+      domain_persistence_script: .agents/skills/loop-ci-sweeper/scripts/update_run_ledger.sh
+      engine: cursor
+      environment: default
+      infer_files_pattern: '[[:alnum:]_.-]+/[^[:space:],)]+\.(md|ya?ml|sh|go|toml|json)'
+      loop_name: ci-sweeper
+      max_targets_per_schedule: 3
+      no_changes_verdict: REJECT
+      pr_body: ""
+      pr_enabled: true
+      pr_exclude: fork,draft,label:no-loop
+      pr_include_bots: ""
+      pr_title: "fix(ci): automated CI repair (loop-ci-sweeper)"
+      prompt_instructions: |
+        Fix the failing CI checks identified in the detection result.
+        Classify flakes and infra/env failures as Watch — do not edit code for those.
+        Apply the smallest change that resolves the logged failure.
+
+        ## Stack routing (validation / repair skills)
+
+        | Failed workflow (hint)              | Domain skill to invoke                          |
+        | ----------------------------------- | ----------------------------------------------- |
+        | on-ci-push-github-actions-workflow  | github-actions-validation                       |
+        | on-ci-push-shell-script             | shell-script-validation                         |
+        | on-ci-push-markdown, on-cd-mkdocs    | markdown-validation                             |
+        | on-ci-push-mise-update-lock         | (minimal lockfile edit; run affected CI checks) |
+
+        Read each skill's SKILL.md under `.agents/skills/` or `.claude/skills/` before invoking.
+        Coverage-threshold and dependency-breakage failures: classify Watch — do not edit until caller verifier allows.
+      skill_name: loop-ci-sweeper
+    secrets:
+      AGENT_TOKEN: ${{ secrets.AGENT_TOKEN }}
+      BOT_APP_CLIENT_ID: ${{ secrets.MAINTENANCE_BOT_APP_CLIENT_ID }}
+      BOT_APP_PRIVATE_KEY: ${{ secrets.MAINTENANCE_BOT_APP_PRIVATE_KEY }}

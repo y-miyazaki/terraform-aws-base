@@ -15,6 +15,7 @@ on:
       - ".github/workflows/**/*.yaml"
       - ".github/actions/**/*.yml"
       - ".github/actions/**/*.yaml"
+      - "scripts/ci/**"
       - "**/action.yml"
       - "**/action.yaml"
   pull_request:
@@ -30,6 +31,7 @@ on:
       - ".github/workflows/**/*.yaml"
       - ".github/actions/**/*.yml"
       - ".github/actions/**/*.yaml"
+      - "scripts/ci/**"
       - "**/action.yml"
       - "**/action.yaml"
 
@@ -42,6 +44,6 @@ permissions:
 
 jobs:
   github-actions-workflow-ci:
-    uses: y-miyazaki/config/.github/workflows/ci-github-actions-workflow.yaml@0098282039f73bf3aba3a67a02568c0dec11c2a5 # v1.8.30
+    uses: y-miyazaki/config/.github/workflows/ci-github-actions-workflow.yaml@b7dbe0b8b43ebe4e476c2466c858fefd9b7728d9 # v1.8.49
     permissions:
       contents: read

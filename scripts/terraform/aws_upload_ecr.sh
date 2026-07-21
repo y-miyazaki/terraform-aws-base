@@ -38,9 +38,7 @@ set -euo pipefail
 umask 027
 export LC_ALL=C.UTF-8
 
-# Get script directory for library loading
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-export SCRIPT_DIR
 
 # Load all-in-one library
 # shellcheck source=../lib/all.sh
@@ -48,7 +46,7 @@ export SCRIPT_DIR
 source "${SCRIPT_DIR}/../lib/all.sh"
 
 #######################################
-# Global variables and default values
+# Global variables
 #######################################
 AWS_REGION="${AWS_REGION:-}"
 VERBOSE=false
@@ -66,14 +64,17 @@ REPOSITORY_NAME=""
 # Description:
 #   Displays usage information for the script, including options and examples
 #
+# Globals:
+#   None
+#
 # Arguments:
 #   None
 #
-# Global Variables:
-#   None
+# Outputs:
+#   Writes to stdout
 #
 # Returns:
-#   None (outputs to stdout)
+#   None
 #
 # Usage:
 #   show_usage
@@ -130,10 +131,7 @@ EOF
 # Description:
 #   Parses command line arguments and validates required repository name
 #
-# Arguments:
-#   $@ - All command line arguments passed to the script
-#
-# Global Variables:
+# Globals:
 #   AWS_REGION - Set to specified AWS region
 #   VERBOSE - Set to true if verbose mode enabled
 #   DRY_RUN - Set to true if dry-run mode enabled
@@ -143,6 +141,12 @@ EOF
 #   DOCKERFILE_PATH - Set to specified Dockerfile path
 #   BUILD_CONTEXT - Set to specified build context
 #   REPOSITORY_NAME - Set to specified repository name
+#
+# Arguments:
+#   $@ - All command line arguments passed to the script
+#
+# Outputs:
+#   None
 #
 # Returns:
 #   Exits with error if repository name is missing or unknown arguments provided
@@ -218,15 +222,18 @@ function parse_arguments {
 # Description:
 #   Authenticates Docker to AWS ECR registry using AWS credentials
 #
-# Arguments:
-#   None
-#
-# Global Variables:
+# Globals:
 #   AWS_REGION - AWS region for ECR registry
 #   DRY_RUN - Whether to run in dry-run mode
 #
+# Arguments:
+#   None
+#
+# Outputs:
+#   the ECR registry URL
+#
 # Returns:
-#   Outputs the ECR registry URL
+#   0 on success
 #
 # Usage:
 #   registry_url=$(authenticate_ecr)
@@ -277,19 +284,22 @@ function authenticate_ecr {
 # Description:
 #   Builds a Docker image with specified parameters and tags it for ECR
 #
-# Arguments:
-#   $1 - Repository name
-#   $2 - ECR registry URL
-#
-# Global Variables:
+# Globals:
 #   DOCKER_PLATFORM - Docker platform to build for
 #   IMAGE_TAG - Image tag to use
 #   DOCKERFILE_PATH - Path to Dockerfile
 #   BUILD_CONTEXT - Build context path
 #   DRY_RUN - Whether to run in dry-run mode
 #
+# Arguments:
+#   $1 - Repository name
+#   $2 - ECR registry URL
+#
+# Outputs:
+#   the full image name (registry/repository:tag)
+#
 # Returns:
-#   Outputs the full image name (registry/repository:tag)
+#   0 on success
 #
 # Usage:
 #   full_image_name=$(build_docker_image "$repo" "$registry_url")
@@ -333,11 +343,14 @@ function build_docker_image {
 # Description:
 #   Pushes the built Docker image to AWS ECR
 #
+# Globals:
+#   DRY_RUN - Whether to run in dry-run mode
+#
 # Arguments:
 #   $1 - Full image name (registry/repository:tag)
 #
-# Global Variables:
-#   DRY_RUN - Whether to run in dry-run mode
+# Outputs:
+#   None
 #
 # Returns:
 #   None
@@ -370,17 +383,20 @@ function push_docker_image {
 #   Tags an existing local Docker image with ECR registry URL and pushes it to ECR
 #   without rebuilding
 #
+# Globals:
+#   IMAGE_TAG - Image tag to use in ECR (default: latest)
+#   DRY_RUN - Whether to run in dry-run mode
+#
 # Arguments:
 #   $1 - Repository name
 #   $2 - ECR registry URL
 #   $3 - Existing image name (format: image:tag)
 #
-# Global Variables:
-#   IMAGE_TAG - Image tag to use in ECR (default: latest)
-#   DRY_RUN - Whether to run in dry-run mode
+# Outputs:
+#   the full image name (registry/repository:tag)
 #
 # Returns:
-#   Outputs the full image name (registry/repository:tag)
+#   0 on success
 #
 # Usage:
 #   full_image_name=$(tag_existing_image "$repo" "$registry_url" "$existing_image")
@@ -422,12 +438,15 @@ function tag_existing_image {
 # Description:
 #   Validates that Dockerfile exists and build context is accessible
 #
+# Globals:
+#   DOCKERFILE_PATH - Path to Dockerfile to validate
+#   BUILD_CONTEXT - Build context path to validate
+#
 # Arguments:
 #   None
 #
-# Global Variables:
-#   DOCKERFILE_PATH - Path to Dockerfile to validate
-#   BUILD_CONTEXT - Build context path to validate
+# Outputs:
+#   None
 #
 # Returns:
 #   Exits with error if validation fails
@@ -454,10 +473,7 @@ function validate_build_requirements {
 # Description:
 #   Main function to execute the script logic for uploading Docker image to ECR
 #
-# Arguments:
-#   $@ - All command line arguments passed to the script
-#
-# Global Variables:
+# Globals:
 #   REPOSITORY_NAME - ECR repository name
 #   AWS_REGION - AWS region
 #   DOCKER_PLATFORM - Docker platform
@@ -465,6 +481,12 @@ function validate_build_requirements {
 #   DOCKERFILE_PATH - Dockerfile path
 #   BUILD_CONTEXT - Build context path
 #   DRY_RUN - Whether to run in dry-run mode
+#
+# Arguments:
+#   $@ - All command line arguments passed to the script
+#
+# Outputs:
+#   None
 #
 # Returns:
 #   Exits with status 0 on success, non-zero on failure

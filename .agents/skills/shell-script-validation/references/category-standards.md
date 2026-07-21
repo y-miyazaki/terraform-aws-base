@@ -30,7 +30,8 @@ export LC_ALL=C.UTF-8
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-# shellcheck source=lib/all.sh
+# Load all-in-one library
+# shellcheck source=./lib/all.sh
 # shellcheck disable=SC1091
 source "${SCRIPT_DIR}/lib/all.sh"
 
@@ -54,6 +55,31 @@ Scripts that use only environment variables or absolute paths omit `SCRIPT_DIR` 
 1. show_usage / parse_arguments (if present)
 2. Other functions in alphabetical order
 3. main function last
+
+## Function Documentation (opt-in validation)
+
+When `--check-function-docs` is passed to `validate.sh`, enforce [Google Shell Style Guide — Function Comments](https://google.github.io/styleguide/shellguide.html#s4.2-function-comments) plus explicit `None` for non-applicable sections:
+
+```bash
+#######################################
+# Brief description of what the function does.
+#
+# Globals:
+#   None
+#
+# Arguments:
+#   $1 - path to process
+#
+# Outputs:
+#   None
+#
+# Returns:
+#   0 on success, 1 on failure
+#######################################
+function my_function() {
+```
+
+Required section headers in this order: `Globals:`, `Arguments:`, `Outputs:`, `Returns:`. Each section must have a body line (content or `None`). Use `scripts/fix_function_doc_order.sh` to normalize section order (accepts files or directories such as `scripts/lib/` and `.github/actions/`).
 
 ## Error Handling
 

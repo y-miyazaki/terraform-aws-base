@@ -56,7 +56,7 @@ Applies to `source`d modules (for example `lib/*.sh`, `scripts/lib/*.sh`):
 - Omit items 2, 3, 5 (`show_usage` / `parse_arguments` / `main`), and 6 from the executable list above
 - Match comment style, separators, and function doc blocks used by sibling files in the same directory
 - List functions in a-z order (G-03)
-- Every function doc block must include **Arguments**, **Global Variables**, and **Returns** (`None` when a section does not apply)
+- Every function doc block must include **Globals**, **Arguments**, **Outputs**, and **Returns** (`None` when a section does not apply)
 - When refactoring logic, **do not remove** header or function comment blocks to save tokens
 
 ### Header Comment Format
@@ -79,24 +79,27 @@ Applies to `source`d modules (for example `lib/*.sh`, `scripts/lib/*.sh`):
 
 ### Function Documentation
 
+Based on [Google Shell Style Guide — Function Comments](https://google.github.io/styleguide/shellguide.html#s4.2-function-comments). List all API sections explicitly; write `None` when a section does not apply (clearer than omitting the section).
+
 ```bash
-# function_name: concise description (one line)
-#
-# Description:
-#   What this function does (one paragraph).
+#######################################
+# Brief description of what the function does.
+# Globals:
+#   VAR_NAME - globals read or written (or None)
 #
 # Arguments:
-#   $1 - description of argument 1
+#   $1 - description of argument 1 (or None)
 #
-# Global Variables:
-#   VAR_NAME - description of global variable set or used
+# Outputs:
+#   STDOUT/STDERR description (or None)
 #
 # Returns:
-#   exit code or output description
-#
+#   Exit status description (or None)
+#######################################
+function my_function() {
 ```
 
-Write `None` for sections that do not apply. **Do not omit sections** — especially `Global Variables`; when a function reads or writes no caller globals, write `Global Variables:` followed by `None`.
+**Do not omit sections** — write `None` on the next line when a section has no applicable content.
 
 ## Guidelines
 
@@ -106,8 +109,8 @@ Write `None` for sections that do not apply. **Do not omit sections** — especi
   - Check: Are executable-script requirements (`set -euo pipefail`, `main`, entry guard) avoided on sourced library files?
 - AP-02 (SHOULD): Preserve DOC Comment Blocks
   - Check: Are header and function DOC blocks kept when refactoring?
-- AP-03 (SHOULD): Global Variables Section Required
-  - Check: Does every function doc block include `Global Variables:` with `None` when no caller globals apply?
+- AP-03 (SHOULD): Globals Section Required
+  - Check: Does every function doc block include `Globals:` with `None` when no caller globals apply?
 - AP-04 (SHOULD): Consistent Library Comment Style
   - Check: Do sibling `lib/*.sh` files share the same comment and separator style?
 
@@ -138,7 +141,7 @@ Write `None` for sections that do not apply. **Do not omit sections** — especi
 - DOC-02 (SHOULD): show_usage Required
   - Check: Is show_usage function implemented?
 - DOC-03 (SHOULD): Function Comment Blocks
-  - Check: Does each function include Description, Arguments, Global Variables, and Returns sections, using the same separator or spacing convention as sibling files in the directory?
+  - Check: Does each function include a description line plus `Globals`, `Arguments`, `Outputs`, and `Returns` sections with explicit `None` when a section does not apply, using the same separator convention as sibling files?
 - DOC-04 (SHOULD): Complex Logic Comments
   - Check: Do complex algorithms have Why comments?
 - DOC-05 (SHOULD): Variable Documentation
@@ -185,7 +188,7 @@ Write `None` for sections that do not apply. **Do not omit sections** — especi
 ### Global / Base (G)
 
 - G-01 (MUST): Set SCRIPT_DIR
-  - Check: When the script sources libraries or resolves relative paths, is `SCRIPT_DIR` set with the canonical assignment (no `export`, no `SC2034` when referenced)?
+  - Check: When the script sources libraries or resolves relative paths, is `SCRIPT_DIR` set?
 - G-02 (SHOULD): No Hardcoded Secrets
   - Check: Are API keys, passwords, and tokens not embedded in scripts?
 - G-03 (MUST): Follow Function Order
@@ -266,28 +269,12 @@ Write `None` for sections that do not apply. **Do not omit sections** — especi
 ### Code Modification Guidelines
 
 - When adding or changing shell scripts or sourced libraries, add or update matching Bats suites under test/bats/ (mirror the script path) in the same change; follow companion Bats rules (stem `bats`) for suite layout.
-- After changes, prioritize running validate.sh from shell-script-validation skill.
-- Use individual commands only for debugging.
 
 ## Testing and Validation
 
-`shell-script-validation` runs automated checks only: `bash -n`, shellcheck, shebang, and permissions. It does **not** enforce DOC-\* comment format or header separator style.
+DOC-\* comment format and header separator style need judgment review (shell-script-review), not automated lint.
 
-**Entry point (recommended)**:
-
-```bash
-bash <agent-root>/skills/shell-script-validation/scripts/validate.sh
-```
-
-**Individual execution (debugging)**:
-
-```bash
-bash -n script.sh
-shellcheck script.sh
-bats -r test/bats
-```
-
-**Detailed guide**: See shell-script-validation skill SKILL.md. For Bats suite layout and helpers, see companion Bats rules (stem `bats`). For comment/header conventions, see shell-script-review skill.
+On-demand validation: see shell-script-validation skill SKILL.md. Suite layout: companion Bats rules (stem `bats`).
 
 ## Security Guidelines
 

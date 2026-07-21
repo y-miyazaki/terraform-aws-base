@@ -27,7 +27,7 @@ export LC_ALL=C.UTF-8
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # Load common library
-# shellcheck source=lib/common.sh
+# shellcheck source=./lib/common.sh
 # shellcheck disable=SC1091
 source "${SCRIPT_DIR}/lib/common.sh"
 
@@ -41,6 +41,19 @@ DRY_RUN="false"
 
 #######################################
 # show_usage: Display usage information
+#
+# Arguments:
+#   None
+#
+# Globals:
+#   None
+#
+# Outputs:
+#   Help text to stdout
+#
+# Returns:
+#   Exits with code 0
+#
 #######################################
 function show_usage {
     cat << EOF
@@ -71,6 +84,19 @@ EOF
 
 #######################################
 # get_repository_from_git: Auto-detect repository
+#
+# Arguments:
+#   None
+#
+# Globals:
+#   None
+#
+# Outputs:
+#   owner/repo to stdout when detected
+#
+# Returns:
+#   0 on success, 1 otherwise
+#
 #######################################
 function get_repository_from_git {
     if ! git remote get-url origin &> /dev/null; then
@@ -89,6 +115,19 @@ function get_repository_from_git {
 
 #######################################
 # find_existing_comment: Find comment by marker
+#
+# Arguments:
+#   None
+#
+# Globals:
+#   None
+#
+# Outputs:
+#   None
+#
+# Returns:
+#   None
+#
 #######################################
 function find_existing_comment {
     gh pr view "$PR_NUMBER" \
@@ -100,6 +139,19 @@ function find_existing_comment {
 
 #######################################
 # create_comment: Create new PR comment
+#
+# Arguments:
+#   None
+#
+# Globals:
+#   None
+#
+# Outputs:
+#   None
+#
+# Returns:
+#   None
+#
 #######################################
 function create_comment {
     log "INFO" "Creating new overview comment on PR #$PR_NUMBER"
@@ -113,6 +165,19 @@ function create_comment {
 
 #######################################
 # update_comment: Update existing comment via GraphQL
+#
+# Arguments:
+#   None
+#
+# Globals:
+#   None
+#
+# Outputs:
+#   None
+#
+# Returns:
+#   None
+#
 #######################################
 function update_comment {
     local comment_id="$1"
@@ -141,6 +206,19 @@ mutation UpdateComment($commentId: ID!, $body: String!) {
 
 #######################################
 # manage_comment: Create or update comment
+#
+# Arguments:
+#   None
+#
+# Globals:
+#   None
+#
+# Outputs:
+#   None
+#
+# Returns:
+#   None
+#
 #######################################
 function manage_comment {
     local comment_id
@@ -169,6 +247,19 @@ function manage_comment {
 
 #######################################
 # parse_arguments: Parse command line
+#
+# Arguments:
+#   $@ - Command line arguments
+
+# Globals:
+#   None
+#
+# Outputs:
+#   None
+#
+# Returns:
+#   None
+#
 #######################################
 function parse_arguments {
     while [[ $# -gt 0 ]]; do
@@ -211,6 +302,19 @@ function parse_arguments {
 
 #######################################
 # main: Main process
+#
+# Arguments:
+#   $@ - Command line arguments
+
+# Globals:
+#   None
+#
+# Outputs:
+#   None
+#
+# Returns:
+#   None
+#
 #######################################
 function main {
     parse_arguments "$@"

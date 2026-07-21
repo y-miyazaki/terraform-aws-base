@@ -42,9 +42,7 @@ set -euo pipefail
 umask 027
 export LC_ALL=C.UTF-8
 
-# Get script directory for library loading
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-export SCRIPT_DIR
 
 # Load all-in-one library
 # shellcheck source=../lib/all.sh
@@ -55,7 +53,7 @@ source "${SCRIPT_DIR}/../lib/all.sh"
 REPO_ROOT="$(git rev-parse --show-toplevel 2> /dev/null || echo "${SCRIPT_DIR}/../..")"
 
 #######################################
-# Global variables and default values
+# Global variables
 #######################################
 VERBOSE=false
 export VERBOSE
@@ -91,7 +89,10 @@ JDBC_DRIVER=""
 # Arguments:
 #   None
 #
-# Global Variables:
+# Globals:
+#   None
+#
+# Outputs:
 #   None
 #
 # Returns:
@@ -159,7 +160,7 @@ EOF
 # Arguments:
 #   $@ - Command line arguments
 #
-# Global Variables:
+# Globals:
 #   VERBOSE - Enable verbose output
 #   DRY_RUN - Enable dry-run mode
 #   ENVIRONMENT - Environment name
@@ -175,6 +176,9 @@ EOF
 #   SSL_MODE - SSL mode for database connection
 #   DB_THREADS - Number of database threads
 #   SKIP_CLEANUP - Skip SSM session cleanup
+#
+# Outputs:
+#   None
 #
 # Returns:
 #   None
@@ -268,7 +272,7 @@ parse_arguments() {
 # Arguments:
 #   None
 #
-# Global Variables:
+# Globals:
 #   ENVIRONMENT - Environment name
 #   DB_NAME - Database name
 #   SECRET_ID - AWS Secrets Manager secret ID
@@ -279,6 +283,9 @@ parse_arguments() {
 #   SSL_MODE - SSL mode for database connection
 #   SCHEMASPY_VERSION - SchemaSpy version
 #   DB_THREADS - Number of database threads
+#
+# Outputs:
+#   None
 #
 # Returns:
 #   None

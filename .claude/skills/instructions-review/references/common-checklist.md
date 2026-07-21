@@ -16,6 +16,7 @@
 - STRUCT-04 (MUST): Standards Chapter Subsections
 - STRUCT-05 (MUST): Guidelines Chapter Subsections
 - STRUCT-06 (MUST): H3 Heading Format
+- STRUCT-07 (MUST): Concise Testing and Validation Chapter
 - STRUCT-08 (SHOULD): Critical MUST in Scope
 
 ## Guidelines Chapter (GUIDE)
@@ -39,8 +40,8 @@
 
 ## Completeness (COMP)
 
-- COMP-01 (SHOULD): No Missing Commands
-- COMP-02 (SHOULD): Real Commands
+- COMP-01 (SHOULD): Validation Ownership Clear
+- COMP-02 (SHOULD): Real Pointers
 
 ## Security Guidelines Chapter (SEC)
 
@@ -58,7 +59,6 @@
 
 ## Testing and Validation Chapter (TEST)
 
-- TEST-01 (MUST): Validation Commands
-- TEST-02 (MUST): Code Block Format
-- TEST-03 (SHOULD): Validation Items
-- TEST-04 (SHOULD): Real Commands
+- TEST-01 (MUST): No Always-Run Lint Mandates
+- TEST-02 (SHOULD): On-Demand Skill Pointer
+- TEST-03 (SHOULD): Domain-Only Operational Notes

@@ -32,6 +32,7 @@ export LC_ALL=C.UTF-8
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
+# Load all-in-one library
 # shellcheck source=./lib/all.sh
 # shellcheck disable=SC1091
 source "${SCRIPT_DIR}/lib/all.sh"
@@ -53,7 +54,10 @@ declare -a required_fields=("name" "description" "license")
 # Arguments:
 #   None
 #
-# Global Variables:
+# Globals:
+#   None
+#
+# Outputs:
 #   None
 #
 # Returns:
@@ -78,7 +82,10 @@ function cleanup {
 # Arguments:
 #   None
 #
-# Global Variables:
+# Globals:
+#   None
+#
+# Outputs:
 #   None
 #
 # Returns:
@@ -123,8 +130,11 @@ EOF
 # Arguments:
 #   $@ - Command line arguments
 #
-# Global Variables:
+# Globals:
 #   SKILL_FILE - Normalized target file path
+#
+# Outputs:
+#   None
 #
 # Returns:
 #   Exits with error when input is invalid
@@ -152,8 +162,8 @@ function parse_arguments {
 
     SKILL_FILE="$(realpath "${SKILL_FILE}")"
 
-    if [[ ! ${SKILL_FILE} =~ /(\.github|\.agents|\.claude|\.cursor|cursor|\.kiro|kiro)/skills/.*/SKILL\.md$ ]]; then
-        error_exit "Error: File must match <agent-root>/skills/*/SKILL.md where agent-root is one of .github,.agents,.claude,.cursor,cursor,.kiro,kiro: ${SKILL_FILE}"
+    if [[ ! ${SKILL_FILE} =~ /(\.github|\.agents|\.claude|\.codex|\.cursor|cursor|\.kiro|kiro)/skills/.*/SKILL\.md$ ]]; then
+        error_exit "Error: File must match <agent-root>/skills/*/SKILL.md where agent-root is one of .github,.agents,.claude,.codex,.cursor,cursor,.kiro,kiro: ${SKILL_FILE}"
     fi
 }
 
@@ -166,7 +176,10 @@ function parse_arguments {
 # Arguments:
 #   None
 #
-# Global Variables:
+# Globals:
+#   None
+#
+# Outputs:
 #   None
 #
 # Returns:
@@ -202,8 +215,11 @@ function check_frontmatter_exists {
 # Arguments:
 #   None
 #
-# Global Variables:
+# Globals:
 #   TMP_FRONTMATTER - Temporary frontmatter file path
+#
+# Outputs:
+#   None
 #
 # Returns:
 #   None (stores check result)
@@ -268,7 +284,10 @@ function check_yaml_syntax {
 # Arguments:
 #   None
 #
-# Global Variables:
+# Globals:
+#   None
+#
+# Outputs:
 #   None
 #
 # Returns:
@@ -310,7 +329,10 @@ function check_required_sections {
 # Arguments:
 #   None
 #
-# Global Variables:
+# Globals:
+#   None
+#
+# Outputs:
 #   None
 #
 # Returns:
@@ -352,7 +374,10 @@ function check_yaml_fields {
 # Arguments:
 #   None
 #
-# Global Variables:
+# Globals:
+#   None
+#
+# Outputs:
 #   None
 #
 # Returns:
@@ -388,7 +413,10 @@ function check_word_count {
 # Arguments:
 #   None
 #
-# Global Variables:
+# Globals:
+#   None
+#
+# Outputs:
 #   None
 #
 # Returns:
@@ -434,7 +462,10 @@ function check_resource_separation {
 # Arguments:
 #   $1 - Overall status (PASS/FAIL)
 #
-# Global Variables:
+# Globals:
+#   None
+#
+# Outputs:
 #   None
 #
 # Returns:
@@ -482,7 +513,10 @@ function print_json_results {
 # Arguments:
 #   $@ - Command line arguments
 #
-# Global Variables:
+# Globals:
+#   None
+#
+# Outputs:
 #   None
 #
 # Returns:

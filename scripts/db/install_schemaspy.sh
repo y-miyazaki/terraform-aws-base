@@ -39,9 +39,7 @@ set -euo pipefail
 umask 027
 export LC_ALL=C.UTF-8
 
-# Get script directory for library loading
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-export SCRIPT_DIR
 
 # Load all-in-one library
 # shellcheck source=../lib/all.sh
@@ -52,13 +50,12 @@ source "${SCRIPT_DIR}/../lib/all.sh"
 REPO_ROOT="$(git rev-parse --show-toplevel 2> /dev/null || echo "${SCRIPT_DIR}/../..")"
 
 #######################################
-# Global variables and default values
+# Global variables
 #######################################
-VERBOSE=false
 export VERBOSE
+DB_TYPE="all"
 DRY_RUN=false
 FORCE_INSTALL=false
-DB_TYPE="all"
 SKIP_JAVA=false
 SKIP_GRAPHVIZ=false
 SKIP_SCHEMASPY=false
@@ -80,7 +77,10 @@ JDBC_VERSION_REDSHIFT="2.1.0.32"
 # Arguments:
 #   None
 #
-# Global Variables:
+# Globals:
+#   None
+#
+# Outputs:
 #   None
 #
 # Returns:
@@ -142,7 +142,7 @@ EOF
 # Arguments:
 #   $@ - Command line arguments
 #
-# Global Variables:
+# Globals:
 #   VERBOSE - Enable verbose output
 #   DRY_RUN - Enable dry-run mode
 #   FORCE_INSTALL - Force reinstallation of components
@@ -153,6 +153,9 @@ EOF
 #   SKIP_JDBC - Skip JDBC driver download
 #   SCHEMASPY_VERSION - SchemaSpy version to download
 #   INSTALL_DIR - Installation directory
+#
+# Outputs:
+#   None
 #
 # Returns:
 #   None
@@ -226,7 +229,7 @@ parse_arguments() {
 # Arguments:
 #   None
 #
-# Global Variables:
+# Globals:
 #   DB_TYPE - Database type
 #   INSTALL_DIR - Installation directory
 #   FORCE_INSTALL - Force reinstallation flag
@@ -234,6 +237,9 @@ parse_arguments() {
 #   SKIP_GRAPHVIZ - Skip Graphviz installation flag
 #   SKIP_SCHEMASPY - Skip SchemaSpy download flag
 #   SKIP_JDBC - Skip JDBC driver download flag
+#
+# Outputs:
+#   None
 #
 # Returns:
 #   None

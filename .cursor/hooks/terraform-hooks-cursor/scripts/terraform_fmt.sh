@@ -28,7 +28,10 @@ export LC_ALL=C.UTF-8
 # Arguments:
 #   None
 #
-# Global Variables:
+# Globals:
+#   None
+#
+# Outputs:
 #   None
 #
 # Returns:

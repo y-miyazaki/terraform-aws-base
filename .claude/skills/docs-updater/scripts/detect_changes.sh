@@ -21,6 +21,10 @@
 # Dependencies:
 # - bash (POSIX bash, /bin/bash)
 # - git
+#
+# Optional environment:
+#   DOCS_UPDATER_DOCS_ROOT    - Documentation tree root (default: docs)
+#   DOCS_UPDATER_SITE_CONFIG  - Site navigation config path (default: mkdocs.yml)
 #######################################
 
 # Error handling: exit on error, unset variable, or failed pipeline
@@ -32,7 +36,8 @@ export LC_ALL=C.UTF-8
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-# shellcheck source=lib/all.sh
+# Load all-in-one library
+# shellcheck source=./lib/all.sh
 # shellcheck disable=SC1091
 source "${SCRIPT_DIR}/lib/all.sh"
 
@@ -53,7 +58,10 @@ declare -a AFFECTED_DOCS=()
 # Arguments:
 #   None
 #
-# Global Variables:
+# Globals:
+#   None
+#
+# Outputs:
 #   None
 #
 # Returns:
@@ -92,8 +100,11 @@ EOF
 # Arguments:
 #   $@ - Command line arguments
 #
-# Global Variables:
+# Globals:
 #   SCOPE - Detection scope (staged or all)
+#
+# Outputs:
+#   None
 #
 # Returns:
 #   None
@@ -163,11 +174,14 @@ function parse_arguments {
 # Arguments:
 #   None
 #
-# Global Variables:
+# Globals:
 #   SCOPE - Detection scope
 #   CHANGED_FILES - Array of changed file paths
 #   RENAMED_FILES - Array of "old->new" rename pairs
 #   DELETED_FILES - Array of deleted file paths
+#
+# Outputs:
+#   None
 #
 # Returns:
 #   None
@@ -208,8 +222,8 @@ function collect_changes {
         fi
     fi
 
-    mapfile -t CHANGED_FILES < <(git diff "${diff_ref}" --name-only --diff-filter=ACMR 2> /dev/null || true)
-    mapfile -t DELETED_FILES < <(git diff "${diff_ref}" --name-only --diff-filter=D 2> /dev/null || true)
+    mapfile -t CHANGED_FILES < <(git diff "${diff_ref}" --name-only --diff-filter=ACMR 2> /dev/null | repo_filter_paths || true)
+    mapfile -t DELETED_FILES < <(git diff "${diff_ref}" --name-only --diff-filter=D 2> /dev/null | repo_filter_paths || true)
 
     local rename_lines
     mapfile -t rename_lines < <(git diff "${diff_ref}" -M --diff-filter=R --name-status 2> /dev/null || true)
@@ -220,14 +234,14 @@ function collect_changes {
         old="$(echo "${line}" | cut -f2)"
         new="$(echo "${line}" | cut -f3)"
         if [[ -n ${old} && -n ${new} ]]; then
-            RENAMED_FILES+=("${old}->${new}")
+            repo_apply_git_rename "${old}" "${new}" RENAMED_FILES DELETED_FILES CHANGED_FILES
         fi
     done
 
     # Include untracked files only for 'all' scope (not range)
     if [[ ${SCOPE} == "all" ]]; then
         local untracked
-        mapfile -t untracked < <(git ls-files --others --exclude-standard 2> /dev/null || true)
+        mapfile -t untracked < <(git ls-files --others --exclude-standard 2> /dev/null | repo_filter_paths || true)
         CHANGED_FILES+=("${untracked[@]}")
     fi
 }
@@ -242,11 +256,14 @@ function collect_changes {
 # Arguments:
 #   None
 #
-# Global Variables:
+# Globals:
 #   CHANGED_FILES - Source of change detection
 #   DELETED_FILES - Deleted files
 #   RENAMED_FILES - Renamed files
 #   AFFECTED_DOCS - Output array of candidate document paths
+#
+# Outputs:
+#   None
 #
 # Returns:
 #   None
@@ -297,30 +314,27 @@ function collect_affected_docs {
     fi
 
     local doc_file
+    local -a find_args
     # Root-level markdown files
     while IFS= read -r doc_file; do
         AFFECTED_DOCS+=("${doc_file}")
-    done < <(find . -maxdepth 1 -name '*.md' -type f 2> /dev/null | sed 's|^\./||')
+    done < <(find . -maxdepth 1 -name '*.md' -type f -print 2> /dev/null | sed 's|^\./||' | repo_filter_paths)
     # docs/ directory markdown files (excluding generated directories)
-    while IFS= read -r doc_file; do
-        AFFECTED_DOCS+=("${doc_file}")
-    done < <(find docs -name '*.md' -type f 2> /dev/null || true)
+    if [[ -d ${DOCS_UPDATER_DOCS_ROOT} ]]; then
+        while IFS= read -r doc_file; do
+            AFFECTED_DOCS+=("${doc_file}")
+        done < <(find "${DOCS_UPDATER_DOCS_ROOT}" -name '*.md' -type f -print 2> /dev/null | repo_filter_paths || true)
+    fi
     # Nested README.md files (excluding root, docs/, generated, and hidden directories)
+    find_args=(. -mindepth 2)
+    repo_append_find_prune_args find_args "${DOCS_UPDATER_DOCS_ROOT}"
+    find_args+=(-name 'README.md' -type f -print)
     while IFS= read -r doc_file; do
         AFFECTED_DOCS+=("${doc_file}")
-    done < <(find . -mindepth 2 \
-        -path './docs' -prune -o \
-        -path '*/.*' -prune -o \
-        -path './.agents' -prune -o \
-        -path './.cursor' -prune -o \
-        -path './.claude' -prune -o \
-        -path './.kiro' -prune -o \
-        -path './.vscode' -prune -o \
-        -path './apm_modules' -prune -o \
-        -name 'README.md' -type f -print 2> /dev/null | sed 's|^\./||' || true)
-    # mkdocs.yml (nav section is documentation)
-    if [[ -f "mkdocs.yml" ]]; then
-        AFFECTED_DOCS+=("mkdocs.yml")
+    done < <(find "${find_args[@]}" 2> /dev/null | sed 's|^\./||' | repo_filter_paths || true)
+    # Site config (nav section is documentation)
+    if [[ -f ${DOCS_UPDATER_SITE_CONFIG} ]] && ! repo_path_should_skip "${DOCS_UPDATER_SITE_CONFIG}"; then
+        AFFECTED_DOCS+=("${DOCS_UPDATER_SITE_CONFIG}")
     fi
 }
 
@@ -330,7 +344,10 @@ function collect_affected_docs {
 # Arguments:
 #   None
 #
-# Global Variables:
+# Globals:
+#   None
+#
+# Outputs:
 #   None
 #
 # Returns:
@@ -364,12 +381,42 @@ function output_json {
 }
 
 #######################################
+# configure_detect_environment: Normalize domain env into globals once at startup
+#
+# Arguments:
+#   None
+#
+# Globals:
+#   DOCS_UPDATER_DOCS_ROOT - Documentation tree root
+#   DOCS_UPDATER_SITE_CONFIG - Site navigation config path
+#
+# Outputs:
+#   None
+#
+# Returns:
+#   None
+#
+# Usage:
+#   configure_detect_environment
+#
+#######################################
+function configure_detect_environment {
+    DOCS_UPDATER_DOCS_ROOT="${DOCS_UPDATER_DOCS_ROOT:-docs}"
+    DOCS_UPDATER_DOCS_ROOT="${DOCS_UPDATER_DOCS_ROOT#./}"
+    DOCS_UPDATER_SITE_CONFIG="${DOCS_UPDATER_SITE_CONFIG:-mkdocs.yml}"
+    DOCS_UPDATER_SITE_CONFIG="${DOCS_UPDATER_SITE_CONFIG#./}"
+}
+
+#######################################
 # main: Entry point
 #
 # Arguments:
 #   $@ - Command line arguments
 #
-# Global Variables:
+# Globals:
+#   None
+#
+# Outputs:
 #   None
 #
 # Returns:
@@ -380,6 +427,7 @@ function output_json {
 #
 #######################################
 function main {
+    configure_detect_environment
     parse_arguments "$@"
     collect_changes
     collect_affected_docs

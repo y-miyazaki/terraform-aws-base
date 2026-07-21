@@ -108,31 +108,11 @@ globs:
 
 ### Code Modification Guidelines
 
-- After changes, prioritize running validate.sh from github-actions-validation skill.
-- Use individual commands only for debugging.
+- Keep `inputs`, `env`, `permissions`, and `with` keys alphabetically ordered (G-05).
 
 ## Testing and Validation
 
-**Entry point (recommended)**:
-
-```bash
-bash <agent-root>/skills/github-actions-validation/scripts/validate.sh
-```
-
-**Individual execution (debugging)**:
-
-```bash
-# syntax and best-practice validation
-actionlint
-
-# policy validation
-ghalint run
-
-# security scanning
-zizmor .github/workflows/
-```
-
-**Detailed guide**: See github-actions-validation skill SKILL.md.
+On-demand validation: see github-actions-validation skill SKILL.md.
 
 ## Security Guidelines
 

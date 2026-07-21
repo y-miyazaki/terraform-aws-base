@@ -8,7 +8,7 @@ exec_auto_install = true # Auto-install tools when commands are run via `mise x`
 github_attestations = true # Verify GitHub release attestations when a backend supports them.
 lockfile = true # Generate and maintain mise.lock with resolved URLs and checksums.
 locked = true # Require lockfile entries during installs to reduce unexpected upstream changes.
-# minimum_release_age = "7d" # Avoid very recent releases to reduce supply-chain risk from rushed or bad publishes.
+minimum_release_age = "7d" # Avoid very recent releases to reduce supply-chain risk from rushed or bad publishes.
 not_found_auto_install = true # Try installing missing tools when a command is looked up from the current config.
 provenance_api_failures_fatal = true # Fail installs if provenance verification APIs are unavailable or verification fails.
 slsa = true # Require SLSA provenance checks when a backend supports them.
@@ -29,22 +29,26 @@ uvx = true # Install uv/uvx via pipx for better isolation and performance.
 
 [tools]
 # A Runtime tools
-aqua = "v2.60.1"
+aqua = "v2.61.0"
 node = "24.18.0"
-pnpm = { version = "11.10.0", depends = ["node"] }
+pnpm = { version = "11.11.0", depends = ["node"] }
 python = "3.14.6"
 
 # AI agent tools
-"github:microsoft/apm" = "v0.24.0"               # agent package manager
-claude = "2.1.205"                               # Claude Code CLI
+"github:microsoft/apm" = "v0.26.0"               # agent package manager
+claude = "2.1.209"                               # Claude Code CLI
 "github:DeusData/codebase-memory-mcp" = "v0.9.0" # codebase memory MCP server
-"aqua:github/copilot-cli" = "1.0.69"             # GitHub Copilot CLI
-"pipx:headroom-ai" = { version = "0.30.0", extras = "proxy,mcp,bedrock", depends = ["python"] }
-"github:yvgude/lean-ctx" = "v3.9.3"              # context optimizer
+"aqua:github/copilot-cli" = "1.0.70"             # GitHub Copilot CLI
+"pipx:headroom-ai" = { version = "0.31.0", extras = "proxy,mcp,bedrock", depends = ["python"] }
+"npm:lean-ctx-bin" = { version = "3.9.12", depends = [
+  "node",
+], allow_builds = [
+  "lean-ctx-bin",
+] } # context optimizer (hooks CLI + MCP npm)
 "github:microsoft/waza" = "v0.38.0"               # agent skill evaluator
 
 # AWS related tools
-"aqua:aws/aws-cli" = "2.35.19"      # AWS CLI
+"aqua:aws/aws-cli" = "2.35.22"      # AWS CLI
 "aqua:aws/aws-sam-cli" = "1.163.0"  # SAM CLI tool
 "npm:awsp" = { version = "0.2.0", depends = [
   "node",
@@ -112,7 +116,7 @@ claude = "2.1.205"                               # Claude Code CLI
 "pipx:mkdocs" = { version = "1.6.1", depends = ["python"], postinstall = "uv pip install --python $MISE_TOOL_INSTALL_PATH/mkdocs/bin/python mkdocs-material mdx-truly-sane-lists" } # MkDocs with Material theme
 "aqua:BurntSushi/ripgrep" = "15.1.0" # grep alternative (rg)
 "aqua:tamasfe/taplo" = "0.10.0"      # TOML formatter / LSP
-"aqua:jdx/usage" = "3.5.4"           # usage CLI tool for command help and completions
+"aqua:jdx/usage" = "3.5.5"           # usage CLI tool for command help and completions
 "aqua:astral-sh/uv" = "0.11.28"      # uv/uvx
 
 [tasks.mise-install]
