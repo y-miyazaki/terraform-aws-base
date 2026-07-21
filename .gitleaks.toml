@@ -18,7 +18,7 @@ title = "gitleaks config"
 # config-enabled features are guaranteed to work.
 minVersion = "v8.25.0"
 
-# TODO: change to [[allowlists]]
+# change to [[allowlists]]
 [allowlist]
 description = "global allow lists"
 paths = [

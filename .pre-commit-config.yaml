@@ -30,8 +30,8 @@ repos:
     hooks:
       - id: detect-secrets
         # args: ['--baseline', '.secrets.baseline']
-        # Exclude go test file and gitleaks config and any terraform.*.tfvars files in any directory
-        exclude: '(.*_test.go|.gitleaks.toml|apm.lock.yaml|aqua-checksums.json|(?:^|/)(?:.*/)?terraform\.(?!example\.)[^.]+\.tfvars$)'
+        # Exclude go tests, gitleaks config, lock/checksums, .loop/ state, terraform.*.tfvars
+        exclude: '(.*_test.go|.gitleaks.toml|apm.lock.yaml|aqua-checksums.json|(?:^|/)\.loop/|(?:^|/)(?:.*/)?terraform\.(?!example\.)[^.]+\.tfvars$)'
   - repo: https://github.com/gitleaks/gitleaks
     rev: v8.30.1
     hooks:
