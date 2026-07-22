@@ -1,6 +1,6 @@
 # trivy:ignore:AVD-DS-0026
 # Pinned to digest for repeatable builds
-FROM node:22-slim@sha256:813a7480f28fdadac1f7f5c824bcdad435b5bc1322a5968bbbdef8d058f9dff4
+FROM node:22-slim@sha256:6c74791e557ce11fc957704f6d4fe134a7bc8d6f5ca4403205b2966bd488f6b3
 
 WORKDIR /app
 
