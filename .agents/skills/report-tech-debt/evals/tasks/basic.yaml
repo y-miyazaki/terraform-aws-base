@@ -1,0 +1,32 @@
+id: report-tech-debt-contract-001
+name: report-tech-debt classifies injected todo marker
+description: >-
+  Validate report-tech-debt classifies an injected todo_comment as code_quality
+  with full session-summary sections.
+tags:
+  - quality
+  - output-contract
+inputs:
+  prompt: >-
+    Use report-tech-debt at L2. Classify the injected todo_comment with Category
+    code_quality under High-Priority. Emit Critical, High-Priority, Watch,
+    Noise / Ignore, and Summary with Category fields. Emit PR ## Overview and ## Summary plus Session Metrics table with Critical, High-Priority, Watch, and Noise / Ignore sections including Category fields.
+  context:
+    level: L2
+    report_file: docs/report/report-tech-debt/2026-07-19.md
+    skip: false
+    signals:
+      - kind: todo_comment
+        path: evals/files/sample_service.go.txt
+        line: 5
+        snippet: "TODO: extract shared validator used by HandleCreate and HandleUpdate"
+        hint: code_quality
+    hotspots: []
+expected:
+  output_contains:
+    - code_quality
+    - High-Priority
+    - Category
+    - Summary
+  outcomes:
+    - type: task_completed

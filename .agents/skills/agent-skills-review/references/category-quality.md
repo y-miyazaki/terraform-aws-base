@@ -69,16 +69,16 @@ Examples:
 
 ---
 
-**Q-09 (SHOULD): Token Hard Gate**
+**Q-09 (SHOULD): Token Budget Advisory**
 
-Check: Does the review include `waza check` evidence and confirm Token Budget is 500 tokens or less?
-Why: Token Budget is a Waza hard gate. SKILL.md that exceeds 500 tokens is not submission-ready regardless of other quality metrics.
+Check: Does the review include `waza check` token evidence? When Token Budget exceeds 500 tokens, record an advisory note in `## Issues` (not a structural FAIL) unless sibling skills in the same package were compressed in isolation.
+Why: External tooling may warn above ~500 tokens; that is **advisory**. Sibling `SKILL.md` documentation-level consistency outranks isolated token compression (per package sibling-consistency policy for skills in the same package). Do not mark Q-09 Failed solely for token count when structure and reference-load contracts meet package norms.
 Examples:
 
-- ✅ `waza check` output attached with "Token Budget: 498 / 500"
-- ✅ Report marks token gate as PASS only after hard-gate evidence is present
-- ❌ No `waza check` evidence provided
-- ❌ Token over budget (for example 551 / 500) but report still marks PASS
+- ✅ `waza check` shows 612 / 500 — Q-09 noted in `## Issues` as advisory; sibling loop skills are at similar depth
+- ✅ Token within budget — Q-09 Passed or omitted from failed table
+- ❌ Token over budget with no `waza check` evidence
+- ❌ One skill compressed below 500 while siblings remain full-depth (BP-04 / sibling drift risk — flag in Issues)
 
 ---
 
@@ -147,3 +147,4 @@ Examples:
 - ✅ Input says "profile: optional (default: default)" and Workflow uses fallback logic when profile is absent
 - ❌ Input says "required" but Workflow says "skip if not provided"
 - ❌ Output Specification defines a field that common-output-format.md omits
+

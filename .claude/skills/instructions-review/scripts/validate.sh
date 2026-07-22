@@ -51,10 +51,10 @@ declare -a required_fields=("name" "description" "license")
 # Description:
 #   Removes the temporary frontmatter file when script exits
 #
-# Arguments:
+# Globals:
 #   None
 #
-# Globals:
+# Arguments:
 #   None
 #
 # Outputs:
@@ -79,10 +79,10 @@ function cleanup {
 # Description:
 #   Prints usage, options, and examples
 #
-# Arguments:
+# Globals:
 #   None
 #
-# Globals:
+# Arguments:
 #   None
 #
 # Outputs:
@@ -127,11 +127,11 @@ EOF
 # Description:
 #   Parses optional SKILL.md argument and validates target path
 #
-# Arguments:
-#   $@ - Command line arguments
-#
 # Globals:
 #   SKILL_FILE - Normalized target file path
+#
+# Arguments:
+#   $@ - Command line arguments
 #
 # Outputs:
 #   None
@@ -173,10 +173,10 @@ function parse_arguments {
 # Description:
 #   Checks whether the file starts with YAML frontmatter markers
 #
-# Arguments:
+# Globals:
 #   None
 #
-# Globals:
+# Arguments:
 #   None
 #
 # Outputs:
@@ -212,11 +212,11 @@ function check_frontmatter_exists {
 # Description:
 #   Extracts only frontmatter and runs yamllint against the extracted YAML
 #
-# Arguments:
-#   None
-#
 # Globals:
 #   TMP_FRONTMATTER - Temporary frontmatter file path
+#
+# Arguments:
+#   None
 #
 # Outputs:
 #   None
@@ -281,10 +281,10 @@ function check_yaml_syntax {
 # Description:
 #   Ensures all required sections are present in SKILL.md
 #
-# Arguments:
+# Globals:
 #   None
 #
-# Globals:
+# Arguments:
 #   None
 #
 # Outputs:
@@ -326,10 +326,10 @@ function check_required_sections {
 # Description:
 #   Verifies required YAML frontmatter fields exist
 #
-# Arguments:
+# Globals:
 #   None
 #
-# Globals:
+# Arguments:
 #   None
 #
 # Outputs:
@@ -371,10 +371,10 @@ function check_yaml_fields {
 # Description:
 #   Ensures SKILL.md word count is lower than 5000 words
 #
-# Arguments:
+# Globals:
 #   None
 #
-# Globals:
+# Arguments:
 #   None
 #
 # Outputs:
@@ -410,10 +410,10 @@ function check_word_count {
 # Description:
 #   Ensures scripts/ and references/ directories exist under skill directory
 #
-# Arguments:
+# Globals:
 #   None
 #
-# Globals:
+# Arguments:
 #   None
 #
 # Outputs:
@@ -459,11 +459,11 @@ function check_resource_separation {
 # Description:
 #   Prints validation results in JSON format
 #
-# Arguments:
-#   $1 - Overall status (PASS/FAIL)
-#
 # Globals:
 #   None
+#
+# Arguments:
+#   $1 - Overall status (PASS/FAIL)
 #
 # Outputs:
 #   None
@@ -510,11 +510,11 @@ function print_json_results {
 # Description:
 #   Parses arguments, executes all checks, prints summary and JSON output
 #
-# Arguments:
-#   $@ - Command line arguments
-#
 # Globals:
 #   None
+#
+# Arguments:
+#   $@ - Command line arguments
 #
 # Outputs:
 #   None

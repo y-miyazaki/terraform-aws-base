@@ -7,7 +7,7 @@ description: >-
 license: Apache-2.0
 metadata:
   author: y-miyazaki
-  version: "1.0.0"
+  version: "1.0.1"
 ---
 
 ## Input
@@ -59,13 +59,13 @@ Minimal inline contract (used if reference file is unavailable):
 
 - [common-checklist.md](references/common-checklist.md) (always read)
 - [common-output-format.md](references/common-output-format.md) (always read)
-- [category-global.md](references/category-global.md) - Read when reviewing triggers and permissions.
-- [category-security.md](references/category-security.md) - Read when reviewing secrets and permission scoping.
-- [category-best-practices.md](references/category-best-practices.md) - Read when reviewing maintainability.
-- [category-error-handling.md](references/category-error-handling.md) - Read when reviewing failure handling behavior.
-- [category-performance.md](references/category-performance.md) - Read when reviewing execution efficiency.
-- [category-tool-integration.md](references/category-tool-integration.md) - Read when reviewing third-party action usage.
-- [common-troubleshooting.md](references/common-troubleshooting.md) - Read on failure or when evidence is partial
+- [category-global.md](references/category-global.md) (always read)
+- [category-security.md](references/category-security.md) (always read)
+- [category-best-practices.md](references/category-best-practices.md) (always read)
+- [category-error-handling.md](references/category-error-handling.md) (always read)
+- [category-performance.md](references/category-performance.md) (always read)
+- [category-tool-integration.md](references/category-tool-integration.md) (always read)
+- [common-troubleshooting.md](references/common-troubleshooting.md) (read on failure)
 
 ## Workflow
 
@@ -75,11 +75,6 @@ Minimal inline contract (used if reference file is unavailable):
 4. Order issues in output by severity: `SEC-*` first, then correctness, then maintainability.
 5. Output report with the required sections per [references/common-output-format.md](references/common-output-format.md). Include file path, line reference, and remediation step for each issue.
 
-### Examples
-
-- Prompt: `Review workflow PR and report failed/deferred checks.`
-- Output: `## Checks Summary` + `## Checks (Failed/Deferred Only)` + `## Issues`, with each issue including file path, line, and remediation.
-
 ### Error Handling
 
 | Condition                                  | Severity    | Action                                                            |
@@ -88,3 +83,8 @@ Minimal inline contract (used if reference file is unavailable):
 | `common-checklist.md` unavailable          | Fatal       | Stop, report missing dependency                                   |
 | `common-output-format.md` unavailable      | Recoverable | Use inline output contract                                        |
 | PR contains no workflow YAML files         | Recoverable | Report "no reviewable workflows" and stop                         |
+
+### Examples
+
+- Prompt: `Review workflow PR and report failed/deferred checks.`
+- Output: `## Checks Summary` + `## Checks (Failed/Deferred Only)` + `## Issues`, with each issue including file path, line, and remediation.

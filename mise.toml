@@ -36,7 +36,7 @@ python = "3.14.6"
 
 # AI agent tools
 "github:microsoft/apm" = "v0.26.0"               # agent package manager
-claude = "2.1.209"                               # Claude Code CLI
+claude = "2.1.210"                               # Claude Code CLI
 "github:DeusData/codebase-memory-mcp" = "v0.9.0" # codebase memory MCP server
 "aqua:github/copilot-cli" = "1.0.70"             # GitHub Copilot CLI
 "pipx:headroom-ai" = { version = "0.31.0", extras = "proxy,mcp,bedrock", depends = ["python"] }
@@ -48,13 +48,13 @@ claude = "2.1.209"                               # Claude Code CLI
 "github:microsoft/waza" = "v0.38.0"               # agent skill evaluator
 
 # AWS related tools
-"aqua:aws/aws-cli" = "2.35.22"      # AWS CLI
+"aqua:aws/aws-cli" = "2.35.23"      # AWS CLI
 "aqua:aws/aws-sam-cli" = "1.163.0"  # SAM CLI tool
 "npm:awsp" = { version = "0.2.0", depends = [
   "node",
 ], install_env = { NPM_CONFIG_IGNORE_SCRIPTS = "true" } } # AWS profile switcher
 "aqua:kayac/ecspresso" = "2.8.5"    # ECS deployment tool
-"aqua:Songmu/ecschedule" = "0.19.0" # ECS scheduled tasks deployment tool
+"aqua:Songmu/ecschedule" = "0.20.0" # ECS scheduled tasks deployment tool
 "pipx:aws-mfa" = { version = "0.0.12", depends = ["python"] } # AWS MFA helper
 
 # GitHub related tools

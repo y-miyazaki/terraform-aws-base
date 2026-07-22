@@ -14,7 +14,7 @@
 - Q-04 (SHOULD): Input/Output Specificity
 - Q-05 (SHOULD): Constraints Clarity
 - Q-06 (MUST): No Implicit Inference
-- Q-09 (SHOULD): Token Hard Gate
+- Q-09 (SHOULD): Token Budget Advisory
 - BP-03 (SHOULD): Token Efficiency
 - BP-04 (SHOULD): Anti-Overtrimming Guardrail
 - Q-10 (SHOULD): Error Handling Completeness
@@ -30,3 +30,4 @@
 - Q-07 (SHOULD): Progressive Disclosure (Soft Guard)
 - Q-08 (SHOULD): Resource Separation
 - S-03 (MUST): Reference Files Header Level Consistency
+

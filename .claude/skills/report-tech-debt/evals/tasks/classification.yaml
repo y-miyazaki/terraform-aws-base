@@ -1,0 +1,49 @@
+id: report-tech-debt-classification-001
+name: report-tech-debt classifies mixed signals by taxonomy
+description: >-
+  Validate code_quality, dependency_version, and documentation land under
+  High-Priority, and vague TODOs land under Noise / Ignore.
+tags:
+  - quality
+  - classification
+inputs:
+  prompt: >-
+    Use report-tech-debt at L2. Classify the injected signals with Category from
+    category-debt-taxonomy.md. Put actionable code_quality, dependency_version,
+    and documentation items under High-Priority. Put vague TODO noise under
+    Noise / Ignore. Cite taxonomy rationale. Do not edit application source. Emit PR ## Overview and ## Summary plus Session Metrics table with Critical, High-Priority, Watch, and Noise / Ignore sections including Category fields.
+  context:
+    level: L2
+    report_file: docs/report/report-tech-debt/2026-07-19.md
+    skip: false
+    signals:
+      - kind: todo_comment
+        path: evals/files/sample_service.go.txt
+        line: 5
+        snippet: "TODO: extract shared validator used by HandleCreate and HandleUpdate"
+        hint: code_quality
+      - kind: eol_hint
+        path: evals/files/go.mod.txt
+        line: 5
+        snippet: "require github.com/old/lib v1.2.3"
+        source: go_mod
+        hint: dependency_version
+      - kind: stale_doc
+        path: evals/files/README.md
+        line: 3
+        snippet: "See workflow `.github/workflows/ci-build.yaml` for CI."
+        hint: documentation
+      - kind: todo_comment
+        path: evals/files/noise.go.txt
+        line: 2
+        snippet: "TODO: maybe later"
+    hotspots: []
+expected:
+  output_contains:
+    - code_quality
+    - dependency_version
+    - documentation
+    - High-Priority
+    - Noise
+  outcomes:
+    - type: task_completed

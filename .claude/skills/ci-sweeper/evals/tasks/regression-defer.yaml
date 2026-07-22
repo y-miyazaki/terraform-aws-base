@@ -1,0 +1,43 @@
+id: ci-sweeper-defer-001
+name: ci-sweeper defers when more than three failures
+description: Validate >3 failures triggers fix-first-regression-only defer policy.
+tags:
+  - quality
+  - edge-case
+inputs:
+  prompt: >-
+    Use ci-sweeper at L2. Context has four regression failures. Fix only
+    the first regression; defer the other three as Watch Items. Emit Actionable
+    Fixes, Watch Items, Ignored, and Summary noting deferral. Emit PR ## Overview and ## Summary plus Session Metrics table with Actionable Fixes, Watch Items, and Ignored sections.
+  context:
+    level: L2
+    skip: false
+    failures:
+      - workflow_name: ci-shell
+        job_name: shellcheck
+        failure_type: regression
+        log_excerpt: SC2086 in scripts/a.sh
+        reason: regression a
+      - workflow_name: ci-shell
+        job_name: shellcheck
+        failure_type: regression
+        log_excerpt: SC2086 in scripts/b.sh
+        reason: regression b
+      - workflow_name: ci-go
+        job_name: test
+        failure_type: regression
+        log_excerpt: compile error in pkg/c
+        reason: regression c
+      - workflow_name: ci-go
+        job_name: test
+        failure_type: regression
+        log_excerpt: compile error in pkg/d
+        reason: regression d
+expected:
+  output_contains:
+    - Watch
+    - Actionable Fixes
+    - defer
+    - Summary
+  outcomes:
+    - type: task_completed

@@ -1,0 +1,29 @@
+id: report-tech-debt-hotspot-001
+name: report-tech-debt classifies churn hotspot only
+description: Validate hotspot-only input classifies as Watch without inventing defects.
+tags:
+  - quality
+  - edge-case
+inputs:
+  prompt: >-
+    Use report-tech-debt at L2. Only a churn hotspot is injected with no marker
+    signals. Classify as Watch under code_quality or architecture. Omit nature.
+    Do not invent CVEs or paths beyond the hotspot. Emit PR ## Overview and ## Summary plus Session Metrics table with Critical, High-Priority, Watch, and Noise / Ignore sections including Category fields.
+  context:
+    level: L2
+    report_file: docs/report/report-tech-debt/2026-07-19.md
+    skip: false
+    signals: []
+    hotspots:
+      - path: scripts/deploy.sh
+        metric: churn
+        value: 18
+        window: 90d
+expected:
+  output_contains:
+    - Watch
+    - churn
+    - deploy.sh
+    - Summary
+  outcomes:
+    - type: task_completed

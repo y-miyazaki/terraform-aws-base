@@ -1,0 +1,18 @@
+package main
+
+import "fmt"
+
+// TODO: extract shared validator used by HandleCreate and HandleUpdate
+func HandleCreate(input string) error {
+	if input == "" {
+		return fmt.Errorf("empty")
+	}
+	return nil
+}
+
+func HandleUpdate(input string) error {
+	if input == "" {
+		return fmt.Errorf("empty")
+	}
+	return nil
+}

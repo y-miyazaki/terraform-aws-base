@@ -1,0 +1,26 @@
+id: changelog-noaction-001
+name: changelog handles skip with empty commits
+description: Validate skip=true with empty commits and releases exits without edits.
+tags:
+  - quality
+  - edge-case
+inputs:
+  prompt: >-
+    Use changelog. Context has skip=true and empty commits/releases.
+    Emit the full changelog report with Commits Processed, Skipped Commits, and
+    Summary. Outcome must be No unreleased changelog commits. Do not edit
+    CHANGELOG.md. Emit PR ## Overview and ## Summary plus Session Metrics table with Commits Processed and Skipped Commits sections.
+  context:
+    changelog_file: CHANGELOG.md
+    changelog_exists: true
+    commit_range: eval0001..eval0001
+    level: L2
+    skip: true
+    commits: []
+    releases: []
+expected:
+  output_contains:
+    - No unreleased changelog commits
+    - Summary
+  outcomes:
+    - type: task_completed

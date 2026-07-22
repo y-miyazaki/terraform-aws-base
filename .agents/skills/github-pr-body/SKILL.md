@@ -6,7 +6,7 @@ description: >-
 license: Apache-2.0
 metadata:
   author: y-miyazaki
-  version: "1.0.0"
+  version: "1.0.1"
 ---
 
 ## Input
@@ -47,11 +47,11 @@ Structured PR output:
 
 - [common-checklist.md](references/common-checklist.md) (always read)
 - [common-output-format.md](references/common-output-format.md) (always read)
-- [common-troubleshooting.md](references/common-troubleshooting.md) - Read when fetching PR data or applying body updates fails unexpectedly.
-- [category-change-classification.md](references/category-change-classification.md) - Read when classifying the PR change type.
-- [category-pr-body-guidelines.md](references/category-pr-body-guidelines.md) - Read when applying PR body writing guidelines.
-- [category-agent-workflows.md](references/category-agent-workflows.md) - Read when selecting baseline or full-body mode.
-- [category-implementation-details.md](references/category-implementation-details.md) - Read when populating implementation detail sections.
+- [common-troubleshooting.md](references/common-troubleshooting.md) (read on failure)
+- [category-change-classification.md](references/category-change-classification.md) (always read)
+- [category-pr-body-guidelines.md](references/category-pr-body-guidelines.md) (always read)
+- [category-agent-workflows.md](references/category-agent-workflows.md) (always read)
+- [category-implementation-details.md](references/category-implementation-details.md) (always read)
 
 ## Workflow
 
@@ -101,6 +101,19 @@ Structured PR output:
    gh pr view <PR_NUMBER> --repo <OWNER/REPO> --json body --jq '.body'
    ```
    Confirm `## Overview` and `## Changes` sections are present and non-empty. In full-body mode, confirm `## Testing`, `## Type of Change`, `## Checklist`, and `## Additional Notes` contain visible content.
+
+### Error Handling
+
+| Condition                                      | Severity    | Action                                                              |
+| ---------------------------------------------- | ----------- | ------------------------------------------------------------------- |
+| `gh` not authenticated                         | Fatal       | Stop; instruct `gh auth login`                                      |
+| PR not found (404)                             | Fatal       | Verify PR number and `owner/repo`                                   |
+| Access denied (403)                            | Fatal       | Verify `repo` write scope                                           |
+| `pr_fetch.sh` or `pr_body.sh` missing          | Fatal       | Stop; report missing script                                         |
+| `.github/PULL_REQUEST_TEMPLATE.md` missing     | Recoverable | Baseline mode only; skip full-body template sections                |
+| Body exceeds GitHub size limit (422)           | Recoverable | Truncate or split content; report in output                         |
+| Rate limit exceeded (429)                      | Recoverable | Defer update; note retry window in report                          |
+| Dry-run output unacceptable                    | Info        | Do not apply; report diff issues and stop                           |
 
 ### Examples
 

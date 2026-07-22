@@ -13,12 +13,14 @@ inputs:
   prompt:
     "Use docs-updater. Assume the only changed files are internal test files
     (e.g., pkg/handler/handler_test.go, pkg/service/service_test.go). Return ## Summary
-    with 'Status: skipped' and reason."
+    with 'Status: skipped' and 'No documentation update required'."
   context:
     scope: staged
 expected:
   output_contains:
     - "## Summary"
     - "Status: skipped"
+    - "No documentation update required"
   outcomes:
     - type: task_completed
+

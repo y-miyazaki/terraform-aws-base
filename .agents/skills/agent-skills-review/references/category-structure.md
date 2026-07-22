@@ -18,8 +18,10 @@ Sections removed by design (redundant with frontmatter description or self-evide
 - Purpose (duplicates description field)
 - When to Use This Skill (duplicates description "Use when..." trigger)
 - Constraints (self-evident prerequisites)
-- Failure Behavior (standard tool behavior)
+- Failure Behavior (standard tool behavior) — use `### Error Handling` under Workflow instead (Q-10 SHOULD)
 - Best Practices (merge into Workflow or Execution Scope)
+
+`### Error Handling` is not a sixth H2 section. It lives under `## Workflow` when the skill has recoverable or fatal branches (Q-10 SHOULD). Loop and utility siblings should include the same table pattern.
 
 Examples:
 
@@ -55,24 +57,27 @@ Examples:
 
 **BP-02 (SHOULD): Reference Trigger Conditions**
 
-Check: Does Reference Files Guide specify when to load each reference file (not just what it contains)?
-Why: Without trigger conditions, the agent may load all reference files upfront (wasting context) or miss relevant files. Explicit triggers enable on-demand loading per progressive disclosure.
+Check: Does Reference Files Guide use explicit load contracts on every line — `(always read)`, path-qualified variants, or `(read on failure)` — per package sibling-consistency policy for skills?
+Why: Vague `Read when…` triggers duplicate workflow conditions and diverge across sibling skills. Fixed phrases make load timing deterministic.
 Examples:
 
-- ✅ `[category-security.md](references/category-security.md) - Read when reviewing input validation, crypto usage, or SQL injection`
-- ✅ `[common-checklist.md](references/common-checklist.md)` with `(always read)` annotation
-- ❌ `**category-security.md** - Security patterns detailed guide` (no trigger, bold instead of link)
+- ✅ `[common-checklist.md](references/common-checklist.md) (always read)`
+- ✅ `[category-input-schema.md](references/category-input-schema.md) (always read — loop path)`
+- ✅ `[common-troubleshooting.md](references/common-troubleshooting.md) (read on failure)`
+- ❌ `Read when parsing context` without `(always read …)`
+- ❌ `— apply` / `— loop` shorthand without `(always read …)`
 
 ---
 
 **Q-07 (SHOULD): Progressive Disclosure (Soft Guard)**
 
-Check: Is SKILL.md concise and compatible with token budget, using word count as a supplemental signal?
-Why: Hard gate is `waza check` token budget. Word count is a soft guard for readability and early warning, not a release blocker by itself.
+Check: Is SKILL.md depth aligned with sibling skills in the same package? Is word count reasonable for that family?
+Why: Token/word limits are advisory. Isolated compression below sibling depth causes execution drift; prefer package-wide alignment over a single-skill token gate.
 Examples:
 
-- ✅ `waza check` token budget passes and word count remains manageable
-- ⚠️ Word count is high, but fix priority is still token/behavior quality rather than raw length alone
+- ✅ Loop skill matches ci-sweeper/changelog section depth and reference phrasing
+- ✅ `waza check` token evidence recorded; over 500 noted as Q-09 advisory when siblings are similar depth
+- ❌ One skill uses arrow-only workflow while siblings use numbered `###` path sections
 
 ---
 
@@ -114,3 +119,4 @@ Examples:
 - ✅ `category-security.md` first line: `## Security Checks` → PASS
 - ❌ `common-checklist.md` first line: `## Checklist` → FAIL (should be H1)
 - ❌ `category-security.md` first line: `# Security Checks` → FAIL (should be H2)
+

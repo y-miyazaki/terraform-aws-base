@@ -55,10 +55,10 @@ WORKFLOWS_DIR=".github/workflows"
 # Description:
 #   Displays usage information for the script, including options and examples
 #
-# Arguments:
+# Globals:
 #   None
 #
-# Globals:
+# Arguments:
 #   None
 #
 # Outputs:
@@ -99,13 +99,13 @@ EOF
 # Description:
 #   Parses command line arguments and sets global variables
 #
-# Arguments:
-#   $@ - All command line arguments passed to the script
-#
 # Globals:
 #   VERBOSE - Enable verbose output
 #   QUIET - Suppress non-error output
 #   WORKFLOWS_DIR - Path to workflows directory
+#
+# Arguments:
+#   $@ - All command line arguments passed to the script
 #
 # Outputs:
 #   None
@@ -149,10 +149,10 @@ function parse_arguments {
 # Description:
 #   Runs actionlint to validate workflow syntax and best practices
 #
-# Arguments:
+# Globals:
 #   None
 #
-# Globals:
+# Arguments:
 #   None
 #
 # Outputs:
@@ -187,10 +187,10 @@ function validate_actionlint {
 # Description:
 #   Runs ghalint to validate workflow security and configuration
 #
-# Arguments:
+# Globals:
 #   None
 #
-# Globals:
+# Arguments:
 #   None
 #
 # Outputs:
@@ -225,10 +225,10 @@ function validate_ghalint {
 # Description:
 #   Runs zizmor to scan for GitHub Actions security issues
 #
-# Arguments:
+# Globals:
 #   None
 #
-# Globals:
+# Arguments:
 #   None
 #
 # Outputs:
@@ -274,13 +274,13 @@ function validate_zizmor {
 # Description:
 #   Main process for GitHub Actions validation
 #
-# Arguments:
-#   $@ - Command line arguments
-#
 # Globals:
 #   VERBOSE - Enable verbose output
 #   QUIET - Suppress non-error output
 #   WORKFLOWS_DIR - Path to workflows directory
+#
+# Arguments:
+#   $@ - Command line arguments
 #
 # Outputs:
 #   None

@@ -39,10 +39,10 @@ OUTPUT_FORMAT="json"
 #######################################
 # show_usage: Display usage information
 #
-# Arguments:
+# Globals:
 #   None
 #
-# Globals:
+# Arguments:
 #   None
 #
 # Outputs:
@@ -81,10 +81,10 @@ EOF
 #######################################
 # get_repository_from_git: Auto-detect repository
 #
-# Arguments:
+# Globals:
 #   None
 #
-# Globals:
+# Arguments:
 #   None
 #
 # Outputs:
@@ -112,10 +112,10 @@ function get_repository_from_git {
 #######################################
 # fetch_pr_metadata: Fetch PR info via gh
 #
-# Arguments:
+# Globals:
 #   None
 #
-# Globals:
+# Arguments:
 #   None
 #
 # Outputs:
@@ -136,10 +136,10 @@ function fetch_pr_metadata {
 #######################################
 # fetch_pr_files_paginated: Fetch all PR files via GitHub API pagination
 #
-# Arguments:
+# Globals:
 #   None
 #
-# Globals:
+# Arguments:
 #   None
 #
 # Outputs:
@@ -161,10 +161,10 @@ function fetch_pr_files_paginated {
 #######################################
 # parse_template_sections: Extract template sections
 #
-# Arguments:
+# Globals:
 #   None
 #
-# Globals:
+# Arguments:
 #   None
 #
 # Outputs:
@@ -203,10 +203,10 @@ function parse_template_sections {
 #######################################
 # classify_files: Classify files by type
 #
-# Arguments:
+# Globals:
 #   None
 #
-# Globals:
+# Arguments:
 #   None
 #
 # Outputs:
@@ -249,12 +249,12 @@ function classify_files {
 #######################################
 # parse_arguments: Parse command line
 #
-# Arguments:
-#   $@ - Command line arguments
-
 # Globals:
 #   None
 #
+# Arguments:
+#   $@ - Command line arguments
+
 # Outputs:
 #   None
 #
@@ -299,12 +299,12 @@ function parse_arguments {
 #######################################
 # main: Main process
 #
-# Arguments:
-#   $@ - Command line arguments
-
 # Globals:
 #   None
 #
+# Arguments:
+#   $@ - Command line arguments
+
 # Outputs:
 #   None
 #

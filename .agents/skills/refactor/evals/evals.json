@@ -1,0 +1,108 @@
+{
+  "skill_name": "refactor",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Please refactor the duplicated helpers under fixtures/ — a.sh and b.sh both define nearly identical log_info and run_step. Deduplicate with a behavior-preserving local-structure change, keep extras in b.sh, and emit the Refactor Result.",
+      "expected_output": "Local-structure dedupe applied with result sections; no feature change.",
+      "files": [],
+      "expectations": [
+        "session-report.md includes ## Overview and ## Summary",
+        "session-report.md includes ### Changes with Target, What was wrong, and What changed columns",
+        "session-report.md includes ## Verification",
+        "Overview or Summary states applied or watch (not a silent failure)",
+        "Duplication between a.sh and b.sh log_info/run_step is reduced OR ### Deferred with structure reason",
+        "b.sh still provides extra() or equivalent unique behavior",
+        "No public API / feature behavior invented beyond dedupe",
+        "Output does not contain bare O1 or O2 tier labels or Session Metrics"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Use the refactor skill. I did not give a path or symbol — what do you do?",
+      "expected_output": "no-op result; no invented target; no file edits",
+      "files": [],
+      "expectations": [
+        "session-report.md title is Refactor Result (H1)",
+        "session-report.md includes ## Overview",
+        "session-report.md includes ## Summary",
+        "session-report.md includes ## Verification",
+        "Overview or Summary states no-op (or equivalent explicit empty-input stop)",
+        "### Changes omitted or empty (no invented fix)",
+        "No source files were modified under fixtures/ (empty fixtures ok)",
+        "No Session Metrics or internal tier labels in output"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Clean up fixtures/messy.sh for shellcheck: snake_case names, quote expansions, drop unused vars. That is the whole task.",
+      "expected_output": "Refuse lint-primary; watch or no-op; messy.sh byte-identical",
+      "files": [],
+      "expectations": [
+        "session-report.md includes ## Overview or ## Summary with explicit refusal",
+        "Overview or Summary states watch or no-op (lint-primary refused)",
+        "messy.sh still contains UnusedVar and FileList markers (not style-rewritten)",
+        "### Deferred or Summary cites lint-primary / DO NOT USE / checklist reason",
+        "### Changes omitted or empty (no style-only rewrite applied)"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "Refactor fixtures/sum.go: add Multiply, and make Add return an overflow error. Frame it as cleanup.",
+      "expected_output": "Refuse feature/API change; sum.go unchanged",
+      "files": [],
+      "expectations": [
+        "Overview or Summary states watch or no-op",
+        "No Multiply function added to sum.go",
+        "Add signature/semantics unchanged (still returns int, not error)",
+        "### Deferred or Summary mentions feature / API / behavior change out of scope",
+        "### Changes omitted or empty",
+        "sum.go still has plain 'func Add(a, b int) int' form"
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "Clarify AddSlow as verbose Add with a local-structure edit, add a characterization test, and emit the result.",
+      "expected_output": "Local-structure clarification and/or characterization; structured result without internal tier labels",
+      "files": [],
+      "expectations": [
+        "session-report.md includes ### Changes and ## Verification",
+        "AddSlow behavior preserved relative to Add (or ### Deferred with gate reason)",
+        "Verification lists characterization test or go test with pass/fail OR ### Deferred explains blocked gate",
+        "No Multiply / overflow-error API changes",
+        "Output does not contain bare O1 or O2 tier labels or Session Metrics",
+        "AddSlow body delegates to Add OR remains equivalent without API change"
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "In fixtures/, move Helper from alpha.go into beta.go as a shallow same-package move. Keep Use() behavior identical. Gate with characterization tests, then emit the result.",
+      "expected_output": "Same-package move applied (or deferred with gate reason); Use() preserved",
+      "files": [],
+      "expectations": [
+        "session-report.md includes ### Changes and ## Verification",
+        "Overview or Summary states applied or watch",
+        "Helper is defined in beta.go OR ### Deferred explains insufficient gate / local-only fallback",
+        "Use() still returns Helper(21) semantics (or ### Deferred with no API invent)",
+        "Package remains pkgmove (no cross-package redesign)",
+        "Verification mentions tests or go test with pass/fail OR ### Deferred explains gate",
+        "Output does not contain bare O1 or O2 tier labels",
+        "No new public API invented (no Multiply, no error-return Add)"
+      ]
+    },
+    {
+      "id": 7,
+      "prompt": "We need an architecture improvement: split fixtures/go-sum into separate packages and introduce an interface for Add so we can mock it in tests. Start refactoring now.",
+      "expected_output": "Phase A architecture proposal only; proposal outcome; no cross-package apply; sum.go unchanged",
+      "files": [],
+      "expectations": [
+        "session-report.md includes ### Architecture Proposal under ## Summary",
+        "Overview or Summary states proposal (architecture Phase A)",
+        "### Changes omitted or empty (no cross-boundary apply)",
+        "sum.go Add signature unchanged (still returns int, not error)",
+        "No interface or new package introduced in fixtures/go-sum",
+        "Architecture Proposal mentions problem, slices, or phased plan (not empty boilerplate)"
+      ]
+    }
+  ]
+}

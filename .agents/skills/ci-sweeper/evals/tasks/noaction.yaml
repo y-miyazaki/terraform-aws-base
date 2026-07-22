@@ -1,0 +1,21 @@
+id: ci-sweeper-noaction-001
+name: ci-sweeper no actionable failures
+description: Validate ci-sweeper exits cleanly when failures array is empty.
+tags:
+  - trigger
+  - negative
+inputs:
+  prompt: >-
+    Use ci-sweeper. Context JSON has skip=true and failures=[]. Emit the
+    full triage report with Actionable Fixes, Watch Items, Ignored, and Summary.
+    Outcome must indicate no actionable failures. Emit PR ## Overview and ## Summary plus Session Metrics table with Actionable Fixes, Watch Items, and Ignored sections.
+  context:
+    skip: true
+    failures: []
+expected:
+  output_contains:
+    - Actionable Fixes
+    - Watch Items
+    - no actionable
+  outcomes:
+    - type: task_completed

@@ -1052,17 +1052,96 @@ function process_single_module_update {
 }
 
 #######################################
-# process_terraform_directory: Process all Terraform files in a directory
+# process_modules_in_terraform_file: Scan and update modules in one Terraform file
 #
 # Description:
-#   Main processing function that scans a Terraform directory for modules,
-#   identifies updates, and processes them either individually or in batch.
+#   Extract module declarations from one file and queue updates when versions differ.
 #
 # Globals:
-#   None
+#   CURRENT_FILE_BEING_SCANNED - File currently being scanned
+#   TOTAL_MODULES - Running module count
+#   VERBOSE - Enable verbose output
+#   CHECK_ONLY - Check-only mode flag
 #
 # Arguments:
-#   $1 - Path to Terraform directory to process
+#   $1 - Path to Terraform file
+#
+# Outputs:
+#   None
+#
+# Returns:
+#   None
+#
+# Usage:
+#   process_modules_in_terraform_file "main.tf"
+#
+#######################################
+function process_modules_in_terraform_file {
+    local file="$1"
+    local file_basename
+    file_basename=$(basename "$file")
+
+    CURRENT_FILE_BEING_SCANNED="$file"
+    log "INFO" "Scanning file: $file_basename"
+
+    local modules_info
+    modules_info="$(extract_modules_from_file "$file" || true)"
+    if [[ $VERBOSE == "true" ]]; then
+        echo "[DEBUG] modules_info for $file:" >&2
+        echo "$modules_info" >&2
+    fi
+
+    while IFS= read -r module_line; do
+        [[ -z $module_line ]] && continue
+        TOTAL_MODULES=$((TOTAL_MODULES + 1))
+        if [[ $VERBOSE == "true" ]]; then
+            echo "[DEBUG] TOTAL_MODULES incremented: $TOTAL_MODULES ($module_line)" >&2
+        fi
+
+        local module_source="${module_line%%||*}"
+        local remaining="${module_line#*||}"
+        local current_version="${remaining%%||*}"
+
+        log "INFO" "Found module: $module_source (current: $current_version)"
+
+        if [[ $CHECK_ONLY == "true" ]]; then
+            echo "📦 Found: $module_source (current: $current_version) in $file_basename"
+            continue
+        fi
+
+        local latest_version
+        latest_version=$(get_latest_version "$module_source")
+
+        if [[ $latest_version == "unknown" ]]; then
+            log "WARN" "Could not determine latest version for $module_source; skipping"
+            continue
+        fi
+
+        if [[ $current_version == "$latest_version" ]]; then
+            log "INFO" "Module $module_source is already up to date ($current_version)"
+            continue
+        fi
+
+        echo "📦 Update available: $module_source: $current_version -> $latest_version in $file_basename"
+        process_single_module_update "$file" "$module_source" "$current_version" "$latest_version"
+    done <<< "$modules_info"
+
+    log "INFO" "Finished scanning: $file_basename"
+}
+
+#######################################
+# process_terraform_directory: Process all Terraform modules in a directory
+#
+# Description:
+#   Discover module files, scan each file, then run batch updates when enabled.
+#
+# Globals:
+#   DRY_RUN - Dry-run mode flag
+#   CHECK_ONLY - Check-only mode flag
+#   RECURSIVE_SEARCH - Recursive search flag
+#
+# Arguments:
+#   $1 - Path to Terraform directory
 #
 # Outputs:
 #   None
@@ -1083,12 +1162,10 @@ function process_terraform_directory {
         return 1
     }
 
-    # Setup backup directory for actual updates
     if [[ $DRY_RUN == "false" ]] && [[ $CHECK_ONLY == "false" ]]; then
         setup_backup_directory
     fi
 
-    # Find terraform files with modules
     local terraform_files
     readarray -t terraform_files < <(find_terraform_modules "$terraform_dir" "$RECURSIVE_SEARCH")
 
@@ -1099,68 +1176,14 @@ function process_terraform_directory {
 
     log "INFO" "Found ${#terraform_files[@]} files with modules"
 
-    # Process each file
+    local file
     for file in "${terraform_files[@]}"; do
-        CURRENT_FILE_BEING_SCANNED="$file"
-        local file_basename
-        file_basename=$(basename "$file")
-        log "INFO" "Scanning file: $file_basename"
-
-        # Extract modules from file
-        local modules_info
-        # Guard against awk non-zero exit with set -e
-        modules_info="$(extract_modules_from_file "$file" || true)"
-        if [[ $VERBOSE == "true" ]]; then
-            echo "[DEBUG] modules_info for $file:" >&2
-            echo "$modules_info" >&2
-        fi
-        while IFS= read -r module_line; do
-            [[ -z $module_line ]] && continue
-            TOTAL_MODULES=$((TOTAL_MODULES + 1))
-            if [[ $VERBOSE == "true" ]]; then
-                echo "[DEBUG] TOTAL_MODULES incremented: $TOTAL_MODULES ($module_line)" >&2
-            fi
-
-            local module_source="${module_line%%||*}"
-            local remaining="${module_line#*||}"
-            local current_version="${remaining%%||*}"
-
-            log "INFO" "Found module: $module_source (current: $current_version)"
-
-            if [[ $CHECK_ONLY == "true" ]]; then
-                echo "📦 Found: $module_source (current: $current_version) in $file_basename"
-                continue
-            fi
-
-            # Get latest version (robust + cached)
-            local latest_version
-            latest_version=$(get_latest_version "$module_source")
-
-            if [[ $latest_version == "unknown" ]]; then
-                log "WARN" "Could not determine latest version for $module_source; skipping"
-                continue
-            fi
-
-            if [[ $current_version == "$latest_version" ]]; then
-                log "INFO" "Module $module_source is already up to date ($current_version)"
-                continue
-            fi
-
-            # Process individual module update
-            echo "📦 Update available: $module_source: $current_version -> $latest_version in $file_basename"
-            process_single_module_update "$file" "$module_source" "$current_version" "$latest_version"
-
-        done <<< "$modules_info"
-        log "INFO" "Finished scanning: $file_basename"
+        process_modules_in_terraform_file "$file"
     done
 
-    # After scanning all files, process batch updates
     if [[ $DRY_RUN == "false" ]] && [[ $CHECK_ONLY == "false" ]]; then
         process_batch_module_updates
     fi
-
-    # Note: Backup files will be cleaned up by cleanup_all_artifacts function at the end
-    # This preserves them during execution for rollback purposes
 }
 
 #######################################
@@ -1384,15 +1407,290 @@ function validate_all_affected_projects {
 }
 
 #######################################
+# reinit_terraform_for_plan_validation: Re-init Terraform before plan comparison
+#
+# Description:
+#   Run terraform init with optional backend config before plan validation.
+#
+# Globals:
+#   VERBOSE - Enable verbose output
+#
+# Arguments:
+#   $1 - Environment name
+#
+# Outputs:
+#   None
+#
+# Returns:
+#   0 on success, 1 on failure
+#
+# Usage:
+#   reinit_terraform_for_plan_validation "dev"
+#
+#######################################
+function reinit_terraform_for_plan_validation {
+    local env="$1"
+    local backend_config="terraform.${env}.tfbackend"
+    local init_options=("-input=false" "-upgrade")
+
+    if [[ -f $backend_config ]]; then
+        init_options+=("-reconfigure" "-backend-config=$backend_config")
+    fi
+
+    log "INFO" "Re-initializing Terraform to download updated modules..."
+    local proj_artifacts
+    proj_artifacts=$(artifact_dir_for "$(pwd)")
+    local init_log_file="${proj_artifacts}/.terraform_init.log"
+    if terraform init "${init_options[@]}" > "${init_log_file}" 2>&1; then
+        return 0
+    fi
+
+    log "ERROR" "Terraform init failed after module update"
+    if [[ $VERBOSE == "true" ]]; then
+        echo_section "TERRAFORM INIT ERROR OUTPUT"
+        log "ERROR" "Init command failed with options: ${init_options[*]}"
+        log "ERROR" "Error details:"
+        cat "${init_log_file}"
+        echo ""
+    fi
+    return 1
+}
+
+#######################################
+# validate_terraform_syntax_for_plan: Run terraform validate in current directory
+#
+# Description:
+#   Validate Terraform syntax in the current working directory after init.
+#
+# Globals:
+#   VERBOSE - Enable verbose output
+#
+# Arguments:
+#   None
+#
+# Outputs:
+#   None
+#
+# Returns:
+#   0 on success, 1 on failure
+#
+# Usage:
+#   validate_terraform_syntax_for_plan
+#
+#######################################
+function validate_terraform_syntax_for_plan {
+    if terraform validate > .terraform_validate.log 2>&1; then
+        return 0
+    fi
+
+    log "ERROR" "Terraform syntax validation failed"
+    if [[ $VERBOSE == "true" ]]; then
+        echo_section "TERRAFORM VALIDATE ERROR OUTPUT"
+        log "ERROR" "Validation failed, error details:"
+        cat .terraform_validate.log
+        echo ""
+    fi
+    return 1
+}
+
+#######################################
+# create_current_terraform_plan: Create current plan artifact for comparison
+#
+# Description:
+#   Run terraform plan and write the current plan artifact for diffing.
+#
+# Globals:
+#   VERBOSE - Enable verbose output
+#
+# Arguments:
+#   $1 - Environment name
+#
+# Outputs:
+#   None
+#
+# Returns:
+#   0 on success, 1 on failure
+#
+# Usage:
+#   create_current_terraform_plan "dev"
+#
+#######################################
+function create_current_terraform_plan {
+    local env="$1"
+    local tfvars_file="terraform.${env}.tfvars"
+
+    local proj_artifacts
+    proj_artifacts=$(artifact_dir_for "$(pwd)")
+    local current_plan_file="${proj_artifacts}/.terraform_current.plan"
+    local current_log_file="${proj_artifacts}/.terraform_current.log"
+    local -a plan_cmd=(terraform plan -lock=false -out="${current_plan_file}")
+
+    if [[ -f $tfvars_file ]]; then
+        plan_cmd+=(-var-file="${tfvars_file}")
+    fi
+
+    if "${plan_cmd[@]}" > "${current_log_file}" 2>&1; then
+        return 0
+    fi
+
+    log "ERROR" "Failed to create current plan"
+    if [[ $VERBOSE == "true" ]]; then
+        echo_section "CURRENT PLAN ERROR OUTPUT"
+        log "ERROR" "Command failed: ${plan_cmd[*]}"
+        log "ERROR" "Error details:"
+        cat "${current_log_file}"
+        echo ""
+    fi
+    return 1
+}
+
+#######################################
+# report_terraform_plan_differences: Log verbose diff when plans diverge
+#
+# Description:
+#   Print and persist unified diff output when baseline and current plans differ.
+#
+# Globals:
+#   VERBOSE - Enable verbose output
+#
+# Arguments:
+#   $1 - Project artifacts directory
+#
+# Outputs:
+#   Diff details to stdout when verbose
+#
+# Returns:
+#   0 on success
+#
+# Usage:
+#   report_terraform_plan_differences "$proj_artifacts"
+#
+#######################################
+function report_terraform_plan_differences {
+    local proj_artifacts="$1"
+
+    log "WARN" "⚠️  Infrastructure changes detected between baseline and current plan"
+    if [[ $VERBOSE != "true" ]]; then
+        log "INFO" "Use -v option to see detailed plan content differences"
+        return 0
+    fi
+
+    echo_section "TERRAFORM SHOW DIFFERENCES DETECTED"
+    log "INFO" "Detailed plan content differences (baseline vs current):"
+    echo ""
+
+    if command -v colordiff > /dev/null 2>&1; then
+        diff -u "${proj_artifacts}/.terraform_baseline.txt" "${proj_artifacts}/.terraform_current.txt" | colordiff
+    else
+        diff -u "${proj_artifacts}/.terraform_baseline.txt" "${proj_artifacts}/.terraform_current.txt"
+    fi
+
+    echo ""
+    echo_section "SUMMARY OF CHANGES"
+
+    local added_resources
+    local removed_resources
+    local modified_resources
+
+    added_resources=$(diff "${proj_artifacts}/.terraform_baseline.txt" "${proj_artifacts}/.terraform_current.txt" | grep -c "^+.*resource\|^+.*data\." || true)
+    removed_resources=$(diff "${proj_artifacts}/.terraform_baseline.txt" "${proj_artifacts}/.terraform_current.txt" | grep -c "^-.*resource\|^-.*data\." || true)
+    modified_resources=$(diff "${proj_artifacts}/.terraform_baseline.txt" "${proj_artifacts}/.terraform_current.txt" | grep -c "^[+-].*~\|^[+-].*-/+\|^[+-].*force replacement" || true)
+
+    log "INFO" "Resources to be added: $added_resources"
+    log "INFO" "Resources to be removed: $removed_resources"
+    log "INFO" "Resources to be modified: $modified_resources"
+
+    local diff_log_file
+    diff_log_file="${proj_artifacts}/terraform_show_diff_$(date +%Y%m%d_%H%M%S).log"
+    {
+        echo "# Terraform Show Differences - $(date)"
+        echo "# Directory: $(pwd)"
+        echo "# Baseline vs Current Plan Content Comparison"
+        echo ""
+        diff -u "${proj_artifacts}/.terraform_baseline.txt" "${proj_artifacts}/.terraform_current.txt"
+    } > "$diff_log_file"
+
+    log "INFO" "Detailed diff saved to: $diff_log_file"
+    echo ""
+}
+
+#######################################
+# cleanup_transient_terraform_plan_logs: Remove transient plan logs from workspace
+#
+# Description:
+#   Delete transient terraform plan and log files from the working directory.
+#
+# Globals:
+#   None
+#
+# Arguments:
+#   None
+#
+# Outputs:
+#   None
+#
+# Returns:
+#   None
+#
+# Usage:
+#   cleanup_transient_terraform_plan_logs
+#
+#######################################
+function cleanup_transient_terraform_plan_logs {
+    rm -f .terraform_baseline.plan .terraform_baseline.log .terraform_baseline.txt || true
+    rm -f .terraform_current.plan .terraform_current.log .terraform_current.txt || true
+    rm -f .terraform_init.log .terraform_validate.log || true
+}
+
+#######################################
+# compare_terraform_plan_artifacts: Compare baseline and current plan artifacts
+#
+# Description:
+#   Render plan artifacts to text and diff them for infrastructure changes.
+#
+# Globals:
+#   None
+#
+# Arguments:
+#   None
+#
+# Outputs:
+#   None
+#
+# Returns:
+#   0 when plans match, 1 when they differ
+#
+# Usage:
+#   compare_terraform_plan_artifacts
+#
+#######################################
+function compare_terraform_plan_artifacts {
+    local proj_artifacts
+    proj_artifacts=$(artifact_dir_for "$(pwd)")
+
+    terraform show -no-color "${proj_artifacts}/.terraform_baseline.plan" > "${proj_artifacts}/.terraform_baseline.txt" 2> /dev/null
+    terraform show -no-color "${proj_artifacts}/.terraform_current.plan" > "${proj_artifacts}/.terraform_current.txt" 2> /dev/null
+
+    if diff -q "${proj_artifacts}/.terraform_baseline.txt" "${proj_artifacts}/.terraform_current.txt" > /dev/null 2>&1; then
+        log "INFO" "✅ No infrastructure changes detected"
+        cleanup_transient_terraform_plan_logs
+        return 0
+    fi
+
+    report_terraform_plan_differences "${proj_artifacts}"
+    cleanup_transient_terraform_plan_logs
+    return 1
+}
+
+#######################################
 # validate_terraform_with_plan_comparison: Validate terraform with plan content comparison
 #
 # Description:
-#   Validate terraform with plan content comparison
+#   Re-init, validate, plan, and compare Terraform output against a baseline plan.
 #
 # Globals:
 #   ENV - Environment variable
 #   DEFAULT_ENV - Default environment
-#   VERBOSE - Enable verbose output
 #
 # Arguments:
 #   $1 - Terraform directory
@@ -1410,143 +1708,16 @@ function validate_all_affected_projects {
 #######################################
 function validate_terraform_with_plan_comparison {
     local terraform_dir="$1"
-    # Use the provided env parameter; if not provided prefer exported ENV, otherwise DEFAULT_ENV
     local env="${2:-${ENV:-$DEFAULT_ENV}}"
 
     cd "$terraform_dir" || return 1
 
     log "INFO" "Validating Terraform configuration with plan content comparison..."
 
-    # Check for backend configuration file
-    local backend_config="terraform.${env}.tfbackend"
-    local init_options=("-input=false" "-upgrade")
-
-    if [[ -f $backend_config ]]; then
-        init_options+=("-reconfigure" "-backend-config=$backend_config")
-    fi
-
-    # Re-initialize to ensure new module version is downloaded
-    log "INFO" "Re-initializing Terraform to download updated modules..."
-    local proj_artifacts
-    proj_artifacts=$(artifact_dir_for "$(pwd)")
-    local init_log_file="${proj_artifacts}/.terraform_init.log"
-    if ! terraform init "${init_options[@]}" > "${init_log_file}" 2>&1; then
-        log "ERROR" "Terraform init failed after module update"
-        if [[ $VERBOSE == "true" ]]; then
-            echo_section "TERRAFORM INIT ERROR OUTPUT"
-            log "ERROR" "Init command failed with options: ${init_options[*]}"
-            log "ERROR" "Error details:"
-            cat "${init_log_file}"
-            echo ""
-        fi
-        return 1
-    fi
-
-    # Validate syntax after init
-    if ! terraform validate > .terraform_validate.log 2>&1; then
-        log "ERROR" "Terraform syntax validation failed"
-        if [[ $VERBOSE == "true" ]]; then
-            echo_section "TERRAFORM VALIDATE ERROR OUTPUT"
-            log "ERROR" "Validation failed, error details:"
-            cat .terraform_validate.log
-            echo ""
-        fi
-        return 1
-    fi
-
-    # Create current plan and compare with baseline; place artifacts into project artifacts dir
-    local tfvars_file="terraform.${env}.tfvars"
-    local plan_options=""
-    if [[ -f $tfvars_file ]]; then
-        plan_options="-var-file=$tfvars_file"
-    fi
-
-    local proj_artifacts
-    proj_artifacts=$(artifact_dir_for "$(pwd)")
-    local current_plan_file="${proj_artifacts}/.terraform_current.plan"
-    local current_log_file="${proj_artifacts}/.terraform_current.log"
-
-    local current_plan_command="terraform plan -lock=false -out=${current_plan_file}"
-    if [[ -n $plan_options ]]; then
-        current_plan_command="$current_plan_command $plan_options"
-    fi
-
-    if ! $current_plan_command > "${current_log_file}" 2>&1; then
-        log "ERROR" "Failed to create current plan"
-        if [[ $VERBOSE == "true" ]]; then
-            echo_section "CURRENT PLAN ERROR OUTPUT"
-            log "ERROR" "Command failed: $current_plan_command"
-            log "ERROR" "Error details:"
-            cat "${current_log_file}"
-            echo ""
-        fi
-        return 1
-    fi
-
-    # Compare plan file contents using 'terraform show' from artifacts
-    terraform show -no-color "${proj_artifacts}/.terraform_baseline.plan" > "${proj_artifacts}/.terraform_baseline.txt" 2> /dev/null
-    terraform show -no-color "${proj_artifacts}/.terraform_current.plan" > "${proj_artifacts}/.terraform_current.txt" 2> /dev/null
-
-    if diff -q "${proj_artifacts}/.terraform_baseline.txt" "${proj_artifacts}/.terraform_current.txt" > /dev/null 2>&1; then
-        log "INFO" "✅ No infrastructure changes detected"
-        # Clean up transient plan files in working dir (artifact copies kept)
-        rm -f .terraform_baseline.plan .terraform_baseline.log .terraform_baseline.txt || true
-        rm -f .terraform_current.plan .terraform_current.log .terraform_current.txt || true
-        rm -f .terraform_init.log .terraform_validate.log || true
-        return 0
-    else
-        log "WARN" "⚠️  Infrastructure changes detected between baseline and current plan"
-        if [[ $VERBOSE == "true" ]]; then
-            echo_section "TERRAFORM SHOW DIFFERENCES DETECTED"
-            log "INFO" "Detailed plan content differences (baseline vs current):"
-            echo ""
-
-            # Show unified diff with context (use artifact files)
-            if command -v colordiff > /dev/null 2>&1; then
-                diff -u "${proj_artifacts}/.terraform_baseline.txt" "${proj_artifacts}/.terraform_current.txt" | colordiff
-            else
-                diff -u "${proj_artifacts}/.terraform_baseline.txt" "${proj_artifacts}/.terraform_current.txt"
-            fi
-
-            echo ""
-            echo_section "SUMMARY OF CHANGES"
-
-            # Count and summarize changes
-            local added_resources
-            local removed_resources
-            local modified_resources
-
-            added_resources=$(diff "${proj_artifacts}/.terraform_baseline.txt" "${proj_artifacts}/.terraform_current.txt" | grep -c "^+.*resource\|^+.*data\." || true)
-            removed_resources=$(diff "${proj_artifacts}/.terraform_baseline.txt" "${proj_artifacts}/.terraform_current.txt" | grep -c "^-.*resource\|^-.*data\." || true)
-            modified_resources=$(diff "${proj_artifacts}/.terraform_baseline.txt" "${proj_artifacts}/.terraform_current.txt" | grep -c "^[+-].*~\|^[+-].*-/+\|^[+-].*force replacement" || true)
-
-            log "INFO" "Resources to be added: $added_resources"
-            log "INFO" "Resources to be removed: $removed_resources"
-            log "INFO" "Resources to be modified: $modified_resources"
-
-            # Save detailed diff to log file for later review
-            local diff_log_file
-            diff_log_file="${proj_artifacts}/terraform_show_diff_$(date +%Y%m%d_%H%M%S).log"
-
-            {
-                echo "# Terraform Show Differences - $(date)"
-                echo "# Directory: $(pwd)"
-                echo "# Baseline vs Current Plan Content Comparison"
-                echo ""
-                diff -u "${proj_artifacts}/.terraform_baseline.txt" "${proj_artifacts}/.terraform_current.txt"
-            } > "$diff_log_file"
-
-            log "INFO" "Detailed diff saved to: $diff_log_file"
-            echo ""
-        else
-            log "INFO" "Use -v option to see detailed plan content differences"
-        fi
-        # Clean up transient plan files in working dir (artifact copies kept)
-        rm -f .terraform_baseline.plan .terraform_baseline.log .terraform_baseline.txt || true
-        rm -f .terraform_current.plan .terraform_current.log .terraform_current.txt || true
-        rm -f .terraform_init.log .terraform_validate.log || true
-        return 1
-    fi
+    reinit_terraform_for_plan_validation "${env}" || return 1
+    validate_terraform_syntax_for_plan || return 1
+    create_current_terraform_plan "${env}" || return 1
+    compare_terraform_plan_artifacts
 }
 
 #######################################

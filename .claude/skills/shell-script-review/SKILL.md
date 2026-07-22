@@ -8,7 +8,7 @@ description: >-
 license: Apache-2.0
 metadata:
   author: y-miyazaki
-  version: "1.1.0"
+  version: "1.1.2"
 ---
 
 ## Input
@@ -65,17 +65,24 @@ Minimal inline contract (used if reference file is unavailable):
 
 - [common-checklist.md](references/common-checklist.md) (always read)
 - [common-output-format.md](references/common-output-format.md) (always read)
-- [category-global.md](references/category-global.md), [category-error-handling.md](references/category-error-handling.md), [category-security.md](references/category-security.md) - Read when reviewing overall quality, error handling, or security.
-- [category-code-standards.md](references/category-code-standards.md), [category-dependencies.md](references/category-dependencies.md), [category-documentation.md](references/category-documentation.md) - Read when reviewing code standards, dependencies, or documentation.
-- [category-function-design.md](references/category-function-design.md), [category-logging.md](references/category-logging.md), [category-performance.md](references/category-performance.md), [category-testing.md](references/category-testing.md) - Read when reviewing function design, logging, performance, or tests.
-- When uncertain which categories apply, default to: category-security, category-error-handling, category-global.
-- [common-troubleshooting.md](references/common-troubleshooting.md) - Read on failure or when validation output is unavailable
+- [common-troubleshooting.md](references/common-troubleshooting.md) (read on failure)
+- [category-global.md](references/category-global.md) (always read)
+- [category-security.md](references/category-security.md) (always read)
+- [category-error-handling.md](references/category-error-handling.md) (always read)
+- [category-anti-patterns.md](references/category-anti-patterns.md) (always read)
+- [category-code-standards.md](references/category-code-standards.md) (always read)
+- [category-dependencies.md](references/category-dependencies.md) (always read)
+- [category-documentation.md](references/category-documentation.md) (always read)
+- [category-function-design.md](references/category-function-design.md) (always read)
+- [category-logging.md](references/category-logging.md) (always read)
+- [category-performance.md](references/category-performance.md) (always read)
+- [category-testing.md](references/category-testing.md) (always read)
 
 ## Workflow
 
 1. Read PR context and script intent.
 2. Confirm `shell-script-validation` results exist. If missing, inform user that validation should run first, then proceed with partial review: evaluate security and error-handling checks directly from source, defer lint-dependent checks (mark as `Deferred` with reason "validation evidence unavailable").
-3. Review checklist categories based on changed script paths and PR intent, then collect failed/deferred ItemIDs.
+3. Review checklist categories based on changed script paths and PR intent, then collect failed/deferred ItemIDs. When uncertain which categories apply, prioritize category-security, category-error-handling, and category-global first.
 4. Output required report sections per [references/common-output-format.md](references/common-output-format.md). Prioritize `SEC-*` findings first. Include file path, risk type, and concrete remediation for each issue.
 
 ### Error Handling

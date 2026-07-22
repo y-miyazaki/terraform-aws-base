@@ -9,8 +9,7 @@ tags:
   - workflow
 inputs:
   prompt: |
-    Use shell-script-validation to validate ./scripts/deploy.sh before merge.
-    The shell script path is optional and defaults to workspace root when omitted.
+    Use shell-script-validation to validate shell scripts before merge.
     State the exact bash scripts/validate.sh command you run, including canonical flags
     `-v -f --check-function-docs` (always pass all three unless opted out below).
     Return ## Summary and ## Tool Results.
@@ -26,3 +25,4 @@ expected:
     - "scripts/validate.sh"
   outcomes:
     - type: task_completed
+

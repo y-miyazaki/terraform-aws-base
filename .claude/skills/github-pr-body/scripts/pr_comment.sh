@@ -42,10 +42,10 @@ DRY_RUN="false"
 #######################################
 # show_usage: Display usage information
 #
-# Arguments:
+# Globals:
 #   None
 #
-# Globals:
+# Arguments:
 #   None
 #
 # Outputs:
@@ -85,10 +85,10 @@ EOF
 #######################################
 # get_repository_from_git: Auto-detect repository
 #
-# Arguments:
+# Globals:
 #   None
 #
-# Globals:
+# Arguments:
 #   None
 #
 # Outputs:
@@ -116,10 +116,10 @@ function get_repository_from_git {
 #######################################
 # find_existing_comment: Find comment by marker
 #
-# Arguments:
+# Globals:
 #   None
 #
-# Globals:
+# Arguments:
 #   None
 #
 # Outputs:
@@ -140,10 +140,10 @@ function find_existing_comment {
 #######################################
 # create_comment: Create new PR comment
 #
-# Arguments:
+# Globals:
 #   None
 #
-# Globals:
+# Arguments:
 #   None
 #
 # Outputs:
@@ -166,10 +166,10 @@ function create_comment {
 #######################################
 # update_comment: Update existing comment via GraphQL
 #
-# Arguments:
+# Globals:
 #   None
 #
-# Globals:
+# Arguments:
 #   None
 #
 # Outputs:
@@ -207,10 +207,10 @@ mutation UpdateComment($commentId: ID!, $body: String!) {
 #######################################
 # manage_comment: Create or update comment
 #
-# Arguments:
+# Globals:
 #   None
 #
-# Globals:
+# Arguments:
 #   None
 #
 # Outputs:
@@ -248,12 +248,12 @@ function manage_comment {
 #######################################
 # parse_arguments: Parse command line
 #
-# Arguments:
-#   $@ - Command line arguments
-
 # Globals:
 #   None
 #
+# Arguments:
+#   $@ - Command line arguments
+
 # Outputs:
 #   None
 #
@@ -303,12 +303,12 @@ function parse_arguments {
 #######################################
 # main: Main process
 #
-# Arguments:
-#   $@ - Command line arguments
-
 # Globals:
 #   None
 #
+# Arguments:
+#   $@ - Command line arguments
+
 # Outputs:
 #   None
 #

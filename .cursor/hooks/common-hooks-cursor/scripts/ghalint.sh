@@ -35,10 +35,10 @@ fi
 #   staged, or untracked. Each git command is guarded with || true to
 #   prevent pipefail from terminating the script.
 #
-# Arguments:
+# Globals:
 #   None
 #
-# Globals:
+# Arguments:
 #   None
 #
 # Outputs:
@@ -74,11 +74,11 @@ function has_changed_workflows {
 #     - Cursor: stop → followup_message, other events → exit 2 + stderr
 #     - unknown: exit 2 + stderr
 #
-# Arguments:
-#   $1 - reason: Human-readable description of what failed and how to fix it
-#
 # Globals:
 #   None
+#
+# Arguments:
+#   $1 - reason: Human-readable description of what failed and how to fix it
 #
 # Outputs:
 #   Writes JSON to stdout or errors to stderr
@@ -231,10 +231,10 @@ function report_failure {
 #   Runs ghalint when workflow files have changed.
 #   Calls report_failure if policy violations are found.
 #
-# Arguments:
+# Globals:
 #   None
 #
-# Globals:
+# Arguments:
 #   None
 #
 # Outputs:

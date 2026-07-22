@@ -1,0 +1,25 @@
+id: refactor-survey-001
+name: refactor interactive survey mode lists candidates only
+description: Verify survey mode uses survey result shape without Changes or Verification.
+tags:
+  - quality
+  - survey-mode
+inputs:
+  prompt: >-
+    Use refactor in survey mode for scripts/example.sh. Discover structural candidates
+    only; do not edit files. Emit Refactor Result per common-output-format.md survey-only
+    shape: ## Overview, ## Summary with ### Candidates (and ### Watch if needed).
+    Do NOT emit ### Changes, ### Deferred, or ## Verification. Do not edit files in
+    this mock eval.
+expected:
+  output_contains:
+    - Refactor Result
+    - "## Overview"
+    - "## Summary"
+    - "### Candidates"
+  output_not_contains:
+    - "### Changes"
+    - "### Deferred"
+    - "## Verification"
+  outcomes:
+    - type: task_completed

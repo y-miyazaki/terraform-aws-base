@@ -21,6 +21,11 @@
 # Returns:
 #   0 when all targets are already canonical or were fixed successfully.
 #   1 when a target could not be processed.
+#
+# Design Rules:
+# - Preserve non-section comment lines inside each function doc block
+# - Only rewrite blocks that declare at least one canonical section header
+# - Leave files unchanged when already canonical (unless reporting dry-run)
 #######################################
 
 # Error handling: exit on error, unset variable, or failed pipeline
@@ -45,6 +50,30 @@ QUIET=false
 declare -a TARGET_PATHS=()
 readonly CANONICAL_SECTIONS=(Globals Arguments Outputs Returns)
 readonly SEPARATOR='#######################################'
+declare -a FIX_DOC_TEMP_FILES=()
+
+#######################################
+# cleanup_fix_doc_temp_files: Remove tracked temporary files
+#
+# Globals:
+#   FIX_DOC_TEMP_FILES
+#
+# Arguments:
+#   None
+#
+# Outputs:
+#   None
+#
+# Returns:
+#   None
+#######################################
+function cleanup_fix_doc_temp_files {
+    local f
+    for f in "${FIX_DOC_TEMP_FILES[@]}"; do
+        rm -f "${f}"
+    done
+}
+trap cleanup_fix_doc_temp_files EXIT
 
 #######################################
 # show_usage: Display script usage information
@@ -71,6 +100,10 @@ Options:
   -h, --help     Display this help message
   -n, --dry-run  Print changes without modifying files
   -q, --quiet    Suppress non-error output
+
+Examples:
+  $(basename "$0") scripts/lib/common.sh
+  $(basename "$0") --dry-run scripts/shell-script
 EOF
 }
 
@@ -123,104 +156,6 @@ function parse_arguments {
 }
 
 #######################################
-# is_section_header: Test whether a line is a section header
-#
-# Globals:
-#   None
-#
-# Arguments:
-#   $1 - Line to test
-#
-# Outputs:
-#   None
-#
-# Returns:
-#   0 when the line is a section header, 1 otherwise.
-#######################################
-function is_section_header {
-    [[ $1 =~ ^#\ [A-Za-z][A-Za-z\ ]*:[[:space:]]*$ ]]
-}
-
-#######################################
-# section_name_from_header: Extract section name from a header line
-#
-# Globals:
-#   None
-#
-# Arguments:
-#   $1 - Section header line
-#
-# Outputs:
-#   Section name to stdout.
-#
-# Returns:
-#   0 on success.
-#######################################
-function section_name_from_header {
-    local line="$1"
-    line="${line#\# }"
-    line="${line%:}"
-    printf '%s' "$line"
-}
-
-#######################################
-# is_canonical_section: Test whether a section name is canonical
-#
-# Globals:
-#   CANONICAL_SECTIONS
-#
-# Arguments:
-#   $1 - Section name
-#
-# Outputs:
-#   None
-#
-# Returns:
-#   0 when canonical, 1 otherwise.
-#######################################
-function is_canonical_section {
-    local name="$1"
-    local section
-
-    for section in "${CANONICAL_SECTIONS[@]}"; do
-        if [[ $section == "$name" ]]; then
-            return 0
-        fi
-    done
-    return 1
-}
-
-#######################################
-# canonical_order_index: Return canonical index for a section name
-#
-# Globals:
-#   CANONICAL_SECTIONS
-#
-# Arguments:
-#   $1 - Section name
-#
-# Outputs:
-#   Index to stdout, or -1 when not canonical.
-#
-# Returns:
-#   0 on success.
-#######################################
-function canonical_order_index {
-    local name="$1"
-    local index=0
-    local section
-
-    for section in "${CANONICAL_SECTIONS[@]}"; do
-        if [[ $section == "$name" ]]; then
-            echo "$index"
-            return 0
-        fi
-        index=$((index + 1))
-    done
-    echo "-1"
-}
-
-#######################################
 # block_needs_reorder: Detect non-canonical section order in a block
 #
 # Globals:
@@ -258,6 +193,248 @@ function block_needs_reorder {
     done < "$block_file"
 
     return 1
+}
+
+#######################################
+# canonical_order_index: Return canonical index for a section name
+#
+# Globals:
+#   CANONICAL_SECTIONS
+#
+# Arguments:
+#   $1 - Section name
+#
+# Outputs:
+#   Index to stdout, or -1 when not canonical.
+#
+# Returns:
+#   0 on success.
+#######################################
+function canonical_order_index {
+    local name="$1"
+    local index=0
+    local section
+
+    for section in "${CANONICAL_SECTIONS[@]}"; do
+        if [[ $section == "$name" ]]; then
+            echo "$index"
+            return 0
+        fi
+        index=$((index + 1))
+    done
+    echo "-1"
+}
+
+#######################################
+# expand_target_paths: Expand a file or directory into shell script paths
+#
+# Globals:
+#   None
+#
+# Arguments:
+#   $1 - File or directory path
+#
+# Outputs:
+#   Shell script paths to stdout (one per line)
+#
+# Returns:
+#   0 on success, 1 when path does not exist
+#######################################
+function expand_target_paths {
+    local target="$1"
+    local -a scripts=()
+    local script entry already
+
+    if [[ -f $target ]]; then
+        printf '%s\0' "$target"
+        return 0
+    fi
+
+    if [[ ! -d $target ]]; then
+        error_exit "File not found: $target"
+    fi
+
+    while IFS= read -r -d '' script; do
+        scripts+=("$script")
+    done < <(find "$target" -type f -name "*.sh" -print0 2> /dev/null)
+
+    while IFS= read -r -d '' script; do
+        if [[ -f $script ]] && head -1 "$script" 2> /dev/null | grep -q "^#!/.*sh"; then
+            already=false
+            for entry in "${scripts[@]}"; do
+                if [[ $entry == "$script" ]]; then
+                    already=true
+                    break
+                fi
+            done
+            if [[ $already == "false" ]]; then
+                scripts+=("$script")
+            fi
+        fi
+    done < <(find "$target" -type f ! -name "*.sh" -executable -print0 2> /dev/null)
+
+    for entry in "${scripts[@]}"; do
+        printf '%s\0' "$entry"
+    done
+}
+
+#######################################
+# is_canonical_section: Test whether a section name is canonical
+#
+# Globals:
+#   CANONICAL_SECTIONS
+#
+# Arguments:
+#   $1 - Section name
+#
+# Outputs:
+#   None
+#
+# Returns:
+#   0 when canonical, 1 otherwise.
+#######################################
+function is_canonical_section {
+    local name="$1"
+    local section
+
+    for section in "${CANONICAL_SECTIONS[@]}"; do
+        if [[ $section == "$name" ]]; then
+            return 0
+        fi
+    done
+    return 1
+}
+
+#######################################
+# is_section_header: Test whether a line is a section header
+#
+# Globals:
+#   None
+#
+# Arguments:
+#   $1 - Line to test
+#
+# Outputs:
+#   None
+#
+# Returns:
+#   0 when the line is a section header, 1 otherwise.
+#######################################
+function is_section_header {
+    [[ $1 =~ ^#\ [A-Za-z][A-Za-z\ ]*:[[:space:]]*$ ]]
+}
+
+#######################################
+# process_file: Reorder function doc blocks in one script file
+#
+# Globals:
+#   DRY_RUN
+#   QUIET
+#   SEPARATOR
+#
+# Arguments:
+#   $1 - Script path
+#
+# Outputs:
+#   Status messages to stderr unless quiet.
+#
+# Returns:
+#   0 on success, 1 on failure.
+#######################################
+function process_file {
+    local script="$1"
+    local -a input_lines=()
+    local -a output_lines=()
+    local -a block_lines=()
+    local changed=false
+    local line
+    local index
+
+    if [[ ! -f $script ]]; then
+        error_exit "File not found: $script"
+    fi
+
+    mapfile -t input_lines < "$script"
+
+    index=0
+    while [[ $index -lt ${#input_lines[@]} ]]; do
+        line="${input_lines[$index]}"
+
+        if [[ $line == "$SEPARATOR" ]]; then
+            local start_index=$((index + 1))
+            local end_index=$start_index
+            local next_is_function=false
+
+            while [[ $end_index -lt ${#input_lines[@]} && ${input_lines[$end_index]} != "$SEPARATOR" ]]; do
+                end_index=$((end_index + 1))
+            done
+
+            if [[ $end_index -lt ${#input_lines[@]} ]]; then
+                local after_sep_index=$((end_index + 1))
+                if [[ $after_sep_index -lt ${#input_lines[@]} ]] && [[ ${input_lines[$after_sep_index]} =~ ^function\  ]]; then
+                    next_is_function=true
+                fi
+            fi
+
+            if [[ $next_is_function == "true" ]]; then
+                block_lines=()
+                local block_index=$start_index
+                while [[ $block_index -lt $end_index ]]; do
+                    block_lines+=("${input_lines[$block_index]}")
+                    block_index=$((block_index + 1))
+                done
+
+                local block_file
+                block_file="$(mktemp)"
+                FIX_DOC_TEMP_FILES+=("${block_file}")
+                if [[ ${#block_lines[@]} -gt 0 ]]; then
+                    printf '%s\n' "${block_lines[@]}" > "$block_file"
+                else
+                    : > "$block_file"
+                fi
+
+                output_lines+=("$SEPARATOR")
+                if block_needs_reorder "$block_file"; then
+                    changed=true
+                    mapfile -t block_lines < <(reorder_doc_block "$block_file")
+                fi
+                if [[ ${#block_lines[@]} -gt 0 ]]; then
+                    output_lines+=("${block_lines[@]}")
+                fi
+                output_lines+=("$SEPARATOR")
+                rm -f "$block_file"
+
+                index=$((end_index + 1))
+                if [[ $index -lt ${#input_lines[@]} ]]; then
+                    output_lines+=("${input_lines[$index]}")
+                    index=$((index + 1))
+                fi
+                continue
+            fi
+        fi
+
+        output_lines+=("$line")
+        index=$((index + 1))
+    done
+
+    if [[ $changed != "true" ]]; then
+        [[ $QUIET != "true" ]] && log "INFO" "No function doc reorder needed: $script"
+        return 0
+    fi
+
+    if [[ $DRY_RUN == "true" ]]; then
+        [[ $QUIET != "true" ]] && log "INFO" "Would reorder function docs: $script"
+        return 0
+    fi
+
+    local output_file
+    output_file="$(mktemp)"
+    FIX_DOC_TEMP_FILES+=("${output_file}")
+    printf '%s\n' "${output_lines[@]}" > "$output_file"
+    mv "$output_file" "$script"
+    rm -f "$output_file"
+    [[ $QUIET != "true" ]] && log "INFO" "Reordered function docs: $script"
+    return 0
 }
 
 #######################################
@@ -382,166 +559,25 @@ function reorder_doc_block {
 }
 
 #######################################
-# process_file: Reorder function doc blocks in one script file
-#
-# Globals:
-#   DRY_RUN
-#   QUIET
-#   SEPARATOR
-#
-# Arguments:
-#   $1 - Script path
-#
-# Outputs:
-#   Status messages to stderr unless quiet.
-#
-# Returns:
-#   0 on success, 1 on failure.
-#######################################
-function process_file {
-    local script="$1"
-    local -a input_lines=()
-    local -a output_lines=()
-    local -a block_lines=()
-    local changed=false
-    local line
-    local index
-
-    if [[ ! -f $script ]]; then
-        error_exit "File not found: $script"
-    fi
-
-    mapfile -t input_lines < "$script"
-
-    index=0
-    while [[ $index -lt ${#input_lines[@]} ]]; do
-        line="${input_lines[$index]}"
-
-        if [[ $line == "$SEPARATOR" ]]; then
-            local start_index=$((index + 1))
-            local end_index=$start_index
-            local next_is_function=false
-
-            while [[ $end_index -lt ${#input_lines[@]} && ${input_lines[$end_index]} != "$SEPARATOR" ]]; do
-                end_index=$((end_index + 1))
-            done
-
-            if [[ $end_index -lt ${#input_lines[@]} ]]; then
-                local after_sep_index=$((end_index + 1))
-                if [[ $after_sep_index -lt ${#input_lines[@]} ]] && [[ ${input_lines[$after_sep_index]} =~ ^function\  ]]; then
-                    next_is_function=true
-                fi
-            fi
-
-            if [[ $next_is_function == "true" ]]; then
-                block_lines=()
-                local block_index=$start_index
-                while [[ $block_index -lt $end_index ]]; do
-                    block_lines+=("${input_lines[$block_index]}")
-                    block_index=$((block_index + 1))
-                done
-
-                local block_file
-                block_file="$(mktemp)"
-                if [[ ${#block_lines[@]} -gt 0 ]]; then
-                    printf '%s\n' "${block_lines[@]}" > "$block_file"
-                else
-                    : > "$block_file"
-                fi
-
-                output_lines+=("$SEPARATOR")
-                if block_needs_reorder "$block_file"; then
-                    changed=true
-                    mapfile -t block_lines < <(reorder_doc_block "$block_file")
-                fi
-                if [[ ${#block_lines[@]} -gt 0 ]]; then
-                    output_lines+=("${block_lines[@]}")
-                fi
-                output_lines+=("$SEPARATOR")
-                rm -f "$block_file"
-
-                index=$((end_index + 1))
-                if [[ $index -lt ${#input_lines[@]} ]]; then
-                    output_lines+=("${input_lines[$index]}")
-                    index=$((index + 1))
-                fi
-                continue
-            fi
-        fi
-
-        output_lines+=("$line")
-        index=$((index + 1))
-    done
-
-    if [[ $changed != "true" ]]; then
-        [[ $QUIET != "true" ]] && log "INFO" "No function doc reorder needed: $script"
-        return 0
-    fi
-
-    if [[ $DRY_RUN == "true" ]]; then
-        [[ $QUIET != "true" ]] && log "INFO" "Would reorder function docs: $script"
-        return 0
-    fi
-
-    local output_file
-    output_file="$(mktemp)"
-    printf '%s\n' "${output_lines[@]}" > "$output_file"
-    mv "$output_file" "$script"
-    [[ $QUIET != "true" ]] && log "INFO" "Reordered function docs: $script"
-    return 0
-}
-
-#######################################
-# expand_target_paths: Expand a file or directory into shell script paths
+# section_name_from_header: Extract section name from a header line
 #
 # Globals:
 #   None
 #
 # Arguments:
-#   $1 - File or directory path
+#   $1 - Section header line
 #
 # Outputs:
-#   Shell script paths to stdout (one per line)
+#   Section name to stdout.
 #
 # Returns:
-#   0 on success, 1 when path does not exist
+#   0 on success.
 #######################################
-function expand_target_paths {
-    local target="$1"
-    local -a scripts=()
-    local script entry already
-
-    if [[ -f $target ]]; then
-        printf '%s\0' "$target"
-        return 0
-    fi
-
-    if [[ ! -d $target ]]; then
-        error_exit "File not found: $target"
-    fi
-
-    while IFS= read -r -d '' script; do
-        scripts+=("$script")
-    done < <(find "$target" -type f -name "*.sh" -print0 2> /dev/null)
-
-    while IFS= read -r -d '' script; do
-        if [[ -f $script ]] && head -1 "$script" 2> /dev/null | grep -q "^#!/.*sh"; then
-            already=false
-            for entry in "${scripts[@]}"; do
-                if [[ $entry == "$script" ]]; then
-                    already=true
-                    break
-                fi
-            done
-            if [[ $already == "false" ]]; then
-                scripts+=("$script")
-            fi
-        fi
-    done < <(find "$target" -type f ! -name "*.sh" -executable -print0 2> /dev/null)
-
-    for entry in "${scripts[@]}"; do
-        printf '%s\0' "$entry"
-    done
+function section_name_from_header {
+    local line="$1"
+    line="${line#\# }"
+    line="${line%:}"
+    printf '%s' "$line"
 }
 
 #######################################
@@ -569,8 +605,13 @@ function main {
 
     local target script
     for target in "${TARGET_PATHS[@]}"; do
+        if [[ ! -e $target ]]; then
+            error_exit "File not found: $target"
+        fi
         while IFS= read -r -d '' script; do
-            process_file "$script"
+            if ! process_file "$script"; then
+                exit 1
+            fi
         done < <(expand_target_paths "$target")
     done
 }

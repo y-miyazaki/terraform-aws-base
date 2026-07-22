@@ -1,0 +1,32 @@
+id: docs-updater-loop-classification-001
+name: docs-updater loop path classifies injected findings
+description: Validate findings classify into High-Priority and Watch from context.
+tags:
+  - quality
+  - loop-path
+  - classification
+inputs:
+  prompt: >-
+    Use docs-updater (loop path). Classify injected findings: missing required README
+    section is High-Priority; slightly outdated version is Watch. Emit all four
+    report sections. Emit PR ## Overview and ## Summary plus Session Metrics table
+    with High-Priority Items, Watch Items, and Noise / Ignore sections.
+  context:
+    commit_range: eval0001..eval0002
+    level: L2
+    skip: false
+    findings:
+      - file: docs/README.md
+        reason: missing required installation section
+        source_commit: eval0002
+      - file: docs/guide/overview.md
+        reason: version number slightly outdated
+        source_commit: eval0002
+expected:
+  output_contains:
+    - High-Priority
+    - Watch
+    - "## Summary"
+    - "## Overview"
+  outcomes:
+    - type: task_completed

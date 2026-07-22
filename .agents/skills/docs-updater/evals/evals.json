@@ -1,0 +1,43 @@
+{
+  "skill_name": "docs-updater",
+  "evals": [
+    {
+      "id": 0,
+      "prompt": "Use docs-updater (interactive/hook path). Step 1 output from `scripts/detect_changes.sh` is in context.detect — parse that JSON only; do not run detect_changes.sh or invent paths. With skip=false, triage affected_docs for the renamed workflow. Do not edit files. Return interactive report per common-output-format.md with ## Summary (Status: updated), ## Changes listing docs/guide.md and mkdocs.yml, and ## Skipped Items.",
+      "expected_output": "Interactive report derived from detect JSON with Status updated, Changes for affected_docs, and Skipped Items",
+      "files": ["evals/files/detect-hook-staged.json"],
+      "expectations": [
+        "Output contains ## Summary with Status: updated",
+        "Output contains ## Changes section",
+        "Output references docs/guide.md from detect affected_docs",
+        "Output references mkdocs.yml from detect affected_docs",
+        "Output references ci-build-deploy.yaml from detect renamed_files",
+        "Output contains ## Skipped Items section"
+      ]
+    },
+    {
+      "id": 1,
+      "prompt": "Use docs-updater (loop path). Context JSON: level=L1, skip=false, findings=[{ \"file\": \"docs/guide.md\", \"reason\": \"stale workflow path\", \"source_commit\": \"abc1234\" }]. Do not edit files. Emit Documentation Triage Report per common-output-format-loop.md with High-Priority Items (Fixed), Watch Items (Deferred), Session Metrics Level L1, plus ## Overview and ## Summary for PR composition.",
+      "expected_output": "Loop triage report with all session sections and PR Overview/Summary",
+      "files": [],
+      "expectations": [
+        "Output contains Documentation Triage Report heading",
+        "Output contains High-Priority Items (Fixed) section",
+        "Output contains Watch Items (Deferred) section",
+        "Output contains Session Metrics with Level L1",
+        "Output contains ## Overview and ## Summary PR sections"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Use docs-updater. Assume git detected a rename from '.github/workflows/ci-build.yaml' to '.github/workflows/ci-build-deploy.yaml'. Return ## Summary with 'Status: updated', ## Changes showing the updated file paths, and ## Skipped Items.",
+      "expected_output": "Rename detection report with updated paths in Changes table",
+      "files": [],
+      "expectations": [
+        "Output contains Status: updated",
+        "Output contains ci-build-deploy in Changes",
+        "Output contains ## Skipped Items section"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+id: ci-sweeper-classification-001
+name: ci-sweeper classifies infra as watch
+description: Validate infra failures are deferred, not auto-fixed.
+tags:
+  - classification
+inputs:
+  prompt: >-
+    Use ci-sweeper. One failure has failure_type=infra (runner OOM). Emit
+    the full triage report with Actionable Fixes and Watch Items sections.
+    Classify the infra failure under Watch Items and do not edit files. Emit PR ## Overview and ## Summary plus Session Metrics table with Actionable Fixes, Watch Items, and Ignored sections.
+  context:
+    failures:
+      - workflow_name: ci-go
+        job_name: test
+        failure_type: infra
+        reason: runner OOM
+expected:
+  output_contains:
+    - Actionable Fixes
+    - Watch Items
+    - Watch
+  outcomes:
+    - type: task_completed

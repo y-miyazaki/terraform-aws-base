@@ -56,11 +56,11 @@ TMP_FILES=()
 #   Removes all temporary files created during script execution.
 #   Registered as EXIT trap handler for automatic cleanup.
 #
-# Arguments:
-#   None
-#
 # Globals:
 #   TMP_FILES - Array of temporary file paths to clean up
+#
+# Arguments:
+#   None
 #
 # Outputs:
 #   None
@@ -90,10 +90,10 @@ trap cleanup EXIT
 #   Displays usage information for the script, including command syntax,
 #   options, and examples. Exits with status 0 after display.
 #
-# Arguments:
+# Globals:
 #   None
 #
-# Globals:
+# Arguments:
 #   None
 #
 # Outputs:
@@ -146,10 +146,10 @@ EOF
 #   Extracts repository name in owner/repo format from git remote URL.
 #   Handles both HTTPS and SSH git URL formats.
 #
-# Arguments:
+# Globals:
 #   None
 #
-# Globals:
+# Arguments:
 #   None
 #
 # Outputs:
@@ -186,12 +186,12 @@ function get_repository_from_git {
 #   Verifies that the specified PR exists in the given repository.
 #   Exits with error if PR is not found.
 #
-# Arguments:
-#   None
-#
 # Globals:
 #   PR_NUMBER - GitHub PR number to validate
 #   REPOSITORY - Repository in owner/repo format
+#
+# Arguments:
+#   None
 #
 # Outputs:
 #   None
@@ -220,11 +220,11 @@ function validate_pr_exists {
 #   - Type of Change
 #   - Testing
 #
-# Arguments:
-#   $1 - PR body text
-#
 # Globals:
 #   None
+#
+# Arguments:
+#   $1 - PR body text
 #
 # Outputs:
 #   JSON with extracted sections
@@ -288,11 +288,11 @@ function parse_template_sections {
 #   Classifies changed files into categories: Feature, Fix, Refactor, Test, Docs, Config, etc.
 #   Uses file path patterns to determine classification.
 #
-# Arguments:
-#   $1 - JSON array of file objects from gh pr view
-#
 # Globals:
 #   None
+#
+# Arguments:
+#   $1 - JSON array of file objects from gh pr view
 #
 # Outputs:
 #   JSON with files grouped by classification
@@ -340,11 +340,11 @@ function classify_file_changes {
 #   Creates a detailed Changes section grouped by file type and directory.
 #   Lists specific modifications with line counts.
 #
-# Arguments:
-#   $1 - JSON with classified files
-#
 # Globals:
 #   None
+#
+# Arguments:
+#   $1 - JSON with classified files
 #
 # Outputs:
 #   markdown for Changes section
@@ -397,14 +397,14 @@ function generate_changes_section {
 #   Content is generated fresh each time, ignoring existing PR body content.
 #   Meant to be inserted/replaced in PR Body directly.
 #
-# Arguments:
-#   None
-#
 # Globals:
 #   PR_NUMBER - GitHub PR number
 #   REPOSITORY - Repository in owner/repo format
 #   BODY_FILE - Path to output body file
 #   TMP_FILES - Array to track temporary files
+#
+# Arguments:
+#   None
 #
 # Outputs:
 #   None (writes body sections to BODY_FILE)
@@ -476,12 +476,12 @@ function generate_body_sections {
 #   Extracts a section starting at a specific H2 heading and ending
 #   before the next H2 heading. Handles CRLF line endings.
 #
+# Globals:
+#   None
+#
 # Arguments:
 #   $1 - Markdown text
 #   $2 - H2 heading text (for example: "## Changes")
-#
-# Globals:
-#   None
 #
 # Outputs:
 #   the matched section or empty output if not found
@@ -522,11 +522,11 @@ function extract_h2_section {
 # Description:
 #   Removes the first line from section text and keeps remaining content.
 #
-# Arguments:
-#   $1 - Section markdown text
-#
 # Globals:
 #   None
+#
+# Arguments:
+#   $1 - Section markdown text
 #
 # Outputs:
 #   section body without heading
@@ -558,11 +558,11 @@ function section_body_without_heading {
 #   Returns success when a section contains visible markdown content
 #   other than heading, blank lines, or HTML comments.
 #
-# Arguments:
-#   $1 - Section markdown text
-#
 # Globals:
 #   None
+#
+# Arguments:
+#   $1 - Section markdown text
 #
 # Outputs:
 #   None
@@ -637,12 +637,12 @@ function section_has_visible_content {
 #   Returns the template section unchanged for empty sections.
 #   Semantic completion is handled by a separate AI refinement step.
 #
+# Globals:
+#   None
+#
 # Arguments:
 #   $1 - H2 heading text (for example: "## Testing")
 #   $2 - Template section markdown text
-#
-# Globals:
-#   None
 #
 # Outputs:
 #   section markdown
@@ -671,14 +671,14 @@ function build_fallback_section {
 #   complete body that includes sections like Testing, Type of Change,
 #   Checklist, and Additional Notes.
 #
-# Arguments:
-#   None
-#
 # Globals:
 #   COMPLETE_BODY_FILE - Path to complete PR body markdown file
 #   PR_NUMBER - GitHub PR number
 #   REPOSITORY - Repository in owner/repo format
 #   DRY_RUN - Enable dry-run mode flag
+#
+# Arguments:
+#   None
 #
 # Outputs:
 #   None
@@ -733,14 +733,14 @@ function apply_complete_pr_body {
 #
 #   Generation is idempotent: multiple executions produce identical results.
 #
-# Arguments:
-#   None
-#
 # Globals:
 #   PR_NUMBER - GitHub PR number
 #   REPOSITORY - Repository in owner/repo format
 #   BODY_FILE - Path to generated body sections
 #   DRY_RUN - Enable dry-run mode flag
+#
+# Arguments:
+#   None
 #
 # Outputs:
 #   None
@@ -903,13 +903,13 @@ function update_pr_body {
 # Description:
 #   Parses command line arguments and sets global variables accordingly
 #
-# Arguments:
-#   $@ - All command line arguments passed to the script
-#
 # Globals:
 #   PR_NUMBER - GitHub PR number
 #   REPOSITORY - Repository in owner/repo format
 #   DRY_RUN - Enable dry-run mode
+#
+# Arguments:
+#   $@ - All command line arguments passed to the script
 #
 # Outputs:
 #   None
@@ -969,13 +969,13 @@ function parse_arguments {
 #   Analyzes PR changes and updates PR Body sections (## Overview, ## Changes)
 #   with auto-generated content based on PULL_REQUEST_TEMPLATE.md structure.
 #
-# Arguments:
-#   $@ - All command line arguments passed to the script
-#
 # Globals:
 #   PR_NUMBER - GitHub PR number
 #   REPOSITORY - Repository in owner/repo format (owner/repo)
 #   DRY_RUN - Enable dry-run mode flag
+#
+# Arguments:
+#   $@ - All command line arguments passed to the script
 #
 # Outputs:
 #   None

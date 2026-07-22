@@ -67,10 +67,13 @@ Always include target file list and deferred reason summary.
 
 - [common-checklist.md](references/common-checklist.md) (always read)
 - [common-output-format.md](references/common-output-format.md) (always read)
-- [common-troubleshooting.md](references/common-troubleshooting.md) - Read when checks fail unexpectedly.
-- [category-global.md](references/category-global.md), [category-testing.md](references/category-testing.md), [category-security.md](references/category-security.md) - Read when reviewing overall quality, testing instructions, or security guidelines.
-- [category-quality.md](references/category-quality.md), [category-guidelines.md](references/category-guidelines.md), [category-standards.md](references/category-standards.md) - Read when reviewing quality criteria, authoring guidelines, or compliance standards.
-- When uncertain which categories apply, default to: category-global, category-quality, category-standards.
+- [common-troubleshooting.md](references/common-troubleshooting.md) (read on failure)
+- [category-global.md](references/category-global.md) (always read)
+- [category-testing.md](references/category-testing.md) (always read)
+- [category-security.md](references/category-security.md) (always read)
+- [category-quality.md](references/category-quality.md) (always read)
+- [category-guidelines.md](references/category-guidelines.md) (always read)
+- [category-standards.md](references/category-standards.md) (always read)
 
 ## Workflow
 

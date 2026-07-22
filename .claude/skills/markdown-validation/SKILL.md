@@ -6,7 +6,7 @@ description: >-
 license: Apache-2.0
 metadata:
   author: y-miyazaki
-  version: "1.0.0"
+  version: "1.0.1"
 ---
 
 ## Input
@@ -42,18 +42,29 @@ Return `## Checks Summary`, `## Checks (Failed/Deferred Only)`, and `## Issues`.
 
 ## Reference Files Guide
 
-**Standard Components** (always read):
-
-- [common-checklist.md](references/common-checklist.md) - Validation checklist with ItemIDs
-- [common-output-format.md](references/common-output-format.md) - Report format specification
-- [common-troubleshooting.md](references/common-troubleshooting.md) - Read when markdownlint-cli2 or link checks fail unexpectedly
-- [common-individual-commands.md](references/common-individual-commands.md) - Read when debugging tools directly
+- [common-checklist.md](references/common-checklist.md) (always read)
+- [common-output-format.md](references/common-output-format.md) (always read)
+- [common-troubleshooting.md](references/common-troubleshooting.md) (read on failure)
+- [common-individual-commands.md](references/common-individual-commands.md) (read on failure)
 
 ## Workflow
 
 1. Run `bash scripts/validate.sh` (or `bash scripts/validate.sh <path>` for scoped validation).
 2. Parse script output and map results to checklist ItemIDs.
 3. Report failed/deferred items per [references/common-output-format.md](references/common-output-format.md).
+
+### Error Handling
+
+| Condition                                      | Severity    | Action                                                              |
+| ---------------------------------------------- | ----------- | ------------------------------------------------------------------- |
+| `scripts/validate.sh` missing                  | Fatal       | Stop; report missing script                                         |
+| No `.md` files under target path               | Info        | Report no reviewable markdown; stop                                 |
+| markdownlint-cli2 or link-check tool missing   | Recoverable | Defer checks for that tool; note in deferred table                  |
+| External link timeout or transient network     | Recoverable | Defer link-check item; note network-only failure                    |
+| Single tool fails, other succeeds              | Recoverable | Report passing tool; defer failed tool with exit status           |
+| All tools fail                                 | Fatal       | Return `status: failed` with per-tool stderr summaries              |
+| `common-checklist.md` unavailable              | Fatal       | Stop; report missing dependency                                     |
+| `common-output-format.md` unavailable          | Recoverable | Use inline output contract                                          |
 
 ### Examples
 

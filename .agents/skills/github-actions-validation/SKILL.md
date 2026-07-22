@@ -6,7 +6,7 @@ description: >-
 license: Apache-2.0
 metadata:
   author: y-miyazaki
-  version: "1.0.0"
+  version: "1.0.1"
 ---
 
 ## Input
@@ -43,22 +43,29 @@ Return `## Checks Summary`, `## Checks (Failed/Deferred Only)`, and `## Issues` 
 
 ## Reference Files Guide
 
-**Standard Components** (always read):
-
-- [common-checklist.md](references/common-checklist.md) - Validation checklist with ItemIDs
-- [common-output-format.md](references/common-output-format.md) - Report format specification
-- [common-troubleshooting.md](references/common-troubleshooting.md) - Read when validation fails unexpectedly
-- [common-individual-commands.md](references/common-individual-commands.md) - Read when debugging a specific tool (actionlint/ghalint/zizmor)
-
-**Category Details** (read when investigating specific failures):
-
-- [category-security.md](references/category-security.md) - Read when zizmor or ghalint reports security issues
+- [common-checklist.md](references/common-checklist.md) (always read)
+- [common-output-format.md](references/common-output-format.md) (always read)
+- [common-troubleshooting.md](references/common-troubleshooting.md) (read on failure)
+- [common-individual-commands.md](references/common-individual-commands.md) (read on failure)
+- [category-security.md](references/category-security.md) (always read)
 
 ## Workflow
 
 1. Run `bash scripts/validate.sh` (or `bash scripts/validate.sh <path>` for scoped validation).
 2. Parse script output and map results to checklist ItemIDs.
 3. Report failed/deferred items per [references/common-output-format.md](references/common-output-format.md).
+
+### Error Handling
+
+| Condition                              | Severity    | Action                                                              |
+| -------------------------------------- | ----------- | ------------------------------------------------------------------- |
+| `scripts/validate.sh` missing          | Fatal       | Stop; report missing script                                         |
+| No workflow YAML under target path     | Info        | Report no reviewable workflows; stop                                |
+| actionlint / ghalint / zizmor missing  | Recoverable | Defer checks for that tool; note in `## Checks (Failed/Deferred Only)` |
+| Single tool fails, others succeed      | Recoverable | Report passing tools; defer failed tool with exit status            |
+| All tools fail                         | Fatal       | Return `status: failed` with per-tool stderr summaries               |
+| `common-checklist.md` unavailable      | Fatal       | Stop; report missing dependency                                     |
+| `common-output-format.md` unavailable  | Recoverable | Use inline output contract                                          |
 
 ### Examples
 

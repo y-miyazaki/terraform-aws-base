@@ -40,9 +40,9 @@ Return structured report per [references/common-output-format.md](references/com
 
 ## Reference Files Guide
 
-- [category-diataxis-mapping.md](references/category-diataxis-mapping.md) — Always read. Determines file placement.
-- [common-checklist.md](references/common-checklist.md) — Always read. Quality validation.
-- [common-output-format.md](references/common-output-format.md) — Always read. Report structure.
+- [category-diataxis-mapping.md](references/category-diataxis-mapping.md) (always read)
+- [common-checklist.md](references/common-checklist.md) (always read)
+- [common-output-format.md](references/common-output-format.md) (always read)
 
 ## Workflow
 

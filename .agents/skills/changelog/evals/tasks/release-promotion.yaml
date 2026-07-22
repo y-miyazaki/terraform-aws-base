@@ -1,0 +1,38 @@
+id: changelog-release-001
+name: changelog promotes undocumented release
+description: Validate releases[] promotion moves matching bullets from Unreleased.
+tags:
+  - quality
+  - edge-case
+inputs:
+  prompt: >-
+    Use changelog at L2. Promote release 1.8.16 from injected releases[].
+    Report which version was promoted in Summary. Move matching commit bullets
+    from ## [Unreleased] into ## [1.8.16] - 2026-07-12 per checklist. Emit PR ## Overview and ## Summary plus Session Metrics table with Commits Processed and Skipped Commits sections.
+  context:
+    changelog_file: evals/files/CHANGELOG.sample.md
+    changelog_exists: true
+    commit_range: eval0001..eval0002
+    level: L2
+    repository_url: https://github.com/owner/repo
+    skip: false
+    commits:
+      - sha: eval0002
+        type: feat
+        scope: changelog
+        breaking: false
+        subject: add changelog workflow
+    releases:
+      - version: "1.8.16"
+        tag: v1.8.16
+        tag_sha: eval0001
+        date: "2026-07-12"
+        commit_shas:
+          - eval0002
+expected:
+  output_contains:
+    - "1.8.16"
+    - Summary
+    - Commits Processed
+  outcomes:
+    - type: task_completed

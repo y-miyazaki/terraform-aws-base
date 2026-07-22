@@ -51,10 +51,10 @@ declare -a markdown_files=()
 # Description:
 #   No-op cleanup placeholder to keep trap behavior consistent
 #
-# Arguments:
+# Globals:
 #   None
 #
-# Globals:
+# Arguments:
 #   None
 #
 # Outputs:
@@ -77,10 +77,10 @@ function cleanup {
 # Description:
 #   Prints usage, options, and examples
 #
-# Arguments:
+# Globals:
 #   None
 #
-# Globals:
+# Arguments:
 #   None
 #
 # Outputs:
@@ -122,11 +122,11 @@ EOF
 # Description:
 #   Parses optional PATH argument and validates target path
 #
-# Arguments:
-#   $@ - Command line arguments
-#
 # Globals:
 #   TARGET_PATH - Normalized target path
+#
+# Arguments:
+#   $@ - Command line arguments
 #
 # Outputs:
 #   None
@@ -164,12 +164,12 @@ function parse_arguments {
 # Description:
 #   Populates markdown_files based on TARGET_PATH (file or directory)
 #
-# Arguments:
-#   None
-#
 # Globals:
 #   TARGET_PATH - Source path to scan
 #   markdown_files - Resolved markdown file list
+#
+# Arguments:
+#   None
 #
 # Outputs:
 #   None
@@ -225,10 +225,10 @@ function collect_markdown_files {
 #   Runs markdownlint-cli2 on workspace Markdown files and optionally checks links
 #   Skips if tools are not installed
 #
-# Arguments:
+# Globals:
 #   None
 #
-# Globals:
+# Arguments:
 #   None
 #
 # Outputs:
@@ -368,11 +368,11 @@ function print_json_results {
 # Description:
 #   Parses arguments, executes all checks, prints summary and JSON output
 #
-# Arguments:
-#   $@ - Command line arguments
-#
 # Globals:
 #   None
+#
+# Arguments:
+#   $@ - Command line arguments
 #
 # Outputs:
 #   None

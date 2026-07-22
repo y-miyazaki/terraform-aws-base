@@ -57,10 +57,10 @@ declare -a required_fields=("name" "description" "license")
 # Description:
 #   Displays usage information for the script, including options and examples
 #
-# Arguments:
+# Globals:
 #   None
 #
-# Globals:
+# Arguments:
 #   None
 #
 # Outputs:
@@ -112,11 +112,11 @@ EOF
 # Description:
 #   Parses command line arguments, validates input, and normalizes paths
 #
-# Arguments:
-#   $@ - All command line arguments passed to the script
-#
 # Globals:
 #   SKILL_FILE - Path to SKILL.md file (normalized with realpath)
+#
+# Arguments:
+#   $@ - All command line arguments passed to the script
 #
 # Outputs:
 #   None
@@ -167,14 +167,14 @@ function parse_arguments {
 #   Runs yamllint on SKILL.md to validate YAML frontmatter syntax
 #   Checks that YAML is well-formed and follows basic rules
 #
-# Arguments:
-#   None (uses global SKILL_FILE)
-#
 # Globals:
 #   SKILL_FILE - Path to SKILL.md file
 #   check_names - Array of check names
 #   check_statuses - Array of check statuses
 #   check_details_json - Array of check details
+#
+# Arguments:
+#   None (uses global SKILL_FILE)
 #
 # Outputs:
 #   None
@@ -245,13 +245,13 @@ function check_yaml_syntax {
 #   Input, Output Specification, Execution Scope,
 #   Reference Files Guide, Workflow
 #
-# Arguments:
-#   None (uses global SKILL_FILE)
-#
 # Globals:
 #   SKILL_FILE - Path to SKILL.md file
 #   results - Associative array to store check results
 #   required_sections - Array of required section names
+#
+# Arguments:
+#   None (uses global SKILL_FILE)
 #
 # Outputs:
 #   None
@@ -292,13 +292,13 @@ function check_structural_completeness {
 #   Verifies that SKILL.md contains YAML frontmatter with required fields:
 #   name, description, license
 #
-# Arguments:
-#   None (uses global SKILL_FILE)
-#
 # Globals:
 #   SKILL_FILE - Path to SKILL.md file
 #   results - Associative array to store check results
 #   required_fields - Array of required field names
+#
+# Arguments:
+#   None (uses global SKILL_FILE)
 #
 # Outputs:
 #   None
@@ -347,12 +347,12 @@ function check_yaml_frontmatter {
 #   Monitors SKILL.md word count as a readability soft guard.
 #   This check is advisory and does not block validation.
 #
-# Arguments:
-#   None (uses global SKILL_FILE)
-#
 # Globals:
 #   SKILL_FILE - Path to SKILL.md file
 #   results - Associative array to store check results
+#
+# Arguments:
+#   None (uses global SKILL_FILE)
 #
 # Outputs:
 #   None
@@ -389,12 +389,12 @@ function check_progressive_disclosure {
 #   Verifies that skill directory contains references/ for all skills.
 #   scripts/ is optional and expected when executable logic is provided.
 #
-# Arguments:
-#   None (uses global SKILL_FILE)
-#
 # Globals:
 #   SKILL_FILE - Path to SKILL.md file
 #   results - Associative array to store check results
+#
+# Arguments:
+#   None (uses global SKILL_FILE)
 #
 # Outputs:
 #   None
@@ -440,14 +440,14 @@ function check_resource_separation {
 #   Verifies that references/ directory contains mandatory files:
 #   common-checklist.md and common-output-format.md
 #
-# Arguments:
-#   None (uses global SKILL_FILE)
-#
 # Globals:
 #   SKILL_FILE - Path to SKILL.md file
 #   check_names - Array of check names
 #   check_statuses - Array of check statuses
 #   check_details_json - Array of check details
+#
+# Arguments:
+#   None (uses global SKILL_FILE)
 #
 # Outputs:
 #   None
@@ -493,10 +493,10 @@ function check_reference_mandatory_files {
 #######################################
 # check_description_quality: Check description field best practices
 #
-# Arguments:
+# Globals:
 #   None
 #
-# Globals:
+# Arguments:
 #   None
 #
 # Outputs:
@@ -550,10 +550,10 @@ function check_description_quality {
 #######################################
 # check_metadata_fields: Check metadata author and version
 #
-# Arguments:
+# Globals:
 #   None
 #
-# Globals:
+# Arguments:
 #   None
 #
 # Outputs:
@@ -589,10 +589,10 @@ function check_metadata_fields {
 #######################################
 # check_reference_triggers: Check Reference Files Guide has trigger conditions
 #
-# Arguments:
+# Globals:
 #   None
 #
-# Globals:
+# Arguments:
 #   None
 #
 # Outputs:
@@ -648,10 +648,10 @@ function check_reference_triggers {
 #######################################
 # check_path_conventions: Enforce path conventions and decoupling rules
 #
-# Arguments:
+# Globals:
 #   None
 #
-# Globals:
+# Arguments:
 #   None
 #
 # Outputs:
@@ -690,11 +690,11 @@ function check_path_conventions {
 # Description:
 #   Outputs validation results in JSON format for machine parsing
 #
-# Arguments:
-#   None (uses global results array)
-#
 # Globals:
 #   results - Associative array containing check results
+#
+# Arguments:
+#   None (uses global results array)
 #
 # Outputs:
 #   None (outputs JSON to stdout)
@@ -753,11 +753,11 @@ EOF
 #   and output generation. Parses arguments, runs all checks, and
 #   outputs results in both human-readable and JSON formats.
 #
-# Arguments:
-#   $@ - Command line arguments (SKILL.md file path)
-#
 # Globals:
 #   SKILL_FILE - Set by parse_arguments
+#
+# Arguments:
+#   $@ - Command line arguments (SKILL.md file path)
 #
 # Outputs:
 #   None

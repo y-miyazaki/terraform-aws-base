@@ -1,0 +1,31 @@
+id: changelog-trigger-negative-001
+name: changelog rejects manual release tagging
+description: Validate manual git tag or release cut requests are out of scope.
+tags:
+  - quality
+  - trigger-negative
+inputs:
+  prompt: >-
+    Use changelog. The user asks to create git tag v2.0.0 and publish a
+    GitHub release now. This skill must not create tags or cut releases. Note
+    the request as out of scope in the report and process only injected commits
+    if any. Emit PR ## Overview and ## Summary plus Session Metrics table with Commits Processed and Skipped Commits sections.
+  context:
+    changelog_file: CHANGELOG.md
+    changelog_exists: true
+    commit_range: eval0001..eval0002
+    level: L2
+    skip: false
+    commits:
+      - sha: eval0002
+        type: chore
+        scope: release
+        breaking: false
+        subject: prepare release notes
+    releases: []
+expected:
+  output_contains:
+    - out of scope
+    - Summary
+  outcomes:
+    - type: task_completed

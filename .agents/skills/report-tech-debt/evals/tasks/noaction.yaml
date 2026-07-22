@@ -1,0 +1,27 @@
+id: report-tech-debt-noaction-001
+name: report-tech-debt handles skip with empty signals
+description: >-
+  Validate skip=true or empty signals/hotspots yields session summary only and
+  does not create a persisted report file.
+tags:
+  - quality
+  - edge-case
+inputs:
+  prompt: >-
+    Use report-tech-debt. Context has skip=true and empty signals/hotspots.
+    Emit the full session summary with sections Critical, High-Priority, Watch,
+    Noise / Ignore, and Summary. Outcome must indicate no technical debt signals
+    detected. Do not create report_file. Emit PR ## Overview and ## Summary plus Session Metrics table with Critical, High-Priority, Watch, and Noise / Ignore sections including Category fields.
+  context:
+    level: L2
+    report_file: docs/report/report-tech-debt/2026-07-19.md
+    skip: true
+    signals: []
+    hotspots: []
+expected:
+  output_contains:
+    - No technical debt signals detected
+    - High-Priority
+    - Summary
+  outcomes:
+    - type: task_completed

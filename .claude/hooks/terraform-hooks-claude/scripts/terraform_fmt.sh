@@ -25,10 +25,10 @@ export LC_ALL=C.UTF-8
 #   Runs terraform fmt -recursive on the repository root.
 #   Exits 0 on skip/success, exits 2 on format failure.
 #
-# Arguments:
+# Globals:
 #   None
 #
-# Globals:
+# Arguments:
 #   None
 #
 # Outputs:

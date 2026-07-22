@@ -59,10 +59,10 @@ DOCS_FAILED=0
 # Description:
 #   Displays usage information for the script, including options and examples
 #
-# Arguments:
+# Globals:
 #   None
 #
-# Globals:
+# Arguments:
 #   None
 #
 # Outputs:
@@ -104,11 +104,11 @@ EOF
 # Description:
 #   Parses command line arguments and collects target directories
 #
-# Arguments:
-#   $@ - All command line arguments passed to the script
-#
 # Globals:
 #   TARGET_DIRS - Array of target directories to process
+#
+# Arguments:
+#   $@ - All command line arguments passed to the script
 #
 # Outputs:
 #   None
@@ -154,11 +154,11 @@ function parse_arguments {
 # Description:
 #   Runs tflint recursively on all Terraform directories
 #
-# Arguments:
-#   None
-#
 # Globals:
 #   TARGET_DIRS - Array of target directories (if scoped)
+#
+# Arguments:
+#   None
 #
 # Outputs:
 #   None
@@ -209,11 +209,11 @@ function run_tflint_check {
 # Description:
 #   Checks that all Terraform files are properly formatted using terraform fmt -recursive
 #
-# Arguments:
-#   None
-#
 # Globals:
 #   TARGET_DIRS - Array of target directories (if scoped)
+#
+# Arguments:
+#   None
 #
 # Outputs:
 #   None
@@ -282,10 +282,10 @@ function run_formatting_check {
 # Description:
 #   Runs security scan using trivy if available
 #
-# Arguments:
+# Globals:
 #   None
 #
-# Globals:
+# Arguments:
 #   None
 #
 # Outputs:
@@ -315,11 +315,11 @@ function run_security_scan {
 # Description:
 #   Processes a single Terraform directory with validation, linting, and documentation generation
 #
-# Arguments:
-#   $1 - Directory path to process
-#
 # Globals:
 #   None
+#
+# Arguments:
+#   $1 - Directory path to process
 #
 # Outputs:
 #   None
@@ -378,11 +378,11 @@ function process_terraform_directory {
 # Description:
 #   Runs validation on all Terraform directories found, either scoped or full workspace
 #
-# Arguments:
-#   None
-#
 # Globals:
 #   TARGET_DIRS - Array of target directories (if scoped)
+#
+# Arguments:
+#   None
 #
 # Outputs:
 #   None
@@ -435,11 +435,11 @@ function run_recursive_validation {
 # Description:
 #   Main function to execute the script logic for recursive Terraform validation
 #
-# Arguments:
-#   $@ - All command line arguments passed to the script
-#
 # Globals:
 #   TARGET_DIRS - Array of target directories to process
+#
+# Arguments:
+#   $@ - All command line arguments passed to the script
 #
 # Outputs:
 #   None

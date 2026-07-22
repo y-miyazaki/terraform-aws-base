@@ -1,0 +1,29 @@
+id: docs-updater-loop-noaction-001
+name: docs-updater loop path no findings
+description: |
+  Validate loop path exits with full triage report when skip or empty findings.
+tags:
+  - quality
+  - loop-path
+  - skip-path
+inputs:
+  prompt: >-
+    Use docs-updater (loop path). Context JSON has skip=true and findings=[].
+    Emit the full Documentation Triage Report per common-output-format-loop.md:
+    High-Priority Items (Fixed), Watch Items (Deferred), Noise / Ignore, Session
+    Metrics with Outcome `No documentation impact detected`. Emit PR ## Overview
+    and ## Summary after the session report. Do not edit files.
+  context:
+    level: L2
+    skip: true
+    findings: []
+expected:
+  output_contains:
+    - "High-Priority Items"
+    - "Watch Items"
+    - "Session Metrics"
+    - "No documentation impact detected"
+    - "## Overview"
+    - "## Summary"
+  outcomes:
+    - type: task_completed

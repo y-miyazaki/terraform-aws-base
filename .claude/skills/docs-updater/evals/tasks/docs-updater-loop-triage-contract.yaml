@@ -1,0 +1,31 @@
+id: docs-updater-loop-triage-001
+name: docs-updater loop triage report contract
+description: |
+  Validate loop path report sections and PR Overview/Summary when findings present.
+tags:
+  - quality
+  - loop-path
+  - output-contract
+inputs:
+  prompt: >-
+    Use docs-updater (loop path). Context JSON: level=L1, skip=false, findings=[{
+    "file": "docs/guide.md", "reason": "stale workflow path", "source_commit":
+    "abc1234" }]. Do not edit files. Emit Documentation Triage Report per
+    common-output-format-loop.md with High-Priority Items (Fixed), Watch Items
+    (Deferred), Session Metrics Level L1, plus ## Overview and ## Summary for PR.
+  context:
+    level: L1
+    skip: false
+    findings:
+      - file: docs/guide.md
+        reason: stale workflow path
+        source_commit: abc1234
+expected:
+  output_contains:
+    - "Documentation Triage Report"
+    - "High-Priority Items"
+    - "Session Metrics"
+    - "## Overview"
+    - "## Summary"
+  outcomes:
+    - type: task_completed

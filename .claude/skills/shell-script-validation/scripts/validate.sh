@@ -141,6 +141,8 @@ EOF
 }
 
 #######################################
+
+#######################################
 # parse_arguments: Parse command line arguments
 #
 # Description:
@@ -201,6 +203,8 @@ function parse_arguments {
 }
 
 #######################################
+
+#######################################
 # analyze_functions: Function to analyze script functions
 #
 # Description:
@@ -245,6 +249,8 @@ function analyze_functions {
         custom_log "DEBUG" "No functions found in: $script_name"
     fi
 }
+
+#######################################
 
 #######################################
 # auto_fix_formatting: Function to auto-fix script formatting with shfmt
@@ -292,6 +298,58 @@ function auto_fix_formatting {
         return 0
     fi
 }
+
+#######################################
+
+#######################################
+# auto_fix_function_doc_order: Reorder function doc sections when auto-fix is enabled
+#
+# Description:
+#   Invokes fix_function_doc_order.sh to normalize section order before validation.
+#
+# Globals:
+#   AUTO_FIX - Enable auto-fix mode
+#   CHECK_FUNCTION_DOCS - Enable function doc block section checks
+#   SCRIPT_DIR - Directory containing helper scripts
+#
+# Arguments:
+#   $1 - Script path
+#
+# Outputs:
+#   None
+#
+# Returns:
+#   0 on success
+#
+# Usage:
+#   auto_fix_function_doc_order "/path/to/script.sh"
+#
+#######################################
+function auto_fix_function_doc_order {
+    local script="$1"
+
+    if [[ $AUTO_FIX != "true" ]] || [[ $CHECK_FUNCTION_DOCS != "true" ]]; then
+        return 0
+    fi
+
+    if [[ $script == *.bats ]]; then
+        return 0
+    fi
+
+    if [[ ! -f "${SCRIPT_DIR}/fix_function_doc_order.sh" ]]; then
+        custom_log "DEBUG" "fix_function_doc_order.sh not found; skipping doc reorder"
+        return 0
+    fi
+
+    if bash "${SCRIPT_DIR}/fix_function_doc_order.sh" -q "$script"; then
+        custom_log "DEBUG" "Function doc order normalized: $(basename "$script")"
+    else
+        custom_log "WARN" "Function doc reorder failed: $(basename "$script")"
+        return 1
+    fi
+}
+
+#######################################
 
 #######################################
 # auto_fix_shellcheck: Function to auto-fix shellcheck issues
@@ -343,6 +401,8 @@ function auto_fix_shellcheck {
 
     return 0
 }
+
+#######################################
 
 #######################################
 # check_complexity: Function to check script complexity
@@ -410,416 +470,6 @@ function check_complexity {
 }
 
 #######################################
-# custom_echo_section: Override echo_section for quiet mode support
-#
-# Description:
-#   Override echo_section for quiet mode support
-#
-# Globals:
-#   QUIET - Suppress non-error output
-#
-# Arguments:
-#   $1 - Section title
-#
-# Outputs:
-#   None
-#
-# Returns:
-#   None
-#
-# Usage:
-#   custom_echo_section "Section Title"
-#
-#######################################
-function custom_echo_section {
-    if [[ $QUIET != "true" ]]; then
-        echo_section "$1"
-    fi
-}
-
-#######################################
-# custom_log: Override log function to handle warning counter and quiet mode
-#
-# Description:
-#   Override log function to handle warning counter and quiet mode
-#
-# Globals:
-#   QUIET - Suppress non-error output
-#   WARNINGS_COUNT - Counter for warnings
-#
-# Arguments:
-#   $1 - Log level
-#   $2 - Message
-#
-# Outputs:
-#   None
-#
-# Returns:
-#   0 on success
-#
-# Usage:
-#   custom_log "INFO" "Message"
-#
-#######################################
-function custom_log {
-    local level=$1
-    local message=$2
-
-    # Handle quiet mode
-    if [[ $QUIET == "true" ]] && [[ $level == "INFO" || $level == "DEBUG" ]]; then
-        return 0
-    fi
-
-    # Call the library log function
-    log "$level" "$message"
-
-    # Increment warning counter for WARN level
-    if [[ $level == "WARN" ]]; then
-        WARNINGS_COUNT=$((WARNINGS_COUNT + 1))
-    fi
-}
-
-#######################################
-# find_bats_tests: Function to find Bats tests in the repository
-#
-# Description:
-#   Function to find Bats tests in the repository
-#
-# Globals:
-#   WORKSPACE_ROOT - Workspace root directory
-#
-# Arguments:
-#   None
-#
-# Outputs:
-#   None
-#
-# Returns:
-#   Newline-separated .bats file paths
-#
-# Usage:
-#   find_bats_tests
-#
-#######################################
-function find_bats_tests {
-    local bats_files=()
-    while IFS= read -r -d '' file; do
-        bats_files+=("$file")
-    done < <(find "$WORKSPACE_ROOT" -type f -name "*.bats" -print0 2> /dev/null)
-
-    for f in "${bats_files[@]}"; do
-        echo "$f"
-    done
-}
-
-#######################################
-# find_shell_scripts: Function to find all shell scripts recursively
-#
-# Description:
-#   Function to find all shell scripts recursively
-#
-# Globals:
-#   SEARCH_PATHS - Array of search paths
-#
-# Arguments:
-#   None
-#
-# Outputs:
-#   None
-#
-# Returns:
-#   List of shell script paths
-#
-# Usage:
-#   find_shell_scripts
-#
-#######################################
-function find_shell_scripts {
-    local scripts=()
-
-    for search_path in "${SEARCH_PATHS[@]}"; do
-        local resolved_search_path
-        if [[ $search_path == /* ]]; then
-            resolved_search_path="$(normalize_path "$search_path")"
-        else
-            resolved_search_path="$(normalize_path "$WORKSPACE_ROOT/$search_path")"
-        fi
-
-        if [[ -f $resolved_search_path ]]; then
-            # Direct file path specified
-            custom_log "DEBUG" "Adding file: $resolved_search_path" >&2
-            scripts+=("$resolved_search_path")
-        elif [[ -d $resolved_search_path ]]; then
-            # Send debug log to stderr to avoid interfering with function output
-            custom_log "DEBUG" "Searching for scripts in: $resolved_search_path" >&2
-
-            # Find files with .sh extension
-            while IFS= read -r -d '' script; do
-                # Double-check it's a file (not directory)
-                if [[ -f $script ]]; then
-                    scripts+=("$(normalize_path "$script")")
-                fi
-            done < <(find "$resolved_search_path" -type f -name "*.sh" -print0 2> /dev/null)
-
-            # Find files with shell shebang but no .sh extension
-            while IFS= read -r -d '' script; do
-                if [[ -f $script ]] && head -1 "$script" 2> /dev/null | grep -q "^#!/.*sh"; then
-                    # Only add if not already in scripts array
-                    local already_added=false
-                    for existing in "${scripts[@]}"; do
-                        if [[ $existing == "$script" ]]; then
-                            already_added=true
-                            break
-                        fi
-                    done
-                    if [[ $already_added == "false" ]]; then
-                        scripts+=("$(normalize_path "$script")")
-                    fi
-                fi
-            done < <(find "$resolved_search_path" -type f ! -name "*.sh" -executable -print0 2> /dev/null)
-        else
-            # Send debug log to stderr
-            custom_log "DEBUG" "Search path does not exist or is not a directory: $resolved_search_path" >&2
-        fi
-    done
-
-    # Output only valid files, filtered again to ensure no directories slip through
-    for script in "${scripts[@]}"; do
-        if [[ -f $script && ! -d $script ]]; then
-            echo "$script"
-        fi
-    done | sort -u
-}
-
-#######################################
-# generate_recommendations: Function to generate recommendations
-#
-# Description:
-#   Function to generate recommendations
-#
-# Globals:
-#   VERBOSE - Enable verbose output
-#   FAILED_SCRIPTS - Counter for failed scripts
-#
-# Arguments:
-#   None
-#
-# Outputs:
-#   None
-#
-# Returns:
-#   0 on success
-#
-# Usage:
-#   generate_recommendations
-#
-#######################################
-function generate_recommendations {
-    if [[ $VERBOSE != "true" ]]; then
-        return 0
-    fi
-
-    custom_echo_section "Recommendations"
-
-    echo "🔧 Improvement suggestions:"
-    echo ""
-
-    if [[ $FAILED_SCRIPTS -gt 0 ]]; then
-        echo "🔨 To auto-fix common issues, run:"
-        echo "  $(basename "$0") --fix"
-        echo ""
-    fi
-
-    echo "📚 Best practices:"
-    echo "  - Use 'set -euo pipefail' for strict error handling"
-    echo "  - Quote variables to prevent word splitting"
-    echo "  - Use local variables in functions"
-    echo "  - Add comprehensive documentation headers"
-    echo "  - Implement proper error handling and logging"
-}
-
-#######################################
-# generate_summary_report: Function to generate summary report
-#
-# Description:
-#   Function to generate summary report
-#
-# Globals:
-#   TOTAL_SCRIPTS - Total scripts counter
-#   PASSED_SCRIPTS - Passed scripts counter
-#   FAILED_SCRIPTS - Failed scripts counter
-#   WARNINGS_COUNT - Warnings counter
-#   PASSED_SCRIPTS_LIST - List of passed scripts
-#   FAILED_SCRIPTS_LIST - List of failed scripts
-#   WARNING_SCRIPTS_LIST - List of warning scripts
-#
-# Arguments:
-#   None
-#
-# Outputs:
-#   None
-#
-# Returns:
-#   None
-#
-# Usage:
-#   generate_summary_report
-#
-#######################################
-function generate_summary_report {
-    custom_echo_section "Validation Summary Report"
-
-    echo "📊 Statistics:"
-    echo "  Total scripts validated: $TOTAL_SCRIPTS"
-    echo "  Scripts passed: $PASSED_SCRIPTS"
-    echo "  Scripts failed: $FAILED_SCRIPTS"
-    if [[ ${#BATS_FAILED_TESTS[@]} -gt 0 ]]; then
-        echo "  Bats test failures: ${#BATS_FAILED_TESTS[@]}"
-    elif [[ ${BATS_EXIT_CODE:-0} -ne 0 ]]; then
-        echo "  Bats exit code: ${BATS_EXIT_CODE}"
-    fi
-    echo "  Warnings issued: $WARNINGS_COUNT"
-    echo ""
-
-    if [[ ${#PASSED_SCRIPTS_LIST[@]} -gt 0 ]]; then
-        echo "✅ Scripts that passed all validations:"
-        for script in "${PASSED_SCRIPTS_LIST[@]}"; do
-            echo "  - $script"
-        done
-        echo ""
-    fi
-
-    if [[ ${#FAILED_SCRIPTS_LIST[@]} -gt 0 ]]; then
-        echo "❌ Scripts that failed validation:"
-        for script in "${FAILED_SCRIPTS_LIST[@]}"; do
-            echo "  - $script"
-        done
-        echo ""
-    fi
-
-    if [[ ${#BATS_FAILED_TESTS[@]} -gt 0 ]]; then
-        echo "❌ Bats test failures (${#BATS_FAILED_TESTS[@]}):"
-        for test in "${BATS_FAILED_TESTS[@]}"; do
-            echo "  - $test"
-        done
-        if [[ -n $BATS_SUMMARY ]]; then
-            echo "  Summary: $BATS_SUMMARY"
-        fi
-        echo ""
-    elif [[ ${BATS_EXIT_CODE:-0} -ne 0 ]]; then
-        echo "❌ Bats tests did not complete successfully (exit ${BATS_EXIT_CODE})"
-        if [[ -n $BATS_SUMMARY ]]; then
-            echo "  Summary: $BATS_SUMMARY"
-        else
-            echo "  Summary: no TAP summary captured (run may have been interrupted)"
-        fi
-        echo ""
-    fi
-
-    if [[ ${#WARNING_SCRIPTS_LIST[@]} -gt 0 ]]; then
-        echo "⚠️  Scripts with warnings:"
-        for script in "${WARNING_SCRIPTS_LIST[@]}"; do
-            echo "  - $script"
-        done
-        echo ""
-    fi
-
-    # Overall result
-    if [[ $FAILED_SCRIPTS -eq 0 && ${#BATS_FAILED_TESTS[@]} -eq 0 && ${BATS_EXIT_CODE:-0} -eq 0 ]]; then
-        if [[ $WARNINGS_COUNT -eq 0 ]]; then
-            echo "🎉 All scripts passed validation with no warnings!"
-        else
-            echo "✅ All scripts passed validation (with $WARNINGS_COUNT warnings)"
-        fi
-    else
-        local failure_parts=()
-        if [[ $FAILED_SCRIPTS -gt 0 ]]; then
-            failure_parts+=("$FAILED_SCRIPTS script(s)")
-        fi
-        if [[ ${#BATS_FAILED_TESTS[@]} -gt 0 ]]; then
-            failure_parts+=("${#BATS_FAILED_TESTS[@]} bats test(s)")
-        elif [[ ${BATS_EXIT_CODE:-0} -ne 0 ]]; then
-            failure_parts+=("incomplete bats run (exit ${BATS_EXIT_CODE})")
-        fi
-        local joined=""
-        if [[ ${#failure_parts[@]} -eq 2 ]]; then
-            joined="${failure_parts[0]} and ${failure_parts[1]}"
-        elif [[ ${#failure_parts[@]} -eq 1 ]]; then
-            joined="${failure_parts[0]}"
-        fi
-        echo "❌ Validation failed: $joined"
-    fi
-}
-
-#######################################
-# print_bats_output: Print bats results (full or failures-only)
-#
-# Description:
-#   In verbose mode, prints full bats output. Otherwise prints only failing
-#   test blocks and the final summary line.
-#
-# Globals:
-#   VERBOSE - Enable verbose output
-#   BATS_FAILED_TESTS - Populated with "file: test name" entries on failure
-#   BATS_SUMMARY - Final "N tests, ..." summary line
-#
-# Arguments:
-#   $1 - Path to captured bats TAP output file
-#   $2 - Bats exit code
-#
-# Outputs:
-#   None
-#
-# Returns:
-#   None
-#
-# Usage:
-#   print_bats_output "/tmp/bats.out" 1
-#
-#######################################
-function print_bats_output {
-    local output_file="$1"
-    local bats_exit="$2"
-
-    collect_bats_failures_from_tap "$output_file"
-
-    if [[ $VERBOSE == "true" ]]; then
-        cat "$output_file"
-        return
-    fi
-
-    if [[ $bats_exit -eq 0 ]]; then
-        if [[ -n $BATS_SUMMARY ]]; then
-            echo "$BATS_SUMMARY"
-        else
-            echo "Bats tests passed"
-        fi
-        return
-    fi
-
-    local in_failure=false
-    while IFS= read -r line || [[ -n $line ]]; do
-        case "$line" in
-            not\ ok\ *)
-                in_failure=true
-                echo "$line"
-                ;;
-            ok\ *)
-                in_failure=false
-                ;;
-            \#*)
-                if [[ $in_failure == "true" ]]; then
-                    echo "$line"
-                fi
-                ;;
-        esac
-    done < "$output_file"
-
-    if [[ -n $BATS_SUMMARY ]]; then
-        echo ""
-        echo "$BATS_SUMMARY"
-    fi
-}
 
 #######################################
 # collect_bats_failures_from_tap: Populate BATS_FAILED_TESTS from TAP output
@@ -901,16 +551,50 @@ function collect_bats_failures_from_tap {
 }
 
 #######################################
-# run_bats_tests: Run bats test files given as arguments
+
+#######################################
+# custom_echo_section: Override echo_section for quiet mode support
 #
 # Description:
-#   Run bats test files given as arguments
+#   Override echo_section for quiet mode support
 #
 # Globals:
-#   WORKSPACE_ROOT - Workspace root directory
+#   QUIET - Suppress non-error output
 #
 # Arguments:
-#   $@ - List of test files
+#   $1 - Section title
+#
+# Outputs:
+#   None
+#
+# Returns:
+#   None
+#
+# Usage:
+#   custom_echo_section "Section Title"
+#
+#######################################
+function custom_echo_section {
+    if [[ $QUIET != "true" ]]; then
+        echo_section "$1"
+    fi
+}
+
+#######################################
+
+#######################################
+# custom_log: Override log function to handle warning counter and quiet mode
+#
+# Description:
+#   Override log function to handle warning counter and quiet mode
+#
+# Globals:
+#   QUIET - Suppress non-error output
+#   WARNINGS_COUNT - Counter for warnings
+#
+# Arguments:
+#   $1 - Log level
+#   $2 - Message
 #
 # Outputs:
 #   None
@@ -919,345 +603,28 @@ function collect_bats_failures_from_tap {
 #   0 on success
 #
 # Usage:
-#   run_bats_tests "test1.bats" "test2.bats"
+#   custom_log "INFO" "Message"
 #
 #######################################
-function run_bats_tests {
-    local tests=("$@")
+function custom_log {
+    local level=$1
+    local message=$2
 
-    if [[ ${#tests[@]} -eq 0 ]]; then
-        custom_log "DEBUG" "No bats tests found"
+    # Handle quiet mode
+    if [[ $QUIET == "true" ]] && [[ $level == "INFO" || $level == "DEBUG" ]]; then
         return 0
     fi
 
-    # Detect bats binary (bats or bats-core)
-    local bats_bin=""
-    if command -v bats &> /dev/null; then
-        bats_bin="bats"
-    elif command -v bats-core &> /dev/null; then
-        bats_bin="bats-core"
-    fi
+    # Call the library log function
+    log "$level" "$message"
 
-    if [[ -z $bats_bin ]]; then
-        custom_log "WARN" "Bats not found; skipping Bats tests"
-        return 0
-    fi
-
-    custom_log "INFO" "Running Bats tests with: $bats_bin"
-
-    local bats_output
-    bats_output=$(mktemp)
-    local bats_exit=0
-
-    # Prefer running the test folder directly if present; run with -r to recurse into subdirectories
-    if [[ -d "$WORKSPACE_ROOT/test/bats" ]]; then
-        pushd "$WORKSPACE_ROOT" > /dev/null || return 1
-        if "$bats_bin" -r "test/bats" --formatter tap > "$bats_output" 2>&1; then
-            bats_exit=0
-        else
-            bats_exit=$?
-        fi
-        popd > /dev/null || true
-    elif "$bats_bin" "${tests[@]}" --formatter tap > "$bats_output" 2>&1; then
-        bats_exit=0
-    else
-        bats_exit=$?
-    fi
-
-    print_bats_output "$bats_output" "$bats_exit"
-    rm -f "$bats_output"
-
-    BATS_EXIT_CODE=$bats_exit
-
-    if [[ $bats_exit -eq 0 ]]; then
-        custom_log "INFO" "Bats tests passed"
-        return 0
-    elif [[ ${#BATS_FAILED_TESTS[@]} -gt 0 ]]; then
-        custom_log "ERROR" "Bats tests failed (${#BATS_FAILED_TESTS[@]} failure(s))"
-        return 1
-    else
-        custom_log "ERROR" "Bats tests exited with status ${bats_exit} (no failing tests recorded; run may have been interrupted)"
-        return 1
+    # Increment warning counter for WARN level
+    if [[ $level == "WARN" ]]; then
+        WARNINGS_COUNT=$((WARNINGS_COUNT + 1))
     fi
 }
 
 #######################################
-# run_shellcheck: Function to run shellcheck
-#
-# Description:
-#   Function to run shellcheck
-#
-# Globals:
-#   VERBOSE - Enable verbose output
-#
-# Arguments:
-#   $1 - Script path
-#
-# Outputs:
-#   None
-#
-# Returns:
-#   0 on success, 1 on failure
-#
-# Usage:
-#   run_shellcheck "/path/to/script.sh"
-#
-#######################################
-function run_shellcheck {
-    local script="$1"
-    local script_name
-    script_name="$(basename "$script")"
-
-    custom_log "DEBUG" "Running shellcheck for: $script_name"
-
-    local shellcheck_output
-    if shellcheck_output=$(shellcheck -e SC1091 -f gcc "$script" 2>&1); then
-        custom_log "DEBUG" "✅ Shellcheck passed: $script_name"
-        return 0
-    else
-        custom_log "WARN" "⚠️  Shellcheck issues found: $script"
-        if [[ $VERBOSE == "true" ]]; then
-            echo "Shellcheck output:"
-            # shellcheck disable=SC2001
-            echo "$shellcheck_output" | sed 's/^/  /'
-        fi
-        return 1
-    fi
-}
-
-#######################################
-# validate_permissions: Function to validate file permissions
-#
-# Description:
-#   Function to validate file permissions
-#
-# Globals:
-#   AUTO_FIX - Enable auto-fix mode
-#
-# Arguments:
-#   $1 - Script path
-#
-# Outputs:
-#   None
-#
-# Returns:
-#   0 on success, 1 on failure
-#
-# Usage:
-#   validate_permissions "/path/to/script.sh"
-#
-#######################################
-function validate_permissions {
-    local script="$1"
-    local script_name
-    script_name="$(basename "$script")"
-
-    custom_log "DEBUG" "Validating permissions for: $script_name"
-
-    if [[ $script == *.bats ]]; then
-        custom_log "DEBUG" "Skipping executable check for Bats file: $script_name"
-        return 0
-    fi
-
-    if [[ -x $script ]]; then
-        custom_log "DEBUG" "✅ Script is executable: $script_name"
-        return 0
-    else
-        custom_log "WARN" "⚠️  Script is not executable: $script_name"
-        if [[ $AUTO_FIX == "true" ]]; then
-            custom_log "INFO" "Auto-fixing permissions for: $script_name"
-            chmod +x "$script"
-            custom_log "INFO" "✅ Made executable: $script_name"
-        fi
-        return 1
-    fi
-}
-
-#######################################
-# validate_script: Function to validate a single script
-#
-# Description:
-#   Function to validate a single script
-#
-# Globals:
-#   WORKSPACE_ROOT - Workspace root directory
-#   TOTAL_SCRIPTS - Total scripts counter
-#   PASSED_SCRIPTS - Passed scripts counter
-#   FAILED_SCRIPTS - Failed scripts counter
-#   PASSED_SCRIPTS_LIST - List of passed scripts
-#   FAILED_SCRIPTS_LIST - List of failed scripts
-#   WARNING_SCRIPTS_LIST - List of warning scripts
-#   VERBOSE - Enable verbose output
-#   AUTO_FIX - Enable auto-fix mode
-#
-# Arguments:
-#   $1 - Script path
-#
-# Outputs:
-#   None
-#
-# Returns:
-#   0 on success, 1 on failure
-#
-# Usage:
-#   validate_script "/path/to/script.sh"
-#
-#######################################
-function validate_script {
-    local script
-    script="$(normalize_path "$1")"
-    local script_name
-    script_name="$(basename "$script")"
-    local relative_path
-    # shellcheck disable=SC2295
-    relative_path="${script#$WORKSPACE_ROOT/}"
-    local validation_passed=true
-
-    TOTAL_SCRIPTS=$((TOTAL_SCRIPTS + 1))
-
-    custom_log "INFO" "Validating script: $relative_path"
-
-    # Skip if it's a directory (should not happen after filtering, but safety check)
-    if [[ -d $script ]]; then
-        custom_log "DEBUG" "Skipping directory: $script_name"
-        TOTAL_SCRIPTS=$((TOTAL_SCRIPTS - 1)) # Don't count directories
-        return 0
-    fi
-
-    # Check if file exists and is readable
-    if [[ ! -f $script ]] || [[ ! -r $script ]]; then
-        custom_log "ERROR" "❌ Script not accessible: $script_name"
-        FAILED_SCRIPTS_LIST+=("$relative_path (not accessible)")
-        FAILED_SCRIPTS=$((FAILED_SCRIPTS + 1))
-        return 1
-    fi
-
-    # Apply auto-formatting with shfmt if in fix mode
-    auto_fix_formatting "$script"
-
-    # Validate shebang
-    if ! validate_shebang "$script"; then
-        validation_passed=false
-    fi
-
-    # Validate permissions
-    if ! validate_permissions "$script"; then
-        validation_passed=false
-    fi
-
-    # Validate syntax
-    if ! validate_syntax "$script"; then
-        validation_passed=false
-    fi
-
-    # Run shellcheck
-    local shellcheck_passed=true
-    if ! run_shellcheck "$script"; then
-        shellcheck_passed=false
-        validation_passed=false
-    fi
-
-    # Normalize function doc section order before optional doc validation
-    auto_fix_function_doc_order "$script"
-
-    # Optional project function doc block checks
-    if ! validate_function_docs "$script"; then
-        validation_passed=false
-    fi
-
-    # Analyze functions (verbose mode only)
-    analyze_functions "$script"
-
-    # Check complexity (verbose mode only)
-    check_complexity "$script"
-
-    # Update counters and arrays
-    if [[ $validation_passed == "true" ]]; then
-        custom_log "INFO" "✅ All validations passed: $script_name"
-        PASSED_SCRIPTS_LIST+=("$relative_path")
-        PASSED_SCRIPTS=$((PASSED_SCRIPTS + 1))
-    else
-        custom_log "ERROR" "❌ Validation failed: $script"
-        FAILED_SCRIPTS_LIST+=("$relative_path")
-        FAILED_SCRIPTS=$((FAILED_SCRIPTS + 1))
-    fi
-
-    # Track warnings separately
-    if [[ $shellcheck_passed == "false" ]] && [[ $validation_passed == "true" ]]; then
-        WARNING_SCRIPTS_LIST+=("$relative_path (shellcheck warnings)")
-    fi
-}
-
-#######################################
-# validate_shebang: Function to validate shebang
-#
-# Description:
-#   Function to validate shebang
-#
-# Globals:
-#   AUTO_FIX - Enable auto-fix mode
-#
-# Arguments:
-#   $1 - Script path
-#
-# Outputs:
-#   None
-#
-# Returns:
-#   0 on success, 1 on failure
-#
-# Usage:
-#   validate_shebang "/path/to/script.sh"
-#
-#######################################
-function validate_shebang {
-    local script="$1"
-    local script_name
-    script_name="$(basename "$script")"
-
-    custom_log "DEBUG" "Validating shebang for: $script_name"
-
-    local first_line
-    first_line=$(head -1 "$script" 2> /dev/null)
-
-    if [[ $first_line =~ ^#!/.*sh ]] || [[ $first_line =~ ^#!/.*bats ]]; then
-        custom_log "DEBUG" "✅ Valid shebang: $script_name ($first_line)"
-        return 0
-    elif [[ $first_line =~ ^#! ]]; then
-        custom_log "WARN" "⚠️  Non-shell shebang: $script_name ($first_line)"
-        return 1
-    else
-        custom_log "WARN" "⚠️  Missing or invalid shebang: $script_name"
-        if [[ $AUTO_FIX == "true" ]]; then
-            custom_log "INFO" "Auto-fixing shebang for: $script_name"
-            # Create backup and add shebang with error handling
-            if ! cp "$script" "$script.bak"; then
-                custom_log "ERROR" "Failed to create backup: $script_name"
-                return 1
-            fi
-            if ! echo "#!/bin/bash" > "$script.tmp"; then
-                custom_log "ERROR" "Failed to write temp file: $script_name"
-                rm -f "$script.bak"
-                return 1
-            fi
-            if ! cat "$script.bak" >> "$script.tmp"; then
-                custom_log "ERROR" "Failed to append content: $script_name"
-                rm -f "$script.bak" "$script.tmp"
-                return 1
-            fi
-            if ! mv "$script.tmp" "$script"; then
-                custom_log "ERROR" "Failed to replace original file: $script_name"
-                rm -f "$script.tmp"
-                # Restore from backup
-                mv "$script.bak" "$script" 2> /dev/null
-                return 1
-            fi
-            rm -f "$script.bak"
-            custom_log "INFO" "✅ Added shebang to: $script_name"
-        fi
-        return 1
-    fi
-}
 
 #######################################
 # extract_function_doc_block: Read doc comment block immediately above a function
@@ -1316,6 +683,156 @@ function extract_function_doc_block {
 
     sed -n "${start},${end}p" "$script"
 }
+
+#######################################
+
+#######################################
+# find_bats_tests: Function to find Bats tests in the repository
+#
+# Description:
+#   Function to find Bats tests in the repository
+#
+# Globals:
+#   WORKSPACE_ROOT - Workspace root directory
+#
+# Arguments:
+#   None
+#
+# Outputs:
+#   None
+#
+# Returns:
+#   Newline-separated .bats file paths
+#
+# Usage:
+#   find_bats_tests
+#
+#######################################
+function find_bats_tests {
+    local bats_files=()
+    while IFS= read -r -d '' file; do
+        bats_files+=("$file")
+    done < <(find "$WORKSPACE_ROOT" -type f -name "*.bats" -print0 2> /dev/null)
+
+    for f in "${bats_files[@]}"; do
+        echo "$f"
+    done
+}
+
+#######################################
+
+#######################################
+# find_shell_scripts: Function to find all shell scripts recursively
+#
+# Description:
+#   Function to find all shell scripts recursively
+#
+# Globals:
+#   SEARCH_PATHS - Array of search paths
+#
+# Arguments:
+#   None
+#
+# Outputs:
+#   None
+#
+# Returns:
+#   List of shell script paths
+#
+# Usage:
+#   find_shell_scripts
+#
+#######################################
+function find_shell_scripts {
+    local scripts=()
+
+    for search_path in "${SEARCH_PATHS[@]}"; do
+        local resolved_search_path
+        if [[ $search_path == /* ]]; then
+            resolved_search_path="$(normalize_path "$search_path")"
+        else
+            resolved_search_path="$(normalize_path "$WORKSPACE_ROOT/$search_path")"
+        fi
+
+        if [[ -f $resolved_search_path ]]; then
+            # Direct file path specified
+            custom_log "DEBUG" "Adding file: $resolved_search_path" >&2
+            scripts+=("$resolved_search_path")
+        elif [[ -d $resolved_search_path ]]; then
+            # Send debug log to stderr to avoid interfering with function output
+            custom_log "DEBUG" "Searching for scripts in: $resolved_search_path" >&2
+
+            # Find files with .sh extension
+            while IFS= read -r -d '' script; do
+                # Double-check it's a file (not directory)
+                if [[ -f $script ]]; then
+                    scripts+=("$(normalize_path "$script")")
+                fi
+            done < <(find "$resolved_search_path" -type f -name "*.sh" -print0 2> /dev/null)
+
+            # Find files with shell shebang but no .sh extension
+            while IFS= read -r -d '' script; do
+                if [[ -f $script ]] && head -1 "$script" 2> /dev/null | grep -q "^#!/.*sh"; then
+                    # Only add if not already in scripts array
+                    local already_added=false
+                    for existing in "${scripts[@]}"; do
+                        if [[ $existing == "$script" ]]; then
+                            already_added=true
+                            break
+                        fi
+                    done
+                    if [[ $already_added == "false" ]]; then
+                        scripts+=("$(normalize_path "$script")")
+                    fi
+                fi
+            done < <(find "$resolved_search_path" -type f ! -name "*.sh" -executable -print0 2> /dev/null)
+        else
+            # Send debug log to stderr
+            custom_log "DEBUG" "Search path does not exist or is not a directory: $resolved_search_path" >&2
+        fi
+    done
+
+    # Output only valid files, filtered again to ensure no directories slip through
+    for script in "${scripts[@]}"; do
+        if [[ -f $script && ! -d $script ]]; then
+            echo "$script"
+        fi
+    done | sort -u
+}
+
+#######################################
+
+#######################################
+# format_function_doc_issue: Format a function doc issue for terminal navigation
+#
+# Description:
+#   Emit a file:line: message for function doc validation failures.
+#
+# Globals:
+#   None
+#
+# Arguments:
+#   $1 - Script path
+#   $2 - Line number
+#   $3 - Issue message
+#
+# Outputs:
+#   file:line: message to stdout
+#
+# Returns:
+#   0 on success
+#
+# Usage:
+#   format_function_doc_issue "$script" "$line_num" "missing function description line"
+#
+#######################################
+function format_function_doc_issue {
+    local script
+    script="$(normalize_path "$1")"
+    printf '%s:%s: %s' "$script" "$2" "$3"
+}
+
+#######################################
 
 #######################################
 # function_doc_section_issues: Report missing Google-style function doc sections
@@ -1405,18 +922,19 @@ function function_doc_section_issues {
 }
 
 #######################################
-# auto_fix_function_doc_order: Reorder function doc sections when auto-fix is enabled
+
+#######################################
+# generate_recommendations: Function to generate recommendations
 #
 # Description:
-#   Invokes fix_function_doc_order.sh to normalize section order before validation.
+#   Function to generate recommendations
 #
 # Globals:
-#   AUTO_FIX - Enable auto-fix mode
-#   CHECK_FUNCTION_DOCS - Enable function doc block section checks
-#   SCRIPT_DIR - Directory containing helper scripts
+#   VERBOSE - Enable verbose output
+#   FAILED_SCRIPTS - Counter for failed scripts
 #
 # Arguments:
-#   $1 - Script path
+#   None
 #
 # Outputs:
 #   None
@@ -1425,35 +943,81 @@ function function_doc_section_issues {
 #   0 on success
 #
 # Usage:
-#   auto_fix_function_doc_order "/path/to/script.sh"
+#   generate_recommendations
 #
 #######################################
-function auto_fix_function_doc_order {
-    local script="$1"
-
-    if [[ $AUTO_FIX != "true" ]] || [[ $CHECK_FUNCTION_DOCS != "true" ]]; then
+function generate_recommendations {
+    if [[ $VERBOSE != "true" ]]; then
         return 0
     fi
 
-    if [[ $script == *.bats ]]; then
-        return 0
+    custom_echo_section "Recommendations"
+
+    echo "🔧 Improvement suggestions:"
+    echo ""
+
+    if [[ $FAILED_SCRIPTS -gt 0 ]]; then
+        echo "🔨 To auto-fix common issues, run:"
+        echo "  $(basename "$0") --fix"
+        echo ""
     fi
 
-    if [[ ! -x "${SCRIPT_DIR}/fix_function_doc_order.sh" ]]; then
-        custom_log "DEBUG" "fix_function_doc_order.sh not found; skipping doc reorder"
-        return 0
-    fi
-
-    if bash "${SCRIPT_DIR}/fix_function_doc_order.sh" -q "$script"; then
-        custom_log "DEBUG" "Function doc order normalized: $(basename "$script")"
-    else
-        custom_log "WARN" "Function doc reorder failed: $(basename "$script")"
-        return 1
-    fi
+    echo "📚 Best practices:"
+    echo "  - Use 'set -euo pipefail' for strict error handling"
+    echo "  - Quote variables to prevent word splitting"
+    echo "  - Use local variables in functions"
+    echo "  - Add comprehensive documentation headers"
+    echo "  - Implement proper error handling and logging"
 }
 
 #######################################
-# normalize_path: Return a canonical absolute path
+
+#######################################
+# generate_summary_report: Function to generate summary report
+#
+# Description:
+#   Compose and print the end-of-run validation summary report.
+#
+# Globals:
+#   TOTAL_SCRIPTS - Total scripts counter
+#   PASSED_SCRIPTS - Passed scripts counter
+#   FAILED_SCRIPTS - Failed scripts counter
+#   WARNINGS_COUNT - Warnings counter
+#   PASSED_SCRIPTS_LIST - List of passed scripts
+#   FAILED_SCRIPTS_LIST - List of failed scripts
+#   WARNING_SCRIPTS_LIST - List of warning scripts
+#   BATS_FAILED_TESTS - Failing bats test entries
+#   BATS_EXIT_CODE - Last bats exit code
+#   BATS_SUMMARY - Human-readable bats summary line
+#
+# Arguments:
+#   None
+#
+# Outputs:
+#   Summary report to stdout
+#
+# Returns:
+#   None
+#
+# Usage:
+#   generate_summary_report
+#
+#######################################
+function generate_summary_report {
+    custom_echo_section "Validation Summary Report"
+    print_summary_statistics
+    print_summary_script_lists
+    print_summary_bats_results
+    print_summary_overall_result
+}
+
+#######################################
+
+#######################################
+# normalize_path: Resolve a script path for stable reporting
+#
+# Description:
+#   Return an absolute path for an existing file, or normalize a missing path.
 #
 # Globals:
 #   None
@@ -1462,10 +1026,14 @@ function auto_fix_function_doc_order {
 #   $1 - Path to normalize
 #
 # Outputs:
-#   Canonical path to stdout
+#   Absolute path to stdout
 #
 # Returns:
 #   0 on success, 1 when path is empty
+#
+# Usage:
+#   normalize_path "/path/to/script.sh"
+#
 #######################################
 function normalize_path {
     local path="$1"
@@ -1490,27 +1058,518 @@ function normalize_path {
 }
 
 #######################################
-# format_function_doc_issue: Format a function doc issue for terminal navigation
+
+#######################################
+# print_bats_output: Print bats results (full or failures-only)
+#
+# Description:
+#   In verbose mode, prints full bats output. Otherwise prints only failing
+#   test blocks and the final summary line.
+#
+# Globals:
+#   VERBOSE - Enable verbose output
+#   BATS_FAILED_TESTS - Populated with "file: test name" entries on failure
+#   BATS_SUMMARY - Final "N tests, ..." summary line
+#
+# Arguments:
+#   $1 - Path to captured bats TAP output file
+#   $2 - Bats exit code
+#
+# Outputs:
+#   None
+#
+# Returns:
+#   None
+#
+# Usage:
+#   print_bats_output "/tmp/bats.out" 1
+#
+#######################################
+function print_bats_output {
+    local output_file="$1"
+    local bats_exit="$2"
+
+    collect_bats_failures_from_tap "$output_file"
+
+    if [[ $VERBOSE == "true" ]]; then
+        cat "$output_file"
+        return
+    fi
+
+    if [[ $bats_exit -eq 0 ]]; then
+        if [[ -n $BATS_SUMMARY ]]; then
+            echo "$BATS_SUMMARY"
+        else
+            echo "Bats tests passed"
+        fi
+        return
+    fi
+
+    local in_failure=false
+    while IFS= read -r line || [[ -n $line ]]; do
+        case "$line" in
+            not\ ok\ *)
+                in_failure=true
+                echo "$line"
+                ;;
+            ok\ *)
+                in_failure=false
+                ;;
+            \#*)
+                if [[ $in_failure == "true" ]]; then
+                    echo "$line"
+                fi
+                ;;
+        esac
+    done < "$output_file"
+
+    if [[ -n $BATS_SUMMARY ]]; then
+        echo ""
+        echo "$BATS_SUMMARY"
+    fi
+}
+
+#######################################
+
+#######################################
+# print_summary_bats_results: Print bats failure details
+#
+# Description:
+#   Print bats failures or incomplete run summary when bats did not pass.
+#
+# Globals:
+#   BATS_FAILED_TESTS - Failing bats test entries
+#   BATS_SUMMARY - Human-readable bats summary line
+#   BATS_EXIT_CODE - Last bats exit code
+#
+# Arguments:
+#   None
+#
+# Outputs:
+#   Bats result details to stdout
+#
+# Returns:
+#   None
+#
+# Usage:
+#   print_summary_bats_results
+#
+#######################################
+function print_summary_bats_results {
+    if [[ ${#BATS_FAILED_TESTS[@]} -gt 0 ]]; then
+        echo "❌ Bats test failures (${#BATS_FAILED_TESTS[@]}):"
+        for test in "${BATS_FAILED_TESTS[@]}"; do
+            echo "  - $test"
+        done
+        if [[ -n $BATS_SUMMARY ]]; then
+            echo "  Summary: $BATS_SUMMARY"
+        fi
+        echo ""
+    elif [[ ${BATS_EXIT_CODE:-0} -ne 0 ]]; then
+        echo "❌ Bats tests did not complete successfully (exit ${BATS_EXIT_CODE})"
+        if [[ -n $BATS_SUMMARY ]]; then
+            echo "  Summary: $BATS_SUMMARY"
+        else
+            echo "  Summary: no TAP summary captured (run may have been interrupted)"
+        fi
+        echo ""
+    fi
+}
+
+#######################################
+
+#######################################
+# print_summary_overall_result: Print warnings and final outcome
+#
+# Description:
+#   Print scripts with warnings and the overall pass/fail message.
+#
+# Globals:
+#   WARNING_SCRIPTS_LIST - List of warning scripts
+#   FAILED_SCRIPTS - Failed scripts counter
+#   BATS_FAILED_TESTS - Failing bats test entries
+#   BATS_EXIT_CODE - Last bats exit code
+#   WARNINGS_COUNT - Warnings counter
+#
+# Arguments:
+#   None
+#
+# Outputs:
+#   Final outcome to stdout
+#
+# Returns:
+#   None
+#
+# Usage:
+#   print_summary_overall_result
+#
+#######################################
+function print_summary_overall_result {
+    if [[ ${#WARNING_SCRIPTS_LIST[@]} -gt 0 ]]; then
+        echo "⚠️  Scripts with warnings:"
+        for script in "${WARNING_SCRIPTS_LIST[@]}"; do
+            echo "  - $script"
+        done
+        echo ""
+    fi
+
+    if [[ $FAILED_SCRIPTS -eq 0 && ${#BATS_FAILED_TESTS[@]} -eq 0 && ${BATS_EXIT_CODE:-0} -eq 0 ]]; then
+        if [[ $WARNINGS_COUNT -eq 0 ]]; then
+            echo "🎉 All scripts passed validation with no warnings!"
+        else
+            echo "✅ All scripts passed validation (with $WARNINGS_COUNT warnings)"
+        fi
+        return
+    fi
+
+    local failure_parts=()
+    if [[ $FAILED_SCRIPTS -gt 0 ]]; then
+        failure_parts+=("$FAILED_SCRIPTS script(s)")
+    fi
+    if [[ ${#BATS_FAILED_TESTS[@]} -gt 0 ]]; then
+        failure_parts+=("${#BATS_FAILED_TESTS[@]} bats test(s)")
+    elif [[ ${BATS_EXIT_CODE:-0} -ne 0 ]]; then
+        failure_parts+=("incomplete bats run (exit ${BATS_EXIT_CODE})")
+    fi
+    local joined=""
+    if [[ ${#failure_parts[@]} -eq 2 ]]; then
+        joined="${failure_parts[0]} and ${failure_parts[1]}"
+    elif [[ ${#failure_parts[@]} -eq 1 ]]; then
+        joined="${failure_parts[0]}"
+    fi
+    echo "❌ Validation failed: $joined"
+}
+
+#######################################
+
+#######################################
+# print_summary_script_lists: Print passed and failed script lists
+#
+# Description:
+#   Print human-readable lists of scripts that passed or failed validation.
+#
+# Globals:
+#   PASSED_SCRIPTS_LIST - List of passed scripts
+#   FAILED_SCRIPTS_LIST - List of failed scripts
+#
+# Arguments:
+#   None
+#
+# Outputs:
+#   Script lists to stdout
+#
+# Returns:
+#   None
+#
+# Usage:
+#   print_summary_script_lists
+#
+#######################################
+function print_summary_script_lists {
+    if [[ ${#PASSED_SCRIPTS_LIST[@]} -gt 0 ]]; then
+        echo "✅ Scripts that passed all validations:"
+        for script in "${PASSED_SCRIPTS_LIST[@]}"; do
+            echo "  - $script"
+        done
+        echo ""
+    fi
+
+    if [[ ${#FAILED_SCRIPTS_LIST[@]} -gt 0 ]]; then
+        echo "❌ Scripts that failed validation:"
+        for script in "${FAILED_SCRIPTS_LIST[@]}"; do
+            echo "  - $script"
+        done
+        echo ""
+    fi
+}
+
+#######################################
+
+#######################################
+# print_summary_statistics: Print validation counters
+#
+# Description:
+#   Print total, passed, failed, bats, and warning counts for the run.
+#
+# Globals:
+#   TOTAL_SCRIPTS - Total scripts counter
+#   PASSED_SCRIPTS - Passed scripts counter
+#   FAILED_SCRIPTS - Failed scripts counter
+#   WARNINGS_COUNT - Warnings counter
+#   BATS_FAILED_TESTS - Failing bats test entries
+#   BATS_EXIT_CODE - Last bats exit code
+#
+# Arguments:
+#   None
+#
+# Outputs:
+#   Summary statistics to stdout
+#
+# Returns:
+#   None
+#
+# Usage:
+#   print_summary_statistics
+#
+#######################################
+function print_summary_statistics {
+    echo "📊 Statistics:"
+    echo "  Total scripts validated: $TOTAL_SCRIPTS"
+    echo "  Scripts passed: $PASSED_SCRIPTS"
+    echo "  Scripts failed: $FAILED_SCRIPTS"
+    if [[ ${#BATS_FAILED_TESTS[@]} -gt 0 ]]; then
+        echo "  Bats test failures: ${#BATS_FAILED_TESTS[@]}"
+    elif [[ ${BATS_EXIT_CODE:-0} -ne 0 ]]; then
+        echo "  Bats exit code: ${BATS_EXIT_CODE}"
+    fi
+    echo "  Warnings issued: $WARNINGS_COUNT"
+    echo ""
+}
+
+#######################################
+
+#######################################
+# record_script_validation_result: Update counters after validation
+#
+# Description:
+#   Record pass/fail lists and warning entries from validation outcome flags.
+#
+# Globals:
+#   PASSED_SCRIPTS - Passed scripts counter
+#   FAILED_SCRIPTS - Failed scripts counter
+#   PASSED_SCRIPTS_LIST - List of passed scripts
+#   FAILED_SCRIPTS_LIST - List of failed scripts
+#   WARNING_SCRIPTS_LIST - List of warning scripts
+#
+# Arguments:
+#   $1 - Script path
+#   $2 - Script basename
+#   $3 - Relative path for reporting
+#   $4 - validation_passed flag (true/false string)
+#   $5 - shellcheck_passed flag (true/false string)
+#
+# Outputs:
+#   None
+#
+# Returns:
+#   None
+#
+# Usage:
+#   record_script_validation_result "$script" "$script_name" "$relative_path" true true
+#
+#######################################
+function record_script_validation_result {
+    local script="$1"
+    local script_name="$2"
+    local relative_path="$3"
+    local validation_passed="$4"
+    local shellcheck_passed="$5"
+
+    if [[ $validation_passed == "true" ]]; then
+        custom_log "INFO" "✅ All validations passed: $script_name"
+        PASSED_SCRIPTS_LIST+=("$relative_path")
+        PASSED_SCRIPTS=$((PASSED_SCRIPTS + 1))
+    else
+        if [[ $shellcheck_passed == "false" ]]; then
+            custom_log "ERROR" "❌ Shellcheck failed: $script"
+        fi
+        FAILED_SCRIPTS_LIST+=("$relative_path")
+        FAILED_SCRIPTS=$((FAILED_SCRIPTS + 1))
+    fi
+}
+
+#######################################
+
+#######################################
+# run_bats_tests: Run bats test files given as arguments
+#
+# Description:
+#   Run bats test files given as arguments
+#
+# Globals:
+#   WORKSPACE_ROOT - Workspace root directory
+#
+# Arguments:
+#   $@ - List of test files
+#
+# Outputs:
+#   None
+#
+# Returns:
+#   0 on success
+#
+# Usage:
+#   run_bats_tests "test1.bats" "test2.bats"
+#
+#######################################
+function run_bats_tests {
+    local tests=("$@")
+
+    if [[ ${#tests[@]} -eq 0 ]]; then
+        custom_log "DEBUG" "No bats tests found"
+        return 0
+    fi
+
+    # Detect bats binary (bats or bats-core)
+    local bats_bin=""
+    if command -v bats &> /dev/null; then
+        bats_bin="bats"
+    elif command -v bats-core &> /dev/null; then
+        bats_bin="bats-core"
+    fi
+
+    if [[ -z $bats_bin ]]; then
+        custom_log "WARN" "Bats not found; skipping Bats tests"
+        return 0
+    fi
+
+    custom_log "INFO" "Running Bats tests with: $bats_bin"
+
+    local bats_output
+    bats_output=$(mktemp)
+    local bats_exit=0
+
+    # Prefer running the test folder directly if present; run with -r to recurse into subdirectories
+    if [[ -d "$WORKSPACE_ROOT/test/bats" ]]; then
+        pushd "$WORKSPACE_ROOT" > /dev/null || return 1
+        if "$bats_bin" -r "test/bats" --formatter tap > "$bats_output" 2>&1; then
+            bats_exit=0
+        else
+            bats_exit=$?
+        fi
+        popd > /dev/null || true
+    elif "$bats_bin" "${tests[@]}" --formatter tap > "$bats_output" 2>&1; then
+        bats_exit=0
+    else
+        bats_exit=$?
+    fi
+
+    print_bats_output "$bats_output" "$bats_exit"
+    rm -f "$bats_output"
+
+    BATS_EXIT_CODE=$bats_exit
+
+    if [[ $bats_exit -eq 0 ]]; then
+        custom_log "INFO" "Bats tests passed"
+        return 0
+    elif [[ ${#BATS_FAILED_TESTS[@]} -gt 0 ]]; then
+        custom_log "ERROR" "Bats tests failed (${#BATS_FAILED_TESTS[@]} failure(s))"
+        return 1
+    else
+        custom_log "ERROR" "Bats tests exited with status ${bats_exit} (no failing tests recorded; run may have been interrupted)"
+        return 1
+    fi
+}
+
+#######################################
+
+#######################################
+# run_script_validation_steps: Run per-script validation checks
+#
+# Description:
+#   Execute shebang, permission, syntax, shellcheck, and doc checks.
 #
 # Globals:
 #   None
 #
 # Arguments:
 #   $1 - Script path
-#   $2 - Line number
-#   $3 - Issue message
+#   $2 - Nameref to validation_passed flag (true/false string)
+#   $3 - Nameref to shellcheck_passed flag (true/false string)
 #
 # Outputs:
-#   file:line: message to stdout
+#   None
 #
 # Returns:
 #   0 on success
+#
+# Usage:
+#   run_script_validation_steps "$script" validation_passed shellcheck_passed
+#
 #######################################
-function format_function_doc_issue {
-    local script
-    script="$(normalize_path "$1")"
-    printf '%s:%s: %s' "$script" "$2" "$3"
+function run_script_validation_steps {
+    local script="$1"
+    local -n _validation_passed="$2"
+    local -n _shellcheck_passed="$3"
+
+    auto_fix_formatting "$script"
+
+    if ! validate_shebang "$script"; then
+        _validation_passed=false
+    fi
+    if ! validate_permissions "$script"; then
+        _validation_passed=false
+    fi
+    if ! validate_syntax "$script"; then
+        _validation_passed=false
+    fi
+    if ! run_shellcheck "$script"; then
+        _shellcheck_passed=false
+        _validation_passed=false
+    fi
+
+    if ! auto_fix_function_doc_order "$script"; then
+        _validation_passed=false
+    fi
+
+    if ! validate_function_docs "$script"; then
+        _validation_passed=false
+    fi
+
+    analyze_functions "$script"
+    check_complexity "$script"
 }
+
+#######################################
+
+#######################################
+# run_shellcheck: Function to run shellcheck
+#
+# Description:
+#   Function to run shellcheck
+#
+# Globals:
+#   VERBOSE - Enable verbose output
+#
+# Arguments:
+#   $1 - Script path
+#
+# Outputs:
+#   None
+#
+# Returns:
+#   0 on success, 1 on failure
+#
+# Usage:
+#   run_shellcheck "/path/to/script.sh"
+#
+#######################################
+function run_shellcheck {
+    local script="$1"
+    local script_name
+    script_name="$(basename "$script")"
+
+    custom_log "DEBUG" "Running shellcheck for: $script_name"
+
+    local shellcheck_output
+    if shellcheck_output=$(shellcheck -e SC1091 -f gcc "$script" 2>&1); then
+        custom_log "DEBUG" "✅ Shellcheck passed: $script_name"
+        return 0
+    else
+        custom_log "WARN" "⚠️  Shellcheck issues found: $script"
+        if [[ $VERBOSE == "true" ]]; then
+            echo "Shellcheck output:"
+            # shellcheck disable=SC2001
+            echo "$shellcheck_output" | sed 's/^/  /'
+        else
+            # shellcheck disable=SC2001
+            echo "$shellcheck_output" | sed 's/^/  /' >&2
+        fi
+        return 1
+    fi
+}
+
+#######################################
 
 #######################################
 # validate_function_docs: Opt-in Google-style function documentation checks
@@ -1580,6 +1639,235 @@ function validate_function_docs {
 }
 
 #######################################
+
+#######################################
+# validate_permissions: Function to validate file permissions
+#
+# Description:
+#   Function to validate file permissions
+#
+# Globals:
+#   AUTO_FIX - Enable auto-fix mode
+#
+# Arguments:
+#   $1 - Script path
+#
+# Outputs:
+#   None
+#
+# Returns:
+#   0 on success, 1 on failure
+#
+# Usage:
+#   validate_permissions "/path/to/script.sh"
+#
+#######################################
+function validate_permissions {
+    local script="$1"
+    local script_name
+    script_name="$(basename "$script")"
+
+    custom_log "DEBUG" "Validating permissions for: $script_name"
+
+    if [[ $script == *.bats ]]; then
+        custom_log "DEBUG" "Skipping executable check for Bats file: $script_name"
+        return 0
+    fi
+
+    if [[ -x $script ]]; then
+        custom_log "DEBUG" "✅ Script is executable: $script_name"
+        return 0
+    else
+        custom_log "WARN" "⚠️  Script is not executable: $script_name"
+        if [[ $AUTO_FIX == "true" ]]; then
+            custom_log "INFO" "Auto-fixing permissions for: $script_name"
+            chmod +x "$script"
+            custom_log "INFO" "✅ Made executable: $script_name"
+        fi
+        return 1
+    fi
+}
+
+#######################################
+
+#######################################
+# validate_script: Function to validate a single script
+#
+# Description:
+#   Orchestrate accessibility checks, validation steps, and result recording.
+#
+# Globals:
+#   WORKSPACE_ROOT - Workspace root directory
+#   TOTAL_SCRIPTS - Total scripts counter
+#   PASSED_SCRIPTS - Passed scripts counter
+#   FAILED_SCRIPTS - Failed scripts counter
+#   PASSED_SCRIPTS_LIST - List of passed scripts
+#   FAILED_SCRIPTS_LIST - List of failed scripts
+#   WARNING_SCRIPTS_LIST - List of warning scripts
+#   VERBOSE - Enable verbose output
+#   AUTO_FIX - Enable auto-fix mode
+#
+# Arguments:
+#   $1 - Script path
+#
+# Outputs:
+#   None
+#
+# Returns:
+#   0 on success, 1 on failure
+#
+# Usage:
+#   validate_script "/path/to/script.sh"
+#
+#######################################
+function validate_script {
+    local script
+    script="$(normalize_path "$1")"
+    local script_name
+    script_name="$(basename "$script")"
+    local relative_path
+    # shellcheck disable=SC2295
+    relative_path="${script#$WORKSPACE_ROOT/}"
+    local validation_passed=true
+    local shellcheck_passed=true
+
+    TOTAL_SCRIPTS=$((TOTAL_SCRIPTS + 1))
+    custom_log "INFO" "Validating script: $relative_path"
+
+    if ! validate_script_accessible "$script" "$script_name" "$relative_path"; then
+        return 1
+    fi
+
+    run_script_validation_steps "$script" validation_passed shellcheck_passed
+
+    record_script_validation_result "$script" "$script_name" "$relative_path" "$validation_passed" "$shellcheck_passed"
+}
+
+#######################################
+
+#######################################
+# validate_script_accessible: Verify script path is readable
+#
+# Description:
+#   Skip directories and ensure the target path exists and is readable.
+#
+# Globals:
+#   TOTAL_SCRIPTS - Total scripts counter
+#   FAILED_SCRIPTS - Failed scripts counter
+#   FAILED_SCRIPTS_LIST - List of failed scripts
+#
+# Arguments:
+#   $1 - Script path
+#   $2 - Script basename
+#   $3 - Relative path for reporting
+#
+# Outputs:
+#   None
+#
+# Returns:
+#   0 when accessible, 1 otherwise
+#
+# Usage:
+#   validate_script_accessible "$script" "$script_name" "$relative_path"
+#
+#######################################
+function validate_script_accessible {
+    local script="$1"
+    local script_name="$2"
+    local relative_path="$3"
+
+    if [[ -d $script ]]; then
+        custom_log "DEBUG" "Skipping directory: $script_name"
+        TOTAL_SCRIPTS=$((TOTAL_SCRIPTS - 1))
+        return 1
+    fi
+
+    if [[ -f $script ]] && [[ -r $script ]]; then
+        return 0
+    fi
+
+    custom_log "ERROR" "❌ Script not accessible: $script_name"
+    FAILED_SCRIPTS_LIST+=("$relative_path (not accessible)")
+    FAILED_SCRIPTS=$((FAILED_SCRIPTS + 1))
+    return 1
+}
+
+#######################################
+
+#######################################
+# validate_shebang: Function to validate shebang
+#
+# Description:
+#   Function to validate shebang
+#
+# Globals:
+#   AUTO_FIX - Enable auto-fix mode
+#
+# Arguments:
+#   $1 - Script path
+#
+# Outputs:
+#   None
+#
+# Returns:
+#   0 on success, 1 on failure
+#
+# Usage:
+#   validate_shebang "/path/to/script.sh"
+#
+#######################################
+function validate_shebang {
+    local script="$1"
+    local script_name
+    script_name="$(basename "$script")"
+
+    custom_log "DEBUG" "Validating shebang for: $script_name"
+
+    local first_line
+    first_line=$(head -1 "$script" 2> /dev/null)
+
+    if [[ $first_line =~ ^#!/.*sh ]] || [[ $first_line =~ ^#!/.*bats ]]; then
+        custom_log "DEBUG" "✅ Valid shebang: $script_name ($first_line)"
+        return 0
+    elif [[ $first_line =~ ^#! ]]; then
+        custom_log "WARN" "⚠️  Non-shell shebang: $script_name ($first_line)"
+        return 1
+    else
+        custom_log "WARN" "⚠️  Missing or invalid shebang: $script_name"
+        if [[ $AUTO_FIX == "true" ]]; then
+            custom_log "INFO" "Auto-fixing shebang for: $script_name"
+            # Create backup and add shebang with error handling
+            if ! cp "$script" "$script.bak"; then
+                custom_log "ERROR" "Failed to create backup: $script_name"
+                return 1
+            fi
+            if ! echo "#!/bin/bash" > "$script.tmp"; then
+                custom_log "ERROR" "Failed to write temp file: $script_name"
+                rm -f "$script.bak"
+                return 1
+            fi
+            if ! cat "$script.bak" >> "$script.tmp"; then
+                custom_log "ERROR" "Failed to append content: $script_name"
+                rm -f "$script.bak" "$script.tmp"
+                return 1
+            fi
+            if ! mv "$script.tmp" "$script"; then
+                custom_log "ERROR" "Failed to replace original file: $script_name"
+                rm -f "$script.tmp"
+                # Restore from backup
+                mv "$script.bak" "$script" 2> /dev/null
+                return 1
+            fi
+            rm -f "$script.bak"
+            custom_log "INFO" "✅ Added shebang to: $script_name"
+        fi
+        return 1
+    fi
+}
+
+#######################################
+
+#######################################
 # validate_syntax: Function to validate script syntax
 #
 # Description:
@@ -1628,6 +1916,8 @@ function validate_syntax {
         return 1
     fi
 }
+
+#######################################
 
 #######################################
 # main: Main process

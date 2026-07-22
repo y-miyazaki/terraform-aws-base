@@ -1,0 +1,45 @@
+id: docs-updater-hook-detect-001
+name: docs-updater hook path parses detect_changes JSON
+description: |
+  Validate interactive/hook path triages injected detect_changes.sh JSON (not assumed
+  prose): maps renamed_files and affected_docs into the interactive report contract.
+tags:
+  - quality
+  - hook-path
+  - detect-json
+inputs:
+  prompt: >-
+    Use docs-updater (interactive/hook path). Step 1 output from
+    `scripts/detect_changes.sh` is in context.detect — parse that JSON only; do not
+    run detect_changes.sh, invent paths, or use loop findings[]. With skip=false,
+    triage affected_docs for stale references to the renamed workflow path. Do not
+    edit files in this mock eval. Return the interactive report per
+    common-output-format.md with ## Summary (Status: updated), ## Changes listing
+    docs/guide.md and mkdocs.yml, and ## Skipped Items.
+  context:
+    scope: staged
+    detect:
+      status: ok
+      scope: staged
+      since: ""
+      commit_range: "--cached"
+      skip: false
+      changed_files:
+        - .github/workflows/ci-build-deploy.yaml
+      deleted_files: []
+      renamed_files:
+        - .github/workflows/ci-build.yaml->.github/workflows/ci-build-deploy.yaml
+      affected_docs:
+        - docs/guide.md
+        - mkdocs.yml
+expected:
+  output_contains:
+    - "## Summary"
+    - "## Changes"
+    - "## Skipped Items"
+    - "Status: updated"
+    - "docs/guide.md"
+    - "mkdocs.yml"
+    - "ci-build-deploy.yaml"
+  outcomes:
+    - type: task_completed

@@ -30,10 +30,10 @@ fi
 #######################################
 # get_changed_files: Collect changed files from git
 #
-# Arguments:
+# Globals:
 #   None
 #
-# Globals:
+# Arguments:
 #   None
 #
 # Outputs:
@@ -56,11 +56,11 @@ function get_changed_files {
 #######################################
 # report_failure: Emit error in the format the current agent expects, then exit.
 #
-# Arguments:
-#   $1 - reason: Human-readable description of what failed
-#
 # Globals:
 #   None
+#
+# Arguments:
+#   $1 - reason: Human-readable description of what failed
 #
 # Outputs:
 #   Does not return. Exits with 0 (JSON block) or 2 (stderr).
@@ -191,10 +191,10 @@ function report_failure {
 #   Runs gitleaks on changed files.
 #   Calls report_failure if secrets are found.
 #
-# Arguments:
+# Globals:
 #   None
 #
-# Globals:
+# Arguments:
 #   None
 #
 # Outputs:

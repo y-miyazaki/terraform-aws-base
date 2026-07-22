@@ -7,7 +7,7 @@ description: >-
 license: Apache-2.0
 metadata:
   author: y-miyazaki
-  version: "1.2.0"
+  version: "1.2.1"
 ---
 
 ## Input
@@ -55,18 +55,31 @@ Structured results for bash -n and shellcheck (syntax and lint only). With `--ch
 
 - [common-checklist.md](references/common-checklist.md) (always read)
 - [common-output-format.md](references/common-output-format.md) (always read)
-- [common-troubleshooting.md](references/common-troubleshooting.md) - Read when checks fail unexpectedly.
-- [common-individual-commands.md](references/common-individual-commands.md) - Read when debugging bash -n or shellcheck.
-- [category-standards.md](references/category-standards.md) - Read when standards/template violations are reported.
+- [common-troubleshooting.md](references/common-troubleshooting.md) (read on failure)
+- [common-individual-commands.md](references/common-individual-commands.md) (read on failure)
+- [category-standards.md](references/category-standards.md) (read on failure)
 
 ## Workflow
 
 1. When `scripts/lib/` changed, sync to skill copies: `bash scripts/ai/sync_skill_lib.sh` then `apm install --update`.
-2. Run `bash scripts/validate.sh -v -f --check-function-docs` with an optional target path (for example `./scripts/deploy.sh`, `./scripts/lib/`, or `./.github/actions/`).
+2. Run `bash scripts/validate.sh -v -f --check-function-docs` with an optional target path (for example `scripts/deploy.sh`, `scripts/lib/`, or `.github/actions/`).
 3. When function doc sections are out of order, run `bash scripts/fix_function_doc_order.sh` on the target path or directory before re-validating.
 4. Review auto-fix diffs from `-f` before continuing.
 5. If checks fail, fix reported issues and rerun the same command.
 6. Retry at most 2 times after fixes; if checks still fail, return blocking findings and stop.
+
+### Error Handling
+
+| Condition                                      | Severity    | Action                                                              |
+| ---------------------------------------------- | ----------- | ------------------------------------------------------------------- |
+| `scripts/validate.sh` missing                  | Fatal       | Stop; report missing script                                         |
+| No shell scripts under target path               | Info        | Report no reviewable scripts; stop                                  |
+| bash -n or shellcheck missing                  | Recoverable | Defer checks for that tool; note in deferred table                  |
+| Single tool fails, other succeeds              | Recoverable | Report passing tool; defer failed tool with exit status           |
+| All tools fail                                 | Fatal       | Return `status: failed` with per-tool stderr summaries              |
+| Function docs intentionally skipped            | Info        | Omit `--check-function-docs`; document opt-out in Summary           |
+| `common-checklist.md` unavailable              | Fatal       | Stop; report missing dependency                                     |
+| `common-output-format.md` unavailable          | Recoverable | Use inline output contract                                          |
 
 ### Examples
 

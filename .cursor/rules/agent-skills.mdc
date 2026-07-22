@@ -23,7 +23,7 @@ globs:
   4. Reference Files Guide
   5. Workflow
 
-### YAML Frontmatter
+`## Workflow` is mandatory (S-01). Error handling belongs **under** Workflow as `### Error Handling` (Q-10 SHOULD) — a severity/action table, not a sixth top-level H2. Align presence and format with sibling skills in the same package.
 
 - **S-02 (MUST)**: Include `name`, `description`, `license`, `metadata.author`, and `metadata.version` - missing fields prevent the plugin system from recognizing the skill.
 
@@ -107,8 +107,8 @@ globs:
   - Check: Are project-specific, non-obvious constraints documented while self-evident constraints are omitted?
 - Q-06 (MUST): No Implicit Inference
   - Check: Are all instructions imperative and explicit with concrete conditions (no vague "appropriately", "depending on context", "reasonable")?
-- Q-09 (SHOULD): Token Hard Gate
-  - Check: Does the review include `waza check` evidence and confirm Token Budget is 500 tokens or less?
+- Q-09 (SHOULD): Token Budget Advisory
+  - Check: Does the review include `waza check` token evidence? Over 500 tokens → advisory in Issues, not automatic FAIL; sibling consistency outranks isolated compression (see `.apm/AGENTS.md`).
 - BP-03 (SHOULD): Token Efficiency
   - Check: Does SKILL.md avoid content that Claude already knows, minimizing redundancy with frontmatter and reference files?
 - BP-04 (SHOULD): Anti-Overtrimming Guardrail
@@ -129,9 +129,9 @@ globs:
 - BP-01 (SHOULD): Description Quality
   - Check: Does the description field follow best practices for skill discovery (third person, "Use when..." trigger, no implementation instructions)?
 - BP-02 (SHOULD): Reference Trigger Conditions
-  - Check: Does Reference Files Guide specify when to load each reference file (not just what it contains)?
+  - Check: Does Reference Files Guide use explicit load contracts on every line — `(always read)`, `(always read — loop path)`, `(always read — interactive path)`, or `(read on failure)` — per `.apm/AGENTS.md`?
 - Q-07 (SHOULD): Progressive Disclosure (Soft Guard)
-  - Check: Is SKILL.md concise and compatible with token budget, using word count as a supplemental signal?
+  - Check: Is SKILL.md depth aligned with sibling skills in the same package? Is word count reasonable for that family? Treat ~500-token tooling warnings as advisory only; do not compress one skill below sibling depth.
 - Q-08 (SHOULD): Resource Separation
   - Check: Does skill directory contain `references/` and the mandatory common reference files? `scripts/` is optional but required when executable logic is provided.
 - S-03 (MUST): Reference Files Header Level Consistency
@@ -150,3 +150,4 @@ On-demand validation: see agent-skills-review skill SKILL.md.
 - Do not include raw secret values or credentials in SKILL.md or references.
 - Validate inputs in `scripts/` code and prevent arbitrary path operations.
 - Sanitize arguments when invoking external tools to prevent command injection.
+

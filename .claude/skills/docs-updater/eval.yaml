@@ -1,11 +1,10 @@
 name: docs-updater-eval
-description: "Evaluation suite for docs-updater.
-
-  Verifies trigger relevance, skip conditions, and structured report output.
-
-  "
+description: >-
+  Evaluation suite for docs-updater.
+  Verifies interactive/hook path (detect_changes.sh) and loop path (findings JSON),
+  skip conditions, and structured report output.
 skill: docs-updater
-version: "1.0"
+version: "1.2"
 config:
   trials_per_task: 5
   timeout_seconds: 180
@@ -23,14 +22,18 @@ graders:
     weight: 1.0
     config:
       assertions:
-        - "'## Summary' in output"
-        - "'Status:' in output"
+        - "'Documentation Triage Report' in output or '## Summary' in output"
+        - "'Session Metrics' in output or 'Outcome' in output or 'Status:' in output"
+        - >-
+          'High-Priority Items' in output or 'No documentation impact detected' in output
+          or 'No documentation update required' in output or 'exceeded-scope' in output
+          or '## Changes' in output or '## Skipped Items' in output
   - type: text
-    name: no_error_markers
+    name: report_sections
     weight: 0.5
     config:
       regex_match:
-        - '##\s+(Summary|Changes|Skipped Items|Recommendations)'
+        - (Documentation Triage Report|High-Priority Items|Session Metrics|## Summary|## Changes|## Skipped Items)
   - type: behavior
     name: bounded_runtime
     weight: 0.5
@@ -40,3 +43,4 @@ graders:
       max_duration_ms: 180000
 tasks:
   - evals/tasks/*.yaml
+

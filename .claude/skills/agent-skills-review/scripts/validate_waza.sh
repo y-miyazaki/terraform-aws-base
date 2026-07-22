@@ -51,10 +51,10 @@ SKILLS_ROOT="$(cd "${SKILL_DIR}/.." && pwd)"
 # Description:
 #   Displays usage information for the script, including options and examples.
 #
-# Arguments:
+# Globals:
 #   None
 #
-# Globals:
+# Arguments:
 #   None
 #
 # Outputs:
@@ -95,12 +95,12 @@ EOF
 # Description:
 #   Parses command line options and validates the required target input.
 #
-# Arguments:
-#   $@ - All command line arguments passed to the script
-#
 # Globals:
 #   VERBOSE - Verbose mode flag
 #   TARGET_INPUT - Raw target input value
+#
+# Arguments:
+#   $@ - All command line arguments passed to the script
 #
 # Outputs:
 #   None
@@ -146,12 +146,12 @@ function parse_arguments {
 # Description:
 #   Resolves a target input to a concrete skill name accepted by 'waza check'.
 #
-# Arguments:
-#   None (uses global TARGET_INPUT)
-#
 # Globals:
 #   TARGET_INPUT - Raw target input value
 #   TARGET_SKILL_NAME - Resolved skill directory name
+#
+# Arguments:
+#   None (uses global TARGET_INPUT)
 #
 # Outputs:
 #   None
@@ -202,11 +202,11 @@ function resolve_target_skill {
 # Description:
 #   Executes 'waza check <skill-name>' in the skills root directory.
 #
-# Arguments:
-#   None (uses resolved globals)
-#
 # Globals:
 #   None
+#
+# Arguments:
+#   None (uses resolved globals)
 #
 # Outputs:
 #   None
@@ -238,11 +238,11 @@ function run_waza_check {
 # Description:
 #   Executes 'waza run <eval.yaml>' for the target skill.
 #
-# Arguments:
-#   None (uses resolved globals)
-#
 # Globals:
 #   None
+#
+# Arguments:
+#   None (uses resolved globals)
 #
 # Outputs:
 #   None
@@ -269,11 +269,11 @@ function run_waza_eval {
 # Description:
 #   Executes 'waza tokens count <SKILL.md>' for visibility of token usage.
 #
-# Arguments:
-#   None (uses resolved globals)
-#
 # Globals:
 #   None
+#
+# Arguments:
+#   None (uses resolved globals)
 #
 # Outputs:
 #   None
@@ -300,11 +300,11 @@ function run_waza_tokens_count {
 # Description:
 #   Parses input, resolves dependencies, and runs waza check for the target skill.
 #
-# Arguments:
-#   $@ - Command line arguments
-#
 # Globals:
 #   None
+#
+# Arguments:
+#   $@ - Command line arguments
 #
 # Outputs:
 #   None

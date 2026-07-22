@@ -11,7 +11,8 @@ inputs:
     Use shell-script-validation to validate shell scripts with bash -n and shellcheck for syntax
     safety and maintainability checks. Does not enforce Bats suite pairing (TEST-00) — run bats
     and shell-script-review for that. Use when committing script changes, running CI validation,
-    or debugging shellcheck findings in PRs. Return ## Summary and ## Tool Results.
+    or debugging shellcheck findings in PRs. Run bash scripts/validate.sh with canonical flags.
+    Return ## Summary and ## Tool Results.
   context:
     target: SKILL.md
 expected:
@@ -21,3 +22,4 @@ expected:
     - "scripts/validate.sh"
   outcomes:
     - type: task_completed
+

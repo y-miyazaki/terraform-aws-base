@@ -81,43 +81,43 @@ url = "https://github.com/BurntSushi/ripgrep/releases/download/15.1.0/ripgrep-15
 url_api = "https://api.github.com/repos/BurntSushi/ripgrep/releases/assets/307305871"
 
 [[tools."aqua:Songmu/ecschedule"]]
-version = "0.19.0"
+version = "0.20.0"
 backend = "aqua:Songmu/ecschedule"
 
 [tools."aqua:Songmu/ecschedule"."platforms.linux-arm64"]
-checksum = "sha256:2301ea9adf41b871bd3af88c3bff90995e032d9da1fb61665f27cb3e51340add"
-url = "https://github.com/Songmu/ecschedule/releases/download/v0.19.0/ecschedule_v0.19.0_linux_arm64.tar.gz"
-url_api = "https://api.github.com/repos/Songmu/ecschedule/releases/assets/426217235"
+checksum = "sha256:d74a20758cf7be9f3add960b5960fe23ac5542be40c9a7b6089c450e5cffe7be"
+url = "https://github.com/Songmu/ecschedule/releases/download/v0.20.0/ecschedule_v0.20.0_linux_arm64.tar.gz"
+url_api = "https://api.github.com/repos/Songmu/ecschedule/releases/assets/476998001"
 
 [tools."aqua:Songmu/ecschedule"."platforms.linux-arm64-musl"]
-checksum = "sha256:2301ea9adf41b871bd3af88c3bff90995e032d9da1fb61665f27cb3e51340add"
-url = "https://github.com/Songmu/ecschedule/releases/download/v0.19.0/ecschedule_v0.19.0_linux_arm64.tar.gz"
-url_api = "https://api.github.com/repos/Songmu/ecschedule/releases/assets/426217235"
+checksum = "sha256:d74a20758cf7be9f3add960b5960fe23ac5542be40c9a7b6089c450e5cffe7be"
+url = "https://github.com/Songmu/ecschedule/releases/download/v0.20.0/ecschedule_v0.20.0_linux_arm64.tar.gz"
+url_api = "https://api.github.com/repos/Songmu/ecschedule/releases/assets/476998001"
 
 [tools."aqua:Songmu/ecschedule"."platforms.linux-x64"]
-checksum = "sha256:d2296fcf4b7eeadc01c99b88fd72e265bf16ae5a30c6a0d8bf2f23fb334b9024"
-url = "https://github.com/Songmu/ecschedule/releases/download/v0.19.0/ecschedule_v0.19.0_linux_amd64.tar.gz"
-url_api = "https://api.github.com/repos/Songmu/ecschedule/releases/assets/426217258"
+checksum = "sha256:d312d155768c8c32353ab4e1deb04c1c0c7ea404d4747f60dd48079ee1f887ad"
+url = "https://github.com/Songmu/ecschedule/releases/download/v0.20.0/ecschedule_v0.20.0_linux_amd64.tar.gz"
+url_api = "https://api.github.com/repos/Songmu/ecschedule/releases/assets/476998041"
 
 [tools."aqua:Songmu/ecschedule"."platforms.linux-x64-musl"]
-checksum = "sha256:d2296fcf4b7eeadc01c99b88fd72e265bf16ae5a30c6a0d8bf2f23fb334b9024"
-url = "https://github.com/Songmu/ecschedule/releases/download/v0.19.0/ecschedule_v0.19.0_linux_amd64.tar.gz"
-url_api = "https://api.github.com/repos/Songmu/ecschedule/releases/assets/426217258"
+checksum = "sha256:d312d155768c8c32353ab4e1deb04c1c0c7ea404d4747f60dd48079ee1f887ad"
+url = "https://github.com/Songmu/ecschedule/releases/download/v0.20.0/ecschedule_v0.20.0_linux_amd64.tar.gz"
+url_api = "https://api.github.com/repos/Songmu/ecschedule/releases/assets/476998041"
 
 [tools."aqua:Songmu/ecschedule"."platforms.macos-arm64"]
-checksum = "sha256:8444b0a8aff03ff0f457c3ea14fcd99e7732c164aefd1a8fbb5889bad45026ef"
-url = "https://github.com/Songmu/ecschedule/releases/download/v0.19.0/ecschedule_v0.19.0_darwin_arm64.zip"
-url_api = "https://api.github.com/repos/Songmu/ecschedule/releases/assets/426217236"
+checksum = "sha256:7c0a1041b7548bd38345d659065b7f0cff5c5d0111f9330c5d048ffcc804988b"
+url = "https://github.com/Songmu/ecschedule/releases/download/v0.20.0/ecschedule_v0.20.0_darwin_arm64.zip"
+url_api = "https://api.github.com/repos/Songmu/ecschedule/releases/assets/476998003"
 
 [tools."aqua:Songmu/ecschedule"."platforms.macos-x64"]
-checksum = "sha256:f5fba3f34021db29f05504ba9f0eaa035a2ce4390c52ca80889a4d7dc59ea2f8"
-url = "https://github.com/Songmu/ecschedule/releases/download/v0.19.0/ecschedule_v0.19.0_darwin_amd64.zip"
-url_api = "https://api.github.com/repos/Songmu/ecschedule/releases/assets/426217241"
+checksum = "sha256:81a2b62502d5ce2874619f136516e432644420c240820a8c044ed65f3079ad5b"
+url = "https://github.com/Songmu/ecschedule/releases/download/v0.20.0/ecschedule_v0.20.0_darwin_amd64.zip"
+url_api = "https://api.github.com/repos/Songmu/ecschedule/releases/assets/476998036"
 
 [tools."aqua:Songmu/ecschedule"."platforms.windows-x64"]
-checksum = "sha256:d8fad4ce7cbecaa20dae933fbd63a550cc727f8f81b5a156154443d9d6b2613c"
-url = "https://github.com/Songmu/ecschedule/releases/download/v0.19.0/ecschedule_v0.19.0_windows_amd64.zip"
-url_api = "https://api.github.com/repos/Songmu/ecschedule/releases/assets/426217257"
+checksum = "sha256:fc3dc2034585b6bc3f1114780b053f9b850318af9394a78d7d49b5e1cee44be3"
+url = "https://github.com/Songmu/ecschedule/releases/download/v0.20.0/ecschedule_v0.20.0_windows_amd64.zip"
+url_api = "https://api.github.com/repos/Songmu/ecschedule/releases/assets/476998002"
 
 [[tools."aqua:air-verse/air"]]
 version = "1.65.3"
@@ -251,26 +251,26 @@ url_api = "https://api.github.com/repos/astral-sh/uv/releases/assets/469655815"
 provenance = "github-attestations"
 
 [[tools."aqua:aws/aws-cli"]]
-version = "2.35.22"
+version = "2.35.23"
 backend = "aqua:aws/aws-cli"
 
 [tools."aqua:aws/aws-cli"."platforms.linux-arm64"]
-url = "https://awscli.amazonaws.com/awscli-exe-linux-aarch64-2.35.22.zip"
+url = "https://awscli.amazonaws.com/awscli-exe-linux-aarch64-2.35.23.zip"
 
 [tools."aqua:aws/aws-cli"."platforms.linux-arm64-musl"]
-url = "https://awscli.amazonaws.com/awscli-exe-linux-aarch64-2.35.22.zip"
+url = "https://awscli.amazonaws.com/awscli-exe-linux-aarch64-2.35.23.zip"
 
 [tools."aqua:aws/aws-cli"."platforms.linux-x64"]
-url = "https://awscli.amazonaws.com/awscli-exe-linux-x86_64-2.35.22.zip"
+url = "https://awscli.amazonaws.com/awscli-exe-linux-x86_64-2.35.23.zip"
 
 [tools."aqua:aws/aws-cli"."platforms.linux-x64-musl"]
-url = "https://awscli.amazonaws.com/awscli-exe-linux-x86_64-2.35.22.zip"
+url = "https://awscli.amazonaws.com/awscli-exe-linux-x86_64-2.35.23.zip"
 
 [tools."aqua:aws/aws-cli"."platforms.macos-arm64"]
-url = "https://awscli.amazonaws.com/AWSCLIV2-2.35.22.pkg"
+url = "https://awscli.amazonaws.com/AWSCLIV2-2.35.23.pkg"
 
 [tools."aqua:aws/aws-cli"."platforms.macos-x64"]
-url = "https://awscli.amazonaws.com/AWSCLIV2-2.35.22.pkg"
+url = "https://awscli.amazonaws.com/AWSCLIV2-2.35.23.pkg"
 
 [[tools."aqua:aws/aws-sam-cli"]]
 version = "1.163.0"
@@ -1539,26 +1539,26 @@ url_api = "https://api.github.com/repos/zizmorcore/zizmor/releases/assets/453417
 provenance = "github-attestations"
 
 [[tools.claude]]
-version = "2.1.209"
+version = "2.1.210"
 backend = "aqua:anthropics/claude-code"
 
 [tools.claude."platforms.linux-arm64"]
-url = "https://storage.googleapis.com/claude-code-dist-86c565f3-f756-42ad-8dfa-d59b1c096819/claude-code-releases/2.1.209/linux-arm64/claude"
+url = "https://storage.googleapis.com/claude-code-dist-86c565f3-f756-42ad-8dfa-d59b1c096819/claude-code-releases/2.1.210/linux-arm64/claude"
 
 [tools.claude."platforms.linux-arm64-musl"]
-url = "https://storage.googleapis.com/claude-code-dist-86c565f3-f756-42ad-8dfa-d59b1c096819/claude-code-releases/2.1.209/linux-arm64-musl/claude"
+url = "https://storage.googleapis.com/claude-code-dist-86c565f3-f756-42ad-8dfa-d59b1c096819/claude-code-releases/2.1.210/linux-arm64-musl/claude"
 
 [tools.claude."platforms.linux-x64"]
-url = "https://storage.googleapis.com/claude-code-dist-86c565f3-f756-42ad-8dfa-d59b1c096819/claude-code-releases/2.1.209/linux-x64/claude"
+url = "https://storage.googleapis.com/claude-code-dist-86c565f3-f756-42ad-8dfa-d59b1c096819/claude-code-releases/2.1.210/linux-x64/claude"
 
 [tools.claude."platforms.linux-x64-musl"]
-url = "https://storage.googleapis.com/claude-code-dist-86c565f3-f756-42ad-8dfa-d59b1c096819/claude-code-releases/2.1.209/linux-x64-musl/claude"
+url = "https://storage.googleapis.com/claude-code-dist-86c565f3-f756-42ad-8dfa-d59b1c096819/claude-code-releases/2.1.210/linux-x64-musl/claude"
 
 [tools.claude."platforms.macos-arm64"]
-url = "https://storage.googleapis.com/claude-code-dist-86c565f3-f756-42ad-8dfa-d59b1c096819/claude-code-releases/2.1.209/darwin-arm64/claude"
+url = "https://storage.googleapis.com/claude-code-dist-86c565f3-f756-42ad-8dfa-d59b1c096819/claude-code-releases/2.1.210/darwin-arm64/claude"
 
 [tools.claude."platforms.macos-x64"]
-url = "https://storage.googleapis.com/claude-code-dist-86c565f3-f756-42ad-8dfa-d59b1c096819/claude-code-releases/2.1.209/darwin-x64/claude"
+url = "https://storage.googleapis.com/claude-code-dist-86c565f3-f756-42ad-8dfa-d59b1c096819/claude-code-releases/2.1.210/darwin-x64/claude"
 
 [[tools."github:DeusData/codebase-memory-mcp"]]
 version = "0.9.0"

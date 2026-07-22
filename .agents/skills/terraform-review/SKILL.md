@@ -6,7 +6,7 @@ description: >-
 license: Apache-2.0
 metadata:
   author: y-miyazaki
-  version: "1.0.0"
+  version: "1.0.2"
 ---
 
 ## Input
@@ -64,13 +64,26 @@ Each issue must include file path, risk summary, and remediation guidance.
 
 - [common-checklist.md](references/common-checklist.md) (always read)
 - [common-output-format.md](references/common-output-format.md) (always read)
-- [category-global.md](references/category-global.md), [category-security.md](references/category-security.md), [category-modules.md](references/category-modules.md), [category-state.md](references/category-state.md) - Read when reviewing resource structure, security, modules, or state management.
-- [category-ci-lint.md](references/category-ci-lint.md), [category-compliance.md](references/category-compliance.md), [category-cost.md](references/category-cost.md), [category-data-sources.md](references/category-data-sources.md) - Read when reviewing CI integration, compliance, cost concerns, or data sources.
-- [category-dependency.md](references/category-dependency.md), [category-events.md](references/category-events.md), [category-migration.md](references/category-migration.md), [category-naming.md](references/category-naming.md) - Read when reviewing dependencies, events, migration, or naming conventions.
-- [category-outputs.md](references/category-outputs.md), [category-patterns.md](references/category-patterns.md), [category-performance.md](references/category-performance.md), [category-tagging.md](references/category-tagging.md) - Read when reviewing outputs, design patterns, performance, or tagging.
-- [category-tfvars.md](references/category-tfvars.md), [category-variables.md](references/category-variables.md), [category-versioning.md](references/category-versioning.md) - Read when reviewing variable definitions, tfvars, or version constraints.
-- When uncertain which categories apply, default to: category-security, category-global, category-modules, category-state.
-- [common-troubleshooting.md](references/common-troubleshooting.md) - Read on failure or when evidence is unavailable
+- [common-troubleshooting.md](references/common-troubleshooting.md) (read on failure)
+- [category-global.md](references/category-global.md) (always read)
+- [category-security.md](references/category-security.md) (always read)
+- [category-modules.md](references/category-modules.md) (always read)
+- [category-state.md](references/category-state.md) (always read)
+- [category-ci-lint.md](references/category-ci-lint.md) (always read)
+- [category-compliance.md](references/category-compliance.md) (always read)
+- [category-cost.md](references/category-cost.md) (always read)
+- [category-data-sources.md](references/category-data-sources.md) (always read)
+- [category-dependency.md](references/category-dependency.md) (always read)
+- [category-events.md](references/category-events.md) (always read)
+- [category-migration.md](references/category-migration.md) (always read)
+- [category-naming.md](references/category-naming.md) (always read)
+- [category-outputs.md](references/category-outputs.md) (always read)
+- [category-patterns.md](references/category-patterns.md) (always read)
+- [category-performance.md](references/category-performance.md) (always read)
+- [category-tagging.md](references/category-tagging.md) (always read)
+- [category-tfvars.md](references/category-tfvars.md) (always read)
+- [category-variables.md](references/category-variables.md) (always read)
+- [category-versioning.md](references/category-versioning.md) (always read)
 
 ## Workflow
 
@@ -79,9 +92,19 @@ Each issue must include file path, risk summary, and remediation guidance.
 3. If PR context is unavailable, review file diffs only and defer PR-context-dependent checks.
 4. If changed files contain no `.tf` or `.tfvars`, return `status: skipped` with reason `no Terraform review target`.
 5. If validation output is partial, keep available findings and defer missing-tool checks with explicit tool name.
-6. Review checklist categories touched by changed files and collect failed/deferred items.
+6. Review checklist categories touched by changed files and collect failed/deferred items. When uncertain which categories apply, prioritize category-security, category-global, category-modules, and category-state first.
 7. If a referenced category file is missing, defer affected checks with the missing file path.
 8. Output required sections per [references/common-output-format.md](references/common-output-format.md). Prioritize `SEC-*` findings first, then correctness, then maintainability. For conflicting findings, prioritize the higher-severity category and document the conflict in `## Issues`.
+
+### Error Handling
+
+| Condition                                      | Severity    | Action                                                                 |
+| ---------------------------------------------- | ----------- | ---------------------------------------------------------------------- |
+| `terraform-validation` output missing            | Recoverable | Defer tool-dependent checks; review security/architecture from source  |
+| `common-checklist.md` unavailable              | Fatal       | Stop; report missing dependency                                        |
+| `common-output-format.md` unavailable          | Recoverable | Use inline output contract                                             |
+| Changed files contain no `.tf`/`.tfvars`       | Recoverable | Return `status: skipped`; reason `no Terraform review target`          |
+| Referenced category file missing               | Recoverable | Defer affected checks; note missing file path                            |
 
 ### Examples
 

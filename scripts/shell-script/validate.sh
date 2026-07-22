@@ -141,6 +141,8 @@ EOF
 }
 
 #######################################
+
+#######################################
 # parse_arguments: Parse command line arguments
 #
 # Description:
@@ -201,6 +203,8 @@ function parse_arguments {
 }
 
 #######################################
+
+#######################################
 # analyze_functions: Function to analyze script functions
 #
 # Description:
@@ -245,6 +249,8 @@ function analyze_functions {
         custom_log "DEBUG" "No functions found in: $script_name"
     fi
 }
+
+#######################################
 
 #######################################
 # auto_fix_formatting: Function to auto-fix script formatting with shfmt
@@ -292,6 +298,58 @@ function auto_fix_formatting {
         return 0
     fi
 }
+
+#######################################
+
+#######################################
+# auto_fix_function_doc_order: Reorder function doc sections when auto-fix is enabled
+#
+# Description:
+#   Invokes fix_function_doc_order.sh to normalize section order before validation.
+#
+# Globals:
+#   AUTO_FIX - Enable auto-fix mode
+#   CHECK_FUNCTION_DOCS - Enable function doc block section checks
+#   SCRIPT_DIR - Directory containing helper scripts
+#
+# Arguments:
+#   $1 - Script path
+#
+# Outputs:
+#   None
+#
+# Returns:
+#   0 on success
+#
+# Usage:
+#   auto_fix_function_doc_order "/path/to/script.sh"
+#
+#######################################
+function auto_fix_function_doc_order {
+    local script="$1"
+
+    if [[ $AUTO_FIX != "true" ]] || [[ $CHECK_FUNCTION_DOCS != "true" ]]; then
+        return 0
+    fi
+
+    if [[ $script == *.bats ]]; then
+        return 0
+    fi
+
+    if [[ ! -f "${SCRIPT_DIR}/fix_function_doc_order.sh" ]]; then
+        custom_log "DEBUG" "fix_function_doc_order.sh not found; skipping doc reorder"
+        return 0
+    fi
+
+    if bash "${SCRIPT_DIR}/fix_function_doc_order.sh" -q "$script"; then
+        custom_log "DEBUG" "Function doc order normalized: $(basename "$script")"
+    else
+        custom_log "WARN" "Function doc reorder failed: $(basename "$script")"
+        return 1
+    fi
+}
+
+#######################################
 
 #######################################
 # auto_fix_shellcheck: Function to auto-fix shellcheck issues
@@ -343,6 +401,8 @@ function auto_fix_shellcheck {
 
     return 0
 }
+
+#######################################
 
 #######################################
 # check_complexity: Function to check script complexity
@@ -410,6 +470,89 @@ function check_complexity {
 }
 
 #######################################
+
+#######################################
+# collect_bats_failures_from_tap: Populate BATS_FAILED_TESTS from TAP output
+#
+# Description:
+#   Parses bats TAP-format output and records failing tests.
+#
+# Globals:
+#   BATS_FAILED_TESTS - Populated with "file: test name" entries
+#   BATS_SUMMARY - Human-readable test count summary
+#
+# Arguments:
+#   $1 - Path to captured bats TAP output file
+#
+# Outputs:
+#   None
+#
+# Returns:
+#   None
+#
+# Usage:
+#   collect_bats_failures_from_tap "/tmp/bats.out"
+#
+#######################################
+function collect_bats_failures_from_tap {
+    local output_file="$1"
+    local current_test=""
+    local current_file=""
+    local ok_count=0
+    local fail_count=0
+    local skip_count=0
+    local total_count=0
+
+    BATS_FAILED_TESTS=()
+    BATS_SUMMARY=""
+
+    while IFS= read -r line || [[ -n $line ]]; do
+        case "$line" in
+            1..*)
+                total_count="${line#1..}"
+                ;;
+            ok\ *)
+                ok_count=$((ok_count + 1))
+                if [[ $line == *"# skip"* ]]; then
+                    skip_count=$((skip_count + 1))
+                fi
+                ;;
+            not\ ok\ *)
+                fail_count=$((fail_count + 1))
+                current_test="${line#not ok }"
+                current_test="${current_test#* }"
+                ;;
+            \#\ \(in\ test\ file\ *)
+                current_file="${line#\# (in test file }"
+                current_file="${current_file%%, line*}"
+                if [[ -n $current_test && -n $current_file ]]; then
+                    BATS_FAILED_TESTS+=("${current_file}: ${current_test}")
+                    current_test=""
+                fi
+                ;;
+        esac
+    done < "$output_file"
+
+    if [[ $total_count -gt 0 ]]; then
+        if [[ $fail_count -eq 0 ]]; then
+            if [[ $skip_count -gt 0 ]]; then
+                BATS_SUMMARY="${total_count} tests, 0 failures, ${skip_count} skipped"
+            else
+                BATS_SUMMARY="${total_count} tests passed"
+            fi
+        else
+            if [[ $skip_count -gt 0 ]]; then
+                BATS_SUMMARY="${total_count} tests, ${fail_count} failures, ${skip_count} skipped"
+            else
+                BATS_SUMMARY="${total_count} tests, ${fail_count} failures"
+            fi
+        fi
+    fi
+}
+
+#######################################
+
+#######################################
 # custom_echo_section: Override echo_section for quiet mode support
 #
 # Description:
@@ -436,6 +579,8 @@ function custom_echo_section {
         echo_section "$1"
     fi
 }
+
+#######################################
 
 #######################################
 # custom_log: Override log function to handle warning counter and quiet mode
@@ -480,6 +625,68 @@ function custom_log {
 }
 
 #######################################
+
+#######################################
+# extract_function_doc_block: Read doc comment block immediately above a function
+#
+# Description:
+#   Returns lines from the nearest preceding separator through the line before
+#   the function definition.
+#
+# Globals:
+#   None
+#
+# Arguments:
+#   $1 - Script path
+#   $2 - Function definition line number
+#
+# Outputs:
+#   Doc block lines to stdout
+#
+# Returns:
+#   0 on success
+#
+# Usage:
+#   extract_function_doc_block "/path/to/script.sh" 42
+#
+#######################################
+function extract_function_doc_block {
+    local script="$1"
+    local func_line="$2"
+    local i=$((func_line - 1))
+    local end=$i
+    local start=1
+    local line
+
+    while [[ $i -ge 1 ]]; do
+        line="$(sed -n "${i}p" "$script")"
+        if [[ -z ${line//[[:space:]]/} ]]; then
+            i=$((i - 1))
+            continue
+        fi
+        if [[ ${line} == "#######################################" ]]; then
+            end=$i
+            i=$((i - 1))
+            break
+        fi
+        break
+    done
+
+    while [[ $i -ge 1 ]]; do
+        line="$(sed -n "${i}p" "$script")"
+        if [[ ${line} == "#######################################" ]]; then
+            start=$i
+            break
+        fi
+        i=$((i - 1))
+    done
+
+    sed -n "${start},${end}p" "$script"
+}
+
+#######################################
+
+#######################################
 # find_bats_tests: Function to find Bats tests in the repository
 #
 # Description:
@@ -511,6 +718,8 @@ function find_bats_tests {
         echo "$f"
     done
 }
+
+#######################################
 
 #######################################
 # find_shell_scripts: Function to find all shell scripts recursively
@@ -592,6 +801,129 @@ function find_shell_scripts {
 }
 
 #######################################
+
+#######################################
+# format_function_doc_issue: Format a function doc issue for terminal navigation
+#
+# Description:
+#   Emit a file:line: message for function doc validation failures.
+#
+# Globals:
+#   None
+#
+# Arguments:
+#   $1 - Script path
+#   $2 - Line number
+#   $3 - Issue message
+#
+# Outputs:
+#   file:line: message to stdout
+#
+# Returns:
+#   0 on success
+#
+# Usage:
+#   format_function_doc_issue "$script" "$line_num" "missing function description line"
+#
+#######################################
+function format_function_doc_issue {
+    local script
+    script="$(normalize_path "$1")"
+    printf '%s:%s: %s' "$script" "$2" "$3"
+}
+
+#######################################
+
+#######################################
+# function_doc_section_issues: Report missing Google-style function doc sections
+#
+# Description:
+#   Validates Globals, Arguments, Outputs, and Returns with explicit body lines.
+#
+# Globals:
+#   None
+#
+# Arguments:
+#   $1 - Doc block text
+#   $2 - Function signature reference (for error messages)
+#
+# Outputs:
+#   Issue strings to stdout (one per line)
+#
+# Returns:
+#   0 always
+#
+# Usage:
+#   function_doc_section_issues "${doc_chunk}" "function foo {"
+#
+#######################################
+function function_doc_section_issues {
+    local doc_chunk="$1"
+    local func_ref="$2"
+
+    awk -v func_ref="${func_ref}" '
+        BEGIN {
+            n = split("Globals Arguments Outputs Returns", sections, " ")
+        }
+        {
+            line_count++
+            lines[line_count] = $0
+        }
+        function section_body_missing(sec,    i, in_sec) {
+            in_sec = 0
+            for (i = 1; i <= line_count; i++) {
+                if (lines[i] ~ "^# " sec ":[[:space:]]*$") {
+                    in_sec = 1
+                    continue
+                }
+                if (in_sec == 1) {
+                    if (lines[i] ~ /^# [A-Za-z][A-Za-z ]*:[[:space:]]*$/) {
+                        return 1
+                    }
+                    if (lines[i] ~ /^#[[:space:]]+[^[:space:]#]/) {
+                        return 0
+                    }
+                }
+            }
+            return 1
+        }
+        END {
+            last_order = -1
+            for (j = 1; j <= line_count; j++) {
+                for (i = 1; i <= n; i++) {
+                    sec = sections[i]
+                    if (lines[j] ~ "^# " sec ":[[:space:]]*$") {
+                        if (i <= last_order) {
+                            print "sections out of order (expected Globals, Arguments, Outputs, Returns)"
+                        }
+                        last_order = i
+                    }
+                }
+            }
+            for (i = 1; i <= n; i++) {
+                sec = sections[i]
+                found = 0
+                for (j = 1; j <= line_count; j++) {
+                    if (lines[j] ~ "^# " sec ":[[:space:]]*$") {
+                        found = 1
+                        break
+                    }
+                }
+                if (!found) {
+                    print "missing " sec " section"
+                    continue
+                }
+                if (section_body_missing(sec)) {
+                    print sec " section has no body (use None)"
+                }
+            }
+        }
+    ' <<< "${doc_chunk}"
+}
+
+#######################################
+
+#######################################
 # generate_recommendations: Function to generate recommendations
 #
 # Description:
@@ -639,10 +971,12 @@ function generate_recommendations {
 }
 
 #######################################
+
+#######################################
 # generate_summary_report: Function to generate summary report
 #
 # Description:
-#   Function to generate summary report
+#   Compose and print the end-of-run validation summary report.
 #
 # Globals:
 #   TOTAL_SCRIPTS - Total scripts counter
@@ -652,12 +986,15 @@ function generate_recommendations {
 #   PASSED_SCRIPTS_LIST - List of passed scripts
 #   FAILED_SCRIPTS_LIST - List of failed scripts
 #   WARNING_SCRIPTS_LIST - List of warning scripts
+#   BATS_FAILED_TESTS - Failing bats test entries
+#   BATS_EXIT_CODE - Last bats exit code
+#   BATS_SUMMARY - Human-readable bats summary line
 #
 # Arguments:
 #   None
 #
 # Outputs:
-#   None
+#   Summary report to stdout
 #
 # Returns:
 #   None
@@ -668,88 +1005,59 @@ function generate_recommendations {
 #######################################
 function generate_summary_report {
     custom_echo_section "Validation Summary Report"
+    print_summary_statistics
+    print_summary_script_lists
+    print_summary_bats_results
+    print_summary_overall_result
+}
 
-    echo "📊 Statistics:"
-    echo "  Total scripts validated: $TOTAL_SCRIPTS"
-    echo "  Scripts passed: $PASSED_SCRIPTS"
-    echo "  Scripts failed: $FAILED_SCRIPTS"
-    if [[ ${#BATS_FAILED_TESTS[@]} -gt 0 ]]; then
-        echo "  Bats test failures: ${#BATS_FAILED_TESTS[@]}"
-    elif [[ ${BATS_EXIT_CODE:-0} -ne 0 ]]; then
-        echo "  Bats exit code: ${BATS_EXIT_CODE}"
-    fi
-    echo "  Warnings issued: $WARNINGS_COUNT"
-    echo ""
+#######################################
 
-    if [[ ${#PASSED_SCRIPTS_LIST[@]} -gt 0 ]]; then
-        echo "✅ Scripts that passed all validations:"
-        for script in "${PASSED_SCRIPTS_LIST[@]}"; do
-            echo "  - $script"
-        done
-        echo ""
-    fi
+#######################################
+# normalize_path: Resolve a script path for stable reporting
+#
+# Description:
+#   Return an absolute path for an existing file, or normalize a missing path.
+#
+# Globals:
+#   None
+#
+# Arguments:
+#   $1 - Path to normalize
+#
+# Outputs:
+#   Absolute path to stdout
+#
+# Returns:
+#   0 on success, 1 when path is empty
+#
+# Usage:
+#   normalize_path "/path/to/script.sh"
+#
+#######################################
+function normalize_path {
+    local path="$1"
 
-    if [[ ${#FAILED_SCRIPTS_LIST[@]} -gt 0 ]]; then
-        echo "❌ Scripts that failed validation:"
-        for script in "${FAILED_SCRIPTS_LIST[@]}"; do
-            echo "  - $script"
-        done
-        echo ""
-    fi
-
-    if [[ ${#BATS_FAILED_TESTS[@]} -gt 0 ]]; then
-        echo "❌ Bats test failures (${#BATS_FAILED_TESTS[@]}):"
-        for test in "${BATS_FAILED_TESTS[@]}"; do
-            echo "  - $test"
-        done
-        if [[ -n $BATS_SUMMARY ]]; then
-            echo "  Summary: $BATS_SUMMARY"
-        fi
-        echo ""
-    elif [[ ${BATS_EXIT_CODE:-0} -ne 0 ]]; then
-        echo "❌ Bats tests did not complete successfully (exit ${BATS_EXIT_CODE})"
-        if [[ -n $BATS_SUMMARY ]]; then
-            echo "  Summary: $BATS_SUMMARY"
-        else
-            echo "  Summary: no TAP summary captured (run may have been interrupted)"
-        fi
-        echo ""
+    if [[ -z $path ]]; then
+        return 1
     fi
 
-    if [[ ${#WARNING_SCRIPTS_LIST[@]} -gt 0 ]]; then
-        echo "⚠️  Scripts with warnings:"
-        for script in "${WARNING_SCRIPTS_LIST[@]}"; do
-            echo "  - $script"
-        done
-        echo ""
+    if [[ -e $path ]]; then
+        realpath "$path"
+        return 0
     fi
 
-    # Overall result
-    if [[ $FAILED_SCRIPTS -eq 0 && ${#BATS_FAILED_TESTS[@]} -eq 0 && ${BATS_EXIT_CODE:-0} -eq 0 ]]; then
-        if [[ $WARNINGS_COUNT -eq 0 ]]; then
-            echo "🎉 All scripts passed validation with no warnings!"
-        else
-            echo "✅ All scripts passed validation (with $WARNINGS_COUNT warnings)"
-        fi
+    local dir base
+    dir="$(dirname "$path")"
+    base="$(basename "$path")"
+    if [[ -d $dir ]]; then
+        printf '%s/%s' "$(realpath "$dir")" "$base"
     else
-        local failure_parts=()
-        if [[ $FAILED_SCRIPTS -gt 0 ]]; then
-            failure_parts+=("$FAILED_SCRIPTS script(s)")
-        fi
-        if [[ ${#BATS_FAILED_TESTS[@]} -gt 0 ]]; then
-            failure_parts+=("${#BATS_FAILED_TESTS[@]} bats test(s)")
-        elif [[ ${BATS_EXIT_CODE:-0} -ne 0 ]]; then
-            failure_parts+=("incomplete bats run (exit ${BATS_EXIT_CODE})")
-        fi
-        local joined=""
-        if [[ ${#failure_parts[@]} -eq 2 ]]; then
-            joined="${failure_parts[0]} and ${failure_parts[1]}"
-        elif [[ ${#failure_parts[@]} -eq 1 ]]; then
-            joined="${failure_parts[0]}"
-        fi
-        echo "❌ Validation failed: $joined"
+        realpath -m "$path"
     fi
 }
+
+#######################################
 
 #######################################
 # print_bats_output: Print bats results (full or failures-only)
@@ -822,17 +1130,223 @@ function print_bats_output {
 }
 
 #######################################
-# collect_bats_failures_from_tap: Populate BATS_FAILED_TESTS from TAP output
+
+#######################################
+# print_summary_bats_results: Print bats failure details
 #
 # Description:
-#   Parses bats TAP-format output and records failing tests.
+#   Print bats failures or incomplete run summary when bats did not pass.
 #
 # Globals:
-#   BATS_FAILED_TESTS - Populated with "file: test name" entries
-#   BATS_SUMMARY - Human-readable test count summary
+#   BATS_FAILED_TESTS - Failing bats test entries
+#   BATS_SUMMARY - Human-readable bats summary line
+#   BATS_EXIT_CODE - Last bats exit code
 #
 # Arguments:
-#   $1 - Path to captured bats TAP output file
+#   None
+#
+# Outputs:
+#   Bats result details to stdout
+#
+# Returns:
+#   None
+#
+# Usage:
+#   print_summary_bats_results
+#
+#######################################
+function print_summary_bats_results {
+    if [[ ${#BATS_FAILED_TESTS[@]} -gt 0 ]]; then
+        echo "❌ Bats test failures (${#BATS_FAILED_TESTS[@]}):"
+        for test in "${BATS_FAILED_TESTS[@]}"; do
+            echo "  - $test"
+        done
+        if [[ -n $BATS_SUMMARY ]]; then
+            echo "  Summary: $BATS_SUMMARY"
+        fi
+        echo ""
+    elif [[ ${BATS_EXIT_CODE:-0} -ne 0 ]]; then
+        echo "❌ Bats tests did not complete successfully (exit ${BATS_EXIT_CODE})"
+        if [[ -n $BATS_SUMMARY ]]; then
+            echo "  Summary: $BATS_SUMMARY"
+        else
+            echo "  Summary: no TAP summary captured (run may have been interrupted)"
+        fi
+        echo ""
+    fi
+}
+
+#######################################
+
+#######################################
+# print_summary_overall_result: Print warnings and final outcome
+#
+# Description:
+#   Print scripts with warnings and the overall pass/fail message.
+#
+# Globals:
+#   WARNING_SCRIPTS_LIST - List of warning scripts
+#   FAILED_SCRIPTS - Failed scripts counter
+#   BATS_FAILED_TESTS - Failing bats test entries
+#   BATS_EXIT_CODE - Last bats exit code
+#   WARNINGS_COUNT - Warnings counter
+#
+# Arguments:
+#   None
+#
+# Outputs:
+#   Final outcome to stdout
+#
+# Returns:
+#   None
+#
+# Usage:
+#   print_summary_overall_result
+#
+#######################################
+function print_summary_overall_result {
+    if [[ ${#WARNING_SCRIPTS_LIST[@]} -gt 0 ]]; then
+        echo "⚠️  Scripts with warnings:"
+        for script in "${WARNING_SCRIPTS_LIST[@]}"; do
+            echo "  - $script"
+        done
+        echo ""
+    fi
+
+    if [[ $FAILED_SCRIPTS -eq 0 && ${#BATS_FAILED_TESTS[@]} -eq 0 && ${BATS_EXIT_CODE:-0} -eq 0 ]]; then
+        if [[ $WARNINGS_COUNT -eq 0 ]]; then
+            echo "🎉 All scripts passed validation with no warnings!"
+        else
+            echo "✅ All scripts passed validation (with $WARNINGS_COUNT warnings)"
+        fi
+        return
+    fi
+
+    local failure_parts=()
+    if [[ $FAILED_SCRIPTS -gt 0 ]]; then
+        failure_parts+=("$FAILED_SCRIPTS script(s)")
+    fi
+    if [[ ${#BATS_FAILED_TESTS[@]} -gt 0 ]]; then
+        failure_parts+=("${#BATS_FAILED_TESTS[@]} bats test(s)")
+    elif [[ ${BATS_EXIT_CODE:-0} -ne 0 ]]; then
+        failure_parts+=("incomplete bats run (exit ${BATS_EXIT_CODE})")
+    fi
+    local joined=""
+    if [[ ${#failure_parts[@]} -eq 2 ]]; then
+        joined="${failure_parts[0]} and ${failure_parts[1]}"
+    elif [[ ${#failure_parts[@]} -eq 1 ]]; then
+        joined="${failure_parts[0]}"
+    fi
+    echo "❌ Validation failed: $joined"
+}
+
+#######################################
+
+#######################################
+# print_summary_script_lists: Print passed and failed script lists
+#
+# Description:
+#   Print human-readable lists of scripts that passed or failed validation.
+#
+# Globals:
+#   PASSED_SCRIPTS_LIST - List of passed scripts
+#   FAILED_SCRIPTS_LIST - List of failed scripts
+#
+# Arguments:
+#   None
+#
+# Outputs:
+#   Script lists to stdout
+#
+# Returns:
+#   None
+#
+# Usage:
+#   print_summary_script_lists
+#
+#######################################
+function print_summary_script_lists {
+    if [[ ${#PASSED_SCRIPTS_LIST[@]} -gt 0 ]]; then
+        echo "✅ Scripts that passed all validations:"
+        for script in "${PASSED_SCRIPTS_LIST[@]}"; do
+            echo "  - $script"
+        done
+        echo ""
+    fi
+
+    if [[ ${#FAILED_SCRIPTS_LIST[@]} -gt 0 ]]; then
+        echo "❌ Scripts that failed validation:"
+        for script in "${FAILED_SCRIPTS_LIST[@]}"; do
+            echo "  - $script"
+        done
+        echo ""
+    fi
+}
+
+#######################################
+
+#######################################
+# print_summary_statistics: Print validation counters
+#
+# Description:
+#   Print total, passed, failed, bats, and warning counts for the run.
+#
+# Globals:
+#   TOTAL_SCRIPTS - Total scripts counter
+#   PASSED_SCRIPTS - Passed scripts counter
+#   FAILED_SCRIPTS - Failed scripts counter
+#   WARNINGS_COUNT - Warnings counter
+#   BATS_FAILED_TESTS - Failing bats test entries
+#   BATS_EXIT_CODE - Last bats exit code
+#
+# Arguments:
+#   None
+#
+# Outputs:
+#   Summary statistics to stdout
+#
+# Returns:
+#   None
+#
+# Usage:
+#   print_summary_statistics
+#
+#######################################
+function print_summary_statistics {
+    echo "📊 Statistics:"
+    echo "  Total scripts validated: $TOTAL_SCRIPTS"
+    echo "  Scripts passed: $PASSED_SCRIPTS"
+    echo "  Scripts failed: $FAILED_SCRIPTS"
+    if [[ ${#BATS_FAILED_TESTS[@]} -gt 0 ]]; then
+        echo "  Bats test failures: ${#BATS_FAILED_TESTS[@]}"
+    elif [[ ${BATS_EXIT_CODE:-0} -ne 0 ]]; then
+        echo "  Bats exit code: ${BATS_EXIT_CODE}"
+    fi
+    echo "  Warnings issued: $WARNINGS_COUNT"
+    echo ""
+}
+
+#######################################
+
+#######################################
+# record_script_validation_result: Update counters after validation
+#
+# Description:
+#   Record pass/fail lists and warning entries from validation outcome flags.
+#
+# Globals:
+#   PASSED_SCRIPTS - Passed scripts counter
+#   FAILED_SCRIPTS - Failed scripts counter
+#   PASSED_SCRIPTS_LIST - List of passed scripts
+#   FAILED_SCRIPTS_LIST - List of failed scripts
+#   WARNING_SCRIPTS_LIST - List of warning scripts
+#
+# Arguments:
+#   $1 - Script path
+#   $2 - Script basename
+#   $3 - Relative path for reporting
+#   $4 - validation_passed flag (true/false string)
+#   $5 - shellcheck_passed flag (true/false string)
 #
 # Outputs:
 #   None
@@ -841,64 +1355,30 @@ function print_bats_output {
 #   None
 #
 # Usage:
-#   collect_bats_failures_from_tap "/tmp/bats.out"
+#   record_script_validation_result "$script" "$script_name" "$relative_path" true true
 #
 #######################################
-function collect_bats_failures_from_tap {
-    local output_file="$1"
-    local current_test=""
-    local current_file=""
-    local ok_count=0
-    local fail_count=0
-    local skip_count=0
-    local total_count=0
+function record_script_validation_result {
+    local script="$1"
+    local script_name="$2"
+    local relative_path="$3"
+    local validation_passed="$4"
+    local shellcheck_passed="$5"
 
-    BATS_FAILED_TESTS=()
-    BATS_SUMMARY=""
-
-    while IFS= read -r line || [[ -n $line ]]; do
-        case "$line" in
-            1..*)
-                total_count="${line#1..}"
-                ;;
-            ok\ *)
-                ok_count=$((ok_count + 1))
-                if [[ $line == *"# skip"* ]]; then
-                    skip_count=$((skip_count + 1))
-                fi
-                ;;
-            not\ ok\ *)
-                fail_count=$((fail_count + 1))
-                current_test="${line#not ok }"
-                current_test="${current_test#* }"
-                ;;
-            \#\ \(in\ test\ file\ *)
-                current_file="${line#\# (in test file }"
-                current_file="${current_file%%, line*}"
-                if [[ -n $current_test && -n $current_file ]]; then
-                    BATS_FAILED_TESTS+=("${current_file}: ${current_test}")
-                    current_test=""
-                fi
-                ;;
-        esac
-    done < "$output_file"
-
-    if [[ $total_count -gt 0 ]]; then
-        if [[ $fail_count -eq 0 ]]; then
-            if [[ $skip_count -gt 0 ]]; then
-                BATS_SUMMARY="${total_count} tests, 0 failures, ${skip_count} skipped"
-            else
-                BATS_SUMMARY="${total_count} tests passed"
-            fi
-        else
-            if [[ $skip_count -gt 0 ]]; then
-                BATS_SUMMARY="${total_count} tests, ${fail_count} failures, ${skip_count} skipped"
-            else
-                BATS_SUMMARY="${total_count} tests, ${fail_count} failures"
-            fi
+    if [[ $validation_passed == "true" ]]; then
+        custom_log "INFO" "✅ All validations passed: $script_name"
+        PASSED_SCRIPTS_LIST+=("$relative_path")
+        PASSED_SCRIPTS=$((PASSED_SCRIPTS + 1))
+    else
+        if [[ $shellcheck_passed == "false" ]]; then
+            custom_log "ERROR" "❌ Shellcheck failed: $script"
         fi
+        FAILED_SCRIPTS_LIST+=("$relative_path")
+        FAILED_SCRIPTS=$((FAILED_SCRIPTS + 1))
     fi
 }
+
+#######################################
 
 #######################################
 # run_bats_tests: Run bats test files given as arguments
@@ -982,6 +1462,67 @@ function run_bats_tests {
 }
 
 #######################################
+
+#######################################
+# run_script_validation_steps: Run per-script validation checks
+#
+# Description:
+#   Execute shebang, permission, syntax, shellcheck, and doc checks.
+#
+# Globals:
+#   None
+#
+# Arguments:
+#   $1 - Script path
+#   $2 - Nameref to validation_passed flag (true/false string)
+#   $3 - Nameref to shellcheck_passed flag (true/false string)
+#
+# Outputs:
+#   None
+#
+# Returns:
+#   0 on success
+#
+# Usage:
+#   run_script_validation_steps "$script" validation_passed shellcheck_passed
+#
+#######################################
+function run_script_validation_steps {
+    local script="$1"
+    local -n _validation_passed="$2"
+    local -n _shellcheck_passed="$3"
+
+    auto_fix_formatting "$script"
+
+    if ! validate_shebang "$script"; then
+        _validation_passed=false
+    fi
+    if ! validate_permissions "$script"; then
+        _validation_passed=false
+    fi
+    if ! validate_syntax "$script"; then
+        _validation_passed=false
+    fi
+    if ! run_shellcheck "$script"; then
+        _shellcheck_passed=false
+        _validation_passed=false
+    fi
+
+    if ! auto_fix_function_doc_order "$script"; then
+        _validation_passed=false
+    fi
+
+    if ! validate_function_docs "$script"; then
+        _validation_passed=false
+    fi
+
+    analyze_functions "$script"
+    check_complexity "$script"
+}
+
+#######################################
+
+#######################################
 # run_shellcheck: Function to run shellcheck
 #
 # Description:
@@ -1020,10 +1561,84 @@ function run_shellcheck {
             echo "Shellcheck output:"
             # shellcheck disable=SC2001
             echo "$shellcheck_output" | sed 's/^/  /'
+        else
+            # shellcheck disable=SC2001
+            echo "$shellcheck_output" | sed 's/^/  /' >&2
         fi
         return 1
     fi
 }
+
+#######################################
+
+#######################################
+# validate_function_docs: Opt-in Google-style function documentation checks
+#
+# Description:
+#   When CHECK_FUNCTION_DOCS is true, verify each function has a preceding doc
+#   block with Globals, Arguments, Outputs, and Returns (explicit None allowed).
+#
+# Globals:
+#   CHECK_FUNCTION_DOCS - Enable function doc block section checks
+#   VERBOSE - Enable verbose output
+#
+# Arguments:
+#   $1 - Script path
+#
+# Outputs:
+#   None
+#
+# Returns:
+#   0 on success, 1 on failure
+#
+# Usage:
+#   validate_function_docs "/path/to/script.sh"
+#
+#######################################
+function validate_function_docs {
+    local script="$1"
+    local script_name
+    script_name="$(basename "$script")"
+
+    if [[ $CHECK_FUNCTION_DOCS != "true" ]]; then
+        return 0
+    fi
+
+    if [[ $script == *.bats ]]; then
+        return 0
+    fi
+
+    custom_log "DEBUG" "Validating function doc blocks for: $script_name"
+
+    local line_num func_sig doc_chunk issue
+    local -a missing=()
+    while IFS= read -r line_num; do
+        [[ -z ${line_num} ]] && continue
+        func_sig="$(sed -n "${line_num}p" "$script")"
+        doc_chunk="$(extract_function_doc_block "$script" "$line_num")"
+
+        if ! grep -E '^# .+' <<< "${doc_chunk}" | grep -qvE '^# (Globals|Arguments|Outputs|Returns):'; then
+            missing+=("$(format_function_doc_issue "$script" "$line_num" "missing function description line")")
+            continue
+        fi
+
+        while IFS= read -r issue; do
+            [[ -z ${issue} ]] && continue
+            missing+=("$(format_function_doc_issue "$script" "$line_num" "$issue")")
+        done < <(function_doc_section_issues "${doc_chunk}" "${func_sig}")
+    done < <(grep -nE '^function [a-zA-Z_][a-zA-Z0-9_]*(\(\))? \{' "$script" 2> /dev/null | cut -d: -f1 || true)
+
+    if [[ ${#missing[@]} -gt 0 ]]; then
+        custom_log "ERROR" "❌ Function doc block validation failed: $script_name"
+        printf '%s\n' "${missing[@]}" >&2
+        return 1
+    fi
+
+    custom_log "DEBUG" "✅ Function doc block validation passed: $script_name"
+    return 0
+}
+
+#######################################
 
 #######################################
 # validate_permissions: Function to validate file permissions
@@ -1074,10 +1689,12 @@ function validate_permissions {
 }
 
 #######################################
+
+#######################################
 # validate_script: Function to validate a single script
 #
 # Description:
-#   Function to validate a single script
+#   Orchestrate accessibility checks, validation steps, and result recording.
 #
 # Globals:
 #   WORKSPACE_ROOT - Workspace root directory
@@ -1112,78 +1729,70 @@ function validate_script {
     # shellcheck disable=SC2295
     relative_path="${script#$WORKSPACE_ROOT/}"
     local validation_passed=true
+    local shellcheck_passed=true
 
     TOTAL_SCRIPTS=$((TOTAL_SCRIPTS + 1))
-
     custom_log "INFO" "Validating script: $relative_path"
 
-    # Skip if it's a directory (should not happen after filtering, but safety check)
-    if [[ -d $script ]]; then
-        custom_log "DEBUG" "Skipping directory: $script_name"
-        TOTAL_SCRIPTS=$((TOTAL_SCRIPTS - 1)) # Don't count directories
-        return 0
-    fi
-
-    # Check if file exists and is readable
-    if [[ ! -f $script ]] || [[ ! -r $script ]]; then
-        custom_log "ERROR" "❌ Script not accessible: $script_name"
-        FAILED_SCRIPTS_LIST+=("$relative_path (not accessible)")
-        FAILED_SCRIPTS=$((FAILED_SCRIPTS + 1))
+    if ! validate_script_accessible "$script" "$script_name" "$relative_path"; then
         return 1
     fi
 
-    # Apply auto-formatting with shfmt if in fix mode
-    auto_fix_formatting "$script"
+    run_script_validation_steps "$script" validation_passed shellcheck_passed
 
-    # Validate shebang
-    if ! validate_shebang "$script"; then
-        validation_passed=false
-    fi
-
-    # Validate permissions
-    if ! validate_permissions "$script"; then
-        validation_passed=false
-    fi
-
-    # Validate syntax
-    if ! validate_syntax "$script"; then
-        validation_passed=false
-    fi
-
-    # Run shellcheck
-    local shellcheck_passed=true
-    if ! run_shellcheck "$script"; then
-        shellcheck_passed=false
-        validation_passed=false
-    fi
-
-    # Optional project function doc block checks
-    if ! validate_function_docs "$script"; then
-        validation_passed=false
-    fi
-
-    # Analyze functions (verbose mode only)
-    analyze_functions "$script"
-
-    # Check complexity (verbose mode only)
-    check_complexity "$script"
-
-    # Update counters and arrays
-    if [[ $validation_passed == "true" ]]; then
-        custom_log "INFO" "✅ All validations passed: $script_name"
-        PASSED_SCRIPTS_LIST+=("$relative_path")
-        PASSED_SCRIPTS=$((PASSED_SCRIPTS + 1))
-    else
-        custom_log "ERROR" "❌ Validation failed: $script"
-        FAILED_SCRIPTS_LIST+=("$relative_path")
-        FAILED_SCRIPTS=$((FAILED_SCRIPTS + 1))
-    fi
-
-    # Track warnings separately
-    if [[ $shellcheck_passed == "false" ]] && [[ $validation_passed == "true" ]]; then
-        WARNING_SCRIPTS_LIST+=("$relative_path (shellcheck warnings)")
-    fi
+    record_script_validation_result "$script" "$script_name" "$relative_path" "$validation_passed" "$shellcheck_passed"
 }
+
+#######################################
+
+#######################################
+# validate_script_accessible: Verify script path is readable
+#
+# Description:
+#   Skip directories and ensure the target path exists and is readable.
+#
+# Globals:
+#   TOTAL_SCRIPTS - Total scripts counter
+#   FAILED_SCRIPTS - Failed scripts counter
+#   FAILED_SCRIPTS_LIST - List of failed scripts
+#
+# Arguments:
+#   $1 - Script path
+#   $2 - Script basename
+#   $3 - Relative path for reporting
+#
+# Outputs:
+#   None
+#
+# Returns:
+#   0 when accessible, 1 otherwise
+#
+# Usage:
+#   validate_script_accessible "$script" "$script_name" "$relative_path"
+#
+#######################################
+function validate_script_accessible {
+    local script="$1"
+    local script_name="$2"
+    local relative_path="$3"
+
+    if [[ -d $script ]]; then
+        custom_log "DEBUG" "Skipping directory: $script_name"
+        TOTAL_SCRIPTS=$((TOTAL_SCRIPTS - 1))
+        return 1
+    fi
+
+    if [[ -f $script ]] && [[ -r $script ]]; then
+        return 0
+    fi
+
+    custom_log "ERROR" "❌ Script not accessible: $script_name"
+    FAILED_SCRIPTS_LIST+=("$relative_path (not accessible)")
+    FAILED_SCRIPTS=$((FAILED_SCRIPTS + 1))
+    return 1
+}
+
+#######################################
 
 #######################################
 # validate_shebang: Function to validate shebang
@@ -1257,249 +1866,6 @@ function validate_shebang {
 }
 
 #######################################
-# extract_function_doc_block: Read doc comment block immediately above a function
-#
-# Description:
-#   Returns lines from the nearest preceding separator through the line before
-#   the function definition.
-#
-# Globals:
-#   None
-#
-# Arguments:
-#   $1 - Script path
-#   $2 - Function definition line number
-#
-# Outputs:
-#   Doc block lines to stdout
-#
-# Returns:
-#   0 on success
-#
-# Usage:
-#   extract_function_doc_block "/path/to/script.sh" 42
-#
-#######################################
-function extract_function_doc_block {
-    local script="$1"
-    local func_line="$2"
-    local i=$((func_line - 1))
-    local end=$i
-    local start=1
-    local line
-
-    while [[ $i -ge 1 ]]; do
-        line="$(sed -n "${i}p" "$script")"
-        if [[ -z ${line//[[:space:]]/} ]]; then
-            i=$((i - 1))
-            continue
-        fi
-        if [[ ${line} == "#######################################" ]]; then
-            end=$i
-            i=$((i - 1))
-            break
-        fi
-        break
-    done
-
-    while [[ $i -ge 1 ]]; do
-        line="$(sed -n "${i}p" "$script")"
-        if [[ ${line} == "#######################################" ]]; then
-            start=$i
-            break
-        fi
-        i=$((i - 1))
-    done
-
-    sed -n "${start},${end}p" "$script"
-}
-
-#######################################
-# function_doc_section_issues: Report missing Google-style function doc sections
-#
-# Description:
-#   Validates Globals, Arguments, Outputs, and Returns with explicit body lines.
-#
-# Globals:
-#   None
-#
-# Arguments:
-#   $1 - Doc block text
-#   $2 - Function signature reference (for error messages)
-#
-# Outputs:
-#   Issue strings to stdout (one per line)
-#
-# Returns:
-#   0 always
-#
-# Usage:
-#   function_doc_section_issues "${doc_chunk}" "function foo {"
-#
-#######################################
-function function_doc_section_issues {
-    local doc_chunk="$1"
-    local func_ref="$2"
-
-    awk -v func_ref="${func_ref}" '
-        BEGIN {
-            n = split("Globals Arguments Outputs Returns", sections, " ")
-        }
-        {
-            line_count++
-            lines[line_count] = $0
-        }
-        function section_body_missing(sec,    i, in_sec) {
-            in_sec = 0
-            for (i = 1; i <= line_count; i++) {
-                if (lines[i] ~ "^# " sec ":[[:space:]]*$") {
-                    in_sec = 1
-                    continue
-                }
-                if (in_sec == 1) {
-                    if (lines[i] ~ /^# [A-Za-z][A-Za-z ]*:[[:space:]]*$/) {
-                        return 1
-                    }
-                    if (lines[i] ~ /^#[[:space:]]+[^[:space:]#]/) {
-                        return 0
-                    }
-                }
-            }
-            return 1
-        }
-        END {
-            for (i = 1; i <= n; i++) {
-                sec = sections[i]
-                found = 0
-                for (j = 1; j <= line_count; j++) {
-                    if (lines[j] ~ "^# " sec ":[[:space:]]*$") {
-                        found = 1
-                        break
-                    }
-                }
-                if (!found) {
-                    print "missing " sec " section"
-                    continue
-                }
-                if (section_body_missing(sec)) {
-                    print sec " section has no body (use None)"
-                }
-            }
-        }
-    ' <<< "${doc_chunk}"
-}
-
-#######################################
-# format_function_doc_issue: Format a function doc issue for terminal navigation
-#
-# Globals:
-#   None
-#
-# Arguments:
-#   $1 - Script path
-#   $2 - Line number
-#   $3 - Issue message
-#
-# Outputs:
-#   file:line: message to stdout
-#
-# Returns:
-#   0 on success
-#######################################
-function normalize_path {
-    local path="$1"
-
-    if [[ -z $path ]]; then
-        return 1
-    fi
-
-    if [[ -e $path ]]; then
-        realpath "$path"
-        return 0
-    fi
-
-    local dir base
-    dir="$(dirname "$path")"
-    base="$(basename "$path")"
-    if [[ -d $dir ]]; then
-        printf '%s/%s' "$(realpath "$dir")" "$base"
-    else
-        realpath -m "$path"
-    fi
-}
-
-function format_function_doc_issue {
-    local script
-    script="$(normalize_path "$1")"
-    printf '%s:%s: %s' "$script" "$2" "$3"
-}
-
-#######################################
-# validate_function_docs: Opt-in Google-style function documentation checks
-#
-# Description:
-#   When CHECK_FUNCTION_DOCS is true, verify each function has a preceding doc
-#   block with Globals, Arguments, Outputs, and Returns (explicit None allowed).
-#
-# Globals:
-#   CHECK_FUNCTION_DOCS - Enable function doc block section checks
-#   VERBOSE - Enable verbose output
-#
-# Arguments:
-#   $1 - Script path
-#
-# Outputs:
-#   None
-#
-# Returns:
-#   0 on success, 1 on failure
-#
-# Usage:
-#   validate_function_docs "/path/to/script.sh"
-#
-#######################################
-function validate_function_docs {
-    local script="$1"
-    local script_name
-    script_name="$(basename "$script")"
-
-    if [[ $CHECK_FUNCTION_DOCS != "true" ]]; then
-        return 0
-    fi
-
-    if [[ $script == *.bats ]]; then
-        return 0
-    fi
-
-    custom_log "DEBUG" "Validating function doc blocks for: $script_name"
-
-    local line_num func_sig doc_chunk issue
-    local -a missing=()
-    while IFS= read -r line_num; do
-        [[ -z ${line_num} ]] && continue
-        func_sig="$(sed -n "${line_num}p" "$script")"
-        doc_chunk="$(extract_function_doc_block "$script" "$line_num")"
-
-        if ! grep -E '^# .+' <<< "${doc_chunk}" | grep -qvE '^# (Globals|Arguments|Outputs|Returns):'; then
-            missing+=("$(format_function_doc_issue "$script" "$line_num" "missing function description line")")
-            continue
-        fi
-
-        while IFS= read -r issue; do
-            [[ -z ${issue} ]] && continue
-            missing+=("$(format_function_doc_issue "$script" "$line_num" "$issue")")
-        done < <(function_doc_section_issues "${doc_chunk}" "${func_sig}")
-    done < <(grep -nE '^function [a-zA-Z_][a-zA-Z0-9_]*(\(\))? \{' "$script" 2> /dev/null | cut -d: -f1 || true)
-
-    if [[ ${#missing[@]} -gt 0 ]]; then
-        custom_log "ERROR" "❌ Function doc block validation failed: $script_name"
-        printf '%s\n' "${missing[@]}" >&2
-        return 1
-    fi
-
-    custom_log "DEBUG" "✅ Function doc block validation passed: $script_name"
-    return 0
-}
 
 #######################################
 # validate_syntax: Function to validate script syntax
@@ -1550,6 +1916,8 @@ function validate_syntax {
         return 1
     fi
 }
+
+#######################################
 
 #######################################
 # main: Main process

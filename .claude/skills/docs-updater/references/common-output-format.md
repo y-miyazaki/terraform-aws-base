@@ -1,34 +1,37 @@
-# docs-updater Report Format
+# docs-updater Result Format
+
+Interactive and hook runs use this structure. Loop runs add session metrics and PR sections per [common-output-format-loop.md](common-output-format-loop.md).
 
 ```markdown
 # docs-updater Result
 
+## Overview
+
+<trigger → problem → action; 1–2 plain-language sentences>
+
 ## Summary
 
-- Status: <updated | skipped | exceeded-scope>
-- Files updated: <count>
-- Files skipped: <count>
+### Changes
 
-## Changes
+| File | What was wrong | What changed |
+| ---- | -------------- | ------------ |
+| `path/to/doc.md` | <stale/missing reference> | <minimal patch summary> |
 
-| File             | Action  | Detail                              |
-| ---------------- | ------- | ----------------------------------- |
-| `path/to/doc.md` | Updated | Replaced old workflow path with new |
-| `mkdocs.yml`     | Updated | Added nav entry under Tutorials     |
+### Skipped
 
-## Skipped Items
+- <count> files: <shared reason>   <!-- or table when enumerating specific paths -->
 
-- <count> files: <shared reason>
+## Verification
 
-## Recommendations
-
-- <actionable suggestion if scope was exceeded>
+| Check | Result |
+| ----- | ------ |
+| <markdown-validation or link check> | <pass \| fail \| skip> |
 ```
 
 ## Rules
 
-- If status is `skipped` (no documentation update required), output only Summary with status and a one-line reason.
-- If status is `exceeded-scope`, list affected files and recommend docs-creator skill or manual review.
-- In Changes table, list only files that were actually modified.
-- In Skipped Items, group files by reason (e.g., "52 files: no references to changed paths") — do not enumerate each one.
-- Summarize at section level — do not list individual line changes.
+- If nothing to update: **Overview** states skip reason; omit empty **Changes** / **Skipped** subsections.
+- In **Changes**, list only files actually modified.
+- **Skipped** paths MUST NOT appear in **Changes**.
+- **List vs table:** group skipped files by reason in a bullet; use a table when listing 2+ distinct path/reason pairs.
+- Do not emit Outcome lines or duplicate file lists outside **Changes**.

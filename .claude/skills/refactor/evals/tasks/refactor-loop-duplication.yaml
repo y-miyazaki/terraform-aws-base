@@ -1,0 +1,39 @@
+id: refactor-loop-duplication-001
+name: refactor loop path surveys all hints then applies
+description: Validate loop path surveys every hint internally and reports apply shape in one run.
+tags:
+  - quality
+  - loop-path
+  - classification
+inputs:
+  prompt: >-
+    Use refactor (loop path) at L2. Survey all duplication_block hints in context
+    internally, then apply every actionable candidate. Emit Refactor Session Report
+    with Session Metrics for verifier/logs, plus apply PR sections from
+    pr-body-template.md: ## Overview, ## Summary (### Changes only — no ### Candidates),
+    and ## Verification per common-output-format-loop.md.
+  context:
+    commit_range: eval0001..eval0002
+    level: L2
+    skip: false
+    hints:
+      - kind: duplication_block
+        path: scripts/example.sh
+        detail: lines 10-17 duplicate scripts/other.sh:40-47
+        lines: 8
+      - kind: duplication_block
+        path: scripts/helper.sh
+        detail: lines 3-10 duplicate scripts/util.sh:20-27
+        lines: 8
+expected:
+  output_contains:
+    - "### Changes"
+    - "## Verification"
+    - Session Metrics
+    - "## Overview"
+    - "## Summary"
+  output_not_contains:
+    - "### Candidates"
+    - "### Watch"
+  outcomes:
+    - type: task_completed

@@ -1,0 +1,29 @@
+id: changelog-l1-001
+name: changelog L1 emits report without editing changelog
+description: Validate L1 processes commits in report only without file edits.
+tags:
+  - quality
+  - level
+inputs:
+  prompt: >-
+    Use changelog at L1. Process the injected feat commit in the report
+    with Commits Processed and Summary sections. Do not edit CHANGELOG.md. Emit PR ## Overview and ## Summary plus Session Metrics table with Commits Processed and Skipped Commits sections.
+  context:
+    changelog_file: CHANGELOG.md
+    changelog_exists: true
+    commit_range: eval0001..eval0002
+    level: L1
+    skip: false
+    commits:
+      - sha: eval0002
+        type: feat
+        scope: changelog
+        breaking: false
+        subject: add changelog workflow
+expected:
+  output_contains:
+    - Commits Processed
+    - Summary
+    - L1
+  outcomes:
+    - type: task_completed

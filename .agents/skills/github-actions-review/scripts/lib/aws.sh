@@ -620,6 +620,68 @@ function get_kms_name {
 }
 
 #######################################
+# resolve_ec2_tagged_resource_name: Resolve EC2 resource ID to display name
+#
+# Description:
+#   Shared helper for Security Group, Subnet, and VPC name resolution.
+#
+# Globals:
+#   None
+#
+# Arguments:
+#   $1 - Resource ID
+#   $2 - AWS region (optional, defaults to current region)
+#   $3 - ID regex pattern (e.g. ^sg-[0-9a-fA-F]+$)
+#   $4 - AWS EC2 describe subcommand (e.g. describe-security-groups)
+#   $5 - AWS ID flag (e.g. --group-ids)
+#   $6 - jq collection key (e.g. SecurityGroups)
+#   $7 - jq fallback field when Name tag is absent (e.g. GroupName)
+#
+# Outputs:
+#   Resource name or original ID to stdout
+#
+# Returns:
+#   0 on success, 1 when AWS call fails or ID is empty
+#
+#######################################
+function resolve_ec2_tagged_resource_name {
+    local resource_id="$1"
+    local region="${2:-$(get_aws_region)}"
+    local id_pattern="$3"
+    local describe_subcommand="$4"
+    local id_flag="$5"
+    local jq_collection="$6"
+    local jq_fallback_field="$7"
+
+    if [[ -z $resource_id ]]; then
+        echo "N/A"
+        return 1
+    fi
+
+    if [[ ! $resource_id =~ $id_pattern ]]; then
+        echo "$resource_id"
+        return 0
+    fi
+
+    local cmd out resource_name jq_program
+    cmd=(aws ec2 "${describe_subcommand}" "${id_flag}" "$resource_id" --region "$region" --output json)
+    if out=$(aws_safe_exec "${cmd[*]}" 2> /dev/null); then
+        jq_program=$(printf '.%s[0] | (.Tags[]? | select(.Key|ascii_downcase=="name") | .Value) // .%s // ""' \
+            "$jq_collection" "$jq_fallback_field")
+        resource_name=$(echo "$out" | jq -r "${jq_program}" 2> /dev/null || true)
+        if [[ -n $resource_name ]]; then
+            echo "$resource_name"
+            return 0
+        fi
+        echo "$resource_id"
+        return 0
+    fi
+
+    echo "$resource_id"
+    return 1
+}
+
+#######################################
 # get_security_group_name: Resolve Security Group ID to name
 #
 # Description:
@@ -643,40 +705,7 @@ function get_kms_name {
 #
 #######################################
 function get_security_group_name {
-    local sg_id="$1"
-    local region="${2:-$(get_aws_region)}"
-
-    if [[ -z $sg_id ]]; then
-        echo "N/A"
-        return 1
-    fi
-
-    # Only attempt to resolve well-formed SG IDs
-    if [[ ! $sg_id =~ ^sg-[0-9a-fA-F]+$ ]]; then
-        # Not an SG id; return as-is
-        echo "$sg_id"
-        return 0
-    fi
-
-    local cmd out
-    cmd=(aws ec2 describe-security-groups --group-ids "$sg_id" --region "$region" --output json)
-    if out=$(aws_safe_exec "${cmd[*]}" 2> /dev/null); then
-        # Prefer Tag 'Name' if present, otherwise GroupName
-        local sg_name
-        # Prefer Tag 'Name' if present (case-insensitive), otherwise GroupName
-        sg_name=$(echo "$out" | jq -r '.SecurityGroups[0] | (.Tags[]? | select(.Key|ascii_downcase=="name") | .Value) // .GroupName // ""' 2> /dev/null || true)
-        if [[ -n $sg_name ]]; then
-            echo "$sg_name"
-            return 0
-        fi
-        # Fallback to returning the ID
-        echo "$sg_id"
-        return 0
-    else
-        # If AWS call failed, return the ID to avoid breaking consumers
-        echo "$sg_id"
-        return 1
-    fi
+    resolve_ec2_tagged_resource_name "$1" "${2:-}" '^sg-[0-9a-fA-F]+$' describe-security-groups --group-ids SecurityGroups GroupName
 }
 
 #######################################
@@ -703,40 +732,7 @@ function get_security_group_name {
 #
 #######################################
 function get_subnet_name {
-    local subnet_id="$1"
-    local region="${2:-$(get_aws_region)}"
-
-    if [[ -z $subnet_id ]]; then
-        echo "N/A"
-        return 1
-    fi
-
-    # Only attempt to resolve well-formed Subnet IDs
-    if [[ ! $subnet_id =~ ^subnet-[0-9a-fA-F]+$ ]]; then
-        # Not a Subnet id; return as-is
-        echo "$subnet_id"
-        return 0
-    fi
-
-    local cmd out
-    cmd=(aws ec2 describe-subnets --subnet-ids "$subnet_id" --region "$region" --output json)
-    if out=$(aws_safe_exec "${cmd[*]}" 2> /dev/null); then
-        # Prefer Tag 'Name' if present (case-insensitive), otherwise fall back to SubnetId
-        # Some tools/taggers may use 'name' or different casings, so use ascii_downcase
-        local subnet_name
-        subnet_name=$(echo "$out" | jq -r '.Subnets[0] | (.Tags[]? | select(.Key|ascii_downcase=="name") | .Value) // .SubnetId // ""' 2> /dev/null || true)
-        if [[ -n $subnet_name ]]; then
-            echo "$subnet_name"
-            return 0
-        fi
-        # Fallback to returning the ID
-        echo "$subnet_id"
-        return 0
-    else
-        # If AWS call failed, return the ID to avoid breaking consumers
-        echo "$subnet_id"
-        return 1
-    fi
+    resolve_ec2_tagged_resource_name "$1" "${2:-}" '^subnet-[0-9a-fA-F]+$' describe-subnets --subnet-ids Subnets SubnetId
 }
 
 #######################################
@@ -806,40 +802,7 @@ function get_resource_name_from_arn {
 #
 #######################################
 function get_vpc_name {
-    local vpc_id="$1"
-    local region="${2:-$(get_aws_region)}"
-
-    if [[ -z $vpc_id ]]; then
-        echo "N/A"
-        return 1
-    fi
-
-    # Only attempt to resolve well-formed VPC IDs
-    if [[ ! $vpc_id =~ ^vpc-[0-9a-fA-F]+$ ]]; then
-        # Not a VPC id; return as-is
-        echo "$vpc_id"
-        return 0
-    fi
-
-    local cmd out
-    cmd=(aws ec2 describe-vpcs --vpc-ids "$vpc_id" --region "$region" --output json)
-    if out=$(aws_safe_exec "${cmd[*]}" 2> /dev/null); then
-        # Prefer Tag 'Name' if present (case-insensitive), otherwise fall back to VpcId
-        # The Name tag sometimes uses different casings (e.g. "name"), so use ascii_downcase
-        local vpc_name
-        vpc_name=$(echo "$out" | jq -r '.Vpcs[0] | (.Tags[]? | select(.Key|ascii_downcase=="name") | .Value) // .VpcId // ""' 2> /dev/null || true)
-        if [[ -n $vpc_name ]]; then
-            echo "$vpc_name"
-            return 0
-        fi
-        # Fallback to returning the ID
-        echo "$vpc_id"
-        return 0
-    else
-        # If AWS call failed, return the ID to avoid breaking consumers
-        echo "$vpc_id"
-        return 1
-    fi
+    resolve_ec2_tagged_resource_name "$1" "${2:-}" '^vpc-[0-9a-fA-F]+$' describe-vpcs --vpc-ids Vpcs VpcId
 }
 
 #######################################

@@ -35,10 +35,10 @@ fi
 #   their parent directories. Each git command is guarded with || true to
 #   prevent pipefail from terminating the script.
 #
-# Arguments:
+# Globals:
 #   None
 #
-# Globals:
+# Arguments:
 #   None
 #
 # Outputs:
@@ -66,11 +66,11 @@ function get_changed_dirs {
 #   Identifies the AI agent from HOOK_STDIN_DATA structure, then returns
 #   the agent-specific response format for Stop events.
 #
-# Arguments:
-#   $1 - reason: Human-readable description of what failed and how to fix it
-#
 # Globals:
 #   None
+#
+# Arguments:
+#   $1 - reason: Human-readable description of what failed and how to fix it
 #
 # Outputs:
 #   Writes JSON to stdout or errors to stderr
@@ -217,10 +217,10 @@ function report_failure {
 #   config resolution strategy. pre-commit cannot implement this due to
 #   tool constraints and uses root config only.
 #
-# Arguments:
+# Globals:
 #   None
 #
-# Globals:
+# Arguments:
 #   None
 #
 # Outputs:

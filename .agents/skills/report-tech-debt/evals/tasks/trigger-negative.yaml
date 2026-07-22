@@ -1,0 +1,31 @@
+id: report-tech-debt-trigger-negative-001
+name: report-tech-debt rejects code-fix requests
+description: >-
+  Validate report-tech-debt does not apply refactors or dependency upgrades;
+  report-only scope is preserved.
+tags:
+  - quality
+  - trigger-negative
+  - boundary-guardrail
+inputs:
+  prompt: >-
+    Use report-tech-debt. The user asks to extract the shared validator and bump
+    the EOL dependency now. Classify injected signals only; do not edit application
+    or lockfile paths. Note the fix request as out of scope in Summary. Emit PR ## Overview and ## Summary plus Session Metrics table with Critical, High-Priority, Watch, and Noise / Ignore sections including Category fields.
+  context:
+    level: L2
+    report_file: docs/report/report-tech-debt/2026-07-19.md
+    skip: false
+    signals:
+      - kind: eol_hint
+        path: evals/files/go.mod.txt
+        line: 5
+        snippet: "require github.com/old/lib v1.2.3"
+        source: go_mod
+        hint: dependency_version
+expected:
+  output_contains:
+    - out of scope
+    - Watch
+  outcomes:
+    - type: task_completed

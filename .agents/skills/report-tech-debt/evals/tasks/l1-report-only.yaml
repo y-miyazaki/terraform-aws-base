@@ -1,0 +1,33 @@
+id: report-tech-debt-l1-001
+name: report-tech-debt L1 emits summary without report file
+description: >-
+  Validate L1 classifies with Category labels but does not write report_file.
+tags:
+  - quality
+  - level
+  - edge-case
+inputs:
+  prompt: >-
+    Use report-tech-debt at L1. Classify the injected signal with Category
+    code_quality under High-Priority (or Watch if evidence is weak). Emit the
+    full session summary including Critical, High-Priority, Watch, Noise / Ignore,
+    and Summary. Do not write report_file. Emit PR ## Overview and ## Summary plus Session Metrics table with Critical, High-Priority, Watch, and Noise / Ignore sections including Category fields.
+  context:
+    level: L1
+    report_file: docs/report/report-tech-debt/2026-07-19.md
+    skip: false
+    signals:
+      - kind: todo_comment
+        path: evals/files/sample_service.go.txt
+        line: 5
+        snippet: "TODO: extract shared validator used by HandleCreate and HandleUpdate"
+        hint: code_quality
+    hotspots: []
+expected:
+  output_contains:
+    - code_quality
+    - High-Priority
+    - L1
+    - Summary
+  outcomes:
+    - type: task_completed
