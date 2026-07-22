@@ -11,6 +11,6 @@
     "@aws-sdk/client-s3": "3.1080.0"
   },
   "overrides": {
-    "fast-xml-parser": "5.9.3"
+    "fast-xml-parser": "5.10.1"
   }
 }
