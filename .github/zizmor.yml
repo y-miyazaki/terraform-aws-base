@@ -2,6 +2,14 @@
 # https://docs.zizmor.sh/configuration/
 
 rules:
+  # copilot-requests is required for Cursor agent loops; valid scope not yet in zizmor's catalog
+  excessive-permissions:
+    ignore:
+      - ci-loop-agent.yaml
+      - on-loop-changelog.yaml
+      - on-loop-ci-sweeper.yaml
+      - on-loop-docs-triage.yaml
+
   # Ignore github-env warning in install-github-release composite action
   # This is intentional for setting up PATH
   github-env:
@@ -13,11 +21,9 @@ rules:
   template-injection:
     ignore:
       - cd-aws-go-registry.yaml
-      - reusable-cd-aws-go-registry.yaml
 
   # Ignore cache-poisoning in Go release workflow
   # Go module/build cache doesn't affect release artifacts produced by goreleaser
   cache-poisoning:
     ignore:
       - cd-go-releaser.yaml
-      - reusable-cd-go-releaser.yaml
