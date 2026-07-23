@@ -1,20 +1,18 @@
 id: refactor-loop-duplication-001
-name: refactor loop path surveys all hints then applies
-description: Validate loop path surveys every hint internally and reports apply shape in one run.
+name: refactor automation path surveys all hints then applies
+description: Validate automation path surveys every hint internally and reports apply shape when may_edit is true.
 tags:
   - quality
-  - loop-path
+  - automation
   - classification
 inputs:
   prompt: >-
-    Use refactor (loop path) at L2. Survey all duplication_block hints in context
-    internally, then apply every actionable candidate. Emit Refactor Session Report
-    with Session Metrics for verifier/logs, plus apply PR sections from
-    pr-body-template.md: ## Overview, ## Summary (### Changes only — no ### Candidates),
-    and ## Verification per common-output-format-loop.md.
+    Use refactor (automation path) with may_edit true. Survey all duplication_block hints
+    in context internally, then apply every actionable candidate. Emit apply PR sections
+    from pr-body-template.md: ## Overview, ## Summary (### Changes only — no ### Candidates),
+    ## Verification, and ## Session Metrics per category-automation-envelope.md.
   context:
     commit_range: eval0001..eval0002
-    level: L2
     skip: false
     hints:
       - kind: duplication_block
@@ -32,8 +30,5 @@ expected:
     - Session Metrics
     - "## Overview"
     - "## Summary"
-  output_not_contains:
-    - "### Candidates"
-    - "### Watch"
   outcomes:
     - type: task_completed

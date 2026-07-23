@@ -93,6 +93,20 @@ Examples:
 
 ---
 
+**S-07 (MUST): Portable Reference Paths**
+
+Check: Do SKILL.md and `references/` link only to files inside the same skill directory (`references/`, `assets/`, `scripts/`) or to absolute `https://` URLs?
+Why: APM packages ship per skill. Paths to repository `docs/`, `../other-skill/`, or `repository \`docs/...\``prose break consumers that install skills via`apm` into unrelated repositories.
+Examples:
+
+- ✅ `[common-loop-triage-format.md](references/common-loop-triage-format.md)`
+- ✅ `https://example.com/spec` for stable external specs
+- ❌ `repository \`docs/explanation/...\``
+- ❌ `[format](../../../../docs/...)` or any `../` escape from the skill tree
+- ❌ `[shared.md](../other-skill/references/shared.md)`
+
+---
+
 **S-03 (MUST): Reference Files Header Level Consistency**
 
 Check: Do references/ files follow consistent header level standards?
@@ -119,4 +133,3 @@ Examples:
 - ✅ `category-security.md` first line: `## Security Checks` → PASS
 - ❌ `common-checklist.md` first line: `## Checklist` → FAIL (should be H1)
 - ❌ `category-security.md` first line: `# Security Checks` → FAIL (should be H2)
-

@@ -2,20 +2,20 @@ id: docs-updater-hook-detect-001
 name: docs-updater hook path parses detect_changes JSON
 description: |
   Validate interactive/hook path triages injected detect_changes.sh JSON (not assumed
-  prose): maps renamed_files and affected_docs into the interactive report contract.
+  prose): maps renamed_files and affected_docs into the interactive survey report contract.
 tags:
   - quality
   - hook-path
   - detect-json
 inputs:
   prompt: >-
-    Use docs-updater (interactive/hook path). Step 1 output from
-    `scripts/detect_changes.sh` is in context.detect — parse that JSON only; do not
-    run detect_changes.sh, invent paths, or use loop findings[]. With skip=false,
-    triage affected_docs for stale references to the renamed workflow path. Do not
-    edit files in this mock eval. Return the interactive report per
-    common-output-format.md with ## Summary (Status: updated), ## Changes listing
-    docs/guide.md and mkdocs.yml, and ## Skipped Items.
+    Use docs-updater (interactive/hook path). Step 1 output from `scripts/detect_changes.sh`
+    is in context.detect — parse that JSON only; do not run detect_changes.sh, invent paths,
+    or use loop findings[]. With skip=false, triage affected_docs for stale references to
+    the renamed workflow path. Survey only — do not edit files. Return the interactive
+    report per common-output-format.md with ## Overview, ## Summary, and ### Candidates
+    listing docs/guide.md and mkdocs.yml. Do not emit ### Changes or ## Verification. State
+    no edits applied in Overview.
   context:
     scope: staged
     detect:
@@ -34,10 +34,10 @@ inputs:
         - mkdocs.yml
 expected:
   output_contains:
+    - "## Overview"
     - "## Summary"
-    - "## Changes"
-    - "## Skipped Items"
-    - "Status: updated"
+    - "### Candidates"
+    - "no edits applied"
     - "docs/guide.md"
     - "mkdocs.yml"
     - "ci-build-deploy.yaml"

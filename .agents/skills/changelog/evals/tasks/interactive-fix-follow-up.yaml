@@ -1,0 +1,30 @@
+id: changelog-interactive-follow-up-001
+name: changelog interactive fix follow-up
+description: Validate follow-up fix request after prior survey applies edits.
+tags:
+  - quality
+  - interactive
+inputs:
+  prompt: >-
+    Use changelog. Prior turn surveyed unreleased commits. The user now says 修正して — apply
+    the prior Candidates to CHANGELOG.md. Emit apply shape with ### Changes and ##
+    Verification. Do not emit ### Candidates. Emit ## Overview and ## Summary per
+    common-output-format.md.
+  context:
+    changelog_file: CHANGELOG.md
+    changelog_exists: true
+    commit_range: eval0001..eval0002
+    skip: false
+    commits:
+      - sha: eval0002
+        type: fix
+        scope: ""
+        breaking: false
+        subject: correct changelog formatting
+expected:
+  output_contains:
+    - Changes
+    - Overview
+    - Verification
+  outcomes:
+    - type: task_completed

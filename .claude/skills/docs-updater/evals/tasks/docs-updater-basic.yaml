@@ -1,22 +1,24 @@
 id: docs-updater-contract-001
 name: docs-updater output contract sections
-description:
-  "Validate that docs-updater returns mandatory report sections from common-output-format.
-
-  "
+description: Validate survey output uses Overview and Candidates per common-output-format.md.
 tags:
   - quality
   - output-contract
 inputs:
-  prompt:
-    "Use docs-updater. Return Markdown with sections: ## Summary, ## Changes,
-    ## Skipped Items. Include Status: field in Summary."
+  prompt: >-
+    Use docs-updater. Survey staged documentation drift. Emit ## Overview and ## Summary
+    with ### Candidates per common-output-format.md. Do not edit files. State no edits
+    applied in Overview.
   context:
     scope: staged
+    skip: false
+    affected_docs:
+      - docs/guide/overview.md
 expected:
   output_contains:
+    - "## Overview"
     - "## Summary"
-    - "## Changes"
-    - "## Skipped Items"
+    - "### Candidates"
+    - no edits applied
   outcomes:
     - type: task_completed

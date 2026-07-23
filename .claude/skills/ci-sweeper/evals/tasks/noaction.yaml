@@ -6,16 +6,15 @@ tags:
   - negative
 inputs:
   prompt: >-
-    Use ci-sweeper. Context JSON has skip=true and failures=[]. Emit the
-    full triage report with Actionable Fixes, Watch Items, Ignored, and Summary.
-    Outcome must indicate no actionable failures. Emit PR ## Overview and ## Summary plus Session Metrics table with Actionable Fixes, Watch Items, and Ignored sections.
+    Use ci-sweeper. Context JSON has skip=true and failures=[]. Emit survey no-op with ##
+    Overview and ## Summary explaining no actionable failures. Do not emit ### Changes or ##
+    Verification. State no edits applied in Overview.
   context:
     skip: true
     failures: []
 expected:
   output_contains:
-    - Actionable Fixes
-    - Watch Items
+    - Overview
     - no actionable
   outcomes:
     - type: task_completed

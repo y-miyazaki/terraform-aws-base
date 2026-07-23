@@ -1,0 +1,33 @@
+id: ci-sweeper-may-edit-false-001
+name: ci-sweeper survey when may_edit is false
+description: Validate may_edit false lists regression under Candidates in survey shape without file edits.
+tags:
+  - quality
+  - constraints
+inputs:
+  prompt: >-
+    Use ci-sweeper with automation constraints may_edit false. Classify the injected
+    shellcheck regression under ### Candidates in survey shape. Do not edit files. Do not
+    emit ## Verification or ### Changes. Emit ## Overview and ## Summary per
+    common-output-format.md. State no edits applied in Overview. Include Category labels on
+    rows.
+  context:
+    skip: false
+    failures:
+      - workflow_name: ci-shell
+        workflow_run_id: "987654321"
+        head_sha: eval0002
+        head_branch: main
+        job_name: shellcheck
+        failure_type: regression
+        log_excerpt: "SC2086: Double quote to prevent globbing and word splitting."
+        run_url: https://github.com/org/repo/actions/runs/987654321
+        source_commit: eval0002
+        reason: shellcheck SC2086 in scripts/deploy.sh
+expected:
+  output_contains:
+    - Candidates
+    - Overview
+    - no edits applied
+  outcomes:
+    - type: task_completed

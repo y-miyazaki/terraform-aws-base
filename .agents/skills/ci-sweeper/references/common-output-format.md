@@ -1,85 +1,92 @@
 # CI Sweeper Triage Report Format
 
-Use this structure for every run, including no-action exits.
+## Survey result (`may_edit: false`)
 
-## Session report (verifier / logs)
+No file edits. **Do not emit `### Changes`, `### Deferred`, or `## Verification`.**
 
 ```markdown
-# CI Sweeper Triage Report
+# CI Sweeper Result
 
-## Actionable Fixes
+## Overview
 
-- **Workflow:** <workflow_name> / **Job:** <job_name>
-- **Root cause:** <from log_excerpt>
-- **Fix applied:** <minimal change summary, or "None">
+<which workflow/job failed → root cause by name → no edits applied>
 
-## Watch Items
+## Summary
 
-- **Workflow:** <workflow_name> / **Job:** <job_name>
-- **Type:** <flake|infra|env|needs-human>
-- **Reason:** <why deferred>
+### Candidates
 
-## Ignored
+| Target                 | Evidence           | Suggested approach       | Priority              |
+| ---------------------- | ------------------ | ------------------------ | --------------------- |
+| `<workflow>` / `<job>` | <from log_excerpt> | <plain-language fix dir> | high \| medium \| low |
 
-- <duplicate, excluded, or ledger-skipped failures, or "None">
+### Watch
 
-## Session Metrics
-
-| Field             | Value                                                       |
-| ----------------- | ----------------------------------------------------------- |
-| Level             | <L1\|L2\|L3>                                                |
-| Failures assessed | <count>                                                     |
-| Fixes applied     | <count>                                                     |
-| Validation        | <commands run and pass/fail, or "Not run">                  |
-| Outcome           | <one-line result, e.g. "CI green / no actionable failures"> |
+| Target                 | Evidence | Why not now             |
+| ---------------------- | -------- | ----------------------- |
+| `<workflow>` / `<job>` | <reason> | flake \| infra \| human |
 ```
 
-## PR body contract (human-facing)
+### Survey rules
 
-At synthesis time, load `assets/pr-body-template.md` and emit `## Overview`, `## Summary`, and `## Verification`.
+- **MUST NOT** include `### Changes`, `### Deferred`, or `## Verification`
+- Zero candidates — Overview explains no-op; omit empty `### Candidates`
 
-`loop-finalize` adds `## Failure context` from detect and `## Run Metadata`. Mechanical `## Changes` is omitted when Summary contains `### Changes`.
+## Apply result (`may_edit: true`)
 
-See repository `docs/explanation/loop-engineering/loop-pr-body-skill-contract.md`.
+```markdown
+# CI Sweeper Result
 
-| Section               | Owner                                  |
-| --------------------- | -------------------------------------- |
-| `## Failure context`  | `loop-finalize` (detect JSON)          |
-| `## Overview` / `## Summary` / `## Verification` | Agent via `assets/pr-body-template.md` |
-| `## Run Metadata`     | `loop-finalize`                        |
+## Overview
 
-### Overview (skill-specific)
+<which failures were fixed vs deferred — name workflow/job and cause>
 
-Emit one paragraph under `## Overview` that answers:
+## Summary
 
-| Element | ci-sweeper content                                                           |
-| ------- | ---------------------------------------------------------------------------- |
-| Trigger | Which workflow/job failed (name, not URL — URLs are in `## Failure context`) |
-| Problem | Root cause in plain language from `log_excerpt`                              |
-| Action  | What was fixed or deferred                                                   |
+### Changes
 
-**Good:** `CI failed on markdownlint MD001 in docs/foo.md; fixed heading style in one file.`
+| Target                 | What was wrong | What changed          |
+| ---------------------- | -------------- | --------------------- |
+| `<workflow>` / `<job>` | <root cause>   | <minimal fix summary> |
 
-**Bad:** `CI sweeper addressed actionable failures.` / repeating run URL / raw log paste
+### Deferred
 
-## Fixes / Deferred consistency
+| Target                 | Why deferred            |
+| ---------------------- | ----------------------- |
+| `<workflow>` / `<job>` | <plain-language reason> |
 
-**Deferred** means no fix remains in the working tree for that failure.
+## Verification
 
-| Rule | Requirement |
-| ---- | ----------- |
-| Mutual exclusion | A failure MUST NOT appear in both **Changes** and **Deferred** |
-| Git alignment | Every path in `git diff` MUST map to a **Changes** row |
-| Deferred = no edit | Revert edits for deferred failures before synthesis |
+| Check         | Result                            |
+| ------------- | --------------------------------- |
+| <command run> | <pass \| fail \| skip \| blocked> |
+```
 
-Before PR synthesis, run `git diff --name-only` and reconcile session **Actionable Fixes** with PR **Changes** / **Deferred**.
+### Apply rules
+
+- **MUST NOT** include `### Candidates` or `### Watch` in final output
+- Reconcile `### Changes` and `### Deferred` with `git diff --name-only` before synthesis
+
+## Session metrics (automation)
+
+On the automation path, append `## Session Metrics` per [category-automation-envelope.md](category-automation-envelope.md).
+
+## Overview (skill-specific)
+
+| Element   | ci-sweeper content                                                       |
+| --------- | ------------------------------------------------------------------------ |
+| Trigger   | Which workflow/job failed (name, not URL)                                |
+| Substance | Root cause in plain language — name the lint rule, file, or failure type |
+| Action    | What was fixed or deferred                                               |
+
+**Good (survey):** `CI failed on markdownlint MD001 in docs/foo.md; one regression candidate identified; no edits applied.`
+
+**Good (apply):** `CI failed on markdownlint MD001 in docs/foo.md; fixed heading style in one file.`
+
+**Bad:** `CI sweeper addressed actionable failures.`
 
 ## Rules
 
-- Always emit all session `##` sections; use `None` or `0` when a section has no items.
-- `## Session Metrics` MUST use a Field \| Value table (not bullet list).
-- Always emit PR `## Overview` and `## Summary` after session report.
-- At `L1`, list fixes in Actionable Fixes but do not edit files.
-- At `L2`/`L3`, edit source files only for `regression` failures within the allowlist.
+- Pick one shape per run — survey or apply.
+- When `may_edit` is `false`, survey shape only — list candidates but do not edit files.
+- When `may_edit` is `true`, apply shape; edit source files only for `regression` failures within allowlist.
 - Do not claim validation passed when commands failed or were not run.
-

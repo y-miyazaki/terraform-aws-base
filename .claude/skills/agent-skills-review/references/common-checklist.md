@@ -29,5 +29,5 @@
 - BP-02 (SHOULD): Reference Trigger Conditions
 - Q-07 (SHOULD): Progressive Disclosure (Soft Guard)
 - Q-08 (SHOULD): Resource Separation
+- S-07 (MUST): Portable Reference Paths
 - S-03 (MUST): Reference Files Header Level Consistency
-

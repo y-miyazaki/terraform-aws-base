@@ -1,21 +1,21 @@
 id: docs-updater-exceeded-001
 name: docs-updater exceeded-scope path
-description: |
-  Validate exceeded-scope output includes recommendation.
-
+description: Validate exceeded-scope output recommends manual review without unsafe edits.
 tags:
   - quality
   - boundary-guardrail
-
 inputs:
-  prompt: "Use docs-updater and assume changes exceed diff-sync scope. Return ## Summary with 'Status: exceeded-scope' and ## Recommendations with 'Manual review' suggestion."
+  prompt: >-
+    Use docs-updater. Assume staged changes exceed diff-sync scope (for example >3 H2
+    restructure). Survey only — do not edit files. Emit ## Overview noting
+    exceeded-scope and recommending manual review or docs-creator. Per
+    common-output-format.md.
   context:
     scope: staged
-
 expected:
   output_contains:
-    - "## Summary"
-    - "Status: exceeded-scope"
-    - "## Recommendations"
+    - "## Overview"
+    - exceeded-scope
+    - docs-creator
   outcomes:
     - type: task_completed

@@ -1,0 +1,31 @@
+id: tech-debt-hotspot-001
+name: tech-debt classifies churn hotspot only
+description: Validate hotspot-only input classifies as Watch without inventing defects.
+tags:
+  - quality
+  - edge-case
+inputs:
+  prompt: >-
+    Use tech-debt with may_edit true. Only a churn hotspot is injected with no marker
+    signals. Classify as Watch in persisted report. Emit apply shape with report_file path
+    under ### Changes and ## Verification. Do not invent CVEs or paths beyond the hotspot.
+    Emit ## Overview and ## Summary per common-output-format.md. Include Category labels on
+    rows.
+  context:
+    commit_range: eval0001..eval0002
+    report_file: docs/report/tech-debt/2026-07-19.md
+    skip: false
+    signals: []
+    hotspots:
+      - path: scripts/deploy.sh
+        metric: churn
+        value: 18
+        window: 90d
+expected:
+  output_contains:
+    - Watch
+    - churn
+    - deploy.sh
+    - Changes
+  outcomes:
+    - type: task_completed

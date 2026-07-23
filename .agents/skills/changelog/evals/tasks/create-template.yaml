@@ -6,14 +6,15 @@ tags:
   - edge-case
 inputs:
   prompt: >-
-    Use changelog at L2. changelog_exists is false. Create the Keep a
-    Changelog template at changelog_file, then add the injected fix commit under
-    ## [Unreleased]. Report in Summary that the file was created. Emit PR ## Overview and ## Summary plus Session Metrics table with Commits Processed and Skipped Commits sections.
+    Use changelog with may_edit true. changelog_exists is false. Create the Keep a Changelog
+    template at changelog_file, then add the injected fix commit under ## [Unreleased]. Emit
+    apply shape noting file creation in ### Changes and ## Overview. Include ##
+    Verification. Include ## Summary per common-output-format.md. Note file created in
+    Overview and ### Changes.
   context:
     changelog_file: CHANGELOG.md
     changelog_exists: false
     commit_range: eval0001..eval0002
-    level: L2
     skip: false
     commits:
       - sha: eval0002
@@ -25,7 +26,7 @@ inputs:
 expected:
   output_contains:
     - created
-    - Summary
-    - Commits Processed
+    - Changes
+    - Overview
   outcomes:
     - type: task_completed

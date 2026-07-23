@@ -1,0 +1,21 @@
+id: refactor-interactive-survey-001
+name: refactor interactive survey default
+description: Validate natural-language refactor request emits survey without edits.
+tags:
+  - quality
+  - interactive
+inputs:
+  prompt: >-
+    Use refactor. The user asks to survey structural refactor candidates in scripts/example.sh.
+    Survey only. Do not edit files. Emit ### Candidates and ## Overview. Do not emit ###
+    Changes or ## Verification. Include ## Summary per common-output-format.md. State no
+    edits applied in Overview.
+  context:
+    target: scripts/example.sh
+expected:
+  output_contains:
+    - Candidates
+    - Overview
+    - no edits applied
+  outcomes:
+    - type: task_completed

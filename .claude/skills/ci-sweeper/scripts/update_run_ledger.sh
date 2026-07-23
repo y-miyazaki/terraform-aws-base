@@ -12,7 +12,7 @@
 # - Exit 0 always; log errors to stderr
 # - Merge into existing ledger without dropping unrelated run entries
 # - Prune entries older than 30 days (aligned with loop-run-log / state retention)
-# - Source shared helpers from scripts/lib/all.sh (synced via scripts/ai/sync_skill_lib.sh)
+# - Source shared helpers from scripts/lib/all.sh (synced via scripts/self/ai/sync_skill_lib.sh)
 #
 # Dependencies:
 # - bash (POSIX bash, /bin/bash)

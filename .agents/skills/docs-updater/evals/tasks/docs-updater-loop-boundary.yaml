@@ -1,20 +1,20 @@
 id: docs-updater-loop-boundary-001
-name: docs-updater loop path defers denylist infrastructure finding
-description: Validate infrastructure path finding is Watch or Noise, not edited.
+name: docs-updater automation path defers denylist infrastructure finding
+description: Validate infrastructure path finding is Deferred, not edited.
 tags:
   - quality
-  - loop-path
+  - automation-path
   - boundary-guardrail
 inputs:
   prompt: >-
-    Use docs-updater (loop path) at L2. A finding points at src/infrastructure/deploy.md
-    which is on the denylist. Classify it as Watch or Noise / Ignore; do not
-    edit denylist paths. Fix only the allowlisted stale doc finding as
-    High-Priority. Emit PR ## Overview and ## Summary plus Session Metrics table
-    with High-Priority Items, Watch Items, and Noise / Ignore sections.
+    Use docs-updater (automation path). ## Constraints may_edit: true A finding points at
+    src/infrastructure/deploy.md on the denylist. Classify it under ### Deferred; do not
+    edit denylist paths. Fix only the allowlisted stale doc under ### Changes. Emit apply
+    shape with ## Overview, ### Changes, ### Deferred, and ## Verification plus Session
+    Metrics. Include ## Summary per common-output-format.md. Include Category labels on
+    rows.
   context:
     commit_range: eval0001..eval0002
-    level: L2
     skip: false
     findings:
       - file: docs/guide/overview.md
@@ -25,10 +25,9 @@ inputs:
         source_commit: eval0002
 expected:
   output_contains:
-    - High-Priority
-    - Watch
+    - Changes
+    - Deferred
     - denylist
-    - "## Summary"
-    - "## Overview"
+    - Overview
   outcomes:
     - type: task_completed

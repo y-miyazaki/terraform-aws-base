@@ -1,0 +1,32 @@
+id: tech-debt-may-edit-false-001
+name: tech-debt survey when may_edit is false
+description: Validate may_edit false classifies with Category labels in Candidates but does not write report_file.
+tags:
+  - quality
+  - constraints
+inputs:
+  prompt: >-
+    Use tech-debt with automation constraints may_edit false. Classify the injected signal
+    with Category code_quality as a Candidate. Emit survey shape with ## Overview, ###
+    Candidates, and optional ### Watch. Do not write report_file. Do not emit ##
+    Verification or ### Changes. Include ## Summary per common-output-format.md. State no
+    edits applied in Overview.
+  context:
+    commit_range: eval0001..eval0002
+    report_file: docs/report/tech-debt/2026-07-19.md
+    skip: false
+    signals:
+      - kind: todo_comment
+        path: evals/files/sample_service.go.txt
+        line: 5
+        snippet: "TODO: extract shared validator used by HandleCreate and HandleUpdate"
+        hint: code_quality
+    hotspots: []
+expected:
+  output_contains:
+    - code_quality
+    - Candidates
+    - Overview
+    - no edits applied
+  outcomes:
+    - type: task_completed

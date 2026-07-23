@@ -1,0 +1,30 @@
+id: changelog-interactive-survey-001
+name: changelog interactive survey default
+description: Validate natural-language check request emits survey without edits.
+tags:
+  - quality
+  - interactive
+inputs:
+  prompt: >-
+    Use changelog. The user asks to check the changelog for unreleased commits. Run survey
+    only. Do not edit CHANGELOG.md. Emit ### Candidates and ## Overview. Do not emit ###
+    Changes or ## Verification. Include ## Summary per common-output-format.md. State no
+    edits applied in Overview.
+  context:
+    changelog_file: CHANGELOG.md
+    changelog_exists: true
+    commit_range: eval0001..eval0002
+    skip: false
+    commits:
+      - sha: eval0002
+        type: feat
+        scope: changelog
+        breaking: false
+        subject: add changelog workflow
+expected:
+  output_contains:
+    - Candidates
+    - Overview
+    - no edits applied
+  outcomes:
+    - type: task_completed

@@ -1,19 +1,20 @@
 id: docs-updater-loop-classification-001
-name: docs-updater loop path classifies injected findings
-description: Validate findings classify into High-Priority and Watch from context.
+name: docs-updater automation path classifies injected findings
+description: Validate findings classify into Candidates and Watch when may_edit is false.
 tags:
   - quality
-  - loop-path
+  - automation-path
   - classification
 inputs:
   prompt: >-
-    Use docs-updater (loop path). Classify injected findings: missing required README
-    section is High-Priority; slightly outdated version is Watch. Emit all four
-    report sections. Emit PR ## Overview and ## Summary plus Session Metrics table
-    with High-Priority Items, Watch Items, and Noise / Ignore sections.
+    Use docs-updater (automation path). ## Constraints may_edit: false Classify injected
+    findings: missing required README section is a Candidate; slightly outdated version is
+    Watch. Emit survey shape with ## Overview, ### Candidates, ### Watch, and Session
+    Metrics. Do not edit files. Do not emit ## Verification or ### Changes. Include ##
+    Summary per common-output-format.md. State no edits applied in Overview. Include
+    Category labels on rows.
   context:
     commit_range: eval0001..eval0002
-    level: L2
     skip: false
     findings:
       - file: docs/README.md
@@ -24,9 +25,8 @@ inputs:
         source_commit: eval0002
 expected:
   output_contains:
-    - High-Priority
+    - Candidates
     - Watch
-    - "## Summary"
-    - "## Overview"
+    - Overview
   outcomes:
     - type: task_completed

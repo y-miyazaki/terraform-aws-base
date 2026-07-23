@@ -1,0 +1,30 @@
+id: tech-debt-interactive-follow-up-001
+name: tech-debt interactive fix follow-up
+description: Validate follow-up apply request after prior survey writes report.
+tags:
+  - quality
+  - interactive
+inputs:
+  prompt: >-
+    Use tech-debt. Prior turn surveyed the injected signal. The user now says apply fixes
+    and write the report. Emit apply shape with ### Changes and ## Verification listing
+    report_file docs/report/tech-debt/2026-07-19.md. Emit ## Overview and ## Summary per
+    common-output-format.md. Include Category code_quality on rows.
+  context:
+    commit_range: eval0001..eval0002
+    report_file: docs/report/tech-debt/2026-07-19.md
+    skip: false
+    signals:
+      - kind: todo_comment
+        path: evals/files/sample_service.go.txt
+        line: 5
+        snippet: "TODO: extract shared validator used by HandleCreate and HandleUpdate"
+        hint: code_quality
+    hotspots: []
+expected:
+  output_contains:
+    - Changes
+    - Overview
+    - Verification
+  outcomes:
+    - type: task_completed

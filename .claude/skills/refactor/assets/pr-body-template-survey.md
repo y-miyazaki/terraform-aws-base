@@ -1,35 +1,28 @@
 <!--
-Survey-only PR template for loop-refactor (L1) and interactive survey mode.
+Survey-only PR template for refactor automation (may_edit: false).
 
-Load at synthesis time when mode is survey or level is L1.
-loop-finalize extracts ## Overview and ## Summary only (no ## Verification).
-
-Rules:
-- Summary contains ### Candidates and optional ### Watch only.
-- Do NOT emit ### Changes, ### Deferred, or ## Verification.
-- Table when 2+ rows; bullet list when one simple item.
-- Omit empty ### subsections.
+Load at synthesis time after survey output is complete.
 -->
 
 ## Overview
 
 <!--
-  GOOD: Surveyed sync scripts under scripts/ and found two duplication blocks worth fixing next and one oversized file to defer.
-  BAD:  Refactor loop completed at L1.
+  GOOD: Surveyed sync scripts under scripts/ and found duplication in sync_skill_lib.sh and an oversized detect_tech_debt.sh; no edits applied.
+  BAD:  Refactor run finished.
 -->
 
-<one or two sentences: scope surveyed, candidate count, no edits applied>
+<one or two sentences: scope surveyed, dominant candidates by name, no edits applied>
 
 ## Summary
 
 ### Candidates
 
-| Target | Evidence | Suggested approach | Priority |
-| ------ | -------- | ------------------ | -------- |
+| Target            | Evidence                  | Suggested approach             | Priority              |
+| ----------------- | ------------------------- | ------------------------------ | --------------------- |
 | `path` `symbol()` | <plain-language evidence> | <plain-language fix direction> | high \| medium \| low |
 
 ### Watch
 
-| Target | Evidence | Why not now |
-| ------ | -------- | ----------- |
+| Target | Evidence                  | Why not now             |
+| ------ | ------------------------- | ----------------------- |
 | `path` | <plain-language evidence> | <plain-language reason> |

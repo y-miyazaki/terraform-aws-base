@@ -21,4 +21,3 @@ Iteration artifacts live under `tmp/refactor-skill-eval/`.
 - iteration-4: v2.1.0 — SKILL token trim, plain-language tiers in body, architecture Phase A eval (eval-7)
 
 Viewer: `tmp/refactor-skill-eval/iteration-3/review.html` (fallback: iteration-2)
-

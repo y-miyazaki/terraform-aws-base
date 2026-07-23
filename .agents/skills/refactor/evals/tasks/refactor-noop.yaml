@@ -7,10 +7,10 @@ tags:
 inputs:
   prompt: >-
     Use refactor. No paths or symbols. Emit the full Refactor Result per
-    common-output-format.md: ## Overview (why no edit), ## Summary (no-op),
-    optional empty ### Deferred, ## Verification (None or skip). Omit ### Changes
-    when nothing was fixed. Do not emit Session Metrics, Target labels, or internal
-    tier labels. Do not edit files in this mock eval.
+    common-output-format.md: ## Overview (why no edit), ## Summary (no-op), optional empty
+    ### Deferred, ## Verification (None or skip). Omit ### Changes when nothing was fixed.
+    Do not emit Session Metrics, Target labels, or internal tier labels. Do not edit files
+    in this mock eval. State no edits applied in Overview.
 expected:
   output_contains:
     - Refactor Result

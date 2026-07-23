@@ -1,0 +1,26 @@
+id: refactor-interactive-fix-same-turn-001
+name: refactor interactive fix same turn
+description: Validate apply language in the same request enables Phase B apply shape.
+tags:
+  - quality
+  - interactive
+inputs:
+  prompt: >-
+    Use refactor for scripts/example.sh. The user says apply the duplication fix. may_edit
+    is true. Emit apply shape with ## Overview, ### Changes, and ## Verification. Do not
+    edit files in this mock eval. Include ## Summary per common-output-format.md.
+  context:
+    commit_range: eval0001..eval0002
+    skip: false
+    hints:
+      - kind: duplication_block
+        path: scripts/example.sh
+        detail: lines 10-17 duplicate scripts/other.sh:40-47
+        lines: 8
+expected:
+  output_contains:
+    - Changes
+    - Overview
+    - Verification
+  outcomes:
+    - type: task_completed

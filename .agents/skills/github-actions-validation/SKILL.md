@@ -57,15 +57,15 @@ Return `## Checks Summary`, `## Checks (Failed/Deferred Only)`, and `## Issues` 
 
 ### Error Handling
 
-| Condition                              | Severity    | Action                                                              |
-| -------------------------------------- | ----------- | ------------------------------------------------------------------- |
-| `scripts/validate.sh` missing          | Fatal       | Stop; report missing script                                         |
-| No workflow YAML under target path     | Info        | Report no reviewable workflows; stop                                |
-| actionlint / ghalint / zizmor missing  | Recoverable | Defer checks for that tool; note in `## Checks (Failed/Deferred Only)` |
-| Single tool fails, others succeed      | Recoverable | Report passing tools; defer failed tool with exit status            |
-| All tools fail                         | Fatal       | Return `status: failed` with per-tool stderr summaries               |
-| `common-checklist.md` unavailable      | Fatal       | Stop; report missing dependency                                     |
-| `common-output-format.md` unavailable  | Recoverable | Use inline output contract                                          |
+| Condition                             | Severity    | Action                                                                 |
+| ------------------------------------- | ----------- | ---------------------------------------------------------------------- |
+| `scripts/validate.sh` missing         | Fatal       | Stop; report missing script                                            |
+| No workflow YAML under target path    | Info        | Report no reviewable workflows; stop                                   |
+| actionlint / ghalint / zizmor missing | Recoverable | Defer checks for that tool; note in `## Checks (Failed/Deferred Only)` |
+| Single tool fails, others succeed     | Recoverable | Report passing tools; defer failed tool with exit status               |
+| All tools fail                        | Fatal       | Return `status: failed` with per-tool stderr summaries                 |
+| `common-checklist.md` unavailable     | Fatal       | Stop; report missing dependency                                        |
+| `common-output-format.md` unavailable | Recoverable | Use inline output contract                                             |
 
 ### Examples
 

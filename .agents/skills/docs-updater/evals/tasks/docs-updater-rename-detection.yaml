@@ -1,24 +1,42 @@
 id: docs-updater-rename-001
 name: docs-updater rename detection
-description: |
-  Validate that renamed files trigger documentation path updates in affected docs and mkdocs.yml.
-
+description: Validate rename triage maps detect JSON into interactive survey Candidates.
 tags:
   - quality
   - rename-path
   - edge-case
-
 inputs:
-  prompt: "Use docs-updater. Assume git detected a rename from '.github/workflows/ci-build.yaml' to '.github/workflows/ci-build-deploy.yaml'. Return ## Summary with 'Status: updated', ## Changes showing the updated file paths, and ## Skipped Items."
+  prompt: >-
+    Use docs-updater (interactive/hook path). Step 1 output from `scripts/detect_changes.sh`
+    is in context.detect — parse that JSON only; do not run detect_changes.sh or invent
+    paths. With skip=false, triage affected_docs for the renamed workflow path. Survey only
+    — do not edit files. Return the interactive report per common-output-format.md with ##
+    Overview, ## Summary, and ### Candidates listing docs/guide.md and mkdocs.yml. Do not
+    emit ### Changes or ## Verification. State no edits applied in Overview.
   context:
     scope: staged
-
+    detect:
+      status: ok
+      scope: staged
+      since: ""
+      commit_range: "--cached"
+      skip: false
+      changed_files:
+        - .github/workflows/ci-build-deploy.yaml
+      deleted_files: []
+      renamed_files:
+        - .github/workflows/ci-build.yaml->.github/workflows/ci-build-deploy.yaml
+      affected_docs:
+        - docs/guide.md
+        - mkdocs.yml
 expected:
   output_contains:
+    - "## Overview"
     - "## Summary"
-    - "Status: updated"
-    - "## Changes"
-    - "ci-build-deploy"
-    - "## Skipped Items"
+    - "### Candidates"
+    - no edits applied
+    - docs/guide.md
+    - mkdocs.yml
+    - ci-build-deploy.yaml
   outcomes:
     - type: task_completed

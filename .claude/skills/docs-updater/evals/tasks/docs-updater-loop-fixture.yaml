@@ -1,20 +1,19 @@
 id: docs-updater-loop-fixture-001
-name: docs-updater loop path fixes stale workflow reference
-description: Validate L2 High-Priority fix targets stale workflow path in fixture doc.
+name: docs-updater automation path fixes stale workflow reference
+description: Validate may_edit true apply shape fixes stale workflow path in fixture doc.
 tags:
   - quality
-  - loop-path
+  - automation-path
   - fixture
 inputs:
   prompt: >-
-    Use docs-updater (loop path) at L2. Fix the High-Priority stale workflow
-    reference in evals/files/README.stale.md per injected finding. Report the fix
-    in High-Priority Items (Fixed) and Summary. Emit PR ## Overview and ## Summary
-    plus Session Metrics table with High-Priority Items, Watch Items, and Noise /
-    Ignore sections.
+    Use docs-updater (automation path). ## Constraints may_edit: true Allowed paths:
+    evals/files/README.stale.md Fix the stale workflow reference in
+    evals/files/README.stale.md per injected finding. Emit apply shape with ### Changes
+    listing the file, ## Overview naming the fix, and ## Verification. Include Session
+    Metrics. Include ## Summary per common-output-format.md.
   context:
     commit_range: eval0001..eval0002
-    level: L2
     skip: false
     findings:
       - file: evals/files/README.stale.md
@@ -22,10 +21,10 @@ inputs:
         source_commit: eval0002
 expected:
   output_contains:
-    - High-Priority
+    - Changes
     - README.stale.md
     - ci-build.yaml
-    - "## Summary"
-    - "## Overview"
+    - Overview
+    - Verification
   outcomes:
     - type: task_completed

@@ -1,0 +1,31 @@
+id: tech-debt-interactive-survey-001
+name: tech-debt interactive survey default
+description: Validate natural-language survey request emits Candidates without report write.
+tags:
+  - quality
+  - interactive
+inputs:
+  prompt: >-
+    Use tech-debt. The user asks to survey technical debt for the injected signal. Survey
+    only. Classify under ### Candidates with Category code_quality. Do not write
+    report_file. Emit ## Overview and ## Summary. Do not emit ### Changes or ##
+    Verification. State no edits applied in Overview.
+  context:
+    commit_range: eval0001..eval0002
+    report_file: docs/report/tech-debt/2026-07-19.md
+    skip: false
+    signals:
+      - kind: todo_comment
+        path: evals/files/sample_service.go.txt
+        line: 5
+        snippet: "TODO: extract shared validator used by HandleCreate and HandleUpdate"
+        hint: code_quality
+    hotspots: []
+expected:
+  output_contains:
+    - Candidates
+    - Overview
+    - code_quality
+    - no edits applied
+  outcomes:
+    - type: task_completed

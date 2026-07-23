@@ -55,16 +55,16 @@ Return `## Checks Summary`, `## Checks (Failed/Deferred Only)`, and `## Issues`.
 
 ### Error Handling
 
-| Condition                                      | Severity    | Action                                                              |
-| ---------------------------------------------- | ----------- | ------------------------------------------------------------------- |
-| `scripts/validate.sh` missing                  | Fatal       | Stop; report missing script                                         |
-| No `.md` files under target path               | Info        | Report no reviewable markdown; stop                                 |
-| markdownlint-cli2 or link-check tool missing   | Recoverable | Defer checks for that tool; note in deferred table                  |
-| External link timeout or transient network     | Recoverable | Defer link-check item; note network-only failure                    |
-| Single tool fails, other succeeds              | Recoverable | Report passing tool; defer failed tool with exit status           |
-| All tools fail                                 | Fatal       | Return `status: failed` with per-tool stderr summaries              |
-| `common-checklist.md` unavailable              | Fatal       | Stop; report missing dependency                                     |
-| `common-output-format.md` unavailable          | Recoverable | Use inline output contract                                          |
+| Condition                                    | Severity    | Action                                                  |
+| -------------------------------------------- | ----------- | ------------------------------------------------------- |
+| `scripts/validate.sh` missing                | Fatal       | Stop; report missing script                             |
+| No `.md` files under target path             | Info        | Report no reviewable markdown; stop                     |
+| markdownlint-cli2 or link-check tool missing | Recoverable | Defer checks for that tool; note in deferred table      |
+| External link timeout or transient network   | Recoverable | Defer link-check item; note network-only failure        |
+| Single tool fails, other succeeds            | Recoverable | Report passing tool; defer failed tool with exit status |
+| All tools fail                               | Fatal       | Return `status: failed` with per-tool stderr summaries  |
+| `common-checklist.md` unavailable            | Fatal       | Stop; report missing dependency                         |
+| `common-output-format.md` unavailable        | Recoverable | Use inline output contract                              |
 
 ### Examples
 

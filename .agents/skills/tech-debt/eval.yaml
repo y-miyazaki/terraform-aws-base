@@ -1,0 +1,43 @@
+name: tech-debt-eval
+description: >-
+  Evaluation suite for tech-debt.
+  Verifies taxonomy classification, may_edit behavior, previous_report comparison,
+  hotspot handling, truncation cap, and skip exits.
+skill: tech-debt
+version: "1.3"
+config:
+  trials_per_task: 5
+  timeout_seconds: 180
+  parallel: false
+  executor: mock
+  model: claude-sonnet-4-20250514
+metrics:
+  - name: task_completion
+    weight: 1.0
+    threshold: 0.8
+    description: Verify evaluation task completes successfully.
+graders:
+  - type: code
+    name: has_structured_output
+    weight: 1.0
+    config:
+      assertions:
+        - "'## Overview' in output or 'Overview' in output"
+        - "'## Summary' in output or 'Summary' in output or '### Candidates' in output or '### Changes' in output or '### Watch' in output or '### Deferred' in output"
+        - "'Category' in output or 'no technical debt signals' in output.lower() or 'no edits applied' in output"
+        - "'Candidates' in output or 'Changes' in output or 'Watch' in output or 'no technical debt signals' in output.lower()"
+  - type: text
+    name: report_sections
+    weight: 0.5
+    config:
+      regex_match:
+        - (### Candidates|### Changes|### Watch|### Deferred)
+  - type: behavior
+    name: bounded_runtime
+    weight: 0.5
+    config:
+      max_tool_calls: 30
+      max_tokens: 120000
+      max_duration_ms: 180000
+tasks:
+  - evals/tasks/*.yaml

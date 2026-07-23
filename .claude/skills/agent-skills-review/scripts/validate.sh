@@ -685,6 +685,51 @@ function check_path_conventions {
 }
 
 #######################################
+# check_portable_reference_paths: Enforce S-07 portable reference paths
+#
+# Globals:
+#   SKILL_FILE
+#
+# Arguments:
+#   None
+#
+# Outputs:
+#   None
+#
+# Returns:
+#   None
+#
+#######################################
+function check_portable_reference_paths {
+    local issues=()
+    local skill_dir file rel_path
+
+    skill_dir="$(dirname "${SKILL_FILE}")"
+
+    while IFS= read -r -d '' file; do
+        rel_path="${file#"${skill_dir}/"}"
+        while IFS= read -r line || [[ -n ${line} ]]; do
+            [[ ${line} == *"❌"* ]] && continue
+            if [[ ${line} =~ \]\(\.\./ ]] || [[ ${line} =~ \]\(docs/ ]] || [[ ${line} =~ repository[[:space:]\`]*docs/ ]]; then
+                issues+=("non-portable reference in ${rel_path}")
+            fi
+        done < "${file}"
+    done < <(find "${skill_dir}" -maxdepth 2 \( -name 'SKILL.md' -o -path "${skill_dir}/references/*.md" \) -print0 2> /dev/null)
+
+    if [[ ${#issues[@]} -eq 0 ]]; then
+        echo "✓ Portable reference paths valid"
+        check_names+=("Portable Reference Paths")
+        check_statuses+=("PASS")
+        check_details_json+=("")
+    else
+        echo "✗ Portable reference path issues: ${issues[*]}"
+        check_names+=("Portable Reference Paths")
+        check_statuses+=("FAIL")
+        check_details_json+=("${issues[*]}")
+    fi
+}
+
+#######################################
 # output_json: Generate JSON format output
 #
 # Description:
@@ -788,6 +833,7 @@ function main {
     check_reference_mandatory_files
     check_reference_triggers
     check_path_conventions
+    check_portable_reference_paths
 
     echo ""
     echo_section "JSON Output"

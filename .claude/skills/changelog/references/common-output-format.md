@@ -1,58 +1,77 @@
-# Changelog Loop Report Format
+# Changelog Report Format
 
-Use this structure for every run, including no-action exits.
+Deferred subsection name for this skill: `### Skipped` (not `### Deferred`).
 
-## Session report (verifier / logs)
+## Survey result (no file edits)
 
 ```markdown
-# Changelog Loop Report
+# Changelog Result
 
-## Commits Processed
+## Overview
 
-- **SHA:** <sha>
-- **Type:** <type>
-- **Subject:** <subject>
+<commit range → which conventional commits/releases would be recorded → no edits applied>
 
-## Skipped Commits
+## Summary
 
-- <already listed in CHANGELOG or non-conventional, or "None">
+### Candidates
 
-## Session Metrics
+| Target        | Type   | Evidence  | Suggested approach  | Priority              |
+| ------------- | ------ | --------- | ------------------- | --------------------- |
+| `<short sha>` | <type> | <subject> | <Unreleased bullet> | high \| medium \| low |
 
-| Field            | Value                      |
-| ---------------- | -------------------------- |
-| Level            | <L1\|L2\|L3>               |
-| Commit range     | <commit_range>             |
-| Commits assessed | <count>                    |
-| File modified    | <changelog_file or "None"> |
-| Outcome          | <one-line result>          |
+### Skipped
+
+| Commit | Why skipped |
+| ------ | ----------- |
 ```
 
-## PR body contract (human-facing)
+### Survey rules
 
-At synthesis time, load `assets/pr-body-template.md` and emit `## Overview`, `## Summary`, and `## Verification`.
+- **MUST NOT** include `### Changes` or `## Verification`
+- Zero candidates — Overview explains no-op; omit empty `### Candidates`
 
-See repository `docs/explanation/loop-engineering/loop-pr-body-skill-contract.md`.
+## Apply result (`changelog_file` edited)
 
-### Overview (skill-specific)
+```markdown
+# Changelog Result
 
-Emit one paragraph under `## Overview` that answers:
+## Overview
 
-| Element | changelog content                                                           |
-| ------- | --------------------------------------------------------------------------- |
-| Trigger | Commits/releases since last processed SHA                                   |
-| Problem | What was missing from `CHANGELOG.md` (Unreleased bullets, version sections) |
-| Action  | Entries added, releases promoted, or "no changes needed"                    |
+<which commits/releases were added to CHANGELOG — name types and sections>
 
-**Good:** `Processed 4 conventional commits since last changelog SHA; added 3 Unreleased bullets under Changed.`
+## Summary
 
-**Bad:** `Changelog loop run finished.` / listing every commit SHA in Overview
+### Changes
 
-## Rules
+| Commit      | Type   | Entry                                |
+| ----------- | ------ | ------------------------------------ |
+| <short sha> | <type> | <Unreleased bullet added or updated> |
 
-- Always emit all session `##` sections; use `None` or `0` when empty.
-- `## Session Metrics` MUST use a Field \| Value table (not bullet list).
-- Always emit PR `## Overview` and `## Summary` after session report.
-- At `L1`, list intended entries under Commits Processed but do not edit files.
-- At `L2`/`L3`, update only `CHANGELOG.md` under `## [Unreleased]`.
+### Skipped
 
+| Commit | Why skipped |
+| ------ | ----------- |
+
+## Verification
+
+| Check                    | Result         |
+| ------------------------ | -------------- |
+| `CHANGELOG.md` structure | <pass \| fail> |
+```
+
+### Apply rules
+
+- **MUST NOT** include `### Candidates` in final output
+- Reconcile `### Changes` with `git diff --name-only` before synthesis
+
+## Session metrics (automation)
+
+On the automation path, append `## Session Metrics` per [category-automation-envelope.md](category-automation-envelope.md).
+
+## Overview (skill-specific)
+
+**Good (survey):** `Processed 4 conventional commits since abc..def; would add 3 Unreleased bullets under Changed; no file edits applied.`
+
+**Good (apply):** `Added 3 Unreleased bullets under Changed and promoted v1.8.16 from detect releases[].`
+
+**Bad:** `Changelog run finished.`

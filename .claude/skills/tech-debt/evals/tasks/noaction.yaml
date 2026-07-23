@@ -1,0 +1,25 @@
+id: tech-debt-noaction-001
+name: tech-debt handles skip with empty signals
+description: >-
+  Validate skip=true or empty signals/hotspots yields survey no-op without report_file.
+tags:
+  - quality
+  - edge-case
+inputs:
+  prompt: >-
+    Use tech-debt. Context has skip=true and empty signals/hotspots. may_edit is false. Emit
+    survey no-op with ## Overview indicating no technical debt signals detected. Do not
+    create report_file. Do not emit ### Changes or ## Verification. Include ## Summary per
+    common-output-format.md. State no edits applied in Overview.
+  context:
+    commit_range: eval0001..eval0002
+    report_file: docs/report/tech-debt/2026-07-19.md
+    skip: true
+    signals: []
+    hotspots: []
+expected:
+  output_contains:
+    - no technical debt signals
+    - Overview
+  outcomes:
+    - type: task_completed

@@ -1,24 +1,29 @@
 id: docs-updater-deletion-001
 name: docs-updater deletion dead-link removal
-description: |
-  Validate that deleted files trigger dead reference removal from documentation.
-
+description: Validate deletion context produces apply-shaped dead-link fix report.
 tags:
   - quality
   - deletion-path
   - edge-case
-
 inputs:
-  prompt: "Use docs-updater. Assume '.github/workflows/on-release.yaml' was deleted and docs/reference/specification.md references it. Return ## Summary with 'Status: updated', ## Changes showing dead link removal, and ## Skipped Items."
+  prompt: >-
+    Use docs-updater. '.github/workflows/on-release.yaml' was deleted and
+    docs/reference/specification.md still references it. Fix the dead link. Emit apply
+    shape with ## Overview, ### Changes, and ## Verification per common-output-format.md.
+    Mock eval — describe the intended patch in the Changes table; do not require real
+    file edits.
   context:
     scope: staged
-
+    skip: false
+    deleted_files:
+      - .github/workflows/on-release.yaml
+    affected_docs:
+      - docs/reference/specification.md
 expected:
   output_contains:
-    - "## Summary"
-    - "Status: updated"
-    - "## Changes"
-    - "on-release"
-    - "## Skipped Items"
+    - "## Overview"
+    - "### Changes"
+    - on-release
+    - "## Verification"
   outcomes:
     - type: task_completed

@@ -98,13 +98,13 @@ Each issue must include file path, risk summary, and remediation guidance.
 
 ### Error Handling
 
-| Condition                                      | Severity    | Action                                                                 |
-| ---------------------------------------------- | ----------- | ---------------------------------------------------------------------- |
-| `terraform-validation` output missing            | Recoverable | Defer tool-dependent checks; review security/architecture from source  |
-| `common-checklist.md` unavailable              | Fatal       | Stop; report missing dependency                                        |
-| `common-output-format.md` unavailable          | Recoverable | Use inline output contract                                             |
-| Changed files contain no `.tf`/`.tfvars`       | Recoverable | Return `status: skipped`; reason `no Terraform review target`          |
-| Referenced category file missing               | Recoverable | Defer affected checks; note missing file path                            |
+| Condition                                | Severity    | Action                                                                |
+| ---------------------------------------- | ----------- | --------------------------------------------------------------------- |
+| `terraform-validation` output missing    | Recoverable | Defer tool-dependent checks; review security/architecture from source |
+| `common-checklist.md` unavailable        | Fatal       | Stop; report missing dependency                                       |
+| `common-output-format.md` unavailable    | Recoverable | Use inline output contract                                            |
+| Changed files contain no `.tf`/`.tfvars` | Recoverable | Return `status: skipped`; reason `no Terraform review target`         |
+| Referenced category file missing         | Recoverable | Defer affected checks; note missing file path                         |
 
 ### Examples
 

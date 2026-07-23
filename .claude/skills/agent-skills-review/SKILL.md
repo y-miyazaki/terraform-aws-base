@@ -7,7 +7,7 @@ description: >-
 license: Apache-2.0
 metadata:
   author: y-miyazaki
-  version: "1.0.4"
+  version: "1.0.6"
 ---
 
 ## Input
@@ -61,15 +61,15 @@ metadata:
 
 ### Error Handling
 
-| Condition                                           | Severity    | Action                                                                 |
-| --------------------------------------------------- | ----------- | ---------------------------------------------------------------------- |
-| Target `SKILL.md` does not exist                    | Fatal       | Return `status: failed`; stop without other checks                     |
-| `validate_waza.sh` or `validate.sh` missing         | Fatal       | Stop; report missing script path                                       |
-| One validation script fails, the other succeeds     | Recoverable | Report successful checks; defer failed script checks with exit status  |
-| Both validation scripts fail                        | Fatal       | Return `status: failed` with command, exit status, and stderr summary  |
-| `common-checklist.md` unavailable                   | Fatal       | Stop; report missing dependency                                        |
-| `common-output-format.md` unavailable               | Recoverable | Use inline output contract from Output Specification                   |
-| Script output missing after one rerun               | Recoverable | Defer affected checks; include command and stderr per troubleshooting  |
+| Condition                                       | Severity    | Action                                                                |
+| ----------------------------------------------- | ----------- | --------------------------------------------------------------------- |
+| Target `SKILL.md` does not exist                | Fatal       | Return `status: failed`; stop without other checks                    |
+| `validate_waza.sh` or `validate.sh` missing     | Fatal       | Stop; report missing script path                                      |
+| One validation script fails, the other succeeds | Recoverable | Report successful checks; defer failed script checks with exit status |
+| Both validation scripts fail                    | Fatal       | Return `status: failed` with command, exit status, and stderr summary |
+| `common-checklist.md` unavailable               | Fatal       | Stop; report missing dependency                                       |
+| `common-output-format.md` unavailable           | Recoverable | Use inline output contract from Output Specification                  |
+| Script output missing after one rerun           | Recoverable | Defer affected checks; include command and stderr per troubleshooting |
 
 ### Examples
 

@@ -2,11 +2,11 @@
 
 ### How scope is resolved
 
-| Mode | Allowlist | Denylist |
-| ---- | --------- | -------- |
-| **Interactive** — no path constraints in prompt or JSON | **Unrestricted** within [Skill-specific limits](#skill-specific-limits) and [ignore conventions](#ignore-conventions) | **None from skill** — follow repository security instructions |
-| **Interactive** — user `allowlist` / `denylist` | User allowlist globs only (within skill-specific limits) | User denylist globs |
-| **Loop** | Caller `allowlist` — repeated in prompt `## Constraints` as `Allowed paths: …` | Caller `denylist` — enforced by loop-execute verifier (may be empty; not inlined in prompt unless caller criteria mention it) |
+| Mode                                                    | Allowlist                                                                                                             | Denylist                                                                                                                      |
+| ------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| **Interactive** — no path constraints in prompt or JSON | **Unrestricted** within [Skill-specific limits](#skill-specific-limits) and [ignore conventions](#ignore-conventions) | **None from skill** — follow repository security instructions                                                                 |
+| **Interactive** — user `allowlist` / `denylist`         | User allowlist globs only (within skill-specific limits)                                                              | User denylist globs                                                                                                           |
+| **Loop**                                                | Caller `allowlist` — repeated in prompt `## Constraints` as `Allowed paths: …`                                        | Caller `denylist` — enforced by loop-execute verifier (may be empty; not inlined in prompt unless caller criteria mention it) |
 
 Skills do **not** ship a repository-wide default denylist. Per-repo deny rules belong in caller workflows, repository instructions (`AGENTS.md`), or explicit user constraints — not in skill references.
 
@@ -25,7 +25,7 @@ Do not edit paths that appear to hold secrets (environment files, credential sto
 
 ### Loop caller examples (this repository)
 
-| Key | Example |
-| --- | ------- |
+| Key         | Example                                                                                                                          |
+| ----------- | -------------------------------------------------------------------------------------------------------------------------------- |
 | `allowlist` | `.github/**`, `.apm/packages/**`, `scripts/**`, `apm.yml`, `mise.toml`, `renovate/**`, `docs/**/*.md`, `README.md`, `mkdocs.yml` |
-| `denylist` | `**/.env`, `**/credentials*`, `**/secrets*`, `**/migration/*.sql`, `**/infrastructure/**` |
+| `denylist`  | `**/.env`, `**/credentials*`, `**/secrets*`, `**/migration/*.sql`, `**/infrastructure/**`                                        |

@@ -23,4 +23,3 @@ expected:
     - "No documentation update required"
   outcomes:
     - type: task_completed
-

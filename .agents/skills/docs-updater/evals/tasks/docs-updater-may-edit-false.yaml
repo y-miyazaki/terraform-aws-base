@@ -1,0 +1,27 @@
+id: docs-updater-may-edit-false-001
+name: docs-updater survey when may_edit is false
+description: Validate may_edit false lists finding Candidates in survey shape without file edits.
+tags:
+  - quality
+  - constraints
+inputs:
+  prompt: >-
+    Use docs-updater (automation path) with ## Constraints may_edit: false. Classify the
+    injected stale workflow finding under ### Candidates in survey shape. Do not edit
+    documentation files. Do not emit ## Verification or ### Changes. Emit ## Overview and ##
+    Summary per common-output-format.md. State no edits applied in Overview. Include
+    Category labels on rows.
+  context:
+    commit_range: eval0001..eval0002
+    skip: false
+    findings:
+      - file: docs/guide/overview.md
+        reason: references deleted workflow ci-build.yaml
+        source_commit: eval0002
+expected:
+  output_contains:
+    - Candidates
+    - Overview
+    - no edits applied
+  outcomes:
+    - type: task_completed

@@ -14,6 +14,10 @@ paths:
 - G-03 (MUST): Keep `applyTo` globs precise to those rule paths — do not use broad trees such as `.claude/**/*.md` that also match skills and unrelated markdown.
 - G-04 (MUST): In agent-facing cross-links, use stem-based wording such as companion X rules (stem `x`) — never bare `*.instructions.md` filenames that disappear after `apm install`.
 - G-05 (MUST): When a companion instruction must guide production-file edits (for example tests paired with source), include those production globs in `applyTo` so the rules inject at edit time.
+- **DIST-01 (MUST)**: Keep distributable instruction content repository-neutral — any consumer project must be able to follow the rules without this config repository's layout.
+  - Do not embed: consumer-project-specific paths, internal CI or workflow names, single canonical file references ("use `path/to/foo` as the reference"), or project-local test support APIs.
+  - Prefer: generic path patterns (for example `lib/*.sh`, `scripts/lib/*.sh`), stem-based companion cross-links, stable external references.
+  - Domain-specific layout jargon is allowed only when expressed as a generic pattern, not a named consumer tree.
 
 ## Standards
 

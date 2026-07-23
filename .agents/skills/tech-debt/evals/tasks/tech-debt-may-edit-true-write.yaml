@@ -1,0 +1,34 @@
+id: tech-debt-may-edit-true-write-001
+name: tech-debt writes persisted report file when may_edit true
+description: Validate may_edit true emits apply shape and writes report_file path in Changes.
+tags:
+  - quality
+  - constraints
+inputs:
+  prompt: >-
+    Use tech-debt with may_edit true. Classify the injected eol_hint as dependency_version
+    under High-Priority in persisted report. Emit apply PR shape with ### Changes listing
+    report_file docs/report/tech-debt/2026-07-19.md and ## Verification. Include Session
+    Metrics with may_edit true. Emit ## Overview and ## Summary per common-output-format.md.
+    Include Category labels on rows.
+  context:
+    commit_range: eval0001..eval0002
+    report_file: docs/report/tech-debt/2026-07-19.md
+    skip: false
+    signals:
+      - kind: eol_hint
+        path: evals/files/go.mod.txt
+        line: 5
+        snippet: "require github.com/old/lib v1.2.3"
+        source: go_mod
+        hint: dependency_version
+    hotspots: []
+expected:
+  output_contains:
+    - dependency_version
+    - docs/report/tech-debt/2026-07-19.md
+    - Changes
+    - may_edit
+    - Verification
+  outcomes:
+    - type: task_completed

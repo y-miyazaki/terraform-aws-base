@@ -1,0 +1,24 @@
+id: docs-updater-interactive-fix-same-turn-001
+name: docs-updater interactive fix same turn
+description: Validate fix language in the same request enables apply shape.
+tags:
+  - quality
+  - interactive
+inputs:
+  prompt: >-
+    Use docs-updater. The user says sync documentation for the injected stale
+    workflow reference. may_edit is true. Emit apply shape with ## Overview, ###
+    Changes, and ## Summary. Do not edit files in this mock eval.
+  context:
+    commit_range: eval0001..eval0002
+    skip: false
+    findings:
+      - file: docs/guide/overview.md
+        reason: references deleted workflow ci-build.yaml
+        source_commit: eval0002
+expected:
+  output_contains:
+    - Changes
+    - Overview
+  outcomes:
+    - type: task_completed

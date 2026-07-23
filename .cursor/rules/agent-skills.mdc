@@ -11,6 +11,8 @@ globs:
 
 - Scope is limited to designing and updating `skills/**/SKILL.md` and `references/*.md`.
 - This file defines SKILL authoring standards and is treated as an exception to the common template (five-chapter structure with Naming Conventions first in Standards is overridden by domain-specific Required Sections ordering).
+- **DIST-01 (MUST)**: Keep skills and `references/` portable across consumer repositories (see also S-07). Do not embed consumer-project-specific paths, internal automation names, or project-local test support APIs in SKILL.md or references.
+- **DIST-02 (SHOULD)**: Shared domain packages (`common`, `go`, `shell-script`, `terraform`) stay consumer-neutral. Single-consumer package scopes may document consumer-specific paths only within that skill's Execution Scope when the package is intended for one integration layout.
 
 ## Standards
 
@@ -46,7 +48,7 @@ globs:
 
 - **S-06 (MUST)**: Use `<agent-root>` placeholder for portable paths; do not hardcode `.github/skills`.
 - Canonical `agent-root` list (single source of truth): `.github`, `.agents`, `.claude`, `.codex`, `.cursor`, `cursor`, `.kiro`, `kiro`.
-- `.vscode` is editor-local configuration, not an agent-root for skill paths; `scripts/lib/repo_paths.sh` excludes it from repository scans separately.
+- `.vscode` is editor-local configuration, not an agent-root for skill paths.
 - Keep markdown examples portable by using `<agent-root>` in paths.
 - Preferred markdown path forms:
   - Cross-skill path: `<agent-root>/skills/<skill-name>/...`
@@ -82,6 +84,13 @@ globs:
   - EN: appropriately, as needed, if possible, preferably, etc., and so on
   - JP equivalents: "appropriately", "as needed", "where possible", "depending on context", "etc."
 
+### Eval Packaging
+
+- **E-01 (SHOULD)**: Ship a thin contract eval harness in each skill: `eval.yaml` plus `evals/tasks/*.yaml` with at least output-contract coverage, one happy path, and one boundary or trigger-negative case where applicable.
+- **E-02 (SHOULD)**: Prefer inline JSON or context in eval task prompts over `evals/files/` when the mock can echo prompts — avoid large binary fixtures in distributable packages.
+- **E-03 (MUST)**: Do not bundle large regression corpora or datasets in APM skill packages; consumers install skills for execution instructions, not regression archives.
+- **E-04 (CAN)**: `evals/evals.json` (skill-creator format) is optional maintainer metadata for description tuning or benchmarks — not required in every skill.
+
 ## Guidelines
 
 ### Pattern Checks (P)
@@ -108,7 +117,7 @@ globs:
 - Q-06 (MUST): No Implicit Inference
   - Check: Are all instructions imperative and explicit with concrete conditions (no vague "appropriately", "depending on context", "reasonable")?
 - Q-09 (SHOULD): Token Budget Advisory
-  - Check: Does the review include `waza check` token evidence? Over 500 tokens → advisory in Issues, not automatic FAIL; sibling consistency outranks isolated compression (see `.apm/AGENTS.md`).
+  - Check: Does the review include `waza check` token evidence? When Token Budget exceeds 500 tokens, record an advisory note in `## Issues` (not a structural FAIL) unless sibling skills in the same package were compressed in isolation.
 - BP-03 (SHOULD): Token Efficiency
   - Check: Does SKILL.md avoid content that Claude already knows, minimizing redundancy with frontmatter and reference files?
 - BP-04 (SHOULD): Anti-Overtrimming Guardrail
@@ -129,11 +138,13 @@ globs:
 - BP-01 (SHOULD): Description Quality
   - Check: Does the description field follow best practices for skill discovery (third person, "Use when..." trigger, no implementation instructions)?
 - BP-02 (SHOULD): Reference Trigger Conditions
-  - Check: Does Reference Files Guide use explicit load contracts on every line — `(always read)`, `(always read — loop path)`, `(always read — interactive path)`, or `(read on failure)` — per `.apm/AGENTS.md`?
+  - Check: Does Reference Files Guide use explicit load contracts on every line — `(always read)`, path-qualified variants, or `(read on failure)` — per package sibling-consistency policy for skills?
 - Q-07 (SHOULD): Progressive Disclosure (Soft Guard)
-  - Check: Is SKILL.md depth aligned with sibling skills in the same package? Is word count reasonable for that family? Treat ~500-token tooling warnings as advisory only; do not compress one skill below sibling depth.
+  - Check: Is SKILL.md depth aligned with sibling skills in the same package? Is word count reasonable for that family?
 - Q-08 (SHOULD): Resource Separation
   - Check: Does skill directory contain `references/` and the mandatory common reference files? `scripts/` is optional but required when executable logic is provided.
+- S-07 (MUST): Portable Reference Paths
+  - Check: Do SKILL.md and `references/` link only to files inside the same skill directory (`references/`, `assets/`, `scripts/`) or to absolute `https://` URLs?
 - S-03 (MUST): Reference Files Header Level Consistency
   - Check: Do references/ files follow consistent header level standards?
 
@@ -147,7 +158,6 @@ On-demand validation: see agent-skills-review skill SKILL.md.
 
 ## Security Guidelines
 
-- Do not include raw secret values or credentials in SKILL.md or references.
+- Do not include raw secret values, credentials, or internal-only URLs in SKILL.md, references, or eval fixtures; use obvious placeholders and document redaction where relevant.
 - Validate inputs in `scripts/` code and prevent arbitrary path operations.
 - Sanitize arguments when invoking external tools to prevent command injection.
-

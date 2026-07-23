@@ -25,4 +25,3 @@ expected:
     - "scripts/validate.sh"
   outcomes:
     - type: task_completed
-

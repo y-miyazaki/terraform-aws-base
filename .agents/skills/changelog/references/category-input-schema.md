@@ -1,6 +1,6 @@
-## Input Schema
+## Detect Result Schema
 
-Provided via prompt context by the calling workflow (loop-prompt-generate action).
+From `scripts/detect_changelog_commits.sh` or caller-supplied JSON.
 
 ```json
 {
@@ -8,7 +8,6 @@ Provided via prompt context by the calling workflow (loop-prompt-generate action
   "changelog_exists": false,
   "commit_range": "abc1234..def5678",
   "compare_url": "https://github.com/owner/repo/compare/abc1234..def5678",
-  "level": "L2",
   "repository": "owner/repo",
   "repository_url": "https://github.com/owner/repo",
   "skip": false,
@@ -18,7 +17,7 @@ Provided via prompt context by the calling workflow (loop-prompt-generate action
       "type": "feat",
       "scope": "changelog",
       "breaking": false,
-      "subject": "add loop-changelog workflow"
+      "subject": "add changelog workflow"
     }
   ],
   "releases": [
@@ -34,11 +33,11 @@ Provided via prompt context by the calling workflow (loop-prompt-generate action
 ```
 
 | Field | Type | Description |
+| ----- | ----- |
 | `changelog_file` | string | Repository-relative path to update |
 | `changelog_exists` | boolean | When false, create Keep a Changelog template before editing |
 | `commit_range` | string | SHA range that triggered detection |
 | `compare_url` | string | Optional GitHub compare URL for the active `commit_range` (empty when unknown) |
-| `level` | enum | Operating level: `L1` (report only), `L2` (edit + PR), `L3` (edit + auto-merge) |
 | `repository` | string | `owner/repo` when resolved (Actions env or git remote) |
 | `repository_url` | string | Web base URL for commit links (no trailing slash) |
 | `skip` | boolean | When true, no unreleased changelog-worthy commits or undocumented releases |
@@ -55,13 +54,6 @@ Provided via prompt context by the calling workflow (loop-prompt-generate action
 | `releases[].date` | string | Release date (`YYYY-MM-DD`) |
 | `releases[].commit_shas` | array | Commit SHAs whose bullets move from `## [Unreleased]` into this release |
 
-### Operating levels
+`commits` and `releases` may be empty arrays.
 
-| Level | Agent behavior for loop-changelog                               |
-| ----- | --------------------------------------------------------------- |
-| `L1`  | Emit changelog report only — do not edit `changelog_file`       |
-| `L2`  | Emit report and edit `changelog_file` within allowlist          |
-| `L3`  | Same file edits as `L2`; caller may auto-merge the changelog PR |
-
-Path allowlist is injected in the implementer prompt `## Constraints` section from the caller (`LOOP_ALLOWLIST`). Denylist is a caller `denylist` input enforced by loop-execute verifier. When `LOOP_ALLOWLIST` is absent, no allowlist restriction within skill-specific limits — see [category-scope.md](category-scope.md).
-
+Path allowlist is not a JSON field. When present, it arrives in `## Constraints` — see [category-scope.md](category-scope.md).

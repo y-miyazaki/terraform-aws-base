@@ -1,0 +1,28 @@
+id: docs-updater-automation-constraints-001
+name: docs-updater automation production constraints
+description: Validate LE workflow Constraints with may_edit from loop-prompt-generate shape.
+tags:
+  - quality
+  - automation
+inputs:
+  prompt: >-
+    Use docs-updater (automation path). ## Constraints may_edit: true write_target: fix You MUST persist edits
+    to disk in the worktree; a report alone is not sufficient when may_edit is true. Allowed
+    paths: docs/**/*.md. Fix the injected High-Priority finding; emit apply shape with ###
+    Changes and ## Verification plus ## Session Metrics. Emit ## Overview and ## Summary per
+    common-output-format.md.
+  context:
+    commit_range: eval0001..eval0002
+    skip: false
+    findings:
+      - file: docs/guide/overview.md
+        reason: references deleted workflow ci-build.yaml
+        source_commit: eval0002
+expected:
+  output_contains:
+    - Changes
+    - Overview
+    - Verification
+    - Session Metrics
+  outcomes:
+    - type: task_completed

@@ -1,0 +1,29 @@
+id: changelog-interactive-fix-same-turn-001
+name: changelog interactive fix same turn
+description: Validate fix language in the same request applies edits in one run.
+tags:
+  - quality
+  - interactive
+inputs:
+  prompt: >-
+    Use changelog. The user says update the changelog with the injected commits. may_edit is
+    true. Edit CHANGELOG.md and emit apply shape with ### Changes and ## Verification. Do
+    not emit ### Candidates. Emit ## Overview and ## Summary per common-output-format.md.
+  context:
+    changelog_file: CHANGELOG.md
+    changelog_exists: true
+    commit_range: eval0001..eval0002
+    skip: false
+    commits:
+      - sha: eval0002
+        type: feat
+        scope: changelog
+        breaking: false
+        subject: add changelog workflow
+expected:
+  output_contains:
+    - Changes
+    - Overview
+    - Verification
+  outcomes:
+    - type: task_completed

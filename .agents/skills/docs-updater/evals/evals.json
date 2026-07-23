@@ -17,26 +17,27 @@
     },
     {
       "id": 1,
-      "prompt": "Use docs-updater (loop path). Context JSON: level=L1, skip=false, findings=[{ \"file\": \"docs/guide.md\", \"reason\": \"stale workflow path\", \"source_commit\": \"abc1234\" }]. Do not edit files. Emit Documentation Triage Report per common-output-format-loop.md with High-Priority Items (Fixed), Watch Items (Deferred), Session Metrics Level L1, plus ## Overview and ## Summary for PR composition.",
-      "expected_output": "Loop triage report with all session sections and PR Overview/Summary",
+      "prompt": "Use docs-updater (automation path). ## Constraints may_edit: false. Context JSON: skip=false, findings=[{ \"file\": \"docs/guide.md\", \"reason\": \"stale workflow path\", \"source_commit\": \"abc1234\" }]. Do not edit files. Emit survey shape per common-output-format-loop.md with ### Candidates, Session Metrics with may_edit false, plus ## Overview and ## Summary for PR composition.",
+      "expected_output": "Automation triage report with survey shape and PR Overview/Summary",
       "files": [],
       "expectations": [
-        "Output contains Documentation Triage Report heading",
-        "Output contains High-Priority Items (Fixed) section",
-        "Output contains Watch Items (Deferred) section",
-        "Output contains Session Metrics with Level L1",
-        "Output contains ## Overview and ## Summary PR sections"
+        "Output contains docs-updater Result heading or ## Overview",
+        "Output contains ### Candidates section",
+        "Output contains Session Metrics with may_edit",
+        "Output contains ## Overview and ## Summary PR sections",
+        "Output does not contain ### Changes or ## Verification"
       ]
     },
     {
       "id": 2,
-      "prompt": "Use docs-updater. Assume git detected a rename from '.github/workflows/ci-build.yaml' to '.github/workflows/ci-build-deploy.yaml'. Return ## Summary with 'Status: updated', ## Changes showing the updated file paths, and ## Skipped Items.",
-      "expected_output": "Rename detection report with updated paths in Changes table",
-      "files": [],
+      "prompt": "Use docs-updater (interactive/hook path). Step 1 output from `scripts/detect_changes.sh` is in context.detect — parse that JSON only. With skip=false, triage affected_docs for the renamed workflow. Survey only — do not edit files. Return interactive report per common-output-format.md with ## Overview, ## Summary, and ### Candidates. State no edits applied in Overview.",
+      "expected_output": "Rename triage survey with Candidates for affected_docs",
+      "files": ["evals/files/detect-hook-staged.json"],
       "expectations": [
-        "Output contains Status: updated",
-        "Output contains ci-build-deploy in Changes",
-        "Output contains ## Skipped Items section"
+        "Output contains ## Overview",
+        "Output contains ### Candidates",
+        "Output references ci-build-deploy from detect renamed_files",
+        "Output contains no edits applied"
       ]
     }
   ]

@@ -1,0 +1,25 @@
+id: docs-updater-interactive-follow-up-001
+name: docs-updater interactive fix follow-up
+description: Validate follow-up fix request after prior survey enables apply shape.
+tags:
+  - quality
+  - interactive
+inputs:
+  prompt: >-
+    Use docs-updater. Prior turn surveyed documentation drift. The user now says 修正して —
+    patch the stale workflow reference. Emit apply shape with ### Changes and ## Summary. Do
+    not edit files in this mock eval. Emit ## Overview and ## Summary per
+    common-output-format.md.
+  context:
+    commit_range: eval0001..eval0002
+    skip: false
+    findings:
+      - file: docs/guide/overview.md
+        reason: references deleted workflow ci-build.yaml
+        source_commit: eval0002
+expected:
+  output_contains:
+    - Changes
+    - Overview
+  outcomes:
+    - type: task_completed

@@ -1,0 +1,33 @@
+id: tech-debt-truncation-001
+name: tech-debt caps Critical and High-Priority at 25
+description: Validate overflow moves to Watch with truncation note when over cap.
+tags:
+  - quality
+  - edge-case
+inputs:
+  prompt: >-
+    Use tech-debt with may_edit true. Assume classification yields 20 High-Priority marker
+    findings plus 6 Critical security findings (26 total above cap). Retain all Critical
+    first, then High-Priority until 25 combined; move overflow to Watch in persisted report.
+    Emit apply shape with report_file under ### Changes, Truncated overflow note in Overview,
+    Category code_quality on rows, and ## Verification. Emit ## Overview and ## Summary per
+    common-output-format.md.
+  context:
+    commit_range: eval0001..eval0002
+    report_file: docs/report/tech-debt/2026-07-19.md
+    skip: false
+    signals:
+      - kind: hack
+        path: evals/files/sample_service.go.txt
+        line: 10
+        snippet: "HACK: duplicated across services"
+        hint: code_quality
+    hotspots: []
+expected:
+  output_contains:
+    - Truncated
+    - Critical
+    - Changes
+    - Overview
+  outcomes:
+    - type: task_completed

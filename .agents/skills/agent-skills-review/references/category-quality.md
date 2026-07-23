@@ -147,4 +147,3 @@ Examples:
 - ✅ Input says "profile: optional (default: default)" and Workflow uses fallback logic when profile is absent
 - ❌ Input says "required" but Workflow says "skip if not provided"
 - ❌ Output Specification defines a field that common-output-format.md omits
-

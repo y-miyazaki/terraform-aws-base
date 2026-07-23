@@ -1,0 +1,34 @@
+id: ci-sweeper-automation-constraints-001
+name: ci-sweeper automation production constraints
+description: Validate LE workflow Constraints with may_edit from loop-prompt-generate shape.
+tags:
+  - quality
+  - automation
+inputs:
+  prompt: >-
+    Use ci-sweeper. ## Constraints may_edit: true write_target: fix You MUST persist edits to disk in the
+    worktree; a report alone is not sufficient when may_edit is true. Allowed paths:
+    scripts/**. Classify the injected regression; emit apply shape with ### Changes and ##
+    Verification plus ## Session Metrics. Do not emit ### Candidates. Emit ## Overview and
+    ## Summary per common-output-format.md. Include Category labels on rows.
+  context:
+    skip: false
+    failures:
+      - workflow_name: ci-shell
+        workflow_run_id: "987654321"
+        head_sha: eval0002
+        head_branch: main
+        job_name: shellcheck
+        failure_type: regression
+        log_excerpt: "SC2086: Double quote to prevent globbing and word splitting."
+        run_url: https://github.com/org/repo/actions/runs/987654321
+        source_commit: eval0002
+        reason: shellcheck SC2086 in scripts/deploy.sh
+expected:
+  output_contains:
+    - Changes
+    - Overview
+    - Verification
+    - Session Metrics
+  outcomes:
+    - type: task_completed

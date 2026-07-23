@@ -66,9 +66,10 @@ source "${_bats_support}/support/common.bash"
 
 ### Support Library
 
-| File | Role |
+| File                            | Role                                                        |
+| ------------------------------- | ----------------------------------------------------------- |
 | `test/bats/support/common.bash` | Optional shared helpers (source paths, fixtures, temp dirs) |
-| `test/bats/support/*.bash` | Domain mocks; load from `setup()` or per-test as needed |
+| `test/bats/support/*.bash`      | Domain mocks; load from `setup()` or per-test as needed     |
 
 Prefer [bats-support](https://github.com/bats-core/bats-support) and [bats-assert](https://github.com/bats-core/bats-assert) when the project adopts them.
 
@@ -138,4 +139,3 @@ References: [bats-core writing tests](https://bats-core.readthedocs.io/en/stable
 - Do not embed real API keys, tokens, or credentials in `@test` fixtures — use obvious placeholders and verify sanitization/redaction where applicable.
 - Write temporary artifacts only under `BATS_TEST_TMPDIR`, `mktemp`, or ignored paths; remove them in `teardown()`.
 - Do not make destructive host paths the default in examples (avoid `rm -rf /` patterns); scope file operations to test fixtures.
-

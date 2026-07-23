@@ -1,0 +1,32 @@
+id: ci-sweeper-interactive-survey-001
+name: ci-sweeper interactive survey default
+description: Validate natural-language triage request emits survey without edits.
+tags:
+  - quality
+  - interactive
+inputs:
+  prompt: >-
+    Use ci-sweeper. The user asks to triage the injected CI failure. Survey only. Classify
+    the regression under ### Candidates. Do not edit files. Emit ## Overview and ## Summary.
+    Do not emit ### Changes or ## Verification. State no edits applied in Overview. Include
+    Category labels on rows.
+  context:
+    skip: false
+    failures:
+      - workflow_name: ci-shell
+        workflow_run_id: "987654321"
+        head_sha: eval0002
+        head_branch: main
+        job_name: shellcheck
+        failure_type: regression
+        log_excerpt: "SC2086: Double quote to prevent globbing and word splitting."
+        run_url: https://github.com/org/repo/actions/runs/987654321
+        source_commit: eval0002
+        reason: shellcheck SC2086 in scripts/deploy.sh
+expected:
+  output_contains:
+    - Candidates
+    - Overview
+    - no edits applied
+  outcomes:
+    - type: task_completed

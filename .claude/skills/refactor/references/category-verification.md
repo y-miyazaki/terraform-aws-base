@@ -30,4 +30,3 @@ Stack-specific gates. Prefer existing `*-validation` skills named in `## Instruc
 
 - Read `## Instructions` for named validation skills and commands
 - Do not hardcode consumer skill package paths into this reference
-

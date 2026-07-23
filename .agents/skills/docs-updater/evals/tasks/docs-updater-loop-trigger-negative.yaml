@@ -1,20 +1,20 @@
 id: docs-updater-loop-trigger-negative-001
-name: docs-updater loop path rejects code fix requests
+name: docs-updater automation path rejects code fix requests
 description: Validate that docs-updater does not attempt to fix code issues.
 tags:
   - quality
-  - loop-path
+  - automation-path
   - trigger-negative
   - boundary-guardrail
 inputs:
   prompt: >-
-    Use docs-updater (loop path). The user asks to fix a bug in src/handler.go. This is
-    not documentation triage. Note the request as out of scope. Emit High-Priority,
-    Watch, Noise / Ignore, and Summary without editing src paths. Emit PR ## Overview
-    and ## Summary plus Session Metrics table with High-Priority Items, Watch Items,
-    and Noise / Ignore sections.
+    Use docs-updater (automation path). ## Constraints may_edit: true The user asks to fix a
+    bug in src/handler.go. This is not documentation triage. Note the request as out of
+    scope in Overview or ### Deferred. Fix only the allowlisted doc finding under ###
+    Changes. Emit apply shape with ## Verification and Session Metrics. Emit ## Overview and
+    ## Summary per common-output-format.md.
   context:
-    level: L2
+    commit_range: eval0001..eval0002
     skip: false
     findings:
       - file: docs/guide/overview.md
@@ -23,8 +23,7 @@ inputs:
 expected:
   output_contains:
     - out of scope
-    - High-Priority
-    - "## Overview"
-    - "## Summary"
+    - Changes
+    - Overview
   outcomes:
     - type: task_completed

@@ -104,16 +104,16 @@ Structured PR output:
 
 ### Error Handling
 
-| Condition                                      | Severity    | Action                                                              |
-| ---------------------------------------------- | ----------- | ------------------------------------------------------------------- |
-| `gh` not authenticated                         | Fatal       | Stop; instruct `gh auth login`                                      |
-| PR not found (404)                             | Fatal       | Verify PR number and `owner/repo`                                   |
-| Access denied (403)                            | Fatal       | Verify `repo` write scope                                           |
-| `pr_fetch.sh` or `pr_body.sh` missing          | Fatal       | Stop; report missing script                                         |
-| `.github/PULL_REQUEST_TEMPLATE.md` missing     | Recoverable | Baseline mode only; skip full-body template sections                |
-| Body exceeds GitHub size limit (422)           | Recoverable | Truncate or split content; report in output                         |
-| Rate limit exceeded (429)                      | Recoverable | Defer update; note retry window in report                          |
-| Dry-run output unacceptable                    | Info        | Do not apply; report diff issues and stop                           |
+| Condition                                  | Severity    | Action                                               |
+| ------------------------------------------ | ----------- | ---------------------------------------------------- |
+| `gh` not authenticated                     | Fatal       | Stop; instruct `gh auth login`                       |
+| PR not found (404)                         | Fatal       | Verify PR number and `owner/repo`                    |
+| Access denied (403)                        | Fatal       | Verify `repo` write scope                            |
+| `pr_fetch.sh` or `pr_body.sh` missing      | Fatal       | Stop; report missing script                          |
+| `.github/PULL_REQUEST_TEMPLATE.md` missing | Recoverable | Baseline mode only; skip full-body template sections |
+| Body exceeds GitHub size limit (422)       | Recoverable | Truncate or split content; report in output          |
+| Rate limit exceeded (429)                  | Recoverable | Defer update; note retry window in report            |
+| Dry-run output unacceptable                | Info        | Do not apply; report diff issues and stop            |
 
 ### Examples
 

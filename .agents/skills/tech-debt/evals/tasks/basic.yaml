@@ -1,0 +1,32 @@
+id: tech-debt-contract-001
+name: tech-debt classifies injected todo marker
+description: >-
+  Validate tech-debt classifies an injected todo_comment in apply shape.
+tags:
+  - quality
+  - output-contract
+inputs:
+  prompt: >-
+    Use tech-debt with may_edit true. Classify the injected todo_comment with Category
+    code_quality under High-Priority in persisted report. Emit apply PR shape with ###
+    Changes (report_file path), Category on rows where applicable, and ## Verification.
+    Include Session Metrics. Emit ## Overview and ## Summary per common-output-format.md.
+  context:
+    commit_range: eval0001..eval0002
+    report_file: docs/report/tech-debt/2026-07-19.md
+    skip: false
+    signals:
+      - kind: todo_comment
+        path: evals/files/sample_service.go.txt
+        line: 5
+        snippet: "TODO: extract shared validator used by HandleCreate and HandleUpdate"
+        hint: code_quality
+    hotspots: []
+expected:
+  output_contains:
+    - code_quality
+    - Category
+    - Changes
+    - Verification
+  outcomes:
+    - type: task_completed

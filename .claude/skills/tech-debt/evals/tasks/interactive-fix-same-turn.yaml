@@ -1,0 +1,31 @@
+id: tech-debt-interactive-fix-same-turn-001
+name: tech-debt interactive fix same turn
+description: Validate apply language in the same request writes report_file.
+tags:
+  - quality
+  - interactive
+inputs:
+  prompt: >-
+    Use tech-debt. The user says write the tech-debt report with the injected signal.
+    may_edit is true. Classify code_quality under High-Priority; emit apply shape with ###
+    Changes listing report_file and ## Verification. Emit ## Overview and ## Summary per
+    common-output-format.md. Include Category labels on rows.
+  context:
+    commit_range: eval0001..eval0002
+    report_file: docs/report/tech-debt/2026-07-19.md
+    skip: false
+    signals:
+      - kind: todo_comment
+        path: evals/files/sample_service.go.txt
+        line: 5
+        snippet: "TODO: extract shared validator used by HandleCreate and HandleUpdate"
+        hint: code_quality
+    hotspots: []
+expected:
+  output_contains:
+    - Changes
+    - Overview
+    - Verification
+    - docs/report/tech-debt/2026-07-19.md
+  outcomes:
+    - type: task_completed

@@ -20,7 +20,7 @@
 # - When DOCS_TRIAGE_DOC_GLOBS is unset, discover all *.md excluding generated/hidden paths
 # - Output structured JSON via shared lib/json.sh
 # - Exit 0 always (errors reported in JSON status field)
-# - Source shared helpers from scripts/lib/all.sh (synced via scripts/ai/sync_skill_lib.sh)
+# - Source shared helpers from scripts/lib/all.sh (synced via scripts/self/ai/sync_skill_lib.sh)
 #
 # Dependencies:
 # - bash (POSIX bash, /bin/bash)

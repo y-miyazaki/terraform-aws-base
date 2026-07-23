@@ -5,9 +5,11 @@ tags:
   - classification
 inputs:
   prompt: >-
-    Use ci-sweeper. One failure has failure_type=infra (runner OOM). Emit
-    the full triage report with Actionable Fixes and Watch Items sections.
-    Classify the infra failure under Watch Items and do not edit files. Emit PR ## Overview and ## Summary plus Session Metrics table with Actionable Fixes, Watch Items, and Ignored sections.
+    Use ci-sweeper with may_edit false. One failure has failure_type=infra (runner OOM).
+    Emit survey shape with ## Overview, ### Candidates or ### Watch as appropriate. Classify
+    the infra failure under ### Watch and do not edit files. Do not emit ## Verification or
+    ### Changes. Include ## Summary per common-output-format.md. State no edits applied in
+    Overview. Include Category labels on rows.
   context:
     failures:
       - workflow_name: ci-go
@@ -16,8 +18,7 @@ inputs:
         reason: runner OOM
 expected:
   output_contains:
-    - Actionable Fixes
-    - Watch Items
     - Watch
+    - Overview
   outcomes:
     - type: task_completed

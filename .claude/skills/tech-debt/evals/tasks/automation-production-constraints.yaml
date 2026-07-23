@@ -1,0 +1,33 @@
+id: tech-debt-automation-constraints-001
+name: tech-debt automation production constraints
+description: Validate LE workflow Constraints with may_edit from loop-prompt-generate shape.
+tags:
+  - quality
+  - automation
+inputs:
+  prompt: >-
+    Use tech-debt. ## Constraints may_edit: true write_target: report report_file:
+    docs/report/tech-debt/2026-07-19.md You MUST persist report_file within allowlist. Allowed paths:
+    docs/report/tech-debt/**/*.md. Classify injected eol_hint as dependency_version; emit
+    apply shape with ### Changes and ## Verification plus ## Session Metrics. Emit ##
+    Overview and ## Summary per common-output-format.md. Include Category labels on rows.
+  context:
+    commit_range: eval0001..eval0002
+    report_file: docs/report/tech-debt/2026-07-19.md
+    skip: false
+    signals:
+      - kind: eol_hint
+        path: evals/files/go.mod.txt
+        line: 5
+        snippet: "require github.com/old/lib v1.2.3"
+        source: go_mod
+        hint: dependency_version
+    hotspots: []
+expected:
+  output_contains:
+    - Changes
+    - Overview
+    - Verification
+    - Session Metrics
+  outcomes:
+    - type: task_completed

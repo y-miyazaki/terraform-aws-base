@@ -1,5 +1,5 @@
 <!--
-Canonical PR-facing template for loop-changelog.
+PR-facing template for changelog automation (may_edit: true).
 
 Load ONLY at synthesis time, after CHANGELOG.md edits complete.
 
@@ -12,28 +12,28 @@ Rules:
 ## Overview
 
 <!--
-  GOOD: Processed 4 conventional commits since last changelog SHA; added 3 Unreleased bullets under Changed.
-  BAD:  Changelog loop run finished.
+  GOOD: Processed 4 conventional commits since abc1234; added 3 Unreleased bullets under Changed and promoted v1.8.16.
+  BAD:  Changelog run finished.
 -->
 
-<one or two sentences: which commits were processed and what CHANGELOG section was updated>
+<one or two sentences: which commits/releases were recorded and under which CHANGELOG sections>
 
 ## Summary
 
 ### Changes
 
-| Commit      | Type   | Entry |
-| ----------- | ------ | ----- |
+| Commit      | Type   | Entry                                |
+| ----------- | ------ | ------------------------------------ |
 | <short sha> | <type> | <Unreleased bullet added or updated> |
 
 ### Skipped
 
-| Commit | Why skipped |
-| ------ | ----------- |
+| Commit | Why skipped                         |
+| ------ | ----------------------------------- |
 | <sha>  | <already listed / non-conventional> |
 
 ## Verification
 
-| Check | Result |
-| ----- | ------ |
+| Check                    | Result         |
+| ------------------------ | -------------- |
 | `CHANGELOG.md` structure | <pass \| fail> |

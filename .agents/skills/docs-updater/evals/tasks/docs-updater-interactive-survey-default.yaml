@@ -1,0 +1,24 @@
+id: docs-updater-interactive-survey-001
+name: docs-updater interactive survey default
+description: Validate natural-language doc drift check emits survey without edits.
+tags:
+  - quality
+  - interactive
+inputs:
+  prompt: >-
+    Use docs-updater. The user asks to check documentation drift for staged changes. Survey
+    only. List affected docs under ### Candidates. Do not edit files. Emit ## Overview and
+    ## Summary. Do not emit ### Changes or ## Verification. State no edits applied in
+    Overview.
+  context:
+    scope: staged
+    skip: false
+    affected_docs:
+      - docs/guide/overview.md
+expected:
+  output_contains:
+    - Candidates
+    - Overview
+    - no edits applied
+  outcomes:
+    - type: task_completed

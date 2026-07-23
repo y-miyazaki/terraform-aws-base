@@ -1,0 +1,31 @@
+id: ci-sweeper-interactive-fix-same-turn-001
+name: ci-sweeper interactive fix same turn
+description: Validate fix language in the same request enables apply shape.
+tags:
+  - quality
+  - interactive
+inputs:
+  prompt: >-
+    Use ci-sweeper. The user says fix the injected shellcheck regression. may_edit is true.
+    Emit apply shape with ## Overview, ### Changes, and ## Verification. Do not edit files
+    in this mock eval. Include ## Summary per common-output-format.md.
+  context:
+    skip: false
+    failures:
+      - workflow_name: ci-shell
+        workflow_run_id: "987654321"
+        head_sha: eval0002
+        head_branch: main
+        job_name: shellcheck
+        failure_type: regression
+        log_excerpt: "SC2086: Double quote to prevent globbing and word splitting."
+        run_url: https://github.com/org/repo/actions/runs/987654321
+        source_commit: eval0002
+        reason: shellcheck SC2086 in scripts/deploy.sh
+expected:
+  output_contains:
+    - Changes
+    - Overview
+    - Verification
+  outcomes:
+    - type: task_completed

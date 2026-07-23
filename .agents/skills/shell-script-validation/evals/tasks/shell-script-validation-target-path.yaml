@@ -23,4 +23,3 @@ expected:
     - "--check-function-docs"
   outcomes:
     - type: task_completed
-

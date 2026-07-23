@@ -1,0 +1,32 @@
+id: refactor-may-edit-false-001
+name: refactor survey when may_edit is false
+description: Validate may_edit false lists hint Candidates in survey shape without file edits.
+tags:
+  - quality
+  - constraints
+inputs:
+  prompt: >-
+    Use refactor with automation constraints may_edit false. List every injected hint under
+    ### Candidates in survey shape. Do not edit files. Do not emit ## Verification or ###
+    Changes. Append ## Session Metrics per category-automation-envelope.md. Emit ## Overview
+    and ## Summary per common-output-format.md. State no edits applied in Overview.
+  context:
+    commit_range: eval0001..eval0002
+    skip: false
+    hints:
+      - kind: duplication_block
+        path: scripts/example.sh
+        detail: lines 10-17 duplicate scripts/other.sh:40-47
+        lines: 8
+      - kind: oversized_unit
+        path: scripts/big.sh
+        detail: file exceeds line threshold
+        lines: 450
+expected:
+  output_contains:
+    - Candidates
+    - Overview
+    - no edits applied
+    - Session Metrics
+  outcomes:
+    - type: task_completed

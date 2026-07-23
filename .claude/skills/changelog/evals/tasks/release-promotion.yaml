@@ -6,14 +6,14 @@ tags:
   - edge-case
 inputs:
   prompt: >-
-    Use changelog at L2. Promote release 1.8.16 from injected releases[].
-    Report which version was promoted in Summary. Move matching commit bullets
-    from ## [Unreleased] into ## [1.8.16] - 2026-07-12 per checklist. Emit PR ## Overview and ## Summary plus Session Metrics table with Commits Processed and Skipped Commits sections.
+    Use changelog with may_edit true. Promote release 1.8.16 from injected releases[].
+    Report which version was promoted in ## Overview. Move matching commit bullets from ##
+    [Unreleased] into ## [1.8.16] - 2026-07-12 per checklist. Emit apply shape with ###
+    Changes and ## Verification. Include ## Summary per common-output-format.md.
   context:
     changelog_file: evals/files/CHANGELOG.sample.md
     changelog_exists: true
     commit_range: eval0001..eval0002
-    level: L2
     repository_url: https://github.com/owner/repo
     skip: false
     commits:
@@ -32,7 +32,7 @@ inputs:
 expected:
   output_contains:
     - "1.8.16"
-    - Summary
-    - Commits Processed
+    - Changes
+    - Overview
   outcomes:
     - type: task_completed

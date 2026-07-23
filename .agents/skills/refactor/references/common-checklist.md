@@ -17,11 +17,11 @@
 - Emit `### Candidates` with one row per candidate (see [common-output-format.md](common-output-format.md))
 - Mark each row **apply** or **watch**; lint/style-only, feature/API, comment-only, or cross-boundary → **watch**
 - Zero candidates → Outcome `no-op`; stop
-- Do not require or read `docs/report/report-tech-debt/**`
+- Do not require or read `docs/report/tech-debt/**`
 
 ## Apply (Phase B)
 
-- Run only when `mode: apply` and level allows edits (`L2`/`L3` loop; interactive default)
+- Run only when `may_edit` is `true` (interactive default; automation per `## Constraints`)
 - Apply **every** candidate marked **apply** in survey order
 - Pick **one** technique per candidate from [category-techniques.md](category-techniques.md)
 - Treat `duplication_block` as **logic duplication** — dedupe executable/shared logic, not documentation or comment-only templates
@@ -29,7 +29,7 @@
 - Stay in closed depth tiers O1/O2 ([category-operations.md](category-operations.md)): **O1** = local structure same behavior; **O2** = plus shallow same-package move
 - No public API semantics changes; no feature behavior changes
 - No one-shot cross-boundary apply or GoF introduction — architecture path is propose → approve → one O2 slice
-- Loop L2/L3: structural intent only; no architecture Phase A/B during apply
+- Automation apply (`may_edit: true`): structural intent only; no architecture Phase A/B during apply
 - Failed gate for one candidate → revert that edit; record under **Deferred**; continue remaining candidates
 
 ## Verification
@@ -43,9 +43,9 @@
 
 ## Output
 
-- Pick **one** result shape per run — survey-only **or** apply — per [common-output-format.md](common-output-format.md) (interactive) or [common-output-format-loop.md](common-output-format-loop.md) (loop)
-- **Survey** (`mode: survey`, loop `L1`): `### Candidates` (+ optional `### Watch`); **MUST NOT** emit `### Changes`, `### Deferred`, or `## Verification`
-- **Apply** (`mode: apply`, loop `L2`/`L3`): `### Changes` (+ optional `### Deferred`) and `## Verification`; **MUST NOT** emit `### Candidates` or `### Watch` in final output
+- Pick **one** result shape per run — survey-only **or** apply — per [common-output-format.md](common-output-format.md) (interactive) or [common-output-format-loop.md](common-output-format-loop.md) (automation)
+- **Survey** (`may_edit: false`): `### Candidates` (+ optional `### Watch`); **MUST NOT** emit `### Changes`, `### Deferred`, or `## Verification`
+- **Apply** (`may_edit: true`): `### Changes` (+ optional `### Deferred`) and `## Verification`; **MUST NOT** emit `### Candidates` or `### Watch` in final output
 - Classify intent and depth tier internally before edits; **do not** put `O1`/`O2`/`O3`, intent labels, or Fowler technique names in user-facing tables
 - Before PR synthesis (apply mode): reconcile **Changes** / **Deferred** with `git diff --name-only`
 - Architecture Phase A: use survey shape + **Architecture Proposal**; no file edits

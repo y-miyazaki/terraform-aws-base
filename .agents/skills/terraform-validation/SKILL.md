@@ -57,14 +57,14 @@ Structured results in fixed order: terraform fmt, terraform validate, tflint, tr
 
 ### Error Handling
 
-| Condition                              | Severity    | Action                                                              |
-| -------------------------------------- | ----------- | ------------------------------------------------------------------- |
-| `scripts/validate.sh` missing          | Fatal       | Stop; report missing script                                         |
-| No `.tf` files under target path       | Info        | Report no reviewable Terraform; stop                                |
-| Single tool fails, others succeed      | Recoverable | Report passing tools; defer failed tool with exit status            |
-| All tools fail                         | Fatal       | Return `status: failed` with per-tool stderr summaries              |
-| `common-checklist.md` unavailable      | Fatal       | Stop; report missing dependency                                     |
-| `common-output-format.md` unavailable  | Recoverable | Use inline output contract                                          |
+| Condition                             | Severity    | Action                                                   |
+| ------------------------------------- | ----------- | -------------------------------------------------------- |
+| `scripts/validate.sh` missing         | Fatal       | Stop; report missing script                              |
+| No `.tf` files under target path      | Info        | Report no reviewable Terraform; stop                     |
+| Single tool fails, others succeed     | Recoverable | Report passing tools; defer failed tool with exit status |
+| All tools fail                        | Fatal       | Return `status: failed` with per-tool stderr summaries   |
+| `common-checklist.md` unavailable     | Fatal       | Stop; report missing dependency                          |
+| `common-output-format.md` unavailable | Recoverable | Use inline output contract                               |
 
 ### Examples
 

@@ -12,19 +12,19 @@ Closed set for apply: O1/O2 only. O3 is proposal-first, then O2 slices after use
 
 ## Execution phases
 
-| Phase | Name   | When                         | Edits |
-| ----- | ------ | ---------------------------- | ----- |
-| A     | Survey | Every run                    | No    |
-| B     | Apply  | `mode: apply` and level allows | Yes   |
+| Phase | Name   | When             | Edits |
+| ----- | ------ | ---------------- | ----- |
+| A     | Survey | Every run        | No    |
+| B     | Apply  | `may_edit: true` | Yes   |
 
 Survey discovers **all** candidates in scope. Apply fixes **every** candidate marked apply in survey order. Do not stop after the first candidate.
 
 ## Execution modes
 
-| Mode    | Phase A | Phase B | Typical trigger                                      |
-| ------- | ------- | ------- | ---------------------------------------------------- |
-| `survey`| Yes     | No      | 洗い出し, list candidates, inventory; loop `L1`        |
-| `apply` | Yes     | Yes     | リファクタリング実施, `/refactor`; loop `L2`/`L3` default |
+| Mode     | Phase A | Phase B | Typical trigger                                             |
+| -------- | ------- | ------- | ----------------------------------------------------------- |
+| `survey` | Yes     | No      | 洗い出し, list candidates, inventory; `may_edit: false`     |
+| `apply`  | Yes     | Yes     | リファクタリング実施, `/refactor`; `may_edit: true` default |
 
 ## Intent classification (before edits)
 
@@ -64,7 +64,7 @@ Allowed:
 - Shallow move within the **same** package/module boundary
 - Import and wiring cleanup required by that move
 
-Forbidden on L2 / automation path:
+Forbidden on automation path (`may_edit: true` with detect hints):
 
 - Cross-package redesign
 - New design patterns (GoF) or deep-module redesign (**O3**)
@@ -84,4 +84,4 @@ Forbidden on L2 / automation path:
 - Run survey + apply for that slice only — **O2 cap**
 - Same verification and validation gates as structural intent
 
-**Never on loop L2:** loop callers and detect hints stay structural (O1/O2) only.
+**Never on automation path:** detect hints stay structural (O1/O2) only.

@@ -1,20 +1,18 @@
 id: changelog-basic-001
 name: changelog-basic
 description: >-
-  Process conventional commits and report changelog updates with Commits
-  Processed and Summary sections.
+  Process conventional commits and emit apply shape with Changes and Verification.
 tags:
   - quality
   - output-contract
 inputs:
   prompt: >-
-    Use changelog at L2. Process the injected conventional commits and emit
-    the full changelog report with sections Commits Processed, Skipped Commits,
-    and Summary. Include Commits Processed and Summary wording in the report. Emit PR ## Overview and ## Summary plus Session Metrics table with Commits Processed and Skipped Commits sections.
+    Use changelog with may_edit true. Process the injected conventional commits and emit
+    apply shape with ## Overview, ### Changes, optional ### Skipped, and ## Verification. Do
+    not emit ### Candidates. Include ## Summary per common-output-format.md.
   context:
     changelog_file: CHANGELOG.md
     commit_range: eval0001..eval0002
-    level: L2
     skip: false
     commits:
       - sha: eval0002
@@ -24,7 +22,8 @@ inputs:
         subject: add changelog workflow
 expected:
   output_contains:
-    - Commits Processed
-    - Summary
+    - Changes
+    - Overview
+    - Verification
   outcomes:
     - type: task_completed

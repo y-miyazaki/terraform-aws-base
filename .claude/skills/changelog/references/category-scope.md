@@ -2,15 +2,15 @@
 
 ### How scope is resolved
 
-| Mode | Allowlist | Denylist |
-| ---- | --------- | -------- |
-| **Interactive** — no path constraints in prompt or JSON | **Unrestricted** within [Skill-specific limits](#skill-specific-limits) and [ignore conventions](#ignore-conventions) | **None from skill** — follow repository security instructions |
-| **Interactive** — user `allowlist` / `denylist` | User allowlist globs only (within skill-specific limits) | User denylist globs |
-| **Loop** | Caller `allowlist` — repeated in prompt `## Constraints` as `Allowed paths: …` | Caller `denylist` — enforced by loop-execute verifier (may be empty; not inlined in prompt unless caller criteria mention it) |
+| Context                                         | Allowlist                                                                                                             | Denylist                                                             |
+| ----------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------- |
+| **Interactive** — no path constraints in prompt | **Unrestricted** within [skill-specific limits](#skill-specific-limits) and [ignore conventions](#ignore-conventions) | **None from skill** — follow repository security instructions        |
+| **Interactive** — user `allowlist` / `denylist` | User allowlist globs only (within skill-specific limits)                                                              | User denylist globs                                                  |
+| **Automation** — `## Constraints`               | `Allowed paths: …` when the caller supplies an allowlist                                                              | Caller denylist — enforced by the automation verifier (may be empty) |
 
-Skills do **not** ship a repository-wide default denylist. Per-repo deny rules belong in caller workflows, repository instructions (`AGENTS.md`), or explicit user constraints — not in skill references.
+Skills do **not** ship a repository-wide default denylist. Per-repo deny rules belong in caller configuration, repository instructions (`AGENTS.md`), or explicit user constraints — not in skill references.
 
-Do **not** treat [Loop caller examples](#loop-caller-examples-this-repository) as interactive scope. Those configure `on-loop-*.yaml` only.
+Do **not** treat automation-only allowlist examples as interactive scope. See [category-automation-envelope.md](category-automation-envelope.md) on the automation path.
 
 ### Ignore conventions
 
@@ -22,9 +22,6 @@ Do not edit paths that appear to hold secrets (environment files, credential sto
 
 This skill edits the changelog file only (`CHANGELOG.md` or `changelog_file` from input).
 
-### Loop caller examples (this repository)
+When `may_edit` is `false`, do not edit any file — survey output only.
 
-| Key | Example |
-| --- | ------- |
-| `allowlist` | `CHANGELOG.md` |
-| `denylist` | *(omitted in `on-loop-changelog.yaml` — scope enforced by allowlist and verifier)* |
+When `may_edit` is `true`, edit only `changelog_file` and only when that path is within the resolved allowlist (interactive: skill-specific limits; automation: `Allowed paths` when set).

@@ -8,4 +8,4 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Added
 
-- add loop-changelog workflow (eval0002)
+- add changelog workflow (eval0002)

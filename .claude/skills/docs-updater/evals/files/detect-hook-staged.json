@@ -4,15 +4,10 @@
   "since": "",
   "commit_range": "--cached",
   "skip": false,
-  "changed_files": [
-    ".github/workflows/ci-build-deploy.yaml"
-  ],
+  "changed_files": [".github/workflows/ci-build-deploy.yaml"],
   "deleted_files": [],
   "renamed_files": [
     ".github/workflows/ci-build.yaml->.github/workflows/ci-build-deploy.yaml"
   ],
-  "affected_docs": [
-    "docs/guide.md",
-    "mkdocs.yml"
-  ]
+  "affected_docs": ["docs/guide.md", "mkdocs.yml"]
 }

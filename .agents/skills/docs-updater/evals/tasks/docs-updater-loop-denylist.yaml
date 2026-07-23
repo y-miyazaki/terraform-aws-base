@@ -1,20 +1,19 @@
 id: docs-updater-loop-denylist-001
-name: docs-updater loop path skips denylist src path
-description: Validate src/** finding is not edited and is classified as Watch.
+name: docs-updater automation path skips denylist src path
+description: Validate src/** finding is not edited and is classified as Deferred.
 tags:
   - quality
-  - loop-path
+  - automation-path
   - boundary-guardrail
 inputs:
   prompt: >-
-    Use docs-updater (loop path) at L2. The only finding is src/handler.go with a doc
-    comment drift note. This path is denylisted. Classify as Watch or Noise /
-    Ignore; do not edit. Summary must note denylist constraint. Emit PR ## Overview
-    and ## Summary plus Session Metrics table with High-Priority Items, Watch Items,
-    and Noise / Ignore sections.
+    Use docs-updater (automation path). ## Constraints may_edit: true The only finding is
+    src/handler.go with a doc comment drift note on the denylist. Classify under ###
+    Deferred; do not edit. Emit apply shape noting denylist constraint in Overview. Include
+    ## Verification and Session Metrics. Emit ## Overview and ## Summary per
+    common-output-format.md. Include Category labels on rows.
   context:
     commit_range: eval0001..eval0002
-    level: L2
     skip: false
     findings:
       - file: src/handler.go
@@ -22,9 +21,8 @@ inputs:
         source_commit: eval0002
 expected:
   output_contains:
-    - Watch
+    - Deferred
     - denylist
-    - "## Summary"
-    - "## Overview"
+    - Overview
   outcomes:
     - type: task_completed

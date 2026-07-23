@@ -1,0 +1,30 @@
+id: changelog-may-edit-false-001
+name: changelog survey when may_edit is false
+description: Validate may_edit false lists commit Candidates in survey shape without file edits.
+tags:
+  - quality
+  - constraints
+inputs:
+  prompt: >-
+    Use changelog with automation constraints may_edit false. List the injected feat commit
+    under ### Candidates in survey shape. Do not edit CHANGELOG.md. Do not emit ##
+    Verification or ### Changes. Emit ## Overview and ## Summary per
+    common-output-format.md. State no edits applied in Overview.
+  context:
+    changelog_file: CHANGELOG.md
+    changelog_exists: true
+    commit_range: eval0001..eval0002
+    skip: false
+    commits:
+      - sha: eval0002
+        type: feat
+        scope: changelog
+        breaking: false
+        subject: add changelog workflow
+expected:
+  output_contains:
+    - Candidates
+    - Overview
+    - no edits applied
+  outcomes:
+    - type: task_completed
