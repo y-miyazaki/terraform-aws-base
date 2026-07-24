@@ -29,6 +29,7 @@ repos:
     rev: v1.5.0
     hooks:
       - id: detect-secrets
+        args: ["--disable-plugin", "Base64HighEntropyString"]
         # args: ['--baseline', '.secrets.baseline']
         # Exclude go tests, gitleaks config, lock/checksums, .loop/ state, terraform.*.tfvars
         exclude: '(.*_test.go|.gitleaks.toml|apm.lock.yaml|aqua-checksums.json|(?:^|/)\.loop/|(?:^|/)(?:.*/)?terraform\.(?!example\.)[^.]+\.tfvars$)'

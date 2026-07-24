@@ -8,7 +8,7 @@
 #     scan_ref: services/api
 #
 # CodeQL languages (codeql_languages):
-#   Go:         '["go","actions"]'
+#   Go:         '["actions","go"]'
 #   Node.js:    '["javascript-typescript","actions"]'
 #   Terraform/IaC-only (no app source): '["actions"]'
 name: on-ci-security
@@ -92,7 +92,7 @@ jobs:
   sast:
     uses: y-miyazaki/config/.github/workflows/ci-sast.yaml@00d6e7a9346341b5fc6318893ff71b80b670fd62 # v1.8.58
     with:
-      # Go:         codeql_languages: '["go","actions"]'
+      # Go:         codeql_languages: '["actions","go"]'
       # Node.js:    codeql_languages: '["javascript-typescript","actions"]'
       # Terraform/IaC-only: codeql_languages: '["actions"]'
       codeql_languages: '["actions"]'

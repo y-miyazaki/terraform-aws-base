@@ -14,7 +14,7 @@
       },
       "responseElements": {
         "x-amz-request-id": "EXAMPLE123456789",
-        "x-amz-id-2": "EXAMPLE111/111"
+        "x-amz-id-2": "EXAMPLE123/5678abcdefghijklambdaisawesome/mnopqrstuvwxyzABCDEFGH"
       },
       "s3": {
         "s3SchemaVersion": "1.0",
@@ -29,8 +29,8 @@
         "object": {
           "key": "logs/E1ABCDEFGHI2J3.2023-05-08-12.a1b2c3d4.gz",
           "size": 1024,
-          "eTag": "01234567890123456789",
-          "sequencer": "012345678901234567"
+          "eTag": "0123456789abcdef0123456789abcdef",
+          "sequencer": "0A1B2C3D4E5F678901"
         }
       }
     },
@@ -48,7 +48,7 @@
       },
       "responseElements": {
         "x-amz-request-id": "EXAMPLE987654321",
-        "x-amz-id-2": "EXAMPLE111/111"
+        "x-amz-id-2": "EXAMPLE123/5678abcdefghijklambdaisawesome/mnopqrstuvwxyzABCDEFGH"
       },
       "s3": {
         "s3SchemaVersion": "1.0",
@@ -63,8 +63,8 @@
         "object": {
           "key": "logs/E1ABCDEFGHI2J3.2023-05-08-14.x9y8z7w6.gz",
           "size": 2048,
-          "eTag": "01234567890123456789",
-          "sequencer": "0123456789012345678"
+          "eTag": "0123456789abcdef0123456789abcdef",
+          "sequencer": "0A1B2C3D4E5F678902"
         }
       }
     }
