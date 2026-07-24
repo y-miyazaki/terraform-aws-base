@@ -10,3 +10,8 @@ test/
 tmp/
 **/.terraform/
 **/node_modules/
+
+# Environment-specific Terraform variable files (private repo; also excluded in
+# pre-commit detect-private-key / detect-secrets).
+**/terraform.*.tfvars
+!**/terraform.example.tfvars

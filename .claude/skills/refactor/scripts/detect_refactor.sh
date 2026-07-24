@@ -627,10 +627,7 @@ function emit_ok_json {
     local skip="true"
 
     if [[ ${#HINTS_JSON[@]} -gt 0 ]]; then
-        hints_arr="[$(
-            IFS=,
-            echo "${HINTS_JSON[*]}"
-        )]"
+        hints_arr="[$(printf '%s,' "${HINTS_JSON[@]}" | sed 's/,$//')]"
         skip="false"
     fi
 
