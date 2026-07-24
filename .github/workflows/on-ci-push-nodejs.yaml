@@ -1,0 +1,43 @@
+# CI workflow: Node.js CI on push/PR
+name: on-ci-push-nodejs
+
+on:
+  push:
+    branches:
+      - "main"
+      - "master"
+      - "hotfix/**"
+      - "release/**"
+      - "develop"
+      - "feature/**"
+    paths:
+      - "nodejs/**"
+  pull_request:
+    branches:
+      - "main"
+      - "master"
+      - "hotfix/**"
+      - "release/**"
+      - "develop"
+      - "feature/**"
+    paths:
+      - "nodejs/**"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  id-token: write
+  pull-requests: write
+
+jobs:
+  nodejs-ci:
+    uses: y-miyazaki/config/.github/workflows/ci-nodejs.yaml@017a70fda429467bcb60682d32360473c6ffbc27
+    with:
+      search_paths: nodejs
+    permissions:
+      contents: read
+      id-token: write
+      pull-requests: write

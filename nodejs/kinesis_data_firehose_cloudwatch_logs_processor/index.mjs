@@ -88,7 +88,7 @@ function transformLogEvent (logEvent) {
   return `${logEvent.message}\n`
 }
 
-function processRecords (records) {
+export function processRecords (records) {
   return records.map(r => {
     const data = loadJsonGzipBase64(r.data)
     const recId = r.recordId
@@ -214,6 +214,8 @@ function loadJsonGzipBase64 (base64Data) {
   return JSON.parse(zlib.gunzipSync(Buffer.from(base64Data, 'base64')))
 }
 
+export { transformLogEvent, loadJsonGzipBase64 }
+
 export const handler = async (event) => {
   const isSas = 'sourceKinesisStreamArn' in event
   const streamARN = isSas ? event.sourceKinesisStreamArn : event.deliveryStreamArn
@@ -282,3 +284,4 @@ export const handler = async (event) => {
 
   return { records: records }
 }
+

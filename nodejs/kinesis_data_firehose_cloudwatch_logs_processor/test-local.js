@@ -1,35 +1,42 @@
-import { readFile } from 'node:fs/promises';
-import { handler } from './index.mjs';
+import { readFile } from "node:fs/promises";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 
-// Test event file path (using newly generated valid test data)
-const TEST_EVENT_PATH = './test/valid-sample-event.json';
+import { handler } from "./index.mjs";
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const TEST_EVENT_PATH = path.join(__dirname, "test", "valid-sample-event.json");
 
 async function runLocalTest() {
-  try {
-    console.log('Starting local test of Lambda function...');
+    console.log("Starting local test of Lambda function...");
 
-    // Load test event
-    const eventData = await readFile(TEST_EVENT_PATH, 'utf8');
+    const eventData = await readFile(TEST_EVENT_PATH, "utf8");
     const event = JSON.parse(eventData);
 
-    console.log('Event data loaded');
+    console.log("Event data loaded");
+    console.log("Executing Lambda function...");
 
-    // Execute Lambda function
-    console.log('Executing Lambda function...');
     const response = await handler(event);
 
-    // Output results
-    console.log('Lambda function execution results:');
+    console.log("Lambda function execution results:");
     console.log(JSON.stringify(response, null, 2));
 
-    // Count successful records
-    const successCount = response.records.filter(record => record.result === 'Ok').length;
-    console.log(`${successCount} out of ${response.records.length} records processed successfully`);
+    const successCount = response.records.filter(
+        (record) => record.result === "Ok"
+    ).length;
 
-  } catch (error) {
-    console.error('Error occurred during test execution:', error);
-  }
+    if (successCount !== response.records.length) {
+        throw new Error(
+            `Expected ${response.records.length} successful records, got ${successCount}`
+        );
+    }
+
+    console.log(
+        `${successCount} out of ${response.records.length} records processed successfully`
+    );
 }
 
-// Run test
-runLocalTest();
+runLocalTest().catch((error) => {
+    console.error("Error occurred during test execution:", error);
+    process.exitCode = 1;
+});

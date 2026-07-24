@@ -1,64 +1,39 @@
-import { readFile } from 'node:fs/promises';
-import * as path from 'path';
-import { fileURLToPath } from 'url';
-import fs from 'fs';
+import { readFile } from "node:fs/promises";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 
-// Setting up the test event path (trying multiple locations)
+import { createHandler } from "./index.mjs";
+import { createMockS3 } from "./test/mock-s3.mjs";
+
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-let TEST_EVENT_PATH = path.join(__dirname, 'test', 'valid-sample-event.json');
+const TEST_EVENT_PATH = path.join(__dirname, "test", "valid-sample-event.json");
 
-// Try alternative path if the file doesn't exist
-if (!fs.existsSync(TEST_EVENT_PATH)) {
-  console.log(`File not found: ${TEST_EVENT_PATH}`);
-  TEST_EVENT_PATH = './test/valid-sample-event.json';
-  console.log(`Trying alternative path: ${TEST_EVENT_PATH}`);
-}
-
-// Setting environment variables
-process.env.TARGET_KEY_PREFIX = 'partitioned/';
+process.env.TARGET_KEY_PREFIX = "partitioned/";
 
 async function runLocalTest() {
-  try {
-    console.log('Starting local test for S3 notification event processing...');
+    console.log("Starting local test for S3 notification event processing...");
 
-    // Loading test event
-    console.log(`Loading test file: ${TEST_EVENT_PATH}`);
-
-    // Checking if the file exists
-    if (!fs.existsSync(TEST_EVENT_PATH)) {
-      console.error(`Error: Test file not found: ${TEST_EVENT_PATH}`);
-      console.log('Checking directory contents:');
-      console.log('Current directory:', process.cwd());
-      console.log('./test directory contents:');
-      try {
-        console.log(fs.readdirSync('./test'));
-      } catch (e) {
-        console.log('test directory not found');
-      }
-      return;
-    }
-
-    const eventData = await readFile(TEST_EVENT_PATH, 'utf8');
+    const eventData = await readFile(TEST_EVENT_PATH, "utf8");
     const event = JSON.parse(eventData);
+    const mockS3 = createMockS3();
+    const handler = createHandler({
+        s3: mockS3,
+        targetKeyPrefix: process.env.TARGET_KEY_PREFIX,
+    });
 
-    console.log('Event data loaded');
     console.log(`Number of records to process: ${event.Records.length}`);
-
-    // Importing test Lambda implementation
-    console.log('Importing test Lambda function...');
-    const { handler } = await import('./test/index-test.mjs');
-
-    // Executing Lambda function
-    console.log('Executing Lambda function...');
     await handler(event);
 
-    console.log('Test execution completed');
+    if (mockS3.operations.length !== event.Records.length * 2) {
+        throw new Error(
+            `Expected ${event.Records.length * 2} S3 operations, got ${mockS3.operations.length}`
+        );
+    }
 
-  } catch (error) {
-    console.error('Error occurred during test execution:', error);
-    console.error(error.stack);
-  }
+    console.log("Test execution completed");
 }
 
-// Run the test
-runLocalTest();
+runLocalTest().catch((error) => {
+    console.error("Error occurred during test execution:", error);
+    process.exitCode = 1;
+});
