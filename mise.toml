@@ -39,7 +39,7 @@ python = "3.14.6"
 claude = "2.1.212"                               # Claude Code CLI
 "github:DeusData/codebase-memory-mcp" = "v0.9.0" # codebase memory MCP server
 "aqua:github/copilot-cli" = "1.0.71"             # GitHub Copilot CLI
-"pipx:headroom-ai" = { version = "0.31.0", extras = "proxy,mcp,bedrock", depends = ["python"] }
+"pipx:headroom-ai" = { version = "0.32.0", extras = "proxy,mcp,bedrock", depends = ["python"] }
 "npm:lean-ctx-bin" = { version = "3.9.12", depends = [
   "node",
 ], allow_builds = [
@@ -48,7 +48,7 @@ claude = "2.1.212"                               # Claude Code CLI
 "github:microsoft/waza" = "v0.38.2"               # agent skill evaluator
 
 # AWS related tools
-"aqua:aws/aws-cli" = "2.35.24"      # AWS CLI
+"aqua:aws/aws-cli" = "2.36.1"      # AWS CLI
 "aqua:aws/aws-sam-cli" = "1.163.0"  # SAM CLI tool
 "npm:awsp" = { version = "0.2.0", depends = [
   "node",
@@ -103,6 +103,7 @@ claude = "2.1.212"                               # Claude Code CLI
 "pipx:pre-commit" = { version = "4.6.0", depends = [
   "python",
 ] } # pre-commit framework
+"pipx:semgrep" = { version = "1.171.0", depends = ["python"] } # SAST scanner (uvx-backed pipx)
 "aqua:aquasecurity/trivy" = "0.72.0" # vulnerability scanner
 
 # Terraform related tools

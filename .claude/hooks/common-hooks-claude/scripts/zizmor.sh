@@ -225,6 +225,43 @@ function report_failure {
 }
 
 #######################################
+# is_zizmor_online_audit_failure: Detect GitHub API connectivity failures
+#
+# Description:
+#   Returns success when zizmor failed before producing findings because an
+#   online audit could not reach the GitHub API (for example impostor-commit).
+#
+# Globals:
+#   None
+#
+# Arguments:
+#   $1 - result: Captured zizmor stdout/stderr
+#
+# Outputs:
+#   None
+#
+# Returns:
+#   0 when the failure looks like an online-audit connectivity issue, 1 otherwise
+#
+# Usage:
+#   is_zizmor_online_audit_failure "$result"
+#
+#######################################
+function is_zizmor_online_audit_failure {
+    local result="$1"
+
+    if ! echo "$result" | grep -q 'fatal: no audit was performed'; then
+        return 1
+    fi
+
+    if echo "$result" | grep -qE 'request error while accessing GitHub API|couldn'\''t list tags for|tcp connect error|Connection timed out|client error \(Connect\)'; then
+        return 0
+    fi
+
+    return 1
+}
+
+#######################################
 # has_zizmor_reportable_findings: Detect actionable zizmor output
 #
 # Description:
@@ -302,11 +339,26 @@ function main {
         exit 0
     fi
 
-    local result exit_code
+    local result exit_code zizmor_args=()
+    if [[ ${ZIZMOR_OFFLINE:-} == 1 || ${ZIZMOR_OFFLINE:-} == true ]]; then
+        zizmor_args+=(--offline)
+    elif [[ ${ZIZMOR_NO_ONLINE_AUDITS:-} == 1 || ${ZIZMOR_NO_ONLINE_AUDITS:-} == true ]]; then
+        zizmor_args+=(--no-online-audits)
+    fi
+
     set +e
-    result=$(zizmor --no-progress .github 2>&1)
+    result=$(zizmor --no-progress "${zizmor_args[@]}" .github 2>&1)
     exit_code=$?
     set -e
+
+    if ((exit_code != 0)) \
+        && ((${#zizmor_args[@]} == 0)) \
+        && is_zizmor_online_audit_failure "$result"; then
+        set +e
+        result=$(zizmor --no-progress --no-online-audits .github 2>&1)
+        exit_code=$?
+        set -e
+    fi
 
     if has_zizmor_reportable_findings "$result" "$exit_code"; then
         report_failure "zizmor found security issues in GitHub Actions workflows or composite actions:

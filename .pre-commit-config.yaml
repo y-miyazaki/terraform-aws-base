@@ -37,6 +37,11 @@ repos:
     hooks:
       - id: gitleaks
         args: ["--config=.gitleaks.toml"]
+  - repo: https://github.com/semgrep/pre-commit
+    rev: v1.171.0
+    hooks:
+      - id: semgrep
+        args: [--config, auto, --error]
   # --------------------------------------------------------------
   # For Shell Script
   # --------------------------------------------------------------
