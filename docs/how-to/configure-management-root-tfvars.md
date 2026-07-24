@@ -10,36 +10,37 @@ Configuration for the **Management (Root) account** — the top-level account th
 
 **What it configures:**
 
-| Service | Purpose |
-|---------|---------|
-| Budgets | Cost monitoring and alerting |
-| Organizations Policies | SCPs and tag policies |
-| CloudTrail | Organization-level audit trail |
-| OIDC GitHub | CI/CD integration |
-| JIT Access | Just-In-Time privileged access via Slack |
-| Lambda | Automation utilities |
+| Service                | Purpose                                  |
+| ---------------------- | ---------------------------------------- |
+| Budgets                | Cost monitoring and alerting             |
+| Organizations Policies | SCPs and tag policies                    |
+| CloudTrail             | Organization-level audit trail           |
+| OIDC GitHub            | CI/CD integration                        |
+| JIT Access             | Just-In-Time privileged access via Slack |
+| Lambda                 | Automation utilities                     |
 
 **Relationship to other stacks:**
+
 - Audit account (`management/audit`) handles delegated security administration
 - Member accounts (`base`) are governed by organizational policies defined here
 - Control Tower manages CloudTrail directly; `security_cloudtrail` is for non-CT environments
 
 ## Required Settings
 
-| Variable (tfvars path) | Description | Example |
-|----------|-------------|---------|
-| `region` | Primary AWS region | `"ap-northeast-1"` |
+| Variable (tfvars path)       | Description                       | Example                 |
+| ---------------------------- | --------------------------------- | ----------------------- |
+| `region`                     | Primary AWS region                | `"ap-northeast-1"`      |
 | `subscriber_email_addresses` | Email(s) for budget notifications | `["admin@example.com"]` |
 
 ## Optional Settings
 
 ### Tags and Naming
 
-| Variable (tfvars path) | Description | Default |
-|----------|-------------|---------|
-| `tags.env` | Environment name | `"root"` |
-| `tags.service` | Service/project name | `"management"` |
-| `name_prefix` | Resource name prefix | `"root-"` |
+| Variable (tfvars path) | Description          | Default        |
+| ---------------------- | -------------------- | -------------- |
+| `tags.env`             | Environment name     | `"root"`       |
+| `tags.service`         | Service/project name | `"management"` |
+| `name_prefix`          | Resource name prefix | `"root-"`      |
 
 ### CloudWatch Log Groups
 
@@ -48,11 +49,11 @@ Same centralized pattern as other stacks. See [Base Terraform Configuration Guid
 <details markdown>
 <summary>Available override services</summary>
 
-| Service Name | Description | Recommended |
-|-------------|-------------|-------------|
-| `budgets` | Budget alerts Lambda logs | 7 days |
-| `security_cloudtrail` | CloudTrail security events | 90 days |
-| `common_lambda_vpc_flow_log` | VPC Flow Logs processing | 7 days |
+| Service Name                 | Description                | Recommended |
+| ---------------------------- | -------------------------- | ----------- |
+| `budgets`                    | Budget alerts Lambda logs  | 7 days      |
+| `security_cloudtrail`        | CloudTrail security events | 90 days     |
+| `common_lambda_vpc_flow_log` | VPC Flow Logs processing   | 7 days      |
 
 </details>
 
@@ -116,10 +117,10 @@ budgets = {
 ```
 
 | Environment | Recommended `limit_amount` |
-|-------------|---------------------------|
-| Development | $50–200 |
-| Staging | $200–500 |
-| Production | $500+ |
+| ----------- | -------------------------- |
+| Development | $50–200                    |
+| Staging     | $200–500                   |
+| Production  | $500+                      |
 
 ### Organizations Policy (SCP)
 
@@ -174,6 +175,7 @@ Same pattern as other stacks. See [Base Terraform Configuration Guide](./configu
 Just-In-Time privileged access via Slack with automatic revocation.
 
 **Prerequisites:**
+
 1. Slack App with required scopes (`chat:write`, `commands`, `users:read`, `users:read.email`)
 2. Lambda zip at `lambda/outputs/go_jit_access.zip`
 3. IAM Identity Center enabled
@@ -203,35 +205,35 @@ jit_access = {
 <details markdown>
 <summary>How to get required values</summary>
 
-| Value | How to Get |
-|-------|-----------|
-| `account_id` | AWS Console → Organizations → Accounts |
-| `permission_set_arn` | IAM Identity Center → Permission sets → copy ARN |
-| `approvers` (Slack User IDs) | Slack profile → "..." → "Copy member ID" |
-| `approver_channel_id` | Channel details → "Channel ID" at bottom |
-| `bot_token` | api.slack.com → Your App → OAuth & Permissions |
-| `signing_secret` | api.slack.com → Your App → Basic Information → App Credentials |
-| Identity Center User ID | `aws identitystore list-users --identity-store-id <id> --filters AttributePath=UserName,AttributeValue=<email>` |
-| `workflow_secret` | `openssl rand -base64 32` |
+| Value                        | How to Get                                                                                                      |
+| ---------------------------- | --------------------------------------------------------------------------------------------------------------- |
+| `account_id`                 | AWS Console → Organizations → Accounts                                                                          |
+| `permission_set_arn`         | IAM Identity Center → Permission sets → copy ARN                                                                |
+| `approvers` (Slack User IDs) | Slack profile → "..." → "Copy member ID"                                                                        |
+| `approver_channel_id`        | Channel details → "Channel ID" at bottom                                                                        |
+| `bot_token`                  | api.slack.com → Your App → OAuth & Permissions                                                                  |
+| `signing_secret`             | api.slack.com → Your App → Basic Information → App Credentials                                                  |
+| Identity Center User ID      | `aws identitystore list-users --identity-store-id <id> --filters AttributePath=UserName,AttributeValue=<email>` |
+| `workflow_secret`            | `openssl rand -base64 32`                                                                                       |
 
 </details>
 
 ## Validation Checklist
 
-| Category | Check |
-|----------|-------|
-| Slack | OAuth token valid, default channel set |
-| Budget | `limit_amount` appropriate for account spend |
-| Budget | At least one subscriber email configured |
-| CloudTrail | Metric filters configured for critical events |
-| GitHub | OIDC repositories listed, admin policy disabled |
-| Organizations | SCP regions and services match requirements |
-| Organizations | SCP tested in non-production first |
-| KMS | Key rotation enabled, deletion window set |
-| JIT Access | `bot_token` and `signing_secret` set |
-| JIT Access | `approver_channel_id` correct |
-| JIT Access | At least one profile with valid Permission Set ARN |
-| JIT Access | Lambda zip exists at expected path |
+| Category      | Check                                              |
+| ------------- | -------------------------------------------------- |
+| Slack         | OAuth token valid, default channel set             |
+| Budget        | `limit_amount` appropriate for account spend       |
+| Budget        | At least one subscriber email configured           |
+| CloudTrail    | Metric filters configured for critical events      |
+| GitHub        | OIDC repositories listed, admin policy disabled    |
+| Organizations | SCP regions and services match requirements        |
+| Organizations | SCP tested in non-production first                 |
+| KMS           | Key rotation enabled, deletion window set          |
+| JIT Access    | `bot_token` and `signing_secret` set               |
+| JIT Access    | `approver_channel_id` correct                      |
+| JIT Access    | At least one profile with valid Permission Set ARN |
+| JIT Access    | Lambda zip exists at expected path                 |
 
 ## Related Documents
 

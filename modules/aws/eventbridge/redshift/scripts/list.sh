@@ -100,11 +100,7 @@ function main {
         exit 0
     fi
 
-    # Join with comma, safely
-    joined=$(
-        IFS=,
-        echo "${list[*]}"
-    )
+    joined=$(printf '%s\n' "${list[@]}" | jq -R . | jq -s 'join(",")')
     echo "{\"list\": \"$joined\"}"
 }
 

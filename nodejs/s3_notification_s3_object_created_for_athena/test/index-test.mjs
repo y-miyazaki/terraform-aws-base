@@ -1,33 +1,37 @@
 // Implementation of S3 client for testing (mock)
 const mockS3 = {
-  send: async (command) => {
-    // Branch processing based on command type
-    if (command instanceof CopyObjectCommand) {
-      console.log(`[Mock] S3 copy operation: ${command.input.CopySource} -> ${command.input.Bucket}/${command.input.Key}`);
-      return {};
-    } else if (command instanceof DeleteObjectCommand) {
-      console.log(`[Mock] S3 delete operation: ${command.input.Bucket}/${command.input.Key}`);
-      return {};
-    }
-    throw new Error(`Unsupported command: ${command.constructor.name}`);
-  }
+    send: async (command) => {
+        // Branch processing based on command type
+        if (command instanceof CopyObjectCommand) {
+            console.log(
+                `[Mock] S3 copy operation: ${command.input.CopySource} -> ${command.input.Bucket}/${command.input.Key}`,
+            );
+            return {};
+        } else if (command instanceof DeleteObjectCommand) {
+            console.log(
+                `[Mock] S3 delete operation: ${command.input.Bucket}/${command.input.Key}`,
+            );
+            return {};
+        }
+        throw new Error(`Unsupported command: ${command.constructor.name}`);
+    },
 };
 
 // Mock command classes
 class CopyObjectCommand {
-  constructor(input) {
-    this.input = input;
-  }
+    constructor(input) {
+        this.input = input;
+    }
 }
 
 class DeleteObjectCommand {
-  constructor(input) {
-    this.input = input;
-  }
+    constructor(input) {
+        this.input = input;
+    }
 }
 
 // prefix to copy partitioned data to w/o leading but w/ trailing slash
-const targetKeyPrefix = process.env.TARGET_KEY_PREFIX || 'partitioned/';
+const targetKeyPrefix = process.env.TARGET_KEY_PREFIX || "partitioned/";
 
 // regex for filenames by Amazon CloudFront access logs. Groups:
 // - 1.	year
@@ -38,7 +42,7 @@ const datePattern = "[^\\d](\\d{4})-(\\d{2})-(\\d{2})-(\\d{2})[^\\d]";
 const filenamePattern = "[^/]+$";
 
 export const handler = async (event) => {
-    console.log('Starting S3 notification event processing...');
+    console.log("Starting S3 notification event processing...");
 
     const moves = event.Records.map(async (record) => {
         const bucket = record.s3.bucket.name;
@@ -50,7 +54,7 @@ export const handler = async (event) => {
         const match = sourceRegex.exec(sourceKey);
         if (!match) {
             console.log(
-                `Object key ${sourceKey} does not match access log file format, will not be moved.`
+                `Object key ${sourceKey} does not match access log file format, will not be moved.`,
             );
             return;
         }
@@ -71,9 +75,13 @@ export const handler = async (event) => {
 
         try {
             await mockS3.send(copyObjectCommand);
-            console.log(`Copy successful: ${bucket}/${sourceKey} to ${bucket}/${targetKey}`);
+            console.log(
+                `Copy successful: ${bucket}/${sourceKey} to ${bucket}/${targetKey}`,
+            );
         } catch (err) {
-            console.error(`Error during copy operation ${bucket}/${sourceKey}: ${err}`);
+            console.error(
+                `Error during copy operation ${bucket}/${sourceKey}: ${err}`,
+            );
             return;
         }
 
@@ -90,5 +98,5 @@ export const handler = async (event) => {
         }
     });
     await Promise.all(moves);
-    console.log('All file processing completed');
+    console.log("All file processing completed");
 };

@@ -21,7 +21,7 @@ export const handler = async (event) => {
         const match = sourceRegex.exec(sourceKey);
         if (!match) {
             console.log(
-                `Object key ${sourceKey} does not look like an access log file, so it will not be moved.`
+                `Object key ${sourceKey} does not look like an access log file, so it will not be moved.`,
             );
             return;
         }

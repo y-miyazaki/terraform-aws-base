@@ -94,10 +94,7 @@ function main {
         exit 0
     fi
 
-    joined=$(
-        IFS=,
-        echo "${job_queues[*]}"
-    )
+    joined=$(printf '%s\n' "${job_queues[@]}" | jq -R . | jq -s 'join(",")')
 
     jq -n --arg list "$joined" '{list_job_queue: $list}'
 }

@@ -135,7 +135,6 @@ resource "aws_iam_policy" "this" {
       {
         Effect = "Allow"
         Action = [
-          "iam:CreateServiceLinkedRole",
           "iam:GetServerCertificate",
           "iam:ListServerCertificates",
         ]
@@ -209,9 +208,46 @@ resource "aws_iam_policy" "this" {
 }
 
 #--------------------------------------------------------------
+# ELB service-linked role creation (scoped via aws_iam_policy_document)
+#--------------------------------------------------------------
+data "aws_iam_policy_document" "elb_service_linked_role" {
+  statement {
+    sid    = "CreateElbServiceLinkedRole"
+    effect = "Allow"
+    actions = [
+      "iam:CreateServiceLinkedRole",
+    ]
+    resources = [
+      "*",
+    ]
+    condition {
+      test     = "StringEquals"
+      variable = "iam:AWSServiceName"
+      values = [
+        "elasticloadbalancing.amazonaws.com",
+      ]
+    }
+  }
+}
+
+resource "aws_iam_policy" "elb_service_linked_role" {
+  description = "Allow ALB Ingress Controller to create the ELB service-linked role."
+  name        = "${var.aws_iam_policy.name}-elb-slr"
+  path        = try(var.aws_iam_policy.path, "/")
+  policy      = data.aws_iam_policy_document.elb_service_linked_role.json
+
+  tags = var.tags
+}
+
+#--------------------------------------------------------------
 # Attaches a Managed IAM Policy to an IAM role
 #--------------------------------------------------------------
 resource "aws_iam_role_policy_attachment" "this" {
   role       = aws_iam_role.this.id
   policy_arn = aws_iam_policy.this.arn
+}
+
+resource "aws_iam_role_policy_attachment" "elb_service_linked_role" {
+  role       = aws_iam_role.this.id
+  policy_arn = aws_iam_policy.elb_service_linked_role.arn
 }

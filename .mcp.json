@@ -22,31 +22,22 @@
     "aws-documentation-mcp-server": {
       "type": "stdio",
       "command": "uvx",
-      "args": [
-        "awslabs.aws-documentation-mcp-server==1.1.26"
-      ]
+      "args": ["awslabs.aws-documentation-mcp-server==1.1.26"]
     },
     "aws-pricing-mcp-server": {
       "type": "stdio",
       "command": "uvx",
-      "args": [
-        "awslabs.aws-pricing-mcp-server==1.0.31"
-      ]
+      "args": ["awslabs.aws-pricing-mcp-server==1.0.31"]
     },
     "context7": {
       "type": "stdio",
       "command": "npx",
-      "args": [
-        "-y",
-        "@upstash/context7-mcp@3.2.3"
-      ]
+      "args": ["-y", "@upstash/context7-mcp@3.2.3"]
     },
     "fetch": {
       "type": "stdio",
       "command": "uvx",
-      "args": [
-        "mcp-server-fetch==2026.7.10"
-      ]
+      "args": ["mcp-server-fetch==2026.7.10"]
     },
     "github": {
       "type": "stdio",
@@ -64,18 +55,12 @@
     "lean-ctx": {
       "type": "stdio",
       "command": "npx",
-      "args": [
-        "-y",
-        "lean-ctx-bin@3.9.12"
-      ]
+      "args": ["-y", "lean-ctx-bin@3.9.12"]
     },
     "hashicorp-terraform-mcp-server": {
       "type": "stdio",
       "command": "npx",
-      "args": [
-        "-y",
-        "terraform-mcp-server@0.13.0"
-      ]
+      "args": ["-y", "terraform-mcp-server@0.13.0"]
     },
     "awslabs-terraform-mcp-server": {
       "type": "stdio",
@@ -83,9 +68,7 @@
       "env": {
         "FASTMCP_LOG_LEVEL": "ERROR"
       },
-      "args": [
-        "awslabs.terraform-mcp-server==1.0.18"
-      ]
+      "args": ["awslabs.terraform-mcp-server==1.0.18"]
     }
   }
 }

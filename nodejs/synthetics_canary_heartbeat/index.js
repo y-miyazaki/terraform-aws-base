@@ -1,8 +1,8 @@
-const { URL } = require('url');
-const synthetics = require('Synthetics');
-const log = require('SyntheticsLogger');
+const { URL } = require("url");
+const synthetics = require("Synthetics");
+const log = require("SyntheticsLogger");
 const syntheticsConfiguration = synthetics.getConfiguration();
-const syntheticsLogHelper = require('SyntheticsLogHelper');
+const syntheticsLogHelper = require("SyntheticsLogHelper");
 
 const loadBlueprint = async function () {
     const urls = process.env.URLS.split(",");
@@ -17,12 +17,11 @@ const loadBlueprint = async function () {
      */
     syntheticsConfiguration.disableStepScreenshots();
     syntheticsConfiguration.setConfig({
-       continueOnStepFailure: true,
-       includeRequestHeaders: true, // Enable if headers should be displayed in HAR
-       includeResponseHeaders: true, // Enable if headers should be displayed in HAR
-       restrictedHeaders: [], // Value of these headers will be redacted from logs and reports
-       restrictedUrlParameters: [] // Values of these url parameters will be redacted from logs and reports
-
+        continueOnStepFailure: true,
+        includeRequestHeaders: true, // Enable if headers should be displayed in HAR
+        includeResponseHeaders: true, // Enable if headers should be displayed in HAR
+        restrictedHeaders: [], // Value of these headers will be redacted from logs and reports
+        restrictedUrlParameters: [], // Values of these url parameters will be redacted from logs and reports
     });
 
     let page = await synthetics.getPage();
@@ -33,13 +32,16 @@ const loadBlueprint = async function () {
 };
 
 // Reset the page in-between
-const resetPage = async function(page) {
+const resetPage = async function (page) {
     try {
-        await page.goto('about:blank',{waitUntil: ['load', 'networkidle0'], timeout: 30000} );
+        await page.goto("about:blank", {
+            waitUntil: ["load", "networkidle0"],
+            timeout: 30000,
+        });
     } catch (e) {
-        synthetics.addExecutionError('Unable to open a blank page. ', e);
+        synthetics.addExecutionError("Unable to open a blank page. ", e);
     }
-}
+};
 
 const loadUrl = async function (page, url, takeScreenshot) {
     let stepName = null;
@@ -67,7 +69,10 @@ const loadUrl = async function (page, url, takeScreenshot) {
            networkidle2: Navigation is successful when the page has no more then 2 network requests for half a second.
            domcontentloaded: It's fired as soon as the page DOM has been loaded, without waiting for resources to finish loading. If needed add explicit wait with await new Promise(r => setTimeout(r, milliseconds))
         */
-        const response = await page.goto(url, { waitUntil: ['domcontentloaded'], timeout: 30000});
+        const response = await page.goto(url, {
+            waitUntil: ["domcontentloaded"],
+            timeout: 30000,
+        });
         if (response) {
             domcontentloaded = true;
             const status = response.status();
@@ -77,7 +82,9 @@ const loadUrl = async function (page, url, takeScreenshot) {
 
             //If the response status code is not a 2xx success code
             if (response.status() < 200 || response.status() > 299) {
-                throw new Error(`Failed to load url: ${sanitizedUrl} ${response.status()} ${response.statusText()}`);
+                throw new Error(
+                    `Failed to load url: ${sanitizedUrl} ${response.status()} ${response.statusText()}`,
+                );
             }
         } else {
             const logNoResponseString = `No response returned for url: ${sanitizedUrl}`;
@@ -88,8 +95,8 @@ const loadUrl = async function (page, url, takeScreenshot) {
 
     // Wait for 15 seconds to let page load fully before taking screenshot.
     if (domcontentloaded && takeScreenshot) {
-        await new Promise(r => setTimeout(r, 15000));
-        await synthetics.takeScreenshot(stepName, 'loaded');
+        await new Promise((r) => setTimeout(r, 15000));
+        await synthetics.takeScreenshot(stepName, "loaded");
     }
 
     // Reset page

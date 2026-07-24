@@ -14,13 +14,13 @@ Configuration for **member accounts** (individual AWS accounts where workloads r
 
 These must be changed before `terraform apply` — the example values will cause failures.
 
-| Variable (tfvars path) | Description | Example |
-|------------------------|-------------|---------|
-| `region.primary` | Primary AWS region for development and provider fallback | `"ap-northeast-1"` |
-| `region.global` | Region for global resources (CloudFront, WAF, ACM) | `"us-east-1"` |
-| `region.targets` | All regions where regional resources are deployed | `["ap-northeast-1", "us-east-1"]` |
-| `security_iam.support_iam_role_principal_arns` | IAM principals for Support role (CIS 1.20) | `["arn:aws:iam::123456789012:root"]` |
-| `budgets.aws_budgets_budget.notification[].subscriber_email_addresses` | Email for budget threshold notifications | `["you@example.com"]` |
+| Variable (tfvars path)                                                 | Description                                              | Example                              |
+| ---------------------------------------------------------------------- | -------------------------------------------------------- | ------------------------------------ |
+| `region.primary`                                                       | Primary AWS region for development and provider fallback | `"ap-northeast-1"`                   |
+| `region.global`                                                        | Region for global resources (CloudFront, WAF, ACM)       | `"us-east-1"`                        |
+| `region.targets`                                                       | All regions where regional resources are deployed        | `["ap-northeast-1", "us-east-1"]`    |
+| `security_iam.support_iam_role_principal_arns`                         | IAM principals for Support role (CIS 1.20)               | `["arn:aws:iam::123456789012:root"]` |
+| `budgets.aws_budgets_budget.notification[].subscriber_email_addresses` | Email for budget threshold notifications                 | `["you@example.com"]`                |
 
 ## Optional Settings
 
@@ -28,11 +28,11 @@ These have sensible defaults but should be customized per environment.
 
 ### Tags and Naming
 
-| Variable (tfvars path) | Description | Default |
-|----------|-------------|---------|
-| `tags.env` | Environment name for cost allocation | `"example"` |
-| `tags.service` | Service/project name | `"base"` |
-| `name_prefix` | Prefix for all resource names | `"base-"` |
+| Variable (tfvars path) | Description                          | Default     |
+| ---------------------- | ------------------------------------ | ----------- |
+| `tags.env`             | Environment name for cost allocation | `"example"` |
+| `tags.service`         | Service/project name                 | `"base"`    |
+| `name_prefix`          | Prefix for all resource names        | `"base-"`   |
 
 ### CloudWatch Log Groups
 
@@ -54,17 +54,17 @@ cloudwatch_log_group = {
 <details markdown>
 <summary>Available override services</summary>
 
-| Service Name | Description | Recommended Retention |
-|-------------|-------------|----------------------|
-| `budgets` | Budget alerts | 7 days |
-| `common_lambda_vpc_flow_log` | VPC Flow Logs processing | 7 days |
-| `guardduty` | GuardDuty findings | 30 days |
-| `health` | AWS Health events (regional) | 14 days |
-| `iam_password_expired` | Password expiration notifications | 14 days |
-| `security_cloudtrail` | CloudTrail audit logs | 90 days |
-| `security_config` | Config compliance (regional) | 30 days |
-| `security_securityhub` | Security Hub findings | 30 days |
-| `trusted_advisor` | Trusted Advisor recommendations | 14 days |
+| Service Name                 | Description                       | Recommended Retention |
+| ---------------------------- | --------------------------------- | --------------------- |
+| `budgets`                    | Budget alerts                     | 7 days                |
+| `common_lambda_vpc_flow_log` | VPC Flow Logs processing          | 7 days                |
+| `guardduty`                  | GuardDuty findings                | 30 days               |
+| `health`                     | AWS Health events (regional)      | 14 days               |
+| `iam_password_expired`       | Password expiration notifications | 14 days               |
+| `security_cloudtrail`        | CloudTrail audit logs             | 90 days               |
+| `security_config`            | Config compliance (regional)      | 30 days               |
+| `security_securityhub`       | Security Hub findings             | 30 days               |
+| `trusted_advisor`            | Trusted Advisor recommendations   | 14 days               |
 
 </details>
 
@@ -89,15 +89,15 @@ slack = {
 <details markdown>
 <summary>Available override functions</summary>
 
-| Function Name | Description |
-|--------------|-------------|
-| `budgets` | Budget alerts |
-| `guardduty` | GuardDuty findings |
-| `health` | AWS Health events |
+| Function Name          | Description                  |
+| ---------------------- | ---------------------------- |
+| `budgets`              | Budget alerts                |
+| `guardduty`            | GuardDuty findings           |
+| `health`               | AWS Health events            |
 | `iam_password_expired` | Password expiration warnings |
-| `security_cloudtrail` | CloudTrail security events |
-| `security_config` | Config compliance changes |
-| `trusted_advisor` | Trusted Advisor checks |
+| `security_cloudtrail`  | CloudTrail security events   |
+| `security_config`      | Config compliance changes    |
+| `trusted_advisor`      | Trusted Advisor checks       |
 
 </details>
 
@@ -105,31 +105,31 @@ slack = {
 
 Each feature has an `is_enabled` flag. Set to `false` to disable.
 
-| Feature | Variable (tfvars path) | Default | Notes |
-|---------|----------|---------|-------|
-| OIDC GitHub | `oidc_github.is_enabled` | `true` | GitHub Actions OIDC provider |
-| Budgets | `budgets.is_enabled` | `true` | Cost alerts |
-| IAM Users/Groups | `iam.is_enabled` | `false` | User and group management |
-| Compute Optimizer | `compute_optimizer.is_enabled` | `true` | Resource optimization |
-| GuardDuty | `guardduty.is_enabled` | `false` | Threat detection (~$1/GB) |
-| Health Events | `health.is_enabled` | `true` | AWS Health notifications |
-| Trusted Advisor | `trusted_advisor.is_enabled` | `false` | Requires Business/Enterprise plan |
-| IAM Password Expired | `iam_password_expired.is_enabled` | `false` | Password expiry alerts |
-| Access Analyzer | `security_access_analyzer.is_enabled` | `true` | External access detection |
-| Athena (Security) | `security_athena.is_enabled` | `true` | Security query workgroup |
-| CloudTrail | `security_cloudtrail.is_enabled` | `false` | API audit logging |
-| Config | `security_config.is_enabled` | `false` | Compliance monitoring |
-| Default VPC | `security_default_vpc.is_enabled` | `true` | VPC hardening |
-| EBS | `security_ebs.is_enabled` | `true` | Encryption by default |
-| EC2 Metadata | `security_ec2_metadata.is_enabled` | `true` | IMDSv2 enforcement |
-| ECR | `security_ecr.is_enabled` | `true` | Native image scanning |
-| GuardDuty (Security) | `security_guardduty.is_enabled` | `false` | Account-level GuardDuty |
-| IAM Security | `security_iam.is_enabled` | `true` | Password policy + Support role |
-| S3 | `security_s3.is_enabled` | `true` | Account-level public access block |
-| Security Hub | `security_securityhub.is_enabled` | `false` | Security posture dashboard |
-| SSM Automation | `security_ssm_automation.is_enabled` | `true` | Automated remediation |
-| Inspector2 | `security_inspector2.is_enabled` | `false` | Vulnerability scanning |
-| Macie | `security_macie.is_enabled` | varies | Sensitive data discovery |
+| Feature              | Variable (tfvars path)                | Default | Notes                             |
+| -------------------- | ------------------------------------- | ------- | --------------------------------- |
+| OIDC GitHub          | `oidc_github.is_enabled`              | `true`  | GitHub Actions OIDC provider      |
+| Budgets              | `budgets.is_enabled`                  | `true`  | Cost alerts                       |
+| IAM Users/Groups     | `iam.is_enabled`                      | `false` | User and group management         |
+| Compute Optimizer    | `compute_optimizer.is_enabled`        | `true`  | Resource optimization             |
+| GuardDuty            | `guardduty.is_enabled`                | `false` | Threat detection (~$1/GB)         |
+| Health Events        | `health.is_enabled`                   | `true`  | AWS Health notifications          |
+| Trusted Advisor      | `trusted_advisor.is_enabled`          | `false` | Requires Business/Enterprise plan |
+| IAM Password Expired | `iam_password_expired.is_enabled`     | `false` | Password expiry alerts            |
+| Access Analyzer      | `security_access_analyzer.is_enabled` | `true`  | External access detection         |
+| Athena (Security)    | `security_athena.is_enabled`          | `true`  | Security query workgroup          |
+| CloudTrail           | `security_cloudtrail.is_enabled`      | `false` | API audit logging                 |
+| Config               | `security_config.is_enabled`          | `false` | Compliance monitoring             |
+| Default VPC          | `security_default_vpc.is_enabled`     | `true`  | VPC hardening                     |
+| EBS                  | `security_ebs.is_enabled`             | `true`  | Encryption by default             |
+| EC2 Metadata         | `security_ec2_metadata.is_enabled`    | `true`  | IMDSv2 enforcement                |
+| ECR                  | `security_ecr.is_enabled`             | `true`  | Native image scanning             |
+| GuardDuty (Security) | `security_guardduty.is_enabled`       | `false` | Account-level GuardDuty           |
+| IAM Security         | `security_iam.is_enabled`             | `true`  | Password policy + Support role    |
+| S3                   | `security_s3.is_enabled`              | `true`  | Account-level public access block |
+| Security Hub         | `security_securityhub.is_enabled`     | `false` | Security posture dashboard        |
+| SSM Automation       | `security_ssm_automation.is_enabled`  | `true`  | Automated remediation             |
+| Inspector2           | `security_inspector2.is_enabled`      | `false` | Vulnerability scanning            |
+| Macie                | `security_macie.is_enabled`           | varies  | Sensitive data discovery          |
 
 ### Control Tower
 
@@ -198,6 +198,7 @@ iam = {
 ```
 
 Key points:
+
 - Groups support custom `policy_document` (inline) and `policy` (managed ARN) attachments
 - `is_enabled_mfa = true` enforces MFA for the group
 - Switch Role supports both `from` (source account) and `to` (destination account) configurations
@@ -207,28 +208,28 @@ Key points:
 
 ## Environment Examples
 
-| Setting (tfvars path) | Development | Staging | Production |
-|---------|-------------|---------|------------|
-| `budgets.aws_budgets_budget.limit_amount` | `"50.0"` | `"200.0"` | `"500.0"` |
-| `guardduty.is_enabled` | `false` | `true` | `true` |
-| `security_config.is_enabled` | `false` | `false` | `true` |
-| `security_cloudtrail.is_enabled` | `false` | `true` | `true` |
-| `cloudwatch_log_group.retention_in_days` | `7` | `14` | `14` |
-| `cloudwatch_log_group.override.security_cloudtrail.retention_in_days` | `30` | `90` | `365` |
-| `control_tower.is_enabled` | `false` | `false` | `true` |
+| Setting (tfvars path)                                                 | Development | Staging   | Production |
+| --------------------------------------------------------------------- | ----------- | --------- | ---------- |
+| `budgets.aws_budgets_budget.limit_amount`                             | `"50.0"`    | `"200.0"` | `"500.0"`  |
+| `guardduty.is_enabled`                                                | `false`     | `true`    | `true`     |
+| `security_config.is_enabled`                                          | `false`     | `false`   | `true`     |
+| `security_cloudtrail.is_enabled`                                      | `false`     | `true`    | `true`     |
+| `cloudwatch_log_group.retention_in_days`                              | `7`         | `14`      | `14`       |
+| `cloudwatch_log_group.override.security_cloudtrail.retention_in_days` | `30`        | `90`      | `365`      |
+| `control_tower.is_enabled`                                            | `false`     | `false`   | `true`     |
 
 ## Validation Checklist
 
-| Category | Check |
-|----------|-------|
+| Category | Check                                                                        |
+| -------- | ---------------------------------------------------------------------------- |
 | Security | If Control Tower enabled: verify managed services are disabled in this stack |
-| Security | If Control Tower disabled: enable security services based on needs |
-| Budget | `limit_amount` matches environment expectations |
-| Budget | At least one `subscriber_email_addresses` configured |
-| Slack | OAuth token valid and bot has channel access |
-| Slack | Channel ID correct (test with low-severity alert) |
-| Cost | Unused services disabled |
-| Cost | Log retention periods appropriate (not excessive) |
+| Security | If Control Tower disabled: enable security services based on needs           |
+| Budget   | `limit_amount` matches environment expectations                              |
+| Budget   | At least one `subscriber_email_addresses` configured                         |
+| Slack    | OAuth token valid and bot has channel access                                 |
+| Slack    | Channel ID correct (test with low-severity alert)                            |
+| Cost     | Unused services disabled                                                     |
+| Cost     | Log retention periods appropriate (not excessive)                            |
 
 ## Related Documents
 

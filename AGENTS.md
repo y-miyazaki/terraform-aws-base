@@ -73,6 +73,7 @@ If instructions conflict, follow this precedence:
 ### Completion Requirements
 
 When applicable, explicitly state the following in your final response:
+
 1. **Implementation:** Overview of changes made.
 2. **Verification:** Proof of verification performed (or explicit statement of inability).
 3. **Risks:** Assumptions made and residual risks.

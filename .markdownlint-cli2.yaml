@@ -15,6 +15,7 @@ ignores:
   - "**/bower_components/**"
   - "**/credentials/**"
   - "**/modules/**"
+  - "terraform/**/README.md"
   - "**/node_modules/**"
   - "**/output/**"
   - "**/prompts/**"

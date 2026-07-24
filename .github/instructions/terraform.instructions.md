@@ -42,24 +42,28 @@ description: "AI Assistant Instructions for Terraform"
 ## Guidelines
 
 ### CI & Lint (CI)
+
 - CI-01 (SHOULD): Minimize Unintended Plan Diffs
   - Check: Does the code avoid patterns that cause unnecessary plan diffs (e.g., unsorted keys, unstable JSON, computed defaults)?
 - CI-02 (SHOULD): New Resources Clearly Justified
   - Check: Do new resources have clear business justification?
 
 ### Compliance & Policy (COMP)
+
 - COMP-03 (MUST): No Default VPC/Open SG/Public S3
   - Check: Is there no use of default VPC, are security groups restrictive, and are S3 buckets private by default?
 - COMP-04 (MUST): IAM Policy with jsonencode or aws_iam_policy_document
   - Check: Do IAM policies use jsonencode() or aws_iam_policy_document data source?
 
 ### Cost Optimization (COST)
+
 - COST-01 (SHOULD): Avoid High-Cost Metrics/Long Retention
   - Check: Are retention periods and metric collection explicitly set rather than left at expensive defaults?
 - COST-02 (SHOULD): Minimize Optional Defaults (monitoring/xray/retention)
   - Check: Are optional features (X-Ray tracing, enhanced monitoring, detailed metrics) explicitly enabled only when needed?
 
 ### Data Sources & Imports (DATA)
+
 - DATA-01 (SHOULD): Justify Each Data Source
   - Check: Is each data source necessary, or can the value be passed as a variable?
 - DATA-02 (SHOULD): Externalize IDs/ARNs as Variables
@@ -68,6 +72,7 @@ description: "AI Assistant Instructions for Terraform"
   - Check: Are all data sources referenced in at least one resource or output?
 
 ### Dependency & Ordering (DEP)
+
 - DEP-01 (SHOULD): Minimal depends_on
   - Check: Is depends_on used only when necessary?
 - DEP-02 (SHOULD): Avoid Circular References
@@ -76,6 +81,7 @@ description: "AI Assistant Instructions for Terraform"
   - Check: Are critical dependencies explicit?
 
 ### Events & Observability (E)
+
 - E-01 (SHOULD): EventBridge event_pattern Precision
   - Check: Are event patterns specific and targeted?
 - E-02 (SHOULD): CloudWatch Log Group Retention
@@ -86,6 +92,7 @@ description: "AI Assistant Instructions for Terraform"
   - Check: Do log levels match environment requirements?
 
 ### Global / Base (G)
+
 - G-01 (SHOULD): Variables/Outputs/Module Usage
   - Check: Do external modules reference latest documentation?
 - G-02 (MUST): Secret Hardcoding Prohibition
@@ -106,6 +113,7 @@ description: "AI Assistant Instructions for Terraform"
   - Check: Are there no tfsec references; is trivy in use?
 
 ### Migration & Refactor (MIG)
+
 - MIG-01 (SHOULD): Use moved Block to Avoid Resource Recreation
   - Check: Do refactors use moved blocks where appropriate?
 - MIG-02 (SHOULD): Replace Deprecated Features
@@ -114,6 +122,7 @@ description: "AI Assistant Instructions for Terraform"
   - Check: Are there no commented-out resource blocks?
 
 ### Modules (M)
+
 - M-01 (SHOULD): Review All .tf Files in Module
   - Check: Are all module files reviewed?
 - M-02 (SHOULD): Provider Version Appropriateness
@@ -124,6 +133,7 @@ description: "AI Assistant Instructions for Terraform"
   - Check: Are tagging and naming conventions consistent?
 
 ### Naming & Documentation (N)
+
 - N-01 (SHOULD): English Comments
   - Check: Are all comments in English?
 - N-02 (SHOULD): Module Header (Purpose/Overview)
@@ -132,6 +142,7 @@ description: "AI Assistant Instructions for Terraform"
   - Check: Are complex configurations well-commented?
 
 ### outputs.tf (O)
+
 - O-01 (SHOULD): All Outputs Require description
   - Check: Does every output have a description?
 - O-02 (SHOULD): No Sensitive Information in Outputs
@@ -140,6 +151,7 @@ description: "AI Assistant Instructions for Terraform"
   - Check: Are all outputs consumed somewhere?
 
 ### Patterns (P)
+
 - P-01 (SHOULD): Avoid Excessive dynamic Blocks
   - Check: Are dynamic blocks used only when necessary?
 - P-02 (SHOULD): Stable for_each Keys
@@ -148,6 +160,7 @@ description: "AI Assistant Instructions for Terraform"
   - Check: Is conditional logic straightforward?
 
 ### Performance & Limits (PERF)
+
 - PERF-01 (SHOULD): Avoid Unbounded for_each/count
   - Check: Are for_each/count driven by bounded, plan-time-known collections rather than unbounded dynamic data?
 - PERF-02 (SHOULD): Reduce Provider Calls
@@ -156,6 +169,7 @@ description: "AI Assistant Instructions for Terraform"
   - Check: Does each alarm have a clear action owner and response procedure?
 
 ### Security (SEC)
+
 - SEC-01 (SHOULD): KMS Encryption (SNS/S3/Logs/StateMachines) [AWS-specific]
   - Check: Is encryption enabled for sensitive resources?
 - SEC-02 (SHOULD): IAM Least Privilege
@@ -168,6 +182,7 @@ description: "AI Assistant Instructions for Terraform"
   - Check: Are CloudTrail and CloudWatch Logs properly configured?
 
 ### State & Backend (STATE)
+
 - STATE-01 (SHOULD): Remote Backend with Encryption (SSE) + DynamoDB Lock
   - Check: Is backend configured with encryption and locking?
 - STATE-02 (SHOULD): No Credentials in Backend Configuration
@@ -176,12 +191,14 @@ description: "AI Assistant Instructions for Terraform"
   - Check: Are workspaces not used, or is workspace usage policy documented in comments?
 
 ### Tagging (TAG)
+
 - TAG-01 (MUST): Name Tag with merge(local.tags, {Name = "..."})
   - Check: Do tags use merge pattern with common tags?
 - TAG-02 (SHOULD): Remove Redundant Manual Tags
   - Check: Are there no duplicate tag keys; is tag management centralized?
 
 ### tfvars (T)
+
 - T-01 (MUST): No Secrets in tfvars
   - Check: Are there no hardcoded secrets in tfvars files?
 - T-02 (SHOULD): Environment-Specific File Separation
@@ -192,6 +209,7 @@ description: "AI Assistant Instructions for Terraform"
   - Check: Are environment prefixes consistent throughout?
 
 ### variables.tf (V)
+
 - V-01 (SHOULD): Concrete Types (Avoid Excessive map(any)/any)
   - Check: Is use of `any` and `map(any)` minimal?
 - V-02 (SHOULD): Default Value Validity
@@ -204,6 +222,7 @@ description: "AI Assistant Instructions for Terraform"
   - Check: Are all variables referenced?
 
 ### Versioning (VERS)
+
 - VERS-01 (MUST): required_version Aligns with Project Standards
   - Check: Does required_version match project standards?
 - VERS-02 (MUST): Provider Version Range (>= lower, < upper)
@@ -215,7 +234,6 @@ description: "AI Assistant Instructions for Terraform"
 
 - After changes, prioritize running validate.sh from terraform-validation skill.
 - Use individual commands only for debugging.
-
 
 ## Testing and Validation
 

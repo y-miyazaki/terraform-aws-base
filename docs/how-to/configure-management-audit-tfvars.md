@@ -10,36 +10,37 @@ Configuration for the **Audit account** in an AWS Control Tower landing zone. Th
 
 **What it configures:**
 
-| Service | Purpose |
-|---------|---------|
-| Security Hub | Centralized compliance dashboard |
-| GuardDuty | Organization-wide threat detection |
-| Macie | Sensitive data discovery across S3 |
+| Service         | Purpose                                     |
+| --------------- | ------------------------------------------- |
+| Security Hub    | Centralized compliance dashboard            |
+| GuardDuty       | Organization-wide threat detection          |
+| Macie           | Sensitive data discovery across S3          |
 | Access Analyzer | Organization-level external access analysis |
-| Inspector2 | Vulnerability scanning (EC2, ECR, Lambda) |
-| AWS Chatbot | Slack notifications for security findings |
+| Inspector2      | Vulnerability scanning (EC2, ECR, Lambda)   |
+| AWS Chatbot     | Slack notifications for security findings   |
 
 **Relationship to other stacks:**
+
 - Member accounts (`base`) should set `control_tower.managed_services.*` to disable services managed here
 - Management root handles organizational policies and budgets, not security delegation
 
 ## Required Settings
 
-| Variable (tfvars path) | Description | Example |
-|----------|-------------|---------|
-| `region` | Primary AWS region | `"ap-northeast-1"` |
-| `security.slack_channel_id` | Slack channel for security notifications | `"C0XXXXXXXXX"` |
-| `security.slack_team_id` | Slack workspace ID | `"xxxxxxxxxxx"` |
+| Variable (tfvars path)      | Description                              | Example            |
+| --------------------------- | ---------------------------------------- | ------------------ |
+| `region`                    | Primary AWS region                       | `"ap-northeast-1"` |
+| `security.slack_channel_id` | Slack channel for security notifications | `"C0XXXXXXXXX"`    |
+| `security.slack_team_id`    | Slack workspace ID                       | `"xxxxxxxxxxx"`    |
 
 ## Optional Settings
 
 ### Tags and Naming
 
-| Variable (tfvars path) | Description | Default |
-|----------|-------------|---------|
-| `tags.env` | Environment name | `"audit"` |
-| `tags.service` | Service/project name | `"security-audit"` |
-| `name_prefix` | Resource name prefix | `"audit-"` |
+| Variable (tfvars path) | Description          | Default            |
+| ---------------------- | -------------------- | ------------------ |
+| `tags.env`             | Environment name     | `"audit"`          |
+| `tags.service`         | Service/project name | `"security-audit"` |
+| `name_prefix`          | Resource name prefix | `"audit-"`         |
 
 ### KMS
 
@@ -178,18 +179,18 @@ aws organizations list-delegated-services-for-account --account-id <AUDIT_ACCOUN
 
 ## Validation Checklist
 
-| Category | Check |
-|----------|-------|
-| Security | Slack channel and team IDs correctly set |
-| Security | Security Hub enabled for compliance |
-| Security | GuardDuty enabled for threat detection |
-| Security | Access Analyzer Organization enabled |
-| Delegation | Account is delegated admin for required services |
+| Category   | Check                                                                      |
+| ---------- | -------------------------------------------------------------------------- |
+| Security   | Slack channel and team IDs correctly set                                   |
+| Security   | Security Hub enabled for compliance                                        |
+| Security   | GuardDuty enabled for threat detection                                     |
+| Security   | Access Analyzer Organization enabled                                       |
+| Delegation | Account is delegated admin for required services                           |
 | Delegation | Base accounts have `control_tower.managed_services.access_analyzer = true` |
-| GitHub | OIDC settings correct, repositories listed |
-| GitHub | Admin policy disabled for production |
-| KMS | Key rotation enabled |
-| Chatbot | Slack workspace integration configured in AWS Chatbot |
+| GitHub     | OIDC settings correct, repositories listed                                 |
+| GitHub     | Admin policy disabled for production                                       |
+| KMS        | Key rotation enabled                                                       |
+| Chatbot    | Slack workspace integration configured in AWS Chatbot                      |
 
 ## Related Documents
 

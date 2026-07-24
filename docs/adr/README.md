@@ -5,6 +5,7 @@ This directory contains Architecture Decision Records (ADRs) that document impor
 ## Format
 
 We follow the [MADR (Markdown Any Decision Record)](https://adr.github.io/madr/) format, which provides:
+
 - Status (Proposed, Accepted, Deprecated, Superseded)
 - Context (Problem statement, constraints)
 - Decision (What was decided and why)
@@ -20,18 +21,21 @@ We follow the [MADR (Markdown Any Decision Record)](https://adr.github.io/madr/)
 **Summary**: Adopted AWS Provider v6's resource-level `region` attribute with a unified `region` object variable (`global`, `primary`, `targets`). All resources explicitly declare their region. No provider aliases are used.
 
 **Key Benefits**:
+
 - Single `region` object replaces three separate variables
 - Every resource declares its region explicitly — no silent fallback
 - Scalable: add a region with a one-line change to `region.targets`
 - No provider alias misrouting risk
 
 **Region Tiers**:
+
 - `main_regional_*.tf` — `for_each = toset(var.region.targets)`
 - `main_central_*.tf` — `region = var.region.global`
 - `main_common_*.tf` — `region = var.region.primary`
 - `main_central_iam*.tf` — regionless (IAM, OIDC)
 
 **Impact**: High
+
 - Affects: All resource deployments in `terraform/base`
 - Risk: Low (explicit region on every resource)
 

@@ -10,6 +10,26 @@ data "aws_region" "current" {}
 #--------------------------------------------------------------
 locals {
   region = coalesce(var.region, data.aws_region.current.region)
+
+  workgroup_configuration = merge(
+    {
+      enforce_workgroup_configuration    = true
+      publish_cloudwatch_metrics_enabled = true
+    },
+    var.workgroup_configuration,
+  )
+
+  workgroup_result_configuration = merge(
+    {},
+    try(var.workgroup_configuration.result_configuration, {}),
+  )
+
+  workgroup_encryption_configuration = try(local.workgroup_result_configuration.encryption_configuration, {})
+
+  workgroup_encryption_option = coalesce(
+    try(local.workgroup_encryption_configuration.encryption_option, null),
+    "SSE_S3",
+  )
 }
 
 #--------------------------------------------------------------
@@ -22,45 +42,33 @@ resource "aws_athena_workgroup" "this" {
 
   region = local.region
   name   = format("%s%s", var.name_prefix, var.workgroup_name)
-  dynamic "configuration" {
-    for_each = length(keys(var.workgroup_configuration)) == 0 ? [] : [var.workgroup_configuration]
+  configuration {
+    bytes_scanned_cutoff_per_query  = try(local.workgroup_configuration.bytes_scanned_cutoff_per_query, null)
+    enforce_workgroup_configuration = try(local.workgroup_configuration.enforce_workgroup_configuration, true)
+    dynamic "engine_version" {
+      for_each = try(local.workgroup_configuration.engine_version, [])
 
-    content {
-      bytes_scanned_cutoff_per_query  = try(configuration.value.bytes_scanned_cutoff_per_query, null)
-      enforce_workgroup_configuration = try(configuration.value.enforce_workgroup_configuration, true)
-      dynamic "engine_version" {
-        for_each = try(configuration.value.engine_version, [])
-
-        content {
-          selected_engine_version = try(engine_version.value.selected_engine_version, null)
-        }
+      content {
+        selected_engine_version = try(engine_version.value.selected_engine_version, null)
       }
-      publish_cloudwatch_metrics_enabled = try(configuration.value.publish_cloudwatch_metrics_enabled, true)
-      dynamic "result_configuration" {
-        for_each = length(keys(try(configuration.value.result_configuration, {}))) == 0 ? [] : [try(configuration.value.result_configuration, {})]
-
-        content {
-          dynamic "encryption_configuration" {
-            for_each = length(keys(try(result_configuration.value.encryption_configuration, {}))) == 0 ? [] : [try(result_configuration.value.encryption_configuration, {})]
-
-            content {
-              encryption_option = encryption_configuration.value.encryption_option
-              kms_key_arn       = try(encryption_configuration.value.kms_key_arn, null)
-            }
-          }
-          dynamic "acl_configuration" {
-            for_each = length(keys(try(result_configuration.value.acl_configuration, {}))) == 0 ? [] : [try(result_configuration.value.acl_configuration, {})]
-
-            content {
-              s3_acl_option = try(acl_configuration.value.s3_acl_option, null)
-            }
-          }
-          expected_bucket_owner = try(result_configuration.value.expected_bucket_owner, null)
-          output_location       = try(result_configuration.value.output_location, null)
-        }
-      }
-      requester_pays_enabled = try(configuration.value.requester_pays_enabled, null)
     }
+    publish_cloudwatch_metrics_enabled = try(local.workgroup_configuration.publish_cloudwatch_metrics_enabled, true)
+    result_configuration {
+      encryption_configuration {
+        encryption_option = local.workgroup_encryption_option
+        kms_key_arn       = try(local.workgroup_encryption_configuration.kms_key_arn, null)
+      }
+      dynamic "acl_configuration" {
+        for_each = length(keys(try(local.workgroup_result_configuration.acl_configuration, {}))) == 0 ? [] : [try(local.workgroup_result_configuration.acl_configuration, {})]
+
+        content {
+          s3_acl_option = try(acl_configuration.value.s3_acl_option, null)
+        }
+      }
+      expected_bucket_owner = try(local.workgroup_result_configuration.expected_bucket_owner, null)
+      output_location       = try(local.workgroup_result_configuration.output_location, null)
+    }
+    requester_pays_enabled = try(local.workgroup_configuration.requester_pays_enabled, null)
   }
   description   = var.workgroup_description
   state         = var.workgroup_state

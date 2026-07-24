@@ -19,16 +19,17 @@ During implementation of multi-region Terraform architecture (ADR-0001), a desig
 
 **Classify resources into three tiers based on AWS service behavior:**
 
-| Tier | File Pattern | Region Source | Criteria |
-|------|-------------|---------------|----------|
-| Regional | `main_regional_*.tf` | `var.region.targets` | Resource has independent per-region state |
-| Global | `main_central_*.tf` | `var.region.global` | AWS-constrained to us-east-1, or account-wide with regional components |
-| Common | `main_central_log.tf` | `var.region.primary` | Shared infrastructure (logs, buckets) placed at development base |
-| Regionless | `main_central_iam*.tf` | (none) | IAM, OIDC, S3 account settings — truly global |
+| Tier       | File Pattern           | Region Source        | Criteria                                                               |
+| ---------- | ---------------------- | -------------------- | ---------------------------------------------------------------------- |
+| Regional   | `main_regional_*.tf`   | `var.region.targets` | Resource has independent per-region state                              |
+| Global     | `main_central_*.tf`    | `var.region.global`  | AWS-constrained to us-east-1, or account-wide with regional components |
+| Common     | `main_central_log.tf`  | `var.region.primary` | Shared infrastructure (logs, buckets) placed at development base       |
+| Regionless | `main_central_iam*.tf` | (none)               | IAM, OIDC, S3 account settings — truly global                          |
 
 ### Classification Method
 
 For each AWS resource, check Terraform documentation:
+
 - Has `region` attribute and independent per-region state → **Regional**
 - AWS-constrained to us-east-1 or account-wide data → **Global**
 - IAM/OIDC/account-level settings with no region concept → **Regionless**
@@ -37,46 +38,46 @@ For each AWS resource, check Terraform documentation:
 
 ### Regional Services (`for_each = toset(var.region.targets)`)
 
-| Resource | File |
-|----------|------|
-| GuardDuty (`aws_guardduty_detector`) | `main_regional_guardduty.tf` |
-| Config (`aws_config_configuration_recorder`) | `main_regional_config.tf` |
-| Inspector2 (`aws_inspector2_enabler`) | `main_regional_inspector2.tf` |
-| Macie (`aws_macie2_account`) | `main_regional_macie.tf` |
-| KMS (`aws_kms_key`) | `main_regional_kms.tf` |
-| EBS (`aws_ebs_encryption_by_default`) | `main_regional_ebs.tf` |
-| EC2 Metadata (`aws_ec2_instance_metadata_defaults`) | `main_regional_ec2_metadata.tf` |
-| Access Analyzer (`aws_accessanalyzer_analyzer`) | `main_regional_security_access_analyzer.tf` |
-| Security Hub (`aws_securityhub_account`) | `main_regional_security_securityhub.tf` |
-| Resource Groups (`aws_resourcegroups_group`) | `main_regional_resource_groups.tf` |
-| SSM Automation (`aws_ssm_service_setting`) | `main_regional_ssm_automation.tf` |
-| Default VPC hardening | `main_regional_security_default_vpc.tf` |
+| Resource                                            | File                                        |
+| --------------------------------------------------- | ------------------------------------------- |
+| GuardDuty (`aws_guardduty_detector`)                | `main_regional_guardduty.tf`                |
+| Config (`aws_config_configuration_recorder`)        | `main_regional_config.tf`                   |
+| Inspector2 (`aws_inspector2_enabler`)               | `main_regional_inspector2.tf`               |
+| Macie (`aws_macie2_account`)                        | `main_regional_macie.tf`                    |
+| KMS (`aws_kms_key`)                                 | `main_regional_kms.tf`                      |
+| EBS (`aws_ebs_encryption_by_default`)               | `main_regional_ebs.tf`                      |
+| EC2 Metadata (`aws_ec2_instance_metadata_defaults`) | `main_regional_ec2_metadata.tf`             |
+| Access Analyzer (`aws_accessanalyzer_analyzer`)     | `main_regional_security_access_analyzer.tf` |
+| Security Hub (`aws_securityhub_account`)            | `main_regional_security_securityhub.tf`     |
+| Resource Groups (`aws_resourcegroups_group`)        | `main_regional_resource_groups.tf`          |
+| SSM Automation (`aws_ssm_service_setting`)          | `main_regional_ssm_automation.tf`           |
+| Default VPC hardening                               | `main_regional_security_default_vpc.tf`     |
 
 ### Global Services (`region = var.region.global`)
 
-| Resource | File | Why Global |
-|----------|------|-----------|
-| Budgets + Lambda + Scheduler | `main_central_budgets.tf` | Account-wide cost data; one report suffices |
-| CloudTrail + Lambda | `main_central_cloudtrail.tf` | Organization trail is account-wide |
-| Trusted Advisor + Lambda + Scheduler | `main_central_trusted_advisor.tf` | Account-wide recommendations |
-| IAM Password Expired + Lambda + Scheduler | `main_central_iam_password_expired.tf` | IAM is global; one check suffices |
-| Lambda VPC | `main_central_lambda_vpc.tf` | Shared VPC for global Lambda functions |
+| Resource                                  | File                                   | Why Global                                  |
+| ----------------------------------------- | -------------------------------------- | ------------------------------------------- |
+| Budgets + Lambda + Scheduler              | `main_central_budgets.tf`              | Account-wide cost data; one report suffices |
+| CloudTrail + Lambda                       | `main_central_cloudtrail.tf`           | Organization trail is account-wide          |
+| Trusted Advisor + Lambda + Scheduler      | `main_central_trusted_advisor.tf`      | Account-wide recommendations                |
+| IAM Password Expired + Lambda + Scheduler | `main_central_iam_password_expired.tf` | IAM is global; one check suffices           |
+| Lambda VPC                                | `main_central_lambda_vpc.tf`           | Shared VPC for global Lambda functions      |
 
 ### Common Services (`region = var.region.primary`)
 
-| Resource | File | Why Primary |
-|----------|------|------------|
-| S3 log bucket | `main_central_log.tf` | Centralized log aggregation at development base |
-| S3 CloudTrail bucket | `main_central_log.tf` | Paired with log bucket |
+| Resource             | File                  | Why Primary                                     |
+| -------------------- | --------------------- | ----------------------------------------------- |
+| S3 log bucket        | `main_central_log.tf` | Centralized log aggregation at development base |
+| S3 CloudTrail bucket | `main_central_log.tf` | Paired with log bucket                          |
 
 ### Regionless Services (no `region` attribute needed)
 
-| Resource | File | Why Regionless |
-|----------|------|---------------|
-| IAM roles/policies | `main_central_iam*.tf` | IAM is a global service |
-| OIDC GitHub | `main_central_oidc_github.tf` | IAM identity provider |
-| S3 account public access | `main_central_s3.tf` | Account-level setting |
-| Compute Optimizer | `main_central_compute_optimizer.tf` | Account-level opt-in |
+| Resource                 | File                                | Why Regionless          |
+| ------------------------ | ----------------------------------- | ----------------------- |
+| IAM roles/policies       | `main_central_iam*.tf`              | IAM is a global service |
+| OIDC GitHub              | `main_central_oidc_github.tf`       | IAM identity provider   |
+| S3 account public access | `main_central_s3.tf`                | Account-level setting   |
+| Compute Optimizer        | `main_central_compute_optimizer.tf` | Account-level opt-in    |
 
 ## Data Duplication Prevention
 

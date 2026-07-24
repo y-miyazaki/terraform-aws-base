@@ -69,13 +69,13 @@ Enable only the thresholds that are meaningful for the cluster class and workloa
 
 ## Tuning Guidance
 
-| Parameter | Impact | Tradeoff |
-| --------- | ------ | -------- |
-| `cloudwatch_log_group.retention_in_days` | Controls the default log retention period for all services | Longer retention increases storage cost and review volume |
-| `cloudwatch_log_group.override.<service>.retention_in_days` | Tunes retention for a single service without changing the global default | Adds configuration complexity and per-service drift risk |
-| `region.targets` | Controls which regions receive regional resources | More regions increase plan/apply time and resource count |
-| `cleanup_schedule_expression` | Controls how often stale JIT assignments are checked | Shorter intervals reduce stale access time but increase scheduler activity |
-| `enabled_*` threshold flags in Redshift monitoring | Controls which alarms exist for each cluster | More enabled checks improve visibility but increase noise and maintenance cost |
+| Parameter                                                   | Impact                                                                   | Tradeoff                                                                       |
+| ----------------------------------------------------------- | ------------------------------------------------------------------------ | ------------------------------------------------------------------------------ |
+| `cloudwatch_log_group.retention_in_days`                    | Controls the default log retention period for all services               | Longer retention increases storage cost and review volume                      |
+| `cloudwatch_log_group.override.<service>.retention_in_days` | Tunes retention for a single service without changing the global default | Adds configuration complexity and per-service drift risk                       |
+| `region.targets`                                            | Controls which regions receive regional resources                        | More regions increase plan/apply time and resource count                       |
+| `cleanup_schedule_expression`                               | Controls how often stale JIT assignments are checked                     | Shorter intervals reduce stale access time but increase scheduler activity     |
+| `enabled_*` threshold flags in Redshift monitoring          | Controls which alarms exist for each cluster                             | More enabled checks improve visibility but increase noise and maintenance cost |
 
 ## Related Documents
 

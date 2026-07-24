@@ -82,6 +82,7 @@ description: "AI Assistant Instructions for Agent Skills Development"
 ## Guidelines
 
 ### Pattern Checks (P)
+
 - P-01 (SHOULD): Design Pattern Compliance
   - Check: Does SKILL.md define a deterministic execution pattern with explicit flow, boundaries, and references?
 - P-02 (SHOULD): Output Contract Compliance
@@ -90,6 +91,7 @@ description: "AI Assistant Instructions for Agent Skills Development"
   - Check: For skills that generate or modify content, does the Workflow include an explicit step to read relevant source material before writing?
 
 ### Quality Checks (Q)
+
 - Q-01 (SHOULD): Output is Truly Structured
   - Check: Is the output format definition implementable and parseable (JSON schema / Markdown structure explicitly defined with example)?
 - Q-02 (SHOULD): Scope Boundaries
@@ -114,6 +116,7 @@ description: "AI Assistant Instructions for Agent Skills Development"
   - Check: If token reduction is applied, are behavior-defining instructions preserved?
 
 ### Structural Checks (S)
+
 - S-01 (MUST): Structural Completeness
   - Check: Does SKILL.md have all 5 required sections at ## heading level?
 - S-02 (MUST): YAML Frontmatter Fields
@@ -133,7 +136,6 @@ description: "AI Assistant Instructions for Agent Skills Development"
 
 - After changes, prioritize running validate.sh from agent-skills-review skill.
 - Use individual commands only for debugging.
-
 
 ## Testing and Validation
 

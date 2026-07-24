@@ -39,6 +39,7 @@ variable "region" {
 ```
 
 Validations enforce:
+
 - `primary` must be included in `targets`
 - `targets` must have at least one region
 
@@ -55,12 +56,12 @@ provider "aws" {
 
 ### File Naming Convention
 
-| Pattern | Region Source | Example |
-|---------|-------------|---------|
-| `main_regional_*.tf` | `for_each = toset(var.region.targets)` | GuardDuty, Config, KMS |
-| `main_central_*.tf` | `region = var.region.global` | Budgets Lambda, CloudTrail |
-| `main_common_*.tf` | `region = var.region.primary` | S3 log buckets |
-| `main_central_iam*.tf` | (none — regionless) | IAM roles, OIDC |
+| Pattern                | Region Source                          | Example                    |
+| ---------------------- | -------------------------------------- | -------------------------- |
+| `main_regional_*.tf`   | `for_each = toset(var.region.targets)` | GuardDuty, Config, KMS     |
+| `main_central_*.tf`    | `region = var.region.global`           | Budgets Lambda, CloudTrail |
+| `main_common_*.tf`     | `region = var.region.primary`          | S3 log buckets             |
+| `main_central_iam*.tf` | (none — regionless)                    | IAM roles, OIDC            |
 
 ### Implementation Pattern
 
@@ -102,16 +103,16 @@ module "s3_log" {
 
 ## Migration from Previous Design
 
-| Before | After |
-|--------|-------|
-| `var.region` | `var.region.primary` |
-| `var.target_regions` | `var.region.targets` |
-| `var.global_resource_region` | `var.region.global` |
-| `provider = aws.global` | `region = var.region.global` |
-| `provider = aws.us-east-1` | `region = var.region.global` |
-| `main_<service>_us_east_1.tf` | Deleted (merged into `main_regional_*.tf`) |
-| `locals.is_default_region_us_east_1` | Deleted (no longer needed) |
-| `locals.regional_providers` | Deleted (no longer needed) |
+| Before                               | After                                      |
+| ------------------------------------ | ------------------------------------------ |
+| `var.region`                         | `var.region.primary`                       |
+| `var.target_regions`                 | `var.region.targets`                       |
+| `var.global_resource_region`         | `var.region.global`                        |
+| `provider = aws.global`              | `region = var.region.global`               |
+| `provider = aws.us-east-1`           | `region = var.region.global`               |
+| `main_<service>_us_east_1.tf`        | Deleted (merged into `main_regional_*.tf`) |
+| `locals.is_default_region_us_east_1` | Deleted (no longer needed)                 |
+| `locals.regional_providers`          | Deleted (no longer needed)                 |
 
 ## Variable Configuration
 

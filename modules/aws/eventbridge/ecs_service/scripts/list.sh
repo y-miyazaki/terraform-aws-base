@@ -173,31 +173,12 @@ function main {
         exit 0
     fi
 
-    # Join arrays with commas
-    cluster_joined=$(
-        IFS=,
-        echo "${list_ecs_cluster[*]}"
-    )
-    service_joined=$(
-        IFS=,
-        echo "${list_ecs_service[*]}"
-    )
-    count_joined=$(
-        IFS=,
-        echo "${list_desired_count[*]}"
-    )
-    has_autoscaling_joined=$(
-        IFS=,
-        echo "${list_has_autoscaling[*]}"
-    )
-    autoscaling_min_joined=$(
-        IFS=,
-        echo "${list_autoscaling_min[*]}"
-    )
-    autoscaling_max_joined=$(
-        IFS=,
-        echo "${list_autoscaling_max[*]}"
-    )
+    cluster_joined=$(printf '%s\n' "${list_ecs_cluster[@]}" | jq -R . | jq -s 'join(",")')
+    service_joined=$(printf '%s\n' "${list_ecs_service[@]}" | jq -R . | jq -s 'join(",")')
+    count_joined=$(printf '%s\n' "${list_desired_count[@]}" | jq -R . | jq -s 'join(",")')
+    has_autoscaling_joined=$(printf '%s\n' "${list_has_autoscaling[@]}" | jq -R . | jq -s 'join(",")')
+    autoscaling_min_joined=$(printf '%s\n' "${list_autoscaling_min[@]}" | jq -R . | jq -s 'join(",")')
+    autoscaling_max_joined=$(printf '%s\n' "${list_autoscaling_max[@]}" | jq -R . | jq -s 'join(",")')
 
     # Output JSON
     echo "{\"list_ecs_cluster\": \"$cluster_joined\", \"list_ecs_service\": \"$service_joined\", \"list_desired_count\": \"$count_joined\", \"list_has_autoscaling\": \"$has_autoscaling_joined\", \"list_autoscaling_min\": \"$autoscaling_min_joined\", \"list_autoscaling_max\": \"$autoscaling_max_joined\"}"

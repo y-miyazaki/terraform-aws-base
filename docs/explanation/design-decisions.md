@@ -35,15 +35,15 @@ This pattern triggers Access Analyzer findings (`isPublic: true`) but is safe. T
 
 The following categories of Access Analyzer findings are expected in a typical deployment and should be archived:
 
-| Category | Reason |
-| --- | --- |
-| `AWSReservedSSO_*` roles | AWS SSO/Identity Center trusts external IdP by design |
-| OIDC GitHub Actions roles | GitHub Actions OIDC federation — intentional |
-| Cognito OpenID Connect roles | Cognito User Pool OIDC federation — intentional |
-| SAML federation roles | External IdP (e.g., CloudGate UNO) federation — intentional |
-| Cross-account S3 access roles | External service integration via AssumeRole — verify trust target |
-| IP-restricted S3 buckets | `Principal: *` with `aws:SourceIp` condition — intentional external data receive |
-| KMS keys (CloudTrail) | CloudTrail decrypt policy with `kms:CallerAccount` condition (see above) |
+| Category                      | Reason                                                                           |
+| ----------------------------- | -------------------------------------------------------------------------------- |
+| `AWSReservedSSO_*` roles      | AWS SSO/Identity Center trusts external IdP by design                            |
+| OIDC GitHub Actions roles     | GitHub Actions OIDC federation — intentional                                     |
+| Cognito OpenID Connect roles  | Cognito User Pool OIDC federation — intentional                                  |
+| SAML federation roles         | External IdP (e.g., CloudGate UNO) federation — intentional                      |
+| Cross-account S3 access roles | External service integration via AssumeRole — verify trust target                |
+| IP-restricted S3 buckets      | `Principal: *` with `aws:SourceIp` condition — intentional external data receive |
+| KMS keys (CloudTrail)         | CloudTrail decrypt policy with `kms:CallerAccount` condition (see above)         |
 
 When investigating findings, check `~/.aws/config` or `aws organizations list-accounts` for account context.
 
@@ -52,6 +52,7 @@ When investigating findings, check `~/.aws/config` or `aws organizations list-ac
 Log retention is managed centrally via `cloudwatch_log_group` variable with per-service overrides, rather than per-Lambda configuration.
 
 Priority order:
+
 1. `cloudwatch_log_group.override.<service_name>.retention_in_days` (highest)
 2. `cloudwatch_log_group.retention_in_days` (default)
 
@@ -108,9 +109,9 @@ Lambda VPC modules use `manage_default_security_group = true` with empty ingress
 
 The following are intentionally out of scope for this baseline repository:
 
-| Item | Reason |
-| --- | --- |
-| WAF / Shield | Project-specific rules; managed in application repositories |
-| VPC creation | Removed (`vpc/create` deleted); application repositories manage VPCs |
-| Route 53 DNSSEC | Hosted Zone-specific; managed where Hosted Zones are defined |
-| ECR repository settings (scan_on_push) | Per-repository; managed in application repositories |
+| Item                                   | Reason                                                               |
+| -------------------------------------- | -------------------------------------------------------------------- |
+| WAF / Shield                           | Project-specific rules; managed in application repositories          |
+| VPC creation                           | Removed (`vpc/create` deleted); application repositories manage VPCs |
+| Route 53 DNSSEC                        | Hosted Zone-specific; managed where Hosted Zones are defined         |
+| ECR repository settings (scan_on_push) | Per-repository; managed in application repositories                  |

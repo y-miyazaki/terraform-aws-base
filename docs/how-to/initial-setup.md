@@ -4,13 +4,13 @@ Common prerequisites before running any Terraform stack (`base`, `management/aud
 
 ## Prerequisites
 
-| Step | Action | Notes |
-|------|--------|-------|
-| 1 | Remove root account access key | Security requirement — do this via AWS Console |
-| 2 | Create IAM user/group for Terraform | Create group (e.g., `deploy`) with `AdministratorAccess`, add user (e.g., `terraform`) with programmatic access only |
-| 3 | Create S3 bucket for Terraform state | See [script usage](#create-state-bucket) below |
-| 4 | Copy and rename `terraform.example.tfvars` | Search for `TODO` comments to identify required changes |
-| 5 | Run `terraform init && terraform apply` | May need a second `apply` if conflicts occur |
+| Step | Action                                     | Notes                                                                                                                |
+| ---- | ------------------------------------------ | -------------------------------------------------------------------------------------------------------------------- |
+| 1    | Remove root account access key             | Security requirement — do this via AWS Console                                                                       |
+| 2    | Create IAM user/group for Terraform        | Create group (e.g., `deploy`) with `AdministratorAccess`, add user (e.g., `terraform`) with programmatic access only |
+| 3    | Create S3 bucket for Terraform state       | See [script usage](#create-state-bucket) below                                                                       |
+| 4    | Copy and rename `terraform.example.tfvars` | Search for `TODO` comments to identify required changes                                                              |
+| 5    | Run `terraform init && terraform apply`    | May need a second `apply` if conflicts occur                                                                         |
 
 ## Create State Bucket
 
@@ -20,11 +20,11 @@ Use the provided script to create an S3 bucket with optional random suffix:
 ./scripts/terraform/aws_init_state.sh -r {region} -b {bucket-name} -p {profile} [-s]
 ```
 
-| Flag | Description |
-|------|-------------|
-| `-r` | AWS region (e.g., `ap-northeast-1`) |
-| `-b` | S3 bucket name |
-| `-p` | AWS CLI profile name |
+| Flag | Description                              |
+| ---- | ---------------------------------------- |
+| `-r` | AWS region (e.g., `ap-northeast-1`)      |
+| `-b` | S3 bucket name                           |
+| `-p` | AWS CLI profile name                     |
 | `-s` | Append random hash suffix to bucket name |
 
 **Example:**

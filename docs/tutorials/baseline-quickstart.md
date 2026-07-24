@@ -6,13 +6,13 @@ This tutorial walks through the shortest reliable path to get a Terraform stack 
 
 ## Prerequisites
 
-| Requirement | How to verify |
-|-------------|--------------|
-| Terraform CLI installed | `terraform version` |
-| AWS CLI profile configured | `aws sts get-caller-identity --profile <profile>` |
-| S3 state bucket created | See [Initial Setup (Common)](../how-to/initial-setup.md) |
+| Requirement                                         | How to verify                                                           |
+| --------------------------------------------------- | ----------------------------------------------------------------------- |
+| Terraform CLI installed                             | `terraform version`                                                     |
+| AWS CLI profile configured                          | `aws sts get-caller-identity --profile <profile>`                       |
+| S3 state bucket created                             | See [Initial Setup (Common)](../how-to/initial-setup.md)                |
 | Backend file prepared (`terraform.<env>.tfbackend`) | Copy from `terraform.example.tfbackend`, fill in bucket name and region |
-| Repository cloned locally | `git clone` the repo |
+| Repository cloned locally                           | `git clone` the repo                                                    |
 
 If the S3 state bucket does not yet exist, complete [Initial Setup (Common)](../how-to/initial-setup.md) first.
 
@@ -124,12 +124,12 @@ If the plan shows destructive replacements, compare with the lifecycle-sensitive
 
 All stacks follow the same workflow. The only differences are the directory, state key, and configuration guide:
 
-| Stack | Directory | State key | Configuration guide |
-|-------|-----------|-----------|-------------------|
-| base | `terraform/base` | `terraform.base.tfstate` | [Base Terraform Configuration Guide](../how-to/configure-base-tfvars.md) |
-| monitor | `terraform/monitor` | `terraform.monitor.tfstate` | [Monitor Terraform Configuration Guide](../how-to/configure-monitor-tfvars.md) |
-| management/audit | `terraform/management/audit` | `terraform.audit.tfstate` | [Management Audit Terraform Configuration Guide](../how-to/configure-management-audit-tfvars.md) |
-| management/root | `terraform/management/root` | `terraform.root.tfstate` | [Management Root Terraform Configuration Guide](../how-to/configure-management-root-tfvars.md) |
+| Stack            | Directory                    | State key                   | Configuration guide                                                                              |
+| ---------------- | ---------------------------- | --------------------------- | ------------------------------------------------------------------------------------------------ |
+| base             | `terraform/base`             | `terraform.base.tfstate`    | [Base Terraform Configuration Guide](../how-to/configure-base-tfvars.md)                         |
+| monitor          | `terraform/monitor`          | `terraform.monitor.tfstate` | [Monitor Terraform Configuration Guide](../how-to/configure-monitor-tfvars.md)                   |
+| management/audit | `terraform/management/audit` | `terraform.audit.tfstate`   | [Management Audit Terraform Configuration Guide](../how-to/configure-management-audit-tfvars.md) |
+| management/root  | `terraform/management/root`  | `terraform.root.tfstate`    | [Management Root Terraform Configuration Guide](../how-to/configure-management-root-tfvars.md)   |
 
 **Recommended apply order:**
 
@@ -142,12 +142,12 @@ All stacks follow the same workflow. The only differences are the directory, sta
 
 ## Troubleshooting
 
-| Symptom | Cause | Resolution |
-|---------|-------|------------|
-| `Error: No valid credential sources found` | AWS profile not configured or expired | Run `aws sso login --profile <profile>` or check `~/.aws/credentials` |
-| `Error: Failed to get existing workspaces` | S3 bucket doesn't exist or wrong region | Verify bucket name and region in tfbackend file |
-| `Error: Error acquiring the state lock` | Another process holds the lock | Wait or force-unlock with `terraform force-unlock <ID>` |
-| Partial apply failure on first run | AWS eventual consistency | Run `terraform apply` again |
+| Symptom                                    | Cause                                   | Resolution                                                            |
+| ------------------------------------------ | --------------------------------------- | --------------------------------------------------------------------- |
+| `Error: No valid credential sources found` | AWS profile not configured or expired   | Run `aws sso login --profile <profile>` or check `~/.aws/credentials` |
+| `Error: Failed to get existing workspaces` | S3 bucket doesn't exist or wrong region | Verify bucket name and region in tfbackend file                       |
+| `Error: Error acquiring the state lock`    | Another process holds the lock          | Wait or force-unlock with `terraform force-unlock <ID>`               |
+| Partial apply failure on first run         | AWS eventual consistency                | Run `terraform apply` again                                           |
 
 For more details, see [Troubleshooting](../how-to/troubleshooting.md).
 

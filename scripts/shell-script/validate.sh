@@ -8,6 +8,10 @@
 #     -v, --verbose  Enable verbose output
 #     -f, --fix      Auto-fix issues where possible
 #     -q, --quiet    Suppress non-error output
+#     -d, --check-function-docs
+#                 Opt-in: enforce Google Shell Style Guide function headers with
+#                 explicit Globals/Arguments/Outputs/Returns (None when N/A).
+#                 See https://google.github.io/styleguide/shellguide.html#s4.2-function-comments
 #
 # Design Rules:
 #   - Use strict mode in scripts (set -euo pipefail) where appropriate
@@ -103,7 +107,7 @@ Options:
   -v, --verbose  Enable verbose output and detailed analysis
   -f, --fix      Auto-fix issues where possible (formatting, permissions)
   -q, --quiet    Suppress non-error output (only show summary)
-  --check-function-docs
+  -d, --check-function-docs
                  Opt-in: enforce Google Shell Style Guide function headers with
                  explicit Globals/Arguments/Outputs/Returns (None when N/A).
                  See https://google.github.io/styleguide/shellguide.html#s4.2-function-comments
@@ -135,6 +139,7 @@ Examples:
   $(basename "$0") -v        # Verbose output with detailed analysis
   $(basename "$0") -f        # Auto-fix fixable issues
   $(basename "$0") -q        # Quiet mode, show only summary
+  $(basename "$0") -d        # Enforce function documentation headers
   $(basename "$0") --dry-run # Preview actions without executing external commands
 EOF
     exit 0
@@ -185,7 +190,7 @@ function parse_arguments {
                 QUIET=true
                 shift
                 ;;
-            --check-function-docs)
+            -d | --check-function-docs)
                 CHECK_FUNCTION_DOCS=true
                 shift
                 ;;

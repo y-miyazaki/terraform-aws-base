@@ -512,38 +512,54 @@ resource "aws_iam_role" "sfn" {
   tags = var.tags
 }
 
-resource "aws_iam_role_policy" "sfn" {
-  name = "${var.name_prefix}jit-access-sfn"
-  role = aws_iam_role.sfn.id
-  policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Sid      = "InvokeLambda"
-        Effect   = "Allow"
-        Action   = "lambda:InvokeFunction"
-        Resource = module.lambda_jit_access.lambda_function_arn
-      },
-      {
-        Sid    = "CloudWatchLogs"
-        Effect = "Allow"
-        Action = [
-          "logs:CreateLogDelivery",
-          "logs:CreateLogGroup",
-          "logs:CreateLogStream",
-          "logs:DeleteLogDelivery",
-          "logs:DescribeLogGroups",
-          "logs:DescribeResourcePolicies",
-          "logs:GetLogDelivery",
-          "logs:ListLogDeliveries",
-          "logs:PutLogEvents",
-          "logs:PutResourcePolicy",
-          "logs:UpdateLogDelivery",
-        ]
-        Resource = "*"
-      },
+data "aws_iam_policy_document" "sfn" {
+  statement {
+    sid    = "InvokeLambda"
+    effect = "Allow"
+    actions = [
+      "lambda:InvokeFunction",
     ]
-  })
+    resources = [
+      module.lambda_jit_access.lambda_function_arn,
+    ]
+  }
+
+  statement {
+    sid    = "CloudWatchLogs"
+    effect = "Allow"
+    actions = [
+      "logs:CreateLogDelivery",
+      "logs:CreateLogGroup",
+      "logs:CreateLogStream",
+      "logs:DeleteLogDelivery",
+      "logs:DescribeLogGroups",
+      "logs:GetLogDelivery",
+      "logs:ListLogDeliveries",
+      "logs:PutLogEvents",
+      "logs:UpdateLogDelivery",
+    ]
+    resources = [
+      "*",
+    ]
+  }
+
+  statement {
+    sid    = "CloudWatchLogsResourcePolicy"
+    effect = "Allow"
+    actions = [
+      "logs:DescribeResourcePolicies",
+      "logs:PutResourcePolicy",
+    ]
+    resources = [
+      "*",
+    ]
+  }
+}
+
+resource "aws_iam_role_policy" "sfn" {
+  name   = "${var.name_prefix}jit-access-sfn"
+  role   = aws_iam_role.sfn.id
+  policy = data.aws_iam_policy_document.sfn.json
 }
 
 module "step_functions" {

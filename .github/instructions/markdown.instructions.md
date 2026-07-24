@@ -23,6 +23,7 @@ description: "AI Assistant Instructions for Markdown Documentation"
 ## Guidelines
 
 ### Structure and Formatting (DOC)
+
 - DOC-00 (MUST): Preserve Existing Structure
   - Check: Does the change modify only the relevant section without unnecessary reorganization?
 - DOC-01 (SHOULD): README.md Section Order
@@ -41,6 +42,7 @@ description: "AI Assistant Instructions for Markdown Documentation"
   - Check: Are cross-references within `docs/` written as relative Markdown links (e.g., `[Specification](../reference/specification.md)`) instead of inline code paths (e.g., `` `docs/reference/specification.md` ``)? MkDocs resolves relative links into navigable site links automatically.
 
 ### Terminology and Consistency (TERM)
+
 - TERM-01 (MUST): Use Official Product Names
   - Check: Are product names written in their official form (e.g., PostgreSQL not postgres/Postgres, GitHub Actions not github actions, Terraform not terraform in prose)?
 - TERM-02 (SHOULD): Consistent Terminology Within Context
@@ -54,7 +56,7 @@ description: "AI Assistant Instructions for Markdown Documentation"
 - TERM-06 (SHOULD): Prefer Active Voice in Procedures
   - Check: Are instructions written in active voice with a clear actor (e.g., "Run the script" not "The script should be run")?
 - TERM-07 (SHOULD): Specify Code Block Language
-  - Check: Do fenced code blocks include a language identifier (e.g., ```bash,```json, ```yaml)?
+  - Check: Do fenced code blocks include a language identifier (e.g., `bash,`json, ```yaml)?
 - TERM-08 (SHOULD): Use Descriptive Link Text
   - Check: Does link text describe the destination rather than using raw URLs or generic labels such as "here"?
 - TERM-09 (SHOULD): Verify Against Repository State

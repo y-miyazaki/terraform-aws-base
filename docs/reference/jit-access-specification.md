@@ -28,12 +28,12 @@ Out-of-scope items:
 
 ### Ownership Boundaries
 
-| Component          | Owner                          |
-| ------------------ | ------------------------------ |
-| Slack App config   | Platform team                  |
-| Permission Sets    | Security team                  |
-| Profile definition | Platform team (via Terraform)  |
-| User mapping       | Platform team (via Terraform)  |
+| Component          | Owner                         |
+| ------------------ | ----------------------------- |
+| Slack App config   | Platform team                 |
+| Permission Sets    | Security team                 |
+| Profile definition | Platform team (via Terraform) |
+| User mapping       | Platform team (via Terraform) |
 
 ### External Dependencies
 
@@ -70,12 +70,12 @@ active  -> revoked                             (early revocation)
 
 ### Failure Behavior
 
-| Failure                  | Behavior                                                    |
-| ------------------------ | ----------------------------------------------------------- |
-| Grant Lambda failure     | 3 retries (30s, 60s, 120s backoff) -> GrantFailed state     |
-| Revoke Lambda failure    | 3 retries (30s, 60s, 120s backoff) -> DLQ + CloudWatch Alarm |
-| Step Functions crash     | Cleanup checker scans every 15 min, force-revokes expired   |
-| Unapproved past start   | Cleanup checker auto-rejects pending requests               |
+| Failure               | Behavior                                                     |
+| --------------------- | ------------------------------------------------------------ |
+| Grant Lambda failure  | 3 retries (30s, 60s, 120s backoff) -> GrantFailed state      |
+| Revoke Lambda failure | 3 retries (30s, 60s, 120s backoff) -> DLQ + CloudWatch Alarm |
+| Step Functions crash  | Cleanup checker scans every 15 min, force-revokes expired    |
+| Unapproved past start | Cleanup checker auto-rejects pending requests                |
 
 ## Operational Characteristics
 
@@ -147,12 +147,12 @@ active  -> revoked                             (early revocation)
 
 ### Parameter Store Layout
 
-| Parameter Path                                    | Purpose                          |
-| ------------------------------------------------- | -------------------------------- |
-| `/jit-access/config/approver-channel`             | Slack channel ID for approvals   |
-| `/jit-access/config/state-machine-arn`            | Step Functions ARN               |
-| `/jit-access/config/profiles/<profile-name>`      | Profile configuration (JSON)     |
-| `/jit-access/user-mapping/<slack-user-id>`        | Identity Center User ID fallback |
+| Parameter Path                               | Purpose                          |
+| -------------------------------------------- | -------------------------------- |
+| `/jit-access/config/approver-channel`        | Slack channel ID for approvals   |
+| `/jit-access/config/state-machine-arn`       | Step Functions ARN               |
+| `/jit-access/config/profiles/<profile-name>` | Profile configuration (JSON)     |
+| `/jit-access/user-mapping/<slack-user-id>`   | Identity Center User ID fallback |
 
 ### Profile JSON Schema
 
@@ -180,16 +180,16 @@ active  -> revoked                             (early revocation)
 
 ### Lambda Environment Variables
 
-| Variable               | Source                | Notes                              |
-| ---------------------- | --------------------- | ---------------------------------- |
-| `APPROVER_CHANNEL_ID`  | `var.slack`           | Approval notification channel      |
-| `DYNAMODB_TABLE_NAME`  | DynamoDB module       | Requests table name                |
-| `IDENTITY_CENTER_ARN`  | Data source           | Identity Center instance ARN       |
-| `IDENTITY_STORE_ID`    | Data source           | Identity Store ID                  |
-| `SLACK_BOT_TOKEN`      | `var.slack`           | Bot OAuth token                    |
-| `SLACK_SIGNING_SECRET` | `var.slack`           | Request signature verification     |
-| `SSM_PARAMETER_PREFIX` | `var.ssm_parameter_prefix` | Default: `/jit-access`        |
-| `WORKFLOW_SECRET`      | `var.slack`           | Optional; Workflow Builder auth     |
+| Variable               | Source                     | Notes                           |
+| ---------------------- | -------------------------- | ------------------------------- |
+| `APPROVER_CHANNEL_ID`  | `var.slack`                | Approval notification channel   |
+| `DYNAMODB_TABLE_NAME`  | DynamoDB module            | Requests table name             |
+| `IDENTITY_CENTER_ARN`  | Data source                | Identity Center instance ARN    |
+| `IDENTITY_STORE_ID`    | Data source                | Identity Store ID               |
+| `SLACK_BOT_TOKEN`      | `var.slack`                | Bot OAuth token                 |
+| `SLACK_SIGNING_SECRET` | `var.slack`                | Request signature verification  |
+| `SSM_PARAMETER_PREFIX` | `var.ssm_parameter_prefix` | Default: `/jit-access`          |
+| `WORKFLOW_SECRET`      | `var.slack`                | Optional; Workflow Builder auth |
 
 ## Slack UX
 
@@ -197,13 +197,13 @@ active  -> revoked                             (early revocation)
 
 `/jit-access` opens a modal with the following fields:
 
-| Field             | Required | Description                                              |
-| ----------------- | -------- | -------------------------------------------------------- |
-| Permission profile | Yes      | Dropdown (dynamically loaded from Parameter Store)       |
-| Start time        | No       | Unspecified = immediately after approval                 |
-| Duration          | Yes      | Selection: 30m / 1h / 2h / 4h (within profile max)      |
-| Reason            | Yes      | Free text                                                |
-| Ticket number     | No       | Optional reference                                       |
+| Field              | Required | Description                                        |
+| ------------------ | -------- | -------------------------------------------------- |
+| Permission profile | Yes      | Dropdown (dynamically loaded from Parameter Store) |
+| Start time         | No       | Unspecified = immediately after approval           |
+| Duration           | Yes      | Selection: 30m / 1h / 2h / 4h (within profile max) |
+| Reason             | Yes      | Free text                                          |
+| Ticket number      | No       | Optional reference                                 |
 
 ### Approval Notification
 
@@ -281,19 +281,19 @@ in both the Terraform `workflow_secret` variable and the Workflow Builder webhoo
 }
 ```
 
-| Field         | Required | Description                                |
-| ------------- | -------- | ------------------------------------------ |
-| slack_user_id | Yes      | Requester's Slack User ID                  |
-| profile       | Yes      | Permission profile name                    |
+| Field         | Required | Description                                  |
+| ------------- | -------- | -------------------------------------------- |
+| slack_user_id | Yes      | Requester's Slack User ID                    |
+| profile       | Yes      | Permission profile name                      |
 | duration      | Yes      | Minutes as string ("30", "60", "120", "240") |
-| start_at      | No       | Unspecified = immediately after approval   |
-| reason        | Yes      | Justification                              |
-| ticket        | No       | Ticket reference                           |
+| start_at      | No       | Unspecified = immediately after approval     |
+| reason        | Yes      | Justification                                |
+| ticket        | No       | Ticket reference                             |
 
 ### Response
 
 ```json
-{"request_id": "20260528100000-U123456", "status": "pending"}
+{ "request_id": "20260528100000-U123456", "status": "pending" }
 ```
 
 ## Early Revocation
@@ -306,14 +306,14 @@ in both the Terraform `workflow_secret` variable and the Workflow Builder webhoo
 
 ## Safety Design
 
-| Risk                    | Mitigation                                                        |
-| ----------------------- | ----------------------------------------------------------------- |
-| Revoke Lambda failure   | 3 retries -> DLQ -> CloudWatch Alarm -> Slack alert               |
-| Step Functions crash    | Cleanup checker scans every 15 min, force-revokes expired         |
-| Unauthorized request    | Slack signature verification + approvers list check               |
-| Duration over-request   | Validated against profile `max_duration_minutes`                  |
-| Duplicate active grant  | DynamoDB check for same user + same profile in active status      |
-| Unapproved stale        | Cleanup checker auto-rejects pending requests past start time     |
+| Risk                   | Mitigation                                                    |
+| ---------------------- | ------------------------------------------------------------- |
+| Revoke Lambda failure  | 3 retries -> DLQ -> CloudWatch Alarm -> Slack alert           |
+| Step Functions crash   | Cleanup checker scans every 15 min, force-revokes expired     |
+| Unauthorized request   | Slack signature verification + approvers list check           |
+| Duration over-request  | Validated against profile `max_duration_minutes`              |
+| Duplicate active grant | DynamoDB check for same user + same profile in active status  |
+| Unapproved stale       | Cleanup checker auto-rejects pending requests past start time |
 
 ## Security
 
@@ -339,14 +339,14 @@ modules/aws/jit_access/
 
 Single Lambda function with action-based routing:
 
-| Caller                              | Action    | Processing                              |
-| ----------------------------------- | --------- | --------------------------------------- |
-| API Gateway (POST /slack/commands)  | HTTP auto | Slash command, modal display            |
-| API Gateway (POST /slack/interactions) | HTTP auto | Approve/reject/early revoke          |
-| API Gateway (POST /workflow/request) | HTTP auto | Workflow Builder request submission    |
-| Step Functions (GrantAccess)        | `grant`   | Permission Set assignment + polling     |
-| Step Functions (RevokeAccess)       | `revoke`  | Permission Set removal + polling        |
-| EventBridge Scheduler               | `cleanup` | Stale scan + force revoke + auto-reject |
+| Caller                                 | Action    | Processing                              |
+| -------------------------------------- | --------- | --------------------------------------- |
+| API Gateway (POST /slack/commands)     | HTTP auto | Slash command, modal display            |
+| API Gateway (POST /slack/interactions) | HTTP auto | Approve/reject/early revoke             |
+| API Gateway (POST /workflow/request)   | HTTP auto | Workflow Builder request submission     |
+| Step Functions (GrantAccess)           | `grant`   | Permission Set assignment + polling     |
+| Step Functions (RevokeAccess)          | `revoke`  | Permission Set removal + polling        |
+| EventBridge Scheduler                  | `cleanup` | Stale scan + force revoke + auto-reject |
 
 ## AWS Services Used
 

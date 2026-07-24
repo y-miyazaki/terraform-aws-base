@@ -10,7 +10,7 @@ The project is structured to manage multiple environments and components, includ
   Manages core AWS resources essential for the project, including IAM roles and policies, KMS keys, CloudTrail for auditing, Security Hub for security compliance, GuardDuty for threat detection, Trusted Advisor recommendations, and resource groups for organization.
 - **Management Resources (`terraform/management/`)**  
   Handles organizational-level configurations, divided into:
-  - **Audit (`terraform/management/audit/`)**  
+  - **Audit (`terraform/management/audit/`)**
   - Focuses on security auditing tools like Chatbot for notifications, GuardDuty, and Security Hub.
   - **Root (`terraform/management/root/`)**
     Manages root-level resources such as budgets, Lambda functions, CloudTrail, and organizational policies.
@@ -58,124 +58,124 @@ Since there is a devcontainer setting in [env/example](https://github.com/y-miya
 
 ### Create Local Development Environment
 
-- Create devcontainer  
+- Create devcontainer
 
-    ```bash
-    mkdir -p .devcontainer
-    mkdir -p env/common/tmp/.aws
-    mkdir -p env/common/tmp/gh
-    touch env/common/tmp/.gitconfig
-    cp -p env/example/.devcontainer/devcontainer.json .devcontainer/devcontainer.json
-    cp -p env/example/.aws/config env/common/tmp/.aws/config
-    ```
+  ```bash
+  mkdir -p .devcontainer
+  mkdir -p env/common/tmp/.aws
+  mkdir -p env/common/tmp/gh
+  touch env/common/tmp/.gitconfig
+  cp -p env/example/.devcontainer/devcontainer.json .devcontainer/devcontainer.json
+  cp -p env/example/.aws/config env/common/tmp/.aws/config
+  ```
 
 - Fix .aws/config  
-    The following excerpt of code is a locally mounted file, so please change the mount settings according to your own environment.  
-    You need to set up your AWS SSO configuration as shown below. Replace the `region` and `account_id` and `sso_start_url` and `sso_region` and `sso_account_id` and `sso_role_name` with your actual values.
+  The following excerpt of code is a locally mounted file, so please change the mount settings according to your own environment.  
+  You need to set up your AWS SSO configuration as shown below. Replace the `region` and `account_id` and `sso_start_url` and `sso_region` and `sso_account_id` and `sso_role_name` with your actual values.
 
-    ```bash
-    cat env/common/tmp/.aws/config
-    ```
+  ```bash
+  cat env/common/tmp/.aws/config
+  ```
 
-    ```ini
-    [profile default]
-    region = ap-northeast-1
+  ```ini
+  [profile default]
+  region = ap-northeast-1
 
-    [profile dev]
-    region = ap-northeast-1
-    account_id = 123456789012
-    sso_start_url = https://example.awsapps.com/start#/
-    sso_region = ap-northeast-1
-    sso_account_id = 123456789012
-    sso_role_name = your sso role name
+  [profile dev]
+  region = ap-northeast-1
+  account_id = 123456789012
+  sso_start_url = https://example.awsapps.com/start#/
+  sso_region = ap-northeast-1
+  sso_account_id = 123456789012
+  sso_role_name = your sso role name
 
-    [profile prd]
-    region = ap-northeast-1
-    account_id = 123456789012
-    sso_start_url = https://example.awsapps.com/start#/
-    sso_region = ap-northeast-1
-    sso_account_id = 123456789012
-    sso_role_name = your sso role name
-    ```
+  [profile prd]
+  region = ap-northeast-1
+  account_id = 123456789012
+  sso_start_url = https://example.awsapps.com/start#/
+  sso_region = ap-northeast-1
+  sso_account_id = 123456789012
+  sso_role_name = your sso role name
+  ```
 
 - Fix .gitconfig  
-    The following excerpt of code is a locally mounted file, so please change the mount settings according to your own environment.  
-    you need to set up your git configuration like below. Please replace the user `name` and `email` with your own information.
+  The following excerpt of code is a locally mounted file, so please change the mount settings according to your own environment.  
+  you need to set up your git configuration like below. Please replace the user `name` and `email` with your own information.
 
-    ```bash
-    cat env/common/tmp/.gitconfig
-    ```
+  ```bash
+  cat env/common/tmp/.gitconfig
+  ```
 
-    ```ini
-    [user]
-        name = Your Name
-        email = your.email@example.com
-    [init]
-        defaultBranch = main
-    [credential]
-        helper = !gh auth git-credential
-    [safe]
-        directory = /workspace
-    ```
+  ```ini
+  [user]
+      name = Your Name
+      email = your.email@example.com
+  [init]
+      defaultBranch = main
+  [credential]
+      helper = !gh auth git-credential
+  [safe]
+      directory = /workspace
+  ```
 
 - launch devcontainer from Visual Studio Code  
-　  Open the command palette with `F1` or `Ctrl+Shift+P`, then
-    `Dev Containers: Open folder in Container` or `Dev containers: Reopen in Container` or `Dev Containers: Rebuild Container`
+  　 Open the command palette with `F1` or `Ctrl+Shift+P`, then
+  `Dev Containers: Open folder in Container` or `Dev containers: Reopen in Container` or `Dev Containers: Rebuild Container`
 
 - GitHub CLI login  
-    After launching the devcontainer, run the following command to log in to [GitHub CLI](https://cli.github.com/).  
-    If you have already logged in, you can skip this step.  
-    If you are using 2FA, please set it up according to the instructions.  
-    For more information, refer to the [GitHub CLI auth login documentation](https://cli.github.com/manual/gh_auth_login).
+  After launching the devcontainer, run the following command to log in to [GitHub CLI](https://cli.github.com/).  
+  If you have already logged in, you can skip this step.  
+  If you are using 2FA, please set it up according to the instructions.  
+  For more information, refer to the [GitHub CLI auth login documentation](https://cli.github.com/manual/gh_auth_login).
 
-    ```bash
-    gh auth login
-    ```
+  ```bash
+  gh auth login
+  ```
 
 - AWS SSO login  
-    After launching the devcontainer, run the following command to log in to AWS SSO.  
-    If you have already logged in, you can skip this step.  
-    For more information, refer to the [AWS CLI SSO configuration guide](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-sso.html).
+  After launching the devcontainer, run the following command to log in to AWS SSO.  
+  If you have already logged in, you can skip this step.  
+  For more information, refer to the [AWS CLI SSO configuration guide](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-sso.html).
 
-    ```bash
-      vscode ➜ (no) ➜ /workspace (develop ✗) $ awsp
-      AWS Profile Switcher
-      ? Choose a profile dev
+  ```bash
+    vscode ➜ (no) ➜ /workspace (develop ✗) $ awsp
+    AWS Profile Switcher
+    ? Choose a profile dev
 
-      The SSO session associated with this profile has expired or is otherwise invalid. To refresh this SSO session run aws sso login with the corresponding profile.  
+    The SSO session associated with this profile has expired or is otherwise invalid. To refresh this SSO session run aws sso login with the corresponding profile.
 
-      vscode ➜ dev ➜ /workspace (develop ✗) $ aws sso login
-      Attempting to automatically open the SSO authorization page in your default browser.
-      If the browser does not open or you wish to use a different device to authorize this request, open the following URL:
+    vscode ➜ dev ➜ /workspace (develop ✗) $ aws sso login
+    Attempting to automatically open the SSO authorization page in your default browser.
+    If the browser does not open or you wish to use a different device to authorize this request, open the following URL:
 
-      https://example.awsapps.com/start/#/device
+    https://example.awsapps.com/start/#/device
 
-      Then enter the code:
+    Then enter the code:
 
-      ****-****
-    ```
+    ****-****
+  ```
 
 ## Commands
 
-  ```bash
-  # e.g., environment dev, prd
-  export ENV=<environment>
+```bash
+# e.g., environment dev, prd
+export ENV=<environment>
 
-  # Initialize Terraform
-  terraform init -reconfigure -backend-config=terraform.${ENV}.tfbackend
+# Initialize Terraform
+terraform init -reconfigure -backend-config=terraform.${ENV}.tfbackend
 
-  # Validate configuration files
-  terraform validate
+# Validate configuration files
+terraform validate
 
-  # Format configuration files
-  terraform fmt --recursive
+# Format configuration files
+terraform fmt --recursive
 
-  # Generate and show an execution plan
-  terraform plan -lock=false -var-file=terraform.${ENV}.tfvars
+# Generate and show an execution plan
+terraform plan -lock=false -var-file=terraform.${ENV}.tfvars
 
-  # Apply changes required to reach the desired state of the configuration
-  terraform apply -var-file=terraform.${ENV}.tfvars
-  ```
+# Apply changes required to reach the desired state of the configuration
+terraform apply -var-file=terraform.${ENV}.tfvars
+```
 
 ## Troubleshooting
 

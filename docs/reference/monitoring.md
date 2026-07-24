@@ -23,44 +23,44 @@ All monitoring resources are toggled via `is_enabled` flags in `terraform/monito
 
 ### Metric Alarms
 
-| Service                | Metrics Monitored                          | Notification |
-| ---------------------- | ------------------------------------------ | ------------ |
-| EC2                    | CPU, status checks, disk                   | SNS → Slack  |
-| RDS                    | CPU, connections, free storage             | SNS → Slack  |
-| ELB (ALB/NLB)         | 5xx errors, latency, unhealthy targets     | SNS → Slack  |
-| Lambda                 | Errors, duration, throttles                | SNS → Slack  |
-| NAT Gateway            | Bandwidth, packets, errors                 | SNS → Slack  |
-| ElastiCache            | CPU, memory, connections                   | SNS → Slack  |
-| CloudFront             | Error rate, requests                       | SNS → Slack  |
-| API Gateway            | 4xx, 5xx, latency                          | SNS → Slack  |
-| SES                    | Bounce rate, complaint rate                | SNS → Slack  |
-| SQS                    | Queue depth, age of oldest message         | SNS → Slack  |
-| SNS                    | Delivery failures                          | SNS → Slack  |
-| Redshift               | CPU, disk, connections                     | SNS → Slack  |
-| ECS Container Insights | CPU utilization, memory, running tasks     | SNS → Slack  |
-| EventBridge Scheduler  | Invocations, failures, throttles           | SNS → Slack  |
-| Synthetics Canary      | Success rate                               | SNS → Slack  |
+| Service                | Metrics Monitored                      | Notification |
+| ---------------------- | -------------------------------------- | ------------ |
+| EC2                    | CPU, status checks, disk               | SNS → Slack  |
+| RDS                    | CPU, connections, free storage         | SNS → Slack  |
+| ELB (ALB/NLB)          | 5xx errors, latency, unhealthy targets | SNS → Slack  |
+| Lambda                 | Errors, duration, throttles            | SNS → Slack  |
+| NAT Gateway            | Bandwidth, packets, errors             | SNS → Slack  |
+| ElastiCache            | CPU, memory, connections               | SNS → Slack  |
+| CloudFront             | Error rate, requests                   | SNS → Slack  |
+| API Gateway            | 4xx, 5xx, latency                      | SNS → Slack  |
+| SES                    | Bounce rate, complaint rate            | SNS → Slack  |
+| SQS                    | Queue depth, age of oldest message     | SNS → Slack  |
+| SNS                    | Delivery failures                      | SNS → Slack  |
+| Redshift               | CPU, disk, connections                 | SNS → Slack  |
+| ECS Container Insights | CPU utilization, memory, running tasks | SNS → Slack  |
+| EventBridge Scheduler  | Invocations, failures, throttles       | SNS → Slack  |
+| Synthetics Canary      | Success rate                           | SNS → Slack  |
 
 ### Log Filter Alarms
 
-| Log Source      | Filter Pattern                    | Notification    |
-| --------------- | --------------------------------- | --------------- |
-| Application     | Custom filter patterns per app    | Lambda → Slack  |
-| MySQL           | Slow query patterns               | Lambda → Slack  |
-| PostgreSQL      | Error and slow query patterns     | Lambda → Slack  |
-| Step Functions  | Execution failure patterns        | Lambda → Slack  |
-| WAF             | Blocked request patterns          | Lambda → Slack  |
+| Log Source     | Filter Pattern                 | Notification   |
+| -------------- | ------------------------------ | -------------- |
+| Application    | Custom filter patterns per app | Lambda → Slack |
+| MySQL          | Slow query patterns            | Lambda → Slack |
+| PostgreSQL     | Error and slow query patterns  | Lambda → Slack |
+| Step Functions | Execution failure patterns     | Lambda → Slack |
+| WAF            | Blocked request patterns       | Lambda → Slack |
 
 ### EventBridge Events
 
-| Event Source    | Events Monitored                                    | Notification   |
-| --------------- | --------------------------------------------------- | -------------- |
-| EC2             | Spot interruption, rebalance recommendation         | Lambda → Slack |
-| ECS Service     | Deployment state, task placement failures           | Lambda → Slack |
-| ECS Scheduled   | Scheduled task execution status                     | Lambda → Slack |
-| Batch           | Job state changes (FAILED, SUCCEEDED)               | Lambda → Slack |
-| RDS Cluster     | Failover, maintenance, configuration changes        | Lambda → Slack |
-| Redshift        | Maintenance, snapshot, configuration changes        | Lambda → Slack |
+| Event Source  | Events Monitored                             | Notification   |
+| ------------- | -------------------------------------------- | -------------- |
+| EC2           | Spot interruption, rebalance recommendation  | Lambda → Slack |
+| ECS Service   | Deployment state, task placement failures    | Lambda → Slack |
+| ECS Scheduled | Scheduled task execution status              | Lambda → Slack |
+| Batch         | Job state changes (FAILED, SUCCEEDED)        | Lambda → Slack |
+| RDS Cluster   | Failover, maintenance, configuration changes | Lambda → Slack |
+| Redshift      | Maintenance, snapshot, configuration changes | Lambda → Slack |
 
 ## Architecture
 

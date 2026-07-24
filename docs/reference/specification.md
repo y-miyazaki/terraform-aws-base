@@ -41,13 +41,13 @@ External dependencies:
 
 Lifecycle-sensitive resources requiring extra care:
 
-| Resource                  | Risk                                                        | Mitigation                                    |
-| ------------------------- | ----------------------------------------------------------- | --------------------------------------------- |
-| KMS keys (CloudTrail)     | Deletion causes permanent data loss                         | `prevent_destroy` lifecycle rule              |
-| GuardDuty detector        | Recreation loses finding history                            | External data source checks before creation   |
-| Access Analyzer           | Organization analyzer conflicts with existing              | Shell script idempotency check                |
-| CloudTrail                | Recreation causes audit gap                                 | Import existing resources                     |
-| S3 buckets (log storage)  | Deletion loses audit logs                                   | Bucket policy + versioning                    |
+| Resource                 | Risk                                          | Mitigation                                  |
+| ------------------------ | --------------------------------------------- | ------------------------------------------- |
+| KMS keys (CloudTrail)    | Deletion causes permanent data loss           | `prevent_destroy` lifecycle rule            |
+| GuardDuty detector       | Recreation loses finding history              | External data source checks before creation |
+| Access Analyzer          | Organization analyzer conflicts with existing | Shell script idempotency check              |
+| CloudTrail               | Recreation causes audit gap                   | Import existing resources                   |
+| S3 buckets (log storage) | Deletion loses audit logs                     | Bucket policy + versioning                  |
 
 Destructive replacement risks:
 
