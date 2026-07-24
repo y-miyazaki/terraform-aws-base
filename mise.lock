@@ -256,26 +256,26 @@ url_api = "https://api.github.com/repos/astral-sh/uv/releases/assets/478261333"
 provenance = "github-attestations"
 
 [[tools."aqua:aws/aws-cli"]]
-version = "2.35.24"
+version = "2.36.1"
 backend = "aqua:aws/aws-cli"
 
 [tools."aqua:aws/aws-cli"."platforms.linux-arm64"]
-url = "https://awscli.amazonaws.com/awscli-exe-linux-aarch64-2.35.24.zip"
+url = "https://awscli.amazonaws.com/awscli-exe-linux-aarch64-2.36.1.zip"
 
 [tools."aqua:aws/aws-cli"."platforms.linux-arm64-musl"]
-url = "https://awscli.amazonaws.com/awscli-exe-linux-aarch64-2.35.24.zip"
+url = "https://awscli.amazonaws.com/awscli-exe-linux-aarch64-2.36.1.zip"
 
 [tools."aqua:aws/aws-cli"."platforms.linux-x64"]
-url = "https://awscli.amazonaws.com/awscli-exe-linux-x86_64-2.35.24.zip"
+url = "https://awscli.amazonaws.com/awscli-exe-linux-x86_64-2.36.1.zip"
 
 [tools."aqua:aws/aws-cli"."platforms.linux-x64-musl"]
-url = "https://awscli.amazonaws.com/awscli-exe-linux-x86_64-2.35.24.zip"
+url = "https://awscli.amazonaws.com/awscli-exe-linux-x86_64-2.36.1.zip"
 
 [tools."aqua:aws/aws-cli"."platforms.macos-arm64"]
-url = "https://awscli.amazonaws.com/AWSCLIV2-2.35.24.pkg"
+url = "https://awscli.amazonaws.com/AWSCLIV2-2.36.1.pkg"
 
 [tools."aqua:aws/aws-cli"."platforms.macos-x64"]
-url = "https://awscli.amazonaws.com/AWSCLIV2-2.35.24.pkg"
+url = "https://awscli.amazonaws.com/AWSCLIV2-2.36.1.pkg"
 
 [[tools."aqua:aws/aws-sam-cli"]]
 version = "1.163.0"
@@ -1765,7 +1765,7 @@ version = "0.0.12"
 backend = "pipx:aws-mfa"
 
 [[tools."pipx:headroom-ai"]]
-version = "0.31.0"
+version = "0.32.0"
 backend = "pipx:headroom-ai"
 
 [tools."pipx:headroom-ai".options]
@@ -1778,6 +1778,10 @@ backend = "pipx:mkdocs"
 [[tools."pipx:pre-commit"]]
 version = "4.6.0"
 backend = "pipx:pre-commit"
+
+[[tools."pipx:semgrep"]]
+version = "1.171.0"
+backend = "pipx:semgrep"
 
 [[tools.pnpm]]
 version = "11.13.1"

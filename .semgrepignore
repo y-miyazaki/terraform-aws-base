@@ -1,0 +1,12 @@
+.agents/
+.claude/
+.codex/
+.cursor/
+.kiro/
+.vscode/
+apm_modules/
+env/
+test/
+tmp/
+**/.terraform/
+**/node_modules/

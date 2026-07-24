@@ -1,5 +1,5 @@
-# CI workflow: Markdown lint on push/PR
-name: on-ci-push-markdown
+# CI workflow: Node.js CI on push/PR
+name: on-ci-push-nodejs
 
 on:
   push:
@@ -11,9 +11,7 @@ on:
       - "develop"
       - "feature/**"
     paths:
-      - "**/*.md"
-      - "docs/**/*.md"
-      - ".markdownlint-cli2.yaml"
+      - "nodejs/**"
   pull_request:
     branches:
       - "main"
@@ -23,9 +21,7 @@ on:
       - "develop"
       - "feature/**"
     paths:
-      - "**/*.md"
-      - "docs/**/*.md"
-      - ".markdownlint-cli2.yaml"
+      - "nodejs/**"
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -33,13 +29,15 @@ concurrency:
 
 permissions:
   contents: read
+  id-token: write
   pull-requests: write
 
 jobs:
-  markdown-ci:
-    uses: y-miyazaki/config/.github/workflows/ci-markdown.yaml@00d6e7a9346341b5fc6318893ff71b80b670fd62 # v1.8.58
+  nodejs-ci:
+    uses: y-miyazaki/config/.github/workflows/ci-nodejs.yaml@00d6e7a9346341b5fc6318893ff71b80b670fd62 # v1.8.58
+    with:
+      search_paths: nodejs
     permissions:
       contents: read
+      id-token: write
       pull-requests: write
-    with:
-      markdownlint_flags: "README*.md docs/**/*.md"

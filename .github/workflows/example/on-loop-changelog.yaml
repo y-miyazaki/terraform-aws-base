@@ -24,7 +24,7 @@ concurrency:
 
 jobs:
   loop:
-    uses: y-miyazaki/config/.github/workflows/ci-loop-caller.yaml@5a725c44406bb5a7d7e32cdc69ddf3fe20d4afd3 # v1.8.55
+    uses: y-miyazaki/config/.github/workflows/ci-loop-caller.yaml@00d6e7a9346341b5fc6318893ff71b80b670fd62 # v1.8.58
     with:
       agent_implementer_max_turns: 5
       agent_implementer_model: cursor-grok-4.5-low
@@ -65,10 +65,11 @@ jobs:
       detect_script: .agents/skills/loop-changelog/scripts/detect_changelog_commits.sh
       engine: cursor
       environment: default
-      finalize_integration: open_pr
+      delivery: open_pr
       infer_files_pattern: 'CHANGELOG\.md'
       loop_name: changelog
       max_targets_per_schedule: 3
+      may_edit: true
       no_changes_verdict: REJECT
       pr_body: ""
       pr_title: "chore(changelog): update CHANGELOG.md (loop-changelog)"
@@ -84,6 +85,7 @@ jobs:
         Preserve existing released sections; do not invent versions outside detect `releases[]`.
       pr_enabled: false
       skill_name: loop-changelog
+      write_target: fix
     secrets:
       AGENT_TOKEN: ${{ secrets.AGENT_TOKEN }}
       BOT_APP_CLIENT_ID: ${{ secrets.MAINTENANCE_BOT_APP_CLIENT_ID }}

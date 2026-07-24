@@ -16,7 +16,6 @@ on:
       - "go.mod"
       - "go.sum"
       - ".golangci.yaml"
-      - "trivy.yaml"
   pull_request:
     branches:
       - "main"
@@ -31,7 +30,6 @@ on:
       - "go.mod"
       - "go.sum"
       - ".golangci.yaml"
-      - "trivy.yaml"
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -64,7 +62,7 @@ jobs:
 
   go-ci:
     needs: detect-go-version
-    uses: y-miyazaki/config/.github/workflows/ci-go.yaml@5a725c44406bb5a7d7e32cdc69ddf3fe20d4afd3 # v1.8.55
+    uses: y-miyazaki/config/.github/workflows/ci-go.yaml@00d6e7a9346341b5fc6318893ff71b80b670fd62 # v1.8.58
     with:
       component: "base"
       go_project_path: "."

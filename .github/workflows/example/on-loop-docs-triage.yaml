@@ -24,7 +24,7 @@ concurrency:
 
 jobs:
   loop:
-    uses: y-miyazaki/config/.github/workflows/ci-loop-caller.yaml@5a725c44406bb5a7d7e32cdc69ddf3fe20d4afd3 # v1.8.55
+    uses: y-miyazaki/config/.github/workflows/ci-loop-caller.yaml@00d6e7a9346341b5fc6318893ff71b80b670fd62 # v1.8.58
     with:
       agent_implementer_max_turns: 5
       agent_implementer_model: cursor-grok-4.5-low
@@ -61,18 +61,20 @@ jobs:
       detect_script: .agents/skills/loop-docs-triage/scripts/detect_changes.sh
       engine: cursor
       environment: default
-      finalize_integration: open_pr
+      delivery: open_pr
       infer_files_pattern: '[[:alnum:]_.-]+/[^[:space:],)]+\.(md|yml|yaml)'
       loop_name: docs-triage
       max_targets_per_schedule: 3
+      may_edit: true
       no_changes_verdict: REJECT
       pr_body: ""
-      pr_title: "fix(docs): automated documentation update (loop-docs-triage)"
+      pr_title: "chore(docs-triage): automated documentation update (loop-docs-triage)"
       prompt_instructions: |
         Edit files directly to address the documented triage findings.
         Prioritize factual consistency with the codebase and preserve existing documentation structure unless triage items require restructuring.
       pr_enabled: false
       skill_name: loop-docs-triage
+      write_target: fix
     secrets:
       AGENT_TOKEN: ${{ secrets.AGENT_TOKEN }}
       BOT_APP_CLIENT_ID: ${{ secrets.MAINTENANCE_BOT_APP_CLIENT_ID }}
