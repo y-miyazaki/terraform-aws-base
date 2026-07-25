@@ -26,54 +26,6 @@ DEP_GLOBAL_COUNT=0
 DEP_TRUNCATED=false
 
 #######################################
-# signal_object_json: Function implementation
-#
-# Globals:
-#   None
-#
-# Arguments:
-#   $1-$6 - kind, path, line, snippet, source, hint (hint optional)
-#
-# Outputs:
-#   JSON object on stdout
-#
-# Returns:
-#   0 on success
-#
-#######################################
-function signal_object_json {
-    local kind="$1"
-    local path="$2"
-    local line="$3"
-    local snippet="$4"
-    local source="$5"
-    local hint="${6:-}"
-
-    if [[ -n ${hint} ]]; then
-        cat << EOF
-{
-  "kind": "$(json_escape "${kind}")",
-  "path": "$(json_escape "${path}")",
-  "line": ${line},
-  "snippet": "$(json_escape "${snippet}")",
-  "source": "$(json_escape "${source}")",
-  "hint": "$(json_escape "${hint}")"
-}
-EOF
-    else
-        cat << EOF
-{
-  "kind": "$(json_escape "${kind}")",
-  "path": "$(json_escape "${path}")",
-  "line": ${line},
-  "snippet": "$(json_escape "${snippet}")",
-  "source": "$(json_escape "${source}")"
-}
-EOF
-    fi
-}
-
-#######################################
 # append_dependency_signal: Append one dependency signal when dep caps allow
 #
 # Globals:
@@ -119,7 +71,9 @@ function append_dependency_signal {
 
     DEP_FILE_COUNTS[${path}]=$((file_count + 1))
     DEP_GLOBAL_COUNT=$((DEP_GLOBAL_COUNT + 1))
-    SIGNALS_JSON+=("$(signal_object_json "${kind}" "${path}" "${line}" "${snippet}" "${source}" "${hint}")")
+    SIGNALS_JSON+=("$(json_object --skip-empty \
+        kind "${kind}" path "${path}" line "${line}" snippet "${snippet}" \
+        source "${source}" hint "${hint}")")
 }
 
 #######################################
@@ -147,7 +101,8 @@ function append_hotspot {
     local value="$3"
     local window="$4"
 
-    HOTSPOTS_JSON+=("$(hotspot_object_json "${path}" "${metric}" "${value}" "${window}")")
+    HOTSPOTS_JSON+=("$(json_object \
+        path "${path}" metric "${metric}" value "$(json_number "${value}")" window "${window}")")
 }
 
 #######################################
@@ -196,7 +151,9 @@ function append_signal {
 
     MARKER_FILE_COUNTS[${path}]=$((file_count + 1))
     MARKER_GLOBAL_COUNT=$((MARKER_GLOBAL_COUNT + 1))
-    SIGNALS_JSON+=("$(signal_object_json "${kind}" "${path}" "${line}" "${snippet}" "${source}" "${hint}")")
+    SIGNALS_JSON+=("$(json_object --skip-empty \
+        kind "${kind}" path "${path}" line "$(json_number "${line}")" snippet "${snippet}" \
+        source "${source}" hint "${hint}")")
 }
 
 #######################################
@@ -579,11 +536,6 @@ function dependency_signals_from_package_json {
 
     [[ -f ${path} ]] || return 0
 
-    if ! command -v jq > /dev/null 2>&1; then
-        WARNINGS+=("dependency sensor skipped for package.json: jq not available")
-        return 0
-    fi
-
     dir="$(dirname "${path}")"
     if [[ ${dir} == "." ]]; then
         lock_path="package-lock.json"
@@ -753,16 +705,13 @@ mlc(md, { baseUrl }, (err, results) => {
 
     [[ -n ${json_output} && ${json_output} != "[]" ]] || return 0
 
-    if ! command -v jq > /dev/null 2>&1; then
-        doc_warn_once "docs link sensor skipped: jq not available"
-        return 0
-    fi
-
     while IFS=$'\t' read -r link status_code; do
         [[ -z ${link} ]] && continue
         line_num="$(doc_line_for_link "${file}" "${link}")"
         snippet="dead link: ${link} (${status_code})"
-        SIGNALS_JSON+=("$(signal_object_json "broken_doc_ref" "${file}" "${line_num}" "${snippet}" "markdown_link_check" "documentation")")
+        SIGNALS_JSON+=("$(json_object --skip-empty \
+            kind "broken_doc_ref" path "${file}" line "${line_num}" snippet "${snippet}" \
+            source "markdown_link_check" hint "documentation")")
     done < <(jq -r '.[] | [.link, (.statusCode | tostring)] | @tsv' <<< "${json_output}" 2> /dev/null || true)
 }
 
@@ -846,7 +795,9 @@ function doc_maybe_emit_stale_signal {
         return 0
     fi
 
-    SIGNALS_JSON+=("$(signal_object_json "stale_doc" "${file}" "1" "${snippet}" "${source}" "documentation")")
+    SIGNALS_JSON+=("$(json_object --skip-empty \
+        kind "stale_doc" path "${file}" line "1" snippet "${snippet}" \
+        source "${source}" hint "documentation")")
 }
 
 #######################################
@@ -922,7 +873,7 @@ function ensure_markdown_link_check {
         return 1
     fi
 
-    cache_dir="${TMPDIR:-/tmp}/loop-tech-debt-mlc/${MLC_VERSION}"
+    cache_dir="${TMPDIR:-/tmp}/tech-debt-mlc/${MLC_VERSION}"
     candidate_cli="${cache_dir}/node_modules/.bin/markdown-link-check"
 
     if [[ ! -x ${candidate_cli} ]]; then
@@ -940,78 +891,6 @@ function ensure_markdown_link_check {
     # shellcheck disable=SC2034 # out_path is a nameref; assignment writes caller output
     out_path="${candidate_cli}"
     return 0
-}
-
-#######################################
-# hotspot_object_json: Build one hotspot object as JSON
-#
-# Globals:
-#   None
-#
-# Arguments:
-#   $1-$4 - path, metric, value, window
-#
-# Outputs:
-#   JSON object on stdout
-#
-# Returns:
-#   0 on success
-#
-# Usage:
-#   hotspot_object_json "pkg/foo.go" "churn" "12" "90d"
-#
-#######################################
-function hotspot_object_json {
-    local path="$1"
-    local metric="$2"
-    local value="$3"
-    local window="$4"
-
-    cat << EOF
-{
-  "path": "$(json_escape "${path}")",
-  "metric": "$(json_escape "${metric}")",
-  "value": ${value},
-  "window": "$(json_escape "${window}")"
-}
-EOF
-}
-
-#######################################
-# hotspots_array_json: Join hotspot objects into a JSON array string
-#
-# Globals:
-#   HOTSPOTS_JSON - Source hotspot objects
-#
-# Arguments:
-#   None
-#
-# Outputs:
-#   JSON array string on stdout
-#
-# Returns:
-#   0 on success
-#
-# Usage:
-#   hotspots_array="$(hotspots_array_json)"
-#
-#######################################
-function hotspots_array_json {
-    local joined=""
-    local hotspot
-
-    if [[ ${#HOTSPOTS_JSON[@]} -eq 0 ]]; then
-        printf '%s' "[]"
-        return
-    fi
-
-    for hotspot in "${HOTSPOTS_JSON[@]}"; do
-        if [[ -n ${joined} ]]; then
-            joined+=","
-        fi
-        joined+="${hotspot}"
-    done
-    printf '[%s]' "${joined}"
 }
 
 #######################################

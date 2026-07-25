@@ -505,7 +505,7 @@ function validate_terraform_env {
     validate_env_vars "ENV" "TF_PLUGIN_CACHE_DIR"
 
     # Validate dependencies
-    validate_dependencies "terraform"
+    require_dependencies "terraform"
 
     # Create plugin cache directory
     if [[ -n ${TF_PLUGIN_CACHE_DIR} ]]; then

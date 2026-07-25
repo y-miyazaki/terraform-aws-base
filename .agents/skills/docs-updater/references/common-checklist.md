@@ -1,5 +1,7 @@
 # docs-updater Checklist
 
+General documentation maintenance checks. Automation-path report shape and edit gates live in [category-automation-envelope.md](category-automation-envelope.md) — load only when the prompt includes `## Constraints`.
+
 ## Update Validation
 
 ### UV-01: Structure Preserved
@@ -22,7 +24,7 @@
 
 - [ ] New table rows follow existing column format
 - [ ] New list items placed at position consistent with existing sort order
-- [ ] mkdocs.yml nav entries placed in correct Diataxis quadrant
+- [ ] Site nav entries placed in the correct documentation section when the repo uses structured nav (for example Diataxis quadrants in `mkdocs.yml`)
 - **PASS** if placement is consistent with surrounding entries
 
 ### UV-04: Scope Respected
@@ -35,11 +37,23 @@
 
 ### UV-05: index.md Consistency
 
-- [ ] If docs/ files were added, deleted, or renamed: `docs/index.md` regenerated
-- [ ] If no docs/ file changes: `docs/index.md` untouched
-- [ ] index.md lists files alphabetically within each Diataxis section
-- [ ] Empty quadrant sections omitted
-- **PASS** if index.md accurately reflects current docs/ contents
+When the repository maintains a generated `docs/index.md` (see template below):
+
+- [ ] If `docs/` files were added, deleted, or renamed: `docs/index.md` regenerated
+- [ ] If no `docs/` file changes: `docs/index.md` untouched
+- [ ] Index lists files alphabetically within each documentation section
+- [ ] Empty section headings omitted
+- **PASS** if the index accurately reflects current `docs/` contents
+
+### UV-06: Canonical Source and Deduplication
+
+When updating docs that describe architecture, APIs, or cross-cutting behavior:
+
+- [ ] Read [category-documentation-maintenance.md](category-documentation-maintenance.md) — link to canonical docs; do not duplicate content in secondary files
+- [ ] One topic → one canonical doc; no duplicate diagrams or tables for the same topic
+- [ ] Consumer maintainer guides under `docs/` consulted when present
+- [ ] Site nav updated when adding or renaming documented pages
+- **PASS** if docs link to a single canonical source per topic and contain no contradictory duplicates
 
 ## docs/index.md Generation Template
 
@@ -77,7 +91,7 @@ _Understanding-oriented discussion of concepts and decisions._
 
 Rules:
 
-- Omit empty quadrant sections (no placeholder text for missing categories)
+- Omit empty section headings (no placeholder text for missing categories)
 - List files alphabetically within each section
 - Description is the document's H1 title or first sentence of purpose paragraph
-- Non-Diataxis directories (e.g., `agents/`, `report/`) get their own H2 section after the four quadrants
+- Non-Diataxis directories (for example `agents/`, `report/`) get their own H2 section after the four quadrants

@@ -1,13 +1,13 @@
 #!/bin/bash
 #######################################
-# Description: Detect technical debt signals and hotspots for loop-tech-debt
+# Description: Detect technical debt signals and hotspots for tech-debt automation
 #
 # Usage: ./detect_tech_debt.sh [--scope staged|all|range] [--since <ref>]
 #   --scope    Detection scope (default: all)
-#              staged: not used for debt sensors (accepted for loop-detect parity)
+#              staged: not used for debt sensors (accepted for detect CLI parity)
 #              all: scan the full repository tree (default)
-#              range: accepted for loop-detect parity (requires --since)
-#   --since    Git ref for range scope (commit SHA from loop state)
+#              range: accepted for detect CLI parity (requires --since)
+#   --since    Git ref for range scope (commit SHA from state cursor (when supplied))
 #
 # Output:
 # - JSON object with signals[], hotspots[], warnings[], skip boolean,
@@ -16,7 +16,7 @@
 # Design Rules:
 # - Emit facts only; Skill builds semantic findings[]
 # - Output structured JSON via shared lib/json.sh
-# - Exit 0 always (errors reported in JSON status field)
+# - Exit 0 on success; fatal errors emit status=error JSON and exit 1
 # - Default scan is full repository (scope=all); do not narrow sensors to lint territory
 # - Per-sensor recoverable failures append to warnings[] and continue
 # - Docs links use self-contained markdown-link-check (mlc) when Node is available
@@ -26,9 +26,9 @@
 # Dependencies:
 # - bash (POSIX bash, /bin/bash)
 # - git
+# - jq
 #
 # Optional dependencies:
-# - jq (package.json dependency sensor; mlc JSON parsing)
 # - node, npm (docs link sensor; self-contained markdown-link-check install)
 #
 # Optional environment:
@@ -65,6 +65,7 @@ source "${SCRIPT_DIR}/lib/all.sh"
 #######################################
 SCOPE="all"
 SINCE_REF=""
+COMMIT_RANGE=""
 REPORT_FILE=""
 PREVIOUS_REPORT=""
 
@@ -92,14 +93,14 @@ function show_usage {
 Usage: detect_tech_debt.sh [--scope staged|all|range] [--since <ref>]
 
 Description:
-    Detect technical debt signals and hotspots for the loop-tech-debt skill.
+    Detect technical debt signals and hotspots for the tech-debt skill.
 
 Options:
     --scope    Detection scope (default: all)
-               staged: accepted for loop-detect parity (not used by sensors)
+               staged: accepted for detect CLI parity (not used by sensors)
                all: scan the full repository tree (default)
-               range: accepted for loop-detect parity (requires --since)
-    --since    Git ref for range scope (commit SHA from loop state)
+               range: accepted for detect CLI parity (requires --since)
+    --since    Git ref for range scope (commit SHA from state cursor (when supplied))
 
 Examples:
     ./detect_tech_debt.sh
@@ -185,7 +186,7 @@ source "${SCRIPT_DIR}/detect_tech_debt_sensors.sh"
 #   None
 #
 # Returns:
-#   Exits with code 0
+#   Exits with code 1 after emitting error JSON
 #
 # Usage:
 #   output_error "Not a git repository"
@@ -194,22 +195,61 @@ source "${SCRIPT_DIR}/detect_tech_debt_sensors.sh"
 function output_error {
     local message="$1"
 
+    if ! command -v jq &> /dev/null; then
+        json_emit_minimal_error "${message}"
+        exit 1
+    fi
+
     resolve_report_file
     resolve_previous_report
 
-    json_object_start
-    json_field_string "status" "error" ","
-    json_field_string "scope" "${SCOPE}" ","
-    json_field_string "since" "${SINCE_REF}" ","
-    json_field_bool "skip" "true" ","
-    json_field_array "signals" "[]" ","
-    json_field_array "hotspots" "[]" ","
-    json_field_array "warnings" "$(json_string_array "${WARNINGS[@]}")" ","
-    json_field_string "report_file" "${REPORT_FILE}" ","
-    json_field_string "previous_report" "${PREVIOUS_REPORT}" ","
-    json_field_string "message" "${message}" ""
-    json_object_end
-    exit 0
+    json_object \
+        status "error" \
+        scope "${SCOPE}" \
+        since "${SINCE_REF}" \
+        commit_range "${COMMIT_RANGE}" \
+        skip "true" \
+        signals "[]" \
+        hotspots "[]" \
+        warnings "$(json_string_array "${WARNINGS[@]}")" \
+        report_file "${REPORT_FILE}" \
+        previous_report "${PREVIOUS_REPORT}" \
+        message "${message}"
+    exit 1
+}
+
+#######################################
+# ensure_dependencies: Fail with detect error JSON when tools are missing
+#
+# Globals:
+#   None
+#
+# Arguments:
+#   $@ - Required tools/commands
+#
+# Outputs:
+#   None
+#
+# Returns:
+#   None (calls output_error on missing dependencies)
+#
+# Usage:
+#   ensure_dependencies bash git jq
+#
+#######################################
+function ensure_dependencies {
+    local -a missing_tools=()
+    local tool
+
+    while IFS= read -r tool; do
+        if [[ -n ${tool} ]]; then
+            missing_tools+=("${tool}")
+        fi
+    done < <(validate_dependencies "$@" || true)
+
+    if [[ ${#missing_tools[@]} -gt 0 ]]; then
+        output_error "Missing required tools: ${missing_tools[*]}. Please install them and ensure they are in PATH."
+    fi
 }
 
 #######################################
@@ -239,7 +279,6 @@ function output_error {
 #######################################
 function output_json {
     local skip="false"
-    local signals_array hotspots_array warnings_array
 
     resolve_report_file
     resolve_previous_report
@@ -248,21 +287,17 @@ function output_json {
         skip="true"
     fi
 
-    signals_array="$(signals_array_json)"
-    hotspots_array="$(hotspots_array_json)"
-    warnings_array="$(json_string_array "${WARNINGS[@]}")"
-
-    json_object_start
-    json_field_string "status" "ok" ","
-    json_field_string "scope" "${SCOPE}" ","
-    json_field_string "since" "${SINCE_REF}" ","
-    json_field_bool "skip" "${skip}" ","
-    json_field_array "signals" "${signals_array}" ","
-    json_field_array "hotspots" "${hotspots_array}" ","
-    json_field_array "warnings" "${warnings_array}" ","
-    json_field_string "report_file" "${REPORT_FILE}" ","
-    json_field_string "previous_report" "${PREVIOUS_REPORT}" ""
-    json_object_end
+    json_object \
+        status "ok" \
+        scope "${SCOPE}" \
+        since "${SINCE_REF}" \
+        commit_range "${COMMIT_RANGE}" \
+        skip "${skip}" \
+        signals "$(json_array "${SIGNALS_JSON[@]}")" \
+        hotspots "$(json_array "${HOTSPOTS_JSON[@]}")" \
+        warnings "$(json_string_array "${WARNINGS[@]}")" \
+        report_file "${REPORT_FILE}" \
+        previous_report "${PREVIOUS_REPORT}"
 }
 
 #######################################
@@ -420,61 +455,6 @@ function resolve_report_file {
 }
 
 #######################################
-# signal_object_json: Build one signal object as JSON
-#
-# Arguments:
-#   $1-$6 - kind, path, line, snippet, source, hint (hint optional)
-#
-# Globals:
-#   None
-#
-# Outputs:
-#   JSON object on stdout
-#
-# Returns:
-#   0 on success
-#
-# Usage:
-#   signal_object_json "todo_comment" "pkg/foo.go" "10" "// TODO" "markers" ""
-#
-#######################################
-# signals_array_json: Join signal objects into a JSON array string
-#
-# Globals:
-#   SIGNALS_JSON - Source signal objects
-#
-# Arguments:
-#   None
-#
-# Outputs:
-#   JSON array string on stdout
-#
-# Returns:
-#   0 on success
-#
-# Usage:
-#   signals_array="$(signals_array_json)"
-#
-#######################################
-function signals_array_json {
-    local joined=""
-    local signal
-
-    if [[ ${#SIGNALS_JSON[@]} -eq 0 ]]; then
-        printf '%s' "[]"
-        return
-    fi
-
-    for signal in "${SIGNALS_JSON[@]}"; do
-        if [[ -n ${joined} ]]; then
-            joined+=","
-        fi
-        joined+="${signal}"
-    done
-    printf '[%s]' "${joined}"
-}
-
-#######################################
 # main: Entry point
 #
 # Globals:
@@ -494,10 +474,16 @@ function signals_array_json {
 #
 #######################################
 function main {
+    ensure_dependencies bash git jq
     configure_detect_environment
     parse_arguments "$@"
     if ! git rev-parse --is-inside-work-tree > /dev/null 2>&1; then
         output_error "Not a git repository"
+    fi
+    if [[ ${SCOPE} == "range" ]]; then
+        COMMIT_RANGE="${SINCE_REF}..HEAD"
+    else
+        COMMIT_RANGE=""
     fi
     collect_marker_signals
     collect_dependency_signals

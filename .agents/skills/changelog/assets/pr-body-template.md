@@ -12,11 +12,11 @@ Rules:
 ## Overview
 
 <!--
-  GOOD: Processed 4 conventional commits since abc1234; added 3 Unreleased bullets under Changed and promoted v1.8.16.
+  GOOD: Processed 4 conventional commits since [abc1234..def5678](https://github.com/org/repo/compare/abc1234..def5678); added 3 Unreleased bullets under Changed and promoted v1.8.16.
   BAD:  Changelog run finished.
 -->
 
-<one or two sentences: which commits/releases were recorded and under which CHANGELOG sections>
+<summary: which commits/releases were recorded and under which CHANGELOG sections; link compare_url when available>
 
 ## Summary
 

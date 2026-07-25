@@ -50,10 +50,10 @@ Survey runs internally first; final output uses apply shape. Write `report_file`
 
 ### Changes
 
-| Target                                | What was wrong | What changed                    |
-| ------------------------------------- | -------------- | ------------------------------- |
-| `docs/report/tech-debt/YYYY-MM-DD.md` | <finding gap>  | <report recorded>               |
-| `path/to/file`                        | <debt fact>    | <minimal closed-set fix if any> |
+| Target          | What was wrong | What changed                    |
+| --------------- | -------------- | ------------------------------- |
+| `<report_file>` | <finding gap>  | <report recorded>               |
+| `path/to/file`  | <debt fact>    | <minimal closed-set fix if any> |
 
 ### Deferred
 
@@ -79,7 +79,7 @@ On the automation path, append `## Session Metrics` per [category-automation-env
 
 ## Persisted report file (`may_edit: true` only)
 
-Write `report_file` (`docs/report/tech-debt/YYYY-MM-DD.md`) with extended tables (Resolved Since Previous, Report Outcome). PR Summary uses apply/survey shape only — not a copy of the full persisted file.
+Write `report_file` (path from detect JSON or `## Constraints`) with extended tables (Resolved Since Previous, Report Outcome). PR Summary uses apply/survey shape only — not a copy of the full persisted file.
 
 ```markdown
 # Technical Debt Report — YYYY-MM-DD
@@ -126,6 +126,6 @@ Write `report_file` (`docs/report/tech-debt/YYYY-MM-DD.md`) with extended tables
 
 **Good (survey):** `Debt scan over abc..def found broken links in docs/guide and pin drift in package.json; 12 TODO markers logged as Watch; no edits applied.`
 
-**Good (apply):** `Recorded 2 High documentation findings in docs/report/tech-debt/2026-07-23.md and fixed a broken link in docs/guide/overview.md; deferred one architecture hotspot to refactor.`
+**Good (apply):** `Recorded 2 High documentation findings in reports/tech-debt/2026-07-23.md and fixed a broken link in docs/guide/overview.md; deferred one architecture hotspot to refactor.`
 
 **Bad:** `Technical debt run finished.`

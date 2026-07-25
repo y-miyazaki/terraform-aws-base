@@ -324,7 +324,7 @@ function main {
     fi
 
     # Validate prerequisites
-    validate_dependencies "gh" "jq"
+    require_dependencies "gh" "jq"
 
     # Fetch PR metadata
     local pr_metadata

@@ -2,9 +2,9 @@
 name: instructions-review
 description: >-
   Review instruction and rule files for structure, consistency, applyTo precision,
-  and portable cross-references — package sources (`*.instructions.md`) and APM-distributed
-  targets (`.cursor/rules/*.mdc`, `.claude/rules/*.md`, `.kiro/steering/*.md`).
-  Use when reviewing instruction PRs, audits, or distributed rule changes after `apm install`.
+  and portable cross-references — package sources (`*.instructions.md`) and distributed
+  agent rule targets (`.cursor/rules/*.mdc`, `.claude/rules/*.md`, `.kiro/steering/*.md`).
+  Use when reviewing instruction PRs, audits, or distributed rule changes after package sync.
 license: Apache-2.0
 metadata:
   author: y-miyazaki
@@ -14,7 +14,6 @@ metadata:
 ## Input
 
 - Target instruction/rule files (required): package sources (`**/instructions/*.instructions.md`) and/or distributed targets (`.cursor/rules/*.mdc`, `.claude/rules/*.md`, `.kiro/steering/*.md`)
-- Prefer package sources under `.apm/packages/**/.apm/instructions/` when both source and generated copies exist
 - PR context (optional)
 
 ## Output Specification

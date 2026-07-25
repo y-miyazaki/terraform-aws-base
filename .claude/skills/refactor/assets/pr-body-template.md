@@ -16,7 +16,7 @@ Rules:
   BAD:  Refactor run finished.
 -->
 
-<one or two sentences: candidates found, how many applied, plain language for a reviewer>
+<summary: candidates found, what was applied vs deferred — plain language for a reviewer>
 
 ## Summary
 

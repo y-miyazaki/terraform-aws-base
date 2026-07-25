@@ -4,7 +4,7 @@ description: >-
   Review shell scripts for security, correctness, maintainability, and Bats suite
   pairing (TEST-00) with emphasis on operational safety.
   Use when reviewing shell script PRs requiring judgment beyond static checks,
-  including whether matching `test/bats/` suites were added or updated.
+  including whether paired Bats suites were added or updated per TEST-00.
 license: Apache-2.0
 metadata:
   author: y-miyazaki
@@ -14,7 +14,7 @@ metadata:
 ## Input
 
 - Shell script files in PR (required)
-- Related Bats suites under `test/bats/` when present (recommended for TEST-00)
+- Related Bats suites paired with changed scripts when present (recommended for TEST-00)
 - PR context with validation evidence reference (required)
 - Validation evidence: latest `shell-script-validation` summary with pass/fail/deferred counts and failed ItemIDs
 

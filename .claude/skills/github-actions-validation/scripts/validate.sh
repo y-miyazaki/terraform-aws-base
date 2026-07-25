@@ -360,7 +360,7 @@ function main {
     parse_arguments "$@"
 
     # Validate required dependencies
-    validate_dependencies "actionlint" "ghalint" "zizmor"
+    require_dependencies "actionlint" "ghalint" "zizmor"
 
     # Run validations
     echo_section "Starting GitHub Actions Validation"

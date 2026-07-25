@@ -317,7 +317,7 @@ function run_waza_tokens_count {
 #
 #######################################
 function main {
-    validate_dependencies "realpath" "waza"
+    require_dependencies "realpath" "waza"
     parse_arguments "$@"
     resolve_target_skill
     run_waza_check

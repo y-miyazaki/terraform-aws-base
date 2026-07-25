@@ -4,7 +4,7 @@ How to identify which documentation files are affected by code changes.
 
 ## Discovery Strategy
 
-The `detect_changes.sh` script collects changed files and returns all candidate documentation files. The AI agent reads each candidate and the relevant diffs to determine what needs updating.
+The skill's detect script collects changed files and returns all candidate documentation files. The AI agent reads each candidate and the relevant diffs to determine what needs updating.
 
 ## Script Output
 
@@ -28,17 +28,18 @@ If none of the above apply to a candidate document, skip it.
 
 - Root `*.md`
 - `docs/**/*.md`
-- Nested `**/README.md` (excluding `.agents/`, `.cursor/`, `.claude/`, `.kiro/`, `.vscode/`, `apm_modules/`)
+- Nested `**/README.md` (excluding install-generated agent roots such as `.agents/`, `.cursor/`, `.claude/`, `.kiro/`, `.vscode/` when present)
 - `mkdocs.yml` (nav section)
 
 ## Match Patterns
 
-| Change type      | What to search for in docs                                   |
-| ---------------- | ------------------------------------------------------------ |
-| Deleted file     | Path or basename appearing in links, tables, lists           |
-| Renamed file     | Old path/name that needs replacing with new                  |
-| Added file       | Whether it belongs in an existing catalog (table, list, nav) |
-| Added docs/ file | mkdocs.yml nav entry + docs/index.md regeneration            |
+| Change type               | What to search for in docs                                                                                                                                                  |
+| ------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Deleted file              | Path or basename appearing in links, tables, lists                                                                                                                          |
+| Renamed file              | Old path/name that needs replacing with new                                                                                                                                 |
+| Added file                | Whether it belongs in an existing catalog (table, list, nav)                                                                                                                |
+| Added docs/ file          | mkdocs.yml nav entry + docs/index.md regeneration                                                                                                                           |
+| Config / interface change | Apply canonical-source rule per [category-documentation-maintenance.md](category-documentation-maintenance.md); check consumer maintainer guides under `docs/` when present |
 
 ## Skip Conditions
 

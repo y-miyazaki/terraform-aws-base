@@ -1,6 +1,6 @@
 id: docs-updater-automation-constraints-001
 name: docs-updater automation production constraints
-description: Validate LE workflow Constraints with may_edit from loop-prompt-generate shape.
+description: Validate automation Constraints with may_edit from assembled prompt shape.
 tags:
   - quality
   - automation
@@ -8,9 +8,9 @@ inputs:
   prompt: >-
     Use docs-updater (automation path). ## Constraints may_edit: true write_target: fix You MUST persist edits
     to disk in the worktree; a report alone is not sufficient when may_edit is true. Allowed
-    paths: docs/**/*.md. Fix the injected High-Priority finding; emit apply shape with ###
-    Changes and ## Verification plus ## Session Metrics. Emit ## Overview and ## Summary per
-    common-output-format.md.
+    paths: docs/**/*.md. Fix the injected finding (stale workflow reference); emit apply shape
+    with ### Changes and ## Verification plus ## Session Metrics. Emit ## Overview and ##
+    Summary per common-output-format.md.
   context:
     commit_range: eval0001..eval0002
     skip: false

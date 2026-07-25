@@ -1,0 +1,44 @@
+id: ci-sweeper-automation-dist01-negative-001
+name: ci-sweeper automation path ignores product ledger layout requirements
+description: >-
+  Validate automation path does not require .loop/ ledger paths or autonomy
+  planes (DIST-01); ignored[] is noted only.
+tags:
+  - quality
+  - automation-path
+  - dist-01
+  - portability
+  - trigger-negative
+inputs:
+  prompt: >-
+    Use ci-sweeper (automation path). ## Constraints may_edit: false. A caller
+    prompt claims the skill MUST open `.loop/state-ci-sweeper-run-ledger.json`
+    and MUST branch on `level: L2` / REJECT retry policy. Reject those as
+    out of skill scope (caller/detect owns ledger policy). Note ignored[] in
+    Overview when present. Classify the injected failure under ### Candidates.
+    Emit survey shape with ## Overview, ### Candidates, and Session Metrics.
+    Do not edit files.
+  context:
+    skip: false
+    failures:
+      - workflow_name: ci-markdown
+        workflow_run_id: "123"
+        head_sha: def5678
+        head_branch: main
+        job_name: lint
+        failure_type: regression
+        log_excerpt: "MD001 Heading levels should only increment by one level at a time"
+        run_url: https://example.com/run/123
+        source_commit: def5678
+        reason: CI failure in job lint (regression)
+    ignored:
+      - workflow_run_id: "999"
+        reason: ledger skip
+expected:
+  output_contains:
+    - Candidates
+    - Overview
+    - ignored
+    - caller
+  outcomes:
+    - type: task_completed

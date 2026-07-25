@@ -1,6 +1,6 @@
 id: ci-sweeper-trigger-negative-001
 name: ci-sweeper rejects manual debugging requests
-description: Validate manual CI debugging is out of scope for loop automation.
+description: Validate manual CI debugging is out of scope for automation.
 tags:
   - quality
   - trigger-negative

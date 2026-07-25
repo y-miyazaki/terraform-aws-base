@@ -148,7 +148,7 @@ echo "$PR_ID"
 **Solution**:
 
 1. Wait for GitHub to update PR commit info (usually 1-2 seconds)
-2. Manually trigger script re-run: `bash scripts/pr-overview-update.sh <PR_NUMBER>`
+2. Re-run analysis: `bash scripts/pr_fetch.sh <PR_NUMBER> --repo owner/repo`, then `bash scripts/pr_body.sh <PR_NUMBER> --repo owner/repo` (or `--body-file` after AI completion)
 3. Verify new changes were committed to PR before running
 
 ---

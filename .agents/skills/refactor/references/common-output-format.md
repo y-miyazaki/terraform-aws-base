@@ -4,7 +4,7 @@ Use this structure for every interactive run. **Survey** (`may_edit: false`) and
 
 Internal depth tiers (`O1`/`O2`), intent labels, and Fowler technique names are for agent workflow only ([category-operations.md](category-operations.md), [category-techniques.md](category-techniques.md)). **Do not put them in user-facing output.**
 
-Automation path PR bodies and Session Metrics: [category-automation-envelope.md](category-automation-envelope.md) and [common-output-format-loop.md](common-output-format-loop.md).
+Automation path PR bodies and Session Metrics: [category-automation-envelope.md](category-automation-envelope.md) and [common-output-format-automation.md](common-output-format-automation.md).
 
 ## Survey result (`may_edit: false`)
 

@@ -7,11 +7,11 @@ Load at synthesis time after survey output is complete.
 ## Overview
 
 <!--
-  GOOD: Since abc1234, 4 conventional commits (2 feat, 2 fix) would add Unreleased bullets under Added and Fixed; no CHANGELOG edits applied.
+  GOOD: Since [abc1234..def5678](https://github.com/org/repo/compare/abc1234..def5678), 4 conventional commits (2 feat, 2 fix) would add Unreleased bullets under Added and Fixed; no CHANGELOG edits applied.
   BAD:  Changelog run finished.
 -->
 
-<one or two sentences: which commits/releases would be recorded and under which sections>
+<summary: which commits/releases would be recorded and under which sections; link compare_url when available>
 
 ## Summary
 

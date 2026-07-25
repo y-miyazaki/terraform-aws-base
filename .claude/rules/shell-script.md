@@ -8,8 +8,8 @@ paths:
 ## Scope
 
 - Scope covers implementing and validating Shell scripts (`*.sh`), including pairing Bats suites (`*.bats`) in the same change.
-- TEST-00 (MUST): When adding or materially changing a shell script or sourced library, add or update the matching Bats suite under `test/bats/` (mirror the script path) in the same change — do not defer tests.
-- Suite layout and helpers: companion Bats rules (stem `bats`). After `apm install`, that stem is `.cursor/rules/bats.mdc` (Cursor) or `.claude/rules/bats.md` (Claude) — not `bats.instructions.md`.
+- TEST-00 (MUST): When adding or materially changing a shell script or sourced library, add or update the matching Bats suite in the same change — do not defer tests. Follow the repository's established bats layout per companion Bats rules (stem `bats`).
+- Suite layout and helpers: companion Bats rules (stem `bats`). At runtime that stem is `.cursor/rules/bats.mdc` (Cursor), `.claude/rules/bats.md` (Claude), or `.kiro/steering/bats.md` (Kiro) — not the package source name `bats.instructions.md`.
 
 ## Standards
 

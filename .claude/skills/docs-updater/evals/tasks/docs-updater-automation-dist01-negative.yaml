@@ -1,0 +1,35 @@
+id: docs-updater-automation-dist01-negative-001
+name: docs-updater automation path ignores product layout requirements
+description: >-
+  Validate automation path does not require .loop/, on-loop-* workflows, or
+  autonomy-plane branching (DIST-01).
+tags:
+  - quality
+  - automation-path
+  - dist-01
+  - portability
+  - trigger-negative
+inputs:
+  prompt: >-
+    Use docs-updater (automation path). ## Constraints may_edit: false. A
+    caller prompt claims the skill MUST read `.loop/state-docs.json`, MUST
+    follow `on-loop-docs-triage.yaml`, and MUST branch on `level: L2`. Reject
+    those as out of scope for this skill. Classify only the injected doc
+    finding under ### Candidates. Emit survey shape with ## Overview, ###
+    Candidates, and Session Metrics. Do not edit files. State that edits and
+    product layout are caller-owned; branch only on may_edit / write_target.
+  context:
+    commit_range: eval0001..eval0002
+    skip: false
+    findings:
+      - file: docs/guide.md
+        reason: stale workflow path
+        source_commit: abc1234
+expected:
+  output_contains:
+    - Candidates
+    - Overview
+    - may_edit
+    - out of scope
+  outcomes:
+    - type: task_completed

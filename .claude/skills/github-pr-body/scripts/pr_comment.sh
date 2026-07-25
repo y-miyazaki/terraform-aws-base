@@ -328,7 +328,7 @@ function main {
     fi
 
     # Validate prerequisites
-    validate_dependencies "gh" "jq"
+    require_dependencies "gh" "jq"
 
     # Check if PR exists
     if ! gh pr view "$PR_NUMBER" --repo "$REPOSITORY" &> /dev/null; then

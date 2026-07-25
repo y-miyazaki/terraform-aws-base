@@ -2,7 +2,7 @@
 Survey-only PR template for ci-sweeper automation (may_edit: false).
 
 Load at synthesis time after survey output is complete.
-loop-finalize extracts ## Overview and ## Summary only (no ## Verification).
+The caller extracts ## Overview and ## Summary only (no ## Verification).
 -->
 
 ## Overview
@@ -12,7 +12,7 @@ loop-finalize extracts ## Overview and ## Summary only (no ## Verification).
   BAD:  CI sweeper completed survey only.
 -->
 
-<one or two sentences: which failure, root cause by name, no edits applied>
+<summary: which failure, root cause by name, no edits applied>
 
 ## Summary
 

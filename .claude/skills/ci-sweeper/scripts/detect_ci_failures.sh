@@ -1,11 +1,11 @@
 #!/bin/bash
 #######################################
-# Description: Detect failed CI workflow runs and emit structured findings for loop-ci-sweeper
+# Description: Detect failed CI workflow runs and emit structured findings for ci-sweeper automation
 #
 # Usage: ./detect_ci_failures.sh [--scope staged|all|range] [--since <ref>]
 #   --scope    Change detection scope (default: range)
 #              range: consider failures since <ref> (requires --since)
-#   --since    Git ref for range scope (commit SHA from loop state)
+#   --since    Git ref for range scope (commit SHA from state cursor (when supplied))
 #
 # Output:
 # - JSON object with failures[] and skip boolean
@@ -13,9 +13,9 @@
 # Design Rules:
 # - Collect failures via gh API (run list/view) filtered by since ref and ledger
 # - Return structured JSON via shared lib/json.sh
-# - Exit 0 always (errors reported in JSON status field)
+# - Exit 0 on success; fatal errors emit status=error JSON and exit 1
 # - Skip runs per CI_SWEEPER_REJECT_RETRY_POLICY and ledger state
-# - workflow_run event path: match run head branch to loop-detect scan branch
+# - workflow_run event path: match run head branch to detect scan branch
 # - Source shared helpers from scripts/lib/all.sh (synced via scripts/self/ai/sync_skill_lib.sh)
 #
 # Dependencies:
@@ -27,9 +27,9 @@
 # Optional environment:
 #   CI_SWEEPER_DEBUG_LOG             when true, emit ::notice/::warning diagnostics (also on in GITHUB_ACTIONS)
 #   CI_SWEEPER_EVENT_HEAD_BRANCH      workflow_run head branch (stable; not rewritten per scan)
-#   CI_SWEEPER_HEAD_BRANCH            per-scan branch context (optional; rewritten by loop-detect)
+#   CI_SWEEPER_HEAD_BRANCH            per-scan branch context (optional; rewritten by detect)
 #   CI_SWEEPER_HEAD_SHA               workflow_run event context (optional)
-#   CI_SWEEPER_LEDGER_FILE            Path to run ledger JSON (default: .loop/state-ci-sweeper-run-ledger.json)
+#   CI_SWEEPER_LEDGER_FILE            Path to run ledger JSON (default: ci-sweeper-run-ledger.json; repo-relative)
 #   CI_SWEEPER_REJECT_MAX_RETRIES     Max REJECT retries when policy is limited (default: 3)
 #   CI_SWEEPER_REJECT_RETRY_POLICY    block | retry | limited (aliases a/b/c)
 #   CI_SWEEPER_RUN_URL                workflow_run event context (optional)
@@ -88,14 +88,14 @@ function show_usage {
 Usage: detect_ci_failures.sh [--scope staged|all|range] [--since <ref>]
 
 Description:
-    Detect failed CI workflow runs for the ci-sweeper loop.
+    Detect failed CI workflow runs for ci-sweeper automation.
 
 Options:
     --scope    Change detection scope (default: range)
-               staged: not used for CI detection (accepted for loop-detect parity)
+               staged: not used for CI detection (accepted for detect CLI parity)
                all: scan recent failures on the checked-out branch (or CI_SWEEPER_HEAD_BRANCH)
                range: consider failures since <ref> (requires --since)
-    --since    Git ref for range scope (commit SHA from loop state)
+    --since    Git ref for range scope (commit SHA from state cursor (when supplied))
 
 Examples:
     ./detect_ci_failures.sh --scope range --since abc1234
@@ -172,7 +172,7 @@ function parse_arguments {
 #   None
 #
 # Returns:
-#   Exits with code 0
+#   Exits with code 1 after emitting error JSON
 #
 # Usage:
 #   output_error "gh CLI is required"
@@ -180,26 +180,65 @@ function parse_arguments {
 #######################################
 function output_error {
     local message="$1"
-    json_object_start
-    json_field_string "status" "error" ","
-    json_field_string "scope" "${SCOPE}" ","
-    json_field_string "since" "${SINCE_REF}" ","
-    json_field_bool "skip" "true" ","
-    json_field_array "failures" "[]" ","
-    json_field_array "ignored" "[]" ","
-    json_field_string "message" "${message}" ""
-    json_object_end
-    exit 0
+
+    if ! command -v jq &> /dev/null; then
+        json_emit_minimal_error "${message}"
+        exit 1
+    fi
+
+    json_object \
+        status "error" \
+        scope "${SCOPE}" \
+        since "${SINCE_REF}" \
+        skip "true" \
+        failures "[]" \
+        ignored "[]" \
+        message "${message}"
+    exit 1
 }
 
 #######################################
-# validate_ledger_file: Ensure ledger path stays under .loop/
+# ensure_dependencies: Fail with detect error JSON when tools are missing
 #
 # Globals:
 #   None
 #
 # Arguments:
-#   $1 - Ledger file path
+#   $@ - Required tools/commands
+#
+# Outputs:
+#   None
+#
+# Returns:
+#   None (calls output_error on missing dependencies)
+#
+# Usage:
+#   ensure_dependencies bash git gh jq
+#
+#######################################
+function ensure_dependencies {
+    local -a missing_tools=()
+    local tool
+
+    while IFS= read -r tool; do
+        if [[ -n ${tool} ]]; then
+            missing_tools+=("${tool}")
+        fi
+    done < <(validate_dependencies "$@" || true)
+
+    if [[ ${#missing_tools[@]} -gt 0 ]]; then
+        output_error "Missing required tools: ${missing_tools[*]}. Please install them and ensure they are in PATH."
+    fi
+}
+
+#######################################
+# validate_ledger_file: Ensure ledger path stays inside the repository
+#
+# Globals:
+#   None
+#
+# Arguments:
+#   $1 - Ledger file path (repository-relative)
 #
 # Outputs:
 #   None
@@ -210,15 +249,17 @@ function output_error {
 #######################################
 function validate_ledger_file {
     local path="$1"
-    local repo_root resolved ledger_root
-    if [[ ${path} != .loop/* ]]; then
-        output_error "CI_SWEEPER_LEDGER_FILE must be under .loop/ (got: ${path})"
+    local repo_root resolved
+    if [[ -z ${path} ]]; then
+        output_error "CI_SWEEPER_LEDGER_FILE must not be empty"
+    fi
+    if [[ ${path} == /* ]]; then
+        output_error "CI_SWEEPER_LEDGER_FILE must be a repository-relative path (got: ${path})"
     fi
     repo_root="$(git rev-parse --show-toplevel 2> /dev/null || pwd)"
-    ledger_root="$(realpath -m "${repo_root}/.loop")"
     resolved="$(realpath -m "${repo_root}/${path}")"
-    if [[ ${resolved} != "${ledger_root}"/* ]]; then
-        output_error "CI_SWEEPER_LEDGER_FILE must stay under .loop/ (got: ${path})"
+    if [[ ${resolved} != "${repo_root}" && ${resolved} != "${repo_root}"/* ]]; then
+        output_error "CI_SWEEPER_LEDGER_FILE must stay under the repository root (got: ${path})"
     fi
 }
 
@@ -767,20 +808,17 @@ function failure_object_json {
     local log_excerpt="$8"
     local reason="CI failure in job ${job_name} (${failure_type})"
 
-    cat << EOF
-{
-  "workflow_name": "$(json_escape "${workflow_name}")",
-  "workflow_run_id": "$(json_escape "${run_id}")",
-  "head_sha": "$(json_escape "${head_sha}")",
-  "head_branch": "$(json_escape "${head_branch}")",
-  "job_name": "$(json_escape "${job_name}")",
-  "failure_type": "$(json_escape "${failure_type}")",
-  "log_excerpt": "$(json_escape "${log_excerpt}")",
-  "run_url": "$(json_escape "${run_url}")",
-  "source_commit": "$(json_escape "${head_sha}")",
-  "reason": "$(json_escape "${reason}")"
-}
-EOF
+    json_object \
+        workflow_name "${workflow_name}" \
+        workflow_run_id "${run_id}" \
+        head_sha "${head_sha}" \
+        head_branch "${head_branch}" \
+        job_name "${job_name}" \
+        failure_type "${failure_type}" \
+        log_excerpt "${log_excerpt}" \
+        run_url "${run_url}" \
+        source_commit "${head_sha}" \
+        reason "${reason}"
 }
 
 #######################################
@@ -833,23 +871,13 @@ function append_failure {
 #
 #######################################
 function ignored_object_json {
-    local workflow_name="$1"
-    local run_id="$2"
-    local head_branch="$3"
-    local job_name="$4"
-    local failure_type="$5"
-    local reason="$6"
-
-    cat << EOF
-{
-  "workflow_name": "$(json_escape "${workflow_name}")",
-  "workflow_run_id": "$(json_escape "${run_id}")",
-  "head_branch": "$(json_escape "${head_branch}")",
-  "job_name": "$(json_escape "${job_name}")",
-  "failure_type": "$(json_escape "${failure_type}")",
-  "reason": "$(json_escape "${reason}")"
-}
-EOF
+    json_object \
+        workflow_name "$1" \
+        workflow_run_id "$2" \
+        head_branch "$3" \
+        job_name "$4" \
+        failure_type "$5" \
+        reason "$6"
 }
 
 #######################################
@@ -991,7 +1019,7 @@ function collect_from_workflow_run_event {
     event_head_branch="${CI_SWEEPER_EVENT_HEAD_BRANCH:-}"
     actual_head_branch="$(run_head_branch_for_run "${run_id}")"
     # EVENT_HEAD_BRANCH is set by the caller from workflow_run and must not be
-    # overwritten per scan context (loop-detect rewrites CI_SWEEPER_HEAD_BRANCH).
+    # overwritten per scan context (detect rewrites CI_SWEEPER_HEAD_BRANCH).
     resolved_head_branch="${actual_head_branch:-${event_head_branch}}"
     log_ci_sweeper_notice "workflow-run" "run:${run_id}" \
         "workflow=${workflow_name} scan=${scan_branch} api_head=${actual_head_branch:-empty} event_head=${event_head_branch:-empty} resolved=${resolved_head_branch:-empty} head_sha=${head_sha}"
@@ -1060,73 +1088,6 @@ function collect_recent_failures {
 }
 
 #######################################
-# failures_array_json: Join failure objects into a JSON array string
-#
-# Globals:
-#   FAILURES_JSON - Source failure objects
-#
-# Arguments:
-#   None
-#
-# Outputs:
-#   JSON array string to stdout
-#
-# Returns:
-#   0 on success
-#
-# Usage:
-#   failures_array="$(failures_array_json)"
-#
-#######################################
-function failures_array_json {
-    local joined=""
-    local failure
-    if [[ ${#FAILURES_JSON[@]} -eq 0 ]]; then
-        printf '%s' "[]"
-        return
-    fi
-    for failure in "${FAILURES_JSON[@]}"; do
-        if [[ -n ${joined} ]]; then
-            joined+=","
-        fi
-        joined+="${failure}"
-    done
-    printf '[%s]' "${joined}"
-}
-
-#######################################
-# ignored_array_json: Join ignored objects into a JSON array string
-#
-# Globals:
-#   None
-#
-# Arguments:
-#   None
-#
-# Outputs:
-#   None
-#
-# Returns:
-#   None
-#
-#######################################
-function ignored_array_json {
-    local joined=""
-    local ignored
-    if [[ ${#IGNORED_JSON[@]} -eq 0 ]]; then
-        printf '%s' "[]"
-        return
-    fi
-    for ignored in "${IGNORED_JSON[@]}"; do
-        if [[ -n ${joined} ]]; then
-            joined+=","
-        fi
-        joined+="${ignored}"
-    done
-    printf '[%s]' "${joined}"
-}
-
-#######################################
 # output_json: Print structured JSON result using lib/json.sh helpers
 #
 # Globals:
@@ -1147,23 +1108,18 @@ function ignored_array_json {
 #######################################
 function output_json {
     local skip="false"
-    local failures_array ignored_array
 
     if [[ ${#FAILURES_JSON[@]} -eq 0 ]]; then
         skip="true"
     fi
 
-    failures_array="$(failures_array_json)"
-    ignored_array="$(ignored_array_json)"
-
-    json_object_start
-    json_field_string "status" "ok" ","
-    json_field_string "scope" "${SCOPE}" ","
-    json_field_string "since" "${SINCE_REF}" ","
-    json_field_bool "skip" "${skip}" ","
-    json_field_array "failures" "${failures_array}" ","
-    json_field_array "ignored" "${ignored_array}" ""
-    json_object_end
+    json_object \
+        status "ok" \
+        scope "${SCOPE}" \
+        since "${SINCE_REF}" \
+        skip "${skip}" \
+        failures "$(json_array "${FAILURES_JSON[@]}")" \
+        ignored "$(json_array "${IGNORED_JSON[@]}")"
 }
 
 #######################################
@@ -1191,7 +1147,7 @@ function output_json {
 #######################################
 function configure_detect_environment {
     DEFAULT_BRANCH="${DEFAULT_BASE_BRANCH:-${DEFAULT_BRANCH:-main}}"
-    LEDGER_FILE="${CI_SWEEPER_LEDGER_FILE:-.loop/state-ci-sweeper-run-ledger.json}"
+    LEDGER_FILE="${CI_SWEEPER_LEDGER_FILE:-ci-sweeper-run-ledger.json}"
     LEDGER_FILE="${LEDGER_FILE#./}"
     SCAN_BRANCH_RUN_LIMIT="${SCAN_BRANCH_RUN_LIMIT:-100}"
     REJECT_RETRY_POLICY="${CI_SWEEPER_REJECT_RETRY_POLICY:-block}"
@@ -1218,13 +1174,10 @@ function configure_detect_environment {
 #
 #######################################
 function main {
+    ensure_dependencies bash git gh jq
     configure_detect_environment
     parse_arguments "$@"
     validate_ledger_file "${LEDGER_FILE}"
-
-    if ! gh_available; then
-        output_error "gh CLI and jq are required but not installed"
-    fi
 
     if [[ -z ${GH_TOKEN:-} && -z ${GITHUB_TOKEN:-} ]]; then
         output_error "GH_TOKEN or GITHUB_TOKEN is required"

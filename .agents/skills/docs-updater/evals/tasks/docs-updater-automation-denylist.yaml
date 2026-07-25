@@ -1,0 +1,28 @@
+id: docs-updater-automation-denylist-001
+name: docs-updater automation path skips denylist src path
+description: Validate src/** finding is not edited and is classified as Deferred.
+tags:
+  - quality
+  - automation-path
+  - boundary-guardrail
+inputs:
+  prompt: >-
+    Use docs-updater (automation path). ## Constraints may_edit: true The only finding is
+    src/handler.go with a doc comment drift note on the denylist. Classify under ###
+    Deferred; do not edit. Emit apply shape noting denylist constraint in Overview. Include
+    ## Verification and Session Metrics. Emit ## Overview and ## Summary per
+    common-output-format.md. Include Category labels on rows.
+  context:
+    commit_range: eval0001..eval0002
+    skip: false
+    findings:
+      - file: src/handler.go
+        reason: godoc references removed API
+        source_commit: eval0002
+expected:
+  output_contains:
+    - Deferred
+    - denylist
+    - Overview
+  outcomes:
+    - type: task_completed

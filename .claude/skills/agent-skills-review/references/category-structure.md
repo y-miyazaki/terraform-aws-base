@@ -21,7 +21,7 @@ Sections removed by design (redundant with frontmatter description or self-evide
 - Failure Behavior (standard tool behavior) — use `### Error Handling` under Workflow instead (Q-10 SHOULD)
 - Best Practices (merge into Workflow or Execution Scope)
 
-`### Error Handling` is not a sixth H2 section. It lives under `## Workflow` when the skill has recoverable or fatal branches (Q-10 SHOULD). Loop and utility siblings should include the same table pattern.
+`### Error Handling` is not a sixth H2 section. It lives under `## Workflow` when the skill has recoverable or fatal branches (Q-10 SHOULD). Automation and utility siblings should include the same table pattern.
 
 Examples:
 
@@ -62,10 +62,10 @@ Why: Vague `Read when…` triggers duplicate workflow conditions and diverge acr
 Examples:
 
 - ✅ `[common-checklist.md](references/common-checklist.md) (always read)`
-- ✅ `[category-input-schema.md](references/category-input-schema.md) (always read — loop path)`
+- ✅ `[category-input-schema.md](references/category-input-schema.md) (always read — automation path)`
 - ✅ `[common-troubleshooting.md](references/common-troubleshooting.md) (read on failure)`
 - ❌ `Read when parsing context` without `(always read …)`
-- ❌ `— apply` / `— loop` shorthand without `(always read …)`
+- ❌ `— apply` / `— automation` shorthand without `(always read …)`
 
 ---
 
@@ -75,7 +75,7 @@ Check: Is SKILL.md depth aligned with sibling skills in the same package? Is wor
 Why: Token/word limits are advisory. Isolated compression below sibling depth causes execution drift; prefer package-wide alignment over a single-skill token gate.
 Examples:
 
-- ✅ Loop skill matches ci-sweeper/changelog section depth and reference phrasing
+- ✅ Automation sibling (for example ci-sweeper/changelog) matches package section depth and reference phrasing
 - ✅ `waza check` token evidence recorded; over 500 noted as Q-09 advisory when siblings are similar depth
 - ❌ One skill uses arrow-only workflow while siblings use numbered `###` path sections
 
@@ -96,10 +96,10 @@ Examples:
 **S-07 (MUST): Portable Reference Paths**
 
 Check: Do SKILL.md and `references/` link only to files inside the same skill directory (`references/`, `assets/`, `scripts/`) or to absolute `https://` URLs?
-Why: APM packages ship per skill. Paths to repository `docs/`, `../other-skill/`, or `repository \`docs/...\``prose break consumers that install skills via`apm` into unrelated repositories.
+Why: Skills are often installed or copied per skill directory. Paths to repository `docs/`, `../other-skill/`, or `repository \`docs/...\`` prose break consumers that use the skill in a different repository layout.
 Examples:
 
-- ✅ `[common-loop-triage-format.md](references/common-loop-triage-format.md)`
+- ✅ `[category-automation-envelope.md](references/category-automation-envelope.md)`
 - ✅ `https://example.com/spec` for stable external specs
 - ❌ `repository \`docs/explanation/...\``
 - ❌ `[format](../../../../docs/...)` or any `../` escape from the skill tree

@@ -16,7 +16,7 @@ metadata:
 
 ## Input
 
-- **Interactive:** natural-language request; run `bash scripts/detect_changelog_commits.sh --scope all` (or `--scope range --since <ref>`) unless detect JSON is already in context — parse per [category-input-schema.md](references/category-input-schema.md)
+- **Interactive:** natural-language request; run this skill's detect script with `--scope all` (or `--scope range --since <ref>`) unless detect JSON is already in context — parse per [category-input-schema.md](references/category-input-schema.md)
 - **Automation:** detect JSON in prompt; read `may_edit`, `write_target`, and `report_file` (when `write_target: report`) from `## Constraints` per [category-automation-envelope.md](references/category-automation-envelope.md)
 
 Path allowlist, when present, arrives in `## Constraints`.
@@ -60,9 +60,9 @@ Resolve **may_edit** before mapping commits:
 | Interactive — follow-up after a prior survey in the session | `true` when the user asks to fix, apply, or update the changelog                                                         |
 | Automation — `## Constraints`                               | `may_edit: true` or `may_edit: false` from [category-automation-envelope.md](references/category-automation-envelope.md) |
 
-When `may_edit` is `true`, resolve `write_target`: on the **interactive** path use `fix` (this skill); on the **automation** path read `write_target` from `## Constraints`. Do not branch on `level` or `delivery`.
+When `may_edit` is `true`, resolve `write_target`: on the **interactive** path use `fix` (this skill); on the **automation** path read `write_target` from `## Constraints`. Do not branch on other caller metadata outside `## Constraints`.
 
-1. Run `scripts/detect_changelog_commits.sh` (interactive) or parse detect JSON per [category-input-schema.md](references/category-input-schema.md).
+1. Run this skill's detect script (interactive) or parse detect JSON per [category-input-schema.md](references/category-input-schema.md). On non-zero exit, read stdout and stop.
 2. On the automation path, read [category-automation-envelope.md](references/category-automation-envelope.md) for Constraints, PR templates, and Session Metrics.
 3. If `skip` or both `commits` and `releases` are empty, emit survey no-op; on automation path append `## Session Metrics` per [category-automation-envelope.md](references/category-automation-envelope.md); stop.
 4. Map commits and releases per [common-checklist.md](references/common-checklist.md).
@@ -74,6 +74,7 @@ When `may_edit` is `true`, resolve `write_target`: on the **interactive** path u
 
 | Condition                                         | Severity    | Action                                                                           |
 | ------------------------------------------------- | ----------- | -------------------------------------------------------------------------------- |
+| Detect script non-zero exit or `status: "error"`  | Fatal       | Read stdout; stop — do not treat as success-path detect JSON                     |
 | `skip` or empty commits/releases                  | Info        | Report skip outcome; stop                                                        |
 | `changelog_file` outside scope                    | Recoverable | Defer; note in report                                                            |
 | Fix requested but `may_edit` is `false`           | Info        | Survey only; note that edits require an explicit fix request or `may_edit: true` |

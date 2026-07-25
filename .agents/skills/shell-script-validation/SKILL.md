@@ -36,13 +36,7 @@ Structured results for bash -n and shellcheck (syntax and lint only). With `--ch
 - run shell script syntax and lint validation before merge
 - reproduce CI failures for shell scripts
 - validate a specific script path during iterative fixes
-- normalize function doc section order in `scripts/`, `scripts/lib/`, or `.github/actions/`
-
-### Common target paths
-
-- `scripts/` — workspace shell scripts
-- `scripts/lib/` — shared library modules (source of truth; sync to skills via `bash scripts/self/ai/sync_skill_lib.sh`)
-- `.github/actions/` — composite action helper scripts
+- normalize function doc section order when this skill ships `scripts/fix_function_doc_order.sh`
 
 ### DO NOT USE FOR:
 
@@ -61,12 +55,11 @@ Structured results for bash -n and shellcheck (syntax and lint only). With `--ch
 
 ## Workflow
 
-1. When `scripts/lib/` changed, sync to skill copies: `bash scripts/self/ai/sync_skill_lib.sh` then `apm install --update`.
-2. Run `bash scripts/validate.sh -v -f -d` with an optional target path (for example `scripts/deploy.sh`, `scripts/lib/`, or `.github/actions/`).
-3. When function doc sections are out of order, run `bash scripts/fix_function_doc_order.sh` on the target path or directory before re-validating.
-4. Review auto-fix diffs from `-f` before continuing.
-5. If checks fail, fix reported issues and rerun the same command.
-6. Retry at most 2 times after fixes; if checks still fail, return blocking findings and stop.
+1. Run `bash scripts/validate.sh -v -f -d` with an optional target path (file or directory under review).
+2. When function doc sections are out of order and `scripts/fix_function_doc_order.sh` exists, run it on the target before re-validating.
+3. Review auto-fix diffs from `-f` before continuing.
+4. If checks fail, fix reported issues and rerun the same command.
+5. Retry at most 2 times after fixes; if checks still fail, return blocking findings and stop.
 
 ### Error Handling
 
@@ -87,17 +80,12 @@ Structured results for bash -n and shellcheck (syntax and lint only). With `--ch
 # Canonical (workspace-wide)
 bash scripts/validate.sh -v -f -d
 
-# Canonical (single script)
-bash scripts/validate.sh -v -f -d ./scripts/deploy.sh
+# Scoped (single script)
+bash scripts/validate.sh -v -f -d ./path/to/script.sh
 
-# Common directories
-bash scripts/validate.sh -v -f -d ./scripts/lib/
-bash scripts/validate.sh -v -f -d ./.github/actions/
-
-# Reorder function doc sections (Globals → Arguments → Outputs → Returns)
-bash scripts/fix_function_doc_order.sh ./scripts/lib/
-bash scripts/fix_function_doc_order.sh ./.github/actions/
+# Reorder function doc sections when the skill ships the helper
+bash scripts/fix_function_doc_order.sh ./path/to/script.sh
 
 # Opt-out: skip function doc sections when intentionally not applicable
-bash scripts/validate.sh -v -f ./scripts/deploy.sh
+bash scripts/validate.sh -v -f ./path/to/script.sh
 ```

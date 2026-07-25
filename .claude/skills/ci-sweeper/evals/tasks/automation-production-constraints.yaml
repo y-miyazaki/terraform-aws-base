@@ -1,6 +1,6 @@
 id: ci-sweeper-automation-constraints-001
 name: ci-sweeper automation production constraints
-description: Validate LE workflow Constraints with may_edit from loop-prompt-generate shape.
+description: Validate automation Constraints with may_edit from assembled prompt shape.
 tags:
   - quality
   - automation

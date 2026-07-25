@@ -1,4 +1,4 @@
-# loop-ci-sweeper Checklist
+# CI Sweeper Checklist
 
 ## Classification
 
@@ -16,8 +16,7 @@
 
 ## Validation
 
-- Run stack-appropriate validation after edits (see `category-validation-commands.md`)
-- Record outcome in `## Verification` (apply only)
+- When validation was run after edits, record commands and outcomes in `## Verification` (apply) or Session Metrics (automation)
 
 ## Output
 

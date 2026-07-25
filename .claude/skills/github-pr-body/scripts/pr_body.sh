@@ -1001,7 +1001,7 @@ function main {
     fi
 
     # Validate prerequisites
-    validate_dependencies "gh" "jq"
+    require_dependencies "gh" "jq"
 
     # Verify PR exists
     validate_pr_exists

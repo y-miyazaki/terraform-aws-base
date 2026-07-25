@@ -1,0 +1,25 @@
+id: refactor-automation-noaction-001
+name: refactor automation path no actionable hints
+description: Validate automation path no-op when skip or empty hints.
+tags:
+  - quality
+  - automation
+  - skip-path
+inputs:
+  prompt: >-
+    Use refactor (automation path) with may_edit true. Context JSON has skip=true and
+    hints=[]. Emit no-op report with ## Session Metrics per category-automation-envelope.md,
+    ## Overview explaining no actionable hint, and ## Summary with no-op outcome. Do not
+    edit files. State no edits applied in Overview.
+  context:
+    commit_range: n/a
+    skip: true
+    hints: []
+expected:
+  output_contains:
+    - Session Metrics
+    - no-op
+    - "## Overview"
+    - "## Summary"
+  outcomes:
+    - type: task_completed

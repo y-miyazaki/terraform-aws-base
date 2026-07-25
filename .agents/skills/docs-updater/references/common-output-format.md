@@ -1,6 +1,6 @@
 # docs-updater Result Format
 
-Interactive and hook runs use this structure. Automation path adds session metrics and PR sections per [common-output-format-loop.md](common-output-format-loop.md).
+Interactive and hook runs use this structure. On the automation path, also follow [common-output-format-automation.md](common-output-format-automation.md).
 
 ## Survey result (no file edits)
 
@@ -68,8 +68,8 @@ Interactive and hook runs use this structure. Automation path adds session metri
 
 ## Overview (skill-specific)
 
-**Good (survey):** `Staged rename of ci-build workflow affects docs/guide.md and mkdocs.yml nav; two drift candidates identified; no edits applied.`
+**Good (survey):** `Staged rename of src/auth module affects docs/guide.md and site nav; two drift candidates identified; no edits applied.`
 
-**Good (apply):** `Updated docs/guide.md workflow link and mkdocs.yml nav entry for ci-build-deploy rename.`
+**Good (apply):** `Updated docs/guide.md path references and nav entry for auth module rename.`
 
 **Bad:** `Documentation sync completed.`

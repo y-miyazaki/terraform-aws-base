@@ -20,12 +20,12 @@ Assign exactly one primary `category` per finding:
 | Category             | Include when                                                                                                                                                                                                      | Exclude / send elsewhere                                                      |
 | -------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
 | `code_quality`       | Maintainability debt from detect facts (markers, churn hotspots) plus ±30-line context — duplicated logic, brittle structure, actionable marker text (Google Complexity/Naming; Sonar Maintainability **labels**) | Linter/SAST metric restatement; one-off style nits without evidence → `noise` |
-| `test_gap`           | Missing or weak tests for changed/critical paths (Google Tests)                                                                                                                                                   | Flaky CI infrastructure repair → loop-ci-sweeper                              |
+| `test_gap`           | Missing or weak tests for changed/critical paths (Google Tests)                                                                                                                                                   | Flaky CI infrastructure repair → ci-sweeper                                   |
 | `architecture`       | Wrong boundary, premature abstraction, deliberate shortcut that blocks change (Google Design; Fowler deliberate debt)                                                                                             | Local tidy-ups without design impact → `code_quality`                         |
 | `dependency_version` | Version lock, version promiscuity, EOL / unsupported major, pin drift that blocks safe upgrades (SemVer)                                                                                                          | Security CVE remediation PRs → security-advisory / human                      |
-| `documentation`      | Wrong Diátaxis form, stale paths, missing required docs type, broken cross-refs                                                                                                                                   | Doc-only fix loops already owned by loop-docs-triage when that loop is active |
+| `documentation`      | Wrong Diátaxis form, stale paths, missing required docs type, broken cross-refs                                                                                                                                   | Doc-only drift repair → docs-updater when that skill owns doc sync            |
 | `security`           | Authz gaps, secret-handling smells, unsafe defaults (Sonar Security) — **report only**                                                                                                                            | Exploit writing, credential rotation, production incident response            |
-| `operational`        | Fragile scripts, missing runbooks, non-reproducible tooling                                                                                                                                                       | Routine changelog / CI green-up owned by other loops                          |
+| `operational`        | Fragile scripts, missing runbooks, non-reproducible tooling                                                                                                                                                       | Routine changelog / CI repair → changelog or ci-sweeper                       |
 
 ### Severity
 
@@ -60,7 +60,7 @@ Assign `nature` only when **narrative evidence** is visible in context (comment/
 
 ### Detect vs lint
 
-Detect covers mechanical facts the loop can observe without linters: dependency manifests, docs links/staleness, git churn, and code markers. Do **not** run or restate linter or SAST findings (complexity scores, style, unused code, naming nits).
+Detect covers mechanical facts observable without linters: dependency manifests, docs links/staleness, git churn, and code markers. Do **not** run or restate linter or SAST findings (complexity scores, style, unused code, naming nits).
 
 Use `code_quality` only when detect supplies a fact (marker or churn hotspot) and reading source context shows maintainability debt that markers/churn surface holistically — not to duplicate an existing linter report.
 

@@ -24,7 +24,7 @@ Path allowlist, when present, arrives in `## Constraints`.
 
 ## Output Specification
 
-Refactor report per [common-output-format.md](references/common-output-format.md). Survey shape when no files are edited; apply shape when edited — within [category-scope.md](references/category-scope.md). Automation path: [common-output-format-loop.md](references/common-output-format-loop.md) and [category-automation-envelope.md](references/category-automation-envelope.md).
+Refactor report per [common-output-format.md](references/common-output-format.md). Survey shape when no files are edited; apply shape when edited — within [category-scope.md](references/category-scope.md). Automation path: [common-output-format-automation.md](references/common-output-format-automation.md) and [category-automation-envelope.md](references/category-automation-envelope.md).
 
 ## Execution Scope
 
@@ -34,7 +34,7 @@ Refactor report per [common-output-format.md](references/common-output-format.md
 
 ### DO NOT USE FOR:
 
-- Lint/style-only; features/API/behavior fixes; cross-boundary apply; loop architecture; tech-debt input
+- Lint/style-only; features/API/behavior fixes; cross-boundary apply; platform-wide architecture refactors; tech-debt input
 
 ## Reference Files Guide
 
@@ -46,7 +46,7 @@ Refactor report per [common-output-format.md](references/common-output-format.md
 - [category-verification.md](references/category-verification.md) (always read)
 - [category-input-schema.md](references/category-input-schema.md) (always read)
 - [category-automation-envelope.md](references/category-automation-envelope.md) (always read — automation path)
-- [common-output-format-loop.md](references/common-output-format-loop.md) (always read — automation path)
+- [common-output-format-automation.md](references/common-output-format-automation.md) (always read — automation path)
 - [common-troubleshooting.md](references/common-troubleshooting.md) (read on failure)
 
 ## Workflow
@@ -61,7 +61,7 @@ Resolve **may_edit** before Phase B:
 | Interactive — follow-up after a prior survey in the session | `true` when the user asks to apply, fix, or refactor listed candidates                                                   |
 | Automation — `## Constraints`                               | `may_edit: true` or `may_edit: false` from [category-automation-envelope.md](references/category-automation-envelope.md) |
 
-When `may_edit` is `true`, resolve `write_target`: on the **interactive** path use `fix` (this skill); on the **automation** path read `write_target` from `## Constraints`. Do not branch on `level` or `delivery`.
+When `may_edit` is `true`, resolve `write_target`: on the **interactive** path use `fix` (this skill); on the **automation** path read `write_target` from `## Constraints`. Do not branch on other caller metadata.
 
 Every run has **Phase A — Survey** (discover candidates). **Phase B — Apply** runs only when `may_edit` is `true` and `write_target` is `fix`.
 
@@ -99,13 +99,14 @@ Every run has **Phase A — Survey** (discover candidates). **Phase B — Apply*
 
 ### Error Handling
 
-| Condition                                     | Severity    | Action                                                                          |
-| --------------------------------------------- | ----------- | ------------------------------------------------------------------------------- |
-| Automation: empty/`skip`                      | Info        | No-op report; stop                                                              |
-| Survey: zero candidates                       | Info        | No-op report; stop                                                              |
-| Architecture request without slice            | Recoverable | Architecture proposal only; stop                                                |
-| Lint-primary or feature/API candidate         | Recoverable | Watch on candidate; skip apply                                                  |
-| Weak or failed gate for one candidate         | Recoverable | Revert that candidate; Deferred; continue                                       |
-| Cross-boundary or out-of-scope target         | Recoverable | Watch on candidate; skip apply                                                  |
-| Apply requested but `may_edit` is `false`     | Info        | Survey only; note that edits require explicit apply request or `may_edit: true` |
-| `may_edit` true with `write_target` not `fix` | Recoverable | Survey only; note expected `write_target: fix`                                  |
+| Condition                                        | Severity    | Action                                                                          |
+| ------------------------------------------------ | ----------- | ------------------------------------------------------------------------------- |
+| Detect script non-zero exit or `status: "error"` | Fatal       | Read stdout; stop — do not treat as success-path detect JSON                    |
+| Automation: empty/`skip`                         | Info        | No-op report; stop                                                              |
+| Survey: zero candidates                          | Info        | No-op report; stop                                                              |
+| Architecture request without slice               | Recoverable | Architecture proposal only; stop                                                |
+| Lint-primary or feature/API candidate            | Recoverable | Watch on candidate; skip apply                                                  |
+| Weak or failed gate for one candidate            | Recoverable | Revert that candidate; Deferred; continue                                       |
+| Cross-boundary or out-of-scope target            | Recoverable | Watch on candidate; skip apply                                                  |
+| Apply requested but `may_edit` is `false`        | Info        | Survey only; note that edits require explicit apply request or `may_edit: true` |
+| `may_edit` true with `write_target` not `fix`    | Recoverable | Survey only; note expected `write_target: fix`                                  |

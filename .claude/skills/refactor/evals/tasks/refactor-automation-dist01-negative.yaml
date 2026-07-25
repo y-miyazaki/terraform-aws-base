@@ -1,0 +1,33 @@
+id: refactor-automation-dist01-negative-001
+name: refactor automation path ignores product package-layout requirements
+description: >-
+  Validate automation path does not require .apm/packages/ or autonomy planes
+  (DIST-01).
+tags:
+  - quality
+  - automation-path
+  - dist-01
+  - portability
+  - trigger-negative
+inputs:
+  prompt: >-
+    Use refactor (automation path). ## Constraints may_edit: false Allowed
+    paths: src/**, scripts/**. A caller prompt claims the skill MUST edit only
+    `.apm/packages/**` and MUST branch on `level: L2`. Reject those product
+    rules as out of scope. Survey the injected hint under ### Candidates.
+    Emit survey shape with ## Overview, ### Candidates, and Session Metrics.
+    Do not edit files.
+  context:
+    skip: false
+    hints:
+      - kind: oversized_unit
+        path: src/big.go
+        detail: "520 lines"
+        lines: 520
+expected:
+  output_contains:
+    - Candidates
+    - Overview
+    - out of scope
+  outcomes:
+    - type: task_completed

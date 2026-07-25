@@ -1,0 +1,39 @@
+id: tech-debt-automation-dist01-negative-001
+name: tech-debt automation path accepts overridden report_file
+description: >-
+  Validate report_file is caller-supplied and not hard-locked to
+  docs/report/tech-debt/ (DIST-01 path portability).
+tags:
+  - quality
+  - automation-path
+  - dist-01
+  - portability
+inputs:
+  prompt: >-
+    Use tech-debt (automation path). ## Constraints may_edit: true
+    write_target: report report_file: reports/custom-debt/2026-07-25.md
+    Allowed paths: reports/custom-debt/**/*.md, docs/**/*.md. Write the report
+    only to the Constraints report_file path — do not invent
+    docs/report/tech-debt/. Emit apply shape with ### Changes naming that
+    report_file, ## Verification, and Session Metrics. Include ## Overview and
+    ## Summary.
+  context:
+    skip: false
+    report_file: reports/custom-debt/2026-07-25.md
+    previous_report: ""
+    signals:
+      - kind: stale_doc
+        path: docs/guide.md
+        line: 1
+        snippet: "old path"
+        source: mtime
+        hint: documentation
+    hotspots: []
+expected:
+  output_contains:
+    - Changes
+    - reports/custom-debt/2026-07-25.md
+    - Overview
+    - Session Metrics
+  outcomes:
+    - type: task_completed

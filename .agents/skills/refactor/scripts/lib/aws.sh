@@ -1040,7 +1040,7 @@ function parse_arn {
 #
 #######################################
 function validate_aws_config {
-    validate_dependencies "aws" "jq"
+    require_dependencies "aws" "jq"
 
     # Test AWS CLI access
     if ! aws sts get-caller-identity > /dev/null 2>&1; then

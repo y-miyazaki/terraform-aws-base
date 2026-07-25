@@ -2,7 +2,7 @@
 Survey-only PR template for tech-debt automation (may_edit: false).
 
 Load at synthesis time after survey output is complete.
-loop-finalize extracts ## Overview and ## Summary only (no ## Verification).
+The caller extracts ## Overview and ## Summary only (no ## Verification).
 
 Rules:
 - Summary contains ### Candidates and optional ### Watch only.
@@ -17,7 +17,7 @@ Rules:
   BAD:  Debt scan found 18 Watch signals; no edits applied.
 -->
 
-<one or two sentences: scan scope, dominant findings by name, no edits applied>
+<summary: scan scope, dominant findings by name, no edits applied>
 
 ## Summary
 

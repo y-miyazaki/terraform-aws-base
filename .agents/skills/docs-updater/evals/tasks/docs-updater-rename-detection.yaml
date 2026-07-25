@@ -7,8 +7,8 @@ tags:
   - edge-case
 inputs:
   prompt: >-
-    Use docs-updater (interactive/hook path). Step 1 output from `scripts/detect_changes.sh`
-    is in context.detect — parse that JSON only; do not run detect_changes.sh or invent
+    Use docs-updater (interactive/hook path). Step 1 output from this skill's detect script
+    is in context.detect — parse that JSON only; do not run the detect script or invent
     paths. With skip=false, triage affected_docs for the renamed workflow path. Survey only
     — do not edit files. Return the interactive report per common-output-format.md with ##
     Overview, ## Summary, and ### Candidates listing docs/guide.md and mkdocs.yml. Do not

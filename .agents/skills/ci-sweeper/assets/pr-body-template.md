@@ -2,11 +2,11 @@
 PR-facing template for ci-sweeper automation (may_edit: true).
 
 Load ONLY at synthesis time, after triage and file edits complete.
-loop-finalize adds ## Failure context from detect; this template covers Overview + Summary + Verification.
+The caller may add ## Failure context from detect; this template covers Overview + Summary + Verification.
 
 Rules:
 - Keep top-level ## Overview, ## Summary, and ## Verification headings exactly as written.
-- Do not duplicate detect failure URLs in Overview — URLs belong in platform ## Failure context.
+- Do not duplicate detect failure URLs in Overview — URLs belong in caller-added ## Failure context.
 - Summary contains ### Changes and ### Deferred only.
 - Do NOT emit Outcome, Suggested next action, or top-level ## Changes.
 - Deferred = failures with NO fix in final working tree; reconcile with git diff before synthesis.
@@ -19,7 +19,7 @@ Rules:
   BAD:  CI sweeper addressed actionable failures.
 -->
 
-<one or two sentences: which failure, what was fixed, what was deferred — name workflow/job and cause>
+<summary: which failure, what was fixed, what was deferred — name workflow/job and cause; do not duplicate failure URLs (caller may add ## Failure context)>
 
 ## Summary
 

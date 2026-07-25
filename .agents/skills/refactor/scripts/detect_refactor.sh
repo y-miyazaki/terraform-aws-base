@@ -1,11 +1,11 @@
 #!/bin/bash
 #######################################
-# Description: Detect mechanical structure hints for loop-refactor (H1 only)
+# Description: Detect mechanical structure hints for refactor automation (H1 only)
 #
 # Usage: ./detect_refactor.sh [--scope staged|all|range] [--since <ref>]
 #   --scope    Change detection scope (default: all for integration scan)
 #              range: limit scan to files changed in <since>..HEAD
-#   --since    Git ref for range scope (commit SHA from loop state)
+#   --since    Git ref for range scope (commit SHA from state cursor (when supplied))
 #
 # Output:
 # - JSON object with hints[], commit_range, skip
@@ -15,12 +15,13 @@
 # - duplication_block compares consecutive non-comment, non-blank lines only
 # - No lint/SAST smell scores
 # - Output structured JSON via shared lib/json.sh
-# - Exit 0 always (errors reported in JSON status field)
+# - Exit 0 on success; fatal errors emit status=error JSON and exit 1
 # - Source shared helpers from scripts/lib/all.sh (synced via scripts/self/ai/sync_skill_lib.sh)
 #
 # Dependencies:
 # - bash (POSIX bash, /bin/bash)
 # - git
+# - jq
 #
 # Optional environment:
 #   REFACTOR_DUP_MIN_LINES          Minimum non-comment, non-empty lines for duplication_block (default: 8)
@@ -67,7 +68,7 @@ declare -a HINTS_JSON=()
 #   None
 #
 # Returns:
-#   Exits with code 0
+#   Exits with code 1 after emitting error JSON
 #
 # Usage:
 #   show_usage
@@ -78,14 +79,14 @@ function show_usage {
 Usage: detect_refactor.sh [--scope staged|all|range] [--since <ref>]
 
 Description:
-    Detect mechanical structure hints (duplication_block, oversized_unit) for loop-refactor.
+    Detect mechanical structure hints (duplication_block, oversized_unit) for refactor automation.
 
 Options:
     --scope    Detection scope (default: all)
                all: scan tracked files matching REFACTOR_SCAN_GLOBS
                range: scan only files changed in <since>..HEAD matching globs
                staged: git diff --cached only (parity with sibling detects)
-    --since    Git ref for range scope (commit SHA from loop state)
+    --since    Git ref for range scope (commit SHA from state cursor (when supplied))
 
 Examples:
     ./detect_refactor.sh --scope all
@@ -123,7 +124,6 @@ function parse_arguments {
             --scope)
                 if [[ $# -lt 2 ]]; then
                     emit_error_json "missing value for --scope"
-                    exit 0
                 fi
                 SCOPE="$2"
                 shift 2
@@ -131,14 +131,12 @@ function parse_arguments {
             --since)
                 if [[ $# -lt 2 ]]; then
                     emit_error_json "missing value for --since"
-                    exit 0
                 fi
                 SINCE_REF="$2"
                 shift 2
                 ;;
             *)
                 emit_error_json "unknown argument: $1"
-                exit 0
                 ;;
         esac
     done
@@ -353,7 +351,6 @@ function collect_scan_files {
         range)
             if [[ -z ${SINCE_REF} ]]; then
                 emit_error_json "range scope requires --since"
-                exit 0
             fi
             mapfile -t candidates < <(git diff --name-only --diff-filter=ACMR "${SINCE_REF}"..HEAD 2> /dev/null || true)
             COMMIT_RANGE="${SINCE_REF}..$(git rev-parse HEAD 2> /dev/null || echo HEAD)"
@@ -367,7 +364,6 @@ function collect_scan_files {
             ;;
         *)
             emit_error_json "invalid scope: ${SCOPE}"
-            exit 0
             ;;
     esac
 }
@@ -399,16 +395,12 @@ function append_hint_json {
     local path="$2"
     local detail="$3"
     local lines="$4"
-    local escaped_kind escaped_path escaped_detail
 
     if [[ ${#HINTS_JSON[@]} -ge ${REFACTOR_MAX_HINTS} ]]; then
         return 0
     fi
 
-    escaped_kind="$(json_escape "${kind}")"
-    escaped_path="$(json_escape "${path}")"
-    escaped_detail="$(json_escape "${detail}")"
-    HINTS_JSON+=("{\"kind\":\"${escaped_kind}\",\"path\":\"${escaped_path}\",\"detail\":\"${escaped_detail}\",\"lines\":${lines}}")
+    HINTS_JSON+=("$(json_object kind "${kind}" path "${path}" detail "${detail}" lines "$(json_number "${lines}")")")
 }
 
 #######################################
@@ -571,7 +563,7 @@ function trim_whitespace {
 }
 
 #######################################
-# emit_error_json: Print error envelope JSON and exit 0
+# emit_error_json: Print error envelope JSON and exit 1
 #
 # Globals:
 #   SCOPE, SINCE_REF
@@ -583,7 +575,7 @@ function trim_whitespace {
 #   None
 #
 # Returns:
-#   Exits with code 0
+#   Exits with code 1 after emitting error JSON
 #
 # Usage:
 #   emit_error_json "reason"
@@ -592,15 +584,54 @@ function trim_whitespace {
 function emit_error_json {
     local message="$1"
 
-    json_object_start
-    json_field_string "status" "error" ","
-    json_field_string "scope" "${SCOPE}" ","
-    json_field_string "since" "${SINCE_REF}" ","
-    json_field_string "commit_range" "" ","
-    json_field_bool "skip" "true" ","
-    json_field_string "message" "${message}" ","
-    echo '  "hints": []'
-    json_object_end
+    if ! command -v jq &> /dev/null; then
+        json_emit_minimal_error "${message}"
+        exit 1
+    fi
+
+    json_object \
+        status "error" \
+        scope "${SCOPE}" \
+        since "${SINCE_REF}" \
+        commit_range "" \
+        skip "true" \
+        message "${message}" \
+        hints "[]"
+    exit 1
+}
+
+#######################################
+# ensure_dependencies: Fail with detect error JSON when tools are missing
+#
+# Globals:
+#   None
+#
+# Arguments:
+#   $@ - Required tools/commands
+#
+# Outputs:
+#   None
+#
+# Returns:
+#   None (calls emit_error_json on missing dependencies)
+#
+# Usage:
+#   ensure_dependencies bash git jq
+#
+#######################################
+function ensure_dependencies {
+    local -a missing_tools=()
+    local tool
+
+    while IFS= read -r tool; do
+        if [[ -n ${tool} ]]; then
+            missing_tools+=("${tool}")
+        fi
+    done < <(validate_dependencies "$@" || true)
+
+    if [[ ${#missing_tools[@]} -gt 0 ]]; then
+        emit_error_json "Missing required tools: ${missing_tools[*]}. Please install them and ensure they are in PATH."
+    fi
 }
 
 #######################################
@@ -623,22 +654,19 @@ function emit_error_json {
 #
 #######################################
 function emit_ok_json {
-    local hints_arr="[]"
     local skip="true"
 
     if [[ ${#HINTS_JSON[@]} -gt 0 ]]; then
-        hints_arr="[$(printf '%s,' "${HINTS_JSON[@]}" | sed 's/,$//')]"
         skip="false"
     fi
 
-    json_object_start
-    json_field_string "status" "ok" ","
-    json_field_string "scope" "${SCOPE}" ","
-    json_field_string "since" "${SINCE_REF}" ","
-    json_field_string "commit_range" "${COMMIT_RANGE}" ","
-    json_field_bool "skip" "${skip}" ","
-    echo "  \"hints\": ${hints_arr}"
-    json_object_end
+    json_object \
+        status "ok" \
+        scope "${SCOPE}" \
+        since "${SINCE_REF}" \
+        commit_range "${COMMIT_RANGE}" \
+        skip "${skip}" \
+        hints "$(json_array "${HINTS_JSON[@]}")"
 }
 
 #######################################
@@ -661,6 +689,7 @@ function emit_ok_json {
 #
 #######################################
 function main {
+    ensure_dependencies bash git jq
     configure_detect_environment
     parse_arguments "$@"
     collect_scan_files
@@ -669,4 +698,6 @@ function main {
     emit_ok_json
 }
 
-main "$@"
+if [[ ${BASH_SOURCE[0]} == "${0}" ]]; then
+    main "$@"
+fi

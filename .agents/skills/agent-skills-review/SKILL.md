@@ -32,6 +32,9 @@ metadata:
 - review new SKILL drafts before release
 - note token budget advisories when `waza check` exceeds 500 tokens (secondary to sibling consistency)
 - fix SKILL spec compliance findings in PR reviews
+- apply **DIST-01 / S-07 portability** when the target skill is **intended for reuse** outside the authoring repository (redistributed skill tree, shared package, or equivalent)
+
+**Portability scope:** DIST-01 and S-07 judge whether skill text and links still work when the skill is installed or copied into a different repository. Defer S-07 for **local-only skills** that live under `<agent-root>/skills/` and are not redistributed — run structural and quality checks (S-01, Q-_, P-_) only. Report DIST-01 violations in `## Issues` for reuse-intended targets. Checklist neutrality in `references/` is defined in companion agent-skills instructions (DIST-01 Scope), not as a universal rule for every skill tree.
 
 ### DO NOT USE FOR:
 

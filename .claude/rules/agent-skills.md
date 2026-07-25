@@ -10,8 +10,9 @@ paths:
 
 - Scope is limited to designing and updating `skills/**/SKILL.md` and `references/*.md`.
 - This file defines SKILL authoring standards and is treated as an exception to the common template (five-chapter structure with Naming Conventions first in Standards is overridden by domain-specific Required Sections ordering).
-- **DIST-01 (MUST)**: Keep skills and `references/` portable across consumer repositories (see also S-07). Do not embed consumer-project-specific paths, internal automation names, or project-local test support APIs in SKILL.md or references.
-- **DIST-02 (SHOULD)**: Shared domain packages (`common`, `go`, `shell-script`, `terraform`) stay consumer-neutral. Single-consumer package scopes may document consumer-specific paths only within that skill's Execution Scope when the package is intended for one integration layout.
+- **DIST-01 (MUST)**: Keep skills and `references/` portable when the skill is meant for reuse outside the authoring repository (see also S-07). Do not embed project-specific paths, internal automation names, or repository-local test helpers in SKILL.md or in `references/` that ship with the skill. In checklist and category items, encode portable contracts — schema fields, dependency declarations, exit semantics — not authoring-repository symbols such as private `validate_*` helpers, test-suite `assert_*` APIs, or internal library paths.
+- **DIST-01b (SHOULD)**: A repository may host **local-only skills** under `<agent-root>/skills/` that are not redistributed. Repo-specific checklist wording, test helpers, and internal paths for those skills belong in that repository's `AGENTS.md` or `docs/` — not in `references/` for skills intended for reuse.
+- **DIST-02 (SHOULD)**: Skills intended for multiple repositories or products stay consumer-neutral in `references/`. Skills scoped to one product or deployment layout may document product-specific paths only inside Execution Scope when the skill's purpose is explicitly single-target.
 
 ## Standards
 
@@ -87,7 +88,7 @@ paths:
 
 - **E-01 (SHOULD)**: Ship a thin contract eval harness in each skill: `eval.yaml` plus `evals/tasks/*.yaml` with at least output-contract coverage, one happy path, and one boundary or trigger-negative case where applicable.
 - **E-02 (SHOULD)**: Prefer inline JSON or context in eval task prompts over `evals/files/` when the mock can echo prompts — avoid large binary fixtures in distributable packages.
-- **E-03 (MUST)**: Do not bundle large regression corpora or datasets in APM skill packages; consumers install skills for execution instructions, not regression archives.
+- **E-03 (MUST)**: Do not bundle large regression corpora or datasets in redistributable skill packages; consumers use skills for execution instructions, not regression archives.
 - **E-04 (CAN)**: `evals/evals.json` (skill-creator format) is optional maintainer metadata for description tuning or benchmarks — not required in every skill.
 
 ## Guidelines

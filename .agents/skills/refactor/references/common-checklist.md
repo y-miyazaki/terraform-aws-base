@@ -12,12 +12,11 @@
 ## Survey (Phase A)
 
 - Run **before** any file edit in `apply` mode; sole phase in `survey` mode
-- Discover **all** candidates in scope — loop: every `hints[]` entry; interactive: user paths or in-scope exploration
+- Discover **all** candidates in scope — automation: every `hints[]` entry; interactive: user paths or in-scope exploration
 - Prefer structure-driven evidence (duplication, oversized unit, user-named symbol) — not lint/SAST smell scores
 - Emit `### Candidates` with one row per candidate (see [common-output-format.md](common-output-format.md))
 - Mark each row **apply** or **watch**; lint/style-only, feature/API, comment-only, or cross-boundary → **watch**
 - Zero candidates → Outcome `no-op`; stop
-- Do not require or read `docs/report/tech-debt/**`
 
 ## Apply (Phase B)
 
@@ -43,7 +42,7 @@
 
 ## Output
 
-- Pick **one** result shape per run — survey-only **or** apply — per [common-output-format.md](common-output-format.md) (interactive) or [common-output-format-loop.md](common-output-format-loop.md) (automation)
+- Pick **one** result shape per run — survey-only **or** apply — per [common-output-format.md](common-output-format.md) (interactive) or [common-output-format-automation.md](common-output-format-automation.md) (automation)
 - **Survey** (`may_edit: false`): `### Candidates` (+ optional `### Watch`); **MUST NOT** emit `### Changes`, `### Deferred`, or `## Verification`
 - **Apply** (`may_edit: true`): `### Changes` (+ optional `### Deferred`) and `## Verification`; **MUST NOT** emit `### Candidates` or `### Watch` in final output
 - Classify intent and depth tier internally before edits; **do not** put `O1`/`O2`/`O3`, intent labels, or Fowler technique names in user-facing tables

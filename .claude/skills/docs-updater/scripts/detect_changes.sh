@@ -7,7 +7,7 @@
 #              staged: git diff --cached only
 #              all: git diff HEAD + untracked files
 #              range: git diff <ref>..HEAD (requires --since)
-#   --since    Git ref for range scope (commit SHA from loop state)
+#   --since    Git ref for range scope (commit SHA from state cursor (when supplied))
 #
 # Output:
 # - JSON object with changed_files, deleted_files, renamed_files, affected_docs, commit_range, skip
@@ -19,18 +19,19 @@
 #   optional DOCS_TRIAGE_EXTRA_FILES (comma-separated non-markdown doc config paths)
 # - When DOCS_TRIAGE_DOC_GLOBS is unset, discover all *.md excluding generated/hidden paths
 # - Output structured JSON via shared lib/json.sh
-# - Exit 0 always (errors reported in JSON status field)
+# - Exit 0 on success; fatal errors emit status=error JSON and exit 1
 # - Source shared helpers from scripts/lib/all.sh (synced via scripts/self/ai/sync_skill_lib.sh)
 #
 # Dependencies:
 # - bash (POSIX bash, /bin/bash)
 # - git
+# - jq
 #
 # Optional environment:
 #   DOCS_UPDATER_DOCS_ROOT     Documentation tree root (default: docs; hook/manual path)
 #   DOCS_UPDATER_SITE_CONFIG   Site navigation config path (default: mkdocs.yml; hook/manual path)
-#   DOCS_TRIAGE_DOC_GLOBS      Comma-separated glob patterns for candidate doc discovery (loop path)
-#   DOCS_TRIAGE_EXTRA_FILES    Comma-separated non-markdown documentation config paths (loop path)
+#   DOCS_TRIAGE_DOC_GLOBS      Comma-separated glob patterns for candidate doc discovery (automation path)
+#   DOCS_TRIAGE_EXTRA_FILES    Comma-separated non-markdown documentation config paths (automation path)
 #######################################
 
 # Error handling: exit on error, unset variable, or failed pipeline
@@ -72,7 +73,7 @@ declare -a AFFECTED_DOCS=()
 #   None
 #
 # Returns:
-#   Exits with code 0
+#   Exits with code 1
 #
 # Usage:
 #   show_usage
@@ -90,7 +91,7 @@ Options:
                staged: git diff --cached only
                all: git diff HEAD + untracked files
                range: git diff <ref>..HEAD (requires --since)
-    --since    Git ref for range scope (commit SHA from loop state)
+    --since    Git ref for range scope (commit SHA from state cursor (when supplied))
 
 Examples:
     ./detect_changes.sh
@@ -128,50 +129,30 @@ function parse_arguments {
                 ;;
             --scope)
                 if [[ $# -lt 2 ]]; then
-                    json_object_start
-                    json_field_string "status" "error" ","
-                    json_field_string "message" "--scope requires a value" ""
-                    json_object_end
-                    exit 0
+                    output_error "--scope requires a value"
                 fi
                 SCOPE="$2"
                 shift 2
                 ;;
             --since)
                 if [[ $# -lt 2 ]]; then
-                    json_object_start
-                    json_field_string "status" "error" ","
-                    json_field_string "message" "--since requires a value" ""
-                    json_object_end
-                    exit 0
+                    output_error "--since requires a value"
                 fi
                 SINCE_REF="$2"
                 shift 2
                 ;;
             *)
-                json_object_start
-                json_field_string "status" "error" ","
-                json_field_string "message" "Unknown argument: $1" ""
-                json_object_end
-                exit 0
+                output_error "Unknown argument: $1"
                 ;;
         esac
     done
 
     if [[ ${SCOPE} != "staged" && ${SCOPE} != "all" && ${SCOPE} != "range" ]]; then
-        json_object_start
-        json_field_string "status" "error" ","
-        json_field_string "message" "--scope must be staged, all, or range" ""
-        json_object_end
-        exit 0
+        output_error "--scope must be staged, all, or range"
     fi
 
     if [[ ${SCOPE} == "range" && -z ${SINCE_REF} ]]; then
-        json_object_start
-        json_field_string "status" "error" ","
-        json_field_string "message" "--scope range requires --since <ref>" ""
-        json_object_end
-        exit 0
+        output_error "--scope range requires --since <ref>"
     fi
 }
 
@@ -369,7 +350,7 @@ function append_docs_for_hook_path {
 # collect_affected_docs: Collect candidate documentation files
 #
 # When non-markdown changes or markdown deletes/renames exist, populate
-# AFFECTED_DOCS from loop globs, generic markdown scan, or hook defaults.
+# AFFECTED_DOCS from automation globs, generic markdown scan, or hook defaults.
 #
 # Globals:
 #   CHANGED_FILES - Source of change detection
@@ -474,11 +455,7 @@ function collect_affected_docs {
 #######################################
 function collect_changes {
     if ! git rev-parse --is-inside-work-tree > /dev/null 2>&1; then
-        json_object_start
-        json_field_string "status" "error" ","
-        json_field_string "message" "Not a git repository" ""
-        json_object_end
-        exit 0
+        output_error "Not a git repository"
     fi
 
     local diff_ref
@@ -531,6 +508,83 @@ function collect_changes {
 }
 
 #######################################
+# output_error: Print structured JSON error and exit
+#
+# Globals:
+#   SCOPE - Detection scope
+#   SINCE_REF - Git ref for range scope
+#   COMMIT_RANGE - Active diff range label
+#
+# Arguments:
+#   $1 - Error message
+#
+# Outputs:
+#   None
+#
+# Returns:
+#   Exits with code 1
+#
+# Usage:
+#   output_error "Not a git repository"
+#
+#######################################
+function output_error {
+    local message="$1"
+
+    if ! command -v jq &> /dev/null; then
+        json_emit_minimal_error "${message}"
+        exit 1
+    fi
+
+    json_object \
+        status "error" \
+        scope "${SCOPE}" \
+        since "${SINCE_REF}" \
+        commit_range "${COMMIT_RANGE}" \
+        skip "true" \
+        changed_files "[]" \
+        deleted_files "[]" \
+        renamed_files "[]" \
+        affected_docs "[]" \
+        message "${message}"
+    exit 1
+}
+
+#######################################
+# ensure_dependencies: Fail with detect error JSON when tools are missing
+#
+# Globals:
+#   None
+#
+# Arguments:
+#   $@ - Required tools/commands
+#
+# Outputs:
+#   None
+#
+# Returns:
+#   None (calls output_error on missing dependencies)
+#
+# Usage:
+#   ensure_dependencies bash git jq
+#
+#######################################
+function ensure_dependencies {
+    local -a missing_tools=()
+    local tool
+
+    while IFS= read -r tool; do
+        if [[ -n ${tool} ]]; then
+            missing_tools+=("${tool}")
+        fi
+    done < <(validate_dependencies "$@" || true)
+
+    if [[ ${#missing_tools[@]} -gt 0 ]]; then
+        output_error "Missing required tools: ${missing_tools[*]}. Please install them and ensure they are in PATH."
+    fi
+}
+
+#######################################
 # output_json: Print structured JSON result using lib/json.sh helpers
 #
 # Globals:
@@ -561,23 +615,16 @@ function output_json {
         skip="true"
     fi
 
-    local changed_arr deleted_arr renamed_arr affected_arr
-    changed_arr="$(json_string_array "${CHANGED_FILES[@]}")"
-    deleted_arr="$(json_string_array "${DELETED_FILES[@]}")"
-    renamed_arr="$(json_string_array "${RENAMED_FILES[@]}")"
-    affected_arr="$(json_string_array "${AFFECTED_DOCS[@]}")"
-
-    json_object_start
-    json_field_string "status" "ok" ","
-    json_field_string "scope" "${SCOPE}" ","
-    json_field_string "since" "${SINCE_REF}" ","
-    json_field_string "commit_range" "${COMMIT_RANGE}" ","
-    json_field_bool "skip" "${skip}" ","
-    json_field_array "changed_files" "${changed_arr}" ","
-    json_field_array "deleted_files" "${deleted_arr}" ","
-    json_field_array "renamed_files" "${renamed_arr}" ","
-    json_field_array "affected_docs" "${affected_arr}" ""
-    json_object_end
+    json_object \
+        status "ok" \
+        scope "${SCOPE}" \
+        since "${SINCE_REF}" \
+        commit_range "${COMMIT_RANGE}" \
+        skip "${skip}" \
+        changed_files "$(json_string_array "${CHANGED_FILES[@]}")" \
+        deleted_files "$(json_string_array "${DELETED_FILES[@]}")" \
+        renamed_files "$(json_string_array "${RENAMED_FILES[@]}")" \
+        affected_docs "$(json_string_array "${AFFECTED_DOCS[@]}")"
 }
 
 #######################################
@@ -657,6 +704,7 @@ function configure_detect_environment {
 #
 #######################################
 function main {
+    ensure_dependencies bash git jq
     configure_detect_environment
     parse_arguments "$@"
     collect_changes

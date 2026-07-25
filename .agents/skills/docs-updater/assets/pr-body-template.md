@@ -2,7 +2,7 @@
 PR-facing template for docs-updater automation (may_edit: true).
 
 Load ONLY at synthesis time, after triage and file edits complete.
-loop-finalize extracts ## Overview, ## Summary, and ## Verification for the PR body.
+The caller extracts ## Overview, ## Summary, and ## Verification for the PR body.
 
 Rules:
 - Keep top-level ## Overview, ## Summary, and ## Verification headings exactly as written.
@@ -16,13 +16,13 @@ Rules:
 ## Overview
 
 <!--
-  Trigger → Problem → Action in 1-2 sentences.
+  Trigger → Problem → Action in plain language.
 
-  GOOD: Docs drift scan found Skills inventory missing loop-refactor rows; this run updated specification.md and left three docs without matching tables unchanged.
-  BAD:  Documentation triage loop completed in apply mode.
+  GOOD: Docs drift scan found Skills inventory missing refactor skill rows; this run updated specification.md and left three docs without matching tables unchanged.
+  BAD:  Documentation triage automation completed in apply mode.
 -->
 
-<one or two sentences: trigger, problem, action — plain language for a reviewer>
+<summary: trigger, problem, action — plain language for a reviewer>
 
 ## Summary
 

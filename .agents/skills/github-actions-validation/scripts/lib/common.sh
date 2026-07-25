@@ -281,10 +281,52 @@ function log {
 }
 
 #######################################
-# validate_dependencies: Validate required command line tools
+# validate_dependencies: Report missing command-line tools
 #
 # Description:
 #   Checks that all required command line tools are available in PATH
+#
+# Globals:
+#   None
+#
+# Arguments:
+#   $@ - List of required tools/commands
+#
+# Outputs:
+#   Missing tool names to stdout (one per line) when any are absent
+#
+# Returns:
+#   0 when all tools are available; 1 when any are missing
+#
+# Usage:
+#   while IFS= read -r tool; do missing+=("$tool"); done < <(validate_dependencies bash git jq || true)
+#
+#######################################
+function validate_dependencies {
+    local -a required_tools=("$@")
+    local -a missing_tools=()
+    local tool
+
+    for tool in "${required_tools[@]}"; do
+        if ! command -v "${tool}" &> /dev/null; then
+            missing_tools+=("${tool}")
+        fi
+    done
+
+    if [[ ${#missing_tools[@]} -gt 0 ]]; then
+        printf '%s\n' "${missing_tools[@]}"
+        return 1
+    fi
+
+    log "INFO" "All required dependencies are available: ${required_tools[*]}"
+    return 0
+}
+
+#######################################
+# require_dependencies: Exit when required command-line tools are missing
+#
+# Description:
+#   Calls validate_dependencies and exits via error_exit on missing tools
 #
 # Globals:
 #   None
@@ -299,24 +341,22 @@ function log {
 #   None (exits on missing dependencies)
 #
 # Usage:
-#   validate_dependencies "aws" "jq" "docker"
+#   require_dependencies "aws" "jq" "docker"
 #
 #######################################
-function validate_dependencies {
-    local required_tools=("$@")
-    local missing_tools=()
+function require_dependencies {
+    local -a missing_tools=()
+    local tool
 
-    for tool in "${required_tools[@]}"; do
-        if ! command -v "$tool" &> /dev/null; then
-            missing_tools+=("$tool")
+    while IFS= read -r tool; do
+        if [[ -n ${tool} ]]; then
+            missing_tools+=("${tool}")
         fi
-    done
+    done < <(validate_dependencies "$@" || true)
 
     if [[ ${#missing_tools[@]} -gt 0 ]]; then
         error_exit "Missing required tools: ${missing_tools[*]}. Please install them and ensure they are in PATH."
     fi
-
-    log "INFO" "All required dependencies are available: ${required_tools[*]}"
 }
 
 #######################################

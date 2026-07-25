@@ -79,7 +79,7 @@ When `--check-function-docs` is passed to `validate.sh`, enforce [Google Shell S
 function my_function() {
 ```
 
-Required section headers in this order: `Globals:`, `Arguments:`, `Outputs:`, `Returns:`. Each section must have a body line (content or `None`). Use `scripts/fix_function_doc_order.sh` to normalize section order (accepts files or directories such as `scripts/lib/` and `.github/actions/`).
+Required section headers in this order: `Globals:`, `Arguments:`, `Outputs:`, `Returns:`. Each section must have a body line (content or `None`). When this skill ships `scripts/fix_function_doc_order.sh`, use it to normalize section order on the target file or directory.
 
 ## Error Handling
 

@@ -1,13 +1,13 @@
 #!/bin/bash
 #######################################
 # Description:
-#   Detect unreleased changelog-worthy commits for loop-changelog.
+#   Detect unreleased changelog-worthy commits for changelog automation.
 #
 # Usage: ./detect_changelog_commits.sh [--scope all|range] [--since <ref>]
-#   --scope    Change detection scope (default: range for loop-detect)
+#   --scope    Change detection scope (default: range for detect CLI)
 #              all: last CHANGELOG_MAX_COMMITS commits on HEAD (local debugging)
 #              range: git log <ref>..HEAD (requires --since; production path)
-#   --since    Git ref for range scope (commit SHA from loop state)
+#   --since    Git ref for range scope (commit SHA from state cursor (when supplied))
 #
 # Output:
 # - JSON object with changelog_file, changelog_exists, commit_range, commits[], repository, repository_url, compare_url, skip
@@ -17,12 +17,13 @@
 # - Include other explicit prefixed commits (renovate(scope):, chore(deps):, …)
 # - Skip subjects without a clear "prefix: description" shape
 # - Output structured JSON via shared lib/json.sh
-# - Exit 0 always (errors reported in JSON status field)
+# - Exit 0 on success; fatal errors emit status=error JSON and exit 1
 # - Source shared helpers from scripts/lib/all.sh (synced via scripts/self/ai/sync_skill_lib.sh)
 #
 # Dependencies:
 # - bash (POSIX bash, /bin/bash)
 # - git
+# - jq
 #
 # Optional environment:
 #   CHANGELOG_FILE            Target changelog path (default: CHANGELOG.md)
@@ -86,13 +87,13 @@ function show_usage {
 Usage: detect_changelog_commits.sh [--scope all|range] [--since <ref>]
 
 Description:
-    Detect unreleased changelog-worthy commits for loop-changelog.
+    Detect unreleased changelog-worthy commits for changelog automation.
 
 Options:
     --scope    Change detection scope (default: range)
                all: last CHANGELOG_MAX_COMMITS commits on HEAD (debugging)
                range: git log <ref>..HEAD (requires --since)
-    --since    Git ref for range scope (commit SHA from loop state)
+    --since    Git ref for range scope (commit SHA from state cursor (when supplied))
 
 Examples:
     ./detect_changelog_commits.sh --scope range --since abc1234
@@ -363,59 +364,16 @@ function resolve_compare_url {
 #
 #######################################
 function commit_object_json {
-    local sha="$1"
-    local commit_type="$2"
-    local scope="$3"
-    local breaking="$4"
-    local subject="$5"
-
-    cat << EOF
-{
-  "sha": "$(json_escape "${sha}")",
-  "type": "$(json_escape "${commit_type}")",
-  "scope": "$(json_escape "${scope}")",
-  "breaking": ${breaking},
-  "subject": "$(json_escape "${subject}")"
-}
-EOF
+    json_object \
+        sha "$1" \
+        type "$2" \
+        scope "$3" \
+        breaking "$4" \
+        subject "$5"
 }
 
 #######################################
-# commits_array_json: Join commit objects into a JSON array string
-#
-# Globals:
-#   COMMITS_JSON - Source commit objects
-#
-# Arguments:
-#   None
-#
-# Outputs:
-#   JSON array string to stdout
-#
-# Returns:
-#   0 on success
-#
-# Usage:
-#   commits_array="$(commits_array_json)"
-#
-#######################################
-function commits_array_json {
-    local joined="" commit
-    if [[ ${#COMMITS_JSON[@]} -eq 0 ]]; then
-        printf '%s' "[]"
-        return
-    fi
-    for commit in "${COMMITS_JSON[@]}"; do
-        if [[ -n ${joined} ]]; then
-            joined+=","
-        fi
-        joined+="${commit}"
-    done
-    printf '[%s]' "${joined}"
-}
-
-#######################################
-# detect_changelog_exists: Set CHANGELOG_EXISTS from CHANGELOG_FILE
+# output_error: Print structured JSON error and exit
 #
 # Globals:
 #   CHANGELOG_FILE - Path to inspect
@@ -470,10 +428,10 @@ function is_conventional_type {
 }
 
 #######################################
-# is_loop_maintenance_commit: Return 0 for loop-changelog automation commits
+# is_loop_maintenance_commit: Return 0 for changelog automation commits
 #
 # Description:
-#   Skip commits produced by this loop so they are not re-ingested on the next scan.
+#   Skip commits produced by this automation so they are not re-ingested on the next scan.
 #
 # Globals:
 #   None
@@ -524,7 +482,7 @@ function is_loop_maintenance_commit {
 #   None
 #
 # Returns:
-#   Exits with code 0
+#   Exits with code 1 after emitting error JSON
 #
 # Usage:
 #   output_error "Not a git repository"
@@ -532,22 +490,63 @@ function is_loop_maintenance_commit {
 #######################################
 function output_error {
     local message="$1"
-    json_object_start
-    json_field_string "status" "error" ","
-    json_field_string "scope" "${SCOPE}" ","
-    json_field_string "since" "${SINCE_REF}" ","
-    json_field_string "changelog_file" "${CHANGELOG_FILE}" ","
-    json_field_bool "changelog_exists" "${CHANGELOG_EXISTS}" ","
-    json_field_string "commit_range" "${COMMIT_RANGE}" ","
-    json_field_string "repository" "${REPOSITORY}" ","
-    json_field_string "repository_url" "${REPOSITORY_URL}" ","
-    json_field_string "compare_url" "${COMPARE_URL}" ","
-    json_field_bool "skip" "true" ","
-    json_field_array "commits" "[]" ","
-    json_field_array "releases" "[]" ","
-    json_field_string "message" "${message}" ""
-    json_object_end
-    exit 0
+
+    if ! command -v jq &> /dev/null; then
+        json_emit_minimal_error "${message}"
+        exit 1
+    fi
+
+    resolve_repository_context
+    resolve_compare_url
+    json_object \
+        status "error" \
+        scope "${SCOPE}" \
+        since "${SINCE_REF}" \
+        changelog_file "${CHANGELOG_FILE}" \
+        changelog_exists "${CHANGELOG_EXISTS}" \
+        commit_range "${COMMIT_RANGE}" \
+        repository "${REPOSITORY}" \
+        repository_url "${REPOSITORY_URL}" \
+        compare_url "${COMPARE_URL}" \
+        skip "true" \
+        commits "[]" \
+        releases "[]" \
+        message "${message}"
+    exit 1
+}
+
+#######################################
+# ensure_dependencies: Fail with detect error JSON when tools are missing
+#
+# Globals:
+#   None
+#
+# Arguments:
+#   $@ - Required tools/commands
+#
+# Outputs:
+#   None
+#
+# Returns:
+#   None (calls output_error on missing dependencies)
+#
+# Usage:
+#   ensure_dependencies bash git jq
+#
+#######################################
+function ensure_dependencies {
+    local -a missing_tools=()
+    local tool
+
+    while IFS= read -r tool; do
+        if [[ -n ${tool} ]]; then
+            missing_tools+=("${tool}")
+        fi
+    done < <(validate_dependencies "$@" || true)
+
+    if [[ ${#missing_tools[@]} -gt 0 ]]; then
+        output_error "Missing required tools: ${missing_tools[*]}. Please install them and ensure they are in PATH."
+    fi
 }
 
 #######################################
@@ -576,32 +575,27 @@ function output_error {
 #######################################
 function output_json {
     local skip="false"
-    local commits_array
-    local releases_array
 
     if [[ ${#COMMITS_JSON[@]} -eq 0 && ${#RELEASES_JSON[@]} -eq 0 ]]; then
         skip="true"
     fi
 
-    commits_array="$(commits_array_json)"
-    releases_array="$(releases_array_json)"
     resolve_repository_context
     resolve_compare_url
 
-    json_object_start
-    json_field_string "status" "ok" ","
-    json_field_string "scope" "${SCOPE}" ","
-    json_field_string "since" "${SINCE_REF}" ","
-    json_field_string "changelog_file" "${CHANGELOG_FILE}" ","
-    json_field_bool "changelog_exists" "${CHANGELOG_EXISTS}" ","
-    json_field_string "commit_range" "${COMMIT_RANGE}" ","
-    json_field_string "repository" "${REPOSITORY}" ","
-    json_field_string "repository_url" "${REPOSITORY_URL}" ","
-    json_field_string "compare_url" "${COMPARE_URL}" ","
-    json_field_bool "skip" "${skip}" ","
-    json_field_array "commits" "${commits_array}" ","
-    json_field_array "releases" "${releases_array}" ""
-    json_object_end
+    json_object \
+        status "ok" \
+        scope "${SCOPE}" \
+        since "${SINCE_REF}" \
+        changelog_file "${CHANGELOG_FILE}" \
+        changelog_exists "${CHANGELOG_EXISTS}" \
+        commit_range "${COMMIT_RANGE}" \
+        repository "${REPOSITORY}" \
+        repository_url "${REPOSITORY_URL}" \
+        compare_url "${COMPARE_URL}" \
+        skip "${skip}" \
+        commits "$(json_array "${COMMITS_JSON[@]}")" \
+        releases "$(json_array "${RELEASES_JSON[@]}")"
 }
 
 #######################################
@@ -747,52 +741,12 @@ function extract_release_version_from_subject {
 #
 #######################################
 function release_object_json {
-    local version="$1"
-    local tag="$2"
-    local tag_sha="$3"
-    local release_date="$4"
-    local commit_shas="$5"
-
-    cat << EOF
-{
-  "version": "$(json_escape "${version}")",
-  "tag": "$(json_escape "${tag}")",
-  "tag_sha": "$(json_escape "${tag_sha}")",
-  "date": "$(json_escape "${release_date}")",
-  "commit_shas": ${commit_shas}
-}
-EOF
-}
-
-#######################################
-# releases_array_json: Join release objects into a JSON array string
-#
-# Globals:
-#   None
-#
-# Arguments:
-#   None
-#
-# Outputs:
-#   JSON array string to stdout
-#
-# Returns:
-#   0 on success
-#
-#######################################
-function releases_array_json {
-    local joined="" release
-    if [[ ${#RELEASES_JSON[@]} -eq 0 ]]; then
-        printf '%s' "[]"
-        return
-    fi
-    for release in "${RELEASES_JSON[@]}"; do
-        if [[ -n ${joined} ]]; then
-            joined+=","
-        fi
-        joined+="${release}"
-    done
-    printf '[%s]' "${joined}"
+    json_object \
+        version "$1" \
+        tag "$2" \
+        tag_sha "$3" \
+        date "$4" \
+        commit_shas "$5"
 }
 
 #######################################
@@ -1014,13 +968,14 @@ function configure_detect_environment {
 #   None
 #
 # Returns:
-#   0 always
+#   0 on success; exits 1 after emitting error JSON on fatal errors
 #
 # Usage:
 #   main "$@"
 #
 #######################################
 function main {
+    ensure_dependencies bash git jq
     configure_detect_environment
     parse_arguments "$@"
     collect_commits

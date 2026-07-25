@@ -12,7 +12,7 @@ paths:
 
 - Scope covers creating and updating instruction/rule files: package sources (`**/instructions/*.instructions.md`) and distributed targets (`.cursor/rules/*.mdc`, `.kiro/steering/*.md`, `.claude/rules/*.md`).
 - G-03 (MUST): Keep `applyTo` globs precise to those rule paths — do not use broad trees such as `.claude/**/*.md` that also match skills and unrelated markdown.
-- G-04 (MUST): In agent-facing cross-links, use stem-based wording such as companion X rules (stem `x`) — never bare `*.instructions.md` filenames that disappear after `apm install`.
+- G-04 (MUST): In agent-facing cross-links, use stem-based wording such as companion X rules (stem `x`) — never bare `*.instructions.md` filenames that are not present after distribution to agent rule paths.
 - G-05 (MUST): When a companion instruction must guide production-file edits (for example tests paired with source), include those production globs in `applyTo` so the rules inject at edit time.
 - **DIST-01 (MUST)**: Keep distributable instruction content repository-neutral — any consumer project must be able to follow the rules without this config repository's layout.
   - Do not embed: consumer-project-specific paths, internal CI or workflow names, single canonical file references ("use `path/to/foo` as the reference"), or project-local test support APIs.
@@ -23,21 +23,21 @@ paths:
 
 ### Naming Conventions
 
-| Component                    | Rule                                              | Example                                      |
-| ---------------------------- | ------------------------------------------------- | -------------------------------------------- |
-| Package source file          | `<stem>.instructions.md`                          | `go.instructions.md`, `bats.instructions.md` |
-| Cursor (after `apm install`) | `.cursor/rules/<stem>.mdc`                        | `go.mdc`, `bats.mdc`                         |
-| Claude (after `apm install`) | `.claude/rules/<stem>.md`                         | `go.md`, `bats.md`                           |
-| Kiro (after `apm install`)   | `.kiro/steering/<stem>.md`                        | `go.md`                                      |
-| Title                        | `# AI Assistant Instructions for <target>`        | `# AI Assistant Instructions for Go`         |
-| Agent-facing cross-link      | Companion wording with stem — not source filename | companion Bats rules (stem `bats`)           |
+| Component               | Rule                                              | Example                                      |
+| ----------------------- | ------------------------------------------------- | -------------------------------------------- |
+| Package source file     | `<stem>.instructions.md`                          | `go.instructions.md`, `bats.instructions.md` |
+| Cursor (distributed)    | `.cursor/rules/<stem>.mdc`                        | `go.mdc`, `bats.mdc`                         |
+| Claude (distributed)    | `.claude/rules/<stem>.md`                         | `go.md`, `bats.md`                           |
+| Kiro (distributed)      | `.kiro/steering/<stem>.md`                        | `go.md`                                      |
+| Title                   | `# AI Assistant Instructions for <target>`        | `# AI Assistant Instructions for Go`         |
+| Agent-facing cross-link | Companion wording with stem — not source filename | companion Bats rules (stem `bats`)           |
 
 ### Standards Content
 
 - **STD-01 (MUST)**: A Naming Conventions table exists - without it, component naming becomes inconsistent.
 - **STD-02 (SHOULD)**: Tool-specific standards are documented when applicable.
 - **STD-03 (MUST)**: The documentation level matches other instruction files - inconsistent granularity makes cross-file comparison difficult.
-- **STD-04 (MUST)**: When instructions are APM-distributed, Naming Conventions document the source stem → Cursor / Claude / Kiro path mapping so agents can resolve companions after install.
+- **STD-04 (MUST)**: When instructions are distributed to agent rule paths, Naming Conventions document the source stem → Cursor / Claude / Kiro path mapping so agents can resolve companions at runtime.
 
 ### Structure
 
@@ -145,7 +145,7 @@ paths:
 - STD-03 (MUST): Consistency
   - Check: Documentation level matches other instructions files
 - STD-04 (MUST): Distribution Naming Documented
-  - Check: When instructions are APM-distributed, does Naming Conventions document source stem → Cursor `.mdc` / Claude `.md` / Kiro steering mapping?
+  - Check: When instructions are distributed to agent rule paths, does Naming Conventions document source stem → Cursor `.mdc` / Claude `.md` / Kiro steering mapping?
 
 ### Testing and Validation Chapter (TEST)
 

@@ -1,12 +1,21 @@
-## Input Schema
+## Exit Codes and Error Envelope
 
-Provided via prompt context by the calling workflow (loop-prompt-generate action) or interactive detect script.
+| Exit code | Meaning                                                                      |
+| --------- | ---------------------------------------------------------------------------- |
+| 0         | Success — stdout is detect script JSON. Parse per schema below and continue. |
+| 1         | Fatal — stdout is detect script error JSON. Read stdout, then **stop**.      |
+
+Detect scripts list `jq` as a required dependency. When `jq` is unavailable at fatal-error emission, stdout may be only `{status, skip, message}` (bootstrap JSON) instead of the full skill-specific field set below.
+
+## Detect script stdout (exit 0 only)
+
+Field set emitted by this skill's detect script or an equivalent caller-supplied JSON object.
 
 ```json
 {
-  "since": "abc1234",
+  "status": "ok",
   "scope": "range",
-  "level": "L2",
+  "since": "abc1234",
   "skip": false,
   "failures": [
     {
@@ -25,24 +34,24 @@ Provided via prompt context by the calling workflow (loop-prompt-generate action
 }
 ```
 
-| Field                        | Type    | Description                                                                                          |
-| ---------------------------- | ------- | ---------------------------------------------------------------------------------------------------- |
-| `since`                      | string  | Last processed SHA from loop state                                                                   |
-| `scope`                      | string  | Detect scope (`range` from loop-detect)                                                              |
-| `level`                      | enum    | Caller metadata only (`L1`, `L2`, `L3`) — do not branch on this field; see `may_edit` in Constraints |
-| `skip`                       | boolean | When true, no actionable work (detect script found no failures)                                      |
-| `failures`                   | array   | Actionable CI failures to assess (may be empty)                                                      |
-| `ignored`                    | array   | Skipped runs (ledger, filters, non-actionable types) for SKILL Ignored section                       |
-| `failures[].workflow_name`   | string  | Failed workflow display name                                                                         |
-| `failures[].workflow_run_id` | string  | GitHub Actions run ID                                                                                |
-| `failures[].head_sha`        | string  | Commit SHA that failed                                                                               |
-| `failures[].head_branch`     | string  | Branch name                                                                                          |
-| `failures[].job_name`        | string  | Failed job name                                                                                      |
-| `failures[].failure_type`    | enum    | `regression`, `flake`, `infra`, or `env` (optional hint from detect script; Skill reclassifies)      |
-| `failures[].log_excerpt`     | string  | Truncated failed log lines                                                                           |
-| `failures[].run_url`         | string  | Link to the workflow run                                                                             |
-| `failures[].source_commit`   | string  | Commit SHA for the failure (same as `head_sha` from detect script)                                   |
-| `failures[].reason`          | string  | Human-readable failure summary                                                                       |
+| Field                        | Type    | Description                                                                                     |
+| ---------------------------- | ------- | ----------------------------------------------------------------------------------------------- |
+| `status`                     | string  | `ok` on success path                                                                            |
+| `scope`                      | string  | Detect scope (for example `range`)                                                              |
+| `since`                      | string  | Last processed SHA from caller state cursor (when supplied)                                     |
+| `skip`                       | boolean | When true, no actionable work (detect script found no failures)                                 |
+| `failures`                   | array   | Actionable CI failures to assess (may be empty)                                                 |
+| `ignored`                    | array   | Skipped runs (ledger, filters, non-actionable types) for SKILL Ignored section                  |
+| `failures[].workflow_name`   | string  | Failed workflow display name                                                                    |
+| `failures[].workflow_run_id` | string  | GitHub Actions run ID                                                                           |
+| `failures[].head_sha`        | string  | Commit SHA that failed                                                                          |
+| `failures[].head_branch`     | string  | Branch name                                                                                     |
+| `failures[].job_name`        | string  | Failed job name                                                                                 |
+| `failures[].failure_type`    | enum    | `regression`, `flake`, `infra`, or `env` (optional hint from detect script; Skill reclassifies) |
+| `failures[].log_excerpt`     | string  | Truncated failed log lines                                                                      |
+| `failures[].run_url`         | string  | Link to the workflow run                                                                        |
+| `failures[].source_commit`   | string  | Commit SHA for the failure (same as `head_sha` from detect script)                              |
+| `failures[].reason`          | string  | Human-readable failure summary                                                                  |
 
 `failures` may be an empty array.
 

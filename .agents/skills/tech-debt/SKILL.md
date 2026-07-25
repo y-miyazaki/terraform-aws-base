@@ -2,8 +2,9 @@
 name: tech-debt
 description: >-
   Discover and classify technical debt from mechanical signals, apply closed-set
-  fixes when requested, and publish structured reports under docs/report/tech-debt/.
-  Use for scheduled loop scans, ad-hoc surveys from detection JSON, or when the user
+  fixes when requested, and publish structured reports (override via
+  TECH_DEBT_DIR or report_file from detect JSON / Constraints).
+  Use for scheduled automation scans, ad-hoc surveys from detection JSON, or when the user
   asks to fix safe documentation/dependency debt. Default is survey only; write
   report_file and apply fixes only when the user explicitly requests apply or
   automation sets may_edit in Constraints. Delegate structural work to refactor.
@@ -17,7 +18,7 @@ metadata:
 
 ## Input
 
-- **Interactive:** natural-language request; run `bash scripts/detect_tech_debt.sh` unless detect JSON is already in context — parse per [category-input-schema.md](references/category-input-schema.md)
+- **Interactive:** natural-language request; run this skill's detect script unless detect JSON is already in context — parse per [category-input-schema.md](references/category-input-schema.md)
 - **Automation:** detect JSON in prompt; read `may_edit`, `write_target`, and `report_file` from `## Constraints` per [category-automation-envelope.md](references/category-automation-envelope.md)
 
 Path allowlist, when present, arrives in `## Constraints`.
@@ -39,7 +40,7 @@ Tech-debt report per [common-output-format.md](references/common-output-format.m
 - Structural refactors or architecture changes (use refactor)
 - CI repair (use ci-sweeper)
 - Security remediation beyond reporting
-- Edit loop state files (bundled by finalize after verification)
+- Edit caller state files (owned by the caller after verification)
 
 ## Reference Files Guide
 
@@ -59,13 +60,13 @@ Resolve **may_edit** before classifying signals:
 | Source                                                      | `may_edit`                                                                                                               |
 | ----------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
 | Interactive — default                                       | `false` — survey only; do not write `report_file`                                                                        |
-| Interactive — apply language in the same request            | `true` — examples: 直して, apply fixes, write the report, update docs/report/tech-debt                                   |
+| Interactive — apply language in the same request            | `true` — examples: 直して, apply fixes, write the report, update the report path                                         |
 | Interactive — follow-up after a prior survey in the session | `true` when the user asks to fix, apply, or write the report                                                             |
 | Automation — `## Constraints`                               | `may_edit: true` or `may_edit: false` from [category-automation-envelope.md](references/category-automation-envelope.md) |
 
-When `may_edit` is `true`, resolve `write_target` and `report_file`: on the **interactive** path use `write_target: report` and `report_file` from detect JSON (`report_file` field) or the user request; on the **automation** path read both from `## Constraints`. Do not branch on `level` or `delivery`.
+When `may_edit` is `true`, resolve `write_target` and `report_file`: on the **interactive** path use `write_target: report` and `report_file` from detect JSON (`report_file` field) or the user request; on the **automation** path read both from `## Constraints`. Do not branch on other caller metadata outside `## Constraints`.
 
-1. Run `scripts/detect_tech_debt.sh` (interactive) or parse detect JSON per [category-input-schema.md](references/category-input-schema.md).
+1. Run this skill's detect script (interactive) or parse detect JSON per [category-input-schema.md](references/category-input-schema.md). On non-zero exit, read stdout and stop.
 2. On the automation path, read [category-automation-envelope.md](references/category-automation-envelope.md) for Constraints, PR templates, and Session Metrics.
 3. Read `previous_report` when set. Compare per [common-checklist.md](references/common-checklist.md#previous-report-comparison). If `skip` or both `signals` and `hotspots` are empty, emit survey no-op; on automation path append `## Session Metrics` per [category-automation-envelope.md](references/category-automation-envelope.md); stop.
 4. For each signal/hotspot, read ±30 lines. Classify per [category-debt-taxonomy.md](references/category-debt-taxonomy.md). Assign Delegate per taxonomy row.
@@ -78,6 +79,7 @@ When `may_edit` is `true`, resolve `write_target` and `report_file`: on the **in
 
 | Condition                                                              | Severity    | Action                                                                             |
 | ---------------------------------------------------------------------- | ----------- | ---------------------------------------------------------------------------------- |
+| Detect script non-zero exit or `status: "error"`                       | Fatal       | Read stdout; stop — do not treat as success-path detect JSON                       |
 | `skip` or empty signals/hotspots                                       | Info        | Report skip outcome; stop                                                          |
 | Path outside allowlist/denylist                                        | Recoverable | Classify Watch; do not edit                                                        |
 | `previous_report` path missing                                         | Recoverable | Skip comparison; note in Overview                                                  |

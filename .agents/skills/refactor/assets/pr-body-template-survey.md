@@ -7,11 +7,11 @@ Load at synthesis time after survey output is complete.
 ## Overview
 
 <!--
-  GOOD: Surveyed sync scripts under scripts/ and found duplication in sync_skill_lib.sh and an oversized detect_tech_debt.sh; no edits applied.
+  GOOD: Surveyed in-scope shell scripts and found duplication in two deploy helpers and an oversized detect script; no edits applied.
   BAD:  Refactor run finished.
 -->
 
-<one or two sentences: scope surveyed, dominant candidates by name, no edits applied>
+<summary: scope surveyed, dominant candidates by name, no edits applied>
 
 ## Summary
 

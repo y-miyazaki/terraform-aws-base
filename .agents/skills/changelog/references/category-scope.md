@@ -8,7 +8,7 @@
 | **Interactive** — user `allowlist` / `denylist` | User allowlist globs only (within skill-specific limits)                                                              | User denylist globs                                                  |
 | **Automation** — `## Constraints`               | `Allowed paths: …` when the caller supplies an allowlist                                                              | Caller denylist — enforced by the automation verifier (may be empty) |
 
-Skills do **not** ship a repository-wide default denylist. Per-repo deny rules belong in caller configuration, repository instructions (`AGENTS.md`), or explicit user constraints — not in skill references.
+Skills do **not** ship a repository-wide default denylist.
 
 Do **not** treat automation-only allowlist examples as interactive scope. See [category-automation-envelope.md](category-automation-envelope.md) on the automation path.
 

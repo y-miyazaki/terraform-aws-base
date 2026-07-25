@@ -3,7 +3,7 @@
   "evals": [
     {
       "id": 0,
-      "prompt": "Use docs-updater (interactive/hook path). Step 1 output from `scripts/detect_changes.sh` is in context.detect — parse that JSON only; do not run detect_changes.sh or invent paths. With skip=false, triage affected_docs for the renamed workflow. Do not edit files. Return interactive report per common-output-format.md with ## Summary (Status: updated), ## Changes listing docs/guide.md and mkdocs.yml, and ## Skipped Items.",
+      "prompt": "Use docs-updater (interactive/hook path). Step 1 output from this skill's detect script is in context.detect — parse that JSON only; do not run the detect script or invent paths. With skip=false, triage affected_docs for the renamed workflow. Do not edit files. Return interactive report per common-output-format.md with ## Summary (Status: updated), ## Changes listing docs/guide.md and mkdocs.yml, and ## Skipped Items.",
       "expected_output": "Interactive report derived from detect JSON with Status updated, Changes for affected_docs, and Skipped Items",
       "files": ["evals/files/detect-hook-staged.json"],
       "expectations": [
@@ -17,7 +17,7 @@
     },
     {
       "id": 1,
-      "prompt": "Use docs-updater (automation path). ## Constraints may_edit: false. Context JSON: skip=false, findings=[{ \"file\": \"docs/guide.md\", \"reason\": \"stale workflow path\", \"source_commit\": \"abc1234\" }]. Do not edit files. Emit survey shape per common-output-format-loop.md with ### Candidates, Session Metrics with may_edit false, plus ## Overview and ## Summary for PR composition.",
+      "prompt": "Use docs-updater (automation path). ## Constraints may_edit: false. Context JSON: skip=false, findings=[{ \"file\": \"docs/guide.md\", \"reason\": \"stale workflow path\", \"source_commit\": \"abc1234\" }]. Do not edit files. Emit survey shape per common-output-format-automation.md with ### Candidates, Session Metrics with may_edit false, plus ## Overview and ## Summary for PR composition.",
       "expected_output": "Automation triage report with survey shape and PR Overview/Summary",
       "files": [],
       "expectations": [
@@ -30,7 +30,7 @@
     },
     {
       "id": 2,
-      "prompt": "Use docs-updater (interactive/hook path). Step 1 output from `scripts/detect_changes.sh` is in context.detect — parse that JSON only. With skip=false, triage affected_docs for the renamed workflow. Survey only — do not edit files. Return interactive report per common-output-format.md with ## Overview, ## Summary, and ### Candidates. State no edits applied in Overview.",
+      "prompt": "Use docs-updater (interactive/hook path). Step 1 output from this skill's detect script is in context.detect — parse that JSON only. With skip=false, triage affected_docs for the renamed workflow. Survey only — do not edit files. Return interactive report per common-output-format.md with ## Overview, ## Summary, and ### Candidates. State no edits applied in Overview.",
       "expected_output": "Rename triage survey with Candidates for affected_docs",
       "files": ["evals/files/detect-hook-staged.json"],
       "expectations": [

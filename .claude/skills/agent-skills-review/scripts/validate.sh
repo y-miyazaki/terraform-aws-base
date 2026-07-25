@@ -19,7 +19,7 @@
 #
 # Dependencies:
 # - bash (POSIX bash, /bin/bash)
-# - grep, wc (standard Unix utilities)
+# - grep, jq, wc (standard Unix utilities)
 # - yamllint (optional, for YAML syntax validation)
 #
 # Examples:
@@ -753,41 +753,23 @@ function check_portable_reference_paths {
 #######################################
 function output_json {
     local overall_status="PASS"
+    local -a results=()
+    local i check status detail
 
-    # Determine overall status
     for status in "${check_statuses[@]}"; do
         [[ $status == "FAIL" ]] && overall_status="FAIL"
     done
 
-    # Output JSON header
-    cat << 'EOF'
-{
-  "validation_results": [
-EOF
-
-    # Output each validation result
     for i in "${!check_names[@]}"; do
-        local check="${check_names[$i]}"
-        local status="${check_statuses[$i]}"
-        local detail="${check_details_json[$i]}"
-
-        # Add comma separator for all but first item
-        [[ $i -gt 0 ]] && cat << 'EOF'
-,
-EOF
-
-        local escaped_detail
-        escaped_detail="$(json_escape "$detail")"
-        printf '    {"check": "%s", "status": "%s", "detail": "%s"}' "$check" "$status" "$escaped_detail"
+        check="${check_names[$i]}"
+        status="${check_statuses[$i]}"
+        detail="${check_details_json[$i]}"
+        results+=("$(json_object check "${check}" status "${status}" detail "${detail}")")
     done
 
-    # Output JSON footer
-    cat << EOF
-
-  ],
-  "overall_status": "$overall_status"
-}
-EOF
+    json_object \
+        validation_results "$(json_array "${results[@]}")" \
+        overall_status "${overall_status}"
 }
 
 #######################################
@@ -816,7 +798,7 @@ EOF
 #######################################
 function main {
     # Validate required dependencies
-    validate_dependencies "grep" "wc" "realpath"
+    require_dependencies "grep" "jq" "realpath" "wc"
 
     # Parse and validate arguments
     parse_arguments "$@"

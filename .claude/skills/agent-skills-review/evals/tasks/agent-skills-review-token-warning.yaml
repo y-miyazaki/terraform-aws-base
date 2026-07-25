@@ -12,7 +12,7 @@ tags:
 inputs:
   prompt:
     "Use agent-skills-review. Assume the target SKILL.md exceeds 500 tokens
-    (e.g., 612 tokens) and matches sibling loop-skill documentation depth.
+    (e.g., 612 tokens) and matches sibling automation-skill documentation depth.
     Return sections ## Checks Summary, ## Checks (Failed/Deferred Only), and ## Issues.
     Report Q-09 token budget as advisory in ## Issues with token count evidence.
     Do not list Q-09 in ## Checks (Failed/Deferred Only)."

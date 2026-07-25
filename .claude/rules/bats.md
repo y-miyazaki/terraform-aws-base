@@ -11,29 +11,30 @@ paths:
 - Scope covers authoring Bats suites (`*.bats`) and applies when editing Shell scripts (`*.sh`) that require pairing a suite.
 - Shell script implementation rules remain in the companion Shell Script rules (stem `shell-script`); this file defines test-suite conventions only.
 - When adding or materially changing a shell script or sourced library, add or update the matching Bats suite in the same change (see companion Shell Script rules TEST-00).
-- After `apm install`, stem `bats` is distributed as `.cursor/rules/bats.mdc` (Cursor) or `.claude/rules/bats.md` (Claude) — not as `bats.instructions.md`.
+- Bats does not mandate a global directory layout — follow the **repository's established test tree** (discover from existing `*.bats` files, CI config, or maintainer docs). Many repositories use `test/bats/` with path mirroring; others differ.
+- When distributed to agent rule paths, stem `bats` resolves as `.cursor/rules/bats.mdc` (Cursor), `.claude/rules/bats.md` (Claude), or `.kiro/steering/bats.md` (Kiro) — not as `bats.instructions.md`.
 
 ## Standards
 
 ### Naming Conventions
 
-| Component        | Rule                                              | Example                             |
-| ---------------- | ------------------------------------------------- | ----------------------------------- |
-| Suite file       | snake_case; mirror source path under `test/bats/` | `scripts/lib/common.bats`           |
-| Support helper   | snake_case `.bash` under `test/bats/support/`     | `common.bash`, `mock_cli.bash`      |
-| `@test` name     | Descriptive sentence (lowercase)                  | `parse_args accepts --verbose flag` |
-| Package constant | UPPER_SNAKE_CASE                                  | `TARGET_SCRIPT`, `FIXTURE_DIR`      |
+| Component        | Rule                                                                 | Example                                      |
+| ---------------- | -------------------------------------------------------------------- | -------------------------------------------- |
+| Suite file       | snake_case; when the repo mirrors paths, match the source under test | `lib/common.bats` mirroring `lib/common.sh`  |
+| Support helper   | snake_case `.bash` under the repository bats support dir when used   | `common.bash`, `mock_cli.bash` in `support/` |
+| `@test` name     | Descriptive sentence (lowercase)                                     | `parse_args accepts --verbose flag`          |
+| Package constant | UPPER_SNAKE_CASE                                                     | `TARGET_SCRIPT`, `FIXTURE_DIR`               |
 
 ### Suite File Structure
 
-Required order for every `test/bats/**/*.bats` file:
+Required order for every repository `*.bats` suite file:
 
 1. `#!/usr/bin/env bats`
 2. Optional `# shellcheck disable=…` line(s)
 3. Header comment block:
    - `# Tests for <repo-relative path>` (required)
    - `# Use cases:` followed by one `# - …` bullet per covered scenario (required)
-4. Optional project support preamble (load `test/bats/support/common.bash` or equivalent when the repository provides it)
+4. Optional project support preamble (load shared support when the repository provides it)
 5. Target constants (`TARGET_SCRIPT`, `TARGET_LIB`, …) when needed
 6. `setup()` — source script(s), export env, create temp state
 7. `teardown()` — when `setup()` creates temp files or dirs
@@ -45,7 +46,7 @@ Example header:
 #!/usr/bin/env bats
 # shellcheck disable=SC2030,SC2031,SC2034,SC2154
 
-# Tests for scripts/lib/common.sh
+# Tests for lib/common.sh
 #
 # Use cases:
 # - execute_command runs and logs when VERBOSE=true
@@ -53,7 +54,7 @@ Example header:
 # - is_dry_run / log behave for VERBOSE and DRY_RUN flags
 ```
 
-When the repository provides `test/bats/support/common.bash`, use a walk-up loader such as:
+When the repository provides shared support (for example `support/common.bash`), use a walk-up loader such as:
 
 ```bash
 _bats_support="$(dirname "${BATS_TEST_FILENAME}")"
@@ -66,10 +67,10 @@ source "${_bats_support}/support/common.bash"
 
 ### Support Library
 
-| File                            | Role                                                        |
-| ------------------------------- | ----------------------------------------------------------- |
-| `test/bats/support/common.bash` | Optional shared helpers (source paths, fixtures, temp dirs) |
-| `test/bats/support/*.bash`      | Domain mocks; load from `setup()` or per-test as needed     |
+| Location                         | Role                                                        |
+| -------------------------------- | ----------------------------------------------------------- |
+| Repository `support/common.bash` | Optional shared helpers (source paths, fixtures, temp dirs) |
+| Repository `support/*.bash`      | Domain mocks; load from `setup()` or per-test as needed     |
 
 Prefer [bats-support](https://github.com/bats-core/bats-support) and [bats-assert](https://github.com/bats-core/bats-assert) when the project adopts them.
 
@@ -77,14 +78,16 @@ Prefer [bats-support](https://github.com/bats-core/bats-support) and [bats-asser
 
 ### File Layout (BAT)
 
-- BAT-01 (MUST): Mirror Source Path
-  - Check: Is the suite placed under `test/bats/` with the same relative path as the script or library under test?
+- BAT-01 (MUST): Pair Script With Suite
+  - Check: When the repository pairs shell scripts with Bats suites, is a suite added or updated in the same change as the script or library?
+- BAT-01b (SHOULD): Mirror Path When Repository Does
+  - Check: When the repository mirrors script paths under a bats root, is the suite placed with the same relative path as the script or library under test?
 - BAT-02 (MUST): Header Target Path
   - Check: Does the header comment name the repo-relative path of the script or library under test?
 - BAT-03 (MUST): Header Use Cases
   - Check: Does the header include `# Use cases:` with one `# - …` bullet per scenario the suite is meant to guarantee (not a dump of every `@test` name — group related assertions)?
 - BAT-04 (SHOULD): Shared Support Helpers
-  - Check: Are repeated setup paths centralized in `test/bats/support/` instead of copied into every suite?
+  - Check: Are repeated setup paths centralized in repository support helpers instead of copied into every suite?
 
 ### Setup and Teardown (SETUP)
 
@@ -111,7 +114,7 @@ Prefer [bats-support](https://github.com/bats-core/bats-support) and [bats-asser
 ### Mocking (MOCK)
 
 - MOCK-01 (SHOULD): Centralize CLI Mocks
-  - Check: Are external CLI mocks placed under `BATS_TEST_TMPDIR` or `test/bats/support/` helpers, with `PATH` prepended in the test?
+  - Check: Are external CLI mocks placed under `BATS_TEST_TMPDIR` or repository support helpers, with `PATH` prepended in the test?
 
 ### Anti-Patterns
 
@@ -121,16 +124,17 @@ Prefer [bats-support](https://github.com/bats-core/bats-support) and [bats-asser
 - Omitting `# Use cases:` or leaving it empty when adding or expanding a suite
 - Real secrets or live tokens in fixtures — use placeholders and assert redaction behavior
 - Skipping `teardown()` when `setup()` writes temp files or directories
+- Mandating `test/bats/` when the repository uses a different bats root — discover and match existing layout
 
 ### Code Modification Guidelines
 
-- Add or update suites under `test/bats/` mirroring the changed script path in the same change as the script.
-- Reuse `test/bats/support/` helpers; extend shared support instead of copying preamble logic.
+- Add or update the paired Bats suite in the same change as the script; follow the repository's established bats layout.
+- Reuse repository support helpers; extend shared support instead of copying preamble logic.
 - Shell script DOC/header rules remain in the companion Shell Script rules (stem `shell-script`); do not duplicate them here.
 
 ## Testing and Validation
 
-On-demand suite verification: see shell-script-validation skill SKILL.md, or run `bats` against the changed suite.
+On-demand suite verification: see shell-script-validation skill SKILL.md, or run `bats` against the changed suite (use the command or path the repository documents).
 
 References: [bats-core writing tests](https://bats-core.readthedocs.io/en/stable/writing-tests.html), [bats-core tutorial](https://bats-core.readthedocs.io/en/stable/tutorial.html). Shell authoring: companion Shell Script rules (stem `shell-script`).
 
