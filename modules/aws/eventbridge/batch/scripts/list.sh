@@ -94,7 +94,7 @@ function main {
         exit 0
     fi
 
-    joined=$(printf '%s\n' "${job_queues[@]}" | jq -R . | jq -s 'join(",")')
+    joined=$(printf '%s\n' "${job_queues[@]}" | jq -R . | jq -s -r 'join(",")')
 
     jq -n --arg list "$joined" '{list_job_queue: $list}'
 }

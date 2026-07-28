@@ -96,12 +96,12 @@ function main {
 
     # Output as JSON
     if [[ ${#list[@]} -eq 0 ]]; then
-        echo '{"list": ""}'
+        jq -n --arg list "" '{list: $list}'
         exit 0
     fi
 
-    joined=$(printf '%s\n' "${list[@]}" | jq -R . | jq -s 'join(",")')
-    echo "{\"list\": \"$joined\"}"
+    joined=$(printf '%s\n' "${list[@]}" | jq -R . | jq -s -r 'join(",")')
+    jq -n --arg list "$joined" '{list: $list}'
 }
 
 # Only call main if script is executed directly

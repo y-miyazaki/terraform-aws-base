@@ -89,7 +89,7 @@ function main {
     mapfile -t clusters < <(aws rds describe-db-clusters --query 'DBClusters[].DBClusterIdentifier' --output text | tr '\t' '\n')
 
     # Output as JSON with comma-separated list
-    joined=$(printf '%s\n' "${clusters[@]}" | jq -R . | jq -s 'join(",")')
+    joined=$(printf '%s\n' "${clusters[@]}" | jq -R . | jq -s -r 'join(",")')
 
     jq -n --arg list "$joined" '{list_db_cluster_identifier: $list}'
 }

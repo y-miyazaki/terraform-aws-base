@@ -169,19 +169,46 @@ function main {
 
     # Output as JSON
     if [[ ${#list_ecs_cluster[@]} -eq 0 ]]; then
-        echo '{"list_ecs_cluster": "", "list_ecs_service": "", "list_desired_count": "", "list_has_autoscaling": "", "list_autoscaling_min": "", "list_autoscaling_max": ""}'
+        jq -n \
+            --arg list_ecs_cluster "" \
+            --arg list_ecs_service "" \
+            --arg list_desired_count "" \
+            --arg list_has_autoscaling "" \
+            --arg list_autoscaling_min "" \
+            --arg list_autoscaling_max "" \
+            '{
+                list_ecs_cluster: $list_ecs_cluster,
+                list_ecs_service: $list_ecs_service,
+                list_desired_count: $list_desired_count,
+                list_has_autoscaling: $list_has_autoscaling,
+                list_autoscaling_min: $list_autoscaling_min,
+                list_autoscaling_max: $list_autoscaling_max
+            }'
         exit 0
     fi
 
-    cluster_joined=$(printf '%s\n' "${list_ecs_cluster[@]}" | jq -R . | jq -s 'join(",")')
-    service_joined=$(printf '%s\n' "${list_ecs_service[@]}" | jq -R . | jq -s 'join(",")')
-    count_joined=$(printf '%s\n' "${list_desired_count[@]}" | jq -R . | jq -s 'join(",")')
-    has_autoscaling_joined=$(printf '%s\n' "${list_has_autoscaling[@]}" | jq -R . | jq -s 'join(",")')
-    autoscaling_min_joined=$(printf '%s\n' "${list_autoscaling_min[@]}" | jq -R . | jq -s 'join(",")')
-    autoscaling_max_joined=$(printf '%s\n' "${list_autoscaling_max[@]}" | jq -R . | jq -s 'join(",")')
+    cluster_joined=$(printf '%s\n' "${list_ecs_cluster[@]}" | jq -R . | jq -s -r 'join(",")')
+    service_joined=$(printf '%s\n' "${list_ecs_service[@]}" | jq -R . | jq -s -r 'join(",")')
+    count_joined=$(printf '%s\n' "${list_desired_count[@]}" | jq -R . | jq -s -r 'join(",")')
+    has_autoscaling_joined=$(printf '%s\n' "${list_has_autoscaling[@]}" | jq -R . | jq -s -r 'join(",")')
+    autoscaling_min_joined=$(printf '%s\n' "${list_autoscaling_min[@]}" | jq -R . | jq -s -r 'join(",")')
+    autoscaling_max_joined=$(printf '%s\n' "${list_autoscaling_max[@]}" | jq -R . | jq -s -r 'join(",")')
 
-    # Output JSON
-    echo "{\"list_ecs_cluster\": \"$cluster_joined\", \"list_ecs_service\": \"$service_joined\", \"list_desired_count\": \"$count_joined\", \"list_has_autoscaling\": \"$has_autoscaling_joined\", \"list_autoscaling_min\": \"$autoscaling_min_joined\", \"list_autoscaling_max\": \"$autoscaling_max_joined\"}"
+    jq -n \
+        --arg list_ecs_cluster "$cluster_joined" \
+        --arg list_ecs_service "$service_joined" \
+        --arg list_desired_count "$count_joined" \
+        --arg list_has_autoscaling "$has_autoscaling_joined" \
+        --arg list_autoscaling_min "$autoscaling_min_joined" \
+        --arg list_autoscaling_max "$autoscaling_max_joined" \
+        '{
+            list_ecs_cluster: $list_ecs_cluster,
+            list_ecs_service: $list_ecs_service,
+            list_desired_count: $list_desired_count,
+            list_has_autoscaling: $list_has_autoscaling,
+            list_autoscaling_min: $list_autoscaling_min,
+            list_autoscaling_max: $list_autoscaling_max
+        }'
 }
 
 # Only call main if script is executed directly
