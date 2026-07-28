@@ -808,7 +808,7 @@ main() {
     validate_parameters
 
     # Validate dependencies
-    validate_dependencies "aws" "jq" "java" "curl"
+    require_dependencies "aws" "jq" "java" "curl"
 
     # Register cleanup function
     trap cleanup EXIT INT TERM

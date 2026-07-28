@@ -193,7 +193,7 @@ function main {
     fi
 
     # Validate dependencies
-    validate_dependencies "docker"
+    require_dependencies "docker"
 
     # Validate module exists
     validate_module "$module_name"

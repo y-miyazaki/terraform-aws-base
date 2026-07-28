@@ -540,7 +540,7 @@ function main {
     start_time=$(date +%s)
 
     # Validate dependencies
-    validate_dependencies "aws" "jq"
+    require_dependencies "aws" "jq"
 
     # Check AWS credentials before any AWS CLI usage
     check_aws_credentials || error_exit "AWS credentials are not set or invalid."

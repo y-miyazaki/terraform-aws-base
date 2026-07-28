@@ -712,7 +712,7 @@ function run_race_tests {
 function main {
     parse_arguments "$@"
     start_time=$(date +%s)
-    validate_dependencies "go" "golangci-lint"
+    require_dependencies "go" "golangci-lint"
     TARGET_PATTERN=$(determine_target_pattern "$TARGET_DIR")
     echo_section "Starting Go code quality checks"
     log "INFO" "Target input: $TARGET_DIR"

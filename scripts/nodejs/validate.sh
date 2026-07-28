@@ -662,7 +662,7 @@ function main {
     start_time=$(date +%s)
 
     # Validate required dependencies
-    validate_dependencies "node" "npm"
+    require_dependencies "node" "npm"
 
     echo_section "Starting Node.js code quality checks"
     log "INFO" "Target directory: $TARGET_DIR"

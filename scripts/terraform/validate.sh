@@ -460,7 +460,7 @@ function main {
     if [[ $GENERATE_DOCS == "true" ]]; then
         required_tools+=("terraform-docs")
     fi
-    validate_dependencies "${required_tools[@]}"
+    require_dependencies "${required_tools[@]}"
 
     echo_section "Starting Terraform code quality checks"
 

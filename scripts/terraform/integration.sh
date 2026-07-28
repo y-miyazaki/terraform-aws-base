@@ -179,7 +179,7 @@ function validate_and_prepare {
 
     # Validate environment and dependencies
     validate_terraform_env
-    validate_dependencies "terraform" "tflint" "trivy"
+    require_dependencies "terraform" "tflint" "trivy"
 
     # Change to target directory
     if ! cd "$dir"; then

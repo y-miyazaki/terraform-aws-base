@@ -402,7 +402,7 @@ function main {
     parse_arguments "$@"
 
     # Validate dependencies
-    validate_dependencies "go"
+    require_dependencies "go"
 
     # Validate Go environment
     validate_go_environment

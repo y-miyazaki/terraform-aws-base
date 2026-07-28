@@ -780,7 +780,7 @@ main() {
     validate_parameters
 
     # Check for required commands
-    validate_dependencies "curl"
+    require_dependencies "curl"
 
     # Install components
     install_java

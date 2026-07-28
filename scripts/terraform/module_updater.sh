@@ -1750,7 +1750,7 @@ function main {
     parse_arguments "$@"
 
     # Validate dependencies
-    validate_dependencies "terraform" "curl" "jq"
+    require_dependencies "terraform" "curl" "jq"
 
     echo_section "Complete Module-by-Module Updater"
     log "INFO" "Target directory: $TERRAFORM_DIR"

@@ -342,7 +342,7 @@ function main {
     parse_arguments "$@"
 
     # Validate required dependencies
-    validate_dependencies "aws" "ecspresso" "jq" "jsonnet"
+    require_dependencies "aws" "ecspresso" "jq" "jsonnet"
 
     # Check AWS credentials before any AWS CLI usage
     check_aws_credentials || error_exit "AWS credentials are not set or invalid."

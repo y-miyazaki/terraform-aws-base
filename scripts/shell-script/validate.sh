@@ -114,7 +114,7 @@ Options:
 
 Design Rules:
   - Use 'set -euo pipefail' in scripts where appropriate
-  - Source shared helpers from scripts/lib/all.sh (error_exit, log, validate_dependencies)
+  - Source shared helpers from scripts/lib/all.sh (error_exit, log, require_dependencies)
   - Prefer quoting variables and using local variables in functions
   - Keep functions small and single-responsibility
 
@@ -1960,7 +1960,7 @@ function main {
     fi
 
     # Validate dependencies
-    validate_dependencies "bash" "find" "grep" "sed" "shellcheck" "shfmt"
+    require_dependencies "bash" "find" "grep" "sed" "shellcheck" "shfmt"
 
     # Ensure a bats test runner exists (bats or bats-core)
     if ! command -v bats &> /dev/null && ! command -v bats-core &> /dev/null; then
