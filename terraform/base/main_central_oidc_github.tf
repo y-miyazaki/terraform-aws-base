@@ -10,7 +10,7 @@
 #--------------------------------------------------------------
 module "oidc_github" {
   source  = "unfunco/oidc-github/aws"
-  version = "3.0.0"
+  version = "3.0.1"
 
   create               = var.oidc_github.is_enabled
   create_oidc_provider = var.oidc_github.create_oidc_provider

@@ -7,7 +7,7 @@
 #--------------------------------------------------------------
 module "s3_account_public_access" {
   source  = "terraform-aws-modules/s3-bucket/aws//modules/account-public-access"
-  version = "5.14.1"
+  version = "5.15.1"
 
   create = var.security_s3.is_enabled
 
