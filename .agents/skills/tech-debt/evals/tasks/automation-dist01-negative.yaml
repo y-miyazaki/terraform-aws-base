@@ -14,9 +14,10 @@ inputs:
     write_target: report report_file: reports/custom-debt/2026-07-25.md
     Allowed paths: reports/custom-debt/**/*.md, docs/**/*.md. Write the report
     only to the Constraints report_file path — do not invent
-    docs/report/tech-debt/. Emit apply shape with ### Changes naming that
-    report_file, ## Verification, and Session Metrics. Include ## Overview and
-    ## Summary.
+    docs/report/tech-debt/. Classify injected stale_doc under documentation.
+    Emit apply shape with ### Changes naming that report_file, ## Verification,
+    and Session Metrics. Emit ## Overview and ## Summary per
+    common-output-format.md. Include Category labels on rows.
   context:
     skip: false
     report_file: reports/custom-debt/2026-07-25.md

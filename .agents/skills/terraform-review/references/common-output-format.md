@@ -29,16 +29,17 @@ Use the following report structure for review and validation output.
 
 Overall Quality: <High | Medium | Low>
 
-<2-4 sentences of holistic judgment that the checklist cannot capture:
-architectural coherence, design intent alignment, hidden coupling,
-maintainability trajectory, or patterns that are technically correct
-but strategically concerning. State what is not obvious from the
-individual check results.>
+1. <short judgment title>
+   - Scope: <path#L<line>, area, or cross-cutting>
+   - Observation: <specific judgment the checklist does not capture>
+   - Impact: <scope and severity>
+   - Recommendation: <actionable next step>
 
 ## Good Practices
 
-- <Specific praise for well-done aspects: good abstractions, thorough
-  error handling, clean separation of concerns, effective testing, etc.>
+1. <short title>
+   - Scope: <path#L<line>, area, or cross-cutting>
+   - Why it helps: <concrete benefit>
 ```
 
 ## Rules
@@ -64,19 +65,22 @@ individual check results.>
 ### ItemID Assignment
 
 - Assign only ItemIDs that exist in `common-checklist.md`. Do not repurpose an existing ItemID for an unrelated finding.
-- If a finding does not map to any checklist ItemID, omit it from the structured report. Mention it in a free-text note after the Issues section if it is high-severity.
+- Checklist-mapped findings go in `## Issues` with ItemIDs.
+- Findings that do not map to any checklist ItemID go in `## Expert Assessment` as numbered judgment items (no ItemID). Do not bury them in free-text prose after Issues.
 
 ### Expert Assessment
 
 - Always include `## Expert Assessment` after `## Issues`.
 - State the Overall Quality level based on the ratio and severity of failures: High (0 critical, ≤2 minor), Medium (some failures but no systemic pattern), Low (systemic issues or critical failures).
-- Write 2-4 sentences of holistic judgment covering concerns that individual checks cannot surface: architectural coherence, hidden coupling, maintainability trajectory, or patterns that pass all rules but are strategically problematic.
-- Do not repeat findings already listed in `## Issues`. Focus on cross-cutting observations.
+- Emit **numbered list items** (same field shape as Issues, without ItemID): title, Scope, Observation, Impact, Recommendation.
+- Cover cross-cutting judgment the checklist cannot surface: architectural coherence, hidden coupling, maintainability trajectory, or patterns that pass rules but are strategically problematic.
+- Limit to 1–5 items. If none, write `No cross-cutting concerns` under Overall Quality (do not invent filler).
+- Do not repeat findings already listed in `## Issues`.
 
 ### Good Practices
 
 - Always include `## Good Practices` after `## Expert Assessment`.
-- List 1-3 specific, concrete things the code does well.
+- Emit **numbered list items** with title, Scope, and Why it helps (1–3 items).
 - If no notable good practices are observed, write `No notable good practices identified` rather than omitting the section.
 
 ## Status Symbols

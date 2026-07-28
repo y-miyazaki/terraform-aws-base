@@ -17,10 +17,9 @@ metadata:
 
 ## Output Specification
 
-Return structured Markdown in accordance with [references/common-output-format.md](references/common-output-format.md).
+Return structured Markdown in accordance with [references/common-output-format.md](references/common-output-format.md). That file is the source of truth for the output contract.
 
-Structured validation results from three tools: actionlint → ghalint → zizmor.
-Return `## Checks Summary`, `## Checks (Failed/Deferred Only)`, and `## Issues` with tool-attributed evidence.
+Structured validation results from three tools: actionlint → ghalint → zizmor. Attribute evidence to the producing tool.
 
 ## Execution Scope
 
@@ -57,18 +56,18 @@ Return `## Checks Summary`, `## Checks (Failed/Deferred Only)`, and `## Issues` 
 
 ### Error Handling
 
-| Condition                             | Severity    | Action                                                                 |
-| ------------------------------------- | ----------- | ---------------------------------------------------------------------- |
-| `scripts/validate.sh` missing         | Fatal       | Stop; report missing script                                            |
-| No workflow YAML under target path    | Info        | Report no reviewable workflows; stop                                   |
-| actionlint / ghalint / zizmor missing | Recoverable | Defer checks for that tool; note in `## Checks (Failed/Deferred Only)` |
-| Single tool fails, others succeed     | Recoverable | Report passing tools; defer failed tool with exit status               |
-| All tools fail                        | Fatal       | Return `status: failed` with per-tool stderr summaries                 |
-| `common-checklist.md` unavailable     | Fatal       | Stop; report missing dependency                                        |
-| `common-output-format.md` unavailable | Recoverable | Use inline output contract                                             |
+| Condition                             | Severity    | Action                                                                                                |
+| ------------------------------------- | ----------- | ----------------------------------------------------------------------------------------------------- |
+| `scripts/validate.sh` missing         | Fatal       | Stop; report missing script                                                                           |
+| No workflow YAML under target path    | Info        | Report no reviewable workflows; stop                                                                  |
+| actionlint / ghalint / zizmor missing | Recoverable | Defer checks for that tool; note in `## Checks (Failed/Deferred Only)`                                |
+| Single tool fails, others succeed     | Recoverable | Report passing tools; defer failed tool with exit status                                              |
+| All tools fail                        | Fatal       | Return `status: failed` with per-tool stderr summaries                                                |
+| `common-checklist.md` unavailable     | Fatal       | Stop; report missing dependency                                                                       |
+| `common-output-format.md` unavailable | Recoverable | Note missing file; emit `## Checks Summary`, `## Checks (Failed/Deferred Only)`, and `## Issues` only |
 
 ### Examples
 
-- Prompt: `Validate workflows and report only failed checks with ItemIDs.`
+- Prompt: `Validate workflows and report only failed checks with ItemIDs`
 - Command: `bash scripts/validate.sh ./.github/workflows/`
-- Output: failed/deferred checks mapped to `actionlint`, `ghalint`, or `zizmor`.
+- Result: Structured report per [references/common-output-format.md](references/common-output-format.md); attribute evidence to actionlint, ghalint, or zizmor.

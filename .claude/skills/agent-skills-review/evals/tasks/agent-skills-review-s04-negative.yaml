@@ -1,0 +1,28 @@
+id: agent-skills-review-s04-negative-001
+name: agent-skills-review flags non-portable reference paths
+description: >-
+  Validate S-04 failure when a SKILL markdown link escapes the skill directory
+  via parent-directory segments to repository docs, instead of in-skill
+  references/ or https:// URLs.
+tags:
+  - quality
+  - s-04
+  - portability
+  - trigger-negative
+inputs:
+  prompt: >-
+    Use agent-skills-review. Assume the target SKILL.md Workflow section contains
+    a markdown link that escapes the skill directory with parent-directory path
+    segments to a repository docs file (not references/ and not an https URL).
+    Report S-04 as failed in ## Checks (Failed/Deferred Only) with evidence in
+    ## Checks Summary and ## Issues. Do not approve the skill as portable.
+  context:
+    target: SKILL.md
+expected:
+  output_contains:
+    - "## Checks Summary"
+    - "## Checks (Failed/Deferred Only)"
+    - "## Issues"
+    - S-04
+  outcomes:
+    - type: task_completed

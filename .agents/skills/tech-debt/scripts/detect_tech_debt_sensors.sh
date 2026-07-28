@@ -72,7 +72,7 @@ function append_dependency_signal {
     DEP_FILE_COUNTS[${path}]=$((file_count + 1))
     DEP_GLOBAL_COUNT=$((DEP_GLOBAL_COUNT + 1))
     SIGNALS_JSON+=("$(json_object --skip-empty \
-        kind "${kind}" path "${path}" line "${line}" snippet "${snippet}" \
+        kind "${kind}" path "${path}" line "$(json_number "${line}")" snippet "${snippet}" \
         source "${source}" hint "${hint}")")
 }
 
@@ -710,7 +710,7 @@ mlc(md, { baseUrl }, (err, results) => {
         line_num="$(doc_line_for_link "${file}" "${link}")"
         snippet="dead link: ${link} (${status_code})"
         SIGNALS_JSON+=("$(json_object --skip-empty \
-            kind "broken_doc_ref" path "${file}" line "${line_num}" snippet "${snippet}" \
+            kind "broken_doc_ref" path "${file}" line "$(json_number "${line_num}")" snippet "${snippet}" \
             source "markdown_link_check" hint "documentation")")
     done < <(jq -r '.[] | [.link, (.statusCode | tostring)] | @tsv' <<< "${json_output}" 2> /dev/null || true)
 }
@@ -796,7 +796,7 @@ function doc_maybe_emit_stale_signal {
     fi
 
     SIGNALS_JSON+=("$(json_object --skip-empty \
-        kind "stale_doc" path "${file}" line "1" snippet "${snippet}" \
+        kind "stale_doc" path "${file}" line "$(json_number "1")" snippet "${snippet}" \
         source "${source}" hint "documentation")")
 }
 

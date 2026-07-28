@@ -45,8 +45,8 @@ Refactor report per [common-output-format.md](references/common-output-format.md
 - [category-techniques.md](references/category-techniques.md) (always read)
 - [category-verification.md](references/category-verification.md) (always read)
 - [category-input-schema.md](references/category-input-schema.md) (always read)
-- [category-automation-envelope.md](references/category-automation-envelope.md) (always read — automation path)
-- [common-output-format-automation.md](references/common-output-format-automation.md) (always read — automation path)
+- [category-automation-envelope.md](references/category-automation-envelope.md) (read on automation path)
+- [common-output-format-automation.md](references/common-output-format-automation.md) (read on automation path)
 - [common-troubleshooting.md](references/common-troubleshooting.md) (read on failure)
 
 ## Workflow
@@ -83,18 +83,18 @@ Every run has **Phase A — Survey** (discover candidates). **Phase B — Apply*
 ### Automation path (`hints[]` in detect JSON)
 
 1. Parse [category-input-schema.md](references/category-input-schema.md); read `may_edit` from [category-automation-envelope.md](references/category-automation-envelope.md).
-2. If empty/`skip` → no-op report; stop.
+2. IF empty/`skip` → no-op report; stop.
 3. Run Phase A on **all** `hints[]` entries (not only the first).
-4. When `may_edit` is `false` → stop after Phase A; emit survey shape with `### Candidates`; load `assets/pr-body-template-survey.md` at synthesis; append `## Session Metrics` per [category-automation-envelope.md](references/category-automation-envelope.md); no file edits.
-5. When `may_edit` is `true` and `write_target` is `fix` → Phase B for every apply candidate within allowlist; structural intent only; load `assets/pr-body-template.md` at synthesis; append `## Session Metrics`.
-6. When `may_edit` is `true` and `write_target` is not `fix` → stop after Phase A; emit survey shape; note expected `write_target: fix` in Overview; append `## Session Metrics`.
+4. IF `may_edit` is `false` → stop after Phase A; emit survey shape with `### Candidates`; load `assets/pr-body-template-survey.md` at synthesis; append `## Session Metrics` per [category-automation-envelope.md](references/category-automation-envelope.md); no file edits.
+5. ELSE IF `may_edit` is `true` AND `write_target` is not `fix` → stop after Phase A; emit survey shape; note expected `write_target: fix` in Overview; append `## Session Metrics`.
+6. ELSE (`may_edit` is `true` AND `write_target` is `fix`) → Phase B for every apply candidate within allowlist; structural intent only; load `assets/pr-body-template.md` at synthesis; append `## Session Metrics`.
 
 ### Interactive path
 
 1. Resolve `may_edit`: structured JSON `mode` per [category-input-schema.md](references/category-input-schema.md) (`survey` → `false`, `apply` → `true`; default `survey` when omitted); else natural language per the table above (default `false` unless apply language or follow-up).
 2. Run Phase A.
-3. `may_edit: false` → emit **survey** result shape; stop; no file edits.
-4. `may_edit: true` → implicit `write_target: fix` on the interactive path; run Phase B for all apply candidates; architecture without `approved_slice` → proposal only (no Phase B).
+3. IF `may_edit` is `false` → emit **survey** result shape; stop; no file edits.
+4. ELSE (`may_edit` is `true`) → implicit `write_target: fix` on the interactive path; run Phase B for all apply candidates; architecture without `approved_slice` → proposal only (no Phase B).
 5. Emit result shape per [common-output-format.md](references/common-output-format.md).
 
 ### Error Handling
@@ -110,3 +110,8 @@ Every run has **Phase A — Survey** (discover candidates). **Phase B — Apply*
 | Cross-boundary or out-of-scope target            | Recoverable | Watch on candidate; skip apply                                                  |
 | Apply requested but `may_edit` is `false`        | Info        | Survey only; note that edits require explicit apply request or `may_edit: true` |
 | `may_edit` true with `write_target` not `fix`    | Recoverable | Survey only; note expected `write_target: fix`                                  |
+
+### Examples
+
+- Prompt: `Survey structural refactor candidates in this package`
+- Result: Survey report per [references/common-output-format.md](references/common-output-format.md); apply only when `may_edit` is true and candidates are marked apply.

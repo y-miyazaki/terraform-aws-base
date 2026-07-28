@@ -7,6 +7,7 @@ The caller may add ## Failure context from detect; this template covers Overview
 Rules:
 - Keep top-level ## Overview, ## Summary, and ## Verification headings exactly as written.
 - Do not duplicate detect failure URLs in Overview — URLs belong in caller-added ## Failure context.
+- In Summary tables, link file paths and workflow/job targets — see category-pr-body-links.md.
 - Summary contains ### Changes and ### Deferred only.
 - Do NOT emit Outcome, Suggested next action, or top-level ## Changes.
 - Deferred = failures with NO fix in final working tree; reconcile with git diff before synthesis.
@@ -25,15 +26,15 @@ Rules:
 
 ### Changes
 
-| Workflow / Job     | What was wrong | What changed          |
-| ------------------ | -------------- | --------------------- |
-| <workflow> / <job> | <root cause>   | <minimal fix summary> |
+| Workflow / Job         | What was wrong | What changed                                                              |
+| ---------------------- | -------------- | ------------------------------------------------------------------------- |
+| `<workflow>` / `<job>` | <root cause>   | `docs/foo.md` (link per category-pr-body-links.md): <minimal fix summary> |
 
 ### Deferred
 
-| Workflow / Job     | Why deferred            |
-| ------------------ | ----------------------- |
-| <workflow> / <job> | <plain-language reason> |
+| Workflow / Job         | Why deferred            |
+| ---------------------- | ----------------------- |
+| `<workflow>` / `<job>` | <plain-language reason> |
 
 ## Verification
 

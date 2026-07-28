@@ -6,7 +6,7 @@ description: >-
 license: Apache-2.0
 metadata:
   author: y-miyazaki
-  version: "1.0.1"
+  version: "1.0.2"
 ---
 
 ## Input
@@ -48,10 +48,12 @@ Structured PR output:
 - [common-checklist.md](references/common-checklist.md) (always read)
 - [common-output-format.md](references/common-output-format.md) (always read)
 - [common-troubleshooting.md](references/common-troubleshooting.md) (read on failure)
-- [category-change-classification.md](references/category-change-classification.md) (always read)
-- [category-pr-body-guidelines.md](references/category-pr-body-guidelines.md) (always read)
-- [category-agent-workflows.md](references/category-agent-workflows.md) (always read)
-- [category-implementation-details.md](references/category-implementation-details.md) (always read)
+- [category-pr-body-guidelines.md](references/category-pr-body-guidelines.md) (read when full-body mode)
+- [category-template-mapping.md](references/category-template-mapping.md) (read when full-body mode)
+- [category-change-classification.md](references/category-change-classification.md) (read when classifying changes)
+- [category-command-reference.md](references/category-command-reference.md) (read on debugging)
+- [category-implementation-details.md](references/category-implementation-details.md) (read on debugging)
+- [category-agent-workflows.md](references/category-agent-workflows.md) (read on debugging)
 
 ## Workflow
 
@@ -82,13 +84,14 @@ Structured PR output:
 
 4. Generate AI-completed content (full-body mode only):
 
-   1. Read `.github/PULL_REQUEST_TEMPLATE.md` from the repository.
-   2. For each H2 section in the template:
+   1. Read [category-pr-body-guidelines.md](references/category-pr-body-guidelines.md). Read [category-template-mapping.md](references/category-template-mapping.md) when template comment guidance is ambiguous.
+   2. Read `.github/PULL_REQUEST_TEMPLATE.md` from the repository.
+   3. For each H2 section in the template:
       - If the section comment contains an `Example:` block, follow that structure to generate visible content.
       - If the section comment contains checkbox guidance, generate or update checkbox lines in the same format.
       - If the section has no guidance, preserve the section heading and template comment without inventing content.
-   3. Keep `## Overview` and `## Changes` content from Step 2 output.
-   4. Write the complete PR body (all sections) to a temporary file (e.g., `/tmp/completed_pr_body.md`).
+   4. Keep `## Overview` and `## Changes` content from Step 2 output.
+   5. Write the complete PR body (all sections) to a temporary file (e.g., `/tmp/completed_pr_body.md`).
 
 5. Apply full body (full-body mode only):
 
@@ -117,5 +120,5 @@ Structured PR output:
 
 ### Examples
 
-- Prompt: `Generate PR body for PR #42 in owner/repo`
-- Result: PR description populated with Overview, Changes, Testing, and Checklist sections from diff analysis.
+- Prompt: `Generate PR body for PR #42`
+- Result: PR body updated via `scripts/pr_body.sh`; report mode and reason per [references/common-output-format.md](references/common-output-format.md).

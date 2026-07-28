@@ -46,7 +46,7 @@ Changelog report per [common-output-format.md](references/common-output-format.m
 - [common-output-format.md](references/common-output-format.md) (always read)
 - [category-scope.md](references/category-scope.md) (always read)
 - [category-input-schema.md](references/category-input-schema.md) (always read)
-- [category-automation-envelope.md](references/category-automation-envelope.md) (always read — automation path)
+- [category-automation-envelope.md](references/category-automation-envelope.md) (read on automation path)
 - [common-troubleshooting.md](references/common-troubleshooting.md) (read on failure)
 
 ## Workflow
@@ -64,11 +64,11 @@ When `may_edit` is `true`, resolve `write_target`: on the **interactive** path u
 
 1. Run this skill's detect script (interactive) or parse detect JSON per [category-input-schema.md](references/category-input-schema.md). On non-zero exit, read stdout and stop.
 2. On the automation path, read [category-automation-envelope.md](references/category-automation-envelope.md) for Constraints, PR templates, and Session Metrics.
-3. If `skip` or both `commits` and `releases` are empty, emit survey no-op; on automation path append `## Session Metrics` per [category-automation-envelope.md](references/category-automation-envelope.md); stop.
+3. IF `skip` OR both `commits` and `releases` are empty → emit survey no-op; on automation path append `## Session Metrics` per [category-automation-envelope.md](references/category-automation-envelope.md); stop.
 4. Map commits and releases per [common-checklist.md](references/common-checklist.md).
-5. When `may_edit` is `false`, emit survey shape with `### Candidates`; on automation path load `assets/pr-body-template-survey.md` at synthesis and append `## Session Metrics` per [category-automation-envelope.md](references/category-automation-envelope.md); stop — do not edit `changelog_file`.
-6. When `may_edit` is `true` and `write_target` is not `fix` → emit survey shape; note expected `write_target: fix` in Overview; stop — do not edit `changelog_file`.
-7. When `may_edit` is `true` and `write_target` is `fix`, edit only `changelog_file` per [category-scope.md](references/category-scope.md); emit apply shape with `### Changes` and `## Verification`; on automation path load `assets/pr-body-template.md` at synthesis and append `## Session Metrics` per [category-automation-envelope.md](references/category-automation-envelope.md).
+5. IF `may_edit` is `false` → emit survey shape with `### Candidates`; on automation path load `assets/pr-body-template-survey.md` at synthesis and append `## Session Metrics` per [category-automation-envelope.md](references/category-automation-envelope.md); stop — do not edit `changelog_file`.
+6. ELSE IF `may_edit` is `true` AND `write_target` is not `fix` → emit survey shape; note expected `write_target: fix` in Overview; stop — do not edit `changelog_file`.
+7. ELSE (`may_edit` is `true` AND `write_target` is `fix`) → edit only `changelog_file` per [category-scope.md](references/category-scope.md); emit apply shape with `### Changes` and `## Verification`; on automation path load `assets/pr-body-template.md` at synthesis and append `## Session Metrics` per [category-automation-envelope.md](references/category-automation-envelope.md).
 
 ### Error Handling
 
@@ -80,3 +80,8 @@ When `may_edit` is `true`, resolve `write_target`: on the **interactive** path u
 | Fix requested but `may_edit` is `false`           | Info        | Survey only; note that edits require an explicit fix request or `may_edit: true` |
 | `may_edit` true with `write_target` not `fix`     | Recoverable | Survey only; note expected `write_target: fix`                                   |
 | `changelog_exists` false and `may_edit` is `true` | Recoverable | Create Keep a Changelog template, then add bullets                               |
+
+### Examples
+
+- Prompt: `Survey CHANGELOG gaps from unreleased commits`
+- Result: Survey report per [references/common-output-format.md](references/common-output-format.md); edit `changelog_file` only when `may_edit` is true.

@@ -6,7 +6,7 @@ description: >-
 license: Apache-2.0
 metadata:
   author: y-miyazaki
-  version: "1.0.2"
+  version: "1.1.0"
 ---
 
 ## Input
@@ -15,26 +15,7 @@ metadata:
 
 ## Output Specification
 
-Return structured Markdown in accordance with [references/common-output-format.md](references/common-output-format.md).
-
-Minimal inline contract (used if reference file is unavailable):
-
-```markdown
-## Checks Summary
-
-- Total: <n>, Passed: <n>, Failed: <n>, Deferred: <n>
-
-## Checks (Failed/Deferred Only)
-
-| ItemID | Status | Evidence | Fix |
-
-## Issues
-
-1. <ItemID>: <title>
-   - File: <path>#L<line>
-   - Problem: <specific>
-   - Recommendation: <fix>
-```
+Return structured Markdown in accordance with [references/common-output-format.md](references/common-output-format.md). That file is the source of truth for the output contract.
 
 Each issue must include file path, risk summary, and remediation guidance.
 
@@ -77,6 +58,7 @@ Each issue must include file path, risk summary, and remediation guidance.
 - [category-events.md](references/category-events.md) (always read)
 - [category-migration.md](references/category-migration.md) (always read)
 - [category-naming.md](references/category-naming.md) (always read)
+- [category-ordering.md](references/category-ordering.md) (always read)
 - [category-outputs.md](references/category-outputs.md) (always read)
 - [category-patterns.md](references/category-patterns.md) (always read)
 - [category-performance.md](references/category-performance.md) (always read)
@@ -92,24 +74,23 @@ Each issue must include file path, risk summary, and remediation guidance.
 3. If PR context is unavailable, review file diffs only and defer PR-context-dependent checks.
 4. If changed files contain no `.tf` or `.tfvars`, return `status: skipped` with reason `no Terraform review target`.
 5. If validation output is partial, keep available findings and defer missing-tool checks with explicit tool name.
-6. Review checklist categories touched by changed files and collect failed/deferred items. When uncertain which categories apply, prioritize category-security, category-global, category-modules, and category-state first.
+6. Apply the full review checklist and collect failed/deferred items.
 7. If a referenced category file is missing, defer affected checks with the missing file path.
 8. Output required sections per [references/common-output-format.md](references/common-output-format.md). Prioritize `SEC-*` findings first, then correctness, then maintainability. For conflicting findings, prioritize the higher-severity category and document the conflict in `## Issues`.
 
 ### Error Handling
 
-| Condition                                | Severity    | Action                                                                |
-| ---------------------------------------- | ----------- | --------------------------------------------------------------------- |
-| `terraform-validation` output missing    | Recoverable | Defer tool-dependent checks; review security/architecture from source |
-| `common-checklist.md` unavailable        | Fatal       | Stop; report missing dependency                                       |
-| `common-output-format.md` unavailable    | Recoverable | Use inline output contract                                            |
-| Changed files contain no `.tf`/`.tfvars` | Recoverable | Return `status: skipped`; reason `no Terraform review target`         |
-| Referenced category file missing         | Recoverable | Defer affected checks; note missing file path                         |
+| Condition                                | Severity    | Action                                                                                                |
+| ---------------------------------------- | ----------- | ----------------------------------------------------------------------------------------------------- |
+| `terraform-validation` output missing    | Recoverable | Defer tool-dependent checks; review security/architecture from source                                 |
+| `common-checklist.md` unavailable        | Fatal       | Stop; report missing dependency                                                                       |
+| `common-output-format.md` unavailable    | Recoverable | Note missing file; emit `## Checks Summary`, `## Checks (Failed/Deferred Only)`, and `## Issues` only |
+| Changed files contain no `.tf`/`.tfvars` | Recoverable | Return `status: skipped`; reason `no Terraform review target`                                         |
+| Referenced category file missing         | Recoverable | Defer affected checks; note missing file path                                                         |
 
 ### Examples
 
-- Prompt: `Review this Terraform PR and return failed/deferred checks only.`
-- Input context: changed files `terraform/env/prod/main.tf`, `terraform/env/prod/variables.tf`, `terraform/env/prod/terraform.tfvars`; validation log missing `tflint` output.
-- Output sample: `## Checks Summary` with deferred count, `## Checks (Failed/Deferred Only)` including deferred `tflint` check with reason `missing terraform-validation output`, and `## Issues` ordered by `SEC-*`, correctness, maintainability.
-- Prompt: `Review this Terraform PR and report security reasoning from existing validation logs.`
-- Output sample: security findings are evaluated from existing logs and code context; no validator commands are executed.
+- Prompt: `Review this Terraform PR and return failed/deferred checks only`
+- Result: Structured report per [references/common-output-format.md](references/common-output-format.md); defer checks that need missing validation evidence (do not run validators).
+- Prompt: `Review this Terraform PR using existing validation logs for security reasoning`
+- Result: Same output contract; evaluate security from logs and code only — do not execute validator commands.

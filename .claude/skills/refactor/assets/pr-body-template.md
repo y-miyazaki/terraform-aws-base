@@ -22,15 +22,15 @@ Rules:
 
 ### Changes
 
-| Target            | What was wrong            | What changed             |
-| ----------------- | ------------------------- | ------------------------ |
-| `path` `symbol()` | <plain-language evidence> | <minimal change summary> |
+| Target                      | What was wrong            | What changed             |
+| --------------------------- | ------------------------- | ------------------------ |
+| `scripts/foo.sh` `symbol()` | <plain-language evidence> | <minimal change summary> |
 
 ### Deferred
 
-| Target | Why deferred            |
-| ------ | ----------------------- |
-| `path` | <plain-language reason> |
+| Target           | Why deferred            |
+| ---------------- | ----------------------- |
+| `scripts/bar.sh` | <plain-language reason> |
 
 ## Verification
 

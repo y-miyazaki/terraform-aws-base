@@ -28,15 +28,15 @@ Rules:
 
 ### Changes
 
-| File   | What was wrong  | What changed             |
-| ------ | --------------- | ------------------------ |
-| <path> | <from findings> | <minimal change summary> |
+| File          | What was wrong  | What changed             |
+| ------------- | --------------- | ------------------------ |
+| `docs/foo.md` | <from findings> | <minimal change summary> |
 
 ### Deferred
 
-| File   | Why deferred            |
-| ------ | ----------------------- |
-| <path> | <plain-language reason> |
+| File          | Why deferred            |
+| ------------- | ----------------------- |
+| `docs/foo.md` | <plain-language reason> |
 
 ## Verification
 

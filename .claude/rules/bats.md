@@ -4,26 +4,24 @@ paths:
   - "**/*.bats"
 ---
 
-# AI Assistant Instructions for Bats
+# Bats Instructions
 
 ## Scope
 
-- Scope covers authoring Bats suites (`*.bats`) and applies when editing Shell scripts (`*.sh`) that require pairing a suite.
+- Scope covers authoring Bats suites and applies when editing shell scripts that require pairing a suite.
 - Shell script implementation rules remain in the companion Shell Script rules (stem `shell-script`); this file defines test-suite conventions only.
 - When adding or materially changing a shell script or sourced library, add or update the matching Bats suite in the same change (see companion Shell Script rules TEST-00).
-- Bats does not mandate a global directory layout — follow the **repository's established test tree** (discover from existing `*.bats` files, CI config, or maintainer docs). Many repositories use `test/bats/` with path mirroring; others differ.
-- When distributed to agent rule paths, stem `bats` resolves as `.cursor/rules/bats.mdc` (Cursor), `.claude/rules/bats.md` (Claude), or `.kiro/steering/bats.md` (Kiro) — not as `bats.instructions.md`.
+- Bats does not mandate a global directory layout — follow the **repository's established test tree** (discover from existing suites, CI config, or maintainer docs).
 
 ## Standards
 
 ### Naming Conventions
 
-| Component        | Rule                                                                 | Example                                      |
-| ---------------- | -------------------------------------------------------------------- | -------------------------------------------- |
-| Suite file       | snake_case; when the repo mirrors paths, match the source under test | `lib/common.bats` mirroring `lib/common.sh`  |
-| Support helper   | snake_case `.bash` under the repository bats support dir when used   | `common.bash`, `mock_cli.bash` in `support/` |
-| `@test` name     | Descriptive sentence (lowercase)                                     | `parse_args accepts --verbose flag`          |
-| Package constant | UPPER_SNAKE_CASE                                                     | `TARGET_SCRIPT`, `FIXTURE_DIR`               |
+| Component      | Rule                                                                 | Example                                      |
+| -------------- | -------------------------------------------------------------------- | -------------------------------------------- |
+| Suite file     | snake_case; when the repo mirrors paths, match the source under test | `lib/common.bats` mirroring `lib/common.sh`  |
+| Support helper | snake_case `.bash` under the repository bats support dir when used   | `common.bash`, `mock_cli.bash` in `support/` |
+| `@test` name   | Descriptive sentence (lowercase)                                     | `parse_args accepts --verbose flag`          |
 
 ### Suite File Structure
 
@@ -67,10 +65,10 @@ source "${_bats_support}/support/common.bash"
 
 ### Support Library
 
-| Location                         | Role                                                        |
-| -------------------------------- | ----------------------------------------------------------- |
-| Repository `support/common.bash` | Optional shared helpers (source paths, fixtures, temp dirs) |
-| Repository `support/*.bash`      | Domain mocks; load from `setup()` or per-test as needed     |
+| Location                         | Role                                                                                   |
+| -------------------------------- | -------------------------------------------------------------------------------------- |
+| Repository `support/common.bash` | Optional shared helpers (source paths, fixtures, temp dirs)                            |
+| Repository `support/*.bash`      | Domain mocks; load from `setup()` for shared mocks or at the start of individual tests |
 
 Prefer [bats-support](https://github.com/bats-core/bats-support) and [bats-assert](https://github.com/bats-core/bats-assert) when the project adopts them.
 

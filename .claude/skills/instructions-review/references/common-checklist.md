@@ -13,7 +13,7 @@
 - STRUCT-01 (MUST): Five Required Chapters Exist
 - STRUCT-02 (MUST): Chapter Order Unified
 - STRUCT-03 (MUST): Heading Levels Appropriate
-- STRUCT-04 (MUST): Standards Chapter Subsections
+- STRUCT-04 (SHOULD): Standards Chapter Subsections
 - STRUCT-05 (MUST): Guidelines Chapter Subsections
 - STRUCT-06 (MUST): H3 Heading Format
 - STRUCT-07 (MUST): Concise Testing and Validation Chapter
@@ -52,10 +52,11 @@
 
 ## Standards Chapter (STD)
 
-- STD-01 (MUST): Naming Conventions
+- STD-01 (MUST): Standards Chapter Non-Obvious Content
 - STD-02 (SHOULD): Tool Standards
 - STD-03 (MUST): Consistency
 - STD-04 (MUST): Distribution Naming Documented
+- STD-05 (MUST): No Guidelines Checklist Duplication in Standards
 
 ## Testing and Validation Chapter (TEST)
 

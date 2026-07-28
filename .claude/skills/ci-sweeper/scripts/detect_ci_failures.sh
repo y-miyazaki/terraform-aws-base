@@ -688,7 +688,7 @@ function sanitize_log_excerpt {
 function fetch_failed_jobs {
     local run_id="$1"
     gh run view "${run_id}" --json jobs --jq \
-        '.jobs[] | select(.conclusion == "failure") | {name: .name, conclusion: .conclusion, url: .html_url}' \
+        '.jobs[] | select(.conclusion == "failure") | {name: .name, conclusion: .conclusion, url: (.url // ""), job_id: (.databaseId // null)}' \
         2> /dev/null || true
 }
 
@@ -748,6 +748,35 @@ function fetch_log_excerpt {
 }
 
 #######################################
+# fetch_run_workflow_path: Fetch workflow file path for a run via REST API
+#
+# Globals:
+#   GITHUB_REPOSITORY - owner/repo (required)
+#
+# Arguments:
+#   $1 - Workflow run ID
+#
+# Outputs:
+#   Workflow path (e.g. .github/workflows/ci.yaml) to stdout
+#
+# Returns:
+#   0 on success
+#
+# Usage:
+#   workflow_path="$(fetch_run_workflow_path "${run_id}")"
+#
+#######################################
+function fetch_run_workflow_path {
+    local run_id="$1"
+    local repo="${GITHUB_REPOSITORY:-}"
+
+    if [[ -z ${repo} ]]; then
+        return 0
+    fi
+    gh api "repos/${repo}/actions/runs/${run_id}" --jq '.path // empty' 2> /dev/null || true
+}
+
+#######################################
 # fetch_definition_error_excerpt: Build context for startup_failure runs
 #
 # Globals:
@@ -785,7 +814,10 @@ function fetch_definition_error_excerpt {
 #   None
 #
 # Arguments:
-#   $1-$8 - workflow_name, run_id, head_sha, head_branch, run_url, job_name, failure_type, log_excerpt
+#   $1-$8  - workflow_name, run_id, head_sha, head_branch, run_url, job_name, failure_type, log_excerpt
+#   $9     - workflow_path (optional)
+#   $10    - job_url (optional)
+#   $11    - job_id (optional)
 #
 # Outputs:
 #   JSON object to stdout
@@ -806,9 +838,16 @@ function failure_object_json {
     local job_name="$6"
     local failure_type="$7"
     local log_excerpt="$8"
+    local workflow_path="${9:-}"
+    local job_url="${10:-}"
+    local job_id="${11:-}"
     local reason="CI failure in job ${job_name} (${failure_type})"
 
-    json_object \
+    if [[ -z ${job_url} && -n ${job_id} && -n ${run_url} ]]; then
+        job_url="${run_url}/job/${job_id}"
+    fi
+
+    json_object --skip-empty \
         workflow_name "${workflow_name}" \
         workflow_run_id "${run_id}" \
         head_sha "${head_sha}" \
@@ -817,6 +856,9 @@ function failure_object_json {
         failure_type "${failure_type}" \
         log_excerpt "${log_excerpt}" \
         run_url "${run_url}" \
+        workflow_path "${workflow_path}" \
+        job_url "${job_url}" \
+        job_id "${job_id}" \
         source_commit "${head_sha}" \
         reason "${reason}"
 }
@@ -828,7 +870,8 @@ function failure_object_json {
 #   None
 #
 # Arguments:
-#   $1-$8 - workflow_name, run_id, head_sha, head_branch, run_url, job_name, failure_type, log_excerpt
+#   $1-$8  - workflow_name, run_id, head_sha, head_branch, run_url, job_name, failure_type, log_excerpt
+#   $9-$11 - workflow_path, job_url, job_id (optional)
 #
 # Outputs:
 #   None
@@ -849,9 +892,12 @@ function append_failure {
     local job_name="$6"
     local failure_type="$7"
     local log_excerpt="$8"
+    local workflow_path="${9:-}"
+    local job_url="${10:-}"
+    local job_id="${11:-}"
 
     FAILURES_JSON+=("$(failure_object_json "${workflow_name}" "${run_id}" "${head_sha}" "${head_branch}" \
-        "${run_url}" "${job_name}" "${failure_type}" "${log_excerpt}")")
+        "${run_url}" "${job_name}" "${failure_type}" "${log_excerpt}" "${workflow_path}" "${job_url}" "${job_id}")")
 }
 
 #######################################
@@ -937,7 +983,10 @@ function collect_failures_for_run {
     local head_branch="$4"
     local run_url="$5"
     local run_conclusion="${6:-}"
-    local ledger_outcome
+    local ledger_outcome workflow_path
+    local job_line job_name job_url job_id log_excerpt failure_type
+
+    workflow_path="$(fetch_run_workflow_path "${run_id}")"
 
     if [[ -z ${run_conclusion} ]]; then
         run_conclusion="$(gh run view "${run_id}" --json conclusion --jq '.conclusion // empty' 2> /dev/null || true)"
@@ -956,31 +1005,32 @@ function collect_failures_for_run {
         return 0
     fi
 
-    local job_line job_name log_excerpt failure_type
     if is_definition_error_conclusion "${run_conclusion}" \
         && ! fetch_failed_jobs "${run_id}" | grep -q .; then
         log_excerpt="$(fetch_definition_error_excerpt "${run_id}" "${run_conclusion}")"
         append_failure "${workflow_name}" "${run_id}" "${head_sha}" "${head_branch}" "${run_url}" \
-            "workflow" "regression" "${log_excerpt}"
+            "workflow" "regression" "${log_excerpt}" "${workflow_path}"
         return 0
     fi
 
     if ! fetch_failed_jobs "${run_id}" | grep -q .; then
         append_failure "${workflow_name}" "${run_id}" "${head_sha}" "${head_branch}" "${run_url}" \
-            "unknown" "regression" "Failed workflow run with no failed job metadata."
+            "unknown" "regression" "Failed workflow run with no failed job metadata." "${workflow_path}"
         return 0
     fi
 
     while IFS= read -r job_line; do
         [[ -z ${job_line} ]] && continue
         job_name="$(jq -r '.name' <<< "${job_line}")"
+        job_url="$(jq -r '.url // empty' <<< "${job_line}")"
+        job_id="$(jq -r 'if .job_id == null then "" else (.job_id|tostring) end' <<< "${job_line}")"
         log_excerpt="$(fetch_log_excerpt "${run_id}" "${job_name}")"
         failure_type="$(classify_failure_type "${log_excerpt}")"
         preview="$(sanitize_log_excerpt "$(printf '%.120s' "${log_excerpt}" | tr -d '\n\r')")"
         log_ci_sweeper_notice "classify" "run:${run_id}" \
             "job=${job_name} failure_type=${failure_type} excerpt_bytes=${#log_excerpt} preview=${preview}"
         append_failure "${workflow_name}" "${run_id}" "${head_sha}" "${head_branch}" "${run_url}" \
-            "${job_name}" "${failure_type}" "${log_excerpt}"
+            "${job_name}" "${failure_type}" "${log_excerpt}" "${workflow_path}" "${job_url}" "${job_id}"
     done < <(fetch_failed_jobs "${run_id}")
 }
 

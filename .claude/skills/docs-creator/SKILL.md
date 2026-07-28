@@ -79,6 +79,6 @@ Return structured report per [references/common-output-format.md](references/com
 
 ### Examples
 
-- "Create architecture doc for caching" → `docs/explanation/caching-architecture.md`
-- "Improve the README" → update `README.md` in place
-- "Write a getting started tutorial" → `docs/tutorials/getting-started.md`
+- Prompt: `Create architecture doc for caching` → `docs/explanation/caching-architecture.md` (see [category-diataxis-mapping.md](references/category-diataxis-mapping.md))
+- Prompt: `Improve the README` → update `README.md` in place
+- Prompt: `Write a getting started tutorial` → `docs/tutorials/getting-started.md`

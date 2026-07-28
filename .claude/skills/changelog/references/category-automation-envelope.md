@@ -50,6 +50,7 @@ PR body rules:
 - Top-level `## Overview`, `## Summary`, and `## Verification` (apply only) — match the apply/survey templates in `assets/`
 - Under Summary use `### Changes` or `### Candidates`; use `### Skipped` for this skill (not `### Deferred`)
 - **Overview contract:** trigger → substance → action; write enough detail for a reviewer without opening the diff; name commit types and CHANGELOG sections; link commit ranges when `compare_url` is available; omit Target, run URLs, and boilerplate
+- **Links:** At synthesis, read [category-pr-body-links.md](category-pr-body-links.md).
 - **List vs table:** one item → bullet list; two or more rows or multiple columns → markdown table; omit empty `###` headings
 - **Summary content to omit:** `**Outcome:**` one-liners, `### Suggested next action`, top-level `## Changes`, `### Validation` inside Summary (use `## Verification`)
 - Reconcile `### Changes` and `### Skipped` with `git diff --name-only` before synthesis

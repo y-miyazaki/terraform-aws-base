@@ -23,10 +23,10 @@ Rules:
 
 ### Changes
 
-| Target          | What was wrong | What changed                |
-| --------------- | -------------- | --------------------------- |
-| `<report_file>` | <finding gap>  | <report recorded>           |
-| `path/to/file`  | <debt fact>    | <closed-set fix if applied> |
+| Target                            | What was wrong | What changed                |
+| --------------------------------- | -------------- | --------------------------- |
+| `reports/tech-debt/2026-07-23.md` | <finding gap>  | <report recorded>           |
+| `docs/guide/overview.md`          | <debt fact>    | <closed-set fix if applied> |
 
 ### Deferred
 

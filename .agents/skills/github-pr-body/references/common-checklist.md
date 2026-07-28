@@ -9,7 +9,7 @@
 ## Execution Steps
 
 - STEP-01: Fetch current PR body from GitHub (`gh pr view --json body`)
-- STEP-02: Classify file changes by type (Terraform, Go, workflow, docs, etc.)
+- STEP-02: Classify file changes by type (Terraform, Go, workflow, docs, shell, markdown, etc.)
 - STEP-03: Generate deterministic `## Overview` content
 - STEP-04: Generate `## Changes` list with file classifications
 - STEP-05: Run AI completion for `## Testing`, `## Type of Change`, `## Checklist`, and `## Additional Notes` when template guidance is present

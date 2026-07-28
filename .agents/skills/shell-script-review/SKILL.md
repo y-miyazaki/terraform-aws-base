@@ -8,7 +8,7 @@ description: >-
 license: Apache-2.0
 metadata:
   author: y-miyazaki
-  version: "1.1.2"
+  version: "1.2.0"
 ---
 
 ## Input
@@ -20,26 +20,7 @@ metadata:
 
 ## Output Specification
 
-Return structured Markdown in accordance with [references/common-output-format.md](references/common-output-format.md).
-
-Minimal inline contract (used if reference file is unavailable):
-
-```markdown
-## Checks Summary
-
-- Total: <n>, Passed: <n>, Failed: <n>, Deferred: <n>
-
-## Checks (Failed/Deferred Only)
-
-| ItemID | Status | Evidence | Fix |
-
-## Issues
-
-1. <ItemID>: <title>
-   - File: <path>#L<line>
-   - Problem: <specific>
-   - Recommendation: <fix>
-```
+Return structured Markdown in accordance with [references/common-output-format.md](references/common-output-format.md). That file is the source of truth for the output contract.
 
 ## Execution Scope
 
@@ -75,26 +56,25 @@ Minimal inline contract (used if reference file is unavailable):
 - [category-documentation.md](references/category-documentation.md) (always read)
 - [category-function-design.md](references/category-function-design.md) (always read)
 - [category-logging.md](references/category-logging.md) (always read)
-- [category-performance.md](references/category-performance.md) (always read)
 - [category-testing.md](references/category-testing.md) (always read)
 
 ## Workflow
 
 1. Read PR context and script intent.
 2. Confirm `shell-script-validation` results exist. If missing, inform user that validation should run first, then proceed with partial review: evaluate security and error-handling checks directly from source, defer lint-dependent checks (mark as `Deferred` with reason "validation evidence unavailable").
-3. Review checklist categories based on changed script paths and PR intent, then collect failed/deferred ItemIDs. When uncertain which categories apply, prioritize category-security, category-error-handling, and category-global first.
+3. Apply the full review checklist and collect failed/deferred ItemIDs.
 4. Output required report sections per [references/common-output-format.md](references/common-output-format.md). Prioritize `SEC-*` findings first. Include file path, risk type, and concrete remediation for each issue.
 
 ### Error Handling
 
-| Condition                                | Severity    | Action                                                       |
-| ---------------------------------------- | ----------- | ------------------------------------------------------------ |
-| `shell-script-validation` output missing | Recoverable | Defer lint-dependent checks, review security/design directly |
-| `common-checklist.md` unavailable        | Fatal       | Stop, report missing dependency                              |
-| `common-output-format.md` unavailable    | Recoverable | Use inline output contract                                   |
-| PR contains only non-shell files         | Recoverable | Report "no reviewable shell scripts" and stop                |
+| Condition                                | Severity    | Action                                                                                                |
+| ---------------------------------------- | ----------- | ----------------------------------------------------------------------------------------------------- |
+| `shell-script-validation` output missing | Recoverable | Defer lint-dependent checks, review security/design directly                                          |
+| `common-checklist.md` unavailable        | Fatal       | Stop, report missing dependency                                                                       |
+| `common-output-format.md` unavailable    | Recoverable | Note missing file; emit `## Checks Summary`, `## Checks (Failed/Deferred Only)`, and `## Issues` only |
+| PR contains only non-shell files         | Recoverable | Report "no reviewable shell scripts" and stop                                                         |
 
 ### Examples
 
 - Prompt: `Review shell script changes for security and style`
-- Result: Structured report with per-file checks, failed items with severity/fix suggestions.
+- Result: Structured report per [references/common-output-format.md](references/common-output-format.md); include TEST-00 pairing judgment when scripts change.

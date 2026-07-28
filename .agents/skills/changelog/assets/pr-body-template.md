@@ -12,7 +12,7 @@ Rules:
 ## Overview
 
 <!--
-  GOOD: Processed 4 conventional commits since [abc1234..def5678](https://github.com/org/repo/compare/abc1234..def5678); added 3 Unreleased bullets under Changed and promoted v1.8.16.
+  GOOD: Processed 4 conventional commits since abc1234..def5678 (compare_url); added 3 Unreleased bullets under Changed and promoted v1.8.16.
   BAD:  Changelog run finished.
 -->
 
@@ -22,15 +22,15 @@ Rules:
 
 ### Changes
 
-| Commit      | Type   | Entry                                |
-| ----------- | ------ | ------------------------------------ |
-| <short sha> | <type> | <Unreleased bullet added or updated> |
+| Commit    | Type   | Entry                                |
+| --------- | ------ | ------------------------------------ |
+| `abc1234` | <type> | <Unreleased bullet added or updated> |
 
 ### Skipped
 
-| Commit | Why skipped                         |
-| ------ | ----------------------------------- |
-| <sha>  | <already listed / non-conventional> |
+| Commit    | Why skipped                         |
+| --------- | ----------------------------------- |
+| `def5678` | <already listed / non-conventional> |
 
 ## Verification
 

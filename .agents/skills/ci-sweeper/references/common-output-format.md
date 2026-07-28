@@ -44,9 +44,9 @@ No file edits. **Do not emit `### Changes`, `### Deferred`, or `## Verification`
 
 ### Changes
 
-| Target                 | What was wrong | What changed          |
-| ---------------------- | -------------- | --------------------- |
-| `<workflow>` / `<job>` | <root cause>   | <minimal fix summary> |
+| Target                 | What was wrong | What changed                                                       |
+| ---------------------- | -------------- | ------------------------------------------------------------------ |
+| `<workflow>` / `<job>` | <root cause>   | `path` (link per category-pr-body-links.md): <minimal fix summary> |
 
 ### Deferred
 
@@ -72,11 +72,11 @@ On the automation path, append `## Session Metrics` per [category-automation-env
 
 ## Overview (skill-specific)
 
-| Element   | ci-sweeper content                                                       |
-| --------- | ------------------------------------------------------------------------ |
-| Trigger   | Which workflow/job failed (name, not URL)                                |
-| Substance | Root cause in plain language — name the lint rule, file, or failure type |
-| Action    | What was fixed or deferred                                               |
+| Element   | ci-sweeper content                                                               |
+| --------- | -------------------------------------------------------------------------------- |
+| Trigger   | Which workflow/job failed (name in Overview; links in Summary / Failure context) |
+| Substance | Root cause in plain language — name the lint rule, file, or failure type         |
+| Action    | What was fixed or deferred                                                       |
 
 **Good (survey):** `CI failed on markdownlint MD001 in docs/foo.md; one regression candidate identified; no edits applied.`
 

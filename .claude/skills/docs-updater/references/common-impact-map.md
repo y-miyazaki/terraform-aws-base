@@ -47,4 +47,4 @@ Set `skip: true` when:
 
 - Only markdown files changed (no source files) AND no markdown renames/deletions occurred
 - Only test files or internal refactoring changed
-- Changes are in generated directories (`.agents/`, `.cursor/`, etc.)
+- Changes are in generated directories (`.agents/`, `.claude/`, `.cursor/`, `.kiro/`, `.vscode/`, etc.)

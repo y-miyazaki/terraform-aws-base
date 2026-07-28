@@ -54,11 +54,11 @@ Check: Heading hierarchy properly uses H2 (chapters) → H3 (subsections)
 Why: Improper heading hierarchy reduces readability and obscures structure
 Fix: Apply H2/H3 hierarchy rules, minimize H4 and beyond
 
-**STRUCT-04 (MUST): Standards Chapter Subsections**
+**STRUCT-04 (SHOULD): Standards Chapter Subsections**
 
-Check: Does the Standards chapter have Naming Conventions subsection first, followed by tool-specific standards?
-Why: Inconsistent subsection order reduces cross-file comparability and onboarding efficiency
-Fix: Place Naming Conventions subsection first, followed by tool/domain standards subsections
+Check: When `### Naming Conventions` is present, is it the first Standards subsection? Omission is allowed when STD-01 says no non-obvious standards content exists.
+Why: Forcing empty or default-only Standards subsections wastes tokens; when Naming Conventions exists, a stable first position keeps cross-file comparison easy
+Fix: Place Naming Conventions first when present; otherwise start Standards with the first real domain standard subsection
 
 **STRUCT-05 (MUST): Guidelines Chapter Subsections**
 

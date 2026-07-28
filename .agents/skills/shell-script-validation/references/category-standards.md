@@ -87,4 +87,4 @@ Required section headers in this order: `Globals:`, `Arguments:`, `Outputs:`, `R
 - Set up cleanup trap for temporary files
 - Validate all inputs
 
-See main [SKILL.md](../SKILL.md) for comprehensive validation workflow.
+See SKILL.md for comprehensive validation workflow.

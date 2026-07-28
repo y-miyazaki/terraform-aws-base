@@ -1,6 +1,6 @@
 ## Pattern Checks (P)
 
-**P-01 (SHOULD): Design Pattern Compliance**
+**P-01 (SHOULD): Workflow matches the skill family pattern (not ad-hoc steps)**
 
 Check: Does SKILL.md define a deterministic execution pattern with explicit flow, boundaries, and references?
 Why: Pattern consistency improves reliability and reduces ambiguous execution across agents.
@@ -14,7 +14,7 @@ Examples:
 
 ---
 
-**P-02 (SHOULD): Output Contract Compliance**
+**P-02 (SHOULD): Output matches common-output-format contract**
 
 Check: Does the skill define a structured output contract across Output Specification and common-output-format.md without contradiction?
 Why: Structured output enables parsing, automation, and consistent evaluation.
@@ -30,7 +30,7 @@ Examples:
 
 ---
 
-**P-03 (SHOULD): Context Gathering Before Output**
+**P-03 (SHOULD): Gather required context before emitting the final report**
 
 Check: For skills that generate or modify content (docs, code, configs), does the Workflow include an explicit step to read relevant source material before writing?
 Why: Skills that write without reading produce generic, low-value output. Explicit context-gathering steps with per-type guidance ensure output is grounded in project-specific facts.

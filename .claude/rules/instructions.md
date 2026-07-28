@@ -6,20 +6,15 @@ paths:
   - "**/.claude/rules/*.md"
 ---
 
-# AI Assistant Instructions for Instruction Files
+# Instruction Files Instructions
 
 ## Scope
 
-- Scope covers creating and updating instruction/rule files: package sources (`**/instructions/*.instructions.md`) and distributed targets (`.cursor/rules/*.mdc`, `.kiro/steering/*.md`, `.claude/rules/*.md`).
-- G-03 (MUST): Keep `applyTo` globs precise to those rule paths — do not use broad trees such as `.claude/**/*.md` that also match skills and unrelated markdown.
-- G-04 (MUST): In agent-facing cross-links, use stem-based wording such as companion X rules (stem `x`) — never bare `*.instructions.md` filenames that are not present after distribution to agent rule paths.
-- G-05 (MUST): When a companion instruction must guide production-file edits (for example tests paired with source), include those production globs in `applyTo` so the rules inject at edit time.
-- **DIST-01 (MUST)**: Keep distributable instruction content repository-neutral — any consumer project must be able to follow the rules without this config repository's layout.
-  - Do not embed: consumer-project-specific paths, internal CI or workflow names, single canonical file references ("use `path/to/foo` as the reference"), or project-local test support APIs.
-  - Prefer: generic path patterns (for example `lib/*.sh`, `scripts/lib/*.sh`), stem-based companion cross-links, stable external references.
-  - Domain-specific layout jargon is allowed only when expressed as a generic pattern, not a named consumer tree.
+- Scope covers creating and updating instruction and rule files for agent consumption.
 
 ## Standards
+
+Document **non-obvious, project- or distribution-specific** rules only. Omit language or ecosystem defaults, generic style guides, and other practices models already know.
 
 ### Naming Conventions
 
@@ -29,132 +24,74 @@ paths:
 | Cursor (distributed)    | `.cursor/rules/<stem>.mdc`                        | `go.mdc`, `bats.mdc`                         |
 | Claude (distributed)    | `.claude/rules/<stem>.md`                         | `go.md`, `bats.md`                           |
 | Kiro (distributed)      | `.kiro/steering/<stem>.md`                        | `go.md`                                      |
-| Title                   | `# AI Assistant Instructions for <target>`        | `# AI Assistant Instructions for Go`         |
+| Title                   | `# <target> Instructions`                         | `# Go Instructions`                          |
 | Agent-facing cross-link | Companion wording with stem — not source filename | companion Bats rules (stem `bats`)           |
-
-### Standards Content
-
-- **STD-01 (MUST)**: A Naming Conventions table exists - without it, component naming becomes inconsistent.
-- **STD-02 (SHOULD)**: Tool-specific standards are documented when applicable.
-- **STD-03 (MUST)**: The documentation level matches other instruction files - inconsistent granularity makes cross-file comparison difficult.
-- **STD-04 (MUST)**: When instructions are distributed to agent rule paths, Naming Conventions document the source stem → Cursor / Claude / Kiro path mapping so agents can resolve companions at runtime.
-
-### Structure
-
-- **G-01 (MUST)**: Include `applyTo` and `description` in Front Matter - missing fields prevent automatic application.
-- **G-02 (MUST)**: Use H1 title format `# AI Assistant Instructions for <target>` - this preserves discoverability and consistency.
-- **G-03 (MUST)**: Keep `applyTo` globs precise to intended instruction/rule paths after distribution (for example `.claude/rules/*.md`, not `.claude/**/*.md`).
-- **G-04 (MUST)**: Use stem-based portable cross-references in agent-facing text; do not cite bare `*.instructions.md` filenames as runtime paths.
-- **G-05 (MUST)**: Companion instructions that must apply during production-file edits include those production globs in `applyTo`.
-- **STRUCT-01 (MUST)**: Keep the five-chapter structure (Scope -> Standards -> Guidelines -> Testing and Validation -> Security Guidelines) - missing chapters create information gaps.
-- **STRUCT-02 (MUST)**: Keep chapter order strict - inconsistent ordering makes file-to-file comparison harder.
-- **STRUCT-03 (MUST)**: Use H2 for chapters and H3 for subsections; minimize H4 and deeper levels - deep hierarchies degrade AI structural recognition.
-- **STRUCT-04 (MUST)**: Start the Standards chapter with `### Naming Conventions` - this is the unified starting point across files.
-- **STRUCT-05 (MUST)**: Order Guidelines as domain rules -> Anti-Patterns -> Code Modification Guidelines - this keeps priority order clear.
-- **STRUCT-06 (MUST)**: In the Guidelines chapter, use H3 heading format `### Name (LEVEL)` for rule sections or `### Name` for declaration/process sections - do not include ID ranges in headings.
-- **STRUCT-07 (MUST)**: Keep `## Testing and Validation` concise: optional on-demand skill pointer and notes for checks not covered by automation; omit always-run command recipes and omit "hooks/pre-commit handle X so do not run Y" explanations; keep detailed review criteria (`TEST-*`, `SEC-*`) in Guidelines - duplicate definitions hurt maintainability and consistency.
-- **STRUCT-08 (SHOULD)**: When Guidelines are large, reinforce critical MUST obligations (for example test pairing) with a short Scope bullet so they are not buried.
 
 ## Guidelines
 
 ### General (G)
 
 - G-01 (MUST): Front Matter
-  - Check: Front Matter contains applyTo and description fields
 - G-02 (MUST): Title
-  - Check: Title clearly indicates purpose
 - G-03 (MUST): applyTo Target Precision
-  - Check: Do `applyTo` globs match only intended instruction/rule paths after distribution (for example `.claude/rules/*.md`, not `.claude/**/*.md`)?
 - G-04 (MUST): Portable Cross-References
-  - Check: Do agent-facing cross-links use stem-based wording such as companion X rules (stem `x`) instead of bare `*.instructions.md` filenames?
 - G-05 (MUST): Companion applyTo Coverage
-  - Check: When a companion instruction must guide production-file edits (for example tests paired with source), does `applyTo` include those production globs?
 
 ### Structure (STRUCT)
 
 - STRUCT-01 (MUST): Five Required Chapters Exist
-  - Check: Scope, Standards, Guidelines, Testing and Validation, and Security Guidelines chapters exist
 - STRUCT-02 (MUST): Chapter Order Unified
-  - Check: Chapters follow Scope → Standards → Guidelines → Testing and Validation → Security Guidelines order
 - STRUCT-03 (MUST): Heading Levels Appropriate
-  - Check: Heading hierarchy properly uses H2 (chapters) → H3 (subsections)
-- STRUCT-04 (MUST): Standards Chapter Subsections
-  - Check: Does the Standards chapter have Naming Conventions subsection first, followed by tool-specific standards?
+- STRUCT-04 (SHOULD): Standards Chapter Subsections
 - STRUCT-05 (MUST): Guidelines Chapter Subsections
-  - Check: Does the Guidelines chapter have domain rules first, followed by Anti-Patterns, then Code Modification Guidelines?
 - STRUCT-06 (MUST): H3 Heading Format
-  - Check: Do H3 headings use `### Name（LEVEL）` format for rule sections, and `### Name` for process/declaration sections?
 - STRUCT-07 (MUST): Concise Testing and Validation Chapter
-  - Check: Is `## Testing and Validation` limited to an optional on-demand skill pointer and notes for checks not covered by automation, without always-run recipes or "hooks/pre-commit handle X so do not run Y" explanations?
 - STRUCT-08 (SHOULD): Critical MUST in Scope
-  - Check: When Guidelines are large, are critical MUST obligations (for example test pairing) reinforced with a short Scope bullet?
 
 ### Guidelines Chapter (GUIDE)
 
 - GUIDE-01 (SHOULD): Code Modification Guidelines
-  - Check: Modification procedures are clearly documented; do not embed always-run lint/validate recipes or "hooks handle it, skip lint" explanations
 - GUIDE-02 (SHOULD): Tool Usage
-  - Check: MCP Tool usage examples are documented
 - GUIDE-03 (SHOULD): Anti-Patterns
-  - Check: Common anti-patterns and pitfalls are documented
 - GUIDE-04 (SHOULD): No ID-less Bullet Rules in Guidelines
-  - Check: Are there no ID-less bullet rules in the Guidelines chapter?
 
 ### Content Quality (QUAL)
 
 - QUAL-01 (SHOULD): Practical Examples
-  - Check: Practical code examples are included
 - QUAL-02 (SHOULD): No Redundancy
-  - Check: No duplicate content
 - QUAL-03 (SHOULD): Token Efficiency
-  - Check: Large code examples are avoided for high token efficiency
 
 ### Consistency (CONS)
 
 - CONS-01 (SHOULD): Section Names
-  - Check: Section names are consistent with other instructions files
 - CONS-02 (SHOULD): Format
-  - Check: Table and list formats are consistent with other instructions files
 - CONS-03 (SHOULD): Internal Consistency
-  - Check: Do Standards templates, Guidelines checks, and code examples within the same file agree with each other without contradiction?
 
 ### Completeness (COMP)
 
 - COMP-01 (SHOULD): Validation Ownership Clear
-  - Check: Does Testing and Validation avoid always-run lint recipes, and use at most a short on-demand skill pointer?
 - COMP-02 (SHOULD): Real Pointers
-  - Check: When a skill is referenced, is the skill name concrete rather than vague "run validation"?
 
 ### Security Guidelines Chapter (SEC)
 
 - SEC-01 (MUST): Tool-Undetectable Risks Documented
-  - Check: Are security practices that automated tools (gitleaks, detect-secrets) cannot detect documented (e.g., destructive command defaults, untrusted link sources)?
 - SEC-02 (MUST): Secrets Management
-  - Check: Is a policy against embedding secrets in instruction files documented?
 - SEC-03 (MUST): Scope Limited to Document Safety
-  - Check: Are security items limited to documentation-specific risks rather than duplicating what CI/pre-commit tools enforce?
 - SEC-04 (SHOULD): Examples
-  - Check: YAML/code examples are included (where applicable)
 
 ### Standards Chapter (STD)
 
-- STD-01 (MUST): Naming Conventions
-  - Check: Naming conventions are documented per component
+- STD-01 (MUST): Standards Chapter Non-Obvious Content
 - STD-02 (SHOULD): Tool Standards
-  - Check: Tool conventions are documented
 - STD-03 (MUST): Consistency
-  - Check: Documentation level matches other instructions files
 - STD-04 (MUST): Distribution Naming Documented
-  - Check: When instructions are distributed to agent rule paths, does Naming Conventions document source stem → Cursor `.mdc` / Claude `.md` / Kiro steering mapping?
+- STD-05 (MUST): No Guidelines Checklist Duplication in Standards
 
 ### Testing and Validation Chapter (TEST)
 
 - TEST-01 (MUST): No Always-Run Lint Mandates
-  - Check: Does the chapter omit "after every change, run validate.sh / linter X" and omit "hooks/pre-commit handle X so do not run Y"?
 - TEST-02 (SHOULD): On-Demand Skill Pointer
-  - Check: If present, is the skill pointer one short line (skill name / SKILL.md) without command recipe blocks?
 - TEST-03 (SHOULD): Domain-Only Operational Notes
-  - Check: Are any remaining operational notes limited to checks automation does not cover (for example tests, coverage, suite pairing, judgment review)?
 
 ### Code Modification Guidelines
 

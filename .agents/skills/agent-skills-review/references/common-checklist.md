@@ -1,33 +1,37 @@
 # Agent Skills Review Checklist
 
+## Best Practice Checks (BP)
+
+- BP-01 (SHOULD): Description states what the skill does and when to use it
+- BP-02 (SHOULD): Reference Files Guide states when each reference is read
+- BP-03 (SHOULD): SKILL.md avoids redundant prose already in references
+- BP-04 (SHOULD): Do not over-compress below sibling skill depth
+
 ## Pattern Checks (P)
 
-- P-01 (SHOULD): Design Pattern Compliance
-- P-02 (SHOULD): Output Contract Compliance
-- P-03 (SHOULD): Context Gathering Before Output
+- P-01 (SHOULD): Workflow matches the skill family pattern (not ad-hoc steps)
+- P-02 (SHOULD): Output matches common-output-format contract
+- P-03 (SHOULD): Gather required context before emitting the final report
 
 ## Quality Checks (Q)
 
-- Q-01 (SHOULD): Output is Truly Structured
-- Q-02 (SHOULD): Scope Boundaries
-- Q-03 (SHOULD): Execution Determinism
-- Q-04 (SHOULD): Input/Output Specificity
-- Q-05 (SHOULD): Constraints Clarity
-- Q-06 (MUST): No Implicit Inference
-- Q-09 (SHOULD): Token Budget Advisory
-- BP-03 (SHOULD): Token Efficiency
-- BP-04 (SHOULD): Anti-Overtrimming Guardrail
-- Q-10 (SHOULD): Error Handling Completeness
-- Q-11 (SHOULD): Input Parameter Consistency
-- Q-12 (SHOULD): Cross-Section Consistency
+- Q-01 (SHOULD): Output format is implementable (schema or Markdown sections)
+- Q-02 (SHOULD): Execution Scope splits Does vs Out of Scope
+- Q-03 (SHOULD): Execution path is single/canonical or branches are explicit
+- Q-04 (SHOULD): Inputs/outputs name concrete shapes with examples
+- Q-05 (SHOULD): Constraints list only non-obvious project rules
+- Q-06 (MUST): Instructions are imperative; no "appropriately"/"as needed"
+- Q-07 (SHOULD): SKILL.md depth aligns with package siblings
+- Q-08 (SHOULD): References/ includes common-checklist and common-output-format
+- Q-09 (SHOULD): Record waza token evidence; over-budget is advisory
+- Q-10 (SHOULD): Workflow defines failure severity and actions
+- Q-11 (SHOULD): Required params have no silent defaults; defaults are optional
+- Q-12 (SHOULD): Input/Output/Workflow/References do not contradict each other
 
 ## Structural Checks (S)
 
-- S-01 (MUST): Structural Completeness
-- S-02 (MUST): YAML Frontmatter Fields
-- BP-01 (SHOULD): Description Quality
-- BP-02 (SHOULD): Reference Trigger Conditions
-- Q-07 (SHOULD): Progressive Disclosure (Soft Guard)
-- Q-08 (SHOULD): Resource Separation
-- S-07 (MUST): Portable Reference Paths
-- S-03 (MUST): Reference Files Header Level Consistency
+- S-01 (MUST): SKILL.md has the five required ## sections
+- S-02 (MUST): Frontmatter has name, description, license (+ version metadata)
+- S-03 (MUST): References/ headers use required H1/H2 levels
+- S-04 (MUST): Links stay in-skill or https:// (no ../docs escapes)
+- S-05 (MUST): Use <agent-root> for install paths; do not hardcode .github/skills

@@ -5,109 +5,75 @@ paths:
   - ".github/actions/**/action.yml"
 ---
 
-# AI Assistant Instructions for GitHub Actions Workflows
+# GitHub Actions Workflows Instructions
 
 ## Scope
 
-- Scope is limited to designing, updating, and validating `.github/workflows/*.yml|yaml` and `.github/actions/*/action.yml` files.
+- Scope covers designing, updating, and validating GitHub Actions workflows and composite action definitions.
 
 ## Standards
 
-### Naming Conventions
-
-| Component     | Rule             | Example              |
-| ------------- | ---------------- | -------------------- |
-| Workflow file | kebab-case       | ci-build-deploy.yaml |
-| Job ID        | kebab-case       | build-and-test       |
-| Step ID       | kebab-case       | setup-node           |
-| Environment   | lowercase        | production, staging  |
-| Secret        | UPPER_SNAKE_CASE | DEPLOY_TOKEN         |
-| Variable      | UPPER_SNAKE_CASE | APP_VERSION          |
-| Artifact name | kebab-case       | build-output-linux   |
-
 ### Key Ordering
 
-- **G-05 (MUST)**: Keep keys in `inputs`, `env`, `permissions`, and `with` in alphabetical order (A-Z) - inconsistent ordering adds diff noise and makes change detection harder.
+Keep map keys in alphabetical order (A-Z) within each block (see ORD-01 in Guidelines for review wording):
+
+| Scope                         | In-scope key maps                                     |
+| ----------------------------- | ----------------------------------------------------- |
+| Workflow and job              | `env`, `permissions`, `with`, `secrets`               |
+| Reusable workflow declaration | `on.workflow_call.inputs`, `on.workflow_call.secrets` |
+| Composite `action.yml`        | `inputs`, `outputs`; per-step `with`, `env`           |
+
+Out of scope for alphabetical ordering: `jobs` map keys and `on` trigger keys (keep semantic order). `steps` are ordered lists, not key maps.
+
+Not enforced by `github-actions-validation` (actionlint, ghalint, zizmor); apply during edits.
 
 ## Guidelines
 
 ### Best Practices (BP)
 
-- BP-01 (SHOULD): Reusable Workflow Design
-  - Check: Are common processes extracted into reusable workflows or composite actions?
-- BP-02 (SHOULD): DRY Principle for Duplication Reduction
-  - Check: Is there code duplication?
-- BP-03 (SHOULD): Explicit Job Dependencies
-  - Check: Are job dependencies explicitly defined with `needs`?
-- BP-04 (SHOULD): Simplify Conditional Branches
-  - Check: Are `if` expressions concise and understandable?
-- BP-05 (SHOULD): Limit Environment Variable Scope
-  - Check: Are secrets or sensitive values exposed at broader scope than necessary? Non-sensitive configuration values at top-level for readability are acceptable.
-- BP-06 (SHOULD): Explicit Action Input Values for Critical Settings
-  - Check: Are action inputs that affect security, caching, or core behavior specified explicitly in `with` blocks, even when matching the action's default value?
+- BP-01 (SHOULD): Extract shared pipelines to reusable workflows/composites
+- BP-02 (SHOULD): Declare job dependencies with needs
+- BP-03 (SHOULD): Keep secrets at minimal env scope
+- BP-04 (SHOULD): Explicit with: for security/cache/core action inputs
 
 ### Error Handling (ERR)
 
-- ERR-01 (SHOULD): Careful Use of continue-on-error
-  - Check: Is `continue-on-error` used only for non-critical steps with explicit justification?
-- ERR-02 (SHOULD): Failure and Always Guards for Cleanup/Notify
-  - Check: Are `if: failure()` and `if: always()` used for cleanup, artifact upload, and notifications where step failure must not skip them?
-- ERR-03 (SHOULD): Timeout Configuration
-  - Check: Are `timeout-minutes` values set for jobs or long-running steps?
-- ERR-04 (SHOULD): Retry Strategy for Flaky Integrations
-  - Check: Is retry logic configured for transient external failures (network/service instability)?
+- ERR-01 (SHOULD): Limit continue-on-error to non-critical justified steps
+- ERR-02 (SHOULD): Use if: failure()/always() for cleanup/notify uploads
+- ERR-03 (SHOULD): Set timeout-minutes on jobs or long steps
 
 ### Global / Base (G)
 
-- G-01 (SHOULD): Clear Workflow Naming
-  - Check: Is the workflow name clear and expressive of its purpose?
-- G-02 (SHOULD): Limit Triggers (on)
-  - Check: Are triggers limited to specific branches, paths, or event types rather than triggering on all pushes/PRs?
-- G-03 (SHOULD): Step Clarification and Order Guarantee
-  - Check: Does each step have a `name` and logical order?
-- G-04 (SHOULD): Explicit Environment and Approval Flow
-  - Check: Do production jobs have `environment` configuration and approval?
-- G-05 (MUST): Alphabetical Key Ordering
-  - Check: Are keys in `inputs`, `env`, `permissions`, and `with` sorted alphabetically (A-Z)?
+- G-01 (SHOULD): Narrow on triggers by branch/path/event
+- G-02 (SHOULD): Production jobs use environment + approval
+
+### Ordering (ORD)
+
+- ORD-01 (MUST): Alphabetize keys in env/permissions/with/secrets blocks
 
 ### Performance (PERF)
 
-- PERF-01 (SHOULD): Cache Strategy and Invalidation
-  - Check: Are cache keys deterministic and invalidated by dependency changes?
-- PERF-02 (SHOULD): Matrix/Parallel Execution Balance
-  - Check: Is matrix or parallel execution used where beneficial without excessive runner cost?
-- PERF-03 (SHOULD): Concurrency Control
-  - Check: Is `concurrency` configured to cancel redundant in-progress runs on same branch/context? Skip this check for reusable workflows (`workflow_call`), where concurrency is the caller's responsibility.
-- PERF-04 (SHOULD): Reduce Unnecessary Workload
-  - Check: Are broad triggers, full-repo checkout, and repeated setup steps minimized?
+- PERF-01 (SHOULD): Deterministic cache keys invalidated by dependency changes
+- PERF-02 (SHOULD): Balance matrix/parallelism vs runner cost
+- PERF-03 (SHOULD): Cancel redundant runs with concurrency (caller-owned for reusable)
 
 ### Security (SEC)
 
-- SEC-01 (SHOULD): Safe Secret References
-  - Check: Are secrets referenced only via `${{ secrets.NAME }}` and not directly output?
-- SEC-02 (SHOULD): Careful Use of pull_request_target
-  - Check: Are fork PR restrictions in place when using `pull_request_target`?
-- SEC-03 (SHOULD): Log Masking for Sensitive Information
-  - Check: Are sensitive values masked with `::add-mask::` or `core.setSecret()`?
-- SEC-04 (SHOULD): Sanitize Environment Variables
-  - Check: Are environment variable inputs validated and sanitized?
-- SEC-05 (SHOULD): Guardrails for Public Repositories
-  - Check: Do public repositories have conditional branches like `github.event.repository.private`?
+- SEC-01 (SHOULD): Reference secrets only via secrets.*; never echo them
+- SEC-02 (SHOULD): Restrict pull_request_target on fork PRs
+- SEC-03 (SHOULD): Mask sensitive values in logs (::add-mask / setSecret)
+- SEC-04 (SHOULD): Validate/sanitize env inputs before use
+- SEC-05 (SHOULD): Public repos gate privileged steps on private/trusted context
 
 ### Tool Integration (TOOL)
 
-- TOOL-01 (SHOULD): Reviewdog Integration for PR Feedback
-  - Check: Is reviewdog integrated where lint results should be surfaced on pull requests?
-- TOOL-02 (SHOULD): Codecov Coverage Upload Strategy
-  - Check: Is Codecov configured with token for private repos, and without token for public repos where the Codecov app is installed?
-- TOOL-03 (SHOULD): Artifact Retention Configuration
-  - Check: Are uploaded artifacts configured with explicit retention periods appropriate for use case?
-- TOOL-04 (SHOULD): Cache Key and Restore Strategy
-  - Check: Are cache keys based on lockfiles and restore-keys configured for safe fallback?
+- TOOL-01 (SHOULD): Wire reviewdog for PR inline lint feedback when applicable
+- TOOL-02 (SHOULD): Upload coverage to Codecov with a clear fail policy
+- TOOL-03 (SHOULD): Set artifact retention intentionally (not default forever)
 
 ### Code Modification Guidelines
 
-- Keep `inputs`, `env`, `permissions`, and `with` keys alphabetically ordered (G-05).
+- Keep map keys alphabetically ordered per ORD-01 in companion github-actions-workflow rules (stem `github-actions-workflow`).
 
 ## Testing and Validation
 

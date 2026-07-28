@@ -46,8 +46,8 @@ Target: root `*.md`, `docs/**/*.md`, nested `**/README.md` (excluding generated 
 
 - [common-checklist.md](references/common-checklist.md) (always read)
 - [common-output-format.md](references/common-output-format.md) (always read)
-- [common-impact-map.md](references/common-impact-map.md) (always read — interactive / hook path)
-- [category-documentation-maintenance.md](references/category-documentation-maintenance.md) (read when deduplication or same-change sync may apply)
+- [common-impact-map.md](references/common-impact-map.md) (read on interactive path)
+- [category-documentation-maintenance.md](references/category-documentation-maintenance.md) (read when deduplication or same-change sync applies)
 - [category-scope.md](references/category-scope.md) (always read)
 - [category-input-schema.md](references/category-input-schema.md) (read on automation path)
 - [category-automation-envelope.md](references/category-automation-envelope.md) (read on automation path)
@@ -68,10 +68,10 @@ Resolve whether to edit documentation files before patching:
 ### Interactive / hook path
 
 1. Run this skill's detect script with `--scope <scope>`. On non-zero exit, read stdout and stop. On exit 0, parse success JSON.
-2. If `skip` is `true`, report skip and exit.
+2. IF `skip` is `true` → report skip and exit.
 3. Triage `affected_docs` per [common-impact-map.md](references/common-impact-map.md); grep before full read.
-4. When edits are not requested, emit survey shape per [common-output-format.md](references/common-output-format.md); stop — do not edit documentation files or run `git add`.
-5. When edits are requested, apply minimal patches per [common-checklist.md](references/common-checklist.md); regenerate `docs/index.md` when `docs/` files created/deleted/renamed; stage with `git add`; emit apply shape per [common-output-format.md](references/common-output-format.md).
+4. IF edits are not requested → emit survey shape per [common-output-format.md](references/common-output-format.md); stop — do not edit documentation files or run `git add`.
+5. ELSE → apply minimal patches per [common-checklist.md](references/common-checklist.md); regenerate `docs/index.md` when `docs/` files created/deleted/renamed; stage with `git add`; emit apply shape per [common-output-format.md](references/common-output-format.md).
 
 ### Automation path
 
@@ -79,13 +79,18 @@ When detect JSON and `## Constraints` are present: follow [category-automation-e
 
 ### Error Handling
 
-| Condition                                        | Severity    | Action                                                                                        |
-| ------------------------------------------------ | ----------- | --------------------------------------------------------------------------------------------- |
-| Detect script non-zero exit or `status: "error"` | Fatal       | Read stdout; stop — do not treat as success-path detect JSON                                  |
-| No git repository                                | Fatal       | Stop                                                                                          |
-| Empty diff / no documentation impact             | Info        | Report skip, exit                                                                             |
-| Affected doc file missing                        | Recoverable | Skip file; note in report                                                                     |
-| Exceeds scope (>3 H2, etc.)                      | Recoverable | Stop for file; recommend docs-creator                                                         |
-| `mkdocs.yml` missing                             | Recoverable | Skip nav update                                                                               |
-| Fix requested but edits not allowed              | Info        | Survey only; note that edits require an explicit fix request or caller permission             |
-| Automation `write_target` mismatch               | Recoverable | Survey only per [category-automation-envelope.md](references/category-automation-envelope.md) |
+| Condition                                           | Severity    | Action                                                                                        |
+| --------------------------------------------------- | ----------- | --------------------------------------------------------------------------------------------- |
+| Detect script non-zero exit or `status: "error"`    | Fatal       | Read stdout; stop — do not treat as success-path detect JSON                                  |
+| No git repository                                   | Fatal       | Stop                                                                                          |
+| Empty diff / no documentation impact                | Info        | Report skip, exit                                                                             |
+| Affected doc file missing                           | Recoverable | Skip file; note in report                                                                     |
+| Exceeds scope (>3 H2, new top-level document, etc.) | Recoverable | Stop for file; recommend docs-creator                                                         |
+| `mkdocs.yml` missing                                | Recoverable | Skip nav update                                                                               |
+| Fix requested but edits not allowed                 | Info        | Survey only; note that edits require an explicit fix request or caller permission             |
+| Automation `write_target` mismatch                  | Recoverable | Survey only per [category-automation-envelope.md](references/category-automation-envelope.md) |
+
+### Examples
+
+- Prompt: `Sync docs after the latest commit diff`
+- Result: Survey or apply report per [references/common-output-format.md](references/common-output-format.md); stay within UV scope gates.

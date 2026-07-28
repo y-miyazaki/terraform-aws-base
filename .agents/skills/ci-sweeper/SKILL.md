@@ -43,8 +43,8 @@ Triage report per [common-output-format.md](references/common-output-format.md).
 - [common-output-format.md](references/common-output-format.md) (always read)
 - [category-scope.md](references/category-scope.md) (always read)
 - [category-input-schema.md](references/category-input-schema.md) (always read)
-- [category-run-ledger.md](references/category-run-ledger.md) (always read — `ignored[]` only; policy is caller/detect)
-- [category-automation-envelope.md](references/category-automation-envelope.md) (always read — automation path)
+- [category-run-ledger.md](references/category-run-ledger.md) (read when ignored[] is non-empty)
+- [category-automation-envelope.md](references/category-automation-envelope.md) (read on automation path)
 - [common-troubleshooting.md](references/common-troubleshooting.md) (read on failure)
 
 ## Workflow
@@ -62,14 +62,14 @@ When `may_edit` is `true`, resolve `write_target`: on the **interactive** path u
 
 1. Run this skill's detect script (interactive) or parse detect JSON per [category-input-schema.md](references/category-input-schema.md). On non-zero exit, read stdout and stop.
 2. On the automation path, read [category-automation-envelope.md](references/category-automation-envelope.md) for Constraints, PR templates, and Session Metrics.
-3. If `skip` or no actionable `failures`, emit survey no-op; on automation path append `## Session Metrics` per [category-automation-envelope.md](references/category-automation-envelope.md); stop.
+3. IF `skip` OR no actionable `failures` → emit survey no-op; on automation path append `## Session Metrics` per [category-automation-envelope.md](references/category-automation-envelope.md); stop.
 4. Classify every item in `failures[]` per [common-checklist.md](references/common-checklist.md). Note `ignored[]` in Overview when non-empty.
-5. When `may_edit` is `false`, emit survey shape with `### Candidates`; on automation path load `assets/pr-body-template-survey.md` at synthesis and append `## Session Metrics` per [category-automation-envelope.md](references/category-automation-envelope.md); stop — do not edit files.
-6. When `may_edit` is `true` and `write_target` is not `fix` → emit survey shape; note expected `write_target: fix` in Overview; stop — do not edit files.
-7. When `may_edit` is `true` and `write_target` is `fix`, fix the first `regression` only when more than three failures are present; defer the rest within [category-scope.md](references/category-scope.md).
-8. When infra/env/flake or >5 files are required, classify as Watch with no edits.
+5. IF `may_edit` is `false` → emit survey shape with `### Candidates`; on automation path load `assets/pr-body-template-survey.md` at synthesis and append `## Session Metrics` per [category-automation-envelope.md](references/category-automation-envelope.md); stop — do not edit files.
+6. ELSE IF `may_edit` is `true` AND `write_target` is not `fix` → emit survey shape; note expected `write_target: fix` in Overview; stop — do not edit files.
+7. ELSE IF `may_edit` is `true` AND `write_target` is `fix` AND (infra/env/flake OR >5 files required) → classify as Watch with no edits; emit survey shape with `### Watch` per [common-output-format.md](references/common-output-format.md); on automation path append `## Session Metrics` per [category-automation-envelope.md](references/category-automation-envelope.md); stop — do not emit apply shape.
+8. ELSE IF `may_edit` is `true` AND `write_target` is `fix` → fix the first `regression` only when more than three failures are present; defer the rest within [category-scope.md](references/category-scope.md).
 9. When validation was run (interactive fix path or caller CI), record commands and outcomes in Session Metrics on the automation path.
-10. When `may_edit` is `true` and `write_target` is `fix`, emit apply shape per [common-output-format.md](references/common-output-format.md); reconcile **Changes** / **Deferred** with `git diff --name-only`; on automation path load `assets/pr-body-template.md` at synthesis and append `## Session Metrics` per [category-automation-envelope.md](references/category-automation-envelope.md).
+10. IF `may_edit` is `true` AND `write_target` is `fix` AND NOT (infra/env/flake OR >5 files required) → emit apply shape per [common-output-format.md](references/common-output-format.md); reconcile **Changes** / **Deferred** with `git diff --name-only`; on automation path load `assets/pr-body-template.md` at synthesis and append `## Session Metrics` per [category-automation-envelope.md](references/category-automation-envelope.md).
 
 ### Error Handling
 
@@ -82,3 +82,8 @@ When `may_edit` is `true`, resolve `write_target`: on the **interactive** path u
 | Infra/env/flake or >5 files required             | Recoverable | Classify Watch; no edits                                                         |
 | Validation tooling missing                       | Recoverable | Defer Watch unless fixing one line from `log_excerpt`                            |
 | Path outside allowlist                           | Recoverable | Watch or defer; do not edit                                                      |
+
+### Examples
+
+- Prompt: `Triage failing CI on the integration branch`
+- Result: Survey report per [references/common-output-format.md](references/common-output-format.md); apply one-line regression fixes only when `may_edit` is true.

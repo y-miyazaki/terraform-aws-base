@@ -15,7 +15,7 @@
 # - Dot-prefixed directory segments are excluded except structural roots (.github, .apm)
 # - Root dotfiles are not excluded by the dot-directory rule
 # - repo_append_find_prune_args is a performance prune; repo_filter_paths is authoritative
-# - Agent directory exclusion aligns with agent-skills.instructions.md S-06 plus .vscode (editor-local)
+# - Agent directory exclusion aligns with agent-skills.instructions.md S-05 plus .vscode (editor-local)
 #######################################
 
 declare -A REPO_PATHS_GITIGNORE_CACHE=()

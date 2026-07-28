@@ -88,7 +88,7 @@ Arguments:
 Validation Checks:
     - Structural Completeness: 5 required sections exist
   - YAML Frontmatter Fields: name, description, license fields present
-  - Description Quality: third person, Use when trigger, no implementation instructions
+  - Description Quality: third person, no implementation instructions (activation trigger wording is advisory)
   - Metadata Fields: author and version present
     - Progressive Disclosure (soft guard): word count monitoring for readability
     - Resource Separation: references/ is recommended (SHOULD); scripts/ is optional
@@ -156,7 +156,7 @@ function parse_arguments {
 
     # Validate path matches expected pattern (SEC-01)
     if [[ ! $SKILL_FILE =~ /(\.github|\.agents|\.claude|\.codex|\.cursor|cursor|\.kiro|kiro)/skills/.*/SKILL\.md$ ]]; then
-        error_exit "Error: File must match <agent-root>/skills/*/SKILL.md where agent-root is one of .github,.agents,.claude,.codex,.cursor,cursor,.kiro,kiro (see agent-skills.instructions.md S-06): $SKILL_FILE"
+        error_exit "Error: File must match <agent-root>/skills/*/SKILL.md where agent-root is one of .github,.agents,.claude,.codex,.cursor,cursor,.kiro,kiro: $SKILL_FILE"
     fi
 }
 
@@ -518,10 +518,8 @@ function check_description_quality {
         issues+=("not third person")
     fi
 
-    # Check "Use when" trigger exists
-    if ! echo "$desc" | grep -qi 'Use when'; then
-        issues+=("missing Use when trigger")
-    fi
+    # Activation trigger content (WHEN) is BP-01 review judgment.
+    # Do not require the literal phrase "Use when" — recommended, not mandatory.
 
     # Check no implementation instructions
     if echo "$desc" | grep -qiP 'Always use|For troubleshooting|Individual commands'; then
@@ -616,21 +614,29 @@ function check_reference_triggers {
     fi
 
     local issues=()
+    local allowlist='\(always read\)|\(read on failure\)|\(read on debugging\)|\(read on automation path\)|\(read on interactive path\)|\(read when [^)]+\)'
+    local ref_line trigger trigger_lower
 
-    # Check for "(always read)" or "Always read" annotation (case-insensitive)
-    if ! echo "$ref_section" | grep -qi 'always read'; then
+    # Require at least one (always read) — case-insensitive for migration compatibility
+    if ! echo "$ref_section" | grep -qiE '\(always read\)'; then
         issues+=("missing (always read) annotation")
     fi
 
-    # Check for "Read when" or "Always read" triggers in category entries
-    local category_lines
-    category_lines=$(echo "$ref_section" | grep -c 'category-' || true)
-    local trigger_lines
-    trigger_lines=$(echo "$ref_section" | grep -ciE 'Read when|Always read' || true)
-
-    if [[ $category_lines -gt 0 ]] && [[ $trigger_lines -eq 0 ]]; then
-        issues+=("category files missing Read when triggers")
-    fi
+    # Each reference line with a link must have an allowlisted parenthetical trigger (BP-02)
+    while IFS= read -r ref_line; do
+        [[ $ref_line =~ ^-[[:space:]] ]] || continue
+        echo "$ref_line" | grep -qE '\[[^]]+\]\([^)]+\)' || continue
+        remainder=$(echo "$ref_line" | sed -E 's/\[[^]]+\]\([^)]+\)//g')
+        if echo "$remainder" | grep -qE '\([^)]+\)'; then
+            trigger=$(echo "$remainder" | grep -oE '\([^)]+\)' | tail -n 1)
+            trigger_lower=$(echo "$trigger" | tr '[:upper:]' '[:lower:]')
+            if ! echo "$trigger_lower" | grep -qE "^(${allowlist})$"; then
+                issues+=("non-allowlist trigger ${trigger}")
+            fi
+        else
+            issues+=("missing trigger annotation on reference line")
+        fi
+    done <<< "$(echo "$ref_section" | grep '^-[[:space:]]')"
 
     if [[ ${#issues[@]} -eq 0 ]]; then
         echo "✓ Reference trigger conditions present"
@@ -646,10 +652,10 @@ function check_reference_triggers {
 }
 
 #######################################
-# check_path_conventions: Enforce path conventions and decoupling rules
+# check_path_conventions: Enforce path conventions and S-05 agent-root portability
 #
 # Globals:
-#   None
+#   SKILL_FILE
 #
 # Arguments:
 #   None
@@ -663,13 +669,30 @@ function check_reference_triggers {
 #######################################
 function check_path_conventions {
     local issues=()
+    local skill_dir file rel_path line
 
-    # Rule 3: If <agent-root> is used, path form must be explicit and portable
+    # If <agent-root> is used, path form must be explicit and portable
     if grep -q '<agent-root>' "$SKILL_FILE"; then
         if ! grep -qE '<agent-root>/(skills|instructions)/' "$SKILL_FILE"; then
             issues+=("invalid <agent-root> path form")
         fi
     fi
+
+    # S-05: do not hardcode a single agent-root install path (judgment examples in ❌ / Why: / Check: skipped)
+    skill_dir="$(dirname "${SKILL_FILE}")"
+    while IFS= read -r -d '' file; do
+        rel_path="${file#"${skill_dir}/"}"
+        while IFS= read -r line || [[ -n ${line} ]]; do
+            [[ ${line} == *"❌"* ]] && continue
+            [[ ${line} =~ ^[[:space:]]*Why: ]] && continue
+            [[ ${line} =~ ^[[:space:]]*Check: ]] && continue
+            [[ ${line} =~ ^\*\*S-05 ]] && continue
+            if [[ ${line} =~ (^|[^[:alnum:]_-])(\.github|\.agents|\.claude|\.codex|\.cursor|cursor|\.kiro|kiro)/skills/ ]]; then
+                issues+=("hardcoded agent-root install path in ${rel_path} (S-05)")
+                break
+            fi
+        done < "${file}"
+    done < <(find "${skill_dir}" -maxdepth 2 \( -name 'SKILL.md' -o -path "${skill_dir}/references/*.md" \) -print0 2> /dev/null)
 
     if [[ ${#issues[@]} -eq 0 ]]; then
         echo "✓ Path conventions valid"
@@ -685,7 +708,7 @@ function check_path_conventions {
 }
 
 #######################################
-# check_portable_reference_paths: Enforce S-07 portable reference paths
+# check_portable_reference_paths: Enforce S-04 portable reference paths
 #
 # Globals:
 #   SKILL_FILE
@@ -710,7 +733,9 @@ function check_portable_reference_paths {
         rel_path="${file#"${skill_dir}/"}"
         while IFS= read -r line || [[ -n ${line} ]]; do
             [[ ${line} == *"❌"* ]] && continue
-            if [[ ${line} =~ \]\(\.\./ ]] || [[ ${line} =~ \]\(docs/ ]] || [[ ${line} =~ repository[[:space:]\`]*docs/ ]]; then
+            [[ ${line} =~ ^[[:space:]]*Why: ]] && continue
+            # Flag only actual markdown links with non-portable targets (S-04)
+            if [[ ${line} =~ \]\(\.\./ ]] || [[ ${line} =~ \]\(docs/ ]]; then
                 issues+=("non-portable reference in ${rel_path}")
             fi
         done < "${file}"

@@ -19,7 +19,7 @@ metadata:
 
 ## Output Specification
 
-Return structured Markdown in accordance with [references/common-output-format.md](references/common-output-format.md).
+Return structured Markdown in accordance with [references/common-output-format.md](references/common-output-format.md). That file is the source of truth for the output contract.
 
 Structured results for bash -n and shellcheck (syntax and lint only). With `--check-function-docs`, also reports [Google Shell Style Guide](https://google.github.io/styleguide/shellguide.html#s4.2-function-comments) function header sections.
 
@@ -63,29 +63,19 @@ Structured results for bash -n and shellcheck (syntax and lint only). With `--ch
 
 ### Error Handling
 
-| Condition                             | Severity    | Action                                                    |
-| ------------------------------------- | ----------- | --------------------------------------------------------- |
-| `scripts/validate.sh` missing         | Fatal       | Stop; report missing script                               |
-| No shell scripts under target path    | Info        | Report no reviewable scripts; stop                        |
-| bash -n or shellcheck missing         | Recoverable | Defer checks for that tool; note in deferred table        |
-| Single tool fails, other succeeds     | Recoverable | Report passing tool; defer failed tool with exit status   |
-| All tools fail                        | Fatal       | Return `status: failed` with per-tool stderr summaries    |
-| Function docs intentionally skipped   | Info        | Omit `--check-function-docs`; document opt-out in Summary |
-| `common-checklist.md` unavailable     | Fatal       | Stop; report missing dependency                           |
-| `common-output-format.md` unavailable | Recoverable | Use inline output contract                                |
+| Condition                             | Severity    | Action                                                                                                |
+| ------------------------------------- | ----------- | ----------------------------------------------------------------------------------------------------- |
+| `scripts/validate.sh` missing         | Fatal       | Stop; report missing script                                                                           |
+| No shell scripts under target path    | Info        | Report no reviewable scripts; stop                                                                    |
+| bash -n or shellcheck missing         | Recoverable | Defer checks for that tool; note in deferred table                                                    |
+| Single tool fails, other succeeds     | Recoverable | Report passing tool; defer failed tool with exit status                                               |
+| All tools fail                        | Fatal       | Return `status: failed` with per-tool stderr summaries                                                |
+| Function docs intentionally skipped   | Info        | Omit `--check-function-docs`; document opt-out in Summary                                             |
+| `common-checklist.md` unavailable     | Fatal       | Stop; report missing dependency                                                                       |
+| `common-output-format.md` unavailable | Recoverable | Note missing file; emit `## Checks Summary`, `## Checks (Failed/Deferred Only)`, and `## Issues` only |
 
 ### Examples
 
-```bash
-# Canonical (workspace-wide)
-bash scripts/validate.sh -v -f -d
-
-# Scoped (single script)
-bash scripts/validate.sh -v -f -d ./path/to/script.sh
-
-# Reorder function doc sections when the skill ships the helper
-bash scripts/fix_function_doc_order.sh ./path/to/script.sh
-
-# Opt-out: skip function doc sections when intentionally not applicable
-bash scripts/validate.sh -v -f ./path/to/script.sh
-```
+- Prompt: `Validate shell scripts (syntax, shellcheck, optional function docs)`
+- Command: `bash scripts/validate.sh -v -f -d`
+- Result: Structured report per [references/common-output-format.md](references/common-output-format.md). Additional invocations: [common-individual-commands.md](references/common-individual-commands.md) (read on debugging).

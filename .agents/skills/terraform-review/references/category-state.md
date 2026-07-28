@@ -1,18 +1,18 @@
 ## State & Backend (STATE)
 
-**STATE-01 (SHOULD): Remote Backend with Encryption (SSE) + DynamoDB Lock**
+**STATE-01 (SHOULD): Remote backend with encryption + locking**
 
 Check: Is backend configured with encryption and locking?
 Why: Unprotected state risks data leakage and concurrent modification corruption
 Fix: Enable S3 encryption + DynamoDB lock, set versioning
 
-**STATE-02 (SHOULD): No Credentials in Backend Configuration**
+**STATE-02 (SHOULD): No credentials embedded in backend config**
 
 Check: Are there no hardcoded credentials in backend blocks?
 Why: Credentials in backend config leak via Git history and violate security policies
 Fix: Use environment variables, IAM roles, or profiles
 
-**STATE-03 (SHOULD): No Workspace (Unless Documented)**
+**STATE-03 (SHOULD): Avoid workspaces unless documented as intentional**
 
 Check: Are workspaces not used, or is workspace usage policy documented in comments?
 Why: Inappropriate workspace usage causes environment confusion and misdeployment

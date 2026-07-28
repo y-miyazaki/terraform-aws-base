@@ -17,7 +17,7 @@ metadata:
 
 ## Output Specification
 
-Return structured Markdown in accordance with [references/common-output-format.md](references/common-output-format.md).
+Return structured Markdown in accordance with [references/common-output-format.md](references/common-output-format.md). That file is the source of truth for the output contract.
 
 Structured results in fixed order: terraform fmt, terraform validate, tflint, trivy config.
 
@@ -57,19 +57,17 @@ Structured results in fixed order: terraform fmt, terraform validate, tflint, tr
 
 ### Error Handling
 
-| Condition                             | Severity    | Action                                                   |
-| ------------------------------------- | ----------- | -------------------------------------------------------- |
-| `scripts/validate.sh` missing         | Fatal       | Stop; report missing script                              |
-| No `.tf` files under target path      | Info        | Report no reviewable Terraform; stop                     |
-| Single tool fails, others succeed     | Recoverable | Report passing tools; defer failed tool with exit status |
-| All tools fail                        | Fatal       | Return `status: failed` with per-tool stderr summaries   |
-| `common-checklist.md` unavailable     | Fatal       | Stop; report missing dependency                          |
-| `common-output-format.md` unavailable | Recoverable | Use inline output contract                               |
+| Condition                             | Severity    | Action                                                                                                |
+| ------------------------------------- | ----------- | ----------------------------------------------------------------------------------------------------- |
+| `scripts/validate.sh` missing         | Fatal       | Stop; report missing script                                                                           |
+| No `.tf` files under target path      | Info        | Report no reviewable Terraform; stop                                                                  |
+| Single tool fails, others succeed     | Recoverable | Report passing tools; defer failed tool with exit status                                              |
+| All tools fail                        | Fatal       | Return `status: failed` with per-tool stderr summaries                                                |
+| `common-checklist.md` unavailable     | Fatal       | Stop; report missing dependency                                                                       |
+| `common-output-format.md` unavailable | Recoverable | Note missing file; emit `## Checks Summary`, `## Checks (Failed/Deferred Only)`, and `## Issues` only |
 
 ### Examples
 
-```bash
-bash scripts/validate.sh
-bash scripts/validate.sh ./terraform/base/
-bash scripts/validate.sh --fix --verbose
-```
+- Prompt: `Validate Terraform fmt, validate, tflint, and trivy`
+- Command: `bash scripts/validate.sh`
+- Result: Structured report per [references/common-output-format.md](references/common-output-format.md). Additional invocations: [common-individual-commands.md](references/common-individual-commands.md) (read on debugging).

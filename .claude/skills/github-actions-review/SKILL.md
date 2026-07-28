@@ -7,7 +7,7 @@ description: >-
 license: Apache-2.0
 metadata:
   author: y-miyazaki
-  version: "1.0.1"
+  version: "1.1.0"
 ---
 
 ## Input
@@ -16,26 +16,7 @@ metadata:
 
 ## Output Specification
 
-Return structured Markdown in accordance with [references/common-output-format.md](references/common-output-format.md).
-
-Minimal inline contract (used if reference file is unavailable):
-
-```markdown
-## Checks Summary
-
-- Total: <n>, Passed: <n>, Failed: <n>, Deferred: <n>
-
-## Checks (Failed/Deferred Only)
-
-| ItemID | Status | Evidence | Fix |
-
-## Issues
-
-1. <ItemID>: <title>
-   - File: <path>#L<line>
-   - Problem: <specific>
-   - Recommendation: <fix>
-```
+Return structured Markdown in accordance with [references/common-output-format.md](references/common-output-format.md). That file is the source of truth for the output contract.
 
 ## Execution Scope
 
@@ -60,6 +41,7 @@ Minimal inline contract (used if reference file is unavailable):
 - [common-checklist.md](references/common-checklist.md) (always read)
 - [common-output-format.md](references/common-output-format.md) (always read)
 - [category-global.md](references/category-global.md) (always read)
+- [category-ordering.md](references/category-ordering.md) (always read)
 - [category-security.md](references/category-security.md) (always read)
 - [category-best-practices.md](references/category-best-practices.md) (always read)
 - [category-error-handling.md](references/category-error-handling.md) (always read)
@@ -71,20 +53,20 @@ Minimal inline contract (used if reference file is unavailable):
 
 1. Read PR context and workflow intent; extract events, `permissions`, secret usage, and external action references.
 2. Confirm `github-actions-validation` results are attached. If missing, inform user that validation should run first, then proceed with partial review: evaluate security and permissions checks directly from YAML, defer syntax/lint-dependent checks (mark as `Deferred` with reason "validation evidence unavailable").
-3. Review relevant checklist categories and collect failed/deferred items.
+3. Apply the full review checklist and collect failed/deferred items.
 4. Order issues in output by severity: `SEC-*` first, then correctness, then maintainability.
 5. Output report with the required sections per [references/common-output-format.md](references/common-output-format.md). Include file path, line reference, and remediation step for each issue.
 
 ### Error Handling
 
-| Condition                                  | Severity    | Action                                                            |
-| ------------------------------------------ | ----------- | ----------------------------------------------------------------- |
-| `github-actions-validation` output missing | Recoverable | Defer lint-dependent checks, review security/permissions directly |
-| `common-checklist.md` unavailable          | Fatal       | Stop, report missing dependency                                   |
-| `common-output-format.md` unavailable      | Recoverable | Use inline output contract                                        |
-| PR contains no workflow YAML files         | Recoverable | Report "no reviewable workflows" and stop                         |
+| Condition                                  | Severity    | Action                                                                                                |
+| ------------------------------------------ | ----------- | ----------------------------------------------------------------------------------------------------- |
+| `github-actions-validation` output missing | Recoverable | Defer lint-dependent checks, review security/permissions directly                                     |
+| `common-checklist.md` unavailable          | Fatal       | Stop, report missing dependency                                                                       |
+| `common-output-format.md` unavailable      | Recoverable | Note missing file; emit `## Checks Summary`, `## Checks (Failed/Deferred Only)`, and `## Issues` only |
+| PR contains no workflow YAML files         | Recoverable | Report "no reviewable workflows" and stop                                                             |
 
 ### Examples
 
-- Prompt: `Review workflow PR and report failed/deferred checks.`
-- Output: `## Checks Summary` + `## Checks (Failed/Deferred Only)` + `## Issues`, with each issue including file path, line, and remediation.
+- Prompt: `Review workflow PR and report failed/deferred checks`
+- Result: Structured report per [references/common-output-format.md](references/common-output-format.md); each issue includes path, line, and remediation.

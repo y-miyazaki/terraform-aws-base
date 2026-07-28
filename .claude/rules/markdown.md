@@ -6,11 +6,11 @@ paths:
   - "mkdocs.yml"
 ---
 
-# AI Assistant Instructions for Markdown
+# Markdown Instructions
 
 ## Scope
 
-- Scope covers documentation maintenance for `README.md`, `CONTRIBUTING.md`, `docs/**/*.md`, and `mkdocs.yml` navigation sync.
+- Scope covers repository documentation maintenance and MkDocs navigation sync.
 - This file defines repository-specific documentation operations rather than general Markdown theory.
 
 ## Standards
@@ -32,7 +32,7 @@ paths:
 - DOC-01 (SHOULD): Document Splitting
   - Check: Is the document becoming difficult to navigate, review, or maintain as a single file?
 - DOC-02 (SHOULD): Image Optimization
-  - Check: When image metadata is available, are images PNG for diagrams and JPEG for photos, preferably under 500KB, and sized for readability?
+  - Check: When image metadata is available, are images PNG for diagrams and JPEG for photos, under 500KB when file size metadata is available, and sized for readability?
 - DOC-03 (SHOULD): Reuse Existing Documentation Structure
   - Check: Can the information be added to an existing document before creating a new file or directory?
 - DOC-04 (SHOULD): Preserve Rationale

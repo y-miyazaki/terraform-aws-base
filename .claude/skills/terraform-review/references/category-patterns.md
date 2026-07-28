@@ -1,18 +1,18 @@
 ## Patterns (P)
 
-**P-01 (SHOULD): Avoid Excessive dynamic Blocks**
+**P-01 (SHOULD): Use dynamic blocks only when static lists are impractical**
 
 Check: Are dynamic blocks used only when necessary?
 Why: Dynamic block overuse and over-abstraction cause reduced readability, complexity, and debugging difficulties
 Fix: Use minimally, prefer static declarations, prioritize clarity
 
-**P-02 (SHOULD): Stable for_each Keys**
+**P-02 (SHOULD): for_each keys are stable across plans**
 
 Check: Are for_each keys stable identifiers?
 Why: Unstable key usage and values prone to change cause resource recreation, unexpected deletion, and state inconsistencies
 Fix: Use unchanging unique values as keys, prefer IDs or names
 
-**P-03 (SHOULD): Avoid count = 0/1 Toggle Chains**
+**P-03 (SHOULD): Avoid count = 0/1 toggle chains for optional resources**
 
 Check: Is conditional logic straightforward?
 Why: Complex conditional branching and count chains cause understanding difficulties, bug-prone code, and maintenance difficulties

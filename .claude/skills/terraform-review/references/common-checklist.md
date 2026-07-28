@@ -2,123 +2,104 @@
 
 ## CI & Lint (CI)
 
-- CI-01 (SHOULD): Minimize Unintended Plan Diffs
-- CI-02 (SHOULD): New Resources Clearly Justified
+- CI-01 (SHOULD): Avoid unstable args that create noisy plan diffs
 
 ## Compliance & Policy (COMP)
 
-- COMP-03 (MUST): No Default VPC/Open SG/Public S3
-- COMP-04 (MUST): IAM Policy with jsonencode or aws_iam_policy_document
+- COMP-01 (MUST): No default VPC, open SG, or public S3 by default
+- COMP-02 (MUST): IAM policy via jsonencode or aws_iam_policy_document
 
 ## Cost Optimization (COST)
 
-- COST-01 (SHOULD): Avoid High-Cost Metrics/Long Retention
-- COST-02 (SHOULD): Minimize Optional Defaults (monitoring/xray/retention)
+- COST-01 (SHOULD): Set explicit retention/metrics; avoid expensive defaults
 
 ## Data Sources & Imports (DATA)
 
-- DATA-01 (SHOULD): Justify Each Data Source
-- DATA-02 (SHOULD): Externalize IDs/ARNs as Variables
-- DATA-03 (SHOULD): Remove Unused data sources
+- DATA-01 (SHOULD): Prefer variables over data sources when caller knows the value
+- DATA-02 (SHOULD): Pass IDs/ARNs as variables instead of hardcoding lookups
 
 ## Dependency & Ordering (DEP)
 
-- DEP-01 (SHOULD): Minimal depends_on
-- DEP-02 (SHOULD): Avoid Circular References
-- DEP-03 (SHOULD): Make Implicit Dependencies Explicit When Needed
+- DEP-01 (SHOULD): Use depends_on only when implicit edges are insufficient
 
 ## Events & Observability (E)
 
-- E-01 (SHOULD): EventBridge event_pattern Precision
-- E-02 (SHOULD): CloudWatch Log Group Retention
-- E-03 (SHOULD): Alarm/Metrics/Dashboard Consistency
-- E-04 (SHOULD): Step Functions Log Level Appropriateness
+- E-01 (SHOULD): Keep EventBridge patterns narrow (source/detail-type)
+- E-02 (SHOULD): Set CloudWatch log group retention explicitly
 
 ## Global / Base (G)
 
-- G-01 (SHOULD): Variables/Outputs/Module Usage
-- G-02 (MUST): Secret Hardcoding Prohibition
-- G-03 (SHOULD): External Module Versioning
-- G-04 (SHOULD): Provider Version Constraints
-- G-05 (MUST): for_each/count with Post-Apply Values
-- G-06 (MUST): Prefer for_each over count
-- G-07 (SHOULD): Module Argument Validity
-- G-08 (SHOULD): Module Output Usage
-- G-09 (SHOULD): tfsec → trivy Migration
+- G-01 (MUST): No secrets hardcoded in Terraform code
+- G-02 (SHOULD): Version-constrain external modules
+- G-03 (SHOULD): Constrain providers with lower and upper version bounds
+- G-04 (MUST): Do not drive for_each/count with post-apply unknown values
+- G-05 (MUST): Prefer for_each over count for keyed instances
 
 ## Migration & Refactor (MIG)
 
-- MIG-01 (SHOULD): Use moved Block to Avoid Resource Recreation
-- MIG-02 (SHOULD): Replace Deprecated Features
-- MIG-03 (SHOULD): No Commented-Out Resources
+- MIG-01 (SHOULD): Use moved blocks to avoid resource recreation on refactors
+- MIG-02 (SHOULD): Replace deprecated resource/argument features
 
 ## Modules (M)
 
-- M-01 (SHOULD): Review All .tf Files in Module
-- M-02 (SHOULD): Provider Version Appropriateness
-- M-03 (SHOULD): Clear Responsibility for locals/variables/outputs
-- M-04 (SHOULD): Unified Tags and Naming Prefixes
+- M-01 (SHOULD): Separate variables/locals/outputs by responsibility
+- M-02 (SHOULD): Centralize tags and naming prefixes via locals/merge
 
 ## Naming & Documentation (N)
 
-- N-01 (SHOULD): English Comments
-- N-02 (SHOULD): Module Header (Purpose/Overview)
-- N-03 (SHOULD): Important Resource Explanation Comments
+- N-01 (SHOULD): Module header documents purpose/overview
+
+## Ordering (ORD)
+
+- ORD-01 (MUST): Alphabetize argument keys inside resource/module/data/local blocks
 
 ## outputs.tf (O)
 
-- O-01 (SHOULD): All Outputs Require description
-- O-02 (SHOULD): No Sensitive Information in Outputs
-- O-03 (SHOULD): Remove Unreferenced Outputs
+- O-01 (SHOULD): Every output has a description
+- O-02 (SHOULD): Outputs do not expose secrets (or mark sensitive)
 
 ## Patterns (P)
 
-- P-01 (SHOULD): Avoid Excessive dynamic Blocks
-- P-02 (SHOULD): Stable for_each Keys
-- P-03 (SHOULD): Avoid count = 0/1 Toggle Chains
+- P-01 (SHOULD): Use dynamic blocks only when static lists are impractical
+- P-02 (SHOULD): for_each keys are stable across plans
+- P-03 (SHOULD): Avoid count = 0/1 toggle chains for optional resources
 
 ## Performance & Limits (PERF)
 
-- PERF-01 (SHOULD): Avoid Unbounded for_each/count
-- PERF-02 (SHOULD): Reduce Provider Calls
-- PERF-03 (SHOULD): Meaningful Alarms Only
+- PERF-01 (SHOULD): Bound for_each/count collections; avoid unbounded expansion
 
 ## Security (SEC)
 
-- SEC-01 (SHOULD): KMS Encryption (SNS/S3/Logs/StateMachines) [AWS-specific]
-- SEC-02 (SHOULD): IAM Least Privilege
-- SEC-03 (SHOULD): Resource Policy with Condition
-- SEC-04 (MUST): No Plaintext Secrets
-- SEC-05 (SHOULD): Appropriate Logging Configuration
+- SEC-01 (SHOULD): Enable KMS encryption for SNS/S3/logs/state machines
+- SEC-02 (SHOULD): IAM policies follow least privilege
+- SEC-03 (SHOULD): Resource policies include Condition guards
+- SEC-04 (MUST): No plaintext secrets in code or state-bound literals
+- SEC-05 (SHOULD): Enable appropriate audit/access logging for sensitive resources
 
 ## State & Backend (STATE)
 
-- STATE-01 (SHOULD): Remote Backend with Encryption (SSE) + DynamoDB Lock
-- STATE-02 (SHOULD): No Credentials in Backend Configuration
-- STATE-03 (SHOULD): No Workspace (Unless Documented)
+- STATE-01 (SHOULD): Remote backend with encryption + locking
+- STATE-02 (SHOULD): No credentials embedded in backend config
+- STATE-03 (SHOULD): Avoid workspaces unless documented as intentional
 
 ## Tagging (TAG)
 
-- TAG-01 (MUST): Name Tag with merge(local.tags, {Name = "..."})
-- TAG-02 (SHOULD): Remove Redundant Manual Tags
+- TAG-01 (MUST): Apply Name via merge(local.tags, { Name = "..." })
 
 ## tfvars (T)
 
-- T-01 (MUST): No Secrets in tfvars
-- T-02 (SHOULD): Environment-Specific File Separation
-- T-03 (SHOULD): No Cross-Environment Identifiers
-- T-04 (SHOULD): No Environment Prefix Mixing
+- T-01 (MUST): No secrets in tfvars
+- T-02 (SHOULD): Separate tfvars by environment
+- T-03 (SHOULD): No cross-environment identifiers in a tfvars file
 
 ## variables.tf (V)
 
-- V-01 (SHOULD): Concrete Types (Avoid Excessive map(any)/any)
-- V-02 (SHOULD): Default Value Validity
-- V-03 (SHOULD): Description Comments + (Required)/(Optional)
-- V-04 (SHOULD): Validation Pattern Restrictions
-- V-05 (SHOULD): No Unused Variables
+- V-01 (SHOULD): Prefer concrete types over any / map(any)
+- V-02 (SHOULD): Variable descriptions mark (Required)/(Optional)
+- V-03 (SHOULD): validation blocks match real business constraints
 
 ## Versioning (VERS)
 
-- VERS-01 (MUST): required_version Aligns with Project Standards
-- VERS-02 (MUST): Provider Version Range (>= lower, < upper)
-- VERS-03 (SHOULD): External Module Pinning (Avoid SHA/pseudo version)
+- VERS-01 (MUST): required_version matches project standard range
+- VERS-02 (MUST): Provider versions use >= lower, < upper form
+- VERS-03 (SHOULD): Pin external modules (avoid mutable SHA/pseudo versions)

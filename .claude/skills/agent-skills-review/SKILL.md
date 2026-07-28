@@ -7,7 +7,7 @@ description: >-
 license: Apache-2.0
 metadata:
   author: y-miyazaki
-  version: "1.0.6"
+  version: "1.0.8"
 ---
 
 ## Input
@@ -17,8 +17,7 @@ metadata:
 
 ## Output Specification
 
-- Return structured Markdown in accordance with [references/common-output-format.md](references/common-output-format.md).
-- Include `## Checks Summary`, `## Checks (Failed/Deferred Only)`, and `## Issues`.
+Return structured Markdown in accordance with [references/common-output-format.md](references/common-output-format.md). That file is the source of truth for the output contract.
 
 ## Execution Scope
 
@@ -32,9 +31,6 @@ metadata:
 - review new SKILL drafts before release
 - note token budget advisories when `waza check` exceeds 500 tokens (secondary to sibling consistency)
 - fix SKILL spec compliance findings in PR reviews
-- apply **DIST-01 / S-07 portability** when the target skill is **intended for reuse** outside the authoring repository (redistributed skill tree, shared package, or equivalent)
-
-**Portability scope:** DIST-01 and S-07 judge whether skill text and links still work when the skill is installed or copied into a different repository. Defer S-07 for **local-only skills** that live under `<agent-root>/skills/` and are not redistributed — run structural and quality checks (S-01, Q-_, P-_) only. Report DIST-01 violations in `## Issues` for reuse-intended targets. Checklist neutrality in `references/` is defined in companion agent-skills instructions (DIST-01 Scope), not as a universal rule for every skill tree.
 
 ### DO NOT USE FOR:
 
@@ -47,16 +43,17 @@ metadata:
 
 - [common-checklist.md](references/common-checklist.md) (always read)
 - [common-output-format.md](references/common-output-format.md) (always read)
-- [category-structure.md](references/category-structure.md) (always read)
-- [category-quality.md](references/category-quality.md) (always read)
+- [category-best-practices.md](references/category-best-practices.md) (always read)
 - [category-patterns.md](references/category-patterns.md) (always read)
+- [category-quality.md](references/category-quality.md) (always read)
+- [category-structure.md](references/category-structure.md) (always read)
 - [common-troubleshooting.md](references/common-troubleshooting.md) (read on failure)
 
 ## Workflow
 
 1. Run `bash scripts/validate_waza.sh <skill-name>` and `bash scripts/validate.sh <SKILL.md>` (CWD: `<agent-root>/skills/agent-skills-review/`).
 2. Record token budget from `waza check` when present; if count > 500, add Q-09 advisory to `## Issues` (do not Fail Q-09 on count alone).
-3. Apply checks in order: `S-*` (structure), `Q-*` (quality language), `P-*` (workflow/policy), `BP-*` (best-practice rules).
+3. Apply checks in order: `BP-*` (best practices), `P-*` (workflow/policy), `Q-*` (quality language), `S-*` (structure).
 4. Report failed/deferred items with ItemIDs.
 5. If target `SKILL.md` does not exist, return `status: failed` and stop without running other checks.
 6. If one validation script fails and the other succeeds, report successful checks normally and mark unresolved checks as deferred with script name and exit status.
@@ -64,39 +61,17 @@ metadata:
 
 ### Error Handling
 
-| Condition                                       | Severity    | Action                                                                |
-| ----------------------------------------------- | ----------- | --------------------------------------------------------------------- |
-| Target `SKILL.md` does not exist                | Fatal       | Return `status: failed`; stop without other checks                    |
-| `validate_waza.sh` or `validate.sh` missing     | Fatal       | Stop; report missing script path                                      |
-| One validation script fails, the other succeeds | Recoverable | Report successful checks; defer failed script checks with exit status |
-| Both validation scripts fail                    | Fatal       | Return `status: failed` with command, exit status, and stderr summary |
-| `common-checklist.md` unavailable               | Fatal       | Stop; report missing dependency                                       |
-| `common-output-format.md` unavailable           | Recoverable | Use inline output contract from Output Specification                  |
-| Script output missing after one rerun           | Recoverable | Defer affected checks; include command and stderr per troubleshooting |
+| Condition                                       | Severity    | Action                                                                                                |
+| ----------------------------------------------- | ----------- | ----------------------------------------------------------------------------------------------------- |
+| Target `SKILL.md` does not exist                | Fatal       | Return `status: failed`; stop without other checks                                                    |
+| `validate_waza.sh` or `validate.sh` missing     | Fatal       | Stop; report missing script path                                                                      |
+| One validation script fails, the other succeeds | Recoverable | Report successful checks; defer failed script checks with exit status                                 |
+| Both validation scripts fail                    | Fatal       | Return `status: failed` with command, exit status, and stderr summary                                 |
+| `common-checklist.md` unavailable               | Fatal       | Stop; report missing dependency                                                                       |
+| `common-output-format.md` unavailable           | Recoverable | Note missing file; emit `## Checks Summary`, `## Checks (Failed/Deferred Only)`, and `## Issues` only |
+| Script output missing after one rerun           | Recoverable | Defer affected checks; include command and stderr per troubleshooting                                 |
 
 ### Examples
 
-- Prompt: `Review SKILL.md and report only failed/deferred items`.
-- Output skeleton:
-
-```markdown
-## Checks Summary
-
-- Total checks: <number>
-- Passed: <count>
-- Failed: <count>
-- Deferred: <count>
-
-## Checks (Failed/Deferred Only)
-
-| ItemID | Status | Evidence | Fix |
-| ------ | ------ | -------- | --- |
-
-## Issues
-
-1. <ItemID>: <ItemName>
-   - File: <path>#L<line>
-   - Problem: <specific issue>
-   - Impact: <scope and severity>
-   - Recommendation: <specific fix>
-```
+- Prompt: `Review SKILL.md and report only failed/deferred items`
+- Result: Structured report per [references/common-output-format.md](references/common-output-format.md) (failed/deferred only).
