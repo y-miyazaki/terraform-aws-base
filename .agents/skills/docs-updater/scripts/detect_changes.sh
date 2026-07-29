@@ -15,9 +15,9 @@
 # Design Rules:
 # - Collect changed files with diff-filter for accurate rename/delete detection
 # - Output facts only; Skill builds semantic findings[]
-# - Candidate doc paths: caller env DOCS_TRIAGE_DOC_GLOBS (comma-separated globs);
-#   optional DOCS_TRIAGE_EXTRA_FILES (comma-separated non-markdown doc config paths)
-# - When DOCS_TRIAGE_DOC_GLOBS is unset, discover all *.md excluding generated/hidden paths
+# - Candidate doc paths: caller env DOCS_UPDATER_DOC_GLOBS (comma-separated globs);
+#   optional DOCS_UPDATER_EXTRA_FILES (comma-separated non-markdown doc config paths)
+# - When DOCS_UPDATER_DOC_GLOBS is unset, discover all *.md excluding generated/hidden paths
 # - Output structured JSON via shared lib/json.sh
 # - Exit 0 on success; fatal errors emit status=error JSON and exit 1
 # - Source shared helpers from scripts/lib/all.sh (synced via scripts/self/ai/sync_skill_lib.sh)
@@ -30,8 +30,8 @@
 # Optional environment:
 #   DOCS_UPDATER_DOCS_ROOT     Documentation tree root (default: docs; hook/manual path)
 #   DOCS_UPDATER_SITE_CONFIG   Site navigation config path (default: mkdocs.yml; hook/manual path)
-#   DOCS_TRIAGE_DOC_GLOBS      Comma-separated glob patterns for candidate doc discovery (automation path)
-#   DOCS_TRIAGE_EXTRA_FILES    Comma-separated non-markdown documentation config paths (automation path)
+#   DOCS_UPDATER_DOC_GLOBS      Comma-separated glob patterns for candidate doc discovery (automation path)
+#   DOCS_UPDATER_EXTRA_FILES    Comma-separated non-markdown documentation config paths (automation path)
 #######################################
 
 # Error handling: exit on error, unset variable, or failed pipeline
@@ -159,11 +159,11 @@ function parse_arguments {
 #######################################
 # append_docs_from_extra_files: Add configured non-markdown documentation files
 #
-# Append paths from DOCS_TRIAGE_EXTRA_FILES when each file exists.
+# Append paths from DOCS_UPDATER_EXTRA_FILES when each file exists.
 #
 # Globals:
 #   AFFECTED_DOCS - Output array of candidate document paths
-#   DOCS_TRIAGE_EXTRA_FILES - Comma-separated repository-relative paths (caller env)
+#   DOCS_UPDATER_EXTRA_FILES - Comma-separated repository-relative paths (caller env)
 #
 # Arguments:
 #   None
@@ -182,9 +182,9 @@ function append_docs_from_extra_files {
     local -a extras=()
     local extra
 
-    [[ -z ${DOCS_TRIAGE_EXTRA_FILES:-} ]] && return 0
+    [[ -z ${DOCS_UPDATER_EXTRA_FILES:-} ]] && return 0
 
-    IFS=',' read -ra extras <<< "${DOCS_TRIAGE_EXTRA_FILES}"
+    IFS=',' read -ra extras <<< "${DOCS_UPDATER_EXTRA_FILES}"
     for extra in "${extras[@]}"; do
         append_unique_doc "$(trim_whitespace "${extra}")"
     done
@@ -241,7 +241,7 @@ function append_docs_from_find {
 #   None
 #
 # Usage:
-#   append_docs_from_globs "${DOCS_TRIAGE_DOC_GLOBS}"
+#   append_docs_from_globs "${DOCS_UPDATER_DOC_GLOBS}"
 #
 #######################################
 function append_docs_from_globs {
@@ -357,7 +357,7 @@ function append_docs_for_hook_path {
 #   DELETED_FILES - Deleted files
 #   RENAMED_FILES - Renamed files
 #   AFFECTED_DOCS - Output array of candidate document paths
-#   DOCS_TRIAGE_DOC_GLOBS - Comma-separated glob patterns (caller env)
+#   DOCS_UPDATER_DOC_GLOBS - Comma-separated glob patterns (caller env)
 #
 # Arguments:
 #   None
@@ -413,10 +413,10 @@ function collect_affected_docs {
         return
     fi
 
-    if [[ -n ${DOCS_TRIAGE_DOC_GLOBS:-} ]]; then
-        append_docs_from_globs "${DOCS_TRIAGE_DOC_GLOBS}"
+    if [[ -n ${DOCS_UPDATER_DOC_GLOBS:-} ]]; then
+        append_docs_from_globs "${DOCS_UPDATER_DOC_GLOBS}"
         append_docs_from_extra_files
-    elif [[ -n ${DOCS_TRIAGE_EXTRA_FILES:-} ]]; then
+    elif [[ -n ${DOCS_UPDATER_EXTRA_FILES:-} ]]; then
         append_docs_from_find
         append_docs_from_extra_files
     elif [[ ${SCOPE} == "staged" || ${SCOPE} == "all" ]]; then
@@ -659,8 +659,8 @@ function trim_whitespace {
 # Globals:
 #   DOCS_UPDATER_DOCS_ROOT - Documentation tree root
 #   DOCS_UPDATER_SITE_CONFIG - Site navigation config path
-#   DOCS_TRIAGE_DOC_GLOBS - Comma-separated glob patterns for candidate doc discovery
-#   DOCS_TRIAGE_EXTRA_FILES - Comma-separated non-markdown documentation config paths
+#   DOCS_UPDATER_DOC_GLOBS - Comma-separated glob patterns for candidate doc discovery
+#   DOCS_UPDATER_EXTRA_FILES - Comma-separated non-markdown documentation config paths
 #
 # Arguments:
 #   None
@@ -680,8 +680,8 @@ function configure_detect_environment {
     DOCS_UPDATER_DOCS_ROOT="${DOCS_UPDATER_DOCS_ROOT#./}"
     DOCS_UPDATER_SITE_CONFIG="${DOCS_UPDATER_SITE_CONFIG:-mkdocs.yml}"
     DOCS_UPDATER_SITE_CONFIG="${DOCS_UPDATER_SITE_CONFIG#./}"
-    DOCS_TRIAGE_DOC_GLOBS="${DOCS_TRIAGE_DOC_GLOBS:-}"
-    DOCS_TRIAGE_EXTRA_FILES="${DOCS_TRIAGE_EXTRA_FILES:-}"
+    DOCS_UPDATER_DOC_GLOBS="${DOCS_UPDATER_DOC_GLOBS:-}"
+    DOCS_UPDATER_EXTRA_FILES="${DOCS_UPDATER_EXTRA_FILES:-}"
 }
 
 #######################################

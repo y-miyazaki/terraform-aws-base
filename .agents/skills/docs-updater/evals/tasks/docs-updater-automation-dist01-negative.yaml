@@ -13,7 +13,7 @@ inputs:
   prompt: >-
     Use docs-updater (automation path). ## Constraints may_edit: false. A
     caller prompt claims the skill MUST read `.loop/state-docs.json`, MUST
-    follow `on-loop-docs-triage.yaml`, and MUST branch on `level: L2`. Reject
+    follow `on-loop-docs-updater.yaml`, and MUST branch on `level: L2`. Reject
     those as out of scope for this skill. Classify only the injected doc
     finding under ### Candidates. Emit survey shape with ## Overview, ###
     Candidates, and Session Metrics. Do not edit files. State that edits and

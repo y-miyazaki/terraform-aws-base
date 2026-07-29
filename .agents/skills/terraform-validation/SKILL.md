@@ -12,9 +12,9 @@ metadata:
 ## Input
 
 - Terraform path or directory (required)
-- Validation script: `scripts/validate.sh` (required, run from the terraform-validation skill directory)
-- Optional flags: `--fix`, `--verbose`
-
+- Validation script (required): `scripts/validate.sh` (run from the terraform-validation skill directory)
+- `--fix` (optional)
+- `--verbose` (optional)
 ## Output Specification
 
 Return structured Markdown in accordance with [references/common-output-format.md](references/common-output-format.md). That file is the source of truth for the output contract.

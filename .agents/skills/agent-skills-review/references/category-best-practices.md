@@ -58,3 +58,28 @@ Examples:
 - ✅ Workflow still deterministic with numbered steps or explicit IF/THEN branches
 - ✅ At least one concrete example remains
 - ❌ Token-only edit removed trigger clarity or deleted examples
+
+---
+
+**BP-05 (SHOULD): Checklist ItemID layout is one style per file**
+
+Check: When `common-checklist.md` uses ItemIDs (`PREFIX-nn`), does the file use exactly one layout — **index** or **gate** — without mixing? Recipe checklists with no ItemIDs are exempt.
+Why: Mixed chapter short-names and item headings make audits and agent self-checks inconsistent. Authoring previously had no layout rule beyond "fixed Item IDs" in the matrix.
+Layouts (pick one per checklist file):
+
+| Layout | H2 chapters | Items | Typical family |
+| ------ | ----------- | ----- | -------------- |
+| **Index** | `## Title (PREFIX)` | `- PREFIX-nn (LEVEL): title` (detail in `category-*.md` when present) | `*-review`, `*-validation`, step checklists |
+| **Gate** | `## Title` (no `(PREFIX)` on H2) | `### PREFIX-nn: Title` with optional checkbox / **PASS** | docs-\* / utility gates |
+
+Plain H2 sections without ItemIDs (for example `## Execution Order`, `## Pass Criteria`) may coexist with index or gate sections. Do **not** mix: H2 `Title (PREFIX)` together with H3 `PREFIX-nn` in the same file. Do **not** invent a third ItemID item layout.
+Examples:
+
+- ✅ Index: `## Security (SEC)` + `- SEC-01 (SHOULD): Validate inputs…`
+- ✅ Index (validation): `## gofumpt (FMT)` + `- FMT-01 (SHOULD): …` beside plain `## Execution Order`
+- ✅ Gate: `## Update Validation` + `### UV-01: Structure Preserved` + **PASS**
+- ✅ Recipe (no ItemIDs): `## Type → Section Mapping` with tables only
+- ❌ `## Intent (INTENT)` plus `### INTENT-01: …` in the same checklist
+- ❌ `- FMT-01: …` under plain `### gofumpt` without `## … (FMT)` (flat third layout)
+- ❌ Requiring ItemIDs on every loop recipe checklist
+

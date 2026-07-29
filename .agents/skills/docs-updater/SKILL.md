@@ -18,9 +18,10 @@ metadata:
 
 ## Input
 
-- **Interactive / hook:** `scope` (`staged`, `all`, `range` with `--since`) — run this skill's detect script — triage per [common-impact-map.md](references/common-impact-map.md); validate patches per [common-checklist.md](references/common-checklist.md)
-- **Automation:** caller-assembled prompt with detect JSON and optional `## Constraints` — load [category-input-schema.md](references/category-input-schema.md) and [category-automation-envelope.md](references/category-automation-envelope.md) on that path only
+- **Interactive / hook (required):** `scope` (`staged`, `all`, `range` with `--since`) — run this skill's detect script — triage per [common-impact-map.md](references/common-impact-map.md); validate patches per [common-checklist.md](references/common-checklist.md)
+- **Automation (optional):** caller-assembled prompt with detect JSON and `## Constraints` — load [category-input-schema.md](references/category-input-schema.md) and [category-automation-envelope.md](references/category-automation-envelope.md) on that path only
 
+Path allowlist, when present, arrives in `## Constraints`.
 ## Output Specification
 
 Report per [common-output-format.md](references/common-output-format.md). On the automation path, also follow [common-output-format-automation.md](references/common-output-format-automation.md) and [category-automation-envelope.md](references/category-automation-envelope.md). Stay within [category-scope.md](references/category-scope.md).

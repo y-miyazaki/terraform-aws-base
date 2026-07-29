@@ -11,9 +11,11 @@ metadata:
 
 ## Input
 
-- Markdown file(s) with `.md` extension (required)
-- Optional: markdownlint-cli2 config, markdown-link-check config, file pattern (`**/*.md`)
-
+- Markdown path or glob (required): `.md` files to validate
+- Validation script (required): `scripts/validate.sh` (run from this skill directory)
+- markdownlint-cli2 config (optional)
+- markdown-link-check config (optional)
+- File pattern (optional): defaults to target path glob
 ## Output Specification
 
 Return structured Markdown in accordance with [references/common-output-format.md](references/common-output-format.md). That file is the source of truth for the output contract.

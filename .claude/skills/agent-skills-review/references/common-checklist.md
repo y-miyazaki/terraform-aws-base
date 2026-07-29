@@ -1,20 +1,18 @@
 # Agent Skills Review Checklist
 
 ## Best Practice Checks (BP)
-
 - BP-01 (SHOULD): Description states what the skill does and when to use it
 - BP-02 (SHOULD): Reference Files Guide states when each reference is read
 - BP-03 (SHOULD): SKILL.md avoids redundant prose already in references
 - BP-04 (SHOULD): Do not over-compress below sibling skill depth
+- BP-05 (SHOULD): Checklist ItemID layout is one style per file
 
 ## Pattern Checks (P)
-
 - P-01 (SHOULD): Workflow matches the skill family pattern (not ad-hoc steps)
 - P-02 (SHOULD): Output matches common-output-format contract
 - P-03 (SHOULD): Gather required context before emitting the final report
 
 ## Quality Checks (Q)
-
 - Q-01 (SHOULD): Output format is implementable (schema or Markdown sections)
 - Q-02 (SHOULD): Execution Scope splits Does vs Out of Scope
 - Q-03 (SHOULD): Execution path is single/canonical or branches are explicit
@@ -29,7 +27,6 @@
 - Q-12 (SHOULD): Input/Output/Workflow/References do not contradict each other
 
 ## Structural Checks (S)
-
 - S-01 (MUST): SKILL.md has the five required ## sections
 - S-02 (MUST): Frontmatter has name, description, license (+ version metadata)
 - S-03 (MUST): References/ headers use required H1/H2 levels

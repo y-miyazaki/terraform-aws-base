@@ -11,10 +11,9 @@ metadata:
 
 ## Input
 
-- Workflow YAML in `.github/workflows/` (required)
-- Validation script: `scripts/validate.sh` (required)
-- Optional: specific directory path
-
+- Workflow YAML path or glob (required): `.github/workflows/`
+- Validation script (required): `scripts/validate.sh`
+- Directory path (optional): scope validation to a subdirectory
 ## Output Specification
 
 Return structured Markdown in accordance with [references/common-output-format.md](references/common-output-format.md). That file is the source of truth for the output contract.

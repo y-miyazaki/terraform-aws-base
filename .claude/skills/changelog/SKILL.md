@@ -9,15 +9,15 @@ description: >-
 license: Apache-2.0
 metadata:
   author: y-miyazaki
-  version: "2.0.3"
+  version: "2.0.4"
 ---
 
 **UTILITY SKILL** — changelog survey and patch, not release tagging.
 
 ## Input
 
-- **Interactive:** natural-language request; run this skill's detect script with `--scope all` (or `--scope range --since <ref>`) unless detect JSON is already in context — parse per [category-input-schema.md](references/category-input-schema.md)
-- **Automation:** detect JSON in prompt; read `may_edit`, `write_target`, and `report_file` (when `write_target: report`) from `## Constraints` per [category-automation-envelope.md](references/category-automation-envelope.md)
+- **Interactive (required):** natural-language request; run this skill's detect script with `--scope all` (or `--scope range --since <ref>`) unless detect JSON is already in context — parse per [category-input-schema.md](references/category-input-schema.md)
+- **Automation (optional):** detect JSON in prompt; read `may_edit`, `write_target`, and `report_file` (when `write_target: report`) from `## Constraints` per [category-automation-envelope.md](references/category-automation-envelope.md)
 
 Path allowlist, when present, arrives in `## Constraints`.
 

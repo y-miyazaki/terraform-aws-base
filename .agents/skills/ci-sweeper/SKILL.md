@@ -9,15 +9,15 @@ description: >-
 license: Apache-2.0
 metadata:
   author: y-miyazaki
-  version: "1.6.0"
+  version: "1.6.1"
 ---
 
 **UTILITY SKILL** — CI failure triage and minimal fix, not merge or release.
 
 ## Input
 
-- **Interactive:** natural-language request; run this skill's detect script unless detect JSON is already in context — parse per [category-input-schema.md](references/category-input-schema.md)
-- **Automation:** detect JSON in prompt; read `may_edit`, `write_target`, and `report_file` (when `write_target: report`) from `## Constraints` per [category-automation-envelope.md](references/category-automation-envelope.md)
+- **Interactive (required):** natural-language request; run this skill's detect script unless detect JSON is already in context — parse per [category-input-schema.md](references/category-input-schema.md)
+- **Automation (optional):** detect JSON in prompt; read `may_edit`, `write_target`, and `report_file` (when `write_target: report`) from `## Constraints` per [category-automation-envelope.md](references/category-automation-envelope.md)
 
 Path allowlist, when present, arrives in `## Constraints`.
 

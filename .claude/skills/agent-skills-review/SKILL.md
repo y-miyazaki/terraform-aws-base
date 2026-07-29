@@ -7,13 +7,13 @@ description: >-
 license: Apache-2.0
 metadata:
   author: y-miyazaki
-  version: "1.0.8"
+  version: "1.0.10"
 ---
 
 ## Input
 
-- Target: `<agent-root>/skills/*/SKILL.md`
-- Evidence: `scripts/validate_waza.sh` and `scripts/validate.sh` outputs
+- Target (required): `<agent-root>/skills/*/SKILL.md`
+- Evidence (required when not pre-supplied): outputs from `scripts/validate_waza.sh` and `scripts/validate.sh` — run both in Workflow step 1 when absent from context
 
 ## Output Specification
 

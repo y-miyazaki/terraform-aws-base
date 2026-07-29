@@ -7,18 +7,19 @@ description: >-
   edits only when the user explicitly requests apply or automation sets may_edit in
   Constraints. Architecture: proposal first, one approved slice per apply batch. Not for
   lint-only style, features, behavior-changing bugfixes, or upgrades.
+  Use when surveying or applying structural refactors interactively or from automation hints.
 license: Apache-2.0
 metadata:
   author: y-miyazaki
-  version: "2.6.0"
+  version: "2.7.0"
 ---
 
 **UTILITY SKILL** — structural refactor survey and apply, not feature work.
 
 ## Input
 
-- **Interactive:** paths/symbols and optional mode — constraints in `## Constraints` or [category-scope.md](references/category-scope.md)
-- **Automation:** detect JSON with `hints[]` in prompt; read `may_edit`, `write_target`, and `report_file` (when `write_target: report`) from `## Constraints` per [category-automation-envelope.md](references/category-automation-envelope.md)
+- **Interactive (required):** paths/symbols and optional mode — constraints in `## Constraints` or [category-scope.md](references/category-scope.md)
+- **Automation (optional):** detect JSON with `hints[]` in prompt; read `may_edit`, `write_target`, and `report_file` (when `write_target: report`) from `## Constraints` per [category-automation-envelope.md](references/category-automation-envelope.md)
 
 Path allowlist, when present, arrives in `## Constraints`.
 
@@ -42,9 +43,9 @@ Refactor report per [common-output-format.md](references/common-output-format.md
 - [common-output-format.md](references/common-output-format.md) (always read)
 - [category-scope.md](references/category-scope.md) (always read)
 - [category-operations.md](references/category-operations.md) (always read)
-- [category-techniques.md](references/category-techniques.md) (always read)
-- [category-verification.md](references/category-verification.md) (always read)
-- [category-input-schema.md](references/category-input-schema.md) (always read)
+- [category-techniques.md](references/category-techniques.md) (read when may_edit is true)
+- [category-verification.md](references/category-verification.md) (read when may_edit is true)
+- [category-input-schema.md](references/category-input-schema.md) (read when structured mode JSON or automation detect JSON is present)
 - [category-automation-envelope.md](references/category-automation-envelope.md) (read on automation path)
 - [common-output-format-automation.md](references/common-output-format-automation.md) (read on automation path)
 - [common-troubleshooting.md](references/common-troubleshooting.md) (read on failure)
@@ -56,33 +57,34 @@ Resolve **may_edit** before Phase B:
 | Source                                                      | `may_edit`                                                                                                               |
 | ----------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
 | Interactive — default                                       | `false` — Phase A survey only; do not edit files                                                                         |
-| Interactive — structured JSON `mode`                        | `survey` → `false`; `apply` → `true`; omit → `false` per [category-input-schema.md](references/category-input-schema.md) |
-| Interactive — apply language in the same request            | `true` — examples: apply, refactor, fix, 適用して                                                                        |
-| Interactive — follow-up after a prior survey in the session | `true` when the user asks to apply, fix, or refactor listed candidates                                                   |
-| Automation — `## Constraints`                               | `may_edit: true` or `may_edit: false` from [category-automation-envelope.md](references/category-automation-envelope.md) |
+| Interactive — structured JSON `mode`                        | `survey` → `false`; `apply` → `true`; omit → `false` — load [category-input-schema.md](references/category-input-schema.md) when that JSON is present |
+| Interactive — apply language in the same request            | `true` — examples: apply, refactor, fix, 適用して                                                                                                        |
+| Interactive — follow-up after a prior survey in the session | `true` when the user asks to apply, fix, or refactor listed candidates                                                                                   |
+| Automation — `## Constraints`                               | `may_edit: true` or `may_edit: false` from [category-automation-envelope.md](references/category-automation-envelope.md)                                 |
 
-When `may_edit` is `true`, resolve `write_target`: on the **interactive** path use `fix` (this skill); on the **automation** path read `write_target` from `## Constraints`. Do not branch on other caller metadata.
+When `may_edit` is `true`, resolve `write_target`: on the **interactive** path use `fix` (this skill); on the **automation** path read `write_target` from `## Constraints`. Do not branch on other caller metadata. Before Phase B, load [category-techniques.md](references/category-techniques.md) and [category-verification.md](references/category-verification.md).
 
 Every run has **Phase A — Survey** (discover candidates). **Phase B — Apply** runs only when `may_edit` is `true` and `write_target` is `fix`.
 
 ### Phase A — Survey (always)
 
-1. Parse input per [category-input-schema.md](references/category-input-schema.md); read constraints; resolve scope.
+1. Resolve scope from the request and [category-scope.md](references/category-scope.md). When structured mode JSON or automation detect JSON is present, parse per [category-input-schema.md](references/category-input-schema.md); otherwise use the `may_edit` table above.
 2. Classify intent per [category-operations.md](references/category-operations.md). Architecture without slice → Phase A architecture proposal; stop before apply.
-3. Discover **all** structural candidates in scope — automation: every `hints[]` entry plus in-scope evidence in hinted files; interactive: user paths/symbols or in-scope exploration.
-4. Lint-primary, feature/API, comment-only overlap, or cross-boundary items → mark **watch** on the candidate row; do not plan apply.
+3. Discover **all** structural candidates in scope — automation: every `hints[]` entry plus in-scope evidence in hinted files; interactive: user paths/symbols or in-scope exploration. Read targets before classifying (SURVEY-03).
+4. Lint-primary, feature/API, comment-only overlap, or cross-boundary items → mark **watch** on the candidate row; do not plan apply. Suggested approach: plain language from operations + evidence (SURVEY-02).
 5. Emit survey result shape per [common-output-format.md](references/common-output-format.md) (`### Candidates` only; no Changes/Deferred/Verification). If zero actionable candidates → no-op report; stop.
 
 ### Phase B — Apply (`may_edit: true` and `write_target: fix` only)
 
-1. For each **apply** candidate in survey order: pick one technique per [category-techniques.md](references/category-techniques.md); minimal in-scope structural edit.
-2. Gate per [category-verification.md](references/category-verification.md). Failed gate for one candidate → revert that edit; move row to **Deferred**; continue remaining candidates.
-3. Re-run stack gates on all touched packages before synthesis.
-4. Emit one **apply** report: `### Changes`, `### Deferred`; omit `### Candidates`. Reconcile with `git diff --name-only` before synthesis.
+1. Load [category-techniques.md](references/category-techniques.md) and [category-verification.md](references/category-verification.md) if not already loaded.
+2. For each **apply** candidate in survey order: pick one technique per [category-techniques.md](references/category-techniques.md); minimal in-scope structural edit.
+3. Gate per [category-verification.md](references/category-verification.md). Failed gate for one candidate → revert that edit; move row to **Deferred**; continue remaining candidates.
+4. Re-run stack gates on all touched packages before synthesis.
+5. Emit one **apply** report: `### Changes`, `### Deferred`; omit `### Candidates`. Reconcile with `git diff --name-only` before synthesis.
 
 ### Automation path (`hints[]` in detect JSON)
 
-1. Parse [category-input-schema.md](references/category-input-schema.md); read `may_edit` from [category-automation-envelope.md](references/category-automation-envelope.md).
+1. Load [category-input-schema.md](references/category-input-schema.md); parse detect JSON; read `may_edit` from [category-automation-envelope.md](references/category-automation-envelope.md).
 2. IF empty/`skip` → no-op report; stop.
 3. Run Phase A on **all** `hints[]` entries (not only the first).
 4. IF `may_edit` is `false` → stop after Phase A; emit survey shape with `### Candidates`; load `assets/pr-body-template-survey.md` at synthesis; append `## Session Metrics` per [category-automation-envelope.md](references/category-automation-envelope.md); no file edits.
@@ -91,7 +93,7 @@ Every run has **Phase A — Survey** (discover candidates). **Phase B — Apply*
 
 ### Interactive path
 
-1. Resolve `may_edit`: structured JSON `mode` per [category-input-schema.md](references/category-input-schema.md) (`survey` → `false`, `apply` → `true`; default `survey` when omitted); else natural language per the table above (default `false` unless apply language or follow-up).
+1. Resolve `may_edit`: when structured JSON `mode` is present, load [category-input-schema.md](references/category-input-schema.md) (`survey` → `false`, `apply` → `true`; default `survey` when omitted); else natural language per the table above (default `false` unless apply language or follow-up).
 2. Run Phase A.
 3. IF `may_edit` is `false` → emit **survey** result shape; stop; no file edits.
 4. ELSE (`may_edit` is `true`) → implicit `write_target: fix` on the interactive path; run Phase B for all apply candidates; architecture without `approved_slice` → proposal only (no Phase B).

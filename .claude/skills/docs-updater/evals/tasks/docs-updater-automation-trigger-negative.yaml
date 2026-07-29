@@ -9,7 +9,7 @@ tags:
 inputs:
   prompt: >-
     Use docs-updater (automation path). ## Constraints may_edit: true The user asks to fix a
-    bug in src/handler.go. This is not documentation triage. Note the request as out of
+    bug in src/handler.go. This is not documentation update. Note the request as out of
     scope in Overview or ### Deferred. Fix only the allowlisted doc finding under ###
     Changes. Emit apply shape with ## Verification and Session Metrics. Emit ## Overview and
     ## Summary per common-output-format.md.

@@ -11,15 +11,15 @@ description: >-
 license: Apache-2.0
 metadata:
   author: y-miyazaki
-  version: "2.1.0"
+  version: "2.2.0"
 ---
 
 **UTILITY SKILL** — technical debt survey and closed-set apply, not structural refactor.
 
 ## Input
 
-- **Interactive:** natural-language request; run this skill's detect script unless detect JSON is already in context — parse per [category-input-schema.md](references/category-input-schema.md)
-- **Automation:** detect JSON in prompt; read `may_edit`, `write_target`, and `report_file` from `## Constraints` per [category-automation-envelope.md](references/category-automation-envelope.md)
+- **Interactive (required):** natural-language request; run this skill's detect script unless detect JSON is already in context — parse per [category-input-schema.md](references/category-input-schema.md)
+- **Automation (optional):** detect JSON in prompt; read `may_edit`, `write_target`, and `report_file` from `## Constraints` per [category-automation-envelope.md](references/category-automation-envelope.md)
 
 Path allowlist, when present, arrives in `## Constraints`.
 
@@ -48,7 +48,7 @@ Tech-debt report per [common-output-format.md](references/common-output-format.m
 - [common-checklist.md](references/common-checklist.md) (always read)
 - [common-output-format.md](references/common-output-format.md) (always read)
 - [category-scope.md](references/category-scope.md) (always read)
-- [category-input-schema.md](references/category-input-schema.md) (always read)
+- [category-input-schema.md](references/category-input-schema.md) (read when parsing detect JSON or running the detect script)
 - [category-automation-envelope.md](references/category-automation-envelope.md) (read on automation path)
 - [common-troubleshooting.md](references/common-troubleshooting.md) (read on failure)
 - Previous report at `previous_report` (read when previous_report path exists)
@@ -64,16 +64,16 @@ Resolve **may_edit** before classifying signals:
 | Interactive — follow-up after a prior survey in the session | `true` when the user asks to fix, apply, or write the report                                                             |
 | Automation — `## Constraints`                               | `may_edit: true` or `may_edit: false` from [category-automation-envelope.md](references/category-automation-envelope.md) |
 
-When `may_edit` is `true`, resolve `write_target` and `report_file`: on the **interactive** path use `write_target: report` and `report_file` from detect JSON (`report_file` field) or the user request; on the **automation** path read both from `## Constraints`. Do not branch on other caller metadata outside `## Constraints`.
+When `may_edit` is `true`, resolve `write_target` and `report_file`: on the **interactive** path use `write_target: report` and `report_file` from detect JSON (`report_file` field) or the user request; on the **automation** path read both from `## Constraints`. Do not branch on other caller metadata outside `## Constraints`. Load [category-scope.md](references/category-scope.md) closed-set rules before any `report_file` write or fix.
 
-1. Run this skill's detect script (interactive) or parse detect JSON per [category-input-schema.md](references/category-input-schema.md). On non-zero exit, read stdout and stop.
+1. Load [category-input-schema.md](references/category-input-schema.md); run this skill's detect script (interactive) or parse detect JSON. On non-zero exit, read stdout and stop.
 2. On the automation path, read [category-automation-envelope.md](references/category-automation-envelope.md) for Constraints, PR templates, and Session Metrics.
-3. Read `previous_report` when set. Compare per [common-checklist.md](references/common-checklist.md#previous-report-comparison). IF `skip` OR both `signals` and `hotspots` are empty → emit survey no-op; on automation path append `## Session Metrics` per [category-automation-envelope.md](references/category-automation-envelope.md); stop.
-4. For each signal/hotspot, read ±30 lines. Classify per [category-debt-taxonomy.md](references/category-debt-taxonomy.md). Assign Delegate per taxonomy row.
+3. Read `previous_report` when set. Compare per [common-checklist.md](references/common-checklist.md) EVID-02. IF `skip` OR both `signals` and `hotspots` are empty → emit survey no-op; on automation path append `## Session Metrics` per [category-automation-envelope.md](references/category-automation-envelope.md); stop.
+4. For each signal/hotspot, read ±30 lines (EVID-01). Classify per [category-debt-taxonomy.md](references/category-debt-taxonomy.md). Assign Delegate (CLASS-02).
 5. IF `may_edit` is `false` → emit survey shape with `### Candidates` and optional `### Watch`; on automation path load `assets/pr-body-template-survey.md` at synthesis and append `## Session Metrics` per [category-automation-envelope.md](references/category-automation-envelope.md); stop — do not write `report_file`.
 6. ELSE IF `may_edit` is `true` AND `write_target` is not `report` → emit survey shape; note expected `write_target: report` in Overview; stop — do not write `report_file`.
 7. ELSE IF `may_edit` is `true` AND `write_target` is `report` AND (`report_file` is missing OR empty) → emit survey shape; note missing `report_file` in Overview; stop.
-8. ELSE (`may_edit` is `true` AND `write_target` is `report` AND `report_file` is set) → write `report_file` within allowlist with full persisted structure; apply closed-set fixes per [category-scope.md](references/category-scope.md); emit apply shape with `### Changes`, optional `### Deferred`, and `## Verification`; on automation path load `assets/pr-body-template.md` at synthesis and append `## Session Metrics` per [category-automation-envelope.md](references/category-automation-envelope.md).
+8. ELSE (`may_edit` is `true` AND `write_target` is `report` AND `report_file` is set) → write `report_file` within allowlist with full persisted structure; apply closed-set fixes only (EDIT-01) per [category-scope.md](references/category-scope.md); emit apply shape with `### Changes`, optional `### Deferred`, and `## Verification`; on automation path load `assets/pr-body-template.md` at synthesis and append `## Session Metrics` per [category-automation-envelope.md](references/category-automation-envelope.md).
 
 ### Error Handling
 

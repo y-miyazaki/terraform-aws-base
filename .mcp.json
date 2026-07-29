@@ -23,7 +23,7 @@
       "type": "stdio",
       "command": "uvx",
       "args": [
-        "awslabs.aws-documentation-mcp-server==1.1.26"
+        "awslabs.aws-documentation-mcp-server==1.1.27"
       ]
     },
     "aws-pricing-mcp-server": {

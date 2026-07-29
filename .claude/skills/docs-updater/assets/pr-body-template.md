@@ -19,7 +19,7 @@ Rules:
   Trigger → Problem → Action in plain language.
 
   GOOD: Docs drift scan found Skills inventory missing refactor skill rows; this run updated specification.md and left three docs without matching tables unchanged.
-  BAD:  Documentation triage automation completed in apply mode.
+  BAD:  Documentation update automation completed in apply mode.
 -->
 
 <summary: trigger, problem, action — plain language for a reviewer>

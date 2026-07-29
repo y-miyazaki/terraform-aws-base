@@ -8,7 +8,7 @@ Load at synthesis time after survey output is complete.
 
 <!--
   GOOD: Docs drift scan found stale workflow references in docs/guide/overview.md and docs/index.md; no edits applied.
-  BAD:  Documentation triage automation completed in survey mode.
+  BAD:  Documentation update automation completed in survey mode.
 -->
 
 <summary: dominant drift by file/type, no edits applied>

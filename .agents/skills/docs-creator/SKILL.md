@@ -16,9 +16,8 @@ metadata:
 
 ## Input
 
-- Natural language request describing what to document (required)
-- `target_file`: explicit path if updating an existing file (optional)
-
+- **Request (required):** natural language describing what to document
+- **target_file (optional):** explicit path when updating an existing file
 ## Output Specification
 
 Return structured report per [references/common-output-format.md](references/common-output-format.md).

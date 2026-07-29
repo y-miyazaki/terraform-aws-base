@@ -12,11 +12,10 @@ metadata:
 
 ## Input
 
-- Shell script path or directory (optional; defaults to workspace root)
-- Validation script: `scripts/validate.sh` (required)
-- Canonical flags: `-v -f -d` (always pass all three unless opted out below)
-- Opt-out: omit `--check-function-docs` only when the target scripts intentionally skip Google function header sections
-
+- Shell script path or directory (optional): defaults to workspace root
+- Validation script (required): `scripts/validate.sh`
+- Canonical flags (required): `-v -f -d` unless opted out below
+- `--check-function-docs` (optional): omit only when targets intentionally skip Google function header sections
 ## Output Specification
 
 Return structured Markdown in accordance with [references/common-output-format.md](references/common-output-format.md). That file is the source of truth for the output contract.
