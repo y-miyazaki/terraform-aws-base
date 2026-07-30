@@ -14,6 +14,7 @@ metadata:
 - Workflow YAML path or glob (required): `.github/workflows/`
 - Validation script (required): `scripts/validate.sh`
 - Directory path (optional): scope validation to a subdirectory
+
 ## Output Specification
 
 Return structured Markdown in accordance with [references/common-output-format.md](references/common-output-format.md). That file is the source of truth for the output contract.
@@ -25,7 +26,6 @@ Structured validation results from three tools: actionlint → ghalint → zizmo
 - **Always use `scripts/validate.sh`** for comprehensive validation. Do not run individual commands.
 - Script executes all tools in order.
 - Individual commands are for debugging only (see [references/common-individual-commands.md](references/common-individual-commands.md))
-- **Do not review workflow design decisions** (use github-actions-review for that)
 
 ### USE FOR:
 

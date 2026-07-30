@@ -74,9 +74,9 @@ No file edits.
 
 ## Verification
 
-| Check                               | Result                 |
-| ----------------------------------- | ---------------------- |
-| <markdown-validation or link check> | <pass \| fail \| skip> |
+| Check                         | Result                 |
+| ----------------------------- | ---------------------- |
+| <markdown lint or link check> | <pass \| fail \| skip> |
 ```
 
 ### Apply rules

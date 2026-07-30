@@ -23,8 +23,6 @@ Return structured Markdown in accordance with [references/common-output-format.m
 
 - Run validation scripts and parse results to assess SKILL.md quality against S-_, Q-_, P-_, and BP-_ checks.
 - Check `waza check` token output; when SKILL.md exceeds 500 tokens, add Q-09 advisory in `## Issues` (not a Failed row unless sibling consistency was violated).
-- Do not merge PRs or edit unrelated files.
-- Do not review product runtime behavior or application business logic.
 
 ### USE FOR:
 
@@ -38,6 +36,8 @@ Return structured Markdown in accordance with [references/common-output-format.m
 - debug product runtime failures unrelated to SKILL quality checks
 - run benchmark content evaluations (`waza run eval.yaml`) as a substitute for compliance checks
 - modify or overwrite the target SKILL.md without explicit user approval (review output only; do not write or commit changes)
+- merge PRs or edit unrelated files
+- review product runtime behavior or application business logic
 
 ## Reference Files Guide
 

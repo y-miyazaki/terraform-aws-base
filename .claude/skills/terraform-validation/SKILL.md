@@ -15,6 +15,7 @@ metadata:
 - Validation script (required): `scripts/validate.sh` (run from the terraform-validation skill directory)
 - `--fix` (optional)
 - `--verbose` (optional)
+
 ## Output Specification
 
 Return structured Markdown in accordance with [references/common-output-format.md](references/common-output-format.md). That file is the source of truth for the output contract.
@@ -26,7 +27,6 @@ Structured results in fixed order: terraform fmt, terraform validate, tflint, tr
 - **Always use `scripts/validate.sh`** for comprehensive validation. Do not run individual commands.
 - Script runs all checks in deterministic order.
 - Individual commands are for debugging only (see [references/common-individual-commands.md](references/common-individual-commands.md)).
-- **Do not review code design decisions** (use terraform-review for that)
 
 ### USE FOR:
 
@@ -36,7 +36,7 @@ Structured results in fixed order: terraform fmt, terraform validate, tflint, tr
 
 ### DO NOT USE FOR:
 
-- perform design and architecture review (use terraform-review)
+- perform design and architecture review
 - implement Terraform resource changes as a primary task
 - validate non-Terraform files
 

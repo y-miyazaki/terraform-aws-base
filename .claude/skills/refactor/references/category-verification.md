@@ -1,32 +1,24 @@
-## Verification (V4)
+## Verification
 
-Stack-specific gates. Prefer existing `*-validation` skills named in `## Instructions` (A').
+### Gate procedure
 
-### Stack table (v1)
+1. **Before apply:** read the target area; note existing tests and validation the repository already uses
+2. **Run gates** from the highest-priority source available — user instructions, session `## Instructions`, repository agent rules, or obvious project entrypoints (for example `Makefile`, package scripts, CI workflow definitions)
+3. **Characterization:** capture **existing** behavior only — do not expand into feature specs
+4. **Red-green:** when tests or checks exist (or context requires them), establish green on current behavior before the structural edit; re-run gates after the edit
+5. **Architecture Phase A:** skip apply and verification — proposal only
 
-| Stack          | Prefer                                                     | If missing foundation                                                 |
-| -------------- | ---------------------------------------------------------- | --------------------------------------------------------------------- |
-| Go             | `go test` for touched packages                             | Add characterization `*_test.go` for existing behavior, then refactor |
-| Shell          | `shellcheck` + bats when suite exists                      | Add/extend bats when domain rules require TEST-00                     |
-| Terraform      | `terraform fmt/validate`, tflint; no unintended plan drift | Do not invent terratest in Phase 1                                    |
-| GitHub Actions | actionlint / workflow validation skills                    | Reuse validation skills via A'; do not invent new product behavior    |
-| Unsupported    | —                                                          | Watch / skip — do not invent tests                                    |
+### Downgrade
 
-### Characterization tests
+- If the gate is insufficient for a same-package move (O2) → apply **local-only (O1)** or watch
+- Record the choice under Verification **Downgrade** using plain labels (`same-package move → local structure` or watch reason)
+- Lint/SAST findings must **not** become the primary reason to select or expand a target
 
-- Capture **existing** behavior only — do not expand into feature specs
-- Red-green discipline: add or run characterization tests on current behavior first; only then apply the structural edit; re-run gates after
-- Add tests/checks before or in the same change as the refactor when the stack is supported and no net exists
-- After tests are green on current behavior, apply local or same-package depth ([category-operations.md](category-operations.md)), then re-run gates
-- Architecture Phase A (proposal): skip characterization and apply — proposal only
+### After Phase B
 
-### Downgrade (V4)
+- Re-run applicable gates on all touched areas before synthesis
+- Report commands actually run and their outcomes — do not claim validation passed when commands failed or were not run
 
-- If the gate is insufficient for a same-package move (O2) → apply **local-only (O1)** or Watch
-- Record the choice under Characterization / Gates **Downgrade** using plain labels (`O2 same-package move → O1 local structure` or Watch reason)
-- Lint/SAST may appear inside a stack gate; their findings must **not** become the primary reason to select or expand a target
+### When no gate is available
 
-### Instructions (A')
-
-- Read `## Instructions` for named validation skills and commands
-- Do not hardcode consumer skill package paths into this reference
+- Mark the candidate **watch** or defer — do not invent tests for an unfamiliar stack without user or context direction

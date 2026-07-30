@@ -1,0 +1,23 @@
+id: refactor-interactive-bare-refactor-001
+name: refactor bare skill name stays survey
+description: >-
+  Validate that invoking the skill by name alone (bare "refactor" / bare "fix")
+  does not set may_edit true — survey shape only.
+tags:
+  - quality
+  - interactive
+  - may-edit
+inputs:
+  prompt: >-
+    Use refactor on scripts/example.sh. The user did not request apply. may_edit is
+    false. Emit survey shape with ## Overview, ## Summary, and ### Candidates. State
+    no edits applied in Overview. Do not edit files in this mock eval.
+  context:
+    target: scripts/example.sh
+expected:
+  output_contains:
+    - Candidates
+    - Overview
+    - no edits applied
+  outcomes:
+    - type: task_completed

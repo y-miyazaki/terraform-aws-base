@@ -1,14 +1,15 @@
 ## Technique selection
 
-Pick **one** Fowler-style transformation **per candidate** during Phase B apply ([category-operations.md](category-operations.md) O1/O2 cap). Re-run stack gates after the full apply batch ([category-verification.md](category-verification.md)).
+Pick **one** Fowler-style transformation **per candidate** during Phase B apply ([category-contract.md](category-contract.md) O1/O2 cap). Re-run verification gates after the full apply batch ([category-verification.md](category-verification.md)).
 
 ### Core rules
 
 - One transformation per candidate; do not batch unrelated edits into one candidate row
-- If verification fails for one candidate, revert or shrink that step — continue other candidates
-- Prefer the smallest technique that addresses the evidence (80/20)
+- Prefer the smallest technique that addresses the evidence
 - O2 (same-package move) only when extract/rename requires relocating a symbol within the same package/module
-- If branches are near-duplicates but not identical, prefer **Duplicate Before Unifying** only when a single candidate step is safe; split near-duplicates into separate candidate rows when needed
+- Near-duplicate branches: unify only when a single candidate step is safe; otherwise split into separate candidate rows
+
+Watch / out-of-scope: [category-contract.md](category-contract.md) **When not to apply**. Gate failure → revert that candidate and continue ([category-verification.md](category-verification.md)).
 
 ## Hint and smell → technique
 
@@ -25,32 +26,24 @@ Pick **one** Fowler-style transformation **per candidate** during Phase B apply 
 
 ## Safe O1 catalog (closed apply set)
 
-| Technique                                     | Use when                                        | Verify via                                     |
-| --------------------------------------------- | ----------------------------------------------- | ---------------------------------------------- |
-| Extract Method/Function                       | Reusable block, section comments, loop body     | Compiler + tests; extracted code is copy-paste |
-| Inline Method/Function                        | Body is as clear as name; prelude to re-extract | Compiler + tests                               |
-| Extract Variable                              | Long or repeated expression                     | Visual equivalence + tests when present        |
-| Inline Variable                               | Name adds no meaning                            | Visual equivalence                             |
-| Rename                                        | Name mismatches purpose                         | Compiler/linter references                     |
-| Replace Nested Conditional with Guard Clauses | Else ladder obscures main path                  | Tests; same outcomes                           |
-| Split Loop                                    | Loop performs unrelated accumulations           | Tests; same iteration semantics                |
-| Remove Dead Code                              | Unreachable branch proven dead                  | Tests + compiler                               |
+| Technique                                     | Use when                                        |
+| --------------------------------------------- | ----------------------------------------------- |
+| Extract Method/Function                       | Reusable block, section comments, loop body     |
+| Inline Method/Function                        | Body is as clear as name; prelude to re-extract |
+| Extract Variable                              | Long or repeated expression                     |
+| Inline Variable                               | Name adds no meaning                            |
+| Rename                                        | Name mismatches purpose                         |
+| Replace Nested Conditional with Guard Clauses | Else ladder obscures main path                  |
+| Split Loop                                    | Loop performs unrelated accumulations           |
+| Remove Dead Code                              | Unreachable branch proven dead                  |
 
-**Out of scope for apply:** Introduce Polymorphism, Extract Interface, GoF patterns, cross-package redesign — route to architecture Phase A ([category-operations.md](category-operations.md) O3).
+**Out of scope for apply:** Introduce Polymorphism, Extract Interface, GoF patterns, cross-package redesign — route to architecture Phase A ([category-contract.md](category-contract.md) O3).
 
 ## O2 extensions
 
-| Technique                           | Use when                                                | Gate required                                                                          |
-| ----------------------------------- | ------------------------------------------------------- | -------------------------------------------------------------------------------------- |
-| Move Method/Function (same package) | Extracted helper belongs in sibling file in same module | Stack gate for touched packages ([category-verification.md](category-verification.md)) |
-| Move Module within package          | Wiring cleanup after Move Method                        | Same as above                                                                          |
+| Technique                           | Use when                                                |
+| ----------------------------------- | ------------------------------------------------------- |
+| Move Method/Function (same package) | Extracted helper belongs in sibling file in same module |
+| Move Module within package          | Wiring cleanup after Move Method                        |
 
-Downgrade to O1 if the gate is insufficient (V4).
-
-## When not to refactor
-
-- Comment-only or formatting-only overlap
-- Rarely changed code with no structural evidence
-- Mission is lint/style-only or feature/API change
-- Cannot verify equivalence with the available stack gate
-- Architecture boundary change — Phase A proposal only, not technique apply
+Downgrade to O1 if the gate is insufficient — see [category-verification.md](category-verification.md).

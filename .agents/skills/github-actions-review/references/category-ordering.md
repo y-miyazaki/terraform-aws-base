@@ -2,7 +2,7 @@
 
 **ORD-01 (MUST): Alphabetize keys in env/permissions/with/secrets blocks**
 
-Note: Not enforced by `github-actions-validation` (actionlint, ghalint, zizmor). Omit from review output unless workflow YAML key ordering is the primary finding.
+Note: Not enforced by deterministic validators (`actionlint`, `ghalint`, `zizmor`). Omit from review output unless workflow YAML key ordering is the primary finding.
 
 Check: Are map keys sorted alphabetically (A-Z) within each ORD-01 in-scope block listed below?
 Why: Inconsistent key ordering adds diff noise and makes change detection harder across workflow files

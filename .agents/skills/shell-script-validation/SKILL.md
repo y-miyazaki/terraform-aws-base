@@ -2,7 +2,7 @@
 name: shell-script-validation
 description: >-
   Validate shell scripts with bash -n and shellcheck for syntax safety and maintainability checks.
-  Does not enforce Bats suite pairing (TEST-00) — run `bats` and shell-script-review for that.
+  Does not enforce Bats suite pairing (TEST-00) — companion stem `bats` covers pairing rules.
   Use when committing script changes, running CI validation, or debugging shellcheck findings in PRs.
 license: Apache-2.0
 metadata:
@@ -16,6 +16,7 @@ metadata:
 - Validation script (required): `scripts/validate.sh`
 - Canonical flags (required): `-v -f -d` unless opted out below
 - `--check-function-docs` (optional): omit only when targets intentionally skip Google function header sections
+
 ## Output Specification
 
 Return structured Markdown in accordance with [references/common-output-format.md](references/common-output-format.md). That file is the source of truth for the output contract.
@@ -27,7 +28,6 @@ Structured results for bash -n and shellcheck (syntax and lint only). With `--ch
 - **Always use `scripts/validate.sh`** for comprehensive validation. Do not run individual commands.
 - Script runs checks in fixed order.
 - Individual commands are for debugging only (see [references/common-individual-commands.md](references/common-individual-commands.md)).
-- **Do not review code design decisions** (use shell-script-review for that)
 - **Bats output:** By default only failing tests and the summary line are printed. Use `-v` for the full pass/fail listing.
 
 ### USE FOR:
@@ -42,7 +42,7 @@ Structured results for bash -n and shellcheck (syntax and lint only). With `--ch
 - perform architecture/design review of shell scripts
 - modify business logic in scripts as a primary task
 - validate non-shell files
-- enforce Bats suite pairing or suite layout (use `bats` and shell-script-review)
+- enforce Bats suite pairing or suite layout (companion stem `bats` covers pairing rules)
 
 ## Reference Files Guide
 

@@ -9,15 +9,15 @@ description: >-
 license: Apache-2.0
 metadata:
   author: y-miyazaki
-  version: "2.0.4"
+  version: "2.0.6"
 ---
 
 **UTILITY SKILL** — changelog survey and patch, not release tagging.
 
 ## Input
 
-- **Interactive (required):** natural-language request; run this skill's detect script with `--scope all` (or `--scope range --since <ref>`) unless detect JSON is already in context — parse per [category-input-schema.md](references/category-input-schema.md)
-- **Automation (optional):** detect JSON in prompt; read `may_edit`, `write_target`, and `report_file` (when `write_target: report`) from `## Constraints` per [category-automation-envelope.md](references/category-automation-envelope.md)
+- **Interactive (required):** natural-language request; optional scope (`all`, or `range` with `--since`) — constraints in `## Constraints` or [category-scope.md](references/category-scope.md)
+- **Automation (optional):** detect JSON in prompt — from a caller or optional skill detect script; not required for interactive runs. Read `may_edit`, `write_target`, and `report_file` (when `write_target: report`) from `## Constraints` per [category-automation-envelope.md](references/category-automation-envelope.md)
 
 Path allowlist, when present, arrives in `## Constraints`.
 
@@ -45,7 +45,7 @@ Changelog report per [common-output-format.md](references/common-output-format.m
 - [common-checklist.md](references/common-checklist.md) (always read)
 - [common-output-format.md](references/common-output-format.md) (always read)
 - [category-scope.md](references/category-scope.md) (always read)
-- [category-input-schema.md](references/category-input-schema.md) (always read)
+- [category-input-schema.md](references/category-input-schema.md) (read when detect JSON is present or the optional detect script is run)
 - [category-automation-envelope.md](references/category-automation-envelope.md) (read on automation path)
 - [common-troubleshooting.md](references/common-troubleshooting.md) (read on failure)
 
@@ -53,18 +53,18 @@ Changelog report per [common-output-format.md](references/common-output-format.m
 
 Resolve **may_edit** before mapping commits:
 
-| Source                                                      | `may_edit`                                                                                                               |
-| ----------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
-| Interactive — default                                       | `false` — survey only; do not edit `changelog_file`                                                                      |
-| Interactive — fix language in the same request              | `true` — examples: 修正して, update the changelog, apply these entries                                                   |
-| Interactive — follow-up after a prior survey in the session | `true` when the user asks to fix, apply, or update the changelog                                                         |
-| Automation — `## Constraints`                               | `may_edit: true` or `may_edit: false` from [category-automation-envelope.md](references/category-automation-envelope.md) |
+| Source                                                      | `may_edit`                                                                                                                                 |
+| ----------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| Interactive — default                                       | `false` — survey only; do not edit `changelog_file`                                                                                        |
+| Interactive — explicit fix language in the same request     | `true` — examples: 修正して, update the changelog, apply these entries. Do **not** treat bare skill name `changelog` or bare `fix` as edit |
+| Interactive — follow-up after a prior survey in the session | `true` when the user explicitly asks to apply listed entries or update the changelog                                                       |
+| Automation — `## Constraints`                               | `may_edit: true` or `may_edit: false` from [category-automation-envelope.md](references/category-automation-envelope.md)                   |
 
 When `may_edit` is `true`, resolve `write_target`: on the **interactive** path use `fix` (this skill); on the **automation** path read `write_target` from `## Constraints`. Do not branch on other caller metadata outside `## Constraints`.
 
-1. Run this skill's detect script (interactive) or parse detect JSON per [category-input-schema.md](references/category-input-schema.md). On non-zero exit, read stdout and stop.
+1. Resolve scope ([category-scope.md](references/category-scope.md)). Parse detect JSON when present; otherwise run this skill's optional detect script when helpful, or gather commits/releases from the user request and repository tools. Load [category-input-schema.md](references/category-input-schema.md) when parsing detect output. On detect script non-zero exit, read stdout and stop.
 2. On the automation path, read [category-automation-envelope.md](references/category-automation-envelope.md) for Constraints, PR templates, and Session Metrics.
-3. IF `skip` OR both `commits` and `releases` are empty → emit survey no-op; on automation path append `## Session Metrics` per [category-automation-envelope.md](references/category-automation-envelope.md); stop.
+3. IF detect reports `skip` OR both `commits` and `releases` are empty after gathering → emit survey no-op; on automation path append `## Session Metrics` per [category-automation-envelope.md](references/category-automation-envelope.md); stop.
 4. Map commits and releases per [common-checklist.md](references/common-checklist.md).
 5. IF `may_edit` is `false` → emit survey shape with `### Candidates`; on automation path load `assets/pr-body-template-survey.md` at synthesis and append `## Session Metrics` per [category-automation-envelope.md](references/category-automation-envelope.md); stop — do not edit `changelog_file`.
 6. ELSE IF `may_edit` is `true` AND `write_target` is not `fix` → emit survey shape; note expected `write_target: fix` in Overview; stop — do not edit `changelog_file`.
@@ -72,14 +72,14 @@ When `may_edit` is `true`, resolve `write_target`: on the **interactive** path u
 
 ### Error Handling
 
-| Condition                                         | Severity    | Action                                                                           |
-| ------------------------------------------------- | ----------- | -------------------------------------------------------------------------------- |
-| Detect script non-zero exit or `status: "error"`  | Fatal       | Read stdout; stop — do not treat as success-path detect JSON                     |
-| `skip` or empty commits/releases                  | Info        | Report skip outcome; stop                                                        |
-| `changelog_file` outside scope                    | Recoverable | Defer; note in report                                                            |
-| Fix requested but `may_edit` is `false`           | Info        | Survey only; note that edits require an explicit fix request or `may_edit: true` |
-| `may_edit` true with `write_target` not `fix`     | Recoverable | Survey only; note expected `write_target: fix`                                   |
-| `changelog_exists` false and `may_edit` is `true` | Recoverable | Create Keep a Changelog template, then add bullets                               |
+| Condition                                                       | Severity    | Action                                                                           |
+| --------------------------------------------------------------- | ----------- | -------------------------------------------------------------------------------- |
+| Detect script non-zero exit or `status: "error"` (when invoked) | Fatal       | Read stdout; stop — do not treat as success-path detect JSON                     |
+| `skip` or empty commits/releases                                | Info        | Report skip outcome; stop                                                        |
+| `changelog_file` outside scope                                  | Recoverable | Defer; note in report                                                            |
+| Fix requested but `may_edit` is `false`                         | Info        | Survey only; note that edits require an explicit fix request or `may_edit: true` |
+| `may_edit` true with `write_target` not `fix`                   | Recoverable | Survey only; note expected `write_target: fix`                                   |
+| `changelog_exists` false and `may_edit` is `true`               | Recoverable | Create Keep a Changelog template, then add bullets                               |
 
 ### Examples
 

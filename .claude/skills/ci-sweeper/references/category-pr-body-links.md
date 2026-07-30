@@ -1,6 +1,6 @@
 ## PR body links (file paths)
 
-Apply at synthesis when emitting Summary tables in loop automation PR bodies.
+Apply at synthesis when emitting Summary tables in automation PR bodies.
 
 ### File paths
 
@@ -28,4 +28,4 @@ When detect `failures[]` is present:
 | `job_id` + `run_url` | `{run_url}/job/{job_id}` when `job_url` is absent                |
 | fallback             | `run_url` for workflow or job label                              |
 
-Do not duplicate `## Failure context` run URLs in Overview — the platform adds that section.
+Do not duplicate `## Failure context` run URLs in Overview when the caller already supplies that section.

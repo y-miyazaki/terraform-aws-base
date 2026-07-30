@@ -18,6 +18,7 @@ metadata:
 
 - **Request (required):** natural language describing what to document
 - **target_file (optional):** explicit path when updating an existing file
+
 ## Output Specification
 
 Return structured report per [references/common-output-format.md](references/common-output-format.md).
@@ -32,9 +33,9 @@ Return structured report per [references/common-output-format.md](references/com
 
 ### DO NOT USE FOR:
 
-- Syncing docs after code changes (use docs-updater skill)
+- Syncing docs after code changes
 - Source code comments or docstrings
-- Markdown linting (use markdown-validation skill)
+- Markdown linting
 - Auto-generated references (godoc, terraform-docs output)
 
 ## Reference Files Guide

@@ -52,6 +52,6 @@ Fix: Keep Testing and Validation to a skill pointer and non-automated operationa
 
 **COMP-02 (SHOULD): Real Pointers**
 
-Check: When a skill is referenced, is the skill name concrete rather than vague "run validation"?
+Check: When on-demand validation or review is referenced, is the companion skill stem concrete rather than vague "run validation"?
 Why: Vague pointers leave agents without a discoverable skill entry point
-Fix: Name the validation or review skill explicitly (for example `go-validation` skill SKILL.md)
+Fix: Name the concrete skill stem (for example `<domain>-validation`) when pointing to on-demand checks

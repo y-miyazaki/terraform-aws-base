@@ -1,0 +1,25 @@
+id: refactor-interactive-architecture-proposal-001
+name: refactor architecture without slice is proposal only
+description: >-
+  Validate architecture intent without approved_slice emits Architecture Proposal
+  and does not enter Phase B apply shape.
+tags:
+  - quality
+  - interactive
+  - architecture
+inputs:
+  prompt: >-
+    Use refactor. The user asks for an architecture improvement and module boundary
+    redesign of scripts/example.sh. No approved_slice. Emit survey shape with
+    ## Overview, ## Summary, and ### Architecture Proposal. State no edits applied
+    in Overview. Do not edit files in this mock eval.
+  context:
+    target: scripts/example.sh
+    intent: architecture
+expected:
+  output_contains:
+    - Overview
+    - Architecture Proposal
+    - no edits applied
+  outcomes:
+    - type: task_completed

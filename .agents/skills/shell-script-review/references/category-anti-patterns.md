@@ -10,7 +10,7 @@ Fix: Omit shebang guards, `main`, and `parse_arguments` from `lib/*.sh`; match s
 
 Check: Are header and function DOC blocks kept when refactoring?
 Why: Removing comments to shorten diffs hides API contracts and breaks review expectations
-Fix: Keep DOC blocks; use shell-script-review for documentation quality judgment
+Fix: Keep DOC blocks; judge documentation quality against DOC checklist items
 
 **AP-03 (SHOULD): Function docs include Globals: (or None)**
 

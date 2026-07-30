@@ -20,8 +20,8 @@ Interactive runs may pass free-form path/symbol in the user prompt. When structu
     "path": "scripts/example.sh",
     "detail": "optional locator"
   },
-  "allowlist": ["src/**", "scripts/**"],
-  "denylist": ["docs/report/**"],
+  "allowlist": ["src/**"],
+  "denylist": [],
   "intent": "structural",
   "approved_slice": "optional — one slice from Phase A proposal for architecture Phase B",
   "constraints": {
@@ -30,42 +30,35 @@ Interactive runs may pass free-form path/symbol in the user prompt. When structu
 }
 ```
 
-| Field                  | Type                           | Description                                                                                                                                         |
-| ---------------------- | ------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `target`               | string                         | Optional scope anchor; when set, survey within that path/symbol                                                                                     |
-| `mode`                 | `survey` \| `apply`            | Interactive only: `survey` → `may_edit: false`; `apply` → `may_edit: true`. Default `survey` when omitted                                           |
-| `hint`                 | object                         | Optional structure hint (future detect H1 shapes)                                                                                                   |
-| `hint.kind`            | string                         | `duplication_block` or `oversized_unit` only                                                                                                        |
-| `hint.path`            | string                         | Path associated with the hint                                                                                                                       |
-| `hint.detail`          | string                         | Optional locator (range, symbol name)                                                                                                               |
-| `allowlist`            | string[]                       | Optional path globs; when set, restrict edits to matching paths. When absent, no allowlist restriction — see [category-scope.md](category-scope.md) |
-| `denylist`             | string[]                       | Optional path globs; when set, do not edit matching paths. When absent, no skill denylist — see [category-scope.md](category-scope.md)              |
-| `intent`               | `structural` \| `architecture` | Agent-classified from user language; default `structural`                                                                                           |
-| `approved_slice`       | string                         | One slice from Phase A proposal; required for architecture Phase B apply                                                                            |
-| `constraints.max_tier` | `O1` \| `O2`                   | Loop/tool depth cap only (`O1` local, `O2` same-package). Not the interactive O3 entry. Default `O2`.                                               |
+| Field                  | Type                           | Description                                                                                                                             |
+| ---------------------- | ------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------- |
+| `target`               | string                         | Optional scope anchor; when set, survey within that path/symbol                                                                         |
+| `mode`                 | `survey` \| `apply`            | Interactive only: `survey` → `may_edit: false`; `apply` → `may_edit: true`. Default `survey` when omitted                               |
+| `hint`                 | object                         | Optional structure hint                                                                                                                 |
+| `hint.kind`            | string                         | `duplication_block` or `oversized_unit` only                                                                                            |
+| `hint.path`            | string                         | Path associated with the hint                                                                                                           |
+| `hint.detail`          | string                         | Optional locator (range, symbol name)                                                                                                   |
+| `allowlist`            | string[]                       | Optional path globs; when set, restrict edits to matching paths. When absent, no allowlist — see [category-scope.md](category-scope.md) |
+| `denylist`             | string[]                       | Optional path globs; when set, do not edit matching paths. When absent, no skill denylist — see [category-scope.md](category-scope.md)  |
+| `intent`               | `structural` \| `architecture` | Agent-classified from user language; default `structural`                                                                               |
+| `approved_slice`       | string                         | One slice from Phase A proposal; required for architecture Phase B apply                                                                |
+| `constraints.max_tier` | `O1` \| `O2`                   | Depth cap for apply (`O1` local, `O2` same-package). Default `O2`. Architecture intent uses contract Phase A/B — not this field.        |
 
-### Interactive mode triggers
-
-| User language (examples)                                     | Resolved `may_edit` |
-| ------------------------------------------------------------ | ------------------- |
-| 洗い出し, 候補, survey, inventory, list (default when vague) | `false`             |
-| リファクタ, refactor, 実施, fix, apply, 適用して             | `true`              |
+Natural-language `may_edit` triggers: SKILL.md Workflow table (not duplicated here). Structured `mode` wins over natural-language when both are present.
 
 ### Rules
 
 - When structured JSON includes `mode`, resolve `may_edit` from `mode` before natural-language triggers
+- Bare skill name `refactor` or bare `fix` alone do **not** set `may_edit: true` — require explicit apply language or `mode: apply`
 - If neither actionable scope nor `hints[]` nor exploratory target → no-op after survey
 - `hint.kind` values outside the closed set → ignore hint; fall back to `target` or scope exploration
-- Classify `intent` from user natural language ([category-operations.md](category-operations.md)); do not require users to pass `max_tier: O3`
-- Architecture intent without `approved_slice` → Phase A proposal only; Outcome `proposal`
-- Architecture Phase B requires `approved_slice` and runs survey + apply for that slice only (O2 cap)
+- Classify `intent` from user natural language ([category-contract.md](category-contract.md))
+- Architecture without / with `approved_slice`: follow [category-contract.md](category-contract.md) O3
 - Automation envelope: `intent` is always `structural`; `constraints.max_tier` is `O1` or `O2` only
-- Do **not** accept tech-debt report file paths as required input fields in v1
-- Stack skill names are **not** schema fields — they arrive under `## Instructions` (A')
 
 ## Automation envelope (caller JSON)
 
-When `hints[]` is present (from caller-supplied detect JSON / `detect_refactor.sh`):
+When `hints[]` is present (from caller-supplied detect JSON or an optional skill detect script):
 
 ```json
 {
@@ -82,21 +75,21 @@ When `hints[]` is present (from caller-supplied detect JSON / `detect_refactor.s
 }
 ```
 
-| Field            | Type    | Description                                              |
-| ---------------- | ------- | -------------------------------------------------------- |
-| `commit_range`   | string  | SHA range when detect scope is `range`                   |
-| `skip`           | boolean | When true, no actionable hints                           |
-| `hints`          | array   | Mechanical H1 hints from detect — survey **all** entries |
-| `hints[].kind`   | enum    | `duplication_block` or `oversized_unit` only             |
-| `hints[].path`   | string  | Primary file path for the hint                           |
-| `hints[].detail` | string  | Locator (line range, peer path, line count)              |
-| `hints[].lines`  | number  | Optional size metric                                     |
+| Field            | Type    | Description                                           |
+| ---------------- | ------- | ----------------------------------------------------- |
+| `commit_range`   | string  | SHA range when detect scope is `range`                |
+| `skip`           | boolean | When true, no actionable hints                        |
+| `hints`          | array   | Mechanical hints from detect — survey **all** entries |
+| `hints[].kind`   | enum    | `duplication_block` or `oversized_unit` only          |
+| `hints[].path`   | string  | Primary file path for the hint                        |
+| `hints[].detail` | string  | Locator (line range, peer path, line count)           |
+| `hints[].lines`  | number  | Optional size metric                                  |
 
 `may_edit` is not a JSON field. It arrives in `## Constraints` — see [category-automation-envelope.md](category-automation-envelope.md).
 
 ### Automation rules
 
-- Survey **every** `hints[]` entry; apply every candidate marked apply within allowlist when `may_edit` is `true`
+- Survey **every** `hints[]` entry; apply every candidate marked apply within allowlist when `may_edit` is `true` and `write_target` is `fix`
 - Force `intent: structural`; `constraints.max_tier: O2`
-- Allowlist/denylist from caller configuration. Allowlist is repeated in prompt `## Constraints`; denylist is enforced by the automation verifier — see [category-scope.md](category-scope.md).
-- Session report per [common-output-format-automation.md](common-output-format-automation.md).
+- Allowlist/denylist from caller configuration — see [category-scope.md](category-scope.md)
+- Session report per [common-output-format-automation.md](common-output-format-automation.md)

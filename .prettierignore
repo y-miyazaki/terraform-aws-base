@@ -1,0 +1,17 @@
+# Lock / generated files
+apm.lock.yaml
+aqua-checksums.json
+mise.lock
+
+# JSON excluded from formatting (matches pre-commit hook excludes)
+**/.devcontainer/devcontainer-lock.json
+**/.devcontainer/devcontainer.json
+**/settings-example.json
+**/settings.json
+
+# Dependencies / build output
+apm_modules/
+node_modules/
+output/
+site/
+tmp/

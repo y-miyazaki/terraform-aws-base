@@ -1,6 +1,6 @@
 ## PR body links (file paths)
 
-Apply at synthesis when emitting Summary tables in loop automation PR bodies.
+Apply at synthesis when emitting Summary tables in automation PR bodies.
 
 ### File paths
 

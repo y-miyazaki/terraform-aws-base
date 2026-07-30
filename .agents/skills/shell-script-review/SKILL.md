@@ -8,15 +8,14 @@ description: >-
 license: Apache-2.0
 metadata:
   author: y-miyazaki
-  version: "1.2.0"
+  version: "1.2.1"
 ---
 
 ## Input
 
 - Shell script files in PR (required)
 - Related Bats suites paired with changed scripts when present (recommended for TEST-00)
-- PR context with validation evidence reference (required)
-- Validation evidence: latest `shell-script-validation` summary with pass/fail/deferred counts and failed ItemIDs
+- PR context: diff and commit messages (recommended)
 
 ## Output Specification
 
@@ -26,12 +25,11 @@ Return structured Markdown in accordance with [references/common-output-format.m
 
 - Systematically apply review checklist from [references/common-checklist.md](references/common-checklist.md)
 - Focus on checks requiring human/AI judgment (design, security, error handling patterns)
-- **Do not run shell-script-validation or execute bash -n/shellcheck**
 - Do not modify script files or approve/merge PRs
 
 ### USE FOR:
 
-- review shell-script PRs after validation output is available
+- review shell-script PRs for judgment beyond static checks
 - assess operational safety and script maintainability risks
 - review security-sensitive script changes requiring judgment
 - verify Bats suite pairing (TEST-00) against companion Bats rules (stem `bats`)
@@ -61,18 +59,16 @@ Return structured Markdown in accordance with [references/common-output-format.m
 ## Workflow
 
 1. Read PR context and script intent.
-2. Confirm `shell-script-validation` results exist. If missing, inform user that validation should run first, then proceed with partial review: evaluate security and error-handling checks directly from source, defer lint-dependent checks (mark as `Deferred` with reason "validation evidence unavailable").
-3. Apply the full review checklist and collect failed/deferred ItemIDs.
-4. Output required report sections per [references/common-output-format.md](references/common-output-format.md). Prioritize `SEC-*` findings first. Include file path, risk type, and concrete remediation for each issue.
+2. Apply the full review checklist and collect failed/deferred ItemIDs.
+3. Output required report sections per [references/common-output-format.md](references/common-output-format.md). Prioritize `SEC-*` findings first. Include file path, risk type, and concrete remediation for each issue.
 
 ### Error Handling
 
-| Condition                                | Severity    | Action                                                                                                |
-| ---------------------------------------- | ----------- | ----------------------------------------------------------------------------------------------------- |
-| `shell-script-validation` output missing | Recoverable | Defer lint-dependent checks, review security/design directly                                          |
-| `common-checklist.md` unavailable        | Fatal       | Stop, report missing dependency                                                                       |
-| `common-output-format.md` unavailable    | Recoverable | Note missing file; emit `## Checks Summary`, `## Checks (Failed/Deferred Only)`, and `## Issues` only |
-| PR contains only non-shell files         | Recoverable | Report "no reviewable shell scripts" and stop                                                         |
+| Condition                             | Severity    | Action                                                                                                |
+| ------------------------------------- | ----------- | ----------------------------------------------------------------------------------------------------- |
+| `common-checklist.md` unavailable     | Fatal       | Stop, report missing dependency                                                                       |
+| `common-output-format.md` unavailable | Recoverable | Note missing file; emit `## Checks Summary`, `## Checks (Failed/Deferred Only)`, and `## Issues` only |
+| PR contains only non-shell files      | Recoverable | Report "no reviewable shell scripts" and stop                                                         |
 
 ### Examples
 

@@ -1,22 +1,20 @@
 id: refactor-noop-001
 name: refactor emits no-op when input empty
-description: Verify refactor stops with full result when nothing actionable.
+description: Verify refactor stops with survey no-op when nothing actionable.
 tags:
   - quality
   - no-op
 inputs:
   prompt: >-
-    Use refactor. No paths or symbols. Emit the full Refactor Result per
-    common-output-format.md: ## Overview (why no edit), ## Summary (no-op), optional empty
-    ### Deferred, ## Verification (None or skip). Omit ### Changes when nothing was fixed.
-    Do not emit Session Metrics, Target labels, or internal tier labels. Do not edit files
-    in this mock eval. State no edits applied in Overview.
+    Use refactor. No paths or symbols. Emit survey no-op per common-output-format.md:
+    ## Overview (why nothing actionable; no edits applied), ## Summary (no-op).
+    Do not emit Session Metrics or internal tier labels. Do not edit files in this
+    mock eval.
 expected:
   output_contains:
-    - Refactor Result
     - "## Overview"
     - "## Summary"
-    - "## Verification"
     - no-op
+    - no edits applied
   outcomes:
     - type: task_completed

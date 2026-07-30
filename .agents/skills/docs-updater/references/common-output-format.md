@@ -54,9 +54,9 @@ Interactive and hook runs use this structure. On the automation path, also follo
 
 ## Verification
 
-| Check                               | Result                 |
-| ----------------------------------- | ---------------------- |
-| <markdown-validation or link check> | <pass \| fail \| skip> |
+| Check                         | Result                 |
+| ----------------------------- | ---------------------- |
+| <markdown lint or link check> | <pass \| fail \| skip> |
 ```
 
 ### Apply rules
