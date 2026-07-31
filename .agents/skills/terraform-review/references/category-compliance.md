@@ -1,4 +1,4 @@
-## Compliance & Policy (COMP)
+# Compliance & Policy (COMP)
 
 **COMP-01 (MUST): No default VPC, open SG, or public S3 by default**
 

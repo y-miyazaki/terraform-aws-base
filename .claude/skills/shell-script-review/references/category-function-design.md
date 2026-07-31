@@ -1,4 +1,4 @@
-## Function Design (FUNC)
+# Function Design (FUNC)
 
 **FUNC-01 (SHOULD): parse_arguments uses while+case with -h/--help**
 

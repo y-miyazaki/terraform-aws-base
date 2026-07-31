@@ -1,4 +1,4 @@
-## Previously processed runs
+# Previously processed runs
 
 Detect may place skipped runs in `ignored[]` when a caller-configured ledger marks them done. The skill:
 

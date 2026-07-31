@@ -1,4 +1,4 @@
-## Security (SEC)
+# Security (SEC)
 
 **SEC-01 (SHOULD): Validate user input used in paths/commands**
 

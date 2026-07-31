@@ -1,4 +1,4 @@
-## Error Handling (ERR)
+# Error Handling (ERR)
 
 **ERR-01 (SHOULD): Trap EXIT/ERR/INT/TERM when cleanup is required**
 

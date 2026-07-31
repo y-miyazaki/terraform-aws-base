@@ -1,4 +1,4 @@
-## Migration & Refactor (MIG)
+# Migration & Refactor (MIG)
 
 **MIG-01 (SHOULD): Use moved blocks to avoid resource recreation on refactors**
 

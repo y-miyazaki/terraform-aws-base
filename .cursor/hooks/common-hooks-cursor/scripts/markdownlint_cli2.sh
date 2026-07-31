@@ -9,7 +9,9 @@
 #
 # Design Rules:
 #   - Exit 0 if tool not found or no changed files (silent skip)
-#   - Call report_failure on lint failure (agent-aware error signal)
+#   - Call report_failure on lint fingerprints or any other non-zero CLI exit
+#   - Content sniffing (Summary / error MD) classifies lint vs tool failure only —
+#     never treat unknown non-zero exits as success
 #   - Supports Kiro CLI, Claude Code, GitHub Copilot, Cursor, Antigravity
 #######################################
 
@@ -57,6 +59,129 @@ function get_changed_files {
         git diff --cached --name-only --diff-filter=ACMR -- '*.md' 2> /dev/null || true
         git ls-files --others --exclude-standard -- '*.md' 2> /dev/null || true
     } | awk 'NF' | sort -u
+}
+
+#######################################
+# markdownlint_has_issues: Detect lint failures from markdownlint-cli2 output
+#
+# Globals:
+#   None
+#
+# Arguments:
+#   $1 - combined stdout/stderr from markdownlint-cli2
+#
+# Outputs:
+#   None
+#
+# Returns:
+#   0 when issues are reported; 1 otherwise
+#######################################
+function markdownlint_has_issues {
+    local result="$1"
+    if [[ $result =~ Summary:\ ([1-9][0-9]*)[[:space:]]issues? ]]; then
+        return 0
+    fi
+    if [[ $result == *" error MD"* ]]; then
+        return 0
+    fi
+    return 1
+}
+
+#######################################
+# markdownlint_requires_failure_report: Whether the hook must block
+#
+# Globals:
+#   None
+#
+# Arguments:
+#   $1 - combined stdout/stderr from markdownlint-cli2
+#   $2 - markdownlint-cli2 exit status
+#
+# Outputs:
+#   None
+#
+# Returns:
+#   0 when the hook should report failure; 1 when the run is clean
+#######################################
+function markdownlint_requires_failure_report {
+    local result="$1"
+    local rc="$2"
+    if markdownlint_has_issues "$result"; then
+        return 0
+    fi
+    if ((rc != 0)); then
+        return 0
+    fi
+    return 1
+}
+
+#######################################
+# build_markdownlint_literal_targets: Build :path args for --no-globs
+#
+# Globals:
+#   None
+#
+# Arguments:
+#   $@ - repository-relative Markdown file paths
+#
+# Outputs:
+#   Literal path arguments to stdout (one per line)
+#
+# Returns:
+#   None
+#######################################
+function build_markdownlint_literal_targets {
+    local file
+    for file in "$@"; do
+        printf ':%s\n' "${file}"
+    done
+}
+
+#######################################
+# truncate_reason_text: Cap reason size for agent responses
+#
+# Globals:
+#   REASON_TRUNCATE_CHARS - optional max characters (default 32768)
+#
+# Arguments:
+#   $1 - text to truncate (printed to stdout)
+#
+# Outputs:
+#   Truncated text to stdout
+#
+# Returns:
+#   None
+#######################################
+function truncate_reason_text {
+    local text="$1"
+    local max_chars="${REASON_TRUNCATE_CHARS:-32768}"
+    if ((${#text} > max_chars)); then
+        printf '%s\n...[truncated]' "${text:0:max_chars}"
+    else
+        printf '%s' "$text"
+    fi
+}
+
+#######################################
+# emit_json_with_reason: Build hook JSON via stdin (avoids ARG_MAX)
+#
+# Globals:
+#   None
+#
+# Arguments:
+#   $1 - reason text
+#   $2 - jq filter using . for the reason value
+#
+# Outputs:
+#   JSON object to stdout
+#
+# Returns:
+#   None
+#######################################
+function emit_json_with_reason {
+    local text="$1"
+    local jq_filter="$2"
+    truncate_reason_text "$text" | jq -Rs "$jq_filter"
 }
 
 #######################################
@@ -146,7 +271,7 @@ function report_failure {
         fi
     fi
 
-    # Final fallback:    # Final fallback: env var check
+    # Final fallback: env var check
     if [[ -z $agent && -n ${GITHUB_COPILOT_API_TOKEN:-} ]]; then
         agent="copilot"
     fi
@@ -154,15 +279,15 @@ function report_failure {
     # Step 2: Build response per agent spec (A-Z order)
     case "$agent" in
         antigravity)
-            jq -n --arg reason "$reason" '{decision: "continue", reason: $reason}'
+            emit_json_with_reason "$reason" '{decision: "continue", reason: .}'
             exit 0
             ;;
         claude_code)
             if [[ $hook_event == "Stop" ]]; then
-                jq -n --arg reason "$reason" '{decision: "block", reason: $reason}'
+                emit_json_with_reason "$reason" '{decision: "block", reason: .}'
                 exit 0
             elif [[ $hook_event == "PostToolUse" ]]; then
-                jq -n --arg ctx "$reason" '{hookSpecificOutput: {hookEventName: "PostToolUse", additionalContext: $ctx}}'
+                emit_json_with_reason "$reason" '{hookSpecificOutput: {hookEventName: "PostToolUse", additionalContext: .}}'
                 exit 0
             else
                 echo "$reason" >&2
@@ -172,11 +297,11 @@ function report_failure {
         copilot)
             case "$hook_event" in
                 Stop | agentStop)
-                    jq -n --arg reason "$reason" '{decision: "block", reason: $reason}'
+                    emit_json_with_reason "$reason" '{decision: "block", reason: .}'
                     exit 0
                     ;;
                 PostToolUse | postToolUse)
-                    jq -n --arg ctx "$reason" '{additionalContext: $ctx}'
+                    emit_json_with_reason "$reason" '{additionalContext: .}'
                     exit 0
                     ;;
                 *)
@@ -187,7 +312,7 @@ function report_failure {
             ;;
         cursor)
             if [[ $hook_event == "stop" ]]; then
-                jq -n --arg reason "$reason" '{followup_message: $reason}'
+                emit_json_with_reason "$reason" '{followup_message: .}'
                 exit 0
             else
                 echo "$reason" >&2
@@ -196,7 +321,7 @@ function report_failure {
             ;;
         kiro)
             if [[ $hook_event == "stop" ]]; then
-                jq -n --arg reason "$reason" '{decision: "block", reason: $reason}'
+                emit_json_with_reason "$reason" '{decision: "block", reason: .}'
                 exit 0
             else
                 echo "$reason" >&2
@@ -205,10 +330,10 @@ function report_failure {
             ;;
         vscode)
             if [[ $hook_event == "Stop" ]]; then
-                jq -n --arg reason "$reason" '{hookSpecificOutput: {hookEventName: "Stop", decision: "block", reason: $reason}}'
+                emit_json_with_reason "$reason" '{hookSpecificOutput: {hookEventName: "Stop", decision: "block", reason: .}}'
                 exit 0
             elif [[ $hook_event == "PostToolUse" ]]; then
-                jq -n --arg reason "$reason" '{decision: "block", reason: $reason, hookSpecificOutput: {hookEventName: "PostToolUse", additionalContext: $reason}}'
+                emit_json_with_reason "$reason" '{decision: "block", reason: ., hookSpecificOutput: {hookEventName: "PostToolUse", additionalContext: .}}'
                 exit 0
             else
                 echo "$reason" >&2
@@ -261,8 +386,30 @@ function main {
     fi
 
     local result
-    result=$(markdownlint-cli2 --fix "${files[@]}" 2>&1) || report_failure "markdownlint-cli2 found issues that --fix could not resolve:
-${result}"
+    local rc=0
+    local -a targets=()
+    mapfile -t targets < <(build_markdownlint_literal_targets "${files[@]}")
+
+    result=$(markdownlint-cli2 --fix --no-globs "${targets[@]}" 2>&1) || rc=$?
+
+    if markdownlint_requires_failure_report "$result" "$rc"; then
+        local failure_detail
+        if markdownlint_has_issues "$result"; then
+            failure_detail=$(printf '%s\n' "$result" | grep -m 50 -E ' error MD' || true)
+            if (($(printf '%s\n' "$result" | grep -cE ' error MD' || true) > 50)); then
+                failure_detail+=$'\n...[markdownlint output truncated]'
+            fi
+            if [[ -z $failure_detail ]]; then
+                failure_detail=$(printf '%s\n' "$result" | head -n 50 || true)
+            fi
+            report_failure "markdownlint-cli2 found issues that --fix could not resolve:
+${failure_detail}"
+        else
+            failure_detail=$(printf '%s\n' "$result" | head -n 50 || true)
+            report_failure "markdownlint-cli2 failed (exit ${rc}):
+${failure_detail}"
+        fi
+    fi
 }
 
 if [[ ${BASH_SOURCE[0]} == "${0}" ]]; then

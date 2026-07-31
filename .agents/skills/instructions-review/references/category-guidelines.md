@@ -1,4 +1,4 @@
-## Guidelines Chapter Review Checks
+# Guidelines Chapter Review Checks
 
 This file contains review checks specific to the Guidelines chapter of instructions files.
 

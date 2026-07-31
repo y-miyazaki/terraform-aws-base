@@ -1,4 +1,4 @@
-## Dependency & Ordering (DEP)
+# Dependency & Ordering (DEP)
 
 **DEP-01 (SHOULD): Use depends_on only when implicit edges are insufficient**
 

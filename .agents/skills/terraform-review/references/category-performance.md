@@ -1,4 +1,4 @@
-## Performance & Limits (PERF)
+# Performance & Limits (PERF)
 
 **PERF-01 (SHOULD): Bound for_each/count collections; avoid unbounded expansion**
 

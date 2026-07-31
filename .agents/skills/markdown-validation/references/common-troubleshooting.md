@@ -1,6 +1,6 @@
-## Markdown Validation - Troubleshooting Guide
+# Markdown Validation - Troubleshooting Guide
 
-### markdownlint-cli2 Failures
+## markdownlint-cli2 Failures
 
 **Issue**: Heading level skipped (for example H1 to H3)
 
@@ -16,7 +16,7 @@
 1. Run auto-fix first: `markdownlint-cli2 --fix **/*.md`
 2. Manually adjust lines that cannot be auto-fixed
 
-### markdown-link-check Failures
+## markdown-link-check Failures
 
 **Issue**: Broken relative link
 
@@ -39,7 +39,7 @@
 1. Retry validation
 2. If endpoint is flaky but valid, define ignore pattern in `.markdown-link-check.json`
 
-### Validation Shell Script Issues
+## Validation Shell Script Issues
 
 **Issue**: `command not found` for markdownlint-cli2 or markdown-link-check
 
@@ -48,7 +48,7 @@
 1. Ensure tools are installed in the development environment
 2. Re-run through script: `bash scripts/validate.sh`
 
-### Revalidation
+## Revalidation
 
 After applying fixes, run:
 

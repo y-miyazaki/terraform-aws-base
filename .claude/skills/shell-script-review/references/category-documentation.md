@@ -1,4 +1,4 @@
-## Documentation (DOC)
+# Documentation (DOC)
 
 **DOC-01 (MUST): Header has Description/Usage/Design Rules**
 

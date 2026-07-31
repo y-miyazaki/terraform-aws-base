@@ -31,12 +31,12 @@ uvx = true # Install uv/uvx via pipx for better isolation and performance.
 # A Runtime tools
 aqua = "v2.62.1"
 node = "24.18.0"
-pnpm = { version = "11.15.1", depends = ["node"] }
+pnpm = { version = "11.17.0", depends = ["node"] }
 python = "3.14.6"
 
 # AI agent tools
 "github:microsoft/apm" = "v0.26.0"               # agent package manager
-claude = "2.1.217"                               # Claude Code CLI
+claude = "2.1.218"                               # Claude Code CLI
 "github:DeusData/codebase-memory-mcp" = "v0.9.0" # codebase memory MCP server
 "aqua:github/copilot-cli" = "1.0.73"             # GitHub Copilot CLI
 "pipx:headroom-ai" = { version = "0.32.1", extras = "proxy,mcp,bedrock", depends = ["python"] }
@@ -48,8 +48,8 @@ claude = "2.1.217"                               # Claude Code CLI
 "github:microsoft/waza" = "v0.38.3"               # agent skill evaluator
 
 # AWS related tools
-"aqua:aws/aws-cli" = "2.36.5"      # AWS CLI
-"aqua:aws/aws-sam-cli" = "1.163.0"  # SAM CLI tool
+"aqua:aws/aws-cli" = "2.36.7"      # AWS CLI
+"aqua:aws/aws-sam-cli" = "1.164.0"  # SAM CLI tool
 "npm:awsp" = { version = "0.2.0", depends = [
   "node",
 ], install_env = { NPM_CONFIG_IGNORE_SCRIPTS = "true" } } # AWS profile switcher
@@ -76,7 +76,7 @@ claude = "2.1.217"                               # Claude Code CLI
 "go:golang.org/x/tools/gopls" = "v0.23.0"                                 # Go language server
 "go:golang.org/x/vuln/cmd/govulncheck" = "1.3.0"                          # vulnerability scanner
 "aqua:ko-build/ko" = "0.19.1"                                             # container builder
-"aqua:vektra/mockery" = "3.7.1"                                           # mock code generator for interfaces
+"aqua:vektra/mockery" = "3.7.2"                                           # mock code generator for interfaces
 "go:github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen" = "v2.8.0"  # OpenAPI code generator
 "aqua:protocolbuffers/protobuf/protoc" = "35.1"                            # protobuf compiler
 "aqua:protocolbuffers/protobuf-go/protoc-gen-go" = "1.36.11"              # protobuf code generator
@@ -107,7 +107,7 @@ claude = "2.1.217"                               # Claude Code CLI
 "aqua:aquasecurity/trivy" = "0.72.0" # vulnerability scanner
 
 # Terraform related tools
-"aqua:getsops/sops" = "3.13.2"                  # encryption tool
+"aqua:getsops/sops" = "3.13.3"                  # encryption tool
 "aqua:hashicorp/terraform" = "1.15.8"           # infrastructure as code
 "aqua:terraform-docs/terraform-docs" = "0.24.0" # documentation generator
 "aqua:terraform-linters/tflint" = "0.64.0"      # linter
@@ -118,7 +118,7 @@ claude = "2.1.217"                               # Claude Code CLI
 "aqua:BurntSushi/ripgrep" = "15.2.0" # grep alternative (rg)
 "aqua:tamasfe/taplo" = "0.10.0"      # TOML formatter / LSP
 "aqua:jdx/usage" = "3.5.6"           # usage CLI tool for command help and completions
-"aqua:astral-sh/uv" = "0.11.31"      # uv/uvx
+"aqua:astral-sh/uv" = "0.11.32"      # uv/uvx
 
 [tasks.mise-install]
 description = "Install tools defined in mise.toml"

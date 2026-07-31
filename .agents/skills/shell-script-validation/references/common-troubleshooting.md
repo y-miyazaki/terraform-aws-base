@@ -1,6 +1,6 @@
-## Shell Script Validation - Troubleshooting Guide
+# Shell Script Validation - Troubleshooting Guide
 
-### bash -n Failures
+## bash -n Failures
 
 **Common issues**:
 

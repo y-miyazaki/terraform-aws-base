@@ -1,4 +1,4 @@
-## Troubleshooting
+# Troubleshooting
 
 - **`skip` true or no documentation impact:** Report no-op; stop without edits.
 - **Path outside skill or caller scope:** Skip file; note in report; do not edit.

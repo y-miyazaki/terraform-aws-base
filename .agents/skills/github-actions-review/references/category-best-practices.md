@@ -1,4 +1,4 @@
-## Best Practices (BP)
+# Best Practices (BP)
 
 **BP-01 (SHOULD): Extract shared pipelines to reusable workflows/composites**
 

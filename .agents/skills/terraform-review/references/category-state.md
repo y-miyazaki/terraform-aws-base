@@ -1,4 +1,4 @@
-## State & Backend (STATE)
+# State & Backend (STATE)
 
 **STATE-01 (SHOULD): Remote backend with encryption + locking**
 

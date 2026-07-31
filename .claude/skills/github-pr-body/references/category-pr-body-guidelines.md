@@ -1,4 +1,4 @@
-## PR Body Writing Guidelines
+# PR Body Writing Guidelines
 
 Guidelines for manually writing or refining PR Body content after using `pr_fetch.sh` or `pr_body.sh`.
 

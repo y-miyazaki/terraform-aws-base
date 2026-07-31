@@ -1,4 +1,4 @@
-## Quality Checks (Q)
+# Quality Checks (Q)
 
 **Q-01 (SHOULD): Output format is implementable (schema or Markdown sections)**
 
@@ -54,7 +54,7 @@ Examples:
 
 - ✅ "Test coverage threshold: 80%" (project-specific, non-obvious)
 - ✅ No Constraints section when all prerequisites are self-evident (tool installation, file existence)
-- ❌ "Go toolchain installed and available in PATH" (self-evident, Claude already knows)
+- ❌ "Go toolchain installed and available in PATH" (self-evident, the agent already knows)
 - ❌ "Cannot validate code that doesn't compile" (self-evident)
 
 ---

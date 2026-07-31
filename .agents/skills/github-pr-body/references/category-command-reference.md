@@ -1,4 +1,4 @@
-## Command Reference
+# Command Reference
 
 Complete reference for scripts in the github-pr-body skill.
 
@@ -105,8 +105,8 @@ scripts/pr_fetch.sh 311 --repo owner/repo \\
 
 # Output:
 # [
-#   {"type": "Config", "count": 20, "additions": 1282},
-#   {"type": "Docs", "count": 63, "additions": 3151}
+# {"type": "Config", "count": 20, "additions": 1282},
+# {"type": "Docs", "count": 63, "additions": 3151}
 # ]
 ```
 

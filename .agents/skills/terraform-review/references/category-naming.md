@@ -1,4 +1,4 @@
-## Naming & Documentation (N)
+# Naming & Documentation (N)
 
 **N-01 (SHOULD): Module header documents purpose/overview**
 

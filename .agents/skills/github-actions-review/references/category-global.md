@@ -1,4 +1,4 @@
-## Global / Base (G)
+# Global / Base (G)
 
 **G-01 (SHOULD): Narrow on triggers by branch/path/event**
 

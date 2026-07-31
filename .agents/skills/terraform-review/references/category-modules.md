@@ -1,4 +1,4 @@
-## Modules (M)
+# Modules (M)
 
 **M-01 (SHOULD): Separate variables/locals/outputs by responsibility**
 

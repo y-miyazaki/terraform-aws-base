@@ -1,28 +1,28 @@
-## Principles
+# Principles
 
 Behavior-preserving structural refactor contract. Consumer context (`AGENTS.md`, steering rules, user prompt) takes precedence when it sets repository norms.
 
-### Preserve behavior
+## Preserve behavior
 
 - Do not change observable behavior, public API semantics, or feature outputs
 - Feature changes, dependency upgrades, and CVE-driven edits are out of scope
 
-### Enhance clarity
+## Enhance clarity
 
 - Reduce unnecessary complexity and nesting when behavior is unchanged
 - Prefer explicit code over overly compact solutions; clarity over brevity
 
-### Minimal change
+## Minimal change
 
 - One transformation per candidate; smallest edit that addresses the evidence
 - Do not expand into repo-wide cleanup beyond resolved scope
 
-### Maintain balance
+## Maintain balance
 
 - Do not over-simplify: avoid clever solutions, combining too many concerns, or removing helpful abstractions
 - Do not prioritize fewer lines over readability or debuggability
 
-### When not to apply (watch)
+## When not to apply (watch)
 
 - Lint/style-only or formatting-only overlap
 - Feature/API or behavior-changing mission
@@ -65,25 +65,25 @@ Survey discovers candidates in scope (architecture Phase B: `approved_slice` onl
 | **structural**   | Dedupe, extract, clarify, shallow move; default when ambiguous                                     | Survey → when `may_edit` + `write_target: fix`, apply all O1/O2 candidates marked apply; else survey only |
 | **architecture** | User mission is module boundary, deep module, redesign, responsibility split, testability at seams | Phase A proposal → approval → Phase B one O2 slice (`may_edit` + `write_target: fix` + `approved_slice`)  |
 
-### Architecture-improvement triggers (examples)
+## Architecture-improvement triggers (examples)
 
 - architecture improvement, redesign, module boundary, deep module, consolidate modules, improve testability at seams, responsibility split
 
 When triggers are mixed with structural work, prefer **structural** unless architecture language is the primary mission.
 
-### O1 — local structure (same behavior)
+## O1 — local structure (same behavior)
 
 Allowed: everything in the O1 typical-edits row above, within existing boundaries.
 
 Forbidden: anything that violates **Preserve behavior** (feature, public API semantics, dependency/CVE mission).
 
-### O2 — same-package move (plus O1)
+## O2 — same-package move (plus O1)
 
 Allowed: O1 plus shallow move within the **same** package/module and import/wiring cleanup for that move.
 
 Forbidden for apply (always — not automation-only): cross-package redesign, GoF / deep-module redesign, large boundary splits. Those require the architecture path (O3).
 
-### O3 — architecture improvement (interactive only)
+## O3 — architecture improvement (interactive only)
 
 **Phase A (default for architecture intent):**
 

@@ -1,4 +1,4 @@
-## Tool Integration (TOOL)
+# Tool Integration (TOOL)
 
 **TOOL-01 (SHOULD): Wire reviewdog for PR inline lint feedback when applicable**
 

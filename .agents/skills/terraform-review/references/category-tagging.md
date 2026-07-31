@@ -1,4 +1,4 @@
-## Tagging (TAG)
+# Tagging (TAG)
 
 **TAG-01 (MUST): Apply Name via merge(local.tags, { Name = "..." })**
 

@@ -1,4 +1,4 @@
-## Security (SEC)
+# Security (SEC)
 
 **SEC-01 (SHOULD): Reference secrets only via secrets.\*; never echo them**
 

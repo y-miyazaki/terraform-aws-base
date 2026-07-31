@@ -1,4 +1,4 @@
-## Error Handling (ERR)
+# Error Handling (ERR)
 
 **ERR-01 (SHOULD): Limit continue-on-error to non-critical justified steps**
 

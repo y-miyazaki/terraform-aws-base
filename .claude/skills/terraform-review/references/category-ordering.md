@@ -1,4 +1,4 @@
-## Ordering (ORD)
+# Ordering (ORD)
 
 **ORD-01 (MUST): Alphabetize argument keys inside resource/module/data/local blocks**
 

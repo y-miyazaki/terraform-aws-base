@@ -1,8 +1,8 @@
-## Technique selection
+# Technique selection
 
 Pick **one** Fowler-style transformation **per candidate** during Phase B apply ([category-contract.md](category-contract.md) O1/O2 cap). Re-run verification gates after the full apply batch ([category-verification.md](category-verification.md)).
 
-### Core rules
+## Core rules
 
 - One transformation per candidate; do not batch unrelated edits into one candidate row
 - Prefer the smallest technique that addresses the evidence

@@ -1,4 +1,4 @@
-## Documentation Maintenance Principles
+# Documentation Maintenance Principles
 
 Portable rules for any repository using docs-updater. Consumer repos may publish domain-specific maintainer guides under `docs/` — read those before patching when present.
 

@@ -1,4 +1,4 @@
-## Testing and Validation Chapter Review Checks
+# Testing and Validation Chapter Review Checks
 
 This file contains review checks specific to the Testing and Validation chapter of instructions files.
 

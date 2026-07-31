@@ -1,4 +1,4 @@
-## Troubleshooting
+# Troubleshooting
 
 On failure, apply the matching row in SKILL.md **Error Handling**. Common cases:
 

@@ -1,4 +1,4 @@
-## outputs.tf (O)
+# outputs.tf (O)
 
 **O-01 (SHOULD): Every output has a description**
 

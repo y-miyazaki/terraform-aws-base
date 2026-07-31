@@ -1,4 +1,4 @@
-## Structural Checks (S)
+# Structural Checks (S)
 
 **S-01 (MUST): SKILL.md has the five required ## sections**
 
@@ -13,7 +13,7 @@ Required sections:
 4. Reference Files Guide
 5. Workflow
 
-Sections removed by design (redundant with frontmatter description or self-evident to Claude):
+Sections removed by design (redundant with frontmatter description or self-evident to the agent):
 
 - Purpose (duplicates description field)
 - When to Use This Skill (duplicates description activation trigger)
@@ -42,32 +42,16 @@ Examples:
 
 ---
 
-**S-03 (MUST): References/ headers use required H1/H2 levels**
+**S-03 (MUST): References/ start with H1 and use consistent heading hierarchy**
 
-Check: Do references/ files follow consistent header level standards?
-Why: Consistent header levels ensure predictable structure, proper document hierarchy, and correct rendering when files are referenced from SKILL.md via @-mention.
-
-Header level requirements:
-
-**Common-prefix files**:
-
-- `common-checklist.md`: Starts with H1 (`#`)
-- `common-output-format.md`: Starts with H1 (`#`)
-- `common-troubleshooting.md`: Starts with H2 (`##`)
-- `common-individual-commands.md`: Starts with H2 (`##`)
-
-**Category-prefix files**:
-
-- All category-\*.md: Starts with H2 (`##`)
-- Internal content: H3 (`###`) and below for hierarchy
-
+Check: Does each `references/` file start with H1 (`#`) and use a consistent heading hierarchy without skipped levels (for example, H1 → H3 with no H2 parent)?
+Why: Each reference file is a self-contained document. A top-level H1 title and non-skipped levels make navigation predictable for agents.
 Examples:
 
-- ✅ `common-checklist.md` first line: `# Checklist Title` → PASS
-- ✅ `common-troubleshooting.md` first line: `## Troubleshooting Guide` → PASS
-- ✅ `category-security.md` first line: `## Security Checks` → PASS
-- ❌ `common-checklist.md` first line: `## Checklist` → FAIL (should be H1)
-- ❌ `category-security.md` first line: `# Security Checks` → FAIL (should be H2)
+- ✅ `# Document title` → `##` sections → `###` subsections
+- ❌ First heading is `##` or lower
+- ❌ H1 → H3 with no H2 parent
+- ❌ Bold pseudo-headings or plain text used instead of markdown headings for structure
 
 ---
 

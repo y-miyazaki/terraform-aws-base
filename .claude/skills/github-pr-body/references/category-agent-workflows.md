@@ -1,4 +1,4 @@
-## Agent Workflow Examples
+# Agent Workflow Examples
 
 This document demonstrates real-world usage scenarios for PR Body updates with the github-pr-body skill.
 

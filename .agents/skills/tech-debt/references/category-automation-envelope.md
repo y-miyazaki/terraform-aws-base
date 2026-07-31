@@ -1,8 +1,8 @@
-## Automation Envelope
+# Automation Envelope
 
 For automation-path runs. Load on the automation path — see SKILL.md Reference Files Guide.
 
-### Constraints
+## Constraints
 
 The caller injects `## Constraints` after detect JSON in the assembled prompt. The agent reads:
 
@@ -37,7 +37,7 @@ Allowed paths: reports/tech-debt/**/*.md, docs/**/*.md
 
 Use consumer-specific report directories in real callers. Resolve `report_file` via `TECH_DEBT_DIR` (detect) and/or `report_file` in `## Constraints`.
 
-### PR body synthesis
+## PR body synthesis
 
 Use [common-output-format.md](common-output-format.md) for report shape. At synthesis, load:
 
@@ -60,7 +60,7 @@ PR body rules:
 
 The caller extracts Overview and Summary from the agent report for PR body composition.
 
-### Session metrics (verifier / logs)
+## Session metrics (verifier / logs)
 
 After survey or apply work, append:
 

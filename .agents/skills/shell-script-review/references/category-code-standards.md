@@ -1,4 +1,4 @@
-## Code Standards (CODE)
+# Code Standards (CODE)
 
 **CODE-01 (SHOULD): Prefer local over globals inside functions**
 

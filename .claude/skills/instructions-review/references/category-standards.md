@@ -1,4 +1,4 @@
-## Standards Chapter Review Checks
+# Standards Chapter Review Checks
 
 This file contains review checks specific to the Standards chapter of instructions files.
 

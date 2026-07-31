@@ -1,4 +1,4 @@
-## Performance (PERF)
+# Performance (PERF)
 
 **PERF-01 (SHOULD): Deterministic cache keys invalidated by dependency changes**
 

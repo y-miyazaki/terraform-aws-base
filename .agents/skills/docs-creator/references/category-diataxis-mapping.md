@@ -1,4 +1,4 @@
-## Diataxis Placement Guide
+# Diataxis Placement Guide
 
 Directory layout follows [Diataxis](https://diataxis.fr/).
 

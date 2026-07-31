@@ -1,8 +1,8 @@
-## Automation Envelope
+# Automation Envelope
 
 For automation-path runs. Load on the automation path — see SKILL.md Reference Files Guide.
 
-### Constraints
+## Constraints
 
 The caller injects `## Constraints` after detect JSON in the assembled prompt. The agent reads:
 
@@ -34,7 +34,7 @@ write_target: fix
 Allowed paths: docs/**/*.md, README.md, mkdocs.yml
 ```
 
-### PR body synthesis
+## PR body synthesis
 
 Use [common-output-format-automation.md](common-output-format-automation.md) for report shape. At synthesis, load:
 
@@ -57,7 +57,7 @@ PR body rules:
 
 The caller extracts Overview and Summary from the agent report for PR body composition.
 
-### Session metrics (verifier / logs)
+## Session metrics (verifier / logs)
 
 After survey or apply work, append:
 

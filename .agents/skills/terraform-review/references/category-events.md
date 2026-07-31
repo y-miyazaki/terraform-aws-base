@@ -1,4 +1,4 @@
-## Events & Observability (E)
+# Events & Observability (E)
 
 **E-01 (SHOULD): Keep EventBridge patterns narrow (source/detail-type)**
 

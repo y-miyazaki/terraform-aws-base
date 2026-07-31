@@ -1,4 +1,4 @@
-## Security Guidelines Chapter Review Checks
+# Security Guidelines Chapter Review Checks
 
 This file contains review checks specific to the Security Guidelines chapter of instructions files.
 

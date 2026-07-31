@@ -1,4 +1,4 @@
-## Implementation Details
+# Implementation Details
 
 Technical implementation and design decisions for the PR Body update system.
 

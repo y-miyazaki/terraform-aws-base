@@ -1,6 +1,6 @@
-## Common Validation Failures
+# Common Validation Failures
 
-### actionlint failures
+## actionlint failures
 
 **Common issues**:
 
@@ -11,7 +11,7 @@
 
 **Fix**: Follow actionlint suggestions
 
-### ghalint failures
+## ghalint failures
 
 **Common issues**:
 
@@ -22,7 +22,7 @@
 
 **Fix**: Add security configurations
 
-### zizmor failures
+## zizmor failures
 
 **Common issues**:
 

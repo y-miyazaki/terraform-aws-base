@@ -1,4 +1,4 @@
-## Troubleshooting
+# Troubleshooting
 
 - **`skip` true or empty actionable `failures`:** Emit survey no-op with Overview explaining no actionable failures; stop without edits.
 - **Validation tooling missing:** Defer as Watch unless fixing a single line reported in `log_excerpt`.

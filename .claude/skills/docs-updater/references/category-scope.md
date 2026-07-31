@@ -1,6 +1,6 @@
-## Path Scope
+# Path Scope
 
-### How scope is resolved
+## How scope is resolved
 
 | Context                                         | Allowlist                                                               | Denylist                                                             |
 | ----------------------------------------------- | ----------------------------------------------------------------------- | -------------------------------------------------------------------- |
@@ -14,6 +14,6 @@ Do **not** treat automation-only allowlist examples as interactive scope. See [c
 
 Do not edit paths that appear to hold secrets (environment files, credential stores, private keys) even when no denylist is set — follow repository security instructions.
 
-### Skill-specific limits
+## Skill-specific limits
 
 This skill edits documentation only. Do not widen edits to application source or infrastructure paths.

@@ -1,4 +1,4 @@
-## CI & Lint (CI)
+# CI & Lint (CI)
 
 **CI-01 (SHOULD): Avoid unstable args that create noisy plan diffs**
 

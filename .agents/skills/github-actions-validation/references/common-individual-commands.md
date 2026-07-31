@@ -1,8 +1,8 @@
-## Debugging Reference: Individual Commands
+# Debugging Reference: Individual Commands
 
 **Use these commands only when debugging validation failures.** For normal validation, always use the validation script.
 
-### actionlint
+## actionlint
 
 **Purpose**: Validate workflow syntax and detect common issues
 
@@ -27,7 +27,7 @@ actionlint -shellcheck= .github/workflows/*.yml
 - Shell command issues
 - Best practice violations
 
-### ghalint run
+## ghalint run
 
 **Purpose**: Security and configuration validation
 
@@ -48,7 +48,7 @@ ghalint run -config .ghalint.yml .github/workflows/
 - Workflow triggers
 - Configuration best practices
 
-### zizmor
+## zizmor
 
 **Purpose**: Scan workflows for GitHub Actions security issues
 

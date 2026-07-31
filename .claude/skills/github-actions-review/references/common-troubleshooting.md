@@ -1,4 +1,4 @@
-## Troubleshooting
+# Troubleshooting
 
 - If evidence is partial, mark affected checks as deferred with explicit reason.
 - If PR contains no workflow YAML files, report "no reviewable workflows" and stop.

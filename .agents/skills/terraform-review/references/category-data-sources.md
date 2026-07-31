@@ -1,4 +1,4 @@
-## Data Sources & Imports (DATA)
+# Data Sources & Imports (DATA)
 
 **DATA-01 (SHOULD): Prefer variables over data sources when caller knows the value**
 

@@ -1,19 +1,19 @@
-## Shell Script Validation - Individual Commands Reference
+# Shell Script Validation - Individual Commands Reference
 
-### For Debugging Only
+## For Debugging Only
 
 Always prefer: `bash scripts/validate.sh`
 
 ## Commands
 
-### bash -n
+## bash -n
 
 ```bash
 # Syntax check
 bash -n script.sh
 ```
 
-### shellcheck
+## shellcheck
 
 ```bash
 # Static analysis

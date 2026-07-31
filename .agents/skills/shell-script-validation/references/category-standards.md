@@ -1,4 +1,4 @@
-## Shell Script Validation - Script Standards
+# Shell Script Validation - Script Standards
 
 ## Required Template
 

@@ -1,4 +1,4 @@
-## Terraform Validation - Security Remediation Guide
+# Terraform Validation - Security Remediation Guide
 
 Use this guide when `trivy config` reports security findings.
 

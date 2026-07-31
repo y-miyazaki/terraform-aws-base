@@ -1,4 +1,4 @@
-## Change Classification Guide
+# Change Classification Guide
 
 ## Overview
 

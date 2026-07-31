@@ -1,4 +1,4 @@
-## Dependencies (DEP)
+# Dependencies (DEP)
 
 **DEP-01 (SHOULD): Verify required commands with command -v before use**
 

@@ -1,8 +1,8 @@
-## Debugging Reference: Individual Commands
+# Debugging Reference: Individual Commands
 
 **Use these commands only when debugging validation failures.** For normal validation, always use `./scripts/validate.sh`.
 
-### markdownlint-cli2
+## markdownlint-cli2
 
 **Purpose**: Validate Markdown syntax and style
 
@@ -30,7 +30,7 @@ markdownlint-cli2 --config .markdownlint-cli2.yaml **/*.md
 - Line length
 - Consistent style
 
-### markdown-link-check
+## markdown-link-check
 
 **Purpose**: Detect broken links
 
@@ -54,7 +54,7 @@ markdown-link-check -c .markdown-link-check.json **/*.md
 
 ## Manual Validation Workflow
 
-### Before Committing
+## Before Committing
 
 1. **Run markdownlint-cli2**:
 
@@ -84,7 +84,7 @@ markdown-link-check -c .markdown-link-check.json **/*.md
 
 ## Common Issues and Fixes
 
-### Line too long
+## Line too long
 
 **Issue**: Lines exceed maximum length
 
@@ -94,7 +94,7 @@ markdown-link-check -c .markdown-link-check.json **/*.md
 markdownlint-cli2 --fix **/*.md
 ```
 
-### Missing blank line before heading
+## Missing blank line before heading
 
 **Issue**: No blank line between content and heading
 
@@ -112,7 +112,7 @@ Some content
 
 **Fix**: Add blank lines before headings
 
-### Invalid heading hierarchy
+## Invalid heading hierarchy
 
 **Issue**: Skipped heading levels (e.g., H1 to H3)
 
@@ -132,7 +132,7 @@ Some content
 
 **Fix**: Use sequential heading levels
 
-### Broken internal links
+## Broken internal links
 
 **Issue**: Link to non-existent file or anchor
 
@@ -143,7 +143,7 @@ Some content
 markdown-link-check -c .markdown-link-check.json README.md
 ```
 
-### Broken external links
+## Broken external links
 
 **Issue**: External website or URL no longer exists
 
@@ -156,7 +156,7 @@ markdown-link-check -c .markdown-link-check.json README.md
 
 ## Configuration Files
 
-### .markdownlint-cli2.yaml
+## .markdownlint-cli2.yaml
 
 ```yaml
 config:
@@ -167,7 +167,7 @@ config:
   line-length: false
 ```
 
-### .markdown-link-check.json
+## .markdown-link-check.json
 
 ```json
 {
@@ -182,7 +182,7 @@ config:
 
 ## Quick Reference
 
-### Essential Commands
+## Essential Commands
 
 ```bash
 # Validate all Markdown
@@ -195,7 +195,7 @@ markdownlint-cli2 --fix **/*.md
 markdown-link-check **/*.md
 ```
 
-### Validation Checklist
+## Validation Checklist
 
 Before committing:
 

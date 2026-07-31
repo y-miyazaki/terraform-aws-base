@@ -39,13 +39,13 @@ Preferred path forms in markdown examples:
 
 ### Reference Files Matrix
 
-| File Name                       | Required | Purpose                                 | Load Trigger              |
-| ------------------------------- | -------- | --------------------------------------- | ------------------------- |
+| File Name                       | Required | Purpose                                                                                | Load Trigger              |
+| ------------------------------- | -------- | -------------------------------------------------------------------------------------- | ------------------------- |
 | `common-checklist.md`           | Yes      | Canonical checklist (ItemIDs when gates/findings are cited; see Checklist item layout) | `(always read)`           |
-| `common-output-format.md`       | Yes      | Canonical output contract               | `(always read)`           |
-| `common-troubleshooting.md`     | No       | Failure diagnostics and rerun procedure | `(read on failure)`       |
-| `common-individual-commands.md` | No       | Debug-only command catalog              | `(read on debugging)`     |
-| `category-*.md`                 | No       | Domain-specific review criteria         | `(read when <condition>)` |
+| `common-output-format.md`       | Yes      | Canonical output contract                                                              | `(always read)`           |
+| `common-troubleshooting.md`     | No       | Failure diagnostics and rerun procedure                                                | `(read on failure)`       |
+| `common-individual-commands.md` | No       | Debug-only command catalog                                                             | `(read on debugging)`     |
+| `category-*.md`                 | No       | Domain-specific review criteria                                                        | `(read when <condition>)` |
 
 Allowlisted Reference Files Guide triggers:
 
@@ -60,16 +60,17 @@ Allowlisted Reference Files Guide triggers:
 
 When `common-checklist.md` uses ItemIDs (`PREFIX-nn`), use **exactly one** layout per file (BP-05). Recipe checklists without ItemIDs may keep plain procedural H2s.
 
-| Layout | H2 | Items | Typical family |
-| ------ | -- | ----- | -------------- |
-| **Index** | `## Title (PREFIX)` | `- PREFIX-nn (LEVEL): title` (Check/Why/Fix in `category-*.md` when present) | `*-review`, `*-validation`, step checklists |
-| **Gate** | `## Title` (no `(PREFIX)` on H2) | `### PREFIX-nn: Title` (+ optional checkbox / **PASS**) | docs-\*, utility gates |
+| Layout    | H2                               | Items                                                                        | Typical family                              |
+| --------- | -------------------------------- | ---------------------------------------------------------------------------- | ------------------------------------------- |
+| **Index** | `## Title (PREFIX)`              | `- PREFIX-nn (LEVEL): title` (Check/Why/Fix in `category-*.md` when present) | `*-review`, `*-validation`, step checklists |
+| **Gate**  | `## Title` (no `(PREFIX)` on H2) | `### PREFIX-nn: Title` (+ optional checkbox / **PASS**)                      | docs-\*, utility gates                      |
 
 Plain H2 sections **without** ItemIDs (for example `## Execution Order`, `## Pass Criteria`) may sit beside index or gate sections in the same file. Do not mix index H2 short-names with gate H3 ItemID headings. Do not require ItemIDs on every skill (loop recipe checklists may stay ID-less).
 
 ## Guidelines
 
 ### Best Practice Checks (BP)
+
 - BP-01 (SHOULD): Description states what the skill does and when to use it
 - BP-02 (SHOULD): Reference Files Guide states when each reference is read
 - BP-03 (SHOULD): SKILL.md avoids redundant prose already in references
@@ -77,11 +78,13 @@ Plain H2 sections **without** ItemIDs (for example `## Execution Order`, `## Pas
 - BP-05 (SHOULD): Checklist ItemID layout is one style per file
 
 ### Pattern Checks (P)
+
 - P-01 (SHOULD): Workflow matches the skill family pattern (not ad-hoc steps)
 - P-02 (SHOULD): Output matches common-output-format contract
 - P-03 (SHOULD): Gather required context before emitting the final report
 
 ### Quality Checks (Q)
+
 - Q-01 (SHOULD): Output format is implementable (schema or Markdown sections)
 - Q-02 (SHOULD): Execution Scope splits Does vs Out of Scope
 - Q-03 (SHOULD): Execution path is single/canonical or branches are explicit
@@ -96,16 +99,16 @@ Plain H2 sections **without** ItemIDs (for example `## Execution Order`, `## Pas
 - Q-12 (SHOULD): Input/Output/Workflow/References do not contradict each other
 
 ### Structural Checks (S)
+
 - S-01 (MUST): SKILL.md has the five required ## sections
 - S-02 (MUST): Frontmatter has name, description, license (+ version metadata)
-- S-03 (MUST): References/ headers use required H1/H2 levels
+- S-03 (MUST): References/ start with H1 and use consistent heading hierarchy
 - S-04 (MUST): Links stay in-skill or https:// (no ../docs escapes)
 - S-05 (MUST): Use <agent-root> for install paths; do not hardcode .github/skills
 
 ### Code Modification Guidelines
 
 - Automate deterministic checks (existence, quantitative, file presence) in skill `scripts/`; keep judgment-based checks in the review skill workflow.
-
 
 ## Testing and Validation
 

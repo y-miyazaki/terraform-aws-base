@@ -1,4 +1,4 @@
-## Troubleshooting
+# Troubleshooting
 
 - **`skip` true or empty `commits` and `releases`:** Emit report with Summary `No unreleased changelog commits`; do not edit `changelog_file`.
 - **`changelog_exists` false and `may_edit` is `true`:** Create Keep a Changelog template before adding bullets (see `common-checklist.md`).

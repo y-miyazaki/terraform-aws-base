@@ -1,4 +1,4 @@
-## Anti-Patterns (AP)
+# Anti-Patterns (AP)
 
 **AP-01 (SHOULD): Omit set -euo/main/entry guard from sourced libs**
 

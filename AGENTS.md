@@ -4,15 +4,6 @@ Operational constitution for AI-assisted development agents. Self-contained — 
 
 ---
 
-## Priority Order
-
-If instructions conflict, follow this precedence:
-
-1. Explicit user instructions
-2. Repository-specific instructions
-3. Existing codebase conventions
-4. General best practices
-
 ## Execution
 
 - Minimal surgical diffs; no unrelated refactor, cleanup, modernization, or optimization unless approved.

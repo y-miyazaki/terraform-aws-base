@@ -1,4 +1,4 @@
-## Cost Optimization (COST)
+# Cost Optimization (COST)
 
 **COST-01 (SHOULD): Set explicit retention/metrics; avoid expensive defaults**
 

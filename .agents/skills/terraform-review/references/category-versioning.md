@@ -1,4 +1,4 @@
-## Versioning (VERS)
+# Versioning (VERS)
 
 **VERS-01 (MUST): required_version matches project standard range**
 

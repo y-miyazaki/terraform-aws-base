@@ -1,4 +1,4 @@
-## Global / Base (G)
+# Global / Base (G)
 
 **G-01 (MUST): No secrets hardcoded in Terraform code**
 

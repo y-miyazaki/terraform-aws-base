@@ -1,4 +1,4 @@
-## Quality, Consistency, and Completeness Review Checks
+# Quality, Consistency, and Completeness Review Checks
 
 This file contains review checks for content quality, cross-file consistency, and completeness of instructions files.
 

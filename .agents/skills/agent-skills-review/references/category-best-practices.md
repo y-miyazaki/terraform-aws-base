@@ -1,4 +1,4 @@
-## Best Practice Checks (BP)
+# Best Practice Checks (BP)
 
 **BP-01 (SHOULD): Description states what the skill does and when to use it**
 
@@ -32,8 +32,8 @@ Examples:
 
 **BP-03 (SHOULD): SKILL.md avoids redundant prose already in references**
 
-Check: Does SKILL.md avoid content that Claude already knows, minimizing redundancy with frontmatter and reference files?
-Why: Every token competes for context window attention. Redundant content dilutes the agent's focus on project-specific instructions. Claude's official best practice: "Would the agent get this wrong without this instruction? If no, cut it."
+Check: Does SKILL.md avoid content the agent already knows, minimizing redundancy with frontmatter and reference files?
+Why: Every token competes for context window attention. Redundant content dilutes the agent's focus on project-specific instructions. Official Agent Skills guidance: "Would the agent get this wrong without this instruction? If no, cut it."
 Examples:
 
 - ✅ No Purpose section (duplicates description field)
@@ -67,10 +67,10 @@ Check: When `common-checklist.md` uses ItemIDs (`PREFIX-nn`), does the file use 
 Why: Mixed chapter short-names and item headings make audits and agent self-checks inconsistent. Authoring previously had no layout rule beyond "fixed Item IDs" in the matrix.
 Layouts (pick one per checklist file):
 
-| Layout | H2 chapters | Items | Typical family |
-| ------ | ----------- | ----- | -------------- |
-| **Index** | `## Title (PREFIX)` | `- PREFIX-nn (LEVEL): title` (detail in `category-*.md` when present) | `*-review`, `*-validation`, step checklists |
-| **Gate** | `## Title` (no `(PREFIX)` on H2) | `### PREFIX-nn: Title` with optional checkbox / **PASS** | docs-\* / utility gates |
+| Layout    | H2 chapters                      | Items                                                                 | Typical family                              |
+| --------- | -------------------------------- | --------------------------------------------------------------------- | ------------------------------------------- |
+| **Index** | `## Title (PREFIX)`              | `- PREFIX-nn (LEVEL): title` (detail in `category-*.md` when present) | `*-review`, `*-validation`, step checklists |
+| **Gate**  | `## Title` (no `(PREFIX)` on H2) | `### PREFIX-nn: Title` with optional checkbox / **PASS**              | docs-\* / utility gates                     |
 
 Plain H2 sections without ItemIDs (for example `## Execution Order`, `## Pass Criteria`) may coexist with index or gate sections. Do **not** mix: H2 `Title (PREFIX)` together with H3 `PREFIX-nn` in the same file. Do **not** invent a third ItemID item layout.
 Examples:
@@ -82,4 +82,3 @@ Examples:
 - ❌ `## Intent (INTENT)` plus `### INTENT-01: …` in the same checklist
 - ❌ `- FMT-01: …` under plain `### gofumpt` without `## … (FMT)` (flat third layout)
 - ❌ Requiring ItemIDs on every loop recipe checklist
-

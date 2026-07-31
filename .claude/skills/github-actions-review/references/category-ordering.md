@@ -1,4 +1,4 @@
-## Ordering (ORD)
+# Ordering (ORD)
 
 **ORD-01 (MUST): Alphabetize keys in env/permissions/with/secrets blocks**
 

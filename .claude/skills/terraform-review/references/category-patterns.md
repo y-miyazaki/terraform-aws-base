@@ -1,4 +1,4 @@
-## Patterns (P)
+# Patterns (P)
 
 **P-01 (SHOULD): Use dynamic blocks only when static lists are impractical**
 

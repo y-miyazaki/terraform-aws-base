@@ -1,4 +1,4 @@
-## Security (SEC)
+# Security (SEC)
 
 **Note**: The following security guidelines are AWS-specific. For multi-cloud repositories, verify the cloud provider context before applying.
 

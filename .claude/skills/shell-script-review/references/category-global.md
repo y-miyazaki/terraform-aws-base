@@ -1,4 +1,4 @@
-## Global / Base (G)
+# Global / Base (G)
 
 **G-01 (MUST): Set SCRIPT_DIR when sourcing or resolving relative paths**
 

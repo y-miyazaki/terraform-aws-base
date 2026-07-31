@@ -1,4 +1,4 @@
-## Common Troubleshooting Guide
+# Common Troubleshooting Guide
 
 This document lists frequent issues found during instructions file reviews and their recommended fixes.
 

@@ -60,6 +60,53 @@ function get_changed_dirs {
 }
 
 #######################################
+# truncate_reason_text: Cap reason size for agent responses
+#
+# Globals:
+#   REASON_TRUNCATE_CHARS - optional max characters (default 32768)
+#
+# Arguments:
+#   $1 - text to truncate (printed to stdout)
+#
+# Outputs:
+#   Truncated text to stdout
+#
+# Returns:
+#   None
+#######################################
+function truncate_reason_text {
+    local text="$1"
+    local max_chars="${REASON_TRUNCATE_CHARS:-32768}"
+    if ((${#text} > max_chars)); then
+        printf '%s\n...[truncated]' "${text:0:max_chars}"
+    else
+        printf '%s' "$text"
+    fi
+}
+
+#######################################
+# emit_json_with_reason: Build hook JSON via stdin (avoids ARG_MAX)
+#
+# Globals:
+#   None
+#
+# Arguments:
+#   $1 - reason text
+#   $2 - jq filter using . for the reason value
+#
+# Outputs:
+#   JSON object to stdout
+#
+# Returns:
+#   None
+#######################################
+function emit_json_with_reason {
+    local text="$1"
+    local jq_filter="$2"
+    truncate_reason_text "$text" | jq -Rs "$jq_filter"
+}
+
+#######################################
 # report_failure: Emit error in the format the current agent expects, then exit.
 #
 # Description:
@@ -147,12 +194,12 @@ function report_failure {
     # Step 2: Build response per agent spec (A-Z order)
     case "$agent" in
         antigravity)
-            jq -n --arg reason "$reason" '{decision: "continue", reason: $reason}'
+            emit_json_with_reason "$reason" '{decision: "continue", reason: .}'
             exit 0
             ;;
         claude_code)
             if [[ $hook_event == "Stop" ]]; then
-                jq -n --arg reason "$reason" '{decision: "block", reason: $reason}'
+                emit_json_with_reason "$reason" '{decision: "block", reason: .}'
                 exit 0
             else
                 echo "$reason" >&2
@@ -162,7 +209,7 @@ function report_failure {
         copilot)
             case "$hook_event" in
                 Stop | agentStop)
-                    jq -n --arg reason "$reason" '{decision: "block", reason: $reason}'
+                    emit_json_with_reason "$reason" '{decision: "block", reason: .}'
                     exit 0
                     ;;
                 *)
@@ -173,7 +220,7 @@ function report_failure {
             ;;
         cursor)
             if [[ $hook_event == "stop" ]]; then
-                jq -n --arg reason "$reason" '{followup_message: $reason}'
+                emit_json_with_reason "$reason" '{followup_message: .}'
                 exit 0
             else
                 echo "$reason" >&2
@@ -182,7 +229,7 @@ function report_failure {
             ;;
         kiro)
             if [[ $hook_event == "stop" ]]; then
-                jq -n --arg reason "$reason" '{decision: "block", reason: $reason}'
+                emit_json_with_reason "$reason" '{decision: "block", reason: .}'
                 exit 0
             else
                 echo "$reason" >&2
@@ -191,7 +238,7 @@ function report_failure {
             ;;
         vscode)
             if [[ $hook_event == "Stop" ]]; then
-                jq -n --arg reason "$reason" '{hookSpecificOutput: {hookEventName: "Stop", decision: "block", reason: $reason}}'
+                emit_json_with_reason "$reason" '{hookSpecificOutput: {hookEventName: "Stop", decision: "block", reason: .}}'
                 exit 0
             else
                 echo "$reason" >&2

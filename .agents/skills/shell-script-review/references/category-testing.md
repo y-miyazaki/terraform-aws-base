@@ -1,4 +1,4 @@
-## Testing (TEST)
+# Testing (TEST)
 
 **TEST-00 (MUST): Add/update paired Bats suite in the same change**
 

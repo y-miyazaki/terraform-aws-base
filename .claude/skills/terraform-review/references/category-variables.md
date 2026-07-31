@@ -1,4 +1,4 @@
-## variables.tf (V)
+# variables.tf (V)
 
 **V-01 (SHOULD): Prefer concrete types over any / map(any)**
 

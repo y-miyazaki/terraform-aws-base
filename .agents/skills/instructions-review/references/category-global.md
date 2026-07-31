@@ -1,4 +1,4 @@
-## Global Review Checks for Instructions Files
+# Global Review Checks for Instructions Files
 
 This file contains global checks applicable to all instructions files, covering general requirements and structural standards.
 

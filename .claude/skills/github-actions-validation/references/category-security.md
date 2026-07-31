@@ -1,4 +1,4 @@
-## GitHub Actions Validation - Security Remediation Guide
+# GitHub Actions Validation - Security Remediation Guide
 
 Use this guide when `ghalint` or `zizmor` reports security findings.
 

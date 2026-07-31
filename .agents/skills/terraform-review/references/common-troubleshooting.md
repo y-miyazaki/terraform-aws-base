@@ -1,4 +1,4 @@
-## Troubleshooting
+# Troubleshooting
 
 - If evidence is partial, mark affected checks as deferred with explicit reason.
 - If PR context is unavailable, review file diffs only and defer PR-context-dependent checks.

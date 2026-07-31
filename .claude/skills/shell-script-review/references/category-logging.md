@@ -1,4 +1,4 @@
-## Logging (LOG)
+# Logging (LOG)
 
 **LOG-01 (SHOULD): Errors go to stderr; normal output to stdout**
 

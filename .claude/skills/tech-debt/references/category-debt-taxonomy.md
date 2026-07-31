@@ -1,9 +1,9 @@
-## Debt Taxonomy
+# Debt Taxonomy
 
 Classify every finding with **category**, **severity**, and optional **nature**.
 Rules below map to public standards — do not invent private taxonomies.
 
-### Sources (canonical)
+## Sources (canonical)
 
 | Topic                         | Source                                                                                                                                     | Use for                                                                                           |
 | ----------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------- |
@@ -13,7 +13,7 @@ Rules below map to public standards — do not invent private taxonomies.
 | Dependency versioning         | [Semantic Versioning](https://semver.org/)                                                                                                 | `dependency_version`                                                                              |
 | Documentation form            | [Diátaxis](https://diataxis.fr/)                                                                                                           | `documentation`                                                                                   |
 
-### Categories
+## Categories
 
 Assign exactly one primary `category` per finding:
 
@@ -27,7 +27,7 @@ Assign exactly one primary `category` per finding:
 | `security`           | Authz gaps, secret-handling smells, unsafe defaults (Sonar Security) — **report only**                                                                                                                            | Exploit writing, credential rotation, production incident response            |
 | `operational`        | Fragile scripts, missing runbooks, non-reproducible tooling                                                                                                                                                       | Routine changelog / CI repair → changelog or ci-sweeper                       |
 
-### Severity
+## Severity
 
 Align with Sonar software-quality severity names; map into report sections:
 
@@ -38,7 +38,7 @@ Align with Sonar software-quality severity names; map into report sections:
 | Medium / Low     | Watch          | Real debt but weak urgency, needs human judgment, or incomplete evidence             |
 | Info             | Noise / Ignore | No expected application impact; marker noise; duplicate                              |
 
-### Nature (optional, Fowler quadrant)
+## Nature (optional, Fowler quadrant)
 
 When evidence supports it, add `nature`:
 
@@ -58,7 +58,7 @@ Assign `nature` only when **narrative evidence** is visible in context (comment/
 | `hack` / `fixme` snippet states intent or repay plan     | Set matching Fowler `nature` |
 | `eol_hint`, `pin_drift`, churn hotspot without narrative | Omit `nature`                |
 
-### Detect vs lint
+## Detect vs lint
 
 Detect covers mechanical facts observable without linters: dependency manifests, docs links/staleness, git churn, and code markers. Do **not** run or restate linter or SAST findings (complexity scores, style, unused code, naming nits).
 
@@ -66,11 +66,11 @@ Use `code_quality` only when detect supplies a fact (marker or churn hotspot) an
 
 Markers may appear in reports — usually **Watch** unless evidence shows **systemic** impact (same marker theme or debt pattern across multiple core files, packages, or architectural boundaries).
 
-### Out of scope
+## Out of scope
 
 Do not recommend new-technology or tool migration playbooks. Report EOL/deprecation **facts** from detect (`eol_hint`, `stale_doc`) only; do not propose replacement stacks or rewrite plans.
 
-### Category decision order
+## Category decision order
 
 Use this order as a **tie-breaker** when one finding could fit multiple categories. Emit **separate findings** when detect supplies distinct signals (e.g. `eol_hint` and missing tests on the same module).
 

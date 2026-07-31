@@ -1,4 +1,4 @@
-## Pattern Checks (P)
+# Pattern Checks (P)
 
 **P-01 (SHOULD): Workflow matches the skill family pattern (not ad-hoc steps)**
 
