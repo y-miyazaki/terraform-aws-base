@@ -125,32 +125,6 @@ fi
 #######################################
 # for GitHub Copilot CLI
 #######################################
-# Workspace root (resolved from devcontainer env; falls back to /workspace)
-WORKSPACE="${CONTAINER_WORKSPACE_FOLDER:-/workspace}"
-
-# Copilot / VSCode environment defaults (do not place secrets directly in this file)
-export COPILOT_BASE="${WORKSPACE}/.copilot"
-# Allow Copilot to use all permissions (tools/paths/urls)
-export COPILOT_ALLOW_ALL="1"
-# Default model (can be overridden by --model flag or /model command)
-export COPILOT_MODEL="gpt-5-mini"
-# Additional directories to search for custom instructions files (comma-separated)
-export COPILOT_CUSTOM_INSTRUCTIONS_DIRS="${WORKSPACE}/.github/instructions"
-# Use bundled ripgrep (set to "false" to use ripgrep from PATH instead)
-export USE_BUILTIN_RIPGREP="true"
-
-# Token resolution:
-#   copilot CLI: COPILOT_GITHUB_TOKEN > GH_TOKEN > GITHUB_TOKEN > stored credentials
-#   gh CLI:      GH_TOKEN > stored credentials (managed by gh auth login)
-# Using COPILOT_GITHUB_TOKEN for copilot-only token, GH_TOKEN for gh CLI,
-# keeping them separate so each tool can use a different token if needed.
-
-# Copilot-specific token (file takes precedence; gives copilot CLI its own identity)
-if [ -f "${COPILOT_BASE}/copilot_github_token" ] && [ "$(stat -c %a "${COPILOT_BASE}/copilot_github_token" 2> /dev/null)" = "600" ]; then
-    COPILOT_GITHUB_TOKEN="$(cat "${COPILOT_BASE}/copilot_github_token")"
-    export COPILOT_GITHUB_TOKEN
-fi
-
 # GH_TOKEN: prefer gh credential store; fall back to file for headless/CI environments
 if command -v gh > /dev/null 2>&1 && gh auth status > /dev/null 2>&1; then
     GH_TOKEN="$(gh auth token 2> /dev/null)"
@@ -171,8 +145,11 @@ if [ -z "${GITHUB_TOKEN-}" ]; then
     fi
 fi
 
-# XDG dirs
+#######################################
+# XDG
+#######################################
 export XDG_CONFIG_HOME="$HOME/.config"
+export XDG_CONFIG_CACHE="$HOME/.cache"
 
 #######################################
 # for lean-ctx

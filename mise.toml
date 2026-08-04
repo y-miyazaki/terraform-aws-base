@@ -30,25 +30,25 @@ uvx = true # Install uv/uvx via pipx for better isolation and performance.
 [tools]
 # A Runtime tools
 aqua = "v2.62.1"
-node = "24.18.0"
+node = "24.18.1"
 pnpm = { version = "11.17.0", depends = ["node"] }
 python = "3.14.6"
 
 # AI agent tools
-"github:microsoft/apm" = "v0.26.0"               # agent package manager
-claude = "2.1.218"                               # Claude Code CLI
+"github:microsoft/apm" = "v0.27.0"               # agent package manager
+claude = "2.1.220"                               # Claude Code CLI
 "github:DeusData/codebase-memory-mcp" = "v0.9.0" # codebase memory MCP server
-"aqua:github/copilot-cli" = "1.0.73"             # GitHub Copilot CLI
+"aqua:github/copilot-cli" = "1.0.75"             # GitHub Copilot CLI
 "pipx:headroom-ai" = { version = "0.32.1", extras = "proxy,mcp,bedrock", depends = ["python"] }
 "npm:lean-ctx-bin" = { version = "3.9.12", depends = [
   "node",
 ], allow_builds = [
   "lean-ctx-bin",
 ] } # context optimizer (hooks CLI + MCP npm)
-"github:microsoft/waza" = "v0.38.3"               # agent skill evaluator
+"github:microsoft/waza" = "v0.38.4"               # agent skill evaluator
 
 # AWS related tools
-"aqua:aws/aws-cli" = "2.36.7"      # AWS CLI
+"aqua:aws/aws-cli" = "2.36.9"      # AWS CLI
 "aqua:aws/aws-sam-cli" = "1.164.0"  # SAM CLI tool
 "npm:awsp" = { version = "0.2.0", depends = [
   "node",
@@ -64,15 +64,15 @@ claude = "2.1.218"                               # Claude Code CLI
 "aqua:suzuki-shunsuke/ghalint" = "1.5.6"                              # GitHub Actions linter
 "aqua:suzuki-shunsuke/ghatm" = "1.0.0"                                # auto-set timeout-minutes for GitHub Actions jobs
 "aqua:suzuki-shunsuke/pinact" = "4.1.0"                               # GitHub Actions pinning tool
-"aqua:zizmorcore/zizmor" = "1.27.0"                                   # GitHub Actions security auditor
+"aqua:zizmorcore/zizmor" = "1.28.0"                                   # GitHub Actions security auditor
 
 # Go related tools
-"aqua:air-verse/air" = "1.67.2"                                           # live reload
+"aqua:air-verse/air" = "1.67.3"                                           # live reload
 "aqua:bufbuild/buf" = "1.72.0"                                            # protobuf linter and formatter
 "go:github.com/go-delve/delve/cmd/dlv" = "v1.27.0"                                          # debugger
-"aqua:mvdan/gofumpt" = "0.10.0"                                           # code formatter
+"aqua:mvdan/gofumpt" = "0.11.0"                                           # code formatter
 "aqua:golangci/golangci-lint" = "2.12.2"                                  # linter
-"aqua:goreleaser/goreleaser" = "2.17.0"                                   # release automation
+"aqua:goreleaser/goreleaser" = "2.17.1"                                   # release automation
 "go:golang.org/x/tools/gopls" = "v0.23.0"                                 # Go language server
 "go:golang.org/x/vuln/cmd/govulncheck" = "1.3.0"                          # vulnerability scanner
 "aqua:ko-build/ko" = "0.19.1"                                             # container builder
@@ -91,7 +91,7 @@ claude = "2.1.218"                               # Claude Code CLI
 "npm:markdown-link-check" = { version = "3.14.2", depends = [
   "node",
 ], install_env = { NPM_CONFIG_IGNORE_SCRIPTS = "true" } } # Markdown link checker
-"npm:markdownlint-cli2" = { version = "0.23.1", depends = [
+"npm:markdownlint-cli2" = { version = "0.23.2", depends = [
   "node",
 ], install_env = { NPM_CONFIG_IGNORE_SCRIPTS = "true" } } # Markdown linter
 "npm:prettier" = { version = "3.9.6", depends = [
@@ -117,7 +117,7 @@ claude = "2.1.218"                               # Claude Code CLI
 "pipx:mkdocs" = { version = "1.6.1", depends = ["python"], postinstall = "uv pip install --python $MISE_TOOL_INSTALL_PATH/mkdocs/bin/python mkdocs-material mdx-truly-sane-lists" } # MkDocs with Material theme
 "aqua:BurntSushi/ripgrep" = "15.2.0" # grep alternative (rg)
 "aqua:tamasfe/taplo" = "0.10.0"      # TOML formatter / LSP
-"aqua:jdx/usage" = "3.5.6"           # usage CLI tool for command help and completions
+"aqua:jdx/usage" = "4.0.0"           # usage CLI tool for command help and completions
 "aqua:astral-sh/uv" = "0.11.32"      # uv/uvx
 
 [tasks.mise-install]

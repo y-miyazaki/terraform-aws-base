@@ -5,8 +5,6 @@
 .claude/tmp/
 
 # AI tools with no project-specific configs (directories fully excluded)
-.copilot
-.kiro
 .serena
 apm_modules/
 

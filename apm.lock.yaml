@@ -1,12 +1,12 @@
 lockfile_version: '1'
-generated_at: '2026-07-31T08:33:05.609574+00:00'
+generated_at: '2026-08-04T06:41:00.767507+00:00'
 apm_version: 0.24.1
 dependencies:
 - repo_url: y-miyazaki/config
   name: config-aws
   host: github.com
-  resolved_commit: 303df93309a3b2f1df07096ca23d83bcdb0a472b
-  resolved_ref: v1.8.70
+  resolved_commit: 8612741d8f077d90272d8ce341d070b49fbe4a62
+  resolved_ref: v1.8.71
   version: 1.0.0
   virtual_path: .apm/packages/aws
   is_virtual: true
@@ -16,8 +16,8 @@ dependencies:
 - repo_url: y-miyazaki/config
   name: config-common
   host: github.com
-  resolved_commit: 303df93309a3b2f1df07096ca23d83bcdb0a472b
-  resolved_ref: v1.8.70
+  resolved_commit: 8612741d8f077d90272d8ce341d070b49fbe4a62
+  resolved_ref: v1.8.71
   version: 1.0.0
   virtual_path: .apm/packages/common
   is_virtual: true
@@ -1380,14 +1380,14 @@ dependencies:
     .cursor/rules/github-actions-workflow.mdc: sha256:696f0edc71b99a2292f30c099e7e55374926ddb9868addec29f684981e82f4f7
     .cursor/rules/instructions.mdc: sha256:40f550a18738b519bc3453d5bdefe21054701f7f54c5a15b6f3496c9e92ae40a
     .cursor/rules/markdown.mdc: sha256:ddf4799d3864c8d6ca48e8d60031b27f804cdbd09bd85c44db9a0b80bd3c9b2d
-  content_hash: sha256:48bcf82afcef9c2117a6732e9d1556237bb10693a74c12f598fdaf1676471649
+  content_hash: sha256:4c61985f29c0f39f1b22dcfa9619aa8da86a208ac11040b2a7436a8f920cc226
   declared_license: Apache-2.0
 - repo_url: y-miyazaki/config
   name: common-hooks-claude
   host: github.com
-  resolved_commit: 303df93309a3b2f1df07096ca23d83bcdb0a472b
-  resolved_ref: v1.8.70
-  version: 1.0.0
+  resolved_commit: 8612741d8f077d90272d8ce341d070b49fbe4a62
+  resolved_ref: v1.8.71
+  version: 2.0.0
   virtual_path: .apm/packages/common-hooks-claude
   is_virtual: true
   package_type: apm_package
@@ -1417,14 +1417,14 @@ dependencies:
     .cursor/hooks/common-hooks-claude/scripts/markdown_link_check.sh: sha256:2ae6a0fd25a08af394fde0f1b35ca3dc5271d261e9bd02351ded87207a96b743
     .cursor/hooks/common-hooks-claude/scripts/markdownlint_cli2.sh: sha256:d229a83c68f734251b3355b65287bd8e0faa85556e58808a40b25c4e0e511723
     .cursor/hooks/common-hooks-claude/scripts/zizmor.sh: sha256:28f45ca1d6733c9b8d1a0a13d0ddfdbcb9c3a515636b3e7972eb45bc351ab044
-  content_hash: sha256:1a7f521a82c927b3d709406861b03eeb2a16fbe117120b5e2673451ac0d0a700
+  content_hash: sha256:b60cd9530f2968c4d7cfab8c75e4e15a724346057ef33b5e6c5e4b9fad4b7c9d
   declared_license: Apache-2.0
 - repo_url: y-miyazaki/config
   name: common-hooks-cursor
   host: github.com
-  resolved_commit: 303df93309a3b2f1df07096ca23d83bcdb0a472b
-  resolved_ref: v1.8.70
-  version: 1.0.0
+  resolved_commit: 8612741d8f077d90272d8ce341d070b49fbe4a62
+  resolved_ref: v1.8.71
+  version: 2.0.0
   virtual_path: .apm/packages/common-hooks-cursor
   is_virtual: true
   package_type: apm_package
@@ -1454,13 +1454,13 @@ dependencies:
     .cursor/hooks/common-hooks-cursor/scripts/markdown_link_check.sh: sha256:2ae6a0fd25a08af394fde0f1b35ca3dc5271d261e9bd02351ded87207a96b743
     .cursor/hooks/common-hooks-cursor/scripts/markdownlint_cli2.sh: sha256:d229a83c68f734251b3355b65287bd8e0faa85556e58808a40b25c4e0e511723
     .cursor/hooks/common-hooks-cursor/scripts/zizmor.sh: sha256:28f45ca1d6733c9b8d1a0a13d0ddfdbcb9c3a515636b3e7972eb45bc351ab044
-  content_hash: sha256:a56c86e8af2e7153da962d473195cfe37b5db597ad2606e3c24fefb0b5976541
+  content_hash: sha256:7155a314e1fe75572bcd87d421f54defa1d2cb1087db42cebc626c4d457d80c0
   declared_license: Apache-2.0
 - repo_url: y-miyazaki/config
   name: config-shell-script
   host: github.com
-  resolved_commit: 303df93309a3b2f1df07096ca23d83bcdb0a472b
-  resolved_ref: v1.8.70
+  resolved_commit: 8612741d8f077d90272d8ce341d070b49fbe4a62
+  resolved_ref: v1.8.71
   version: 1.0.0
   virtual_path: .apm/packages/shell-script
   is_virtual: true
@@ -1668,8 +1668,8 @@ dependencies:
 - repo_url: y-miyazaki/config
   name: shell-script-hooks-claude
   host: github.com
-  resolved_commit: 303df93309a3b2f1df07096ca23d83bcdb0a472b
-  resolved_ref: v1.8.70
+  resolved_commit: 8612741d8f077d90272d8ce341d070b49fbe4a62
+  resolved_ref: v1.8.71
   version: 1.0.0
   virtual_path: .apm/packages/shell-script-hooks-claude
   is_virtual: true
@@ -1689,8 +1689,8 @@ dependencies:
 - repo_url: y-miyazaki/config
   name: shell-script-hooks-cursor
   host: github.com
-  resolved_commit: 303df93309a3b2f1df07096ca23d83bcdb0a472b
-  resolved_ref: v1.8.70
+  resolved_commit: 8612741d8f077d90272d8ce341d070b49fbe4a62
+  resolved_ref: v1.8.71
   version: 1.0.0
   virtual_path: .apm/packages/shell-script-hooks-cursor
   is_virtual: true
@@ -1710,8 +1710,8 @@ dependencies:
 - repo_url: y-miyazaki/config
   name: config-terraform
   host: github.com
-  resolved_commit: 303df93309a3b2f1df07096ca23d83bcdb0a472b
-  resolved_ref: v1.8.70
+  resolved_commit: 8612741d8f077d90272d8ce341d070b49fbe4a62
+  resolved_ref: v1.8.71
   version: 1.0.0
   virtual_path: .apm/packages/terraform
   is_virtual: true
@@ -1935,8 +1935,8 @@ dependencies:
 - repo_url: y-miyazaki/config
   name: config-terraform-aws
   host: github.com
-  resolved_commit: 303df93309a3b2f1df07096ca23d83bcdb0a472b
-  resolved_ref: v1.8.70
+  resolved_commit: 8612741d8f077d90272d8ce341d070b49fbe4a62
+  resolved_ref: v1.8.71
   version: 1.0.0
   virtual_path: .apm/packages/terraform-aws
   is_virtual: true
@@ -1946,8 +1946,8 @@ dependencies:
 - repo_url: y-miyazaki/config
   name: terraform-hooks-claude
   host: github.com
-  resolved_commit: 303df93309a3b2f1df07096ca23d83bcdb0a472b
-  resolved_ref: v1.8.70
+  resolved_commit: 8612741d8f077d90272d8ce341d070b49fbe4a62
+  resolved_ref: v1.8.71
   version: 1.0.0
   virtual_path: .apm/packages/terraform-hooks-claude
   is_virtual: true
@@ -1967,8 +1967,8 @@ dependencies:
 - repo_url: y-miyazaki/config
   name: terraform-hooks-cursor
   host: github.com
-  resolved_commit: 303df93309a3b2f1df07096ca23d83bcdb0a472b
-  resolved_ref: v1.8.70
+  resolved_commit: 8612741d8f077d90272d8ce341d070b49fbe4a62
+  resolved_ref: v1.8.71
   version: 1.0.0
   virtual_path: .apm/packages/terraform-hooks-cursor
   is_virtual: true
@@ -2047,7 +2047,7 @@ mcp_configs:
     transport: stdio
     args:
     - -y
-    - '@upstash/context7-mcp@3.2.4'
+    - '@upstash/context7-mcp@3.2.5'
     registry: false
     command: npx
   fetch:
@@ -2064,7 +2064,7 @@ mcp_configs:
     transport: stdio
     args:
     - -lc
-    - TOKEN="${GH_TOKEN:-$GITHUB_TOKEN}"; exec uvx mcp-compressor==0.31.6 -- https://api.githubcopilot.com/mcp/
+    - TOKEN="${GH_TOKEN:-$GITHUB_TOKEN}"; exec uvx mcp-compressor==0.31.7 -- https://api.githubcopilot.com/mcp/
       -H "Authorization=Bearer ${TOKEN}" --auth explicit-headers
     registry: false
     command: bash
