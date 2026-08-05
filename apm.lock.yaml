@@ -1,23 +1,23 @@
 lockfile_version: '1'
-generated_at: '2026-08-05T04:07:06.461202+00:00'
+generated_at: '2026-08-05T08:23:00.547096+00:00'
 apm_version: 0.27.0
 dependencies:
 - repo_url: y-miyazaki/config
   name: config-aws
   host: github.com
-  resolved_commit: 8612741d8f077d90272d8ce341d070b49fbe4a62
-  resolved_ref: v1.8.71
+  resolved_commit: f6417a973be4e65076f589738f1c7776e8fe9926
+  resolved_ref: v1.8.72
   version: 1.0.0
   virtual_path: .apm/packages/aws
   is_virtual: true
   package_type: apm_package
-  content_hash: sha256:4936e1706315ba46895a23e491a9b92c5819613aad5d130d200117dd18928e61
+  content_hash: sha256:c03923a0da3e4c370b12ba5c4ae4d340ae89faa9acaaf83b0291c51de987ad4d
   declared_license: Apache-2.0
 - repo_url: y-miyazaki/config
   name: config-common
   host: github.com
-  resolved_commit: 8612741d8f077d90272d8ce341d070b49fbe4a62
-  resolved_ref: v1.8.71
+  resolved_commit: f6417a973be4e65076f589738f1c7776e8fe9926
+  resolved_ref: v1.8.72
   version: 1.0.0
   virtual_path: .apm/packages/common
   is_virtual: true
@@ -1380,13 +1380,13 @@ dependencies:
     .cursor/rules/github-actions-workflow.mdc: sha256:696f0edc71b99a2292f30c099e7e55374926ddb9868addec29f684981e82f4f7
     .cursor/rules/instructions.mdc: sha256:40f550a18738b519bc3453d5bdefe21054701f7f54c5a15b6f3496c9e92ae40a
     .cursor/rules/markdown.mdc: sha256:ddf4799d3864c8d6ca48e8d60031b27f804cdbd09bd85c44db9a0b80bd3c9b2d
-  content_hash: sha256:4c61985f29c0f39f1b22dcfa9619aa8da86a208ac11040b2a7436a8f920cc226
+  content_hash: sha256:8a1f904f310d9fbe8465b2482426f67e629885eb2bf63200dada98ab27071b78
   declared_license: Apache-2.0
 - repo_url: y-miyazaki/config
   name: common-hooks-claude
   host: github.com
-  resolved_commit: 8612741d8f077d90272d8ce341d070b49fbe4a62
-  resolved_ref: v1.8.71
+  resolved_commit: f6417a973be4e65076f589738f1c7776e8fe9926
+  resolved_ref: v1.8.72
   version: 2.0.0
   virtual_path: .apm/packages/common-hooks-claude
   is_virtual: true
@@ -1410,8 +1410,8 @@ dependencies:
 - repo_url: y-miyazaki/config
   name: common-hooks-cursor
   host: github.com
-  resolved_commit: 8612741d8f077d90272d8ce341d070b49fbe4a62
-  resolved_ref: v1.8.71
+  resolved_commit: f6417a973be4e65076f589738f1c7776e8fe9926
+  resolved_ref: v1.8.72
   version: 2.0.0
   virtual_path: .apm/packages/common-hooks-cursor
   is_virtual: true
@@ -1435,8 +1435,8 @@ dependencies:
 - repo_url: y-miyazaki/config
   name: config-shell-script
   host: github.com
-  resolved_commit: 8612741d8f077d90272d8ce341d070b49fbe4a62
-  resolved_ref: v1.8.71
+  resolved_commit: f6417a973be4e65076f589738f1c7776e8fe9926
+  resolved_ref: v1.8.72
   version: 1.0.0
   virtual_path: .apm/packages/shell-script
   is_virtual: true
@@ -1644,8 +1644,8 @@ dependencies:
 - repo_url: y-miyazaki/config
   name: shell-script-hooks-claude
   host: github.com
-  resolved_commit: 8612741d8f077d90272d8ce341d070b49fbe4a62
-  resolved_ref: v1.8.71
+  resolved_commit: f6417a973be4e65076f589738f1c7776e8fe9926
+  resolved_ref: v1.8.72
   version: 1.0.0
   virtual_path: .apm/packages/shell-script-hooks-claude
   is_virtual: true
@@ -1661,8 +1661,8 @@ dependencies:
 - repo_url: y-miyazaki/config
   name: shell-script-hooks-cursor
   host: github.com
-  resolved_commit: 8612741d8f077d90272d8ce341d070b49fbe4a62
-  resolved_ref: v1.8.71
+  resolved_commit: f6417a973be4e65076f589738f1c7776e8fe9926
+  resolved_ref: v1.8.72
   version: 1.0.0
   virtual_path: .apm/packages/shell-script-hooks-cursor
   is_virtual: true
@@ -1678,8 +1678,8 @@ dependencies:
 - repo_url: y-miyazaki/config
   name: config-terraform
   host: github.com
-  resolved_commit: 8612741d8f077d90272d8ce341d070b49fbe4a62
-  resolved_ref: v1.8.71
+  resolved_commit: f6417a973be4e65076f589738f1c7776e8fe9926
+  resolved_ref: v1.8.72
   version: 1.0.0
   virtual_path: .apm/packages/terraform
   is_virtual: true
@@ -1903,8 +1903,8 @@ dependencies:
 - repo_url: y-miyazaki/config
   name: config-terraform-aws
   host: github.com
-  resolved_commit: 8612741d8f077d90272d8ce341d070b49fbe4a62
-  resolved_ref: v1.8.71
+  resolved_commit: f6417a973be4e65076f589738f1c7776e8fe9926
+  resolved_ref: v1.8.72
   version: 1.0.0
   virtual_path: .apm/packages/terraform-aws
   is_virtual: true
@@ -1914,8 +1914,8 @@ dependencies:
 - repo_url: y-miyazaki/config
   name: terraform-hooks-claude
   host: github.com
-  resolved_commit: 8612741d8f077d90272d8ce341d070b49fbe4a62
-  resolved_ref: v1.8.71
+  resolved_commit: f6417a973be4e65076f589738f1c7776e8fe9926
+  resolved_ref: v1.8.72
   version: 1.0.0
   virtual_path: .apm/packages/terraform-hooks-claude
   is_virtual: true
@@ -1931,8 +1931,8 @@ dependencies:
 - repo_url: y-miyazaki/config
   name: terraform-hooks-cursor
   host: github.com
-  resolved_commit: 8612741d8f077d90272d8ce341d070b49fbe4a62
-  resolved_ref: v1.8.71
+  resolved_commit: f6417a973be4e65076f589738f1c7776e8fe9926
+  resolved_ref: v1.8.72
   version: 1.0.0
   virtual_path: .apm/packages/terraform-hooks-cursor
   is_virtual: true
@@ -10211,6 +10211,33 @@ deployments:
 - kind: uri
   target: mcp
   value: aws-documentation-mcp-server
+  runtime: claude
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: null
+- kind: uri
+  target: mcp
+  value: aws-pricing-mcp-server
+  runtime: claude
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: null
+- kind: uri
+  target: mcp
+  value: lean-ctx
+  runtime: claude
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: null
+- kind: uri
+  target: mcp
+  value: aws-documentation-mcp-server
   runtime: cursor
   scope: project
   owners:
@@ -10324,7 +10351,7 @@ mcp_configs:
     name: aws-documentation-mcp-server
     transport: stdio
     args:
-    - awslabs.aws-documentation-mcp-server==1.1.27
+    - awslabs.aws-documentation-mcp-server==1.1.28
     registry: false
     command: uvx
   aws-knowledge-mcp-server:
@@ -10346,7 +10373,7 @@ mcp_configs:
     name: aws-pricing-mcp-server
     transport: stdio
     args:
-    - awslabs.aws-pricing-mcp-server==1.0.31
+    - awslabs.aws-pricing-mcp-server==1.0.32
     registry: false
     command: uvx
   awslabs-terraform-mcp-server:
@@ -10403,10 +10430,14 @@ mcp_configs:
     transport: stdio
     args:
     - -y
-    - lean-ctx-bin@3.9.12
+    - lean-ctx-bin@3.9.13
     registry: false
     command: npx
 mcp_target_servers:
+  claude:
+  - aws-documentation-mcp-server
+  - aws-pricing-mcp-server
+  - lean-ctx
   cursor:
   - aws-documentation-mcp-server
   - aws-knowledge-mcp-server

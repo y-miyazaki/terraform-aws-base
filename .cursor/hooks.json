@@ -1,0 +1,51 @@
+{
+  "hooks": {
+    "stop": [
+      {
+        "command": ".cursor/hooks/common-hooks-cursor/scripts/actionlint.sh",
+        "timeoutSec": 60
+      },
+      {
+        "command": ".cursor/hooks/common-hooks-cursor/scripts/ghalint.sh",
+        "timeoutSec": 60
+      },
+      {
+        "command": ".cursor/hooks/common-hooks-cursor/scripts/zizmor.sh",
+        "timeoutSec": 60
+      },
+      {
+        "command": ".cursor/hooks/common-hooks-cursor/scripts/gitleaks.sh",
+        "timeoutSec": 60
+      },
+      {
+        "command": ".cursor/hooks/common-hooks-cursor/scripts/markdown_link_check.sh",
+        "timeoutSec": 240
+      },
+      {
+        "command": ".cursor/hooks/common-hooks-cursor/scripts/markdownlint_cli2.sh",
+        "timeoutSec": 120
+      },
+      {
+        "command": ".cursor/hooks/shell-script-hooks-cursor/scripts/shellcheck.sh",
+        "timeoutSec": 120
+      },
+      {
+        "command": ".cursor/hooks/terraform-hooks-cursor/scripts/tflint.sh",
+        "timeoutSec": 120
+      }
+    ],
+    "afterFileEdit": [
+      {
+        "command": ".cursor/hooks/shell-script-hooks-cursor/scripts/shfmt.sh",
+        "timeoutSec": 120
+      }
+    ],
+    "postToolUse": [
+      {
+        "command": ".cursor/hooks/terraform-hooks-cursor/scripts/terraform_fmt.sh",
+        "timeoutSec": 120
+      }
+    ]
+  },
+  "version": 1
+}

@@ -1,7 +1,7 @@
 {
   "Stop": [
     {
-      "matcher": "",
+      "matcher": "*",
       "hooks": [
         {
           "type": "command",
@@ -9,10 +9,10 @@
           "timeout": 60
         }
       ],
-      "_apm_source": "common-hooks-claude"
+      "_apm_source": "y-miyazaki/config/.apm/packages/common-hooks-claude"
     },
     {
-      "matcher": "",
+      "matcher": "*",
       "hooks": [
         {
           "type": "command",
@@ -20,10 +20,10 @@
           "timeout": 60
         }
       ],
-      "_apm_source": "common-hooks-claude"
+      "_apm_source": "y-miyazaki/config/.apm/packages/common-hooks-claude"
     },
     {
-      "matcher": "",
+      "matcher": "*",
       "hooks": [
         {
           "type": "command",
@@ -31,10 +31,10 @@
           "timeout": 60
         }
       ],
-      "_apm_source": "common-hooks-claude"
+      "_apm_source": "y-miyazaki/config/.apm/packages/common-hooks-claude"
     },
     {
-      "matcher": "",
+      "matcher": "*",
       "hooks": [
         {
           "type": "command",
@@ -42,10 +42,10 @@
           "timeout": 60
         }
       ],
-      "_apm_source": "common-hooks-claude"
+      "_apm_source": "y-miyazaki/config/.apm/packages/common-hooks-claude"
     },
     {
-      "matcher": "",
+      "matcher": "*",
       "hooks": [
         {
           "type": "command",
@@ -53,10 +53,10 @@
           "timeout": 240
         }
       ],
-      "_apm_source": "common-hooks-claude"
+      "_apm_source": "y-miyazaki/config/.apm/packages/common-hooks-claude"
     },
     {
-      "matcher": "",
+      "matcher": "*",
       "hooks": [
         {
           "type": "command",
@@ -64,10 +64,10 @@
           "timeout": 120
         }
       ],
-      "_apm_source": "common-hooks-claude"
+      "_apm_source": "y-miyazaki/config/.apm/packages/common-hooks-claude"
     },
     {
-      "matcher": "",
+      "matcher": "*",
       "hooks": [
         {
           "type": "command",
@@ -75,10 +75,10 @@
           "timeout": 120
         }
       ],
-      "_apm_source": "shell-script-hooks-claude"
+      "_apm_source": "y-miyazaki/config/.apm/packages/shell-script-hooks-claude"
     },
     {
-      "matcher": "",
+      "matcher": "*",
       "hooks": [
         {
           "type": "command",
@@ -86,26 +86,10 @@
           "timeout": 120
         }
       ],
-      "_apm_source": "terraform-hooks-claude"
+      "_apm_source": "y-miyazaki/config/.apm/packages/terraform-hooks-claude"
     }
   ],
   "PostToolUse": [
-    {
-      "matcher": "",
-      "hooks": [
-        {
-          "type": "command",
-          "command": "command -v lean-ctx >/dev/null 2>&1 || exit 0; lean-ctx hook observe",
-          "timeout": 5
-        }
-      ],
-      "_apm_source": "common-hooks-claude"
-    },
-    {
-      "command": "command -v lean-ctx >/dev/null 2>&1 || exit 0; lean-ctx hook observe",
-      "timeoutSec": 5,
-      "_apm_source": "common-hooks-cursor"
-    },
     {
       "matcher": "Write",
       "hooks": [
@@ -115,7 +99,7 @@
           "timeout": 120
         }
       ],
-      "_apm_source": "shell-script-hooks-claude"
+      "_apm_source": "y-miyazaki/config/.apm/packages/shell-script-hooks-claude"
     },
     {
       "matcher": "Edit|Write|Bash",
@@ -126,95 +110,7 @@
           "timeout": 120
         }
       ],
-      "_apm_source": "terraform-hooks-claude"
-    },
-    {
-      "command": ".claude/hooks/terraform-hooks-cursor/scripts/terraform_fmt.sh",
-      "timeoutSec": 120,
-      "_apm_source": "terraform-hooks-cursor"
-    }
-  ],
-  "PreToolUse": [
-    {
-      "matcher": "Bash|Write",
-      "hooks": [
-        {
-          "type": "command",
-          "command": "command -v lean-ctx >/dev/null 2>&1 || exit 0; lean-ctx hook rewrite",
-          "timeout": 15
-        }
-      ],
-      "_apm_source": "common-hooks-claude"
-    },
-    {
-      "matcher": "",
-      "hooks": [
-        {
-          "type": "command",
-          "command": "command -v lean-ctx >/dev/null 2>&1 || exit 0; lean-ctx hook redirect",
-          "timeout": 5
-        }
-      ],
-      "_apm_source": "common-hooks-claude"
-    },
-    {
-      "command": "command -v lean-ctx >/dev/null 2>&1 || exit 0; lean-ctx hook rewrite",
-      "timeoutSec": 15,
-      "_apm_source": "common-hooks-cursor"
-    },
-    {
-      "command": "command -v lean-ctx >/dev/null 2>&1 || exit 0; lean-ctx hook redirect",
-      "timeoutSec": 5,
-      "_apm_source": "common-hooks-cursor"
-    }
-  ],
-  "stop": [
-    {
-      "command": ".claude/hooks/common-hooks-cursor/scripts/actionlint.sh",
-      "timeoutSec": 60,
-      "_apm_source": "common-hooks-cursor"
-    },
-    {
-      "command": ".claude/hooks/common-hooks-cursor/scripts/ghalint.sh",
-      "timeoutSec": 60,
-      "_apm_source": "common-hooks-cursor"
-    },
-    {
-      "command": ".claude/hooks/common-hooks-cursor/scripts/zizmor.sh",
-      "timeoutSec": 60,
-      "_apm_source": "common-hooks-cursor"
-    },
-    {
-      "command": ".claude/hooks/common-hooks-cursor/scripts/gitleaks.sh",
-      "timeoutSec": 60,
-      "_apm_source": "common-hooks-cursor"
-    },
-    {
-      "command": ".claude/hooks/common-hooks-cursor/scripts/markdown_link_check.sh",
-      "timeoutSec": 240,
-      "_apm_source": "common-hooks-cursor"
-    },
-    {
-      "command": ".claude/hooks/common-hooks-cursor/scripts/markdownlint_cli2.sh",
-      "timeoutSec": 120,
-      "_apm_source": "common-hooks-cursor"
-    },
-    {
-      "command": ".claude/hooks/shell-script-hooks-cursor/scripts/shellcheck.sh",
-      "timeoutSec": 120,
-      "_apm_source": "shell-script-hooks-cursor"
-    },
-    {
-      "command": ".claude/hooks/terraform-hooks-cursor/scripts/tflint.sh",
-      "timeoutSec": 120,
-      "_apm_source": "terraform-hooks-cursor"
-    }
-  ],
-  "afterFileEdit": [
-    {
-      "command": ".claude/hooks/shell-script-hooks-cursor/scripts/shfmt.sh",
-      "timeoutSec": 120,
-      "_apm_source": "shell-script-hooks-cursor"
+      "_apm_source": "y-miyazaki/config/.apm/packages/terraform-hooks-claude"
     }
   ]
 }
