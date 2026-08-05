@@ -8,6 +8,8 @@ Configuration for **monitoring and observability**. Sets up CloudWatch alarms, l
 **Example file:** [terraform.example.tfvars](https://github.com/y-miyazaki/terraform-aws-base/blob/main/terraform/monitor/terraform.example.tfvars)
 **Initial setup:** See [Initial Setup (Common)](./initial-setup.md)
 
+**Customization markers:** In `terraform.example.tfvars` (and env copies), search for `CUSTOMIZE` comments — they mark values that require environment-specific changes.
+
 **Control Tower note:** Set `use_control_tower = true` to avoid conflicts with Control Tower-managed log groups.
 
 ## Required Settings

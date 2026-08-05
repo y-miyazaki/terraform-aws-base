@@ -1,6 +1,6 @@
 #--------------------------------------------------------------
 # Basically, it is already set so that the setting is completed only by changing tfvars.
-# All parameters that need to be changed for each environment are described in TODO comments.
+# All parameters that need to be changed for each environment are described in CUSTOMIZE comments.
 #
 # ENVIRONMENT-SPECIFIC CONFIGURATION GUIDE:
 # - Development: Minimal monitoring, disable expensive analytics, basic alerting
@@ -16,13 +16,13 @@
 # These tags are automatically applied to all resources created by this Terraform configuration.
 # Common tags help with cost allocation, resource organization, and compliance tracking.
 #--------------------------------------------------------------
-# TODO: need to change tags.
+# CUSTOMIZE: need to change tags.
 tags = {
-  # TODO: need to change env.
+  # CUSTOMIZE: need to change env.
   # Environment name for resource identification and cost allocation
   # Examples: "dev", "stg", "prd", "audit", "root"
   env = "example"
-  # TODO: need to change service.
+  # CUSTOMIZE: need to change service.
   # Service/project name for resource grouping and identification
   # This should match your project name, job name, or product name
   service = "base"
@@ -51,11 +51,11 @@ name_prefix = "base-"
 # https://docs.aws.amazon.com/global-infrastructure/latest/regions/aws-regions.html
 #--------------------------------------------------------------
 region = {
-  # TODO: Global resources (CloudFront, Route53, WAF, ACM) — must be us-east-1
+  # CUSTOMIZE: Global resources (CloudFront, Route53, WAF, ACM) — must be us-east-1
   global = "us-east-1"
-  # TODO: Development and operations base region (fallback for provider)
+  # CUSTOMIZE: Development and operations base region (fallback for provider)
   primary = "ap-northeast-1"
-  # TODO: All regions where regional resources are deployed
+  # CUSTOMIZE: All regions where regional resources are deployed
   targets = ["ap-northeast-1", "us-east-1"]
 }
 
@@ -74,7 +74,7 @@ region = {
 #
 # Use cloudwatch_log_group.override for centralized management.
 #--------------------------------------------------------------
-# TODO: need to change cloudwatch_log_group settings.
+# CUSTOMIZE: need to change cloudwatch_log_group settings.
 cloudwatch_log_group = {
   # Default retention period for all services (in days)
   retention_in_days = 14
@@ -127,11 +127,11 @@ cloudwatch_log_group = {
 # Use slack.override for centralized management instead of environment variables.
 #--------------------------------------------------------------
 slack = {
-  # TODO: need to change SLACK_OAUTH_ACCESS_TOKEN (bot token xoxb-xxxxxx....)
+  # CUSTOMIZE: need to change SLACK_OAUTH_ACCESS_TOKEN (bot token xoxb-xxxxxx....)
   # Get this from your Slack app's OAuth & Permissions page
   # Format: xoxb-XXXXXXXXX-XXXXXXXXX-XXXXXXXXXXXXXXXXXXXXXXXX
   oauth_access_token = "xoxb-xxxxxxxxxxxxx-xxxxxxxxxxxxx-xxxxxxxxxxxxxxxxxxxxxxxx"
-  # TODO: need to change SLACK_CHANNEL_ID
+  # CUSTOMIZE: need to change SLACK_CHANNEL_ID
   # Right-click on your Slack channel and select "Copy link" to find the channel ID
   channel_id = "C0XXXXXXXXX"
 
@@ -224,7 +224,7 @@ common_log = {
         prefix                                 = null
         expiration = [
           {
-            # TODO: need to change days. default 3years.
+            # CUSTOMIZE: need to change days. default 3years.
             # Adjust retention period based on your compliance requirements
             days                         = 1095
             expired_object_delete_marker = null
@@ -243,7 +243,7 @@ common_log = {
         ]
       }
     ]
-    # TODO: need to change for logging.
+    # CUSTOMIZE: need to change for logging.
     # example)
     #    logging = {
     #      target_bucket = "{your bucket}"
@@ -272,13 +272,13 @@ common_log = {
 #--------------------------------------------------------------
 common_lambda = {
   vpc = {
-    # TODO: If you want to run LambdaFunctions inside a VPC, set to true. However,
+    # CUSTOMIZE: If you want to run LambdaFunctions inside a VPC, set to true. However,
     # VPC requires more cost since you need to configure NAT Gateway and other settings.
     is_enabled = false
-    # TODO: If a VPC has already been established, specify false; if a new VPC is to be created, specify true.
+    # CUSTOMIZE: If a VPC has already been established, specify false; if a new VPC is to be created, specify true.
     create_vpc = false
 
-    # TODO: To specify a VPC that already exists, configure the following settings for Lambda.
+    # CUSTOMIZE: To specify a VPC that already exists, configure the following settings for Lambda.
     # If var.common_lambda.vpc.is_enabled = true and var.common_lambda.vpc.create_vpc = false,
     # the Lambda will be built in an existing VPC by referencing the parameters here.
     exists = {
@@ -289,7 +289,7 @@ common_lambda = {
       ]
       security_group_id = "sg-xxxxxxxxxxxxxxxxx"
     }
-    # TODO: To specify a new VPC to be set up for Lambda, please set the following information.
+    # CUSTOMIZE: To specify a new VPC to be set up for Lambda, please set the following information.
     # If var.common_lambda.vpc.is_enabled = true and var.common_lambda.vpc.create_vpc = true,
     # a new VPC is built by referencing the parameters here.
     new = {
@@ -350,7 +350,7 @@ common_lambda = {
     }
     aws_lambda_function = {
       environment = {
-        # TODO: need to change TIMEZONE.
+        # CUSTOMIZE: need to change TIMEZONE.
         # https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
         TIMEZONE = "Asia/Tokyo"
       }
@@ -377,7 +377,6 @@ common_lambda = {
       sqs_failure_feedback_role_arn            = null
     }
   }
-  # TODO: ex
   step_functions_log = {
     aws_sns_topic = {
       name                                     = "aws-step-functions-log"
@@ -452,7 +451,7 @@ common_lambda = {
 # Specify the target log group in the log_group_names variable to transfer logs to S3.
 #--------------------------------------------------------------
 delivery_log = {
-  # TODO: need to set is_enabled for settings of delivery log.
+  # CUSTOMIZE: need to set is_enabled for settings of delivery log.
   is_enabled = false
   # (Optional) Builds a list of log group name to automatically set log_group_names. If this is true, the log_group_names setting will be ignored.
   create_auto_log_group_names = true
@@ -514,7 +513,7 @@ delivery_log = {
 # Specify the target log group in the log_group_names variable to transfer logs to S3.
 #--------------------------------------------------------------
 delivery_log_us_east_1 = {
-  # TODO: need to set is_enabled for settings of delivery log.
+  # CUSTOMIZE: need to set is_enabled for settings of delivery log.
   is_enabled = false
   # (Optional) Builds a list of log group name to automatically set log_group_names. If this is true, the log_group_names setting will be ignored.
   create_auto_log_group_names = true
@@ -579,7 +578,7 @@ delivery_log_us_east_1 = {
 # Filter logs related to Application.
 #--------------------------------------------------------------
 metric_log_application = {
-  # TODO: need to set is_enabled for settings of application log.
+  # CUSTOMIZE: need to set is_enabled for settings of application log.
   is_enabled = false
   # (Optional) Builds a list of log group name to automatically set log_group_names. If this is true, the log_group_names setting will be ignored.
   create_auto_log_group_names = true
@@ -615,7 +614,7 @@ metric_log_application = {
   log_group_names = []
   aws_cloudwatch_log_metric_filter = {
     name = "application-logs-error"
-    # TODO: need to change pattern for application log.
+    # CUSTOMIZE: need to change pattern for application log.
     pattern = <<PATTERN
 [( msg="*\"ERROR\"*" || msg="*\"error\"*" || msg="*\"FATAL\"*" || msg="*\"fatal\"*" || msg="*\"PANIC\"*" || msg="*\"panic\"*" || msg="*\"CRITICAL\"*" || msg="*\"critical\"*" || msg="*AccessDenied*" || msg="*ERROR*" || msg="*Failed\"*" || msg="*Aborted\"*" || msg="*TimedOut\"*" || msg="*FailStateEntered\"*") && ( msg!="*ExecutionSucceeded\"*" && msg!="*'PAUSED'*" && msg!=%"level": ?"(debug|info|warn|warning)"% && msg!="{\"header\":*")]
 PATTERN
@@ -650,7 +649,7 @@ PATTERN
 # Uses EventBridge Scheduler to trigger a Lambda function that queries CloudWatch Logs.
 #--------------------------------------------------------------
 metric_log_application_report = {
-  # TODO: need to set is_enabled for settings of application errors report every day.
+  # CUSTOMIZE: need to set is_enabled for settings of application errors report every day.
   #      If you want to set report, set is_enabled = true.
   is_enabled = false
   aws_eventbridge_schedule = {
@@ -660,16 +659,15 @@ metric_log_application_report = {
   }
   aws_lambda_function = {
     environment = {
-      # TODO: need to change OUTPUT_MODE. csv, html, both are available, but html is recommended for readability.
+      # CUSTOMIZE: need to change OUTPUT_MODE. csv, html, both are available, but html is recommended for readability.
       OUTPUT_MODE = "html"
-      # TODO: need to change TIMEZONE.
+      # CUSTOMIZE: need to change TIMEZONE.
       # https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
       TIMEZONE = "Asia/Tokyo"
     }
   }
 }
 
-# TODO: ex
 #--------------------------------------------------------------
 # Log:Step Functions
 # The filter function of CloudWatchLogs can be used to check specified logs
@@ -679,7 +677,7 @@ metric_log_application_report = {
 # Filter logs related to Step Functions
 #--------------------------------------------------------------
 metric_log_step_functions = {
-  # TODO: need to set is_enabled for settings of application log.
+  # CUSTOMIZE: need to set is_enabled for settings of application log.
   is_enabled = false
   # (Optional) Builds a list of log group name to automatically set log_group_names. If this is true, the log_group_names setting will be ignored.
   create_auto_log_group_names = true
@@ -698,7 +696,7 @@ metric_log_step_functions = {
 
   aws_cloudwatch_log_metric_filter = {
     name = "step-functions-logs-success"
-    # TODO: need to change pattern for application log.
+    # CUSTOMIZE: need to change pattern for application log.
     pattern = <<PATTERN
 [( msg="*ExecutionSucceeded\"*")]
 PATTERN
@@ -736,7 +734,7 @@ PATTERN
 # Filter logs related to WAF.
 #--------------------------------------------------------------
 metric_log_waf = {
-  # TODO: need to set is_enabled for settings of application log.
+  # CUSTOMIZE: need to set is_enabled for settings of application log.
   is_enabled = false
   # (Optional) Builds a list of log group name to automatically set log_group_names. If this is true, the log_group_names setting will be ignored.
   create_auto_log_group_names = true
@@ -754,7 +752,7 @@ metric_log_waf = {
   log_group_names = []
   aws_cloudwatch_log_metric_filter = {
     name = "waf-logs-error"
-    # TODO: need to change pattern for application log.
+    # CUSTOMIZE: need to change pattern for application log.
     pattern = <<PATTERN
 {$.action= "BLOCK" && $.terminatingRuleType = "MANAGED_RULE_GROUP"}
 PATTERN
@@ -792,7 +790,7 @@ PATTERN
 # Filter logs related to WAF.
 #--------------------------------------------------------------
 metric_log_waf_us_east_1 = {
-  # TODO: need to set is_enabled for settings of application log.
+  # CUSTOMIZE: need to set is_enabled for settings of application log.
   is_enabled = false
   # (Optional) Builds a list of log group name to automatically set log_group_names. If this is true, the log_group_names setting will be ignored.
   create_auto_log_group_names = true
@@ -810,7 +808,7 @@ metric_log_waf_us_east_1 = {
   log_group_names = []
   aws_cloudwatch_log_metric_filter = {
     name = "waf-logs-error"
-    # TODO: need to change pattern for application log.
+    # CUSTOMIZE: need to change pattern for application log.
     pattern = <<PATTERN
 {$.action= "BLOCK" && $.terminatingRuleType = "MANAGED_RULE_GROUP"}
 PATTERN
@@ -848,9 +846,9 @@ PATTERN
 # Filter logs related to MySQL.
 #--------------------------------------------------------------
 metric_log_mysql_slowquery = {
-  # TODO: need to set is_enabled for settings of mysql slowquery log.
+  # CUSTOMIZE: need to set is_enabled for settings of mysql slowquery log.
   is_enabled = false
-  # TODO: need to add log_group_name for mysql slowquery.
+  # CUSTOMIZE: need to add log_group_name for mysql slowquery.
   #       check log group name for mysql slowquery.
   # check CloudWatch Group name list command.
   # ex1) aws logs describe-log-groups --log-group-name-prefix hogehoge | jq -r ".logGroups[].logGroupName"
@@ -861,7 +859,7 @@ metric_log_mysql_slowquery = {
 
   aws_cloudwatch_log_metric_filter = {
     name = "mysql-slowquery-logs-error"
-    # TODO: need to change pattern for postgresql log.
+    # CUSTOMIZE: need to change pattern for postgresql log.
     pattern = <<PATTERN
 -rdsproxy -rdsproxyadmin -rdsadmin
 PATTERN
@@ -898,9 +896,9 @@ PATTERN
 # Filter logs related to PostgreSQL.
 #--------------------------------------------------------------
 metric_log_postgresql = {
-  # TODO: need to set is_enabled for settings of postgresql log.
+  # CUSTOMIZE: need to set is_enabled for settings of postgresql log.
   is_enabled = false
-  # TODO: need to add log_group_name for postgresql.
+  # CUSTOMIZE: need to add log_group_name for postgresql.
   #       check log group name for postgresql.
   # check CloudWatch Group name list command.
   # ex1) aws logs describe-log-groups --log-group-name-prefix hogehoge | jq -r ".logGroups[].logGroupName"
@@ -911,7 +909,7 @@ metric_log_postgresql = {
 
   aws_cloudwatch_log_metric_filter = {
     name = "postgresql-logs-error"
-    # TODO: need to change pattern for postgresql log.
+    # CUSTOMIZE: need to change pattern for postgresql log.
     # [the database system...]: is start database instance log.
     # [Can't handle storage runtime process crash]: is start database instance log.
     # [canceling statement due to statement timeout] is normal operation when statement timeout occurs.
@@ -951,11 +949,11 @@ PATTERN
 # Filter logs related to PostgreSQL.
 #--------------------------------------------------------------
 metric_log_postgresql_slowquery = {
-  # TODO: need to set is_enabled for settings of postgresql slow query alert every time.
+  # CUSTOMIZE: need to set is_enabled for settings of postgresql slow query alert every time.
   #      If you want to set alert, set is_enabled = true.
   is_enabled = false
 
-  # TODO: need to add log_group_name for postgresql.
+  # CUSTOMIZE: need to add log_group_name for postgresql.
   #       check log group name for postgresql.
   # check CloudWatch Group name list command.
   # ex1) aws logs describe-log-groups --log-group-name-prefix hogehoge | jq -r ".logGroups[].logGroupName"
@@ -966,7 +964,7 @@ metric_log_postgresql_slowquery = {
 
   aws_cloudwatch_log_metric_filter = {
     name = "postgresql-slowquery-logs-error"
-    # TODO: need to change pattern for postgresql slow query filter.
+    # CUSTOMIZE: need to change pattern for postgresql slow query filter.
     pattern = <<PATTERN
 [( msg="*duration:*" ) && ( msg!="*aws_s3.table_import_from_s3*" && msg!="*INSERT INTO*" && msg!="*MERGE INTO*" && msg!=%ci[0-9]{5}.do% && msg!="*statement: FETCH*" && msg!="*statement: REFRESH MATERIALIZED VIEW*")]
 PATTERN
@@ -1000,7 +998,7 @@ PATTERN
 # Uses EventBridge Scheduler to trigger a Lambda function that queries CloudWatch Logs.
 #--------------------------------------------------------------
 metric_log_postgresql_slowquery_report = {
-  # TODO: need to set is_enabled for settings of postgresql slow queries report every day.
+  # CUSTOMIZE: need to set is_enabled for settings of postgresql slow queries report every day.
   #      If you want to set report, set is_enabled = true.
   is_enabled = true
   aws_eventbridge_schedule = {
@@ -1011,7 +1009,7 @@ metric_log_postgresql_slowquery_report = {
   aws_lambda_function = {
     environment = {
       LOG_GROUP_NAME = "/aws/rds/cluster/example-db/postgresql"
-      # TODO: need to change LOG_GROUP_FILTER_PATTERN for postgresql slow query filter.
+      # CUSTOMIZE: need to change LOG_GROUP_FILTER_PATTERN for postgresql slow query filter.
       LOG_GROUP_FILTER_PATTERN = <<PATTERN
 [( msg="*duration:*" ) && ( msg!="*aws_s3.table_import_from_s3*" && msg!="*INSERT INTO*" && msg!="*MERGE INTO*" && msg!=%ci[0-9]{5}.do% && msg!="*statement: FETCH*" && msg!="*statement: REFRESH MATERIALIZED VIEW*")]
 PATTERN
@@ -1032,11 +1030,11 @@ PATTERN
 # https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-metrics-and-dimensions.html
 #--------------------------------------------------------------
 metric_resource_api_gateway = {
-  # TODO: need to set is_enabled for Metric of API Gateway.
+  # CUSTOMIZE: need to set is_enabled for Metric of API Gateway.
   is_enabled = false
-  # TODO: need to set period for API Gateway.
+  # CUSTOMIZE: need to set period for API Gateway.
   period = 300
-  # TODO: need to set threshold for API Gateway.
+  # CUSTOMIZE: need to set threshold for API Gateway.
   threshold = {
     # (Required) 4XXerror threshold (unit=%)
     enabled_error4XX = false
@@ -1090,11 +1088,11 @@ metric_resource_api_gateway = {
 # https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/monitoring-using-cloudwatch.html
 #--------------------------------------------------------------
 metric_resource_cloudfront = {
-  # TODO: need to set is_enabled for Metric of CloudFront.
+  # CUSTOMIZE: need to set is_enabled for Metric of CloudFront.
   is_enabled = false
-  # TODO: need to set period for CloudFront.
+  # CUSTOMIZE: need to set period for CloudFront.
   period = 1800
-  # TODO: need to set threshold for CloudFront.
+  # CUSTOMIZE: need to set threshold for CloudFront.
   threshold = {
     # (Required) Error401Rate threshold (unit=%)
     enabled_error_401_rate = false
@@ -1162,11 +1160,11 @@ metric_resource_cloudfront = {
 # https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/viewing_metrics_with_cloudwatch.html
 #--------------------------------------------------------------
 metric_resource_ec2 = {
-  # TODO: need to set is_enabled for Metric of EC2.
+  # CUSTOMIZE: need to set is_enabled for Metric of EC2.
   is_enabled = false
-  # TODO: need to set period for EC2.
+  # CUSTOMIZE: need to set period for EC2.
   period = 300
-  # TODO: need to set threshold for EC2.
+  # CUSTOMIZE: need to set threshold for EC2.
   threshold = {
     # (Required) CPUCreditBalance threshold (unit=Count)
     enabled_cpu_credit_balance = false
@@ -1291,11 +1289,11 @@ metric_resource_ec2 = {
 # Metrics about ECS/ContainerInsights will be checked and you will be notified via Slack if the specified threshold is exceeded.
 #--------------------------------------------------------------
 metric_resource_ecs_container_insights = {
-  # TODO: need to set is_enabled for Metric of ECS/ContainerInsights.
+  # CUSTOMIZE: need to set is_enabled for Metric of ECS/ContainerInsights.
   is_enabled = false
-  # TODO: need to set period for ECS/ContainerInsights.
+  # CUSTOMIZE: need to set period for ECS/ContainerInsights.
   period = 300
-  # TODO: need to set threshold for ECS/ContainerInsights.
+  # CUSTOMIZE: need to set threshold for ECS/ContainerInsights.
   threshold = {
     # (Required) CpuUtilized/CpuReserved threshold (unit=Percent)
     enabled_cpu_utilization = true
@@ -1316,7 +1314,7 @@ metric_resource_ecs_container_insights = {
     enabled_storage_write_bytes = false
     storage_write_bytes         = 1073741824
   }
-  # TODO: need to set dimensions for monitor of ECS/ContainerInsights.
+  # CUSTOMIZE: need to set dimensions for monitor of ECS/ContainerInsights.
   # check ECS distribution name list command.
   # ex) scripts/terraform/ecs_container_sights.sh
   #   ex)
@@ -1342,11 +1340,11 @@ metric_resource_ecs_container_insights = {
 # https://docs.aws.amazon.com/AmazonElastiCache/latest/red-ug/CacheMetrics.html
 #--------------------------------------------------------------
 metric_resource_elasticache = {
-  # TODO: need to set is_enabled for Metric of ElastiCache.
+  # CUSTOMIZE: need to set is_enabled for Metric of ElastiCache.
   is_enabled = false
-  # TODO: need to set period for ElastiCache.
+  # CUSTOMIZE: need to set period for ElastiCache.
   period = 300
-  # TODO: need to set threshold for ElastiCache.
+  # CUSTOMIZE: need to set threshold for ElastiCache.
   threshold = {
     # (Required) AuthenticationFailures threshold (unit=Count)
     enabled_authentication_failures = true
@@ -1475,11 +1473,11 @@ metric_resource_elasticache = {
 # https://docs.aws.amazon.com/elasticloadbalancing/latest/application/load-balancer-cloudwatch-metrics.html
 #--------------------------------------------------------------
 metric_resource_elb = {
-  # TODO: need to set is_enabled for Metric of ELB (ALB/NLB).
+  # CUSTOMIZE: need to set is_enabled for Metric of ELB (ALB/NLB).
   is_enabled = false
-  # TODO: need to set period for ELB.
+  # CUSTOMIZE: need to set period for ELB.
   period = 1800
-  # TODO: need to set threshold for ELB.
+  # CUSTOMIZE: need to set threshold for ELB.
   threshold = {
     # (Required) ActiveConnectionCount threshold (unit=Count)
     enabled_active_connection_count = true
@@ -1558,11 +1556,11 @@ metric_resource_elb = {
 # https://docs.aws.amazon.com/eventbridge/latest/userguide/eb-what-is.html
 #--------------------------------------------------------------
 metric_resource_eventbridge_scheduler = {
-  # TODO: need to set is_enabled for Metric of EventBridge Scheduler.
+  # CUSTOMIZE: need to set is_enabled for Metric of EventBridge Scheduler.
   is_enabled = false
-  # TODO: need to set period for EventBridge Scheduler.
+  # CUSTOMIZE: need to set period for EventBridge Scheduler.
   period = 300
-  # TODO: need to set threshold for EventBridge Scheduler.
+  # CUSTOMIZE: need to set threshold for EventBridge Scheduler.
   threshold = {
     # InvocationAttemptCount threshold (unit=Count)
     enabled_invocation_attempt_count = false
@@ -1593,7 +1591,7 @@ metric_resource_eventbridge_scheduler = {
   auto_dimensions_exclude_list = []
   # (Optional) If create_auto_dimensions is set to true and this list is not empty, only schedule group names matching any of these patterns (partial match) will be included.
   auto_dimensions_include_list = []
-  # TODO: need to set dimensions for monitor of EventBridge Scheduler.
+  # CUSTOMIZE: need to set dimensions for monitor of EventBridge Scheduler.
   # Specify the instance of the target EventBridge Scheduler name to be monitored by Map.
   # check EventBridge Scheduler id list command.
   # ex) aws scheduler list-schedule-groups | jq -r '.ScheduleGroups[] | .Dimensions = "{\n  \"ScheduleGroup\" = \"" + .Name + "\"\n}," | .Dimensions'
@@ -1619,11 +1617,11 @@ metric_resource_eventbridge_scheduler = {
 # https://docs.aws.amazon.com/lambda/latest/dg/monitoring-metrics.html
 #--------------------------------------------------------------
 metric_resource_lambda = {
-  # TODO: need to set is_enabled for monitor of Lambda.
+  # CUSTOMIZE: need to set is_enabled for monitor of Lambda.
   is_enabled = false
-  # TODO: need to set period for Lambda.
+  # CUSTOMIZE: need to set period for Lambda.
   period = 300
-  # TODO: need to set threshold for Lambda.
+  # CUSTOMIZE: need to set threshold for Lambda.
   threshold = {
     # (Required) AsyncEventAge threshold (unit=Milliseconds)
     enabled_async_event_age = true
@@ -1732,11 +1730,11 @@ metric_resource_lambda = {
 # https://docs.aws.amazon.com/vpc/latest/userguide/metrics-dimensions-nat-gateway.html
 #--------------------------------------------------------------
 metric_resource_nat_gateway = {
-  # TODO: need to set is_enabled for monitor of NAT Gateway.
+  # CUSTOMIZE: need to set is_enabled for monitor of NAT Gateway.
   is_enabled = false
-  # TODO: need to set period for NAT Gateway.
+  # CUSTOMIZE: need to set period for NAT Gateway.
   period = 300
-  # TODO: need to set threshold for NAT Gateway.
+  # CUSTOMIZE: need to set threshold for NAT Gateway.
   threshold = {
     # (Optional) ActiveConnectionCount threshold (unit=Count)
     enabled_active_connection_count = false
@@ -1826,20 +1824,20 @@ metric_resource_nat_gateway = {
 # https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/monitoring-cloudwatch.html
 #--------------------------------------------------------------
 metric_resource_rds_cluster = {
-  # TODO: need to set is_enabled for monitor of RDS Cluster.
+  # CUSTOMIZE: need to set is_enabled for monitor of RDS Cluster.
   is_enabled = false
-  # TODO: need to set is_aurora for monitor of RDS(Aurora).
+  # CUSTOMIZE: need to set is_aurora for monitor of RDS(Aurora).
   # If the target DB to be monitored is Aurora, set to true.
   is_aurora = true
-  # TODO: need to set is_aurora for monitor of RDS(MySQL).
+  # CUSTOMIZE: need to set is_aurora for monitor of RDS(MySQL).
   # If the target DB to be monitored is MySQL, set to true.
   is_mysql = false
-  # TODO: need to set is_aurora for monitor of RDS(PostgreSQL).
+  # CUSTOMIZE: need to set is_aurora for monitor of RDS(PostgreSQL).
   # If the target DB to be monitored is PostgreSQL, set to true.
   is_postgresql = true
-  # TODO: need to set period for RDS.
+  # CUSTOMIZE: need to set period for RDS.
   period = 300
-  # TODO: need to set threshold for RDS.
+  # CUSTOMIZE: need to set threshold for RDS.
   threshold = {
     # (Required) AuroraReplicaLag threshold (unit=Milliseconds)
     enabled_aurora_replica_lag = true
@@ -1945,11 +1943,11 @@ metric_resource_rds_cluster = {
 # https://docs.aws.amazon.com/redshift/latest/mgmt/metrics-listing.html
 #--------------------------------------------------------------
 metric_resource_redshift = {
-  # TODO: need to set is_enabled for monitor of Redshift.
+  # CUSTOMIZE: need to set is_enabled for monitor of Redshift.
   is_enabled = false
-  # TODO: need to set period for Redshift.
+  # CUSTOMIZE: need to set period for Redshift.
   period = 300
-  # TODO: need to set threshold for Redshift.
+  # CUSTOMIZE: need to set threshold for Redshift.
   threshold = {
     # (Required) CommitQueueLength threshold (unit=Count)
     enabled_commit_queue_length = true
@@ -2084,11 +2082,11 @@ metric_resource_redshift = {
 # https://docs.aws.amazon.com/ses/latest/dg/event-publishing-retrieving-cloudwatch.html
 #--------------------------------------------------------------
 metric_resource_ses = {
-  # TODO: need to set is_enabled for monitor of SES.
+  # CUSTOMIZE: need to set is_enabled for monitor of SES.
   is_enabled = false
-  # TODO: need to set period for SES.
+  # CUSTOMIZE: need to set period for SES.
   period = 300
-  # TODO: need to set threshold for SES.
+  # CUSTOMIZE: need to set threshold for SES.
   threshold = {
     # (Optional) Bounce threshold (unit=Count)
     enabled_bounce = false
@@ -2124,11 +2122,11 @@ metric_resource_ses = {
 #       because they use different dimensions (no TopicName).
 #--------------------------------------------------------------
 metric_resource_sns = {
-  # TODO: need to set is_enabled for monitor of SNS.
+  # CUSTOMIZE: need to set is_enabled for monitor of SNS.
   is_enabled = false
-  # TODO: need to set period for SNS.
+  # CUSTOMIZE: need to set period for SNS.
   period = 300
-  # TODO: need to set threshold for SNS.
+  # CUSTOMIZE: need to set threshold for SNS.
   threshold = {
     # (Required) NumberOfMessagesPublished threshold (unit=Count)
     enabled_number_of_messages_published = false
@@ -2202,11 +2200,11 @@ metric_resource_sns = {
 #       ensures no false alarms.
 #--------------------------------------------------------------
 metric_resource_sqs = {
-  # TODO: need to set is_enabled for monitor of SQS.
+  # CUSTOMIZE: need to set is_enabled for monitor of SQS.
   is_enabled = false
-  # TODO: need to set period for SQS.
+  # CUSTOMIZE: need to set period for SQS.
   period = 300
-  # TODO: need to set threshold for SQS.
+  # CUSTOMIZE: need to set threshold for SQS.
   threshold = {
     # (Required) ApproximateAgeOfOldestMessage threshold (unit=Seconds)
     enabled_approximate_age_of_oldest_message = true
@@ -2288,7 +2286,7 @@ metric_resource_sqs = {
 # - EC2 Spot Instance Interruption Warning
 #--------------------------------------------------------------
 cloudwatch_event_ec2 = {
-  # TODO: need to set is_enabled for settings of EC2.
+  # CUSTOMIZE: need to set is_enabled for settings of EC2.
   is_enabled = false
   aws_cloudwatch_event_rule = {
     name        = "ec2-cloudwatch-event-rule"
@@ -2322,11 +2320,11 @@ metric_synthetics_canary = {
     # Monitors availability of specified endpoints via periodic HTTP checks.
     #--------------------------------------------------------------
     heartbeat = {
-      # TODO: need to set is_enabled for Metric of Synthetics Canary.
+      # CUSTOMIZE: need to set is_enabled for Metric of Synthetics Canary.
       is_enabled = false
-      # TODO: need to set period for Synthetics Canary.
+      # CUSTOMIZE: need to set period for Synthetics Canary.
       period = 300
-      # TODO: need to set threshold for Synthetics Canary.
+      # CUSTOMIZE: need to set threshold for Synthetics Canary.
       threshold = {
         # (Required) 2xx threshold (unit=Count)
         enabled_2xx = false
@@ -2373,7 +2371,7 @@ metric_synthetics_canary = {
           }
         ]
         # (Optional) Configuration block. Detailed below.
-        # TODO: If you are restricting IP addresses using WAF or other methods but are allowing access from a VPC, you must configure the VPC accordingly.
+        # CUSTOMIZE: If you are restricting IP addresses using WAF or other methods but are allowing access from a VPC, you must configure the VPC accordingly.
         #       When a request must be made from a fixed IP, such as in the case of a site with restricted access.
         vpc_config = [
           # {
@@ -2403,7 +2401,7 @@ metric_synthetics_canary = {
             ]
           }
         ]
-        # TODO: Set the Heartbeat URL and list of acceptable status codes.
+        # CUSTOMIZE: Set the Heartbeat URL and list of acceptable status codes.
         # (Optional) URLS/STATUS_CODE_RANGES is an environment variable that can be specified as a delimited string to allow heart beats to be thrown to multiple URLs.
         env = {
           URLS = "https://yahoo.co.jp/"
@@ -2415,11 +2413,11 @@ metric_synthetics_canary = {
     # Validates that all links on specified pages are functional.
     #--------------------------------------------------------------
     linkcheck = {
-      # TODO: need to set is_enabled for Metric of Synthetics Canary.
+      # CUSTOMIZE: need to set is_enabled for Metric of Synthetics Canary.
       is_enabled = false
-      # TODO: need to set period for Synthetics Canary.
+      # CUSTOMIZE: need to set period for Synthetics Canary.
       period = 300
-      # TODO: need to set threshold for Synthetics Canary.
+      # CUSTOMIZE: need to set threshold for Synthetics Canary.
       threshold = {
         # (Required) 2xx threshold (unit=Count)
         enabled_2xx = false
@@ -2467,7 +2465,7 @@ metric_synthetics_canary = {
           }
         ]
         # (Optional) Configuration block. Detailed below.
-        # TODO: If you are restricting IP addresses using WAF or other methods but are allowing access from a VPC, you must configure the VPC accordingly.
+        # CUSTOMIZE: If you are restricting IP addresses using WAF or other methods but are allowing access from a VPC, you must configure the VPC accordingly.
         #       When a request must be made from a fixed IP, such as in the case of a site with restricted access.
         vpc_config = [
           #   {
@@ -2495,7 +2493,7 @@ metric_synthetics_canary = {
             ]
           }
         ]
-        # TODO: Set the URL for the link check and the maximum number of links to follow.
+        # CUSTOMIZE: Set the URL for the link check and the maximum number of links to follow.
         # (Optional) URLS/LIMIT is an environment variable that can be specified as a delimited string to allow heart beats to be thrown to multiple URLs.
         env = {
           URLS  = "https://yahoo.co.jp/"
@@ -2516,7 +2514,7 @@ metric_synthetics_canary = {
 # With this configuration, CloudFront and SES logs can be viewed in Athena.
 #--------------------------------------------------------------
 athena = {
-  # TODO: need to set is_enabled for Athena.
+  # CUSTOMIZE: need to set is_enabled for Athena.
   is_enabled     = false
   workgroup_name = "analytics"
   workgroup_configuration = {
@@ -2533,13 +2531,13 @@ athena = {
   database_encryption_configuration = {
     encryption_option = "SSE_S3"
   }
-  # TODO: To check CloudFront logs with Athena, specify true.
+  # CUSTOMIZE: To check CloudFront logs with Athena, specify true.
   enabled_cloudfront = true
-  # TODO: Specify the S3 bucket where CloudFront logs are stored. s3://{bucket name}/{bucket prefix}
+  # CUSTOMIZE: Specify the S3 bucket where CloudFront logs are stored. s3://{bucket name}/{bucket prefix}
   cloudfront_log_bucket = "s3://base-aws-log-application-0123456789012/Logs/CloudFront/"
-  # TODO: To check SES logs with Athena, specify true.
+  # CUSTOMIZE: To check SES logs with Athena, specify true.
   enabled_ses = true
-  # TODO: Specify the S3 bucket where SES logs are stored. s3://{bucket name}/{bucket prefix}
+  # CUSTOMIZE: Specify the S3 bucket where SES logs are stored. s3://{bucket name}/{bucket prefix}
   ses_log_bucket = "s3://base-aws-log-application-0123456789012/Logs/base-aws-ses-log/"
 }
 
@@ -2547,7 +2545,7 @@ athena = {
 # Report CSP
 #--------------------------------------------------------------
 report_csp = {
-  # TODO: need to set is_enabled for report CSP.
+  # CUSTOMIZE: need to set is_enabled for report CSP.
   is_enabled = false
 }
 
@@ -2566,11 +2564,11 @@ eventbridge = {
   # Schedule automatic enable and disable of AWS Batch Job Queue.
   #--------------------------------------------------------------
   batch = {
-    # TODO: need to set is_enabled for enable and disable batch job queue schedule.
+    # CUSTOMIZE: need to set is_enabled for enable and disable batch job queue schedule.
     is_enabled = false
-    # TODO: need to set schedule_expression_stop for disable batch job queue.
+    # CUSTOMIZE: need to set schedule_expression_stop for disable batch job queue.
     schedule_expression_stop = "cron(0 10 * * ? *)"
-    # TODO: need to set schedule_expression_start for enable batch job queue.
+    # CUSTOMIZE: need to set schedule_expression_start for enable batch job queue.
     schedule_expression_start = "cron(0 1 ? * MON-FRI *)"
     # (Optional) Automatically discover AWS Batch job queues to create schedules. If true, schedules variable is ignored.
     create_auto_schedules = true
@@ -2585,13 +2583,13 @@ eventbridge = {
     #   ex)
     #   schedules = {
     #     example = {
-    #       # TODO: need to set job_queue for enable and disable batch job queue.
+    #       # CUSTOMIZE: need to set job_queue for enable and disable batch job queue.
     #       job_queue = "example-job-queue"
-    #       # TODO: (Optional) if you want to override schedule_expression_stop for batch job queue.
+    #       # CUSTOMIZE: (Optional) if you want to override schedule_expression_stop for batch job queue.
     #       schedule_expression_stop  = "cron(0 10 * * ? *)"
-    #       # TODO: (Optional) if you want to override schedule_expression_start for batch job queue.
+    #       # CUSTOMIZE: (Optional) if you want to override schedule_expression_start for batch job queue.
     #       schedule_expression_start = "cron(0 1 ? * MON-FRI *)"
-    #       # TODO: (Optional) if you want to override description for batch job queue.
+    #       # CUSTOMIZE: (Optional) if you want to override description for batch job queue.
     #       description = "Enable and disable example Batch job queue"
     #     }
     #   }
@@ -2601,11 +2599,11 @@ eventbridge = {
   # Schedule automatic stop and start of EC2 Instance.
   #--------------------------------------------------------------
   ec2 = {
-    # TODO: need to set is_enabled for stop and start ec2_instance schedule.
+    # CUSTOMIZE: need to set is_enabled for stop and start ec2_instance schedule.
     is_enabled = false
-    # TODO: need to set schedule_expression_stop for stop ec2 instance.
+    # CUSTOMIZE: need to set schedule_expression_stop for stop ec2 instance.
     schedule_expression_stop = "cron(0 10 * * ? *)"
-    # TODO: need to set schedule_expression_start for start ec2 instance.
+    # CUSTOMIZE: need to set schedule_expression_start for start ec2 instance.
     schedule_expression_start = "cron(0 1 ? * MON-FRI *)"
     # (Optional) Automatically discover EC2 instances to create schedules. If true, schedules variable is ignored.
     create_auto_schedules = true
@@ -2620,13 +2618,13 @@ eventbridge = {
     #   ex)
     #   schedules = {
     #     example = {
-    #       # TODO: (Required) need to set instance_id for stop and start ec2 instance.
+    #       # CUSTOMIZE: (Required) need to set instance_id for stop and start ec2 instance.
     #       instance_id = "i-1234567890abcdef0"
-    #       # TODO: (Optional) if you want to override schedule_expression_stop for ec2 instance.
+    #       # CUSTOMIZE: (Optional) if you want to override schedule_expression_stop for ec2 instance.
     #       # schedule_expression_stop = "cron(0 10 * * ? *)"
-    #       # TODO: (Optional) if you want to override schedule_expression_start for ec2 instance.
+    #       # CUSTOMIZE: (Optional) if you want to override schedule_expression_start for ec2 instance.
     #       # schedule_expression_start = "cron(0 1 ? * MON-FRI *)"
-    #       # TODO: (Optional) if you want to override description for ec2 instance.
+    #       # CUSTOMIZE: (Optional) if you want to override description for ec2 instance.
     #       description = "Stop and start example EC2 instance"
     #     }
     #   }
@@ -2636,11 +2634,11 @@ eventbridge = {
   # Schedule automatic stop and start of ECS Service.
   #--------------------------------------------------------------
   ecs_service = {
-    # TODO: need to set is_enabled for stop and start ecs_service schedule.
+    # CUSTOMIZE: need to set is_enabled for stop and start ecs_service schedule.
     is_enabled = false
-    # TODO: need to set schedule_expression_stop for stop ecs service.
+    # CUSTOMIZE: need to set schedule_expression_stop for stop ecs service.
     schedule_expression_stop = "cron(0 10 * * ? *)"
-    # TODO: need to set schedule_expression_start for start ecs service.
+    # CUSTOMIZE: need to set schedule_expression_start for start ecs service.
     schedule_expression_start = "cron(0 1 ? * MON-FRI *)"
     # (Optional) Automatically discover ECS services to create schedules. If true, schedules variable is ignored.
     create_auto_schedules = true
@@ -2648,11 +2646,11 @@ eventbridge = {
     auto_schedules_exclude_list = []
     # (Optional) List of patterns to include in auto-discovery (partial match). If empty, all are included.
     auto_schedules_include_list = []
-    # TODO: need to set autoscaling_min_capacity for start ecs service with autoscaling (set to 0 to skip autoscaling adjustment).
+    # CUSTOMIZE: need to set autoscaling_min_capacity for start ecs service with autoscaling (set to 0 to skip autoscaling adjustment).
     autoscaling_min_capacity = 1
-    # TODO: need to set autoscaling_max_capacity for start ecs service with autoscaling (set to 0 to use discovered value).
+    # CUSTOMIZE: need to set autoscaling_max_capacity for start ecs service with autoscaling (set to 0 to use discovered value).
     autoscaling_max_capacity = 10
-    # TODO: need to set desired_count for start ecs service.
+    # CUSTOMIZE: need to set desired_count for start ecs service.
     desired_count = 1
     # (Optional) If create_auto_schedules is set to false, need to set schedules for stop and start ECS Service.
     # Specify the instance of the target ECS Service to be scheduled by Map.
@@ -2661,21 +2659,21 @@ eventbridge = {
     #   ex)
     #   schedules = {
     #     example-service = {
-    #       # TODO: (Required) need to set ecs_cluster for stop and start ecs service.
+    #       # CUSTOMIZE: (Required) need to set ecs_cluster for stop and start ecs service.
     #       ecs_cluster   = "example-cluster"
-    #       # TODO: (Required) need to set ecs_service for stop and start ecs service.
+    #       # CUSTOMIZE: (Required) need to set ecs_service for stop and start ecs service.
     #       ecs_service   = "example-service"
-    #       # TODO: (Optional) if you want to override autoscaling_min_capacity for start ecs service with autoscaling (set to 0 to skip autoscaling adjustment).
+    #       # CUSTOMIZE: (Optional) if you want to override autoscaling_min_capacity for start ecs service with autoscaling (set to 0 to skip autoscaling adjustment).
     #       autoscaling_min_capacity = 1
-    #       # TODO: (Optional) if you want to override autoscaling_max_capacity for start ecs service with autoscaling (set to 0 to use discovered value).
+    #       # CUSTOMIZE: (Optional) if you want to override autoscaling_max_capacity for start ecs service with autoscaling (set to 0 to use discovered value).
     #       autoscaling_max_capacity = 10
-    #       # TODO: (Optional) if you want to override desired_count for start ecs service.
+    #       # CUSTOMIZE: (Optional) if you want to override desired_count for start ecs service.
     #       desired_count = 1
-    #       # TODO: (Optional) if you want to override schedule_expression_stop for ecs service.
+    #       # CUSTOMIZE: (Optional) if you want to override schedule_expression_stop for ecs service.
     #       schedule_expression_stop  = "cron(0 10 * * ? *)"
-    #       # TODO: (Optional) if you want to override schedule_expression_start for ecs service.
+    #       # CUSTOMIZE: (Optional) if you want to override schedule_expression_start for ecs service.
     #       schedule_expression_start = "cron(0 1 ? * MON-FRI *)"
-    #       # TODO: (Optional) if you want to override description for ecs service.
+    #       # CUSTOMIZE: (Optional) if you want to override description for ecs service.
     #       description = "Stop and start example ECS service"
     #     }
     #   }
@@ -2685,11 +2683,11 @@ eventbridge = {
   # Schedule automatic enable and disable of ECS Scheduled Task (EventBridge Rule).
   #--------------------------------------------------------------
   ecs_scheduled_task = {
-    # TODO: need to set is_enabled for enable and disable ecs scheduled task schedule.
+    # CUSTOMIZE: need to set is_enabled for enable and disable ecs scheduled task schedule.
     is_enabled = false
-    # TODO: need to set schedule_expression_stop for disable ecs scheduled task rule.
+    # CUSTOMIZE: need to set schedule_expression_stop for disable ecs scheduled task rule.
     schedule_expression_stop = "cron(0 10 * * ? *)"
-    # TODO: need to set schedule_expression_start for enable ecs scheduled task rule.
+    # CUSTOMIZE: need to set schedule_expression_start for enable ecs scheduled task rule.
     schedule_expression_start = "cron(0 1 ? * MON-FRI *)"
     # (Optional) Automatically discover EventBridge rules targeting ECS tasks to create schedules. If true, schedules variable is ignored.
     create_auto_schedules = true
@@ -2704,15 +2702,15 @@ eventbridge = {
     #   ex)
     #   schedules = {
     #     example = {
-    #       # TODO: (Required) need to set ecs_cluster for enable and disable ecs scheduled task rule.
+    #       # CUSTOMIZE: (Required) need to set ecs_cluster for enable and disable ecs scheduled task rule.
     #       ecs_cluster = "example-ecs-cluster"
-    #       # TODO: (Required) need to set task_definition for enable and disable ecs scheduled task rule.
+    #       # CUSTOMIZE: (Required) need to set task_definition for enable and disable ecs scheduled task rule.
     #       task_definition = "example-task-definition-family"
-    #       # TODO: (Optional) if you want to override schedule_expression_stop for ecs scheduled task rule.
+    #       # CUSTOMIZE: (Optional) if you want to override schedule_expression_stop for ecs scheduled task rule.
     #       schedule_expression_stop  = "cron(0 10 * * ? *)"
-    #       # TODO: (Optional) if you want to override schedule_expression_start for ecs scheduled task rule.
+    #       # CUSTOMIZE: (Optional) if you want to override schedule_expression_start for ecs scheduled task rule.
     #       schedule_expression_start = "cron(0 1 ? * MON-FRI *)"
-    #       # TODO: (Optional) if you want to override description for ecs scheduled task rule.
+    #       # CUSTOMIZE: (Optional) if you want to override description for ecs scheduled task rule.
     #       description = "Enable and disable example ECS task rule"
     #     }
     #   }
@@ -2722,11 +2720,11 @@ eventbridge = {
   # Schedule automatic stop and start of RDS Cluster.
   #--------------------------------------------------------------
   rds_cluster = {
-    # TODO: need to set is_enabled for stop and start rds_cluster schedule.
+    # CUSTOMIZE: need to set is_enabled for stop and start rds_cluster schedule.
     is_enabled = false
-    # TODO: need to set schedule_expression_stop for stop rds cluster.
+    # CUSTOMIZE: need to set schedule_expression_stop for stop rds cluster.
     schedule_expression_stop = "cron(0 10 * * ? *)"
-    # TODO: need to set schedule_expression_start for start rds cluster.
+    # CUSTOMIZE: need to set schedule_expression_start for start rds cluster.
     schedule_expression_start = "cron(0 1 ? * MON-FRI *)"
     # (Optional) Automatically discover RDS clusters to create schedules. If true, schedules variable is ignored.
     create_auto_schedules = true
@@ -2741,13 +2739,13 @@ eventbridge = {
     #   ex)
     #   schedules = {
     #     example = {
-    #       # TODO: (Required) need to set db_cluster_identifier for stop and start rds cluster.
+    #       # CUSTOMIZE: (Required) need to set db_cluster_identifier for stop and start rds cluster.
     #       db_cluster_identifier = "example-db"
-    #       # TODO: (Optional) if you want to override schedule_expression_stop for rds cluster.
+    #       # CUSTOMIZE: (Optional) if you want to override schedule_expression_stop for rds cluster.
     #       schedule_expression_stop  = "cron(0 10 * * ? *)"
-    #       # TODO: (Optional) if you want to override schedule_expression_start for rds cluster.
+    #       # CUSTOMIZE: (Optional) if you want to override schedule_expression_start for rds cluster.
     #       schedule_expression_start = "cron(0 1 ? * MON-FRI *)"
-    #       # TODO: (Optional) if you want to override description for rds cluster.
+    #       # CUSTOMIZE: (Optional) if you want to override description for rds cluster.
     #       description = "Stop and start example RDS cluster"
     #     }
     #   }
@@ -2757,11 +2755,11 @@ eventbridge = {
   # Schedule automatic pause and resume of Redshift Cluster.
   #--------------------------------------------------------------
   redshift = {
-    # TODO: need to set is_enabled for pause and resume redshift cluster schedule.
+    # CUSTOMIZE: need to set is_enabled for pause and resume redshift cluster schedule.
     is_enabled = false
-    # TODO: need to set schedule_expression_stop for pause redshift cluster.
+    # CUSTOMIZE: need to set schedule_expression_stop for pause redshift cluster.
     schedule_expression_stop = "cron(0 10 * * ? *)"
-    # TODO: need to set schedule_expression_start for resume redshift cluster.
+    # CUSTOMIZE: need to set schedule_expression_start for resume redshift cluster.
     schedule_expression_start = "cron(0 1 ? * MON-FRI *)"
     # (Optional) Automatically discover Redshift clusters to create schedules. If true, schedules variable is ignored.
     create_auto_schedules = true
@@ -2776,13 +2774,13 @@ eventbridge = {
     #   ex)
     #   schedules = {
     #     example = {
-    #       # TODO: (Required) need to set cluster_identifier for pause and resume redshift cluster.
+    #       # CUSTOMIZE: (Required) need to set cluster_identifier for pause and resume redshift cluster.
     #       cluster_identifier = "example-redshift"
-    #       # TODO: (Optional) if you want to override schedule_expression_stop for redshift cluster.
+    #       # CUSTOMIZE: (Optional) if you want to override schedule_expression_stop for redshift cluster.
     #       schedule_expression_stop  = "cron(0 10 * * ? *)"
-    #       # TODO: (Optional) if you want to override schedule_expression_start for redshift cluster.
+    #       # CUSTOMIZE: (Optional) if you want to override schedule_expression_start for redshift cluster.
     #       schedule_expression_start = "cron(0 1 ? * MON-FRI *)"
-    #       # TODO: (Optional) if you want to override description for redshift cluster.
+    #       # CUSTOMIZE: (Optional) if you want to override description for redshift cluster.
     #       description = "Pause and resume example Redshift cluster"
     #     }
     #   }

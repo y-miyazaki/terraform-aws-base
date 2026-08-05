@@ -9,7 +9,7 @@ Common prerequisites before running any Terraform stack (`base`, `management/aud
 | 1    | Remove root account access key             | Security requirement — do this via AWS Console                                                                       |
 | 2    | Create IAM user/group for Terraform        | Create group (e.g., `deploy`) with `AdministratorAccess`, add user (e.g., `terraform`) with programmatic access only |
 | 3    | Create S3 bucket for Terraform state       | See [script usage](#create-state-bucket) below                                                                       |
-| 4    | Copy and rename `terraform.example.tfvars` | Search for `TODO` comments to identify required changes                                                              |
+| 4    | Copy and rename `terraform.example.tfvars` | Search for `CUSTOMIZE` comments to identify required changes                                                         |
 | 5    | Run `terraform init && terraform apply`    | May need a second `apply` if conflicts occur                                                                         |
 
 ## Create State Bucket

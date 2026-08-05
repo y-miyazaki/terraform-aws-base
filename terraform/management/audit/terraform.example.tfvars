@@ -1,6 +1,6 @@
 #--------------------------------------------------------------
 # Basically, it is already set so that the setting is completed only by changing tfvars.
-# All parameters that need to be changed for each environment are described in TODO comments.
+# All parameters that need to be changed for each environment are described in CUSTOMIZE comments.
 #
 # ENVIRONMENT-SPECIFIC CONFIGURATION GUIDE:
 # - Audit Environment: Security monitoring including Security Hub, GuardDuty, CloudTrail
@@ -15,13 +15,13 @@
 # These tags are automatically applied to all resources created by this Terraform configuration.
 # Common tags help with cost allocation, resource organization, and compliance tracking.
 #--------------------------------------------------------------
-# TODO: need to change tags.
+# CUSTOMIZE: need to change tags.
 tags = {
-  # TODO: need to change env.
+  # CUSTOMIZE: need to change env.
   # Environment name for resource identification and cost allocation
   # Examples: "dev", "stg", "prd", "audit", "root"
   env = "example"
-  # TODO: need to change service.
+  # CUSTOMIZE: need to change service.
   # Service/project name for resource grouping and identification
   # This should match your project name, job name, or product name
   service = "base"
@@ -47,11 +47,11 @@ name_prefix = "base-"
 # - targets: All regions where organization security services are deployed
 #--------------------------------------------------------------
 region = {
-  # TODO: Global resources (CloudFront, Route53, WAF, ACM) — must be us-east-1
+  # CUSTOMIZE: Global resources (CloudFront, Route53, WAF, ACM) — must be us-east-1
   global = "us-east-1"
-  # TODO: Development and operations base region (fallback for provider)
+  # CUSTOMIZE: Development and operations base region (fallback for provider)
   primary = "ap-northeast-1"
-  # TODO: All regions where organization security services are deployed
+  # CUSTOMIZE: All regions where organization security services are deployed
   targets = ["ap-northeast-1", "us-east-1"]
 }
 
@@ -70,7 +70,7 @@ region = {
 #
 # Use cloudwatch_log_group.override for centralized management.
 #--------------------------------------------------------------
-# TODO: need to change cloudwatch_log_group settings.
+# CUSTOMIZE: need to change cloudwatch_log_group settings.
 cloudwatch_log_group = {
   # Default retention period for all services (in days)
   retention_in_days = 14
@@ -109,15 +109,15 @@ kms = {
 # Use least privilege principles and attach only necessary policies.
 #--------------------------------------------------------------
 oidc_github = {
-  # TODO: need to set is_enabled for settings of IAM OIDC for GitHub Actions.
+  # CUSTOMIZE: need to set is_enabled for settings of IAM OIDC for GitHub Actions.
   is_enabled = true
-  # TODO: Flag to enable/disable the attachment of the AdministratorAccess policy.
+  # CUSTOMIZE: Flag to enable/disable the attachment of the AdministratorAccess policy.
   dangerously_attach_admin_policy = true
-  # TODO: Flag to enable/disable the attachment of the ReadOnly policy.
+  # CUSTOMIZE: Flag to enable/disable the attachment of the ReadOnly policy.
   iam_role_policy_names = []
-  # TODO: Flag to enable/disable the creation of the GitHub OIDC provider.
+  # CUSTOMIZE: Flag to enable/disable the creation of the GitHub OIDC provider.
   create_oidc_provider = true
-  # TODO: Set the org/repo of the GitHub repository to github_subjects.
+  # CUSTOMIZE: Set the org/repo of the GitHub repository to github_subjects.
   github_subjects = [
     # "your-repository/repository-name",
   ]
@@ -153,9 +153,9 @@ oidc_github = {
 # NOTICE: GuardDuty is automatically disabled if control_tower.managed_services.guardduty = true.
 #--------------------------------------------------------------
 security_notification = {
-  # TODO: need to set slack_channel_id for settings of AWS SecurityHub Notification(Slack).
+  # CUSTOMIZE: need to set slack_channel_id for settings of AWS SecurityHub Notification(Slack).
   slack_channel_id = "C0XXXXXXXXX"
-  # TODO: need to set slack_team_id for settings of AWS SecurityHub Notification(Slack).
+  # CUSTOMIZE: need to set slack_team_id for settings of AWS SecurityHub Notification(Slack).
   slack_team_id = "xxxxxxxxxxx"
   #--------------------------------------------------------------
   # GuardDuty
@@ -165,7 +165,7 @@ security_notification = {
   # COST CONSIDERATION: ~$1.00 per GB of logs analyzed
   #--------------------------------------------------------------
   guardduty = {
-    # TODO: need to set is_enabled for settings of AWS GuardDuty.
+    # CUSTOMIZE: need to set is_enabled for settings of AWS GuardDuty.
     is_enabled = true
   }
   #--------------------------------------------------------------
@@ -176,7 +176,7 @@ security_notification = {
   # https://docs.aws.amazon.com/chatbot/latest/adminguide/slack-setup.html
   #--------------------------------------------------------------
   securityhub = {
-    # TODO: need to set is_enabled for settings of AWS SecurityHub.
+    # CUSTOMIZE: need to set is_enabled for settings of AWS SecurityHub.
     is_enabled = true
   }
 }
@@ -187,7 +187,7 @@ security_notification = {
 # Enables organization-wide settings for identifying resources shared with external entities.
 #--------------------------------------------------------------
 access_analyzer_organization = {
-  # TODO: need to set is_enabled for settings of AWS Access Analyzer Organization.
+  # CUSTOMIZE: need to set is_enabled for settings of AWS Access Analyzer Organization.
   is_enabled    = true
   analyzer_name = "aws-access-analyzer"
 }
@@ -198,11 +198,11 @@ access_analyzer_organization = {
 # Enables organization-wide settings for automated threat detection and response.
 #--------------------------------------------------------------
 guardduty_organization = {
-  # TODO: need to set is_enabled for settings of AWS GuardDuty Organization.
+  # CUSTOMIZE: need to set is_enabled for settings of AWS GuardDuty Organization.
   is_enabled = true
   # Set to true to create a new GuardDuty detector if no detector exists in this region.
   create_detector = false
-  # TODO: need to set auto_enable_organization_members for settings of AWS GuardDuty Organization.
+  # CUSTOMIZE: need to set auto_enable_organization_members for settings of AWS GuardDuty Organization.
   auto_enable_organization_members = "ALL"
   features = {
     # https://docs.aws.amazon.com/guardduty/latest/APIReference/API_DetectorFeatureConfiguration.html
@@ -247,7 +247,7 @@ guardduty_organization = {
 # Enables organization-wide settings for automated security assessments.
 #--------------------------------------------------------------
 inspector2_organization = {
-  # TODO: need to set is_enabled for settings of AWS Inspector2.
+  # CUSTOMIZE: need to set is_enabled for settings of AWS Inspector2.
   is_enabled = true
 
   enabler = {
@@ -274,7 +274,7 @@ inspector2_organization = {
       ]
     }
   }
-  # TODO: need to set is_enabled_configuration for settings of AWS Inspector2.
+  # CUSTOMIZE: need to set is_enabled_configuration for settings of AWS Inspector2.
   is_enabled_configuration = true
   configuration = {
     auto_enable_ec2             = false
@@ -290,13 +290,13 @@ inspector2_organization = {
 # Amazon Macie central configuration for organization-wide sensitive data discovery.
 #--------------------------------------------------------------
 macie_organization = {
-  # TODO: need to set is_enabled for settings of AWS Macie Organization.
+  # CUSTOMIZE: need to set is_enabled for settings of AWS Macie Organization.
   is_enabled = true
-  # TODO: need to set auto_enable for settings of AWS Macie Organization.
+  # CUSTOMIZE: need to set auto_enable for settings of AWS Macie Organization.
   auto_enable = true
-  # TODO: need to set status for settings of AWS Macie account.
+  # CUSTOMIZE: need to set status for settings of AWS Macie account.
   status = "ENABLED"
-  # TODO: need to set finding_publishing_frequency for settings of AWS Macie account.
+  # CUSTOMIZE: need to set finding_publishing_frequency for settings of AWS Macie account.
   finding_publishing_frequency = "FIFTEEN_MINUTES"
   classification_jobs          = []
   findings_filters             = []
@@ -307,20 +307,20 @@ macie_organization = {
 # AWS Security Hub central configuration for organization-wide settings.
 #--------------------------------------------------------------
 securityhub_organization = {
-  # TODO: need to set is_enabled for settings of AWS SecurityHub Organization.
+  # CUSTOMIZE: need to set is_enabled for settings of AWS SecurityHub Organization.
   is_enabled = true
-  # TODO: need to set is_enabled_finding_aggregator for settings of Security Hub finding aggregator.
+  # CUSTOMIZE: need to set is_enabled_finding_aggregator for settings of Security Hub finding aggregator.
   is_enabled_finding_aggregator = true
   configuration_policy = {
     service_enabled = true
     name            = "securityhub-configuration-policy"
-    # TODO: need to set enabled_standard_arns for settings of AWS SecurityHub Organization.
+    # CUSTOMIZE: need to set enabled_standard_arns for settings of AWS SecurityHub Organization.
     # https://docs.aws.amazon.com/ja_jp/securityhub/latest/userguide/cis-aws-foundations-benchmark.html
     enabled_standard_arns = [
       "arn:aws:securityhub:{any region}::standards/aws-foundational-security-best-practices/v/1.0.0",
       "arn:aws:securityhub:{any region}::standards/cis-aws-foundations-benchmark/v/5.0.0"
     ]
-    # TODO: need to set disabled_control_identifiers for settings of AWS SecurityHub Organization.
+    # CUSTOMIZE: need to set disabled_control_identifiers for settings of AWS SecurityHub Organization.
     # https://docs.aws.amazon.com/ja_jp/securityhub/latest/userguide/securityhub-controls-reference.html
     security_controls_configuration = {
       disabled_control_identifiers = [

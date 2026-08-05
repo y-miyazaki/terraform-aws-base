@@ -1,6 +1,6 @@
 #--------------------------------------------------------------
 # Basically, it is already set so that the setting is completed only by changing tfvars.
-# All parameters that need to be changed for each environment are described in TODO comments.
+# All parameters that need to be changed for each environment are described in CUSTOMIZE comments.
 #
 # ENVIRONMENT-SPECIFIC CONFIGURATION GUIDE:
 # - Root Environment: Organizational governance, budgets, policies, CloudTrail audit
@@ -15,13 +15,13 @@
 # These tags are automatically applied to all resources created by this Terraform configuration.
 # Common tags help with cost allocation, resource organization, and compliance tracking.
 #--------------------------------------------------------------
-# TODO: need to change tags.
+# CUSTOMIZE: need to change tags.
 tags = {
-  # TODO: need to change env.
+  # CUSTOMIZE: need to change env.
   # Environment name for resource identification and cost allocation
   # Examples: "dev", "stg", "prd", "audit", "root"
   env = "example"
-  # TODO: need to change service.
+  # CUSTOMIZE: need to change service.
   # Service/project name for resource grouping and identification
   # This should match your project name, job name, or product name
   service = "base"
@@ -46,11 +46,11 @@ name_prefix = "base-"
 # - targets: All regions where resources are deployed
 #--------------------------------------------------------------
 region = {
-  # TODO: Global resources (CloudFront, Route53, WAF, ACM) — must be us-east-1
+  # CUSTOMIZE: Global resources (CloudFront, Route53, WAF, ACM) — must be us-east-1
   global = "us-east-1"
-  # TODO: Development and operations base region (fallback for provider)
+  # CUSTOMIZE: Development and operations base region (fallback for provider)
   primary = "ap-northeast-1"
-  # TODO: All regions where resources are deployed
+  # CUSTOMIZE: All regions where resources are deployed
   targets = ["ap-northeast-1", "us-east-1"]
 }
 
@@ -69,7 +69,7 @@ region = {
 #
 # Use cloudwatch_log_group.override for centralized management.
 #--------------------------------------------------------------
-# TODO: need to change cloudwatch_log_group settings.
+# CUSTOMIZE: need to change cloudwatch_log_group settings.
 cloudwatch_log_group = {
   # Default retention period for all services (in days)
   retention_in_days = 14
@@ -100,11 +100,11 @@ cloudwatch_log_group = {
 # Use slack.override for centralized management.
 #--------------------------------------------------------------
 slack = {
-  # TODO: need to change SLACK_OAUTH_ACCESS_TOKEN (bot token xoxb-xxxxxx....)
+  # CUSTOMIZE: need to change SLACK_OAUTH_ACCESS_TOKEN (bot token xoxb-xxxxxx....)
   # Get this from your Slack app's OAuth & Permissions page
   # Format: xoxb-XXXXXXXXX-XXXXXXXXX-XXXXXXXXXXXXXXXXXXXXXXXX
   oauth_access_token = "xoxb-xxxxxxxxxxxxx-xxxxxxxxxxxxx-xxxxxxxxxxxxxxxxxxxxxxxx"
-  # TODO: need to change SLACK_CHANNEL_ID
+  # CUSTOMIZE: need to change SLACK_CHANNEL_ID
   # Right-click on your Slack channel and select "Copy link" to find the channel ID
   channel_id = "C0XXXXXXXXX"
 
@@ -154,15 +154,15 @@ kms = {
 # Use least privilege principles and attach only necessary policies.
 #--------------------------------------------------------------
 oidc_github = {
-  # TODO: need to set is_enabled for settings of IAM OIDC for GitHub Actions.
+  # CUSTOMIZE: need to set is_enabled for settings of IAM OIDC for GitHub Actions.
   is_enabled = true
-  # TODO: Flag to enable/disable the attachment of the AdministratorAccess policy.
+  # CUSTOMIZE: Flag to enable/disable the attachment of the AdministratorAccess policy.
   dangerously_attach_admin_policy = true
-  # TODO: Flag to enable/disable the attachment of the ReadOnly policy.
+  # CUSTOMIZE: Flag to enable/disable the attachment of the ReadOnly policy.
   iam_role_policy_names = []
-  # TODO: Flag to enable/disable the creation of the GitHub OIDC provider.
+  # CUSTOMIZE: Flag to enable/disable the creation of the GitHub OIDC provider.
   create_oidc_provider = true
-  # TODO: Set the org/repo of the GitHub repository to github_subjects.
+  # CUSTOMIZE: Set the org/repo of the GitHub repository to github_subjects.
   github_subjects = [
     # "your-repository/repository-name",
   ]
@@ -184,14 +184,14 @@ oidc_github = {
 # COST CONSIDERATION: The first two budgets are free. Additional budgets cost $0.02 per day (~$0.60/month).
 #--------------------------------------------------------------
 budgets = {
-  # TODO: need to set is_enabled for settings of budgets.
+  # CUSTOMIZE: need to set is_enabled for settings of budgets.
   is_enabled = true
   # Provides a budgets budget resource. Budgets use the cost visualisation provided
   # by Cost Explorer to show you the status of your budgets, to provide forecasts of
   # your estimated costs, and to track your AWS usage, including your free tier usage.
   aws_budgets_budget = {
     name = "budgets-monthly"
-    # TODO: need to change limit_amount for Service
+    # CUSTOMIZE: need to change limit_amount for Service
     limit_amount = "100.0"
     time_unit    = "MONTHLY"
     notification = [
@@ -200,7 +200,7 @@ budgets = {
         threshold           = "80"
         threshold_type      = "PERCENTAGE"
         notification_type   = "ACTUAL"
-        # TODO: need to change subscriber_email_addresses.
+        # CUSTOMIZE: need to change subscriber_email_addresses.
         # If the threshold is exceeded, you will be notified to the email address provided.
         # At least one must set an email address.
         subscriber_email_addresses = [
@@ -219,7 +219,7 @@ budgets = {
   aws_lambda_function = {
     environment = {
       ENV = "root"
-      # TODO: need to change TIMEZONE.
+      # CUSTOMIZE: need to change TIMEZONE.
       # https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
       TIMEZONE = "Asia/Tokyo"
     }
@@ -241,13 +241,13 @@ budgets = {
 #--------------------------------------------------------------
 common_lambda = {
   vpc = {
-    # TODO: If you want to run LambdaFunctions inside a VPC, set to true. However,
+    # CUSTOMIZE: If you want to run LambdaFunctions inside a VPC, set to true. However,
     # VPC requires more cost since you need to configure NAT Gateway and other settings.
     is_enabled = false
-    # TODO: If a VPC has already been established, specify false; if a new VPC is to be created, specify true.
+    # CUSTOMIZE: If a VPC has already been established, specify false; if a new VPC is to be created, specify true.
     create_vpc = false
 
-    # TODO: To specify a VPC that already exists, configure the following settings for Lambda.
+    # CUSTOMIZE: To specify a VPC that already exists, configure the following settings for Lambda.
     # If var.common_lambda.vpc.is_enabled = true and var.common_lambda.vpc.create_vpc = false,
     # the Lambda will be built in an existing VPC by referencing the parameters here.
     exists = {
@@ -258,7 +258,7 @@ common_lambda = {
       ]
       security_group_id = "sg-xxxxxxxxxxxxxxxxx"
     }
-    # TODO: To specify a new VPC to be set up for Lambda, please set the following information.
+    # CUSTOMIZE: To specify a new VPC to be set up for Lambda, please set the following information.
     # If var.common_lambda.vpc.is_enabled = true and var.common_lambda.vpc.create_vpc = true,
     # a new VPC is built by referencing the parameters here.
     new = {
@@ -326,7 +326,7 @@ common_lambda = {
 # CAUTION: Test SCPs carefully in non-production environments first!
 # Incorrectly configured SCPs can block critical operations, including administrative access.
 #--------------------------------------------------------------
-# TODO: Review and adjust allowed services and regions based on organizational requirements.
+# CUSTOMIZE: Review and adjust allowed services and regions based on organizational requirements.
 organizations_policy = {
   policy = {
     Version = "2012-10-17",
@@ -423,9 +423,9 @@ organizations_policy = {
 # - SNS: First 1,000 notifications free, then $0.50 per 1M notifications
 #--------------------------------------------------------------
 security_cloudtrail = {
-  # TODO: need to set is_enabled for settings of CloudTrail.
+  # CUSTOMIZE: need to set is_enabled for settings of CloudTrail.
   is_enabled = true
-  # TODO: need to set cloudwatch_2_event_exclusions exclude alert logs.
+  # CUSTOMIZE: need to set cloudwatch_2_event_exclusions exclude alert logs.
   # It is best to exclude items such as APIs automatically requested via the console screen, as they act as noise.
   # https://docs.aws.amazon.com/securityhub/latest/userguide/cloudwatch-controls.html#cloudwatch-2
   cloudwatch_2_event_exclusions = [
@@ -539,7 +539,7 @@ PATTERN
 # - max_duration_minutes should be set to the minimum required time
 #--------------------------------------------------------------
 jit_access = {
-  # TODO: Set to true when Slack App and Lambda zip are ready.
+  # CUSTOMIZE: Set to true when Slack App and Lambda zip are ready.
   is_enabled                  = true
   cleanup_schedule_expression = "rate(15 minutes)"
   #-----------------------------------------------------------------------------

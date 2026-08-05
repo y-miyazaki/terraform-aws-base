@@ -8,6 +8,8 @@ Configuration for **member accounts** (individual AWS accounts where workloads r
 **Example file:** [terraform.example.tfvars](https://github.com/y-miyazaki/terraform-aws-base/blob/main/terraform/base/terraform.example.tfvars)
 **Initial setup:** See [Initial Setup (Common)](./initial-setup.md)
 
+**Customization markers:** In `terraform.example.tfvars` (and env copies), search for `CUSTOMIZE` comments — they mark values that require environment-specific changes.
+
 **Control Tower integration:** Set `control_tower.is_enabled = true` to disable security services that are centrally managed by the management/audit account.
 
 ## Required Settings

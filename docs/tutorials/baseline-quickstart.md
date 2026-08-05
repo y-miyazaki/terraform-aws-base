@@ -52,7 +52,7 @@ Copy the example tfvars and customize for the target environment:
 cp terraform.example.tfvars terraform.dev.tfvars
 ```
 
-Open the file and search for `TODO` comments — these mark values that require environment-specific changes. Key settings:
+Open the file and search for `CUSTOMIZE` comments — these mark values that require environment-specific changes. Key settings:
 
 - `region` — target AWS region
 - `cloudwatch_log_group` — log group retention and configuration

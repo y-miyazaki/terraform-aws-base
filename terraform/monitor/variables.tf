@@ -167,7 +167,8 @@ variable "metric_log_application_report" {
   type        = any
   description = "CloudWatch Logs (Application) errors report resources on AWS"
 }
-# TODO: ex
+
+# TODO: will be removed in the future
 variable "metric_log_step_functions" {
   type        = any
   description = "CloudWatch Logs (Step Functions) resources on AWS"

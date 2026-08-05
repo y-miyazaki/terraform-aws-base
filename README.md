@@ -38,6 +38,8 @@ Each feature is toggled on/off via `terraform.example.tfvars`. The directory is 
    cp terraform/base/terraform.example.tfvars terraform/base/terraform.tfvars
    ```
 
+   Search for `CUSTOMIZE` comments to find environment-specific settings.
+
 3. Configure features — see [Configuration Guide](https://y-miyazaki.github.io/terraform-aws-base/how-to/configure-base-tfvars/)
 
 4. Apply:

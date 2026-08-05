@@ -1,6 +1,6 @@
 #--------------------------------------------------------------
 # Basically, it is already set so that the setting is completed only by changing tfvars.
-# All parameters that need to be changed for each environment are described in TODO comments.
+# All parameters that need to be changed for each environment are described in CUSTOMIZE comments.
 #
 # ENVIRONMENT-SPECIFIC CONFIGURATION GUIDE:
 # - Development: Set minimal security services, lower budgets, disable expensive features
@@ -36,7 +36,7 @@
 # Verify with (run from root account):
 #   aws cloudtrail describe-trails --query 'trailList[?IsOrganizationTrail==`true`].Name'
 #--------------------------------------------------------------
-# TODO: need to change Control Tower settings.
+# CUSTOMIZE: need to change Control Tower settings.
 control_tower = {
   # aws controltower list-landing-zones (run from root account)
   is_enabled = false
@@ -64,13 +64,13 @@ control_tower = {
 # These tags are automatically applied to all resources created by this Terraform configuration.
 # Common tags help with cost allocation, resource organization, and compliance tracking.
 #--------------------------------------------------------------
-# TODO: need to change tags.
+# CUSTOMIZE: need to change tags.
 tags = {
-  # TODO: need to change env.
+  # CUSTOMIZE: need to change env.
   # Environment name for resource identification and cost allocation
   # Examples: "dev", "stg", "prd", "audit", "root"
   env = "example"
-  # TODO: need to change service.
+  # CUSTOMIZE: need to change service.
   # Service/project name for resource grouping and identification
   # This should match your project name, job name, or product name
   service = "base"
@@ -98,11 +98,11 @@ name_prefix = "base-"
 # https://docs.aws.amazon.com/global-infrastructure/latest/regions/aws-regions.html
 #--------------------------------------------------------------
 region = {
-  # TODO: Global resources (CloudFront, Route53, WAF, ACM) — must be us-east-1
+  # CUSTOMIZE: Global resources (CloudFront, Route53, WAF, ACM) — must be us-east-1
   global = "us-east-1"
-  # TODO: Development and operations base region (fallback for provider)
+  # CUSTOMIZE: Development and operations base region (fallback for provider)
   primary = "ap-northeast-1"
-  # TODO: All regions where regional resources are deployed
+  # CUSTOMIZE: All regions where regional resources are deployed
   targets = ["ap-northeast-1", "us-east-1"]
 }
 
@@ -121,7 +121,7 @@ region = {
 #
 # Use cloudwatch_log_group.override for centralized management.
 #--------------------------------------------------------------
-# TODO: need to change cloudwatch_log_group settings.
+# CUSTOMIZE: need to change cloudwatch_log_group settings.
 cloudwatch_log_group = {
   # Default retention period for all services (in days)
   retention_in_days = 14
@@ -173,11 +173,11 @@ cloudwatch_log_group = {
 # Use slack.override for centralized management.
 #--------------------------------------------------------------
 slack = {
-  # TODO: need to change SLACK_OAUTH_ACCESS_TOKEN (bot token xoxb-xxxxxx....)
+  # CUSTOMIZE: need to change SLACK_OAUTH_ACCESS_TOKEN (bot token xoxb-xxxxxx....)
   # Get this from your Slack app's OAuth & Permissions page
   # Format: xoxb-XXXXXXXXX-XXXXXXXXX-XXXXXXXXXXXXXXXXXXXXXXXX
   oauth_access_token = "xoxb-xxxxxxxxxxxxx-xxxxxxxxxxxxx-xxxxxxxxxxxxxxxxxxxxxxxx"
-  # TODO: need to change SLACK_CHANNEL_ID
+  # CUSTOMIZE: need to change SLACK_CHANNEL_ID
   # Right-click on your Slack channel and select "Copy link" to find the channel ID
   channel_id = "C0XXXXXXXXX"
 
@@ -233,15 +233,15 @@ kms = {
 # Use least privilege principles and attach only necessary policies.
 #--------------------------------------------------------------
 oidc_github = {
-  # TODO: need to set is_enabled for settings of IAM OIDC for GitHub Actions.
+  # CUSTOMIZE: need to set is_enabled for settings of IAM OIDC for GitHub Actions.
   is_enabled = true
-  # TODO: Flag to enable/disable the attachment of the AdministratorAccess policy.
+  # CUSTOMIZE: Flag to enable/disable the attachment of the AdministratorAccess policy.
   dangerously_attach_admin_policy = true
-  # TODO: Flag to enable/disable the attachment of the ReadOnly policy.
+  # CUSTOMIZE: Flag to enable/disable the attachment of the ReadOnly policy.
   iam_role_policy_names = []
-  # TODO: Flag to enable/disable the creation of the GitHub OIDC provider.
+  # CUSTOMIZE: Flag to enable/disable the creation of the GitHub OIDC provider.
   create_oidc_provider = true
-  # TODO: Set the org/repo of the GitHub repository to github_subjects.
+  # CUSTOMIZE: Set the org/repo of the GitHub repository to github_subjects.
   github_subjects = [
     # "your-repository/repository-name",
   ]
@@ -256,7 +256,7 @@ oidc_github = {
 # Useful for viewing all resources belonging to a specific environment or service in one place.
 #--------------------------------------------------------------
 resource_groups = {
-  # TODO: need to change is_enabled for settings of resourcegroups_group.
+  # CUSTOMIZE: need to change is_enabled for settings of resourcegroups_group.
   is_enabled = true
 }
 
@@ -269,14 +269,14 @@ resource_groups = {
 # - Production: $500+/month
 #--------------------------------------------------------------
 budgets = {
-  # TODO: need to set is_enabled for settings of budgets.
+  # CUSTOMIZE: need to set is_enabled for settings of budgets.
   is_enabled = true
   # Provides a budgets budget resource. Budgets use the cost visualisation provided
   # by Cost Explorer to show you the status of your budgets, to provide forecasts of
   # your estimated costs, and to track your AWS usage, including your free tier usage.
   aws_budgets_budget = {
     name = "budgets-monthly"
-    # TODO: need to change limit_amount for Service
+    # CUSTOMIZE: need to change limit_amount for Service
     limit_amount = "100.0"
     time_unit    = "MONTHLY"
     notification = [
@@ -285,7 +285,7 @@ budgets = {
         threshold           = "80"
         threshold_type      = "PERCENTAGE"
         notification_type   = "ACTUAL"
-        # TODO: need to change subscriber_email_addresses.
+        # CUSTOMIZE: need to change subscriber_email_addresses.
         # If the threshold is exceeded, you will be notified to the email address provided.
         # At least one must set an email address.
         subscriber_email_addresses = [
@@ -303,7 +303,7 @@ budgets = {
   }
   aws_lambda_function = {
     environment = {
-      # TODO: need to change TIMEZONE.
+      # CUSTOMIZE: need to change TIMEZONE.
       # https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
       TIMEZONE = "Asia/Tokyo"
     }
@@ -320,7 +320,7 @@ budgets = {
 # based on your utilization data.
 #--------------------------------------------------------------
 compute_optimizer = {
-  # TODO: need to set is_enabled for settings of Compute Optimizer.
+  # CUSTOMIZE: need to set is_enabled for settings of Compute Optimizer.
   is_enabled = true
 }
 
@@ -332,7 +332,7 @@ compute_optimizer = {
 # COST CONSIDERATION: ~$1.00 per GB of logs analyzed
 #--------------------------------------------------------------
 guardduty = {
-  # TODO: need to set is_enabled for settings of AWS GuardDuty.
+  # CUSTOMIZE: need to set is_enabled for settings of AWS GuardDuty.
   is_enabled = true
   aws_cloudwatch_event_rule = {
     name        = "guardduty-cloudwatch-event-rule"
@@ -348,7 +348,7 @@ guardduty = {
 # Monitors both regional (ap-northeast-1) and global (us-east-1) health events.
 #--------------------------------------------------------------
 health = {
-  # TODO: need to set is_enabled for settings of AWS Health.
+  # CUSTOMIZE: need to set is_enabled for settings of AWS Health.
   is_enabled = true
   aws_cloudwatch_event_rule = {
     name           = "health-cloudwatch-event-rule"
@@ -365,7 +365,7 @@ health = {
 # NOTE: Full Trusted Advisor checks require Business or Enterprise support plan.
 #--------------------------------------------------------------
 trusted_advisor = {
-  # TODO: need to set is_enabled for settings of Trusted Advisor.
+  # CUSTOMIZE: need to set is_enabled for settings of Trusted Advisor.
   // If you are not in a business or enterprise plan with a support plan, set is_enable to false as notifications will fail. If not, set it to true.
   is_enabled = false
   aws_eventbridge_schedule = {
@@ -380,7 +380,7 @@ trusted_advisor = {
 # A list of target users will be automatically notified in Slack 10 days before the IAM password expires.
 #--------------------------------------------------------------
 iam_password_expired = {
-  # TODO: need to set is_enabled for settings of IAM password expired.
+  # CUSTOMIZE: need to set is_enabled for settings of IAM password expired.
   is_enabled = false
   aws_eventbridge_schedule = {
     name                = "iam-password-expired-eventbridge-scheduler"
@@ -396,7 +396,7 @@ iam_password_expired = {
 # Includes MFA enforcement, password policies, and role-based access control.
 #--------------------------------------------------------------
 iam = {
-  # TODO: need to set is_enabled for settings of IAM.
+  # CUSTOMIZE: need to set is_enabled for settings of IAM.
   is_enabled = false
   #--------------------------------------------------------------
   # IAM Users Configuration
@@ -404,7 +404,7 @@ iam = {
   # Set is_console_access=true for AWS Management Console login.
   # Set is_access_key=true for CLI/API access via access keys.
   #--------------------------------------------------------------
-  # TODO: need to change IAM User.
+  # CUSTOMIZE: need to change IAM User.
   user = {
     "test" = {
       is_console_access = false
@@ -414,20 +414,20 @@ iam = {
   #--------------------------------------------------------------
   # IAM Groups Configuration
   #--------------------------------------------------------------
-  # TODO: need to change IAM Group.
+  # CUSTOMIZE: need to change IAM Group.
   # Please specify the user with the same name that has been set in users.
   group = {
-    # TODO: need to change IAM Group name.
+    # CUSTOMIZE: need to change IAM Group name.
     # This name will be used as the group name.
     administrator = {
-      # TODO: need to set is_enabled_mfa.
+      # CUSTOMIZE: need to set is_enabled_mfa.
       # If true, force MFA settings and login.
       is_enabled_mfa = true
-      # TODO: need to set users.
+      # CUSTOMIZE: need to set users.
       users = [
         "test1",
       ]
-      # TODO: need to set base policy.
+      # CUSTOMIZE: need to set base policy.
       # Please specify the base policy to provide.
       # default null.
       # You need to check this document.
@@ -589,7 +589,7 @@ iam = {
           #--------------------------------------------------------------
         ]
       }
-      # TODO: need to add policy arn. group policy limit is 10.
+      # CUSTOMIZE: need to add policy arn. group policy limit is 10.
       # You need to check this document.
       # https://aws.amazon.com/jp/premiumsupport/knowledge-center/iam-increase-policy-size/
       policy = [
@@ -598,17 +598,17 @@ iam = {
         }
       ]
     }
-    # TODO: need to change IAM Group name.
+    # CUSTOMIZE: need to change IAM Group name.
     # This name will be used as the group name.
     developer = {
-      # TODO: need to set is_enabled_mfa.
+      # CUSTOMIZE: need to set is_enabled_mfa.
       # If true, force MFA settings and login.
       is_enabled_mfa = true
-      # TODO: need to set users.
+      # CUSTOMIZE: need to set users.
       users = [
         "test2",
       ]
-      # TODO: need to set base policy.
+      # CUSTOMIZE: need to set base policy.
       # Please specify the base policy to provide.
       # default null.
       # You need to check this document.
@@ -720,22 +720,22 @@ iam = {
           #--------------------------------------------------------------
         ]
       }
-      # TODO: need to add policy arn. group policy limit is 10.
+      # CUSTOMIZE: need to add policy arn. group policy limit is 10.
       # You need to check this document.
       # https://aws.amazon.com/jp/premiumsupport/knowledge-center/iam-increase-policy-size/
       policy = [
       ]
     }
-    # TODO: need to change IAM Group name.
+    # CUSTOMIZE: need to change IAM Group name.
     # This name will be used as the group name.
     operator = {
-      # TODO: need to set is_enabled_mfa.
+      # CUSTOMIZE: need to set is_enabled_mfa.
       # If true, force MFA settings and login.
       is_enabled_mfa = true
-      # TODO: need to set users.
+      # CUSTOMIZE: need to set users.
       users = [
       ]
-      # TODO: need to set base policy.
+      # CUSTOMIZE: need to set base policy.
       # Please specify the base policy to provide.
       # default null.
       # You need to check this document.
@@ -847,27 +847,27 @@ iam = {
           #--------------------------------------------------------------
         ]
       }
-      # TODO: need to add policy arn. group policy limit is 10.
+      # CUSTOMIZE: need to add policy arn. group policy limit is 10.
       # You need to check this document.
       # https://aws.amazon.com/jp/premiumsupport/knowledge-center/iam-increase-policy-size/
       policy = []
     }
-    # TODO: need to change IAM Group name.
+    # CUSTOMIZE: need to change IAM Group name.
     # This name will be used as the group name.
     deploy_infra = {
-      # TODO: need to set is_enabled_mfa.
+      # CUSTOMIZE: need to set is_enabled_mfa.
       # If true, force MFA settings and login.
       is_enabled_mfa = false
-      # TODO: need to set users.
+      # CUSTOMIZE: need to set users.
       users = [
       ]
-      # TODO: need to set base policy.
+      # CUSTOMIZE: need to set base policy.
       # Please specify the base policy to provide.
       # default null.
       # You need to check this document.
       # https://aws.amazon.com/jp/premiumsupport/knowledge-center/iam-increase-policy-size/
       policy_document = null
-      # TODO: need to add policy arn. group policy limit is 10.
+      # CUSTOMIZE: need to add policy arn. group policy limit is 10.
       # You need to check this document.
       # https://aws.amazon.com/jp/premiumsupport/knowledge-center/iam-increase-policy-size/
       policy = [
@@ -876,17 +876,17 @@ iam = {
         }
       ]
     }
-    # TODO: need to change IAM Group name.
+    # CUSTOMIZE: need to change IAM Group name.
     # This name will be used as the group name.
     deploy_code = {
-      # TODO: need to set is_enabled_mfa.
+      # CUSTOMIZE: need to set is_enabled_mfa.
       # If true, force MFA settings and login.
       is_enabled_mfa = false
-      # TODO: need to set users.
+      # CUSTOMIZE: need to set users.
       users = [
         "deploy-static-contents",
       ]
-      # TODO: need to set base policy.
+      # CUSTOMIZE: need to set base policy.
       # Please specify the base policy to provide.
       # default null.
       # You need to check this document.
@@ -930,7 +930,7 @@ iam = {
           },
         ]
       }
-      # TODO: need to add policy arn. group policy limit is 10.
+      # CUSTOMIZE: need to add policy arn. group policy limit is 10.
       # You need to check this document.
       # https://aws.amazon.com/jp/premiumsupport/knowledge-center/iam-increase-policy-size/
       policy = []
@@ -944,10 +944,10 @@ iam = {
   switch_role = {
     # These are the settings for the original AWS account that will use SwitchRole.
     from = {
-      # TODO: need to set is_enabled for switch role(from).
+      # CUSTOMIZE: need to set is_enabled for switch role(from).
       is_enabled = false
       group = {
-        # TODO: need to change IAM Group name.
+        # CUSTOMIZE: need to change IAM Group name.
         # An IAM policy for the SwitchRole will be attached to the group with the specified name.
         administrator = {
           aws_iam_policy = {
@@ -962,7 +962,7 @@ iam = {
                   "sts:AssumeRole",
                 ]
                 resources = [
-                  # TODO: need to change AWS account ID(123456789012) and role name
+                  # CUSTOMIZE: need to change AWS account ID(123456789012) and role name
                   # Specify the original AWS account ID(123456789012) that will use the IAM Switch role.
                   # Specify the AWS Account ID(123456789012) of the switch destination.
                   "arn:aws:iam::123456789012:role/base-iam-switch-to-administrator-role",
@@ -971,7 +971,7 @@ iam = {
             ]
           }
         }
-        # TODO: need to change IAM Group name.
+        # CUSTOMIZE: need to change IAM Group name.
         # An IAM policy for the SwitchRole will be attached to the group with the specified name.
         developer = {
           aws_iam_policy = {
@@ -986,7 +986,7 @@ iam = {
                   "sts:AssumeRole",
                 ]
                 resources = [
-                  # TODO: need to change AWS account ID(123456789012) and role name
+                  # CUSTOMIZE: need to change AWS account ID(123456789012) and role name
                   # Specify the original AWS account ID(123456789012) that will use the IAM Switch role.
                   # Specify the AWS Account ID(123456789012) of the switch destination.
                   "arn:aws:iam::123456789012:role/base-iam-switch-to-developer-role",
@@ -995,7 +995,7 @@ iam = {
             ]
           }
         }
-        # TODO: need to change IAM Group name.
+        # CUSTOMIZE: need to change IAM Group name.
         # An IAM policy for the SwitchRole will be attached to the group with the specified name.
         operator = {
           aws_iam_policy = {
@@ -1010,7 +1010,7 @@ iam = {
                   "sts:AssumeRole",
                 ]
                 resources = [
-                  # TODO: need to change AWS account ID(123456789012) and role name
+                  # CUSTOMIZE: need to change AWS account ID(123456789012) and role name
                   # Specify the original AWS account ID(123456789012) that will use the IAM Switch role.
                   # Specify the AWS Account ID(123456789012) of the switch destination.
                   "arn:aws:iam::123456789012:role/base-iam-switch-to-operator-role",
@@ -1023,24 +1023,24 @@ iam = {
     }
     # These are the settings for the AWS account to which the SwitchRole is to be used.
     to = {
-      # TODO: need to set is_enabled for switch role(to).
+      # CUSTOMIZE: need to set is_enabled for switch role(to).
       is_enabled = false
       role = {
-        # TODO: need to change IAM switch role name.
+        # CUSTOMIZE: need to change IAM switch role name.
         # Part of this name will be used as the switch role name.
         administrator = {
-          # TODO: need to change IAM switch role.
+          # CUSTOMIZE: need to change IAM switch role.
           aws_iam_role = {
             name        = "iam-switch-to-administrator-role"
             path        = "/"
             description = ""
-            # TODO: need to change AWS account ID(123456789012)
+            # CUSTOMIZE: need to change AWS account ID(123456789012)
             # Specify the original AWS account ID(123456789012) that will use the IAM Switch role.
             # Specify the AWS Account ID(123456789012) of the switch source.
             account_id         = "123456789012"
             assume_role_policy = null
           }
-          # TODO: need to set base policy.
+          # CUSTOMIZE: need to set base policy.
           # Please specify the base policy to provide.
           # default null.
           # You need to check this document.
@@ -1202,7 +1202,7 @@ iam = {
               #--------------------------------------------------------------
             ]
           }
-          # TODO: need to add policy arn. group policy limit is 10.
+          # CUSTOMIZE: need to add policy arn. group policy limit is 10.
           # You need to check this document.
           # https://aws.amazon.com/jp/premiumsupport/knowledge-center/iam-increase-policy-size/
           policy = [
@@ -1211,21 +1211,21 @@ iam = {
             }
           ]
         }
-        # TODO: need to change IAM switch role name.
+        # CUSTOMIZE: need to change IAM switch role name.
         # Part of this name will be used as the switch role name.
         developer = {
-          # TODO: need to change IAM switch role.
+          # CUSTOMIZE: need to change IAM switch role.
           aws_iam_role = {
             name        = "iam-switch-to-developer-role"
             path        = "/"
             description = ""
-            # TODO: need to change AWS account ID(123456789012)
+            # CUSTOMIZE: need to change AWS account ID(123456789012)
             # Specify the original AWS account ID(123456789012) that will use the IAM Switch role.
             # Specify the AWS Account ID(123456789012) of the switch source.
             account_id         = "123456789012"
             assume_role_policy = null
           }
-          # TODO: need to set base policy.
+          # CUSTOMIZE: need to set base policy.
           # Please specify the base policy to provide.
           # default null.
           # You need to check this document.
@@ -1337,7 +1337,7 @@ iam = {
               #--------------------------------------------------------------
             ]
           }
-          # TODO: need to add policy arn. group policy limit is 10.
+          # CUSTOMIZE: need to add policy arn. group policy limit is 10.
           # You need to check this document.
           # https://aws.amazon.com/jp/premiumsupport/knowledge-center/iam-increase-policy-size/
           policy = [
@@ -1346,21 +1346,21 @@ iam = {
             },
           ]
         }
-        # TODO: need to change IAM switch role name.
+        # CUSTOMIZE: need to change IAM switch role name.
         # Part of this name will be used as the switch role name.
         operator = {
-          # TODO: need to change IAM switch role.
+          # CUSTOMIZE: need to change IAM switch role.
           aws_iam_role = {
             name        = "iam-switch-to-operator-role"
             path        = "/"
             description = ""
-            # TODO: need to change AWS account ID(123456789012)
+            # CUSTOMIZE: need to change AWS account ID(123456789012)
             # Specify the original AWS account ID(123456789012) that will use the IAM Switch role.
             # Specify the AWS Account ID(123456789012) of the switch source.
             account_id         = "123456789012"
             assume_role_policy = null
           }
-          # TODO: need to set base policy.
+          # CUSTOMIZE: need to set base policy.
           # Please specify the base policy to provide.
           # default null.
           # You need to check this document.
@@ -1472,7 +1472,7 @@ iam = {
               #--------------------------------------------------------------
             ]
           }
-          # TODO: need to add policy arn. group policy limit is 10.
+          # CUSTOMIZE: need to add policy arn. group policy limit is 10.
           # You need to check this document.
           # https://aws.amazon.com/jp/premiumsupport/knowledge-center/iam-increase-policy-size/
           policy = []
@@ -1490,13 +1490,13 @@ iam = {
 #--------------------------------------------------------------
 common_lambda = {
   vpc = {
-    # TODO: If you want to run LambdaFunctions inside a VPC, set to true. However,
+    # CUSTOMIZE: If you want to run LambdaFunctions inside a VPC, set to true. However,
     # VPC requires more cost since you need to configure NAT Gateway and other settings.
     is_enabled = false
-    # TODO: If a VPC has already been established, specify false; if a new VPC is to be created, specify true.
+    # CUSTOMIZE: If a VPC has already been established, specify false; if a new VPC is to be created, specify true.
     create_vpc = true
 
-    # TODO: To specify a VPC that already exists, configure the following settings for Lambda.
+    # CUSTOMIZE: To specify a VPC that already exists, configure the following settings for Lambda.
     # If var.common_lambda.vpc.is_enabled = true and var.common_lambda.vpc.create_vpc = false,
     # the Lambda will be built in an existing VPC by referencing the parameters here.
     exists = {
@@ -1507,7 +1507,7 @@ common_lambda = {
       ]
       security_group_id = "sg-xxxxxxxxxxxxxxxxx"
     }
-    # TODO: To specify a new VPC to be set up for Lambda, please set the following information.
+    # CUSTOMIZE: To specify a new VPC to be set up for Lambda, please set the following information.
     # If var.common_lambda.vpc.is_enabled = true and var.common_lambda.vpc.create_vpc = true,
     # a new VPC is built by referencing the parameters here.
     new = {
@@ -1565,7 +1565,7 @@ common_lambda = {
 # Configured with lifecycle policies, encryption, and versioning for compliance.
 #--------------------------------------------------------------
 common_log = {
-  # TODO: need to set elb_account_id for ELB access log.
+  # CUSTOMIZE: need to set elb_account_id for ELB access log.
   # Please specify the account ID for the target region of ELB. Refer to the following URL for the account ID.
   # https://docs.aws.amazon.com/ja_jp/elasticloadbalancing/latest/classic/enable-access-logs.html
   # elb account id is ap-northeast-1.
@@ -1590,7 +1590,7 @@ common_log = {
         prefix                                 = null
         expiration = [
           {
-            # TODO: need to change days. default 3years.
+            # CUSTOMIZE: need to change days. default 3years.
             # Adjust retention period based on your compliance requirements
             days                         = 1095
             expired_object_delete_marker = null
@@ -1632,7 +1632,7 @@ common_log = {
   #--------------------------------------------------------------
   s3_cloudtrail = {
     bucket = "aws-log-cloudtrail"
-    # TODO: need to change create_bucket for cloudtrail
+    # CUSTOMIZE: need to change create_bucket for cloudtrail
     create_bucket        = false
     attach_public_policy = true
     block_public_acls    = true
@@ -1647,7 +1647,7 @@ common_log = {
         prefix                                 = null
         expiration = [
           {
-            # TODO: need to change days. default 3years.
+            # CUSTOMIZE: need to change days. default 3years.
             # Adjust retention period based on your compliance requirements
             days                         = 1095
             expired_object_delete_marker = null
@@ -1691,7 +1691,7 @@ common_log = {
 # Notice: This option is automatically disabled if control_tower.managed_services.access_analyzer=true.
 #--------------------------------------------------------------
 security_access_analyzer = {
-  # TODO: need to set is_enabled for settings of Access Analyzer.
+  # CUSTOMIZE: need to set is_enabled for settings of Access Analyzer.
   is_enabled = true
   aws_accessanalyzer_analyzer = {
     analyzer_name = "aws-access-analyzer"
@@ -1706,7 +1706,7 @@ security_access_analyzer = {
 # Ensures that all query results are encrypted at rest using S3 server-side encryption.
 #--------------------------------------------------------------
 security_athena = {
-  # TODO: need to set is_enabled for settings of Athena.
+  # CUSTOMIZE: need to set is_enabled for settings of Athena.
   is_enabled = true
 }
 
@@ -1715,9 +1715,9 @@ security_athena = {
 # Notice: This option is automatically disabled if control_tower.managed_services.cloudtrail=true.
 #--------------------------------------------------------------
 security_cloudtrail = {
-  # TODO: need to set is_enabled for settings of CloudTrail.
+  # CUSTOMIZE: need to set is_enabled for settings of CloudTrail.
   is_enabled = true
-  # TODO: need to set is_s3_enabled for settings of New S3 Bucket.
+  # CUSTOMIZE: need to set is_s3_enabled for settings of New S3 Bucket.
   is_s3_enabled = false
   aws_iam_role = {
     description = ""
@@ -1777,7 +1777,7 @@ PATTERN
   #         prefix                                 = null
   #         expiration = [
   #           {
-  #             # TODO: need to change days. default 3years.
+  #             # CUSTOMIZE: need to change days. default 3years.
   #             # Adjust retention period based on your compliance requirements
   #             days                         = 1095
   #             expired_object_delete_marker = null
@@ -1874,9 +1874,9 @@ PATTERN
 # Notice: This option is automatically disabled if control_tower.managed_services.config=true.
 #--------------------------------------------------------------
 security_config = {
-  # TODO: need to set is_enabled for settings of AWS Config.
+  # CUSTOMIZE: need to set is_enabled for settings of AWS Config.
   is_enabled = true
-  # TODO: need to set is_s3_enabled for settings of New S3 Bucket.
+  # CUSTOMIZE: need to set is_s3_enabled for settings of New S3 Bucket.
   is_s3_enabled = false
   aws_config_configuration_recorder = {
     name = "aws-config-configuration-recorder"
@@ -1910,7 +1910,7 @@ security_config = {
   #         prefix                                 = null
   #         expiration = [
   #           {
-  #             # TODO: need to change days. default 3years.
+  #             # CUSTOMIZE: need to change days. default 3years.
   #             # Adjust retention period based on your compliance requirements
   #             days                         = 1095
   #             expired_object_delete_marker = null
@@ -1977,35 +1977,35 @@ security_config = {
       path        = "/"
     }
   }
-  # TODO: If you want to automatically remediation resources, please modify the following.
+  # CUSTOMIZE: If you want to automatically remediation resources, please modify the following.
   # AWS Config allows you to remediate noncompliant resources that are evaluated by AWS Config Rules. AWS Config applies remediation using AWS Systems Manager Automation documents.
   # https://docs.aws.amazon.com/config/latest/developerguide/remediation.html
   remediation = {
     ec2 = {
-      # TODO: If true, it will disable the default SSH and RDP ports that are open for all IP addresses.
+      # CUSTOMIZE: If true, it will disable the default SSH and RDP ports that are open for all IP addresses.
       is_disable_public_access_for_security_group = true
     }
     s3 = {
-      # TODO: If true, configures the Amazon Simple Storage Service (Amazon S3) public access block settings for an Amazon S3 bucket based on the values you specify.
+      # CUSTOMIZE: If true, configures the Amazon Simple Storage Service (Amazon S3) public access block settings for an Amazon S3 bucket based on the values you specify.
       is_configure_s3_bucket_public_access_block = true
       configure_s3_bucket_public_access_block = {
-        # TODO: If set to True, Amazon S3 blocks public access control lists (ACLs) for the S3 bucket, and objects stored in the S3 bucket you specify in the BucketName parameter.
+        # CUSTOMIZE: If set to True, Amazon S3 blocks public access control lists (ACLs) for the S3 bucket, and objects stored in the S3 bucket you specify in the BucketName parameter.
         block_public_acls = true
-        # TODO: If set to True, Amazon S3 blocks public bucket policies for the S3 bucket you specify in the BucketName parameter.
+        # CUSTOMIZE: If set to True, Amazon S3 blocks public bucket policies for the S3 bucket you specify in the BucketName parameter.
         block_public_policy = true
-        # TODO: If set to True, Amazon S3 ignores all public ACLs for the S3 bucket you specify in the BucketName parameter.
+        # CUSTOMIZE: If set to True, Amazon S3 ignores all public ACLs for the S3 bucket you specify in the BucketName parameter.
         ignore_public_acls = true
-        # TODO: If set to True, Amazon S3 restricts public bucket policies for the S3 bucket you specify in the BucketName parameter.
+        # CUSTOMIZE: If set to True, Amazon S3 restricts public bucket policies for the S3 bucket you specify in the BucketName parameter.
         restrict_public_buckets = true
       }
-      # TODO: If true, public read/write of the S3 bucket will be disabled.
+      # CUSTOMIZE: If true, public read/write of the S3 bucket will be disabled.
       is_disable_s3_bucket_public_read_write = true
-      # TODO: If true, Enable encryption for an Amazon Simple Storage Service (Amazon S3) bucket (encrypt the contents of the bucket).
+      # CUSTOMIZE: If true, Enable encryption for an Amazon Simple Storage Service (Amazon S3) bucket (encrypt the contents of the bucket).
       is_enabled_s3_bucket_encryption            = true
       enabled_s3_bucket_encryption_sse_algorithm = "AES256"
-      # TODO: If true, bucket policy statement that explicitly denies HTTP requests to the Amazon S3 bucket you specify.
+      # CUSTOMIZE: If true, bucket policy statement that explicitly denies HTTP requests to the Amazon S3 bucket you specify.
       is_restrict_bucket_ssl_requests_only = false
-      # TODO: If true, it will enable S3 bucket versioning.
+      # CUSTOMIZE: If true, it will enable S3 bucket versioning.
       is_configure_s3_bucket_versioning = true
     }
   }
@@ -2018,7 +2018,7 @@ security_config = {
 # Optionally creates VPC Endpoints to resolve Security Hub EC2.10 finding (costs ~$10/month per VPC).
 #--------------------------------------------------------------
 security_default_vpc = {
-  # TODO: need to set is_enabled for settings of default VPC security.
+  # CUSTOMIZE: need to set is_enabled for settings of default VPC security.
   is_enabled           = true
   is_enabled_flow_logs = true
   # A boolean flag to enable/disable VPC Endpoint for [EC2.10]. Defaults true."
@@ -2047,12 +2047,12 @@ security_default_vpc = {
 # implementation details.
 #--------------------------------------------------------------
 security_ebs = {
-  # TODO: need to set is_enabled for EBS security controls
+  # CUSTOMIZE: need to set is_enabled for EBS security controls
   is_enabled = true
 
-  # TODO: need to set is_enabled for enabling EBS encryption by default
+  # CUSTOMIZE: need to set is_enabled for enabling EBS encryption by default
   is_enabled_ebs_encryption_by_default = true
-  # TODO: need to set is_enabled for blocking public access to EBS snapshots
+  # CUSTOMIZE: need to set is_enabled for blocking public access to EBS snapshots
   is_enabled_ebs_public_snapshot_block_access = true
 }
 
@@ -2062,7 +2062,7 @@ security_ebs = {
 # Security Hub: EC2.8 - EC2 instances should use IMDSv2
 #--------------------------------------------------------------
 security_ec2_metadata = {
-  # TODO: need to set is_enabled for EC2 Instance Metadata security controls
+  # CUSTOMIZE: need to set is_enabled for EC2 Instance Metadata security controls
   is_enabled                  = true
   http_endpoint               = "enabled"
   http_put_response_hop_limit = 1
@@ -2075,7 +2075,7 @@ security_ec2_metadata = {
 # Migrates basic scan type to AWS native scanning technology.
 #--------------------------------------------------------------
 security_ecr = {
-  # TODO: need to set is_enabled for ECR account security controls
+  # CUSTOMIZE: need to set is_enabled for ECR account security controls
   is_enabled = true
 }
 
@@ -2087,10 +2087,10 @@ security_ecr = {
 # Notice: This option is automatically disabled if control_tower.managed_services.guardduty=true.
 #--------------------------------------------------------------
 security_guardduty = {
-  # TODO: need to set is_enabled for settings of GuardDuty. Even if GuardDuty is already set, it must be set to false.
+  # CUSTOMIZE: need to set is_enabled for settings of GuardDuty. Even if GuardDuty is already set, it must be set to false.
   is_enabled = true
   aws_guardduty_detector = {
-    # TODO: need to set enabled for settings of GuardDuty Detector.
+    # CUSTOMIZE: need to set enabled for settings of GuardDuty Detector.
     enable                       = true
     finding_publishing_frequency = "FIFTEEN_MINUTES"
   }
@@ -2105,7 +2105,7 @@ security_guardduty = {
 # Creates IAM role for AWS Support access as required by CIS benchmark 1.20.
 #--------------------------------------------------------------
 security_iam = {
-  # TODO: need to set is_enabled for settings of IAM security.
+  # CUSTOMIZE: need to set is_enabled for settings of IAM security.
   is_enabled = true
   aws_iam_account_password_policy = {
     allow_users_to_change_password = true
@@ -2118,7 +2118,7 @@ security_iam = {
     require_symbols                = true
     require_uppercase_characters   = true
   }
-  # TODO: need to set principal role arn for Support IAM Role.
+  # CUSTOMIZE: need to set principal role arn for Support IAM Role.
   # https://docs.aws.amazon.com/securityhub/latest/userguide/securityhub-cis-controls.html#cis-1.20-remediation
   support_iam_role_principal_arns = [
     # example)
@@ -2139,9 +2139,9 @@ security_iam = {
 # Notice: This option is automatically disabled if control_tower.managed_services.inspector2=true.
 #--------------------------------------------------------------
 security_inspector2 = {
-  # TODO: need to set is_enabled for settings of Inspector2.
+  # CUSTOMIZE: need to set is_enabled for settings of Inspector2.
   is_enabled = true
-  # TODO: need to set resource_types for settings of Inspector2.
+  # CUSTOMIZE: need to set resource_types for settings of Inspector2.
   # Valid values: EC2, ECR, LAMBDA, LAMBDA_CODE, CODE_REPOSITORY
   resource_types = ["EC2", "ECR", "LAMBDA", "LAMBDA_CODE"]
 }
@@ -2152,11 +2152,11 @@ security_inspector2 = {
 # Notice: This option is automatically disabled if control_tower.managed_services.macie=true.
 #--------------------------------------------------------------
 security_macie = {
-  # TODO: need to set is_enabled for settings of Macie.
+  # CUSTOMIZE: need to set is_enabled for settings of Macie.
   is_enabled = true
-  # TODO: need to set status for settings of Macie account.
+  # CUSTOMIZE: need to set status for settings of Macie account.
   status = "ENABLED"
-  # TODO: need to set finding_publishing_frequency for settings of Macie account.
+  # CUSTOMIZE: need to set finding_publishing_frequency for settings of Macie account.
   finding_publishing_frequency = "FIFTEEN_MINUTES"
   # Classification jobs for sensitive data discovery in S3 buckets.
   # Each job requires: name, job_type (ONE_TIME or SCHEDULED), and s3_job_definition.
@@ -2203,7 +2203,7 @@ security_macie = {
 # These settings apply to all buckets in the account unless explicitly overridden.
 #--------------------------------------------------------------
 security_s3 = {
-  # TODO: need to set is_enabled for settings of S3 security.
+  # CUSTOMIZE: need to set is_enabled for settings of S3 security.
   is_enabled = true
 
   # Manages S3 account-level Public Access Block configuration. For more information about these settings, see the AWS S3 Block Public Access documentation.
@@ -2221,11 +2221,11 @@ security_s3 = {
 # Notice: This option is automatically disabled if control_tower.managed_services.securityhub=true.
 #--------------------------------------------------------------
 security_securityhub = {
-  # TODO: need to set is_enabled for settings of SecurityHub.
+  # CUSTOMIZE: need to set is_enabled for settings of SecurityHub.
   is_enabled = true
   aws_securityhub_member = {
   }
-  # TODO: need to change product_subscription.
+  # CUSTOMIZE: need to change product_subscription.
   aws_securityhub_product_subscription = {
   }
   aws_securityhub_action_target = {
@@ -2242,7 +2242,7 @@ security_securityhub = {
 # Disables public sharing of SSM Automation documents to comply with SSM.7 control.
 #--------------------------------------------------------------
 security_ssm_automation = {
-  # TODO: need to set is_enabled for settings of SSM Automation.
+  # CUSTOMIZE: need to set is_enabled for settings of SSM Automation.
   is_enabled                = true
   cloudwatch_log_group_name = "/aws/ssm/automation/executeScript"
 }
