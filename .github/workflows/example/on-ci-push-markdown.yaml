@@ -13,6 +13,7 @@ on:
     paths:
       - "**/*.md"
       - "docs/**/*.md"
+      - ".markdown-link-check.json"
       - ".markdownlint-cli2.yaml"
   pull_request:
     branches:
@@ -25,6 +26,7 @@ on:
     paths:
       - "**/*.md"
       - "docs/**/*.md"
+      - ".markdown-link-check.json"
       - ".markdownlint-cli2.yaml"
 
 concurrency:
@@ -37,7 +39,7 @@ permissions:
 
 jobs:
   markdown-ci:
-    uses: y-miyazaki/config/.github/workflows/ci-markdown.yaml@f6417a973be4e65076f589738f1c7776e8fe9926 # v1.8.72
+    uses: y-miyazaki/config/.github/workflows/ci-markdown.yaml@c0501cf11737a931ff309d4079cebfaf796e7890 # v1.8.76
     permissions:
       contents: read
       pull-requests: write

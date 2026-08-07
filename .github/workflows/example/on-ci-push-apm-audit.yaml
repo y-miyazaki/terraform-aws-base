@@ -32,14 +32,17 @@ on:
       - "apm.yml"
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
+  group: ${{ github.workflow }}-${{ github.ref }}
 
 permissions:
   contents: read
 
 jobs:
   apm-audit:
-    uses: y-miyazaki/config/.github/workflows/ci-apm-audit.yaml@f6417a973be4e65076f589738f1c7776e8fe9926 # v1.8.72
+    uses: y-miyazaki/config/.github/workflows/ci-apm-audit.yaml@c0501cf11737a931ff309d4079cebfaf796e7890 # v1.8.76
+    with:
+      # Set true only when installed trees must match APM sources exactly.
+      check_drift: false
     permissions:
       contents: read

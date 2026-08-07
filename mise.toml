@@ -29,18 +29,18 @@ uvx = true # Install uv/uvx via pipx for better isolation and performance.
 
 [tools]
 # A Runtime tools
-aqua = "v2.62.1"
+aqua = "v2.62.2"
 node = "24.18.1"
-pnpm = { version = "11.17.0", depends = ["node"] }
+pnpm = { version = "11.18.0", depends = ["node"] }
 python = "3.14.6"
 
 # AI agent tools
 "github:microsoft/apm" = "v0.27.0"               # agent package manager
 claude = "2.1.220"                               # Claude Code CLI
 "github:DeusData/codebase-memory-mcp" = "v0.9.0" # codebase memory MCP server
-"aqua:github/copilot-cli" = "1.0.75"             # GitHub Copilot CLI
-"pipx:headroom-ai" = { version = "0.32.1", extras = "proxy,mcp,bedrock", depends = ["python"] }
-"npm:lean-ctx-bin" = { version = "3.9.12", depends = [
+"aqua:github/copilot-cli" = "1.0.77"             # GitHub Copilot CLI
+"pipx:headroom-ai" = { version = "0.33.0", extras = "proxy,mcp,bedrock", depends = ["python"] }
+"npm:lean-ctx-bin" = { version = "3.9.13", depends = [
   "node",
 ], allow_builds = [
   "lean-ctx-bin",
@@ -48,7 +48,7 @@ claude = "2.1.220"                               # Claude Code CLI
 "github:microsoft/waza" = "v0.38.4"               # agent skill evaluator
 
 # AWS related tools
-"aqua:aws/aws-cli" = "2.36.10"      # AWS CLI
+"aqua:aws/aws-cli" = "2.36.13"      # AWS CLI
 "aqua:aws/aws-sam-cli" = "1.164.0"  # SAM CLI tool
 "npm:awsp" = { version = "0.2.0", depends = [
   "node",
@@ -60,10 +60,10 @@ claude = "2.1.220"                               # Claude Code CLI
 # GitHub related tools
 "aqua:rhysd/actionlint" = "1.7.12"                                    # GitHub Actions linter
 "aqua:suzuki-shunsuke/disable-checkout-persist-credentials" = "1.0.0" # disable persist-credentials in checkout action
-"aqua:cli/cli" = "2.96.0"                                             # GitHub CLI (gh)
+"aqua:cli/cli" = "2.97.0"                                             # GitHub CLI (gh)
 "aqua:suzuki-shunsuke/ghalint" = "1.5.6"                              # GitHub Actions linter
 "aqua:suzuki-shunsuke/ghatm" = "1.0.0"                                # auto-set timeout-minutes for GitHub Actions jobs
-"aqua:suzuki-shunsuke/pinact" = "4.1.0"                               # GitHub Actions pinning tool
+"aqua:suzuki-shunsuke/pinact" = "4.1.1"                               # GitHub Actions pinning tool
 "aqua:zizmorcore/zizmor" = "1.28.0"                                   # GitHub Actions security auditor
 
 # Go related tools
@@ -88,7 +88,7 @@ claude = "2.1.220"                               # Claude Code CLI
 "npm:cspell" = { version = "10.0.1", depends = [
   "node",
 ], install_env = { NPM_CONFIG_IGNORE_SCRIPTS = "true" } } # spell checker
-"npm:markdown-link-check" = { version = "3.14.2", depends = [
+"npm:markdown-link-check" = { version = "3.15.0", depends = [
   "node",
 ], install_env = { NPM_CONFIG_IGNORE_SCRIPTS = "true" } } # Markdown link checker
 "npm:markdownlint-cli2" = { version = "0.23.2", depends = [
@@ -103,7 +103,7 @@ claude = "2.1.220"                               # Claude Code CLI
 "pipx:pre-commit" = { version = "4.6.1", depends = [
   "python",
 ] } # pre-commit framework
-"pipx:semgrep" = { version = "1.171.0", depends = ["python"] } # SAST scanner (uvx-backed pipx)
+"pipx:semgrep" = { version = "1.172.0", depends = ["python"] } # SAST scanner (uvx-backed pipx)
 "aqua:aquasecurity/trivy" = "0.72.0" # vulnerability scanner
 
 # Terraform related tools
@@ -117,8 +117,8 @@ claude = "2.1.220"                               # Claude Code CLI
 "pipx:mkdocs" = { version = "1.6.1", depends = ["python"], postinstall = "uv pip install --python $MISE_TOOL_INSTALL_PATH/mkdocs/bin/python mkdocs-material mdx-truly-sane-lists" } # MkDocs with Material theme
 "aqua:BurntSushi/ripgrep" = "15.2.0" # grep alternative (rg)
 "aqua:tamasfe/taplo" = "0.10.0"      # TOML formatter / LSP
-"aqua:jdx/usage" = "4.0.0"           # usage CLI tool for command help and completions
-"aqua:astral-sh/uv" = "0.11.33"      # uv/uvx
+"aqua:jdx/usage" = "4.1.0"           # usage CLI tool for command help and completions
+"aqua:astral-sh/uv" = "0.12.0"      # uv/uvx
 
 [tasks.mise-install]
 description = "Install tools defined in mise.toml"

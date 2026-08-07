@@ -1,0 +1,48 @@
+# CI workflow: Terraform lint on push/PR (no AWS credentials)
+# Copy to .github/workflows/on-ci-push-terraform.yaml in your repository.
+name: on-ci-push-terraform
+
+on:
+  push:
+    branches:
+      - "main"
+      - "master"
+      - "hotfix/**"
+      - "release/**"
+      - "develop"
+      - "feature/**"
+    paths:
+      - "**/*.tf"
+      - "**/.tflint.hcl"
+      - ".github/workflows/ci-terraform.yaml"
+      - ".github/workflows/on-ci-push-terraform.yaml"
+  pull_request:
+    branches:
+      - "main"
+      - "master"
+      - "hotfix/**"
+      - "release/**"
+      - "develop"
+      - "feature/**"
+    paths:
+      - "**/*.tf"
+      - "**/.tflint.hcl"
+      - ".github/workflows/ci-terraform.yaml"
+      - ".github/workflows/on-ci-push-terraform.yaml"
+
+concurrency:
+  cancel-in-progress: true
+  group: ${{ github.workflow }}-${{ github.ref }}
+
+permissions:
+  contents: read
+
+jobs:
+  terraform-ci:
+    uses: y-miyazaki/config/.github/workflows/ci-terraform.yaml@c0501cf11737a931ff309d4079cebfaf796e7890 # v1.8.76
+    with:
+      modules_path: modules
+      recursive: true
+      terraform_path: .
+    permissions:
+      contents: read

@@ -16,11 +16,11 @@ Operational constitution for AI-assisted development agents. Self-contained — 
 - After two failed attempts on the same approach: diagnose root cause and switch strategy; do not patch incrementally.
 - No placeholder implementations unless explicitly requested.
 - Test-first for code changes: write or update tests with sufficient cases before or alongside implementation; code modifications MUST include corresponding test additions or updates.
-- Run verification appropriate to scope; state what was not verified and why.
+- Prefer behavior and tests over re-running mechanical lint/format; state what was not verified and why.
 - MUST NOT weaken, remove, or bypass tests or validations solely to make checks pass.
 
 ## Completion (MUST state in final response)
 
 1. **Implementation:** Overview of changes made.
-2. **Verification:** Proof of verification performed (or explicit statement of inability).
+2. **Verification:** What was verified (behavior/tests), deferred, or unavailable — lint/format re-runs are not required proof.
 3. **Risks:** Assumptions made and residual risks.

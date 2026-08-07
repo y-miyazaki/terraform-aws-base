@@ -2,12 +2,12 @@
 
 # Tests for github-pr-body skill
 
-SH_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-
 setup() {
+    local skill_root
+    skill_root="$(cd "$(dirname "${BATS_TEST_FILENAME}")/../.." && pwd)"
     # shellcheck source=../../scripts/pr_body.sh
     # shellcheck disable=SC1091
-    source "${SH_DIR}/scripts/pr_body.sh"
+    source "${skill_root}/scripts/pr_body.sh"
 
     export PR_NUMBER="123"
     export REPOSITORY="octocat/Hello-World"

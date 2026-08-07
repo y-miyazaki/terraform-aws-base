@@ -1,10 +1,10 @@
-# Loop workflow: Documentation triage
+# Loop workflow: Documentation update
 # Detects doc-impacting changes, runs bounded Agent→Verify loop, then finalizes.
-# Design doc: docs/explanation/loop-engineering/workflows/loop-docs-triage-workflow-design.md
+# Design doc: docs/explanation/loop-engineering/workflows/loop-docs-updater-workflow-design.md
 # Caller inputs: docs/explanation/loop-engineering/workflows/loop-caller-inputs-reference.md
 # Requires repository secret: AGENT_TOKEN (engine API key; see engine input).
 # Pass credentials via secrets: (callee BOT_APP_* / AGENT_TOKEN; remap MAINTENANCE_BOT_*). Optional with.environment for env-scoped secrets inside the reusable.
-name: on-loop-docs-triage
+name: on-loop-docs-updater
 
 on:
   schedule:
@@ -24,7 +24,7 @@ concurrency:
 
 jobs:
   loop:
-    uses: y-miyazaki/config/.github/workflows/ci-loop-caller.yaml@f6417a973be4e65076f589738f1c7776e8fe9926 # v1.8.72
+    uses: y-miyazaki/config/.github/workflows/ci-loop-caller.yaml@c0501cf11737a931ff309d4079cebfaf796e7890 # v1.8.76
     with:
       agent_implementer_max_turns: 5
       agent_implementer_model: cursor-grok-4.5-low
@@ -36,9 +36,9 @@ jobs:
         1. Changes are limited to documentation files (docs/, README.md, mkdocs.yml nav)
         2. Content is factually consistent with the codebase
         3. No sensitive information is exposed
-        4. Changes address the documented triage items
+        4. Changes address the documented findings
         5. No duplicate documentation is introduced
-        6. Existing documentation structure is preserved unless explicitly required by triage items
+        6. Existing documentation structure is preserved unless findings explicitly require restructuring
 
         ## Criteria for REJECT
 
@@ -46,7 +46,7 @@ jobs:
         - Changes outside allowed documentation paths
         - Factual inaccuracies or hallucinated content
         - Sensitive data exposure
-        - Gratuitous changes not related to triage items
+        - Gratuitous changes not related to documented findings
         - Duplicate content that restates existing documentation
         - Unnecessary restructuring of document headings or sections
       agent_verifier_max_turns: 3
@@ -57,23 +57,24 @@ jobs:
       budget_max_runs_per_day: 1
       budget_max_tokens_per_day: 500000
       detect_domain_env_json: >-
-        {"DOCS_TRIAGE_DOC_GLOBS":"docs/**/*.md,README.md","DOCS_TRIAGE_EXTRA_FILES":"mkdocs.yml"}
-      detect_script: .agents/skills/loop-docs-triage/scripts/detect_changes.sh
+        {"DOCS_UPDATER_DOC_GLOBS":"docs/**/*.md,README.md","DOCS_UPDATER_EXTRA_FILES":"mkdocs.yml"}
+      detect_script: .agents/skills/docs-updater/scripts/detect_changes.sh
       engine: cursor
       environment: default
       delivery: open_pr
       infer_files_pattern: '[[:alnum:]_.-]+/[^[:space:],)]+\.(md|yml|yaml)'
-      loop_name: docs-triage
+      loop_name: docs-updater
       max_targets_per_schedule: 3
       may_edit: true
       no_changes_verdict: REJECT
       pr_body: ""
-      pr_title: "chore(docs-triage): automated documentation update (loop-docs-triage)"
+      pr_title: "chore(docs-updater): automated documentation update (loop-docs-updater)"
       prompt_instructions: |
-        Edit files directly to address the documented triage findings.
-        Prioritize factual consistency with the codebase and preserve existing documentation structure unless triage items require restructuring.
+        Run the docs-updater skill for loop findings.
+        Edit files directly to address the documented findings.
+        Prioritize factual consistency with the codebase and preserve existing documentation structure unless findings require restructuring.
       pr_enabled: false
-      skill_name: loop-docs-triage
+      skill_name: docs-updater
       write_target: fix
     secrets:
       AGENT_TOKEN: ${{ secrets.AGENT_TOKEN }}

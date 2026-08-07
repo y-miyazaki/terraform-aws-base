@@ -1,0 +1,89 @@
+# Loop workflow: Structural refactor (consumer example)
+# Copy of dogfood on-loop-refactor.yaml — adjust schedule, allowlist, and remote pin as needed.
+# Design doc: docs/explanation/loop-engineering/workflows/loop-refactor-workflow-design.md
+# Caller inputs: docs/explanation/loop-engineering/workflows/loop-caller-inputs-reference.md
+name: on-loop-refactor
+
+on:
+  schedule:
+    - cron: "0 10 * * 0"
+  workflow_dispatch: {}
+
+permissions:
+  actions: write
+  contents: write
+  copilot-requests: write # zizmor: ignore[excessive-permissions]
+  pull-requests: write
+
+concurrency:
+  cancel-in-progress: false
+  group: loop-state-main
+  queue: max
+
+jobs:
+  loop:
+    uses: y-miyazaki/config/.github/workflows/ci-loop-caller.yaml@c0501cf11737a931ff309d4079cebfaf796e7890 # v1.8.76
+    with:
+      agent_implementer_max_turns: 5
+      agent_implementer_model: cursor-grok-4.5-low
+      agent_loop_max_attempts: 3
+      agent_verifier_criteria: |
+        ## Criteria for APPROVE
+
+        ALL of the following must be true:
+        1. The implementer surveyed every detect hint in the detection result before applying fixes
+        2. Applied changes address all actionable candidates marked apply in the survey (local or same-package structural edits only)
+        3. No files outside the allowlist were modified
+        4. No denylist paths were touched
+        5. No cross-package redesign, GoF patterns, or public API semantics changes
+        6. No lint/style-only or architecture-improvement refactors
+        7. The implementer report lists validation commands run and their outcome
+        8. ### Changes and ### Deferred reconcile with the branch diff
+
+        ## Criteria for REJECT
+
+        ANY of the following triggers REJECT:
+        - Only the first hint was addressed while other actionable hints were ignored
+        - Cross-package moves, new design patterns, or deep-module redesign
+        - Architecture-improvement or proposal-only output with no safe local or same-package structural apply
+        - Lint-primary diffs (rename/quote/gofmt-only) not tied to a surveyed candidate
+        - Feature, behavior-changing, or dependency upgrade changes
+        - Modifications outside the allowlist
+        - Missing validation when the stack supports an existing gate
+        - Hallucinated paths, commands, or APIs not present in the repository
+        - A deferred path still appears in the branch diff, or a diff path is missing from ### Changes
+      agent_verifier_max_turns: 3
+      agent_verifier_model: composer-2.5
+      allowlist: ".apm/packages/**,scripts/**"
+      branch_match: main
+      branch_state: main
+      budget_max_runs_per_day: 1
+      budget_max_tokens_per_day: 500000
+      delivery: open_pr
+      detect_domain_env_json: >-
+        {"REFACTOR_DUP_MIN_LINES":"8","REFACTOR_OVERSIZED_FILE_LINES":"400","REFACTOR_SCAN_GLOBS":".apm/packages/**,scripts/**"}
+      detect_script: .agents/skills/refactor/scripts/detect_refactor.sh
+      engine: cursor
+      environment: default
+      infer_files_pattern: '[[:alnum:]_.-]+/[^[:space:],)]+\.(md|ya?ml|sh|go|toml|json)'
+      loop_name: refactor
+      max_targets_per_schedule: 1
+      may_edit: true
+      no_changes_verdict: REJECT
+      pr_body: ""
+      pr_title: "chore(refactor): structural improvement (loop-refactor)"
+      prompt_instructions: |
+        Run the refactor skill in apply mode for every mechanical hint (duplication_block or oversized_unit) in the detection result.
+        Phase A: survey all hints[] entries and emit ### Candidates with apply or watch disposition.
+        Phase B: apply every candidate marked apply — same-package scope cap; structural intent only; no architecture-improvement proposal path.
+        One technique per candidate; minimal structural diff within local or same-package scope per fix; revert and defer any candidate that fails its gate.
+        Re-run stack validation on all touched packages before finalize.
+        Stack validation (A'): shell-script-validation, go-validation, github-actions-validation, markdown-validation as applicable via ## Instructions.
+        Invoke named validation skills for touched stacks before finalize.
+      pr_enabled: false
+      skill_name: refactor
+      write_target: fix
+    secrets:
+      AGENT_TOKEN: ${{ secrets.AGENT_TOKEN }}
+      BOT_APP_CLIENT_ID: ${{ secrets.MAINTENANCE_BOT_APP_CLIENT_ID }}
+      BOT_APP_PRIVATE_KEY: ${{ secrets.MAINTENANCE_BOT_APP_PRIVATE_KEY }}
