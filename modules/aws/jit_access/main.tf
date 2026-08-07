@@ -25,7 +25,7 @@ locals {
 #--------------------------------------------------------------
 module "dynamodb_table_requests" {
   source  = "terraform-aws-modules/dynamodb-table/aws"
-  version = "5.5.0"
+  version = "5.5.1"
 
   region = local.region
 
