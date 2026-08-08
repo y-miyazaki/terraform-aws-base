@@ -3,7 +3,7 @@
 # Awesome Statusline - DEFAULT Mode
 # ============================================================================
 # Line 1: 🤖 Model | 🎨 Style | 📂 path 🌿(branch)✅
-# Line 2: 🧠 Context bar % | 5H bar % (time) | 7D bar % (day)
+# Line 2: 🧠 Context bar % (size) │ 🪙 Token In/Out │ 5H │ 7D
 # % numbers use gradient end color + Bold
 # ============================================================================
 # v2.1.1 - Updated from v2.1.0
@@ -22,6 +22,8 @@ MODEL=$(echo "$input" | jq -r '.model.display_name // "Unknown"')
 CURRENT_DIR=$(echo "$input" | jq -r '.workspace.current_dir // "."')
 CONTEXT_SIZE=$(echo "$input" | jq -r '.context_window.context_window_size // 200000')
 CURRENT_USAGE=$(echo "$input" | jq -r '.context_window.current_usage // null')
+TOTAL_INPUT_RAW=$(echo "$input" | jq -r '.context_window.total_input_tokens // empty')
+TOTAL_OUTPUT_RAW=$(echo "$input" | jq -r '.context_window.total_output_tokens // empty')
 OUTPUT_STYLE=$(echo "$input" | jq -r '.output_style.name // ""')
 
 # Rate limits (official API - available for Pro/Max subscribers)
@@ -47,6 +49,26 @@ C_YELLOW="\033[38;2;249;226;175m"
 C_OVERLAY="\033[38;2;108;112;134m"
 C_LATTE_GREEN="\033[38;2;64;160;43m"
 C_LATTE_YELLOW="\033[38;2;223;142;29m"
+C_TOKEN_IN="\033[38;2;137;180;250m"
+C_TOKEN_OUT="\033[38;2;250;179;135m"
+
+# ============================================================================
+# Helpers
+# ============================================================================
+format_compact_tokens() {
+    local n="${1:-}"
+    if [[ -z $n || $n == "null" ]]; then
+        printf '—'
+        return 0
+    fi
+    if (( n >= 1000000 )); then
+        printf '%d.%dM' $((n / 1000000)) $(((n % 1000000) / 100000))
+    elif (( n >= 1000 )); then
+        printf '%dK' $(((n + 500) / 1000))
+    else
+        printf '%d' "$n"
+    fi
+}
 
 # ============================================================================
 # Gradient Functions
@@ -208,7 +230,12 @@ fi
 
 CTX_BAR=$(generate_bar "$CONTEXT_PERCENT" 10 "context")
 CTX_END_COLOR=$(get_context_gradient_color "$CONTEXT_PERCENT")
-CTX_DISPLAY="🧠 ${C_PINK}Context${RESET} ${CTX_BAR} ${BOLD}\033[38;2;${CTX_END_COLOR}m${CONTEXT_PERCENT}%${RESET}"
+CTX_SIZE_LABEL=$(format_compact_tokens "$CONTEXT_SIZE")
+CTX_DISPLAY="🧠 ${C_PINK}Context${RESET} ${CTX_BAR} ${BOLD}\033[38;2;${CTX_END_COLOR}m${CONTEXT_PERCENT}%${RESET} ${C_SUBTEXT}(${CTX_SIZE_LABEL})${RESET}"
+
+TOKEN_IN=$(format_compact_tokens "$TOTAL_INPUT_RAW")
+TOKEN_OUT=$(format_compact_tokens "$TOTAL_OUTPUT_RAW")
+TOKEN_DISPLAY="🪙 ${C_SUBTEXT}Token${RESET} ${C_TOKEN_IN}In ${BOLD}${TOKEN_IN}${RESET} ${C_TOKEN_OUT}Out ${BOLD}${TOKEN_OUT}${RESET}"
 
 # Format 5H reset as "1h2m"
 format_time_remaining() {
@@ -262,7 +289,7 @@ if [[ -n $FIVE_HOUR_PCT ]]; then
     FIVE_DISPLAY="${C_LAVENDER}5H${RESET} ${FIVE_BAR} ${BOLD}\033[38;2;${FIVE_END_COLOR}m${FIVE_HOUR}%${RESET} (${FIVE_RESET_FMT})"
     SEVEN_DISPLAY="${C_YELLOW}7D${RESET} ${SEVEN_BAR} ${BOLD}\033[38;2;${SEVEN_END_COLOR}m${SEVEN_DAY}%${RESET} (${SEVEN_RESET_FMT})"
 
-    LINE2="${CTX_DISPLAY} │ ${FIVE_DISPLAY} │ ${SEVEN_DISPLAY}"
+    LINE2="${CTX_DISPLAY} │ ${TOKEN_DISPLAY} │ ${FIVE_DISPLAY} │ ${SEVEN_DISPLAY}"
 else
     FIVE_BAR=$(generate_bar 0 10 "5h")
     SEVEN_BAR=$(generate_bar 0 10 "7d")
@@ -270,7 +297,7 @@ else
     SEVEN_END_COLOR=$(get_usage_7d_gradient_color 0)
     FIVE_DISPLAY="${C_LAVENDER}5H${RESET} ${FIVE_BAR} ${BOLD}\033[38;2;${FIVE_END_COLOR}m0%${RESET}"
     SEVEN_DISPLAY="${C_YELLOW}7D${RESET} ${SEVEN_BAR} ${BOLD}\033[38;2;${SEVEN_END_COLOR}m0%${RESET}"
-    LINE2="${CTX_DISPLAY} │ ${FIVE_DISPLAY} │ ${SEVEN_DISPLAY} ${C_OVERLAY}(loading..)${RESET}"
+    LINE2="${CTX_DISPLAY} │ ${TOKEN_DISPLAY} │ ${FIVE_DISPLAY} │ ${SEVEN_DISPLAY} ${C_OVERLAY}(loading..)${RESET}"
 fi
 
 # ============================================================================
