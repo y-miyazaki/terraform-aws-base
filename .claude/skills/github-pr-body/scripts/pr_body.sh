@@ -81,7 +81,9 @@ function cleanup {
     done
 }
 
-trap cleanup EXIT
+if [[ ${BASH_SOURCE[0]} == "${0}" ]]; then
+    trap cleanup EXIT
+fi
 
 #######################################
 # show_usage: Display usage information

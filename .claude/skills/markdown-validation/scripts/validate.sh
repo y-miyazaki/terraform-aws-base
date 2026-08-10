@@ -282,12 +282,17 @@ function validate_markdown_files {
             check_details+=("no Markdown files found")
             echo "⊘ Markdown link validation skipped (no .md files found)"
         else
+            local -a mlc_config_args=()
+            if [[ -f .markdown-link-check.json ]]; then
+                mlc_config_args=(-c .markdown-link-check.json)
+            fi
+
             local file
             local link_failed=false
             local failing_file=""
             local failing_output=""
             for file in "${markdown_files[@]}"; do
-                if ! failing_output="$(markdown-link-check "${file}" 2>&1)"; then
+                if ! failing_output="$(markdown-link-check "${mlc_config_args[@]}" "${file}" 2>&1)"; then
                     link_failed=true
                     failing_file="${file}"
                     echo "${failing_output}"

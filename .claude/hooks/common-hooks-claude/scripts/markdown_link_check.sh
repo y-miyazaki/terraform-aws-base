@@ -308,12 +308,17 @@ function main {
         exit 0
     fi
 
+    local mlc_config_args=()
+    if [[ -f .markdown-link-check.json ]]; then
+        mlc_config_args=(-c .markdown-link-check.json)
+    fi
+
     local fails=0
     local output=""
     for file in "${files[@]}"; do
         [[ -n $file && -f $file ]] || continue
         local result
-        result=$(markdown-link-check "$file" 2>&1) || {
+        result=$(markdown-link-check "${mlc_config_args[@]}" "$file" 2>&1) || {
             fails=$((fails + 1))
             output+="${result}"$'\n'
         }
