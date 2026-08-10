@@ -3,8 +3,10 @@
 # Description: Detect mechanical structure hints for refactor automation (H1 only)
 #
 # Usage: ./detect_refactor.sh [--scope staged|all|range] [--since <ref>]
-#   --scope    Change detection scope (default: all for integration scan)
-#              range: limit scan to files changed in <since>..HEAD
+#   --scope    Cursor axis (default: all)
+#              all: enumerate eligible files, then REFACTOR_SCAN_GLOBS filter when set
+#              range: files changed in <since>..HEAD matching filter (--since required)
+#              staged: git diff --cached only intersect filter
 #   --since    Git ref for range scope (commit SHA from state cursor (when supplied))
 #
 # Output:
@@ -82,10 +84,10 @@ Description:
     Detect mechanical structure hints (duplication_block, oversized_unit) for refactor automation.
 
 Options:
-    --scope    Detection scope (default: all)
-               all: scan tracked files matching REFACTOR_SCAN_GLOBS
-               range: scan only files changed in <since>..HEAD matching globs
-               staged: git diff --cached only (parity with sibling detects)
+    --scope    Cursor axis (default: all)
+               all: enumerate eligible files, then REFACTOR_SCAN_GLOBS filter when set
+               range: files changed in <since>..HEAD matching filter (--since required)
+               staged: git diff --cached only intersect filter
     --since    Git ref for range scope (commit SHA from state cursor (when supplied))
 
 Examples:
@@ -463,7 +465,7 @@ function find_duplication_blocks {
             }
             buf_count++
             buf[buf_count] = line
-            phys_line[buf_count] = NR
+            phys_line[buf_count] = FNR
             if (buf_count < min_lines) {
                 next
             }

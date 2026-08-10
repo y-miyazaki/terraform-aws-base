@@ -28,7 +28,7 @@ Field set emitted by this skill's detect script or an equivalent caller-supplied
 | Field           | Type    | Description                                            |
 | --------------- | ------- | ------------------------------------------------------ |
 | `status`        | string  | `ok` on success path                                   |
-| `scope`         | string  | Detect scope (`staged`, `all`, or `range`)             |
+| `scope`         | string  | `staged` (index / hook), `all` (full candidate-doc enumeration), or `range` (`--since`..HEAD) |
 | `since`         | string  | Range start ref when `scope` is `range` (may be empty) |
 | `commit_range`  | string  | Active revision range label                            |
 | `skip`          | boolean | When true, no documentation impact detected            |

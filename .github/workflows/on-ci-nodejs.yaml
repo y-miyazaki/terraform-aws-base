@@ -34,7 +34,7 @@ permissions:
 
 jobs:
   nodejs-ci:
-    uses: y-miyazaki/config/.github/workflows/ci-nodejs.yaml@c0501cf11737a931ff309d4079cebfaf796e7890 # v1.8.76
+    uses: y-miyazaki/config/.github/workflows/ci-nodejs.yaml@06f84d98a415f02750132aada0da639380d8b125 # v1.8.77
     with:
       search_paths: nodejs
     permissions:

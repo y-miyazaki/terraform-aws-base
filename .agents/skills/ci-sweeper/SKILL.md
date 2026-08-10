@@ -42,6 +42,7 @@ Triage report per [common-output-format.md](references/common-output-format.md).
 - [common-checklist.md](references/common-checklist.md) (always read)
 - [common-output-format.md](references/common-output-format.md) (always read)
 - [category-scope.md](references/category-scope.md) (always read)
+- [category-detect-scope.md](references/category-detect-scope.md) (read on interactive path)
 - [category-input-schema.md](references/category-input-schema.md) (read when detect JSON is present or the optional detect script is run)
 - [category-run-ledger.md](references/category-run-ledger.md) (read when ignored[] is non-empty)
 - [category-automation-envelope.md](references/category-automation-envelope.md) (read on automation path)
@@ -60,7 +61,7 @@ Resolve **may_edit** before classifying failures:
 
 When `may_edit` is `true`, resolve `write_target`: on the **interactive** path use `fix` (this skill); on the **automation** path read `write_target` from `## Constraints`. Do not branch on other caller metadata outside `## Constraints`.
 
-1. Resolve scope ([category-scope.md](references/category-scope.md)). Parse detect JSON when present; otherwise run this skill's optional detect script when helpful, or gather failures from the user request and available CI/log context. Load [category-input-schema.md](references/category-input-schema.md) when parsing detect output. On detect script non-zero exit, read stdout and stop.
+1. Resolve scope ([category-scope.md](references/category-scope.md)). Parse detect JSON when present; otherwise resolve the detect universe from the prompt ([category-detect-scope.md](references/category-detect-scope.md)), run this skill's optional detect script with the resolved `--scope` (default `all`), then Agent-complement beyond mechanical output; if tools for detect are unavailable, gather failures from the user request and available CI/log context instead of silent no-op. Load [category-input-schema.md](references/category-input-schema.md) when parsing detect output. On detect script non-zero exit, read stdout and stop.
 2. On the automation path, read [category-automation-envelope.md](references/category-automation-envelope.md) for Constraints, PR templates, and Session Metrics.
 3. IF detect reports `skip` OR no actionable failures after gathering → emit survey no-op; on automation path append `## Session Metrics` per [category-automation-envelope.md](references/category-automation-envelope.md); stop.
 4. Classify every failure per [common-checklist.md](references/common-checklist.md). Note `ignored[]` in Overview when non-empty.

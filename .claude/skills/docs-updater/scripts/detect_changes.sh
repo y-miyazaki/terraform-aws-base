@@ -3,9 +3,9 @@
 # Description: Detect code changes and identify candidate documentation files
 #
 # Usage: ./detect_changes.sh [--scope staged|all|range] [--since <ref>]
-#   --scope    Change detection scope (default: staged for hooks/manual)
+#   --scope    Cursor axis (default: staged for hooks/manual)
 #              staged: git diff --cached only
-#              all: git diff HEAD + untracked files
+#              all: enumerate all candidate documentation paths (DOC_GLOBS or default markdown discovery)
 #              range: git diff <ref>..HEAD (requires --since)
 #   --since    Git ref for range scope (commit SHA from state cursor (when supplied))
 #
@@ -87,9 +87,9 @@ Description:
     Detect code changes and identify candidate documentation files.
 
 Options:
-    --scope    Change detection scope (default: staged)
+    --scope    Cursor axis (default: staged)
                staged: git diff --cached only
-               all: git diff HEAD + untracked files
+               all: enumerate all candidate documentation paths (not working-tree diff)
                range: git diff <ref>..HEAD (requires --since)
     --since    Git ref for range scope (commit SHA from state cursor (when supplied))
 
@@ -347,6 +347,38 @@ function append_docs_for_hook_path {
 }
 
 #######################################
+# collect_all_candidate_docs: Enumerate candidate docs for --scope all
+#
+# Globals:
+#   AFFECTED_DOCS - Output array of candidate document paths
+#   DOCS_UPDATER_DOC_GLOBS - Comma-separated glob patterns (caller env)
+#
+# Arguments:
+#   None
+#
+# Outputs:
+#   None
+#
+# Returns:
+#   None
+#
+# Usage:
+#   collect_all_candidate_docs
+#
+#######################################
+function collect_all_candidate_docs {
+    AFFECTED_DOCS=()
+    if [[ -n ${DOCS_UPDATER_DOC_GLOBS:-} ]]; then
+        append_docs_from_globs "${DOCS_UPDATER_DOC_GLOBS}"
+        append_docs_from_extra_files
+    else
+        append_docs_from_find
+        append_docs_from_extra_files
+        append_unique_doc "${DOCS_UPDATER_SITE_CONFIG}"
+    fi
+}
+
+#######################################
 # collect_affected_docs: Collect candidate documentation files
 #
 # When non-markdown changes or markdown deletes/renames exist, populate
@@ -419,7 +451,7 @@ function collect_affected_docs {
     elif [[ -n ${DOCS_UPDATER_EXTRA_FILES:-} ]]; then
         append_docs_from_find
         append_docs_from_extra_files
-    elif [[ ${SCOPE} == "staged" || ${SCOPE} == "all" ]]; then
+    elif [[ ${SCOPE} == "staged" ]]; then
         append_docs_for_hook_path
     elif [[ ${DOCS_UPDATER_DOCS_ROOT} != "docs" || ${DOCS_UPDATER_SITE_CONFIG} != "mkdocs.yml" ]]; then
         append_docs_for_hook_path
@@ -473,7 +505,7 @@ function collect_changes {
                 use_head="true"
             fi
         else
-            use_head="true"
+            output_error "--scope must be staged, all, or range"
         fi
 
         diff_ref="--cached"
@@ -499,12 +531,6 @@ function collect_changes {
         fi
     done
 
-    # Include untracked files only for 'all' scope (not range)
-    if [[ ${SCOPE} == "all" ]]; then
-        local untracked
-        mapfile -t untracked < <(git ls-files --others --exclude-standard 2> /dev/null | repo_filter_paths || true)
-        CHANGED_FILES+=("${untracked[@]}")
-    fi
 }
 
 #######################################
@@ -707,8 +733,16 @@ function main {
     ensure_dependencies bash git jq
     configure_detect_environment
     parse_arguments "$@"
-    collect_changes
-    collect_affected_docs
+    if [[ ${SCOPE} == "all" ]]; then
+        COMMIT_RANGE="all"
+        CHANGED_FILES=()
+        DELETED_FILES=()
+        RENAMED_FILES=()
+        collect_all_candidate_docs
+    else
+        collect_changes
+        collect_affected_docs
+    fi
     output_json
 }
 

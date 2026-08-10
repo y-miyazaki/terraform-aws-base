@@ -31,7 +31,7 @@ uvx = true # Install uv/uvx via pipx for better isolation and performance.
 # A Runtime tools
 aqua = "v2.62.2"
 node = "24.18.1"
-pnpm = { version = "11.18.0", depends = ["node"] }
+pnpm = { version = "11.19.0", depends = ["node"] }
 python = "3.14.6"
 
 # AI agent tools
@@ -48,8 +48,8 @@ claude = "2.1.220"                               # Claude Code CLI
 "github:microsoft/waza" = "v0.38.4"               # agent skill evaluator
 
 # AWS related tools
-"aqua:aws/aws-cli" = "2.36.13"      # AWS CLI
-"aqua:aws/aws-sam-cli" = "1.164.0"  # SAM CLI tool
+"aqua:aws/aws-cli" = "2.36.14"      # AWS CLI
+"aqua:aws/aws-sam-cli" = "1.165.0"  # SAM CLI tool
 "npm:awsp" = { version = "0.2.0", depends = [
   "node",
 ], install_env = { NPM_CONFIG_IGNORE_SCRIPTS = "true" } } # AWS profile switcher
@@ -67,7 +67,7 @@ claude = "2.1.220"                               # Claude Code CLI
 "aqua:zizmorcore/zizmor" = "1.28.0"                                   # GitHub Actions security auditor
 
 # Go related tools
-"aqua:air-verse/air" = "1.67.3"                                           # live reload
+"aqua:air-verse/air" = "1.67.4"                                           # live reload
 "aqua:bufbuild/buf" = "1.72.0"                                            # protobuf linter and formatter
 "go:github.com/go-delve/delve/cmd/dlv" = "v1.27.0"                                          # debugger
 "aqua:mvdan/gofumpt" = "0.11.0"                                           # code formatter
@@ -82,7 +82,7 @@ claude = "2.1.220"                               # Claude Code CLI
 "aqua:protocolbuffers/protobuf-go/protoc-gen-go" = "1.36.11"              # protobuf code generator
 "aqua:grpc/grpc-go/protoc-gen-go-grpc" = "1.6.1"                          # gRPC code generator
 "aqua:swaggo/swag" = "1.16.6"                                             # API documentation generator
-"aqua:go-swagger/go-swagger" = "0.35.3"                                   # API documentation generator (swagger)
+"aqua:go-swagger/go-swagger" = "0.36.0"                                   # API documentation generator (swagger)
 
 # Lint / Formatter tools
 "npm:cspell" = { version = "10.0.1", depends = [
@@ -118,7 +118,7 @@ claude = "2.1.220"                               # Claude Code CLI
 "aqua:BurntSushi/ripgrep" = "15.2.0" # grep alternative (rg)
 "aqua:tamasfe/taplo" = "0.10.0"      # TOML formatter / LSP
 "aqua:jdx/usage" = "4.1.0"           # usage CLI tool for command help and completions
-"aqua:astral-sh/uv" = "0.12.0"      # uv/uvx
+"aqua:astral-sh/uv" = "0.12.1"      # uv/uvx
 
 [tasks.mise-install]
 description = "Install tools defined in mise.toml"

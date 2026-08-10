@@ -43,9 +43,10 @@ Refactor report per [common-output-format.md](references/common-output-format.md
 - [common-output-format.md](references/common-output-format.md) (always read)
 - [category-scope.md](references/category-scope.md) (always read)
 - [category-contract.md](references/category-contract.md) (always read)
+- [category-detect-scope.md](references/category-detect-scope.md) (read on interactive path)
 - [category-verification.md](references/category-verification.md) (always read — apply vs watch and Phase B gates)
 - [category-techniques.md](references/category-techniques.md) (read when may_edit is true)
-- [category-input-schema.md](references/category-input-schema.md) (read when structured mode JSON or automation detect JSON is present)
+- [category-input-schema.md](references/category-input-schema.md) (read when structured mode JSON, automation detect JSON, or the optional detect script is run)
 - [category-automation-envelope.md](references/category-automation-envelope.md) (read on automation path)
 - [common-output-format-automation.md](references/common-output-format-automation.md) (read on automation path)
 - [common-troubleshooting.md](references/common-troubleshooting.md) (read on failure)
@@ -95,10 +96,13 @@ Discover and classify only. Emit a final report from Phase A **only** when this 
 
 ### Interactive path
 
-1. Resolve `may_edit` (table above).
-2. Phase A (architecture without `approved_slice` stops inside Phase A step 3).
-3. `may_edit: false` or `write_target` ≠ `fix` → emit survey shape; stop.
-4. Else → Phase B; emit apply shape.
+1. Resolve `may_edit` (table above). Load [category-detect-scope.md](references/category-detect-scope.md).
+2. Resolve universe from the prompt (default = `REFACTOR_SCAN_GLOBS` / skill defaults). If the user named paths/globs, narrow the universe before detect.
+3. If detect JSON is absent, run `scripts/detect_refactor.sh` with the resolved scope (default `--scope all`; set `REFACTOR_SCAN_GLOBS` for a temporary universe). On non-zero exit or `status: "error"`, read stdout and stop.
+4. Phase A: classify every `hints[]` entry and Agent-complement structural candidates (read targets — SURVEY-03). Architecture without `approved_slice` stops inside Phase A step 3.
+5. Empty detect alone is not a no-op if complement found apply-worthy or watch-worthy work.
+6. `may_edit: false` or `write_target` ≠ `fix` → emit survey shape; stop.
+7. Else → Phase B; emit apply shape.
 
 ### Error Handling
 

@@ -3,8 +3,10 @@
 # Description: Detect failed CI workflow runs and emit structured findings for ci-sweeper automation
 #
 # Usage: ./detect_ci_failures.sh [--scope staged|all|range] [--since <ref>]
-#   --scope    Change detection scope (default: range)
-#              range: consider failures since <ref> (requires --since)
+#   --scope    Cursor axis (default: all)
+#              all: limit-bounded failure enumeration on the relevant branch
+#              range: failures related to <since> window (requires --since)
+#              staged: noop / deprecated (accepted for CLI parity)
 #   --since    Git ref for range scope (commit SHA from state cursor (when supplied))
 #
 # Output:
@@ -58,7 +60,7 @@ source "${SCRIPT_DIR}/lib/all.sh"
 #######################################
 # Global variables
 #######################################
-SCOPE="range"
+SCOPE="all"
 SINCE_REF=""
 
 declare -a FAILURES_JSON=()
@@ -91,15 +93,15 @@ Description:
     Detect failed CI workflow runs for ci-sweeper automation.
 
 Options:
-    --scope    Change detection scope (default: range)
-               staged: not used for CI detection (accepted for detect CLI parity)
-               all: scan recent failures on the checked-out branch (or CI_SWEEPER_HEAD_BRANCH)
-               range: consider failures since <ref> (requires --since)
+    --scope    Cursor axis (default: all)
+               all: limit-bounded failure enumeration on the relevant branch
+               range: failures related to <since> window (requires --since)
+               staged: noop / deprecated (accepted for CLI parity)
     --since    Git ref for range scope (commit SHA from state cursor (when supplied))
 
 Examples:
+    ./detect_ci_failures.sh
     ./detect_ci_failures.sh --scope range --since abc1234
-    ./detect_ci_failures.sh --scope all
 EOF
     exit 0
 }
@@ -1228,6 +1230,11 @@ function main {
     configure_detect_environment
     parse_arguments "$@"
     validate_ledger_file "${LEDGER_FILE}"
+
+    if [[ ${SCOPE} == "staged" ]]; then
+        output_json
+        return
+    fi
 
     if [[ -z ${GH_TOKEN:-} && -z ${GITHUB_TOKEN:-} ]]; then
         output_error "GH_TOKEN or GITHUB_TOKEN is required"

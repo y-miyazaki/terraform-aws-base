@@ -49,6 +49,7 @@ Tech-debt report per [common-output-format.md](references/common-output-format.m
 - [common-checklist.md](references/common-checklist.md) (always read)
 - [common-output-format.md](references/common-output-format.md) (always read)
 - [category-scope.md](references/category-scope.md) (always read)
+- [category-detect-scope.md](references/category-detect-scope.md) (read on interactive path)
 - [category-input-schema.md](references/category-input-schema.md) (read when detect JSON is present or the optional detect script is run)
 - [category-automation-envelope.md](references/category-automation-envelope.md) (read on automation path)
 - [common-troubleshooting.md](references/common-troubleshooting.md) (read on failure)
@@ -67,7 +68,7 @@ Resolve **may_edit** before classifying signals:
 
 When `may_edit` is `true`, resolve `write_target` and `report_file`: on the **interactive** path use `write_target: report` and `report_file` from detect JSON (`report_file` field) or the user request; on the **automation** path read both from `## Constraints`. Do not branch on other caller metadata outside `## Constraints`. Load [category-scope.md](references/category-scope.md) closed-set rules before any `report_file` write or fix.
 
-1. Resolve scope ([category-scope.md](references/category-scope.md)). Parse detect JSON when present; otherwise run this skill's optional detect script when helpful, or gather signals/hotspots from the user request and repository tools. Load [category-input-schema.md](references/category-input-schema.md) when parsing detect output. On detect script non-zero exit, read stdout and stop.
+1. Resolve scope ([category-scope.md](references/category-scope.md)). Parse detect JSON when present; otherwise resolve the detect universe from the prompt ([category-detect-scope.md](references/category-detect-scope.md)), run this skill's optional detect script with the resolved `--scope` (default `all`), then Agent-complement beyond mechanical output; if tools for detect are unavailable, gather signals/hotspots from the user request and repository tools instead of silent no-op. Load [category-input-schema.md](references/category-input-schema.md) when parsing detect output. On detect script non-zero exit, read stdout and stop.
 2. On the automation path, read [category-automation-envelope.md](references/category-automation-envelope.md) for Constraints, PR templates, and Session Metrics.
 3. Read `previous_report` when set. Compare per [common-checklist.md](references/common-checklist.md) EVID-02. IF detect reports `skip` OR both `signals` and `hotspots` are empty after gathering → emit survey no-op; on automation path append `## Session Metrics` per [category-automation-envelope.md](references/category-automation-envelope.md); stop.
 4. For each signal/hotspot, read ±30 lines (EVID-01). Classify per [category-debt-taxonomy.md](references/category-debt-taxonomy.md). Assign Delegate (CLASS-02).

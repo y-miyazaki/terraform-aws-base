@@ -28,9 +28,9 @@
         "vscode-icons-team.vscode-icons",
         "yzhang.markdown-all-in-one",
         // for AI
-        "automatalabs.copilot-mcp",
-        "github.copilot",
-        "github.copilot-chat",
+        // "automatalabs.copilot-mcp",
+        // "github.copilot",
+        // "github.copilot-chat",
         // for Shell Script environment
         "foxundermoon.shell-format",
         "timonwong.shellcheck",

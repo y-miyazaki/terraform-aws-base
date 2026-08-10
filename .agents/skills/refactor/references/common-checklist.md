@@ -22,7 +22,7 @@ Gate IDs are for agent self-check and Deferred/Watch reasons. Candidate identity
 ### SURVEY-01: Full in-scope discovery
 
 - [ ] Phase A runs **before** any file edit when `may_edit` is `true`; sole phase when `may_edit` is `false` or when architecture lacks `approved_slice`
-- [ ] Discover candidates in scope — automation: every `hints[]` entry; interactive structural: user paths or in-scope exploration; architecture Phase B: **only** the `approved_slice`
+- [ ] Discover candidates in scope — automation: every `hints[]` entry; interactive structural: run optional detect for the resolved universe then Agent-complement (user paths/symbols always read); architecture Phase B: **only** the `approved_slice`
 - [ ] Prefer structure-driven evidence (duplication, oversized unit, user-named symbol) — not lint/SAST smell scores
 - [ ] Zero structural candidates → Outcome `no-op`; stop (architecture proposal is not a no-op)
 - **PASS** if every in-scope hint/path/slice was considered

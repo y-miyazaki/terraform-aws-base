@@ -1,10 +1,11 @@
 ---
 name: docs-updater
 description: >-
-  Detect documentation drift and patch affected docs — via git diff (hooks, manual)
-  or structured detect JSON from an external caller. Keeps references, links, tables,
-  and nav entries accurate. Use when syncing docs after code changes, before PRs, on doc
-  sync requests, or when automation reports documentation drift. Default is survey
+  Detect documentation drift and patch affected docs — via candidate-doc survey
+  (Interactive), git diff (hooks), range cursor (automation), or structured detect
+  JSON from an external caller. Keeps references, links, tables, and nav entries
+  accurate. Use when syncing docs after code changes, before PRs, on doc sync
+  requests, or when automation reports documentation drift. Default is survey
   only; edit documentation files only when the user explicitly requests a fix or
   caller constraints allow edits. Not for new document creation, content
   authoring, or markdown linting.
@@ -18,7 +19,7 @@ metadata:
 
 ## Input
 
-- **Interactive / hook (required):** `scope` (`staged`, `all`, `range` with `--since`) — triage per [common-impact-map.md](references/common-impact-map.md); validate patches per [common-checklist.md](references/common-checklist.md)
+- **Interactive / hook (required):** resolve scope per [category-detect-scope.md](references/category-detect-scope.md) — Interactive free-form → `all` (full candidate docs); git hook → `staged`; automation cursor → `range` with `--since` — triage per [common-impact-map.md](references/common-impact-map.md); validate patches per [common-checklist.md](references/common-checklist.md)
 - **Automation (optional):** detect JSON in prompt — from a caller or optional skill detect script; not required for interactive runs. Load [category-input-schema.md](references/category-input-schema.md) and [category-automation-envelope.md](references/category-automation-envelope.md) on that path only
 
 Path allowlist, when present, arrives in `## Constraints`.
@@ -33,7 +34,7 @@ Target: root `*.md`, `docs/**/*.md`, nested `**/README.md` (excluding generated 
 
 ### USE FOR:
 
-- Update cross-references, tables, lists, and nav entries for changed paths
+- Survey candidate documentation for drift and sync opportunities (Interactive `all`); update cross-references, tables, lists, and nav entries for changed paths
 - Remove dead links; update paths for renames
 - Apply minimal documentation patches per [common-checklist.md](references/common-checklist.md) and [category-documentation-maintenance.md](references/category-documentation-maintenance.md)
 
@@ -51,6 +52,7 @@ Target: root `*.md`, `docs/**/*.md`, nested `**/README.md` (excluding generated 
 - [common-impact-map.md](references/common-impact-map.md) (read on interactive path)
 - [category-documentation-maintenance.md](references/category-documentation-maintenance.md) (read when deduplication or same-change sync applies)
 - [category-scope.md](references/category-scope.md) (always read)
+- [category-detect-scope.md](references/category-detect-scope.md) (read on interactive path)
 - [category-input-schema.md](references/category-input-schema.md) (read when detect JSON is present or the optional detect script is run)
 - [category-automation-envelope.md](references/category-automation-envelope.md) (read on automation path)
 - [common-output-format-automation.md](references/common-output-format-automation.md) (read on automation path)
@@ -69,7 +71,7 @@ Resolve whether to edit documentation files before patching:
 
 ### Interactive / hook path
 
-1. Resolve scope ([category-scope.md](references/category-scope.md)). Parse detect JSON when present; otherwise run this skill's optional detect script with `--scope <scope>` when helpful, or gather changed paths from git and the user request. On detect script non-zero exit, read stdout and stop.
+1. Resolve scope ([category-scope.md](references/category-scope.md)). Parse detect JSON when present; otherwise resolve the detect universe from the prompt ([category-detect-scope.md](references/category-detect-scope.md)), run this skill's optional detect script with the resolved `--scope` (default `all` for Interactive free-form; `staged` for git hook; `range` when the user named a SHA range), then Agent-complement beyond mechanical output; if tools for detect are unavailable, gather changed paths from git and the user request instead of silent no-op. On detect script non-zero exit, read stdout and stop.
 2. IF detect reports `skip` OR no documentation impact after gathering → report skip and exit.
 3. Triage affected docs per [common-impact-map.md](references/common-impact-map.md); grep before full read.
 4. IF edits are not requested → emit survey shape per [common-output-format.md](references/common-output-format.md); stop — do not edit documentation files or run `git add`.

@@ -3,10 +3,10 @@
 # Description: Detect technical debt signals and hotspots for tech-debt automation
 #
 # Usage: ./detect_tech_debt.sh [--scope staged|all|range] [--since <ref>]
-#   --scope    Detection scope (default: all)
-#              staged: not used for debt sensors (accepted for detect CLI parity)
-#              all: scan the full repository tree (default)
-#              range: accepted for detect CLI parity (requires --since)
+#   --scope    Cursor axis (default: all)
+#              all: full repository sensor pass
+#              range: accepted for CLI parity (requires --since); sensor narrowing per current implementation
+#              staged: noop / deprecated (accepted for CLI parity)
 #   --since    Git ref for range scope (commit SHA from state cursor (when supplied))
 #
 # Output:
@@ -96,10 +96,10 @@ Description:
     Detect technical debt signals and hotspots for the tech-debt skill.
 
 Options:
-    --scope    Detection scope (default: all)
-               staged: accepted for detect CLI parity (not used by sensors)
-               all: scan the full repository tree (default)
-               range: accepted for detect CLI parity (requires --since)
+    --scope    Cursor axis (default: all)
+               all: full repository sensor pass
+               range: accepted for CLI parity (requires --since)
+               staged: noop / deprecated (accepted for CLI parity)
     --since    Git ref for range scope (commit SHA from state cursor (when supplied))
 
 Examples:
@@ -479,6 +479,11 @@ function main {
     parse_arguments "$@"
     if ! git rev-parse --is-inside-work-tree > /dev/null 2>&1; then
         output_error "Not a git repository"
+    fi
+    if [[ ${SCOPE} == "staged" ]]; then
+        COMMIT_RANGE="staged"
+        output_json
+        return
     fi
     if [[ ${SCOPE} == "range" ]]; then
         COMMIT_RANGE="${SINCE_REF}..HEAD"

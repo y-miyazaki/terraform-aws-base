@@ -116,13 +116,38 @@ if command -v apm > /dev/null 2>&1; then
 fi
 
 #######################################
-# lean-ctx (APM owns workspace MCP; shell/hooks left to lean-ctx)
-# Same pin as .apm/packages/common MCP (npx lean-ctx-bin@…)
+# lean-ctx (after apm install — project MCP via APM, user MCP suppressed)
+#
+# Project MCP: APM → /workspace/.cursor/mcp.json (lean-ctx in common apm.yml).
+# User MCP (~/.cursor/mcp.json): suppress via setup.auto_update_mcp=false (GH #281).
+#   Global: ~/.config/lean-ctx/config.toml — pre-seed below before lean-ctx trust.
+#   Project: .lean-ctx.toml [setup] — override; lean-ctx trust applies trust-gated keys.
+# Shell/hooks: lean-ctx setup writes env/common/.bashrc (bind-mounted as ~/.bashrc).
+# Do not run: lean-ctx wrap cursor (re-adds user-scope ~/.cursor/mcp.json).
+# mise install only places lean-ctx-bin on PATH; it does not run lean-ctx setup.
 #######################################
-if command -v npx > /dev/null 2>&1; then
-    npx -y lean-ctx-bin@3.9.13 config set setup.auto_update_mcp false > /dev/null 2>&1 \
-        || echo "[warn] lean-ctx config set (auto_update_mcp) failed" >&2
-    npx -y lean-ctx-bin@3.9.13 trust || echo "[warn] lean-ctx trust failed" >&2
+if command -v lean-ctx > /dev/null 2>&1 || command -v npx > /dev/null 2>&1; then
+    mkdir -p "${HOME}/.config/lean-ctx"
+    if [ ! -f "${HOME}/.config/lean-ctx/config.toml" ]; then
+        cat > "${HOME}/.config/lean-ctx/config.toml" << 'EOF'
+[setup]
+auto_update_mcp = false
+auto_inject_rules = false
+auto_inject_skills = false
+EOF
+    elif ! grep -q 'auto_update_mcp' "${HOME}/.config/lean-ctx/config.toml" 2> /dev/null; then
+        printf '\n[setup]\nauto_update_mcp = false\nauto_inject_rules = false\nauto_inject_skills = false\n' \
+            >> "${HOME}/.config/lean-ctx/config.toml"
+    fi
+
+    (
+        cd "$repo_root"
+        if command -v lean-ctx > /dev/null 2>&1; then
+            lean-ctx trust || echo "[warn] lean-ctx trust failed" >&2
+        else
+            npx -y lean-ctx-bin@3.9.13 trust || echo "[warn] lean-ctx trust failed" >&2
+        fi
+    )
 fi
 
 #######################################

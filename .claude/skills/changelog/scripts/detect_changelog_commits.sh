@@ -4,9 +4,9 @@
 #   Detect unreleased changelog-worthy commits for changelog automation.
 #
 # Usage: ./detect_changelog_commits.sh [--scope all|range] [--since <ref>]
-#   --scope    Change detection scope (default: range for detect CLI)
-#              all: last CHANGELOG_MAX_COMMITS commits on HEAD (local debugging)
-#              range: git log <ref>..HEAD (requires --since; production path)
+#   --scope    Cursor axis (default: all)
+#              all: cap-bounded commits without since-cursor
+#              range: git log <ref>..HEAD (requires --since)
 #   --since    Git ref for range scope (commit SHA from state cursor (when supplied))
 #
 # Output:
@@ -52,7 +52,7 @@ source "${SCRIPT_DIR}/lib/all.sh"
 #######################################
 # Global variables
 #######################################
-SCOPE="range"
+SCOPE="all"
 SINCE_REF=""
 COMPARE_URL=""
 HEAD_SHA=""
@@ -90,14 +90,14 @@ Description:
     Detect unreleased changelog-worthy commits for changelog automation.
 
 Options:
-    --scope    Change detection scope (default: range)
-               all: last CHANGELOG_MAX_COMMITS commits on HEAD (debugging)
+    --scope    Cursor axis (default: all)
+               all: cap-bounded commits without since-cursor
                range: git log <ref>..HEAD (requires --since)
     --since    Git ref for range scope (commit SHA from state cursor (when supplied))
 
 Examples:
+    ./detect_changelog_commits.sh
     ./detect_changelog_commits.sh --scope range --since abc1234
-    ./detect_changelog_commits.sh --scope all
 EOF
     exit 0
 }
