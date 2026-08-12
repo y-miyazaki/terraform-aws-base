@@ -52,11 +52,19 @@ fi
 #
 #######################################
 function get_changed_files {
-    {
-        git diff --name-only --diff-filter=ACMR -- '*.md' 2> /dev/null || true
-        git diff --cached --name-only --diff-filter=ACMR -- '*.md' 2> /dev/null || true
-        git ls-files --others --exclude-standard -- '*.md' 2> /dev/null || true
-    } | awk 'NF' | sort -u
+    local path
+
+    while IFS= read -r path; do
+        [[ -z ${path} ]] && continue
+        [[ -f ${path} ]] || continue
+        printf '%s\n' "${path}"
+    done < <(
+        {
+            git diff --name-only --diff-filter=ACMR -- '*.md' 2> /dev/null || true
+            git diff --cached --name-only --diff-filter=ACMR -- '*.md' 2> /dev/null || true
+            git ls-files --others --exclude-standard -- '*.md' 2> /dev/null || true
+        } | awk 'NF' | sort -u
+    )
 }
 
 #######################################
@@ -82,6 +90,26 @@ function truncate_reason_text {
     else
         printf '%s' "$text"
     fi
+}
+#######################################
+# collapse_reason_for_cursor_display: Flatten multiline hook reasons for Cursor stop UI
+#
+# Globals:
+#   None
+#
+# Arguments:
+#   $1 - reason text
+#
+# Outputs:
+#   Single-line reason on stdout
+#
+# Returns:
+#   None
+#
+#######################################
+function collapse_reason_for_cursor_display {
+    local text="$1"
+    printf '%s' "$text" | tr '\n' ' ' | sed 's/[[:space:]]\+/ /g;s/^[[:space:]]*//;s/[[:space:]]*$//'
 }
 
 #######################################
@@ -200,6 +228,10 @@ function report_failure {
     fi
 
     # Step 2: Build response per agent spec (A-Z order)
+    if [[ $agent == "cursor" && $hook_event == "stop" ]]; then
+        reason=$(collapse_reason_for_cursor_display "$reason")
+    fi
+
     case "$agent" in
         antigravity)
             emit_json_with_reason "$reason" '{decision: "continue", reason: .}'

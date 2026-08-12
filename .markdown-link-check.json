@@ -1,0 +1,11 @@
+{
+  "aliveStatusCodes": [200, 206, 301, 302, 307, 308],
+  "retryCount": 5,
+  "retryOn429": true,
+  "timeout": "30s",
+  "ignorePatterns": [
+    {
+      "pattern": "^https://github\\.com/"
+    }
+  ]
+}

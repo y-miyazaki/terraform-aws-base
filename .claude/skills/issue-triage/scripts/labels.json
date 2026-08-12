@@ -1,0 +1,38 @@
+{
+  "needs-triage": {
+    "color": "ededed",
+    "description": "Issue needs triage classification or human review"
+  },
+  "bug": {
+    "color": "d73a4a",
+    "description": "Something is not working as expected"
+  },
+  "feature": {
+    "color": "a2eeef",
+    "description": "New capability or enhancement request"
+  },
+  "question": {
+    "color": "d876e3",
+    "description": "Further information is requested"
+  },
+  "documentation": {
+    "color": "0075ca",
+    "description": "Improvements or additions to documentation"
+  },
+  "triage:needs-info": {
+    "color": "fbca04",
+    "description": "Waiting for author or maintainer clarification"
+  },
+  "triage:ready": {
+    "color": "0e8a16",
+    "description": "Enough information for triage follow-up actions"
+  },
+  "autofix": {
+    "color": "5319e7",
+    "description": "Eligible for automated fix attempts"
+  },
+  "triage:failed": {
+    "color": "b60205",
+    "description": "Automated triage failed; human must clear before retry"
+  }
+}

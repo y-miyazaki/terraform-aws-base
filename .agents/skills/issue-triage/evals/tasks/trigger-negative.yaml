@@ -1,0 +1,30 @@
+id: issue-triage-trigger-negative-001
+name: issue-triage rejects autofix and PR requests
+description: >-
+  Validate opening PRs, repository_dispatch, and issue-autofix intake are out of scope
+  for issue-triage.
+tags:
+  - quality
+  - trigger-negative
+inputs:
+  prompt: >-
+    Use issue-triage. The user asks you to implement a fix and open a PR with Fixes #42,
+    or to fire repository_dispatch for issue-autofix — that is out of scope for this
+    skill. Explain the request is out of scope. Emit ## Overview and ## Deferred noting
+    issue-autofix is human-triggered later. Do not edit repository files or call
+    repository_dispatch.
+  context:
+    skip: false
+    issue_number: 42
+    title: "Login button returns 500 on submit"
+    body: "Please autofix this now."
+    labels:
+      - triage:ready
+      - autofix
+    event: labeled
+expected:
+  output_contains:
+    - out of scope
+    - Overview
+  outcomes:
+    - type: task_completed

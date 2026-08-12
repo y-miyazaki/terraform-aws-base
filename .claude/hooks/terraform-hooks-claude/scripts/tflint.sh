@@ -52,11 +52,19 @@ fi
 #
 #######################################
 function get_changed_dirs {
-    {
-        git diff --name-only --diff-filter=ACMR -- '*.tf' '*.tfvars' '*.hcl' 2> /dev/null || true
-        git diff --cached --name-only --diff-filter=ACMR -- '*.tf' '*.tfvars' '*.hcl' 2> /dev/null || true
-        git ls-files --others --exclude-standard -- '*.tf' '*.tfvars' '*.hcl' 2> /dev/null || true
-    } | awk 'NF' | xargs -I{} dirname {} | sort -u
+    local path
+
+    while IFS= read -r path; do
+        [[ -z ${path} ]] && continue
+        [[ -f ${path} ]] || continue
+        dirname "${path}"
+    done < <(
+        {
+            git diff --name-only --diff-filter=ACMR -- '*.tf' '*.tfvars' '*.hcl' 2> /dev/null || true
+            git diff --cached --name-only --diff-filter=ACMR -- '*.tf' '*.tfvars' '*.hcl' 2> /dev/null || true
+            git ls-files --others --exclude-standard -- '*.tf' '*.tfvars' '*.hcl' 2> /dev/null || true
+        } | awk 'NF' | sort -u
+    ) | sort -u
 }
 
 #######################################
@@ -82,6 +90,26 @@ function truncate_reason_text {
     else
         printf '%s' "$text"
     fi
+}
+#######################################
+# collapse_reason_for_cursor_display: Flatten multiline hook reasons for Cursor stop UI
+#
+# Globals:
+#   None
+#
+# Arguments:
+#   $1 - reason text
+#
+# Outputs:
+#   Single-line reason on stdout
+#
+# Returns:
+#   None
+#
+#######################################
+function collapse_reason_for_cursor_display {
+    local text="$1"
+    printf '%s' "$text" | tr '\n' ' ' | sed 's/[[:space:]]\+/ /g;s/^[[:space:]]*//;s/[[:space:]]*$//'
 }
 
 #######################################
@@ -192,6 +220,10 @@ function report_failure {
     fi
 
     # Step 2: Build response per agent spec (A-Z order)
+    if [[ $agent == "cursor" && $hook_event == "stop" ]]; then
+        reason=$(collapse_reason_for_cursor_display "$reason")
+    fi
+
     case "$agent" in
         antigravity)
             emit_json_with_reason "$reason" '{decision: "continue", reason: .}'

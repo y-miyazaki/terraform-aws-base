@@ -145,7 +145,7 @@ EOF
         if command -v lean-ctx > /dev/null 2>&1; then
             lean-ctx trust || echo "[warn] lean-ctx trust failed" >&2
         else
-            npx -y lean-ctx-bin@3.9.13 trust || echo "[warn] lean-ctx trust failed" >&2
+            npx -y lean-ctx-bin@3.9.17 trust || echo "[warn] lean-ctx trust failed" >&2
         fi
     )
 fi

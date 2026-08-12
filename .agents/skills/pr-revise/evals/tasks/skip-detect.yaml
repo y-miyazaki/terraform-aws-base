@@ -1,0 +1,22 @@
+id: pr-revise-skip-detect-001
+name: pr-revise exits cleanly when detect skips
+description: Validate pr-revise reports skip reason without pushing changes.
+tags:
+  - trigger
+  - negative
+inputs:
+  prompt: >-
+    Use pr-revise. Detect JSON has skip=true because the comment body is empty. Report the
+    skip reason in ## Overview. Do not edit files or push. Emit ## Summary noting skip.
+  context:
+    skip: true
+    pr_number: 55
+    mention: "@loop"
+    comment_body: ""
+    actor: human-reviewer
+expected:
+  output_contains:
+    - Overview
+    - skip
+  outcomes:
+    - type: task_completed

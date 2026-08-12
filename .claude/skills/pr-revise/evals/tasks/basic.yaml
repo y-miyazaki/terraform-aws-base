@@ -1,0 +1,26 @@
+id: pr-revise-contract-001
+name: pr-revise applies mention-gated feedback
+description: >-
+  Validate pr-revise emits apply shape when may_edit is true and mention is present.
+tags:
+  - quality
+  - output-contract
+inputs:
+  prompt: >-
+    Use pr-revise with may_edit true and write_target fix. Apply the human @loop feedback
+    from detect JSON for PR #55 in this mock eval (describe the revision only; do not edit
+    files on disk). Emit apply shape with ## Overview, ## Summary ### Changes, and ##
+    Verification per common-output-format.md.
+  context:
+    skip: false
+    pr_number: 55
+    mention: "@loop"
+    comment_body: "@loop please rename handleUser to handleUserProfile and add a unit test."
+    actor: human-reviewer
+expected:
+  output_contains:
+    - Overview
+    - Changes
+    - handleUserProfile
+  outcomes:
+    - type: task_completed

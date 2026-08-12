@@ -1,0 +1,23 @@
+id: pr-revise-trigger-negative-001
+name: pr-revise rejects mention-less and bot comments
+description: Validate pr-revise does not act without mention-gated human feedback.
+tags:
+  - quality
+  - trigger-negative
+inputs:
+  prompt: >-
+    Use pr-revise. Detect JSON has a bot comment without the configured mention — that is
+    out of scope. Explain the request is out of scope or skipped. Emit ## Overview and ##
+    Summary. Do not edit files.
+  context:
+    skip: true
+    pr_number: 55
+    mention: "@loop"
+    comment_body: "LGTM"
+    actor: github-actions[bot]
+expected:
+  output_contains:
+    - Overview
+    - skip
+  outcomes:
+    - type: task_completed

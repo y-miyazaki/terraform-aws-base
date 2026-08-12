@@ -1,0 +1,24 @@
+id: pr-revise-may-edit-false-001
+name: pr-revise survey when may_edit is false
+description: Validate may_edit false emits survey shape without file edits.
+tags:
+  - quality
+  - constraints
+inputs:
+  prompt: >-
+    Use pr-revise with automation constraints may_edit false. Survey PR #55 from detect
+    JSON. Emit survey shape with ## Overview, ## Summary ### Candidates, and note no edits
+    applied. Do not emit ## Verification or ### Changes. Do not edit files.
+  context:
+    skip: false
+    pr_number: 55
+    mention: "@loop"
+    comment_body: "@loop please rename handleUser to handleUserProfile and add a unit test."
+    actor: human-reviewer
+expected:
+  output_contains:
+    - Overview
+    - Candidates
+    - no edits applied
+  outcomes:
+    - type: task_completed

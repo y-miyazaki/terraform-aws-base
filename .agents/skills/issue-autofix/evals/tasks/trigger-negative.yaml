@@ -1,0 +1,25 @@
+id: issue-autofix-trigger-negative-001
+name: issue-autofix rejects repository_dispatch from agent
+description: Validate the Agent must not fire repository_dispatch for issue-autofix intake.
+tags:
+  - quality
+  - trigger-negative
+inputs:
+  prompt: >-
+    Use issue-autofix. The user asks you to call repository_dispatch or HTTP-dispatch
+    loop-issue-autofix yourself — that is out of scope for the Agent. Explain the request
+    is out of scope. Emit survey ## Overview and ## Summary. Do not edit files or call
+    repository_dispatch.
+  context:
+    skip: false
+    issue_number: 42
+    title: "Null pointer when user profile missing"
+    body: "Please dispatch autofix now."
+    labels:
+      - triage:ready
+expected:
+  output_contains:
+    - out of scope
+    - Overview
+  outcomes:
+    - type: task_completed

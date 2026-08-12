@@ -44,13 +44,21 @@ fi
 #
 #######################################
 function get_changed_files {
-    {
-        git diff --name-only --diff-filter=ACMR 2> /dev/null || true
-        git diff --cached --name-only --diff-filter=ACMR 2> /dev/null || true
-        git ls-files --others --exclude-standard 2> /dev/null || true
-    } | awk 'NF' \
-        | grep -v -E '^(\.agents/|\.cursor/|\.claude/|\.kiro/|\.vscode/|apm_modules/)' \
-        | sort -u
+    local path
+
+    while IFS= read -r path; do
+        [[ -z ${path} ]] && continue
+        [[ -f ${path} ]] || continue
+        printf '%s\n' "${path}"
+    done < <(
+        {
+            git diff --name-only --diff-filter=ACMR 2> /dev/null || true
+            git diff --cached --name-only --diff-filter=ACMR 2> /dev/null || true
+            git ls-files --others --exclude-standard 2> /dev/null || true
+        } | awk 'NF' \
+            | grep -v -E '^(\.agents/|\.cursor/|\.claude/|\.kiro/|\.vscode/|apm_modules/)' \
+            | sort -u
+    )
 }
 
 #######################################
@@ -76,6 +84,26 @@ function truncate_reason_text {
     else
         printf '%s' "$text"
     fi
+}
+#######################################
+# collapse_reason_for_cursor_display: Flatten multiline hook reasons for Cursor stop UI
+#
+# Globals:
+#   None
+#
+# Arguments:
+#   $1 - reason text
+#
+# Outputs:
+#   Single-line reason on stdout
+#
+# Returns:
+#   None
+#
+#######################################
+function collapse_reason_for_cursor_display {
+    local text="$1"
+    printf '%s' "$text" | tr '\n' ' ' | sed 's/[[:space:]]\+/ /g;s/^[[:space:]]*//;s/[[:space:]]*$//'
 }
 
 #######################################
@@ -159,6 +187,10 @@ function report_failure {
 
     if [[ -z $agent && -n ${GITHUB_COPILOT_API_TOKEN:-} ]]; then
         agent="copilot"
+    fi
+
+    if [[ $agent == "cursor" && $hook_event == "stop" ]]; then
+        reason=$(collapse_reason_for_cursor_display "$reason")
     fi
 
     case "$agent" in

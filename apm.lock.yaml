@@ -1,12 +1,12 @@
 lockfile_version: '1'
-generated_at: '2026-08-10T06:59:21.042942+00:00'
+generated_at: '2026-08-12T09:13:18.059644+00:00'
 apm_version: 0.27.0
 dependencies:
 - repo_url: y-miyazaki/config
   name: config-aws
   host: github.com
-  resolved_commit: 93f29ddb86b09e8c81f9e5e82b4c87446ffc17c6
-  resolved_ref: v1.8.78
+  resolved_commit: 6268b2323ae57994b488f2262a41302b273ff50e
+  resolved_ref: v1.8.79
   version: 1.0.0
   virtual_path: .apm/packages/aws
   is_virtual: true
@@ -16,8 +16,8 @@ dependencies:
 - repo_url: y-miyazaki/config
   name: config-common
   host: github.com
-  resolved_commit: 93f29ddb86b09e8c81f9e5e82b4c87446ffc17c6
-  resolved_ref: v1.8.78
+  resolved_commit: 6268b2323ae57994b488f2262a41302b273ff50e
+  resolved_ref: v1.8.79
   version: 1.0.0
   virtual_path: .apm/packages/common
   is_virtual: true
@@ -262,6 +262,54 @@ dependencies:
   - .agents/skills/instructions-review/references/common-checklist.md
   - .agents/skills/instructions-review/references/common-output-format.md
   - .agents/skills/instructions-review/references/common-troubleshooting.md
+  - .agents/skills/issue-autofix
+  - .agents/skills/issue-autofix/SKILL.md
+  - .agents/skills/issue-autofix/assets/pr-body-template-survey.md
+  - .agents/skills/issue-autofix/assets/pr-body-template.md
+  - .agents/skills/issue-autofix/eval.yaml
+  - .agents/skills/issue-autofix/evals/tasks/automation-production-constraints.yaml
+  - .agents/skills/issue-autofix/evals/tasks/basic.yaml
+  - .agents/skills/issue-autofix/evals/tasks/may-edit-false.yaml
+  - .agents/skills/issue-autofix/evals/tasks/skip-open-pr.yaml
+  - .agents/skills/issue-autofix/evals/tasks/trigger-negative.yaml
+  - .agents/skills/issue-autofix/references/category-automation-envelope.md
+  - .agents/skills/issue-autofix/references/category-pr-body-links.md
+  - .agents/skills/issue-autofix/references/common-checklist.md
+  - .agents/skills/issue-autofix/references/common-output-format.md
+  - .agents/skills/issue-autofix/scripts/detect_autofix.sh
+  - .agents/skills/issue-autofix/scripts/lib/all.sh
+  - .agents/skills/issue-autofix/scripts/lib/aws.sh
+  - .agents/skills/issue-autofix/scripts/lib/common.sh
+  - .agents/skills/issue-autofix/scripts/lib/csv.sh
+  - .agents/skills/issue-autofix/scripts/lib/json.sh
+  - .agents/skills/issue-autofix/scripts/lib/repo_paths.sh
+  - .agents/skills/issue-autofix/scripts/lib/terraform.sh
+  - .agents/skills/issue-autofix/scripts/lib/validation.sh
+  - .agents/skills/issue-triage
+  - .agents/skills/issue-triage/SKILL.md
+  - .agents/skills/issue-triage/eval.yaml
+  - .agents/skills/issue-triage/evals/tasks/basic.yaml
+  - .agents/skills/issue-triage/evals/tasks/classification.yaml
+  - .agents/skills/issue-triage/evals/tasks/may-edit-false.yaml
+  - .agents/skills/issue-triage/evals/tasks/noaction.yaml
+  - .agents/skills/issue-triage/evals/tasks/trigger-negative.yaml
+  - .agents/skills/issue-triage/references/category-fsm.md
+  - .agents/skills/issue-triage/references/category-prompt-rules.md
+  - .agents/skills/issue-triage/references/common-checklist.md
+  - .agents/skills/issue-triage/references/common-output-format.md
+  - .agents/skills/issue-triage/scripts/detect_issue.sh
+  - .agents/skills/issue-triage/scripts/hooks/README.md
+  - .agents/skills/issue-triage/scripts/hooks/on_detect_dispatch.sh
+  - .agents/skills/issue-triage/scripts/label_fsm.sh
+  - .agents/skills/issue-triage/scripts/labels.json
+  - .agents/skills/issue-triage/scripts/lib/all.sh
+  - .agents/skills/issue-triage/scripts/lib/aws.sh
+  - .agents/skills/issue-triage/scripts/lib/common.sh
+  - .agents/skills/issue-triage/scripts/lib/csv.sh
+  - .agents/skills/issue-triage/scripts/lib/json.sh
+  - .agents/skills/issue-triage/scripts/lib/repo_paths.sh
+  - .agents/skills/issue-triage/scripts/lib/terraform.sh
+  - .agents/skills/issue-triage/scripts/lib/validation.sh
   - .agents/skills/markdown-validation
   - .agents/skills/markdown-validation/SKILL.md
   - .agents/skills/markdown-validation/eval.yaml
@@ -283,6 +331,29 @@ dependencies:
   - .agents/skills/markdown-validation/scripts/lib/terraform.sh
   - .agents/skills/markdown-validation/scripts/lib/validation.sh
   - .agents/skills/markdown-validation/scripts/validate.sh
+  - .agents/skills/pr-revise
+  - .agents/skills/pr-revise/SKILL.md
+  - .agents/skills/pr-revise/assets/pr-body-template-survey.md
+  - .agents/skills/pr-revise/assets/pr-body-template.md
+  - .agents/skills/pr-revise/eval.yaml
+  - .agents/skills/pr-revise/evals/tasks/automation-production-constraints.yaml
+  - .agents/skills/pr-revise/evals/tasks/basic.yaml
+  - .agents/skills/pr-revise/evals/tasks/may-edit-false.yaml
+  - .agents/skills/pr-revise/evals/tasks/skip-detect.yaml
+  - .agents/skills/pr-revise/evals/tasks/trigger-negative.yaml
+  - .agents/skills/pr-revise/references/category-automation-envelope.md
+  - .agents/skills/pr-revise/references/category-pr-body-links.md
+  - .agents/skills/pr-revise/references/common-checklist.md
+  - .agents/skills/pr-revise/references/common-output-format.md
+  - .agents/skills/pr-revise/scripts/detect_pr_revise.sh
+  - .agents/skills/pr-revise/scripts/lib/all.sh
+  - .agents/skills/pr-revise/scripts/lib/aws.sh
+  - .agents/skills/pr-revise/scripts/lib/common.sh
+  - .agents/skills/pr-revise/scripts/lib/csv.sh
+  - .agents/skills/pr-revise/scripts/lib/json.sh
+  - .agents/skills/pr-revise/scripts/lib/repo_paths.sh
+  - .agents/skills/pr-revise/scripts/lib/terraform.sh
+  - .agents/skills/pr-revise/scripts/lib/validation.sh
   - .agents/skills/refactor
   - .agents/skills/refactor/SKILL.md
   - .agents/skills/refactor/assets/pr-body-template-survey.md
@@ -611,6 +682,54 @@ dependencies:
   - .claude/skills/instructions-review/references/common-checklist.md
   - .claude/skills/instructions-review/references/common-output-format.md
   - .claude/skills/instructions-review/references/common-troubleshooting.md
+  - .claude/skills/issue-autofix
+  - .claude/skills/issue-autofix/SKILL.md
+  - .claude/skills/issue-autofix/assets/pr-body-template-survey.md
+  - .claude/skills/issue-autofix/assets/pr-body-template.md
+  - .claude/skills/issue-autofix/eval.yaml
+  - .claude/skills/issue-autofix/evals/tasks/automation-production-constraints.yaml
+  - .claude/skills/issue-autofix/evals/tasks/basic.yaml
+  - .claude/skills/issue-autofix/evals/tasks/may-edit-false.yaml
+  - .claude/skills/issue-autofix/evals/tasks/skip-open-pr.yaml
+  - .claude/skills/issue-autofix/evals/tasks/trigger-negative.yaml
+  - .claude/skills/issue-autofix/references/category-automation-envelope.md
+  - .claude/skills/issue-autofix/references/category-pr-body-links.md
+  - .claude/skills/issue-autofix/references/common-checklist.md
+  - .claude/skills/issue-autofix/references/common-output-format.md
+  - .claude/skills/issue-autofix/scripts/detect_autofix.sh
+  - .claude/skills/issue-autofix/scripts/lib/all.sh
+  - .claude/skills/issue-autofix/scripts/lib/aws.sh
+  - .claude/skills/issue-autofix/scripts/lib/common.sh
+  - .claude/skills/issue-autofix/scripts/lib/csv.sh
+  - .claude/skills/issue-autofix/scripts/lib/json.sh
+  - .claude/skills/issue-autofix/scripts/lib/repo_paths.sh
+  - .claude/skills/issue-autofix/scripts/lib/terraform.sh
+  - .claude/skills/issue-autofix/scripts/lib/validation.sh
+  - .claude/skills/issue-triage
+  - .claude/skills/issue-triage/SKILL.md
+  - .claude/skills/issue-triage/eval.yaml
+  - .claude/skills/issue-triage/evals/tasks/basic.yaml
+  - .claude/skills/issue-triage/evals/tasks/classification.yaml
+  - .claude/skills/issue-triage/evals/tasks/may-edit-false.yaml
+  - .claude/skills/issue-triage/evals/tasks/noaction.yaml
+  - .claude/skills/issue-triage/evals/tasks/trigger-negative.yaml
+  - .claude/skills/issue-triage/references/category-fsm.md
+  - .claude/skills/issue-triage/references/category-prompt-rules.md
+  - .claude/skills/issue-triage/references/common-checklist.md
+  - .claude/skills/issue-triage/references/common-output-format.md
+  - .claude/skills/issue-triage/scripts/detect_issue.sh
+  - .claude/skills/issue-triage/scripts/hooks/README.md
+  - .claude/skills/issue-triage/scripts/hooks/on_detect_dispatch.sh
+  - .claude/skills/issue-triage/scripts/label_fsm.sh
+  - .claude/skills/issue-triage/scripts/labels.json
+  - .claude/skills/issue-triage/scripts/lib/all.sh
+  - .claude/skills/issue-triage/scripts/lib/aws.sh
+  - .claude/skills/issue-triage/scripts/lib/common.sh
+  - .claude/skills/issue-triage/scripts/lib/csv.sh
+  - .claude/skills/issue-triage/scripts/lib/json.sh
+  - .claude/skills/issue-triage/scripts/lib/repo_paths.sh
+  - .claude/skills/issue-triage/scripts/lib/terraform.sh
+  - .claude/skills/issue-triage/scripts/lib/validation.sh
   - .claude/skills/markdown-validation
   - .claude/skills/markdown-validation/SKILL.md
   - .claude/skills/markdown-validation/eval.yaml
@@ -632,6 +751,29 @@ dependencies:
   - .claude/skills/markdown-validation/scripts/lib/terraform.sh
   - .claude/skills/markdown-validation/scripts/lib/validation.sh
   - .claude/skills/markdown-validation/scripts/validate.sh
+  - .claude/skills/pr-revise
+  - .claude/skills/pr-revise/SKILL.md
+  - .claude/skills/pr-revise/assets/pr-body-template-survey.md
+  - .claude/skills/pr-revise/assets/pr-body-template.md
+  - .claude/skills/pr-revise/eval.yaml
+  - .claude/skills/pr-revise/evals/tasks/automation-production-constraints.yaml
+  - .claude/skills/pr-revise/evals/tasks/basic.yaml
+  - .claude/skills/pr-revise/evals/tasks/may-edit-false.yaml
+  - .claude/skills/pr-revise/evals/tasks/skip-detect.yaml
+  - .claude/skills/pr-revise/evals/tasks/trigger-negative.yaml
+  - .claude/skills/pr-revise/references/category-automation-envelope.md
+  - .claude/skills/pr-revise/references/category-pr-body-links.md
+  - .claude/skills/pr-revise/references/common-checklist.md
+  - .claude/skills/pr-revise/references/common-output-format.md
+  - .claude/skills/pr-revise/scripts/detect_pr_revise.sh
+  - .claude/skills/pr-revise/scripts/lib/all.sh
+  - .claude/skills/pr-revise/scripts/lib/aws.sh
+  - .claude/skills/pr-revise/scripts/lib/common.sh
+  - .claude/skills/pr-revise/scripts/lib/csv.sh
+  - .claude/skills/pr-revise/scripts/lib/json.sh
+  - .claude/skills/pr-revise/scripts/lib/repo_paths.sh
+  - .claude/skills/pr-revise/scripts/lib/terraform.sh
+  - .claude/skills/pr-revise/scripts/lib/validation.sh
   - .claude/skills/refactor
   - .claude/skills/refactor/SKILL.md
   - .claude/skills/refactor/assets/pr-body-template-survey.md
@@ -952,6 +1094,52 @@ dependencies:
     .agents/skills/instructions-review/references/common-checklist.md: sha256:7496b0e41515a152dcd867afedba0dd4f6bfa4efc3f1f593a7a7da95c9b2b4fb
     .agents/skills/instructions-review/references/common-output-format.md: sha256:fcbaadf9e13b5cd6a9b8e891b6168406c4de17237d4038d39ebeeb4811be8987
     .agents/skills/instructions-review/references/common-troubleshooting.md: sha256:8503ca9408390cb4a9d0c734dc544c377ce95b2fd3c9683004a63a947413eb74
+    .agents/skills/issue-autofix/SKILL.md: sha256:dd907bd0c9b27c6e023e3bb6c74457ce7e32ca9c3d6546a96f8c771663bae82f
+    .agents/skills/issue-autofix/assets/pr-body-template-survey.md: sha256:fc7fcdcfc448f22daa51c46475f4fa119fc7dd76efc169b1efdde6ccf26cc9b0
+    .agents/skills/issue-autofix/assets/pr-body-template.md: sha256:985a405316c869e250ba940a273446de0b344874d653c32da14d5b3568a8a8c4
+    .agents/skills/issue-autofix/eval.yaml: sha256:2f56cfce13935d57c0f96e0c7b9bde1618282c05adf29074d0579ecdf7fbde8e
+    .agents/skills/issue-autofix/evals/tasks/automation-production-constraints.yaml: sha256:2089d58908b96f97c940d0f1f09e5c763394ec1fdb797e53b3ac2f96f50f0d25
+    .agents/skills/issue-autofix/evals/tasks/basic.yaml: sha256:0327d229537ec7cd6c5ab7ffaf58d84408145edf0fbb4b4c13ba90d8cd6b2107
+    .agents/skills/issue-autofix/evals/tasks/may-edit-false.yaml: sha256:b40dd0a9fdb4b2801da17fe5bd63f5676a65ee0977a7364a99a8e186b3b5a966
+    .agents/skills/issue-autofix/evals/tasks/skip-open-pr.yaml: sha256:41b5ffa4bed18fcc98dd2f5d1629aa48eef95b268b72c2d7619084d7d7b33b45
+    .agents/skills/issue-autofix/evals/tasks/trigger-negative.yaml: sha256:4656257658698eb4cb72ad52a2c88e8f5dfd3ed1ace31ab3faa0b52ae81b6b8c
+    .agents/skills/issue-autofix/references/category-automation-envelope.md: sha256:bff1b2ddd1d4c4c5c4fd49c369f6aff8faa865dd3d3e0d0b7f41af8b257463fd
+    .agents/skills/issue-autofix/references/category-pr-body-links.md: sha256:05215504edae18534ceafedc76216ea083853fc8775178fea6e1172e2564bd73
+    .agents/skills/issue-autofix/references/common-checklist.md: sha256:5931bb939e9142c05585c48c66924c84c231c836581dcab3b19ab9233a3e0d56
+    .agents/skills/issue-autofix/references/common-output-format.md: sha256:b9865437df37b2d0f457d39a166f16d9173d1d8bcad7b423486290bb56fad187
+    .agents/skills/issue-autofix/scripts/detect_autofix.sh: sha256:f5e6ff237e373caa60c618cb41a34172b0444f18f861d61d071dee6c51a2d781
+    .agents/skills/issue-autofix/scripts/lib/all.sh: sha256:dc9b27d00ff0b37be6f5c986a59a8107f59a83bede4de5818e453a38ae51f216
+    .agents/skills/issue-autofix/scripts/lib/aws.sh: sha256:8040932c1176ff8f6f011586844cee9a07fa725b90de6c5b007d5cecf7f2d67a
+    .agents/skills/issue-autofix/scripts/lib/common.sh: sha256:26dded5e470bfa13c48f3816b58def268413042de385a468ee851f6f578bceda
+    .agents/skills/issue-autofix/scripts/lib/csv.sh: sha256:f9cddbbcba29d3b3baebbe45ad9cd1c9b015ff8342c01f55a4361f3154a0cf49
+    .agents/skills/issue-autofix/scripts/lib/json.sh: sha256:4a865c119ac68f6635c4e9301b497d78794dc0e890df9fc214976cd8d77a1a7b
+    .agents/skills/issue-autofix/scripts/lib/repo_paths.sh: sha256:4175492cd08671457c500eb2fa5880cb170a5e285379f3cec3219be935d6b3b7
+    .agents/skills/issue-autofix/scripts/lib/terraform.sh: sha256:19d9b56a4346d68a4656ccfe61c64b8638c86ffdc02b830a7cdd84be7449551d
+    .agents/skills/issue-autofix/scripts/lib/validation.sh: sha256:ec9bd6f765f43bb03ebb43771d262e0a9768d0bb92e855249c3f87b653b3cdb1
+    .agents/skills/issue-triage/SKILL.md: sha256:6efce4555bcac4741cc29308d74f4d5bc28eccc09bc3be3eb0e4856841eaa8cd
+    .agents/skills/issue-triage/eval.yaml: sha256:f76b9f3d0bd249ee3ad97eec9d2ae7c10af22585f6f1089d5c9dd2010cae770a
+    .agents/skills/issue-triage/evals/tasks/basic.yaml: sha256:047e2e5439a24fe6f7d380f1abc045df57dbbc40274e32f357b488f7796b1b5e
+    .agents/skills/issue-triage/evals/tasks/classification.yaml: sha256:543482d079d1d2a500e0c88697db969f736d656e1c599b5f6d2a7a4d7d39c8c8
+    .agents/skills/issue-triage/evals/tasks/may-edit-false.yaml: sha256:b36da307a9f66d28b3688e4117b6f4964fdde3cbaaa088a83bd125e170475c3f
+    .agents/skills/issue-triage/evals/tasks/noaction.yaml: sha256:8202700a3e47cc52894b4aa26b03dfe24e614293c5227edaa524ed5cbd6d814e
+    .agents/skills/issue-triage/evals/tasks/trigger-negative.yaml: sha256:945a495fae8dd8ff97e3ff5071d4feef686ce1810b432797ccc0760790850eee
+    .agents/skills/issue-triage/references/category-fsm.md: sha256:ffa4d12415ec0039706653f61421a97fa2e6908386b9c5b472e813ba6ee47bb0
+    .agents/skills/issue-triage/references/category-prompt-rules.md: sha256:e67df6a93425ad01790db46aa36a222c9e8757b8e67409068bd9a278bdaa49c7
+    .agents/skills/issue-triage/references/common-checklist.md: sha256:6ecb6f76fa17b16b25bf17540ae25e6c8c1b6646959ed1785e8588a8a0d26308
+    .agents/skills/issue-triage/references/common-output-format.md: sha256:e7417fc53325ed69c4b7885e1b9569dc1e7d923b76178d19c567b6900325e774
+    .agents/skills/issue-triage/scripts/detect_issue.sh: sha256:40cf4c0dea9e8db14bcf2dd9dbfb4f12652e17bd26cec118b667c3656cbd83d4
+    .agents/skills/issue-triage/scripts/hooks/README.md: sha256:e625aa7ad73242a58f621c8beaa8c60dba3969f516f2151680c14ec689e74499
+    .agents/skills/issue-triage/scripts/hooks/on_detect_dispatch.sh: sha256:430cec6f1ff59e9579f7a88838807557499eabfeb42b44b57b663a10c4021874
+    .agents/skills/issue-triage/scripts/label_fsm.sh: sha256:07668d65c5512e4cc3b6636c5b3a9e51ae64f71c23ef4f6bef3b379daaac65d2
+    .agents/skills/issue-triage/scripts/labels.json: sha256:df7a567b6b08ca04392680d2cea769847401123dc3d3591a1dc28de5e53d4910
+    .agents/skills/issue-triage/scripts/lib/all.sh: sha256:dc9b27d00ff0b37be6f5c986a59a8107f59a83bede4de5818e453a38ae51f216
+    .agents/skills/issue-triage/scripts/lib/aws.sh: sha256:8040932c1176ff8f6f011586844cee9a07fa725b90de6c5b007d5cecf7f2d67a
+    .agents/skills/issue-triage/scripts/lib/common.sh: sha256:26dded5e470bfa13c48f3816b58def268413042de385a468ee851f6f578bceda
+    .agents/skills/issue-triage/scripts/lib/csv.sh: sha256:f9cddbbcba29d3b3baebbe45ad9cd1c9b015ff8342c01f55a4361f3154a0cf49
+    .agents/skills/issue-triage/scripts/lib/json.sh: sha256:4a865c119ac68f6635c4e9301b497d78794dc0e890df9fc214976cd8d77a1a7b
+    .agents/skills/issue-triage/scripts/lib/repo_paths.sh: sha256:4175492cd08671457c500eb2fa5880cb170a5e285379f3cec3219be935d6b3b7
+    .agents/skills/issue-triage/scripts/lib/terraform.sh: sha256:19d9b56a4346d68a4656ccfe61c64b8638c86ffdc02b830a7cdd84be7449551d
+    .agents/skills/issue-triage/scripts/lib/validation.sh: sha256:ec9bd6f765f43bb03ebb43771d262e0a9768d0bb92e855249c3f87b653b3cdb1
     .agents/skills/markdown-validation/SKILL.md: sha256:c551eba1e6ee70871999e6d7cd61657d83747310d5e38b36140e8fac089ac52e
     .agents/skills/markdown-validation/eval.yaml: sha256:f8f1ac7e23a7df5b47303cc2fccc40752a63bb7439791d139bd5fe0c6612861f
     .agents/skills/markdown-validation/evals/tasks/markdown-validation-basic.yaml: sha256:6dc08d54f13e3d8292c804a27dcf04134b945825f911fb442bc53b9715687581
@@ -972,6 +1160,28 @@ dependencies:
     .agents/skills/markdown-validation/scripts/lib/terraform.sh: sha256:19d9b56a4346d68a4656ccfe61c64b8638c86ffdc02b830a7cdd84be7449551d
     .agents/skills/markdown-validation/scripts/lib/validation.sh: sha256:ec9bd6f765f43bb03ebb43771d262e0a9768d0bb92e855249c3f87b653b3cdb1
     .agents/skills/markdown-validation/scripts/validate.sh: sha256:e3539d49e2c14344c3a36960a0af773871233964f163b9e4044ed5cefdfc9efa
+    .agents/skills/pr-revise/SKILL.md: sha256:d1f457cf7e47e58e6aa76d44c8b25780687cc134a35013e17afc6a5833ebf683
+    .agents/skills/pr-revise/assets/pr-body-template-survey.md: sha256:a3ede1d4f27988af39abd9cf4309c512b79936dd1b9289f35ca0583ee49096c2
+    .agents/skills/pr-revise/assets/pr-body-template.md: sha256:519855d8bd15a4a37aec5546c3dfcd0bfbc03e33d0bbcd7a4b768963f2a53867
+    .agents/skills/pr-revise/eval.yaml: sha256:6ab255e102adc300c5ef3886255b6597b8c97d927e950fbd83af7be99b9e00cd
+    .agents/skills/pr-revise/evals/tasks/automation-production-constraints.yaml: sha256:f5727a065c7d7fa951aab1afcfc7214fc79a94224933f6aa6d2a9461730219b2
+    .agents/skills/pr-revise/evals/tasks/basic.yaml: sha256:6c4815e58529cdd78e4cba38dd67df8a9447debf30f11de5d76aea9ac7ce3337
+    .agents/skills/pr-revise/evals/tasks/may-edit-false.yaml: sha256:8e86a3d83c58019132dc949cd3ee8f47c05600ede7e48d58c5a5d6db4dd8a6bc
+    .agents/skills/pr-revise/evals/tasks/skip-detect.yaml: sha256:13ffe91a63fa071a78ce36cd87813214a5d0f21e2abc44b0f1f30df33e73ff56
+    .agents/skills/pr-revise/evals/tasks/trigger-negative.yaml: sha256:94ef4aab92cc195a67599c433f037621d504fa3102362721ccd0296663c33cff
+    .agents/skills/pr-revise/references/category-automation-envelope.md: sha256:4c70e4eabf639a63328c638ba02900b09cd3d1c5c103853bd1cab3ee600bfa8b
+    .agents/skills/pr-revise/references/category-pr-body-links.md: sha256:0676f44801c6f1d9e1d71c2105399c81b786b23fdcd920eda1b037e2edc6c7e7
+    .agents/skills/pr-revise/references/common-checklist.md: sha256:dc1c1d1fbdbce358a8ac18371794ebefbd6aa03f3c7c84020584c6ab88614a45
+    .agents/skills/pr-revise/references/common-output-format.md: sha256:cea76fcf5e610c7f39dfd0cfe6c706f517177093966df2353d79e980a1767afa
+    .agents/skills/pr-revise/scripts/detect_pr_revise.sh: sha256:80ed00c50ff0a1552eed48b8574df487d94de946e131236de85adbff9090499c
+    .agents/skills/pr-revise/scripts/lib/all.sh: sha256:dc9b27d00ff0b37be6f5c986a59a8107f59a83bede4de5818e453a38ae51f216
+    .agents/skills/pr-revise/scripts/lib/aws.sh: sha256:8040932c1176ff8f6f011586844cee9a07fa725b90de6c5b007d5cecf7f2d67a
+    .agents/skills/pr-revise/scripts/lib/common.sh: sha256:26dded5e470bfa13c48f3816b58def268413042de385a468ee851f6f578bceda
+    .agents/skills/pr-revise/scripts/lib/csv.sh: sha256:f9cddbbcba29d3b3baebbe45ad9cd1c9b015ff8342c01f55a4361f3154a0cf49
+    .agents/skills/pr-revise/scripts/lib/json.sh: sha256:4a865c119ac68f6635c4e9301b497d78794dc0e890df9fc214976cd8d77a1a7b
+    .agents/skills/pr-revise/scripts/lib/repo_paths.sh: sha256:4175492cd08671457c500eb2fa5880cb170a5e285379f3cec3219be935d6b3b7
+    .agents/skills/pr-revise/scripts/lib/terraform.sh: sha256:19d9b56a4346d68a4656ccfe61c64b8638c86ffdc02b830a7cdd84be7449551d
+    .agents/skills/pr-revise/scripts/lib/validation.sh: sha256:ec9bd6f765f43bb03ebb43771d262e0a9768d0bb92e855249c3f87b653b3cdb1
     .agents/skills/refactor/SKILL.md: sha256:106c0b7ccfd0073964b7aa155b06dd5acf61ba35107640ae0c73b71874e24177
     .agents/skills/refactor/assets/pr-body-template-survey.md: sha256:003181f5c72a7aad6bd266d950c038163ede347509443681690e26d45f936daa
     .agents/skills/refactor/assets/pr-body-template.md: sha256:69dafe1e5ecd944d74f8ad1ba428cb1adc14ef37595a9419f9e38122984123ee
@@ -1289,6 +1499,52 @@ dependencies:
     .claude/skills/instructions-review/references/common-checklist.md: sha256:7496b0e41515a152dcd867afedba0dd4f6bfa4efc3f1f593a7a7da95c9b2b4fb
     .claude/skills/instructions-review/references/common-output-format.md: sha256:fcbaadf9e13b5cd6a9b8e891b6168406c4de17237d4038d39ebeeb4811be8987
     .claude/skills/instructions-review/references/common-troubleshooting.md: sha256:8503ca9408390cb4a9d0c734dc544c377ce95b2fd3c9683004a63a947413eb74
+    .claude/skills/issue-autofix/SKILL.md: sha256:dd907bd0c9b27c6e023e3bb6c74457ce7e32ca9c3d6546a96f8c771663bae82f
+    .claude/skills/issue-autofix/assets/pr-body-template-survey.md: sha256:fc7fcdcfc448f22daa51c46475f4fa119fc7dd76efc169b1efdde6ccf26cc9b0
+    .claude/skills/issue-autofix/assets/pr-body-template.md: sha256:985a405316c869e250ba940a273446de0b344874d653c32da14d5b3568a8a8c4
+    .claude/skills/issue-autofix/eval.yaml: sha256:2f56cfce13935d57c0f96e0c7b9bde1618282c05adf29074d0579ecdf7fbde8e
+    .claude/skills/issue-autofix/evals/tasks/automation-production-constraints.yaml: sha256:2089d58908b96f97c940d0f1f09e5c763394ec1fdb797e53b3ac2f96f50f0d25
+    .claude/skills/issue-autofix/evals/tasks/basic.yaml: sha256:0327d229537ec7cd6c5ab7ffaf58d84408145edf0fbb4b4c13ba90d8cd6b2107
+    .claude/skills/issue-autofix/evals/tasks/may-edit-false.yaml: sha256:b40dd0a9fdb4b2801da17fe5bd63f5676a65ee0977a7364a99a8e186b3b5a966
+    .claude/skills/issue-autofix/evals/tasks/skip-open-pr.yaml: sha256:41b5ffa4bed18fcc98dd2f5d1629aa48eef95b268b72c2d7619084d7d7b33b45
+    .claude/skills/issue-autofix/evals/tasks/trigger-negative.yaml: sha256:4656257658698eb4cb72ad52a2c88e8f5dfd3ed1ace31ab3faa0b52ae81b6b8c
+    .claude/skills/issue-autofix/references/category-automation-envelope.md: sha256:bff1b2ddd1d4c4c5c4fd49c369f6aff8faa865dd3d3e0d0b7f41af8b257463fd
+    .claude/skills/issue-autofix/references/category-pr-body-links.md: sha256:05215504edae18534ceafedc76216ea083853fc8775178fea6e1172e2564bd73
+    .claude/skills/issue-autofix/references/common-checklist.md: sha256:5931bb939e9142c05585c48c66924c84c231c836581dcab3b19ab9233a3e0d56
+    .claude/skills/issue-autofix/references/common-output-format.md: sha256:b9865437df37b2d0f457d39a166f16d9173d1d8bcad7b423486290bb56fad187
+    .claude/skills/issue-autofix/scripts/detect_autofix.sh: sha256:f5e6ff237e373caa60c618cb41a34172b0444f18f861d61d071dee6c51a2d781
+    .claude/skills/issue-autofix/scripts/lib/all.sh: sha256:dc9b27d00ff0b37be6f5c986a59a8107f59a83bede4de5818e453a38ae51f216
+    .claude/skills/issue-autofix/scripts/lib/aws.sh: sha256:8040932c1176ff8f6f011586844cee9a07fa725b90de6c5b007d5cecf7f2d67a
+    .claude/skills/issue-autofix/scripts/lib/common.sh: sha256:26dded5e470bfa13c48f3816b58def268413042de385a468ee851f6f578bceda
+    .claude/skills/issue-autofix/scripts/lib/csv.sh: sha256:f9cddbbcba29d3b3baebbe45ad9cd1c9b015ff8342c01f55a4361f3154a0cf49
+    .claude/skills/issue-autofix/scripts/lib/json.sh: sha256:4a865c119ac68f6635c4e9301b497d78794dc0e890df9fc214976cd8d77a1a7b
+    .claude/skills/issue-autofix/scripts/lib/repo_paths.sh: sha256:4175492cd08671457c500eb2fa5880cb170a5e285379f3cec3219be935d6b3b7
+    .claude/skills/issue-autofix/scripts/lib/terraform.sh: sha256:19d9b56a4346d68a4656ccfe61c64b8638c86ffdc02b830a7cdd84be7449551d
+    .claude/skills/issue-autofix/scripts/lib/validation.sh: sha256:ec9bd6f765f43bb03ebb43771d262e0a9768d0bb92e855249c3f87b653b3cdb1
+    .claude/skills/issue-triage/SKILL.md: sha256:6efce4555bcac4741cc29308d74f4d5bc28eccc09bc3be3eb0e4856841eaa8cd
+    .claude/skills/issue-triage/eval.yaml: sha256:f76b9f3d0bd249ee3ad97eec9d2ae7c10af22585f6f1089d5c9dd2010cae770a
+    .claude/skills/issue-triage/evals/tasks/basic.yaml: sha256:047e2e5439a24fe6f7d380f1abc045df57dbbc40274e32f357b488f7796b1b5e
+    .claude/skills/issue-triage/evals/tasks/classification.yaml: sha256:543482d079d1d2a500e0c88697db969f736d656e1c599b5f6d2a7a4d7d39c8c8
+    .claude/skills/issue-triage/evals/tasks/may-edit-false.yaml: sha256:b36da307a9f66d28b3688e4117b6f4964fdde3cbaaa088a83bd125e170475c3f
+    .claude/skills/issue-triage/evals/tasks/noaction.yaml: sha256:8202700a3e47cc52894b4aa26b03dfe24e614293c5227edaa524ed5cbd6d814e
+    .claude/skills/issue-triage/evals/tasks/trigger-negative.yaml: sha256:945a495fae8dd8ff97e3ff5071d4feef686ce1810b432797ccc0760790850eee
+    .claude/skills/issue-triage/references/category-fsm.md: sha256:ffa4d12415ec0039706653f61421a97fa2e6908386b9c5b472e813ba6ee47bb0
+    .claude/skills/issue-triage/references/category-prompt-rules.md: sha256:e67df6a93425ad01790db46aa36a222c9e8757b8e67409068bd9a278bdaa49c7
+    .claude/skills/issue-triage/references/common-checklist.md: sha256:6ecb6f76fa17b16b25bf17540ae25e6c8c1b6646959ed1785e8588a8a0d26308
+    .claude/skills/issue-triage/references/common-output-format.md: sha256:e7417fc53325ed69c4b7885e1b9569dc1e7d923b76178d19c567b6900325e774
+    .claude/skills/issue-triage/scripts/detect_issue.sh: sha256:40cf4c0dea9e8db14bcf2dd9dbfb4f12652e17bd26cec118b667c3656cbd83d4
+    .claude/skills/issue-triage/scripts/hooks/README.md: sha256:e625aa7ad73242a58f621c8beaa8c60dba3969f516f2151680c14ec689e74499
+    .claude/skills/issue-triage/scripts/hooks/on_detect_dispatch.sh: sha256:430cec6f1ff59e9579f7a88838807557499eabfeb42b44b57b663a10c4021874
+    .claude/skills/issue-triage/scripts/label_fsm.sh: sha256:07668d65c5512e4cc3b6636c5b3a9e51ae64f71c23ef4f6bef3b379daaac65d2
+    .claude/skills/issue-triage/scripts/labels.json: sha256:df7a567b6b08ca04392680d2cea769847401123dc3d3591a1dc28de5e53d4910
+    .claude/skills/issue-triage/scripts/lib/all.sh: sha256:dc9b27d00ff0b37be6f5c986a59a8107f59a83bede4de5818e453a38ae51f216
+    .claude/skills/issue-triage/scripts/lib/aws.sh: sha256:8040932c1176ff8f6f011586844cee9a07fa725b90de6c5b007d5cecf7f2d67a
+    .claude/skills/issue-triage/scripts/lib/common.sh: sha256:26dded5e470bfa13c48f3816b58def268413042de385a468ee851f6f578bceda
+    .claude/skills/issue-triage/scripts/lib/csv.sh: sha256:f9cddbbcba29d3b3baebbe45ad9cd1c9b015ff8342c01f55a4361f3154a0cf49
+    .claude/skills/issue-triage/scripts/lib/json.sh: sha256:4a865c119ac68f6635c4e9301b497d78794dc0e890df9fc214976cd8d77a1a7b
+    .claude/skills/issue-triage/scripts/lib/repo_paths.sh: sha256:4175492cd08671457c500eb2fa5880cb170a5e285379f3cec3219be935d6b3b7
+    .claude/skills/issue-triage/scripts/lib/terraform.sh: sha256:19d9b56a4346d68a4656ccfe61c64b8638c86ffdc02b830a7cdd84be7449551d
+    .claude/skills/issue-triage/scripts/lib/validation.sh: sha256:ec9bd6f765f43bb03ebb43771d262e0a9768d0bb92e855249c3f87b653b3cdb1
     .claude/skills/markdown-validation/SKILL.md: sha256:c551eba1e6ee70871999e6d7cd61657d83747310d5e38b36140e8fac089ac52e
     .claude/skills/markdown-validation/eval.yaml: sha256:f8f1ac7e23a7df5b47303cc2fccc40752a63bb7439791d139bd5fe0c6612861f
     .claude/skills/markdown-validation/evals/tasks/markdown-validation-basic.yaml: sha256:6dc08d54f13e3d8292c804a27dcf04134b945825f911fb442bc53b9715687581
@@ -1309,6 +1565,28 @@ dependencies:
     .claude/skills/markdown-validation/scripts/lib/terraform.sh: sha256:19d9b56a4346d68a4656ccfe61c64b8638c86ffdc02b830a7cdd84be7449551d
     .claude/skills/markdown-validation/scripts/lib/validation.sh: sha256:ec9bd6f765f43bb03ebb43771d262e0a9768d0bb92e855249c3f87b653b3cdb1
     .claude/skills/markdown-validation/scripts/validate.sh: sha256:e3539d49e2c14344c3a36960a0af773871233964f163b9e4044ed5cefdfc9efa
+    .claude/skills/pr-revise/SKILL.md: sha256:d1f457cf7e47e58e6aa76d44c8b25780687cc134a35013e17afc6a5833ebf683
+    .claude/skills/pr-revise/assets/pr-body-template-survey.md: sha256:a3ede1d4f27988af39abd9cf4309c512b79936dd1b9289f35ca0583ee49096c2
+    .claude/skills/pr-revise/assets/pr-body-template.md: sha256:519855d8bd15a4a37aec5546c3dfcd0bfbc03e33d0bbcd7a4b768963f2a53867
+    .claude/skills/pr-revise/eval.yaml: sha256:6ab255e102adc300c5ef3886255b6597b8c97d927e950fbd83af7be99b9e00cd
+    .claude/skills/pr-revise/evals/tasks/automation-production-constraints.yaml: sha256:f5727a065c7d7fa951aab1afcfc7214fc79a94224933f6aa6d2a9461730219b2
+    .claude/skills/pr-revise/evals/tasks/basic.yaml: sha256:6c4815e58529cdd78e4cba38dd67df8a9447debf30f11de5d76aea9ac7ce3337
+    .claude/skills/pr-revise/evals/tasks/may-edit-false.yaml: sha256:8e86a3d83c58019132dc949cd3ee8f47c05600ede7e48d58c5a5d6db4dd8a6bc
+    .claude/skills/pr-revise/evals/tasks/skip-detect.yaml: sha256:13ffe91a63fa071a78ce36cd87813214a5d0f21e2abc44b0f1f30df33e73ff56
+    .claude/skills/pr-revise/evals/tasks/trigger-negative.yaml: sha256:94ef4aab92cc195a67599c433f037621d504fa3102362721ccd0296663c33cff
+    .claude/skills/pr-revise/references/category-automation-envelope.md: sha256:4c70e4eabf639a63328c638ba02900b09cd3d1c5c103853bd1cab3ee600bfa8b
+    .claude/skills/pr-revise/references/category-pr-body-links.md: sha256:0676f44801c6f1d9e1d71c2105399c81b786b23fdcd920eda1b037e2edc6c7e7
+    .claude/skills/pr-revise/references/common-checklist.md: sha256:dc1c1d1fbdbce358a8ac18371794ebefbd6aa03f3c7c84020584c6ab88614a45
+    .claude/skills/pr-revise/references/common-output-format.md: sha256:cea76fcf5e610c7f39dfd0cfe6c706f517177093966df2353d79e980a1767afa
+    .claude/skills/pr-revise/scripts/detect_pr_revise.sh: sha256:80ed00c50ff0a1552eed48b8574df487d94de946e131236de85adbff9090499c
+    .claude/skills/pr-revise/scripts/lib/all.sh: sha256:dc9b27d00ff0b37be6f5c986a59a8107f59a83bede4de5818e453a38ae51f216
+    .claude/skills/pr-revise/scripts/lib/aws.sh: sha256:8040932c1176ff8f6f011586844cee9a07fa725b90de6c5b007d5cecf7f2d67a
+    .claude/skills/pr-revise/scripts/lib/common.sh: sha256:26dded5e470bfa13c48f3816b58def268413042de385a468ee851f6f578bceda
+    .claude/skills/pr-revise/scripts/lib/csv.sh: sha256:f9cddbbcba29d3b3baebbe45ad9cd1c9b015ff8342c01f55a4361f3154a0cf49
+    .claude/skills/pr-revise/scripts/lib/json.sh: sha256:4a865c119ac68f6635c4e9301b497d78794dc0e890df9fc214976cd8d77a1a7b
+    .claude/skills/pr-revise/scripts/lib/repo_paths.sh: sha256:4175492cd08671457c500eb2fa5880cb170a5e285379f3cec3219be935d6b3b7
+    .claude/skills/pr-revise/scripts/lib/terraform.sh: sha256:19d9b56a4346d68a4656ccfe61c64b8638c86ffdc02b830a7cdd84be7449551d
+    .claude/skills/pr-revise/scripts/lib/validation.sh: sha256:ec9bd6f765f43bb03ebb43771d262e0a9768d0bb92e855249c3f87b653b3cdb1
     .claude/skills/refactor/SKILL.md: sha256:106c0b7ccfd0073964b7aa155b06dd5acf61ba35107640ae0c73b71874e24177
     .claude/skills/refactor/assets/pr-body-template-survey.md: sha256:003181f5c72a7aad6bd266d950c038163ede347509443681690e26d45f936daa
     .claude/skills/refactor/assets/pr-body-template.md: sha256:69dafe1e5ecd944d74f8ad1ba428cb1adc14ef37595a9419f9e38122984123ee
@@ -1396,13 +1674,13 @@ dependencies:
     .cursor/rules/github-actions-workflow.mdc: sha256:696f0edc71b99a2292f30c099e7e55374926ddb9868addec29f684981e82f4f7
     .cursor/rules/instructions.mdc: sha256:40f550a18738b519bc3453d5bdefe21054701f7f54c5a15b6f3496c9e92ae40a
     .cursor/rules/markdown.mdc: sha256:ddf4799d3864c8d6ca48e8d60031b27f804cdbd09bd85c44db9a0b80bd3c9b2d
-  content_hash: sha256:3c4b469f1e350df91b499e590dccd932062e2e3f392887f4234c47505c7c179d
+  content_hash: sha256:a533ed66c51c80f59f62fe954b203e7465fc9f6b4a6a82cf6ed64d5e9067732a
   declared_license: Apache-2.0
 - repo_url: y-miyazaki/config
   name: common-hooks-claude
   host: github.com
-  resolved_commit: 93f29ddb86b09e8c81f9e5e82b4c87446ffc17c6
-  resolved_ref: v1.8.78
+  resolved_commit: 6268b2323ae57994b488f2262a41302b273ff50e
+  resolved_ref: v1.8.79
   version: 2.0.0
   virtual_path: .apm/packages/common-hooks-claude
   is_virtual: true
@@ -1415,19 +1693,19 @@ dependencies:
   - .claude/hooks/common-hooks-claude/scripts/markdownlint_cli2.sh
   - .claude/hooks/common-hooks-claude/scripts/zizmor.sh
   deployed_file_hashes:
-    .claude/hooks/common-hooks-claude/scripts/actionlint.sh: sha256:5a381f744f2d7895c3458240026a5de495a84ceab9d25536d6d1c544f141158e
-    .claude/hooks/common-hooks-claude/scripts/ghalint.sh: sha256:644c0c86799e80972e139e7ddd5c935789d90dde31713301a23b19febed40a42
-    .claude/hooks/common-hooks-claude/scripts/gitleaks.sh: sha256:3b323d16af65f68a2bd8d645a9ac180987764ff1c521511c92c6df3ed026e592
-    .claude/hooks/common-hooks-claude/scripts/markdown_link_check.sh: sha256:5b7e4faa4141e01df7a69b1e6ce17db5fbbc47c79bc3e5a40e3c6d0e44b7de02
-    .claude/hooks/common-hooks-claude/scripts/markdownlint_cli2.sh: sha256:d229a83c68f734251b3355b65287bd8e0faa85556e58808a40b25c4e0e511723
-    .claude/hooks/common-hooks-claude/scripts/zizmor.sh: sha256:28f45ca1d6733c9b8d1a0a13d0ddfdbcb9c3a515636b3e7972eb45bc351ab044
-  content_hash: sha256:0478d2c02c2505cedee5f28d5fcdefa63b00bd71ef12cd41837ce054fa72685d
+    .claude/hooks/common-hooks-claude/scripts/actionlint.sh: sha256:3927acfad6ceaea9f1483a64c64fc77d30dead3ff5d95d9c7a8e58f1dcc5a4b1
+    .claude/hooks/common-hooks-claude/scripts/ghalint.sh: sha256:d30cd6cabcc632e23b5f7b5f2d76f1046f9d1d3c629e9c0fdfda2ace8ad3d59a
+    .claude/hooks/common-hooks-claude/scripts/gitleaks.sh: sha256:90cea9350f4b0f1ec66cd8c7025955b973291d4186d48b4ca5826c62c2acabd1
+    .claude/hooks/common-hooks-claude/scripts/markdown_link_check.sh: sha256:d98896487ac9fe4e3189e06cd2f861a66b89ce2e5a9c5714d85e654e2c937548
+    .claude/hooks/common-hooks-claude/scripts/markdownlint_cli2.sh: sha256:24111fe6fafdcd8b19a391a922488509f4eb4df1068daa36c5f4c69698991e88
+    .claude/hooks/common-hooks-claude/scripts/zizmor.sh: sha256:9dc27438135f1eff1a02429f1efc85bc71e700a083245e5af1e2767b0ece320b
+  content_hash: sha256:3a4c46055daca6c4b9dbe7aa0efc5aa2270b8a37a6f6f43487f7a7b0468be041
   declared_license: Apache-2.0
 - repo_url: y-miyazaki/config
   name: common-hooks-cursor
   host: github.com
-  resolved_commit: 93f29ddb86b09e8c81f9e5e82b4c87446ffc17c6
-  resolved_ref: v1.8.78
+  resolved_commit: 6268b2323ae57994b488f2262a41302b273ff50e
+  resolved_ref: v1.8.79
   version: 2.0.0
   virtual_path: .apm/packages/common-hooks-cursor
   is_virtual: true
@@ -1440,19 +1718,19 @@ dependencies:
   - .cursor/hooks/common-hooks-cursor/scripts/markdownlint_cli2.sh
   - .cursor/hooks/common-hooks-cursor/scripts/zizmor.sh
   deployed_file_hashes:
-    .cursor/hooks/common-hooks-cursor/scripts/actionlint.sh: sha256:5a381f744f2d7895c3458240026a5de495a84ceab9d25536d6d1c544f141158e
-    .cursor/hooks/common-hooks-cursor/scripts/ghalint.sh: sha256:644c0c86799e80972e139e7ddd5c935789d90dde31713301a23b19febed40a42
-    .cursor/hooks/common-hooks-cursor/scripts/gitleaks.sh: sha256:3b323d16af65f68a2bd8d645a9ac180987764ff1c521511c92c6df3ed026e592
-    .cursor/hooks/common-hooks-cursor/scripts/markdown_link_check.sh: sha256:5b7e4faa4141e01df7a69b1e6ce17db5fbbc47c79bc3e5a40e3c6d0e44b7de02
-    .cursor/hooks/common-hooks-cursor/scripts/markdownlint_cli2.sh: sha256:d229a83c68f734251b3355b65287bd8e0faa85556e58808a40b25c4e0e511723
-    .cursor/hooks/common-hooks-cursor/scripts/zizmor.sh: sha256:28f45ca1d6733c9b8d1a0a13d0ddfdbcb9c3a515636b3e7972eb45bc351ab044
-  content_hash: sha256:f4112d1eee41a2cb689309a9202d80f34a4fefe17efe47b78412456ed6ee63d3
+    .cursor/hooks/common-hooks-cursor/scripts/actionlint.sh: sha256:3927acfad6ceaea9f1483a64c64fc77d30dead3ff5d95d9c7a8e58f1dcc5a4b1
+    .cursor/hooks/common-hooks-cursor/scripts/ghalint.sh: sha256:d30cd6cabcc632e23b5f7b5f2d76f1046f9d1d3c629e9c0fdfda2ace8ad3d59a
+    .cursor/hooks/common-hooks-cursor/scripts/gitleaks.sh: sha256:90cea9350f4b0f1ec66cd8c7025955b973291d4186d48b4ca5826c62c2acabd1
+    .cursor/hooks/common-hooks-cursor/scripts/markdown_link_check.sh: sha256:a1915528049fecdb51b96aba56b90d67f2bd7e571900b226a3e8ecc1916e682f
+    .cursor/hooks/common-hooks-cursor/scripts/markdownlint_cli2.sh: sha256:24111fe6fafdcd8b19a391a922488509f4eb4df1068daa36c5f4c69698991e88
+    .cursor/hooks/common-hooks-cursor/scripts/zizmor.sh: sha256:9dc27438135f1eff1a02429f1efc85bc71e700a083245e5af1e2767b0ece320b
+  content_hash: sha256:dd822843f9f03720bb242e2c4e64aea46fa04dd7975c5c9360f2a1f57ad9994a
   declared_license: Apache-2.0
 - repo_url: y-miyazaki/config
   name: config-shell-script
   host: github.com
-  resolved_commit: 93f29ddb86b09e8c81f9e5e82b4c87446ffc17c6
-  resolved_ref: v1.8.78
+  resolved_commit: 6268b2323ae57994b488f2262a41302b273ff50e
+  resolved_ref: v1.8.79
   version: 1.0.0
   virtual_path: .apm/packages/shell-script
   is_virtual: true
@@ -1660,8 +1938,8 @@ dependencies:
 - repo_url: y-miyazaki/config
   name: shell-script-hooks-claude
   host: github.com
-  resolved_commit: 93f29ddb86b09e8c81f9e5e82b4c87446ffc17c6
-  resolved_ref: v1.8.78
+  resolved_commit: 6268b2323ae57994b488f2262a41302b273ff50e
+  resolved_ref: v1.8.79
   version: 1.0.0
   virtual_path: .apm/packages/shell-script-hooks-claude
   is_virtual: true
@@ -1670,15 +1948,15 @@ dependencies:
   - .claude/hooks/shell-script-hooks-claude/scripts/shellcheck.sh
   - .claude/hooks/shell-script-hooks-claude/scripts/shfmt.sh
   deployed_file_hashes:
-    .claude/hooks/shell-script-hooks-claude/scripts/shellcheck.sh: sha256:223f1409ea7dc64b560b28fedc54f9643db379f302bc24febd21daa8f29ef1e2
-    .claude/hooks/shell-script-hooks-claude/scripts/shfmt.sh: sha256:f5501a998d9e4ff6b70abf91a62e201009c718eae6073bc4ae3c815532472043
-  content_hash: sha256:65519199cdfac4a7c2bbefd9ff7afffdc75b1befc0ee28b3ad0dc737c73ee258
+    .claude/hooks/shell-script-hooks-claude/scripts/shellcheck.sh: sha256:d77a2c66cf9f6775ae8f72294410a16f0493f59ed73a54919503e830f052f5a5
+    .claude/hooks/shell-script-hooks-claude/scripts/shfmt.sh: sha256:e57ba2d9229d5e47e1cecacb3451884fb17380c44c85e01c6a7d421ef8c80e6c
+  content_hash: sha256:6f4c4798c1072756f9a425b42252e15f22b08ae68ef9da943e903fc8fa47f0f3
   declared_license: Apache-2.0
 - repo_url: y-miyazaki/config
   name: shell-script-hooks-cursor
   host: github.com
-  resolved_commit: 93f29ddb86b09e8c81f9e5e82b4c87446ffc17c6
-  resolved_ref: v1.8.78
+  resolved_commit: 6268b2323ae57994b488f2262a41302b273ff50e
+  resolved_ref: v1.8.79
   version: 1.0.0
   virtual_path: .apm/packages/shell-script-hooks-cursor
   is_virtual: true
@@ -1687,15 +1965,15 @@ dependencies:
   - .cursor/hooks/shell-script-hooks-cursor/scripts/shellcheck.sh
   - .cursor/hooks/shell-script-hooks-cursor/scripts/shfmt.sh
   deployed_file_hashes:
-    .cursor/hooks/shell-script-hooks-cursor/scripts/shellcheck.sh: sha256:223f1409ea7dc64b560b28fedc54f9643db379f302bc24febd21daa8f29ef1e2
-    .cursor/hooks/shell-script-hooks-cursor/scripts/shfmt.sh: sha256:f5501a998d9e4ff6b70abf91a62e201009c718eae6073bc4ae3c815532472043
-  content_hash: sha256:d4ece9033123850bd57bf9aee7a422c9a99d293cc737f2281eae73961884a00c
+    .cursor/hooks/shell-script-hooks-cursor/scripts/shellcheck.sh: sha256:d77a2c66cf9f6775ae8f72294410a16f0493f59ed73a54919503e830f052f5a5
+    .cursor/hooks/shell-script-hooks-cursor/scripts/shfmt.sh: sha256:1ee58b42a134c92845a1b9ea81a91e6c4218e0c446dda35ed261a2a0bfd8e74f
+  content_hash: sha256:62b624a24bf105d1ad12a6b11d2d49889a927b0130967583e42f0b8cb8ef3e1b
   declared_license: Apache-2.0
 - repo_url: y-miyazaki/config
   name: config-terraform
   host: github.com
-  resolved_commit: 93f29ddb86b09e8c81f9e5e82b4c87446ffc17c6
-  resolved_ref: v1.8.78
+  resolved_commit: 6268b2323ae57994b488f2262a41302b273ff50e
+  resolved_ref: v1.8.79
   version: 1.0.0
   virtual_path: .apm/packages/terraform
   is_virtual: true
@@ -1919,8 +2197,8 @@ dependencies:
 - repo_url: y-miyazaki/config
   name: config-terraform-aws
   host: github.com
-  resolved_commit: 93f29ddb86b09e8c81f9e5e82b4c87446ffc17c6
-  resolved_ref: v1.8.78
+  resolved_commit: 6268b2323ae57994b488f2262a41302b273ff50e
+  resolved_ref: v1.8.79
   version: 1.0.0
   virtual_path: .apm/packages/terraform-aws
   is_virtual: true
@@ -1930,8 +2208,8 @@ dependencies:
 - repo_url: y-miyazaki/config
   name: terraform-hooks-claude
   host: github.com
-  resolved_commit: 93f29ddb86b09e8c81f9e5e82b4c87446ffc17c6
-  resolved_ref: v1.8.78
+  resolved_commit: 6268b2323ae57994b488f2262a41302b273ff50e
+  resolved_ref: v1.8.79
   version: 1.0.0
   virtual_path: .apm/packages/terraform-hooks-claude
   is_virtual: true
@@ -1941,14 +2219,14 @@ dependencies:
   - .claude/hooks/terraform-hooks-claude/scripts/tflint.sh
   deployed_file_hashes:
     .claude/hooks/terraform-hooks-claude/scripts/terraform_fmt.sh: sha256:629d8ae656f0de37e0922f433ddf4b2105c714c44dc1b5ab5950c4de85a27e04
-    .claude/hooks/terraform-hooks-claude/scripts/tflint.sh: sha256:d5393a45c01059bf5d965bb092f1851bdb72435a5d8c9c992469dab2f2b8ca9b
-  content_hash: sha256:576726f72ad2922e6144a3054f404db6e860d407db2e8a9997f234949815bdda
+    .claude/hooks/terraform-hooks-claude/scripts/tflint.sh: sha256:28266b4c304db6017b7ce071845642920e67d1dfce7c68083e218c08d65af131
+  content_hash: sha256:fd947bd672f3899fe97d799955ae38cce7257d51b819f1c1a53ddd299457e9b2
   declared_license: Apache-2.0
 - repo_url: y-miyazaki/config
   name: terraform-hooks-cursor
   host: github.com
-  resolved_commit: 93f29ddb86b09e8c81f9e5e82b4c87446ffc17c6
-  resolved_ref: v1.8.78
+  resolved_commit: 6268b2323ae57994b488f2262a41302b273ff50e
+  resolved_ref: v1.8.79
   version: 1.0.0
   virtual_path: .apm/packages/terraform-hooks-cursor
   is_virtual: true
@@ -1958,8 +2236,8 @@ dependencies:
   - .cursor/hooks/terraform-hooks-cursor/scripts/tflint.sh
   deployed_file_hashes:
     .cursor/hooks/terraform-hooks-cursor/scripts/terraform_fmt.sh: sha256:629d8ae656f0de37e0922f433ddf4b2105c714c44dc1b5ab5950c4de85a27e04
-    .cursor/hooks/terraform-hooks-cursor/scripts/tflint.sh: sha256:d5393a45c01059bf5d965bb092f1851bdb72435a5d8c9c992469dab2f2b8ca9b
-  content_hash: sha256:ea3397ea102b82f6fe077c8ef7ebfbc8b4c804cfdc0d73a7788ce9db6ad171ad
+    .cursor/hooks/terraform-hooks-cursor/scripts/tflint.sh: sha256:28266b4c304db6017b7ce071845642920e67d1dfce7c68083e218c08d65af131
+  content_hash: sha256:ee94be1a78f5903ee35c1a885949c9079896019967bd08f68efe39a11149d2c1
   declared_license: Apache-2.0
 deployments:
 - kind: project-relative
@@ -1979,7 +2257,7 @@ deployments:
   owners:
   - y-miyazaki/config/.apm/packages/common-hooks-claude
   active_owner: y-miyazaki/config/.apm/packages/common-hooks-claude
-  content_hash: sha256:5a381f744f2d7895c3458240026a5de495a84ceab9d25536d6d1c544f141158e
+  content_hash: sha256:3927acfad6ceaea9f1483a64c64fc77d30dead3ff5d95d9c7a8e58f1dcc5a4b1
 - kind: project-relative
   target: claude
   value: .claude/hooks/common-hooks-claude/scripts/ghalint.sh
@@ -1988,7 +2266,7 @@ deployments:
   owners:
   - y-miyazaki/config/.apm/packages/common-hooks-claude
   active_owner: y-miyazaki/config/.apm/packages/common-hooks-claude
-  content_hash: sha256:644c0c86799e80972e139e7ddd5c935789d90dde31713301a23b19febed40a42
+  content_hash: sha256:d30cd6cabcc632e23b5f7b5f2d76f1046f9d1d3c629e9c0fdfda2ace8ad3d59a
 - kind: project-relative
   target: claude
   value: .claude/hooks/common-hooks-claude/scripts/gitleaks.sh
@@ -1997,7 +2275,7 @@ deployments:
   owners:
   - y-miyazaki/config/.apm/packages/common-hooks-claude
   active_owner: y-miyazaki/config/.apm/packages/common-hooks-claude
-  content_hash: sha256:3b323d16af65f68a2bd8d645a9ac180987764ff1c521511c92c6df3ed026e592
+  content_hash: sha256:90cea9350f4b0f1ec66cd8c7025955b973291d4186d48b4ca5826c62c2acabd1
 - kind: project-relative
   target: claude
   value: .claude/hooks/common-hooks-claude/scripts/markdown_link_check.sh
@@ -2006,7 +2284,7 @@ deployments:
   owners:
   - y-miyazaki/config/.apm/packages/common-hooks-claude
   active_owner: y-miyazaki/config/.apm/packages/common-hooks-claude
-  content_hash: sha256:5b7e4faa4141e01df7a69b1e6ce17db5fbbc47c79bc3e5a40e3c6d0e44b7de02
+  content_hash: sha256:d98896487ac9fe4e3189e06cd2f861a66b89ce2e5a9c5714d85e654e2c937548
 - kind: project-relative
   target: claude
   value: .claude/hooks/common-hooks-claude/scripts/markdownlint_cli2.sh
@@ -2015,7 +2293,7 @@ deployments:
   owners:
   - y-miyazaki/config/.apm/packages/common-hooks-claude
   active_owner: y-miyazaki/config/.apm/packages/common-hooks-claude
-  content_hash: sha256:d229a83c68f734251b3355b65287bd8e0faa85556e58808a40b25c4e0e511723
+  content_hash: sha256:24111fe6fafdcd8b19a391a922488509f4eb4df1068daa36c5f4c69698991e88
 - kind: project-relative
   target: claude
   value: .claude/hooks/common-hooks-claude/scripts/zizmor.sh
@@ -2024,7 +2302,7 @@ deployments:
   owners:
   - y-miyazaki/config/.apm/packages/common-hooks-claude
   active_owner: y-miyazaki/config/.apm/packages/common-hooks-claude
-  content_hash: sha256:28f45ca1d6733c9b8d1a0a13d0ddfdbcb9c3a515636b3e7972eb45bc351ab044
+  content_hash: sha256:9dc27438135f1eff1a02429f1efc85bc71e700a083245e5af1e2767b0ece320b
 - kind: project-relative
   target: claude
   value: .claude/hooks/shell-script-hooks-claude/scripts/shellcheck.sh
@@ -2033,7 +2311,7 @@ deployments:
   owners:
   - y-miyazaki/config/.apm/packages/shell-script-hooks-claude
   active_owner: y-miyazaki/config/.apm/packages/shell-script-hooks-claude
-  content_hash: sha256:223f1409ea7dc64b560b28fedc54f9643db379f302bc24febd21daa8f29ef1e2
+  content_hash: sha256:d77a2c66cf9f6775ae8f72294410a16f0493f59ed73a54919503e830f052f5a5
 - kind: project-relative
   target: claude
   value: .claude/hooks/shell-script-hooks-claude/scripts/shfmt.sh
@@ -2042,7 +2320,7 @@ deployments:
   owners:
   - y-miyazaki/config/.apm/packages/shell-script-hooks-claude
   active_owner: y-miyazaki/config/.apm/packages/shell-script-hooks-claude
-  content_hash: sha256:f5501a998d9e4ff6b70abf91a62e201009c718eae6073bc4ae3c815532472043
+  content_hash: sha256:e57ba2d9229d5e47e1cecacb3451884fb17380c44c85e01c6a7d421ef8c80e6c
 - kind: project-relative
   target: claude
   value: .claude/hooks/terraform-hooks-claude/scripts/terraform_fmt.sh
@@ -2060,7 +2338,7 @@ deployments:
   owners:
   - y-miyazaki/config/.apm/packages/terraform-hooks-claude
   active_owner: y-miyazaki/config/.apm/packages/terraform-hooks-claude
-  content_hash: sha256:d5393a45c01059bf5d965bb092f1851bdb72435a5d8c9c992469dab2f2b8ca9b
+  content_hash: sha256:28266b4c304db6017b7ce071845642920e67d1dfce7c68083e218c08d65af131
 - kind: project-relative
   target: claude
   value: .claude/rules/agent-skills.md
@@ -4277,6 +4555,438 @@ deployments:
   content_hash: sha256:8503ca9408390cb4a9d0c734dc544c377ce95b2fd3c9683004a63a947413eb74
 - kind: project-relative
   target: claude
+  value: .claude/skills/issue-autofix
+  runtime: null
+  scope: project
+  owners:
+  - y-miyazaki/config/.apm/packages/common
+  active_owner: y-miyazaki/config/.apm/packages/common
+  content_hash: null
+- kind: project-relative
+  target: claude
+  value: .claude/skills/issue-autofix/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - y-miyazaki/config/.apm/packages/common
+  active_owner: y-miyazaki/config/.apm/packages/common
+  content_hash: sha256:dd907bd0c9b27c6e023e3bb6c74457ce7e32ca9c3d6546a96f8c771663bae82f
+- kind: project-relative
+  target: claude
+  value: .claude/skills/issue-autofix/assets/pr-body-template-survey.md
+  runtime: null
+  scope: project
+  owners:
+  - y-miyazaki/config/.apm/packages/common
+  active_owner: y-miyazaki/config/.apm/packages/common
+  content_hash: sha256:fc7fcdcfc448f22daa51c46475f4fa119fc7dd76efc169b1efdde6ccf26cc9b0
+- kind: project-relative
+  target: claude
+  value: .claude/skills/issue-autofix/assets/pr-body-template.md
+  runtime: null
+  scope: project
+  owners:
+  - y-miyazaki/config/.apm/packages/common
+  active_owner: y-miyazaki/config/.apm/packages/common
+  content_hash: sha256:985a405316c869e250ba940a273446de0b344874d653c32da14d5b3568a8a8c4
+- kind: project-relative
+  target: claude
+  value: .claude/skills/issue-autofix/eval.yaml
+  runtime: null
+  scope: project
+  owners:
+  - y-miyazaki/config/.apm/packages/common
+  active_owner: y-miyazaki/config/.apm/packages/common
+  content_hash: sha256:2f56cfce13935d57c0f96e0c7b9bde1618282c05adf29074d0579ecdf7fbde8e
+- kind: project-relative
+  target: claude
+  value: .claude/skills/issue-autofix/evals/tasks/automation-production-constraints.yaml
+  runtime: null
+  scope: project
+  owners:
+  - y-miyazaki/config/.apm/packages/common
+  active_owner: y-miyazaki/config/.apm/packages/common
+  content_hash: sha256:2089d58908b96f97c940d0f1f09e5c763394ec1fdb797e53b3ac2f96f50f0d25
+- kind: project-relative
+  target: claude
+  value: .claude/skills/issue-autofix/evals/tasks/basic.yaml
+  runtime: null
+  scope: project
+  owners:
+  - y-miyazaki/config/.apm/packages/common
+  active_owner: y-miyazaki/config/.apm/packages/common
+  content_hash: sha256:0327d229537ec7cd6c5ab7ffaf58d84408145edf0fbb4b4c13ba90d8cd6b2107
+- kind: project-relative
+  target: claude
+  value: .claude/skills/issue-autofix/evals/tasks/may-edit-false.yaml
+  runtime: null
+  scope: project
+  owners:
+  - y-miyazaki/config/.apm/packages/common
+  active_owner: y-miyazaki/config/.apm/packages/common
+  content_hash: sha256:b40dd0a9fdb4b2801da17fe5bd63f5676a65ee0977a7364a99a8e186b3b5a966
+- kind: project-relative
+  target: claude
+  value: .claude/skills/issue-autofix/evals/tasks/skip-open-pr.yaml
+  runtime: null
+  scope: project
+  owners:
+  - y-miyazaki/config/.apm/packages/common
+  active_owner: y-miyazaki/config/.apm/packages/common
+  content_hash: sha256:41b5ffa4bed18fcc98dd2f5d1629aa48eef95b268b72c2d7619084d7d7b33b45
+- kind: project-relative
+  target: claude
+  value: .claude/skills/issue-autofix/evals/tasks/trigger-negative.yaml
+  runtime: null
+  scope: project
+  owners:
+  - y-miyazaki/config/.apm/packages/common
+  active_owner: y-miyazaki/config/.apm/packages/common
+  content_hash: sha256:4656257658698eb4cb72ad52a2c88e8f5dfd3ed1ace31ab3faa0b52ae81b6b8c
+- kind: project-relative
+  target: claude
+  value: .claude/skills/issue-autofix/references/category-automation-envelope.md
+  runtime: null
+  scope: project
+  owners:
+  - y-miyazaki/config/.apm/packages/common
+  active_owner: y-miyazaki/config/.apm/packages/common
+  content_hash: sha256:bff1b2ddd1d4c4c5c4fd49c369f6aff8faa865dd3d3e0d0b7f41af8b257463fd
+- kind: project-relative
+  target: claude
+  value: .claude/skills/issue-autofix/references/category-pr-body-links.md
+  runtime: null
+  scope: project
+  owners:
+  - y-miyazaki/config/.apm/packages/common
+  active_owner: y-miyazaki/config/.apm/packages/common
+  content_hash: sha256:05215504edae18534ceafedc76216ea083853fc8775178fea6e1172e2564bd73
+- kind: project-relative
+  target: claude
+  value: .claude/skills/issue-autofix/references/common-checklist.md
+  runtime: null
+  scope: project
+  owners:
+  - y-miyazaki/config/.apm/packages/common
+  active_owner: y-miyazaki/config/.apm/packages/common
+  content_hash: sha256:5931bb939e9142c05585c48c66924c84c231c836581dcab3b19ab9233a3e0d56
+- kind: project-relative
+  target: claude
+  value: .claude/skills/issue-autofix/references/common-output-format.md
+  runtime: null
+  scope: project
+  owners:
+  - y-miyazaki/config/.apm/packages/common
+  active_owner: y-miyazaki/config/.apm/packages/common
+  content_hash: sha256:b9865437df37b2d0f457d39a166f16d9173d1d8bcad7b423486290bb56fad187
+- kind: project-relative
+  target: claude
+  value: .claude/skills/issue-autofix/scripts/detect_autofix.sh
+  runtime: null
+  scope: project
+  owners:
+  - y-miyazaki/config/.apm/packages/common
+  active_owner: y-miyazaki/config/.apm/packages/common
+  content_hash: sha256:f5e6ff237e373caa60c618cb41a34172b0444f18f861d61d071dee6c51a2d781
+- kind: project-relative
+  target: claude
+  value: .claude/skills/issue-autofix/scripts/lib/all.sh
+  runtime: null
+  scope: project
+  owners:
+  - y-miyazaki/config/.apm/packages/common
+  active_owner: y-miyazaki/config/.apm/packages/common
+  content_hash: sha256:dc9b27d00ff0b37be6f5c986a59a8107f59a83bede4de5818e453a38ae51f216
+- kind: project-relative
+  target: claude
+  value: .claude/skills/issue-autofix/scripts/lib/aws.sh
+  runtime: null
+  scope: project
+  owners:
+  - y-miyazaki/config/.apm/packages/common
+  active_owner: y-miyazaki/config/.apm/packages/common
+  content_hash: sha256:8040932c1176ff8f6f011586844cee9a07fa725b90de6c5b007d5cecf7f2d67a
+- kind: project-relative
+  target: claude
+  value: .claude/skills/issue-autofix/scripts/lib/common.sh
+  runtime: null
+  scope: project
+  owners:
+  - y-miyazaki/config/.apm/packages/common
+  active_owner: y-miyazaki/config/.apm/packages/common
+  content_hash: sha256:26dded5e470bfa13c48f3816b58def268413042de385a468ee851f6f578bceda
+- kind: project-relative
+  target: claude
+  value: .claude/skills/issue-autofix/scripts/lib/csv.sh
+  runtime: null
+  scope: project
+  owners:
+  - y-miyazaki/config/.apm/packages/common
+  active_owner: y-miyazaki/config/.apm/packages/common
+  content_hash: sha256:f9cddbbcba29d3b3baebbe45ad9cd1c9b015ff8342c01f55a4361f3154a0cf49
+- kind: project-relative
+  target: claude
+  value: .claude/skills/issue-autofix/scripts/lib/json.sh
+  runtime: null
+  scope: project
+  owners:
+  - y-miyazaki/config/.apm/packages/common
+  active_owner: y-miyazaki/config/.apm/packages/common
+  content_hash: sha256:4a865c119ac68f6635c4e9301b497d78794dc0e890df9fc214976cd8d77a1a7b
+- kind: project-relative
+  target: claude
+  value: .claude/skills/issue-autofix/scripts/lib/repo_paths.sh
+  runtime: null
+  scope: project
+  owners:
+  - y-miyazaki/config/.apm/packages/common
+  active_owner: y-miyazaki/config/.apm/packages/common
+  content_hash: sha256:4175492cd08671457c500eb2fa5880cb170a5e285379f3cec3219be935d6b3b7
+- kind: project-relative
+  target: claude
+  value: .claude/skills/issue-autofix/scripts/lib/terraform.sh
+  runtime: null
+  scope: project
+  owners:
+  - y-miyazaki/config/.apm/packages/common
+  active_owner: y-miyazaki/config/.apm/packages/common
+  content_hash: sha256:19d9b56a4346d68a4656ccfe61c64b8638c86ffdc02b830a7cdd84be7449551d
+- kind: project-relative
+  target: claude
+  value: .claude/skills/issue-autofix/scripts/lib/validation.sh
+  runtime: null
+  scope: project
+  owners:
+  - y-miyazaki/config/.apm/packages/common
+  active_owner: y-miyazaki/config/.apm/packages/common
+  content_hash: sha256:ec9bd6f765f43bb03ebb43771d262e0a9768d0bb92e855249c3f87b653b3cdb1
+- kind: project-relative
+  target: claude
+  value: .claude/skills/issue-triage
+  runtime: null
+  scope: project
+  owners:
+  - y-miyazaki/config/.apm/packages/common
+  active_owner: y-miyazaki/config/.apm/packages/common
+  content_hash: null
+- kind: project-relative
+  target: claude
+  value: .claude/skills/issue-triage/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - y-miyazaki/config/.apm/packages/common
+  active_owner: y-miyazaki/config/.apm/packages/common
+  content_hash: sha256:6efce4555bcac4741cc29308d74f4d5bc28eccc09bc3be3eb0e4856841eaa8cd
+- kind: project-relative
+  target: claude
+  value: .claude/skills/issue-triage/eval.yaml
+  runtime: null
+  scope: project
+  owners:
+  - y-miyazaki/config/.apm/packages/common
+  active_owner: y-miyazaki/config/.apm/packages/common
+  content_hash: sha256:f76b9f3d0bd249ee3ad97eec9d2ae7c10af22585f6f1089d5c9dd2010cae770a
+- kind: project-relative
+  target: claude
+  value: .claude/skills/issue-triage/evals/tasks/basic.yaml
+  runtime: null
+  scope: project
+  owners:
+  - y-miyazaki/config/.apm/packages/common
+  active_owner: y-miyazaki/config/.apm/packages/common
+  content_hash: sha256:047e2e5439a24fe6f7d380f1abc045df57dbbc40274e32f357b488f7796b1b5e
+- kind: project-relative
+  target: claude
+  value: .claude/skills/issue-triage/evals/tasks/classification.yaml
+  runtime: null
+  scope: project
+  owners:
+  - y-miyazaki/config/.apm/packages/common
+  active_owner: y-miyazaki/config/.apm/packages/common
+  content_hash: sha256:543482d079d1d2a500e0c88697db969f736d656e1c599b5f6d2a7a4d7d39c8c8
+- kind: project-relative
+  target: claude
+  value: .claude/skills/issue-triage/evals/tasks/may-edit-false.yaml
+  runtime: null
+  scope: project
+  owners:
+  - y-miyazaki/config/.apm/packages/common
+  active_owner: y-miyazaki/config/.apm/packages/common
+  content_hash: sha256:b36da307a9f66d28b3688e4117b6f4964fdde3cbaaa088a83bd125e170475c3f
+- kind: project-relative
+  target: claude
+  value: .claude/skills/issue-triage/evals/tasks/noaction.yaml
+  runtime: null
+  scope: project
+  owners:
+  - y-miyazaki/config/.apm/packages/common
+  active_owner: y-miyazaki/config/.apm/packages/common
+  content_hash: sha256:8202700a3e47cc52894b4aa26b03dfe24e614293c5227edaa524ed5cbd6d814e
+- kind: project-relative
+  target: claude
+  value: .claude/skills/issue-triage/evals/tasks/trigger-negative.yaml
+  runtime: null
+  scope: project
+  owners:
+  - y-miyazaki/config/.apm/packages/common
+  active_owner: y-miyazaki/config/.apm/packages/common
+  content_hash: sha256:945a495fae8dd8ff97e3ff5071d4feef686ce1810b432797ccc0760790850eee
+- kind: project-relative
+  target: claude
+  value: .claude/skills/issue-triage/references/category-fsm.md
+  runtime: null
+  scope: project
+  owners:
+  - y-miyazaki/config/.apm/packages/common
+  active_owner: y-miyazaki/config/.apm/packages/common
+  content_hash: sha256:ffa4d12415ec0039706653f61421a97fa2e6908386b9c5b472e813ba6ee47bb0
+- kind: project-relative
+  target: claude
+  value: .claude/skills/issue-triage/references/category-prompt-rules.md
+  runtime: null
+  scope: project
+  owners:
+  - y-miyazaki/config/.apm/packages/common
+  active_owner: y-miyazaki/config/.apm/packages/common
+  content_hash: sha256:e67df6a93425ad01790db46aa36a222c9e8757b8e67409068bd9a278bdaa49c7
+- kind: project-relative
+  target: claude
+  value: .claude/skills/issue-triage/references/common-checklist.md
+  runtime: null
+  scope: project
+  owners:
+  - y-miyazaki/config/.apm/packages/common
+  active_owner: y-miyazaki/config/.apm/packages/common
+  content_hash: sha256:6ecb6f76fa17b16b25bf17540ae25e6c8c1b6646959ed1785e8588a8a0d26308
+- kind: project-relative
+  target: claude
+  value: .claude/skills/issue-triage/references/common-output-format.md
+  runtime: null
+  scope: project
+  owners:
+  - y-miyazaki/config/.apm/packages/common
+  active_owner: y-miyazaki/config/.apm/packages/common
+  content_hash: sha256:e7417fc53325ed69c4b7885e1b9569dc1e7d923b76178d19c567b6900325e774
+- kind: project-relative
+  target: claude
+  value: .claude/skills/issue-triage/scripts/detect_issue.sh
+  runtime: null
+  scope: project
+  owners:
+  - y-miyazaki/config/.apm/packages/common
+  active_owner: y-miyazaki/config/.apm/packages/common
+  content_hash: sha256:40cf4c0dea9e8db14bcf2dd9dbfb4f12652e17bd26cec118b667c3656cbd83d4
+- kind: project-relative
+  target: claude
+  value: .claude/skills/issue-triage/scripts/hooks/README.md
+  runtime: null
+  scope: project
+  owners:
+  - y-miyazaki/config/.apm/packages/common
+  active_owner: y-miyazaki/config/.apm/packages/common
+  content_hash: sha256:e625aa7ad73242a58f621c8beaa8c60dba3969f516f2151680c14ec689e74499
+- kind: project-relative
+  target: claude
+  value: .claude/skills/issue-triage/scripts/hooks/on_detect_dispatch.sh
+  runtime: null
+  scope: project
+  owners:
+  - y-miyazaki/config/.apm/packages/common
+  active_owner: y-miyazaki/config/.apm/packages/common
+  content_hash: sha256:430cec6f1ff59e9579f7a88838807557499eabfeb42b44b57b663a10c4021874
+- kind: project-relative
+  target: claude
+  value: .claude/skills/issue-triage/scripts/label_fsm.sh
+  runtime: null
+  scope: project
+  owners:
+  - y-miyazaki/config/.apm/packages/common
+  active_owner: y-miyazaki/config/.apm/packages/common
+  content_hash: sha256:07668d65c5512e4cc3b6636c5b3a9e51ae64f71c23ef4f6bef3b379daaac65d2
+- kind: project-relative
+  target: claude
+  value: .claude/skills/issue-triage/scripts/labels.json
+  runtime: null
+  scope: project
+  owners:
+  - y-miyazaki/config/.apm/packages/common
+  active_owner: y-miyazaki/config/.apm/packages/common
+  content_hash: sha256:df7a567b6b08ca04392680d2cea769847401123dc3d3591a1dc28de5e53d4910
+- kind: project-relative
+  target: claude
+  value: .claude/skills/issue-triage/scripts/lib/all.sh
+  runtime: null
+  scope: project
+  owners:
+  - y-miyazaki/config/.apm/packages/common
+  active_owner: y-miyazaki/config/.apm/packages/common
+  content_hash: sha256:dc9b27d00ff0b37be6f5c986a59a8107f59a83bede4de5818e453a38ae51f216
+- kind: project-relative
+  target: claude
+  value: .claude/skills/issue-triage/scripts/lib/aws.sh
+  runtime: null
+  scope: project
+  owners:
+  - y-miyazaki/config/.apm/packages/common
+  active_owner: y-miyazaki/config/.apm/packages/common
+  content_hash: sha256:8040932c1176ff8f6f011586844cee9a07fa725b90de6c5b007d5cecf7f2d67a
+- kind: project-relative
+  target: claude
+  value: .claude/skills/issue-triage/scripts/lib/common.sh
+  runtime: null
+  scope: project
+  owners:
+  - y-miyazaki/config/.apm/packages/common
+  active_owner: y-miyazaki/config/.apm/packages/common
+  content_hash: sha256:26dded5e470bfa13c48f3816b58def268413042de385a468ee851f6f578bceda
+- kind: project-relative
+  target: claude
+  value: .claude/skills/issue-triage/scripts/lib/csv.sh
+  runtime: null
+  scope: project
+  owners:
+  - y-miyazaki/config/.apm/packages/common
+  active_owner: y-miyazaki/config/.apm/packages/common
+  content_hash: sha256:f9cddbbcba29d3b3baebbe45ad9cd1c9b015ff8342c01f55a4361f3154a0cf49
+- kind: project-relative
+  target: claude
+  value: .claude/skills/issue-triage/scripts/lib/json.sh
+  runtime: null
+  scope: project
+  owners:
+  - y-miyazaki/config/.apm/packages/common
+  active_owner: y-miyazaki/config/.apm/packages/common
+  content_hash: sha256:4a865c119ac68f6635c4e9301b497d78794dc0e890df9fc214976cd8d77a1a7b
+- kind: project-relative
+  target: claude
+  value: .claude/skills/issue-triage/scripts/lib/repo_paths.sh
+  runtime: null
+  scope: project
+  owners:
+  - y-miyazaki/config/.apm/packages/common
+  active_owner: y-miyazaki/config/.apm/packages/common
+  content_hash: sha256:4175492cd08671457c500eb2fa5880cb170a5e285379f3cec3219be935d6b3b7
+- kind: project-relative
+  target: claude
+  value: .claude/skills/issue-triage/scripts/lib/terraform.sh
+  runtime: null
+  scope: project
+  owners:
+  - y-miyazaki/config/.apm/packages/common
+  active_owner: y-miyazaki/config/.apm/packages/common
+  content_hash: sha256:19d9b56a4346d68a4656ccfe61c64b8638c86ffdc02b830a7cdd84be7449551d
+- kind: project-relative
+  target: claude
+  value: .claude/skills/issue-triage/scripts/lib/validation.sh
+  runtime: null
+  scope: project
+  owners:
+  - y-miyazaki/config/.apm/packages/common
+  active_owner: y-miyazaki/config/.apm/packages/common
+  content_hash: sha256:ec9bd6f765f43bb03ebb43771d262e0a9768d0bb92e855249c3f87b653b3cdb1
+- kind: project-relative
+  target: claude
   value: .claude/skills/markdown-validation
   runtime: null
   scope: project
@@ -4464,6 +5174,213 @@ deployments:
   - y-miyazaki/config/.apm/packages/common
   active_owner: y-miyazaki/config/.apm/packages/common
   content_hash: sha256:e3539d49e2c14344c3a36960a0af773871233964f163b9e4044ed5cefdfc9efa
+- kind: project-relative
+  target: claude
+  value: .claude/skills/pr-revise
+  runtime: null
+  scope: project
+  owners:
+  - y-miyazaki/config/.apm/packages/common
+  active_owner: y-miyazaki/config/.apm/packages/common
+  content_hash: null
+- kind: project-relative
+  target: claude
+  value: .claude/skills/pr-revise/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - y-miyazaki/config/.apm/packages/common
+  active_owner: y-miyazaki/config/.apm/packages/common
+  content_hash: sha256:d1f457cf7e47e58e6aa76d44c8b25780687cc134a35013e17afc6a5833ebf683
+- kind: project-relative
+  target: claude
+  value: .claude/skills/pr-revise/assets/pr-body-template-survey.md
+  runtime: null
+  scope: project
+  owners:
+  - y-miyazaki/config/.apm/packages/common
+  active_owner: y-miyazaki/config/.apm/packages/common
+  content_hash: sha256:a3ede1d4f27988af39abd9cf4309c512b79936dd1b9289f35ca0583ee49096c2
+- kind: project-relative
+  target: claude
+  value: .claude/skills/pr-revise/assets/pr-body-template.md
+  runtime: null
+  scope: project
+  owners:
+  - y-miyazaki/config/.apm/packages/common
+  active_owner: y-miyazaki/config/.apm/packages/common
+  content_hash: sha256:519855d8bd15a4a37aec5546c3dfcd0bfbc03e33d0bbcd7a4b768963f2a53867
+- kind: project-relative
+  target: claude
+  value: .claude/skills/pr-revise/eval.yaml
+  runtime: null
+  scope: project
+  owners:
+  - y-miyazaki/config/.apm/packages/common
+  active_owner: y-miyazaki/config/.apm/packages/common
+  content_hash: sha256:6ab255e102adc300c5ef3886255b6597b8c97d927e950fbd83af7be99b9e00cd
+- kind: project-relative
+  target: claude
+  value: .claude/skills/pr-revise/evals/tasks/automation-production-constraints.yaml
+  runtime: null
+  scope: project
+  owners:
+  - y-miyazaki/config/.apm/packages/common
+  active_owner: y-miyazaki/config/.apm/packages/common
+  content_hash: sha256:f5727a065c7d7fa951aab1afcfc7214fc79a94224933f6aa6d2a9461730219b2
+- kind: project-relative
+  target: claude
+  value: .claude/skills/pr-revise/evals/tasks/basic.yaml
+  runtime: null
+  scope: project
+  owners:
+  - y-miyazaki/config/.apm/packages/common
+  active_owner: y-miyazaki/config/.apm/packages/common
+  content_hash: sha256:6c4815e58529cdd78e4cba38dd67df8a9447debf30f11de5d76aea9ac7ce3337
+- kind: project-relative
+  target: claude
+  value: .claude/skills/pr-revise/evals/tasks/may-edit-false.yaml
+  runtime: null
+  scope: project
+  owners:
+  - y-miyazaki/config/.apm/packages/common
+  active_owner: y-miyazaki/config/.apm/packages/common
+  content_hash: sha256:8e86a3d83c58019132dc949cd3ee8f47c05600ede7e48d58c5a5d6db4dd8a6bc
+- kind: project-relative
+  target: claude
+  value: .claude/skills/pr-revise/evals/tasks/skip-detect.yaml
+  runtime: null
+  scope: project
+  owners:
+  - y-miyazaki/config/.apm/packages/common
+  active_owner: y-miyazaki/config/.apm/packages/common
+  content_hash: sha256:13ffe91a63fa071a78ce36cd87813214a5d0f21e2abc44b0f1f30df33e73ff56
+- kind: project-relative
+  target: claude
+  value: .claude/skills/pr-revise/evals/tasks/trigger-negative.yaml
+  runtime: null
+  scope: project
+  owners:
+  - y-miyazaki/config/.apm/packages/common
+  active_owner: y-miyazaki/config/.apm/packages/common
+  content_hash: sha256:94ef4aab92cc195a67599c433f037621d504fa3102362721ccd0296663c33cff
+- kind: project-relative
+  target: claude
+  value: .claude/skills/pr-revise/references/category-automation-envelope.md
+  runtime: null
+  scope: project
+  owners:
+  - y-miyazaki/config/.apm/packages/common
+  active_owner: y-miyazaki/config/.apm/packages/common
+  content_hash: sha256:4c70e4eabf639a63328c638ba02900b09cd3d1c5c103853bd1cab3ee600bfa8b
+- kind: project-relative
+  target: claude
+  value: .claude/skills/pr-revise/references/category-pr-body-links.md
+  runtime: null
+  scope: project
+  owners:
+  - y-miyazaki/config/.apm/packages/common
+  active_owner: y-miyazaki/config/.apm/packages/common
+  content_hash: sha256:0676f44801c6f1d9e1d71c2105399c81b786b23fdcd920eda1b037e2edc6c7e7
+- kind: project-relative
+  target: claude
+  value: .claude/skills/pr-revise/references/common-checklist.md
+  runtime: null
+  scope: project
+  owners:
+  - y-miyazaki/config/.apm/packages/common
+  active_owner: y-miyazaki/config/.apm/packages/common
+  content_hash: sha256:dc1c1d1fbdbce358a8ac18371794ebefbd6aa03f3c7c84020584c6ab88614a45
+- kind: project-relative
+  target: claude
+  value: .claude/skills/pr-revise/references/common-output-format.md
+  runtime: null
+  scope: project
+  owners:
+  - y-miyazaki/config/.apm/packages/common
+  active_owner: y-miyazaki/config/.apm/packages/common
+  content_hash: sha256:cea76fcf5e610c7f39dfd0cfe6c706f517177093966df2353d79e980a1767afa
+- kind: project-relative
+  target: claude
+  value: .claude/skills/pr-revise/scripts/detect_pr_revise.sh
+  runtime: null
+  scope: project
+  owners:
+  - y-miyazaki/config/.apm/packages/common
+  active_owner: y-miyazaki/config/.apm/packages/common
+  content_hash: sha256:80ed00c50ff0a1552eed48b8574df487d94de946e131236de85adbff9090499c
+- kind: project-relative
+  target: claude
+  value: .claude/skills/pr-revise/scripts/lib/all.sh
+  runtime: null
+  scope: project
+  owners:
+  - y-miyazaki/config/.apm/packages/common
+  active_owner: y-miyazaki/config/.apm/packages/common
+  content_hash: sha256:dc9b27d00ff0b37be6f5c986a59a8107f59a83bede4de5818e453a38ae51f216
+- kind: project-relative
+  target: claude
+  value: .claude/skills/pr-revise/scripts/lib/aws.sh
+  runtime: null
+  scope: project
+  owners:
+  - y-miyazaki/config/.apm/packages/common
+  active_owner: y-miyazaki/config/.apm/packages/common
+  content_hash: sha256:8040932c1176ff8f6f011586844cee9a07fa725b90de6c5b007d5cecf7f2d67a
+- kind: project-relative
+  target: claude
+  value: .claude/skills/pr-revise/scripts/lib/common.sh
+  runtime: null
+  scope: project
+  owners:
+  - y-miyazaki/config/.apm/packages/common
+  active_owner: y-miyazaki/config/.apm/packages/common
+  content_hash: sha256:26dded5e470bfa13c48f3816b58def268413042de385a468ee851f6f578bceda
+- kind: project-relative
+  target: claude
+  value: .claude/skills/pr-revise/scripts/lib/csv.sh
+  runtime: null
+  scope: project
+  owners:
+  - y-miyazaki/config/.apm/packages/common
+  active_owner: y-miyazaki/config/.apm/packages/common
+  content_hash: sha256:f9cddbbcba29d3b3baebbe45ad9cd1c9b015ff8342c01f55a4361f3154a0cf49
+- kind: project-relative
+  target: claude
+  value: .claude/skills/pr-revise/scripts/lib/json.sh
+  runtime: null
+  scope: project
+  owners:
+  - y-miyazaki/config/.apm/packages/common
+  active_owner: y-miyazaki/config/.apm/packages/common
+  content_hash: sha256:4a865c119ac68f6635c4e9301b497d78794dc0e890df9fc214976cd8d77a1a7b
+- kind: project-relative
+  target: claude
+  value: .claude/skills/pr-revise/scripts/lib/repo_paths.sh
+  runtime: null
+  scope: project
+  owners:
+  - y-miyazaki/config/.apm/packages/common
+  active_owner: y-miyazaki/config/.apm/packages/common
+  content_hash: sha256:4175492cd08671457c500eb2fa5880cb170a5e285379f3cec3219be935d6b3b7
+- kind: project-relative
+  target: claude
+  value: .claude/skills/pr-revise/scripts/lib/terraform.sh
+  runtime: null
+  scope: project
+  owners:
+  - y-miyazaki/config/.apm/packages/common
+  active_owner: y-miyazaki/config/.apm/packages/common
+  content_hash: sha256:19d9b56a4346d68a4656ccfe61c64b8638c86ffdc02b830a7cdd84be7449551d
+- kind: project-relative
+  target: claude
+  value: .claude/skills/pr-revise/scripts/lib/validation.sh
+  runtime: null
+  scope: project
+  owners:
+  - y-miyazaki/config/.apm/packages/common
+  active_owner: y-miyazaki/config/.apm/packages/common
+  content_hash: sha256:ec9bd6f765f43bb03ebb43771d262e0a9768d0bb92e855249c3f87b653b3cdb1
 - kind: project-relative
   target: claude
   value: .claude/skills/refactor
@@ -8282,6 +9199,438 @@ deployments:
   content_hash: sha256:8503ca9408390cb4a9d0c734dc544c377ce95b2fd3c9683004a63a947413eb74
 - kind: project-relative
   target: cursor
+  value: .agents/skills/issue-autofix
+  runtime: null
+  scope: project
+  owners:
+  - y-miyazaki/config/.apm/packages/common
+  active_owner: y-miyazaki/config/.apm/packages/common
+  content_hash: null
+- kind: project-relative
+  target: cursor
+  value: .agents/skills/issue-autofix/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - y-miyazaki/config/.apm/packages/common
+  active_owner: y-miyazaki/config/.apm/packages/common
+  content_hash: sha256:dd907bd0c9b27c6e023e3bb6c74457ce7e32ca9c3d6546a96f8c771663bae82f
+- kind: project-relative
+  target: cursor
+  value: .agents/skills/issue-autofix/assets/pr-body-template-survey.md
+  runtime: null
+  scope: project
+  owners:
+  - y-miyazaki/config/.apm/packages/common
+  active_owner: y-miyazaki/config/.apm/packages/common
+  content_hash: sha256:fc7fcdcfc448f22daa51c46475f4fa119fc7dd76efc169b1efdde6ccf26cc9b0
+- kind: project-relative
+  target: cursor
+  value: .agents/skills/issue-autofix/assets/pr-body-template.md
+  runtime: null
+  scope: project
+  owners:
+  - y-miyazaki/config/.apm/packages/common
+  active_owner: y-miyazaki/config/.apm/packages/common
+  content_hash: sha256:985a405316c869e250ba940a273446de0b344874d653c32da14d5b3568a8a8c4
+- kind: project-relative
+  target: cursor
+  value: .agents/skills/issue-autofix/eval.yaml
+  runtime: null
+  scope: project
+  owners:
+  - y-miyazaki/config/.apm/packages/common
+  active_owner: y-miyazaki/config/.apm/packages/common
+  content_hash: sha256:2f56cfce13935d57c0f96e0c7b9bde1618282c05adf29074d0579ecdf7fbde8e
+- kind: project-relative
+  target: cursor
+  value: .agents/skills/issue-autofix/evals/tasks/automation-production-constraints.yaml
+  runtime: null
+  scope: project
+  owners:
+  - y-miyazaki/config/.apm/packages/common
+  active_owner: y-miyazaki/config/.apm/packages/common
+  content_hash: sha256:2089d58908b96f97c940d0f1f09e5c763394ec1fdb797e53b3ac2f96f50f0d25
+- kind: project-relative
+  target: cursor
+  value: .agents/skills/issue-autofix/evals/tasks/basic.yaml
+  runtime: null
+  scope: project
+  owners:
+  - y-miyazaki/config/.apm/packages/common
+  active_owner: y-miyazaki/config/.apm/packages/common
+  content_hash: sha256:0327d229537ec7cd6c5ab7ffaf58d84408145edf0fbb4b4c13ba90d8cd6b2107
+- kind: project-relative
+  target: cursor
+  value: .agents/skills/issue-autofix/evals/tasks/may-edit-false.yaml
+  runtime: null
+  scope: project
+  owners:
+  - y-miyazaki/config/.apm/packages/common
+  active_owner: y-miyazaki/config/.apm/packages/common
+  content_hash: sha256:b40dd0a9fdb4b2801da17fe5bd63f5676a65ee0977a7364a99a8e186b3b5a966
+- kind: project-relative
+  target: cursor
+  value: .agents/skills/issue-autofix/evals/tasks/skip-open-pr.yaml
+  runtime: null
+  scope: project
+  owners:
+  - y-miyazaki/config/.apm/packages/common
+  active_owner: y-miyazaki/config/.apm/packages/common
+  content_hash: sha256:41b5ffa4bed18fcc98dd2f5d1629aa48eef95b268b72c2d7619084d7d7b33b45
+- kind: project-relative
+  target: cursor
+  value: .agents/skills/issue-autofix/evals/tasks/trigger-negative.yaml
+  runtime: null
+  scope: project
+  owners:
+  - y-miyazaki/config/.apm/packages/common
+  active_owner: y-miyazaki/config/.apm/packages/common
+  content_hash: sha256:4656257658698eb4cb72ad52a2c88e8f5dfd3ed1ace31ab3faa0b52ae81b6b8c
+- kind: project-relative
+  target: cursor
+  value: .agents/skills/issue-autofix/references/category-automation-envelope.md
+  runtime: null
+  scope: project
+  owners:
+  - y-miyazaki/config/.apm/packages/common
+  active_owner: y-miyazaki/config/.apm/packages/common
+  content_hash: sha256:bff1b2ddd1d4c4c5c4fd49c369f6aff8faa865dd3d3e0d0b7f41af8b257463fd
+- kind: project-relative
+  target: cursor
+  value: .agents/skills/issue-autofix/references/category-pr-body-links.md
+  runtime: null
+  scope: project
+  owners:
+  - y-miyazaki/config/.apm/packages/common
+  active_owner: y-miyazaki/config/.apm/packages/common
+  content_hash: sha256:05215504edae18534ceafedc76216ea083853fc8775178fea6e1172e2564bd73
+- kind: project-relative
+  target: cursor
+  value: .agents/skills/issue-autofix/references/common-checklist.md
+  runtime: null
+  scope: project
+  owners:
+  - y-miyazaki/config/.apm/packages/common
+  active_owner: y-miyazaki/config/.apm/packages/common
+  content_hash: sha256:5931bb939e9142c05585c48c66924c84c231c836581dcab3b19ab9233a3e0d56
+- kind: project-relative
+  target: cursor
+  value: .agents/skills/issue-autofix/references/common-output-format.md
+  runtime: null
+  scope: project
+  owners:
+  - y-miyazaki/config/.apm/packages/common
+  active_owner: y-miyazaki/config/.apm/packages/common
+  content_hash: sha256:b9865437df37b2d0f457d39a166f16d9173d1d8bcad7b423486290bb56fad187
+- kind: project-relative
+  target: cursor
+  value: .agents/skills/issue-autofix/scripts/detect_autofix.sh
+  runtime: null
+  scope: project
+  owners:
+  - y-miyazaki/config/.apm/packages/common
+  active_owner: y-miyazaki/config/.apm/packages/common
+  content_hash: sha256:f5e6ff237e373caa60c618cb41a34172b0444f18f861d61d071dee6c51a2d781
+- kind: project-relative
+  target: cursor
+  value: .agents/skills/issue-autofix/scripts/lib/all.sh
+  runtime: null
+  scope: project
+  owners:
+  - y-miyazaki/config/.apm/packages/common
+  active_owner: y-miyazaki/config/.apm/packages/common
+  content_hash: sha256:dc9b27d00ff0b37be6f5c986a59a8107f59a83bede4de5818e453a38ae51f216
+- kind: project-relative
+  target: cursor
+  value: .agents/skills/issue-autofix/scripts/lib/aws.sh
+  runtime: null
+  scope: project
+  owners:
+  - y-miyazaki/config/.apm/packages/common
+  active_owner: y-miyazaki/config/.apm/packages/common
+  content_hash: sha256:8040932c1176ff8f6f011586844cee9a07fa725b90de6c5b007d5cecf7f2d67a
+- kind: project-relative
+  target: cursor
+  value: .agents/skills/issue-autofix/scripts/lib/common.sh
+  runtime: null
+  scope: project
+  owners:
+  - y-miyazaki/config/.apm/packages/common
+  active_owner: y-miyazaki/config/.apm/packages/common
+  content_hash: sha256:26dded5e470bfa13c48f3816b58def268413042de385a468ee851f6f578bceda
+- kind: project-relative
+  target: cursor
+  value: .agents/skills/issue-autofix/scripts/lib/csv.sh
+  runtime: null
+  scope: project
+  owners:
+  - y-miyazaki/config/.apm/packages/common
+  active_owner: y-miyazaki/config/.apm/packages/common
+  content_hash: sha256:f9cddbbcba29d3b3baebbe45ad9cd1c9b015ff8342c01f55a4361f3154a0cf49
+- kind: project-relative
+  target: cursor
+  value: .agents/skills/issue-autofix/scripts/lib/json.sh
+  runtime: null
+  scope: project
+  owners:
+  - y-miyazaki/config/.apm/packages/common
+  active_owner: y-miyazaki/config/.apm/packages/common
+  content_hash: sha256:4a865c119ac68f6635c4e9301b497d78794dc0e890df9fc214976cd8d77a1a7b
+- kind: project-relative
+  target: cursor
+  value: .agents/skills/issue-autofix/scripts/lib/repo_paths.sh
+  runtime: null
+  scope: project
+  owners:
+  - y-miyazaki/config/.apm/packages/common
+  active_owner: y-miyazaki/config/.apm/packages/common
+  content_hash: sha256:4175492cd08671457c500eb2fa5880cb170a5e285379f3cec3219be935d6b3b7
+- kind: project-relative
+  target: cursor
+  value: .agents/skills/issue-autofix/scripts/lib/terraform.sh
+  runtime: null
+  scope: project
+  owners:
+  - y-miyazaki/config/.apm/packages/common
+  active_owner: y-miyazaki/config/.apm/packages/common
+  content_hash: sha256:19d9b56a4346d68a4656ccfe61c64b8638c86ffdc02b830a7cdd84be7449551d
+- kind: project-relative
+  target: cursor
+  value: .agents/skills/issue-autofix/scripts/lib/validation.sh
+  runtime: null
+  scope: project
+  owners:
+  - y-miyazaki/config/.apm/packages/common
+  active_owner: y-miyazaki/config/.apm/packages/common
+  content_hash: sha256:ec9bd6f765f43bb03ebb43771d262e0a9768d0bb92e855249c3f87b653b3cdb1
+- kind: project-relative
+  target: cursor
+  value: .agents/skills/issue-triage
+  runtime: null
+  scope: project
+  owners:
+  - y-miyazaki/config/.apm/packages/common
+  active_owner: y-miyazaki/config/.apm/packages/common
+  content_hash: null
+- kind: project-relative
+  target: cursor
+  value: .agents/skills/issue-triage/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - y-miyazaki/config/.apm/packages/common
+  active_owner: y-miyazaki/config/.apm/packages/common
+  content_hash: sha256:6efce4555bcac4741cc29308d74f4d5bc28eccc09bc3be3eb0e4856841eaa8cd
+- kind: project-relative
+  target: cursor
+  value: .agents/skills/issue-triage/eval.yaml
+  runtime: null
+  scope: project
+  owners:
+  - y-miyazaki/config/.apm/packages/common
+  active_owner: y-miyazaki/config/.apm/packages/common
+  content_hash: sha256:f76b9f3d0bd249ee3ad97eec9d2ae7c10af22585f6f1089d5c9dd2010cae770a
+- kind: project-relative
+  target: cursor
+  value: .agents/skills/issue-triage/evals/tasks/basic.yaml
+  runtime: null
+  scope: project
+  owners:
+  - y-miyazaki/config/.apm/packages/common
+  active_owner: y-miyazaki/config/.apm/packages/common
+  content_hash: sha256:047e2e5439a24fe6f7d380f1abc045df57dbbc40274e32f357b488f7796b1b5e
+- kind: project-relative
+  target: cursor
+  value: .agents/skills/issue-triage/evals/tasks/classification.yaml
+  runtime: null
+  scope: project
+  owners:
+  - y-miyazaki/config/.apm/packages/common
+  active_owner: y-miyazaki/config/.apm/packages/common
+  content_hash: sha256:543482d079d1d2a500e0c88697db969f736d656e1c599b5f6d2a7a4d7d39c8c8
+- kind: project-relative
+  target: cursor
+  value: .agents/skills/issue-triage/evals/tasks/may-edit-false.yaml
+  runtime: null
+  scope: project
+  owners:
+  - y-miyazaki/config/.apm/packages/common
+  active_owner: y-miyazaki/config/.apm/packages/common
+  content_hash: sha256:b36da307a9f66d28b3688e4117b6f4964fdde3cbaaa088a83bd125e170475c3f
+- kind: project-relative
+  target: cursor
+  value: .agents/skills/issue-triage/evals/tasks/noaction.yaml
+  runtime: null
+  scope: project
+  owners:
+  - y-miyazaki/config/.apm/packages/common
+  active_owner: y-miyazaki/config/.apm/packages/common
+  content_hash: sha256:8202700a3e47cc52894b4aa26b03dfe24e614293c5227edaa524ed5cbd6d814e
+- kind: project-relative
+  target: cursor
+  value: .agents/skills/issue-triage/evals/tasks/trigger-negative.yaml
+  runtime: null
+  scope: project
+  owners:
+  - y-miyazaki/config/.apm/packages/common
+  active_owner: y-miyazaki/config/.apm/packages/common
+  content_hash: sha256:945a495fae8dd8ff97e3ff5071d4feef686ce1810b432797ccc0760790850eee
+- kind: project-relative
+  target: cursor
+  value: .agents/skills/issue-triage/references/category-fsm.md
+  runtime: null
+  scope: project
+  owners:
+  - y-miyazaki/config/.apm/packages/common
+  active_owner: y-miyazaki/config/.apm/packages/common
+  content_hash: sha256:ffa4d12415ec0039706653f61421a97fa2e6908386b9c5b472e813ba6ee47bb0
+- kind: project-relative
+  target: cursor
+  value: .agents/skills/issue-triage/references/category-prompt-rules.md
+  runtime: null
+  scope: project
+  owners:
+  - y-miyazaki/config/.apm/packages/common
+  active_owner: y-miyazaki/config/.apm/packages/common
+  content_hash: sha256:e67df6a93425ad01790db46aa36a222c9e8757b8e67409068bd9a278bdaa49c7
+- kind: project-relative
+  target: cursor
+  value: .agents/skills/issue-triage/references/common-checklist.md
+  runtime: null
+  scope: project
+  owners:
+  - y-miyazaki/config/.apm/packages/common
+  active_owner: y-miyazaki/config/.apm/packages/common
+  content_hash: sha256:6ecb6f76fa17b16b25bf17540ae25e6c8c1b6646959ed1785e8588a8a0d26308
+- kind: project-relative
+  target: cursor
+  value: .agents/skills/issue-triage/references/common-output-format.md
+  runtime: null
+  scope: project
+  owners:
+  - y-miyazaki/config/.apm/packages/common
+  active_owner: y-miyazaki/config/.apm/packages/common
+  content_hash: sha256:e7417fc53325ed69c4b7885e1b9569dc1e7d923b76178d19c567b6900325e774
+- kind: project-relative
+  target: cursor
+  value: .agents/skills/issue-triage/scripts/detect_issue.sh
+  runtime: null
+  scope: project
+  owners:
+  - y-miyazaki/config/.apm/packages/common
+  active_owner: y-miyazaki/config/.apm/packages/common
+  content_hash: sha256:40cf4c0dea9e8db14bcf2dd9dbfb4f12652e17bd26cec118b667c3656cbd83d4
+- kind: project-relative
+  target: cursor
+  value: .agents/skills/issue-triage/scripts/hooks/README.md
+  runtime: null
+  scope: project
+  owners:
+  - y-miyazaki/config/.apm/packages/common
+  active_owner: y-miyazaki/config/.apm/packages/common
+  content_hash: sha256:e625aa7ad73242a58f621c8beaa8c60dba3969f516f2151680c14ec689e74499
+- kind: project-relative
+  target: cursor
+  value: .agents/skills/issue-triage/scripts/hooks/on_detect_dispatch.sh
+  runtime: null
+  scope: project
+  owners:
+  - y-miyazaki/config/.apm/packages/common
+  active_owner: y-miyazaki/config/.apm/packages/common
+  content_hash: sha256:430cec6f1ff59e9579f7a88838807557499eabfeb42b44b57b663a10c4021874
+- kind: project-relative
+  target: cursor
+  value: .agents/skills/issue-triage/scripts/label_fsm.sh
+  runtime: null
+  scope: project
+  owners:
+  - y-miyazaki/config/.apm/packages/common
+  active_owner: y-miyazaki/config/.apm/packages/common
+  content_hash: sha256:07668d65c5512e4cc3b6636c5b3a9e51ae64f71c23ef4f6bef3b379daaac65d2
+- kind: project-relative
+  target: cursor
+  value: .agents/skills/issue-triage/scripts/labels.json
+  runtime: null
+  scope: project
+  owners:
+  - y-miyazaki/config/.apm/packages/common
+  active_owner: y-miyazaki/config/.apm/packages/common
+  content_hash: sha256:df7a567b6b08ca04392680d2cea769847401123dc3d3591a1dc28de5e53d4910
+- kind: project-relative
+  target: cursor
+  value: .agents/skills/issue-triage/scripts/lib/all.sh
+  runtime: null
+  scope: project
+  owners:
+  - y-miyazaki/config/.apm/packages/common
+  active_owner: y-miyazaki/config/.apm/packages/common
+  content_hash: sha256:dc9b27d00ff0b37be6f5c986a59a8107f59a83bede4de5818e453a38ae51f216
+- kind: project-relative
+  target: cursor
+  value: .agents/skills/issue-triage/scripts/lib/aws.sh
+  runtime: null
+  scope: project
+  owners:
+  - y-miyazaki/config/.apm/packages/common
+  active_owner: y-miyazaki/config/.apm/packages/common
+  content_hash: sha256:8040932c1176ff8f6f011586844cee9a07fa725b90de6c5b007d5cecf7f2d67a
+- kind: project-relative
+  target: cursor
+  value: .agents/skills/issue-triage/scripts/lib/common.sh
+  runtime: null
+  scope: project
+  owners:
+  - y-miyazaki/config/.apm/packages/common
+  active_owner: y-miyazaki/config/.apm/packages/common
+  content_hash: sha256:26dded5e470bfa13c48f3816b58def268413042de385a468ee851f6f578bceda
+- kind: project-relative
+  target: cursor
+  value: .agents/skills/issue-triage/scripts/lib/csv.sh
+  runtime: null
+  scope: project
+  owners:
+  - y-miyazaki/config/.apm/packages/common
+  active_owner: y-miyazaki/config/.apm/packages/common
+  content_hash: sha256:f9cddbbcba29d3b3baebbe45ad9cd1c9b015ff8342c01f55a4361f3154a0cf49
+- kind: project-relative
+  target: cursor
+  value: .agents/skills/issue-triage/scripts/lib/json.sh
+  runtime: null
+  scope: project
+  owners:
+  - y-miyazaki/config/.apm/packages/common
+  active_owner: y-miyazaki/config/.apm/packages/common
+  content_hash: sha256:4a865c119ac68f6635c4e9301b497d78794dc0e890df9fc214976cd8d77a1a7b
+- kind: project-relative
+  target: cursor
+  value: .agents/skills/issue-triage/scripts/lib/repo_paths.sh
+  runtime: null
+  scope: project
+  owners:
+  - y-miyazaki/config/.apm/packages/common
+  active_owner: y-miyazaki/config/.apm/packages/common
+  content_hash: sha256:4175492cd08671457c500eb2fa5880cb170a5e285379f3cec3219be935d6b3b7
+- kind: project-relative
+  target: cursor
+  value: .agents/skills/issue-triage/scripts/lib/terraform.sh
+  runtime: null
+  scope: project
+  owners:
+  - y-miyazaki/config/.apm/packages/common
+  active_owner: y-miyazaki/config/.apm/packages/common
+  content_hash: sha256:19d9b56a4346d68a4656ccfe61c64b8638c86ffdc02b830a7cdd84be7449551d
+- kind: project-relative
+  target: cursor
+  value: .agents/skills/issue-triage/scripts/lib/validation.sh
+  runtime: null
+  scope: project
+  owners:
+  - y-miyazaki/config/.apm/packages/common
+  active_owner: y-miyazaki/config/.apm/packages/common
+  content_hash: sha256:ec9bd6f765f43bb03ebb43771d262e0a9768d0bb92e855249c3f87b653b3cdb1
+- kind: project-relative
+  target: cursor
   value: .agents/skills/markdown-validation
   runtime: null
   scope: project
@@ -8469,6 +9818,213 @@ deployments:
   - y-miyazaki/config/.apm/packages/common
   active_owner: y-miyazaki/config/.apm/packages/common
   content_hash: sha256:e3539d49e2c14344c3a36960a0af773871233964f163b9e4044ed5cefdfc9efa
+- kind: project-relative
+  target: cursor
+  value: .agents/skills/pr-revise
+  runtime: null
+  scope: project
+  owners:
+  - y-miyazaki/config/.apm/packages/common
+  active_owner: y-miyazaki/config/.apm/packages/common
+  content_hash: null
+- kind: project-relative
+  target: cursor
+  value: .agents/skills/pr-revise/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - y-miyazaki/config/.apm/packages/common
+  active_owner: y-miyazaki/config/.apm/packages/common
+  content_hash: sha256:d1f457cf7e47e58e6aa76d44c8b25780687cc134a35013e17afc6a5833ebf683
+- kind: project-relative
+  target: cursor
+  value: .agents/skills/pr-revise/assets/pr-body-template-survey.md
+  runtime: null
+  scope: project
+  owners:
+  - y-miyazaki/config/.apm/packages/common
+  active_owner: y-miyazaki/config/.apm/packages/common
+  content_hash: sha256:a3ede1d4f27988af39abd9cf4309c512b79936dd1b9289f35ca0583ee49096c2
+- kind: project-relative
+  target: cursor
+  value: .agents/skills/pr-revise/assets/pr-body-template.md
+  runtime: null
+  scope: project
+  owners:
+  - y-miyazaki/config/.apm/packages/common
+  active_owner: y-miyazaki/config/.apm/packages/common
+  content_hash: sha256:519855d8bd15a4a37aec5546c3dfcd0bfbc03e33d0bbcd7a4b768963f2a53867
+- kind: project-relative
+  target: cursor
+  value: .agents/skills/pr-revise/eval.yaml
+  runtime: null
+  scope: project
+  owners:
+  - y-miyazaki/config/.apm/packages/common
+  active_owner: y-miyazaki/config/.apm/packages/common
+  content_hash: sha256:6ab255e102adc300c5ef3886255b6597b8c97d927e950fbd83af7be99b9e00cd
+- kind: project-relative
+  target: cursor
+  value: .agents/skills/pr-revise/evals/tasks/automation-production-constraints.yaml
+  runtime: null
+  scope: project
+  owners:
+  - y-miyazaki/config/.apm/packages/common
+  active_owner: y-miyazaki/config/.apm/packages/common
+  content_hash: sha256:f5727a065c7d7fa951aab1afcfc7214fc79a94224933f6aa6d2a9461730219b2
+- kind: project-relative
+  target: cursor
+  value: .agents/skills/pr-revise/evals/tasks/basic.yaml
+  runtime: null
+  scope: project
+  owners:
+  - y-miyazaki/config/.apm/packages/common
+  active_owner: y-miyazaki/config/.apm/packages/common
+  content_hash: sha256:6c4815e58529cdd78e4cba38dd67df8a9447debf30f11de5d76aea9ac7ce3337
+- kind: project-relative
+  target: cursor
+  value: .agents/skills/pr-revise/evals/tasks/may-edit-false.yaml
+  runtime: null
+  scope: project
+  owners:
+  - y-miyazaki/config/.apm/packages/common
+  active_owner: y-miyazaki/config/.apm/packages/common
+  content_hash: sha256:8e86a3d83c58019132dc949cd3ee8f47c05600ede7e48d58c5a5d6db4dd8a6bc
+- kind: project-relative
+  target: cursor
+  value: .agents/skills/pr-revise/evals/tasks/skip-detect.yaml
+  runtime: null
+  scope: project
+  owners:
+  - y-miyazaki/config/.apm/packages/common
+  active_owner: y-miyazaki/config/.apm/packages/common
+  content_hash: sha256:13ffe91a63fa071a78ce36cd87813214a5d0f21e2abc44b0f1f30df33e73ff56
+- kind: project-relative
+  target: cursor
+  value: .agents/skills/pr-revise/evals/tasks/trigger-negative.yaml
+  runtime: null
+  scope: project
+  owners:
+  - y-miyazaki/config/.apm/packages/common
+  active_owner: y-miyazaki/config/.apm/packages/common
+  content_hash: sha256:94ef4aab92cc195a67599c433f037621d504fa3102362721ccd0296663c33cff
+- kind: project-relative
+  target: cursor
+  value: .agents/skills/pr-revise/references/category-automation-envelope.md
+  runtime: null
+  scope: project
+  owners:
+  - y-miyazaki/config/.apm/packages/common
+  active_owner: y-miyazaki/config/.apm/packages/common
+  content_hash: sha256:4c70e4eabf639a63328c638ba02900b09cd3d1c5c103853bd1cab3ee600bfa8b
+- kind: project-relative
+  target: cursor
+  value: .agents/skills/pr-revise/references/category-pr-body-links.md
+  runtime: null
+  scope: project
+  owners:
+  - y-miyazaki/config/.apm/packages/common
+  active_owner: y-miyazaki/config/.apm/packages/common
+  content_hash: sha256:0676f44801c6f1d9e1d71c2105399c81b786b23fdcd920eda1b037e2edc6c7e7
+- kind: project-relative
+  target: cursor
+  value: .agents/skills/pr-revise/references/common-checklist.md
+  runtime: null
+  scope: project
+  owners:
+  - y-miyazaki/config/.apm/packages/common
+  active_owner: y-miyazaki/config/.apm/packages/common
+  content_hash: sha256:dc1c1d1fbdbce358a8ac18371794ebefbd6aa03f3c7c84020584c6ab88614a45
+- kind: project-relative
+  target: cursor
+  value: .agents/skills/pr-revise/references/common-output-format.md
+  runtime: null
+  scope: project
+  owners:
+  - y-miyazaki/config/.apm/packages/common
+  active_owner: y-miyazaki/config/.apm/packages/common
+  content_hash: sha256:cea76fcf5e610c7f39dfd0cfe6c706f517177093966df2353d79e980a1767afa
+- kind: project-relative
+  target: cursor
+  value: .agents/skills/pr-revise/scripts/detect_pr_revise.sh
+  runtime: null
+  scope: project
+  owners:
+  - y-miyazaki/config/.apm/packages/common
+  active_owner: y-miyazaki/config/.apm/packages/common
+  content_hash: sha256:80ed00c50ff0a1552eed48b8574df487d94de946e131236de85adbff9090499c
+- kind: project-relative
+  target: cursor
+  value: .agents/skills/pr-revise/scripts/lib/all.sh
+  runtime: null
+  scope: project
+  owners:
+  - y-miyazaki/config/.apm/packages/common
+  active_owner: y-miyazaki/config/.apm/packages/common
+  content_hash: sha256:dc9b27d00ff0b37be6f5c986a59a8107f59a83bede4de5818e453a38ae51f216
+- kind: project-relative
+  target: cursor
+  value: .agents/skills/pr-revise/scripts/lib/aws.sh
+  runtime: null
+  scope: project
+  owners:
+  - y-miyazaki/config/.apm/packages/common
+  active_owner: y-miyazaki/config/.apm/packages/common
+  content_hash: sha256:8040932c1176ff8f6f011586844cee9a07fa725b90de6c5b007d5cecf7f2d67a
+- kind: project-relative
+  target: cursor
+  value: .agents/skills/pr-revise/scripts/lib/common.sh
+  runtime: null
+  scope: project
+  owners:
+  - y-miyazaki/config/.apm/packages/common
+  active_owner: y-miyazaki/config/.apm/packages/common
+  content_hash: sha256:26dded5e470bfa13c48f3816b58def268413042de385a468ee851f6f578bceda
+- kind: project-relative
+  target: cursor
+  value: .agents/skills/pr-revise/scripts/lib/csv.sh
+  runtime: null
+  scope: project
+  owners:
+  - y-miyazaki/config/.apm/packages/common
+  active_owner: y-miyazaki/config/.apm/packages/common
+  content_hash: sha256:f9cddbbcba29d3b3baebbe45ad9cd1c9b015ff8342c01f55a4361f3154a0cf49
+- kind: project-relative
+  target: cursor
+  value: .agents/skills/pr-revise/scripts/lib/json.sh
+  runtime: null
+  scope: project
+  owners:
+  - y-miyazaki/config/.apm/packages/common
+  active_owner: y-miyazaki/config/.apm/packages/common
+  content_hash: sha256:4a865c119ac68f6635c4e9301b497d78794dc0e890df9fc214976cd8d77a1a7b
+- kind: project-relative
+  target: cursor
+  value: .agents/skills/pr-revise/scripts/lib/repo_paths.sh
+  runtime: null
+  scope: project
+  owners:
+  - y-miyazaki/config/.apm/packages/common
+  active_owner: y-miyazaki/config/.apm/packages/common
+  content_hash: sha256:4175492cd08671457c500eb2fa5880cb170a5e285379f3cec3219be935d6b3b7
+- kind: project-relative
+  target: cursor
+  value: .agents/skills/pr-revise/scripts/lib/terraform.sh
+  runtime: null
+  scope: project
+  owners:
+  - y-miyazaki/config/.apm/packages/common
+  active_owner: y-miyazaki/config/.apm/packages/common
+  content_hash: sha256:19d9b56a4346d68a4656ccfe61c64b8638c86ffdc02b830a7cdd84be7449551d
+- kind: project-relative
+  target: cursor
+  value: .agents/skills/pr-revise/scripts/lib/validation.sh
+  runtime: null
+  scope: project
+  owners:
+  - y-miyazaki/config/.apm/packages/common
+  active_owner: y-miyazaki/config/.apm/packages/common
+  content_hash: sha256:ec9bd6f765f43bb03ebb43771d262e0a9768d0bb92e855249c3f87b653b3cdb1
 - kind: project-relative
   target: cursor
   value: .agents/skills/refactor
@@ -10151,7 +11707,7 @@ deployments:
   owners:
   - y-miyazaki/config/.apm/packages/common-hooks-cursor
   active_owner: y-miyazaki/config/.apm/packages/common-hooks-cursor
-  content_hash: sha256:5a381f744f2d7895c3458240026a5de495a84ceab9d25536d6d1c544f141158e
+  content_hash: sha256:3927acfad6ceaea9f1483a64c64fc77d30dead3ff5d95d9c7a8e58f1dcc5a4b1
 - kind: project-relative
   target: cursor
   value: .cursor/hooks/common-hooks-cursor/scripts/ghalint.sh
@@ -10160,7 +11716,7 @@ deployments:
   owners:
   - y-miyazaki/config/.apm/packages/common-hooks-cursor
   active_owner: y-miyazaki/config/.apm/packages/common-hooks-cursor
-  content_hash: sha256:644c0c86799e80972e139e7ddd5c935789d90dde31713301a23b19febed40a42
+  content_hash: sha256:d30cd6cabcc632e23b5f7b5f2d76f1046f9d1d3c629e9c0fdfda2ace8ad3d59a
 - kind: project-relative
   target: cursor
   value: .cursor/hooks/common-hooks-cursor/scripts/gitleaks.sh
@@ -10169,7 +11725,7 @@ deployments:
   owners:
   - y-miyazaki/config/.apm/packages/common-hooks-cursor
   active_owner: y-miyazaki/config/.apm/packages/common-hooks-cursor
-  content_hash: sha256:3b323d16af65f68a2bd8d645a9ac180987764ff1c521511c92c6df3ed026e592
+  content_hash: sha256:90cea9350f4b0f1ec66cd8c7025955b973291d4186d48b4ca5826c62c2acabd1
 - kind: project-relative
   target: cursor
   value: .cursor/hooks/common-hooks-cursor/scripts/markdown_link_check.sh
@@ -10178,7 +11734,7 @@ deployments:
   owners:
   - y-miyazaki/config/.apm/packages/common-hooks-cursor
   active_owner: y-miyazaki/config/.apm/packages/common-hooks-cursor
-  content_hash: sha256:5b7e4faa4141e01df7a69b1e6ce17db5fbbc47c79bc3e5a40e3c6d0e44b7de02
+  content_hash: sha256:a1915528049fecdb51b96aba56b90d67f2bd7e571900b226a3e8ecc1916e682f
 - kind: project-relative
   target: cursor
   value: .cursor/hooks/common-hooks-cursor/scripts/markdownlint_cli2.sh
@@ -10187,7 +11743,7 @@ deployments:
   owners:
   - y-miyazaki/config/.apm/packages/common-hooks-cursor
   active_owner: y-miyazaki/config/.apm/packages/common-hooks-cursor
-  content_hash: sha256:d229a83c68f734251b3355b65287bd8e0faa85556e58808a40b25c4e0e511723
+  content_hash: sha256:24111fe6fafdcd8b19a391a922488509f4eb4df1068daa36c5f4c69698991e88
 - kind: project-relative
   target: cursor
   value: .cursor/hooks/common-hooks-cursor/scripts/zizmor.sh
@@ -10196,7 +11752,7 @@ deployments:
   owners:
   - y-miyazaki/config/.apm/packages/common-hooks-cursor
   active_owner: y-miyazaki/config/.apm/packages/common-hooks-cursor
-  content_hash: sha256:28f45ca1d6733c9b8d1a0a13d0ddfdbcb9c3a515636b3e7972eb45bc351ab044
+  content_hash: sha256:9dc27438135f1eff1a02429f1efc85bc71e700a083245e5af1e2767b0ece320b
 - kind: project-relative
   target: cursor
   value: .cursor/hooks/shell-script-hooks-cursor/scripts/shellcheck.sh
@@ -10205,7 +11761,7 @@ deployments:
   owners:
   - y-miyazaki/config/.apm/packages/shell-script-hooks-cursor
   active_owner: y-miyazaki/config/.apm/packages/shell-script-hooks-cursor
-  content_hash: sha256:223f1409ea7dc64b560b28fedc54f9643db379f302bc24febd21daa8f29ef1e2
+  content_hash: sha256:d77a2c66cf9f6775ae8f72294410a16f0493f59ed73a54919503e830f052f5a5
 - kind: project-relative
   target: cursor
   value: .cursor/hooks/shell-script-hooks-cursor/scripts/shfmt.sh
@@ -10214,7 +11770,7 @@ deployments:
   owners:
   - y-miyazaki/config/.apm/packages/shell-script-hooks-cursor
   active_owner: y-miyazaki/config/.apm/packages/shell-script-hooks-cursor
-  content_hash: sha256:f5501a998d9e4ff6b70abf91a62e201009c718eae6073bc4ae3c815532472043
+  content_hash: sha256:1ee58b42a134c92845a1b9ea81a91e6c4218e0c446dda35ed261a2a0bfd8e74f
 - kind: project-relative
   target: cursor
   value: .cursor/hooks/terraform-hooks-cursor/scripts/terraform_fmt.sh
@@ -10232,7 +11788,7 @@ deployments:
   owners:
   - y-miyazaki/config/.apm/packages/terraform-hooks-cursor
   active_owner: y-miyazaki/config/.apm/packages/terraform-hooks-cursor
-  content_hash: sha256:d5393a45c01059bf5d965bb092f1851bdb72435a5d8c9c992469dab2f2b8ca9b
+  content_hash: sha256:28266b4c304db6017b7ce071845642920e67d1dfce7c68083e218c08d65af131
 - kind: project-relative
   target: cursor
   value: .cursor/rules/agent-skills.mdc

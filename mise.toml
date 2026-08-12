@@ -30,17 +30,17 @@ uvx = true # Install uv/uvx via pipx for better isolation and performance.
 [tools]
 # A Runtime tools
 aqua = "v2.62.2"
-node = "24.18.1"
-pnpm = { version = "11.19.0", depends = ["node"] }
+node = "24.19.0"
+pnpm = { version = "11.20.0", depends = ["node"] }
 python = "3.14.6"
 
 # AI agent tools
 "github:microsoft/apm" = "v0.27.0"               # agent package manager
-claude = "2.1.220"                               # Claude Code CLI
+claude = "2.1.222"                               # Claude Code CLI
 "github:DeusData/codebase-memory-mcp" = "v0.9.0" # codebase memory MCP server
-"aqua:github/copilot-cli" = "1.0.77"             # GitHub Copilot CLI
-"pipx:headroom-ai" = { version = "0.33.0", extras = "proxy,mcp,bedrock", depends = ["python"] }
-"npm:lean-ctx-bin" = { version = "3.9.13", depends = [
+"aqua:github/copilot-cli" = "1.0.78"             # GitHub Copilot CLI
+"pipx:headroom-ai" = { version = "0.34.0", extras = "proxy,mcp,bedrock", depends = ["python"] }
+"npm:lean-ctx-bin" = { version = "3.9.17", depends = [
   "node",
 ], allow_builds = [
   "lean-ctx-bin",
@@ -48,7 +48,7 @@ claude = "2.1.220"                               # Claude Code CLI
 "github:microsoft/waza" = "v0.38.4"               # agent skill evaluator
 
 # AWS related tools
-"aqua:aws/aws-cli" = "2.36.14"      # AWS CLI
+"aqua:aws/aws-cli" = "2.36.16"      # AWS CLI
 "aqua:aws/aws-sam-cli" = "1.165.0"  # SAM CLI tool
 "npm:awsp" = { version = "0.2.0", depends = [
   "node",
@@ -64,12 +64,12 @@ claude = "2.1.220"                               # Claude Code CLI
 "aqua:suzuki-shunsuke/ghalint" = "1.5.6"                              # GitHub Actions linter
 "aqua:suzuki-shunsuke/ghatm" = "1.0.0"                                # auto-set timeout-minutes for GitHub Actions jobs
 "aqua:suzuki-shunsuke/pinact" = "4.1.1"                               # GitHub Actions pinning tool
-"aqua:zizmorcore/zizmor" = "1.28.0"                                   # GitHub Actions security auditor
+"aqua:zizmorcore/zizmor" = "1.29.0"                                   # GitHub Actions security auditor
 
 # Go related tools
 "aqua:air-verse/air" = "1.67.4"                                           # live reload
 "aqua:bufbuild/buf" = "1.72.0"                                            # protobuf linter and formatter
-"go:github.com/go-delve/delve/cmd/dlv" = "v1.27.0"                                          # debugger
+"go:github.com/go-delve/delve/cmd/dlv" = "v1.27.1"                                          # debugger
 "aqua:mvdan/gofumpt" = "0.11.0"                                           # code formatter
 "aqua:golangci/golangci-lint" = "2.12.2"                                  # linter
 "aqua:goreleaser/goreleaser" = "2.17.1"                                   # release automation
@@ -82,7 +82,7 @@ claude = "2.1.220"                               # Claude Code CLI
 "aqua:protocolbuffers/protobuf-go/protoc-gen-go" = "1.36.11"              # protobuf code generator
 "aqua:grpc/grpc-go/protoc-gen-go-grpc" = "1.6.1"                          # gRPC code generator
 "aqua:swaggo/swag" = "1.16.6"                                             # API documentation generator
-"aqua:go-swagger/go-swagger" = "0.36.0"                                   # API documentation generator (swagger)
+"aqua:go-swagger/go-swagger" = "0.36.1"                                   # API documentation generator (swagger)
 
 # Lint / Formatter tools
 "npm:cspell" = { version = "10.0.1", depends = [
@@ -104,7 +104,7 @@ claude = "2.1.220"                               # Claude Code CLI
   "python",
 ] } # pre-commit framework
 "pipx:semgrep" = { version = "1.172.0", depends = ["python"] } # SAST scanner (uvx-backed pipx)
-"aqua:aquasecurity/trivy" = "0.72.0" # vulnerability scanner
+"aqua:aquasecurity/trivy" = "0.73.0" # vulnerability scanner
 
 # Terraform related tools
 "aqua:getsops/sops" = "3.13.3"                  # encryption tool
