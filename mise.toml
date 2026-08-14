@@ -35,7 +35,7 @@ pnpm = { version = "11.20.0", depends = ["node"] }
 python = "3.14.6"
 
 # AI agent tools
-"github:microsoft/apm" = "v0.27.0"               # agent package manager
+"github:microsoft/apm" = "v0.28.0"               # agent package manager
 claude = "2.1.222"                               # Claude Code CLI
 "github:DeusData/codebase-memory-mcp" = "v0.9.0" # codebase memory MCP server
 "aqua:github/copilot-cli" = "1.0.78"             # GitHub Copilot CLI
@@ -48,7 +48,7 @@ claude = "2.1.222"                               # Claude Code CLI
 "github:microsoft/waza" = "v0.38.4"               # agent skill evaluator
 
 # AWS related tools
-"aqua:aws/aws-cli" = "2.36.16"      # AWS CLI
+"aqua:aws/aws-cli" = "2.36.18"      # AWS CLI
 "aqua:aws/aws-sam-cli" = "1.165.0"  # SAM CLI tool
 "npm:awsp" = { version = "0.2.0", depends = [
   "node",
@@ -100,7 +100,7 @@ claude = "2.1.222"                               # Claude Code CLI
 
 # Security related tools
 "aqua:gitleaks/gitleaks" = "8.30.1"  # secret scanner
-"pipx:pre-commit" = { version = "4.6.1", depends = [
+"pipx:pre-commit" = { version = "4.6.2", depends = [
   "python",
 ] } # pre-commit framework
 "pipx:semgrep" = { version = "1.172.0", depends = ["python"] } # SAST scanner (uvx-backed pipx)
@@ -117,8 +117,8 @@ claude = "2.1.222"                               # Claude Code CLI
 "pipx:mkdocs" = { version = "1.6.1", depends = ["python"], postinstall = "uv pip install --python $MISE_TOOL_INSTALL_PATH/mkdocs/bin/python mkdocs-material mdx-truly-sane-lists" } # MkDocs with Material theme
 "aqua:BurntSushi/ripgrep" = "15.2.0" # grep alternative (rg)
 "aqua:tamasfe/taplo" = "0.10.0"      # TOML formatter / LSP
-"aqua:jdx/usage" = "4.1.0"           # usage CLI tool for command help and completions
-"aqua:astral-sh/uv" = "0.12.1"      # uv/uvx
+"aqua:jdx/usage" = "5.0.0"           # usage CLI tool for command help and completions
+"aqua:astral-sh/uv" = "0.12.2"      # uv/uvx
 
 [tasks.mise-install]
 description = "Install tools defined in mise.toml"

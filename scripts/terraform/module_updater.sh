@@ -657,16 +657,16 @@ function extract_modules_from_file {
       if ($0 ~ /}/) nest--;
       if (nest == 0) {
         source=""; version="";
-        if (match(block, /source[[:space:]]*=[[:space:]]*\"[^\"]+\"/)) {
+        if (match(block, /source[[:space:]]*=[[:space:]]*"[^"]+"/)) {
           s = substr(block, RSTART, RLENGTH);
-          gsub(/.*=[[:space:]]*\"/, "", s);
-          gsub(/\".*/, "", s);
+          gsub(/.*=[[:space:]]*"/, "", s);
+          gsub(/".*/, "", s);
           source = s;
         }
-        if (match(block, /version[[:space:]]*=[[:space:]]*\"[^\"]+\"/)) {
+        if (match(block, /version[[:space:]]*=[[:space:]]*"[^"]+"/)) {
           s = substr(block, RSTART, RLENGTH);
-          gsub(/.*=[[:space:]]*\"/, "", s);
-          gsub(/\".*/, "", s);
+          gsub(/.*=[[:space:]]*"/, "", s);
+          gsub(/".*/, "", s);
           version = s;
         }
         if (length(source) > 0 && length(version) > 0) { print source "||" version "||" FILENAME; }

@@ -2,14 +2,15 @@
 #######################################
 # Description: Comprehensive Go code quality and testing script for Go projects
 #
-# Usage: ./validate.sh [options] <directory>
+# Usage: ./validate.sh [options] [directory]
 #   options:
-#     -h, --help     Display this help message
-#     -v, --verbose  Enable verbose output
-#     -d, --dry-run  Run in dry-run mode (no changes made)
-#     -f, --fix      Automatically fix issues where possible
+#     -h, --help       Display this help message
+#     -v, --verbose    Enable verbose output
+#     -d, --dry-run    Run in dry-run mode (no changes made)
+#     -f, --fix        Automatically fix issues where possible
+#         --skip-tests Skip go test, race, coverage, and benchmark checks
 #   arguments:
-#     directory      Package or directory to validate
+#     directory        Package or directory to validate (optional)
 #######################################
 
 # Error handling: exit on error, unset variable, or failed pipeline
@@ -36,8 +37,9 @@ TARGET_DIR=""
 TARGET_PATTERN="./..."
 COVERAGE_THRESHOLD=80
 EXIT_CODE=0
-# 新規: スコープ実行フラグ (特定ディレクトリのみ)
+# When true, limit checks to TARGET_DIR (not "." or "./...")
 IS_SCOPED=false
+SKIP_TESTS=false
 
 # Flags for individual checks
 LINT_FAILED=0
@@ -84,21 +86,23 @@ Description: Comprehensive Go code quality and testing script for Go projects
              Automatically detects Go directories if no specific target is provided
 
 Options:
-  -h, --help     Display this help message
-  -v, --verbose  Enable verbose output and benchmark tests
-  -d, --dry-run  Run in dry-run mode (no changes made)
-  -f, --fix      Automatically fix issues where possible
+  -h, --help       Display this help message
+  -v, --verbose    Enable verbose output and benchmark tests
+  -d, --dry-run    Run in dry-run mode (no changes made)
+  -f, --fix        Automatically fix issues where possible
+      --skip-tests Skip go test, race, coverage, and benchmark checks
 
 Arguments:
-  directory      Target directory to check (optional)
-                 If not provided, auto-detects all Go directories
-                 Use './...' to check all packages recursively
+  directory        Target directory to check (optional)
+                   If not provided, auto-detects all Go directories
+                   Use './...' to check all packages recursively
 
 Examples:
   $(basename "$0")                                    # Auto-detect all Go directories
   $(basename "$0") -v                                 # Auto-detect with verbose output
   $(basename "$0") -f ./cmd/cloudwatch                # Check specific directory with auto-fix
   $(basename "$0") -v -f ./...                        # Check all packages recursively
+  $(basename "$0") --skip-tests ./cmd/foo             # Lint/build only
 EOF
     exit 0
 }
@@ -110,7 +114,9 @@ EOF
 #   Parses command line arguments and sets global variables accordingly
 #
 # Globals:
-#   None
+#   TARGET_DIR - Package or directory to validate
+#   IS_SCOPED - Limit checks when TARGET_DIR is not "." or "./..."
+#   SKIP_TESTS - Skip go test, race, coverage, and benchmark checks
 #
 # Arguments:
 #   $@ - All command line arguments passed to the script
@@ -143,9 +149,14 @@ function parse_arguments {
                 FIX_MODE=true
                 shift
                 ;;
+            --skip-tests)
+                SKIP_TESTS=true
+                shift
+                ;;
             -*)
                 error_exit "Unknown option: $1"
                 ;;
+
             *)
                 if [[ -z ${TARGET_DIR:-} ]]; then
                     TARGET_DIR="$1"
@@ -167,8 +178,6 @@ function parse_arguments {
         IS_SCOPED=true
     fi
 }
-
-# Dependencies validation is now handled by common.sh library
 
 #######################################
 # determine_target_pattern: Determine target pattern for Go tools
@@ -721,16 +730,21 @@ function main {
     log "INFO" "Verbose mode: $VERBOSE"
     log "INFO" "Dry-run mode: $DRY_RUN"
     log "INFO" "Fix mode: $FIX_MODE"
+    log "INFO" "Skip tests: $SKIP_TESTS"
     run_go_mod_tidy
     run_go_build
     run_golangci_lint
-    run_tests
-    run_race_tests
-    run_coverage_tests
-    run_security_checks
-    if [[ $VERBOSE == "true" ]]; then
-        run_benchmark_tests
+    if [[ $SKIP_TESTS != "true" ]]; then
+        run_tests
+        run_race_tests
+        run_coverage_tests
+        if [[ $VERBOSE == "true" ]]; then
+            run_benchmark_tests
+        fi
+    else
+        log "INFO" "Skipping go test, race, coverage, and benchmark checks"
     fi
+    run_security_checks
     # Record end time and calculate elapsed time
     end_time=$(date +%s)
     elapsed=$((end_time - start_time))
@@ -752,29 +766,34 @@ function main {
     else
         echo "✅ golangci-lint" >&2
     fi
-    if [[ $TEST_FAILED == "1" ]]; then
-        echo -n "❌ go test" >&2
-        # Use safe arithmetic comparison with default 0
-        if ((${TEST_FAIL_COUNT:-0} > 0)); then
-            echo " (${TEST_FAIL_COUNT} failed)" >&2
-        else
-            echo "" >&2
-        fi
+    if [[ $SKIP_TESTS == "true" ]]; then
+        echo "⏭️ go test (skipped)" >&2
+        echo "⏭️ go test -race (skipped)" >&2
+        echo "⏭️ go test -cover (skipped)" >&2
     else
-        echo "✅ go test" >&2
-    fi
-    [[ $RACE_FAILED == "1" ]] && echo "❌ go test -race" >&2 || echo "✅ go test -race" >&2
-    if [[ $COVERAGE_FAILED == "1" ]]; then
-        if [[ -n $COVERAGE_PERCENT ]]; then
-            echo "⚠️ go test -cover ($COVERAGE_PERCENT% < ${COVERAGE_THRESHOLD}% threshold)" >&2
+        if [[ $TEST_FAILED == "1" ]]; then
+            echo -n "❌ go test" >&2
+            if ((${TEST_FAIL_COUNT:-0} > 0)); then
+                echo " (${TEST_FAIL_COUNT} failed)" >&2
+            else
+                echo "" >&2
+            fi
         else
-            echo "⚠️ go test -cover" >&2
+            echo "✅ go test" >&2
         fi
-    else
-        if [[ -n $COVERAGE_PERCENT ]]; then
-            echo "✅ go test -cover ($COVERAGE_PERCENT%)" >&2
+        [[ $RACE_FAILED == "1" ]] && echo "❌ go test -race" >&2 || echo "✅ go test -race" >&2
+        if [[ $COVERAGE_FAILED == "1" ]]; then
+            if [[ -n $COVERAGE_PERCENT ]]; then
+                echo "⚠️ go test -cover ($COVERAGE_PERCENT% < ${COVERAGE_THRESHOLD}% threshold)" >&2
+            else
+                echo "⚠️ go test -cover" >&2
+            fi
         else
-            echo "✅ go test -cover" >&2
+            if [[ -n $COVERAGE_PERCENT ]]; then
+                echo "✅ go test -cover ($COVERAGE_PERCENT%)" >&2
+            else
+                echo "✅ go test -cover" >&2
+            fi
         fi
     fi
     [[ $SECURITY_FAILED == "1" ]] && echo "❌ security checks (govulncheck)" >&2 || echo "✅ security checks (govulncheck)" >&2
