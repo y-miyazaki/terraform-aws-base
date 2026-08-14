@@ -1,15 +1,16 @@
 ---
 name: changelog
 description: >-
-  Survey and update CHANGELOG.md from unreleased commits and undocumented releases
-  (conventional, renovate, chore, pin/finalize subjects, and git tags). Use when
-  the user asks to check, review, or update the changelog, or when automation supplies
-  commit/release detect JSON. Default is survey only; edit CHANGELOG.md only when the
-  user explicitly requests a fix or automation sets may_edit in Constraints.
+  Survey and update CHANGELOG.md from unreleased commits and undocumented
+  releases. Use in conversation when the user asks to check, review, or update
+  the changelog. Also the loop entry skill when automation supplies
+  commit/release detect JSON. Interactive default is survey only; edit
+  CHANGELOG.md when the user explicitly requests a fix or automation sets
+  may_edit in Constraints.
 license: Apache-2.0
 metadata:
   author: y-miyazaki
-  version: "2.0.6"
+  version: "2.0.7"
 ---
 
 **UTILITY SKILL** — changelog survey and patch, not release tagging.

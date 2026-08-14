@@ -23,14 +23,14 @@
       "type": "stdio",
       "command": "uvx",
       "args": [
-        "awslabs.aws-documentation-mcp-server==1.1.28"
+        "awslabs.aws-documentation-mcp-server==1.1.29"
       ]
     },
     "aws-pricing-mcp-server": {
       "type": "stdio",
       "command": "uvx",
       "args": [
-        "awslabs.aws-pricing-mcp-server==1.0.32"
+        "awslabs.aws-pricing-mcp-server==1.0.33"
       ]
     },
     "context7": {
@@ -68,7 +68,7 @@
       "command": "npx",
       "args": [
         "-y",
-        "lean-ctx-bin@3.9.13"
+        "lean-ctx-bin@3.9.17"
       ]
     },
     "hashicorp-terraform-mcp-server": {

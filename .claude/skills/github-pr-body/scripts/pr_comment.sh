@@ -2,7 +2,7 @@
 #######################################
 # Description: Create or update PR overview comment
 #
-# Usage: ./pr-comment.sh <PR_NUMBER> <COMMENT_FILE> [--repo OWNER/REPO] [--dry-run]
+# Usage: ./pr_comment.sh <PR_NUMBER> <COMMENT_FILE> [--repo OWNER/REPO] [--dry-run]
 #   --repo       Repository in owner/repo format (default: auto-detect from git)
 #   --dry-run    Show what would be done without making changes
 #   -h, --help   Display this help message
@@ -12,9 +12,9 @@
 #   COMMENT_FILE           File containing comment markdown content
 #
 # Examples:
-#   ./pr-comment.sh 123 comment.md
-#   ./pr-comment.sh 123 comment.md --repo owner/repo
-#   ./pr-comment.sh 123 comment.md --dry-run
+#   ./pr_comment.sh 123 comment.md
+#   ./pr_comment.sh 123 comment.md --repo owner/repo
+#   ./pr_comment.sh 123 comment.md --dry-run
 #######################################
 
 # Error handling: exit on error, unset variable, or failed pipeline
@@ -277,7 +277,7 @@ function parse_arguments {
                 shift
                 ;;
             *)
-                if [[ -z $PR_NUMBER ]] && [[ $1 =~ ^[0-9]+$ ]]; then
+                if [[ -z $PR_NUMBER ]] && [[ $1 =~ ^[1-9][0-9]*$ ]]; then
                     PR_NUMBER="$1"
                 elif [[ -z $COMMENT_FILE ]] && [[ -f $1 ]]; then
                     COMMENT_FILE="$1"
@@ -329,6 +329,9 @@ function main {
 
     # Validate prerequisites
     require_dependencies "gh" "jq"
+
+    require_valid_pr_number "$PR_NUMBER"
+    require_valid_repository_slug "$REPOSITORY"
 
     # Check if PR exists
     if ! gh pr view "$PR_NUMBER" --repo "$REPOSITORY" &> /dev/null; then

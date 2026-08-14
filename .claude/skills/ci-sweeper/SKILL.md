@@ -1,15 +1,16 @@
 ---
 name: ci-sweeper
 description: >-
-  Triage failing CI on integration branches and/or PR heads, classify failures,
-  apply minimal fixes when actionable. Use when the user asks to triage or fix
-  CI failures, when automation detects failed workflow runs, or when
-  automation supplies detection JSON. Default is survey only; edit files only when
-  the user explicitly requests a fix or automation sets may_edit in Constraints.
+  Triage failing CI on integration branches and/or PR heads, classify
+  failures, apply minimal fixes when actionable. Use in conversation when the
+  user asks to triage or fix CI failures. Also the loop entry skill when
+  automation detects failed workflow runs or supplies detection JSON.
+  Interactive default is survey only; edit files when the user explicitly
+  requests a fix or automation sets may_edit in Constraints.
 license: Apache-2.0
 metadata:
   author: y-miyazaki
-  version: "1.6.3"
+  version: "1.6.4"
 ---
 
 **UTILITY SKILL** — CI failure triage and minimal fix, not merge or release.

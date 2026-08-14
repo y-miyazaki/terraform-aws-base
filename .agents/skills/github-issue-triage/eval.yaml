@@ -1,0 +1,43 @@
+name: github-issue-triage-eval
+description: >-
+  Evaluation suite for github-issue-triage.
+  Verifies classification, label FSM behavior, comment history (new vs update),
+  may_edit guardrails, skip exits, trigger-negative guardrails, and structured
+  session report output.
+skill: github-issue-triage
+version: "1.0"
+config:
+  trials_per_task: 5
+  timeout_seconds: 180
+  parallel: false
+  executor: mock
+  model: claude-sonnet-4-20250514
+metrics:
+  - name: task_completion
+    weight: 1.0
+    threshold: 0.8
+    description: Verify evaluation task completes successfully.
+graders:
+  - type: code
+    name: has_structured_output
+    weight: 1.0
+    config:
+      assertions:
+        - "'## Overview' in output or 'Overview' in output"
+        - "'## Changes' in output or 'Changes' in output or '## Deferred' in output or 'Deferred' in output"
+        - "'## Session Metrics' in output or 'Session Metrics' in output or 'no repository file edits' in output.lower() or 'skip' in output.lower()"
+  - type: text
+    name: report_sections
+    weight: 0.5
+    config:
+      regex_match:
+        - (## Overview|## Changes|## Deferred|## Session Metrics)
+  - type: behavior
+    name: bounded_runtime
+    weight: 0.5
+    config:
+      max_tool_calls: 30
+      max_tokens: 120000
+      max_duration_ms: 180000
+tasks:
+  - evals/tasks/*.yaml

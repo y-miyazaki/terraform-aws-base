@@ -1,17 +1,16 @@
 ---
 name: refactor
 description: >-
-  Behavior-preserving structural refactors with verification gates. Survey candidates
-  first, then apply all actionable in-scope structural fixes in one run — interactively or from
-  optional automation hints (duplication_block, oversized_unit). Default is survey only; apply
-  edits only when the user explicitly requests apply or automation sets may_edit in
-  Constraints. Architecture: proposal first, one approved slice per apply batch. Not for
-  lint-only style, features, behavior-changing bugfixes, or upgrades.
-  Use when surveying or applying structural refactors interactively or from automation hints.
+  Behavior-preserving structural refactors with verification gates. Use in
+  conversation when surveying or applying structural refactors. Also the loop
+  entry skill when automation supplies hints (duplication_block,
+  oversized_unit). Interactive default is survey only; apply edits when the
+  user explicitly requests apply or automation sets may_edit in Constraints.
+  Not for lint-only style, features, behavior-changing bugfixes, or upgrades.
 license: Apache-2.0
 metadata:
   author: y-miyazaki
-  version: "2.8.6"
+  version: "2.8.7"
 ---
 
 **UTILITY SKILL** — structural refactor survey and apply, not feature work.
@@ -44,7 +43,7 @@ Refactor report per [common-output-format.md](references/common-output-format.md
 - [category-scope.md](references/category-scope.md) (always read)
 - [category-contract.md](references/category-contract.md) (always read)
 - [category-detect-scope.md](references/category-detect-scope.md) (read on interactive path)
-- [category-verification.md](references/category-verification.md) (always read — apply vs watch and Phase B gates)
+- [category-verification.md](references/category-verification.md) (read when may_edit is true)
 - [category-techniques.md](references/category-techniques.md) (read when may_edit is true)
 - [category-input-schema.md](references/category-input-schema.md) (read when structured mode JSON, automation detect JSON, or the optional detect script is run)
 - [category-automation-envelope.md](references/category-automation-envelope.md) (read on automation path)

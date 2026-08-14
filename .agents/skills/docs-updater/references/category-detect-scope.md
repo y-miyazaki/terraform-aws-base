@@ -2,11 +2,11 @@
 
 `--scope` is a **cursor axis**, not a universal "whole repo files" switch.
 
-| Value | Cursor | Meaning |
-| ----- | ------ | ------- |
-| `range` | Commit (`--since` required) | Universe members related to `<since>..HEAD` |
-| `all` | None | Full enumeration of this skill's domain universe, then caps/filters |
-| `staged` | Index | Universe members in the git index — file-oriented skills only |
+| Value    | Cursor                      | Meaning                                                             |
+| -------- | --------------------------- | ------------------------------------------------------------------- |
+| `range`  | Commit (`--since` required) | Universe members related to `<since>..HEAD`                         |
+| `all`    | None                        | Full enumeration of this skill's domain universe, then caps/filters |
+| `staged` | Index                       | Universe members in the git index — file-oriented skills only       |
 
 `all` is not unbounded: skill caps still apply (hint limits, commit limits, run limits).
 
@@ -24,11 +24,11 @@ When natural units are files: enumerate eligible paths, then apply this skill's 
 
 ## This skill (`docs-updater`)
 
-| Field | Value |
-| ----- | ----- |
-| Universe | Candidate docs (`DOCS_UPDATER_DOC_GLOBS` or default markdown discovery) |
-| `all` | Full candidate-doc enumeration (not working-tree diff) |
-| `range` | Impact from `<since>..HEAD` changes |
-| `staged` | Impact from cached diff (git hook / pre-commit) |
-| Detect script | `scripts/detect_changes.sh` |
-| Path roles | Interactive free-form → `all`; git hook → `staged`; automation with cursor → `range` |
+| Field         | Value                                                                                |
+| ------------- | ------------------------------------------------------------------------------------ |
+| Universe      | Candidate docs (`DOCS_UPDATER_DOC_GLOBS` or default markdown discovery)              |
+| `all`         | Full candidate-doc enumeration (not working-tree diff)                               |
+| `range`       | Impact from `<since>..HEAD` changes                                                  |
+| `staged`      | Impact from cached diff (git hook / pre-commit)                                      |
+| Detect script | `scripts/detect_changes.sh`                                                          |
+| Path roles    | Interactive free-form → `all`; git hook → `staged`; automation with cursor → `range` |

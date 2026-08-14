@@ -1,0 +1,30 @@
+id: github-issue-triage-classification-001
+name: github-issue-triage low-confidence keeps needs-triage
+description: >-
+  Validate low-confidence Issues keep needs-triage and post clarifying questions
+  instead of applying a type label.
+tags:
+  - quality
+  - classification
+inputs:
+  prompt: >-
+    Use github-issue-triage with may_edit false. Triage Issue #77 from detect JSON. Confidence
+    is low — keep needs-triage, ask numbered clarifying questions on the Issue, and list
+    planned gh mutations under ## Changes. Emit ## Overview, ## Deferred, and ## Session
+    Metrics. Do not apply bug/feature/question/documentation labels. Do not edit repository
+    files.
+  context:
+    skip: false
+    issue_number: 77
+    title: "Something feels slow"
+    body: "Performance might be worse lately."
+    labels:
+      - needs-triage
+    event: opened
+expected:
+  output_contains:
+    - Overview
+    - needs-triage
+    - Changes
+  outcomes:
+    - type: task_completed

@@ -1,0 +1,29 @@
+id: github-issue-triage-contract-001
+name: github-issue-triage classifies injected bug issue
+description: >-
+  Validate github-issue-triage classifies a clear bug report, applies allowlisted labels,
+  and emits the session report shape.
+tags:
+  - quality
+  - output-contract
+inputs:
+  prompt: >-
+    Use github-issue-triage with may_edit false. Triage Issue #42 from detect JSON. Classify as
+    bug when confident. Emit ## Overview, ## Changes (gh label/comment mutations), ##
+    Deferred when applicable, and ## Session Metrics per common-output-format.md. Do not
+    edit repository files. Do not start github-issue-autofix or call repository_dispatch.
+  context:
+    skip: false
+    issue_number: 42
+    title: "Login button returns 500 on submit"
+    body: "Steps: open /login, click Submit. Expected 200, got 500 in production."
+    labels:
+      - needs-triage
+    event: opened
+expected:
+  output_contains:
+    - Overview
+    - Changes
+    - bug
+  outcomes:
+    - type: task_completed

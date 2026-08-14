@@ -281,7 +281,7 @@ function parse_arguments {
                 shift 2
                 ;;
             *)
-                if [[ -z $PR_NUMBER ]] && [[ $1 =~ ^[0-9]+$ ]]; then
+                if [[ -z $PR_NUMBER ]] && [[ $1 =~ ^[1-9][0-9]*$ ]]; then
                     PR_NUMBER="$1"
                 else
                     error_exit "Invalid argument: $1"
@@ -325,6 +325,9 @@ function main {
 
     # Validate prerequisites
     require_dependencies "gh" "jq"
+
+    require_valid_pr_number "$PR_NUMBER"
+    require_valid_repository_slug "$REPOSITORY"
 
     # Fetch PR metadata
     local pr_metadata

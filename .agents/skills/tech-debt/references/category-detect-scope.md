@@ -2,11 +2,11 @@
 
 `--scope` is a **cursor axis**, not a universal "whole repo files" switch.
 
-| Value | Cursor | Meaning |
-| ----- | ------ | ------- |
-| `range` | Commit (`--since` required) | Universe members related to `<since>..HEAD` |
-| `all` | None | Full enumeration of this skill's domain universe, then caps/filters |
-| `staged` | Index | Universe members in the git index — file-oriented skills only |
+| Value    | Cursor                      | Meaning                                                             |
+| -------- | --------------------------- | ------------------------------------------------------------------- |
+| `range`  | Commit (`--since` required) | Universe members related to `<since>..HEAD`                         |
+| `all`    | None                        | Full enumeration of this skill's domain universe, then caps/filters |
+| `staged` | Index                       | Universe members in the git index — file-oriented skills only       |
 
 `all` is not unbounded: skill caps still apply (hint limits, commit limits, run limits).
 
@@ -24,10 +24,10 @@ When natural units are files: enumerate eligible paths, then apply this skill's 
 
 ## This skill (`tech-debt`)
 
-| Field | Value |
-| ----- | ----- |
-| Universe | Repository sensor universe (full tree walk when unfiltered) |
-| `all` | Full sensor pass |
-| `range` | Accepted for CLI parity — document actual sensor behavior in detect usage; do not silently redefine without tests |
-| `staged` | noop / deprecated |
-| Detect script | `scripts/detect_tech_debt.sh` |
+| Field         | Value                                                                                                             |
+| ------------- | ----------------------------------------------------------------------------------------------------------------- |
+| Universe      | Repository sensor universe (full tree walk when unfiltered)                                                       |
+| `all`         | Full sensor pass                                                                                                  |
+| `range`       | Accepted for CLI parity — document actual sensor behavior in detect usage; do not silently redefine without tests |
+| `staged`      | noop / deprecated                                                                                                 |
+| Detect script | `scripts/detect_tech_debt.sh`                                                                                     |

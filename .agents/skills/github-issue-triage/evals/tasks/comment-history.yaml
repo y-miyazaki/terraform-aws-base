@@ -1,0 +1,32 @@
+id: github-issue-triage-comment-history-001
+name: github-issue-triage posts a new comment on re-triage
+description: >-
+  Validate re-triage after a human reply creates a new Issue comment instead of
+  overwriting the prior triage comment.
+tags:
+  - quality
+  - comments
+inputs:
+  prompt: >-
+    Use github-issue-triage with may_edit false. Triage Issue #81 from detect JSON. A human
+    replied while triage:needs-info is present. Re-evaluate and post a NEW Issue
+    comment (do not update or overwrite the prior triage comment). List planned gh
+    mutations under ## Changes using issue_comment.sh create (not correct) for the comment. Emit ##
+    Overview, ## Deferred when applicable, and ## Session Metrics. Do not edit
+    repository files. Do not start github-issue-autofix or call repository_dispatch.
+  context:
+    skip: false
+    issue_number: 81
+    title: "Something feels slow"
+    body: "Performance might be worse lately."
+    labels:
+      - needs-triage
+      - triage:needs-info
+    event: issue_comment
+expected:
+  output_contains:
+    - Overview
+    - Changes
+    - new
+  outcomes:
+    - type: task_completed

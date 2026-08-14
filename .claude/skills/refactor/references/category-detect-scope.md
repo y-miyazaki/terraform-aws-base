@@ -2,11 +2,11 @@
 
 `--scope` is a **cursor axis**, not a universal "whole repo files" switch.
 
-| Value | Cursor | Meaning |
-| ----- | ------ | ------- |
-| `range` | Commit (`--since` required) | Universe members related to `<since>..HEAD` |
-| `all` | None | Full enumeration of this skill's domain universe, then caps/filters |
-| `staged` | Index | Universe members in the git index — file-oriented skills only |
+| Value    | Cursor                      | Meaning                                                             |
+| -------- | --------------------------- | ------------------------------------------------------------------- |
+| `range`  | Commit (`--since` required) | Universe members related to `<since>..HEAD`                         |
+| `all`    | None                        | Full enumeration of this skill's domain universe, then caps/filters |
+| `staged` | Index                       | Universe members in the git index — file-oriented skills only       |
 
 `all` is not unbounded: skill caps still apply (hint limits, commit limits, run limits).
 
@@ -24,10 +24,10 @@ When natural units are files: enumerate eligible paths, then apply this skill's 
 
 ## This skill (`refactor`)
 
-| Field | Value |
-| ----- | ----- |
-| Universe | Enumerate tracked paths, then `REFACTOR_SCAN_GLOBS` when set (default `.apm/packages/**,scripts/**`) |
-| `all` | Full enumerated∩filter scan → `hints[]` |
-| `range` | Changed paths in `<since>..HEAD` ∩ filter |
-| `staged` | Cached paths ∩ filter |
-| Detect script | `scripts/detect_refactor.sh` |
+| Field         | Value                                                                                                |
+| ------------- | ---------------------------------------------------------------------------------------------------- |
+| Universe      | Enumerate tracked paths, then `REFACTOR_SCAN_GLOBS` when set (default `.apm/packages/**,scripts/**`) |
+| `all`         | Full enumerated∩filter scan → `hints[]`                                                              |
+| `range`       | Changed paths in `<since>..HEAD` ∩ filter                                                            |
+| `staged`      | Cached paths ∩ filter                                                                                |
+| Detect script | `scripts/detect_refactor.sh`                                                                         |

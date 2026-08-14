@@ -1,18 +1,16 @@
 ---
 name: docs-updater
 description: >-
-  Detect documentation drift and patch affected docs — via candidate-doc survey
-  (Interactive), git diff (hooks), range cursor (automation), or structured detect
-  JSON from an external caller. Keeps references, links, tables, and nav entries
-  accurate. Use when syncing docs after code changes, before PRs, on doc sync
-  requests, or when automation reports documentation drift. Default is survey
-  only; edit documentation files only when the user explicitly requests a fix or
-  caller constraints allow edits. Not for new document creation, content
-  authoring, or markdown linting.
+  Detect documentation drift and patch affected docs (candidate survey, git
+  hook, range cursor, or detect JSON). Use in conversation when the user asks
+  to sync or update docs after code changes. Also the loop entry skill for
+  documentation drift automation. Interactive default is survey only; edit
+  docs when the user explicitly requests a fix or Constraints allow edits.
+  Not for new document creation or markdown linting.
 license: Apache-2.0
 metadata:
   author: y-miyazaki
-  version: "3.4.2"
+  version: "3.4.3"
 ---
 
 **UTILITY SKILL** — automated diff-sync and drift repair, not content authoring.

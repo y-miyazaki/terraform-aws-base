@@ -2,11 +2,11 @@
 
 `--scope` is a **cursor axis**, not a universal "whole repo files" switch.
 
-| Value | Cursor | Meaning |
-| ----- | ------ | ------- |
-| `range` | Commit (`--since` required) | Universe members related to `<since>..HEAD` |
-| `all` | None | Full enumeration of this skill's domain universe, then caps/filters |
-| `staged` | Index | Universe members in the git index — file-oriented skills only |
+| Value    | Cursor                      | Meaning                                                             |
+| -------- | --------------------------- | ------------------------------------------------------------------- |
+| `range`  | Commit (`--since` required) | Universe members related to `<since>..HEAD`                         |
+| `all`    | None                        | Full enumeration of this skill's domain universe, then caps/filters |
+| `staged` | Index                       | Universe members in the git index — file-oriented skills only       |
 
 `all` is not unbounded: skill caps still apply (hint limits, commit limits, run limits).
 
@@ -24,10 +24,10 @@ When natural units are files: enumerate eligible paths, then apply this skill's 
 
 ## This skill (`changelog`)
 
-| Field | Value |
-| ----- | ----- |
-| Universe | Commit set capped by `CHANGELOG_MAX_COMMITS` (or successor) |
-| `all` | Cap-bounded commits without since-cursor |
-| `range` | `<since>..HEAD` commits |
-| `staged` | Not used — if accepted for CLI parity, treat as noop / deprecated |
-| Detect script | `scripts/detect_changelog_commits.sh` |
+| Field         | Value                                                             |
+| ------------- | ----------------------------------------------------------------- |
+| Universe      | Commit set capped by `CHANGELOG_MAX_COMMITS` (or successor)       |
+| `all`         | Cap-bounded commits without since-cursor                          |
+| `range`       | `<since>..HEAD` commits                                           |
+| `staged`      | Not used — if accepted for CLI parity, treat as noop / deprecated |
+| Detect script | `scripts/detect_changelog_commits.sh`                             |

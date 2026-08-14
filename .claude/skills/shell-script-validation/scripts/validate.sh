@@ -1,38 +1,18 @@
 #!/bin/bash
 #######################################
-# Description: Comprehensive validation tool for all shell scripts in the workspace.
+# Description:
+#   Comprehensive validation tool for shell scripts in the workspace.
 #
-# Usage: ./validate.sh [options]
-#   options:
-#     -h, --help     Display this help message
-#     -v, --verbose  Enable verbose output
-#     -f, --fix      Auto-fix issues where possible
-#     -q, --quiet    Suppress non-error output
-#     -d, --check-function-docs
-#                 Opt-in: enforce Google Shell Style Guide function headers with
-#                 explicit Globals/Arguments/Outputs/Returns (None when N/A).
-#                 See https://google.github.io/styleguide/shellguide.html#s4.2-function-comments
+# Usage:
+#   bash scripts/shell-script/validate.sh [OPTIONS] [path1 path2 ...]
 #
 # Design Rules:
-#   - Use strict mode in scripts (set -euo pipefail) where appropriate
-#   - Source common utilities from `scripts/lib/all.sh` (error_exit, log, etc.)
-#   - Prefer quoting variables, local variables in functions and single responsibility
-#   - Tests must be provided with Bats and run by this validator
-#
-# Dependencies:
-#   - bash (expected at /bin/bash)
-#   - shellcheck
-#   - shfmt
-#   - bats (bats-core) or bats
-#   - jq
-#
-# Examples:
-#   ./scripts/validate.sh
-#   ./scripts/validate.sh --dry-run --verbose
+#   - Use strict mode (set -euo pipefail) where appropriate
+#   - Source shared helpers from scripts/lib/all.sh
+#   - Bats suites live under test/bats/; scope with --tests or skip with --skip-tests
 #
 # Output:
-# - Validation results for each script to stdout
-# - Exit code 0 if all checks pass, non-zero otherwise
+#   Validation results to stdout; exit 0 when all checks pass
 #######################################
 
 # Error handling: exit on error, unset variable, or failed pipeline
@@ -56,9 +36,18 @@ VERBOSE=false
 AUTO_FIX=false
 QUIET=false
 CHECK_FUNCTION_DOCS=false
+# Repository root (parent of scripts/)
 WORKSPACE_ROOT="$(cd "${SCRIPT_DIR}/../../.." && pwd)"
-# Global variable for script search paths
+# Positional paths limiting shell-script discovery (empty = workspace root)
 SEARCH_PATHS=()
+# True when SEARCH_PATHS is user-provided (not default workspace root)
+IS_SCOPED=false
+# Paths from --tests limiting Bats discovery (empty = full test/bats suite)
+TEST_PATHS=()
+# True when only --tests is given (skip shell-script validation)
+SKIP_SCRIPTS=false
+# True when --skip-tests is given (skip Bats execution)
+SKIP_TESTS=false
 
 # Counters for statistics
 TOTAL_SCRIPTS=0
@@ -111,6 +100,11 @@ Options:
                  Opt-in: enforce Google Shell Style Guide function headers with
                  explicit Globals/Arguments/Outputs/Returns (None when N/A).
                  See https://google.github.io/styleguide/shellguide.html#s4.2-function-comments
+  -t, --tests PATH
+                 Limit Bats tests to PATH (directory or .bats file; repeatable).
+                 Omit to run the full test/bats suite (same default as go/validate.sh).
+      --skip-tests
+                 Skip Bats test execution.
 
 Design Rules:
   - Use 'set -euo pipefail' in scripts where appropriate
@@ -134,18 +128,21 @@ Features:
   - Function dependency analysis
   - Performance analysis
 
+Arguments:
+  path1 path2 ...  Optional paths to limit shell-script validation (directory or .sh file).
+                   Omit to validate all shell scripts in the workspace.
+
 Examples:
-  $(basename "$0")           # Run all validations
-  $(basename "$0") -v        # Verbose output with detailed analysis
-  $(basename "$0") -f        # Auto-fix fixable issues
-  $(basename "$0") -q        # Quiet mode, show only summary
-  $(basename "$0") -d        # Enforce function documentation headers
-  $(basename "$0") --dry-run # Preview actions without executing external commands
+  $(basename "$0")                                                # Full script + test validation
+  $(basename "$0") scripts/lib                                    # Validate scripts/lib (tests: full suite)
+  $(basename "$0") scripts/lib --tests test/bats/scripts/lib      # Scripts + scoped Bats tree
+  $(basename "$0") --tests test/bats/github-actions               # Tests only
+  $(basename "$0") --tests test/bats/scripts/lib/common.bats      # Single Bats file
+  $(basename "$0") scripts/lib --skip-tests                       # Scripts only
+  $(basename "$0") -q -v                                          # Quiet / verbose
 EOF
     exit 0
 }
-
-#######################################
 
 #######################################
 # parse_arguments: Parse command line arguments
@@ -158,6 +155,9 @@ EOF
 #   AUTO_FIX - Enable auto-fix mode
 #   QUIET - Suppress non-error output
 #   CHECK_FUNCTION_DOCS - Enable function doc block section checks
+#   TEST_PATHS - Optional test paths from --tests
+#   SKIP_TESTS - Skip Bats test execution
+#   SKIP_SCRIPTS - Skip shell-script validation
 #
 # Arguments:
 #   $@ - Command line arguments
@@ -194,17 +194,30 @@ function parse_arguments {
                 CHECK_FUNCTION_DOCS=true
                 shift
                 ;;
-            # NOTE: Bats tests are always run; no external option needed
+            -t | --tests)
+                if [[ $# -lt 2 ]]; then
+                    error_exit "Option $1 requires a path argument"
+                fi
+                TEST_PATHS+=("$2")
+                shift 2
+                ;;
+            --skip-tests)
+                SKIP_TESTS=true
+                shift
+                ;;
             -*)
                 error_exit "Unknown option: $1"
                 ;;
             *)
-                # Collect target directories or files
                 SEARCH_PATHS+=("$1")
                 shift
                 ;;
         esac
     done
+
+    if [[ ${#SEARCH_PATHS[@]} -eq 0 && ${#TEST_PATHS[@]} -gt 0 ]]; then
+        SKIP_SCRIPTS=true
+    fi
 }
 
 #######################################
@@ -243,7 +256,7 @@ function analyze_functions {
     custom_log "DEBUG" "Analyzing functions in: $script_name"
 
     local functions
-    functions=$(grep -n "^function\|^[a-zA-Z_][a-zA-Z0-9_]*\s*()" "$script" 2> /dev/null | head -10)
+    functions=$(grep -n "^function\|^[a-zA-Z_][a-zA-Z0-9_]*\s*()" "$script" 2> /dev/null | head -10 || true)
 
     if [[ -n $functions ]]; then
         custom_log "INFO" "Functions found in $script_name:"
@@ -446,7 +459,8 @@ function check_complexity {
     line_count=$(wc -l < "$script" 2> /dev/null)
 
     local function_count
-    function_count=$(grep -c "^function\|^[a-zA-Z_][a-zA-Z0-9_]*\s*()" "$script" 2> /dev/null)
+    function_count=$(grep -c "^function\|^[a-zA-Z_][a-zA-Z0-9_]*\s*()" "$script" 2> /dev/null || true)
+    function_count="${function_count:-0}"
 
     local complexity_score=0
 
@@ -553,6 +567,50 @@ function collect_bats_failures_from_tap {
             fi
         fi
     fi
+}
+
+#######################################
+
+#######################################
+# collect_bats_from_resolved_path: Collect Bats files for one --tests path
+#
+# Description:
+#   Resolve a --tests PATH to zero or more .bats files (file or directory).
+#
+# Globals:
+#   WORKSPACE_ROOT - Workspace root directory
+#
+# Arguments:
+#   $1 - Resolved absolute path
+#   $2 - Nameref to bats_files array
+#
+# Outputs:
+#   None
+#
+# Returns:
+#   0 on success
+#
+# Usage:
+#   collect_bats_from_resolved_path "$resolved" bats_files
+#
+#######################################
+function collect_bats_from_resolved_path {
+    local resolved="$1"
+    local -n _bats_files="$2"
+
+    if [[ -f $resolved && $resolved == *.bats ]]; then
+        _bats_files+=("$resolved")
+        return 0
+    fi
+
+    if [[ -d $resolved ]]; then
+        while IFS= read -r -d '' file; do
+            _bats_files+=("$file")
+        done < <(find "$resolved" -type f -name "*.bats" -print0 2> /dev/null)
+        return 0
+    fi
+
+    custom_log "DEBUG" "No Bats tests found for path: $resolved" >&2
 }
 
 #######################################
@@ -699,15 +757,17 @@ function extract_function_doc_block {
 #
 # Globals:
 #   WORKSPACE_ROOT - Workspace root directory
+#   TEST_PATHS - Optional paths from --tests (empty = full suite)
+#   SKIP_TESTS - When true, return no tests
 #
 # Arguments:
 #   None
 #
 # Outputs:
-#   None
+#   Newline-separated .bats file paths to stdout
 #
 # Returns:
-#   Newline-separated .bats file paths
+#   0 on success
 #
 # Usage:
 #   find_bats_tests
@@ -715,13 +775,29 @@ function extract_function_doc_block {
 #######################################
 function find_bats_tests {
     local bats_files=()
-    while IFS= read -r -d '' file; do
-        bats_files+=("$file")
-    done < <(find "$WORKSPACE_ROOT" -type f -name "*.bats" -print0 2> /dev/null)
+    local search_path=""
+    local resolved_search_path=""
 
-    for f in "${bats_files[@]}"; do
-        echo "$f"
-    done
+    if [[ $SKIP_TESTS == "true" ]]; then
+        return 0
+    fi
+
+    if [[ ${#TEST_PATHS[@]} -gt 0 ]]; then
+        for search_path in "${TEST_PATHS[@]}"; do
+            resolved_search_path="$(resolve_user_search_path "$search_path")"
+            collect_bats_from_resolved_path "$resolved_search_path" bats_files
+        done
+    else
+        while IFS= read -r -d '' file; do
+            bats_files+=("$file")
+        done < <(find "$WORKSPACE_ROOT" -type f -name "*.bats" -print0 2> /dev/null)
+    fi
+
+    if [[ ${#bats_files[@]} -eq 0 ]]; then
+        return 0
+    fi
+
+    printf '%s\n' "${bats_files[@]}" | sort -u
 }
 
 #######################################
@@ -1386,6 +1462,40 @@ function record_script_validation_result {
 #######################################
 
 #######################################
+# resolve_user_search_path: Resolve a user search path under WORKSPACE_ROOT
+#
+# Description:
+#   Normalize a user-provided relative or absolute search path.
+#
+# Globals:
+#   WORKSPACE_ROOT - Workspace root directory
+#
+# Arguments:
+#   $1 - User search path
+#
+# Outputs:
+#   Absolute path to stdout
+#
+# Returns:
+#   0 on success
+#
+# Usage:
+#   resolve_user_search_path "scripts/lib"
+#
+#######################################
+function resolve_user_search_path {
+    local search_path="$1"
+
+    if [[ $search_path == /* ]]; then
+        normalize_path "$search_path"
+    else
+        normalize_path "$WORKSPACE_ROOT/$search_path"
+    fi
+}
+
+#######################################
+
+#######################################
 # run_bats_tests: Run bats test files given as arguments
 #
 # Description:
@@ -1434,8 +1544,8 @@ function run_bats_tests {
     bats_output=$(mktemp)
     local bats_exit=0
 
-    # Prefer running the test folder directly if present; run with -r to recurse into subdirectories
-    if [[ -d "$WORKSPACE_ROOT/test/bats" ]]; then
+    # Full suite when --tests omitted; scoped --tests runs use the discovered file list.
+    if [[ ${#TEST_PATHS[@]} -eq 0 && -d "$WORKSPACE_ROOT/test/bats" ]]; then
         pushd "$WORKSPACE_ROOT" > /dev/null || return 1
         if "$bats_bin" -r "test/bats" --formatter tap > "$bats_output" 2>&1; then
             bats_exit=0
@@ -1928,10 +2038,15 @@ function validate_syntax {
 # main: Main process
 #
 # Description:
-#   Main process
+#   Orchestrate script discovery, validation, Bats execution, and reporting.
 #
 # Globals:
 #   WORKSPACE_ROOT - Workspace root directory
+#   SEARCH_PATHS - Script discovery paths
+#   TEST_PATHS - Bats discovery paths from --tests
+#   IS_SCOPED - User provided script paths
+#   SKIP_SCRIPTS - Skip shell-script validation
+#   SKIP_TESTS - Skip Bats execution
 #   AUTO_FIX - Enable auto-fix mode
 #   VERBOSE - Enable verbose output
 #   QUIET - Suppress non-error output
@@ -1954,53 +2069,65 @@ function main {
     # Parse arguments
     parse_arguments "$@"
 
-    # If no search paths provided, default to workspace root
-    if [[ ${#SEARCH_PATHS[@]} -eq 0 ]]; then
+    if [[ ${#SEARCH_PATHS[@]} -eq 0 && $SKIP_SCRIPTS != "true" ]]; then
         SEARCH_PATHS=("$WORKSPACE_ROOT")
+    elif [[ ${#SEARCH_PATHS[@]} -gt 0 ]]; then
+        IS_SCOPED=true
     fi
 
-    # Validate dependencies
     require_dependencies "bash" "find" "grep" "sed" "shellcheck" "shfmt"
 
-    # Ensure a bats test runner exists (bats or bats-core)
-    if ! command -v bats &> /dev/null && ! command -v bats-core &> /dev/null; then
-        error_exit "Missing required test runner: install 'bats' or 'bats-core' to run tests"
+    if [[ $SKIP_TESTS != "true" ]]; then
+        if ! command -v bats &> /dev/null && ! command -v bats-core &> /dev/null; then
+            error_exit "Missing required test runner: install 'bats' or 'bats-core' to run tests"
+        fi
     fi
 
-    # Log script start
     custom_echo_section "Comprehensive Script Validation Tool"
     custom_log "INFO" "Workspace root: $WORKSPACE_ROOT"
     custom_log "INFO" "Auto-fix mode: $AUTO_FIX"
     custom_log "INFO" "Verbose mode: $VERBOSE"
     custom_log "INFO" "Quiet mode: $QUIET"
     custom_log "INFO" "Function doc checks: $CHECK_FUNCTION_DOCS"
-
-    # Find all shell scripts
-    custom_echo_section "Script Discovery"
-    local scripts
-    readarray -t scripts < <(find_shell_scripts)
-
-    if [[ ${#scripts[@]} -eq 0 ]]; then
-        custom_log "WARN" "No shell scripts found in the workspace"
-        exit 0
+    custom_log "INFO" "Scoped mode: $IS_SCOPED"
+    custom_log "INFO" "Skip scripts: $SKIP_SCRIPTS"
+    custom_log "INFO" "Skip tests: $SKIP_TESTS"
+    if [[ $IS_SCOPED == "true" ]]; then
+        custom_log "INFO" "Script paths: ${SEARCH_PATHS[*]}"
+    fi
+    if [[ ${#TEST_PATHS[@]} -gt 0 ]]; then
+        custom_log "INFO" "Test paths: ${TEST_PATHS[*]}"
     fi
 
-    custom_log "INFO" "Found ${#scripts[@]} shell scripts to validate"
+    local scripts=()
+    if [[ $SKIP_SCRIPTS != "true" ]]; then
+        custom_echo_section "Script Discovery"
+        readarray -t scripts < <(find_shell_scripts)
 
-    # Validate each script
-    custom_echo_section "Script Validation"
-    for script in "${scripts[@]}"; do
-        validate_script "$script"
-    done
+        if [[ ${#scripts[@]} -eq 0 ]]; then
+            custom_log "WARN" "No shell scripts found in the workspace"
+            if [[ $SKIP_TESTS == "true" || ${#TEST_PATHS[@]} -gt 0 ]]; then
+                :
+            else
+                exit 0
+            fi
+        else
+            custom_log "INFO" "Found ${#scripts[@]} shell scripts to validate"
+            custom_echo_section "Script Validation"
+            for script in "${scripts[@]}"; do
+                validate_script "$script"
+            done
+        fi
+    fi
 
-    # Run Bats tests (if enabled or if auto-detected)
-    custom_echo_section "Bats Tests"
-    mapfile -t bats_files < <(find_bats_tests)
-    if [[ ${#bats_files[@]} -gt 0 ]]; then
-        # Run Bats tests; failures are tracked in BATS_FAILED_TESTS
-        run_bats_tests "${bats_files[@]}" || true
-    else
-        custom_log "INFO" "No bats tests found to run"
+    if [[ $SKIP_TESTS != "true" ]]; then
+        custom_echo_section "Tests"
+        mapfile -t bats_files < <(find_bats_tests)
+        if [[ ${#bats_files[@]} -gt 0 ]]; then
+            run_bats_tests "${bats_files[@]}" || true
+        else
+            custom_log "INFO" "No bats tests found to run"
+        fi
     fi
 
     # Generate summary report (after running tests so failures are included)
@@ -2018,6 +2145,6 @@ function main {
 }
 
 # Only call main function if script is executed directly, not sourced
-if [[ ${BASH_SOURCE[0]} == "$0" ]]; then
+if [[ ${BASH_SOURCE[0]} == "${0}" ]]; then
     main "$@"
 fi

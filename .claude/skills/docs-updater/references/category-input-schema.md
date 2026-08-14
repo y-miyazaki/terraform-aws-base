@@ -25,16 +25,16 @@ Field set emitted by this skill's detect script or an equivalent caller-supplied
 }
 ```
 
-| Field           | Type    | Description                                            |
-| --------------- | ------- | ------------------------------------------------------ |
-| `status`        | string  | `ok` on success path                                   |
+| Field           | Type    | Description                                                                                   |
+| --------------- | ------- | --------------------------------------------------------------------------------------------- |
+| `status`        | string  | `ok` on success path                                                                          |
 | `scope`         | string  | `staged` (index / hook), `all` (full candidate-doc enumeration), or `range` (`--since`..HEAD) |
-| `since`         | string  | Range start ref when `scope` is `range` (may be empty) |
-| `commit_range`  | string  | Active revision range label                            |
-| `skip`          | boolean | When true, no documentation impact detected            |
-| `changed_files` | array   | Repository-relative changed paths (may be empty)       |
-| `deleted_files` | array   | Deleted paths (may be empty)                           |
-| `renamed_files` | array   | Rename pairs `old=>new` (may be empty)                 |
-| `affected_docs` | array   | Candidate documentation paths to triage (may be empty) |
+| `since`         | string  | Range start ref when `scope` is `range` (may be empty)                                        |
+| `commit_range`  | string  | Active revision range label                                                                   |
+| `skip`          | boolean | When true, no documentation impact detected                                                   |
+| `changed_files` | array   | Repository-relative changed paths (may be empty)                                              |
+| `deleted_files` | array   | Deleted paths (may be empty)                                                                  |
+| `renamed_files` | array   | Rename pairs `old=>new` (may be empty)                                                        |
+| `affected_docs` | array   | Candidate documentation paths to triage (may be empty)                                        |
 
 Edit permission and path scope are **not** JSON fields. Read them from `## Constraints` per [category-automation-envelope.md](category-automation-envelope.md) and [category-scope.md](category-scope.md).

@@ -2,11 +2,11 @@
 
 `--scope` is a **cursor axis**, not a universal "whole repo files" switch.
 
-| Value | Cursor | Meaning |
-| ----- | ------ | ------- |
-| `range` | Commit (`--since` required) | Universe members related to `<since>..HEAD` |
-| `all` | None | Full enumeration of this skill's domain universe, then caps/filters |
-| `staged` | Index | Universe members in the git index — file-oriented skills only |
+| Value    | Cursor                      | Meaning                                                             |
+| -------- | --------------------------- | ------------------------------------------------------------------- |
+| `range`  | Commit (`--since` required) | Universe members related to `<since>..HEAD`                         |
+| `all`    | None                        | Full enumeration of this skill's domain universe, then caps/filters |
+| `staged` | Index                       | Universe members in the git index — file-oriented skills only       |
 
 `all` is not unbounded: skill caps still apply (hint limits, commit limits, run limits).
 
@@ -24,11 +24,11 @@ When natural units are files: enumerate eligible paths, then apply this skill's 
 
 ## This skill (`ci-sweeper`)
 
-| Field | Value |
-| ----- | ----- |
-| Universe | Failed workflow runs on the relevant branch (scan limit applies) |
-| `all` | Limit-bounded failure enumeration |
-| `range` | Failures related to the `--since` window |
-| `staged` | noop / deprecated (index cursor does not apply to CI runs) |
-| Detect script | `scripts/detect_ci_failures.sh` |
+| Field            | Value                                                                                                                                                                                     |
+| ---------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Universe         | Failed workflow runs on the relevant branch (scan limit applies)                                                                                                                          |
+| `all`            | Limit-bounded failure enumeration                                                                                                                                                         |
+| `range`          | Failures related to the `--since` window                                                                                                                                                  |
+| `staged`         | noop / deprecated (index cursor does not apply to CI runs)                                                                                                                                |
+| Detect script    | `scripts/detect_ci_failures.sh`                                                                                                                                                           |
 | Interactive note | Prefer user-supplied run URL / job / log as primary evidence; still run detect when JSON is absent and tools allow; if `gh`/auth missing, fall back to user context — do not silent no-op |

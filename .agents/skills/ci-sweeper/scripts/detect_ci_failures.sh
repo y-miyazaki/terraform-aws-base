@@ -18,7 +18,7 @@
 # - Exit 0 on success; fatal errors emit status=error JSON and exit 1
 # - Skip runs per CI_SWEEPER_REJECT_RETRY_POLICY and ledger state
 # - workflow_run event path: match run head branch to detect scan branch
-# - Source shared helpers from scripts/lib/all.sh (synced via scripts/self/ai/sync_skill_lib.sh)
+# - Source shared helpers from scripts/lib/all.sh (synced via scripts/self/apm/sync_skill_lib.sh)
 #
 # Dependencies:
 # - bash (POSIX bash, /bin/bash)

@@ -48,8 +48,8 @@ Gate IDs are for agent self-check and Deferred/Watch reasons. Failure identity i
 
 ## Examples
 
-| Failure signal              | Classification | Section / action        |
-| --------------------------- | -------------- | ----------------------- |
-| Workflow lint (actionlint)  | regression     | Fix workflow YAML only  |
-| Shell lint (shellcheck)     | regression     | Fix reported line only  |
-| Runner OOM in logs          | flake / infra  | Watch; escalate         |
+| Failure signal             | Classification | Section / action       |
+| -------------------------- | -------------- | ---------------------- |
+| Workflow lint (actionlint) | regression     | Fix workflow YAML only |
+| Shell lint (shellcheck)    | regression     | Fix reported line only |
+| Runner OOM in logs         | flake / infra  | Watch; escalate        |

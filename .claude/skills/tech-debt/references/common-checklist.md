@@ -11,6 +11,7 @@ Read [category-debt-taxonomy.md](category-debt-taxonomy.md) first. For each sign
 1. Assign one primary `category` using the decision order in the taxonomy
 2. Assign severity → persisted report section (Critical / High-Priority / Watch / Noise) and PR row placement (`### Candidates` / `### Watch` for survey; `### Changes` / `### Deferred` for apply)
 3. Add `nature` only when narrative evidence is clear (snippet, ADR, trade-off note) — omit for metrics-only signals (churn, `eol_hint`, `pin_drift`)
+
 - **PASS** if every Candidate row has category + severity mapping
 
 ### CLASS-02: Delegate

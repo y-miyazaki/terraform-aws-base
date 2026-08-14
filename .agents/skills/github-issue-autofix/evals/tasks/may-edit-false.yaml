@@ -1,0 +1,26 @@
+id: github-issue-autofix-may-edit-false-001
+name: github-issue-autofix survey when may_edit is false
+description: Validate may_edit false emits survey shape without file edits.
+tags:
+  - quality
+  - constraints
+inputs:
+  prompt: >-
+    Use github-issue-autofix with automation constraints may_edit false. Survey Issue #42 from
+    detect JSON. Emit survey shape with ## Overview, ## Summary ### Candidates, and note
+    no edits applied. Do not emit ## Verification or ### Changes. Do not edit files.
+  context:
+    skip: false
+    issue_number: 42
+    title: "Null pointer when user profile missing"
+    body: "HandleCreate panics when profile is nil."
+    labels:
+      - triage:ready
+      - autofix
+expected:
+  output_contains:
+    - Overview
+    - Candidates
+    - no edits applied
+  outcomes:
+    - type: task_completed

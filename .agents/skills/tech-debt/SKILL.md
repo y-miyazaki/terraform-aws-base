@@ -1,18 +1,17 @@
 ---
 name: tech-debt
 description: >-
-  Discover and classify technical debt from mechanical signals, apply closed-set
-  fixes when requested, and publish structured reports (override via
-  TECH_DEBT_DIR or report_file from detect JSON / Constraints).
-  Use for scheduled automation scans, ad-hoc surveys from detection JSON, or when the user
-  asks to fix safe documentation/dependency debt. Default is survey only; write
-  report_file and apply fixes only when the user explicitly requests apply or
-  automation sets may_edit in Constraints. Do not apply structural refactors;
-  record Delegate hints in Candidates instead.
+  Discover and classify technical debt from mechanical signals; apply
+  closed-set fixes when requested. Use in conversation when the user asks to
+  survey or fix safe documentation/dependency debt. Also the loop entry skill
+  for scheduled scans or detect JSON. Interactive default is survey only;
+  write report_file and apply fixes when the user explicitly requests apply
+  or automation sets may_edit in Constraints. Do not apply structural
+  refactors.
 license: Apache-2.0
 metadata:
   author: y-miyazaki
-  version: "2.2.2"
+  version: "2.2.3"
 ---
 
 **UTILITY SKILL** — technical debt survey and closed-set apply, not structural refactor.

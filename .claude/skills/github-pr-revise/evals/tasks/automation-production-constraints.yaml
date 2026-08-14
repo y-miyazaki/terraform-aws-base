@@ -1,0 +1,26 @@
+id: github-pr-revise-automation-constraints-001
+name: github-pr-revise automation production constraints
+description: Validate automation Constraints with may_edit from assembled prompt shape.
+tags:
+  - quality
+  - automation
+inputs:
+  prompt: >-
+    Use github-pr-revise. ## Constraints may_edit: true write_target: fix You MUST persist edits
+    to disk in the worktree when may_edit is true; a report alone is not sufficient.
+    Allowed paths: src/**. Apply the @loop feedback from detect JSON for PR #55 in this
+    mock eval (describe the revision only). Emit apply shape with ### Changes and ##
+    Verification plus ## Overview and ## Summary. Do not emit ### Candidates.
+  context:
+    skip: false
+    pr_number: 55
+    mention: "@loop"
+    comment_body: "@loop extract the validator into a shared helper and add tests."
+    actor: human-reviewer
+expected:
+  output_contains:
+    - Changes
+    - Overview
+    - Verification
+  outcomes:
+    - type: task_completed
