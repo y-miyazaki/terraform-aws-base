@@ -254,7 +254,7 @@ module "step_functions" {
   count = var.is_enabled ? 1 : 0
 
   source  = "terraform-aws-modules/step-functions/aws"
-  version = "5.1.0"
+  version = "5.1.1"
 
   region = local.region
 

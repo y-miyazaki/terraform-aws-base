@@ -6,7 +6,7 @@ module "kms_key" {
   for_each = local.monitor_regions
 
   source  = "terraform-aws-modules/kms/aws"
-  version = "4.2.0"
+  version = "4.2.1"
 
   create = var.kms["monitor"].is_enabled
   region = each.value

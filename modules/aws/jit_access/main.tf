@@ -564,7 +564,7 @@ resource "aws_iam_role_policy" "sfn" {
 
 module "step_functions" {
   source  = "terraform-aws-modules/step-functions/aws"
-  version = "5.1.0"
+  version = "5.1.1"
 
   region = local.region
 
