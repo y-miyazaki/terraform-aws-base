@@ -18,14 +18,14 @@
       "type": "stdio",
       "command": "uvx",
       "args": [
-        "awslabs.aws-documentation-mcp-server==1.1.29"
+        "awslabs.aws-documentation-mcp-server==1.1.30"
       ]
     },
     "aws-pricing-mcp-server": {
       "type": "stdio",
       "command": "uvx",
       "args": [
-        "awslabs.aws-pricing-mcp-server==1.0.33"
+        "awslabs.aws-pricing-mcp-server==1.0.34"
       ]
     },
     "context7": {
@@ -33,7 +33,7 @@
       "command": "npx",
       "args": [
         "-y",
-        "@upstash/context7-mcp@3.2.5"
+        "@upstash/context7-mcp@4.0.0"
       ]
     },
     "fetch": {
@@ -63,7 +63,7 @@
       "command": "npx",
       "args": [
         "-y",
-        "lean-ctx-bin@3.9.17"
+        "lean-ctx-bin@3.9.18"
       ]
     },
     "hashicorp-terraform-mcp-server": {

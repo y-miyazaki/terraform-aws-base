@@ -2,6 +2,8 @@
 # Allows manual release creation by specifying a version.
 name: on-cd-wd-go-releaser
 
+run-name: "${{ github.workflow }} (${{ inputs.version }})"
+
 on:
   workflow_dispatch:
     inputs:
@@ -56,7 +58,7 @@ jobs:
   release:
     name: Release base
     needs: detect-go-version
-    uses: y-miyazaki/config/.github/workflows/cd-go-releaser.yaml@de782bdea32cf4aa332bc3b11f04daf5bbf9b14c # v1.8.85
+    uses: y-miyazaki/config/.github/workflows/cd-go-releaser.yaml@8d505770ce51faa61b0181756dafe6a630f4cc6f # v1.8.92
     with:
       component: base
       create_tag: ${{ inputs.create_tag }}

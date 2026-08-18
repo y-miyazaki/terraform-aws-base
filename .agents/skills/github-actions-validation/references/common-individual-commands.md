@@ -2,12 +2,32 @@
 
 **Use these commands only when debugging validation failures.** For normal validation, always use the validation script.
 
+## yaml_map_order.py
+
+**Purpose**: Verify or fix alphabetical map key order (ORD-01)
+
+```bash
+# Check tracked workflow and action YAML (example paths)
+python3 scripts/lib/yaml_map_order.py check \
+  .github/workflows/ci.yml \
+  .github/actions/example/action.yml
+
+# Rewrite unsorted map blocks in place
+python3 scripts/lib/yaml_map_order.py fix \
+  .github/workflows/ci.yml
+```
+
+**What it checks**:
+
+- `env`, `inputs`, `outputs`, `permissions`, `secrets`, and `with` map keys are alphabetically ordered
+
 ## actionlint
 
 **Purpose**: Validate workflow syntax and detect common issues
 
 ```bash
-# Check all workflows
+# Check all workflows (run from repository root so .github/actionlint.yaml applies)
+cd "$(git rev-parse --show-toplevel)"
 actionlint .github/workflows/*.{yml,yaml}
 
 # Check specific workflow

@@ -1,6 +1,8 @@
 # CD workflow: Build and deploy MkDocs to GitHub Pages
 name: on-cd-mkdocs
 
+run-name: "${{ github.workflow }} (${{ github.event_name }})"
+
 on:
   push:
     branches:
@@ -17,7 +19,7 @@ permissions:
 
 jobs:
   build:
-    uses: y-miyazaki/config/.github/workflows/cd-mkdocs.yaml@de782bdea32cf4aa332bc3b11f04daf5bbf9b14c # v1.8.85
+    uses: y-miyazaki/config/.github/workflows/cd-mkdocs.yaml@8d505770ce51faa61b0181756dafe6a630f4cc6f # v1.8.92
     with:
       artifact_name: mkdocs-site
       config_file: mkdocs.yml
@@ -27,7 +29,7 @@ jobs:
 
   deploy:
     needs: build
-    uses: y-miyazaki/config/.github/workflows/cd-github-pages.yaml@de782bdea32cf4aa332bc3b11f04daf5bbf9b14c # v1.8.85
+    uses: y-miyazaki/config/.github/workflows/cd-github-pages.yaml@8d505770ce51faa61b0181756dafe6a630f4cc6f # v1.8.92
     with:
       artifact_name: mkdocs-site
     permissions:

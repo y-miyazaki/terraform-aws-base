@@ -4,18 +4,18 @@ Use when detect JSON (`hints[]`) is present on the automation path. Interactive 
 
 Branch on `may_edit` from `## Constraints` — see [category-automation-envelope.md](category-automation-envelope.md). Do not branch on other caller metadata.
 
-## Session report (verifier / logs)
+## Session report (checker / logs)
 
 Always emit for automation runs. Append `## Session Metrics` per [category-automation-envelope.md](category-automation-envelope.md):
 
-| Field          | Value                      |
-| -------------- | -------------------------- |
-| may_edit       | <true\|false>              |
-| Commit range   | <commit_range or "n/a">    |
-| Hints assessed | <count>                    |
-| Candidates     | <count>                    |
-| Applied        | <count or "0">             |
-| Outcome        | <one-line verifier result> |
+| Field          | Value                     |
+| -------------- | ------------------------- |
+| may_edit       | <true\|false>             |
+| Commit range   | <commit_range or "n/a">   |
+| Hints assessed | <count>                   |
+| Candidates     | <count>                   |
+| Applied        | <count or "0">            |
+| Outcome        | <one-line checker result> |
 
 ## PR body templates
 
@@ -59,7 +59,7 @@ Before PR synthesis, run `git diff --name-only` and reconcile **Changes** and **
 
 ## Rules
 
-- Emit **Session Metrics** for verifier/logs; PR body uses the `may_edit`-specific template only.
+- Emit **Session Metrics** for checker/logs; PR body uses the `may_edit`-specific template only.
 - When `may_edit` is `false`, use survey template; do not edit files.
 - When `may_edit` is `true`, survey all `hints[]` internally, apply all apply candidates, emit apply template once.
 - Never claim verification passed when commands failed or were not run.

@@ -15,7 +15,7 @@ The caller injects `## Constraints` after detect JSON in the assembled prompt. T
 
 Callers supply `may_edit`, `write_target` (`fix` | `report`), and optional `report_file` in `## Constraints`. The skill branches on `may_edit` and `write_target` only — do not branch on other caller metadata.
 
-Denylist is enforced by the automation verifier — see [category-scope.md](category-scope.md).
+Denylist is enforced by the automation checker — see [category-scope.md](category-scope.md).
 
 Example (survey):
 
@@ -60,7 +60,7 @@ PR body rules:
 
 The caller extracts Overview and Summary from the agent report for PR body composition.
 
-## Session metrics (verifier / logs)
+## Session metrics (checker / logs)
 
 After survey or apply work, append:
 

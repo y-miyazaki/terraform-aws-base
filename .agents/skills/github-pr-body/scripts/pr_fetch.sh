@@ -29,6 +29,10 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # shellcheck disable=SC1091
 source "${SCRIPT_DIR}/lib/common.sh"
 
+# shellcheck source=./lib/validation.sh
+# shellcheck disable=SC1091
+source "${SCRIPT_DIR}/lib/validation.sh"
+
 #######################################
 # Global variables
 #######################################

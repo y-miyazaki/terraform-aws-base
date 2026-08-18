@@ -24,7 +24,7 @@
 #   GITHUB_RUN_ID           Default automation run id when --loop-run-id is omitted
 #   TARGET_JSON             target_json from caller finalize output (when CLI args omitted)
 #   OUTCOME                 Outcome from caller finalize output (when --outcome omitted)
-#   VERDICT                 Verifier verdict (maps to ledger outcome when OUTCOME unset)
+#   VERDICT                 Checker verdict (maps to ledger outcome when OUTCOME unset)
 #######################################
 
 # Error handling: exit on error, unset variable, or failed pipeline

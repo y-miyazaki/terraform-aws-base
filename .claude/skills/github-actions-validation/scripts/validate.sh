@@ -1,6 +1,6 @@
 #!/bin/bash
 #######################################
-# Description: Validation tool for GitHub Actions workflows using actionlint, ghalint, and zizmor.
+# Description: Validation tool for GitHub Actions workflows using ORD-01 map order checks, actionlint, ghalint, and zizmor.
 #
 # Usage: ./validate.sh [options]
 #   options:
@@ -15,6 +15,7 @@
 #   - Tests must be provided with Bats and run by this validator
 #
 # Dependencies:
+#   - python3
 #   - actionlint
 #   - ghalint
 #   - zizmor
@@ -50,6 +51,130 @@ WORKFLOWS_DIR=".github/workflows"
 #######################################
 
 #######################################
+# resolve_repository_root: Return the git repository root directory
+#
+# Globals:
+#   None
+#
+# Arguments:
+#   None
+#
+# Outputs:
+#   Repository root path on stdout
+#
+# Returns:
+#   0 on success
+#
+# Usage:
+#   repo_root="$(resolve_repository_root)"
+#
+#######################################
+function resolve_repository_root {
+    git rev-parse --show-toplevel 2> /dev/null || pwd
+}
+
+#######################################
+# collect_yaml_map_order_targets: Collect workflow and action YAML paths for ORD-01
+#
+# Description:
+#   Builds the file list for yaml_map_order.py. Default scope is tracked workflow
+#   YAML plus action.yml files under .github/actions. A custom workflows-dir limits
+#   checks to YAML files under that directory only.
+#
+# Globals:
+#   WORKFLOWS_DIR - Path to workflows directory
+#
+# Arguments:
+#   $1 - Name reference to output array
+#
+# Outputs:
+#   None
+#
+# Returns:
+#   0 on success
+#
+# Usage:
+#   local -a targets=()
+#   collect_yaml_map_order_targets targets
+#
+#######################################
+function collect_yaml_map_order_targets {
+    # shellcheck disable=SC2178 # nameref to caller array by name
+    local -n _out=$1
+    local file pattern repo_root
+
+    _out=()
+    repo_root="$(resolve_repository_root)"
+
+    if [[ ${WORKFLOWS_DIR} != ".github/workflows" ]]; then
+        while IFS= read -r file; do
+            [[ -n ${file} ]] && _out+=("${file}")
+        done < <(find "${WORKFLOWS_DIR}" -type f \( -name '*.yml' -o -name '*.yaml' \) 2> /dev/null | LC_ALL=C sort)
+        return 0
+    fi
+
+    pattern='^\.github/(workflows/.*\.(ya?ml)|actions/.*/action\.(ya?ml))$'
+    while IFS= read -r file; do
+        [[ -z ${file} ]] && continue
+        if [[ ${file} =~ ${pattern} ]]; then
+            _out+=("${repo_root}/${file}")
+        fi
+    done < <(cd "${repo_root}" && repo_emit_tracked_paths '\.(ya?ml)$')
+}
+
+#######################################
+# validate_yaml_map_key_order: Validate alphabetical map key order (ORD-01)
+#
+# Description:
+#   Runs yaml_map_order.py check against workflow and action YAML files.
+#
+# Globals:
+#   VERBOSE - Enable verbose output
+#   WORKFLOWS_DIR - Path to workflows directory
+#
+# Arguments:
+#   None
+#
+# Outputs:
+#   None
+#
+# Returns:
+#   0 on success, 1 on failure
+#
+# Usage:
+#   validate_yaml_map_key_order
+#
+#######################################
+function validate_yaml_map_key_order {
+    echo_section "Checking YAML map key order (ORD-01)"
+    local start_time checker
+    local -a targets=()
+    start_time=$(date +%s)
+    checker="${SCRIPT_DIR}/lib/yaml_map_order.py"
+
+    validate_file_exists "${checker}" "YAML map order checker"
+    collect_yaml_map_order_targets targets
+
+    if [[ ${#targets[@]} -eq 0 ]]; then
+        if [[ $VERBOSE == true ]]; then
+            log INFO "No workflow or action YAML files found for ORD-01 check"
+        fi
+        end_echo_section "ORD-01 check completed" "$start_time"
+        return 0
+    fi
+
+    if [[ $VERBOSE == true ]]; then
+        log INFO "Checking ${#targets[@]} YAML file(s) for alphabetical map key order"
+    fi
+
+    if ! python3 "${checker}" check "${targets[@]}"; then
+        error_exit "YAML map key order validation failed (ORD-01)"
+    fi
+
+    end_echo_section "ORD-01 check completed" "$start_time"
+}
+
+#######################################
 # show_usage: Display script usage information
 #
 # Description:
@@ -75,7 +200,7 @@ function show_usage {
     cat << EOF
 Usage: $0 [options] [workflows-dir]
 
-Validation tool for GitHub Actions workflows using actionlint, ghalint, and zizmor.
+Validation tool for GitHub Actions workflows using ORD-01 map order checks, actionlint, ghalint, and zizmor.
 
 Arguments:
   workflows-dir    Path to .github/workflows directory (default: .github/workflows)
@@ -167,14 +292,17 @@ function parse_arguments {
 #######################################
 function validate_actionlint {
     echo_section "Running actionlint"
-    local start_time
+    local start_time repo_root
     start_time=$(date +%s)
+    repo_root="$(git rev-parse --show-toplevel 2> /dev/null || pwd)"
 
     if [[ $VERBOSE == true ]]; then
-        log INFO "Validating workflow syntax and best practices with actionlint"
+        log INFO "Validating workflow syntax and best practices with actionlint (repo root: ${repo_root})"
     fi
 
-    if ! actionlint; then
+    # actionlint loads .github/actionlint.yaml from the repository root; running
+    # from the skill directory otherwise misses path-specific ignore rules.
+    if ! (cd "${repo_root}" && actionlint); then
         error_exit "actionlint validation failed"
     fi
 
@@ -205,14 +333,16 @@ function validate_actionlint {
 #######################################
 function validate_ghalint {
     echo_section "Running ghalint"
-    local start_time
+    local start_time repo_root workflows_path
     start_time=$(date +%s)
+    repo_root="$(resolve_repository_root)"
+    workflows_path="${repo_root}/${WORKFLOWS_DIR}"
 
     if [[ $VERBOSE == true ]]; then
         log INFO "Validating workflow security and configuration with ghalint"
     fi
 
-    if ! ghalint run "${WORKFLOWS_DIR}"; then
+    if ! ghalint run "${workflows_path}"; then
         error_exit "ghalint validation failed"
     fi
 
@@ -288,10 +418,7 @@ function validate_zizmor {
     fi
 
     local repo_root result exit_code zizmor_args=()
-    repo_root="$(dirname "${WORKFLOWS_DIR}")"
-    if [[ $repo_root == "." && $WORKFLOWS_DIR == ".github/workflows" ]]; then
-        repo_root="."
-    fi
+    repo_root="$(resolve_repository_root)"
 
     if [[ ${ZIZMOR_OFFLINE:-} == 1 || ${ZIZMOR_OFFLINE:-} == true ]]; then
         zizmor_args+=(--offline)
@@ -360,11 +487,12 @@ function main {
     parse_arguments "$@"
 
     # Validate required dependencies
-    require_dependencies "actionlint" "ghalint" "zizmor"
+    require_dependencies "python3" "actionlint" "ghalint" "zizmor"
 
     # Run validations
     echo_section "Starting GitHub Actions Validation"
 
+    validate_yaml_map_key_order
     validate_actionlint
     validate_ghalint
     validate_zizmor

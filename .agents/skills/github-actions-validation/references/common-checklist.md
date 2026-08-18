@@ -4,9 +4,14 @@
 
 Run tools in this order (fail-fast: stop on first failure):
 
-1. `actionlint` — YAML syntax and GitHub Actions schema validation
-2. `ghalint` — GitHub Actions best practice and policy checks
-3. `zizmor` — security-focused static analysis
+1. `yaml_map_order.py check` — alphabetical map key order (ORD-01)
+2. `actionlint` — YAML syntax and GitHub Actions schema validation
+3. `ghalint` — GitHub Actions best practice and policy checks
+4. `zizmor` — security-focused static analysis
+
+## YAML map key order (ORD)
+
+- ORD-01 (SHOULD): Map keys under `env`, `inputs`, `outputs`, `permissions`, `secrets`, and `with` are alphabetically ordered (ASCII / `LC_ALL=C`)
 
 ## actionlint (ACT)
 

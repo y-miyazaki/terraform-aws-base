@@ -2,6 +2,8 @@
 # Copy to .github/workflows/on-ci-push-terraform.yaml in your repository.
 name: on-ci-push-terraform
 
+run-name: "${{ github.workflow }} (${{ github.event_name }})"
+
 on:
   push:
     branches:
@@ -39,7 +41,7 @@ permissions:
 
 jobs:
   terraform-ci:
-    uses: y-miyazaki/config/.github/workflows/ci-terraform.yaml@de782bdea32cf4aa332bc3b11f04daf5bbf9b14c # v1.8.85
+    uses: y-miyazaki/config/.github/workflows/ci-terraform.yaml@8d505770ce51faa61b0181756dafe6a630f4cc6f # v1.8.92
     with:
       modules_path: modules
       recursive: true

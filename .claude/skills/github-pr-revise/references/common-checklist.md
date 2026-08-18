@@ -7,6 +7,7 @@ Gate IDs are for agent self-check and Deferred reasons. PR identity in reports r
 ### SCOPE-01: Mention-gated revision
 
 - [ ] Act only on human mention-gated feedback from detect JSON
+- [ ] When `result.comments` has multiple items, address the full array (not only `comment_body`)
 - [ ] Apply revisions on the PR head (or stacked branch when landing is `open_pr`)
 - [ ] Do not act on bot comments or mention-less comments
 - **PASS** if edits match the human's requested revision scope

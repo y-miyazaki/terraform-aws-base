@@ -31,24 +31,24 @@ uvx = true # Install uv/uvx via pipx for better isolation and performance.
 # A Runtime tools
 aqua = "v2.62.2"
 node = "24.19.0"
-pnpm = { version = "11.20.0", depends = ["node"] }
+pnpm = { version = "11.21.0", depends = ["node"] }
 python = "3.14.6"
 
 # AI agent tools
 "github:microsoft/apm" = "v0.28.0"               # agent package manager
 claude = "2.1.222"                               # Claude Code CLI
 "github:DeusData/codebase-memory-mcp" = "v0.9.0" # codebase memory MCP server
-"aqua:github/copilot-cli" = "1.0.78"             # GitHub Copilot CLI
+"aqua:github/copilot-cli" = "1.0.79"             # GitHub Copilot CLI
 "pipx:headroom-ai" = { version = "0.34.0", extras = "proxy,mcp,bedrock", depends = ["python"] }
-"npm:lean-ctx-bin" = { version = "3.9.17", depends = [
+"npm:lean-ctx-bin" = { version = "3.9.18", depends = [
   "node",
 ], allow_builds = [
   "lean-ctx-bin",
 ] } # context optimizer (hooks CLI + MCP npm)
-"github:microsoft/waza" = "v0.38.4"               # agent skill evaluator
+"github:microsoft/waza" = "v0.38.5"               # agent skill evaluator
 
 # AWS related tools
-"aqua:aws/aws-cli" = "2.36.18"      # AWS CLI
+"aqua:aws/aws-cli" = "2.36.20"      # AWS CLI
 "aqua:aws/aws-sam-cli" = "1.165.0"  # SAM CLI tool
 "npm:awsp" = { version = "0.2.0", depends = [
   "node",
@@ -79,10 +79,10 @@ claude = "2.1.222"                               # Claude Code CLI
 "aqua:vektra/mockery" = "3.7.2"                                           # mock code generator for interfaces
 "go:github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen" = "v2.8.0"  # OpenAPI code generator
 "aqua:protocolbuffers/protobuf/protoc" = "35.1"                            # protobuf compiler
-"aqua:protocolbuffers/protobuf-go/protoc-gen-go" = "1.36.11"              # protobuf code generator
+"aqua:protocolbuffers/protobuf-go/protoc-gen-go" = "1.36.12"              # protobuf code generator
 "aqua:grpc/grpc-go/protoc-gen-go-grpc" = "1.6.1"                          # gRPC code generator
 "aqua:swaggo/swag" = "1.16.6"                                             # API documentation generator
-"aqua:go-swagger/go-swagger" = "0.36.1"                                   # API documentation generator (swagger)
+"aqua:go-swagger/go-swagger" = "0.36.2"                                   # API documentation generator (swagger)
 
 # Lint / Formatter tools
 "npm:cspell" = { version = "10.0.1", depends = [
@@ -117,8 +117,8 @@ claude = "2.1.222"                               # Claude Code CLI
 "pipx:mkdocs" = { version = "1.6.1", depends = ["python"], postinstall = "uv pip install --python $MISE_TOOL_INSTALL_PATH/mkdocs/bin/python mkdocs-material mdx-truly-sane-lists" } # MkDocs with Material theme
 "aqua:BurntSushi/ripgrep" = "15.2.0" # grep alternative (rg)
 "aqua:tamasfe/taplo" = "0.10.0"      # TOML formatter / LSP
-"aqua:jdx/usage" = "5.0.0"           # usage CLI tool for command help and completions
-"aqua:astral-sh/uv" = "0.12.2"      # uv/uvx
+"aqua:jdx/usage" = "5.1.0"           # usage CLI tool for command help and completions
+"aqua:astral-sh/uv" = "0.12.3"      # uv/uvx
 
 [tasks.mise-install]
 description = "Install tools defined in mise.toml"

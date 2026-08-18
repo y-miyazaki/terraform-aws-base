@@ -37,7 +37,7 @@ Report EOL/deprecation facts; do not recommend new-technology or tool migration 
 
 ### SCOPE-01: Allowlist and caps
 
-- [ ] On the automation path, respect caller `allowlist` / `denylist` per [category-scope.md](category-scope.md) (allowlist in `## Constraints`; denylist enforced by verifier)
+- [ ] On the automation path, respect caller `allowlist` / `denylist` per [category-scope.md](category-scope.md) (allowlist in `## Constraints`; denylist enforced by checker)
 - [ ] Read source outside the allowlist for evidence only — never edit it
 - [ ] Cap Critical + High-Priority persisted findings at 25; retain all Critical first, then High-Priority until the cap; defer overflow to Watch with a truncation note
 - [ ] Do not invent APIs, paths, metrics, ownership, or CVEs

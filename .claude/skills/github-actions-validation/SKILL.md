@@ -1,7 +1,8 @@
 ---
 name: github-actions-validation
 description: >-
-  Validate GitHub Actions workflows for syntax and security with actionlint, ghalint, and zizmor.
+  Validate GitHub Actions workflows for syntax and security with ORD-01 map key order checks,
+  actionlint, ghalint, and zizmor.
   Use when committing workflow changes, running CI validation, or checking workflow security issues.
 license: Apache-2.0
 metadata:
@@ -19,7 +20,7 @@ metadata:
 
 Return structured Markdown in accordance with [references/common-output-format.md](references/common-output-format.md). That file is the source of truth for the output contract.
 
-Structured validation results from three tools: actionlint → ghalint → zizmor. Attribute evidence to the producing tool.
+Structured validation results from four tools: ORD-01 map order → actionlint → ghalint → zizmor. Attribute evidence to the producing tool.
 
 ## Execution Scope
 
@@ -69,4 +70,4 @@ Structured validation results from three tools: actionlint → ghalint → zizmo
 
 - Prompt: `Validate workflows and report only failed checks with ItemIDs`
 - Command: `bash scripts/validate.sh ./.github/workflows/`
-- Result: Structured report per [references/common-output-format.md](references/common-output-format.md); attribute evidence to actionlint, ghalint, or zizmor.
+- Result: Structured report per [references/common-output-format.md](references/common-output-format.md); attribute evidence to ORD-01, actionlint, ghalint, or zizmor.

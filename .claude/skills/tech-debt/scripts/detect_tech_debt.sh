@@ -41,7 +41,7 @@
 #   TECH_DEBT_EOL_MODULES           - Comma-separated module paths/names for eol_hint signals
 #   TECH_DEBT_STALE_DAYS    - Days before a markdown file is stale (default: 365)
 #   TECH_DEBT_SKIP_MLC      - When true, skip broken_doc_ref checks with a warning
-#   TECH_DEBT_CHURN_WINDOW  - Git log window for churn hotspots (default: 90d)
+#   TECH_DEBT_CHURN_WINDOW  - Git log --since window for churn hotspots (default: 90.days)
 #   TECH_DEBT_CHURN_MIN     - Minimum commit touches per path (default: 5)
 #   TECH_DEBT_CHURN_TOP     - Maximum churn hotspots to emit (default: 20)
 #######################################

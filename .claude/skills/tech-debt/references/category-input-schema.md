@@ -33,7 +33,7 @@ Field set emitted by this skill's detect script or an equivalent caller-supplied
       "path": "scripts/deploy.sh",
       "metric": "churn",
       "value": 18,
-      "window": "90d"
+      "window": "90.days"
     }
   ]
 }
@@ -57,7 +57,7 @@ Field set emitted by this skill's detect script or an equivalent caller-supplied
 | `hotspots[].path`   | string  | File path                                                                                                                                                                                                                   |
 | `hotspots[].metric` | string  | Metric name (`churn`)                                                                                                                                                                                                       |
 | `hotspots[].value`  | number  | Metric value                                                                                                                                                                                                                |
-| `hotspots[].window` | string  | Observation window (e.g. `90d`)                                                                                                                                                                                             |
+| `hotspots[].window` | string  | Observation window (git `--since` form, e.g. `90.days`)                                                                                                                                                                     |
 
 ### Closed `signals[].kind` set
 

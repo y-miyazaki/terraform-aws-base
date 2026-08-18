@@ -1,6 +1,8 @@
 # CI workflow: Node.js CI on push/PR
 name: on-ci-push-nodejs
 
+run-name: "${{ github.workflow }} (${{ github.event_name }})"
+
 on:
   push:
     branches:
@@ -34,7 +36,7 @@ permissions:
 
 jobs:
   nodejs-ci:
-    uses: y-miyazaki/config/.github/workflows/ci-nodejs.yaml@de782bdea32cf4aa332bc3b11f04daf5bbf9b14c # v1.8.85
+    uses: y-miyazaki/config/.github/workflows/ci-nodejs.yaml@8d505770ce51faa61b0181756dafe6a630f4cc6f # v1.8.92
     with:
       search_paths: nodejs
     permissions:

@@ -90,20 +90,20 @@ No file edits.
 | `## Verification` | Required when apply phase ran                          |
 | Git alignment     | Reconcile with `git diff --name-only` before synthesis |
 
-## Session metrics (verifier / logs)
+## Session metrics (checker / logs)
 
 Separate from PR body. Emit after survey or apply work per [category-automation-envelope.md](category-automation-envelope.md):
 
 ```markdown
 ## Session Metrics
 
-| Field             | Value                      |
-| ----------------- | -------------------------- |
-| may_edit          | <true\|false>              |
-| Commit range      | <commit_range>             |
-| Findings assessed | <count>                    |
-| Files modified    | <count>                    |
-| Outcome           | <one-line verifier result> |
+| Field             | Value                     |
+| ----------------- | ------------------------- |
+| may_edit          | <true\|false>             |
+| Commit range      | <commit_range>            |
+| Findings assessed | <count>                   |
+| Files modified    | <count>                   |
+| Outcome           | <one-line checker result> |
 ```
 
 ## PR body templates

@@ -92,7 +92,7 @@ function append_dependency_signal {
 #   0 always
 #
 # Usage:
-#   append_hotspot "src/hot.go" "churn" "12" "90d"
+#   append_hotspot "src/hot.go" "churn" "12" "90.days"
 #
 #######################################
 function append_hotspot {
@@ -161,7 +161,7 @@ function append_signal {
 #
 # Globals:
 #   HOTSPOTS_JSON - Output array of hotspot objects
-#   TECH_DEBT_CHURN_WINDOW - Churn window (default: 90d)
+#   TECH_DEBT_CHURN_WINDOW - Churn window (default: 90.days; git --since form)
 #   TECH_DEBT_CHURN_MIN - Minimum commit count (default: 5)
 #   TECH_DEBT_CHURN_TOP - Top N paths to emit (default: 20)
 #   WARNINGS - Warning messages when git log fails
@@ -180,7 +180,7 @@ function append_signal {
 #
 #######################################
 function collect_churn_hotspots {
-    local window="${TECH_DEBT_CHURN_WINDOW:-90d}"
+    local window="${TECH_DEBT_CHURN_WINDOW:-90.days}"
     local min_count="${TECH_DEBT_CHURN_MIN:-5}"
     local top_n="${TECH_DEBT_CHURN_TOP:-20}"
     local emitted=0

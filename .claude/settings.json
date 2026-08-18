@@ -20,6 +20,10 @@
       "Bash(env *)",
       "Bash(file *)",
       "Bash(find *)",
+      "Bash(gh issue list)",
+      "Bash(gh pr list)",
+      "Bash(gh run view)",
+      "Bash(gh workflow list)",
       "Bash(git add *)",
       "Bash(git blame *)",
       "Bash(git branch *)",
@@ -43,6 +47,9 @@
       "Bash(hostname *)",
       "Bash(id *)",
       "Bash(jq *)",
+      "Bash(lean-ctx *)",
+      "Bash(*lean-ctx-bin/bin/lean-ctx *)",
+      "Bash(npx *lean-ctx*)",
       "Bash(less *)",
       "Bash(ls *)",
       "Bash(more *)",
@@ -243,6 +250,86 @@
         "hooks": [
           {
             "type": "command",
+            "command": "\"${CLAUDE_PROJECT_DIR}/.claude/hooks/common-hooks-claude/scripts/actionlint.sh\"",
+            "timeout": 60
+          }
+        ]
+      },
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"${CLAUDE_PROJECT_DIR}/.claude/hooks/common-hooks-claude/scripts/ghalint.sh\"",
+            "timeout": 60
+          }
+        ]
+      },
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"${CLAUDE_PROJECT_DIR}/.claude/hooks/common-hooks-claude/scripts/zizmor.sh\"",
+            "timeout": 60
+          }
+        ]
+      },
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"${CLAUDE_PROJECT_DIR}/.claude/hooks/common-hooks-claude/scripts/gitleaks.sh\"",
+            "timeout": 60
+          }
+        ]
+      },
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"${CLAUDE_PROJECT_DIR}/.claude/hooks/common-hooks-claude/scripts/markdown_link_check.sh\"",
+            "timeout": 240
+          }
+        ]
+      },
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"${CLAUDE_PROJECT_DIR}/.claude/hooks/common-hooks-claude/scripts/markdownlint_cli2.sh\"",
+            "timeout": 120
+          }
+        ]
+      },
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"${CLAUDE_PROJECT_DIR}/.claude/hooks/go-hooks-claude/scripts/golangci_lint.sh\"",
+            "timeout": 120
+          }
+        ]
+      },
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"${CLAUDE_PROJECT_DIR}/.claude/hooks/shell-script-hooks-claude/scripts/shellcheck.sh\"",
+            "timeout": 120
+          }
+        ]
+      },
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
             "command": ".claude/hooks/common-hooks-claude/scripts/actionlint.sh",
             "timeout": 60
           }
@@ -320,6 +407,16 @@
       }
     ],
     "PostToolUse": [
+      {
+        "matcher": "Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"${CLAUDE_PROJECT_DIR}/.claude/hooks/shell-script-hooks-claude/scripts/shfmt.sh\"",
+            "timeout": 120
+          }
+        ]
+      },
       {
         "matcher": "Write",
         "hooks": [

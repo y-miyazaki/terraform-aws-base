@@ -13,6 +13,8 @@
 #   Terraform/IaC-only (no app source): '["actions"]'
 name: on-ci-security
 
+run-name: "${{ github.workflow }} (${{ github.event_name }})"
+
 on:
   pull_request:
     branches:
@@ -90,7 +92,7 @@ permissions:
 
 jobs:
   sast:
-    uses: y-miyazaki/config/.github/workflows/ci-sast.yaml@de782bdea32cf4aa332bc3b11f04daf5bbf9b14c # v1.8.85
+    uses: y-miyazaki/config/.github/workflows/ci-sast.yaml@8d505770ce51faa61b0181756dafe6a630f4cc6f # v1.8.92
     with:
       # Go:         codeql_languages: '["actions","go"]'
       # Node.js:    codeql_languages: '["javascript-typescript","actions"]'
@@ -102,7 +104,7 @@ jobs:
       security-events: write
 
   security:
-    uses: y-miyazaki/config/.github/workflows/ci-security.yaml@de782bdea32cf4aa332bc3b11f04daf5bbf9b14c # v1.8.85
+    uses: y-miyazaki/config/.github/workflows/ci-security.yaml@8d505770ce51faa61b0181756dafe6a630f4cc6f # v1.8.92
     permissions:
       contents: read
       pull-requests: write

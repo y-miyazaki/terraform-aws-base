@@ -5,6 +5,8 @@
 # 3. Pass BOT_APP_* via secrets: (remap MAINTENANCE_BOT_* as needed).
 name: on-ci-push-aqua-update-checksum
 
+run-name: "${{ github.workflow }} (${{ github.event_name }})"
+
 on:
   push:
     paths:
@@ -20,7 +22,7 @@ permissions:
 
 jobs:
   aqua-update-checksum:
-    uses: y-miyazaki/config/.github/workflows/ci-aqua-update-checksum.yaml@de782bdea32cf4aa332bc3b11f04daf5bbf9b14c # v1.8.85
+    uses: y-miyazaki/config/.github/workflows/ci-aqua-update-checksum.yaml@8d505770ce51faa61b0181756dafe6a630f4cc6f # v1.8.92
     permissions:
       contents: read
     secrets:

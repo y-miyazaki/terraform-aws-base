@@ -20,7 +20,7 @@ inputs:
       - path: scripts/deploy.sh
         metric: churn
         value: 18
-        window: 90d
+        window: 90.days
 expected:
   output_contains:
     - Watch

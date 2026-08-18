@@ -94,10 +94,11 @@ repos:
         types: [yaml]
         files: ^\.github/workflows/.*\.(ya?ml)$
   - repo: https://github.com/zizmorcore/zizmor-pre-commit
-    rev: v1.25.2
+    rev: v1.29.0
     hooks:
       # Run the linter.
       - id: zizmor
+        files: ^\.github/workflows/.*\.(ya?ml)$
   # --------------------------------------------------------------
   # For Go
   # --------------------------------------------------------------
@@ -134,6 +135,18 @@ repos:
     hooks:
       - id: markdown-link-check
         args: [--quiet, -c, .markdown-link-check.json]
+  # --------------------------------------------------------------
+  # For mkdocs
+  # --------------------------------------------------------------
+  - repo: local
+    hooks:
+      - id: mkdocs
+        name: mkdocs
+        description: Build MkDocs site with --strict to validate documentation.
+        entry: mkdocs build --strict
+        language: system
+        pass_filenames: false
+        files: ^(docs/.*\.md|mkdocs\.yml)$
   # --------------------------------------------------------------
   # For Prettier
   # --------------------------------------------------------------

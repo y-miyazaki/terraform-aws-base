@@ -17,7 +17,7 @@ metadata:
 
 ## Input
 
-- **Automation:** detect JSON from `detect_pr_revise.sh` with `result.pr_number` and comment facts. Read `may_edit` / `write_target` from `## Constraints`.
+- **Automation:** detect JSON from `detect_pr_revise.sh` with `result.pr_number`, trigger comment fields, and `result.comments` (array of open human `@mention` comments with `comment_id`, `body`, `path`, `line`, `start_line`, `side`, `diff_hunk`, `in_reply_to_id`, `source`, `subject_type`). Read `may_edit` / `write_target` from `## Constraints`. Address the full `comments` array — not only `comment_body`.
 - **Interactive:** PR URL or number plus the human feedback to apply; same Constraints defaults as automation survey unless the user explicitly requests apply.
 
 ## Output Specification

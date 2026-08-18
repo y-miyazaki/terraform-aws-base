@@ -28,6 +28,66 @@ if ! declare -f log > /dev/null 2>&1; then
 fi
 
 #######################################
+# require_valid_pr_number: Validate GitHub PR number
+#
+# Description:
+#   Ensures the PR number is a positive integer (1 or greater)
+#
+# Globals:
+#   None
+#
+# Arguments:
+#   $1 - PR number
+#
+# Outputs:
+#   None
+#
+# Returns:
+#   None (exits on invalid PR number)
+#
+# Usage:
+#   require_valid_pr_number "$PR_NUMBER"
+#
+#######################################
+function require_valid_pr_number {
+    local pr_number="$1"
+
+    if [[ ! $pr_number =~ ^[1-9][0-9]*$ ]]; then
+        error_exit "Invalid argument: ${pr_number}"
+    fi
+}
+
+#######################################
+# require_valid_repository_slug: Validate GitHub repository slug
+#
+# Description:
+#   Ensures the repository slug matches owner/repo format
+#
+# Globals:
+#   None
+#
+# Arguments:
+#   $1 - Repository slug (owner/repo)
+#
+# Outputs:
+#   None
+#
+# Returns:
+#   None (exits on invalid slug)
+#
+# Usage:
+#   require_valid_repository_slug "$REPOSITORY"
+#
+#######################################
+function require_valid_repository_slug {
+    local repository="$1"
+
+    if [[ ! $repository =~ ^[A-Za-z0-9._-]+/[A-Za-z0-9._-]+$ ]]; then
+        error_exit "Invalid repository slug"
+    fi
+}
+
+#######################################
 # validate_config_format: Validate configuration file format
 #
 # Description:
@@ -327,6 +387,54 @@ function validate_network_connectivity {
 }
 
 #######################################
+# validate_port_availability: Validate port availability
+#
+# Description:
+#   Tests if a network port is open and available on a host
+#
+# Globals:
+#   None
+#
+# Arguments:
+#   $1 - Host
+#   $2 - Port
+#   $3 - Timeout in seconds (optional, defaults to 3)
+#
+# Outputs:
+#   None
+#
+# Returns:
+#   0 if port is open, 1 if closed or unreachable
+#
+# Usage:
+#   if validate_port_availability "localhost" "8080"; then echo "Port open"; fi
+#
+#######################################
+function validate_port_availability {
+    local host="$1"
+    local port="$2"
+    local timeout="${3:-3}"
+
+    if command -v nc > /dev/null 2>&1; then
+        if nc -z -w "$timeout" "$host" "$port" > /dev/null 2>&1; then
+            log "DEBUG" "Port is available: $host:$port"
+            return 0
+        fi
+    elif command -v telnet > /dev/null 2>&1; then
+        if timeout "$timeout" telnet "$host" "$port" < /dev/null > /dev/null 2>&1; then
+            log "DEBUG" "Port is available: $host:$port"
+            return 0
+        fi
+    else
+        log "WARN" "Cannot test port availability (nc or telnet not available)"
+        return 0
+    fi
+
+    log "ERROR" "Port is not available: $host:$port"
+    return 1
+}
+
+#######################################
 # validate_script_executable: Validate script executable permissions
 #
 # Description:
@@ -404,54 +512,6 @@ function validate_script_syntax {
         log "ERROR" "Script syntax error in: $script_path"
         return 1
     fi
-}
-
-#######################################
-# validate_port_availability: Validate port availability
-#
-# Description:
-#   Tests if a network port is open and available on a host
-#
-# Globals:
-#   None
-#
-# Arguments:
-#   $1 - Host
-#   $2 - Port
-#   $3 - Timeout in seconds (optional, defaults to 3)
-#
-# Outputs:
-#   None
-#
-# Returns:
-#   0 if port is open, 1 if closed or unreachable
-#
-# Usage:
-#   if validate_port_availability "localhost" "8080"; then echo "Port open"; fi
-#
-#######################################
-function validate_port_availability {
-    local host="$1"
-    local port="$2"
-    local timeout="${3:-3}"
-
-    if command -v nc > /dev/null 2>&1; then
-        if nc -z -w "$timeout" "$host" "$port" > /dev/null 2>&1; then
-            log "DEBUG" "Port is available: $host:$port"
-            return 0
-        fi
-    elif command -v telnet > /dev/null 2>&1; then
-        if timeout "$timeout" telnet "$host" "$port" < /dev/null > /dev/null 2>&1; then
-            log "DEBUG" "Port is available: $host:$port"
-            return 0
-        fi
-    else
-        log "WARN" "Cannot test port availability (nc or telnet not available)"
-        return 0
-    fi
-
-    log "ERROR" "Port is not available: $host:$port"
-    return 1
 }
 
 #######################################

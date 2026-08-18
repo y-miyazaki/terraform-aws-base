@@ -417,7 +417,7 @@ function resolve_comment_id_json {
 #   None
 #
 # Outputs:
-#   Verifier context string on stdout
+#   Checker context string on stdout
 #
 # Returns:
 #   0 on success
