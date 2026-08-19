@@ -132,6 +132,7 @@
       "Bash(curl *)",
       "Bash(ghalint *)",
       "Bash(golangci-lint *)",
+      "Bash(gofmt *)",
       "Bash(go get *)",
       "Bash(go mod download *)",
       "Bash(markdown-link-check *)",

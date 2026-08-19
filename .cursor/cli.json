@@ -170,6 +170,7 @@
       "Shell(git push)",
       "Shell(go get)",
       "Shell(go mod download)",
+      "Shell(gofmt)",
       "Shell(golangci-lint)",
       "Shell(markdown-link-check)",
       "Shell(markdownlint-cli2)",

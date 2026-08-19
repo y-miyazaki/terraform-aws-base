@@ -41,6 +41,7 @@
     "go list",
     "go test",
     "go version",
+    "gofmt",
     "grep",
     "head",
     "hostname",
