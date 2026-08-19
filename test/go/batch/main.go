@@ -8,6 +8,7 @@ import (
 	"fmt"
 )
 
+// nolint:errcheck, forbidigo, revive
 func main() {
 	fmt.Println("Starting Hello batch")
 }

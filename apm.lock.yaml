@@ -1,12 +1,12 @@
 lockfile_version: '1'
-generated_at: '2026-08-19T06:22:35.571174+00:00'
+generated_at: '2026-08-19T07:43:13.338877+00:00'
 apm_version: 0.27.0
 dependencies:
 - repo_url: y-miyazaki/config
   name: config-aws
   host: github.com
-  resolved_commit: 346ffb484d5d8430d864b4d7e9218367f53404a4
-  resolved_ref: v1.8.93
+  resolved_commit: 5c63d4f17e325af80cb35f16c6a79240da564d9a
+  resolved_ref: v1.8.94
   version: 1.0.0
   virtual_path: .apm/packages/aws
   is_virtual: true
@@ -16,8 +16,8 @@ dependencies:
 - repo_url: y-miyazaki/config
   name: config-common
   host: github.com
-  resolved_commit: 346ffb484d5d8430d864b4d7e9218367f53404a4
-  resolved_ref: v1.8.93
+  resolved_commit: 5c63d4f17e325af80cb35f16c6a79240da564d9a
+  resolved_ref: v1.8.94
   version: 1.0.0
   virtual_path: .apm/packages/common
   is_virtual: true
@@ -349,8 +349,8 @@ dependencies:
 - repo_url: y-miyazaki/config
   name: common-hooks-claude
   host: github.com
-  resolved_commit: 346ffb484d5d8430d864b4d7e9218367f53404a4
-  resolved_ref: v1.8.93
+  resolved_commit: 5c63d4f17e325af80cb35f16c6a79240da564d9a
+  resolved_ref: v1.8.94
   version: 2.0.0
   virtual_path: .apm/packages/common-hooks-claude
   is_virtual: true
@@ -374,8 +374,8 @@ dependencies:
 - repo_url: y-miyazaki/config
   name: common-hooks-cursor
   host: github.com
-  resolved_commit: 346ffb484d5d8430d864b4d7e9218367f53404a4
-  resolved_ref: v1.8.93
+  resolved_commit: 5c63d4f17e325af80cb35f16c6a79240da564d9a
+  resolved_ref: v1.8.94
   version: 2.0.0
   virtual_path: .apm/packages/common-hooks-cursor
   is_virtual: true
@@ -399,8 +399,8 @@ dependencies:
 - repo_url: y-miyazaki/config
   name: config-github
   host: github.com
-  resolved_commit: 346ffb484d5d8430d864b4d7e9218367f53404a4
-  resolved_ref: v1.8.93
+  resolved_commit: 5c63d4f17e325af80cb35f16c6a79240da564d9a
+  resolved_ref: v1.8.94
   version: 1.0.0
   virtual_path: .apm/packages/github
   is_virtual: true
@@ -824,8 +824,8 @@ dependencies:
 - repo_url: y-miyazaki/config
   name: config-github-actions
   host: github.com
-  resolved_commit: 346ffb484d5d8430d864b4d7e9218367f53404a4
-  resolved_ref: v1.8.93
+  resolved_commit: 5c63d4f17e325af80cb35f16c6a79240da564d9a
+  resolved_ref: v1.8.94
   version: 1.0.0
   virtual_path: .apm/packages/github-actions
   is_virtual: true
@@ -1001,8 +1001,8 @@ dependencies:
 - repo_url: y-miyazaki/config
   name: config-repo-maintenance
   host: github.com
-  resolved_commit: 346ffb484d5d8430d864b4d7e9218367f53404a4
-  resolved_ref: v1.8.93
+  resolved_commit: 5c63d4f17e325af80cb35f16c6a79240da564d9a
+  resolved_ref: v1.8.94
   version: 1.0.0
   virtual_path: .apm/packages/repo-maintenance
   is_virtual: true
@@ -1824,8 +1824,8 @@ dependencies:
 - repo_url: y-miyazaki/config
   name: config-shell-script
   host: github.com
-  resolved_commit: 346ffb484d5d8430d864b4d7e9218367f53404a4
-  resolved_ref: v1.8.93
+  resolved_commit: 5c63d4f17e325af80cb35f16c6a79240da564d9a
+  resolved_ref: v1.8.94
   version: 1.0.0
   virtual_path: .apm/packages/shell-script
   is_virtual: true
@@ -2037,8 +2037,8 @@ dependencies:
 - repo_url: y-miyazaki/config
   name: shell-script-hooks-claude
   host: github.com
-  resolved_commit: 346ffb484d5d8430d864b4d7e9218367f53404a4
-  resolved_ref: v1.8.93
+  resolved_commit: 5c63d4f17e325af80cb35f16c6a79240da564d9a
+  resolved_ref: v1.8.94
   version: 1.0.0
   virtual_path: .apm/packages/shell-script-hooks-claude
   is_virtual: true
@@ -2054,8 +2054,8 @@ dependencies:
 - repo_url: y-miyazaki/config
   name: shell-script-hooks-cursor
   host: github.com
-  resolved_commit: 346ffb484d5d8430d864b4d7e9218367f53404a4
-  resolved_ref: v1.8.93
+  resolved_commit: 5c63d4f17e325af80cb35f16c6a79240da564d9a
+  resolved_ref: v1.8.94
   version: 1.0.0
   virtual_path: .apm/packages/shell-script-hooks-cursor
   is_virtual: true
@@ -2071,8 +2071,8 @@ dependencies:
 - repo_url: y-miyazaki/config
   name: config-terraform
   host: github.com
-  resolved_commit: 346ffb484d5d8430d864b4d7e9218367f53404a4
-  resolved_ref: v1.8.93
+  resolved_commit: 5c63d4f17e325af80cb35f16c6a79240da564d9a
+  resolved_ref: v1.8.94
   version: 1.0.0
   virtual_path: .apm/packages/terraform
   is_virtual: true
@@ -2300,8 +2300,8 @@ dependencies:
 - repo_url: y-miyazaki/config
   name: config-terraform-aws
   host: github.com
-  resolved_commit: 346ffb484d5d8430d864b4d7e9218367f53404a4
-  resolved_ref: v1.8.93
+  resolved_commit: 5c63d4f17e325af80cb35f16c6a79240da564d9a
+  resolved_ref: v1.8.94
   version: 1.0.0
   virtual_path: .apm/packages/terraform-aws
   is_virtual: true
@@ -2311,8 +2311,8 @@ dependencies:
 - repo_url: y-miyazaki/config
   name: terraform-hooks-claude
   host: github.com
-  resolved_commit: 346ffb484d5d8430d864b4d7e9218367f53404a4
-  resolved_ref: v1.8.93
+  resolved_commit: 5c63d4f17e325af80cb35f16c6a79240da564d9a
+  resolved_ref: v1.8.94
   version: 1.0.0
   virtual_path: .apm/packages/terraform-hooks-claude
   is_virtual: true
@@ -2328,8 +2328,8 @@ dependencies:
 - repo_url: y-miyazaki/config
   name: terraform-hooks-cursor
   host: github.com
-  resolved_commit: 346ffb484d5d8430d864b4d7e9218367f53404a4
-  resolved_ref: v1.8.93
+  resolved_commit: 5c63d4f17e325af80cb35f16c6a79240da564d9a
+  resolved_ref: v1.8.94
   version: 1.0.0
   virtual_path: .apm/packages/terraform-hooks-cursor
   is_virtual: true
