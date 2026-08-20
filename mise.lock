@@ -256,26 +256,26 @@ url_api = "https://api.github.com/repos/astral-sh/uv/releases/assets/505387809"
 provenance = "github-attestations"
 
 [[tools."aqua:aws/aws-cli"]]
-version = "2.36.21"
+version = "2.36.22"
 backend = "aqua:aws/aws-cli"
 
 [tools."aqua:aws/aws-cli"."platforms.linux-arm64"]
-url = "https://awscli.amazonaws.com/awscli-exe-linux-aarch64-2.36.21.zip"
+url = "https://awscli.amazonaws.com/awscli-exe-linux-aarch64-2.36.22.zip"
 
 [tools."aqua:aws/aws-cli"."platforms.linux-arm64-musl"]
-url = "https://awscli.amazonaws.com/awscli-exe-linux-aarch64-2.36.21.zip"
+url = "https://awscli.amazonaws.com/awscli-exe-linux-aarch64-2.36.22.zip"
 
 [tools."aqua:aws/aws-cli"."platforms.linux-x64"]
-url = "https://awscli.amazonaws.com/awscli-exe-linux-x86_64-2.36.21.zip"
+url = "https://awscli.amazonaws.com/awscli-exe-linux-x86_64-2.36.22.zip"
 
 [tools."aqua:aws/aws-cli"."platforms.linux-x64-musl"]
-url = "https://awscli.amazonaws.com/awscli-exe-linux-x86_64-2.36.21.zip"
+url = "https://awscli.amazonaws.com/awscli-exe-linux-x86_64-2.36.22.zip"
 
 [tools."aqua:aws/aws-cli"."platforms.macos-arm64"]
-url = "https://awscli.amazonaws.com/AWSCLIV2-2.36.21.pkg"
+url = "https://awscli.amazonaws.com/AWSCLIV2-2.36.22.pkg"
 
 [tools."aqua:aws/aws-cli"."platforms.macos-x64"]
-url = "https://awscli.amazonaws.com/AWSCLIV2-2.36.21.pkg"
+url = "https://awscli.amazonaws.com/AWSCLIV2-2.36.22.pkg"
 
 [[tools."aqua:aws/aws-sam-cli"]]
 version = "1.165.0"
@@ -1461,43 +1461,43 @@ url_api = "https://api.github.com/repos/terraform-linters/tflint/releases/assets
 provenance = "github-attestations"
 
 [[tools."aqua:vektra/mockery"]]
-version = "3.7.2"
+version = "3.7.3"
 backend = "aqua:vektra/mockery"
 
 [tools."aqua:vektra/mockery"."platforms.linux-arm64"]
-checksum = "sha256:27141b83d8bccc29d66ed91093da69604b320d417bd562d819c8b0372f1444ad"
-url = "https://github.com/vektra/mockery/releases/download/v3.7.2/mockery_3.7.2_Linux_arm64.tar.gz"
-url_api = "https://api.github.com/repos/vektra/mockery/releases/assets/487546649"
+checksum = "sha256:01882151519384bf7877d0c63c0fc02a678ee5d9a2c6c8666675aa17a16744c4"
+url = "https://github.com/vektra/mockery/releases/download/v3.7.3/mockery_3.7.3_Linux_arm64.tar.gz"
+url_api = "https://api.github.com/repos/vektra/mockery/releases/assets/511944620"
 
 [tools."aqua:vektra/mockery"."platforms.linux-arm64-musl"]
-checksum = "sha256:27141b83d8bccc29d66ed91093da69604b320d417bd562d819c8b0372f1444ad"
-url = "https://github.com/vektra/mockery/releases/download/v3.7.2/mockery_3.7.2_Linux_arm64.tar.gz"
-url_api = "https://api.github.com/repos/vektra/mockery/releases/assets/487546649"
+checksum = "sha256:01882151519384bf7877d0c63c0fc02a678ee5d9a2c6c8666675aa17a16744c4"
+url = "https://github.com/vektra/mockery/releases/download/v3.7.3/mockery_3.7.3_Linux_arm64.tar.gz"
+url_api = "https://api.github.com/repos/vektra/mockery/releases/assets/511944620"
 
 [tools."aqua:vektra/mockery"."platforms.linux-x64"]
-checksum = "sha256:db819b897de126634cefeb3773a3b76eea7769c718f0e5e62e968ab00add12c6"
-url = "https://github.com/vektra/mockery/releases/download/v3.7.2/mockery_3.7.2_Linux_x86_64.tar.gz"
-url_api = "https://api.github.com/repos/vektra/mockery/releases/assets/487546650"
+checksum = "sha256:150bbabc3c50ceb964b709fdfbc54e095e4f585a85ccfe2c8ee7f640d522f110"
+url = "https://github.com/vektra/mockery/releases/download/v3.7.3/mockery_3.7.3_Linux_x86_64.tar.gz"
+url_api = "https://api.github.com/repos/vektra/mockery/releases/assets/511944625"
 
 [tools."aqua:vektra/mockery"."platforms.linux-x64-musl"]
-checksum = "sha256:db819b897de126634cefeb3773a3b76eea7769c718f0e5e62e968ab00add12c6"
-url = "https://github.com/vektra/mockery/releases/download/v3.7.2/mockery_3.7.2_Linux_x86_64.tar.gz"
-url_api = "https://api.github.com/repos/vektra/mockery/releases/assets/487546650"
+checksum = "sha256:150bbabc3c50ceb964b709fdfbc54e095e4f585a85ccfe2c8ee7f640d522f110"
+url = "https://github.com/vektra/mockery/releases/download/v3.7.3/mockery_3.7.3_Linux_x86_64.tar.gz"
+url_api = "https://api.github.com/repos/vektra/mockery/releases/assets/511944625"
 
 [tools."aqua:vektra/mockery"."platforms.macos-arm64"]
-checksum = "sha256:f30c556a7c34df2002062aa6b0a014076b37f4f45429c70407804ee39aae71cf"
-url = "https://github.com/vektra/mockery/releases/download/v3.7.2/mockery_3.7.2_Darwin_arm64.tar.gz"
-url_api = "https://api.github.com/repos/vektra/mockery/releases/assets/487546634"
+checksum = "sha256:4886bfd00f82dfb0ccd8112aaf4e85af142b4c3e051635120ac73c3394b59ff4"
+url = "https://github.com/vektra/mockery/releases/download/v3.7.3/mockery_3.7.3_Darwin_arm64.tar.gz"
+url_api = "https://api.github.com/repos/vektra/mockery/releases/assets/511944639"
 
 [tools."aqua:vektra/mockery"."platforms.macos-x64"]
-checksum = "sha256:fddf50e1b43c97e7ae150784c922a73772d6304346294a90ce5cd24b0090b0cc"
-url = "https://github.com/vektra/mockery/releases/download/v3.7.2/mockery_3.7.2_Darwin_x86_64.tar.gz"
-url_api = "https://api.github.com/repos/vektra/mockery/releases/assets/487546633"
+checksum = "sha256:107abe6c7bbf1ecc3d5a2fa9f621ab8d12816367b8ce35d51fa1cbf556f9360b"
+url = "https://github.com/vektra/mockery/releases/download/v3.7.3/mockery_3.7.3_Darwin_x86_64.tar.gz"
+url_api = "https://api.github.com/repos/vektra/mockery/releases/assets/511944643"
 
 [tools."aqua:vektra/mockery"."platforms.windows-x64"]
-checksum = "sha256:77952b0381bbdc5b490011e8fa602633e5b8bbf29368568046b6641ed297e9b2"
-url = "https://github.com/vektra/mockery/releases/download/v3.7.2/mockery_3.7.2_Windows_x86_64.tar.gz"
-url_api = "https://api.github.com/repos/vektra/mockery/releases/assets/487546636"
+checksum = "sha256:53c3592aae7652ff2b15f3a246d19b407c6fa958301ce042df6400b145425442"
+url = "https://github.com/vektra/mockery/releases/download/v3.7.3/mockery_3.7.3_Windows_x86_64.tar.gz"
+url_api = "https://api.github.com/repos/vektra/mockery/releases/assets/511944622"
 
 [[tools."aqua:zizmorcore/zizmor"]]
 version = "1.29.0"
@@ -1567,49 +1567,49 @@ url = "https://github.com/anthropics/claude-code/releases/download/v2.1.222/clau
 url_api = "https://api.github.com/repos/anthropics/claude-code/releases/assets/501790626"
 
 [[tools."github:DeusData/codebase-memory-mcp"]]
-version = "0.10.2"
+version = "0.10.3"
 backend = "github:DeusData/codebase-memory-mcp"
 
 [tools."github:DeusData/codebase-memory-mcp"."platforms.linux-arm64"]
-checksum = "sha256:b70148686cec55c31673fc0cebc0caf7f664f4ae29f7ba7f07b9617c2e5eaf85"
-url = "https://github.com/DeusData/codebase-memory-mcp/releases/download/v0.10.2/codebase-memory-mcp-linux-arm64.tar.gz"
-url_api = "https://api.github.com/repos/DeusData/codebase-memory-mcp/releases/assets/510393715"
+checksum = "sha256:967b9eababfdbd2ef1987c571d55bc7c028cd1db7f99279830634c58db311e32"
+url = "https://github.com/DeusData/codebase-memory-mcp/releases/download/v0.10.3/codebase-memory-mcp-linux-arm64.tar.gz"
+url_api = "https://api.github.com/repos/DeusData/codebase-memory-mcp/releases/assets/512277867"
 provenance = "github-attestations"
 
 [tools."github:DeusData/codebase-memory-mcp"."platforms.linux-arm64-musl"]
-checksum = "sha256:b70148686cec55c31673fc0cebc0caf7f664f4ae29f7ba7f07b9617c2e5eaf85"
-url = "https://github.com/DeusData/codebase-memory-mcp/releases/download/v0.10.2/codebase-memory-mcp-linux-arm64.tar.gz"
-url_api = "https://api.github.com/repos/DeusData/codebase-memory-mcp/releases/assets/510393715"
+checksum = "sha256:967b9eababfdbd2ef1987c571d55bc7c028cd1db7f99279830634c58db311e32"
+url = "https://github.com/DeusData/codebase-memory-mcp/releases/download/v0.10.3/codebase-memory-mcp-linux-arm64.tar.gz"
+url_api = "https://api.github.com/repos/DeusData/codebase-memory-mcp/releases/assets/512277867"
 provenance = "github-attestations"
 
 [tools."github:DeusData/codebase-memory-mcp"."platforms.linux-x64"]
-checksum = "sha256:6e3bb7353be21407a78e67b5465e53e3afb1a4a213e7a561606900ac08dcfdd6"
-url = "https://github.com/DeusData/codebase-memory-mcp/releases/download/v0.10.2/codebase-memory-mcp-linux-amd64.tar.gz"
-url_api = "https://api.github.com/repos/DeusData/codebase-memory-mcp/releases/assets/510393712"
+checksum = "sha256:74997fb0934e70a22f20c2e112fb4d883867dc1f01a7bcdc94cf86d13b5cbd31"
+url = "https://github.com/DeusData/codebase-memory-mcp/releases/download/v0.10.3/codebase-memory-mcp-linux-amd64.tar.gz"
+url_api = "https://api.github.com/repos/DeusData/codebase-memory-mcp/releases/assets/512277888"
 provenance = "github-attestations"
 
 [tools."github:DeusData/codebase-memory-mcp"."platforms.linux-x64-musl"]
-checksum = "sha256:6e3bb7353be21407a78e67b5465e53e3afb1a4a213e7a561606900ac08dcfdd6"
-url = "https://github.com/DeusData/codebase-memory-mcp/releases/download/v0.10.2/codebase-memory-mcp-linux-amd64.tar.gz"
-url_api = "https://api.github.com/repos/DeusData/codebase-memory-mcp/releases/assets/510393712"
+checksum = "sha256:74997fb0934e70a22f20c2e112fb4d883867dc1f01a7bcdc94cf86d13b5cbd31"
+url = "https://github.com/DeusData/codebase-memory-mcp/releases/download/v0.10.3/codebase-memory-mcp-linux-amd64.tar.gz"
+url_api = "https://api.github.com/repos/DeusData/codebase-memory-mcp/releases/assets/512277888"
 provenance = "github-attestations"
 
 [tools."github:DeusData/codebase-memory-mcp"."platforms.macos-arm64"]
-checksum = "sha256:fa3ee085485fd9c16d1c1bd8a102df518862dabd2d6a09e4c6d8dfb3cd2a7eb4"
-url = "https://github.com/DeusData/codebase-memory-mcp/releases/download/v0.10.2/codebase-memory-mcp-darwin-arm64.tar.gz"
-url_api = "https://api.github.com/repos/DeusData/codebase-memory-mcp/releases/assets/510393722"
+checksum = "sha256:0ebf02328207d4c3d862c837b5e973de5bac808df92b0941737721d467287f7f"
+url = "https://github.com/DeusData/codebase-memory-mcp/releases/download/v0.10.3/codebase-memory-mcp-darwin-arm64.tar.gz"
+url_api = "https://api.github.com/repos/DeusData/codebase-memory-mcp/releases/assets/512277860"
 provenance = "github-attestations"
 
 [tools."github:DeusData/codebase-memory-mcp"."platforms.macos-x64"]
-checksum = "sha256:bb6cb47aea9e50e2193cdd917d5dbafa63b7d9c1cbe74bab5ec9bf4faa67e295"
-url = "https://github.com/DeusData/codebase-memory-mcp/releases/download/v0.10.2/codebase-memory-mcp-darwin-amd64.tar.gz"
-url_api = "https://api.github.com/repos/DeusData/codebase-memory-mcp/releases/assets/510393725"
+checksum = "sha256:1107fea28285823e1436e4f38a4e00a0b472d8a43c379da7dfd200c914a4b9dd"
+url = "https://github.com/DeusData/codebase-memory-mcp/releases/download/v0.10.3/codebase-memory-mcp-darwin-amd64.tar.gz"
+url_api = "https://api.github.com/repos/DeusData/codebase-memory-mcp/releases/assets/512277859"
 provenance = "github-attestations"
 
 [tools."github:DeusData/codebase-memory-mcp"."platforms.windows-x64"]
-checksum = "sha256:8f08e5c5b480e625adf9d4560765a860d493a690df6ded5b94127283ec5b660a"
-url = "https://github.com/DeusData/codebase-memory-mcp/releases/download/v0.10.2/codebase-memory-mcp-windows-amd64.zip"
-url_api = "https://api.github.com/repos/DeusData/codebase-memory-mcp/releases/assets/510393717"
+checksum = "sha256:fa7e53dd5e6b8daf633db7bf37a923061d836a70dd380d6627736d95b998875b"
+url = "https://github.com/DeusData/codebase-memory-mcp/releases/download/v0.10.3/codebase-memory-mcp-windows-amd64.zip"
+url_api = "https://api.github.com/repos/DeusData/codebase-memory-mcp/releases/assets/512277865"
 provenance = "github-attestations"
 
 [[tools."github:microsoft/apm"]]
