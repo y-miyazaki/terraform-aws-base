@@ -61,9 +61,9 @@ format_compact_tokens() {
         printf '—'
         return 0
     fi
-    if (( n >= 1000000 )); then
+    if ((n >= 1000000)); then
         printf '%d.%dM' $((n / 1000000)) $(((n % 1000000) / 100000))
-    elif (( n >= 1000 )); then
+    elif ((n >= 1000)); then
         printf '%dK' $(((n + 500) / 1000))
     else
         printf '%d' "$n"

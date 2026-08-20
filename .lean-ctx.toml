@@ -1,0 +1,126 @@
+# Project-level lean-ctx compression tuning
+auto_mode_learning = true
+bypass_hints = "aggressive"
+cache_policy = "aggressive"
+compression_aggressiveness = 0.8
+compression_level = "max"
+crush_verbatim_json = true
+enable_wakeup_ctx = false
+minimal_overhead = true
+output_density = "terse"
+# Keep in sync with .cursor/cli.json permissions.allow Shell(*) and
+# .cursor/permissions.json terminalAllowlist (same command set).
+shell_allowlist_extra = [
+    "awk",
+    "basename",
+    "bash",
+    "bats",
+    "cat",
+    "cd",
+    "cmp",
+    "command",
+    "cut",
+    "date",
+    "df",
+    "diff",
+    "dirname",
+    "du",
+    "echo",
+    "env",
+    "file",
+    "find",
+    "gh issue list",
+    "gh pr list",
+    "gh run view",
+    "gh workflow list",
+    "git add",
+    "git blame",
+    "git branch",
+    "git diff",
+    "git grep",
+    "git log",
+    "git remote -v",
+    "git remote show",
+    "git rev-parse",
+    "git show",
+    "git stash list",
+    "git stash show",
+    "git status",
+    "go doc",
+    "go env",
+    "go list",
+    "go test",
+    "go tool",
+    "go version",
+    "grep",
+    "head",
+    "hostname",
+    "id",
+    "jq",
+    "lean-ctx",
+    "**/lean-ctx-bin/bin/lean-ctx",
+    "npx:lean-ctx*",
+    "less",
+    "ls",
+    "mockery",
+    "more",
+    "npm list",
+    "npm run",
+    "npm test",
+    "npm view",
+    "printenv",
+    "printf",
+    "pwd",
+    "readlink",
+    "realpath",
+    "rg",
+    "sed -n",
+    "sort",
+    "stat",
+    "strings",
+    "tail",
+    "test",
+    "tr",
+    "tree",
+    "uname",
+    "uniq",
+    "wc",
+    "which",
+    "whoami",
+    "xargs",
+]
+structure_first = true
+symbol_map_auto = true
+
+
+# Net savings: power profile advertises 81 tools (~27K tok/turn fixed overhead);
+# standard keeps the 16 most-used tools (~20K) while ctx_call still reaches the rest.
+tool_profile = "standard"
+
+# Repo MCP (.cursor/mcp.json via APM) is canonical — do not register user-level lean-ctx.
+# Keep ~/.cursor/mcp.json mcpServers empty; never run `lean-ctx wrap cursor` (re-adds user MCP).
+# Hooks (~/.cursor/hooks.json) enforce ctx_* routing; skip rule/skill injection into AGENTS.md etc.
+[archive]
+ephemeral = true
+ephemeral_min_tokens = 800
+threshold_chars = 400
+
+[autonomy]
+auto_dedup = true
+auto_preload = true
+dedup_threshold = 3
+
+[loop_detection]
+normal_threshold = 1
+reduced_threshold = 2
+
+# Observatory "role:coder tokens N% WARNING" — project .lean-ctx.toml cannot set [context];
+# per machine: lean-ctx config set context.budget_tokens 25000
+
+[memory.knowledge]
+max_facts = 300
+
+[setup]
+auto_inject_rules = false
+auto_inject_skills = false
+auto_update_mcp = false

@@ -52,6 +52,7 @@
     "npx:lean-ctx*",
     "less",
     "ls",
+    "mockery",
     "more",
     "npm list",
     "npm run",

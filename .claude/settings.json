@@ -53,6 +53,7 @@
       "Bash(npx *lean-ctx*)",
       "Bash(less *)",
       "Bash(ls *)",
+      "Bash(mockery *)",
       "Bash(more *)",
       "Bash(npm list *)",
       "Bash(npm run *)",

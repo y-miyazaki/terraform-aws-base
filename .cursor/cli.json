@@ -52,6 +52,7 @@
       "Shell(npx:lean-ctx*)",
       "Shell(less)",
       "Shell(ls)",
+      "Shell(mockery)",
       "Shell(more)",
       "Shell(npm list)",
       "Shell(npm run)",
