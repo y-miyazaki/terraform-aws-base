@@ -25,7 +25,7 @@ data "aws_availability_zones" "lambda_vpc" {
 
 module "lambda_vpc" {
   source  = "terraform-aws-modules/vpc/aws"
-  version = "6.6.1"
+  version = "6.7.0"
 
   create_vpc = var.common_lambda.vpc.is_enabled && var.common_lambda.vpc.create_vpc
   region     = var.region.global

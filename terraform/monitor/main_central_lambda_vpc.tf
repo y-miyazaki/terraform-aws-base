@@ -13,7 +13,7 @@ module "lambda_vpc" {
   for_each = local.monitor_regions
 
   source  = "terraform-aws-modules/vpc/aws"
-  version = "6.6.1"
+  version = "6.7.0"
 
   create_vpc = var.common_lambda.vpc.is_enabled && var.common_lambda.vpc.create_vpc
   region     = each.value
