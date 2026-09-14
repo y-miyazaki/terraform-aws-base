@@ -71,6 +71,14 @@ Not enforced by `github-actions-validation` (actionlint, ghalint, zizmor); apply
 - TOOL-02 (SHOULD): Upload coverage to Codecov with a clear fail policy
 - TOOL-03 (SHOULD): Set artifact retention intentionally (not default forever)
 
+### Anti-Patterns (AP)
+
+- AP-01 (MUST): Echoing or logging secrets
+- AP-02 (MUST): pull_request_target on untrusted fork PRs without guards
+- AP-03 (SHOULD): Floating third-party action tags
+- AP-04 (SHOULD): Overly broad workflow permissions
+- AP-05 (SHOULD): Passing untrusted PR input directly to shell
+
 ### Code Modification Guidelines
 
 - Keep map keys alphabetically ordered per ORD-01 in companion github-actions-workflow rules (stem `github-actions-workflow`).

@@ -1,12 +1,5 @@
 # Shell Script Review Checklist
 
-## Anti-Patterns (AP)
-
-- AP-01 (SHOULD): Omit set -euo/main/entry guard from sourced libs
-- AP-02 (SHOULD): Keep header/function DOC blocks when refactoring
-- AP-03 (SHOULD): Function docs include Globals: (or None)
-- AP-04 (SHOULD): Match sibling lib/\*.sh comment/separator style
-
 ## Code Standards (CODE)
 
 - CODE-01 (SHOULD): Prefer local over globals inside functions
@@ -62,3 +55,10 @@
 
 - TEST-00 (MUST): Add/update paired Bats suite in the same change
 - TEST-01 (SHOULD): Bats test functions ordered a-z after setup/teardown
+
+## Anti-Patterns (AP)
+
+- AP-01 (SHOULD): Omit set -euo/main/entry guard from sourced libs
+- AP-02 (SHOULD): Keep header/function DOC blocks when refactoring
+- AP-03 (SHOULD): Function docs include Globals: (or None)
+- AP-04 (SHOULD): Match sibling lib/\*.sh comment/separator style

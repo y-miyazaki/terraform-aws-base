@@ -38,7 +38,7 @@
       "command": "npx",
       "args": [
         "-y",
-        "@upstash/context7-mcp@4.0.2"
+        "@upstash/context7-mcp@4.0.3"
       ]
     },
     "fetch": {
@@ -47,7 +47,7 @@
       "args": [
         "--with",
         "mcp>=1.28,<2",
-        "mcp-server-fetch==2026.7.10"
+        "mcp-server-fetch==2026.8.18"
       ]
     },
     "github": {
@@ -55,7 +55,7 @@
       "command": "bash",
       "args": [
         "-lc",
-        "TOKEN=\"${GH_TOKEN:-$GITHUB_TOKEN}\"; exec uvx mcp-compressor==0.31.7 -- https://api.githubcopilot.com/mcp/ -H \"Authorization=Bearer ${TOKEN}\" --auth explicit-headers"
+        "TOKEN=\"${GH_TOKEN:-$GITHUB_TOKEN}\"; exec uvx mcp-compressor==0.31.8 -- https://api.githubcopilot.com/mcp/ -H \"Authorization=Bearer ${TOKEN}\" --auth explicit-headers"
       ]
     },
     "codebase-memory-mcp": {
@@ -68,7 +68,7 @@
       "command": "npx",
       "args": [
         "-y",
-        "lean-ctx-bin@3.9.18"
+        "lean-ctx-bin@3.9.20"
       ]
     },
     "hashicorp-terraform-mcp-server": {

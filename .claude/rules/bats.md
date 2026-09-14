@@ -10,8 +10,17 @@ paths:
 
 - Scope covers authoring Bats suites and applies when editing shell scripts that require pairing a suite.
 - Shell script implementation rules remain in the companion Shell Script rules (stem `shell-script`); this file defines test-suite conventions only.
-- When adding or materially changing a shell script or sourced library, add or update the matching Bats suite in the same change (see companion Shell Script rules TEST-00).
+- When adding or materially changing a shell script or sourced library, add or update the matching Bats suite in the same change (MUST) — same obligation as companion Shell Script rules (stem `shell-script`).
 - Bats does not mandate a global directory layout — follow the **repository's established test tree** (discover from existing suites, CI config, or maintainer docs).
+
+### Rule application (`globs` / `paths`)
+
+| Pattern                       | Use when                                                           | Result                                                                         |
+| ----------------------------- | ------------------------------------------------------------------ | ------------------------------------------------------------------------------ |
+| `**/*.sh,**/*.bats` (default) | Test rules must apply while editing **production** `.sh` files too | Suite pairing and conventions inject on script edits (G-05 companion coverage) |
+| `**/*.bats` only              | Test rules should inject **only** when a suite file is open        | Pairing obligation is easy to miss when changing `foo.sh`                      |
+
+**Why Bats lists two globs but Go uses one:** Bats pairs `*.sh` with `*.bats` — different extensions, so both must be listed. Go tests live in `*_test.go`, which already matches `**/*.go`. Listing only `**/*.bats` does not inject rules when editing the script under test.
 
 ## Standards
 
@@ -76,53 +85,39 @@ Prefer [bats-support](https://github.com/bats-core/bats-support) and [bats-asser
 
 ### File Layout (BAT)
 
-- BAT-01 (MUST): Pair Script With Suite
-  - Check: When the repository pairs shell scripts with Bats suites, is a suite added or updated in the same change as the script or library?
-- BAT-01b (SHOULD): Mirror Path When Repository Does
-  - Check: When the repository mirrors script paths under a bats root, is the suite placed with the same relative path as the script or library under test?
-- BAT-02 (MUST): Header Target Path
-  - Check: Does the header comment name the repo-relative path of the script or library under test?
-- BAT-03 (MUST): Header Use Cases
-  - Check: Does the header include `# Use cases:` with one `# - …` bullet per scenario the suite is meant to guarantee (not a dump of every `@test` name — group related assertions)?
-- BAT-04 (SHOULD): Shared Support Helpers
-  - Check: Are repeated setup paths centralized in repository support helpers instead of copied into every suite?
+- BAT-01 (MUST): When the repository pairs shell scripts with Bats suites, add or update the suite in the same change as the script or library
+- BAT-01b (SHOULD): When the repository mirrors script paths under a bats root, place the suite with the same relative path as the script or library under test
+- BAT-02 (MUST): Header comment names the repo-relative path of the script or library under test
+- BAT-03 (MUST): Header includes `# Use cases:` with one `# - …` bullet per scenario the suite guarantees — not a dump of every `@test` name
+- BAT-04 (SHOULD): Centralize repeated setup paths in repository support helpers instead of copying preamble into every suite
 
 ### Setup and Teardown (SETUP)
 
-- SETUP-01 (MUST): Source in setup()
-  - Check: Are targets sourced or invoked from `setup()` (or a shared helper), not ad hoc per test?
-- SETUP-02 (MUST): Teardown Temp State
-  - Check: Does `teardown()` remove files or directories created in `setup()` (`mktemp`, mock bins, fixture dirs)?
-- SETUP-03 (SHOULD): Export Before Source
-  - Check: Are environment variables exported before sourcing when the sourced script reads them at load time?
+- SETUP-01 (MUST): Source or invoke targets from `setup()` (or a shared helper) — not ad hoc per test
+- SETUP-02 (MUST): `teardown()` removes files or directories created in `setup()` (`mktemp`, mock bins, fixture dirs)
+- SETUP-03 (SHOULD): Export environment variables before sourcing when the sourced script reads them at load time
 
-### Test Design (TEST)
+### Test Design (BDES)
 
-- TEST-01 (SHOULD): Unit vs Integration Split
-  - Check: Are pure functions tested after `setup()` sources the script, and CLI flows tested via `run bash "${SCRIPT}" …`?
-- TEST-02 (MUST): Use run for CLI Assertions
-  - Check: Are CLI exit status and output asserted with Bats `run` and `$status` / `$output` (or bats-assert equivalents)?
-- TEST-03 (MUST): Subshell for cwd Changes
-  - Check: Are integration commands that need a different working directory wrapped in `run bash -c 'cd … && …'` or an equivalent helper — never bare `cd` immediately before `run`?
-- TEST-04 (SHOULD): Test Order
-  - Check: Are `@test` blocks ordered a-z by description (after `setup`/`teardown`)?
-- TEST-05 (SHOULD): No Duplicate Source
-  - Check: Is the target script sourced once in `setup()` without redundant `source` inside individual tests?
+- BDES-01 (SHOULD): Test pure functions after `setup()` sources the script; test CLI flows via `run bash "${SCRIPT}" …`
+- BDES-02 (MUST): Assert CLI exit status and output with Bats `run` and `$status` / `$output` (or bats-assert equivalents)
+- BDES-03 (MUST): Wrap cwd-changing integration commands in `run bash -c 'cd … && …'` or an equivalent helper — never bare `cd` immediately before `run`
+- BDES-04 (SHOULD): Order `@test` blocks a-z by description after `setup`/`teardown` (see shell-script-review TEST-01)
+- BDES-05 (SHOULD): Source the target script once in `setup()` without redundant `source` inside individual tests
 
 ### Mocking (MOCK)
 
-- MOCK-01 (SHOULD): Centralize CLI Mocks
-  - Check: Are external CLI mocks placed under `BATS_TEST_TMPDIR` or repository support helpers, with `PATH` prepended in the test?
+- MOCK-01 (SHOULD): Place external CLI mocks under `BATS_TEST_TMPDIR` or repository support helpers, with `PATH` prepended in the test
 
-### Anti-Patterns
+### Test Anti-Patterns (TAP)
 
-- Bare `cd` immediately before `run` — `run` executes in a subshell that resets cwd
-- Mixing relative script paths in integration tests without a repository root helper
-- Inconsistent headers — always use the full repo-relative path under test and a `# Use cases:` block
-- Omitting `# Use cases:` or leaving it empty when adding or expanding a suite
-- Real secrets or live tokens in fixtures — use placeholders and assert redaction behavior
-- Skipping `teardown()` when `setup()` writes temp files or directories
-- Mandating `test/bats/` when the repository uses a different bats root — discover and match existing layout
+- TAP-01 (MUST): Bare `cd` immediately before `run` — `run` executes in a subshell that resets cwd
+- TAP-02 (SHOULD): Mixing relative script paths in integration tests without a repository root helper
+- TAP-03 (MUST): Inconsistent headers — always use the full repo-relative path under test and a `# Use cases:` block
+- TAP-04 (MUST): Omitting `# Use cases:` or leaving it empty when adding or expanding a suite
+- TAP-05 (MUST): Real secrets or live tokens in fixtures — use placeholders and assert redaction behavior
+- TAP-06 (SHOULD): Skipping `teardown()` when `setup()` writes temp files or directories
+- TAP-07 (SHOULD): Mandating `test/bats/` when the repository uses a different bats root — discover and match existing layout
 
 ### Code Modification Guidelines
 

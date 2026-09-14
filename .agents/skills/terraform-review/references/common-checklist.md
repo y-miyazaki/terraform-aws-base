@@ -103,3 +103,11 @@
 - VERS-01 (MUST): required_version matches project standard range
 - VERS-02 (MUST): Provider versions use >= lower, < upper form
 - VERS-03 (SHOULD): Pin external modules (avoid mutable SHA/pseudo versions)
+
+## Anti-Patterns (AP)
+
+- AP-01 (MUST): Plaintext secrets in Terraform code or tfvars
+- AP-02 (SHOULD): count for keyed resources instead of for_each
+- AP-03 (SHOULD): Credentials embedded in backend configuration
+- AP-04 (MUST): Unsafe defaults for network exposure
+- AP-05 (SHOULD): Hand-written IAM policy JSON strings

@@ -7,8 +7,8 @@ paths:
 
 ## Scope
 
-- Scope covers implementing and validating shell scripts, including pairing Bats suites in the same change when required.
-- TEST-00 (MUST): When adding or materially changing a shell script or sourced library, add or update the matching Bats suite in the same change — do not defer tests. Follow the repository's established bats layout per companion Bats rules (stem `bats`).
+- Scope covers implementing and validating shell scripts.
+- When adding or materially changing a shell script or sourced library, add or update the matching Bats suite in the same change (MUST) — do not defer tests. Follow the repository's established bats layout per companion Bats rules (stem `bats`).
 - Suite layout and helpers: companion Bats rules (stem `bats`).
 
 ## Standards
@@ -96,13 +96,6 @@ function my_function() {
 
 ## Guidelines
 
-### Anti-Patterns (AP)
-
-- AP-01 (SHOULD): Omit set -euo/main/entry guard from sourced libs
-- AP-02 (SHOULD): Keep header/function DOC blocks when refactoring
-- AP-03 (SHOULD): Function docs include Globals: (or None)
-- AP-04 (SHOULD): Match sibling lib/\*.sh comment/separator style
-
 ### Code Standards (CODE)
 
 - CODE-01 (SHOULD): Prefer local over globals inside functions
@@ -156,12 +149,18 @@ function my_function() {
 
 ### Testing (TEST)
 
-- TEST-00 (MUST): Add/update paired Bats suite in the same change
 - TEST-01 (SHOULD): Bats test functions ordered a-z after setup/teardown
+
+### Anti-Patterns (AP)
+
+- AP-01 (SHOULD): Omit set -euo/main/entry guard from sourced libs
+- AP-02 (SHOULD): Keep header/function DOC blocks when refactoring
+- AP-03 (SHOULD): Function docs include Globals: (or None)
+- AP-04 (SHOULD): Match sibling lib/\*.sh comment/separator style
 
 ### Code Modification Guidelines
 
-- When adding or changing shell scripts or sourced libraries, add or update matching Bats suites under test/bats/ (mirror the script path) in the same change; follow companion Bats rules (stem `bats`) for suite layout.
+- When adding or changing shell scripts or sourced libraries, add or update the paired Bats suite in the same change; follow the repository's established bats layout per companion Bats rules (stem `bats`).
 
 ## Testing and Validation
 
