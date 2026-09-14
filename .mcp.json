@@ -23,14 +23,14 @@
       "type": "stdio",
       "command": "uvx",
       "args": [
-        "awslabs.aws-documentation-mcp-server==1.1.30"
+        "awslabs.aws-documentation-mcp-server==1.2.0"
       ]
     },
     "aws-pricing-mcp-server": {
       "type": "stdio",
       "command": "uvx",
       "args": [
-        "awslabs.aws-pricing-mcp-server==1.0.34"
+        "awslabs.aws-pricing-mcp-server==1.1.0"
       ]
     },
     "context7": {
@@ -38,7 +38,7 @@
       "command": "npx",
       "args": [
         "-y",
-        "@upstash/context7-mcp@4.0.3"
+        "@upstash/context7-mcp@4.0.5"
       ]
     },
     "fetch": {
@@ -55,7 +55,7 @@
       "command": "bash",
       "args": [
         "-lc",
-        "TOKEN=\"${GH_TOKEN:-$GITHUB_TOKEN}\"; exec uvx mcp-compressor==0.31.8 -- https://api.githubcopilot.com/mcp/ -H \"Authorization=Bearer ${TOKEN}\" --auth explicit-headers"
+        "TOKEN=\"${GH_TOKEN:-$GITHUB_TOKEN}\"; exec uvx mcp-compressor==0.31.10 -- https://api.githubcopilot.com/mcp/ -H \"Authorization=Bearer ${TOKEN}\" --auth explicit-headers"
       ]
     },
     "codebase-memory-mcp": {
@@ -68,7 +68,7 @@
       "command": "npx",
       "args": [
         "-y",
-        "lean-ctx-bin@3.9.20"
+        "lean-ctx-bin@3.10.1"
       ]
     },
     "hashicorp-terraform-mcp-server": {
