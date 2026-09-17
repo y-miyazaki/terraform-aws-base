@@ -39,6 +39,7 @@ locals {
     k => merge(
       v,
       {
+        key_name = substr(k, 0, 35)
         # Fallback: use module default if key absent or explicitly null
         schedule_expression_start = try(coalesce(v.schedule_expression_start, var.schedule_expression_start), var.schedule_expression_start)
         schedule_expression_stop  = try(coalesce(v.schedule_expression_stop, var.schedule_expression_stop), var.schedule_expression_stop)
@@ -52,6 +53,7 @@ locals {
     k => merge(
       v,
       {
+        key_name                  = substr(k, 0, 35)
         schedule_expression_start = try(coalesce(v.schedule_expression_start, var.schedule_expression_start), var.schedule_expression_start)
         schedule_expression_stop  = try(coalesce(v.schedule_expression_stop, var.schedule_expression_stop), var.schedule_expression_stop)
       }

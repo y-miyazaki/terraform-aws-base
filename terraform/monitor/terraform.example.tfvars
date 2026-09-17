@@ -653,7 +653,7 @@ metric_log_application_report = {
   #      If you want to set report, set is_enabled = true.
   is_enabled = false
   aws_eventbridge_schedule = {
-    name                = "application-errors-eventbridge-scheduler"
+    name                = "application-errors-sch"
     schedule_expression = "cron(0 0 * * ? *)" # Every day at 00:00 UTC
     description         = "This eventbridge scheduler called application errors lambda function."
   }
@@ -1002,7 +1002,7 @@ metric_log_postgresql_slowquery_report = {
   #      If you want to set report, set is_enabled = true.
   is_enabled = true
   aws_eventbridge_schedule = {
-    name                = "postgresql-slowquery-eventbridge-scheduler"
+    name                = "postgresql-slowquery-sch"
     schedule_expression = "cron(0 0 * * ? *)" # Every day at 00:00 UTC
     description         = "This eventbridge scheduler called PostgreSQL slow query lambda function."
   }

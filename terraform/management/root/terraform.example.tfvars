@@ -212,7 +212,7 @@ budgets = {
     ]
   }
   aws_eventbridge_schedule = {
-    name                = "budgets-eventbridge-scheduler"
+    name                = "budgets-sch"
     schedule_expression = "cron(0 9 * * ? *)"
     description         = "This eventbridge scheduler called budgets lambda function."
   }

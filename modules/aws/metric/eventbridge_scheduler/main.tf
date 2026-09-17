@@ -50,7 +50,7 @@ resource "aws_cloudwatch_metric_alarm" "invocation_attempt_count" {
   } : {}
 
   region                    = local.region
-  alarm_name                = "${var.name_prefix}metric-eventbridge-scheduler-${each.key}-invocation-attempt-count"
+  alarm_name                = "${var.name_prefix}metric-sch-${each.key}-invocation-attempt-count"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
   namespace                 = "AWS/Scheduler"
@@ -81,7 +81,7 @@ resource "aws_cloudwatch_metric_alarm" "target_error_count" {
   } : {}
 
   region                    = local.region
-  alarm_name                = "${var.name_prefix}metric-eventbridge-scheduler-${each.key}-target-error-count"
+  alarm_name                = "${var.name_prefix}metric-sch-${each.key}-target-error-count"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
   namespace                 = "AWS/Scheduler"
@@ -112,7 +112,7 @@ resource "aws_cloudwatch_metric_alarm" "target_error_throttled_count" {
   } : {}
 
   region                    = local.region
-  alarm_name                = "${var.name_prefix}metric-eventbridge-scheduler-${each.key}-target-error-throttled-count"
+  alarm_name                = "${var.name_prefix}metric-sch-${each.key}-target-error-throttled-count"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
   namespace                 = "AWS/Scheduler"
@@ -143,7 +143,7 @@ resource "aws_cloudwatch_metric_alarm" "invocation_dropped_count" {
   } : {}
 
   region                    = local.region
-  alarm_name                = "${var.name_prefix}metric-eventbridge-scheduler-${each.key}-invocation-dropped-count"
+  alarm_name                = "${var.name_prefix}metric-sch-${each.key}-invocation-dropped-count"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
   namespace                 = "AWS/Scheduler"
@@ -174,7 +174,7 @@ resource "aws_cloudwatch_metric_alarm" "invocation_throttle_count" {
   } : {}
 
   region                    = local.region
-  alarm_name                = "${var.name_prefix}metric-eventbridge-scheduler-${each.key}-invocation-throttle-count"
+  alarm_name                = "${var.name_prefix}metric-sch-${each.key}-invocation-throttle-count"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
   namespace                 = "AWS/Scheduler"

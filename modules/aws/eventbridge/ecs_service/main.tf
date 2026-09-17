@@ -50,7 +50,7 @@ resource "aws_scheduler_schedule" "stop" {
   flexible_time_window {
     mode = "OFF"
   }
-  name                = substr("${var.name_prefix}${each.key}-stop-ecs-service-scheduler", 0, 63)
+  name                = substr("${var.name_prefix}${each.value.key_name}-stop-es-sch", 0, 63)
   schedule_expression = each.value.schedule_expression_stop
   state               = "ENABLED"
   target {
@@ -84,7 +84,7 @@ resource "aws_scheduler_schedule" "stop_autoscaling" {
   flexible_time_window {
     mode = "OFF"
   }
-  name                = substr("${var.name_prefix}${each.key}-stop-autoscaling-scheduler", 0, 63)
+  name                = substr("${var.name_prefix}${each.value.key_name}-stop-as-sch", 0, 63)
   schedule_expression = each.value.schedule_expression_stop
   state               = "ENABLED"
   target {
@@ -120,7 +120,7 @@ resource "aws_scheduler_schedule" "start" {
   flexible_time_window {
     mode = "OFF"
   }
-  name                = substr("${var.name_prefix}${each.key}-start-ecs-service-scheduler", 0, 63)
+  name                = substr("${var.name_prefix}${each.value.key_name}-start-es-sch", 0, 63)
   schedule_expression = each.value.schedule_expression_start
   state               = "ENABLED"
   target {
@@ -154,7 +154,7 @@ resource "aws_scheduler_schedule" "start_autoscaling" {
   flexible_time_window {
     mode = "OFF"
   }
-  name                = substr("${var.name_prefix}${each.key}-start-autoscaling-scheduler", 0, 63)
+  name                = substr("${var.name_prefix}${each.value.key_name}-start-as-sch", 0, 63)
   schedule_expression = each.value.schedule_expression_start
   state               = "ENABLED"
   target {

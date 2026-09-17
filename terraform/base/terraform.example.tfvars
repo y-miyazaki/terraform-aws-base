@@ -297,7 +297,7 @@ budgets = {
     ]
   }
   aws_eventbridge_schedule = {
-    name                = "budgets-eventbridge-scheduler"
+    name                = "budgets-sch"
     schedule_expression = "cron(0 9 * * ? *)"
     description         = "This eventbridge scheduler called budgets lambda function."
   }
@@ -369,7 +369,7 @@ trusted_advisor = {
   // If you are not in a business or enterprise plan with a support plan, set is_enable to false as notifications will fail. If not, set it to true.
   is_enabled = false
   aws_eventbridge_schedule = {
-    name                = "trusted-advisor-eventbridge-scheduler"
+    name                = "trusted-advisor-sch"
     schedule_expression = "cron(0 0 * * ? *)"
     description         = "This eventbridge scheduler called trusted advisor lambda function."
   }
@@ -383,7 +383,7 @@ iam_password_expired = {
   # CUSTOMIZE: need to set is_enabled for settings of IAM password expired.
   is_enabled = false
   aws_eventbridge_schedule = {
-    name                = "iam-password-expired-eventbridge-scheduler"
+    name                = "iam-password-expired-sch"
     schedule_expression = "cron(0 0 * * ? *)"
     description         = "This eventbridge scheduler called iam password expired lambda function."
   }
