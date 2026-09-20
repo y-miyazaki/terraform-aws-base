@@ -1,5 +1,5 @@
 ---
-description: Shell Script Instructions
+description: "Shell Script Instructions"
 globs: "**/*.sh"
 ---
 

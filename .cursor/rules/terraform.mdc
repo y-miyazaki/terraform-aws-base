@@ -1,5 +1,5 @@
 ---
-description: Terraform Instructions
+description: "Terraform Instructions"
 globs:
   - "**/*.tf"
   - "**/*.tfvars"
