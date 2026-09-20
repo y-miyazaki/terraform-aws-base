@@ -1,5 +1,5 @@
 ---
-description: Writing Instruction Files Instructions
+description: "Writing Instruction Files Instructions"
 globs:
   - "**/instructions/*.instructions.md"
   - "**/.cursor/rules/*.mdc"

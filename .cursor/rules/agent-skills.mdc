@@ -1,5 +1,5 @@
 ---
-description: Agent Skills Development Instructions
+description: "Agent Skills Development Instructions"
 globs:
   - "**/skills/**/SKILL.md"
   - "**/skills/**/references/*.md"

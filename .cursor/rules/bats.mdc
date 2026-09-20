@@ -1,5 +1,5 @@
 ---
-description: Bats Test Suites Instructions
+description: "Bats Test Suites Instructions"
 globs:
   - "**/*.sh"
   - "**/*.bats"

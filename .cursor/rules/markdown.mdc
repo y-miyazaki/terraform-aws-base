@@ -1,5 +1,5 @@
 ---
-description: Markdown Documentation Instructions
+description: "Markdown Documentation Instructions"
 globs:
   - "README.md"
   - "CONTRIBUTING.md"
