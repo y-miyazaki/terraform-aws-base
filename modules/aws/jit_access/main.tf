@@ -25,7 +25,7 @@ locals {
 #--------------------------------------------------------------
 module "dynamodb_table_requests" {
   source  = "terraform-aws-modules/dynamodb-table/aws"
-  version = "5.5.1"
+  version = "5.5.2"
 
   region = local.region
 
@@ -247,7 +247,7 @@ resource "aws_iam_role_policy_attachment" "lambda_vpc" {
 #--------------------------------------------------------------
 module "lambda_jit_access" {
   source  = "terraform-aws-modules/lambda/aws"
-  version = "8.8.0"
+  version = "8.8.2"
 
   region = local.region
 
