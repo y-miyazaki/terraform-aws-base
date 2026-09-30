@@ -5,7 +5,7 @@ module "kms_key" {
   for_each = var.kms
 
   source  = "terraform-aws-modules/kms/aws"
-  version = "4.2.1"
+  version = "4.2.2"
 
   create = each.value.is_enabled
   region = var.region.primary

@@ -7,7 +7,7 @@ module "kms_key" {
   }
 
   source  = "terraform-aws-modules/kms/aws"
-  version = "4.2.1"
+  version = "4.2.2"
 
   region = each.key
 

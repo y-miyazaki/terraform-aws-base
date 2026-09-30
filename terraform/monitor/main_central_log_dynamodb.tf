@@ -7,7 +7,7 @@ module "dynamodb_table_monitor_log" {
   for_each = local.monitor_regions
 
   source  = "terraform-aws-modules/dynamodb-table/aws"
-  version = "5.5.1"
+  version = "5.5.2"
 
   create_table = true
   region       = each.value
