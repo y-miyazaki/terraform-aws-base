@@ -11,7 +11,7 @@
 module "oidc_github" {
   for_each = var.oidc_github.settings
   source   = "unfunco/oidc-github/aws"
-  version = "3.1.0"
+  version  = "3.1.0"
 
   create               = var.oidc_github.is_enabled
   create_oidc_provider = each.value.create_oidc_provider
