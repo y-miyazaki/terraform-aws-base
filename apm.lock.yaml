@@ -1,11 +1,11 @@
 lockfile_version: '1'
-apm_version: 0.31.0
+apm_version: 0.32.0
 dependencies:
 - repo_url: y-miyazaki/config
   name: config-aws
   host: github.com
-  resolved_commit: 3c71cc203f50908c901c6f0917711152c328c36c
-  resolved_ref: v1.8.103
+  resolved_commit: c14e8c8666d6edcea7eec23d8c0d20f0f1610707
+  resolved_ref: v1.8.104
   version: 1.0.0
   virtual_path: .apm/packages/aws
   is_virtual: true
@@ -15,8 +15,8 @@ dependencies:
 - repo_url: y-miyazaki/config
   name: config-common
   host: github.com
-  resolved_commit: 3c71cc203f50908c901c6f0917711152c328c36c
-  resolved_ref: v1.8.103
+  resolved_commit: c14e8c8666d6edcea7eec23d8c0d20f0f1610707
+  resolved_ref: v1.8.104
   version: 1.0.0
   virtual_path: .apm/packages/common
   is_virtual: true
@@ -343,13 +343,13 @@ dependencies:
     .cursor/rules/agent-skills.mdc: sha256:14e4cb59c97e39f20d7aef3d2a9d34383f32663b7cbfe807f23c9ea53cda22bf
     .cursor/rules/instructions.mdc: sha256:7cc7ae586c8403d368874bf71113e83f69f262090ec664ea4e77bbdf9122b064
     .cursor/rules/markdown.mdc: sha256:e77c6b8ca2523de09eb9ada60ea18e8fbbeaae6a92f70f9b6f887a4f73387fa7
-  content_hash: sha256:e511fb60f489502276c257287abe403536361bbd34728d9ee06e237fe632a9b0
+  content_hash: sha256:15aacc475effb1cb8513d302c93c5d61e4d594eb9a12f564f4c716e6da3606ed
   declared_license: Apache-2.0
 - repo_url: y-miyazaki/config
   name: common-hooks-claude
   host: github.com
-  resolved_commit: 3c71cc203f50908c901c6f0917711152c328c36c
-  resolved_ref: v1.8.103
+  resolved_commit: c14e8c8666d6edcea7eec23d8c0d20f0f1610707
+  resolved_ref: v1.8.104
   version: 2.0.0
   virtual_path: .apm/packages/common-hooks-claude
   is_virtual: true
@@ -373,8 +373,8 @@ dependencies:
 - repo_url: y-miyazaki/config
   name: common-hooks-cursor
   host: github.com
-  resolved_commit: 3c71cc203f50908c901c6f0917711152c328c36c
-  resolved_ref: v1.8.103
+  resolved_commit: c14e8c8666d6edcea7eec23d8c0d20f0f1610707
+  resolved_ref: v1.8.104
   version: 2.0.0
   virtual_path: .apm/packages/common-hooks-cursor
   is_virtual: true
@@ -398,8 +398,8 @@ dependencies:
 - repo_url: y-miyazaki/config
   name: config-github
   host: github.com
-  resolved_commit: 3c71cc203f50908c901c6f0917711152c328c36c
-  resolved_ref: v1.8.103
+  resolved_commit: c14e8c8666d6edcea7eec23d8c0d20f0f1610707
+  resolved_ref: v1.8.104
   version: 1.0.0
   virtual_path: .apm/packages/github
   is_virtual: true
@@ -818,13 +818,13 @@ dependencies:
     .claude/skills/github-pr-revise/scripts/lib/terraform.sh: sha256:19d9b56a4346d68a4656ccfe61c64b8638c86ffdc02b830a7cdd84be7449551d
     .claude/skills/github-pr-revise/scripts/lib/validation.sh: sha256:a2f91f635ecbd92ea0d7cea4d0703fd8fa58af0c35021c20d7cd8e1f3bd634eb
     .claude/skills/github-pr-revise/scripts/lib/yaml_map_order.py: sha256:b6e23fe34ecb02222d077dbd27f65b597c8417eeb707406dc76702a536647803
-  content_hash: sha256:f3a58b4d90f9d2ea573d678047bbe7a67a099c53e01f686b92566a8532f96735
+  content_hash: sha256:17605ac0092c6446604069152dede9f965c2e44c31a7ae3c36a531158de7d27c
   declared_license: Apache-2.0
 - repo_url: y-miyazaki/config
   name: config-github-actions
   host: github.com
-  resolved_commit: 3c71cc203f50908c901c6f0917711152c328c36c
-  resolved_ref: v1.8.103
+  resolved_commit: c14e8c8666d6edcea7eec23d8c0d20f0f1610707
+  resolved_ref: v1.8.104
   version: 1.0.0
   virtual_path: .apm/packages/github-actions
   is_virtual: true
@@ -1004,8 +1004,8 @@ dependencies:
 - repo_url: y-miyazaki/config
   name: config-repo-maintenance
   host: github.com
-  resolved_commit: 3c71cc203f50908c901c6f0917711152c328c36c
-  resolved_ref: v1.8.103
+  resolved_commit: c14e8c8666d6edcea7eec23d8c0d20f0f1610707
+  resolved_ref: v1.8.104
   version: 1.0.0
   virtual_path: .apm/packages/repo-maintenance
   is_virtual: true
@@ -1827,8 +1827,8 @@ dependencies:
 - repo_url: y-miyazaki/config
   name: config-shell-script
   host: github.com
-  resolved_commit: 3c71cc203f50908c901c6f0917711152c328c36c
-  resolved_ref: v1.8.103
+  resolved_commit: c14e8c8666d6edcea7eec23d8c0d20f0f1610707
+  resolved_ref: v1.8.104
   version: 1.0.0
   virtual_path: .apm/packages/shell-script
   is_virtual: true
@@ -2040,8 +2040,8 @@ dependencies:
 - repo_url: y-miyazaki/config
   name: shell-script-hooks-claude
   host: github.com
-  resolved_commit: 3c71cc203f50908c901c6f0917711152c328c36c
-  resolved_ref: v1.8.103
+  resolved_commit: c14e8c8666d6edcea7eec23d8c0d20f0f1610707
+  resolved_ref: v1.8.104
   version: 1.0.0
   virtual_path: .apm/packages/shell-script-hooks-claude
   is_virtual: true
@@ -2057,8 +2057,8 @@ dependencies:
 - repo_url: y-miyazaki/config
   name: shell-script-hooks-cursor
   host: github.com
-  resolved_commit: 3c71cc203f50908c901c6f0917711152c328c36c
-  resolved_ref: v1.8.103
+  resolved_commit: c14e8c8666d6edcea7eec23d8c0d20f0f1610707
+  resolved_ref: v1.8.104
   version: 1.0.0
   virtual_path: .apm/packages/shell-script-hooks-cursor
   is_virtual: true
@@ -2074,8 +2074,8 @@ dependencies:
 - repo_url: y-miyazaki/config
   name: config-terraform
   host: github.com
-  resolved_commit: 3c71cc203f50908c901c6f0917711152c328c36c
-  resolved_ref: v1.8.103
+  resolved_commit: c14e8c8666d6edcea7eec23d8c0d20f0f1610707
+  resolved_ref: v1.8.104
   version: 1.0.0
   virtual_path: .apm/packages/terraform
   is_virtual: true
@@ -2307,8 +2307,8 @@ dependencies:
 - repo_url: y-miyazaki/config
   name: config-terraform-aws
   host: github.com
-  resolved_commit: 3c71cc203f50908c901c6f0917711152c328c36c
-  resolved_ref: v1.8.103
+  resolved_commit: c14e8c8666d6edcea7eec23d8c0d20f0f1610707
+  resolved_ref: v1.8.104
   version: 1.0.0
   virtual_path: .apm/packages/terraform-aws
   is_virtual: true
@@ -2318,8 +2318,8 @@ dependencies:
 - repo_url: y-miyazaki/config
   name: terraform-hooks-claude
   host: github.com
-  resolved_commit: 3c71cc203f50908c901c6f0917711152c328c36c
-  resolved_ref: v1.8.103
+  resolved_commit: c14e8c8666d6edcea7eec23d8c0d20f0f1610707
+  resolved_ref: v1.8.104
   version: 1.0.0
   virtual_path: .apm/packages/terraform-hooks-claude
   is_virtual: true
@@ -2335,8 +2335,8 @@ dependencies:
 - repo_url: y-miyazaki/config
   name: terraform-hooks-cursor
   host: github.com
-  resolved_commit: 3c71cc203f50908c901c6f0917711152c328c36c
-  resolved_ref: v1.8.103
+  resolved_commit: c14e8c8666d6edcea7eec23d8c0d20f0f1610707
+  resolved_ref: v1.8.104
   version: 1.0.0
   virtual_path: .apm/packages/terraform-hooks-cursor
   is_virtual: true
@@ -12286,6 +12286,42 @@ deployments:
   - y-miyazaki/config/.apm/packages/terraform
   active_owner: y-miyazaki/config/.apm/packages/terraform
   content_hash: sha256:6db7ba811f976b2b9b88865ebc1138dc1ae378353b5764b0cc24ea20f0095811
+- kind: uri
+  target: mcp
+  value: github
+  runtime: claude
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: null
+- kind: uri
+  target: mcp
+  value: lean-ctx
+  runtime: claude
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: null
+- kind: uri
+  target: mcp
+  value: github
+  runtime: cursor
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: null
+- kind: uri
+  target: mcp
+  value: lean-ctx
+  runtime: cursor
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: null
 mcp_servers:
 - aws-documentation-mcp-server
 - aws-knowledge-mcp-server
@@ -12365,7 +12401,7 @@ mcp_configs:
     transport: stdio
     args:
     - -lc
-    - TOKEN="${GH_TOKEN:-$GITHUB_TOKEN}"; exec uvx mcp-compressor==0.32.1 -- https://api.githubcopilot.com/mcp/
+    - TOKEN="${GH_TOKEN:-$GITHUB_TOKEN}"; exec uvx mcp-compressor==0.33.0 -- https://api.githubcopilot.com/mcp/
       -H "Authorization=Bearer ${TOKEN}" --auth explicit-headers
     registry: false
     command: bash
@@ -12382,10 +12418,16 @@ mcp_configs:
     transport: stdio
     args:
     - -y
-    - lean-ctx-bin@3.10.2
+    - lean-ctx-bin@3.10.5
     registry: false
     command: npx
-mcp_target_servers: {}
+mcp_target_servers:
+  claude:
+  - github
+  - lean-ctx
+  cursor:
+  - github
+  - lean-ctx
 mcp_config_provenance:
   aws-documentation-mcp-server: config-aws
   aws-knowledge-mcp-server: config-aws

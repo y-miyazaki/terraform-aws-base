@@ -31,16 +31,16 @@ uvx = true # Install uv/uvx via pipx for better isolation and performance.
 # A Runtime tools
 aqua = "v2.62.3"
 node = "24.21.0"
-pnpm = { version = "11.27.1", depends = ["node"] }
+pnpm = { version = "11.28.2", depends = ["node"] }
 python = "3.14.6"
 
 # AI agent tools
 "github:microsoft/apm" = "v0.31.0"               # agent package manager
 claude = "2.1.270"                               # Claude Code CLI
 "github:DeusData/codebase-memory-mcp" = "v0.11.0" # codebase memory MCP server
-"aqua:github/copilot-cli" = "1.0.88"             # GitHub Copilot CLI
-"pipx:headroom-ai" = { version = "0.38.0", extras = "proxy,mcp,bedrock", depends = ["python"] }
-"npm:lean-ctx-bin" = { version = "3.10.2", depends = [
+"aqua:github/copilot-cli" = "1.0.89"             # GitHub Copilot CLI
+"pipx:headroom-ai" = { version = "0.39.1", extras = "proxy,mcp,bedrock", depends = ["python"] }
+"npm:lean-ctx-bin" = { version = "3.10.5", depends = [
   "node",
 ], allow_builds = [
   "lean-ctx-bin",
@@ -53,8 +53,8 @@ claude = "2.1.270"                               # Claude Code CLI
 "npm:awsp" = { version = "0.2.0", depends = [
   "node",
 ], install_env = { NPM_CONFIG_IGNORE_SCRIPTS = "true" } } # AWS profile switcher
-"aqua:kayac/ecspresso" = "2.8.6"    # ECS deployment tool
-"aqua:Songmu/ecschedule" = "0.20.0" # ECS scheduled tasks deployment tool
+"aqua:kayac/ecspresso" = "2.8.7"    # ECS deployment tool
+"aqua:Songmu/ecschedule" = "0.21.0" # ECS scheduled tasks deployment tool
 "pipx:aws-mfa" = { version = "0.0.12", depends = ["python"] } # AWS MFA helper
 
 # GitHub related tools
@@ -71,7 +71,7 @@ claude = "2.1.270"                               # Claude Code CLI
 "aqua:bufbuild/buf" = "1.73.0"                                            # protobuf linter and formatter
 "go:github.com/go-delve/delve/cmd/dlv" = "v1.27.2"                                          # debugger
 "aqua:mvdan/gofumpt" = "0.12.0"                                           # code formatter
-"aqua:golangci/golangci-lint" = "2.13.2"                                  # linter
+"aqua:golangci/golangci-lint" = "2.14.0"                                  # linter
 "aqua:goreleaser/goreleaser" = "2.18.1"                                   # release automation
 "go:golang.org/x/tools/gopls" = "v0.23.0"                                 # Go language server
 "go:golang.org/x/vuln/cmd/govulncheck" = "1.3.0"                          # vulnerability scanner
@@ -94,7 +94,7 @@ claude = "2.1.270"                               # Claude Code CLI
 "npm:markdownlint-cli2" = { version = "0.23.3", depends = [
   "node",
 ], install_env = { PNPM_CONFIG_IGNORE_SCRIPTS = "true" } } # Markdown linter
-"npm:prettier" = { version = "3.9.8", depends = [
+"npm:prettier" = { version = "3.9.9", depends = [
   "node",
 ], install_env = { PNPM_CONFIG_IGNORE_SCRIPTS = "true" } } # Code formatter
 
@@ -103,12 +103,12 @@ claude = "2.1.270"                               # Claude Code CLI
 "pipx:pre-commit" = { version = "4.6.2", depends = [
   "python",
 ] } # pre-commit framework
-"pipx:semgrep" = { version = "1.177.0", depends = ["python"] } # SAST scanner (uvx-backed pipx)
+"pipx:semgrep" = { version = "1.178.0", depends = ["python"] } # SAST scanner (uvx-backed pipx)
 "aqua:aquasecurity/trivy" = "0.74.0" # vulnerability scanner
 
 # Terraform related tools
 "aqua:getsops/sops" = "3.13.3"                  # encryption tool
-"aqua:hashicorp/terraform" = "1.16.3"           # infrastructure as code
+"aqua:hashicorp/terraform" = "1.16.4"           # infrastructure as code
 "aqua:terraform-docs/terraform-docs" = "0.24.0" # documentation generator
 "aqua:terraform-linters/tflint" = "0.64.0"      # linter
 
