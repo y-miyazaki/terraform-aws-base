@@ -12,6 +12,6 @@
     "@aws-sdk/client-kinesis": "3.1141.0"
   },
   "overrides": {
-    "fast-xml-parser": "5.11.1"
+    "fast-xml-parser": "5.11.2"
   }
 }
