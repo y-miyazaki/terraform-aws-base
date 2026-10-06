@@ -16,7 +16,7 @@
 
 | Name | Source | Version |
 | ---- | ------ | ------- |
-| <a name="module_step_functions"></a> [step\_functions](#module\_step\_functions) | terraform-aws-modules/step-functions/aws | 5.1.0 |
+| <a name="module_step_functions"></a> [step\_functions](#module\_step\_functions) | terraform-aws-modules/step-functions/aws | 5.1.1 |
 
 ## Resources
 

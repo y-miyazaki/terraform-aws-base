@@ -1588,25 +1588,21 @@ common_log = {
         abort_incomplete_multipart_upload_days = 7
         enabled                                = true
         prefix                                 = null
-        expiration = [
-          {
-            # CUSTOMIZE: need to change days. default 3years.
-            # Adjust retention period based on your compliance requirements
-            days                         = 1095
-            expired_object_delete_marker = null
-          }
-        ]
+        expiration = {
+          # CUSTOMIZE: need to change days. default 3years.
+          # Adjust retention period based on your compliance requirements
+          days                         = 1095
+          expired_object_delete_marker = null
+        }
         transition = [
           {
             days          = 30
             storage_class = "ONEZONE_IA"
           }
         ]
-        noncurrent_version_expiration = [
-          {
-            days = 30
-          }
-        ]
+        noncurrent_version_expiration = {
+          days = 30
+        }
       }
     ]
     restrict_public_buckets = true
@@ -1659,11 +1655,9 @@ common_log = {
             storage_class = "ONEZONE_IA"
           }
         ]
-        noncurrent_version_expiration = [
-          {
-            days = 30
-          }
-        ]
+        noncurrent_version_expiration = {
+          days = 30
+        }
       }
     ]
     restrict_public_buckets = true
@@ -1775,25 +1769,21 @@ PATTERN
   #         abort_incomplete_multipart_upload_days = 7
   #         enabled                                = true
   #         prefix                                 = null
-  #         expiration = [
-  #           {
-  #             # CUSTOMIZE: need to change days. default 3years.
-  #             # Adjust retention period based on your compliance requirements
-  #             days                         = 1095
-  #             expired_object_delete_marker = null
-  #           }
-  #         ]
+  #         expiration = {
+  #           # CUSTOMIZE: need to change days. default 3years.
+  #           # Adjust retention period based on your compliance requirements
+  #           days                         = 1095
+  #           expired_object_delete_marker = null
+  #         }
   #         transition = [
   #           {
   #             days          = 30
   #             storage_class = "ONEZONE_IA"
   #           }
   #         ]
-  #         noncurrent_version_expiration = [
-  #           {
-  #             days = 30
-  #           }
-  #         ]
+  #         noncurrent_version_expiration = {
+  #           days = 30
+  #         }
   #       }
   #     ]
   #     replication_configuration = []
@@ -1908,25 +1898,21 @@ security_config = {
   #         abort_incomplete_multipart_upload_days = 7
   #         enabled                                = true
   #         prefix                                 = null
-  #         expiration = [
-  #           {
-  #             # CUSTOMIZE: need to change days. default 3years.
-  #             # Adjust retention period based on your compliance requirements
-  #             days                         = 1095
-  #             expired_object_delete_marker = null
-  #           }
-  #         ]
+  #         expiration = {
+  #           # CUSTOMIZE: need to change days. default 3years.
+  #           # Adjust retention period based on your compliance requirements
+  #           days                         = 1095
+  #           expired_object_delete_marker = null
+  #         }
   #         transition = [
   #           {
   #             days          = 30
   #             storage_class = "ONEZONE_IA"
   #           }
   #         ]
-  #         noncurrent_version_expiration = [
-  #           {
-  #             days = 30
-  #           }
-  #         ]
+  #         noncurrent_version_expiration = {
+  #           days = 30
+  #         }
   #       }
   #     ]
   #     replication_configuration = []

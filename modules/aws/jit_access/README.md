@@ -16,9 +16,9 @@
 
 | Name | Source | Version |
 | ---- | ------ | ------- |
-| <a name="module_dynamodb_table_requests"></a> [dynamodb\_table\_requests](#module\_dynamodb\_table\_requests) | terraform-aws-modules/dynamodb-table/aws | 5.5.0 |
-| <a name="module_lambda_jit_access"></a> [lambda\_jit\_access](#module\_lambda\_jit\_access) | terraform-aws-modules/lambda/aws | 8.8.0 |
-| <a name="module_step_functions"></a> [step\_functions](#module\_step\_functions) | terraform-aws-modules/step-functions/aws | 5.1.0 |
+| <a name="module_dynamodb_table_requests"></a> [dynamodb\_table\_requests](#module\_dynamodb\_table\_requests) | terraform-aws-modules/dynamodb-table/aws | 5.5.2 |
+| <a name="module_lambda_jit_access"></a> [lambda\_jit\_access](#module\_lambda\_jit\_access) | terraform-aws-modules/lambda/aws | 8.8.2 |
+| <a name="module_step_functions"></a> [step\_functions](#module\_step\_functions) | terraform-aws-modules/step-functions/aws | 5.1.1 |
 
 ## Resources
 

@@ -29,7 +29,7 @@ module "aws_security_config_create" {
   s3_bucket = try(var.security_config.aws_s3_bucket, {
     bucket                               = "config"
     lifecycle_rule                       = []
-    logging                              = {}
+    logging                              = null
     server_side_encryption_configuration = {}
     versioning                           = {}
   })

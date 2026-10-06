@@ -55,7 +55,7 @@ module "s3_log" {
   force_destroy                             = var.common_log.s3_log.force_destroy
   ignore_public_acls                        = var.common_log.s3_log.ignore_public_acls
   lifecycle_rule                            = var.common_log.s3_log.lifecycle_rule
-  logging                                   = {}
+  logging                                   = null
   object_ownership                          = "ObjectWriter"
   policy                                    = data.aws_iam_policy_document.s3_log_combined.json
   restrict_public_buckets                   = var.common_log.s3_log.restrict_public_buckets

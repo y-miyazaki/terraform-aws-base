@@ -16,7 +16,7 @@
 
 | Name | Source | Version |
 | ---- | ------ | ------- |
-| <a name="module_s3"></a> [s3](#module\_s3) | terraform-aws-modules/s3-bucket/aws | 5.15.1 |
+| <a name="module_s3"></a> [s3](#module\_s3) | terraform-aws-modules/s3-bucket/aws | 5.16.1 |
 
 ## Resources
 
@@ -76,7 +76,7 @@
 | <a name="input_is_enabled"></a> [is\_enabled](#input\_is\_enabled) | (Optional) A boolean flag to enable/disable settings of CloudTrail. Defaults true. | `bool` | `true` | no |
 | <a name="input_is_s3_enabled"></a> [is\_s3\_enabled](#input\_is\_s3\_enabled) | (Optional) A boolean flag to enable/disable S3 Bucket. Defaults false. | `bool` | `false` | no |
 | <a name="input_region"></a> [region](#input\_region) | (Required) The region name. | `string` | n/a | yes |
-| <a name="input_s3_bucket"></a> [s3\_bucket](#input\_s3\_bucket) | (Optional) If you have a new S3 to create, please specify this one. Yes to the variable:aws\_s3\_bucket\_existing. | <pre>object(<br/>    {<br/>      # (Optional, Forces new resource) The name of the bucket. If omitted, Terraform will assign a random, unique name. Must be lowercase and less than or equal to 63 characters in length. A full list of bucket naming rules may be found here.<br/>      bucket                               = string<br/>      lifecycle_rule                       = any<br/>      logging                              = any<br/>      server_side_encryption_configuration = any<br/>      versioning                           = any<br/>    }<br/>  )</pre> | <pre>{<br/>  "bucket": "s3-cloudtrail",<br/>  "lifecycle_rule": {},<br/>  "logging": {},<br/>  "server_side_encryption_configuration": {},<br/>  "versioning": {}<br/>}</pre> | no |
+| <a name="input_s3_bucket"></a> [s3\_bucket](#input\_s3\_bucket) | (Optional) If you have a new S3 to create, please specify this one. Yes to the variable:aws\_s3\_bucket\_existing. | <pre>object(<br/>    {<br/>      # (Optional, Forces new resource) The name of the bucket. If omitted, Terraform will assign a random, unique name. Must be lowercase and less than or equal to 63 characters in length. A full list of bucket naming rules may be found here.<br/>      bucket                               = string<br/>      lifecycle_rule                       = list(any)<br/>      logging                              = any<br/>      server_side_encryption_configuration = any<br/>      versioning                           = any<br/>    }<br/>  )</pre> | <pre>{<br/>  "bucket": "s3-cloudtrail",<br/>  "lifecycle_rule": [],<br/>  "logging": null,<br/>  "server_side_encryption_configuration": {},<br/>  "versioning": {}<br/>}</pre> | no |
 | <a name="input_sns_kms_master_key_id"></a> [sns\_kms\_master\_key\_id](#input\_sns\_kms\_master\_key\_id) | (Optional) The KMS master key for SNS. | `string` | `null` | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | (Optional) Key-value map of resource tags. | `map(any)` | `null` | no |
 

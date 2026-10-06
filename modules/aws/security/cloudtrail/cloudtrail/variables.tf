@@ -132,7 +132,7 @@ variable "s3_bucket" {
     {
       # (Optional, Forces new resource) The name of the bucket. If omitted, Terraform will assign a random, unique name. Must be lowercase and less than or equal to 63 characters in length. A full list of bucket naming rules may be found here.
       bucket                               = string
-      lifecycle_rule                       = any
+      lifecycle_rule                       = list(any)
       logging                              = any
       server_side_encryption_configuration = any
       versioning                           = any
@@ -141,8 +141,8 @@ variable "s3_bucket" {
   description = "(Optional) If you have a new S3 to create, please specify this one. Yes to the variable:aws_s3_bucket_existing."
   default = {
     bucket                               = "s3-cloudtrail"
-    lifecycle_rule                       = {}
-    logging                              = {}
+    lifecycle_rule                       = []
+    logging                              = null
     server_side_encryption_configuration = {}
     versioning                           = {}
   }
