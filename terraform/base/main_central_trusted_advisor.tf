@@ -44,7 +44,7 @@ resource "aws_scheduler_schedule" "trusted_advisor" {
 # tfsec:ignore:aws-lambda-enable-tracing
 module "lambda_function_trusted_advisor" {
   source  = "terraform-aws-modules/lambda/aws"
-  version = "8.9.0"
+  version = "8.8.2"
 
   create = var.trusted_advisor.is_enabled
   region = var.region.global

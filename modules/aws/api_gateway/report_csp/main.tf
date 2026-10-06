@@ -95,7 +95,7 @@ resource "aws_api_gateway_stage" "this" {
 #--------------------------------------------------------------
 module "aws_lambda_create_lambda_report_csp" {
   source  = "terraform-aws-modules/lambda/aws"
-  version = "8.9.0"
+  version = "8.8.2"
 
   create = var.is_enabled
   region = local.region

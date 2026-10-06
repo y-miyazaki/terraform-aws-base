@@ -235,18 +235,37 @@ kms = {
 oidc_github = {
   # CUSTOMIZE: need to set is_enabled for settings of IAM OIDC for GitHub Actions.
   is_enabled = true
-  # CUSTOMIZE: Flag to enable/disable the attachment of the AdministratorAccess policy.
-  dangerously_attach_admin_policy = true
-  # CUSTOMIZE: Flag to enable/disable the attachment of the ReadOnly policy.
-  iam_role_policy_names = []
-  # CUSTOMIZE: Flag to enable/disable the creation of the GitHub OIDC provider.
-  create_oidc_provider = true
-  # CUSTOMIZE: Set the org/repo of the GitHub repository to github_subjects.
-  github_subjects = [
-    # "your-repository/repository-name",
-  ]
-  iam_role_name = "oidc-github-role"
-  iam_role_path = "/"
+  settings = {
+    base = {
+      # CUSTOMIZE: Flag to enable/disable the attachment of the AdministratorAccess policy.
+      dangerously_attach_admin_policy = true
+      # CUSTOMIZE: Flag to enable/disable the attachment of the ReadOnly policy.
+      iam_role_policy_names = []
+      # CUSTOMIZE: Flag to enable/disable the creation of the GitHub OIDC provider.
+      create_oidc_provider = true
+      # CUSTOMIZE: Set the org/repo of the GitHub repository to github_subjects.
+      github_subjects = [
+        # "your-repository/repository-name",
+      ]
+      iam_role_name = "oidc-github-role"
+      iam_role_path = "/"
+      iam_role_inline_policies = {
+        Version = "2012-10-17"
+        Statement = [
+          {
+            Sid    = "AllowAccountGetAccountInformation"
+            Effect = "Allow"
+            Action = [
+              "account:GetAccountInformation",
+            ]
+            Resource = [
+              "arn:aws:account::211125717743:account",
+            ]
+          },
+        ]
+      }
+    }
+  }
 }
 
 #--------------------------------------------------------------
