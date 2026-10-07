@@ -11,7 +11,7 @@
 
 | Name | Version |
 | ---- | ------- |
-| <a name="provider_aws"></a> [aws](#provider\_aws) | 6.56.0 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | 6.67.0 |
 
 ## Modules
 
@@ -24,9 +24,9 @@
 | <a name="module_delegated_services"></a> [delegated\_services](#module\_delegated\_services) | ../../../modules/aws/organizations/delegated_services | n/a |
 | <a name="module_guardduty_organization"></a> [guardduty\_organization](#module\_guardduty\_organization) | ../../../modules/aws/security/guardduty_organization | n/a |
 | <a name="module_inspector2_organization"></a> [inspector2\_organization](#module\_inspector2\_organization) | ../../../modules/aws/security/inspector2_organization | n/a |
-| <a name="module_kms_key"></a> [kms\_key](#module\_kms\_key) | terraform-aws-modules/kms/aws | 4.2.0 |
+| <a name="module_kms_key"></a> [kms\_key](#module\_kms\_key) | terraform-aws-modules/kms/aws | 4.2.2 |
 | <a name="module_macie_organization"></a> [macie\_organization](#module\_macie\_organization) | ../../../modules/aws/security/macie_organization | n/a |
-| <a name="module_oidc_github"></a> [oidc\_github](#module\_oidc\_github) | unfunco/oidc-github/aws | 3.0.0 |
+| <a name="module_oidc_github"></a> [oidc\_github](#module\_oidc\_github) | unfunco/oidc-github/aws | 3.1.0 |
 | <a name="module_securityhub_organization"></a> [securityhub\_organization](#module\_securityhub\_organization) | ../../../modules/aws/security/securityhub_organization | n/a |
 
 ## Resources

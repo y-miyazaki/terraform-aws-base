@@ -10,7 +10,7 @@
 
 | Name | Version |
 | ---- | ------- |
-| <a name="provider_aws"></a> [aws](#provider\_aws) | 6.56.0 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | 6.67.0 |
 
 ## Modules
 
@@ -45,16 +45,16 @@
 | <a name="module_aws_security_securityhub"></a> [aws\_security\_securityhub](#module\_aws\_security\_securityhub) | ../../modules/aws/security/securityhub | n/a |
 | <a name="module_aws_security_ssm_automation"></a> [aws\_security\_ssm\_automation](#module\_aws\_security\_ssm\_automation) | ../../modules/aws/security/ssm_automation | n/a |
 | <a name="module_guardduty"></a> [guardduty](#module\_guardduty) | ../../modules/aws/security/guardduty | n/a |
-| <a name="module_kms_key"></a> [kms\_key](#module\_kms\_key) | terraform-aws-modules/kms/aws | 4.2.0 |
-| <a name="module_lambda_function_budgets"></a> [lambda\_function\_budgets](#module\_lambda\_function\_budgets) | terraform-aws-modules/lambda/aws | 8.8.0 |
-| <a name="module_lambda_function_cloudtrail"></a> [lambda\_function\_cloudtrail](#module\_lambda\_function\_cloudtrail) | terraform-aws-modules/lambda/aws | 8.8.0 |
-| <a name="module_lambda_function_iam_password_expired"></a> [lambda\_function\_iam\_password\_expired](#module\_lambda\_function\_iam\_password\_expired) | terraform-aws-modules/lambda/aws | 8.8.0 |
-| <a name="module_lambda_function_trusted_advisor"></a> [lambda\_function\_trusted\_advisor](#module\_lambda\_function\_trusted\_advisor) | terraform-aws-modules/lambda/aws | 8.8.0 |
-| <a name="module_lambda_vpc"></a> [lambda\_vpc](#module\_lambda\_vpc) | terraform-aws-modules/vpc/aws | 6.6.1 |
-| <a name="module_oidc_github"></a> [oidc\_github](#module\_oidc\_github) | unfunco/oidc-github/aws | 3.0.0 |
-| <a name="module_s3_account_public_access"></a> [s3\_account\_public\_access](#module\_s3\_account\_public\_access) | terraform-aws-modules/s3-bucket/aws//modules/account-public-access | 5.14.1 |
-| <a name="module_s3_cloudtrail"></a> [s3\_cloudtrail](#module\_s3\_cloudtrail) | terraform-aws-modules/s3-bucket/aws | 5.14.1 |
-| <a name="module_s3_log"></a> [s3\_log](#module\_s3\_log) | terraform-aws-modules/s3-bucket/aws | 5.14.1 |
+| <a name="module_kms_key"></a> [kms\_key](#module\_kms\_key) | terraform-aws-modules/kms/aws | 4.2.2 |
+| <a name="module_lambda_function_budgets"></a> [lambda\_function\_budgets](#module\_lambda\_function\_budgets) | terraform-aws-modules/lambda/aws | 8.9.0 |
+| <a name="module_lambda_function_cloudtrail"></a> [lambda\_function\_cloudtrail](#module\_lambda\_function\_cloudtrail) | terraform-aws-modules/lambda/aws | 8.9.0 |
+| <a name="module_lambda_function_iam_password_expired"></a> [lambda\_function\_iam\_password\_expired](#module\_lambda\_function\_iam\_password\_expired) | terraform-aws-modules/lambda/aws | 8.9.0 |
+| <a name="module_lambda_function_trusted_advisor"></a> [lambda\_function\_trusted\_advisor](#module\_lambda\_function\_trusted\_advisor) | terraform-aws-modules/lambda/aws | 8.9.0 |
+| <a name="module_lambda_vpc"></a> [lambda\_vpc](#module\_lambda\_vpc) | terraform-aws-modules/vpc/aws | 6.7.3 |
+| <a name="module_oidc_github"></a> [oidc\_github](#module\_oidc\_github) | unfunco/oidc-github/aws | 3.1.0 |
+| <a name="module_s3_account_public_access"></a> [s3\_account\_public\_access](#module\_s3\_account\_public\_access) | terraform-aws-modules/s3-bucket/aws//modules/account-public-access | 5.16.1 |
+| <a name="module_s3_cloudtrail"></a> [s3\_cloudtrail](#module\_s3\_cloudtrail) | terraform-aws-modules/s3-bucket/aws | 5.16.1 |
+| <a name="module_s3_log"></a> [s3\_log](#module\_s3\_log) | terraform-aws-modules/s3-bucket/aws | 5.16.1 |
 
 ## Resources
 
@@ -116,5 +116,4 @@
 | <a name="output_lambda_vpc_default_security_group_id"></a> [lambda\_vpc\_default\_security\_group\_id](#output\_lambda\_vpc\_default\_security\_group\_id) | The ID of the default security group for Lambda VPC |
 | <a name="output_lambda_vpc_id"></a> [lambda\_vpc\_id](#output\_lambda\_vpc\_id) | The ID of the VPC created for Lambda functions |
 | <a name="output_lambda_vpc_private_subnet"></a> [lambda\_vpc\_private\_subnet](#output\_lambda\_vpc\_private\_subnet) | List of private subnet IDs where Lambda functions will be deployed |
-| <a name="output_oidc_github_iam_role_arn"></a> [oidc\_github\_iam\_role\_arn](#output\_oidc\_github\_iam\_role\_arn) | IAM role arn for GitHub actions |
 <!-- END_TF_DOCS -->

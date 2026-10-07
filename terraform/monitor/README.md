@@ -10,7 +10,7 @@
 
 | Name | Version |
 | ---- | ------- |
-| <a name="provider_aws"></a> [aws](#provider\_aws) | 6.56.0 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | 6.67.0 |
 
 ## Modules
 
@@ -29,17 +29,17 @@
 | <a name="module_aws_cloudwatch_events_ec2"></a> [aws\_cloudwatch\_events\_ec2](#module\_aws\_cloudwatch\_events\_ec2) | ../../modules/aws/cloudwatch/events/ec2 | n/a |
 | <a name="module_aws_iam_role_eventbridge"></a> [aws\_iam\_role\_eventbridge](#module\_aws\_iam\_role\_eventbridge) | ../../modules/aws/iam/role/eventbridge | n/a |
 | <a name="module_aws_iam_role_lambda"></a> [aws\_iam\_role\_lambda](#module\_aws\_iam\_role\_lambda) | ../../modules/aws/iam/role/lambda | n/a |
-| <a name="module_aws_lambda_create_lambda_kinesis_data_firehose_cloudwatch_logs_processor"></a> [aws\_lambda\_create\_lambda\_kinesis\_data\_firehose\_cloudwatch\_logs\_processor](#module\_aws\_lambda\_create\_lambda\_kinesis\_data\_firehose\_cloudwatch\_logs\_processor) | terraform-aws-modules/lambda/aws | 8.8.0 |
-| <a name="module_aws_lambda_create_lambda_kinesis_data_firehose_cloudwatch_logs_processor_us_east_1"></a> [aws\_lambda\_create\_lambda\_kinesis\_data\_firehose\_cloudwatch\_logs\_processor\_us\_east\_1](#module\_aws\_lambda\_create\_lambda\_kinesis\_data\_firehose\_cloudwatch\_logs\_processor\_us\_east\_1) | terraform-aws-modules/lambda/aws | 8.8.0 |
-| <a name="module_aws_lambda_create_lambda_log"></a> [aws\_lambda\_create\_lambda\_log](#module\_aws\_lambda\_create\_lambda\_log) | terraform-aws-modules/lambda/aws | 8.8.0 |
-| <a name="module_aws_lambda_create_lambda_log_us_east_1"></a> [aws\_lambda\_create\_lambda\_log\_us\_east\_1](#module\_aws\_lambda\_create\_lambda\_log\_us\_east\_1) | terraform-aws-modules/lambda/aws | 8.8.0 |
-| <a name="module_aws_lambda_create_lambda_metric"></a> [aws\_lambda\_create\_lambda\_metric](#module\_aws\_lambda\_create\_lambda\_metric) | terraform-aws-modules/lambda/aws | 8.8.0 |
-| <a name="module_aws_lambda_create_lambda_metric_us_east_1"></a> [aws\_lambda\_create\_lambda\_metric\_us\_east\_1](#module\_aws\_lambda\_create\_lambda\_metric\_us\_east\_1) | terraform-aws-modules/lambda/aws | 8.8.0 |
-| <a name="module_aws_lambda_create_lambda_s3_notification_s3_object_created_for_athena"></a> [aws\_lambda\_create\_lambda\_s3\_notification\_s3\_object\_created\_for\_athena](#module\_aws\_lambda\_create\_lambda\_s3\_notification\_s3\_object\_created\_for\_athena) | terraform-aws-modules/lambda/aws | 8.8.0 |
-| <a name="module_aws_lambda_create_lambda_s3_notification_s3_object_created_for_athena_us_east_1"></a> [aws\_lambda\_create\_lambda\_s3\_notification\_s3\_object\_created\_for\_athena\_us\_east\_1](#module\_aws\_lambda\_create\_lambda\_s3\_notification\_s3\_object\_created\_for\_athena\_us\_east\_1) | terraform-aws-modules/lambda/aws | 8.8.0 |
-| <a name="module_aws_lambda_create_lambda_ses"></a> [aws\_lambda\_create\_lambda\_ses](#module\_aws\_lambda\_create\_lambda\_ses) | terraform-aws-modules/lambda/aws | 8.8.0 |
-| <a name="module_aws_lambda_create_lambda_ses_us_east_1"></a> [aws\_lambda\_create\_lambda\_ses\_us\_east\_1](#module\_aws\_lambda\_create\_lambda\_ses\_us\_east\_1) | terraform-aws-modules/lambda/aws | 8.8.0 |
-| <a name="module_aws_lambda_create_lambda_step_functions_log"></a> [aws\_lambda\_create\_lambda\_step\_functions\_log](#module\_aws\_lambda\_create\_lambda\_step\_functions\_log) | terraform-aws-modules/lambda/aws | 8.8.0 |
+| <a name="module_aws_lambda_create_lambda_kinesis_data_firehose_cloudwatch_logs_processor"></a> [aws\_lambda\_create\_lambda\_kinesis\_data\_firehose\_cloudwatch\_logs\_processor](#module\_aws\_lambda\_create\_lambda\_kinesis\_data\_firehose\_cloudwatch\_logs\_processor) | terraform-aws-modules/lambda/aws | 8.9.0 |
+| <a name="module_aws_lambda_create_lambda_kinesis_data_firehose_cloudwatch_logs_processor_us_east_1"></a> [aws\_lambda\_create\_lambda\_kinesis\_data\_firehose\_cloudwatch\_logs\_processor\_us\_east\_1](#module\_aws\_lambda\_create\_lambda\_kinesis\_data\_firehose\_cloudwatch\_logs\_processor\_us\_east\_1) | terraform-aws-modules/lambda/aws | 8.9.0 |
+| <a name="module_aws_lambda_create_lambda_log"></a> [aws\_lambda\_create\_lambda\_log](#module\_aws\_lambda\_create\_lambda\_log) | terraform-aws-modules/lambda/aws | 8.9.0 |
+| <a name="module_aws_lambda_create_lambda_log_us_east_1"></a> [aws\_lambda\_create\_lambda\_log\_us\_east\_1](#module\_aws\_lambda\_create\_lambda\_log\_us\_east\_1) | terraform-aws-modules/lambda/aws | 8.9.0 |
+| <a name="module_aws_lambda_create_lambda_metric"></a> [aws\_lambda\_create\_lambda\_metric](#module\_aws\_lambda\_create\_lambda\_metric) | terraform-aws-modules/lambda/aws | 8.9.0 |
+| <a name="module_aws_lambda_create_lambda_metric_us_east_1"></a> [aws\_lambda\_create\_lambda\_metric\_us\_east\_1](#module\_aws\_lambda\_create\_lambda\_metric\_us\_east\_1) | terraform-aws-modules/lambda/aws | 8.9.0 |
+| <a name="module_aws_lambda_create_lambda_s3_notification_s3_object_created_for_athena"></a> [aws\_lambda\_create\_lambda\_s3\_notification\_s3\_object\_created\_for\_athena](#module\_aws\_lambda\_create\_lambda\_s3\_notification\_s3\_object\_created\_for\_athena) | terraform-aws-modules/lambda/aws | 8.9.0 |
+| <a name="module_aws_lambda_create_lambda_s3_notification_s3_object_created_for_athena_us_east_1"></a> [aws\_lambda\_create\_lambda\_s3\_notification\_s3\_object\_created\_for\_athena\_us\_east\_1](#module\_aws\_lambda\_create\_lambda\_s3\_notification\_s3\_object\_created\_for\_athena\_us\_east\_1) | terraform-aws-modules/lambda/aws | 8.9.0 |
+| <a name="module_aws_lambda_create_lambda_ses"></a> [aws\_lambda\_create\_lambda\_ses](#module\_aws\_lambda\_create\_lambda\_ses) | terraform-aws-modules/lambda/aws | 8.9.0 |
+| <a name="module_aws_lambda_create_lambda_ses_us_east_1"></a> [aws\_lambda\_create\_lambda\_ses\_us\_east\_1](#module\_aws\_lambda\_create\_lambda\_ses\_us\_east\_1) | terraform-aws-modules/lambda/aws | 8.9.0 |
+| <a name="module_aws_lambda_create_lambda_step_functions_log"></a> [aws\_lambda\_create\_lambda\_step\_functions\_log](#module\_aws\_lambda\_create\_lambda\_step\_functions\_log) | terraform-aws-modules/lambda/aws | 8.9.0 |
 | <a name="module_aws_metric_api_gateway"></a> [aws\_metric\_api\_gateway](#module\_aws\_metric\_api\_gateway) | ../../modules/aws/metric/api_gateway | n/a |
 | <a name="module_aws_metric_cloudfront"></a> [aws\_metric\_cloudfront](#module\_aws\_metric\_cloudfront) | ../../modules/aws/metric/cloudfront | n/a |
 | <a name="module_aws_metric_ec2"></a> [aws\_metric\_ec2](#module\_aws\_metric\_ec2) | ../../modules/aws/metric/ec2 | n/a |
@@ -64,22 +64,22 @@
 | <a name="module_aws_sns_subscription_lambda_ses_us_east_1"></a> [aws\_sns\_subscription\_lambda\_ses\_us\_east\_1](#module\_aws\_sns\_subscription\_lambda\_ses\_us\_east\_1) | ../../modules/aws/sns/subscription | n/a |
 | <a name="module_aws_sns_subscription_lambda_step_functions_log"></a> [aws\_sns\_subscription\_lambda\_step\_functions\_log](#module\_aws\_sns\_subscription\_lambda\_step\_functions\_log) | ../../modules/aws/sns/subscription | n/a |
 | <a name="module_aws_synthetics_canary"></a> [aws\_synthetics\_canary](#module\_aws\_synthetics\_canary) | ../../modules/aws/synthetics_canary | n/a |
-| <a name="module_dynamodb_table_monitor_log"></a> [dynamodb\_table\_monitor\_log](#module\_dynamodb\_table\_monitor\_log) | terraform-aws-modules/dynamodb-table/aws | 5.5.0 |
+| <a name="module_dynamodb_table_monitor_log"></a> [dynamodb\_table\_monitor\_log](#module\_dynamodb\_table\_monitor\_log) | terraform-aws-modules/dynamodb-table/aws | 5.5.2 |
 | <a name="module_eventbridge_batch"></a> [eventbridge\_batch](#module\_eventbridge\_batch) | ../../modules/aws/eventbridge/batch | n/a |
 | <a name="module_eventbridge_ec2"></a> [eventbridge\_ec2](#module\_eventbridge\_ec2) | ../../modules/aws/eventbridge/ec2 | n/a |
 | <a name="module_eventbridge_ecs_scheduled_task"></a> [eventbridge\_ecs\_scheduled\_task](#module\_eventbridge\_ecs\_scheduled\_task) | ../../modules/aws/eventbridge/ecs_scheduled_task | n/a |
 | <a name="module_eventbridge_ecs_service"></a> [eventbridge\_ecs\_service](#module\_eventbridge\_ecs\_service) | ../../modules/aws/eventbridge/ecs_service | n/a |
 | <a name="module_eventbridge_rds_cluster"></a> [eventbridge\_rds\_cluster](#module\_eventbridge\_rds\_cluster) | ../../modules/aws/eventbridge/rds_cluster | n/a |
 | <a name="module_eventbridge_redshift"></a> [eventbridge\_redshift](#module\_eventbridge\_redshift) | ../../modules/aws/eventbridge/redshift | n/a |
-| <a name="module_kms_key"></a> [kms\_key](#module\_kms\_key) | terraform-aws-modules/kms/aws | 4.2.0 |
-| <a name="module_lambda_function_application_errors"></a> [lambda\_function\_application\_errors](#module\_lambda\_function\_application\_errors) | terraform-aws-modules/lambda/aws | 8.8.0 |
-| <a name="module_lambda_function_cloudwatch_event_ec2"></a> [lambda\_function\_cloudwatch\_event\_ec2](#module\_lambda\_function\_cloudwatch\_event\_ec2) | terraform-aws-modules/lambda/aws | 8.8.0 |
-| <a name="module_lambda_function_postgresql_slowquery"></a> [lambda\_function\_postgresql\_slowquery](#module\_lambda\_function\_postgresql\_slowquery) | terraform-aws-modules/lambda/aws | 8.8.0 |
-| <a name="module_lambda_vpc"></a> [lambda\_vpc](#module\_lambda\_vpc) | terraform-aws-modules/vpc/aws | 6.6.1 |
+| <a name="module_kms_key"></a> [kms\_key](#module\_kms\_key) | terraform-aws-modules/kms/aws | 4.2.2 |
+| <a name="module_lambda_function_application_errors"></a> [lambda\_function\_application\_errors](#module\_lambda\_function\_application\_errors) | terraform-aws-modules/lambda/aws | 8.9.0 |
+| <a name="module_lambda_function_cloudwatch_event_ec2"></a> [lambda\_function\_cloudwatch\_event\_ec2](#module\_lambda\_function\_cloudwatch\_event\_ec2) | terraform-aws-modules/lambda/aws | 8.9.0 |
+| <a name="module_lambda_function_postgresql_slowquery"></a> [lambda\_function\_postgresql\_slowquery](#module\_lambda\_function\_postgresql\_slowquery) | terraform-aws-modules/lambda/aws | 8.9.0 |
+| <a name="module_lambda_vpc"></a> [lambda\_vpc](#module\_lambda\_vpc) | terraform-aws-modules/vpc/aws | 6.7.3 |
 | <a name="module_log_delivery_application"></a> [log\_delivery\_application](#module\_log\_delivery\_application) | ../../modules/aws/cloudwatch/delivery | n/a |
 | <a name="module_log_delivery_application_us_east_1"></a> [log\_delivery\_application\_us\_east\_1](#module\_log\_delivery\_application\_us\_east\_1) | ../../modules/aws/cloudwatch/delivery | n/a |
-| <a name="module_s3_application_log"></a> [s3\_application\_log](#module\_s3\_application\_log) | terraform-aws-modules/s3-bucket/aws | 5.14.1 |
-| <a name="module_s3_application_log_notification_cloudfront"></a> [s3\_application\_log\_notification\_cloudfront](#module\_s3\_application\_log\_notification\_cloudfront) | terraform-aws-modules/s3-bucket/aws//modules/notification | 5.14.1 |
+| <a name="module_s3_application_log"></a> [s3\_application\_log](#module\_s3\_application\_log) | terraform-aws-modules/s3-bucket/aws | 5.16.1 |
+| <a name="module_s3_application_log_notification_cloudfront"></a> [s3\_application\_log\_notification\_cloudfront](#module\_s3\_application\_log\_notification\_cloudfront) | terraform-aws-modules/s3-bucket/aws//modules/notification | 5.16.1 |
 
 ## Resources
 

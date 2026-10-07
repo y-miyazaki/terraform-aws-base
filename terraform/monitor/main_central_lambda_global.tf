@@ -362,7 +362,7 @@ module "aws_lambda_create_lambda_kinesis_data_firehose_cloudwatch_logs_processor
   logging_system_log_level      = "WARN"
   memory_size                   = 256
   publish                       = false
-  runtime                       = "nodejs22.x"
+  runtime                       = "nodejs24.x"
   timeout                       = 300
   tracing_mode                  = "PassThrough"
   vpc_security_group_ids        = var.common_lambda.vpc.is_enabled ? var.common_lambda.vpc.create_vpc ? [module.lambda_vpc["global"].default_security_group_id] : [var.common_lambda.vpc.exists.security_group_id] : []
@@ -422,7 +422,7 @@ module "aws_lambda_create_lambda_s3_notification_s3_object_created_for_athena_us
   logging_system_log_level      = "WARN"
   memory_size                   = 128
   publish                       = false
-  runtime                       = "nodejs22.x"
+  runtime                       = "nodejs24.x"
   timeout                       = 300
   tracing_mode                  = "PassThrough"
   vpc_security_group_ids        = var.common_lambda.vpc.is_enabled ? var.common_lambda.vpc.create_vpc ? [module.lambda_vpc["global"].default_security_group_id] : [var.common_lambda.vpc.exists.security_group_id] : []

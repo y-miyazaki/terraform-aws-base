@@ -10,7 +10,7 @@
 
 | Name | Version |
 | ---- | ------- |
-| <a name="provider_aws"></a> [aws](#provider\_aws) | 6.56.0 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | 6.67.0 |
 
 ## Modules
 
@@ -23,11 +23,11 @@
 | <a name="module_aws_iam_role_lambda"></a> [aws\_iam\_role\_lambda](#module\_aws\_iam\_role\_lambda) | ../../../modules/aws/iam/role/lambda | n/a |
 | <a name="module_aws_security_cloudtrail_controltower"></a> [aws\_security\_cloudtrail\_controltower](#module\_aws\_security\_cloudtrail\_controltower) | ../../../modules/aws/security/cloudtrail/controltower | n/a |
 | <a name="module_jit_access"></a> [jit\_access](#module\_jit\_access) | ../../../modules/aws/jit_access | n/a |
-| <a name="module_kms_key"></a> [kms\_key](#module\_kms\_key) | terraform-aws-modules/kms/aws | 4.2.0 |
-| <a name="module_lambda_function_budgets"></a> [lambda\_function\_budgets](#module\_lambda\_function\_budgets) | terraform-aws-modules/lambda/aws | 8.8.0 |
-| <a name="module_lambda_function_cloudtrail"></a> [lambda\_function\_cloudtrail](#module\_lambda\_function\_cloudtrail) | terraform-aws-modules/lambda/aws | 8.8.0 |
-| <a name="module_lambda_vpc"></a> [lambda\_vpc](#module\_lambda\_vpc) | terraform-aws-modules/vpc/aws | 6.6.1 |
-| <a name="module_oidc_github"></a> [oidc\_github](#module\_oidc\_github) | unfunco/oidc-github/aws | 3.0.0 |
+| <a name="module_kms_key"></a> [kms\_key](#module\_kms\_key) | terraform-aws-modules/kms/aws | 4.2.2 |
+| <a name="module_lambda_function_budgets"></a> [lambda\_function\_budgets](#module\_lambda\_function\_budgets) | terraform-aws-modules/lambda/aws | 8.9.0 |
+| <a name="module_lambda_function_cloudtrail"></a> [lambda\_function\_cloudtrail](#module\_lambda\_function\_cloudtrail) | terraform-aws-modules/lambda/aws | 8.9.0 |
+| <a name="module_lambda_vpc"></a> [lambda\_vpc](#module\_lambda\_vpc) | terraform-aws-modules/vpc/aws | 6.7.3 |
+| <a name="module_oidc_github"></a> [oidc\_github](#module\_oidc\_github) | unfunco/oidc-github/aws | 3.1.0 |
 | <a name="module_waf_jit_access"></a> [waf\_jit\_access](#module\_waf\_jit\_access) | ../../../modules/aws/waf | n/a |
 
 ## Resources
