@@ -25,7 +25,7 @@ Run tools in this order (fail-fast: stop on first failure):
 ## tflint (LINT)
 
 - LINT-01 (SHOULD): All enabled rules pass with zero findings
-- LINT-02 (SHOULD): AWS provider-specific rules pass
+- LINT-02 (SHOULD): Provider-specific rules enabled in `.tflint.hcl` pass
 - LINT-03 (SHOULD): No deprecated resource types or argument names
 - LINT-04 (SHOULD): Custom ruleset (`.tflint.hcl`) compliance verified
 
@@ -33,7 +33,7 @@ Run tools in this order (fail-fast: stop on first failure):
 
 - SEC-01 (SHOULD): No HIGH or CRITICAL severity misconfigurations
 - SEC-02 (SHOULD): No hardcoded secrets detected
-- SEC-03 (SHOULD): IAM policies comply with least-privilege principles
+- SEC-03 (SHOULD): Access policies comply with least-privilege principles
 - SEC-04 (SHOULD): Suppressed findings have documented justifications
 
 ## Pass Criteria

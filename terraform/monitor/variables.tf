@@ -340,6 +340,9 @@ variable "devops_agent" {
     <name_prefix without trailing "-">/<key>/webhook, encrypted with module.kms_key_devops_agent when kms["monitor_devops_agent"].is_enabled
     (otherwise aws/secretsmanager); they never enter the Terraform state. aws CLI and jq are required where Terraform runs.
     agents_md is keyed by the agent type (GENERIC applies to all agents; at most one per agent type), and agents_md[*].content_file is the AGENTS.md path relative to this stack directory.
+    agent_spaces[*].linear.team is the Linear team (name or key) in which the Agent Space creates Issues with the Linear MCP server. When it is set,
+    main_central_devops_agent.tf appends a Linear section (the team and the stop rule) to the GENERIC AGENTS.md of that Agent Space
+    (a GENERIC AGENTS.md is created when agents_md has none); the file given by content_file is never edited. Leave it null to add nothing.
     skills[*].content_file (the SKILL.md of a skill directory; text files under references/ and assets/ next to it are attached automatically) and custom_agents[*].system_prompt_file are paths relative to this stack directory.
   EOT
   type = object({
@@ -387,6 +390,9 @@ variable "devops_agent" {
         agents_md = optional(map(object({
           content_file = string
         })), {})
+        linear = optional(object({
+          team = optional(string)
+        }), {})
         skills = optional(map(object({
           agent_types  = optional(list(string), ["GENERIC"])
           content_file = string
@@ -465,6 +471,10 @@ variable "devops_agent" {
   validation {
     condition     = alltrue([for k, a in var.devops_agent.primary.agent_spaces : !contains(keys(a.mcp_servers), "mcp_slack_reply")])
     error_message = "devops_agent.primary.agent_spaces[*].mcp_servers must not define the key mcp_slack_reply (built-in, attached by devops_agent.primary.mcp_slack_reply)."
+  }
+  validation {
+    condition     = alltrue([for k, a in var.devops_agent.primary.agent_spaces : a.linear.team == null || can(regex("^[^\\x00-\\x1f\\x7f]{1,64}$", a.linear.team)) && trimspace(a.linear.team) == a.linear.team])
+    error_message = "devops_agent.primary.agent_spaces[*].linear.team must be 1-64 characters without control characters (newline) or leading/trailing spaces."
   }
   default = {}
 }

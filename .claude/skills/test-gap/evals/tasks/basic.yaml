@@ -1,0 +1,28 @@
+id: test-gap-contract-001
+name: test-gap emits apply shape without claiming execution
+description: >-
+  Validate test-gap emits ## Verification that states the command CI runs and does not claim the tests passed.
+tags:
+  - quality
+  - output-contract
+inputs:
+  prompt: >-
+    Use test-gap with may_edit true and write_target fix. The target scripts/foo.sh has no paired test.
+    Emit the apply PR shape with ### Changes, ### Deferred when applicable, and ## Verification.
+    You cannot run tests here; do not claim they passed.
+  context:
+    skip: false
+    hotspots:
+      - path: scripts/foo.sh
+        kind: churn
+        count: 7
+        window: 90.days
+    ledger:
+      file: .loop/state-test-gap-ledger.json
+      processed: []
+expected:
+  output_contains:
+    - Changes
+    - Verification
+  outcomes:
+    - type: task_completed

@@ -11,85 +11,29 @@ Use this guide when `trivy config` reports security findings.
 
 ## Common trivy Findings and Fixes
 
-### Public S3 Bucket Access
+### Public Storage Access
 
-**Typical finding**:
+**Typical finding**: storage allows public principals or public access is not blocked.
 
-- Bucket policy allows public principals (`"Principal": "*"`)
-- Public access block is not fully enabled
-
-**Fix**:
-
-```hcl
-resource "aws_s3_bucket_public_access_block" "this" {
-	bucket                  = aws_s3_bucket.this.id
-	block_public_acls       = true
-	block_public_policy     = true
-	ignore_public_acls      = true
-	restrict_public_buckets = true
-}
-```
+**Fix**: Enable the provider's block-public-access setting and remove public principals from policies.
 
 ### Missing Encryption at Rest
 
-**Typical finding**:
+**Typical finding**: storage, disks, databases, or log targets missing encryption settings.
 
-- S3/EBS/RDS/log targets missing encryption settings
+**Fix**: Enable encryption at rest and set the managed-key argument explicitly.
 
-**Fix**:
+### Overly Permissive Access Policies
 
-```hcl
-resource "aws_s3_bucket_server_side_encryption_configuration" "this" {
-	bucket = aws_s3_bucket.this.id
+**Typical finding**: wildcards in actions or resources without strict conditions.
 
-	rule {
-		apply_server_side_encryption_by_default {
-			sse_algorithm     = "aws:kms"
-			kms_master_key_id = aws_kms_key.this.arn
-		}
-	}
-}
-```
+**Fix**: Limit actions and resources to what is required and add condition guards.
 
-### Overly Permissive IAM Policies
+### Firewall Rule Open to Internet
 
-**Typical finding**:
+**Typical finding**: inbound rules expose sensitive ports to `0.0.0.0/0`.
 
-- Wildcards in `Action` or `Resource` without strict conditions
-
-**Fix**:
-
-```hcl
-data "aws_iam_policy_document" "least_privilege" {
-	statement {
-		sid     = "ReadSpecificBucket"
-		effect  = "Allow"
-		actions = ["s3:GetObject"]
-		resources = [
-			"${aws_s3_bucket.this.arn}/*"
-		]
-	}
-}
-```
-
-### Security Group Open to Internet
-
-**Typical finding**:
-
-- Inbound rules expose sensitive ports to `0.0.0.0/0`
-
-**Fix**:
-
-```hcl
-ingress {
-	from_port   = 443
-	to_port     = 443
-	protocol    = "tcp"
-	cidr_blocks = ["10.0.0.0/16"]
-}
-```
-
-Avoid unrestricted inbound SSH/RDP unless explicitly required and documented.
+**Fix**: Restrict source CIDRs to known ranges. Avoid unrestricted inbound SSH/RDP unless explicitly required and documented.
 
 ## Revalidation Commands
 

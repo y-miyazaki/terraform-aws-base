@@ -29,9 +29,9 @@
 
 **Common security issues**:
 
-- Unencrypted S3 buckets
-- Overly permissive IAM policies
-- Missing KMS encryption
+- Unencrypted storage
+- Overly permissive access policies
+- Missing encryption at rest
 - Public access enabled
 
 **Fix**: Add security controls as recommended

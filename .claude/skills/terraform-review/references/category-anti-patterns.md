@@ -4,7 +4,7 @@
 
 Check: Are passwords, API keys, or tokens present in `.tf`, `.tfvars`, or `.hcl` files (G-01, SEC-04, T-01)?
 Why: Secrets in version control leak via history, clones, and CI logs
-Fix: Use variables with external secret stores (Secrets Manager, SSM Parameter Store) — never commit literals
+Fix: Use variables with external secret stores — never commit literals
 
 **AP-02 (SHOULD): count for keyed resources instead of for_each**
 
@@ -20,12 +20,12 @@ Fix: Use environment variables, OIDC, or provider-specific credential chains
 
 **AP-04 (MUST): Unsafe defaults for network exposure**
 
-Check: Do resources default to open security groups, public S3 buckets, or default VPC (COMP-01)?
+Check: Do resources default to open firewall rules, public storage, or default networks (COMP-01)?
 Why: Unsafe defaults expand attack surface and violate least-privilege policy
-Fix: Explicit VPC/subnet references, restrictive SG rules, and `block_public_access` on S3
+Fix: Explicit network/subnet references, restrictive firewall rules, and blocked public access on storage
 
-**AP-05 (SHOULD): Hand-written IAM policy JSON strings**
+**AP-05 (SHOULD): Hand-written policy JSON strings**
 
-Check: Are IAM policies built as raw JSON strings instead of `jsonencode` or `aws_iam_policy_document` (COMP-02)?
+Check: Are policies built as raw JSON strings instead of `jsonencode` or a provider policy-document data source (COMP-02)?
 Why: String JSON is error-prone and harder to validate at plan time
-Fix: Use `jsonencode()` or the `aws_iam_policy_document` data source
+Fix: Use `jsonencode()` or the provider policy-document data source

@@ -101,6 +101,8 @@ If you are using SES to store your standard logs in S3, you can retrieve the log
 
 AWS DevOps Agent investigates incidents across AWS resources and connected tools (for example GitHub, and MCP servers such as GitHub / Notion) and proposes root causes and mitigations. Managed by `main_central_devops_agent.tf` and the `devops_agent` module. `devops_agent.primary.agent_spaces` is a map keyed by the Agent Space name, and the module is called once per Agent Space with `for_each`. The KMS key and the GitHub registrations (`devops_agent.primary.github_registrations`, a map) are shared at the account level.
 
+The asset metadata (skills, `agents_md`, custom agents) that Terraform sends includes `status = "ACTIVE"` (and `skill_type = "USER"` for skills), the values the service adds and returns in the metadata, so they do not appear as a plan difference. An asset whose `metadata` differs only by these fields on the first plan after an upgrade is updated in place once.
+
 Reference: [What is AWS DevOps Agent?](https://docs.aws.amazon.com/devopsagent/latest/userguide/about-aws-devops-agent.html)
 
 | Component                    | Managed by                                       | Notes                                                                                                                                                                                    |
@@ -138,9 +140,9 @@ Re-creating the Agent Space (for example renaming its key or changing `kms.monit
 
 Reference: [Getting started with AWS DevOps Agent using Terraform](https://docs.aws.amazon.com/devopsagent/latest/userguide/getting-started-with-aws-devops-agent-getting-started-with-aws-devops-agent-using-terraform.html)
 
-### Issue and Draft PR from Alarms (GitHub / Notion)
+### Issue and Draft PR from Alarms (GitHub / Notion / Linear)
 
-The agent records an alarm investigation as a GitHub Issue (or a Notion page) and proposes a fix as a Draft pull request (PR) to `develop` (or the repository default branch when `develop` does not exist) from a `feature/devops-agent/**` branch. A human reviews and merges.
+The agent records an alarm investigation as a GitHub Issue (or a Notion page, or a Linear Issue) and proposes a fix as a Draft pull request (PR) to `develop` (or the repository default branch when `develop` does not exist) from a `feature/devops-agent/**` branch. A human reviews and merges. A PR is opened only when it contains the real fix in code; when the fix cannot be made in code, the agent opens no PR and writes the proposal in the Issue (or page) instead. Use only one tracker skill (GitHub, Notion, or Linear) per Agent Space; a PR is always a GitHub PR. A PR that only adds a document describing the fix is never opened.
 
 Prerequisites:
 
@@ -155,13 +157,14 @@ The native GitHub integration is read-only, so Issue and PR creation needs the G
 3. Allowlist only the needed tools in `agent_spaces.<name>.mcp_servers`: `add_issue_comment`, `issue_write`, `issue_read`, `search_issues`, `get_label`, `create_branch`, `create_or_update_file`, `push_files`, `create_pull_request`, `pull_request_read`, `update_pull_request` (the full list is in `terraform.example.tfvars`). The current GitHub MCP server has no `create_issue`. Do not allowlist merge or delete tools.
 4. Attach the skills (`agent_spaces.<name>.skills`) and, optionally, the custom agents (`agent_spaces.<name>.custom_agents`).
 
-| Item                                                                                                       | Location                                                                                                                                                                                   |
-| ---------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| GitHub skill (Issue + Draft PR to `develop` or the default branch from a `feature/devops-agent/**` branch) | `terraform/monitor/devops_agent/skills/github-issue-draft-pr/`                                                                                                                             |
-| Notion skill (incident page + Draft PR)                                                                    | `terraform/monitor/devops_agent/skills/notion-issue-draft-pr/`                                                                                                                             |
-| Custom agents using the skills                                                                             | `terraform/monitor/devops_agent/agents/github_issue_pr_agent.md`, `terraform/monitor/devops_agent/agents/notion_issue_pr_agent.md`                                                         |
-| Follow-up skill and agent (scheduled)                                                                      | `terraform/monitor/devops_agent/skills/github-issue-pr-followup/`, `terraform/monitor/devops_agent/agents/github_issue_pr_followup_agent.md`                                               |
-| Example configuration                                                                                      | `terraform.example.tfvars`; `terraform.dev.tfvars` enables the skills only. The MCP registration, `mcp_servers`, and custom agents stay commented out until the `service_id` is available. |
+| Item                                                                                                       | Location                                                                                                                                                                                                                                                                                           |
+| ---------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| GitHub skill (Issue + Draft PR to `develop` or the default branch from a `feature/devops-agent/**` branch) | `terraform/monitor/devops_agent/skills/github-issue-draft-pr/`                                                                                                                                                                                                                                     |
+| Notion skill (incident page + Draft PR)                                                                    | `terraform/monitor/devops_agent/skills/notion-issue-draft-pr/`                                                                                                                                                                                                                                     |
+| Linear skill (Linear Issue + Draft PR)                                                                     | `terraform/monitor/devops_agent/skills/linear-issue-draft-pr/`                                                                                                                                                                                                                                     |
+| Custom agents using the skills                                                                             | `terraform/monitor/devops_agent/agents/github_issue_pr_agent.md`, `terraform/monitor/devops_agent/agents/notion_issue_pr_agent.md`, `terraform/monitor/devops_agent/agents/linear_issue_pr_agent.md`                                                                                               |
+| Follow-up skill and agent (scheduled)                                                                      | `terraform/monitor/devops_agent/skills/github-issue-pr-followup/`, `terraform/monitor/devops_agent/agents/github_issue_pr_followup_agent.md`; Linear: `terraform/monitor/devops_agent/skills/linear-issue-pr-followup/`, `terraform/monitor/devops_agent/agents/linear_issue_pr_followup_agent.md` |
+| Example configuration                                                                                      | `terraform.example.tfvars`; `terraform.dev.tfvars` enables the skills only. The MCP registration, `mcp_servers`, and custom agents stay commented out until the `service_id` is available.                                                                                                         |
 
 #### Skill directory layout
 
@@ -184,7 +187,10 @@ devops_agent/skills/<skill-name>/
 
 #### Label `devops-agent`
 
-Every Issue and PR that the agent creates carries the label `devops-agent` (the GitHub MCP server exposes no label-creation tool, so create the label once by hand with color `1D76DB`, or let `issue_write` create it implicitly). The follow-up agent handles only items with this label, and people can tell agent-created items by it. Adding the label to a PR uses `issue_write` with the PR number; this is not documented in the GitHub MCP server README, so verify it on the first run (when it fails, the agent reports the missing label).
+Every Issue and PR that the agent creates carries the label `devops-agent`. The follow-up agent handles only items with this label, and people can tell agent-created items by it.
+
+- **GitHub: a person must create the label beforehand.** Creating a label needs Label creation permission in GitHub (write access to the repository), and the GitHub MCP server exposes no label-creation tool, so the agent cannot create it. Create it once in every target repository (color `1D76DB`) before the first investigation. When the label is missing, the agent still creates the Issue and PR, reports the missing label in the Issue/PR and in Slack reply B, and the follow-up agent never picks the item up. Adding the label to a PR uses `issue_write` with the PR number; this is not documented in the GitHub MCP server README, so verify it on the first run (when it fails, the agent reports the missing label).
+- **Linear: the agent creates it.** The Linear skill checks the label with `list_issue_labels` and creates it with `save_issue_label` when it is missing. When the Linear credential has no permission to create labels, the agent creates no Issue (it would never be followed up) and reports the missing permission in reply B (`Failed`); create the label in Linear beforehand in that case.
 
 #### Slack reply format
 
@@ -226,6 +232,19 @@ Behavior not verified in this repository:
 - The tool name format in the custom agent `tools` list (the examples assume `<MCP server name>_<tool name>`).
 
 References: [Connecting MCP Servers](https://docs.aws.amazon.com/devopsagent/latest/userguide/configuring-integrations-and-knowledge-connecting-mcp-servers.html), [Working with directed actions](https://docs.aws.amazon.com/devopsagent/latest/userguide/working-with-devops-agent-working-with-directed-actions.html)
+
+#### Linear (Linear MCP server)
+
+The Linear skill records the Issue in Linear instead of GitHub. The PR is still a GitHub Draft PR, so the GitHub MCP server is also needed (its prerequisites above apply). The GitHub Draft PR links to the Issue by the Linear identifier (for example `ENG-123`) and the agent attaches the PR URL to the Issue.
+
+1. Register the Linear MCP server (endpoint `https://mcp.linear.app/mcp`). It accepts OAuth, or an API key / token sent as `Authorization: Bearer <token>`. Register it like the GitHub MCP server or in the console (Capability Providers), and set the returned service ID in `devops_agent.primary.mcp_server_registrations.<name>.service_id`. Never put the credential in tfvars or the Terraform state.
+2. Allowlist only the needed tools in `agent_spaces.<name>.mcp_servers`: `list_teams`, `list_issues`, `get_issue`, `save_issue`, `list_comments`, `save_comment`, `list_issue_labels`, `save_issue_label`, `list_issue_statuses`.
+3. Set the Linear team in tfvars: `agent_spaces.<name>.linear = { team = "<team name or key>" }`. When it is set, Terraform appends a `## Linear` section (`Linear team: <team>`, and the rule to create Issues only in that team) to the GENERIC AGENTS.md of the Agent Space; `devops_agent/agents_md/generic.md` is not edited, and a GENERIC AGENTS.md is created when `agents_md` has none. The agent checks the team with `list_teams`, and when it does not exist it creates nothing, never uses another team, and reports `Failed`. `null` (the default) adds nothing.
+4. Attach the skills `linear-issue-draft-pr` and `linear-issue-pr-followup` and the custom agents `linear_issue_pr_agent` and `linear_issue_pr_followup_agent`. The follow-up agent runs on a schedule trigger, handles only open Linear Issues of the configured team with the label `devops-agent` and the PRs linked from them, answers unanswered human comments with `save_comment` (footer `-- devops-agent`), and closes an Issue only on an explicit human instruction or when its PR is merged.
+
+The `linear` block, the registration, `mcp_servers`, `skills`, and `custom_agents` examples are in `terraform.example.tfvars` (commented out in every environment until the `service_id` is available).
+
+Not verified in this repository: the tool names with the prefix `LinearMcpServer_` in the custom agent `tools` list, whether the AWS DevOps Agent can complete the Linear OAuth flow (use an API key or token when it cannot), and which Linear permission is required to create a label with `save_issue_label`.
 
 ### Slack Reply MCP Server
 

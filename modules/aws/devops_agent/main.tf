@@ -348,10 +348,13 @@ resource "awscc_devopsagent_asset" "skill" {
     ],
     [for path in sort(keys(each.value.files)) : { content_text = each.value.files[path], path = path }]
   )
+  # status and skill_type are set by the service and returned in the metadata; sending the same values avoids a perpetual plan difference.
   metadata = jsonencode({
     agent_types = each.value.agent_types
     description = each.value.description
     name        = each.value.name
+    skill_type  = "USER"
+    status      = "ACTIVE"
   })
 }
 
@@ -370,8 +373,10 @@ resource "awscc_devopsagent_asset" "agents_md" {
       path         = "AGENTS.md"
     }
   ]
+  # status is set by the service and returned in the metadata; sending the same value avoids a perpetual plan difference.
   metadata = jsonencode({
     agent_type = each.key
+    status     = "ACTIVE"
   })
 }
 
@@ -389,9 +394,11 @@ resource "awscc_devopsagent_asset" "custom_agent" {
       path         = "AGENT.md"
     }
   ]
+  # status is set by the service and returned in the metadata; sending the same value avoids a perpetual plan difference.
   metadata = jsonencode({
     name   = each.value.name
     skills = [for k in each.value.skills : awscc_devopsagent_asset.skill[k].asset_id]
+    status = "ACTIVE"
     tools  = each.value.tools
   })
 }

@@ -937,8 +937,11 @@ metric_log_postgresql = {
     # [the database system...]: is start database instance log.
     # [Can't handle storage runtime process crash]: is start database instance log.
     # [canceling statement due to statement timeout] is normal operation when statement timeout occurs.
+    # [idle-in-transaction timeout]: application-level protection (db-long-lock-mitigation, B2C-11941). benign nightly batch event.
+    # [connection to client lost]: client disconnected during nightly batch. benign.
+    # [conflict with recovery]: reader WAL-apply conflict during recovery. benign and transient.
     pattern = <<PATTERN
-[( msg="*ERROR:*" || msg="*FATAL:*" ) && ( msg!="*FATAL:*the database system*" && msg!="*FATAL:*Can't handle storage runtime process crash*" && msg!="*ERROR:*canceling autovacuum task*" && msg!="*ERROR:*canceling statement due to statement timeout*")]
+[( msg="*ERROR:*" || msg="*FATAL:*" ) && ( msg!="*FATAL:*the database system*" && msg!="*FATAL:*Can't handle storage runtime process crash*" && msg!="*ERROR:*canceling autovacuum task*" && msg!="*ERROR:*canceling statement due to statement timeout*" && msg!="*FATAL:*idle-in-transaction timeout*" && msg!="*FATAL:*connection to client lost*" && msg!="*conflict with recovery*")]
 PATTERN
     metric_transformation = [
       {
@@ -2979,6 +2982,9 @@ devops_agent = {
     #       --service-details '{"mcpserver":{"name":"GitHubMcpServer","endpoint":"https://api.githubcopilot.com/mcp/","authorizationConfig":{"apiKey":{"apiKeyName":"github-pat","apiKeyHeader":"Authorization","apiKeyValue":"Bearer <PAT>"}}}}' # pragma: allowlist secret
     #     (PAT: fine-grained, only the target repositories; Issues / Contents / Pull requests: read and write.
     #      Notion hosted MCP uses OAuth, so register it in the console (Capability Providers) and copy the service ID.)
+    #     Linear hosted MCP (https://mcp.linear.app/mcp) accepts OAuth, or an API key / token as `Authorization: Bearer <token>`: register it in the console (Capability Providers) or like the GitHub PAT above.
+    #     If the Linear credential cannot create labels, create the label devops-agent in Linear beforehand.
+    #     GitHub label: create the label devops-agent in every target repository beforehand. It needs Label creation permission in GitHub; the GitHub MCP server has no tool to create it, so the agent cannot.
     #     aws devops-agent list-services --region ap-northeast-1 --query 'services[].{id:serviceId,type:serviceType}'
     #   ex)
     #   mcp_server_registrations = {
@@ -2992,6 +2998,12 @@ devops_agent = {
     #       description = "Notion MCP server (incident pages)"
     #       endpoint    = "https://mcp.notion.com/mcp"
     #       name        = "NotionMcpServer"
+    #       service_id  = "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+    #     }
+    #     linear = {
+    #       description = "Linear MCP server (incident Issues)"
+    #       endpoint    = "https://mcp.linear.app/mcp"
+    #       name        = "LinearMcpServer"
     #       service_id  = "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
     #     }
     #   }
@@ -3035,7 +3047,7 @@ devops_agent = {
         github_repositories = {}
         # (Optional) MCP servers to associate (tool allowlist; unlisted tools are invisible to the agent).
         # mcp_server_registration: key of devops_agent.primary.mcp_server_registrations. Do not allowlist merge / delete tools.
-        # Tool names follow the current GitHub MCP server (issue_write / issue_read; there is no create_issue). Notion tool names: verify with tools/list.
+        # Tool names follow the current GitHub MCP server (issue_write / issue_read; there is no create_issue). Notion and Linear tool names: verify with tools/list.
         #   ex)
         #   mcp_servers = {
         #     github = {
@@ -3051,6 +3063,13 @@ devops_agent = {
         #       mcp_server_registration = "notion"
         #       tools                   = ["notion-create-pages", "notion-fetch", "notion-search", "notion-update-page"]
         #     }
+        #     linear = {
+        #       mcp_server_registration = "linear"
+        #       tools = [
+        #         "get_issue", "list_comments", "list_issue_labels", "list_issue_statuses", "list_issues", "list_teams",
+        #         "save_comment", "save_issue", "save_issue_label",
+        #       ]
+        #     }
         #   }
         mcp_servers = {}
         # (Optional) Agent instructions (AGENTS.md) injected into every session. Key: agent type (GENERIC = all agents; at most one per agent type).
@@ -3061,6 +3080,13 @@ devops_agent = {
             content_file = "devops_agent/agents_md/generic.md"
           }
         }
+        # (Optional) Linear team (name or key) in which this Agent Space creates Issues with the Linear MCP server (linear_issue_* custom agents).
+        # When set, Terraform appends a "Linear" section (the team and the rule to create Issues only in it) to the GENERIC AGENTS.md of this Agent Space;
+        # the file given by content_file (generic.md) is not edited. null adds nothing. Set it together with the linear mcp_servers, skills and custom_agents examples.
+        #   ex) linear = { team = "ENG" }
+        linear = {
+          team = null
+        }
         # (Optional) Skills to attach to custom agents. content_file is relative to terraform/monitor.
         #   ex)
         #   skills = {
@@ -3068,6 +3094,20 @@ devops_agent = {
         #       name         = "example-skill"
         #       description  = "When the agent should use this skill."
         #       content_file = "devops_agent/skills/example-skill/SKILL.md"
+        #     }
+        #   }
+        # Linear skills (attach to the linear_issue_* custom agents below).
+        #   ex)
+        #   skills = {
+        #     linear_issue_draft_pr = {
+        #       name         = "linear-issue-draft-pr"
+        #       description  = "Record an alarm investigation as a Linear Issue labeled devops-agent and, for a small confirmed fix, a GitHub Draft PR labeled devops-agent (to develop, or the default branch if absent). Use this when an investigation of a CloudWatch alarm or incident finds a root cause and the team tracks incidents in Linear. It also replies to the Slack alert thread. Do not use it together with another tracker skill for the same alarm."
+        #       content_file = "devops_agent/skills/linear-issue-draft-pr/SKILL.md"
+        #     }
+        #     linear_issue_pr_followup = {
+        #       name         = "linear-issue-pr-followup"
+        #       description  = "Follow up on unanswered human comments on Linear Issues and their GitHub PRs labeled devops-agent: answer, update the text, re-check the incident, fix the Draft PR, and close when allowed. Use this in the scheduled follow-up run. Do not use it to start an investigation or to create Issues, PRs or labels."
+        #       content_file = "devops_agent/skills/linear-issue-pr-followup/SKILL.md"
         #     }
         #   }
         skills = {}
@@ -3106,6 +3146,39 @@ devops_agent = {
         #         "GitHubMcpServer_add_issue_comment", "GitHubMcpServer_create_or_update_file", "GitHubMcpServer_get_file_contents", "GitHubMcpServer_issue_read",
         #         "GitHubMcpServer_issue_write", "GitHubMcpServer_pull_request_read", "GitHubMcpServer_push_files", "GitHubMcpServer_search_code",
         #         "GitHubMcpServer_search_issues", "GitHubMcpServer_update_pull_request",
+        #       ]
+        #       triggers = {
+        #         # Weekdays 09:00-19:00 JST, hourly
+        #         weekday_hourly = {
+        #           schedule_expression = "cron(0 0-10 ? * MON-FRI *)"
+        #           status              = "Active"
+        #         }
+        #       }
+        #     }
+        #     linear_issue_pr_agent = {
+        #       name               = "linear-issue-pr-agent"
+        #       system_prompt_file = "devops_agent/agents/linear_issue_pr_agent.md"
+        #       skills             = ["linear_issue_draft_pr"]
+        #       tools = [
+        #         "use_aws", "query_cloudwatch_logs", "McpSlackReply_slack_reply_to_thread",
+        #         "LinearMcpServer_list_issue_labels", "LinearMcpServer_list_issues", "LinearMcpServer_list_teams",
+        #         "LinearMcpServer_save_comment", "LinearMcpServer_save_issue", "LinearMcpServer_save_issue_label",
+        #         "GitHubMcpServer_create_branch", "GitHubMcpServer_create_or_update_file", "GitHubMcpServer_create_pull_request",
+        #         "GitHubMcpServer_get_file_contents", "GitHubMcpServer_get_label", "GitHubMcpServer_issue_write",
+        #         "GitHubMcpServer_list_branches", "GitHubMcpServer_push_files", "GitHubMcpServer_search_code",
+        #       ]
+        #     }
+        #     linear_issue_pr_followup_agent = {
+        #       name               = "linear-issue-pr-followup-agent"
+        #       system_prompt_file = "devops_agent/agents/linear_issue_pr_followup_agent.md"
+        #       skills             = ["linear_issue_pr_followup"]
+        #       tools = [
+        #         "use_aws", "query_cloudwatch_logs",
+        #         "LinearMcpServer_list_comments", "LinearMcpServer_list_issue_statuses", "LinearMcpServer_list_issues",
+        #         "LinearMcpServer_list_teams", "LinearMcpServer_save_comment", "LinearMcpServer_save_issue",
+        #         "GitHubMcpServer_add_issue_comment", "GitHubMcpServer_create_or_update_file", "GitHubMcpServer_get_file_contents",
+        #         "GitHubMcpServer_pull_request_read", "GitHubMcpServer_push_files", "GitHubMcpServer_search_code",
+        #         "GitHubMcpServer_update_pull_request",
         #       ]
         #       triggers = {
         #         # Weekdays 09:00-19:00 JST, hourly

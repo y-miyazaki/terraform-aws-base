@@ -51,7 +51,6 @@ Each issue must include file path, risk summary, and remediation guidance.
 - [category-cost.md](references/category-cost.md) (always read)
 - [category-data-sources.md](references/category-data-sources.md) (always read)
 - [category-dependency.md](references/category-dependency.md) (always read)
-- [category-events.md](references/category-events.md) (always read)
 - [category-migration.md](references/category-migration.md) (always read)
 - [category-naming.md](references/category-naming.md) (always read)
 - [category-ordering.md](references/category-ordering.md) (always read)

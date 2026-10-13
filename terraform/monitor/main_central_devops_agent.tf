@@ -25,6 +25,29 @@ locals {
       tools        = ["slack_reply_to_thread"]
     }
   } : {}
+
+  # AGENTS.md per Agent Space and agent type. When agent_spaces[*].linear.team is set, the Linear section is appended to the GENERIC AGENTS.md
+  # (created when agents_md has none), so the content file itself (e.g. devops_agent/agents_md/generic.md) is never edited.
+  devops_agent_agents_md = {
+    for k, base in local.devops_agent_agents_md_base : k => local.devops_agent_agents_md_linear_section[k] == null ? base : merge(base, {
+      GENERIC = contains(keys(base), "GENERIC") ? "${base["GENERIC"]}\n${local.devops_agent_agents_md_linear_section[k]}" : local.devops_agent_agents_md_linear_section[k]
+    })
+  }
+  devops_agent_agents_md_base = {
+    for k, a in var.devops_agent.primary.agent_spaces : k => {
+      for t, v in a.agents_md : t => file("${path.module}/${v.content_file}")
+    }
+  }
+  devops_agent_agents_md_linear_section = {
+    for k, a in var.devops_agent.primary.agent_spaces : k => a.linear.team == null ? null : join("\n", [
+      "## Linear",
+      "",
+      "- Linear team: ${a.linear.team}",
+      "- Create Linear Issues only in this team. Check that it exists with `list_teams` before creating an Issue; when it does not exist, create nothing and report it.",
+      "- Never create an Issue in any other team and never guess a team.",
+      "",
+    ])
+  }
 }
 
 module "devops_agent" {
@@ -45,9 +68,7 @@ module "devops_agent" {
     name                     = "${var.name_prefix}${each.key}"
   }
   agent_space_additional_policy_statements = each.value.additional_policy_statements
-  agents_md = {
-    for k, v in each.value.agents_md : k => file("${path.module}/${v.content_file}")
-  }
+  agents_md                                = local.devops_agent_agents_md[each.key]
   aws_iam_role_agent_space = {
     name = "${var.name_prefix}${each.key}-agent-space-role"
   }

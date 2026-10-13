@@ -4,13 +4,13 @@
 
 Check: Is backend configured with encryption and locking?
 Why: Unprotected state risks data leakage and concurrent modification corruption
-Fix: Enable S3 encryption + DynamoDB lock, set versioning
+Fix: Enable backend encryption and state locking, set versioning
 
 **STATE-02 (SHOULD): No credentials embedded in backend config**
 
 Check: Are there no hardcoded credentials in backend blocks?
 Why: Credentials in backend config leak via Git history and violate security policies
-Fix: Use environment variables, IAM roles, or profiles
+Fix: Use environment variables, workload identity/roles, or credential profiles
 
 **STATE-03 (SHOULD): Avoid workspaces unless documented as intentional**
 

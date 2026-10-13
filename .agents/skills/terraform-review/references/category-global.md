@@ -4,7 +4,7 @@
 
 Check: Are there no plaintext secrets in .tf files?
 Why: Hardcoded credentials, passwords, and tokens cause information leakage, Git history contamination, and security breaches
-Fix: Use variables, AWS Secrets Manager, or SSM Parameter Store
+Fix: Use variables backed by a secret manager or parameter store
 
 **G-02 (SHOULD): Version-constrain external modules**
 
