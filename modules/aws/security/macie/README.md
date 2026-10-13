@@ -33,7 +33,7 @@ No modules.
 | <a name="input_finding_publishing_frequency"></a> [finding\_publishing\_frequency](#input\_finding\_publishing\_frequency) | (Optional) Frequency for publishing Macie findings. Valid values are FIFTEEN\_MINUTES, ONE\_HOUR, SIX\_HOURS. | `string` | `"FIFTEEN_MINUTES"` | no |
 | <a name="input_findings_filters"></a> [findings\_filters](#input\_findings\_filters) | (Optional) List of findings filter configurations. Each item requires name, action, and finding\_criteria. | `any` | `[]` | no |
 | <a name="input_is_enabled"></a> [is\_enabled](#input\_is\_enabled) | (Optional) A boolean flag to enable/disable Macie account configuration. Defaults true. | `bool` | `true` | no |
-| <a name="input_region"></a> [region](#input\_region) | AWS region where Macie resources will be deployed | `string` | n/a | yes |
+| <a name="input_region"></a> [region](#input\_region) | AWS region where Macie resources will be deployed. Defaults to provider region. | `string` | `null` | no |
 | <a name="input_status"></a> [status](#input\_status) | (Optional) Status for the Macie account. Valid values are ENABLED or PAUSED. | `string` | `"ENABLED"` | no |
 
 ## Outputs

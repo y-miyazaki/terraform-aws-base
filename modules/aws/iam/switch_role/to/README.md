@@ -35,6 +35,7 @@ No modules.
 | <a name="input_is_enabled"></a> [is\_enabled](#input\_is\_enabled) | (Optional) A boolean flag to enable/disable Trusted Advisor. Defaults true. | `bool` | `true` | no |
 | <a name="input_name_prefix"></a> [name\_prefix](#input\_name\_prefix) | (Optional) Prefix of policy name . | `string` | `""` | no |
 | <a name="input_policy"></a> [policy](#input\_policy) | (Optional) Provides an IAM policy. | `list(any)` | `[]` | no |
+| <a name="input_region"></a> [region](#input\_region) | (Optional) AWS region. Accepted for a uniform module interface; this module manages only global resources (IAM), so the value is not used. | `string` | `null` | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | (Optional) A mapping of tags to assign to the resource. | `map(any)` | `null` | no |
 
 ## Outputs

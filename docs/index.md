@@ -41,3 +41,9 @@ _Understanding-oriented discussion of concepts and decisions._
 - [Architecture Overview](explanation/architecture.md) - AWS Organization structure, multi-account design, and Terraform directory layout
 - [Design Document — Terraform Modules and Root Configurations](explanation/design.md) - Module-level structural conventions, variable design patterns, and naming rules
 - [Design Decisions](explanation/design-decisions.md) - Key design decisions, rejected alternatives, and rationale for major patterns
+
+## Report
+
+_Research findings and comparisons._
+
+- [AWS DevOps Agent 調査レポート: 仕様と運用上の知見](report/devops-agent-findings.md) - DevOps Agent の仕様、Skill 設計、Slack 返信、GitHub 連携で分かったことと未確認事項

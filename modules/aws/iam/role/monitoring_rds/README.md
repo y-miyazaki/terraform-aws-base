@@ -28,6 +28,7 @@ No modules.
 | Name | Description | Type | Default | Required |
 | ---- | ----------- | ---- | ------- | :------: |
 | <a name="input_aws_iam_role"></a> [aws\_iam\_role](#input\_aws\_iam\_role) | (Optional) Provides an IAM role. | <pre>object(<br/>    {<br/>      # Description of the role.<br/>      description = optional(string)<br/>      # Friendly name of the role. If omitted, Terraform will assign a random, unique name. See IAM Identifiers for more information.<br/>      name = string<br/>      # Path to the role. See IAM Identifiers for more information.<br/>      path = optional(string)<br/>    }<br/>  )</pre> | <pre>{<br/>  "description": "IAM role for Monitoring RDS.",<br/>  "name": "monitoring-rds-role",<br/>  "path": "/"<br/>}</pre> | no |
+| <a name="input_region"></a> [region](#input\_region) | (Optional) AWS region. Accepted for a uniform module interface; this module manages only global resources (IAM), so the value is not used. | `string` | `null` | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | (Optional) A mapping of tags to assign to the resource. | `map(any)` | `null` | no |
 
 ## Outputs

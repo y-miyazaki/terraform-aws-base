@@ -459,6 +459,13 @@ function is_loop_maintenance_commit {
     if [[ ${commit_type} == "chore" && ${scope} == "changelog" ]]; then
         return 0
     fi
+    if [[ ${commit_type} == "chore" && ${scope} == "loop" ]]; then
+        case "${subject}" in
+            "append run log [skip ci]" | "update state [skip ci]")
+                return 0
+                ;;
+        esac
+    fi
     if [[ ${subject} == *"(loop-changelog)"* ]]; then
         return 0
     fi

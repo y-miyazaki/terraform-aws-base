@@ -32,6 +32,8 @@ resource "aws_guardduty_organization_admin_account" "this" {
 #--------------------------------------------------------------
 data "aws_guardduty_detector" "existing" {
   count = var.is_enabled && !var.create_detector ? 1 : 0
+
+  region = local.region
 }
 
 resource "aws_guardduty_detector" "this" {

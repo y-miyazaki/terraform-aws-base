@@ -29,7 +29,7 @@ No modules.
 | Name | Description | Type | Default | Required |
 | ---- | ----------- | ---- | ------- | :------: |
 | <a name="input_is_enabled"></a> [is\_enabled](#input\_is\_enabled) | (Optional) A boolean flag to enable/disable Inspector2 account configuration. Defaults true. | `bool` | `true` | no |
-| <a name="input_region"></a> [region](#input\_region) | AWS region where Inspector2 will be enabled | `string` | n/a | yes |
+| <a name="input_region"></a> [region](#input\_region) | AWS region where Inspector2 will be enabled. Defaults to provider region. | `string` | `null` | no |
 | <a name="input_resource_types"></a> [resource\_types](#input\_resource\_types) | (Required) Type of resources to scan. Valid values are EC2, ECR, LAMBDA, LAMBDA\_CODE, CODE\_REPOSITORY. | `list(string)` | <pre>[<br/>  "EC2",<br/>  "ECR",<br/>  "LAMBDA",<br/>  "LAMBDA_CODE"<br/>]</pre> | no |
 
 ## Outputs

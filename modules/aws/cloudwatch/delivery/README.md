@@ -288,7 +288,7 @@ No direct resources are created by this module. All resources are managed by sub
 | <a name="input_lambda_processor_arn"></a> [lambda\_processor\_arn](#input\_lambda\_processor\_arn) | (Optional) ARN of the Lambda function for processing logs in Kinesis Firehose. If null, processing is disabled. | `string` | `null` | no |
 | <a name="input_log_group_names"></a> [log\_group\_names](#input\_log\_group\_names) | (Optional) If create\_auto\_log\_group\_names is set to false, List of CloudWatch Log Group names to subscribe. | `list(string)` | `[]` | no |
 | <a name="input_name_prefix"></a> [name\_prefix](#input\_name\_prefix) | (Required) Name prefix for all resources. | `string` | n/a | yes |
-| <a name="input_region"></a> [region](#input\_region) | (Required) AWS region. | `string` | n/a | yes |
+| <a name="input_region"></a> [region](#input\_region) | (Optional) AWS region. Defaults to provider region. | `string` | `null` | no |
 | <a name="input_s3_bucket_arn"></a> [s3\_bucket\_arn](#input\_s3\_bucket\_arn) | (Required) ARN of the S3 bucket where logs will be delivered. | `string` | n/a | yes |
 | <a name="input_tags"></a> [tags](#input\_tags) | (Optional) A mapping of tags to assign to the resources. | `map(any)` | `{}` | no |
 

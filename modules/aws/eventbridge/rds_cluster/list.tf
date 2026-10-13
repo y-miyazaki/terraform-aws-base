@@ -4,6 +4,8 @@
 data "aws_rds_clusters" "this" {
   count = var.is_enabled && var.create_auto_schedules ? 1 : 0
 
+  region = local.region
+
   filter {
     name = "engine"
     values = [

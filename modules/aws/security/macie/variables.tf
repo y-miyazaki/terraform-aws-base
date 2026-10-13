@@ -3,7 +3,8 @@
 #--------------------------------------------------------------
 variable "region" {
   type        = string
-  description = "AWS region where Macie resources will be deployed"
+  description = "AWS region where Macie resources will be deployed. Defaults to provider region."
+  default     = null
 }
 
 variable "is_enabled" {

@@ -148,91 +148,105 @@ resource "aws_iam_role" "lambda" {
   tags = var.tags
 }
 
-resource "aws_iam_role_policy" "lambda" {
-  name = "${var.name_prefix}jit-access-lambda"
-  role = aws_iam_role.lambda.id
-  policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = concat([
-      {
-        Sid    = "CloudWatchLogs"
-        Effect = "Allow"
-        Action = [
-          "logs:CreateLogGroup",
-          "logs:CreateLogStream",
-          "logs:PutLogEvents",
-        ]
-        Resource = "arn:aws:logs:*:*:*"
-      },
-      {
-        Sid    = "DynamoDB"
-        Effect = "Allow"
-        Action = [
-          "dynamodb:GetItem",
-          "dynamodb:PutItem",
-          "dynamodb:UpdateItem",
-          "dynamodb:Query",
-          "dynamodb:Scan",
-        ]
-        Resource = [
-          module.dynamodb_table_requests.dynamodb_table_arn,
-          "${module.dynamodb_table_requests.dynamodb_table_arn}/index/*",
-        ]
-      },
-      {
-        Sid    = "SSMParameterStore"
-        Effect = "Allow"
-        Action = [
-          "ssm:GetParameter",
-          "ssm:GetParametersByPath",
-        ]
-        Resource = "arn:aws:ssm:*:*:parameter${var.ssm_parameter_prefix}/*"
-      },
-      {
-        Sid    = "IdentityCenter"
-        Effect = "Allow"
-        Action = [
-          "sso:CreateAccountAssignment",
-          "sso:DeleteAccountAssignment",
-          "sso:DescribeAccountAssignmentCreationStatus",
-          "sso:DescribeAccountAssignmentDeletionStatus",
-        ]
-        Resource = "*"
-      },
-      {
-        Sid    = "IdentityStore"
-        Effect = "Allow"
-        Action = [
-          "identitystore:GetUserId",
-        ]
-        Resource = "*"
-      },
-      {
-        Sid    = "StepFunctions"
-        Effect = "Allow"
-        Action = [
-          "states:StartExecution",
-          "states:StopExecution",
-          "states:DescribeExecution",
-        ]
-        Resource = module.step_functions.state_machine_arn
-      },
-      {
-        Sid      = "LambdaInvoke"
-        Effect   = "Allow"
-        Action   = "lambda:InvokeFunction"
-        Resource = module.lambda_jit_access.lambda_function_arn
-      },
-      ], var.kms_key_arn != null ? [{
-        Sid    = "KMS"
-        Effect = "Allow"
-        Action = [
-          "kms:Decrypt",
-          "kms:GenerateDataKey",
-        ]
-        Resource = var.kms_key_arn
-    }] : [])
-  })
+data "aws_iam_policy_document" "lambda" {
+  statement {
+    sid    = "CloudWatchLogs"
+    effect = "Allow"
+    actions = [
+      "logs:CreateLogGroup",
+      "logs:CreateLogStream",
+      "logs:PutLogEvents",
+    ]
+    resources = ["arn:aws:logs:*:*:*"]
+  }
+
+  statement {
+    sid    = "DynamoDB"
+    effect = "Allow"
+    actions = [
+      "dynamodb:GetItem",
+      "dynamodb:PutItem",
+      "dynamodb:Query",
+      "dynamodb:Scan",
+      "dynamodb:UpdateItem",
+    ]
+    resources = [
+      module.dynamodb_table_requests.dynamodb_table_arn,
+      "${module.dynamodb_table_requests.dynamodb_table_arn}/index/*",
+    ]
+  }
+
+  statement {
+    sid    = "SSMParameterStore"
+    effect = "Allow"
+    actions = [
+      "ssm:GetParameter",
+      "ssm:GetParametersByPath",
+    ]
+    resources = ["arn:aws:ssm:*:*:parameter${var.ssm_parameter_prefix}/*"]
+  }
+
+  statement {
+    sid    = "IdentityCenter"
+    effect = "Allow"
+    actions = [
+      "sso:CreateAccountAssignment",
+      "sso:DeleteAccountAssignment",
+      "sso:DescribeAccountAssignmentCreationStatus",
+      "sso:DescribeAccountAssignmentDeletionStatus",
+    ]
+    resources = ["*"]
+  }
+
+  statement {
+    sid       = "IdentityStore"
+    effect    = "Allow"
+    actions   = ["identitystore:GetUserId"]
+    resources = ["*"]
+  }
+
+  statement {
+    sid    = "StepFunctions"
+    effect = "Allow"
+    actions = [
+      "states:DescribeExecution",
+      "states:StartExecution",
+      "states:StopExecution",
+    ]
+    resources = [module.step_functions.state_machine_arn]
+  }
+
+  statement {
+    sid       = "LambdaInvoke"
+    effect    = "Allow"
+    actions   = ["lambda:InvokeFunction"]
+    resources = [module.lambda_jit_access.lambda_function_arn]
+  }
+
+  dynamic "statement" {
+    for_each = var.kms_key_arn != null ? [var.kms_key_arn] : []
+
+    content {
+      sid    = "KMS"
+      effect = "Allow"
+      actions = [
+        "kms:Decrypt",
+        "kms:GenerateDataKey",
+      ]
+      resources = [statement.value]
+    }
+  }
+}
+
+resource "aws_iam_policy" "lambda" {
+  name   = "${var.name_prefix}jit-access-lambda"
+  policy = data.aws_iam_policy_document.lambda.json
+  tags   = merge(var.tags, { Name = "${var.name_prefix}jit-access-lambda" })
+}
+
+resource "aws_iam_role_policy_attachment" "lambda" {
+  policy_arn = aws_iam_policy.lambda.arn
+  role       = aws_iam_role.lambda.name
 }
 
 resource "aws_iam_role_policy_attachment" "lambda_vpc" {
@@ -556,10 +570,15 @@ data "aws_iam_policy_document" "sfn" {
   }
 }
 
-resource "aws_iam_role_policy" "sfn" {
+resource "aws_iam_policy" "sfn" {
   name   = "${var.name_prefix}jit-access-sfn"
-  role   = aws_iam_role.sfn.id
   policy = data.aws_iam_policy_document.sfn.json
+  tags   = merge(var.tags, { Name = "${var.name_prefix}jit-access-sfn" })
+}
+
+resource "aws_iam_role_policy_attachment" "sfn" {
+  policy_arn = aws_iam_policy.sfn.arn
+  role       = aws_iam_role.sfn.name
 }
 
 module "step_functions" {
@@ -684,17 +703,23 @@ resource "aws_iam_role" "scheduler" {
   tags = var.tags
 }
 
-resource "aws_iam_role_policy" "scheduler" {
-  name = "${var.name_prefix}jit-access-sch"
-  role = aws_iam_role.scheduler.id
-  policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [{
-      Effect   = "Allow"
-      Action   = "lambda:InvokeFunction"
-      Resource = module.lambda_jit_access.lambda_function_arn
-    }]
-  })
+data "aws_iam_policy_document" "scheduler" {
+  statement {
+    effect    = "Allow"
+    actions   = ["lambda:InvokeFunction"]
+    resources = [module.lambda_jit_access.lambda_function_arn]
+  }
+}
+
+resource "aws_iam_policy" "scheduler" {
+  name   = "${var.name_prefix}jit-access-sch"
+  policy = data.aws_iam_policy_document.scheduler.json
+  tags   = merge(var.tags, { Name = "${var.name_prefix}jit-access-sch" })
+}
+
+resource "aws_iam_role_policy_attachment" "scheduler" {
+  policy_arn = aws_iam_policy.scheduler.arn
+  role       = aws_iam_role.scheduler.name
 }
 
 resource "aws_scheduler_schedule" "cleanup" {

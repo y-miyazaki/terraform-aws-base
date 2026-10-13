@@ -3,6 +3,15 @@
 # Purpose: Attach S3 bucket policy permitting S3 server access logging delivery.
 # Notes: Grants PutObject to logging.s3.amazonaws.com; future improvement: restrict principal with source account conditions.
 #--------------------------------------------------------------
+data "aws_region" "current" {}
+
+#--------------------------------------------------------------
+# Locals
+#--------------------------------------------------------------
+locals {
+  region = coalesce(var.region, data.aws_region.current.region)
+}
+
 #--------------------------------------------------------------
 # Generates an IAM policy document in JSON format for use with resources that expect policy documents such as aws_iam_policy.
 #--------------------------------------------------------------

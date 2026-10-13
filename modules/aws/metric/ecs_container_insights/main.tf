@@ -20,11 +20,21 @@ locals {
 
   names = length(var.dimensions) > 0 ? flatten([
     for r in var.dimensions : {
-      name = format("%s-", r.TaskDefinitionFamily)
+      name   = format("%s-", r.TaskDefinitionFamily)
+      family = r.TaskDefinitionFamily
     }]) : [{
-    name = ""
+    name   = ""
+    family = ""
   }]
   is_dimensions = length(var.dimensions) > 0 ? true : false
+
+  # Per-TaskDefinitionFamily effective CPU utilization threshold.
+  # Falls back to the shared var.threshold.cpu_utilization when no override exists for a family,
+  # so an empty var.threshold_override (the default) preserves existing behavior for every family.
+  cpu_utilization_thresholds = [
+    for n in local.names :
+    try(var.threshold_override[n.family].cpu_utilization, var.threshold.cpu_utilization)
+  ]
 }
 
 #--------------------------------------------------------------
@@ -38,10 +48,10 @@ resource "aws_cloudwatch_metric_alarm" "cpu_utilization" {
   alarm_name          = "${var.name_prefix}metric-ecs-container-insights-${local.names[count.index].name}cpu-utilization"
   comparison_operator = "GreaterThanOrEqualToThreshold"
   evaluation_periods  = 1
-  threshold           = var.threshold.cpu_utilization
+  threshold           = local.cpu_utilization_thresholds[count.index]
   actions_enabled     = true
   alarm_actions       = var.alarm_actions
-  alarm_description   = "This is an alarm to check for <${local.url}|ECS ContainerInsights Cpu Utilization>(>= ${var.threshold.cpu_utilization})."
+  alarm_description   = "This is an alarm to check for <${local.url}|ECS ContainerInsights Cpu Utilization>(>= ${local.cpu_utilization_thresholds[count.index]})."
   ok_actions          = var.ok_actions
   treat_missing_data  = "notBreaching"
   metric_query {

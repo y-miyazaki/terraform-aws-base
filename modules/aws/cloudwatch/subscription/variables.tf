@@ -66,7 +66,8 @@ variable "account_id" {
 
 variable "region" {
   type        = string
-  description = "(Required) Specify the region."
+  description = "(Optional) Specify the region. Defaults to provider region."
+  default     = null
 }
 
 variable "tags" {

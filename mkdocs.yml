@@ -58,6 +58,7 @@ nav:
       - Features Base: reference/features-base.md
       - Features Monitor: reference/features-monitor.md
       - JIT Access Specification: reference/jit-access-specification.md
+      - Slack Reply MCP Lambda Request: reference/mcp-slack-reply-lambda-request.md
       - Module Catalog: reference/module-catalog.md
       - Monitoring: reference/monitoring.md
       - Performance: reference/performance.md
@@ -66,6 +67,8 @@ nav:
       - Architecture: explanation/architecture.md
       - Design: explanation/design.md
       - Design Decisions: explanation/design-decisions.md
+  - Report:
+      - DevOps Agent Findings: report/devops-agent-findings.md
   - ADR:
       - Overview: adr/README.md
       - "0001: Multi-Region Terraform Architecture": adr/0001-multi-region-terraform-architecture.md

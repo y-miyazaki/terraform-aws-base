@@ -58,6 +58,12 @@ variable "threshold" {
   }
 }
 
+variable "threshold_override" {
+  type        = map(any)
+  description = "(Optional) Per-TaskDefinitionFamily threshold overrides. Key is the TaskDefinitionFamily. Each value may set any of the threshold object's keys (e.g. cpu_utilization) to override the shared threshold for that family only. When empty (the default), every family uses the shared var.threshold values, so existing behavior is unchanged."
+  default     = {}
+}
+
 variable "dimensions" {
   type        = list(map(any))
   description = "(Optional) The dimensions for the alarm's associated metric. For the list of available dimensions see the AWS documentation here."

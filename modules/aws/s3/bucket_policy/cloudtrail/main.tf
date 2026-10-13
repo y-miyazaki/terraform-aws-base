@@ -3,6 +3,15 @@
 # Purpose: Attach S3 bucket policy enabling CloudTrail to write logs with ACL enforcement.
 # Notes: Enforces bucket-owner-full-control ACL; future improvement: add optional condition for specific CloudTrail ARNs.
 #--------------------------------------------------------------
+data "aws_region" "current" {}
+
+#--------------------------------------------------------------
+# Locals
+#--------------------------------------------------------------
+locals {
+  region = coalesce(var.region, data.aws_region.current.region)
+}
+
 #--------------------------------------------------------------
 # Provides IAM Policy document.
 #--------------------------------------------------------------

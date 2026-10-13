@@ -2,6 +2,8 @@
 # Data source for auto-discovery of EC2 instances
 #--------------------------------------------------------------
 data "aws_instances" "this" {
+  region = local.region
+
   instance_state_names = [
     "pending",
     "running",
@@ -13,6 +15,7 @@ data "aws_instances" "this" {
 data "aws_instance" "this" {
   for_each = var.is_enabled && var.create_auto_schedules ? toset(data.aws_instances.this.ids) : []
 
+  region      = local.region
   instance_id = each.value
 }
 

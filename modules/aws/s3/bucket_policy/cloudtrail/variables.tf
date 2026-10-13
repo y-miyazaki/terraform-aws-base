@@ -16,3 +16,9 @@ variable "account_id" {
   type        = string
   description = "(Required) AWS account ID for member account."
 }
+
+variable "region" {
+  type        = string
+  description = "(Optional) AWS region. Defaults to provider region."
+  default     = null
+}

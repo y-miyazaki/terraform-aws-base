@@ -5,6 +5,7 @@ module "log_delivery_application" {
   source = "../../modules/aws/cloudwatch/delivery"
 
   is_enabled = var.delivery_log.is_enabled
+  region     = var.region.primary
 
   name_prefix                       = var.name_prefix
   create_auto_log_group_names       = var.delivery_log.create_auto_log_group_names
@@ -32,7 +33,6 @@ module "log_delivery_application" {
   aws_iam_policy_kinesis_firehose = var.delivery_log.aws_iam_policy_kinesis_firehose
 
   account_id = data.aws_caller_identity.current.account_id
-  region     = var.region.primary
 
   tags = var.tags
 }

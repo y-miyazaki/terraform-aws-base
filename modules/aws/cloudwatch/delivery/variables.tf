@@ -91,7 +91,8 @@ variable "account_id" {
 
 variable "region" {
   type        = string
-  description = "(Required) AWS region."
+  description = "(Optional) AWS region. Defaults to provider region."
+  default     = null
 }
 
 variable "tags" {

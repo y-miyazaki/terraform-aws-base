@@ -11,7 +11,7 @@ locals {
     # https://advancedweb.hu/how-to-manage-lambda-log-groups-with-terraform/
     policy = jsonencode({
       Version = "2012-10-17"
-      Statement = [
+      Statement = concat([
         {
           Sid    = "AllowCloudWatchLogs"
           Effect = "Allow"
@@ -123,7 +123,7 @@ locals {
             "*",
           ]
         }
-      ]
+      ])
     })
   })
 }

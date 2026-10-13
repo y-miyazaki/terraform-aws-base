@@ -8,7 +8,6 @@ module "kms_key" {
   version = "4.2.2"
 
   create = each.value.is_enabled
-
   region = var.region.primary
 
   deletion_window_in_days = each.value.deletion_window_in_days

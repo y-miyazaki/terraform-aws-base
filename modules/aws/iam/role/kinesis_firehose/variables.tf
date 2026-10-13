@@ -8,7 +8,8 @@ variable "account_id" {
 
 variable "region" {
   type        = string
-  description = "(Required) The AWS region."
+  description = "(Optional) The AWS region. Defaults to provider region."
+  default     = null
 }
 
 variable "aws_iam_role" {

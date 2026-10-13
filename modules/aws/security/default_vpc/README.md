@@ -46,7 +46,7 @@ No modules.
 | <a name="input_is_enabled"></a> [is\_enabled](#input\_is\_enabled) | (Optional) A boolean flag to enable/disable settings of Dafault VPC. Defaults true. | `bool` | `true` | no |
 | <a name="input_is_enabled_flow_logs"></a> [is\_enabled\_flow\_logs](#input\_is\_enabled\_flow\_logs) | (Optional) A boolean flag to enable/disable Flow Log. Defaults true. | `bool` | `true` | no |
 | <a name="input_is_enabled_vpc_end_point"></a> [is\_enabled\_vpc\_end\_point](#input\_is\_enabled\_vpc\_end\_point) | (Optional) A boolean flag to enable/disable VPC Endpoint for [EC2.10]. Defaults false. | `bool` | `false` | no |
-| <a name="input_region"></a> [region](#input\_region) | (Required) The region name. | `string` | n/a | yes |
+| <a name="input_region"></a> [region](#input\_region) | (Optional) The region name. Defaults to provider region. | `string` | `null` | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | (Optional) A mapping of tags to assign to the resource. | `map(any)` | `null` | no |
 
 ## Outputs

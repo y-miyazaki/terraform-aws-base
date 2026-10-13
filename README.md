@@ -177,6 +177,16 @@ Named queries for ad-hoc log analysis in S3.
 | CloudFront  | Standard access log analysis via SQL |
 | SES         | Event log analysis via SQL           |
 
+### Monitoring: AWS DevOps Agent
+
+AWS DevOps Agent investigates alarms (started from the alarm Lambda through a generic webhook). With the GitHub or Notion Model Context Protocol (MCP) server and the bundled skills, it records the root cause as a GitHub Issue or Notion page and proposes a fix as a Draft pull request to `develop` (or the default branch when `develop` does not exist) from a `feature/*` branch. A human reviews and merges. See [Features: Monitor](https://y-miyazaki.github.io/terraform-aws-base/reference/features-monitor/#issue-and-draft-pr-from-alarms-github-notion) for the setup.
+
+| Item                 | Location                                                         | Description                                            |
+| -------------------- | ---------------------------------------------------------------- | ------------------------------------------------------ |
+| Skills               | `terraform/monitor/devops_agent/skills/`                         | GitHub Issue + Draft PR, Notion page + Draft PR        |
+| Custom agents        | `terraform/monitor/devops_agent/agents/`                         | Prompts for health check and Issue / Draft PR agents   |
+| MCP server allowlist | `devops_agent.primary.agent_spaces.<name>.mcp_servers` in tfvars | Tools the agent can use; merge and delete are excluded |
+
 ## Directory Structure
 
 | Directory/File        | Description                                                            |
@@ -191,7 +201,7 @@ Named queries for ad-hoc log analysis in S3.
 | terraform/            | Environment-specific Terraform configurations                          |
 | terraform/base/       | Base infrastructure configurations for core AWS resources              |
 | terraform/management/ | Management-level configurations (audit and root)                       |
-| terraform/monitor/    | Monitoring and metrics configurations                                  |
+| terraform/monitor/    | Monitoring, metrics, and DevOps Agent configurations                   |
 | test/                 | Test configurations and resources                                      |
 
 ## Documentation

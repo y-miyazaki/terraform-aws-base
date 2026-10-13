@@ -9,6 +9,14 @@ terraform {
       source  = "hashicorp/aws"
       version = "~> 6.0"
     }
+    awscc = {
+      source  = "hashicorp/awscc"
+      version = ">= 1.104.0, < 2.0.0"
+    }
+    time = {
+      source  = "hashicorp/time"
+      version = ">= 0.9.0, < 1.0.0"
+    }
   }
   backend "s3" {
   }
@@ -20,4 +28,9 @@ provider "aws" {
   default_tags {
     tags = var.tags
   }
+}
+
+# AWS Cloud Control provider — used for AWS DevOps Agent (not available in hashicorp/aws).
+provider "awscc" {
+  region = var.region.primary
 }

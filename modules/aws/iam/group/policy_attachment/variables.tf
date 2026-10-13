@@ -13,3 +13,9 @@ variable "aws_iam_group_policy_attachment" {
   )
   description = "(Required) - Attaches a Managed IAM Policy to an IAM group"
 }
+
+variable "region" {
+  type        = string
+  description = "(Optional) AWS region. Accepted for a uniform module interface; this module manages only global resources (IAM), so the value is not used."
+  default     = null
+}

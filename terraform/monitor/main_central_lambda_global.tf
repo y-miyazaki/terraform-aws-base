@@ -7,6 +7,7 @@ module "aws_sns_subscription_lambda_metric_us_east_1" {
   count = local.is_enabled_global ? 1 : 0
 
   source = "../../modules/aws/sns/subscription"
+
   region = "us-east-1"
 
   aws_sns_topic = merge(var.common_lambda.metric.aws_sns_topic, {
@@ -157,14 +158,14 @@ module "aws_lambda_create_lambda_log_us_east_1" {
   create_package                          = false
   create_role                             = false
   description                             = "This program sends the result of log to Slack."
-  environment_variables = {
+  environment_variables = merge({
     LOGGER_FORMATTER = "json"
     LOGGER_OUT       = "stdout"
     LOGGER_LEVEL     = "warn"
     # Override SLACK_* with priority: override > defaults
     SLACK_OAUTH_ACCESS_TOKEN = coalesce(try(var.slack.override.common_lambda_log.oauth_access_token, null), var.slack.oauth_access_token)
     SLACK_CHANNEL_ID         = coalesce(try(var.slack.override.common_lambda_log.channel_id, null), var.slack.channel_id)
-  }
+  }, var.common_lambda.log.aws_lambda_function.environment)
   function_name                 = "${var.name_prefix}cloudwatch-alarm-log-to-sns-to-slack"
   handler                       = "cloudwatch_alarm_to_sns_to_slack"
   lambda_role                   = module.aws_iam_role_lambda.arn
@@ -343,18 +344,12 @@ module "aws_lambda_create_lambda_kinesis_data_firehose_cloudwatch_logs_processor
   create_package                          = false
   create_role                             = false
   description                             = "An Amazon Kinesis Firehose stream processor that extracts individual log events from records sent by Cloudwatch Logs subscription filters."
-  environment_variables = merge({
-    LOGGER_FORMATTER = "json"
-    LOGGER_OUT       = "stdout"
-    LOGGER_LEVEL     = "warn"
-    # Override SLACK_* with priority: override > defaults
-    SLACK_OAUTH_ACCESS_TOKEN = coalesce(try(var.slack.override.common_lambda_kinesis_data_firehose_cloudwatch_logs_processor.oauth_access_token, null), var.slack.oauth_access_token)
-    SLACK_CHANNEL_ID         = coalesce(try(var.slack.override.common_lambda_kinesis_data_firehose_cloudwatch_logs_processor.channel_id, null), var.slack.channel_id)
-  }, var.common_lambda.metric.aws_lambda_function.environment)
-  function_name = "${var.name_prefix}kinesis-data-firehose-cloudwatch-logs-processor"
-  handler       = "index.handler"
-  lambda_role   = module.aws_iam_role_lambda.arn
-  layers        = []
+  # The processor does not read any environment variable.
+  environment_variables = {}
+  function_name         = "${var.name_prefix}kinesis-data-firehose-cloudwatch-logs-processor"
+  handler               = "index.handler"
+  lambda_role           = module.aws_iam_role_lambda.arn
+  layers                = []
   # cd /workspace/nodejs/kinesis_data_firehose_cloudwatch_logs_processor && npm install && zip -r /workspace/lambda/outputs/nodejs_kinesis_data_firehose_cloudwatch_logs_processor.zip .
   local_existing_package        = "../../lambda/outputs/nodejs_kinesis_data_firehose_cloudwatch_logs_processor.zip"
   logging_application_log_level = "WARN"
@@ -385,8 +380,8 @@ module "aws_lambda_create_lambda_s3_notification_s3_object_created_for_athena_us
   source  = "terraform-aws-modules/lambda/aws"
   version = "8.9.0"
 
-  region = "us-east-1"
   create = local.is_enabled_global
+  region = "us-east-1"
 
   allowed_triggers = {
     trigger = {

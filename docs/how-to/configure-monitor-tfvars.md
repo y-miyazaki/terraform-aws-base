@@ -158,6 +158,43 @@ Automatic resource scheduling (stop at night, start in morning).
 | Delivery Log (S3)       | `delivery_log.is_enabled` | `false` |
 | Report CSP              | `report_csp.is_enabled`   | `false` |
 
+### AWS DevOps Agent
+
+| Setting                                                                           | Default | Description                                                                                                                                                                                                                                                                                                                              |
+| --------------------------------------------------------------------------------- | ------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `devops_agent.primary.is_enabled`                                                 | `false` | Host the Agent Spaces in this account. Independent of `devops_agent.secondary`; both can be enabled. See [Primary and Secondary Accounts](../reference/features-monitor.md#primary-and-secondary-accounts)                                                                                                                               |
+| `devops_agent.primary.secondary_accounts`                                         | `{}`    | Map of secondary accounts the Agent Space investigates: `account_id` (12 digits). Add an account after its role exists                                                                                                                                                                                                                   |
+| `devops_agent.secondary.is_enabled`                                               | `false` | Create only the read-only cross-account role `DevOpsAgentRole-SecondaryAccount` so that the Agent Space of the primary account can investigate this account                                                                                                                                                                              |
+| `devops_agent.secondary.primary_account_id`                                       | `null`  | Required when `secondary.is_enabled`. Account ID of the primary account                                                                                                                                                                                                                                                                  |
+| `devops_agent.secondary.primary_agent_space_arn`                                  | `null`  | Required when `secondary.is_enabled`. ARN of the Agent Space in the primary account (`terraform output -json devops_agent_agent_space_arns` in the primary account)                                                                                                                                                                      |
+| `devops_agent.secondary.additional_policy_statements`                             | `[]`    | Extra IAM statements for the cross-account role on top of `AIDevOpsAgentAccessPolicy` (never allow `secretsmanager:GetSecretValue`)                                                                                                                                                                                                      |
+| `kms.monitor_devops_agent.is_enabled`                                             | `false` | One KMS key shared by all Agent Spaces (and the webhook secrets), declared in the `kms` variable next to `kms.monitor`; immutable after an Agent Space is created                                                                                                                                                                        |
+| `devops_agent.primary.github_registrations`                                       | `{}`    | Map of GitHub registrations (account level, one per GitHub user / organization / GitHub Enterprise Server instance, registered in the console first): `service_id`, `owner`, `owner_type`                                                                                                                                                |
+| `devops_agent.primary.mcp_slack_reply`                                            | `{}`    | Slack reply MCP server (Lambda function URL + dedicated IAM role): `is_enabled` (`false`), `memory_size` (`128`), `timeout` (`30`). Terraform also registers it in AWS DevOps Agent and attaches it to every Agent Space with the tool `slack_reply_to_thread` (no entry in `mcp_servers` needed; the key `mcp_slack_reply` is reserved) |
+| `devops_agent.primary.mcp_server_registrations`                                   | `{}`    | Map of MCP server registrations (account level; e.g. GitHub MCP server for Issue / Draft PR, Notion MCP server): `service_id`, `name`, `endpoint`, `description`. Register with `aws devops-agent register-service --service mcpserver` first (credential never enters the state)                                                        |
+| `devops_agent.primary.agent_spaces`                                               | `{}`    | Map keyed by the Agent Space name (`name_prefix` prepended); `module.devops_agent` is called with `for_each`                                                                                                                                                                                                                             |
+| `devops_agent.primary.agent_spaces.<name>.is_enabled`                             | `true`  | Create this Agent Space (also requires `devops_agent.primary.is_enabled`)                                                                                                                                                                                                                                                                |
+| `devops_agent.primary.agent_spaces.<name>.github_repositories`                    | `{}`    | GitHub repositories associated with this Agent Space; `github_registration` refers to a key of `devops_agent.primary.github_registrations`                                                                                                                                                                                               |
+| `devops_agent.primary.agent_spaces.<name>.mcp_servers`                            | `{}`    | MCP servers associated with the Agent Space (tool allowlist); `mcp_server_registration` refers to a key of `devops_agent.primary.mcp_server_registrations`, `tools` is the allowed tool names                                                                                                                                            |
+| `devops_agent.primary.agent_spaces.<name>.agents_md`                              | `{}`    | Agent instructions (AGENTS.md) injected into every session. Key: agent type (`GENERIC` = all agents; at most one per agent type); `content_file` is relative to `terraform/monitor`, e.g. `devops_agent/agents_md/generic.md` (Markdown only, max 25 KB)                                                                                 |
+| `devops_agent.primary.agent_spaces.<name>.skills`                                 | `{}`    | Skills (`content_file` is the `SKILL.md` of a skill directory, relative to `terraform/monitor`, e.g. `devops_agent/skills/github-issue-draft-pr/SKILL.md`; text files under `references/` and `assets/` in that directory are attached automatically)                                                                                    |
+| `devops_agent.primary.agent_spaces.<name>.custom_agents`                          | `{}`    | Custom agents with schedule triggers                                                                                                                                                                                                                                                                                                     |
+| `devops_agent.primary.agent_spaces.<name>.webhook.is_enabled`                     | `false` | Generic webhook (HMAC)                                                                                                                                                                                                                                                                                                                   |
+| `devops_agent.primary.agent_spaces.<name>.webhook.secret.recovery_window_in_days` | `7`     | Days before the secret is deleted after destroy (`0` or `7`-`30`)                                                                                                                                                                                                                                                                        |
+
+Names derived from the Agent Space name (map key):
+
+| Resource                             | Name                                                                            |
+| ------------------------------------ | ------------------------------------------------------------------------------- |
+| Agent Space                          | `<name_prefix><name>` (e.g. `base-devops-agent`)                                |
+| IAM roles                            | `<name_prefix><name>-agent-space-role`, `<name_prefix><name>-operator-app-role` |
+| Event channel registration (webhook) | `<name_prefix><name>-webhook`                                                   |
+| Webhook secret (Secrets Manager)     | `<name_prefix without "-">/<name>/webhook` (e.g. `base/devops-agent/webhook`)   |
+
+Renaming a key recreates the Agent Space and everything in it (the investigation history is lost).
+
+The webhook secret is returned only once when the webhook is created. Terraform creates the webhook with the AWS CLI and writes the credentials directly to the Secrets Manager secret, so the secret never enters the Terraform state or tfvars. After apply, use the outputs `devops_agent_webhook_urls` and `devops_agent_webhook_secret_arns` (maps keyed by the Agent Space name). The AWS CLI v2 and `jq` must be installed where Terraform runs. See [AWS DevOps Agent](../reference/features-monitor.md#aws-devops-agent) for the flow, lifecycle, and required permissions.
+
 ### use_control_tower
 
 Set to `true` to disable services conflicting with Control Tower. Automatically disables: CloudTrail, GuardDuty, Security Hub, Config, IAM password notifications.
@@ -175,18 +212,20 @@ Set to `true` to disable services conflicting with Control Tower. Automatically 
 
 ## Validation Checklist
 
-| Category    | Check                                                 |
-| ----------- | ----------------------------------------------------- |
-| Monitoring  | Enable appropriate services for your environment      |
-| Resources   | Lambda/RDS/ALB thresholds match workload patterns     |
-| Logs        | Log group names configured or auto-discovery enabled  |
-| Logs        | Exclusion patterns reduce noise                       |
-| Analytics   | Athena S3 bucket paths are correct                    |
-| Cost        | Unused services disabled                              |
-| Cost        | Synthetics Canary schedules cost-efficient            |
-| Slack       | Test notifications with a simple alert first          |
-| Integration | S3 permissions for log delivery confirmed             |
-| Integration | IAM permissions for all monitoring services validated |
+| Category    | Check                                                                   |
+| ----------- | ----------------------------------------------------------------------- |
+| Monitoring  | Enable appropriate services for your environment                        |
+| Resources   | Lambda/RDS/ALB thresholds match workload patterns                       |
+| Logs        | Log group names configured or auto-discovery enabled                    |
+| Logs        | Exclusion patterns reduce noise                                         |
+| Analytics   | Athena S3 bucket paths are correct                                      |
+| Cost        | Unused services disabled                                                |
+| Cost        | Synthetics Canary schedules cost-efficient                              |
+| Slack       | Test notifications with a simple alert first                            |
+| Integration | S3 permissions for log delivery confirmed                               |
+| Integration | IAM permissions for all monitoring services validated                   |
+| Integration | AWS CLI v2 and jq installed where Terraform runs (DevOps Agent webhook) |
+| Security    | DevOps Agent webhook secret read from Secrets Manager, not tfvars       |
 
 ## Related Documents
 

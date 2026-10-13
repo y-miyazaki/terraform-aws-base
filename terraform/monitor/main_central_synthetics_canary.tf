@@ -18,6 +18,7 @@ module "aws_synthetics_canary" {
   source = "../../modules/aws/synthetics_canary"
 
   is_enabled = each.value.is_enabled
+  region     = var.region.primary
 
   account_id = data.aws_caller_identity.current.account_id
   aws_iam_role = {
@@ -51,7 +52,6 @@ module "aws_synthetics_canary" {
     zip_file = local.synthetics_canary_zip_files[each.key]
     }
   )
-  region        = var.region.primary
   s3_bucket_arn = module.s3_application_log.s3_bucket_arn
 
   tags = var.tags

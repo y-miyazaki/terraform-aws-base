@@ -155,9 +155,9 @@ export XDG_CONFIG_CACHE="$HOME/.cache"
 # for lean-ctx
 #######################################
 # lean-ctx shell hook — begin
-if [ -f "/home/vscode/.config/lean-ctx/shell-hook.bash" ]; then
-. "/home/vscode/.config/lean-ctx/shell-hook.bash"
-fi
+# if [ -f "/home/vscode/.config/lean-ctx/shell-hook.bash" ]; then
+# . "/home/vscode/.config/lean-ctx/shell-hook.bash"
+# fi
 # lean-ctx shell hook — end
 
 # >>> lean-ctx agent aliases >>>

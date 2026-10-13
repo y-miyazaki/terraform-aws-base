@@ -26,5 +26,5 @@ variable "config_role_names" {
 variable "region" {
   type        = string
   description = "(Optional) AWS region for the analyzer check script. If not set, uses the provider's default region."
-  default     = ""
+  default     = null
 }

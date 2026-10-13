@@ -75,7 +75,8 @@ variable "aws_iam_policy" {
 
 variable "region" {
   type        = string
-  description = "(Required) The region name."
+  description = "(Optional) The region name. Defaults to provider region."
+  default     = null
 }
 
 variable "tags" {

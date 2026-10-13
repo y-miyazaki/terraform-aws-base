@@ -159,9 +159,6 @@ slack = {
     # cloudwatch_event_ec2 = {
     #   channel_id         = "C0XXXXXXXXX"
     # }
-    # common_lambda_kinesis_data_firehose_cloudwatch_logs_processor = {
-    #   channel_id         = "C0XXXXXXXXX"
-    # }
     # common_lambda_log = {
     #   channel_id         = "C0XXXXXXXXX"
     # }
@@ -196,6 +193,11 @@ kms = {
   monitor = {
     description             = "This key used for monitor default."
     deletion_window_in_days = 7
+    is_enabled              = true
+  }
+  monitor_devops_agent = {
+    description             = "This key used for AWS DevOps Agent Space."
+    deletion_window_in_days = 30
     is_enabled              = true
   }
 }
@@ -349,6 +351,17 @@ common_lambda = {
         # CUSTOMIZE: need to change TIMEZONE.
         # https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
         TIMEZONE = "Asia/Tokyo"
+        # CUSTOMIZE: AWS DevOps Agent generic webhook (of the Agent Space in the primary account) that the alert Lambda forwards to.
+        # Both values come from the primary account (prd):
+        #   URL         : terraform output -json devops_agent_webhook_urls | jq -r '."<name>"'
+        #   HMAC secret : aws secretsmanager get-secret-value --secret-id <name_prefix without "-">/<name>/webhook --query SecretString --output text | jq -r .webhook_secret
+        # The HMAC secret is kept in tfvars and in the Lambda environment, like SLACK_OAUTH_ACCESS_TOKEN. Never commit it to a public repository.
+        # Notes:
+        #   - The webhook exists only in the primary account (agent_spaces.<name>.webhook.is_enabled = true there). Apply it first.
+        #   - Re-creating the webhook (destroy, or renaming the Agent Space key) changes both values. Update every account afterwards.
+        #   - Set the same values for every Lambda that sends to the webhook (metric and log).
+        # DEVOPS_AGENT_WEBHOOK_URL = "https://example.invalid/webhook" # pragma: allowlist secret
+        # DEVOPS_AGENT_WEBHOOK_HMAC_SECRET = "xxxxxxxx" # pragma: allowlist secret
       }
     }
   }
@@ -371,6 +384,21 @@ common_lambda = {
       sqs_success_feedback_role_arn            = null
       sqs_success_feedback_sample_rate         = null
       sqs_failure_feedback_role_arn            = null
+    }
+    aws_lambda_function = {
+      environment = {
+        # CUSTOMIZE: AWS DevOps Agent generic webhook (of the Agent Space in the primary account) that the alert Lambda forwards to.
+        # Both values come from the primary account (prd):
+        #   URL         : terraform output -json devops_agent_webhook_urls | jq -r '."<name>"'
+        #   HMAC secret : aws secretsmanager get-secret-value --secret-id <name_prefix without "-">/<name>/webhook --query SecretString --output text | jq -r .webhook_secret
+        # The HMAC secret is kept in tfvars and in the Lambda environment, like SLACK_OAUTH_ACCESS_TOKEN. Never commit it to a public repository.
+        # Notes:
+        #   - The webhook exists only in the primary account (agent_spaces.<name>.webhook.is_enabled = true there). Apply it first.
+        #   - Re-creating the webhook (destroy, or renaming the Agent Space key) changes both values. Update every account afterwards.
+        #   - Set the same values for every Lambda that sends to the webhook (metric and log).
+        # DEVOPS_AGENT_WEBHOOK_URL = "https://example.invalid/webhook" # pragma: allowlist secret
+        # DEVOPS_AGENT_WEBHOOK_HMAC_SECRET = "xxxxxxxx" # pragma: allowlist secret
+      }
     }
   }
   step_functions_log = {
@@ -1310,6 +1338,13 @@ metric_resource_ecs_container_insights = {
     enabled_storage_write_bytes = false
     storage_write_bytes         = 1073741824
   }
+  # (Optional) Override thresholds for specific resources. Key is the TaskDefinitionFamily.
+  # threshold_override = {
+  #   "resource-name" = {
+  #     cpu_utilization = 95
+  #   }
+  # }
+  threshold_override = {}
   # CUSTOMIZE: need to set dimensions for monitor of ECS/ContainerInsights.
   # check ECS distribution name list command.
   # ex) scripts/terraform/ecs_container_sights.sh
@@ -2781,5 +2816,353 @@ eventbridge = {
     #     }
     #   }
     schedules = {}
+  }
+}
+
+#--------------------------------------------------------------
+# AWS DevOps Agent
+# AWS DevOps Agent investigates incidents across AWS resources and connected tools
+# (e.g. GitHub) and proposes root causes and mitigations.
+# This creates an Agent Space in region.primary with IAM roles, the operator web app,
+# a KMS customer managed key, the monitor account association, GitHub repository associations,
+# and custom agents with scheduled triggers.
+#
+# Agent Spaces:
+#   devops_agent.primary.agent_spaces is a map keyed by the Agent Space name; one Agent Space (module.devops_agent[<name>])
+#   is created per entry when devops_agent.primary.is_enabled and agent_spaces.<name>.is_enabled are true.
+#   Account-level settings shared by all Agent Spaces: kms (one key), primary.github_registrations.
+#
+# Prerequisite for GitHub:
+#   Register GitHub at the account level in the AWS DevOps Agent console (cannot be automated by Terraform).
+#   The registration is shared by all Agent Spaces in the AWS account; register once per AWS account.
+#   Console: AWS DevOps Agent > Capabilities > Pipeline > Add > GitHub > Connection type
+#
+#   A) App registration (recommended: supports webhooks, no token expiration)
+#     1. Connection type: App registration
+#     2. Select Organization and enter the GitHub organization name (must match exactly).
+#     3. GitHub App permissions: Read and write (default) or Read-only.
+#        Read-only cannot post PR comments, propose fixes, or trigger workflows.
+#     4. Verification method: Browser-based callback > Submit.
+#        (If the GitHub App is already installed on the organization, e.g. from another AWS account,
+#         "Verify with a personal access token" can be used instead. The token needs read:org
+#         (classic) or Organization Administration: Read-only (fine-grained), and its owner must be
+#         an organization owner. The token is used once and not stored.)
+#     5. Authorize the app on GitHub, then install it on the organization with
+#        "Only select repositories" and choose the repositories to connect.
+#     Requires: organization owner (permission to install GitHub Apps).
+#
+#   B) Personal access token (no webhooks: no real-time push/PR/deployment events)
+#     1. Create a token on GitHub (Settings > Developer settings > Personal access tokens).
+#        - Fine-grained (recommended):
+#            Resource owner: the GitHub organization
+#            Repository access: Only select repositories (the repositories to connect)
+#            Repository permissions: Contents: Read-only, Metadata: Read-only
+#            Organization permissions: Members: Read-only
+#        - Classic:
+#            Scopes: repo, read:org
+#            (repo grants read/write to every repository the owner can access; prefer fine-grained)
+#            If the organization uses SAML SSO, authorize the token for the organization (Configure SSO).
+#        Set an expiration that fits the security policy. The organization may restrict PAT usage
+#        (Organization settings > Personal access tokens).
+#     2. Connection type: Personal access token. Enter the token and the GitHub organization name > Submit.
+#        The token owner must be an active member of the organization.
+#     3. The token cannot be updated. Before it expires: create a new token, deregister GitHub,
+#        register again, then update github_registrations.<name>.service_id below (the service ID changes) and apply.
+#
+#   Each registration corresponds to one GitHub user, organization, or GitHub Enterprise Server instance;
+#   register each organization separately and add one entry per registration to github_registrations below.
+#   After registration, get the service ID and set github_registrations.<name>.service_id below.
+#   Repository ID: gh api repos/<owner>/<repo> --jq .id
+#   https://docs.aws.amazon.com/devopsagent/latest/userguide/connecting-to-cicd-pipelines-connecting-github.html
+#
+# Webhook (optional):
+#   A generic webhook lets external systems (e.g. monitoring tools) start investigations via HTTP POST
+#   signed with HMAC (x-amzn-event-signature / x-amzn-event-timestamp headers).
+#   How it works (agent_spaces.<name>.webhook.is_enabled = true), per Agent Space:
+#     1. Terraform registers the event channel service (account level, name: <name_prefix><name>-webhook)
+#        with the AWS CLI. CloudFormation/awscc cannot register it.
+#     2. Terraform creates the Secrets Manager secret <name_prefix without "-">/<name>/webhook (empty, e.g.
+#        base/devops-agent/webhook), encrypted with the
+#        DevOps Agent KMS key when kms["monitor_devops_agent"].is_enabled is true (otherwise the AWS managed key aws/secretsmanager).
+#     3. Terraform creates the webhook with the AWS CLI (associate-service). The webhook secret is returned only
+#        once at this point, so it is written directly to the secret above. awscc would discard it.
+#        The secret value never appears in the Terraform state, plan, outputs or logs.
+#   Outputs after apply:
+#     terraform output devops_agent_webhook_urls          # map: Agent Space name => POST target URL
+#     terraform output devops_agent_webhook_secret_arns   # map: Agent Space name => secret holding the credentials
+#   Secret value (JSON): webhook_id, webhook_secret (HMAC signing secret, or API key when webhook_type is apikey),
+#     webhook_type (hmac or apikey; the API does not let callers choose it, so check it after the first apply), webhook_url
+#     aws secretsmanager get-secret-value --secret-id <devops_agent_webhook_secret_arns[name]> --query SecretString --output text
+#     Grant senders (e.g. Lambda) secretsmanager:GetSecretValue on the secret (and kms:Decrypt on the key).
+#   Requirements where Terraform runs: aws CLI v2 with devops-agent, jq, and
+#     aidevops:RegisterService/DeregisterService/ListServices/AssociateService/DisassociateService/ListAssociations/
+#     ListWebhooks, secretsmanager:PutSecretValue (and kms:GenerateDataKey on the KMS key).
+#   Notes:
+#     - Do not put the webhook secret in tfvars. Terraform does not manage the secret version; do not edit it by hand.
+#     - Recreating the webhook (agent space / service / secret changes, or terraform apply -replace=
+#       'module.devops_agent["<name>"].terraform_data.webhook_association[0]') changes the URL and the secret, and the new
+#       credentials are written as a new secret version. Update the senders afterwards.
+#     - Rotating the webhook in the console keeps the URL but does NOT update the secret; prefer the -replace above,
+#       or put the rotated secret into the secret manually.
+#     - If the secret could not be stored, apply fails; run terraform apply again (the webhook is recreated).
+#     - agent_spaces.<name>.webhook.is_enabled = false (or destroy) removes the webhook, deregisters the event
+#       channel service, and schedules the secret deletion (webhook.secret.recovery_window_in_days).
+#   https://docs.aws.amazon.com/devopsagent/latest/userguide/configuring-integrations-and-knowledge-invoking-devops-agent-through-webhook.html
+#
+# Notes:
+#   - kms["monitor_devops_agent"].is_enabled cannot be changed after the Agent Space is created (forces a new Agent Space
+#     and the investigation history is lost). Decide before the first apply.
+#   - Triggers support schedules only (TIME_BASED). Expressions are evaluated in UTC.
+#
+# Supported regions: us-east-1, us-west-2, ap-southeast-2, ap-northeast-1, eu-central-1, eu-west-1
+# https://docs.aws.amazon.com/devopsagent/latest/userguide/connecting-to-cicd-pipelines-connecting-github.html
+#--------------------------------------------------------------
+devops_agent = {
+  # How this account takes part in AWS DevOps Agent. primary and secondary are independent; both can be enabled in one account
+  # (it hosts Agent Spaces that investigate itself and is also investigated by the Agent Space of another primary account).
+  #   primary   : hosts the Agent Spaces (primary.agent_spaces) and associates primary.secondary_accounts as source accounts.
+  #   secondary : creates only the read-only cross-account role (DevOpsAgentRole-SecondaryAccount) that trusts
+  #               secondary.primary_agent_space_arn in secondary.primary_account_id.
+  # Rollout (primary = prd, secondary = dev / qa / stg). Values that only exist after an apply are placeholders until then.
+  #   1) Before the first primary apply, register the account-level services in the primary account and replace the
+  #      placeholder service_id ("xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx") in the primary tfvars. IDs from another account do not work.
+  #        - primary.github_registrations.<name>.service_id    : register GitHub in the AWS DevOps Agent console (see "Prerequisite for GitHub" above), then
+  #          aws devops-agent list-services --region ap-northeast-1 --filter-service-type github --query 'services[].{id:serviceId,owner:additionalServiceDetails.github.owner}'
+  #        - primary.mcp_server_registrations.<name>.service_id : aws devops-agent register-service --service mcpserver ... (see mcp_server_registrations below)
+  #   2) Apply the primary account. If the source associations fail because the secondary role does not exist yet,
+  #      continue with 3) and 4), then apply the primary account again.
+  #   3) Read the values that the primary apply created (run in the primary account):
+  #        - Agent Space ARN : terraform output -json devops_agent_agent_space_arns | jq -r '."devops-agent"'
+  #        - Webhook URL     : terraform output -json devops_agent_webhook_urls | jq -r '."devops-agent"'
+  #        - HMAC secret     : aws secretsmanager get-secret-value --secret-id "$(terraform output -json devops_agent_webhook_secret_arns | jq -r '."devops-agent"')" --query SecretString --output text | jq -r .webhook_secret
+  #   4) In every secondary tfvars, replace secondary.primary_agent_space_arn (placeholder ".../agentspace/set-after-prd-apply") with the ARN from 3), and apply.
+  #   5) In every tfvars (primary and secondary), set DEVOPS_AGENT_WEBHOOK_URL and DEVOPS_AGENT_WEBHOOK_HMAC_SECRET from 3) in
+  #      metric.aws_lambda_function.environment and log.aws_lambda_function.environment, and apply.
+  #      Until then the alert Lambda functions in that account do not forward alarms to AWS DevOps Agent.
+  #   Re-creating the Agent Space (renaming its key, or changing kms["monitor_devops_agent"].is_enabled) changes the ARN: repeat 3) and 4).
+  #   Re-creating the webhook changes the URL and the HMAC secret: repeat 3) and 5).
+  primary = {
+    # CUSTOMIZE: need to set is_enabled to host the AWS DevOps Agent Spaces in this account (all Agent Spaces).
+    is_enabled = false
+    # (Optional) Secondary (source) accounts the Agent Space investigates. Key: arbitrary identifier.
+    # Add an account only after the secondary account has been applied (the cross-account role must exist).
+    #   ex)
+    #   secondary_accounts = {
+    #     dev = { account_id = "123456789012" }
+    #   }
+    secondary_accounts = {}
+    # GitHub registrations (account level, registered in the console; see "Prerequisite for GitHub" above).
+    # One registration per GitHub user, organization, or GitHub Enterprise Server instance.
+    # Key: arbitrary name referred to by agent_spaces.<name>.github_repositories[*].github_registration.
+    # check GitHub service ID / owner command.
+    # ex) aws devops-agent list-services --region ap-northeast-1 --filter-service-type github --query 'services[].{id:serviceId,owner:additionalServiceDetails.github.owner}'
+    #   ex)
+    #   github_registrations = {
+    #     "example-org" = {
+    #       service_id = "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+    #       owner      = "example-org"
+    #       owner_type = "organization"
+    #     }
+    #   }
+    github_registrations = {}
+    # Slack reply MCP server (reply to the alert thread as the Bot); attached to every Agent Space
+    #   ex)
+    #   mcp_slack_reply = {
+    #     is_enabled = true
+    #   }
+    mcp_slack_reply = {}
+    # MCP server registrations (account level). Register with the AWS CLI first; the credential never enters the Terraform state.
+    # Key: arbitrary name referred to by agent_spaces.<name>.mcp_servers[*].mcp_server_registration.
+    # Write access (Issue / branch / Draft PR) needs the GitHub MCP server; the native GitHub integration is read-only.
+    #   ex) read the PAT from Secrets Manager (do not type it in the shell history), then register:
+    #     aws devops-agent register-service --service mcpserver --region ap-northeast-1 \
+    #       --service-details '{"mcpserver":{"name":"GitHubMcpServer","endpoint":"https://api.githubcopilot.com/mcp/","authorizationConfig":{"apiKey":{"apiKeyName":"github-pat","apiKeyHeader":"Authorization","apiKeyValue":"Bearer <PAT>"}}}}' # pragma: allowlist secret
+    #     (PAT: fine-grained, only the target repositories; Issues / Contents / Pull requests: read and write.
+    #      Notion hosted MCP uses OAuth, so register it in the console (Capability Providers) and copy the service ID.)
+    #     aws devops-agent list-services --region ap-northeast-1 --query 'services[].{id:serviceId,type:serviceType}'
+    #   ex)
+    #   mcp_server_registrations = {
+    #     github = {
+    #       description = "GitHub MCP server (Issue / Draft PR)"
+    #       endpoint    = "https://api.githubcopilot.com/mcp/"
+    #       name        = "GitHubMcpServer"
+    #       service_id  = "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+    #     }
+    #     notion = {
+    #       description = "Notion MCP server (incident pages)"
+    #       endpoint    = "https://mcp.notion.com/mcp"
+    #       name        = "NotionMcpServer"
+    #       service_id  = "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+    #     }
+    #   }
+    mcp_server_registrations = {}
+    # Agent Spaces. Key: Agent Space name (name_prefix is prepended; 1-40 lowercase letters, digits or hyphens).
+    # Derived names: IAM roles <name_prefix><key>-agent-space-role / <name_prefix><key>-operator-app-role,
+    # webhook event channel <name_prefix><key>-webhook, webhook secret <name_prefix without "-">/<key>/webhook.
+    # Renaming a key recreates the Agent Space and everything in it (the investigation history is lost).
+    agent_spaces = {
+      "devops-agent" = {
+        # (Optional) Create this Agent Space (also requires devops_agent.primary.is_enabled).
+        is_enabled = true
+        # (Optional) Agent Space description.
+        description = "AWS DevOps Agent Space"
+        # (Optional) Allow elevated directed actions.
+        elevated_actions_enabled = false
+        # (Optional) Language used in agent responses (BCP 47). Responds in the input language when unset.
+        locale = "en-US"
+        # (Optional) Extra IAM statements for the Agent Space role on top of AIDevOpsAgentAccessPolicy. Never allow secretsmanager:GetSecretValue.
+        #   ex)
+        #   additional_policy_statements = [
+        #     {
+        #       sid       = "AllowReadLambdaFunctions"
+        #       actions   = ["lambda:GetFunction", "lambda:GetFunctionConfiguration"]
+        #       resources = ["arn:aws:lambda:ap-northeast-1:*:function:*"]
+        #     },
+        #   ]
+        additional_policy_statements = []
+        # (Optional) GitHub repositories to associate. github_registration: key of devops_agent.primary.github_registrations
+        # (the registration that can access the repository).
+        # check GitHub repository ID command.
+        # ex) gh api repos/<owner>/<repo> --jq .id
+        #   ex)
+        #   github_repositories = {
+        #     example = {
+        #       github_registration = "example-org"
+        #       repo_id   = "123456789"
+        #       repo_name = "example"
+        #     }
+        #   }
+        github_repositories = {}
+        # (Optional) MCP servers to associate (tool allowlist; unlisted tools are invisible to the agent).
+        # mcp_server_registration: key of devops_agent.primary.mcp_server_registrations. Do not allowlist merge / delete tools.
+        # Tool names follow the current GitHub MCP server (issue_write / issue_read; there is no create_issue). Notion tool names: verify with tools/list.
+        #   ex)
+        #   mcp_servers = {
+        #     github = {
+        #       mcp_server_registration = "github"
+        #       tools = [
+        #         "add_issue_comment", "create_branch", "create_or_update_file", "create_pull_request", "get_file_contents", "get_label",
+        #         "issue_read",
+        #         "issue_write", "list_branches", "list_issues", "pull_request_read", "push_files", "search_code",
+        #         "search_issues", "update_pull_request",
+        #       ]
+        #     }
+        #     notion = {
+        #       mcp_server_registration = "notion"
+        #       tools                   = ["notion-create-pages", "notion-fetch", "notion-search", "notion-update-page"]
+        #     }
+        #   }
+        mcp_servers = {}
+        # (Optional) Agent instructions (AGENTS.md) injected into every session. Key: agent type (GENERIC = all agents; at most one per agent type).
+        # Other agent types: CHAT, INCIDENT_TRIAGE, INCIDENT_RCA, INCIDENT_MITIGATION, INCIDENT_UI, PREVENTION, RELEASE_READINESS_REVIEW, RELEASE_TESTING.
+        # content_file is relative to terraform/monitor (Markdown only, no frontmatter, max 25 KB).
+        agents_md = {
+          GENERIC = {
+            content_file = "devops_agent/agents_md/generic.md"
+          }
+        }
+        # (Optional) Skills to attach to custom agents. content_file is relative to terraform/monitor.
+        #   ex)
+        #   skills = {
+        #     example_skill = {
+        #       name         = "example-skill"
+        #       description  = "When the agent should use this skill."
+        #       content_file = "devops_agent/skills/example-skill/SKILL.md"
+        #     }
+        #   }
+        skills = {}
+        # Issue / Draft PR agents (enable together with mcp_servers above; tool name prefix <MCP server name>_ is assumed, verify in the console).
+        #   ex)
+        #   custom_agents = {
+        #     github_issue_pr_agent = {
+        #       name               = "github-issue-pr-agent"
+        #       system_prompt_file = "devops_agent/agents/github_issue_pr_agent.md"
+        #       skills             = ["github_issue_draft_pr"]
+        #       tools = [
+        #         "use_aws", "query_cloudwatch_logs", "McpSlackReply_slack_reply_to_thread",
+        #         "GitHubMcpServer_add_issue_comment", "GitHubMcpServer_create_branch", "GitHubMcpServer_create_or_update_file",
+        #         "GitHubMcpServer_create_pull_request", "GitHubMcpServer_get_file_contents", "GitHubMcpServer_get_label",
+        #         "GitHubMcpServer_issue_write", "GitHubMcpServer_list_branches", "GitHubMcpServer_list_issues",
+        #         "GitHubMcpServer_search_code", "GitHubMcpServer_search_issues",
+        #       ]
+        #     }
+        #     notion_issue_pr_agent = {
+        #       name               = "notion-issue-pr-agent"
+        #       system_prompt_file = "devops_agent/agents/notion_issue_pr_agent.md"
+        #       skills             = ["notion_issue_draft_pr"]
+        #       tools = [
+        #         "use_aws", "query_cloudwatch_logs", "McpSlackReply_slack_reply_to_thread",
+        #         "NotionMcpServer_notion-create-pages", "NotionMcpServer_notion-search", "NotionMcpServer_notion-update-page",
+        #         "GitHubMcpServer_create_branch", "GitHubMcpServer_create_or_update_file", "GitHubMcpServer_create_pull_request",
+        #         "GitHubMcpServer_get_file_contents", "GitHubMcpServer_get_label", "GitHubMcpServer_issue_write", "GitHubMcpServer_list_branches",
+        #       ]
+        #     }
+        #     github_issue_pr_followup_agent = {
+        #       name               = "github-issue-pr-followup-agent"
+        #       system_prompt_file = "devops_agent/agents/github_issue_pr_followup_agent.md"
+        #       skills             = ["github_issue_pr_followup"]
+        #       tools = [
+        #         "use_aws", "query_cloudwatch_logs",
+        #         "GitHubMcpServer_add_issue_comment", "GitHubMcpServer_create_or_update_file", "GitHubMcpServer_get_file_contents", "GitHubMcpServer_issue_read",
+        #         "GitHubMcpServer_issue_write", "GitHubMcpServer_pull_request_read", "GitHubMcpServer_push_files", "GitHubMcpServer_search_code",
+        #         "GitHubMcpServer_search_issues", "GitHubMcpServer_update_pull_request",
+        #       ]
+        #       triggers = {
+        #         # Weekdays 09:00-19:00 JST, hourly
+        #         weekday_hourly = {
+        #           schedule_expression = "cron(0 0-10 ? * MON-FRI *)"
+        #           status              = "Active"
+        #         }
+        #       }
+        #     }
+        #   }
+        # (Optional) Custom agents and scheduled triggers. system_prompt_file is relative to terraform/monitor.
+        custom_agents = {
+          example_agent = {
+            name               = "example-agent"
+            system_prompt_file = "devops_agent/agents/example_agent.md"
+            tools              = ["use_aws"]
+            triggers = {
+              daily = {
+                schedule_expression = "rate(1 day)"
+                status              = "Inactive"
+              }
+            }
+          }
+        }
+        # (Optional) Generic webhook (HMAC). See "Webhook" above.
+        # The webhook credentials are written to the Secrets Manager secret by the AWS CLI (never to the Terraform state).
+        webhook = {
+          is_enabled = false
+          secret = {
+            # Days before the secret is deleted after destroy (0 or 7-30).
+            recovery_window_in_days = 7
+          }
+        }
+      }
+    }
+  }
+  secondary = {
+    # CUSTOMIZE: need to set is_enabled to let the Agent Space of the primary account investigate this account.
+    is_enabled = false
+    # (Optional) Extra IAM statements for the cross-account role (DevOpsAgentRole-SecondaryAccount) on top of
+    # AIDevOpsAgentAccessPolicy, for read actions the managed policy lacks (AccessDenied in the investigation). Never allow secretsmanager:GetSecretValue.
+    # The primary account uses primary.agent_spaces.<name>.additional_policy_statements instead.
+    #   ex)
+    #   additional_policy_statements = [
+    #     {
+    #       sid       = "AllowReadLambdaFunctions"
+    #       actions   = ["lambda:GetFunction", "lambda:GetFunctionConfiguration"]
+    #       resources = ["arn:aws:lambda:ap-northeast-1:*:function:*"]
+    #     },
+    #   ]
+    additional_policy_statements = []
+    # (Required when is_enabled) The primary account and the ARN of its Agent Space.
+    # check Agent Space ARN command (run in the primary account). ex) terraform output -json devops_agent_agent_space_arns
+    #   ex)
+    #   primary_account_id      = "123456789012"
+    #   primary_agent_space_arn = "arn:aws:aidevops:ap-northeast-1:123456789012:agentspace/xxxxxxxx"
+    primary_account_id      = "123456789012"
+    primary_agent_space_arn = "arn:aws:aidevops:ap-northeast-1:123456789012:agentspace/xxxxxxxx-xxxxxx-xxxxx-xxxxxxxxxxx"
   }
 }

@@ -5,6 +5,7 @@
 .claude/tmp/
 
 # AI tools with no project-specific configs (directories fully excluded)
+**/.headroom*
 .serena
 apm_modules/
 
@@ -77,3 +78,4 @@ modules/**/.terraform.lock.hcl
 !.vscode/cspell-project.txt
 !.vscode/mcp.json
 !.vscode/settings-example.json
+.worktrees/

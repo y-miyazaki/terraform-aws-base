@@ -36,6 +36,7 @@ No modules.
 | <a name="input_aws_iam_role"></a> [aws\_iam\_role](#input\_aws\_iam\_role) | (Optional) Provides an IAM role. | <pre>object(<br/>    {<br/>      # Description of the role.<br/>      description = optional(string)<br/>      # Friendly name of the role. If omitted, Terraform will assign a random, unique name. See IAM Identifiers for more information.<br/>      name = string<br/>      # Path to the role. See IAM Identifiers for more information.<br/>      path = optional(string)<br/>    }<br/>  )</pre> | <pre>{<br/>  "description": "IAM role for EKS ALB ingress controller.",<br/>  "name": "eks-alb-ingress-controller-role",<br/>  "path": "/"<br/>}</pre> | no |
 | <a name="input_cluster_identity_oidc_issuer_url"></a> [cluster\_identity\_oidc\_issuer\_url](#input\_cluster\_identity\_oidc\_issuer\_url) | (Required) Issuer URL for the OpenID Connect identity provider. | `string` | n/a | yes |
 | <a name="input_open_connect_provider_arn"></a> [open\_connect\_provider\_arn](#input\_open\_connect\_provider\_arn) | (Required) The ARN assigned by AWS for open connect provider. | `string` | n/a | yes |
+| <a name="input_region"></a> [region](#input\_region) | (Optional) AWS region. Accepted for a uniform module interface; this module manages only global resources (IAM), so the value is not used. | `string` | `null` | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | (Optional) Key-value mapping of tags for the IAM role | `map(any)` | `null` | no |
 
 ## Outputs

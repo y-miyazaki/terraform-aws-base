@@ -222,7 +222,8 @@ variable "account_id" {
 
 variable "region" {
   type        = string
-  description = "(Required) The region name."
+  description = "(Optional) The region name. Defaults to provider region."
+  default     = null
 }
 
 variable "cloudtrail_kms_master_key_id" {

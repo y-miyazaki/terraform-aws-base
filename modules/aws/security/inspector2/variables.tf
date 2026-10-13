@@ -3,7 +3,8 @@
 #--------------------------------------------------------------
 variable "region" {
   type        = string
-  description = "AWS region where Inspector2 will be enabled"
+  description = "AWS region where Inspector2 will be enabled. Defaults to provider region."
+  default     = null
 }
 
 variable "is_enabled" {

@@ -11,3 +11,9 @@ variable "bucket" {
   type        = string
   description = "(Required) The S3 bucket name."
 }
+
+variable "region" {
+  type        = string
+  description = "(Optional) AWS region. Defaults to provider region."
+  default     = null
+}

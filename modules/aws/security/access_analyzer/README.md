@@ -32,7 +32,7 @@ No modules.
 | ---- | ----------- | ---- | ------- | :------: |
 | <a name="input_analyzer_name"></a> [analyzer\_name](#input\_analyzer\_name) | (Required) Name of the Analyzer. | `string` | n/a | yes |
 | <a name="input_is_enabled"></a> [is\_enabled](#input\_is\_enabled) | (Optional) A boolean flag to enable/disable settings of Access Analyzer. Defaults true. | `bool` | `true` | no |
-| <a name="input_region"></a> [region](#input\_region) | (Optional) AWS region for the analyzer check script. If not set, uses the provider's default region. | `string` | `""` | no |
+| <a name="input_region"></a> [region](#input\_region) | (Optional) AWS region for the analyzer check script. If not set, uses the provider's default region. | `string` | `null` | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | (Optional) Key-value map of resource tags. | `map(any)` | `null` | no |
 | <a name="input_type"></a> [type](#input\_type) | (Optional) Type of Analyzer. Valid values are ACCOUNT or ORGANIZATION. Defaults to ACCOUNT. | `string` | `null` | no |
 

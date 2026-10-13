@@ -3,7 +3,8 @@
 #--------------------------------------------------------------
 variable "region" {
   type        = string
-  description = "(Required) AWS region for this GuardDuty detector. Enables multi-region deployments."
+  description = "(Optional) AWS region for this GuardDuty detector. Enables multi-region deployments. Defaults to provider region."
+  default     = null
 }
 
 variable "is_enabled" {

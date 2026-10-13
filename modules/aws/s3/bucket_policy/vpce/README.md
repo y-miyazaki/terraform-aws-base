@@ -30,7 +30,7 @@ No modules.
 | ---- | ----------- | ---- | ------- | :------: |
 | <a name="input_attach_bucket_policy"></a> [attach\_bucket\_policy](#input\_attach\_bucket\_policy) | (Optional) Controls if S3 bucket should have bucket policy attached (set to true to use value of policy as bucket policy). | `bool` | `false` | no |
 | <a name="input_bucket"></a> [bucket](#input\_bucket) | (Required) The S3 bucket name. | `string` | n/a | yes |
-| <a name="input_region"></a> [region](#input\_region) | (Optional) AWS region for the analyzer check script. If not set, uses the provider's default region. | `string` | `""` | no |
+| <a name="input_region"></a> [region](#input\_region) | (Optional) AWS region for the analyzer check script. If not set, uses the provider's default region. | `string` | `null` | no |
 | <a name="input_vpc_id"></a> [vpc\_id](#input\_vpc\_id) | (Required) The VPC ID. | `string` | n/a | yes |
 
 ## Outputs

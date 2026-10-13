@@ -3,7 +3,8 @@
 #--------------------------------------------------------------
 variable "region" {
   type        = string
-  description = "(Required) The region name, in the form com.amazonaws.region.service for AWS services."
+  description = "(Optional) The region name, in the form com.amazonaws.region.service for AWS services. Defaults to provider region."
+  default     = null
 }
 
 variable "vpc_id" {

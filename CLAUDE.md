@@ -34,28 +34,6 @@ To modify agent instructions or skills, edit the source at `.apm/packages/<name>
 
 Independent groups — run in any order. Within each group, execute sequentially.
 
-**Terraform** (run from repo root):
-
-```bash
-terraform fmt -check -recursive
-terraform validate
-tflint --recursive
-trivy config .
-```
-
-**Shell scripts**:
-
-```bash
-shellcheck **/*.sh
-shfmt -d **/*.sh
-```
-
-**Tests**:
-
-```bash
-bats test/bats/
-```
-
 ### CI/CD
 
 - CI: Reusable workflows from `y-miyazaki/config` repo (Terraform plan, lint, trivy scan)
@@ -74,6 +52,12 @@ bats test/bats/
 - **Secrets**: Never in code — use SSM Parameter Store or Secrets Manager
 - **File naming**: `main_<scope>_<feature>.tf` (e.g., `main_regional_guardduty.tf`)
 - **Notifications**: Follow SNS → Lambda → Slack pattern when adding alerts
+
+### tfvars Conventions
+
+- `terraform.example.tfvars` is the master. Every variable and comment written there MUST also be set in `terraform.{dev,qa,stg,prd}.tfvars`.
+- Comments are identical in all five files; only values may differ per environment. A `diff` between two tfvars files must show value differences only.
+- When adding or changing a variable or comment, update all five files in the same change. Never limit it to dev; set an explicit empty value (`[]`, `{}`) when an environment has nothing to set.
 
 ### File Structure Patterns
 

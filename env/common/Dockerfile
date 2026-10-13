@@ -1,7 +1,7 @@
 #--------------------------------------------------------------
 # base build image
 #--------------------------------------------------------------
-FROM mcr.microsoft.com/devcontainers/go:1.26@sha256:67b02c72818d3d9d11ef74936c627fcb71be11d2a451e1bb1966b900ddf0322f
+FROM mcr.microsoft.com/devcontainers/go:1.26@sha256:8b574a68147f10c022721891b5df98ea3adc7abb251806959f5cfc40e20e279b
 #--------------------------------------------------------------
 # ARG
 #--------------------------------------------------------------
@@ -11,7 +11,7 @@ ARG USER=vscode
 ARG WORKDIR=/workspace
 
 # version(base)
-ARG MISE_VERSION=v2026.9.1 # https://github.com/jdx/mise/releases
+ARG MISE_VERSION=v2026.10.1 # https://github.com/jdx/mise/releases
 
 #--------------------------------------------------------------
 # ENV
@@ -50,7 +50,7 @@ RUN rm -f /etc/apt/sources.list.d/yarn.list && \
 #--------------------------------------------------------------
 RUN apt-get update && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-    make openssl git tar curl zip jq groff gcc bison python3 python3-dev python3-pip fish shellcheck shfmt bats yamllint
+    make openssl git tar curl zip jq groff gcc bison python3 python3-dev python3-pip fish
 
 # Install mise to a system-wide path so remoteUser=vscode can always resolve it
 RUN curl -fsSL https://mise.run | MISE_VERSION=${MISE_VERSION} MISE_INSTALL_PATH=/usr/local/bin/mise sh && \

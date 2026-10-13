@@ -39,6 +39,7 @@ No modules.
 | <a name="input_group"></a> [group](#input\_group) | (Optional) Provides an IAM Group. | `any` | `{}` | no |
 | <a name="input_is_enabled"></a> [is\_enabled](#input\_is\_enabled) | (Optional) Whether to create IAM resources. Set to false to disable the entire module. | `bool` | `true` | no |
 | <a name="input_name_prefix"></a> [name\_prefix](#input\_name\_prefix) | (Optional) Prefix of policy name . | `string` | `""` | no |
+| <a name="input_region"></a> [region](#input\_region) | (Optional) AWS region. Accepted for a uniform module interface; this module manages only global resources (IAM), so the value is not used. | `string` | `null` | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | (Optional) A mapping of tags to assign to the resource. | `map(any)` | `null` | no |
 | <a name="input_user"></a> [user](#input\_user) | (Optional) Provides an IAM User. | <pre>map(object({<br/>    is_console_access = bool<br/>    is_access_key     = bool<br/>  }))</pre> | `{}` | no |
 
