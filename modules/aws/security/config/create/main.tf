@@ -83,7 +83,7 @@ resource "aws_config_configuration_recorder" "this" {
 #--------------------------------------------------------------
 module "s3" {
   source  = "terraform-aws-modules/s3-bucket/aws"
-  version = "5.16.1"
+  version = "5.16.2"
 
   create_bucket = local.is_s3_enabled
   region        = local.region

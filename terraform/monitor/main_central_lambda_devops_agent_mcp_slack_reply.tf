@@ -15,7 +15,7 @@ locals {
 
 module "aws_lambda_devops_agent_mcp_slack_reply" {
   source  = "terraform-aws-modules/lambda/aws"
-  version = "8.9.0"
+  version = "8.12.0"
 
   create = local.devops_agent_mcp_slack_reply_enabled
 
