@@ -27,15 +27,15 @@ module "aws_budgets_create" {
 resource "aws_scheduler_schedule" "budgets" {
   count = var.budgets.is_enabled ? 1 : 0
 
-  region = var.region.primary
+  region              = var.region.primary
+  description         = var.budgets.aws_eventbridge_schedule.description
+  name                = "${var.name_prefix}${var.budgets.aws_eventbridge_schedule.name}"
+  schedule_expression = var.budgets.aws_eventbridge_schedule.schedule_expression
+  state               = "ENABLED"
 
-  description = var.budgets.aws_eventbridge_schedule.description
-  name        = "${var.name_prefix}${var.budgets.aws_eventbridge_schedule.name}"
   flexible_time_window {
     mode = "OFF"
   }
-  schedule_expression = var.budgets.aws_eventbridge_schedule.schedule_expression
-  state               = "ENABLED"
   target {
     arn      = module.lambda_function_budgets.lambda_function_arn
     role_arn = module.aws_iam_role_eventbridge.arn
@@ -53,7 +53,7 @@ resource "aws_scheduler_schedule" "budgets" {
 # tfsec:ignore:aws-lambda-enable-tracing
 module "lambda_function_budgets" {
   source  = "terraform-aws-modules/lambda/aws"
-  version = "8.9.0"
+  version = "8.12.0"
 
   create = var.budgets.is_enabled
   region = var.region.primary

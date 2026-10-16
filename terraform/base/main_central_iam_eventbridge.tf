@@ -36,8 +36,8 @@ locals {
 module "aws_iam_role_eventbridge" {
   source = "../../modules/aws/iam/role/eventbridge"
 
-  aws_iam_role   = local.eventbridge_role.aws_iam_role
   aws_iam_policy = local.eventbridge_role.aws_iam_policy
+  aws_iam_role   = local.eventbridge_role.aws_iam_role
 
   tags = var.tags
 }

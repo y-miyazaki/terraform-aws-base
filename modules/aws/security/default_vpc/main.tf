@@ -13,8 +13,8 @@ locals {
 }
 
 data "aws_availability_zones" "this" {
-  state  = "available"
   region = local.region
+  state  = "available"
 }
 
 #--------------------------------------------------------------
@@ -70,11 +70,11 @@ resource "aws_default_network_acl" "this" {
   region                 = local.region
   default_network_acl_id = aws_default_vpc.this[0].default_network_acl_id
 
-  tags = var.tags
-
   lifecycle {
     ignore_changes = [subnet_ids]
   }
+
+  tags = var.tags
 }
 
 #--------------------------------------------------------------
@@ -97,8 +97,8 @@ resource "aws_default_subnet" "this" {
   count = local.is_active ? length(data.aws_availability_zones.this.names) : 0
 
   region                  = local.region
-  map_public_ip_on_launch = false
   availability_zone       = data.aws_availability_zones.this.names[count.index]
+  map_public_ip_on_launch = false
 
   tags = var.tags
 }
@@ -110,14 +110,14 @@ resource "aws_default_subnet" "this" {
 resource "aws_vpc_endpoint" "this" {
   count = local.is_active && var.is_enabled_vpc_end_point ? 1 : 0
 
-  region       = local.region
-  service_name = "com.amazonaws.${local.region}.ec2"
-  vpc_id       = aws_default_vpc.this[0].id
+  region = local.region
   #  auto_accept         = var.auto_accept
   #  policy              = var.policy
   private_dns_enabled = true
+  security_group_ids  = [aws_default_security_group.this[0].id]
+  service_name        = "com.amazonaws.${local.region}.ec2"
   # route_table_ids     = [aws_default_route_table.this[0].id]
-  subnet_ids         = aws_default_subnet.this[*].id
-  security_group_ids = [aws_default_security_group.this[0].id]
-  vpc_endpoint_type  = "Interface"
+  subnet_ids        = aws_default_subnet.this[*].id
+  vpc_endpoint_type = "Interface"
+  vpc_id            = aws_default_vpc.this[0].id
 }

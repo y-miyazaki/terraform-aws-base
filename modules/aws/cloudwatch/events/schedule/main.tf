@@ -30,13 +30,14 @@ resource "aws_cloudwatch_event_rule" "this" {
 #--------------------------------------------------------------
 resource "aws_cloudwatch_event_target" "this" {
   region     = local.region
-  rule       = aws_cloudwatch_event_rule.this.name
-  target_id  = try(var.aws_cloudwatch_event_target.target_id, null)
   arn        = try(var.aws_cloudwatch_event_target.arn, null)
   input      = try(var.aws_cloudwatch_event_target.input, null)
   input_path = try(var.aws_cloudwatch_event_target.input_path, null)
   # role_arn is used for ecs_target
-  role_arn = try(var.aws_cloudwatch_event_target.target_role_arn, null)
+  role_arn  = try(var.aws_cloudwatch_event_target.target_role_arn, null)
+  rule      = aws_cloudwatch_event_rule.this.name
+  target_id = try(var.aws_cloudwatch_event_target.target_id, null)
+
   dynamic "run_command_targets" {
     for_each = var.aws_cloudwatch_event_target.run_command_targets == null ? [] : var.aws_cloudwatch_event_target.run_command_targets
 

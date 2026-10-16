@@ -33,7 +33,7 @@ module "aws_sns_subscription_lambda_metric" {
 #--------------------------------------------------------------
 module "aws_lambda_create_lambda_metric" {
   source  = "terraform-aws-modules/lambda/aws"
-  version = "8.9.0"
+  version = "8.12.0"
 
   region = var.region.primary
 
@@ -65,7 +65,7 @@ module "aws_lambda_create_lambda_metric" {
     # Override SLACK_* with priority: override > defaults
     SLACK_OAUTH_ACCESS_TOKEN = coalesce(try(var.slack.override.common_lambda_metric.oauth_access_token, null), var.slack.oauth_access_token)
     SLACK_CHANNEL_ID         = coalesce(try(var.slack.override.common_lambda_metric.channel_id, null), var.slack.channel_id)
-  }, var.common_lambda.metric.aws_lambda_function.environment)
+  }, local.devops_agent_webhook_locale_environment, var.common_lambda.metric.aws_lambda_function.environment)
   function_name                 = "${var.name_prefix}cloudwatch-alarm-metric-to-sns-to-slack"
   handler                       = "cloudwatch_alarm_to_sns_to_slack"
   lambda_role                   = module.aws_iam_role_lambda.arn
@@ -124,7 +124,7 @@ module "aws_sns_subscription_lambda_log" {
 #--------------------------------------------------------------
 module "aws_lambda_create_lambda_log" {
   source  = "terraform-aws-modules/lambda/aws"
-  version = "8.9.0"
+  version = "8.12.0"
 
   region = var.region.primary
 
@@ -155,7 +155,7 @@ module "aws_lambda_create_lambda_log" {
     # Override SLACK_* with priority: override > defaults
     SLACK_OAUTH_ACCESS_TOKEN = coalesce(try(var.slack.override.common_lambda_log.oauth_access_token, null), var.slack.oauth_access_token)
     SLACK_CHANNEL_ID         = coalesce(try(var.slack.override.common_lambda_log.channel_id, null), var.slack.channel_id)
-  }, var.common_lambda.log.aws_lambda_function.environment)
+  }, local.devops_agent_webhook_locale_environment, var.common_lambda.log.aws_lambda_function.environment)
   function_name                 = "${var.name_prefix}cloudwatch-alarm-log-to-sns-to-slack"
   handler                       = "cloudwatch_alarm_to_sns_to_slack"
   lambda_role                   = module.aws_iam_role_lambda.arn
@@ -241,7 +241,7 @@ module "aws_sns_subscription_lambda_ses" {
 # tfsec:ignore:aws-lambda-enable-tracing
 module "aws_lambda_create_lambda_ses" {
   source  = "terraform-aws-modules/lambda/aws"
-  version = "8.9.0"
+  version = "8.12.0"
 
   region = var.region.primary
 
@@ -304,7 +304,7 @@ module "aws_lambda_create_lambda_ses" {
 #--------------------------------------------------------------
 module "aws_lambda_create_lambda_kinesis_data_firehose_cloudwatch_logs_processor" {
   source  = "terraform-aws-modules/lambda/aws"
-  version = "8.9.0"
+  version = "8.12.0"
 
   region = var.region.primary
 
@@ -361,7 +361,7 @@ module "aws_lambda_create_lambda_kinesis_data_firehose_cloudwatch_logs_processor
 #--------------------------------------------------------------
 module "aws_lambda_create_lambda_s3_notification_s3_object_created_for_athena" {
   source  = "terraform-aws-modules/lambda/aws"
-  version = "8.9.0"
+  version = "8.12.0"
 
   region = var.region.primary
 

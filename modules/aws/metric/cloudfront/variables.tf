@@ -16,80 +16,55 @@ variable "period" {
 variable "threshold" {
   type = object({
     # (Required) CacheHitRate threshold (unit=%)
-    enabled_cache_hit_rate = bool
-    cache_hit_rate         = number
+    cache_hit_rate = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # (Required) Error401Rate threshold (unit=%)
-    enabled_error_401_rate = bool
-    error_401_rate         = number
+    error_401_rate = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # (Required) Error403Rate threshold (unit=%)
-    enabled_error_403_rate = bool
-    error_403_rate         = number
+    error_403_rate = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # (Required) Error404Rate threshold (unit=%)
-    enabled_error_404_rate = bool
-    error_404_rate         = number
+    error_404_rate = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # (Required) Error502Rate threshold (unit=%)
-    enabled_error_502_rate = bool
-    error_502_rate         = number
+    error_502_rate = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # (Required) Error503Rate threshold (unit=%)
-    enabled_error_503_rate = bool
-    error_503_rate         = number
+    error_503_rate = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # (Required) Error504Rate threshold (unit=%)
-    enabled_error_504_rate = bool
-    error_504_rate         = number
+    error_504_rate = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # (Required) OriginLatency threshold (unit=Milliseconds)
-    enabled_origin_latency = bool
-    origin_latency         = number
-    }
-  )
+    origin_latency = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
+  })
   description = "(Optional) Set the threshold for each Metric in CloudFront."
   default = {
-    enabled_cache_hit_rate = true
-    cache_hit_rate         = 70
-    enabled_error_401_rate = true
-    error_401_rate         = 1
-    enabled_error_403_rate = false
-    error_403_rate         = 1
-    enabled_error_404_rate = true
-    error_404_rate         = 1
-    enabled_error_502_rate = true
-    error_502_rate         = 1
-    enabled_error_503_rate = true
-    error_503_rate         = 1
-    enabled_error_504_rate = true
-    error_504_rate         = 1
-    enabled_origin_latency = true
-    origin_latency         = 10000
+    cache_hit_rate = { enabled = true, value = 70 }
+    error_401_rate = { enabled = true, value = 1 }
+    error_403_rate = { enabled = false, value = 1 }
+    error_404_rate = { enabled = true, value = 1 }
+    error_502_rate = { enabled = true, value = 1 }
+    error_503_rate = { enabled = true, value = 1 }
+    error_504_rate = { enabled = true, value = 1 }
+    origin_latency = { enabled = true, value = 10000 }
   }
 }
 
 variable "threshold_override" {
   type = map(object({
-    # (Optional) CacheHitRate threshold (unit=%)
-    enabled_cache_hit_rate = optional(bool)
-    cache_hit_rate         = optional(number)
-    # (Optional) Error401Rate threshold (unit=%)
-    enabled_error_401_rate = optional(bool)
-    error_401_rate         = optional(number)
-    # (Optional) Error403Rate threshold (unit=%)
-    enabled_error_403_rate = optional(bool)
-    error_403_rate         = optional(number)
-    # (Optional) Error404Rate threshold (unit=%)
-    enabled_error_404_rate = optional(bool)
-    error_404_rate         = optional(number)
-    # (Optional) Error502Rate threshold (unit=%)
-    enabled_error_502_rate = optional(bool)
-    error_502_rate         = optional(number)
-    # (Optional) Error503Rate threshold (unit=%)
-    enabled_error_503_rate = optional(bool)
-    error_503_rate         = optional(number)
-    # (Optional) Error504Rate threshold (unit=%)
-    enabled_error_504_rate = optional(bool)
-    error_504_rate         = optional(number)
-    # (Optional) OriginLatency threshold (unit=Milliseconds)
-    enabled_origin_latency = optional(bool)
-    origin_latency         = optional(number)
+    # CacheHitRate threshold (unit=%)
+    cache_hit_rate = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # Error401Rate threshold (unit=%)
+    error_401_rate = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # Error403Rate threshold (unit=%)
+    error_403_rate = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # Error404Rate threshold (unit=%)
+    error_404_rate = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # Error502Rate threshold (unit=%)
+    error_502_rate = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # Error503Rate threshold (unit=%)
+    error_503_rate = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # Error504Rate threshold (unit=%)
+    error_504_rate = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # OriginLatency threshold (unit=Milliseconds)
+    origin_latency = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
   }))
-  description = "(Optional) Override thresholds for specific resources. Key is the DistributionId."
+  description = "(Optional) Override thresholds for specific resources. Key is the DistributionId. Each metric accepts enabled, value, datapoints_to_alarm and evaluation_periods."
   default     = {}
 }
 

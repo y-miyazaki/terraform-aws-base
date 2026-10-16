@@ -35,8 +35,8 @@ resource "aws_route_table_association" "this" {
   count = length(var.aws_subnet)
 
   region         = local.region
-  subnet_id      = element(aws_subnet.this[*].id, count.index)
   route_table_id = try(var.aws_route_table_association.route_table_id)
+  subnet_id      = element(aws_subnet.this[*].id, count.index)
 }
 
 #--------------------------------------------------------------
@@ -45,9 +45,10 @@ resource "aws_route_table_association" "this" {
 # tfsec:ignore:aws-ec2-no-public-egress-sgr
 resource "aws_security_group" "this" {
   region      = local.region
+  description = "Allow inbound/outbound traffic"
   name        = try(var.aws_security_group.name)
   vpc_id      = try(var.aws_subnet[0].vpc_id)
-  description = "Allow inbound/outbound traffic"
+
   ingress {
     description = "from VPC"
     from_port   = 0
@@ -63,12 +64,11 @@ resource "aws_security_group" "this" {
     #tfsec:ignore:AWS009
     cidr_blocks = ["0.0.0.0/0"]
   }
-
-  tags = var.tags
-
   lifecycle {
     create_before_destroy = true
   }
+
+  tags = var.tags
 }
 
 #--------------------------------------------------------------
@@ -101,6 +101,6 @@ resource "aws_iam_policy" "this" {
 # Attaches a Managed IAM Policy to an IAM role
 #--------------------------------------------------------------
 resource "aws_iam_role_policy_attachment" "this" {
-  role       = aws_iam_role.this.name
   policy_arn = aws_iam_policy.this.arn
+  role       = aws_iam_role.this.name
 }

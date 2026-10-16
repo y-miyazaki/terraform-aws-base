@@ -18,8 +18,8 @@ resource "aws_macie2_account" "this" {
   count = var.is_enabled ? 1 : 0
 
   region                       = local.region
-  status                       = var.status
   finding_publishing_frequency = var.finding_publishing_frequency
+  status                       = var.status
 }
 
 #--------------------------------------------------------------
@@ -29,13 +29,13 @@ resource "aws_macie2_classification_job" "this" {
   for_each = var.is_enabled ? { for job in var.classification_jobs : job.name => job } : {}
 
   region                     = local.region
-  job_type                   = each.value.job_type
-  name                       = each.value.name
+  custom_data_identifier_ids = try(each.value.custom_data_identifier_ids, null)
   description                = try(each.value.description, null)
-  sampling_percentage        = try(each.value.sampling_percentage, null)
   initial_run                = try(each.value.initial_run, null)
   job_status                 = try(each.value.job_status, null)
-  custom_data_identifier_ids = try(each.value.custom_data_identifier_ids, null)
+  job_type                   = each.value.job_type
+  name                       = each.value.name
+  sampling_percentage        = try(each.value.sampling_percentage, null)
 
   dynamic "s3_job_definition" {
     for_each = try([each.value.s3_job_definition], [])
@@ -187,7 +187,6 @@ resource "aws_macie2_classification_job" "this" {
       }
     }
   }
-
   dynamic "schedule_frequency" {
     for_each = try([each.value.schedule_frequency], [])
     content {
@@ -197,8 +196,7 @@ resource "aws_macie2_classification_job" "this" {
     }
   }
 
-  tags = try(each.value.tags, null)
-
+  tags       = try(each.value.tags, null)
   depends_on = [aws_macie2_account.this]
 }
 
@@ -209,9 +207,9 @@ resource "aws_macie2_findings_filter" "this" {
   for_each = var.is_enabled ? { for filter in var.findings_filters : filter.name => filter } : {}
 
   region      = local.region
-  name        = each.value.name
   action      = each.value.action
   description = try(each.value.description, null)
+  name        = each.value.name
   position    = try(each.value.position, null)
 
   finding_criteria {
@@ -230,7 +228,6 @@ resource "aws_macie2_findings_filter" "this" {
     }
   }
 
-  tags = try(each.value.tags, null)
-
+  tags       = try(each.value.tags, null)
   depends_on = [aws_macie2_account.this]
 }

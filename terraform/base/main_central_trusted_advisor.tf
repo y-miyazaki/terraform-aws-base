@@ -18,15 +18,15 @@
 resource "aws_scheduler_schedule" "trusted_advisor" {
   count = var.trusted_advisor.is_enabled ? 1 : 0
 
-  region = var.region.global
+  region              = var.region.global
+  description         = var.trusted_advisor.aws_eventbridge_schedule.description
+  name                = "${var.name_prefix}${var.trusted_advisor.aws_eventbridge_schedule.name}"
+  schedule_expression = var.trusted_advisor.aws_eventbridge_schedule.schedule_expression
+  state               = "ENABLED"
 
-  name        = "${var.name_prefix}${var.trusted_advisor.aws_eventbridge_schedule.name}"
-  description = var.trusted_advisor.aws_eventbridge_schedule.description
   flexible_time_window {
     mode = "OFF"
   }
-  schedule_expression = var.trusted_advisor.aws_eventbridge_schedule.schedule_expression
-  state               = "ENABLED"
   target {
     arn      = module.lambda_function_trusted_advisor.lambda_function_arn
     role_arn = module.aws_iam_role_eventbridge.arn
@@ -44,7 +44,7 @@ resource "aws_scheduler_schedule" "trusted_advisor" {
 # tfsec:ignore:aws-lambda-enable-tracing
 module "lambda_function_trusted_advisor" {
   source  = "terraform-aws-modules/lambda/aws"
-  version = "8.9.0"
+  version = "8.12.0"
 
   create = var.trusted_advisor.is_enabled
   region = var.region.global

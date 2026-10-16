@@ -16,75 +16,82 @@ variable "period" {
 variable "threshold" {
   type = object({
     # (Required) 2xx threshold (unit=Count)
-    enabled_2xx = bool
-    http_2xx    = number
+    http_2xx = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # (Required) 4xx threshold (unit=Count)
-    enabled_4xx = bool
-    http_4xx    = number
+    http_4xx = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # (Required) 5xx threshold (unit=Count)
-    enabled_5xx = bool
-    http_5xx    = number
+    http_5xx = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # (Required) Duration threshold (unit=Milliseconds)
-    enabled_duration = bool
-    duration         = number
+    duration = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # (Required) DurationDryRun threshold (unit=Milliseconds)
-    enabled_duration_dry_run = bool
-    duration_dry_run         = number
+    duration_dry_run = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # (Required) Failed threshold (unit=Count)
-    enabled_failed = bool
-    failed         = number
+    failed = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # (Required) FailedRequests threshold (unit=Count)
-    enabled_failed_requests = bool
-    failed_requests         = number
+    failed_requests = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # (Required) SuccessPercent threshold (unit=Percent)
-    enabled_success_percent = bool
-    success_percent         = number
+    success_percent = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # (Required) SuccessPercentDryRun threshold (unit=Percent)
-    enabled_success_percent_dry_run = bool
-    success_percent_dry_run         = number
+    success_percent_dry_run = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # (Required) SuccessPercentWithRetries threshold (unit=Percent)
-    enabled_success_percent_with_retries = bool
-    success_percent_with_retries         = number
+    success_percent_with_retries = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # (Required) VisualMonitoringSuccessPercent threshold (unit=Percent)
-    enabled_visual_monitoring_success_percent = bool
-    visual_monitoring_success_percent         = number
+    visual_monitoring_success_percent = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
   })
   description = "(Optional) Set the threshold for each Metric in Synthetics."
   default = {
     # (Required) 2xx threshold (unit=Count)
-    enabled_2xx = false
-    http_2xx    = 100
+    http_2xx = { enabled = false, value = 100 }
     # (Required) 4xx threshold (unit=Count)
-    enabled_4xx = true
-    http_4xx    = 1
+    http_4xx = { enabled = true, value = 1 }
     # (Required) 5xx threshold (unit=Count)
-    enabled_5xx = true
-    http_5xx    = 1
+    http_5xx = { enabled = true, value = 1 }
     # (Required) Duration threshold (unit=Milliseconds)
-    enabled_duration = true
-    duration         = 30000
+    duration = { enabled = true, value = 30000 }
     # (Required) DurationDryRun threshold (unit=Milliseconds)
-    enabled_duration_dry_run = false
-    duration_dry_run         = 30000
+    duration_dry_run = { enabled = false, value = 30000 }
     # (Required) Failed threshold (unit=Count)
-    enabled_failed = true
-    failed         = 1
+    failed = { enabled = true, value = 1 }
     # (Required) FailedRequests threshold (unit=Count)
-    enabled_failed_requests = false
-    failed_requests         = 1
+    failed_requests = { enabled = false, value = 1 }
     # (Required) SuccessPercent threshold (unit=Percent)
-    enabled_success_percent = true
-    success_percent         = 99
+    success_percent = { enabled = true, value = 99 }
     # (Required) SuccessPercentDryRun threshold (unit=Percent)
-    enabled_success_percent_dry_run = false
-    success_percent_dry_run         = 99
+    success_percent_dry_run = { enabled = false, value = 99 }
     # (Required) SuccessPercentWithRetries threshold (unit=Percent)
-    enabled_success_percent_with_retries = false
-    success_percent_with_retries         = 99
+    success_percent_with_retries = { enabled = false, value = 99 }
     # (Required) VisualMonitoringSuccessPercent threshold (unit=Percent)
-    enabled_visual_monitoring_success_percent = false
-    visual_monitoring_success_percent         = 99
+    visual_monitoring_success_percent = { enabled = false, value = 99 }
   }
+}
+
+variable "threshold_override" {
+  type = map(object({
+    # 2xx threshold (unit=Count)
+    http_2xx = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # 4xx threshold (unit=Count)
+    http_4xx = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # 5xx threshold (unit=Count)
+    http_5xx = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # Duration threshold (unit=Milliseconds)
+    duration = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # DurationDryRun threshold (unit=Milliseconds)
+    duration_dry_run = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # Failed threshold (unit=Count)
+    failed = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # FailedRequests threshold (unit=Count)
+    failed_requests = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # SuccessPercent threshold (unit=Percent)
+    success_percent = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # SuccessPercentDryRun threshold (unit=Percent)
+    success_percent_dry_run = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # SuccessPercentWithRetries threshold (unit=Percent)
+    success_percent_with_retries = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # VisualMonitoringSuccessPercent threshold (unit=Percent)
+    visual_monitoring_success_percent = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+  }))
+  description = "(Optional) Map of resource name to threshold overrides. Key is CanaryName (exact match), value contains optional threshold attributes to override. Each metric accepts enabled, value, datapoints_to_alarm and evaluation_periods."
+  default     = {}
 }
 
 variable "create_auto_dimensions" {

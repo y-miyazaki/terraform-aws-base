@@ -37,176 +37,115 @@ variable "period" {
 variable "threshold" {
   type = object({
     # AuroraReplicaLag threshold (unit=Milliseconds)
-    enabled_aurora_replica_lag = bool
-    aurora_replica_lag         = number
+    aurora_replica_lag = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # BufferCacheHitRatio threshold (unit=Percent)
-    enabled_buffer_cache_hit_ratio = bool
-    buffer_cache_hit_ratio         = number
+    buffer_cache_hit_ratio = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # CommitLatency threshold (unit=Milliseconds)
-    enabled_commit_latency = bool
-    commit_latency         = number
+    commit_latency = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # CPUCreditBalance threshold (unit=Count)
-    enabled_cpu_credit_balance = bool
-    cpu_credit_balance         = number
+    cpu_credit_balance = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # CPUUtilization threshold (unit=%)
-    enabled_cpu_utilization = bool
-    cpu_utilization         = number
+    cpu_utilization = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # DatabaseConnections threshold (unit=Count)
-    enabled_database_connections = bool
-    database_connections         = number
+    database_connections = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # Deadlocks threshold (unit=Count/Seconds)
-    enabled_deadlocks = bool
-    deadlocks         = number
+    deadlocks = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # DeleteLatency threshold (unit=Count)
-    enabled_delete_latency = bool
-    delete_latency         = number
+    delete_latency = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # DiskQueueDepth threshold (unit=Count)
-    enabled_disk_queue_depth = bool
-    disk_queue_depth         = number
+    disk_queue_depth = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # EngineUptime threshold (unit=Seconds)
-    enabled_engine_uptime = bool
-    engine_uptime         = number
+    engine_uptime = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # FreeLocalStorage threshold (unit=Bytes)
-    enabled_free_local_storage = bool
-    free_local_storage         = number
+    free_local_storage = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # FreeableMemory threshold (unit=Megabytes)
-    enabled_freeable_memory = bool
-    freeable_memory         = number
+    freeable_memory = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # NetworkReceiveThroughput threshold (unit=Bytes/Second)
-    enabled_network_receive_throughput = bool
-    network_receive_throughput         = number
+    network_receive_throughput = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # NetworkTransmitThroughput threshold (unit=Bytes/Second)
-    enabled_network_transmit_throughput = bool
-    network_transmit_throughput         = number
+    network_transmit_throughput = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # ReadIOPS threshold (unit=Count/Second)
-    enabled_read_iops = bool
-    read_iops         = number
+    read_iops = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # ReadLatency threshold (unit=Seconds)
-    enabled_read_latency = bool
-    read_latency         = number
+    read_latency = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # ReadThroughput threshold (unit=Bytes/Second)
-    enabled_read_throughput = bool
-    read_throughput         = number
+    read_throughput = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # WriteIOPS threshold (unit=Count/Second)
-    enabled_write_iops = bool
-    write_iops         = number
+    write_iops = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # WriteLatency threshold (unit=Seconds)
-    enabled_write_latency = bool
-    write_latency         = number
+    write_latency = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # WriteThroughput threshold (unit=Bytes/Second)
-    enabled_write_throughput = bool
-    write_throughput         = number
-    }
-  )
+    write_throughput = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
+  })
   description = "(Optional) Set the threshold for each Metric in RDS."
   default = {
-    enabled_aurora_replica_lag          = true
-    aurora_replica_lag                  = 1000
-    enabled_buffer_cache_hit_ratio      = true
-    buffer_cache_hit_ratio              = 95
-    enabled_commit_latency              = true
-    commit_latency                      = 10000
-    enabled_cpu_credit_balance          = true
-    cpu_credit_balance                  = 100
-    enabled_cpu_utilization             = true
-    cpu_utilization                     = 80
-    enabled_database_connections        = true
-    database_connections                = 100
-    enabled_deadlocks                   = true
-    deadlocks                           = 1
-    enabled_delete_latency              = true
-    delete_latency                      = 10
-    enabled_disk_queue_depth            = true
-    disk_queue_depth                    = 64
-    enabled_engine_uptime               = true
-    engine_uptime                       = 86400
-    enabled_free_local_storage          = true
-    free_local_storage                  = 1073741824 # 1GB
-    enabled_freeable_memory             = true
-    freeable_memory                     = 512
-    enabled_network_receive_throughput  = true
-    network_receive_throughput          = 104857600 # 100MB/s
-    enabled_network_transmit_throughput = true
-    network_transmit_throughput         = 104857600 # 100MB/s
-    enabled_read_iops                   = true
-    read_iops                           = 1000
-    enabled_read_latency                = true
-    read_latency                        = 10
-    enabled_read_throughput             = true
-    read_throughput                     = 104857600 # 100MB/s
-    enabled_write_iops                  = true
-    write_iops                          = 1000
-    enabled_write_latency               = true
-    write_latency                       = 10
-    enabled_write_throughput            = true
-    write_throughput                    = 104857600 # 100MB/s
+    aurora_replica_lag          = { enabled = true, value = 1000 }
+    buffer_cache_hit_ratio      = { enabled = true, value = 95 }
+    commit_latency              = { enabled = true, value = 10000 }
+    cpu_credit_balance          = { enabled = true, value = 100 }
+    cpu_utilization             = { enabled = true, value = 80 }
+    database_connections        = { enabled = true, value = 100 }
+    deadlocks                   = { enabled = true, value = 1 }
+    delete_latency              = { enabled = true, value = 10 }
+    disk_queue_depth            = { enabled = true, value = 64 }
+    engine_uptime               = { enabled = true, value = 86400 }
+    free_local_storage          = { enabled = true, value = 1073741824 } # 1GB
+    freeable_memory             = { enabled = true, value = 512 }
+    network_receive_throughput  = { enabled = true, value = 104857600 } # 100MB/s
+    network_transmit_throughput = { enabled = true, value = 104857600 } # 100MB/s
+    read_iops                   = { enabled = true, value = 1000 }
+    read_latency                = { enabled = true, value = 10 }
+    read_throughput             = { enabled = true, value = 104857600 } # 100MB/s
+    write_iops                  = { enabled = true, value = 1000 }
+    write_latency               = { enabled = true, value = 10 }
+    write_throughput            = { enabled = true, value = 104857600 } # 100MB/s
   }
 }
 
 variable "threshold_override" {
   type = map(object({
-    # (Optional) AuroraReplicaLag threshold (unit=Milliseconds)
-    enabled_aurora_replica_lag = optional(bool)
-    aurora_replica_lag         = optional(number)
-    # (Optional) BufferCacheHitRatio threshold (unit=Percent)
-    enabled_buffer_cache_hit_ratio = optional(bool)
-    buffer_cache_hit_ratio         = optional(number)
-    # (Optional) CommitLatency threshold (unit=Milliseconds)
-    enabled_commit_latency = optional(bool)
-    commit_latency         = optional(number)
-    # (Optional) CPUCreditBalance threshold (unit=Count)
-    enabled_cpu_credit_balance = optional(bool)
-    cpu_credit_balance         = optional(number)
-    # (Optional) CPUUtilization threshold (unit=%)
-    enabled_cpu_utilization = optional(bool)
-    cpu_utilization         = optional(number)
-    # (Optional) DatabaseConnections threshold (unit=Count)
-    enabled_database_connections = optional(bool)
-    database_connections         = optional(number)
-    # (Optional) Deadlocks threshold (unit=Count/Seconds)
-    enabled_deadlocks = optional(bool)
-    deadlocks         = optional(number)
-    # (Optional) DeleteLatency threshold (unit=Count)
-    enabled_delete_latency = optional(bool)
-    delete_latency         = optional(number)
-    # (Optional) DiskQueueDepth threshold (unit=Count)
-    enabled_disk_queue_depth = optional(bool)
-    disk_queue_depth         = optional(number)
-    # (Optional) EngineUptime threshold (unit=Seconds)
-    enabled_engine_uptime = optional(bool)
-    engine_uptime         = optional(number)
-    # (Optional) FreeLocalStorage threshold (unit=Bytes)
-    enabled_free_local_storage = optional(bool)
-    free_local_storage         = optional(number)
-    # (Optional) FreeableMemory threshold (unit=Megabytes)
-    enabled_freeable_memory = optional(bool)
-    freeable_memory         = optional(number)
-    # (Optional) NetworkReceiveThroughput threshold (unit=Bytes/Second)
-    enabled_network_receive_throughput = optional(bool)
-    network_receive_throughput         = optional(number)
-    # (Optional) NetworkTransmitThroughput threshold (unit=Bytes/Second)
-    enabled_network_transmit_throughput = optional(bool)
-    network_transmit_throughput         = optional(number)
-    # (Optional) ReadIOPS threshold (unit=Count/Second)
-    enabled_read_iops = optional(bool)
-    read_iops         = optional(number)
-    # (Optional) ReadLatency threshold (unit=Seconds)
-    enabled_read_latency = optional(bool)
-    read_latency         = optional(number)
-    # (Optional) ReadThroughput threshold (unit=Bytes/Second)
-    enabled_read_throughput = optional(bool)
-    read_throughput         = optional(number)
-    # (Optional) WriteIOPS threshold (unit=Count/Second)
-    enabled_write_iops = optional(bool)
-    write_iops         = optional(number)
-    # (Optional) WriteLatency threshold (unit=Seconds)
-    enabled_write_latency = optional(bool)
-    write_latency         = optional(number)
-    # (Optional) WriteThroughput threshold (unit=Bytes/Second)
-    enabled_write_throughput = optional(bool)
-    write_throughput         = optional(number)
+    # AuroraReplicaLag threshold (unit=Milliseconds)
+    aurora_replica_lag = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # BufferCacheHitRatio threshold (unit=Percent)
+    buffer_cache_hit_ratio = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # CommitLatency threshold (unit=Milliseconds)
+    commit_latency = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # CPUCreditBalance threshold (unit=Count)
+    cpu_credit_balance = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # CPUUtilization threshold (unit=%)
+    cpu_utilization = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # DatabaseConnections threshold (unit=Count)
+    database_connections = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # Deadlocks threshold (unit=Count/Seconds)
+    deadlocks = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # DeleteLatency threshold (unit=Count)
+    delete_latency = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # DiskQueueDepth threshold (unit=Count)
+    disk_queue_depth = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # EngineUptime threshold (unit=Seconds)
+    engine_uptime = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # FreeLocalStorage threshold (unit=Bytes)
+    free_local_storage = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # FreeableMemory threshold (unit=Megabytes)
+    freeable_memory = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # NetworkReceiveThroughput threshold (unit=Bytes/Second)
+    network_receive_throughput = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # NetworkTransmitThroughput threshold (unit=Bytes/Second)
+    network_transmit_throughput = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # ReadIOPS threshold (unit=Count/Second)
+    read_iops = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # ReadLatency threshold (unit=Seconds)
+    read_latency = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # ReadThroughput threshold (unit=Bytes/Second)
+    read_throughput = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # WriteIOPS threshold (unit=Count/Second)
+    write_iops = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # WriteLatency threshold (unit=Seconds)
+    write_latency = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # WriteThroughput threshold (unit=Bytes/Second)
+    write_throughput = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
   }))
-  description = "(Optional) Override thresholds for specific resources. Key is the DBClusterIdentifier."
+  description = "(Optional) Override thresholds for specific resources. Key is the DBClusterIdentifier. Each metric accepts enabled, value, datapoints_to_alarm and evaluation_periods."
   default     = {}
 }
 

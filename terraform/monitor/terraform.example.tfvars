@@ -636,6 +636,21 @@ metric_log_application = {
   # ex1) aws logs describe-log-groups --log-group-name-prefix hogehoge | jq -r ".logGroups[].logGroupName"
   # ex2) aws logs describe-log-groups --log-group-name-prefix /aws/ | jq -r '.logGroups[] | .logGroupName = "\"" + .logGroupName + "\"," | .logGroupName'
   log_group_names = []
+
+  # (Optional) Override settings for specific log groups. Key is the exact log group name.
+  # Each log group can override enabled / pattern / threshold / evaluation_periods / datapoints_to_alarm / period (all optional; unspecified values fall back to aws_cloudwatch_log_metric_filter and aws_cloudwatch_metric_alarm).
+  # enabled = false creates neither the metric filter nor the alarm for that log group. pattern replaces the whole filter pattern, so copy the common pattern and add the exclusions.
+  # log_group_override = {
+  #   "/aws/lambda/example" = {
+  #     enabled             = false
+  #     pattern             = "?ERROR"
+  #     threshold           = 5
+  #     evaluation_periods  = 1
+  #     datapoints_to_alarm = 1
+  #     period              = 60
+  #   }
+  # }
+  log_group_override = {}
   aws_cloudwatch_log_metric_filter = {
     name = "application-logs-error"
     # CUSTOMIZE: need to change pattern for application log.
@@ -940,8 +955,11 @@ metric_log_postgresql = {
     # [idle-in-transaction timeout]: application-level protection (db-long-lock-mitigation, B2C-11941). benign nightly batch event.
     # [connection to client lost]: client disconnected during nightly batch. benign.
     # [conflict with recovery]: reader WAL-apply conflict during recovery. benign and transient.
+    # [terminating background worker]: parallel-worker teardown after client-side timeout during the daily batch. benign nightly batch event.
+    # [could not map dynamic shared memory segment]: parallel-worker DSM teardown after a canceled parallel query (statement timeout). benign, reader-only.
+    # [could not attach to dynamic shared area]: parallel-worker DSA teardown after a canceled parallel query (statement timeout). benign, reader-only.
     pattern = <<PATTERN
-[( msg="*ERROR:*" || msg="*FATAL:*" ) && ( msg!="*FATAL:*the database system*" && msg!="*FATAL:*Can't handle storage runtime process crash*" && msg!="*ERROR:*canceling autovacuum task*" && msg!="*ERROR:*canceling statement due to statement timeout*" && msg!="*FATAL:*idle-in-transaction timeout*" && msg!="*FATAL:*connection to client lost*" && msg!="*conflict with recovery*")]
+[( msg="*ERROR:*" || msg="*FATAL:*" ) && ( msg!="*FATAL:*the database system*" && msg!="*FATAL:*Can't handle storage runtime process crash*" && msg!="*ERROR:*canceling autovacuum task*" && msg!="*ERROR:*canceling statement due to statement timeout*" && msg!="*FATAL:*idle-in-transaction timeout*" && msg!="*FATAL:*connection to client lost*" && msg!="*conflict with recovery*" && msg!="*FATAL:*terminating background worker*" && msg!="*ERROR:*could not map dynamic shared memory segment*" && msg!="*ERROR:*could not attach to dynamic shared area*")]
 PATTERN
     metric_transformation = [
       {
@@ -1064,22 +1082,24 @@ metric_resource_api_gateway = {
   # CUSTOMIZE: need to set threshold for API Gateway.
   threshold = {
     # (Required) 4XXerror threshold (unit=%)
-    enabled_error4XX = false
-    error4XX         = 20
+    error4XX = { enabled = false, value = 20 }
     # (Required) 5XXerror threshold (unit=%)
-    enabled_error5XX = true
-    error5XX         = 1
+    error5XX = { enabled = true, value = 1 }
     # (Required) IntegrationLatency threshold (unit=Milliseconds)
-    enabled_integration_latency = false
-    integration_latency         = 10000
+    integration_latency = { enabled = false, value = 10000 }
     # (Required) Latency threshold (unit=Milliseconds)
-    enabled_latency = true
-    latency         = 8000
+    latency = { enabled = true, value = 8000 }
   }
   # (Optional) Override thresholds for specific resources. Key is the ApiName.
+  # Each metric can override enabled / value / datapoints_to_alarm / evaluation_periods (all optional; unspecified values fall back to threshold).
   # threshold_override = {
   #   "resource-name" = {
-  #     enabled_some_metric = false
+  #     some_metric = {
+  #       enabled             = false
+  #       value               = 100
+  #       datapoints_to_alarm = 1
+  #       evaluation_periods  = 1
+  #     }
   #   }
   # }
   threshold_override = {}
@@ -1122,34 +1142,32 @@ metric_resource_cloudfront = {
   # CUSTOMIZE: need to set threshold for CloudFront.
   threshold = {
     # (Required) Error401Rate threshold (unit=%)
-    enabled_error_401_rate = false
-    error_401_rate         = 1
+    error_401_rate = { enabled = false, value = 1 }
     # (Required) Error403Rate threshold (unit=%)
-    enabled_error_403_rate = false
-    error_403_rate         = 1
+    error_403_rate = { enabled = false, value = 1 }
     # (Required) Error404Rate threshold (unit=%)
-    enabled_error_404_rate = false
-    error_404_rate         = 1
+    error_404_rate = { enabled = false, value = 1 }
     # (Required) Error502Rate threshold (unit=%)
-    enabled_error_502_rate = true
-    error_502_rate         = 1
+    error_502_rate = { enabled = true, value = 1 }
     # (Required) Error503Rate threshold (unit=%)
-    enabled_error_503_rate = true
-    error_503_rate         = 1
+    error_503_rate = { enabled = true, value = 1 }
     # (Required) Error504Rate threshold (unit=%)
-    enabled_error_504_rate = true
-    error_504_rate         = 1
+    error_504_rate = { enabled = true, value = 1 }
     # (Required) CacheHitRate threshold (unit=%)
-    enabled_cache_hit_rate = false
-    cache_hit_rate         = 70
+    cache_hit_rate = { enabled = false, value = 70 }
     # (Required) OriginLatency threshold (unit=Milliseconds)
-    enabled_origin_latency = true
-    origin_latency         = 10000
+    origin_latency = { enabled = true, value = 10000 }
   }
   # (Optional) Override thresholds for specific resources. Key is the DistributionId.
+  # Each metric can override enabled / value / datapoints_to_alarm / evaluation_periods (all optional; unspecified values fall back to threshold).
   # threshold_override = {
   #   "resource-name" = {
-  #     enabled_some_metric = false
+  #     some_metric = {
+  #       enabled             = false
+  #       value               = 100
+  #       datapoints_to_alarm = 1
+  #       evaluation_periods  = 1
+  #     }
   #   }
   # }
   threshold_override = {}
@@ -1194,94 +1212,72 @@ metric_resource_ec2 = {
   # CUSTOMIZE: need to set threshold for EC2.
   threshold = {
     # (Required) CPUCreditBalance threshold (unit=Count)
-    enabled_cpu_credit_balance = false
-    cpu_credit_balance         = 100
+    cpu_credit_balance = { enabled = false, value = 100 }
     # (Required) CPUCreditUsage threshold (unit=Count)
-    enabled_cpu_credit_usage = false
-    cpu_credit_usage         = 5
+    cpu_credit_usage = { enabled = false, value = 5 }
     # (Required) CPUUtilization threshold (unit=Percent)
-    enabled_cpu_utilization = true
-    cpu_utilization         = 80
+    cpu_utilization = { enabled = true, value = 80 }
     # (Required) CPUSurplusCreditBalance threshold (unit=Count)
-    enabled_cpu_surplus_credit_balance = false
-    cpu_surplus_credit_balance         = 5
+    cpu_surplus_credit_balance = { enabled = false, value = 5 }
     # (Required) CPUSurplusCreditsCharged threshold (unit=Count)
-    enabled_cpu_surplus_credits_charged = false
-    cpu_surplus_credits_charged         = 1
+    cpu_surplus_credits_charged = { enabled = false, value = 1 }
     # (Required) DedicatedHostCPUUtilization threshold (unit=Percent)
-    enabled_dedicated_host_cpu_utilization = false
-    dedicated_host_cpu_utilization         = 80
+    dedicated_host_cpu_utilization = { enabled = false, value = 80 }
     # (Required) DiskReadBytes threshold (unit=Bytes)
-    enabled_disk_read_bytes = false
-    disk_read_bytes         = 1073741824 # 1GB
+    disk_read_bytes = { enabled = false, value = 1073741824 } # 1GB
     # (Required) DiskReadOps threshold (unit=Count)
-    enabled_disk_read_ops = false
-    disk_read_ops         = 1000
+    disk_read_ops = { enabled = false, value = 1000 }
     # (Required) DiskWriteBytes threshold (unit=Bytes)
-    enabled_disk_write_bytes = false
-    disk_write_bytes         = 1073741824 # 1GB
+    disk_write_bytes = { enabled = false, value = 1073741824 } # 1GB
     # (Required) DiskWriteOps threshold (unit=Count)
-    enabled_disk_write_ops = false
-    disk_write_ops         = 1000
+    disk_write_ops = { enabled = false, value = 1000 }
     # (Required) EBSByteBalance% threshold (unit=Percent)
-    enabled_ebs_byte_balance_percent = false
-    ebs_byte_balance_percent         = 10
+    ebs_byte_balance_percent = { enabled = false, value = 10 }
     # (Required) EBSIOBalance% threshold (unit=Percent)
-    enabled_ebs_io_balance_percent = false
-    ebs_io_balance_percent         = 10
+    ebs_io_balance_percent = { enabled = false, value = 10 }
     # (Required) EBSReadBytes threshold (unit=Bytes)
-    enabled_ebs_read_bytes = false
-    ebs_read_bytes         = 1073741824 # 1GB
+    ebs_read_bytes = { enabled = false, value = 1073741824 } # 1GB
     # (Required) EBSReadOps threshold (unit=Count)
-    enabled_ebs_read_ops = false
-    ebs_read_ops         = 1000
+    ebs_read_ops = { enabled = false, value = 1000 }
     # (Required) EBSWriteBytes threshold (unit=Bytes)
-    enabled_ebs_write_bytes = false
-    ebs_write_bytes         = 1073741824 # 1GB
+    ebs_write_bytes = { enabled = false, value = 1073741824 } # 1GB
     # (Required) EBSWriteOps threshold (unit=Count)
-    enabled_ebs_write_ops = false
-    ebs_write_ops         = 1000
+    ebs_write_ops = { enabled = false, value = 1000 }
     # (Required) InstanceEBSIOPSExceededCheck threshold (unit=None)
-    enabled_instance_ebs_iops_exceeded_check = true
-    instance_ebs_iops_exceeded_check         = 1
+    instance_ebs_iops_exceeded_check = { enabled = true, value = 1 }
     # (Required) InstanceEBSThroughputExceededCheck threshold (unit=None)
-    enabled_instance_ebs_throughput_exceeded_check = true
-    instance_ebs_throughput_exceeded_check         = 1
+    instance_ebs_throughput_exceeded_check = { enabled = true, value = 1 }
     # (Required) MetadataNoToken threshold (unit=Count)
-    enabled_metadata_no_token = true
-    metadata_no_token         = 1
+    metadata_no_token = { enabled = true, value = 1 }
     # (Required) MetadataNoTokenRejected threshold (unit=Count)
-    enabled_metadata_no_token_rejected = true
-    metadata_no_token_rejected         = 1
+    metadata_no_token_rejected = { enabled = true, value = 1 }
     # (Required) NetworkIn threshold (unit=Bytes)
-    enabled_network_in = false
-    network_in         = 1073741824 # 1GB
+    network_in = { enabled = false, value = 1073741824 } # 1GB
     # (Required) NetworkOut threshold (unit=Bytes)
-    enabled_network_out = false
-    network_out         = 1073741824 # 1GB
+    network_out = { enabled = false, value = 1073741824 } # 1GB
     # (Required) NetworkPacketsIn threshold (unit=Count)
-    enabled_network_packets_in = false
-    network_packets_in         = 1000000
+    network_packets_in = { enabled = false, value = 1000000 }
     # (Required) NetworkPacketsOut threshold (unit=Count)
-    enabled_network_packets_out = false
-    network_packets_out         = 1000000
+    network_packets_out = { enabled = false, value = 1000000 }
     # (Required) StatusCheckFailed threshold (unit=Count)
-    enabled_status_check_failed = true
-    status_check_failed         = 1
+    status_check_failed = { enabled = true, value = 1 }
     # (Required) StatusCheckFailed_AttachedEBS threshold (unit=Count)
-    enabled_status_check_failed_attached_ebs = false
-    status_check_failed_attached_ebs         = 1
+    status_check_failed_attached_ebs = { enabled = false, value = 1 }
     # (Required) StatusCheckFailed_Instance threshold (unit=Count)
-    enabled_status_check_failed_instance = true
-    status_check_failed_instance         = 1
+    status_check_failed_instance = { enabled = true, value = 1 }
     # (Required) StatusCheckFailed_System threshold (unit=Count)
-    enabled_status_check_failed_system = true
-    status_check_failed_system         = 1
+    status_check_failed_system = { enabled = true, value = 1 }
   }
   # (Optional) Override thresholds for specific resources. Key is the InstanceId.
+  # Each metric can override enabled / value / datapoints_to_alarm / evaluation_periods (all optional; unspecified values fall back to threshold).
   # threshold_override = {
   #   "resource-name" = {
-  #     enabled_some_metric = false
+  #     some_metric = {
+  #       enabled             = false
+  #       value               = 100
+  #       datapoints_to_alarm = 1
+  #       evaluation_periods  = 1
+  #     }
   #   }
   # }
   threshold_override = {}
@@ -1323,28 +1319,28 @@ metric_resource_ecs_container_insights = {
   # CUSTOMIZE: need to set threshold for ECS/ContainerInsights.
   threshold = {
     # (Required) CpuUtilized/CpuReserved threshold (unit=Percent)
-    enabled_cpu_utilization = true
-    cpu_utilization         = 80
+    cpu_utilization = { enabled = true, value = 80 }
     # (Required) MemoryUtilized/MemoryReserved threshold (unit=Percent)
-    enabled_memory_utilization = true
-    memory_utilization         = 90
+    memory_utilization = { enabled = true, value = 90 }
     # (Optional) NetworkRxBytes threshold (unit=Bytes/Second)
-    enabled_network_rx_bytes = false
-    network_rx_bytes         = 104857600
+    network_rx_bytes = { enabled = false, value = 104857600 }
     # (Optional) NetworkTxBytes threshold (unit=Bytes/Second)
-    enabled_network_tx_bytes = false
-    network_tx_bytes         = 104857600
+    network_tx_bytes = { enabled = false, value = 104857600 }
     # (Optional) StorageReadBytes threshold (unit=Bytes)
-    enabled_storage_read_bytes = false
-    storage_read_bytes         = 1073741824
+    storage_read_bytes = { enabled = false, value = 1073741824 }
     # (Optional) StorageWriteBytes threshold (unit=Bytes)
-    enabled_storage_write_bytes = false
-    storage_write_bytes         = 1073741824
+    storage_write_bytes = { enabled = false, value = 1073741824 }
   }
   # (Optional) Override thresholds for specific resources. Key is the TaskDefinitionFamily.
+  # Each metric can override enabled / value / datapoints_to_alarm / evaluation_periods (all optional; unspecified values fall back to threshold).
   # threshold_override = {
   #   "resource-name" = {
-  #     cpu_utilization = 95
+  #     cpu_utilization = {
+  #       enabled             = false
+  #       value               = 100
+  #       datapoints_to_alarm = 1
+  #       evaluation_periods  = 1
+  #     }
   #   }
   # }
   threshold_override = {}
@@ -1381,97 +1377,74 @@ metric_resource_elasticache = {
   # CUSTOMIZE: need to set threshold for ElastiCache.
   threshold = {
     # (Required) AuthenticationFailures threshold (unit=Count)
-    enabled_authentication_failures = true
-    authentication_failures         = 1
+    authentication_failures = { enabled = true, value = 1 }
     # (Optional) BytesUsedForCache threshold (unit=Bytes)
-    enabled_bytes_used_for_cache = false
-    bytes_used_for_cache         = 10737418240
+    bytes_used_for_cache = { enabled = false, value = 10737418240 }
     # (Optional) CacheHits threshold (unit=Count)
-    enabled_cache_hits = false
-    cache_hits         = 1000000
+    cache_hits = { enabled = false, value = 1000000 }
     # (Required) CacheHitRate threshold (unit=Percent)
-    enabled_cache_hit_rate = true
-    cache_hit_rate         = 10
+    cache_hit_rate = { enabled = true, value = 10 }
     # (Optional) CacheMisses threshold (unit=Count)
-    enabled_cache_misses = true
-    cache_misses         = 1000
+    cache_misses = { enabled = true, value = 1000 }
     # (Required) CommandAuthorizationFailures threshold (unit=Count)
-    enabled_command_authorization_failures = true
-    command_authorization_failures         = 1
+    command_authorization_failures = { enabled = true, value = 1 }
     # (Optional) CPUUtilization threshold (unit=Percent)
-    enabled_cpu_utilization = false
-    cpu_utilization         = 90
+    cpu_utilization = { enabled = false, value = 90 }
     # (Required) CurrConnections threshold (unit=Count)
-    enabled_curr_connections = true
-    curr_connections         = 50
+    curr_connections = { enabled = true, value = 50 }
     # (Optional) CurrItems threshold (unit=Count)
-    enabled_curr_items = false
-    curr_items         = 1000000
+    curr_items = { enabled = false, value = 1000000 }
     # (Optional) DatabaseCapacityUsagePercentage threshold (unit=Percent)
-    enabled_database_capacity_usage_percentage = false
-    database_capacity_usage_percentage         = 80
+    database_capacity_usage_percentage = { enabled = false, value = 80 }
     # (Required) DatabaseMemoryUsagePercentage threshold (unit=Percent)
-    enabled_database_memory_usage_percentage = true
-    database_memory_usage_percentage         = 80
+    database_memory_usage_percentage = { enabled = true, value = 80 }
     # (Required) EngineCPUUtilization threshold (unit=Percent)
-    enabled_engine_cpu_utilization = true
-    engine_cpu_utilization         = 90
+    engine_cpu_utilization = { enabled = true, value = 90 }
     # (Required) ErrorCount threshold (unit=Count)
-    enabled_error_count = true
-    error_count         = 1
+    error_count = { enabled = true, value = 1 }
     # (Required) Evictions threshold (unit=Count)
-    enabled_evictions = true
-    evictions         = 100
+    evictions = { enabled = true, value = 100 }
     # (Optional) FreeableMemory threshold (unit=Bytes)
-    enabled_freeable_memory = false
-    freeable_memory         = 104857600
+    freeable_memory = { enabled = false, value = 104857600 }
     # (Required) IamAuthenticationExpirations threshold (unit=Count)
-    enabled_iam_authentication_expirations = true
-    iam_authentication_expirations         = 1
+    iam_authentication_expirations = { enabled = true, value = 1 }
     # (Required) IamAuthenticationThrottling threshold (unit=Count)
-    enabled_iam_authentication_throttling = true
-    iam_authentication_throttling         = 1
+    iam_authentication_throttling = { enabled = true, value = 1 }
     # (Required) KeyAuthorizationFailures threshold (unit=Count)
-    enabled_key_authorization_failures = true
-    key_authorization_failures         = 1
+    key_authorization_failures = { enabled = true, value = 1 }
     # (Required) MemoryFragmentationRatio threshold (unit=None)
-    enabled_memory_fragmentation_ratio = true
-    memory_fragmentation_ratio         = 5
+    memory_fragmentation_ratio = { enabled = true, value = 5 }
     # (Optional) NetworkBytesIn threshold (unit=Bytes)
-    enabled_network_bytes_in = false
-    network_bytes_in         = 104857600
+    network_bytes_in = { enabled = false, value = 104857600 }
     # (Optional) NetworkBytesOut threshold (unit=Bytes)
-    enabled_network_bytes_out = false
-    network_bytes_out         = 104857600
+    network_bytes_out = { enabled = false, value = 104857600 }
     # (Required) NewConnections threshold (unit=Count)
-    enabled_new_connections = true
-    new_connections         = 100
+    new_connections = { enabled = true, value = 100 }
     # (Required) ReplicationBytes threshold (unit=Bytes)
-    enabled_replication_bytes = true
-    replication_bytes         = 104857600 # 100MB
+    replication_bytes = { enabled = true, value = 104857600 } # 100MB
     # (Required) ReplicationLag threshold (unit=Seconds)
-    enabled_replication_lag = true
-    replication_lag         = 30
+    replication_lag = { enabled = true, value = 30 }
     # (Required) SaveInProgress threshold (unit=None)
-    enabled_save_in_progress = true
-    save_in_progress         = 1
+    save_in_progress = { enabled = true, value = 1 }
     # (Required) SuccessfulReadRequestLatency threshold (unit=Microseconds)
-    enabled_successful_read_request_latency = true
-    successful_read_request_latency         = 10000
+    successful_read_request_latency = { enabled = true, value = 10000 }
     # (Required) SuccessfulWriteRequestLatency threshold (unit=Microseconds)
-    enabled_successful_write_request_latency = true
-    successful_write_request_latency         = 10000
+    successful_write_request_latency = { enabled = true, value = 10000 }
     # (Required) SwapUsage threshold (unit=Bytes)
-    enabled_swap_usage = true
-    swap_usage         = 52428800 # 50MB
+    swap_usage = { enabled = true, value = 52428800 } # 50MB
     # (Required) TrafficManagementActive threshold (unit=None)
-    enabled_traffic_management_active = true
-    traffic_management_active         = 1
+    traffic_management_active = { enabled = true, value = 1 }
   }
   # (Optional) Override thresholds for specific resources. Key is the CacheClusterId.
+  # Each metric can override enabled / value / datapoints_to_alarm / evaluation_periods (all optional; unspecified values fall back to threshold).
   # threshold_override = {
   #   "resource-name" = {
-  #     enabled_some_metric = false
+  #     some_metric = {
+  #       enabled             = false
+  #       value               = 100
+  #       datapoints_to_alarm = 1
+  #       evaluation_periods  = 1
+  #     }
   #   }
   # }
   threshold_override = {}
@@ -1514,35 +1487,25 @@ metric_resource_elb = {
   # CUSTOMIZE: need to set threshold for ELB.
   threshold = {
     # (Required) ActiveConnectionCount threshold (unit=Count)
-    enabled_active_connection_count = true
-    active_connection_count         = 10000
+    active_connection_count = { enabled = true, value = 10000 }
     # (Required) ClientTLSNegotiationErrorCount threshold (unit=Count)
-    enabled_client_tls_negotiation_error_count = true
-    client_tls_negotiation_error_count         = 10
+    client_tls_negotiation_error_count = { enabled = true, value = 10 }
     # (Required) ConsumedLCUs threshold (unit=Count)
-    enabled_consumed_lcus = true
-    consumed_lcus         = 5
+    consumed_lcus = { enabled = true, value = 5 }
     # (Required) HTTPCode_4XX_Count	threshold (unit=Count)
-    enabled_httpcode_4xx_count = true
-    httpcode_4xx_count         = 1
+    httpcode_4xx_count = { enabled = true, value = 1 }
     # (Required) HTTPCode_5XX_Count	threshold (unit=Count)
-    enabled_httpcode_5xx_count = true
-    httpcode_5xx_count         = 1
+    httpcode_5xx_count = { enabled = true, value = 1 }
     # (Required) HTTPCode_ELB_4XX_Count	threshold (unit=Count)
-    enabled_httpcode_elb_4xx_count = true
-    httpcode_elb_4xx_count         = 1
+    httpcode_elb_4xx_count = { enabled = true, value = 1 }
     # (Required) HTTPCode_ELB_5XX_Count	threshold (unit=Count)
-    enabled_httpcode_elb_5xx_count = true
-    httpcode_elb_5xx_count         = 1
+    httpcode_elb_5xx_count = { enabled = true, value = 1 }
     # (Required) TargetResponseTime	threshold (unit=)
-    enabled_target_response_time = true
-    target_response_time         = 10
+    target_response_time = { enabled = true, value = 10 }
     # (Required) TargetTLSNegotiationErrorCount	threshold (unit=Count)
-    enabled_target_tls_negotiation_error_count = true
-    target_tls_negotiation_error_count         = 10
+    target_tls_negotiation_error_count = { enabled = true, value = 10 }
     # (Required) UnHealthyHostCount	threshold (unit=Count)
-    enabled_unhealthy_host_count = true
-    unhealthy_host_count         = 1
+    unhealthy_host_count = { enabled = true, value = 1 }
   }
   # (Optional) Override thresholds for specific resources. Key is the LoadBalancer.
   # NOTE: Metrics requiring TargetGroup dimension (enabled by default = false):
@@ -1550,9 +1513,15 @@ metric_resource_elb = {
   #   - mitigated_host_count, healthy_state_dns, healthy_state_routing, unhealthy_state_dns,
   #   - unhealthy_state_routing, unhealthy_routing_request_count, lambda_internal_error, lambda_user_error
   # To enable TargetGroup-specific metrics, create dimensions with TargetGroup parameter.
+  # Each metric can override enabled / value / datapoints_to_alarm / evaluation_periods (all optional; unspecified values fall back to threshold).
   # threshold_override = {
   #   "resource-name" = {
-  #     enabled_some_metric = false
+  #     some_metric = {
+  #       enabled             = false
+  #       value               = 100
+  #       datapoints_to_alarm = 1
+  #       evaluation_periods  = 1
+  #     }
   #   }
   # }
   threshold_override = {}
@@ -1597,25 +1566,26 @@ metric_resource_eventbridge_scheduler = {
   # CUSTOMIZE: need to set threshold for EventBridge Scheduler.
   threshold = {
     # InvocationAttemptCount threshold (unit=Count)
-    enabled_invocation_attempt_count = false
-    invocation_attempt_count         = 0
+    invocation_attempt_count = { enabled = false, value = 0 }
     # TargetErrorCount threshold (unit=Count)
-    enabled_target_error_count = true
-    target_error_count         = 1
+    target_error_count = { enabled = true, value = 1 }
     # TargetErrorThrottledCount threshold (unit=Count)
-    enabled_target_error_throttled_count = true
-    target_error_throttled_count         = 1
+    target_error_throttled_count = { enabled = true, value = 1 }
     # InvocationThrottleCount threshold (unit=Count)
-    enabled_invocation_throttle_count = true
-    invocation_throttle_count         = 1
+    invocation_throttle_count = { enabled = true, value = 1 }
     # InvocationDroppedCount threshold (unit=Count)
-    enabled_invocation_dropped_count = true
-    invocation_dropped_count         = 1
+    invocation_dropped_count = { enabled = true, value = 1 }
   }
   # (Optional) Per-schedule-group threshold overrides. Key is the schedule group name.
+  # Each metric can override enabled / value / datapoints_to_alarm / evaluation_periods (all optional; unspecified values fall back to threshold).
   # threshold_override = {
   #   "my-critical-group" = {
-  #     target_error_count = 0  # Stricter threshold for critical group
+  #     target_error_count = {
+  #       enabled             = false
+  #       value               = 100
+  #       datapoints_to_alarm = 1
+  #       evaluation_periods  = 1
+  #     }
   #   }
   # }
   threshold_override = {}
@@ -1658,70 +1628,56 @@ metric_resource_lambda = {
   # CUSTOMIZE: need to set threshold for Lambda.
   threshold = {
     # (Required) AsyncEventAge threshold (unit=Milliseconds)
-    enabled_async_event_age = true
-    async_event_age         = 30000
+    async_event_age = { enabled = true, value = 30000 }
     # (Required) AsyncEventsDropped threshold (unit=Count)
-    enabled_async_events_dropped = true
-    async_events_dropped         = 1
+    async_events_dropped = { enabled = true, value = 1 }
     # (Optional) AsyncEventsReceived threshold (unit=Count)
-    enabled_async_events_received = false
-    async_events_received         = 100000
+    async_events_received = { enabled = false, value = 100000 }
     # (Optional) ClaimedAccountConcurrency threshold (unit=Count)
-    enabled_claimed_account_concurrency = false
-    claimed_account_concurrency         = 900
+    claimed_account_concurrency = { enabled = false, value = 900 }
     # (Required) ConcurrentExecutions threshold (unit=Count)
-    enabled_concurrent_executions = true
-    concurrent_executions         = 500
+    concurrent_executions = { enabled = true, value = 500 }
     # (Required) DeadLetterErrors threshold (unit=Count)
-    enabled_dead_letter_errors = true
-    dead_letter_errors         = 1
+    dead_letter_errors = { enabled = true, value = 1 }
     # (Required) DestinationDeliveryFailures threshold (unit=Count)
-    enabled_destination_delivery_failures = true
-    destination_delivery_failures         = 1
+    destination_delivery_failures = { enabled = true, value = 1 }
     # (Required) Duration threshold (unit=Milliseconds)
-    enabled_duration = true
-    duration         = 10000
+    duration = { enabled = true, value = 10000 }
     # (Required) Errors threshold (unit=Count)
-    enabled_errors = true
-    errors         = 1
+    errors = { enabled = true, value = 1 }
     # (Required) Invocations threshold (unit=Count)
-    enabled_invocations = true
-    invocations         = 100000
+    invocations = { enabled = true, value = 100000 }
     # (Required) IteratorAge threshold (unit=Milliseconds)
-    enabled_iterator_age = true
-    iterator_age         = 60000
+    iterator_age = { enabled = true, value = 60000 }
     # (Optional) OffsetLag threshold (unit=Milliseconds)
-    enabled_offset_lag = false
-    offset_lag         = 100000
+    offset_lag = { enabled = false, value = 100000 }
     # (Optional) PostRuntimeExtensionsDuration threshold (unit=Milliseconds)
-    enabled_post_runtime_extensions_duration = false
-    post_runtime_extensions_duration         = 5000
+    post_runtime_extensions_duration = { enabled = false, value = 5000 }
     # (Optional) ProvisionedConcurrentExecutions threshold (unit=Count)
-    enabled_provisioned_concurrent_executions = false
-    provisioned_concurrent_executions         = 500
+    provisioned_concurrent_executions = { enabled = false, value = 500 }
     # (Optional) ProvisionedConcurrencyInvocations threshold (unit=Count)
-    enabled_provisioned_concurrency_invocations = false
-    provisioned_concurrency_invocations         = 10000
+    provisioned_concurrency_invocations = { enabled = false, value = 10000 }
     # (Optional) ProvisionedConcurrencySpilloverInvocations threshold (unit=Count)
-    enabled_provisioned_concurrency_spillover_invocations = false
-    provisioned_concurrency_spillover_invocations         = 100
+    provisioned_concurrency_spillover_invocations = { enabled = false, value = 100 }
     # (Optional) ProvisionedConcurrencyUtilization threshold (unit=Percent)
-    enabled_provisioned_concurrency_utilization = false
-    provisioned_concurrency_utilization         = 80
+    provisioned_concurrency_utilization = { enabled = false, value = 80 }
     # (Required) RecursiveInvocationsDropped threshold (unit=Count)
-    enabled_recursive_invocations_dropped = true
-    recursive_invocations_dropped         = 1
+    recursive_invocations_dropped = { enabled = true, value = 1 }
     # (Required) Throttles threshold (unit=Count)
-    enabled_throttles = true
-    throttles         = 1
+    throttles = { enabled = true, value = 1 }
     # (Optional) UnreservedConcurrentExecutions threshold (unit=Count)
-    enabled_unreserved_concurrent_executions = false
-    unreserved_concurrent_executions         = 800
+    unreserved_concurrent_executions = { enabled = false, value = 800 }
   }
   # (Optional) Override thresholds for specific resources. Key is the FunctionName.
+  # Each metric can override enabled / value / datapoints_to_alarm / evaluation_periods (all optional; unspecified values fall back to threshold).
   # threshold_override = {
   #   "resource-name" = {
-  #     enabled_some_metric = false
+  #     some_metric = {
+  #       enabled             = false
+  #       value               = 100
+  #       datapoints_to_alarm = 1
+  #       evaluation_periods  = 1
+  #     }
   #   }
   # }
   threshold_override = {}
@@ -1771,58 +1727,48 @@ metric_resource_nat_gateway = {
   # CUSTOMIZE: need to set threshold for NAT Gateway.
   threshold = {
     # (Optional) ActiveConnectionCount threshold (unit=Count)
-    enabled_active_connection_count = false
-    active_connection_count         = 10000
+    active_connection_count = { enabled = false, value = 10000 }
     # (Required) BytesOutToDestination threshold (unit=Bytes)
-    enabled_bytes_out_to_destination = true
-    bytes_out_to_destination         = 107374182400 # 100GB in bytes
+    bytes_out_to_destination = { enabled = true, value = 107374182400 } # 100GB in bytes
     # (Required) BytesInFromSource threshold (unit=Bytes)
-    enabled_bytes_in_from_source = true
-    bytes_in_from_source         = 107374182400 # 100GB in bytes
+    bytes_in_from_source = { enabled = true, value = 107374182400 } # 100GB in bytes
     # (Optional) BytesInFromDestination threshold (unit=Bytes)
-    enabled_bytes_in_from_destination = false
-    bytes_in_from_destination         = 107374182400 # 100GB in bytes
+    bytes_in_from_destination = { enabled = false, value = 107374182400 } # 100GB in bytes
     # (Optional) BytesOutToSource threshold (unit=Bytes)
-    enabled_bytes_out_to_source = false
-    bytes_out_to_source         = 107374182400 # 100GB in bytes
+    bytes_out_to_source = { enabled = false, value = 107374182400 } # 100GB in bytes
     # (Required) PacketsDropCount threshold (unit=Count)
-    enabled_packets_drop_count = true
-    packets_drop_count         = 100
+    packets_drop_count = { enabled = true, value = 100 }
     # (Required) ErrorPortAllocation threshold (unit=Count)
-    enabled_error_port_allocation = true
-    error_port_allocation         = 10
+    error_port_allocation = { enabled = true, value = 10 }
     # (Optional) IdleTimeoutCount threshold (unit=Count)
-    enabled_idle_timeout_count = false
-    idle_timeout_count         = 100
+    idle_timeout_count = { enabled = false, value = 100 }
     # (Optional) PacketsInFromDestination threshold (unit=Count)
-    enabled_packets_in_from_destination = false
-    packets_in_from_destination         = 10000000
+    packets_in_from_destination = { enabled = false, value = 10000000 }
     # (Optional) PacketsInFromSource threshold (unit=Count)
-    enabled_packets_in_from_source = false
-    packets_in_from_source         = 10000000
+    packets_in_from_source = { enabled = false, value = 10000000 }
     # (Optional) PacketsOutToDestination threshold (unit=Count)
-    enabled_packets_out_to_destination = false
-    packets_out_to_destination         = 10000000
+    packets_out_to_destination = { enabled = false, value = 10000000 }
     # (Optional) PacketsOutToSource threshold (unit=Count)
-    enabled_packets_out_to_source = false
-    packets_out_to_source         = 10000000
+    packets_out_to_source = { enabled = false, value = 10000000 }
     # (Required) ConnectionAttemptCount threshold (unit=Count)
-    enabled_connection_attempt_count = true
-    connection_attempt_count         = 10000
+    connection_attempt_count = { enabled = true, value = 10000 }
     # (Required) ConnectionEstablishedCount threshold (unit=Count)
-    enabled_connection_established_count = true
-    connection_established_count         = 10000
+    connection_established_count = { enabled = true, value = 10000 }
     # (Optional) PeakBytesPerSecond threshold (unit=Bytes/Second)
-    enabled_peak_bytes_per_second = false
-    peak_bytes_per_second         = 1073741824 # 1GB/sec
+    peak_bytes_per_second = { enabled = false, value = 1073741824 } # 1GB/sec
     # (Optional) PeakPacketsPerSecond threshold (unit=Count/Second)
-    enabled_peak_packets_per_second = false
-    peak_packets_per_second         = 100000
+    peak_packets_per_second = { enabled = false, value = 100000 }
   }
   # (Optional) Override thresholds for specific resources. Key is the NatGatewayId.
+  # Each metric can override enabled / value / datapoints_to_alarm / evaluation_periods (all optional; unspecified values fall back to threshold).
   # threshold_override = {
   #   "resource-name" = {
-  #     enabled_some_metric = false
+  #     some_metric = {
+  #       enabled             = false
+  #       value               = 100
+  #       datapoints_to_alarm = 1
+  #       evaluation_periods  = 1
+  #     }
   #   }
   # }
   threshold_override = {}
@@ -1874,70 +1820,56 @@ metric_resource_rds_cluster = {
   # CUSTOMIZE: need to set threshold for RDS.
   threshold = {
     # (Required) AuroraReplicaLag threshold (unit=Milliseconds)
-    enabled_aurora_replica_lag = true
-    aurora_replica_lag         = 1000
+    aurora_replica_lag = { enabled = true, value = 1000 }
     # (Required) BufferCacheHitRatio threshold (unit=Percent)
-    enabled_buffer_cache_hit_ratio = false
-    buffer_cache_hit_ratio         = 95
+    buffer_cache_hit_ratio = { enabled = false, value = 95 }
     # (Required) CommitLatency threshold (unit=Milliseconds)
-    enabled_commit_latency = true
-    commit_latency         = 10000
+    commit_latency = { enabled = true, value = 10000 }
     # (Required) CPUCreditBalance threshold (unit=Count)
-    enabled_cpu_credit_balance = true
-    cpu_credit_balance         = 100
+    cpu_credit_balance = { enabled = true, value = 100 }
     # (Required) CPUUtilization threshold (unit=%)
-    enabled_cpu_utilization = true
-    cpu_utilization         = 80
+    cpu_utilization = { enabled = true, value = 80 }
     # (Required) DatabaseConnections threshold (unit=Count)
-    enabled_database_connections = true
-    database_connections         = 100
+    database_connections = { enabled = true, value = 100 }
     # (Required) Deadlocks threshold (unit=Count)
-    enabled_deadlocks = true
-    deadlocks         = 1
+    deadlocks = { enabled = true, value = 1 }
     # (Required) DeleteLatency threshold (unit=Count)
-    enabled_delete_latency = true
-    delete_latency         = 10
+    delete_latency = { enabled = true, value = 10 }
     # (Required) DiskQueueDepth threshold (unit=Count)
-    enabled_disk_queue_depth = true
-    disk_queue_depth         = 64
+    disk_queue_depth = { enabled = true, value = 64 }
     # (Required) EngineUptime threshold (unit=Seconds)
-    enabled_engine_uptime = false
-    engine_uptime         = 86400
+    engine_uptime = { enabled = false, value = 86400 }
     # (Required) FreeLocalStorage threshold (unit=Bytes)
-    enabled_free_local_storage = false
-    free_local_storage         = 1073741824
+    free_local_storage = { enabled = false, value = 1073741824 }
     # (Required) FreeableMemory threshold (unit=Megabytes)
-    enabled_freeable_memory = true
-    freeable_memory         = 512
+    freeable_memory = { enabled = true, value = 512 }
     # (Required) NetworkReceiveThroughput threshold (unit=Bytes/Second)
-    enabled_network_receive_throughput = false
-    network_receive_throughput         = 1024 * 1024
+    network_receive_throughput = { enabled = false, value = 1024 * 1024 }
     # (Required) NetworkTransmitThroughput threshold (unit=Bytes/Second)
-    enabled_network_transmit_throughput = false
-    network_transmit_throughput         = 1024 * 1024
+    network_transmit_throughput = { enabled = false, value = 1024 * 1024 }
     # (Required) ReadIOPS threshold (unit=Count/Second)
-    enabled_read_iops = false
-    read_iops         = 1000
+    read_iops = { enabled = false, value = 1000 }
     # (Required) ReadLatency threshold (unit=Seconds)
-    enabled_read_latency = true
-    read_latency         = 10
+    read_latency = { enabled = true, value = 10 }
     # (Required) ReadThroughput threshold (unit=Bytes/Second)
-    enabled_read_throughput = false
-    read_throughput         = 1024 * 1024 * 1024
+    read_throughput = { enabled = false, value = 1024 * 1024 * 1024 }
     # (Required) WriteIOPS threshold (unit=Count/Second)
-    enabled_write_iops = false
-    write_iops         = 1000
+    write_iops = { enabled = false, value = 1000 }
     # (Required) WriteLatency threshold (unit=Seconds)
-    enabled_write_latency = true
-    write_latency         = 10
+    write_latency = { enabled = true, value = 10 }
     # (Required) WriteThroughput threshold (unit=Bytes/Second)
-    enabled_write_throughput = false
-    write_throughput         = 1024 * 1024 * 1024
+    write_throughput = { enabled = false, value = 1024 * 1024 * 1024 }
   }
   # (Optional) Override thresholds for specific resources. Key is the DBClusterIdentifier.
+  # Each metric can override enabled / value / datapoints_to_alarm / evaluation_periods (all optional; unspecified values fall back to threshold).
   # threshold_override = {
   #   "resource-name" = {
-  #     enabled_some_metric = false
+  #     some_metric = {
+  #       enabled             = false
+  #       value               = 100
+  #       datapoints_to_alarm = 1
+  #       evaluation_periods  = 1
+  #     }
   #   }
   # }
   threshold_override = {}
@@ -1984,103 +1916,78 @@ metric_resource_redshift = {
   # CUSTOMIZE: need to set threshold for Redshift.
   threshold = {
     # (Required) CommitQueueLength threshold (unit=Count)
-    enabled_commit_queue_length = true
-    commit_queue_length         = 100
+    commit_queue_length = { enabled = true, value = 100 }
     # (Required) ConcurrencyScalingActiveClusters threshold (unit=Count)
-    enabled_concurrency_scaling_active_clusters = true
-    concurrency_scaling_active_clusters         = 100
+    concurrency_scaling_active_clusters = { enabled = true, value = 100 }
     # (Required) ConcurrencyScalingSeconds threshold (unit=Seconds)
-    enabled_concurrency_scaling_seconds = true
-    concurrency_scaling_seconds         = 10
+    concurrency_scaling_seconds = { enabled = true, value = 10 }
     # (Required) CPUUtilization threshold (unit=Percent)
-    enabled_cpu_utilization = true
-    cpu_utilization         = 80
+    cpu_utilization = { enabled = true, value = 80 }
     # (Required) DatabaseConnections threshold (unit=Count)
-    enabled_database_connections = true
-    database_connections         = 100
+    database_connections = { enabled = true, value = 100 }
     # (Required) HealthStatus threshold (HEALTHY(1)/UNHEALTHY(0))
-    enabled_health_status = true
-    health_status         = 0
+    health_status = { enabled = true, value = 0 }
     # (Required) MaintenanceMode threshold (unit=Count(ON(1)/OFF(0)))
-    enabled_maintenance_mode = true
-    maintenance_mode         = 1
+    maintenance_mode = { enabled = true, value = 1 }
     # (Required) MaxConfiguredConcurrencyScalingClusters threshold (unit=Count)
-    enabled_max_configured_concurrency_scaling_clusters = true
-    max_configured_concurrency_scaling_clusters         = 5
+    max_configured_concurrency_scaling_clusters = { enabled = true, value = 5 }
     # (Required) NetworkReceiveThroughput threshold (unit=Bytes/Second)
-    enabled_network_receive_throughput = false
-    network_receive_throughput         = 1024 * 1024
+    network_receive_throughput = { enabled = false, value = 1024 * 1024 }
     # (Required) NetworkTransmitThroughput threshold (unit=Bytes/Second)
-    enabled_network_transmit_throughput = false
-    network_transmit_throughput         = 1024 * 1024
+    network_transmit_throughput = { enabled = false, value = 1024 * 1024 }
     # (Required) PercentageDiskSpaceUsed threshold (unit=Percent)
-    enabled_percentage_disk_space_used = true
-    percentage_disk_space_used         = 80
+    percentage_disk_space_used = { enabled = true, value = 80 }
     # (Required) QueriesCompletedPerSecond threshold (unit=Count/Second)
-    enabled_queries_completed_per_second = true
-    queries_completed_per_second         = 100
+    queries_completed_per_second = { enabled = true, value = 100 }
     # (Required) QueryDuration threshold (unit=Microseconds)
-    enabled_query_duration = true
-    query_duration         = 3000000
+    query_duration = { enabled = true, value = 3000000 }
     # (Required) QueryRuntimeBreakdown threshold (unit=Microseconds)
-    enabled_query_runtime_breakdown = true
-    query_runtime_breakdown         = 3000000
+    query_runtime_breakdown = { enabled = true, value = 3000000 }
     # (Required) ReadIOPS threshold (unit=Count/Second)
-    enabled_read_iops = false
-    read_iops         = 1000
+    read_iops = { enabled = false, value = 1000 }
     # (Required) ReadLatency threshold (unit=Seconds)
-    enabled_read_latency = true
-    read_latency         = 3
+    read_latency = { enabled = true, value = 3 }
     # (Required) ReadThroughput threshold (unit=Bytes)
-    enabled_read_throughput = false
-    read_throughput         = 1024 * 1024 * 1024
+    read_throughput = { enabled = false, value = 1024 * 1024 * 1024 }
     # (Required) RedshiftManagedStorageTotalCapacity threshold (unit=Megabytes)
-    enabled_redshift_managed_storage_total_capacity = false
-    redshift_managed_storage_total_capacity         = 1024 * 1024 * 500
+    redshift_managed_storage_total_capacity = { enabled = false, value = 1024 * 1024 * 500 }
     # (Required) TotalTableCount threshold (unit=Count)
-    enabled_total_table_count = false
-    total_table_count         = 50
+    total_table_count = { enabled = false, value = 50 }
     # (Required) WLMQueueLength threshold (unit=Count)
-    enabled_wlm_queue_length = true
-    wlm_queue_length         = 5
+    wlm_queue_length = { enabled = true, value = 5 }
     # (Required) WLMQueueWaitTime threshold (unit=Milliseconds)
-    enabled_wlm_queue_wait_time = true
-    wlm_queue_wait_time         = 100
+    wlm_queue_wait_time = { enabled = true, value = 100 }
     # (Required) WLMQueriesCompletedPerSecond threshold (unit=Count/Second)
-    enabled_wlm_queries_completed_per_second = false
-    wlm_queries_completed_per_second         = 100
+    wlm_queries_completed_per_second = { enabled = false, value = 100 }
     # (Required) WLMQueryDuration threshold (unit=Microseconds)
-    enabled_wlm_query_duration = true
-    wlm_query_duration         = 3000000
+    wlm_query_duration = { enabled = true, value = 3000000 }
     # (Required) WLMRunningQueries threshold (unit=Count)
-    enabled_wlm_running_queries = false
-    wlm_running_queries         = 10
+    wlm_running_queries = { enabled = false, value = 10 }
     # (Required) WriteIOPS threshold (unit=Count/Second)
-    enabled_write_iops = false
-    write_iops         = 1000
+    write_iops = { enabled = false, value = 1000 }
     # (Required) WriteLatency threshold (unit=Seconds)
-    enabled_write_latency = true
-    write_latency         = 3
+    write_latency = { enabled = true, value = 3 }
     # (Required) WriteThroughput threshold (unit=Bytes)
-    enabled_write_throughput = false
-    write_throughput         = 1024 * 1024 * 1024
+    write_throughput = { enabled = false, value = 1024 * 1024 * 1024 }
     # (Required) SchemaQuota threshold (unit=Megabytes)
-    enabled_schema_quota = false
-    schema_quota         = 1024
+    schema_quota = { enabled = false, value = 1024 }
     # (Required) NumExceededSchemaQuotas threshold (unit=Count)
-    enabled_num_exceeded_schema_quotas = true
-    num_exceeded_schema_quotas         = 0
+    num_exceeded_schema_quotas = { enabled = true, value = 0 }
     # (Required) StorageUsed threshold (unit=Megabytes)
-    enabled_storage_used = false
-    storage_used         = 1024
+    storage_used = { enabled = false, value = 1024 }
     # (Required) PercentageQuotaUsed threshold (unit=Percent)
-    enabled_percentage_quota_used = false
-    percentage_quota_used         = 1024
+    percentage_quota_used = { enabled = false, value = 1024 }
   }
   # (Optional) Override thresholds for specific resources. Key is the ClusterIdentifier.
+  # Each metric can override enabled / value / datapoints_to_alarm / evaluation_periods (all optional; unspecified values fall back to threshold).
   # threshold_override = {
   #   "resource-name" = {
-  #     enabled_some_metric = false
+  #     some_metric = {
+  #       enabled             = false
+  #       value               = 100
+  #       datapoints_to_alarm = 1
+  #       evaluation_periods  = 1
+  #     }
   #   }
   # }
   threshold_override = {}
@@ -2123,28 +2030,34 @@ metric_resource_ses = {
   # CUSTOMIZE: need to set threshold for SES.
   threshold = {
     # (Optional) Bounce threshold (unit=Count)
-    enabled_bounce = false
-    bounce         = 100
+    bounce = { enabled = false, value = 100 }
     # (Optional) Complaint threshold (unit=Count)
-    enabled_complaint = false
-    complaint         = 10
+    complaint = { enabled = false, value = 10 }
     # (Optional) Delivery threshold (unit=Count)
-    enabled_delivery = false
-    delivery         = 100000
+    delivery = { enabled = false, value = 100000 }
     # (Optional) Reject threshold (unit=Count)
-    enabled_reject = false
-    reject         = 10
+    reject = { enabled = false, value = 10 }
     # Reputation.BounceRate threshold (unit=Percent)
-    enabled_reputation_bouncerate = true
-    reputation_bouncerate         = 5
+    reputation_bouncerate = { enabled = true, value = 5 }
     # Reputation.ComplaintRate threshold (unit=Percent)
-    enabled_reputation_complaintrate = true
-    reputation_complaintrate         = 0.1
+    reputation_complaintrate = { enabled = true, value = 0.1 }
     # (Optional) Send threshold (unit=Count)
-    enabled_send = false
-    send         = 100000
+    send = { enabled = false, value = 100000 }
   }
-  dimensions = []
+  # (Optional) thresholds specific resources. Key is ConfigurationSetName ("default" when dimensions is empty).
+  # Each metric can override enabled / value / datapoints_to_alarm / evaluation_periods (all optional; unspecified values fall back to threshold).
+  # threshold_override = {
+  #   "resource-name" = {
+  #     some_metric = {
+  #       enabled             = false
+  #       value               = 100
+  #       datapoints_to_alarm = 1
+  #       evaluation_periods  = 1
+  #     }
+  #   }
+  # }
+  threshold_override = {}
+  dimensions         = []
 }
 
 #--------------------------------------------------------------
@@ -2163,46 +2076,40 @@ metric_resource_sns = {
   # CUSTOMIZE: need to set threshold for SNS.
   threshold = {
     # (Required) NumberOfMessagesPublished threshold (unit=Count)
-    enabled_number_of_messages_published = false
-    number_of_messages_published         = 1000
+    number_of_messages_published = { enabled = false, value = 1000 }
     # (Required) NumberOfNotificationsDelivered threshold (unit=Count)
-    enabled_number_of_notifications_delivered = false
-    number_of_notifications_delivered         = 1000
+    number_of_notifications_delivered = { enabled = false, value = 1000 }
     # (Required) NumberOfNotificationsFailed threshold (unit=Count)
-    enabled_number_of_notifications_failed = true
-    number_of_notifications_failed         = 1
+    number_of_notifications_failed = { enabled = true, value = 1 }
     # (Required) NumberOfNotificationsFailedToRedriveToDlq threshold (unit=Count)
-    enabled_number_of_notifications_failed_to_redrive_to_dlq = true
-    number_of_notifications_failed_to_redrive_to_dlq         = 1
+    number_of_notifications_failed_to_redrive_to_dlq = { enabled = true, value = 1 }
     # (Required) NumberOfNotificationsFilteredOut threshold (unit=Count)
-    enabled_number_of_notifications_filtered_out = false
-    number_of_notifications_filtered_out         = 100
+    number_of_notifications_filtered_out = { enabled = false, value = 100 }
     # (Required) NumberOfNotificationsFilteredOut-InvalidAttributes threshold (unit=Count)
-    enabled_number_of_notifications_filtered_out_invalid_attributes = false
-    number_of_notifications_filtered_out_invalid_attributes         = 1
+    number_of_notifications_filtered_out_invalid_attributes = { enabled = false, value = 1 }
     # (Required) NumberOfNotificationsFilteredOut-InvalidMessageBody threshold (unit=Count)
-    enabled_number_of_notifications_filtered_out_invalid_message_body = false
-    number_of_notifications_filtered_out_invalid_message_body         = 1
+    number_of_notifications_filtered_out_invalid_message_body = { enabled = false, value = 1 }
     # (Required) NumberOfNotificationsFilteredOut-MessageAttributes threshold (unit=Count)
-    enabled_number_of_notifications_filtered_out_message_attributes = false
-    number_of_notifications_filtered_out_message_attributes         = 100
+    number_of_notifications_filtered_out_message_attributes = { enabled = false, value = 100 }
     # (Required) NumberOfNotificationsFilteredOut-MessageBody threshold (unit=Count)
-    enabled_number_of_notifications_filtered_out_message_body = false
-    number_of_notifications_filtered_out_message_body         = 100
+    number_of_notifications_filtered_out_message_body = { enabled = false, value = 100 }
     # (Required) NumberOfNotificationsFilteredOut-NoMessageAttributes threshold (unit=Count)
-    enabled_number_of_notifications_filtered_out_no_message_attributes = false
-    number_of_notifications_filtered_out_no_message_attributes         = 100
+    number_of_notifications_filtered_out_no_message_attributes = { enabled = false, value = 100 }
     # (Required) NumberOfNotificationsRedrivenToDlq threshold (unit=Count)
-    enabled_number_of_notifications_redriven_to_dlq = false
-    number_of_notifications_redriven_to_dlq         = 10
+    number_of_notifications_redriven_to_dlq = { enabled = false, value = 10 }
     # (Required) PublishSize threshold (unit=Bytes)
-    enabled_publish_size = false
-    publish_size         = 262144
+    publish_size = { enabled = false, value = 262144 }
   }
   # (Optional) Override thresholds for specific resources. Key is the TopicName.
+  # Each metric can override enabled / value / datapoints_to_alarm / evaluation_periods (all optional; unspecified values fall back to threshold).
   # threshold_override = {
   #   "resource-name" = {
-  #     enabled_some_metric = false
+  #     some_metric = {
+  #       enabled             = false
+  #       value               = 100
+  #       datapoints_to_alarm = 1
+  #       evaluation_periods  = 1
+  #     }
   #   }
   # }
   threshold_override = {}
@@ -2241,58 +2148,48 @@ metric_resource_sqs = {
   # CUSTOMIZE: need to set threshold for SQS.
   threshold = {
     # (Required) ApproximateAgeOfOldestMessage threshold (unit=Seconds)
-    enabled_approximate_age_of_oldest_message = true
-    approximate_age_of_oldest_message         = 3600
+    approximate_age_of_oldest_message = { enabled = true, value = 3600 }
     # (Required) ApproximateAgeOfOldestMessageInQuietGroups threshold (unit=Seconds, Fair Queues only)
-    enabled_approximate_age_of_oldest_message_in_quiet_groups = false
-    approximate_age_of_oldest_message_in_quiet_groups         = 3600
+    approximate_age_of_oldest_message_in_quiet_groups = { enabled = false, value = 3600 }
     # (Required) ApproximateNumberOfGroupsWithInflightMessages threshold (unit=Count, FIFO only)
-    enabled_approximate_number_of_groups_with_inflight_messages = false
-    approximate_number_of_groups_with_inflight_messages         = 100
+    approximate_number_of_groups_with_inflight_messages = { enabled = false, value = 100 }
     # (Required) ApproximateNumberOfMessagesDelayed threshold (unit=Count)
-    enabled_approximate_number_of_messages_delayed = false
-    approximate_number_of_messages_delayed         = 1000
+    approximate_number_of_messages_delayed = { enabled = false, value = 1000 }
     # (Required) ApproximateNumberOfMessagesDelayedInQuietGroups threshold (unit=Count, Fair Queues only)
-    enabled_approximate_number_of_messages_delayed_in_quiet_groups = false
-    approximate_number_of_messages_delayed_in_quiet_groups         = 100
+    approximate_number_of_messages_delayed_in_quiet_groups = { enabled = false, value = 100 }
     # (Required) ApproximateNumberOfMessagesNotVisible threshold (unit=Count)
-    enabled_approximate_number_of_messages_not_visible = false
-    approximate_number_of_messages_not_visible         = 1000
+    approximate_number_of_messages_not_visible = { enabled = false, value = 1000 }
     # (Required) ApproximateNumberOfMessagesNotVisibleInQuietGroups threshold (unit=Count, Fair Queues only)
-    enabled_approximate_number_of_messages_not_visible_in_quiet_groups = false
-    approximate_number_of_messages_not_visible_in_quiet_groups         = 100
+    approximate_number_of_messages_not_visible_in_quiet_groups = { enabled = false, value = 100 }
     # (Required) ApproximateNumberOfMessagesVisible threshold (unit=Count)
-    enabled_approximate_number_of_messages_visible = true
-    approximate_number_of_messages_visible         = 1
+    approximate_number_of_messages_visible = { enabled = true, value = 1 }
     # (Required) ApproximateNumberOfMessagesVisibleInQuietGroups threshold (unit=Count, Fair Queues only)
-    enabled_approximate_number_of_messages_visible_in_quiet_groups = false
-    approximate_number_of_messages_visible_in_quiet_groups         = 100
+    approximate_number_of_messages_visible_in_quiet_groups = { enabled = false, value = 100 }
     # (Required) ApproximateNumberOfNoisyGroups threshold (unit=Count, Fair Queues only)
-    enabled_approximate_number_of_noisy_groups = false
-    approximate_number_of_noisy_groups         = 10
+    approximate_number_of_noisy_groups = { enabled = false, value = 10 }
     # (Required) NumberOfDeduplicatedSentMessages threshold (unit=Count, FIFO only)
-    enabled_number_of_deduplicated_sent_messages = false
-    number_of_deduplicated_sent_messages         = 100
+    number_of_deduplicated_sent_messages = { enabled = false, value = 100 }
     # (Required) NumberOfEmptyReceives threshold (unit=Count)
-    enabled_number_of_empty_receives = false
-    number_of_empty_receives         = 1000
+    number_of_empty_receives = { enabled = false, value = 1000 }
     # (Required) NumberOfMessagesDeleted threshold (unit=Count)
-    enabled_number_of_messages_deleted = false
-    number_of_messages_deleted         = 1000
+    number_of_messages_deleted = { enabled = false, value = 1000 }
     # (Required) NumberOfMessagesReceived threshold (unit=Count)
-    enabled_number_of_messages_received = false
-    number_of_messages_received         = 1000
+    number_of_messages_received = { enabled = false, value = 1000 }
     # (Required) NumberOfMessagesSent threshold (unit=Count)
-    enabled_number_of_messages_sent = false
-    number_of_messages_sent         = 1000
+    number_of_messages_sent = { enabled = false, value = 1000 }
     # (Required) SentMessageSize threshold (unit=Bytes)
-    enabled_sent_message_size = false
-    sent_message_size         = 262144
+    sent_message_size = { enabled = false, value = 262144 }
   }
   # (Optional) Override thresholds for specific resources. Key is the QueueName.
+  # Each metric can override enabled / value / datapoints_to_alarm / evaluation_periods (all optional; unspecified values fall back to threshold).
   # threshold_override = {
   #   "resource-name" = {
-  #     enabled_some_metric = false
+  #     some_metric = {
+  #       enabled             = false
+  #       value               = 100
+  #       datapoints_to_alarm = 1
+  #       evaluation_periods  = 1
+  #     }
   #   }
   # }
   threshold_override = {}
@@ -2361,39 +2258,41 @@ metric_synthetics_canary = {
       # CUSTOMIZE: need to set threshold for Synthetics Canary.
       threshold = {
         # (Required) 2xx threshold (unit=Count)
-        enabled_2xx = false
-        http_2xx    = 100
+        http_2xx = { enabled = false, value = 100 }
         # (Required) 4xx threshold (unit=Count)
-        enabled_4xx = true
-        http_4xx    = 1
+        http_4xx = { enabled = true, value = 1 }
         # (Required) 5xx threshold (unit=Count)
-        enabled_5xx = true
-        http_5xx    = 1
+        http_5xx = { enabled = true, value = 1 }
         # (Required) Duration threshold (unit=Milliseconds)
-        enabled_duration = true
-        duration         = 30000
+        duration = { enabled = true, value = 30000 }
         # (Required) DurationDryRun threshold (unit=Milliseconds)
-        enabled_duration_dry_run = false
-        duration_dry_run         = 30000
+        duration_dry_run = { enabled = false, value = 30000 }
         # (Required) Failed threshold (unit=Count)
-        enabled_failed = true
-        failed         = 1
+        failed = { enabled = true, value = 1 }
         # (Required) FailedRequests threshold (unit=Count)
-        enabled_failed_requests = false
-        failed_requests         = 1
+        failed_requests = { enabled = false, value = 1 }
         # (Required) SuccessPercent threshold (unit=Percent)
-        enabled_success_percent = false
-        success_percent         = 99
+        success_percent = { enabled = false, value = 99 }
         # (Required) SuccessPercentDryRun threshold (unit=Percent)
-        enabled_success_percent_dry_run = false
-        success_percent_dry_run         = 99
+        success_percent_dry_run = { enabled = false, value = 99 }
         # (Required) SuccessPercentWithRetries threshold (unit=Percent)
-        enabled_success_percent_with_retries = false
-        success_percent_with_retries         = 99
+        success_percent_with_retries = { enabled = false, value = 99 }
         # (Required) VisualMonitoringSuccessPercent threshold (unit=Percent)
-        enabled_visual_monitoring_success_percent = false
-        visual_monitoring_success_percent         = 99
+        visual_monitoring_success_percent = { enabled = false, value = 99 }
       }
+      # (Optional) thresholds specific resources. Key is CanaryName.
+      # Each metric can override enabled / value / datapoints_to_alarm / evaluation_periods (all optional; unspecified values fall back to threshold).
+      # threshold_override = {
+      #   "resource-name" = {
+      #     some_metric = {
+      #       enabled             = false
+      #       value               = 100
+      #       datapoints_to_alarm = 1
+      #       evaluation_periods  = 1
+      #     }
+      #   }
+      # }
+      threshold_override = {}
       aws_synthetics_canary = {
         # ARN of the IAM role to be used to run the canary. see AWS Docs for permissions needs for IAM Role.
         # If not specified, a role policy is automatically created.
@@ -2454,39 +2353,41 @@ metric_synthetics_canary = {
       # CUSTOMIZE: need to set threshold for Synthetics Canary.
       threshold = {
         # (Required) 2xx threshold (unit=Count)
-        enabled_2xx = false
-        http_2xx    = 100
+        http_2xx = { enabled = false, value = 100 }
         # (Required) 4xx threshold (unit=Count)
-        enabled_4xx = true
-        http_4xx    = 1
+        http_4xx = { enabled = true, value = 1 }
         # (Required) 5xx threshold (unit=Count)
-        enabled_5xx = true
-        http_5xx    = 1
+        http_5xx = { enabled = true, value = 1 }
         # (Required) Duration threshold (unit=Milliseconds)
-        enabled_duration = false
-        duration         = 30000
+        duration = { enabled = false, value = 30000 }
         # (Required) DurationDryRun threshold (unit=Milliseconds)
-        enabled_duration_dry_run = false
-        duration_dry_run         = 30000
+        duration_dry_run = { enabled = false, value = 30000 }
         # (Required) Failed threshold (unit=Count)
-        enabled_failed = true
-        failed         = 1
+        failed = { enabled = true, value = 1 }
         # (Required) FailedRequests threshold (unit=Count)
-        enabled_failed_requests = false
-        failed_requests         = 1
+        failed_requests = { enabled = false, value = 1 }
         # (Required) SuccessPercent threshold (unit=Percent)
-        enabled_success_percent = false
-        success_percent         = 99
+        success_percent = { enabled = false, value = 99 }
         # (Required) SuccessPercentDryRun threshold (unit=Percent)
-        enabled_success_percent_dry_run = false
-        success_percent_dry_run         = 99
+        success_percent_dry_run = { enabled = false, value = 99 }
         # (Required) SuccessPercentWithRetries threshold (unit=Percent)
-        enabled_success_percent_with_retries = false
-        success_percent_with_retries         = 99
+        success_percent_with_retries = { enabled = false, value = 99 }
         # (Required) VisualMonitoringSuccessPercent threshold (unit=Percent)
-        enabled_visual_monitoring_success_percent = false
-        visual_monitoring_success_percent         = 99
+        visual_monitoring_success_percent = { enabled = false, value = 99 }
       }
+      # (Optional) thresholds specific resources. Key is CanaryName.
+      # Each metric can override enabled / value / datapoints_to_alarm / evaluation_periods (all optional; unspecified values fall back to threshold).
+      # threshold_override = {
+      #   "resource-name" = {
+      #     some_metric = {
+      #       enabled             = false
+      #       value               = 100
+      #       datapoints_to_alarm = 1
+      #       evaluation_periods  = 1
+      #     }
+      #   }
+      # }
+      threshold_override = {}
 
       aws_synthetics_canary = {
         # ARN of the IAM role to be used to run the canary. see AWS Docs for permissions needs for IAM Role.
@@ -2977,13 +2878,15 @@ devops_agent = {
     # MCP server registrations (account level). Register with the AWS CLI first; the credential never enters the Terraform state.
     # Key: arbitrary name referred to by agent_spaces.<name>.mcp_servers[*].mcp_server_registration.
     # Write access (Issue / branch / Draft PR) needs the GitHub MCP server; the native GitHub integration is read-only.
-    #   ex) read the PAT from Secrets Manager (do not type it in the shell history), then register:
-    #     aws devops-agent register-service --service mcpserver --region ap-northeast-1 \
-    #       --service-details '{"mcpserver":{"name":"GitHubMcpServer","endpoint":"https://api.githubcopilot.com/mcp/","authorizationConfig":{"apiKey":{"apiKeyName":"github-pat","apiKeyHeader":"Authorization","apiKeyValue":"Bearer <PAT>"}}}}' # pragma: allowlist secret
-    #     (PAT: fine-grained, only the target repositories; Issues / Contents / Pull requests: read and write.
-    #      Notion hosted MCP uses OAuth, so register it in the console (Capability Providers) and copy the service ID.)
-    #     Linear hosted MCP (https://mcp.linear.app/mcp) accepts OAuth, or an API key / token as `Authorization: Bearer <token>`: register it in the console (Capability Providers) or like the GitHub PAT above.
-    #     If the Linear credential cannot create labels, create the label devops-agent in Linear beforehand.
+    #   ex) register each MCP server with the AWS CLI. Read the credential from Secrets Manager (do not type it in the shell history):
+    #     - GitHub (PAT: fine-grained, only the target repositories; Issues / Contents / Pull requests: read and write):
+    #         aws devops-agent register-service --service mcpserver --region ap-northeast-1 \
+    #           --service-details '{"mcpserver":{"name":"GitHubMcpServer","endpoint":"https://api.githubcopilot.com/mcp/","authorizationConfig":{"apiKey":{"apiKeyName":"github-pat","apiKeyHeader":"Authorization","apiKeyValue":"Bearer <PAT>"}}}}' # pragma: allowlist secret
+    #     - Linear (API key / token; OAuth is also possible via the console):
+    #         aws devops-agent register-service --service mcpserver --region ap-northeast-1 \
+    #           --service-details '{"mcpserver":{"name":"LinearMcpServer","endpoint":"https://mcp.linear.app/mcp","authorizationConfig":{"apiKey":{"apiKeyName":"linear-api-key","apiKeyHeader":"Authorization","apiKeyValue":"Bearer <TOKEN>"}}}}' # pragma: allowlist secret
+    #         If the Linear credential cannot create labels, create the label devops-agent in Linear beforehand.
+    #     - Notion (hosted MCP uses OAuth): register it in the console (Capability Providers) and copy the service ID.
     #     GitHub label: create the label devops-agent in every target repository beforehand. It needs Label creation permission in GitHub; the GitHub MCP server has no tool to create it, so the agent cannot.
     #     aws devops-agent list-services --region ap-northeast-1 --query 'services[].{id:serviceId,type:serviceType}'
     #   ex)
@@ -3056,7 +2959,7 @@ devops_agent = {
         #         "add_issue_comment", "create_branch", "create_or_update_file", "create_pull_request", "get_file_contents", "get_label",
         #         "issue_read",
         #         "issue_write", "list_branches", "list_issues", "pull_request_read", "push_files", "search_code",
-        #         "search_issues", "update_pull_request",
+        #         "search_issues", "search_repositories", "update_pull_request",
         #       ]
         #     }
         #     notion = {
@@ -3074,10 +2977,15 @@ devops_agent = {
         mcp_servers = {}
         # (Optional) Agent instructions (AGENTS.md) injected into every session. Key: agent type (GENERIC = all agents; at most one per agent type).
         # Other agent types: CHAT, INCIDENT_TRIAGE, INCIDENT_RCA, INCIDENT_MITIGATION, INCIDENT_UI, PREVENTION, RELEASE_READINESS_REVIEW, RELEASE_TESTING.
-        # content_file is relative to terraform/monitor (Markdown only, no frontmatter, max 25 KB).
+        # content_file / content_files are relative to terraform/monitor (Markdown only, no frontmatter, max 25 KB in total per agent type).
+        # content_files are concatenated in order after content_file, so rules can be split into one file per category (e.g. incident-suppression/ = alarms that must not be listed as incidents).
         agents_md = {
           GENERIC = {
             content_file = "devops_agent/agents_md/generic.md"
+            content_files = [
+              "devops_agent/agents_md/incident-suppression/postgresql-operation.md",
+              "devops_agent/agents_md/incident-suppression/scheduled-stop.md",
+            ]
           }
         }
         # (Optional) Linear team (name or key) in which this Agent Space creates Issues with the Linear MCP server (linear_issue_* custom agents).
@@ -3088,6 +2996,7 @@ devops_agent = {
           team = null
         }
         # (Optional) Skills to attach to custom agents. content_file is relative to terraform/monitor.
+        # name and description are optional: when omitted they are read from the frontmatter of SKILL.md; a value set here takes precedence.
         #   ex)
         #   skills = {
         #     example_skill = {
@@ -3100,11 +3009,13 @@ devops_agent = {
         #   ex)
         #   skills = {
         #     linear_issue_draft_pr = {
+        #       agent_types  = ["INCIDENT_RCA", "INCIDENT_MITIGATION"]
         #       name         = "linear-issue-draft-pr"
-        #       description  = "Record an alarm investigation as a Linear Issue labeled devops-agent and, for a small confirmed fix, a GitHub Draft PR labeled devops-agent (to develop, or the default branch if absent). Use this when an investigation of a CloudWatch alarm or incident finds a root cause and the team tracks incidents in Linear. It also replies to the Slack alert thread. Do not use it together with another tracker skill for the same alarm."
+        #       description  = "Record an alarm investigation as a Linear Issue labeled devops-agent and, for a small confirmed fix, a GitHub Draft PR labeled devops-agent (to the repository default branch). Use this when an investigation of a CloudWatch alarm or incident finds a root cause and the team tracks incidents in Linear. It also replies to the Slack alert thread. Do not use it together with another tracker skill for the same alarm."
         #       content_file = "devops_agent/skills/linear-issue-draft-pr/SKILL.md"
         #     }
         #     linear_issue_pr_followup = {
+        #       agent_types  = ["GENERIC"]
         #       name         = "linear-issue-pr-followup"
         #       description  = "Follow up on unanswered human comments on Linear Issues and their GitHub PRs labeled devops-agent: answer, update the text, re-check the incident, fix the Draft PR, and close when allowed. Use this in the scheduled follow-up run. Do not use it to start an investigation or to create Issues, PRs or labels."
         #       content_file = "devops_agent/skills/linear-issue-pr-followup/SKILL.md"
@@ -3123,7 +3034,7 @@ devops_agent = {
         #         "GitHubMcpServer_add_issue_comment", "GitHubMcpServer_create_branch", "GitHubMcpServer_create_or_update_file",
         #         "GitHubMcpServer_create_pull_request", "GitHubMcpServer_get_file_contents", "GitHubMcpServer_get_label",
         #         "GitHubMcpServer_issue_write", "GitHubMcpServer_list_branches", "GitHubMcpServer_list_issues",
-        #         "GitHubMcpServer_search_code", "GitHubMcpServer_search_issues",
+        #         "GitHubMcpServer_search_code", "GitHubMcpServer_search_issues", "GitHubMcpServer_search_repositories",
         #       ]
         #     }
         #     notion_issue_pr_agent = {
@@ -3135,6 +3046,7 @@ devops_agent = {
         #         "NotionMcpServer_notion-create-pages", "NotionMcpServer_notion-search", "NotionMcpServer_notion-update-page",
         #         "GitHubMcpServer_create_branch", "GitHubMcpServer_create_or_update_file", "GitHubMcpServer_create_pull_request",
         #         "GitHubMcpServer_get_file_contents", "GitHubMcpServer_get_label", "GitHubMcpServer_issue_write", "GitHubMcpServer_list_branches",
+        #         "GitHubMcpServer_search_repositories",
         #       ]
         #     }
         #     github_issue_pr_followup_agent = {
@@ -3166,6 +3078,7 @@ devops_agent = {
         #         "GitHubMcpServer_create_branch", "GitHubMcpServer_create_or_update_file", "GitHubMcpServer_create_pull_request",
         #         "GitHubMcpServer_get_file_contents", "GitHubMcpServer_get_label", "GitHubMcpServer_issue_write",
         #         "GitHubMcpServer_list_branches", "GitHubMcpServer_push_files", "GitHubMcpServer_search_code",
+        #         "GitHubMcpServer_search_repositories",
         #       ]
         #     }
         #     linear_issue_pr_followup_agent = {
@@ -3190,19 +3103,7 @@ devops_agent = {
         #     }
         #   }
         # (Optional) Custom agents and scheduled triggers. system_prompt_file is relative to terraform/monitor.
-        custom_agents = {
-          example_agent = {
-            name               = "example-agent"
-            system_prompt_file = "devops_agent/agents/example_agent.md"
-            tools              = ["use_aws"]
-            triggers = {
-              daily = {
-                schedule_expression = "rate(1 day)"
-                status              = "Inactive"
-              }
-            }
-          }
-        }
+        custom_agents = {}
         # (Optional) Generic webhook (HMAC). See "Webhook" above.
         # The webhook credentials are written to the Secrets Manager secret by the AWS CLI (never to the Terraform state).
         webhook = {

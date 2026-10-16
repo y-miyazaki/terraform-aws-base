@@ -34,10 +34,10 @@ resource "aws_guardduty_member" "this" {
   region                     = local.region
   account_id                 = var.aws_guardduty_member[count.index].account_id
   detector_id                = aws_guardduty_detector.this[0].id
-  email                      = var.aws_guardduty_member[count.index].email
-  invite                     = try(var.aws_guardduty_member[count.index].invite, false)
-  invitation_message         = try(var.aws_guardduty_member[count.index].invitation_message, null)
   disable_email_notification = try(var.aws_guardduty_member[count.index].disable_email_notification, false)
+  email                      = var.aws_guardduty_member[count.index].email
+  invitation_message         = try(var.aws_guardduty_member[count.index].invitation_message, null)
+  invite                     = try(var.aws_guardduty_member[count.index].invite, false)
 }
 
 #--------------------------------------------------------------

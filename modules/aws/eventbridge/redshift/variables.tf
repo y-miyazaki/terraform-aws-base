@@ -10,7 +10,7 @@ variable "is_enabled" {
 variable "name_prefix" {
   type        = string
   description = "(Optional) Creates a unique name beginning with the specified prefix."
-  default     = null
+  default     = ""
 }
 
 variable "role_arn" {

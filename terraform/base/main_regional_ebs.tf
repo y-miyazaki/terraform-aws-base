@@ -9,10 +9,10 @@ module "aws_security_ebs" {
 
   source = "../../modules/aws/security/ebs"
 
-  is_enabled                                  = try(var.security_ebs.is_enabled, true)
+  is_enabled = try(var.security_ebs.is_enabled, true)
+  region     = each.value
+
   is_enabled_ebs_encryption_by_default        = try(var.security_ebs.is_enabled_ebs_encryption_by_default, true)
   is_enabled_ebs_public_snapshot_block_access = try(var.security_ebs.is_enabled_ebs_public_snapshot_block_access, true)
-  region                                      = each.value
-
-  state = try(var.security_ebs.state, "block-all-sharing")
+  state                                       = try(var.security_ebs.state, "block-all-sharing")
 }

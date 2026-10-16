@@ -67,12 +67,25 @@ run "rejects_wildcard_agent_space_arn" {
   expect_failures = [var.primary]
 }
 
-run "no_additional_policy_by_default" {
+run "attaches_default_policy_statements_by_default" {
   command = plan
 
   assert {
+    condition     = length(aws_iam_policy.additional) == 1 && length(aws_iam_role_policy_attachment.additional) == 1
+    error_message = "the baseline default_policy_statements must be attached when nothing else is set"
+  }
+}
+
+run "no_additional_policy_when_all_statements_empty" {
+  command = plan
+  variables {
+    default_policy_statements    = []
+    additional_policy_statements = []
+  }
+
+  assert {
     condition     = length(aws_iam_policy.additional) == 0 && length(aws_iam_role_policy_attachment.additional) == 0
-    error_message = "no additional policy must be created when additional_policy_statements is empty"
+    error_message = "no additional policy must be created when both statement lists are empty"
   }
 }
 
@@ -111,4 +124,19 @@ run "rejects_non_alphanumeric_sid" {
   }
 
   expect_failures = [var.additional_policy_statements]
+}
+
+run "rejects_non_alphanumeric_default_sid" {
+  command = plan
+  variables {
+    default_policy_statements = [
+      {
+        actions   = ["s3:GetBucketVersioning"]
+        resources = ["*"]
+        sid       = "Allow-Read"
+      },
+    ]
+  }
+
+  expect_failures = [var.default_policy_statements]
 }

@@ -14,16 +14,18 @@ module "aws_security_config_create" {
   )
   region = each.value
 
-
+  # CloudWatch Event Rule and Target
+  aws_cloudwatch_event_rule = try(var.security_config.aws_cloudwatch_event_rule, {})
+  aws_cloudwatch_event_target = try(var.security_config.aws_cloudwatch_event_target, {
+    arn = ""
+  })
   # AWS Config Configuration Recorder
   aws_config_configuration_recorder = try(var.security_config.aws_config_configuration_recorder, {})
-
   # AWS Config Configuration Recorder Status
   aws_config_configuration_recorder_status = try(var.security_config.aws_config_configuration_recorder_status, {})
-
   # AWS Config Delivery Channel
   aws_config_delivery_channel = try(var.security_config.aws_config_delivery_channel, {})
-
+  aws_s3_bucket_existing      = try(var.security_config.aws_s3_bucket_existing, null)
   # S3 bucket configuration
   is_s3_enabled = try(var.security_config.is_s3_enabled, false)
   s3_bucket = try(var.security_config.aws_s3_bucket, {
@@ -32,13 +34,6 @@ module "aws_security_config_create" {
     logging                              = null
     server_side_encryption_configuration = {}
     versioning                           = {}
-  })
-  aws_s3_bucket_existing = try(var.security_config.aws_s3_bucket_existing, null)
-
-  # CloudWatch Event Rule and Target
-  aws_cloudwatch_event_rule = try(var.security_config.aws_cloudwatch_event_rule, {})
-  aws_cloudwatch_event_target = try(var.security_config.aws_cloudwatch_event_target, {
-    arn = ""
   })
 
   # Tags

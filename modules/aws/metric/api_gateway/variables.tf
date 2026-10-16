@@ -16,48 +16,35 @@ variable "period" {
 variable "threshold" {
   type = object({
     # 4XXerror threshold (unit=%)
-    enabled_error4XX = bool
-    error4XX         = number
+    error4XX = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # 5XXerror threshold (unit=%)
-    enabled_error5XX = bool
-    error5XX         = number
+    error5XX = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # IntegrationLatency threshold (unit=Milliseconds)
-    enabled_integration_latency = bool
-    integration_latency         = number
+    integration_latency = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # Latency threshold (unit=Milliseconds)
-    enabled_latency = bool
-    latency         = number
-    }
-  )
+    latency = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
+  })
   description = "(Optional) Set the threshold for each Metric in API Gateway."
   default = {
-    enabled_error4XX            = true
-    error4XX                    = 1
-    enabled_error5XX            = true
-    error5XX                    = 1
-    enabled_integration_latency = true
-    integration_latency         = 10000
-    enabled_latency             = true
-    latency                     = 10000
+    error4XX            = { enabled = true, value = 1 }
+    error5XX            = { enabled = true, value = 1 }
+    integration_latency = { enabled = true, value = 10000 }
+    latency             = { enabled = true, value = 10000 }
   }
 }
 
 variable "threshold_override" {
   type = map(object({
-    # (Optional) 4XXerror threshold (unit=%)
-    enabled_error4XX = optional(bool)
-    error4XX         = optional(number)
-    # (Optional) 5XXerror threshold (unit=%)
-    enabled_error5XX = optional(bool)
-    error5XX         = optional(number)
-    # (Optional) IntegrationLatency threshold (unit=Milliseconds)
-    enabled_integration_latency = optional(bool)
-    integration_latency         = optional(number)
-    # (Optional) Latency threshold (unit=Milliseconds)
-    enabled_latency = optional(bool)
-    latency         = optional(number)
+    # 4XXerror threshold (unit=%)
+    error4XX = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # 5XXerror threshold (unit=%)
+    error5XX = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # IntegrationLatency threshold (unit=Milliseconds)
+    integration_latency = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # Latency threshold (unit=Milliseconds)
+    latency = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
   }))
-  description = "(Optional) Override thresholds for specific resources. Key is the ApiName."
+  description = "(Optional) Override thresholds for specific resources. Key is the ApiName. Each metric accepts enabled, value, datapoints_to_alarm and evaluation_periods."
   default     = {}
 }
 

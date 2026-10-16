@@ -23,8 +23,9 @@ resource "aws_config_config_rule" "aurora-mysql-backtracking-enabled" {
   count = var.is_enabled ? 1 : 0
 
   region      = local.region
-  name        = "${local.name_prefix}aurora-mysql-backtracking-enabled"
   description = "Checks if an Amazon Aurora MySQL cluster has backtracking enabled. This rule is NON_COMPLIANT if the Aurora cluster uses MySQL and it does not have backtracking enabled."
+  name        = "${local.name_prefix}aurora-mysql-backtracking-enabled"
+
   source {
     owner             = "AWS"
     source_identifier = "AURORA_MYSQL_BACKTRACKING_ENABLED"
@@ -40,8 +41,9 @@ resource "aws_config_config_rule" "db-instance-backup-enabled" {
   count = var.is_enabled ? 1 : 0
 
   region      = local.region
-  name        = "${local.name_prefix}db-instance-backup-enabled"
   description = "Checks whether RDS DB instances have backups enabled."
+  name        = "${local.name_prefix}db-instance-backup-enabled"
+
   source {
     owner             = "AWS"
     source_identifier = "DB_INSTANCE_BACKUP_ENABLED"
@@ -57,8 +59,9 @@ resource "aws_config_config_rule" "rds-automatic-minor-version-upgrade-enabled" 
   count = var.is_enabled ? 1 : 0
 
   region      = local.region
-  name        = "${local.name_prefix}rds-automatic-minor-version-upgrade-enabled"
   description = "Checks if Amazon Relational Database Service (RDS) database instances are configured for automatic minor version upgrades. The rule is NON_COMPLIANT if the value of 'autoMinorVersionUpgrade' is false."
+  name        = "${local.name_prefix}rds-automatic-minor-version-upgrade-enabled"
+
   source {
     owner             = "AWS"
     source_identifier = "RDS_AUTOMATIC_MINOR_VERSION_UPGRADE_ENABLED"
@@ -90,8 +93,9 @@ resource "aws_config_config_rule" "rds-in-backup-plan" {
   count = var.is_enabled ? 1 : 0
 
   region      = local.region
-  name        = "${local.name_prefix}rds-in-backup-plan"
   description = "Checks whether Amazon RDS database is present in back plans of AWS Backup. The rule is NON_COMPLIANT if Amazon RDS databases are not included in any AWS Backup plan."
+  name        = "${local.name_prefix}rds-in-backup-plan"
+
   source {
     owner             = "AWS"
     source_identifier = "RDS_IN_BACKUP_PLAN"

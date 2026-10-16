@@ -29,8 +29,6 @@ module "dynamodb_table_requests" {
 
   region = local.region
 
-  name                = "${var.name_prefix}jit-access-requests"
-  autoscaling_enabled = false
   attributes = [
     {
       name = "request_id"
@@ -53,7 +51,9 @@ module "dynamodb_table_requests" {
       type = "S"
     },
   ]
-  billing_mode = "PAY_PER_REQUEST"
+  autoscaling_enabled         = false
+  billing_mode                = "PAY_PER_REQUEST"
+  deletion_protection_enabled = true
   global_secondary_indexes = [
     {
       name            = "gsi-user"
@@ -68,8 +68,8 @@ module "dynamodb_table_requests" {
       projection_type = "ALL"
     },
   ]
-  deletion_protection_enabled        = true
   hash_key                           = "request_id"
+  name                               = "${var.name_prefix}jit-access-requests"
   point_in_time_recovery_enabled     = true
   server_side_encryption_enabled     = var.kms_key_arn != null
   server_side_encryption_kms_key_arn = var.kms_key_arn
@@ -133,7 +133,6 @@ resource "aws_ssm_parameter" "user_mapping" {
 # Provides an IAM role.
 #--------------------------------------------------------------
 resource "aws_iam_role" "lambda" {
-  name = "${var.name_prefix}jit-access-lambda"
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
     Statement = [{
@@ -144,6 +143,7 @@ resource "aws_iam_role" "lambda" {
       }
     }]
   })
+  name = "${var.name_prefix}jit-access-lambda"
 
   tags = var.tags
 }
@@ -252,8 +252,8 @@ resource "aws_iam_role_policy_attachment" "lambda" {
 resource "aws_iam_role_policy_attachment" "lambda_vpc" {
   count = var.vpc_config != null ? 1 : 0
 
-  role       = aws_iam_role.lambda.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole"
+  role       = aws_iam_role.lambda.name
 }
 
 #--------------------------------------------------------------
@@ -261,7 +261,7 @@ resource "aws_iam_role_policy_attachment" "lambda_vpc" {
 #--------------------------------------------------------------
 module "lambda_jit_access" {
   source  = "terraform-aws-modules/lambda/aws"
-  version = "8.9.0"
+  version = "8.12.0"
 
   region = local.region
 
@@ -306,8 +306,8 @@ module "lambda_jit_access" {
 #--------------------------------------------------------------
 resource "aws_api_gateway_rest_api" "slack" {
   region      = local.region
-  name        = "${var.name_prefix}jit-access-slack"
   description = "JIT Access Slack webhook endpoint"
+  name        = "${var.name_prefix}jit-access-slack"
 
   endpoint_configuration {
     types = ["REGIONAL"]
@@ -477,8 +477,8 @@ resource "aws_api_gateway_method_settings" "this" {
 
 resource "aws_cloudwatch_log_group" "api_gateway" {
   region            = local.region
-  name              = "/aws/apigateway/${var.name_prefix}jit-access-slack"
   kms_key_id        = var.kms_key_arn
+  name              = "/aws/apigateway/${var.name_prefix}jit-access-slack"
   retention_in_days = var.lambda_log_retention_days
 
   tags = var.tags
@@ -511,7 +511,6 @@ resource "aws_wafv2_web_acl_association" "api_gateway" {
 # https://registry.terraform.io/modules/terraform-aws-modules/step-functions/aws/latest
 #--------------------------------------------------------------
 resource "aws_iam_role" "sfn" {
-  name = "${var.name_prefix}jit-access-sfn"
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
     Statement = [{
@@ -522,6 +521,7 @@ resource "aws_iam_role" "sfn" {
       }
     }]
   })
+  name = "${var.name_prefix}jit-access-sfn"
 
   tags = var.tags
 }
@@ -585,12 +585,12 @@ module "step_functions" {
   source  = "terraform-aws-modules/step-functions/aws"
   version = "5.1.1"
 
+  create = true
   region = local.region
 
   cloudwatch_log_group_kms_key_id        = var.kms_key_arn
   cloudwatch_log_group_name              = "/aws/sfn/${var.name_prefix}jit-access-sfn"
   cloudwatch_log_group_retention_in_days = var.lambda_log_retention_days
-  create                                 = true
   create_role                            = false
   definition = jsonencode({
     Comment = "JIT Access: Wait -> Grant -> Wait(duration) -> Revoke"
@@ -688,7 +688,6 @@ module "step_functions" {
 # EventBridge Scheduler: Cleanup checker
 #--------------------------------------------------------------
 resource "aws_iam_role" "scheduler" {
-  name = "${var.name_prefix}jit-access-sch"
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
     Statement = [{
@@ -699,6 +698,7 @@ resource "aws_iam_role" "scheduler" {
       }
     }]
   })
+  name = "${var.name_prefix}jit-access-sch"
 
   tags = var.tags
 }
@@ -723,16 +723,14 @@ resource "aws_iam_role_policy_attachment" "scheduler" {
 }
 
 resource "aws_scheduler_schedule" "cleanup" {
-  region     = local.region
-  name       = "${var.name_prefix}jit-access-cleanup"
-  group_name = "default"
+  region              = local.region
+  group_name          = "default"
+  name                = "${var.name_prefix}jit-access-cleanup"
+  schedule_expression = var.cleanup_schedule_expression
 
   flexible_time_window {
     mode = "OFF"
   }
-
-  schedule_expression = var.cleanup_schedule_expression
-
   target {
     arn      = module.lambda_jit_access.lambda_function_arn
     role_arn = aws_iam_role.scheduler.arn
@@ -745,10 +743,10 @@ resource "aws_scheduler_schedule" "cleanup" {
 #--------------------------------------------------------------
 resource "aws_sqs_queue" "dlq" {
   region                     = local.region
-  name                       = "${var.name_prefix}jit-access-dlq"
-  message_retention_seconds  = 1209600
-  visibility_timeout_seconds = 300
   kms_master_key_id          = var.kms_key_arn
+  message_retention_seconds  = 1209600
+  name                       = "${var.name_prefix}jit-access-dlq"
+  visibility_timeout_seconds = 300
 
   tags = var.tags
 }
@@ -758,20 +756,19 @@ resource "aws_sqs_queue" "dlq" {
 #--------------------------------------------------------------
 resource "aws_cloudwatch_metric_alarm" "dlq_messages" {
   region              = local.region
-  alarm_name          = "${var.name_prefix}jit-access-dlq-messages"
   alarm_description   = "JIT Access: Messages in DLQ indicate revoke failures requiring manual intervention"
+  alarm_name          = "${var.name_prefix}jit-access-dlq-messages"
   comparison_operator = "GreaterThanThreshold"
-  evaluation_periods  = 1
-  metric_name         = "ApproximateNumberOfMessagesVisible"
-  namespace           = "AWS/SQS"
-  period              = 300
-  statistic           = "Sum"
-  threshold           = 0
-  treat_missing_data  = "notBreaching"
-
   dimensions = {
     QueueName = aws_sqs_queue.dlq.name
   }
+  evaluation_periods = 1
+  metric_name        = "ApproximateNumberOfMessagesVisible"
+  namespace          = "AWS/SQS"
+  period             = 300
+  statistic          = "Sum"
+  threshold          = 0
+  treat_missing_data = "notBreaching"
 
   tags = var.tags
 }

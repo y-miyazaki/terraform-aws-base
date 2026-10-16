@@ -15,11 +15,31 @@ locals {
 #--------------------------------------------------------------
 module "s3_log" {
   source  = "terraform-aws-modules/s3-bucket/aws"
-  version = "5.16.1"
+  version = "5.17.0"
 
-  create_bucket = var.common_log.s3_log.create_bucket
-  region        = var.region.primary
+  region = var.region.primary
 
+  attach_access_log_delivery_policy         = true
+  attach_analytics_destination_policy       = false
+  attach_cloudtrail_log_delivery_policy     = true
+  attach_deny_incorrect_encryption_headers  = false
+  attach_deny_incorrect_kms_key_sse         = false
+  attach_deny_insecure_transport_policy     = true
+  attach_deny_ssec_encrypted_object_uploads = false
+  attach_deny_unencrypted_object_uploads    = false
+  attach_elb_log_delivery_policy            = true
+  attach_inventory_destination_policy       = false
+  attach_lb_log_delivery_policy             = true
+  attach_policy                             = true
+  attach_public_policy                      = var.common_log.s3_log.attach_public_policy
+  attach_require_latest_tls_policy          = true
+  attach_waf_log_delivery_policy            = true
+  block_public_acls                         = var.common_log.s3_log.block_public_acls
+  block_public_policy                       = var.common_log.s3_log.block_public_policy
+  bucket                                    = local.s3_log_bucket
+  control_object_ownership                  = true
+  create_bucket                             = var.common_log.s3_log.create_bucket
+  force_destroy                             = var.common_log.s3_log.force_destroy
   grant = [
     {
       type       = "CanonicalUser"
@@ -33,35 +53,15 @@ module "s3_log" {
       # Ref. https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/AccessLogs.html
     },
   ]
-  attach_access_log_delivery_policy         = true
-  attach_analytics_destination_policy       = false
-  attach_cloudtrail_log_delivery_policy     = true
-  attach_deny_incorrect_encryption_headers  = false
-  attach_deny_incorrect_kms_key_sse         = false
-  attach_deny_insecure_transport_policy     = true
-  attach_deny_unencrypted_object_uploads    = false
-  attach_deny_ssec_encrypted_object_uploads = false
-  attach_elb_log_delivery_policy            = true
-  attach_inventory_destination_policy       = false
-  attach_lb_log_delivery_policy             = true
-  attach_policy                             = true
-  attach_public_policy                      = var.common_log.s3_log.attach_public_policy
-  attach_require_latest_tls_policy          = true
-  attach_waf_log_delivery_policy            = true
-  block_public_acls                         = var.common_log.s3_log.block_public_acls
-  block_public_policy                       = var.common_log.s3_log.block_public_policy
-  bucket                                    = local.s3_log_bucket
-  control_object_ownership                  = true
-  force_destroy                             = var.common_log.s3_log.force_destroy
-  ignore_public_acls                        = var.common_log.s3_log.ignore_public_acls
-  lifecycle_rule                            = var.common_log.s3_log.lifecycle_rule
-  logging                                   = null
-  object_ownership                          = "ObjectWriter"
-  policy                                    = data.aws_iam_policy_document.s3_log_combined.json
-  restrict_public_buckets                   = var.common_log.s3_log.restrict_public_buckets
-  server_side_encryption_configuration      = var.common_log.s3_log.server_side_encryption_configuration
-  versioning                                = var.common_log.s3_log.versioning
-  website                                   = {}
+  ignore_public_acls                   = var.common_log.s3_log.ignore_public_acls
+  lifecycle_rule                       = var.common_log.s3_log.lifecycle_rule
+  logging                              = null
+  object_ownership                     = "ObjectWriter"
+  policy                               = data.aws_iam_policy_document.s3_log_combined.json
+  restrict_public_buckets              = var.common_log.s3_log.restrict_public_buckets
+  server_side_encryption_configuration = var.common_log.s3_log.server_side_encryption_configuration
+  versioning                           = var.common_log.s3_log.versioning
+  website                              = {}
 
   tags = var.tags
 }
@@ -75,9 +75,9 @@ module "aws_s3_policy_config_log" {
 
   region = var.region.primary
 
+  account_id           = data.aws_caller_identity.current.account_id
   attach_bucket_policy = false
   bucket               = local.s3_log_bucket
-  account_id           = data.aws_caller_identity.current.account_id
   config_role_names    = local.config_role_names
 }
 
@@ -111,10 +111,9 @@ data "aws_iam_policy_document" "s3_log_combined" {
 #--------------------------------------------------------------
 module "s3_cloudtrail" {
   source  = "terraform-aws-modules/s3-bucket/aws"
-  version = "5.16.1"
+  version = "5.17.0"
 
-  create_bucket = var.common_log.s3_cloudtrail.create_bucket && !local.control_tower_managed_services.cloudtrail
-  region        = var.region.primary
+  region = var.region.primary
 
   attach_access_log_delivery_policy         = true
   attach_analytics_destination_policy       = false
@@ -122,8 +121,8 @@ module "s3_cloudtrail" {
   attach_deny_incorrect_encryption_headers  = false
   attach_deny_incorrect_kms_key_sse         = false
   attach_deny_insecure_transport_policy     = true
-  attach_deny_unencrypted_object_uploads    = false
   attach_deny_ssec_encrypted_object_uploads = false
+  attach_deny_unencrypted_object_uploads    = false
   attach_elb_log_delivery_policy            = false
   attach_inventory_destination_policy       = false
   attach_lb_log_delivery_policy             = false
@@ -135,6 +134,7 @@ module "s3_cloudtrail" {
   block_public_policy                       = var.common_log.s3_cloudtrail.block_public_policy
   bucket                                    = local.s3_cloudtrail_bucket
   control_object_ownership                  = true
+  create_bucket                             = var.common_log.s3_cloudtrail.create_bucket && !local.control_tower_managed_services.cloudtrail
   force_destroy                             = var.common_log.s3_cloudtrail.force_destroy
   ignore_public_acls                        = var.common_log.s3_cloudtrail.ignore_public_acls
   lifecycle_rule                            = var.common_log.s3_cloudtrail.lifecycle_rule

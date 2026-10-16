@@ -13,11 +13,31 @@
 #tfsec:ignore:aws-s3-specify-public-access-block
 module "s3_application_log" {
   source  = "terraform-aws-modules/s3-bucket/aws"
-  version = "5.16.1"
+  version = "5.17.0"
 
-  create_bucket = var.common_log.s3_application_log.create_bucket
-  region        = var.region.primary
+  region = var.region.primary
 
+  attach_access_log_delivery_policy         = true
+  attach_analytics_destination_policy       = false
+  attach_cloudtrail_log_delivery_policy     = true
+  attach_deny_incorrect_encryption_headers  = false
+  attach_deny_incorrect_kms_key_sse         = false
+  attach_deny_insecure_transport_policy     = true
+  attach_deny_ssec_encrypted_object_uploads = false
+  attach_deny_unencrypted_object_uploads    = false
+  attach_elb_log_delivery_policy            = true
+  attach_inventory_destination_policy       = false
+  attach_lb_log_delivery_policy             = true
+  attach_policy                             = false
+  attach_public_policy                      = var.common_log.s3_application_log.attach_public_policy
+  attach_require_latest_tls_policy          = true
+  attach_waf_log_delivery_policy            = true
+  block_public_acls                         = var.common_log.s3_application_log.block_public_acls
+  block_public_policy                       = var.common_log.s3_application_log.block_public_policy
+  bucket                                    = "${var.name_prefix}${var.common_log.s3_application_log.bucket}-${data.aws_caller_identity.current.account_id}"
+  control_object_ownership                  = true
+  create_bucket                             = var.common_log.s3_application_log.create_bucket
+  force_destroy                             = var.common_log.s3_application_log.force_destroy
   grant = [
     {
       type       = "CanonicalUser"
@@ -31,33 +51,13 @@ module "s3_application_log" {
       # Ref. https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/AccessLogs.html
     },
   ]
-  attach_access_log_delivery_policy         = true
-  attach_analytics_destination_policy       = false
-  attach_cloudtrail_log_delivery_policy     = true
-  attach_deny_incorrect_encryption_headers  = false
-  attach_deny_incorrect_kms_key_sse         = false
-  attach_deny_insecure_transport_policy     = true
-  attach_deny_unencrypted_object_uploads    = false
-  attach_deny_ssec_encrypted_object_uploads = false
-  attach_elb_log_delivery_policy            = true
-  attach_inventory_destination_policy       = false
-  attach_lb_log_delivery_policy             = true
-  attach_policy                             = false
-  attach_public_policy                      = var.common_log.s3_application_log.attach_public_policy
-  attach_require_latest_tls_policy          = true
-  attach_waf_log_delivery_policy            = true
-  block_public_acls                         = var.common_log.s3_application_log.block_public_acls
-  block_public_policy                       = var.common_log.s3_application_log.block_public_policy
-  bucket                                    = "${var.name_prefix}${var.common_log.s3_application_log.bucket}-${data.aws_caller_identity.current.account_id}"
-  control_object_ownership                  = true
-  force_destroy                             = var.common_log.s3_application_log.force_destroy
-  ignore_public_acls                        = var.common_log.s3_application_log.ignore_public_acls
-  lifecycle_rule                            = var.common_log.s3_application_log.lifecycle_rule
-  logging                                   = var.common_log.s3_application_log.logging
-  object_ownership                          = "ObjectWriter"
-  restrict_public_buckets                   = var.common_log.s3_application_log.restrict_public_buckets
-  server_side_encryption_configuration      = var.common_log.s3_application_log.server_side_encryption_configuration
-  versioning                                = var.common_log.s3_application_log.versioning
+  ignore_public_acls                   = var.common_log.s3_application_log.ignore_public_acls
+  lifecycle_rule                       = var.common_log.s3_application_log.lifecycle_rule
+  logging                              = var.common_log.s3_application_log.logging
+  object_ownership                     = "ObjectWriter"
+  restrict_public_buckets              = var.common_log.s3_application_log.restrict_public_buckets
+  server_side_encryption_configuration = var.common_log.s3_application_log.server_side_encryption_configuration
+  versioning                           = var.common_log.s3_application_log.versioning
 
   tags = var.tags
 }
@@ -68,7 +68,7 @@ module "s3_application_log" {
 #--------------------------------------------------------------
 module "s3_application_log_notification_cloudfront" {
   source  = "terraform-aws-modules/s3-bucket/aws//modules/notification"
-  version = "5.16.1"
+  version = "5.17.0"
 
   region = var.region.primary
 

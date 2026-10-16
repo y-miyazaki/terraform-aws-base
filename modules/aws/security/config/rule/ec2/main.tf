@@ -83,8 +83,9 @@ resource "aws_config_config_rule" "ebs-optimized-instance" {
   count = var.is_enabled ? 1 : 0
 
   region      = local.region
-  name        = "${local.name_prefix}ebs-optimized-instance"
   description = "Checks whether EBS optimization is enabled for your EC2 instances that can be EBS-optimized."
+  name        = "${local.name_prefix}ebs-optimized-instance"
+
   source {
     owner             = "AWS"
     source_identifier = "EBS_OPTIMIZED_INSTANCE"
@@ -148,8 +149,9 @@ resource "aws_config_config_rule" "ec2-instance-detailed-monitoring-enabled" {
   count = var.is_enabled ? 1 : 0
 
   region      = local.region
-  name        = "${local.name_prefix}ec2-instance-detailed-monitoring-enabled"
   description = "Checks whether detailed monitoring is enabled for EC2 instances."
+  name        = "${local.name_prefix}ec2-instance-detailed-monitoring-enabled"
+
   source {
     owner             = "AWS"
     source_identifier = "EC2_INSTANCE_DETAILED_MONITORING_ENABLED"
@@ -197,8 +199,9 @@ resource "aws_config_config_rule" "ec2-instance-profile-attached" {
   count = var.is_enabled ? 1 : 0
 
   region      = local.region
-  name        = "${local.name_prefix}ec2-instance-profile-attached"
   description = "Checks if an Amazon Elastic Compute Cloud (Amazon EC2) instance has an Identity and Access Management (IAM) profile attached to it. This rule is NON_COMPLIANT if no IAM profile is attached to the Amazon EC2 instance."
+  name        = "${local.name_prefix}ec2-instance-profile-attached"
+
   source {
     owner             = "AWS"
     source_identifier = "EC2_INSTANCE_PROFILE_ATTACHED"
@@ -214,8 +217,9 @@ resource "aws_config_config_rule" "ec2-instances-in-vpc" {
   count = var.is_enabled ? 1 : 0
 
   region      = local.region
-  name        = "${local.name_prefix}ec2-instances-in-vpc"
   description = "Checks whether your EC2 instances belong to a virtual private cloud (VPC)."
+  name        = "${local.name_prefix}ec2-instances-in-vpc"
+
   source {
     owner             = "AWS"
     source_identifier = "INSTANCES_IN_VPC"
@@ -357,8 +361,9 @@ resource "aws_config_config_rule" "ec2-volume-inuse-check" {
   count = var.is_enabled ? 1 : 0
 
   region      = local.region
-  name        = "${local.name_prefix}ec2-volume-inuse-check"
   description = "Checks whether EBS volumes are attached to EC2 instances."
+  name        = "${local.name_prefix}ec2-volume-inuse-check"
+
   source {
     owner             = "AWS"
     source_identifier = "EC2_VOLUME_INUSE_CHECK"
@@ -406,9 +411,10 @@ resource "aws_config_config_rule" "restricted-common-ports" {
   count = var.is_enabled ? 1 : 0
 
   region           = local.region
-  name             = "${local.name_prefix}restricted-common-ports"
   description      = "Checks whether security groups that are in use disallow unrestricted incoming TCP traffic to the specified ports."
   input_parameters = jsonencode(var.restricted_common_ports.input_parameters)
+  name             = "${local.name_prefix}restricted-common-ports"
+
   source {
     owner             = "AWS"
     source_identifier = "RESTRICTED_INCOMING_TRAFFIC"
@@ -424,8 +430,9 @@ resource "aws_config_config_rule" "restricted-ssh" {
   count = var.is_enabled ? 1 : 0
 
   region      = local.region
-  name        = "${local.name_prefix}restricted-ssh"
   description = "Checks whether security groups that are in use disallow unrestricted incoming SSH traffic."
+  name        = "${local.name_prefix}restricted-ssh"
+
   source {
     owner             = "AWS"
     source_identifier = "INCOMING_SSH_DISABLED"
@@ -440,11 +447,15 @@ resource "aws_config_config_rule" "restricted-ssh" {
 resource "aws_config_remediation_configuration" "restricted-ssh" {
   count = var.is_enabled && var.is_disable_public_access_for_security_group ? 1 : 0
 
-  region           = local.region
-  config_rule_name = aws_config_config_rule.restricted-ssh[0].name
-  target_type      = "SSM_DOCUMENT"
+  region                     = local.region
+  automatic                  = true
+  config_rule_name           = aws_config_config_rule.restricted-ssh[0].name
+  maximum_automatic_attempts = 5
+  retry_attempt_seconds      = 60
   # https://docs.aws.amazon.com/systems-manager-automation-runbooks/latest/userguide/automation-aws-disablepublicaccessforsecuritygroup.html
-  target_id = "AWS-DisablePublicAccessForSecurityGroup"
+  target_id   = "AWS-DisablePublicAccessForSecurityGroup"
+  target_type = "SSM_DOCUMENT"
+
   parameter {
     name         = "AutomationAssumeRole"
     static_value = var.ssm_automation_assume_role_arn
@@ -453,9 +464,6 @@ resource "aws_config_remediation_configuration" "restricted-ssh" {
     name           = "GroupId"
     resource_value = "RESOURCE_ID"
   }
-  automatic                  = true
-  maximum_automatic_attempts = 5
-  retry_attempt_seconds      = 60
 }
 
 #--------------------------------------------------------------

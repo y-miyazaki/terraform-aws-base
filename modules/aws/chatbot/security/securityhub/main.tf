@@ -42,8 +42,8 @@ resource "aws_iam_role" "eventbridge" {
 resource "aws_iam_role_policy_attachment" "eventbridge" {
   count = var.is_enabled ? 1 : 0
 
-  role       = aws_iam_role.eventbridge[0].name
   policy_arn = aws_iam_policy.eventbridge[0].arn
+  role       = aws_iam_role.eventbridge[0].name
 }
 
 resource "aws_iam_policy" "eventbridge" {
@@ -138,8 +138,8 @@ resource "aws_iam_policy" "step_functions" {
 resource "aws_iam_role_policy_attachment" "step_functions" {
   count = var.is_enabled ? 1 : 0
 
-  role       = aws_iam_role.step_functions[0].name
   policy_arn = aws_iam_policy.step_functions[0].arn
+  role       = aws_iam_role.step_functions[0].name
 }
 
 #--------------------------------------------------------------
@@ -209,8 +209,8 @@ resource "aws_sns_topic" "this" {
   count = var.is_enabled ? 1 : 0
 
   region            = local.region
-  name              = "${var.name_prefix}security-securityhub-chatbot-slack-topic"
   kms_master_key_id = var.kms_master_key_id
+  name              = "${var.name_prefix}security-securityhub-chatbot-slack-topic"
 
   tags = var.tags
 }
@@ -232,18 +232,18 @@ resource "aws_cloudwatch_event_target" "sns_publish" {
   count = var.is_enabled ? 1 : 0
 
   region    = local.region
+  arn       = aws_sns_topic.this[0].arn
   rule      = aws_cloudwatch_event_rule.securityhub[0].name
   target_id = aws_sns_topic.this[0].name
-  arn       = aws_sns_topic.this[0].arn
 }
 
 resource "aws_cloudwatch_event_target" "step_functions" {
   count = var.is_enabled ? 1 : 0
 
   region   = local.region
-  rule     = aws_cloudwatch_event_rule.securityhub[0].name
   arn      = module.step_functions[0].state_machine_arn
   role_arn = aws_iam_role.eventbridge[0].arn
+  rule     = aws_cloudwatch_event_rule.securityhub[0].name
 }
 
 #--------------------------------------------------------------
@@ -256,12 +256,12 @@ module "step_functions" {
   source  = "terraform-aws-modules/step-functions/aws"
   version = "5.1.1"
 
+  create = true
   region = local.region
 
   cloudwatch_log_group_kms_key_id        = var.cloudwatch_log_group_kms_key_id
   cloudwatch_log_group_name              = "/aws/sfn/${var.name_prefix}securityhub-update-findings-sfn"
   cloudwatch_log_group_retention_in_days = var.cloudwatch_log_group_retention_in_days
-  create                                 = true
   create_role                            = false
   definition = jsonencode({
     Comment = "A description of my state machine"

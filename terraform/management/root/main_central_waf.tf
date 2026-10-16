@@ -32,8 +32,7 @@ module "waf_jit_access" {
       ]
     }
   }
-  name  = "${var.name_prefix}jit-access-waf"
-  scope = "REGIONAL"
+  name = "${var.name_prefix}jit-access-waf"
   rules = [
     # Priority 1: IP reputation (WCU 25) - block known malicious IPs immediately
     {
@@ -93,10 +92,10 @@ module "waf_jit_access" {
       }
     },
   ]
+  scope = "REGIONAL"
   visibility_config = {
     metric_name = "${var.name_prefix}jit-access-waf"
   }
-
 
   tags = var.tags
 }

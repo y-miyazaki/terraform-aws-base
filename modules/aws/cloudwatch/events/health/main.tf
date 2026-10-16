@@ -38,8 +38,8 @@ resource "aws_cloudwatch_event_target" "this" {
   count = var.is_enabled ? 1 : 0
 
   region = local.region
-  rule   = aws_cloudwatch_event_rule.this[0].name
   arn    = try(var.aws_cloudwatch_event_target.arn, null)
+  rule   = aws_cloudwatch_event_rule.this[0].name
 
   depends_on = [
     aws_cloudwatch_event_rule.this

@@ -41,6 +41,6 @@ resource "aws_route_table_association" "this" {
   count = length(var.aws_subnet)
 
   region         = local.region
-  subnet_id      = element(aws_subnet.this[*].id, count.index)
   route_table_id = try(var.aws_route_table_association.route_table_id)
+  subnet_id      = element(aws_subnet.this[*].id, count.index)
 }

@@ -23,7 +23,8 @@
 data "aws_region" "current" {}
 
 locals {
-  region = coalesce(var.region, data.aws_region.current.region)
+  agent_space_policy_statements = concat(var.agent_space_default_policy_statements, var.agent_space_additional_policy_statements)
+  region                        = coalesce(var.region, data.aws_region.current.region)
   # Trust policy for roles assumed by the AWS DevOps Agent service.
   assume_role_condition = {
     ArnLike = {
@@ -109,10 +110,10 @@ resource "aws_iam_role_policy_attachment" "agent_space_service_linked_role" {
 }
 
 data "aws_iam_policy_document" "agent_space_additional" {
-  count = var.is_enabled && length(var.agent_space_additional_policy_statements) > 0 ? 1 : 0
+  count = var.is_enabled && length(local.agent_space_policy_statements) > 0 ? 1 : 0
 
   dynamic "statement" {
-    for_each = var.agent_space_additional_policy_statements
+    for_each = local.agent_space_policy_statements
 
     content {
       actions   = statement.value.actions
@@ -124,7 +125,7 @@ data "aws_iam_policy_document" "agent_space_additional" {
 }
 
 resource "aws_iam_policy" "agent_space_additional" {
-  count = var.is_enabled && length(var.agent_space_additional_policy_statements) > 0 ? 1 : 0
+  count = var.is_enabled && length(local.agent_space_policy_statements) > 0 ? 1 : 0
 
   name   = "Additional-${var.aws_iam_role_agent_space.name}"
   policy = data.aws_iam_policy_document.agent_space_additional[0].json
@@ -132,7 +133,7 @@ resource "aws_iam_policy" "agent_space_additional" {
 }
 
 resource "aws_iam_role_policy_attachment" "agent_space_additional" {
-  count = var.is_enabled && length(var.agent_space_additional_policy_statements) > 0 ? 1 : 0
+  count = var.is_enabled && length(local.agent_space_policy_statements) > 0 ? 1 : 0
 
   policy_arn = aws_iam_policy.agent_space_additional[0].arn
   role       = aws_iam_role.agent_space[0].name

@@ -16,9 +16,9 @@ resource "aws_cloudwatch_log_group" "ssm_automation" {
   count = var.is_enabled ? 1 : 0
 
   region            = local.region
+  kms_key_id        = var.cloudwatch_log_group_kms_key_id
   name              = var.cloudwatch_log_group_name
   retention_in_days = var.cloudwatch_log_group_retention_in_days
-  kms_key_id        = var.cloudwatch_log_group_kms_key_id
 
   tags = var.tags
 }

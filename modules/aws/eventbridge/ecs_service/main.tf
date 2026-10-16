@@ -17,16 +17,16 @@ locals {
 module "scheduler_helper" {
   source = "../../_internal/eventbridge_scheduler_helper"
 
-  is_enabled            = var.is_enabled
-  create_auto_schedules = var.create_auto_schedules
+  is_enabled = var.is_enabled
 
-  source_schedules            = local.auto_discovered_schedules
-  auto_schedules_include_list = var.auto_schedules_include_list
   auto_schedules_exclude_list = var.auto_schedules_exclude_list
+  auto_schedules_include_list = var.auto_schedules_include_list
+  create_auto_schedules       = var.create_auto_schedules
   manual_schedules            = var.schedules
+  primary_key                 = "ecs_service"
   schedule_expression_start   = var.schedule_expression_start
   schedule_expression_stop    = var.schedule_expression_stop
-  primary_key                 = "ecs_service"
+  source_schedules            = local.auto_discovered_schedules
 }
 
 #--------------------------------------------------------------
@@ -45,14 +45,15 @@ resource "aws_scheduler_schedule" "stop" {
     if var.is_enabled && v.schedule_expression_stop != null && coalesce(try(v.has_autoscaling, 0), 0) == 0
   }
 
-  region      = local.region
-  description = try(each.value.description, var.description, "Stop ECS service ${each.value.ecs_service}")
-  flexible_time_window {
-    mode = "OFF"
-  }
+  region              = local.region
+  description         = try(each.value.description, var.description, "Stop ECS service ${each.value.ecs_service}")
   name                = substr("${var.name_prefix}${each.value.key_name}-stop-es-sch", 0, 63)
   schedule_expression = each.value.schedule_expression_stop
   state               = "ENABLED"
+
+  flexible_time_window {
+    mode = "OFF"
+  }
   target {
     arn      = "arn:aws:scheduler:::aws-sdk:ecs:updateService"
     role_arn = var.role_arn
@@ -79,14 +80,15 @@ resource "aws_scheduler_schedule" "stop_autoscaling" {
     if var.is_enabled && v.schedule_expression_stop != null && coalesce(try(v.has_autoscaling, 0), 0) == 1
   }
 
-  region      = local.region
-  description = "Set autoscaling min/max capacity to 0 for ECS service ${each.value.ecs_service}"
-  flexible_time_window {
-    mode = "OFF"
-  }
+  region              = local.region
+  description         = "Set autoscaling min/max capacity to 0 for ECS service ${each.value.ecs_service}"
   name                = substr("${var.name_prefix}${each.value.key_name}-stop-as-sch", 0, 63)
   schedule_expression = each.value.schedule_expression_stop
   state               = "ENABLED"
+
+  flexible_time_window {
+    mode = "OFF"
+  }
   target {
     arn      = "arn:aws:scheduler:::aws-sdk:applicationautoscaling:registerScalableTarget"
     role_arn = var.role_arn
@@ -115,14 +117,15 @@ resource "aws_scheduler_schedule" "start" {
     if var.is_enabled && v.schedule_expression_start != null && coalesce(try(v.has_autoscaling, 0), 0) == 0
   }
 
-  region      = local.region
-  description = try(each.value.description, var.description, "Start ECS service ${each.value.ecs_service}")
-  flexible_time_window {
-    mode = "OFF"
-  }
+  region              = local.region
+  description         = try(each.value.description, var.description, "Start ECS service ${each.value.ecs_service}")
   name                = substr("${var.name_prefix}${each.value.key_name}-start-es-sch", 0, 63)
   schedule_expression = each.value.schedule_expression_start
   state               = "ENABLED"
+
+  flexible_time_window {
+    mode = "OFF"
+  }
   target {
     arn      = "arn:aws:scheduler:::aws-sdk:ecs:updateService"
     role_arn = var.role_arn
@@ -149,14 +152,15 @@ resource "aws_scheduler_schedule" "start_autoscaling" {
     if var.is_enabled && v.schedule_expression_start != null && coalesce(try(v.has_autoscaling, 0), 0) == 1
   }
 
-  region      = local.region
-  description = "Restore autoscaling min/max capacity for ECS service ${each.value.ecs_service}"
-  flexible_time_window {
-    mode = "OFF"
-  }
+  region              = local.region
+  description         = "Restore autoscaling min/max capacity for ECS service ${each.value.ecs_service}"
   name                = substr("${var.name_prefix}${each.value.key_name}-start-as-sch", 0, 63)
   schedule_expression = each.value.schedule_expression_start
   state               = "ENABLED"
+
+  flexible_time_window {
+    mode = "OFF"
+  }
   target {
     arn      = "arn:aws:scheduler:::aws-sdk:applicationautoscaling:registerScalableTarget"
     role_arn = var.role_arn

@@ -125,7 +125,7 @@ One Agent Space in the primary account can investigate other AWS accounts. An ac
 
 The two blocks are independent. If you enable both in one account, the account hosts Agent Spaces that investigate itself and is also investigated by the Agent Space of another primary account.
 
-The role trusts `aidevops.amazonaws.com` only when `aws:SourceAccount` is `devops_agent.secondary.primary_account_id` and `aws:SourceArn` is exactly `devops_agent.secondary.primary_agent_space_arn` (no wildcard), and has the AWS managed policy `AIDevOpsAgentAccessPolicy`. The role name is fixed so that the primary account can build the assumable role ARN from the account ID.
+The role trusts `aidevops.amazonaws.com` only when `aws:SourceAccount` is `devops_agent.secondary.primary_account_id` and `aws:SourceArn` is exactly `devops_agent.secondary.primary_agent_space_arn` (no wildcard), and has the AWS managed policy `AIDevOpsAgentAccessPolicy` plus a baseline of read-only metadata actions (module variable `default_policy_statements`; set `[]` to drop it) merged with `devops_agent.secondary.additional_policy_statements`. Secret-returning actions (`secretsmanager:GetSecretValue`, API Gateway API key reads) are intentionally not allowed. The role name is fixed so that the primary account can build the assumable role ARN from the account ID.
 
 If `devops_agent.secondary.is_enabled` is `true`, `primary_account_id` and `primary_agent_space_arn` are required (validation error otherwise).
 
@@ -330,6 +330,8 @@ aws secretsmanager get-secret-value \
 ```
 
 The alert Lambda functions (`metric` and `log`) in every account send to the webhook of the primary account. Set `DEVOPS_AGENT_WEBHOOK_URL` (`devops_agent_webhook_urls` output) and `DEVOPS_AGENT_WEBHOOK_HMAC_SECRET` (`webhook_secret` in the secret) in `metric.aws_lambda_function.environment` and `log.aws_lambda_function.environment`. The HMAC secret is then stored in the tfvars and the Lambda environment, as `SLACK_OAUTH_ACCESS_TOKEN` already is. When the webhook is re-created, update both values in every account.
+
+In the primary account, `DEVOPS_AGENT_LOCALE` (for example `ja-JP`) is injected automatically into the `metric` and `log` Lambda environments from `agent_spaces.<name>.locale` of the Agent Space that has `webhook.is_enabled = true` (the first by name when several; nothing is injected when `locale` is null). The Lambda code can use it to request the answer language in the webhook payload. Values set in `aws_lambda_function.environment` take priority. Secondary accounts have no Agent Space, so set `DEVOPS_AGENT_LOCALE` there in `aws_lambda_function.environment` when needed.
 
 #### Lifecycle
 

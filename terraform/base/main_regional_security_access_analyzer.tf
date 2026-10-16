@@ -11,6 +11,7 @@ module "aws_security_access_analyzer" {
   region     = each.value
 
   analyzer_name = try(var.security_access_analyzer.analyzer_name, "${var.name_prefix}analyzer-${each.value}")
-  tags          = var.tags
   type          = try(var.security_access_analyzer.type, "ACCOUNT")
+
+  tags = var.tags
 }

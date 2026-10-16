@@ -10,21 +10,22 @@
 #--------------------------------------------------------------
 module "oidc_github" {
   for_each = var.oidc_github.settings
-  source   = "unfunco/oidc-github/aws"
-  version  = "3.1.0"
 
-  create               = var.oidc_github.is_enabled
-  create_oidc_provider = each.value.create_oidc_provider
+  source  = "unfunco/oidc-github/aws"
+  version = "3.1.0"
 
+  create = var.oidc_github.is_enabled
+
+  create_oidc_provider            = each.value.create_oidc_provider
   dangerously_attach_admin_policy = each.value.dangerously_attach_admin_policy
   default_subject                 = "*"
   github_subjects                 = each.value.github_subjects
-  iam_role_policy_names           = each.value.iam_role_policy_names
   iam_role_inline_policies = {
     format("%s%s%s%s", var.name_prefix, "oidc-github-", each.key, "-inline-policy") = jsonencode(each.value.iam_role_inline_policies)
   }
-  iam_role_name = format("%s%s", var.name_prefix, each.value.iam_role_name)
-  iam_role_path = each.value.iam_role_path
+  iam_role_name         = format("%s%s", var.name_prefix, each.value.iam_role_name)
+  iam_role_path         = each.value.iam_role_path
+  iam_role_policy_names = each.value.iam_role_policy_names
 
   tags = var.tags
 }

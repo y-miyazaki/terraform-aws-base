@@ -16,124 +16,87 @@ variable "period" {
 variable "threshold" {
   type = object({
     # (Required) NumberOfMessagesPublished threshold (unit=Count)
-    enabled_number_of_messages_published = bool
-    number_of_messages_published         = number
+    number_of_messages_published = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # (Required) NumberOfNotificationsDelivered threshold (unit=Count)
-    enabled_number_of_notifications_delivered = bool
-    number_of_notifications_delivered         = number
+    number_of_notifications_delivered = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # (Required) NumberOfNotificationsFailed threshold (unit=Count)
-    enabled_number_of_notifications_failed = bool
-    number_of_notifications_failed         = number
+    number_of_notifications_failed = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # (Required) NumberOfNotificationsFailedToRedriveToDlq threshold (unit=Count)
-    enabled_number_of_notifications_failed_to_redrive_to_dlq = bool
-    number_of_notifications_failed_to_redrive_to_dlq         = number
+    number_of_notifications_failed_to_redrive_to_dlq = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # (Required) NumberOfNotificationsFilteredOut threshold (unit=Count)
-    enabled_number_of_notifications_filtered_out = bool
-    number_of_notifications_filtered_out         = number
+    number_of_notifications_filtered_out = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # (Required) NumberOfNotificationsFilteredOut-InvalidAttributes threshold (unit=Count)
-    enabled_number_of_notifications_filtered_out_invalid_attributes = bool
-    number_of_notifications_filtered_out_invalid_attributes         = number
+    number_of_notifications_filtered_out_invalid_attributes = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # (Required) NumberOfNotificationsFilteredOut-InvalidMessageBody threshold (unit=Count)
-    enabled_number_of_notifications_filtered_out_invalid_message_body = bool
-    number_of_notifications_filtered_out_invalid_message_body         = number
+    number_of_notifications_filtered_out_invalid_message_body = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # (Required) NumberOfNotificationsFilteredOut-MessageAttributes threshold (unit=Count)
-    enabled_number_of_notifications_filtered_out_message_attributes = bool
-    number_of_notifications_filtered_out_message_attributes         = number
+    number_of_notifications_filtered_out_message_attributes = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # (Required) NumberOfNotificationsFilteredOut-MessageBody threshold (unit=Count)
-    enabled_number_of_notifications_filtered_out_message_body = bool
-    number_of_notifications_filtered_out_message_body         = number
+    number_of_notifications_filtered_out_message_body = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # (Required) NumberOfNotificationsFilteredOut-NoMessageAttributes threshold (unit=Count)
-    enabled_number_of_notifications_filtered_out_no_message_attributes = bool
-    number_of_notifications_filtered_out_no_message_attributes         = number
+    number_of_notifications_filtered_out_no_message_attributes = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # (Required) NumberOfNotificationsRedrivenToDlq threshold (unit=Count)
-    enabled_number_of_notifications_redriven_to_dlq = bool
-    number_of_notifications_redriven_to_dlq         = number
+    number_of_notifications_redriven_to_dlq = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # (Required) PublishSize threshold (unit=Bytes)
-    enabled_publish_size = bool
-    publish_size         = number
-    }
-  )
+    publish_size = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
+  })
   description = "(Optional) Set the threshold for each Metric in SNS."
   default = {
     # (Required) NumberOfMessagesPublished threshold (unit=Count)
-    enabled_number_of_messages_published = false
-    number_of_messages_published         = 100000
+    number_of_messages_published = { enabled = false, value = 100000 }
     # (Required) NumberOfNotificationsDelivered threshold (unit=Count)
-    enabled_number_of_notifications_delivered = false
-    number_of_notifications_delivered         = 100000
+    number_of_notifications_delivered = { enabled = false, value = 100000 }
     # (Required) NumberOfNotificationsFailed threshold (unit=Count)
-    enabled_number_of_notifications_failed = true
-    number_of_notifications_failed         = 1
+    number_of_notifications_failed = { enabled = true, value = 1 }
     # (Required) NumberOfNotificationsFailedToRedriveToDlq threshold (unit=Count)
-    enabled_number_of_notifications_failed_to_redrive_to_dlq = true
-    number_of_notifications_failed_to_redrive_to_dlq         = 1
+    number_of_notifications_failed_to_redrive_to_dlq = { enabled = true, value = 1 }
     # (Required) NumberOfNotificationsFilteredOut threshold (unit=Count)
-    enabled_number_of_notifications_filtered_out = false
-    number_of_notifications_filtered_out         = 100
+    number_of_notifications_filtered_out = { enabled = false, value = 100 }
     # (Required) NumberOfNotificationsFilteredOut-InvalidAttributes threshold (unit=Count)
-    enabled_number_of_notifications_filtered_out_invalid_attributes = true
-    number_of_notifications_filtered_out_invalid_attributes         = 1
+    number_of_notifications_filtered_out_invalid_attributes = { enabled = true, value = 1 }
     # (Required) NumberOfNotificationsFilteredOut-InvalidMessageBody threshold (unit=Count)
-    enabled_number_of_notifications_filtered_out_invalid_message_body = true
-    number_of_notifications_filtered_out_invalid_message_body         = 1
+    number_of_notifications_filtered_out_invalid_message_body = { enabled = true, value = 1 }
     # (Required) NumberOfNotificationsFilteredOut-MessageAttributes threshold (unit=Count)
-    enabled_number_of_notifications_filtered_out_message_attributes = false
-    number_of_notifications_filtered_out_message_attributes         = 100
+    number_of_notifications_filtered_out_message_attributes = { enabled = false, value = 100 }
     # (Required) NumberOfNotificationsFilteredOut-MessageBody threshold (unit=Count)
-    enabled_number_of_notifications_filtered_out_message_body = false
-    number_of_notifications_filtered_out_message_body         = 100
+    number_of_notifications_filtered_out_message_body = { enabled = false, value = 100 }
     # (Required) NumberOfNotificationsFilteredOut-NoMessageAttributes threshold (unit=Count)
-    enabled_number_of_notifications_filtered_out_no_message_attributes = false
-    number_of_notifications_filtered_out_no_message_attributes         = 100
+    number_of_notifications_filtered_out_no_message_attributes = { enabled = false, value = 100 }
     # (Required) NumberOfNotificationsRedrivenToDlq threshold (unit=Count)
-    enabled_number_of_notifications_redriven_to_dlq = true
-    number_of_notifications_redriven_to_dlq         = 1
+    number_of_notifications_redriven_to_dlq = { enabled = true, value = 1 }
     # (Required) PublishSize threshold (unit=Bytes)
-    enabled_publish_size = false
-    publish_size         = 262144 # 256KB (max SNS message size)
+    publish_size = { enabled = false, value = 262144 } # 256KB (max SNS message size)
   }
 }
 
 variable "threshold_override" {
   type = map(object({
-    # (Optional) NumberOfMessagesPublished threshold (unit=Count)
-    enabled_number_of_messages_published = optional(bool)
-    number_of_messages_published         = optional(number)
-    # (Optional) NumberOfNotificationsDelivered threshold (unit=Count)
-    enabled_number_of_notifications_delivered = optional(bool)
-    number_of_notifications_delivered         = optional(number)
-    # (Optional) NumberOfNotificationsFailed threshold (unit=Count)
-    enabled_number_of_notifications_failed = optional(bool)
-    number_of_notifications_failed         = optional(number)
-    # (Optional) NumberOfNotificationsFailedToRedriveToDlq threshold (unit=Count)
-    enabled_number_of_notifications_failed_to_redrive_to_dlq = optional(bool)
-    number_of_notifications_failed_to_redrive_to_dlq         = optional(number)
-    # (Optional) NumberOfNotificationsFilteredOut threshold (unit=Count)
-    enabled_number_of_notifications_filtered_out = optional(bool)
-    number_of_notifications_filtered_out         = optional(number)
-    # (Optional) NumberOfNotificationsFilteredOut-InvalidAttributes threshold (unit=Count)
-    enabled_number_of_notifications_filtered_out_invalid_attributes = optional(bool)
-    number_of_notifications_filtered_out_invalid_attributes         = optional(number)
-    # (Optional) NumberOfNotificationsFilteredOut-InvalidMessageBody threshold (unit=Count)
-    enabled_number_of_notifications_filtered_out_invalid_message_body = optional(bool)
-    number_of_notifications_filtered_out_invalid_message_body         = optional(number)
-    # (Optional) NumberOfNotificationsFilteredOut-MessageAttributes threshold (unit=Count)
-    enabled_number_of_notifications_filtered_out_message_attributes = optional(bool)
-    number_of_notifications_filtered_out_message_attributes         = optional(number)
-    # (Optional) NumberOfNotificationsFilteredOut-MessageBody threshold (unit=Count)
-    enabled_number_of_notifications_filtered_out_message_body = optional(bool)
-    number_of_notifications_filtered_out_message_body         = optional(number)
-    # (Optional) NumberOfNotificationsFilteredOut-NoMessageAttributes threshold (unit=Count)
-    enabled_number_of_notifications_filtered_out_no_message_attributes = optional(bool)
-    number_of_notifications_filtered_out_no_message_attributes         = optional(number)
-    # (Optional) NumberOfNotificationsRedrivenToDlq threshold (unit=Count)
-    enabled_number_of_notifications_redriven_to_dlq = optional(bool)
-    number_of_notifications_redriven_to_dlq         = optional(number)
-    # (Optional) PublishSize threshold (unit=Bytes)
-    enabled_publish_size = optional(bool)
-    publish_size         = optional(number)
+    # NumberOfMessagesPublished threshold (unit=Count)
+    number_of_messages_published = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # NumberOfNotificationsDelivered threshold (unit=Count)
+    number_of_notifications_delivered = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # NumberOfNotificationsFailed threshold (unit=Count)
+    number_of_notifications_failed = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # NumberOfNotificationsFailedToRedriveToDlq threshold (unit=Count)
+    number_of_notifications_failed_to_redrive_to_dlq = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # NumberOfNotificationsFilteredOut threshold (unit=Count)
+    number_of_notifications_filtered_out = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # NumberOfNotificationsFilteredOut-InvalidAttributes threshold (unit=Count)
+    number_of_notifications_filtered_out_invalid_attributes = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # NumberOfNotificationsFilteredOut-InvalidMessageBody threshold (unit=Count)
+    number_of_notifications_filtered_out_invalid_message_body = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # NumberOfNotificationsFilteredOut-MessageAttributes threshold (unit=Count)
+    number_of_notifications_filtered_out_message_attributes = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # NumberOfNotificationsFilteredOut-MessageBody threshold (unit=Count)
+    number_of_notifications_filtered_out_message_body = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # NumberOfNotificationsFilteredOut-NoMessageAttributes threshold (unit=Count)
+    number_of_notifications_filtered_out_no_message_attributes = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # NumberOfNotificationsRedrivenToDlq threshold (unit=Count)
+    number_of_notifications_redriven_to_dlq = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # PublishSize threshold (unit=Bytes)
+    publish_size = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
   }))
-  description = "(Optional) Override thresholds for specific resources. Key is the TopicName."
+  description = "(Optional) Override thresholds for specific resources. Key is the TopicName. Each metric accepts enabled, value, datapoints_to_alarm and evaluation_periods."
   default     = {}
 }
 

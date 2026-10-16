@@ -16,295 +16,201 @@ variable "period" {
 variable "threshold" {
   type = object({
     # (Required) CommitQueueLength threshold (unit=Count)
-    enabled_commit_queue_length = bool
-    commit_queue_length         = number
+    commit_queue_length = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # (Required) ConcurrencyScalingActiveClusters threshold (unit=Count)
-    enabled_concurrency_scaling_active_clusters = bool
-    concurrency_scaling_active_clusters         = number
+    concurrency_scaling_active_clusters = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # (Required) ConcurrencyScalingSeconds threshold (unit=Seconds)
-    enabled_concurrency_scaling_seconds = bool
-    concurrency_scaling_seconds         = number
+    concurrency_scaling_seconds = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # (Required) CPUUtilization threshold (unit=Percent)
-    enabled_cpu_utilization = bool
-    cpu_utilization         = number
+    cpu_utilization = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # (Required) DatabaseConnections threshold (unit=Count)
-    enabled_database_connections = bool
-    database_connections         = number
+    database_connections = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # (Required) HealthStatus threshold (HEALTHY(1)/UNHEALTHY(0))
-    enabled_health_status = bool
-    health_status         = number
+    health_status = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # (Required) MaintenanceMode threshold (unit=Count(ON(1)/OFF(0)))
-    enabled_maintenance_mode = bool
-    maintenance_mode         = number
+    maintenance_mode = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # (Required) MaxConfiguredConcurrencyScalingClusters threshold (unit=Count)
-    enabled_max_configured_concurrency_scaling_clusters = bool
-    max_configured_concurrency_scaling_clusters         = number
+    max_configured_concurrency_scaling_clusters = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # (Required) NetworkReceiveThroughput threshold (unit=Bytes/Second)
-    enabled_network_receive_throughput = bool
-    network_receive_throughput         = number
+    network_receive_throughput = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # (Required) NetworkTransmitThroughput threshold (unit=Bytes/Second)
-    enabled_network_transmit_throughput = bool
-    network_transmit_throughput         = number
+    network_transmit_throughput = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # (Required) NumExceededSchemaQuotas threshold (unit=Count)
-    enabled_num_exceeded_schema_quotas = bool
-    num_exceeded_schema_quotas         = number
+    num_exceeded_schema_quotas = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # (Required) SchemaQuota threshold (unit=Megabytes)
-    enabled_schema_quota = bool
-    schema_quota         = number
+    schema_quota = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # (Required) StorageUsed threshold (unit=Megabytes)
-    enabled_storage_used = bool
-    storage_used         = number
+    storage_used = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # (Required) PercentageDiskSpaceUsed threshold (unit=Percent)
-    enabled_percentage_disk_space_used = bool
-    percentage_disk_space_used         = number
+    percentage_disk_space_used = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # (Required) PercentageQuotaUsed threshold (unit=Percent)
-    enabled_percentage_quota_used = bool
-    percentage_quota_used         = number
+    percentage_quota_used = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # (Required) QueriesCompletedPerSecond threshold (unit=Count/Second)
-    enabled_queries_completed_per_second = bool
-    queries_completed_per_second         = number
+    queries_completed_per_second = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # (Required) QueryDuration threshold (unit=Microseconds)
-    enabled_query_duration = bool
-    query_duration         = number
+    query_duration = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # (Required) QueryRuntimeBreakdown threshold (unit=Microseconds)
-    enabled_query_runtime_breakdown = bool
-    query_runtime_breakdown         = number
+    query_runtime_breakdown = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # (Required) ReadIOPS threshold (unit=Count/Second)
-    enabled_read_iops = bool
-    read_iops         = number
+    read_iops = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # (Required) ReadLatency threshold (unit=Seconds)
-    enabled_read_latency = bool
-    read_latency         = number
+    read_latency = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # (Required) ReadThroughput threshold (unit=Bytes)
-    enabled_read_throughput = bool
-    read_throughput         = number
+    read_throughput = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # (Required) RedshiftManagedStorageTotalCapacity threshold (unit=Megabytes)
-    enabled_redshift_managed_storage_total_capacity = bool
-    redshift_managed_storage_total_capacity         = number
+    redshift_managed_storage_total_capacity = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # (Required) TotalTableCount threshold (unit=Count)
-    enabled_total_table_count = bool
-    total_table_count         = number
+    total_table_count = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # (Required) WLMQueueLength threshold (unit=Count)
-    enabled_wlm_queue_length = bool
-    wlm_queue_length         = number
+    wlm_queue_length = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # (Required) WLMQueueWaitTime threshold (unit=Milliseconds)
-    enabled_wlm_queue_wait_time = bool
-    wlm_queue_wait_time         = number
+    wlm_queue_wait_time = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # (Required) WLMQueriesCompletedPerSecond threshold (unit=Count/Second)
-    enabled_wlm_queries_completed_per_second = bool
-    wlm_queries_completed_per_second         = number
+    wlm_queries_completed_per_second = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # (Required) WLMQueryDuration threshold (unit=Microseconds)
-    enabled_wlm_query_duration = bool
-    wlm_query_duration         = number
+    wlm_query_duration = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # (Required) WLMRunningQueries threshold (unit=Count)
-    enabled_wlm_running_queries = bool
-    wlm_running_queries         = number
+    wlm_running_queries = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # (Required) WriteIOPS threshold (unit=Count/Second)
-    enabled_write_iops = bool
-    write_iops         = number
+    write_iops = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # (Required) WriteLatency threshold (unit=Seconds)
-    enabled_write_latency = bool
-    write_latency         = number
+    write_latency = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # (Required) WriteThroughput threshold (unit=Bytes)
-    enabled_write_throughput = bool
-    write_throughput         = number
-    }
-  )
+    write_throughput = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
+  })
   description = "(Optional) Set the threshold for each Metric in SES."
   default = {
     # (Required) CommitQueueLength threshold (unit=Count)
-    enabled_commit_queue_length = true
-    commit_queue_length         = 100
+    commit_queue_length = { enabled = true, value = 100 }
     # (Required) ConcurrencyScalingActiveClusters threshold (unit=Count)
-    enabled_concurrency_scaling_active_clusters = true
-    concurrency_scaling_active_clusters         = 100
+    concurrency_scaling_active_clusters = { enabled = true, value = 100 }
     # (Required) ConcurrencyScalingSeconds threshold (unit=Seconds)
-    enabled_concurrency_scaling_seconds = true
-    concurrency_scaling_seconds         = 10
+    concurrency_scaling_seconds = { enabled = true, value = 10 }
     # (Required) CPUUtilization threshold (unit=Percent)
-    enabled_cpu_utilization = true
-    cpu_utilization         = 80
+    cpu_utilization = { enabled = true, value = 80 }
     # (Required) DatabaseConnections threshold (unit=Count)
-    enabled_database_connections = true
-    database_connections         = 100
+    database_connections = { enabled = true, value = 100 }
     # (Required) HealthStatus threshold (HEALTHY(1)/UNHEALTHY(0))
-    enabled_health_status = true
-    health_status         = 0
+    health_status = { enabled = true, value = 0 }
     # (Required) MaintenanceMode threshold (unit=Count(ON(1)/OFF(0)))
-    enabled_maintenance_mode = true
-    maintenance_mode         = 1
+    maintenance_mode = { enabled = true, value = 1 }
     # (Required) MaxConfiguredConcurrencyScalingClusters threshold (unit=Count)
-    enabled_max_configured_concurrency_scaling_clusters = true
-    max_configured_concurrency_scaling_clusters         = 5
+    max_configured_concurrency_scaling_clusters = { enabled = true, value = 5 }
     # (Required) NetworkReceiveThroughput threshold (unit=Bytes/Second)
-    enabled_network_receive_throughput = false
-    network_receive_throughput         = 1024 * 1024
+    network_receive_throughput = { enabled = false, value = 1024 * 1024 }
     # (Required) NetworkTransmitThroughput threshold (unit=Bytes/Second)
-    enabled_network_transmit_throughput = false
-    network_transmit_throughput         = 1024 * 1024
+    network_transmit_throughput = { enabled = false, value = 1024 * 1024 }
     # (Required) NumExceededSchemaQuotas threshold (unit=Count)
-    enabled_num_exceeded_schema_quotas = false
-    num_exceeded_schema_quotas         = 10
+    num_exceeded_schema_quotas = { enabled = false, value = 10 }
     # (Required) PercentageDiskSpaceUsed threshold (unit=Percent)
-    enabled_percentage_disk_space_used = true
-    percentage_disk_space_used         = 80
+    percentage_disk_space_used = { enabled = true, value = 80 }
     # (Required) PercentageQuotaUsed threshold (unit=Percent)
-    enabled_percentage_quota_used = false
-    percentage_quota_used         = 1024
+    percentage_quota_used = { enabled = false, value = 1024 }
     # (Required) QueriesCompletedPerSecond threshold (unit=Count/Second)
-    enabled_queries_completed_per_second = true
-    queries_completed_per_second         = 100
+    queries_completed_per_second = { enabled = true, value = 100 }
     # (Required) QueryDuration threshold (unit=Microseconds)
-    enabled_query_duration = true
-    query_duration         = 3000000
+    query_duration = { enabled = true, value = 3000000 }
     # (Required) QueryRuntimeBreakdown threshold (unit=Microseconds)
-    enabled_query_runtime_breakdown = true
-    query_runtime_breakdown         = 3000000
+    query_runtime_breakdown = { enabled = true, value = 3000000 }
     # (Required) ReadIOPS threshold (unit=Count/Second)
-    enabled_read_iops = false
-    read_iops         = 1000
+    read_iops = { enabled = false, value = 1000 }
     # (Required) ReadLatency threshold (unit=Seconds)
-    enabled_read_latency = true
-    read_latency         = 3
+    read_latency = { enabled = true, value = 3 }
     # (Required) ReadThroughput threshold (unit=Bytes)
-    enabled_read_throughput = false
-    read_throughput         = 1024 * 1024 * 1024
+    read_throughput = { enabled = false, value = 1024 * 1024 * 1024 }
     # (Required) RedshiftManagedStorageTotalCapacity threshold (unit=Megabytes)
-    enabled_redshift_managed_storage_total_capacity = false
-    redshift_managed_storage_total_capacity         = 1024 * 1024 * 500
+    redshift_managed_storage_total_capacity = { enabled = false, value = 1024 * 1024 * 500 }
     # (Required) SchemaQuota threshold (unit=Megabytes)
-    enabled_schema_quota = false
-    schema_quota         = 1024
+    schema_quota = { enabled = false, value = 1024 }
     # (Required) StorageUsed threshold (unit=Megabytes)
-    enabled_storage_used = false
-    storage_used         = 1024
+    storage_used = { enabled = false, value = 1024 }
     # (Required) TotalTableCount threshold (unit=Count)
-    enabled_total_table_count = false
-    total_table_count         = 50
+    total_table_count = { enabled = false, value = 50 }
     # (Required) WLMQueueLength threshold (unit=Count)
-    enabled_wlm_queue_length = true
-    wlm_queue_length         = 100
+    wlm_queue_length = { enabled = true, value = 100 }
     # (Required) WLMQueueWaitTime threshold (unit=Milliseconds)
-    enabled_wlm_queue_wait_time = true
-    wlm_queue_wait_time         = 100
+    wlm_queue_wait_time = { enabled = true, value = 100 }
     # (Required) WLMQueriesCompletedPerSecond threshold (unit=Count/Second)
-    enabled_wlm_queries_completed_per_second = false
-    wlm_queries_completed_per_second         = 100
+    wlm_queries_completed_per_second = { enabled = false, value = 100 }
     # (Required) WLMQueryDuration threshold (unit=Microseconds)
-    enabled_wlm_query_duration = true
-    wlm_query_duration         = 3000000
+    wlm_query_duration = { enabled = true, value = 3000000 }
     # (Required) WLMRunningQueries threshold (unit=Count)
-    enabled_wlm_running_queries = false
-    wlm_running_queries         = 10
+    wlm_running_queries = { enabled = false, value = 10 }
     # (Required) WriteIOPS threshold (unit=Count/Second)
-    enabled_write_iops = false
-    write_iops         = 1000
+    write_iops = { enabled = false, value = 1000 }
     # (Required) WriteLatency threshold (unit=Seconds)
-    enabled_write_latency = true
-    write_latency         = 3
+    write_latency = { enabled = true, value = 3 }
     # (Required) WriteThroughput threshold (unit=Bytes)
-    enabled_write_throughput = false
-    write_throughput         = 1024 * 1024 * 1024
+    write_throughput = { enabled = false, value = 1024 * 1024 * 1024 }
   }
 }
 
 variable "threshold_override" {
   type = map(object({
-    # (Optional) CommitQueueLength threshold (unit=Count)
-    enabled_commit_queue_length = optional(bool)
-    commit_queue_length         = optional(number)
-    # (Optional) ConcurrencyScalingActiveClusters threshold (unit=Count)
-    enabled_concurrency_scaling_active_clusters = optional(bool)
-    concurrency_scaling_active_clusters         = optional(number)
-    # (Optional) ConcurrencyScalingSeconds threshold (unit=Seconds)
-    enabled_concurrency_scaling_seconds = optional(bool)
-    concurrency_scaling_seconds         = optional(number)
-    # (Optional) CPUUtilization threshold (unit=Percent)
-    enabled_cpu_utilization = optional(bool)
-    cpu_utilization         = optional(number)
-    # (Optional) DatabaseConnections threshold (unit=Count)
-    enabled_database_connections = optional(bool)
-    database_connections         = optional(number)
-    # (Optional) HealthStatus threshold (HEALTHY(1)/UNHEALTHY(0))
-    enabled_health_status = optional(bool)
-    health_status         = optional(number)
-    # (Optional) MaintenanceMode threshold (unit=Count(ON(1)/OFF(0)))
-    enabled_maintenance_mode = optional(bool)
-    maintenance_mode         = optional(number)
-    # (Optional) MaxConfiguredConcurrencyScalingClusters threshold (unit=Count)
-    enabled_max_configured_concurrency_scaling_clusters = optional(bool)
-    max_configured_concurrency_scaling_clusters         = optional(number)
-    # (Optional) NetworkReceiveThroughput threshold (unit=Bytes/Second)
-    enabled_network_receive_throughput = optional(bool)
-    network_receive_throughput         = optional(number)
-    # (Optional) NetworkTransmitThroughput threshold (unit=Bytes/Second)
-    enabled_network_transmit_throughput = optional(bool)
-    network_transmit_throughput         = optional(number)
-    # (Optional) NumExceededSchemaQuotas threshold (unit=Count)
-    enabled_num_exceeded_schema_quotas = optional(bool)
-    num_exceeded_schema_quotas         = optional(number)
-    # (Optional) SchemaQuota threshold (unit=Megabytes)
-    enabled_schema_quota = optional(bool)
-    schema_quota         = optional(number)
-    # (Optional) StorageUsed threshold (unit=Megabytes)
-    enabled_storage_used = optional(bool)
-    storage_used         = optional(number)
-    # (Optional) PercentageDiskSpaceUsed threshold (unit=Percent)
-    enabled_percentage_disk_space_used = optional(bool)
-    percentage_disk_space_used         = optional(number)
-    # (Optional) PercentageQuotaUsed threshold (unit=Percent)
-    enabled_percentage_quota_used = optional(bool)
-    percentage_quota_used         = optional(number)
-    # (Optional) QueriesCompletedPerSecond threshold (unit=Count/Second)
-    enabled_queries_completed_per_second = optional(bool)
-    queries_completed_per_second         = optional(number)
-    # (Optional) QueryDuration threshold (unit=Microseconds)
-    enabled_query_duration = optional(bool)
-    query_duration         = optional(number)
-    # (Optional) QueryRuntimeBreakdown threshold (unit=Microseconds)
-    enabled_query_runtime_breakdown = optional(bool)
-    query_runtime_breakdown         = optional(number)
-    # (Optional) ReadIOPS threshold (unit=Count/Second)
-    enabled_read_iops = optional(bool)
-    read_iops         = optional(number)
-    # (Optional) ReadLatency threshold (unit=Seconds)
-    enabled_read_latency = optional(bool)
-    read_latency         = optional(number)
-    # (Optional) ReadThroughput threshold (unit=Bytes)
-    enabled_read_throughput = optional(bool)
-    read_throughput         = optional(number)
-    # (Optional) RedshiftManagedStorageTotalCapacity threshold (unit=Megabytes)
-    enabled_redshift_managed_storage_total_capacity = optional(bool)
-    redshift_managed_storage_total_capacity         = optional(number)
-    # (Optional) TotalTableCount threshold (unit=Count)
-    enabled_total_table_count = optional(bool)
-    total_table_count         = optional(number)
-    # (Optional) WLMQueueLength threshold (unit=Count)
-    enabled_wlm_queue_length = optional(bool)
-    wlm_queue_length         = optional(number)
-    # (Optional) WLMQueueWaitTime threshold (unit=Milliseconds)
-    enabled_wlm_queue_wait_time = optional(bool)
-    wlm_queue_wait_time         = optional(number)
-    # (Optional) WLMQueriesCompletedPerSecond threshold (unit=Count/Second)
-    enabled_wlm_queries_completed_per_second = optional(bool)
-    wlm_queries_completed_per_second         = optional(number)
-    # (Optional) WLMQueryDuration threshold (unit=Microseconds)
-    enabled_wlm_query_duration = optional(bool)
-    wlm_query_duration         = optional(number)
-    # (Optional) WLMRunningQueries threshold (unit=Count)
-    enabled_wlm_running_queries = optional(bool)
-    wlm_running_queries         = optional(number)
-    # (Optional) WriteIOPS threshold (unit=Count/Second)
-    enabled_write_iops = optional(bool)
-    write_iops         = optional(number)
-    # (Optional) WriteLatency threshold (unit=Seconds)
-    enabled_write_latency = optional(bool)
-    write_latency         = optional(number)
-    # (Optional) WriteThroughput threshold (unit=Bytes)
-    enabled_write_throughput = optional(bool)
-    write_throughput         = optional(number)
+    # CommitQueueLength threshold (unit=Count)
+    commit_queue_length = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # ConcurrencyScalingActiveClusters threshold (unit=Count)
+    concurrency_scaling_active_clusters = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # ConcurrencyScalingSeconds threshold (unit=Seconds)
+    concurrency_scaling_seconds = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # CPUUtilization threshold (unit=Percent)
+    cpu_utilization = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # DatabaseConnections threshold (unit=Count)
+    database_connections = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # HealthStatus threshold (HEALTHY(1)/UNHEALTHY(0))
+    health_status = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # MaintenanceMode threshold (unit=Count(ON(1)/OFF(0)))
+    maintenance_mode = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # MaxConfiguredConcurrencyScalingClusters threshold (unit=Count)
+    max_configured_concurrency_scaling_clusters = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # NetworkReceiveThroughput threshold (unit=Bytes/Second)
+    network_receive_throughput = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # NetworkTransmitThroughput threshold (unit=Bytes/Second)
+    network_transmit_throughput = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # NumExceededSchemaQuotas threshold (unit=Count)
+    num_exceeded_schema_quotas = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # SchemaQuota threshold (unit=Megabytes)
+    schema_quota = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # StorageUsed threshold (unit=Megabytes)
+    storage_used = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # PercentageDiskSpaceUsed threshold (unit=Percent)
+    percentage_disk_space_used = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # PercentageQuotaUsed threshold (unit=Percent)
+    percentage_quota_used = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # QueriesCompletedPerSecond threshold (unit=Count/Second)
+    queries_completed_per_second = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # QueryDuration threshold (unit=Microseconds)
+    query_duration = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # QueryRuntimeBreakdown threshold (unit=Microseconds)
+    query_runtime_breakdown = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # ReadIOPS threshold (unit=Count/Second)
+    read_iops = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # ReadLatency threshold (unit=Seconds)
+    read_latency = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # ReadThroughput threshold (unit=Bytes)
+    read_throughput = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # RedshiftManagedStorageTotalCapacity threshold (unit=Megabytes)
+    redshift_managed_storage_total_capacity = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # TotalTableCount threshold (unit=Count)
+    total_table_count = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # WLMQueueLength threshold (unit=Count)
+    wlm_queue_length = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # WLMQueueWaitTime threshold (unit=Milliseconds)
+    wlm_queue_wait_time = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # WLMQueriesCompletedPerSecond threshold (unit=Count/Second)
+    wlm_queries_completed_per_second = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # WLMQueryDuration threshold (unit=Microseconds)
+    wlm_query_duration = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # WLMRunningQueries threshold (unit=Count)
+    wlm_running_queries = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # WriteIOPS threshold (unit=Count/Second)
+    write_iops = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # WriteLatency threshold (unit=Seconds)
+    write_latency = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # WriteThroughput threshold (unit=Bytes)
+    write_throughput = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
   }))
-  description = "(Optional) Override thresholds for specific resources. Key is the ClusterIdentifier."
+  description = "(Optional) Override thresholds for specific resources. Key is the ClusterIdentifier. Each metric accepts enabled, value, datapoints_to_alarm and evaluation_periods."
   default     = {}
 }
 

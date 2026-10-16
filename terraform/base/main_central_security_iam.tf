@@ -11,12 +11,12 @@ module "aws_security_iam" {
   is_enabled = var.security_iam.is_enabled
 
   aws_iam_account_password_policy = var.security_iam.aws_iam_account_password_policy
-  support_iam_role_principal_arns = var.security_iam.support_iam_role_principal_arns
   aws_iam_role = {
     description = try(var.security_iam.aws_iam_role.description, null)
     name        = "${var.name_prefix}${var.security_iam.aws_iam_role.name}"
     path        = try(var.security_iam.aws_iam_role.path, "/")
   }
+  support_iam_role_principal_arns = var.security_iam.support_iam_role_principal_arns
 
   tags = var.tags
 }

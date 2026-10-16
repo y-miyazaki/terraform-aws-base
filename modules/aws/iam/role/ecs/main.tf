@@ -33,8 +33,8 @@ resource "aws_iam_role" "ecs" {
 # policy attach: AmazonEC2ContainerServiceRole
 #--------------------------------------------------------------
 resource "aws_iam_role_policy_attachment" "ecs" {
-  role       = aws_iam_role.ecs.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonEC2ContainerServiceRole"
+  role       = aws_iam_role.ecs.name
 }
 
 #--------------------------------------------------------------
@@ -67,8 +67,8 @@ resource "aws_iam_role" "ecs_tasks" {
 # policy attach: AmazonECSTaskExecutionRolePolicy
 #--------------------------------------------------------------
 resource "aws_iam_role_policy_attachment" "ecs_tasks" {
-  role       = aws_iam_role.ecs_tasks.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
+  role       = aws_iam_role.ecs_tasks.name
 }
 
 #--------------------------------------------------------------
@@ -137,8 +137,8 @@ resource "aws_iam_policy" "events" {
 # policy attach: ECS runtask
 #--------------------------------------------------------------
 resource "aws_iam_role_policy_attachment" "events" {
-  role       = aws_iam_role.events.name
   policy_arn = aws_iam_policy.events.arn
+  role       = aws_iam_role.events.name
 }
 
 #--------------------------------------------------------------
@@ -146,6 +146,6 @@ resource "aws_iam_role_policy_attachment" "events" {
 # events.amazonaws.com role adds CloudWatchLogsFullAccess policy
 #--------------------------------------------------------------
 resource "aws_iam_role_policy_attachment" "cloudwatch_logs" {
-  role       = aws_iam_role.events.name
   policy_arn = "arn:aws:iam::aws:policy/CloudWatchLogsFullAccess"
+  role       = aws_iam_role.events.name
 }

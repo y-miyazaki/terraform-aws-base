@@ -18,15 +18,15 @@ locals {
 module "helper" {
   source = "../../_internal/metric_helper"
 
-  is_enabled  = var.is_enabled
-  create_auto = var.create_auto_dimensions
+  is_enabled = var.is_enabled
 
-  source_list        = data.aws_lambda_functions.this.function_names
-  include_list       = var.auto_dimensions_include_list
-  exclude_list       = var.auto_dimensions_exclude_list
-  manual_dimensions  = var.dimensions
-  dimension_key      = "FunctionName"
   base_threshold     = var.threshold
+  create_auto        = var.create_auto_dimensions
+  dimension_key      = "FunctionName"
+  exclude_list       = var.auto_dimensions_exclude_list
+  include_list       = var.auto_dimensions_include_list
+  manual_dimensions  = var.dimensions
+  source_list        = data.aws_lambda_functions.this.function_names
   threshold_override = var.threshold_override
 }
 
@@ -48,26 +48,27 @@ locals {
 resource "aws_cloudwatch_metric_alarm" "async_event_age" {
   for_each = {
     for k, v in local.list : k => v
-    if var.is_enabled && local.effective_thresholds[k].enabled_async_event_age
+    if var.is_enabled && local.effective_thresholds[k].async_event_age.enabled
   }
 
   region                    = local.region
-  alarm_name                = "${var.name_prefix}metric-lambda-${each.value.name}-async-event-age"
-  comparison_operator       = "GreaterThanOrEqualToThreshold"
-  evaluation_periods        = 1
-  namespace                 = "AWS/Lambda"
-  metric_name               = "AsyncEventAge"
-  period                    = var.period
-  statistic                 = "Maximum"
-  threshold                 = local.effective_thresholds[each.key].async_event_age
   actions_enabled           = true
   alarm_actions             = var.alarm_actions
-  alarm_description         = "This is an alarm to check for <${local.url}|Lambda async event age>(>= ${local.effective_thresholds[each.key].async_event_age}ms)."
-  insufficient_data_actions = var.insufficient_data_actions
-  ok_actions                = var.ok_actions
-  unit                      = "Milliseconds"
-  treat_missing_data        = "notBreaching"
+  alarm_description         = "This is an alarm to check for <${local.url}|Lambda async event age>(>= ${local.effective_thresholds[each.key].async_event_age.value}ms)."
+  alarm_name                = "${var.name_prefix}metric-lambda-${each.value.name}-async-event-age"
+  comparison_operator       = "GreaterThanOrEqualToThreshold"
+  datapoints_to_alarm       = local.effective_thresholds[each.key].async_event_age.datapoints_to_alarm
   dimensions                = each.value.dimensions
+  evaluation_periods        = local.effective_thresholds[each.key].async_event_age.evaluation_periods
+  insufficient_data_actions = var.insufficient_data_actions
+  metric_name               = "AsyncEventAge"
+  namespace                 = "AWS/Lambda"
+  ok_actions                = var.ok_actions
+  period                    = var.period
+  statistic                 = "Maximum"
+  threshold                 = local.effective_thresholds[each.key].async_event_age.value
+  treat_missing_data        = "notBreaching"
+  unit                      = "Milliseconds"
 
   tags = var.tags
 }
@@ -79,26 +80,27 @@ resource "aws_cloudwatch_metric_alarm" "async_event_age" {
 resource "aws_cloudwatch_metric_alarm" "async_events_dropped" {
   for_each = {
     for k, v in local.list : k => v
-    if var.is_enabled && local.effective_thresholds[k].enabled_async_events_dropped
+    if var.is_enabled && local.effective_thresholds[k].async_events_dropped.enabled
   }
 
   region                    = local.region
-  alarm_name                = "${var.name_prefix}metric-lambda-${each.value.name}-async-events-dropped"
-  comparison_operator       = "GreaterThanOrEqualToThreshold"
-  evaluation_periods        = 1
-  namespace                 = "AWS/Lambda"
-  metric_name               = "AsyncEventsDropped"
-  period                    = var.period
-  statistic                 = "Sum"
-  threshold                 = local.effective_thresholds[each.key].async_events_dropped
   actions_enabled           = true
   alarm_actions             = var.alarm_actions
-  alarm_description         = "This is an alarm to check for <${local.url}|Lambda async events dropped>(>= ${local.effective_thresholds[each.key].async_events_dropped})."
-  insufficient_data_actions = var.insufficient_data_actions
-  ok_actions                = var.ok_actions
-  unit                      = "Count"
-  treat_missing_data        = "notBreaching"
+  alarm_description         = "This is an alarm to check for <${local.url}|Lambda async events dropped>(>= ${local.effective_thresholds[each.key].async_events_dropped.value})."
+  alarm_name                = "${var.name_prefix}metric-lambda-${each.value.name}-async-events-dropped"
+  comparison_operator       = "GreaterThanOrEqualToThreshold"
+  datapoints_to_alarm       = local.effective_thresholds[each.key].async_events_dropped.datapoints_to_alarm
   dimensions                = each.value.dimensions
+  evaluation_periods        = local.effective_thresholds[each.key].async_events_dropped.evaluation_periods
+  insufficient_data_actions = var.insufficient_data_actions
+  metric_name               = "AsyncEventsDropped"
+  namespace                 = "AWS/Lambda"
+  ok_actions                = var.ok_actions
+  period                    = var.period
+  statistic                 = "Sum"
+  threshold                 = local.effective_thresholds[each.key].async_events_dropped.value
+  treat_missing_data        = "notBreaching"
+  unit                      = "Count"
 
   tags = var.tags
 }
@@ -110,26 +112,27 @@ resource "aws_cloudwatch_metric_alarm" "async_events_dropped" {
 resource "aws_cloudwatch_metric_alarm" "async_events_received" {
   for_each = {
     for k, v in local.list : k => v
-    if var.is_enabled && local.effective_thresholds[k].enabled_async_events_received
+    if var.is_enabled && local.effective_thresholds[k].async_events_received.enabled
   }
 
   region                    = local.region
-  alarm_name                = "${var.name_prefix}metric-lambda-${each.value.name}-async-events-received"
-  comparison_operator       = "GreaterThanOrEqualToThreshold"
-  evaluation_periods        = 1
-  namespace                 = "AWS/Lambda"
-  metric_name               = "AsyncEventsReceived"
-  period                    = var.period
-  statistic                 = "Sum"
-  threshold                 = local.effective_thresholds[each.key].async_events_received
   actions_enabled           = true
   alarm_actions             = var.alarm_actions
-  alarm_description         = "This is an alarm to check for <${local.url}|Lambda async events received>(>= ${local.effective_thresholds[each.key].async_events_received})."
-  insufficient_data_actions = var.insufficient_data_actions
-  ok_actions                = var.ok_actions
-  unit                      = "Count"
-  treat_missing_data        = "notBreaching"
+  alarm_description         = "This is an alarm to check for <${local.url}|Lambda async events received>(>= ${local.effective_thresholds[each.key].async_events_received.value})."
+  alarm_name                = "${var.name_prefix}metric-lambda-${each.value.name}-async-events-received"
+  comparison_operator       = "GreaterThanOrEqualToThreshold"
+  datapoints_to_alarm       = local.effective_thresholds[each.key].async_events_received.datapoints_to_alarm
   dimensions                = each.value.dimensions
+  evaluation_periods        = local.effective_thresholds[each.key].async_events_received.evaluation_periods
+  insufficient_data_actions = var.insufficient_data_actions
+  metric_name               = "AsyncEventsReceived"
+  namespace                 = "AWS/Lambda"
+  ok_actions                = var.ok_actions
+  period                    = var.period
+  statistic                 = "Sum"
+  threshold                 = local.effective_thresholds[each.key].async_events_received.value
+  treat_missing_data        = "notBreaching"
+  unit                      = "Count"
 
   tags = var.tags
 }
@@ -141,26 +144,27 @@ resource "aws_cloudwatch_metric_alarm" "async_events_received" {
 resource "aws_cloudwatch_metric_alarm" "claimed_account_concurrency" {
   for_each = {
     for k, v in local.list : k => v
-    if var.is_enabled && local.effective_thresholds[k].enabled_claimed_account_concurrency
+    if var.is_enabled && local.effective_thresholds[k].claimed_account_concurrency.enabled
   }
 
   region                    = local.region
-  alarm_name                = "${var.name_prefix}metric-lambda-${each.value.name}-claimed-account-concurrency"
-  comparison_operator       = "GreaterThanOrEqualToThreshold"
-  evaluation_periods        = 1
-  namespace                 = "AWS/Lambda"
-  metric_name               = "ClaimedAccountConcurrency"
-  period                    = var.period
-  statistic                 = "Maximum"
-  threshold                 = local.effective_thresholds[each.key].claimed_account_concurrency
   actions_enabled           = true
   alarm_actions             = var.alarm_actions
-  alarm_description         = "This is an alarm to check for <${local.url}|Lambda claimed account concurrency>(>= ${local.effective_thresholds[each.key].claimed_account_concurrency})."
-  insufficient_data_actions = var.insufficient_data_actions
-  ok_actions                = var.ok_actions
-  unit                      = "Count"
-  treat_missing_data        = "notBreaching"
+  alarm_description         = "This is an alarm to check for <${local.url}|Lambda claimed account concurrency>(>= ${local.effective_thresholds[each.key].claimed_account_concurrency.value})."
+  alarm_name                = "${var.name_prefix}metric-lambda-${each.value.name}-claimed-account-concurrency"
+  comparison_operator       = "GreaterThanOrEqualToThreshold"
+  datapoints_to_alarm       = local.effective_thresholds[each.key].claimed_account_concurrency.datapoints_to_alarm
   dimensions                = each.value.dimensions
+  evaluation_periods        = local.effective_thresholds[each.key].claimed_account_concurrency.evaluation_periods
+  insufficient_data_actions = var.insufficient_data_actions
+  metric_name               = "ClaimedAccountConcurrency"
+  namespace                 = "AWS/Lambda"
+  ok_actions                = var.ok_actions
+  period                    = var.period
+  statistic                 = "Maximum"
+  threshold                 = local.effective_thresholds[each.key].claimed_account_concurrency.value
+  treat_missing_data        = "notBreaching"
+  unit                      = "Count"
 
   tags = var.tags
 }
@@ -172,26 +176,27 @@ resource "aws_cloudwatch_metric_alarm" "claimed_account_concurrency" {
 resource "aws_cloudwatch_metric_alarm" "concurrent_executions" {
   for_each = {
     for k, v in local.list : k => v
-    if var.is_enabled && local.effective_thresholds[k].enabled_concurrent_executions
+    if var.is_enabled && local.effective_thresholds[k].concurrent_executions.enabled
   }
 
   region                    = local.region
-  alarm_name                = "${var.name_prefix}metric-lambda-${each.value.name}-concurrent-executions"
-  comparison_operator       = "GreaterThanOrEqualToThreshold"
-  evaluation_periods        = 1
-  namespace                 = "AWS/Lambda"
-  metric_name               = "ConcurrentExecutions"
-  period                    = var.period
-  statistic                 = "Maximum"
-  threshold                 = local.effective_thresholds[each.key].concurrent_executions
   actions_enabled           = true
   alarm_actions             = var.alarm_actions
-  alarm_description         = "This is an alarm to check for <${local.url}|Lambda concurrent executions>(>= ${local.effective_thresholds[each.key].concurrent_executions})."
-  insufficient_data_actions = var.insufficient_data_actions
-  ok_actions                = var.ok_actions
-  unit                      = "Count"
-  treat_missing_data        = "notBreaching"
+  alarm_description         = "This is an alarm to check for <${local.url}|Lambda concurrent executions>(>= ${local.effective_thresholds[each.key].concurrent_executions.value})."
+  alarm_name                = "${var.name_prefix}metric-lambda-${each.value.name}-concurrent-executions"
+  comparison_operator       = "GreaterThanOrEqualToThreshold"
+  datapoints_to_alarm       = local.effective_thresholds[each.key].concurrent_executions.datapoints_to_alarm
   dimensions                = each.value.dimensions
+  evaluation_periods        = local.effective_thresholds[each.key].concurrent_executions.evaluation_periods
+  insufficient_data_actions = var.insufficient_data_actions
+  metric_name               = "ConcurrentExecutions"
+  namespace                 = "AWS/Lambda"
+  ok_actions                = var.ok_actions
+  period                    = var.period
+  statistic                 = "Maximum"
+  threshold                 = local.effective_thresholds[each.key].concurrent_executions.value
+  treat_missing_data        = "notBreaching"
+  unit                      = "Count"
 
   tags = var.tags
 }
@@ -203,26 +208,27 @@ resource "aws_cloudwatch_metric_alarm" "concurrent_executions" {
 resource "aws_cloudwatch_metric_alarm" "dead_letter_errors" {
   for_each = {
     for k, v in local.list : k => v
-    if var.is_enabled && local.effective_thresholds[k].enabled_dead_letter_errors
+    if var.is_enabled && local.effective_thresholds[k].dead_letter_errors.enabled
   }
 
   region                    = local.region
-  alarm_name                = "${var.name_prefix}metric-lambda-${each.value.name}-dead-letter-errors"
-  comparison_operator       = "GreaterThanOrEqualToThreshold"
-  evaluation_periods        = 1
-  namespace                 = "AWS/Lambda"
-  metric_name               = "DeadLetterErrors"
-  period                    = var.period
-  statistic                 = "Sum"
-  threshold                 = local.effective_thresholds[each.key].dead_letter_errors
   actions_enabled           = true
   alarm_actions             = var.alarm_actions
-  alarm_description         = "This is an alarm to check for <${local.url}|Lambda dead letter errors>(>= ${local.effective_thresholds[each.key].dead_letter_errors})."
-  insufficient_data_actions = var.insufficient_data_actions
-  ok_actions                = var.ok_actions
-  unit                      = "Count"
-  treat_missing_data        = "notBreaching"
+  alarm_description         = "This is an alarm to check for <${local.url}|Lambda dead letter errors>(>= ${local.effective_thresholds[each.key].dead_letter_errors.value})."
+  alarm_name                = "${var.name_prefix}metric-lambda-${each.value.name}-dead-letter-errors"
+  comparison_operator       = "GreaterThanOrEqualToThreshold"
+  datapoints_to_alarm       = local.effective_thresholds[each.key].dead_letter_errors.datapoints_to_alarm
   dimensions                = each.value.dimensions
+  evaluation_periods        = local.effective_thresholds[each.key].dead_letter_errors.evaluation_periods
+  insufficient_data_actions = var.insufficient_data_actions
+  metric_name               = "DeadLetterErrors"
+  namespace                 = "AWS/Lambda"
+  ok_actions                = var.ok_actions
+  period                    = var.period
+  statistic                 = "Sum"
+  threshold                 = local.effective_thresholds[each.key].dead_letter_errors.value
+  treat_missing_data        = "notBreaching"
+  unit                      = "Count"
 
   tags = var.tags
 }
@@ -234,26 +240,27 @@ resource "aws_cloudwatch_metric_alarm" "dead_letter_errors" {
 resource "aws_cloudwatch_metric_alarm" "destination_delivery_failures" {
   for_each = {
     for k, v in local.list : k => v
-    if var.is_enabled && local.effective_thresholds[k].enabled_destination_delivery_failures
+    if var.is_enabled && local.effective_thresholds[k].destination_delivery_failures.enabled
   }
 
   region                    = local.region
-  alarm_name                = "${var.name_prefix}metric-lambda-${each.value.name}-destination-delivery-failures"
-  comparison_operator       = "GreaterThanOrEqualToThreshold"
-  evaluation_periods        = 1
-  namespace                 = "AWS/Lambda"
-  metric_name               = "DestinationDeliveryFailures"
-  period                    = var.period
-  statistic                 = "Sum"
-  threshold                 = local.effective_thresholds[each.key].destination_delivery_failures
   actions_enabled           = true
   alarm_actions             = var.alarm_actions
-  alarm_description         = "This is an alarm to check for <${local.url}|Lambda destination delivery failures>(>= ${local.effective_thresholds[each.key].destination_delivery_failures})."
-  insufficient_data_actions = var.insufficient_data_actions
-  ok_actions                = var.ok_actions
-  unit                      = "Count"
-  treat_missing_data        = "notBreaching"
+  alarm_description         = "This is an alarm to check for <${local.url}|Lambda destination delivery failures>(>= ${local.effective_thresholds[each.key].destination_delivery_failures.value})."
+  alarm_name                = "${var.name_prefix}metric-lambda-${each.value.name}-destination-delivery-failures"
+  comparison_operator       = "GreaterThanOrEqualToThreshold"
+  datapoints_to_alarm       = local.effective_thresholds[each.key].destination_delivery_failures.datapoints_to_alarm
   dimensions                = each.value.dimensions
+  evaluation_periods        = local.effective_thresholds[each.key].destination_delivery_failures.evaluation_periods
+  insufficient_data_actions = var.insufficient_data_actions
+  metric_name               = "DestinationDeliveryFailures"
+  namespace                 = "AWS/Lambda"
+  ok_actions                = var.ok_actions
+  period                    = var.period
+  statistic                 = "Sum"
+  threshold                 = local.effective_thresholds[each.key].destination_delivery_failures.value
+  treat_missing_data        = "notBreaching"
+  unit                      = "Count"
 
   tags = var.tags
 }
@@ -265,26 +272,27 @@ resource "aws_cloudwatch_metric_alarm" "destination_delivery_failures" {
 resource "aws_cloudwatch_metric_alarm" "duration" {
   for_each = {
     for k, v in local.list : k => v
-    if var.is_enabled && local.effective_thresholds[k].enabled_duration
+    if var.is_enabled && local.effective_thresholds[k].duration.enabled
   }
 
   region                    = local.region
-  alarm_name                = "${var.name_prefix}metric-lambda-${each.value.name}-duration"
-  comparison_operator       = "GreaterThanOrEqualToThreshold"
-  evaluation_periods        = 1
-  namespace                 = "AWS/Lambda"
-  metric_name               = "Duration"
-  period                    = var.period
-  statistic                 = "Maximum"
-  threshold                 = local.effective_thresholds[each.key].duration
   actions_enabled           = true
   alarm_actions             = var.alarm_actions
-  alarm_description         = "This is an alarm to check for <${local.url}|Lambda duration>(>= ${local.effective_thresholds[each.key].duration}ms)."
-  insufficient_data_actions = var.insufficient_data_actions
-  ok_actions                = var.ok_actions
-  unit                      = "Milliseconds"
-  treat_missing_data        = "notBreaching"
+  alarm_description         = "This is an alarm to check for <${local.url}|Lambda duration>(>= ${local.effective_thresholds[each.key].duration.value}ms)."
+  alarm_name                = "${var.name_prefix}metric-lambda-${each.value.name}-duration"
+  comparison_operator       = "GreaterThanOrEqualToThreshold"
+  datapoints_to_alarm       = local.effective_thresholds[each.key].duration.datapoints_to_alarm
   dimensions                = each.value.dimensions
+  evaluation_periods        = local.effective_thresholds[each.key].duration.evaluation_periods
+  insufficient_data_actions = var.insufficient_data_actions
+  metric_name               = "Duration"
+  namespace                 = "AWS/Lambda"
+  ok_actions                = var.ok_actions
+  period                    = var.period
+  statistic                 = "Maximum"
+  threshold                 = local.effective_thresholds[each.key].duration.value
+  treat_missing_data        = "notBreaching"
+  unit                      = "Milliseconds"
 
   tags = var.tags
 }
@@ -296,26 +304,27 @@ resource "aws_cloudwatch_metric_alarm" "duration" {
 resource "aws_cloudwatch_metric_alarm" "errors" {
   for_each = {
     for k, v in local.list : k => v
-    if var.is_enabled && local.effective_thresholds[k].enabled_errors
+    if var.is_enabled && local.effective_thresholds[k].errors.enabled
   }
 
   region                    = local.region
-  alarm_name                = "${var.name_prefix}metric-lambda-${each.value.name}-errors"
-  comparison_operator       = "GreaterThanOrEqualToThreshold"
-  evaluation_periods        = 1
-  namespace                 = "AWS/Lambda"
-  metric_name               = "Errors"
-  period                    = var.period
-  statistic                 = "Sum"
-  threshold                 = local.effective_thresholds[each.key].errors
   actions_enabled           = true
   alarm_actions             = var.alarm_actions
-  alarm_description         = "This is an alarm to check for <${local.url}|Lambda errors>(>= ${local.effective_thresholds[each.key].errors})."
-  insufficient_data_actions = var.insufficient_data_actions
-  ok_actions                = var.ok_actions
-  unit                      = "Count"
-  treat_missing_data        = "notBreaching"
+  alarm_description         = "This is an alarm to check for <${local.url}|Lambda errors>(>= ${local.effective_thresholds[each.key].errors.value})."
+  alarm_name                = "${var.name_prefix}metric-lambda-${each.value.name}-errors"
+  comparison_operator       = "GreaterThanOrEqualToThreshold"
+  datapoints_to_alarm       = local.effective_thresholds[each.key].errors.datapoints_to_alarm
   dimensions                = each.value.dimensions
+  evaluation_periods        = local.effective_thresholds[each.key].errors.evaluation_periods
+  insufficient_data_actions = var.insufficient_data_actions
+  metric_name               = "Errors"
+  namespace                 = "AWS/Lambda"
+  ok_actions                = var.ok_actions
+  period                    = var.period
+  statistic                 = "Sum"
+  threshold                 = local.effective_thresholds[each.key].errors.value
+  treat_missing_data        = "notBreaching"
+  unit                      = "Count"
 
   tags = var.tags
 }
@@ -327,26 +336,27 @@ resource "aws_cloudwatch_metric_alarm" "errors" {
 resource "aws_cloudwatch_metric_alarm" "invocations" {
   for_each = {
     for k, v in local.list : k => v
-    if var.is_enabled && local.effective_thresholds[k].enabled_invocations
+    if var.is_enabled && local.effective_thresholds[k].invocations.enabled
   }
 
   region                    = local.region
-  alarm_name                = "${var.name_prefix}metric-lambda-${each.value.name}-invocations"
-  comparison_operator       = "GreaterThanOrEqualToThreshold"
-  evaluation_periods        = 1
-  namespace                 = "AWS/Lambda"
-  metric_name               = "Invocations"
-  period                    = var.period
-  statistic                 = "Sum"
-  threshold                 = local.effective_thresholds[each.key].invocations
   actions_enabled           = true
   alarm_actions             = var.alarm_actions
-  alarm_description         = "This is an alarm to check for <${local.url}|Lambda invocations>(>= ${local.effective_thresholds[each.key].invocations})."
-  insufficient_data_actions = var.insufficient_data_actions
-  ok_actions                = var.ok_actions
-  unit                      = "Count"
-  treat_missing_data        = "notBreaching"
+  alarm_description         = "This is an alarm to check for <${local.url}|Lambda invocations>(>= ${local.effective_thresholds[each.key].invocations.value})."
+  alarm_name                = "${var.name_prefix}metric-lambda-${each.value.name}-invocations"
+  comparison_operator       = "GreaterThanOrEqualToThreshold"
+  datapoints_to_alarm       = local.effective_thresholds[each.key].invocations.datapoints_to_alarm
   dimensions                = each.value.dimensions
+  evaluation_periods        = local.effective_thresholds[each.key].invocations.evaluation_periods
+  insufficient_data_actions = var.insufficient_data_actions
+  metric_name               = "Invocations"
+  namespace                 = "AWS/Lambda"
+  ok_actions                = var.ok_actions
+  period                    = var.period
+  statistic                 = "Sum"
+  threshold                 = local.effective_thresholds[each.key].invocations.value
+  treat_missing_data        = "notBreaching"
+  unit                      = "Count"
 
   tags = var.tags
 }
@@ -358,26 +368,27 @@ resource "aws_cloudwatch_metric_alarm" "invocations" {
 resource "aws_cloudwatch_metric_alarm" "iterator_age" {
   for_each = {
     for k, v in local.list : k => v
-    if var.is_enabled && local.effective_thresholds[k].enabled_iterator_age
+    if var.is_enabled && local.effective_thresholds[k].iterator_age.enabled
   }
 
   region                    = local.region
-  alarm_name                = "${var.name_prefix}metric-lambda-${each.value.name}-iterator-age"
-  comparison_operator       = "GreaterThanOrEqualToThreshold"
-  evaluation_periods        = 1
-  namespace                 = "AWS/Lambda"
-  metric_name               = "IteratorAge"
-  period                    = var.period
-  statistic                 = "Maximum"
-  threshold                 = local.effective_thresholds[each.key].iterator_age
   actions_enabled           = true
   alarm_actions             = var.alarm_actions
-  alarm_description         = "This is an alarm to check for <${local.url}|Lambda iterator age>(>= ${local.effective_thresholds[each.key].iterator_age}ms)."
-  insufficient_data_actions = var.insufficient_data_actions
-  ok_actions                = var.ok_actions
-  unit                      = "Milliseconds"
-  treat_missing_data        = "notBreaching"
+  alarm_description         = "This is an alarm to check for <${local.url}|Lambda iterator age>(>= ${local.effective_thresholds[each.key].iterator_age.value}ms)."
+  alarm_name                = "${var.name_prefix}metric-lambda-${each.value.name}-iterator-age"
+  comparison_operator       = "GreaterThanOrEqualToThreshold"
+  datapoints_to_alarm       = local.effective_thresholds[each.key].iterator_age.datapoints_to_alarm
   dimensions                = each.value.dimensions
+  evaluation_periods        = local.effective_thresholds[each.key].iterator_age.evaluation_periods
+  insufficient_data_actions = var.insufficient_data_actions
+  metric_name               = "IteratorAge"
+  namespace                 = "AWS/Lambda"
+  ok_actions                = var.ok_actions
+  period                    = var.period
+  statistic                 = "Maximum"
+  threshold                 = local.effective_thresholds[each.key].iterator_age.value
+  treat_missing_data        = "notBreaching"
+  unit                      = "Milliseconds"
 
   tags = var.tags
 }
@@ -389,26 +400,27 @@ resource "aws_cloudwatch_metric_alarm" "iterator_age" {
 resource "aws_cloudwatch_metric_alarm" "offset_lag" {
   for_each = {
     for k, v in local.list : k => v
-    if var.is_enabled && local.effective_thresholds[k].enabled_offset_lag
+    if var.is_enabled && local.effective_thresholds[k].offset_lag.enabled
   }
 
   region                    = local.region
-  alarm_name                = "${var.name_prefix}metric-lambda-${each.value.name}-offset-lag"
-  comparison_operator       = "GreaterThanOrEqualToThreshold"
-  evaluation_periods        = 1
-  namespace                 = "AWS/Lambda"
-  metric_name               = "OffsetLag"
-  period                    = var.period
-  statistic                 = "Maximum"
-  threshold                 = local.effective_thresholds[each.key].offset_lag
   actions_enabled           = true
   alarm_actions             = var.alarm_actions
-  alarm_description         = "This is an alarm to check for <${local.url}|Lambda offset lag>(>= ${local.effective_thresholds[each.key].offset_lag}ms)."
-  insufficient_data_actions = var.insufficient_data_actions
-  ok_actions                = var.ok_actions
-  unit                      = "Milliseconds"
-  treat_missing_data        = "notBreaching"
+  alarm_description         = "This is an alarm to check for <${local.url}|Lambda offset lag>(>= ${local.effective_thresholds[each.key].offset_lag.value}ms)."
+  alarm_name                = "${var.name_prefix}metric-lambda-${each.value.name}-offset-lag"
+  comparison_operator       = "GreaterThanOrEqualToThreshold"
+  datapoints_to_alarm       = local.effective_thresholds[each.key].offset_lag.datapoints_to_alarm
   dimensions                = each.value.dimensions
+  evaluation_periods        = local.effective_thresholds[each.key].offset_lag.evaluation_periods
+  insufficient_data_actions = var.insufficient_data_actions
+  metric_name               = "OffsetLag"
+  namespace                 = "AWS/Lambda"
+  ok_actions                = var.ok_actions
+  period                    = var.period
+  statistic                 = "Maximum"
+  threshold                 = local.effective_thresholds[each.key].offset_lag.value
+  treat_missing_data        = "notBreaching"
+  unit                      = "Milliseconds"
 
   tags = var.tags
 }
@@ -420,26 +432,27 @@ resource "aws_cloudwatch_metric_alarm" "offset_lag" {
 resource "aws_cloudwatch_metric_alarm" "post_runtime_extensions_duration" {
   for_each = {
     for k, v in local.list : k => v
-    if var.is_enabled && local.effective_thresholds[k].enabled_post_runtime_extensions_duration
+    if var.is_enabled && local.effective_thresholds[k].post_runtime_extensions_duration.enabled
   }
 
   region                    = local.region
-  alarm_name                = "${var.name_prefix}metric-lambda-${each.value.name}-post-runtime-extensions-duration"
-  comparison_operator       = "GreaterThanOrEqualToThreshold"
-  evaluation_periods        = 1
-  namespace                 = "AWS/Lambda"
-  metric_name               = "PostRuntimeExtensionsDuration"
-  period                    = var.period
-  statistic                 = "Maximum"
-  threshold                 = local.effective_thresholds[each.key].post_runtime_extensions_duration
   actions_enabled           = true
   alarm_actions             = var.alarm_actions
-  alarm_description         = "This is an alarm to check for <${local.url}|Lambda post runtime extensions duration>(>= ${local.effective_thresholds[each.key].post_runtime_extensions_duration}ms)."
-  insufficient_data_actions = var.insufficient_data_actions
-  ok_actions                = var.ok_actions
-  unit                      = "Milliseconds"
-  treat_missing_data        = "notBreaching"
+  alarm_description         = "This is an alarm to check for <${local.url}|Lambda post runtime extensions duration>(>= ${local.effective_thresholds[each.key].post_runtime_extensions_duration.value}ms)."
+  alarm_name                = "${var.name_prefix}metric-lambda-${each.value.name}-post-runtime-extensions-duration"
+  comparison_operator       = "GreaterThanOrEqualToThreshold"
+  datapoints_to_alarm       = local.effective_thresholds[each.key].post_runtime_extensions_duration.datapoints_to_alarm
   dimensions                = each.value.dimensions
+  evaluation_periods        = local.effective_thresholds[each.key].post_runtime_extensions_duration.evaluation_periods
+  insufficient_data_actions = var.insufficient_data_actions
+  metric_name               = "PostRuntimeExtensionsDuration"
+  namespace                 = "AWS/Lambda"
+  ok_actions                = var.ok_actions
+  period                    = var.period
+  statistic                 = "Maximum"
+  threshold                 = local.effective_thresholds[each.key].post_runtime_extensions_duration.value
+  treat_missing_data        = "notBreaching"
+  unit                      = "Milliseconds"
 
   tags = var.tags
 }
@@ -451,26 +464,27 @@ resource "aws_cloudwatch_metric_alarm" "post_runtime_extensions_duration" {
 resource "aws_cloudwatch_metric_alarm" "provisioned_concurrent_executions" {
   for_each = {
     for k, v in local.list : k => v
-    if var.is_enabled && local.effective_thresholds[k].enabled_provisioned_concurrent_executions
+    if var.is_enabled && local.effective_thresholds[k].provisioned_concurrent_executions.enabled
   }
 
   region                    = local.region
-  alarm_name                = "${var.name_prefix}metric-lambda-${each.value.name}-provisioned-concurrent-executions"
-  comparison_operator       = "GreaterThanOrEqualToThreshold"
-  evaluation_periods        = 1
-  namespace                 = "AWS/Lambda"
-  metric_name               = "ProvisionedConcurrentExecutions"
-  period                    = var.period
-  statistic                 = "Maximum"
-  threshold                 = local.effective_thresholds[each.key].provisioned_concurrent_executions
   actions_enabled           = true
   alarm_actions             = var.alarm_actions
-  alarm_description         = "This is an alarm to check for <${local.url}|Lambda provisioned concurrent executions>(>= ${local.effective_thresholds[each.key].provisioned_concurrent_executions})."
-  insufficient_data_actions = var.insufficient_data_actions
-  ok_actions                = var.ok_actions
-  unit                      = "Count"
-  treat_missing_data        = "notBreaching"
+  alarm_description         = "This is an alarm to check for <${local.url}|Lambda provisioned concurrent executions>(>= ${local.effective_thresholds[each.key].provisioned_concurrent_executions.value})."
+  alarm_name                = "${var.name_prefix}metric-lambda-${each.value.name}-provisioned-concurrent-executions"
+  comparison_operator       = "GreaterThanOrEqualToThreshold"
+  datapoints_to_alarm       = local.effective_thresholds[each.key].provisioned_concurrent_executions.datapoints_to_alarm
   dimensions                = each.value.dimensions
+  evaluation_periods        = local.effective_thresholds[each.key].provisioned_concurrent_executions.evaluation_periods
+  insufficient_data_actions = var.insufficient_data_actions
+  metric_name               = "ProvisionedConcurrentExecutions"
+  namespace                 = "AWS/Lambda"
+  ok_actions                = var.ok_actions
+  period                    = var.period
+  statistic                 = "Maximum"
+  threshold                 = local.effective_thresholds[each.key].provisioned_concurrent_executions.value
+  treat_missing_data        = "notBreaching"
+  unit                      = "Count"
 
   tags = var.tags
 }
@@ -482,26 +496,27 @@ resource "aws_cloudwatch_metric_alarm" "provisioned_concurrent_executions" {
 resource "aws_cloudwatch_metric_alarm" "provisioned_concurrency_invocations" {
   for_each = {
     for k, v in local.list : k => v
-    if var.is_enabled && local.effective_thresholds[k].enabled_provisioned_concurrency_invocations
+    if var.is_enabled && local.effective_thresholds[k].provisioned_concurrency_invocations.enabled
   }
 
   region                    = local.region
-  alarm_name                = "${var.name_prefix}metric-lambda-${each.value.name}-provisioned-concurrency-invocations"
-  comparison_operator       = "GreaterThanOrEqualToThreshold"
-  evaluation_periods        = 1
-  namespace                 = "AWS/Lambda"
-  metric_name               = "ProvisionedConcurrencyInvocations"
-  period                    = var.period
-  statistic                 = "Sum"
-  threshold                 = local.effective_thresholds[each.key].provisioned_concurrency_invocations
   actions_enabled           = true
   alarm_actions             = var.alarm_actions
-  alarm_description         = "This is an alarm to check for <${local.url}|Lambda provisioned concurrency invocations>(>= ${local.effective_thresholds[each.key].provisioned_concurrency_invocations})."
-  insufficient_data_actions = var.insufficient_data_actions
-  ok_actions                = var.ok_actions
-  unit                      = "Count"
-  treat_missing_data        = "notBreaching"
+  alarm_description         = "This is an alarm to check for <${local.url}|Lambda provisioned concurrency invocations>(>= ${local.effective_thresholds[each.key].provisioned_concurrency_invocations.value})."
+  alarm_name                = "${var.name_prefix}metric-lambda-${each.value.name}-provisioned-concurrency-invocations"
+  comparison_operator       = "GreaterThanOrEqualToThreshold"
+  datapoints_to_alarm       = local.effective_thresholds[each.key].provisioned_concurrency_invocations.datapoints_to_alarm
   dimensions                = each.value.dimensions
+  evaluation_periods        = local.effective_thresholds[each.key].provisioned_concurrency_invocations.evaluation_periods
+  insufficient_data_actions = var.insufficient_data_actions
+  metric_name               = "ProvisionedConcurrencyInvocations"
+  namespace                 = "AWS/Lambda"
+  ok_actions                = var.ok_actions
+  period                    = var.period
+  statistic                 = "Sum"
+  threshold                 = local.effective_thresholds[each.key].provisioned_concurrency_invocations.value
+  treat_missing_data        = "notBreaching"
+  unit                      = "Count"
 
   tags = var.tags
 }
@@ -513,26 +528,27 @@ resource "aws_cloudwatch_metric_alarm" "provisioned_concurrency_invocations" {
 resource "aws_cloudwatch_metric_alarm" "provisioned_concurrency_spillover_invocations" {
   for_each = {
     for k, v in local.list : k => v
-    if var.is_enabled && local.effective_thresholds[k].enabled_provisioned_concurrency_spillover_invocations
+    if var.is_enabled && local.effective_thresholds[k].provisioned_concurrency_spillover_invocations.enabled
   }
 
   region                    = local.region
-  alarm_name                = "${var.name_prefix}metric-lambda-${each.value.name}-provisioned-concurrency-spillover-invocations"
-  comparison_operator       = "GreaterThanOrEqualToThreshold"
-  evaluation_periods        = 1
-  namespace                 = "AWS/Lambda"
-  metric_name               = "ProvisionedConcurrencySpilloverInvocations"
-  period                    = var.period
-  statistic                 = "Sum"
-  threshold                 = local.effective_thresholds[each.key].provisioned_concurrency_spillover_invocations
   actions_enabled           = true
   alarm_actions             = var.alarm_actions
-  alarm_description         = "This is an alarm to check for <${local.url}|Lambda provisioned concurrency spillover invocations>(>= ${local.effective_thresholds[each.key].provisioned_concurrency_spillover_invocations})."
-  insufficient_data_actions = var.insufficient_data_actions
-  ok_actions                = var.ok_actions
-  unit                      = "Count"
-  treat_missing_data        = "notBreaching"
+  alarm_description         = "This is an alarm to check for <${local.url}|Lambda provisioned concurrency spillover invocations>(>= ${local.effective_thresholds[each.key].provisioned_concurrency_spillover_invocations.value})."
+  alarm_name                = "${var.name_prefix}metric-lambda-${each.value.name}-provisioned-concurrency-spillover-invocations"
+  comparison_operator       = "GreaterThanOrEqualToThreshold"
+  datapoints_to_alarm       = local.effective_thresholds[each.key].provisioned_concurrency_spillover_invocations.datapoints_to_alarm
   dimensions                = each.value.dimensions
+  evaluation_periods        = local.effective_thresholds[each.key].provisioned_concurrency_spillover_invocations.evaluation_periods
+  insufficient_data_actions = var.insufficient_data_actions
+  metric_name               = "ProvisionedConcurrencySpilloverInvocations"
+  namespace                 = "AWS/Lambda"
+  ok_actions                = var.ok_actions
+  period                    = var.period
+  statistic                 = "Sum"
+  threshold                 = local.effective_thresholds[each.key].provisioned_concurrency_spillover_invocations.value
+  treat_missing_data        = "notBreaching"
+  unit                      = "Count"
 
   tags = var.tags
 }
@@ -544,26 +560,27 @@ resource "aws_cloudwatch_metric_alarm" "provisioned_concurrency_spillover_invoca
 resource "aws_cloudwatch_metric_alarm" "provisioned_concurrency_utilization" {
   for_each = {
     for k, v in local.list : k => v
-    if var.is_enabled && local.effective_thresholds[k].enabled_provisioned_concurrency_utilization
+    if var.is_enabled && local.effective_thresholds[k].provisioned_concurrency_utilization.enabled
   }
 
   region                    = local.region
-  alarm_name                = "${var.name_prefix}metric-lambda-${each.value.name}-provisioned-concurrency-utilization"
-  comparison_operator       = "GreaterThanOrEqualToThreshold"
-  evaluation_periods        = 1
-  namespace                 = "AWS/Lambda"
-  metric_name               = "ProvisionedConcurrencyUtilization"
-  period                    = var.period
-  statistic                 = "Maximum"
-  threshold                 = local.effective_thresholds[each.key].provisioned_concurrency_utilization
   actions_enabled           = true
   alarm_actions             = var.alarm_actions
-  alarm_description         = "This is an alarm to check for <${local.url}|Lambda provisioned concurrency utilization>(>= ${local.effective_thresholds[each.key].provisioned_concurrency_utilization}%)."
-  insufficient_data_actions = var.insufficient_data_actions
-  ok_actions                = var.ok_actions
-  unit                      = "Percent"
-  treat_missing_data        = "notBreaching"
+  alarm_description         = "This is an alarm to check for <${local.url}|Lambda provisioned concurrency utilization>(>= ${local.effective_thresholds[each.key].provisioned_concurrency_utilization.value}%)."
+  alarm_name                = "${var.name_prefix}metric-lambda-${each.value.name}-provisioned-concurrency-utilization"
+  comparison_operator       = "GreaterThanOrEqualToThreshold"
+  datapoints_to_alarm       = local.effective_thresholds[each.key].provisioned_concurrency_utilization.datapoints_to_alarm
   dimensions                = each.value.dimensions
+  evaluation_periods        = local.effective_thresholds[each.key].provisioned_concurrency_utilization.evaluation_periods
+  insufficient_data_actions = var.insufficient_data_actions
+  metric_name               = "ProvisionedConcurrencyUtilization"
+  namespace                 = "AWS/Lambda"
+  ok_actions                = var.ok_actions
+  period                    = var.period
+  statistic                 = "Maximum"
+  threshold                 = local.effective_thresholds[each.key].provisioned_concurrency_utilization.value
+  treat_missing_data        = "notBreaching"
+  unit                      = "Percent"
 
   tags = var.tags
 }
@@ -575,26 +592,27 @@ resource "aws_cloudwatch_metric_alarm" "provisioned_concurrency_utilization" {
 resource "aws_cloudwatch_metric_alarm" "recursive_invocations_dropped" {
   for_each = {
     for k, v in local.list : k => v
-    if var.is_enabled && local.effective_thresholds[k].enabled_recursive_invocations_dropped
+    if var.is_enabled && local.effective_thresholds[k].recursive_invocations_dropped.enabled
   }
 
   region                    = local.region
-  alarm_name                = "${var.name_prefix}metric-lambda-${each.value.name}-recursive-invocations-dropped"
-  comparison_operator       = "GreaterThanOrEqualToThreshold"
-  evaluation_periods        = 1
-  namespace                 = "AWS/Lambda"
-  metric_name               = "RecursiveInvocationsDropped"
-  period                    = var.period
-  statistic                 = "Sum"
-  threshold                 = local.effective_thresholds[each.key].recursive_invocations_dropped
   actions_enabled           = true
   alarm_actions             = var.alarm_actions
-  alarm_description         = "This is an alarm to check for <${local.url}|Lambda recursive invocations dropped>(>= ${local.effective_thresholds[each.key].recursive_invocations_dropped})."
-  insufficient_data_actions = var.insufficient_data_actions
-  ok_actions                = var.ok_actions
-  unit                      = "Count"
-  treat_missing_data        = "notBreaching"
+  alarm_description         = "This is an alarm to check for <${local.url}|Lambda recursive invocations dropped>(>= ${local.effective_thresholds[each.key].recursive_invocations_dropped.value})."
+  alarm_name                = "${var.name_prefix}metric-lambda-${each.value.name}-recursive-invocations-dropped"
+  comparison_operator       = "GreaterThanOrEqualToThreshold"
+  datapoints_to_alarm       = local.effective_thresholds[each.key].recursive_invocations_dropped.datapoints_to_alarm
   dimensions                = each.value.dimensions
+  evaluation_periods        = local.effective_thresholds[each.key].recursive_invocations_dropped.evaluation_periods
+  insufficient_data_actions = var.insufficient_data_actions
+  metric_name               = "RecursiveInvocationsDropped"
+  namespace                 = "AWS/Lambda"
+  ok_actions                = var.ok_actions
+  period                    = var.period
+  statistic                 = "Sum"
+  threshold                 = local.effective_thresholds[each.key].recursive_invocations_dropped.value
+  treat_missing_data        = "notBreaching"
+  unit                      = "Count"
 
   tags = var.tags
 }
@@ -606,26 +624,27 @@ resource "aws_cloudwatch_metric_alarm" "recursive_invocations_dropped" {
 resource "aws_cloudwatch_metric_alarm" "throttles" {
   for_each = {
     for k, v in local.list : k => v
-    if var.is_enabled && local.effective_thresholds[k].enabled_throttles
+    if var.is_enabled && local.effective_thresholds[k].throttles.enabled
   }
 
   region                    = local.region
-  alarm_name                = "${var.name_prefix}metric-lambda-${each.value.name}-throttles"
-  comparison_operator       = "GreaterThanOrEqualToThreshold"
-  evaluation_periods        = 1
-  namespace                 = "AWS/Lambda"
-  metric_name               = "Throttles"
-  period                    = var.period
-  statistic                 = "Sum"
-  threshold                 = local.effective_thresholds[each.key].throttles
   actions_enabled           = true
   alarm_actions             = var.alarm_actions
-  alarm_description         = "This is an alarm to check for <${local.url}|Lambda throttles>(>= ${local.effective_thresholds[each.key].throttles})."
-  insufficient_data_actions = var.insufficient_data_actions
-  ok_actions                = var.ok_actions
-  unit                      = "Count"
-  treat_missing_data        = "notBreaching"
+  alarm_description         = "This is an alarm to check for <${local.url}|Lambda throttles>(>= ${local.effective_thresholds[each.key].throttles.value})."
+  alarm_name                = "${var.name_prefix}metric-lambda-${each.value.name}-throttles"
+  comparison_operator       = "GreaterThanOrEqualToThreshold"
+  datapoints_to_alarm       = local.effective_thresholds[each.key].throttles.datapoints_to_alarm
   dimensions                = each.value.dimensions
+  evaluation_periods        = local.effective_thresholds[each.key].throttles.evaluation_periods
+  insufficient_data_actions = var.insufficient_data_actions
+  metric_name               = "Throttles"
+  namespace                 = "AWS/Lambda"
+  ok_actions                = var.ok_actions
+  period                    = var.period
+  statistic                 = "Sum"
+  threshold                 = local.effective_thresholds[each.key].throttles.value
+  treat_missing_data        = "notBreaching"
+  unit                      = "Count"
 
   tags = var.tags
 }
@@ -637,26 +656,27 @@ resource "aws_cloudwatch_metric_alarm" "throttles" {
 resource "aws_cloudwatch_metric_alarm" "unreserved_concurrent_executions" {
   for_each = {
     for k, v in local.list : k => v
-    if var.is_enabled && local.effective_thresholds[k].enabled_unreserved_concurrent_executions
+    if var.is_enabled && local.effective_thresholds[k].unreserved_concurrent_executions.enabled
   }
 
   region                    = local.region
-  alarm_name                = "${var.name_prefix}metric-lambda-${each.value.name}-unreserved-concurrent-executions"
-  comparison_operator       = "GreaterThanOrEqualToThreshold"
-  evaluation_periods        = 1
-  namespace                 = "AWS/Lambda"
-  metric_name               = "UnreservedConcurrentExecutions"
-  period                    = var.period
-  statistic                 = "Maximum"
-  threshold                 = local.effective_thresholds[each.key].unreserved_concurrent_executions
   actions_enabled           = true
   alarm_actions             = var.alarm_actions
-  alarm_description         = "This is an alarm to check for <${local.url}|Lambda unreserved concurrent executions>(>= ${local.effective_thresholds[each.key].unreserved_concurrent_executions})."
-  insufficient_data_actions = var.insufficient_data_actions
-  ok_actions                = var.ok_actions
-  unit                      = "Count"
-  treat_missing_data        = "notBreaching"
+  alarm_description         = "This is an alarm to check for <${local.url}|Lambda unreserved concurrent executions>(>= ${local.effective_thresholds[each.key].unreserved_concurrent_executions.value})."
+  alarm_name                = "${var.name_prefix}metric-lambda-${each.value.name}-unreserved-concurrent-executions"
+  comparison_operator       = "GreaterThanOrEqualToThreshold"
+  datapoints_to_alarm       = local.effective_thresholds[each.key].unreserved_concurrent_executions.datapoints_to_alarm
   dimensions                = each.value.dimensions
+  evaluation_periods        = local.effective_thresholds[each.key].unreserved_concurrent_executions.evaluation_periods
+  insufficient_data_actions = var.insufficient_data_actions
+  metric_name               = "UnreservedConcurrentExecutions"
+  namespace                 = "AWS/Lambda"
+  ok_actions                = var.ok_actions
+  period                    = var.period
+  statistic                 = "Maximum"
+  threshold                 = local.effective_thresholds[each.key].unreserved_concurrent_executions.value
+  treat_missing_data        = "notBreaching"
+  unit                      = "Count"
 
   tags = var.tags
 }

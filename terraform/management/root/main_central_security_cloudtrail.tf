@@ -43,17 +43,17 @@ module "aws_cloudwatch_alarm_cloudtrail" {
 
   region = var.region.primary
 
-  alarm_actions = var.security_cloudtrail.is_enabled ? [module.aws_security_cloudtrail_controltower.sns_topic_arn] : []
-  #   ok_actions                        = var.security_cloudtrail.is_enabled ? [module.aws_security_cloudtrail_controltower.sns_topic_arn] : []
-  create_auto_log_group_names       = false
+  alarm_actions                     = var.security_cloudtrail.is_enabled ? [module.aws_security_cloudtrail_controltower.sns_topic_arn] : []
   auto_log_group_names_exclude_list = []
   auto_log_group_names_include_list = []
+  aws_cloudwatch_log_metric_filter  = each.value.aws_cloudwatch_log_metric_filter
+  aws_cloudwatch_metric_alarm       = each.value.aws_cloudwatch_metric_alarm
+  #   ok_actions                        = var.security_cloudtrail.is_enabled ? [module.aws_security_cloudtrail_controltower.sns_topic_arn] : []
+  create_auto_log_group_names = false
   log_group_names = [
     "aws-controltower/CloudTrailLogs"
   ]
-  name_prefix                      = var.name_prefix
-  aws_cloudwatch_log_metric_filter = each.value.aws_cloudwatch_log_metric_filter
-  aws_cloudwatch_metric_alarm      = each.value.aws_cloudwatch_metric_alarm
+  name_prefix = var.name_prefix
 
   tags = var.tags
 }
@@ -65,7 +65,7 @@ module "aws_cloudwatch_alarm_cloudtrail" {
 # tfsec:ignore:aws-lambda-enable-tracing
 module "lambda_function_cloudtrail" {
   source  = "terraform-aws-modules/lambda/aws"
-  version = "8.9.0"
+  version = "8.12.0"
 
   create = var.security_cloudtrail.is_enabled
   region = var.region.primary

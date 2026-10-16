@@ -18,15 +18,15 @@ locals {
 module "helper" {
   source = "../../_internal/metric_helper"
 
-  is_enabled  = var.is_enabled
-  create_auto = var.create_auto_dimensions
+  is_enabled = var.is_enabled
 
-  source_list        = var.create_auto_dimensions && length(data.external.list) > 0 ? split(",", data.external.list[0].result.list_distribution) : []
-  include_list       = var.auto_dimensions_include_list
-  exclude_list       = var.auto_dimensions_exclude_list
-  manual_dimensions  = var.dimensions
-  dimension_key      = "DistributionId"
   base_threshold     = var.threshold
+  create_auto        = var.create_auto_dimensions
+  dimension_key      = "DistributionId"
+  exclude_list       = var.auto_dimensions_exclude_list
+  include_list       = var.auto_dimensions_include_list
+  manual_dimensions  = var.dimensions
+  source_list        = var.create_auto_dimensions && length(data.external.list) > 0 ? split(",", data.external.list[0].result.list_distribution) : []
   threshold_override = var.threshold_override
 }
 
@@ -34,13 +34,16 @@ module "helper" {
 # Locals
 #--------------------------------------------------------------
 locals {
-  url     = "https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/programming-cloudwatch-metrics.html"
-  domains = var.is_enabled && var.create_auto_dimensions && length(data.external.list) > 0 ? split(",", data.external.list[0].result.list_domain) : []
+  url              = "https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/programming-cloudwatch-metrics.html"
+  distribution_ids = var.is_enabled && var.create_auto_dimensions && length(data.external.list) > 0 ? split(",", data.external.list[0].result.list_distribution) : []
+  domains          = var.is_enabled && var.create_auto_dimensions && length(data.external.list) > 0 ? split(",", data.external.list[0].result.list_domain) : []
+  # Domains are paired with IDs before filtering; the filtered list has different positions than the unfiltered one.
+  domain_by_distribution_id = zipmap(local.distribution_ids, local.domains)
 
   # Use filtered results from helper module and combine with domains
   filtered_distributions = module.helper.filtered_list
   auto_dimensions = [
-    for k, v in local.filtered_distributions : "${v}/${try(local.domains[k], "")}"
+    for v in local.filtered_distributions : "${v}/${lookup(local.domain_by_distribution_id, v, "")}"
   ]
   safe_dimensions = module.helper.safe_manual_dimensions
 
@@ -55,8 +58,9 @@ locals {
     }
     } : {
     for v in local.safe_dimensions : v.DistributionId => {
-      name       = v.DistributionId
-      dimensions = v
+      name = v.DistributionId
+      # Domain is only used for the alarm description; default it to the distribution ID when omitted.
+      dimensions = merge({ Domain = v.DistributionId }, v)
     } if v != null && try(v.DistributionId, null) != null && v.DistributionId != ""
   }
 
@@ -71,26 +75,27 @@ locals {
 resource "aws_cloudwatch_metric_alarm" "cache_hit_rate" {
   for_each = {
     for k, v in local.list : k => v
-    if var.is_enabled && local.effective_thresholds[k].enabled_cache_hit_rate
+    if var.is_enabled && local.effective_thresholds[k].cache_hit_rate.enabled
   }
 
   region                    = local.region
-  alarm_name                = "${var.name_prefix}metric-cloudfront-${each.value.name}-cache-hit-rate"
-  comparison_operator       = "LessThanOrEqualToThreshold"
-  evaluation_periods        = 1
-  namespace                 = "AWS/CloudFront"
-  metric_name               = "CacheHitRate"
-  period                    = var.period
-  statistic                 = "Average"
-  threshold                 = local.effective_thresholds[each.key].cache_hit_rate
   actions_enabled           = true
   alarm_actions             = var.alarm_actions
-  alarm_description         = "This is an alarm to check for ${each.value.dimensions.Domain} <${local.url}|CloudFront cache hit rate>(<= ${local.effective_thresholds[each.key].cache_hit_rate}%)."
-  insufficient_data_actions = var.insufficient_data_actions
-  ok_actions                = var.ok_actions
-  unit                      = "Percent"
-  treat_missing_data        = "notBreaching"
+  alarm_description         = "This is an alarm to check for ${each.value.dimensions.Domain} <${local.url}|CloudFront cache hit rate>(<= ${local.effective_thresholds[each.key].cache_hit_rate.value}%)."
+  alarm_name                = "${var.name_prefix}metric-cloudfront-${each.value.name}-cache-hit-rate"
+  comparison_operator       = "LessThanOrEqualToThreshold"
+  datapoints_to_alarm       = local.effective_thresholds[each.key].cache_hit_rate.datapoints_to_alarm
   dimensions                = { for k, v in each.value.dimensions : k => v if k != "Domain" }
+  evaluation_periods        = local.effective_thresholds[each.key].cache_hit_rate.evaluation_periods
+  insufficient_data_actions = var.insufficient_data_actions
+  metric_name               = "CacheHitRate"
+  namespace                 = "AWS/CloudFront"
+  ok_actions                = var.ok_actions
+  period                    = var.period
+  statistic                 = "Average"
+  threshold                 = local.effective_thresholds[each.key].cache_hit_rate.value
+  treat_missing_data        = "notBreaching"
+  unit                      = "Percent"
 
   tags = var.tags
 }
@@ -102,26 +107,27 @@ resource "aws_cloudwatch_metric_alarm" "cache_hit_rate" {
 resource "aws_cloudwatch_metric_alarm" "error_401_rate" {
   for_each = {
     for k, v in local.list : k => v
-    if var.is_enabled && local.effective_thresholds[k].enabled_error_401_rate
+    if var.is_enabled && local.effective_thresholds[k].error_401_rate.enabled
   }
 
   region                    = local.region
-  alarm_name                = "${var.name_prefix}metric-cloudfront-${each.value.name}-error-401-rate"
-  comparison_operator       = "GreaterThanOrEqualToThreshold"
-  evaluation_periods        = 1
-  namespace                 = "AWS/CloudFront"
-  metric_name               = "401ErrorRate"
-  period                    = var.period
-  statistic                 = "Average"
-  threshold                 = local.effective_thresholds[each.key].error_401_rate
   actions_enabled           = true
   alarm_actions             = var.alarm_actions
-  alarm_description         = "This is an alarm to check for ${each.value.dimensions.Domain} <${local.url}|CloudFront 401 Error Rate>(>= ${local.effective_thresholds[each.key].error_401_rate}%)."
-  insufficient_data_actions = var.insufficient_data_actions
-  ok_actions                = var.ok_actions
-  unit                      = "Percent"
-  treat_missing_data        = "notBreaching"
+  alarm_description         = "This is an alarm to check for ${each.value.dimensions.Domain} <${local.url}|CloudFront 401 Error Rate>(>= ${local.effective_thresholds[each.key].error_401_rate.value}%)."
+  alarm_name                = "${var.name_prefix}metric-cloudfront-${each.value.name}-error-401-rate"
+  comparison_operator       = "GreaterThanOrEqualToThreshold"
+  datapoints_to_alarm       = local.effective_thresholds[each.key].error_401_rate.datapoints_to_alarm
   dimensions                = { for k, v in each.value.dimensions : k => v if k != "Domain" }
+  evaluation_periods        = local.effective_thresholds[each.key].error_401_rate.evaluation_periods
+  insufficient_data_actions = var.insufficient_data_actions
+  metric_name               = "401ErrorRate"
+  namespace                 = "AWS/CloudFront"
+  ok_actions                = var.ok_actions
+  period                    = var.period
+  statistic                 = "Average"
+  threshold                 = local.effective_thresholds[each.key].error_401_rate.value
+  treat_missing_data        = "notBreaching"
+  unit                      = "Percent"
 
   tags = var.tags
 }
@@ -133,26 +139,27 @@ resource "aws_cloudwatch_metric_alarm" "error_401_rate" {
 resource "aws_cloudwatch_metric_alarm" "error_403_rate" {
   for_each = {
     for k, v in local.list : k => v
-    if var.is_enabled && local.effective_thresholds[k].enabled_error_403_rate
+    if var.is_enabled && local.effective_thresholds[k].error_403_rate.enabled
   }
 
   region                    = local.region
-  alarm_name                = "${var.name_prefix}metric-cloudfront-${each.value.name}-error-403-rate"
-  comparison_operator       = "GreaterThanOrEqualToThreshold"
-  evaluation_periods        = 1
-  namespace                 = "AWS/CloudFront"
-  metric_name               = "403ErrorRate"
-  period                    = var.period
-  statistic                 = "Average"
-  threshold                 = local.effective_thresholds[each.key].error_403_rate
   actions_enabled           = true
   alarm_actions             = var.alarm_actions
-  alarm_description         = "This is an alarm to check for ${each.value.dimensions.Domain} <${local.url}|CloudFront 403 Error Rate>(>= ${local.effective_thresholds[each.key].error_403_rate}%)."
-  insufficient_data_actions = var.insufficient_data_actions
-  ok_actions                = var.ok_actions
-  unit                      = "Percent"
-  treat_missing_data        = "notBreaching"
+  alarm_description         = "This is an alarm to check for ${each.value.dimensions.Domain} <${local.url}|CloudFront 403 Error Rate>(>= ${local.effective_thresholds[each.key].error_403_rate.value}%)."
+  alarm_name                = "${var.name_prefix}metric-cloudfront-${each.value.name}-error-403-rate"
+  comparison_operator       = "GreaterThanOrEqualToThreshold"
+  datapoints_to_alarm       = local.effective_thresholds[each.key].error_403_rate.datapoints_to_alarm
   dimensions                = { for k, v in each.value.dimensions : k => v if k != "Domain" }
+  evaluation_periods        = local.effective_thresholds[each.key].error_403_rate.evaluation_periods
+  insufficient_data_actions = var.insufficient_data_actions
+  metric_name               = "403ErrorRate"
+  namespace                 = "AWS/CloudFront"
+  ok_actions                = var.ok_actions
+  period                    = var.period
+  statistic                 = "Average"
+  threshold                 = local.effective_thresholds[each.key].error_403_rate.value
+  treat_missing_data        = "notBreaching"
+  unit                      = "Percent"
 
   tags = var.tags
 }
@@ -164,26 +171,27 @@ resource "aws_cloudwatch_metric_alarm" "error_403_rate" {
 resource "aws_cloudwatch_metric_alarm" "error_404_rate" {
   for_each = {
     for k, v in local.list : k => v
-    if var.is_enabled && local.effective_thresholds[k].enabled_error_404_rate
+    if var.is_enabled && local.effective_thresholds[k].error_404_rate.enabled
   }
 
   region                    = local.region
-  alarm_name                = "${var.name_prefix}metric-cloudfront-${each.value.name}-error-404-rate"
-  comparison_operator       = "GreaterThanOrEqualToThreshold"
-  evaluation_periods        = 1
-  namespace                 = "AWS/CloudFront"
-  metric_name               = "404ErrorRate"
-  period                    = var.period
-  statistic                 = "Average"
-  threshold                 = local.effective_thresholds[each.key].error_404_rate
   actions_enabled           = true
   alarm_actions             = var.alarm_actions
-  alarm_description         = "This is an alarm to check for ${each.value.dimensions.Domain} <${local.url}|CloudFront 404 Error Rate>(>= ${local.effective_thresholds[each.key].error_404_rate}%)."
-  insufficient_data_actions = var.insufficient_data_actions
-  ok_actions                = var.ok_actions
-  unit                      = "Percent"
-  treat_missing_data        = "notBreaching"
+  alarm_description         = "This is an alarm to check for ${each.value.dimensions.Domain} <${local.url}|CloudFront 404 Error Rate>(>= ${local.effective_thresholds[each.key].error_404_rate.value}%)."
+  alarm_name                = "${var.name_prefix}metric-cloudfront-${each.value.name}-error-404-rate"
+  comparison_operator       = "GreaterThanOrEqualToThreshold"
+  datapoints_to_alarm       = local.effective_thresholds[each.key].error_404_rate.datapoints_to_alarm
   dimensions                = { for k, v in each.value.dimensions : k => v if k != "Domain" }
+  evaluation_periods        = local.effective_thresholds[each.key].error_404_rate.evaluation_periods
+  insufficient_data_actions = var.insufficient_data_actions
+  metric_name               = "404ErrorRate"
+  namespace                 = "AWS/CloudFront"
+  ok_actions                = var.ok_actions
+  period                    = var.period
+  statistic                 = "Average"
+  threshold                 = local.effective_thresholds[each.key].error_404_rate.value
+  treat_missing_data        = "notBreaching"
+  unit                      = "Percent"
 
   tags = var.tags
 }
@@ -195,26 +203,27 @@ resource "aws_cloudwatch_metric_alarm" "error_404_rate" {
 resource "aws_cloudwatch_metric_alarm" "error_502_rate" {
   for_each = {
     for k, v in local.list : k => v
-    if var.is_enabled && local.effective_thresholds[k].enabled_error_502_rate
+    if var.is_enabled && local.effective_thresholds[k].error_502_rate.enabled
   }
 
   region                    = local.region
-  alarm_name                = "${var.name_prefix}metric-cloudfront-${each.value.name}-error-502-rate"
-  comparison_operator       = "GreaterThanOrEqualToThreshold"
-  evaluation_periods        = 1
-  namespace                 = "AWS/CloudFront"
-  metric_name               = "502ErrorRate"
-  period                    = var.period
-  statistic                 = "Average"
-  threshold                 = local.effective_thresholds[each.key].error_502_rate
   actions_enabled           = true
   alarm_actions             = var.alarm_actions
-  alarm_description         = "This is an alarm to check for ${each.value.dimensions.Domain} <${local.url}|CloudFront 502 Error Rate>(>= ${local.effective_thresholds[each.key].error_502_rate}%)."
-  insufficient_data_actions = var.insufficient_data_actions
-  ok_actions                = var.ok_actions
-  unit                      = "Percent"
-  treat_missing_data        = "notBreaching"
+  alarm_description         = "This is an alarm to check for ${each.value.dimensions.Domain} <${local.url}|CloudFront 502 Error Rate>(>= ${local.effective_thresholds[each.key].error_502_rate.value}%)."
+  alarm_name                = "${var.name_prefix}metric-cloudfront-${each.value.name}-error-502-rate"
+  comparison_operator       = "GreaterThanOrEqualToThreshold"
+  datapoints_to_alarm       = local.effective_thresholds[each.key].error_502_rate.datapoints_to_alarm
   dimensions                = { for k, v in each.value.dimensions : k => v if k != "Domain" }
+  evaluation_periods        = local.effective_thresholds[each.key].error_502_rate.evaluation_periods
+  insufficient_data_actions = var.insufficient_data_actions
+  metric_name               = "502ErrorRate"
+  namespace                 = "AWS/CloudFront"
+  ok_actions                = var.ok_actions
+  period                    = var.period
+  statistic                 = "Average"
+  threshold                 = local.effective_thresholds[each.key].error_502_rate.value
+  treat_missing_data        = "notBreaching"
+  unit                      = "Percent"
 
   tags = var.tags
 }
@@ -226,26 +235,27 @@ resource "aws_cloudwatch_metric_alarm" "error_502_rate" {
 resource "aws_cloudwatch_metric_alarm" "error_503_rate" {
   for_each = {
     for k, v in local.list : k => v
-    if var.is_enabled && local.effective_thresholds[k].enabled_error_503_rate
+    if var.is_enabled && local.effective_thresholds[k].error_503_rate.enabled
   }
 
   region                    = local.region
-  alarm_name                = "${var.name_prefix}metric-cloudfront-${each.value.name}-error-503-rate"
-  comparison_operator       = "GreaterThanOrEqualToThreshold"
-  evaluation_periods        = 1
-  namespace                 = "AWS/CloudFront"
-  metric_name               = "503ErrorRate"
-  period                    = var.period
-  statistic                 = "Average"
-  threshold                 = local.effective_thresholds[each.key].error_503_rate
   actions_enabled           = true
   alarm_actions             = var.alarm_actions
-  alarm_description         = "This is an alarm to check for ${each.value.dimensions.Domain} <${local.url}|CloudFront 503 Error Rate>(>= ${local.effective_thresholds[each.key].error_503_rate}%)."
-  insufficient_data_actions = var.insufficient_data_actions
-  ok_actions                = var.ok_actions
-  unit                      = "Percent"
-  treat_missing_data        = "notBreaching"
+  alarm_description         = "This is an alarm to check for ${each.value.dimensions.Domain} <${local.url}|CloudFront 503 Error Rate>(>= ${local.effective_thresholds[each.key].error_503_rate.value}%)."
+  alarm_name                = "${var.name_prefix}metric-cloudfront-${each.value.name}-error-503-rate"
+  comparison_operator       = "GreaterThanOrEqualToThreshold"
+  datapoints_to_alarm       = local.effective_thresholds[each.key].error_503_rate.datapoints_to_alarm
   dimensions                = { for k, v in each.value.dimensions : k => v if k != "Domain" }
+  evaluation_periods        = local.effective_thresholds[each.key].error_503_rate.evaluation_periods
+  insufficient_data_actions = var.insufficient_data_actions
+  metric_name               = "503ErrorRate"
+  namespace                 = "AWS/CloudFront"
+  ok_actions                = var.ok_actions
+  period                    = var.period
+  statistic                 = "Average"
+  threshold                 = local.effective_thresholds[each.key].error_503_rate.value
+  treat_missing_data        = "notBreaching"
+  unit                      = "Percent"
 
   tags = var.tags
 }
@@ -257,26 +267,27 @@ resource "aws_cloudwatch_metric_alarm" "error_503_rate" {
 resource "aws_cloudwatch_metric_alarm" "error_504_rate" {
   for_each = {
     for k, v in local.list : k => v
-    if var.is_enabled && local.effective_thresholds[k].enabled_error_504_rate
+    if var.is_enabled && local.effective_thresholds[k].error_504_rate.enabled
   }
 
   region                    = local.region
-  alarm_name                = "${var.name_prefix}metric-cloudfront-${each.value.name}-error-504-rate"
-  comparison_operator       = "GreaterThanOrEqualToThreshold"
-  evaluation_periods        = 1
-  namespace                 = "AWS/CloudFront"
-  metric_name               = "504ErrorRate"
-  period                    = var.period
-  statistic                 = "Average"
-  threshold                 = local.effective_thresholds[each.key].error_504_rate
   actions_enabled           = true
   alarm_actions             = var.alarm_actions
-  alarm_description         = "This is an alarm to check for ${each.value.dimensions.Domain} <${local.url}|CloudFront 504 Error Rate>(>= ${local.effective_thresholds[each.key].error_504_rate}%)."
-  insufficient_data_actions = var.insufficient_data_actions
-  ok_actions                = var.ok_actions
-  unit                      = "Percent"
-  treat_missing_data        = "notBreaching"
+  alarm_description         = "This is an alarm to check for ${each.value.dimensions.Domain} <${local.url}|CloudFront 504 Error Rate>(>= ${local.effective_thresholds[each.key].error_504_rate.value}%)."
+  alarm_name                = "${var.name_prefix}metric-cloudfront-${each.value.name}-error-504-rate"
+  comparison_operator       = "GreaterThanOrEqualToThreshold"
+  datapoints_to_alarm       = local.effective_thresholds[each.key].error_504_rate.datapoints_to_alarm
   dimensions                = { for k, v in each.value.dimensions : k => v if k != "Domain" }
+  evaluation_periods        = local.effective_thresholds[each.key].error_504_rate.evaluation_periods
+  insufficient_data_actions = var.insufficient_data_actions
+  metric_name               = "504ErrorRate"
+  namespace                 = "AWS/CloudFront"
+  ok_actions                = var.ok_actions
+  period                    = var.period
+  statistic                 = "Average"
+  threshold                 = local.effective_thresholds[each.key].error_504_rate.value
+  treat_missing_data        = "notBreaching"
+  unit                      = "Percent"
 
   tags = var.tags
 }
@@ -288,26 +299,27 @@ resource "aws_cloudwatch_metric_alarm" "error_504_rate" {
 resource "aws_cloudwatch_metric_alarm" "origin_latency" {
   for_each = {
     for k, v in local.list : k => v
-    if var.is_enabled && local.effective_thresholds[k].enabled_origin_latency
+    if var.is_enabled && local.effective_thresholds[k].origin_latency.enabled
   }
 
   region                    = local.region
-  alarm_name                = "${var.name_prefix}metric-cloudfront-${each.value.name}-origin-latency"
-  comparison_operator       = "GreaterThanOrEqualToThreshold"
-  evaluation_periods        = 1
-  namespace                 = "AWS/CloudFront"
-  metric_name               = "OriginLatency"
-  period                    = var.period
-  extended_statistic        = "p90"
-  threshold                 = local.effective_thresholds[each.key].origin_latency
   actions_enabled           = true
   alarm_actions             = var.alarm_actions
-  alarm_description         = "This is an alarm to check for ${each.value.dimensions.Domain} <${local.url}|CloudFront origin latency>(>= ${local.effective_thresholds[each.key].origin_latency}ms)."
-  insufficient_data_actions = var.insufficient_data_actions
-  ok_actions                = var.ok_actions
-  unit                      = "Milliseconds"
-  treat_missing_data        = "notBreaching"
+  alarm_description         = "This is an alarm to check for ${each.value.dimensions.Domain} <${local.url}|CloudFront origin latency>(>= ${local.effective_thresholds[each.key].origin_latency.value}ms)."
+  alarm_name                = "${var.name_prefix}metric-cloudfront-${each.value.name}-origin-latency"
+  comparison_operator       = "GreaterThanOrEqualToThreshold"
+  datapoints_to_alarm       = local.effective_thresholds[each.key].origin_latency.datapoints_to_alarm
   dimensions                = { for k, v in each.value.dimensions : k => v if k != "Domain" }
+  evaluation_periods        = local.effective_thresholds[each.key].origin_latency.evaluation_periods
+  extended_statistic        = "p90"
+  insufficient_data_actions = var.insufficient_data_actions
+  metric_name               = "OriginLatency"
+  namespace                 = "AWS/CloudFront"
+  ok_actions                = var.ok_actions
+  period                    = var.period
+  threshold                 = local.effective_thresholds[each.key].origin_latency.value
+  treat_missing_data        = "notBreaching"
+  unit                      = "Milliseconds"
 
   tags = var.tags
 }

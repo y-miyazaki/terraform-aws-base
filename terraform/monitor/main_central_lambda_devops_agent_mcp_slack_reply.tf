@@ -4,10 +4,14 @@
 # https://registry.terraform.io/modules/terraform-aws-modules/lambda/aws/latest
 #--------------------------------------------------------------
 locals {
-  # Channels the alert Lambda functions post to
+  # Channels the alert Lambda functions post to.
+  # This function only holds the common token, so channels whose override uses a different token are excluded.
   devops_agent_mcp_slack_reply_channel_ids = distinct(compact(concat(
     [var.slack.channel_id],
-    [for k, v in try(var.slack.override, {}) : try(v.channel_id, null)]
+    [
+      for k, v in try(var.slack.override, {}) : try(v.channel_id, null)
+      if try(v.oauth_access_token, null) == null || try(v.oauth_access_token, null) == var.slack.oauth_access_token
+    ]
   )))
   devops_agent_mcp_slack_reply_enabled = local.devops_agent_is_primary && var.devops_agent.primary.mcp_slack_reply.is_enabled
   devops_agent_mcp_slack_reply_name    = "${var.name_prefix}devops-agent-mcp-slack-reply"
@@ -15,7 +19,7 @@ locals {
 
 module "aws_lambda_devops_agent_mcp_slack_reply" {
   source  = "terraform-aws-modules/lambda/aws"
-  version = "8.9.0"
+  version = "8.12.0"
 
   create = local.devops_agent_mcp_slack_reply_enabled
 

@@ -7,7 +7,8 @@
 #     -h, --help           Display this help message
 #     -v, --verbose        Enable verbose output
 #     -d, --generate-docs  Generate README.md using terraform-docs (requires terraform-docs installed)
-#     -f, --fix            Automatically fix formatting issues (terraform fmt)
+#     -f, --fix            Automatically fix formatting issues (terraform fmt); with -o also argument order
+#     -o, --check-order    Check alphabetical argument order (ORD-01) with terraform_attr_order.py (requires python3)
 #   arguments:
 #     dirN                 One or more target directories to scope validation (optional)
 # Design Rules:
@@ -15,6 +16,7 @@
 #   - Directories are validated recursively for each main.tf found
 #   - Uses terraform.sh library functions for consistency
 #   - Runs tflint recursively before validation
+#   - Checks alphabetical argument order (ORD-01) only when --check-order is given
 #   - Follows common parse_arguments pattern used in other scripts
 #
 # Output:
@@ -42,6 +44,7 @@ source "${SCRIPT_DIR}/../lib/all.sh"
 TARGET_DIRS=()
 GENERATE_DOCS="false"
 AUTO_FIX="false"
+CHECK_ORDER="false"
 # shellcheck disable=SC2034
 VERBOSE="false"
 EXIT_CODE=0
@@ -50,6 +53,7 @@ EXIT_CODE=0
 TFLINT_FAILED=0
 VALIDATE_FAILED=0
 FMT_FAILED=0
+ORDER_FAILED=0
 SECURITY_FAILED=0
 DOCS_FAILED=0
 
@@ -87,7 +91,8 @@ Options:
   -h, --help           Display this help message
   -v, --verbose        Enable verbose output
   -d, --generate-docs  Generate README.md using terraform-docs (requires terraform-docs installed)
-  -f, --fix            Automatically fix formatting issues (terraform fmt)
+  -f, --fix            Automatically fix formatting issues (terraform fmt); with -o also argument order
+  -o, --check-order    Check alphabetical argument order (ORD-01) with terraform_attr_order.py (requires python3)
 
 Examples:
   $0                         # scan whole workspace
@@ -135,6 +140,9 @@ function parse_arguments {
                 ;;
             -f | --fix)
                 AUTO_FIX="true"
+                ;;
+            -o | --check-order)
+                CHECK_ORDER="true"
                 ;;
             -*)
                 error_exit "Unknown option: $1"
@@ -273,6 +281,56 @@ function run_formatting_check {
         EXIT_CODE=1
     else
         log "INFO" "Terraform formatting check passed"
+    fi
+}
+
+#######################################
+# run_attribute_order_check: Check alphabetical argument order (ORD-01)
+#
+# Description:
+#   Runs terraform_attr_order.py on resource/data/module blocks. With --fix the files are rewritten in place.
+#
+# Globals:
+#   TARGET_DIRS - Array of target directories (if scoped)
+#   AUTO_FIX - Rewrite files instead of only checking
+#   SCRIPT_DIR - Directory of this script
+#
+# Arguments:
+#   None
+#
+# Outputs:
+#   None
+#
+# Returns:
+#   None (sets ORDER_FAILED and EXIT_CODE on violations)
+#
+# Usage:
+#   run_attribute_order_check
+#
+#######################################
+function run_attribute_order_check {
+    if [[ $AUTO_FIX == "true" ]]; then
+        echo_section "Auto-fixing Terraform argument order (ORD-01)"
+    else
+        echo_section "Checking Terraform argument order (ORD-01)"
+    fi
+
+    local -a targets=(".")
+    if [[ ${#TARGET_DIRS[@]} -gt 0 ]]; then
+        targets=("${TARGET_DIRS[@]}")
+    fi
+
+    local -a options=()
+    if [[ $AUTO_FIX == "true" ]]; then
+        options+=("--fix")
+    fi
+
+    if ! python3 "${SCRIPT_DIR}/terraform_attr_order.py" ${options[@]+"${options[@]}"} "${targets[@]}"; then
+        log "ERROR" "Terraform argument order check failed"
+        ORDER_FAILED=1
+        EXIT_CODE=1
+    else
+        log "INFO" "Terraform argument order check passed"
     fi
 }
 
@@ -457,6 +515,9 @@ function main {
 
     # Validate required dependencies
     local required_tools=("terraform" "tflint" "trivy")
+    if [[ $CHECK_ORDER == "true" ]]; then
+        required_tools+=("python3")
+    fi
     if [[ $GENERATE_DOCS == "true" ]]; then
         required_tools+=("terraform-docs")
     fi
@@ -468,6 +529,9 @@ function main {
     run_tflint_check
     run_recursive_validation
     run_formatting_check
+    if [[ $CHECK_ORDER == "true" ]]; then
+        run_attribute_order_check
+    fi
     run_security_scan
 
     # Record end time and calculate elapsed time
@@ -482,6 +546,9 @@ function main {
         [[ $TFLINT_FAILED == "1" ]] && echo "❌ tflint" >&2 || echo "✅ tflint" >&2
         [[ $VALIDATE_FAILED == "1" ]] && echo "❌ terraform validate" >&2 || echo "✅ terraform validate" >&2
         [[ $FMT_FAILED == "1" ]] && echo "❌ terraform fmt" >&2 || echo "✅ terraform fmt" >&2
+        if [[ $CHECK_ORDER == "true" ]]; then
+            [[ $ORDER_FAILED == "1" ]] && echo "❌ argument order (ORD-01)" >&2 || echo "✅ argument order (ORD-01)" >&2
+        fi
         [[ $SECURITY_FAILED == "1" ]] && echo "❌ security scan (trivy)" >&2 || echo "✅ security scan (trivy)" >&2
         [[ $DOCS_FAILED == "1" ]] && echo "⚠️  terraform-docs" >&2
         log "ERROR" "❌ Some validations failed"

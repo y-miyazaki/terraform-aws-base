@@ -16,240 +16,155 @@ variable "period" {
 variable "threshold" {
   type = object({
     # (Required) CPUCreditBalance threshold (unit=Count)
-    enabled_cpu_credit_balance = bool
-    cpu_credit_balance         = number
+    cpu_credit_balance = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # (Required) CPUCreditUsage threshold (unit=Count)
-    enabled_cpu_credit_usage = bool
-    cpu_credit_usage         = number
+    cpu_credit_usage = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # (Required) CPUUtilization threshold (unit=Percent)
-    enabled_cpu_utilization = bool
-    cpu_utilization         = number
+    cpu_utilization = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # (Required) CPUSurplusCreditBalance threshold (unit=Count)
-    enabled_cpu_surplus_credit_balance = bool
-    cpu_surplus_credit_balance         = number
+    cpu_surplus_credit_balance = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # (Required) CPUSurplusCreditsCharged threshold (unit=Count)
-    enabled_cpu_surplus_credits_charged = bool
-    cpu_surplus_credits_charged         = number
+    cpu_surplus_credits_charged = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # (Required) DedicatedHostCPUUtilization threshold (unit=Percent)
-    enabled_dedicated_host_cpu_utilization = bool
-    dedicated_host_cpu_utilization         = number
+    dedicated_host_cpu_utilization = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # (Required) DiskReadBytes threshold (unit=Bytes)
-    enabled_disk_read_bytes = bool
-    disk_read_bytes         = number
+    disk_read_bytes = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # (Required) DiskReadOps threshold (unit=Count)
-    enabled_disk_read_ops = bool
-    disk_read_ops         = number
+    disk_read_ops = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # (Required) DiskWriteBytes threshold (unit=Bytes)
-    enabled_disk_write_bytes = bool
-    disk_write_bytes         = number
+    disk_write_bytes = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # (Required) DiskWriteOps threshold (unit=Count)
-    enabled_disk_write_ops = bool
-    disk_write_ops         = number
+    disk_write_ops = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # (Required) EBSByteBalance% threshold (unit=Percent)
-    enabled_ebs_byte_balance_percent = bool
-    ebs_byte_balance_percent         = number
+    ebs_byte_balance_percent = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # (Required) EBSIOBalance% threshold (unit=Percent)
-    enabled_ebs_io_balance_percent = bool
-    ebs_io_balance_percent         = number
+    ebs_io_balance_percent = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # (Required) EBSReadBytes threshold (unit=Bytes)
-    enabled_ebs_read_bytes = bool
-    ebs_read_bytes         = number
+    ebs_read_bytes = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # (Required) EBSReadOps threshold (unit=Count)
-    enabled_ebs_read_ops = bool
-    ebs_read_ops         = number
+    ebs_read_ops = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # (Required) EBSWriteBytes threshold (unit=Bytes)
-    enabled_ebs_write_bytes = bool
-    ebs_write_bytes         = number
+    ebs_write_bytes = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # (Required) EBSWriteOps threshold (unit=Count)
-    enabled_ebs_write_ops = bool
-    ebs_write_ops         = number
+    ebs_write_ops = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # (Required) InstanceEBSIOPSExceededCheck threshold (unit=None)
-    enabled_instance_ebs_iops_exceeded_check = bool
-    instance_ebs_iops_exceeded_check         = number
+    instance_ebs_iops_exceeded_check = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # (Required) InstanceEBSThroughputExceededCheck threshold (unit=None)
-    enabled_instance_ebs_throughput_exceeded_check = bool
-    instance_ebs_throughput_exceeded_check         = number
+    instance_ebs_throughput_exceeded_check = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # (Required) MetadataNoToken threshold (unit=Count)
-    enabled_metadata_no_token = bool
-    metadata_no_token         = number
+    metadata_no_token = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # (Required) MetadataNoTokenRejected threshold (unit=Count)
-    enabled_metadata_no_token_rejected = bool
-    metadata_no_token_rejected         = number
+    metadata_no_token_rejected = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # (Required) NetworkIn threshold (unit=Bytes)
-    enabled_network_in = bool
-    network_in         = number
+    network_in = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # (Required) NetworkOut threshold (unit=Bytes)
-    enabled_network_out = bool
-    network_out         = number
+    network_out = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # (Required) NetworkPacketsIn threshold (unit=Count)
-    enabled_network_packets_in = bool
-    network_packets_in         = number
+    network_packets_in = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # (Required) NetworkPacketsOut threshold (unit=Count)
-    enabled_network_packets_out = bool
-    network_packets_out         = number
+    network_packets_out = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # (Required) StatusCheckFailed threshold (unit=Count)
-    enabled_status_check_failed = bool
-    status_check_failed         = number
+    status_check_failed = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # (Required) StatusCheckFailed_AttachedEBS threshold (unit=Count)
-    enabled_status_check_failed_attached_ebs = bool
-    status_check_failed_attached_ebs         = number
+    status_check_failed_attached_ebs = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # (Required) StatusCheckFailed_Instance threshold (unit=Count)
-    enabled_status_check_failed_instance = bool
-    status_check_failed_instance         = number
+    status_check_failed_instance = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # (Required) StatusCheckFailed_System threshold (unit=Count)
-    enabled_status_check_failed_system = bool
-    status_check_failed_system         = number
-    }
-  )
+    status_check_failed_system = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
+  })
   description = "(Optional) Set the threshold for each Metric in EC2."
   default = {
-    enabled_cpu_credit_balance                     = true
-    cpu_credit_balance                             = 10
-    enabled_instance_ebs_iops_exceeded_check       = true
-    instance_ebs_iops_exceeded_check               = 1
-    enabled_instance_ebs_throughput_exceeded_check = true
-    instance_ebs_throughput_exceeded_check         = 1
-    enabled_cpu_credit_usage                       = true
-    cpu_credit_usage                               = 5
-    enabled_cpu_utilization                        = true
-    cpu_utilization                                = 80
-    enabled_cpu_surplus_credit_balance             = true
-    cpu_surplus_credit_balance                     = 5
-    enabled_cpu_surplus_credits_charged            = true
-    cpu_surplus_credits_charged                    = 1
-    enabled_dedicated_host_cpu_utilization         = true
-    dedicated_host_cpu_utilization                 = 80
-    enabled_disk_read_bytes                        = true
-    disk_read_bytes                                = 1000000000
-    enabled_disk_read_ops                          = true
-    disk_read_ops                                  = 1000
-    enabled_disk_write_bytes                       = true
-    disk_write_bytes                               = 1000000000
-    enabled_disk_write_ops                         = true
-    disk_write_ops                                 = 1000
-    enabled_ebs_byte_balance_percent               = true
-    ebs_byte_balance_percent                       = 10
-    enabled_ebs_io_balance_percent                 = true
-    ebs_io_balance_percent                         = 10
-    enabled_ebs_read_bytes                         = true
-    ebs_read_bytes                                 = 1000000000
-    enabled_ebs_read_ops                           = true
-    ebs_read_ops                                   = 1000
-    enabled_ebs_write_bytes                        = true
-    ebs_write_bytes                                = 1000000000
-    enabled_ebs_write_ops                          = true
-    ebs_write_ops                                  = 1000
-    enabled_metadata_no_token                      = true
-    metadata_no_token                              = 1
-    enabled_metadata_no_token_rejected             = true
-    metadata_no_token_rejected                     = 1
-    enabled_network_in                             = true
-    network_in                                     = 1000000000
-    enabled_network_out                            = true
-    network_out                                    = 1000000000
-    enabled_network_packets_in                     = true
-    network_packets_in                             = 100000
-    enabled_network_packets_out                    = true
-    network_packets_out                            = 100000
-    enabled_status_check_failed                    = true
-    status_check_failed                            = 1
-    enabled_status_check_failed_attached_ebs       = true
-    status_check_failed_attached_ebs               = 1
-    enabled_status_check_failed_instance           = true
-    status_check_failed_instance                   = 1
-    enabled_status_check_failed_system             = true
-    status_check_failed_system                     = 1
+    cpu_credit_balance                     = { enabled = true, value = 10 }
+    instance_ebs_iops_exceeded_check       = { enabled = true, value = 1 }
+    instance_ebs_throughput_exceeded_check = { enabled = true, value = 1 }
+    cpu_credit_usage                       = { enabled = true, value = 5 }
+    cpu_utilization                        = { enabled = true, value = 80 }
+    cpu_surplus_credit_balance             = { enabled = true, value = 5 }
+    cpu_surplus_credits_charged            = { enabled = true, value = 1 }
+    dedicated_host_cpu_utilization         = { enabled = true, value = 80 }
+    disk_read_bytes                        = { enabled = true, value = 1000000000 }
+    disk_read_ops                          = { enabled = true, value = 1000 }
+    disk_write_bytes                       = { enabled = true, value = 1000000000 }
+    disk_write_ops                         = { enabled = true, value = 1000 }
+    ebs_byte_balance_percent               = { enabled = true, value = 10 }
+    ebs_io_balance_percent                 = { enabled = true, value = 10 }
+    ebs_read_bytes                         = { enabled = true, value = 1000000000 }
+    ebs_read_ops                           = { enabled = true, value = 1000 }
+    ebs_write_bytes                        = { enabled = true, value = 1000000000 }
+    ebs_write_ops                          = { enabled = true, value = 1000 }
+    metadata_no_token                      = { enabled = true, value = 1 }
+    metadata_no_token_rejected             = { enabled = true, value = 1 }
+    network_in                             = { enabled = true, value = 1000000000 }
+    network_out                            = { enabled = true, value = 1000000000 }
+    network_packets_in                     = { enabled = true, value = 100000 }
+    network_packets_out                    = { enabled = true, value = 100000 }
+    status_check_failed                    = { enabled = true, value = 1 }
+    status_check_failed_attached_ebs       = { enabled = true, value = 1 }
+    status_check_failed_instance           = { enabled = true, value = 1 }
+    status_check_failed_system             = { enabled = true, value = 1 }
   }
 }
 
 variable "threshold_override" {
   type = map(object({
-    # (Optional) CPUCreditBalance threshold (unit=Count)
-    enabled_cpu_credit_balance = optional(bool)
-    cpu_credit_balance         = optional(number)
-    # (Optional) InstanceEBSIOPSExceededCheck threshold (unit=None)
-    enabled_instance_ebs_iops_exceeded_check = optional(bool)
-    instance_ebs_iops_exceeded_check         = optional(number)
-    # (Optional) InstanceEBSThroughputExceededCheck threshold (unit=None)
-    enabled_instance_ebs_throughput_exceeded_check = optional(bool)
-    instance_ebs_throughput_exceeded_check         = optional(number)
-    # (Optional) CPUCreditUsage threshold (unit=Count)
-    enabled_cpu_credit_usage = optional(bool)
-    cpu_credit_usage         = optional(number)
-    # (Optional) CPUUtilization threshold (unit=Percent)
-    enabled_cpu_utilization = optional(bool)
-    cpu_utilization         = optional(number)
-    # (Optional) CPUSurplusCreditBalance threshold (unit=Count)
-    enabled_cpu_surplus_credit_balance = optional(bool)
-    cpu_surplus_credit_balance         = optional(number)
-    # (Optional) CPUSurplusCreditsCharged threshold (unit=Count)
-    enabled_cpu_surplus_credits_charged = optional(bool)
-    cpu_surplus_credits_charged         = optional(number)
-    # (Optional) DedicatedHostCPUUtilization threshold (unit=Percent)
-    enabled_dedicated_host_cpu_utilization = optional(bool)
-    dedicated_host_cpu_utilization         = optional(number)
-    # (Optional) DiskReadBytes threshold (unit=Bytes)
-    enabled_disk_read_bytes = optional(bool)
-    disk_read_bytes         = optional(number)
-    # (Optional) DiskReadOps threshold (unit=Count)
-    enabled_disk_read_ops = optional(bool)
-    disk_read_ops         = optional(number)
-    # (Optional) DiskWriteBytes threshold (unit=Bytes)
-    enabled_disk_write_bytes = optional(bool)
-    disk_write_bytes         = optional(number)
-    # (Optional) DiskWriteOps threshold (unit=Count)
-    enabled_disk_write_ops = optional(bool)
-    disk_write_ops         = optional(number)
-    # (Optional) EBSByteBalance% threshold (unit=Percent)
-    enabled_ebs_byte_balance_percent = optional(bool)
-    ebs_byte_balance_percent         = optional(number)
-    # (Optional) EBSIOBalance% threshold (unit=Percent)
-    enabled_ebs_io_balance_percent = optional(bool)
-    ebs_io_balance_percent         = optional(number)
-    # (Optional) EBSReadBytes threshold (unit=Bytes)
-    enabled_ebs_read_bytes = optional(bool)
-    ebs_read_bytes         = optional(number)
-    # (Optional) EBSReadOps threshold (unit=Count)
-    enabled_ebs_read_ops = optional(bool)
-    ebs_read_ops         = optional(number)
-    # (Optional) EBSWriteBytes threshold (unit=Bytes)
-    enabled_ebs_write_bytes = optional(bool)
-    ebs_write_bytes         = optional(number)
-    # (Optional) EBSWriteOps threshold (unit=Count)
-    enabled_ebs_write_ops = optional(bool)
-    ebs_write_ops         = optional(number)
-    # (Optional) MetadataNoToken threshold (unit=Count)
-    enabled_metadata_no_token = optional(bool)
-    metadata_no_token         = optional(number)
-    # (Optional) MetadataNoTokenRejected threshold (unit=Count)
-    enabled_metadata_no_token_rejected = optional(bool)
-    metadata_no_token_rejected         = optional(number)
-    # (Optional) NetworkIn threshold (unit=Bytes)
-    enabled_network_in = optional(bool)
-    network_in         = optional(number)
-    # (Optional) NetworkOut threshold (unit=Bytes)
-    enabled_network_out = optional(bool)
-    network_out         = optional(number)
-    # (Optional) NetworkPacketsIn threshold (unit=Count)
-    enabled_network_packets_in = optional(bool)
-    network_packets_in         = optional(number)
-    # (Optional) NetworkPacketsOut threshold (unit=Count)
-    enabled_network_packets_out = optional(bool)
-    network_packets_out         = optional(number)
-    # (Optional) StatusCheckFailed threshold (unit=Count)
-    enabled_status_check_failed = optional(bool)
-    status_check_failed         = optional(number)
-    # (Optional) StatusCheckFailed_AttachedEBS threshold (unit=Count)
-    enabled_status_check_failed_attached_ebs = optional(bool)
-    status_check_failed_attached_ebs         = optional(number)
-    # (Optional) StatusCheckFailed_Instance threshold (unit=Count)
-    enabled_status_check_failed_instance = optional(bool)
-    status_check_failed_instance         = optional(number)
-    # (Optional) StatusCheckFailed_System threshold (unit=Count)
-    enabled_status_check_failed_system = optional(bool)
-    status_check_failed_system         = optional(number)
+    # CPUCreditBalance threshold (unit=Count)
+    cpu_credit_balance = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # CPUCreditUsage threshold (unit=Count)
+    cpu_credit_usage = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # CPUUtilization threshold (unit=Percent)
+    cpu_utilization = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # CPUSurplusCreditBalance threshold (unit=Count)
+    cpu_surplus_credit_balance = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # CPUSurplusCreditsCharged threshold (unit=Count)
+    cpu_surplus_credits_charged = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # DedicatedHostCPUUtilization threshold (unit=Percent)
+    dedicated_host_cpu_utilization = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # DiskReadBytes threshold (unit=Bytes)
+    disk_read_bytes = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # DiskReadOps threshold (unit=Count)
+    disk_read_ops = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # DiskWriteBytes threshold (unit=Bytes)
+    disk_write_bytes = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # DiskWriteOps threshold (unit=Count)
+    disk_write_ops = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # EBSByteBalance% threshold (unit=Percent)
+    ebs_byte_balance_percent = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # EBSIOBalance% threshold (unit=Percent)
+    ebs_io_balance_percent = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # EBSReadBytes threshold (unit=Bytes)
+    ebs_read_bytes = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # EBSReadOps threshold (unit=Count)
+    ebs_read_ops = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # EBSWriteBytes threshold (unit=Bytes)
+    ebs_write_bytes = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # EBSWriteOps threshold (unit=Count)
+    ebs_write_ops = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # InstanceEBSIOPSExceededCheck threshold (unit=None)
+    instance_ebs_iops_exceeded_check = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # InstanceEBSThroughputExceededCheck threshold (unit=None)
+    instance_ebs_throughput_exceeded_check = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # MetadataNoToken threshold (unit=Count)
+    metadata_no_token = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # MetadataNoTokenRejected threshold (unit=Count)
+    metadata_no_token_rejected = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # NetworkIn threshold (unit=Bytes)
+    network_in = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # NetworkOut threshold (unit=Bytes)
+    network_out = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # NetworkPacketsIn threshold (unit=Count)
+    network_packets_in = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # NetworkPacketsOut threshold (unit=Count)
+    network_packets_out = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # StatusCheckFailed threshold (unit=Count)
+    status_check_failed = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # StatusCheckFailed_AttachedEBS threshold (unit=Count)
+    status_check_failed_attached_ebs = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # StatusCheckFailed_Instance threshold (unit=Count)
+    status_check_failed_instance = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # StatusCheckFailed_System threshold (unit=Count)
+    status_check_failed_system = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
   }))
-  description = "(Optional) Override thresholds for specific resources. Key is the InstanceId."
+  description = "(Optional) Override thresholds for specific resources. Key is the InstanceId. Each metric accepts enabled, value, datapoints_to_alarm and evaluation_periods."
   default     = {}
 }
 

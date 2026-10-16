@@ -3,7 +3,7 @@
 # Purpose: Provide common metric module helper logic including:
 #          - Auto-discovery filtering with null safety and include/exclude patterns
 #          - Dimension list generation for for_each usage
-#          - Threshold override merging (base + per-resource overrides)
+#          - Threshold override merging (base + per-resource per-metric overrides)
 # Notes: Internal helper module for metric modules; not intended for direct use.
 #        Replaces auto_discovery_filter with additional threshold_override support.
 #--------------------------------------------------------------
@@ -60,21 +60,36 @@ locals {
 
 #--------------------------------------------------------------
 # Locals - Threshold override merging logic
-# For each resource key, merge base_threshold with any overrides.
+# For each resource key and metric, merge base_threshold[metric] with any overrides.
+# Result shape: effective_thresholds[resource_key][metric] = {
+#   enabled, value, datapoints_to_alarm, evaluation_periods
+# }
 # Uses coalesce pattern: override value if not null, otherwise base value.
 #--------------------------------------------------------------
 locals {
-  # Generate effective thresholds for each resource
-  # Each attribute in threshold_override[key] will override the corresponding base_threshold attribute
+  # Generate effective thresholds for each resource and metric
+  # Each non-null attribute in threshold_override[resource_key][metric] overrides the corresponding base_threshold[metric] attribute
   effective_thresholds = {
-    for key in local.resource_keys : key => merge(
-      var.base_threshold,
-      # Only merge non-null values from override
-      {
-        for attr, value in try(local.safe_threshold_override[key], {}) :
-        attr => value
-        if value != null
-      }
-    )
+    for key in local.resource_keys : key => {
+      for metric, base in var.base_threshold : metric => merge(
+        # Alarm evaluation defaults (1 datapoint of 1 period); overridable per metric
+        {
+          datapoints_to_alarm = 1
+          evaluation_periods  = 1
+        },
+        # Only merge non-null values from base
+        {
+          for attr, value in base :
+          attr => value
+          if value != null
+        },
+        # Only merge non-null values from override (a resource/metric without override resolves to {})
+        try({
+          for attr, value in local.safe_threshold_override[key][metric] :
+          attr => value
+          if value != null
+        }, {})
+      )
+    }
   }
 }

@@ -16,389 +16,305 @@ variable "period" {
 variable "threshold" {
   type = object({
     # ActiveConnectionCount threshold (unit=Count)
-    enabled_active_connection_count = bool
-    active_connection_count         = number
+    active_connection_count = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # ClientTLSNegotiationErrorCount threshold (unit=Count)
-    enabled_client_tls_negotiation_error_count = bool
-    client_tls_negotiation_error_count         = number
+    client_tls_negotiation_error_count = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # ConsumedLCUs threshold (unit=Count)
-    enabled_consumed_lcus = bool
-    consumed_lcus         = number
+    consumed_lcus = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # HTTPCode_4XX_Count threshold (unit=Count)
-    enabled_httpcode_4xx_count = bool
-    httpcode_4xx_count         = number
+    httpcode_4xx_count = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # HTTPCode_5XX_Count threshold (unit=Count)
-    enabled_httpcode_5xx_count = bool
-    httpcode_5xx_count         = number
+    httpcode_5xx_count = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # HTTPCode_ELB_4XX_Count threshold (unit=Count)
-    enabled_httpcode_elb_4xx_count = bool
-    httpcode_elb_4xx_count         = number
+    httpcode_elb_4xx_count = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # HTTPCode_ELB_5XX_Count threshold (unit=Count)
-    enabled_httpcode_elb_5xx_count = bool
-    httpcode_elb_5xx_count         = number
+    httpcode_elb_5xx_count = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # TargetResponseTime threshold (unit=Seconds)
-    enabled_target_response_time = bool
-    target_response_time         = number
+    target_response_time = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # TargetTLSNegotiationErrorCount threshold (unit=Count)
-    enabled_target_tls_negotiation_error_count = bool
-    target_tls_negotiation_error_count         = number
+    target_tls_negotiation_error_count = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # UnHealthyHostCount threshold (unit=Count) [Requires TargetGroup dimension]
-    enabled_unhealthy_host_count = bool
-    unhealthy_host_count         = number
+    unhealthy_host_count = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
 
     # Load Balancer Metrics (Additional)
     # DesyncMitigationMode_NonCompliant_Request_Count threshold (unit=Count)
-    enabled_desync_mitigation_mode_non_compliant_request_count = optional(bool, false)
-    desync_mitigation_mode_non_compliant_request_count         = optional(number, 1)
+    desync_mitigation_mode_non_compliant_request_count = optional(object({ enabled = optional(bool, false), value = optional(number, 1), datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) }), { enabled = false, value = 1, datapoints_to_alarm = 1, evaluation_periods = 1 })
     # DroppedInvalidHeaderRequestCount threshold (unit=Count) [Requires AvailabilityZone dimension]
-    enabled_dropped_invalid_header_request_count = optional(bool, false)
-    dropped_invalid_header_request_count         = optional(number, 1)
+    dropped_invalid_header_request_count = optional(object({ enabled = optional(bool, false), value = optional(number, 1), datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) }), { enabled = false, value = 1, datapoints_to_alarm = 1, evaluation_periods = 1 })
     # ForwardedInvalidHeaderRequestCount threshold (unit=Count) [Requires AvailabilityZone dimension]
-    enabled_forwarded_invalid_header_request_count = optional(bool, false)
-    forwarded_invalid_header_request_count         = optional(number, 1)
+    forwarded_invalid_header_request_count = optional(object({ enabled = optional(bool, false), value = optional(number, 1), datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) }), { enabled = false, value = 1, datapoints_to_alarm = 1, evaluation_periods = 1 })
     # GrpcRequestCount threshold (unit=Count)
-    enabled_grpc_request_count = optional(bool, false)
-    grpc_request_count         = optional(number, 100)
+    grpc_request_count = optional(object({ enabled = optional(bool, false), value = optional(number, 100), datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) }), { enabled = false, value = 100, datapoints_to_alarm = 1, evaluation_periods = 1 })
     # HTTP_Fixed_Response_Count threshold (unit=Count)
-    enabled_http_fixed_response_count = optional(bool, false)
-    http_fixed_response_count         = optional(number, 100)
+    http_fixed_response_count = optional(object({ enabled = optional(bool, false), value = optional(number, 100), datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) }), { enabled = false, value = 100, datapoints_to_alarm = 1, evaluation_periods = 1 })
     # HTTP_Redirect_Count threshold (unit=Count)
-    enabled_http_redirect_count = optional(bool, false)
-    http_redirect_count         = optional(number, 100)
+    http_redirect_count = optional(object({ enabled = optional(bool, false), value = optional(number, 100), datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) }), { enabled = false, value = 100, datapoints_to_alarm = 1, evaluation_periods = 1 })
     # HTTP_Redirect_Url_Limit_Exceeded_Count threshold (unit=Count)
-    enabled_http_redirect_url_limit_exceeded_count = optional(bool, false)
-    http_redirect_url_limit_exceeded_count         = optional(number, 1)
+    http_redirect_url_limit_exceeded_count = optional(object({ enabled = optional(bool, false), value = optional(number, 1), datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) }), { enabled = false, value = 1, datapoints_to_alarm = 1, evaluation_periods = 1 })
     # HTTPCode_ELB_3XX_Count threshold (unit=Count)
-    enabled_httpcode_elb_3xx_count = optional(bool, false)
-    httpcode_elb_3xx_count         = optional(number, 100)
+    httpcode_elb_3xx_count = optional(object({ enabled = optional(bool, false), value = optional(number, 100), datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) }), { enabled = false, value = 100, datapoints_to_alarm = 1, evaluation_periods = 1 })
     # HTTPCode_ELB_500_Count threshold (unit=Count)
-    enabled_httpcode_elb_500_count = optional(bool, false)
-    httpcode_elb_500_count         = optional(number, 1)
+    httpcode_elb_500_count = optional(object({ enabled = optional(bool, false), value = optional(number, 1), datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) }), { enabled = false, value = 1, datapoints_to_alarm = 1, evaluation_periods = 1 })
     # HTTPCode_ELB_502_Count threshold (unit=Count)
-    enabled_httpcode_elb_502_count = optional(bool, false)
-    httpcode_elb_502_count         = optional(number, 1)
+    httpcode_elb_502_count = optional(object({ enabled = optional(bool, false), value = optional(number, 1), datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) }), { enabled = false, value = 1, datapoints_to_alarm = 1, evaluation_periods = 1 })
     # HTTPCode_ELB_503_Count threshold (unit=Count)
-    enabled_httpcode_elb_503_count = optional(bool, false)
-    httpcode_elb_503_count         = optional(number, 1)
+    httpcode_elb_503_count = optional(object({ enabled = optional(bool, false), value = optional(number, 1), datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) }), { enabled = false, value = 1, datapoints_to_alarm = 1, evaluation_periods = 1 })
     # HTTPCode_ELB_504_Count threshold (unit=Count)
-    enabled_httpcode_elb_504_count = optional(bool, false)
-    httpcode_elb_504_count         = optional(number, 1)
+    httpcode_elb_504_count = optional(object({ enabled = optional(bool, false), value = optional(number, 1), datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) }), { enabled = false, value = 1, datapoints_to_alarm = 1, evaluation_periods = 1 })
     # IPv6ProcessedBytes threshold (unit=Bytes)
-    enabled_ipv6_processed_bytes = optional(bool, false)
-    ipv6_processed_bytes         = optional(number, 1073741824)
+    ipv6_processed_bytes = optional(object({ enabled = optional(bool, false), value = optional(number, 1073741824), datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) }), { enabled = false, value = 1073741824, datapoints_to_alarm = 1, evaluation_periods = 1 })
     # IPv6RequestCount threshold (unit=Count)
-    enabled_ipv6_request_count = optional(bool, false)
-    ipv6_request_count         = optional(number, 1000)
+    ipv6_request_count = optional(object({ enabled = optional(bool, false), value = optional(number, 1000), datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) }), { enabled = false, value = 1000, datapoints_to_alarm = 1, evaluation_periods = 1 })
     # NewConnectionCount threshold (unit=Count)
-    enabled_new_connection_count = optional(bool, false)
-    new_connection_count         = optional(number, 10000)
+    new_connection_count = optional(object({ enabled = optional(bool, false), value = optional(number, 10000), datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) }), { enabled = false, value = 10000, datapoints_to_alarm = 1, evaluation_periods = 1 })
     # NonStickyRequestCount threshold (unit=Count)
-    enabled_non_sticky_request_count = optional(bool, false)
-    non_sticky_request_count         = optional(number, 1000)
+    non_sticky_request_count = optional(object({ enabled = optional(bool, false), value = optional(number, 1000), datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) }), { enabled = false, value = 1000, datapoints_to_alarm = 1, evaluation_periods = 1 })
     # ProcessedBytes threshold (unit=Bytes)
-    enabled_processed_bytes = optional(bool, false)
-    processed_bytes         = optional(number, 10737418240)
+    processed_bytes = optional(object({ enabled = optional(bool, false), value = optional(number, 10737418240), datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) }), { enabled = false, value = 10737418240, datapoints_to_alarm = 1, evaluation_periods = 1 })
     # RejectedConnectionCount threshold (unit=Count)
-    enabled_rejected_connection_count = optional(bool, false)
-    rejected_connection_count         = optional(number, 1)
+    rejected_connection_count = optional(object({ enabled = optional(bool, false), value = optional(number, 1), datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) }), { enabled = false, value = 1, datapoints_to_alarm = 1, evaluation_periods = 1 })
     # RequestCount threshold (unit=Count)
-    enabled_request_count = optional(bool, false)
-    request_count         = optional(number, 10000)
+    request_count = optional(object({ enabled = optional(bool, false), value = optional(number, 10000), datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) }), { enabled = false, value = 10000, datapoints_to_alarm = 1, evaluation_periods = 1 })
     # RuleEvaluations threshold (unit=Count) [LoadBalancer only, no AvailabilityZone]
-    enabled_rule_evaluations = optional(bool, false)
-    rule_evaluations         = optional(number, 100000)
+    rule_evaluations = optional(object({ enabled = optional(bool, false), value = optional(number, 100000), datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) }), { enabled = false, value = 100000, datapoints_to_alarm = 1, evaluation_periods = 1 })
     # StandardProcessedBytes threshold (unit=Bytes)
-    enabled_standard_processed_bytes = optional(bool, false)
-    standard_processed_bytes         = optional(number, 10737418240)
+    standard_processed_bytes = optional(object({ enabled = optional(bool, false), value = optional(number, 10737418240), datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) }), { enabled = false, value = 10737418240, datapoints_to_alarm = 1, evaluation_periods = 1 })
 
     # LCU Metrics (Additional)
     # PeakLCUs threshold (unit=Count) [LoadBalancer only, no AvailabilityZone]
-    enabled_peak_lcus = optional(bool, false)
-    peak_lcus         = optional(number, 10)
+    peak_lcus = optional(object({ enabled = optional(bool, false), value = optional(number, 10), datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) }), { enabled = false, value = 10, datapoints_to_alarm = 1, evaluation_periods = 1 })
     # ReservedLCUs threshold (unit=Count) [LoadBalancer only, no AvailabilityZone]
-    enabled_reserved_lcus = optional(bool, false)
-    reserved_lcus         = optional(number, 10)
+    reserved_lcus = optional(object({ enabled = optional(bool, false), value = optional(number, 10), datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) }), { enabled = false, value = 10, datapoints_to_alarm = 1, evaluation_periods = 1 })
 
     # Target Metrics
     # AnomalousHostCount threshold (unit=Count) [Requires TargetGroup dimension]
-    enabled_anomalous_host_count = optional(bool, false)
-    anomalous_host_count         = optional(number, 1)
+    anomalous_host_count = optional(object({ enabled = optional(bool, false), value = optional(number, 1), datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) }), { enabled = false, value = 1, datapoints_to_alarm = 1, evaluation_periods = 1 })
     # HealthyHostCount threshold (unit=Count) [Requires TargetGroup dimension]
-    enabled_healthy_host_count = optional(bool, false)
-    healthy_host_count         = optional(number, 1)
+    healthy_host_count = optional(object({ enabled = optional(bool, false), value = optional(number, 1), datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) }), { enabled = false, value = 1, datapoints_to_alarm = 1, evaluation_periods = 1 })
     # HTTPCode_Target_2XX_Count threshold (unit=Count)
-    enabled_httpcode_target_2xx_count = optional(bool, false)
-    httpcode_target_2xx_count         = optional(number, 1)
+    httpcode_target_2xx_count = optional(object({ enabled = optional(bool, false), value = optional(number, 1), datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) }), { enabled = false, value = 1, datapoints_to_alarm = 1, evaluation_periods = 1 })
     # HTTPCode_Target_3XX_Count threshold (unit=Count)
-    enabled_httpcode_target_3xx_count = optional(bool, false)
-    httpcode_target_3xx_count         = optional(number, 100)
+    httpcode_target_3xx_count = optional(object({ enabled = optional(bool, false), value = optional(number, 100), datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) }), { enabled = false, value = 100, datapoints_to_alarm = 1, evaluation_periods = 1 })
     # RequestCountPerTarget threshold (unit=Count) [Requires TargetGroup dimension]
-    enabled_request_count_per_target = optional(bool, false)
-    request_count_per_target         = optional(number, 1000)
+    request_count_per_target = optional(object({ enabled = optional(bool, false), value = optional(number, 1000), datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) }), { enabled = false, value = 1000, datapoints_to_alarm = 1, evaluation_periods = 1 })
     # TargetConnectionErrorCount threshold (unit=Count)
-    enabled_target_connection_error_count = optional(bool, false)
-    target_connection_error_count         = optional(number, 1)
+    target_connection_error_count = optional(object({ enabled = optional(bool, false), value = optional(number, 1), datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) }), { enabled = false, value = 1, datapoints_to_alarm = 1, evaluation_periods = 1 })
     # ZonalShiftedHostCount threshold (unit=Count) [Requires TargetGroup dimension]
-    enabled_zonal_shifted_host_count = optional(bool, false)
-    zonal_shifted_host_count         = optional(number, 1)
+    zonal_shifted_host_count = optional(object({ enabled = optional(bool, false), value = optional(number, 1), datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) }), { enabled = false, value = 1, datapoints_to_alarm = 1, evaluation_periods = 1 })
 
     # Target Group Health Metrics [All require LoadBalancer + TargetGroup dimensions]
     # HealthyStateDNS threshold (unit=Count) [Requires TargetGroup dimension]
-    enabled_healthy_state_dns = optional(bool, false)
-    healthy_state_dns         = optional(number, 1)
+    healthy_state_dns = optional(object({ enabled = optional(bool, false), value = optional(number, 1), datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) }), { enabled = false, value = 1, datapoints_to_alarm = 1, evaluation_periods = 1 })
     # HealthyStateRouting threshold (unit=Count) [Requires TargetGroup dimension]
-    enabled_healthy_state_routing = optional(bool, false)
-    healthy_state_routing         = optional(number, 1)
+    healthy_state_routing = optional(object({ enabled = optional(bool, false), value = optional(number, 1), datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) }), { enabled = false, value = 1, datapoints_to_alarm = 1, evaluation_periods = 1 })
     # UnhealthyRoutingRequestCount threshold (unit=Count) [Requires TargetGroup dimension]
-    enabled_unhealthy_routing_request_count = optional(bool, false)
-    unhealthy_routing_request_count         = optional(number, 1)
+    unhealthy_routing_request_count = optional(object({ enabled = optional(bool, false), value = optional(number, 1), datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) }), { enabled = false, value = 1, datapoints_to_alarm = 1, evaluation_periods = 1 })
     # UnhealthyStateDNS threshold (unit=Count) [Requires TargetGroup dimension]
-    enabled_unhealthy_state_dns = optional(bool, false)
-    unhealthy_state_dns         = optional(number, 1)
+    unhealthy_state_dns = optional(object({ enabled = optional(bool, false), value = optional(number, 1), datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) }), { enabled = false, value = 1, datapoints_to_alarm = 1, evaluation_periods = 1 })
     # UnhealthyStateRouting threshold (unit=Count) [Requires TargetGroup dimension]
-    enabled_unhealthy_state_routing = optional(bool, false)
-    unhealthy_state_routing         = optional(number, 1)
+    unhealthy_state_routing = optional(object({ enabled = optional(bool, false), value = optional(number, 1), datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) }), { enabled = false, value = 1, datapoints_to_alarm = 1, evaluation_periods = 1 })
 
     # User Authentication Metrics
     # ELBAuthError threshold (unit=Count)
-    enabled_elb_auth_error = optional(bool, false)
-    elb_auth_error         = optional(number, 1)
+    elb_auth_error = optional(object({ enabled = optional(bool, false), value = optional(number, 1), datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) }), { enabled = false, value = 1, datapoints_to_alarm = 1, evaluation_periods = 1 })
     # ELBAuthFailure threshold (unit=Count)
-    enabled_elb_auth_failure = optional(bool, false)
-    elb_auth_failure         = optional(number, 1)
+    elb_auth_failure = optional(object({ enabled = optional(bool, false), value = optional(number, 1), datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) }), { enabled = false, value = 1, datapoints_to_alarm = 1, evaluation_periods = 1 })
     # ELBAuthLatency threshold (unit=Milliseconds)
-    enabled_elb_auth_latency = optional(bool, false)
-    elb_auth_latency         = optional(number, 1000)
+    elb_auth_latency = optional(object({ enabled = optional(bool, false), value = optional(number, 1000), datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) }), { enabled = false, value = 1000, datapoints_to_alarm = 1, evaluation_periods = 1 })
     # ELBAuthRefreshTokenSuccess threshold (unit=Count)
-    enabled_elb_auth_refresh_token_success = optional(bool, false)
-    elb_auth_refresh_token_success         = optional(number, 1)
+    elb_auth_refresh_token_success = optional(object({ enabled = optional(bool, false), value = optional(number, 1), datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) }), { enabled = false, value = 1, datapoints_to_alarm = 1, evaluation_periods = 1 })
     # ELBAuthSuccess threshold (unit=Count)
-    enabled_elb_auth_success = optional(bool, false)
-    elb_auth_success         = optional(number, 1)
+    elb_auth_success = optional(object({ enabled = optional(bool, false), value = optional(number, 1), datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) }), { enabled = false, value = 1, datapoints_to_alarm = 1, evaluation_periods = 1 })
     # ELBAuthUserClaimsSizeExceeded threshold (unit=Count)
-    enabled_elb_auth_user_claims_size_exceeded = optional(bool, false)
-    elb_auth_user_claims_size_exceeded         = optional(number, 1)
+    elb_auth_user_claims_size_exceeded = optional(object({ enabled = optional(bool, false), value = optional(number, 1), datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) }), { enabled = false, value = 1, datapoints_to_alarm = 1, evaluation_periods = 1 })
 
     # Lambda Function Metrics
     # LambdaInternalError threshold (unit=Count) [Requires TargetGroup dimension]
-    enabled_lambda_internal_error = optional(bool, false)
-    lambda_internal_error         = optional(number, 1)
+    lambda_internal_error = optional(object({ enabled = optional(bool, false), value = optional(number, 1), datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) }), { enabled = false, value = 1, datapoints_to_alarm = 1, evaluation_periods = 1 })
     # LambdaTargetProcessedBytes threshold (unit=Bytes) [LoadBalancer only, no AvailabilityZone]
-    enabled_lambda_target_processed_bytes = optional(bool, false)
-    lambda_target_processed_bytes         = optional(number, 1073741824)
+    lambda_target_processed_bytes = optional(object({ enabled = optional(bool, false), value = optional(number, 1073741824), datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) }), { enabled = false, value = 1073741824, datapoints_to_alarm = 1, evaluation_periods = 1 })
     # LambdaUserError threshold (unit=Count) [Requires TargetGroup dimension]
-    enabled_lambda_user_error = optional(bool, false)
-    lambda_user_error         = optional(number, 1)
+    lambda_user_error = optional(object({ enabled = optional(bool, false), value = optional(number, 1), datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) }), { enabled = false, value = 1, datapoints_to_alarm = 1, evaluation_periods = 1 })
 
     # Target Optimizer Metrics
     # MitigatedHostCount threshold (unit=Count) [Requires TargetGroup dimension]
-    enabled_mitigated_host_count = optional(bool, false)
-    mitigated_host_count         = optional(number, 1)
+    mitigated_host_count = optional(object({ enabled = optional(bool, false), value = optional(number, 1), datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) }), { enabled = false, value = 1, datapoints_to_alarm = 1, evaluation_periods = 1 })
     # TargetControlActiveChannelCount threshold (unit=Count)
-    enabled_target_control_active_channel_count = optional(bool, false)
-    target_control_active_channel_count         = optional(number, 1)
+    target_control_active_channel_count = optional(object({ enabled = optional(bool, false), value = optional(number, 1), datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) }), { enabled = false, value = 1, datapoints_to_alarm = 1, evaluation_periods = 1 })
     # TargetControlChannelErrorCount threshold (unit=Count)
-    enabled_target_control_channel_error_count = optional(bool, false)
-    target_control_channel_error_count         = optional(number, 1)
+    target_control_channel_error_count = optional(object({ enabled = optional(bool, false), value = optional(number, 1), datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) }), { enabled = false, value = 1, datapoints_to_alarm = 1, evaluation_periods = 1 })
     # TargetControlNewChannelCount threshold (unit=Count)
-    enabled_target_control_new_channel_count = optional(bool, false)
-    target_control_new_channel_count         = optional(number, 1)
+    target_control_new_channel_count = optional(object({ enabled = optional(bool, false), value = optional(number, 1), datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) }), { enabled = false, value = 1, datapoints_to_alarm = 1, evaluation_periods = 1 })
     # TargetControlProcessedBytes threshold (unit=Bytes)
-    enabled_target_control_processed_bytes = optional(bool, false)
-    target_control_processed_bytes         = optional(number, 1073741824)
+    target_control_processed_bytes = optional(object({ enabled = optional(bool, false), value = optional(number, 1073741824), datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) }), { enabled = false, value = 1073741824, datapoints_to_alarm = 1, evaluation_periods = 1 })
     # TargetControlRequestCount threshold (unit=Count)
-    enabled_target_control_request_count = optional(bool, false)
-    target_control_request_count         = optional(number, 100)
+    target_control_request_count = optional(object({ enabled = optional(bool, false), value = optional(number, 100), datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) }), { enabled = false, value = 100, datapoints_to_alarm = 1, evaluation_periods = 1 })
     # TargetControlRequestRejectCount threshold (unit=Count)
-    enabled_target_control_request_reject_count = optional(bool, false)
-    target_control_request_reject_count         = optional(number, 1)
+    target_control_request_reject_count = optional(object({ enabled = optional(bool, false), value = optional(number, 1), datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) }), { enabled = false, value = 1, datapoints_to_alarm = 1, evaluation_periods = 1 })
     # TargetControlWorkQueueLength threshold (unit=Count)
-    enabled_target_control_work_queue_length = optional(bool, false)
-    target_control_work_queue_length         = optional(number, 100)
+    target_control_work_queue_length = optional(object({ enabled = optional(bool, false), value = optional(number, 100), datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) }), { enabled = false, value = 100, datapoints_to_alarm = 1, evaluation_periods = 1 })
     # TargetOptimizerAnomalyScore threshold (unit=)
-    enabled_target_optimizer_anomaly_score = optional(bool, false)
-    target_optimizer_anomaly_score         = optional(number, 0.5)
-    }
-  )
+    target_optimizer_anomaly_score = optional(object({ enabled = optional(bool, false), value = optional(number, 0.5), datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) }), { enabled = false, value = 0.5, datapoints_to_alarm = 1, evaluation_periods = 1 })
+  })
   description = "(Optional) Set the threshold for each Metric in ALB."
   default = {
-    enabled_active_connection_count            = true
-    active_connection_count                    = 10000
-    enabled_client_tls_negotiation_error_count = true
-    client_tls_negotiation_error_count         = 10
-    enabled_consumed_lcus                      = true
-    consumed_lcus                              = 5
-    enabled_httpcode_4xx_count                 = true
-    httpcode_4xx_count                         = 1
-    enabled_httpcode_5xx_count                 = true
-    httpcode_5xx_count                         = 1
-    enabled_httpcode_elb_4xx_count             = true
-    httpcode_elb_4xx_count                     = 1
-    enabled_httpcode_elb_5xx_count             = true
-    httpcode_elb_5xx_count                     = 1
-    enabled_target_response_time               = true
-    target_response_time                       = 10
-    enabled_target_tls_negotiation_error_count = true
-    target_tls_negotiation_error_count         = 10
-    enabled_unhealthy_host_count               = true
-    unhealthy_host_count                       = 1
+    active_connection_count            = { enabled = true, value = 10000 }
+    client_tls_negotiation_error_count = { enabled = true, value = 10 }
+    consumed_lcus                      = { enabled = true, value = 5 }
+    httpcode_4xx_count                 = { enabled = true, value = 1 }
+    httpcode_5xx_count                 = { enabled = true, value = 1 }
+    httpcode_elb_4xx_count             = { enabled = true, value = 1 }
+    httpcode_elb_5xx_count             = { enabled = true, value = 1 }
+    target_response_time               = { enabled = true, value = 10 }
+    target_tls_negotiation_error_count = { enabled = true, value = 10 }
+    unhealthy_host_count               = { enabled = true, value = 1 }
   }
 }
 
 variable "threshold_override" {
   type = map(object({
-    # (Optional) ActiveConnectionCount threshold (unit=Count)
-    enabled_active_connection_count = optional(bool)
-    active_connection_count         = optional(number)
-    # (Optional) ClientTLSNegotiationErrorCount threshold (unit=Count)
-    enabled_client_tls_negotiation_error_count = optional(bool)
-    client_tls_negotiation_error_count         = optional(number)
-    # (Optional) ConsumedLCUs threshold (unit=Count)
-    enabled_consumed_lcus = optional(bool)
-    consumed_lcus         = optional(number)
-    # (Optional) HTTPCode_4XX_Count threshold (unit=Count)
-    enabled_httpcode_4xx_count = optional(bool)
-    httpcode_4xx_count         = optional(number)
-    # (Optional) HTTPCode_5XX_Count threshold (unit=Count)
-    enabled_httpcode_5xx_count = optional(bool)
-    httpcode_5xx_count         = optional(number)
-    # (Optional) HTTPCode_ELB_4XX_Count threshold (unit=Count)
-    enabled_httpcode_elb_4xx_count = optional(bool)
-    httpcode_elb_4xx_count         = optional(number)
-    # (Optional) HTTPCode_ELB_5XX_Count threshold (unit=Count)
-    enabled_httpcode_elb_5xx_count = optional(bool)
-    httpcode_elb_5xx_count         = optional(number)
-    # (Optional) TargetResponseTime threshold (unit=Seconds)
-    enabled_target_response_time = optional(bool)
-    target_response_time         = optional(number)
-    # (Optional) TargetTLSNegotiationErrorCount threshold (unit=Count)
-    enabled_target_tls_negotiation_error_count = optional(bool)
-    target_tls_negotiation_error_count         = optional(number)
-    # (Optional) UnHealthyHostCount threshold (unit=Count)
-    enabled_unhealthy_host_count = optional(bool)
-    unhealthy_host_count         = optional(number)
+    # ActiveConnectionCount threshold (unit=Count)
+    active_connection_count = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # ClientTLSNegotiationErrorCount threshold (unit=Count)
+    client_tls_negotiation_error_count = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # ConsumedLCUs threshold (unit=Count)
+    consumed_lcus = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # HTTPCode_4XX_Count threshold (unit=Count)
+    httpcode_4xx_count = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # HTTPCode_5XX_Count threshold (unit=Count)
+    httpcode_5xx_count = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # HTTPCode_ELB_4XX_Count threshold (unit=Count)
+    httpcode_elb_4xx_count = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # HTTPCode_ELB_5XX_Count threshold (unit=Count)
+    httpcode_elb_5xx_count = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # TargetResponseTime threshold (unit=Seconds)
+    target_response_time = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # TargetTLSNegotiationErrorCount threshold (unit=Count)
+    target_tls_negotiation_error_count = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # UnHealthyHostCount threshold (unit=Count) [Requires TargetGroup dimension]
+    unhealthy_host_count = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
 
     # Load Balancer Metrics (Additional)
-    enabled_desync_mitigation_mode_non_compliant_request_count = optional(bool)
-    desync_mitigation_mode_non_compliant_request_count         = optional(number)
-    enabled_dropped_invalid_header_request_count               = optional(bool)
-    dropped_invalid_header_request_count                       = optional(number)
-    enabled_forwarded_invalid_header_request_count             = optional(bool)
-    forwarded_invalid_header_request_count                     = optional(number)
-    enabled_grpc_request_count                                 = optional(bool)
-    grpc_request_count                                         = optional(number)
-    enabled_http_fixed_response_count                          = optional(bool)
-    http_fixed_response_count                                  = optional(number)
-    enabled_http_redirect_count                                = optional(bool)
-    http_redirect_count                                        = optional(number)
-    enabled_http_redirect_url_limit_exceeded_count             = optional(bool)
-    http_redirect_url_limit_exceeded_count                     = optional(number)
-    enabled_httpcode_elb_3xx_count                             = optional(bool)
-    httpcode_elb_3xx_count                                     = optional(number)
-    enabled_httpcode_elb_500_count                             = optional(bool)
-    httpcode_elb_500_count                                     = optional(number)
-    enabled_httpcode_elb_502_count                             = optional(bool)
-    httpcode_elb_502_count                                     = optional(number)
-    enabled_httpcode_elb_503_count                             = optional(bool)
-    httpcode_elb_503_count                                     = optional(number)
-    enabled_httpcode_elb_504_count                             = optional(bool)
-    httpcode_elb_504_count                                     = optional(number)
-    enabled_ipv6_processed_bytes                               = optional(bool)
-    ipv6_processed_bytes                                       = optional(number)
-    enabled_ipv6_request_count                                 = optional(bool)
-    ipv6_request_count                                         = optional(number)
-    enabled_new_connection_count                               = optional(bool)
-    new_connection_count                                       = optional(number)
-    enabled_non_sticky_request_count                           = optional(bool)
-    non_sticky_request_count                                   = optional(number)
-    enabled_processed_bytes                                    = optional(bool)
-    processed_bytes                                            = optional(number)
-    enabled_rejected_connection_count                          = optional(bool)
-    rejected_connection_count                                  = optional(number)
-    enabled_request_count                                      = optional(bool)
-    request_count                                              = optional(number)
-    enabled_rule_evaluations                                   = optional(bool)
-    rule_evaluations                                           = optional(number)
-    enabled_standard_processed_bytes                           = optional(bool)
-    standard_processed_bytes                                   = optional(number)
+    # DesyncMitigationMode_NonCompliant_Request_Count threshold (unit=Count)
+    desync_mitigation_mode_non_compliant_request_count = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # DroppedInvalidHeaderRequestCount threshold (unit=Count) [Requires AvailabilityZone dimension]
+    dropped_invalid_header_request_count = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # ForwardedInvalidHeaderRequestCount threshold (unit=Count) [Requires AvailabilityZone dimension]
+    forwarded_invalid_header_request_count = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # GrpcRequestCount threshold (unit=Count)
+    grpc_request_count = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # HTTP_Fixed_Response_Count threshold (unit=Count)
+    http_fixed_response_count = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # HTTP_Redirect_Count threshold (unit=Count)
+    http_redirect_count = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # HTTP_Redirect_Url_Limit_Exceeded_Count threshold (unit=Count)
+    http_redirect_url_limit_exceeded_count = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # HTTPCode_ELB_3XX_Count threshold (unit=Count)
+    httpcode_elb_3xx_count = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # HTTPCode_ELB_500_Count threshold (unit=Count)
+    httpcode_elb_500_count = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # HTTPCode_ELB_502_Count threshold (unit=Count)
+    httpcode_elb_502_count = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # HTTPCode_ELB_503_Count threshold (unit=Count)
+    httpcode_elb_503_count = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # HTTPCode_ELB_504_Count threshold (unit=Count)
+    httpcode_elb_504_count = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # IPv6ProcessedBytes threshold (unit=Bytes)
+    ipv6_processed_bytes = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # IPv6RequestCount threshold (unit=Count)
+    ipv6_request_count = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # NewConnectionCount threshold (unit=Count)
+    new_connection_count = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # NonStickyRequestCount threshold (unit=Count)
+    non_sticky_request_count = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # ProcessedBytes threshold (unit=Bytes)
+    processed_bytes = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # RejectedConnectionCount threshold (unit=Count)
+    rejected_connection_count = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # RequestCount threshold (unit=Count)
+    request_count = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # RuleEvaluations threshold (unit=Count) [LoadBalancer only, no AvailabilityZone]
+    rule_evaluations = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # StandardProcessedBytes threshold (unit=Bytes)
+    standard_processed_bytes = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
 
     # LCU Metrics (Additional)
-    enabled_peak_lcus     = optional(bool)
-    peak_lcus             = optional(number)
-    enabled_reserved_lcus = optional(bool)
-    reserved_lcus         = optional(number)
+    # PeakLCUs threshold (unit=Count) [LoadBalancer only, no AvailabilityZone]
+    peak_lcus = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # ReservedLCUs threshold (unit=Count) [LoadBalancer only, no AvailabilityZone]
+    reserved_lcus = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
 
     # Target Metrics
-    enabled_anomalous_host_count          = optional(bool)
-    anomalous_host_count                  = optional(number)
-    enabled_healthy_host_count            = optional(bool)
-    healthy_host_count                    = optional(number)
-    enabled_httpcode_target_2xx_count     = optional(bool)
-    httpcode_target_2xx_count             = optional(number)
-    enabled_httpcode_target_3xx_count     = optional(bool)
-    httpcode_target_3xx_count             = optional(number)
-    enabled_request_count_per_target      = optional(bool)
-    request_count_per_target              = optional(number)
-    enabled_target_connection_error_count = optional(bool)
-    target_connection_error_count         = optional(number)
-    enabled_zonal_shifted_host_count      = optional(bool)
-    zonal_shifted_host_count              = optional(number)
+    # AnomalousHostCount threshold (unit=Count) [Requires TargetGroup dimension]
+    anomalous_host_count = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # HealthyHostCount threshold (unit=Count) [Requires TargetGroup dimension]
+    healthy_host_count = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # HTTPCode_Target_2XX_Count threshold (unit=Count)
+    httpcode_target_2xx_count = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # HTTPCode_Target_3XX_Count threshold (unit=Count)
+    httpcode_target_3xx_count = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # RequestCountPerTarget threshold (unit=Count) [Requires TargetGroup dimension]
+    request_count_per_target = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # TargetConnectionErrorCount threshold (unit=Count)
+    target_connection_error_count = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # ZonalShiftedHostCount threshold (unit=Count) [Requires TargetGroup dimension]
+    zonal_shifted_host_count = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
 
-    # Target Group Health Metrics
-    enabled_healthy_state_dns               = optional(bool)
-    healthy_state_dns                       = optional(number)
-    enabled_healthy_state_routing           = optional(bool)
-    healthy_state_routing                   = optional(number)
-    enabled_unhealthy_routing_request_count = optional(bool)
-    unhealthy_routing_request_count         = optional(number)
-    enabled_unhealthy_state_dns             = optional(bool)
-    unhealthy_state_dns                     = optional(number)
-    enabled_unhealthy_state_routing         = optional(bool)
-    unhealthy_state_routing                 = optional(number)
+    # Target Group Health Metrics [All require LoadBalancer + TargetGroup dimensions]
+    # HealthyStateDNS threshold (unit=Count) [Requires TargetGroup dimension]
+    healthy_state_dns = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # HealthyStateRouting threshold (unit=Count) [Requires TargetGroup dimension]
+    healthy_state_routing = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # UnhealthyRoutingRequestCount threshold (unit=Count) [Requires TargetGroup dimension]
+    unhealthy_routing_request_count = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # UnhealthyStateDNS threshold (unit=Count) [Requires TargetGroup dimension]
+    unhealthy_state_dns = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # UnhealthyStateRouting threshold (unit=Count) [Requires TargetGroup dimension]
+    unhealthy_state_routing = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
 
     # User Authentication Metrics
-    enabled_elb_auth_error                     = optional(bool)
-    elb_auth_error                             = optional(number)
-    enabled_elb_auth_failure                   = optional(bool)
-    elb_auth_failure                           = optional(number)
-    enabled_elb_auth_latency                   = optional(bool)
-    elb_auth_latency                           = optional(number)
-    enabled_elb_auth_refresh_token_success     = optional(bool)
-    elb_auth_refresh_token_success             = optional(number)
-    enabled_elb_auth_success                   = optional(bool)
-    elb_auth_success                           = optional(number)
-    enabled_elb_auth_user_claims_size_exceeded = optional(bool)
-    elb_auth_user_claims_size_exceeded         = optional(number)
+    # ELBAuthError threshold (unit=Count)
+    elb_auth_error = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # ELBAuthFailure threshold (unit=Count)
+    elb_auth_failure = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # ELBAuthLatency threshold (unit=Milliseconds)
+    elb_auth_latency = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # ELBAuthRefreshTokenSuccess threshold (unit=Count)
+    elb_auth_refresh_token_success = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # ELBAuthSuccess threshold (unit=Count)
+    elb_auth_success = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # ELBAuthUserClaimsSizeExceeded threshold (unit=Count)
+    elb_auth_user_claims_size_exceeded = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
 
     # Lambda Function Metrics
-    enabled_lambda_internal_error         = optional(bool)
-    lambda_internal_error                 = optional(number)
-    enabled_lambda_target_processed_bytes = optional(bool)
-    lambda_target_processed_bytes         = optional(number)
-    enabled_lambda_user_error             = optional(bool)
-    lambda_user_error                     = optional(number)
+    # LambdaInternalError threshold (unit=Count) [Requires TargetGroup dimension]
+    lambda_internal_error = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # LambdaTargetProcessedBytes threshold (unit=Bytes) [LoadBalancer only, no AvailabilityZone]
+    lambda_target_processed_bytes = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # LambdaUserError threshold (unit=Count) [Requires TargetGroup dimension]
+    lambda_user_error = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
 
     # Target Optimizer Metrics
-    enabled_mitigated_host_count                = optional(bool)
-    mitigated_host_count                        = optional(number)
-    enabled_target_control_active_channel_count = optional(bool)
-    target_control_active_channel_count         = optional(number)
-    enabled_target_control_channel_error_count  = optional(bool)
-    target_control_channel_error_count          = optional(number)
-    enabled_target_control_new_channel_count    = optional(bool)
-    target_control_new_channel_count            = optional(number)
-    enabled_target_control_processed_bytes      = optional(bool)
-    target_control_processed_bytes              = optional(number)
-    enabled_target_control_request_count        = optional(bool)
-    target_control_request_count                = optional(number)
-    enabled_target_control_request_reject_count = optional(bool)
-    target_control_request_reject_count         = optional(number)
-    enabled_target_control_work_queue_length    = optional(bool)
-    target_control_work_queue_length            = optional(number)
-    enabled_target_optimizer_anomaly_score      = optional(bool)
-    target_optimizer_anomaly_score              = optional(number)
+    # MitigatedHostCount threshold (unit=Count) [Requires TargetGroup dimension]
+    mitigated_host_count = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # TargetControlActiveChannelCount threshold (unit=Count)
+    target_control_active_channel_count = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # TargetControlChannelErrorCount threshold (unit=Count)
+    target_control_channel_error_count = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # TargetControlNewChannelCount threshold (unit=Count)
+    target_control_new_channel_count = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # TargetControlProcessedBytes threshold (unit=Bytes)
+    target_control_processed_bytes = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # TargetControlRequestCount threshold (unit=Count)
+    target_control_request_count = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # TargetControlRequestRejectCount threshold (unit=Count)
+    target_control_request_reject_count = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # TargetControlWorkQueueLength threshold (unit=Count)
+    target_control_work_queue_length = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # TargetOptimizerAnomalyScore threshold (unit=)
+    target_optimizer_anomaly_score = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
   }))
-  description = "(Optional) Override thresholds for specific resources. Key is the LoadBalancer."
+  description = "(Optional) Override thresholds for specific resources. Key is the LoadBalancer. Each metric accepts enabled, value, datapoints_to_alarm and evaluation_periods."
   default     = {}
 }
 

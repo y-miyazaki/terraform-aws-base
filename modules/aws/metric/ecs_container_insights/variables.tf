@@ -16,51 +16,51 @@ variable "period" {
 variable "threshold" {
   type = object({
     # (Required) CpuUtilized/CpuReserved threshold (unit=Percent)
-    enabled_cpu_utilization = bool
-    cpu_utilization         = number
+    cpu_utilization = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # (Required) MemoryUtilized/MemoryReserved threshold (unit=Percent)
-    enabled_memory_utilization = bool
-    memory_utilization         = number
+    memory_utilization = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # (Optional) NetworkRxBytes threshold (unit=Bytes/Second)
-    enabled_network_rx_bytes = bool
-    network_rx_bytes         = number
+    network_rx_bytes = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # (Optional) NetworkTxBytes threshold (unit=Bytes/Second)
-    enabled_network_tx_bytes = bool
-    network_tx_bytes         = number
+    network_tx_bytes = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # (Optional) StorageReadBytes threshold (unit=Bytes)
-    enabled_storage_read_bytes = bool
-    storage_read_bytes         = number
+    storage_read_bytes = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # (Optional) StorageWriteBytes threshold (unit=Bytes)
-    enabled_storage_write_bytes = bool
-    storage_write_bytes         = number
-    }
-  )
+    storage_write_bytes = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
+  })
   description = "(Optional) Set the threshold for each Metric in ECS Container Insights."
   default = {
     # (Required) CpuUtilized/CpuReserved threshold (unit=Percent)
-    enabled_cpu_utilization = true
-    cpu_utilization         = 80
+    cpu_utilization = { enabled = true, value = 80 }
     # (Required) MemoryUtilized/MemoryReserved threshold (unit=Percent)
-    enabled_memory_utilization = true
-    memory_utilization         = 80
+    memory_utilization = { enabled = true, value = 80 }
     # (Optional) NetworkRxBytes threshold (unit=Bytes/Second)
-    enabled_network_rx_bytes = false
-    network_rx_bytes         = 10485760 # 10 MB/s
+    network_rx_bytes = { enabled = false, value = 10485760 } # 10 MB/s
     # (Optional) NetworkTxBytes threshold (unit=Bytes/Second)
-    enabled_network_tx_bytes = false
-    network_tx_bytes         = 10485760 # 10 MB/s
+    network_tx_bytes = { enabled = false, value = 10485760 } # 10 MB/s
     # (Optional) StorageReadBytes threshold (unit=Bytes)
-    enabled_storage_read_bytes = false
-    storage_read_bytes         = 104857600 # 100 MB
+    storage_read_bytes = { enabled = false, value = 104857600 } # 100 MB
     # (Optional) StorageWriteBytes threshold (unit=Bytes)
-    enabled_storage_write_bytes = false
-    storage_write_bytes         = 104857600 # 100 MB
+    storage_write_bytes = { enabled = false, value = 104857600 } # 100 MB
   }
 }
 
 variable "threshold_override" {
-  type        = map(any)
-  description = "(Optional) Per-TaskDefinitionFamily threshold overrides. Key is the TaskDefinitionFamily. Each value may set any of the threshold object's keys (e.g. cpu_utilization) to override the shared threshold for that family only. When empty (the default), every family uses the shared var.threshold values, so existing behavior is unchanged."
+  type = map(object({
+    # CpuUtilized/CpuReserved threshold (unit=Percent)
+    cpu_utilization = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # MemoryUtilized/MemoryReserved threshold (unit=Percent)
+    memory_utilization = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # NetworkRxBytes threshold (unit=Bytes/Second)
+    network_rx_bytes = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # NetworkTxBytes threshold (unit=Bytes/Second)
+    network_tx_bytes = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # StorageReadBytes threshold (unit=Bytes)
+    storage_read_bytes = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # StorageWriteBytes threshold (unit=Bytes)
+    storage_write_bytes = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+  }))
+  description = "(Optional) Per-TaskDefinitionFamily threshold overrides. Key is the TaskDefinitionFamily (exact match), or the reserved key \"default\" when dimensions is empty. NOTE: do not use \"default\" as an actual TaskDefinitionFamily in dimensions; it would be indistinguishable from the reserved key. Value contains optional threshold attributes to override. Each metric accepts enabled, value, datapoints_to_alarm and evaluation_periods."
   default     = {}
 }
 

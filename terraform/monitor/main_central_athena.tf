@@ -7,8 +7,18 @@ module "athena" {
   is_enabled = var.athena.is_enabled
   region     = var.region.primary
 
+  cloudfront_log_bucket             = var.athena.cloudfront_log_bucket
+  database_bucket                   = var.athena.is_enabled ? module.s3_application_log.s3_bucket_id : ""
+  database_comment                  = var.athena.database_comment
+  database_encryption_configuration = var.athena.database_encryption_configuration
+  # (must be lowercase letters, numbers, or underscore ('_'))
+  database_name = var.athena.database_name
+  # CloudFront
+  enabled_cloudfront = var.athena.enabled_cloudfront
+  # SES
+  enabled_ses    = var.athena.enabled_ses
   name_prefix    = var.name_prefix
-  workgroup_name = var.athena.workgroup_name
+  ses_log_bucket = var.athena.ses_log_bucket
   workgroup_configuration = {
     enforce_workgroup_configuration    = true
     publish_cloudwatch_metrics_enabled = true
@@ -21,21 +31,9 @@ module "athena" {
     }
     requester_pays_enabled = try(var.athena.workgroup_configuration.requester_pays_enabled, false)
   }
-  workgroup_state       = var.athena.workgroup_state
   workgroup_description = var.athena.workgroup_description
-  database_bucket       = var.athena.is_enabled ? module.s3_application_log.s3_bucket_id : ""
-  # (must be lowercase letters, numbers, or underscore ('_'))
-  database_name                     = var.athena.database_name
-  database_comment                  = var.athena.database_comment
-  database_encryption_configuration = var.athena.database_encryption_configuration
-
-  # CloudFront
-  enabled_cloudfront    = var.athena.enabled_cloudfront
-  cloudfront_log_bucket = var.athena.cloudfront_log_bucket
-
-  # SES
-  enabled_ses    = var.athena.enabled_ses
-  ses_log_bucket = var.athena.ses_log_bucket
+  workgroup_name        = var.athena.workgroup_name
+  workgroup_state       = var.athena.workgroup_state
 
   tags = var.tags
 }

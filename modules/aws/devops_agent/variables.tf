@@ -224,6 +224,35 @@ variable "custom_agents" {
   }
 }
 
+variable "agent_space_default_policy_statements" {
+  type = list(object({
+    # (Required) IAM actions, e.g. ["glue:GetTriggers"].
+    actions = list(string)
+    # (Optional) Allow or Deny.
+    effect = optional(string, "Allow")
+    # (Required) Resource ARNs the statement applies to.
+    resources = list(string)
+    # (Required) Statement ID (alphanumeric, unique within the list).
+    sid = string
+  }))
+  description = "(Optional) Baseline read-only statements attached to the Agent Space role on top of AIDevOpsAgentAccessPolicy. Only add actions that return no secrets or credentials; never allow secretsmanager:GetSecretValue. Set [] to attach none. agent_space_additional_policy_statements is merged after this list."
+  default = [
+    {
+      sid       = "AllowReadGlueTriggers"
+      actions   = ["glue:GetTrigger", "glue:GetTriggers"]
+      resources = ["*"]
+    },
+  ]
+  validation {
+    condition     = alltrue([for s in var.agent_space_default_policy_statements : contains(["Allow", "Deny"], s.effect)])
+    error_message = "agent_space_default_policy_statements[*].effect must be Allow or Deny."
+  }
+  validation {
+    condition     = alltrue([for s in var.agent_space_default_policy_statements : can(regex("^[A-Za-z0-9]+$", s.sid))])
+    error_message = "agent_space_default_policy_statements[*].sid must be alphanumeric."
+  }
+}
+
 variable "agent_space_additional_policy_statements" {
   type = list(object({
     # (Required) IAM actions, e.g. ["lambda:GetFunction"].

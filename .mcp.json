@@ -64,6 +64,13 @@
         "FASTMCP_LOG_LEVEL": "ERROR"
       },
       "args": ["awslabs.terraform-mcp-server==1.0.18"]
+    },
+    "linear": {
+      "type": "http",
+      "url": "https://mcp.linear.app/mcp",
+      "headers": {
+        "Authorization": "Bearer ${LINEAR_API_KEY}"
+      }
     }
   }
 }

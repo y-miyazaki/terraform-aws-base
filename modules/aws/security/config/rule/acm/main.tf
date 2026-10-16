@@ -23,8 +23,9 @@ resource "aws_config_config_rule" "acm-certificate-expiration-check" {
   count = var.is_enabled ? 1 : 0
 
   region      = local.region
-  name        = "${local.name_prefix}acm-certificate-expiration-check"
   description = "Checks whether ACM Certificates in your account are marked for expiration within the specified number of days. Certificates provided by ACM are automatically renewed. ACM does not automatically renew certificates that you import."
+  name        = "${local.name_prefix}acm-certificate-expiration-check"
+
   source {
     owner             = "AWS"
     source_identifier = "ACM_CERTIFICATE_EXPIRATION_CHECK"

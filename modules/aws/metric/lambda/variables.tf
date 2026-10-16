@@ -16,176 +16,115 @@ variable "period" {
 variable "threshold" {
   type = object({
     # AsyncEventAge threshold (unit=Milliseconds)
-    enabled_async_event_age = bool
-    async_event_age         = number
+    async_event_age = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # AsyncEventsDropped threshold (unit=Count)
-    enabled_async_events_dropped = bool
-    async_events_dropped         = number
+    async_events_dropped = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # AsyncEventsReceived threshold (unit=Count)
-    enabled_async_events_received = bool
-    async_events_received         = number
+    async_events_received = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # ClaimedAccountConcurrency threshold (unit=Count)
-    enabled_claimed_account_concurrency = bool
-    claimed_account_concurrency         = number
+    claimed_account_concurrency = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # ConcurrentExecutions threshold (unit=Count)
-    enabled_concurrent_executions = bool
-    concurrent_executions         = number
+    concurrent_executions = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # DeadLetterErrors threshold (unit=Count)
-    enabled_dead_letter_errors = bool
-    dead_letter_errors         = number
+    dead_letter_errors = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # DestinationDeliveryFailures threshold (unit=Count)
-    enabled_destination_delivery_failures = bool
-    destination_delivery_failures         = number
+    destination_delivery_failures = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # Duration threshold (unit=Milliseconds)
-    enabled_duration = bool
-    duration         = number
+    duration = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # Errors threshold (unit=Count)
-    enabled_errors = bool
-    errors         = number
+    errors = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # Invocations threshold (unit=Count)
-    enabled_invocations = bool
-    invocations         = number
+    invocations = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # IteratorAge threshold (unit=Milliseconds)
-    enabled_iterator_age = bool
-    iterator_age         = number
+    iterator_age = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # OffsetLag threshold (unit=Milliseconds)
-    enabled_offset_lag = bool
-    offset_lag         = number
+    offset_lag = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # PostRuntimeExtensionsDuration threshold (unit=Milliseconds)
-    enabled_post_runtime_extensions_duration = bool
-    post_runtime_extensions_duration         = number
+    post_runtime_extensions_duration = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # ProvisionedConcurrentExecutions threshold (unit=Count)
-    enabled_provisioned_concurrent_executions = bool
-    provisioned_concurrent_executions         = number
+    provisioned_concurrent_executions = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # ProvisionedConcurrencyInvocations threshold (unit=Count)
-    enabled_provisioned_concurrency_invocations = bool
-    provisioned_concurrency_invocations         = number
+    provisioned_concurrency_invocations = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # ProvisionedConcurrencySpilloverInvocations threshold (unit=Count)
-    enabled_provisioned_concurrency_spillover_invocations = bool
-    provisioned_concurrency_spillover_invocations         = number
+    provisioned_concurrency_spillover_invocations = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # ProvisionedConcurrencyUtilization threshold (unit=Percent)
-    enabled_provisioned_concurrency_utilization = bool
-    provisioned_concurrency_utilization         = number
+    provisioned_concurrency_utilization = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # RecursiveInvocationsDropped threshold (unit=Count)
-    enabled_recursive_invocations_dropped = bool
-    recursive_invocations_dropped         = number
+    recursive_invocations_dropped = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # Throttles threshold (unit=Count)
-    enabled_throttles = bool
-    throttles         = number
+    throttles = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # UnreservedConcurrentExecutions threshold (unit=Count)
-    enabled_unreserved_concurrent_executions = bool
-    unreserved_concurrent_executions         = number
-    }
-  )
+    unreserved_concurrent_executions = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
+  })
   description = "(Optional) Set the threshold for each Metric in Lambda."
   default = {
-    enabled_async_event_age                               = true
-    async_event_age                                       = 30000
-    enabled_async_events_dropped                          = true
-    async_events_dropped                                  = 1
-    enabled_async_events_received                         = false
-    async_events_received                                 = 100000
-    enabled_claimed_account_concurrency                   = false
-    claimed_account_concurrency                           = 900
-    enabled_concurrent_executions                         = true
-    concurrent_executions                                 = 500
-    enabled_dead_letter_errors                            = true
-    dead_letter_errors                                    = 1
-    enabled_destination_delivery_failures                 = true
-    destination_delivery_failures                         = 1
-    enabled_duration                                      = true
-    duration                                              = 10000
-    enabled_errors                                        = true
-    errors                                                = 1
-    enabled_invocations                                   = true
-    invocations                                           = 100000
-    enabled_iterator_age                                  = true
-    iterator_age                                          = 60000
-    enabled_offset_lag                                    = false
-    offset_lag                                            = 100000
-    enabled_post_runtime_extensions_duration              = false
-    post_runtime_extensions_duration                      = 5000
-    enabled_provisioned_concurrent_executions             = false
-    provisioned_concurrent_executions                     = 500
-    enabled_provisioned_concurrency_invocations           = false
-    provisioned_concurrency_invocations                   = 10000
-    enabled_provisioned_concurrency_spillover_invocations = false
-    provisioned_concurrency_spillover_invocations         = 100
-    enabled_provisioned_concurrency_utilization           = false
-    provisioned_concurrency_utilization                   = 80
-    enabled_recursive_invocations_dropped                 = true
-    recursive_invocations_dropped                         = 1
-    enabled_throttles                                     = true
-    throttles                                             = 10
-    enabled_unreserved_concurrent_executions              = false
-    unreserved_concurrent_executions                      = 800
+    async_event_age                               = { enabled = true, value = 30000 }
+    async_events_dropped                          = { enabled = true, value = 1 }
+    async_events_received                         = { enabled = false, value = 100000 }
+    claimed_account_concurrency                   = { enabled = false, value = 900 }
+    concurrent_executions                         = { enabled = true, value = 500 }
+    dead_letter_errors                            = { enabled = true, value = 1 }
+    destination_delivery_failures                 = { enabled = true, value = 1 }
+    duration                                      = { enabled = true, value = 10000 }
+    errors                                        = { enabled = true, value = 1 }
+    invocations                                   = { enabled = true, value = 100000 }
+    iterator_age                                  = { enabled = true, value = 60000 }
+    offset_lag                                    = { enabled = false, value = 100000 }
+    post_runtime_extensions_duration              = { enabled = false, value = 5000 }
+    provisioned_concurrent_executions             = { enabled = false, value = 500 }
+    provisioned_concurrency_invocations           = { enabled = false, value = 10000 }
+    provisioned_concurrency_spillover_invocations = { enabled = false, value = 100 }
+    provisioned_concurrency_utilization           = { enabled = false, value = 80 }
+    recursive_invocations_dropped                 = { enabled = true, value = 1 }
+    throttles                                     = { enabled = true, value = 10 }
+    unreserved_concurrent_executions              = { enabled = false, value = 800 }
   }
 }
 
 variable "threshold_override" {
   type = map(object({
     # AsyncEventAge threshold (unit=Milliseconds)
-    enabled_async_event_age = optional(bool)
-    async_event_age         = optional(number)
+    async_event_age = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
     # AsyncEventsDropped threshold (unit=Count)
-    enabled_async_events_dropped = optional(bool)
-    async_events_dropped         = optional(number)
+    async_events_dropped = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
     # AsyncEventsReceived threshold (unit=Count)
-    enabled_async_events_received = optional(bool)
-    async_events_received         = optional(number)
+    async_events_received = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
     # ClaimedAccountConcurrency threshold (unit=Count)
-    enabled_claimed_account_concurrency = optional(bool)
-    claimed_account_concurrency         = optional(number)
+    claimed_account_concurrency = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
     # ConcurrentExecutions threshold (unit=Count)
-    enabled_concurrent_executions = optional(bool)
-    concurrent_executions         = optional(number)
+    concurrent_executions = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
     # DeadLetterErrors threshold (unit=Count)
-    enabled_dead_letter_errors = optional(bool)
-    dead_letter_errors         = optional(number)
+    dead_letter_errors = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
     # DestinationDeliveryFailures threshold (unit=Count)
-    enabled_destination_delivery_failures = optional(bool)
-    destination_delivery_failures         = optional(number)
+    destination_delivery_failures = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
     # Duration threshold (unit=Milliseconds)
-    enabled_duration = optional(bool)
-    duration         = optional(number)
+    duration = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
     # Errors threshold (unit=Count)
-    enabled_errors = optional(bool)
-    errors         = optional(number)
+    errors = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
     # Invocations threshold (unit=Count)
-    enabled_invocations = optional(bool)
-    invocations         = optional(number)
+    invocations = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
     # IteratorAge threshold (unit=Milliseconds)
-    enabled_iterator_age = optional(bool)
-    iterator_age         = optional(number)
+    iterator_age = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
     # OffsetLag threshold (unit=Milliseconds)
-    enabled_offset_lag = optional(bool)
-    offset_lag         = optional(number)
+    offset_lag = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
     # PostRuntimeExtensionsDuration threshold (unit=Milliseconds)
-    enabled_post_runtime_extensions_duration = optional(bool)
-    post_runtime_extensions_duration         = optional(number)
+    post_runtime_extensions_duration = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
     # ProvisionedConcurrentExecutions threshold (unit=Count)
-    enabled_provisioned_concurrent_executions = optional(bool)
-    provisioned_concurrent_executions         = optional(number)
+    provisioned_concurrent_executions = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
     # ProvisionedConcurrencyInvocations threshold (unit=Count)
-    enabled_provisioned_concurrency_invocations = optional(bool)
-    provisioned_concurrency_invocations         = optional(number)
+    provisioned_concurrency_invocations = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
     # ProvisionedConcurrencySpilloverInvocations threshold (unit=Count)
-    enabled_provisioned_concurrency_spillover_invocations = optional(bool)
-    provisioned_concurrency_spillover_invocations         = optional(number)
+    provisioned_concurrency_spillover_invocations = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
     # ProvisionedConcurrencyUtilization threshold (unit=Percent)
-    enabled_provisioned_concurrency_utilization = optional(bool)
-    provisioned_concurrency_utilization         = optional(number)
+    provisioned_concurrency_utilization = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
     # RecursiveInvocationsDropped threshold (unit=Count)
-    enabled_recursive_invocations_dropped = optional(bool)
-    recursive_invocations_dropped         = optional(number)
+    recursive_invocations_dropped = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
     # Throttles threshold (unit=Count)
-    enabled_throttles = optional(bool)
-    throttles         = optional(number)
+    throttles = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
     # UnreservedConcurrentExecutions threshold (unit=Count)
-    enabled_unreserved_concurrent_executions = optional(bool)
-    unreserved_concurrent_executions         = optional(number)
+    unreserved_concurrent_executions = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
   }))
-  description = "(Optional) Override thresholds for specific Lambda functions. Key is the FunctionName."
+  description = "(Optional) Override thresholds for specific Lambda functions. Key is the FunctionName. Each metric accepts enabled, value, datapoints_to_alarm and evaluation_periods."
   default     = {}
 }
 

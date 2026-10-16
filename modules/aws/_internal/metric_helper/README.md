@@ -26,7 +26,7 @@ No modules.
 
 | Name | Description | Type | Default | Required |
 | ---- | ----------- | ---- | ------- | :------: |
-| <a name="input_base_threshold"></a> [base\_threshold](#input\_base\_threshold) | Base threshold object containing default values for all metrics | `any` | n/a | yes |
+| <a name="input_base_threshold"></a> [base\_threshold](#input\_base\_threshold) | Base threshold object. Key is the metric name, value is an object with enabled, value, datapoints\_to\_alarm and evaluation\_periods. | `any` | n/a | yes |
 | <a name="input_create_auto"></a> [create\_auto](#input\_create\_auto) | Whether to create auto-discovered resources (true) or use manual dimensions (false) | `bool` | `false` | no |
 | <a name="input_dimension_key"></a> [dimension\_key](#input\_dimension\_key) | The primary dimension key name (e.g., 'QueueName' for SQS, 'DBClusterIdentifier' for RDS) | `string` | n/a | yes |
 | <a name="input_exclude_list"></a> [exclude\_list](#input\_exclude\_list) | Exclude filter list | `list(string)` | `[]` | no |
@@ -35,7 +35,7 @@ No modules.
 | <a name="input_manual_dimensions"></a> [manual\_dimensions](#input\_manual\_dimensions) | Manual dimensions list (when create\_auto = false) | `any` | `null` | no |
 | <a name="input_region"></a> [region](#input\_region) | (Optional) AWS region. Defaults to provider region. | `string` | `null` | no |
 | <a name="input_source_list"></a> [source\_list](#input\_source\_list) | Source list to filter (from data source or external script) | `list(string)` | `[]` | no |
-| <a name="input_threshold_override"></a> [threshold\_override](#input\_threshold\_override) | Map of resource name to threshold overrides. Key is the dimension value (exact match), value is an object with optional threshold attributes to override. | `any` | `{}` | no |
+| <a name="input_threshold_override"></a> [threshold\_override](#input\_threshold\_override) | Map of resource name to per-metric threshold overrides. Key is the dimension value (exact match), value is a map of metric name to an object with optional enabled, value, datapoints\_to\_alarm and evaluation\_periods to override. | `any` | `{}` | no |
 
 ## Outputs
 

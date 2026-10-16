@@ -125,9 +125,9 @@ locals {
 module "aws_iam_role_lambda" {
   source = "../../modules/aws/iam/role/lambda"
 
-  is_vpc         = var.common_lambda.vpc.is_enabled
-  aws_iam_role   = local.aws_iam_role_lambda
   aws_iam_policy = local.aws_iam_policy_lambda
+  aws_iam_role   = local.aws_iam_role_lambda
+  is_vpc         = var.common_lambda.vpc.is_enabled
 
   tags = var.tags
 }

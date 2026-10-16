@@ -12,8 +12,8 @@ module "aws_resourcegroups_group" {
   is_enabled = try(var.resource_groups.is_enabled, true)
   region     = each.value
 
-  name        = try(var.resource_groups.name, "${var.name_prefix}resource-group-${each.value}")
   description = try(var.resource_groups.description, "Resource group for region ${each.value}")
+  name        = try(var.resource_groups.name, "${var.name_prefix}resource-group-${each.value}")
   resource_query = try(var.resource_groups.resource_query, [
     {
       query = jsonencode({
@@ -26,5 +26,6 @@ module "aws_resourcegroups_group" {
       type = "TAG_FILTERS_1_0"
     }
   ])
+
   tags = var.tags
 }

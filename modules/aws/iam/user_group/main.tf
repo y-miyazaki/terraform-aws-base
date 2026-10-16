@@ -33,9 +33,9 @@ locals {
 resource "aws_iam_user" "this" {
   for_each = var.is_enabled ? var.user : {}
 
+  force_destroy = true
   name          = each.key
   path          = "/"
-  force_destroy = true
 }
 
 #--------------------------------------------------------------
@@ -44,13 +44,9 @@ resource "aws_iam_user" "this" {
 resource "aws_iam_user_login_profile" "this" {
   for_each = var.is_enabled ? { for k, v in var.user : k => v if v.is_console_access } : {}
 
-  user                    = each.key
-  pgp_key                 = "keybase:exp_enechange"
   password_reset_required = true
-
-  depends_on = [
-    aws_iam_user.this,
-  ]
+  pgp_key                 = "keybase:exp_enechange"
+  user                    = each.key
 
   lifecycle {
     # Check this following document.
@@ -61,6 +57,10 @@ resource "aws_iam_user_login_profile" "this" {
       pgp_key,
     ]
   }
+
+  depends_on = [
+    aws_iam_user.this,
+  ]
 }
 
 #--------------------------------------------------------------
@@ -79,9 +79,9 @@ resource "aws_iam_group" "this" {
 resource "aws_iam_group_membership" "this" {
   for_each = { for group in local.group : group.group => group }
 
+  group = each.value.group
   name  = "${each.key}-membership"
   users = each.value.users
-  group = each.value.group
 
   depends_on = [
     aws_iam_group.this,

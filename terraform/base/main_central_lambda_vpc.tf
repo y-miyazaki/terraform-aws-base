@@ -27,42 +27,36 @@ module "lambda_vpc" {
   source  = "terraform-aws-modules/vpc/aws"
   version = "6.7.3"
 
-  create_vpc = var.common_lambda.vpc.is_enabled && var.common_lambda.vpc.create_vpc
-  region     = var.region.global
-
-  # Basic VPC configuration
-  name = "${var.name_prefix}${var.common_lambda.vpc.new.name}"
-  cidr = var.common_lambda.vpc.new.cidr
+  region = var.region.global
 
   # Subnet configuration — AZs determined dynamically
-  azs             = slice(data.aws_availability_zones.lambda_vpc.names, 0, min(3, length(data.aws_availability_zones.lambda_vpc.names)))
-  private_subnets = var.common_lambda.vpc.new.private_subnets
-  public_subnets  = var.common_lambda.vpc.new.public_subnets
-
+  azs                                  = slice(data.aws_availability_zones.lambda_vpc.names, 0, min(3, length(data.aws_availability_zones.lambda_vpc.names)))
+  cidr                                 = var.common_lambda.vpc.new.cidr
+  create_flow_log_cloudwatch_iam_role  = var.common_lambda.vpc.new.create_flow_log_cloudwatch_iam_role
+  create_flow_log_cloudwatch_log_group = var.common_lambda.vpc.new.create_flow_log_cloudwatch_log_group
+  create_vpc                           = var.common_lambda.vpc.is_enabled && var.common_lambda.vpc.create_vpc
+  default_security_group_egress        = []
+  default_security_group_ingress       = []
   # DNS settings for service discovery
   enable_dns_hostnames = var.common_lambda.vpc.new.enable_dns_hostnames
   enable_dns_support   = var.common_lambda.vpc.new.enable_dns_support
-
-  # NAT Gateway for private subnet internet access
-  enable_nat_gateway     = var.common_lambda.vpc.new.enable_nat_gateway
-  single_nat_gateway     = var.common_lambda.vpc.new.single_nat_gateway
-  one_nat_gateway_per_az = var.common_lambda.vpc.new.one_nat_gateway_per_az
-
-  # VPN Gateway for on-premises connectivity
-  enable_vpn_gateway = var.common_lambda.vpc.new.enable_vpn_gateway
-
   # VPC Flow Logs for network monitoring
-  enable_flow_log                                 = var.common_lambda.vpc.new.enable_flow_log
-  create_flow_log_cloudwatch_log_group            = var.common_lambda.vpc.new.create_flow_log_cloudwatch_log_group
-  create_flow_log_cloudwatch_iam_role             = var.common_lambda.vpc.new.create_flow_log_cloudwatch_iam_role
+  enable_flow_log = var.common_lambda.vpc.new.enable_flow_log
+  # NAT Gateway for private subnet internet access
+  enable_nat_gateway = var.common_lambda.vpc.new.enable_nat_gateway
+  # VPN Gateway for on-premises connectivity
+  enable_vpn_gateway                              = var.common_lambda.vpc.new.enable_vpn_gateway
   flow_log_cloudwatch_log_group_retention_in_days = coalesce(try(var.cloudwatch_log_group.override.common_lambda_vpc_flow_log.retention_in_days, null), var.cloudwatch_log_group.retention_in_days)
   flow_log_file_format                            = var.common_lambda.vpc.new.flow_log_file_format
-
+  manage_default_security_group                   = true
   # Disable default resource management
-  manage_default_vpc             = false
-  manage_default_security_group  = true
-  default_security_group_ingress = []
-  default_security_group_egress  = []
+  manage_default_vpc = false
+  # Basic VPC configuration
+  name                   = "${var.name_prefix}${var.common_lambda.vpc.new.name}"
+  one_nat_gateway_per_az = var.common_lambda.vpc.new.one_nat_gateway_per_az
+  private_subnets        = var.common_lambda.vpc.new.private_subnets
+  public_subnets         = var.common_lambda.vpc.new.public_subnets
+  single_nat_gateway     = var.common_lambda.vpc.new.single_nat_gateway
 
   tags = var.tags
 }

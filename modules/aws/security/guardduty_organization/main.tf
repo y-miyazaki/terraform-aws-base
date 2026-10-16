@@ -75,9 +75,9 @@ resource "aws_guardduty_organization_configuration_feature" "this" {
   for_each = var.is_enabled ? var.features : {}
 
   region      = local.region
+  auto_enable = each.value.auto_enable
   detector_id = local.detector_id
   name        = each.key
-  auto_enable = each.value.auto_enable
 
   dynamic "additional_configuration" {
     for_each = each.value.additional_configurations

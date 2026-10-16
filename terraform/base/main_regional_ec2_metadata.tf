@@ -12,6 +12,6 @@ module "aws_security_ec2_metadata" {
   region     = each.value
 
   http_endpoint               = try(var.security_ec2_metadata.http_endpoint, "enabled")
-  http_tokens                 = try(var.security_ec2_metadata.http_tokens, "required")
   http_put_response_hop_limit = try(var.security_ec2_metadata.http_put_response_hop_limit, 1)
+  http_tokens                 = try(var.security_ec2_metadata.http_tokens, "required")
 }

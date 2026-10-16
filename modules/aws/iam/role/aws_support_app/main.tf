@@ -32,6 +32,6 @@ resource "aws_iam_role" "this" {
 # Attaches a Managed IAM Policy to an IAM role
 #--------------------------------------------------------------
 resource "aws_iam_role_policy_attachment" "this" {
-  role       = aws_iam_role.this.name
   policy_arn = "arn:aws:iam::aws:policy/AWSSupportAppFullAccess"
+  role       = aws_iam_role.this.name
 }

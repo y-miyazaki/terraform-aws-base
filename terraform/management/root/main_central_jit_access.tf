@@ -12,10 +12,10 @@ module "jit_access" {
   region = var.region.primary
 
   cleanup_schedule_expression = var.jit_access.cleanup_schedule_expression
-  name_prefix                 = var.name_prefix
   kms_key_arn                 = module.kms_key["root"].key_arn
   lambda_log_retention_days   = coalesce(try(var.cloudwatch_log_group.override.jit_access.retention_in_days, null), var.cloudwatch_log_group.retention_in_days)
   lambda_zip_base_path        = "../../../lambda/outputs"
+  name_prefix                 = var.name_prefix
   profiles                    = var.jit_access.profiles
   slack = {
     approver_channel_id = var.jit_access.slack.approver_channel_id
@@ -29,7 +29,6 @@ module "jit_access" {
   waf_web_acl_arn = module.waf_jit_access[0].web_acl_arn
 
   tags = var.tags
-
   depends_on = [
     module.api_gateway_account
   ]

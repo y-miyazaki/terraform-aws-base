@@ -21,15 +21,15 @@ locals {
 module "helper" {
   source = "../../_internal/metric_helper"
 
-  is_enabled  = var.is_enabled
-  create_auto = var.create_auto_dimensions
+  is_enabled = var.is_enabled
 
-  source_list        = var.create_auto_dimensions && length(data.external.list) > 0 ? split(",", data.external.list[0].result.list) : []
-  include_list       = var.auto_dimensions_include_list
-  exclude_list       = var.auto_dimensions_exclude_list
-  manual_dimensions  = var.dimensions
-  dimension_key      = "QueueName"
   base_threshold     = var.threshold
+  create_auto        = var.create_auto_dimensions
+  dimension_key      = "QueueName"
+  exclude_list       = var.auto_dimensions_exclude_list
+  include_list       = var.auto_dimensions_include_list
+  manual_dimensions  = var.dimensions
+  source_list        = var.create_auto_dimensions && length(data.external.list) > 0 ? split(",", data.external.list[0].result.list) : []
   threshold_override = var.threshold_override
 }
 
@@ -51,26 +51,27 @@ locals {
 resource "aws_cloudwatch_metric_alarm" "approximate_age_of_oldest_message" {
   for_each = {
     for k, v in local.list : k => v
-    if var.is_enabled && local.effective_thresholds[k].enabled_approximate_age_of_oldest_message
+    if var.is_enabled && local.effective_thresholds[k].approximate_age_of_oldest_message.enabled
   }
 
   region                    = local.region
-  alarm_name                = "${var.name_prefix}metric-sqs-${each.value.name}-approximate-age-of-oldest-message"
-  comparison_operator       = "GreaterThanOrEqualToThreshold"
-  evaluation_periods        = 1
-  namespace                 = "AWS/SQS"
-  metric_name               = "ApproximateAgeOfOldestMessage"
-  period                    = var.period
-  statistic                 = "Maximum"
-  threshold                 = local.effective_thresholds[each.key].approximate_age_of_oldest_message
   actions_enabled           = true
   alarm_actions             = var.alarm_actions
-  alarm_description         = "This is an alarm to check for <${local.url}|SQS ApproximateAgeOfOldestMessage>(>= ${local.effective_thresholds[each.key].approximate_age_of_oldest_message}s)."
-  insufficient_data_actions = var.insufficient_data_actions
-  ok_actions                = var.ok_actions
-  unit                      = "Seconds"
-  treat_missing_data        = "notBreaching"
+  alarm_description         = "This is an alarm to check for <${local.url}|SQS ApproximateAgeOfOldestMessage>(>= ${local.effective_thresholds[each.key].approximate_age_of_oldest_message.value}s)."
+  alarm_name                = "${var.name_prefix}metric-sqs-${each.value.name}-approximate-age-of-oldest-message"
+  comparison_operator       = "GreaterThanOrEqualToThreshold"
+  datapoints_to_alarm       = local.effective_thresholds[each.key].approximate_age_of_oldest_message.datapoints_to_alarm
   dimensions                = each.value.dimensions
+  evaluation_periods        = local.effective_thresholds[each.key].approximate_age_of_oldest_message.evaluation_periods
+  insufficient_data_actions = var.insufficient_data_actions
+  metric_name               = "ApproximateAgeOfOldestMessage"
+  namespace                 = "AWS/SQS"
+  ok_actions                = var.ok_actions
+  period                    = var.period
+  statistic                 = "Maximum"
+  threshold                 = local.effective_thresholds[each.key].approximate_age_of_oldest_message.value
+  treat_missing_data        = "notBreaching"
+  unit                      = "Seconds"
 
   tags = var.tags
 }
@@ -82,26 +83,27 @@ resource "aws_cloudwatch_metric_alarm" "approximate_age_of_oldest_message" {
 resource "aws_cloudwatch_metric_alarm" "approximate_age_of_oldest_message_in_quiet_groups" {
   for_each = {
     for k, v in local.list : k => v
-    if var.is_enabled && local.effective_thresholds[k].enabled_approximate_age_of_oldest_message_in_quiet_groups
+    if var.is_enabled && local.effective_thresholds[k].approximate_age_of_oldest_message_in_quiet_groups.enabled
   }
 
   region                    = local.region
-  alarm_name                = "${var.name_prefix}metric-sqs-${each.value.name}-approximate-age-of-oldest-message-in-quiet-groups"
-  comparison_operator       = "GreaterThanOrEqualToThreshold"
-  evaluation_periods        = 1
-  namespace                 = "AWS/SQS"
-  metric_name               = "ApproximateAgeOfOldestMessageInQuietGroups"
-  period                    = var.period
-  statistic                 = "Maximum"
-  threshold                 = local.effective_thresholds[each.key].approximate_age_of_oldest_message_in_quiet_groups
   actions_enabled           = true
   alarm_actions             = var.alarm_actions
-  alarm_description         = "This is an alarm to check for <${local.url}|SQS ApproximateAgeOfOldestMessageInQuietGroups>(>= ${local.effective_thresholds[each.key].approximate_age_of_oldest_message_in_quiet_groups}s)."
-  insufficient_data_actions = var.insufficient_data_actions
-  ok_actions                = var.ok_actions
-  unit                      = "Seconds"
-  treat_missing_data        = "notBreaching"
+  alarm_description         = "This is an alarm to check for <${local.url}|SQS ApproximateAgeOfOldestMessageInQuietGroups>(>= ${local.effective_thresholds[each.key].approximate_age_of_oldest_message_in_quiet_groups.value}s)."
+  alarm_name                = "${var.name_prefix}metric-sqs-${each.value.name}-approximate-age-of-oldest-message-in-quiet-groups"
+  comparison_operator       = "GreaterThanOrEqualToThreshold"
+  datapoints_to_alarm       = local.effective_thresholds[each.key].approximate_age_of_oldest_message_in_quiet_groups.datapoints_to_alarm
   dimensions                = each.value.dimensions
+  evaluation_periods        = local.effective_thresholds[each.key].approximate_age_of_oldest_message_in_quiet_groups.evaluation_periods
+  insufficient_data_actions = var.insufficient_data_actions
+  metric_name               = "ApproximateAgeOfOldestMessageInQuietGroups"
+  namespace                 = "AWS/SQS"
+  ok_actions                = var.ok_actions
+  period                    = var.period
+  statistic                 = "Maximum"
+  threshold                 = local.effective_thresholds[each.key].approximate_age_of_oldest_message_in_quiet_groups.value
+  treat_missing_data        = "notBreaching"
+  unit                      = "Seconds"
 
   tags = var.tags
 }
@@ -113,26 +115,27 @@ resource "aws_cloudwatch_metric_alarm" "approximate_age_of_oldest_message_in_qui
 resource "aws_cloudwatch_metric_alarm" "approximate_number_of_groups_with_inflight_messages" {
   for_each = {
     for k, v in local.list : k => v
-    if var.is_enabled && local.effective_thresholds[k].enabled_approximate_number_of_groups_with_inflight_messages
+    if var.is_enabled && local.effective_thresholds[k].approximate_number_of_groups_with_inflight_messages.enabled
   }
 
   region                    = local.region
-  alarm_name                = "${var.name_prefix}metric-sqs-${each.value.name}-approximate-number-of-groups-with-inflight-messages"
-  comparison_operator       = "GreaterThanOrEqualToThreshold"
-  evaluation_periods        = 1
-  namespace                 = "AWS/SQS"
-  metric_name               = "ApproximateNumberOfGroupsWithInflightMessages"
-  period                    = var.period
-  statistic                 = "Average"
-  threshold                 = local.effective_thresholds[each.key].approximate_number_of_groups_with_inflight_messages
   actions_enabled           = true
   alarm_actions             = var.alarm_actions
-  alarm_description         = "This is an alarm to check for <${local.url}|SQS ApproximateNumberOfGroupsWithInflightMessages>(>= ${local.effective_thresholds[each.key].approximate_number_of_groups_with_inflight_messages})."
-  insufficient_data_actions = var.insufficient_data_actions
-  ok_actions                = var.ok_actions
-  unit                      = "Count"
-  treat_missing_data        = "notBreaching"
+  alarm_description         = "This is an alarm to check for <${local.url}|SQS ApproximateNumberOfGroupsWithInflightMessages>(>= ${local.effective_thresholds[each.key].approximate_number_of_groups_with_inflight_messages.value})."
+  alarm_name                = "${var.name_prefix}metric-sqs-${each.value.name}-approximate-number-of-groups-with-inflight-messages"
+  comparison_operator       = "GreaterThanOrEqualToThreshold"
+  datapoints_to_alarm       = local.effective_thresholds[each.key].approximate_number_of_groups_with_inflight_messages.datapoints_to_alarm
   dimensions                = each.value.dimensions
+  evaluation_periods        = local.effective_thresholds[each.key].approximate_number_of_groups_with_inflight_messages.evaluation_periods
+  insufficient_data_actions = var.insufficient_data_actions
+  metric_name               = "ApproximateNumberOfGroupsWithInflightMessages"
+  namespace                 = "AWS/SQS"
+  ok_actions                = var.ok_actions
+  period                    = var.period
+  statistic                 = "Average"
+  threshold                 = local.effective_thresholds[each.key].approximate_number_of_groups_with_inflight_messages.value
+  treat_missing_data        = "notBreaching"
+  unit                      = "Count"
 
   tags = var.tags
 }
@@ -144,26 +147,27 @@ resource "aws_cloudwatch_metric_alarm" "approximate_number_of_groups_with_inflig
 resource "aws_cloudwatch_metric_alarm" "approximate_number_of_messages_delayed" {
   for_each = {
     for k, v in local.list : k => v
-    if var.is_enabled && local.effective_thresholds[k].enabled_approximate_number_of_messages_delayed
+    if var.is_enabled && local.effective_thresholds[k].approximate_number_of_messages_delayed.enabled
   }
 
   region                    = local.region
-  alarm_name                = "${var.name_prefix}metric-sqs-${each.value.name}-approximate-number-of-messages-delayed"
-  comparison_operator       = "GreaterThanOrEqualToThreshold"
-  evaluation_periods        = 1
-  namespace                 = "AWS/SQS"
-  metric_name               = "ApproximateNumberOfMessagesDelayed"
-  period                    = var.period
-  statistic                 = "Average"
-  threshold                 = local.effective_thresholds[each.key].approximate_number_of_messages_delayed
   actions_enabled           = true
   alarm_actions             = var.alarm_actions
-  alarm_description         = "This is an alarm to check for <${local.url}|SQS ApproximateNumberOfMessagesDelayed>(>= ${local.effective_thresholds[each.key].approximate_number_of_messages_delayed})."
-  insufficient_data_actions = var.insufficient_data_actions
-  ok_actions                = var.ok_actions
-  unit                      = "Count"
-  treat_missing_data        = "notBreaching"
+  alarm_description         = "This is an alarm to check for <${local.url}|SQS ApproximateNumberOfMessagesDelayed>(>= ${local.effective_thresholds[each.key].approximate_number_of_messages_delayed.value})."
+  alarm_name                = "${var.name_prefix}metric-sqs-${each.value.name}-approximate-number-of-messages-delayed"
+  comparison_operator       = "GreaterThanOrEqualToThreshold"
+  datapoints_to_alarm       = local.effective_thresholds[each.key].approximate_number_of_messages_delayed.datapoints_to_alarm
   dimensions                = each.value.dimensions
+  evaluation_periods        = local.effective_thresholds[each.key].approximate_number_of_messages_delayed.evaluation_periods
+  insufficient_data_actions = var.insufficient_data_actions
+  metric_name               = "ApproximateNumberOfMessagesDelayed"
+  namespace                 = "AWS/SQS"
+  ok_actions                = var.ok_actions
+  period                    = var.period
+  statistic                 = "Average"
+  threshold                 = local.effective_thresholds[each.key].approximate_number_of_messages_delayed.value
+  treat_missing_data        = "notBreaching"
+  unit                      = "Count"
 
   tags = var.tags
 }
@@ -175,26 +179,27 @@ resource "aws_cloudwatch_metric_alarm" "approximate_number_of_messages_delayed" 
 resource "aws_cloudwatch_metric_alarm" "approximate_number_of_messages_delayed_in_quiet_groups" {
   for_each = {
     for k, v in local.list : k => v
-    if var.is_enabled && local.effective_thresholds[k].enabled_approximate_number_of_messages_delayed_in_quiet_groups
+    if var.is_enabled && local.effective_thresholds[k].approximate_number_of_messages_delayed_in_quiet_groups.enabled
   }
 
   region                    = local.region
-  alarm_name                = "${var.name_prefix}metric-sqs-${each.value.name}-approximate-number-of-messages-delayed-in-quiet-groups"
-  comparison_operator       = "GreaterThanOrEqualToThreshold"
-  evaluation_periods        = 1
-  namespace                 = "AWS/SQS"
-  metric_name               = "ApproximateNumberOfMessagesDelayedInQuietGroups"
-  period                    = var.period
-  statistic                 = "Average"
-  threshold                 = local.effective_thresholds[each.key].approximate_number_of_messages_delayed_in_quiet_groups
   actions_enabled           = true
   alarm_actions             = var.alarm_actions
-  alarm_description         = "This is an alarm to check for <${local.url}|SQS ApproximateNumberOfMessagesDelayedInQuietGroups>(>= ${local.effective_thresholds[each.key].approximate_number_of_messages_delayed_in_quiet_groups})."
-  insufficient_data_actions = var.insufficient_data_actions
-  ok_actions                = var.ok_actions
-  unit                      = "Count"
-  treat_missing_data        = "notBreaching"
+  alarm_description         = "This is an alarm to check for <${local.url}|SQS ApproximateNumberOfMessagesDelayedInQuietGroups>(>= ${local.effective_thresholds[each.key].approximate_number_of_messages_delayed_in_quiet_groups.value})."
+  alarm_name                = "${var.name_prefix}metric-sqs-${each.value.name}-approximate-number-of-messages-delayed-in-quiet-groups"
+  comparison_operator       = "GreaterThanOrEqualToThreshold"
+  datapoints_to_alarm       = local.effective_thresholds[each.key].approximate_number_of_messages_delayed_in_quiet_groups.datapoints_to_alarm
   dimensions                = each.value.dimensions
+  evaluation_periods        = local.effective_thresholds[each.key].approximate_number_of_messages_delayed_in_quiet_groups.evaluation_periods
+  insufficient_data_actions = var.insufficient_data_actions
+  metric_name               = "ApproximateNumberOfMessagesDelayedInQuietGroups"
+  namespace                 = "AWS/SQS"
+  ok_actions                = var.ok_actions
+  period                    = var.period
+  statistic                 = "Average"
+  threshold                 = local.effective_thresholds[each.key].approximate_number_of_messages_delayed_in_quiet_groups.value
+  treat_missing_data        = "notBreaching"
+  unit                      = "Count"
 
   tags = var.tags
 }
@@ -206,26 +211,27 @@ resource "aws_cloudwatch_metric_alarm" "approximate_number_of_messages_delayed_i
 resource "aws_cloudwatch_metric_alarm" "approximate_number_of_messages_not_visible" {
   for_each = {
     for k, v in local.list : k => v
-    if var.is_enabled && local.effective_thresholds[k].enabled_approximate_number_of_messages_not_visible
+    if var.is_enabled && local.effective_thresholds[k].approximate_number_of_messages_not_visible.enabled
   }
 
   region                    = local.region
-  alarm_name                = "${var.name_prefix}metric-sqs-${each.value.name}-approximate-number-of-messages-not-visible"
-  comparison_operator       = "GreaterThanOrEqualToThreshold"
-  evaluation_periods        = 1
-  namespace                 = "AWS/SQS"
-  metric_name               = "ApproximateNumberOfMessagesNotVisible"
-  period                    = var.period
-  statistic                 = "Average"
-  threshold                 = local.effective_thresholds[each.key].approximate_number_of_messages_not_visible
   actions_enabled           = true
   alarm_actions             = var.alarm_actions
-  alarm_description         = "This is an alarm to check for <${local.url}|SQS ApproximateNumberOfMessagesNotVisible>(>= ${local.effective_thresholds[each.key].approximate_number_of_messages_not_visible})."
-  insufficient_data_actions = var.insufficient_data_actions
-  ok_actions                = var.ok_actions
-  unit                      = "Count"
-  treat_missing_data        = "notBreaching"
+  alarm_description         = "This is an alarm to check for <${local.url}|SQS ApproximateNumberOfMessagesNotVisible>(>= ${local.effective_thresholds[each.key].approximate_number_of_messages_not_visible.value})."
+  alarm_name                = "${var.name_prefix}metric-sqs-${each.value.name}-approximate-number-of-messages-not-visible"
+  comparison_operator       = "GreaterThanOrEqualToThreshold"
+  datapoints_to_alarm       = local.effective_thresholds[each.key].approximate_number_of_messages_not_visible.datapoints_to_alarm
   dimensions                = each.value.dimensions
+  evaluation_periods        = local.effective_thresholds[each.key].approximate_number_of_messages_not_visible.evaluation_periods
+  insufficient_data_actions = var.insufficient_data_actions
+  metric_name               = "ApproximateNumberOfMessagesNotVisible"
+  namespace                 = "AWS/SQS"
+  ok_actions                = var.ok_actions
+  period                    = var.period
+  statistic                 = "Average"
+  threshold                 = local.effective_thresholds[each.key].approximate_number_of_messages_not_visible.value
+  treat_missing_data        = "notBreaching"
+  unit                      = "Count"
 
   tags = var.tags
 }
@@ -237,26 +243,27 @@ resource "aws_cloudwatch_metric_alarm" "approximate_number_of_messages_not_visib
 resource "aws_cloudwatch_metric_alarm" "approximate_number_of_messages_not_visible_in_quiet_groups" {
   for_each = {
     for k, v in local.list : k => v
-    if var.is_enabled && local.effective_thresholds[k].enabled_approximate_number_of_messages_not_visible_in_quiet_groups
+    if var.is_enabled && local.effective_thresholds[k].approximate_number_of_messages_not_visible_in_quiet_groups.enabled
   }
 
   region                    = local.region
-  alarm_name                = "${var.name_prefix}metric-sqs-${each.value.name}-approximate-number-of-messages-not-visible-in-quiet-groups"
-  comparison_operator       = "GreaterThanOrEqualToThreshold"
-  evaluation_periods        = 1
-  namespace                 = "AWS/SQS"
-  metric_name               = "ApproximateNumberOfMessagesNotVisibleInQuietGroups"
-  period                    = var.period
-  statistic                 = "Average"
-  threshold                 = local.effective_thresholds[each.key].approximate_number_of_messages_not_visible_in_quiet_groups
   actions_enabled           = true
   alarm_actions             = var.alarm_actions
-  alarm_description         = "This is an alarm to check for <${local.url}|SQS ApproximateNumberOfMessagesNotVisibleInQuietGroups>(>= ${local.effective_thresholds[each.key].approximate_number_of_messages_not_visible_in_quiet_groups})."
-  insufficient_data_actions = var.insufficient_data_actions
-  ok_actions                = var.ok_actions
-  unit                      = "Count"
-  treat_missing_data        = "notBreaching"
+  alarm_description         = "This is an alarm to check for <${local.url}|SQS ApproximateNumberOfMessagesNotVisibleInQuietGroups>(>= ${local.effective_thresholds[each.key].approximate_number_of_messages_not_visible_in_quiet_groups.value})."
+  alarm_name                = "${var.name_prefix}metric-sqs-${each.value.name}-approximate-number-of-messages-not-visible-in-quiet-groups"
+  comparison_operator       = "GreaterThanOrEqualToThreshold"
+  datapoints_to_alarm       = local.effective_thresholds[each.key].approximate_number_of_messages_not_visible_in_quiet_groups.datapoints_to_alarm
   dimensions                = each.value.dimensions
+  evaluation_periods        = local.effective_thresholds[each.key].approximate_number_of_messages_not_visible_in_quiet_groups.evaluation_periods
+  insufficient_data_actions = var.insufficient_data_actions
+  metric_name               = "ApproximateNumberOfMessagesNotVisibleInQuietGroups"
+  namespace                 = "AWS/SQS"
+  ok_actions                = var.ok_actions
+  period                    = var.period
+  statistic                 = "Average"
+  threshold                 = local.effective_thresholds[each.key].approximate_number_of_messages_not_visible_in_quiet_groups.value
+  treat_missing_data        = "notBreaching"
+  unit                      = "Count"
 
   tags = var.tags
 }
@@ -268,26 +275,27 @@ resource "aws_cloudwatch_metric_alarm" "approximate_number_of_messages_not_visib
 resource "aws_cloudwatch_metric_alarm" "approximate_number_of_messages_visible" {
   for_each = {
     for k, v in local.list : k => v
-    if var.is_enabled && local.effective_thresholds[k].enabled_approximate_number_of_messages_visible
+    if var.is_enabled && local.effective_thresholds[k].approximate_number_of_messages_visible.enabled
   }
 
   region                    = local.region
-  alarm_name                = "${var.name_prefix}metric-sqs-${each.value.name}-approximate-number-of-messages-visible"
-  comparison_operator       = "GreaterThanOrEqualToThreshold"
-  evaluation_periods        = 1
-  namespace                 = "AWS/SQS"
-  metric_name               = "ApproximateNumberOfMessagesVisible"
-  period                    = var.period
-  statistic                 = "Average"
-  threshold                 = local.effective_thresholds[each.key].approximate_number_of_messages_visible
   actions_enabled           = true
   alarm_actions             = var.alarm_actions
-  alarm_description         = "This is an alarm to check for <${local.url}|SQS ApproximateNumberOfMessagesVisible>(>= ${local.effective_thresholds[each.key].approximate_number_of_messages_visible})."
-  insufficient_data_actions = var.insufficient_data_actions
-  ok_actions                = var.ok_actions
-  unit                      = "Count"
-  treat_missing_data        = "notBreaching"
+  alarm_description         = "This is an alarm to check for <${local.url}|SQS ApproximateNumberOfMessagesVisible>(>= ${local.effective_thresholds[each.key].approximate_number_of_messages_visible.value})."
+  alarm_name                = "${var.name_prefix}metric-sqs-${each.value.name}-approximate-number-of-messages-visible"
+  comparison_operator       = "GreaterThanOrEqualToThreshold"
+  datapoints_to_alarm       = local.effective_thresholds[each.key].approximate_number_of_messages_visible.datapoints_to_alarm
   dimensions                = each.value.dimensions
+  evaluation_periods        = local.effective_thresholds[each.key].approximate_number_of_messages_visible.evaluation_periods
+  insufficient_data_actions = var.insufficient_data_actions
+  metric_name               = "ApproximateNumberOfMessagesVisible"
+  namespace                 = "AWS/SQS"
+  ok_actions                = var.ok_actions
+  period                    = var.period
+  statistic                 = "Average"
+  threshold                 = local.effective_thresholds[each.key].approximate_number_of_messages_visible.value
+  treat_missing_data        = "notBreaching"
+  unit                      = "Count"
 
   tags = var.tags
 }
@@ -299,26 +307,27 @@ resource "aws_cloudwatch_metric_alarm" "approximate_number_of_messages_visible" 
 resource "aws_cloudwatch_metric_alarm" "approximate_number_of_messages_visible_in_quiet_groups" {
   for_each = {
     for k, v in local.list : k => v
-    if var.is_enabled && local.effective_thresholds[k].enabled_approximate_number_of_messages_visible_in_quiet_groups
+    if var.is_enabled && local.effective_thresholds[k].approximate_number_of_messages_visible_in_quiet_groups.enabled
   }
 
   region                    = local.region
-  alarm_name                = "${var.name_prefix}metric-sqs-${each.value.name}-approximate-number-of-messages-visible-in-quiet-groups"
-  comparison_operator       = "GreaterThanOrEqualToThreshold"
-  evaluation_periods        = 1
-  namespace                 = "AWS/SQS"
-  metric_name               = "ApproximateNumberOfMessagesVisibleInQuietGroups"
-  period                    = var.period
-  statistic                 = "Average"
-  threshold                 = local.effective_thresholds[each.key].approximate_number_of_messages_visible_in_quiet_groups
   actions_enabled           = true
   alarm_actions             = var.alarm_actions
-  alarm_description         = "This is an alarm to check for <${local.url}|SQS ApproximateNumberOfMessagesVisibleInQuietGroups>(>= ${local.effective_thresholds[each.key].approximate_number_of_messages_visible_in_quiet_groups})."
-  insufficient_data_actions = var.insufficient_data_actions
-  ok_actions                = var.ok_actions
-  unit                      = "Count"
-  treat_missing_data        = "notBreaching"
+  alarm_description         = "This is an alarm to check for <${local.url}|SQS ApproximateNumberOfMessagesVisibleInQuietGroups>(>= ${local.effective_thresholds[each.key].approximate_number_of_messages_visible_in_quiet_groups.value})."
+  alarm_name                = "${var.name_prefix}metric-sqs-${each.value.name}-approximate-number-of-messages-visible-in-quiet-groups"
+  comparison_operator       = "GreaterThanOrEqualToThreshold"
+  datapoints_to_alarm       = local.effective_thresholds[each.key].approximate_number_of_messages_visible_in_quiet_groups.datapoints_to_alarm
   dimensions                = each.value.dimensions
+  evaluation_periods        = local.effective_thresholds[each.key].approximate_number_of_messages_visible_in_quiet_groups.evaluation_periods
+  insufficient_data_actions = var.insufficient_data_actions
+  metric_name               = "ApproximateNumberOfMessagesVisibleInQuietGroups"
+  namespace                 = "AWS/SQS"
+  ok_actions                = var.ok_actions
+  period                    = var.period
+  statistic                 = "Average"
+  threshold                 = local.effective_thresholds[each.key].approximate_number_of_messages_visible_in_quiet_groups.value
+  treat_missing_data        = "notBreaching"
+  unit                      = "Count"
 
   tags = var.tags
 }
@@ -330,26 +339,27 @@ resource "aws_cloudwatch_metric_alarm" "approximate_number_of_messages_visible_i
 resource "aws_cloudwatch_metric_alarm" "approximate_number_of_noisy_groups" {
   for_each = {
     for k, v in local.list : k => v
-    if var.is_enabled && local.effective_thresholds[k].enabled_approximate_number_of_noisy_groups
+    if var.is_enabled && local.effective_thresholds[k].approximate_number_of_noisy_groups.enabled
   }
 
   region                    = local.region
-  alarm_name                = "${var.name_prefix}metric-sqs-${each.value.name}-approximate-number-of-noisy-groups"
-  comparison_operator       = "GreaterThanOrEqualToThreshold"
-  evaluation_periods        = 1
-  namespace                 = "AWS/SQS"
-  metric_name               = "ApproximateNumberOfNoisyGroups"
-  period                    = var.period
-  statistic                 = "Average"
-  threshold                 = local.effective_thresholds[each.key].approximate_number_of_noisy_groups
   actions_enabled           = true
   alarm_actions             = var.alarm_actions
-  alarm_description         = "This is an alarm to check for <${local.url}|SQS ApproximateNumberOfNoisyGroups>(>= ${local.effective_thresholds[each.key].approximate_number_of_noisy_groups})."
-  insufficient_data_actions = var.insufficient_data_actions
-  ok_actions                = var.ok_actions
-  unit                      = "Count"
-  treat_missing_data        = "notBreaching"
+  alarm_description         = "This is an alarm to check for <${local.url}|SQS ApproximateNumberOfNoisyGroups>(>= ${local.effective_thresholds[each.key].approximate_number_of_noisy_groups.value})."
+  alarm_name                = "${var.name_prefix}metric-sqs-${each.value.name}-approximate-number-of-noisy-groups"
+  comparison_operator       = "GreaterThanOrEqualToThreshold"
+  datapoints_to_alarm       = local.effective_thresholds[each.key].approximate_number_of_noisy_groups.datapoints_to_alarm
   dimensions                = each.value.dimensions
+  evaluation_periods        = local.effective_thresholds[each.key].approximate_number_of_noisy_groups.evaluation_periods
+  insufficient_data_actions = var.insufficient_data_actions
+  metric_name               = "ApproximateNumberOfNoisyGroups"
+  namespace                 = "AWS/SQS"
+  ok_actions                = var.ok_actions
+  period                    = var.period
+  statistic                 = "Average"
+  threshold                 = local.effective_thresholds[each.key].approximate_number_of_noisy_groups.value
+  treat_missing_data        = "notBreaching"
+  unit                      = "Count"
 
   tags = var.tags
 }
@@ -361,26 +371,27 @@ resource "aws_cloudwatch_metric_alarm" "approximate_number_of_noisy_groups" {
 resource "aws_cloudwatch_metric_alarm" "number_of_deduplicated_sent_messages" {
   for_each = {
     for k, v in local.list : k => v
-    if var.is_enabled && local.effective_thresholds[k].enabled_number_of_deduplicated_sent_messages
+    if var.is_enabled && local.effective_thresholds[k].number_of_deduplicated_sent_messages.enabled
   }
 
   region                    = local.region
-  alarm_name                = "${var.name_prefix}metric-sqs-${each.value.name}-number-of-deduplicated-sent-messages"
-  comparison_operator       = "GreaterThanOrEqualToThreshold"
-  evaluation_periods        = 1
-  namespace                 = "AWS/SQS"
-  metric_name               = "NumberOfDeduplicatedSentMessages"
-  period                    = var.period
-  statistic                 = "Sum"
-  threshold                 = local.effective_thresholds[each.key].number_of_deduplicated_sent_messages
   actions_enabled           = true
   alarm_actions             = var.alarm_actions
-  alarm_description         = "This is an alarm to check for <${local.url}|SQS NumberOfDeduplicatedSentMessages>(>= ${local.effective_thresholds[each.key].number_of_deduplicated_sent_messages})."
-  insufficient_data_actions = var.insufficient_data_actions
-  ok_actions                = var.ok_actions
-  unit                      = "Count"
-  treat_missing_data        = "notBreaching"
+  alarm_description         = "This is an alarm to check for <${local.url}|SQS NumberOfDeduplicatedSentMessages>(>= ${local.effective_thresholds[each.key].number_of_deduplicated_sent_messages.value})."
+  alarm_name                = "${var.name_prefix}metric-sqs-${each.value.name}-number-of-deduplicated-sent-messages"
+  comparison_operator       = "GreaterThanOrEqualToThreshold"
+  datapoints_to_alarm       = local.effective_thresholds[each.key].number_of_deduplicated_sent_messages.datapoints_to_alarm
   dimensions                = each.value.dimensions
+  evaluation_periods        = local.effective_thresholds[each.key].number_of_deduplicated_sent_messages.evaluation_periods
+  insufficient_data_actions = var.insufficient_data_actions
+  metric_name               = "NumberOfDeduplicatedSentMessages"
+  namespace                 = "AWS/SQS"
+  ok_actions                = var.ok_actions
+  period                    = var.period
+  statistic                 = "Sum"
+  threshold                 = local.effective_thresholds[each.key].number_of_deduplicated_sent_messages.value
+  treat_missing_data        = "notBreaching"
+  unit                      = "Count"
 
   tags = var.tags
 }
@@ -392,26 +403,27 @@ resource "aws_cloudwatch_metric_alarm" "number_of_deduplicated_sent_messages" {
 resource "aws_cloudwatch_metric_alarm" "number_of_empty_receives" {
   for_each = {
     for k, v in local.list : k => v
-    if var.is_enabled && local.effective_thresholds[k].enabled_number_of_empty_receives
+    if var.is_enabled && local.effective_thresholds[k].number_of_empty_receives.enabled
   }
 
   region                    = local.region
-  alarm_name                = "${var.name_prefix}metric-sqs-${each.value.name}-number-of-empty-receives"
-  comparison_operator       = "GreaterThanOrEqualToThreshold"
-  evaluation_periods        = 1
-  namespace                 = "AWS/SQS"
-  metric_name               = "NumberOfEmptyReceives"
-  period                    = var.period
-  statistic                 = "Sum"
-  threshold                 = local.effective_thresholds[each.key].number_of_empty_receives
   actions_enabled           = true
   alarm_actions             = var.alarm_actions
-  alarm_description         = "This is an alarm to check for <${local.url}|SQS NumberOfEmptyReceives>(>= ${local.effective_thresholds[each.key].number_of_empty_receives})."
-  insufficient_data_actions = var.insufficient_data_actions
-  ok_actions                = var.ok_actions
-  unit                      = "Count"
-  treat_missing_data        = "notBreaching"
+  alarm_description         = "This is an alarm to check for <${local.url}|SQS NumberOfEmptyReceives>(>= ${local.effective_thresholds[each.key].number_of_empty_receives.value})."
+  alarm_name                = "${var.name_prefix}metric-sqs-${each.value.name}-number-of-empty-receives"
+  comparison_operator       = "GreaterThanOrEqualToThreshold"
+  datapoints_to_alarm       = local.effective_thresholds[each.key].number_of_empty_receives.datapoints_to_alarm
   dimensions                = each.value.dimensions
+  evaluation_periods        = local.effective_thresholds[each.key].number_of_empty_receives.evaluation_periods
+  insufficient_data_actions = var.insufficient_data_actions
+  metric_name               = "NumberOfEmptyReceives"
+  namespace                 = "AWS/SQS"
+  ok_actions                = var.ok_actions
+  period                    = var.period
+  statistic                 = "Sum"
+  threshold                 = local.effective_thresholds[each.key].number_of_empty_receives.value
+  treat_missing_data        = "notBreaching"
+  unit                      = "Count"
 
   tags = var.tags
 }
@@ -423,26 +435,27 @@ resource "aws_cloudwatch_metric_alarm" "number_of_empty_receives" {
 resource "aws_cloudwatch_metric_alarm" "number_of_messages_deleted" {
   for_each = {
     for k, v in local.list : k => v
-    if var.is_enabled && local.effective_thresholds[k].enabled_number_of_messages_deleted
+    if var.is_enabled && local.effective_thresholds[k].number_of_messages_deleted.enabled
   }
 
   region                    = local.region
-  alarm_name                = "${var.name_prefix}metric-sqs-${each.value.name}-number-of-messages-deleted"
-  comparison_operator       = "GreaterThanOrEqualToThreshold"
-  evaluation_periods        = 1
-  namespace                 = "AWS/SQS"
-  metric_name               = "NumberOfMessagesDeleted"
-  period                    = var.period
-  statistic                 = "Sum"
-  threshold                 = local.effective_thresholds[each.key].number_of_messages_deleted
   actions_enabled           = true
   alarm_actions             = var.alarm_actions
-  alarm_description         = "This is an alarm to check for <${local.url}|SQS NumberOfMessagesDeleted>(>= ${local.effective_thresholds[each.key].number_of_messages_deleted})."
-  insufficient_data_actions = var.insufficient_data_actions
-  ok_actions                = var.ok_actions
-  unit                      = "Count"
-  treat_missing_data        = "notBreaching"
+  alarm_description         = "This is an alarm to check for <${local.url}|SQS NumberOfMessagesDeleted>(>= ${local.effective_thresholds[each.key].number_of_messages_deleted.value})."
+  alarm_name                = "${var.name_prefix}metric-sqs-${each.value.name}-number-of-messages-deleted"
+  comparison_operator       = "GreaterThanOrEqualToThreshold"
+  datapoints_to_alarm       = local.effective_thresholds[each.key].number_of_messages_deleted.datapoints_to_alarm
   dimensions                = each.value.dimensions
+  evaluation_periods        = local.effective_thresholds[each.key].number_of_messages_deleted.evaluation_periods
+  insufficient_data_actions = var.insufficient_data_actions
+  metric_name               = "NumberOfMessagesDeleted"
+  namespace                 = "AWS/SQS"
+  ok_actions                = var.ok_actions
+  period                    = var.period
+  statistic                 = "Sum"
+  threshold                 = local.effective_thresholds[each.key].number_of_messages_deleted.value
+  treat_missing_data        = "notBreaching"
+  unit                      = "Count"
 
   tags = var.tags
 }
@@ -454,26 +467,27 @@ resource "aws_cloudwatch_metric_alarm" "number_of_messages_deleted" {
 resource "aws_cloudwatch_metric_alarm" "number_of_messages_received" {
   for_each = {
     for k, v in local.list : k => v
-    if var.is_enabled && local.effective_thresholds[k].enabled_number_of_messages_received
+    if var.is_enabled && local.effective_thresholds[k].number_of_messages_received.enabled
   }
 
   region                    = local.region
-  alarm_name                = "${var.name_prefix}metric-sqs-${each.value.name}-number-of-messages-received"
-  comparison_operator       = "GreaterThanOrEqualToThreshold"
-  evaluation_periods        = 1
-  namespace                 = "AWS/SQS"
-  metric_name               = "NumberOfMessagesReceived"
-  period                    = var.period
-  statistic                 = "Sum"
-  threshold                 = local.effective_thresholds[each.key].number_of_messages_received
   actions_enabled           = true
   alarm_actions             = var.alarm_actions
-  alarm_description         = "This is an alarm to check for <${local.url}|SQS NumberOfMessagesReceived>(>= ${local.effective_thresholds[each.key].number_of_messages_received})."
-  insufficient_data_actions = var.insufficient_data_actions
-  ok_actions                = var.ok_actions
-  unit                      = "Count"
-  treat_missing_data        = "notBreaching"
+  alarm_description         = "This is an alarm to check for <${local.url}|SQS NumberOfMessagesReceived>(>= ${local.effective_thresholds[each.key].number_of_messages_received.value})."
+  alarm_name                = "${var.name_prefix}metric-sqs-${each.value.name}-number-of-messages-received"
+  comparison_operator       = "GreaterThanOrEqualToThreshold"
+  datapoints_to_alarm       = local.effective_thresholds[each.key].number_of_messages_received.datapoints_to_alarm
   dimensions                = each.value.dimensions
+  evaluation_periods        = local.effective_thresholds[each.key].number_of_messages_received.evaluation_periods
+  insufficient_data_actions = var.insufficient_data_actions
+  metric_name               = "NumberOfMessagesReceived"
+  namespace                 = "AWS/SQS"
+  ok_actions                = var.ok_actions
+  period                    = var.period
+  statistic                 = "Sum"
+  threshold                 = local.effective_thresholds[each.key].number_of_messages_received.value
+  treat_missing_data        = "notBreaching"
+  unit                      = "Count"
 
   tags = var.tags
 }
@@ -485,26 +499,27 @@ resource "aws_cloudwatch_metric_alarm" "number_of_messages_received" {
 resource "aws_cloudwatch_metric_alarm" "number_of_messages_sent" {
   for_each = {
     for k, v in local.list : k => v
-    if var.is_enabled && local.effective_thresholds[k].enabled_number_of_messages_sent
+    if var.is_enabled && local.effective_thresholds[k].number_of_messages_sent.enabled
   }
 
   region                    = local.region
-  alarm_name                = "${var.name_prefix}metric-sqs-${each.value.name}-number-of-messages-sent"
-  comparison_operator       = "GreaterThanOrEqualToThreshold"
-  evaluation_periods        = 1
-  namespace                 = "AWS/SQS"
-  metric_name               = "NumberOfMessagesSent"
-  period                    = var.period
-  statistic                 = "Sum"
-  threshold                 = local.effective_thresholds[each.key].number_of_messages_sent
   actions_enabled           = true
   alarm_actions             = var.alarm_actions
-  alarm_description         = "This is an alarm to check for <${local.url}|SQS NumberOfMessagesSent>(>= ${local.effective_thresholds[each.key].number_of_messages_sent})."
-  insufficient_data_actions = var.insufficient_data_actions
-  ok_actions                = var.ok_actions
-  unit                      = "Count"
-  treat_missing_data        = "notBreaching"
+  alarm_description         = "This is an alarm to check for <${local.url}|SQS NumberOfMessagesSent>(>= ${local.effective_thresholds[each.key].number_of_messages_sent.value})."
+  alarm_name                = "${var.name_prefix}metric-sqs-${each.value.name}-number-of-messages-sent"
+  comparison_operator       = "GreaterThanOrEqualToThreshold"
+  datapoints_to_alarm       = local.effective_thresholds[each.key].number_of_messages_sent.datapoints_to_alarm
   dimensions                = each.value.dimensions
+  evaluation_periods        = local.effective_thresholds[each.key].number_of_messages_sent.evaluation_periods
+  insufficient_data_actions = var.insufficient_data_actions
+  metric_name               = "NumberOfMessagesSent"
+  namespace                 = "AWS/SQS"
+  ok_actions                = var.ok_actions
+  period                    = var.period
+  statistic                 = "Sum"
+  threshold                 = local.effective_thresholds[each.key].number_of_messages_sent.value
+  treat_missing_data        = "notBreaching"
+  unit                      = "Count"
 
   tags = var.tags
 }
@@ -516,26 +531,27 @@ resource "aws_cloudwatch_metric_alarm" "number_of_messages_sent" {
 resource "aws_cloudwatch_metric_alarm" "sent_message_size" {
   for_each = {
     for k, v in local.list : k => v
-    if var.is_enabled && local.effective_thresholds[k].enabled_sent_message_size
+    if var.is_enabled && local.effective_thresholds[k].sent_message_size.enabled
   }
 
   region                    = local.region
-  alarm_name                = "${var.name_prefix}metric-sqs-${each.value.name}-sent-message-size"
-  comparison_operator       = "GreaterThanOrEqualToThreshold"
-  evaluation_periods        = 1
-  namespace                 = "AWS/SQS"
-  metric_name               = "SentMessageSize"
-  period                    = var.period
-  statistic                 = "Average"
-  threshold                 = local.effective_thresholds[each.key].sent_message_size
   actions_enabled           = true
   alarm_actions             = var.alarm_actions
-  alarm_description         = "This is an alarm to check for <${local.url}|SQS SentMessageSize>(>= ${local.effective_thresholds[each.key].sent_message_size} bytes)."
-  insufficient_data_actions = var.insufficient_data_actions
-  ok_actions                = var.ok_actions
-  unit                      = "Bytes"
-  treat_missing_data        = "notBreaching"
+  alarm_description         = "This is an alarm to check for <${local.url}|SQS SentMessageSize>(>= ${local.effective_thresholds[each.key].sent_message_size.value} bytes)."
+  alarm_name                = "${var.name_prefix}metric-sqs-${each.value.name}-sent-message-size"
+  comparison_operator       = "GreaterThanOrEqualToThreshold"
+  datapoints_to_alarm       = local.effective_thresholds[each.key].sent_message_size.datapoints_to_alarm
   dimensions                = each.value.dimensions
+  evaluation_periods        = local.effective_thresholds[each.key].sent_message_size.evaluation_periods
+  insufficient_data_actions = var.insufficient_data_actions
+  metric_name               = "SentMessageSize"
+  namespace                 = "AWS/SQS"
+  ok_actions                = var.ok_actions
+  period                    = var.period
+  statistic                 = "Average"
+  threshold                 = local.effective_thresholds[each.key].sent_message_size.value
+  treat_missing_data        = "notBreaching"
+  unit                      = "Bytes"
 
   tags = var.tags
 }

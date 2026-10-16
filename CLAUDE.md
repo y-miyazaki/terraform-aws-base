@@ -1,5 +1,3 @@
-@AGENTS.md
-
 # Project Instructions
 
 ## Repository Rules
@@ -34,6 +32,12 @@ To modify agent instructions or skills, edit the source at `.apm/packages/<name>
 
 Independent groups — run in any order. Within each group, execute sequentially.
 
+Terraform checks — do NOT run manually:
+
+- `terraform fmt` and `tflint`: executed by hooks. No manual run required.
+- `terraform validate`: requires `terraform init` beforehand, which is difficult in this environment. Not required.
+- `trivy`: executed by pre-commit. No manual run required.
+
 ### CI/CD
 
 - CI: Reusable workflows from `y-miyazaki/config` repo (Terraform plan, lint, trivy scan)
@@ -58,6 +62,7 @@ Independent groups — run in any order. Within each group, execute sequentially
 - `terraform.example.tfvars` is the master. Every variable and comment written there MUST also be set in `terraform.{dev,qa,stg,prd}.tfvars`.
 - Comments are identical in all five files; only values may differ per environment. A `diff` between two tfvars files must show value differences only.
 - When adding or changing a variable or comment, update all five files in the same change. Never limit it to dev; set an explicit empty value (`[]`, `{}`) when an environment has nothing to set.
+- `terraform.example.tfvars` holds environment-independent defaults. When a CloudWatch Logs metric filter or alarm fix is environment-independent (e.g. excluding benign PostgreSQL log noise from `metric_log_postgresql`), apply it to example and all four environments with identical patterns and comments, even if the ticket targets only one environment. Keep environment-specific values (thresholds, log group names) per environment.
 
 ### File Structure Patterns
 

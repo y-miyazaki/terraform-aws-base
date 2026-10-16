@@ -46,6 +46,79 @@ variable "aws_iam_role" {
   description = "(Required) IAM role configuration."
 }
 
+variable "default_policy_statements" {
+  type = list(object({
+    # (Required) IAM actions, e.g. ["s3:GetBucketVersioning"].
+    actions = list(string)
+    # (Optional) Allow or Deny.
+    effect = optional(string, "Allow")
+    # (Required) Resource ARNs the statement applies to.
+    resources = list(string)
+    # (Required) Statement ID (alphanumeric, unique within the list).
+    sid = string
+  }))
+  description = "(Optional) Baseline read-only statements attached to the role on top of AIDevOpsAgentAccessPolicy, for metadata reads the managed policy lacks (AccessDenied in the investigation). Only add actions that return no secrets or credentials; never allow secretsmanager:GetSecretValue or apigateway API key reads. Set [] to attach none. additional_policy_statements is merged after this list."
+  default = [
+    {
+      sid = "AllowReadMetadata"
+      actions = [
+        "cloudformation:ListStacks",
+        "cloudwatch:DescribeAlarmHistory",
+        "cloudwatch:DescribeAlarms",
+        "ecs:ListClusters",
+        "eks:ListClusters",
+        "kms:GetKeyRotationStatus",
+        "kms:ListResourceTags",
+        "lambda:ListFunctions",
+        "rds:DescribeEvents",
+        "redshift:GetResourcePolicy",
+      ]
+      resources = ["*"]
+    },
+    {
+      sid       = "AllowReadGlueTriggers"
+      actions   = ["glue:GetTrigger", "glue:GetTriggers"]
+      resources = ["*"]
+    },
+    {
+      sid = "AllowReadS3BucketConfiguration"
+      actions = [
+        "s3:GetAccelerateConfiguration",
+        "s3:GetAnalyticsConfiguration",
+        "s3:GetBucketCORS",
+        "s3:GetBucketLogging",
+        "s3:GetBucketNotification",
+        "s3:GetBucketObjectLockConfiguration",
+        "s3:GetBucketOwnershipControls",
+        "s3:GetBucketPublicAccessBlock",
+        "s3:GetBucketTagging",
+        "s3:GetBucketVersioning",
+        "s3:GetBucketWebsite",
+        "s3:GetEncryptionConfiguration",
+        "s3:GetIntelligentTieringConfiguration",
+        "s3:GetInventoryConfiguration",
+        "s3:GetLifecycleConfiguration",
+        "s3:GetMetricsConfiguration",
+        "s3:GetReplicationConfiguration",
+      ]
+      resources = ["arn:aws:s3:::*"]
+    },
+    {
+      sid       = "AllowReadApiGatewayVpcLinks"
+      actions   = ["apigateway:GET"]
+      resources = ["arn:aws:apigateway:*::/vpclinks", "arn:aws:apigateway:*::/vpclinks/*"]
+    },
+  ]
+  validation {
+    condition     = alltrue([for s in var.default_policy_statements : contains(["Allow", "Deny"], s.effect)])
+    error_message = "default_policy_statements[*].effect must be Allow or Deny."
+  }
+  validation {
+    condition     = alltrue([for s in var.default_policy_statements : can(regex("^[A-Za-z0-9]+$", s.sid))])
+    error_message = "default_policy_statements[*].sid must be alphanumeric."
+  }
+}
+
 variable "additional_policy_statements" {
   type = list(object({
     # (Required) IAM actions, e.g. ["lambda:GetFunction"].

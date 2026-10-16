@@ -18,8 +18,13 @@ locals {
 resource "aws_budgets_budget" "this" {
   count = var.is_enabled ? 1 : 0
 
-  name        = var.aws_budgets_budget.name
-  budget_type = coalesce(var.aws_budgets_budget.budget_type, "COST")
+  budget_type       = coalesce(var.aws_budgets_budget.budget_type, "COST")
+  limit_amount      = var.aws_budgets_budget.limit_amount
+  limit_unit        = coalesce(var.aws_budgets_budget.limit_unit, "USD")
+  name              = var.aws_budgets_budget.name
+  time_period_end   = coalesce(var.aws_budgets_budget.time_period_end, "2050-12-31_00:00")
+  time_period_start = coalesce(var.aws_budgets_budget.time_period_start, "2021-01-01_00:00")
+  time_unit         = coalesce(var.aws_budgets_budget.time_unit, "MONTHLY")
 
   // Cost filters
   dynamic "cost_filter" {
@@ -30,7 +35,6 @@ resource "aws_budgets_budget" "this" {
       values = cost_filter.value.values
     }
   }
-
   // Cost types (optional list, usually single element)
   dynamic "cost_types" {
     for_each = var.aws_budgets_budget.cost_types == null ? [] : var.aws_budgets_budget.cost_types
@@ -49,13 +53,6 @@ resource "aws_budgets_budget" "this" {
       use_blended                = coalesce(cost_types.value.use_blended, false)
     }
   }
-
-  limit_amount      = var.aws_budgets_budget.limit_amount
-  limit_unit        = coalesce(var.aws_budgets_budget.limit_unit, "USD")
-  time_period_end   = coalesce(var.aws_budgets_budget.time_period_end, "2050-12-31_00:00")
-  time_period_start = coalesce(var.aws_budgets_budget.time_period_start, "2021-01-01_00:00")
-  time_unit         = coalesce(var.aws_budgets_budget.time_unit, "MONTHLY")
-
   // Notifications
   dynamic "notification" {
     for_each = var.aws_budgets_budget.notification == null ? [] : var.aws_budgets_budget.notification

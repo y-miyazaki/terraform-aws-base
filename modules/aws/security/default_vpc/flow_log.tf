@@ -5,15 +5,15 @@ resource "aws_cloudwatch_log_group" "this" {
   count = local.is_active && var.is_enabled_flow_logs ? 1 : 0
 
   region            = local.region
+  kms_key_id        = try(var.aws_cloudwatch_log_group.kms_key_id, null)
   name              = var.aws_cloudwatch_log_group.name
   retention_in_days = var.aws_cloudwatch_log_group.retention_in_days
-  kms_key_id        = try(var.aws_cloudwatch_log_group.kms_key_id, null)
-
-  tags = var.tags
 
   lifecycle {
     create_before_destroy = true
   }
+
+  tags = var.tags
 }
 
 #--------------------------------------------------------------
@@ -88,8 +88,8 @@ resource "aws_iam_policy" "this" {
 resource "aws_iam_role_policy_attachment" "this" {
   count = local.is_active && var.is_enabled_flow_logs ? 1 : 0
 
-  role       = aws_iam_role.this[0].name
   policy_arn = aws_iam_policy.this[0].arn
+  role       = aws_iam_role.this[0].name
 }
 
 #--------------------------------------------------------------
@@ -99,13 +99,12 @@ resource "aws_flow_log" "this" {
   count = local.is_active && var.is_enabled_flow_logs ? 1 : 0
 
   region          = local.region
-  log_destination = aws_cloudwatch_log_group.this[0].arn
   iam_role_arn    = aws_iam_role.this[0].arn
-  vpc_id          = aws_default_vpc.this[0].id
+  log_destination = aws_cloudwatch_log_group.this[0].arn
   traffic_type    = "ALL"
+  vpc_id          = aws_default_vpc.this[0].id
 
   tags = var.tags
-
   depends_on = [
     aws_cloudwatch_log_group.this,
     aws_iam_role.this,

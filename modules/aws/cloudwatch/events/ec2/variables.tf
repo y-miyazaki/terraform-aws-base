@@ -14,14 +14,15 @@ variable "aws_cloudwatch_event_rule" {
       name = string
       # (Optional) The description of the rule.
       description = optional(string)
+      # (Optional) The state of the rule. Valid values: ENABLED, DISABLED, ENABLED_WITH_ALL_CLOUDTRAIL_MANAGEMENT_EVENTS.
+      state = optional(string)
     }
   )
   description = "(Optional) Provides an EventBridge Rule resource."
   default = {
     name        = "ec2-cloudwatch-event-rule"
     description = "This cloudwatch event used for EC2."
-    role_arn    = null
-    is_enabled  = true
+    state       = "ENABLED"
   }
 }
 

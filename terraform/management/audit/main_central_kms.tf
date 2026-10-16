@@ -10,6 +10,7 @@ module "kms_key" {
   create = each.value.is_enabled
   region = var.region.primary
 
+  aliases                 = ["${var.name_prefix}${each.key}"]
   deletion_window_in_days = each.value.deletion_window_in_days
   description             = each.value.description
   enable_default_policy   = true
@@ -48,7 +49,6 @@ module "kms_key" {
       ]
     },
   ]
-  aliases = ["${var.name_prefix}${each.key}"]
 
   tags = merge(var.tags, {
     Name = "${var.name_prefix}${each.key}"

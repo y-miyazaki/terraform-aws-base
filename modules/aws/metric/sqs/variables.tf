@@ -16,159 +16,111 @@ variable "period" {
 variable "threshold" {
   type = object({
     # (Required) ApproximateAgeOfOldestMessage threshold (unit=Seconds)
-    enabled_approximate_age_of_oldest_message = bool
-    approximate_age_of_oldest_message         = number
+    approximate_age_of_oldest_message = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # (Required) ApproximateAgeOfOldestMessageInQuietGroups threshold (unit=Seconds) - Fair Queues
-    enabled_approximate_age_of_oldest_message_in_quiet_groups = bool
-    approximate_age_of_oldest_message_in_quiet_groups         = number
+    approximate_age_of_oldest_message_in_quiet_groups = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # (Required) ApproximateNumberOfGroupsWithInflightMessages threshold (unit=Count) - FIFO only
-    enabled_approximate_number_of_groups_with_inflight_messages = bool
-    approximate_number_of_groups_with_inflight_messages         = number
+    approximate_number_of_groups_with_inflight_messages = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # (Required) ApproximateNumberOfMessagesDelayed threshold (unit=Count)
-    enabled_approximate_number_of_messages_delayed = bool
-    approximate_number_of_messages_delayed         = number
+    approximate_number_of_messages_delayed = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # (Required) ApproximateNumberOfMessagesDelayedInQuietGroups threshold (unit=Count) - Fair Queues
-    enabled_approximate_number_of_messages_delayed_in_quiet_groups = bool
-    approximate_number_of_messages_delayed_in_quiet_groups         = number
+    approximate_number_of_messages_delayed_in_quiet_groups = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # (Required) ApproximateNumberOfMessagesNotVisible threshold (unit=Count)
-    enabled_approximate_number_of_messages_not_visible = bool
-    approximate_number_of_messages_not_visible         = number
+    approximate_number_of_messages_not_visible = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # (Required) ApproximateNumberOfMessagesNotVisibleInQuietGroups threshold (unit=Count) - Fair Queues
-    enabled_approximate_number_of_messages_not_visible_in_quiet_groups = bool
-    approximate_number_of_messages_not_visible_in_quiet_groups         = number
+    approximate_number_of_messages_not_visible_in_quiet_groups = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # (Required) ApproximateNumberOfMessagesVisible threshold (unit=Count)
-    enabled_approximate_number_of_messages_visible = bool
-    approximate_number_of_messages_visible         = number
+    approximate_number_of_messages_visible = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # (Required) ApproximateNumberOfMessagesVisibleInQuietGroups threshold (unit=Count) - Fair Queues
-    enabled_approximate_number_of_messages_visible_in_quiet_groups = bool
-    approximate_number_of_messages_visible_in_quiet_groups         = number
+    approximate_number_of_messages_visible_in_quiet_groups = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # (Required) ApproximateNumberOfNoisyGroups threshold (unit=Count) - Fair Queues
-    enabled_approximate_number_of_noisy_groups = bool
-    approximate_number_of_noisy_groups         = number
+    approximate_number_of_noisy_groups = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # (Required) NumberOfDeduplicatedSentMessages threshold (unit=Count) - FIFO only
-    enabled_number_of_deduplicated_sent_messages = bool
-    number_of_deduplicated_sent_messages         = number
+    number_of_deduplicated_sent_messages = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # (Required) NumberOfEmptyReceives threshold (unit=Count)
-    enabled_number_of_empty_receives = bool
-    number_of_empty_receives         = number
+    number_of_empty_receives = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # (Required) NumberOfMessagesDeleted threshold (unit=Count)
-    enabled_number_of_messages_deleted = bool
-    number_of_messages_deleted         = number
+    number_of_messages_deleted = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # (Required) NumberOfMessagesReceived threshold (unit=Count)
-    enabled_number_of_messages_received = bool
-    number_of_messages_received         = number
+    number_of_messages_received = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # (Required) NumberOfMessagesSent threshold (unit=Count)
-    enabled_number_of_messages_sent = bool
-    number_of_messages_sent         = number
+    number_of_messages_sent = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # (Required) SentMessageSize threshold (unit=Bytes)
-    enabled_sent_message_size = bool
-    sent_message_size         = number
+    sent_message_size = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
   })
   description = "(Optional) Set the threshold for each Metric in SQS."
   default = {
     # (Required) ApproximateAgeOfOldestMessage threshold (unit=Seconds)
-    enabled_approximate_age_of_oldest_message = true
-    approximate_age_of_oldest_message         = 3600 # 1 hour
+    approximate_age_of_oldest_message = { enabled = true, value = 3600 } # 1 hour
     # (Required) ApproximateAgeOfOldestMessageInQuietGroups threshold (unit=Seconds) - Fair Queues
-    enabled_approximate_age_of_oldest_message_in_quiet_groups = false
-    approximate_age_of_oldest_message_in_quiet_groups         = 3600 # 1 hour
+    approximate_age_of_oldest_message_in_quiet_groups = { enabled = false, value = 3600 } # 1 hour
     # (Required) ApproximateNumberOfGroupsWithInflightMessages threshold (unit=Count) - FIFO only
-    enabled_approximate_number_of_groups_with_inflight_messages = false
-    approximate_number_of_groups_with_inflight_messages         = 1000
+    approximate_number_of_groups_with_inflight_messages = { enabled = false, value = 1000 }
     # (Required) ApproximateNumberOfMessagesDelayed threshold (unit=Count)
-    enabled_approximate_number_of_messages_delayed = false
-    approximate_number_of_messages_delayed         = 1000
+    approximate_number_of_messages_delayed = { enabled = false, value = 1000 }
     # (Required) ApproximateNumberOfMessagesDelayedInQuietGroups threshold (unit=Count) - Fair Queues
-    enabled_approximate_number_of_messages_delayed_in_quiet_groups = false
-    approximate_number_of_messages_delayed_in_quiet_groups         = 1000
+    approximate_number_of_messages_delayed_in_quiet_groups = { enabled = false, value = 1000 }
     # (Required) ApproximateNumberOfMessagesNotVisible threshold (unit=Count)
-    enabled_approximate_number_of_messages_not_visible = false
-    approximate_number_of_messages_not_visible         = 10000
+    approximate_number_of_messages_not_visible = { enabled = false, value = 10000 }
     # (Required) ApproximateNumberOfMessagesNotVisibleInQuietGroups threshold (unit=Count) - Fair Queues
-    enabled_approximate_number_of_messages_not_visible_in_quiet_groups = false
-    approximate_number_of_messages_not_visible_in_quiet_groups         = 10000
+    approximate_number_of_messages_not_visible_in_quiet_groups = { enabled = false, value = 10000 }
     # (Required) ApproximateNumberOfMessagesVisible threshold (unit=Count)
-    enabled_approximate_number_of_messages_visible = true
-    approximate_number_of_messages_visible         = 1000
+    approximate_number_of_messages_visible = { enabled = true, value = 1000 }
     # (Required) ApproximateNumberOfMessagesVisibleInQuietGroups threshold (unit=Count) - Fair Queues
-    enabled_approximate_number_of_messages_visible_in_quiet_groups = false
-    approximate_number_of_messages_visible_in_quiet_groups         = 1000
+    approximate_number_of_messages_visible_in_quiet_groups = { enabled = false, value = 1000 }
     # (Required) ApproximateNumberOfNoisyGroups threshold (unit=Count) - Fair Queues
-    enabled_approximate_number_of_noisy_groups = false
-    approximate_number_of_noisy_groups         = 1
+    approximate_number_of_noisy_groups = { enabled = false, value = 1 }
     # (Required) NumberOfDeduplicatedSentMessages threshold (unit=Count) - FIFO only
-    enabled_number_of_deduplicated_sent_messages = false
-    number_of_deduplicated_sent_messages         = 100
+    number_of_deduplicated_sent_messages = { enabled = false, value = 100 }
     # (Required) NumberOfEmptyReceives threshold (unit=Count)
-    enabled_number_of_empty_receives = false
-    number_of_empty_receives         = 10000
+    number_of_empty_receives = { enabled = false, value = 10000 }
     # (Required) NumberOfMessagesDeleted threshold (unit=Count)
-    enabled_number_of_messages_deleted = false
-    number_of_messages_deleted         = 100000
+    number_of_messages_deleted = { enabled = false, value = 100000 }
     # (Required) NumberOfMessagesReceived threshold (unit=Count)
-    enabled_number_of_messages_received = false
-    number_of_messages_received         = 100000
+    number_of_messages_received = { enabled = false, value = 100000 }
     # (Required) NumberOfMessagesSent threshold (unit=Count)
-    enabled_number_of_messages_sent = false
-    number_of_messages_sent         = 100000
+    number_of_messages_sent = { enabled = false, value = 100000 }
     # (Required) SentMessageSize threshold (unit=Bytes)
-    enabled_sent_message_size = false
-    sent_message_size         = 262144 # 256KB (max SQS message size)
+    sent_message_size = { enabled = false, value = 262144 } # 256KB (max SQS message size)
   }
 }
 
 variable "threshold_override" {
   type = map(object({
     # ApproximateAgeOfOldestMessage threshold (unit=Seconds)
-    enabled_approximate_age_of_oldest_message = optional(bool)
-    approximate_age_of_oldest_message         = optional(number)
+    approximate_age_of_oldest_message = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
     # ApproximateAgeOfOldestMessageInQuietGroups threshold (unit=Seconds) - Fair Queues
-    enabled_approximate_age_of_oldest_message_in_quiet_groups = optional(bool)
-    approximate_age_of_oldest_message_in_quiet_groups         = optional(number)
+    approximate_age_of_oldest_message_in_quiet_groups = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
     # ApproximateNumberOfGroupsWithInflightMessages threshold (unit=Count) - FIFO only
-    enabled_approximate_number_of_groups_with_inflight_messages = optional(bool)
-    approximate_number_of_groups_with_inflight_messages         = optional(number)
+    approximate_number_of_groups_with_inflight_messages = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
     # ApproximateNumberOfMessagesDelayed threshold (unit=Count)
-    enabled_approximate_number_of_messages_delayed = optional(bool)
-    approximate_number_of_messages_delayed         = optional(number)
+    approximate_number_of_messages_delayed = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
     # ApproximateNumberOfMessagesDelayedInQuietGroups threshold (unit=Count) - Fair Queues
-    enabled_approximate_number_of_messages_delayed_in_quiet_groups = optional(bool)
-    approximate_number_of_messages_delayed_in_quiet_groups         = optional(number)
+    approximate_number_of_messages_delayed_in_quiet_groups = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
     # ApproximateNumberOfMessagesNotVisible threshold (unit=Count)
-    enabled_approximate_number_of_messages_not_visible = optional(bool)
-    approximate_number_of_messages_not_visible         = optional(number)
+    approximate_number_of_messages_not_visible = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
     # ApproximateNumberOfMessagesNotVisibleInQuietGroups threshold (unit=Count) - Fair Queues
-    enabled_approximate_number_of_messages_not_visible_in_quiet_groups = optional(bool)
-    approximate_number_of_messages_not_visible_in_quiet_groups         = optional(number)
+    approximate_number_of_messages_not_visible_in_quiet_groups = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
     # ApproximateNumberOfMessagesVisible threshold (unit=Count)
-    enabled_approximate_number_of_messages_visible = optional(bool)
-    approximate_number_of_messages_visible         = optional(number)
+    approximate_number_of_messages_visible = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
     # ApproximateNumberOfMessagesVisibleInQuietGroups threshold (unit=Count) - Fair Queues
-    enabled_approximate_number_of_messages_visible_in_quiet_groups = optional(bool)
-    approximate_number_of_messages_visible_in_quiet_groups         = optional(number)
+    approximate_number_of_messages_visible_in_quiet_groups = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
     # ApproximateNumberOfNoisyGroups threshold (unit=Count) - Fair Queues
-    enabled_approximate_number_of_noisy_groups = optional(bool)
-    approximate_number_of_noisy_groups         = optional(number)
+    approximate_number_of_noisy_groups = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
     # NumberOfDeduplicatedSentMessages threshold (unit=Count) - FIFO only
-    enabled_number_of_deduplicated_sent_messages = optional(bool)
-    number_of_deduplicated_sent_messages         = optional(number)
+    number_of_deduplicated_sent_messages = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
     # NumberOfEmptyReceives threshold (unit=Count)
-    enabled_number_of_empty_receives = optional(bool)
-    number_of_empty_receives         = optional(number)
+    number_of_empty_receives = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
     # NumberOfMessagesDeleted threshold (unit=Count)
-    enabled_number_of_messages_deleted = optional(bool)
-    number_of_messages_deleted         = optional(number)
+    number_of_messages_deleted = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
     # NumberOfMessagesReceived threshold (unit=Count)
-    enabled_number_of_messages_received = optional(bool)
-    number_of_messages_received         = optional(number)
+    number_of_messages_received = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
     # NumberOfMessagesSent threshold (unit=Count)
-    enabled_number_of_messages_sent = optional(bool)
-    number_of_messages_sent         = optional(number)
+    number_of_messages_sent = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
     # SentMessageSize threshold (unit=Bytes)
-    enabled_sent_message_size = optional(bool)
-    sent_message_size         = optional(number)
+    sent_message_size = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
   }))
-  description = "(Optional) Override threshold settings for specific queues. Key is QueueName (exact match), value contains optional threshold attributes to override."
+  description = "(Optional) Override threshold settings for specific queues. Key is QueueName (exact match), value contains optional threshold attributes to override. Each metric accepts enabled, value, datapoints_to_alarm and evaluation_periods."
   default     = {}
 }
 

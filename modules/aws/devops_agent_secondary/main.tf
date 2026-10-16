@@ -4,6 +4,10 @@
 # Notes: The trust policy is pinned to one Agent Space ARN. Create the Agent Space in the primary account first.
 #        https://docs.aws.amazon.com/devopsagent/latest/userguide/getting-started-with-aws-devops-agent-getting-started-with-aws-devops-agent-using-terraform.html
 #--------------------------------------------------------------
+locals {
+  policy_statements = concat(var.default_policy_statements, var.additional_policy_statements)
+}
+
 data "aws_iam_policy_document" "service_linked_role" {
   statement {
     actions   = ["iam:CreateServiceLinkedRole"] # nosemgrep: terraform.lang.security.iam.no-iam-resource-exposure.no-iam-resource-exposure -- scoped to the single Resource Explorer service-linked role ARN
@@ -67,10 +71,10 @@ resource "aws_iam_role_policy_attachment" "service_linked_role" {
 }
 
 data "aws_iam_policy_document" "additional" {
-  count = var.is_enabled && length(var.additional_policy_statements) > 0 ? 1 : 0
+  count = var.is_enabled && length(local.policy_statements) > 0 ? 1 : 0
 
   dynamic "statement" {
-    for_each = var.additional_policy_statements
+    for_each = local.policy_statements
 
     content {
       actions   = statement.value.actions
@@ -82,7 +86,7 @@ data "aws_iam_policy_document" "additional" {
 }
 
 resource "aws_iam_policy" "additional" {
-  count = var.is_enabled && length(var.additional_policy_statements) > 0 ? 1 : 0
+  count = var.is_enabled && length(local.policy_statements) > 0 ? 1 : 0
 
   name   = "Additional-${var.aws_iam_role.name}"
   path   = var.aws_iam_role.path
@@ -91,7 +95,7 @@ resource "aws_iam_policy" "additional" {
 }
 
 resource "aws_iam_role_policy_attachment" "additional" {
-  count = var.is_enabled && length(var.additional_policy_statements) > 0 ? 1 : 0
+  count = var.is_enabled && length(local.policy_statements) > 0 ? 1 : 0
 
   policy_arn = aws_iam_policy.additional[0].arn
   role       = aws_iam_role.this[0].name

@@ -84,8 +84,8 @@ resource "aws_iam_policy" "this" {
 # Attaches a Managed IAM Policy to an IAM role
 #--------------------------------------------------------------
 resource "aws_iam_role_policy_attachment" "this" {
-  role       = aws_iam_role.this.name
   policy_arn = aws_iam_policy.this.arn
+  role       = aws_iam_role.this.name
 }
 
 #--------------------------------------------------------------
@@ -95,10 +95,10 @@ resource "aws_cloudwatch_log_subscription_filter" "this" {
   for_each = local.aws_cloudwatch_log_subscription_filter
 
   region          = local.region
-  name            = each.value.name
   destination_arn = each.value.destination_arn
+  distribution    = try(each.value.distribution, "Random")
   filter_pattern  = try(each.value.filter_pattern, null)
   log_group_name  = each.value.log_group_name
+  name            = each.value.name
   role_arn        = aws_iam_role.this.arn
-  distribution    = try(each.value.distribution, "Random")
 }

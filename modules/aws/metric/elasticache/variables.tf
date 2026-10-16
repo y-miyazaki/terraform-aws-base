@@ -34,248 +34,160 @@ variable "period" {
 variable "threshold" {
   type = object({
     # AuthenticationFailures threshold (unit=Count)
-    enabled_authentication_failures = bool
-    authentication_failures         = number
+    authentication_failures = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # BytesUsedForCache threshold (unit=Bytes)
-    enabled_bytes_used_for_cache = bool
-    bytes_used_for_cache         = number
+    bytes_used_for_cache = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # CacheHitRate threshold (unit=Percent)
-    enabled_cache_hit_rate = bool
-    cache_hit_rate         = number
+    cache_hit_rate = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # CacheHits threshold (unit=Count)
-    enabled_cache_hits = bool
-    cache_hits         = number
+    cache_hits = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # CacheMisses threshold (unit=Count)
-    enabled_cache_misses = bool
-    cache_misses         = number
+    cache_misses = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # CommandAuthorizationFailures threshold (unit=Count)
-    enabled_command_authorization_failures = bool
-    command_authorization_failures         = number
+    command_authorization_failures = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # CPUUtilization threshold (unit=Percent)
-    enabled_cpu_utilization = bool
-    cpu_utilization         = number
+    cpu_utilization = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # CurrConnections threshold (unit=Count)
-    enabled_curr_connections = bool
-    curr_connections         = number
+    curr_connections = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # CurrItems threshold (unit=Count)
-    enabled_curr_items = bool
-    curr_items         = number
+    curr_items = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # DatabaseCapacityUsagePercentage threshold (unit=Percent)
-    enabled_database_capacity_usage_percentage = bool
-    database_capacity_usage_percentage         = number
+    database_capacity_usage_percentage = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # DatabaseMemoryUsagePercentage threshold (unit=Percent)
-    enabled_database_memory_usage_percentage = bool
-    database_memory_usage_percentage         = number
+    database_memory_usage_percentage = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # EngineCPUUtilization threshold (unit=Percent)
-    enabled_engine_cpu_utilization = bool
-    engine_cpu_utilization         = number
+    engine_cpu_utilization = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # ErrorCount threshold (unit=Count)
-    enabled_error_count = bool
-    error_count         = number
+    error_count = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # Evictions threshold (unit=Count)
-    enabled_evictions = bool
-    evictions         = number
+    evictions = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # FreeableMemory threshold (unit=Bytes)
-    enabled_freeable_memory = bool
-    freeable_memory         = number
+    freeable_memory = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # IamAuthenticationExpirations threshold (unit=Count)
-    enabled_iam_authentication_expirations = bool
-    iam_authentication_expirations         = number
+    iam_authentication_expirations = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # IamAuthenticationThrottling threshold (unit=Count)
-    enabled_iam_authentication_throttling = bool
-    iam_authentication_throttling         = number
+    iam_authentication_throttling = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # KeyAuthorizationFailures threshold (unit=Count)
-    enabled_key_authorization_failures = bool
-    key_authorization_failures         = number
+    key_authorization_failures = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # MemoryFragmentationRatio threshold (unit=None)
-    enabled_memory_fragmentation_ratio = bool
-    memory_fragmentation_ratio         = number
+    memory_fragmentation_ratio = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # NetworkBytesIn threshold (unit=Bytes)
-    enabled_network_bytes_in = bool
-    network_bytes_in         = number
+    network_bytes_in = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # NetworkBytesOut threshold (unit=Bytes)
-    enabled_network_bytes_out = bool
-    network_bytes_out         = number
+    network_bytes_out = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # NewConnections threshold (unit=Count)
-    enabled_new_connections = bool
-    new_connections         = number
+    new_connections = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # ReplicationBytes threshold (unit=Bytes)
-    enabled_replication_bytes = bool
-    replication_bytes         = number
+    replication_bytes = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # ReplicationLag threshold (unit=Seconds)
-    enabled_replication_lag = bool
-    replication_lag         = number
+    replication_lag = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # SaveInProgress threshold (unit=None)
-    enabled_save_in_progress = bool
-    save_in_progress         = number
+    save_in_progress = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # SuccessfulReadRequestLatency threshold (unit=Microseconds)
-    enabled_successful_read_request_latency = bool
-    successful_read_request_latency         = number
+    successful_read_request_latency = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # SuccessfulWriteRequestLatency threshold (unit=Microseconds)
-    enabled_successful_write_request_latency = bool
-    successful_write_request_latency         = number
+    successful_write_request_latency = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # SwapUsage threshold (unit=Bytes)
-    enabled_swap_usage = bool
-    swap_usage         = number
+    swap_usage = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # TrafficManagementActive threshold (unit=None)
-    enabled_traffic_management_active = bool
-    traffic_management_active         = number
-    }
-  )
+    traffic_management_active = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
+  })
   description = "(Optional) Set the threshold for each Metric in ElastiCache."
   default = {
-    enabled_authentication_failures            = true
-    authentication_failures                    = 1
-    enabled_bytes_used_for_cache               = true
-    bytes_used_for_cache                       = 3221225472 # 3GB
-    enabled_cache_hit_rate                     = true
-    cache_hit_rate                             = 10
-    enabled_cache_hits                         = false
-    cache_hits                                 = 0
-    enabled_cache_misses                       = true
-    cache_misses                               = 1000
-    enabled_command_authorization_failures     = true
-    command_authorization_failures             = 1
-    enabled_cpu_utilization                    = true
-    cpu_utilization                            = 90
-    enabled_curr_connections                   = true
-    curr_connections                           = 50
-    enabled_curr_items                         = true
-    curr_items                                 = 100000
-    enabled_database_capacity_usage_percentage = true
-    database_capacity_usage_percentage         = 80
-    enabled_database_memory_usage_percentage   = true
-    database_memory_usage_percentage           = 80
-    enabled_engine_cpu_utilization             = true
-    engine_cpu_utilization                     = 90
-    enabled_error_count                        = true
-    error_count                                = 1
-    enabled_evictions                          = true
-    evictions                                  = 100
-    enabled_freeable_memory                    = true
-    freeable_memory                            = 1073741824 # 1GB
-    enabled_iam_authentication_expirations     = true
-    iam_authentication_expirations             = 1
-    enabled_iam_authentication_throttling      = true
-    iam_authentication_throttling              = 1
-    enabled_key_authorization_failures         = true
-    key_authorization_failures                 = 1
-    enabled_memory_fragmentation_ratio         = true
-    memory_fragmentation_ratio                 = 5
-    enabled_network_bytes_in                   = true
-    network_bytes_in                           = 524288000 # 500MB
-    enabled_network_bytes_out                  = true
-    network_bytes_out                          = 524288000 # 500MB
-    enabled_new_connections                    = true
-    new_connections                            = 100
-    enabled_replication_bytes                  = true
-    replication_bytes                          = 104857600 # 100MB
-    enabled_replication_lag                    = true
-    replication_lag                            = 30
-    enabled_save_in_progress                   = true
-    save_in_progress                           = 1
-    enabled_successful_read_request_latency    = true
-    successful_read_request_latency            = 10000
-    enabled_successful_write_request_latency   = true
-    successful_write_request_latency           = 10000
-    enabled_swap_usage                         = true
-    swap_usage                                 = 52428800 # 50MB
-    enabled_traffic_management_active          = true
-    traffic_management_active                  = 1
+    authentication_failures            = { enabled = true, value = 1 }
+    bytes_used_for_cache               = { enabled = true, value = 3221225472 } # 3GB
+    cache_hit_rate                     = { enabled = true, value = 10 }
+    cache_hits                         = { enabled = false, value = 0 }
+    cache_misses                       = { enabled = true, value = 1000 }
+    command_authorization_failures     = { enabled = true, value = 1 }
+    cpu_utilization                    = { enabled = true, value = 90 }
+    curr_connections                   = { enabled = true, value = 50 }
+    curr_items                         = { enabled = true, value = 100000 }
+    database_capacity_usage_percentage = { enabled = true, value = 80 }
+    database_memory_usage_percentage   = { enabled = true, value = 80 }
+    engine_cpu_utilization             = { enabled = true, value = 90 }
+    error_count                        = { enabled = true, value = 1 }
+    evictions                          = { enabled = true, value = 100 }
+    freeable_memory                    = { enabled = true, value = 1073741824 } # 1GB
+    iam_authentication_expirations     = { enabled = true, value = 1 }
+    iam_authentication_throttling      = { enabled = true, value = 1 }
+    key_authorization_failures         = { enabled = true, value = 1 }
+    memory_fragmentation_ratio         = { enabled = true, value = 5 }
+    network_bytes_in                   = { enabled = true, value = 524288000 } # 500MB
+    network_bytes_out                  = { enabled = true, value = 524288000 } # 500MB
+    new_connections                    = { enabled = true, value = 100 }
+    replication_bytes                  = { enabled = true, value = 104857600 } # 100MB
+    replication_lag                    = { enabled = true, value = 30 }
+    save_in_progress                   = { enabled = true, value = 1 }
+    successful_read_request_latency    = { enabled = true, value = 10000 }
+    successful_write_request_latency   = { enabled = true, value = 10000 }
+    swap_usage                         = { enabled = true, value = 52428800 } # 50MB
+    traffic_management_active          = { enabled = true, value = 1 }
   }
 }
 
 variable "threshold_override" {
   type = map(object({
-    # (Optional) AuthenticationFailures threshold (unit=Count)
-    enabled_authentication_failures = optional(bool)
-    authentication_failures         = optional(number)
-    # (Optional) BytesUsedForCache threshold (unit=Bytes)
-    enabled_bytes_used_for_cache = optional(bool)
-    bytes_used_for_cache         = optional(number)
-    # (Optional) CacheHitRate threshold (unit=Percent)
-    enabled_cache_hit_rate = optional(bool)
-    cache_hit_rate         = optional(number)
-    # (Optional) CacheHits threshold (unit=Count)
-    enabled_cache_hits = optional(bool)
-    cache_hits         = optional(number)
-    # (Optional) CacheMisses threshold (unit=Count)
-    enabled_cache_misses = optional(bool)
-    cache_misses         = optional(number)
-    # (Optional) CommandAuthorizationFailures threshold (unit=Count)
-    enabled_command_authorization_failures = optional(bool)
-    command_authorization_failures         = optional(number)
-    # (Optional) CPUUtilization threshold (unit=Percent)
-    enabled_cpu_utilization = optional(bool)
-    cpu_utilization         = optional(number)
-    # (Optional) CurrConnections threshold (unit=Count)
-    enabled_curr_connections = optional(bool)
-    curr_connections         = optional(number)
-    # (Optional) CurrItems threshold (unit=Count)
-    enabled_curr_items = optional(bool)
-    curr_items         = optional(number)
-    # (Optional) DatabaseCapacityUsagePercentage threshold (unit=Percent)
-    enabled_database_capacity_usage_percentage = optional(bool)
-    database_capacity_usage_percentage         = optional(number)
-    # (Optional) DatabaseMemoryUsagePercentage threshold (unit=Percent)
-    enabled_database_memory_usage_percentage = optional(bool)
-    database_memory_usage_percentage         = optional(number)
-    # (Optional) EngineCPUUtilization threshold (unit=Percent)
-    enabled_engine_cpu_utilization = optional(bool)
-    engine_cpu_utilization         = optional(number)
-    # (Optional) ErrorCount threshold (unit=Count)
-    enabled_error_count = optional(bool)
-    error_count         = optional(number)
-    # (Optional) Evictions threshold (unit=Count)
-    enabled_evictions = optional(bool)
-    evictions         = optional(number)
-    # (Optional) FreeableMemory threshold (unit=Bytes)
-    enabled_freeable_memory = optional(bool)
-    freeable_memory         = optional(number)
-    # (Optional) IamAuthenticationExpirations threshold (unit=Count)
-    enabled_iam_authentication_expirations = optional(bool)
-    iam_authentication_expirations         = optional(number)
-    # (Optional) IamAuthenticationThrottling threshold (unit=Count)
-    enabled_iam_authentication_throttling = optional(bool)
-    iam_authentication_throttling         = optional(number)
-    # (Optional) KeyAuthorizationFailures threshold (unit=Count)
-    enabled_key_authorization_failures = optional(bool)
-    key_authorization_failures         = optional(number)
-    # (Optional) MemoryFragmentationRatio threshold (unit=None)
-    enabled_memory_fragmentation_ratio = optional(bool)
-    memory_fragmentation_ratio         = optional(number)
-    # (Optional) NetworkBytesIn threshold (unit=Bytes)
-    enabled_network_bytes_in = optional(bool)
-    network_bytes_in         = optional(number)
-    # (Optional) NetworkBytesOut threshold (unit=Bytes)
-    enabled_network_bytes_out = optional(bool)
-    network_bytes_out         = optional(number)
-    # (Optional) NewConnections threshold (unit=Count)
-    enabled_new_connections = optional(bool)
-    new_connections         = optional(number)
-    # (Optional) ReplicationBytes threshold (unit=Bytes)
-    enabled_replication_bytes = optional(bool)
-    replication_bytes         = optional(number)
-    # (Optional) ReplicationLag threshold (unit=Seconds)
-    enabled_replication_lag = optional(bool)
-    replication_lag         = optional(number)
-    # (Optional) SaveInProgress threshold (unit=None)
-    enabled_save_in_progress = optional(bool)
-    save_in_progress         = optional(number)
-    # (Optional) SuccessfulReadRequestLatency threshold (unit=Microseconds)
-    enabled_successful_read_request_latency = optional(bool)
-    successful_read_request_latency         = optional(number)
-    # (Optional) SuccessfulWriteRequestLatency threshold (unit=Microseconds)
-    enabled_successful_write_request_latency = optional(bool)
-    successful_write_request_latency         = optional(number)
-    # (Optional) SwapUsage threshold (unit=Bytes)
-    enabled_swap_usage = optional(bool)
-    swap_usage         = optional(number)
-    # (Optional) TrafficManagementActive threshold (unit=None)
-    enabled_traffic_management_active = optional(bool)
-    traffic_management_active         = optional(number)
+    # AuthenticationFailures threshold (unit=Count)
+    authentication_failures = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # BytesUsedForCache threshold (unit=Bytes)
+    bytes_used_for_cache = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # CacheHitRate threshold (unit=Percent)
+    cache_hit_rate = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # CacheHits threshold (unit=Count)
+    cache_hits = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # CacheMisses threshold (unit=Count)
+    cache_misses = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # CommandAuthorizationFailures threshold (unit=Count)
+    command_authorization_failures = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # CPUUtilization threshold (unit=Percent)
+    cpu_utilization = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # CurrConnections threshold (unit=Count)
+    curr_connections = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # CurrItems threshold (unit=Count)
+    curr_items = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # DatabaseCapacityUsagePercentage threshold (unit=Percent)
+    database_capacity_usage_percentage = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # DatabaseMemoryUsagePercentage threshold (unit=Percent)
+    database_memory_usage_percentage = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # EngineCPUUtilization threshold (unit=Percent)
+    engine_cpu_utilization = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # ErrorCount threshold (unit=Count)
+    error_count = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # Evictions threshold (unit=Count)
+    evictions = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # FreeableMemory threshold (unit=Bytes)
+    freeable_memory = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # IamAuthenticationExpirations threshold (unit=Count)
+    iam_authentication_expirations = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # IamAuthenticationThrottling threshold (unit=Count)
+    iam_authentication_throttling = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # KeyAuthorizationFailures threshold (unit=Count)
+    key_authorization_failures = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # MemoryFragmentationRatio threshold (unit=None)
+    memory_fragmentation_ratio = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # NetworkBytesIn threshold (unit=Bytes)
+    network_bytes_in = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # NetworkBytesOut threshold (unit=Bytes)
+    network_bytes_out = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # NewConnections threshold (unit=Count)
+    new_connections = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # ReplicationBytes threshold (unit=Bytes)
+    replication_bytes = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # ReplicationLag threshold (unit=Seconds)
+    replication_lag = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # SaveInProgress threshold (unit=None)
+    save_in_progress = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # SuccessfulReadRequestLatency threshold (unit=Microseconds)
+    successful_read_request_latency = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # SuccessfulWriteRequestLatency threshold (unit=Microseconds)
+    successful_write_request_latency = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # SwapUsage threshold (unit=Bytes)
+    swap_usage = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # TrafficManagementActive threshold (unit=None)
+    traffic_management_active = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
   }))
-  description = "(Optional) Override thresholds for specific resources. Key is the CacheClusterId."
+  description = "(Optional) Override thresholds for specific resources. Key is the CacheClusterId. Each metric accepts enabled, value, datapoints_to_alarm and evaluation_periods."
   default     = {}
 }
 

@@ -14,6 +14,15 @@ locals {
   # Fixed name: the primary account builds the assumable role ARN of every secondary account from it.
   devops_agent_secondary_role_name = "DevOpsAgentRole-SecondaryAccount"
 
+  # Locale of the Agent Space that owns the generic webhook (first by name when several). Injected into the alert Lambda environment as
+  # DEVOPS_AGENT_LOCALE so the webhook sender can request the same answer language. null (nothing injected) when this account has no
+  # webhook-enabled Agent Space with a locale; secondary accounts set DEVOPS_AGENT_LOCALE explicitly in aws_lambda_function.environment.
+  devops_agent_webhook_locale = try([
+    for k in sort(keys(var.devops_agent.primary.agent_spaces)) : var.devops_agent.primary.agent_spaces[k].locale
+    if local.devops_agent_is_primary && var.devops_agent.primary.agent_spaces[k].is_enabled && var.devops_agent.primary.agent_spaces[k].webhook.is_enabled && var.devops_agent.primary.agent_spaces[k].locale != null
+  ][0], null)
+  devops_agent_webhook_locale_environment = local.devops_agent_webhook_locale == null ? {} : { DEVOPS_AGENT_LOCALE = local.devops_agent_webhook_locale }
+
   # Slack reply MCP server (main_central_lambda_devops_agent_mcp_slack_reply.tf), attached to every Agent Space
   devops_agent_mcp_slack_reply_mcp_servers = local.devops_agent_mcp_slack_reply_enabled ? {
     mcp_slack_reply = {
@@ -35,7 +44,16 @@ locals {
   }
   devops_agent_agents_md_base = {
     for k, a in var.devops_agent.primary.agent_spaces : k => {
-      for t, v in a.agents_md : t => file("${path.module}/${v.content_file}")
+      # Files are concatenated in order (content_file first, then content_files), so rules can be split by category.
+      for t, v in a.agents_md : t => join("\n", [
+        for f in concat(v.content_file == null ? [] : [v.content_file], v.content_files) : file("${path.module}/${f}")
+      ])
+    }
+  }
+  # name and description of a skill default to the frontmatter of its SKILL.md; the value in agent_spaces[*].skills[*] takes precedence.
+  devops_agent_skill_frontmatter = {
+    for k, a in var.devops_agent.primary.agent_spaces : k => {
+      for sk, v in a.skills : sk => try(yamldecode(split("---", file("${path.module}/${v.content_file}"))[1]), {})
     }
   }
   devops_agent_agents_md_linear_section = {
@@ -118,13 +136,13 @@ module "devops_agent" {
     for k, v in each.value.skills : k => {
       agent_types = v.agent_types
       content     = file("${path.module}/${v.content_file}")
-      description = v.description
+      description = coalesce(v.description, try(local.devops_agent_skill_frontmatter[each.key][k].description, null))
       # Files next to SKILL.md: references/ and assets/ (text files only), read from the directory of content_file.
       files = {
         for f in fileset(dirname("${path.module}/${v.content_file}"), "{assets,references}/**/*.{csv,json,md,txt,yaml,yml}") :
         f => file("${dirname("${path.module}/${v.content_file}")}/${f}")
       }
-      name = v.name
+      name = coalesce(v.name, try(local.devops_agent_skill_frontmatter[each.key][k].name, null))
     }
   }
   webhook = each.value.webhook.is_enabled ? {

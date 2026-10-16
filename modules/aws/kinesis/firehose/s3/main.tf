@@ -21,8 +21,10 @@ locals {
 resource "aws_kinesis_firehose_delivery_stream" "this" {
   for_each = local.aws_kinesis_firehose_delivery_stream
 
-  region = local.region
-  name   = each.value.name
+  region      = local.region
+  destination = "extended_s3"
+  name        = each.value.name
+
   dynamic "server_side_encryption" {
     for_each = try(each.value.server_side_encryption, [])
 
@@ -32,7 +34,6 @@ resource "aws_kinesis_firehose_delivery_stream" "this" {
       key_arn  = try(server_side_encryption.value.key_arn, null)
     }
   }
-  destination = "extended_s3"
   dynamic "extended_s3_configuration" {
     for_each = try(each.value.extended_s3_configuration, [])
 
@@ -86,14 +87,14 @@ resource "aws_kinesis_firehose_delivery_stream" "this" {
         content {
           # base
           role_arn           = aws_iam_role.this[0].arn
-          bucket_arn         = try(extended_s3_configuration.value.bucket_arn, null)
-          prefix             = try(extended_s3_configuration.value.prefix, null)
-          buffering_size     = try(extended_s3_configuration.value.buffering_size, null)
-          buffering_interval = try(extended_s3_configuration.value.buffering_interval, null)
-          compression_format = try(extended_s3_configuration.value.compression_format, null)
-          kms_key_arn        = try(extended_s3_configuration.value.kms_key_arn, null)
+          bucket_arn         = try(s3_backup_configuration.value.bucket_arn, null)
+          prefix             = try(s3_backup_configuration.value.prefix, null)
+          buffering_size     = try(s3_backup_configuration.value.buffering_size, null)
+          buffering_interval = try(s3_backup_configuration.value.buffering_interval, null)
+          compression_format = try(s3_backup_configuration.value.compression_format, null)
+          kms_key_arn        = try(s3_backup_configuration.value.kms_key_arn, null)
           dynamic "cloudwatch_logging_options" {
-            for_each = try(extended_s3_configuration.value.cloudwatch_logging_options, [])
+            for_each = try(s3_backup_configuration.value.cloudwatch_logging_options, [])
 
             content {
               enabled         = try(cloudwatch_logging_options.value.enabled, null)
@@ -203,7 +204,7 @@ data "aws_iam_policy_document" "this" {
     ]
     #tfsec:ignore:AWS099
     resources = [
-      "arn:aws:logs:${local.region}:${var.account_id}:log-group/*",
+      "arn:aws:logs:${local.region}:${var.account_id}:log-group:*",
     ]
   }
   statement {
@@ -240,6 +241,6 @@ resource "aws_iam_policy" "this" {
 resource "aws_iam_role_policy_attachment" "this" {
   count = length(var.aws_kinesis_firehose_delivery_stream) > 0 ? 1 : 0
 
-  role       = aws_iam_role.this[0].name
   policy_arn = aws_iam_policy.this[0].arn
+  role       = aws_iam_role.this[0].name
 }

@@ -21,11 +21,19 @@ module "aws_api_gateway_report_csp" {
   is_enabled = var.report_csp.is_enabled
   region     = var.region.primary
 
-  name_prefix                               = var.name_prefix
-  role_arn                                  = module.aws_iam_role_lambda.arn
+  aws_api_gateway_rest_api_execution_arn    = var.report_csp.is_enabled ? module.aws_api_gateway_create.execution_arn : ""
   aws_api_gateway_rest_api_id               = var.report_csp.is_enabled ? module.aws_api_gateway_create.id : ""
   aws_api_gateway_rest_api_root_resource_id = var.report_csp.is_enabled ? module.aws_api_gateway_create.root_resource_id : ""
-  aws_api_gateway_rest_api_execution_arn    = var.report_csp.is_enabled ? module.aws_api_gateway_create.execution_arn : ""
+  lambda_function_environment = {
+    LOGGER_FORMATTER = "json"
+    LOGGER_OUT       = "stdout"
+    LOGGER_LEVEL     = "warn"
+    # Override SLACK_* with priority: override > defaults
+    SLACK_OAUTH_ACCESS_TOKEN = coalesce(try(var.slack.override.apigateway_report_csp.oauth_access_token, null), var.slack.oauth_access_token)
+    SLACK_CHANNEL_ID         = coalesce(try(var.slack.override.apigateway_report_csp.channel_id, null), var.slack.channel_id)
+  }
+  name_prefix = var.name_prefix
+  role_arn    = module.aws_iam_role_lambda.arn
   vpc_config = var.common_lambda.vpc.is_enabled ? var.common_lambda.vpc.create_vpc ? [
     {
       subnet_ids         = module.lambda_vpc["primary"].private_subnets
@@ -37,14 +45,6 @@ module "aws_api_gateway_report_csp" {
       security_group_ids = [var.common_lambda.vpc.exists.security_group_id]
     }
   ] : []
-  lambda_function_environment = {
-    LOGGER_FORMATTER = "json"
-    LOGGER_OUT       = "stdout"
-    LOGGER_LEVEL     = "warn"
-    # Override SLACK_* with priority: override > defaults
-    SLACK_OAUTH_ACCESS_TOKEN = coalesce(try(var.slack.override.apigateway_report_csp.oauth_access_token, null), var.slack.oauth_access_token)
-    SLACK_CHANNEL_ID         = coalesce(try(var.slack.override.apigateway_report_csp.channel_id, null), var.slack.channel_id)
-  }
 
   tags = var.tags
 }

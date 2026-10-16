@@ -54,8 +54,8 @@ resource "aws_sns_topic" "this" {
   count = var.is_enabled ? 1 : 0
 
   region            = local.region
-  name              = "${var.name_prefix}security-guardduty-chatbot-slack-topic"
   kms_master_key_id = var.kms_master_key_id
+  name              = "${var.name_prefix}security-guardduty-chatbot-slack-topic"
 
   tags = var.tags
 }
@@ -76,7 +76,7 @@ resource "aws_cloudwatch_event_target" "sns_publish" {
   count = var.is_enabled ? 1 : 0
 
   region    = local.region
+  arn       = aws_sns_topic.this[0].arn
   rule      = aws_cloudwatch_event_rule.this[0].name
   target_id = aws_sns_topic.this[0].name
-  arn       = aws_sns_topic.this[0].arn
 }

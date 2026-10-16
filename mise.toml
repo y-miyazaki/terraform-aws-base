@@ -39,18 +39,18 @@ uvx = true # Install uv/uvx via pipx for better isolation and performance.
 #   - npm:awsp: shell functions (_awsp), no executable to shim
 
 # A Runtime tools
-aqua = "v2.63.0"
+aqua = "v2.64.0"
 node = "24.21.0"
-pnpm = { version = "11.28.4", depends = ["node"] }
+pnpm = { version = "11.28.5", depends = ["node"] }
 python = "3.14.6"
 
 # AI agent tools
 "github:microsoft/apm" = { version = "v0.33.0", lazy = true, lazy_bins = ["apm"] }                                 # agent package manager
-claude = { version = "2.1.291", lazy = true, lazy_bins = ["claude"] }                                              # Claude Code CLI
+claude = { version = "2.1.295", lazy = true, lazy_bins = ["claude"] }                                              # Claude Code CLI
 "github:DeusData/codebase-memory-mcp" = { version = "v0.11.0", lazy = true, lazy_bins = ["codebase-memory-mcp"] } # codebase memory MCP server
-"aqua:github/copilot-cli" = { version = "1.0.92", lazy = true, lazy_bins = ["copilot"] }                           # GitHub Copilot CLI
+"aqua:github/copilot-cli" = { version = "1.0.94", lazy = true, lazy_bins = ["copilot"] }                           # GitHub Copilot CLI
 "pipx:headroom-ai" = { version = "0.40.0", extras = "proxy,mcp,bedrock", depends = ["python"], lazy = true, lazy_bins = ["headroom", "headroom-cache-ttl"] }
-"npm:lean-ctx-bin" = { version = "3.10.5", depends = [
+"npm:lean-ctx-bin" = { version = "3.11.0", depends = [
   "node",
 ], allow_builds = [
   "lean-ctx-bin",
@@ -58,8 +58,8 @@ claude = { version = "2.1.291", lazy = true, lazy_bins = ["claude"] }           
 "github:microsoft/waza" = { version = "v0.38.9", lazy = true, lazy_bins = ["waza"] }                              # agent skill evaluator
 
 # AWS related tools
-"aqua:aws/aws-cli" = { version = "2.37.9", lazy = true, lazy_bins = ["aws", "aws_completer"] }                     # AWS CLI
-"aqua:aws/aws-sam-cli" = { version = "1.166.2", lazy = true, lazy_bins = ["sam"] }                                 # SAM CLI tool
+"aqua:aws/aws-cli" = { version = "2.37.11", lazy = true, lazy_bins = ["aws", "aws_completer"] }                     # AWS CLI
+"aqua:aws/aws-sam-cli" = { version = "1.167.0", lazy = true, lazy_bins = ["sam"] }                                 # SAM CLI tool
 "npm:awsp" = { version = "0.2.0", depends = [
   "node",
 ], install_env = { NPM_CONFIG_IGNORE_SCRIPTS = "true" } } # AWS profile switcher
@@ -119,7 +119,7 @@ claude = { version = "2.1.291", lazy = true, lazy_bins = ["claude"] }           
 "pipx:pre-commit" = { version = "4.6.2", depends = [
   "python",
 ], lazy = true, lazy_bins = ["pre-commit"] } # pre-commit framework
-"pipx:semgrep" = { version = "1.179.0", depends = ["python"], lazy = true, lazy_bins = ["semgrep", "pysemgrep"] } # SAST scanner (uvx-backed pipx)
+"pipx:semgrep" = { version = "1.180.0", depends = ["python"], lazy = true, lazy_bins = ["semgrep", "pysemgrep"] } # SAST scanner (uvx-backed pipx)
 "aqua:aquasecurity/trivy" = { version = "0.75.0", lazy = true, lazy_bins = ["trivy"] }                             # vulnerability scanner
 
 # Terraform related tools
@@ -133,8 +133,8 @@ claude = { version = "2.1.291", lazy = true, lazy_bins = ["claude"] }           
 "pipx:mkdocs" = { version = "1.6.1", depends = ["python"], postinstall = "uv pip install --python $MISE_TOOL_INSTALL_PATH/mkdocs/bin/python mkdocs-material mdx-truly-sane-lists", lazy = true, lazy_bins = ["mkdocs"] } # MkDocs with Material theme
 "aqua:BurntSushi/ripgrep" = { version = "15.2.0", lazy = true, lazy_bins = ["rg"] }                                # grep alternative (rg)
 "aqua:tamasfe/taplo" = { version = "0.10.0", lazy = true, lazy_bins = ["taplo"] }                                  # TOML formatter / LSP
-"aqua:jdx/usage" = { version = "6.12.0", lazy = true, lazy_bins = ["usage"] }                                      # usage CLI tool for command help and completions
-"aqua:astral-sh/uv" = "0.12.23"                                                                                    # uv/uvx
+"aqua:jdx/usage" = { version = "6.12.1", lazy = true, lazy_bins = ["usage"] }                                      # usage CLI tool for command help and completions
+"aqua:astral-sh/uv" = "0.12.24"                                                                                    # uv/uvx
 
 [tasks.mise-install]
 description = "Install tools defined in mise.toml"

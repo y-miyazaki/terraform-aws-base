@@ -16,144 +16,95 @@ variable "period" {
 variable "threshold" {
   type = object({
     # ActiveConnectionCount threshold (unit=Count)
-    enabled_active_connection_count = bool
-    active_connection_count         = number
+    active_connection_count = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # BytesOutToDestination threshold (unit=Bytes)
-    enabled_bytes_out_to_destination = bool
-    bytes_out_to_destination         = number
+    bytes_out_to_destination = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # BytesInFromSource threshold (unit=Bytes)
-    enabled_bytes_in_from_source = bool
-    bytes_in_from_source         = number
+    bytes_in_from_source = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # BytesInFromDestination threshold (unit=Bytes)
-    enabled_bytes_in_from_destination = bool
-    bytes_in_from_destination         = number
+    bytes_in_from_destination = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # BytesOutToSource threshold (unit=Bytes)
-    enabled_bytes_out_to_source = bool
-    bytes_out_to_source         = number
+    bytes_out_to_source = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # PacketsDropCount threshold (unit=Count)
-    enabled_packets_drop_count = bool
-    packets_drop_count         = number
+    packets_drop_count = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # ErrorPortAllocation threshold (unit=Count)
-    enabled_error_port_allocation = bool
-    error_port_allocation         = number
+    error_port_allocation = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # IdleTimeoutCount threshold (unit=Count)
-    enabled_idle_timeout_count = bool
-    idle_timeout_count         = number
+    idle_timeout_count = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # PacketsInFromDestination threshold (unit=Count)
-    enabled_packets_in_from_destination = bool
-    packets_in_from_destination         = number
+    packets_in_from_destination = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # PacketsInFromSource threshold (unit=Count)
-    enabled_packets_in_from_source = bool
-    packets_in_from_source         = number
+    packets_in_from_source = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # PacketsOutToDestination threshold (unit=Count)
-    enabled_packets_out_to_destination = bool
-    packets_out_to_destination         = number
+    packets_out_to_destination = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # PacketsOutToSource threshold (unit=Count)
-    enabled_packets_out_to_source = bool
-    packets_out_to_source         = number
+    packets_out_to_source = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # ConnectionAttemptCount threshold (unit=Count)
-    enabled_connection_attempt_count = bool
-    connection_attempt_count         = number
+    connection_attempt_count = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # ConnectionEstablishedCount threshold (unit=Count)
-    enabled_connection_established_count = bool
-    connection_established_count         = number
+    connection_established_count = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # PeakBytesPerSecond threshold (unit=Bytes/Second)
-    enabled_peak_bytes_per_second = bool
-    peak_bytes_per_second         = number
+    peak_bytes_per_second = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # PeakPacketsPerSecond threshold (unit=Count/Second)
-    enabled_peak_packets_per_second = bool
-    peak_packets_per_second         = number
-    }
-  )
+    peak_packets_per_second = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
+  })
   description = "(Optional) Set the threshold for each Metric in NAT Gateway."
   default = {
-    enabled_active_connection_count      = false
-    active_connection_count              = 10000
-    enabled_bytes_out_to_destination     = true
-    bytes_out_to_destination             = 107374182400 # 100GB in bytes
-    enabled_bytes_in_from_source         = true
-    bytes_in_from_source                 = 107374182400 # 100GB in bytes
-    enabled_bytes_in_from_destination    = false
-    bytes_in_from_destination            = 107374182400 # 100GB in bytes
-    enabled_bytes_out_to_source          = false
-    bytes_out_to_source                  = 107374182400 # 100GB in bytes
-    enabled_packets_drop_count           = true
-    packets_drop_count                   = 100
-    enabled_error_port_allocation        = true
-    error_port_allocation                = 10
-    enabled_idle_timeout_count           = false
-    idle_timeout_count                   = 100
-    enabled_packets_in_from_destination  = false
-    packets_in_from_destination          = 10000000
-    enabled_packets_in_from_source       = false
-    packets_in_from_source               = 10000000
-    enabled_packets_out_to_destination   = false
-    packets_out_to_destination           = 10000000
-    enabled_packets_out_to_source        = false
-    packets_out_to_source                = 10000000
-    enabled_connection_attempt_count     = true
-    connection_attempt_count             = 10000
-    enabled_connection_established_count = true
-    connection_established_count         = 10000
-    enabled_peak_bytes_per_second        = false
-    peak_bytes_per_second                = 1073741824 # 1GB/sec
-    enabled_peak_packets_per_second      = false
-    peak_packets_per_second              = 100000
+    active_connection_count      = { enabled = false, value = 10000 }
+    bytes_out_to_destination     = { enabled = true, value = 107374182400 }  # 100GB in bytes
+    bytes_in_from_source         = { enabled = true, value = 107374182400 }  # 100GB in bytes
+    bytes_in_from_destination    = { enabled = false, value = 107374182400 } # 100GB in bytes
+    bytes_out_to_source          = { enabled = false, value = 107374182400 } # 100GB in bytes
+    packets_drop_count           = { enabled = true, value = 100 }
+    error_port_allocation        = { enabled = true, value = 10 }
+    idle_timeout_count           = { enabled = false, value = 100 }
+    packets_in_from_destination  = { enabled = false, value = 10000000 }
+    packets_in_from_source       = { enabled = false, value = 10000000 }
+    packets_out_to_destination   = { enabled = false, value = 10000000 }
+    packets_out_to_source        = { enabled = false, value = 10000000 }
+    connection_attempt_count     = { enabled = true, value = 10000 }
+    connection_established_count = { enabled = true, value = 10000 }
+    peak_bytes_per_second        = { enabled = false, value = 1073741824 } # 1GB/sec
+    peak_packets_per_second      = { enabled = false, value = 100000 }
   }
 }
 
 variable "threshold_override" {
   type = map(object({
     # ActiveConnectionCount threshold (unit=Count)
-    enabled_active_connection_count = optional(bool)
-    active_connection_count         = optional(number)
+    active_connection_count = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
     # BytesOutToDestination threshold (unit=Bytes)
-    enabled_bytes_out_to_destination = optional(bool)
-    bytes_out_to_destination         = optional(number)
+    bytes_out_to_destination = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
     # BytesInFromSource threshold (unit=Bytes)
-    enabled_bytes_in_from_source = optional(bool)
-    bytes_in_from_source         = optional(number)
+    bytes_in_from_source = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
     # BytesInFromDestination threshold (unit=Bytes)
-    enabled_bytes_in_from_destination = optional(bool)
-    bytes_in_from_destination         = optional(number)
+    bytes_in_from_destination = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
     # BytesOutToSource threshold (unit=Bytes)
-    enabled_bytes_out_to_source = optional(bool)
-    bytes_out_to_source         = optional(number)
+    bytes_out_to_source = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
     # PacketsDropCount threshold (unit=Count)
-    enabled_packets_drop_count = optional(bool)
-    packets_drop_count         = optional(number)
+    packets_drop_count = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
     # ErrorPortAllocation threshold (unit=Count)
-    enabled_error_port_allocation = optional(bool)
-    error_port_allocation         = optional(number)
+    error_port_allocation = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
     # IdleTimeoutCount threshold (unit=Count)
-    enabled_idle_timeout_count = optional(bool)
-    idle_timeout_count         = optional(number)
+    idle_timeout_count = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
     # PacketsInFromDestination threshold (unit=Count)
-    enabled_packets_in_from_destination = optional(bool)
-    packets_in_from_destination         = optional(number)
+    packets_in_from_destination = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
     # PacketsInFromSource threshold (unit=Count)
-    enabled_packets_in_from_source = optional(bool)
-    packets_in_from_source         = optional(number)
+    packets_in_from_source = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
     # PacketsOutToDestination threshold (unit=Count)
-    enabled_packets_out_to_destination = optional(bool)
-    packets_out_to_destination         = optional(number)
+    packets_out_to_destination = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
     # PacketsOutToSource threshold (unit=Count)
-    enabled_packets_out_to_source = optional(bool)
-    packets_out_to_source         = optional(number)
+    packets_out_to_source = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
     # ConnectionAttemptCount threshold (unit=Count)
-    enabled_connection_attempt_count = optional(bool)
-    connection_attempt_count         = optional(number)
+    connection_attempt_count = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
     # ConnectionEstablishedCount threshold (unit=Count)
-    enabled_connection_established_count = optional(bool)
-    connection_established_count         = optional(number)
+    connection_established_count = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
     # PeakBytesPerSecond threshold (unit=Bytes/Second)
-    enabled_peak_bytes_per_second = optional(bool)
-    peak_bytes_per_second         = optional(number)
+    peak_bytes_per_second = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
     # PeakPacketsPerSecond threshold (unit=Count/Second)
-    enabled_peak_packets_per_second = optional(bool)
-    peak_packets_per_second         = optional(number)
+    peak_packets_per_second = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
   }))
-  description = "(Optional) Override thresholds for specific NAT Gateways. Key is the NatGatewayId."
+  description = "(Optional) Override thresholds for specific NAT Gateways. Key is the NatGatewayId. Each metric accepts enabled, value, datapoints_to_alarm and evaluation_periods."
   default     = {}
 }
 

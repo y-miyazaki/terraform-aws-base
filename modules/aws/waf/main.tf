@@ -21,8 +21,8 @@ resource "aws_cloudwatch_log_group" "this" {
   count = var.logging.enabled && var.logging.log_destination_arn == null ? 1 : 0
 
   region            = local.region
-  name              = coalesce(var.logging.log_group_name, "aws-waf-logs-${var.name}")
   kms_key_id        = var.logging.kms_key_id
+  name              = coalesce(var.logging.log_group_name, "aws-waf-logs-${var.name}")
   retention_in_days = var.logging.retention_in_days
 
   tags = var.tags
@@ -33,8 +33,8 @@ resource "aws_cloudwatch_log_group" "this" {
 #--------------------------------------------------------------
 resource "aws_wafv2_web_acl" "this" {
   region      = local.region
-  name        = var.name
   description = var.description
+  name        = var.name
   scope       = var.scope
 
   default_action {
@@ -47,7 +47,6 @@ resource "aws_wafv2_web_acl" "this" {
       content {}
     }
   }
-
   dynamic "custom_response_body" {
     for_each = var.custom_response_bodies
     content {
@@ -56,7 +55,6 @@ resource "aws_wafv2_web_acl" "this" {
       key          = custom_response_body.value.key
     }
   }
-
   dynamic "rule" {
     for_each = var.rules
     content {
@@ -167,7 +165,6 @@ resource "aws_wafv2_web_acl" "this" {
       }
     }
   }
-
   visibility_config {
     cloudwatch_metrics_enabled = var.visibility_config.cloudwatch_metrics_enabled
     metric_name                = var.visibility_config.metric_name

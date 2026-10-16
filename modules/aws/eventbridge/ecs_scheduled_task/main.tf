@@ -18,16 +18,16 @@ locals {
 module "scheduler_helper" {
   source = "../../_internal/eventbridge_scheduler_helper"
 
-  is_enabled            = var.is_enabled
-  create_auto_schedules = var.create_auto_schedules
+  is_enabled = var.is_enabled
 
-  source_schedules            = local.auto_discovered_schedules
-  auto_schedules_include_list = var.auto_schedules_include_list
   auto_schedules_exclude_list = var.auto_schedules_exclude_list
+  auto_schedules_include_list = var.auto_schedules_include_list
+  create_auto_schedules       = var.create_auto_schedules
   manual_schedules            = var.schedules
+  primary_key                 = "task_definition" # Filter by task definition family name
   schedule_expression_start   = var.schedule_expression_start
   schedule_expression_stop    = var.schedule_expression_stop
-  primary_key                 = "task_definition" # Filter by task definition family name
+  source_schedules            = local.auto_discovered_schedules
 }
 
 #--------------------------------------------------------------
@@ -43,6 +43,7 @@ locals {
     for k, v in local.raw_schedules : [
       for rule_name in split(",", lookup(local.discovered_rules_map, "${v.ecs_cluster}/${v.task_definition}", "")) : {
         key                       = k
+        key_name                  = replace("${k}-${rule_name}", "/", "-")
         rule_name                 = rule_name
         schedule_expression_start = v.schedule_expression_start
         schedule_expression_stop  = v.schedule_expression_stop
@@ -70,14 +71,15 @@ resource "aws_scheduler_schedule" "stop" {
     if var.is_enabled && v.schedule_expression_stop != null
   }
 
-  region      = local.region
-  description = try(each.value.description, var.description, "Disable EventBridge rule ${each.value.rule_name} (Task: ${each.value.task_definition})")
-  flexible_time_window {
-    mode = "OFF"
-  }
+  region              = local.region
+  description         = try(each.value.description, var.description, "Disable EventBridge rule ${each.value.rule_name} (Task: ${each.value.task_definition})")
   name                = substr("${var.name_prefix}${each.value.key_name}-disable-rule-sch", 0, 63)
   schedule_expression = each.value.schedule_expression_stop
   state               = "ENABLED"
+
+  flexible_time_window {
+    mode = "OFF"
+  }
   target {
     arn      = "arn:aws:scheduler:::aws-sdk:eventbridge:disableRule"
     role_arn = var.role_arn
@@ -102,14 +104,15 @@ resource "aws_scheduler_schedule" "start" {
     if var.is_enabled && v.schedule_expression_start != null
   }
 
-  region      = local.region
-  description = try(each.value.description, var.description, "Enable EventBridge rule ${each.value.rule_name} (Task: ${each.value.task_definition})")
-  flexible_time_window {
-    mode = "OFF"
-  }
+  region              = local.region
+  description         = try(each.value.description, var.description, "Enable EventBridge rule ${each.value.rule_name} (Task: ${each.value.task_definition})")
   name                = substr("${var.name_prefix}${each.value.key_name}-enable-rule-sch", 0, 63)
   schedule_expression = each.value.schedule_expression_start
   state               = "ENABLED"
+
+  flexible_time_window {
+    mode = "OFF"
+  }
   target {
     arn      = "arn:aws:scheduler:::aws-sdk:eventbridge:enableRule"
     role_arn = var.role_arn

@@ -243,11 +243,11 @@ resource "aws_iam_policy" "elb_service_linked_role" {
 # Attaches a Managed IAM Policy to an IAM role
 #--------------------------------------------------------------
 resource "aws_iam_role_policy_attachment" "this" {
-  role       = aws_iam_role.this.id
   policy_arn = aws_iam_policy.this.arn
+  role       = aws_iam_role.this.id
 }
 
 resource "aws_iam_role_policy_attachment" "elb_service_linked_role" {
-  role       = aws_iam_role.this.id
   policy_arn = aws_iam_policy.elb_service_linked_role.arn
+  role       = aws_iam_role.this.id
 }

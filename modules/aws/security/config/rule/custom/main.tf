@@ -19,10 +19,11 @@ resource "aws_config_config_rule" "this" {
   count = var.is_enabled ? 1 : 0
 
   region                      = local.region
-  name                        = var.aws_config_config_rule[count.index].name
   description                 = var.aws_config_config_rule[count.index].description
   input_parameters            = var.aws_config_config_rule[count.index].input_parameters
   maximum_execution_frequency = var.aws_config_config_rule[count.index].maximum_execution_frequency
+  name                        = var.aws_config_config_rule[count.index].name
+
   dynamic "scope" {
     for_each = try(var.aws_config_config_rule[count.index].scope, [])
 

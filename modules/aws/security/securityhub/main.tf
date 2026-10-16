@@ -89,9 +89,9 @@ resource "aws_securityhub_action_target" "this" {
   count = var.is_enabled ? 1 : 0
 
   region      = local.region
-  name        = var.aws_securityhub_action_target.name
-  identifier  = var.aws_securityhub_action_target.identifier
   description = var.aws_securityhub_action_target.description
+  identifier  = var.aws_securityhub_action_target.identifier
+  name        = var.aws_securityhub_action_target.name
 
   depends_on = [
     aws_securityhub_account.this

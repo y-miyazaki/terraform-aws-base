@@ -85,7 +85,7 @@ trap 'echo "[ERROR] Aborted while processing: ${CURRENT_FILE_BEING_SCANNED:-N/A}
 #   None
 #
 # Arguments:
-#   None
+#   $1 - Exit code (default: 0)
 #
 # Outputs:
 #   Writes to stdout
@@ -98,6 +98,7 @@ trap 'echo "[ERROR] Aborted while processing: ${CURRENT_FILE_BEING_SCANNED:-N/A}
 #
 #######################################
 function show_usage {
+    local exit_code="${1:-0}"
     cat << EOF
 Usage: $(basename "$0") [options]
 
@@ -129,7 +130,7 @@ Examples:
   $(basename "$0") --no-plan terraform/base
   $(basename "$0") -v -r terraform/                  # Recursive with verbose output
 EOF
-    exit 0
+    exit "$exit_code"
 }
 
 #######################################
@@ -199,7 +200,7 @@ function parse_arguments {
 
     if [[ -z $TERRAFORM_DIR ]]; then
         echo "Error: Terraform directory is required" >&2
-        show_usage
+        show_usage 1
     fi
 
     TERRAFORM_DIR=$(realpath "$TERRAFORM_DIR")
@@ -509,12 +510,6 @@ function create_baseline_plan {
 
     log "INFO" "Creating baseline plan before module update..."
 
-    # Debug output for troubleshooting
-    echo "[DEBUG] Current directory: $(pwd)"
-    echo "[DEBUG] Directory listing:" && ls -l
-    echo "[DEBUG] ENV: $env"
-    set -x
-
     # Check for backend configuration file
     local backend_config="terraform.${env}.tfbackend"
     local init_options=()
@@ -525,7 +520,6 @@ function create_baseline_plan {
 
     # Initialize terraform
     if ! terraform init "${init_options[@]}" > /dev/null 2>&1; then
-        set +x
         log "ERROR" "Initial terraform init failed"
         if [[ $VERBOSE == "true" ]]; then
             log "ERROR" "Init error - running in verbose mode"
@@ -534,7 +528,6 @@ function create_baseline_plan {
         fi
         return 1
     fi
-    set +x
 
     # Create baseline plan and write artifacts to the backup artifacts dir for this project
     local tfvars_file="terraform.${env}.tfvars"
@@ -646,33 +639,32 @@ function create_baseline_plans_for_projects {
 function extract_modules_from_file {
     local file="$1"
     # Extract module blocks and find source/version pairs robustly (POSIX awk, nested block aware)
+    # Only top-level attributes of a module block count, so nested blocks and
+    # attributes such as engine_version are not mistaken for the module version.
     awk '
-    BEGIN { in_module=0; block=""; nest=0; }
-    '"$MODULE_PATTERN_AWK"' {
-      in_module=1; block = $0 "\n"; nest=1; next;
-    }
+    BEGIN { in_module=0; nest=0; source=""; version="" }
+    '"$MODULE_PATTERN_AWK"' && !in_module { in_module=1; nest=0; source=""; version="" }
     in_module {
-      block = block $0 "\n";
-      if ($0 ~ /{/) nest++;
-      if ($0 ~ /}/) nest--;
-      if (nest == 0) {
-        source=""; version="";
-        if (match(block, /source[[:space:]]*=[[:space:]]*"[^"]+"/)) {
-          s = substr(block, RSTART, RLENGTH);
-          gsub(/.*=[[:space:]]*"/, "", s);
-          gsub(/".*/, "", s);
+      line = $0
+      if (nest == 1) {
+        if (match(line, /^[[:space:]]*source[[:space:]]*=[[:space:]]*"[^"]+"/)) {
+          s = substr(line, RSTART, RLENGTH);
+          sub(/^[^"]*"/, "", s); sub(/".*/, "", s);
           source = s;
         }
-        if (match(block, /version[[:space:]]*=[[:space:]]*"[^"]+"/)) {
-          s = substr(block, RSTART, RLENGTH);
-          gsub(/.*=[[:space:]]*"/, "", s);
-          gsub(/".*/, "", s);
+        if (match(line, /^[[:space:]]*version[[:space:]]*=[[:space:]]*"[^"]+"/)) {
+          s = substr(line, RSTART, RLENGTH);
+          sub(/^[^"]*"/, "", s); sub(/".*/, "", s);
           version = s;
         }
-        if (length(source) > 0 && length(version) > 0) { print source "||" version "||" FILENAME; }
-        in_module=0; block="";
       }
-      next;
+      tmp = line; opens = gsub(/{/, "", tmp);
+      tmp = line; closes = gsub(/}/, "", tmp);
+      nest += opens - closes;
+      if (nest <= 0) {
+        if (length(source) > 0 && length(version) > 0) { print source "||" version "||" FILENAME; }
+        in_module=0;
+      }
     }
   ' "$file"
 }
@@ -761,9 +753,7 @@ function find_terraform_project_root {
     done
 
     # If no project root found, return the file's directory
-    # shellcheck disable=SC2086
-    # shellcheck disable=SC2005
-    echo "$(dirname \"$file_path\")"
+    dirname "$file_path"
 }
 
 #######################################
@@ -824,6 +814,7 @@ function get_latest_version {
         latest=$(echo "$response" | jq -r '
             ( .versions // empty | map(.version) )
             // ( .modules // empty | first | .versions // empty | map(.version) )
+            | map(select(test("^[0-9]+([.][0-9]+)*$")))
             | select(length>0)
             | sort_by(split(".")|map(tonumber? // 0))
             | last
@@ -1318,22 +1309,51 @@ function update_module_version {
     local backup_file
     backup_file=$(backup_file "$file")
 
-    # Update version using sed
-    local escaped_current
-    # shellcheck disable=SC2016
-    escaped_current=$(printf '%s\n' "$current_version" | sed 's/[[\.*^$()+?{|]/\\&/g')
-    local escaped_new
-    # shellcheck disable=SC2016
-    escaped_new=$(printf '%s\n' "$new_version" | sed 's/[[\.*^$()+?{|]/\\&/g')
-
-    if sed -i.tmp "s/version[[:space:]]*=[[:space:]]*\"${escaped_current}\"/version = \"${escaped_new}\"/" "$file"; then
-        rm -f "$file.tmp"
+    # Rewrite only the top-level version of module blocks whose source matches.
+    # Other modules, nested attributes (e.g. engine_version) and differing
+    # per-file current versions are handled correctly.
+    local tmp_file
+    tmp_file=$(mktemp "${file}.XXXXXX")
+    if MU_SRC="$module_source" MU_NEW="$new_version" awk '
+    BEGIN { src=ENVIRON["MU_SRC"]; new=ENVIRON["MU_NEW"]; in_module=0; n=0; changed=0 }
+    '"$MODULE_PATTERN_AWK"' && !in_module { in_module=1; nest=0; n=0; src_match=0; vline=0 }
+    in_module {
+      line = $0
+      if (nest == 1) {
+        if (match(line, /^[[:space:]]*source[[:space:]]*=[[:space:]]*"[^"]+"/)) {
+          s = substr(line, RSTART, RLENGTH);
+          sub(/^[^"]*"/, "", s); sub(/".*/, "", s);
+          if (s == src) src_match = 1;
+        }
+        if (vline == 0 && match(line, /^[[:space:]]*version[[:space:]]*=[[:space:]]*"[^"]+"/)) vline = n + 1;
+      }
+      buf[++n] = line
+      tmp = line; opens = gsub(/{/, "", tmp);
+      tmp = line; closes = gsub(/}/, "", tmp);
+      nest += opens - closes;
+      if (nest <= 0) {
+        if (src_match && vline > 0) {
+          sub(/"[^"]+"/, "\"" new "\"", buf[vline]); changed++;
+        }
+        for (i = 1; i <= n; i++) print buf[i];
+        in_module=0; n=0;
+      }
+      next
+    }
+    { print }
+    END {
+      if (in_module) for (i = 1; i <= n; i++) print buf[i];
+      exit (changed > 0 ? 0 : 3)
+    }
+  ' "$file" > "$tmp_file"; then
+        cat "$tmp_file" > "$file"
+        rm -f "$tmp_file"
         log "INFO" "✅ Successfully updated $module_source in $(basename "$file")"
         return 0
     else
-        # Restore from backup on failure
+        # No matching module changed (or awk failed): restore from backup
         cp "$backup_file" "$file"
-        rm -f "$file.tmp"
+        rm -f "$tmp_file"
         log "ERROR" "❌ Failed to update $module_source in $(basename "$file")"
         return 1
     fi

@@ -48,8 +48,8 @@ resource "aws_iam_role" "this" {
 resource "aws_iam_role_policy_attachment" "this" {
   count = var.is_enabled ? length(var.policy) : 0
 
-  role       = aws_iam_role.this[0].name
   policy_arn = var.policy[count.index].policy_arn
+  role       = aws_iam_role.this[0].name
 }
 
 #--------------------------------------------------------------
@@ -117,6 +117,6 @@ resource "aws_iam_policy" "custom" {
 resource "aws_iam_role_policy_attachment" "custom" {
   count = var.is_enabled && var.aws_iam_policy != null ? 1 : 0
 
-  role       = aws_iam_role.this[0].name
   policy_arn = aws_iam_policy.custom[0].arn
+  role       = aws_iam_role.this[0].name
 }

@@ -130,8 +130,8 @@ resource "aws_iam_policy" "this" {
 resource "aws_iam_role_policy_attachment" "this" {
   count = var.is_enabled && var.aws_synthetics_canary.execution_role_arn == null ? 1 : 0
 
-  role       = aws_iam_role.this[0].name
   policy_arn = aws_iam_policy.this[0].arn
+  role       = aws_iam_role.this[0].name
 }
 
 #--------------------------------------------------------------
@@ -140,12 +140,20 @@ resource "aws_iam_role_policy_attachment" "this" {
 resource "aws_synthetics_canary" "this" {
   count = var.is_enabled ? 1 : 0
 
-  region               = local.region
-  artifact_s3_location = var.aws_synthetics_canary.artifact_s3_location
-  execution_role_arn   = var.aws_synthetics_canary.execution_role_arn == null ? aws_iam_role.this[0].arn : var.aws_synthetics_canary.execution_role_arn
-  handler              = var.aws_synthetics_canary.handler
-  name                 = var.aws_synthetics_canary.name
-  runtime_version      = var.aws_synthetics_canary.runtime_version
+  region                   = local.region
+  artifact_s3_location     = var.aws_synthetics_canary.artifact_s3_location
+  execution_role_arn       = var.aws_synthetics_canary.execution_role_arn == null ? aws_iam_role.this[0].arn : var.aws_synthetics_canary.execution_role_arn
+  failure_retention_period = try(var.aws_synthetics_canary.failure_retention_period, null)
+  handler                  = var.aws_synthetics_canary.handler
+  name                     = var.aws_synthetics_canary.name
+  runtime_version          = var.aws_synthetics_canary.runtime_version
+  s3_bucket                = try(var.aws_synthetics_canary.s3_bucket, null)
+  s3_key                   = try(var.aws_synthetics_canary.s3_key, null)
+  s3_version               = try(var.aws_synthetics_canary.s3_version, null)
+  start_canary             = try(var.aws_synthetics_canary.start_canary, null)
+  success_retention_period = try(var.aws_synthetics_canary.success_retention_period, null)
+  zip_file                 = try(var.aws_synthetics_canary.zip_file, null)
+
   dynamic "schedule" {
     for_each = try(var.aws_synthetics_canary.schedule, [])
 
@@ -162,7 +170,6 @@ resource "aws_synthetics_canary" "this" {
       security_group_ids = try(vpc_config.value.security_group_ids, null)
     }
   }
-  failure_retention_period = try(var.aws_synthetics_canary.failure_retention_period, null)
   dynamic "run_config" {
     for_each = try(var.aws_synthetics_canary.run_config, [])
 
@@ -172,11 +179,6 @@ resource "aws_synthetics_canary" "this" {
       active_tracing     = try(run_config.value.active_tracing, null)
     }
   }
-  s3_bucket                = try(var.aws_synthetics_canary.s3_bucket, null)
-  s3_key                   = try(var.aws_synthetics_canary.s3_key, null)
-  s3_version               = try(var.aws_synthetics_canary.s3_version, null)
-  start_canary             = try(var.aws_synthetics_canary.start_canary, null)
-  success_retention_period = try(var.aws_synthetics_canary.success_retention_period, null)
   dynamic "artifact_config" {
     for_each = try(var.aws_synthetics_canary.artifact_config, [])
 
@@ -191,10 +193,8 @@ resource "aws_synthetics_canary" "this" {
       }
     }
   }
-  zip_file = try(var.aws_synthetics_canary.zip_file, null)
 
   tags = var.tags
-
   depends_on = [
     aws_iam_role_policy_attachment.this
   ]

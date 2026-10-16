@@ -54,6 +54,6 @@ resource "aws_iam_role" "this" {
 resource "aws_iam_role_policy_attachment" "support_policy" {
   count = var.is_enabled && var.aws_iam_role != null ? 1 : 0
 
-  role       = aws_iam_role.this[0].id
   policy_arn = "arn:aws:iam::aws:policy/AWSSupportAccess"
+  role       = aws_iam_role.this[0].id
 }

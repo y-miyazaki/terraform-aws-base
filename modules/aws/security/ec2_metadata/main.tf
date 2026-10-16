@@ -20,7 +20,7 @@ resource "aws_ec2_instance_metadata_defaults" "this" {
   count = var.is_enabled ? 1 : 0
 
   region                      = local.region
-  http_tokens                 = var.http_tokens
-  http_put_response_hop_limit = var.http_put_response_hop_limit
   http_endpoint               = var.http_endpoint
+  http_put_response_hop_limit = var.http_put_response_hop_limit
+  http_tokens                 = var.http_tokens
 }

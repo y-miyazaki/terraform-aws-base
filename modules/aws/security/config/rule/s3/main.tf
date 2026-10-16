@@ -20,8 +20,9 @@ resource "aws_config_config_rule" "cloudtrail-s3-dataevents-enabled" {
   count = var.is_enabled ? 1 : 0
 
   region      = local.region
-  name        = "${local.name_prefix}cloudtrail-s3-dataevents-enabled"
   description = "Checks whether at least one AWS CloudTrail trail is logging Amazon S3 data events for all S3 buckets. The rule is NON_COMPLIANT if trails log data events for S3 buckets is not configured."
+  name        = "${local.name_prefix}cloudtrail-s3-dataevents-enabled"
+
   source {
     owner             = "AWS"
     source_identifier = "CLOUDTRAIL_S3_DATAEVENTS_ENABLED"
@@ -38,8 +39,9 @@ resource "aws_config_config_rule" "s3-account-level-public-access-blocks" {
   count = var.is_enabled ? 1 : 0
 
   region      = local.region
-  name        = "${local.name_prefix}s3-account-level-public-access-blocks"
   description = "Checks whether the required public access block settings are configured from account level. The rule is NON_COMPLIANT when the public access block settings are not configured from account level."
+  name        = "${local.name_prefix}s3-account-level-public-access-blocks"
+
   source {
     owner             = "AWS"
     source_identifier = "S3_ACCOUNT_LEVEL_PUBLIC_ACCESS_BLOCKS"
@@ -54,11 +56,15 @@ resource "aws_config_config_rule" "s3-account-level-public-access-blocks" {
 resource "aws_config_remediation_configuration" "s3-account-level-public-access-blocks" {
   count = var.is_enabled && var.is_configure_s3_bucket_public_access_block ? 1 : 0
 
-  region           = local.region
-  config_rule_name = aws_config_config_rule.s3-account-level-public-access-blocks[0].name
-  target_type      = "SSM_DOCUMENT"
+  region                     = local.region
+  automatic                  = true
+  config_rule_name           = aws_config_config_rule.s3-account-level-public-access-blocks[0].name
+  maximum_automatic_attempts = 5
+  retry_attempt_seconds      = 60
   # https://docs.aws.amazon.com/systems-manager-automation-runbooks/latest/userguide/automation-aws-block-public-s3.html
-  target_id = "AWSConfigRemediation-ConfigureS3PublicAccessBlock"
+  target_id   = "AWSConfigRemediation-ConfigureS3PublicAccessBlock"
+  target_type = "SSM_DOCUMENT"
+
   parameter {
     name           = "AccountId"
     resource_value = "RESOURCE_ID"
@@ -83,9 +89,6 @@ resource "aws_config_remediation_configuration" "s3-account-level-public-access-
     name         = "RestrictPublicBuckets"
     static_value = var.configure_s3_bucket_public_access_block.restrict_public_buckets
   }
-  automatic                  = true
-  maximum_automatic_attempts = 5
-  retry_attempt_seconds      = 60
 }
 
 #--------------------------------------------------------------
@@ -128,8 +131,9 @@ resource "aws_config_config_rule" "s3-bucket-level-public-access-prohibited" {
   count = var.is_enabled ? 1 : 0
 
   region      = local.region
-  name        = "${local.name_prefix}s3-bucket-level-public-access-prohibited"
   description = "Checks if Amazon Simple Storage Service (Amazon S3) buckets are publicly accessible. This rule is NON_COMPLIANT if an Amazon S3 bucket is not listed in the excludedPublicBuckets parameter and bucket level settings are public."
+  name        = "${local.name_prefix}s3-bucket-level-public-access-prohibited"
+
   source {
     owner             = "AWS"
     source_identifier = "S3_BUCKET_LEVEL_PUBLIC_ACCESS_PROHIBITED"
@@ -144,11 +148,15 @@ resource "aws_config_config_rule" "s3-bucket-level-public-access-prohibited" {
 resource "aws_config_remediation_configuration" "s3-bucket-level-public-access-prohibited" {
   count = var.is_enabled && var.is_configure_s3_bucket_public_access_block ? 1 : 0
 
-  region           = local.region
-  config_rule_name = aws_config_config_rule.s3-bucket-level-public-access-prohibited[0].name
-  target_type      = "SSM_DOCUMENT"
+  region                     = local.region
+  automatic                  = true
+  config_rule_name           = aws_config_config_rule.s3-bucket-level-public-access-prohibited[0].name
+  maximum_automatic_attempts = 5
+  retry_attempt_seconds      = 60
   # https://docs.aws.amazon.com/systems-manager-automation-runbooks/latest/userguide/automation-aws-block-public-s3-bucket.html
-  target_id = "AWSConfigRemediation-ConfigureS3BucketPublicAccessBlock"
+  target_id   = "AWSConfigRemediation-ConfigureS3BucketPublicAccessBlock"
+  target_type = "SSM_DOCUMENT"
+
   parameter {
     name         = "AutomationAssumeRole"
     static_value = var.ssm_automation_assume_role_arn
@@ -173,9 +181,6 @@ resource "aws_config_remediation_configuration" "s3-bucket-level-public-access-p
     name         = "RestrictPublicBuckets"
     static_value = var.configure_s3_bucket_public_access_block.restrict_public_buckets
   }
-  automatic                  = true
-  maximum_automatic_attempts = 5
-  retry_attempt_seconds      = 60
 }
 
 #--------------------------------------------------------------
@@ -235,8 +240,9 @@ resource "aws_config_config_rule" "s3-bucket-public-read-prohibited" {
   count = var.is_enabled ? 1 : 0
 
   region      = local.region
-  name        = "${local.name_prefix}s3-bucket-public-read-prohibited"
   description = "Checks that your Amazon S3 buckets do not allow public read access. The rule checks the Block Public Access settings, the bucket policy, and the bucket access control list (ACL)."
+  name        = "${local.name_prefix}s3-bucket-public-read-prohibited"
+
   source {
     owner             = "AWS"
     source_identifier = "S3_BUCKET_PUBLIC_READ_PROHIBITED"
@@ -251,11 +257,15 @@ resource "aws_config_config_rule" "s3-bucket-public-read-prohibited" {
 resource "aws_config_remediation_configuration" "s3-bucket-public-read-prohibited" {
   count = var.is_enabled && var.is_disable_s3_bucket_public_read_write ? 1 : 0
 
-  region           = local.region
-  config_rule_name = aws_config_config_rule.s3-bucket-public-read-prohibited[0].name
-  target_type      = "SSM_DOCUMENT"
+  region                     = local.region
+  automatic                  = true
+  config_rule_name           = aws_config_config_rule.s3-bucket-public-read-prohibited[0].name
+  maximum_automatic_attempts = 5
+  retry_attempt_seconds      = 60
   # https://docs.aws.amazon.com/systems-manager-automation-runbooks/latest/userguide/automation-aws-disables3bucketpublicreadwrite.html
-  target_id = "AWS-DisableS3BucketPublicReadWrite"
+  target_id   = "AWS-DisableS3BucketPublicReadWrite"
+  target_type = "SSM_DOCUMENT"
+
   parameter {
     name         = "AutomationAssumeRole"
     static_value = var.ssm_automation_assume_role_arn
@@ -264,9 +274,6 @@ resource "aws_config_remediation_configuration" "s3-bucket-public-read-prohibite
     name           = "S3BucketName"
     resource_value = "RESOURCE_ID"
   }
-  automatic                  = true
-  maximum_automatic_attempts = 5
-  retry_attempt_seconds      = 60
 }
 
 #--------------------------------------------------------------
@@ -277,8 +284,9 @@ resource "aws_config_config_rule" "s3-bucket-public-write-prohibited" {
   count = var.is_enabled ? 1 : 0
 
   region      = local.region
-  name        = "${local.name_prefix}s3-bucket-public-write-prohibited"
   description = "Checks that your Amazon S3 buckets do not allow public write access. The rule checks the Block Public Access settings, the bucket policy, and the bucket access control list (ACL)."
+  name        = "${local.name_prefix}s3-bucket-public-write-prohibited"
+
   source {
     owner             = "AWS"
     source_identifier = "S3_BUCKET_PUBLIC_WRITE_PROHIBITED"
@@ -293,11 +301,15 @@ resource "aws_config_config_rule" "s3-bucket-public-write-prohibited" {
 resource "aws_config_remediation_configuration" "s3-bucket-public-write-prohibited" {
   count = var.is_enabled && var.is_disable_s3_bucket_public_read_write ? 1 : 0
 
-  region           = local.region
-  config_rule_name = aws_config_config_rule.s3-bucket-public-write-prohibited[0].name
-  target_type      = "SSM_DOCUMENT"
+  region                     = local.region
+  automatic                  = true
+  config_rule_name           = aws_config_config_rule.s3-bucket-public-write-prohibited[0].name
+  maximum_automatic_attempts = 5
+  retry_attempt_seconds      = 60
   # https://docs.aws.amazon.com/systems-manager-automation-runbooks/latest/userguide/automation-aws-disables3bucketpublicreadwrite.html
-  target_id = "AWS-DisableS3BucketPublicReadWrite"
+  target_id   = "AWS-DisableS3BucketPublicReadWrite"
+  target_type = "SSM_DOCUMENT"
+
   parameter {
     name         = "AutomationAssumeRole"
     static_value = var.ssm_automation_assume_role_arn
@@ -306,9 +318,6 @@ resource "aws_config_remediation_configuration" "s3-bucket-public-write-prohibit
     name           = "S3BucketName"
     resource_value = "RESOURCE_ID"
   }
-  automatic                  = true
-  maximum_automatic_attempts = 5
-  retry_attempt_seconds      = 60
 }
 
 #--------------------------------------------------------------
@@ -336,8 +345,9 @@ resource "aws_config_config_rule" "s3-bucket-server-side-encryption-enabled" {
   count = var.is_enabled ? 1 : 0
 
   region      = local.region
-  name        = "${local.name_prefix}s3-bucket-server-side-encryption-enabled"
   description = "Checks that your Amazon S3 bucket either has S3 default encryption enabled or that the S3 bucket policy explicitly denies put-object requests without server side encryption."
+  name        = "${local.name_prefix}s3-bucket-server-side-encryption-enabled"
+
   source {
     owner             = "AWS"
     source_identifier = "S3_BUCKET_SERVER_SIDE_ENCRYPTION_ENABLED"
@@ -352,12 +362,15 @@ resource "aws_config_config_rule" "s3-bucket-server-side-encryption-enabled" {
 resource "aws_config_remediation_configuration" "s3-bucket-server-side-encryption-enabled" {
   count = var.is_enabled && var.is_enabled_s3_bucket_encryption ? 1 : 0
 
-  region           = local.region
-  config_rule_name = aws_config_config_rule.s3-bucket-server-side-encryption-enabled[0].name
-  target_type      = "SSM_DOCUMENT"
-
+  region                     = local.region
+  automatic                  = true
+  config_rule_name           = aws_config_config_rule.s3-bucket-server-side-encryption-enabled[0].name
+  maximum_automatic_attempts = 5
+  retry_attempt_seconds      = 60
   # https://docs.aws.amazon.com/systems-manager-automation-runbooks/latest/userguide/automation-aws-enableS3bucketencryption.html
-  target_id = "AWS-EnableS3BucketEncryption"
+  target_id   = "AWS-EnableS3BucketEncryption"
+  target_type = "SSM_DOCUMENT"
+
   parameter {
     name         = "AutomationAssumeRole"
     static_value = var.ssm_automation_assume_role_arn
@@ -370,10 +383,6 @@ resource "aws_config_remediation_configuration" "s3-bucket-server-side-encryptio
     name         = "SSEAlgorithm"
     static_value = var.enabled_s3_bucket_encryption_sse_algorithm
   }
-
-  automatic                  = true
-  maximum_automatic_attempts = 5
-  retry_attempt_seconds      = 60
 }
 
 #--------------------------------------------------------------
@@ -384,8 +393,9 @@ resource "aws_config_config_rule" "s3-bucket-ssl-requests-only" {
   count = var.is_enabled ? 1 : 0
 
   region      = local.region
-  name        = "${local.name_prefix}s3-bucket-ssl-requests-only"
   description = "Checks whether S3 buckets have policies that require requests to use Secure Socket Layer (SSL)."
+  name        = "${local.name_prefix}s3-bucket-ssl-requests-only"
+
   source {
     owner             = "AWS"
     source_identifier = "S3_BUCKET_SSL_REQUESTS_ONLY"
@@ -400,11 +410,15 @@ resource "aws_config_config_rule" "s3-bucket-ssl-requests-only" {
 resource "aws_config_remediation_configuration" "s3-bucket-ssl-requests-only" {
   count = var.is_enabled && var.is_restrict_bucket_ssl_requests_only ? 1 : 0
 
-  region           = local.region
-  config_rule_name = aws_config_config_rule.s3-bucket-ssl-requests-only[0].name
-  target_type      = "SSM_DOCUMENT"
+  region                     = local.region
+  automatic                  = true
+  config_rule_name           = aws_config_config_rule.s3-bucket-ssl-requests-only[0].name
+  maximum_automatic_attempts = 5
+  retry_attempt_seconds      = 60
   # https://docs.aws.amazon.com/systems-manager-automation-runbooks/latest/userguide/automation-aws-s3-deny-http.html
-  target_id = "AWSConfigRemediation-RestrictBucketSSLRequestsOnly"
+  target_id   = "AWSConfigRemediation-RestrictBucketSSLRequestsOnly"
+  target_type = "SSM_DOCUMENT"
+
   parameter {
     name         = "AutomationAssumeRole"
     static_value = var.ssm_automation_assume_role_arn
@@ -413,10 +427,6 @@ resource "aws_config_remediation_configuration" "s3-bucket-ssl-requests-only" {
     name           = "BucketName"
     resource_value = "RESOURCE_ID"
   }
-
-  automatic                  = true
-  maximum_automatic_attempts = 5
-  retry_attempt_seconds      = 60
 }
 
 #--------------------------------------------------------------
@@ -426,8 +436,9 @@ resource "aws_config_config_rule" "s3-bucket-versioning-enabled" {
   count = var.is_enabled ? 1 : 0
 
   region      = local.region
-  name        = "${local.name_prefix}s3-bucket-versioning-enabled"
   description = "Checks that none of the specified applications are installed on the instance. Optionally, specify the version. Newer versions will not be blacklisted. Optionally, specify the platform to apply the rule only to instances running that platform."
+  name        = "${local.name_prefix}s3-bucket-versioning-enabled"
+
   source {
     owner             = "AWS"
     source_identifier = "S3_BUCKET_VERSIONING_ENABLED"
@@ -442,11 +453,15 @@ resource "aws_config_config_rule" "s3-bucket-versioning-enabled" {
 resource "aws_config_remediation_configuration" "s3-bucket-versioning-enabled" {
   count = var.is_enabled && var.is_configure_s3_bucket_versioning ? 1 : 0
 
-  region           = local.region
-  config_rule_name = aws_config_config_rule.s3-bucket-versioning-enabled[0].name
-  target_type      = "SSM_DOCUMENT"
+  region                     = local.region
+  automatic                  = true
+  config_rule_name           = aws_config_config_rule.s3-bucket-versioning-enabled[0].name
+  maximum_automatic_attempts = 5
+  retry_attempt_seconds      = 60
   # https://docs.aws.amazon.com/systems-manager-automation-runbooks/latest/userguide/automation-aws-configures3bucketversioning.html
-  target_id = "AWS-ConfigureS3BucketVersioning"
+  target_id   = "AWS-ConfigureS3BucketVersioning"
+  target_type = "SSM_DOCUMENT"
+
   parameter {
     name         = "AutomationAssumeRole"
     static_value = var.ssm_automation_assume_role_arn
@@ -459,10 +474,6 @@ resource "aws_config_remediation_configuration" "s3-bucket-versioning-enabled" {
     name         = "VersioningState"
     static_value = "Enabled"
   }
-
-  automatic                  = true
-  maximum_automatic_attempts = 5
-  retry_attempt_seconds      = 60
 }
 
 #--------------------------------------------------------------

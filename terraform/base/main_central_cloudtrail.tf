@@ -46,30 +46,29 @@ module "aws_security_cloudtrail" {
   is_enabled = var.security_cloudtrail.is_enabled && !local.control_tower_managed_services.cloudtrail
   region     = var.region.global
 
-  is_s3_enabled              = var.security_cloudtrail.is_s3_enabled
-  aws_sns_topic              = local.aws_sns_topic_cloudtrail
-  aws_sns_topic_subscription = local.aws_sns_topic_subscription_cloudtrail
+  account_id     = data.aws_caller_identity.current.account_id
+  aws_cloudtrail = local.aws_cloudtrail_cloudtrail
   aws_cloudwatch_log_group = {
     name              = "${var.name_prefix}aws-cloudtrail-logs"
     kms_key_id        = module.kms_key[var.region.global].key_arn
     retention_in_days = coalesce(try(var.cloudwatch_log_group.override.security_cloudtrail.retention_in_days, null), var.cloudwatch_log_group.retention_in_days)
   }
-  aws_iam_role   = local.aws_iam_role_cloudtrail
   aws_iam_policy = local.aws_iam_policy_cloudtrail
+  aws_iam_role   = local.aws_iam_role_cloudtrail
   aws_s3_bucket_existing = {
     # The S3 bucket id
     bucket_id = module.s3_cloudtrail.s3_bucket_id
     # The S3 bucket arn
     bucket_arn = module.s3_cloudtrail.s3_bucket_arn
   }
-  aws_cloudtrail               = local.aws_cloudtrail_cloudtrail
-  cloudwatch_name_prefix       = var.name_prefix
+  aws_sns_topic                = local.aws_sns_topic_cloudtrail
+  aws_sns_topic_subscription   = local.aws_sns_topic_subscription_cloudtrail
   cloudtrail_kms_master_key_id = module.kms_key[var.region.global].key_id
+  cloudwatch_name_prefix       = var.name_prefix
+  is_s3_enabled                = var.security_cloudtrail.is_s3_enabled
   sns_kms_master_key_id        = module.kms_key[var.region.global].key_id
-  account_id                   = data.aws_caller_identity.current.account_id
 
   tags = var.tags
-
   depends_on = [
     module.s3_cloudtrail,
   ]
@@ -85,14 +84,14 @@ module "aws_cloudwatch_alarm_cloudtrail" {
   region     = var.region.global
 
   alarm_actions                     = var.security_cloudtrail.is_enabled && !local.control_tower_managed_services.cloudtrail ? [module.aws_security_cloudtrail.sns_topic_arn] : []
-  ok_actions                        = var.security_cloudtrail.is_enabled && !local.control_tower_managed_services.cloudtrail ? [module.aws_security_cloudtrail.sns_topic_arn] : []
-  create_auto_log_group_names       = false
   auto_log_group_names_exclude_list = []
   auto_log_group_names_include_list = []
-  log_group_names                   = var.security_cloudtrail.is_enabled && !local.control_tower_managed_services.cloudtrail ? [module.aws_security_cloudtrail.log_group_name] : []
-  name_prefix                       = var.name_prefix
   aws_cloudwatch_log_metric_filter  = var.security_cloudtrail.aws_cloudwatch_log_metric_filter
   aws_cloudwatch_metric_alarm       = var.security_cloudtrail.aws_cloudwatch_metric_alarm
+  create_auto_log_group_names       = false
+  log_group_names                   = var.security_cloudtrail.is_enabled && !local.control_tower_managed_services.cloudtrail ? [module.aws_security_cloudtrail.log_group_name] : []
+  name_prefix                       = var.name_prefix
+  ok_actions                        = var.security_cloudtrail.is_enabled && !local.control_tower_managed_services.cloudtrail ? [module.aws_security_cloudtrail.sns_topic_arn] : []
 
   tags = var.tags
 }
@@ -104,7 +103,7 @@ module "aws_cloudwatch_alarm_cloudtrail" {
 # tfsec:ignore:aws-lambda-enable-tracing
 module "lambda_function_cloudtrail" {
   source  = "terraform-aws-modules/lambda/aws"
-  version = "8.9.0"
+  version = "8.12.0"
 
   create = var.security_cloudtrail.is_enabled && !local.control_tower_managed_services.cloudtrail
   region = var.region.global

@@ -35,6 +35,12 @@ variable "auto_log_group_names_include_list" {
   default     = []
 }
 
+variable "log_group_override" {
+  type        = any
+  description = "(Optional) Override settings for specific log groups. Key is the exact log group name. Each value can set enabled / pattern / threshold / evaluation_periods / datapoints_to_alarm / period (all optional; unspecified values fall back to aws_cloudwatch_log_metric_filter and aws_cloudwatch_metric_alarm). enabled = false creates neither the metric filter nor the alarm."
+  default     = {}
+}
+
 variable "alarm_actions" {
   type        = list(string)
   description = "(Required) The list of actions to execute when this alarm transitions into an ALARM state from any other state. Each action is specified as an Amazon Resource Name (ARN)."

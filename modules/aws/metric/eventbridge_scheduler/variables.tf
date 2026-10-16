@@ -17,55 +17,49 @@ variable "threshold" {
   type = object({
     # InvocationAttemptCount threshold (unit=Count)
     # Monitor total invocation attempts (typically disabled for regular monitoring)
-    enabled_invocation_attempt_count = bool
-    invocation_attempt_count         = number
+    invocation_attempt_count = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # TargetErrorCount threshold (unit=Count)
     # Alert on target execution errors (recommended: 1 for immediate notification)
-    enabled_target_error_count = bool
-    target_error_count         = number
+    target_error_count = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # TargetErrorThrottledCount threshold (unit=Count)
     # Alert on throttling errors from target services
-    enabled_target_error_throttled_count = bool
-    target_error_throttled_count         = number
+    target_error_throttled_count = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # InvocationThrottleCount threshold (unit=Count)
     # Alert on scheduler throttling due to rate limits
-    enabled_invocation_throttle_count = bool
-    invocation_throttle_count         = number
+    invocation_throttle_count = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
     # InvocationDroppedCount threshold (unit=Count)
     # Alert on dropped invocations due to system issues
-    enabled_invocation_dropped_count = bool
-    invocation_dropped_count         = number
-    }
-  )
+    invocation_dropped_count = object({ enabled = bool, value = number, datapoints_to_alarm = optional(number, 1), evaluation_periods = optional(number, 1) })
+  })
   description = "(Optional) Set the threshold for each Metric in EventBridge Scheduler."
   default = {
-    enabled_invocation_attempt_count     = false
-    invocation_attempt_count             = 0
-    enabled_target_error_count           = true
-    target_error_count                   = 10
-    enabled_target_error_throttled_count = true
-    target_error_throttled_count         = 1
-    enabled_invocation_throttle_count    = true
-    invocation_throttle_count            = 1
-    enabled_invocation_dropped_count     = true
-    invocation_dropped_count             = 1
+    invocation_attempt_count     = { enabled = false, value = 0 }
+    target_error_count           = { enabled = true, value = 10 }
+    target_error_throttled_count = { enabled = true, value = 1 }
+    invocation_throttle_count    = { enabled = true, value = 1 }
+    invocation_dropped_count     = { enabled = true, value = 1 }
   }
 }
 
 variable "threshold_override" {
   type = map(object({
-    enabled_invocation_attempt_count     = optional(bool)
-    invocation_attempt_count             = optional(number)
-    enabled_target_error_count           = optional(bool)
-    target_error_count                   = optional(number)
-    enabled_target_error_throttled_count = optional(bool)
-    target_error_throttled_count         = optional(number)
-    enabled_invocation_throttle_count    = optional(bool)
-    invocation_throttle_count            = optional(number)
-    enabled_invocation_dropped_count     = optional(bool)
-    invocation_dropped_count             = optional(number)
+    # InvocationAttemptCount threshold (unit=Count)
+    # Monitor total invocation attempts (typically disabled for regular monitoring)
+    invocation_attempt_count = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # TargetErrorCount threshold (unit=Count)
+    # Alert on target execution errors (recommended: 1 for immediate notification)
+    target_error_count = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # TargetErrorThrottledCount threshold (unit=Count)
+    # Alert on throttling errors from target services
+    target_error_throttled_count = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # InvocationThrottleCount threshold (unit=Count)
+    # Alert on scheduler throttling due to rate limits
+    invocation_throttle_count = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
+    # InvocationDroppedCount threshold (unit=Count)
+    # Alert on dropped invocations due to system issues
+    invocation_dropped_count = optional(object({ enabled = optional(bool), value = optional(number), datapoints_to_alarm = optional(number), evaluation_periods = optional(number) }))
   }))
-  description = "(Optional) Per-schedule-group threshold overrides. Key is the schedule group name."
+  description = "(Optional) Per-schedule-group threshold overrides. Key is the schedule group name. Each metric accepts enabled, value, datapoints_to_alarm and evaluation_periods."
   default     = {}
 }
 

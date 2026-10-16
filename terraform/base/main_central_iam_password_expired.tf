@@ -14,15 +14,15 @@
 resource "aws_scheduler_schedule" "iam_password_expired" {
   count = var.iam_password_expired.is_enabled ? 1 : 0
 
-  region = var.region.global
+  region              = var.region.global
+  description         = var.iam_password_expired.aws_eventbridge_schedule.description
+  name                = "${var.name_prefix}${var.iam_password_expired.aws_eventbridge_schedule.name}"
+  schedule_expression = var.iam_password_expired.aws_eventbridge_schedule.schedule_expression
+  state               = "ENABLED"
 
-  name        = "${var.name_prefix}${var.iam_password_expired.aws_eventbridge_schedule.name}"
-  description = var.iam_password_expired.aws_eventbridge_schedule.description
   flexible_time_window {
     mode = "OFF"
   }
-  schedule_expression = var.iam_password_expired.aws_eventbridge_schedule.schedule_expression
-  state               = "ENABLED"
   target {
     arn      = module.lambda_function_iam_password_expired.lambda_function_arn
     role_arn = module.aws_iam_role_eventbridge.arn
@@ -40,7 +40,7 @@ resource "aws_scheduler_schedule" "iam_password_expired" {
 # tfsec:ignore:aws-lambda-enable-tracing
 module "lambda_function_iam_password_expired" {
   source  = "terraform-aws-modules/lambda/aws"
-  version = "8.9.0"
+  version = "8.12.0"
 
   create = var.iam_password_expired.is_enabled && !local.control_tower_managed_services.iam_password_expired
   region = var.region.global

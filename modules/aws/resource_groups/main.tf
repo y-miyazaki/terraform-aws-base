@@ -19,8 +19,9 @@ resource "aws_resourcegroups_group" "this" {
   count = var.is_enabled ? 1 : 0
 
   region      = local.region
-  name        = var.name
   description = var.description
+  name        = var.name
+
   dynamic "resource_query" {
     for_each = var.resource_query
 

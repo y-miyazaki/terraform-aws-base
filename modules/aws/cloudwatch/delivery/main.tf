@@ -25,13 +25,13 @@ locals {
 module "filter" {
   source = "../../_internal/auto_discovery_filter"
 
-  is_enabled  = var.is_enabled
-  create_auto = var.create_auto_log_group_names
+  is_enabled = var.is_enabled
 
-  source_list       = data.aws_cloudwatch_log_groups.this.log_group_names
-  include_list      = var.auto_log_group_names_include_list
+  create_auto       = var.create_auto_log_group_names
   exclude_list      = local.merged_exclude_list
+  include_list      = var.auto_log_group_names_include_list
   manual_dimensions = var.log_group_names
+  source_list       = data.aws_cloudwatch_log_groups.this.log_group_names
 }
 
 #--------------------------------------------------------------
@@ -122,15 +122,16 @@ module "aws_cloudwatch_subscription" {
 
   source = "../subscription"
 
-  region                                 = local.region
+  region = local.region
+
+  account_id                             = var.account_id
   aws_cloudwatch_log_subscription_filter = local.aws_cloudwatch_log_subscription_filter
-  aws_iam_role = merge(var.aws_iam_role_cloudwatch_logs, {
-    name = "${var.name_prefix}${var.aws_iam_role_cloudwatch_logs.name}"
-  })
   aws_iam_policy = merge(var.aws_iam_policy_cloudwatch_logs, {
     name = "${var.name_prefix}${var.aws_iam_policy_cloudwatch_logs.name}"
   })
-  account_id = var.account_id
+  aws_iam_role = merge(var.aws_iam_role_cloudwatch_logs, {
+    name = "${var.name_prefix}${var.aws_iam_role_cloudwatch_logs.name}"
+  })
 
   tags = var.tags
 }
@@ -145,14 +146,14 @@ module "aws_kinesis_firehose_s3" {
 
   region = local.region
 
-  account_id                           = var.account_id
-  aws_kinesis_firehose_delivery_stream = local.aws_kinesis_firehose_delivery_stream
-  aws_iam_role = merge(var.aws_iam_role_kinesis_firehose, {
-    name = "${var.name_prefix}${var.aws_iam_role_kinesis_firehose.name}"
-  })
+  account_id = var.account_id
   aws_iam_policy = merge(var.aws_iam_policy_kinesis_firehose, {
     name = "${var.name_prefix}${var.aws_iam_policy_kinesis_firehose.name}"
   })
+  aws_iam_role = merge(var.aws_iam_role_kinesis_firehose, {
+    name = "${var.name_prefix}${var.aws_iam_role_kinesis_firehose.name}"
+  })
+  aws_kinesis_firehose_delivery_stream = local.aws_kinesis_firehose_delivery_stream
 
   tags = var.tags
 }

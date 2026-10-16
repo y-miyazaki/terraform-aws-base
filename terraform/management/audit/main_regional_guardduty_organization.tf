@@ -7,14 +7,14 @@ module "guardduty_organization" {
 
   source = "../../../modules/aws/security/guardduty_organization"
 
-  is_enabled       = var.guardduty_organization.is_enabled && local.is_delegated_admin.guardduty
-  is_enabled_admin = false
-  create_detector  = var.guardduty_organization.create_detector
-  region           = each.value
+  is_enabled = var.guardduty_organization.is_enabled && local.is_delegated_admin.guardduty
+  region     = each.value
 
   admin_account_id                 = data.aws_caller_identity.current.account_id
   auto_enable_organization_members = var.guardduty_organization.auto_enable_organization_members
+  create_detector                  = var.guardduty_organization.create_detector
   features                         = var.guardduty_organization.features
+  is_enabled_admin                 = false
 
   tags = var.tags
 }

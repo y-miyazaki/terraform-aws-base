@@ -11,12 +11,13 @@ module "aws_metric_ses_us_east_1" {
   is_enabled = local.is_enabled_global && var.metric_resource_ses.is_enabled
   region     = "us-east-1"
 
-  period        = var.metric_resource_ses.period
-  threshold     = var.metric_resource_ses.threshold
-  alarm_actions = [module.aws_sns_subscription_lambda_metric_us_east_1[0].arn]
-  ok_actions    = [module.aws_sns_subscription_lambda_metric_us_east_1[0].arn]
-  dimensions    = var.metric_resource_ses.dimensions
-  name_prefix   = var.name_prefix
+  alarm_actions      = local.is_enabled_global ? [module.aws_sns_subscription_lambda_metric_us_east_1[0].arn] : []
+  dimensions         = var.metric_resource_ses.dimensions
+  name_prefix        = var.name_prefix
+  ok_actions         = local.is_enabled_global ? [module.aws_sns_subscription_lambda_metric_us_east_1[0].arn] : []
+  period             = var.metric_resource_ses.period
+  threshold          = var.metric_resource_ses.threshold
+  threshold_override = var.metric_resource_ses.threshold_override
 
   tags = var.tags
 }

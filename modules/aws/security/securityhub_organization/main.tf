@@ -47,7 +47,10 @@ resource "aws_securityhub_finding_aggregator" "this" {
 resource "aws_securityhub_configuration_policy" "this" {
   count = var.is_enabled ? 1 : 0
 
-  region = local.region
+  region      = local.region
+  description = var.configuration_policy_description
+  name        = var.configuration_policy_name
+
   configuration_policy {
     service_enabled       = var.configuration_policy.service_enabled
     enabled_standard_arns = try(var.configuration_policy.enabled_standard_arns, [])
@@ -55,8 +58,6 @@ resource "aws_securityhub_configuration_policy" "this" {
       disabled_control_identifiers = try(var.configuration_policy.security_controls_configuration.disabled_control_identifiers, [])
     }
   }
-  description = var.configuration_policy_description
-  name        = var.configuration_policy_name
 
   depends_on = [aws_securityhub_organization_configuration.this]
 }

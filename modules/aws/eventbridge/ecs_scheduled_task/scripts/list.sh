@@ -85,10 +85,9 @@ function main {
         exit 1
     fi
 
-    # Get all enabled rule names
-    # Note: --state option is not supported in list-rules, so filter in query
-    # shellcheck disable=SC2016
-    rules=$(aws events list-rules --query 'Rules[?State==`ENABLED`].Name' --output text 2> /dev/null || echo "")
+    # Get all rule names regardless of state: rules disabled by the stop schedule must stay discoverable,
+    # otherwise the start schedule that re-enables them would be removed on the next plan.
+    rules=$(aws events list-rules --query 'Rules[].Name' --output text 2> /dev/null || echo "")
 
     if [[ -z $rules ]]; then
         echo '{}'

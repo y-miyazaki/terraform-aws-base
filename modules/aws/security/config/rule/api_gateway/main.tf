@@ -39,8 +39,9 @@ resource "aws_config_config_rule" "api-gw-xray-enabled" {
   count = var.is_enabled ? 1 : 0
 
   region      = local.region
-  name        = "${local.name_prefix}api-gw-xray-enabled"
   description = "Checks if AWS X-Ray tracing is enabled on Amazon API Gateway REST APIs. The rule is COMPLIANT if X-Ray tracing is enabled and NON_COMPLIANT otherwise."
+  name        = "${local.name_prefix}api-gw-xray-enabled"
+
   source {
     owner             = "AWS"
     source_identifier = "API_GW_XRAY_ENABLED"

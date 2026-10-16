@@ -21,14 +21,14 @@ module "aws_synthetics_canary" {
   region     = var.region.primary
 
   account_id = data.aws_caller_identity.current.account_id
-  aws_iam_role = {
-    name        = format("%smonitor-synthetics-canary-%s-role", var.name_prefix, each.key)
-    description = format("IAM role for Synthetics Canary(%s)", each.key)
-    path        = "/"
-  }
   aws_iam_policy = {
     name        = format("%smonitor-synthetics-canary-%s-policy", var.name_prefix, each.key)
     description = format("IAM policy for Synthetics Canary(%s)", each.key)
+    path        = "/"
+  }
+  aws_iam_role = {
+    name        = format("%smonitor-synthetics-canary-%s-role", var.name_prefix, each.key)
+    description = format("IAM role for Synthetics Canary(%s)", each.key)
     path        = "/"
   }
   aws_synthetics_canary = merge(each.value.aws_synthetics_canary, {

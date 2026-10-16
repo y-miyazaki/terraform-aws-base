@@ -17,16 +17,16 @@ locals {
 module "scheduler_helper" {
   source = "../../_internal/eventbridge_scheduler_helper"
 
-  is_enabled            = var.is_enabled
-  create_auto_schedules = var.create_auto_schedules
+  is_enabled = var.is_enabled
 
-  source_schedules            = local.auto_discovered_schedules
-  auto_schedules_include_list = var.auto_schedules_include_list
   auto_schedules_exclude_list = var.auto_schedules_exclude_list
+  auto_schedules_include_list = var.auto_schedules_include_list
+  create_auto_schedules       = var.create_auto_schedules
   manual_schedules            = var.schedules
+  primary_key                 = "cluster_identifier"
   schedule_expression_start   = var.schedule_expression_start
   schedule_expression_stop    = var.schedule_expression_stop
-  primary_key                 = "cluster_identifier"
+  source_schedules            = local.auto_discovered_schedules
 }
 
 #--------------------------------------------------------------
@@ -45,14 +45,15 @@ resource "aws_scheduler_schedule" "pause" {
     if var.is_enabled && v.schedule_expression_stop != null
   }
 
-  region      = local.region
-  description = try(each.value.description, var.description, "Pause Redshift cluster ${each.value.cluster_identifier}")
-  flexible_time_window {
-    mode = "OFF"
-  }
+  region              = local.region
+  description         = try(each.value.description, var.description, "Pause Redshift cluster ${each.value.cluster_identifier}")
   name                = substr("${var.name_prefix}${each.value.key_name}-pause-rsc-sch", 0, 63)
   schedule_expression = each.value.schedule_expression_stop
   state               = "ENABLED"
+
+  flexible_time_window {
+    mode = "OFF"
+  }
   target {
     arn      = "arn:aws:scheduler:::aws-sdk:redshift:pauseCluster"
     role_arn = var.role_arn
@@ -77,14 +78,15 @@ resource "aws_scheduler_schedule" "resume" {
     if var.is_enabled && v.schedule_expression_start != null
   }
 
-  region      = local.region
-  description = try(each.value.description, var.description, "Resume Redshift cluster ${each.value.cluster_identifier}")
-  flexible_time_window {
-    mode = "OFF"
-  }
+  region              = local.region
+  description         = try(each.value.description, var.description, "Resume Redshift cluster ${each.value.cluster_identifier}")
   name                = substr("${var.name_prefix}${each.value.key_name}-resume-rsc-sch", 0, 63)
   schedule_expression = each.value.schedule_expression_start
   state               = "ENABLED"
+
+  flexible_time_window {
+    mode = "OFF"
+  }
   target {
     arn      = "arn:aws:scheduler:::aws-sdk:redshift:resumeCluster"
     role_arn = var.role_arn

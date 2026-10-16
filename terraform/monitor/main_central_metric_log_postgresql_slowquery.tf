@@ -7,16 +7,16 @@ module "aws_cloudwatch_alarm_log_postgresql_slowquery" {
   is_enabled = var.metric_log_postgresql_slowquery.is_enabled
   region     = var.region.primary
 
-  create_auto_log_group_names       = false
+  alarm_actions                     = var.metric_log_postgresql_slowquery.is_enabled ? [module.aws_sns_subscription_lambda_log.arn] : []
   auto_log_group_names_exclude_list = []
   auto_log_group_names_include_list = []
-  alarm_actions                     = var.metric_log_postgresql_slowquery.is_enabled ? [module.aws_sns_subscription_lambda_log.arn] : []
+  aws_cloudwatch_log_metric_filter  = var.metric_log_postgresql_slowquery.aws_cloudwatch_log_metric_filter
+  aws_cloudwatch_metric_alarm       = var.metric_log_postgresql_slowquery.aws_cloudwatch_metric_alarm
+  create_auto_log_group_names       = false
   # In the case of logs, even if the alarm has been recovered, it is not considered OK.
   #   ok_actions                        = var.metric_log_postgresql_slowquery.is_enabled ? [module.aws_sns_subscription_lambda_log.arn] : []
-  log_group_names                  = var.metric_log_postgresql_slowquery.log_group_names
-  name_prefix                      = var.name_prefix
-  aws_cloudwatch_log_metric_filter = var.metric_log_postgresql_slowquery.aws_cloudwatch_log_metric_filter
-  aws_cloudwatch_metric_alarm      = var.metric_log_postgresql_slowquery.aws_cloudwatch_metric_alarm
+  log_group_names = var.metric_log_postgresql_slowquery.log_group_names
+  name_prefix     = var.name_prefix
 
   tags = var.tags
 }

@@ -10,26 +10,27 @@
 resource "aws_cloudwatch_metric_alarm" "elb_auth_error" {
   for_each = {
     for k, v in local.list : k => v
-    if var.is_enabled && local.effective_thresholds[k].enabled_elb_auth_error
+    if var.is_enabled && local.effective_thresholds[k].elb_auth_error.enabled
   }
 
   region                    = local.region
-  alarm_name                = "${var.name_prefix}metric-alb-${each.value.name}-elb-auth-error"
-  comparison_operator       = "GreaterThanOrEqualToThreshold"
-  evaluation_periods        = 1
-  namespace                 = "AWS/ApplicationELB"
-  metric_name               = "ELBAuthError"
-  period                    = var.period
-  statistic                 = "Sum"
-  threshold                 = local.effective_thresholds[each.key].elb_auth_error
   actions_enabled           = true
   alarm_actions             = var.alarm_actions
-  alarm_description         = "This is an alarm to check for <${local.url}|ALB elb auth error>(>= ${local.effective_thresholds[each.key].elb_auth_error})."
-  insufficient_data_actions = var.insufficient_data_actions
-  ok_actions                = var.ok_actions
-  unit                      = "Count"
-  treat_missing_data        = "notBreaching"
+  alarm_description         = "This is an alarm to check for <${local.url}|ALB elb auth error>(>= ${local.effective_thresholds[each.key].elb_auth_error.value})."
+  alarm_name                = "${var.name_prefix}metric-alb-${each.value.name}-elb-auth-error"
+  comparison_operator       = "GreaterThanOrEqualToThreshold"
+  datapoints_to_alarm       = local.effective_thresholds[each.key].elb_auth_error.datapoints_to_alarm
   dimensions                = each.value.dimensions
+  evaluation_periods        = local.effective_thresholds[each.key].elb_auth_error.evaluation_periods
+  insufficient_data_actions = var.insufficient_data_actions
+  metric_name               = "ELBAuthError"
+  namespace                 = "AWS/ApplicationELB"
+  ok_actions                = var.ok_actions
+  period                    = var.period
+  statistic                 = "Sum"
+  threshold                 = local.effective_thresholds[each.key].elb_auth_error.value
+  treat_missing_data        = "notBreaching"
+  unit                      = "Count"
 
   tags = var.tags
 }
@@ -41,26 +42,27 @@ resource "aws_cloudwatch_metric_alarm" "elb_auth_error" {
 resource "aws_cloudwatch_metric_alarm" "elb_auth_failure" {
   for_each = {
     for k, v in local.list : k => v
-    if var.is_enabled && local.effective_thresholds[k].enabled_elb_auth_failure
+    if var.is_enabled && local.effective_thresholds[k].elb_auth_failure.enabled
   }
 
   region                    = local.region
-  alarm_name                = "${var.name_prefix}metric-alb-${each.value.name}-elb-auth-failure"
-  comparison_operator       = "GreaterThanOrEqualToThreshold"
-  evaluation_periods        = 1
-  namespace                 = "AWS/ApplicationELB"
-  metric_name               = "ELBAuthFailure"
-  period                    = var.period
-  statistic                 = "Sum"
-  threshold                 = local.effective_thresholds[each.key].elb_auth_failure
   actions_enabled           = true
   alarm_actions             = var.alarm_actions
-  alarm_description         = "This is an alarm to check for <${local.url}|ALB elb auth failure>(>= ${local.effective_thresholds[each.key].elb_auth_failure})."
-  insufficient_data_actions = var.insufficient_data_actions
-  ok_actions                = var.ok_actions
-  unit                      = "Count"
-  treat_missing_data        = "notBreaching"
+  alarm_description         = "This is an alarm to check for <${local.url}|ALB elb auth failure>(>= ${local.effective_thresholds[each.key].elb_auth_failure.value})."
+  alarm_name                = "${var.name_prefix}metric-alb-${each.value.name}-elb-auth-failure"
+  comparison_operator       = "GreaterThanOrEqualToThreshold"
+  datapoints_to_alarm       = local.effective_thresholds[each.key].elb_auth_failure.datapoints_to_alarm
   dimensions                = each.value.dimensions
+  evaluation_periods        = local.effective_thresholds[each.key].elb_auth_failure.evaluation_periods
+  insufficient_data_actions = var.insufficient_data_actions
+  metric_name               = "ELBAuthFailure"
+  namespace                 = "AWS/ApplicationELB"
+  ok_actions                = var.ok_actions
+  period                    = var.period
+  statistic                 = "Sum"
+  threshold                 = local.effective_thresholds[each.key].elb_auth_failure.value
+  treat_missing_data        = "notBreaching"
+  unit                      = "Count"
 
   tags = var.tags
 }
@@ -72,26 +74,27 @@ resource "aws_cloudwatch_metric_alarm" "elb_auth_failure" {
 resource "aws_cloudwatch_metric_alarm" "elb_auth_latency" {
   for_each = {
     for k, v in local.list : k => v
-    if var.is_enabled && local.effective_thresholds[k].enabled_elb_auth_latency
+    if var.is_enabled && local.effective_thresholds[k].elb_auth_latency.enabled
   }
 
   region                    = local.region
-  alarm_name                = "${var.name_prefix}metric-alb-${each.value.name}-elb-auth-latency"
-  comparison_operator       = "GreaterThanOrEqualToThreshold"
-  evaluation_periods        = 1
-  namespace                 = "AWS/ApplicationELB"
-  metric_name               = "ELBAuthLatency"
-  period                    = var.period
-  statistic                 = "Average"
-  threshold                 = local.effective_thresholds[each.key].elb_auth_latency
   actions_enabled           = true
   alarm_actions             = var.alarm_actions
-  alarm_description         = "This is an alarm to check for <${local.url}|ALB elb auth latency>(>= ${local.effective_thresholds[each.key].elb_auth_latency})."
-  insufficient_data_actions = var.insufficient_data_actions
-  ok_actions                = var.ok_actions
-  unit                      = "Milliseconds"
-  treat_missing_data        = "notBreaching"
+  alarm_description         = "This is an alarm to check for <${local.url}|ALB elb auth latency>(>= ${local.effective_thresholds[each.key].elb_auth_latency.value})."
+  alarm_name                = "${var.name_prefix}metric-alb-${each.value.name}-elb-auth-latency"
+  comparison_operator       = "GreaterThanOrEqualToThreshold"
+  datapoints_to_alarm       = local.effective_thresholds[each.key].elb_auth_latency.datapoints_to_alarm
   dimensions                = each.value.dimensions
+  evaluation_periods        = local.effective_thresholds[each.key].elb_auth_latency.evaluation_periods
+  insufficient_data_actions = var.insufficient_data_actions
+  metric_name               = "ELBAuthLatency"
+  namespace                 = "AWS/ApplicationELB"
+  ok_actions                = var.ok_actions
+  period                    = var.period
+  statistic                 = "Average"
+  threshold                 = local.effective_thresholds[each.key].elb_auth_latency.value
+  treat_missing_data        = "notBreaching"
+  unit                      = "Milliseconds"
 
   tags = var.tags
 }
@@ -103,26 +106,27 @@ resource "aws_cloudwatch_metric_alarm" "elb_auth_latency" {
 resource "aws_cloudwatch_metric_alarm" "elb_auth_refresh_token_success" {
   for_each = {
     for k, v in local.list : k => v
-    if var.is_enabled && local.effective_thresholds[k].enabled_elb_auth_refresh_token_success
+    if var.is_enabled && local.effective_thresholds[k].elb_auth_refresh_token_success.enabled
   }
 
   region                    = local.region
-  alarm_name                = "${var.name_prefix}metric-alb-${each.value.name}-elb-auth-refresh-token-success"
-  comparison_operator       = "LessThanThreshold"
-  evaluation_periods        = 1
-  namespace                 = "AWS/ApplicationELB"
-  metric_name               = "ELBAuthRefreshTokenSuccess"
-  period                    = var.period
-  statistic                 = "Sum"
-  threshold                 = local.effective_thresholds[each.key].elb_auth_refresh_token_success
   actions_enabled           = true
   alarm_actions             = var.alarm_actions
-  alarm_description         = "This is an alarm to check for <${local.url}|ALB elb auth refresh token success>(< ${local.effective_thresholds[each.key].elb_auth_refresh_token_success})."
-  insufficient_data_actions = var.insufficient_data_actions
-  ok_actions                = var.ok_actions
-  unit                      = "Count"
-  treat_missing_data        = "notBreaching"
+  alarm_description         = "This is an alarm to check for <${local.url}|ALB elb auth refresh token success>(< ${local.effective_thresholds[each.key].elb_auth_refresh_token_success.value})."
+  alarm_name                = "${var.name_prefix}metric-alb-${each.value.name}-elb-auth-refresh-token-success"
+  comparison_operator       = "LessThanThreshold"
+  datapoints_to_alarm       = local.effective_thresholds[each.key].elb_auth_refresh_token_success.datapoints_to_alarm
   dimensions                = each.value.dimensions
+  evaluation_periods        = local.effective_thresholds[each.key].elb_auth_refresh_token_success.evaluation_periods
+  insufficient_data_actions = var.insufficient_data_actions
+  metric_name               = "ELBAuthRefreshTokenSuccess"
+  namespace                 = "AWS/ApplicationELB"
+  ok_actions                = var.ok_actions
+  period                    = var.period
+  statistic                 = "Sum"
+  threshold                 = local.effective_thresholds[each.key].elb_auth_refresh_token_success.value
+  treat_missing_data        = "notBreaching"
+  unit                      = "Count"
 
   tags = var.tags
 }
@@ -134,26 +138,27 @@ resource "aws_cloudwatch_metric_alarm" "elb_auth_refresh_token_success" {
 resource "aws_cloudwatch_metric_alarm" "elb_auth_success" {
   for_each = {
     for k, v in local.list : k => v
-    if var.is_enabled && local.effective_thresholds[k].enabled_elb_auth_success
+    if var.is_enabled && local.effective_thresholds[k].elb_auth_success.enabled
   }
 
   region                    = local.region
-  alarm_name                = "${var.name_prefix}metric-alb-${each.value.name}-elb-auth-success"
-  comparison_operator       = "LessThanThreshold"
-  evaluation_periods        = 1
-  namespace                 = "AWS/ApplicationELB"
-  metric_name               = "ELBAuthSuccess"
-  period                    = var.period
-  statistic                 = "Sum"
-  threshold                 = local.effective_thresholds[each.key].elb_auth_success
   actions_enabled           = true
   alarm_actions             = var.alarm_actions
-  alarm_description         = "This is an alarm to check for <${local.url}|ALB elb auth success>(< ${local.effective_thresholds[each.key].elb_auth_success})."
-  insufficient_data_actions = var.insufficient_data_actions
-  ok_actions                = var.ok_actions
-  unit                      = "Count"
-  treat_missing_data        = "notBreaching"
+  alarm_description         = "This is an alarm to check for <${local.url}|ALB elb auth success>(< ${local.effective_thresholds[each.key].elb_auth_success.value})."
+  alarm_name                = "${var.name_prefix}metric-alb-${each.value.name}-elb-auth-success"
+  comparison_operator       = "LessThanThreshold"
+  datapoints_to_alarm       = local.effective_thresholds[each.key].elb_auth_success.datapoints_to_alarm
   dimensions                = each.value.dimensions
+  evaluation_periods        = local.effective_thresholds[each.key].elb_auth_success.evaluation_periods
+  insufficient_data_actions = var.insufficient_data_actions
+  metric_name               = "ELBAuthSuccess"
+  namespace                 = "AWS/ApplicationELB"
+  ok_actions                = var.ok_actions
+  period                    = var.period
+  statistic                 = "Sum"
+  threshold                 = local.effective_thresholds[each.key].elb_auth_success.value
+  treat_missing_data        = "notBreaching"
+  unit                      = "Count"
 
   tags = var.tags
 }
@@ -165,26 +170,27 @@ resource "aws_cloudwatch_metric_alarm" "elb_auth_success" {
 resource "aws_cloudwatch_metric_alarm" "elb_auth_user_claims_size_exceeded" {
   for_each = {
     for k, v in local.list : k => v
-    if var.is_enabled && local.effective_thresholds[k].enabled_elb_auth_user_claims_size_exceeded
+    if var.is_enabled && local.effective_thresholds[k].elb_auth_user_claims_size_exceeded.enabled
   }
 
   region                    = local.region
-  alarm_name                = "${var.name_prefix}metric-alb-${each.value.name}-elb-auth-user-claims-size-exceeded"
-  comparison_operator       = "GreaterThanOrEqualToThreshold"
-  evaluation_periods        = 1
-  namespace                 = "AWS/ApplicationELB"
-  metric_name               = "ELBAuthUserClaimsSizeExceeded"
-  period                    = var.period
-  statistic                 = "Sum"
-  threshold                 = local.effective_thresholds[each.key].elb_auth_user_claims_size_exceeded
   actions_enabled           = true
   alarm_actions             = var.alarm_actions
-  alarm_description         = "This is an alarm to check for <${local.url}|ALB elb auth user claims size exceeded>(>= ${local.effective_thresholds[each.key].elb_auth_user_claims_size_exceeded})."
-  insufficient_data_actions = var.insufficient_data_actions
-  ok_actions                = var.ok_actions
-  unit                      = "Count"
-  treat_missing_data        = "notBreaching"
+  alarm_description         = "This is an alarm to check for <${local.url}|ALB elb auth user claims size exceeded>(>= ${local.effective_thresholds[each.key].elb_auth_user_claims_size_exceeded.value})."
+  alarm_name                = "${var.name_prefix}metric-alb-${each.value.name}-elb-auth-user-claims-size-exceeded"
+  comparison_operator       = "GreaterThanOrEqualToThreshold"
+  datapoints_to_alarm       = local.effective_thresholds[each.key].elb_auth_user_claims_size_exceeded.datapoints_to_alarm
   dimensions                = each.value.dimensions
+  evaluation_periods        = local.effective_thresholds[each.key].elb_auth_user_claims_size_exceeded.evaluation_periods
+  insufficient_data_actions = var.insufficient_data_actions
+  metric_name               = "ELBAuthUserClaimsSizeExceeded"
+  namespace                 = "AWS/ApplicationELB"
+  ok_actions                = var.ok_actions
+  period                    = var.period
+  statistic                 = "Sum"
+  threshold                 = local.effective_thresholds[each.key].elb_auth_user_claims_size_exceeded.value
+  treat_missing_data        = "notBreaching"
+  unit                      = "Count"
 
   tags = var.tags
 }

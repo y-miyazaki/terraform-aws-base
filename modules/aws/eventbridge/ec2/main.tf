@@ -17,16 +17,16 @@ locals {
 module "scheduler_helper" {
   source = "../../_internal/eventbridge_scheduler_helper"
 
-  is_enabled            = var.is_enabled
-  create_auto_schedules = var.create_auto_schedules
+  is_enabled = var.is_enabled
 
-  source_schedules            = local.auto_discovered_schedules
-  auto_schedules_include_list = var.auto_schedules_include_list
   auto_schedules_exclude_list = var.auto_schedules_exclude_list
+  auto_schedules_include_list = var.auto_schedules_include_list
+  create_auto_schedules       = var.create_auto_schedules
   manual_schedules            = var.schedules
+  primary_key                 = "instance_id"
   schedule_expression_start   = var.schedule_expression_start
   schedule_expression_stop    = var.schedule_expression_stop
-  primary_key                 = "instance_id"
+  source_schedules            = local.auto_discovered_schedules
 }
 
 #--------------------------------------------------------------
@@ -45,14 +45,15 @@ resource "aws_scheduler_schedule" "stop" {
     if var.is_enabled && v.schedule_expression_stop != null
   }
 
-  region      = local.region
-  description = try(each.value.description, var.description, "Stop EC2 instance ${each.value.instance_id}")
-  flexible_time_window {
-    mode = "OFF"
-  }
+  region              = local.region
+  description         = try(each.value.description, var.description, "Stop EC2 instance ${each.value.instance_id}")
   name                = substr("${var.name_prefix}${coalesce(try(each.value.key_name, null), each.value.instance_id)}-stop-ec2-sch", 0, 63)
   schedule_expression = each.value.schedule_expression_stop
   state               = "ENABLED"
+
+  flexible_time_window {
+    mode = "OFF"
+  }
   target {
     arn      = "arn:aws:scheduler:::aws-sdk:ec2:stopInstances"
     role_arn = var.role_arn
@@ -75,14 +76,15 @@ resource "aws_scheduler_schedule" "start" {
     if var.is_enabled && v.schedule_expression_start != null
   }
 
-  region      = local.region
-  description = try(each.value.description, var.description, "Start EC2 instance ${each.value.instance_id}")
-  flexible_time_window {
-    mode = "OFF"
-  }
+  region              = local.region
+  description         = try(each.value.description, var.description, "Start EC2 instance ${each.value.instance_id}")
   name                = substr("${var.name_prefix}${coalesce(try(each.value.key_name, null), each.value.instance_id)}-start-ec2-sch", 0, 63)
   schedule_expression = each.value.schedule_expression_start
   state               = "ENABLED"
+
+  flexible_time_window {
+    mode = "OFF"
+  }
   target {
     arn      = "arn:aws:scheduler:::aws-sdk:ec2:startInstances"
     role_arn = var.role_arn

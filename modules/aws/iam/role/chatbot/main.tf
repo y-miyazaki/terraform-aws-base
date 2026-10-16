@@ -38,17 +38,17 @@ data "aws_iam_policy_document" "securityhub" {
 }
 
 resource "aws_iam_policy" "securityhub" {
-  name        = "${var.name}-chatbot-securityhub-policy"
   description = "securityhub policy for AWS Q(Chatbot)."
+  name        = "${var.name}-chatbot-securityhub-policy"
   policy      = data.aws_iam_policy_document.securityhub.json
 }
 
 resource "aws_iam_role_policy_attachment" "aws_resource_explorer_read_only_access" {
-  role       = aws_iam_role.this.name
   policy_arn = "arn:aws:iam::aws:policy/AWSResourceExplorerReadOnlyAccess"
+  role       = aws_iam_role.this.name
 }
 
 resource "aws_iam_role_policy_attachment" "securityhub" {
-  role       = aws_iam_role.this.name
   policy_arn = aws_iam_policy.securityhub.arn
+  role       = aws_iam_role.this.name
 }

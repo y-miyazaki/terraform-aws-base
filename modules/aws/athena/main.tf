@@ -40,8 +40,12 @@ locals {
 resource "aws_athena_workgroup" "this" {
   count = var.is_enabled ? 1 : 0
 
-  region = local.region
-  name   = format("%s%s", var.name_prefix, var.workgroup_name)
+  region        = local.region
+  description   = var.workgroup_description
+  force_destroy = true
+  name          = format("%s%s", var.name_prefix, var.workgroup_name)
+  state         = var.workgroup_state
+
   configuration {
     bytes_scanned_cutoff_per_query  = try(local.workgroup_configuration.bytes_scanned_cutoff_per_query, null)
     enforce_workgroup_configuration = try(local.workgroup_configuration.enforce_workgroup_configuration, true)
@@ -70,9 +74,6 @@ resource "aws_athena_workgroup" "this" {
     }
     requester_pays_enabled = try(local.workgroup_configuration.requester_pays_enabled, null)
   }
-  description   = var.workgroup_description
-  state         = var.workgroup_state
-  force_destroy = true
 
   tags = var.tags
 }
@@ -84,9 +85,14 @@ resource "aws_athena_workgroup" "this" {
 resource "aws_athena_database" "this" {
   count = var.is_enabled ? 1 : 0
 
-  region = local.region
-  bucket = var.database_bucket
-  name   = format("%s_%s", trimsuffix(var.name_prefix, "-"), var.database_name)
+  region                = local.region
+  bucket                = var.database_bucket
+  comment               = var.database_comment
+  expected_bucket_owner = var.database_expected_bucket_owner
+  force_destroy         = true
+  name                  = format("%s_%s", trimsuffix(var.name_prefix, "-"), var.database_name)
+  properties            = var.database_properties
+
   dynamic "acl_configuration" {
     for_each = length(keys(var.database_acl_configuration)) == 0 ? [] : [var.database_acl_configuration]
 
@@ -94,7 +100,6 @@ resource "aws_athena_database" "this" {
       s3_acl_option = try(acl_configuration.value.s3_acl_option, "BUCKET_OWNER_FULL_CONTROL")
     }
   }
-  comment = var.database_comment
   dynamic "encryption_configuration" {
     for_each = length(keys(var.database_encryption_configuration)) == 0 ? [] : [var.database_encryption_configuration]
 
@@ -103,9 +108,6 @@ resource "aws_athena_database" "this" {
       kms_key           = try(encryption_configuration.value.kms_key, null)
     }
   }
-  expected_bucket_owner = var.database_expected_bucket_owner
-  properties            = var.database_properties
-  force_destroy         = true
 
   depends_on = [
     aws_athena_workgroup.this
@@ -162,12 +164,12 @@ resource "null_resource" "cloudfront_create_table" {
       aws athena start-query-execution \
         --work-group "${aws_athena_workgroup.this[0].id}" \
         --query-execution-context Database="${aws_athena_database.this[0].id}" \
-        --query-string "${replace(replace(replace(data.template_file.cloudfront_drop_table[0].rendered, "`", "\\`"), "\"", "\\\""), "$", "\\$")}"\
+        --query-string "${replace(replace(replace(data.template_file.cloudfront_drop_table[0].rendered, "`", "\\`"), "\"", "\\\""), "$", "\\$")}"
       sleep 3
       aws athena start-query-execution \
         --work-group "${aws_athena_workgroup.this[0].id}" \
         --query-execution-context Database="${aws_athena_database.this[0].id}" \
-        --query-string "${replace(replace(replace(data.template_file.cloudfront_create_table[0].rendered, "`", "\\`"), "\"", "\\\""), "$", "\\$")}"\
+        --query-string "${replace(replace(replace(data.template_file.cloudfront_create_table[0].rendered, "`", "\\`"), "\"", "\\\""), "$", "\\$")}"
       sleep 20
     EOF
   }
@@ -192,11 +194,11 @@ resource "aws_athena_named_query" "cloudfront_query_1week_error" {
   count = var.is_enabled && var.enabled_cloudfront ? 1 : 0
 
   region      = local.region
-  name        = format("%s%s", var.name_prefix, "cloudfront-1week-error")
-  description = "List errors encountered by CloudFront for a week, with no duplicate URIs.."
-  workgroup   = aws_athena_workgroup.this[0].id
   database    = aws_athena_database.this[0].name
+  description = "List errors encountered by CloudFront for a week, with no duplicate URIs.."
+  name        = format("%s%s", var.name_prefix, "cloudfront-1week-error")
   query       = data.template_file.cloudfront_query_1week_error[0].rendered
+  workgroup   = aws_athena_workgroup.this[0].id
 }
 
 #--------------------------------------------------------------
@@ -237,12 +239,12 @@ resource "null_resource" "ses_create_table" {
       aws athena start-query-execution \
         --work-group "${aws_athena_workgroup.this[0].id}" \
         --query-execution-context Database="${aws_athena_database.this[0].id}" \
-        --query-string "${replace(replace(replace(data.template_file.ses_drop_table[0].rendered, "`", "\\`"), "\"", "\\\""), "$", "\\$")}"\
+        --query-string "${replace(replace(replace(data.template_file.ses_drop_table[0].rendered, "`", "\\`"), "\"", "\\\""), "$", "\\$")}"
       sleep 3
       aws athena start-query-execution \
         --work-group "${aws_athena_workgroup.this[0].id}" \
         --query-execution-context Database="${aws_athena_database.this[0].id}" \
-        --query-string "${replace(replace(replace(data.template_file.ses_create_table[0].rendered, "`", "\\`"), "\"", "\\\""), "$", "\\$")}"\
+        --query-string "${replace(replace(replace(data.template_file.ses_create_table[0].rendered, "`", "\\`"), "\"", "\\\""), "$", "\\$")}"
       sleep 20
     EOF
   }
@@ -319,31 +321,31 @@ resource "aws_athena_named_query" "ses_query_bounce_hard_1week" {
   count = var.is_enabled && var.enabled_ses ? 1 : 0
 
   region      = local.region
-  name        = format("%s%s", var.name_prefix, "ses-bounce-hard-1week")
-  description = "List hard bounces generated by SES for one week."
-  workgroup   = aws_athena_workgroup.this[0].id
   database    = aws_athena_database.this[0].name
+  description = "List hard bounces generated by SES for one week."
+  name        = format("%s%s", var.name_prefix, "ses-bounce-hard-1week")
   query       = data.template_file.ses_query_bounce_hard_1week[0].rendered
+  workgroup   = aws_athena_workgroup.this[0].id
 }
 
 resource "aws_athena_named_query" "ses_query_bounce_soft_1week" {
   count = var.is_enabled && var.enabled_ses ? 1 : 0
 
   region      = local.region
-  name        = format("%s%s", var.name_prefix, "ses-bounce-soft-1week")
-  description = "List soft bounces generated by SES for one week."
-  workgroup   = aws_athena_workgroup.this[0].id
   database    = aws_athena_database.this[0].name
+  description = "List soft bounces generated by SES for one week."
+  name        = format("%s%s", var.name_prefix, "ses-bounce-soft-1week")
   query       = data.template_file.ses_query_bounce_soft_1week[0].rendered
+  workgroup   = aws_athena_workgroup.this[0].id
 }
 
 resource "aws_athena_named_query" "ses_query_bounce_all_1week" {
   count = var.is_enabled && var.enabled_ses ? 1 : 0
 
   region      = local.region
-  name        = format("%s%s", var.name_prefix, "ses-bounce-all-1week")
-  description = "List all bounces generated by SES for one week."
-  workgroup   = aws_athena_workgroup.this[0].id
   database    = aws_athena_database.this[0].name
+  description = "List all bounces generated by SES for one week."
+  name        = format("%s%s", var.name_prefix, "ses-bounce-all-1week")
   query       = data.template_file.ses_query_bounce_all_1week[0].rendered
+  workgroup   = aws_athena_workgroup.this[0].id
 }

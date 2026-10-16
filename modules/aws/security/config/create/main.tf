@@ -48,9 +48,9 @@ resource "aws_iam_role" "config" {
 resource "aws_iam_role_policy_attachment" "config" {
   count = var.is_enabled ? 1 : 0
 
-  role = aws_iam_role.config[0].name
   # https://docs.aws.amazon.com/ja_jp/config/latest/developerguide/security-iam-awsmanpol.html
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWS_ConfigRole"
+  role       = aws_iam_role.config[0].name
 }
 
 #--------------------------------------------------------------
@@ -83,10 +83,9 @@ resource "aws_config_configuration_recorder" "this" {
 #--------------------------------------------------------------
 module "s3" {
   source  = "terraform-aws-modules/s3-bucket/aws"
-  version = "5.16.1"
+  version = "5.17.0"
 
-  create_bucket = local.is_s3_enabled
-  region        = local.region
+  region = local.region
 
   attach_access_log_delivery_policy         = true
   attach_analytics_destination_policy       = false
@@ -94,8 +93,8 @@ module "s3" {
   attach_deny_incorrect_encryption_headers  = false
   attach_deny_incorrect_kms_key_sse         = false
   attach_deny_insecure_transport_policy     = true
-  attach_deny_unencrypted_object_uploads    = false
   attach_deny_ssec_encrypted_object_uploads = false
+  attach_deny_unencrypted_object_uploads    = false
   attach_elb_log_delivery_policy            = false
   attach_inventory_destination_policy       = false
   attach_lb_log_delivery_policy             = false
@@ -107,6 +106,7 @@ module "s3" {
   block_public_policy                       = true
   bucket                                    = var.s3_bucket.bucket
   control_object_ownership                  = true
+  create_bucket                             = local.is_s3_enabled
   force_destroy                             = true
   ignore_public_acls                        = true
   lifecycle_rule                            = var.s3_bucket.lifecycle_rule
@@ -149,9 +149,9 @@ resource "aws_config_delivery_channel" "this" {
 resource "aws_config_configuration_recorder_status" "this" {
   count = var.is_enabled ? 1 : 0
 
+  is_enabled = var.aws_config_configuration_recorder_status.is_enabled
   region     = local.region
   name       = aws_config_configuration_recorder.this[0].name
-  is_enabled = var.aws_config_configuration_recorder_status.is_enabled
 
   depends_on = [
     aws_config_delivery_channel.this,
@@ -199,8 +199,8 @@ resource "aws_cloudwatch_event_target" "this" {
   count = var.is_enabled ? 1 : 0
 
   region = local.region
-  rule   = aws_cloudwatch_event_rule.this[0].name
   arn    = var.aws_cloudwatch_event_target.arn
+  rule   = aws_cloudwatch_event_rule.this[0].name
 
   depends_on = [
     aws_cloudwatch_event_rule.this

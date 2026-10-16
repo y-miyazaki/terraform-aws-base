@@ -4,15 +4,15 @@
 resource "aws_scheduler_schedule" "postgresql_slowquery" {
   count = var.metric_log_postgresql_slowquery_report.is_enabled ? 1 : 0
 
-  region = var.region.primary
+  region              = var.region.primary
+  description         = var.metric_log_postgresql_slowquery_report.aws_eventbridge_schedule.description
+  name                = "${var.name_prefix}${var.metric_log_postgresql_slowquery_report.aws_eventbridge_schedule.name}"
+  schedule_expression = var.metric_log_postgresql_slowquery_report.aws_eventbridge_schedule.schedule_expression
+  state               = "ENABLED"
 
-  name        = "${var.name_prefix}${var.metric_log_postgresql_slowquery_report.aws_eventbridge_schedule.name}"
-  description = var.metric_log_postgresql_slowquery_report.aws_eventbridge_schedule.description
   flexible_time_window {
     mode = "OFF"
   }
-  schedule_expression = var.metric_log_postgresql_slowquery_report.aws_eventbridge_schedule.schedule_expression
-  state               = "ENABLED"
   target {
     arn      = module.lambda_function_postgresql_slowquery.lambda_function_arn
     role_arn = module.aws_iam_role_eventbridge.arn
@@ -30,7 +30,7 @@ resource "aws_scheduler_schedule" "postgresql_slowquery" {
 # tfsec:ignore:aws-lambda-enable-tracing
 module "lambda_function_postgresql_slowquery" {
   source  = "terraform-aws-modules/lambda/aws"
-  version = "8.9.0"
+  version = "8.12.0"
 
   create = var.metric_log_postgresql_slowquery_report.is_enabled
   region = var.region.primary

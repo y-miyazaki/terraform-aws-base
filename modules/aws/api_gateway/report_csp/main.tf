@@ -19,9 +19,9 @@ resource "aws_api_gateway_resource" "this" {
   count = var.is_enabled ? 1 : 0
 
   region      = local.region
-  rest_api_id = var.aws_api_gateway_rest_api_id
   parent_id   = var.aws_api_gateway_rest_api_root_resource_id
   path_part   = "report-csp"
+  rest_api_id = var.aws_api_gateway_rest_api_id
 }
 
 #--------------------------------------------------------------
@@ -31,10 +31,10 @@ resource "aws_api_gateway_method" "this" {
   count = var.is_enabled ? 1 : 0
 
   region        = local.region
-  rest_api_id   = var.aws_api_gateway_rest_api_id
-  resource_id   = aws_api_gateway_resource.this[0].id
-  http_method   = "POST"
   authorization = "NONE"
+  http_method   = "POST"
+  resource_id   = aws_api_gateway_resource.this[0].id
+  rest_api_id   = var.aws_api_gateway_rest_api_id
 }
 
 #--------------------------------------------------------------
@@ -95,7 +95,7 @@ resource "aws_api_gateway_stage" "this" {
 #--------------------------------------------------------------
 module "aws_lambda_create_lambda_report_csp" {
   source  = "terraform-aws-modules/lambda/aws"
-  version = "8.9.0"
+  version = "8.12.0"
 
   create = var.is_enabled
   region = local.region
@@ -147,10 +147,10 @@ resource "aws_api_gateway_integration" "this" {
   count = var.is_enabled ? 1 : 0
 
   region                  = local.region
-  rest_api_id             = var.aws_api_gateway_rest_api_id
-  resource_id             = aws_api_gateway_method.this[0].resource_id
   http_method             = aws_api_gateway_method.this[0].http_method
   integration_http_method = "POST"
+  resource_id             = aws_api_gateway_method.this[0].resource_id
+  rest_api_id             = var.aws_api_gateway_rest_api_id
   type                    = "AWS_PROXY"
   uri                     = module.aws_lambda_create_lambda_report_csp.lambda_function_invoke_arn
 }

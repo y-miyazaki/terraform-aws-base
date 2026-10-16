@@ -92,12 +92,12 @@ locals {
 module "aws_iam_role_lambda" {
   source = "../../../modules/aws/iam/role/lambda"
 
-  is_vpc = var.common_lambda.vpc.is_enabled
+  aws_iam_policy = local.aws_iam_policy_lambda
   aws_iam_role = merge(var.common_lambda.aws_iam_role, {
     name = "${var.name_prefix}${var.common_lambda.aws_iam_role.name}"
     }
   )
-  aws_iam_policy = local.aws_iam_policy_lambda
+  is_vpc = var.common_lambda.vpc.is_enabled
 
   tags = var.tags
 }

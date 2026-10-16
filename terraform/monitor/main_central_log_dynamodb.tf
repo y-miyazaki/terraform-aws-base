@@ -9,8 +9,7 @@ module "dynamodb_table_monitor_log" {
   source  = "terraform-aws-modules/dynamodb-table/aws"
   version = "5.5.2"
 
-  create_table = true
-  region       = each.value
+  region = each.value
 
   attributes = [
     {
@@ -20,6 +19,7 @@ module "dynamodb_table_monitor_log" {
   ]
   autoscaling_enabled         = false
   billing_mode                = "PAY_PER_REQUEST"
+  create_table                = true
   deletion_protection_enabled = true
   hash_key                    = "alarm_name"
   name                        = "${var.name_prefix}monitor-log"
@@ -27,13 +27,7 @@ module "dynamodb_table_monitor_log" {
     max_read_request_units  = 3
     max_write_request_units = 3
   }
-  point_in_time_recovery_enabled     = true
-  server_side_encryption_enabled     = true
-  server_side_encryption_kms_key_arn = module.kms_key[each.key].key_arn
-  table_class                        = "STANDARD"
-  ttl_attribute_name                 = "expires_at"
-  ttl_enabled                        = true
-
+  point_in_time_recovery_enabled = true
   resource_policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
@@ -59,6 +53,11 @@ module "dynamodb_table_monitor_log" {
       }
     ]
   })
+  server_side_encryption_enabled     = var.kms["monitor"].is_enabled
+  server_side_encryption_kms_key_arn = var.kms["monitor"].is_enabled ? module.kms_key[each.key].key_arn : null
+  table_class                        = "STANDARD"
+  ttl_attribute_name                 = "expires_at"
+  ttl_enabled                        = true
 
   tags = var.tags
 }

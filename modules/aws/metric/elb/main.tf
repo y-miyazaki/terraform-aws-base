@@ -18,15 +18,15 @@ locals {
 module "helper" {
   source = "../../_internal/metric_helper"
 
-  is_enabled  = var.is_enabled
-  create_auto = var.create_auto_dimensions
+  is_enabled = var.is_enabled
 
-  source_list        = data.aws_lbs.this.arns
-  include_list       = var.auto_dimensions_include_list
-  exclude_list       = var.auto_dimensions_exclude_list
-  manual_dimensions  = var.dimensions
-  dimension_key      = "LoadBalancer"
   base_threshold     = var.threshold
+  create_auto        = var.create_auto_dimensions
+  dimension_key      = "LoadBalancer"
+  exclude_list       = var.auto_dimensions_exclude_list
+  include_list       = var.auto_dimensions_include_list
+  manual_dimensions  = var.dimensions
+  source_list        = data.aws_lbs.this.arns
   threshold_override = var.threshold_override
 }
 

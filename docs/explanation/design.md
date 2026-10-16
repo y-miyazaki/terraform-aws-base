@@ -188,7 +188,7 @@ terraform apply -var-file=terraform.<env>.tfvars
 
 ## Provider Configuration
 
-All root modules declare `required_version = ">=1.12"` and pin the AWS provider to `~>6.0`. Tags are injected globally via `default_tags` on the provider to avoid per-resource tag repetition.
+All root modules declare `required_version = ">= 1.12"` and pin the AWS provider to `>= 6.0.0, < 7.0.0`. Tags are injected globally via `default_tags` on the provider to avoid per-resource tag repetition.
 
 In `terraform/base`, the default provider uses `var.region.primary` as a safety fallback. All resources must explicitly set `region` — the provider region is never relied upon intentionally:
 
