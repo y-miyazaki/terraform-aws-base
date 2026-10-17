@@ -2886,7 +2886,6 @@ devops_agent = {
     #         aws devops-agent register-service --service mcpserver --region ap-northeast-1 \
     #           --service-details '{"mcpserver":{"name":"LinearMcpServer","endpoint":"https://mcp.linear.app/mcp","authorizationConfig":{"apiKey":{"apiKeyName":"linear-api-key","apiKeyHeader":"Authorization","apiKeyValue":"Bearer <TOKEN>"}}}}' # pragma: allowlist secret
     #         If the Linear credential cannot create labels, create the label devops-agent in Linear beforehand.
-    #     - Notion (hosted MCP uses OAuth): register it in the console (Capability Providers) and copy the service ID.
     #     GitHub label: create the label devops-agent in every target repository beforehand. It needs Label creation permission in GitHub; the GitHub MCP server has no tool to create it, so the agent cannot.
     #     aws devops-agent list-services --region ap-northeast-1 --query 'services[].{id:serviceId,type:serviceType}'
     #   ex)
@@ -2895,12 +2894,6 @@ devops_agent = {
     #       description = "GitHub MCP server (Issue / Draft PR)"
     #       endpoint    = "https://api.githubcopilot.com/mcp/"
     #       name        = "GitHubMcpServer"
-    #       service_id  = "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
-    #     }
-    #     notion = {
-    #       description = "Notion MCP server (incident pages)"
-    #       endpoint    = "https://mcp.notion.com/mcp"
-    #       name        = "NotionMcpServer"
     #       service_id  = "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
     #     }
     #     linear = {
@@ -2950,7 +2943,7 @@ devops_agent = {
         github_repositories = {}
         # (Optional) MCP servers to associate (tool allowlist; unlisted tools are invisible to the agent).
         # mcp_server_registration: key of devops_agent.primary.mcp_server_registrations. Do not allowlist merge / delete tools.
-        # Tool names follow the current GitHub MCP server (issue_write / issue_read; there is no create_issue). Notion and Linear tool names: verify with tools/list.
+        # Tool names follow the current GitHub MCP server (issue_write / issue_read; there is no create_issue). Linear tool names: verify with tools/list.
         #   ex)
         #   mcp_servers = {
         #     github = {
@@ -2961,10 +2954,6 @@ devops_agent = {
         #         "issue_write", "list_branches", "list_issues", "pull_request_read", "push_files", "search_code",
         #         "search_issues", "search_repositories", "update_pull_request",
         #       ]
-        #     }
-        #     notion = {
-        #       mcp_server_registration = "notion"
-        #       tools                   = ["notion-create-pages", "notion-fetch", "notion-search", "notion-update-page"]
         #     }
         #     linear = {
         #       mcp_server_registration = "linear"
@@ -2985,6 +2974,7 @@ devops_agent = {
             content_files = [
               "devops_agent/agents_md/incident-suppression/postgresql-operation.md",
               "devops_agent/agents_md/incident-suppression/scheduled-stop.md",
+              "devops_agent/agents_md/incident-suppression/memory-based-suppression.md",
             ]
           }
         }
@@ -3020,6 +3010,12 @@ devops_agent = {
         #       description  = "Follow up on unanswered human comments on Linear Issues and their GitHub PRs labeled devops-agent: answer, update the text, re-check the incident, fix the Draft PR, and close when allowed. Use this in the scheduled follow-up run. Do not use it to start an investigation or to create Issues, PRs or labels."
         #       content_file = "devops_agent/skills/linear-issue-pr-followup/SKILL.md"
         #     }
+        #     incident_triage_suppression = {
+        #       agent_types  = ["INCIDENT_TRIAGE"]
+        #       name         = "incident-triage-suppression"
+        #       description  = "Triage-stage skip criteria: before scheduling an investigation, read the per-alarm suppression memory monitors-<alarm-name> in directives and SKIP the incident when its ## Suppression is ACTIVE, so no investigation is dispatched (zero agent cost)."
+        #       content_file = "devops_agent/skills/incident-triage-suppression/SKILL.md"
+        #     }
         #   }
         skills = {}
         # Issue / Draft PR agents (enable together with mcp_servers above; tool name prefix <MCP server name>_ is assumed, verify in the console).
@@ -3035,18 +3031,6 @@ devops_agent = {
         #         "GitHubMcpServer_create_pull_request", "GitHubMcpServer_get_file_contents", "GitHubMcpServer_get_label",
         #         "GitHubMcpServer_issue_write", "GitHubMcpServer_list_branches", "GitHubMcpServer_list_issues",
         #         "GitHubMcpServer_search_code", "GitHubMcpServer_search_issues", "GitHubMcpServer_search_repositories",
-        #       ]
-        #     }
-        #     notion_issue_pr_agent = {
-        #       name               = "notion-issue-pr-agent"
-        #       system_prompt_file = "devops_agent/agents/notion_issue_pr_agent.md"
-        #       skills             = ["notion_issue_draft_pr"]
-        #       tools = [
-        #         "use_aws", "query_cloudwatch_logs", "McpSlackReply_slack_reply_to_thread",
-        #         "NotionMcpServer_notion-create-pages", "NotionMcpServer_notion-search", "NotionMcpServer_notion-update-page",
-        #         "GitHubMcpServer_create_branch", "GitHubMcpServer_create_or_update_file", "GitHubMcpServer_create_pull_request",
-        #         "GitHubMcpServer_get_file_contents", "GitHubMcpServer_get_label", "GitHubMcpServer_issue_write", "GitHubMcpServer_list_branches",
-        #         "GitHubMcpServer_search_repositories",
         #       ]
         #     }
         #     github_issue_pr_followup_agent = {

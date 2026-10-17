@@ -328,7 +328,7 @@ variable "devops_agent" {
     primary.github_registrations is a map of the account-level GitHub registrations (one per GitHub user, organization, or GitHub Enterprise
     Server instance), registered in the AWS DevOps Agent console beforehand; set github_registrations.<name>.service_id to the
     registered service ID. agent_spaces[*].github_repositories[*].github_registration refers to a key of github_registrations.
-    primary.mcp_server_registrations is a map of the account-level MCP server registrations (e.g. GitHub MCP server, Notion MCP server),
+    primary.mcp_server_registrations is a map of the account-level MCP server registrations (e.g. GitHub MCP server, Linear MCP server),
     registered beforehand with `aws devops-agent register-service --service mcpserver` (the credential never enters the Terraform
     state); set mcp_server_registrations.<name>.service_id to the returned service ID. agent_spaces[*].mcp_servers[*].mcp_server_registration
     refers to a key of mcp_server_registrations, and tools is the allowlist of MCP tool names the Agent Space can use.

@@ -4,8 +4,8 @@
 | Name | Version |
 | ---- | ------- |
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.5.7 |
-| <a name="requirement_aws"></a> [aws](#requirement\_aws) | ~> 6.0 |
-| <a name="requirement_external"></a> [external](#requirement\_external) | ~> 2.4.0 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 6.0.0, < 7.0.0 |
+| <a name="requirement_external"></a> [external](#requirement\_external) | >= 2.4.0, < 2.5.0 |
 
 ## Providers
 
@@ -43,7 +43,7 @@
 | <a name="input_description"></a> [description](#input\_description) | (Optional) Default description for schedules. | `string` | `null` | no |
 | <a name="input_desired_count"></a> [desired\_count](#input\_desired\_count) | (Optional) Default desired count for starting ECS services when not specified in schedules. | `number` | `1` | no |
 | <a name="input_is_enabled"></a> [is\_enabled](#input\_is\_enabled) | (Optional) A boolean flag to enable/disable ECS service schedules. | `bool` | `true` | no |
-| <a name="input_name_prefix"></a> [name\_prefix](#input\_name\_prefix) | (Optional) Creates a unique name beginning with the specified prefix. | `string` | `null` | no |
+| <a name="input_name_prefix"></a> [name\_prefix](#input\_name\_prefix) | (Optional) Creates a unique name beginning with the specified prefix. | `string` | `""` | no |
 | <a name="input_region"></a> [region](#input\_region) | (Optional) AWS region. Defaults to provider region. | `string` | `null` | no |
 | <a name="input_retry_max_age_seconds"></a> [retry\_max\_age\_seconds](#input\_retry\_max\_age\_seconds) | (Optional) Maximum age of a request that EventBridge Scheduler sends to a target for processing. | `number` | `3600` | no |
 | <a name="input_retry_max_attempts"></a> [retry\_max\_attempts](#input\_retry\_max\_attempts) | (Optional) Maximum number of retry attempts to make before the request fails. | `number` | `3` | no |

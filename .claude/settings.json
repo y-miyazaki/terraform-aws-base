@@ -190,6 +190,7 @@
       "Edit(./.env)",
       "Edit(./.env.*)",
       "Edit(./secrets/**)",
+      "Edit(~/**)",
       "Read(**/credentials/**)",
       "Read(**/*.crt)",
       "Read(**/*.key)",
@@ -222,9 +223,7 @@
     ],
     "ask": [
       "Bash(git branch -D:*)",
-      "Bash(git checkout:*)",
       "Bash(git clean -f:*)",
-      "Bash(git commit:*)",
       "Bash(git push:*)",
       "Bash(git rebase:*)",
       "Bash(git reset --hard:*)",
@@ -246,6 +245,7 @@
       "Edit(mise.toml)",
       "Edit(package.json)",
       "Edit(renovate.json)",
+      "Edit(terraform.*.tfvars)",
       "Edit(tsconfig.json)"
     ]
   },

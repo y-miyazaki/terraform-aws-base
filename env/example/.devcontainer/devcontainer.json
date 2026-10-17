@@ -1,4 +1,5 @@
 {
+  "$schema": "https://raw.githubusercontent.com/devcontainers/spec/main/schemas/devContainer.schema.json",
   "dockerFile": "../env/common/Dockerfile",
   "remoteUser": "vscode",
   "containerEnv": {
@@ -28,6 +29,7 @@
         "vscode-icons-team.vscode-icons",
         "yzhang.markdown-all-in-one",
         // for AI
+        "anthropic.claude-code",
         // "automatalabs.copilot-mcp",
         // "github.copilot",
         // "github.copilot-chat",

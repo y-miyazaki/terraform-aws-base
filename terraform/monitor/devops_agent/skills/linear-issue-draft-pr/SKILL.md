@@ -31,7 +31,7 @@ description: "Record an alarm investigation as a Linear Issue labeled devops-age
 
 - Chat questions, status checks, or investigations without an actionable root cause (create nothing; send reply B with `No action`).
 - Replying to comments on existing Issues and PRs (`linear-issue-pr-followup`).
-- Tracking incidents as GitHub Issues (`github-issue-draft-pr`) or Notion pages (`notion-issue-draft-pr`). Never run two tracker skills for the same alarm; if several are loaded, use this skill only when it is the one the team configured for this Agent Space, otherwise stop and report the conflict.
+- Tracking incidents as GitHub Issues (`github-issue-draft-pr`). Never run two tracker skills for the same alarm; if several are loaded, use this skill only when it is the one the team configured for this Agent Space, otherwise stop and report the conflict.
 - Resources not defined in an associated repository (record the Linear Issue only and say why).
 - An Agent Space whose `AGENTS.md` has no `Linear team:` line (create nothing in Linear; say so in reply B with `Failed`).
 
@@ -41,6 +41,20 @@ description: "Record an alarm investigation as a Linear Issue labeled devops-age
 - [common-output-format.md](references/common-output-format.md) (always read: link format, Slack reply A and B)
 - [issue-body-template.md](assets/issue-body-template.md) (read when creating or updating the Issue)
 - [pr-body-template.md](assets/pr-body-template.md) (read when opening the PR)
+
+## Suppression pre-check (before creating anything)
+
+This is a second safety net for the GENERIC `AGENTS.md` rule *incident-suppression: per-alarm
+memory directives*. Even though triage/RCA should already have honored it, re-check here so a
+suppressed alarm never gets a fresh Issue/PR at the record step.
+
+- Extract the alarm name from the incident title: the string after the environment prefix
+  (`[prd]`/`[stg]`/`[dev]`) and before the first `:`, lowercase kebab-case (spaces and `/` → `-`).
+- `get_memory` for `monitors-<alarm-name>` in `directives`.
+- IF its `## Suppression` is `ACTIVE` → create **no** Linear Issue and **no** PR. Send Slack
+  reply B with `No action`, noting the alarm is suppressed by an active directive (cite the
+  memory name), and go straight to the final report.
+- IF `NONE`/absent, or the memory does not exist → proceed with the workflow below.
 
 ## Delegation
 
@@ -54,21 +68,22 @@ Roles when the investigation lead delegates to a sub-agent (for example the miti
 ## Workflow
 
 1. Send Slack reply A as soon as the investigation starts, unless reply A was already sent in this investigation (never send it twice; the lead normally sends it, see Delegation).
-2. Resolve the team (CHK-02): read `Linear team:` from `AGENTS.md` and confirm it exists with `list_teams`. IF it is missing or does not exist → create nothing in Linear, go to step 9 with `Failed`.
-3. Check the label `devops-agent` (CHK-05: `list_issue_labels`, then `save_issue_label` when it is missing).
-4. Search Linear for an existing open Issue for the same alarm and resource (`list_issues` with `team`, `label: devops-agent`, and `query`).
-   IF one is open → add the new evidence with `save_comment`, find the PR linked from it, record both URLs, go to step 9.
-5. Create the Issue (`save_issue` without `id`, `team`, `title`, `description`, `labels: ["devops-agent"]`) from the Issue template. Title: `[<environment>] <resource>: <problem>`. The `Pull request` section starts as `none (PR not created yet)`; step 6 or step 8 replaces it, so the Issue never ends with that placeholder.
-6. Decide whether a Draft PR is allowed (CHK-04 in the checklist). IF not → set the `Pull request` section of the Issue to `none (<reason>)` (`save_issue` with `id` and `patch`), then go to step 9 with the Issue only.
-7. Create the working branch `feature/devops-agent/<short-resource-name>-<yyyymmdd>` from the base branch (`create_branch`, GitHub MCP), then read the target files (`get_file_contents`, `search_code`) and make the smallest possible change to the failing resource definition (`create_or_update_file`, or `push_files` for several files). IF the fix cannot be made in code → do not open a PR; set the `Pull request` section to `none (<reason>)`, put the proposed fix in the Issue, and go to step 9. A PR containing only a document that describes the fix is prohibited. Follow `AGENTS.md` / `CLAUDE.md` when present.
-8. Open a **Draft** PR to the base branch (`create_pull_request`, `draft: true`) from the PR template with the Linear identifier (for example `ENG-123`) in the body, then add the GitHub label `devops-agent` (CHK-05). Then set the `Pull request` section of the Issue to the full PR URL and `Draft`, and attach the PR as a link (`save_issue` with `id`, `patch`, and `links: [{url, title}]`).
-9. Send Slack reply B (by the agent that created the result; in every outcome). Send reply C only when a human decision is needed.
-10. Report the outcome, Incident (omitted when `unknown`), Repository, Issue URL, and PR URL in the investigation result, in the format of reply B.
+2. Run the **Suppression pre-check** above. IF suppressed → create nothing, send reply B with `No action`, and go to step 10.
+3. Resolve the team (CHK-02): read `Linear team:` from `AGENTS.md` and confirm it exists with `list_teams`. IF it is missing or does not exist → create nothing in Linear, go to step 10 with `Failed`.
+4. Check the label `devops-agent` (CHK-05: `list_issue_labels`, then `save_issue_label` when it is missing).
+5. Search Linear for an existing open Issue for the same alarm and resource (`list_issues` with `team`, `label: devops-agent`, and `query`).
+   IF one is open → add the new evidence with `save_comment`, find the PR linked from it, record both URLs, go to step 10.
+6. Create the Issue (`save_issue` without `id`, `team`, `title`, `description`, `labels: ["devops-agent"]`) from the Issue template. Title: `[<environment>] <resource>: <problem>`. The `Pull request` section starts as `none (PR not created yet)`; step 7 or step 9 replaces it, so the Issue never ends with that placeholder.
+7. Decide whether a Draft PR is allowed (CHK-04 in the checklist). IF not → set the `Pull request` section of the Issue to `none (<reason>)` (`save_issue` with `id` and `patch`), then go to step 10 with the Issue only.
+8. Create the working branch `feature/devops-agent/<short-resource-name>-<yyyymmdd>` from the base branch (`create_branch`, GitHub MCP), then read the target files (`get_file_contents`, `search_code`) and make the smallest possible change to the failing resource definition (`create_or_update_file`, or `push_files` for several files). IF the fix cannot be made in code → do not open a PR; set the `Pull request` section to `none (<reason>)`, put the proposed fix in the Issue, and go to step 10. A PR containing only a document that describes the fix is prohibited. Follow `AGENTS.md` / `CLAUDE.md` when present.
+9. Open a **Draft** PR to the base branch (`create_pull_request`, `draft: true`) from the PR template with the Linear identifier (for example `ENG-123`) in the body, then add the GitHub label `devops-agent` (CHK-05). Then set the `Pull request` section of the Issue to the full PR URL and `Draft`, and attach the PR as a link (`save_issue` with `id`, `patch`, and `links: [{url, title}]`).
+10. Send Slack reply B (by the agent that created the result; in every outcome). Send reply C only when a human decision is needed.
+11. Report the outcome, Incident (omitted when `unknown`), Repository, Issue URL, and PR URL in the investigation result, in the format of reply B.
 
 ### Error Handling
 
 | Condition                                | Severity    | Action                                                                                                                                                                                  |
-| ---------------------------------------- | ----------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| ---------------------------------------- | ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | A tool call fails                        | Recoverable | Do not retry in a loop; report the failing tool, the error text, and the likely missing permission; put the Issue/PR text in the result so a human can create it                        |
 | `Linear team:` missing or team not found | Recoverable | Create nothing in Linear and never fall back to another team; reply B with `Failed`; put the Issue text in the result                                                                   |
 | Label `devops-agent` cannot be created   | Recoverable | Do not retry; create no Issue without the label (the follow-up agent would never find it); reply B with `Failed`, naming the Linear permission needed; put the Issue text in the result |
@@ -79,4 +94,4 @@ Roles when the investigation lead delegates to a sub-agent (for example the miti
 | Slack reply B fails                      | Recoverable | Do not retry; report the error text in the result                                                                                                                                       |
 | `slack_reply_target` absent or malformed | Info        | Send no Slack reply; do not guess a channel or timestamp                                                                                                                                |
 
-<!-- last_verified: 2026-10-13 (Linear and GitHub MCP server tool names; review quarterly) -->
+<!-- last_verified: 2026-10-17 (Linear and GitHub MCP server tool names; review quarterly) -->

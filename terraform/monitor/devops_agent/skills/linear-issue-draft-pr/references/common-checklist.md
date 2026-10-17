@@ -9,7 +9,7 @@ Gate IDs are for self-check and for explaining a skipped step. Do not put these 
 - [ ] Write everything you produce for people (Issue title/body, PR title/body, commit messages, comments, Slack replies) in the same language as your response in this investigation (the Agent Space response language, or the language of the request when none is set)
 - [ ] Do not mix languages in the prose of one Issue, PR, or reply
 - [ ] Keep in English, exactly as defined: section headings, field labels and keys of the templates and Slack formats (`Incident`, `Issue`, `PR`, `Outcome`, `Root cause`, `Next`, `Repository`, `base branch`), the Outcome values, `confirmed`/`suspected`, `unknown`, and the `[devops-agent]` prefix. Write all prose (every sentence after a heading or label) in the response language, never in English. Keep code, identifiers, resource names, ARNs, branch names, tool names, and log excerpts as they are
-- [ ] End the Linear Issue and PR body with the `Meta` block of the template and set `response_language` to the language code of your response (for example `ja`)
+- [ ] End the Linear Issue and PR body with the `Meta` block (a `| Key | Value |` table) of the template and set the `response_language` row to the language code of your response (for example `ja`)
 - [ ] Linear does not render HTML: never write `<details>` or `<summary>` in a Linear Issue or comment (they appear as raw text). Make a section collapsible only with Linear's `+++ <title>` … `+++` syntax. GitHub PR bodies keep `<details>`
 - **PASS** if each artifact uses a single language
 

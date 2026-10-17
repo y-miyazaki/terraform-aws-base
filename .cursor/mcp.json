@@ -58,14 +58,6 @@
       "command": "codebase-memory-mcp",
       "args": []
     },
-    "lean-ctx": {
-      "type": "stdio",
-      "command": "npx",
-      "args": [
-        "-y",
-        "lean-ctx-bin@3.10.5"
-      ]
-    },
     "hashicorp-terraform-mcp-server": {
       "type": "stdio",
       "command": "npx",

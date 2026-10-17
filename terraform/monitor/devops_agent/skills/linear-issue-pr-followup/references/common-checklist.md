@@ -6,8 +6,8 @@ Gate IDs are for self-check and for explaining a skipped item. Do not put these 
 
 ### CHK-01: Language, team, and target items
 
-- [ ] Write comments, Issue text, and PR text in one language: the `response_language` value in the `Meta` block at the end of the Issue or PR body. When the Meta block or that value is missing, use the language of your response (the Agent Space response language). Do not infer the language from any other part of the Issue or PR body.
-- [ ] Keep the `Meta` block as the last block of the Issue or PR body whenever you edit the body; change only `last_followup` (set it to the UTC time of this run, `YYYY-MM-DDTHH:MM:SSZ`) and never edit the other keys
+- [ ] Write comments, Issue text, and PR text in one language: the `response_language` row of the `Meta` table at the end of the Issue or PR body (older items may carry a `response_language: <value>` line in a text block instead; read it the same way). When the Meta block or that value is missing, use the language of your response (the Agent Space response language). Do not infer the language from any other part of the Issue or PR body.
+- [ ] Keep the `Meta` block as the last block of the Issue or PR body whenever you edit the body; change only the `last_followup` value (set it to the UTC time of this run, `YYYY-MM-DDTHH:MM:SSZ`), keep the existing format (table, or the older `key: value` text block), and never edit the other keys
 - [ ] Keep in English, exactly as defined: section headings, field labels and fixed keys (`Checked:`, `Changed:`, `Not done:`, `Closed:`, `-- devops-agent`), code, identifiers, branch names, tool names, and log excerpts
 - [ ] Read the line `Linear team: <team>` in `AGENTS.md`; confirm it exists with `list_teams`; if it is missing or does not exist, report it and stop (never search another team)
 - [ ] Target only Linear Issues of that team that carry the label `devops-agent`, and the PRs linked from them that carry the GitHub label `devops-agent`; target repositories are those associated with the Agent Space

@@ -1,3 +1,5 @@
+@AGENTS.md
+
 # Project Instructions
 
 ## Repository Rules
@@ -60,7 +62,8 @@ Terraform checks — do NOT run manually:
 ### tfvars Conventions
 
 - `terraform.example.tfvars` is the master. Every variable and comment written there MUST also be set in `terraform.{dev,qa,stg,prd}.tfvars`.
-- Comments are identical in all five files; only values may differ per environment. A `diff` between two tfvars files must show value differences only.
+- Comments are identical in all five files, based on `terraform.example.tfvars`; only values may differ per environment. A `diff` between two tfvars files must show value differences only.
+- Exception: comments attached to environment-specific values (e.g. a `threshold_override` entry keyed by an environment-specific cluster name) only need to exist in that environment's file.
 - When adding or changing a variable or comment, update all five files in the same change. Never limit it to dev; set an explicit empty value (`[]`, `{}`) when an environment has nothing to set.
 - `terraform.example.tfvars` holds environment-independent defaults. When a CloudWatch Logs metric filter or alarm fix is environment-independent (e.g. excluding benign PostgreSQL log noise from `metric_log_postgresql`), apply it to example and all four environments with identical patterns and comments, even if the ticket targets only one environment. Keep environment-specific values (thresholds, log group names) per environment.
 

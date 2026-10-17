@@ -4,19 +4,19 @@
 | Name | Version |
 | ---- | ------- |
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.5.7 |
-| <a name="requirement_aws"></a> [aws](#requirement\_aws) | ~> 6.0 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 6.0.0, < 7.0.0 |
 
 ## Providers
 
 | Name | Version |
 | ---- | ------- |
-| <a name="provider_aws"></a> [aws](#provider\_aws) | ~> 6.0 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | >= 6.0.0, < 7.0.0 |
 
 ## Modules
 
 | Name | Source | Version |
 | ---- | ------ | ------- |
-| <a name="module_aws_lambda_create_lambda_report_csp"></a> [aws\_lambda\_create\_lambda\_report\_csp](#module\_aws\_lambda\_create\_lambda\_report\_csp) | terraform-aws-modules/lambda/aws | 8.9.0 |
+| <a name="module_aws_lambda_create_lambda_report_csp"></a> [aws\_lambda\_create\_lambda\_report\_csp](#module\_aws\_lambda\_create\_lambda\_report\_csp) | terraform-aws-modules/lambda/aws | 8.12.0 |
 
 ## Resources
 

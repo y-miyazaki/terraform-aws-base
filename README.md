@@ -179,11 +179,11 @@ Named queries for ad-hoc log analysis in S3.
 
 ### Monitoring: AWS DevOps Agent
 
-AWS DevOps Agent investigates alarms (started from the alarm Lambda through a generic webhook). With the GitHub or Notion Model Context Protocol (MCP) server and the bundled skills, it records the root cause as a GitHub Issue or Notion page and proposes a fix as a Draft pull request to `develop` (or the default branch when `develop` does not exist) from a `feature/*` branch. A human reviews and merges. See [Features: Monitor](https://y-miyazaki.github.io/terraform-aws-base/reference/features-monitor/#issue-and-draft-pr-from-alarms-github-notion) for the setup.
+AWS DevOps Agent investigates alarms (started from the alarm Lambda through a generic webhook). With the GitHub or Linear Model Context Protocol (MCP) server and the bundled skills, it records the root cause as a GitHub or Linear Issue and proposes a fix as a Draft pull request to `develop` (or the default branch when `develop` does not exist) from a `feature/*` branch. A human reviews and merges. See [Features: Monitor](https://y-miyazaki.github.io/terraform-aws-base/reference/features-monitor/#issue-and-draft-pr-from-alarms-github-linear) for the setup.
 
 | Item                 | Location                                                         | Description                                            |
 | -------------------- | ---------------------------------------------------------------- | ------------------------------------------------------ |
-| Skills               | `terraform/monitor/devops_agent/skills/`                         | GitHub Issue + Draft PR, Notion page + Draft PR        |
+| Skills               | `terraform/monitor/devops_agent/skills/`                         | GitHub Issue + Draft PR, Linear Issue + Draft PR       |
 | Custom agents        | `terraform/monitor/devops_agent/agents/`                         | Prompts for health check and Issue / Draft PR agents   |
 | MCP server allowlist | `devops_agent.primary.agent_spaces.<name>.mcp_servers` in tfvars | Tools the agent can use; merge and delete are excluded |
 

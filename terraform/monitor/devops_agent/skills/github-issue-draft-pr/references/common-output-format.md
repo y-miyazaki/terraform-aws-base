@@ -40,7 +40,7 @@ Incident: <Incident value>
 
 ### Reply B (at the end, always)
 
-If the Incident value would be `unknown`, omit the `Incident:` line from replies A, B, and C. Send B after the Issue (and the PR, when one is created) exist, and also when none is created. Plain text, 10 lines or fewer. Write `Repository:` as `none (<reason>)` when the repository is ambiguous or no associated repository holds the target (same wording as the `repository:` key of the Meta block). Keep the labels and the Outcome value in English; write the text after `Root cause (...)` and `Next` in the response language (CHK-01).
+If the Incident value would be `unknown`, omit the `Incident:` line from replies A, B, and C. Send B after the Issue (and the PR, when one is created) exist, and also when none is created. Plain text, 10 lines or fewer. Write `Repository:` as `none (<reason>)` when the repository is ambiguous or no associated repository holds the target (same wording as the `repository` row of the Meta table). Keep the labels and the Outcome value in English; write the text after `Root cause (...)` and `Next` in the response language (CHK-01).
 
 ```text
 [devops-agent] <Outcome>
