@@ -12792,60 +12792,6 @@ deployments:
   - y-miyazaki/config/.apm/packages/terraform
   active_owner: y-miyazaki/config/.apm/packages/terraform
   content_hash: sha256:75916a122516ab4dd4ad5a27b09e0efa4bc01c087000ccdcd81c5de4dd9f3bd9
-- kind: uri
-  target: mcp
-  value: aws-documentation-mcp-server
-  runtime: claude
-  scope: project
-  owners:
-  - .
-  active_owner: .
-  content_hash: null
-- kind: uri
-  target: mcp
-  value: context7
-  runtime: claude
-  scope: project
-  owners:
-  - .
-  active_owner: .
-  content_hash: null
-- kind: uri
-  target: mcp
-  value: github
-  runtime: claude
-  scope: project
-  owners:
-  - .
-  active_owner: .
-  content_hash: null
-- kind: uri
-  target: mcp
-  value: aws-documentation-mcp-server
-  runtime: cursor
-  scope: project
-  owners:
-  - .
-  active_owner: .
-  content_hash: null
-- kind: uri
-  target: mcp
-  value: context7
-  runtime: cursor
-  scope: project
-  owners:
-  - .
-  active_owner: .
-  content_hash: null
-- kind: uri
-  target: mcp
-  value: github
-  runtime: cursor
-  scope: project
-  owners:
-  - .
-  active_owner: .
-  content_hash: null
 mcp_servers:
 - aws-documentation-mcp-server
 - aws-knowledge-mcp-server
@@ -12936,15 +12882,7 @@ mcp_configs:
     - terraform-mcp-server@0.13.0
     registry: false
     command: npx
-mcp_target_servers:
-  claude:
-  - aws-documentation-mcp-server
-  - context7
-  - github
-  cursor:
-  - aws-documentation-mcp-server
-  - context7
-  - github
+mcp_target_servers: {}
 mcp_config_provenance:
   aws-documentation-mcp-server: config-aws
   aws-knowledge-mcp-server: config-aws
