@@ -8,7 +8,7 @@ targets:
 includes: auto
 dependencies:
   apm:
-    - github.com/y-miyazaki/config/.apm/packages/common#v1.8.121
+    - github.com/y-miyazaki/config/.apm/packages/common#v1.8.125
     - github.com/y-miyazaki/config/.apm/packages/repo-maintenance#v1.8.121
     - github.com/y-miyazaki/config/.apm/packages/github#v1.8.121
     - github.com/y-miyazaki/config/.apm/packages/github-actions#v1.8.121
