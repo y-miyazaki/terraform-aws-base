@@ -13,7 +13,7 @@ dependencies:
     - github.com/y-miyazaki/config/.apm/packages/github#v1.8.121
     - github.com/y-miyazaki/config/.apm/packages/github-actions#v1.8.121
     # - github.com/y-miyazaki/config/.apm/packages/loop#v1.8.121
-    - github.com/y-miyazaki/config/.apm/packages/common-hooks-claude#v1.8.121
+    - github.com/y-miyazaki/config/.apm/packages/common-hooks-claude#v1.8.125
     # - github.com/y-miyazaki/config/.apm/packages/common-hooks-copilot#v1.8.121
     - github.com/y-miyazaki/config/.apm/packages/common-hooks-cursor#v1.8.121
     - github.com/y-miyazaki/config/.apm/packages/aws#v1.8.121
