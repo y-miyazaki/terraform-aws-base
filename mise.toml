@@ -40,26 +40,26 @@ uvx = true # Install uv/uvx via pipx for better isolation and performance.
 
 # A Runtime tools
 aqua = "v2.64.0"
-node = "24.21.0"
-pnpm = { version = "11.28.5", depends = ["node"] }
+node = "24.22.1"
+pnpm = { version = "11.28.6", depends = ["node"] }
 python = "3.14.6"
 
 # AI agent tools
-"github:microsoft/apm" = { version = "v0.33.0", lazy = true, lazy_bins = ["apm"] }                                 # agent package manager
-claude = { version = "2.1.296", lazy = true, lazy_bins = ["claude"] }                                              # Claude Code CLI
-"github:DeusData/codebase-memory-mcp" = { version = "v0.11.0", lazy = true, lazy_bins = ["codebase-memory-mcp"] } # codebase memory MCP server
-"aqua:github/copilot-cli" = { version = "1.0.95", lazy = true, lazy_bins = ["copilot"] }                           # GitHub Copilot CLI
-"pipx:headroom-ai" = { version = "0.40.0", extras = "proxy,mcp,bedrock", depends = ["python"], lazy = true, lazy_bins = ["headroom", "headroom-cache-ttl"] }
+"github:microsoft/apm" = { version = "v0.34.0", lazy = true, lazy_bins = ["apm"] }                                 # agent package manager
+claude = { version = "2.1.306", lazy = true, lazy_bins = ["claude"] }                                              # Claude Code CLI
+"github:DeusData/codebase-memory-mcp" = { version = "v0.12.1", lazy = true, lazy_bins = ["codebase-memory-mcp"] } # codebase memory MCP server
+"aqua:github/copilot-cli" = { version = "1.0.101", lazy = true, lazy_bins = ["copilot"] }                           # GitHub Copilot CLI
+"pipx:headroom-ai" = { version = "0.41.0", extras = "proxy,mcp,bedrock", depends = ["python"], lazy = true, lazy_bins = ["headroom", "headroom-cache-ttl"] }
 "npm:lean-ctx-bin" = { version = "3.11.4", depends = [
   "node",
 ], allow_builds = [
   "lean-ctx-bin",
 ], install_env = { PNPM_CONFIG_IGNORE_SCRIPTS = "true" }, lazy = true, lazy_bins = ["lean-ctx"] } # context optimizer (hooks CLI + MCP npm)
-"github:microsoft/waza" = { version = "v0.38.10", lazy = true, lazy_bins = ["waza"] }                              # agent skill evaluator
+"github:microsoft/waza" = { version = "v0.39.0", lazy = true, lazy_bins = ["waza"] }                              # agent skill evaluator
 
 # AWS related tools
-"aqua:aws/aws-cli" = { version = "2.37.12", lazy = true, lazy_bins = ["aws", "aws_completer"] }                     # AWS CLI
-"aqua:aws/aws-sam-cli" = { version = "1.168.0", lazy = true, lazy_bins = ["sam"] }                                 # SAM CLI tool
+"aqua:aws/aws-cli" = { version = "2.38.4", lazy = true, lazy_bins = ["aws", "aws_completer"] }                     # AWS CLI
+"aqua:aws/aws-sam-cli" = { version = "1.169.0", lazy = true, lazy_bins = ["sam"] }                                 # SAM CLI tool
 "npm:awsp" = { version = "0.2.0", depends = [
   "node",
 ], install_env = { NPM_CONFIG_IGNORE_SCRIPTS = "true" } } # AWS profile switcher
@@ -70,23 +70,23 @@ claude = { version = "2.1.296", lazy = true, lazy_bins = ["claude"] }           
 # GitHub related tools
 "aqua:rhysd/actionlint" = { version = "1.7.12", lazy = true, lazy_bins = ["actionlint"] }                          # GitHub Actions linter
 "aqua:suzuki-shunsuke/disable-checkout-persist-credentials" = { version = "1.0.0", lazy = true, lazy_bins = ["disable-checkout-persist-credentials"] } # disable persist-credentials in checkout action
-"aqua:cli/cli" = { version = "2.102.0", lazy = true, lazy_bins = ["gh"] }                                          # GitHub CLI (gh)
+"aqua:cli/cli" = { version = "2.102.1", lazy = true, lazy_bins = ["gh"] }                                          # GitHub CLI (gh)
 "aqua:suzuki-shunsuke/ghalint" = { version = "1.5.6", lazy = true, lazy_bins = ["ghalint"] }                       # GitHub Actions linter
 "aqua:suzuki-shunsuke/ghatm" = { version = "1.0.0", lazy = true, lazy_bins = ["ghatm"] }                           # auto-set timeout-minutes for GitHub Actions jobs
 "aqua:suzuki-shunsuke/pinact" = { version = "5.0.0", lazy = true, lazy_bins = ["pinact"] }                         # GitHub Actions pinning tool
-"aqua:zizmorcore/zizmor" = { version = "1.30.1", lazy = true, lazy_bins = ["zizmor"] }                             # GitHub Actions security auditor
+"aqua:zizmorcore/zizmor" = { version = "1.31.1", lazy = true, lazy_bins = ["zizmor"] }                             # GitHub Actions security auditor
 
 # Go related tools
 "aqua:air-verse/air" = { version = "1.67.4", lazy = true, lazy_bins = ["air"] }                                    # live reload
-"aqua:bufbuild/buf" = { version = "1.73.0", lazy = true, lazy_bins = ["buf", "protoc-gen-buf-breaking", "protoc-gen-buf-lint"] } # protobuf linter and formatter
+"aqua:bufbuild/buf" = { version = "1.74.0", lazy = true, lazy_bins = ["buf", "protoc-gen-buf-breaking", "protoc-gen-buf-lint"] } # protobuf linter and formatter
 "go:github.com/go-delve/delve/cmd/dlv" = { version = "v1.27.2", lazy = true, lazy_bins = ["dlv"] }                 # debugger
 "aqua:mvdan/gofumpt" = { version = "0.12.0", lazy = true, lazy_bins = ["gofumpt"] }                                # code formatter
-"aqua:golangci/golangci-lint" = { version = "2.14.0", lazy = true, lazy_bins = ["golangci-lint"] }                 # linter
+"aqua:golangci/golangci-lint" = { version = "2.15.0", lazy = true, lazy_bins = ["golangci-lint"] }                 # linter
 "aqua:goreleaser/goreleaser" = { version = "2.18.3", lazy = true, lazy_bins = ["goreleaser"] }                     # release automation
-"go:golang.org/x/tools/gopls" = { version = "v0.23.0", lazy = true, lazy_bins = ["gopls"] }                        # Go language server
+"go:golang.org/x/tools/gopls" = { version = "v0.24.0", lazy = true, lazy_bins = ["gopls"] }                        # Go language server
 "go:golang.org/x/vuln/cmd/govulncheck" = { version = "1.3.0", lazy = true, lazy_bins = ["govulncheck"] }           # vulnerability scanner
 "aqua:ko-build/ko" = { version = "0.19.1", lazy = true, lazy_bins = ["ko"] }                                       # container builder
-"aqua:vektra/mockery" = { version = "3.8.0", lazy = true, lazy_bins = ["mockery"] }                                # mock code generator for interfaces
+"aqua:vektra/mockery" = { version = "3.8.1", lazy = true, lazy_bins = ["mockery"] }                                # mock code generator for interfaces
 "go:github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen" = { version = "v2.8.0", lazy = true, lazy_bins = ["oapi-codegen"] } # OpenAPI code generator
 "aqua:protocolbuffers/protobuf/protoc" = { version = "36.2", lazy = true, lazy_bins = ["protoc"] }                 # protobuf compiler
 "aqua:protocolbuffers/protobuf-go/protoc-gen-go" = { version = "1.36.12", lazy = true, lazy_bins = ["protoc-gen-go"] } # protobuf code generator
@@ -116,15 +116,15 @@ claude = { version = "2.1.296", lazy = true, lazy_bins = ["claude"] }           
 
 # Security related tools
 "aqua:gitleaks/gitleaks" = { version = "8.30.1", lazy = true, lazy_bins = ["gitleaks"] }                           # secret scanner
-"pipx:pre-commit" = { version = "4.6.2", depends = [
+"pipx:pre-commit" = { version = "4.7.0", depends = [
   "python",
 ], lazy = true, lazy_bins = ["pre-commit"] } # pre-commit framework
-"pipx:semgrep" = { version = "1.180.0", depends = ["python"], lazy = true, lazy_bins = ["semgrep", "pysemgrep"] } # SAST scanner (uvx-backed pipx)
-"aqua:aquasecurity/trivy" = { version = "0.75.0", lazy = true, lazy_bins = ["trivy"] }                             # vulnerability scanner
+"pipx:semgrep" = { version = "1.182.0", depends = ["python"], lazy = true, lazy_bins = ["semgrep", "pysemgrep"] } # SAST scanner (uvx-backed pipx)
+"aqua:aquasecurity/trivy" = { version = "0.76.0", lazy = true, lazy_bins = ["trivy"] }                             # vulnerability scanner
 
 # Terraform related tools
 "aqua:getsops/sops" = { version = "3.13.3", lazy = true, lazy_bins = ["sops"] }                                    # encryption tool
-"aqua:hashicorp/terraform" = { version = "1.16.5", lazy = true, lazy_bins = ["terraform"] }                        # infrastructure as code
+"aqua:hashicorp/terraform" = { version = "1.16.6", lazy = true, lazy_bins = ["terraform"] }                        # infrastructure as code
 "aqua:terraform-docs/terraform-docs" = { version = "0.24.0", lazy = true, lazy_bins = ["terraform-docs"] }         # documentation generator
 "aqua:terraform-linters/tflint" = { version = "0.64.0", lazy = true, lazy_bins = ["tflint"] }                      # linter
 
@@ -133,8 +133,8 @@ claude = { version = "2.1.296", lazy = true, lazy_bins = ["claude"] }           
 "pipx:mkdocs" = { version = "1.6.1", depends = ["python"], postinstall = "uv pip install --python $MISE_TOOL_INSTALL_PATH/mkdocs/bin/python mkdocs-material mdx-truly-sane-lists", lazy = true, lazy_bins = ["mkdocs"] } # MkDocs with Material theme
 "aqua:BurntSushi/ripgrep" = { version = "15.2.0", lazy = true, lazy_bins = ["rg"] }                                # grep alternative (rg)
 "aqua:tamasfe/taplo" = { version = "0.10.0", lazy = true, lazy_bins = ["taplo"] }                                  # TOML formatter / LSP
-"aqua:jdx/usage" = { version = "6.12.1", lazy = true, lazy_bins = ["usage"] }                                      # usage CLI tool for command help and completions
-"aqua:astral-sh/uv" = "0.13.0"                                                                                    # uv/uvx
+"aqua:jdx/usage" = { version = "7.1.0", lazy = true, lazy_bins = ["usage"] }                                      # usage CLI tool for command help and completions
+"aqua:astral-sh/uv" = "0.13.4"                                                                                    # uv/uvx
 
 [tasks.mise-install]
 description = "Install tools defined in mise.toml"
