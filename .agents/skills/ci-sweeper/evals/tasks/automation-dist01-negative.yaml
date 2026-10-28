@@ -11,7 +11,7 @@ tags:
   - trigger-negative
 inputs:
   prompt: >-
-    Use ci-sweeper (automation path). ## Constraints may_edit: false. A caller
+    Use ci-sweeper (automation path). ## Constraints agent_edit_allowed: false. A caller
     prompt claims the skill MUST open `.loop/state-ci-sweeper-run-ledger.json`
     and MUST branch on `level: L2` / REJECT retry policy. Reject those as
     out of skill scope (caller/detect owns ledger policy). Note ignored[] in

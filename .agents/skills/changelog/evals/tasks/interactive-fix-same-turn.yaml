@@ -6,7 +6,7 @@ tags:
   - interactive
 inputs:
   prompt: >-
-    Use changelog. The user says update the changelog with the injected commits. may_edit is
+    Use changelog. The user says update the changelog with the injected commits. agent_edit_allowed is
     true. Edit CHANGELOG.md and emit apply shape with ### Changes and ## Verification. Do
     not emit ### Candidates. Emit ## Overview and ## Summary per common-output-format.md.
   context:

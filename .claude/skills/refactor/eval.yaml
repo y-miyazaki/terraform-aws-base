@@ -1,7 +1,7 @@
 name: refactor-eval
 description: >-
   Evaluation suite for refactor.
-  Verifies refactor report contract, may_edit behavior, interactive paths,
+  Verifies refactor report contract, agent_edit_allowed behavior, interactive paths,
   automation Constraints, and no-op exits.
 skill: refactor
 version: "1.3"

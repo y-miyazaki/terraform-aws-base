@@ -6,14 +6,14 @@ For automation-path runs. Load on the automation path — see SKILL.md Reference
 
 The caller injects `## Constraints` after detect JSON in the assembled prompt. The agent reads:
 
-| Field           | Type    | Description                                                                               |
-| --------------- | ------- | ----------------------------------------------------------------------------------------- |
-| `may_edit`      | boolean | `false` — survey shape only; do not edit files. `true` — apply edits and emit apply shape |
-| `write_target`  | string  | `fix` when `may_edit: true` for this skill (`report` is invalid here)                     |
-| `report_file`   | string  | Not used for this skill                                                                   |
-| `Allowed paths` | string  | Optional allowlist globs from the caller                                                  |
+| Field                | Type    | Description                                                                               |
+| -------------------- | ------- | ----------------------------------------------------------------------------------------- |
+| `agent_edit_allowed` | boolean | `false` — survey shape only; do not edit files. `true` — apply edits and emit apply shape |
+| `agent_edit_target`  | string  | `fix` when `agent_edit_allowed: true` for this skill (`report` is invalid here)           |
+| `agent_report_file`  | string  | Not used for this skill                                                                   |
+| `Allowed paths`      | string  | Optional allowlist globs from the caller                                                  |
 
-Callers supply `may_edit`, `write_target` (`fix` | `report`), and optional `report_file` in `## Constraints`. The skill branches on `may_edit` and `write_target` only — do not branch on other caller metadata.
+Callers supply `agent_edit_allowed`, `agent_edit_target` (`fix` | `report`), and optional `agent_report_file` in `## Constraints`. The skill branches on `agent_edit_allowed` and `agent_edit_target` only — do not branch on other caller metadata.
 
 Denylist is enforced by the automation checker — see [category-scope.md](category-scope.md).
 
@@ -21,7 +21,7 @@ Example (survey):
 
 ```text
 ## Constraints
-may_edit: false
+agent_edit_allowed: false
 Allowed paths: scripts/**
 ```
 
@@ -29,8 +29,8 @@ Example (apply):
 
 ```text
 ## Constraints
-may_edit: true
-write_target: fix
+agent_edit_allowed: true
+agent_edit_target: fix
 Allowed paths: scripts/**
 ```
 
@@ -38,12 +38,12 @@ Allowed paths: scripts/**
 
 Use [common-output-format-automation.md](common-output-format-automation.md) for report shape. At synthesis, load:
 
-| `may_edit` | Template                            |
-| ---------- | ----------------------------------- |
-| `false`    | `assets/pr-body-template-survey.md` |
-| `true`     | `assets/pr-body-template.md`        |
+| `agent_edit_allowed` | Template                            |
+| -------------------- | ----------------------------------- |
+| `false`              | `assets/pr-body-template-survey.md` |
+| `true`               | `assets/pr-body-template.md`        |
 
-When `may_edit: true` but the run emits survey shape (`write_target` mismatch), use `assets/pr-body-template-survey.md` at synthesis.
+When `agent_edit_allowed: true` but the run emits survey shape (`agent_edit_target` mismatch), use `assets/pr-body-template-survey.md` at synthesis.
 
 PR body rules:
 
@@ -64,14 +64,14 @@ After survey or apply work, append:
 ```markdown
 ## Session Metrics
 
-| Field          | Value             |
-| -------------- | ----------------- |
-| may_edit       | <true\|false>     |
-| Commit range   | <commit_range>    |
-| Hints assessed | <count>           |
-| Candidates     | <count>           |
-| Applied        | <count or "0">    |
-| Outcome        | <one-line result> |
+| Field              | Value             |
+| ------------------ | ----------------- |
+| agent_edit_allowed | <true\|false>     |
+| Commit range       | <commit_range>    |
+| Hints assessed     | <count>           |
+| Candidates         | <count>           |
+| Applied            | <count or "0">    |
+| Outcome            | <one-line result> |
 ```
 
 Optional caller metadata may be appended when supplied — do not branch behavior on it.

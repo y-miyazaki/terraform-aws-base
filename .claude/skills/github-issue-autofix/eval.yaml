@@ -1,7 +1,7 @@
 name: github-issue-autofix-eval
 description: >-
   Evaluation suite for github-issue-autofix.
-  Verifies may_edit behavior, skip conditions, Fixes #N contract, trigger-negative
+  Verifies agent_edit_allowed behavior, skip conditions, Fixes #N contract, trigger-negative
   guardrails, and structured apply/survey report output.
 skill: github-issue-autofix
 version: "1.0"

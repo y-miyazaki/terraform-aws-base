@@ -15,9 +15,9 @@ Interactive and hook runs use this structure. On the automation path, also follo
 
 ### Candidates
 
-| Target           | Evidence                  | Suggested approach       | Priority              |
-| ---------------- | ------------------------- | ------------------------ | --------------------- |
-| `path/to/doc.md` | <stale/missing reference> | <plain-language fix dir> | high \| medium \| low |
+| Target        | Evidence                  | Suggested approach       | Priority              |
+| ------------- | ------------------------- | ------------------------ | --------------------- |
+| <linked path> | <stale/missing reference> | <plain-language fix dir> | high \| medium \| low |
 
 ### Watch
 
@@ -43,9 +43,9 @@ Interactive and hook runs use this structure. On the automation path, also follo
 
 ### Changes
 
-| File             | What was wrong            | What changed            |
-| ---------------- | ------------------------- | ----------------------- |
-| `path/to/doc.md` | <stale/missing reference> | <minimal patch summary> |
+| File          | What was wrong            | What changed            |
+| ------------- | ------------------------- | ----------------------- |
+| <linked path> | <stale/missing reference> | <minimal patch summary> |
 
 ### Deferred
 

@@ -4,8 +4,10 @@
 from __future__ import annotations
 
 import argparse
+import os
 import re
 import sys
+import tempfile
 from pathlib import Path
 
 MAP_HEADERS = frozenset(
@@ -18,7 +20,17 @@ MAP_HEADERS = frozenset(
         "secrets:",
     }
 )
-KEY_RE = re.compile(r"^(\s+)([A-Za-z0-9_-]+):\s*(.*)$")
+# A map key is a plain scalar (letters, digits, "_", "-", "."), a quoted string, or a ${{ }}
+# expression, followed by ":" and a space or end of line. Anything else (for example a "- " list
+# item or a value that merely contains a colon) is not a key, so the block ends there.
+KEY_RE = re.compile(
+    r"^(\s+)("
+    r"[A-Za-z0-9_.-]+"
+    r"|\"(?:[^\"\\]|\\.)*\""
+    r"|'(?:[^']|'')*'"
+    r"|\$\{\{.*?\}\}"
+    r"):(?:\s+(.*))?$"
+)
 
 
 def parse_block(
@@ -61,7 +73,10 @@ def parse_block(
         if not match:
             break
 
+        # Compare on the unquoted text so "a" and a sort the same way
         key = match.group(2)
+        if len(key) >= 2 and key[0] == key[-1] and key[0] in "\"'":
+            key = key[1:-1]
         entry_lines = pending_prefix + [line]
         pending_prefix = []
         i += 1
@@ -184,12 +199,34 @@ def check_file(path: Path) -> list[str]:
     return check_maps_in_text(path.read_text(encoding="utf-8"), str(path))
 
 
+def write_atomically(path: Path, text: str) -> None:
+    """Replace ``path`` with ``text`` so an interrupt never leaves a truncated file.
+
+    Writes to a temporary file in the same directory (same filesystem, so ``os.replace``
+    is atomic) and carries the original file mode over.
+    """
+    handle = tempfile.NamedTemporaryFile(
+        "w", encoding="utf-8", newline="", dir=path.parent, prefix=f".{path.name}.", delete=False
+    )
+    try:
+        with handle:
+            handle.write(text)
+        os.chmod(handle.name, path.stat().st_mode & 0o7777)
+        os.replace(handle.name, path)
+    except BaseException:
+        try:
+            os.unlink(handle.name)
+        except OSError:
+            pass
+        raise
+
+
 def fix_file(path: Path) -> bool:
     original = path.read_text(encoding="utf-8")
     updated = sort_maps_in_text(original)
     if updated == original:
         return False
-    path.write_text(updated, encoding="utf-8")
+    write_atomically(path, updated)
     return True
 
 

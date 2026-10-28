@@ -1,13 +1,13 @@
 id: docs-updater-automation-classification-001
 name: docs-updater automation path classifies injected findings
-description: Validate findings classify into Candidates and Watch when may_edit is false.
+description: Validate findings classify into Candidates and Watch when agent_edit_allowed is false.
 tags:
   - quality
   - automation-path
   - classification
 inputs:
   prompt: >-
-    Use docs-updater (automation path). ## Constraints may_edit: false Classify injected
+    Use docs-updater (automation path). ## Constraints agent_edit_allowed: false Classify injected
     findings: missing required README section is a Candidate; slightly outdated version is
     Watch. Emit survey shape with ## Overview, ### Candidates, ### Watch, and Session
     Metrics. Do not edit files. Do not emit ## Verification or ### Changes. Include ##

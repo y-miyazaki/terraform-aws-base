@@ -7,4 +7,4 @@ Apply at synthesis when emitting Summary tables and Overview.
 
 ## Template placeholders
 
-- Use backtick SHAs in templates (for example `` `abc1234` ``), not example `https://github.com/org/repo/...` markdown links.
+- Templates mark SHAs with `<linked sha>`; never put example `https://github.com/org/repo/...` markdown links in templates.

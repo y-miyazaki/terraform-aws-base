@@ -15,148 +15,10 @@
 # - Literal true, false, and null infer JSON types; valid {…} or […] fragments embed as JSON
 #######################################
 
-readonly _JSON_NUMBER_PREFIX=$'\x1eN'
-
-#######################################
-# json_escape_string: Escape a string for JSON embedding without jq
-#
-# Globals:
-#   None
-#
-# Arguments:
-#   $1 - String to escape
-#
-# Outputs:
-#   JSON-safe escaped string to stdout
-#
-# Returns:
-#   0 on success
-#
-# Usage:
-#   escaped="$(json_escape_string "path/to \"file\"")"
-#
-#######################################
-function json_escape_string {
-    local str="$1"
-    local i c ord out=""
-    local len=${#str}
-
-    for ((i = 0; i < len; i++)); do
-        c="${str:i:1}"
-        case "${c}" in
-            $'\\')
-                out+=$'\\\\'
-                ;;
-            '"')
-                out+='\"'
-                ;;
-            $'\b')
-                out+='\b'
-                ;;
-            $'\f')
-                out+='\f'
-                ;;
-            $'\n')
-                out+='\n'
-                ;;
-            $'\r')
-                out+='\r'
-                ;;
-            $'\t')
-                out+='\t'
-                ;;
-            *)
-                LC_ALL=C printf -v ord '%d' "'${c}"
-                if ((ord < 32)); then
-                    out+=$(printf '\\u%04x' "${ord}")
-                else
-                    out+="${c}"
-                fi
-                ;;
-        esac
-    done
-    printf '%s' "${out}"
-}
-
-#######################################
-# json_emit_minimal_error: Print a minimal error object without jq
-#
-# Globals:
-#   None
-#
-# Arguments:
-#   $1 - Error message
-#
-# Outputs:
-#   Minimal JSON error object to stdout
-#
-# Returns:
-#   None
-#
-# Usage:
-#   json_emit_minimal_error "Missing required tools: jq"
-#
-#######################################
-function json_emit_minimal_error {
-    local message="$1"
-
-    printf '{"status":"error","skip":true,"message":"%s"}\n' "$(json_escape_string "${message}")"
-}
-
-#######################################
-# json_is_number: Return whether a value is a JSON number literal
-#
-# Globals:
-#   None
-#
-# Arguments:
-#   $1 - Candidate number string
-#
-# Outputs:
-#   None
-#
-# Returns:
-#   0 when the value matches a JSON number; 1 otherwise
-#
-# Usage:
-#   json_is_number "42"
-#
-#######################################
-function json_is_number {
-    local value="$1"
-
-    [[ ${value} =~ ^-?(0|[1-9][0-9]*)(\.[0-9]+)?([eE][+-]?[0-9]+)?$ ]]
-}
-
-#######################################
-# json_number: Mark a value for JSON number encoding in json_object/json_array
-#
-# Globals:
-#   _JSON_NUMBER_PREFIX - Internal marker prefix
-#
-# Arguments:
-#   $1 - JSON number literal string
-#
-# Outputs:
-#   Marked number string to stdout
-#
-# Returns:
-#   0 on success; 1 when the value is not a valid JSON number
-#
-# Usage:
-#   json_object line "$(json_number 42)"
-#
-#######################################
-function json_number {
-    local value="$1"
-
-    if ! json_is_number "${value}"; then
-        printf 'json_number: invalid JSON number: %s\n' "${value}" >&2
-        return 1
-    fi
-
-    printf '%s%s' "${_JSON_NUMBER_PREFIX}" "${value}"
-}
+# Guard against "readonly variable" errors when this file is sourced more than once
+if [[ -z ${_JSON_NUMBER_PREFIX+set} ]]; then
+    readonly _JSON_NUMBER_PREFIX=$'\x1eN'
+fi
 
 #######################################
 # json_append_encoded_value: Append one jq-bound value argument
@@ -250,6 +112,147 @@ function json_array {
 
     prog+="]"
     "${jq_cmd[@]}" "${prog}"
+}
+
+#######################################
+# json_emit_minimal_error: Print a minimal error object without jq
+#
+# Globals:
+#   None
+#
+# Arguments:
+#   $1 - Error message
+#
+# Outputs:
+#   Minimal JSON error object to stdout
+#
+# Returns:
+#   None
+#
+# Usage:
+#   json_emit_minimal_error "Missing required tools: jq"
+#
+#######################################
+function json_emit_minimal_error {
+    local message="$1"
+
+    printf '{"status":"error","skip":true,"message":"%s"}\n' "$(json_escape_string "${message}")"
+}
+
+#######################################
+# json_escape_string: Escape a string for JSON embedding without jq
+#
+# Globals:
+#   None
+#
+# Arguments:
+#   $1 - String to escape
+#
+# Outputs:
+#   JSON-safe escaped string to stdout
+#
+# Returns:
+#   0 on success
+#
+# Usage:
+#   escaped="$(json_escape_string "path/to \"file\"")"
+#
+#######################################
+function json_escape_string {
+    local str="$1"
+    local i c ord out=""
+    local len=${#str}
+
+    for ((i = 0; i < len; i++)); do
+        c="${str:i:1}"
+        case "${c}" in
+            $'\\')
+                out+=$'\\\\'
+                ;;
+            '"')
+                out+='\"'
+                ;;
+            $'\b')
+                out+='\b'
+                ;;
+            $'\f')
+                out+='\f'
+                ;;
+            $'\n')
+                out+='\n'
+                ;;
+            $'\r')
+                out+='\r'
+                ;;
+            $'\t')
+                out+='\t'
+                ;;
+            *)
+                LC_ALL=C printf -v ord '%d' "'${c}"
+                if ((ord < 32)); then
+                    out+=$(printf '\\u%04x' "${ord}")
+                else
+                    out+="${c}"
+                fi
+                ;;
+        esac
+    done
+    printf '%s' "${out}"
+}
+
+#######################################
+# json_is_number: Return whether a value is a JSON number literal
+#
+# Globals:
+#   None
+#
+# Arguments:
+#   $1 - Candidate number string
+#
+# Outputs:
+#   None
+#
+# Returns:
+#   0 when the value matches a JSON number; 1 otherwise
+#
+# Usage:
+#   json_is_number "42"
+#
+#######################################
+function json_is_number {
+    local value="$1"
+
+    [[ ${value} =~ ^-?(0|[1-9][0-9]*)(\.[0-9]+)?([eE][+-]?[0-9]+)?$ ]]
+}
+
+#######################################
+# json_number: Mark a value for JSON number encoding in json_object/json_array
+#
+# Globals:
+#   _JSON_NUMBER_PREFIX - Internal marker prefix
+#
+# Arguments:
+#   $1 - JSON number literal string
+#
+# Outputs:
+#   Marked number string to stdout
+#
+# Returns:
+#   0 on success; 1 when the value is not a valid JSON number
+#
+# Usage:
+#   json_object line "$(json_number 42)"
+#
+#######################################
+function json_number {
+    local value="$1"
+
+    if ! json_is_number "${value}"; then
+        printf 'json_number: invalid JSON number: %s\n' "${value}" >&2
+        return 1
+    fi
+
+    printf '%s%s' "${_JSON_NUMBER_PREFIX}" "${value}"
 }
 
 #######################################

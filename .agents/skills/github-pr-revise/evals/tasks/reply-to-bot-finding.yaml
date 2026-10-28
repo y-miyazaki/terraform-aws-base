@@ -1,0 +1,31 @@
+id: github-pr-revise-contract-006
+name: github-pr-revise reads the parent finding for an @loop reply
+description: >-
+  Validate github-pr-revise reads the parent comment and thread when a human replies @loop to a review finding.
+tags:
+  - quality
+  - context
+inputs:
+  prompt: >-
+    Use github-pr-revise with agent_edit_allowed true and agent_edit_target fix for PR #61 in this mock eval
+    (describe the revision only; do not edit files on disk). The human replied "@loop please fix"
+    to a review comment whose parent_body is "**#1 [Critical]** nil pointer dereference in
+    handleUser when the profile is missing". State that you read the parent comment and its
+    thread, then emit apply shape with ## Overview, ## Summary ### Changes, and ## Verification
+    per common-output-format.md.
+  context:
+    skip: false
+    pr_number: 61
+    mention: "@loop"
+    comment_body: "@loop please fix"
+    in_reply_to_id: 4001
+    parent_body: "**#1 [Critical]** nil pointer dereference in handleUser when the profile is missing"
+    actor: human-reviewer
+expected:
+  output_contains:
+    - Overview
+    - Changes
+    - parent comment
+    - thread
+  outcomes:
+    - type: task_completed

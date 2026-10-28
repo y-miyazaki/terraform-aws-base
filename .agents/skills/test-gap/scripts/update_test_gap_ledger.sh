@@ -15,7 +15,7 @@
 # - Base branch: TEST_GAP_BASE_BRANCH, else TARGET_JSON .to.branch (loop-finalize passes it), else main
 # - loop-finalize passes only EXECUTE_BRANCH, LOOP_NAME, OUTCOME, STATE_FILE, TARGET_JSON, VERDICT to this script;
 #   TEST_GAP_LEDGER_FILE and TEST_GAP_RETENTION_DAYS therefore stay at their defaults when run from finalize
-# - Skip no-action, error, escalated, and unknown outcomes
+# - Skip unchanged, error, escalated, and unknown outcomes
 # - Prune entries older than the retention window
 # - Write via mktemp + mv; keep unrelated entries intact
 # - Source shared helpers from scripts/lib/all.sh (synced via scripts/self/apm/sync_skill_lib.sh)
@@ -26,7 +26,7 @@
 # - jq
 #
 # Optional environment:
-#   OUTCOME                  pr-created | rejected | watch | no-action | no-changes | error | escalated
+#   OUTCOME                  pr_created | pr_pushed | rejected | watch | unchanged | error | escalated
 #   VERDICT                  APPROVE | REJECT (used when OUTCOME is unset)
 #   EXECUTE_BRANCH           Agent branch holding the test changes (required to record anything)
 #   TARGET_JSON              Loop target JSON; .to.branch is the base branch when TEST_GAP_BASE_BRANCH is unset
@@ -138,13 +138,14 @@ function resolve_base_branch {
 function resolve_outcome {
     if [[ -z ${OUTCOME} ]]; then
         case "${VERDICT:-}" in
-            APPROVE) OUTCOME="pr-created" ;;
+            APPROVE) OUTCOME="pr_created" ;;
             REJECT) OUTCOME="rejected" ;;
         esac
     fi
     case "${OUTCOME}" in
-        pr-created | rejected | watch) ;;
-        "" | no-action | no-changes | error | escalated)
+        pr-created) OUTCOME="pr_created" ;;
+        pr_created | pr_pushed | rejected | watch) ;;
+        "" | unchanged | no-action | no-changes | error | escalated)
             OUTCOME=""
             ;;
         *)

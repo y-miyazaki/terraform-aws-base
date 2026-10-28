@@ -1,13 +1,13 @@
 id: github-issue-autofix-automation-constraints-001
 name: github-issue-autofix automation production constraints
-description: Validate automation Constraints with may_edit from assembled prompt shape.
+description: Validate automation Constraints with agent_edit_allowed from assembled prompt shape.
 tags:
   - quality
   - automation
 inputs:
   prompt: >-
-    Use github-issue-autofix. ## Constraints may_edit: true write_target: fix You MUST persist
-    edits to disk in the worktree when may_edit is true; a report alone is not sufficient.
+    Use github-issue-autofix. ## Constraints agent_edit_allowed: true agent_edit_target: fix You MUST persist
+    edits to disk in the worktree when agent_edit_allowed is true; a report alone is not sufficient.
     Allowed paths: src/**. Fix Issue #42 from detect JSON in this mock eval (describe the
     fix only). Emit apply shape with ### Changes and ## Verification plus ## Overview and
     ## Summary. Include Fixes #42. Do not emit ### Candidates.

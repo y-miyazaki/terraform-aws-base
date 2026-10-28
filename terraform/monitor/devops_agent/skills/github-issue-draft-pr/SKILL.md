@@ -42,17 +42,17 @@ description: "Record an alarm investigation as a GitHub Issue labeled devops-age
 
 ## Suppression pre-check (before creating anything)
 
-This is a second safety net for the GENERIC `AGENTS.md` rule *incident-suppression: per-alarm
-memory directives*. Even though triage/RCA should already have honored it, re-check here so a
+This is a second safety net for the GENERIC `AGENTS.md` rule _incident-suppression: per-alarm
+memory directives_. Even though the investigation should already have stopped early, re-check here so a
 suppressed alarm never gets a fresh Issue/PR at the record step.
 
 - Extract the alarm name from the incident title: the string after the environment prefix
   (`[prd]`/`[stg]`/`[dev]`) and before the first `:`, lowercase kebab-case (spaces and `/` → `-`).
-- `get_memory` for `monitors-<alarm-name>` in `directives`.
-- IF its `## Suppression` is `ACTIVE` → create **no** GitHub Issue and **no** PR. Send Slack
+- `get_memory` for `monitors-<alarm-name>` in `suppressions`, then in `directives`.
+- IF either memory's `## Suppression` is `ACTIVE` → create **no** GitHub Issue and **no** PR. Send Slack
   reply B with `No action`, noting the alarm is suppressed by an active directive (cite the
   memory name), and go straight to the final report.
-- IF `NONE`/absent, or the memory does not exist → proceed with the workflow below.
+- IF `NONE`/absent in both, or neither memory exists → proceed with the workflow below.
 
 ## Delegation
 

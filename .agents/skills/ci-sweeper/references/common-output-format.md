@@ -1,6 +1,6 @@
 # CI Sweeper Triage Report Format
 
-## Survey result (`may_edit: false`)
+## Survey result (`agent_edit_allowed: false`)
 
 No file edits. **Do not emit `### Changes`, `### Deferred`, or `## Verification`.**
 
@@ -15,15 +15,15 @@ No file edits. **Do not emit `### Changes`, `### Deferred`, or `## Verification`
 
 ### Candidates
 
-| Target                 | Evidence           | Suggested approach       | Priority              |
-| ---------------------- | ------------------ | ------------------------ | --------------------- |
-| `<workflow>` / `<job>` | <from log_excerpt> | <plain-language fix dir> | high \| medium \| low |
+| Target                           | Evidence           | Suggested approach       | Priority              |
+| -------------------------------- | ------------------ | ------------------------ | --------------------- |
+| <linked workflow> / <linked job> | <from log_excerpt> | <plain-language fix dir> | high \| medium \| low |
 
 ### Watch
 
-| Target                 | Evidence | Why not now             |
-| ---------------------- | -------- | ----------------------- |
-| `<workflow>` / `<job>` | <reason> | flake \| infra \| human |
+| Target                           | Evidence | Why not now             |
+| -------------------------------- | -------- | ----------------------- |
+| <linked workflow> / <linked job> | <reason> | flake \| infra \| human |
 ```
 
 ### Survey rules
@@ -31,7 +31,7 @@ No file edits. **Do not emit `### Changes`, `### Deferred`, or `## Verification`
 - **MUST NOT** include `### Changes`, `### Deferred`, or `## Verification`
 - Zero candidates — Overview explains no-op; omit empty `### Candidates`
 
-## Apply result (`may_edit: true`)
+## Apply result (`agent_edit_allowed: true`)
 
 ```markdown
 # CI Sweeper Result
@@ -44,15 +44,15 @@ No file edits. **Do not emit `### Changes`, `### Deferred`, or `## Verification`
 
 ### Changes
 
-| Target                 | What was wrong | What changed                                                       |
-| ---------------------- | -------------- | ------------------------------------------------------------------ |
-| `<workflow>` / `<job>` | <root cause>   | `path` (link per category-pr-body-links.md): <minimal fix summary> |
+| Target                           | What was wrong | What changed                         |
+| -------------------------------- | -------------- | ------------------------------------ |
+| <linked workflow> / <linked job> | <root cause>   | <linked path>: <minimal fix summary> |
 
 ### Deferred
 
-| Target                 | Why deferred            |
-| ---------------------- | ----------------------- |
-| `<workflow>` / `<job>` | <plain-language reason> |
+| Target                           | Why deferred            |
+| -------------------------------- | ----------------------- |
+| <linked workflow> / <linked job> | <plain-language reason> |
 
 ## Verification
 
@@ -87,6 +87,6 @@ On the automation path, append `## Session Metrics` per [category-automation-env
 ## Rules
 
 - Pick one shape per run — survey or apply.
-- When `may_edit` is `false`, survey shape only — list candidates but do not edit files.
-- When `may_edit` is `true`, apply shape; edit source files only for `regression` failures within allowlist.
+- When `agent_edit_allowed` is `false`, survey shape only — list candidates but do not edit files.
+- When `agent_edit_allowed` is `true`, apply shape; edit source files only for `regression` failures within allowlist.
 - Do not claim validation passed when commands failed or were not run.

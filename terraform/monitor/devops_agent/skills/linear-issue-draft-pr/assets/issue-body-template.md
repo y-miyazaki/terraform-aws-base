@@ -79,20 +79,20 @@ The DevOps Agent follow-up bot applies these rules on every scheduled run.
 +++ Meta
 
 <!--
-Fixed keys stay in English. One row per key in the `| Key | Value |` table; wrap each key in backticks, write the value as plain text, and escape `|` inside a value as `\|`; keep this section last.
+Fixed keys stay in English. One row per key in the `| Key | Value |` table; write the key and the value as plain text (no backticks), and escape `|` inside a value as `\|`; keep this section last.
 response_language: the language code of your response (ja, en, ...); the follow-up bot writes its comments in this language.
 incident: the Incident value from the link format; omit this row when it would be `unknown`.
 repository: the <owner>/<repo> full name (plain text, no link inside this table); write `none (<reason>)` (candidates in the reason when ambiguous) when the repository is ambiguous or none holds the target.
 -->
 
-| Key                 | Value                                                 |
-| ------------------- | ----------------------------------------------------- |
-| `response_language` | <language code, e.g. ja>                              |
-| `incident`          | <Incident value>                                      |
-| `environment`       | <dev \| qa \| stg \| prd>                             |
-| `repository`        | <owner>/<repo>                                        |
-| `root_cause_status` | <confirmed \| suspected>                              |
-| `created_by`        | devops-agent (<agent name>) at <YYYY-MM-DDTHH:MM:SSZ> |
-| `last_followup`     | none                                                  |
+| Key               | Value                                                 |
+| ----------------- | ----------------------------------------------------- |
+| response_language | <language code, e.g. ja>                              |
+| incident          | <Incident value>                                      |
+| environment       | <dev \| qa \| stg \| prd>                             |
+| repository        | <owner>/<repo>                                        |
+| root_cause_status | <confirmed \| suspected>                              |
+| created_by        | devops-agent (<agent name>) at <YYYY-MM-DDTHH:MM:SSZ> |
+| last_followup     | none                                                  |
 
 +++

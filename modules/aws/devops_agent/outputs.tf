@@ -26,6 +26,10 @@ output "mcp_server_association_ids" {
   description = "Map of MCP server key to association ID."
   value       = { for k, v in awscc_devopsagent_association.mcp_server : k => v.association_id }
 }
+output "memory_store_asset_ids" {
+  description = "Map of memory store key to asset ID."
+  value       = { for k, v in awscc_devopsagent_asset.memory_store : k => v.asset_id }
+}
 output "monitor_association_id" {
   description = "Association ID of the monitor account."
   value       = try(awscc_devopsagent_association.aws_monitor[0].association_id, null)

@@ -5,7 +5,7 @@ tags:
   - classification
 inputs:
   prompt: >-
-    Use ci-sweeper with may_edit false. One failure has failure_type=infra (runner OOM).
+    Use ci-sweeper with agent_edit_allowed false. One failure has failure_type=infra (runner OOM).
     Emit survey shape with ## Overview, ### Candidates or ### Watch as appropriate. Classify
     the infra failure under ### Watch and do not edit files. Do not emit ## Verification or
     ### Changes. Include ## Summary per common-output-format.md. State no edits applied in

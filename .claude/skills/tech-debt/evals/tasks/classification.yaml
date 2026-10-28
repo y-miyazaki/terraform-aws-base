@@ -7,14 +7,14 @@ tags:
   - classification
 inputs:
   prompt: >-
-    Use tech-debt with may_edit true. Classify injected signals with Category from
-    category-debt-taxonomy.md. Write report_file with Critical/High-Priority/Watch sections.
-    Emit apply PR shape with ### Changes (report_file path) and ## Verification. Put vague
+    Use tech-debt with agent_edit_allowed true. Classify injected signals with Category from
+    category-debt-taxonomy.md. Write agent_report_file with Critical/High-Priority/Watch sections.
+    Emit apply PR shape with ### Changes (agent_report_file path) and ## Verification. Put vague
     TODO noise in persisted Noise section only — not in PR Candidates. Do not edit
     application source. Emit ## Overview and ## Summary per common-output-format.md.
   context:
     commit_range: eval0001..eval0002
-    report_file: docs/report/tech-debt/2026-07-19.md
+    agent_report_file: docs/report/tech-debt/2026-07-19.md
     skip: false
     signals:
       - kind: todo_comment

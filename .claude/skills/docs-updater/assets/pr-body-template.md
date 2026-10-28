@@ -1,11 +1,13 @@
 <!--
-PR-facing template for docs-updater automation (may_edit: true).
+PR-facing template for docs-updater automation (agent_edit_allowed: true).
 
 Load ONLY at synthesis time, after triage and file edits complete.
 The caller extracts ## Overview, ## Summary, and ## Verification for the PR body.
 
 Rules:
 - Keep top-level ## Overview, ## Summary, and ## Verification headings exactly as written.
+- Link every repository path, commit SHA, and workflow/job in Summary tables as a markdown link per category-pr-body-links.md. <linked ...> marks where a link goes; do not emit it, and do not use a plain code span for a linkable item.
+- Keep the table columns as written; do not rename, merge, or drop columns.
 - Summary contains ### Changes and ### Deferred only (plus optional domain subsections).
 - Do NOT emit Outcome, Suggested next action, or top-level ## Changes.
 - Deferred = paths with NO fix in final working tree; reconcile with git diff before synthesis.
@@ -30,13 +32,13 @@ Rules:
 
 | File          | What was wrong  | What changed             |
 | ------------- | --------------- | ------------------------ |
-| `docs/foo.md` | <from findings> | <minimal change summary> |
+| <linked path> | <from findings> | <minimal change summary> |
 
 ### Deferred
 
 | File          | Why deferred            |
 | ------------- | ----------------------- |
-| `docs/foo.md` | <plain-language reason> |
+| <linked path> | <plain-language reason> |
 
 ## Verification
 

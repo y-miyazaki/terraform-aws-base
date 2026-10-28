@@ -8,7 +8,7 @@ tags:
   - classification
 inputs:
   prompt: >-
-    Use github-issue-triage with may_edit false. Triage Issue #77 from detect JSON. Confidence
+    Use github-issue-triage with agent_edit_allowed false. Triage Issue #77 from detect JSON. Confidence
     is low — keep needs-triage, ask numbered clarifying questions on the Issue, and list
     planned gh mutations under ## Changes. Emit ## Overview, ## Deferred, and ## Session
     Metrics. Do not apply bug/feature/question/documentation labels. Do not edit repository

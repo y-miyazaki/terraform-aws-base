@@ -2,15 +2,15 @@ id: refactor-interactive-mode-precedence-001
 name: refactor structured mode survey wins over apply language
 description: >-
   Validate structured JSON mode: survey wins over natural-language apply wording
-  in the same request (may_edit stays false).
+  in the same request (agent_edit_allowed stays false).
 tags:
   - quality
   - interactive
-  - may-edit
+  - agent-edit-allowed
 inputs:
   prompt: >-
     Use refactor with structured JSON mode survey for scripts/example.sh. Even though
-    the user also says apply the candidates, mode survey wins so may_edit is false.
+    the user also says apply the candidates, mode survey wins so agent_edit_allowed is false.
     Emit survey shape with ## Overview, ## Summary, and ### Candidates. State no
     edits applied in Overview. Do not edit files in this mock eval.
   context:

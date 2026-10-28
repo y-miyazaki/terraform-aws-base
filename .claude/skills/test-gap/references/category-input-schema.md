@@ -12,7 +12,7 @@ The skill detect script (`scripts/detect_test_gap.sh`) emits:
   "hotspots": [{ "path": "src/a.sh", "kind": "churn", "count": 7, "window": "90.days" }],
   "ledger": {
     "file": ".loop/state-test-gap-ledger.json",
-    "processed": [{ "path": "test/bats/foo.bats", "attempts": 1, "outcome": "pr-created", "processed_at": "2026-10-11T10:00:00Z" }]
+    "processed": [{ "path": "test/bats/foo.bats", "attempts": 1, "outcome": "pr_created", "processed_at": "2026-10-11T10:00:00Z" }]
   },
   "warnings": [],
   "verifier_context": "## test-gap ledger (recently processed test paths)\n..."

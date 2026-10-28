@@ -6,14 +6,14 @@ tags:
   - edge-case
 inputs:
   prompt: >-
-    Use tech-debt with may_edit true. Only a churn hotspot is injected with no marker
-    signals. Classify as Watch in persisted report. Emit apply shape with report_file path
+    Use tech-debt with agent_edit_allowed true. Only a churn hotspot is injected with no marker
+    signals. Classify as Watch in persisted report. Emit apply shape with agent_report_file path
     under ### Changes and ## Verification. Do not invent CVEs or paths beyond the hotspot.
     Emit ## Overview and ## Summary per common-output-format.md. Include Category labels on
     rows.
   context:
     commit_range: eval0001..eval0002
-    report_file: docs/report/tech-debt/2026-07-19.md
+    agent_report_file: docs/report/tech-debt/2026-07-19.md
     skip: false
     signals: []
     hotspots:

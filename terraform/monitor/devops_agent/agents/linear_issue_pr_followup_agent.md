@@ -23,4 +23,4 @@ Read the human replies on Linear Issues labeled `devops-agent` (in the team name
 ## Output
 
 One line per handled item: the full Issue/PR URL and the action taken (answered, updated, committed, closed, asked a question,
-no unanswered comments, or deferred), then the errors if any tool failed.
+no unanswered comments, recorded to memory, or deferred), then the errors if any tool failed. Closed Issues recorded in the closed-item harvest (Step 9) get the `recorded to memory` line, or a skip reason.

@@ -36,6 +36,7 @@
     "git blame",
     "git branch",
     "git diff",
+    "git fetch",
     "git grep",
     "git log",
     "git remote -v",
@@ -99,7 +100,8 @@
       "git commit, push, checkout, rebase, reset --hard, clean -f, and branch -D require approval.",
       "Do not read or write .env files, credentials, secrets/, private keys, or cloud credential paths.",
       "Do not dump environment variables (env, printenv); they carry tokens.",
-      "Do not write outside the repository (e.g. ~/)."
+      "Do not write to dotfiles or dot-directories under the home directory (e.g. ~/.ssh, ~/.aws).",
+      "Do not call the codebase-memory-mcp delete_project tool."
     ]
   }
 }

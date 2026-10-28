@@ -1,7 +1,7 @@
 name: github-pr-revise-eval
 description: >-
   Evaluation suite for github-pr-revise.
-  Verifies mention-gated revision, may_edit behavior, skip conditions,
+  Verifies mention-gated revision, agent_edit_allowed behavior, skip conditions,
   trigger-negative guardrails, and structured apply/survey report output.
 skill: github-pr-revise
 version: "1.0"

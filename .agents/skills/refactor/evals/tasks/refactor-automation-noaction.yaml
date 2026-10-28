@@ -7,7 +7,7 @@ tags:
   - skip-path
 inputs:
   prompt: >-
-    Use refactor (automation path) with may_edit true. Context JSON has skip=true and
+    Use refactor (automation path) with agent_edit_allowed true. Context JSON has skip=true and
     hints=[]. Emit no-op report with ## Session Metrics per category-automation-envelope.md,
     ## Overview explaining no actionable hint, and ## Summary with no-op outcome. Do not
     edit files. State no edits applied in Overview.

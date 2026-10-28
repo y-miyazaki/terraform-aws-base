@@ -16,11 +16,11 @@ Do not edit paths that appear to hold secrets (environment files, credential sto
 
 ## Skill-specific limits
 
-This skill writes technical debt reports and may apply **closed-set** fixes when `may_edit` is `true` and paths are on the resolved allowlist:
+This skill writes technical debt reports and may apply **closed-set** fixes when `agent_edit_allowed` is `true` and paths are on the resolved allowlist:
 
 - `broken_doc_ref`, `stale_doc` — documentation paths only
 - simple `pin_drift` — manifest files only (`package.json`, `go.mod`, etc.)
 
-When `may_edit` is `false`, do not edit any file — survey output only.
+When `agent_edit_allowed` is `false`, do not edit any file — survey output only.
 
-When `may_edit` is `true`, write only `report_file` and closed-set fix targets within the resolved allowlist. Read source files outside allowlist for evidence; do not modify paths outside allowlist. Structural or security debt remains report-only — delegate to `refactor` or human.
+When `agent_edit_allowed` is `true`, write only `agent_report_file` and closed-set fix targets within the resolved allowlist. Read source files outside allowlist for evidence; do not modify paths outside allowlist. Structural or security debt remains report-only — delegate to `refactor` or human.

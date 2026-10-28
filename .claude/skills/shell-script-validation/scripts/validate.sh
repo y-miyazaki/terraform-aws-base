@@ -96,9 +96,12 @@ Options:
   -v, --verbose  Enable verbose output and detailed analysis
   -f, --fix      Auto-fix issues where possible (formatting, permissions)
   -q, --quiet    Suppress non-error output (only show summary)
-  -d, --check-function-docs
+  -c, --check-function-docs
+                 (-d is a deprecated alias; -d is reserved for --dry-run in the other validate scripts)
                  Opt-in: enforce Google Shell Style Guide function headers with
                  explicit Globals/Arguments/Outputs/Returns (None when N/A).
+                 Also checks top-level function order (G-03): show_usage,
+                 parse_arguments, a-z, main (detection only).
                  See https://google.github.io/styleguide/shellguide.html#s4.2-function-comments
   -t, --tests PATH
                  Limit Bats tests to PATH (directory or .bats file; repeatable).
@@ -190,7 +193,13 @@ function parse_arguments {
                 QUIET=true
                 shift
                 ;;
-            -d | --check-function-docs)
+            -c | --check-function-docs)
+                CHECK_FUNCTION_DOCS=true
+                shift
+                ;;
+            -d)
+                # Deprecated alias: -d means --dry-run in the other scripts
+                custom_log "WARN" "-d is deprecated for --check-function-docs; use -c or --check-function-docs"
                 CHECK_FUNCTION_DOCS=true
                 shift
                 ;;
@@ -1631,6 +1640,10 @@ function run_script_validation_steps {
         _validation_passed=false
     fi
 
+    if ! validate_function_order "$script"; then
+        _validation_passed=false
+    fi
+
     analyze_functions "$script"
     check_complexity "$script"
 }
@@ -1754,6 +1767,117 @@ function validate_function_docs {
 }
 
 #######################################
+# validate_function_order: Opt-in function order check (G-03)
+#
+# Description:
+#   When CHECK_FUNCTION_DOCS is true, verifies top-level functions appear in the order
+#   show_usage, parse_arguments, other functions in a-z order, then main. Scripts without
+#   show_usage/parse_arguments/main (sourced libraries) are checked for a-z order only.
+#   Heredoc bodies are skipped so text such as "terraform {" is never read as a function.
+#   Detection only: nothing is rewritten.
+#
+# Globals:
+#   CHECK_FUNCTION_DOCS - Enable function doc and order checks
+#
+# Arguments:
+#   $1 - Script path
+#
+# Outputs:
+#   Writes the first out-of-order function to stderr on failure
+#
+# Returns:
+#   0 when in order or the check is disabled; 1 when out of order
+#
+# Usage:
+#   validate_function_order "/path/to/script.sh"
+#
+#######################################
+function validate_function_order {
+    local script="$1"
+    local script_name
+    script_name="$(basename "$script")"
+
+    if [[ $CHECK_FUNCTION_DOCS != "true" ]]; then
+        return 0
+    fi
+
+    if [[ $script == *.bats ]]; then
+        return 0
+    fi
+
+    custom_log "DEBUG" "Validating function order for: $script_name"
+
+    local -a names=()
+    local -a lines=()
+    local entry
+    while IFS= read -r entry; do
+        [[ -z ${entry} ]] && continue
+        lines+=("${entry%%:*}")
+        names+=("${entry#*:}")
+    done < <(awk '
+        heredoc != "" {
+            line = $0
+            sub(/^[ \t]+/, "", line)
+            if (line == heredoc) { heredoc = "" }
+            next
+        }
+        /^(function[ \t]+)?[A-Za-z_][A-Za-z0-9_]*[ \t]*(\(\))?[ \t]*\{[ \t]*$/ {
+            name = $0
+            sub(/^function[ \t]+/, "", name)
+            sub(/[ \t]*(\(\))?[ \t]*\{[ \t]*$/, "", name)
+            print NR ":" name
+            next
+        }
+        # "(^|[^<])<<" so a here-string ("<<<") is not mistaken for a heredoc
+        match($0, /(^|[^<])<<-?[ \t]*["\x27]?[A-Za-z_][A-Za-z0-9_]*["\x27]?/) {
+            tag = substr($0, RSTART, RLENGTH)
+            sub(/^[^<]?<<-?[ \t]*["\x27]?/, "", tag)
+            sub(/["\x27]$/, "", tag)
+            heredoc = tag
+        }
+    ' "$script" 2> /dev/null || true)
+
+    if [[ ${#names[@]} -lt 2 ]]; then
+        return 0
+    fi
+
+    local -a middle=()
+    local -a expected=()
+    local name has_main=false
+    for name in "${names[@]}"; do
+        case "$name" in
+            show_usage | parse_arguments) ;;
+            main) has_main=true ;;
+            *) middle+=("$name") ;;
+        esac
+    done
+
+    # Expected: show_usage, parse_arguments (when present), a-z (byte order), main (when present)
+    local item
+    for item in show_usage parse_arguments; do
+        for name in "${names[@]}"; do
+            [[ $name == "$item" ]] && expected+=("$item")
+        done
+    done
+    if [[ ${#middle[@]} -gt 0 ]]; then
+        while IFS= read -r item; do
+            expected+=("$item")
+        done < <(printf '%s\n' "${middle[@]}" | LC_ALL=C sort)
+    fi
+    [[ $has_main == "true" ]] && expected+=("main")
+
+    local i
+    for ((i = 0; i < ${#names[@]}; i++)); do
+        if [[ ${names[i]} != "${expected[i]}" ]]; then
+            custom_log "ERROR" "❌ Function order validation failed: $script_name"
+            echo "$script:${lines[i]}: function '${names[i]}' is out of order (expected '${expected[i]}' here; G-03: show_usage, parse_arguments, a-z, main)" >&2
+            return 1
+        fi
+    done
+
+    custom_log "DEBUG" "✅ Function order validation passed: $script_name"
+    return 0
+}
 
 #######################################
 # validate_permissions: Function to validate file permissions
@@ -1796,8 +1920,12 @@ function validate_permissions {
         custom_log "WARN" "⚠️  Script is not executable: $script_name"
         if [[ $AUTO_FIX == "true" ]]; then
             custom_log "INFO" "Auto-fixing permissions for: $script_name"
-            chmod +x "$script"
-            custom_log "INFO" "✅ Made executable: $script_name"
+            if chmod +x "$script"; then
+                custom_log "INFO" "✅ Made executable: $script_name"
+                # Fixed: the run must not be reported as failed because of an issue it just repaired
+                return 0
+            fi
+            custom_log "ERROR" "Failed to make executable: $script_name"
         fi
         return 1
     fi
@@ -1975,6 +2103,7 @@ function validate_shebang {
             fi
             rm -f "$script.bak"
             custom_log "INFO" "✅ Added shebang to: $script_name"
+            return 0
         fi
         return 1
     fi
@@ -2115,7 +2244,8 @@ function main {
             custom_log "INFO" "Found ${#scripts[@]} shell scripts to validate"
             custom_echo_section "Script Validation"
             for script in "${scripts[@]}"; do
-                validate_script "$script"
+                # Failures are recorded in FAILED_SCRIPTS; do not let set -e skip the summary and tests
+                validate_script "$script" || true
             done
         fi
     fi

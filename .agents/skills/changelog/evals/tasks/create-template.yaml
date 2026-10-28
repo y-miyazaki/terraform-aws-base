@@ -6,7 +6,7 @@ tags:
   - edge-case
 inputs:
   prompt: >-
-    Use changelog with may_edit true. changelog_exists is false. Create the Keep a Changelog
+    Use changelog with agent_edit_allowed true. changelog_exists is false. Create the Keep a Changelog
     template at changelog_file, then add the injected fix commit under ## [Unreleased]. Emit
     apply shape noting file creation in ### Changes and ## Overview. Include ##
     Verification. Include ## Summary per common-output-format.md. Note file created in

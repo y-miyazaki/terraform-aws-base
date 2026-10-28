@@ -1,7 +1,7 @@
 name: tech-debt-eval
 description: >-
   Evaluation suite for tech-debt.
-  Verifies taxonomy classification, may_edit behavior, previous_report comparison,
+  Verifies taxonomy classification, agent_edit_allowed behavior, previous_report comparison,
   hotspot handling, truncation cap, and skip exits.
 skill: tech-debt
 version: "1.3"

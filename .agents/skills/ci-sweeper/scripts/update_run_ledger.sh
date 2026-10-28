@@ -12,6 +12,8 @@
 # - Exit 0 on intentional skip paths (empty run id, should_skip, ledger update failure after warn)
 # - Exit 1 when jq is missing (required dependency)
 # - Merge into existing ledger without dropping unrelated run entries
+# - loop-finalize passes only EXECUTE_BRANCH, LOOP_NAME, OUTCOME, STATE_FILE, TARGET_JSON, VERDICT to this script;
+#   CI_SWEEPER_LEDGER_FILE therefore stays at its default (.loop/state-ci-sweeper-run-ledger.json) when run from finalize
 # - Prune entries older than 30 days (aligned with caller run-log / state retention)
 # - Source shared helpers from scripts/lib/all.sh (synced via scripts/self/ai/sync_skill_lib.sh)
 #
@@ -20,7 +22,7 @@
 # - jq
 #
 # Optional environment:
-#   CI_SWEEPER_LEDGER_FILE  Ledger path (default: ci-sweeper-run-ledger.json; repo-relative)
+#   CI_SWEEPER_LEDGER_FILE  Ledger path (default: .loop/state-ci-sweeper-run-ledger.json; repo-relative)
 #   GITHUB_RUN_ID           Default automation run id when --loop-run-id is omitted
 #   TARGET_JSON             target_json from caller finalize output (when CLI args omitted)
 #   OUTCOME                 Outcome from caller finalize output (when --outcome omitted)
@@ -44,7 +46,7 @@ source "${SCRIPT_DIR}/lib/all.sh"
 #######################################
 # Global variables
 #######################################
-LEDGER_FILE="${CI_SWEEPER_LEDGER_FILE:-ci-sweeper-run-ledger.json}"
+LEDGER_FILE="${CI_SWEEPER_LEDGER_FILE:-.loop/state-ci-sweeper-run-ledger.json}"
 RUN_ID=""
 WORKFLOW_NAME=""
 HEAD_SHA=""
@@ -78,11 +80,11 @@ Options:
     --run-id         Workflow run ID to record
     --workflow       Workflow display name
     --head-sha       Commit SHA for the failed run
-    --outcome        Run outcome (for example: pr-created, rejected, no-action)
+    --outcome        Run outcome (for example: pr_created, rejected, unchanged)
     --loop-run-id    GitHub Actions run ID for the automation execution (optional)
 
 Examples:
-    ./update_run_ledger.sh --run-id 123456789 --workflow ci-markdown --head-sha abc1234 --outcome pr-created
+    ./update_run_ledger.sh --run-id 123456789 --workflow ci-markdown --head-sha abc1234 --outcome pr_created
 EOF
     exit 0
 }
@@ -186,13 +188,14 @@ function resolve_from_env {
     fi
     if [[ -z ${OUTCOME} ]]; then
         case "${VERDICT:-}" in
-            APPROVE) OUTCOME="pr-created" ;;
+            APPROVE) OUTCOME="pr_created" ;;
             REJECT) OUTCOME="rejected" ;;
         esac
     fi
     case "${OUTCOME}" in
-        no-changes) OUTCOME="no-action" ;;
-        pr-created | rejected | watch | no-action) ;;
+        no-changes | no-action) OUTCOME="unchanged" ;;
+        pr-created) OUTCOME="pr_created" ;;
+        pr_created | pr_pushed | rejected | unchanged | watch) ;;
         error | escalated)
             OUTCOME=""
             ;;

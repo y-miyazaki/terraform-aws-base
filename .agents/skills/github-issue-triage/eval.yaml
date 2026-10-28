@@ -2,7 +2,7 @@ name: github-issue-triage-eval
 description: >-
   Evaluation suite for github-issue-triage.
   Verifies classification, label FSM behavior, comment history (new vs update),
-  may_edit guardrails, skip exits, trigger-negative guardrails, and structured
+  agent_edit_allowed guardrails, skip exits, trigger-negative guardrails, and structured
   session report output.
 skill: github-issue-triage
 version: "1.0"

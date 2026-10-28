@@ -4,9 +4,9 @@ Deferred subsection name for this skill: `### Deferred` (not `### Skipped`).
 
 Category and severity rules: [category-debt-taxonomy.md](category-debt-taxonomy.md).
 
-## Survey result (`may_edit: false`)
+## Survey result (`agent_edit_allowed: false`)
 
-No file edits. **Do not write `report_file`.** **Do not emit `### Changes`, `### Deferred`, or `## Verification`.**
+No file edits. **Do not write `agent_report_file`.** **Do not emit `### Changes`, `### Deferred`, or `## Verification`.**
 
 ```markdown
 # Technical Debt Result
@@ -19,9 +19,9 @@ No file edits. **Do not write `report_file`.** **Do not emit `### Changes`, `###
 
 ### Candidates
 
-| Target      | Category   | Evidence            | Suggested approach         | Delegate                                       | Priority              |
-| ----------- | ---------- | ------------------- | -------------------------- | ---------------------------------------------- | --------------------- |
-| `path:line` | <category> | <snippet or metric> | <plain-language direction> | self \| refactor \| docs-updater \| human \| — | high \| medium \| low |
+| Target               | Category   | Evidence            | Suggested approach         | Delegate                                       | Priority              |
+| -------------------- | ---------- | ------------------- | -------------------------- | ---------------------------------------------- | --------------------- |
+| <linked path>:<line> | <category> | <snippet or metric> | <plain-language direction> | self \| refactor \| docs-updater \| human \| — | high \| medium \| low |
 
 ### Watch
 
@@ -35,9 +35,9 @@ No file edits. **Do not write `report_file`.** **Do not emit `### Changes`, `###
 - Zero candidates — Overview explains no-op; omit empty `### Candidates`
 - **Delegate:** `self` = closed-set apply candidate; `refactor` = structural; `docs-updater` = doc drift; `human` = security or judgment; `—` = report-only
 
-## Apply result (`may_edit: true`)
+## Apply result (`agent_edit_allowed: true`)
 
-Survey runs internally first; final output uses apply shape. Write `report_file` within allowlist.
+Survey runs internally first; final output uses apply shape. Write `agent_report_file` within allowlist.
 
 ```markdown
 # Technical Debt Result
@@ -50,10 +50,10 @@ Survey runs internally first; final output uses apply shape. Write `report_file`
 
 ### Changes
 
-| Target          | What was wrong | What changed                    |
-| --------------- | -------------- | ------------------------------- |
-| `<report_file>` | <finding gap>  | <report recorded>               |
-| `path/to/file`  | <debt fact>    | <minimal closed-set fix if any> |
+| Target                | What was wrong | What changed                    |
+| --------------------- | -------------- | ------------------------------- |
+| `<agent_report_file>` | <finding gap>  | <report recorded>               |
+| `path/to/file`        | <debt fact>    | <minimal closed-set fix if any> |
 
 ### Deferred
 
@@ -77,9 +77,9 @@ Survey runs internally first; final output uses apply shape. Write `report_file`
 
 On the automation path, append `## Session Metrics` per [category-automation-envelope.md](category-automation-envelope.md).
 
-## Persisted report file (`may_edit: true` only)
+## Persisted report file (`agent_edit_allowed: true` only)
 
-Write `report_file` (path from detect JSON or `## Constraints`) with extended tables (Resolved Since Previous, Report Outcome). PR Summary uses apply/survey shape only — not a copy of the full persisted file.
+Write `agent_report_file` (path from detect JSON or `## Constraints`) with extended tables (Resolved Since Previous, Report Outcome). PR Summary uses apply/survey shape only — not a copy of the full persisted file.
 
 ```markdown
 # Technical Debt Report — YYYY-MM-DD

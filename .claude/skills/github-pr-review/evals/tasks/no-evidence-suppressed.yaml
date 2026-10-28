@@ -1,0 +1,28 @@
+id: github-pr-review-no-evidence-suppressed-001
+name: github-pr-review suppresses preference-only findings
+description: >-
+  Validate a diff with only stylistic preferences, no rule, no criteria item, and no concrete
+  bug yields an empty findings array.
+tags:
+  - quality
+  - suppression
+inputs:
+  prompt: >-
+    Use github-pr-review with agent_edit_allowed true and agent_edit_target report. The diff renames a local
+    variable from "x" to "count" in one file; no rule or criteria item covers naming and there
+    is no bug. Write the report JSON with "findings": [] and still fill premises and summary
+    stating there are no findings. Do not invent a finding.
+  context:
+    skip: false
+    pr_number: 10
+    base_sha: "1111111111111111111111111111111111111111"
+    head_sha: "2222222222222222222222222222222222222222"
+    report_path: ".loop-review/pr-10.json"
+    agent_edit_allowed: true
+    agent_edit_target: report
+expected:
+  output_contains:
+    - '"findings": []'
+    - premises
+  outcomes:
+    - type: task_completed

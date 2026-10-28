@@ -6,8 +6,9 @@
 #   options:
 #     -h, --help           Display this help message
 #     -v, --verbose        Enable verbose output
-#     -d, --generate-docs  Generate README.md using terraform-docs (requires terraform-docs installed)
-#     -f, --fix            Automatically fix formatting issues (terraform fmt)
+#     -g, --generate-docs  Generate README.md using terraform-docs (requires terraform-docs installed)
+#     -f, --fix            Automatically fix formatting issues (terraform fmt); with -o also argument order
+#     -o, --check-order    Check alphabetical argument order (ORD-01) with terraform_attr_order.py (requires python3)
 #   arguments:
 #     dirN                 One or more target directories to scope validation (optional)
 # Design Rules:
@@ -15,6 +16,7 @@
 #   - Directories are validated recursively for each main.tf found
 #   - Uses terraform.sh library functions for consistency
 #   - Runs tflint recursively before validation
+#   - Checks alphabetical argument order (ORD-01) only when --check-order is given
 #   - Follows common parse_arguments pattern used in other scripts
 #
 # Output:
@@ -42,6 +44,7 @@ source "${SCRIPT_DIR}/lib/all.sh"
 TARGET_DIRS=()
 GENERATE_DOCS="false"
 AUTO_FIX="false"
+CHECK_ORDER="false"
 # shellcheck disable=SC2034
 VERBOSE="false"
 EXIT_CODE=0
@@ -50,6 +53,7 @@ EXIT_CODE=0
 TFLINT_FAILED=0
 VALIDATE_FAILED=0
 FMT_FAILED=0
+ORDER_FAILED=0
 SECURITY_FAILED=0
 DOCS_FAILED=0
 
@@ -86,8 +90,10 @@ Description: Recursive Terraform validation, formatting check, linting, and secu
 Options:
   -h, --help           Display this help message
   -v, --verbose        Enable verbose output
-  -d, --generate-docs  Generate README.md using terraform-docs (requires terraform-docs installed)
-  -f, --fix            Automatically fix formatting issues (terraform fmt)
+  -g, --generate-docs  Generate README.md using terraform-docs (requires terraform-docs installed)
+                       (-d is a deprecated alias; -d is reserved for --dry-run in the other validate scripts)
+  -f, --fix            Automatically fix formatting issues (terraform fmt); with -o also argument order
+  -o, --check-order    Check alphabetical argument order (ORD-01) with terraform_attr_order.py (requires python3)
 
 Examples:
   $0                         # scan whole workspace
@@ -130,11 +136,19 @@ function parse_arguments {
                 # shellcheck disable=SC2034
                 VERBOSE="true"
                 ;;
-            -d | --generate-docs)
+            -g | --generate-docs)
+                GENERATE_DOCS="true"
+                ;;
+            -d)
+                # Deprecated alias: -d means --dry-run in the other scripts
+                log "WARN" "-d is deprecated for --generate-docs; use -g or --generate-docs"
                 GENERATE_DOCS="true"
                 ;;
             -f | --fix)
                 AUTO_FIX="true"
+                ;;
+            -o | --check-order)
+                CHECK_ORDER="true"
                 ;;
             -*)
                 error_exit "Unknown option: $1"
@@ -149,13 +163,78 @@ function parse_arguments {
 }
 
 #######################################
-# run_tflint_check: Run tflint recursively
+# process_terraform_directory: Process single terraform directory
 #
 # Description:
-#   Runs tflint recursively on all Terraform directories
+#   Processes a single Terraform directory with validation, linting, and documentation generation
+#
+# Globals:
+#   None
+#
+# Arguments:
+#   $1 - Directory path to process
+#
+# Outputs:
+#   None
+#
+# Returns:
+#   Exits with error if any validation step fails
+#
+# Usage:
+#   process_terraform_directory "$dir"
+#
+#######################################
+function process_terraform_directory {
+    local dir="$1"
+    local failed=0
+
+    log "INFO" ">>> Investigating Terraform directory: $dir"
+
+    if [[ ! -d $dir ]]; then
+        log "WARN" "Directory disappeared, skipping: $dir"
+        return 0
+    fi
+
+    pushd "$dir" > /dev/null || return 1
+
+    # Step 1: Initialize Terraform (backend disabled for validation)
+    if ! execute_command_string "terraform init -backend=false"; then
+        log "ERROR" "Failed to initialize Terraform for $dir"
+        failed=1
+    fi
+
+    # Step 2: Validate Terraform configuration
+    if [[ $failed -eq 0 ]]; then
+        if ! terraform_validate; then
+            log "ERROR" "Terraform validation failed for $dir"
+            failed=1
+        fi
+    fi
+
+    # Step 4: Generate documentation (terraform-docs) if requested
+    if [[ $GENERATE_DOCS == "true" ]]; then
+        log "INFO" "Generating documentation (terraform-docs)"
+        if ! execute_command_string "terraform-docs markdown table --output-file README.md ./"; then
+            log "WARN" "Failed to generate documentation for $dir"
+            DOCS_FAILED=1
+            # We don't fail the whole script just for docs unless EXIT_CODE should be 1
+        fi
+    fi
+
+    popd > /dev/null || true
+    return $failed
+}
+
+#######################################
+# run_attribute_order_check: Check alphabetical argument order (ORD-01)
+#
+# Description:
+#   Runs terraform_attr_order.py on resource/data/module blocks. With --fix the files are rewritten in place.
 #
 # Globals:
 #   TARGET_DIRS - Array of target directories (if scoped)
+#   AUTO_FIX - Rewrite files instead of only checking
+#   SCRIPT_DIR - Directory of this script
 #
 # Arguments:
 #   None
@@ -164,42 +243,35 @@ function parse_arguments {
 #   None
 #
 # Returns:
-#   Exits with error if tflint finds issues
+#   None (sets ORDER_FAILED and EXIT_CODE on violations)
 #
 # Usage:
-#   run_tflint_check
+#   run_attribute_order_check
 #
 #######################################
-function run_tflint_check {
-    echo_section "Running tflint (recursive)"
-
-    local failed=0
-    if [[ ${#TARGET_DIRS[@]} -gt 0 ]]; then
-        for target in "${TARGET_DIRS[@]}"; do
-            if [[ -d $target ]]; then
-                pushd "$target" > /dev/null || continue
-                log "INFO" "Running tflint in: $target"
-                if ! terraform_lint "recursive"; then
-                    failed=1
-                fi
-                popd > /dev/null || true
-            else
-                log "WARN" "Skipping non-existent directory for tflint: $target"
-            fi
-        done
+function run_attribute_order_check {
+    if [[ $AUTO_FIX == "true" ]]; then
+        echo_section "Auto-fixing Terraform argument order (ORD-01)"
     else
-        log "INFO" "Running tflint recursively in entire workspace"
-        if ! terraform_lint "recursive"; then
-            failed=1
-        fi
+        echo_section "Checking Terraform argument order (ORD-01)"
     fi
 
-    if [[ $failed -eq 1 ]]; then
-        log "ERROR" "tflint found issues"
-        TFLINT_FAILED=1
+    local -a targets=(".")
+    if [[ ${#TARGET_DIRS[@]} -gt 0 ]]; then
+        targets=("${TARGET_DIRS[@]}")
+    fi
+
+    local -a options=()
+    if [[ $AUTO_FIX == "true" ]]; then
+        options+=("--fix")
+    fi
+
+    if ! python3 "${SCRIPT_DIR}/terraform_attr_order.py" ${options[@]+"${options[@]}"} "${targets[@]}"; then
+        log "ERROR" "Terraform argument order check failed"
+        ORDER_FAILED=1
         EXIT_CODE=1
     else
-        log "INFO" "tflint passed"
+        log "INFO" "Terraform argument order check passed"
     fi
 }
 
@@ -277,102 +349,6 @@ function run_formatting_check {
 }
 
 #######################################
-# run_security_scan: Run security scan
-#
-# Description:
-#   Runs security scan using trivy if available
-#
-# Globals:
-#   None
-#
-# Arguments:
-#   None
-#
-# Outputs:
-#   None
-#
-# Returns:
-#   Exits with error if security issues are found
-#
-# Usage:
-#   run_security_scan
-#
-#######################################
-function run_security_scan {
-    echo_section "Running security scan with trivy"
-    if ! execute_command_string "trivy fs . --format table"; then
-        log "ERROR" "trivy found security issues"
-        SECURITY_FAILED=1
-        EXIT_CODE=1
-    else
-        log "INFO" "Security scan passed"
-    fi
-}
-
-#######################################
-# process_terraform_directory: Process single terraform directory
-#
-# Description:
-#   Processes a single Terraform directory with validation, linting, and documentation generation
-#
-# Globals:
-#   None
-#
-# Arguments:
-#   $1 - Directory path to process
-#
-# Outputs:
-#   None
-#
-# Returns:
-#   Exits with error if any validation step fails
-#
-# Usage:
-#   process_terraform_directory "$dir"
-#
-#######################################
-function process_terraform_directory {
-    local dir="$1"
-    local failed=0
-
-    log "INFO" ">>> Investigating Terraform directory: $dir"
-
-    if [[ ! -d $dir ]]; then
-        log "WARN" "Directory disappeared, skipping: $dir"
-        return 0
-    fi
-
-    pushd "$dir" > /dev/null || return 1
-
-    # Step 1: Initialize Terraform (backend disabled for validation)
-    if ! execute_command_string "terraform init -backend=false"; then
-        log "ERROR" "Failed to initialize Terraform for $dir"
-        failed=1
-    fi
-
-    # Step 2: Validate Terraform configuration
-    if [[ $failed -eq 0 ]]; then
-        if ! terraform_validate; then
-            log "ERROR" "Terraform validation failed for $dir"
-            failed=1
-        fi
-    fi
-
-    # Step 4: Generate documentation (terraform-docs) if requested
-    if [[ $GENERATE_DOCS == "true" ]]; then
-        log "INFO" "Generating documentation (terraform-docs)"
-        if ! execute_command_string "terraform-docs markdown table --output-file README.md ./"; then
-            log "WARN" "Failed to generate documentation for $dir"
-            DOCS_FAILED=1
-            # We don't fail the whole script just for docs unless EXIT_CODE should be 1
-        fi
-    fi
-
-    popd > /dev/null || true
-    return $failed
-}
-
-#######################################
 # run_recursive_validation: Run recursive terraform validation
 #
 # Description:
@@ -430,6 +406,113 @@ function run_recursive_validation {
 }
 
 #######################################
+# run_security_scan: Run security scan
+#
+# Description:
+#   Runs security scan using trivy if available
+#
+# Globals:
+#   None
+#
+# Arguments:
+#   None
+#
+# Outputs:
+#   None
+#
+# Returns:
+#   Exits with error if security issues are found
+#
+# Usage:
+#   run_security_scan
+#
+#######################################
+function run_security_scan {
+    echo_section "Running security scan with trivy"
+
+    # Scope the scan to the target directories (default: the whole tree), like tflint and fmt
+    local -a targets=(".")
+    if [[ ${#TARGET_DIRS[@]} -gt 0 ]]; then
+        targets=("${TARGET_DIRS[@]}")
+    fi
+
+    local target
+    local scan_failed=0
+    for target in "${targets[@]}"; do
+        if [[ ! -d $target ]]; then
+            log "WARN" "Skipping security scan for non-existent directory: $target"
+            continue
+        fi
+        if ! execute_command trivy fs "$target" --format table; then
+            log "ERROR" "trivy found security issues in $target"
+            scan_failed=1
+        fi
+    done
+
+    if [[ $scan_failed -ne 0 ]]; then
+        SECURITY_FAILED=1
+        EXIT_CODE=1
+    else
+        log "INFO" "Security scan passed"
+    fi
+}
+
+#######################################
+# run_tflint_check: Run tflint recursively
+#
+# Description:
+#   Runs tflint recursively on all Terraform directories
+#
+# Globals:
+#   TARGET_DIRS - Array of target directories (if scoped)
+#
+# Arguments:
+#   None
+#
+# Outputs:
+#   None
+#
+# Returns:
+#   Exits with error if tflint finds issues
+#
+# Usage:
+#   run_tflint_check
+#
+#######################################
+function run_tflint_check {
+    echo_section "Running tflint (recursive)"
+
+    local failed=0
+    if [[ ${#TARGET_DIRS[@]} -gt 0 ]]; then
+        for target in "${TARGET_DIRS[@]}"; do
+            if [[ -d $target ]]; then
+                pushd "$target" > /dev/null || continue
+                log "INFO" "Running tflint in: $target"
+                if ! terraform_lint "recursive"; then
+                    failed=1
+                fi
+                popd > /dev/null || true
+            else
+                log "WARN" "Skipping non-existent directory for tflint: $target"
+            fi
+        done
+    else
+        log "INFO" "Running tflint recursively in entire workspace"
+        if ! terraform_lint "recursive"; then
+            failed=1
+        fi
+    fi
+
+    if [[ $failed -eq 1 ]]; then
+        log "ERROR" "tflint found issues"
+        TFLINT_FAILED=1
+        EXIT_CODE=1
+    else
+        log "INFO" "tflint passed"
+    fi
+}
+
+#######################################
 # main: Main process
 #
 # Description:
@@ -457,6 +540,9 @@ function main {
 
     # Validate required dependencies
     local required_tools=("terraform" "tflint" "trivy")
+    if [[ $CHECK_ORDER == "true" ]]; then
+        required_tools+=("python3")
+    fi
     if [[ $GENERATE_DOCS == "true" ]]; then
         required_tools+=("terraform-docs")
     fi
@@ -468,6 +554,9 @@ function main {
     run_tflint_check
     run_recursive_validation
     run_formatting_check
+    if [[ $CHECK_ORDER == "true" ]]; then
+        run_attribute_order_check
+    fi
     run_security_scan
 
     # Record end time and calculate elapsed time
@@ -482,6 +571,9 @@ function main {
         [[ $TFLINT_FAILED == "1" ]] && echo "❌ tflint" >&2 || echo "✅ tflint" >&2
         [[ $VALIDATE_FAILED == "1" ]] && echo "❌ terraform validate" >&2 || echo "✅ terraform validate" >&2
         [[ $FMT_FAILED == "1" ]] && echo "❌ terraform fmt" >&2 || echo "✅ terraform fmt" >&2
+        if [[ $CHECK_ORDER == "true" ]]; then
+            [[ $ORDER_FAILED == "1" ]] && echo "❌ argument order (ORD-01)" >&2 || echo "✅ argument order (ORD-01)" >&2
+        fi
         [[ $SECURITY_FAILED == "1" ]] && echo "❌ security scan (trivy)" >&2 || echo "✅ security scan (trivy)" >&2
         [[ $DOCS_FAILED == "1" ]] && echo "⚠️  terraform-docs" >&2
         log "ERROR" "❌ Some validations failed"

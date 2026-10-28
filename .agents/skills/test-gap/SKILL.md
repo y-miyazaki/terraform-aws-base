@@ -4,7 +4,7 @@ description: >-
   Find under-tested code and add meaningful tests without changing production code or existing assertions.
   Use in conversation when the user asks to find missing tests, add tests for an under-tested script or package, or improve test coverage.
   Also the loop entry skill for scheduled runs when automation supplies detect JSON (hotspots, ledger). Interactive default is survey only;
-  edit test files when the user explicitly requests adding tests or automation sets may_edit in Constraints.
+  edit test files when the user explicitly requests adding tests or automation sets agent_edit_allowed in Constraints.
 license: Apache-2.0
 metadata:
   author: y-miyazaki
@@ -39,17 +39,18 @@ metadata:
 - [common-output-format.md](references/common-output-format.md) (always read)
 - [category-input-schema.md](references/category-input-schema.md) (read when detect JSON is present)
 - [category-automation-envelope.md](references/category-automation-envelope.md) (read on automation path)
-- [category-pr-body-links.md](references/category-pr-body-links.md) (read at PR body synthesis)
+- [category-pr-body-links.md](references/category-pr-body-links.md) (read when synthesizing the PR body)
+- `assets/pr-body-template.md` and `assets/pr-body-template-survey.md` (read when synthesizing the PR body)
 
 ## Workflow
 
-Resolve `may_edit` first:
+Resolve `agent_edit_allowed` first:
 
-| Source                                 | `may_edit`                                                                                           |
-| -------------------------------------- | ---------------------------------------------------------------------------------------------------- |
-| Interactive — default                  | `false` — survey only                                                                                |
-| Interactive — add/write tests language | `true` — examples: テストを追加して, add tests for, write tests                                      |
-| Automation — `## Constraints`          | value of `may_edit` in [category-automation-envelope.md](references/category-automation-envelope.md) |
+| Source                                 | `agent_edit_allowed`                                                                                           |
+| -------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| Interactive — default                  | `false` — survey only                                                                                          |
+| Interactive — add/write tests language | `true` — examples: テストを追加して, add tests for, write tests                                                |
+| Automation — `## Constraints`          | value of `agent_edit_allowed` in [category-automation-envelope.md](references/category-automation-envelope.md) |
 
 ### Target selection
 
@@ -64,7 +65,7 @@ Resolve `may_edit` first:
 2. Write tests that assert observable behavior: return values, side effects, error paths. A test that cannot fail is not acceptable.
 3. Place files only within `Allowed paths` (interactive: the repository's existing test directories). Never edit production files.
 4. You cannot run the tests in this environment. Do not claim you ran them. State the command CI will run and the expected result in `## Verification`.
-5. When `may_edit` is `false`, or `write_target` is not `fix`, emit the survey shape and stop.
+5. When `agent_edit_allowed` is `false`, or `agent_edit_target` is not `fix`, emit the survey shape and stop.
 
 ### Error Handling
 

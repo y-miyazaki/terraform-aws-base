@@ -6,25 +6,25 @@ For automation-path runs. Load on the automation path — see SKILL.md Reference
 
 The caller injects `## Constraints` after detect JSON in the assembled prompt. The agent reads:
 
-| Field           | Type    | Description                                                                             |
-| --------------- | ------- | --------------------------------------------------------------------------------------- |
-| `may_edit`      | boolean | `false` — survey shape only; do not edit files. `true` — apply fix and emit apply shape |
-| `write_target`  | string  | `fix` when `may_edit: true` for this skill                                              |
-| `report_file`   | string  | Not used for this skill                                                                 |
-| `Allowed paths` | string  | Optional allowlist globs from the caller                                                |
+| Field                | Type    | Description                                                                             |
+| -------------------- | ------- | --------------------------------------------------------------------------------------- |
+| `agent_edit_allowed` | boolean | `false` — survey shape only; do not edit files. `true` — apply fix and emit apply shape |
+| `agent_edit_target`  | string  | `fix` when `agent_edit_allowed: true` for this skill                                    |
+| `agent_report_file`  | string  | Not used for this skill                                                                 |
+| `Allowed paths`      | string  | Optional allowlist globs from the caller                                                |
 
-Callers supply `may_edit`, `write_target` (`fix` | `report`), and optional `report_file` in `## Constraints`. The skill branches on `may_edit` and `write_target` only — do not branch on `delivery` or invent mention triggers.
+Callers supply `agent_edit_allowed`, `agent_edit_target` (`fix` | `report`), and optional `agent_report_file` in `## Constraints`. The skill branches on `agent_edit_allowed` and `agent_edit_target` only — do not branch on `delivery` or invent mention triggers.
 
 ## PR body synthesis
 
 Use [common-output-format.md](common-output-format.md) for report shape. At synthesis, load:
 
-| `may_edit` | Template                            |
-| ---------- | ----------------------------------- |
-| `false`    | `assets/pr-body-template-survey.md` |
-| `true`     | `assets/pr-body-template.md`        |
+| `agent_edit_allowed` | Template                            |
+| -------------------- | ----------------------------------- |
+| `false`              | `assets/pr-body-template-survey.md` |
+| `true`               | `assets/pr-body-template.md`        |
 
-When `may_edit: true` but the run emits survey shape (`write_target` mismatch), use `assets/pr-body-template-survey.md` at synthesis.
+When `agent_edit_allowed: true` but the run emits survey shape (`agent_edit_target` mismatch), use `assets/pr-body-template-survey.md` at synthesis.
 
 PR body rules:
 

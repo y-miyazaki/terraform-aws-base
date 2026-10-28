@@ -75,8 +75,8 @@ Do not mark Resolved when only `line` shifted but `path` + `kind` + snippet stil
 
 ### EDIT-01: Closed-set apply only
 
-- [ ] When `may_edit` is `false`, emit survey shape — do not write `report_file`
-- [ ] When `may_edit` is `true`, write allowlisted `report_file` and apply closed-set fixes only (`broken_doc_ref`, `stale_doc`, simple `pin_drift`) per [category-scope.md](category-scope.md)
+- [ ] When `agent_edit_allowed` is `false`, emit survey shape — do not write `agent_report_file`
+- [ ] When `agent_edit_allowed` is `true`, write allowlisted `agent_report_file` and apply closed-set fixes only (`broken_doc_ref`, `stale_doc`, simple `pin_drift`) per [category-scope.md](category-scope.md)
 - [ ] Do not perform structural refactors here (Delegate to refactor)
 - **PASS** if apply edits are closed-set only
 
@@ -92,10 +92,10 @@ Do not mark Resolved when only `line` shifted but `path` + `kind` + snippet stil
 
 | Condition                                                    | Severity    | Action                                                                    |
 | ------------------------------------------------------------ | ----------- | ------------------------------------------------------------------------- |
-| `skip` true, or both `signals` and `hotspots` empty          | recoverable | Emit survey no-op; stop without `report_file`                             |
+| `skip` true, or both `signals` and `hotspots` empty          | recoverable | Emit survey no-op; stop without `agent_report_file`                       |
 | Evidence `path` missing or unreadable                        | recoverable | Classify as Watch with reason; continue other items                       |
 | `previous_report` set but file missing                       | recoverable | Proceed without resolved/regression notes; note absence in Summary        |
-| `report_file` outside allowlist or on denylist               | blocking    | Do not write any report file; note in Summary; still emit session summary |
+| `agent_report_file` outside allowlist or on denylist         | blocking    | Do not write any report file; note in Summary; still emit session summary |
 | Finding would require invented APIs, paths, metrics, or CVEs | fatal       | Omit the finding (or Noise / Ignore); never fabricate evidence            |
 
 ## Examples

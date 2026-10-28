@@ -14,14 +14,14 @@ Gate IDs are for agent self-check and Deferred/Watch reasons. Candidate identity
 ### INTENT-02: Architecture path gates
 
 - [ ] Architecture without user-approved slice → Phase A proposal only; Outcome `proposal`; no apply
-- [ ] Architecture Phase B → user names **one** approved slice; apply as O2 cap only when `may_edit` is `true` and `write_target` is `fix`
+- [ ] Architecture Phase B → user names **one** approved slice; apply as O2 cap only when `agent_edit_allowed` is `true` and `agent_edit_target` is `fix`
 - **PASS** if architecture never skips proposal → approve → one slice
 
 ## Survey
 
 ### SURVEY-01: Full in-scope discovery
 
-- [ ] Phase A runs **before** any file edit when `may_edit` is `true`; sole phase when `may_edit` is `false` or when architecture lacks `approved_slice`
+- [ ] Phase A runs **before** any file edit when `agent_edit_allowed` is `true`; sole phase when `agent_edit_allowed` is `false` or when architecture lacks `approved_slice`
 - [ ] Discover candidates in scope — automation: every `hints[]` entry; interactive structural: run optional detect for the resolved universe then Agent-complement (user paths/symbols always read); architecture Phase B: **only** the `approved_slice`
 - [ ] Prefer structure-driven evidence (duplication, oversized unit, user-named symbol) — not lint/SAST smell scores
 - [ ] Zero structural candidates → Outcome `no-op`; stop (architecture proposal is not a no-op)
@@ -31,7 +31,7 @@ Gate IDs are for agent self-check and Deferred/Watch reasons. Candidate identity
 
 - [ ] Apply-worthy candidates → `### Candidates`; otherwise → `### Watch` ([common-output-format.md](common-output-format.md)) — do not put watch-only items in Candidates
 - [ ] Lint/style-only, feature/API, comment-only, cannot-verify, or cross-boundary → **Watch**
-- [ ] Suggested approach uses plain-language direction from evidence + [category-contract.md](category-contract.md) (dedupe, extract, clarify, shallow move) — load [category-techniques.md](category-techniques.md) when `may_edit` is `true`
+- [ ] Suggested approach uses plain-language direction from evidence + [category-contract.md](category-contract.md) (dedupe, extract, clarify, shallow move) — load [category-techniques.md](category-techniques.md) when `agent_edit_allowed` is `true`
 - **PASS** if no Candidates row is lint-primary or cross-boundary
 
 ### SURVEY-03: Read before classifying
@@ -41,15 +41,15 @@ Gate IDs are for agent self-check and Deferred/Watch reasons. Candidate identity
 
 ## Apply
 
-Load [category-techniques.md](category-techniques.md) when `may_edit` is `true`.
+Load [category-techniques.md](category-techniques.md) when `agent_edit_allowed` is `true`.
 
 ### APPLY-01: Edit gate and batch
 
-- [ ] Run only when `may_edit` is `true` **and** `write_target` is `fix` (interactive default `may_edit: false`; automation per `## Constraints`)
+- [ ] Run only when `agent_edit_allowed` is `true` **and** `agent_edit_target` is `fix` (interactive default `agent_edit_allowed: false`; automation per `## Constraints`)
 - [ ] Apply **every** candidate marked **apply** in survey order
 - [ ] Pick **one** technique per candidate from [category-techniques.md](category-techniques.md)
 - [ ] Failed gate for one candidate → revert that edit; record under **Deferred**; continue remaining candidates
-- **PASS** if no apply edit runs unless both `may_edit` is true and `write_target` is `fix`
+- **PASS** if no apply edit runs unless both `agent_edit_allowed` is true and `agent_edit_target` is `fix`
 
 ### APPLY-02: Closed structural set
 
@@ -58,7 +58,7 @@ Load [category-techniques.md](category-techniques.md) when `may_edit` is `true`.
 - [ ] Stay in closed depth tiers O1/O2 ([category-contract.md](category-contract.md)): **O1** = local structure same behavior; **O2** = plus shallow same-package move
 - [ ] No public API semantics changes; no feature behavior changes
 - [ ] No one-shot cross-boundary apply or GoF introduction — architecture path is propose → approve → one O2 slice
-- [ ] Automation apply (`may_edit: true` and `write_target: fix`): structural intent only; no architecture Phase A/B during apply
+- [ ] Automation apply (`agent_edit_allowed: true` and `agent_edit_target: fix`): structural intent only; no architecture Phase A/B during apply
 - **PASS** if every edit is behavior-preserving O1/O2 structural work
 
 ## Verification

@@ -39,23 +39,25 @@ description: "Follow up on GitHub Issues and PRs labeled devops-agent: read unan
 
 ## Memory Structure
 
-This skill saves human operational decisions to the `directives` store, following the
+This skill saves human operational decisions to the `suppressions` store (the custom memory store
+attached to this custom agent; the managed `directives` store is read-only for custom agents), following the
 same **one-file-per-alarm** convention the managed `monitors` store already uses. There
 is no index file and no sub-folders: the agent finds the right memory by its `description`,
 and each alarm's full history lives in a single file.
 
 ```
-directives/
+suppressions/
   monitors-<alarm-name>            ← one memory file per alarm (suppression + history + incidents)
 ```
 
 The memory's `description` names the alarm, so an agent triaging a firing alarm matches
 on the description and opens only that one file. No index, no fan-out.
 
-**How the suppression is honored:** writing `## Suppression: ACTIVE` here is what makes the
-triage / investigation agents skip the alarm. That enforcement rule lives in the GENERIC
-`AGENTS.md` (incident-suppression: per-alarm memory directives). This skill is the **writer**;
-the triage/RCA agents are the **readers**. Keep the two in sync.
+**How the suppression is honored:** writing `## Suppression: ACTIVE` here makes the
+investigation agent stop early on the next firing of the alarm (the triage stage does not
+read this memory, so the investigation still starts). That enforcement rule lives in the
+GENERIC `AGENTS.md` (incident-suppression: per-alarm memory directives). This skill is the
+**writer**; the investigation agents are the **readers**. Keep the two in sync.
 
 ## Workflow
 
@@ -66,19 +68,21 @@ the triage/RCA agents are the **readers**. Keep the two in sync.
 5. Re-check the incident read-only (`use_aws`, `query_cloudwatch_logs`) when a comment reports a new fact, a recurrence, or asks about the current state; put the result in the answer. Use the same time window as the original investigation, or the last 24 hours when the comment reports a recurrence.
 6. Post one answer comment per item with `add_issue_comment` (it also works for PRs) from the comment template.
 7. Apply the close rules (CHK-05).
-8. Report per item in the run result.
+8. Harvest the closed items into memory (CHK-07, see "Step 8 — Closed-item harvest" below). It runs on every run, even when no open item needs action.
+9. Report per item in the run result.
 
-| Comment type                              | Action                                                                                                                        | Save to memory? (Step 5a) |
-| ----------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- | ------------------------- |
-| Question or request for status            | Answer in a comment with evidence (step 5 when it needs fresh data)                                                           | No                        |
-| New information about the incident        | Append it to the Issue body under a section `Update <yyyy-mm-dd>` (`issue_write` update; keep the existing text), then answer | Yes — `note`              |
-| Correction of root cause                  | Fix the title or body, then answer with what changed                                                                          | Yes — `root-cause`        |
-| Correction of other Issue or PR text      | Fix the title or body (`issue_write` update, `update_pull_request`), then answer with what changed                            | No                        |
-| Request to change the PR                  | Change code only when CHK-04 holds; otherwise answer why not and what a human must do                                         | No                        |
-| Instruction to close                      | Apply CHK-05                                                                                                                  | Yes — `incident` entry    |
-| **Suppression instruction** (see Step 5a) | **Set `## Suppression` to `ACTIVE`, save the memory, confirm in the comment, then apply CHK-05**                              | Yes — `suppression`       |
-| **Un-suppression / resume monitoring** (see Step 5a) | **Set `## Suppression` to `NONE`, save the memory, confirm in the comment**                                        | Yes — `suppression`       |
-| Ambiguous or out of scope                 | Ask one specific clarifying question; do not guess                                                                            | No                        |
+| Comment type                                                               | Action                                                                                                                        | Save to memory? (Step 5a)                              |
+| -------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------ |
+| Question or request for status                                             | Answer in a comment with evidence (step 5 when it needs fresh data)                                                           | No                                                     |
+| New information about the incident                                         | Append it to the Issue body under a section `Update <yyyy-mm-dd>` (`issue_write` update; keep the existing text), then answer | Yes — `note`                                           |
+| Correction of root cause                                                   | Fix the title or body, then answer with what changed                                                                          | Yes — `root-cause`                                     |
+| Correction of other Issue or PR text                                       | Fix the title or body (`issue_write` update, `update_pull_request`), then answer with what changed                            | No                                                     |
+| Request to change the PR                                                   | Change code only when CHK-04 holds; otherwise answer why not and what a human must do                                         | No                                                     |
+| Instruction to close                                                       | Apply CHK-05                                                                                                                  | Yes — `incident` entry                                 |
+| Closed without a comment (a person closed it, or the linked PR was merged) | No answer comment; harvest it in step 8                                                                                       | Yes — `incident`, `root-cause`, `suppression` (step 8) |
+| **Suppression instruction** (see Step 5a)                                  | **Set `## Suppression` to `ACTIVE`, save the memory, confirm in the comment, then apply CHK-05**                              | Yes — `suppression`                                    |
+| **Un-suppression / resume monitoring** (see Step 5a)                       | **Set `## Suppression` to `NONE`, save the memory, confirm in the comment**                                                   | Yes — `suppression`                                    |
+| Ambiguous or out of scope                                                  | Ask one specific clarifying question; do not guess                                                                            | No                                                     |
 
 ### Author identity (human vs. agent) — read before classifying
 
@@ -131,10 +135,22 @@ description: "<alarm-name> の対応方針・抑制状態・履歴。<alarm-name
 - <IssueID>: <one-line summary> (<yyyy-mm-dd>) [<suppressed|resolved|cancelled|open>]
 ```
 
+#### Human comment examples
+
+Classify a comment by its meaning, not by exact wording. Typical comments and how to handle them:
+
+| Human comment                                  | Type                                   | Memory change                                                                        |
+| ---------------------------------------------- | -------------------------------------- | ------------------------------------------------------------------------------------ |
+| 「magaseek 解約済みのため今後チェック不要」    | Suppression instruction                | `ACTIVE`; `suppression` bullet with the verbatim comment                             |
+| 「契約終了まで監視不要。終了後は監視再開して」 | Suppression instruction                | `ACTIVE`; keep the resume condition in the verbatim bullet                           |
+| 「監視再開して」「やっぱり調査して」           | Un-suppression / resume monitoring     | `NONE`; `unsuppression` bullet                                                       |
+| 「修正 PR マージ済み、クローズして」           | Instruction to close (not suppression) | `## Incidents` line only                                                             |
+| 「一旦様子見」                                 | Ambiguous                              | None; ask whether future firings of this alarm should be suppressed or only this one |
+
 #### Procedure
 
-1. `get_memory` for `monitors-<alarm-name>` in `directives`.
-   - **Not found** → compose a new document in the format above and `create_memory` with `store: directives`.
+1. `get_memory` for `monitors-<alarm-name>` in `suppressions`.
+   - **Not found** → compose a new document in the format above and `create_memory` with `store: suppressions`.
    - **Found** → edit the retrieved document in place, preserving all existing bullets.
 2. Apply the change for the comment type:
    - **Suppression instruction** — set `## Suppression` to `ACTIVE` and append a `suppression` bullet to `## History`.
@@ -152,11 +168,39 @@ description: "<alarm-name> の対応方針・抑制状態・履歴。<alarm-name
    - **On close (any reason)** — append or update the matching line under `## Incidents` (if a line for this
      Issue ID already exists, update its status rather than adding a duplicate).
 3. `update_memory` (or `create_memory` if it was new) — one write per alarm.
-4. Confirm in the answer comment, e.g. `メモリに保存しました: monitors-<alarm-name>（directives ストア）`.
+4. Confirm in the answer comment, e.g. `メモリに保存しました: monitors-<alarm-name>（suppressions ストア）`.
 5. Proceed to CHK-05 when closing.
+
+**If no memory write tool is available, or the store is not attached:** record `memory write unavailable: suppressions`
+in the run result, do not write `メモリに保存しました` in the answer comment, and tell the human in the answer comment that the
+suppression was not saved.
 
 **If the memory tool call fails:** log the error in the run result, skip the memory step,
 and continue normally. Do not block the answer comment or the close on a memory failure.
+
+### Step 8 — Closed-item harvest (CHK-07)
+
+Steps 1–7 only see open items. An Issue that a person closes without a comment, or whose PR was
+merged, never reaches Step 5a, so its root cause and conclusion would be lost. Step 8 records them.
+
+1. List the closed items with `search_issues`: `repo:<owner>/<repo> label:devops-agent is:closed closed:>=<date 7 days before this run, YYYY-MM-DD>`.
+2. Skip an item when its alarm memory already has a `## Incidents` line for this Issue number with a
+   closed status (`resolved`, `cancelled`, or `suppressed`). This keeps the harvest idempotent across runs.
+3. Alarm name: extract it from the Issue title as in Step 5a. When no alarm name can be extracted,
+   skip the item and record `no alarm name` in the run result.
+4. Read the Issue body (`issue_read` with `method: get`) and its last human comment (`issue_read` with
+   `method: get_comments`). Take the root cause from a section headed `Root cause` or `根本原因` (when
+   present) and the conclusion from the close reason in the last human comment or the body's conclusion section.
+5. Apply Step 5a to the alarm's memory (one `get_memory` and one write per alarm):
+   - A root cause was found → append a `root-cause` bullet to `## History`.
+   - Set the `## Incidents` line for this Issue number: `[resolved]` for `state_reason: completed` (or a merged PR),
+     `[cancelled]` for `not_planned`.
+   - **Suppression conclusion** → when the conclusion contains one of 「調査不要」「誤検知」「設定変更済み」
+     「対応不要」「修正不要」「今後チェック不要」「監視不要」 / "no investigation needed" / "false positive" /
+     "config already changed" / "won't fix" / "no longer needed", set `## Suppression` to `ACTIVE`, append
+     a `suppression` bullet with the verbatim phrase and the source Issue number, and set the Incidents line to
+     `[suppressed]`. Do **not** treat "resolved" or "fix is merged" as a suppression conclusion.
+6. Record the item in the run result with its alarm memory name, or with the reason it was skipped.
 
 ### Error Handling
 

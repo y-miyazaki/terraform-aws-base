@@ -43,6 +43,11 @@
   ],
   "afterFileEdit": [
     {
+      "command": ".cursor/hooks/common-hooks-cursor/scripts/prettier.sh",
+      "timeoutSec": 120,
+      "_apm_source": "y-miyazaki/config/.apm/packages/common-hooks-cursor"
+    },
+    {
       "command": ".cursor/hooks/shell-script-hooks-cursor/scripts/shfmt.sh",
       "timeoutSec": 120,
       "_apm_source": "y-miyazaki/config/.apm/packages/shell-script-hooks-cursor"

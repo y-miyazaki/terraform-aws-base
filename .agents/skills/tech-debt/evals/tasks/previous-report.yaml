@@ -6,15 +6,15 @@ tags:
   - edge-case
 inputs:
   prompt: >-
-    Use tech-debt with may_edit true. Read previous_report
+    Use tech-debt with agent_edit_allowed true. Read previous_report
     evals/files/previous-report.sample.md. The noise.go.txt TODO is absent from current
     signals — mark Resolved in persisted report. The new eol_hint is New. Emit apply PR
-    shape with ### Changes (report_file) and ## Verification. Mark Resolved items in Overview
+    shape with ### Changes (agent_report_file) and ## Verification. Mark Resolved items in Overview
     and persisted report. Include Category dependency_version on rows. Emit ## Overview and
     ## Summary per common-output-format.md.
   context:
     commit_range: eval0001..eval0002
-    report_file: docs/report/tech-debt/2026-07-19.md
+    agent_report_file: docs/report/tech-debt/2026-07-19.md
     previous_report: evals/files/previous-report.sample.md
     skip: false
     signals:

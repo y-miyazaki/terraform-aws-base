@@ -1,6 +1,10 @@
 <!--
-PR-facing template for github-pr-revise automation (may_edit: true).
+PR-facing template for github-pr-revise automation (agent_edit_allowed: true).
 Load ONLY at synthesis time after applying review feedback.
+
+Rules:
+- Link every repository path, commit SHA, and workflow/job in Summary tables as a markdown link per category-pr-body-links.md. <linked ...> marks where a link goes; do not emit it, and do not use a plain code span for a linkable item.
+- Keep the table columns as written; do not rename, merge, or drop columns.
 -->
 
 ## Overview
@@ -16,9 +20,9 @@ Load ONLY at synthesis time after applying review feedback.
 
 ### Changes
 
-| Area        | Feedback addressed | What changed                             |
-| ----------- | ------------------ | ---------------------------------------- |
-| `<package>` | <review point>     | `path/to/file.go`: <minimal fix summary> |
+| Area        | Feedback addressed | What changed                         |
+| ----------- | ------------------ | ------------------------------------ |
+| `<package>` | <review point>     | <linked path>: <minimal fix summary> |
 
 ### Deferred
 

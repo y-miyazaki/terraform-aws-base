@@ -14,7 +14,7 @@ Field set emitted by this skill's detect script or an equivalent caller-supplied
 ```json
 {
   "commit_range": "abc1234..def5678",
-  "report_file": "reports/tech-debt/2026-07-19.md",
+  "agent_report_file": "reports/tech-debt/2026-07-19.md",
   "previous_report": "reports/tech-debt/2026-07-12.md",
   "skip": false,
   "warnings": ["docs link sensor skipped: node not available"],
@@ -39,25 +39,25 @@ Field set emitted by this skill's detect script or an equivalent caller-supplied
 }
 ```
 
-| Field               | Type    | Description                                                                                                                                                                                                                 |
-| ------------------- | ------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `commit_range`      | string  | SHA range that triggered detection (may be empty)                                                                                                                                                                           |
-| `report_file`       | string  | Repository-relative path for the persisted report. Detect resolves a dated basename under `TECH_DEBT_DIR` when unset. Callers override via `TECH_DEBT_DIR` (detect) and/or `report_file` in detect JSON / `## Constraints`. |
-| `previous_report`   | string  | Optional path to the prior dated report (empty when none). Search roots default to `TECH_DEBT_LEGACY_SEARCH_DIRS` (same default as `TECH_DEBT_DIR`).                                                                        |
-| `skip`              | boolean | When true, no debt signals or hotspots detected                                                                                                                                                                             |
-| `warnings`          | array   | Optional strings from detect (per-sensor recoverable failures, truncation, skipped sensors); caller may pass through                                                                                                        |
-| `signals`           | array   | Mechanical debt facts from detect (may be empty)                                                                                                                                                                            |
-| `signals[].kind`    | enum    | Closed set — see table below                                                                                                                                                                                                |
-| `signals[].path`    | string  | File path containing the signal                                                                                                                                                                                             |
-| `signals[].line`    | number  | 1-based line number                                                                                                                                                                                                         |
-| `signals[].snippet` | string  | Short evidence text from the source line                                                                                                                                                                                    |
-| `signals[].source`  | string  | Detection method (`git_grep`, `go_mod`, `package_json`, `markdown_link_check`, `git_log`, `mtime`)                                                                                                                          |
-| `signals[].hint`    | string  | Optional detect hint toward a taxonomy category (agent still decides)                                                                                                                                                       |
-| `hotspots`          | array   | Aggregate churn candidates (may be empty)                                                                                                                                                                                   |
-| `hotspots[].path`   | string  | File path                                                                                                                                                                                                                   |
-| `hotspots[].metric` | string  | Metric name (`churn`)                                                                                                                                                                                                       |
-| `hotspots[].value`  | number  | Metric value                                                                                                                                                                                                                |
-| `hotspots[].window` | string  | Observation window (git `--since` form, e.g. `90.days`)                                                                                                                                                                     |
+| Field               | Type    | Description                                                                                                                                                                                                                       |
+| ------------------- | ------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `commit_range`      | string  | SHA range that triggered detection (may be empty)                                                                                                                                                                                 |
+| `agent_report_file` | string  | Repository-relative path for the persisted report. Detect resolves a dated basename under `TECH_DEBT_DIR` when unset. Callers override via `TECH_DEBT_DIR` (detect) and/or `agent_report_file` in detect JSON / `## Constraints`. |
+| `previous_report`   | string  | Optional path to the prior dated report (empty when none). Search roots default to `TECH_DEBT_LEGACY_SEARCH_DIRS` (same default as `TECH_DEBT_DIR`).                                                                              |
+| `skip`              | boolean | When true, no debt signals or hotspots detected                                                                                                                                                                                   |
+| `warnings`          | array   | Optional strings from detect (per-sensor recoverable failures, truncation, skipped sensors); caller may pass through                                                                                                              |
+| `signals`           | array   | Mechanical debt facts from detect (may be empty)                                                                                                                                                                                  |
+| `signals[].kind`    | enum    | Closed set — see table below                                                                                                                                                                                                      |
+| `signals[].path`    | string  | File path containing the signal                                                                                                                                                                                                   |
+| `signals[].line`    | number  | 1-based line number                                                                                                                                                                                                               |
+| `signals[].snippet` | string  | Short evidence text from the source line                                                                                                                                                                                          |
+| `signals[].source`  | string  | Detection method (`git_grep`, `go_mod`, `package_json`, `markdown_link_check`, `git_log`, `mtime`)                                                                                                                                |
+| `signals[].hint`    | string  | Optional detect hint toward a taxonomy category (agent still decides)                                                                                                                                                             |
+| `hotspots`          | array   | Aggregate churn candidates (may be empty)                                                                                                                                                                                         |
+| `hotspots[].path`   | string  | File path                                                                                                                                                                                                                         |
+| `hotspots[].metric` | string  | Metric name (`churn`)                                                                                                                                                                                                             |
+| `hotspots[].value`  | number  | Metric value                                                                                                                                                                                                                      |
+| `hotspots[].window` | string  | Observation window (git `--since` form, e.g. `90.days`)                                                                                                                                                                           |
 
 ### Closed `signals[].kind` set
 
@@ -79,4 +79,4 @@ Detect emits only these kinds. Unexpected kinds → classify as Watch or Noise.
 
 `signals` and `hotspots` may be empty arrays.
 
-`may_edit` is not a JSON field. On the automation path it arrives in `## Constraints` — see [category-automation-envelope.md](category-automation-envelope.md). Path allowlist is also injected in `## Constraints` from the caller. See [category-scope.md](category-scope.md).
+`agent_edit_allowed` is not a JSON field. On the automation path it arrives in `## Constraints` — see [category-automation-envelope.md](category-automation-envelope.md). Path allowlist is also injected in `## Constraints` from the caller. See [category-scope.md](category-scope.md).

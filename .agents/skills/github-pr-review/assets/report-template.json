@@ -1,0 +1,47 @@
+{
+  "pr_number": 123,
+  "head_sha": "<copy detect result.head_sha (full 40-hex sha)>",
+  "base_sha": "<copy detect result.base_sha (full 40-hex sha)>",
+  "response_language": "en",
+  "premises": {
+    "pr_body": "<what the PR body states, or none>",
+    "linked": ["#120"]
+  },
+  "summary": "<what the PR does and the overall assessment, in the response language; say explicitly when there are no findings>",
+  "findings": [
+    {
+      "id": 1,
+      "severity": "Warning",
+      "title": "<one-line summary>",
+      "evidence": {
+        "kind": "rule",
+        "path": "<path of a file that exists at the base commit>",
+        "quote": "<verbatim text from that file>"
+      },
+      "location": {
+        "path": "<path changed by the PR>",
+        "line": 42,
+        "start_line": 40,
+        "side": "RIGHT",
+        "in_diff": true
+      },
+      "impact": "<what happens if left as is>"
+    },
+    {
+      "id": 2,
+      "severity": "Critical",
+      "title": "<one-line summary of a bug>",
+      "evidence": {
+        "kind": "bug",
+        "quote": "<diff line and the concrete input or state that fails>"
+      },
+      "location": {
+        "path": "<path changed by the PR>",
+        "line": 77,
+        "side": "RIGHT",
+        "in_diff": true
+      },
+      "impact": "<what happens if left as is>"
+    }
+  ]
+}

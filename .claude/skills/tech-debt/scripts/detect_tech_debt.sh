@@ -11,7 +11,7 @@
 #
 # Output:
 # - JSON object with signals[], hotspots[], warnings[], skip boolean,
-#   report_file, and previous_report
+#   agent_report_file, and previous_report
 #
 # Design Rules:
 # - Emit facts only; Skill builds semantic findings[]
@@ -212,7 +212,7 @@ function output_error {
         signals "[]" \
         hotspots "[]" \
         warnings "$(json_string_array "${WARNINGS[@]}")" \
-        report_file "${REPORT_FILE}" \
+        agent_report_file "${REPORT_FILE}" \
         previous_report "${PREVIOUS_REPORT}" \
         message "${message}"
     exit 1
@@ -296,7 +296,7 @@ function output_json {
         signals "$(json_array "${SIGNALS_JSON[@]}")" \
         hotspots "$(json_array "${HOTSPOTS_JSON[@]}")" \
         warnings "$(json_string_array "${WARNINGS[@]}")" \
-        report_file "${REPORT_FILE}" \
+        agent_report_file "${REPORT_FILE}" \
         previous_report "${PREVIOUS_REPORT}"
 }
 

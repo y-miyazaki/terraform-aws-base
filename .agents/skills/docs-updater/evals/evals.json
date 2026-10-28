@@ -17,13 +17,13 @@
     },
     {
       "id": 1,
-      "prompt": "Use docs-updater (automation path). ## Constraints may_edit: false. Context JSON: skip=false, findings=[{ \"file\": \"docs/guide.md\", \"reason\": \"stale workflow path\", \"source_commit\": \"abc1234\" }]. Do not edit files. Emit survey shape per common-output-format-automation.md with ### Candidates, Session Metrics with may_edit false, plus ## Overview and ## Summary for PR composition.",
+      "prompt": "Use docs-updater (automation path). ## Constraints agent_edit_allowed: false. Context JSON: skip=false, findings=[{ \"file\": \"docs/guide.md\", \"reason\": \"stale workflow path\", \"source_commit\": \"abc1234\" }]. Do not edit files. Emit survey shape per common-output-format-automation.md with ### Candidates, Session Metrics with agent_edit_allowed false, plus ## Overview and ## Summary for PR composition.",
       "expected_output": "Automation triage report with survey shape and PR Overview/Summary",
       "files": [],
       "expectations": [
         "Output contains docs-updater Result heading or ## Overview",
         "Output contains ### Candidates section",
-        "Output contains Session Metrics with may_edit",
+        "Output contains Session Metrics with agent_edit_allowed",
         "Output contains ## Overview and ## Summary PR sections",
         "Output does not contain ### Changes or ## Verification"
       ]

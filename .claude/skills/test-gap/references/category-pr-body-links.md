@@ -10,5 +10,5 @@ Apply at synthesis when emitting Summary tables in automation PR bodies.
 
 ## Template placeholders (skill assets)
 
-- Use backtick placeholders in `assets/pr-body-template*.md` and `references/common-output-format*.md` (for example `` `test/path/to/file` ``).
+- Templates and output-format files mark linkable items with angle-bracket placeholders such as `<linked path>`. Emit a markdown link there, not a code span and not the placeholder.
 - Do not embed example markdown links to a sample repository. They fail markdown-link-check with 404.

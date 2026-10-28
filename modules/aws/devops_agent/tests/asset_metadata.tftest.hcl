@@ -38,10 +38,17 @@ variables {
   }
   custom_agents = {
     example = {
+      memory_stores = ["example"]
       name          = "example-agent"
       skills        = ["example"]
       system_prompt = "You are an example agent for this AWS account."
       tools         = ["use_aws"]
+    }
+  }
+  memory_stores = {
+    example = {
+      description = "Example custom memory store."
+      name        = "example-store"
     }
   }
   skills = {
@@ -71,6 +78,45 @@ run "metadata_includes_service_managed_fields" {
     condition     = jsondecode(awscc_devopsagent_asset.agents_md["GENERIC"].metadata).status == "ACTIVE"
     error_message = "agents_md metadata must include status = ACTIVE"
   }
+  assert {
+    condition     = jsondecode(awscc_devopsagent_asset.memory_store["example"].metadata).status == "ACTIVE"
+    error_message = "memory store metadata must include status = ACTIVE"
+  }
+}
+
+# Custom agents can write only to the custom stores listed in metadata.memory_stores (asset IDs, not names).
+run "custom_agent_attaches_memory_store_ids" {
+  command = apply
+
+  assert {
+    condition     = jsondecode(awscc_devopsagent_asset.custom_agent["example"].metadata).memory_stores == [awscc_devopsagent_asset.memory_store["example"].asset_id]
+    error_message = "custom agent metadata.memory_stores must contain the memory store asset IDs"
+  }
+  assert {
+    condition     = jsondecode(awscc_devopsagent_asset.memory_store["example"].metadata).name == "example-store" && jsondecode(awscc_devopsagent_asset.memory_store["example"].metadata).agent_types == ["GENERIC"]
+    error_message = "memory store metadata must keep the name and default agent_types = [GENERIC]"
+  }
+  # Cloud Control rejects a create without files or zip ("exactly one of Files or Zip must be set on Create").
+  assert {
+    condition     = length(awscc_devopsagent_asset.memory_store["example"].files) == 1 && awscc_devopsagent_asset.memory_store["example"].files[0].path == "example-store.md"
+    error_message = "memory store must be created with one file <name>.md"
+  }
+}
+
+run "custom_agent_rejects_unknown_memory_store" {
+  command = plan
+
+  variables {
+    custom_agents = {
+      example = {
+        memory_stores = ["missing"]
+        name          = "example-agent"
+        system_prompt = "You are an example agent for this AWS account."
+      }
+    }
+  }
+
+  expect_failures = [var.custom_agents]
 }
 
 run "metadata_keeps_user_settings" {

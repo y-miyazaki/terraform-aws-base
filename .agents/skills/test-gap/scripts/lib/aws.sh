@@ -22,149 +22,13 @@
 # Ensure common.sh is loaded for logging functions
 if ! declare -f log > /dev/null 2>&1; then
     # Try to source common.sh from the same directory
-    SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+    # Private name: do not overwrite the caller's SCRIPT_DIR
+    _LIB_COMMON_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
     # shellcheck source=./common.sh
     # shellcheck disable=SC1091
-    source "$SCRIPT_DIR/common.sh"
+    source "${_LIB_COMMON_DIR}/common.sh"
+    unset _LIB_COMMON_DIR
 fi
-
-#######################################
-# aws_safe_exec: Safely execute AWS CLI command with error handling
-#
-# Description:
-#   Executes AWS CLI commands with proper error handling and logging
-#
-# Globals:
-#   None
-#
-# Arguments:
-#   $@ - AWS CLI command and arguments
-#
-# Outputs:
-#   Writes command result to stdout
-#
-# Returns:
-#   0 on success, non-zero on error
-#
-# Usage:
-#   result=$(aws_safe_exec aws s3 ls)
-#
-#######################################
-function aws_safe_exec {
-    # This function accepts either a single string command or an array-style command
-    # Usage: aws_safe_exec "aws s3 ls --region us-east-1"
-    #    or: aws_safe_exec aws s3 ls --region us-east-1
-    local output
-    local exit_code
-
-    if [[ $# -eq 0 ]]; then
-        log "ERROR" "aws_safe_exec: no command provided" >&2
-        return 1
-    fi
-
-    # If more than one argument, execute safely as an array to avoid word-splitting
-    if [[ $# -gt 1 ]]; then
-        log "DEBUG" "Executing AWS CLI: $*" >&2
-        if output=$("${@}" 2>&1); then
-            echo "$output"
-            return 0
-        else
-            exit_code=$?
-            log "ERROR" "AWS CLI command failed (exit code: $exit_code): $*" >&2
-            log "ERROR" "Output: $output" >&2
-            return $exit_code
-        fi
-    fi
-
-    # Single-string command: run under bash -c (keeps backward compatibility)
-    local cmd_string="$1"
-    log "DEBUG" "Executing AWS CLI (shell): $cmd_string" >&2
-    if output=$(bash -c "$cmd_string" 2>&1); then
-        echo "$output"
-        return 0
-    else
-        exit_code=$?
-        log "ERROR" "AWS CLI command failed (exit code: $exit_code): $cmd_string" >&2
-        log "ERROR" "Output: $output" >&2
-        return $exit_code
-    fi
-}
-
-#######################################
-# aws_retry_exec: Execute AWS CLI with retry/backoff
-#
-# Description:
-#   Executes AWS CLI commands with automatic retry and exponential backoff
-#
-# Globals:
-#   None
-#
-# Arguments:
-#   $1 - max retries (optional, defaults to 3)
-#   $@ - AWS CLI command and arguments
-#
-# Outputs:
-#   Writes command result to stdout
-#
-# Returns:
-#   0 on success, non-zero on failure
-#
-# Usage:
-#   result=$(aws_retry_exec aws s3 ls)
-#
-#######################################
-function aws_retry_exec {
-    # aws_retry_exec [max_retries] <cmd...>
-    # If first argument is a positive integer, treat it as max_retries.
-    local max_retries=3
-    if [[ $# -gt 0 && $1 =~ ^[0-9]+$ ]]; then
-        max_retries="$1"
-        shift
-    fi
-
-    local cmd=("$@")
-    local attempt=1
-    local delay=2
-    local output
-    local rc
-
-    while true; do
-        log "DEBUG" "aws_retry_exec attempt $attempt cmd: ${cmd[*]}" >&2
-        if output=$("${cmd[@]}" 2>&1); then
-            echo "$output"
-            return 0
-        fi
-
-        rc=$?
-        # Detect common non-retryable client errors from AWS CLI output and abort retries.
-        # AWS CLI often prints: "An error occurred (ErrorName) when calling the OperationName operation: message"
-        # Try to extract the ErrorName via text parsing first, then fall back to JSON Error.Code.
-        local non_retryable_error
-        non_retryable_error=$(echo "$output" | sed -n 's/.*An error occurred (\([^)]*\)).*/\1/p' 2> /dev/null || true)
-        if [[ -z $non_retryable_error ]]; then
-            non_retryable_error=$(echo "$output" | jq -r '.Error.Code // empty' 2> /dev/null || true)
-        fi
-        if [[ -n $non_retryable_error ]]; then
-            case "$non_retryable_error" in
-                AccessDenied* | UnauthorizedOperation | Unauthorized* | Validation* | InvalidParameter* | InvalidArgument* | MissingParameter* | BadRequest* | ResourceNotFound* | NoSuchKey | NotFound*)
-                    log "ERROR" "aws_retry_exec: non-retryable error detected ($non_retryable_error). Aborting: ${cmd[*]}" >&2
-                    log "ERROR" "Output: $output" >&2
-                    return $rc
-                    ;;
-            esac
-        fi
-        if ((attempt >= max_retries)); then
-            log "ERROR" "aws_retry_exec failed after $attempt attempts (exit: $rc): ${cmd[*]}" >&2
-            log "ERROR" "Output: $output" >&2
-            return $rc
-        fi
-
-        log "WARN" "aws_retry_exec: attempt $attempt/$max_retries failed (exit: $rc). Retrying in ${delay}s: ${cmd[*]}" >&2
-        sleep $delay
-        attempt=$((attempt + 1))
-        delay=$((delay * 2))
-    done
-}
 
 #######################################
 # aws_paginate_items: Paginate AWS list calls
@@ -183,7 +47,8 @@ function aws_retry_exec {
 #   Writes each JSON array item line-by-line to stdout
 #
 # Returns:
-#   None
+#   Always 0. AWS CLI errors are tolerated (the call falls back from --max-results to
+#   --max-items) and yield no items, so callers cannot tell a failure from an empty result.
 #
 # Usage:
 #   aws_paginate_items 'UserPools' aws cognito-idp list-user-pools --region us-east-1
@@ -286,6 +151,145 @@ function aws_paginate_items {
         fi
     done
 
+}
+
+#######################################
+# aws_retry_exec: Execute AWS CLI with retry/backoff
+#
+# Description:
+#   Executes AWS CLI commands with automatic retry and exponential backoff
+#
+# Globals:
+#   None
+#
+# Arguments:
+#   $1 - max retries (optional, defaults to 3)
+#   $@ - AWS CLI command and arguments
+#
+# Outputs:
+#   Writes command result to stdout
+#
+# Returns:
+#   0 on success, non-zero on failure
+#
+# Usage:
+#   result=$(aws_retry_exec aws s3 ls)
+#
+#######################################
+function aws_retry_exec {
+    # aws_retry_exec [max_retries] <cmd...>
+    # If first argument is a positive integer, treat it as max_retries.
+    local max_retries=3
+    if [[ $# -gt 0 && $1 =~ ^[0-9]+$ ]]; then
+        max_retries="$1"
+        shift
+    fi
+
+    local cmd=("$@")
+    local attempt=1
+    local delay=2
+    local output
+    local rc
+
+    while true; do
+        log "DEBUG" "aws_retry_exec attempt $attempt cmd: ${cmd[*]}" >&2
+        rc=0
+        output=$("${cmd[@]}" 2>&1) || rc=$?
+        if ((rc == 0)); then
+            echo "$output"
+            return 0
+        fi
+
+        # Detect common non-retryable client errors from AWS CLI output and abort retries.
+        # AWS CLI often prints: "An error occurred (ErrorName) when calling the OperationName operation: message"
+        # Try to extract the ErrorName via text parsing first, then fall back to JSON Error.Code.
+        local non_retryable_error
+        non_retryable_error=$(echo "$output" | sed -n 's/.*An error occurred (\([^)]*\)).*/\1/p' 2> /dev/null || true)
+        if [[ -z $non_retryable_error ]]; then
+            non_retryable_error=$(echo "$output" | jq -r '.Error.Code // empty' 2> /dev/null || true)
+        fi
+        if [[ -n $non_retryable_error ]]; then
+            case "$non_retryable_error" in
+                AccessDenied* | UnauthorizedOperation | Unauthorized* | Validation* | InvalidParameter* | InvalidArgument* | MissingParameter* | BadRequest* | ResourceNotFound* | NoSuchKey | NotFound*)
+                    log "ERROR" "aws_retry_exec: non-retryable error detected ($non_retryable_error). Aborting: ${cmd[*]}" >&2
+                    log "ERROR" "Output: $output" >&2
+                    return $rc
+                    ;;
+            esac
+        fi
+        if ((attempt >= max_retries)); then
+            log "ERROR" "aws_retry_exec failed after $attempt attempts (exit: $rc): ${cmd[*]}" >&2
+            log "ERROR" "Output: $output" >&2
+            return $rc
+        fi
+
+        log "WARN" "aws_retry_exec: attempt $attempt/$max_retries failed (exit: $rc). Retrying in ${delay}s: ${cmd[*]}" >&2
+        sleep $delay
+        attempt=$((attempt + 1))
+        delay=$((delay * 2))
+    done
+}
+
+#######################################
+# aws_safe_exec: Safely execute AWS CLI command with error handling
+#
+# Description:
+#   Executes AWS CLI commands with proper error handling and logging
+#
+# Globals:
+#   None
+#
+# Arguments:
+#   $@ - AWS CLI command and arguments
+#
+# Outputs:
+#   Writes command result to stdout
+#
+# Returns:
+#   0 on success, non-zero on error
+#
+# Usage:
+#   result=$(aws_safe_exec aws s3 ls)
+#
+#######################################
+function aws_safe_exec {
+    # This function accepts either a single string command or an array-style command
+    # Usage: aws_safe_exec "aws s3 ls --region us-east-1"
+    #    or: aws_safe_exec aws s3 ls --region us-east-1
+    local output
+    local exit_code
+
+    if [[ $# -eq 0 ]]; then
+        log "ERROR" "aws_safe_exec: no command provided" >&2
+        return 1
+    fi
+
+    # If more than one argument, execute safely as an array to avoid word-splitting
+    if [[ $# -gt 1 ]]; then
+        log "DEBUG" "Executing AWS CLI: $*" >&2
+        if output=$("${@}" 2>&1); then
+            echo "$output"
+            return 0
+        else
+            exit_code=$?
+            log "ERROR" "AWS CLI command failed (exit code: $exit_code): $*" >&2
+            log "ERROR" "Output: $output" >&2
+            return $exit_code
+        fi
+    fi
+
+    # Single-string command: run under bash -c (keeps backward compatibility)
+    local cmd_string="$1"
+    log "DEBUG" "Executing AWS CLI (shell): $cmd_string" >&2
+    if output=$(bash -c "$cmd_string" 2>&1); then
+        echo "$output"
+        return 0
+    else
+        exit_code=$?
+        log "ERROR" "AWS CLI command failed (exit code: $exit_code): $cmd_string" >&2
+        log "ERROR" "Output: $output" >&2
+        return $exit_code
+    fi
 }
 
 #######################################
@@ -530,6 +534,16 @@ function get_aws_account_id {
 function get_aws_region {
     local region
     local region_from_aws
+    # Environment variables take precedence over the AWS config file (same as the AWS CLI)
+    if [[ -n ${AWS_REGION:-} ]]; then
+        echo "$AWS_REGION"
+        return 0
+    fi
+    if [[ -n ${AWS_DEFAULT_REGION:-} ]]; then
+        echo "$AWS_DEFAULT_REGION"
+        return 0
+    fi
+
     # aws configure get region returns empty string (exit 0) when not set, so capture value and test
     region_from_aws=$(aws configure get region 2> /dev/null || true)
     if [[ -n $region_from_aws ]]; then
@@ -537,9 +551,13 @@ function get_aws_region {
         return 0
     fi
 
-    # Try to get from instance metadata if running on EC2
-    local region_from_meta
-    region_from_meta=$(curl -s --max-time 2 http://169.254.169.254/latest/meta-data/placement/region 2> /dev/null || true)
+    # Try to get from instance metadata if running on EC2 (IMDSv2). Off EC2 this fails fast.
+    local imds_token
+    local region_from_meta=""
+    imds_token=$(curl -s --connect-timeout 1 --max-time 2 -X PUT -H "X-aws-ec2-metadata-token-ttl-seconds: 60" http://169.254.169.254/latest/api/token 2> /dev/null || true)
+    if [[ -n $imds_token ]]; then
+        region_from_meta=$(curl -s --connect-timeout 1 --max-time 2 -H "X-aws-ec2-metadata-token: ${imds_token}" http://169.254.169.254/latest/meta-data/placement/region 2> /dev/null || true)
+    fi
     if [[ -n $region_from_meta ]]; then
         echo "$region_from_meta"
         return 0
@@ -573,7 +591,11 @@ function get_aws_region {
 #######################################
 function get_kms_name {
     local kms_identifier="$1"
-    local region="${2:-$(get_aws_region)}"
+    local region="${2:-}"
+    if [[ -z $region ]]; then
+        # Assign separately: inside "local x=$(...)" a failure (and error_exit) is masked
+        region=$(get_aws_region) || return 1
+    fi
 
     if [[ -z $kms_identifier || $kms_identifier == "N/A" ]]; then
         echo "N/A"
@@ -594,7 +616,7 @@ function get_kms_name {
 
     # Try to describe the key to verify it exists (and obtain the canonical KeyId)
     local key_meta
-    key_meta=$(aws_safe_exec "aws kms describe-key --key-id '$key_id' --region '$region' --output json" 2> /dev/null || echo '{}')
+    key_meta=$(aws_safe_exec aws kms describe-key --key-id "$key_id" --region "$region" --output json 2> /dev/null || echo '{}')
     if [[ $key_meta != "{}" ]]; then
         key_id=$(echo "$key_meta" | jq -r '.KeyMetadata.KeyId' 2> /dev/null || echo "$key_id")
     fi
@@ -620,65 +642,50 @@ function get_kms_name {
 }
 
 #######################################
-# resolve_ec2_tagged_resource_name: Resolve EC2 resource ID to display name
+# get_resource_name_from_arn: Get resource name from ARN
 #
 # Description:
-#   Shared helper for Security Group, Subnet, and VPC name resolution.
+#   Extracts the resource name from an AWS ARN
 #
 # Globals:
 #   None
 #
 # Arguments:
-#   $1 - Resource ID
-#   $2 - AWS region (optional, defaults to current region)
-#   $3 - ID regex pattern (e.g. ^sg-[0-9a-fA-F]+$)
-#   $4 - AWS EC2 describe subcommand (e.g. describe-security-groups)
-#   $5 - AWS ID flag (e.g. --group-ids)
-#   $6 - jq collection key (e.g. SecurityGroups)
-#   $7 - jq fallback field when Name tag is absent (e.g. GroupName)
+#   $1 - AWS ARN
 #
 # Outputs:
-#   Resource name or original ID to stdout
+#   Resource name (to stdout) or exits on error
 #
 # Returns:
-#   0 on success, 1 when AWS call fails or ID is empty
+#   0 on success
+#
+# Usage:
+#   name=$(get_resource_name_from_arn "arn:aws:s3:::my-bucket")
 #
 #######################################
-function resolve_ec2_tagged_resource_name {
-    local resource_id="$1"
-    local region="${2:-$(get_aws_region)}"
-    local id_pattern="$3"
-    local describe_subcommand="$4"
-    local id_flag="$5"
-    local jq_collection="$6"
-    local jq_fallback_field="$7"
+function get_resource_name_from_arn {
+    local arn="$1"
+    local arn_json
+    local resource_part
 
-    if [[ -z $resource_id ]]; then
-        echo "N/A"
+    # Capture parse_arn first: in "parse_arn | jq" only jq's status would be tested
+    if ! arn_json=$(parse_arn "$arn"); then
         return 1
     fi
+    resource_part=$(jq -r '.resource' <<< "$arn_json")
 
-    if [[ ! $resource_id =~ $id_pattern ]]; then
-        echo "$resource_id"
-        return 0
+    # Handle different resource formats; whichever separator comes first decides
+    if [[ $resource_part == */* && ${resource_part%%/*} != *:* ]]; then
+        # Format: resource-type/resource-name
+        echo "${resource_part##*/}"
+    elif [[ $resource_part == *:* ]]; then
+        # Format: resource-type:resource-name[:qualifier] (qualifier such as a Lambda alias or "*" is dropped)
+        local name_part="${resource_part#*:}"
+        echo "${name_part%%:*}"
+    else
+        # Simple resource name
+        echo "$resource_part"
     fi
-
-    local cmd out resource_name jq_program
-    cmd=(aws ec2 "${describe_subcommand}" "${id_flag}" "$resource_id" --region "$region" --output json)
-    if out=$(aws_safe_exec "${cmd[*]}" 2> /dev/null); then
-        jq_program=$(printf '.%s[0] | (.Tags[]? | select(.Key|ascii_downcase=="name") | .Value) // .%s // ""' \
-            "$jq_collection" "$jq_fallback_field")
-        resource_name=$(echo "$out" | jq -r "${jq_program}" 2> /dev/null || true)
-        if [[ -n $resource_name ]]; then
-            echo "$resource_name"
-            return 0
-        fi
-        echo "$resource_id"
-        return 0
-    fi
-
-    echo "$resource_id"
-    return 1
 }
 
 #######################################
@@ -733,49 +740,6 @@ function get_security_group_name {
 #######################################
 function get_subnet_name {
     resolve_ec2_tagged_resource_name "$1" "${2:-}" '^subnet-[0-9a-fA-F]+$' describe-subnets --subnet-ids Subnets SubnetId
-}
-
-#######################################
-# get_resource_name_from_arn: Get resource name from ARN
-#
-# Description:
-#   Extracts the resource name from an AWS ARN
-#
-# Globals:
-#   None
-#
-# Arguments:
-#   $1 - AWS ARN
-#
-# Outputs:
-#   Resource name (to stdout) or exits on error
-#
-# Returns:
-#   0 on success
-#
-# Usage:
-#   name=$(get_resource_name_from_arn "arn:aws:s3:::my-bucket")
-#
-#######################################
-function get_resource_name_from_arn {
-    local arn="$1"
-    local resource_part
-
-    if ! resource_part=$(parse_arn "$arn" | jq -r '.resource'); then
-        return 1
-    fi
-
-    # Handle different resource formats
-    if [[ $resource_part == */* ]]; then
-        # Format: resource-type/resource-name
-        echo "${resource_part##*/}"
-    elif [[ $resource_part == *:* ]]; then
-        # Format: resource-type:resource-name
-        echo "${resource_part##*:}"
-    else
-        # Simple resource name
-        echo "$resource_part"
-    fi
 }
 
 #######################################
@@ -864,7 +828,11 @@ function get_waf_association {
 #######################################
 function get_waf_name {
     local waf_arn="$1"
-    local region="${2:-$(get_aws_region)}"
+    local region="${2:-}"
+    if [[ -z $region ]]; then
+        # Assign separately: inside "local x=$(...)" a failure (and error_exit) is masked
+        region=$(get_aws_region) || return 1
+    fi
 
     if [[ -z $waf_arn || $waf_arn == "N/A" ]]; then
         echo "N/A"
@@ -928,14 +896,19 @@ function get_waf_name {
 #######################################
 function is_service_available_in_region {
     local service="$1"
-    local region="${2:-$(get_aws_region)}"
 
-    # Some services are global
+    # Some services are global: no region needed
     case "$service" in
         iam | cloudfront | route53 | waf)
             return 0
             ;;
     esac
+
+    local region="${2:-}"
+    if [[ -z $region ]]; then
+        # Assign separately: inside "local x=$(...)" a failure (and error_exit) is masked
+        region=$(get_aws_region) || return 1
+    fi
 
     # Check if service is available in region by attempting to list resources
     case "$service" in
@@ -998,16 +971,19 @@ function parse_arn {
         return 1
     fi
 
-    # Split ARN into components
-    IFS=':' read -ra ARN_PARTS <<< "$arn"
+    # Split the first five fields; the resource is everything after the fifth colon
+    # (it may itself contain colons, e.g. arn:aws:lambda:r:acct:function:name)
+    local -a arn_parts
+    IFS=':' read -ra arn_parts <<< "$arn"
+    local resource="${arn#*:*:*:*:*:}"
 
     # Create JSON object
     jq -n \
-        --arg partition "${ARN_PARTS[1]}" \
-        --arg service "${ARN_PARTS[2]}" \
-        --arg region "${ARN_PARTS[3]}" \
-        --arg account "${ARN_PARTS[4]}" \
-        --arg resource "${ARN_PARTS[5]}" \
+        --arg partition "${arn_parts[1]}" \
+        --arg service "${arn_parts[2]}" \
+        --arg region "${arn_parts[3]}" \
+        --arg account "${arn_parts[4]}" \
+        --arg resource "$resource" \
         '{
             partition: $partition,
             service: $service,
@@ -1015,6 +991,72 @@ function parse_arn {
             account: $account,
             resource: $resource
         }'
+}
+
+#######################################
+# resolve_ec2_tagged_resource_name: Resolve EC2 resource ID to display name
+#
+# Description:
+#   Shared helper for Security Group, Subnet, and VPC name resolution.
+#
+# Globals:
+#   None
+#
+# Arguments:
+#   $1 - Resource ID
+#   $2 - AWS region (optional, defaults to current region)
+#   $3 - ID regex pattern (e.g. ^sg-[0-9a-fA-F]+$)
+#   $4 - AWS EC2 describe subcommand (e.g. describe-security-groups)
+#   $5 - AWS ID flag (e.g. --group-ids)
+#   $6 - jq collection key (e.g. SecurityGroups)
+#   $7 - jq fallback field when Name tag is absent (e.g. GroupName)
+#
+# Outputs:
+#   Resource name or original ID to stdout
+#
+# Returns:
+#   0 on success, 1 when AWS call fails or ID is empty
+#
+#######################################
+function resolve_ec2_tagged_resource_name {
+    local resource_id="$1"
+    local region="${2:-}"
+    if [[ -z $region ]]; then
+        # Assign separately: inside "local x=$(...)" a failure (and error_exit) is masked
+        region=$(get_aws_region) || return 1
+    fi
+    local id_pattern="$3"
+    local describe_subcommand="$4"
+    local id_flag="$5"
+    local jq_collection="$6"
+    local jq_fallback_field="$7"
+
+    if [[ -z $resource_id ]]; then
+        echo "N/A"
+        return 1
+    fi
+
+    if [[ ! $resource_id =~ $id_pattern ]]; then
+        echo "$resource_id"
+        return 0
+    fi
+
+    local cmd out resource_name jq_program
+    cmd=(aws ec2 "${describe_subcommand}" "${id_flag}" "$resource_id" --region "$region" --output json)
+    if out=$(aws_safe_exec "${cmd[@]}" 2> /dev/null); then
+        jq_program=$(printf '.%s[0] | (.Tags[]? | select(.Key|ascii_downcase=="name") | .Value) // .%s // ""' \
+            "$jq_collection" "$jq_fallback_field")
+        resource_name=$(echo "$out" | jq -r "${jq_program}" 2> /dev/null || true)
+        if [[ -n $resource_name ]]; then
+            echo "$resource_name"
+            return 0
+        fi
+        echo "$resource_id"
+        return 0
+    fi
+
+    echo "$resource_id"
+    return 1
 }
 
 #######################################

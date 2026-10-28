@@ -6,7 +6,7 @@ tags:
   - edge-case
 inputs:
   prompt: >-
-    Use changelog with may_edit true. Promote release 1.8.16 from injected releases[].
+    Use changelog with agent_edit_allowed true. Promote release 1.8.16 from injected releases[].
     Report which version was promoted in ## Overview. Move matching commit bullets from ##
     [Unreleased] into ## [1.8.16] - 2026-07-12 per checklist. Emit apply shape with ###
     Changes and ## Verification. Include ## Summary per common-output-format.md.

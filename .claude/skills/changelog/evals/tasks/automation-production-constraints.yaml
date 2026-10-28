@@ -1,13 +1,13 @@
 id: changelog-automation-constraints-001
 name: changelog automation production constraints
-description: Validate automation Constraints with may_edit from assembled prompt shape.
+description: Validate automation Constraints with agent_edit_allowed from assembled prompt shape.
 tags:
   - quality
   - automation
 inputs:
   prompt: >-
-    Use changelog. ## Constraints may_edit: true write_target: fix You MUST persist edits to disk in the
-    worktree; a report alone is not sufficient when may_edit is true. Allowed paths:
+    Use changelog. ## Constraints agent_edit_allowed: true agent_edit_target: fix You MUST persist edits to disk in the
+    worktree; a report alone is not sufficient when agent_edit_allowed is true. Allowed paths:
     CHANGELOG.md. Process injected commits; emit apply shape with ### Changes and ##
     Verification plus ## Session Metrics. Do not emit ### Candidates. Emit ## Overview and
     ## Summary per common-output-format.md.

@@ -1,13 +1,13 @@
 id: docs-updater-automation-constraints-001
 name: docs-updater automation production constraints
-description: Validate automation Constraints with may_edit from assembled prompt shape.
+description: Validate automation Constraints with agent_edit_allowed from assembled prompt shape.
 tags:
   - quality
   - automation
 inputs:
   prompt: >-
-    Use docs-updater (automation path). ## Constraints may_edit: true write_target: fix You MUST persist edits
-    to disk in the worktree; a report alone is not sufficient when may_edit is true. Allowed
+    Use docs-updater (automation path). ## Constraints agent_edit_allowed: true agent_edit_target: fix You MUST persist edits
+    to disk in the worktree; a report alone is not sufficient when agent_edit_allowed is true. Allowed
     paths: docs/**/*.md. Fix the injected finding (stale workflow reference); emit apply shape
     with ### Changes and ## Verification plus ## Session Metrics. Emit ## Overview and ##
     Summary per common-output-format.md.

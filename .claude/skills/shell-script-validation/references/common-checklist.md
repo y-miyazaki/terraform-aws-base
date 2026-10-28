@@ -31,7 +31,7 @@ Run tools in this order (fail-fast: stop on first failure):
 
 ## Optional: `--check-function-docs`
 
-Pass to `validate.sh` to enforce [Google Shell Style Guide — Function Comments](https://google.github.io/styleguide/shellguide.html#s4.2-function-comments) with explicit `Globals`, `Arguments`, `Outputs`, and `Returns` sections (`None` when a section does not apply), in that order. When this skill ships `scripts/fix_function_doc_order.sh`, use it on the target path or directory to normalize section order. Opt-in only.
+Pass to `validate.sh` to enforce [Google Shell Style Guide — Function Comments](https://google.github.io/styleguide/shellguide.html#s4.2-function-comments) with explicit `Globals`, `Arguments`, `Outputs`, and `Returns`, and to check top-level function order (show_usage, parse_arguments, a-z, main) sections (`None` when a section does not apply), in that order. When this skill ships `scripts/fix_function_doc_order.sh`, use it on the target path or directory to normalize section order. Opt-in only.
 
 ## Pass Criteria
 

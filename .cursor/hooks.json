@@ -36,6 +36,10 @@
     ],
     "afterFileEdit": [
       {
+        "command": ".cursor/hooks/common-hooks-cursor/scripts/prettier.sh",
+        "timeoutSec": 120
+      },
+      {
         "command": ".cursor/hooks/shell-script-hooks-cursor/scripts/shfmt.sh",
         "timeoutSec": 120
       }

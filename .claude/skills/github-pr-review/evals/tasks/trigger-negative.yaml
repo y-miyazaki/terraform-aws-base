@@ -1,0 +1,24 @@
+id: github-pr-review-trigger-negative-001
+name: github-pr-review rejects fix requests
+description: >-
+  Validate asking to fix the PR is out of scope: no file edits, no posting; the agent points
+  to github-pr-revise.
+tags:
+  - quality
+  - trigger-negative
+inputs:
+  prompt: >-
+    Use github-pr-review. The user says "fix this PR" and asks you to edit the code, push, or
+    post an approving review. That is out of scope for this skill. Explain it is out of scope,
+    point to github-pr-revise, and emit ## Overview. Do not edit files, push, or post.
+  context:
+    skip: false
+    pr_number: 12
+    agent_edit_allowed: false
+expected:
+  output_contains:
+    - out of scope
+    - github-pr-revise
+    - Overview
+  outcomes:
+    - type: task_completed

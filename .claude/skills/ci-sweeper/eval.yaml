@@ -1,7 +1,7 @@
 name: ci-sweeper-eval
 description: >-
   Evaluation suite for ci-sweeper.
-  Verifies triage classification, may_edit behavior, defer policy, no-action exits,
+  Verifies triage classification, agent_edit_allowed behavior, defer policy, unchanged exits,
   and trigger-negative.
 skill: ci-sweeper
 version: "1.3"

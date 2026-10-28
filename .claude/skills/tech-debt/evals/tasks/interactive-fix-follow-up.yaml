@@ -8,11 +8,11 @@ inputs:
   prompt: >-
     Use tech-debt. Prior turn surveyed the injected signal. The user now says apply fixes
     and write the report. Emit apply shape with ### Changes and ## Verification listing
-    report_file docs/report/tech-debt/2026-07-19.md. Emit ## Overview and ## Summary per
+    agent_report_file docs/report/tech-debt/2026-07-19.md. Emit ## Overview and ## Summary per
     common-output-format.md. Include Category code_quality on rows.
   context:
     commit_range: eval0001..eval0002
-    report_file: docs/report/tech-debt/2026-07-19.md
+    agent_report_file: docs/report/tech-debt/2026-07-19.md
     skip: false
     signals:
       - kind: todo_comment

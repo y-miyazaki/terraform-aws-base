@@ -31,14 +31,13 @@
 #   CI_SWEEPER_EVENT_HEAD_BRANCH      workflow_run head branch (stable; not rewritten per scan)
 #   CI_SWEEPER_HEAD_BRANCH            per-scan branch context (optional; rewritten by detect)
 #   CI_SWEEPER_HEAD_SHA               workflow_run event context (optional)
-#   CI_SWEEPER_LEDGER_FILE            Path to run ledger JSON (default: ci-sweeper-run-ledger.json; repo-relative)
+#   CI_SWEEPER_LEDGER_FILE            Path to run ledger JSON (default: .loop/state-ci-sweeper-run-ledger.json; repo-relative)
 #   CI_SWEEPER_REJECT_MAX_RETRIES     Max REJECT retries when policy is limited (default: 3)
 #   CI_SWEEPER_REJECT_RETRY_POLICY    block | retry | limited (aliases a/b/c)
 #   CI_SWEEPER_RUN_URL                workflow_run event context (optional)
 #   CI_SWEEPER_WORKFLOW_NAME          workflow_run event context (optional)
 #   CI_SWEEPER_WORKFLOW_RUN_ID        workflow_run event context (optional)
-#   DEFAULT_BASE_BRANCH               Fallback branch when checkout context is unavailable
-#   DEFAULT_BRANCH                    Alias for DEFAULT_BASE_BRANCH (legacy)
+#   DEFAULT_BRANCH                    Fallback branch when checkout context is unavailable (default: main)
 #   GH_TOKEN / GITHUB_TOKEN           GitHub API token
 #   SCAN_BRANCH_RUN_LIMIT             Max failed runs to scan per branch (default: 100)
 #######################################
@@ -532,10 +531,10 @@ function should_skip_processed_run {
             return 0
             ;;
         retry)
-            [[ ${outcome} == "pr-created" ]]
+            [[ ${outcome} == "pr_created" || ${outcome} == "pr_pushed" || ${outcome} == "pr-created" ]]
             ;;
         limited)
-            if [[ ${outcome} == "pr-created" ]]; then
+            if [[ ${outcome} == "pr_created" || ${outcome} == "pr_pushed" || ${outcome} == "pr-created" ]]; then
                 return 0
             fi
             if [[ ${outcome} == "rejected" ]]; then
@@ -1198,8 +1197,8 @@ function output_json {
 #
 #######################################
 function configure_detect_environment {
-    DEFAULT_BRANCH="${DEFAULT_BASE_BRANCH:-${DEFAULT_BRANCH:-main}}"
-    LEDGER_FILE="${CI_SWEEPER_LEDGER_FILE:-ci-sweeper-run-ledger.json}"
+    DEFAULT_BRANCH="${DEFAULT_BRANCH:-main}"
+    LEDGER_FILE="${CI_SWEEPER_LEDGER_FILE:-.loop/state-ci-sweeper-run-ledger.json}"
     LEDGER_FILE="${LEDGER_FILE#./}"
     SCAN_BRANCH_RUN_LIMIT="${SCAN_BRANCH_RUN_LIMIT:-100}"
     REJECT_RETRY_POLICY="${CI_SWEEPER_REJECT_RETRY_POLICY:-block}"

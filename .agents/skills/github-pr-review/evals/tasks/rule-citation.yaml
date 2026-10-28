@@ -1,0 +1,32 @@
+id: github-pr-review-rule-citation-001
+name: github-pr-review cites a rule verbatim
+description: >-
+  Validate a diff that violates a rule in a base instruction file yields a rule finding with
+  the verbatim quote.
+tags:
+  - quality
+  - evidence
+inputs:
+  prompt: >-
+    Use github-pr-review with agent_edit_allowed true and agent_edit_target report. The diff adds
+    "eval $user_input" in scripts/run.sh line 12. The base AGENTS.md contains the sentence
+    "Never pass untrusted input to eval." Write the report JSON whose findings array has one finding whose
+    evidence is {"kind": "rule"}, path AGENTS.md, and quote copied verbatim from that sentence, with
+    location.in_diff true. Do not paraphrase the quote.
+  context:
+    skip: false
+    pr_number: 9
+    base_sha: "1111111111111111111111111111111111111111"
+    head_sha: "2222222222222222222222222222222222222222"
+    report_path: ".loop-review/pr-9.json"
+    agent_edit_allowed: true
+    agent_edit_target: report
+    base_files:
+      AGENTS.md: "Never pass untrusted input to eval."
+expected:
+  output_contains:
+    - '"kind": "rule"'
+    - Never pass untrusted input to eval.
+    - quote
+  outcomes:
+    - type: task_completed

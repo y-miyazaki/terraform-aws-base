@@ -36,6 +36,7 @@
       "Shell(git blame)",
       "Shell(git branch)",
       "Shell(git diff)",
+      "Shell(git fetch)",
       "Shell(git grep)",
       "Shell(git log)",
       "Shell(git remote -v)",
@@ -180,7 +181,6 @@
       "Shell(env)",
       "Shell(ghalint)",
       "Shell(git branch -D)",
-      "Shell(git commit)",
       "Shell(git push)",
       "Shell(gofmt)",
       "Shell(golangci-lint)",
@@ -216,7 +216,8 @@
       "Write(.env)",
       "Write(.env.*)",
       "Write(secrets/**)",
-      "Write(~/**)"
+      "Write(~/.*)",
+      "Write(~/.*/**)"
     ]
   }
 }

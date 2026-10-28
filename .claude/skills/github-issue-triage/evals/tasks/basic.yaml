@@ -8,7 +8,7 @@ tags:
   - output-contract
 inputs:
   prompt: >-
-    Use github-issue-triage with may_edit false. Triage Issue #42 from detect JSON. Classify as
+    Use github-issue-triage with agent_edit_allowed false. Triage Issue #42 from detect JSON. Classify as
     bug when confident. Emit ## Overview, ## Changes (gh label/comment mutations), ##
     Deferred when applicable, and ## Session Metrics per common-output-format.md. Do not
     edit repository files. Do not start github-issue-autofix or call repository_dispatch.

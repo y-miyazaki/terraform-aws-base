@@ -2,13 +2,13 @@ id: ci-sweeper-contract-001
 name: ci-sweeper triages injected regression failure
 description: >-
   Validate ci-sweeper classifies an injected regression failure into Changes
-  when may_edit is true.
+  when agent_edit_allowed is true.
 tags:
   - quality
   - output-contract
 inputs:
   prompt: >-
-    Use ci-sweeper with may_edit true. Classify the injected shellcheck regression from
+    Use ci-sweeper with agent_edit_allowed true. Classify the injected shellcheck regression from
     failures[]. Emit apply shape with ## Overview, ### Changes, and ## Verification. Do not
     edit files in this mock eval. Include ## Summary per common-output-format.md. Include
     Category labels on rows.

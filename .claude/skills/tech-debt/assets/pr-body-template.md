@@ -1,10 +1,12 @@
 <!--
-Apply PR template for tech-debt automation (may_edit: true).
+Apply PR template for tech-debt automation (agent_edit_allowed: true).
 
 Load ONLY at synthesis time, after classification and edits complete.
 
 Rules:
 - Keep top-level ## Overview, ## Summary, and ## Verification headings exactly as written.
+- Link every repository path, commit SHA, and workflow/job in Summary tables as a markdown link per category-pr-body-links.md. <linked ...> marks where a link goes; do not emit it, and do not use a plain code span for a linkable item.
+- Keep the table columns as written; do not rename, merge, or drop columns.
 - Use ### Deferred (not Skipped) for items not fixed in this run.
 - Do NOT emit ### Candidates, ### Watch, Outcome, or Suggested next action.
 - Overview must name what was recorded/fixed — include scope when many items.
@@ -23,10 +25,10 @@ Rules:
 
 ### Changes
 
-| Target                            | What was wrong | What changed                |
-| --------------------------------- | -------------- | --------------------------- |
-| `reports/tech-debt/2026-07-23.md` | <finding gap>  | <report recorded>           |
-| `docs/guide/overview.md`          | <debt fact>    | <closed-set fix if applied> |
+| Target        | What was wrong | What changed                |
+| ------------- | -------------- | --------------------------- |
+| <linked path> | <finding gap>  | <report recorded>           |
+| <linked path> | <debt fact>    | <closed-set fix if applied> |
 
 ### Deferred
 

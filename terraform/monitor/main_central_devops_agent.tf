@@ -44,10 +44,7 @@ locals {
   }
   devops_agent_agents_md_base = {
     for k, a in var.devops_agent.primary.agent_spaces : k => {
-      # Files are concatenated in order (content_file first, then content_files), so rules can be split by category.
-      for t, v in a.agents_md : t => join("\n", [
-        for f in concat(v.content_file == null ? [] : [v.content_file], v.content_files) : file("${path.module}/${f}")
-      ])
+      for t, v in a.agents_md : t => file("${path.module}/${v.content_file}")
     }
   }
   # name and description of a skill default to the frontmatter of its SKILL.md; the value in agent_spaces[*].skills[*] takes precedence.
@@ -95,6 +92,7 @@ module "devops_agent" {
   }
   custom_agents = {
     for k, v in each.value.custom_agents : k => {
+      memory_stores = v.memory_stores
       name          = v.name
       skills        = v.skills
       system_prompt = file("${path.module}/${v.system_prompt_file}")
@@ -125,6 +123,8 @@ module "devops_agent" {
     },
     local.devops_agent_mcp_slack_reply_mcp_servers
   )
+  # Custom memory stores: the follow-up custom agents write suppression decisions here (managed stores are read-only for custom agents).
+  memory_stores = each.value.memory_stores
   # Secondary (source) accounts the Agent Space investigates. The cross-account role must already exist in each account.
   secondary_accounts = {
     for k, v in var.devops_agent.primary.secondary_accounts : k => {

@@ -1,12 +1,12 @@
 # Refactor Result Format
 
-Use this structure for every interactive run. **Survey** (`may_edit: false`) and **apply** (`may_edit: true`) use **different** Summary shapes — do not mix them.
+Use this structure for every interactive run. **Survey** (`agent_edit_allowed: false`) and **apply** (`agent_edit_allowed: true`) use **different** Summary shapes — do not mix them.
 
 Internal depth tiers (`O1`/`O2`), intent labels, and Fowler technique names are for agent workflow only ([category-contract.md](category-contract.md), [category-techniques.md](category-techniques.md)). **Do not put them in user-facing output.**
 
 Automation path PR bodies and Session Metrics: [category-automation-envelope.md](category-automation-envelope.md) and [common-output-format-automation.md](common-output-format-automation.md).
 
-## Survey result (`may_edit: false`)
+## Survey result (`agent_edit_allowed: false`)
 
 No file edits. **Do not emit `### Changes`, `### Deferred`, or a Verification table.**
 
@@ -27,9 +27,9 @@ No file edits. **Do not emit `### Changes`, `### Deferred`, or a Verification ta
 
 ### Watch
 
-| Target | Evidence                  | Why not now             |
-| ------ | ------------------------- | ----------------------- |
-| `path` | <plain-language evidence> | <plain-language reason> |
+| Target        | Evidence                  | Why not now             |
+| ------------- | ------------------------- | ----------------------- |
+| <linked path> | <plain-language evidence> | <plain-language reason> |
 
 ### Architecture Proposal
 
@@ -50,7 +50,7 @@ No file edits. **Do not emit `### Changes`, `### Deferred`, or a Verification ta
 
 **Candidates columns:** **Suggested approach** = plain-language fix direction (not internal technique names). **Priority** = `high` \| `medium` \| `low` for human triage.
 
-## Apply result (`may_edit: true`)
+## Apply result (`agent_edit_allowed: true`)
 
 Survey runs internally first; final output uses the **apply** shape. **Do not emit `### Candidates`** in the final report — reconcile into Changes and Deferred.
 
@@ -71,9 +71,9 @@ Survey runs internally first; final output uses the **apply** shape. **Do not em
 
 ### Deferred
 
-| Target | Why deferred            |
-| ------ | ----------------------- |
-| `path` | <plain-language reason> |
+| Target        | Why deferred            |
+| ------------- | ----------------------- |
+| <linked path> | <plain-language reason> |
 
 ## Verification
 

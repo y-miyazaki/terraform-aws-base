@@ -1,0 +1,32 @@
+id: github-pr-review-basic-001
+name: github-pr-review writes a report with premises and language
+description: >-
+  Validate github-pr-review writes the report JSON with findings, premises, and
+  response_language, copying head_sha and base_sha from detect JSON.
+tags:
+  - quality
+  - output-contract
+inputs:
+  prompt: >-
+    Use github-pr-review with agent_edit_allowed true and agent_edit_target report. Review PR #7 from detect
+    JSON. Read the PR body and linked Issue first. Write the report JSON to result.report_path
+    with pr_number, head_sha and base_sha copied from detect, response_language, premises,
+    summary, and findings. Do not post a review or edit any other file.
+  context:
+    skip: false
+    pr_number: 7
+    base_sha: "1111111111111111111111111111111111111111"
+    head_sha: "2222222222222222222222222222222222222222"
+    report_path: ".loop-review/pr-7.json"
+    changed_files:
+      - src/app.sh
+    pr_body: "Add retry to uploader. Closes #120."
+    agent_edit_allowed: true
+    agent_edit_target: report
+expected:
+  output_contains:
+    - findings
+    - premises
+    - response_language
+  outcomes:
+    - type: task_completed

@@ -21,10 +21,12 @@
 # Ensure common.sh is loaded for logging functions
 if ! declare -f log > /dev/null 2>&1; then
     # Try to source common.sh from the same directory
-    SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+    # Private name: do not overwrite the caller's SCRIPT_DIR
+    _LIB_COMMON_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
     # shellcheck source=./common.sh
     # shellcheck disable=SC1091
-    source "$SCRIPT_DIR/common.sh"
+    source "${_LIB_COMMON_DIR}/common.sh"
+    unset _LIB_COMMON_DIR
 fi
 
 #######################################
@@ -52,28 +54,29 @@ fi
 #
 #######################################
 function terraform_apply {
-    local env_name="${1:-${ENV}}"
+    local env_name="${1:-${ENV:-}}"
     local plan_file="${2:-}"
     local auto_approve="${3:-}"
 
     echo_section "Terraform apply"
 
+    # Terraform stops parsing flags at the first positional argument, so flags must precede the plan file
+    local apply_flags=""
+    if [[ $auto_approve == "auto-approve" ]]; then
+        apply_flags=" -auto-approve"
+    fi
+
     local apply_cmd
     if [[ -n $plan_file && -f $plan_file ]]; then
         # Apply from plan file
-        apply_cmd="terraform apply $plan_file"
+        apply_cmd="terraform apply${apply_flags} $plan_file"
     else
         # Direct apply with variables
         local var_file="terraform.${env_name}.tfvars"
         if [[ ! -f $var_file ]]; then
             error_exit "Variables file not found: $var_file"
         fi
-        apply_cmd="terraform apply -var-file=$var_file"
-    fi
-
-    # Add auto-approve if specified
-    if [[ $auto_approve == "auto-approve" ]]; then
-        apply_cmd="$apply_cmd --auto-approve"
+        apply_cmd="terraform apply${apply_flags} -var-file=$var_file"
     fi
 
     if ! execute_command_string "$apply_cmd"; then
@@ -107,7 +110,7 @@ function terraform_apply {
 #
 #######################################
 function terraform_destroy {
-    local env_name="${1:-${ENV}}"
+    local env_name="${1:-${ENV:-}}"
     local auto_approve="${2:-}"
     local var_file="terraform.${env_name}.tfvars"
 
@@ -130,32 +133,6 @@ function terraform_destroy {
     fi
 
     log "INFO" "Terraform resources destroyed successfully"
-}
-
-#######################################
-# terraform_get_workspace: Get current Terraform workspace
-#
-# Description:
-#   Returns the name of the currently selected Terraform workspace
-#
-# Globals:
-#   None
-#
-# Arguments:
-#   None
-#
-# Outputs:
-#   Current workspace name to stdout
-#
-# Returns:
-#   0 on success
-#
-# Usage:
-#   current_workspace=$(terraform_get_workspace)
-#
-#######################################
-function terraform_get_workspace {
-    terraform workspace show 2> /dev/null || echo "default"
 }
 
 #######################################
@@ -200,6 +177,32 @@ function terraform_format {
 }
 
 #######################################
+# terraform_get_workspace: Get current Terraform workspace
+#
+# Description:
+#   Returns the name of the currently selected Terraform workspace
+#
+# Globals:
+#   None
+#
+# Arguments:
+#   None
+#
+# Outputs:
+#   Current workspace name to stdout
+#
+# Returns:
+#   0 on success
+#
+# Usage:
+#   current_workspace=$(terraform_get_workspace)
+#
+#######################################
+function terraform_get_workspace {
+    terraform workspace show 2> /dev/null || echo "default"
+}
+
+#######################################
 # terraform_init: Initialize Terraform with backend configuration
 #
 # Description:
@@ -223,7 +226,7 @@ function terraform_format {
 #
 #######################################
 function terraform_init {
-    local env_name="${1:-${ENV}}"
+    local env_name="${1:-${ENV:-}}"
     local additional_options="${2:-}"
     local backend_config="terraform.${env_name}.tfbackend"
 
@@ -244,6 +247,58 @@ function terraform_init {
     fi
 
     log "INFO" "Terraform initialized with backend config: $backend_config"
+}
+
+#######################################
+# terraform_lint: Run tflint on Terraform configuration
+#
+# Description:
+#   Runs tflint to lint Terraform configuration files
+#
+# Globals:
+#   None
+#
+# Arguments:
+#   $1 - Recursive mode (optional, "recursive" to run recursively)
+#
+# Outputs:
+#   None
+#
+# Returns:
+#   None (exits on lint failure)
+#
+# Usage:
+#   terraform_lint "recursive"
+#
+#######################################
+function terraform_lint {
+    local recursive_mode="${1:-}"
+
+    echo_section "Terraform linting"
+
+    local lint_cmd="tflint"
+
+    # Use root .tflint.hcl if it exists and no explicit config is specified
+    local root_config
+    root_config="$(git rev-parse --show-toplevel 2> /dev/null)/.tflint.hcl"
+    if [[ -f $root_config ]]; then
+        lint_cmd="$lint_cmd --config=$root_config"
+        # Initialize plugins before linting
+        log "INFO" "Initializing tflint plugins..."
+        if ! execute_command_string "tflint --init --config=$root_config"; then
+            error_exit "tflint --init failed"
+        fi
+    fi
+
+    if [[ $recursive_mode == "recursive" ]]; then
+        lint_cmd="$lint_cmd --recursive"
+    fi
+
+    if ! execute_command_string "$lint_cmd"; then
+        error_exit "tflint found issues in Terraform configuration"
+    fi
+
+    log "INFO" "Terraform configuration linting passed"
 }
 
 #######################################
@@ -271,7 +326,7 @@ function terraform_init {
 #
 #######################################
 function terraform_plan {
-    local env_name="${1:-${ENV}}"
+    local env_name="${1:-${ENV:-}}"
     local plan_file="${2:-terraform.tfplan}"
     local additional_options="${3:-}"
     local var_file="terraform.${env_name}.tfvars"
@@ -368,58 +423,6 @@ function terraform_validate {
 }
 
 #######################################
-# terraform_lint: Run tflint on Terraform configuration
-#
-# Description:
-#   Runs tflint to lint Terraform configuration files
-#
-# Globals:
-#   None
-#
-# Arguments:
-#   $1 - Recursive mode (optional, "recursive" to run recursively)
-#
-# Outputs:
-#   None
-#
-# Returns:
-#   None (exits on lint failure)
-#
-# Usage:
-#   terraform_lint "recursive"
-#
-#######################################
-function terraform_lint {
-    local recursive_mode="${1:-}"
-
-    echo_section "Terraform linting"
-
-    local lint_cmd="tflint"
-
-    # Use root .tflint.hcl if it exists and no explicit config is specified
-    local root_config
-    root_config="$(git rev-parse --show-toplevel 2> /dev/null)/.tflint.hcl"
-    if [[ -f $root_config ]]; then
-        lint_cmd="$lint_cmd --config=$root_config"
-        # Initialize plugins before linting
-        log "INFO" "Initializing tflint plugins..."
-        if ! execute_command_string "tflint --init --config=$root_config"; then
-            error_exit "tflint --init failed"
-        fi
-    fi
-
-    if [[ $recursive_mode == "recursive" ]]; then
-        lint_cmd="$lint_cmd --recursive"
-    fi
-
-    if ! execute_command_string "$lint_cmd"; then
-        error_exit "tflint found issues in Terraform configuration"
-    fi
-
-    log "INFO" "Terraform configuration linting passed"
-}
-
-#######################################
 # terraform_workflow: Run complete Terraform workflow
 #
 # Description:
@@ -444,7 +447,7 @@ function terraform_lint {
 #
 #######################################
 function terraform_workflow {
-    local env_name="${1:-${ENV}}"
+    local env_name="${1:-${ENV:-}}"
     local workflow_type="${2:-apply}"
     local auto_approve="${3:-}"
 
@@ -501,8 +504,13 @@ function terraform_workflow {
 function validate_terraform_env {
     local env_name="${1:-${ENV:-}}"
 
+    # The environment may come from the argument or ENV; do not require ENV when it is passed
+    if [[ -z ${env_name} ]]; then
+        error_exit "Environment name is required (argument or ENV)"
+    fi
+
     # Validate required environment variables
-    validate_env_vars "ENV" "TF_PLUGIN_CACHE_DIR"
+    validate_env_vars "TF_PLUGIN_CACHE_DIR"
 
     # Validate dependencies
     require_dependencies "terraform"

@@ -1,7 +1,11 @@
 <!--
-PR-facing template for github-issue-autofix automation (may_edit: true).
+PR-facing template for github-issue-autofix automation (agent_edit_allowed: true).
 Load ONLY at synthesis time after the fix is implemented.
 Must include Fixes #<N> for the source Issue.
+
+Rules:
+- Link every repository path, commit SHA, and workflow/job in Summary tables as a markdown link per category-pr-body-links.md. <linked ...> marks where a link goes; do not emit it, and do not use a plain code span for a linkable item.
+- Keep the table columns as written; do not rename, merge, or drop columns.
 -->
 
 ## Overview
@@ -17,9 +21,9 @@ Must include Fixes #<N> for the source Issue.
 
 ### Changes
 
-| Area        | What was wrong | What changed                             |
-| ----------- | -------------- | ---------------------------------------- |
-| `<package>` | <root cause>   | `path/to/file.go`: <minimal fix summary> |
+| Area        | What was wrong | What changed                         |
+| ----------- | -------------- | ------------------------------------ |
+| `<package>` | <root cause>   | <linked path>: <minimal fix summary> |
 
 ### Deferred
 

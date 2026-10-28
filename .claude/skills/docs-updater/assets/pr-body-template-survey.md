@@ -1,7 +1,11 @@
 <!--
-Survey-only PR template for docs-updater automation (may_edit: false).
+Survey-only PR template for docs-updater automation (agent_edit_allowed: false).
 
 Load at synthesis time after survey output is complete.
+
+Rules:
+- Link every repository path, commit SHA, and workflow/job in Summary tables as a markdown link per category-pr-body-links.md. <linked ...> marks where a link goes; do not emit it, and do not use a plain code span for a linkable item.
+- Keep the table columns as written; do not rename, merge, or drop columns.
 -->
 
 ## Overview
@@ -17,9 +21,9 @@ Load at synthesis time after survey output is complete.
 
 ### Candidates
 
-| Target           | Evidence                  | Suggested approach       | Priority              |
-| ---------------- | ------------------------- | ------------------------ | --------------------- |
-| `path/to/doc.md` | <stale/missing reference> | <plain-language fix dir> | high \| medium \| low |
+| Target        | Evidence                  | Suggested approach       | Priority              |
+| ------------- | ------------------------- | ------------------------ | --------------------- |
+| <linked path> | <stale/missing reference> | <plain-language fix dir> | high \| medium \| low |
 
 ### Watch
 

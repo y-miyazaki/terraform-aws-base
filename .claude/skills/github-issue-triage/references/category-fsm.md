@@ -17,7 +17,7 @@ Allowlisted labels live in `scripts/labels.json` (color + description). Only cat
 
 When triage fails in a way that leaves the Issue in an unsafe or ambiguous state, apply allowlisted `triage:failed`. Detect skips the Issue while this label is present; a human must remove it before automation retries.
 
-The Agent may apply `triage:failed` on unsafe partial failure. The Agent must **not** fire `repository_dispatch` or start github-issue-autofix intake; autofix remains a human-triggered follow-up via `autofix` or trusted platform hooks.
+The Agent may apply `triage:failed` on unsafe partial failure. In a message run (the prompt names a message directory) it writes `triage:failed` into the `add` list of `message_labels.json` instead of calling `gh`; when the agent run itself fails, the platform does not apply the label. The Agent must **not** fire `repository_dispatch` or start github-issue-autofix intake; autofix remains a human-triggered follow-up via the `autofix` label.
 
 ## Events → recommended transitions
 

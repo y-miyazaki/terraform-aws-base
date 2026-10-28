@@ -8,7 +8,7 @@ tags:
   - comments
 inputs:
   prompt: >-
-    Use github-issue-triage with may_edit false. Triage Issue #81 from detect JSON. A human
+    Use github-issue-triage with agent_edit_allowed false. Triage Issue #81 from detect JSON. A human
     replied while triage:needs-info is present. Re-evaluate and post a NEW Issue
     comment (do not update or overwrite the prior triage comment). List planned gh
     mutations under ## Changes using issue_comment.sh create (not correct) for the comment. Emit ##

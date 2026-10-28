@@ -143,6 +143,7 @@ function association_value_allowed {
 #   $9 - actor
 #   $10 - start_line (may be empty)
 #   $11 - subject_type (line or file; may be empty)
+#   $12 - parent_body (body of the replied-to review comment; may be empty, key omitted)
 #
 # Outputs:
 #   JSON object to stdout
@@ -151,7 +152,7 @@ function association_value_allowed {
 #   0 on success
 #
 # Usage:
-#   build_comment_object "1" "@loop fix" "a.go" "10" "RIGHT" "@@" "" "pull_request_review_comment" "me" "8" "line"
+#   build_comment_object "1" "@loop fix" "a.go" "10" "RIGHT" "@@" "" "pull_request_review_comment" "me" "8" "line" ""
 #
 #######################################
 function build_comment_object {
@@ -166,7 +167,9 @@ function build_comment_object {
     local actor="${9:-}"
     local start_line="${10:-}"
     local subject_type="${11:-}"
+    local parent_body="${12:-}"
     local comment_id_json="" line_json="" in_reply_to_json="" start_line_json=""
+    local obj
 
     if [[ -n ${comment_id} ]]; then
         comment_id_json="$(json_number "${comment_id}")"
@@ -181,7 +184,7 @@ function build_comment_object {
         start_line_json="$(json_number "${start_line}")"
     fi
 
-    json_object \
+    obj="$(json_object \
         comment_id "${comment_id_json}" \
         body "${body}" \
         path "${path}" \
@@ -192,7 +195,13 @@ function build_comment_object {
         in_reply_to_id "${in_reply_to_json}" \
         source "${source}" \
         actor "${actor}" \
-        subject_type "${subject_type}"
+        subject_type "${subject_type}")"
+
+    if [[ -n ${parent_body} ]]; then
+        jq -c --arg parent_body "${parent_body}" '. + {parent_body: $parent_body}' <<< "${obj}"
+        return 0
+    fi
+    printf '%s\n' "${obj}"
 }
 
 #######################################
@@ -379,7 +388,8 @@ function build_trigger_comments_array {
         "${source}" \
         "${PR_ACTOR:-}" \
         "${PR_COMMENT_START_LINE:-}" \
-        "${PR_COMMENT_SUBJECT_TYPE:-}")"
+        "${PR_COMMENT_SUBJECT_TYPE:-}" \
+        "$(fetch_parent_comment_body "${PR_COMMENT_IN_REPLY_TO_ID:-}")")"
     json_array "${obj}"
 }
 
@@ -517,6 +527,44 @@ function ensure_dependencies {
 }
 
 #######################################
+# fetch_parent_comment_body: Fetch the body of the review comment being replied to
+#
+# Globals:
+#   GITHUB_REPOSITORY
+#   GH_TOKEN
+#   GITHUB_TOKEN
+#
+# Arguments:
+#   $1 - in_reply_to_id (may be empty)
+#
+# Outputs:
+#   Parent comment body to stdout; empty when no parent or unavailable (fail soft)
+#
+# Returns:
+#   0 always
+#
+# Usage:
+#   parent_body="$(fetch_parent_comment_body "699")"
+#
+#######################################
+function fetch_parent_comment_body {
+    local in_reply_to_id="${1:-}"
+    local token body
+
+    if [[ ! ${in_reply_to_id} =~ ^[0-9]+$ || -z ${GITHUB_REPOSITORY:-} ]]; then
+        return 0
+    fi
+    if ! command -v gh > /dev/null 2>&1; then
+        return 0
+    fi
+    token="${GH_TOKEN:-${GITHUB_TOKEN:-}}"
+    if body="$(GH_TOKEN="${token}" gh api "repos/${GITHUB_REPOSITORY}/pulls/comments/${in_reply_to_id}" --jq .body 2> /dev/null)"; then
+        printf '%s' "${body}"
+    fi
+    return 0
+}
+
+#######################################
 # filter_api_comments_to_objects: Convert API comment JSON arrays into comments[]
 #
 # Globals:
@@ -624,7 +672,8 @@ function filter_api_comments_to_objects {
             "pull_request_review_comment" \
             "${actor}" \
             "${start_line}" \
-            "${subject_type}")"
+            "${subject_type}" \
+            "$(fetch_parent_comment_body "${in_reply_to}")")"
         objects+=("${obj}")
     done < <(jq -c '.[]?' <<< "${review_json}")
 

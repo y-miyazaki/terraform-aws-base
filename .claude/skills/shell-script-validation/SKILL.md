@@ -14,14 +14,14 @@ metadata:
 
 - Shell script path or directory (optional): defaults to workspace root
 - Validation script (required): `scripts/validate.sh`
-- Canonical flags (required): `-v -f -d` unless opted out below
-- `--check-function-docs` (optional): omit only when targets intentionally skip Google function header sections
+- Canonical flags (required): `-v -f --check-function-docs` unless opted out below
+- `--check-function-docs` (optional): omit only when targets intentionally skip Google function header sections and function order checks
 
 ## Output Specification
 
 Return structured Markdown in accordance with [references/common-output-format.md](references/common-output-format.md). That file is the source of truth for the output contract.
 
-Structured results for bash -n and shellcheck (syntax and lint only). With `--check-function-docs`, also reports [Google Shell Style Guide](https://google.github.io/styleguide/shellguide.html#s4.2-function-comments) function header sections.
+Structured results for bash -n and shellcheck (syntax and lint only). With `--check-function-docs`, also reports [Google Shell Style Guide](https://google.github.io/styleguide/shellguide.html#s4.2-function-comments) function header sections and top-level function order (show_usage, parse_arguments, a-z, main; detection only).
 
 ## Execution Scope
 
@@ -54,7 +54,7 @@ Structured results for bash -n and shellcheck (syntax and lint only). With `--ch
 
 ## Workflow
 
-1. Run `bash scripts/validate.sh -v -f -d` with an optional target path (file or directory under review).
+1. Run `bash scripts/validate.sh -v -f --check-function-docs` with an optional target path (file or directory under review).
 2. When function doc sections are out of order and `scripts/fix_function_doc_order.sh` exists, run it on the target before re-validating.
 3. Review auto-fix diffs from `-f` before continuing.
 4. If checks fail, fix reported issues and rerun the same command.
@@ -76,5 +76,5 @@ Structured results for bash -n and shellcheck (syntax and lint only). With `--ch
 ### Examples
 
 - Prompt: `Validate shell scripts (syntax, shellcheck, optional function docs)`
-- Command: `bash scripts/validate.sh -v -f -d`
+- Command: `bash scripts/validate.sh -v -f --check-function-docs`
 - Result: Structured report per [references/common-output-format.md](references/common-output-format.md). Additional invocations: [common-individual-commands.md](references/common-individual-commands.md) (read on debugging).

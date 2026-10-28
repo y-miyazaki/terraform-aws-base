@@ -1,6 +1,6 @@
 # Issue Autofix Report Format
 
-## Survey result (`may_edit: false`)
+## Survey result (`agent_edit_allowed: false`)
 
 No file edits. **Do not emit `### Changes`, `### Deferred`, or `## Verification`.**
 
@@ -15,9 +15,9 @@ No file edits. **Do not emit `### Changes`, `### Deferred`, or `## Verification`
 
 ### Candidates
 
-| Target | Evidence | Suggested approach | Priority              |
-| ------ | -------- | ------------------ | --------------------- |
-| `path` | …        | …                  | high \| medium \| low |
+| Target        | Evidence | Suggested approach | Priority              |
+| ------------- | -------- | ------------------ | --------------------- |
+| <linked path> | …        | …                  | high \| medium \| low |
 
 ### Watch
 
@@ -32,7 +32,7 @@ No file edits. **Do not emit `### Changes`, `### Deferred`, or `## Verification`
 - Do not call `repository_dispatch` from the Agent
 - At synthesis on the automation path, load `assets/pr-body-template-survey.md`
 
-## Apply result (`may_edit: true`)
+## Apply result (`agent_edit_allowed: true`)
 
 ```markdown
 # Issue Autofix Result

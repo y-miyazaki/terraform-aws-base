@@ -33,7 +33,7 @@ Interactive runs may pass free-form path/symbol in the user prompt. When structu
 | Field                  | Type                           | Description                                                                                                                             |
 | ---------------------- | ------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------- |
 | `target`               | string                         | Optional scope anchor; when set, survey within that path/symbol                                                                         |
-| `mode`                 | `survey` \| `apply`            | Interactive only: `survey` → `may_edit: false`; `apply` → `may_edit: true`. Default `survey` when omitted                               |
+| `mode`                 | `survey` \| `apply`            | Interactive only: `survey` → `agent_edit_allowed: false`; `apply` → `agent_edit_allowed: true`. Default `survey` when omitted           |
 | `hint`                 | object                         | Optional structure hint                                                                                                                 |
 | `hint.kind`            | string                         | `duplication_block` or `oversized_unit` only                                                                                            |
 | `hint.path`            | string                         | Path associated with the hint                                                                                                           |
@@ -44,12 +44,12 @@ Interactive runs may pass free-form path/symbol in the user prompt. When structu
 | `approved_slice`       | string                         | One slice from Phase A proposal; required for architecture Phase B apply                                                                |
 | `constraints.max_tier` | `O1` \| `O2`                   | Depth cap for apply (`O1` local, `O2` same-package). Default `O2`. Architecture intent uses contract Phase A/B — not this field.        |
 
-Natural-language `may_edit` triggers: SKILL.md Workflow table (not duplicated here). Structured `mode` wins over natural-language when both are present.
+Natural-language `agent_edit_allowed` triggers: SKILL.md Workflow table (not duplicated here). Structured `mode` wins over natural-language when both are present.
 
 ### Rules
 
-- When structured JSON includes `mode`, resolve `may_edit` from `mode` before natural-language triggers
-- Bare skill name `refactor` or bare `fix` alone do **not** set `may_edit: true` — require explicit apply language or `mode: apply`
+- When structured JSON includes `mode`, resolve `agent_edit_allowed` from `mode` before natural-language triggers
+- Bare skill name `refactor` or bare `fix` alone do **not** set `agent_edit_allowed: true` — require explicit apply language or `mode: apply`
 - If neither actionable scope nor `hints[]` nor exploratory target → no-op after survey
 - `hint.kind` values outside the closed set → ignore hint; fall back to `target` or scope exploration
 - Classify `intent` from user natural language ([category-contract.md](category-contract.md))
@@ -85,11 +85,11 @@ When `hints[]` is present (from caller-supplied detect JSON or an optional skill
 | `hints[].detail` | string  | Locator (line range, peer path, line count)           |
 | `hints[].lines`  | number  | Optional size metric                                  |
 
-`may_edit` is not a JSON field. It arrives in `## Constraints` — see [category-automation-envelope.md](category-automation-envelope.md).
+`agent_edit_allowed` is not a JSON field. It arrives in `## Constraints` — see [category-automation-envelope.md](category-automation-envelope.md).
 
 ### Automation rules
 
-- Survey **every** `hints[]` entry; apply every candidate marked apply within allowlist when `may_edit` is `true` and `write_target` is `fix`
+- Survey **every** `hints[]` entry; apply every candidate marked apply within allowlist when `agent_edit_allowed` is `true` and `agent_edit_target` is `fix`
 - Force `intent: structural`; `constraints.max_tier: O2`
 - Allowlist/denylist from caller configuration — see [category-scope.md](category-scope.md)
 - Session report per [common-output-format-automation.md](common-output-format-automation.md)

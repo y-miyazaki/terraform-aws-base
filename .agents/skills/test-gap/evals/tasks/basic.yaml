@@ -7,7 +7,7 @@ tags:
   - output-contract
 inputs:
   prompt: >-
-    Use test-gap with may_edit true and write_target fix. The target scripts/foo.sh has no paired test.
+    Use test-gap with agent_edit_allowed true and agent_edit_target fix. The target scripts/foo.sh has no paired test.
     Emit the apply PR shape with ### Changes, ### Deferred when applicable, and ## Verification.
     You cannot run tests here; do not claim they passed.
   context:

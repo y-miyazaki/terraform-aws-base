@@ -1,7 +1,7 @@
 #--------------------------------------------------------------
 # Module: aws/devops_agent
 # Purpose: Create AWS DevOps Agent Space with IAM roles, operator web app, optional encryption with a caller-provided KMS key,
-#          monitor account association, GitHub repository associations, agent instructions (AGENTS.md), and skills/custom agents/scheduled triggers.
+#          monitor account association, GitHub repository associations, agent instructions (AGENTS.md), and skills/memory stores/custom agents/scheduled triggers.
 # Notes: When agent_space.kms_key_arn is set, the key policy must grant aidevops.amazonaws.com access
 #        (managed by the caller).
 #        https://docs.aws.amazon.com/devopsagent/latest/userguide/aws-devops-agent-security-encryption-at-rest-for-devops-agent.html
@@ -40,6 +40,7 @@ locals {
   custom_agents       = var.is_enabled ? var.custom_agents : {}
   github_repositories = var.is_enabled ? var.github_repositories : {}
   is_webhook_enabled  = var.is_enabled && var.webhook != null
+  memory_stores       = var.is_enabled ? var.memory_stores : {}
   skills              = var.is_enabled ? var.skills : {}
   triggers = merge([
     for agent_key, agent in local.custom_agents : {
@@ -382,6 +383,31 @@ resource "awscc_devopsagent_asset" "agents_md" {
 }
 
 #--------------------------------------------------------------
+# Assets: custom memory stores (custom agents can write only to attached custom stores)
+# https://docs.aws.amazon.com/devopsagent/latest/userguide/about-aws-devops-agent-devops-agent-memories.html
+#--------------------------------------------------------------
+resource "awscc_devopsagent_asset" "memory_store" {
+  for_each = local.memory_stores
+
+  agent_space_id = awscc_devopsagent_agent_space.this[0].agent_space_id
+  asset_type     = "memory_store"
+  # Cloud Control requires exactly one of files or zip on create. Managed stores hold a single <name>.md with a "# <name>" heading; follow that.
+  files = [
+    {
+      content_text = "# ${each.value.name}\n"
+      path         = "${each.value.name}.md"
+    }
+  ]
+  # status is set by the service and returned in the metadata; sending the same value avoids a perpetual plan difference.
+  metadata = jsonencode({
+    agent_types = each.value.agent_types
+    description = each.value.description
+    name        = each.value.name
+    status      = "ACTIVE"
+  })
+}
+
+#--------------------------------------------------------------
 # Assets: custom agents
 #--------------------------------------------------------------
 resource "awscc_devopsagent_asset" "custom_agent" {
@@ -397,10 +423,11 @@ resource "awscc_devopsagent_asset" "custom_agent" {
   ]
   # status is set by the service and returned in the metadata; sending the same value avoids a perpetual plan difference.
   metadata = jsonencode({
-    name   = each.value.name
-    skills = [for k in each.value.skills : awscc_devopsagent_asset.skill[k].asset_id]
-    status = "ACTIVE"
-    tools  = each.value.tools
+    memory_stores = [for k in each.value.memory_stores : awscc_devopsagent_asset.memory_store[k].asset_id]
+    name          = each.value.name
+    skills        = [for k in each.value.skills : awscc_devopsagent_asset.skill[k].asset_id]
+    status        = "ACTIVE"
+    tools         = each.value.tools
   })
 }
 

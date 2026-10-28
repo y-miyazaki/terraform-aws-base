@@ -5,7 +5,7 @@ description: >-
   conversation when surveying or applying structural refactors. Also the loop
   entry skill when automation supplies hints (duplication_block,
   oversized_unit). Interactive default is survey only; apply edits when the
-  user explicitly requests apply or automation sets may_edit in Constraints.
+  user explicitly requests apply or automation sets agent_edit_allowed in Constraints.
   Not for lint-only style, features, behavior-changing bugfixes, or upgrades.
 license: Apache-2.0
 metadata:
@@ -18,7 +18,7 @@ metadata:
 ## Input
 
 - **Interactive (required):** paths/symbols and optional mode — constraints in `## Constraints` or [category-scope.md](references/category-scope.md)
-- **Automation (optional):** detect JSON with `hints[]` in prompt — from a caller or optional skill detect script; not required for interactive runs. Read `may_edit`, `write_target`, and `report_file` (when `write_target: report`) from `## Constraints` per [category-automation-envelope.md](references/category-automation-envelope.md)
+- **Automation (optional):** detect JSON with `hints[]` in prompt — from a caller or optional skill detect script; not required for interactive runs. Read `agent_edit_allowed`, `agent_edit_target`, and `agent_report_file` (when `agent_edit_target: report`) from `## Constraints` per [category-automation-envelope.md](references/category-automation-envelope.md)
 
 Path allowlist, when present, arrives in `## Constraints`.
 
@@ -43,32 +43,34 @@ Refactor report per [common-output-format.md](references/common-output-format.md
 - [category-scope.md](references/category-scope.md) (always read)
 - [category-contract.md](references/category-contract.md) (always read)
 - [category-detect-scope.md](references/category-detect-scope.md) (read on interactive path)
-- [category-verification.md](references/category-verification.md) (read when may_edit is true)
-- [category-techniques.md](references/category-techniques.md) (read when may_edit is true)
+- [category-verification.md](references/category-verification.md) (read when agent_edit_allowed is true)
+- [category-techniques.md](references/category-techniques.md) (read when agent_edit_allowed is true)
 - [category-input-schema.md](references/category-input-schema.md) (read when structured mode JSON, automation detect JSON, or the optional detect script is run)
 - [category-automation-envelope.md](references/category-automation-envelope.md) (read on automation path)
 - [common-output-format-automation.md](references/common-output-format-automation.md) (read on automation path)
 - [common-troubleshooting.md](references/common-troubleshooting.md) (read on failure)
+- [category-pr-body-links.md](references/category-pr-body-links.md) (read when synthesizing the PR body)
+- `assets/pr-body-template.md` and `assets/pr-body-template-survey.md` (read when synthesizing the PR body)
 
 ## Workflow
 
 Phases, modes, depth tiers, and intent: [category-contract.md](references/category-contract.md). Self-check gates: [common-checklist.md](references/common-checklist.md).
 
-Canonical sequence: resolve `may_edit` → Phase A (discover/classify; emit only when stopping) → Phase B only when edit-authorized → emit **one** result shape (OUT-01).
+Canonical sequence: resolve `agent_edit_allowed` → Phase A (discover/classify; emit only when stopping) → Phase B only when edit-authorized → emit **one** result shape (OUT-01).
 
-Resolve **may_edit** before Phase B. Interactive rows — first match wins:
+Resolve **agent_edit_allowed** before Phase B. Interactive rows — first match wins:
 
-| Source                                                      | `may_edit`                                                                                                                                                 |
+| Source                                                      | `agent_edit_allowed`                                                                                                                                       |
 | ----------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Interactive — structured JSON `mode` present                | From `mode` only (`survey` → `false`; `apply` → `true`) — wins over natural-language; load [category-input-schema.md](references/category-input-schema.md) |
 | Interactive — explicit apply language in the same request   | `true` — examples: apply, 適用して, "apply the candidates". Do **not** treat bare skill name `refactor` or bare `fix` as apply                             |
 | Interactive — follow-up after a prior survey in the session | `true` when the user explicitly asks to apply listed candidates                                                                                            |
 | Interactive — default                                       | `false` — survey only; do not edit files                                                                                                                   |
-| Automation — `## Constraints`                               | `may_edit: true` or `may_edit: false` from [category-automation-envelope.md](references/category-automation-envelope.md)                                   |
+| Automation — `## Constraints`                               | `agent_edit_allowed: true` or `agent_edit_allowed: false` from [category-automation-envelope.md](references/category-automation-envelope.md)               |
 
-When `may_edit` is `true`, resolve `write_target`: interactive → `fix`; automation → from `## Constraints`. Do not branch on other caller metadata. Before Phase B, load [category-techniques.md](references/category-techniques.md).
+When `agent_edit_allowed` is `true`, resolve `agent_edit_target`: interactive → `fix`; automation → from `## Constraints`. Do not branch on other caller metadata. Before Phase B, load [category-techniques.md](references/category-techniques.md).
 
-Phase B runs only when `may_edit` is `true` and `write_target` is `fix`. Architecture without `approved_slice` never enters Phase B (INTENT-02).
+Phase B runs only when `agent_edit_allowed` is `true` and `agent_edit_target` is `fix`. Architecture without `approved_slice` never enters Phase B (INTENT-02).
 
 ### Phase A — Survey (always)
 
@@ -80,44 +82,44 @@ Discover and classify only. Emit a final report from Phase A **only** when this 
 4. Discover candidates (SURVEY-01): structural → all in-scope; architecture Phase B → **only** the `approved_slice`. Read targets before classifying (SURVEY-03); route apply-worthy → Candidates, else → Watch (SURVEY-02).
 5. Structural zero actionable → no-op report; stop.
 
-### Phase B — Apply (`may_edit: true` and `write_target: fix`)
+### Phase B — Apply (`agent_edit_allowed: true` and `agent_edit_target: fix`)
 
 1. For each **apply** candidate: one technique ([category-techniques.md](references/category-techniques.md)); gate ([category-verification.md](references/category-verification.md)); on failure revert → Deferred; continue (APPLY-01).
 2. Re-run gates on touched areas; emit apply shape; reconcile with `git diff --name-only` (OUT-01).
 
 ### Automation path (`hints[]` in detect JSON)
 
-1. Parse detect JSON; read `may_edit` / `write_target` from `## Constraints`.
+1. Parse detect JSON; read `agent_edit_allowed` / `agent_edit_target` from `## Constraints`.
 2. Empty/`skip` → no-op; stop.
 3. Phase A on **all** `hints[]` (structural only — no architecture Phase A/B).
-4. `may_edit: false` or `write_target` ≠ `fix` → emit survey shape + Session Metrics (note expected `write_target: fix` when mismatched); no Phase B.
+4. `agent_edit_allowed: false` or `agent_edit_target` ≠ `fix` → emit survey shape + Session Metrics (note expected `agent_edit_target: fix` when mismatched); no Phase B.
 5. Else → Phase B; emit apply shape + Session Metrics ([category-automation-envelope.md](references/category-automation-envelope.md)).
 
 ### Interactive path
 
-1. Resolve `may_edit` (table above). Load [category-detect-scope.md](references/category-detect-scope.md).
+1. Resolve `agent_edit_allowed` (table above). Load [category-detect-scope.md](references/category-detect-scope.md).
 2. Resolve universe from the prompt (default = `REFACTOR_SCAN_GLOBS` / skill defaults). If the user named paths/globs, narrow the universe before detect.
 3. If detect JSON is absent, run `scripts/detect_refactor.sh` with the resolved scope (default `--scope all`; set `REFACTOR_SCAN_GLOBS` for a temporary universe). On non-zero exit or `status: "error"`, read stdout and stop.
 4. Phase A: classify every `hints[]` entry and Agent-complement structural candidates (read targets — SURVEY-03). Architecture without `approved_slice` stops inside Phase A step 3.
 5. Empty detect alone is not a no-op if complement found apply-worthy or watch-worthy work.
-6. `may_edit: false` or `write_target` ≠ `fix` → emit survey shape; stop.
+6. `agent_edit_allowed: false` or `agent_edit_target` ≠ `fix` → emit survey shape; stop.
 7. Else → Phase B; emit apply shape.
 
 ### Error Handling
 
-| Condition                                        | Severity    | Action                                                                          |
-| ------------------------------------------------ | ----------- | ------------------------------------------------------------------------------- |
-| Detect script non-zero exit or `status: "error"` | Fatal       | Read stdout; stop — do not treat as success-path detect JSON                    |
-| Automation: empty/`skip`                         | Info        | No-op report; stop                                                              |
-| Survey: zero candidates                          | Info        | No-op report; stop                                                              |
-| Architecture request without slice               | Recoverable | Architecture proposal only; stop                                                |
-| Lint-primary or feature/API candidate            | Recoverable | Watch on candidate; skip apply                                                  |
-| Weak or failed gate for one candidate            | Recoverable | Revert that candidate; Deferred; continue                                       |
-| Cross-boundary or out-of-scope target            | Recoverable | Watch on candidate; skip apply                                                  |
-| Apply requested but `may_edit` is `false`        | Info        | Survey only; note that edits require explicit apply request or `may_edit: true` |
-| `may_edit` true with `write_target` not `fix`    | Recoverable | Survey only; note expected `write_target: fix`                                  |
+| Condition                                                    | Severity    | Action                                                                                    |
+| ------------------------------------------------------------ | ----------- | ----------------------------------------------------------------------------------------- |
+| Detect script non-zero exit or `status: "error"`             | Fatal       | Read stdout; stop — do not treat as success-path detect JSON                              |
+| Automation: empty/`skip`                                     | Info        | No-op report; stop                                                                        |
+| Survey: zero candidates                                      | Info        | No-op report; stop                                                                        |
+| Architecture request without slice                           | Recoverable | Architecture proposal only; stop                                                          |
+| Lint-primary or feature/API candidate                        | Recoverable | Watch on candidate; skip apply                                                            |
+| Weak or failed gate for one candidate                        | Recoverable | Revert that candidate; Deferred; continue                                                 |
+| Cross-boundary or out-of-scope target                        | Recoverable | Watch on candidate; skip apply                                                            |
+| Apply requested but `agent_edit_allowed` is `false`          | Info        | Survey only; note that edits require explicit apply request or `agent_edit_allowed: true` |
+| `agent_edit_allowed` true with `agent_edit_target` not `fix` | Recoverable | Survey only; note expected `agent_edit_target: fix`                                       |
 
 ### Examples
 
 - Prompt: `Survey structural refactor candidates in this package`
-- Result: Survey report per [references/common-output-format.md](references/common-output-format.md); apply only when `may_edit` is true, `write_target` is `fix`, and candidates are marked apply.
+- Result: Survey report per [references/common-output-format.md](references/common-output-format.md); apply only when `agent_edit_allowed` is true, `agent_edit_target` is `fix`, and candidates are marked apply.

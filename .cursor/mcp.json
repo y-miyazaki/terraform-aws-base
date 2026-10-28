@@ -8,7 +8,7 @@
       "type": "stdio",
       "command": "uvx",
       "args": [
-        "mcp-proxy==0.12.0",
+        "mcp-proxy==0.13.0",
         "--transport",
         "streamablehttp",
         "https://knowledge-mcp.global.api.aws"
@@ -18,7 +18,7 @@
       "type": "stdio",
       "command": "uvx",
       "args": [
-        "awslabs.aws-documentation-mcp-server==1.2.1"
+        "awslabs.aws-documentation-mcp-server==1.2.3"
       ]
     },
     "aws-pricing-mcp-server": {
@@ -33,7 +33,7 @@
       "command": "npx",
       "args": [
         "-y",
-        "@upstash/context7-mcp@4.1.1"
+        "@upstash/context7-mcp@4.4.4"
       ]
     },
     "fetch": {
@@ -42,7 +42,7 @@
       "args": [
         "--with",
         "mcp>=1.28,<2",
-        "mcp-server-fetch==2026.8.18"
+        "mcp-server-fetch==2026.10.19"
       ]
     },
     "github": {
@@ -50,7 +50,7 @@
       "command": "bash",
       "args": [
         "-lc",
-        "TOKEN=\"${GH_TOKEN:-$GITHUB_TOKEN}\"; exec uvx mcp-compressor==0.33.0 -- https://api.githubcopilot.com/mcp/ -H \"Authorization=Bearer ${TOKEN}\" --auth explicit-headers"
+        "TOKEN=\"${GH_TOKEN:-$GITHUB_TOKEN}\"; exec uvx mcp-compressor==0.38.0 -- https://api.githubcopilot.com/mcp/ -H \"Authorization=Bearer ${TOKEN}\" --auth explicit-headers"
       ]
     },
     "codebase-memory-mcp": {

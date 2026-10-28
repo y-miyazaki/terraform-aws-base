@@ -46,20 +46,20 @@ python = "3.14.6"
 
 # AI agent tools
 "github:microsoft/apm" = { version = "v0.33.0", lazy = true, lazy_bins = ["apm"] }                                 # agent package manager
-claude = { version = "2.1.295", lazy = true, lazy_bins = ["claude"] }                                              # Claude Code CLI
+claude = { version = "2.1.296", lazy = true, lazy_bins = ["claude"] }                                              # Claude Code CLI
 "github:DeusData/codebase-memory-mcp" = { version = "v0.11.0", lazy = true, lazy_bins = ["codebase-memory-mcp"] } # codebase memory MCP server
-"aqua:github/copilot-cli" = { version = "1.0.94", lazy = true, lazy_bins = ["copilot"] }                           # GitHub Copilot CLI
+"aqua:github/copilot-cli" = { version = "1.0.95", lazy = true, lazy_bins = ["copilot"] }                           # GitHub Copilot CLI
 "pipx:headroom-ai" = { version = "0.40.0", extras = "proxy,mcp,bedrock", depends = ["python"], lazy = true, lazy_bins = ["headroom", "headroom-cache-ttl"] }
-"npm:lean-ctx-bin" = { version = "3.11.0", depends = [
+"npm:lean-ctx-bin" = { version = "3.11.4", depends = [
   "node",
 ], allow_builds = [
   "lean-ctx-bin",
 ], install_env = { PNPM_CONFIG_IGNORE_SCRIPTS = "true" }, lazy = true, lazy_bins = ["lean-ctx"] } # context optimizer (hooks CLI + MCP npm)
-"github:microsoft/waza" = { version = "v0.38.9", lazy = true, lazy_bins = ["waza"] }                              # agent skill evaluator
+"github:microsoft/waza" = { version = "v0.38.10", lazy = true, lazy_bins = ["waza"] }                              # agent skill evaluator
 
 # AWS related tools
-"aqua:aws/aws-cli" = { version = "2.37.11", lazy = true, lazy_bins = ["aws", "aws_completer"] }                     # AWS CLI
-"aqua:aws/aws-sam-cli" = { version = "1.167.0", lazy = true, lazy_bins = ["sam"] }                                 # SAM CLI tool
+"aqua:aws/aws-cli" = { version = "2.37.12", lazy = true, lazy_bins = ["aws", "aws_completer"] }                     # AWS CLI
+"aqua:aws/aws-sam-cli" = { version = "1.168.0", lazy = true, lazy_bins = ["sam"] }                                 # SAM CLI tool
 "npm:awsp" = { version = "0.2.0", depends = [
   "node",
 ], install_env = { NPM_CONFIG_IGNORE_SCRIPTS = "true" } } # AWS profile switcher
@@ -82,7 +82,7 @@ claude = { version = "2.1.295", lazy = true, lazy_bins = ["claude"] }           
 "go:github.com/go-delve/delve/cmd/dlv" = { version = "v1.27.2", lazy = true, lazy_bins = ["dlv"] }                 # debugger
 "aqua:mvdan/gofumpt" = { version = "0.12.0", lazy = true, lazy_bins = ["gofumpt"] }                                # code formatter
 "aqua:golangci/golangci-lint" = { version = "2.14.0", lazy = true, lazy_bins = ["golangci-lint"] }                 # linter
-"aqua:goreleaser/goreleaser" = { version = "2.18.2", lazy = true, lazy_bins = ["goreleaser"] }                     # release automation
+"aqua:goreleaser/goreleaser" = { version = "2.18.3", lazy = true, lazy_bins = ["goreleaser"] }                     # release automation
 "go:golang.org/x/tools/gopls" = { version = "v0.23.0", lazy = true, lazy_bins = ["gopls"] }                        # Go language server
 "go:golang.org/x/vuln/cmd/govulncheck" = { version = "1.3.0", lazy = true, lazy_bins = ["govulncheck"] }           # vulnerability scanner
 "aqua:ko-build/ko" = { version = "0.19.1", lazy = true, lazy_bins = ["ko"] }                                       # container builder
@@ -104,7 +104,7 @@ claude = { version = "2.1.295", lazy = true, lazy_bins = ["claude"] }           
 "npm:markdownlint-cli2" = { version = "0.23.3", depends = [
   "node",
 ], install_env = { PNPM_CONFIG_IGNORE_SCRIPTS = "true" }, lazy = true, lazy_bins = ["markdownlint-cli2"] } # Markdown linter
-"npm:prettier" = { version = "3.9.9", depends = [
+"npm:prettier" = { version = "3.9.10", depends = [
   "node",
 ], install_env = { PNPM_CONFIG_IGNORE_SCRIPTS = "true" }, lazy = true, lazy_bins = ["prettier"] } # Code formatter
 
@@ -134,7 +134,7 @@ claude = { version = "2.1.295", lazy = true, lazy_bins = ["claude"] }           
 "aqua:BurntSushi/ripgrep" = { version = "15.2.0", lazy = true, lazy_bins = ["rg"] }                                # grep alternative (rg)
 "aqua:tamasfe/taplo" = { version = "0.10.0", lazy = true, lazy_bins = ["taplo"] }                                  # TOML formatter / LSP
 "aqua:jdx/usage" = { version = "6.12.1", lazy = true, lazy_bins = ["usage"] }                                      # usage CLI tool for command help and completions
-"aqua:astral-sh/uv" = "0.12.24"                                                                                    # uv/uvx
+"aqua:astral-sh/uv" = "0.13.0"                                                                                    # uv/uvx
 
 [tasks.mise-install]
 description = "Install tools defined in mise.toml"

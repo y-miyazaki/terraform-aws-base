@@ -1,7 +1,11 @@
 <!--
-Survey-only PR template for refactor automation (may_edit: false).
+Survey-only PR template for refactor automation (agent_edit_allowed: false).
 
 Load at synthesis time after survey output is complete.
+
+Rules:
+- Link every repository path, commit SHA, and workflow/job in Summary tables as a markdown link per category-pr-body-links.md. <linked ...> marks where a link goes; do not emit it, and do not use a plain code span for a linkable item.
+- Keep the table columns as written; do not rename, merge, or drop columns.
 -->
 
 ## Overview
@@ -17,12 +21,12 @@ Load at synthesis time after survey output is complete.
 
 ### Candidates
 
-| Target            | Evidence                  | Suggested approach             | Priority              |
-| ----------------- | ------------------------- | ------------------------------ | --------------------- |
-| `path` `symbol()` | <plain-language evidence> | <plain-language fix direction> | high \| medium \| low |
+| Target                   | Evidence                  | Suggested approach             | Priority              |
+| ------------------------ | ------------------------- | ------------------------------ | --------------------- |
+| <linked path> `symbol()` | <plain-language evidence> | <plain-language fix direction> | high \| medium \| low |
 
 ### Watch
 
-| Target | Evidence                  | Why not now             |
-| ------ | ------------------------- | ----------------------- |
-| `path` | <plain-language evidence> | <plain-language reason> |
+| Target        | Evidence                  | Why not now             |
+| ------------- | ------------------------- | ----------------------- |
+| <linked path> | <plain-language evidence> | <plain-language reason> |

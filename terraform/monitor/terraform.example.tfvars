@@ -2966,16 +2966,10 @@ devops_agent = {
         mcp_servers = {}
         # (Optional) Agent instructions (AGENTS.md) injected into every session. Key: agent type (GENERIC = all agents; at most one per agent type).
         # Other agent types: CHAT, INCIDENT_TRIAGE, INCIDENT_RCA, INCIDENT_MITIGATION, INCIDENT_UI, PREVENTION, RELEASE_READINESS_REVIEW, RELEASE_TESTING.
-        # content_file / content_files are relative to terraform/monitor (Markdown only, no frontmatter, max 25 KB in total per agent type).
-        # content_files are concatenated in order after content_file, so rules can be split into one file per category (e.g. incident-suppression/ = alarms that must not be listed as incidents).
+        # content_file is relative to terraform/monitor (Markdown only, no frontmatter, max 25 KB).
         agents_md = {
           GENERIC = {
             content_file = "devops_agent/agents_md/generic.md"
-            content_files = [
-              "devops_agent/agents_md/incident-suppression/postgresql-operation.md",
-              "devops_agent/agents_md/incident-suppression/scheduled-stop.md",
-              "devops_agent/agents_md/incident-suppression/memory-based-suppression.md",
-            ]
           }
         }
         # (Optional) Linear team (name or key) in which this Agent Space creates Issues with the Linear MCP server (linear_issue_* custom agents).
@@ -3010,14 +3004,20 @@ devops_agent = {
         #       description  = "Follow up on unanswered human comments on Linear Issues and their GitHub PRs labeled devops-agent: answer, update the text, re-check the incident, fix the Draft PR, and close when allowed. Use this in the scheduled follow-up run. Do not use it to start an investigation or to create Issues, PRs or labels."
         #       content_file = "devops_agent/skills/linear-issue-pr-followup/SKILL.md"
         #     }
-        #     incident_triage_suppression = {
-        #       agent_types  = ["INCIDENT_TRIAGE"]
-        #       name         = "incident-triage-suppression"
-        #       description  = "Triage-stage skip criteria: before scheduling an investigation, read the per-alarm suppression memory monitors-<alarm-name> in directives and SKIP the incident when its ## Suppression is ACTIVE, so no investigation is dispatched (zero agent cost)."
-        #       content_file = "devops_agent/skills/incident-triage-suppression/SKILL.md"
-        #     }
         #   }
         skills = {}
+        # (Optional) Custom memory stores. Custom agents can write only to the custom stores attached by custom_agents[*].memory_stores;
+        # the managed directives and monitors stores are read-only for them. The follow-up skills record per-alarm suppression decisions in "suppressions",
+        # and the GENERIC AGENTS.md (generic.md) stops the investigation of an alarm whose memory there is ACTIVE.
+        #   ex)
+        #   memory_stores = {
+        #     suppressions = {
+        #       agent_types = ["GENERIC"]
+        #       name        = "suppressions"
+        #       description = "Per-alarm suppression decisions that humans made on devops-agent Issues, one memory monitors-<alarm-name> per alarm (written by the follow-up custom agents). Read the memory matching the firing alarm before planning an investigation: when its ## Suppression is ACTIVE, stop the investigation of that alarm."
+        #     }
+        #   }
+        memory_stores = {}
         # Issue / Draft PR agents (enable together with mcp_servers above; tool name prefix <MCP server name>_ is assumed, verify in the console).
         #   ex)
         #   custom_agents = {
@@ -3034,6 +3034,7 @@ devops_agent = {
         #       ]
         #     }
         #     github_issue_pr_followup_agent = {
+        #       memory_stores      = ["suppressions"]
         #       name               = "github-issue-pr-followup-agent"
         #       system_prompt_file = "devops_agent/agents/github_issue_pr_followup_agent.md"
         #       skills             = ["github_issue_pr_followup"]
@@ -3066,6 +3067,7 @@ devops_agent = {
         #       ]
         #     }
         #     linear_issue_pr_followup_agent = {
+        #       memory_stores      = ["suppressions"]
         #       name               = "linear-issue-pr-followup-agent"
         #       system_prompt_file = "devops_agent/agents/linear_issue_pr_followup_agent.md"
         #       skills             = ["linear_issue_pr_followup"]

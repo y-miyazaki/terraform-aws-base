@@ -6,7 +6,7 @@ description: >-
   the changelog. Also the loop entry skill when automation supplies
   commit/release detect JSON. Interactive default is survey only; edit
   CHANGELOG.md when the user explicitly requests a fix or automation sets
-  may_edit in Constraints.
+  agent_edit_allowed in Constraints.
 license: Apache-2.0
 metadata:
   author: y-miyazaki
@@ -18,7 +18,7 @@ metadata:
 ## Input
 
 - **Interactive (required):** natural-language request; optional scope (`all`, or `range` with `--since`) — constraints in `## Constraints` or [category-scope.md](references/category-scope.md)
-- **Automation (optional):** detect JSON in prompt — from a caller or optional skill detect script; not required for interactive runs. Read `may_edit`, `write_target`, and `report_file` (when `write_target: report`) from `## Constraints` per [category-automation-envelope.md](references/category-automation-envelope.md)
+- **Automation (optional):** detect JSON in prompt — from a caller or optional skill detect script; not required for interactive runs. Read `agent_edit_allowed`, `agent_edit_target`, and `agent_report_file` (when `agent_edit_target: report`) from `## Constraints` per [category-automation-envelope.md](references/category-automation-envelope.md)
 
 Path allowlist, when present, arrives in `## Constraints`.
 
@@ -50,40 +50,42 @@ Changelog report per [common-output-format.md](references/common-output-format.m
 - [category-input-schema.md](references/category-input-schema.md) (read when detect JSON is present or the optional detect script is run)
 - [category-automation-envelope.md](references/category-automation-envelope.md) (read on automation path)
 - [common-troubleshooting.md](references/common-troubleshooting.md) (read on failure)
+- [category-pr-body-links.md](references/category-pr-body-links.md) (read when synthesizing the PR body)
+- `assets/pr-body-template.md` and `assets/pr-body-template-survey.md` (read when synthesizing the PR body)
 
 ## Workflow
 
-Resolve **may_edit** before mapping commits:
+Resolve **agent_edit_allowed** before mapping commits:
 
-| Source                                                      | `may_edit`                                                                                                                                 |
-| ----------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
-| Interactive — default                                       | `false` — survey only; do not edit `changelog_file`                                                                                        |
-| Interactive — explicit fix language in the same request     | `true` — examples: 修正して, update the changelog, apply these entries. Do **not** treat bare skill name `changelog` or bare `fix` as edit |
-| Interactive — follow-up after a prior survey in the session | `true` when the user explicitly asks to apply listed entries or update the changelog                                                       |
-| Automation — `## Constraints`                               | `may_edit: true` or `may_edit: false` from [category-automation-envelope.md](references/category-automation-envelope.md)                   |
+| Source                                                      | `agent_edit_allowed`                                                                                                                         |
+| ----------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| Interactive — default                                       | `false` — survey only; do not edit `changelog_file`                                                                                          |
+| Interactive — explicit fix language in the same request     | `true` — examples: 修正して, update the changelog, apply these entries. Do **not** treat bare skill name `changelog` or bare `fix` as edit   |
+| Interactive — follow-up after a prior survey in the session | `true` when the user explicitly asks to apply listed entries or update the changelog                                                         |
+| Automation — `## Constraints`                               | `agent_edit_allowed: true` or `agent_edit_allowed: false` from [category-automation-envelope.md](references/category-automation-envelope.md) |
 
-When `may_edit` is `true`, resolve `write_target`: on the **interactive** path use `fix` (this skill); on the **automation** path read `write_target` from `## Constraints`. Do not branch on other caller metadata outside `## Constraints`.
+When `agent_edit_allowed` is `true`, resolve `agent_edit_target`: on the **interactive** path use `fix` (this skill); on the **automation** path read `agent_edit_target` from `## Constraints`. Do not branch on other caller metadata outside `## Constraints`.
 
 1. Resolve scope ([category-scope.md](references/category-scope.md)). Parse detect JSON when present; otherwise resolve the detect universe from the prompt ([category-detect-scope.md](references/category-detect-scope.md)), run this skill's optional detect script with the resolved `--scope` (default `all`), then Agent-complement beyond mechanical output; if tools for detect are unavailable, gather commits/releases from the user request and repository tools instead of silent no-op. Load [category-input-schema.md](references/category-input-schema.md) when parsing detect output. On detect script non-zero exit, read stdout and stop.
 2. On the automation path, read [category-automation-envelope.md](references/category-automation-envelope.md) for Constraints, PR templates, and Session Metrics.
 3. IF detect reports `skip` OR both `commits` and `releases` are empty after gathering → emit survey no-op; on automation path append `## Session Metrics` per [category-automation-envelope.md](references/category-automation-envelope.md); stop.
 4. Map commits and releases per [common-checklist.md](references/common-checklist.md).
-5. IF `may_edit` is `false` → emit survey shape with `### Candidates`; on automation path load `assets/pr-body-template-survey.md` at synthesis and append `## Session Metrics` per [category-automation-envelope.md](references/category-automation-envelope.md); stop — do not edit `changelog_file`.
-6. ELSE IF `may_edit` is `true` AND `write_target` is not `fix` → emit survey shape; note expected `write_target: fix` in Overview; stop — do not edit `changelog_file`.
-7. ELSE (`may_edit` is `true` AND `write_target` is `fix`) → edit only `changelog_file` per [category-scope.md](references/category-scope.md); emit apply shape with `### Changes` and `## Verification`; on automation path load `assets/pr-body-template.md` at synthesis and append `## Session Metrics` per [category-automation-envelope.md](references/category-automation-envelope.md).
+5. IF `agent_edit_allowed` is `false` → emit survey shape with `### Candidates`; on automation path load `assets/pr-body-template-survey.md` at synthesis and append `## Session Metrics` per [category-automation-envelope.md](references/category-automation-envelope.md); stop — do not edit `changelog_file`.
+6. ELSE IF `agent_edit_allowed` is `true` AND `agent_edit_target` is not `fix` → emit survey shape; note expected `agent_edit_target: fix` in Overview; stop — do not edit `changelog_file`.
+7. ELSE (`agent_edit_allowed` is `true` AND `agent_edit_target` is `fix`) → edit only `changelog_file` per [category-scope.md](references/category-scope.md); emit apply shape with `### Changes` and `## Verification`; on automation path load `assets/pr-body-template.md` at synthesis and append `## Session Metrics` per [category-automation-envelope.md](references/category-automation-envelope.md).
 
 ### Error Handling
 
-| Condition                                                       | Severity    | Action                                                                           |
-| --------------------------------------------------------------- | ----------- | -------------------------------------------------------------------------------- |
-| Detect script non-zero exit or `status: "error"` (when invoked) | Fatal       | Read stdout; stop — do not treat as success-path detect JSON                     |
-| `skip` or empty commits/releases                                | Info        | Report skip outcome; stop                                                        |
-| `changelog_file` outside scope                                  | Recoverable | Defer; note in report                                                            |
-| Fix requested but `may_edit` is `false`                         | Info        | Survey only; note that edits require an explicit fix request or `may_edit: true` |
-| `may_edit` true with `write_target` not `fix`                   | Recoverable | Survey only; note expected `write_target: fix`                                   |
-| `changelog_exists` false and `may_edit` is `true`               | Recoverable | Create Keep a Changelog template, then add bullets                               |
+| Condition                                                       | Severity    | Action                                                                                     |
+| --------------------------------------------------------------- | ----------- | ------------------------------------------------------------------------------------------ |
+| Detect script non-zero exit or `status: "error"` (when invoked) | Fatal       | Read stdout; stop — do not treat as success-path detect JSON                               |
+| `skip` or empty commits/releases                                | Info        | Report skip outcome; stop                                                                  |
+| `changelog_file` outside scope                                  | Recoverable | Defer; note in report                                                                      |
+| Fix requested but `agent_edit_allowed` is `false`               | Info        | Survey only; note that edits require an explicit fix request or `agent_edit_allowed: true` |
+| `agent_edit_allowed` true with `agent_edit_target` not `fix`    | Recoverable | Survey only; note expected `agent_edit_target: fix`                                        |
+| `changelog_exists` false and `agent_edit_allowed` is `true`     | Recoverable | Create Keep a Changelog template, then add bullets                                         |
 
 ### Examples
 
 - Prompt: `Survey CHANGELOG gaps from unreleased commits`
-- Result: Survey report per [references/common-output-format.md](references/common-output-format.md); edit `changelog_file` only when `may_edit` is true.
+- Result: Survey report per [references/common-output-format.md](references/common-output-format.md); edit `changelog_file` only when `agent_edit_allowed` is true.

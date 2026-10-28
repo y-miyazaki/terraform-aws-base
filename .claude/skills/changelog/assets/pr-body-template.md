@@ -1,10 +1,12 @@
 <!--
-PR-facing template for changelog automation (may_edit: true).
+PR-facing template for changelog automation (agent_edit_allowed: true).
 
 Load ONLY at synthesis time, after CHANGELOG.md edits complete.
 
 Rules:
 - Keep top-level ## Overview, ## Summary, and ## Verification headings exactly as written.
+- Link every repository path, commit SHA, and workflow/job in Summary tables as a markdown link per category-pr-body-links.md. <linked ...> marks where a link goes; do not emit it, and do not use a plain code span for a linkable item.
+- Keep the table columns as written; do not rename, merge, or drop columns.
 - Use ### Skipped (not Deferred) for commits not added to CHANGELOG.
 - Do NOT emit Outcome or Suggested next action.
 -->
@@ -22,15 +24,15 @@ Rules:
 
 ### Changes
 
-| Commit    | Type   | Entry                                |
-| --------- | ------ | ------------------------------------ |
-| `abc1234` | <type> | <Unreleased bullet added or updated> |
+| Commit       | Type   | Entry                                |
+| ------------ | ------ | ------------------------------------ |
+| <linked sha> | <type> | <Unreleased bullet added or updated> |
 
 ### Skipped
 
-| Commit    | Why skipped                         |
-| --------- | ----------------------------------- |
-| `def5678` | <already listed / non-conventional> |
+| Commit       | Why skipped                         |
+| ------------ | ----------------------------------- |
+| <linked sha> | <already listed / non-conventional> |
 
 ## Verification
 

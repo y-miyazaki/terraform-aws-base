@@ -1,7 +1,7 @@
 name: changelog-eval
 description: >-
   Evaluation suite for changelog.
-  Verifies changelog report contract, may_edit behavior, interactive paths, release
+  Verifies changelog report contract, agent_edit_allowed behavior, interactive paths, release
   promotion, automation Constraints, and out-of-scope rejection.
 skill: changelog
 version: "1.4"

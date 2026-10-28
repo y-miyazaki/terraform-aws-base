@@ -1,0 +1,20 @@
+id: github-pr-review-skip-detect-001
+name: github-pr-review exits cleanly when detect skips
+description: Validate github-pr-review reports the skip reason and writes no report.
+tags:
+  - trigger
+  - negative
+inputs:
+  prompt: >-
+    Use github-pr-review. Detect JSON has skip=true because the PR is a draft. Report the skip
+    reason in ## Overview. Do not write a report file, do not post, and do not edit files.
+  context:
+    skip: true
+    pr_number: 8
+    message: "PR is a draft"
+expected:
+  output_contains:
+    - Overview
+    - skip
+  outcomes:
+    - type: task_completed

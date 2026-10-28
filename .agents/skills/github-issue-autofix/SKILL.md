@@ -5,7 +5,7 @@ description: >-
   conversation when the user gives an Issue number or URL and asks to
   implement or fix it. Also the L2 loop entry skill after autofix label,
   repository_dispatch, or workflow_dispatch. Interactive default is survey;
-  apply when the user explicitly requests a fix or may_edit is true. Detect
+  apply when the user explicitly requests a fix or agent_edit_allowed is true. Detect
   skips when an open/draft PR already closes the Issue. Agent must not fire
   repository_dispatch.
 license: Apache-2.0
@@ -18,7 +18,7 @@ metadata:
 
 ## Input
 
-- **Automation:** detect JSON from `detect_autofix.sh` with `result.issue_number`. Read `may_edit` / `write_target` from `## Constraints`.
+- **Automation:** detect JSON from `detect_autofix.sh` with `result.issue_number`. Read `agent_edit_allowed` / `agent_edit_target` from `## Constraints`.
 - **Interactive:** Issue number (or URL resolved to a number) plus optional failure context; same Constraints defaults as automation survey unless the user explicitly requests a fix.
 
 ## Output Specification
@@ -29,7 +29,7 @@ Report per [common-output-format.md](references/common-output-format.md). On the
 
 ### USE FOR:
 
-- Implement a minimal fix for the Issue on the integration branch worktree when `may_edit: true`
+- Implement a minimal fix for the Issue on the integration branch worktree when `agent_edit_allowed: true`
 - Synthesize PR body from `assets/pr-body-template.md` including `Fixes #<N>`
 
 ### DO NOT USE FOR:
@@ -49,30 +49,30 @@ Report per [common-output-format.md](references/common-output-format.md). On the
 
 ## Workflow
 
-Resolve **may_edit** before implementing:
+Resolve **agent_edit_allowed** before implementing:
 
-| Source                              | `may_edit`                                                                                                               |
-| ----------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
-| Interactive — default               | `false` — survey only; do not edit files                                                                                 |
-| Interactive — explicit fix language | `true` — user asks to implement/fix the Issue in the same request                                                        |
-| Automation — `## Constraints`       | `may_edit: true` or `may_edit: false` from [category-automation-envelope.md](references/category-automation-envelope.md) |
+| Source                              | `agent_edit_allowed`                                                                                                                         |
+| ----------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| Interactive — default               | `false` — survey only; do not edit files                                                                                                     |
+| Interactive — explicit fix language | `true` — user asks to implement/fix the Issue in the same request                                                                            |
+| Automation — `## Constraints`       | `agent_edit_allowed: true` or `agent_edit_allowed: false` from [category-automation-envelope.md](references/category-automation-envelope.md) |
 
-When `may_edit` is `true`, resolve `write_target`: on the **interactive** path use `fix` (this skill); on the **automation** path read `write_target` from `## Constraints`. Do not branch on other caller metadata outside `## Constraints`.
+When `agent_edit_allowed` is `true`, resolve `agent_edit_target`: on the **interactive** path use `fix` (this skill); on the **automation** path read `agent_edit_target` from `## Constraints`. Do not branch on other caller metadata outside `## Constraints`.
 
 1. Read detect JSON; if `skip: true`, report skip reason and stop.
 2. On the automation path, read [category-automation-envelope.md](references/category-automation-envelope.md) for Constraints and PR templates.
-3. IF `may_edit` is `false` → emit survey shape; load `assets/pr-body-template-survey.md` at synthesis when on automation path; stop.
-4. ELSE IF `may_edit` is `true` AND `write_target` is not `fix` → emit survey shape; note expected `write_target: fix`; stop.
-5. ELSE IF `may_edit` is `true` AND `write_target` is `fix` → implement the minimal fix for Issue `#N` on the worktree.
+3. IF `agent_edit_allowed` is `false` → emit survey shape; load `assets/pr-body-template-survey.md` at synthesis when on automation path; stop.
+4. ELSE IF `agent_edit_allowed` is `true` AND `agent_edit_target` is not `fix` → emit survey shape; note expected `agent_edit_target: fix`; stop.
+5. ELSE IF `agent_edit_allowed` is `true` AND `agent_edit_target` is `fix` → implement the minimal fix for Issue `#N` on the worktree.
 6. At synthesis, load the apply PR template; ensure body includes `Fixes #<N>`.
 7. Do **not** fire `repository_dispatch` or start other loops from the Agent.
 
 ### Error Handling
 
-| Condition                                    | Severity    | Action                                       |
-| -------------------------------------------- | ----------- | -------------------------------------------- |
-| Detect `status: error`                       | Fatal       | Stop; do not mutate repository files         |
-| Detect `skip: true`                          | Info        | Report skip reason; do not open a PR         |
-| `may_edit: false`                            | Info        | Survey only; do not edit files               |
-| `write_target` not `fix` when edits expected | Recoverable | Survey only; note mismatch in Overview       |
-| Validation tooling missing after edits       | Recoverable | Defer in report; do not claim passing checks |
+| Condition                                         | Severity    | Action                                       |
+| ------------------------------------------------- | ----------- | -------------------------------------------- |
+| Detect `status: error`                            | Fatal       | Stop; do not mutate repository files         |
+| Detect `skip: true`                               | Info        | Report skip reason; do not open a PR         |
+| `agent_edit_allowed: false`                       | Info        | Survey only; do not edit files               |
+| `agent_edit_target` not `fix` when edits expected | Recoverable | Survey only; note mismatch in Overview       |
+| Validation tooling missing after edits            | Recoverable | Defer in report; do not claim passing checks |

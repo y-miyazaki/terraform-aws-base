@@ -56,6 +56,8 @@ Scripts that use only environment variables or absolute paths omit `SCRIPT_DIR` 
 2. Other functions in alphabetical order
 3. main function last
 
+With `--check-function-docs`, `validate.sh` reports the first function that is out of order (detection only; it never reorders functions).
+
 ## Function Documentation (opt-in validation)
 
 When `--check-function-docs` is passed to `validate.sh`, enforce [Google Shell Style Guide — Function Comments](https://google.github.io/styleguide/shellguide.html#s4.2-function-comments) plus explicit `None` for non-applicable sections:

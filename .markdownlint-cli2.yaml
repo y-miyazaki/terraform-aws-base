@@ -21,6 +21,8 @@ ignores:
   - "**/prompts/**"
   - "**/secrets/**"
   - "**/tmp/**"
+  - "**/.claude/worktrees/**"
+  - "**/.superpowers/**"
   - "**/vendor/**"
 # Rule configuration
 config:

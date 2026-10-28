@@ -55,4 +55,4 @@ Field set emitted by this skill's detect script or an equivalent caller-supplied
 
 `failures` may be an empty array.
 
-Path allowlist is not a JSON field. When present, `may_edit` and allowed paths arrive in `## Constraints` — see [category-automation-envelope.md](category-automation-envelope.md).
+Path allowlist is not a JSON field. When present, `agent_edit_allowed` and allowed paths arrive in `## Constraints` — see [category-automation-envelope.md](category-automation-envelope.md).

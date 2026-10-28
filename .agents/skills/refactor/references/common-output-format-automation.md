@@ -2,43 +2,43 @@
 
 Use when detect JSON (`hints[]`) is present on the automation path. Interactive runs use [common-output-format.md](common-output-format.md).
 
-Branch on `may_edit` from `## Constraints` — see [category-automation-envelope.md](category-automation-envelope.md). Do not branch on other caller metadata.
+Branch on `agent_edit_allowed` from `## Constraints` — see [category-automation-envelope.md](category-automation-envelope.md). Do not branch on other caller metadata.
 
 ## Session report (checker / logs)
 
 Always emit for automation runs. Append `## Session Metrics` per [category-automation-envelope.md](category-automation-envelope.md):
 
-| Field          | Value                     |
-| -------------- | ------------------------- |
-| may_edit       | <true\|false>             |
-| Commit range   | <commit_range or "n/a">   |
-| Hints assessed | <count>                   |
-| Candidates     | <count>                   |
-| Applied        | <count or "0">            |
-| Outcome        | <one-line checker result> |
+| Field              | Value                     |
+| ------------------ | ------------------------- |
+| agent_edit_allowed | <true\|false>             |
+| Commit range       | <commit_range or "n/a">   |
+| Hints assessed     | <count>                   |
+| Candidates         | <count>                   |
+| Applied            | <count or "0">            |
+| Outcome            | <one-line checker result> |
 
 ## PR body templates
 
-| `may_edit` | Template asset                      | Summary subsections                    |
-| ---------- | ----------------------------------- | -------------------------------------- |
-| `false`    | `assets/pr-body-template-survey.md` | `### Candidates`, optional `### Watch` |
-| `true`     | `assets/pr-body-template.md`        | `### Changes`, optional `### Deferred` |
+| `agent_edit_allowed` | Template asset                      | Summary subsections                    |
+| -------------------- | ----------------------------------- | -------------------------------------- |
+| `false`              | `assets/pr-body-template-survey.md` | `### Candidates`, optional `### Watch` |
+| `true`               | `assets/pr-body-template.md`        | `### Changes`, optional `### Deferred` |
 
-At synthesis time, load the template for resolved `may_edit` and emit **exactly**:
+At synthesis time, load the template for resolved `agent_edit_allowed` and emit **exactly**:
 
 1. `## Overview`
 2. `## Summary` (subsections per template — **do not mix survey and apply subsections**)
-3. `## Verification` — **apply only** (`may_edit: true`); omit for survey-only
+3. `## Verification` — **apply only** (`agent_edit_allowed: true`); omit for survey-only
 
 The caller extracts Overview, Summary, and Verification (when present) for PR body composition. Platform sections (for example failure context or run metadata) may be added by the caller.
 
-## Survey PR body (`may_edit: false`)
+## Survey PR body (`agent_edit_allowed: false`)
 
 - Load `assets/pr-body-template-survey.md`
 - **MUST NOT** include `### Changes`, `### Deferred`, or `## Verification`
 - `### Candidates` required when candidates exist; `### Watch` optional
 
-## Apply PR body (`may_edit: true`)
+## Apply PR body (`agent_edit_allowed: true`)
 
 - Load `assets/pr-body-template.md`
 - **MUST NOT** include `### Candidates` or `### Watch` in final output
@@ -59,7 +59,7 @@ Before PR synthesis, run `git diff --name-only` and reconcile **Changes** and **
 
 ## Rules
 
-- Emit **Session Metrics** for checker/logs; PR body uses the `may_edit`-specific template only.
-- When `may_edit` is `false`, use survey template; do not edit files.
-- When `may_edit` is `true`, survey all `hints[]` internally, apply all apply candidates, emit apply template once.
+- Emit **Session Metrics** for checker/logs; PR body uses the `agent_edit_allowed`-specific template only.
+- When `agent_edit_allowed` is `false`, use survey template; do not edit files.
+- When `agent_edit_allowed` is `true`, survey all `hints[]` internally, apply all apply candidates, emit apply template once.
 - Never claim verification passed when commands failed or were not run.

@@ -1,0 +1,30 @@
+id: github-pr-review-pre-existing-excluded-001
+name: github-pr-review excludes pre-existing problems
+description: >-
+  Validate a rule violation that already existed outside the diff is not reported, leaving
+  findings empty.
+tags:
+  - quality
+  - suppression
+inputs:
+  prompt: >-
+    Use github-pr-review with agent_edit_allowed true and agent_edit_target report. The PR changes only
+    README.md. While opening scripts/legacy.sh you notice a rule violation that already
+    existed at the base commit and is not touched by the diff. Do not report it. Write the
+    report JSON with "findings": [] and a summary saying no PR-caused problems were found.
+  context:
+    skip: false
+    pr_number: 11
+    base_sha: "1111111111111111111111111111111111111111"
+    head_sha: "2222222222222222222222222222222222222222"
+    report_path: ".loop-review/pr-11.json"
+    changed_files:
+      - README.md
+    agent_edit_allowed: true
+    agent_edit_target: report
+expected:
+  output_contains:
+    - '"findings": []'
+    - no PR-caused
+  outcomes:
+    - type: task_completed

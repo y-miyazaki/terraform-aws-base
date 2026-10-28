@@ -1,10 +1,12 @@
 <!--
-PR-facing template for refactor automation (may_edit: true).
+PR-facing template for refactor automation (agent_edit_allowed: true).
 
 Load ONLY at synthesis time, after refactor edits complete.
 
 Rules:
 - Keep top-level ## Overview, ## Summary, and ## Verification headings exactly as written.
+- Link every repository path, commit SHA, and workflow/job in Summary tables as a markdown link per category-pr-body-links.md. <linked ...> marks where a link goes; do not emit it, and do not use a plain code span for a linkable item.
+- Keep the table columns as written; do not rename, merge, or drop columns.
 - Use ### Deferred for candidates not applied in this run.
 - Do NOT emit Outcome or Suggested next action.
 -->
@@ -22,15 +24,15 @@ Rules:
 
 ### Changes
 
-| Target                      | What was wrong            | What changed             |
-| --------------------------- | ------------------------- | ------------------------ |
-| `scripts/foo.sh` `symbol()` | <plain-language evidence> | <minimal change summary> |
+| Target                   | What was wrong            | What changed             |
+| ------------------------ | ------------------------- | ------------------------ |
+| <linked path> `symbol()` | <plain-language evidence> | <minimal change summary> |
 
 ### Deferred
 
-| Target           | Why deferred            |
-| ---------------- | ----------------------- |
-| `scripts/bar.sh` | <plain-language reason> |
+| Target        | Why deferred            |
+| ------------- | ----------------------- |
+| <linked path> | <plain-language reason> |
 
 ## Verification
 

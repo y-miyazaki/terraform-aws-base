@@ -18,6 +18,6 @@ Do not edit paths that appear to hold secrets (environment files, credential sto
 
 This skill edits the changelog file only (`CHANGELOG.md` or `changelog_file` from input).
 
-When `may_edit` is `false`, do not edit any file — survey output only.
+When `agent_edit_allowed` is `false`, do not edit any file — survey output only.
 
-When `may_edit` is `true`, edit only `changelog_file` and only when that path is within the resolved allowlist (interactive: skill-specific limits; automation: `Allowed paths` when set).
+When `agent_edit_allowed` is `true`, edit only `changelog_file` and only when that path is within the resolved allowlist (interactive: skill-specific limits; automation: `Allowed paths` when set).

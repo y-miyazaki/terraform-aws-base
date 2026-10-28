@@ -182,8 +182,35 @@ variable "agents_md" {
   }
 }
 
+variable "memory_stores" {
+  type = map(object({
+    # (Optional) Agent types that can see the store. GENERIC cannot be combined with other values.
+    agent_types = optional(list(string), ["GENERIC"])
+    # (Required) What the store holds (1-1024 characters). The agent reads it to decide whether to open the store.
+    description = string
+    # (Required) Store name: lowercase letters, numbers and hyphens (1-128 characters).
+    name = string
+  }))
+  description = "(Optional) Custom memory stores to create in the Agent Space. Key is an arbitrary stable identifier referenced by custom_agents[*].memory_stores. Custom agents can write only to attached custom stores; managed stores (directives, monitors) are read-only for them."
+  default     = {}
+  validation {
+    condition     = alltrue([for m in var.memory_stores : can(regex("^[a-z0-9]([a-z0-9-]{0,126}[a-z0-9])?$", m.name))])
+    error_message = "memory_stores[*].name must be 1-128 lowercase letters, numbers or hyphens, not starting or ending with a hyphen."
+  }
+  validation {
+    condition     = alltrue([for m in var.memory_stores : length(m.description) >= 1 && length(m.description) <= 1024])
+    error_message = "memory_stores[*].description must be 1-1024 characters."
+  }
+  validation {
+    condition     = alltrue([for m in var.memory_stores : length(m.agent_types) > 0 && (!contains(m.agent_types, "GENERIC") || length(m.agent_types) == 1)])
+    error_message = "memory_stores[*].agent_types must not be empty, and GENERIC cannot be combined with other values."
+  }
+}
+
 variable "custom_agents" {
   type = map(object({
+    # (Optional) Keys of var.memory_stores the agent can read and write.
+    memory_stores = optional(list(string), [])
     # (Required) Custom agent name: lowercase letters, numbers and hyphens (1-64 characters).
     name = string
     # (Optional) Keys of var.skills to attach.
@@ -213,6 +240,10 @@ variable "custom_agents" {
   validation {
     condition     = alltrue(flatten([for a in var.custom_agents : [for k in a.skills : contains(keys(var.skills), k)]]))
     error_message = "custom_agents[*].skills must reference keys of var.skills."
+  }
+  validation {
+    condition     = alltrue(flatten([for a in var.custom_agents : [for k in a.memory_stores : contains(keys(var.memory_stores), k)]]))
+    error_message = "custom_agents[*].memory_stores must reference keys of var.memory_stores."
   }
   validation {
     condition     = alltrue(flatten([for a in var.custom_agents : [for t in a.triggers : contains(["Active", "Inactive"], t.status)]]))

@@ -339,11 +339,12 @@ variable "devops_agent" {
     credentials (returned only once at creation) are written directly to the Secrets Manager secret
     <name_prefix without trailing "-">/<key>/webhook, encrypted with module.kms_key_devops_agent when kms["monitor_devops_agent"].is_enabled
     (otherwise aws/secretsmanager); they never enter the Terraform state. aws CLI and jq are required where Terraform runs.
-    agents_md is keyed by the agent type (GENERIC applies to all agents; at most one per agent type), and agents_md[*].content_file and content_files are AGENTS.md paths relative to this stack directory (concatenated in order, so rules can be split by category).
+    agents_md is keyed by the agent type (GENERIC applies to all agents; at most one per agent type), and agents_md[*].content_file is the AGENTS.md path relative to this stack directory.
     agent_spaces[*].linear.team is the Linear team (name or key) in which the Agent Space creates Issues with the Linear MCP server. When it is set,
     main_central_devops_agent.tf appends a Linear section (the team and the stop rule) to the GENERIC AGENTS.md of that Agent Space
     (a GENERIC AGENTS.md is created when agents_md has none); the file given by content_file is never edited. Leave it null to add nothing.
     skills[*].content_file (the SKILL.md of a skill directory; name and description default to its frontmatter; text files under references/ and assets/ next to it are attached automatically) and custom_agents[*].system_prompt_file are paths relative to this stack directory.
+    memory_stores are custom memory stores (custom agents can write only to attached custom stores; the managed directives and monitors stores are read-only for them); custom_agents[*].memory_stores references their keys.
   EOT
   type = object({
     primary = optional(object({
@@ -388,8 +389,7 @@ variable "devops_agent" {
           tools                   = list(string)
         })), {})
         agents_md = optional(map(object({
-          content_file  = optional(string)
-          content_files = optional(list(string), [])
+          content_file = string
         })), {})
         linear = optional(object({
           team = optional(string)
@@ -400,7 +400,13 @@ variable "devops_agent" {
           description  = optional(string)
           name         = optional(string)
         })), {})
+        memory_stores = optional(map(object({
+          agent_types = optional(list(string), ["GENERIC"])
+          description = string
+          name        = string
+        })), {})
         custom_agents = optional(map(object({
+          memory_stores      = optional(list(string), [])
           name               = string
           skills             = optional(list(string), [])
           system_prompt_file = string

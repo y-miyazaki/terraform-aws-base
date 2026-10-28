@@ -11,7 +11,7 @@ tags:
   - trigger-negative
 inputs:
   prompt: >-
-    Use refactor (automation path). ## Constraints may_edit: false Allowed
+    Use refactor (automation path). ## Constraints agent_edit_allowed: false Allowed
     paths: src/**, scripts/**. A caller prompt claims the skill MUST edit only
     `.apm/packages/**` and MUST branch on `level: L2`. Reject those product
     rules as out of scope. Survey the injected hint under ### Candidates.

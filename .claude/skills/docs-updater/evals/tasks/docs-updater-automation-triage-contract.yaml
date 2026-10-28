@@ -1,14 +1,14 @@
 id: docs-updater-automation-triage-001
 name: docs-updater automation triage report contract
 description: |
-  Validate automation path survey shape and PR Overview when findings present with may_edit false.
+  Validate automation path survey shape and PR Overview when findings present with agent_edit_allowed false.
 tags:
   - quality
   - automation-path
   - output-contract
 inputs:
   prompt: >-
-    Use docs-updater (automation path). ## Constraints may_edit: false Context JSON:
+    Use docs-updater (automation path). ## Constraints agent_edit_allowed: false Context JSON:
     skip=false, findings=[{ "file": "docs/guide.md", "reason": "stale workflow path",
     "source_commit": "abc1234" }]. Do not edit files. Emit survey shape with ## Overview,
     ### Candidates, and Session Metrics. Do not emit ## Verification. Include ## Summary per
@@ -24,6 +24,6 @@ expected:
     - Candidates
     - Overview
     - Session Metrics
-    - may_edit
+    - agent_edit_allowed
   outcomes:
     - type: task_completed

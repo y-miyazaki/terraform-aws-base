@@ -46,24 +46,24 @@ Closed set for apply: O1/O2 only. O3 is proposal-first, then O2 slices after use
 
 ## Execution phases and modes
 
-| Phase | Name   | When                                     | Edits |
-| ----- | ------ | ---------------------------------------- | ----- |
-| A     | Survey | Every run                                | No    |
-| B     | Apply  | `may_edit: true` and `write_target: fix` | Yes   |
+| Phase | Name   | When                                                    | Edits |
+| ----- | ------ | ------------------------------------------------------- | ----- |
+| A     | Survey | Every run                                               | No    |
+| B     | Apply  | `agent_edit_allowed: true` and `agent_edit_target: fix` | Yes   |
 
-| Mode     | Phase A | Phase B                           | Maps to           |
-| -------- | ------- | --------------------------------- | ----------------- |
-| `survey` | Yes     | No                                | `may_edit: false` |
-| `apply`  | Yes     | Yes only when `write_target: fix` | `may_edit: true`  |
+| Mode     | Phase A | Phase B                                | Maps to                     |
+| -------- | ------- | -------------------------------------- | --------------------------- |
+| `survey` | Yes     | No                                     | `agent_edit_allowed: false` |
+| `apply`  | Yes     | Yes only when `agent_edit_target: fix` | `agent_edit_allowed: true`  |
 
-Survey discovers candidates in scope (architecture Phase B: `approved_slice` only). Apply fixes **every** candidate marked apply in survey order when `may_edit` is `true` and `write_target` is `fix`. Do not stop after the first candidate. How `may_edit` / `write_target` are resolved: SKILL.md Workflow.
+Survey discovers candidates in scope (architecture Phase B: `approved_slice` only). Apply fixes **every** candidate marked apply in survey order when `agent_edit_allowed` is `true` and `agent_edit_target` is `fix`. Do not stop after the first candidate. How `agent_edit_allowed` / `agent_edit_target` are resolved: SKILL.md Workflow.
 
 ## Intent classification (before edits)
 
-| Intent           | When to use                                                                                        | Path                                                                                                      |
-| ---------------- | -------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
-| **structural**   | Dedupe, extract, clarify, shallow move; default when ambiguous                                     | Survey → when `may_edit` + `write_target: fix`, apply all O1/O2 candidates marked apply; else survey only |
-| **architecture** | User mission is module boundary, deep module, redesign, responsibility split, testability at seams | Phase A proposal → approval → Phase B one O2 slice (`may_edit` + `write_target: fix` + `approved_slice`)  |
+| Intent           | When to use                                                                                        | Path                                                                                                                     |
+| ---------------- | -------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| **structural**   | Dedupe, extract, clarify, shallow move; default when ambiguous                                     | Survey → when `agent_edit_allowed` + `agent_edit_target: fix`, apply all O1/O2 candidates marked apply; else survey only |
+| **architecture** | User mission is module boundary, deep module, redesign, responsibility split, testability at seams | Phase A proposal → approval → Phase B one O2 slice (`agent_edit_allowed` + `agent_edit_target: fix` + `approved_slice`)  |
 
 ## Architecture-improvement triggers (examples)
 
@@ -94,7 +94,7 @@ Forbidden for apply (always — not automation-only): cross-package redesign, Go
 **Phase B (after explicit user approval of one slice):**
 
 - User names **one** approved slice from the proposal
-- Run survey + apply for that slice only — **O2 cap** — only when `may_edit` is `true` and `write_target` is `fix`
+- Run survey + apply for that slice only — **O2 cap** — only when `agent_edit_allowed` is `true` and `agent_edit_target` is `fix`
 - Same verification gates as structural intent
 
 **Never on automation path:** detect hints stay structural (O1/O2) only.

@@ -24,8 +24,8 @@ Gate IDs are for agent self-check and Deferred reasons. Issue identity in report
 
 ### COMM-01: Thread history
 
-- [ ] Create a new Issue comment via `scripts/issue_comment.sh create` on each FSM transition and on re-triage after a human reply
-- [ ] Use `scripts/issue_comment.sh correct` only for minor corrections to the latest marked bot comment in the same FSM state
+- [ ] Create a new Issue comment via `scripts/issue_comment.sh create` on each FSM transition and on re-triage after a human reply (interactive; in a message run `message.md` plays the same role)
+- [ ] Use `scripts/issue_comment.sh correct` only for minor corrections to the latest marked bot comment in the same FSM state (interactive only)
 - [ ] Do not overwrite prior triage analysis or edit human comments
 - **PASS** if the thread would retain prior bot analysis as separate comments
 
@@ -33,7 +33,7 @@ Gate IDs are for agent self-check and Deferred reasons. Issue identity in report
 
 ### SCOPE-01: API-only side effects
 
-- [ ] Labels and Issue comments only when `may_edit` is false
+- [ ] Labels and Issue comments only when `agent_edit_allowed` is false
 - [ ] Do not open PRs or start github-issue-autofix
 - [ ] Do not fire `repository_dispatch`
 - **PASS** if no repository file edits under L1 constraints

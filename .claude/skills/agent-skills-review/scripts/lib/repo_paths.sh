@@ -18,7 +18,56 @@
 # - Agent directory exclusion aligns with agent-skills.instructions.md S-05 plus .vscode (editor-local)
 #######################################
 
-declare -A REPO_PATHS_GITIGNORE_CACHE=()
+# "${assoc+set}" tests element [0], so use declare -p to detect an existing array
+if ! declare -p REPO_PATHS_GITIGNORE_CACHE > /dev/null 2>&1; then
+    declare -gA REPO_PATHS_GITIGNORE_CACHE=()
+fi
+
+#######################################
+# repo_append_find_prune_args: Append standard find prune predicates to an array
+#
+# Globals:
+#   REPO_PATHS_EXTRA_PRUNES - Comma-separated repository-relative prune roots
+#   REPO_PATHS_INCLUDE_AGENTS - When true, do not prune agent directories
+#
+# Arguments:
+#   $1 - Name reference to find argument array
+#   $@ - Optional extra repository-relative prune roots (merged with REPO_PATHS_EXTRA_PRUNES)
+#
+# Outputs:
+#   None
+#
+# Returns:
+#   None
+#
+# Usage:
+#   local -a find_args=(.)
+#   repo_append_find_prune_args find_args
+#   find_args+=(-name '*.md' -type f -print)
+#   find "${find_args[@]}" | sed 's|^\./||' | repo_filter_paths
+#
+#######################################
+function repo_append_find_prune_args {
+    # shellcheck disable=SC2178 # nameref to caller array by name
+    local -n _out=$1
+    shift
+    local -a extra_prunes=()
+    local extra
+
+    mapfile -t extra_prunes < <(repo_list_extra_prune_roots "$@")
+
+    _out+=(\( -path './.git')
+    if [[ ${REPO_PATHS_INCLUDE_AGENTS:-false} != "true" ]]; then
+        _out+=(-o -path './.agents' -o -path './.cursor' -o -path './.claude' -o -path './.codex' -o -path './.kiro' -o -path './.vscode')
+    fi
+    _out+=(-o -path './apm_modules' -o -path './node_modules' -o -path './dist' -o -path './build' -o -path './bin')
+    for extra in "${extra_prunes[@]}"; do
+        [[ -z ${extra} ]] && continue
+        extra="${extra#./}"
+        _out+=(-o -path "./${extra}" -o -path "./${extra}/*")
+    done
+    _out+=(\) -prune -o)
+}
 
 #######################################
 # repo_apply_git_rename: Classify a git rename for detect delta consumers
@@ -117,52 +166,6 @@ function repo_array_append_unique {
         [[ ${existing} == "${path}" ]] && return 0
     done
     _out+=("${path}")
-}
-
-#######################################
-# repo_append_find_prune_args: Append standard find prune predicates to an array
-#
-# Globals:
-#   REPO_PATHS_EXTRA_PRUNES - Comma-separated repository-relative prune roots
-#   REPO_PATHS_INCLUDE_AGENTS - When true, do not prune agent directories
-#
-# Arguments:
-#   $1 - Name reference to find argument array
-#   $@ - Optional extra repository-relative prune roots (merged with REPO_PATHS_EXTRA_PRUNES)
-#
-# Outputs:
-#   None
-#
-# Returns:
-#   None
-#
-# Usage:
-#   local -a find_args=(.)
-#   repo_append_find_prune_args find_args
-#   find_args+=(-name '*.md' -type f -print)
-#   find "${find_args[@]}" | sed 's|^\./||' | repo_filter_paths
-#
-#######################################
-function repo_append_find_prune_args {
-    # shellcheck disable=SC2178 # nameref to caller array by name
-    local -n _out=$1
-    shift
-    local -a extra_prunes=()
-    local extra
-
-    mapfile -t extra_prunes < <(repo_list_extra_prune_roots "$@")
-
-    _out+=(\( -path './.git')
-    if [[ ${REPO_PATHS_INCLUDE_AGENTS:-false} != "true" ]]; then
-        _out+=(-o -path './.agents' -o -path './.cursor' -o -path './.claude' -o -path './.codex' -o -path './.kiro' -o -path './.vscode')
-    fi
-    _out+=(-o -path './apm_modules' -o -path './node_modules' -o -path './dist' -o -path './build' -o -path './bin')
-    for extra in "${extra_prunes[@]}"; do
-        [[ -z ${extra} ]] && continue
-        extra="${extra#./}"
-        _out+=(-o -path "./${extra}" -o -path "./${extra}/*")
-    done
-    _out+=(\) -prune -o)
 }
 
 #######################################
@@ -409,12 +412,14 @@ function repo_path_is_generated_or_agent {
 #######################################
 function repo_path_is_gitignored {
     local path="$1"
-    local cache_key="__rp_${path//\//_}"
-    cache_key="${cache_key//./_D_}"
+    # An empty path is not a valid array subscript and can never be ignored
+    [[ -n ${path} ]] || return 1
+    # Key on the path itself: any mangling (e.g. "a/b" vs "a_b") would make distinct paths collide
+    local cache_key="${path}"
     local cache_hit=0
     local cached_value=0
 
-    if [[ -z ${REPO_PATHS_GITIGNORE_CACHE+set} ]]; then
+    if ! declare -p REPO_PATHS_GITIGNORE_CACHE > /dev/null 2>&1; then
         declare -gA REPO_PATHS_GITIGNORE_CACHE=()
     fi
 
@@ -424,25 +429,19 @@ function repo_path_is_gitignored {
     if ! git rev-parse --is-inside-work-tree > /dev/null 2>&1; then
         return 1
     fi
-    set +u
-    if [[ ${REPO_PATHS_GITIGNORE_CACHE[${cache_key}]+set} == set ]]; then
+    if [[ ${REPO_PATHS_GITIGNORE_CACHE["${cache_key}"]+set} == set ]]; then
         cache_hit=1
-        cached_value="${REPO_PATHS_GITIGNORE_CACHE[${cache_key}]}"
+        cached_value="${REPO_PATHS_GITIGNORE_CACHE["${cache_key}"]}"
     fi
-    set -u
     if [[ ${cache_hit} -eq 1 ]]; then
         [[ ${cached_value} -eq 1 ]]
         return
     fi
     if git check-ignore -q -- "${path}" 2> /dev/null; then
-        set +u
-        REPO_PATHS_GITIGNORE_CACHE[${cache_key}]=1
-        set -u
+        REPO_PATHS_GITIGNORE_CACHE["${cache_key}"]=1
         return 0
     fi
-    set +u
-    REPO_PATHS_GITIGNORE_CACHE[${cache_key}]=0
-    set -u
+    REPO_PATHS_GITIGNORE_CACHE["${cache_key}"]=0
     return 1
 }
 

@@ -2,7 +2,7 @@ name: docs-updater-eval
 description: >-
   Evaluation suite for docs-updater.
   Verifies interactive/hook path (detect_changes.sh) and automation path (findings JSON),
-  may_edit behavior, skip conditions, and structured report output.
+  agent_edit_allowed behavior, skip conditions, and structured report output.
 skill: docs-updater
 version: "1.3"
 config:

@@ -9,15 +9,15 @@ tags:
   - boundary-guardrail
 inputs:
   prompt: >-
-    Use tech-debt with may_edit true. The user asks to extract the shared validator and bump
+    Use tech-debt with agent_edit_allowed true. The user asks to extract the shared validator and bump
     the EOL dependency now. Classify injected signals only; do not edit application or
     lockfile paths for structural work. Note the fix request as out of scope in ### Deferred
-    or Overview. Emit apply shape with report_file under ### Changes and ## Verification.
+    or Overview. Emit apply shape with agent_report_file under ### Changes and ## Verification.
     Emit ## Overview and ## Summary per common-output-format.md. Include Category labels on
     rows.
   context:
     commit_range: eval0001..eval0002
-    report_file: docs/report/tech-debt/2026-07-19.md
+    agent_report_file: docs/report/tech-debt/2026-07-19.md
     skip: false
     signals:
       - kind: eol_hint

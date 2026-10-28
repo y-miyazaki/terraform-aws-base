@@ -178,6 +178,16 @@ devops_agent/skills/<skill-name>/
 
 `content_file` points to `SKILL.md`. Terraform attaches the text files (`csv`, `json`, `md`, `txt`, `yaml`, `yml`) under `references/` and `assets/` in the same directory to the skill automatically. `SKILL.md` has no frontmatter because the name and description are passed as metadata. Scripts are not supported by AWS DevOps Agent.
 
+#### Per-alarm suppression
+
+To suppress future investigations of one alarm, comment on its `devops-agent` Issue. The follow-up skill records the decision in the memory `monitors-<alarm-name>` of the custom memory store `suppressions`, with `## Suppression: ACTIVE`.
+
+- Custom agents can write only to the custom stores attached to them; the managed `directives` and `monitors` stores are read-only for them. Create the store with `memory_stores` and attach it to the follow-up agent with `custom_agents[*].memory_stores` (`terraform.prd.tfvars` sets both). Without them, the follow-up agent saves nothing and reports `memory write unavailable: suppressions`.
+- A human can also record the same memory in the `directives` store with Chat. The investigation reads both stores.
+- Write the reason in the comment, for example 「magaseek 解約済みのため今後チェック不要」. To lift the suppression, comment 「監視再開して」.
+- On the next firing, the investigation reads the memory (rule in `devops_agent/agents_md/generic.md`) and stops early. It sends one Slack reply, creates no Issue, PR, or memory, and investigates further only when you ask in that investigation.
+- Triage does not read this memory, so the investigation still starts and its short run is billed. The comment examples the follow-up skill classifies are in `devops_agent/skills/linear-issue-pr-followup/SKILL.md` (Human comment examples).
+
 #### Issue and PR templates
 
 - The Issue has a `Pull request` section. It holds the full PR URL with its state (`Draft`) when a PR was created, and `none (<reason>)` when none was created. The agent creates the Issue first with `none (PR not created yet)` and updates the section after the PR step, so the placeholder never remains.

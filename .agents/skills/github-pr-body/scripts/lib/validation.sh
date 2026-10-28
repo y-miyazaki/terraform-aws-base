@@ -21,10 +21,12 @@
 # Ensure common.sh is loaded for logging functions
 if ! declare -f log > /dev/null 2>&1; then
     # Try to source common.sh from the same directory
-    SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+    # Private name: do not overwrite the caller's SCRIPT_DIR
+    _LIB_COMMON_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
     # shellcheck source=./common.sh
     # shellcheck disable=SC1091
-    source "$SCRIPT_DIR/common.sh"
+    source "${_LIB_COMMON_DIR}/common.sh"
+    unset _LIB_COMMON_DIR
 fi
 
 #######################################
@@ -551,12 +553,12 @@ function validate_yaml_file {
         # Check if the PyYAML package is available. If not, warn and return success
         # so callers that can't validate still pass. This avoids failing when
         # python3 is present but PyYAML is not installed in the environment.
-        if ! python3 -c "import pkgutil; assert pkgutil.find_loader('yaml') is not None" > /dev/null 2>&1; then
+        if ! python3 -c "import importlib.util, sys; sys.exit(0 if importlib.util.find_spec('yaml') else 1)" > /dev/null 2>&1; then
             log "WARN" "PyYAML not available; cannot validate YAML file: $yaml_file"
             return 0
         fi
 
-        if python3 -c "import yaml; yaml.safe_load(open('$yaml_file'))" > /dev/null 2>&1; then
+        if python3 -c "import sys, yaml; yaml.safe_load(open(sys.argv[1]))" "$yaml_file" > /dev/null 2>&1; then
             log "DEBUG" "YAML file is valid: $yaml_file"
             return 0
         fi

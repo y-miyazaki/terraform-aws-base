@@ -10,6 +10,7 @@
 # Design Rules:
 # - Consume issue event fields from environment variables
 # - Skip bot actors and bot issue comments
+# - result.entity.kind is always issue (the loop entity platform requires it when skip=false)
 # - Output structured JSON via shared lib/json.sh
 # - Exit 0 on success; fatal errors emit status=error JSON and exit 1
 # - Source shared helpers from scripts/lib/all.sh (synced via scripts/self/apm/sync_skill_lib.sh)
@@ -29,7 +30,6 @@
 #   ISSUE_ACTOR               Event actor login
 #   ISSUE_ACTOR_TYPE          Event actor type (User, Bot, ...)
 #   ISSUE_COMMENT_USER_TYPE   Comment author type for issue_comment events (optional)
-#   ISSUE_LABEL_NAME          Label name for labeled/unlabeled events (optional)
 #   GITHUB_EVENT_PATH         Path to GitHub webhook event JSON (hydrates ISSUE_* when ISSUE_NUMBER unset)
 #   GITHUB_EVENT_NAME         GitHub event name for hydration (issues, issue_comment, workflow_dispatch)
 #   GITHUB_REPOSITORY         Repository slug for workflow_dispatch gh api fetch
@@ -174,7 +174,6 @@ function hydrate_issue_env_from_event {
     ISSUE_ACTOR="$(jq -r '.sender.login // ""' <<< "${event_json}")"
     ISSUE_ACTOR_TYPE="$(jq -r '.sender.type // ""' <<< "${event_json}")"
     ISSUE_COMMENT_USER_TYPE="$(jq -r '.comment.user.type // ""' <<< "${event_json}")"
-    ISSUE_LABEL_NAME="$(jq -r '.label.name // ""' <<< "${event_json}")"
 }
 
 #######################################
@@ -325,60 +324,6 @@ function should_skip_issue {
 }
 
 #######################################
-# should_request_dispatch: Return whether to emit dispatch flags (Y3 intake)
-#
-# Globals:
-#   ISSUE_ACTOR_TYPE
-#   ISSUE_EVENT_NAME
-#   ISSUE_EVENT_ACTION
-#   ISSUE_COMMENT_USER_TYPE
-#   ISSUE_LABELS_JSON
-#   ISSUE_LABEL_NAME
-#
-# Arguments:
-#   None
-#
-# Outputs:
-#   None
-#
-# Returns:
-#   0 when repository_dispatch should be requested, 1 otherwise
-#
-# Usage:
-#   if should_request_dispatch; then ...
-#
-#######################################
-function should_request_dispatch {
-    if [[ ${ISSUE_ACTOR_TYPE} == "Bot" ]]; then
-        return 1
-    fi
-
-    if [[ ${ISSUE_EVENT_NAME} == "issue_comment" && ${ISSUE_COMMENT_USER_TYPE:-} == "Bot" ]]; then
-        return 1
-    fi
-
-    if jq -e --arg name "triage:failed" 'contains([$name])' <<< "${ISSUE_LABELS_JSON}" > /dev/null 2>&1; then
-        return 1
-    fi
-
-    if ! jq -e 'contains(["triage:ready"]) and contains(["autofix"]) and (contains(["triage:failed"]) | not)' <<< "${ISSUE_LABELS_JSON}" > /dev/null 2>&1; then
-        return 1
-    fi
-
-    # Autofix workflow already handles labeled(autofix) directly — avoid double intake.
-    if [[ ${ISSUE_EVENT_NAME} == "issues" && ${ISSUE_EVENT_ACTION} == "labeled" && ${ISSUE_LABEL_NAME:-} == "autofix" ]]; then
-        return 1
-    fi
-
-    # Hand off when triage:ready is applied while autofix is already present.
-    if [[ ${ISSUE_EVENT_NAME} == "issues" && ${ISSUE_EVENT_ACTION} == "labeled" && ${ISSUE_LABEL_NAME:-} == "triage:ready" ]]; then
-        return 0
-    fi
-
-    return 1
-}
-
-#######################################
 # resolve_comment_id_json: Resolve comment_id field for result JSON
 #
 # Globals:
@@ -457,38 +402,21 @@ function build_verifier_context {
 #
 #######################################
 function build_result_json {
-    local comment_id payload
+    local comment_id
     comment_id="$(resolve_comment_id_json)"
 
-    if should_request_dispatch; then
-        payload="$(jq -nc --arg n "${ISSUE_NUMBER}" '{issue_number: $n}')"
-        json_object \
-            handoff_key "entity:issue:${ISSUE_NUMBER}" \
-            issue_number "$(json_number "${ISSUE_NUMBER}")" \
-            title "${ISSUE_TITLE}" \
-            body "${ISSUE_BODY}" \
-            labels "${ISSUE_LABELS_JSON}" \
-            event_name "${ISSUE_EVENT_NAME}" \
-            event_action "${ISSUE_EVENT_ACTION}" \
-            comment_id "${comment_id}" \
-            actor "${ISSUE_ACTOR}" \
-            actor_type "${ISSUE_ACTOR_TYPE}" \
-            dispatch_requested "true" \
-            dispatch_event_type "loop-github-issue-autofix" \
-            dispatch_client_payload "${payload}"
-    else
-        json_object \
-            handoff_key "entity:issue:${ISSUE_NUMBER}" \
-            issue_number "$(json_number "${ISSUE_NUMBER}")" \
-            title "${ISSUE_TITLE}" \
-            body "${ISSUE_BODY}" \
-            labels "${ISSUE_LABELS_JSON}" \
-            event_name "${ISSUE_EVENT_NAME}" \
-            event_action "${ISSUE_EVENT_ACTION}" \
-            comment_id "${comment_id}" \
-            actor "${ISSUE_ACTOR}" \
-            actor_type "${ISSUE_ACTOR_TYPE}"
-    fi
+    json_object \
+        handoff_key "entity:issue:${ISSUE_NUMBER}" \
+        entity '{"kind":"issue"}' \
+        issue_number "$(json_number "${ISSUE_NUMBER}")" \
+        title "${ISSUE_TITLE}" \
+        body "${ISSUE_BODY}" \
+        labels "${ISSUE_LABELS_JSON}" \
+        event_name "${ISSUE_EVENT_NAME}" \
+        event_action "${ISSUE_EVENT_ACTION}" \
+        comment_id "${comment_id}" \
+        actor "${ISSUE_ACTOR}" \
+        actor_type "${ISSUE_ACTOR_TYPE}"
 }
 
 #######################################
@@ -582,7 +510,6 @@ function main {
     ISSUE_EVENT_ACTION="${ISSUE_EVENT_ACTION:-}"
     ISSUE_ACTOR="${ISSUE_ACTOR:-}"
     ISSUE_ACTOR_TYPE="${ISSUE_ACTOR_TYPE:-}"
-    ISSUE_LABEL_NAME="${ISSUE_LABEL_NAME:-}"
 
     if should_skip_issue; then
         skip="true"

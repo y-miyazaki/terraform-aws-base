@@ -138,6 +138,10 @@ function error_exit {
 function execute_command {
     # Execute a command safely without eval. Accepts arguments and runs them
     # Example: execute_command aws s3 cp "src" "dest"
+    if [[ $# -lt 1 ]]; then
+        error_exit "execute_command requires a command"
+    fi
+
     if is_dry_run; then
         # Always print dry-run info regardless of VERBOSE so users see planned actions
         echo "DRY-RUN: Would execute: $*" >&2
@@ -146,11 +150,7 @@ function execute_command {
 
     log "DEBUG" "Executing: $*"
 
-    # Execute the command in multi-argument style only to avoid injection risks.
-    if [[ $# -lt 2 ]]; then
-        error_exit "execute_command requires command and arguments as separate parameters"
-    fi
-
+    # Executed as an argument array (never through a shell) to avoid injection risks.
     "${@}"
 }
 
@@ -281,6 +281,43 @@ function log {
 }
 
 #######################################
+# require_dependencies: Exit when required command-line tools are missing
+#
+# Description:
+#   Calls validate_dependencies and exits via error_exit on missing tools
+#
+# Globals:
+#   None
+#
+# Arguments:
+#   $@ - List of required tools/commands
+#
+# Outputs:
+#   None
+#
+# Returns:
+#   None (exits on missing dependencies)
+#
+# Usage:
+#   require_dependencies "aws" "jq" "docker"
+#
+#######################################
+function require_dependencies {
+    local -a missing_tools=()
+    local tool
+
+    while IFS= read -r tool; do
+        if [[ -n ${tool} ]]; then
+            missing_tools+=("${tool}")
+        fi
+    done < <(validate_dependencies "$@" || true)
+
+    if [[ ${#missing_tools[@]} -gt 0 ]]; then
+        error_exit "Missing required tools: ${missing_tools[*]}. Please install them and ensure they are in PATH."
+    fi
+}
+
+#######################################
 # validate_dependencies: Report missing command-line tools
 #
 # Description:
@@ -320,43 +357,6 @@ function validate_dependencies {
 
     log "INFO" "All required dependencies are available: ${required_tools[*]}"
     return 0
-}
-
-#######################################
-# require_dependencies: Exit when required command-line tools are missing
-#
-# Description:
-#   Calls validate_dependencies and exits via error_exit on missing tools
-#
-# Globals:
-#   None
-#
-# Arguments:
-#   $@ - List of required tools/commands
-#
-# Outputs:
-#   None
-#
-# Returns:
-#   None (exits on missing dependencies)
-#
-# Usage:
-#   require_dependencies "aws" "jq" "docker"
-#
-#######################################
-function require_dependencies {
-    local -a missing_tools=()
-    local tool
-
-    while IFS= read -r tool; do
-        if [[ -n ${tool} ]]; then
-            missing_tools+=("${tool}")
-        fi
-    done < <(validate_dependencies "$@" || true)
-
-    if [[ ${#missing_tools[@]} -gt 0 ]]; then
-        error_exit "Missing required tools: ${missing_tools[*]}. Please install them and ensure they are in PATH."
-    fi
 }
 
 #######################################

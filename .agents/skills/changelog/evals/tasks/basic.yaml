@@ -7,7 +7,7 @@ tags:
   - output-contract
 inputs:
   prompt: >-
-    Use changelog with may_edit true. Process the injected conventional commits and emit
+    Use changelog with agent_edit_allowed true. Process the injected conventional commits and emit
     apply shape with ## Overview, ### Changes, optional ### Skipped, and ## Verification. Do
     not emit ### Candidates. Include ## Summary per common-output-format.md.
   context:
