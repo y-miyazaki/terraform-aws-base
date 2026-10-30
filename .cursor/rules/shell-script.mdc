@@ -1,6 +1,6 @@
 ---
-description: Shell Script Instructions
-globs: **/*.sh
+description: "Shell Script Instructions"
+globs: "**/*.sh"
 ---
 
 # Shell Script Instructions

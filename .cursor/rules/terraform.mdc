@@ -1,6 +1,9 @@
 ---
-description: Terraform Instructions
-globs: **/*.tf, **/*.tfvars, **/*.hcl
+description: "Terraform Instructions"
+globs:
+  - "**/*.tf"
+  - "**/*.tfvars"
+  - "**/*.hcl"
 ---
 
 # Terraform Instructions

@@ -1,6 +1,10 @@
 ---
-description: Markdown Documentation Instructions
-globs: README.md, CONTRIBUTING.md, docs/**/*.md, mkdocs.yml
+description: "Markdown Documentation Instructions"
+globs:
+  - "README.md"
+  - "CONTRIBUTING.md"
+  - "docs/**/*.md"
+  - "mkdocs.yml"
 ---
 
 # Markdown Instructions

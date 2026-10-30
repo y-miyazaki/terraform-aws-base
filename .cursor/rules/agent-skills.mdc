@@ -1,6 +1,8 @@
 ---
-description: Agent Skills Development Instructions
-globs: **/skills/**/SKILL.md, **/skills/**/references/*.md
+description: "Agent Skills Development Instructions"
+globs:
+  - "**/skills/**/SKILL.md"
+  - "**/skills/**/references/*.md"
 ---
 
 # Agent Skills Instructions
