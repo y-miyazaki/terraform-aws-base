@@ -1,10 +1,6 @@
 ---
-description: "Writing Instruction Files Instructions"
-globs:
-  - "**/instructions/*.instructions.md"
-  - "**/.cursor/rules/*.mdc"
-  - "**/.kiro/steering/*.md"
-  - "**/.claude/rules/*.md"
+description: Writing Instruction Files Instructions
+globs: **/instructions/*.instructions.md, **/.cursor/rules/*.mdc, **/.kiro/steering/*.md, **/.claude/rules/*.md
 ---
 
 # Instruction Files Instructions

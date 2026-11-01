@@ -1,5 +1,5 @@
 lockfile_version: '1'
-apm_version: 0.32.0
+apm_version: 0.35.0
 dependencies:
 - repo_url: y-miyazaki/config
   name: config-aws
@@ -340,9 +340,9 @@ dependencies:
     .claude/skills/markdown-validation/scripts/lib/yaml_map_order.py: sha256:eb542fe34e2e1c11c08d0f78c4717cb3521fbe5ae2f6e05712317fa5478ccf80
     .claude/skills/markdown-validation/scripts/validate.sh: sha256:e3539d49e2c14344c3a36960a0af773871233964f163b9e4044ed5cefdfc9efa
     .cursor/agents/test-engineer.md: sha256:8dfd917e4b2652f8eedc6355660732645a18a85ee803cc8e82a83884d9e5c390
-    .cursor/rules/agent-skills.mdc: sha256:aafb607db4e03bfbfc609e3836be3cf81cc67d80b4fa20836cc8b7309d27ca55
-    .cursor/rules/instructions.mdc: sha256:5a189c964fab5c53593cbb83a7bd63f9e06f7794e680747ed452f6a270767d9a
-    .cursor/rules/markdown.mdc: sha256:e77c6b8ca2523de09eb9ada60ea18e8fbbeaae6a92f70f9b6f887a4f73387fa7
+    .cursor/rules/agent-skills.mdc: sha256:56fd2e38618afbf0118051ceae5eb8992a19c4b756d338750a553b2064d5c823
+    .cursor/rules/instructions.mdc: sha256:1e1080bb01e9172c6bba3c14e65599b7d77eff6bdf562d59585f5e470a0e4866
+    .cursor/rules/markdown.mdc: sha256:75df65f44fd4f213387152822fd5d3e09b52b1d2f94a252f070ffd82e32659a7
   content_hash: sha256:0bac24052d0b6ba4493beb0859f53dd4fb9977b98f19d91a8deb22f933e7dd5d
   declared_license: Apache-2.0
 - repo_url: y-miyazaki/config
@@ -1112,7 +1112,7 @@ dependencies:
     .claude/skills/github-actions-validation/scripts/lib/validation.sh: sha256:90d4a03121954f13303571b84e4590976040d42d47015fbc0b591d0315d8a502
     .claude/skills/github-actions-validation/scripts/lib/yaml_map_order.py: sha256:eb542fe34e2e1c11c08d0f78c4717cb3521fbe5ae2f6e05712317fa5478ccf80
     .claude/skills/github-actions-validation/scripts/validate.sh: sha256:95a9b6a15968a74f9a4093183d104c971af0420181846745f2e5d2c25d2596e8
-    .cursor/rules/github-actions-workflow.mdc: sha256:1e8aa24cfc1558fac2c385b4a2f5e36205280bd32f338c55f80dafc471dba6f2
+    .cursor/rules/github-actions-workflow.mdc: sha256:9b7008db1503a9f24629bbb514ed6b8547850cd646a6c5866d3cc919b5239e82
   content_hash: sha256:9849f79eb37933a0d7e0b5c253e0c3120ce05be6e9dea1b73239a382187fc675
   declared_license: Apache-2.0
 - repo_url: y-miyazaki/config
@@ -2237,8 +2237,8 @@ dependencies:
     .claude/skills/shell-script-validation/scripts/lib/validation.sh: sha256:90d4a03121954f13303571b84e4590976040d42d47015fbc0b591d0315d8a502
     .claude/skills/shell-script-validation/scripts/lib/yaml_map_order.py: sha256:eb542fe34e2e1c11c08d0f78c4717cb3521fbe5ae2f6e05712317fa5478ccf80
     .claude/skills/shell-script-validation/scripts/validate.sh: sha256:c8996fc182f607a11be33eac6d8a62e494461c1d0c45316bf224a2f216964b32
-    .cursor/rules/bats.mdc: sha256:9e10de6308b02f26ccf1a58051977a46b1622ab3feb04458ec6d0bb21f2694d6
-    .cursor/rules/shell-script.mdc: sha256:b03f45b6302df3015d165e718a3b60f58f73d83bb81f37c8618a904f76f11eb9
+    .cursor/rules/bats.mdc: sha256:46fa97003bbdfbe2a49c4e269c605ca920d2f652238be0f44f822d25a1f39b27
+    .cursor/rules/shell-script.mdc: sha256:5a3d9d3a3e0f52b4f68267e3c5ae78afc439f264a80563444c1879dc17bb2855
   content_hash: sha256:b7f937aa7bf35ebcfecf50076c9a6ceba759de524d919dd28f41fb69a4d73aba
   declared_license: Apache-2.0
 - repo_url: y-miyazaki/config
@@ -2501,7 +2501,7 @@ dependencies:
     .claude/skills/terraform-validation/scripts/lib/validation.sh: sha256:90d4a03121954f13303571b84e4590976040d42d47015fbc0b591d0315d8a502
     .claude/skills/terraform-validation/scripts/lib/yaml_map_order.py: sha256:eb542fe34e2e1c11c08d0f78c4717cb3521fbe5ae2f6e05712317fa5478ccf80
     .claude/skills/terraform-validation/scripts/validate.sh: sha256:85273c5900de8981739850b36359698d06b29ddc970a1d14e5c7342b3c9d72c2
-    .cursor/rules/terraform.mdc: sha256:15b2a6dae53086625dc7ce39ab020ceb94c328f19e6201207005fb5ef0842a56
+    .cursor/rules/terraform.mdc: sha256:75916a122516ab4dd4ad5a27b09e0efa4bc01c087000ccdcd81c5de4dd9f3bd9
   content_hash: sha256:b85bed704a31032ce0b2a3a0b4c043b7033c7e0fc674e66498505d4d4ee1382b
   declared_license: Apache-2.0
 - repo_url: y-miyazaki/config
@@ -2518,7 +2518,7 @@ dependencies:
   - .cursor/rules/terraform-aws.mdc
   deployed_file_hashes:
     .claude/rules/terraform-aws.md: sha256:50904365fd19f7b4a86481437813ecbfdaa81c792c5ac65b96e44b85dadabd6b
-    .cursor/rules/terraform-aws.mdc: sha256:0d904250c07cc839c6429dea2872b1f91c404c6ad68e076494733905ef16c243
+    .cursor/rules/terraform-aws.mdc: sha256:e1111e68acdd2947b0e19e425bcbec4b49cda7e7c103c04985a4c2767b221de9
   content_hash: sha256:9abe8a872f9c229d94933c7bf7228ea387c5815301061bf5a5080656f92cc9e0
   declared_license: Apache-2.0
 - repo_url: y-miyazaki/config
@@ -13364,7 +13364,7 @@ deployments:
   owners:
   - y-miyazaki/config/.apm/packages/common
   active_owner: y-miyazaki/config/.apm/packages/common
-  content_hash: sha256:aafb607db4e03bfbfc609e3836be3cf81cc67d80b4fa20836cc8b7309d27ca55
+  content_hash: sha256:56fd2e38618afbf0118051ceae5eb8992a19c4b756d338750a553b2064d5c823
 - kind: project-relative
   target: cursor
   value: .cursor/rules/bats.mdc
@@ -13373,7 +13373,7 @@ deployments:
   owners:
   - y-miyazaki/config/.apm/packages/shell-script
   active_owner: y-miyazaki/config/.apm/packages/shell-script
-  content_hash: sha256:9e10de6308b02f26ccf1a58051977a46b1622ab3feb04458ec6d0bb21f2694d6
+  content_hash: sha256:46fa97003bbdfbe2a49c4e269c605ca920d2f652238be0f44f822d25a1f39b27
 - kind: project-relative
   target: cursor
   value: .cursor/rules/github-actions-workflow.mdc
@@ -13382,7 +13382,7 @@ deployments:
   owners:
   - y-miyazaki/config/.apm/packages/github-actions
   active_owner: y-miyazaki/config/.apm/packages/github-actions
-  content_hash: sha256:1e8aa24cfc1558fac2c385b4a2f5e36205280bd32f338c55f80dafc471dba6f2
+  content_hash: sha256:9b7008db1503a9f24629bbb514ed6b8547850cd646a6c5866d3cc919b5239e82
 - kind: project-relative
   target: cursor
   value: .cursor/rules/instructions.mdc
@@ -13391,7 +13391,7 @@ deployments:
   owners:
   - y-miyazaki/config/.apm/packages/common
   active_owner: y-miyazaki/config/.apm/packages/common
-  content_hash: sha256:5a189c964fab5c53593cbb83a7bd63f9e06f7794e680747ed452f6a270767d9a
+  content_hash: sha256:1e1080bb01e9172c6bba3c14e65599b7d77eff6bdf562d59585f5e470a0e4866
 - kind: project-relative
   target: cursor
   value: .cursor/rules/markdown.mdc
@@ -13400,7 +13400,7 @@ deployments:
   owners:
   - y-miyazaki/config/.apm/packages/common
   active_owner: y-miyazaki/config/.apm/packages/common
-  content_hash: sha256:e77c6b8ca2523de09eb9ada60ea18e8fbbeaae6a92f70f9b6f887a4f73387fa7
+  content_hash: sha256:75df65f44fd4f213387152822fd5d3e09b52b1d2f94a252f070ffd82e32659a7
 - kind: project-relative
   target: cursor
   value: .cursor/rules/shell-script.mdc
@@ -13409,7 +13409,7 @@ deployments:
   owners:
   - y-miyazaki/config/.apm/packages/shell-script
   active_owner: y-miyazaki/config/.apm/packages/shell-script
-  content_hash: sha256:b03f45b6302df3015d165e718a3b60f58f73d83bb81f37c8618a904f76f11eb9
+  content_hash: sha256:5a3d9d3a3e0f52b4f68267e3c5ae78afc439f264a80563444c1879dc17bb2855
 - kind: project-relative
   target: cursor
   value: .cursor/rules/terraform-aws.mdc
@@ -13418,7 +13418,7 @@ deployments:
   owners:
   - y-miyazaki/config/.apm/packages/terraform-aws
   active_owner: y-miyazaki/config/.apm/packages/terraform-aws
-  content_hash: sha256:0d904250c07cc839c6429dea2872b1f91c404c6ad68e076494733905ef16c243
+  content_hash: sha256:e1111e68acdd2947b0e19e425bcbec4b49cda7e7c103c04985a4c2767b221de9
 - kind: project-relative
   target: cursor
   value: .cursor/rules/terraform.mdc
@@ -13427,7 +13427,97 @@ deployments:
   owners:
   - y-miyazaki/config/.apm/packages/terraform
   active_owner: y-miyazaki/config/.apm/packages/terraform
-  content_hash: sha256:15b2a6dae53086625dc7ce39ab020ceb94c328f19e6201207005fb5ef0842a56
+  content_hash: sha256:75916a122516ab4dd4ad5a27b09e0efa4bc01c087000ccdcd81c5de4dd9f3bd9
+- kind: uri
+  target: mcp
+  value: aws-documentation-mcp-server
+  runtime: claude
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:67b7cb2d065eb5efed7a117cac42df6070ec640db58c4f63f894c45b3d97ebb9
+- kind: uri
+  target: mcp
+  value: aws-knowledge-mcp-server
+  runtime: claude
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:2cc52920bbd727a047768155cef33f14ac60e83e159bec86bebed72d015edd64
+- kind: uri
+  target: mcp
+  value: aws-mcp
+  runtime: claude
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:0efa9d3635591e8df46a44c9825d9510b606534f3c503b4b2cdeaea47de27cd3
+- kind: uri
+  target: mcp
+  value: aws-pricing-mcp-server
+  runtime: claude
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:405deee305775a8c87da5cecaed43e70ab05e0b043668efc216d7ca397b2cc84
+- kind: uri
+  target: mcp
+  value: awslabs-terraform-mcp-server
+  runtime: claude
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:e4f7022799bdde95f0005c37dc67ecd3ffe605e842178390462135ef342526a2
+- kind: uri
+  target: mcp
+  value: codebase-memory-mcp
+  runtime: claude
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:bc69a4668d08a2bea2981c4ab0c13087654d9c7710ff3e5234fa82d193dd1d20
+- kind: uri
+  target: mcp
+  value: context7
+  runtime: claude
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:828cc04f4f935aaada15702ddbbf02d900fa4acf3edc564cdcb07a46a9f140e2
+- kind: uri
+  target: mcp
+  value: fetch
+  runtime: claude
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:c4cb1d183212d7e26110dba28246911f90e399d89186cb0ac045940e079d75fe
+- kind: uri
+  target: mcp
+  value: github
+  runtime: claude
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:3dd1d0c09f829c5d954106881ee25e3c0904ab59b25bc69c9b12dfa5a97d30c8
+- kind: uri
+  target: mcp
+  value: hashicorp-terraform-mcp-server
+  runtime: claude
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:9b227c115fca9230d52fdd7ce69fe055638afe0d964c9518bb873fc31d5d5392
 mcp_servers:
 - aws-documentation-mcp-server
 - aws-knowledge-mcp-server
@@ -13518,7 +13608,18 @@ mcp_configs:
     - terraform-mcp-server@0.13.0
     registry: false
     command: npx
-mcp_target_servers: {}
+mcp_target_servers:
+  claude:
+  - aws-documentation-mcp-server
+  - aws-knowledge-mcp-server
+  - aws-mcp
+  - aws-pricing-mcp-server
+  - awslabs-terraform-mcp-server
+  - codebase-memory-mcp
+  - context7
+  - fetch
+  - github
+  - hashicorp-terraform-mcp-server
 mcp_config_provenance:
   aws-documentation-mcp-server: config-aws
   aws-knowledge-mcp-server: config-aws

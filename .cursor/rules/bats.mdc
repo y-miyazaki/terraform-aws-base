@@ -1,8 +1,6 @@
 ---
-description: "Bats Test Suites Instructions"
-globs:
-  - "**/*.sh"
-  - "**/*.bats"
+description: Bats Test Suites Instructions
+globs: **/*.sh, **/*.bats
 ---
 
 # Bats Instructions
