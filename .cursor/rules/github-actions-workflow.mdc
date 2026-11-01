@@ -1,9 +1,6 @@
 ---
-description: "GitHub Actions Workflows Instructions"
-globs:
-  - ".github/workflows/**/*.yaml"
-  - ".github/workflows/**/*.yml"
-  - ".github/actions/**/action.yml"
+description: GitHub Actions Workflows Instructions
+globs: .github/workflows/**/*.yaml, .github/workflows/**/*.yml, .github/actions/**/action.yml
 ---
 
 # GitHub Actions Workflows Instructions
