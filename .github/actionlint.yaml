@@ -19,3 +19,6 @@ paths:
     ignore:
       # Ignore all errors for lock files used as generated workflow metadata.
       - ".*"
+self-hosted-runner:
+  labels:
+    - ubuntu-26.04

@@ -46,7 +46,7 @@ python = "3.14.6"
 
 # AI agent tools
 "github:microsoft/apm" = { version = "v0.35.0", lazy = true, lazy_bins = ["apm"] }                                 # agent package manager
-claude = { version = "2.1.309", lazy = true, lazy_bins = ["claude"] }                                              # Claude Code CLI
+claude = { version = "2.1.310", lazy = true, lazy_bins = ["claude"] }                                              # Claude Code CLI
 "github:DeusData/codebase-memory-mcp" = { version = "v0.12.1", lazy = true, lazy_bins = ["codebase-memory-mcp"] } # codebase memory MCP server
 "aqua:github/copilot-cli" = { version = "1.0.103", lazy = true, lazy_bins = ["copilot"] }                           # GitHub Copilot CLI
 "pipx:headroom-ai" = { version = "0.41.0", extras = "proxy,mcp,bedrock", depends = ["python"], lazy = true, lazy_bins = ["headroom", "headroom-cache-ttl"] }
@@ -70,7 +70,7 @@ claude = { version = "2.1.309", lazy = true, lazy_bins = ["claude"] }           
 # GitHub related tools
 "aqua:rhysd/actionlint" = { version = "1.7.12", lazy = true, lazy_bins = ["actionlint"] }                          # GitHub Actions linter
 "aqua:suzuki-shunsuke/disable-checkout-persist-credentials" = { version = "1.0.0", lazy = true, lazy_bins = ["disable-checkout-persist-credentials"] } # disable persist-credentials in checkout action
-"aqua:cli/cli" = { version = "2.103.0", lazy = true, lazy_bins = ["gh"] }                                          # GitHub CLI (gh)
+"aqua:cli/cli" = { version = "2.103.2", lazy = true, lazy_bins = ["gh"] }                                          # GitHub CLI (gh)
 "aqua:suzuki-shunsuke/ghalint" = { version = "1.5.6", lazy = true, lazy_bins = ["ghalint"] }                       # GitHub Actions linter
 "aqua:suzuki-shunsuke/ghatm" = { version = "1.0.0", lazy = true, lazy_bins = ["ghatm"] }                           # auto-set timeout-minutes for GitHub Actions jobs
 "aqua:suzuki-shunsuke/pinact" = { version = "5.0.1", lazy = true, lazy_bins = ["pinact"] }                         # GitHub Actions pinning tool
@@ -87,7 +87,7 @@ claude = { version = "2.1.309", lazy = true, lazy_bins = ["claude"] }           
 "go:golang.org/x/vuln/cmd/govulncheck" = { version = "1.3.0", lazy = true, lazy_bins = ["govulncheck"] }           # vulnerability scanner
 "aqua:ko-build/ko" = { version = "0.19.1", lazy = true, lazy_bins = ["ko"] }                                       # container builder
 "aqua:vektra/mockery" = { version = "3.8.1", lazy = true, lazy_bins = ["mockery"] }                                # mock code generator for interfaces
-"go:github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen" = { version = "v2.8.0", lazy = true, lazy_bins = ["oapi-codegen"] } # OpenAPI code generator
+"go:github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen" = { version = "v2.8.1", lazy = true, lazy_bins = ["oapi-codegen"] } # OpenAPI code generator
 "aqua:protocolbuffers/protobuf/protoc" = { version = "36.2", lazy = true, lazy_bins = ["protoc"] }                 # protobuf compiler
 "aqua:protocolbuffers/protobuf-go/protoc-gen-go" = { version = "1.36.12", lazy = true, lazy_bins = ["protoc-gen-go"] } # protobuf code generator
 "aqua:grpc/grpc-go/protoc-gen-go-grpc" = { version = "1.6.1", lazy = true, lazy_bins = ["protoc-gen-go-grpc"] }    # gRPC code generator
@@ -133,7 +133,7 @@ claude = { version = "2.1.309", lazy = true, lazy_bins = ["claude"] }           
 "pipx:mkdocs" = { version = "1.6.1", depends = ["python"], postinstall = "uv pip install --python $MISE_TOOL_INSTALL_PATH/mkdocs/bin/python mkdocs-material mdx-truly-sane-lists", lazy = true, lazy_bins = ["mkdocs"] } # MkDocs with Material theme
 "aqua:BurntSushi/ripgrep" = { version = "15.2.0", lazy = true, lazy_bins = ["rg"] }                                # grep alternative (rg)
 "aqua:tamasfe/taplo" = { version = "0.10.0", lazy = true, lazy_bins = ["taplo"] }                                  # TOML formatter / LSP
-"aqua:jdx/usage" = { version = "7.1.1", lazy = true, lazy_bins = ["usage"] }                                      # usage CLI tool for command help and completions
+"aqua:jdx/usage" = { version = "7.1.2", lazy = true, lazy_bins = ["usage"] }                                      # usage CLI tool for command help and completions
 "aqua:astral-sh/uv" = "0.13.5"                                                                                    # uv/uvx
 
 [tasks.mise-install]
