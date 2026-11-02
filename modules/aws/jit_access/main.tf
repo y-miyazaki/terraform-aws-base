@@ -206,14 +206,21 @@ data "aws_iam_policy_document" "lambda" {
   }
 
   statement {
-    sid    = "StepFunctions"
+    sid       = "StepFunctionsStartExecution"
+    effect    = "Allow"
+    actions   = ["states:StartExecution"]
+    resources = [module.step_functions.state_machine_arn]
+  }
+
+  # DescribeExecution / StopExecution target execution ARNs, not the state machine ARN.
+  statement {
+    sid    = "StepFunctionsExecution"
     effect = "Allow"
     actions = [
       "states:DescribeExecution",
-      "states:StartExecution",
       "states:StopExecution",
     ]
-    resources = [module.step_functions.state_machine_arn]
+    resources = ["${replace(module.step_functions.state_machine_arn, ":stateMachine:", ":execution:")}:*"]
   }
 
   statement {

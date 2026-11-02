@@ -16,4 +16,4 @@ When there are no targets, write `no targets`.
 
 ## Answer comment
 
-Use [comment-template.md](../assets/comment-template.md). The last line is always `-- devops-agent`.
+Use [comment-template.md](../assets/comment-template.md). The last line is always the bot footer (template line; defined in `AGENTS.md`, section `Bot footer`).

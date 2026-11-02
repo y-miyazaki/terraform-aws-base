@@ -9,7 +9,9 @@ Gate IDs are for self-check and for explaining a skipped step. Do not put these 
 - [ ] Write everything you produce for people (Issue title/body, PR title/body, commit messages, comments, Slack replies) in the same language as your response in this investigation (the Agent Space response language, or the language of the request when none is set)
 - [ ] Do not mix languages in the prose of one Issue, PR, or reply
 - [ ] Keep in English, exactly as defined: section headings, field labels and keys of the templates and Slack formats (`Incident`, `Issue`, `PR`, `Outcome`, `Root cause`, `Next`, `Repository`, `base branch`), the Outcome values, `confirmed`/`suspected`, `unknown`, and the `[devops-agent]` prefix. Write all prose (every sentence after a heading or label) in the response language, never in English. Keep code, identifiers, resource names, ARNs, branch names, tool names, and log excerpts as they are
-- [ ] End the Issue and PR body with the `Meta` block (a `| Key | Value |` table) of the template and set the `response_language` row to the language code of your response (for example `ja`)
+- [ ] End the Issue and PR body with the `Meta` block (a `| Key | Value |` table) of the template, followed only by the bot footer line (Meta, then the footer as the very last line) and set the `response_language` row to the language code of your response (for example `ja`)
+- [ ] Every comment you write ends with a collapsed Meta table (`response_language`, `source` = `investigation`), then the footer (`AGENTS.md`, section `Bot footer`, bullet Meta in comments)
+- [ ] Bot footer (`AGENTS.md`, section `Bot footer`): the last line of every Issue body, PR body, and comment is the GitHub footer (the templates carry the line). A missing footer makes the follow-up agent answer its own comment
 - **PASS** if each artifact uses a single language
 
 ## Repository and branches

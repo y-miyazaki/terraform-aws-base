@@ -188,6 +188,19 @@ To suppress future investigations of one alarm, comment on its `devops-agent` Is
 - On the next firing, the investigation reads the memory (rule in `devops_agent/agents_md/generic.md`) and stops early. It sends one Slack reply, creates no Issue, PR, or memory, and investigates further only when you ask in that investigation.
 - Triage does not read this memory, so the investigation still starts and its short run is billed. The comment examples the follow-up skill classifies are in `devops_agent/skills/linear-issue-pr-followup/SKILL.md` (Human comment examples).
 
+#### Re-investigation cooldown
+
+Repeated firings of the same alarm each start a full investigation and are billed each time. Set `devops_agent.primary.agent_spaces.<name>.reinvestigation_cooldown_hours` (integer 1-720, default `null` = off) to suppress them. It applies to Linear and GitHub Issues alike.
+
+- Terraform appends an `Incident re-investigation cooldown` section to the GENERIC AGENTS.md of the Agent Space (like the Linear section; `generic.md` is not edited). The rule is evaluated by the lead from AGENTS.md alone; the skills have no cooldown check because they never run when it skips.
+- When the alarm already has an open `devops-agent` Issue whose last agent activity is newer than the cooldown, the investigation ends right away: no Slack reply (not even reply A), no skill, no sub-agent, and no Issue, comment, PR, or memory. Last agent activity is the Meta row `last_investigated` of the Issue (set at creation and on every evidence comment added by an investigation; the creation time when the row is missing). Follow-up answers and human comments do not move it. Escalated incidents (higher priority, another resource) and explicit human requests are investigated regardless.
+- After the cooldown has passed, the alarm is investigated normally and the open Issue is reused. A different alarm is never affected. To investigate within the cooldown, ask in that investigation.
+- Like the per-alarm suppression, the early-exit run is still billed (it is short); the full investigation and mitigation do not run. Suppressing the send itself needs a change in the alert Lambda, which is not in this repository.
+
+#### Bot footer
+
+Every Issue body, PR body, and comment written by the agent ends with `Written by DevOps Agent, an automation — not by a person. Review before acting.` (Linear: plain text, because Linear does not render HTML and may rewrite markup such as `_..._` when a comment is read back; GitHub: `<sub>...</sub>`). The text is fixed English. The rules are defined once, in `main_central_devops_agent.tf` (`devops_agent_agents_md_bot_footer_section`), which appends the `Bot footer` section to every GENERIC AGENTS.md. A comment whose last non-empty line equals the footer (compared after removing surrounding markup characters) (or the legacy footer `-- devops-agent`) is a bot comment; a quoted footer elsewhere in a human reply does not count. The follow-up skills never reply to a bot comment, so only a comment without a bot footer is handled as a human reply. The cooldown also uses it to tell agent activity from human comments. Every comment also ends with a collapsed Meta table (`response_language`, `source` = `investigation` or `followup`, and `answered_until` in follow-up answers) before the footer (`source` is `chat` for Chat comments). A comment with a Meta `source` row counts as a bot comment even without the footer; a comment without Meta falls back to the footer and legacy rules.
+
 #### Issue and PR templates
 
 - The Issue has a `Pull request` section. It holds the full PR URL with its state (`Draft`) when a PR was created, and `none (<reason>)` when none was created. The agent creates the Issue first with `none (PR not created yet)` and updates the section after the PR step, so the placeholder never remains.
@@ -223,9 +236,11 @@ Issue and PR URLs are the full `html_url` returned by the tools (never only `#12
 
 #### Follow-up on replies (scheduled)
 
+The full lifecycle (creation, re-firing, human comments, close, reopen) and the role split are specified in [DevOps Agent Issue Lifecycle Specification](devops-agent-lifecycle.md).
+
 The generic webhook does not deliver Issue or PR comments, so the custom agent `github_issue_pr_followup_agent` runs on a schedule trigger (dev: hourly on weekdays 09:00-19:00 JST). It handles only open Issues and PRs with the label `devops-agent`:
 
-- It finds human comments newer than its own latest comment (the footer line `-- devops-agent`), answers them in one comment per item, re-checks the incident read-only when needed, and updates the Issue or PR text.
+- It finds human comments newer than the `answered_until` value in the Meta table of its own latest answer (bot comments, including its own investigation comments, are never evidence for a decision and never move that baseline), answers them in one comment per item, re-checks the incident read-only when needed, and updates the Issue or PR text.
 - It commits only to the head branch (`feature/devops-agent/**`) of an open Draft PR, and only for a small change of the same kind as the original fix.
 - It closes an Issue when a human explicitly asks for it or when the linked PR is merged. It closes a PR only on an explicit human request.
 - It never merges, approves, marks a PR ready, force pushes, deletes branches, creates Issues/PRs/labels, or posts to Slack.

@@ -94,3 +94,5 @@ repository: the <owner>/<repo> full name (plain text, no link inside this table)
 | last_followup     | none                                                  |
 
 </details>
+
+<sub>Written by DevOps Agent, an automation — not by a person. Review before acting.</sub>

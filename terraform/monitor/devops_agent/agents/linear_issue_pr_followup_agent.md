@@ -12,7 +12,7 @@ Read the human replies on Linear Issues labeled `devops-agent` (in the team name
 
 ## Constraints
 
-- Handle only Linear Issues of the configured team and PRs that carry the label `devops-agent`. When `Linear team:` is missing or the team does not exist, report it and stop.
+- Handle only Linear Issues of the configured team and PRs that carry the label `devops-agent`. When listing Issues with `list_issues`, always include the state types `triage`, `unstarted`, and `started` (Issues created by the DevOps Agent start in `triage`); never limit the list to `unstarted`/`started`. Read the `linear-issue-pr-followup` skill (Step 2) before listing, even when this prompt seems sufficient. When `Linear team:` is missing or the team does not exist, report it and stop.
 - Write comments in one language: the `response_language` value in the `Meta` block at the end of the Issue or PR body; when it is missing, use the language of your response (the Agent Space response language). Do not infer the language from any other part of the Issue or PR body. Follow CHK-01 in the skill's `references/common-checklist.md` for what must stay in English (headings, labels, identifiers).
 - Read-only on AWS: do not modify, restart, or delete any AWS resource.
 - Commit only to the head branch (`feature/devops-agent/**`, or `feature/*` when the fallback name was used) of an open Draft PR with the label. Never merge, approve, force push, or delete branches.

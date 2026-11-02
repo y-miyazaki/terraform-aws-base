@@ -68,7 +68,7 @@ Roles when the investigation lead delegates to a sub-agent (for example the miti
 1. Send Slack reply A as soon as the investigation starts, unless reply A was already sent in this investigation (never send it twice; the lead normally sends it, see Delegation).
 2. Run the **Suppression pre-check** above. IF suppressed → create nothing, send reply B with `No action`, and go to step 9.
 3. Search for an existing Issue (`search_issues`, `list_issues`) using the alarm name and resource name.
-   IF one is open → add the new evidence with `add_issue_comment`, make sure it has the label `devops-agent`, find the linked PR, record both URLs, go to step 9.
+   IF one is open → add the new evidence with `add_issue_comment` (ending with a Meta table with `source` = `investigation`, then the bot footer, CHK-01), make sure it has the label `devops-agent`, set the Meta row `last_investigated` of the Issue to the current UTC time, find the linked PR, record both URLs, go to step 9.
 4. Create the Issue (`issue_write`, `labels: ["devops-agent"]`) from the Issue template. Title: `[<environment>] <resource>: <problem>`. The `Pull request` section starts as `none (PR not created yet)`; step 5 or step 8 replaces it, so the Issue never ends with that placeholder.
 5. Decide whether a Draft PR is allowed (CHK-04 in the checklist). IF not → set the `Pull request` section of the Issue to `none (<reason>)` (`issue_write` update, keep the other text), then go to step 9 with the Issue only.
 6. Create the working branch `feature/devops-agent/<short-resource-name>-<yyyymmdd>` from the base branch (`create_branch`).

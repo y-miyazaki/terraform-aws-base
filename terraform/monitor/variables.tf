@@ -343,6 +343,9 @@ variable "devops_agent" {
     agent_spaces[*].linear.team is the Linear team (name or key) in which the Agent Space creates Issues with the Linear MCP server. When it is set,
     main_central_devops_agent.tf appends a Linear section (the team and the stop rule) to the GENERIC AGENTS.md of that Agent Space
     (a GENERIC AGENTS.md is created when agents_md has none); the file given by content_file is never edited. Leave it null to add nothing.
+    agent_spaces[*].reinvestigation_cooldown_hours (integer 1-720, tracker independent: Linear and GitHub) suppresses re-investigation: when the alarm of a firing incident already has an open
+    devops-agent Issue whose last agent activity is newer than this many hours, the investigation ends right away with no Slack reply, no skill, and nothing created. When it is set,
+    main_central_devops_agent.tf appends a cooldown section to the GENERIC AGENTS.md like the Linear section. Leave it null (default) to investigate every firing.
     skills[*].content_file (the SKILL.md of a skill directory; name and description default to its frontmatter; text files under references/ and assets/ next to it are attached automatically) and custom_agents[*].system_prompt_file are paths relative to this stack directory.
     memory_stores are custom memory stores (custom agents can write only to attached custom stores; the managed directives and monitors stores are read-only for them); custom_agents[*].memory_stores references their keys.
   EOT
@@ -394,6 +397,7 @@ variable "devops_agent" {
         linear = optional(object({
           team = optional(string)
         }), {})
+        reinvestigation_cooldown_hours = optional(number)
         skills = optional(map(object({
           agent_types  = optional(list(string), ["GENERIC"])
           content_file = string
@@ -482,6 +486,10 @@ variable "devops_agent" {
   validation {
     condition     = alltrue([for k, a in var.devops_agent.primary.agent_spaces : a.linear.team == null || can(regex("^[^\\x00-\\x1f\\x7f]{1,64}$", a.linear.team)) && trimspace(a.linear.team) == a.linear.team])
     error_message = "devops_agent.primary.agent_spaces[*].linear.team must be 1-64 characters without control characters (newline) or leading/trailing spaces."
+  }
+  validation {
+    condition     = alltrue([for k, a in var.devops_agent.primary.agent_spaces : a.reinvestigation_cooldown_hours == null ? true : (a.reinvestigation_cooldown_hours >= 1 && a.reinvestigation_cooldown_hours <= 720 && floor(a.reinvestigation_cooldown_hours) == a.reinvestigation_cooldown_hours)])
+    error_message = "devops_agent.primary.agent_spaces[*].reinvestigation_cooldown_hours must be null or an integer between 1 and 720."
   }
   default = {}
 }

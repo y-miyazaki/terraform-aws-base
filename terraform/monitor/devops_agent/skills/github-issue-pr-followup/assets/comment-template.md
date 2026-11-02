@@ -1,6 +1,6 @@
 <!--
 Answer comment template for github-issue-pr-followup.
-Load ONLY when posting an answer comment. Keep the labels `Checked:`, `Changed:`, `Not done:`, `Closed:` in English; write the prose in the language of the Issue or PR.
+Load ONLY when posting an answer comment. The last line (bot footer) is fixed English text and must be kept exactly. Keep the labels `Checked:`, `Changed:`, `Not done:`, `Closed:` in English; write the prose in the language of the Issue or PR.
 -->
 
 <answer to each unanswered comment; do not @-mention anyone>
@@ -25,4 +25,14 @@ Closed: <which auto-close condition was met and what action was taken>
        Closed: AUTO-I1 — closing this Issue per explicit instruction; marked not_planned.
 -->
 
--- devops-agent
+<details><summary>Meta</summary>
+
+| Key               | Value                                                            |
+| ----------------- | ---------------------------------------------------------------- |
+| response_language | <language code, for example ja>                                  |
+| source            | followup                                                         |
+| answered_until    | <createdAt, UTC, of the newest human comment this answer covers> |
+
+</details>
+
+<sub>Written by DevOps Agent, an automation — not by a person. Review before acting.</sub>

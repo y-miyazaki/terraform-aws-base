@@ -57,6 +57,7 @@ nav:
       - Security Hub Controls: reference/security-hub-controls.md
       - Features Base: reference/features-base.md
       - Features Monitor: reference/features-monitor.md
+      - DevOps Agent Issue Lifecycle: reference/devops-agent-lifecycle.md
       - JIT Access Specification: reference/jit-access-specification.md
       - Slack Reply MCP Lambda Request: reference/mcp-slack-reply-lambda-request.md
       - Module Catalog: reference/module-catalog.md

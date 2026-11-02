@@ -2979,6 +2979,14 @@ devops_agent = {
         linear = {
           team = null
         }
+        # (Optional) Re-investigation cooldown in hours (integer 1-720), for Linear and GitHub Issues alike. null disables it (every firing is investigated).
+        # When set, Terraform appends an "Incident re-investigation cooldown" section to the GENERIC AGENTS.md of this Agent Space. If the alarm of a firing incident
+        # already has an open devops-agent Issue whose last agent activity (the Meta row last_investigated, or the creation time when missing) is newer than this
+        # many hours, the investigation ends right away with no Slack reply, no skill, and nothing created (no sub-agents, telemetry queries, mitigation, Issue, or PR).
+        # Escalated incidents (higher priority, another resource) and explicit human requests are still investigated. Follow-up answers do not extend the cooldown.
+        # It limits the cost of repeated firings of the same alarm; the short early-exit run is still billed. A different alarm is investigated normally.
+        #   ex) reinvestigation_cooldown_hours = 24
+        reinvestigation_cooldown_hours = null
         # (Optional) Skills to attach to custom agents. content_file is relative to terraform/monitor.
         # name and description are optional: when omitted they are read from the frontmatter of SKILL.md; a value set here takes precedence.
         #   ex)

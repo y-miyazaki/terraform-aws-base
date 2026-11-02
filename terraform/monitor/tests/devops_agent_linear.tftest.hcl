@@ -74,8 +74,8 @@ run "linear_unset_leaves_generic_unchanged" {
   }
 
   assert {
-    condition     = local.devops_agent_agents_md["devops-agent"]["GENERIC"] == file("devops_agent/agents_md/generic.md")
-    error_message = "without linear.team the AGENTS.md must be exactly generic.md"
+    condition     = startswith(local.devops_agent_agents_md["devops-agent"]["GENERIC"], file("devops_agent/agents_md/generic.md")) && !strcontains(local.devops_agent_agents_md["devops-agent"]["GENERIC"], "Linear team:")
+    error_message = "without linear.team the AGENTS.md must be generic.md plus the bot footer section only"
   }
 }
 
@@ -116,4 +116,114 @@ run "linear_team_with_newline_fails" {
   }
 
   expect_failures = [var.devops_agent]
+}
+
+run "cooldown_section_is_appended_to_generic" {
+  command = plan
+  variables {
+    devops_agent = {
+      primary = {
+        is_enabled = true
+        agent_spaces = {
+          devops-agent = {
+            agents_md                      = { GENERIC = { content_file = "devops_agent/agents_md/generic.md" } }
+            linear                         = { team = "ENG" }
+            reinvestigation_cooldown_hours = 24
+          }
+        }
+      }
+    }
+  }
+
+  assert {
+    condition     = startswith(local.devops_agent_agents_md["devops-agent"]["GENERIC"], file("devops_agent/agents_md/generic.md"))
+    error_message = "the GENERIC AGENTS.md must keep the content of generic.md unchanged at the start"
+  }
+  assert {
+    condition     = strcontains(local.devops_agent_agents_md["devops-agent"]["GENERIC"], "Linear team: ENG")
+    error_message = "the Linear section must stay when the cooldown is set"
+  }
+  assert {
+    condition     = strcontains(local.devops_agent_agents_md["devops-agent"]["GENERIC"], "Incident re-investigation cooldown: 24 hours")
+    error_message = "the cooldown section must carry the configured hours"
+  }
+}
+
+run "cooldown_without_linear_creates_generic" {
+  command = plan
+  variables {
+    devops_agent = {
+      primary = {
+        is_enabled = true
+        agent_spaces = {
+          devops-agent = {
+            reinvestigation_cooldown_hours = 6
+          }
+        }
+      }
+    }
+  }
+
+  assert {
+    condition     = strcontains(local.devops_agent_agents_md["devops-agent"]["GENERIC"], "Incident re-investigation cooldown: 6 hours") && !strcontains(local.devops_agent_agents_md["devops-agent"]["GENERIC"], "Linear team:")
+    error_message = "the cooldown alone must create a GENERIC AGENTS.md without the Linear section (GitHub trackers)"
+  }
+}
+
+run "cooldown_unset_adds_nothing" {
+  command = plan
+  variables {
+    devops_agent = {
+      primary = {
+        is_enabled = true
+        agent_spaces = {
+          devops-agent = {
+            agents_md = { GENERIC = { content_file = "devops_agent/agents_md/generic.md" } }
+          }
+        }
+      }
+    }
+  }
+
+  assert {
+    condition     = startswith(local.devops_agent_agents_md["devops-agent"]["GENERIC"], file("devops_agent/agents_md/generic.md")) && !strcontains(local.devops_agent_agents_md["devops-agent"]["GENERIC"], "re-investigation cooldown")
+    error_message = "without cooldown and linear.team the AGENTS.md must be generic.md plus the bot footer section only"
+  }
+}
+
+run "cooldown_out_of_range_fails" {
+  command = plan
+  variables {
+    devops_agent = {
+      primary = {
+        is_enabled = true
+        agent_spaces = {
+          devops-agent = {
+            reinvestigation_cooldown_hours = 0
+          }
+        }
+      }
+    }
+  }
+
+  expect_failures = [var.devops_agent]
+}
+
+run "bot_footer_is_always_appended" {
+  command = plan
+  variables {
+    devops_agent = {
+      primary = {
+        is_enabled = true
+        agent_spaces = {
+          devops-agent = {}
+        }
+      }
+    }
+  }
+
+  assert {
+    condition     = strcontains(local.devops_agent_agents_md["devops-agent"]["GENERIC"], "Written by DevOps Agent, an automation") && strcontains(local.devops_agent_agents_md["devops-agent"]["GENERIC"], "## Bot footer")
+    error_message = "the bot footer section must be in the GENERIC AGENTS.md even without agents_md, linear.team, or cooldown"
+  }
 }

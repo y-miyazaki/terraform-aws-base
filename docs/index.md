@@ -27,6 +27,7 @@ _Information-oriented technical descriptions._
 - [Security Hub Controls Compliance Matrix](reference/security-hub-controls.md) - Security Hub controls compliance matrix
 - [Base Features Detail](reference/features-base.md) - Detailed descriptions for base stack features (security, IAM, cost)
 - [Monitor Features Detail](reference/features-monitor.md) - Detailed descriptions for monitor stack features (logs, metrics, events)
+- [DevOps Agent Issue Lifecycle Specification](reference/devops-agent-lifecycle.md) - DevOps Agent behavior from alarm firing to Issue close and reopen, and the role of each agent
 - [JIT Access System Specification](reference/jit-access-specification.md) - JIT privileged access system with Slack integration, approval workflow, and auto-revocation
 - [Module Catalog](reference/module-catalog.md) - Reusable Terraform module catalog with purpose and location
 - [Monitoring](reference/monitoring.md) - Alert configuration, dashboards, and operational runbooks

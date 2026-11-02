@@ -93,6 +93,9 @@ repository: the <owner>/<repo> full name (plain text, no link inside this table)
 | repository        | <owner>/<repo>                                        |
 | root_cause_status | <confirmed \| suspected>                              |
 | created_by        | devops-agent (<agent name>) at <YYYY-MM-DDTHH:MM:SSZ> |
+| last_investigated | <YYYY-MM-DDTHH:MM:SSZ, creation time>                 |
 | last_followup     | none                                                  |
 
 +++
+
+Written by DevOps Agent, an automation — not by a person. Review before acting.

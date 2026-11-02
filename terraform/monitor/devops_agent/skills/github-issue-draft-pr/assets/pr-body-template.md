@@ -100,3 +100,5 @@ last_followup: the follow-up bot sets this to the UTC time of its latest run; wr
 | last_followup     | none                                                  |
 
 </details>
+
+<sub>Written by DevOps Agent, an automation — not by a person. Review before acting.</sub>

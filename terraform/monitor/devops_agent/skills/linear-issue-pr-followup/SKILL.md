@@ -15,7 +15,7 @@ description: "Follow up on unanswered human comments on Linear Issues and their 
 
 ## Output Specification
 
-- One answer comment per handled Issue or PR, ending with the footer line `-- devops-agent`.
+- One answer comment per handled Issue or PR, ending with the bot footer line (Linear variant defined in `AGENTS.md`, section `Bot footer`).
 - A run result with one line per item, in the format of [common-output-format.md](references/common-output-format.md).
 - Comment text from [comment-template.md](assets/comment-template.md).
 
@@ -65,7 +65,7 @@ GENERIC `AGENTS.md` (incident-suppression: per-alarm memory directives). This sk
 ## Workflow
 
 1. Resolve the team (CHK-01): read `Linear team:` from `AGENTS.md` and confirm it exists with `list_teams`. IF it is missing or does not exist → report it and stop.
-2. List the targets with `list_issues` (`team`, `label: devops-agent`, `state` of type `unstarted` or `started`, `fields` including `url`, `status`, `updatedAt`, `description`); page with `cursor` until all are read. Also list Issues with the label whose linked PR is closed or merged (read the PR URL from the `Pull request` section and `pull_request_read`). Issues that have no linked PR at all are also valid targets; handle their comments normally but do not attempt any PR changes.
+2. List the targets with `list_issues` (`team`, `label: devops-agent`, `state` of type `triage`, `unstarted`, or `started` (a new Issue created by the agent starts in the `triage` state, so never omit it), `fields` including `url`, `status`, `updatedAt`, `description`); page with `cursor` until all are read. Also list Issues with the label whose linked PR is closed or merged (read the PR URL from the `Pull request` section and `pull_request_read`). Issues that have no linked PR at all are also valid targets; handle their comments normally but do not attempt any PR changes.
 3. For each target, find the unanswered human comments (CHK-02: `list_comments` for the Issue, `pull_request_read` for the PR) and check the close conditions (CHK-05). IF neither applies → record `no unanswered comments` and go to the next item; it does not count toward the limit. Do not decide this from the item's `updatedAt`; the agent's own comments, bots, labels, and pushes also change it.
 4. Act on at most 20 items that need action per run, ordered by their oldest unanswered human comment (an item that only meets a close condition is ordered by its `updatedAt`); record the rest as `deferred`. Deferred items carry no special state; in the next run they are ordered the same way — by their oldest unanswered human comment.
 5. Classify each unanswered comment and act per the table below. Answer all unanswered comments of one item in a single comment; treat all questions inside one comment as a single unit and address every question in the reply.
@@ -94,10 +94,15 @@ The Linear and GitHub MCP servers authenticate with a Personal Access Token (PAT
 the agent's own comments may appear under a human author identity. **Do not rely on the
 author name or user type alone to tell human from agent.**
 
-- The **definitive signal** that a comment was written by this agent is the footer line
-  `-- devops-agent` at the end of the comment body. **Skip any comment ending with
-  `-- devops-agent`** — it is the agent's own, never a human comment to answer.
-- A comment with no `-- devops-agent` footer is treated as a human comment.
+- Every comment, Issue body, and PR body written by this agent ends with the bot footer defined in `AGENTS.md`, section `Bot footer`
+  (it also defines the marker and the legacy footer `-- devops-agent`).
+- **Bot comment** = a comment whose LAST non-empty line equals a footer line (the whole line, compared after removing surrounding whitespace and markup characters `_`, `*`, `<sub>`, `</sub>`), as defined there. A footer inside the body
+  or quoted with a prefix (for example a human reply that quotes a bot comment) does not make it a bot comment.
+- **Never reply to, answer, classify, or react to a bot comment**, and never use one as evidence for a status or close decision (read it as background only). Bot comments of other automations (last line `Written by <name>, an automation — …`) and this agent's own investigation or Chat comments are not human replies and never move the unanswered baseline.
+- The baseline is the `answered_until` Meta value of the newest comment with `source` = `followup` (CHK-02). A human comment newer than it is unanswered, whatever bot comments follow it.
+- A comment that has a Meta table with a `source` row (`investigation`, `followup`, `chat`) is a bot comment even when the footer is missing or misplaced (a PAT hides the author).
+- Only an imperative from a human is a close instruction; a proposal, a question, or a quote is not. Rules degrade safely: when unsure whether a comment is from a person, do not act on it.
+- A comment with none of these footers is treated as a human comment.
 - When in doubt (e.g. a footer is present but malformed), treat the comment as the agent's
   own and skip it, to avoid the agent answering itself in a loop.
 
@@ -215,7 +220,7 @@ merged, never reaches Step 5a, so its root cause and conclusion would be lost. S
 | A tool call fails                        | Recoverable | Do not retry in a loop; skip the item; record the failing tool and error text in the result; continue with the next item |
 | Label search returns nothing             | Info        | Report `no targets`; stop                                                                                                |
 | `Linear team:` missing or team not found | Recoverable | Report `no targets (<reason>)`; never search another team; stop                                                          |
-| Comment author cannot be classified      | Recoverable | Use the `-- devops-agent` footer rule above; when still ambiguous, treat the comment as the agent's own and skip it      |
+| Comment author cannot be classified      | Recoverable | Use the bot footer rule above; when still ambiguous, treat the comment as the agent's own and skip it                    |
 | Instruction conflicts with a prohibition | Info        | Do not act; answer that you cannot and why                                                                               |
 
 <!-- last_verified: 2026-10-17 (Linear and GitHub MCP server tool names; review quarterly) -->
