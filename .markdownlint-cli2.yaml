@@ -10,6 +10,7 @@ ignores:
   - "*.yml"
   - "**/.copilot/**"
   - "**/.github/CODEOWNERS"
+  - "**/.superpowers/**"
   - "**/.terraform/**"
   - "**/apm_modules/**"
   - "**/bower_components/**"
@@ -21,8 +22,7 @@ ignores:
   - "**/prompts/**"
   - "**/secrets/**"
   - "**/tmp/**"
-  - "**/.claude/worktrees/**"
-  - "**/.superpowers/**"
+  - "**/worktrees/**"
   - "**/vendor/**"
 # Rule configuration
 config:
