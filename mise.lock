@@ -1152,78 +1152,78 @@ checksum = "sha256:2948dd7f77dec0f562ec29000103e0441d915be5e5f1a02c1ce23681951cf
 url = "https://releases.hashicorp.com/terraform/1.17.0/terraform_1.17.0_windows_amd64.zip"
 
 [[tools."aqua:jdx/usage"]]
-version = "7.1.2"
+version = "7.1.3"
 backend = "aqua:jdx/usage"
 
 [tools."aqua:jdx/usage"."platforms.linux-arm64"]
-checksum = "sha256:5171193a0397cc054d5e009cbaf51799598241b8175b4bfd91f8640bbfc91a7a"
-url = "https://github.com/jdx/usage/releases/download/v7.1.2/usage-aarch64-unknown-linux-gnu.tar.gz"
-url_api = "https://api.github.com/repos/jdx/usage/releases/assets/671924507"
+checksum = "sha256:f5e8cb2d9fea663e0b17472ce30ccc398c5dae4ddd7c6fb60f6b0f1d59386677"
+url = "https://github.com/jdx/usage/releases/download/v7.1.3/usage-aarch64-unknown-linux-gnu.tar.gz"
+url_api = "https://api.github.com/repos/jdx/usage/releases/assets/677766044"
 
 [tools."aqua:jdx/usage"."platforms.linux-arm64-musl"]
-checksum = "sha256:d4675f05c0a707b24e5b5bdac57c23b584209305e70adc11e616e8f26b36104f"
-url = "https://github.com/jdx/usage/releases/download/v7.1.2/usage-aarch64-unknown-linux-musl.tar.gz"
-url_api = "https://api.github.com/repos/jdx/usage/releases/assets/671925472"
+checksum = "sha256:2e3cc3ae62b3ef008eb739c527101087864e210da9df23c8e2b456c90b8dc8b4"
+url = "https://github.com/jdx/usage/releases/download/v7.1.3/usage-aarch64-unknown-linux-musl.tar.gz"
+url_api = "https://api.github.com/repos/jdx/usage/releases/assets/677763852"
 
 [tools."aqua:jdx/usage"."platforms.linux-x64"]
-checksum = "sha256:185a79a3fb0cdc0a09e22bad5d197a47518ad3ea3cc5b6f1e53e9f7ae7908079"
-url = "https://github.com/jdx/usage/releases/download/v7.1.2/usage-x86_64-unknown-linux-gnu.tar.gz"
-url_api = "https://api.github.com/repos/jdx/usage/releases/assets/671924363"
+checksum = "sha256:8862647112681941439df958ea8240a96e14319adc7f28497f09bd2ba10c0344"
+url = "https://github.com/jdx/usage/releases/download/v7.1.3/usage-x86_64-unknown-linux-gnu.tar.gz"
+url_api = "https://api.github.com/repos/jdx/usage/releases/assets/677764720"
 
 [tools."aqua:jdx/usage"."platforms.linux-x64-musl"]
-checksum = "sha256:da9ce7c2c0220f336b7ade208c7755ae3dd137642f90f6ec460ba821d809754b"
-url = "https://github.com/jdx/usage/releases/download/v7.1.2/usage-x86_64-unknown-linux-musl.tar.gz"
-url_api = "https://api.github.com/repos/jdx/usage/releases/assets/671925676"
+checksum = "sha256:826cb318a95ac418e8c3f8237439ac39239dfe88e491adc3ecddd3fa4e58d057"
+url = "https://github.com/jdx/usage/releases/download/v7.1.3/usage-x86_64-unknown-linux-musl.tar.gz"
+url_api = "https://api.github.com/repos/jdx/usage/releases/assets/677764945"
 
 [tools."aqua:jdx/usage"."platforms.macos-arm64"]
-checksum = "sha256:febcc62e79cf7278e532b36073847812711b4e6e9a381663ca796a52b772ba33"
-url = "https://github.com/jdx/usage/releases/download/v7.1.2/usage-universal-apple-darwin.tar.gz"
-url_api = "https://api.github.com/repos/jdx/usage/releases/assets/671924039"
+checksum = "sha256:4878938599894c051baaf601cb5c7ee351f4276c9da0acbf959e868884f2b99b"
+url = "https://github.com/jdx/usage/releases/download/v7.1.3/usage-universal-apple-darwin.tar.gz"
+url_api = "https://api.github.com/repos/jdx/usage/releases/assets/677768757"
 
 [tools."aqua:jdx/usage"."platforms.macos-x64"]
-checksum = "sha256:febcc62e79cf7278e532b36073847812711b4e6e9a381663ca796a52b772ba33"
-url = "https://github.com/jdx/usage/releases/download/v7.1.2/usage-universal-apple-darwin.tar.gz"
-url_api = "https://api.github.com/repos/jdx/usage/releases/assets/671924039"
+checksum = "sha256:4878938599894c051baaf601cb5c7ee351f4276c9da0acbf959e868884f2b99b"
+url = "https://github.com/jdx/usage/releases/download/v7.1.3/usage-universal-apple-darwin.tar.gz"
+url_api = "https://api.github.com/repos/jdx/usage/releases/assets/677768757"
 
 [tools."aqua:jdx/usage"."platforms.windows-x64"]
-checksum = "sha256:061fe944671b7348d034ccaf016c457f896597dbddc18ee2d6858bd88bdb1519"
-url = "https://github.com/jdx/usage/releases/download/v7.1.2/usage-x86_64-pc-windows-msvc.zip"
-url_api = "https://api.github.com/repos/jdx/usage/releases/assets/671927107"
+checksum = "sha256:4abb3f7b7e9ecac17558be73336137fa83ec9a43d0c1168a9bbb5aedd1685a27"
+url = "https://github.com/jdx/usage/releases/download/v7.1.3/usage-x86_64-pc-windows-msvc.zip"
+url_api = "https://api.github.com/repos/jdx/usage/releases/assets/677772151"
 
 [[tools."aqua:jdx/usage"]]
-version = "7.1.2"
+version = "7.1.3"
 backend = "aqua:jdx/usage"
 
 [tools."aqua:jdx/usage".options]
 "vars.lazy" = "true"
 
 [tools."aqua:jdx/usage"."platforms.linux-arm64"]
-checksum = "sha256:d4675f05c0a707b24e5b5bdac57c23b584209305e70adc11e616e8f26b36104f"
-url = "https://github.com/jdx/usage/releases/download/v7.1.2/usage-aarch64-unknown-linux-musl.tar.gz"
+checksum = "sha256:2e3cc3ae62b3ef008eb739c527101087864e210da9df23c8e2b456c90b8dc8b4"
+url = "https://github.com/jdx/usage/releases/download/v7.1.3/usage-aarch64-unknown-linux-musl.tar.gz"
 
 [tools."aqua:jdx/usage"."platforms.linux-arm64-musl"]
-checksum = "sha256:d4675f05c0a707b24e5b5bdac57c23b584209305e70adc11e616e8f26b36104f"
-url = "https://github.com/jdx/usage/releases/download/v7.1.2/usage-aarch64-unknown-linux-musl.tar.gz"
+checksum = "sha256:2e3cc3ae62b3ef008eb739c527101087864e210da9df23c8e2b456c90b8dc8b4"
+url = "https://github.com/jdx/usage/releases/download/v7.1.3/usage-aarch64-unknown-linux-musl.tar.gz"
 
 [tools."aqua:jdx/usage"."platforms.linux-x64"]
-checksum = "sha256:da9ce7c2c0220f336b7ade208c7755ae3dd137642f90f6ec460ba821d809754b"
-url = "https://github.com/jdx/usage/releases/download/v7.1.2/usage-x86_64-unknown-linux-musl.tar.gz"
+checksum = "sha256:826cb318a95ac418e8c3f8237439ac39239dfe88e491adc3ecddd3fa4e58d057"
+url = "https://github.com/jdx/usage/releases/download/v7.1.3/usage-x86_64-unknown-linux-musl.tar.gz"
 
 [tools."aqua:jdx/usage"."platforms.linux-x64-musl"]
-checksum = "sha256:da9ce7c2c0220f336b7ade208c7755ae3dd137642f90f6ec460ba821d809754b"
-url = "https://github.com/jdx/usage/releases/download/v7.1.2/usage-x86_64-unknown-linux-musl.tar.gz"
+checksum = "sha256:826cb318a95ac418e8c3f8237439ac39239dfe88e491adc3ecddd3fa4e58d057"
+url = "https://github.com/jdx/usage/releases/download/v7.1.3/usage-x86_64-unknown-linux-musl.tar.gz"
 
 [tools."aqua:jdx/usage"."platforms.macos-arm64"]
-checksum = "sha256:febcc62e79cf7278e532b36073847812711b4e6e9a381663ca796a52b772ba33"
-url = "https://github.com/jdx/usage/releases/download/v7.1.2/usage-universal-apple-darwin.tar.gz"
+checksum = "sha256:4878938599894c051baaf601cb5c7ee351f4276c9da0acbf959e868884f2b99b"
+url = "https://github.com/jdx/usage/releases/download/v7.1.3/usage-universal-apple-darwin.tar.gz"
 
 [tools."aqua:jdx/usage"."platforms.macos-x64"]
-checksum = "sha256:febcc62e79cf7278e532b36073847812711b4e6e9a381663ca796a52b772ba33"
-url = "https://github.com/jdx/usage/releases/download/v7.1.2/usage-universal-apple-darwin.tar.gz"
+checksum = "sha256:4878938599894c051baaf601cb5c7ee351f4276c9da0acbf959e868884f2b99b"
+url = "https://github.com/jdx/usage/releases/download/v7.1.3/usage-universal-apple-darwin.tar.gz"
 
 [tools."aqua:jdx/usage"."platforms.windows-x64"]
-checksum = "sha256:061fe944671b7348d034ccaf016c457f896597dbddc18ee2d6858bd88bdb1519"
-url = "https://github.com/jdx/usage/releases/download/v7.1.2/usage-x86_64-pc-windows-msvc.zip"
+checksum = "sha256:4abb3f7b7e9ecac17558be73336137fa83ec9a43d0c1168a9bbb5aedd1685a27"
+url = "https://github.com/jdx/usage/releases/download/v7.1.3/usage-x86_64-pc-windows-msvc.zip"
 
 [[tools."aqua:kayac/ecspresso"]]
 version = "2.8.7"
@@ -1566,184 +1566,265 @@ url = "https://github.com/rhysd/actionlint/releases/download/v1.7.12/actionlint_
 provenance = "github-attestations"
 
 [[tools."aqua:suzuki-shunsuke/disable-checkout-persist-credentials"]]
-version = "1.0.0"
+version = "1.0.1"
 backend = "aqua:suzuki-shunsuke/disable-checkout-persist-credentials"
 
+[tools."aqua:suzuki-shunsuke/disable-checkout-persist-credentials"."platforms.linux-arm64"]
+checksum = "sha256:04401eb6a683e59c55adda75d8874f2ba1b3341aa2061d851c318061f081f498"
+url = "https://github.com/suzuki-shunsuke/disable-checkout-persist-credentials/releases/download/v1.0.1/disable-checkout-persist-credentials_linux_arm64.tar.gz"
+url_api = "https://api.github.com/repos/suzuki-shunsuke/disable-checkout-persist-credentials/releases/assets/675245297"
+provenance = "cosign"
+
+[tools."aqua:suzuki-shunsuke/disable-checkout-persist-credentials"."platforms.linux-arm64-musl"]
+checksum = "sha256:04401eb6a683e59c55adda75d8874f2ba1b3341aa2061d851c318061f081f498"
+url = "https://github.com/suzuki-shunsuke/disable-checkout-persist-credentials/releases/download/v1.0.1/disable-checkout-persist-credentials_linux_arm64.tar.gz"
+url_api = "https://api.github.com/repos/suzuki-shunsuke/disable-checkout-persist-credentials/releases/assets/675245297"
+provenance = "cosign"
+
+[tools."aqua:suzuki-shunsuke/disable-checkout-persist-credentials"."platforms.linux-x64"]
+checksum = "sha256:25d53229e21a61b304c46b64766545afb313f1a1a2edc68c6105cf95aaae4e31"
+url = "https://github.com/suzuki-shunsuke/disable-checkout-persist-credentials/releases/download/v1.0.1/disable-checkout-persist-credentials_linux_amd64.tar.gz"
+url_api = "https://api.github.com/repos/suzuki-shunsuke/disable-checkout-persist-credentials/releases/assets/675245283"
+provenance = "cosign"
+
+[tools."aqua:suzuki-shunsuke/disable-checkout-persist-credentials"."platforms.linux-x64-musl"]
+checksum = "sha256:25d53229e21a61b304c46b64766545afb313f1a1a2edc68c6105cf95aaae4e31"
+url = "https://github.com/suzuki-shunsuke/disable-checkout-persist-credentials/releases/download/v1.0.1/disable-checkout-persist-credentials_linux_amd64.tar.gz"
+url_api = "https://api.github.com/repos/suzuki-shunsuke/disable-checkout-persist-credentials/releases/assets/675245283"
+provenance = "cosign"
+
+[tools."aqua:suzuki-shunsuke/disable-checkout-persist-credentials"."platforms.macos-arm64"]
+checksum = "sha256:b4c7d04b1636db63e6a5603077cf72f19b69f39194da8bcff26ed3409c53a17b"
+url = "https://github.com/suzuki-shunsuke/disable-checkout-persist-credentials/releases/download/v1.0.1/disable-checkout-persist-credentials_darwin_arm64.tar.gz"
+url_api = "https://api.github.com/repos/suzuki-shunsuke/disable-checkout-persist-credentials/releases/assets/675245273"
+provenance = "cosign"
+
+[tools."aqua:suzuki-shunsuke/disable-checkout-persist-credentials"."platforms.macos-x64"]
+checksum = "sha256:35fe8e83235538fd05bda75972746764906474a479ec2d61515835b894881933"
+url = "https://github.com/suzuki-shunsuke/disable-checkout-persist-credentials/releases/download/v1.0.1/disable-checkout-persist-credentials_darwin_amd64.tar.gz"
+url_api = "https://api.github.com/repos/suzuki-shunsuke/disable-checkout-persist-credentials/releases/assets/675245276"
+provenance = "cosign"
+
+[tools."aqua:suzuki-shunsuke/disable-checkout-persist-credentials"."platforms.windows-x64"]
+checksum = "sha256:90ec2205a9c66c503e4a108df57b01ae5520f3a15e52b8b21bd3757aec634917"
+url = "https://github.com/suzuki-shunsuke/disable-checkout-persist-credentials/releases/download/v1.0.1/disable-checkout-persist-credentials_windows_amd64.zip"
+url_api = "https://api.github.com/repos/suzuki-shunsuke/disable-checkout-persist-credentials/releases/assets/675245302"
+provenance = "cosign"
+
 [[tools."aqua:suzuki-shunsuke/disable-checkout-persist-credentials"]]
-version = "1.0.0"
+version = "1.0.1"
 backend = "aqua:suzuki-shunsuke/disable-checkout-persist-credentials"
 
 [tools."aqua:suzuki-shunsuke/disable-checkout-persist-credentials".options]
 "vars.lazy" = "true"
 
 [tools."aqua:suzuki-shunsuke/disable-checkout-persist-credentials"."platforms.linux-arm64"]
-checksum = "sha256:a0925ca95870ad1f4bbdbb4e96172c4730558de76ac67f2d78f2ced1300ab9c7"
-url = "https://github.com/suzuki-shunsuke/disable-checkout-persist-credentials/releases/download/v1.0.0/disable-checkout-persist-credentials_linux_arm64.tar.gz"
-
-[tools."aqua:suzuki-shunsuke/disable-checkout-persist-credentials"."platforms.linux-arm64".provenance.slsa]
-url = "https://github.com/suzuki-shunsuke/disable-checkout-persist-credentials/releases/download/v1.0.0/multiple.intoto.jsonl"
+checksum = "sha256:04401eb6a683e59c55adda75d8874f2ba1b3341aa2061d851c318061f081f498"
+url = "https://github.com/suzuki-shunsuke/disable-checkout-persist-credentials/releases/download/v1.0.1/disable-checkout-persist-credentials_linux_arm64.tar.gz"
+provenance = "slsa"
 
 [tools."aqua:suzuki-shunsuke/disable-checkout-persist-credentials"."platforms.linux-arm64-musl"]
-checksum = "sha256:a0925ca95870ad1f4bbdbb4e96172c4730558de76ac67f2d78f2ced1300ab9c7"
-url = "https://github.com/suzuki-shunsuke/disable-checkout-persist-credentials/releases/download/v1.0.0/disable-checkout-persist-credentials_linux_arm64.tar.gz"
-
-[tools."aqua:suzuki-shunsuke/disable-checkout-persist-credentials"."platforms.linux-arm64-musl".provenance.slsa]
-url = "https://github.com/suzuki-shunsuke/disable-checkout-persist-credentials/releases/download/v1.0.0/multiple.intoto.jsonl"
+checksum = "sha256:04401eb6a683e59c55adda75d8874f2ba1b3341aa2061d851c318061f081f498"
+url = "https://github.com/suzuki-shunsuke/disable-checkout-persist-credentials/releases/download/v1.0.1/disable-checkout-persist-credentials_linux_arm64.tar.gz"
+provenance = "slsa"
 
 [tools."aqua:suzuki-shunsuke/disable-checkout-persist-credentials"."platforms.linux-x64"]
-checksum = "sha256:81a4e471cdf0788ad14f648a126d3a8ca82019026262fdfeeea5aaf6490fb89a"
-url = "https://github.com/suzuki-shunsuke/disable-checkout-persist-credentials/releases/download/v1.0.0/disable-checkout-persist-credentials_linux_amd64.tar.gz"
-
-[tools."aqua:suzuki-shunsuke/disable-checkout-persist-credentials"."platforms.linux-x64".provenance.slsa]
-url = "https://github.com/suzuki-shunsuke/disable-checkout-persist-credentials/releases/download/v1.0.0/multiple.intoto.jsonl"
+checksum = "sha256:25d53229e21a61b304c46b64766545afb313f1a1a2edc68c6105cf95aaae4e31"
+url = "https://github.com/suzuki-shunsuke/disable-checkout-persist-credentials/releases/download/v1.0.1/disable-checkout-persist-credentials_linux_amd64.tar.gz"
 
 [tools."aqua:suzuki-shunsuke/disable-checkout-persist-credentials"."platforms.linux-x64-musl"]
-checksum = "sha256:81a4e471cdf0788ad14f648a126d3a8ca82019026262fdfeeea5aaf6490fb89a"
-url = "https://github.com/suzuki-shunsuke/disable-checkout-persist-credentials/releases/download/v1.0.0/disable-checkout-persist-credentials_linux_amd64.tar.gz"
-
-[tools."aqua:suzuki-shunsuke/disable-checkout-persist-credentials"."platforms.linux-x64-musl".provenance.slsa]
-url = "https://github.com/suzuki-shunsuke/disable-checkout-persist-credentials/releases/download/v1.0.0/multiple.intoto.jsonl"
+checksum = "sha256:25d53229e21a61b304c46b64766545afb313f1a1a2edc68c6105cf95aaae4e31"
+url = "https://github.com/suzuki-shunsuke/disable-checkout-persist-credentials/releases/download/v1.0.1/disable-checkout-persist-credentials_linux_amd64.tar.gz"
+provenance = "slsa"
 
 [tools."aqua:suzuki-shunsuke/disable-checkout-persist-credentials"."platforms.macos-arm64"]
-checksum = "sha256:48ea9e0aa93febcc4d88095594fe38deb634292f9ed9b187e23067d50c4b4b43"
-url = "https://github.com/suzuki-shunsuke/disable-checkout-persist-credentials/releases/download/v1.0.0/disable-checkout-persist-credentials_darwin_arm64.tar.gz"
-
-[tools."aqua:suzuki-shunsuke/disable-checkout-persist-credentials"."platforms.macos-arm64".provenance.slsa]
-url = "https://github.com/suzuki-shunsuke/disable-checkout-persist-credentials/releases/download/v1.0.0/multiple.intoto.jsonl"
+checksum = "sha256:b4c7d04b1636db63e6a5603077cf72f19b69f39194da8bcff26ed3409c53a17b"
+url = "https://github.com/suzuki-shunsuke/disable-checkout-persist-credentials/releases/download/v1.0.1/disable-checkout-persist-credentials_darwin_arm64.tar.gz"
+provenance = "slsa"
 
 [tools."aqua:suzuki-shunsuke/disable-checkout-persist-credentials"."platforms.macos-x64"]
-checksum = "sha256:304e83bb3d31479192d7392cd2f09140cb3dd0356cbbb417399200cbc547f9eb"
-url = "https://github.com/suzuki-shunsuke/disable-checkout-persist-credentials/releases/download/v1.0.0/disable-checkout-persist-credentials_darwin_amd64.tar.gz"
-
-[tools."aqua:suzuki-shunsuke/disable-checkout-persist-credentials"."platforms.macos-x64".provenance.slsa]
-url = "https://github.com/suzuki-shunsuke/disable-checkout-persist-credentials/releases/download/v1.0.0/multiple.intoto.jsonl"
+checksum = "sha256:35fe8e83235538fd05bda75972746764906474a479ec2d61515835b894881933"
+url = "https://github.com/suzuki-shunsuke/disable-checkout-persist-credentials/releases/download/v1.0.1/disable-checkout-persist-credentials_darwin_amd64.tar.gz"
+provenance = "slsa"
 
 [tools."aqua:suzuki-shunsuke/disable-checkout-persist-credentials"."platforms.windows-x64"]
-checksum = "sha256:fe6b9cb19efb258a41902bfeb0141788948765e8ce04b7807a0e2212bbf5147c"
-url = "https://github.com/suzuki-shunsuke/disable-checkout-persist-credentials/releases/download/v1.0.0/disable-checkout-persist-credentials_windows_amd64.zip"
-
-[tools."aqua:suzuki-shunsuke/disable-checkout-persist-credentials"."platforms.windows-x64".provenance.slsa]
-url = "https://github.com/suzuki-shunsuke/disable-checkout-persist-credentials/releases/download/v1.0.0/multiple.intoto.jsonl"
+checksum = "sha256:90ec2205a9c66c503e4a108df57b01ae5520f3a15e52b8b21bd3757aec634917"
+url = "https://github.com/suzuki-shunsuke/disable-checkout-persist-credentials/releases/download/v1.0.1/disable-checkout-persist-credentials_windows_amd64.zip"
+provenance = "slsa"
 
 [[tools."aqua:suzuki-shunsuke/ghalint"]]
-version = "1.5.6"
+version = "1.5.7"
 backend = "aqua:suzuki-shunsuke/ghalint"
 
+[tools."aqua:suzuki-shunsuke/ghalint"."platforms.linux-arm64"]
+checksum = "sha256:0123356892fb6e62ed0c7deba7b06e57af29a7447d41e51d0d71f8fcb3ecbbea"
+url = "https://github.com/suzuki-shunsuke/ghalint/releases/download/v1.5.7/ghalint_1.5.7_linux_arm64.tar.gz"
+url_api = "https://api.github.com/repos/suzuki-shunsuke/ghalint/releases/assets/676756686"
+provenance = "cosign"
+
+[tools."aqua:suzuki-shunsuke/ghalint"."platforms.linux-arm64-musl"]
+checksum = "sha256:0123356892fb6e62ed0c7deba7b06e57af29a7447d41e51d0d71f8fcb3ecbbea"
+url = "https://github.com/suzuki-shunsuke/ghalint/releases/download/v1.5.7/ghalint_1.5.7_linux_arm64.tar.gz"
+url_api = "https://api.github.com/repos/suzuki-shunsuke/ghalint/releases/assets/676756686"
+provenance = "cosign"
+
+[tools."aqua:suzuki-shunsuke/ghalint"."platforms.linux-x64"]
+checksum = "sha256:b8eaba77baea50540caf43e81ea32049ca07fecba267a84c78a27ce5a86631a3"
+url = "https://github.com/suzuki-shunsuke/ghalint/releases/download/v1.5.7/ghalint_1.5.7_linux_amd64.tar.gz"
+url_api = "https://api.github.com/repos/suzuki-shunsuke/ghalint/releases/assets/676756679"
+provenance = "cosign"
+
+[tools."aqua:suzuki-shunsuke/ghalint"."platforms.linux-x64-musl"]
+checksum = "sha256:b8eaba77baea50540caf43e81ea32049ca07fecba267a84c78a27ce5a86631a3"
+url = "https://github.com/suzuki-shunsuke/ghalint/releases/download/v1.5.7/ghalint_1.5.7_linux_amd64.tar.gz"
+url_api = "https://api.github.com/repos/suzuki-shunsuke/ghalint/releases/assets/676756679"
+provenance = "cosign"
+
+[tools."aqua:suzuki-shunsuke/ghalint"."platforms.macos-arm64"]
+checksum = "sha256:c3abc5c3a8eedafbeb3d3d2d27a2757876fd5d4937c7306a3932906d578f968a"
+url = "https://github.com/suzuki-shunsuke/ghalint/releases/download/v1.5.7/ghalint_1.5.7_darwin_arm64.tar.gz"
+url_api = "https://api.github.com/repos/suzuki-shunsuke/ghalint/releases/assets/676756660"
+provenance = "cosign"
+
+[tools."aqua:suzuki-shunsuke/ghalint"."platforms.macos-x64"]
+checksum = "sha256:b5644bc3a78fddc662fdb16767cd4a6d6e4066ab1714f71bfff61b911b7837b7"
+url = "https://github.com/suzuki-shunsuke/ghalint/releases/download/v1.5.7/ghalint_1.5.7_darwin_amd64.tar.gz"
+url_api = "https://api.github.com/repos/suzuki-shunsuke/ghalint/releases/assets/676756664"
+provenance = "cosign"
+
+[tools."aqua:suzuki-shunsuke/ghalint"."platforms.windows-x64"]
+checksum = "sha256:b9be347bc179de6a8c7c8d4a57ab4cf32701a73d1459a5a27457deb60a4d7cfc"
+url = "https://github.com/suzuki-shunsuke/ghalint/releases/download/v1.5.7/ghalint_1.5.7_windows_amd64.zip"
+url_api = "https://api.github.com/repos/suzuki-shunsuke/ghalint/releases/assets/676756694"
+provenance = "cosign"
+
 [[tools."aqua:suzuki-shunsuke/ghalint"]]
-version = "1.5.6"
+version = "1.5.7"
 backend = "aqua:suzuki-shunsuke/ghalint"
 
 [tools."aqua:suzuki-shunsuke/ghalint".options]
 "vars.lazy" = "true"
 
 [tools."aqua:suzuki-shunsuke/ghalint"."platforms.linux-arm64"]
-checksum = "sha256:203a22c70b40bb161626973ad2a8dd06aeb736699fc8e03dd425dee8ff3406e6"
-url = "https://github.com/suzuki-shunsuke/ghalint/releases/download/v1.5.6/ghalint_1.5.6_linux_arm64.tar.gz"
-
-[tools."aqua:suzuki-shunsuke/ghalint"."platforms.linux-arm64".provenance.slsa]
-url = "https://github.com/suzuki-shunsuke/ghalint/releases/download/v1.5.6/multiple.intoto.jsonl"
+checksum = "sha256:0123356892fb6e62ed0c7deba7b06e57af29a7447d41e51d0d71f8fcb3ecbbea"
+url = "https://github.com/suzuki-shunsuke/ghalint/releases/download/v1.5.7/ghalint_1.5.7_linux_arm64.tar.gz"
+provenance = "slsa"
 
 [tools."aqua:suzuki-shunsuke/ghalint"."platforms.linux-arm64-musl"]
-checksum = "sha256:203a22c70b40bb161626973ad2a8dd06aeb736699fc8e03dd425dee8ff3406e6"
-url = "https://github.com/suzuki-shunsuke/ghalint/releases/download/v1.5.6/ghalint_1.5.6_linux_arm64.tar.gz"
-
-[tools."aqua:suzuki-shunsuke/ghalint"."platforms.linux-arm64-musl".provenance.slsa]
-url = "https://github.com/suzuki-shunsuke/ghalint/releases/download/v1.5.6/multiple.intoto.jsonl"
+checksum = "sha256:0123356892fb6e62ed0c7deba7b06e57af29a7447d41e51d0d71f8fcb3ecbbea"
+url = "https://github.com/suzuki-shunsuke/ghalint/releases/download/v1.5.7/ghalint_1.5.7_linux_arm64.tar.gz"
+provenance = "slsa"
 
 [tools."aqua:suzuki-shunsuke/ghalint"."platforms.linux-x64"]
-checksum = "sha256:98ee0e3330de7286f470d1e89c03ff7ce70d7a5998ba0f15969c400447be579c"
-url = "https://github.com/suzuki-shunsuke/ghalint/releases/download/v1.5.6/ghalint_1.5.6_linux_amd64.tar.gz"
-
-[tools."aqua:suzuki-shunsuke/ghalint"."platforms.linux-x64".provenance.slsa]
-url = "https://github.com/suzuki-shunsuke/ghalint/releases/download/v1.5.6/multiple.intoto.jsonl"
+checksum = "sha256:b8eaba77baea50540caf43e81ea32049ca07fecba267a84c78a27ce5a86631a3"
+url = "https://github.com/suzuki-shunsuke/ghalint/releases/download/v1.5.7/ghalint_1.5.7_linux_amd64.tar.gz"
 
 [tools."aqua:suzuki-shunsuke/ghalint"."platforms.linux-x64-musl"]
-checksum = "sha256:98ee0e3330de7286f470d1e89c03ff7ce70d7a5998ba0f15969c400447be579c"
-url = "https://github.com/suzuki-shunsuke/ghalint/releases/download/v1.5.6/ghalint_1.5.6_linux_amd64.tar.gz"
-
-[tools."aqua:suzuki-shunsuke/ghalint"."platforms.linux-x64-musl".provenance.slsa]
-url = "https://github.com/suzuki-shunsuke/ghalint/releases/download/v1.5.6/multiple.intoto.jsonl"
+checksum = "sha256:b8eaba77baea50540caf43e81ea32049ca07fecba267a84c78a27ce5a86631a3"
+url = "https://github.com/suzuki-shunsuke/ghalint/releases/download/v1.5.7/ghalint_1.5.7_linux_amd64.tar.gz"
+provenance = "slsa"
 
 [tools."aqua:suzuki-shunsuke/ghalint"."platforms.macos-arm64"]
-checksum = "sha256:1262cac411e27b4653e6b66b7b06580ebcc2026fdd903e12e6cb0e4591639de6"
-url = "https://github.com/suzuki-shunsuke/ghalint/releases/download/v1.5.6/ghalint_1.5.6_darwin_arm64.tar.gz"
-
-[tools."aqua:suzuki-shunsuke/ghalint"."platforms.macos-arm64".provenance.slsa]
-url = "https://github.com/suzuki-shunsuke/ghalint/releases/download/v1.5.6/multiple.intoto.jsonl"
+checksum = "sha256:c3abc5c3a8eedafbeb3d3d2d27a2757876fd5d4937c7306a3932906d578f968a"
+url = "https://github.com/suzuki-shunsuke/ghalint/releases/download/v1.5.7/ghalint_1.5.7_darwin_arm64.tar.gz"
+provenance = "slsa"
 
 [tools."aqua:suzuki-shunsuke/ghalint"."platforms.macos-x64"]
-checksum = "sha256:d2a0e8605333068065dcf4c9b7b7a24891eda1750ac01fb755dfba426a390883"
-url = "https://github.com/suzuki-shunsuke/ghalint/releases/download/v1.5.6/ghalint_1.5.6_darwin_amd64.tar.gz"
-
-[tools."aqua:suzuki-shunsuke/ghalint"."platforms.macos-x64".provenance.slsa]
-url = "https://github.com/suzuki-shunsuke/ghalint/releases/download/v1.5.6/multiple.intoto.jsonl"
+checksum = "sha256:b5644bc3a78fddc662fdb16767cd4a6d6e4066ab1714f71bfff61b911b7837b7"
+url = "https://github.com/suzuki-shunsuke/ghalint/releases/download/v1.5.7/ghalint_1.5.7_darwin_amd64.tar.gz"
+provenance = "slsa"
 
 [tools."aqua:suzuki-shunsuke/ghalint"."platforms.windows-x64"]
-checksum = "sha256:109ea9b39c8e263cef924bd3b4fe5505964204f934ca60d986f4090d01a99ba5"
-url = "https://github.com/suzuki-shunsuke/ghalint/releases/download/v1.5.6/ghalint_1.5.6_windows_amd64.zip"
-
-[tools."aqua:suzuki-shunsuke/ghalint"."platforms.windows-x64".provenance.slsa]
-url = "https://github.com/suzuki-shunsuke/ghalint/releases/download/v1.5.6/multiple.intoto.jsonl"
+checksum = "sha256:b9be347bc179de6a8c7c8d4a57ab4cf32701a73d1459a5a27457deb60a4d7cfc"
+url = "https://github.com/suzuki-shunsuke/ghalint/releases/download/v1.5.7/ghalint_1.5.7_windows_amd64.zip"
+provenance = "slsa"
 
 [[tools."aqua:suzuki-shunsuke/ghatm"]]
-version = "1.0.0"
+version = "1.0.1"
 backend = "aqua:suzuki-shunsuke/ghatm"
 
+[tools."aqua:suzuki-shunsuke/ghatm"."platforms.linux-arm64"]
+checksum = "sha256:243a9b9e4f1c3133370843e0591ba243545eb0e71d4316b32c737d37ba02a000"
+url = "https://github.com/suzuki-shunsuke/ghatm/releases/download/v1.0.1/ghatm_linux_arm64.tar.gz"
+url_api = "https://api.github.com/repos/suzuki-shunsuke/ghatm/releases/assets/676900956"
+provenance = "cosign"
+
+[tools."aqua:suzuki-shunsuke/ghatm"."platforms.linux-arm64-musl"]
+checksum = "sha256:243a9b9e4f1c3133370843e0591ba243545eb0e71d4316b32c737d37ba02a000"
+url = "https://github.com/suzuki-shunsuke/ghatm/releases/download/v1.0.1/ghatm_linux_arm64.tar.gz"
+url_api = "https://api.github.com/repos/suzuki-shunsuke/ghatm/releases/assets/676900956"
+provenance = "cosign"
+
+[tools."aqua:suzuki-shunsuke/ghatm"."platforms.linux-x64"]
+checksum = "sha256:4d9b755527a8e3ccb437f2a3b2226ee81602c0498e3410c61b00af60645f11fa"
+url = "https://github.com/suzuki-shunsuke/ghatm/releases/download/v1.0.1/ghatm_linux_amd64.tar.gz"
+url_api = "https://api.github.com/repos/suzuki-shunsuke/ghatm/releases/assets/676900951"
+provenance = "cosign"
+
+[tools."aqua:suzuki-shunsuke/ghatm"."platforms.linux-x64-musl"]
+checksum = "sha256:4d9b755527a8e3ccb437f2a3b2226ee81602c0498e3410c61b00af60645f11fa"
+url = "https://github.com/suzuki-shunsuke/ghatm/releases/download/v1.0.1/ghatm_linux_amd64.tar.gz"
+url_api = "https://api.github.com/repos/suzuki-shunsuke/ghatm/releases/assets/676900951"
+provenance = "cosign"
+
+[tools."aqua:suzuki-shunsuke/ghatm"."platforms.macos-arm64"]
+checksum = "sha256:eb4fe6f153b06391deebdd69eee0e046109f8e87f554d8d870c9f11a2907cfb0"
+url = "https://github.com/suzuki-shunsuke/ghatm/releases/download/v1.0.1/ghatm_darwin_arm64.tar.gz"
+url_api = "https://api.github.com/repos/suzuki-shunsuke/ghatm/releases/assets/676900933"
+provenance = "cosign"
+
+[tools."aqua:suzuki-shunsuke/ghatm"."platforms.macos-x64"]
+checksum = "sha256:cc8c4ba813c2cb98bc9bf1d648a18e70955889713bdb78b754ed9353cdb57545"
+url = "https://github.com/suzuki-shunsuke/ghatm/releases/download/v1.0.1/ghatm_darwin_amd64.tar.gz"
+url_api = "https://api.github.com/repos/suzuki-shunsuke/ghatm/releases/assets/676900929"
+provenance = "cosign"
+
+[tools."aqua:suzuki-shunsuke/ghatm"."platforms.windows-x64"]
+checksum = "sha256:f3483d039159815ff2c2ee246d86e58cd7c623f08a94ae1527117744fd343e9e"
+url = "https://github.com/suzuki-shunsuke/ghatm/releases/download/v1.0.1/ghatm_windows_amd64.zip"
+url_api = "https://api.github.com/repos/suzuki-shunsuke/ghatm/releases/assets/676900977"
+provenance = "cosign"
+
 [[tools."aqua:suzuki-shunsuke/ghatm"]]
-version = "1.0.0"
+version = "1.0.1"
 backend = "aqua:suzuki-shunsuke/ghatm"
 
 [tools."aqua:suzuki-shunsuke/ghatm".options]
 "vars.lazy" = "true"
 
 [tools."aqua:suzuki-shunsuke/ghatm"."platforms.linux-arm64"]
-checksum = "sha256:92368685124a3a7db0e59c2c56e9ab1af3eaf636a8f891c86684f5b6010ed5e5"
-url = "https://github.com/suzuki-shunsuke/ghatm/releases/download/v1.0.0/ghatm_linux_arm64.tar.gz"
-
-[tools."aqua:suzuki-shunsuke/ghatm"."platforms.linux-arm64".provenance.slsa]
-url = "https://github.com/suzuki-shunsuke/ghatm/releases/download/v1.0.0/multiple.intoto.jsonl"
+checksum = "sha256:243a9b9e4f1c3133370843e0591ba243545eb0e71d4316b32c737d37ba02a000"
+url = "https://github.com/suzuki-shunsuke/ghatm/releases/download/v1.0.1/ghatm_linux_arm64.tar.gz"
+provenance = "slsa"
 
 [tools."aqua:suzuki-shunsuke/ghatm"."platforms.linux-arm64-musl"]
-checksum = "sha256:92368685124a3a7db0e59c2c56e9ab1af3eaf636a8f891c86684f5b6010ed5e5"
-url = "https://github.com/suzuki-shunsuke/ghatm/releases/download/v1.0.0/ghatm_linux_arm64.tar.gz"
-
-[tools."aqua:suzuki-shunsuke/ghatm"."platforms.linux-arm64-musl".provenance.slsa]
-url = "https://github.com/suzuki-shunsuke/ghatm/releases/download/v1.0.0/multiple.intoto.jsonl"
+checksum = "sha256:243a9b9e4f1c3133370843e0591ba243545eb0e71d4316b32c737d37ba02a000"
+url = "https://github.com/suzuki-shunsuke/ghatm/releases/download/v1.0.1/ghatm_linux_arm64.tar.gz"
+provenance = "slsa"
 
 [tools."aqua:suzuki-shunsuke/ghatm"."platforms.linux-x64"]
-checksum = "sha256:22195c41bc439958e3983ad1cf6f7b2d3ed8a0685df4b15bff5b2bbfb38118ed"
-url = "https://github.com/suzuki-shunsuke/ghatm/releases/download/v1.0.0/ghatm_linux_amd64.tar.gz"
-
-[tools."aqua:suzuki-shunsuke/ghatm"."platforms.linux-x64".provenance.slsa]
-url = "https://github.com/suzuki-shunsuke/ghatm/releases/download/v1.0.0/multiple.intoto.jsonl"
+checksum = "sha256:4d9b755527a8e3ccb437f2a3b2226ee81602c0498e3410c61b00af60645f11fa"
+url = "https://github.com/suzuki-shunsuke/ghatm/releases/download/v1.0.1/ghatm_linux_amd64.tar.gz"
 
 [tools."aqua:suzuki-shunsuke/ghatm"."platforms.linux-x64-musl"]
-checksum = "sha256:22195c41bc439958e3983ad1cf6f7b2d3ed8a0685df4b15bff5b2bbfb38118ed"
-url = "https://github.com/suzuki-shunsuke/ghatm/releases/download/v1.0.0/ghatm_linux_amd64.tar.gz"
-
-[tools."aqua:suzuki-shunsuke/ghatm"."platforms.linux-x64-musl".provenance.slsa]
-url = "https://github.com/suzuki-shunsuke/ghatm/releases/download/v1.0.0/multiple.intoto.jsonl"
+checksum = "sha256:4d9b755527a8e3ccb437f2a3b2226ee81602c0498e3410c61b00af60645f11fa"
+url = "https://github.com/suzuki-shunsuke/ghatm/releases/download/v1.0.1/ghatm_linux_amd64.tar.gz"
+provenance = "slsa"
 
 [tools."aqua:suzuki-shunsuke/ghatm"."platforms.macos-arm64"]
-checksum = "sha256:63204eb557d71e8cf5af739a82444cf231581f067e36903aece3e172544d16a8"
-url = "https://github.com/suzuki-shunsuke/ghatm/releases/download/v1.0.0/ghatm_darwin_arm64.tar.gz"
-
-[tools."aqua:suzuki-shunsuke/ghatm"."platforms.macos-arm64".provenance.slsa]
-url = "https://github.com/suzuki-shunsuke/ghatm/releases/download/v1.0.0/multiple.intoto.jsonl"
+checksum = "sha256:eb4fe6f153b06391deebdd69eee0e046109f8e87f554d8d870c9f11a2907cfb0"
+url = "https://github.com/suzuki-shunsuke/ghatm/releases/download/v1.0.1/ghatm_darwin_arm64.tar.gz"
+provenance = "slsa"
 
 [tools."aqua:suzuki-shunsuke/ghatm"."platforms.macos-x64"]
-checksum = "sha256:1d9eef823cbc2a7e8789c0a1511896292a831d477670b9b4180a9a9db817ebad"
-url = "https://github.com/suzuki-shunsuke/ghatm/releases/download/v1.0.0/ghatm_darwin_amd64.tar.gz"
-
-[tools."aqua:suzuki-shunsuke/ghatm"."platforms.macos-x64".provenance.slsa]
-url = "https://github.com/suzuki-shunsuke/ghatm/releases/download/v1.0.0/multiple.intoto.jsonl"
+checksum = "sha256:cc8c4ba813c2cb98bc9bf1d648a18e70955889713bdb78b754ed9353cdb57545"
+url = "https://github.com/suzuki-shunsuke/ghatm/releases/download/v1.0.1/ghatm_darwin_amd64.tar.gz"
+provenance = "slsa"
 
 [tools."aqua:suzuki-shunsuke/ghatm"."platforms.windows-x64"]
-checksum = "sha256:b195c25ab335729eaf63fe9c40185091e9e87bf709c7a487e7b258096be2b63a"
-url = "https://github.com/suzuki-shunsuke/ghatm/releases/download/v1.0.0/ghatm_windows_amd64.zip"
-
-[tools."aqua:suzuki-shunsuke/ghatm"."platforms.windows-x64".provenance.slsa]
-url = "https://github.com/suzuki-shunsuke/ghatm/releases/download/v1.0.0/multiple.intoto.jsonl"
+checksum = "sha256:f3483d039159815ff2c2ee246d86e58cd7c623f08a94ae1527117744fd343e9e"
+url = "https://github.com/suzuki-shunsuke/ghatm/releases/download/v1.0.1/ghatm_windows_amd64.zip"
+provenance = "slsa"
 
 [[tools."aqua:suzuki-shunsuke/pinact"]]
 version = "5.0.2"
