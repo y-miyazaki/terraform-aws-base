@@ -48,7 +48,7 @@ python = "3.14.6"
 "github:microsoft/apm" = { version = "v0.35.0", lazy = true, lazy_bins = ["apm"] }                                 # agent package manager
 claude = { version = "2.1.311", lazy = true, lazy_bins = ["claude"] }                                              # Claude Code CLI
 "github:DeusData/codebase-memory-mcp" = { version = "v0.12.1", lazy = true, lazy_bins = ["codebase-memory-mcp"] } # codebase memory MCP server
-"aqua:github/copilot-cli" = { version = "1.0.103", lazy = true, lazy_bins = ["copilot"] }                           # GitHub Copilot CLI
+"aqua:github/copilot-cli" = { version = "1.0.104", lazy = true, lazy_bins = ["copilot"] }                           # GitHub Copilot CLI
 "pipx:headroom-ai" = { version = "0.42.0", extras = "proxy,mcp,bedrock", depends = ["python"], lazy = true, lazy_bins = ["headroom", "headroom-cache-ttl"] }
 "npm:lean-ctx-bin" = { version = "3.11.4", depends = [
   "node",

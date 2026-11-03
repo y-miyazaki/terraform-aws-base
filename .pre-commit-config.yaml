@@ -1,6 +1,10 @@
 # See https://pre-commit.com for more information
 # See https://pre-commit.com/hooks.html for more hooks
-repos:
+# Use the mise-managed node instead of letting nodeenv resolve "latest",
+# which breaks when the newest node release is a pre-release (e.g. "x.0.0-alpha").
+default_language_version:
+  node: system
+  repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v6.0.0
     hooks:
