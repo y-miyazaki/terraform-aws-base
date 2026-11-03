@@ -39,30 +39,13 @@ repos:
       - id: gitleaks
         args: ["--config=.gitleaks.toml"]
   - repo: https://github.com/semgrep/pre-commit
-    rev: v1.171.0
+    rev: v1.180.0
     hooks:
       - id: semgrep
         # pass_filenames must be false so .semgrepignore applies; explicit file
         # targets bypass semgrepignore (semgrep/pre-commit#4978).
         pass_filenames: false
         args: [--config, auto, --error]
-  # --------------------------------------------------------------
-  # For Shell Script
-  # --------------------------------------------------------------
-  - repo: local
-    hooks:
-      - id: shellcheck
-        name: shellcheck
-        description: Shell script static analysis tool.
-        language: system
-        entry: shellcheck
-        files: \.(sh|bats)$
-      - id: shfmt
-        name: shfmt
-        description: Shell script formatter.
-        language: system
-        entry: shfmt -w -s -i 4 -ci -bn -sr
-        files: \.(sh|bats)$
   # --------------------------------------------------------------
   # For Commit Message
   # --------------------------------------------------------------
@@ -94,7 +77,7 @@ repos:
         types: [yaml]
         files: ^\.github/workflows/.*\.(ya?ml)$
   - repo: https://github.com/zizmorcore/zizmor-pre-commit
-    rev: v1.29.0
+    rev: v1.31.1
     hooks:
       # Run the linter.
       - id: zizmor
@@ -123,18 +106,18 @@ repos:
   # --------------------------------------------------------------
   # For Markdown
   # --------------------------------------------------------------
-  - repo: https://github.com/DavidAnson/markdownlint-cli2
-    rev: v0.22.1
-    hooks:
-      - id: markdownlint-cli2
-        args: ["--fix"]
-        exclude: '^(terraform|modules)(/.*)?/README\.md$'
-        files: \.md$
   - repo: https://github.com/tcort/markdown-link-check
     rev: v3.15.0
     hooks:
       - id: markdown-link-check
         args: [--quiet, -c, .markdown-link-check.json]
+  - repo: https://github.com/DavidAnson/markdownlint-cli2
+    rev: v0.23.3
+    hooks:
+      - id: markdownlint-cli2
+        args: ["--fix"]
+        exclude: '^(terraform|modules)(/.*)?/README\.md$'
+        files: \.md$
   # --------------------------------------------------------------
   # For mkdocs
   # --------------------------------------------------------------
@@ -160,6 +143,33 @@ repos:
         files: \.(cjs|css|html|js|json|jsonc|jsx|md|mjs|tsx?|ya?ml)$
         language: system
   # --------------------------------------------------------------
+  # For Renovate
+  # --------------------------------------------------------------
+  - repo: https://github.com/renovatebot/pre-commit-hooks
+    rev: 44.206.2
+    hooks:
+      - id: renovate-config-validator
+        # The hook default only matches renovate.json(c|5) / .renovaterc; also cover shared presets under renovate/.
+        files: '^(renovate/.*\.json|\.github/renovate\.json)$'
+        args: [--strict]
+  # --------------------------------------------------------------
+  # For Shell Script
+  # --------------------------------------------------------------
+  - repo: local
+    hooks:
+      - id: shellcheck
+        name: shellcheck
+        description: Shell script static analysis tool.
+        language: system
+        entry: shellcheck
+        files: \.(sh|bats)$
+      - id: shfmt
+        name: shfmt
+        description: Shell script formatter.
+        language: system
+        entry: shfmt -w -s -i 4 -ci -bn -sr
+        files: \.(sh|bats)$
+  # --------------------------------------------------------------
   # For SQL
   # --------------------------------------------------------------
   # - repo: https://github.com/sqlfluff/sqlfluff
@@ -172,20 +182,6 @@ repos:
   # --------------------------------------------------------------
   # For Terraform
   # --------------------------------------------------------------
-  - repo: https://github.com/antonbabenko/pre-commit-terraform
-    rev: v1.105.0
-    hooks:
-      - id: terraform_fmt
-      - id: terraform_tflint
-        args:
-          - --args=--config=__GIT_WORKING_DIR__/.tflint.hcl
-          - --args=--no-color
-          - --args=--fix
-      - id: terraform_trivy
-        args:
-          - --args=--config=__GIT_WORKING_DIR__/trivy.yaml
-          - --args=--format=table
-          - --args=--skip-dirs=**/.terraform
   - repo: https://github.com/terraform-docs/terraform-docs
     rev: v0.24.0
     hooks:
@@ -216,3 +212,17 @@ repos:
             ".",
             "modules",
           ]
+  - repo: https://github.com/antonbabenko/pre-commit-terraform
+    rev: v1.105.0
+    hooks:
+      - id: terraform_fmt
+      - id: terraform_tflint
+        args:
+          - --args=--config=__GIT_WORKING_DIR__/.tflint.hcl
+          - --args=--no-color
+          - --args=--fix
+      - id: terraform_trivy
+        args:
+          - --args=--config=__GIT_WORKING_DIR__/trivy.yaml
+          - --args=--format=table
+          - --args=--skip-dirs=**/.terraform
