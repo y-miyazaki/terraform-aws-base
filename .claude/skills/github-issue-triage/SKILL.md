@@ -60,9 +60,9 @@ Session report per [common-output-format.md](references/common-output-format.md)
 
 ### Error Handling
 
-| Condition                                 | Severity    | Action                                                                   |
-| ----------------------------------------- | ----------- | ------------------------------------------------------------------------ |
-| Detect `status: error`                    | Fatal       | Stop; do not mutate Issue                                                |
-| Unknown / non-allowlisted label requested | Recoverable | Do not apply; keep `needs-triage`                                        |
-| `gh` failure                              | Recoverable | Report in session output; avoid partial unlabeled state when possible    |
+| Condition                                 | Severity    | Action                                                                                                                  |
+| ----------------------------------------- | ----------- | ----------------------------------------------------------------------------------------------------------------------- |
+| Detect `status: error`                    | Fatal       | Stop; do not mutate Issue                                                                                               |
+| Unknown / non-allowlisted label requested | Recoverable | Do not apply; keep `needs-triage`                                                                                       |
+| `gh` failure                              | Recoverable | Report in session output; avoid partial unlabeled state when possible                                                   |
 | Unsafe partial failure                    | Recoverable | Apply allowlisted `triage:failed` (message run: add it to `message_labels.json`); detect skips until a human removes it |

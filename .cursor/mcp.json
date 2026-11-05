@@ -42,7 +42,7 @@
       "args": [
         "--with",
         "mcp>=1.28,<2",
-        "mcp-server-fetch==2026.10.19"
+        "mcp-server-fetch==2026.10.28"
       ]
     },
     "github": {

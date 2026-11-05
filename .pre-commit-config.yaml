@@ -4,7 +4,7 @@
 # which breaks when the newest node release is a pre-release (e.g. "x.0.0-alpha").
 default_language_version:
   node: system
-  repos:
+repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v6.0.0
     hooks:
@@ -177,7 +177,7 @@ default_language_version:
   # For SQL
   # --------------------------------------------------------------
   # - repo: https://github.com/sqlfluff/sqlfluff
-  #   rev: 4.1.0
+  #   rev: 4.4.0
   #   hooks:
   #     - id: sqlfluff-lint
   #       args: [--dialect, mysql]
@@ -217,7 +217,7 @@ default_language_version:
             "modules",
           ]
   - repo: https://github.com/antonbabenko/pre-commit-terraform
-    rev: v1.105.0
+    rev: v1.109.3
     hooks:
       - id: terraform_fmt
       - id: terraform_tflint
