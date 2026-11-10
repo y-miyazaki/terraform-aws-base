@@ -42,7 +42,7 @@ module "aws_lambda_create_lambda_metric" {
   for_each = local.monitor_regions
 
   source  = "terraform-aws-modules/lambda/aws"
-  version = "8.12.0"
+  version = "8.13.0"
 
   region = each.value
 
@@ -137,7 +137,7 @@ module "aws_lambda_create_lambda_log" {
   for_each = local.monitor_regions
 
   source  = "terraform-aws-modules/lambda/aws"
-  version = "8.12.0"
+  version = "8.13.0"
 
   region = each.value
 
@@ -258,7 +258,7 @@ module "aws_lambda_create_lambda_ses" {
   for_each = local.monitor_regions
 
   source  = "terraform-aws-modules/lambda/aws"
-  version = "8.12.0"
+  version = "8.13.0"
 
   region = each.value
 
