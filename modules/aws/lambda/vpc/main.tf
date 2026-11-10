@@ -16,14 +16,15 @@ locals {
 }
 
 resource "aws_subnet" "this" {
-  count = length(var.aws_subnet)
+  # Keyed by cidr_block so reordering var.aws_subnet does not recreate subnets.
+  for_each = { for s in var.aws_subnet : s.cidr_block => s }
 
   region                  = local.region
-  availability_zone       = try(var.aws_subnet[count.index].availability_zone)
-  cidr_block              = try(var.aws_subnet[count.index].cidr_block)
-  map_public_ip_on_launch = try(var.aws_subnet[count.index].map_public_ip_on_launch, false)
-  outpost_arn             = try(var.aws_subnet[count.index].outpost_arn, null)
-  vpc_id                  = try(var.aws_subnet[count.index].vpc_id, null)
+  availability_zone       = try(each.value.availability_zone)
+  cidr_block              = each.key
+  map_public_ip_on_launch = try(each.value.map_public_ip_on_launch, false)
+  outpost_arn             = try(each.value.outpost_arn, null)
+  vpc_id                  = try(each.value.vpc_id, null)
 
   tags = var.tags
 }
@@ -32,11 +33,11 @@ resource "aws_subnet" "this" {
 # Provides a resource to create an association between a route table and a subnet or a route table and an internet gateway or virtual private gateway.
 #--------------------------------------------------------------
 resource "aws_route_table_association" "this" {
-  count = length(var.aws_subnet)
+  for_each = aws_subnet.this
 
   region         = local.region
   route_table_id = try(var.aws_route_table_association.route_table_id)
-  subnet_id      = element(aws_subnet.this[*].id, count.index)
+  subnet_id      = each.value.id
 }
 
 #--------------------------------------------------------------
@@ -54,7 +55,7 @@ resource "aws_security_group" "this" {
     from_port   = 0
     to_port     = 65535
     protocol    = "tcp"
-    cidr_blocks = aws_subnet.this[*].cidr_block
+    cidr_blocks = [for s in aws_subnet.this : s.cidr_block]
   }
   egress {
     description = "Allow outbound all"

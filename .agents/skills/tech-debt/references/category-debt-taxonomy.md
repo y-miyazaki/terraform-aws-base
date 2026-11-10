@@ -25,7 +25,7 @@ Assign exactly one primary `category` per finding:
 | `dependency_version` | Version lock, version promiscuity, EOL / unsupported major, pin drift that blocks safe upgrades (SemVer)                                                                                                          | Security CVE remediation PRs → security-advisory / human                      |
 | `documentation`      | Wrong Diátaxis form, stale paths, missing required docs type, broken cross-refs                                                                                                                                   | Doc-only drift repair → docs-updater when that skill owns doc sync            |
 | `security`           | Authz gaps, secret-handling smells, unsafe defaults (Sonar Security) — **report only**                                                                                                                            | Exploit writing, credential rotation, production incident response            |
-| `operational`        | Fragile scripts, missing runbooks, non-reproducible tooling                                                                                                                                                       | Routine changelog / CI repair → changelog or ci-sweeper                       |
+| `operational`        | Fragile scripts, missing runbooks, non-reproducible tooling, tracked build artifacts (`tracked_artifact`) that bloat history and block review                                                                     | Routine changelog / CI repair → changelog or ci-sweeper                       |
 
 ## Severity
 

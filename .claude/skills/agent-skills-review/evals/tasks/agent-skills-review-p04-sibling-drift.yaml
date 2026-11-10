@@ -1,0 +1,27 @@
+id: agent-skills-review-p04-sibling-drift-001
+name: agent-skills-review flags shared-rule drift between sibling skills
+description: >-
+  Validate P-04 failure when sibling skills that share an edit-gate contract
+  word the shared rule differently.
+tags:
+  - quality
+  - p-04
+  - consistency
+inputs:
+  prompt: >-
+    Use agent-skills-review on the target SKILL.md with its sibling skills.
+    Assume the target treats a bare "apply" request as an edit request, while a
+    sibling skill in the same package with the same edit-gate table excludes a
+    bare "apply". Report P-04 as failed in ## Checks (Failed/Deferred Only) and
+    describe the drift in ## Issues, citing both skill paths. Include
+    ## Checks Summary.
+  context:
+    target: SKILL.md
+expected:
+  output_contains:
+    - "## Checks Summary"
+    - "## Checks (Failed/Deferred Only)"
+    - "## Issues"
+    - P-04
+  outcomes:
+    - type: task_completed

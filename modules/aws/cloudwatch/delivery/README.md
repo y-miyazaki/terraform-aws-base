@@ -1,18 +1,23 @@
 # CloudWatch Log Delivery Module
 
 ## Overview
+
 This module creates CloudWatch Logs subscription filters and Kinesis Firehose delivery streams for delivering logs to S3.
 
 ## Features
+
 - CloudWatch Logs subscription filters with configurable filter patterns
 - Kinesis Firehose delivery streams with S3 destination
 - Optional Lambda processing for log transformation
 - Optional server-side encryption with KMS
 - Automatic name transformation for log groups
+- S3 object keys follow `<prefix>/AWSLogs/<account-id>/cloudwatchlogs/<region>/<delivery stream name>/YYYY/MM/DD/HH/` (AWS native log delivery layout), so same-named log groups in different regions do not mix
+- To move objects delivered under the previous layout (`<prefix>/<delivery stream name>/...`), use `scripts/terraform/aws_migrate_firehose_log_prefix.sh`
 
 ## Usage
 
 ### Basic Example (Manual Log Group Specification)
+
 ```terraform
 module "log_delivery" {
   source = "../../modules/aws/cloudwatch/delivery"
@@ -28,8 +33,8 @@ module "log_delivery" {
   s3_bucket_arn = "arn:aws:s3:::my-log-bucket"
 
   aws_kinesis_firehose_delivery_stream = {
-    buffering_size     = 5
-    buffering_interval = 60
+    buffering_size     = 128
+    buffering_interval = 900
     prefix             = "Log/"
     compression_format = "GZIP"
     server_side_encryption = {
@@ -65,6 +70,7 @@ module "log_delivery" {
 ```
 
 ### Auto-Discovery of Log Groups
+
 ```terraform
 module "log_delivery_auto" {
   source = "../../modules/aws/cloudwatch/delivery"
@@ -88,8 +94,8 @@ module "log_delivery_auto" {
   s3_bucket_arn = "arn:aws:s3:::my-log-bucket"
 
   aws_kinesis_firehose_delivery_stream = {
-    buffering_size     = 5
-    buffering_interval = 60
+    buffering_size     = 128
+    buffering_interval = 900
     prefix             = "Log/"
     compression_format = "GZIP"
     server_side_encryption = {
@@ -125,6 +131,7 @@ module "log_delivery_auto" {
 ```
 
 ### With Lambda Processing
+
 ```terraform
 module "log_delivery_with_processing" {
   source = "../../modules/aws/cloudwatch/delivery"
@@ -137,8 +144,8 @@ module "log_delivery_with_processing" {
   lambda_processor_arn = "arn:aws:lambda:ap-northeast-1:123456789012:function:log-processor"
 
   aws_kinesis_firehose_delivery_stream = {
-    buffering_size                  = 5
-    buffering_interval              = 60
+    buffering_size                  = 128
+    buffering_interval              = 900
     lambda_buffer_size_mb           = "2"
     lambda_buffer_interval_seconds  = 900
   }
@@ -148,6 +155,7 @@ module "log_delivery_with_processing" {
 ```
 
 ### With KMS Encryption
+
 ```terraform
 module "log_delivery_encrypted" {
   source = "../../modules/aws/cloudwatch/delivery"
@@ -229,6 +237,7 @@ No direct resources are created by this module. All resources are managed by sub
 | kinesis_firehose_delivery_stream_names | Names of the Kinesis Firehose delivery streams.    |
 
 ## Notes
+
 - **Auto-Discovery**: Set `create_auto_log_group_names = true` to automatically discover all log groups in the region
   - Use `auto_log_group_names_include_list` to filter by patterns (partial match)
   - Use `auto_log_group_names_exclude_list` to exclude specific patterns (partial match)

@@ -13,6 +13,7 @@ MARKER_PER_FILE_CAP=10
 MARKER_GLOBAL_CAP=50
 DEP_PER_FILE_CAP=20
 DEP_GLOBAL_CAP=50
+ARTIFACT_GLOBAL_CAP=50
 MLC_VERSION="3.14.2"
 
 declare -a SIGNALS_JSON=()
@@ -154,6 +155,131 @@ function append_signal {
     SIGNALS_JSON+=("$(json_object --skip-empty \
         kind "${kind}" path "${path}" line "$(json_number "${line}")" snippet "${snippet}" \
         source "${source}" hint "${hint}")")
+}
+
+#######################################
+# artifact_extension_pattern: Build a case-folded ERE suffix pattern from a CSV extension list
+#
+# Globals:
+#   None
+#
+# Arguments:
+#   $1 - Comma-separated extensions (optional leading dot, surrounding blanks allowed)
+#
+# Outputs:
+#   ERE pattern on stdout (empty when no usable extension remains)
+#
+# Returns:
+#   0 always
+#
+# Usage:
+#   pattern="$(artifact_extension_pattern "zip, .jar")"
+#
+#######################################
+function artifact_extension_pattern {
+    local csv="$1"
+    local ext ext_list=""
+    local -a ext_array=()
+
+    IFS=',' read -ra ext_array <<< "${csv}"
+    for ext in "${ext_array[@]}"; do
+        ext="${ext#"${ext%%[![:space:]]*}"}"
+        ext="${ext%"${ext##*[![:space:]]}"}"
+        ext="${ext#.}"
+        # An empty alternative would match every path ending in a dot.
+        [[ -z ${ext} ]] && continue
+        ext="$(printf '%s' "${ext,,}" | sed 's/[][\.*^$+?(){}|/]/\\&/g')"
+        ext_list+="${ext_list:+|}${ext}"
+    done
+    [[ -z ${ext_list} ]] && return 0
+    printf '\\.(%s)$' "${ext_list}"
+}
+
+#######################################
+# collect_artifact_signals: Emit one tracked_artifact signal per directory of tracked build artifacts
+#
+# Globals:
+#   ARTIFACT_GLOBAL_CAP - Maximum tracked_artifact signals (one per directory)
+#   REPO_PATHS_EXTRA_PRUNES - Shared prune roots honored through repo_path_should_skip
+#   SIGNALS_JSON - Output array of signal objects
+#   TECH_DEBT_ARTIFACT_EXTENSIONS - Comma-separated extensions, case-insensitive, optional leading dot (default: zip,jar,war,whl,tar,tgz,gz,exe,dll,so,dylib,class,pyc)
+#   WARNINGS - Warning messages when the artifact cap is reached
+#
+# Arguments:
+#   None
+#
+# Outputs:
+#   None
+#
+# Returns:
+#   None
+#
+# Usage:
+#   collect_artifact_signals
+#
+#######################################
+function collect_artifact_signals {
+    local extensions="${TECH_DEBT_ARTIFACT_EXTENSIONS:-zip,jar,war,whl,tar,tgz,gz,exe,dll,so,dylib,class,pyc}"
+    local pattern entry meta file dir size noun idx
+    local emitted=0
+    local -a dirs=()
+    local -a paths=()
+    local -a shas=()
+    local -a sizes=()
+    declare -A dir_counts=()
+    declare -A dir_bytes=()
+
+    if ! git rev-parse --is-inside-work-tree > /dev/null 2>&1; then
+        return 0
+    fi
+
+    pattern="$(artifact_extension_pattern "${extensions}")"
+    [[ -z ${pattern} ]] && return 0
+
+    # Walk the index directly instead of repo_emit_tracked_paths: sizes need the
+    # blob id (-s), and -z keeps non-ASCII paths unquoted (core.quotePath).
+    # Filtering still goes through repo_path_should_skip so the sensor shares the
+    # other sensors' exclusions, except that build output (dist/ build/ bin/) and
+    # tracked-but-gitignored files are kept: they are what this sensor reports.
+    while IFS= read -r -d '' entry; do
+        meta="${entry%%$'\t'*}"
+        file="${entry#*$'\t'}"
+        [[ -z ${file} || ${meta} == 160000\ * ]] && continue
+        [[ ${file,,} =~ ${pattern} ]] || continue
+        if REPO_PATHS_INCLUDE_BUILD_OUTPUT=true REPO_PATHS_INCLUDE_GITIGNORED=true \
+            repo_path_should_skip "${file}"; then
+            continue
+        fi
+        meta="${meta#* }"
+        paths+=("${file}")
+        shas+=("${meta%% *}")
+    done < <(git ls-files -z -s 2> /dev/null || true)
+
+    [[ ${#paths[@]} -eq 0 ]] && return 0
+    mapfile -t sizes < <(printf '%s\n' "${shas[@]}" | git cat-file --batch-check='%(objectsize)' 2> /dev/null || true)
+    for idx in "${!paths[@]}"; do
+        dir="${paths[${idx}]%/*}"
+        [[ ${dir} == "${paths[${idx}]}" ]] && dir="."
+        size="${sizes[${idx}]:-0}"
+        [[ ${size} =~ ^[0-9]+$ ]] || size=0
+        dir_counts[${dir}]=$((${dir_counts[${dir}]:-0} + 1))
+        dir_bytes[${dir}]=$((${dir_bytes[${dir}]:-0} + size))
+    done
+
+    mapfile -t dirs < <(printf '%s\n' "${!dir_counts[@]}" | sort)
+    for dir in "${dirs[@]}"; do
+        if [[ ${emitted} -ge ${ARTIFACT_GLOBAL_CAP} ]]; then
+            WARNINGS+=("tracked_artifact signals truncated")
+            break
+        fi
+        noun="artifacts"
+        [[ ${dir_counts[${dir}]} -eq 1 ]] && noun="artifact"
+        SIGNALS_JSON+=("$(json_object --skip-empty \
+            kind "tracked_artifact" path "${dir}" line "$(json_number 1)" \
+            snippet "${dir_counts[${dir}]} tracked build ${noun} (${dir_bytes[${dir}]} bytes)" \
+            source "git_ls_files" hint "operational")")
+        emitted=$((emitted + 1))
+    done
 }
 
 #######################################

@@ -3,16 +3,16 @@
   "evals": [
     {
       "id": 0,
-      "prompt": "Use docs-updater (interactive/hook path). Step 1 output from this skill's detect script is in context.detect — parse that JSON only; do not run the detect script or invent paths. With skip=false, triage affected_docs for the renamed workflow. Do not edit files. Return interactive report per common-output-format.md with ## Summary (Status: updated), ## Changes listing docs/guide.md and mkdocs.yml, and ## Skipped Items.",
-      "expected_output": "Interactive report derived from detect JSON with Status updated, Changes for affected_docs, and Skipped Items",
+      "prompt": "Use docs-updater (interactive/hook path). The user asks to update the docs for the renamed workflow, which asks for changes, so agent_edit_allowed is true. Step 1 output from this skill's detect script is in context.detect — parse that JSON only; do not run the detect script or invent paths. With skip=false, triage affected_docs. Describe the patches; do not modify files in this eval. Return the apply report per common-output-format.md with ## Overview, ## Summary, ### Changes listing docs/guide.md and mkdocs.yml, ### Deferred when applicable, and ## Verification.",
+      "expected_output": "Apply report derived from detect JSON: Overview, Changes for affected_docs, Verification",
       "files": ["evals/files/detect-hook-staged.json"],
       "expectations": [
-        "Output contains ## Summary with Status: updated",
-        "Output contains ## Changes section",
+        "Output contains ## Overview and ## Summary",
+        "Output contains ### Changes section",
         "Output references docs/guide.md from detect affected_docs",
         "Output references mkdocs.yml from detect affected_docs",
         "Output references ci-build-deploy.yaml from detect renamed_files",
-        "Output contains ## Skipped Items section"
+        "Output contains ## Verification"
       ]
     },
     {

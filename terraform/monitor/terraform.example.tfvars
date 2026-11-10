@@ -279,13 +279,25 @@ common_lambda = {
     # CUSTOMIZE: To specify a VPC that already exists, configure the following settings for Lambda.
     # If var.common_lambda.vpc.is_enabled = true and var.common_lambda.vpc.create_vpc = false,
     # the Lambda will be built in an existing VPC by referencing the parameters here.
+    # Subnets and security groups are regional, so specify them per region.
+    # Set an entry for every region in var.region.primary, var.region.global and var.region.targets.
     exists = {
-      private_subnets = [
-        "subnet-xxxxxxxxxxxxxxxxx",
-        "subnet-xxxxxxxxxxxxxxxxx",
-        "subnet-xxxxxxxxxxxxxxxxx",
-      ]
-      security_group_id = "sg-xxxxxxxxxxxxxxxxx"
+      "ap-northeast-1" = {
+        private_subnets = [
+          "subnet-xxxxxxxxxxxxxxxxx",
+          "subnet-xxxxxxxxxxxxxxxxx",
+          "subnet-xxxxxxxxxxxxxxxxx",
+        ]
+        security_group_id = "sg-xxxxxxxxxxxxxxxxx"
+      }
+      "us-east-1" = {
+        private_subnets = [
+          "subnet-xxxxxxxxxxxxxxxxx",
+          "subnet-xxxxxxxxxxxxxxxxx",
+          "subnet-xxxxxxxxxxxxxxxxx",
+        ]
+        security_group_id = "sg-xxxxxxxxxxxxxxxxx"
+      }
     }
     # CUSTOMIZE: To specify a new VPC to be set up for Lambda, please set the following information.
     # If var.common_lambda.vpc.is_enabled = true and var.common_lambda.vpc.create_vpc = true,
@@ -500,8 +512,8 @@ delivery_log = {
   #--------------------------------------------------------------
   aws_kinesis_firehose_delivery_stream = {
     extended_s3_configuration = {
-      buffering_size     = 5
-      buffering_interval = 60
+      buffering_size     = 128
+      buffering_interval = 900
       prefix             = "Logs/"
       compression_format = "GZIP"
       dynamic_partitioning_configuration = {
@@ -562,8 +574,8 @@ delivery_log_us_east_1 = {
   #--------------------------------------------------------------
   aws_kinesis_firehose_delivery_stream = {
     extended_s3_configuration = {
-      buffering_size     = 5
-      buffering_interval = 60
+      buffering_size     = 128
+      buffering_interval = 900
       prefix             = "Logs/"
       compression_format = "GZIP"
       dynamic_partitioning_configuration = {
@@ -592,6 +604,22 @@ delivery_log_us_east_1 = {
     path        = "/"
   }
 }
+
+#--------------------------------------------------------------
+# Multi-region monitoring (metric_log_* / metric_resource_*)
+# Alarms for regional services are created in the regions listed in "regions".
+# - regions: (Optional) Regions to monitor. Default: [region.primary]. Each region must be listed in region.targets.
+# - region_override: (Optional) Per-region values. Map of region => object whose top-level keys
+#   (e.g. dimensions, threshold, threshold_override, log_group_names, is_enabled) replace the common values for that region.
+# Example (put inside a metric_* block):
+#   regions = ["ap-northeast-1", "ap-northeast-3"]
+#   region_override = {
+#     "ap-northeast-3" = {
+#       dimensions = [{ DBClusterIdentifier = "example-osaka" }]
+#     }
+#   }
+# Global-only metrics (metric_resource_cloudfront, metric_log_waf_us_east_1) and report functions are not affected.
+#--------------------------------------------------------------
 
 #--------------------------------------------------------------
 # Log:Application
@@ -2020,11 +2048,14 @@ metric_resource_redshift = {
 # (both AWS resource metrics and application metrics that you provide) for search, graphing, and alarms.
 #
 # Metrics about SES will be checked and you will be notified via Slack if the specified threshold is exceeded.
+# SES is a regional service: use "regions" (see Multi-region monitoring) to monitor SES in additional regions.
 # https://docs.aws.amazon.com/ses/latest/dg/event-publishing-retrieving-cloudwatch.html
 #--------------------------------------------------------------
 metric_resource_ses = {
   # CUSTOMIZE: need to set is_enabled for monitor of SES.
   is_enabled = false
+  # (Optional) Regions to monitor SES. Default: [region.primary]. Each region must be listed in region.targets.
+  regions = ["ap-northeast-1", "us-east-1"]
   # CUSTOMIZE: need to set period for SES.
   period = 300
   # CUSTOMIZE: need to set threshold for SES.
@@ -2473,7 +2504,8 @@ athena = {
   # CUSTOMIZE: To check SES logs with Athena, specify true.
   enabled_ses = true
   # CUSTOMIZE: Specify the S3 bucket where SES logs are stored. s3://{bucket name}/{bucket prefix}
-  ses_log_bucket = "s3://base-aws-log-application-0123456789012/Logs/base-aws-ses-log/"
+  # Firehose delivers CloudWatch Logs to {prefix}/AWSLogs/{account id}/cloudwatchlogs/{region}/{delivery stream name}/ (SES: log group /aws/ses/log in the primary region).
+  ses_log_bucket = "s3://base-aws-log-application-0123456789012/Logs/AWSLogs/0123456789012/cloudwatchlogs/ap-northeast-1/base-aws-ses-log/"
 }
 
 #--------------------------------------------------------------

@@ -28,5 +28,6 @@ Rules:
 
 ### Watch
 
-| Target | Evidence | Why not now |
-| ------ | -------- | ----------- |
+| Target                           | Evidence           | Why not now                                |
+| -------------------------------- | ------------------ | ------------------------------------------ |
+| <linked workflow> / <linked job> | <from log_excerpt> | flake \| infra \| env \| >5 files \| human |

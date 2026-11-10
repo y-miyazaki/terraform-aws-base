@@ -1,0 +1,35 @@
+id: tech-debt-interactive-bare-fix-001
+name: tech-debt bare fix enters apply
+description: >-
+  Validate that a request asking for changes ("fix") sets agent_edit_allowed true
+  and the run emits apply shape, not survey.
+tags:
+  - quality
+  - interactive
+  - agent-edit-allowed
+inputs:
+  prompt: >-
+    Use tech-debt. The user says only "fix". That asks for changes to be made, so
+    agent_edit_allowed is true and agent_edit_target is report. Classify the documentation signal with a Category label; list agent_report_file under ### Changes.
+    Emit apply shape with ## Overview, ## Summary, ### Changes, and ## Verification per
+    common-output-format.md. Do not emit ### Candidates. Describe the edit; do not modify
+    files in this mock eval.
+  context:
+    commit_range: eval0001..eval0002
+    agent_report_file: docs/report/tech-debt/2026-07-19.md
+    skip: false
+    signals:
+      - kind: broken_doc_ref
+        path: README.md
+        line: 12
+        snippet: "see docs/old-guide.md"
+        hint: documentation
+    hotspots: []
+expected:
+  output_contains:
+    - Overview
+    - Summary
+    - Changes
+    - Verification
+  outcomes:
+    - type: task_completed

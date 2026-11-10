@@ -11,7 +11,7 @@ Run tools in this order (fail-fast: stop on first failure):
 
 ## YAML map key order (ORD)
 
-- ORD-01 (SHOULD): Map keys under `env`, `inputs`, `outputs`, `permissions`, `secrets`, and `with` are alphabetically ordered (ASCII / `LC_ALL=C`)
+- ORD-01 (MUST): Map keys under `env`, `inputs`, `outputs`, `permissions`, `secrets`, and `with` are alphabetically ordered (ASCII / `LC_ALL=C`)
 
 ## actionlint (ACT)
 

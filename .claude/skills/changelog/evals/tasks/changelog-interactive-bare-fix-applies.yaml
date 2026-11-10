@@ -1,0 +1,35 @@
+id: changelog-interactive-bare-fix-001
+name: changelog bare fix enters apply
+description: >-
+  Validate that a request asking for changes ("fix") sets agent_edit_allowed true
+  and the run emits apply shape, not survey.
+tags:
+  - quality
+  - interactive
+  - agent-edit-allowed
+inputs:
+  prompt: >-
+    Use changelog. The user says only "fix". That asks for changes to be made, so
+    agent_edit_allowed is true and agent_edit_target is fix. Describe the CHANGELOG.md entries you would add.
+    Emit apply shape with ## Overview, ## Summary, ### Changes, and ## Verification per
+    common-output-format.md. Do not emit ### Candidates. Describe the edit; do not modify
+    files in this mock eval.
+  context:
+    changelog_file: CHANGELOG.md
+    changelog_exists: true
+    commit_range: eval0001..eval0002
+    skip: false
+    commits:
+      - sha: eval0002
+        type: feat
+        scope: changelog
+        breaking: false
+        subject: add changelog workflow
+expected:
+  output_contains:
+    - Overview
+    - Summary
+    - Changes
+    - Verification
+  outcomes:
+    - type: task_completed

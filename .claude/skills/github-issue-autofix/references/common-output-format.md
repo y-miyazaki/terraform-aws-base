@@ -9,7 +9,7 @@ No file edits. **Do not emit `### Changes`, `### Deferred`, or `## Verification`
 
 ## Overview
 
-<Issue #N → root cause hypothesis → no edits applied>
+<Refs #N → root cause hypothesis → no edits applied>
 
 ## Summary
 
@@ -29,6 +29,7 @@ No file edits. **Do not emit `### Changes`, `### Deferred`, or `## Verification`
 
 - **MUST NOT** include `### Changes`, `### Deferred`, or `## Verification`
 - Zero candidates — Overview explains no-op; omit empty `### Candidates`
+- Reference the Issue as `Refs #<N>`; **MUST NOT** use a closing keyword (`Fixes`, `Closes`, `Resolves`)
 - Do not call `repository_dispatch` from the Agent
 - At synthesis on the automation path, load `assets/pr-body-template-survey.md`
 
@@ -64,6 +65,6 @@ No file edits. **Do not emit `### Changes`, `### Deferred`, or `## Verification`
 
 ### Apply rules
 
-- PR body / report **MUST** include `Fixes #<N>` (or equivalent closing keyword) for the source Issue
+- PR body / report **MUST** include the literal `Fixes #<N>` for the source Issue
 - Do not call `repository_dispatch` from the Agent
 - At synthesis on the automation path, load `assets/pr-body-template.md`

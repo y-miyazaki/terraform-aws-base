@@ -1,21 +1,21 @@
 id: docs-updater-skip-001
 name: docs-updater skip path
 description: |
-  Validate skip output includes required status and reason.
+  Validate skip emits the survey no-op (Overview explains no documentation impact).
 
 tags:
   - quality
   - skip-path
 
 inputs:
-  prompt: "Use docs-updater and assume no changed files match impact map patterns. Return ## Summary with 'Status: skipped' and 'No documentation update required'."
+  prompt: "Use docs-updater and assume no changed files match impact map patterns. Emit survey no-op per common-output-format.md: ## Overview explains no documentation impact and states no edits applied; include ## Summary. Do not emit ### Changes or ## Verification."
   context:
     scope: staged
 
 expected:
   output_contains:
-    - "## Summary"
-    - "Status: skipped"
-    - "No documentation update required"
+    - "## Overview"
+    - "no documentation impact"
+    - "no edits applied"
   outcomes:
     - type: task_completed

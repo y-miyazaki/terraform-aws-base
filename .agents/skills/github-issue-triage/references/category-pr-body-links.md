@@ -17,5 +17,5 @@ Link everything that can be linked in an Issue comment. Apply when writing the t
 
 ## Not links
 
-- Labels, commands, and tokens (`triage:ready`, `autofix`, `@loop`) stay as code spans.
+- Labels, commands, and tokens (`triage:ready`, `autofix`, `<mention>` — the configured mention token) stay as code spans.
 - Do not invent example `org/repo` URLs; use `<owner>/<repo>` placeholders in prose.

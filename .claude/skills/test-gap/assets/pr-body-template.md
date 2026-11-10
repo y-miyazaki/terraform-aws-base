@@ -9,7 +9,7 @@ Rules:
 - Keep the table columns as written; do not rename, merge, or drop columns.
 - Use ### Deferred (not Skipped) for items not done in this run.
 - Do NOT emit ### Candidates, Outcome, or Suggested next action.
-- Never state that tests passed. You cannot run them here.
+- Report only results of test commands actually run; when not run, state the command, the expected result, and why it was not run.
 -->
 
 ## Overview
@@ -37,6 +37,6 @@ Rules:
 
 ## Verification
 
-| Check               | Result                                           |
-| ------------------- | ------------------------------------------------ |
-| `<command CI runs>` | <skip — not run here; CI expects pass for tests> |
+| Check          | Result                                                  |
+| -------------- | ------------------------------------------------------- |
+| <test command> | <pass \| fail \| not run — expected result and why not> |

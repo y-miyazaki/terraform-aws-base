@@ -39,6 +39,7 @@
 #   TECH_DEBT_LEGACY_SEARCH_DIRS - Comma-separated prior-report search roots (default: docs/report/tech-debt)
 #   TECH_DEBT_PREVIOUS_GLOB  - Glob for prior report files under search dirs (default: ????-??-??.md)
 #   TECH_DEBT_EOL_MODULES           - Comma-separated module paths/names for eol_hint signals
+#   TECH_DEBT_ARTIFACT_EXTENSIONS - Comma-separated extensions (case-insensitive, leading dot optional) treated as build artifacts for tracked_artifact (default: zip,jar,war,whl,tar,tgz,gz,exe,dll,so,dylib,class,pyc)
 #   TECH_DEBT_STALE_DAYS    - Days before a markdown file is stale (default: 365)
 #   TECH_DEBT_SKIP_MLC      - When true, skip broken_doc_ref checks with a warning
 #   TECH_DEBT_CHURN_WINDOW  - Git log --since window for churn hotspots (default: 90.days)
@@ -492,6 +493,7 @@ function main {
     fi
     collect_marker_signals
     collect_dependency_signals
+    collect_artifact_signals
     collect_doc_signals
     collect_churn_hotspots
     output_json

@@ -37,13 +37,13 @@ General documentation maintenance checks. Automation-path report shape and edit 
 
 ### UV-05: index.md Consistency
 
-When the repository maintains a generated `docs/index.md` (see template below):
+Only when the repository already maintains a generated documentation index (for example `docs/index.md`); skip this gate otherwise:
 
-- [ ] If `docs/` files were added, deleted, or renamed: `docs/index.md` regenerated
-- [ ] If no `docs/` file changes: `docs/index.md` untouched
-- [ ] Index lists files alphabetically within each documentation section
+- [ ] If documentation files were added, deleted, or renamed: the index regenerated in its existing structure
+- [ ] If no documentation file changes: the index untouched
+- [ ] Index ordering and section layout follow the existing index
 - [ ] Empty section headings omitted
-- **PASS** if the index accurately reflects current `docs/` contents
+- **PASS** if the index accurately reflects current documentation contents
 
 ### UV-06: Canonical Source and Deduplication
 
@@ -55,9 +55,9 @@ When updating docs that describe architecture, APIs, or cross-cutting behavior:
 - [ ] Site nav updated when adding or renaming documented pages
 - **PASS** if docs link to a single canonical source per topic and contain no contradictory duplicates
 
-## docs/index.md Generation Template
+## Example Index Structure
 
-When regenerating `docs/index.md`, use this structure:
+Example only — when regenerating an existing index, keep that index's structure. The sample below shows a Diataxis-organized `docs/index.md`; use it only when the existing index already follows this shape:
 
 ```markdown
 # Documentation Index
@@ -89,7 +89,7 @@ _Understanding-oriented discussion of concepts and decisions._
 - [filename.md](explanation/filename.md) - One-line description
 ```
 
-Rules:
+Rules (for an index shaped like the example):
 
 - Omit empty section headings (no placeholder text for missing categories)
 - List files alphabetically within each section

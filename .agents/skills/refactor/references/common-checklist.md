@@ -63,7 +63,7 @@ Load [category-techniques.md](category-techniques.md) when `agent_edit_allowed` 
 
 ## Verification
 
-Always load [category-verification.md](category-verification.md) for apply vs watch and Phase B gates.
+Load [category-verification.md](category-verification.md) when `agent_edit_allowed` is `true` (Phase B gates, downgrade, and apply-vs-watch for unverifiable candidates).
 
 ### VERIFY-01: Verification gates
 

@@ -89,3 +89,27 @@ resource "aws_guardduty_organization_configuration_feature" "this" {
 
   depends_on = [aws_guardduty_organization_configuration.this]
 }
+
+#--------------------------------------------------------------
+# GuardDuty Members
+# - Register specified accounts as members of this region's detector.
+# - Organization auto-enable cannot be restricted per account, so use this with
+#   auto_enable_organization_members = "NONE" when only some accounts are allowed.
+#--------------------------------------------------------------
+resource "aws_guardduty_member" "this" {
+  for_each = var.is_enabled ? var.members : {}
+
+  region      = local.region
+  account_id  = each.key
+  detector_id = local.detector_id
+  email       = each.value
+  invite      = false
+
+  # Organization members cannot be deleted by the delegated admin, and email/invite
+  # are not returned by the API for them. Ignore both to avoid replacement.
+  lifecycle {
+    ignore_changes = [email, invite]
+  }
+
+  depends_on = [aws_guardduty_organization_configuration.this]
+}

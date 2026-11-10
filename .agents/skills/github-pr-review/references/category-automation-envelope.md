@@ -18,7 +18,14 @@ Callers supply `agent_edit_allowed`, `agent_edit_target` (`fix` | `report`), and
 
 ## Report and session output
 
-Write the report file per [common-output-format.md](common-output-format.md). The session report to the caller uses `## Overview`, `## Summary`, and `### Deferred`:
+Write the report file per [common-output-format.md](common-output-format.md). The session report to the caller uses `## Overview`, `## Summary`, and `### Deferred`. When the report file was written, `## Summary` holds:
+
+- `### Report` — one bullet: the report path and finding counts by severity (`Critical` / `Warning` / `Suggestion`)
+- `### Findings` — table `| Severity | Location | Evidence kind | Title |`, one row per finding in the report; omit when there are zero findings
+
+When no file was written (survey), use the survey shape in common-output-format.md.
+
+Rules:
 
 - **Links:** At synthesis, read [category-pr-body-links.md](category-pr-body-links.md).
 - **Overview contract:** trigger → substance → action; name the PR number, the intent sources read, and the number of findings written; omit run URLs and boilerplate

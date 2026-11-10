@@ -28,13 +28,13 @@ Rules:
 
 ### Changes
 
-| Workflow / Job                   | What was wrong | What changed                         |
+| Target                           | What was wrong | What changed                         |
 | -------------------------------- | -------------- | ------------------------------------ |
 | <linked workflow> / <linked job> | <root cause>   | <linked path>: <minimal fix summary> |
 
 ### Deferred
 
-| Workflow / Job                   | Why deferred            |
+| Target                           | Why deferred            |
 | -------------------------------- | ----------------------- |
 | <linked workflow> / <linked job> | <plain-language reason> |
 

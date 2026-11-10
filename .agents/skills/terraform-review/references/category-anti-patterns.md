@@ -1,12 +1,14 @@
 # Anti-Patterns (AP)
 
+When an AP item cites a base ItemID in parentheses, report the finding once under the base ItemID (the first one listed when several are cited); the AP item is a lookup pointer, not a second finding.
+
 **AP-01 (MUST): Plaintext secrets in Terraform code or tfvars**
 
 Check: Are passwords, API keys, or tokens present in `.tf`, `.tfvars`, or `.hcl` files (G-01, SEC-04, T-01)?
 Why: Secrets in version control leak via history, clones, and CI logs
 Fix: Use variables with external secret stores — never commit literals
 
-**AP-02 (SHOULD): count for keyed resources instead of for_each**
+**AP-02 (MUST): count for keyed resources instead of for_each**
 
 Check: Is `count` used for named or keyed instances where list order can change (G-05)?
 Why: Index shifts recreate resources and cause destructive plan diffs on reorder
@@ -24,7 +26,7 @@ Check: Do resources default to open firewall rules, public storage, or default n
 Why: Unsafe defaults expand attack surface and violate least-privilege policy
 Fix: Explicit network/subnet references, restrictive firewall rules, and blocked public access on storage
 
-**AP-05 (SHOULD): Hand-written policy JSON strings**
+**AP-05 (MUST): Hand-written policy JSON strings**
 
 Check: Are policies built as raw JSON strings instead of `jsonencode` or a provider policy-document data source (COMP-02)?
 Why: String JSON is error-prone and harder to validate at plan time

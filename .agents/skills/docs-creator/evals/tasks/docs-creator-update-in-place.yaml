@@ -1,0 +1,24 @@
+id: docs-creator-update-001
+name: docs-creator updates an existing document in place
+description:
+  "Validate the update path preserves structure and reports Status: updated.
+
+  "
+tags:
+  - quality
+  - boundary-guardrail
+inputs:
+  prompt:
+    "Use docs-creator to improve the existing README.md. Preserve the original
+    structure; do not restructure without an explicit request. Return ## Summary
+    with 'Status: updated' and list README.md in ## Changes."
+  context:
+    target_file: README.md
+expected:
+  output_contains:
+    - "## Summary"
+    - "Status: updated"
+    - "## Changes"
+    - README.md
+  outcomes:
+    - type: task_completed

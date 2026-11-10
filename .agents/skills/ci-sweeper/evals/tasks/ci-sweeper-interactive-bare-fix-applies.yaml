@@ -1,0 +1,37 @@
+id: ci-sweeper-interactive-bare-fix-001
+name: ci-sweeper bare fix enters apply
+description: >-
+  Validate that a request asking for changes ("fix") sets agent_edit_allowed true
+  and the run emits apply shape, not survey.
+tags:
+  - quality
+  - interactive
+  - agent-edit-allowed
+inputs:
+  prompt: >-
+    Use ci-sweeper. The user says only "fix". That asks for changes to be made, so
+    agent_edit_allowed is true and agent_edit_target is fix.
+    Emit apply shape with ## Overview, ## Summary, ### Changes, and ## Verification per
+    common-output-format.md. Do not emit ### Candidates. Describe the edit; do not modify
+    files in this mock eval.
+  context:
+    skip: false
+    failures:
+      - workflow_name: ci-shell
+        workflow_run_id: "987654321"
+        head_sha: eval0002
+        head_branch: main
+        job_name: shellcheck
+        failure_type: regression
+        log_excerpt: "SC2086: Double quote to prevent globbing and word splitting."
+        run_url: https://github.com/org/repo/actions/runs/987654321
+        source_commit: eval0002
+        reason: shellcheck SC2086 in scripts/deploy.sh
+expected:
+  output_contains:
+    - Overview
+    - Summary
+    - Changes
+    - Verification
+  outcomes:
+    - type: task_completed

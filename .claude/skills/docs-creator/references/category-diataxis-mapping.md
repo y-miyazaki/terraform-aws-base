@@ -1,6 +1,6 @@
 # Diataxis Placement Guide
 
-Directory layout follows [Diataxis](https://diataxis.fr/).
+Fallback layout when the repository has no existing docs directory structure. When one exists, place files in the matching existing directory instead. This layout follows [Diataxis](https://diataxis.fr/).
 
 | Quadrant    | Directory           | Purpose                | Characteristics                                        |
 | ----------- | ------------------- | ---------------------- | ------------------------------------------------------ |

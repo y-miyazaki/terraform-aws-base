@@ -6,9 +6,9 @@ This file contains review checks for content quality, cross-file consistency, an
 
 **QUAL-01 (SHOULD): Practical Examples**
 
-Check: Practical code examples are included
-Why: Missing examples reduce usability and hinder understanding
-Fix: Add practical code examples
+Check: Where a rule's correct form is not clear from its wording (for example a required syntax, file layout, or naming pattern), is a short practical example included? Files whose Guidelines are ItemID title bullets only do not need examples.
+Why: Missing examples for non-obvious forms reduce usability; examples for self-evident rules waste always-on tokens (QUAL-03)
+Fix: Add a minimal example only for rules whose correct form is not self-evident
 
 **QUAL-02 (SHOULD): No Redundancy**
 

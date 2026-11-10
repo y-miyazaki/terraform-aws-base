@@ -7,9 +7,10 @@ Gate IDs are for agent self-check and Deferred reasons. Issue identity in report
 ### SCOPE-01: Fix and PR shape
 
 - [ ] Implement a minimal fix for the source Issue when `agent_edit_allowed: true` and `agent_edit_target: fix`
-- [ ] PR body includes `Fixes #<N>` (or equivalent closing keyword)
+- [ ] Apply shape: PR body includes the literal `Fixes #<N>`
+- [ ] Survey shape: PR body references `Refs #<N>` and contains no closing keyword (`Fixes`, `Closes`, `Resolves`)
 - [ ] Do not call `repository_dispatch` from the Agent
-- **PASS** if apply edits address the Issue and PR body closes it
+- **PASS** if apply edits address the Issue and the apply PR body closes it; a survey PR body never closes it
 
 ## Output
 
@@ -21,7 +22,4 @@ Gate IDs are for agent self-check and Deferred reasons. Issue identity in report
 
 ## Error handling
 
-- Detect `status: error` → stop; do not mutate repository files
-- Detect `skip: true` → report skip reason; do not open a PR
-- `agent_edit_allowed: false` → survey only; do not edit files
-- `agent_edit_target` not `fix` when edits requested → survey only; note mismatch
+Follow the Error Handling table in `SKILL.md` (`### Error Handling`); it is the single source for error conditions and actions.

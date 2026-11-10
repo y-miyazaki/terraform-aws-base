@@ -7,14 +7,14 @@
 **Fix**:
 
 1. Reorder headings sequentially (H1 -> H2 -> H3)
-2. Run `bash scripts/validate.sh ./path/to/file.md`
+2. From the repository root, run `bash <skill-dir>/scripts/validate.sh path/to/file.md`
 
 **Issue**: Line length or list style violations
 
 **Fix**:
 
-1. Run auto-fix first: `markdownlint-cli2 --fix **/*.md`
-2. Manually adjust lines that cannot be auto-fixed
+1. Report the rule IDs and lines; do not modify files during validation
+2. When the user asks for fixes, run `markdownlint-cli2 --fix <files>` and adjust remaining lines by hand
 
 ## markdown-link-check Failures
 
@@ -46,12 +46,12 @@
 **Fix**:
 
 1. Ensure tools are installed in the development environment
-2. Re-run through script: `bash scripts/validate.sh`
+2. Re-run the script from the repository root: `bash <skill-dir>/scripts/validate.sh`
 
 ## Revalidation
 
-After applying fixes, run:
+After applying fixes, run from the repository root (the script reads `.markdown-link-check.json` from the working directory):
 
 ```bash
-bash scripts/validate.sh
+bash <skill-dir>/scripts/validate.sh
 ```

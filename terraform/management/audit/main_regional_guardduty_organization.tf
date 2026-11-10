@@ -11,10 +11,11 @@ module "guardduty_organization" {
   region     = each.value
 
   admin_account_id                 = data.aws_caller_identity.current.account_id
-  auto_enable_organization_members = var.guardduty_organization.auto_enable_organization_members
+  auto_enable_organization_members = local.region_account_allowlist[each.value] == null ? var.guardduty_organization.auto_enable_organization_members : "NONE"
   create_detector                  = var.guardduty_organization.create_detector
   features                         = var.guardduty_organization.features
   is_enabled_admin                 = false
+  members                          = lookup(local.guardduty_members_by_region, each.value, {})
 
   tags = var.tags
 }

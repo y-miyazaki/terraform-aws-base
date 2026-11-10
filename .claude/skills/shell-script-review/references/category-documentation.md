@@ -11,6 +11,7 @@ Fix: Add standard header with Description/Usage/Design Rules
 Check: Does each function include a description line plus `Globals`, `Arguments`, `Outputs`, and `Returns` sections with explicit `None` when a section does not apply, using the same separator convention as sibling files?
 Why: Missing sections or implicit omission reduce review efficiency and hinder maintenance
 Fix: Match sibling file style; document all four API sections per [Google Shell Style Guide — Function Comments](https://google.github.io/styleguide/shellguide.html#s4.2-function-comments)
+Note: Also detected by shell-script validation with `--check-function-docs`. When validation output is supplied, take this ItemID's status from that result and cite the tool instead of re-reporting it.
 Reference: [Google Shell Style Guide — Function Comments](https://google.github.io/styleguide/shellguide.html#s4.2-function-comments)
 
 **DOC-03 (SHOULD): Globals comment purpose/unit/constraints**

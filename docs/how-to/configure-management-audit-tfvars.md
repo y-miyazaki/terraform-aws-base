@@ -36,6 +36,39 @@ Configuration for the **Audit account** in an AWS Control Tower landing zone. Th
 
 ## Optional Settings
 
+### Per-region Account Allowlist
+
+Set `region.account_allowlist` when some accounts cannot use a region (for example, an OU whose service control policy (SCP) denies it). Keys must be listed in `region.targets`. A region without a key applies to all accounts.
+
+```hcl
+region = {
+  targets = ["ap-northeast-1", "ap-northeast-3", "us-east-1"]
+  account_allowlist = {
+    "ap-northeast-3" = ["123456789012"]
+  }
+}
+```
+
+In a region with an allowlist:
+
+- Inspector2 enables only the `enabler` accounts that are in the allowlist.
+- GuardDuty sets `auto_enable_organization_members` to `"NONE"` and registers the allowlisted accounts as members.
+- Inspector2 skips the organization auto-enable configuration (`is_enabled_configuration`).
+
+Set `inspector2_organization.region_excluded_resource_types` for scan types that Inspector2 does not offer in a region. For example, Lambda code scanning (`LAMBDA_CODE`) and Code Security (`CODE_REPOSITORY`) are not available in `ap-northeast-3`, and enabling them returns `AccessDeniedException`.
+
+```hcl
+inspector2_organization = {
+  region_excluded_resource_types = {
+    "ap-northeast-3" = ["CODE_REPOSITORY", "LAMBDA_CODE"]
+  }
+}
+```
+
+- Security Hub, Macie, and Access Analyzer are not restricted per account.
+
+Add an allowlist only to a region that is newly added to `region.targets`. Adding it to a region that already uses `auto_enable_organization_members = "ALL"` changes the setting to `"NONE"` and tries to register accounts that are already members. Accounts outside the allowlist stay enrolled.
+
 ### Tags and Naming
 
 | Variable (tfvars path) | Description          | Default            |

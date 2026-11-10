@@ -30,17 +30,17 @@ export LC_ALL=C.UTF-8
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-# Load all-in-one library
-# shellcheck source=./lib/all.sh
+# Load the repository's shared library (only when one exists)
+# shellcheck source=./lib/common.sh
 # shellcheck disable=SC1091
-source "${SCRIPT_DIR}/lib/all.sh"
+source "${SCRIPT_DIR}/lib/common.sh"
 
 #######################################
 # Global variables
 #######################################
 ```
 
-Scripts that use only environment variables or absolute paths omit `SCRIPT_DIR` and the `source` block.
+`lib/common.sh` is a placeholder: use the library path the repository already has, and omit the `source` block when it has none. Scripts that use only environment variables or absolute paths omit `SCRIPT_DIR` and the `source` block.
 
 ## SCRIPT_DIR (G-01)
 
@@ -58,7 +58,7 @@ Scripts that use only environment variables or absolute paths omit `SCRIPT_DIR` 
 
 With `--check-function-docs`, `validate.sh` reports the first function that is out of order (detection only; it never reorders functions).
 
-## Function Documentation (opt-in validation)
+## Function Documentation (`--check-function-docs`)
 
 When `--check-function-docs` is passed to `validate.sh`, enforce [Google Shell Style Guide — Function Comments](https://google.github.io/styleguide/shellguide.html#s4.2-function-comments) plus explicit `None` for non-applicable sections:
 
@@ -85,8 +85,6 @@ Required section headers in this order: `Globals:`, `Arguments:`, `Outputs:`, `R
 
 ## Error Handling
 
-- Use error_exit from common library
+- Use the repository's shared error helper (for example `error_exit`) when one exists; otherwise print the message to stderr and exit non-zero
 - Set up cleanup trap for temporary files
 - Validate all inputs
-
-See SKILL.md for comprehensive validation workflow.

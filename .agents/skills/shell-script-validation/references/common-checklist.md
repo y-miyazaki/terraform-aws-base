@@ -2,11 +2,16 @@
 
 ## Execution Order
 
-Run tools in this order (fail-fast: stop on first failure):
+`scripts/validate.sh` runs these checks for each discovered script and continues after a failing script or check (no fail-fast); the exit code is non-zero when any check failed:
 
-1. `bash -n` — syntax parse check
-2. `shellcheck` — static analysis and best practice enforcement
-3. Project standards check — common header and structure conventions (opt-in function doc sections via `--check-function-docs`)
+1. Shebang and permission checks (with `-f`, formatting is rewritten by `shfmt` first; with `-f` and `--check-function-docs`, function doc section order is also normalized by `scripts/fix_function_doc_order.sh` after shellcheck when that file is present)
+2. `bash -n` — syntax parse check
+3. `shellcheck` — static analysis and best practice enforcement
+4. Function doc sections and top-level function order — only with `--check-function-docs`
+
+After the script checks, it runs the repository's Bats suites unless `--skip-tests` is passed (`--tests PATH` limits which suites run).
+
+`shellcheck` and `shfmt` are required, and `bats` or `bats-core` when Bats runs; the script stops before any check when one is missing.
 
 ## bash -n (SYN)
 
@@ -29,12 +34,15 @@ Run tools in this order (fail-fast: stop on first failure):
 - STD-03 (SHOULD): `set -euo pipefail`, `umask 027`, and `export LC_ALL=C.UTF-8` are present at script top (entry scripts)
 - STD-04 (SHOULD): Script follows the project's common header template and `# Global variables` block when globals are defined
 
-## Optional: `--check-function-docs`
+## Function docs: `--check-function-docs`
 
-Pass to `validate.sh` to enforce [Google Shell Style Guide — Function Comments](https://google.github.io/styleguide/shellguide.html#s4.2-function-comments) with explicit `Globals`, `Arguments`, `Outputs`, and `Returns`, and to check top-level function order (show_usage, parse_arguments, a-z, main) sections (`None` when a section does not apply), in that order. When this skill ships `scripts/fix_function_doc_order.sh`, use it on the target path or directory to normalize section order. Opt-in only.
+The script leaves these checks off unless `--check-function-docs` (`-c`) is passed. This skill's default command passes it; omit it only when the targets intentionally skip function header sections, and state the opt-out in Summary.
+
+When passed, `validate.sh` enforces [Google Shell Style Guide — Function Comments](https://google.github.io/styleguide/shellguide.html#s4.2-function-comments) with explicit `Globals`, `Arguments`, `Outputs`, and `Returns` sections in that order (`None` when a section does not apply), and checks top-level function order (show_usage, parse_arguments, a-z, main). When this skill ships `scripts/fix_function_doc_order.sh`, use it on the target path or directory to normalize section order.
 
 ## Pass Criteria
 
 - All tools exit with code 0
+- Checks that did not run are reported as `⊘ Skipped` with the reason
 - No errors or warnings above configured thresholds
 - See [common-output-format.md](common-output-format.md) for output structure

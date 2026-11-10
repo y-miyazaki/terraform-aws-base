@@ -16,7 +16,7 @@ Rules:
 ## Overview
 
 <!--
-  GOOD: PR #5 — @loop asked to rename handleUser and add a unit test; candidate fix scoped to pkg/foo/bar.go; no edits applied.
+  GOOD: PR #5 — reviewer asked to rename handleUser and add a unit test; candidate fix scoped to pkg/foo/bar.go; no edits applied.
   BAD:  PR revise survey completed; no edits applied.
 -->
 

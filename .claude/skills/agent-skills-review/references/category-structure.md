@@ -51,7 +51,8 @@ Examples:
 - ✅ `# Document title` → `##` sections → `###` subsections
 - ❌ First heading is `##` or lower
 - ❌ H1 → H3 with no H2 parent
-- ❌ Bold pseudo-headings or plain text used instead of markdown headings for structure
+- ✅ Bold ItemID labels (`**ID (LEVEL): title**`) for individual check items inside a section — these are item labels, not structure
+- ❌ Bold pseudo-headings or plain text used instead of markdown headings for document sections
 
 ---
 

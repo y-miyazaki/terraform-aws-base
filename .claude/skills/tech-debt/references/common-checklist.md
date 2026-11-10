@@ -40,7 +40,7 @@ Report EOL/deprecation facts; do not recommend new-technology or tool migration 
 - [ ] On the automation path, respect caller `allowlist` / `denylist` per [category-scope.md](category-scope.md) (allowlist in `## Constraints`; denylist enforced by checker)
 - [ ] Read source outside the allowlist for evidence only — never edit it
 - [ ] Cap Critical + High-Priority persisted findings at 25; retain all Critical first, then High-Priority until the cap; defer overflow to Watch with a truncation note
-- [ ] Do not invent APIs, paths, metrics, ownership, or CVEs
+- [ ] Do not invent APIs, paths, metrics, ownership, or CVEs — omit a finding (or classify it Noise) rather than fabricate evidence
 - **PASS** if no edit or report write escapes allowlist/denylist
 
 ## Evidence
@@ -69,14 +69,14 @@ When `previous_report` is set and readable, match findings by **identity**, not 
 
 Do not mark Resolved when only `line` shifted but `path` + `kind` + snippet still match.
 
-- **PASS** if previous_report set ⇒ comparison labels are present or absence is noted in Overview
+- **PASS** if previous_report set ⇒ comparison labels are present, or the missing file is noted in Overview
 
 ## Edit
 
 ### EDIT-01: Closed-set apply only
 
 - [ ] When `agent_edit_allowed` is `false`, emit survey shape — do not write `agent_report_file`
-- [ ] When `agent_edit_allowed` is `true`, write allowlisted `agent_report_file` and apply closed-set fixes only (`broken_doc_ref`, `stale_doc`, simple `pin_drift`) per [category-scope.md](category-scope.md)
+- [ ] When `agent_edit_allowed` is `true`, write allowlisted `agent_report_file` (interactive runs with no report path skip the report and note it in Overview — SKILL.md Workflow step 7) and apply closed-set fixes only (`broken_doc_ref`, `stale_doc`, simple `pin_drift`) per [category-scope.md](category-scope.md)
 - [ ] Do not perform structural refactors here (Delegate to refactor)
 - **PASS** if apply edits are closed-set only
 
@@ -85,18 +85,8 @@ Do not mark Resolved when only `line` shifted but `path` + `kind` + snippet stil
 ### OUT-01: Survey vs apply shape
 
 - [ ] Emit survey or apply shape per [common-output-format.md](common-output-format.md)
-- [ ] Include `Category` (and `Nature` when set) on every candidate/finding row
-- **PASS** if shapes are not mixed and Category is present on every row
-
-## Error Handling
-
-| Condition                                                    | Severity    | Action                                                                    |
-| ------------------------------------------------------------ | ----------- | ------------------------------------------------------------------------- |
-| `skip` true, or both `signals` and `hotspots` empty          | recoverable | Emit survey no-op; stop without `agent_report_file`                       |
-| Evidence `path` missing or unreadable                        | recoverable | Classify as Watch with reason; continue other items                       |
-| `previous_report` set but file missing                       | recoverable | Proceed without resolved/regression notes; note absence in Summary        |
-| `agent_report_file` outside allowlist or on denylist         | blocking    | Do not write any report file; note in Summary; still emit session summary |
-| Finding would require invented APIs, paths, metrics, or CVEs | fatal       | Omit the finding (or Noise / Ignore); never fabricate evidence            |
+- [ ] Include `Category` (and `Nature` when set) on every row of tables that carry those columns: survey `### Candidates` and the persisted report's Critical / High-Priority / Watch tables
+- **PASS** if shapes are not mixed and Category is present on every row of those tables
 
 ## Examples
 

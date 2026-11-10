@@ -2,7 +2,9 @@
 
 ## Overview
 
-This document provides the decision matrix for classifying code changes by type (Feature, Fix, Refactor, Test, Docs, Config, Perf, Security) and determining their placement in the Changes section.
+This document provides the decision matrix for classifying a PR's intent by type (Feature, Fix, Refactor, Test, Docs, Config, Perf, Security). Use it only to select `## Type of Change` checkboxes during full-body AI completion.
+
+It does **not** change `## Changes`: `pr_body.sh` groups files deterministically into five path-based labels (Config, Docs, Feature, Test, Other) — see [common-output-format.md](common-output-format.md). Do not regroup `## Changes` by the eight types below; example sections in this document show intent grouping only.
 
 ---
 

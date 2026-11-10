@@ -35,7 +35,7 @@ agent_report_file: reports/tech-debt/2026-07-23.md
 Allowed paths: reports/tech-debt/**/*.md, docs/**/*.md
 ```
 
-Use consumer-specific report directories in real callers. Resolve `agent_report_file` via `TECH_DEBT_DIR` (detect) and/or `agent_report_file` in `## Constraints`.
+Use consumer-specific report directories in real callers. Resolve `agent_report_file` from `## Constraints`, else from detect JSON (the optional detect script derives it from its `TECH_DEBT_DIR` environment variable — see [category-input-schema.md](category-input-schema.md)).
 
 ## PR body synthesis
 

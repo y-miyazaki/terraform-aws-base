@@ -5,8 +5,8 @@ description: >-
   releases. Use in conversation when the user asks to check, review, or update
   the changelog. Also the loop entry skill when automation supplies
   commit/release detect JSON. Interactive default is survey only; edit
-  CHANGELOG.md when the user explicitly requests a fix or automation sets
-  agent_edit_allowed in Constraints.
+  CHANGELOG.md when the request asks for changes to be made (for example fix,
+  apply, or update) or automation sets agent_edit_allowed in Constraints.
 license: Apache-2.0
 metadata:
   author: y-miyazaki
@@ -18,7 +18,7 @@ metadata:
 ## Input
 
 - **Interactive (required):** natural-language request; optional scope (`all`, or `range` with `--since`) — constraints in `## Constraints` or [category-scope.md](references/category-scope.md)
-- **Automation (optional):** detect JSON in prompt — from a caller or optional skill detect script; not required for interactive runs. Read `agent_edit_allowed`, `agent_edit_target`, and `agent_report_file` (when `agent_edit_target: report`) from `## Constraints` per [category-automation-envelope.md](references/category-automation-envelope.md)
+- **Automation (optional):** detect JSON in prompt — from a caller or optional skill detect script; not required for interactive runs. Read `agent_edit_allowed` and `agent_edit_target` from `## Constraints` per [category-automation-envelope.md](references/category-automation-envelope.md)
 
 Path allowlist, when present, arrives in `## Constraints`.
 
@@ -57,18 +57,20 @@ Changelog report per [common-output-format.md](references/common-output-format.m
 
 Resolve **agent_edit_allowed** before mapping commits:
 
-| Source                                                      | `agent_edit_allowed`                                                                                                                         |
-| ----------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
-| Interactive — default                                       | `false` — survey only; do not edit `changelog_file`                                                                                          |
-| Interactive — explicit fix language in the same request     | `true` — examples: 修正して, update the changelog, apply these entries. Do **not** treat bare skill name `changelog` or bare `fix` as edit   |
-| Interactive — follow-up after a prior survey in the session | `true` when the user explicitly asks to apply listed entries or update the changelog                                                         |
-| Automation — `## Constraints`                               | `agent_edit_allowed: true` or `agent_edit_allowed: false` from [category-automation-envelope.md](references/category-automation-envelope.md) |
+| Source                                                                                                          | `agent_edit_allowed`                                                                                                                         |
+| --------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| Interactive — default: the request asks to look, check, triage, or survey, or only names the skill              | `false` — survey only; do not edit `changelog_file`                                                                                          |
+| Interactive — the request asks for changes to be made (for example fix, apply, 修正して, 適用して, update, add) | `true`                                                                                                                                       |
+| Interactive — follow-up after a survey asking to apply                                                          | `true`                                                                                                                                       |
+| Automation — `## Constraints`                                                                                   | `agent_edit_allowed: true` or `agent_edit_allowed: false` from [category-automation-envelope.md](references/category-automation-envelope.md) |
+
+When intent is unclear, survey and offer to apply — edits are harder to undo than a report.
 
 When `agent_edit_allowed` is `true`, resolve `agent_edit_target`: on the **interactive** path use `fix` (this skill); on the **automation** path read `agent_edit_target` from `## Constraints`. Do not branch on other caller metadata outside `## Constraints`.
 
 1. Resolve scope ([category-scope.md](references/category-scope.md)). Parse detect JSON when present; otherwise resolve the detect universe from the prompt ([category-detect-scope.md](references/category-detect-scope.md)), run this skill's optional detect script with the resolved `--scope` (default `all`), then Agent-complement beyond mechanical output; if tools for detect are unavailable, gather commits/releases from the user request and repository tools instead of silent no-op. Load [category-input-schema.md](references/category-input-schema.md) when parsing detect output. On detect script non-zero exit, read stdout and stop.
 2. On the automation path, read [category-automation-envelope.md](references/category-automation-envelope.md) for Constraints, PR templates, and Session Metrics.
-3. IF detect reports `skip` OR both `commits` and `releases` are empty after gathering → emit survey no-op; on automation path append `## Session Metrics` per [category-automation-envelope.md](references/category-automation-envelope.md); stop.
+3. IF detect reports `skip` OR both `commits` and `releases` are empty after gathering → emit survey no-op per [common-output-format.md](references/common-output-format.md) (Overview explains no-op); on automation path append `## Session Metrics` per [category-automation-envelope.md](references/category-automation-envelope.md); stop.
 4. Map commits and releases per [common-checklist.md](references/common-checklist.md).
 5. IF `agent_edit_allowed` is `false` → emit survey shape with `### Candidates`; on automation path load `assets/pr-body-template-survey.md` at synthesis and append `## Session Metrics` per [category-automation-envelope.md](references/category-automation-envelope.md); stop — do not edit `changelog_file`.
 6. ELSE IF `agent_edit_allowed` is `true` AND `agent_edit_target` is not `fix` → emit survey shape; note expected `agent_edit_target: fix` in Overview; stop — do not edit `changelog_file`.
@@ -76,14 +78,14 @@ When `agent_edit_allowed` is `true`, resolve `agent_edit_target`: on the **inter
 
 ### Error Handling
 
-| Condition                                                       | Severity    | Action                                                                                     |
-| --------------------------------------------------------------- | ----------- | ------------------------------------------------------------------------------------------ |
-| Detect script non-zero exit or `status: "error"` (when invoked) | Fatal       | Read stdout; stop — do not treat as success-path detect JSON                               |
-| `skip` or empty commits/releases                                | Info        | Report skip outcome; stop                                                                  |
-| `changelog_file` outside scope                                  | Recoverable | Defer; note in report                                                                      |
-| Fix requested but `agent_edit_allowed` is `false`               | Info        | Survey only; note that edits require an explicit fix request or `agent_edit_allowed: true` |
-| `agent_edit_allowed` true with `agent_edit_target` not `fix`    | Recoverable | Survey only; note expected `agent_edit_target: fix`                                        |
-| `changelog_exists` false and `agent_edit_allowed` is `true`     | Recoverable | Create Keep a Changelog template, then add bullets                                         |
+| Condition                                                           | Severity    | Action                                                       |
+| ------------------------------------------------------------------- | ----------- | ------------------------------------------------------------ |
+| Detect script non-zero exit or `status: "error"` (when invoked)     | Fatal       | Read stdout; stop — do not treat as success-path detect JSON |
+| `skip` or empty commits/releases                                    | Info        | Emit survey no-op (Overview explains no-op); stop            |
+| `changelog_file` outside scope                                      | Recoverable | Defer; note in report                                        |
+| Edit requested but `## Constraints` set `agent_edit_allowed: false` | Info        | Survey only; note that the caller Constraints disallow edits |
+| `agent_edit_allowed` true with `agent_edit_target` not `fix`        | Recoverable | Survey only; note expected `agent_edit_target: fix`          |
+| `changelog_exists` false and `agent_edit_allowed` is `true`         | Recoverable | Create Keep a Changelog template, then add bullets           |
 
 ### Examples
 

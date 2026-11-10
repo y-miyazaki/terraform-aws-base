@@ -13,7 +13,7 @@
 
 ## Denylist
 
-The automation checker enforces the platform default denylist. Treat denylisted paths as Watch and never edit them.
+When the caller supplies a denylist (in `## Constraints` or the prompt), never edit denylisted paths: leave them out of `### Candidates` (survey) and list them under `### Deferred` (apply) when they were the chosen target.
 
 ## Target size
 

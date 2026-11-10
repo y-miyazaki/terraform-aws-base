@@ -6,7 +6,7 @@ Gate IDs are for agent self-check and Deferred reasons. PR identity in reports r
 
 ### SCOPE-01: Read-only first review
 
-- [ ] Write only the report file at `result.report_path`, and only when `agent_edit_allowed: true` and `agent_edit_target: report`
+- [ ] Write only the report file (automation: `result.report_path`; interactive: the path the user names), and only when `agent_edit_allowed: true` and `agent_edit_target: report`
 - [ ] Never post, approve, request changes, or edit source files
 - [ ] Use `gh` for read-only calls only
 - **PASS** if the report file is the only file changed and nothing was posted
@@ -38,12 +38,9 @@ Gate IDs are for agent self-check and Deferred reasons. PR identity in reports r
 ### OUT-01: Report shape
 
 - [ ] Report matches [common-output-format.md](common-output-format.md) and `assets/report-template.json`
-- [ ] `head_sha` / `base_sha` copied from detect `result.head_sha` / `result.base_sha`
-- **PASS** if the JSON parses and `pr_number` equals `result.pr_number`
+- [ ] `head_sha` / `base_sha` copied from detect `result.head_sha` / `result.base_sha` (interactive: `headRefOid` / `baseRefOid` from `gh pr view`)
+- **PASS** if the JSON parses and `pr_number` equals detect `result.pr_number` (interactive: the PR number the user gave)
 
 ## Error handling
 
-- Detect `status: error` → stop; write no report
-- Detect `skip: true` → report skip reason; write no report
-- `agent_edit_allowed: false` → survey only; write no file
-- `agent_edit_target` not `report` → survey only; note mismatch
+Follow the Error Handling table in `SKILL.md` (`### Error Handling`); it is the single source for error conditions and actions.

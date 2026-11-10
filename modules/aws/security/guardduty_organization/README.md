@@ -21,6 +21,7 @@ No modules.
 | Name | Type |
 | ---- | ---- |
 | [aws_guardduty_detector.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/guardduty_detector) | resource |
+| [aws_guardduty_member.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/guardduty_member) | resource |
 | [aws_guardduty_organization_admin_account.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/guardduty_organization_admin_account) | resource |
 | [aws_guardduty_organization_configuration.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/guardduty_organization_configuration) | resource |
 | [aws_guardduty_organization_configuration_feature.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/guardduty_organization_configuration_feature) | resource |
@@ -37,6 +38,7 @@ No modules.
 | <a name="input_features"></a> [features](#input\_features) | GuardDuty organization configuration features | <pre>map(object({<br/>    auto_enable = string<br/>    additional_configurations = optional(list(object({<br/>      name        = string<br/>      auto_enable = string<br/>    })), [])<br/>  }))</pre> | `{}` | no |
 | <a name="input_is_enabled"></a> [is\_enabled](#input\_is\_enabled) | Whether to enable GuardDuty organization configuration | `bool` | `false` | no |
 | <a name="input_is_enabled_admin"></a> [is\_enabled\_admin](#input\_is\_enabled\_admin) | Whether to enable GuardDuty organization admin account designation | `bool` | `false` | no |
+| <a name="input_members"></a> [members](#input\_members) | Map of member account ID to email to register explicitly. Use with auto\_enable\_organization\_members = "NONE" to restrict members per region. | `map(string)` | `{}` | no |
 | <a name="input_region"></a> [region](#input\_region) | (Optional) AWS region. Defaults to provider region. | `string` | `null` | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | Tags to apply to created resources | `map(any)` | `{}` | no |
 

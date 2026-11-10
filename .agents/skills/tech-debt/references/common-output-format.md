@@ -37,7 +37,7 @@ No file edits. **Do not write `agent_report_file`.** **Do not emit `### Changes`
 
 ## Apply result (`agent_edit_allowed: true`)
 
-Survey runs internally first; final output uses apply shape. Write `agent_report_file` within allowlist.
+Survey runs internally first; final output uses apply shape. Write `agent_report_file` within allowlist. Interactive runs with no report path write no report file: omit the report row from `### Changes` and say so in Overview.
 
 ```markdown
 # Technical Debt Result
@@ -50,10 +50,10 @@ Survey runs internally first; final output uses apply shape. Write `agent_report
 
 ### Changes
 
-| Target                | What was wrong | What changed                    |
-| --------------------- | -------------- | ------------------------------- |
-| `<agent_report_file>` | <finding gap>  | <report recorded>               |
-| `path/to/file`        | <debt fact>    | <minimal closed-set fix if any> |
+| Target        | What was wrong | What changed                    |
+| ------------- | -------------- | ------------------------------- |
+| <linked path> | <finding gap>  | <report recorded>               |
+| <linked path> | <debt fact>    | <minimal closed-set fix if any> |
 
 ### Deferred
 
@@ -120,7 +120,7 @@ Write `agent_report_file` (path from detect JSON or `## Constraints`) with exten
 
 - Pick **one** result shape per run — survey-only **or** apply.
 - Cap Critical + High-Priority at 25 combined; defer overflow to Watch with truncation note.
-- Every finding row must include `Category` from the taxonomy.
+- Every row of a table with a `Category` column (survey `### Candidates`; persisted Critical / High-Priority / Watch) must include `Category` from the taxonomy.
 
 ## Overview (skill-specific)
 

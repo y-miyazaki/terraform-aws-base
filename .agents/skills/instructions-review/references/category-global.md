@@ -6,9 +6,9 @@ This file contains global checks applicable to all instructions files, covering 
 
 **G-01 (MUST): Front Matter**
 
-Check: Front Matter contains applyTo and description fields
-Why: Missing Front Matter causes automation failures and unclear file scope
-Fix: Explicitly document `applyTo` and `description`
+Check: Front Matter contains the file-scope key for the file's format — `applyTo` plus `description` for package sources (`*.instructions.md`), `paths` for Claude rules (`.claude/rules/*.md`), `globs` plus `description` for Cursor `.mdc`, or the target agent's equivalent for other rule formats. Require `description` only for formats that define one.
+Why: The scope key decides which files the rule is injected for, so a missing or wrong key silently disables the rule; formats such as Claude rules have no `description` field, so requiring one there produces a false failure
+Fix: Add the format's scope key (`applyTo` / `paths` / `globs` / equivalent), and `description` where the format defines it
 
 **G-02 (MUST): Title**
 
@@ -18,9 +18,9 @@ Fix: Use clear, purpose-driven titles
 
 **G-03 (MUST): applyTo Target Precision**
 
-Check: Do `applyTo` globs match only intended instruction/rule paths after distribution (for example `.claude/rules/*.md`, not `.claude/**/*.md`)?
+Check: Do scope globs (`applyTo`, `paths` in Claude rules, or `globs` in Cursor `.mdc`) match only intended instruction/rule paths after distribution (for example `.claude/rules/*.md`, not `.claude/**/*.md`)?
 Why: Over-broad globs inject instruction-authoring rules into unrelated files (skills, docs) and hide missing companion coverage
-Fix: Scope `applyTo` to package sources plus distributed rule paths (Cursor `.mdc`, Claude/Kiro rules), not entire agent trees
+Fix: Scope the glob key to package sources plus distributed rule paths (Cursor `.mdc`, Claude/Kiro rules), not entire agent trees
 
 **G-04 (MUST): Portable Cross-References**
 
@@ -68,9 +68,9 @@ Fix: Order subsections as: domain-specific rules → Anti-Patterns → Code Modi
 
 **STRUCT-06 (MUST): H3 Heading Format**
 
-Check: Do H3 headings use `### Name（LEVEL）` format for rule sections, and `### Name` for process/declaration sections?
+Check: Do H3 headings use `### Category Name (PREFIX)` for ItemID rule groups (for example `### Security (SEC)`), and `### Name` for process/declaration sections (for example `### Code Modification Guidelines`)?
 Why: Inconsistent H3 formats make the instruction file type unclear at a glance
-Fix: Use `### Name（MUST）` or `### Name（SHOULD）` for rule groups; use `### Name` for non-rule sections
+Fix: Use `### Category Name (PREFIX)` for rule groups whose bullets carry `PREFIX-nn` ItemIDs; use `### Name` for non-rule sections
 
 **STRUCT-07 (MUST): Concise Testing and Validation Chapter**
 

@@ -1,0 +1,34 @@
+id: test-gap-interactive-bare-fix-001
+name: test-gap bare fix enters apply
+description: >-
+  Validate that a request asking for changes ("fix") sets agent_edit_allowed true
+  and the run emits apply shape, not survey.
+tags:
+  - quality
+  - interactive
+  - agent-edit-allowed
+inputs:
+  prompt: >-
+    Use test-gap. The user says only "fix". That asks for changes to be made, so
+    agent_edit_allowed is true and agent_edit_target is fix. Describe the tests you would add for one target; do not claim tests passed unless they were run.
+    Emit apply shape with ## Overview, ## Summary, ### Changes, and ## Verification per
+    common-output-format.md. Do not emit ### Candidates. Describe the edit; do not modify
+    files in this mock eval.
+  context:
+    skip: false
+    hotspots:
+      - path: scripts/foo.sh
+        kind: churn
+        count: 7
+        window: 90.days
+    ledger:
+      file: state-test-gap-ledger.json
+      processed: []
+expected:
+  output_contains:
+    - Overview
+    - Summary
+    - Changes
+    - Verification
+  outcomes:
+    - type: task_completed

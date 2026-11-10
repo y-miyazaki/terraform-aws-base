@@ -34,7 +34,7 @@ module "aws_sns_subscription_lambda_step_functions_log" {
 # tfsec:ignore:aws-lambda-enable-tracing
 module "aws_lambda_create_lambda_step_functions_log" {
   source  = "terraform-aws-modules/lambda/aws"
-  version = "8.13.0"
+  version = "8.12.0"
 
   region = var.region.primary
 
@@ -79,8 +79,8 @@ module "aws_lambda_create_lambda_step_functions_log" {
   runtime                       = "provided.al2023"
   timeout                       = 300
   tracing_mode                  = "PassThrough"
-  vpc_security_group_ids        = var.common_lambda.vpc.is_enabled ? var.common_lambda.vpc.create_vpc ? [module.lambda_vpc["primary"].default_security_group_id] : [var.common_lambda.vpc.exists.security_group_id] : []
-  vpc_subnet_ids                = var.common_lambda.vpc.is_enabled ? var.common_lambda.vpc.create_vpc ? module.lambda_vpc["primary"].private_subnets : var.common_lambda.vpc.exists.private_subnets : []
+  vpc_security_group_ids        = var.common_lambda.vpc.is_enabled ? var.common_lambda.vpc.create_vpc ? [module.lambda_vpc["primary"].default_security_group_id] : [var.common_lambda.vpc.exists[var.region.primary].security_group_id] : []
+  vpc_subnet_ids                = var.common_lambda.vpc.is_enabled ? var.common_lambda.vpc.create_vpc ? module.lambda_vpc["primary"].private_subnets : var.common_lambda.vpc.exists[var.region.primary].private_subnets : []
 
   tags = var.tags
 

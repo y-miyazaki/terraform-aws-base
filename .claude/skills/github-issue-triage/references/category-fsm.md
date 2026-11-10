@@ -19,6 +19,21 @@ When triage fails in a way that leaves the Issue in an unsafe or ambiguous state
 
 The Agent may apply `triage:failed` on unsafe partial failure. In a message run (the prompt names a message directory) it writes `triage:failed` into the `add` list of `message_labels.json` instead of calling `gh`; when the agent run itself fails, the platform does not apply the label. The Agent must **not** fire `repository_dispatch` or start github-issue-autofix intake; autofix remains a human-triggered follow-up via the `autofix` label.
 
+## Choosing the event
+
+The helper accepts only the four events in the transitions table below. Map Issue activity to them:
+
+| Issue activity                                 | Event                                                                                |
+| ---------------------------------------------- | ------------------------------------------------------------------------------------ |
+| Issue opened                                   | `opened`                                                                             |
+| Issue reopened                                 | `opened`                                                                             |
+| Human reply while `triage:needs-info` present  | Re-classify with the new facts, then `mark_ready` (enough info) or `mark_needs_info` |
+| Classification complete with enough info       | `mark_ready`                                                                         |
+| Facts missing                                  | `mark_needs_info`                                                                    |
+| Human asks to re-triage a `triage:ready` Issue | `human_retriage`                                                                     |
+
+Type labels are not produced by the helper; see SKILL.md Workflow step 5.
+
 ## Events → recommended transitions
 
 Helpers: `scripts/label_fsm.sh` → `label_fsm_next_state <labels_json> <event>` → `{"add":[],"remove":[]}`.

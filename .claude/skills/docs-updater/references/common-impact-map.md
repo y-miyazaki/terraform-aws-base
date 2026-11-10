@@ -28,7 +28,7 @@ If none of the above apply to a candidate document, skip it.
 
 - Root `*.md`
 - `docs/**/*.md`
-- Nested `**/README.md` (excluding install-generated agent roots such as `.agents/`, `.cursor/`, `.claude/`, `.kiro/`, `.vscode/` when present)
+- Nested `**/README.md` (excluding generated or tool-installed directories, as identified by repository conventions)
 - `mkdocs.yml` (nav section)
 
 ## Match Patterns
@@ -38,13 +38,15 @@ If none of the above apply to a candidate document, skip it.
 | Deleted file              | Path or basename appearing in links, tables, lists                                                                                                                          |
 | Renamed file              | Old path/name that needs replacing with new                                                                                                                                 |
 | Added file                | Whether it belongs in an existing catalog (table, list, nav)                                                                                                                |
-| Added docs/ file          | mkdocs.yml nav entry + docs/index.md regeneration                                                                                                                           |
+| Added docs/ file          | Site nav entry + documentation index regeneration when the repository maintains them (UV-05)                                                                                |
 | Config / interface change | Apply canonical-source rule per [category-documentation-maintenance.md](category-documentation-maintenance.md); check consumer maintainer guides under `docs/` when present |
 
 ## Skip Conditions
+
+Applies to `staged` and `range` scope only (change-driven runs). Under `all` (Interactive free-form), survey every candidate document regardless of what changed.
 
 Set `skip: true` when:
 
 - Only markdown files changed (no source files) AND no markdown renames/deletions occurred
 - Only test files or internal refactoring changed
-- Changes are in generated directories (`.agents/`, `.claude/`, `.cursor/`, `.kiro/`, `.vscode/`, etc.)
+- Changes are only in generated or tool-installed directories (as identified by repository conventions)

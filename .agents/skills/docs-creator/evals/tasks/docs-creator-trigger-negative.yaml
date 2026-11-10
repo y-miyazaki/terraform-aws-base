@@ -1,0 +1,26 @@
+id: docs-creator-trigger-negative-001
+name: docs-creator rejects source docstring requests
+description:
+  "Validate that docs-creator does not handle source code comments or docstrings
+  (DO NOT USE FOR in SKILL.md).
+
+  "
+tags:
+  - quality
+  - trigger-negative
+  - boundary-guardrail
+inputs:
+  prompt:
+    "Use docs-creator. The user asks to add docstrings to every function in
+    pkg/auth/service.go. Source code comments and docstrings are out of scope for
+    this skill. Do not edit files. Return ## Summary with 'Status: blocked' and
+    explain in ## Notes that the request is out of scope."
+  context:
+    target: pkg/auth/service.go
+expected:
+  output_contains:
+    - out of scope
+    - "## Summary"
+    - "Status: blocked"
+  outcomes:
+    - type: task_completed

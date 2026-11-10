@@ -2,89 +2,38 @@
 
 ## Overview
 
-**Important**: This document originally described hypothetical agent-based template mapping logic. The current `pr_body.sh` script does NOT implement intelligent template parsing or semantic mapping.
+`pr_body.sh` behavior:
 
-**Actual script behavior**:
-
-- Generates metadata-only baseline for `## Overview` section (Title, Branch, Stats)
-- Generates file list for `## Changes` section (grouped by deterministic pattern-based classification)
+- Generates a metadata-only baseline for `## Overview` (Title, Branch, Stats)
+- Generates the file list for `## Changes` (grouped by deterministic path-based classification)
 - Rebuilds other sections in template order and preserves template comments for AI completion
-- Does not interpret chapter meaning or generate section prose beyond deterministic baseline output
-
-**This document is retained for**:
-
-- Understanding historical design intent
-- Reference for potential future agent enhancement
-- Clarifying what the script does NOT do
-
----
-
-## Template Detection
-
-**Note**: The following describes conceptual template detection logic that is NOT implemented by the current script.
-
-Current script behavior: Always generates the same baseline output structure regardless of template presence or format.
-
-### Decision Tree (Conceptual - AI Completion Layer)
-
-The following decision tree describes the AI completion layer that runs after the deterministic shell scripts:
-
-```
-1. Does PULL_REQUEST_TEMPLATE.md exist in repo?
-   ├─ YES → Load template and extract structure
-   │        ├─ Script: rebuild deterministic baseline in template order
-   │        ├─ AI: read section comments and Example / checkbox guidance
-   │        └─ AI: generate chapter content using that guidance
-   │
-   └─ NO → Use deterministic baseline only
-           ├─ Script: generate Overview + Changes
-           └─ AI: avoid inventing unsupported structure
-```
-
-**Actual script behavior**: Template presence affects section order and comment preservation, but not semantic prose generation.
-
-### Template Loading (Conceptual - Not Implemented)
-
-The following template detection logic is NOT used by the current `pr_body.sh` script:
-
-```bash
-# This code is NOT in the actual script - reference only
-# Check for template at multiple standard locations
-if [ -f ".github/PULL_REQUEST_TEMPLATE.md" ]; then
-  TEMPLATE_PATH=".github/PULL_REQUEST_TEMPLATE.md"
-elif [ -f ".github/pull_request_template.md" ]; then
-  TEMPLATE_PATH=".github/pull_request_template.md"
-elif [ -f "PULL_REQUEST_TEMPLATE.md" ]; then
-  TEMPLATE_PATH="PULL_REQUEST_TEMPLATE.md"
-else
-  # No template found - use default format
-  USE_DEFAULT_FORMAT=true
-fi
-```
-
-**Actual script behavior**: Always generates same baseline output, template-agnostic.
+- Does not interpret chapter meaning or generate section prose; full-body AI completion does that (see [category-pr-body-guidelines.md](category-pr-body-guidelines.md))
 
 ---
 
 ## Standard Template Sections to PR Body Update Mapping
 
-### Repository-Specific Template Structure
+### Template Location
 
-This repository uses `.github/PULL_REQUEST_TEMPLATE.md` with the following structure:
+`pr_body.sh` reads only `.github/PULL_REQUEST_TEMPLATE.md` at the repository root; that is the supported template location. A root-level `PULL_REQUEST_TEMPLATE.md`, `docs/PULL_REQUEST_TEMPLATE.md`, and multi-template directories (`.github/PULL_REQUEST_TEMPLATE/`) are not read by the script.
 
-| Template Section             | Required? | Purpose                       | Script Behavior                     | AI Completion Behavior                                  |
-| ---------------------------- | --------- | ----------------------------- | ----------------------------------- | ------------------------------------------------------- |
-| **Overview**                 | ✅ YES    | High-level change summary     | Deterministic baseline content      | Refine or replace using comment guidance                |
-| **Related Issues**           | No        | Links to GitHub issues        | Preserve template section structure | Generate visible content if guidance indicates it       |
-| **Changes**                  | ✅ YES    | Technical modifications       | File list with classification       | Optionally refine prose around generated structure      |
-| **Testing**                  | No        | Test coverage and methods     | Preserve template section structure | Generate visible content using Example or checklist     |
-| **Type of Change** (8 types) | No        | Change categorization         | Preserve template section structure | Select checkboxes based on PR meaning                   |
-| **Checklist**                | No        | Quality/convention compliance | Preserve template section structure | Update checkboxes based on validation and reviewer data |
-| **Additional Notes**         | No        | Extra context                 | Preserve template section structure | Generate content when example or PR context warrants it |
+### Section Handling
 
-### Type of Change (Informational Only)
+`## Overview` and `## Changes` are script-generated. AI completion fills every other H2 in the template that carries guidance comments or examples; H2s without guidance are preserved as-is. The rows below are examples (e.g. a template with these sections), not a required set:
 
-The template defines 8 change types for reviewer/author reference:
+| Template Section     | Required? | Purpose                       | Script Behavior                     | AI Completion Behavior                                  |
+| -------------------- | --------- | ----------------------------- | ----------------------------------- | ------------------------------------------------------- |
+| **Overview**         | ✅ YES    | High-level change summary     | Deterministic baseline content      | Refine or replace using comment guidance                |
+| **Related Issues**   | No        | Links to GitHub issues        | Preserve template section structure | Generate visible content if guidance indicates it       |
+| **Changes**          | ✅ YES    | Technical modifications       | File list with classification       | Optionally refine prose around generated structure      |
+| **Testing**          | No        | Test coverage and methods     | Preserve template section structure | Generate visible content using Example or checklist     |
+| **Type of Change**   | No        | Change categorization         | Preserve template section structure | Select checkboxes based on PR meaning                   |
+| **Checklist**        | No        | Quality/convention compliance | Preserve template section structure | Update checkboxes based on validation and reviewer data |
+| **Additional Notes** | No        | Extra context                 | Preserve template section structure | Generate content when example or PR context warrants it |
+
+### Type of Change (when the template has a Type of Change section)
+
+Apply this subsection only when the template has a Type of Change section. Example checkbox set (a template may define a different list; use its own items):
 
 | Template Checkbox                        | Purpose                                            |
 | ---------------------------------------- | -------------------------------------------------- |
@@ -209,9 +158,9 @@ Example: Closes #123, Related to #456
 
 - Fill issue links when PR context or linked issues are known
 
-#### 4-7. Other Sections (Optional, Preserved)
+#### 4. Other Template Sections (Preserved)
 
-These sections are preserved in PR Body as template-ordered placeholders by the script:
+Every other H2 in the template is preserved in template order by the script. For example:
 
 - **Testing**: Test coverage details (preserved for AI completion)
 - **Type of Change**: Change categorization (preserved for AI completion)
@@ -256,26 +205,26 @@ Closes #456
 
 **Branch**: feature/auth-gateway -> main
 
-**Stats**: 5 files changed (+250 / -30 lines)
+**Stats**: 4 files changed (+250 / -30 lines)
 
 _This section was auto-generated._
 
 ## Changes
+
+### Config
+
+- **terraform/iam_roles.tf**: +30 / -10 lines
 
 ### Feature
 
 - **src/AuthGateway.ts**: +120 / -10 lines
 - **src/CognitoClient.ts**: +80 / -5 lines
 
-### Config
-
-- **terraform/iam_roles.tf**: +30 / -10 lines
-
 ### Test
 
-- **tests/AuthGateway.test.ts**: +20 / -5 lines
+- **tests/auth_gateway_test.ts**: +20 / -5 lines
 
-**Summary**: 5 files changed (+250 / -30 lines)
+**Summary**: 4 files changed (+250 / -30 lines)
 
 ## Type of Change
 
@@ -299,56 +248,6 @@ Closes #456
 
 ---
 
-## Default Format (No Template)
-
-**Note**: This section describes a hypothetical agent-based comment format that is NOT implemented by the current `pr_body.sh` script.
-
-The actual script always generates metadata-only baseline for Overview and file-list-only for Changes, regardless of template presence.
-
-For reference only (not implemented):
-
-```markdown
-<!-- github-pr-body:v1 -->
-
-## 📋 PR Overview
-
-### Objective
-
-[What problem does this PR solve or what feature does it add?]
-
-### Background
-
-[Why is this change necessary? Context and rationale]
-
-### Key Changes
-
-[2–3 sentence high-level summary of main modifications]
-
-### Scope
-
-[Impact area, affected modules, backward compatibility]
-
----
-
-## 📝 Changes
-
-### [File/Module Category 1]
-
-- **[File]**: [Specific change description]
-
-### [File/Module Category 2]
-
-- **[File]**: [Specific change description]
-
-### Summary by Type
-
-- **Features**: [List of feature additions]
-- **Fixes**: [List of bug fixes]
-- **Docs**: [Documentation updates]
-```
-
----
-
 ## Template-Specific Best Practices
 
 ### When Template Sections Are Empty
@@ -366,7 +265,7 @@ For reference only (not implemented):
 
 - Template has "Testing" section but it's empty
 - Code shows 10 new unit tests were added
-- Include in Changes section: `**Tests**: 10 new unit tests added for AuthGateway`
+- Fill the `## Testing` section: `10 new unit tests added for AuthGateway`; leave the script-generated `## Changes` as is
 
 ### Custom/Non-Standard Templates
 
@@ -374,8 +273,8 @@ For reference only (not implemented):
 
 **Best Effort Approach**:
 
-1. Attempt to map sections by name similarity (e.g., "Summary" → "Objective")
-2. If unclear, fall back to Default Format
+1. Fill each template H2 from its own comment guidance; do not infer format from the heading name alone
+2. If a section has no guidance, preserve it without inventing structure
 3. Prioritize actual PR description content over strict template alignment
 4. Document any assumptions in the overview
 
@@ -383,18 +282,15 @@ For reference only (not implemented):
 
 ## Change Categorization by File Type
 
-**Script Behavior**: Classification is deterministic and pattern-based (file extension and path only). The script does NOT read template "Type of Change" checkboxes or any other template indicators.
+**Script Behavior**: Classification is deterministic and path-based. The script does NOT read template "Type of Change" checkboxes or any other template indicators. Rules are checked in this order; the first match wins:
 
-File pattern to classification mapping:
-
-| File Pattern                                 | Classification | Notes                                   |
-| -------------------------------------------- | -------------- | --------------------------------------- |
-| `.go`, `.ts`, `.py`, `.java`                 | **Feature**    | Application code (not test/config/docs) |
-| `*_test.go`, `*.test.ts`, `test_*.py`        | **Test**       | Test files by naming convention         |
-| `*.md`, `docs/`                              | **Docs**       | Documentation files                     |
-| `go.mod`, `package.json`, `requirements.txt` | **Config**     | Dependency manifests                    |
-| `Dockerfile`, `.github/workflows/`           | **Config**     | Infrastructure and CI/CD configuration  |
-| `*.tf`, `terraform/`                         | **Config**     | Terraform infrastructure code           |
+| Path match                                                                                                                           | Classification |
+| ------------------------------------------------------------------------------------------------------------------------------------ | -------------- |
+| ends with `_test.go`, `_test.ts`, `_test.js`, `_test.py`, `_test.java`                                                               | **Test**       |
+| ends with `.md`, `.txt`, `.rst`                                                                                                      | **Docs**       |
+| contains `Dockerfile`, `docker-compose`, `.github/workflows`, `manifest`, `stack`, `terraform`, `Makefile`, `package.json`, `go.mod` | **Config**     |
+| ends with `.go`, `.ts`, `.js`, `.py`, `.java`                                                                                        | **Feature**    |
+| anything else                                                                                                                        | **Other**      |
 
 ---
 
@@ -414,54 +310,6 @@ Classification logic:
     ├─ Match file path/extension against patterns
     ├─ Assign to category: Config | Docs | Feature | Test | Other
     └─ Group files by category in Changes section
-```
-
-**Not implemented** (reference only, for potential future agent enhancement):
-
----
-
-## Example: Terraform-Heavy Repository
-
-**Note**: This example describes hypothetical agent behavior that is NOT implemented by `pr_body.sh`.
-
-The actual script generates metadata-only Overview and file-list Changes, regardless of template content.
-
-For reference only (conceptual future enhancement):
-
-**Template Structure**:
-
-```markdown
-## Type of Change
-
-- [x] Terraform Module Update
-- [ ] Bug Fix
-- [ ] Documentation
-
-## Modules Changed
-
-- vpc
-- security-groups
-
-## Breaking Changes
-
-None
-```
-
-**Agent Mapping**:
-
-```markdown
-### Objective
-
-Update VPC module with enhanced security group management
-
-### Key Changes
-
-- Added dynamic security group creation in VPC module
-- Refactored ingress/egress rule handling
-
-### Scope
-
-VPC and Security Groups modules; backward-compatible; safe to deploy
 ```
 
 ---

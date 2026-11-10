@@ -15,15 +15,15 @@ globs: .github/workflows/**/*.yaml, .github/workflows/**/*.yml, .github/actions/
 
 Keep map keys in alphabetical order (A-Z) within each block (see ORD-01 in Guidelines for review wording):
 
-| Scope                         | In-scope key maps                                     |
-| ----------------------------- | ----------------------------------------------------- |
-| Workflow and job              | `env`, `permissions`, `with`, `secrets`               |
-| Reusable workflow declaration | `on.workflow_call.inputs`, `on.workflow_call.secrets` |
-| Composite `action.yml`        | `inputs`, `outputs`; per-step `with`, `env`           |
+| Scope                         | In-scope key maps                                                                 |
+| ----------------------------- | --------------------------------------------------------------------------------- |
+| Workflow and job              | `env`, `outputs`, `permissions`, `secrets`, `with`                                |
+| Reusable workflow declaration | `on.workflow_call.inputs`, `on.workflow_call.outputs`, `on.workflow_call.secrets` |
+| Composite `action.yml`        | `inputs`, `outputs`; per-step `env`, `with`                                       |
 
-Out of scope for alphabetical ordering: `jobs` map keys and `on` trigger keys (keep semantic order). `steps` are ordered lists, not key maps.
+Any `env`, `inputs`, `outputs`, `permissions`, `secrets`, or `with` map is in scope. Out of scope for alphabetical ordering: `jobs` map keys and `on` trigger keys (keep semantic order). `steps` are ordered lists, not key maps.
 
-Not enforced by `github-actions-validation` (actionlint, ghalint, zizmor); apply during edits.
+Enforced by the `github-actions-validation` ORD-01 step (map key order check, run before actionlint, ghalint, and zizmor); also apply during edits.
 
 ## Guidelines
 
@@ -43,7 +43,7 @@ Not enforced by `github-actions-validation` (actionlint, ghalint, zizmor); apply
 - G-02 (SHOULD): Production jobs use environment + approval
 
 ### Ordering (ORD)
-- ORD-01 (MUST): Alphabetize keys in env/permissions/with/secrets blocks
+- ORD-01 (MUST): Alphabetize keys in env/inputs/outputs/permissions/secrets/with maps
 
 ### Performance (PERF)
 - PERF-01 (SHOULD): Deterministic cache keys invalidated by dependency changes
@@ -51,8 +51,8 @@ Not enforced by `github-actions-validation` (actionlint, ghalint, zizmor); apply
 - PERF-03 (SHOULD): Cancel redundant runs with concurrency (caller-owned for reusable)
 
 ### Security (SEC)
-- SEC-01 (SHOULD): Reference secrets only via secrets.\*; never echo them
-- SEC-02 (SHOULD): Restrict pull_request_target on fork PRs
+- SEC-01 (MUST): Reference secrets only via secrets.\*; never echo them
+- SEC-02 (MUST): Restrict pull_request_target on fork PRs
 - SEC-03 (SHOULD): Mask sensitive values in logs (::add-mask / setSecret)
 - SEC-04 (SHOULD): Validate/sanitize env inputs before use
 - SEC-05 (SHOULD): Public repos gate privileged steps on private/trusted context

@@ -1,11 +1,11 @@
 # Terraform Validation - Security Remediation Guide
 
-Use this guide when `trivy config` reports security findings.
+Use this guide when the trivy step (`trivy fs`) reports security findings. The step prints findings but does not fail on them, so apply this policy as reviewer guidance.
 
 ## Severity Handling Policy
 
-- **CRITICAL**: Must be fixed before merge.
-- **HIGH**: Must be fixed before production deployment.
+- **CRITICAL**: Fix before merge; flag it as blocking in the report.
+- **HIGH**: Fix before merge; flag it as blocking in the report.
 - **MEDIUM**: Fix in the current or next planned change window.
 - **LOW**: Fix when practical and track in backlog if deferred.
 
@@ -46,7 +46,7 @@ bash scripts/validate.sh
 For faster feedback on specific directories:
 
 ```bash
-bash scripts/validate.sh ./terraform/base/ ./terraform/management/
+bash scripts/validate.sh <terraform-dir-1> <terraform-dir-2>
 ```
 
 ## Escalation Rule

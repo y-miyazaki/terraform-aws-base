@@ -6,4 +6,4 @@ Detect may place skipped runs in `ignored[]` when a caller-configured ledger mar
 - Does **not** re-apply ledger skip or REJECT-retry policy
 - Does **not** require a product-specific ledger path
 
-Ledger path, retry policy, and persistence are **caller / detect-script env** concerns (`CI_SWEEPER_LEDGER_FILE`, `CI_SWEEPER_REJECT_RETRY_POLICY`, `CI_SWEEPER_REJECT_MAX_RETRIES`). Consumer automation docs may document dogfood values; skills must not embed them as required layout.
+Ledger path, retry policy, and persistence are caller concerns. The bundled scripts read them from `CI_SWEEPER_LEDGER_FILE`, `CI_SWEEPER_REJECT_RETRY_POLICY`, and `CI_SWEEPER_REJECT_MAX_RETRIES`; each has a script default, and callers override it as needed. Do not assume a fixed ledger location.

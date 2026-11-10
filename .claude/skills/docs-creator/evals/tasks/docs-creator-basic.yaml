@@ -1,0 +1,24 @@
+id: docs-creator-contract-001
+name: docs-creator output contract sections
+description:
+  "Validate docs-creator returns the report sections from common-output-format.md.
+
+  "
+tags:
+  - quality
+  - output-contract
+inputs:
+  prompt:
+    "Use docs-creator to create an architecture document for the caching layer.
+    Return the report with ## Summary (Status: created, file counts), ## Changes
+    (one row per file touched), and ## Notes."
+  context:
+    target: docs/explanation/caching-architecture.md
+expected:
+  output_contains:
+    - "## Summary"
+    - "Status: created"
+    - "## Changes"
+    - "## Notes"
+  outcomes:
+    - type: task_completed

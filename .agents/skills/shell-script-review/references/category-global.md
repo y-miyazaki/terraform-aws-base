@@ -17,6 +17,7 @@ Fix: Use environment variables or AWS Secrets Manager, remove constants
 Check: Is order show_usage→parse_arguments→functions a-z→main last for executable entry scripts?
 Why: Inconsistent function order reduces readability and lowers review efficiency
 Fix: Place show_usage→parse_arguments→other functions in a-z order→main last
+Note: Also detected by shell-script validation with `--check-function-docs` (function order). When validation output is supplied, take this ItemID's status from that result and cite the tool instead of re-reporting it.
 
 **G-04 (SHOULD): Re-runs are safe when operationally required**
 

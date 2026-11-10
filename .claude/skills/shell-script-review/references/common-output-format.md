@@ -7,6 +7,7 @@ Use the following report structure for review and validation output.
 
 ## Checks Summary
 
+- Status: <completed | failed | skipped>
 - Total checks: <number>
 - Passed: <count>
 - Failed: <count>
@@ -45,13 +46,11 @@ Overall Quality: <High | Medium | Low>
 ## Rules
 
 - Keep full evaluation data for all checks internally using fixed ItemIDs from `references/common-checklist.md`.
-- In human-readable output, display only:
-  - `## Checks Summary` (counts), and
-  - `## Checks (Failed/Deferred Only)`.
-- Do not list passed checks in `## Checks (Failed/Deferred Only)`.
+- Passed checks appear only as counts in `## Checks Summary`; do not list them in `## Checks (Failed/Deferred Only)`.
+- `Status` is `completed` when the review ran, `failed` when it could not run (for example, no target file exists), and `skipped` when there is nothing in scope to review. For `failed` and `skipped`, set the counts to `0`, write one `## Issues` entry without an ItemID that states the cause (it replaces `No issues found`), and omit `## Expert Assessment` and `## Good Practices` — no checks ran, so there is nothing to assess.
 - Keep ItemIDs fixed and sorted in checklist order.
 - `## Issues` must always contain full details for each failed or deferred check.
-- If there are no failed or deferred checks:
+- If `Status` is `completed` and there are no failed or deferred checks:
   - In `## Checks (Failed/Deferred Only)`, output `No failed or deferred checks`.
   - In `## Issues`, output `No issues found`.
 
@@ -66,12 +65,12 @@ Overall Quality: <High | Medium | Low>
 
 - Assign only ItemIDs that exist in `common-checklist.md`. Do not repurpose an existing ItemID for an unrelated finding.
 - Checklist-mapped findings go in `## Issues` with ItemIDs.
-- Findings that do not map to any checklist ItemID go in `## Expert Assessment` as numbered judgment items (no ItemID). Do not bury them in free-text prose after Issues.
+- Findings that do not map to any checklist ItemID go in `## Expert Assessment` as numbered judgment items (no ItemID). Do not bury them in free-text prose after Issues. The one exception is the cause entry for a `failed` or `skipped` Status (see Rules).
 
 ### Expert Assessment
 
-- Always include `## Expert Assessment` after `## Issues`.
-- State the Overall Quality level based on the ratio and severity of failures: High (0 critical, ≤2 minor), Medium (some failures but no systemic pattern), Low (systemic issues or critical failures).
+- Include `## Expert Assessment` after `## Issues` whenever `Status` is `completed`.
+- State the Overall Quality level based on the ratio and severity of failures: High (0 MUST failures, ≤2 SHOULD failures), Medium (other failures with no systemic pattern), Low (a systemic pattern, or a MUST failure with security or correctness impact).
 - Emit **numbered list items** (same field shape as Issues, without ItemID): title, Scope, Observation, Impact, Recommendation.
 - Cover cross-cutting judgment the checklist cannot surface: architectural coherence, hidden coupling, maintainability trajectory, or patterns that pass rules but are strategically problematic.
 - Limit to 1–5 items. If none, write `No cross-cutting concerns` under Overall Quality (do not invent filler).
@@ -79,7 +78,7 @@ Overall Quality: <High | Medium | Low>
 
 ### Good Practices
 
-- Always include `## Good Practices` after `## Expert Assessment`.
+- Include `## Good Practices` after `## Expert Assessment` whenever `Status` is `completed`.
 - Emit **numbered list items** with title, Scope, and Why it helps (1–3 items).
 - If no notable good practices are observed, write `No notable good practices identified` rather than omitting the section.
 

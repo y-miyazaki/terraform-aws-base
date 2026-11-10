@@ -29,6 +29,6 @@ When natural units are files: enumerate eligible paths, then apply this skill's 
 | Universe         | Failed workflow runs on the relevant branch (scan limit applies)                                                                                                                          |
 | `all`            | Limit-bounded failure enumeration                                                                                                                                                         |
 | `range`          | Failures related to the `--since` window                                                                                                                                                  |
-| `staged`         | noop / deprecated (index cursor does not apply to CI runs)                                                                                                                                |
+| `staged`         | Not used — the index cursor does not apply to CI runs; the detect script accepts it and returns no failures; use `all` or `range`                                                         |
 | Detect script    | `scripts/detect_ci_failures.sh`                                                                                                                                                           |
 | Interactive note | Prefer user-supplied run URL / job / log as primary evidence; still run detect when JSON is absent and tools allow; if `gh`/auth missing, fall back to user context — do not silent no-op |

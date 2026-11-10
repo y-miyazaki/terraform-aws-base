@@ -13,12 +13,12 @@ Examples:
 
 **Q-02 (SHOULD): Execution Scope splits Does vs Out of Scope**
 
-Check: Is Execution Scope split into "What this skill does" (action list) + "Out of Scope" (explicit non-actions with tool delegation)?
+Check: Is Execution Scope split into an in-scope action list (`### USE FOR:`) and explicit non-actions (`### DO NOT USE FOR:`), with tool or skill delegation where relevant?
 Why: Scope clarity prevents skill misuse, reduces ambiguity about responsibility boundaries, and clarifies tool/skill separation.
 Examples:
 
-- ✅ "Does: Review design. Does NOT: Run syntax checks (yamllint's responsibility)"
-- ❌ Only "Does" section or implicit scope ("Not responsible for X")
+- ✅ `### USE FOR:` "review workflow design" + `### DO NOT USE FOR:` "run syntax checks (yamllint's responsibility)"
+- ❌ Only `### USE FOR:` or implicit scope ("Not responsible for X")
 
 ---
 
@@ -96,14 +96,13 @@ Examples:
 
 **Q-09 (SHOULD): Record waza token evidence; over-budget is advisory**
 
-Check: Does the review include `waza check` token evidence? When Token Budget exceeds 500 tokens, record an advisory note in `## Issues` (not a structural FAIL) unless sibling skills in the same package were compressed in isolation.
+Check: Does the review include `waza check` token evidence? When Token Budget exceeds 500 tokens, record an advisory note in `## Issues` (not a FAIL). Fail Q-09 only when `waza check` ran but its token count is not recorded in the review; when `validate_waza.sh` itself failed, defer Q-09 with the script's exit status instead, because the evidence never existed. Isolated compression below sibling depth is reported under BP-04.
 Why: External tooling may warn above ~500 tokens; that is **advisory**. Sibling `SKILL.md` documentation-level consistency outranks isolated token compression (per package sibling-consistency policy for skills in the same package). Do not mark Q-09 Failed solely for token count when structure and reference-load contracts meet package norms.
 Examples:
 
 - ✅ `waza check` shows 612 / 500 — Q-09 noted in `## Issues` as advisory; sibling skills are at similar depth
 - ✅ Token within budget — Q-09 Passed or omitted from failed table
 - ❌ Token over budget with no `waza check` evidence
-- ❌ One skill compressed below 500 while siblings remain full-depth (BP-04 / sibling drift risk — flag in Issues)
 
 ---
 
@@ -134,10 +133,14 @@ Examples:
 
 **Q-12 (SHOULD): Input/Output/Workflow/References do not contradict each other**
 
-Check: Are definitions across sections (Input, Output Specification, Workflow, Reference Files Guide) free of mutual contradiction?
-Why: Contradictions between sections (e.g., Input declares a parameter optional but Workflow treats it as required) cause non-deterministic agent behavior
+Check: Are definitions free of mutual contradiction across SKILL.md sections (Input, Output Specification, Workflow, Execution Scope, Error Handling), between SKILL.md and each `references/` file, between `references/` files, and between the docs and bundled `scripts/` (options, defaults, execution order, stop-on-failure behavior, missing-tool handling)?
+Why: Contradictions (e.g., Input declares a parameter optional but Workflow treats it as required, or the docs promise behavior the bundled script does not implement) cause non-deterministic agent behavior
 Examples:
 
 - ✅ Input says "profile: optional (default: default)" and Workflow uses fallback logic when profile is absent
 - ❌ Input says "required" but Workflow says "skip if not provided"
 - ❌ Output Specification defines a field that common-output-format.md omits
+- ❌ Error Handling says `status: failed` but common-output-format.md defines no status field
+- ❌ common-checklist.md routes a case to a section that common-output-format.md forbids in that mode
+- ❌ SKILL.md says "stop on the first tool failure" but the bundled script runs every tool and aggregates
+- ❌ SKILL.md documents a `--fix` option that the bundled script does not accept

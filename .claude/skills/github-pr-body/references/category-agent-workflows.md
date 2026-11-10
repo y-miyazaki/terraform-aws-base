@@ -6,7 +6,7 @@ This document demonstrates real-world usage scenarios for PR Body updates with t
 
 **Situation**: Analyze PR changes without modifying Body
 
-````
+```text
 User: "PR #123 の変更を分析して owner/repo"
 
 Agent:
@@ -17,17 +17,13 @@ Agent:
    - Additions/deletions by category
 3. Analyze results and provide summary
 4. Optionally: Save to JSON for further processing
-   ```bash
    scripts/pr_fetch.sh 123 --repo owner/repo > pr_analysis.json
-````
-
 5. Confirm: "✅ PR analysis complete - core config changes and documentation updates detected"
-
 ```
 
 **Result**: Comprehensive PR analysis without modifying Body. Perfect for understanding scope before decisions.
 
-**Use Case**: Large PRs like #311 with 130+ file changes where understanding structure is critical.
+**Use Case**: Large PRs (for example 130+ changed files) where understanding structure is critical.
 
 ---
 
@@ -35,31 +31,31 @@ Agent:
 
 **Situation**: Analyze first, generate deterministic baseline, then let AI complete each section
 
-```
+```text
 
-User: "Analyze PR #311 and complete the PR body for owner/repo"
+User: "Analyze PR #123 and complete the PR body for owner/repo"
 
 Agent:
 
 1. Step 1 - Analyze with pr_fetch.sh:
-   scripts/pr_fetch.sh 311 --repo owner/repo
+   scripts/pr_fetch.sh 123 --repo owner/repo
 
 2. Step 2 - Preview deterministic baseline with pr_body.sh:
-   scripts/pr_body.sh 311 --repo owner/repo --dry-run
+   scripts/pr_body.sh 123 --repo owner/repo --dry-run
 
 3. Step 3 - Generate baseline or apply it:
-   scripts/pr_body.sh 311 --repo owner/repo
+   scripts/pr_body.sh 123 --repo owner/repo
 
 4. Step 4 - Run AI completion:
 
    - Read each section comment in PULL_REQUEST_TEMPLATE.md
    - Fill sections that require visible content
-   - Explicitly complete Testing, Type of Change, Checklist, and Additional Notes when the template guidance is applicable
+   - Complete every template H2 that carries guidance comments or examples (e.g. Testing, Checklist)
    - Follow Example or checkbox format for each section
    - Save the complete PR body to /tmp/completed_pr_body.md
 
 5. Step 5 - Apply the completed PR body:
-   scripts/pr_body.sh 311 --repo owner/repo --body-file /tmp/completed_pr_body.md
+   scripts/pr_body.sh 123 --repo owner/repo --body-file /tmp/completed_pr_body.md
 
 6. Confirm: "✅ PR Body updated with deterministic baseline and AI-completed sections"
 
@@ -73,7 +69,7 @@ Agent:
 
 **Situation**: Generate baseline first, then complete sections semantically
 
-```
+```text
 
 User: "Update the body for PR #123 in owner/repo"
 
@@ -96,7 +92,7 @@ Agent:
 
 **Situation**: Preview changes before applying for review
 
-```
+```text
 
 User: "PR #456 の body 更新を確認 owner/repo"
 
@@ -117,9 +113,9 @@ Agent:
 
 **Situation**: Complete PR documentation in Japanese while keeping the shell script deterministic
 
-```
+```text
 
-User: "Complete PR #311 in Japanese"
+User: "Complete PR #123 in Japanese"
 
 Agent:
 
@@ -143,7 +139,7 @@ Agent:
 
 **Situation**: PR needs domain-specific context
 
-```
+```text
 
 User: "Summarize this PR with domain focus and mention module impact + deployment status"
 
@@ -175,7 +171,7 @@ Agent:
 
 **Situation**: Update file classifications after new commits pushed to PR
 
-```
+```text
 
 User: "PR #789: 新しいコミットが追加された後、更新してほしい"
 
@@ -201,4 +197,3 @@ Agent:
 - **Apply AI-completed full bodies via `pr_body.sh --body-file`**, not direct `gh pr edit`
 - **Do not embed semantic generation in shell scripts**
 - **Tool priority**: Always use shell scripts for baseline generation, then AI completion for chapter content
-```

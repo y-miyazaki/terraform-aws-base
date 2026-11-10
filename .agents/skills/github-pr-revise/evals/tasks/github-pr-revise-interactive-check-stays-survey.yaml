@@ -1,0 +1,25 @@
+id: github-pr-revise-interactive-check-stays-survey-001
+name: github-pr-revise interactive check request stays survey
+description: >-
+  Validate that an interactive request to check PR feedback, with no request to change files,
+  stays survey: lists candidates and edits nothing.
+tags:
+  - quality
+  - interactive
+inputs:
+  prompt: >-
+    Use github-pr-revise. The user says "check the review feedback on PR #55". Checking asks
+    to look, not to change files, so agent_edit_allowed is false. Do not edit files, commit,
+    push, or open a PR. Emit survey shape with ## Overview, ## Summary, and ### Candidates,
+    and state no edits applied in Overview. Do not emit ### Changes or ## Verification.
+  context:
+    pr_number: 55
+    feedback: "Please rename handleUser to handleUserProfile and add a unit test."
+    feedback_author: human-reviewer
+expected:
+  output_contains:
+    - Overview
+    - Candidates
+    - no edits applied
+  outcomes:
+    - type: task_completed

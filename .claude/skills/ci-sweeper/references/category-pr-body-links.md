@@ -19,13 +19,13 @@ Apply at synthesis. Also follow file-path rules in this file's **File paths** se
 
 ## Workflow / job rows
 
-When detect `failures[]` is present:
+When detect `failures[]` is present (fields per [category-input-schema.md](category-input-schema.md)):
 
-| Field                | Link target                                                      |
-| -------------------- | ---------------------------------------------------------------- |
-| `workflow_path`      | `https://github.com/{owner}/{repo}/actions/workflows/{basename}` |
-| `job_url`            | use as-is when set                                               |
-| `job_id` + `run_url` | `{run_url}/job/{job_id}` when `job_url` is absent                |
-| fallback             | `run_url` for workflow or job label                              |
+| Field                                      | Link target                                                      |
+| ------------------------------------------ | ---------------------------------------------------------------- |
+| `failures[].workflow_path`                 | `https://github.com/{owner}/{repo}/actions/workflows/{basename}` |
+| `failures[].job_url`                       | use as-is when set                                               |
+| `failures[].job_id` + `failures[].run_url` | `{run_url}/job/{job_id}` when `job_url` is absent                |
+| fallback                                   | `run_url` for workflow or job label                              |
 
 Do not duplicate `## Failure context` run URLs in Overview when the caller already supplies that section.

@@ -12,9 +12,9 @@ metadata:
 
 ## Input
 
-- Workflow YAML path or glob (required): `.github/workflows/`
 - Validation script (required): `scripts/validate.sh`
-- Directory path (optional): scope validation to a subdirectory
+- Workflows directory (optional): defaults to `.github/workflows`; scopes the ORD-01 map order check and ghalint (actionlint and zizmor always scan the whole repository). Without it, the ORD-01 check covers git-tracked `.github/workflows/*.yml|yaml` and `.github/actions/**/action.yml|yaml`; untracked new files are not checked until they are added to git. With it, the ORD-01 check covers only YAML files under that directory (relative to the current directory), so composite actions are not checked
+- `--verbose` / `--quiet` (optional)
 
 ## Output Specification
 
@@ -25,7 +25,7 @@ Structured validation results from four tools: ORD-01 map order → actionlint �
 ## Execution Scope
 
 - **Always use `scripts/validate.sh`** for comprehensive validation. Do not run individual commands.
-- Script executes all tools in order.
+- Script executes all tools in order and stops at the first failing tool (fail-fast); later tools are reported as `⊘ Skipped`.
 - Individual commands are for debugging only (see [references/common-individual-commands.md](references/common-individual-commands.md))
 
 ### USE FOR:
@@ -50,21 +50,22 @@ Structured validation results from four tools: ORD-01 map order → actionlint �
 
 ## Workflow
 
-1. Run `bash scripts/validate.sh` (or `bash scripts/validate.sh <path>` for scoped validation).
+1. Run `bash scripts/validate.sh` (or `bash scripts/validate.sh <workflows-dir>` to scope the ORD-01 check and ghalint).
 2. Parse script output and map results to checklist ItemIDs.
-3. Report failed/deferred items per [references/common-output-format.md](references/common-output-format.md).
+3. Report per-tool results (pass, fail, skipped) per [references/common-output-format.md](references/common-output-format.md).
+4. If checks fail and the user asked for fixes, fix reported issues and rerun the same command; otherwise report the failures.
+5. Retry at most 2 times after fixes; if checks still fail, return blocking findings and stop.
 
 ### Error Handling
 
-| Condition                             | Severity    | Action                                                                                                |
-| ------------------------------------- | ----------- | ----------------------------------------------------------------------------------------------------- |
-| `scripts/validate.sh` missing         | Fatal       | Stop; report missing script                                                                           |
-| No workflow YAML under target path    | Info        | Report no reviewable workflows; stop                                                                  |
-| actionlint / ghalint / zizmor missing | Recoverable | Defer checks for that tool; note in `## Checks (Failed/Deferred Only)`                                |
-| Single tool fails, others succeed     | Recoverable | Report passing tools; defer failed tool with exit status                                              |
-| All tools fail                        | Fatal       | Return `status: failed` with per-tool stderr summaries                                                |
-| `common-checklist.md` unavailable     | Fatal       | Stop; report missing dependency                                                                       |
-| `common-output-format.md` unavailable | Recoverable | Note missing file; emit `## Checks Summary`, `## Checks (Failed/Deferred Only)`, and `## Issues` only |
+| Condition                                       | Severity    | Action                                                                                            |
+| ----------------------------------------------- | ----------- | ------------------------------------------------------------------------------------------------- |
+| `scripts/validate.sh` missing                   | Fatal       | Stop; report missing script                                                                       |
+| No workflow YAML under target path              | Info        | Report no reviewable workflows; stop                                                              |
+| python3 / actionlint / ghalint / zizmor missing | Fatal       | Stop; report the missing binary; set `Status: ❌ FAIL`                                            |
+| A tool fails                                    | Recoverable | Report earlier tools as passed, the failed tool ❌ Fail with exit status, later tools `⊘ Skipped` |
+| `common-checklist.md` unavailable               | Fatal       | Stop; report missing dependency                                                                   |
+| `common-output-format.md` unavailable           | Recoverable | Note missing file; emit `## Summary`, `## Tool Results`, and `## Error Details` only              |
 
 ### Examples
 

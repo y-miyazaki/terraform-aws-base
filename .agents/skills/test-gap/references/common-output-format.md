@@ -47,9 +47,9 @@ Survey rules: MUST NOT include `### Changes`, `### Deferred`, or `## Verificatio
 
 ## Verification
 
-| Check               | Result                                           |
-| ------------------- | ------------------------------------------------ |
-| `<command CI runs>` | <skip — not run here; CI expects pass for tests> |
+| Check          | Result                                                  |
+| -------------- | ------------------------------------------------------- |
+| <test command> | <pass \| fail \| not run — expected result and why not> |
 ```
 
-Apply rules: omit empty `###` headings. Never write that tests passed.
+Apply rules: omit empty `###` headings. Report only results of commands actually run; never write that tests passed without running them.

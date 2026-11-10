@@ -12,9 +12,9 @@ Fix: Document domain modification procedures only; defer executable validation t
 
 **GUIDE-02 (SHOULD): Tool Usage**
 
-Check: MCP Tool usage examples are documented
+Check: When the file directs agents to use a specific tool (CLI, MCP server, or other integration), is a usage example documented for that tool? Files that direct no specific tool pass.
 Why: Missing examples cause operational variations and inefficient workflows
-Fix: Add MCP Tool usage examples (where applicable)
+Fix: Add a usage example for each tool the file directs agents to use
 
 **GUIDE-03 (SHOULD): Anti-Patterns**
 
@@ -24,6 +24,6 @@ Fix: Document common anti-patterns to avoid with explanations
 
 **GUIDE-04 (SHOULD): No ID-less Bullet Rules in Guidelines**
 
-Check: Are there no ID-less bullet rules in the Guidelines chapter?
+Check: Are there no ID-less bullet rules in the Guidelines rule groups? `### Code Modification Guidelines` is exempt — its procedural bullets may be ID-less and may cite ItemIDs inline.
 Why: Rules without IDs cannot be referenced in review checklists, causing tracking gaps and audit failures
-Fix: Convert all bullet rules to the standard format: `**ID (LEVEL)**: rule — rationale`
+Fix: Convert rule bullets to the standard format: `- PREFIX-nn (LEVEL): title`

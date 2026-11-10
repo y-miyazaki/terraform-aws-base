@@ -16,7 +16,7 @@
 - G-02 (SHOULD): Production jobs use environment + approval
 
 ## Ordering (ORD)
-- ORD-01 (MUST): Alphabetize keys in env/permissions/with/secrets blocks
+- ORD-01 (MUST): Alphabetize keys in env/inputs/outputs/permissions/secrets/with maps
 
 ## Performance (PERF)
 - PERF-01 (SHOULD): Deterministic cache keys invalidated by dependency changes
@@ -24,8 +24,8 @@
 - PERF-03 (SHOULD): Cancel redundant runs with concurrency (caller-owned for reusable)
 
 ## Security (SEC)
-- SEC-01 (SHOULD): Reference secrets only via secrets.\*; never echo them
-- SEC-02 (SHOULD): Restrict pull_request_target on fork PRs
+- SEC-01 (MUST): Reference secrets only via secrets.\*; never echo them
+- SEC-02 (MUST): Restrict pull_request_target on fork PRs
 - SEC-03 (SHOULD): Mask sensitive values in logs (::add-mask / setSecret)
 - SEC-04 (SHOULD): Validate/sanitize env inputs before use
 - SEC-05 (SHOULD): Public repos gate privileged steps on private/trusted context

@@ -8,7 +8,7 @@
       "type": "stdio",
       "command": "uvx",
       "args": [
-        "mcp-proxy==0.13.0",
+        "mcp-proxy==0.13.3",
         "--transport",
         "streamablehttp",
         "https://knowledge-mcp.global.api.aws"
@@ -18,7 +18,7 @@
       "type": "stdio",
       "command": "uvx",
       "args": [
-        "awslabs.aws-documentation-mcp-server==1.2.3"
+        "awslabs.aws-documentation-mcp-server==1.2.4"
       ]
     },
     "aws-pricing-mcp-server": {

@@ -12,6 +12,8 @@
 # - Caller-specific exclusions use REPO_PATHS_EXTRA_PRUNES (comma-separated roots)
 # - REPO_PATHS_INCLUDE_AGENTS=true skips agent-directory exclusion (default: exclude)
 # - REPO_PATHS_INCLUDE_GITIGNORED=true skips gitignore exclusion (default: exclude)
+# - REPO_PATHS_INCLUDE_BUILD_OUTPUT=true keeps dist/, build/, bin/ (default: exclude)
+# - git path listings use -z so non-ASCII paths are not C-quoted (core.quotePath)
 # - Dot-prefixed directory segments are excluded except structural roots (.github, .apm)
 # - Root dotfiles are not excluded by the dot-directory rule
 # - repo_append_find_prune_args is a performance prune; repo_filter_paths is authoritative
@@ -29,6 +31,7 @@ fi
 # Globals:
 #   REPO_PATHS_EXTRA_PRUNES - Comma-separated repository-relative prune roots
 #   REPO_PATHS_INCLUDE_AGENTS - When true, do not prune agent directories
+#   REPO_PATHS_INCLUDE_BUILD_OUTPUT - When true, do not prune dist/, build/, bin/
 #
 # Arguments:
 #   $1 - Name reference to find argument array
@@ -60,7 +63,10 @@ function repo_append_find_prune_args {
     if [[ ${REPO_PATHS_INCLUDE_AGENTS:-false} != "true" ]]; then
         _out+=(-o -path './.agents' -o -path './.cursor' -o -path './.claude' -o -path './.codex' -o -path './.kiro' -o -path './.vscode')
     fi
-    _out+=(-o -path './apm_modules' -o -path './node_modules' -o -path './dist' -o -path './build' -o -path './bin')
+    _out+=(-o -path './apm_modules' -o -path './node_modules')
+    if [[ ${REPO_PATHS_INCLUDE_BUILD_OUTPUT:-false} != "true" ]]; then
+        _out+=(-o -path './dist' -o -path './build' -o -path './bin')
+    fi
     for extra in "${extra_prunes[@]}"; do
         [[ -z ${extra} ]] && continue
         extra="${extra#./}"
@@ -174,6 +180,7 @@ function repo_array_append_unique {
 # Globals:
 #   REPO_PATHS_EXTRA_PRUNES - Comma-separated repository-relative prune roots
 #   REPO_PATHS_INCLUDE_AGENTS - When true, do not exclude agent directories
+#   REPO_PATHS_INCLUDE_BUILD_OUTPUT - When true, do not exclude dist/, build/, bin/
 #   REPO_PATHS_INCLUDE_GITIGNORED - When true, do not exclude gitignored paths
 #
 # Arguments:
@@ -197,7 +204,7 @@ function repo_emit_tracked_paths {
         return 0
     fi
 
-    while IFS= read -r file; do
+    while IFS= read -r -d '' file; do
         [[ -z ${file} ]] && continue
         if [[ -n ${pattern} ]] && [[ ! ${file} =~ ${pattern} ]]; then
             continue
@@ -206,7 +213,7 @@ function repo_emit_tracked_paths {
             continue
         fi
         printf '%s\n' "${file}"
-    done < <(git ls-files 2> /dev/null || true)
+    done < <(git ls-files -z 2> /dev/null || true)
 }
 
 #######################################
@@ -344,6 +351,7 @@ function repo_path_has_excluded_dot_directory {
 #
 # Globals:
 #   REPO_PATHS_INCLUDE_AGENTS - When true, do not treat agent directories as generated
+#   REPO_PATHS_INCLUDE_BUILD_OUTPUT - When true, do not treat dist/, build/, bin/ as generated
 #
 # Arguments:
 #   $1 - Repository-relative file path
@@ -367,10 +375,15 @@ function repo_path_is_generated_or_agent {
         .git | .git/*) return 0 ;;
         apm_modules | apm_modules/*) return 0 ;;
         node_modules | node_modules/*) return 0 ;;
-        dist | dist/*) return 0 ;;
-        build | build/*) return 0 ;;
-        bin | bin/*) return 0 ;;
     esac
+
+    if [[ ${REPO_PATHS_INCLUDE_BUILD_OUTPUT:-false} != "true" ]]; then
+        case "${path}" in
+            dist | dist/*) return 0 ;;
+            build | build/*) return 0 ;;
+            bin | bin/*) return 0 ;;
+        esac
+    fi
 
     if [[ ${REPO_PATHS_INCLUDE_AGENTS:-false} == "true" ]]; then
         return 1
@@ -487,6 +500,7 @@ function repo_path_matches_extra_prune {
 # Globals:
 #   REPO_PATHS_EXTRA_PRUNES - Comma-separated repository-relative prune roots
 #   REPO_PATHS_INCLUDE_AGENTS - When true, do not exclude agent directories
+#   REPO_PATHS_INCLUDE_BUILD_OUTPUT - When true, do not exclude dist/, build/, bin/
 #   REPO_PATHS_INCLUDE_GITIGNORED - When true, do not exclude gitignored paths
 #
 # Arguments:
@@ -517,6 +531,7 @@ function repo_path_should_skip {
 #
 # Globals:
 #   REPO_PATHS_INCLUDE_AGENTS - When true, do not exclude agent directories
+#   REPO_PATHS_INCLUDE_BUILD_OUTPUT - When true, do not exclude dist/, build/, bin/
 #   REPO_PATHS_INCLUDE_GITIGNORED - When true, do not exclude gitignored paths
 #
 # Arguments:

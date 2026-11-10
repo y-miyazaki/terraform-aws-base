@@ -20,7 +20,17 @@ metadata:
 
 Return structured Markdown in accordance with [references/common-output-format.md](references/common-output-format.md). That file is the source of truth for the output contract.
 
-Always include target file list and deferred reason summary.
+Skill-local addition: insert a `## Targets` section directly after the `# <Result Title>` heading, before `## Checks Summary`, with one row per target file:
+
+```markdown
+## Targets
+
+| File     | Status                |
+| -------- | --------------------- |
+| `<path>` | `reviewed`, `missing` |
+```
+
+Then, in `## Issues` and `## Checks (Failed/Deferred Only)`, prefix each entry with the file path when more than one target is reviewed. Give each Deferred entry its reason.
 
 ## Execution Scope
 
@@ -47,7 +57,7 @@ Always include target file list and deferred reason summary.
 
 - [common-checklist.md](references/common-checklist.md) (always read)
 - [common-output-format.md](references/common-output-format.md) (always read)
-- [common-troubleshooting.md](references/common-troubleshooting.md) (read on failure)
+- [common-troubleshooting.md](references/common-troubleshooting.md) (read when a check fails)
 - [category-global.md](references/category-global.md) (always read)
 - [category-testing.md](references/category-testing.md) (always read)
 - [category-security.md](references/category-security.md) (always read)
@@ -58,8 +68,8 @@ Always include target file list and deferred reason summary.
 ## Workflow
 
 1. Read PR context and identify target instruction files.
-2. If target file does not exist, return `status: failed` for that file and continue remaining targets. Process all target files independently — one failure does not stop the review of others.
-3. If PR context is unavailable, run file-only review and mark PR-context checks as deferred.
+2. If a target file does not exist, mark it `missing` in `## Targets` (not a check failure, so no `## Issues` entry) and continue remaining targets. Process all target files independently — one failure does not stop the review of others.
+3. If PR context is unavailable, identify targets from the user prompt and review the files alone. No checklist item requires PR context, so nothing is deferred for its absence.
 4. Verify required chapter order (Scope → Standards → Guidelines → Testing and Validation → Security Guidelines), then review checklist priorities and collect failed/deferred ItemIDs.
 5. Output required report sections per [references/common-output-format.md](references/common-output-format.md).
 
@@ -68,14 +78,14 @@ Always include target file list and deferred reason summary.
 | Status   | When to use                                                                                 |
 | -------- | ------------------------------------------------------------------------------------------- |
 | Failed   | Check evaluated and issue confirmed with concrete evidence (file + line or missing element) |
-| Deferred | Check cannot be evaluated — category file unavailable, or PR context absent                 |
+| Deferred | Check cannot be evaluated — its category file is unavailable                                |
 | Passed   | Check evaluated and no issue found (counted in summary only)                                |
 
 Key evaluation criteria (inline summary of common-checklist):
 
 - **Structure**: 5 H2 chapters in correct order (Scope → Standards → Guidelines → Testing and Validation → Security Guidelines)
 - **Guidelines format**: H3 headings with category IDs; rule bullets are ItemID + `(LEVEL)` + title only (synced instructions are thin — do **not** require `Check:` child bullets in `## Guidelines`; full Check/Why/Fix live in `*-review` `category-*.md`)
-- **Code Modification Guidelines**: must exist in every file
+- **Code Modification Guidelines**: required as the last Guidelines subsection (STRUCT-05, MUST); the clarity of its content is GUIDE-01 (SHOULD)
 - **No empty sections**: every H3 must have content
 
 ### Error Handling
@@ -86,8 +96,8 @@ Key evaluation criteria (inline summary of common-checklist):
 | `common-output-format.md` unavailable       | Recoverable | Note missing file; emit `## Checks Summary`, `## Checks (Failed/Deferred Only)`, and `## Issues` only |
 | Category reference file missing             | Recoverable | Defer checks from that category, note missing file in report                                          |
 | All category files missing                  | Fatal       | Stop, report "no evaluation criteria available"                                                       |
-| Target instruction/rule file does not exist | Recoverable | Report `status: failed` for that file, continue remaining targets                                     |
-| All target files missing                    | Fatal       | Stop, report "no reviewable instruction files found"                                                  |
+| Target instruction/rule file does not exist | Recoverable | Mark the file `missing` in `## Targets`, continue remaining targets                                   |
+| All target files missing                    | Fatal       | Set `Status: failed`; stop; `## Issues` cause entry: "no reviewable instruction files found"          |
 
 ### Examples
 

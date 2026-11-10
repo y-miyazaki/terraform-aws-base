@@ -33,6 +33,12 @@ variable "auto_enable_organization_members" {
   default     = "ALL"
 }
 
+variable "members" {
+  description = "Map of member account ID to email to register explicitly. Use with auto_enable_organization_members = \"NONE\" to restrict members per region."
+  type        = map(string)
+  default     = {}
+}
+
 variable "features" {
   description = "GuardDuty organization configuration features"
   type = map(object({

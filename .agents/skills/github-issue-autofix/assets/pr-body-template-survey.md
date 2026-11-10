@@ -16,11 +16,11 @@ Rules:
 ## Overview
 
 <!--
-  GOOD: Issue #12 crash on save — nil profile in pkg/foo/bar.go; fix candidate identified; no edits applied.
+  GOOD: Refs #12 crash on save — nil profile in pkg/foo/bar.go; fix candidate identified; no edits applied.
   BAD:  Autofix survey completed; no edits applied.
 -->
 
-<summary: Issue number, root cause hypothesis, no edits applied>
+<summary: Refs #N (never a closing keyword such as Fixes), root cause hypothesis, no edits applied>
 
 ## Summary
 

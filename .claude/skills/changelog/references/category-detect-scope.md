@@ -24,10 +24,10 @@ When natural units are files: enumerate eligible paths, then apply this skill's 
 
 ## This skill (`changelog`)
 
-| Field         | Value                                                             |
-| ------------- | ----------------------------------------------------------------- |
-| Universe      | Commit set capped by `CHANGELOG_MAX_COMMITS` (or successor)       |
-| `all`         | Cap-bounded commits without since-cursor                          |
-| `range`       | `<since>..HEAD` commits                                           |
-| `staged`      | Not used — if accepted for CLI parity, treat as noop / deprecated |
-| Detect script | `scripts/detect_changelog_commits.sh`                             |
+| Field         | Value                                                         |
+| ------------- | ------------------------------------------------------------- |
+| Universe      | Commit set capped by `CHANGELOG_MAX_COMMITS` (or successor)   |
+| `all`         | Cap-bounded commits without since-cursor                      |
+| `range`       | `<since>..HEAD` commits                                       |
+| `staged`      | Not used — the detect script rejects it; use `all` or `range` |
+| Detect script | `scripts/detect_changelog_commits.sh`                         |

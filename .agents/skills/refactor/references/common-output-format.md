@@ -21,9 +21,9 @@ No file edits. **Do not emit `### Changes`, `### Deferred`, or a Verification ta
 
 ### Candidates
 
-| Target                       | Evidence                  | Suggested approach             | Priority              |
-| ---------------------------- | ------------------------- | ------------------------------ | --------------------- |
-| `path/to/file.sh` `symbol()` | <plain-language evidence> | <plain-language fix direction> | high \| medium \| low |
+| Target                   | Evidence                  | Suggested approach             | Priority              |
+| ------------------------ | ------------------------- | ------------------------------ | --------------------- |
+| <linked path> `symbol()` | <plain-language evidence> | <plain-language fix direction> | high \| medium \| low |
 
 ### Watch
 
@@ -65,9 +65,9 @@ Survey runs internally first; final output uses the **apply** shape. **Do not em
 
 ### Changes
 
-| Target                       | What was wrong            | What changed                          |
-| ---------------------------- | ------------------------- | ------------------------------------- |
-| `path/to/file.sh` `symbol()` | <plain-language evidence> | <minimal behavior-preserving summary> |
+| Target                   | What was wrong            | What changed                          |
+| ------------------------ | ------------------------- | ------------------------------------- |
+| <linked path> `symbol()` | <plain-language evidence> | <minimal behavior-preserving summary> |
 
 ### Deferred
 
@@ -103,7 +103,9 @@ Survey runs internally first; final output uses the **apply** shape. **Do not em
 
 Before emitting the result, run `git diff --name-only` and reconcile **Changes** and **Deferred**.
 
-## No-op (both modes)
+## Survey no-op (both modes)
+
+When nothing actionable is found, emit the survey shape with Overview explaining the no-op — regardless of `agent_edit_allowed`, since no edits were made:
 
 ```markdown
 # Refactor Result
@@ -115,12 +117,9 @@ Before emitting the result, run `git diff --name-only` and reconcile **Changes**
 ## Summary
 
 <no subsections, or a single sentence under Summary>
-
-## Verification
 ```
 
-- Survey no-op: omit Verification (same as survey-only).
-- Apply no-op after survey: Verification may be `None` when no edits were attempted.
+No `## Verification`, `### Changes`, or `### Deferred` in a no-op report.
 
 ## Session metrics (automation)
 

@@ -9,9 +9,12 @@ variable "name_prefix" {
 variable "region" {
   description = "Region configuration for multi-region deployment"
   type = object({
-    global  = string
-    primary = string
-    targets = list(string)
+    # Region => account IDs allowed in that region (allowlist).
+    # Regions without a key apply to all accounts.
+    account_allowlist = optional(map(list(string)), {})
+    global            = string
+    primary           = string
+    targets           = list(string)
   })
   validation {
     condition     = length(var.region.targets) > 0
@@ -20,6 +23,14 @@ variable "region" {
   validation {
     condition     = contains(var.region.targets, var.region.primary)
     error_message = "region.primary must be included in region.targets"
+  }
+  validation {
+    condition     = alltrue([for r in keys(var.region.account_allowlist) : contains(var.region.targets, r)])
+    error_message = "region.account_allowlist keys must be included in region.targets"
+  }
+  validation {
+    condition     = alltrue([for ids in values(var.region.account_allowlist) : alltrue([for id in ids : can(regex("^[0-9]{12}$", id))])])
+    error_message = "region.account_allowlist values must be 12-digit AWS account IDs"
   }
 }
 
@@ -115,7 +126,9 @@ variable "inspector2_organization" {
       account_ids    = list(string)
       resource_types = list(string)
     })), {})
-    is_enabled_configuration = optional(bool, false)
+    # Region => resource types not supported there (e.g. LAMBDA_CODE), removed from every enabler.
+    region_excluded_resource_types = optional(map(list(string)), {})
+    is_enabled_configuration       = optional(bool, false)
     configuration = optional(object({
       auto_enable_ec2             = bool
       auto_enable_ecr             = bool

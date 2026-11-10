@@ -221,7 +221,7 @@ pr_body.sh 123 --repo owner/repo
 
 ## Limitations
 
-1. **PR Template Required**: Expects `.github/PULL_REQUEST_TEMPLATE.md` for context
+1. **Single Template Location**: The baseline run reads only `.github/PULL_REQUEST_TEMPLATE.md` and exits with an error when it is missing (a `--body-file` run applies the given body without reading the template); root, `docs/`, and multi-template directories are not read
 2. **GitHub API Dependency**: Requires internet access and GitHub authentication
 3. **Body Size Limit**: GitHub enforces 65,536 character limit
 4. **File Name Only**: Classification based on file name patterns, not content inspection

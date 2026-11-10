@@ -2,13 +2,14 @@
 
 **BP-01 (SHOULD): Description states what the skill does and when to use it**
 
-Check: Does the description field follow best practices for skill discovery (third person, includes when-to-activate trigger content, no implementation instructions)?
+Check: Does the description field state what the skill does, include when-to-activate trigger content, and avoid implementation instructions? Third person is recommended; a leading imperative verb phrase (`Review …`, `Validate …`) that names the action and object is also acceptable.
 Why: The description is the primary signal for skill activation. Poor descriptions cause incorrect skill selection or missed activation. Official guidance: write in third person and include specific keywords that help agents identify relevant tasks. A clear activation trigger is required; the exact phrase `Use when...` is recommended but not mandatory.
 Examples:
 
 - ✅ "Reviews Go source code for correctness and security. Use when reviewing Go pull requests or assessing security." (third person + recommended trigger phrasing)
 - ✅ "Reviews Go source code for correctness and security during pull-request review and security assessment." (third person + trigger content without `Use when`)
-- ❌ "Use for manual review of Go code" (imperative, not third person)
+- ✅ "Review Go source code for correctness and security. Use when reviewing Go pull requests." (imperative verb phrase + trigger)
+- ❌ "Use for Go code" (no stated action and no specific trigger)
 - ❌ "Always use validate.sh script. For troubleshooting, see references/." (implementation instructions in description)
 - ❌ "Helps with Go code" (too vague, no activation trigger)
 
@@ -58,6 +59,7 @@ Examples:
 - ✅ Workflow still deterministic with numbered steps or explicit IF/THEN branches
 - ✅ At least one concrete example remains
 - ❌ Token-only edit removed trigger clarity or deleted examples
+- ❌ One skill compressed below 500 tokens while sibling skills in the same package remain full-depth
 
 ---
 

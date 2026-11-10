@@ -1,0 +1,26 @@
+id: docs-creator-duplicate-path-001
+name: docs-creator duplicate filename conflict
+description:
+  "Validate that docs-creator stops and asks when the resolved filename already
+  exists in a different directory.
+
+  "
+tags:
+  - quality
+  - early-termination
+inputs:
+  prompt:
+    "Use docs-creator to create a how-to guide named deployment.md. Assume a file
+    with the same name already exists in a different docs directory. Stop and ask
+    the user. Return ## Summary with 'Status: blocked', an empty ## Changes table,
+    and the conflicting path in ## Notes."
+  context:
+    target: docs/how-to/deployment.md
+expected:
+  output_contains:
+    - "## Summary"
+    - "Status: blocked"
+    - "## Changes"
+    - "## Notes"
+  outcomes:
+    - type: task_completed

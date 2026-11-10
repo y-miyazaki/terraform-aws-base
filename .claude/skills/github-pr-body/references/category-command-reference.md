@@ -183,7 +183,7 @@ scripts/pr_body.sh <PR#>
 
 - Use `pr_body.sh` to write the baseline body structure.
 - Use AI to read `PULL_REQUEST_TEMPLATE.md` comments and generate visible chapter content.
-- Use `--body-file` to apply a complete AI-generated PR body that includes Testing, Type of Change, Checklist, and Additional Notes.
+- Use `--body-file` to apply a complete AI-generated PR body that includes every template H2 that carries guidance comments or examples (e.g. Testing, Checklist).
 - Do not add section-specific semantic rules into the shell script.
 
 ### Error: `PR #XXX not found`

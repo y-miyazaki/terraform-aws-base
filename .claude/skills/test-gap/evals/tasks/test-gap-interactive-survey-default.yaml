@@ -1,0 +1,33 @@
+id: test-gap-interactive-survey-default-001
+name: test-gap find request stays survey
+description: >-
+  Validate that a request to find under-tested code (asks to look, not to change files)
+  keeps agent_edit_allowed false and emits survey shape only.
+tags:
+  - quality
+  - interactive
+  - agent-edit-allowed
+inputs:
+  prompt: >-
+    Use test-gap. The user asks to check which scripts are under-tested. Checking asks to
+    look, not to change files, so agent_edit_allowed is false. List ranked targets under
+    ### Candidates. Do not edit files. Emit ## Overview and ## Summary per
+    common-output-format.md. Do not emit ### Changes, ### Deferred, or ## Verification.
+    State no edits applied in Overview.
+  context:
+    skip: false
+    hotspots:
+      - path: scripts/foo.sh
+        kind: churn
+        count: 7
+        window: 90.days
+    ledger:
+      file: state-test-gap-ledger.json
+      processed: []
+expected:
+  output_contains:
+    - Candidates
+    - Overview
+    - no edits applied
+  outcomes:
+    - type: task_completed

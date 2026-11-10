@@ -11,6 +11,7 @@
 - P-01 (SHOULD): Workflow matches the skill family pattern (not ad-hoc steps)
 - P-02 (SHOULD): Output matches common-output-format contract
 - P-03 (SHOULD): Gather required context before emitting the final report
+- P-04 (SHOULD): Shared contract rules match sibling skills
 
 ## Quality Checks (Q)
 - Q-01 (SHOULD): Output format is implementable (schema or Markdown sections)

@@ -12,12 +12,13 @@ metadata:
 ## Input
 
 - Terraform `.tf`/`.tfvars` files and PR context or file diffs (required)
+- Validation output from the companion `terraform-validation` report or CI (optional): used to skip tool-detectable checks
 
 ## Output Specification
 
 Return structured Markdown in accordance with [references/common-output-format.md](references/common-output-format.md). That file is the source of truth for the output contract.
 
-Each issue must include file path, risk summary, and remediation guidance.
+Each issue must include file path with line reference (`<path>#L<line>`), risk summary, and remediation guidance.
 
 ## Execution Scope
 
@@ -61,15 +62,19 @@ Each issue must include file path, risk summary, and remediation guidance.
 - [category-tfvars.md](references/category-tfvars.md) (always read)
 - [category-variables.md](references/category-variables.md) (always read)
 - [category-versioning.md](references/category-versioning.md) (always read)
+- [category-anti-patterns.md](references/category-anti-patterns.md) (always read)
 
 ## Workflow
 
-1. Read PR context and module scope.
-2. If PR context is unavailable, review file diffs only and defer PR-context-dependent checks.
-3. If changed files contain no `.tf` or `.tfvars`, return `status: skipped` with reason `no Terraform review target`.
-4. Apply the full review checklist and collect failed/deferred items.
-5. If a referenced category file is missing, defer affected checks with the missing file path.
-6. Output required sections per [references/common-output-format.md](references/common-output-format.md). Prioritize `SEC-*` findings first, then correctness, then maintainability. For conflicting findings, prioritize the higher-severity category and document the conflict in `## Issues`.
+1. Read PR context and module scope. If PR context is unavailable, review file diffs only and defer PR-context-dependent checks.
+2. If changed files contain no `.tf` or `.tfvars`, set `Status: skipped` in `## Checks Summary` with reason `no Terraform review target`.
+3. Scope findings to changed files and hunks. Report violations in unchanged code outside the diff only under `## Expert Assessment`, not `## Issues`. For ad-hoc file review without a diff, treat the whole file as in scope.
+4. Exclude generated files and vendored third-party code (for example `.terraform/` directories and `.terraform.lock.hcl`) from primary findings unless they introduce security-critical risk.
+5. For very large PRs (>50 changed Terraform files), prioritize security/correctness checks first and defer low-risk style checks if evidence is insufficient.
+6. When validation output (companion `terraform-validation` report or equivalent CI results) is supplied, do not re-report failures those tools detect: take the overlapping ItemID's status from the tool result, cite the tool, and spend the review on judgment checks. Category items with a validation `Note:` name the known overlaps.
+7. Apply the full review checklist and collect failed/deferred items.
+8. If a referenced category file is missing, defer affected checks with the missing file path.
+9. Output required sections per [references/common-output-format.md](references/common-output-format.md). Prioritize `SEC-*` findings first, then correctness, then maintainability. For conflicting findings, prioritize the higher-severity category and document the conflict in `## Issues`.
 
 ### Error Handling
 
@@ -77,7 +82,7 @@ Each issue must include file path, risk summary, and remediation guidance.
 | ---------------------------------------- | ----------- | ----------------------------------------------------------------------------------------------------- |
 | `common-checklist.md` unavailable        | Fatal       | Stop; report missing dependency                                                                       |
 | `common-output-format.md` unavailable    | Recoverable | Note missing file; emit `## Checks Summary`, `## Checks (Failed/Deferred Only)`, and `## Issues` only |
-| Changed files contain no `.tf`/`.tfvars` | Recoverable | Return `status: skipped`; reason `no Terraform review target`                                         |
+| Changed files contain no `.tf`/`.tfvars` | Recoverable | Set `Status: skipped` in `## Checks Summary`; reason `no Terraform review target`                     |
 | Referenced category file missing         | Recoverable | Defer affected checks; note missing file path                                                         |
 
 ### Examples

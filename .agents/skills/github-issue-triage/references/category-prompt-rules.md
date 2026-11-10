@@ -29,11 +29,11 @@ Do not collapse multiple FSM transitions into one edited comment. Do not update 
 
 ## Ready guidance
 
-When applying `triage:ready`, tell the human how to request a draft autofix PR later (`autofix` label or future assign-command). Do not start github-issue-autofix yourself.
+When applying `triage:ready`, tell the human how to request a draft autofix PR later (add the `autofix` label). Do not start github-issue-autofix yourself.
 
 ## Side effects
 
 - Interactive: use `gh` for labels and comments. Message run: write `message.md` and `message_labels.json` only.
 - Only allowlisted labels from `scripts/labels.json`.
-- No repository file edits when Constraints say `agent_edit_allowed: false`.
+- No repository file edits, regardless of `agent_edit_allowed` (see SKILL.md Edit gate).
 - Mentions / `@` triggers are out of scope.

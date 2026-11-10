@@ -42,11 +42,16 @@ name_prefix = "base-"
 #--------------------------------------------------------------
 # Default Region for Resources
 # Region Configuration
+# - account_allowlist: Optional per-region account ID allowlist (omit a region to allow all accounts)
 # - global:  Global resources (CloudFront, WAF, ACM) — must be us-east-1
 # - primary: Development and operations base region (fallback for provider)
 # - targets: All regions where organization security services are deployed
 #--------------------------------------------------------------
 region = {
+  # CUSTOMIZE: Allowlist of account IDs per region (key = region listed in targets).
+  # Regions without a key apply to all accounts. Use for regions that some OU SCPs deny.
+  # Example: "ap-northeast-3" = ["123456789012"]
+  account_allowlist = {}
   # CUSTOMIZE: Global resources (CloudFront, Route53, WAF, ACM) — must be us-east-1
   global = "us-east-1"
   # CUSTOMIZE: Development and operations base region (fallback for provider)
@@ -273,6 +278,11 @@ inspector2_organization = {
         "ECR"
       ]
     }
+  }
+  # CUSTOMIZE: Resource types to skip per region (key = region listed in region.targets).
+  # Use for scan types Inspector does not support in that region (e.g. LAMBDA_CODE, CODE_REPOSITORY).
+  region_excluded_resource_types = {
+    "ap-northeast-3" = ["CODE_REPOSITORY", "LAMBDA_CODE"]
   }
   # CUSTOMIZE: need to set is_enabled_configuration for settings of AWS Inspector2.
   is_enabled_configuration = true

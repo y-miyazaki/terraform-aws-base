@@ -1,12 +1,12 @@
 # Security (SEC)
 
-**SEC-01 (SHOULD): Reference secrets only via secrets.\*; never echo them**
+**SEC-01 (MUST): Reference secrets only via secrets.\*; never echo them**
 
 Check: Are secrets referenced only via `${{ secrets.NAME }}` and not directly output?
 Why: Improper secret handling (direct `${{ secrets.* }}` output, log echo, etc.) causes leaks via logs/artifacts
 Fix: Use only `${{ secrets.NAME }}`, prohibit log output, mask when necessary
 
-**SEC-02 (SHOULD): Restrict pull_request_target on fork PRs**
+**SEC-02 (MUST): Restrict pull_request_target on fork PRs**
 
 Check: Are fork PR restrictions in place when using `pull_request_target`?
 Why: `pull_request_target` runs with write permissions and access to secrets in the context of the base repository, allowing malicious fork PRs to exfiltrate secrets or modify repository contents

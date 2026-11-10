@@ -7,8 +7,9 @@ Gate IDs are for agent self-check and Deferred/Watch reasons. Failure identity i
 ### CLASS-01: Failure type routing
 
 - [ ] `regression` → `### Candidates` when `agent_edit_allowed` is `false`; `### Changes` when `agent_edit_allowed` is `true`
-- [ ] `flake` → `### Watch` (no auto-fix)
-- [ ] `infra` / `env` → `### Watch` (escalate to human)
+- [ ] `flake` → Watch-class (no auto-fix)
+- [ ] `infra` / `env` → Watch-class (escalate to human)
+- [ ] Watch-class rows go under `### Watch` in survey shape and under `### Deferred` in apply shape (apply shape has no `### Watch`)
 - [ ] Detect `failure_type` is a hint only — reclassify when `log_excerpt` contradicts it
 - [ ] `ignored[]` → note in Overview when non-empty; omit dedicated section
 - **PASS** if every failure has one primary classification row
@@ -18,15 +19,15 @@ Gate IDs are for agent self-check and Deferred/Watch reasons. Failure identity i
 ### SCOPE-01: Fix caps and path guards
 
 - [ ] Respect path scope per [category-scope.md](category-scope.md)
-- [ ] Fix at most one regression when more than three failures are present
-- [ ] Defer fixes requiring more than five files as Watch
+- [ ] When more than three failures are present, fix only the first regression; defer the rest
+- [ ] A fix requiring more than five files is Watch-class — no edits for that failure
 - **PASS** if apply edits stay within scope and caps
 
 ## Verification
 
 ### VERIFY-01: Post-fix validation record
 
-- [ ] When validation was run after edits, record commands and outcomes in `## Verification` (apply) or Session Metrics (automation)
+- [ ] After edits, run the repository's existing check for each fixed job when available; record commands and outcomes in `## Verification` (and Session Metrics on the automation path)
 - **PASS** if apply claims match commands actually run
 
 ## Output
@@ -41,10 +42,10 @@ Gate IDs are for agent self-check and Deferred/Watch reasons. Failure identity i
 
 ## Error handling
 
-- `skip` true or no actionable failures → survey no-op; stop
-- More than three failures → fix the first regression only when `agent_edit_allowed` is `true`; defer rest as Watch
-- Fix requires >5 files → classify as Watch; no edits
-- Validation tool missing → defer as Watch unless fixing one line from `log_excerpt`
+- `skip` true or no actionable failures → survey no-op per [common-output-format.md](common-output-format.md) (Overview explains no-op); stop
+- More than three failures and `agent_edit_allowed` is `true` → fix only the first regression; defer the rest under `### Deferred`
+- Fix requires >5 files → Watch-class; no edits for that failure
+- Validation tool missing → defer the failure unless fixing one line from `log_excerpt`
 
 ## Examples
 

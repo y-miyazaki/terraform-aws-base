@@ -1,0 +1,31 @@
+id: docs-updater-interactive-bare-fix-001
+name: docs-updater bare fix enters apply
+description: >-
+  Validate that a request asking for changes ("fix") sets agent_edit_allowed true
+  and the run emits apply shape, not survey.
+tags:
+  - quality
+  - interactive
+  - agent-edit-allowed
+inputs:
+  prompt: >-
+    Use docs-updater. The user says only "fix". That asks for changes to be made, so
+    agent_edit_allowed is true and agent_edit_target is fix.
+    Emit apply shape with ## Overview, ## Summary, ### Changes, and ## Verification per
+    common-output-format.md. Do not emit ### Candidates. Describe the edit; do not modify
+    files in this mock eval.
+  context:
+    commit_range: eval0001..eval0002
+    skip: false
+    findings:
+      - file: docs/guide/overview.md
+        reason: references deleted workflow ci-build.yaml
+        source_commit: eval0002
+expected:
+  output_contains:
+    - Overview
+    - Summary
+    - Changes
+    - Verification
+  outcomes:
+    - type: task_completed

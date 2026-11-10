@@ -33,22 +33,20 @@ Gate IDs are for agent self-check and Deferred reasons. Issue identity in report
 
 ### SCOPE-01: API-only side effects
 
-- [ ] Labels and Issue comments only when `agent_edit_allowed` is false
+- [ ] Side effects are Issue labels and comments only (or message-run files); never edit repository files, regardless of `agent_edit_allowed`
 - [ ] Do not open PRs or start github-issue-autofix
 - [ ] Do not fire `repository_dispatch`
-- **PASS** if no repository file edits under L1 constraints
+- **PASS** if no repository file edits
 
 ## Output
 
 ### OUT-01: Session report shape
 
 - [ ] Emit report per [common-output-format.md](common-output-format.md)
-- [ ] List each `gh` mutation under **Changes**
+- [ ] List each `gh` mutation (Interactive) or each file written to the message directory (message run) under **Changes**
 - [ ] Record skipped or deferred items when detect skipped or questions remain
 - **PASS** if report matches automation or interactive shape
 
 ## Error handling
 
-- Detect `status: error` → stop; do not mutate Issue
-- `gh` failure → report in session output; avoid partial unlabeled state when possible
-- Unknown label requested → do not apply; keep `needs-triage`
+Follow the Error Handling table in `SKILL.md` (`### Error Handling`); it is the single source for error conditions and actions.

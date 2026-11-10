@@ -75,9 +75,11 @@ locals {
       extended_s3_configuration = [
         {
           bucket_arn         = var.s3_bucket_arn
-          buffering_size     = try(var.aws_kinesis_firehose_delivery_stream.extended_s3_configuration.buffering_size, 5)
-          buffering_interval = try(var.aws_kinesis_firehose_delivery_stream.extended_s3_configuration.buffering_interval, 60)
-          prefix             = format("%s/%s/", trimsuffix(try(var.aws_kinesis_firehose_delivery_stream.extended_s3_configuration.prefix, "Log/"), "/"), "${var.name_prefix}${replace(replace(r, "/", "-"), "/^-/", "")}")
+          buffering_size     = try(var.aws_kinesis_firehose_delivery_stream.extended_s3_configuration.buffering_size, 128)
+          buffering_interval = try(var.aws_kinesis_firehose_delivery_stream.extended_s3_configuration.buffering_interval, 900)
+          # <prefix>/AWSLogs/<account-id>/cloudwatchlogs/<region>/<name>/YYYY/MM/DD/HH/
+          # Follows the AWS native log delivery layout; region separates same-named log groups across regions.
+          prefix             = format("%s/AWSLogs/%s/cloudwatchlogs/%s/%s/", trimsuffix(try(var.aws_kinesis_firehose_delivery_stream.extended_s3_configuration.prefix, "Log/"), "/"), var.account_id, local.region, "${var.name_prefix}${replace(replace(r, "/", "-"), "/^-/", "")}")
           compression_format = try(var.aws_kinesis_firehose_delivery_stream.extended_s3_configuration.compression_format, "GZIP")
           cloudwatch_logging_options = try(var.aws_kinesis_firehose_delivery_stream.extended_s3_configuration.cloudwatch_logging_options, [
             {

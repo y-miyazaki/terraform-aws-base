@@ -10,16 +10,13 @@ tags:
   - trigger-negative
   - boundary-guardrail
 inputs:
-  prompt:
-    "Use docs-updater. Assume the only changed files are internal test files
-    (e.g., pkg/handler/handler_test.go, pkg/service/service_test.go). Return ## Summary
-    with 'Status: skipped' and 'No documentation update required'."
+  prompt: "Use docs-updater. Assume the only changed files are internal test files (e.g., pkg/handler/handler_test.go, pkg/service/service_test.go). Emit survey no-op per common-output-format.md: ## Overview explains no documentation impact and states no edits applied; include ## Summary. Do not emit ### Changes or ## Verification."
   context:
     scope: staged
 expected:
   output_contains:
-    - "## Summary"
-    - "Status: skipped"
-    - "No documentation update required"
+    - "## Overview"
+    - "no documentation impact"
+    - "no edits applied"
   outcomes:
     - type: task_completed

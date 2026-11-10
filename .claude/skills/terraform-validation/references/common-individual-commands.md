@@ -29,10 +29,14 @@ terraform validate
 tflint --recursive
 ```
 
-### trivy config
+### trivy
 
 ```bash
-trivy config --severity HIGH,CRITICAL .
+# What validate.sh runs (default scanners unless the repository configures trivy)
+trivy fs <terraform-dir> --format table
+
+# Misconfiguration-only scan that fails on HIGH/CRITICAL findings
+trivy config --severity HIGH,CRITICAL --exit-code 1 <terraform-dir>
 ```
 
 See [Troubleshooting Guide](common-troubleshooting.md) for detailed error resolution.

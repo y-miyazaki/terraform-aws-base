@@ -1,10 +1,11 @@
-name: docs-creation-eval
-description: "Evaluation suite for docs-creation.
+name: docs-creator-eval
+description: "Evaluation suite for docs-creator.
 
-  Runs a baseline task to verify skill invocation and structured response behavior.
+  Verifies the report contract (## Summary with Status, ## Changes, ## Notes),
+  blocked paths, and trigger-negative guardrails.
 
   "
-skill: docs-creation
+skill: docs-creator
 version: "1.0"
 config:
   trials_per_task: 5
@@ -24,13 +25,13 @@ graders:
     config:
       assertions:
         - "'## Summary' in output"
-        - "'## Created' in output or '## Issues' in output"
+        - "'Status:' in output"
   - type: text
     name: section_headers_present
     weight: 0.5
     config:
       regex_match:
-        - '##\s+(Summary|Created|Issues)'
+        - '##\s+(Summary|Changes|Notes)'
   - type: behavior
     name: bounded_runtime
     weight: 0.5

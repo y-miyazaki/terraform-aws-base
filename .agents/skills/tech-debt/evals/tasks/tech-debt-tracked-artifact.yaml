@@ -1,0 +1,33 @@
+id: tech-debt-tracked-artifact-001
+name: tech-debt classifies tracked build artifacts as operational report-only debt
+description: Validate a tracked_artifact signal is classified operational and reported without proposing history rewrite as an applied fix.
+tags:
+  - quality
+  - classification
+inputs:
+  prompt: >-
+    Use tech-debt in survey mode (agent_edit_allowed false). One tracked_artifact signal is
+    injected for a directory of tracked build output. Classify it with category operational,
+    delegate to human, and do not apply or propose removing files from git history as an edit.
+    Emit ## Overview and ## Summary with ### Candidates per common-output-format.md. Include
+    Category labels on rows.
+  context:
+    commit_range: eval0001..eval0002
+    agent_report_file: docs/report/tech-debt/2026-07-19.md
+    skip: false
+    signals:
+      - kind: tracked_artifact
+        path: out/lambda
+        line: 1
+        snippet: 20 tracked build artifacts (114198269 bytes)
+        source: git_ls_files
+        hint: operational
+    hotspots: []
+expected:
+  output_contains:
+    - Candidates
+    - operational
+    - out/lambda
+    - human
+  outcomes:
+    - type: task_completed

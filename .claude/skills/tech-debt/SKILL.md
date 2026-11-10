@@ -5,9 +5,9 @@ description: >-
   closed-set fixes when requested. Use in conversation when the user asks to
   survey or fix safe documentation/dependency debt. Also the loop entry skill
   for scheduled scans or detect JSON. Interactive default is survey only;
-  write agent_report_file and apply fixes when the user explicitly requests apply
-  or automation sets agent_edit_allowed in Constraints. Do not apply structural
-  refactors.
+  write agent_report_file and apply closed-set fixes when the request asks for
+  changes to be made (for example fix, apply, or update) or automation sets
+  agent_edit_allowed in Constraints. Do not apply structural refactors.
 license: Apache-2.0
 metadata:
   author: y-miyazaki
@@ -60,36 +60,41 @@ Tech-debt report per [common-output-format.md](references/common-output-format.m
 
 Resolve **agent_edit_allowed** before classifying signals:
 
-| Source                                                      | `agent_edit_allowed`                                                                                                                                 |
-| ----------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Interactive — default                                       | `false` — survey only; do not write `agent_report_file`                                                                                              |
-| Interactive — apply language in the same request            | `true` — examples: 直して, apply fixes, write the report, update the report path. Do **not** treat bare skill name `tech-debt` or bare `fix` as edit |
-| Interactive — follow-up after a prior survey in the session | `true` when the user explicitly asks to apply listed fixes or write the report                                                                       |
-| Automation — `## Constraints`                               | `agent_edit_allowed: true` or `agent_edit_allowed: false` from [category-automation-envelope.md](references/category-automation-envelope.md)         |
+| Source                                                                                                          | `agent_edit_allowed`                                                                                                                         |
+| --------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| Interactive — default: the request asks to look, check, triage, or survey, or only names the skill              | `false` — survey only; do not write `agent_report_file` or edit files                                                                        |
+| Interactive — the request asks for changes to be made (for example fix, apply, 修正して, 適用して, update, add) | `true`                                                                                                                                       |
+| Interactive — follow-up after a survey asking to apply                                                          | `true`                                                                                                                                       |
+| Automation — `## Constraints`                                                                                   | `agent_edit_allowed: true` or `agent_edit_allowed: false` from [category-automation-envelope.md](references/category-automation-envelope.md) |
+
+When intent is unclear, survey and offer to apply — edits are harder to undo than a report.
 
 When `agent_edit_allowed` is `true`, resolve `agent_edit_target` and `agent_report_file`: on the **interactive** path use `agent_edit_target: report` and `agent_report_file` from detect JSON (`agent_report_file` field) or the user request; on the **automation** path read both from `## Constraints`. Do not branch on other caller metadata outside `## Constraints`. Load [category-scope.md](references/category-scope.md) closed-set rules before any `agent_report_file` write or fix.
 
 1. Resolve scope ([category-scope.md](references/category-scope.md)). Parse detect JSON when present; otherwise resolve the detect universe from the prompt ([category-detect-scope.md](references/category-detect-scope.md)), run this skill's optional detect script with the resolved `--scope` (default `all`), then Agent-complement beyond mechanical output; if tools for detect are unavailable, gather signals/hotspots from the user request and repository tools instead of silent no-op. Load [category-input-schema.md](references/category-input-schema.md) when parsing detect output. On detect script non-zero exit, read stdout and stop.
 2. On the automation path, read [category-automation-envelope.md](references/category-automation-envelope.md) for Constraints, PR templates, and Session Metrics.
-3. Read `previous_report` when set. Compare per [common-checklist.md](references/common-checklist.md) EVID-02. IF detect reports `skip` OR both `signals` and `hotspots` are empty after gathering → emit survey no-op; on automation path append `## Session Metrics` per [category-automation-envelope.md](references/category-automation-envelope.md); stop.
+3. Read `previous_report` when set. Compare per [common-checklist.md](references/common-checklist.md) EVID-02. IF detect reports `skip` OR both `signals` and `hotspots` are empty after gathering → emit survey no-op per [common-output-format.md](references/common-output-format.md) (Overview explains no-op); on automation path append `## Session Metrics` per [category-automation-envelope.md](references/category-automation-envelope.md); stop.
 4. For each signal/hotspot, read ±30 lines (EVID-01). Classify per [category-debt-taxonomy.md](references/category-debt-taxonomy.md). Assign Delegate (CLASS-02).
 5. IF `agent_edit_allowed` is `false` → emit survey shape with `### Candidates` and optional `### Watch`; on automation path load `assets/pr-body-template-survey.md` at synthesis and append `## Session Metrics` per [category-automation-envelope.md](references/category-automation-envelope.md); stop — do not write `agent_report_file`.
 6. ELSE IF `agent_edit_allowed` is `true` AND `agent_edit_target` is not `report` → emit survey shape; note expected `agent_edit_target: report` in Overview; stop — do not write `agent_report_file`.
-7. ELSE IF `agent_edit_allowed` is `true` AND `agent_edit_target` is `report` AND (`agent_report_file` is missing OR empty) → emit survey shape; note missing `agent_report_file` in Overview; stop.
+7. ELSE IF `agent_edit_target` is `report` AND (`agent_report_file` is missing OR empty):
+   - **Automation path** → emit survey shape; note missing `agent_report_file` in Overview; stop.
+   - **Interactive path** → apply closed-set fixes only (EDIT-01) per [category-scope.md](references/category-scope.md) without writing a report file; emit apply shape (`### Changes` lists only fixed paths); note in Overview that no report file was written because no path was given. When no closed-set fix applies either, emit survey shape and offer to write the report once the user names a path.
 8. ELSE (`agent_edit_allowed` is `true` AND `agent_edit_target` is `report` AND `agent_report_file` is set) → write `agent_report_file` within allowlist with full persisted structure; apply closed-set fixes only (EDIT-01) per [category-scope.md](references/category-scope.md); emit apply shape with `### Changes`, optional `### Deferred`, and `## Verification`; on automation path load `assets/pr-body-template.md` at synthesis and append `## Session Metrics` per [category-automation-envelope.md](references/category-automation-envelope.md).
 
 ### Error Handling
 
-| Condition                                                                                   | Severity    | Action                                                                                       |
-| ------------------------------------------------------------------------------------------- | ----------- | -------------------------------------------------------------------------------------------- |
-| Detect script non-zero exit or `status: "error"` (when invoked)                             | Fatal       | Read stdout; stop — do not treat as success-path detect JSON                                 |
-| `skip` or empty signals/hotspots                                                            | Info        | Report skip outcome; stop                                                                    |
-| Path outside allowlist/denylist                                                             | Recoverable | Classify Watch; do not edit                                                                  |
-| `previous_report` path missing                                                              | Recoverable | Skip comparison; note in Overview                                                            |
-| Apply requested but `agent_edit_allowed` is `false`                                         | Info        | Survey only; note that edits require an explicit apply request or `agent_edit_allowed: true` |
-| `agent_edit_allowed` true with `agent_edit_target` not `report`                             | Recoverable | Survey only; note expected `agent_edit_target: report`                                       |
-| `agent_edit_allowed` true with missing `agent_report_file` when `agent_edit_target: report` | Recoverable | Survey only; note missing `agent_report_file` in Constraints or detect JSON                  |
-| Cap exceeded (>25 Critical+High-Priority)                                                   | Recoverable | Retain Critical first; defer overflow to Watch; note truncation                              |
+| Condition                                                                                   | Severity    | Action                                                                                                                          |
+| ------------------------------------------------------------------------------------------- | ----------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| Detect script non-zero exit or `status: "error"` (when invoked)                             | Fatal       | Read stdout; stop — do not treat as success-path detect JSON                                                                    |
+| `skip` or empty signals/hotspots                                                            | Info        | Emit survey no-op (Overview explains no-op); stop                                                                               |
+| Path outside allowlist/denylist                                                             | Recoverable | Classify Watch; do not edit                                                                                                     |
+| `agent_report_file` outside allowlist or on denylist                                        | Recoverable | Do not write the report file; note in Overview; continue closed-set fixes within allowlist                                      |
+| `previous_report` path missing                                                              | Recoverable | Skip comparison; note in Overview                                                                                               |
+| Edit requested but `## Constraints` set `agent_edit_allowed: false`                         | Info        | Survey only; note that the caller Constraints disallow edits                                                                    |
+| `agent_edit_allowed` true with `agent_edit_target` not `report`                             | Recoverable | Survey only; note expected `agent_edit_target: report`                                                                          |
+| `agent_edit_allowed` true with missing `agent_report_file` when `agent_edit_target: report` | Recoverable | Automation: survey only; note missing `agent_report_file`. Interactive: closed-set fixes only, no report file; note in Overview |
+| Cap exceeded (>25 Critical+High-Priority)                                                   | Recoverable | Retain Critical first; defer overflow to Watch; note truncation                                                                 |
 
 ### Examples
 

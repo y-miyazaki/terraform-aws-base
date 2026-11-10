@@ -6,24 +6,31 @@ This document lists frequent issues found during instructions file reviews and t
 
 **Problem**: Testing and Validation is nested inside Guidelines
 
-**Root Cause**: Incorrect chapter hierarchy in YAML frontmatter
+**Root Cause**: Testing and Validation written as an H3 under `## Guidelines` instead of its own H2 chapter
 
-**Fix**: Extract as independent chapter, place before Security Guidelines
+**Fix**: Promote it to an H2 chapter placed after Guidelines and before Security Guidelines
 
 **Example**:
 
-```yaml
-# ❌ Incorrect
-- name: Guidelines
-  sections:
-    - Testing and Validation
+```markdown
+<!-- ❌ Incorrect -->
 
-# ✅ Correct
-- name: Guidelines
-  sections: [...]
-- name: Testing and Validation
-  sections: [...]
+## Guidelines
+
+### Testing and Validation
+
+<!-- ✅ Correct -->
+
+## Guidelines
+
+### Code Modification Guidelines
+
+## Testing and Validation
+
+## Security Guidelines
 ```
+
+Related checklist IDs: STRUCT-01, STRUCT-02, STRUCT-03
 
 ## Issue 2: Always-On Validation Recipes in Instructions
 
@@ -47,31 +54,30 @@ Related checklist IDs: TEST-01, TEST-02, STRUCT-07
 
 **Root Cause**: Incomplete template usage
 
-**Fix**: Add chapter covering secrets management and best practices
+**Fix**: Add the chapter and limit it to document-safety risks that automated scanners cannot detect (SEC-03)
 
-**Required Topics**:
+**Topics to cover**:
 
-- Secrets management (environment variables, config files)
-- Credential handling
-- Sensitive data patterns
-- Security scanning tools
+- Secrets policy: no secrets in instruction files; point to environment variables or a secret manager (SEC-02)
+- Risks tools cannot detect: unsafe defaults, destructive command defaults, untrusted link sources, privilege assumptions (SEC-01)
+- Do not restate rules that secret scanners or CI already enforce (SEC-03)
 
 Related checklist IDs: STRUCT-01, SEC-01, SEC-02
 
 ## Issue 4: Inconsistent Documentation Level
 
-**Problem**: Less detailed than other files
+**Problem**: Chapter coverage or format differs from peer instruction files in the same repository
 
 **Root Cause**: Insufficient review against peer files
 
-**Fix**: Review other files and expand to equivalent detail level
+**Fix**: Align coverage and format with peers without adding always-on bulk
 
 **How to Standardize**:
 
-1. Compare section lengths with peer instructions files
-2. Check if all standard topics are covered
-3. Expand thin sections to match peer detail level
-4. Ensure consistent code example quality
+1. Compare chapter and subsection coverage with peer instruction files
+2. Add only missing non-obvious, project-specific content (STD-01); do not pad thin sections to match peer length
+3. Keep Guidelines as ItemID title bullets; full Check/Why/Fix stays in review `category-*.md` (STD-05)
+4. Add code examples only where the domain needs one, and keep them minimal (QUAL-01, QUAL-03)
 
 Related checklist IDs: STD-03, CONS-02, QUAL-01
 

@@ -2,7 +2,7 @@
 
 ## Execution Order
 
-Run tools in this order (fail-fast: stop on first failure):
+Tools run in this order; both run even when the first fails:
 
 1. `markdownlint-cli2` — Markdown syntax and style enforcement
 2. `markdown-link-check` — broken link detection
@@ -12,8 +12,8 @@ Run tools in this order (fail-fast: stop on first failure):
 - MDL-01 (SHOULD): Heading hierarchy is consistent (no skipped levels)
 - MDL-02 (SHOULD): No trailing spaces or hard tabs
 - MDL-03 (SHOULD): Code blocks have language specifiers where applicable
-- MDL-04 (SHOULD): List marker style is consistent within a file
-- MDL-05 (SHOULD): Blank line rules around headings and code blocks followed
+- MDL-04 (SHOULD): List marker style and indentation are consistent within a file
+- MDL-05 (SHOULD): Blank line rules around headings, code blocks, and lists followed
 - MDL-06 (SHOULD): Table formatting is valid
 - MDL-07 (SHOULD): No bare URLs (use `[text](url)` format)
 

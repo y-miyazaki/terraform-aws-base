@@ -26,7 +26,7 @@
         "session-report.md title is Refactor Result (H1)",
         "session-report.md includes ## Overview",
         "session-report.md includes ## Summary",
-        "session-report.md includes ## Verification",
+        "session-report.md does not include ## Verification (survey no-op)",
         "Overview or Summary states no-op (or equivalent explicit empty-input stop)",
         "### Changes omitted or empty (no invented fix)",
         "No source files were modified under fixtures/ (empty fixtures ok)",

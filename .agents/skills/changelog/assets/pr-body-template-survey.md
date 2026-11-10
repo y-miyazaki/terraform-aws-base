@@ -21,7 +21,7 @@ Rules:
 
 ### Candidates
 
-| Target       | Type   | Evidence  | Suggested approach  | Priority              |
+| Commit       | Type   | Evidence  | Suggested approach  | Priority              |
 | ------------ | ------ | --------- | ------------------- | --------------------- |
 | <linked sha> | <type> | <subject> | <Unreleased bullet> | high \| medium \| low |
 

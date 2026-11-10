@@ -10,7 +10,7 @@ Rules:
 ## Overview
 
 <!--
-  GOOD: Applied @loop feedback on PR #5 — fixed nil check in pkg/foo/bar.go.
+  GOOD: Applied reviewer feedback on PR #5 — fixed nil check in pkg/foo/bar.go.
   BAD:  Revised the PR.
 -->
 

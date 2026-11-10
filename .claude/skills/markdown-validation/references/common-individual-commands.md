@@ -1,206 +1,81 @@
 # Debugging Reference: Individual Commands
 
-**Use these commands only when debugging validation failures.** For normal validation, always use `./scripts/validate.sh`.
+Use these commands only to get details after `scripts/validate.sh` reports a failure. Run them from the repository root against the files the script reported. They are read-only; do not add `--fix` unless the user asks for fixes.
 
 ## markdownlint-cli2
 
-**Purpose**: Validate Markdown syntax and style
+`scripts/validate.sh` hides markdownlint-cli2 output. Re-run it to see rule IDs and line numbers:
 
 ```bash
-# Check all Markdown files
-markdownlint-cli2 **/*.md
-
-# Check specific file
+# One file
 markdownlint-cli2 README.md
 
-# Auto-fix issues
-markdownlint-cli2 --fix **/*.md
-
-# Check with custom config
-markdownlint-cli2 --config .markdownlint-cli2.yaml **/*.md
+# A directory (quote the glob so markdownlint-cli2 expands it)
+markdownlint-cli2 "docs/**/*.md"
 ```
 
-**What it checks**:
+markdownlint-cli2 discovers `.markdownlint-cli2.yaml`, `.markdownlint-cli2.jsonc`, or `.markdownlint.*` from the working directory; no flag is needed.
 
-- Markdown syntax errors
-- Heading hierarchy (H1→H2→H3 order)
-- List and table formatting
-- Code block language specification
-- Trailing spaces
-- Line length
-- Consistent style
+Output lines look like `docs/guide.md:12 MD022/blanks-around-headings ...`. Map rule IDs to checklist items:
+
+| Rule IDs            | Checklist item |
+| ------------------- | -------------- |
+| MD001               | MDL-01         |
+| MD009, MD010        | MDL-02         |
+| MD040               | MDL-03         |
+| MD004, MD007, MD029 | MDL-04         |
+| MD022, MD031, MD032 | MDL-05         |
+| MD055, MD056        | MDL-06         |
+| MD034               | MDL-07         |
+
+Rules not in this table (for example MD013, MD024, MD041) have no checklist item; report them with their rule ID only.
 
 ## markdown-link-check
 
-**Purpose**: Detect broken links
+`scripts/validate.sh` stops at the first file with a broken link. Re-run per file to list every broken link:
 
 ```bash
-# Check all Markdown files
-markdown-link-check **/*.md
-
-# Check specific file
-markdown-link-check README.md
-
-# Check with config
-markdown-link-check -c .markdown-link-check.json **/*.md
-```
-
-**What it checks**:
-
-- Broken internal links
-- Broken external links
-- Invalid anchor references
-- Missing files
-
-## Manual Validation Workflow
-
-## Before Committing
-
-1. **Run markdownlint-cli2**:
-
-   ```bash
-   markdownlint-cli2 **/*.md
-   ```
-
-2. **Fix issues** (auto-fix where possible):
-
-   ```bash
-   markdownlint-cli2 --fix **/*.md
-   ```
-
-3. **Check links**:
-
-   ```bash
-   markdown-link-check **/*.md
-   ```
-
-4. **Manual review**:
-
-   - Verify all links are correct
-   - Check for proper formatting
-   - Ensure consistency across documents
-
-5. **Commit** - Commit fixed Markdown files
-
-## Common Issues and Fixes
-
-## Line too long
-
-**Issue**: Lines exceed maximum length
-
-**Fix**:
-
-```bash
-markdownlint-cli2 --fix **/*.md
-```
-
-## Missing blank line before heading
-
-**Issue**: No blank line between content and heading
-
-**Example**:
-
-```markdown
-Some content
-
-## Heading # ✗ Missing blank line
-
-Some content
-
-## Heading # ✓ Correct
-```
-
-**Fix**: Add blank lines before headings
-
-## Invalid heading hierarchy
-
-**Issue**: Skipped heading levels (e.g., H1 to H3)
-
-**Example**:
-
-```markdown
-# Heading 1
-
-### Heading 3 # ✗ Skipped H2
-
-# Heading 1
-
-## Heading 2
-
-### Heading 3 # ✓ Correct
-```
-
-**Fix**: Use sequential heading levels
-
-## Broken internal links
-
-**Issue**: Link to non-existent file or anchor
-
-**Fix**: Verify file paths and anchor names are correct
-
-```bash
-# Check specific links
+# One file, with the repository config when present
 markdown-link-check -c .markdown-link-check.json README.md
+
+# Without a config file
+markdown-link-check README.md
 ```
 
-## Broken external links
+Each failing link is printed as `[✖] <url> → Status: <code>`. A relative path or anchor failure maps to LINK-01 / LINK-02 / LINK-04; an external URL failure maps to LINK-03.
 
-**Issue**: External website or URL no longer exists
+## Examples of Common Failures
 
-**Fix Options**:
+### Missing blank line before heading (MD022)
 
-1. Update to new URL
-2. Remove outdated link
-3. Document reason for removal
-4. Use `.markdown-link-check.json` to skip unreliable links
+```markdown
+<!-- ✗ Incorrect -->
 
-## Configuration Files
+Some content
 
-## .markdownlint-cli2.yaml
+## Heading
 
-```yaml
-config:
-  MD003: "consistent"
-  MD004: "consistent"
-  MD024: false
-  MD033: false
-  line-length: false
+<!-- ✓ Correct -->
+
+Some content
+
+## Heading
 ```
 
-## .markdown-link-check.json
+### Skipped heading level (MD001)
 
-```json
-{
-  "ignorePatterns": [
-    {
-      "pattern": "^https://internal.company.com"
-    }
-  ],
-  "timeout": "20s"
-}
+```markdown
+<!-- ✗ Incorrect -->
+
+# Title
+
+### Section
+
+<!-- ✓ Correct -->
+
+# Title
+
+## Section
+
+### Subsection
 ```
-
-## Quick Reference
-
-## Essential Commands
-
-```bash
-# Validate all Markdown
-markdownlint-cli2 **/*.md
-
-# Auto-fix issues
-markdownlint-cli2 --fix **/*.md
-
-# Check links
-markdown-link-check **/*.md
-```
-
-## Validation Checklist
-
-Before committing:
-
-- [ ] markdownlint-cli2 passes with no errors
-- [ ] All links are valid (markdown-link-check passes)
-- [ ] Manual review completed
-- [ ] No sensitive information included
-- [ ] Formatting is consistent

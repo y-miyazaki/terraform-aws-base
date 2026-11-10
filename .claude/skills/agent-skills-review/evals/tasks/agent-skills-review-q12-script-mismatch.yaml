@@ -1,0 +1,27 @@
+id: agent-skills-review-q12-script-mismatch-001
+name: agent-skills-review flags docs that contradict the bundled script
+description: >-
+  Validate Q-12 failure when SKILL.md documents behavior that the bundled
+  script does not implement.
+tags:
+  - quality
+  - q-12
+  - consistency
+inputs:
+  prompt: >-
+    Use agent-skills-review. Assume the target SKILL.md says the bundled
+    scripts/validate.sh stops on the first tool failure and accepts a --fix
+    option, while the script runs every tool, aggregates failures, and rejects
+    any option other than a path. Report Q-12 as failed in
+    ## Checks (Failed/Deferred Only), count it in ## Checks Summary, and describe
+    both contradictions in ## Issues.
+  context:
+    target: SKILL.md
+expected:
+  output_contains:
+    - "## Checks Summary"
+    - "## Checks (Failed/Deferred Only)"
+    - "## Issues"
+    - Q-12
+  outcomes:
+    - type: task_completed

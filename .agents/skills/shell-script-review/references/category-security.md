@@ -11,6 +11,7 @@ Fix: Validate input with regex patterns, whitelists, and range checks
 Check: Are variables quoted with `"$var"` where needed, and is `eval` avoided for untrusted input?
 Why: Unquoted variables or eval use enable arbitrary command execution, privilege escalation, system compromise
 Fix: Quote variables with `"$var"`, avoid eval, use arrays for argument lists
+Note: shellcheck reports unquoted expansions (for example SC2086). When validation output is supplied, take the status of the quoting part from shellcheck and cite it; still evaluate `eval` and other dynamic execution on untrusted input, which shellcheck does not judge.
 
 **SEC-03 (SHOULD): Normalize/restrict user-controlled paths**
 

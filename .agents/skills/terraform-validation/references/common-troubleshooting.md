@@ -25,7 +25,7 @@
 
 **Fix**: Update code according to suggestions
 
-## trivy config Failures
+## trivy Findings
 
 **Common security issues**:
 

@@ -26,23 +26,23 @@ Zero findings — Overview says so explicitly; omit `### Candidates`.
 
 ## Report file (`agent_edit_allowed: true`, `agent_edit_target: report`)
 
-Write JSON to `result.report_path` (for example `.loop-review/pr-<n>.json`). Start from `assets/report-template.json`.
+Write JSON to `result.report_path` on the automation path, or to the path the user names on the interactive path. Start from `assets/report-template.json`.
 
-| Field                 | Type   | Rule                                                                                                  |
-| --------------------- | ------ | ----------------------------------------------------------------------------------------------------- |
-| `pr_number`           | number | Required. Must equal detect `result.pr_number`                                                        |
-| `head_sha`            | string | Required. Copy detect `result.head_sha`; a missing or stale value makes the platform refuse to post   |
-| `base_sha`            | string | Copy detect `result.base_sha`                                                                         |
-| `response_language`   | string | Language code used for agent-written prose (`en`, `ja`, ...)                                          |
-| `premises`            | object | `pr_body`: what you read from the PR body or `none`; `linked`: array of `#N` / paths, or `none`       |
-| `summary`             | string | What the PR does and the overall assessment; say explicitly when there are no findings                |
-| `findings`            | array  | May be empty. Order by severity, then by importance                                                   |
-| `findings[].id`       | number | Optional sequence hint; the platform numbers findings itself                                          |
-| `findings[].severity` | string | `Critical`, `Warning`, or `Suggestion`                                                                |
-| `findings[].title`    | string | One-line summary                                                                                      |
-| `findings[].evidence` | object | `kind` (`rule` \| `criteria` \| `bug`); `rule` / `criteria` require `path` and verbatim `quote`       |
-| `findings[].location` | object | `path`, `line`, optional `start_line` (less than `line`), `side` (`RIGHT` default, `LEFT`), `in_diff` |
-| `findings[].impact`   | string | What happens if left as is                                                                            |
+| Field                 | Type   | Rule                                                                                                                            |
+| --------------------- | ------ | ------------------------------------------------------------------------------------------------------------------------------- |
+| `pr_number`           | number | Required. Must equal detect `result.pr_number` (interactive: the PR number the user gave)                                       |
+| `head_sha`            | string | Required. Copy detect `result.head_sha` (interactive: `headRefOid`); a missing or stale value makes the platform refuse to post |
+| `base_sha`            | string | Copy detect `result.base_sha` (interactive: `baseRefOid`)                                                                       |
+| `response_language`   | string | Language code used for agent-written prose (`en`, `ja`, ...)                                                                    |
+| `premises`            | object | `pr_body`: what you read from the PR body or `none`; `linked`: array of `#N` / paths, or `none`                                 |
+| `summary`             | string | What the PR does and the overall assessment; say explicitly when there are no findings                                          |
+| `findings`            | array  | May be empty. Order by severity, then by importance                                                                             |
+| `findings[].id`       | number | Optional sequence hint; the platform numbers findings itself                                                                    |
+| `findings[].severity` | string | `Critical`, `Warning`, or `Suggestion`                                                                                          |
+| `findings[].title`    | string | One-line summary                                                                                                                |
+| `findings[].evidence` | object | `kind` (`rule` \| `criteria` \| `bug`); `rule` / `criteria` require `path` and verbatim `quote`                                 |
+| `findings[].location` | object | `path`, `line`, optional `start_line` (less than `line`), `side` (`RIGHT` default, `LEFT`), `in_diff`                           |
+| `findings[].impact`   | string | What happens if left as is                                                                                                      |
 
 Rules:
 

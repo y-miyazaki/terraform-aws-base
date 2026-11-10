@@ -24,6 +24,6 @@ Fix: Remove items already enforced by gitleaks/detect-secrets/CI and keep only d
 
 **SEC-04 (SHOULD): Examples**
 
-Check: YAML/code examples are included (where applicable)
-Why: Missing examples lead to implementation errors and unclear best practices
-Fix: Add YAML/code examples where needed
+Check: When a security rule requires a specific non-obvious form (for example a secret reference syntax or a safe default value), is a short YAML/code example included? Rules that are clear from their wording do not need one.
+Why: Missing examples for non-obvious forms lead to implementation errors; examples for self-evident rules waste always-on tokens
+Fix: Add a minimal YAML/code example only for security rules whose correct form is not self-evident

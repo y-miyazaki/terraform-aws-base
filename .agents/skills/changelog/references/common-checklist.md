@@ -60,6 +60,19 @@ When detect JSON includes `releases[]`:
 - [ ] Edit only `changelog_file` from input — see [category-scope.md](category-scope.md)
 - **PASS** if no paths outside `changelog_file` are edited
 
+## Structure
+
+### STRUCT-01: Changelog structure check
+
+Run after edits; report the result as the `CHANGELOG.md` structure row in `## Verification`.
+
+- [ ] Exactly one `## [Unreleased]` heading, above every released version section
+- [ ] Release headings use `## [x.y.z] - YYYY-MM-DD`, newest first
+- [ ] Subsections under each version use Keep a Changelog names (`### Added`, `### Changed`, `### Deprecated`, `### Removed`, `### Fixed`, `### Security`); no empty subsections added
+- [ ] Released version sections are unchanged except bullets promoted out of `## [Unreleased]` per REL-01
+- [ ] Every new bullet appears exactly once in the file
+- **PASS** if every item holds; report `fail` with the failing item otherwise
+
 ## Output
 
 ### OUT-01: Survey vs apply shape
@@ -71,6 +84,6 @@ When detect JSON includes `releases[]`:
 
 ## Error handling
 
-- `skip` true or empty `commits` and `releases` → survey no-op Overview; stop without editing `CHANGELOG.md`
+- `skip` true or empty `commits` and `releases` → emit survey no-op per [common-output-format.md](common-output-format.md) (Overview explains no-op); stop without editing `CHANGELOG.md`
 - `changelog_exists` false and edits allowed → create Keep a Changelog template, then add bullets
 - Malformed existing changelog → preserve released sections; append/fix only `## [Unreleased]` and new detect `releases[]` sections

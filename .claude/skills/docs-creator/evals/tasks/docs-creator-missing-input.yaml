@@ -1,0 +1,25 @@
+id: docs-creator-missing-input-001
+name: docs-creator blocks on ambiguous intent
+description:
+  "Validate that docs-creator reports Status: blocked and names the missing
+  information when the request is ambiguous.
+
+  "
+tags:
+  - quality
+  - error-path
+  - edge-case
+inputs:
+  prompt:
+    "Use docs-creator. The request is 'write some docs' with no topic and no
+    target_file, and the intent cannot be inferred. Return ## Summary with
+    'Status: blocked' and explain in ## Notes what information is needed."
+  context:
+    target: unspecified
+expected:
+  output_contains:
+    - "## Summary"
+    - "Status: blocked"
+    - "## Notes"
+  outcomes:
+    - type: task_completed

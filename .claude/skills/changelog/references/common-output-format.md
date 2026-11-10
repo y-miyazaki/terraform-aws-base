@@ -15,9 +15,9 @@ Deferred subsection name for this skill: `### Skipped` (not `### Deferred`).
 
 ### Candidates
 
-| Target        | Type   | Evidence  | Suggested approach  | Priority              |
-| ------------- | ------ | --------- | ------------------- | --------------------- |
-| `<short sha>` | <type> | <subject> | <Unreleased bullet> | high \| medium \| low |
+| Commit       | Type   | Evidence  | Suggested approach  | Priority              |
+| ------------ | ------ | --------- | ------------------- | --------------------- |
+| <linked sha> | <type> | <subject> | <Unreleased bullet> | high \| medium \| low |
 
 ### Skipped
 
@@ -43,9 +43,9 @@ Deferred subsection name for this skill: `### Skipped` (not `### Deferred`).
 
 ### Changes
 
-| Commit      | Type   | Entry                                |
-| ----------- | ------ | ------------------------------------ |
-| <short sha> | <type> | <Unreleased bullet added or updated> |
+| Commit       | Type   | Entry                                |
+| ------------ | ------ | ------------------------------------ |
+| <linked sha> | <type> | <Unreleased bullet added or updated> |
 
 ### Skipped
 
@@ -54,9 +54,9 @@ Deferred subsection name for this skill: `### Skipped` (not `### Deferred`).
 
 ## Verification
 
-| Check                    | Result         |
-| ------------------------ | -------------- |
-| `CHANGELOG.md` structure | <pass \| fail> |
+| Check                    | Result                                                |
+| ------------------------ | ----------------------------------------------------- |
+| `CHANGELOG.md` structure | <pass \| fail — per STRUCT-01 in common-checklist.md> |
 ```
 
 ### Apply rules

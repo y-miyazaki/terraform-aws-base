@@ -1,4 +1,4 @@
-# PR Overview - Troubleshooting Guide
+# PR Body - Troubleshooting Guide
 
 ## ⚠️ Common Issues & Solutions
 
@@ -62,144 +62,11 @@ GraphQL error: Access Denied
 
 ---
 
-## PR and Comment Issues
-
-### Issue: Comment not created or updated
-
-**Symptom**: Script runs but comment doesn't appear on PR
-
-**Troubleshooting steps**:
-
-1. **Verify PR exists**:
-
-   ```bash
-   gh pr view <PR_NUMBER> --repo <OWNER>/<REPO>
-   ```
-
-2. **Check if creating vs updating**:
-
-   ```bash
-   # Look for existing comment with marker
-   gh pr view <PR_NUMBER> \
-     --repo <OWNER>/<REPO> \
-     --json comments \
-     --jq '.comments[] | select(.body | contains("<!-- github-pr-body:v1 -->"))'
-   ```
-
-3. **For creation failure**: Verify comment file exists and contains valid markdown
-
-   ```bash
-   cat /tmp/pr_overview_comment.md
-   ```
-
-4. **For update failure**: Verify comment ID format is correct
-   ```bash
-   # Should start with IC_kwDO
-   echo "$COMMENT_ID"
-   ```
-
----
-
-### Issue: GraphQL API returns "Could not resolve to a node"
-
-**Symptom**:
-
-```
-GraphQL error: Could not resolve to a node with global ID of type 'IssueComment': IC_...
-```
-
-**Cause**: ID format mismatch or incorrect ID extraction
-
-**Solution**:
-
-| Scenario            | Check                       | Fix                                              |
-| ------------------- | --------------------------- | ------------------------------------------------ |
-| Updating comment    | ID format is `IC_kwDO...`   | Re-extract ID using `gh pr view --json comments` |
-| Updating PR body    | ID format is `PR_kwDO...`   | Re-extract ID using `gh pr view --json id`       |
-| Old/deleted comment | Comment ID no longer exists | Create new comment instead of updating           |
-
-**Verification**:
-
-```bash
-# Extract and verify comment ID
-COMMENT_ID=$(gh pr view 123 --repo owner/repo --json comments \
-  --jq '.comments[] | select(.body | contains("<!-- github-pr-body:v1 -->")) | .id')
-
-# Must start with IC_
-echo "$COMMENT_ID"
-# Expected: IC_kwDO...
-
-# Extract and verify PR ID
-PR_ID=$(gh pr view 123 --repo owner/repo --json id --jq '.id')
-
-# Must start with PR_
-echo "$PR_ID"
-# Expected: PR_kwDO...
-```
-
----
-
-### Issue: Comment created but with old content
-
-**Symptom**: Comment appears but shows outdated summary of changes
-
-**Cause**: Comment was created with stale PR diff
-
-**Solution**:
-
-1. Wait for GitHub to update PR commit info (usually 1-2 seconds)
-2. Re-run analysis: `bash scripts/pr_fetch.sh <PR_NUMBER> --repo owner/repo`, then `bash scripts/pr_body.sh <PR_NUMBER> --repo owner/repo` (or `--body-file` after AI completion)
-3. Verify new changes were committed to PR before running
-
----
-
-## Token & Escaping Issues
-
-### Issue: Special characters breaking GraphQL mutation
-
-**Symptom**:
-
-```
-GraphQL parse error: Syntax Error in ""
-```
-
-**Cause**: Unescaped quotes, newlines, or special characters in comment body
-
-**Solution**: Use proper bash escaping in helper functions
-
-```bash
-# ❌ WRONG - Raw variable interpolation
-body_text="This is a "quoted" value"
-
-# ✅ CORRECT - Use @ prefix for file-based input
-BODY=$(cat /tmp/comment.md)  # Load from file, properly escaped
-gh api graphql -f body="$BODY" ...
-
-# Or use printf for variable escaping
-body_text=$(printf '%s\n' 'This is a "quoted" value')
-```
-
----
-
-### Issue: Marker not preserved in comment
-
-**Symptom**: `<!-- github-pr-body:v1 -->` marker disappears after manual edit or update
-
-**Cause**: Manual editing removed marker or update operation didn't preserve it
-
-**Solution**:
-
-- **For updates**: Always ensure marker is first line of new comment body
-- **For manual edits**: Keep marker at top of comment
-- **For recovery**: If marker lost, search PR comments for agent-generated content by date/time
-
----
-
 ## PR Size Issues
 
 ### Issue: PR too large (1000+ files)
 
-**Symptom**: Script times out or produces extremely long comment
+**Symptom**: Script times out or produces an extremely long PR body
 
 **Best Practice**:
 
@@ -290,7 +157,7 @@ GraphQL error: API rate limit exceeded
 
 **When scripts reference helper functions**:
 
-- [category-command-reference.md](category-command-reference.md) - GraphQL mutation reference
+- [category-command-reference.md](category-command-reference.md) - `pr_fetch.sh` / `pr_body.sh` options, parameters, exit codes, and debugging steps
 - [category-template-mapping.md](category-template-mapping.md) - Template structure mapping
 - [category-change-classification.md](category-change-classification.md) - Change type classification
 
@@ -392,35 +259,6 @@ Specify PR number as first argument:
 ./pr_body.sh 123                    # Correct
 ./pr_body.sh                        # Error: missing PR number
 ```
-
----
-
-### Error: "Failed to create comment" or "Failed to update comment"
-
-**Symptom**:
-
-```
-ERROR: Failed to create comment
-ERROR: Failed to update comment
-```
-
-**Possible causes**:
-
-- GitHub API failure
-- Missing or invalid comment file
-- GraphQL mutation error
-- Network connectivity issue
-
-**Troubleshooting**:
-
-1. Check GitHub status: `gh status`
-2. Verify authentication: `gh auth status`
-3. Run with verbose output: `./pr_body.sh 123 -v --dry-run`
-4. Check temporary file:
-   ```bash
-   ls -la /tmp/pr_overview_comment_*.md
-   ```
-5. Inspect GraphQL response for error details (enable verbose)
 
 ---
 

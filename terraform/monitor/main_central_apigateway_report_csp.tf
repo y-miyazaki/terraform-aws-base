@@ -41,8 +41,8 @@ module "aws_api_gateway_report_csp" {
     }
     ] : [
     {
-      subnet_ids         = var.common_lambda.vpc.exists.private_subnets
-      security_group_ids = [var.common_lambda.vpc.exists.security_group_id]
+      subnet_ids         = var.common_lambda.vpc.exists[var.region.primary].private_subnets
+      security_group_ids = [var.common_lambda.vpc.exists[var.region.primary].security_group_id]
     }
   ] : []
 

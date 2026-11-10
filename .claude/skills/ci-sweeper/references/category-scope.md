@@ -16,5 +16,5 @@ Do not edit paths that appear to hold secrets (environment files, credential sto
 
 ## Skill-specific limits
 
-- Fix at most one `regression` when more than three failures are present
-- Defer fixes requiring more than five files as Watch
+- When more than three failures are present, fix only the first `regression`; defer the rest
+- A fix requiring more than five files gets no edits (Watch in survey, Deferred in apply)

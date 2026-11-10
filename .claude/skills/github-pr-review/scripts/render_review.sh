@@ -51,6 +51,7 @@
 #   REPORT_FILE           Report path to read instead of git fetch + git show (test seam)
 #   PR_DIFF_FILE          Unified diff to read instead of gh pr diff (test seam)
 #   PR_BASE_SHA / PR_HEAD_SHA Trusted PR SHAs instead of gh pr view (test seam; both required)
+#   PR_MENTION            Mention token named in inline fix requests (default: @loop)
 #######################################
 
 # Error handling: exit on error, unset variable, or failed pipeline
@@ -95,10 +96,10 @@ def evidence_line($repo; $base; $n):
 def location_url($repo; $base; $head):
   (if (.location.side // "RIGHT") == "LEFT" then $base else $head end) as $sha
   | "https://github.com/\($repo)/blob/\($sha)/\(.location.path | enc_path)#\(.location | line_anchor)";
-def inline_comment_template($repo; $base):
+def inline_comment_template($repo; $base; $mention):
   "**#\(.number) [\(.severity)]** \(.title)\n\n"
   + ([evidence_line($repo; $base; 2), "- Impact: \(.impact | indent(2))"] | join("\n"))
-  + "\n\nTo request a fix, reply to this comment with `@loop`.\n";
+  + "\n\nTo request a fix, reply to this comment with `\($mention)`.\n";
 def finding_item($repo; $base; $head; $pr):
   if .inline then
     "\(.number). **[\(.severity)]** \(.title | indent(3)) — inline: [\("\(.location.path)#\(.location | line_anchor)" | md_label)](https://github.com/\($repo)/pull/\($pr)/files)"
@@ -250,6 +251,7 @@ function base_evidence_blob {
 #
 # Globals:
 #   GITHUB_REPOSITORY
+#   PR_MENTION (default @loop)
 #   REVIEW_JQ_LIB
 #   REVIEW_MARKER
 #
@@ -268,13 +270,14 @@ function base_evidence_blob {
 #
 #######################################
 function build_review_json {
-    jq -c --arg repo "${GITHUB_REPOSITORY}" --arg marker "${REVIEW_MARKER}" "${REVIEW_JQ_LIB}"'
+    jq -c --arg repo "${GITHUB_REPOSITORY}" --arg marker "${REVIEW_MARKER}" \
+        --arg mention "${PR_MENTION:-@loop}" "${REVIEW_JQ_LIB}"'
         . as $r
         | {
             body: review_body_template($repo; $marker),
             comments: [
                 $r.findings[] | select(.inline)
-                | {body: inline_comment_template($repo; $r.base_sha), line: .location.line,
+                | {body: inline_comment_template($repo; $r.base_sha; $mention), line: .location.line,
                    path: .location.path, side: .location.side}
                   + (if .location.start_line then
                        {start_line: .location.start_line, start_side: .location.side} else {} end)
@@ -436,6 +439,7 @@ function read_report {
 #
 # Globals:
 #   GITHUB_REPOSITORY
+#   PR_MENTION (default @loop)
 #   REVIEW_BASE_SHA (default for $2)
 #   REVIEW_JQ_LIB
 #
@@ -455,7 +459,7 @@ function read_report {
 #######################################
 function render_inline_comment {
     jq -r --arg repo "${GITHUB_REPOSITORY}" --arg base "${2:-${REVIEW_BASE_SHA:-}}" \
-        "${REVIEW_JQ_LIB} inline_comment_template(\$repo; \$base)" <<< "$1"
+        --arg mention "${PR_MENTION:-@loop}" "${REVIEW_JQ_LIB} inline_comment_template(\$repo; \$base; \$mention)" <<< "$1"
 }
 
 #######################################

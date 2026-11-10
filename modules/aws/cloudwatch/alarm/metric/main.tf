@@ -1,7 +1,7 @@
 #--------------------------------------------------------------
 # Module: aws/cloudwatch/alarm/metric
 # Purpose: Provision generic CloudWatch metric alarms from a list input supporting dimensions, metric math, and extended settings.
-# Notes: Wrapper for multiple alarms using count; unified tagging applied; future improvement: migrate to for_each keyed by alarm_name to avoid index drift.
+# Notes: Wrapper for multiple alarms using for_each keyed by alarm_name; unified tagging applied.
 #--------------------------------------------------------------
 data "aws_region" "current" {}
 
@@ -16,32 +16,33 @@ locals {
 # Provides a CloudWatch Metric Alarm resource.
 #--------------------------------------------------------------
 resource "aws_cloudwatch_metric_alarm" "this" {
-  count = length(var.aws_cloudwatch_metric_alarm)
+  # Keyed by alarm_name so reordering var.aws_cloudwatch_metric_alarm does not recreate alarms.
+  for_each = { for a in var.aws_cloudwatch_metric_alarm : a.alarm_name => a }
 
   region                                = local.region
-  actions_enabled                       = try(var.aws_cloudwatch_metric_alarm[count.index].actions_enabled, null)
-  alarm_actions                         = try(var.aws_cloudwatch_metric_alarm[count.index].alarm_actions, null)
-  alarm_description                     = try(var.aws_cloudwatch_metric_alarm[count.index].alarm_description, null)
-  alarm_name                            = try(var.aws_cloudwatch_metric_alarm[count.index].alarm_name)
-  comparison_operator                   = try(var.aws_cloudwatch_metric_alarm[count.index].comparison_operator, null)
-  datapoints_to_alarm                   = try(var.aws_cloudwatch_metric_alarm[count.index].datapoints_to_alarm, null)
-  dimensions                            = try(var.aws_cloudwatch_metric_alarm[count.index].dimensions, null)
-  evaluate_low_sample_count_percentiles = try(var.aws_cloudwatch_metric_alarm[count.index].evaluate_low_sample_count_percentiles, null)
-  evaluation_periods                    = try(var.aws_cloudwatch_metric_alarm[count.index].evaluation_periods, null)
-  extended_statistic                    = try(var.aws_cloudwatch_metric_alarm[count.index].extended_statistic, null)
-  insufficient_data_actions             = try(var.aws_cloudwatch_metric_alarm[count.index].insufficient_data_actions, null)
-  metric_name                           = try(var.aws_cloudwatch_metric_alarm[count.index].metric_name)
-  namespace                             = try(var.aws_cloudwatch_metric_alarm[count.index].namespace)
-  ok_actions                            = try(var.aws_cloudwatch_metric_alarm[count.index].ok_actions, null)
-  period                                = try(var.aws_cloudwatch_metric_alarm[count.index].period, null)
-  statistic                             = try(var.aws_cloudwatch_metric_alarm[count.index].statistic, null)
-  threshold                             = try(var.aws_cloudwatch_metric_alarm[count.index].threshold, null)
-  threshold_metric_id                   = try(var.aws_cloudwatch_metric_alarm[count.index].threshold_metric_id, null)
-  treat_missing_data                    = try(var.aws_cloudwatch_metric_alarm[count.index].treat_missing_data, null)
-  unit                                  = try(var.aws_cloudwatch_metric_alarm[count.index].unit, null)
+  actions_enabled                       = try(each.value.actions_enabled, null)
+  alarm_actions                         = try(each.value.alarm_actions, null)
+  alarm_description                     = try(each.value.alarm_description, null)
+  alarm_name                            = try(each.value.alarm_name)
+  comparison_operator                   = try(each.value.comparison_operator, null)
+  datapoints_to_alarm                   = try(each.value.datapoints_to_alarm, null)
+  dimensions                            = try(each.value.dimensions, null)
+  evaluate_low_sample_count_percentiles = try(each.value.evaluate_low_sample_count_percentiles, null)
+  evaluation_periods                    = try(each.value.evaluation_periods, null)
+  extended_statistic                    = try(each.value.extended_statistic, null)
+  insufficient_data_actions             = try(each.value.insufficient_data_actions, null)
+  metric_name                           = try(each.value.metric_name)
+  namespace                             = try(each.value.namespace)
+  ok_actions                            = try(each.value.ok_actions, null)
+  period                                = try(each.value.period, null)
+  statistic                             = try(each.value.statistic, null)
+  threshold                             = try(each.value.threshold, null)
+  threshold_metric_id                   = try(each.value.threshold_metric_id, null)
+  treat_missing_data                    = try(each.value.treat_missing_data, null)
+  unit                                  = try(each.value.unit, null)
 
   dynamic "metric_query" {
-    for_each = try(var.aws_cloudwatch_metric_alarm[count.index].metric_query, [])
+    for_each = try(each.value.metric_query, [])
 
     content {
       id          = try(metric_query.value.id, null)

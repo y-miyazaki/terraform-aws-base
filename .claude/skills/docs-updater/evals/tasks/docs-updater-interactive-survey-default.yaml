@@ -6,8 +6,7 @@ tags:
   - interactive
 inputs:
   prompt: >-
-    Use docs-updater. The user asks to check documentation drift for staged changes. Survey
-    only. List affected docs under ### Candidates. Do not edit files. Emit ## Overview and
+    Use docs-updater. The user asks to check documentation drift for staged changes. Checking asks to look, not to change files, so agent_edit_allowed is false. List affected docs under ### Candidates. Do not edit files. Emit ## Overview and
     ## Summary. Do not emit ### Changes or ## Verification. State no edits applied in
     Overview.
   context:

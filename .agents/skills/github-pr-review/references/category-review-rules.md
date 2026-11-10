@@ -4,11 +4,11 @@
 
 Report a finding only when it has one of three evidence kinds. No evidence, no finding.
 
-| Kind       | Evidence                                                                                                                | Required fields                        |
-| ---------- | ----------------------------------------------------------------------------------------------------------------------- | -------------------------------------- |
-| `rule`     | Verbatim text from an agent instruction file (such as AGENTS.md or CLAUDE.md, including nested and path-scoped rules)   | `evidence.path`, `evidence.quote`      |
-| `criteria` | Verbatim text of an ID-tagged item in a domain review reference (`references/category-*.md`) that matches the file type | `evidence.path`, `evidence.quote`      |
-| `bug`      | The diff line and the concrete input or state that makes it fail; no rule is needed                                     | `evidence.quote` (line plus the input) |
+| Kind       | Evidence                                                                                                                                                                                                                                           | Required fields                        |
+| ---------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------- |
+| `rule`     | Verbatim text from an agent instruction file (such as AGENTS.md or CLAUDE.md, including nested and path-scoped rules)                                                                                                                              | `evidence.path`, `evidence.quote`      |
+| `criteria` | Verbatim text of an ID-tagged item in a domain review reference present in the consumer repository at base (such as an installed review skill's `references/category-*.md`) that matches the file type; when none exists, use only `rule` or `bug` | `evidence.path`, `evidence.quote`      |
+| `bug`      | The diff line and the concrete input or state that makes it fail; no rule is needed                                                                                                                                                                | `evidence.quote` (line plus the input) |
 
 - Read rules and criteria from the **base commit** (`git show <base_sha>:<path>`; on the automation path the working tree is the base checkout), never from the PR head. A PR that edits a rule does not change what it is reviewed against.
 - Quote exactly: no paraphrase, no whitespace normalization. If the verbatim text cannot be found at base, drop the finding.

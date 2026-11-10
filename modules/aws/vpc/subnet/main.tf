@@ -16,31 +16,33 @@ locals {
 }
 locals {
   name_prefix = trimsuffix(var.name_prefix, "-")
+  # Keyed by cidr_block so reordering var.aws_subnet does not recreate subnets. index keeps the legacy "<prefix>-subnet-<n>" Name tag.
+  subnets = { for i, s in var.aws_subnet : s.cidr_block => { index = i + 1, subnet = s } }
 }
 
 #--------------------------------------------------------------
 # Provides an VPC subnet resource.
 #--------------------------------------------------------------
 resource "aws_subnet" "this" {
-  count = length(var.aws_subnet)
+  for_each = local.subnets
 
   region                  = local.region
-  availability_zone       = try(var.aws_subnet[count.index].availability_zone)
-  cidr_block              = try(var.aws_subnet[count.index].cidr_block)
-  map_public_ip_on_launch = try(var.aws_subnet[count.index].map_public_ip_on_launch, false)
-  outpost_arn             = try(var.aws_subnet[count.index].outpost_arn, null)
-  vpc_id                  = try(var.aws_subnet[count.index].vpc_id, null)
+  availability_zone       = try(each.value.subnet.availability_zone)
+  cidr_block              = each.key
+  map_public_ip_on_launch = try(each.value.subnet.map_public_ip_on_launch, false)
+  outpost_arn             = try(each.value.subnet.outpost_arn, null)
+  vpc_id                  = try(each.value.subnet.vpc_id, null)
 
-  tags = merge(var.tags, { "Name" = format("%v-subnet-%d", local.name_prefix, count.index + 1) })
+  tags = merge(var.tags, { "Name" = format("%v-subnet-%d", local.name_prefix, each.value.index) })
 }
 
 #--------------------------------------------------------------
 # Provides a resource to create an association between a route table and a subnet or a route table and an internet gateway or virtual private gateway.
 #--------------------------------------------------------------
 resource "aws_route_table_association" "this" {
-  count = length(var.aws_subnet)
+  for_each = aws_subnet.this
 
   region         = local.region
   route_table_id = try(var.aws_route_table_association.route_table_id)
-  subnet_id      = element(aws_subnet.this[*].id, count.index)
+  subnet_id      = each.value.id
 }
