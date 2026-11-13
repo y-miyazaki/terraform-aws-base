@@ -11,6 +11,7 @@
 # - Consume issue event fields from environment variables
 # - Skip bot actors and bot issue comments
 # - result.entity.kind is always issue (the loop entity platform requires it when skip=false)
+# - result.gate.entity carries the Issue state fact when it is known (event payload or API); the admission gate decides on it
 # - Output structured JSON via shared lib/json.sh
 # - Exit 0 on success; fatal errors emit status=error JSON and exit 1
 # - Source shared helpers from scripts/lib/all.sh (synced via scripts/self/apm/sync_skill_lib.sh)
@@ -24,17 +25,17 @@
 #   ISSUE_TITLE               Issue title
 #   ISSUE_BODY                Issue body
 #   ISSUE_LABELS_JSON         JSON array of label names
-#   ISSUE_EVENT_NAME          GitHub event name (issues, issue_comment, ...)
+#   ISSUE_EVENT_NAME          GitHub event name (issues, issue_comment, schedule, ...); schedule skips issues with any triage:* label
 #   ISSUE_EVENT_ACTION        GitHub event action (opened, created, ...)
 #   ISSUE_COMMENT_ID          Comment id for issue_comment events (optional)
 #   ISSUE_ACTOR               Event actor login
 #   ISSUE_ACTOR_TYPE          Event actor type (User, Bot, ...)
 #   ISSUE_COMMENT_USER_TYPE   Comment author type for issue_comment events (optional)
 #   GITHUB_EVENT_PATH         Path to GitHub webhook event JSON (hydrates ISSUE_* when ISSUE_NUMBER unset)
-#   GITHUB_EVENT_NAME         GitHub event name for hydration (issues, issue_comment, workflow_dispatch)
-#   GITHUB_REPOSITORY         Repository slug for workflow_dispatch gh api fetch
-#   GITHUB_ACTOR              Actor login for workflow_dispatch hydration
-#   GH_TOKEN / GITHUB_TOKEN   Token for workflow_dispatch gh api fetch when title/body/labels empty
+#   GITHUB_EVENT_NAME         GitHub event name for hydration (issues, issue_comment, workflow_dispatch, schedule)
+#   GITHUB_REPOSITORY         Repository slug for gh api fetch when ISSUE_NUMBER is set
+#   GITHUB_ACTOR              Actor login for gh api hydration
+#   GH_TOKEN / GITHUB_TOKEN   Token for gh api fetch when ISSUE_NUMBER is set and title/body/labels empty
 #######################################
 
 # Error handling: exit on error, unset variable, or failed pipeline
@@ -173,11 +174,12 @@ function hydrate_issue_env_from_event {
     ISSUE_COMMENT_ID="${comment_id}"
     ISSUE_ACTOR="$(jq -r '.sender.login // ""' <<< "${event_json}")"
     ISSUE_ACTOR_TYPE="$(jq -r '.sender.type // ""' <<< "${event_json}")"
+    ISSUE_STATE="$(jq -r '.issue.state // ""' <<< "${event_json}")"
     ISSUE_COMMENT_USER_TYPE="$(jq -r '.comment.user.type // ""' <<< "${event_json}")"
 }
 
 #######################################
-# hydrate_issue_from_api_if_needed: Fill missing issue fields for workflow_dispatch
+# hydrate_issue_from_api_if_needed: Fill missing issue fields via gh api (workflow_dispatch, schedule)
 #
 # Globals:
 #   ISSUE_NUMBER
@@ -237,6 +239,9 @@ function hydrate_issue_from_api_if_needed {
     ISSUE_EVENT_ACTION="${ISSUE_EVENT_ACTION:-workflow_dispatch}"
     ISSUE_ACTOR="${ISSUE_ACTOR:-${GITHUB_ACTOR:-}}"
     ISSUE_ACTOR_TYPE="${ISSUE_ACTOR_TYPE:-User}"
+    if [[ -z ${ISSUE_STATE:-} ]]; then
+        ISSUE_STATE="$(jq -r '.state // ""' <<< "${issue_json}")"
+    fi
 }
 
 #######################################
@@ -299,6 +304,14 @@ function should_skip_issue {
 
     if jq -e --arg name "triage:failed" 'contains([$name])' <<< "${ISSUE_LABELS_JSON}" > /dev/null 2>&1; then
         return 0
+    fi
+
+    if [[ ${ISSUE_EVENT_NAME} == "schedule" ]]; then
+        # Scheduled intake: any triage:* label means the issue was already triaged
+        if jq -e 'any(.[]; startswith("triage:"))' <<< "${ISSUE_LABELS_JSON}" > /dev/null 2>&1; then
+            return 0
+        fi
+        return 1
     fi
 
     if [[ ${ISSUE_EVENT_NAME} == "workflow_dispatch" ]]; then
@@ -444,6 +457,11 @@ function output_json {
     local result_json verifier_context
 
     result_json="$(build_result_json)"
+    # The entity state is a fact for the admission gate; it is reported only when it is known
+    if [[ -n ${ISSUE_STATE:-} ]]; then
+        result_json="$(jq -c --argjson n "${ISSUE_NUMBER}" --arg state "${ISSUE_STATE}" \
+            '. + {gate: {entity: {kind: "issue", number: $n, state: $state}}}' <<< "${result_json}")"
+    fi
     verifier_context="$(build_verifier_context)"
 
     json_object \
@@ -488,9 +506,7 @@ function main {
     ensure_dependencies bash jq
 
     if [[ -n ${ISSUE_NUMBER:-} ]]; then
-        if [[ ${GITHUB_EVENT_NAME:-} == "workflow_dispatch" || ${ISSUE_EVENT_NAME:-} == "workflow_dispatch" ]]; then
-            hydrate_issue_from_api_if_needed
-        fi
+        hydrate_issue_from_api_if_needed
     elif [[ -n ${GITHUB_EVENT_PATH:-} && -f ${GITHUB_EVENT_PATH} ]]; then
         hydrate_issue_env_from_event
     else

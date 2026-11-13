@@ -6,7 +6,7 @@ description: >-
 license: Apache-2.0
 metadata:
   author: y-miyazaki
-  version: "1.1.1"
+  version: "1.2.0"
 ---
 
 ## Input
@@ -31,6 +31,7 @@ Each issue must include file path with line reference (`<path>#L<line>`), risk s
 ### USE FOR:
 
 - reviewing Terraform PRs for security, architecture, and module design issues
+- reviewing whole stacks or modules (no diff) for missing configuration, asymmetric settings, and failure paths that no one is notified about
 - assessing cross-module risks and environment-specific concerns in Terraform changes
 
 ### DO NOT USE FOR:
@@ -47,6 +48,9 @@ Each issue must include file path with line reference (`<path>#L<line>`), risk s
 - [category-security.md](references/category-security.md) (always read)
 - [category-modules.md](references/category-modules.md) (always read)
 - [category-state.md](references/category-state.md) (always read)
+- [category-config.md](references/category-config.md) (always read)
+- [category-integration.md](references/category-integration.md) (always read)
+- [category-testing.md](references/category-testing.md) (always read)
 - [category-ci-lint.md](references/category-ci-lint.md) (always read)
 - [category-compliance.md](references/category-compliance.md) (always read)
 - [category-cost.md](references/category-cost.md) (always read)
@@ -72,9 +76,11 @@ Each issue must include file path with line reference (`<path>#L<line>`), risk s
 4. Exclude generated files and vendored third-party code (for example `.terraform/` directories and `.terraform.lock.hcl`) from primary findings unless they introduce security-critical risk.
 5. For very large PRs (>50 changed Terraform files), prioritize security/correctness checks first and defer low-risk style checks if evidence is insufficient.
 6. When validation output (companion `terraform-validation` report or equivalent CI results) is supplied, do not re-report failures those tools detect: take the overlapping ItemID's status from the tool result, cite the tool, and spend the review on judgment checks. Category items with a validation `Note:` name the known overlaps.
-7. Apply the full review checklist and collect failed/deferred items.
-8. If a referenced category file is missing, defer affected checks with the missing file path.
-9. Output required sections per [references/common-output-format.md](references/common-output-format.md). Prioritize `SEC-*` findings first, then correctness, then maintainability. For conflicting findings, prioritize the higher-severity category and document the conflict in `## Issues`.
+7. Apply the full review checklist and collect failed/deferred items. For `CFG-*` checks, also look for what is **missing** per [category-config.md](references/category-config.md).
+8. For every finding, search the repository for sibling occurrences of the same pattern (including the mirrored side of paired modules or stacks) and fill `Siblings` (`none found` when empty).
+9. Before judging any resource or module call (arguments, defaults, required permissions, service behavior), read its documentation at the version pinned in the code, such as the Terraform Registry page for the provider resource or module. Do not decide from memory. When the documentation cannot be read, defer the check or report the claim under `Unverified`; never state it as fact.
+10. If a referenced category file is missing, defer affected checks with the missing file path.
+11. Output required sections per [references/common-output-format.md](references/common-output-format.md). Prioritize `SEC-*` findings first, then correctness, then maintainability. For conflicting findings, prioritize the higher-severity category and document the conflict in `## Issues`.
 
 ### Error Handling
 

@@ -25,6 +25,8 @@ Use the following report structure for review and validation output.
    - Problem: <specific issue>
    - Impact: <scope and severity>
    - Recommendation: <specific fix>
+   - Siblings: <other locations with the same pattern, or "none found">
+   - Unverified: <assumption that could not be confirmed against a primary source or the live environment; omit when none>
 
 ## Expert Assessment
 

@@ -62,38 +62,6 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "${SCRIPT_DIR}/lib/all.sh"
 
 #######################################
-# actor_association_allowed: Return whether the PR actor association is trusted
-#
-# Globals:
-#   PR_ACTOR_ASSOCIATION
-#
-# Arguments:
-#   None
-#
-# Outputs:
-#   None
-#
-# Returns:
-#   0 when association is allowed or unset, 1 otherwise
-#
-# Usage:
-#   if actor_association_allowed; then ...
-#
-#######################################
-function actor_association_allowed {
-    local assoc="${PR_ACTOR_ASSOCIATION:-}"
-
-    if [[ -z ${assoc} ]]; then
-        return 0
-    fi
-
-    case "${assoc}" in
-        MEMBER | OWNER | COLLABORATOR) return 0 ;;
-        *) return 1 ;;
-    esac
-}
-
-#######################################
 # association_value_allowed: Return whether an association string is trusted
 #
 # Globals:
@@ -106,7 +74,7 @@ function actor_association_allowed {
 #   None
 #
 # Returns:
-#   0 when association is allowed or empty, 1 otherwise
+#   0 for MEMBER, OWNER or COLLABORATOR; 1 otherwise, including empty (fail closed)
 #
 # Usage:
 #   if association_value_allowed "${assoc}"; then ...
@@ -114,10 +82,6 @@ function actor_association_allowed {
 #######################################
 function association_value_allowed {
     local assoc="${1:-}"
-
-    if [[ -z ${assoc} ]]; then
-        return 0
-    fi
 
     case "${assoc}" in
         MEMBER | OWNER | COLLABORATOR) return 0 ;;
@@ -205,6 +169,55 @@ function build_comment_object {
 }
 
 #######################################
+# build_gate_json: Build the result.gate facts for the admission gate
+#
+# Description:
+#   Reports who acted and whether the required mention is present. The gate decides: bot actors,
+#   an untrusted author association on a webhook, and a missing mention on a webhook are refused
+#   there, not in this script.
+#
+# Globals:
+#   PR_NUMBER
+#   PR_ACTOR
+#   PR_ACTOR_TYPE
+#   PR_ACTOR_ASSOCIATION
+#   PR_COMMENT_BODY
+#   PR_MENTION
+#   GITHUB_EVENT_NAME
+#
+# Arguments:
+#   None
+#
+# Outputs:
+#   Gate JSON object on stdout
+#
+# Returns:
+#   0 on success
+#
+#######################################
+function build_gate_json {
+    local mention="${PR_MENTION:-@loop}"
+    local body="${PR_COMMENT_BODY:-}"
+    local source="webhook" mention_required="false" mention_present="false"
+
+    if mention_gate_applies; then
+        mention_required="true"
+        if comment_body_contains_mention "${body}" "${mention}"; then
+            mention_present="true"
+        fi
+    else
+        source="dispatch"
+    fi
+
+    jq -nc --argjson n "${PR_NUMBER}" --arg source "${source}" \
+        --arg login "${PR_ACTOR:-}" --arg type "${PR_ACTOR_TYPE:-}" --arg association "${PR_ACTOR_ASSOCIATION:-}" \
+        --argjson mention_required "${mention_required}" --argjson mention_present "${mention_present}" \
+        '{entity: {kind: "pr", number: $n},
+          actor: {login: $login, type: $type, association: $association},
+          trigger: {source: $source, mention_required: $mention_required, mention_present: $mention_present}}'
+}
+
+#######################################
 # build_result_json: Build the result object JSON
 #
 # Globals:
@@ -274,7 +287,8 @@ function build_result_json {
         comments "${comments_json}" \
         actor "${PR_ACTOR:-}" \
         event_name "${GITHUB_EVENT_NAME:-}" \
-        subject_type "${PR_COMMENT_SUBJECT_TYPE:-}"
+        subject_type "${PR_COMMENT_SUBJECT_TYPE:-}" \
+        gate "$(build_gate_json)"
 }
 
 #######################################
@@ -301,7 +315,6 @@ function build_result_json {
 #
 #######################################
 function build_skip_message {
-    local mention="${PR_MENTION:-@loop}"
     local body="${PR_COMMENT_BODY:-}"
 
     if [[ -n ${PR_SKIP_REASON:-} ]]; then
@@ -314,27 +327,12 @@ function build_skip_message {
         return 0
     fi
 
-    if [[ ${PR_ACTOR_TYPE:-} == "Bot" ]]; then
-        printf '%s' "github-pr-revise: bot actor skipped"
-        return 0
-    fi
-
-    if ! actor_association_allowed; then
-        printf '%s' "github-pr-revise: maintainer association required"
-        return 0
-    fi
-
-    if mention_gate_applies; then
-        if [[ -n ${body} ]] && ! comment_body_contains_mention "${body}" "${mention}"; then
-            printf 'github-pr-revise: mention %s not found' "${mention}"
-            return 0
-        fi
-        if [[ -z ${body} ]]; then
+    if [[ -z ${body} ]]; then
+        if mention_gate_applies; then
             printf '%s' "github-pr-revise: comment body required"
-            return 0
+        else
+            printf '%s' "github-pr-revise: explicit dispatch requires feedback"
         fi
-    elif [[ -z ${body} ]]; then
-        printf '%s' "github-pr-revise: explicit dispatch requires feedback"
         return 0
     fi
 
@@ -1047,9 +1045,7 @@ function should_gather_open_comments {
 # should_skip_pr_revise: Return whether detect should skip this event
 #
 # Globals:
-#   PR_ACTOR_TYPE
 #   PR_COMMENT_BODY
-#   PR_MENTION
 #
 # Arguments:
 #   None
@@ -1065,22 +1061,11 @@ function should_gather_open_comments {
 #
 #######################################
 function should_skip_pr_revise {
-    local mention="${PR_MENTION:-@loop}"
     local body="${PR_COMMENT_BODY:-}"
 
-    if [[ ${PR_ACTOR_TYPE:-} == "Bot" ]]; then
-        return 0
-    fi
-
-    if ! actor_association_allowed; then
-        return 0
-    fi
-
-    if mention_gate_applies; then
-        if ! comment_body_contains_mention "${body}" "${mention}"; then
-            return 0
-        fi
-    elif [[ -z ${body} ]]; then
+    # Actor trust, bot actors and the required mention are facts for the admission gate
+    # (result.gate); only a missing comment body or feedback is a domain skip here.
+    if [[ -z ${body} ]]; then
         return 0
     fi
 

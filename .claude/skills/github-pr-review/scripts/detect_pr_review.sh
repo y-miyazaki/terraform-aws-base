@@ -184,6 +184,9 @@ function hydrate_pr_env_from_event {
         if [[ -z ${PR_DRAFT:-} ]]; then
             PR_DRAFT="$(jq -r '.pull_request.draft // false | tostring' <<< "${event_json}")"
         fi
+        if [[ -z ${PR_STATE:-} ]]; then
+            PR_STATE="$(jq -r 'if .pull_request.merged == true then "merged" else (.pull_request.state // "") end' <<< "${event_json}")"
+        fi
         if [[ -z ${PR_IS_FORK:-} ]]; then
             PR_IS_FORK="$(jq -r '(.pull_request.head.repo.full_name // "") as $h | (.repository.full_name // "") as $r | (($h != "" and $r != "" and $h == $r) | not) | tostring' <<< "${event_json}")"
         fi
@@ -269,7 +272,7 @@ function hydrate_pr_from_api_if_needed {
     fi
 
     pr_json="$(GH_TOKEN="${GH_TOKEN:-${GITHUB_TOKEN:-}}" gh pr view "${PR_NUMBER}" --repo "${GITHUB_REPOSITORY}" \
-        --json author,isDraft,isCrossRepository,labels,baseRefOid,headRefOid)" || {
+        --json author,isDraft,isCrossRepository,labels,baseRefOid,headRefOid,state)" || {
         output_error "failed to fetch PR #${PR_NUMBER} from GitHub API"
     }
 
@@ -278,6 +281,9 @@ function hydrate_pr_from_api_if_needed {
     fi
     if [[ -z ${PR_DRAFT:-} ]]; then
         PR_DRAFT="$(jq -r '.isDraft // false | tostring' <<< "${pr_json}")"
+    fi
+    if [[ -z ${PR_STATE:-} ]]; then
+        PR_STATE="$(jq -r '(.state // "") | ascii_downcase' <<< "${pr_json}")"
     fi
     if [[ -z ${PR_IS_FORK:-} ]]; then
         PR_IS_FORK="$(jq -r '.isCrossRepository // false | tostring' <<< "${pr_json}")"
@@ -471,7 +477,9 @@ function evaluate_skip {
 #
 #######################################
 function build_result_json {
-    json_object \
+    local result_json
+
+    result_json="$(json_object \
         handoff_key "entity:pr:${PR_NUMBER}" \
         entity '{"kind":"pr"}' \
         pr_number "$(json_number "${PR_NUMBER}")" \
@@ -481,7 +489,13 @@ function build_result_json {
         report_path ".loop-review/pr-${PR_NUMBER}.json" \
         event_name "${PR_EVENT_NAME}" \
         event_action "${PR_EVENT_ACTION}" \
-        force "${PR_FORCE}"
+        force "${PR_FORCE}")"
+    # The entity state is a fact for the admission gate; it is reported only when it is known
+    if [[ -n ${PR_STATE:-} ]]; then
+        result_json="$(jq -c --argjson n "${PR_NUMBER}" --arg state "${PR_STATE}" \
+            '. + {gate: {entity: {kind: "pr", number: $n, state: $state}}}' <<< "${result_json}")"
+    fi
+    printf '%s' "${result_json}"
 }
 
 #######################################

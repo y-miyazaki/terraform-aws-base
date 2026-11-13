@@ -17,3 +17,9 @@ Fix: Separate files per environment (dev.tfvars, prd.tfvars)
 Check: Are there no foreign environment IDs (account IDs, VPC IDs, etc.)?
 Why: Cross-environment ID mixing and incorrect IDs from other environments cause cross-environment contamination and unintended resource references
 Fix: Use only environment-specific values, validate variables/locals
+
+**T-04 (SHOULD): Variable structure is consistent across environments and the example file**
+
+Check: Do all environment tfvars files define the same keys as the example (master) file, with only values differing?
+Why: A key present in one environment and missing in another causes silent behavior differences and failed applies, and makes cross-environment diffs unreadable
+Fix: Add the missing keys to every environment file (use an explicit empty value when an environment has nothing to set)

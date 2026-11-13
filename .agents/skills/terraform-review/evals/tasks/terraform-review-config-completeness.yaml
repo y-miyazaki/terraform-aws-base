@@ -1,0 +1,31 @@
+id: terraform-review-config-completeness-001
+name: terraform-review detects missing configuration
+description:
+  "Validate that terraform-review reports arguments and module inputs that are
+  missing (left to defaults), not only wrong ones, and that it checks sibling
+  occurrences.
+
+  "
+tags:
+  - quality
+  - specific-check
+  - config-completeness
+inputs:
+  prompt:
+    "Use terraform-review. Assume an event-delivery resource sets no retry
+    policy and no dead-letter target, and a registry module call sets no
+    encryption key input. Report CFG-02 and CFG-03 as failed in ## Checks
+    (Failed/Deferred Only), include them in ## Checks Summary, and list
+    sibling occurrences under Siblings in ## Issues."
+  context:
+    target: SKILL.md
+expected:
+  output_contains:
+    - "## Checks Summary"
+    - "## Checks (Failed/Deferred Only)"
+    - CFG-02
+    - CFG-03
+    - "## Issues"
+    - Siblings
+  outcomes:
+    - type: task_completed

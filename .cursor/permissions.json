@@ -39,6 +39,7 @@
     "git fetch",
     "git grep",
     "git log",
+    "git rebase",
     "git remote -v",
     "git remote show",
     "git rev-parse",
@@ -46,6 +47,7 @@
     "git stash list",
     "git stash show",
     "git status",
+    "git worktree list",
     "go build *",
     "go doc",
     "go env",
@@ -80,6 +82,7 @@
     "stat",
     "strings",
     "tail",
+    "terraform version",
     "test",
     "touch *",
     "tr",
@@ -97,11 +100,14 @@
       "Prioritize lean-ctx and fetch MCP. Avoid heavy terminal outputs."
     ],
     "block_instructions": [
-      "git commit, push, checkout, rebase, reset --hard, clean -f, and branch -D require approval.",
+      "git commit, checkout, reset --hard, clean -f, and branch -D require approval; git push --force and git push -f stay blocked unless the user asks for them.",
       "Do not read or write .env files, credentials, secrets/, private keys, or cloud credential paths.",
       "Do not dump environment variables (env, printenv); they carry tokens.",
-      "Do not write to dotfiles or dot-directories under the home directory (e.g. ~/.ssh, ~/.aws).",
-      "Do not call the codebase-memory-mcp delete_project tool."
+      "Do not write to credential, shell-startup, or tool-config dotfiles and dot-directories under the home directory (e.g. ~/.ssh, ~/.aws, ~/.config, ~/.bashrc, ~/.zshrc, ~/.gitconfig, ~/.claude/settings*.json, ~/.claude/hooks); ~/.claude/projects/-workspace/memory is the only exception.",
+      "Do not call the codebase-memory-mcp delete_project tool.",
+      "Do not run terraform apply, destroy, import, state mv, state rm, or force-unlock.",
+      "Do not run aws CLI delete-* or put-* subcommands.",
+      "Do not read .terraform/, node_modules/, apm_modules/, lambda/outputs/, site/, or *.lock files."
     ]
   }
 }

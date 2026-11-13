@@ -20,6 +20,13 @@ globs: **/*.tf, **/*.tfvars, **/*.hcl
 - COMP-01 (MUST): No default network, open firewall, or public storage by default
 - COMP-02 (MUST): Policy documents via jsonencode or provider policy data sources
 
+### Configuration Completeness (CFG)
+- CFG-01 (SHOULD): Security-relevant arguments are set explicitly, not left to provider/service defaults
+- CFG-02 (SHOULD): Reliability and failure-handling arguments are set explicitly
+- CFG-03 (SHOULD): Module calls cover the module's security and operations inputs
+- CFG-04 (SHOULD): Sibling resources and modules are configured symmetrically
+- CFG-05 (SHOULD): Intentional omissions and suppressions are documented
+
 ### Cost Optimization (COST)
 - COST-01 (SHOULD): Set explicit retention/metrics; avoid expensive defaults
 
@@ -37,9 +44,15 @@ globs: **/*.tf, **/*.tfvars, **/*.hcl
 - G-04 (MUST): Do not drive for_each/count with post-apply unknown values
 - G-05 (MUST): Prefer for_each over count for keyed instances
 
+### Integration & Consistency (INT)
+- INT-01 (MUST): Encryption and resource-policy changes are matched on every side that must use the key or policy
+- INT-02 (SHOULD): Failure paths reach a notification target
+- INT-03 (SHOULD): No dead or permanently disabled code
+
 ### Migration & Refactor (MIG)
 - MIG-01 (SHOULD): Use moved blocks to avoid resource recreation on refactors
 - MIG-02 (SHOULD): Replace deprecated resource/argument features
+- MIG-03 (SHOULD): State-address changes are called out with their migration path
 
 ### Modules (M)
 - M-01 (SHOULD): Separate variables/locals/outputs by responsibility
@@ -47,6 +60,7 @@ globs: **/*.tf, **/*.tfvars, **/*.hcl
 
 ### Naming & Documentation (N)
 - N-01 (SHOULD): Module header documents purpose/overview
+- N-02 (SHOULD): Documentation stays in sync with interface changes
 
 ### Ordering (ORD)
 - ORD-01 (MUST): Alphabetize argument keys inside resource/module/data/local blocks
@@ -78,10 +92,14 @@ globs: **/*.tf, **/*.tfvars, **/*.hcl
 ### Tagging (TAG)
 - TAG-01 (MUST): Apply Name via merge(local.tags, { Name = "..." })
 
+### Testing (TEST)
+- TEST-01 (SHOULD): Module changes come with tests that assert behavior
+
 ### tfvars (T)
 - T-01 (MUST): No secrets in tfvars
 - T-02 (SHOULD): Separate tfvars by environment
 - T-03 (SHOULD): No cross-environment identifiers in a tfvars file
+- T-04 (SHOULD): Variable structure is consistent across environments and the example file
 
 ### variables.tf (V)
 - V-01 (SHOULD): Prefer concrete types over any / map(any)
