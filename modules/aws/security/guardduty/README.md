@@ -10,7 +10,7 @@
 
 | Name | Version |
 | ---- | ------- |
-| <a name="provider_aws"></a> [aws](#provider\_aws) | >= 6.0.0, < 7.0.0 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | 6.73.0 |
 
 ## Modules
 
@@ -21,6 +21,7 @@ No modules.
 | Name | Type |
 | ---- | ---- |
 | [aws_guardduty_detector.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/guardduty_detector) | resource |
+| [aws_guardduty_detector_feature.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/guardduty_detector_feature) | resource |
 | [aws_guardduty_invite_accepter.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/guardduty_invite_accepter) | resource |
 | [aws_guardduty_member.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/guardduty_member) | resource |
 | [aws_region.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/region) | data source |
@@ -30,6 +31,7 @@ No modules.
 | Name | Description | Type | Default | Required |
 | ---- | ----------- | ---- | ------- | :------: |
 | <a name="input_aws_guardduty_detector"></a> [aws\_guardduty\_detector](#input\_aws\_guardduty\_detector) | (Required) The resource of aws\_guardduty\_detector. | <pre>object(<br/>    {<br/>      enable                       = bool<br/>      finding_publishing_frequency = string<br/>    }<br/>  )</pre> | n/a | yes |
+| <a name="input_aws_guardduty_detector_feature"></a> [aws\_guardduty\_detector\_feature](#input\_aws\_guardduty\_detector\_feature) | (Optional) Map of GuardDuty detector features keyed by feature name (for example S3\_DATA\_EVENTS, EBS\_MALWARE\_PROTECTION). Features that are not listed keep the AWS default. Defaults to an empty map. | <pre>map(object(<br/>    {<br/>      # (Required) ENABLED or DISABLED.<br/>      status = string<br/>      # (Optional) Additional configurations of the feature (for example RUNTIME_MONITORING agent management).<br/>      additional_configurations = optional(list(object({<br/>        name   = string<br/>        status = string<br/>      })), [])<br/>    }<br/>  ))</pre> | `{}` | no |
 | <a name="input_aws_guardduty_member"></a> [aws\_guardduty\_member](#input\_aws\_guardduty\_member) | (Required) The resource of aws\_guardduty\_member. | <pre>list(object(<br/>    {<br/>      account_id                 = string<br/>      email                      = string<br/>      invite                     = bool<br/>      invitation_message         = string<br/>      disable_email_notification = bool<br/>    }<br/>  ))</pre> | n/a | yes |
 | <a name="input_is_enabled"></a> [is\_enabled](#input\_is\_enabled) | (Optional) A boolean flag to enable/disable settings of GuardDuty. Defaults true. | `bool` | `true` | no |
 | <a name="input_region"></a> [region](#input\_region) | (Optional) AWS region for this GuardDuty detector. Enables multi-region deployments. Defaults to provider region. | `string` | `null` | no |

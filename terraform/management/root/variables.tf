@@ -1,9 +1,11 @@
 variable "tags" {
-  type = map(string)
+  description = "(Required) Default tags applied to all resources created by this stack."
+  type        = map(string)
 }
 
 variable "name_prefix" {
-  type = string
+  description = "(Required) Prefix prepended to the names of resources created by this stack."
+  type        = string
 }
 
 variable "region" {
@@ -101,6 +103,7 @@ variable "slack" {
 }
 
 variable "kms" {
+  description = "(Required) KMS key settings (deletion window and key rotation) used to encrypt data of supported services."
   type = map(object({
     description             = string
     deletion_window_in_days = number
@@ -109,6 +112,7 @@ variable "kms" {
 }
 
 variable "oidc_github" {
+  description = "(Required) GitHub Actions IAM OIDC identity provider and role settings. dangerously_attach_admin_policy should be false in production."
   type = object({
     is_enabled                      = bool
     dangerously_attach_admin_policy = bool
@@ -121,6 +125,7 @@ variable "oidc_github" {
 }
 
 variable "budgets" {
+  description = "(Required) AWS Budgets settings, including budget limits and cost alert notification."
   type = object({
     is_enabled = bool
     aws_budgets_budget = object({
@@ -149,6 +154,7 @@ variable "budgets" {
 }
 
 variable "common_lambda" {
+  description = "(Required) Common Lambda settings (for example VPC placement) shared by the Lambda functions in this stack."
   type = object({
     vpc = object({
       is_enabled = bool
@@ -190,6 +196,7 @@ variable "common_lambda" {
 }
 
 variable "security_cloudtrail" {
+  description = "(Required) CloudTrail settings, including CloudWatch log metric filters, alarms and notification."
   type = object({
     is_enabled = bool
     aws_cloudwatch_log = optional(map(object({
@@ -245,8 +252,15 @@ variable "security_cloudtrail" {
       redrive_policy                  = optional(string)
     }))
     cloudwatch_2_event_exclusions = optional(list(object({
-      event_source = string
-      event_name   = string
+      event_source      = optional(string)
+      event_name        = optional(string)
+      user_identity_arn = optional(string)
+    })), [])
+    cloudwatch_4_event_exclusions = optional(list(object({
+      event_source      = optional(string)
+      event_name        = optional(string)
+      role_name         = optional(string)
+      user_identity_arn = optional(string)
     })), [])
   })
 }

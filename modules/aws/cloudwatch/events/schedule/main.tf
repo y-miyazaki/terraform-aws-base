@@ -38,6 +38,11 @@ resource "aws_cloudwatch_event_target" "this" {
   rule      = aws_cloudwatch_event_rule.this.name
   target_id = try(var.aws_cloudwatch_event_target.target_id, null)
 
+  retry_policy {
+    maximum_event_age_in_seconds = var.retry_policy.maximum_event_age_in_seconds
+    maximum_retry_attempts       = var.retry_policy.maximum_retry_attempts
+  }
+
   dynamic "run_command_targets" {
     for_each = var.aws_cloudwatch_event_target.run_command_targets == null ? [] : var.aws_cloudwatch_event_target.run_command_targets
 

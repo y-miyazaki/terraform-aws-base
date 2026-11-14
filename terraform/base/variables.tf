@@ -24,11 +24,13 @@ variable "control_tower" {
 }
 
 variable "tags" {
-  type = map(any)
+  description = "(Required) Default tags applied to all resources created by this stack."
+  type        = map(any)
 }
 
 variable "name_prefix" {
-  type = string
+  description = "(Required) Prefix prepended to the names of resources created by this stack."
+  type        = string
 }
 
 variable "region" {
@@ -168,113 +170,140 @@ variable "slack" {
 }
 
 variable "kms" {
-  type = any
+  description = "(Required) KMS key settings (deletion window and key rotation) used to encrypt data of supported services."
+  type        = any
 }
 
 variable "oidc_github" {
-  type = any
+  description = "(Required) GitHub Actions IAM OIDC identity provider and role settings. dangerously_attach_admin_policy should be false in production."
+  type        = any
 }
 
 variable "resource_groups" {
-  type = any
+  description = "(Required) AWS Resource Groups settings."
+  type        = any
 }
 
 variable "budgets" {
-  type = any
+  description = "(Required) AWS Budgets settings, including budget limits and cost alert notification."
+  type        = any
 }
 
 variable "compute_optimizer" {
-  type = any
+  description = "(Required) AWS AWS Compute Optimizer settings for resource right-sizing recommendations and notification."
+  type        = any
 }
 
 variable "guardduty" {
-  type = any
+  description = "(Required) GuardDuty finding notification settings (SNS, Lambda and Slack)."
+  type        = any
 }
 
 variable "health" {
-  type = any
+  description = "(Required) AWS Health event monitoring and Slack notification settings (regional and global events)."
+  type        = any
 }
 
 variable "trusted_advisor" {
-  type = any
+  description = "(Required) AWS Trusted Advisor check monitoring and notification settings."
+  type        = any
 }
 
 variable "iam_password_expired" {
-  type = any
+  description = "(Required) IAM password expiration check and notification settings."
+  type        = any
 }
 
 variable "iam" {
-  type = any
+  description = "(Required) IAM user, group and switch role settings."
+  type        = any
 }
 
 variable "common_lambda" {
-  type = any
+  description = "(Required) Common Lambda settings (for example VPC placement) shared by the Lambda functions in this stack."
+  type        = any
 }
 
 variable "common_log" {
-  type = any
+  description = "(Required) Common settings for log buckets and log delivery shared across services."
+  type        = any
 }
 # security
 variable "security_access_analyzer" {
-  type = any
+  description = "(Required) IAM Access Analyzer settings."
+  type        = any
 }
 
 variable "security_athena" {
-  type = any
+  description = "(Required) Athena security settings (query result encryption for the primary workgroup)."
+  type        = any
 }
 
 variable "security_cloudtrail" {
-  type = any
+  description = "(Required) CloudTrail settings, including CloudWatch log metric filters, alarms and notification."
+  type        = any
 }
 
 variable "security_config" {
-  type = any
+  description = "(Required) AWS Config recorder, delivery channel and rule settings."
+  type        = any
 }
 
 variable "security_default_vpc" {
-  type = any
+  description = "(Required) Default VPC hardening settings (default VPC, subnets, security group and flow logs)."
+  type        = any
 }
 
 variable "security_ebs" {
-  type = any
+  description = "(Required) EBS account-level security defaults (encryption by default and public snapshot access blocking)."
+  type        = any
 }
 
 variable "security_ec2_metadata" {
+  description = "(Required) EC2 instance metadata defaults (IMDSv2 required for new instances)."
   type = object({
     is_enabled = bool
   })
 }
 
 variable "security_ecr" {
+  description = "(Required) ECR account-level security defaults (enhanced scanning)."
   type = object({
     is_enabled = bool
   })
 }
 
 variable "security_guardduty" {
-  type = any
+  description = "(Required) GuardDuty detector and member account settings."
+  type        = any
 }
 
 variable "security_iam" {
-  type = any
+  description = "(Required) IAM account security settings, including password policy and support role."
+  type        = any
 }
 
 variable "security_inspector2" {
-  type = any
+  description = "(Required) Amazon Inspector v2 settings."
+  type        = any
 }
 
 variable "security_macie" {
-  type = any
+  description = "(Required) Amazon Macie settings."
+  type        = any
 }
 
 variable "security_s3" {
-  type = any
+  description = "(Required) S3 account-level public access block settings."
+  type        = any
 }
 
 variable "security_securityhub" {
-  type = any
+  description = "(Required) Security Hub settings, including standards and finding aggregation."
+  type        = any
 }
 
 variable "security_ssm_automation" {
-  type = any
+  description = "(Required) Systems Manager Automation security settings (SSM.6 logging and SSM.7 public document sharing block)."
+  type        = any
 }

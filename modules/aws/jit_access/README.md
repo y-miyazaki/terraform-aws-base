@@ -10,14 +10,14 @@
 
 | Name | Version |
 | ---- | ------- |
-| <a name="provider_aws"></a> [aws](#provider\_aws) | >= 6.0.0, < 7.0.0 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | 6.73.0 |
 
 ## Modules
 
 | Name | Source | Version |
 | ---- | ------ | ------- |
 | <a name="module_dynamodb_table_requests"></a> [dynamodb\_table\_requests](#module\_dynamodb\_table\_requests) | terraform-aws-modules/dynamodb-table/aws | 5.5.2 |
-| <a name="module_lambda_jit_access"></a> [lambda\_jit\_access](#module\_lambda\_jit\_access) | terraform-aws-modules/lambda/aws | 8.12.0 |
+| <a name="module_lambda_jit_access"></a> [lambda\_jit\_access](#module\_lambda\_jit\_access) | terraform-aws-modules/lambda/aws | 8.13.0 |
 | <a name="module_step_functions"></a> [step\_functions](#module\_step\_functions) | terraform-aws-modules/step-functions/aws | 5.1.1 |
 
 ## Resources
@@ -59,6 +59,7 @@
 | [aws_ssm_parameter.state_machine_arn](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ssm_parameter) | resource |
 | [aws_ssm_parameter.user_mapping](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ssm_parameter) | resource |
 | [aws_wafv2_web_acl_association.api_gateway](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/wafv2_web_acl_association) | resource |
+| [aws_caller_identity.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/caller_identity) | data source |
 | [aws_iam_policy_document.lambda](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
 | [aws_iam_policy_document.scheduler](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
 | [aws_iam_policy_document.sfn](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
@@ -70,7 +71,7 @@
 | Name | Description | Type | Default | Required |
 | ---- | ----------- | ---- | ------- | :------: |
 | <a name="input_cleanup_schedule_expression"></a> [cleanup\_schedule\_expression](#input\_cleanup\_schedule\_expression) | (Optional) EventBridge schedule expression for the cleanup checker. | `string` | `"rate(15 minutes)"` | no |
-| <a name="input_kms_key_arn"></a> [kms\_key\_arn](#input\_kms\_key\_arn) | (Optional) KMS key ARN for encrypting CloudWatch Logs and DynamoDB. | `string` | `null` | no |
+| <a name="input_kms_key_arn"></a> [kms\_key\_arn](#input\_kms\_key\_arn) | (Optional) KMS key ARN for encrypting CloudWatch Logs, DynamoDB, SQS, SNS and the Step Functions state machine. | `string` | `null` | no |
 | <a name="input_lambda_log_retention_days"></a> [lambda\_log\_retention\_days](#input\_lambda\_log\_retention\_days) | (Optional) CloudWatch Logs retention in days for Lambda functions. | `number` | `30` | no |
 | <a name="input_lambda_memory_size"></a> [lambda\_memory\_size](#input\_lambda\_memory\_size) | (Optional) Memory size in MB for Lambda functions. | `number` | `128` | no |
 | <a name="input_lambda_timeout"></a> [lambda\_timeout](#input\_lambda\_timeout) | (Optional) Timeout in seconds for Lambda functions. | `number` | `300` | no |

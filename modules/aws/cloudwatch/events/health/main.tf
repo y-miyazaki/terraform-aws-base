@@ -41,6 +41,11 @@ resource "aws_cloudwatch_event_target" "this" {
   arn    = try(var.aws_cloudwatch_event_target.arn, null)
   rule   = aws_cloudwatch_event_rule.this[0].name
 
+  retry_policy {
+    maximum_event_age_in_seconds = var.retry_policy.maximum_event_age_in_seconds
+    maximum_retry_attempts       = var.retry_policy.maximum_retry_attempts
+  }
+
   depends_on = [
     aws_cloudwatch_event_rule.this
   ]

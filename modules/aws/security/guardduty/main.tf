@@ -26,18 +26,40 @@ resource "aws_guardduty_detector" "this" {
 }
 
 #--------------------------------------------------------------
+# Provides a resource to manage a GuardDuty detector feature (protection plan).
+# https://docs.aws.amazon.com/guardduty/latest/APIReference/API_DetectorFeatureConfiguration.html
+#--------------------------------------------------------------
+resource "aws_guardduty_detector_feature" "this" {
+  for_each = var.is_enabled && var.aws_guardduty_detector.enable ? var.aws_guardduty_detector_feature : {}
+
+  region      = local.region
+  detector_id = aws_guardduty_detector.this[0].id
+  name        = each.key
+  status      = each.value.status
+
+  dynamic "additional_configuration" {
+    for_each = each.value.additional_configurations
+
+    content {
+      name   = additional_configuration.value.name
+      status = additional_configuration.value.status
+    }
+  }
+}
+
+#--------------------------------------------------------------
 # Provides a resource to manage a GuardDuty member. To accept invitations in member accounts, see the aws_guardduty_invite_accepter resource.
 #--------------------------------------------------------------
 resource "aws_guardduty_member" "this" {
-  count = var.is_enabled ? length(var.aws_guardduty_member) : 0
+  for_each = var.is_enabled ? { for member in var.aws_guardduty_member : member.account_id => member } : {}
 
   region                     = local.region
-  account_id                 = var.aws_guardduty_member[count.index].account_id
+  account_id                 = each.value.account_id
   detector_id                = aws_guardduty_detector.this[0].id
-  disable_email_notification = try(var.aws_guardduty_member[count.index].disable_email_notification, false)
-  email                      = var.aws_guardduty_member[count.index].email
-  invitation_message         = try(var.aws_guardduty_member[count.index].invitation_message, null)
-  invite                     = try(var.aws_guardduty_member[count.index].invite, false)
+  disable_email_notification = try(each.value.disable_email_notification, false)
+  email                      = each.value.email
+  invitation_message         = try(each.value.invitation_message, null)
+  invite                     = try(each.value.invite, false)
 }
 
 #--------------------------------------------------------------

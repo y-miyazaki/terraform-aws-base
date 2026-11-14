@@ -28,23 +28,24 @@ module "aws_lambda_create_lambda_kinesis_data_firehose_cloudwatch_logs_processor
   cloudwatch_logs_kms_key_id              = module.kms_key[local.is_enabled_global ? "global" : "primary"].key_arn
   cloudwatch_logs_retention_in_days       = coalesce(try(var.cloudwatch_log_group.override.common_lambda_kinesis_data_firehose_cloudwatch_logs_processor.retention_in_days, null), var.cloudwatch_log_group.retention_in_days)
   create_current_version_allowed_triggers = false
-  create_package                          = false
+  create_package                          = true
   create_role                             = false
   description                             = "An Amazon Kinesis Firehose stream processor that extracts individual log events from records sent by Cloudwatch Logs subscription filters."
   # The processor does not read any environment variable.
   environment_variables = {}
   function_name         = "${var.name_prefix}kinesis-data-firehose-cloudwatch-logs-processor"
   handler               = "index.handler"
-  lambda_role           = module.aws_iam_role_lambda.arn
-  layers                = []
-  # cd /workspace/nodejs/kinesis_data_firehose_cloudwatch_logs_processor && npm install && zip -r /workspace/lambda/outputs/nodejs_kinesis_data_firehose_cloudwatch_logs_processor.zip .
-  local_existing_package        = "../../lambda/outputs/nodejs_kinesis_data_firehose_cloudwatch_logs_processor.zip"
+  # Same source_path as the primary-region function: use a different hash to avoid concurrent writes to one zip.
+  hash_extra                    = "us_east_1"
+  lambda_role                   = module.aws_iam_role_lambda.arn
+  layers                        = []
   logging_application_log_level = "WARN"
   logging_log_format            = "JSON"
   logging_system_log_level      = "WARN"
   memory_size                   = 256
   publish                       = false
   runtime                       = "nodejs24.x"
+  source_path                   = local.nodejs_lambda_source_path["kinesis_data_firehose_cloudwatch_logs_processor"]
   timeout                       = 300
   tracing_mode                  = "PassThrough"
   vpc_security_group_ids        = var.common_lambda.vpc.is_enabled ? var.common_lambda.vpc.create_vpc ? [module.lambda_vpc[local.is_enabled_global ? "global" : "primary"].default_security_group_id] : [var.common_lambda.vpc.exists[var.region.global].security_group_id] : []
@@ -87,7 +88,7 @@ module "aws_lambda_create_lambda_s3_notification_s3_object_created_for_athena_us
   cloudwatch_logs_kms_key_id              = module.kms_key[local.is_enabled_global ? "global" : "primary"].key_arn
   cloudwatch_logs_retention_in_days       = coalesce(try(var.cloudwatch_log_group.override.common_lambda_s3_notification_s3_object_created_for_athena.retention_in_days, null), var.cloudwatch_log_group.retention_in_days)
   create_current_version_allowed_triggers = false
-  create_package                          = false
+  create_package                          = true
   create_role                             = false
   description                             = "This program moves s3 object(CloudFront) for Athena."
   environment_variables = {
@@ -95,16 +96,17 @@ module "aws_lambda_create_lambda_s3_notification_s3_object_created_for_athena_us
   }
   function_name = "${var.name_prefix}s3-notification-s3-object-created-for-athena"
   handler       = "index.handler"
-  lambda_role   = module.aws_iam_role_lambda.arn
-  layers        = []
-  # cd /workspace/nodejs/s3_notification_s3_object_created_for_athena && npm install && zip -r /workspace/lambda/outputs/nodejs_s3_notification_s3_object_created_for_athena.zip .
-  local_existing_package        = "../../lambda/outputs/nodejs_s3_notification_s3_object_created_for_athena.zip"
+  # Same source_path as the primary-region function: use a different hash to avoid concurrent writes to one zip.
+  hash_extra                    = "us_east_1"
+  lambda_role                   = module.aws_iam_role_lambda.arn
+  layers                        = []
   logging_application_log_level = "INFO"
   logging_log_format            = "JSON"
   logging_system_log_level      = "WARN"
   memory_size                   = 128
   publish                       = false
   runtime                       = "nodejs24.x"
+  source_path                   = local.nodejs_lambda_source_path["s3_notification_s3_object_created_for_athena"]
   timeout                       = 300
   tracing_mode                  = "PassThrough"
   vpc_security_group_ids        = var.common_lambda.vpc.is_enabled ? var.common_lambda.vpc.create_vpc ? [module.lambda_vpc[local.is_enabled_global ? "global" : "primary"].default_security_group_id] : [var.common_lambda.vpc.exists[var.region.global].security_group_id] : []

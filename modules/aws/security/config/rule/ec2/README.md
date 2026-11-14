@@ -38,7 +38,7 @@ No modules.
 | <a name="input_is_enabled"></a> [is\_enabled](#input\_is\_enabled) | (Optional) A boolean flag to enable/disable AWS Config. Defaults true. | `bool` | `true` | no |
 | <a name="input_name_prefix"></a> [name\_prefix](#input\_name\_prefix) | (Optional) Prefix of config name. | `string` | `""` | no |
 | <a name="input_region"></a> [region](#input\_region) | (Optional) AWS region. Defaults to provider region. | `string` | `null` | no |
-| <a name="input_restricted_common_ports"></a> [restricted\_common\_ports](#input\_restricted\_common\_ports) | n/a | <pre>object(<br/>    {<br/>      input_parameters = map(any)<br/>    }<br/>  )</pre> | <pre>{<br/>  "input_parameters": {<br/>    "blockedPort1": "20",<br/>    "blockedPort2": "21",<br/>    "blockedPort3": "3389",<br/>    "blockedPort4": "3306",<br/>    "blockedPort5": "4333"<br/>  }<br/>}</pre> | no |
+| <a name="input_restricted_common_ports"></a> [restricted\_common\_ports](#input\_restricted\_common\_ports) | (Optional) Input parameters for the restricted-common-ports AWS Config rule (blockedPort1..5). | <pre>object(<br/>    {<br/>      input_parameters = map(any)<br/>    }<br/>  )</pre> | <pre>{<br/>  "input_parameters": {<br/>    "blockedPort1": "20",<br/>    "blockedPort2": "21",<br/>    "blockedPort3": "3389",<br/>    "blockedPort4": "3306",<br/>    "blockedPort5": "4333"<br/>  }<br/>}</pre> | no |
 | <a name="input_ssm_automation_assume_role_arn"></a> [ssm\_automation\_assume\_role\_arn](#input\_ssm\_automation\_assume\_role\_arn) | (Required) AssumeRole arn in SSM Automation | `string` | n/a | yes |
 | <a name="input_tags"></a> [tags](#input\_tags) | (Optional) Key-value map of resource tags. | `map(any)` | `null` | no |
 

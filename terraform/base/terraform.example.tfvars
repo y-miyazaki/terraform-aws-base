@@ -1732,6 +1732,17 @@ security_cloudtrail = {
   is_enabled = true
   # CUSTOMIZE: need to set is_s3_enabled for settings of New S3 Bucket.
   is_s3_enabled = false
+  # CUSTOMIZE: need to set cloudwatch_2_event_exclusions to exclude unauthorized API call alerts (CloudWatch.2).
+  # An event is excluded only when all the keys that are set (event_source, event_name, user_identity_arn) match; at least one key is required.
+  # Setting only user_identity_arn ignores every event from that principal. Wildcards (*) are allowed in user_identity_arn.
+  # https://docs.aws.amazon.com/securityhub/latest/userguide/cloudwatch-controls.html#cloudwatch-2
+  cloudwatch_2_event_exclusions = []
+  # CUSTOMIZE: need to set cloudwatch_4_event_exclusions to exclude IAM policy change alerts (CloudWatch.4).
+  # An event is excluded only when event_name, user_identity_arn and (if set) role_name ALL match,
+  # so use it for known automation (e.g. IAM Identity Center JIT access) instead of excluding an event name globally.
+  # Wildcards (*) are allowed. Do not hardcode account IDs in user_identity_arn.
+  # https://docs.aws.amazon.com/securityhub/latest/userguide/cloudwatch-controls.html#cloudwatch-4
+  cloudwatch_4_event_exclusions = []
   aws_iam_role = {
     description = ""
     name        = "security-cloudtrail-role"
@@ -2098,6 +2109,44 @@ security_guardduty = {
     # CUSTOMIZE: need to set enabled for settings of GuardDuty Detector.
     enable                       = true
     finding_publishing_frequency = "FIFTEEN_MINUTES"
+  }
+  # GuardDuty protection plans (features), keyed by feature name. Features that are not listed keep the AWS default.
+  # status: ENABLED or DISABLED. Keep this aligned with guardduty_organization.features in management/audit.
+  # https://docs.aws.amazon.com/guardduty/latest/APIReference/API_DetectorFeatureConfiguration.html
+  # COST CONSIDERATION: each enabled feature is billed separately.
+  aws_guardduty_detector_feature = {
+    EBS_MALWARE_PROTECTION = {
+      status = "ENABLED"
+    }
+    EKS_AUDIT_LOGS = {
+      status = "DISABLED"
+    }
+    LAMBDA_NETWORK_LOGS = {
+      status = "ENABLED"
+    }
+    RDS_LOGIN_EVENTS = {
+      status = "ENABLED"
+    }
+    RUNTIME_MONITORING = {
+      status = "ENABLED"
+      additional_configurations = [
+        {
+          name   = "ECS_FARGATE_AGENT_MANAGEMENT"
+          status = "ENABLED"
+        },
+        {
+          name   = "EC2_AGENT_MANAGEMENT"
+          status = "ENABLED"
+        },
+        {
+          name   = "EKS_ADDON_MANAGEMENT"
+          status = "DISABLED"
+        }
+      ]
+    }
+    S3_DATA_EVENTS = {
+      status = "ENABLED"
+    }
   }
   aws_guardduty_member = [
   ]

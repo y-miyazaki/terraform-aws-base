@@ -27,6 +27,7 @@ module "aws_security_cloudtrail_controltower" {
   aws_sns_topic                 = local.aws_sns_topic_cloudtrail
   aws_sns_topic_subscription    = local.aws_sns_topic_subscription_cloudtrail
   cloudwatch_2_event_exclusions = var.security_cloudtrail.cloudwatch_2_event_exclusions
+  cloudwatch_4_event_exclusions = var.security_cloudtrail.cloudwatch_4_event_exclusions
   cloudwatch_name_prefix        = var.name_prefix
   sns_kms_master_key_id         = module.kms_key["root"].key_id
 

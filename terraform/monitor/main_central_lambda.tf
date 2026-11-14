@@ -1,4 +1,24 @@
 #--------------------------------------------------------------
+# Node.js Lambda packages
+# The zip is built from nodejs/<project> during apply (terraform-aws-modules/lambda package.py: npm ci + zip).
+# Requires node, npm and python3 on the machine running Terraform (GitHub-hosted ubuntu-26.04 has them).
+# Do not commit built zip files; they are written to builds/ (gitignored).
+#--------------------------------------------------------------
+locals {
+  nodejs_lambda_source_path = {
+    for project in [
+      "kinesis_data_firehose_cloudwatch_logs_processor",
+      "s3_notification_s3_object_created_for_athena",
+      ] : project => [{
+        commands = ["npm ci --omit=dev", ":zip"]
+        path     = "${path.module}/../../nodejs/${project}"
+        # node_modules is rebuilt by npm ci; test files are not needed at runtime.
+        patterns = ["!package-lock\\.json", "!test-local\\.js", "!test/.*", "node_modules/.+"]
+    }]
+  }
+}
+
+#--------------------------------------------------------------
 # Create Lambda function
 # For Kinesis Data Firehose Cloudwatch Logs Processor
 # https://registry.terraform.io/modules/terraform-aws-modules/lambda/aws/latest
@@ -26,23 +46,22 @@ module "aws_lambda_create_lambda_kinesis_data_firehose_cloudwatch_logs_processor
   cloudwatch_logs_kms_key_id              = module.kms_key["primary"].key_arn
   cloudwatch_logs_retention_in_days       = coalesce(try(var.cloudwatch_log_group.override.common_lambda_kinesis_data_firehose_cloudwatch_logs_processor.retention_in_days, null), var.cloudwatch_log_group.retention_in_days)
   create_current_version_allowed_triggers = false
-  create_package                          = false
+  create_package                          = true
   create_role                             = false
   description                             = "An Amazon Kinesis Firehose stream processor that extracts individual log events from records sent by Cloudwatch Logs subscription filters."
   # The processor does not read any environment variable.
-  environment_variables = {}
-  function_name         = "${var.name_prefix}kinesis-data-firehose-cloudwatch-logs-processor"
-  handler               = "index.handler"
-  lambda_role           = module.aws_iam_role_lambda.arn
-  layers                = []
-  # cd /workspace/nodejs/kinesis_data_firehose_cloudwatch_logs_processor && npm install && zip -r /workspace/lambda/outputs/nodejs_kinesis_data_firehose_cloudwatch_logs_processor.zip .
-  local_existing_package        = "../../lambda/outputs/nodejs_kinesis_data_firehose_cloudwatch_logs_processor.zip"
+  environment_variables         = {}
+  function_name                 = "${var.name_prefix}kinesis-data-firehose-cloudwatch-logs-processor"
+  handler                       = "index.handler"
+  lambda_role                   = module.aws_iam_role_lambda.arn
+  layers                        = []
   logging_application_log_level = "WARN"
   logging_log_format            = "JSON"
   logging_system_log_level      = "WARN"
   memory_size                   = 256
   publish                       = false
   runtime                       = "nodejs24.x"
+  source_path                   = local.nodejs_lambda_source_path["kinesis_data_firehose_cloudwatch_logs_processor"]
   timeout                       = 300
   tracing_mode                  = "PassThrough"
   vpc_security_group_ids        = var.common_lambda.vpc.is_enabled ? var.common_lambda.vpc.create_vpc ? [module.lambda_vpc["primary"].default_security_group_id] : [var.common_lambda.vpc.exists[var.region.primary].security_group_id] : []
@@ -83,24 +102,23 @@ module "aws_lambda_create_lambda_s3_notification_s3_object_created_for_athena" {
   cloudwatch_logs_kms_key_id              = module.kms_key["primary"].key_arn
   cloudwatch_logs_retention_in_days       = coalesce(try(var.cloudwatch_log_group.override.common_lambda_s3_notification_s3_object_created_for_athena.retention_in_days, null), var.cloudwatch_log_group.retention_in_days)
   create_current_version_allowed_triggers = false
-  create_package                          = false
+  create_package                          = true
   create_role                             = false
   description                             = "This program moves s3 object(CloudFront) for Athena."
   environment_variables = {
     TARGET_KEY_PREFIX = "Logs/CloudFront/"
   }
-  function_name = "${var.name_prefix}s3-notification-s3-object-created-for-athena"
-  handler       = "index.handler"
-  lambda_role   = module.aws_iam_role_lambda.arn
-  layers        = []
-  # cd /workspace/nodejs/s3_notification_s3_object_created_for_athena && npm install && zip -r /workspace/lambda/outputs/nodejs_s3_notification_s3_object_created_for_athena.zip .
-  local_existing_package        = "../../lambda/outputs/nodejs_s3_notification_s3_object_created_for_athena.zip"
+  function_name                 = "${var.name_prefix}s3-notification-s3-object-created-for-athena"
+  handler                       = "index.handler"
+  lambda_role                   = module.aws_iam_role_lambda.arn
+  layers                        = []
   logging_application_log_level = "INFO"
   logging_log_format            = "JSON"
   logging_system_log_level      = "WARN"
   memory_size                   = 128
   publish                       = false
   runtime                       = "nodejs24.x"
+  source_path                   = local.nodejs_lambda_source_path["s3_notification_s3_object_created_for_athena"]
   timeout                       = 300
   tracing_mode                  = "PassThrough"
   vpc_security_group_ids        = var.common_lambda.vpc.is_enabled ? var.common_lambda.vpc.create_vpc ? [module.lambda_vpc["primary"].default_security_group_id] : [var.common_lambda.vpc.exists[var.region.primary].security_group_id] : []

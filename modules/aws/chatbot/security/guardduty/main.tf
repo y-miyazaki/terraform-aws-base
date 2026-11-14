@@ -79,4 +79,9 @@ resource "aws_cloudwatch_event_target" "sns_publish" {
   arn       = aws_sns_topic.this[0].arn
   rule      = aws_cloudwatch_event_rule.this[0].name
   target_id = aws_sns_topic.this[0].name
+
+  retry_policy {
+    maximum_event_age_in_seconds = var.retry_policy.maximum_event_age_in_seconds
+    maximum_retry_attempts       = var.retry_policy.maximum_retry_attempts
+  }
 }

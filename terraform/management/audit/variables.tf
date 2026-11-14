@@ -1,9 +1,11 @@
 variable "tags" {
-  type = map(string)
+  description = "(Required) Default tags applied to all resources created by this stack."
+  type        = map(string)
 }
 
 variable "name_prefix" {
-  type = string
+  description = "(Required) Prefix prepended to the names of resources created by this stack."
+  type        = string
 }
 
 variable "region" {
@@ -63,6 +65,7 @@ variable "cloudwatch_log_group" {
 }
 
 variable "kms" {
+  description = "(Required) KMS key settings (deletion window and key rotation) used to encrypt data of supported services."
   type = map(object({
     description             = string
     deletion_window_in_days = number
@@ -71,6 +74,7 @@ variable "kms" {
 }
 
 variable "oidc_github" {
+  description = "(Required) GitHub Actions IAM OIDC identity provider and role settings. dangerously_attach_admin_policy should be false in production."
   type = object({
     is_enabled                      = bool
     dangerously_attach_admin_policy = bool
@@ -83,6 +87,7 @@ variable "oidc_github" {
 }
 
 variable "security_notification" {
+  description = "(Required) Slack channel and workspace settings used for security notifications."
   type = object({
     slack_channel_id = string
     slack_team_id    = string
@@ -96,6 +101,7 @@ variable "security_notification" {
 }
 
 variable "access_analyzer_organization" {
+  description = "(Required) Organization-level IAM Access Analyzer settings."
   type = object({
     is_enabled    = bool
     analyzer_name = string
@@ -104,6 +110,7 @@ variable "access_analyzer_organization" {
 
 
 variable "guardduty_organization" {
+  description = "(Required) Organization-level GuardDuty settings."
   type = object({
     is_enabled                       = bool
     create_detector                  = optional(bool, false)
@@ -120,6 +127,7 @@ variable "guardduty_organization" {
 
 
 variable "inspector2_organization" {
+  description = "(Required) Organization-level Amazon Inspector v2 settings."
   type = object({
     is_enabled = bool
     enabler = optional(map(object({
@@ -141,6 +149,7 @@ variable "inspector2_organization" {
 
 
 variable "macie_organization" {
+  description = "(Required) Organization-level Amazon Macie settings."
   type = object({
     is_enabled                   = bool
     auto_enable                  = bool
@@ -153,6 +162,7 @@ variable "macie_organization" {
 
 
 variable "securityhub_organization" {
+  description = "(Required) Organization-level Security Hub settings."
   type = object({
     is_enabled                    = bool
     is_enabled_finding_aggregator = optional(bool, false)

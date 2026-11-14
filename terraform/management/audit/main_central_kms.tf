@@ -48,6 +48,17 @@ module "kms_key" {
         }
       ]
     },
+    {
+      # Required when a Step Functions state machine encrypted with this key has CloudWatch Logs integration enabled.
+      # https://docs.aws.amazon.com/step-functions/latest/dg/encryption-at-rest.html
+      sid = "AllowLogDeliveryForStepFunctions"
+      principals = [{
+        type        = "Service"
+        identifiers = ["delivery.logs.amazonaws.com"]
+      }]
+      actions   = ["kms:Decrypt"]
+      resources = ["*"]
+    },
   ]
 
   tags = merge(var.tags, {

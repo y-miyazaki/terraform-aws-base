@@ -94,10 +94,10 @@ resource "aws_default_security_group" "this" {
 # EC2-10: Ensure VPC subnets are not publicly accessible
 #--------------------------------------------------------------
 resource "aws_default_subnet" "this" {
-  count = local.is_active ? length(data.aws_availability_zones.this.names) : 0
+  for_each = local.is_active ? toset(data.aws_availability_zones.this.names) : toset([])
 
   region                  = local.region
-  availability_zone       = data.aws_availability_zones.this.names[count.index]
+  availability_zone       = each.key
   map_public_ip_on_launch = false
 
   tags = var.tags
@@ -117,7 +117,7 @@ resource "aws_vpc_endpoint" "this" {
   security_group_ids  = [aws_default_security_group.this[0].id]
   service_name        = "com.amazonaws.${local.region}.ec2"
   # route_table_ids     = [aws_default_route_table.this[0].id]
-  subnet_ids        = aws_default_subnet.this[*].id
+  subnet_ids        = [for subnet in aws_default_subnet.this : subnet.id]
   vpc_endpoint_type = "Interface"
   vpc_id            = aws_default_vpc.this[0].id
 }

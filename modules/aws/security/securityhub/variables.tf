@@ -25,6 +25,18 @@ variable "region" {
   default     = null
 }
 
+variable "auto_enable_controls" {
+  type        = bool
+  description = "(Optional) Whether to automatically enable new controls when they are added to the enabled standards. Defaults true (same as the AWS provider default)."
+  default     = true
+}
+
+variable "enable_default_standards" {
+  type        = bool
+  description = "(Optional) Whether to enable the standards Security Hub designates as default (AWS Foundational Security Best Practices and CIS AWS Foundations Benchmark v1.2.0) when the account is enabled. Defaults true (same as the AWS provider default). This is applied only when Security Hub is enabled for the first time."
+  default     = true
+}
+
 variable "enabled_cis_aws_foundations_benchmark" {
   type        = bool
   description = "(Optional) CIS AWS Foundations Benchmark is valid, set it to true. default is true."

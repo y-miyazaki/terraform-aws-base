@@ -2,11 +2,20 @@
 # Synthetics Canary Configuration
 #--------------------------------------------------------------
 locals {
-  # Map of function names to their ZIP file paths
-  synthetics_canary_zip_files = {
-    heartbeat = "../../lambda/outputs/nodejs_synthetics_canary_heartbeat.zip"
-    linkcheck = "../../lambda/outputs/nodejs_synthetics_canary_linkcheck.zip"
-  }
+  # Function names built from nodejs/synthetics_canary_<name>/index.js
+  synthetics_canary_functions = toset(["heartbeat", "linkcheck"])
+}
+
+#--------------------------------------------------------------
+# Provides the Synthetics Canary packages (index.js at the zip root)
+# Written to builds/ (gitignored); do not commit built zip files.
+#--------------------------------------------------------------
+data "archive_file" "synthetics_canary" {
+  for_each = local.synthetics_canary_functions
+
+  output_path = "${path.module}/builds/nodejs_synthetics_canary_${each.key}.zip"
+  source_file = "${path.module}/../../nodejs/synthetics_canary_${each.key}/index.js"
+  type        = "zip"
 }
 
 #--------------------------------------------------------------
@@ -48,8 +57,7 @@ module "aws_synthetics_canary" {
     # ZIP file path based on function name (heartbeat or linkcheck)
     # Updated package structure for syn-nodejs-puppeteer-11.0+: index.js at root level
     # https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Synthetics_Canaries_WritingCanary_Nodejs.html#CloudWatch_Synthetics_Canaries_package
-    # Build command: bash /workspace/nodejs/build-nodejs.sh
-    zip_file = local.synthetics_canary_zip_files[each.key]
+    zip_file = data.archive_file.synthetics_canary[each.key].output_path
     }
   )
   s3_bucket_arn = module.s3_application_log.s3_bucket_arn

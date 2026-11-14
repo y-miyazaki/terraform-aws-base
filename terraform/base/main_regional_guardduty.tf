@@ -15,8 +15,9 @@ module "guardduty" {
   )
   region = each.value
 
-  aws_guardduty_detector = try(var.security_guardduty.aws_guardduty_detector, {})
-  aws_guardduty_member   = try(var.security_guardduty.aws_guardduty_member, {})
+  aws_guardduty_detector         = try(var.security_guardduty.aws_guardduty_detector, {})
+  aws_guardduty_detector_feature = try(var.security_guardduty.aws_guardduty_detector_feature, {})
+  aws_guardduty_member           = try(var.security_guardduty.aws_guardduty_member, {})
 
   tags = var.tags
 }

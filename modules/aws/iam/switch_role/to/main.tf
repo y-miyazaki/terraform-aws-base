@@ -46,9 +46,9 @@ resource "aws_iam_role" "this" {
 # Attaches a Managed IAM Policy to an IAM role
 #--------------------------------------------------------------
 resource "aws_iam_role_policy_attachment" "this" {
-  count = var.is_enabled ? length(var.policy) : 0
+  for_each = var.is_enabled ? { for policy in var.policy : policy.policy_arn => policy } : {}
 
-  policy_arn = var.policy[count.index].policy_arn
+  policy_arn = each.value.policy_arn
   role       = aws_iam_role.this[0].name
 }
 

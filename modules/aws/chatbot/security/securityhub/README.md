@@ -10,7 +10,7 @@
 
 | Name | Version |
 | ---- | ------- |
-| <a name="provider_aws"></a> [aws](#provider\_aws) | >= 6.0.0, < 7.0.0 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | 6.73.0 |
 
 ## Modules
 
@@ -33,6 +33,7 @@
 | [aws_iam_role_policy_attachment.step_functions](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy_attachment) | resource |
 | [aws_sns_topic.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/sns_topic) | resource |
 | [aws_sns_topic_policy.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/sns_topic_policy) | resource |
+| [aws_caller_identity.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/caller_identity) | data source |
 | [aws_iam_policy_document.eventbridge](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
 | [aws_iam_policy_document.eventbridge_assume_role](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
 | [aws_iam_policy_document.sns_topic](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
@@ -50,6 +51,8 @@
 | <a name="input_kms_master_key_id"></a> [kms\_master\_key\_id](#input\_kms\_master\_key\_id) | (Optional) KMS key ID to set for SNS Topic. | `string` | `null` | no |
 | <a name="input_name_prefix"></a> [name\_prefix](#input\_name\_prefix) | (Optional) Name prefix of all resources. | `string` | `""` | no |
 | <a name="input_region"></a> [region](#input\_region) | (Optional) AWS region. Defaults to provider region. | `string` | `null` | no |
+| <a name="input_retry_policy"></a> [retry\_policy](#input\_retry\_policy) | (Optional) Retry policy of the EventBridge target. Defaults to the EventBridge defaults (24 hours, 185 attempts). Events are dropped after the retries are exhausted because no dead-letter queue is configured. | <pre>object({<br/>    # The maximum amount of time, in seconds, to continue to make retry attempts.<br/>    maximum_event_age_in_seconds = number<br/>    # The maximum number of retry attempts to make before the request fails.<br/>    maximum_retry_attempts = number<br/>  })</pre> | <pre>{<br/>  "maximum_event_age_in_seconds": 86400,<br/>  "maximum_retry_attempts": 185<br/>}</pre> | no |
+| <a name="input_step_functions_kms_key_arn"></a> [step\_functions\_kms\_key\_arn](#input\_step\_functions\_kms\_key\_arn) | (Optional) KMS key ARN to encrypt the Step Functions state machine with a customer managed key. Null uses the AWS owned key. | `string` | `null` | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | (Optional) Key-value map of resource tags. | `map(any)` | `null` | no |
 
 ## Outputs

@@ -32,6 +32,7 @@ No modules.
 | <a name="input_aws_cloudwatch_event_target"></a> [aws\_cloudwatch\_event\_target](#input\_aws\_cloudwatch\_event\_target) | (Required) Provides an EventBridge Target resource. | <pre>object(<br/>    {<br/>      # (Required) The Amazon Resource Name (ARN) associated of the target.<br/>      arn = string<br/>    }<br/>  )</pre> | n/a | yes |
 | <a name="input_is_enabled"></a> [is\_enabled](#input\_is\_enabled) | (Optional) A boolean flag to enable/disable Trusted Advisor. Defaults true. | `bool` | `true` | no |
 | <a name="input_region"></a> [region](#input\_region) | (Optional) AWS region. Defaults to provider region. | `string` | `null` | no |
+| <a name="input_retry_policy"></a> [retry\_policy](#input\_retry\_policy) | (Optional) Retry policy of the EventBridge target. Defaults to the EventBridge defaults (24 hours, 185 attempts). Events are dropped after the retries are exhausted because no dead-letter queue is configured. | <pre>object({<br/>    # The maximum amount of time, in seconds, to continue to make retry attempts.<br/>    maximum_event_age_in_seconds = number<br/>    # The maximum number of retry attempts to make before the request fails.<br/>    maximum_retry_attempts = number<br/>  })</pre> | <pre>{<br/>  "maximum_event_age_in_seconds": 86400,<br/>  "maximum_retry_attempts": 185<br/>}</pre> | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | (Optional) Key-value map of resource tags. | `map(any)` | `null` | no |
 
 ## Outputs

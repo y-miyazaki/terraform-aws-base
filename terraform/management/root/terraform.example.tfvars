@@ -461,7 +461,17 @@ security_cloudtrail = {
       event_name   = "GetBucketOwnershipControls"
       event_source = "s3.amazonaws.com"
     },
+    # Setting only user_identity_arn ignores every event from that principal (e.g. DevOps Agent).
+    {
+      user_identity_arn = "arn:aws:sts::*:assumed-role/DevOpsAgentRole-SecondaryAccount/*"
+    },
   ]
+  # CUSTOMIZE: need to set cloudwatch_4_event_exclusions to exclude IAM policy change alerts (CloudWatch.4).
+  # An event is excluded only when event_name, user_identity_arn and (if set) role_name ALL match,
+  # so use it for known automation (e.g. IAM Identity Center JIT access) instead of excluding an event name globally.
+  # Wildcards (*) are allowed. Do not hardcode account IDs in user_identity_arn.
+  # https://docs.aws.amazon.com/securityhub/latest/userguide/cloudwatch-controls.html#cloudwatch-4
+  cloudwatch_4_event_exclusions = []
   aws_cloudwatch_log = {
     cloudtrail_logs_terminate = {
       aws_cloudwatch_log_metric_filter = {

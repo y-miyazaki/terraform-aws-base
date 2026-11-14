@@ -19,7 +19,9 @@ resource "aws_securityhub_account" "this" {
   count = var.is_enabled ? 1 : 0
 
   region                    = local.region
+  auto_enable_controls      = var.auto_enable_controls
   control_finding_generator = "SECURITY_CONTROL"
+  enable_default_standards  = var.enable_default_standards
 }
 
 #--------------------------------------------------------------

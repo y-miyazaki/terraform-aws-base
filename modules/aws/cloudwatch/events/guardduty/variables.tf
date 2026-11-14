@@ -44,3 +44,17 @@ variable "tags" {
   description = "(Optional) Key-value map of resource tags."
   default     = null
 }
+
+variable "retry_policy" {
+  type = object({
+    # The maximum amount of time, in seconds, to continue to make retry attempts.
+    maximum_event_age_in_seconds = number
+    # The maximum number of retry attempts to make before the request fails.
+    maximum_retry_attempts = number
+  })
+  description = "(Optional) Retry policy of the EventBridge target. Defaults to the EventBridge defaults (24 hours, 185 attempts). Events are dropped after the retries are exhausted because no dead-letter queue is configured."
+  default = {
+    maximum_event_age_in_seconds = 86400
+    maximum_retry_attempts       = 185
+  }
+}

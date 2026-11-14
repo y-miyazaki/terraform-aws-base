@@ -2911,7 +2911,11 @@ devops_agent = {
     # Key: arbitrary name referred to by agent_spaces.<name>.mcp_servers[*].mcp_server_registration.
     # Write access (Issue / branch / Draft PR) needs the GitHub MCP server; the native GitHub integration is read-only.
     #   ex) register each MCP server with the AWS CLI. Read the credential from Secrets Manager (do not type it in the shell history):
-    #     - GitHub (PAT: fine-grained, only the target repositories; Issues / Contents / Pull requests: read and write):
+    #     - GitHub (PAT; the required permissions differ by token type):
+    #         Fine-grained personal access token (recommended): Resource owner = the organization, Repository access = only the target repositories.
+    #           Repository permissions: Contents = read and write, Issues = read and write, Pull requests = read and write (Metadata = read is added automatically).
+    #         Personal access token (classic): scope repo (private repositories; public_repo is enough for public ones only). Authorize SSO for the organization if it is enforced.
+    #           A classic token cannot be limited to specific repositories.
     #         aws devops-agent register-service --service mcpserver --region ap-northeast-1 \
     #           --service-details '{"mcpserver":{"name":"GitHubMcpServer","endpoint":"https://api.githubcopilot.com/mcp/","authorizationConfig":{"apiKey":{"apiKeyName":"github-pat","apiKeyHeader":"Authorization","apiKeyValue":"Bearer <PAT>"}}}}' # pragma: allowlist secret
     #     - Linear (API key / token; OAuth is also possible via the console):
@@ -2920,6 +2924,12 @@ devops_agent = {
     #         If the Linear credential cannot create labels, create the label devops-agent in Linear beforehand.
     #     GitHub label: create the label devops-agent in every target repository beforehand. It needs Label creation permission in GitHub; the GitHub MCP server has no tool to create it, so the agent cannot.
     #     aws devops-agent list-services --region ap-northeast-1 --query 'services[].{id:serviceId,type:serviceType}'
+    #   Rotate the credential / remove a registration (there is no update-service; a changed credential means registering again):
+    #     1. Register again with a new name (the name must be unique in the account, e.g. GitHubMcpServerV2) and note the returned serviceId.
+    #     2. Set name and service_id of the entry below. MCP tool names are prefixed with the registered name (<name>_<tool>), so also update the names in the tools of the agents that use it.
+    #     3. Apply with -replace='module.devops_agent["<agent_space>"].awscc_devopsagent_association.mcp_server["<key>"]'. An in-place update is validated against the old registration and fails with "credential expired".
+    #     4. Remove the old registration. It fails with "has active associations" while an association still uses it:
+    #         aws devops-agent deregister-service --service-id <old service_id> --region ap-northeast-1
     #   ex)
     #   mcp_server_registrations = {
     #     github = {

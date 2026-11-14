@@ -13,6 +13,20 @@ locals {
   is_s3_enabled = var.is_enabled && var.is_s3_enabled
   bucket_id     = local.is_s3_enabled ? module.s3.s3_bucket_id : var.aws_s3_bucket_existing.bucket_id
   #   bucket_arn    = local.is_s3_enabled ? module.s3.s3_bucket_arn : var.aws_s3_bucket_existing.bucket_arn
+
+  # Trailing newline kept as-is so the patterns do not change.
+  cloudwatch_2_pattern = "${module.filter_pattern.cloudwatch_2_pattern}\n"
+  cloudwatch_4_pattern = "${module.filter_pattern.cloudwatch_4_pattern}\n"
+}
+
+#--------------------------------------------------------------
+# CloudWatch.2 / CloudWatch.4 filter patterns (shared helper)
+#--------------------------------------------------------------
+module "filter_pattern" {
+  source = "../../../_internal/cloudtrail_filter_pattern"
+
+  cloudwatch_2_event_exclusions = var.cloudwatch_2_event_exclusions
+  cloudwatch_4_event_exclusions = var.cloudwatch_4_event_exclusions
 }
 
 #--------------------------------------------------------------
@@ -135,17 +149,19 @@ resource "aws_cloudwatch_log_metric_filter" "cloudwatch_2" {
   region         = local.region
   log_group_name = aws_cloudwatch_log_group.this[0].name
   name           = "${var.cloudwatch_name_prefix}cloudwatch-2-unauthorized-operation-api"
-  # noise list:
-  # - assumed-role/AWSServiceRoleFor*
-  # - assumed-role/AIOpsRole*
-  pattern = <<PATTERN
-{(($.errorCode="*UnauthorizedOperation") || ($.errorCode="AccessDenied*")) && ($.userIdentity.arn!="*assumed-role/AWSServiceRoleFor*") && ($.userIdentity.arn!="*assumed-role/AIOpsRole*")}
-PATTERN
+  pattern        = local.cloudwatch_2_pattern
 
   metric_transformation {
     name      = "${var.cloudwatch_name_prefix}cloudwatch-2-unauthorized-operation-api"
     namespace = "CloudTrail"
     value     = "1"
+  }
+
+  lifecycle {
+    precondition {
+      condition     = length(local.cloudwatch_2_pattern) <= 1024
+      error_message = "The CloudWatch.2 filter pattern exceeds the 1024-character CloudWatch Logs limit. Reduce cloudwatch_2_event_exclusions."
+    }
   }
 }
 
@@ -232,14 +248,19 @@ resource "aws_cloudwatch_log_metric_filter" "cloudwatch_4" {
   region         = local.region
   log_group_name = aws_cloudwatch_log_group.this[0].name
   name           = "${var.cloudwatch_name_prefix}cloudwatch-4-iam-policy"
-  pattern        = <<PATTERN
-{($.eventName=DeleteGroupPolicy) || ($.eventName=DeleteRolePolicy) || ($.eventName=DeleteUserPolicy) || ($.eventName=PutGroupPolicy) || ($.eventName=PutRolePolicy) || ($.eventName=PutUserPolicy) || ($.eventName=CreatePolicy) || ($.eventName=DeletePolicy) || ($.eventName=CreatePolicyVersion) || ($.eventName=DeletePolicyVersion) || ($.eventName=AttachRolePolicy) || ($.eventName=DetachRolePolicy) || ($.eventName=AttachUserPolicy) || ($.eventName=DetachUserPolicy) || ($.eventName=AttachGroupPolicy) || ($.eventName=DetachGroupPolicy)}
-PATTERN
+  pattern        = local.cloudwatch_4_pattern
 
   metric_transformation {
     name      = "${var.cloudwatch_name_prefix}cloudwatch-4-iam-policy"
     namespace = "CloudTrail"
     value     = "1"
+  }
+
+  lifecycle {
+    precondition {
+      condition     = length(local.cloudwatch_4_pattern) <= 1024
+      error_message = "The CloudWatch.4 filter pattern exceeds the 1024-character CloudWatch Logs limit. Reduce cloudwatch_4_event_exclusions."
+    }
   }
 }
 

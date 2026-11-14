@@ -42,23 +42,23 @@ uvx = true # Install uv/uvx via pipx for better isolation and performance.
 aqua = "v2.66.1"
 node = "24.22.2"
 pnpm = { version = "11.28.11", depends = ["node"] }
-python = "3.15.2"
+python = "3.14.6" # pinned: onnxruntime (pipx:headroom-ai dependency) has no cp315 wheels yet
 
 # AI agent tools
 "github:microsoft/apm" = { version = "v0.35.0", lazy = true, lazy_bins = ["apm"] }                                 # agent package manager
-claude = { version = "2.1.318", lazy = true, lazy_bins = ["claude"] }                                              # Claude Code CLI
+claude = { version = "2.1.319", lazy = true, lazy_bins = ["claude"] }                                              # Claude Code CLI
 "github:DeusData/codebase-memory-mcp" = { version = "v0.12.1", lazy = true, lazy_bins = ["codebase-memory-mcp"] } # codebase memory MCP server
-"aqua:github/copilot-cli" = { version = "1.0.105", lazy = true, lazy_bins = ["copilot"] }                           # GitHub Copilot CLI
+"aqua:github/copilot-cli" = { version = "1.0.107", lazy = true, lazy_bins = ["copilot"] }                           # GitHub Copilot CLI
 "pipx:headroom-ai" = { version = "0.43.1", extras = "proxy,mcp,bedrock", depends = ["python"], lazy = true, lazy_bins = ["headroom", "headroom-cache-ttl"] }
 "npm:lean-ctx-bin" = { version = "3.12.2", depends = [
   "node",
 ], allow_builds = [
   "lean-ctx-bin",
 ], install_env = { PNPM_CONFIG_IGNORE_SCRIPTS = "true" }, lazy = true, lazy_bins = ["lean-ctx"] } # context optimizer (hooks CLI + MCP npm)
-"github:microsoft/waza" = { version = "v0.40.0", lazy = true, lazy_bins = ["waza"] }                              # agent skill evaluator
+"github:microsoft/waza" = { version = "v0.40.1", lazy = true, lazy_bins = ["waza"] }                              # agent skill evaluator
 
 # AWS related tools
-"aqua:aws/aws-cli" = { version = "2.39.5", lazy = true, lazy_bins = ["aws", "aws_completer"] }                     # AWS CLI
+"aqua:aws/aws-cli" = { version = "2.39.6", lazy = true, lazy_bins = ["aws", "aws_completer"] }                     # AWS CLI
 "aqua:aws/aws-sam-cli" = { version = "1.171.0", lazy = true, lazy_bins = ["sam"] }                                 # SAM CLI tool
 "npm:awsp" = { version = "0.2.0", depends = [
   "node",
@@ -95,7 +95,7 @@ claude = { version = "2.1.318", lazy = true, lazy_bins = ["claude"] }           
 "aqua:go-swagger/go-swagger" = { version = "0.36.7", lazy = true, lazy_bins = ["swagger"] }                        # API documentation generator (swagger)
 
 # Lint / Formatter tools
-"npm:cspell" = { version = "10.4.0", depends = [
+"npm:cspell" = { version = "10.4.1", depends = [
   "node",
 ], install_env = { PNPM_CONFIG_IGNORE_SCRIPTS = "true" }, lazy = true, lazy_bins = ["cspell", "cspell-esm"] } # spell checker
 "npm:markdown-link-check" = { version = "3.15.0", depends = [
@@ -110,7 +110,8 @@ claude = { version = "2.1.318", lazy = true, lazy_bins = ["claude"] }           
 
 # Shell / test tools (moved from env/common/Dockerfile apt packages)
 "aqua:bats-core/bats-core" = { version = "1.14.0", lazy = true, lazy_bins = ["bats"] }                             # Bats shell test runner
-"aqua:koalaman/shellcheck" = { version = "0.11.0", lazy = true, lazy_bins = ["shellcheck"] }                       # shell script linter
+"aqua:shenwei356/rush" = { version = "0.11.1", lazy = true, lazy_bins = ["rush"] }                                # parallel runner used by bats --jobs
+"aqua:koalaman/shellcheck" ={ version = "0.11.0", lazy = true, lazy_bins = ["shellcheck"] }                       # shell script linter
 "aqua:mvdan/sh" = { version = "3.14.1", lazy = true, lazy_bins = ["shfmt"] }                                       # shell script formatter (shfmt)
 "pipx:yamllint" = { version = "1.38.0", depends = ["python"], lazy = true, lazy_bins = ["yamllint"] }              # YAML linter
 
@@ -119,7 +120,7 @@ claude = { version = "2.1.318", lazy = true, lazy_bins = ["claude"] }           
 "pipx:pre-commit" = { version = "4.7.0", depends = [
   "python",
 ], lazy = true, lazy_bins = ["pre-commit"] } # pre-commit framework
-"pipx:semgrep" = { version = "1.183.0", depends = ["python"], lazy = true, lazy_bins = ["semgrep", "pysemgrep"] } # SAST scanner (uvx-backed pipx)
+"pipx:semgrep" = { version = "1.184.0", depends = ["python"], lazy = true, lazy_bins = ["semgrep", "pysemgrep"] } # SAST scanner (uvx-backed pipx)
 "aqua:aquasecurity/trivy" = { version = "0.76.2", lazy = true, lazy_bins = ["trivy"] }                             # vulnerability scanner
 
 # Terraform related tools
@@ -133,7 +134,7 @@ claude = { version = "2.1.318", lazy = true, lazy_bins = ["claude"] }           
 "pipx:mkdocs" = { version = "1.6.1", depends = ["python"], postinstall = "uv pip install --python $MISE_TOOL_INSTALL_PATH/mkdocs/bin/python mkdocs-material mdx-truly-sane-lists", lazy = true, lazy_bins = ["mkdocs"] } # MkDocs with Material theme
 "aqua:BurntSushi/ripgrep" = { version = "15.2.0", lazy = true, lazy_bins = ["rg"] }                                # grep alternative (rg)
 "aqua:tamasfe/taplo" = { version = "0.10.0", lazy = true, lazy_bins = ["taplo"] }                                  # TOML formatter / LSP
-"aqua:jdx/usage" = { version = "7.2.0", lazy = true, lazy_bins = ["usage"] }                                      # usage CLI tool for command help and completions
+"aqua:jdx/usage" = { version = "7.3.0", lazy = true, lazy_bins = ["usage"] }                                      # usage CLI tool for command help and completions
 "aqua:astral-sh/uv" = "0.13.7"                                                                                    # uv/uvx
 
 [tasks.mise-install]

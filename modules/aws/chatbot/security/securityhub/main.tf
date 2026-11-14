@@ -3,6 +3,7 @@
 # Purpose: Ingest Security Hub findings (non-PASSED, NEW, CRITICAL/HIGH) via EventBridge, notify Slack (SNS + Chatbot) and update findings workflow using Step Functions.
 # Notes: Multiple IAM roles/policies for events and step functions; unified tagging applied; future improvement: externalize Step Functions definition and severity thresholds.
 #--------------------------------------------------------------
+data "aws_caller_identity" "current" {}
 data "aws_region" "current" {}
 
 #--------------------------------------------------------------
@@ -10,6 +11,8 @@ data "aws_region" "current" {}
 #--------------------------------------------------------------
 locals {
   region = coalesce(var.region, data.aws_region.current.region)
+  # Built from the name (not the resource) to avoid a dependency cycle with the execution role.
+  state_machine_arn = "arn:aws:states:${local.region}:${data.aws_caller_identity.current.account_id}:stateMachine:${var.name_prefix}security-securityhub-update-findings-sfn"
 }
 
 #--------------------------------------------------------------
@@ -124,6 +127,48 @@ data "aws_iam_policy_document" "step_functions" {
       "*",
     ]
   }
+
+  # The execution role needs these permissions when the state machine is encrypted with a customer managed key.
+  # The state machine ARN is built from its name because referencing the resource would create a dependency cycle.
+  # https://docs.aws.amazon.com/step-functions/latest/dg/encryption-at-rest.html
+  dynamic "statement" {
+    for_each = var.step_functions_kms_key_arn != null ? [var.step_functions_kms_key_arn] : []
+
+    content {
+      sid    = "StateMachineEncryption"
+      effect = "Allow"
+      actions = [
+        "kms:Decrypt",
+        "kms:GenerateDataKey",
+      ]
+      resources = [
+        statement.value,
+      ]
+
+      condition {
+        test     = "StringEquals"
+        variable = "kms:EncryptionContext:aws:states:stateMachineArn"
+        values   = [local.state_machine_arn]
+      }
+    }
+  }
+  # Required for CloudWatch Logs integration of an encrypted state machine.
+  dynamic "statement" {
+    for_each = var.step_functions_kms_key_arn != null ? [var.step_functions_kms_key_arn] : []
+
+    content {
+      sid       = "StateMachineLogsEncryption"
+      effect    = "Allow"
+      actions   = ["kms:GenerateDataKey"]
+      resources = [statement.value]
+
+      condition {
+        test     = "StringLike"
+        variable = "kms:EncryptionContext:SourceArn"
+        values   = ["arn:aws:logs:${local.region}:${data.aws_caller_identity.current.account_id}:*"]
+      }
+    }
+  }
 }
 
 resource "aws_iam_policy" "step_functions" {
@@ -235,6 +280,11 @@ resource "aws_cloudwatch_event_target" "sns_publish" {
   arn       = aws_sns_topic.this[0].arn
   rule      = aws_cloudwatch_event_rule.securityhub[0].name
   target_id = aws_sns_topic.this[0].name
+
+  retry_policy {
+    maximum_event_age_in_seconds = var.retry_policy.maximum_event_age_in_seconds
+    maximum_retry_attempts       = var.retry_policy.maximum_retry_attempts
+  }
 }
 
 resource "aws_cloudwatch_event_target" "step_functions" {
@@ -244,6 +294,11 @@ resource "aws_cloudwatch_event_target" "step_functions" {
   arn      = module.step_functions[0].state_machine_arn
   role_arn = aws_iam_role.eventbridge[0].arn
   rule     = aws_cloudwatch_event_rule.securityhub[0].name
+
+  retry_policy {
+    maximum_event_age_in_seconds = var.retry_policy.maximum_event_age_in_seconds
+    maximum_retry_attempts       = var.retry_policy.maximum_retry_attempts
+  }
 }
 
 #--------------------------------------------------------------
@@ -286,6 +341,11 @@ module "step_functions" {
       }
     }
   })
+  encryption_configuration = var.step_functions_kms_key_arn != null ? {
+    type                              = "CUSTOMER_MANAGED_KMS_KEY"
+    kms_key_id                        = var.step_functions_kms_key_arn
+    kms_data_key_reuse_period_seconds = 300
+  } : {}
   logging_configuration = {
     include_execution_data = true
     level                  = "ERROR"

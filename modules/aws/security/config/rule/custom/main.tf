@@ -16,16 +16,16 @@ locals {
 }
 
 resource "aws_config_config_rule" "this" {
-  count = var.is_enabled ? 1 : 0
+  for_each = var.is_enabled ? { for rule in var.aws_config_config_rule : rule.name => rule } : {}
 
   region                      = local.region
-  description                 = var.aws_config_config_rule[count.index].description
-  input_parameters            = var.aws_config_config_rule[count.index].input_parameters
-  maximum_execution_frequency = var.aws_config_config_rule[count.index].maximum_execution_frequency
-  name                        = var.aws_config_config_rule[count.index].name
+  description                 = each.value.description
+  input_parameters            = each.value.input_parameters
+  maximum_execution_frequency = each.value.maximum_execution_frequency
+  name                        = each.value.name
 
   dynamic "scope" {
-    for_each = try(var.aws_config_config_rule[count.index].scope, [])
+    for_each = try(each.value.scope, [])
 
     content {
       compliance_resource_id    = try(scope.value.compliance_resource_id, null)
@@ -35,7 +35,7 @@ resource "aws_config_config_rule" "this" {
     }
   }
   dynamic "source" {
-    for_each = var.aws_config_config_rule[count.index].source
+    for_each = each.value.source
 
     content {
       owner             = try(source.value.owner, null)

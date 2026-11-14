@@ -11,6 +11,13 @@ Every rule is **MUST** unless marked **SHOULD**. SHOULD may be skipped only with
 - Precedence, highest first: the user's explicit current request > instruction files nearest to the edited path > this file > skill or tool defaults. A lower layer never overrides a higher one.
 - Do not expose secrets, credentials, or sensitive tokens in outputs, logs, or commits.
 
+## Request Evaluation
+
+- Before implementing, check the request for flaws or a clearly better alternative.
+- If one exists, report it with the better option before changing anything, and wait for the user's decision.
+- Implement exactly what was requested unless the user chooses the alternative.
+- If the request is sound, proceed without commentary.
+
 ## Scope
 
 - Minimal surgical diffs; no unrelated refactor, cleanup, modernization, or optimization unless approved. "Unrelated" means not needed to satisfy the request; the only additions allowed beyond that are the consolidation and simplification defined under Fixing Bugs and Anti-Patterns. Label off-scope suggestions explicitly.
@@ -57,5 +64,7 @@ Every rule is **MUST** unless marked **SHOULD**. SHOULD may be skipped only with
 1. **Implementation:** Overview of changes made.
 2. **Verification:** What was verified (behavior/tests), deferred, or unavailable — lint/format re-runs are not required proof. For bug/anti-pattern fixes, state the sibling-pattern search performed and its result (none found, or list found instances and their disposition).
 3. **Risks:** Assumptions made and residual risks.
+
+Do not report checks that hooks, pre-commit, or CI run automatically as not run, pending, or skipped; omit them entirely. Do not state the obvious (the request itself, what a tool call already showed).
 
 Investigation-only or question-only responses skip this format, but MUST still mark unverified claims as such.

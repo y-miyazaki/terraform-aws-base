@@ -6,6 +6,7 @@
 # Notes: Lambda zip files are built in a separate repository and placed in
 #        lambda/outputs/. This module references them via local_existing_package.
 #--------------------------------------------------------------
+data "aws_caller_identity" "current" {}
 data "aws_region" "current" {}
 data "aws_ssoadmin_instances" "this" {}
 
@@ -17,6 +18,8 @@ locals {
   # Data: IAM Identity Center instance (one per account)
   identity_center_arn = tolist(data.aws_ssoadmin_instances.this.arns)[0]
   identity_store_id   = tolist(data.aws_ssoadmin_instances.this.identity_store_ids)[0]
+  # Built from the name (not the resource) to avoid a dependency cycle with the execution role.
+  state_machine_arn = "arn:aws:states:${local.region}:${data.aws_caller_identity.current.account_id}:stateMachine:${var.name_prefix}jit-access-sfn"
 }
 
 #--------------------------------------------------------------
@@ -575,6 +578,48 @@ data "aws_iam_policy_document" "sfn" {
       "*",
     ]
   }
+
+  # The execution role needs these permissions when the state machine is encrypted with a customer managed key.
+  # The state machine ARN is built from its name because referencing the resource would create a dependency cycle.
+  # https://docs.aws.amazon.com/step-functions/latest/dg/encryption-at-rest.html
+  dynamic "statement" {
+    for_each = var.kms_key_arn != null ? [var.kms_key_arn] : []
+
+    content {
+      sid    = "StateMachineEncryption"
+      effect = "Allow"
+      actions = [
+        "kms:Decrypt",
+        "kms:GenerateDataKey",
+      ]
+      resources = [
+        statement.value,
+      ]
+
+      condition {
+        test     = "StringEquals"
+        variable = "kms:EncryptionContext:aws:states:stateMachineArn"
+        values   = [local.state_machine_arn]
+      }
+    }
+  }
+  # Required for CloudWatch Logs integration of an encrypted state machine.
+  dynamic "statement" {
+    for_each = var.kms_key_arn != null ? [var.kms_key_arn] : []
+
+    content {
+      sid       = "StateMachineLogsEncryption"
+      effect    = "Allow"
+      actions   = ["kms:GenerateDataKey"]
+      resources = [statement.value]
+
+      condition {
+        test     = "StringLike"
+        variable = "kms:EncryptionContext:SourceArn"
+        values   = ["arn:aws:logs:${local.region}:${data.aws_caller_identity.current.account_id}:*"]
+      }
+    }
+  }
 }
 
 resource "aws_iam_policy" "sfn" {
@@ -673,6 +718,11 @@ module "step_functions" {
       }
     }
   })
+  encryption_configuration = var.kms_key_arn != null ? {
+    type                              = "CUSTOMER_MANAGED_KMS_KEY"
+    kms_key_id                        = var.kms_key_arn
+    kms_data_key_reuse_period_seconds = 300
+  } : {}
   logging_configuration = {
     include_execution_data = true
     level                  = "ERROR"

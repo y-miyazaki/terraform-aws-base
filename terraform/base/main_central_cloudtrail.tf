@@ -61,12 +61,14 @@ module "aws_security_cloudtrail" {
     # The S3 bucket arn
     bucket_arn = module.s3_cloudtrail.s3_bucket_arn
   }
-  aws_sns_topic                = local.aws_sns_topic_cloudtrail
-  aws_sns_topic_subscription   = local.aws_sns_topic_subscription_cloudtrail
-  cloudtrail_kms_master_key_id = module.kms_key[var.region.global].key_id
-  cloudwatch_name_prefix       = var.name_prefix
-  is_s3_enabled                = var.security_cloudtrail.is_s3_enabled
-  sns_kms_master_key_id        = module.kms_key[var.region.global].key_id
+  aws_sns_topic                 = local.aws_sns_topic_cloudtrail
+  aws_sns_topic_subscription    = local.aws_sns_topic_subscription_cloudtrail
+  cloudtrail_kms_master_key_id  = module.kms_key[var.region.global].key_id
+  cloudwatch_2_event_exclusions = var.security_cloudtrail.cloudwatch_2_event_exclusions
+  cloudwatch_4_event_exclusions = var.security_cloudtrail.cloudwatch_4_event_exclusions
+  cloudwatch_name_prefix        = var.name_prefix
+  is_s3_enabled                 = var.security_cloudtrail.is_s3_enabled
+  sns_kms_master_key_id         = module.kms_key[var.region.global].key_id
 
   tags = var.tags
   depends_on = [

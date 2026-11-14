@@ -14,19 +14,19 @@ data "aws_region" "current" {}
 locals {
   region = coalesce(var.region, data.aws_region.current.region)
 
-  cloudwatch_2_exclusion_clauses = [
-    for exclusion in var.cloudwatch_2_event_exclusions :
-    # CloudWatch filter patterns do not support !(...); use De Morgan: !(A && B) => (!A || !B)
-    format(" && (($.eventSource!=\"%s\") || ($.eventName!=\"%s\"))", exclusion.event_source, exclusion.event_name)
-  ]
+  # Trailing newline kept as-is so the patterns do not change.
+  cloudwatch_2_pattern = module.filter_pattern.cloudwatch_2_pattern
+  cloudwatch_4_pattern = "${module.filter_pattern.cloudwatch_4_pattern}\n"
+}
 
-  cloudwatch_2_pattern = join("", concat(
-    [
-      "{(($.errorCode=\"*UnauthorizedOperation\") || ($.errorCode=\"AccessDenied*\")) && ($.userIdentity.arn!=\"*assumed-role/AWSServiceRoleFor*\") && ($.userIdentity.arn!=\"*assumed-role/AIOpsRole*\")"
-    ],
-    local.cloudwatch_2_exclusion_clauses,
-    ["}"]
-  ))
+#--------------------------------------------------------------
+# CloudWatch.2 / CloudWatch.4 filter patterns (shared helper)
+#--------------------------------------------------------------
+module "filter_pattern" {
+  source = "../../../_internal/cloudtrail_filter_pattern"
+
+  cloudwatch_2_event_exclusions = var.cloudwatch_2_event_exclusions
+  cloudwatch_4_event_exclusions = var.cloudwatch_4_event_exclusions
 }
 
 resource "aws_sns_topic" "this" {
@@ -139,6 +139,13 @@ resource "aws_cloudwatch_log_metric_filter" "cloudwatch_2" {
     namespace = "CloudTrail"
     value     = "1"
   }
+
+  lifecycle {
+    precondition {
+      condition     = length(local.cloudwatch_2_pattern) <= 1024
+      error_message = "The CloudWatch.2 filter pattern exceeds the 1024-character CloudWatch Logs limit. Reduce cloudwatch_2_event_exclusions."
+    }
+  }
 }
 
 #--------------------------------------------------------------
@@ -171,6 +178,8 @@ resource "aws_cloudwatch_metric_alarm" "cloudwatch_2" {
 # (CloudWatch.3) Provides a CloudWatch Log Metric Filter resource.
 # https://docs.aws.amazon.com/securityhub/latest/userguide/cloudwatch-controls.html#cloudwatch-3-remediation
 #--------------------------------------------------------------
+# NOTE: Intentionally disabled (count = 0). CloudWatch.3 (console sign-in without MFA) is not used
+# because MFA is no longer part of this baseline. Do not enable without revisiting that decision.
 resource "aws_cloudwatch_log_metric_filter" "cloudwatch_3" {
   count = 0
 
@@ -192,6 +201,8 @@ PATTERN
 # (CloudWatch.3) Provides a CloudWatch Metric Alarm resource.
 # https://docs.aws.amazon.com/securityhub/latest/userguide/cloudwatch-controls.html#cloudwatch-3-remediation
 #--------------------------------------------------------------
+# NOTE: Intentionally disabled (count = 0). CloudWatch.3 (console sign-in without MFA) is not used
+# because MFA is no longer part of this baseline. Do not enable without revisiting that decision.
 resource "aws_cloudwatch_metric_alarm" "cloudwatch_3" {
   count = 0
 
@@ -224,14 +235,19 @@ resource "aws_cloudwatch_log_metric_filter" "cloudwatch_4" {
   region         = local.region
   log_group_name = var.cloudtrail_log_group_name
   name           = "${var.cloudwatch_name_prefix}cloudwatch-4-iam-policy"
-  pattern        = <<PATTERN
-{($.eventName=DeleteGroupPolicy) || ($.eventName=DeleteRolePolicy) || ($.eventName=DeleteUserPolicy) || ($.eventName=PutGroupPolicy) || ($.eventName=PutRolePolicy) || ($.eventName=PutUserPolicy) || ($.eventName=CreatePolicy) || ($.eventName=DeletePolicy) || ($.eventName=CreatePolicyVersion) || ($.eventName=DeletePolicyVersion) || ($.eventName=AttachRolePolicy) || ($.eventName=DetachRolePolicy) || ($.eventName=AttachUserPolicy) || ($.eventName=DetachUserPolicy) || ($.eventName=AttachGroupPolicy) || ($.eventName=DetachGroupPolicy)}
-PATTERN
+  pattern        = local.cloudwatch_4_pattern
 
   metric_transformation {
     name      = "${var.cloudwatch_name_prefix}cloudwatch-4-iam-policy"
     namespace = "CloudTrail"
     value     = "1"
+  }
+
+  lifecycle {
+    precondition {
+      condition     = length(local.cloudwatch_4_pattern) <= 1024
+      error_message = "The CloudWatch.4 filter pattern exceeds the 1024-character CloudWatch Logs limit. Reduce cloudwatch_4_event_exclusions."
+    }
   }
 }
 

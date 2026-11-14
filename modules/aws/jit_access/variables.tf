@@ -81,7 +81,7 @@ variable "timezone" {
 
 variable "kms_key_arn" {
   type        = string
-  description = "(Optional) KMS key ARN for encrypting CloudWatch Logs and DynamoDB."
+  description = "(Optional) KMS key ARN for encrypting CloudWatch Logs, DynamoDB, SQS, SNS and the Step Functions state machine."
   default     = null
 }
 

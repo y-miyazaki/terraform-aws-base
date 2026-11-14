@@ -79,11 +79,59 @@ variable "cloudtrail_log_group_name" {
 
 variable "cloudwatch_2_event_exclusions" {
   type = list(object({
-    event_source = string
-    event_name   = string
+    event_source      = optional(string)
+    event_name        = optional(string)
+    user_identity_arn = optional(string)
   }))
-  description = "(Optional) eventSource and eventName combinations to exclude from CloudWatch.2 unauthorized API call detection."
+  description = "(Optional) Exclusions from CloudWatch.2 unauthorized API call detection. An event is excluded only when all the keys that are set (eventSource, eventName, userIdentity.arn) match; at least one key is required. An exclusion with only user_identity_arn ignores every event from that principal. Wildcards (*) are allowed in user_identity_arn."
   default     = []
+
+  validation {
+    condition = alltrue([
+      for e in var.cloudwatch_2_event_exclusions :
+      e.event_source != null || e.event_name != null || e.user_identity_arn != null
+    ])
+    error_message = "Each cloudwatch_2_event_exclusions entry must set at least one of event_source, event_name, user_identity_arn."
+  }
+
+  validation {
+    condition = alltrue(flatten([
+      for e in var.cloudwatch_2_event_exclusions : [
+        for v in [e.event_source, e.event_name, e.user_identity_arn] :
+        v == null ? true : (length(v) > 0 && !can(regex("[\"\\\\]", v)))
+      ]
+    ]))
+    error_message = "cloudwatch_2_event_exclusions values must not be empty or contain double quotes or backslashes."
+  }
+}
+
+variable "cloudwatch_4_event_exclusions" {
+  type = list(object({
+    event_source      = optional(string)
+    event_name        = optional(string)
+    role_name         = optional(string)
+    user_identity_arn = optional(string)
+  }))
+  description = "(Optional) Exclusions from CloudWatch.4 IAM policy change detection. An event is excluded only when all the keys that are set (eventSource, eventName, userIdentity.arn, requestParameters.roleName) match; at least one key is required. Wildcards (*) are allowed."
+  default     = []
+
+  validation {
+    condition = alltrue([
+      for e in var.cloudwatch_4_event_exclusions :
+      e.event_source != null || e.event_name != null || e.role_name != null || e.user_identity_arn != null
+    ])
+    error_message = "Each cloudwatch_4_event_exclusions entry must set at least one of event_source, event_name, role_name, user_identity_arn."
+  }
+
+  validation {
+    condition = alltrue(flatten([
+      for e in var.cloudwatch_4_event_exclusions : [
+        for v in [e.event_source, e.event_name, e.role_name, e.user_identity_arn] :
+        v == null ? true : (length(v) > 0 && !can(regex("[\"\\\\]", v)))
+      ]
+    ]))
+    error_message = "cloudwatch_4_event_exclusions values must not be empty or contain double quotes or backslashes."
+  }
 }
 
 variable "cloudwatch_name_prefix" {

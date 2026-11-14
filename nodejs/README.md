@@ -58,6 +58,19 @@ cd /workspace/nodejs/s3_notification_s3_object_created_for_athena
 npm test
 ```
 
+## Packaging
+
+Terraform builds the deployment zips in `terraform/monitor`; you do not commit them.
+
+- **Lambda** (`kinesis_data_firehose_cloudwatch_logs_processor`, `s3_notification_s3_object_created_for_athena`):
+  `terraform-aws-modules/lambda` runs `npm ci --omit=dev` and zips the project during `terraform apply`.
+  The zip file name is derived from the source content, so the function updates only when the code or `package-lock.json` changes.
+- **Synthetics Canary** (`synthetics_canary_heartbeat`, `synthetics_canary_linkcheck`):
+  `data.archive_file` zips `index.js` at the zip root.
+
+Prerequisites: `node`, `npm` and `python3` on the machine that runs `terraform apply` (the `ubuntu-26.04` GitHub-hosted runner has them).
+Output goes to `terraform/monitor/builds/` (gitignored).
+
 ## Notes
 
 - Run `npm audit --audit-level=high` after dependency changes.

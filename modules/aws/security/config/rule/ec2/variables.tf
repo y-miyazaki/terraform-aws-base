@@ -25,6 +25,7 @@ variable "is_disable_public_access_for_security_group" {
 }
 
 variable "restricted_common_ports" {
+  description = "(Optional) Input parameters for the restricted-common-ports AWS Config rule (blockedPort1..5)."
   type = object(
     {
       input_parameters = map(any)
