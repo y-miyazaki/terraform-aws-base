@@ -514,7 +514,10 @@ function main {
 
     if [[ $fails -gt 0 ]]; then
         local clean_output
-        clean_output=$(echo "$output" | sed 's/\x1b\[[0-9;]*m//g' | grep -E '✖' || true)
+        clean_output=$(echo "$output" | sed 's/\x1b\[[0-9;]*m//g' | grep -E '✖|dead link|ERROR:' || true)
+        if [[ -z ${clean_output} ]]; then
+            clean_output=$(echo "$output" | sed 's/\x1b\[[0-9;]*m//g' | sed '/^[[:space:]]*$/d' | tail -20)
+        fi
         report_failure "markdown-link-check found broken links. Fix or remove these dead links:
 ${clean_output}"
     fi

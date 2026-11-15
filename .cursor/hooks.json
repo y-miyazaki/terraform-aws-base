@@ -44,6 +44,12 @@
         "timeout": 120
       }
     ],
+    "beforeSubmitPrompt": [
+      {
+        "command": ".cursor/hooks/common-hooks-cursor/scripts/gitleaks_prompt.sh",
+        "timeout": 30
+      }
+    ],
     "postToolUse": [
       {
         "command": ".cursor/hooks/terraform-hooks-cursor/scripts/terraform_fmt.sh",

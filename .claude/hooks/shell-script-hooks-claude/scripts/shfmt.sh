@@ -32,6 +32,8 @@ fi
 #
 # Description:
 #   Gathers modified/added/untracked shell scripts from git.
+#   Skips paths that no longer exist on disk (for example staged add then
+#   deleted from the working tree without staging the deletion).
 #   Each git command is guarded with || true to prevent pipefail
 #   from terminating the script.
 #

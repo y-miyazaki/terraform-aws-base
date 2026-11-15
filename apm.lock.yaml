@@ -4,8 +4,8 @@ dependencies:
 - repo_url: y-miyazaki/config
   name: config-aws
   host: github.com
-  resolved_commit: 3abd33a0f989cc822b05ab14000c087aa64455de
-  resolved_ref: v1.9.11
+  resolved_commit: 51b50cb4fd63e9b9da76a8b0bd3c6597b0763220
+  resolved_ref: v1.9.12
   version: 1.0.0
   virtual_path: .apm/packages/aws
   is_virtual: true
@@ -15,8 +15,8 @@ dependencies:
 - repo_url: y-miyazaki/config
   name: config-common
   host: github.com
-  resolved_commit: 3abd33a0f989cc822b05ab14000c087aa64455de
-  resolved_ref: v1.9.11
+  resolved_commit: 51b50cb4fd63e9b9da76a8b0bd3c6597b0763220
+  resolved_ref: v1.9.12
   version: 1.0.0
   virtual_path: .apm/packages/common
   is_virtual: true
@@ -356,8 +356,8 @@ dependencies:
 - repo_url: y-miyazaki/config
   name: common-hooks-claude
   host: github.com
-  resolved_commit: 3abd33a0f989cc822b05ab14000c087aa64455de
-  resolved_ref: v1.9.11
+  resolved_commit: 51b50cb4fd63e9b9da76a8b0bd3c6597b0763220
+  resolved_ref: v1.9.12
   version: 2.0.0
   virtual_path: .apm/packages/common-hooks-claude
   is_virtual: true
@@ -366,6 +366,7 @@ dependencies:
   - .claude/hooks/common-hooks-claude/scripts/actionlint.sh
   - .claude/hooks/common-hooks-claude/scripts/ghalint.sh
   - .claude/hooks/common-hooks-claude/scripts/gitleaks.sh
+  - .claude/hooks/common-hooks-claude/scripts/gitleaks_prompt.sh
   - .claude/hooks/common-hooks-claude/scripts/markdown_link_check.sh
   - .claude/hooks/common-hooks-claude/scripts/markdownlint_cli2.sh
   - .claude/hooks/common-hooks-claude/scripts/prettier.sh
@@ -374,17 +375,18 @@ dependencies:
     .claude/hooks/common-hooks-claude/scripts/actionlint.sh: sha256:c32872a4418f631c829682bb51174a56950be4f865bbb44ac97a0a8b8438fcd6
     .claude/hooks/common-hooks-claude/scripts/ghalint.sh: sha256:2a18dbb466a03c28544aa56476ff612a3b6bb1f6974ac7478c968dc5cc5883ed
     .claude/hooks/common-hooks-claude/scripts/gitleaks.sh: sha256:57563225d79386dffd1b02a893098b086296cbbf40b86c96bb603a659bd425b0
-    .claude/hooks/common-hooks-claude/scripts/markdown_link_check.sh: sha256:4ac0e9c462aca6253a0d7a163aff7ed659c177b3b9d07aaa02c512dba7182aee
+    .claude/hooks/common-hooks-claude/scripts/gitleaks_prompt.sh: sha256:9c77a5a930cb68072f832ea2779133014d216e45285ce25e617ca0a2075f51f6
+    .claude/hooks/common-hooks-claude/scripts/markdown_link_check.sh: sha256:73ec1c1515decd2dce2b8c8ad4583742cc05c8767b8ab8a1a20b250efce38f26
     .claude/hooks/common-hooks-claude/scripts/markdownlint_cli2.sh: sha256:e2eced48b7918d060c1f4d15f67039ae2f97d8bba2d5dd5fa350925dcff8334b
-    .claude/hooks/common-hooks-claude/scripts/prettier.sh: sha256:826f49fc307bff249e6a2106946b3c53500ab2b003d49732f8dbc64c7d145749
+    .claude/hooks/common-hooks-claude/scripts/prettier.sh: sha256:8c8053c1d8857cdf6c31858d0223f93fa6099659b711edf114c7c49d6c8c865f
     .claude/hooks/common-hooks-claude/scripts/zizmor.sh: sha256:17755760efe4caf8139c2afe1646ec391ca4248303e9e5133c10e26b2dd75731
-  content_hash: sha256:9cc36e5b1d72d22419e7db66fb31d7b5e748f0e37985a89aaa22ea39f5d3391e
+  content_hash: sha256:a893e00c5825b492250c1999f629583acd417f13bcbf046281c264249f15df06
   declared_license: Apache-2.0
 - repo_url: y-miyazaki/config
   name: common-hooks-cursor
   host: github.com
-  resolved_commit: 3abd33a0f989cc822b05ab14000c087aa64455de
-  resolved_ref: v1.9.11
+  resolved_commit: 51b50cb4fd63e9b9da76a8b0bd3c6597b0763220
+  resolved_ref: v1.9.12
   version: 2.0.0
   virtual_path: .apm/packages/common-hooks-cursor
   is_virtual: true
@@ -393,6 +395,7 @@ dependencies:
   - .cursor/hooks/common-hooks-cursor/scripts/actionlint.sh
   - .cursor/hooks/common-hooks-cursor/scripts/ghalint.sh
   - .cursor/hooks/common-hooks-cursor/scripts/gitleaks.sh
+  - .cursor/hooks/common-hooks-cursor/scripts/gitleaks_prompt.sh
   - .cursor/hooks/common-hooks-cursor/scripts/markdown_link_check.sh
   - .cursor/hooks/common-hooks-cursor/scripts/markdownlint_cli2.sh
   - .cursor/hooks/common-hooks-cursor/scripts/prettier.sh
@@ -401,17 +404,18 @@ dependencies:
     .cursor/hooks/common-hooks-cursor/scripts/actionlint.sh: sha256:c32872a4418f631c829682bb51174a56950be4f865bbb44ac97a0a8b8438fcd6
     .cursor/hooks/common-hooks-cursor/scripts/ghalint.sh: sha256:2a18dbb466a03c28544aa56476ff612a3b6bb1f6974ac7478c968dc5cc5883ed
     .cursor/hooks/common-hooks-cursor/scripts/gitleaks.sh: sha256:57563225d79386dffd1b02a893098b086296cbbf40b86c96bb603a659bd425b0
+    .cursor/hooks/common-hooks-cursor/scripts/gitleaks_prompt.sh: sha256:9c77a5a930cb68072f832ea2779133014d216e45285ce25e617ca0a2075f51f6
     .cursor/hooks/common-hooks-cursor/scripts/markdown_link_check.sh: sha256:73ec1c1515decd2dce2b8c8ad4583742cc05c8767b8ab8a1a20b250efce38f26
     .cursor/hooks/common-hooks-cursor/scripts/markdownlint_cli2.sh: sha256:e2eced48b7918d060c1f4d15f67039ae2f97d8bba2d5dd5fa350925dcff8334b
     .cursor/hooks/common-hooks-cursor/scripts/prettier.sh: sha256:8c8053c1d8857cdf6c31858d0223f93fa6099659b711edf114c7c49d6c8c865f
     .cursor/hooks/common-hooks-cursor/scripts/zizmor.sh: sha256:17755760efe4caf8139c2afe1646ec391ca4248303e9e5133c10e26b2dd75731
-  content_hash: sha256:19ce5547037352c30964968d97057982490e16112f2ce65834f8ca728e36709b
+  content_hash: sha256:f7856bbdcf5f38dcb784e3cfe3f8d754683e724e83e6e6d49a12a0ad7fb34114
   declared_license: Apache-2.0
 - repo_url: y-miyazaki/config
   name: config-github
   host: github.com
-  resolved_commit: 3abd33a0f989cc822b05ab14000c087aa64455de
-  resolved_ref: v1.9.11
+  resolved_commit: 51b50cb4fd63e9b9da76a8b0bd3c6597b0763220
+  resolved_ref: v1.9.12
   version: 1.0.0
   virtual_path: .apm/packages/github
   is_virtual: true
@@ -953,8 +957,8 @@ dependencies:
 - repo_url: y-miyazaki/config
   name: config-github-actions
   host: github.com
-  resolved_commit: 3abd33a0f989cc822b05ab14000c087aa64455de
-  resolved_ref: v1.9.11
+  resolved_commit: 51b50cb4fd63e9b9da76a8b0bd3c6597b0763220
+  resolved_ref: v1.9.12
   version: 1.0.0
   virtual_path: .apm/packages/github-actions
   is_virtual: true
@@ -1134,8 +1138,8 @@ dependencies:
 - repo_url: y-miyazaki/config
   name: config-repo-maintenance
   host: github.com
-  resolved_commit: 3abd33a0f989cc822b05ab14000c087aa64455de
-  resolved_ref: v1.9.11
+  resolved_commit: 51b50cb4fd63e9b9da76a8b0bd3c6597b0763220
+  resolved_ref: v1.9.12
   version: 1.0.0
   virtual_path: .apm/packages/repo-maintenance
   is_virtual: true
@@ -2087,8 +2091,8 @@ dependencies:
 - repo_url: y-miyazaki/config
   name: config-shell-script
   host: github.com
-  resolved_commit: 3abd33a0f989cc822b05ab14000c087aa64455de
-  resolved_ref: v1.9.11
+  resolved_commit: 51b50cb4fd63e9b9da76a8b0bd3c6597b0763220
+  resolved_ref: v1.9.12
   version: 1.0.0
   virtual_path: .apm/packages/shell-script
   is_virtual: true
@@ -2300,8 +2304,8 @@ dependencies:
 - repo_url: y-miyazaki/config
   name: shell-script-hooks-claude
   host: github.com
-  resolved_commit: 3abd33a0f989cc822b05ab14000c087aa64455de
-  resolved_ref: v1.9.11
+  resolved_commit: 51b50cb4fd63e9b9da76a8b0bd3c6597b0763220
+  resolved_ref: v1.9.12
   version: 1.0.0
   virtual_path: .apm/packages/shell-script-hooks-claude
   is_virtual: true
@@ -2311,14 +2315,14 @@ dependencies:
   - .claude/hooks/shell-script-hooks-claude/scripts/shfmt.sh
   deployed_file_hashes:
     .claude/hooks/shell-script-hooks-claude/scripts/shellcheck.sh: sha256:eb8be3c6f5496907d9e34d1321e3476d36f7bc3ba58ce7afd9cd8100375165af
-    .claude/hooks/shell-script-hooks-claude/scripts/shfmt.sh: sha256:e57ba2d9229d5e47e1cecacb3451884fb17380c44c85e01c6a7d421ef8c80e6c
-  content_hash: sha256:48c03348e417f6843466943b00a4de5a9fbc27f22ce944a9839b7e1fe0c6c3fb
+    .claude/hooks/shell-script-hooks-claude/scripts/shfmt.sh: sha256:1ee58b42a134c92845a1b9ea81a91e6c4218e0c446dda35ed261a2a0bfd8e74f
+  content_hash: sha256:0f05e090e48afe705600c5f75b8e63f461ac3f0c0031f991aeb5256f8cea179f
   declared_license: Apache-2.0
 - repo_url: y-miyazaki/config
   name: shell-script-hooks-cursor
   host: github.com
-  resolved_commit: 3abd33a0f989cc822b05ab14000c087aa64455de
-  resolved_ref: v1.9.11
+  resolved_commit: 51b50cb4fd63e9b9da76a8b0bd3c6597b0763220
+  resolved_ref: v1.9.12
   version: 1.0.0
   virtual_path: .apm/packages/shell-script-hooks-cursor
   is_virtual: true
@@ -2334,8 +2338,8 @@ dependencies:
 - repo_url: y-miyazaki/config
   name: config-terraform
   host: github.com
-  resolved_commit: 3abd33a0f989cc822b05ab14000c087aa64455de
-  resolved_ref: v1.9.11
+  resolved_commit: 51b50cb4fd63e9b9da76a8b0bd3c6597b0763220
+  resolved_ref: v1.9.12
   version: 1.0.0
   virtual_path: .apm/packages/terraform
   is_virtual: true
@@ -2579,8 +2583,8 @@ dependencies:
 - repo_url: y-miyazaki/config
   name: config-terraform-aws
   host: github.com
-  resolved_commit: 3abd33a0f989cc822b05ab14000c087aa64455de
-  resolved_ref: v1.9.11
+  resolved_commit: 51b50cb4fd63e9b9da76a8b0bd3c6597b0763220
+  resolved_ref: v1.9.12
   version: 1.0.0
   virtual_path: .apm/packages/terraform-aws
   is_virtual: true
@@ -2596,8 +2600,8 @@ dependencies:
 - repo_url: y-miyazaki/config
   name: terraform-hooks-claude
   host: github.com
-  resolved_commit: 3abd33a0f989cc822b05ab14000c087aa64455de
-  resolved_ref: v1.9.11
+  resolved_commit: 51b50cb4fd63e9b9da76a8b0bd3c6597b0763220
+  resolved_ref: v1.9.12
   version: 1.0.0
   virtual_path: .apm/packages/terraform-hooks-claude
   is_virtual: true
@@ -2613,8 +2617,8 @@ dependencies:
 - repo_url: y-miyazaki/config
   name: terraform-hooks-cursor
   host: github.com
-  resolved_commit: 3abd33a0f989cc822b05ab14000c087aa64455de
-  resolved_ref: v1.9.11
+  resolved_commit: 51b50cb4fd63e9b9da76a8b0bd3c6597b0763220
+  resolved_ref: v1.9.12
   version: 1.0.0
   virtual_path: .apm/packages/terraform-hooks-cursor
   is_virtual: true
@@ -2666,13 +2670,22 @@ deployments:
   content_hash: sha256:57563225d79386dffd1b02a893098b086296cbbf40b86c96bb603a659bd425b0
 - kind: project-relative
   target: claude
+  value: .claude/hooks/common-hooks-claude/scripts/gitleaks_prompt.sh
+  runtime: null
+  scope: project
+  owners:
+  - y-miyazaki/config/.apm/packages/common-hooks-claude
+  active_owner: y-miyazaki/config/.apm/packages/common-hooks-claude
+  content_hash: sha256:9c77a5a930cb68072f832ea2779133014d216e45285ce25e617ca0a2075f51f6
+- kind: project-relative
+  target: claude
   value: .claude/hooks/common-hooks-claude/scripts/markdown_link_check.sh
   runtime: null
   scope: project
   owners:
   - y-miyazaki/config/.apm/packages/common-hooks-claude
   active_owner: y-miyazaki/config/.apm/packages/common-hooks-claude
-  content_hash: sha256:4ac0e9c462aca6253a0d7a163aff7ed659c177b3b9d07aaa02c512dba7182aee
+  content_hash: sha256:73ec1c1515decd2dce2b8c8ad4583742cc05c8767b8ab8a1a20b250efce38f26
 - kind: project-relative
   target: claude
   value: .claude/hooks/common-hooks-claude/scripts/markdownlint_cli2.sh
@@ -2690,7 +2703,7 @@ deployments:
   owners:
   - y-miyazaki/config/.apm/packages/common-hooks-claude
   active_owner: y-miyazaki/config/.apm/packages/common-hooks-claude
-  content_hash: sha256:826f49fc307bff249e6a2106946b3c53500ab2b003d49732f8dbc64c7d145749
+  content_hash: sha256:8c8053c1d8857cdf6c31858d0223f93fa6099659b711edf114c7c49d6c8c865f
 - kind: project-relative
   target: claude
   value: .claude/hooks/common-hooks-claude/scripts/zizmor.sh
@@ -2717,7 +2730,7 @@ deployments:
   owners:
   - y-miyazaki/config/.apm/packages/shell-script-hooks-claude
   active_owner: y-miyazaki/config/.apm/packages/shell-script-hooks-claude
-  content_hash: sha256:e57ba2d9229d5e47e1cecacb3451884fb17380c44c85e01c6a7d421ef8c80e6c
+  content_hash: sha256:1ee58b42a134c92845a1b9ea81a91e6c4218e0c446dda35ed261a2a0bfd8e74f
 - kind: project-relative
   target: claude
   value: .claude/hooks/terraform-hooks-claude/scripts/terraform_fmt.sh
@@ -13680,6 +13693,15 @@ deployments:
   - y-miyazaki/config/.apm/packages/common-hooks-cursor
   active_owner: y-miyazaki/config/.apm/packages/common-hooks-cursor
   content_hash: sha256:57563225d79386dffd1b02a893098b086296cbbf40b86c96bb603a659bd425b0
+- kind: project-relative
+  target: cursor
+  value: .cursor/hooks/common-hooks-cursor/scripts/gitleaks_prompt.sh
+  runtime: null
+  scope: project
+  owners:
+  - y-miyazaki/config/.apm/packages/common-hooks-cursor
+  active_owner: y-miyazaki/config/.apm/packages/common-hooks-cursor
+  content_hash: sha256:9c77a5a930cb68072f832ea2779133014d216e45285ce25e617ca0a2075f51f6
 - kind: project-relative
   target: cursor
   value: .cursor/hooks/common-hooks-cursor/scripts/markdown_link_check.sh
