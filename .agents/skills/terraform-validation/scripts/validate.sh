@@ -99,7 +99,7 @@ Examples:
   $0                         # scan whole workspace
   $0 modules/aws/security    # scan only that subtree
   $0 modules/aws/vpc modules/aws/iam  # scan multiple targets
-  $0 -d modules/aws/vpc      # scan and generate docs
+  $0 -g modules/aws/vpc      # scan and generate docs
 EOF
     exit 0
 }
@@ -211,7 +211,7 @@ function process_terraform_directory {
         fi
     fi
 
-    # Step 4: Generate documentation (terraform-docs) if requested
+    # Step 3: Generate documentation (terraform-docs) if requested
     if [[ $GENERATE_DOCS == "true" ]]; then
         log "INFO" "Generating documentation (terraform-docs)"
         if ! execute_command_string "terraform-docs markdown table --output-file README.md ./"; then
@@ -377,6 +377,7 @@ function run_recursive_validation {
     if [[ ${#TARGET_DIRS[@]} -gt 0 ]]; then
         for target in "${TARGET_DIRS[@]}"; do
             if [[ ! -d $target ]]; then
+                log "WARN" "Skipping non-existent directory for validation: $target"
                 continue
             fi
             log "INFO" "Searching for Terraform modules in: $target"
@@ -563,21 +564,24 @@ function main {
     end_time=$(date +%s)
     elapsed=$((end_time - start_time))
 
-    if [[ $EXIT_CODE -eq 0 ]]; then
-        echo_section "All checks completed successfully in ${elapsed} seconds"
-        log "INFO" "✅ All validations passed"
-    else
-        echo_section "Result (completed in ${elapsed} seconds)"
-        [[ $TFLINT_FAILED == "1" ]] && echo "❌ tflint" >&2 || echo "✅ tflint" >&2
-        [[ $VALIDATE_FAILED == "1" ]] && echo "❌ terraform validate" >&2 || echo "✅ terraform validate" >&2
-        [[ $FMT_FAILED == "1" ]] && echo "❌ terraform fmt" >&2 || echo "✅ terraform fmt" >&2
-        if [[ $CHECK_ORDER == "true" ]]; then
-            [[ $ORDER_FAILED == "1" ]] && echo "❌ argument order (ORD-01)" >&2 || echo "✅ argument order (ORD-01)" >&2
-        fi
-        [[ $SECURITY_FAILED == "1" ]] && echo "❌ security scan (trivy)" >&2 || echo "✅ security scan (trivy)" >&2
-        [[ $DOCS_FAILED == "1" ]] && echo "⚠️  terraform-docs" >&2
-        log "ERROR" "❌ Some validations failed"
+    local order_status="SKIP"
+    if [[ $CHECK_ORDER == "true" ]]; then
+        order_status="$(check_status "$ORDER_FAILED")"
     fi
+    local docs_status="SKIP"
+    if [[ $GENERATE_DOCS == "true" ]]; then
+        docs_status="PASS"
+        if [[ $DOCS_FAILED == "1" ]]; then
+            docs_status="WARN"
+        fi
+    fi
+    print_validation_result terraform "$elapsed" \
+        "tflint=$(check_status "$TFLINT_FAILED")" \
+        "terraform_validate=$(check_status "$VALIDATE_FAILED")" \
+        "terraform_fmt=$(check_status "$FMT_FAILED")" \
+        "argument_order=${order_status}" \
+        "security_scan=$(check_status "$SECURITY_FAILED")" \
+        "terraform_docs=${docs_status}" || true
 
     exit $EXIT_CODE
 }

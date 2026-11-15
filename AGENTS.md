@@ -27,7 +27,7 @@ Every rule is **MUST** unless marked **SHOULD**. SHOULD may be skipped only with
 
 - Never fabricate APIs, commands, paths, or behavior; state "unknown" when uncertain.
 - Do not rely on training knowledge for version-specific APIs, library behavior, or toolchain details. Verify, in this order: repository code, tests, and docs; then official primary sources (vendor documentation, release notes, source repository) via a documentation tool or web fetch.
-- Do not manually run lint, format, or static-analysis checks that hooks, pre-commit, or CI already run automatically; act on their output instead. Run the tests for the changed behavior yourself. Never bypass or disable hooks.
+- Do not manually run lint, format, or static-analysis checks that hooks, pre-commit, or CI already run automatically; act on their output instead. Run the tests for the changed behavior yourself, except tests a hook already runs (for example `go test` for changed Go packages); for those, act on the hook output. Never bypass or disable hooks.
 - MUST NOT weaken, remove, or bypass tests or validations solely to make checks pass.
 
 ## Fixing Bugs and Anti-Patterns

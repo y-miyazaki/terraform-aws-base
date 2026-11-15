@@ -92,12 +92,12 @@ Structured PR output:
       - If the section comment contains checkbox guidance, generate or update checkbox lines in the same format.
       - If the section has no guidance, preserve the section heading and template comment without inventing content.
    4. Replace the metadata-only `## Overview` from Step 2 with a narrative Overview in the format of [category-pr-body-guidelines.md](references/category-pr-body-guidelines.md) § Overview Format (2–4 sentence paragraph plus `Core Fixes:`, `Scope:`, and `Risk / Deployment Note:` bullets); keep `## Changes` from Step 2 output.
-   5. Write the complete PR body (all sections) to a temporary file (e.g., `/tmp/completed_pr_body.md`).
+   5. Write the complete PR body (all sections) to a temporary file in the location the consumer's rules designate for temporary files.
 
 5. Apply full body (full-body mode only):
 
    ```bash
-   scripts/pr_body.sh <PR_NUMBER> --repo <OWNER/REPO> --body-file /tmp/completed_pr_body.md
+   scripts/pr_body.sh <PR_NUMBER> --repo <OWNER/REPO> --body-file <TEMP_FILE>
    ```
 
 6. Verify success:

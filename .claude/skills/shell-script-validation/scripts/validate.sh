@@ -1512,6 +1512,7 @@ function resolve_user_search_path {
 #
 # Globals:
 #   WORKSPACE_ROOT - Workspace root directory
+#   BATS_JOBS - Optional parallel job count (default nproc; 1 = serial)
 #
 # Arguments:
 #   $@ - List of test files
@@ -1549,6 +1550,31 @@ function run_bats_tests {
 
     custom_log "INFO" "Running Bats tests with: $bats_bin"
 
+    # Run test files in parallel when a bats-supported runner (GNU parallel or rush) is installed.
+    # BATS_JOBS overrides the job count; BATS_JOBS=1 forces serial execution.
+    local -a bats_opts=(--formatter tap)
+    local parallel_bin=""
+    local jobs="${BATS_JOBS:-$(nproc 2> /dev/null || echo 1)}"
+    if [[ $jobs -gt 1 ]]; then
+        if command -v parallel &> /dev/null; then
+            parallel_bin="parallel"
+        elif command -v rush &> /dev/null; then
+            parallel_bin="rush"
+        fi
+    fi
+    if [[ -n $parallel_bin ]]; then
+        # A mise shim re-resolves PATH and drops the bats libexec dir; launch the real binary instead.
+        local runner_bin="$parallel_bin" runner_real=""
+        if [[ $(command -v "$parallel_bin") == */shims/* ]] && command -v mise &> /dev/null; then
+            runner_real=$(mise which "$parallel_bin" 2> /dev/null || true)
+            if [[ -n $runner_real && -x $runner_real ]]; then
+                runner_bin="$runner_real"
+            fi
+        fi
+        bats_opts+=(--jobs "$jobs" --parallel-binary-name "$runner_bin" --no-parallelize-within-files)
+        custom_log "INFO" "Bats parallel: jobs=$jobs runner=$parallel_bin"
+    fi
+
     local bats_output
     bats_output=$(mktemp)
     local bats_exit=0
@@ -1556,13 +1582,13 @@ function run_bats_tests {
     # Full suite when --tests omitted; scoped --tests runs use the discovered file list.
     if [[ ${#TEST_PATHS[@]} -eq 0 && -d "$WORKSPACE_ROOT/test/bats" ]]; then
         pushd "$WORKSPACE_ROOT" > /dev/null || return 1
-        if "$bats_bin" -r "test/bats" --formatter tap > "$bats_output" 2>&1; then
+        if "$bats_bin" -r "test/bats" "${bats_opts[@]}" > "$bats_output" 2>&1; then
             bats_exit=0
         else
             bats_exit=$?
         fi
         popd > /dev/null || true
-    elif "$bats_bin" "${tests[@]}" --formatter tap > "$bats_output" 2>&1; then
+    elif "$bats_bin" "${tests[@]}" "${bats_opts[@]}" > "$bats_output" 2>&1; then
         bats_exit=0
     else
         bats_exit=$?
@@ -2267,6 +2293,29 @@ function main {
     generate_recommendations
 
     custom_echo_section "Validation Complete"
+
+    local scripts_status="PASS" bats_status="PASS" scripts_detail="" bats_detail=""
+    if [[ $SKIP_SCRIPTS == "true" ]]; then
+        scripts_status="SKIP"
+    elif [[ $FAILED_SCRIPTS -gt 0 ]]; then
+        scripts_status="FAIL"
+        scripts_detail="|${FAILED_SCRIPTS} failed"
+    elif [[ ${WARNINGS_COUNT:-0} -gt 0 ]]; then
+        scripts_status="WARN"
+        scripts_detail="|${WARNINGS_COUNT} warnings"
+    fi
+    if [[ $SKIP_TESTS == "true" ]]; then
+        bats_status="SKIP"
+    elif [[ ${#BATS_FAILED_TESTS[@]} -gt 0 ]]; then
+        bats_status="FAIL"
+        bats_detail="|${#BATS_FAILED_TESTS[@]} failed"
+    elif [[ ${BATS_EXIT_CODE:-0} -ne 0 ]]; then
+        bats_status="FAIL"
+        bats_detail="|incomplete run (exit ${BATS_EXIT_CODE})"
+    fi
+    print_validation_result shell-script "$SECONDS" \
+        "scripts=${scripts_status}${scripts_detail}" \
+        "bats=${bats_status}${bats_detail}" || true
 
     # Exit with appropriate code
     if [[ $FAILED_SCRIPTS -gt 0 ]] || [[ ${#BATS_FAILED_TESTS[@]} -gt 0 ]] || [[ ${BATS_EXIT_CODE:-0} -ne 0 ]]; then

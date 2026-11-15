@@ -11,7 +11,7 @@ ARG USER=vscode
 ARG WORKDIR=/workspace
 
 # version(base)
-ARG MISE_VERSION=v2026.11.3 # https://github.com/jdx/mise/releases
+ARG MISE_VERSION=v2026.11.4 # https://github.com/jdx/mise/releases
 
 #--------------------------------------------------------------
 # ENV

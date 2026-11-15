@@ -10,6 +10,8 @@
 # Design Rules:
 #   - Exit 0 if tool not found or no changed files (silent skip)
 #   - Call report_failure on scan failure (agent-aware error signal)
+#   - Skip (exit 0) once the same working-tree state was reported HOOK_BLOCK_LIMIT times
+#     (default 2) in this session; any file change re-runs the tool
 #   - Supports Kiro CLI, Claude Code, Copilot CLI, Cursor, Antigravity, VS Code
 #######################################
 
@@ -146,6 +148,7 @@ function emit_json_with_reason {
 #######################################
 function report_failure {
     local reason="$1"
+    record_blocked_state
     local agent=""
     local hook_event=""
 
@@ -264,6 +267,154 @@ function report_failure {
 }
 
 #######################################
+# blocked_state_file: Resolve the per-session, per-hook file that stores the blocked state
+#
+# Globals:
+#   HOOK_STDIN_DATA - hook event JSON (session_id / conversation_id / sessionId / conversationId)
+#   TMPDIR          - optional base directory (default /tmp)
+#
+# Arguments:
+#   None
+#
+# Outputs:
+#   State file path to stdout
+#
+# Returns:
+#   0 always
+#
+#######################################
+function blocked_state_file {
+    local session name
+    session=$(printf '%s' "${HOOK_STDIN_DATA:-}" | jq -r '.session_id // .conversation_id // .sessionId // .conversationId // empty' 2> /dev/null || true)
+    session=$(printf '%s' "${session:-nosession}" | tr -c 'A-Za-z0-9_-' '_')
+    name=$(basename "${BASH_SOURCE[0]}" .sh)
+    printf '%s/hook-state-%s/%s__%s\n' "${TMPDIR:-/tmp}" "$(id -u)" "${session:0:64}" "$name"
+}
+
+#######################################
+# clear_blocked_state: Forget the blocked state after a passing run
+#
+# Globals:
+#   None
+#
+# Arguments:
+#   None
+#
+# Outputs:
+#   None
+#
+# Returns:
+#   0 always
+#
+#######################################
+function clear_blocked_state {
+    rm -f "$(blocked_state_file)" 2> /dev/null || true
+}
+
+#######################################
+# compute_state_hash: Hash the working-tree change state (tracked diff + untracked content)
+#
+# Globals:
+#   None
+#
+# Arguments:
+#   None
+#
+# Outputs:
+#   Hex digest to stdout (empty when no hash command is available)
+#
+# Returns:
+#   0 always
+#
+#######################################
+function compute_state_hash {
+    local -a hasher
+    if command -v sha256sum > /dev/null 2>&1; then
+        hasher=(sha256sum)
+    elif command -v shasum > /dev/null 2>&1; then
+        hasher=(shasum -a 256)
+    else
+        return 0
+    fi
+
+    {
+        git diff HEAD 2> /dev/null || true
+        git ls-files --others --exclude-standard -z 2> /dev/null | xargs -0 -r "${hasher[@]}" 2> /dev/null || true
+    } | "${hasher[@]}" | cut -d' ' -f1
+}
+
+#######################################
+# is_blocked_state: Check whether the current state was already reported enough times
+#
+# Globals:
+#   HOOK_BLOCK_LIMIT - max reports per unchanged state (default 2)
+#   HOOK_STATE_HASH  - state hash captured at hook start
+#
+# Arguments:
+#   None
+#
+# Outputs:
+#   None
+#
+# Returns:
+#   0 when the state was reported HOOK_BLOCK_LIMIT times already, 1 otherwise
+#
+#######################################
+function is_blocked_state {
+    local current="${HOOK_STATE_HASH:-}"
+    [[ -n $current ]] || return 1
+
+    local limit="${HOOK_BLOCK_LIMIT:-2}"
+    [[ $limit =~ ^[0-9]+$ ]] || limit=2
+
+    local file saved="" count=0
+    file=$(blocked_state_file)
+    [[ -f $file ]] || return 1
+    read -r saved count < "$file" || true
+    [[ $saved == "$current" && ${count:-0} =~ ^[0-9]+$ ]] || return 1
+    ((count >= limit))
+}
+
+#######################################
+# record_blocked_state: Count one more report for the post-run state
+#
+# Description:
+#   Re-hashes after the tool ran so auto-fixes made by the tool itself are included.
+#   The count restarts at 1 when the state differs from the stored one.
+#
+# Globals:
+#   None
+#
+# Arguments:
+#   None
+#
+# Outputs:
+#   None
+#
+# Returns:
+#   0 always
+#
+#######################################
+function record_blocked_state {
+    local hash file saved="" count=0
+    hash=$(compute_state_hash)
+    [[ -n $hash ]] || return 0
+    file=$(blocked_state_file)
+    if [[ -f $file ]]; then
+        read -r saved count < "$file" || true
+    fi
+    if [[ $saved == "$hash" && ${count:-0} =~ ^[0-9]+$ ]]; then
+        count=$((count + 1))
+    else
+        count=1
+    fi
+    {
+        mkdir -p "$(dirname "$file")" \
+            && printf '%s %s\n' "$hash" "$count" > "$file"
+    } 2> /dev/null || true
+}
+
+#######################################
 # main: Entry point
 #
 # Description:
@@ -289,6 +440,11 @@ function main {
     local root
     root=$(git rev-parse --show-toplevel 2> /dev/null) || exit 0
     cd "$root" || exit 0
+
+    HOOK_STATE_HASH=$(compute_state_hash)
+    if is_blocked_state; then
+        exit 0
+    fi
 
     local files=()
     mapfile -t files < <(get_changed_files)
@@ -320,6 +476,8 @@ function main {
         report_failure "gitleaks found potential secrets in changed files:
 ${result}"
     fi
+
+    clear_blocked_state
 }
 
 if [[ ${BASH_SOURCE[0]} == "${0}" ]]; then

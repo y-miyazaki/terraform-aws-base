@@ -20,8 +20,6 @@ paths:
 | `**/*.sh,**/*.bats` (default) | Test rules must apply while editing **production** `.sh` files too | Suite pairing and conventions inject on script edits (G-05 companion coverage) |
 | `**/*.bats` only              | Test rules should inject **only** when a suite file is open        | Pairing obligation is easy to miss when changing `foo.sh`                      |
 
-**Why Bats lists two globs but Go uses one:** Bats pairs `*.sh` with `*.bats` — different extensions, so both must be listed. Go tests live in `*_test.go`, which already matches `**/*.go`. Listing only `**/*.bats` does not inject rules when editing the script under test.
-
 ## Standards
 
 ### Naming Conventions
