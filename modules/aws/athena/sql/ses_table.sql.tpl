@@ -1,15 +1,15 @@
 CREATE EXTERNAL TABLE IF NOT EXISTS ${athena_database_name}.${athena_table_name} (
 
-eventType string,
+detail struct<eventType:string,
 
-complaint struct<arrivaldate:string,
+complaint:struct<arrivaldate:string,
 complainedrecipients:array<struct<emailaddress:string>>,
 complaintfeedbacktype:string,
 feedbackid:string,
 `timestamp`:string,
 useragent:string>,
 
-bounce struct<bouncedrecipients:array<struct<action:string,
+bounce:struct<bouncedrecipients:array<struct<action:string,
 diagnosticcode:string,
 emailaddress:string,
 status:string>>,
@@ -19,7 +19,7 @@ feedbackid:string,
 reportingmta:string,
 `timestamp`:string>,
 
-mail struct<`timestamp`:string,
+mail:struct<`timestamp`:string,
 source:string,
 sourceArn:string,
 sendingAccountId:string,
@@ -38,24 +38,24 @@ ses_outgoing_ip:string,
 ses_from_domain:string,
 ses_caller_identity:string> >,
 
-send string,
+send:string,
 
-delivery struct<processingtimemillis:int,
+delivery:struct<processingtimemillis:int,
 recipients:array<string>,
 reportingmta:string,
 smtpresponse:string,
 `timestamp`:string>,
 
-open struct<ipaddress:string,
+open:struct<ipaddress:string,
 `timestamp`:string,
 userAgent:string>,
 
-reject struct<reason:string>,
+reject:struct<reason:string>,
 
-click struct<ipAddress:string,
+click:struct<ipAddress:string,
 `timestamp`:string,
 userAgent:string,
-link:string>
+link:string>>
 )
 PARTITIONED BY
 (

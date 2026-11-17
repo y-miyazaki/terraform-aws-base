@@ -53,7 +53,6 @@ cloudwatch_log_group = {
 | `common_lambda_log_us_east_1`            | Same (us-east-1 failover)      | 7–14 days   |
 | `common_lambda_metric`                   | Kinesis Data Firehose metrics  | 14 days     |
 | `common_lambda_metric_us_east_1`         | Metrics Lambda (us-east-1)     | 14 days     |
-| `common_lambda_ses`                      | SES alarms to Slack            | 7 days      |
 | `common_lambda_step_functions`           | Step Functions notifications   | 14 days     |
 | `common_lambda_step_functions_us_east_1` | Step Functions (us-east-1)     | 14 days     |
 | `common_lambda_vpc_flow_log`             | VPC Flow Logs processing       | 7 days      |
@@ -70,7 +69,6 @@ slack = {
   channel_id         = "C0XXXXXXXXX"
   override = {
     common_lambda_log          = { channel_id = "C-ALERTS" }
-    common_lambda_ses          = { channel_id = "C-EMAIL" }
     cloudwatch_event_ec2       = { channel_id = "C-INFRA" }
     common_lambda_step_functions = { channel_id = "C-DEVOPS" }
   }
@@ -86,7 +84,6 @@ slack = {
 | `cloudwatch_event_ec2`            | EC2 instance state changes                |
 | `common_lambda_log`               | CloudWatch alarms → SNS → Slack           |
 | `common_lambda_metric`            | Kinesis Data Firehose metrics             |
-| `common_lambda_ses`               | CloudWatch alarms via SES                 |
 | `common_lambda_step_functions`    | Step Functions execution logs             |
 | `metric_log_application`          | Application errors report                 |
 | `metric_log_postgresql_slowquery` | PostgreSQL slow query alerts              |
@@ -122,7 +119,7 @@ Alarms for regional services (`metric_resource_*` and `metric_log_*`, except Clo
 - `regions` (optional): Regions to monitor. The default is `[region.primary]`. Each region must be listed in `region.targets`; otherwise `terraform plan` fails.
 - `region_override` (optional): Map of region to an object whose top-level keys (for example `dimensions`, `threshold`, `threshold_override`, `log_group_names`, `is_enabled`) replace the common values for that region.
 
-Each alarm notifies the metric or log SNS topic and Lambda function of the same region. The SNS topics, Lambda functions, KMS keys, and DynamoDB tables exist in every region in `region.targets`. The SES event-notification SNS topic and Lambda function (`common_lambda.ses`) also exist in every one of these regions.
+Each alarm notifies the metric or log SNS topic and Lambda function of the same region. The SNS topics, Lambda functions, KMS keys, and DynamoDB tables exist in every region in `region.targets`.
 
 If you run the Lambda functions in an existing VPC (`common_lambda.vpc.is_enabled = true` and `create_vpc = false`), set `common_lambda.vpc.exists` per region (key: region name, value: `private_subnets` and `security_group_id`). Specify an entry for `region.primary`, `region.global`, and every other region in `region.targets`, because subnets and security groups are regional.
 

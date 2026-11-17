@@ -58,9 +58,6 @@ variable "cloudwatch_log_group" {
       common_lambda_metric = optional(object({
         retention_in_days = optional(number)
       }))
-      common_lambda_ses = optional(object({
-        retention_in_days = optional(number)
-      }))
       common_lambda_step_functions = optional(object({
         retention_in_days = optional(number)
       }))
@@ -116,10 +113,6 @@ variable "slack" {
         channel_id         = optional(string)
       }))
       common_lambda_metric = optional(object({
-        oauth_access_token = optional(string)
-        channel_id         = optional(string)
-      }))
-      common_lambda_ses = optional(object({
         oauth_access_token = optional(string)
         channel_id         = optional(string)
       }))

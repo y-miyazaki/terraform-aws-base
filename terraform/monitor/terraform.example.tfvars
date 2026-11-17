@@ -97,9 +97,6 @@ cloudwatch_log_group = {
     # common_lambda_s3_notification_s3_object_created_for_athena = {
     #   retention_in_days = 14
     # }
-    # common_lambda_ses = {
-    #   retention_in_days = 7
-    # }
     # common_lambda_step_functions = {
     #   retention_in_days = 14
     # }
@@ -142,7 +139,6 @@ slack = {
   #
   # Available function overrides:
   # - common_lambda_log: CloudWatch Alarms to Slack
-  # - common_lambda_ses: CloudWatch Alarms via SES to Slack
   # - common_lambda_metric: Kinesis Data Firehose CloudWatch Logs Processor
   # - step_functions: Step Functions Log to Slack
   # - cloudwatch_event_ec2: EC2 Events to Slack
@@ -163,9 +159,6 @@ slack = {
     #   channel_id         = "C0XXXXXXXXX"
     # }
     # common_lambda_metric = {
-    #   channel_id         = "C0XXXXXXXXX"
-    # }
-    # common_lambda_ses = {
     #   channel_id         = "C0XXXXXXXXX"
     # }
     # common_lambda_s3_notification_s3_object_created_for_athena = {
@@ -432,32 +425,6 @@ common_lambda = {
       sqs_success_feedback_role_arn            = null
       sqs_success_feedback_sample_rate         = null
       sqs_failure_feedback_role_arn            = null
-    }
-  }
-  ses = {
-    aws_sns_topic = {
-      name                                     = "aws-ses"
-      name_prefix                              = null
-      display_name                             = null
-      policy                                   = null
-      delivery_policy                          = null
-      application_success_feedback_role_arn    = null
-      application_success_feedback_sample_rate = null
-      application_failure_feedback_role_arn    = null
-      http_success_feedback_role_arn           = null
-      http_success_feedback_sample_rate        = null
-      http_failure_feedback_role_arn           = null
-      lambda_success_feedback_role_arn         = null
-      lambda_success_feedback_sample_rate      = null
-      lambda_failure_feedback_role_arn         = null
-      sqs_success_feedback_role_arn            = null
-      sqs_success_feedback_sample_rate         = null
-      sqs_failure_feedback_role_arn            = null
-    }
-    aws_lambda_function = {
-      environment = {
-        LOG_GROUP_NAME = "/aws/ses/log"
-      }
     }
   }
   aws_iam_role = {
@@ -2504,8 +2471,8 @@ athena = {
   # CUSTOMIZE: To check SES logs with Athena, specify true.
   enabled_ses = true
   # CUSTOMIZE: Specify the S3 bucket where SES logs are stored. s3://{bucket name}/{bucket prefix}
-  # Firehose delivers CloudWatch Logs to {prefix}/AWSLogs/{account id}/cloudwatchlogs/{region}/{delivery stream name}/ (SES: log group /aws/ses/log in the primary region).
-  ses_log_bucket = "s3://base-aws-log-application-0123456789012/Logs/AWSLogs/0123456789012/cloudwatchlogs/ap-northeast-1/base-aws-ses-log/"
+  # Firehose delivers CloudWatch Logs to {prefix}/AWSLogs/{account id}/cloudwatchlogs/{region}/{delivery stream name}/ (SES: log group /aws/events/ses in the primary region).
+  ses_log_bucket = "s3://base-aws-log-application-0123456789012/Logs/AWSLogs/0123456789012/cloudwatchlogs/ap-northeast-1/base-aws-events-ses/"
 }
 
 #--------------------------------------------------------------

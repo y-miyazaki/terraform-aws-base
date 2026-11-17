@@ -25,16 +25,6 @@ moved {
 }
 
 moved {
-  from = module.aws_sns_subscription_lambda_ses
-  to   = module.aws_sns_subscription_lambda_ses["primary"]
-}
-
-moved {
-  from = module.aws_lambda_create_lambda_ses
-  to   = module.aws_lambda_create_lambda_ses["primary"]
-}
-
-moved {
   from = module.aws_cloudwatch_alarm_log_application
   to   = module.aws_cloudwatch_alarm_log_application["primary"]
 }
@@ -140,11 +130,6 @@ moved {
 }
 
 moved {
-  from = module.aws_sns_subscription_lambda_ses_us_east_1[0]
-  to   = module.aws_sns_subscription_lambda_ses["global"]
-}
-
-moved {
   from = module.aws_lambda_create_lambda_metric_us_east_1
   to   = module.aws_lambda_create_lambda_metric["global"]
 }
@@ -152,11 +137,6 @@ moved {
 moved {
   from = module.aws_lambda_create_lambda_log_us_east_1
   to   = module.aws_lambda_create_lambda_log["global"]
-}
-
-moved {
-  from = module.aws_lambda_create_lambda_ses_us_east_1
-  to   = module.aws_lambda_create_lambda_ses["global"]
 }
 
 moved {

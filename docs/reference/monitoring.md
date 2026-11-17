@@ -104,7 +104,6 @@ Lambda configurations are placed based on the service they support:
 - Regional service Lambda: `main_regional_*.tf` with `region = each.value`
 - Alarm notification pipeline (SNS, Lambda, KMS, DynamoDB, Lambda VPC) in the monitor stack: `main_regional_*.tf` with `for_each = local.monitor_regions` (primary, global when it differs, and other `region.targets`)
 - Metric and log alarms in the monitor stack: `main_regional_metric_*.tf` with `for_each` over the regions in each variable's `regions` (default: primary only) and per-region `region_override`
-- SES event notification (SNS, Lambda) in the monitor stack: `main_regional_lambda.tf` with `for_each = local.monitor_regions`
 - Global-only alarms (`main_central_metric_resource_cloudfront.tf`, `main_central_metric_log_waf_global.tf`) stay in `main_central_*.tf`
 
 ### Daily Report Functions
