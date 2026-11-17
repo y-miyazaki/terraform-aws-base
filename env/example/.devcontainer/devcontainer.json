@@ -10,47 +10,47 @@
   "customizations": {
     "vscode": {
       "settings": {
-        "extensions.verifySignature": false
+        "extensions.verifySignature": true
       },
       "extensions": [
-        "3w36zj6.textlint",
-        "davidanson.vscode-markdownlint",
-        "editorconfig.editorconfig",
-        "esbenp.prettier-vscode",
-        "fabiospampinato.vscode-diff",
-        "github.vscode-github-actions",
-        "github.vscode-pull-request-github",
-        "ibm.output-colorizer",
-        "qufiwefefwoyn.inline-sql-syntax",
-        "redhat.vscode-yaml",
-        "streetsidesoftware.code-spell-checker",
-        "tamasfe.even-better-toml",
-        "usernamehw.errorlens",
-        "vscode-icons-team.vscode-icons",
-        "yzhang.markdown-all-in-one",
+        "3w36zj6.textlint@0.13.0",
+        "davidanson.vscode-markdownlint@0.62.1",
+        "editorconfig.editorconfig@0.18.2",
+        "esbenp.prettier-vscode@12.4.0",
+        "fabiospampinato.vscode-diff@2.1.2",
+        "github.vscode-github-actions@0.32.3",
+        "github.vscode-pull-request-github@0.178.0",
+        "ibm.output-colorizer@0.1.2",
+        "qufiwefefwoyn.inline-sql-syntax@2.16.0",
+        "redhat.vscode-yaml@2.0.0",
+        "streetsidesoftware.code-spell-checker@4.10.0",
+        "tamasfe.even-better-toml@0.21.2",
+        "usernamehw.errorlens@3.30.0",
+        "vscode-icons-team.vscode-icons@13.0.0",
+        "yzhang.markdown-all-in-one@3.6.3",
         // for AI
-        "anthropic.claude-code",
-        // "automatalabs.copilot-mcp",
-        // "github.copilot",
-        // "github.copilot-chat",
+        "anthropic.claude-code@2.1.326",
+        // "automatalabs.copilot-mcp@0.0.97",
+        // "github.copilot@1.388.0",
+        // "github.copilot-chat@0.48.1",
         // for Shell Script environment
-        "foxundermoon.shell-format",
-        "timonwong.shellcheck",
-        "mads-hartmann.bash-ide-vscode",
-        "rogalmic.bash-debug",
+        "foxundermoon.shell-format@7.2.8",
+        "timonwong.shellcheck@0.48.4",
+        "mads-hartmann.bash-ide-vscode@1.43.2",
+        "rogalmic.bash-debug@0.3.9",
         // for Go environment
-        "golang.go",
-        "windmilleng.vscode-go-autotest",
-        "timvaneker.serverless-snippets",
-        "bufbuild.vscode-buf",
+        "golang.go@0.58.0",
+        "windmilleng.vscode-go-autotest@1.6.0",
+        "timvaneker.serverless-snippets@0.1.0",
+        "bufbuild.vscode-buf@0.8.19",
         // for Jsonnet environment
-        "grafana.vscode-jsonnet",
+        "grafana.vscode-jsonnet@0.7.4",
         // for terraform extensions
-        "hashicorp.terraform"
+        "hashicorp.terraform@2.40.1"
         // for Python environment
-        // "charliermarsh.ruff",
-        // "ms-python.mypy-type-checker",
-        // "ms-python.python"
+        // "charliermarsh.ruff@2026.96.0",
+        // "ms-python.mypy-type-checker@2026.8.0",
+        // "ms-python.python@2026.10.0"
       ]
     }
   },
