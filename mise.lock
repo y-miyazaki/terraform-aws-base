@@ -3249,7 +3249,7 @@ version = "0.0.12"
 backend = "pipx:aws-mfa"
 
 [[tools."pipx:headroom-ai"]]
-version = "0.43.1"
+version = "0.44.0"
 backend = "pipx:headroom-ai"
 
 [tools."pipx:headroom-ai".options]

@@ -8,7 +8,7 @@
       "type": "stdio",
       "command": "uvx",
       "args": [
-        "mcp-proxy==0.14.0",
+        "mcp-proxy==0.15.0",
         "--transport",
         "streamablehttp",
         "https://knowledge-mcp.global.api.aws"
@@ -18,7 +18,7 @@
       "type": "stdio",
       "command": "uvx",
       "args": [
-        "awslabs.aws-documentation-mcp-server==1.2.4"
+        "awslabs.aws-documentation-mcp-server==1.2.5"
       ]
     },
     "aws-pricing-mcp-server": {
@@ -33,15 +33,13 @@
       "command": "npx",
       "args": [
         "-y",
-        "@upstash/context7-mcp@4.5.1"
+        "@upstash/context7-mcp@4.6.0"
       ]
     },
     "fetch": {
       "type": "stdio",
       "command": "uvx",
       "args": [
-        "--with",
-        "mcp>=1.28,<2",
         "mcp-server-fetch==2026.11.4"
       ]
     },
@@ -55,8 +53,13 @@
     },
     "codebase-memory-mcp": {
       "type": "stdio",
-      "command": "codebase-memory-mcp",
-      "args": []
+      "command": "uvx",
+      "args": [
+        "mcp-compressor==0.34.0",
+        "--exclude-tools=delete_project",
+        "--",
+        "codebase-memory-mcp"
+      ]
     },
     "hashicorp-terraform-mcp-server": {
       "type": "stdio",
