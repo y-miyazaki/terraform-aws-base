@@ -65,7 +65,7 @@ Since there is a devcontainer setting in [env/example](https://github.com/y-miya
   mkdir -p env/common/tmp/.aws
   mkdir -p env/common/tmp/gh
   touch env/common/tmp/.gitconfig
-  cp -p env/example/.devcontainer/devcontainer.json .devcontainer/devcontainer.json
+  cp -p env/example/.devcontainer/cursor/devcontainer.json .devcontainer/devcontainer.json
   cp -p env/example/.aws/config env/common/tmp/.aws/config
   ```
 

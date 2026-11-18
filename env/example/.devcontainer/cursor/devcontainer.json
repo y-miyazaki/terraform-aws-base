@@ -1,0 +1,90 @@
+{
+  "$schema": "https://raw.githubusercontent.com/devcontainers/spec/main/schemas/devContainer.schema.json",
+  "dockerFile": "../env/common/Dockerfile",
+  "remoteUser": "vscode",
+  "containerEnv": {
+    "CONTAINER_WORKSPACE_FOLDER": "${containerWorkspaceFolder}",
+    "LOCAL_WORKSPACE_FOLDER": "${localWorkspaceFolder}"
+  },
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "extensions.autoUpdate": true,
+        "extensions.autoCheckUpdates": true,
+        "extensions.verifySignature": true
+      },
+      // Cursor installs from Open VSX: pin versions published there (not Visual Studio Marketplace)
+      "extensions": [
+        // "3w36zj6.textlint@0.13.0",
+        "davidanson.vscode-markdownlint@0.62.1",
+        "editorconfig.editorconfig@0.18.2",
+        "esbenp.prettier-vscode@12.4.0",
+        // "fabiospampinato.vscode-diff@2.1.2",
+        "github.vscode-github-actions@0.32.3",
+        "github.vscode-pull-request-github@0.174.0",
+        "ibm.output-colorizer@0.1.2",
+        "qufiwefefwoyn.inline-sql-syntax@2.10.3",
+        "redhat.vscode-yaml@2.0.0",
+        "streetsidesoftware.code-spell-checker@4.10.0",
+        "tamasfe.even-better-toml@0.21.2",
+        "usernamehw.errorlens@3.30.0",
+        "vscode-icons-team.vscode-icons@13.0.0",
+        "yzhang.markdown-all-in-one@3.6.2",
+        // for AI
+        "anthropic.claude-code@2.1.326",
+        // "automatalabs.copilot-mcp@0.0.97",
+        // "github.copilot@1.388.0",
+        // "github.copilot-chat@0.48.1",
+        // for Shell Script environment
+        "foxundermoon.shell-format@7.2.8",
+        "timonwong.shellcheck@0.48.4",
+        "mads-hartmann.bash-ide-vscode@1.43.2",
+        "rogalmic.bash-debug@0.3.9",
+        // for Go environment
+        "golang.go@0.58.0",
+        // "windmilleng.vscode-go-autotest@1.6.0",
+        // "timvaneker.serverless-snippets@0.1.0",
+        "bufbuild.vscode-buf@0.8.19",
+        // for Jsonnet environment
+        "grafana.vscode-jsonnet@0.7.4",
+        // for terraform extensions
+        "hashicorp.terraform@2.40.1"
+        // for Python environment
+        // "charliermarsh.ruff@2026.96.0",
+        // "ms-python.mypy-type-checker@2026.8.0",
+        // "ms-python.python@2026.10.0"
+      ]
+    }
+  },
+  "initializeCommand": "mkdir -p env/common/tmp/gh env/common/tmp/.aws && touch env/common/tmp/.gitconfig",
+  "mounts": [
+    "source=devcontainer-home-vscode-local,target=/home/vscode/.local,type=volume",
+    "source=${localWorkspaceFolder},target=/workspace,type=bind",
+    "source=${localWorkspaceFolder}/env/common/.bashrc,target=/home/vscode/.bashrc,type=bind",
+    "source=${localWorkspaceFolder}/env/common/tmp/.gitconfig,target=/home/vscode/.gitconfig,type=bind",
+    "source=${localWorkspaceFolder}/env/common/tmp/gh,target=/home/vscode/.config/gh,type=bind",
+    "source=${localWorkspaceFolder}/env/common/tmp/.aws,target=/home/vscode/.aws,type=bind"
+  ],
+  "onCreateCommand": "/bin/bash env/common/scripts/on_create.sh",
+  "postCreateCommand": "/bin/bash env/common/scripts/post_create.sh",
+  "postStartCommand": "/bin/bash env/common/scripts/post_start.sh",
+  "runArgs": [
+    "--add-host=host.docker.internal:host-gateway"
+  ],
+  "updateContentCommand": "/bin/bash env/common/scripts/update_content.sh",
+  "waitFor": "postCreateCommand",
+  "remoteEnv": {
+    "PATH": "/home/vscode/.local/share/mise/shims:${containerEnv:PATH}"
+  },
+  "workspaceMount": "",
+  "workspaceFolder": "/workspace",
+  "init": true,
+  "overrideCommand": false,
+  "features": {
+    "ghcr.io/devcontainers/features/docker-outside-of-docker:1": {
+      "version": "29.10.0",
+      "moby": false,
+      "dockerDashComposeVersion": "v2"
+    }
+  }
+}

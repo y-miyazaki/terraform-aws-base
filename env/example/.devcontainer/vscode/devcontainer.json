@@ -81,7 +81,7 @@
   "overrideCommand": false,
   "features": {
     "ghcr.io/devcontainers/features/docker-outside-of-docker:1": {
-      "version": "latest",
+      "version": "29.10.0",
       "moby": false,
       "dockerDashComposeVersion": "v2"
     }
