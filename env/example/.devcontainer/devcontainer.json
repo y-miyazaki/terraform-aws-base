@@ -9,6 +9,8 @@
   "customizations": {
     "vscode": {
       "settings": {
+        "extensions.autoUpdate": true,
+        "extensions.autoCheckUpdates": true,
         "extensions.verifySignature": true
       },
       "extensions": [
