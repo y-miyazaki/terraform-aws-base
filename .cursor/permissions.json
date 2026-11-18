@@ -64,9 +64,6 @@
     "hostname",
     "id",
     "jq",
-    "lean-ctx",
-    "**/lean-ctx-bin/bin/lean-ctx",
-    "npx:lean-ctx*",
     "less",
     "ls",
     "mkdir -p *",
@@ -99,7 +96,7 @@
   ],
   "autoRun": {
     "allow_instructions": [
-      "Prioritize lean-ctx and fetch MCP. Avoid heavy terminal outputs."
+      "Prioritize the fetch MCP. Avoid heavy terminal outputs."
     ],
     "block_instructions": [
       "git commit, push, checkout, rebase, reset --hard, clean -f, and branch -D require approval; git push --force and git push -f stay blocked unless the user asks for them.",

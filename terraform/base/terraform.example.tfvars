@@ -1742,7 +1742,14 @@ security_cloudtrail = {
   # so use it for known automation (e.g. IAM Identity Center JIT access) instead of excluding an event name globally.
   # Wildcards (*) are allowed. Do not hardcode account IDs in user_identity_arn.
   # https://docs.aws.amazon.com/securityhub/latest/userguide/cloudwatch-controls.html#cloudwatch-4
-  cloudwatch_4_event_exclusions = []
+  cloudwatch_4_event_exclusions = [
+    # Covers Put/Attach/Detach/DeleteRolePolicy in one rule (keeps the filter pattern within the 1024-character limit).
+    {
+      event_name        = "*RolePolicy"
+      role_name         = "AWSReservedSSO_*"
+      user_identity_arn = "arn:aws:sts::*:assumed-role/AWSServiceRoleForSSO/*"
+    },
+  ]
   aws_iam_role = {
     description = ""
     name        = "security-cloudtrail-role"

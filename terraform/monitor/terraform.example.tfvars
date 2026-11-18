@@ -610,6 +610,7 @@ metric_log_application = {
     "/aws/apigateway",
     "/aws/ecs/containerinsights",
     "/aws/ecs/example-",
+    "/aws/events/ses",
     "/aws/lambda/aws-controltower-NotificationForwarder",
     "/aws/lambda/base-",
     "/aws/kinesis",

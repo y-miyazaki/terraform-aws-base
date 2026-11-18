@@ -57,7 +57,7 @@ Slack request -> Approval channel notification -> Approver clicks Approve
 pending -> approved -> active -> revoked       (normal completion)
 pending -> approved -> active -> expired       (cleanup-checker forced revoke)
 pending -> rejected                            (approver rejected)
-pending -> auto_rejected                       (start time passed without approval)
+pending -> auto_rejected                       (approval deadline passed without approval)
 active  -> revoked                             (early revocation)
 ```
 
@@ -68,14 +68,28 @@ active  -> revoked                             (early revocation)
 - Only users listed in the profile's `approvers` can approve or reject
 - All lifecycle events are posted as thread replies to the original approval message
 
+### Approval Deadline
+
+A pending request can be approved only until its approval deadline. After the deadline it is auto-rejected, and an Approve click is refused.
+
+| Request type                 | Approval deadline       |
+| ---------------------------- | ----------------------- |
+| Immediate (no start time)    | Creation time + 8 hours |
+| Scheduled (start time given) | `end_at` of the request |
+
+- The 8-hour limit is a constant in the Lambda code (not configurable).
+- An immediate request approved within the limit is granted from the approval time for the full requested duration.
+- A scheduled request approved after `start_at` (and before `end_at`) is granted immediately but still ends at the original `end_at`, so the granted time can be shorter than the requested duration.
+- The cleanup checker runs every 15 minutes, so the actual auto-rejection occurs up to 15 minutes after the deadline.
+
 ### Failure Behavior
 
-| Failure               | Behavior                                                     |
-| --------------------- | ------------------------------------------------------------ |
-| Grant Lambda failure  | 3 retries (30s, 60s, 120s backoff) -> GrantFailed state      |
-| Revoke Lambda failure | 3 retries (30s, 60s, 120s backoff) -> DLQ + CloudWatch Alarm |
-| Step Functions crash  | Cleanup checker scans every 15 min, force-revokes expired    |
-| Unapproved past start | Cleanup checker auto-rejects pending requests                |
+| Failure                  | Behavior                                                              |
+| ------------------------ | --------------------------------------------------------------------- |
+| Grant Lambda failure     | 3 retries (30s, 60s, 120s backoff) -> GrantFailed state               |
+| Revoke Lambda failure    | 3 retries (30s, 60s, 120s backoff) -> DLQ + CloudWatch Alarm          |
+| Step Functions crash     | Cleanup checker scans every 15 min, force-revokes expired             |
+| Unapproved past deadline | Cleanup checker auto-rejects pending requests (see Approval Deadline) |
 
 ## Operational Characteristics
 
@@ -126,7 +140,7 @@ active  -> revoked                             (early revocation)
 │    - Scan stale active assignments  │
 │    - Force-revoke expired           │
 │    - Auto-reject unapproved past    │
-│      start time                     │
+│      approval deadline              │
 └─────────────────────────────────────┘
 ```
 
@@ -237,7 +251,7 @@ All lifecycle events are posted as thread replies:
 Error cases:
 
 ```text
-  └─ ⏰ Auto-rejected (start time passed)
+  └─ ⏰ Auto-rejected (not approved within 8 hours of the request / end time passed without approval)
   └─ ⏹️ Early revoked by @actor
 ```
 
@@ -306,14 +320,14 @@ in both the Terraform `workflow_secret` variable and the Workflow Builder webhoo
 
 ## Safety Design
 
-| Risk                   | Mitigation                                                    |
-| ---------------------- | ------------------------------------------------------------- |
-| Revoke Lambda failure  | 3 retries -> DLQ -> CloudWatch Alarm -> Slack alert           |
-| Step Functions crash   | Cleanup checker scans every 15 min, force-revokes expired     |
-| Unauthorized request   | Slack signature verification + approvers list check           |
-| Duration over-request  | Validated against profile `max_duration_minutes`              |
-| Duplicate active grant | DynamoDB check for same user + same profile in active status  |
-| Unapproved stale       | Cleanup checker auto-rejects pending requests past start time |
+| Risk                   | Mitigation                                                                 |
+| ---------------------- | -------------------------------------------------------------------------- |
+| Revoke Lambda failure  | 3 retries -> DLQ -> CloudWatch Alarm -> Slack alert                        |
+| Step Functions crash   | Cleanup checker scans every 15 min, force-revokes expired                  |
+| Unauthorized request   | Slack signature verification + approvers list check                        |
+| Duration over-request  | Validated against profile `max_duration_minutes`                           |
+| Duplicate active grant | DynamoDB check for same user + same profile in active status               |
+| Unapproved stale       | Cleanup checker auto-rejects pending requests past their approval deadline |
 
 ## Security
 

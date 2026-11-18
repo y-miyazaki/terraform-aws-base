@@ -4,8 +4,7 @@
   "remoteUser": "vscode",
   "containerEnv": {
     "CONTAINER_WORKSPACE_FOLDER": "${containerWorkspaceFolder}",
-    "LOCAL_WORKSPACE_FOLDER": "${localWorkspaceFolder}",
-    "BASH_ENV": "/home/vscode/.config/lean-ctx/env.sh"
+    "LOCAL_WORKSPACE_FOLDER": "${localWorkspaceFolder}"
   },
   "customizations": {
     "vscode": {
@@ -54,28 +53,29 @@
       ]
     }
   },
+  "initializeCommand": "mkdir -p env/common/tmp/gh env/common/tmp/.aws && touch env/common/tmp/.gitconfig",
   "mounts": [
-    "source=devcontainer-home-vscode-local,target=/home/vscode/.local,type=volume"
+    "source=devcontainer-home-vscode-local,target=/home/vscode/.local,type=volume",
+    "source=${localWorkspaceFolder},target=/workspace,type=bind",
+    "source=${localWorkspaceFolder}/env/common/.bashrc,target=/home/vscode/.bashrc,type=bind",
+    "source=${localWorkspaceFolder}/env/common/tmp/.gitconfig,target=/home/vscode/.gitconfig,type=bind",
+    "source=${localWorkspaceFolder}/env/common/tmp/gh,target=/home/vscode/.config/gh,type=bind",
+    "source=${localWorkspaceFolder}/env/common/tmp/.aws,target=/home/vscode/.aws,type=bind"
   ],
+  "onCreateCommand": "/bin/bash env/common/scripts/on_create.sh",
+  "postCreateCommand": "/bin/bash env/common/scripts/post_create.sh",
+  "postStartCommand": "/bin/bash env/common/scripts/post_start.sh",
   "runArgs": [
-    "--add-host=host.docker.internal:host-gateway",
-    "-v",
-    "${localWorkspaceFolder}:/workspace",
-    "-v",
-    "${localWorkspaceFolder}/env/common/.bashrc:/home/vscode/.bashrc",
-    "-v",
-    "${localWorkspaceFolder}/env/common/tmp/.gitconfig:/home/vscode/.gitconfig",
-    "-v",
-    "${localWorkspaceFolder}/env/common/tmp/gh:/home/vscode/.config/gh",
-    "-v",
-    "${localWorkspaceFolder}/env/common/tmp/.aws:/home/vscode/.aws"
+    "--add-host=host.docker.internal:host-gateway"
   ],
-  "postCreateCommand": "/bin/bash env/common/scripts/init.sh",
+  "updateContentCommand": "/bin/bash env/common/scripts/update_content.sh",
+  "waitFor": "postCreateCommand",
   "remoteEnv": {
     "PATH": "/home/vscode/.local/share/mise/shims:${containerEnv:PATH}"
   },
   "workspaceMount": "",
   "workspaceFolder": "/workspace",
+  "init": true,
   "overrideCommand": false,
   "features": {
     "ghcr.io/devcontainers/features/docker-outside-of-docker:1": {
