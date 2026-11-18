@@ -67,9 +67,6 @@
       "Bash(hostname:*)",
       "Bash(id:*)",
       "Bash(jq:*)",
-      "Bash(lean-ctx:*)",
-      "Bash(*lean-ctx-bin/bin/lean-ctx *)",
-      "Bash(npx *lean-ctx*)",
       "Bash(less:*)",
       "Bash(ls:*)",
       "Bash(mkdir -p:*)",
@@ -156,7 +153,9 @@
       "mcp__fetch",
       "mcp__github__get_*",
       "mcp__github__list_*",
-      "mcp__github__search_*"
+      "mcp__github__search_*",
+      "mcp__github__server_get_tool_schema",
+      "mcp__github__server_invoke_tool"
     ],
     "deny": [
       "Bash(actionlint:*)",
