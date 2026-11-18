@@ -466,8 +466,8 @@ function is_loop_maintenance_commit {
     fi
     if [[ ${commit_type} == "chore" && ${scope} == "loop" ]]; then
         case "${subject}" in
-            "append run log [skip ci]" | "update state [skip ci]" \
-                | "promote state for PR #"* | "clear_pending state for PR #"*)
+            "append run log [skip ci]" | "update state [skip ci]" | \
+                "promote state for PR #"* | "clear_pending state for PR #"*)
                 return 0
                 ;;
         esac

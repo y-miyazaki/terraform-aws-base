@@ -1213,6 +1213,12 @@ function print_bats_output {
         esac
     done < "$output_file"
 
+    # Non-zero exit without any "not ok": surface runner errors/warnings hidden by the filter above.
+    if [[ ${#BATS_FAILED_TESTS[@]} -eq 0 ]]; then
+        echo "Bats output (non-TAP lines; no failing tests recorded):"
+        grep -vE '^(ok |1\.\.|\s*$)' "$output_file" || true
+    fi
+
     if [[ -n $BATS_SUMMARY ]]; then
         echo ""
         echo "$BATS_SUMMARY"

@@ -53,8 +53,8 @@ claude = { version = "2.1.322", lazy = true, lazy_bins = ["claude"] }           
 "github:microsoft/waza" = { version = "v0.40.1", lazy = true, lazy_bins = ["waza"] }                              # agent skill evaluator
 
 # AWS related tools
-"aqua:aws/aws-cli" = { version = "2.39.7", lazy = true, lazy_bins = ["aws", "aws_completer"] }                     # AWS CLI
-"aqua:aws/aws-sam-cli" = { version = "1.171.0", lazy = true, lazy_bins = ["sam"] }                                 # SAM CLI tool
+"aqua:aws/aws-cli" = { version = "2.40.0", lazy = true, lazy_bins = ["aws", "aws_completer"] }                     # AWS CLI
+"aqua:aws/aws-sam-cli" = { version = "1.172.1", lazy = true, lazy_bins = ["sam"] }                                 # SAM CLI tool
 "npm:awsp" = { version = "0.2.0", depends = [
   "node",
 ], install_env = { NPM_CONFIG_IGNORE_SCRIPTS = "true" } } # AWS profile switcher
@@ -115,7 +115,7 @@ claude = { version = "2.1.322", lazy = true, lazy_bins = ["claude"] }           
 "pipx:pre-commit" = { version = "4.7.0", depends = [
   "python",
 ], lazy = true, lazy_bins = ["pre-commit"] } # pre-commit framework
-"pipx:semgrep" = { version = "1.184.0", depends = ["python"], lazy = true, lazy_bins = ["semgrep", "pysemgrep"] } # SAST scanner (uvx-backed pipx)
+"pipx:semgrep" = { version = "1.185.0", depends = ["python"], lazy = true, lazy_bins = ["semgrep", "pysemgrep"] } # SAST scanner (uvx-backed pipx)
 "aqua:aquasecurity/trivy" = { version = "0.76.2", lazy = true, lazy_bins = ["trivy"] }                             # vulnerability scanner
 
 # Terraform related tools
