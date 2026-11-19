@@ -16,8 +16,8 @@ variable "aws_cloudwatch_event_rule" {
       schedule_expression = string
       # (Optional) The description of the rule. Defaults to "Trusted Advisor event rule.".
       description = optional(string, "Trusted Advisor event rule.")
-      # Whether the rule should be enabled (defaults to ENABLED).
-      state = string
+      # (Optional) The state of the rule. Valid values: ENABLED, DISABLED, ENABLED_WITH_ALL_CLOUDTRAIL_MANAGEMENT_EVENTS. Defaults to ENABLED.
+      state = optional(string, "ENABLED")
     }
   )
   description = "(Optional) Provides an EventBridge Rule resource."

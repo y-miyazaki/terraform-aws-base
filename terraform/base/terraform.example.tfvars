@@ -28,13 +28,16 @@
 # to another account (typically the audit account) and the corresponding
 # managed_services flag should be set to true.
 #   aws organizations list-delegated-administrators --service-principal access-analyzer.amazonaws.com
-#   aws organizations list-delegated-administrators --service-principal config.amazonaws.com
 #   aws organizations list-delegated-administrators --service-principal guardduty.amazonaws.com
 #   aws organizations list-delegated-administrators --service-principal securityhub.amazonaws.com
 #
 # CloudTrail is managed directly by Control Tower on the root account (not via delegated admin).
 # Verify with (run from root account):
 #   aws cloudtrail describe-trails --query 'trailList[?IsOrganizationTrail==`true`].Name'
+#
+# AWS Config is not delegated. Control Tower manages it in each governed account through the AWS-GR_CONFIG_ENABLED control.
+# Verify with (run from root account, for each governed OU):
+#   aws controltower list-enabled-controls --target-identifier <OU ARN>
 #--------------------------------------------------------------
 # CUSTOMIZE: need to change Control Tower settings.
 control_tower = {
@@ -45,7 +48,7 @@ control_tower = {
     access_analyzer = false
     # aws cloudtrail describe-trails --query 'trailList[?IsOrganizationTrail==`true`].Name' (run from root account)
     cloudtrail = false
-    # aws organizations list-delegated-administrators --service-principal config.amazonaws.com
+    # aws controltower list-enabled-controls --target-identifier <OU ARN> (run from root account; look for AWS-GR_CONFIG_ENABLED)
     config = false
     # aws organizations list-delegated-administrators --service-principal guardduty.amazonaws.com
     guardduty = false
@@ -92,7 +95,7 @@ name_prefix = "base-"
 # Region Configuration
 # - global:  Global resources (CloudFront, Route53, WAF, ACM) — must be us-east-1
 # - primary: Development and operations base region (fallback for provider)
-# - targets: All regions where regional resources are deployed
+# - targets: All regions where regional resources are deployed (must include both global and primary)
 #
 # Common regions:
 # https://docs.aws.amazon.com/global-infrastructure/latest/regions/aws-regions.html
@@ -102,7 +105,7 @@ region = {
   global = "us-east-1"
   # CUSTOMIZE: Development and operations base region (fallback for provider)
   primary = "ap-northeast-1"
-  # CUSTOMIZE: All regions where regional resources are deployed
+  # CUSTOMIZE: All regions where regional resources are deployed (must include both global and primary)
   targets = ["ap-northeast-1", "us-east-1"]
 }
 

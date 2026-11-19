@@ -10,7 +10,7 @@
 
 | Name | Version |
 | ---- | ------- |
-| <a name="provider_aws"></a> [aws](#provider\_aws) | >= 6.0.0, < 7.0.0 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | 6.73.0 |
 
 ## Modules
 
@@ -28,7 +28,7 @@ No modules.
 
 | Name | Description | Type | Default | Required |
 | ---- | ----------- | ---- | ------- | :------: |
-| <a name="input_aws_cloudwatch_event_rule"></a> [aws\_cloudwatch\_event\_rule](#input\_aws\_cloudwatch\_event\_rule) | (Optional) Provides an EventBridge Rule resource. | <pre>object(<br/>    {<br/>      # The name of the rule. If omitted, Terraform will assign a random, unique name. Conflicts with name_prefix.<br/>      name = string<br/>      # The scheduling expression. For example, cron(0 20 * * ? *) or rate(5 minutes). At least one of schedule_expression or event_pattern is required. Can only be used on the default event bus.<br/>      schedule_expression = string<br/>      # (Optional) The description of the rule. Defaults to "Trusted Advisor event rule.".<br/>      description = optional(string, "Trusted Advisor event rule.")<br/>      # Whether the rule should be enabled (defaults to ENABLED).<br/>      state = string<br/>    }<br/>  )</pre> | <pre>{<br/>  "description": "Trusted Advisor event rule.",<br/>  "name": "trusted-advisor-cloudwatch-event-rule",<br/>  "schedule_expression": "cron(*/5 * * * ? *)",<br/>  "state": "ENABLED"<br/>}</pre> | no |
+| <a name="input_aws_cloudwatch_event_rule"></a> [aws\_cloudwatch\_event\_rule](#input\_aws\_cloudwatch\_event\_rule) | (Optional) Provides an EventBridge Rule resource. | <pre>object(<br/>    {<br/>      # The name of the rule. If omitted, Terraform will assign a random, unique name. Conflicts with name_prefix.<br/>      name = string<br/>      # The scheduling expression. For example, cron(0 20 * * ? *) or rate(5 minutes). At least one of schedule_expression or event_pattern is required. Can only be used on the default event bus.<br/>      schedule_expression = string<br/>      # (Optional) The description of the rule. Defaults to "Trusted Advisor event rule.".<br/>      description = optional(string, "Trusted Advisor event rule.")<br/>      # (Optional) The state of the rule. Valid values: ENABLED, DISABLED, ENABLED_WITH_ALL_CLOUDTRAIL_MANAGEMENT_EVENTS. Defaults to ENABLED.<br/>      state = optional(string, "ENABLED")<br/>    }<br/>  )</pre> | <pre>{<br/>  "description": "Trusted Advisor event rule.",<br/>  "name": "trusted-advisor-cloudwatch-event-rule",<br/>  "schedule_expression": "cron(*/5 * * * ? *)",<br/>  "state": "ENABLED"<br/>}</pre> | no |
 | <a name="input_aws_cloudwatch_event_target"></a> [aws\_cloudwatch\_event\_target](#input\_aws\_cloudwatch\_event\_target) | (Required) Provides an EventBridge Target resource. | <pre>object(<br/>    {<br/>      # (Required) The Amazon Resource Name (ARN) associated of the target.<br/>      arn = string<br/>    }<br/>  )</pre> | n/a | yes |
 | <a name="input_is_enabled"></a> [is\_enabled](#input\_is\_enabled) | (Optional) A boolean flag to enable/disable Trusted Advisor. Defaults true. | `bool` | `true` | no |
 | <a name="input_region"></a> [region](#input\_region) | (Optional) AWS region. Defaults to provider region. | `string` | `null` | no |

@@ -12,7 +12,8 @@ module "aws_chatbot_create" {
   slack_team_id    = var.security_notification.slack_team_id
   sns_topic_arns = concat(
     var.security_notification.securityhub.is_enabled ? [module.aws_chatbot_security_securityhub.sns_topic_arn] : [],
-    var.security_notification.guardduty.is_enabled ? [module.aws_chatbot_security_guardduty.sns_topic_arn] : []
+    var.security_notification.guardduty.is_enabled ? concat([module.aws_chatbot_security_guardduty.sns_topic_arn], [for m in module.aws_chatbot_security_guardduty_secondary : m.sns_topic_arn]) : [],
+    local.is_access_analyzer_notification_enabled ? [for m in module.aws_chatbot_security_access_analyzer : m.sns_topic_arn] : []
   )
 
   tags = var.tags

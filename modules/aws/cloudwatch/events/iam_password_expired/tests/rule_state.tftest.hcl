@@ -24,6 +24,22 @@ run "description_defaults_to_module_text" {
   }
 }
 
+run "state_defaults_to_enabled" {
+  command = plan
+
+  variables {
+    aws_cloudwatch_event_rule = {
+      name                = "example-rule"
+      schedule_expression = "rate(1 day)"
+    }
+  }
+
+  assert {
+    condition     = aws_cloudwatch_event_rule.this[0].state == "ENABLED"
+    error_message = "The rule state must default to ENABLED when it is omitted."
+  }
+}
+
 run "state_is_passed_to_the_rule" {
   command = plan
 
@@ -56,5 +72,14 @@ run "nothing_is_created_when_disabled" {
   assert {
     condition     = length(aws_cloudwatch_event_rule.this) == 0 && length(aws_cloudwatch_event_target.this) == 0
     error_message = "No rule or target must be created when is_enabled is false."
+  }
+}
+
+run "rule_defaults_are_for_iam_password_expired" {
+  command = plan
+
+  assert {
+    condition     = aws_cloudwatch_event_rule.this[0].name == "iam-password-expired-cloudwatch-event-rule" && aws_cloudwatch_event_rule.this[0].schedule_expression == "cron(0 0 * * ? *)" && aws_cloudwatch_event_rule.this[0].description == "IAM password expired event rule."
+    error_message = "The default rule must be the IAM password expired rule, not a copy of the Trusted Advisor one."
   }
 }

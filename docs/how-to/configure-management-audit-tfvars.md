@@ -199,10 +199,17 @@ access_analyzer_organization = {
 security_notification = {
   slack_channel_id = "C0XXXXXXXXX"
   slack_team_id    = "xxxxxxxxxxx"
-  guardduty    = { is_enabled = true }
-  securityhub  = { is_enabled = true }
+  access_analyzer  = { is_enabled = true }
+  guardduty        = { is_enabled = true }
+  securityhub      = { is_enabled = true }
 }
 ```
+
+`guardduty` forwards GuardDuty findings to Slack. Because findings are regional, the EventBridge rule and SNS topic are created in every region in `region.targets`; the topics outside the primary region are not encrypted, because the KMS key exists only in the primary region.
+
+`access_analyzer` forwards active external access findings of the organization analyzers (for example an S3 bucket or IAM role shared outside the organization) to Slack. Internal access and unused access findings are not notified. The notification is created only when `access_analyzer_organization.is_enabled` is true and the audit account is the delegated administrator of IAM Access Analyzer. The EventBridge rule and SNS topic are created in every region in `region.targets`, and the Chatbot configuration subscribes to all of them. The KMS key exists only in the primary region, so the SNS topics in the other regions are not encrypted.
+
+Each finding is notified when it is created or when its status changes (for example, when an archived finding becomes active again). Archive expected findings, such as the CloudTrail KMS key policy described in [Design Decisions](../explanation/design-decisions.md), with an Access Analyzer archive rule: archived findings are no longer active, so they are not notified.
 
 ### Delegated Administrator Verification
 

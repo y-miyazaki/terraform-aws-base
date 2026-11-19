@@ -139,6 +139,28 @@ variable "cloudwatch_name_prefix" {
   description = "(Required) CloudWatch Filter/Alarm name prefix."
 }
 
+variable "console_login_failure_threshold" {
+  type        = number
+  description = "(Optional) Number of failed AWS Management Console sign-ins within 5 minutes that triggers the alarm. Defaults 5."
+  default     = 5
+
+  validation {
+    condition     = var.console_login_failure_threshold >= 1 && var.console_login_failure_threshold == floor(var.console_login_failure_threshold)
+    error_message = "console_login_failure_threshold must be an integer of 1 or more."
+  }
+}
+
+variable "identity_center_login_failure_threshold" {
+  type        = number
+  description = "(Optional) Number of failed IAM Identity Center sign-in credential verifications within 5 minutes that triggers the alarm. Defaults 10."
+  default     = 10
+
+  validation {
+    condition     = var.identity_center_login_failure_threshold >= 1 && var.identity_center_login_failure_threshold == floor(var.identity_center_login_failure_threshold)
+    error_message = "identity_center_login_failure_threshold must be an integer of 1 or more."
+  }
+}
+
 variable "sns_kms_master_key_id" {
   type        = string
   description = "(Optional) The KMS master key."
@@ -149,6 +171,17 @@ variable "tags" {
   type        = map(any)
   description = "(Optional) Key-value map of resource tags."
   default     = null
+}
+
+variable "unauthorized_operation_burst_threshold" {
+  type        = number
+  description = "(Optional) Number of UnauthorizedOperation/AccessDenied API errors (after cloudwatch_2_event_exclusions) within 5 minutes that triggers the alarm. Defaults 100."
+  default     = 100
+
+  validation {
+    condition     = var.unauthorized_operation_burst_threshold >= 1 && var.unauthorized_operation_burst_threshold == floor(var.unauthorized_operation_burst_threshold)
+    error_message = "unauthorized_operation_burst_threshold must be an integer of 1 or more."
+  }
 }
 
 variable "region" {

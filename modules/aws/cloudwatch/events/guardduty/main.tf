@@ -28,7 +28,7 @@ resource "aws_cloudwatch_event_rule" "this" {
       "GuardDuty Finding"
     ]
   })
-  name  = try(var.aws_cloudwatch_event_rule.name, "security-guardduty-cloudwatch-event-rule")
+  name  = var.aws_cloudwatch_event_rule.name
   state = var.aws_cloudwatch_event_rule.state
 
   tags = var.tags

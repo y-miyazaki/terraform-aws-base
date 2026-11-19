@@ -25,7 +25,7 @@ resource "aws_cloudwatch_event_rule" "this" {
       "aws.health"
     ]
   })
-  name  = try(var.aws_cloudwatch_event_rule.name, "health-cloudwatch-event-rule")
+  name  = var.aws_cloudwatch_event_rule.name
   state = var.aws_cloudwatch_event_rule.state
 
   tags = var.tags

@@ -1,7 +1,7 @@
 #--------------------------------------------------------------
 # Module: aws/chatbot/security/guardduty
 # Purpose: Create EventBridge rule and SNS topic to forward GuardDuty findings to Slack via AWS Chatbot.
-# Notes: SNS topic policy allows events.amazonaws.com publish; unified tagging applied; future improvement: add severity filtering and batching.
+# Notes: SNS topic policy allows events.amazonaws.com publish only from the rule of this module (aws:SourceArn); unified tagging applied; future improvement: add severity filtering and batching.
 #--------------------------------------------------------------
 #--------------------------------------------------------------
 # Provides an EventBridge Rule resource.
@@ -35,6 +35,8 @@ resource "aws_cloudwatch_event_rule" "this" {
 }
 
 data "aws_iam_policy_document" "sns_topic" {
+  count = var.is_enabled ? 1 : 0
+
   statement {
     effect = "Allow"
     principals {
@@ -47,6 +49,12 @@ data "aws_iam_policy_document" "sns_topic" {
     resources = [
       aws_sns_topic.this[0].arn,
     ]
+
+    condition {
+      test     = "ArnEquals"
+      variable = "aws:SourceArn"
+      values   = [aws_cloudwatch_event_rule.this[0].arn]
+    }
   }
 }
 
@@ -65,7 +73,7 @@ resource "aws_sns_topic_policy" "this" {
 
   region = local.region
   arn    = aws_sns_topic.this[0].arn
-  policy = data.aws_iam_policy_document.sns_topic.json
+  policy = data.aws_iam_policy_document.sns_topic[0].json
 }
 
 #--------------------------------------------------------------

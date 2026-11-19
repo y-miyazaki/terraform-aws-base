@@ -17,6 +17,7 @@
 | Name | Source | Version |
 | ---- | ------ | ------- |
 | <a name="module_filter_pattern"></a> [filter\_pattern](#module\_filter\_pattern) | ../../../_internal/cloudtrail_filter_pattern | n/a |
+| <a name="module_security_service_disable"></a> [security\_service\_disable](#module\_security\_service\_disable) | ../../../_internal/security_service_disable_alarm | n/a |
 
 ## Resources
 
@@ -36,6 +37,8 @@
 | [aws_cloudwatch_log_metric_filter.cloudwatch_7](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_log_metric_filter) | resource |
 | [aws_cloudwatch_log_metric_filter.cloudwatch_8](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_log_metric_filter) | resource |
 | [aws_cloudwatch_log_metric_filter.cloudwatch_9](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_log_metric_filter) | resource |
+| [aws_cloudwatch_log_metric_filter.console_login_failure](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_log_metric_filter) | resource |
+| [aws_cloudwatch_log_metric_filter.identity_center_login_failure](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_log_metric_filter) | resource |
 | [aws_cloudwatch_metric_alarm.cloudwatch_1](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_metric_alarm) | resource |
 | [aws_cloudwatch_metric_alarm.cloudwatch_10](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_metric_alarm) | resource |
 | [aws_cloudwatch_metric_alarm.cloudwatch_11](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_metric_alarm) | resource |
@@ -50,6 +53,9 @@
 | [aws_cloudwatch_metric_alarm.cloudwatch_7](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_metric_alarm) | resource |
 | [aws_cloudwatch_metric_alarm.cloudwatch_8](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_metric_alarm) | resource |
 | [aws_cloudwatch_metric_alarm.cloudwatch_9](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_metric_alarm) | resource |
+| [aws_cloudwatch_metric_alarm.console_login_failure](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_metric_alarm) | resource |
+| [aws_cloudwatch_metric_alarm.identity_center_login_failure](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_metric_alarm) | resource |
+| [aws_cloudwatch_metric_alarm.unauthorized_operation_burst](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_metric_alarm) | resource |
 | [aws_sns_topic.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/sns_topic) | resource |
 | [aws_sns_topic_subscription.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/sns_topic_subscription) | resource |
 | [aws_region.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/region) | data source |
@@ -64,10 +70,13 @@
 | <a name="input_cloudwatch_2_event_exclusions"></a> [cloudwatch\_2\_event\_exclusions](#input\_cloudwatch\_2\_event\_exclusions) | (Optional) Exclusions from CloudWatch.2 unauthorized API call detection. An event is excluded only when all the keys that are set (eventSource, eventName, userIdentity.arn) match; at least one key is required. An exclusion with only user\_identity\_arn ignores every event from that principal. Wildcards (*) are allowed in user\_identity\_arn. | <pre>list(object({<br/>    event_source      = optional(string)<br/>    event_name        = optional(string)<br/>    user_identity_arn = optional(string)<br/>  }))</pre> | `[]` | no |
 | <a name="input_cloudwatch_4_event_exclusions"></a> [cloudwatch\_4\_event\_exclusions](#input\_cloudwatch\_4\_event\_exclusions) | (Optional) Exclusions from CloudWatch.4 IAM policy change detection. An event is excluded only when all the keys that are set (eventSource, eventName, userIdentity.arn, requestParameters.roleName) match; at least one key is required. Wildcards (*) are allowed. | <pre>list(object({<br/>    event_source      = optional(string)<br/>    event_name        = optional(string)<br/>    role_name         = optional(string)<br/>    user_identity_arn = optional(string)<br/>  }))</pre> | `[]` | no |
 | <a name="input_cloudwatch_name_prefix"></a> [cloudwatch\_name\_prefix](#input\_cloudwatch\_name\_prefix) | (Required) CloudWatch Filter/Alarm name prefix. | `string` | n/a | yes |
+| <a name="input_console_login_failure_threshold"></a> [console\_login\_failure\_threshold](#input\_console\_login\_failure\_threshold) | (Optional) Number of failed AWS Management Console sign-ins within 5 minutes that triggers the alarm. Defaults 5. | `number` | `5` | no |
+| <a name="input_identity_center_login_failure_threshold"></a> [identity\_center\_login\_failure\_threshold](#input\_identity\_center\_login\_failure\_threshold) | (Optional) Number of failed IAM Identity Center sign-in credential verifications within 5 minutes that triggers the alarm. Defaults 10. | `number` | `10` | no |
 | <a name="input_is_enabled"></a> [is\_enabled](#input\_is\_enabled) | (Optional) A boolean flag to enable/disable settings of CloudTrail. Defaults true. | `bool` | `true` | no |
 | <a name="input_region"></a> [region](#input\_region) | (Optional) AWS region. Defaults to provider region. | `string` | `null` | no |
 | <a name="input_sns_kms_master_key_id"></a> [sns\_kms\_master\_key\_id](#input\_sns\_kms\_master\_key\_id) | (Optional) The KMS master key. | `string` | `null` | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | (Optional) Key-value map of resource tags. | `map(any)` | `null` | no |
+| <a name="input_unauthorized_operation_burst_threshold"></a> [unauthorized\_operation\_burst\_threshold](#input\_unauthorized\_operation\_burst\_threshold) | (Optional) Number of UnauthorizedOperation/AccessDenied API errors (after cloudwatch\_2\_event\_exclusions) within 5 minutes that triggers the alarm. Defaults 100. | `number` | `100` | no |
 
 ## Outputs
 

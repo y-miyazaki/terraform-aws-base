@@ -155,7 +155,7 @@ oidc_github = {
 # - Security Hub: $0.0010 per security check per region per month
 # - GuardDuty: ~$1.00 per GB of logs analyzed (VPC Flow Logs, DNS logs, CloudTrail events)
 #
-# NOTICE: GuardDuty is automatically disabled if control_tower.managed_services.guardduty = true.
+# NOTICE: The notifications below do not depend on Control Tower; only their is_enabled flags control them.
 #--------------------------------------------------------------
 security_notification = {
   # CUSTOMIZE: need to set slack_channel_id for settings of AWS SecurityHub Notification(Slack).
@@ -163,10 +163,23 @@ security_notification = {
   # CUSTOMIZE: need to set slack_team_id for settings of AWS SecurityHub Notification(Slack).
   slack_team_id = "xxxxxxxxxxx"
   #--------------------------------------------------------------
+  # IAM Access Analyzer
+  # Forwards external access findings (e.g., an S3 bucket or IAM role shared outside the organization) to Slack.
+  # Only ACTIVE external access findings are notified; internal access and unused access findings are not.
+  # Findings of the organization analyzers are notified in every region in region.targets.
+  # This notification is independent of securityhub, which forwards only CRITICAL/HIGH findings whose compliance status is not PASSED.
+  # Findings are evaluated by IAM Access Analyzer and reach EventBridge within about an hour.
+  #--------------------------------------------------------------
+  access_analyzer = {
+    # CUSTOMIZE: need to set is_enabled for settings of IAM Access Analyzer Notification(Slack).
+    is_enabled = true
+  }
+  #--------------------------------------------------------------
   # GuardDuty
   # Amazon GuardDuty is a threat detection service that continuously monitors your AWS accounts and workloads for malicious activity and
   # delivers detailed security findings for visibility and remediation.
-  # Notice: This option is automatically disabled if control_tower.managed_services.guardduty = true.
+  # Notice: This option does not depend on Control Tower; the rule and topic are created whenever is_enabled is true.
+  # The rule and topic are created in every region in region.targets (the topics outside region.primary are not encrypted).
   # COST CONSIDERATION: ~$1.00 per GB of logs analyzed
   #--------------------------------------------------------------
   guardduty = {

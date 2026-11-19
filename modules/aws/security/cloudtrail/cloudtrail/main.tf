@@ -100,7 +100,7 @@ resource "aws_cloudwatch_log_metric_filter" "cloudwatch_1" {
   count = var.is_enabled ? 1 : 0
 
   region         = local.region
-  log_group_name = aws_cloudwatch_log_group.this[0].name
+  log_group_name = one(aws_cloudwatch_log_group.this[*].name)
   name           = "${var.cloudwatch_name_prefix}cloudwatch-1-root"
   pattern        = <<PATTERN
 {$.userIdentity.type="Root" && $.userIdentity.invokedBy NOT EXISTS && $.eventType !="AwsServiceEvent"}
@@ -147,7 +147,7 @@ resource "aws_cloudwatch_log_metric_filter" "cloudwatch_2" {
   count = var.is_enabled ? 1 : 0
 
   region         = local.region
-  log_group_name = aws_cloudwatch_log_group.this[0].name
+  log_group_name = one(aws_cloudwatch_log_group.this[*].name)
   name           = "${var.cloudwatch_name_prefix}cloudwatch-2-unauthorized-operation-api"
   pattern        = local.cloudwatch_2_pattern
 
@@ -199,7 +199,7 @@ resource "aws_cloudwatch_log_metric_filter" "cloudwatch_3" {
   count = 0
 
   region         = local.region
-  log_group_name = aws_cloudwatch_log_group.this[0].name
+  log_group_name = one(aws_cloudwatch_log_group.this[*].name)
   name           = "${var.cloudwatch_name_prefix}cloudwatch-3-mfa"
   pattern        = <<PATTERN
 {($.eventName="ConsoleLogin") && ($.additionalEventData.MFAUsed!="Yes") && ($.userIdentity.type="IAMUser") && ($.responseElements.ConsoleLogin="Success")}
@@ -246,7 +246,7 @@ resource "aws_cloudwatch_log_metric_filter" "cloudwatch_4" {
   count = var.is_enabled ? 1 : 0
 
   region         = local.region
-  log_group_name = aws_cloudwatch_log_group.this[0].name
+  log_group_name = one(aws_cloudwatch_log_group.this[*].name)
   name           = "${var.cloudwatch_name_prefix}cloudwatch-4-iam-policy"
   pattern        = local.cloudwatch_4_pattern
 
@@ -298,7 +298,7 @@ resource "aws_cloudwatch_log_metric_filter" "cloudwatch_5" {
   count = var.is_enabled ? 1 : 0
 
   region         = local.region
-  log_group_name = aws_cloudwatch_log_group.this[0].name
+  log_group_name = one(aws_cloudwatch_log_group.this[*].name)
   name           = "${var.cloudwatch_name_prefix}cloudwatch-5-cloudtrail"
   pattern        = <<PATTERN
 {($.eventName=CreateTrail) || ($.eventName=UpdateTrail) || ($.eventName=DeleteTrail) || ($.eventName=StartLogging) || ($.eventName=StopLogging)}
@@ -345,7 +345,7 @@ resource "aws_cloudwatch_log_metric_filter" "cloudwatch_6" {
   count = var.is_enabled ? 1 : 0
 
   region         = local.region
-  log_group_name = aws_cloudwatch_log_group.this[0].name
+  log_group_name = one(aws_cloudwatch_log_group.this[*].name)
   name           = "${var.cloudwatch_name_prefix}cloudwatch-6-failed-authentication"
   pattern        = <<PATTERN
 {($.eventName=ConsoleLogin) && ($.errorMessage="Failed authentication")}
@@ -392,7 +392,7 @@ resource "aws_cloudwatch_log_metric_filter" "cloudwatch_7" {
   count = var.is_enabled ? 1 : 0
 
   region         = local.region
-  log_group_name = aws_cloudwatch_log_group.this[0].name
+  log_group_name = one(aws_cloudwatch_log_group.this[*].name)
   name           = "${var.cloudwatch_name_prefix}cloudwatch-7-cmk"
   pattern        = <<PATTERN
 {($.eventSource=kms.amazonaws.com) && (($.eventName=DisableKey) || ($.eventName=ScheduleKeyDeletion))}
@@ -439,7 +439,7 @@ resource "aws_cloudwatch_log_metric_filter" "cloudwatch_8" {
   count = var.is_enabled ? 1 : 0
 
   region         = local.region
-  log_group_name = aws_cloudwatch_log_group.this[0].name
+  log_group_name = one(aws_cloudwatch_log_group.this[*].name)
   name           = "${var.cloudwatch_name_prefix}cloudwatch-8-s3-bucket-policy"
   pattern        = <<PATTERN
 {($.eventSource=s3.amazonaws.com) && (($.eventName=PutBucketAcl) || ($.eventName=PutBucketPolicy) || ($.eventName=PutBucketCors) || ($.eventName=PutBucketLifecycle) || ($.eventName=PutBucketReplication) || ($.eventName=DeleteBucketPolicy) || ($.eventName=DeleteBucketCors) || ($.eventName=DeleteBucketLifecycle) || ($.eventName=DeleteBucketReplication))}
@@ -486,7 +486,7 @@ resource "aws_cloudwatch_log_metric_filter" "cloudwatch_9" {
   count = var.is_enabled ? 1 : 0
 
   region         = local.region
-  log_group_name = aws_cloudwatch_log_group.this[0].name
+  log_group_name = one(aws_cloudwatch_log_group.this[*].name)
   name           = "${var.cloudwatch_name_prefix}cloudwatch-9-config"
   pattern        = <<PATTERN
 {($.eventSource=config.amazonaws.com) && (($.eventName=StopConfigurationRecorder) || ($.eventName=DeleteDeliveryChannel) || ($.eventName=PutDeliveryChannel) || ($.eventName=PutConfigurationRecorder))}
@@ -533,7 +533,7 @@ resource "aws_cloudwatch_log_metric_filter" "cloudwatch_10" {
   count = var.is_enabled ? 1 : 0
 
   region         = local.region
-  log_group_name = aws_cloudwatch_log_group.this[0].name
+  log_group_name = one(aws_cloudwatch_log_group.this[*].name)
   name           = "${var.cloudwatch_name_prefix}cloudwatch-10-security-group"
   pattern        = <<PATTERN
 {($.eventName=AuthorizeSecurityGroupIngress) || ($.eventName=AuthorizeSecurityGroupEgress) || ($.eventName=RevokeSecurityGroupIngress) || ($.eventName=RevokeSecurityGroupEgress) || ($.eventName=CreateSecurityGroup) || ($.eventName=DeleteSecurityGroup)}
@@ -580,7 +580,7 @@ resource "aws_cloudwatch_log_metric_filter" "cloudwatch_11" {
   count = var.is_enabled ? 1 : 0
 
   region         = local.region
-  log_group_name = aws_cloudwatch_log_group.this[0].name
+  log_group_name = one(aws_cloudwatch_log_group.this[*].name)
   name           = "${var.cloudwatch_name_prefix}cloudwatch-11-nacl"
   pattern        = <<PATTERN
 {($.eventName=CreateNetworkAcl) || ($.eventName=CreateNetworkAclEntry) || ($.eventName=DeleteNetworkAcl) || ($.eventName=DeleteNetworkAclEntry) || ($.eventName=ReplaceNetworkAclEntry) || ($.eventName=ReplaceNetworkAclAssociation)}
@@ -627,7 +627,7 @@ resource "aws_cloudwatch_log_metric_filter" "cloudwatch_12" {
   count = var.is_enabled ? 1 : 0
 
   region         = local.region
-  log_group_name = aws_cloudwatch_log_group.this[0].name
+  log_group_name = one(aws_cloudwatch_log_group.this[*].name)
   name           = "${var.cloudwatch_name_prefix}cloudwatch-12-network-gateways"
   pattern        = <<PATTERN
 {($.eventName=CreateCustomerGateway) || ($.eventName=DeleteCustomerGateway) || ($.eventName=AttachInternetGateway) || ($.eventName=CreateInternetGateway) || ($.eventName=DeleteInternetGateway) || ($.eventName=DetachInternetGateway)}
@@ -674,7 +674,7 @@ resource "aws_cloudwatch_log_metric_filter" "cloudwatch_13" {
   count = var.is_enabled ? 1 : 0
 
   region         = local.region
-  log_group_name = aws_cloudwatch_log_group.this[0].name
+  log_group_name = one(aws_cloudwatch_log_group.this[*].name)
   name           = "${var.cloudwatch_name_prefix}cloudwatch-13-route-table"
   pattern        = <<PATTERN
 {($.eventName=CreateRoute) || ($.eventName=CreateRouteTable) || ($.eventName=ReplaceRoute) || ($.eventName=ReplaceRouteTableAssociation) || ($.eventName=DeleteRouteTable) || ($.eventName=DeleteRoute) || ($.eventName=DisassociateRouteTable)}
@@ -721,7 +721,7 @@ resource "aws_cloudwatch_log_metric_filter" "cloudwatch_14" {
   count = var.is_enabled ? 1 : 0
 
   region         = local.region
-  log_group_name = aws_cloudwatch_log_group.this[0].name
+  log_group_name = one(aws_cloudwatch_log_group.this[*].name)
   name           = "${var.cloudwatch_name_prefix}cloudwatch-14-vpc"
   pattern        = <<PATTERN
 {($.eventName=CreateVpc) || ($.eventName=DeleteVpc) || ($.eventName=ModifyVpcAttribute) || ($.eventName=AcceptVpcPeeringConnection) || ($.eventName=CreateVpcPeeringConnection) || ($.eventName=DeleteVpcPeeringConnection) || ($.eventName=RejectVpcPeeringConnection) || ($.eventName=AttachClassicLinkVpc) || ($.eventName=DetachClassicLinkVpc) || ($.eventName=DisableVpcClassicLink) || ($.eventName=EnableVpcClassicLink)}
@@ -929,4 +929,21 @@ resource "aws_cloudtrail" "this" {
     aws_iam_role_policy_attachment.this,
     module.s3,
   ]
+}
+
+#--------------------------------------------------------------
+# Metric filter and alarm for security service tampering.
+# CloudWatch.1-14 do not cover disabling GuardDuty, Security Hub, Macie, Inspector or Access Analyzer.
+# Fires on a single matching call, including denied attempts. No ok_actions: there is nothing to recover from.
+#--------------------------------------------------------------
+module "security_service_disable" {
+  source = "../../../_internal/security_service_disable_alarm"
+
+  alarm_actions  = aws_sns_topic.this[*].arn
+  is_enabled     = var.is_enabled
+  log_group_name = one(aws_cloudwatch_log_group.this[*].name)
+  name_prefix    = var.cloudwatch_name_prefix
+  region         = local.region
+
+  tags = var.tags
 }

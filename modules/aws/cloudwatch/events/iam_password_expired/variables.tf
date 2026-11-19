@@ -3,7 +3,7 @@
 #--------------------------------------------------------------
 variable "is_enabled" {
   type        = bool
-  description = "(Optional) A boolean flag to enable/disable Trusted Advisor. Defaults true."
+  description = "(Optional) A boolean flag to enable/disable IAM password expired. Defaults true."
   default     = true
 }
 
@@ -16,15 +16,15 @@ variable "aws_cloudwatch_event_rule" {
       schedule_expression = string
       # (Optional) The description of the rule. Defaults to "IAM password expired event rule.".
       description = optional(string, "IAM password expired event rule.")
-      # Whether the rule should be enabled (defaults to ENABLED).
-      state = string
+      # (Optional) The state of the rule. Valid values: ENABLED, DISABLED, ENABLED_WITH_ALL_CLOUDTRAIL_MANAGEMENT_EVENTS. Defaults to ENABLED.
+      state = optional(string, "ENABLED")
     }
   )
   description = "(Optional) Provides an EventBridge Rule resource."
   default = {
-    name                = "trusted-advisor-cloudwatch-event-rule"
-    schedule_expression = "cron(*/5 * * * ? *)"
-    description         = "Trusted Advisor event rule."
+    name                = "iam-password-expired-cloudwatch-event-rule"
+    schedule_expression = "cron(0 0 * * ? *)"
+    description         = "IAM password expired event rule."
     state               = "ENABLED"
   }
 }

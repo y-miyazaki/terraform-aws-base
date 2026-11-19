@@ -20,8 +20,8 @@ resource "aws_cloudwatch_event_rule" "this" {
 
   region              = local.region
   description         = var.aws_cloudwatch_event_rule.description
-  name                = try(var.aws_cloudwatch_event_rule.name, "trusted-advisor-cloudwatch-event-rule")
-  schedule_expression = try(var.aws_cloudwatch_event_rule.schedule_expression, "cron(*/5 * * * ? *)")
+  name                = var.aws_cloudwatch_event_rule.name
+  schedule_expression = var.aws_cloudwatch_event_rule.schedule_expression
   state               = var.aws_cloudwatch_event_rule.state
 
   tags = var.tags

@@ -24,6 +24,22 @@ run "description_defaults_to_module_text" {
   }
 }
 
+run "state_defaults_to_enabled" {
+  command = plan
+
+  variables {
+    aws_cloudwatch_event_rule = {
+      name                = "example-rule"
+      schedule_expression = "rate(1 day)"
+    }
+  }
+
+  assert {
+    condition     = aws_cloudwatch_event_rule.this[0].state == "ENABLED"
+    error_message = "The rule state must default to ENABLED when it is omitted."
+  }
+}
+
 run "state_is_passed_to_the_rule" {
   command = plan
 

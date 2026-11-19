@@ -153,6 +153,17 @@ organizations_policy = {
 
 Monitors and alerts on specific CloudTrail events (e.g., EC2 termination, IAM changes).
 
+The Control Tower module also creates the following alarms without any tfvars entry. Both alarms send ALARM notifications through the same SNS topic as the other CloudTrail alarms. They send no recovery (OK) notification.
+
+| Alarm                                 | Condition (5-minute window)                                                                                                         |
+| ------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| `console-login-failure-burst`         | 5 or more failed `ConsoleLogin` events (IAM user or root sign-in failures)                                                          |
+| `unauthorized-operation-api-burst`    | 100 or more `UnauthorizedOperation` / `AccessDenied` errors, after applying `cloudwatch_2_event_exclusions`                         |
+| `identity-center-login-failure-burst` | 10 or more failed IAM Identity Center sign-in credential verifications (`CredentialVerification` with a `Failure` result)           |
+| `security-service-disable`            | One call that disables, deletes or detaches GuardDuty, Security Hub, Macie, Inspector or Access Analyzer (denied attempts included) |
+
+The thresholds are module inputs (`console_login_failure_threshold`, `unauthorized_operation_burst_threshold`, `identity_center_login_failure_threshold`) with these defaults. `security-service-disable` has no threshold; it matches the disable, delete and detach calls by name, so benign calls such as `DisableImportFindingsForProduct` do not raise it. CloudWatch.2 still alerts on a single event; the burst alarm alerts on volume.
+
 ```hcl
 security_cloudtrail = {
   is_enabled = false

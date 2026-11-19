@@ -13,6 +13,7 @@ locals {
   }
   # EventBridge rule names of the notification pipelines. The Lambda permissions build the rule ARN from
   # these names instead of reading it from the events modules, which would make the modules depend on each other.
+  # The names carry name_prefix, as in the deployed rules (for example base-health-cloudwatch-event-rule). Do not drop it: the rules would be replaced.
   event_rule_names = {
     config    = "${var.name_prefix}${var.security_config.aws_cloudwatch_event_rule.name}"
     guardduty = "${var.name_prefix}${var.guardduty.aws_cloudwatch_event_rule.name}"

@@ -132,6 +132,8 @@ Each feature has an `is_enabled` flag. Set to `false` to disable.
 | Inspector2           | `security_inspector2.is_enabled`      | `false` | Vulnerability scanning            |
 | Macie                | `security_macie.is_enabled`           | varies  | Sensitive data discovery          |
 
+When `security_cloudtrail` is enabled, the module also creates the `security-service-disable` alarm, which fires when GuardDuty, Security Hub, Macie, Inspector or Access Analyzer is disabled, deleted or detached from its administrator account. In Control Tower environments `security_cloudtrail` is disabled, and the organization trail alarms of the management root stack cover all accounts. See [Management Root Terraform Configuration Guide](./configure-management-root-tfvars.md#cloudtrail).
+
 #### Notes on specific features
 
 - **Notifications (GuardDuty, Health, Config):** when enabled, each region in `region.targets` gets an EventBridge rule and a Lambda function that posts to Slack. `guardduty` and `security_config` are skipped when the service is managed by Control Tower (`control_tower.managed_services`). AWS Health global events are published only to `region.global`, so it must be included in `region.targets`. Retention and Slack overrides use the `guardduty`, `health` and `security_config` keys. The Lambda VPC (`common_lambda.vpc`) exists only in `region.global`, so these Lambda functions attach to it only in that region and run outside a VPC in the other regions.
@@ -166,12 +168,14 @@ aws controltower list-landing-zones
 
 # Check delegated administrators per service
 aws organizations list-delegated-administrators --service-principal access-analyzer.amazonaws.com
-aws organizations list-delegated-administrators --service-principal config.amazonaws.com
 aws organizations list-delegated-administrators --service-principal guardduty.amazonaws.com
 aws organizations list-delegated-administrators --service-principal securityhub.amazonaws.com
 
 # Check organization-level CloudTrail
 aws cloudtrail describe-trails --query 'trailList[?IsOrganizationTrail==`true`].Name'
+
+# Check AWS Config (not delegated; managed through the AWS-GR_CONFIG_ENABLED control of each governed OU)
+aws controltower list-enabled-controls --target-identifier <OU ARN>
 ```
 
 </details>

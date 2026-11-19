@@ -746,3 +746,144 @@ resource "aws_cloudwatch_metric_alarm" "cloudwatch_14" {
 
   tags = var.tags
 }
+
+#--------------------------------------------------------------
+# Provides a CloudWatch Log Metric Filter resource (console sign-in failures).
+# CloudWatch.3 only covers sign-ins without MFA, so failed sign-ins (password guessing) are detected here.
+# https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudtrail-event-reference-aws-console-sign-in-events.html
+#--------------------------------------------------------------
+resource "aws_cloudwatch_log_metric_filter" "console_login_failure" {
+  count = var.is_enabled ? 1 : 0
+
+  region         = local.region
+  log_group_name = var.cloudtrail_log_group_name
+  name           = "${var.cloudwatch_name_prefix}console-login-failure-burst"
+  pattern        = <<PATTERN
+{($.eventName="ConsoleLogin") && ($.responseElements.ConsoleLogin="Failure")}
+PATTERN
+
+  metric_transformation {
+    name      = "${var.cloudwatch_name_prefix}console-login-failure-burst"
+    namespace = "CloudTrail"
+    value     = "1"
+  }
+}
+
+#--------------------------------------------------------------
+# Provides a CloudWatch Metric Alarm resource (console sign-in failures).
+# Fires when console_login_failure_threshold or more failed sign-ins occur within 5 minutes.
+# No ok_actions: a recovery notice after every burst only adds noise.
+#--------------------------------------------------------------
+resource "aws_cloudwatch_metric_alarm" "console_login_failure" {
+  count = var.is_enabled ? 1 : 0
+
+  region                    = local.region
+  actions_enabled           = true
+  alarm_actions             = [aws_sns_topic.this[0].arn]
+  alarm_description         = "[Security] ${var.console_login_failure_threshold} or more failed AWS Management Console sign-ins within 5 minutes (possible password guessing)."
+  alarm_name                = "${var.cloudwatch_name_prefix}console-login-failure-burst"
+  comparison_operator       = "GreaterThanOrEqualToThreshold"
+  evaluation_periods        = 1
+  insufficient_data_actions = []
+  metric_name               = aws_cloudwatch_log_metric_filter.console_login_failure[0].id
+  namespace                 = aws_cloudwatch_log_metric_filter.console_login_failure[0].metric_transformation[0].namespace
+  period                    = 300
+  statistic                 = "Sum"
+  threshold                 = var.console_login_failure_threshold
+  treat_missing_data        = "notBreaching"
+
+  tags = var.tags
+}
+
+#--------------------------------------------------------------
+# Provides a CloudWatch Metric Alarm resource (mass unauthorized API calls).
+# CloudWatch.2 alerts on a single event; this alerts on volume (possible credential abuse or resource enumeration).
+# It counts the metric of the CloudWatch.2 filter, so cloudwatch_2_event_exclusions is the single definition of known noise.
+# Fires when unauthorized_operation_burst_threshold or more events occur within 5 minutes.
+# No ok_actions: a recovery notice after every burst only adds noise.
+#--------------------------------------------------------------
+resource "aws_cloudwatch_metric_alarm" "unauthorized_operation_burst" {
+  count = var.is_enabled ? 1 : 0
+
+  region                    = local.region
+  actions_enabled           = true
+  alarm_actions             = [aws_sns_topic.this[0].arn]
+  alarm_description         = "[Security] ${var.unauthorized_operation_burst_threshold} or more UnauthorizedOperation/AccessDenied API errors within 5 minutes (possible credential abuse or resource enumeration)."
+  alarm_name                = "${var.cloudwatch_name_prefix}unauthorized-operation-api-burst"
+  comparison_operator       = "GreaterThanOrEqualToThreshold"
+  evaluation_periods        = 1
+  insufficient_data_actions = []
+  metric_name               = aws_cloudwatch_log_metric_filter.cloudwatch_2[0].id
+  namespace                 = aws_cloudwatch_log_metric_filter.cloudwatch_2[0].metric_transformation[0].namespace
+  period                    = 300
+  statistic                 = "Sum"
+  threshold                 = var.unauthorized_operation_burst_threshold
+  treat_missing_data        = "notBreaching"
+
+  tags = var.tags
+}
+
+#--------------------------------------------------------------
+# Provides a CloudWatch Log Metric Filter resource (IAM Identity Center sign-in failures).
+# A failed sign-in is a CredentialVerification event whose serviceEventDetails is "Failure"; UserAuthentication only records successes.
+# https://docs.aws.amazon.com/singlesignon/latest/userguide/understanding-sign-in-events.html
+#--------------------------------------------------------------
+resource "aws_cloudwatch_log_metric_filter" "identity_center_login_failure" {
+  count = var.is_enabled ? 1 : 0
+
+  region         = local.region
+  log_group_name = var.cloudtrail_log_group_name
+  name           = "${var.cloudwatch_name_prefix}identity-center-login-failure-burst"
+  pattern        = <<PATTERN
+{($.eventSource="signin.amazonaws.com") && ($.eventName="CredentialVerification") && ($.serviceEventDetails.CredentialVerification="Failure")}
+PATTERN
+
+  metric_transformation {
+    name      = "${var.cloudwatch_name_prefix}identity-center-login-failure-burst"
+    namespace = "CloudTrail"
+    value     = "1"
+  }
+}
+
+#--------------------------------------------------------------
+# Provides a CloudWatch Metric Alarm resource (IAM Identity Center sign-in failures).
+# Fires when identity_center_login_failure_threshold or more failed credential verifications occur within 5 minutes.
+# No ok_actions: a recovery notice after every burst only adds noise.
+#--------------------------------------------------------------
+resource "aws_cloudwatch_metric_alarm" "identity_center_login_failure" {
+  count = var.is_enabled ? 1 : 0
+
+  region                    = local.region
+  actions_enabled           = true
+  alarm_actions             = [aws_sns_topic.this[0].arn]
+  alarm_description         = "[Security] ${var.identity_center_login_failure_threshold} or more failed IAM Identity Center sign-in credential verifications within 5 minutes (possible password guessing)."
+  alarm_name                = "${var.cloudwatch_name_prefix}identity-center-login-failure-burst"
+  comparison_operator       = "GreaterThanOrEqualToThreshold"
+  evaluation_periods        = 1
+  insufficient_data_actions = []
+  metric_name               = aws_cloudwatch_log_metric_filter.identity_center_login_failure[0].id
+  namespace                 = aws_cloudwatch_log_metric_filter.identity_center_login_failure[0].metric_transformation[0].namespace
+  period                    = 300
+  statistic                 = "Sum"
+  threshold                 = var.identity_center_login_failure_threshold
+  treat_missing_data        = "notBreaching"
+
+  tags = var.tags
+}
+
+#--------------------------------------------------------------
+# Metric filter and alarm for security service tampering.
+# CloudWatch.1-14 do not cover disabling GuardDuty, Security Hub, Macie, Inspector or Access Analyzer.
+# Fires on a single matching call, including denied attempts. No ok_actions: there is nothing to recover from.
+#--------------------------------------------------------------
+module "security_service_disable" {
+  source = "../../../_internal/security_service_disable_alarm"
+
+  alarm_actions  = aws_sns_topic.this[*].arn
+  is_enabled     = var.is_enabled
+  log_group_name = var.cloudtrail_log_group_name
+  name_prefix    = var.cloudwatch_name_prefix
+  region         = local.region
+
+  tags = var.tags
+}

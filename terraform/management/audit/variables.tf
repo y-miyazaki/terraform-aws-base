@@ -91,6 +91,9 @@ variable "security_notification" {
   type = object({
     slack_channel_id = string
     slack_team_id    = string
+    access_analyzer = object({
+      is_enabled = bool
+    })
     guardduty = object({
       is_enabled = bool
     })
