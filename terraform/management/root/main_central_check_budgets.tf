@@ -103,8 +103,4 @@ module "lambda_function_budgets" {
   vpc_subnet_ids                = var.common_lambda.vpc.is_enabled ? var.common_lambda.vpc.create_vpc ? module.lambda_vpc.private_subnets : var.common_lambda.vpc.exists.private_subnets : []
 
   tags = var.tags
-
-  depends_on = [
-    module.lambda_vpc
-  ]
 }

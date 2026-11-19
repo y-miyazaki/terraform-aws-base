@@ -150,9 +150,6 @@ cloudwatch_log_group = {
     # security_config = {
     #   retention_in_days = 30
     # }
-    # security_securityhub = {
-    #   retention_in_days = 30
-    # }
     # security_ssm_automation = {
     #   retention_in_days = 14
     # }
@@ -249,6 +246,7 @@ oidc_github = {
       ]
       iam_role_name = "oidc-github-role"
       iam_role_path = "/"
+      # {account_id} in the policy is replaced with the current AWS account ID.
       iam_role_inline_policies = {
         Version = "2012-10-17"
         Statement = [
@@ -259,7 +257,7 @@ oidc_github = {
               "account:GetAccountInformation",
             ]
             Resource = [
-              "arn:aws:account::211125717743:account",
+              "arn:aws:account::{account_id}:account",
             ]
           },
         ]
@@ -364,16 +362,15 @@ guardduty = {
 # Health
 # AWS Health provides personalized information about events that can affect your AWS infrastructure.
 # This monitors AWS Health events and sends notifications to Slack when issues occur.
-# Monitors both regional (ap-northeast-1) and global (us-east-1) health events.
+# Deployed to every region in region.targets. Global health events are only published to region.global (us-east-1).
 #--------------------------------------------------------------
 health = {
   # CUSTOMIZE: need to set is_enabled for settings of AWS Health.
   is_enabled = true
   aws_cloudwatch_event_rule = {
-    name           = "health-cloudwatch-event-rule"
-    name_us_east_1 = "health-us-east-1-cloudwatch-event-rule"
-    description    = "This cloudwatch event used for Health."
-    state          = "ENABLED"
+    name        = "health-cloudwatch-event-rule"
+    description = "This cloudwatch event used for Health."
+    state       = "ENABLED"
   }
 }
 
@@ -1706,8 +1703,9 @@ common_log = {
 security_access_analyzer = {
   # CUSTOMIZE: need to set is_enabled for settings of Access Analyzer.
   is_enabled = true
+  # The analyzer is named "<name_prefix><analyzer_name>-<region>". type is ACCOUNT or ORGANIZATION.
   aws_accessanalyzer_analyzer = {
-    analyzer_name = "aws-access-analyzer"
+    analyzer_name = "analyzer"
     type          = "ACCOUNT"
   }
 }
@@ -2157,6 +2155,10 @@ security_guardduty = {
   }
   aws_guardduty_member = [
   ]
+  # The AWS account ID of the GuardDuty administrator account whose invitation this account accepts, keyed by region.
+  # Invitations are per region, so list only the regions in which this account is invited by an aws_guardduty_member entry with invite = true.
+  # An empty map accepts no invitation. ex) { "ap-northeast-1" = "123456789012" }
+  master_account_ids = {}
 }
 
 #--------------------------------------------------------------
@@ -2284,6 +2286,20 @@ security_s3 = {
 security_securityhub = {
   # CUSTOMIZE: need to set is_enabled for settings of SecurityHub.
   is_enabled = true
+  # Whether to automatically enable new controls when they are added to the enabled standards.
+  auto_enable_controls = true
+  # Whether to enable the standards Security Hub designates as default (AWS Foundational Security Best Practices
+  # and CIS AWS Foundations Benchmark v1.2.0) when Security Hub is enabled for the first time.
+  # This is applied only at the first enablement. It does not change an account that is already enabled.
+  enable_default_standards = true
+  # Subscribe to the CIS AWS Foundations Benchmark standard.
+  # https://docs.aws.amazon.com/securityhub/latest/userguide/cis-aws-foundations-benchmark.html
+  enabled_cis_aws_foundations_benchmark = true
+  cis_aws_foundations_benchmark_version = "5.0.0"
+  # Subscribe to the PCI DSS standard.
+  # COST CONSIDERATION: Security Hub is billed per security check, so each enabled standard adds cost.
+  enabled_pci_dss = true
+  pci_dss_version = "3.2.1"
   aws_securityhub_member = {
   }
   # CUSTOMIZE: need to change product_subscription.

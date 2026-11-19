@@ -42,7 +42,7 @@ module "lambda_function_iam_password_expired" {
   source  = "terraform-aws-modules/lambda/aws"
   version = "8.13.0"
 
-  create = var.iam_password_expired.is_enabled && !local.control_tower_managed_services.iam_password_expired
+  create = var.iam_password_expired.is_enabled
   region = var.region.global
 
   allowed_triggers = {

@@ -1,0 +1,60 @@
+mock_provider "aws" {}
+
+variables {
+  aws_cloudwatch_event_target = {
+    arn = "arn:aws:lambda:ap-northeast-1:123456789012:function:example"
+  }
+  region = "ap-northeast-1"
+}
+
+run "description_defaults_to_module_text" {
+  command = plan
+
+  variables {
+    aws_cloudwatch_event_rule = {
+      name                = "example-rule"
+      schedule_expression = "rate(1 day)"
+      state               = "ENABLED"
+    }
+  }
+
+  assert {
+    condition     = aws_cloudwatch_event_rule.this[0].description == "Trusted Advisor event rule."
+    error_message = "The rule description must default to the module's description."
+  }
+}
+
+run "state_is_passed_to_the_rule" {
+  command = plan
+
+  variables {
+    aws_cloudwatch_event_rule = {
+      name                = "example-rule"
+      schedule_expression = "rate(1 day)"
+      state               = "DISABLED"
+    }
+  }
+
+  assert {
+    condition     = aws_cloudwatch_event_rule.this[0].state == "DISABLED"
+    error_message = "The configured rule state must be applied."
+  }
+}
+
+run "nothing_is_created_when_disabled" {
+  command = plan
+
+  variables {
+    is_enabled = false
+    aws_cloudwatch_event_rule = {
+      name                = "example-rule"
+      schedule_expression = "rate(1 day)"
+      state               = "ENABLED"
+    }
+  }
+
+  assert {
+    condition     = length(aws_cloudwatch_event_rule.this) == 0 && length(aws_cloudwatch_event_target.this) == 0
+    error_message = "No rule or target must be created when is_enabled is false."
+  }
+}

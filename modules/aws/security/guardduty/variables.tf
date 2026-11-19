@@ -52,6 +52,12 @@ variable "aws_guardduty_member" {
   description = "(Required) The resource of aws_guardduty_member."
 }
 
+variable "master_account_id" {
+  type        = string
+  description = "(Optional) The AWS account ID of the GuardDuty administrator (primary) account whose invitation this account accepts. When null (default), no invitation is accepted. Set it only in a member account that is invited with an aws_guardduty_member invite."
+  default     = null
+}
+
 variable "tags" {
   type        = map(any)
   description = "(Optional) Key-value map of resource tags."

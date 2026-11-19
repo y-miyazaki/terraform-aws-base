@@ -34,15 +34,10 @@ module "aws_api_gateway_report_csp" {
   }
   name_prefix = var.name_prefix
   role_arn    = module.aws_iam_role_lambda.arn
-  vpc_config = var.common_lambda.vpc.is_enabled ? var.common_lambda.vpc.create_vpc ? [
+  vpc_config = var.common_lambda.vpc.is_enabled ? [
     {
-      subnet_ids         = module.lambda_vpc["primary"].private_subnets
-      security_group_ids = [module.lambda_vpc["primary"].default_security_group_id]
-    }
-    ] : [
-    {
-      subnet_ids         = var.common_lambda.vpc.exists[var.region.primary].private_subnets
-      security_group_ids = [var.common_lambda.vpc.exists[var.region.primary].security_group_id]
+      security_group_ids = local.lambda_vpc_security_group_ids["primary"]
+      subnet_ids         = local.lambda_vpc_subnet_ids["primary"]
     }
   ] : []
 

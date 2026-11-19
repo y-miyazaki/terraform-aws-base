@@ -2,7 +2,7 @@
 # For GuardDuty
 #--------------------------------------------------------------
 #--------------------------------------------------------------
-# Enables GuardDuty for this AWS account.
+# Forwards GuardDuty findings to Slack via AWS Chatbot (EventBridge rule + SNS topic).
 #--------------------------------------------------------------
 module "aws_chatbot_security_guardduty" {
   source = "../../../modules/aws/chatbot/security/guardduty"

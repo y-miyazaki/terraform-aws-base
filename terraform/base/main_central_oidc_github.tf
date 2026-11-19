@@ -21,7 +21,12 @@ module "oidc_github" {
   default_subject                 = "*"
   github_subjects                 = each.value.github_subjects
   iam_role_inline_policies = {
-    format("%s%s%s%s", var.name_prefix, "oidc-github-", each.key, "-inline-policy") = jsonencode(each.value.iam_role_inline_policies)
+    # {account_id} in the policy is replaced with the current AWS account ID.
+    format("%s%s%s%s", var.name_prefix, "oidc-github-", each.key, "-inline-policy") = replace(
+      jsonencode(each.value.iam_role_inline_policies),
+      "{account_id}",
+      data.aws_caller_identity.current.account_id
+    )
   }
   iam_role_name         = format("%s%s", var.name_prefix, each.value.iam_role_name)
   iam_role_path         = each.value.iam_role_path

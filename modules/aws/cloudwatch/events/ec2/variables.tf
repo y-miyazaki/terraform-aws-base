@@ -12,10 +12,10 @@ variable "aws_cloudwatch_event_rule" {
     {
       # (Required) The name of the rule. If omitted, Terraform will assign a random, unique name. Conflicts with name_prefix.
       name = string
-      # (Optional) The description of the rule.
-      description = optional(string)
-      # (Optional) The state of the rule. Valid values: ENABLED, DISABLED, ENABLED_WITH_ALL_CLOUDTRAIL_MANAGEMENT_EVENTS.
-      state = optional(string)
+      # (Optional) The description of the rule. Defaults to "This cloudwatch event used for EC2.".
+      description = optional(string, "This cloudwatch event used for EC2.")
+      # (Optional) The state of the rule. Valid values: ENABLED, DISABLED, ENABLED_WITH_ALL_CLOUDTRAIL_MANAGEMENT_EVENTS. Defaults to ENABLED.
+      state = optional(string, "ENABLED")
     }
   )
   description = "(Optional) Provides an EventBridge Rule resource."

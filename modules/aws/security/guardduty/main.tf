@@ -66,9 +66,9 @@ resource "aws_guardduty_member" "this" {
 # Provides a resource to accept a pending GuardDuty invite on creation, ensure the detector has the correct primary account on read, and disassociate with the primary account upon removal.
 #--------------------------------------------------------------
 resource "aws_guardduty_invite_accepter" "this" {
-  count = var.is_enabled ? 1 : 0
+  count = var.is_enabled && var.master_account_id != null ? 1 : 0
 
   region            = local.region
   detector_id       = aws_guardduty_detector.this[0].id
-  master_account_id = aws_guardduty_detector.this[0].account_id
+  master_account_id = var.master_account_id
 }

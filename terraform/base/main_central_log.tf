@@ -4,7 +4,7 @@
 locals {
   s3_log_bucket        = "${var.name_prefix}${var.common_log.s3_log.bucket}-${data.aws_caller_identity.current.account_id}"
   s3_cloudtrail_bucket = "${var.name_prefix}${var.common_log.s3_cloudtrail.bucket}-${data.aws_caller_identity.current.account_id}"
-  config_role_names = var.security_config.is_enabled && !local.control_tower_managed_services.config ? [
+  config_role_names = local.is_enabled_security_config ? [
     for region in var.region.targets : module.aws_security_config_create[region].config_role_name
   ] : []
 }

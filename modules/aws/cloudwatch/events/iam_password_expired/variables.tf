@@ -14,8 +14,8 @@ variable "aws_cloudwatch_event_rule" {
       name = string
       # The scheduling expression. For example, cron(0 20 * * ? *) or rate(5 minutes). At least one of schedule_expression or event_pattern is required. Can only be used on the default event bus.
       schedule_expression = string
-      # The description of the rule.
-      description = optional(string)
+      # (Optional) The description of the rule. Defaults to "IAM password expired event rule.".
+      description = optional(string, "IAM password expired event rule.")
       # Whether the rule should be enabled (defaults to ENABLED).
       state = string
     }

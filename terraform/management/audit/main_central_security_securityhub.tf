@@ -2,7 +2,7 @@
 # For Security Hub
 #--------------------------------------------------------------
 #--------------------------------------------------------------
-# Enables Security Hub for this AWS account.
+# Forwards Security Hub findings to Slack via AWS Chatbot (EventBridge rule + Step Functions + SNS topic).
 #--------------------------------------------------------------
 module "aws_chatbot_security_securityhub" {
   source = "../../../modules/aws/chatbot/security/securityhub"
@@ -15,4 +15,6 @@ module "aws_chatbot_security_securityhub" {
   kms_master_key_id                      = module.kms_key["audit"].key_id
   name_prefix                            = var.name_prefix
   step_functions_kms_key_arn             = module.kms_key["audit"].key_arn
+
+  tags = var.tags
 }

@@ -45,7 +45,7 @@ pnpm = { version = "11.28.11", depends = ["node"] }
 python = "3.14.6" # pinned: onnxruntime (pipx:headroom-ai dependency) has no cp315 wheels yet
 
 # AI agent tools
-"github:microsoft/apm" = { version = "v0.35.0", lazy = true, lazy_bins = ["apm"] }                                 # agent package manager
+"github:microsoft/apm" = { version = "v0.35.1", lazy = true, lazy_bins = ["apm"] }                                 # agent package manager
 claude = { version = "2.1.322", lazy = true, lazy_bins = ["claude"] }                                              # Claude Code CLI
 "github:DeusData/codebase-memory-mcp" = { version = "v0.12.1", lazy = true, lazy_bins = ["codebase-memory-mcp"] } # codebase memory MCP server
 "aqua:github/copilot-cli" = { version = "1.0.109", lazy = true, lazy_bins = ["copilot"] }                           # GitHub Copilot CLI
@@ -53,7 +53,7 @@ claude = { version = "2.1.322", lazy = true, lazy_bins = ["claude"] }           
 "github:microsoft/waza" = { version = "v0.40.1", lazy = true, lazy_bins = ["waza"] }                              # agent skill evaluator
 
 # AWS related tools
-"aqua:aws/aws-cli" = { version = "2.40.0", lazy = true, lazy_bins = ["aws", "aws_completer"] }                     # AWS CLI
+"aqua:aws/aws-cli" = { version = "2.40.1", lazy = true, lazy_bins = ["aws", "aws_completer"] }                     # AWS CLI
 "aqua:aws/aws-sam-cli" = { version = "1.172.1", lazy = true, lazy_bins = ["sam"] }                                 # SAM CLI tool
 "npm:awsp" = { version = "0.2.0", depends = [
   "node",
@@ -99,7 +99,7 @@ claude = { version = "2.1.322", lazy = true, lazy_bins = ["claude"] }           
 "npm:markdownlint-cli2" = { version = "0.24.0", depends = [
   "node",
 ], install_env = { PNPM_CONFIG_IGNORE_SCRIPTS = "true" }, lazy = true, lazy_bins = ["markdownlint-cli2"] } # Markdown linter
-"npm:prettier" = { version = "3.9.10", depends = [
+"npm:prettier" = { version = "3.10.0", depends = [
   "node",
 ], install_env = { PNPM_CONFIG_IGNORE_SCRIPTS = "true" }, lazy = true, lazy_bins = ["prettier"] } # Code formatter
 
@@ -120,7 +120,7 @@ claude = { version = "2.1.322", lazy = true, lazy_bins = ["claude"] }           
 
 # Terraform related tools
 "aqua:getsops/sops" = { version = "3.13.3", lazy = true, lazy_bins = ["sops"] }                                    # encryption tool
-"aqua:hashicorp/terraform" = { version = "1.17.1", lazy = true, lazy_bins = ["terraform"] }                        # infrastructure as code
+"aqua:hashicorp/terraform" = { version = "1.17.2", lazy = true, lazy_bins = ["terraform"] }                        # infrastructure as code
 "aqua:terraform-docs/terraform-docs" = { version = "0.24.0", lazy = true, lazy_bins = ["terraform-docs"] }         # documentation generator
 "aqua:terraform-linters/tflint" = { version = "0.66.0", lazy = true, lazy_bins = ["tflint"] }                      # linter
 

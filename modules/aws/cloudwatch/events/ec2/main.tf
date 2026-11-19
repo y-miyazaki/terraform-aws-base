@@ -21,7 +21,7 @@ resource "aws_cloudwatch_event_rule" "this" {
   count = var.is_enabled ? 1 : 0
 
   region      = local.region
-  description = try(var.aws_cloudwatch_event_rule.description, "This cloudwatch event used for EC2.")
+  description = var.aws_cloudwatch_event_rule.description
   event_pattern = jsonencode({
     source = [
       "aws.ec2"
@@ -32,7 +32,7 @@ resource "aws_cloudwatch_event_rule" "this" {
     ]
   })
   name  = try(var.aws_cloudwatch_event_rule.name, "ec2-cloudwatch-event-rule")
-  state = try(var.aws_cloudwatch_event_rule.state, "ENABLED")
+  state = var.aws_cloudwatch_event_rule.state
 
   tags = var.tags
 }

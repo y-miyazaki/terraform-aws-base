@@ -65,7 +65,6 @@ cloudwatch_log_group = {
 | `iam_password_expired`       | Password expiration notifications | 14 days               |
 | `security_cloudtrail`        | CloudTrail audit logs             | 90 days               |
 | `security_config`            | Config compliance (regional)      | 30 days               |
-| `security_securityhub`       | Security Hub findings             | 30 days               |
 | `trusted_advisor`            | Trusted Advisor recommendations   | 14 days               |
 
 </details>
@@ -132,6 +131,14 @@ Each feature has an `is_enabled` flag. Set to `false` to disable.
 | SSM Automation       | `security_ssm_automation.is_enabled`  | `true`  | Automated remediation             |
 | Inspector2           | `security_inspector2.is_enabled`      | `false` | Vulnerability scanning            |
 | Macie                | `security_macie.is_enabled`           | varies  | Sensitive data discovery          |
+
+#### Notes on specific features
+
+- **Notifications (GuardDuty, Health, Config):** when enabled, each region in `region.targets` gets an EventBridge rule and a Lambda function that posts to Slack. `guardduty` and `security_config` are skipped when the service is managed by Control Tower (`control_tower.managed_services`). AWS Health global events are published only to `region.global`, so it must be included in `region.targets`. Retention and Slack overrides use the `guardduty`, `health` and `security_config` keys. The Lambda VPC (`common_lambda.vpc`) exists only in `region.global`, so these Lambda functions attach to it only in that region and run outside a VPC in the other regions.
+- **Security Hub:** `enable_default_standards`, `enabled_cis_aws_foundations_benchmark` / `cis_aws_foundations_benchmark_version` and `enabled_pci_dss` / `pci_dss_version` decide which standards are subscribed. `enable_default_standards` is applied only when Security Hub is enabled for the first time. Security Hub and Access Analyzer are skipped when managed by Control Tower.
+- **GuardDuty (Security):** `master_account_ids` maps a region to the administrator account whose invitation a member account accepts. Invitations are per region, so list only the invited regions. Leave it `{}` unless this account is invited with an `aws_guardduty_member` entry (`invite = true`).
+- **Regions:** `region.global` must be included in `region.targets` (validated).
+- **OIDC GitHub:** `{account_id}` in `iam_role_inline_policies` is replaced with the current AWS account ID.
 
 ### Control Tower
 

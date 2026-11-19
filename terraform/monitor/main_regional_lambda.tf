@@ -87,14 +87,10 @@ module "aws_lambda_create_lambda_metric" {
   runtime                       = "provided.al2023"
   timeout                       = 300
   tracing_mode                  = "PassThrough"
-  vpc_security_group_ids        = var.common_lambda.vpc.is_enabled ? var.common_lambda.vpc.create_vpc ? [module.lambda_vpc[each.key].default_security_group_id] : [var.common_lambda.vpc.exists[each.value].security_group_id] : []
-  vpc_subnet_ids                = var.common_lambda.vpc.is_enabled ? var.common_lambda.vpc.create_vpc ? module.lambda_vpc[each.key].private_subnets : var.common_lambda.vpc.exists[each.value].private_subnets : []
+  vpc_security_group_ids        = local.lambda_vpc_security_group_ids[each.key]
+  vpc_subnet_ids                = local.lambda_vpc_subnet_ids[each.key]
 
   tags = var.tags
-
-  depends_on = [
-    module.lambda_vpc
-  ]
 }
 
 #--------------------------------------------------------------
@@ -181,12 +177,8 @@ module "aws_lambda_create_lambda_log" {
   runtime                       = "provided.al2023"
   timeout                       = 300
   tracing_mode                  = "PassThrough"
-  vpc_security_group_ids        = var.common_lambda.vpc.is_enabled ? var.common_lambda.vpc.create_vpc ? [module.lambda_vpc[each.key].default_security_group_id] : [var.common_lambda.vpc.exists[each.value].security_group_id] : []
-  vpc_subnet_ids                = var.common_lambda.vpc.is_enabled ? var.common_lambda.vpc.create_vpc ? module.lambda_vpc[each.key].private_subnets : var.common_lambda.vpc.exists[each.value].private_subnets : []
+  vpc_security_group_ids        = local.lambda_vpc_security_group_ids[each.key]
+  vpc_subnet_ids                = local.lambda_vpc_subnet_ids[each.key]
 
   tags = var.tags
-
-  depends_on = [
-    module.lambda_vpc
-  ]
 }

@@ -20,6 +20,18 @@ locals {
     local.extra_regions,
   )
 
+  # Key of module.lambda_vpc used by the global-region Lambda functions.
+  lambda_vpc_global_key = local.is_enabled_global ? "global" : "primary"
+
+  # Lambda VPC settings by monitor region key. Empty when the Lambda VPC is disabled.
+  # Uses the VPC created by module.lambda_vpc (create_vpc = true) or var.common_lambda.vpc.exists (create_vpc = false).
+  lambda_vpc_security_group_ids = {
+    for k, r in local.monitor_regions : k => var.common_lambda.vpc.is_enabled ? var.common_lambda.vpc.create_vpc ? [module.lambda_vpc[k].default_security_group_id] : [var.common_lambda.vpc.exists[r].security_group_id] : []
+  }
+  lambda_vpc_subnet_ids = {
+    for k, r in local.monitor_regions : k => var.common_lambda.vpc.is_enabled ? var.common_lambda.vpc.create_vpc ? module.lambda_vpc[k].private_subnets : var.common_lambda.vpc.exists[r].private_subnets : []
+  }
+
   # Settings of each regional metric/log alarm (common values + optional "regions" / "region_override").
   metric_settings = {
     metric_log_application                 = var.metric_log_application

@@ -26,6 +26,7 @@ module "aws_lambda_devops_agent_mcp_slack_reply" {
   region = var.region.primary
 
   architectures                           = ["arm64"]
+  attach_policy_statements                = true
   authorization_type                      = "AWS_IAM"
   cloudwatch_logs_kms_key_id              = module.kms_key["primary"].key_arn
   cloudwatch_logs_retention_in_days       = var.cloudwatch_log_group.retention_in_days
@@ -47,10 +48,18 @@ module "aws_lambda_devops_agent_mcp_slack_reply" {
   logging_log_format            = "JSON"
   logging_system_log_level      = "WARN"
   memory_size                   = var.devops_agent.primary.mcp_slack_reply.memory_size
-  publish                       = false
-  runtime                       = "provided.al2023"
-  timeout                       = var.devops_agent.primary.mcp_slack_reply.timeout
-  tracing_mode                  = "PassThrough"
+  # The execution role writes to the KMS-encrypted log group, so it needs access to that key only.
+  policy_statements = {
+    logs_kms = {
+      actions   = ["kms:Decrypt", "kms:GenerateDataKey*"]
+      effect    = "Allow"
+      resources = [module.kms_key["primary"].key_arn]
+    }
+  }
+  publish      = false
+  runtime      = "provided.al2023"
+  timeout      = var.devops_agent.primary.mcp_slack_reply.timeout
+  tracing_mode = "PassThrough"
 
   tags = var.tags
 }

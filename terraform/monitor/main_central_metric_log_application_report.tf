@@ -76,12 +76,8 @@ module "lambda_function_application_errors" {
   runtime                       = "provided.al2023"
   timeout                       = 900
   tracing_mode                  = "PassThrough"
-  vpc_security_group_ids        = var.common_lambda.vpc.is_enabled ? var.common_lambda.vpc.create_vpc ? [module.lambda_vpc["primary"].default_security_group_id] : [var.common_lambda.vpc.exists[var.region.primary].security_group_id] : []
-  vpc_subnet_ids                = var.common_lambda.vpc.is_enabled ? var.common_lambda.vpc.create_vpc ? module.lambda_vpc["primary"].private_subnets : var.common_lambda.vpc.exists[var.region.primary].private_subnets : []
+  vpc_security_group_ids        = local.lambda_vpc_security_group_ids["primary"]
+  vpc_subnet_ids                = local.lambda_vpc_subnet_ids["primary"]
 
   tags = var.tags
-
-  depends_on = [
-    module.lambda_vpc
-  ]
 }

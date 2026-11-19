@@ -19,10 +19,10 @@ resource "aws_cloudwatch_event_rule" "this" {
   count = var.is_enabled ? 1 : 0
 
   region              = local.region
-  description         = try(var.aws_cloudwatch_event_rule.description, "IAM password expired event rule.")
+  description         = var.aws_cloudwatch_event_rule.description
   name                = try(var.aws_cloudwatch_event_rule.name, "iam-password-expired-cloudwatch-event-rule")
   schedule_expression = try(var.aws_cloudwatch_event_rule.schedule_expression, "cron(0 0 * * ? *)")
-  state               = try(var.aws_cloudwatch_event_rule.state, "ENABLED")
+  state               = var.aws_cloudwatch_event_rule.state
 
   tags = var.tags
 }

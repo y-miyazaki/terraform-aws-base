@@ -1,6 +1,6 @@
 variable "control_tower" {
   description = <<-EOT
-    Control Tower and organization-managed security services configuration.
+    (Optional) Control Tower and organization-managed security services configuration.
 
     Use this object to describe whether Control Tower is enabled and which
     services are centrally managed outside this base stack.
@@ -34,7 +34,7 @@ variable "name_prefix" {
 }
 
 variable "region" {
-  description = "Region configuration for multi-region deployment"
+  description = "(Required) Region configuration for multi-region deployment."
   type = object({
     global  = string
     primary = string
@@ -48,11 +48,15 @@ variable "region" {
     condition     = contains(var.region.targets, var.region.primary)
     error_message = "region.primary must be included in region.targets"
   }
+  validation {
+    condition     = contains(var.region.targets, var.region.global)
+    error_message = "region.global must be included in region.targets"
+  }
 }
 
 variable "cloudwatch_log_group" {
   description = <<-EOT
-    Common CloudWatch Log Group configuration for all services.
+    (Required) Common CloudWatch Log Group configuration for all services.
 
     Priority order (higher priority overrides lower):
     1. var.cloudwatch_log_group.override.<service_name>.retention_in_days (highest priority)
@@ -95,9 +99,6 @@ variable "cloudwatch_log_group" {
       security_config = optional(object({
         retention_in_days = optional(number)
       }))
-      security_securityhub = optional(object({
-        retention_in_days = optional(number)
-      }))
       security_ssm_automation = optional(object({
         retention_in_days = optional(number)
       }))
@@ -110,7 +111,7 @@ variable "cloudwatch_log_group" {
 
 variable "slack" {
   description = <<-EOT
-    Common Slack configuration for all Lambda functions.
+    (Required) Common Slack configuration for all Lambda functions.
 
     Priority order (higher priority overrides lower):
     1. var.slack.override.<function_name> (highest priority)
@@ -191,27 +192,57 @@ variable "budgets" {
 
 variable "compute_optimizer" {
   description = "(Required) AWS AWS Compute Optimizer settings for resource right-sizing recommendations and notification."
-  type        = any
+  type = object({
+    is_enabled = bool
+  })
 }
 
 variable "guardduty" {
-  description = "(Required) GuardDuty finding notification settings (SNS, Lambda and Slack)."
-  type        = any
+  description = "(Required) GuardDuty finding notification settings (EventBridge, Lambda and Slack)."
+  type = object({
+    is_enabled = bool
+    aws_cloudwatch_event_rule = object({
+      description = string
+      name        = string
+      state       = string
+    })
+  })
 }
 
 variable "health" {
   description = "(Required) AWS Health event monitoring and Slack notification settings (regional and global events)."
-  type        = any
+  type = object({
+    is_enabled = bool
+    aws_cloudwatch_event_rule = object({
+      description = string
+      name        = string
+      state       = string
+    })
+  })
 }
 
 variable "trusted_advisor" {
   description = "(Required) AWS Trusted Advisor check monitoring and notification settings."
-  type        = any
+  type = object({
+    is_enabled = bool
+    aws_eventbridge_schedule = object({
+      description         = string
+      name                = string
+      schedule_expression = string
+    })
+  })
 }
 
 variable "iam_password_expired" {
   description = "(Required) IAM password expiration check and notification settings."
-  type        = any
+  type = object({
+    is_enabled = bool
+    aws_eventbridge_schedule = object({
+      description         = string
+      name                = string
+      schedule_expression = string
+    })
+  })
 }
 
 variable "iam" {
@@ -231,12 +262,22 @@ variable "common_log" {
 # security
 variable "security_access_analyzer" {
   description = "(Required) IAM Access Analyzer settings."
-  type        = any
+  type = object({
+    is_enabled = bool
+    aws_accessanalyzer_analyzer = object({
+      analyzer_name = string
+      type          = string
+    })
+  })
 }
 
 variable "security_athena" {
   description = "(Required) Athena security settings (query result encryption for the primary workgroup)."
-  type        = any
+  type = object({
+    is_enabled      = bool
+    output_location = optional(string)
+    workgroup       = optional(string, "primary")
+  })
 }
 
 variable "security_cloudtrail" {
@@ -256,13 +297,21 @@ variable "security_default_vpc" {
 
 variable "security_ebs" {
   description = "(Required) EBS account-level security defaults (encryption by default and public snapshot access blocking)."
-  type        = any
+  type = object({
+    is_enabled                                  = bool
+    is_enabled_ebs_encryption_by_default        = bool
+    is_enabled_ebs_public_snapshot_block_access = bool
+    state                                       = optional(string, "block-all-sharing")
+  })
 }
 
 variable "security_ec2_metadata" {
   description = "(Required) EC2 instance metadata defaults (IMDSv2 required for new instances)."
   type = object({
-    is_enabled = bool
+    is_enabled                  = bool
+    http_endpoint               = string
+    http_put_response_hop_limit = number
+    http_tokens                 = string
   })
 }
 
@@ -275,7 +324,37 @@ variable "security_ecr" {
 
 variable "security_guardduty" {
   description = "(Required) GuardDuty detector and member account settings."
-  type        = any
+  type = object({
+    is_enabled = bool
+    aws_guardduty_detector = object({
+      enable                       = bool
+      finding_publishing_frequency = string
+    })
+    aws_guardduty_detector_feature = optional(map(object({
+      status = string
+      additional_configurations = optional(list(object({
+        name   = string
+        status = string
+      })), [])
+    })), {})
+    aws_guardduty_member = optional(list(object({
+      account_id                 = string
+      disable_email_notification = bool
+      email                      = string
+      invitation_message         = string
+      invite                     = bool
+    })), [])
+    # Administrator account ID per region (key: region) whose invitation this account accepts.
+    master_account_ids = optional(map(string), {})
+  })
+  validation {
+    condition     = alltrue([for account_id in values(var.security_guardduty.master_account_ids) : can(regex("^[0-9]{12}$", account_id))])
+    error_message = "security_guardduty.master_account_ids values must be 12-digit AWS account IDs"
+  }
+  validation {
+    condition     = alltrue([for region in keys(var.security_guardduty.master_account_ids) : contains(var.region.targets, region)])
+    error_message = "security_guardduty.master_account_ids keys must be included in region.targets"
+  }
 }
 
 variable "security_iam" {
@@ -285,25 +364,59 @@ variable "security_iam" {
 
 variable "security_inspector2" {
   description = "(Required) Amazon Inspector v2 settings."
-  type        = any
+  type = object({
+    is_enabled     = bool
+    resource_types = list(string)
+  })
 }
 
 variable "security_macie" {
   description = "(Required) Amazon Macie settings."
-  type        = any
+  type = object({
+    is_enabled                   = bool
+    classification_jobs          = any
+    finding_publishing_frequency = string
+    findings_filters             = any
+    status                       = string
+  })
 }
 
 variable "security_s3" {
   description = "(Required) S3 account-level public access block settings."
-  type        = any
+  type = object({
+    is_enabled              = bool
+    block_public_acls       = bool
+    block_public_policy     = bool
+    ignore_public_acls      = bool
+    restrict_public_buckets = bool
+  })
 }
 
 variable "security_securityhub" {
   description = "(Required) Security Hub settings, including standards and finding aggregation."
-  type        = any
+  type = object({
+    is_enabled = bool
+    # Applied only when Security Hub is enabled for the first time.
+    auto_enable_controls = bool
+    aws_securityhub_action_target = object({
+      description = string
+      identifier  = string
+      name        = string
+    })
+    aws_securityhub_member                = map(any)
+    aws_securityhub_product_subscription  = map(any)
+    cis_aws_foundations_benchmark_version = string
+    enable_default_standards              = bool
+    enabled_cis_aws_foundations_benchmark = bool
+    enabled_pci_dss                       = bool
+    pci_dss_version                       = string
+  })
 }
 
 variable "security_ssm_automation" {
   description = "(Required) Systems Manager Automation security settings (SSM.6 logging and SSM.7 public document sharing block)."
-  type        = any
+  type = object({
+    is_enabled                = bool
+    cloudwatch_log_group_name = string
+  })
 }

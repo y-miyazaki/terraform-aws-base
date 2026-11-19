@@ -22,7 +22,7 @@ module "jit_access" {
     bot_token           = var.jit_access.slack.bot_token
     signing_secret      = var.jit_access.slack.signing_secret
     user_mappings       = var.jit_access.slack.user_mappings
-    workflow_secret     = try(var.jit_access.slack.workflow_secret, null)
+    workflow_secret     = var.jit_access.slack.workflow_secret
   }
   timezone        = var.jit_access.timezone
   waf_enabled     = true
