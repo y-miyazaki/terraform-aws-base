@@ -130,10 +130,11 @@ securityhub_organization = {
     ]
     security_controls_configuration = { disabled_control_identifiers = [] }
   }
-  linking_mode = "ALL_REGIONS"
   target_id    = "r-xxxxxx"
 }
 ```
+
+The finding aggregator links the regions in `region.targets` (the primary region is the home region). Configuration policies take effect only in the home region and these linked regions, so every region in `region.targets` must be enabled for the accounts. A disabled opt-in region makes the policy association fail, and the disabled controls stay active in the member accounts.
 
 #### GuardDuty Organization
 
@@ -192,6 +193,8 @@ access_analyzer_organization = {
 ```
 
 > **Note:** If an ORGANIZATION-type analyzer already exists (e.g., from Control Tower), Terraform skips creation to avoid conflicts. Multi-region deployment is automatic via `for_each = toset(var.region.targets)`.
+
+`archive_rules` creates Access Analyzer archive rules (key = rule name; filters are ANDed; filter keys follow [IAM Access Analyzer filter keys](https://docs.aws.amazon.com/IAM/latest/UserGuide/access-analyzer-reference-filter-keys.html)). The example archives the `AWSReservedSSO_*` roles that IAM Identity Center creates, which trust the Identity Center SAML provider and are otherwise reported as external access on every permission set assignment. Archive rules are created only when Terraform creates the analyzer. GitHub OIDC roles are intentionally not archived.
 
 #### Security Notifications (Chatbot)
 

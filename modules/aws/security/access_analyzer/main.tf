@@ -48,3 +48,27 @@ resource "aws_accessanalyzer_analyzer" "this" {
 
   tags = var.tags
 }
+
+#--------------------------------------------------------------
+# Manages Access Analyzer archive rules.
+# Created only when this module creates the analyzer.
+#--------------------------------------------------------------
+resource "aws_accessanalyzer_archive_rule" "this" {
+  for_each = local.create ? var.archive_rules : {}
+
+  analyzer_name = aws_accessanalyzer_analyzer.this[0].analyzer_name
+  region        = local.region
+  rule_name     = each.key
+
+  dynamic "filter" {
+    for_each = each.value.filters
+
+    content {
+      contains = filter.value.contains
+      criteria = filter.key
+      eq       = filter.value.eq
+      exists   = filter.value.exists == null ? null : tostring(filter.value.exists)
+      neq      = filter.value.neq
+    }
+  }
+}

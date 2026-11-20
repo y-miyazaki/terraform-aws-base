@@ -11,8 +11,8 @@
 
 | Name | Version |
 | ---- | ------- |
-| <a name="provider_aws"></a> [aws](#provider\_aws) | >= 6.0.0, < 7.0.0 |
-| <a name="provider_external"></a> [external](#provider\_external) | >= 2.0.0, < 3.0.0 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | 6.73.0 |
+| <a name="provider_external"></a> [external](#provider\_external) | 2.4.2 |
 
 ## Modules
 
@@ -23,6 +23,7 @@ No modules.
 | Name | Type |
 | ---- | ---- |
 | [aws_accessanalyzer_analyzer.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/accessanalyzer_analyzer) | resource |
+| [aws_accessanalyzer_archive_rule.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/accessanalyzer_archive_rule) | resource |
 | [aws_region.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/region) | data source |
 | [external_external.organization_analyzer_exists](https://registry.terraform.io/providers/hashicorp/external/latest/docs/data-sources/external) | data source |
 
@@ -31,6 +32,7 @@ No modules.
 | Name | Description | Type | Default | Required |
 | ---- | ----------- | ---- | ------- | :------: |
 | <a name="input_analyzer_name"></a> [analyzer\_name](#input\_analyzer\_name) | (Required) Name of the Analyzer. | `string` | n/a | yes |
+| <a name="input_archive_rules"></a> [archive\_rules](#input\_archive\_rules) | (Optional) Archive rules keyed by rule name. Each rule's filters are keyed by IAM Access Analyzer filter key (for example principal.Federated) and are ANDed. Findings matching a rule are archived automatically. Rules are created only when this module creates the analyzer. | <pre>map(object({<br/>    filters = map(object({<br/>      contains = optional(list(string))<br/>      eq       = optional(list(string))<br/>      exists   = optional(bool)<br/>      neq      = optional(list(string))<br/>    }))<br/>  }))</pre> | `{}` | no |
 | <a name="input_is_enabled"></a> [is\_enabled](#input\_is\_enabled) | (Optional) A boolean flag to enable/disable settings of Access Analyzer. Defaults true. | `bool` | `true` | no |
 | <a name="input_region"></a> [region](#input\_region) | (Optional) AWS region for the analyzer check script. If not set, uses the provider's default region. | `string` | `null` | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | (Optional) Key-value map of resource tags. | `map(any)` | `null` | no |

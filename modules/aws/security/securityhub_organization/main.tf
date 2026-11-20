@@ -40,8 +40,17 @@ resource "aws_securityhub_organization_configuration" "this" {
 resource "aws_securityhub_finding_aggregator" "this" {
   count = var.is_enabled && var.is_enabled_finding_aggregator ? 1 : 0
 
-  region       = local.region
-  linking_mode = var.linking_mode
+  region            = local.region
+  linking_mode      = "SPECIFIED_REGIONS"
+  specified_regions = var.linked_regions
+
+  lifecycle {
+    # The provider requires at least one specified region for SPECIFIED_REGIONS.
+    precondition {
+      condition     = length(var.linked_regions) > 0
+      error_message = "linked_regions must contain at least one region other than the home region when the finding aggregator is enabled."
+    }
+  }
 }
 
 resource "aws_securityhub_configuration_policy" "this" {

@@ -58,7 +58,7 @@ claude = { version = "2.1.322", lazy = true, lazy_bins = ["claude"] }           
 "npm:awsp" = { version = "0.2.0", depends = [
   "node",
 ], install_env = { NPM_CONFIG_IGNORE_SCRIPTS = "true" } } # AWS profile switcher
-"aqua:kayac/ecspresso" = { version = "2.8.8", lazy = true, lazy_bins = ["ecspresso"] }                             # ECS deployment tool
+"aqua:kayac/ecspresso" = { version = "2.8.9", lazy = true, lazy_bins = ["ecspresso"] }                             # ECS deployment tool
 "aqua:Songmu/ecschedule" = { version = "0.21.1", lazy = true, lazy_bins = ["ecschedule"] }                        # ECS scheduled tasks deployment tool
 "pipx:aws-mfa" = { version = "0.0.12", depends = ["python"], lazy = true, lazy_bins = ["aws-mfa"] }               # AWS MFA helper
 
@@ -96,10 +96,10 @@ claude = { version = "2.1.322", lazy = true, lazy_bins = ["claude"] }           
 "npm:markdown-link-check" = { version = "3.15.0", depends = [
   "node",
 ], install_env = { PNPM_CONFIG_IGNORE_SCRIPTS = "true" }, lazy = true, lazy_bins = ["markdown-link-check"] } # Markdown link checker
-"npm:markdownlint-cli2" = { version = "0.24.0", depends = [
+"npm:markdownlint-cli2" = { version = "0.24.1", depends = [
   "node",
 ], install_env = { PNPM_CONFIG_IGNORE_SCRIPTS = "true" }, lazy = true, lazy_bins = ["markdownlint-cli2"] } # Markdown linter
-"npm:prettier" = { version = "3.10.0", depends = [
+"npm:prettier" = { version = "3.10.1", depends = [
   "node",
 ], install_env = { PNPM_CONFIG_IGNORE_SCRIPTS = "true" }, lazy = true, lazy_bins = ["prettier"] } # Code formatter
 

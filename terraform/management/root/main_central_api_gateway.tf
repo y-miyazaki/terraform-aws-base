@@ -8,6 +8,7 @@ module "api_gateway_account" {
 
   region = var.region.primary
 
+  kms_key_arn = module.kms_key["root"].key_arn
   name_prefix = var.name_prefix
 
   tags = var.tags

@@ -208,6 +208,19 @@ access_analyzer_organization = {
   # CUSTOMIZE: need to set is_enabled for settings of AWS Access Analyzer Organization.
   is_enabled    = true
   analyzer_name = "aws-access-analyzer"
+  # Findings matching a rule are archived automatically. Filters in a rule are ANDed; the key is an IAM Access Analyzer filter key.
+  # IAM Identity Center permission sets create AWSReservedSSO_* roles that trust the Identity Center SAML provider.
+  # Access Analyzer reports them as external access on every assignment, so they are archived here.
+  # GitHub OIDC roles are deliberately not archived; review them one by one.
+  archive_rules = {
+    identity_center_sso_role = {
+      filters = {
+        "principal.Federated" = { contains = ["saml-provider/AWSSSO_"] }
+        "resource"            = { contains = [":role/aws-reserved/sso.amazonaws.com/"] }
+        "resourceType"        = { eq = ["AWS::IAM::Role"] }
+      }
+    }
+  }
 }
 
 #--------------------------------------------------------------
@@ -353,6 +366,5 @@ securityhub_organization = {
     }
   }
   configuration_policy_name = "securityhub-configuration-policy"
-  linking_mode              = "ALL_REGIONS"
   target_id                 = "r-xxxxxx"
 }

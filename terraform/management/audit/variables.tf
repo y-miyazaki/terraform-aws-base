@@ -108,6 +108,14 @@ variable "access_analyzer_organization" {
   type = object({
     is_enabled    = bool
     analyzer_name = string
+    archive_rules = optional(map(object({
+      filters = map(object({
+        contains = optional(list(string))
+        eq       = optional(list(string))
+        exists   = optional(bool)
+        neq      = optional(list(string))
+      }))
+    })), {})
   })
 }
 
@@ -179,7 +187,6 @@ variable "securityhub_organization" {
     })
     configuration_policy_name        = optional(string)
     configuration_policy_description = optional(string, "")
-    linking_mode                     = optional(string, "ALL_REGIONS")
     target_id                        = string
   })
 }

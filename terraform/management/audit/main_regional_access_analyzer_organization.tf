@@ -11,6 +11,7 @@ module "access_analyzer_organization" {
   region     = each.value
 
   analyzer_name = "${var.name_prefix}${var.access_analyzer_organization.analyzer_name}-${each.value}"
+  archive_rules = var.access_analyzer_organization.archive_rules
   type          = "ORGANIZATION"
 
   tags = var.tags

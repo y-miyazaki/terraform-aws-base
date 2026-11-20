@@ -55,10 +55,10 @@ variable "configuration_policy" {
   }
 }
 
-variable "linking_mode" {
-  description = "(Optional) The finding aggregator linking mode. Valid values are ALL_REGIONS and SINGLE_REGION. Default is ALL_REGIONS."
-  type        = string
-  default     = "ALL_REGIONS"
+variable "linked_regions" {
+  description = "(Optional) Linked regions of the finding aggregator, excluding the home region (the region of this module). Configuration policies take effect in the home region and in these regions only, so list only regions that are enabled for the account (a disabled opt-in region makes the policy association fail)."
+  type        = list(string)
+  default     = []
 }
 
 variable "target_id" {
