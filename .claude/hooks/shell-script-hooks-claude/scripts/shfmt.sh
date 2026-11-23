@@ -31,7 +31,8 @@ fi
 # get_changed_files: Collect changed shell script files from git
 #
 # Description:
-#   Gathers modified/added/untracked shell scripts from git.
+#   Gathers modified/added/untracked shell scripts from git: files with extension *.sh,
+#   *.bats or *.bash, plus executable extensionless files whose first line is a shell shebang.
 #   Skips paths that no longer exist on disk (for example staged add then
 #   deleted from the working tree without staging the deletion).
 #   Each git command is guarded with || true to prevent pipefail
@@ -54,18 +55,26 @@ fi
 #
 #######################################
 function get_changed_files {
-    local -a shell_ext_globs=('*.sh' '*.bats' '*.bash')
     local path
 
     while IFS= read -r path; do
         [[ -z ${path} ]] && continue
         [[ -f ${path} ]] || continue
+        case "${path}" in
+            *.sh | *.bats | *.bash) ;;
+            *)
+                # Extensionless scripts count when executable with a shell shebang
+                if [[ ! -x ${path} ]] || ! head -1 "${path}" 2> /dev/null | grep -q '^#!/.*sh'; then
+                    continue
+                fi
+                ;;
+        esac
         printf '%s\n' "${path}"
     done < <(
         {
-            git diff --name-only --diff-filter=ACMR -- "${shell_ext_globs[@]}" 2> /dev/null || true
-            git diff --cached --name-only --diff-filter=ACMR -- "${shell_ext_globs[@]}" 2> /dev/null || true
-            git ls-files --others --exclude-standard -- "${shell_ext_globs[@]}" 2> /dev/null || true
+            git diff --name-only --diff-filter=ACMR 2> /dev/null || true
+            git diff --cached --name-only --diff-filter=ACMR 2> /dev/null || true
+            git ls-files --others --exclude-standard 2> /dev/null || true
         } | awk 'NF' | sort -u
     )
 }

@@ -1,7 +1,7 @@
 #--------------------------------------------------------------
 # base build image
 #--------------------------------------------------------------
-FROM mcr.microsoft.com/devcontainers/go:1.26@sha256:5471e2c2cbc871ffdf4fafc2b7e1d8d8e2082dfb6d48b26d3582a8e89ef0719e
+FROM mcr.microsoft.com/devcontainers/go:1.26@sha256:5bffe882dc558bef43dbccd10c2d02d54b2d28456c7bf7ba4641642b5ad38292
 #--------------------------------------------------------------
 # ARG
 #--------------------------------------------------------------
@@ -11,7 +11,7 @@ ARG USER=vscode
 ARG WORKDIR=/workspace
 
 # version(base)
-ARG MISE_VERSION=v2026.11.7 # https://github.com/jdx/mise/releases
+ARG MISE_VERSION=v2026.11.8 # https://github.com/jdx/mise/releases
 
 #--------------------------------------------------------------
 # ENV

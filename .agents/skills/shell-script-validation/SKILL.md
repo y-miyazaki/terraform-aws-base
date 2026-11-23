@@ -19,6 +19,7 @@ metadata:
 - `--check-function-docs` (default on in this skill; off in the script unless passed): omit only when targets intentionally skip Google function header sections and function order checks
 - `--tests PATH` (optional, repeatable): limit the Bats suites the script runs to PATH (directory or `.bats` file); pass an absolute path
 - `--skip-tests` (optional): skip Bats execution; use when the repository has no Bats suites or `bats` is not installed
+- `--changed-only` (optional): validate only shell scripts (`.sh`, or executable files with a shell shebang) with uncommitted git changes (staged, unstaged, untracked); positional paths narrow the set; without `--tests`, runs the Bats suites that mirror those scripts under the Bats root (`<root>/<script path>.bats`; default root `test/bats`, override with the `BATS_MIRROR_ROOT` environment variable) plus changed `.bats` files
 
 ## Output Specification
 

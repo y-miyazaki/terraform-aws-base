@@ -9,7 +9,7 @@
 3. `shellcheck` — static analysis and best practice enforcement
 4. Function doc sections and top-level function order — only with `--check-function-docs`
 
-After the script checks, it runs the repository's Bats suites unless `--skip-tests` is passed (`--tests PATH` limits which suites run).
+After the script checks, it runs the repository's Bats suites unless `--skip-tests` is passed (`--tests PATH` limits which suites run; with `--changed-only` it runs only the suites mirroring the changed scripts plus changed `.bats` files, or none when neither exists).
 
 `shellcheck` and `shfmt` are required, and `bats` or `bats-core` when Bats runs; the script stops before any check when one is missing.
 

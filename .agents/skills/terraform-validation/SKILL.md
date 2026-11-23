@@ -15,6 +15,7 @@ metadata:
 - Validation script (required): `scripts/validate.sh` (run from the terraform-validation skill directory)
 - `--fix` (optional): rewrites formatting with `terraform fmt` (and argument order with `--check-order`)
 - `--verbose` (optional)
+- `--changed-only` (optional): validate only the modules (nearest directory with `.tf` files, scanned recursively; `terraform init`/`validate` still run only where `main.tf` exists) of `.tf`/`.tfvars`/`.hcl` files with uncommitted git changes (staged, unstaged, untracked); directory arguments narrow the set; a module at the current directory means the whole tree; exits 0 with nothing checked when none changed
 - `--check-order` (optional): run the argument order check (ORD-01) on top-level arguments of `resource`, `data`, and `module` blocks; requires `python3` and a `terraform_attr_order.py` helper next to `validate.sh`, which this skill does not bundle
 - `--generate-docs` (optional): writes `README.md` in each Terraform module directory with `terraform-docs`; requires `terraform-docs`. Pass it only when the user asks for generated docs, because it changes files
 

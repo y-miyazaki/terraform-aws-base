@@ -48,6 +48,11 @@ TEST_PATHS=()
 SKIP_SCRIPTS=false
 # True when --skip-tests is given (skip Bats execution)
 SKIP_TESTS=false
+# True when --changed-only is given (limit to files with uncommitted git changes)
+CHANGED_ONLY=false
+# Root under which Bats suites mirror script paths (scripts/a/b.sh -> test/bats/scripts/a/b.bats);
+# override with the BATS_MIRROR_ROOT environment variable
+BATS_MIRROR_ROOT="${BATS_MIRROR_ROOT:-test/bats}"
 
 # Counters for statistics
 TOTAL_SCRIPTS=0
@@ -108,6 +113,10 @@ Options:
                  Omit to run the full test/bats suite (same default as go/validate.sh).
       --skip-tests
                  Skip Bats test execution.
+      --changed-only
+                 Validate only shell scripts (.sh, or executable with a shell shebang) with uncommitted git changes (staged, unstaged, untracked);
+                 positional paths narrow the set. Without --tests, runs the Bats suites paired with
+                 those scripts (test/bats/<script path>.bats) and the changed .bats files.
 
 Design Rules:
   - Use 'set -euo pipefail' in scripts where appropriate
@@ -143,6 +152,7 @@ Examples:
   $(basename "$0") --tests test/bats/scripts/lib/common.bats      # Single Bats file
   $(basename "$0") scripts/lib --skip-tests                       # Scripts only
   $(basename "$0") -q -v                                          # Quiet / verbose
+  $(basename "$0") --changed-only                                 # Only git-changed scripts and Bats suites
 EOF
     exit 0
 }
@@ -161,6 +171,9 @@ EOF
 #   TEST_PATHS - Optional test paths from --tests
 #   SKIP_TESTS - Skip Bats test execution
 #   SKIP_SCRIPTS - Skip shell-script validation
+#   CHANGED_ONLY - Limit scripts and Bats suites to uncommitted git changes
+#   SEARCH_PATHS - Replaced by the changed scripts when CHANGED_ONLY is set
+#   TEST_PATHS - Filled with paired and changed suites when CHANGED_ONLY is set without --tests
 #
 # Arguments:
 #   $@ - Command line arguments
@@ -214,6 +227,10 @@ function parse_arguments {
                 SKIP_TESTS=true
                 shift
                 ;;
+            --changed-only)
+                CHANGED_ONLY=true
+                shift
+                ;;
             -*)
                 error_exit "Unknown option: $1"
                 ;;
@@ -223,6 +240,48 @@ function parse_arguments {
                 ;;
         esac
     done
+
+    if [[ $CHANGED_ONLY == "true" ]]; then
+        # Discovery resolves paths against WORKSPACE_ROOT; synced skill copies derive it from
+        # their own location, so use the repository root of the current directory when there is one
+        local repo_root
+        repo_root="$(git rev-parse --show-toplevel 2> /dev/null || true)"
+        if [[ -n $repo_root ]]; then
+            WORKSPACE_ROOT="$repo_root"
+        fi
+        pushd "$WORKSPACE_ROOT" > /dev/null || error_exit "Cannot change directory to $WORKSPACE_ROOT"
+        local -a scopes=()
+        local scope
+        if [[ ${#SEARCH_PATHS[@]} -gt 0 ]]; then
+            scopes=("${SEARCH_PATHS[@]}")
+            for scope in "${scopes[@]}"; do
+                if [[ ! -e $scope ]]; then
+                    error_exit "Path does not exist: $scope"
+                fi
+            done
+        fi
+        mapfile -t SEARCH_PATHS < <(find_changed_shell_scripts ${scopes[@]+"${scopes[@]}"})
+        if [[ ${#SEARCH_PATHS[@]} -eq 0 ]]; then
+            SKIP_SCRIPTS=true
+            custom_log "INFO" "--changed-only: no changed shell scripts"
+        fi
+        if [[ ${#TEST_PATHS[@]} -eq 0 && $SKIP_TESTS != "true" ]]; then
+            # Suites paired with the changed scripts, plus changed suites (narrowed by the same scopes)
+            local -a changed_bats=()
+            mapfile -t changed_bats < <(repo_emit_changed_paths '\.bats$' ${scopes[@]+"${scopes[@]}"})
+            mapfile -t TEST_PATHS < <(
+                {
+                    find_paired_bats_tests ${SEARCH_PATHS[@]+"${SEARCH_PATHS[@]}"}
+                    printf '%s\n' ${changed_bats[@]+"${changed_bats[@]}"}
+                } | sed '/^$/d' | sort -u
+            )
+            if [[ ${#TEST_PATHS[@]} -eq 0 ]]; then
+                SKIP_TESTS=true
+                custom_log "INFO" "--changed-only: no changed Bats suites"
+            fi
+        fi
+        popd > /dev/null || true
+    fi
 
     if [[ ${#SEARCH_PATHS[@]} -eq 0 && ${#TEST_PATHS[@]} -gt 0 ]]; then
         SKIP_SCRIPTS=true
@@ -812,6 +871,78 @@ function find_bats_tests {
 #######################################
 
 #######################################
+# find_changed_shell_scripts: List changed shell scripts, including extensionless shebang scripts
+#
+# Description:
+#   Emits changed files that are *.sh, plus executable files without .sh whose first line is a
+#   shell shebang (the same rule find_shell_scripts uses for a full run). bin/, dist/, build/ and
+#   agent directories are included, as in a full run.
+#
+# Globals:
+#   None
+#
+# Arguments:
+#   $@ - Optional scope paths narrowing the changed files
+#
+# Outputs:
+#   Script paths relative to the current directory, one per line
+#
+# Returns:
+#   0 on success
+#
+# Usage:
+#   mapfile -t scripts < <(find_changed_shell_scripts scripts/lib)
+#
+#######################################
+function find_changed_shell_scripts {
+    local file
+    while IFS= read -r file; do
+        [[ -z $file ]] && continue
+        if [[ $file == *.sh ]]; then
+            printf '%s\n' "$file"
+        elif [[ -x $file ]] && has_shell_shebang "$file"; then
+            printf '%s\n' "$file"
+        fi
+    done < <(REPO_PATHS_INCLUDE_BUILD_OUTPUT=true REPO_PATHS_INCLUDE_AGENTS=true repo_emit_changed_paths '' "$@")
+}
+
+#######################################
+# find_paired_bats_tests: Find the Bats suites that mirror the given scripts
+#
+# Description:
+#   Maps each script path a/b/c.sh to ${BATS_MIRROR_ROOT}/a/b/c.bats and emits those that exist.
+#   Scripts that are not .sh files are ignored.
+#
+# Globals:
+#   BATS_MIRROR_ROOT - Root under which suites mirror script paths
+#   WORKSPACE_ROOT - Repository root used to check that the suite exists
+#
+# Arguments:
+#   $@ - Script paths relative to the repository root
+#
+# Outputs:
+#   Existing suite paths relative to the repository root, one per line
+#
+# Returns:
+#   0 on success
+#
+# Usage:
+#   find_paired_bats_tests scripts/lib/common.sh
+#
+#######################################
+function find_paired_bats_tests {
+    local script suite
+    for script in "$@"; do
+        [[ $script == *.sh ]] || continue
+        script="${script#"${WORKSPACE_ROOT}"/}"
+        suite="${BATS_MIRROR_ROOT}/${script%.sh}.bats"
+        if [[ -f "${WORKSPACE_ROOT}/${suite}" ]]; then
+            printf '%s\n' "$suite"
+        fi
+    done
+}
+
+#######################################
 # find_shell_scripts: Function to find all shell scripts recursively
 #
 # Description:
@@ -862,7 +993,7 @@ function find_shell_scripts {
 
             # Find files with shell shebang but no .sh extension
             while IFS= read -r -d '' script; do
-                if [[ -f $script ]] && head -1 "$script" 2> /dev/null | grep -q "^#!/.*sh"; then
+                if [[ -f $script ]] && has_shell_shebang "$script"; then
                     # Only add if not already in scripts array
                     local already_added=false
                     for existing in "${scripts[@]}"; do
@@ -1102,6 +1233,32 @@ function generate_summary_report {
 }
 
 #######################################
+
+#######################################
+# has_shell_shebang: Check whether a file starts with a shell shebang
+#
+# Description:
+#   Single owner of the shebang rule shared by full discovery and --changed-only discovery.
+#
+# Globals:
+#   None
+#
+# Arguments:
+#   $1 - File path
+#
+# Outputs:
+#   None
+#
+# Returns:
+#   0 when the first line matches ^#!/.*sh, 1 otherwise
+#
+# Usage:
+#   has_shell_shebang "bin/deploy"
+#
+#######################################
+function has_shell_shebang {
+    head -1 "$1" 2> /dev/null | grep -q "^#!/.*sh"
+}
 
 #######################################
 # normalize_path: Resolve a script path for stable reporting

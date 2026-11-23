@@ -4,8 +4,8 @@ dependencies:
 - repo_url: y-miyazaki/config
   name: config-aws
   host: github.com
-  resolved_commit: 3875443aae2b0ec89efa6a3c3bdbc594ad4462bf
-  resolved_ref: v1.9.15
+  resolved_commit: 619efea37d6fc3a47939f63d7c38d8f838f5241d
+  resolved_ref: v1.9.16
   version: 1.0.0
   virtual_path: .apm/packages/aws
   is_virtual: true
@@ -15,8 +15,8 @@ dependencies:
 - repo_url: y-miyazaki/config
   name: config-common
   host: github.com
-  resolved_commit: 3875443aae2b0ec89efa6a3c3bdbc594ad4462bf
-  resolved_ref: v1.9.15
+  resolved_commit: 619efea37d6fc3a47939f63d7c38d8f838f5241d
+  resolved_ref: v1.9.16
   version: 1.0.0
   virtual_path: .apm/packages/common
   is_virtual: true
@@ -104,6 +104,8 @@ dependencies:
   - .agents/skills/markdown-validation/scripts/validate.sh
   - .claude/agents/test-engineer.md
   - .claude/rules/agent-skills.md
+  - .claude/rules/claude-settings.md
+  - .claude/rules/cursor-settings.md
   - .claude/rules/instructions.md
   - .claude/rules/markdown.md
   - .claude/skills/agent-skills-review
@@ -188,6 +190,8 @@ dependencies:
   - .claude/skills/markdown-validation/scripts/validate.sh
   - .cursor/agents/test-engineer.md
   - .cursor/rules/agent-skills.mdc
+  - .cursor/rules/claude-settings.mdc
+  - .cursor/rules/cursor-settings.mdc
   - .cursor/rules/instructions.mdc
   - .cursor/rules/markdown.mdc
   deployed_file_hashes:
@@ -214,7 +218,7 @@ dependencies:
     .agents/skills/agent-skills-review/scripts/lib/common.sh: sha256:0ac46c94e935f7a62cdebd56b68a450f741bc55aae32e8cfde95049b8c8c21c5
     .agents/skills/agent-skills-review/scripts/lib/csv.sh: sha256:a4baeaf2d5842190c2b32c9fe131c782263766a399fda598fc83e35941e84209
     .agents/skills/agent-skills-review/scripts/lib/json.sh: sha256:71376538696a43cb7558ba983306d9ce7567419e0855994bf34d3658a000aacc
-    .agents/skills/agent-skills-review/scripts/lib/repo_paths.sh: sha256:18ad2548e1fc7e10161ccc7b1956bf6fcac2086699d53fc653ce099a2c96d1d9
+    .agents/skills/agent-skills-review/scripts/lib/repo_paths.sh: sha256:0abc669efa1da7a8ad1eec2f2c001ca3498c93d32de8ba2c39c15a999738cfe9
     .agents/skills/agent-skills-review/scripts/lib/terraform.sh: sha256:ea6645e2a7568d82745051d539eac406a35640b033dae8e5e72fbf0f96a56b55
     .agents/skills/agent-skills-review/scripts/lib/validation.sh: sha256:90d4a03121954f13303571b84e4590976040d42d47015fbc0b591d0315d8a502
     .agents/skills/agent-skills-review/scripts/lib/yaml_map_order.py: sha256:eb542fe34e2e1c11c08d0f78c4717cb3521fbe5ae2f6e05712317fa5478ccf80
@@ -262,13 +266,15 @@ dependencies:
     .agents/skills/markdown-validation/scripts/lib/common.sh: sha256:0ac46c94e935f7a62cdebd56b68a450f741bc55aae32e8cfde95049b8c8c21c5
     .agents/skills/markdown-validation/scripts/lib/csv.sh: sha256:a4baeaf2d5842190c2b32c9fe131c782263766a399fda598fc83e35941e84209
     .agents/skills/markdown-validation/scripts/lib/json.sh: sha256:71376538696a43cb7558ba983306d9ce7567419e0855994bf34d3658a000aacc
-    .agents/skills/markdown-validation/scripts/lib/repo_paths.sh: sha256:18ad2548e1fc7e10161ccc7b1956bf6fcac2086699d53fc653ce099a2c96d1d9
+    .agents/skills/markdown-validation/scripts/lib/repo_paths.sh: sha256:0abc669efa1da7a8ad1eec2f2c001ca3498c93d32de8ba2c39c15a999738cfe9
     .agents/skills/markdown-validation/scripts/lib/terraform.sh: sha256:ea6645e2a7568d82745051d539eac406a35640b033dae8e5e72fbf0f96a56b55
     .agents/skills/markdown-validation/scripts/lib/validation.sh: sha256:90d4a03121954f13303571b84e4590976040d42d47015fbc0b591d0315d8a502
     .agents/skills/markdown-validation/scripts/lib/yaml_map_order.py: sha256:eb542fe34e2e1c11c08d0f78c4717cb3521fbe5ae2f6e05712317fa5478ccf80
     .agents/skills/markdown-validation/scripts/validate.sh: sha256:e3539d49e2c14344c3a36960a0af773871233964f163b9e4044ed5cefdfc9efa
     .claude/agents/test-engineer.md: sha256:e4454632ab953fd0569f5cbc609e55eb30fd27ed13319fcffbd092e8bb2e6ffa
     .claude/rules/agent-skills.md: sha256:8ed6b5a1d827010f9bf2c3dbfc51e931865f034bb636e3736cfff95a8e34c94d
+    .claude/rules/claude-settings.md: sha256:7a11346bf695246e83e202ffee7b09f480ac8ff1cf89ecd9170a80ffa3d1903c
+    .claude/rules/cursor-settings.md: sha256:a95d8699a466a3f182d114d7ea1b0e66f6188a334261976a2531c93b6aa98a17
     .claude/rules/instructions.md: sha256:27318b9c03647fba11a0ab2f1fe572e4cd0c5ade238e3e27989acb558f502ef4
     .claude/rules/markdown.md: sha256:67c019eba7931bf52778706d22a623568f1974239b65789d44630112179deae7
     .claude/skills/agent-skills-review/SKILL.md: sha256:c350cf2ac0195caa1dd5092e2000fab58edf8c9f9fa529ee0323d2367dcb25c5
@@ -294,7 +300,7 @@ dependencies:
     .claude/skills/agent-skills-review/scripts/lib/common.sh: sha256:0ac46c94e935f7a62cdebd56b68a450f741bc55aae32e8cfde95049b8c8c21c5
     .claude/skills/agent-skills-review/scripts/lib/csv.sh: sha256:a4baeaf2d5842190c2b32c9fe131c782263766a399fda598fc83e35941e84209
     .claude/skills/agent-skills-review/scripts/lib/json.sh: sha256:71376538696a43cb7558ba983306d9ce7567419e0855994bf34d3658a000aacc
-    .claude/skills/agent-skills-review/scripts/lib/repo_paths.sh: sha256:18ad2548e1fc7e10161ccc7b1956bf6fcac2086699d53fc653ce099a2c96d1d9
+    .claude/skills/agent-skills-review/scripts/lib/repo_paths.sh: sha256:0abc669efa1da7a8ad1eec2f2c001ca3498c93d32de8ba2c39c15a999738cfe9
     .claude/skills/agent-skills-review/scripts/lib/terraform.sh: sha256:ea6645e2a7568d82745051d539eac406a35640b033dae8e5e72fbf0f96a56b55
     .claude/skills/agent-skills-review/scripts/lib/validation.sh: sha256:90d4a03121954f13303571b84e4590976040d42d47015fbc0b591d0315d8a502
     .claude/skills/agent-skills-review/scripts/lib/yaml_map_order.py: sha256:eb542fe34e2e1c11c08d0f78c4717cb3521fbe5ae2f6e05712317fa5478ccf80
@@ -342,22 +348,24 @@ dependencies:
     .claude/skills/markdown-validation/scripts/lib/common.sh: sha256:0ac46c94e935f7a62cdebd56b68a450f741bc55aae32e8cfde95049b8c8c21c5
     .claude/skills/markdown-validation/scripts/lib/csv.sh: sha256:a4baeaf2d5842190c2b32c9fe131c782263766a399fda598fc83e35941e84209
     .claude/skills/markdown-validation/scripts/lib/json.sh: sha256:71376538696a43cb7558ba983306d9ce7567419e0855994bf34d3658a000aacc
-    .claude/skills/markdown-validation/scripts/lib/repo_paths.sh: sha256:18ad2548e1fc7e10161ccc7b1956bf6fcac2086699d53fc653ce099a2c96d1d9
+    .claude/skills/markdown-validation/scripts/lib/repo_paths.sh: sha256:0abc669efa1da7a8ad1eec2f2c001ca3498c93d32de8ba2c39c15a999738cfe9
     .claude/skills/markdown-validation/scripts/lib/terraform.sh: sha256:ea6645e2a7568d82745051d539eac406a35640b033dae8e5e72fbf0f96a56b55
     .claude/skills/markdown-validation/scripts/lib/validation.sh: sha256:90d4a03121954f13303571b84e4590976040d42d47015fbc0b591d0315d8a502
     .claude/skills/markdown-validation/scripts/lib/yaml_map_order.py: sha256:eb542fe34e2e1c11c08d0f78c4717cb3521fbe5ae2f6e05712317fa5478ccf80
     .claude/skills/markdown-validation/scripts/validate.sh: sha256:e3539d49e2c14344c3a36960a0af773871233964f163b9e4044ed5cefdfc9efa
     .cursor/agents/test-engineer.md: sha256:e4454632ab953fd0569f5cbc609e55eb30fd27ed13319fcffbd092e8bb2e6ffa
     .cursor/rules/agent-skills.mdc: sha256:bf1d491a9e6c43371389c304d28c2aae3c11d7e87a942e5ebd300d929970396b
+    .cursor/rules/claude-settings.mdc: sha256:ea3ae11b20131657082426810672f946222a6aced0821e331946b07bd92fabb6
+    .cursor/rules/cursor-settings.mdc: sha256:ed678ed4f5237213a594083999b3108a5b3423ad7624dbe4a895e7589c189023
     .cursor/rules/instructions.mdc: sha256:1e1080bb01e9172c6bba3c14e65599b7d77eff6bdf562d59585f5e470a0e4866
     .cursor/rules/markdown.mdc: sha256:75df65f44fd4f213387152822fd5d3e09b52b1d2f94a252f070ffd82e32659a7
-  content_hash: sha256:11b71f9ed5da50ed099cedece54a1462d15a7fd5470fdf95dc90750c29175496
+  content_hash: sha256:ec6b19deaa82e070d4fde3d8e21e99023af87c9a28d2308d550500fbbc08e4bb
   declared_license: Apache-2.0
 - repo_url: y-miyazaki/config
   name: common-hooks-claude
   host: github.com
-  resolved_commit: 3875443aae2b0ec89efa6a3c3bdbc594ad4462bf
-  resolved_ref: v1.9.15
+  resolved_commit: 619efea37d6fc3a47939f63d7c38d8f838f5241d
+  resolved_ref: v1.9.16
   version: 2.0.0
   virtual_path: .apm/packages/common-hooks-claude
   is_virtual: true
@@ -385,8 +393,8 @@ dependencies:
 - repo_url: y-miyazaki/config
   name: common-hooks-cursor
   host: github.com
-  resolved_commit: 3875443aae2b0ec89efa6a3c3bdbc594ad4462bf
-  resolved_ref: v1.9.15
+  resolved_commit: 619efea37d6fc3a47939f63d7c38d8f838f5241d
+  resolved_ref: v1.9.16
   version: 2.0.0
   virtual_path: .apm/packages/common-hooks-cursor
   is_virtual: true
@@ -414,8 +422,8 @@ dependencies:
 - repo_url: y-miyazaki/config
   name: config-github
   host: github.com
-  resolved_commit: 3875443aae2b0ec89efa6a3c3bdbc594ad4462bf
-  resolved_ref: v1.9.15
+  resolved_commit: 619efea37d6fc3a47939f63d7c38d8f838f5241d
+  resolved_ref: v1.9.16
   version: 1.0.0
   virtual_path: .apm/packages/github
   is_virtual: true
@@ -712,7 +720,7 @@ dependencies:
     .agents/skills/github-issue-autofix/scripts/lib/common.sh: sha256:0ac46c94e935f7a62cdebd56b68a450f741bc55aae32e8cfde95049b8c8c21c5
     .agents/skills/github-issue-autofix/scripts/lib/csv.sh: sha256:a4baeaf2d5842190c2b32c9fe131c782263766a399fda598fc83e35941e84209
     .agents/skills/github-issue-autofix/scripts/lib/json.sh: sha256:71376538696a43cb7558ba983306d9ce7567419e0855994bf34d3658a000aacc
-    .agents/skills/github-issue-autofix/scripts/lib/repo_paths.sh: sha256:18ad2548e1fc7e10161ccc7b1956bf6fcac2086699d53fc653ce099a2c96d1d9
+    .agents/skills/github-issue-autofix/scripts/lib/repo_paths.sh: sha256:0abc669efa1da7a8ad1eec2f2c001ca3498c93d32de8ba2c39c15a999738cfe9
     .agents/skills/github-issue-autofix/scripts/lib/terraform.sh: sha256:ea6645e2a7568d82745051d539eac406a35640b033dae8e5e72fbf0f96a56b55
     .agents/skills/github-issue-autofix/scripts/lib/validation.sh: sha256:90d4a03121954f13303571b84e4590976040d42d47015fbc0b591d0315d8a502
     .agents/skills/github-issue-autofix/scripts/lib/yaml_map_order.py: sha256:eb542fe34e2e1c11c08d0f78c4717cb3521fbe5ae2f6e05712317fa5478ccf80
@@ -738,7 +746,7 @@ dependencies:
     .agents/skills/github-issue-triage/scripts/lib/common.sh: sha256:0ac46c94e935f7a62cdebd56b68a450f741bc55aae32e8cfde95049b8c8c21c5
     .agents/skills/github-issue-triage/scripts/lib/csv.sh: sha256:a4baeaf2d5842190c2b32c9fe131c782263766a399fda598fc83e35941e84209
     .agents/skills/github-issue-triage/scripts/lib/json.sh: sha256:71376538696a43cb7558ba983306d9ce7567419e0855994bf34d3658a000aacc
-    .agents/skills/github-issue-triage/scripts/lib/repo_paths.sh: sha256:18ad2548e1fc7e10161ccc7b1956bf6fcac2086699d53fc653ce099a2c96d1d9
+    .agents/skills/github-issue-triage/scripts/lib/repo_paths.sh: sha256:0abc669efa1da7a8ad1eec2f2c001ca3498c93d32de8ba2c39c15a999738cfe9
     .agents/skills/github-issue-triage/scripts/lib/terraform.sh: sha256:ea6645e2a7568d82745051d539eac406a35640b033dae8e5e72fbf0f96a56b55
     .agents/skills/github-issue-triage/scripts/lib/validation.sh: sha256:90d4a03121954f13303571b84e4590976040d42d47015fbc0b591d0315d8a502
     .agents/skills/github-issue-triage/scripts/lib/yaml_map_order.py: sha256:eb542fe34e2e1c11c08d0f78c4717cb3521fbe5ae2f6e05712317fa5478ccf80
@@ -763,7 +771,7 @@ dependencies:
     .agents/skills/github-pr-body/scripts/lib/common.sh: sha256:0ac46c94e935f7a62cdebd56b68a450f741bc55aae32e8cfde95049b8c8c21c5
     .agents/skills/github-pr-body/scripts/lib/csv.sh: sha256:a4baeaf2d5842190c2b32c9fe131c782263766a399fda598fc83e35941e84209
     .agents/skills/github-pr-body/scripts/lib/json.sh: sha256:71376538696a43cb7558ba983306d9ce7567419e0855994bf34d3658a000aacc
-    .agents/skills/github-pr-body/scripts/lib/repo_paths.sh: sha256:18ad2548e1fc7e10161ccc7b1956bf6fcac2086699d53fc653ce099a2c96d1d9
+    .agents/skills/github-pr-body/scripts/lib/repo_paths.sh: sha256:0abc669efa1da7a8ad1eec2f2c001ca3498c93d32de8ba2c39c15a999738cfe9
     .agents/skills/github-pr-body/scripts/lib/terraform.sh: sha256:ea6645e2a7568d82745051d539eac406a35640b033dae8e5e72fbf0f96a56b55
     .agents/skills/github-pr-body/scripts/lib/validation.sh: sha256:90d4a03121954f13303571b84e4590976040d42d47015fbc0b591d0315d8a502
     .agents/skills/github-pr-body/scripts/lib/yaml_map_order.py: sha256:eb542fe34e2e1c11c08d0f78c4717cb3521fbe5ae2f6e05712317fa5478ccf80
@@ -792,7 +800,7 @@ dependencies:
     .agents/skills/github-pr-review/scripts/lib/common.sh: sha256:0ac46c94e935f7a62cdebd56b68a450f741bc55aae32e8cfde95049b8c8c21c5
     .agents/skills/github-pr-review/scripts/lib/csv.sh: sha256:a4baeaf2d5842190c2b32c9fe131c782263766a399fda598fc83e35941e84209
     .agents/skills/github-pr-review/scripts/lib/json.sh: sha256:71376538696a43cb7558ba983306d9ce7567419e0855994bf34d3658a000aacc
-    .agents/skills/github-pr-review/scripts/lib/repo_paths.sh: sha256:18ad2548e1fc7e10161ccc7b1956bf6fcac2086699d53fc653ce099a2c96d1d9
+    .agents/skills/github-pr-review/scripts/lib/repo_paths.sh: sha256:0abc669efa1da7a8ad1eec2f2c001ca3498c93d32de8ba2c39c15a999738cfe9
     .agents/skills/github-pr-review/scripts/lib/terraform.sh: sha256:ea6645e2a7568d82745051d539eac406a35640b033dae8e5e72fbf0f96a56b55
     .agents/skills/github-pr-review/scripts/lib/validation.sh: sha256:90d4a03121954f13303571b84e4590976040d42d47015fbc0b591d0315d8a502
     .agents/skills/github-pr-review/scripts/lib/yaml_map_order.py: sha256:eb542fe34e2e1c11c08d0f78c4717cb3521fbe5ae2f6e05712317fa5478ccf80
@@ -818,7 +826,7 @@ dependencies:
     .agents/skills/github-pr-revise/scripts/lib/common.sh: sha256:0ac46c94e935f7a62cdebd56b68a450f741bc55aae32e8cfde95049b8c8c21c5
     .agents/skills/github-pr-revise/scripts/lib/csv.sh: sha256:a4baeaf2d5842190c2b32c9fe131c782263766a399fda598fc83e35941e84209
     .agents/skills/github-pr-revise/scripts/lib/json.sh: sha256:71376538696a43cb7558ba983306d9ce7567419e0855994bf34d3658a000aacc
-    .agents/skills/github-pr-revise/scripts/lib/repo_paths.sh: sha256:18ad2548e1fc7e10161ccc7b1956bf6fcac2086699d53fc653ce099a2c96d1d9
+    .agents/skills/github-pr-revise/scripts/lib/repo_paths.sh: sha256:0abc669efa1da7a8ad1eec2f2c001ca3498c93d32de8ba2c39c15a999738cfe9
     .agents/skills/github-pr-revise/scripts/lib/terraform.sh: sha256:ea6645e2a7568d82745051d539eac406a35640b033dae8e5e72fbf0f96a56b55
     .agents/skills/github-pr-revise/scripts/lib/validation.sh: sha256:90d4a03121954f13303571b84e4590976040d42d47015fbc0b591d0315d8a502
     .agents/skills/github-pr-revise/scripts/lib/yaml_map_order.py: sha256:eb542fe34e2e1c11c08d0f78c4717cb3521fbe5ae2f6e05712317fa5478ccf80
@@ -842,7 +850,7 @@ dependencies:
     .claude/skills/github-issue-autofix/scripts/lib/common.sh: sha256:0ac46c94e935f7a62cdebd56b68a450f741bc55aae32e8cfde95049b8c8c21c5
     .claude/skills/github-issue-autofix/scripts/lib/csv.sh: sha256:a4baeaf2d5842190c2b32c9fe131c782263766a399fda598fc83e35941e84209
     .claude/skills/github-issue-autofix/scripts/lib/json.sh: sha256:71376538696a43cb7558ba983306d9ce7567419e0855994bf34d3658a000aacc
-    .claude/skills/github-issue-autofix/scripts/lib/repo_paths.sh: sha256:18ad2548e1fc7e10161ccc7b1956bf6fcac2086699d53fc653ce099a2c96d1d9
+    .claude/skills/github-issue-autofix/scripts/lib/repo_paths.sh: sha256:0abc669efa1da7a8ad1eec2f2c001ca3498c93d32de8ba2c39c15a999738cfe9
     .claude/skills/github-issue-autofix/scripts/lib/terraform.sh: sha256:ea6645e2a7568d82745051d539eac406a35640b033dae8e5e72fbf0f96a56b55
     .claude/skills/github-issue-autofix/scripts/lib/validation.sh: sha256:90d4a03121954f13303571b84e4590976040d42d47015fbc0b591d0315d8a502
     .claude/skills/github-issue-autofix/scripts/lib/yaml_map_order.py: sha256:eb542fe34e2e1c11c08d0f78c4717cb3521fbe5ae2f6e05712317fa5478ccf80
@@ -868,7 +876,7 @@ dependencies:
     .claude/skills/github-issue-triage/scripts/lib/common.sh: sha256:0ac46c94e935f7a62cdebd56b68a450f741bc55aae32e8cfde95049b8c8c21c5
     .claude/skills/github-issue-triage/scripts/lib/csv.sh: sha256:a4baeaf2d5842190c2b32c9fe131c782263766a399fda598fc83e35941e84209
     .claude/skills/github-issue-triage/scripts/lib/json.sh: sha256:71376538696a43cb7558ba983306d9ce7567419e0855994bf34d3658a000aacc
-    .claude/skills/github-issue-triage/scripts/lib/repo_paths.sh: sha256:18ad2548e1fc7e10161ccc7b1956bf6fcac2086699d53fc653ce099a2c96d1d9
+    .claude/skills/github-issue-triage/scripts/lib/repo_paths.sh: sha256:0abc669efa1da7a8ad1eec2f2c001ca3498c93d32de8ba2c39c15a999738cfe9
     .claude/skills/github-issue-triage/scripts/lib/terraform.sh: sha256:ea6645e2a7568d82745051d539eac406a35640b033dae8e5e72fbf0f96a56b55
     .claude/skills/github-issue-triage/scripts/lib/validation.sh: sha256:90d4a03121954f13303571b84e4590976040d42d47015fbc0b591d0315d8a502
     .claude/skills/github-issue-triage/scripts/lib/yaml_map_order.py: sha256:eb542fe34e2e1c11c08d0f78c4717cb3521fbe5ae2f6e05712317fa5478ccf80
@@ -893,7 +901,7 @@ dependencies:
     .claude/skills/github-pr-body/scripts/lib/common.sh: sha256:0ac46c94e935f7a62cdebd56b68a450f741bc55aae32e8cfde95049b8c8c21c5
     .claude/skills/github-pr-body/scripts/lib/csv.sh: sha256:a4baeaf2d5842190c2b32c9fe131c782263766a399fda598fc83e35941e84209
     .claude/skills/github-pr-body/scripts/lib/json.sh: sha256:71376538696a43cb7558ba983306d9ce7567419e0855994bf34d3658a000aacc
-    .claude/skills/github-pr-body/scripts/lib/repo_paths.sh: sha256:18ad2548e1fc7e10161ccc7b1956bf6fcac2086699d53fc653ce099a2c96d1d9
+    .claude/skills/github-pr-body/scripts/lib/repo_paths.sh: sha256:0abc669efa1da7a8ad1eec2f2c001ca3498c93d32de8ba2c39c15a999738cfe9
     .claude/skills/github-pr-body/scripts/lib/terraform.sh: sha256:ea6645e2a7568d82745051d539eac406a35640b033dae8e5e72fbf0f96a56b55
     .claude/skills/github-pr-body/scripts/lib/validation.sh: sha256:90d4a03121954f13303571b84e4590976040d42d47015fbc0b591d0315d8a502
     .claude/skills/github-pr-body/scripts/lib/yaml_map_order.py: sha256:eb542fe34e2e1c11c08d0f78c4717cb3521fbe5ae2f6e05712317fa5478ccf80
@@ -922,7 +930,7 @@ dependencies:
     .claude/skills/github-pr-review/scripts/lib/common.sh: sha256:0ac46c94e935f7a62cdebd56b68a450f741bc55aae32e8cfde95049b8c8c21c5
     .claude/skills/github-pr-review/scripts/lib/csv.sh: sha256:a4baeaf2d5842190c2b32c9fe131c782263766a399fda598fc83e35941e84209
     .claude/skills/github-pr-review/scripts/lib/json.sh: sha256:71376538696a43cb7558ba983306d9ce7567419e0855994bf34d3658a000aacc
-    .claude/skills/github-pr-review/scripts/lib/repo_paths.sh: sha256:18ad2548e1fc7e10161ccc7b1956bf6fcac2086699d53fc653ce099a2c96d1d9
+    .claude/skills/github-pr-review/scripts/lib/repo_paths.sh: sha256:0abc669efa1da7a8ad1eec2f2c001ca3498c93d32de8ba2c39c15a999738cfe9
     .claude/skills/github-pr-review/scripts/lib/terraform.sh: sha256:ea6645e2a7568d82745051d539eac406a35640b033dae8e5e72fbf0f96a56b55
     .claude/skills/github-pr-review/scripts/lib/validation.sh: sha256:90d4a03121954f13303571b84e4590976040d42d47015fbc0b591d0315d8a502
     .claude/skills/github-pr-review/scripts/lib/yaml_map_order.py: sha256:eb542fe34e2e1c11c08d0f78c4717cb3521fbe5ae2f6e05712317fa5478ccf80
@@ -948,17 +956,17 @@ dependencies:
     .claude/skills/github-pr-revise/scripts/lib/common.sh: sha256:0ac46c94e935f7a62cdebd56b68a450f741bc55aae32e8cfde95049b8c8c21c5
     .claude/skills/github-pr-revise/scripts/lib/csv.sh: sha256:a4baeaf2d5842190c2b32c9fe131c782263766a399fda598fc83e35941e84209
     .claude/skills/github-pr-revise/scripts/lib/json.sh: sha256:71376538696a43cb7558ba983306d9ce7567419e0855994bf34d3658a000aacc
-    .claude/skills/github-pr-revise/scripts/lib/repo_paths.sh: sha256:18ad2548e1fc7e10161ccc7b1956bf6fcac2086699d53fc653ce099a2c96d1d9
+    .claude/skills/github-pr-revise/scripts/lib/repo_paths.sh: sha256:0abc669efa1da7a8ad1eec2f2c001ca3498c93d32de8ba2c39c15a999738cfe9
     .claude/skills/github-pr-revise/scripts/lib/terraform.sh: sha256:ea6645e2a7568d82745051d539eac406a35640b033dae8e5e72fbf0f96a56b55
     .claude/skills/github-pr-revise/scripts/lib/validation.sh: sha256:90d4a03121954f13303571b84e4590976040d42d47015fbc0b591d0315d8a502
     .claude/skills/github-pr-revise/scripts/lib/yaml_map_order.py: sha256:eb542fe34e2e1c11c08d0f78c4717cb3521fbe5ae2f6e05712317fa5478ccf80
-  content_hash: sha256:ee8ffdb20a3324b7865df74c356fd5723d1084fad9ec0f0fd45fb1f27cd6af94
+  content_hash: sha256:8e0234638106542c7a000cddf4de7c2414a73795ab54ae062652b8669840b29e
   declared_license: Apache-2.0
 - repo_url: y-miyazaki/config
   name: config-github-actions
   host: github.com
-  resolved_commit: 3875443aae2b0ec89efa6a3c3bdbc594ad4462bf
-  resolved_ref: v1.9.15
+  resolved_commit: 619efea37d6fc3a47939f63d7c38d8f838f5241d
+  resolved_ref: v1.9.16
   version: 1.0.0
   virtual_path: .apm/packages/github-actions
   is_virtual: true
@@ -1086,7 +1094,7 @@ dependencies:
     .agents/skills/github-actions-validation/scripts/lib/common.sh: sha256:0ac46c94e935f7a62cdebd56b68a450f741bc55aae32e8cfde95049b8c8c21c5
     .agents/skills/github-actions-validation/scripts/lib/csv.sh: sha256:a4baeaf2d5842190c2b32c9fe131c782263766a399fda598fc83e35941e84209
     .agents/skills/github-actions-validation/scripts/lib/json.sh: sha256:71376538696a43cb7558ba983306d9ce7567419e0855994bf34d3658a000aacc
-    .agents/skills/github-actions-validation/scripts/lib/repo_paths.sh: sha256:18ad2548e1fc7e10161ccc7b1956bf6fcac2086699d53fc653ce099a2c96d1d9
+    .agents/skills/github-actions-validation/scripts/lib/repo_paths.sh: sha256:0abc669efa1da7a8ad1eec2f2c001ca3498c93d32de8ba2c39c15a999738cfe9
     .agents/skills/github-actions-validation/scripts/lib/terraform.sh: sha256:ea6645e2a7568d82745051d539eac406a35640b033dae8e5e72fbf0f96a56b55
     .agents/skills/github-actions-validation/scripts/lib/validation.sh: sha256:90d4a03121954f13303571b84e4590976040d42d47015fbc0b591d0315d8a502
     .agents/skills/github-actions-validation/scripts/lib/yaml_map_order.py: sha256:eb542fe34e2e1c11c08d0f78c4717cb3521fbe5ae2f6e05712317fa5478ccf80
@@ -1127,19 +1135,19 @@ dependencies:
     .claude/skills/github-actions-validation/scripts/lib/common.sh: sha256:0ac46c94e935f7a62cdebd56b68a450f741bc55aae32e8cfde95049b8c8c21c5
     .claude/skills/github-actions-validation/scripts/lib/csv.sh: sha256:a4baeaf2d5842190c2b32c9fe131c782263766a399fda598fc83e35941e84209
     .claude/skills/github-actions-validation/scripts/lib/json.sh: sha256:71376538696a43cb7558ba983306d9ce7567419e0855994bf34d3658a000aacc
-    .claude/skills/github-actions-validation/scripts/lib/repo_paths.sh: sha256:18ad2548e1fc7e10161ccc7b1956bf6fcac2086699d53fc653ce099a2c96d1d9
+    .claude/skills/github-actions-validation/scripts/lib/repo_paths.sh: sha256:0abc669efa1da7a8ad1eec2f2c001ca3498c93d32de8ba2c39c15a999738cfe9
     .claude/skills/github-actions-validation/scripts/lib/terraform.sh: sha256:ea6645e2a7568d82745051d539eac406a35640b033dae8e5e72fbf0f96a56b55
     .claude/skills/github-actions-validation/scripts/lib/validation.sh: sha256:90d4a03121954f13303571b84e4590976040d42d47015fbc0b591d0315d8a502
     .claude/skills/github-actions-validation/scripts/lib/yaml_map_order.py: sha256:eb542fe34e2e1c11c08d0f78c4717cb3521fbe5ae2f6e05712317fa5478ccf80
     .claude/skills/github-actions-validation/scripts/validate.sh: sha256:95a9b6a15968a74f9a4093183d104c971af0420181846745f2e5d2c25d2596e8
     .cursor/rules/github-actions-workflow.mdc: sha256:d84f15c6f16b980d2d6dcf074afb9141b9adaf6913eacb865be557c5456d0b4a
-  content_hash: sha256:c011e2259be3a0f050dfc03390b52ddd88d9914d1cc2ab8f523906f0f9169180
+  content_hash: sha256:b26803358937f91344cd947d364908d0db0ad8323c1aafff510bbecfd5eb00fc
   declared_license: Apache-2.0
 - repo_url: y-miyazaki/config
   name: config-repo-maintenance
   host: github.com
-  resolved_commit: 3875443aae2b0ec89efa6a3c3bdbc594ad4462bf
-  resolved_ref: v1.9.15
+  resolved_commit: 619efea37d6fc3a47939f63d7c38d8f838f5241d
+  resolved_ref: v1.9.16
   version: 1.0.0
   virtual_path: .apm/packages/repo-maintenance
   is_virtual: true
@@ -1652,7 +1660,7 @@ dependencies:
     .agents/skills/changelog/scripts/lib/common.sh: sha256:0ac46c94e935f7a62cdebd56b68a450f741bc55aae32e8cfde95049b8c8c21c5
     .agents/skills/changelog/scripts/lib/csv.sh: sha256:a4baeaf2d5842190c2b32c9fe131c782263766a399fda598fc83e35941e84209
     .agents/skills/changelog/scripts/lib/json.sh: sha256:71376538696a43cb7558ba983306d9ce7567419e0855994bf34d3658a000aacc
-    .agents/skills/changelog/scripts/lib/repo_paths.sh: sha256:18ad2548e1fc7e10161ccc7b1956bf6fcac2086699d53fc653ce099a2c96d1d9
+    .agents/skills/changelog/scripts/lib/repo_paths.sh: sha256:0abc669efa1da7a8ad1eec2f2c001ca3498c93d32de8ba2c39c15a999738cfe9
     .agents/skills/changelog/scripts/lib/terraform.sh: sha256:ea6645e2a7568d82745051d539eac406a35640b033dae8e5e72fbf0f96a56b55
     .agents/skills/changelog/scripts/lib/validation.sh: sha256:90d4a03121954f13303571b84e4590976040d42d47015fbc0b591d0315d8a502
     .agents/skills/changelog/scripts/lib/yaml_map_order.py: sha256:eb542fe34e2e1c11c08d0f78c4717cb3521fbe5ae2f6e05712317fa5478ccf80
@@ -1687,7 +1695,7 @@ dependencies:
     .agents/skills/ci-sweeper/scripts/lib/common.sh: sha256:0ac46c94e935f7a62cdebd56b68a450f741bc55aae32e8cfde95049b8c8c21c5
     .agents/skills/ci-sweeper/scripts/lib/csv.sh: sha256:a4baeaf2d5842190c2b32c9fe131c782263766a399fda598fc83e35941e84209
     .agents/skills/ci-sweeper/scripts/lib/json.sh: sha256:71376538696a43cb7558ba983306d9ce7567419e0855994bf34d3658a000aacc
-    .agents/skills/ci-sweeper/scripts/lib/repo_paths.sh: sha256:18ad2548e1fc7e10161ccc7b1956bf6fcac2086699d53fc653ce099a2c96d1d9
+    .agents/skills/ci-sweeper/scripts/lib/repo_paths.sh: sha256:0abc669efa1da7a8ad1eec2f2c001ca3498c93d32de8ba2c39c15a999738cfe9
     .agents/skills/ci-sweeper/scripts/lib/terraform.sh: sha256:ea6645e2a7568d82745051d539eac406a35640b033dae8e5e72fbf0f96a56b55
     .agents/skills/ci-sweeper/scripts/lib/validation.sh: sha256:90d4a03121954f13303571b84e4590976040d42d47015fbc0b591d0315d8a502
     .agents/skills/ci-sweeper/scripts/lib/yaml_map_order.py: sha256:eb542fe34e2e1c11c08d0f78c4717cb3521fbe5ae2f6e05712317fa5478ccf80
@@ -1737,7 +1745,7 @@ dependencies:
     .agents/skills/docs-updater/scripts/lib/common.sh: sha256:0ac46c94e935f7a62cdebd56b68a450f741bc55aae32e8cfde95049b8c8c21c5
     .agents/skills/docs-updater/scripts/lib/csv.sh: sha256:a4baeaf2d5842190c2b32c9fe131c782263766a399fda598fc83e35941e84209
     .agents/skills/docs-updater/scripts/lib/json.sh: sha256:71376538696a43cb7558ba983306d9ce7567419e0855994bf34d3658a000aacc
-    .agents/skills/docs-updater/scripts/lib/repo_paths.sh: sha256:18ad2548e1fc7e10161ccc7b1956bf6fcac2086699d53fc653ce099a2c96d1d9
+    .agents/skills/docs-updater/scripts/lib/repo_paths.sh: sha256:0abc669efa1da7a8ad1eec2f2c001ca3498c93d32de8ba2c39c15a999738cfe9
     .agents/skills/docs-updater/scripts/lib/terraform.sh: sha256:ea6645e2a7568d82745051d539eac406a35640b033dae8e5e72fbf0f96a56b55
     .agents/skills/docs-updater/scripts/lib/validation.sh: sha256:90d4a03121954f13303571b84e4590976040d42d47015fbc0b591d0315d8a502
     .agents/skills/docs-updater/scripts/lib/yaml_map_order.py: sha256:eb542fe34e2e1c11c08d0f78c4717cb3521fbe5ae2f6e05712317fa5478ccf80
@@ -1779,7 +1787,7 @@ dependencies:
     .agents/skills/refactor/scripts/lib/common.sh: sha256:0ac46c94e935f7a62cdebd56b68a450f741bc55aae32e8cfde95049b8c8c21c5
     .agents/skills/refactor/scripts/lib/csv.sh: sha256:a4baeaf2d5842190c2b32c9fe131c782263766a399fda598fc83e35941e84209
     .agents/skills/refactor/scripts/lib/json.sh: sha256:71376538696a43cb7558ba983306d9ce7567419e0855994bf34d3658a000aacc
-    .agents/skills/refactor/scripts/lib/repo_paths.sh: sha256:18ad2548e1fc7e10161ccc7b1956bf6fcac2086699d53fc653ce099a2c96d1d9
+    .agents/skills/refactor/scripts/lib/repo_paths.sh: sha256:0abc669efa1da7a8ad1eec2f2c001ca3498c93d32de8ba2c39c15a999738cfe9
     .agents/skills/refactor/scripts/lib/terraform.sh: sha256:ea6645e2a7568d82745051d539eac406a35640b033dae8e5e72fbf0f96a56b55
     .agents/skills/refactor/scripts/lib/validation.sh: sha256:90d4a03121954f13303571b84e4590976040d42d47015fbc0b591d0315d8a502
     .agents/skills/refactor/scripts/lib/yaml_map_order.py: sha256:eb542fe34e2e1c11c08d0f78c4717cb3521fbe5ae2f6e05712317fa5478ccf80
@@ -1824,7 +1832,7 @@ dependencies:
     .agents/skills/tech-debt/scripts/lib/common.sh: sha256:0ac46c94e935f7a62cdebd56b68a450f741bc55aae32e8cfde95049b8c8c21c5
     .agents/skills/tech-debt/scripts/lib/csv.sh: sha256:a4baeaf2d5842190c2b32c9fe131c782263766a399fda598fc83e35941e84209
     .agents/skills/tech-debt/scripts/lib/json.sh: sha256:71376538696a43cb7558ba983306d9ce7567419e0855994bf34d3658a000aacc
-    .agents/skills/tech-debt/scripts/lib/repo_paths.sh: sha256:18ad2548e1fc7e10161ccc7b1956bf6fcac2086699d53fc653ce099a2c96d1d9
+    .agents/skills/tech-debt/scripts/lib/repo_paths.sh: sha256:0abc669efa1da7a8ad1eec2f2c001ca3498c93d32de8ba2c39c15a999738cfe9
     .agents/skills/tech-debt/scripts/lib/terraform.sh: sha256:ea6645e2a7568d82745051d539eac406a35640b033dae8e5e72fbf0f96a56b55
     .agents/skills/tech-debt/scripts/lib/validation.sh: sha256:90d4a03121954f13303571b84e4590976040d42d47015fbc0b591d0315d8a502
     .agents/skills/tech-debt/scripts/lib/yaml_map_order.py: sha256:eb542fe34e2e1c11c08d0f78c4717cb3521fbe5ae2f6e05712317fa5478ccf80
@@ -1849,7 +1857,7 @@ dependencies:
     .agents/skills/test-gap/scripts/lib/common.sh: sha256:0ac46c94e935f7a62cdebd56b68a450f741bc55aae32e8cfde95049b8c8c21c5
     .agents/skills/test-gap/scripts/lib/csv.sh: sha256:a4baeaf2d5842190c2b32c9fe131c782263766a399fda598fc83e35941e84209
     .agents/skills/test-gap/scripts/lib/json.sh: sha256:71376538696a43cb7558ba983306d9ce7567419e0855994bf34d3658a000aacc
-    .agents/skills/test-gap/scripts/lib/repo_paths.sh: sha256:18ad2548e1fc7e10161ccc7b1956bf6fcac2086699d53fc653ce099a2c96d1d9
+    .agents/skills/test-gap/scripts/lib/repo_paths.sh: sha256:0abc669efa1da7a8ad1eec2f2c001ca3498c93d32de8ba2c39c15a999738cfe9
     .agents/skills/test-gap/scripts/lib/terraform.sh: sha256:ea6645e2a7568d82745051d539eac406a35640b033dae8e5e72fbf0f96a56b55
     .agents/skills/test-gap/scripts/lib/validation.sh: sha256:90d4a03121954f13303571b84e4590976040d42d47015fbc0b591d0315d8a502
     .agents/skills/test-gap/scripts/lib/yaml_map_order.py: sha256:eb542fe34e2e1c11c08d0f78c4717cb3521fbe5ae2f6e05712317fa5478ccf80
@@ -1884,7 +1892,7 @@ dependencies:
     .claude/skills/changelog/scripts/lib/common.sh: sha256:0ac46c94e935f7a62cdebd56b68a450f741bc55aae32e8cfde95049b8c8c21c5
     .claude/skills/changelog/scripts/lib/csv.sh: sha256:a4baeaf2d5842190c2b32c9fe131c782263766a399fda598fc83e35941e84209
     .claude/skills/changelog/scripts/lib/json.sh: sha256:71376538696a43cb7558ba983306d9ce7567419e0855994bf34d3658a000aacc
-    .claude/skills/changelog/scripts/lib/repo_paths.sh: sha256:18ad2548e1fc7e10161ccc7b1956bf6fcac2086699d53fc653ce099a2c96d1d9
+    .claude/skills/changelog/scripts/lib/repo_paths.sh: sha256:0abc669efa1da7a8ad1eec2f2c001ca3498c93d32de8ba2c39c15a999738cfe9
     .claude/skills/changelog/scripts/lib/terraform.sh: sha256:ea6645e2a7568d82745051d539eac406a35640b033dae8e5e72fbf0f96a56b55
     .claude/skills/changelog/scripts/lib/validation.sh: sha256:90d4a03121954f13303571b84e4590976040d42d47015fbc0b591d0315d8a502
     .claude/skills/changelog/scripts/lib/yaml_map_order.py: sha256:eb542fe34e2e1c11c08d0f78c4717cb3521fbe5ae2f6e05712317fa5478ccf80
@@ -1919,7 +1927,7 @@ dependencies:
     .claude/skills/ci-sweeper/scripts/lib/common.sh: sha256:0ac46c94e935f7a62cdebd56b68a450f741bc55aae32e8cfde95049b8c8c21c5
     .claude/skills/ci-sweeper/scripts/lib/csv.sh: sha256:a4baeaf2d5842190c2b32c9fe131c782263766a399fda598fc83e35941e84209
     .claude/skills/ci-sweeper/scripts/lib/json.sh: sha256:71376538696a43cb7558ba983306d9ce7567419e0855994bf34d3658a000aacc
-    .claude/skills/ci-sweeper/scripts/lib/repo_paths.sh: sha256:18ad2548e1fc7e10161ccc7b1956bf6fcac2086699d53fc653ce099a2c96d1d9
+    .claude/skills/ci-sweeper/scripts/lib/repo_paths.sh: sha256:0abc669efa1da7a8ad1eec2f2c001ca3498c93d32de8ba2c39c15a999738cfe9
     .claude/skills/ci-sweeper/scripts/lib/terraform.sh: sha256:ea6645e2a7568d82745051d539eac406a35640b033dae8e5e72fbf0f96a56b55
     .claude/skills/ci-sweeper/scripts/lib/validation.sh: sha256:90d4a03121954f13303571b84e4590976040d42d47015fbc0b591d0315d8a502
     .claude/skills/ci-sweeper/scripts/lib/yaml_map_order.py: sha256:eb542fe34e2e1c11c08d0f78c4717cb3521fbe5ae2f6e05712317fa5478ccf80
@@ -1969,7 +1977,7 @@ dependencies:
     .claude/skills/docs-updater/scripts/lib/common.sh: sha256:0ac46c94e935f7a62cdebd56b68a450f741bc55aae32e8cfde95049b8c8c21c5
     .claude/skills/docs-updater/scripts/lib/csv.sh: sha256:a4baeaf2d5842190c2b32c9fe131c782263766a399fda598fc83e35941e84209
     .claude/skills/docs-updater/scripts/lib/json.sh: sha256:71376538696a43cb7558ba983306d9ce7567419e0855994bf34d3658a000aacc
-    .claude/skills/docs-updater/scripts/lib/repo_paths.sh: sha256:18ad2548e1fc7e10161ccc7b1956bf6fcac2086699d53fc653ce099a2c96d1d9
+    .claude/skills/docs-updater/scripts/lib/repo_paths.sh: sha256:0abc669efa1da7a8ad1eec2f2c001ca3498c93d32de8ba2c39c15a999738cfe9
     .claude/skills/docs-updater/scripts/lib/terraform.sh: sha256:ea6645e2a7568d82745051d539eac406a35640b033dae8e5e72fbf0f96a56b55
     .claude/skills/docs-updater/scripts/lib/validation.sh: sha256:90d4a03121954f13303571b84e4590976040d42d47015fbc0b591d0315d8a502
     .claude/skills/docs-updater/scripts/lib/yaml_map_order.py: sha256:eb542fe34e2e1c11c08d0f78c4717cb3521fbe5ae2f6e05712317fa5478ccf80
@@ -2011,7 +2019,7 @@ dependencies:
     .claude/skills/refactor/scripts/lib/common.sh: sha256:0ac46c94e935f7a62cdebd56b68a450f741bc55aae32e8cfde95049b8c8c21c5
     .claude/skills/refactor/scripts/lib/csv.sh: sha256:a4baeaf2d5842190c2b32c9fe131c782263766a399fda598fc83e35941e84209
     .claude/skills/refactor/scripts/lib/json.sh: sha256:71376538696a43cb7558ba983306d9ce7567419e0855994bf34d3658a000aacc
-    .claude/skills/refactor/scripts/lib/repo_paths.sh: sha256:18ad2548e1fc7e10161ccc7b1956bf6fcac2086699d53fc653ce099a2c96d1d9
+    .claude/skills/refactor/scripts/lib/repo_paths.sh: sha256:0abc669efa1da7a8ad1eec2f2c001ca3498c93d32de8ba2c39c15a999738cfe9
     .claude/skills/refactor/scripts/lib/terraform.sh: sha256:ea6645e2a7568d82745051d539eac406a35640b033dae8e5e72fbf0f96a56b55
     .claude/skills/refactor/scripts/lib/validation.sh: sha256:90d4a03121954f13303571b84e4590976040d42d47015fbc0b591d0315d8a502
     .claude/skills/refactor/scripts/lib/yaml_map_order.py: sha256:eb542fe34e2e1c11c08d0f78c4717cb3521fbe5ae2f6e05712317fa5478ccf80
@@ -2056,7 +2064,7 @@ dependencies:
     .claude/skills/tech-debt/scripts/lib/common.sh: sha256:0ac46c94e935f7a62cdebd56b68a450f741bc55aae32e8cfde95049b8c8c21c5
     .claude/skills/tech-debt/scripts/lib/csv.sh: sha256:a4baeaf2d5842190c2b32c9fe131c782263766a399fda598fc83e35941e84209
     .claude/skills/tech-debt/scripts/lib/json.sh: sha256:71376538696a43cb7558ba983306d9ce7567419e0855994bf34d3658a000aacc
-    .claude/skills/tech-debt/scripts/lib/repo_paths.sh: sha256:18ad2548e1fc7e10161ccc7b1956bf6fcac2086699d53fc653ce099a2c96d1d9
+    .claude/skills/tech-debt/scripts/lib/repo_paths.sh: sha256:0abc669efa1da7a8ad1eec2f2c001ca3498c93d32de8ba2c39c15a999738cfe9
     .claude/skills/tech-debt/scripts/lib/terraform.sh: sha256:ea6645e2a7568d82745051d539eac406a35640b033dae8e5e72fbf0f96a56b55
     .claude/skills/tech-debt/scripts/lib/validation.sh: sha256:90d4a03121954f13303571b84e4590976040d42d47015fbc0b591d0315d8a502
     .claude/skills/tech-debt/scripts/lib/yaml_map_order.py: sha256:eb542fe34e2e1c11c08d0f78c4717cb3521fbe5ae2f6e05712317fa5478ccf80
@@ -2081,18 +2089,18 @@ dependencies:
     .claude/skills/test-gap/scripts/lib/common.sh: sha256:0ac46c94e935f7a62cdebd56b68a450f741bc55aae32e8cfde95049b8c8c21c5
     .claude/skills/test-gap/scripts/lib/csv.sh: sha256:a4baeaf2d5842190c2b32c9fe131c782263766a399fda598fc83e35941e84209
     .claude/skills/test-gap/scripts/lib/json.sh: sha256:71376538696a43cb7558ba983306d9ce7567419e0855994bf34d3658a000aacc
-    .claude/skills/test-gap/scripts/lib/repo_paths.sh: sha256:18ad2548e1fc7e10161ccc7b1956bf6fcac2086699d53fc653ce099a2c96d1d9
+    .claude/skills/test-gap/scripts/lib/repo_paths.sh: sha256:0abc669efa1da7a8ad1eec2f2c001ca3498c93d32de8ba2c39c15a999738cfe9
     .claude/skills/test-gap/scripts/lib/terraform.sh: sha256:ea6645e2a7568d82745051d539eac406a35640b033dae8e5e72fbf0f96a56b55
     .claude/skills/test-gap/scripts/lib/validation.sh: sha256:90d4a03121954f13303571b84e4590976040d42d47015fbc0b591d0315d8a502
     .claude/skills/test-gap/scripts/lib/yaml_map_order.py: sha256:eb542fe34e2e1c11c08d0f78c4717cb3521fbe5ae2f6e05712317fa5478ccf80
     .claude/skills/test-gap/scripts/update_test_gap_ledger.sh: sha256:ae2a12d1a38b67b24e71b507f4df15d22460afd6cbf721f1efdb7132a557ff45
-  content_hash: sha256:930683c69ab9ccda64325e6b8a7478998385ce766050cb20d90f8b9d34ed4875
+  content_hash: sha256:8332e2eea145618e8f05e5a152cae4cfbb2c1c8318642260f2327d21be403fa2
   declared_license: Apache-2.0
 - repo_url: y-miyazaki/config
   name: config-shell-script
   host: github.com
-  resolved_commit: 3875443aae2b0ec89efa6a3c3bdbc594ad4462bf
-  resolved_ref: v1.9.15
+  resolved_commit: 619efea37d6fc3a47939f63d7c38d8f838f5241d
+  resolved_ref: v1.9.16
   version: 1.0.0
   virtual_path: .apm/packages/shell-script
   is_virtual: true
@@ -2221,7 +2229,7 @@ dependencies:
     .agents/skills/shell-script-review/references/common-checklist.md: sha256:2eda918ed96cf04d6f8058145a287c11d9e1f2d3e80163874855a5995ba2b5e9
     .agents/skills/shell-script-review/references/common-output-format.md: sha256:2752ae788e8dbeae4958cb07b93dad31bf09da1080d16055427ca1fe06e14273
     .agents/skills/shell-script-review/references/common-troubleshooting.md: sha256:426d9a560e3224eb3c53a36c5ef29bb788f4762a6e40f5c66deab74ab016df16
-    .agents/skills/shell-script-validation/SKILL.md: sha256:38c4f20f53c1dd9397c47c9aa2fb9bb8a8ca7265391e583342e35b1c22d62997
+    .agents/skills/shell-script-validation/SKILL.md: sha256:cc07f26188d690cd8d90500616b1498e0e8292fbfa2eab5c396f1db660ccd2ec
     .agents/skills/shell-script-validation/eval.yaml: sha256:6f2518a30fe2dbd04da7b10693bd4eb8cc076d9983646c98f0591e9712ffcfd8
     .agents/skills/shell-script-validation/evals/tasks/shell-script-validation-basic.yaml: sha256:d2df5946a3fcf3765e52405d29b0bb478e6a64dc4d05310a76a1ce6ee763d005
     .agents/skills/shell-script-validation/evals/tasks/shell-script-validation-boundary-guardrail.yaml: sha256:1238638e16effa3f2f1c58c5e12768624d65b5821b4c8b7b20d40878eeca8104
@@ -2233,7 +2241,7 @@ dependencies:
     .agents/skills/shell-script-validation/evals/tasks/shell-script-validation-trigger-negative.yaml: sha256:cb7f413048123c3c4dab9f3d8651b89a29ebce907f8d108c092ece58c8080c19
     .agents/skills/shell-script-validation/evals/tasks/shell-script-validation-trigger-positive.yaml: sha256:54adf62dc0ffe48a7140d1f4e980400fb1a970f9c11a85cd111cae5a6c2acbc0
     .agents/skills/shell-script-validation/references/category-standards.md: sha256:ca1997e2725d739bc969d7b5b4b9356f62e8225df7c3e2cc76fa25c9ff596e5b
-    .agents/skills/shell-script-validation/references/common-checklist.md: sha256:101cc7eba12a4baeaac3b258fcda649a79a07260c118d6072385e67cbc3647f1
+    .agents/skills/shell-script-validation/references/common-checklist.md: sha256:f62969a6828a3f7eeaa92a981a074ddb1e3f791f3e149f3be27c5742be34e7dc
     .agents/skills/shell-script-validation/references/common-individual-commands.md: sha256:a0506c9db0db57da3ae0d1e0fc6b573b4cabbd91ddceba53ea64e6aea95cea3e
     .agents/skills/shell-script-validation/references/common-output-format.md: sha256:d7ec71286a4ea46d8d264535720cd7cf046e304a03ceb566df812a8d1a5af8be
     .agents/skills/shell-script-validation/references/common-troubleshooting.md: sha256:412dd9ee08ec456680ad97bee351f01d8db3617c33afe3075be1d43145985bba
@@ -2243,11 +2251,11 @@ dependencies:
     .agents/skills/shell-script-validation/scripts/lib/common.sh: sha256:0ac46c94e935f7a62cdebd56b68a450f741bc55aae32e8cfde95049b8c8c21c5
     .agents/skills/shell-script-validation/scripts/lib/csv.sh: sha256:a4baeaf2d5842190c2b32c9fe131c782263766a399fda598fc83e35941e84209
     .agents/skills/shell-script-validation/scripts/lib/json.sh: sha256:71376538696a43cb7558ba983306d9ce7567419e0855994bf34d3658a000aacc
-    .agents/skills/shell-script-validation/scripts/lib/repo_paths.sh: sha256:18ad2548e1fc7e10161ccc7b1956bf6fcac2086699d53fc653ce099a2c96d1d9
+    .agents/skills/shell-script-validation/scripts/lib/repo_paths.sh: sha256:0abc669efa1da7a8ad1eec2f2c001ca3498c93d32de8ba2c39c15a999738cfe9
     .agents/skills/shell-script-validation/scripts/lib/terraform.sh: sha256:ea6645e2a7568d82745051d539eac406a35640b033dae8e5e72fbf0f96a56b55
     .agents/skills/shell-script-validation/scripts/lib/validation.sh: sha256:90d4a03121954f13303571b84e4590976040d42d47015fbc0b591d0315d8a502
     .agents/skills/shell-script-validation/scripts/lib/yaml_map_order.py: sha256:eb542fe34e2e1c11c08d0f78c4717cb3521fbe5ae2f6e05712317fa5478ccf80
-    .agents/skills/shell-script-validation/scripts/validate.sh: sha256:7362cb582f871432a4c9d67fab6dc98b5d55b7af1cf95f474e38e1151cd7a201
+    .agents/skills/shell-script-validation/scripts/validate.sh: sha256:9a01adaa3b3c13bad509759c8851a32744800524f3ea1cfa576ff9ac6fc0588c
     .claude/rules/bats.md: sha256:1d17f095e9ced10a07b6a088c47de639f99f07f6d07647f592faa8373915d73d
     .claude/rules/shell-script.md: sha256:d8c780ac26e04ed0d24eb22972dfc0a879b85cab97762be8a692198ad05fae3b
     .claude/skills/shell-script-review/SKILL.md: sha256:73b023114f5238093d399dff71d348ef4a9cf1793a17362409fd98922a9c2755
@@ -2270,7 +2278,7 @@ dependencies:
     .claude/skills/shell-script-review/references/common-checklist.md: sha256:2eda918ed96cf04d6f8058145a287c11d9e1f2d3e80163874855a5995ba2b5e9
     .claude/skills/shell-script-review/references/common-output-format.md: sha256:2752ae788e8dbeae4958cb07b93dad31bf09da1080d16055427ca1fe06e14273
     .claude/skills/shell-script-review/references/common-troubleshooting.md: sha256:426d9a560e3224eb3c53a36c5ef29bb788f4762a6e40f5c66deab74ab016df16
-    .claude/skills/shell-script-validation/SKILL.md: sha256:38c4f20f53c1dd9397c47c9aa2fb9bb8a8ca7265391e583342e35b1c22d62997
+    .claude/skills/shell-script-validation/SKILL.md: sha256:cc07f26188d690cd8d90500616b1498e0e8292fbfa2eab5c396f1db660ccd2ec
     .claude/skills/shell-script-validation/eval.yaml: sha256:6f2518a30fe2dbd04da7b10693bd4eb8cc076d9983646c98f0591e9712ffcfd8
     .claude/skills/shell-script-validation/evals/tasks/shell-script-validation-basic.yaml: sha256:d2df5946a3fcf3765e52405d29b0bb478e6a64dc4d05310a76a1ce6ee763d005
     .claude/skills/shell-script-validation/evals/tasks/shell-script-validation-boundary-guardrail.yaml: sha256:1238638e16effa3f2f1c58c5e12768624d65b5821b4c8b7b20d40878eeca8104
@@ -2282,7 +2290,7 @@ dependencies:
     .claude/skills/shell-script-validation/evals/tasks/shell-script-validation-trigger-negative.yaml: sha256:cb7f413048123c3c4dab9f3d8651b89a29ebce907f8d108c092ece58c8080c19
     .claude/skills/shell-script-validation/evals/tasks/shell-script-validation-trigger-positive.yaml: sha256:54adf62dc0ffe48a7140d1f4e980400fb1a970f9c11a85cd111cae5a6c2acbc0
     .claude/skills/shell-script-validation/references/category-standards.md: sha256:ca1997e2725d739bc969d7b5b4b9356f62e8225df7c3e2cc76fa25c9ff596e5b
-    .claude/skills/shell-script-validation/references/common-checklist.md: sha256:101cc7eba12a4baeaac3b258fcda649a79a07260c118d6072385e67cbc3647f1
+    .claude/skills/shell-script-validation/references/common-checklist.md: sha256:f62969a6828a3f7eeaa92a981a074ddb1e3f791f3e149f3be27c5742be34e7dc
     .claude/skills/shell-script-validation/references/common-individual-commands.md: sha256:a0506c9db0db57da3ae0d1e0fc6b573b4cabbd91ddceba53ea64e6aea95cea3e
     .claude/skills/shell-script-validation/references/common-output-format.md: sha256:d7ec71286a4ea46d8d264535720cd7cf046e304a03ceb566df812a8d1a5af8be
     .claude/skills/shell-script-validation/references/common-troubleshooting.md: sha256:412dd9ee08ec456680ad97bee351f01d8db3617c33afe3075be1d43145985bba
@@ -2292,20 +2300,20 @@ dependencies:
     .claude/skills/shell-script-validation/scripts/lib/common.sh: sha256:0ac46c94e935f7a62cdebd56b68a450f741bc55aae32e8cfde95049b8c8c21c5
     .claude/skills/shell-script-validation/scripts/lib/csv.sh: sha256:a4baeaf2d5842190c2b32c9fe131c782263766a399fda598fc83e35941e84209
     .claude/skills/shell-script-validation/scripts/lib/json.sh: sha256:71376538696a43cb7558ba983306d9ce7567419e0855994bf34d3658a000aacc
-    .claude/skills/shell-script-validation/scripts/lib/repo_paths.sh: sha256:18ad2548e1fc7e10161ccc7b1956bf6fcac2086699d53fc653ce099a2c96d1d9
+    .claude/skills/shell-script-validation/scripts/lib/repo_paths.sh: sha256:0abc669efa1da7a8ad1eec2f2c001ca3498c93d32de8ba2c39c15a999738cfe9
     .claude/skills/shell-script-validation/scripts/lib/terraform.sh: sha256:ea6645e2a7568d82745051d539eac406a35640b033dae8e5e72fbf0f96a56b55
     .claude/skills/shell-script-validation/scripts/lib/validation.sh: sha256:90d4a03121954f13303571b84e4590976040d42d47015fbc0b591d0315d8a502
     .claude/skills/shell-script-validation/scripts/lib/yaml_map_order.py: sha256:eb542fe34e2e1c11c08d0f78c4717cb3521fbe5ae2f6e05712317fa5478ccf80
-    .claude/skills/shell-script-validation/scripts/validate.sh: sha256:7362cb582f871432a4c9d67fab6dc98b5d55b7af1cf95f474e38e1151cd7a201
+    .claude/skills/shell-script-validation/scripts/validate.sh: sha256:9a01adaa3b3c13bad509759c8851a32744800524f3ea1cfa576ff9ac6fc0588c
     .cursor/rules/bats.mdc: sha256:f4cbb6ae99732d01905ae2b853475745ce3604f504abf3eb8a3d27fbe4a88f71
     .cursor/rules/shell-script.mdc: sha256:5a3d9d3a3e0f52b4f68267e3c5ae78afc439f264a80563444c1879dc17bb2855
-  content_hash: sha256:84ff06c1574e542a6fc433758d2ddf0cd1259605d16a20d193da72324c9d07e8
+  content_hash: sha256:fe10bb1cf37859acb2e5933320682db0786658521f4ed8b5c6752ede33afb5ad
   declared_license: Apache-2.0
 - repo_url: y-miyazaki/config
   name: shell-script-hooks-claude
   host: github.com
-  resolved_commit: 3875443aae2b0ec89efa6a3c3bdbc594ad4462bf
-  resolved_ref: v1.9.15
+  resolved_commit: 619efea37d6fc3a47939f63d7c38d8f838f5241d
+  resolved_ref: v1.9.16
   version: 1.0.0
   virtual_path: .apm/packages/shell-script-hooks-claude
   is_virtual: true
@@ -2314,15 +2322,15 @@ dependencies:
   - .claude/hooks/shell-script-hooks-claude/scripts/shellcheck.sh
   - .claude/hooks/shell-script-hooks-claude/scripts/shfmt.sh
   deployed_file_hashes:
-    .claude/hooks/shell-script-hooks-claude/scripts/shellcheck.sh: sha256:eb8be3c6f5496907d9e34d1321e3476d36f7bc3ba58ce7afd9cd8100375165af
-    .claude/hooks/shell-script-hooks-claude/scripts/shfmt.sh: sha256:1ee58b42a134c92845a1b9ea81a91e6c4218e0c446dda35ed261a2a0bfd8e74f
-  content_hash: sha256:0f05e090e48afe705600c5f75b8e63f461ac3f0c0031f991aeb5256f8cea179f
+    .claude/hooks/shell-script-hooks-claude/scripts/shellcheck.sh: sha256:a557c363ee593ef079f46f5ad8565503f0e902751195258dae102708120c010c
+    .claude/hooks/shell-script-hooks-claude/scripts/shfmt.sh: sha256:818c6b53d95dab143a5a8fc8b751490121adcbcd7e0640a695bd950909810d54
+  content_hash: sha256:1bf5a75f3dc398d8f1a475489eaa7942889a47e48681e0351fe6de00ed231d0c
   declared_license: Apache-2.0
 - repo_url: y-miyazaki/config
   name: shell-script-hooks-cursor
   host: github.com
-  resolved_commit: 3875443aae2b0ec89efa6a3c3bdbc594ad4462bf
-  resolved_ref: v1.9.15
+  resolved_commit: 619efea37d6fc3a47939f63d7c38d8f838f5241d
+  resolved_ref: v1.9.16
   version: 1.0.0
   virtual_path: .apm/packages/shell-script-hooks-cursor
   is_virtual: true
@@ -2331,15 +2339,15 @@ dependencies:
   - .cursor/hooks/shell-script-hooks-cursor/scripts/shellcheck.sh
   - .cursor/hooks/shell-script-hooks-cursor/scripts/shfmt.sh
   deployed_file_hashes:
-    .cursor/hooks/shell-script-hooks-cursor/scripts/shellcheck.sh: sha256:eb8be3c6f5496907d9e34d1321e3476d36f7bc3ba58ce7afd9cd8100375165af
-    .cursor/hooks/shell-script-hooks-cursor/scripts/shfmt.sh: sha256:1ee58b42a134c92845a1b9ea81a91e6c4218e0c446dda35ed261a2a0bfd8e74f
-  content_hash: sha256:f2256ce7c11038dcd357cdcb0bacf6bc1c6d324c62b74ca7c30d5c68984530a0
+    .cursor/hooks/shell-script-hooks-cursor/scripts/shellcheck.sh: sha256:a557c363ee593ef079f46f5ad8565503f0e902751195258dae102708120c010c
+    .cursor/hooks/shell-script-hooks-cursor/scripts/shfmt.sh: sha256:818c6b53d95dab143a5a8fc8b751490121adcbcd7e0640a695bd950909810d54
+  content_hash: sha256:8fc221adc6d2916ad0079d1200370f046100206aa9b6b27080a15e13809b9fb8
   declared_license: Apache-2.0
 - repo_url: y-miyazaki/config
   name: config-terraform
   host: github.com
-  resolved_commit: 3875443aae2b0ec89efa6a3c3bdbc594ad4462bf
-  resolved_ref: v1.9.15
+  resolved_commit: 619efea37d6fc3a47939f63d7c38d8f838f5241d
+  resolved_ref: v1.9.16
   version: 1.0.0
   virtual_path: .apm/packages/terraform
   is_virtual: true
@@ -2498,7 +2506,7 @@ dependencies:
     .agents/skills/terraform-review/references/common-checklist.md: sha256:55177fdc32f189ed46dc2f07ac7682b196fe0393ddaac1fc331eb96d005d8c0b
     .agents/skills/terraform-review/references/common-output-format.md: sha256:fc8d1319d99fcd9beb5246cbeea520fda22c2bbec68e25453541825ac0c96e69
     .agents/skills/terraform-review/references/common-troubleshooting.md: sha256:bfe9a5e84bebba0e7142c93f3d892dd8fade1865f1fe97db828b5d42312c3be8
-    .agents/skills/terraform-validation/SKILL.md: sha256:396b9dc374b6d161f7d64fd0d47eb12e536481582f1a8d8e65fddab49ccdf3ed
+    .agents/skills/terraform-validation/SKILL.md: sha256:a194bcebf23f4fc52e08ab1f91143b11beadc4a36099c0f0a107701e2a757853
     .agents/skills/terraform-validation/eval.yaml: sha256:f8ffa728ca32ffbb4686f3217009a8d1a68f8c13143bd43488e3161d0afbbbfa
     .agents/skills/terraform-validation/evals/tasks/terraform-validation-basic.yaml: sha256:f80524e8135a64daa3ee6fbc550d1a1df80af45cbdc03dd44c58336f8968f457
     .agents/skills/terraform-validation/evals/tasks/terraform-validation-boundary-guardrail.yaml: sha256:809893aa04ee403aa1afb6a0e49aec7e50390b246325796e659735625fcdedf2
@@ -2508,18 +2516,18 @@ dependencies:
     .agents/skills/terraform-validation/references/category-security.md: sha256:111d33272f7138dde9d9ab1c4dbf89ae99fa1895685ec0e6035074e7f9fbcbf1
     .agents/skills/terraform-validation/references/common-checklist.md: sha256:041450425a99b2d49e2f5ef7f4e38ebaa9b1d224ec88355732b047ba2c9d7301
     .agents/skills/terraform-validation/references/common-individual-commands.md: sha256:094b176b391c9c1af2013f82febde658861f8842b61c2335713002ca8f720068
-    .agents/skills/terraform-validation/references/common-output-format.md: sha256:fd181d62014f177f7e9c6f3ec6eb3d7f9b12d80822fdd9214df492ba9fe9b59f
+    .agents/skills/terraform-validation/references/common-output-format.md: sha256:adb8c41bac839475db8db224d075e6e6b67e8289dcc3237006296f55847512db
     .agents/skills/terraform-validation/references/common-troubleshooting.md: sha256:42205b777324e7c3a54b84d58de2d86c4686c970a3fc1c161ffd90b77948c9c7
     .agents/skills/terraform-validation/scripts/lib/all.sh: sha256:dc9b27d00ff0b37be6f5c986a59a8107f59a83bede4de5818e453a38ae51f216
     .agents/skills/terraform-validation/scripts/lib/aws.sh: sha256:9378617c56fa762fe44fc13b84c0eb941c593228842f6ead60a3487391a8d9dc
     .agents/skills/terraform-validation/scripts/lib/common.sh: sha256:0ac46c94e935f7a62cdebd56b68a450f741bc55aae32e8cfde95049b8c8c21c5
     .agents/skills/terraform-validation/scripts/lib/csv.sh: sha256:a4baeaf2d5842190c2b32c9fe131c782263766a399fda598fc83e35941e84209
     .agents/skills/terraform-validation/scripts/lib/json.sh: sha256:71376538696a43cb7558ba983306d9ce7567419e0855994bf34d3658a000aacc
-    .agents/skills/terraform-validation/scripts/lib/repo_paths.sh: sha256:18ad2548e1fc7e10161ccc7b1956bf6fcac2086699d53fc653ce099a2c96d1d9
+    .agents/skills/terraform-validation/scripts/lib/repo_paths.sh: sha256:0abc669efa1da7a8ad1eec2f2c001ca3498c93d32de8ba2c39c15a999738cfe9
     .agents/skills/terraform-validation/scripts/lib/terraform.sh: sha256:ea6645e2a7568d82745051d539eac406a35640b033dae8e5e72fbf0f96a56b55
     .agents/skills/terraform-validation/scripts/lib/validation.sh: sha256:90d4a03121954f13303571b84e4590976040d42d47015fbc0b591d0315d8a502
     .agents/skills/terraform-validation/scripts/lib/yaml_map_order.py: sha256:eb542fe34e2e1c11c08d0f78c4717cb3521fbe5ae2f6e05712317fa5478ccf80
-    .agents/skills/terraform-validation/scripts/validate.sh: sha256:eca66d694298f708cf1644f7761a6839ea33c688b8a501fdfc3104261a3e5760
+    .agents/skills/terraform-validation/scripts/validate.sh: sha256:24ce0986f992808ad90346a8dfab2d7b9b72638210ba21b42b23bb51e212b341
     .claude/rules/terraform.md: sha256:06be3812884339b386642d7a1c5866d092d0fbd1b6b7c03dc4242e4541cd853a
     .claude/skills/terraform-review/SKILL.md: sha256:ae9f6261376a1ebf433a780ab90ee4db51f8e7e597955c1ea69e6240e471dfc0
     .claude/skills/terraform-review/eval.yaml: sha256:a75fc46212d549116961c510b90a48d2151741ac8b1bfa9889b825fa14058025
@@ -2555,7 +2563,7 @@ dependencies:
     .claude/skills/terraform-review/references/common-checklist.md: sha256:55177fdc32f189ed46dc2f07ac7682b196fe0393ddaac1fc331eb96d005d8c0b
     .claude/skills/terraform-review/references/common-output-format.md: sha256:fc8d1319d99fcd9beb5246cbeea520fda22c2bbec68e25453541825ac0c96e69
     .claude/skills/terraform-review/references/common-troubleshooting.md: sha256:bfe9a5e84bebba0e7142c93f3d892dd8fade1865f1fe97db828b5d42312c3be8
-    .claude/skills/terraform-validation/SKILL.md: sha256:396b9dc374b6d161f7d64fd0d47eb12e536481582f1a8d8e65fddab49ccdf3ed
+    .claude/skills/terraform-validation/SKILL.md: sha256:a194bcebf23f4fc52e08ab1f91143b11beadc4a36099c0f0a107701e2a757853
     .claude/skills/terraform-validation/eval.yaml: sha256:f8ffa728ca32ffbb4686f3217009a8d1a68f8c13143bd43488e3161d0afbbbfa
     .claude/skills/terraform-validation/evals/tasks/terraform-validation-basic.yaml: sha256:f80524e8135a64daa3ee6fbc550d1a1df80af45cbdc03dd44c58336f8968f457
     .claude/skills/terraform-validation/evals/tasks/terraform-validation-boundary-guardrail.yaml: sha256:809893aa04ee403aa1afb6a0e49aec7e50390b246325796e659735625fcdedf2
@@ -2565,26 +2573,26 @@ dependencies:
     .claude/skills/terraform-validation/references/category-security.md: sha256:111d33272f7138dde9d9ab1c4dbf89ae99fa1895685ec0e6035074e7f9fbcbf1
     .claude/skills/terraform-validation/references/common-checklist.md: sha256:041450425a99b2d49e2f5ef7f4e38ebaa9b1d224ec88355732b047ba2c9d7301
     .claude/skills/terraform-validation/references/common-individual-commands.md: sha256:094b176b391c9c1af2013f82febde658861f8842b61c2335713002ca8f720068
-    .claude/skills/terraform-validation/references/common-output-format.md: sha256:fd181d62014f177f7e9c6f3ec6eb3d7f9b12d80822fdd9214df492ba9fe9b59f
+    .claude/skills/terraform-validation/references/common-output-format.md: sha256:adb8c41bac839475db8db224d075e6e6b67e8289dcc3237006296f55847512db
     .claude/skills/terraform-validation/references/common-troubleshooting.md: sha256:42205b777324e7c3a54b84d58de2d86c4686c970a3fc1c161ffd90b77948c9c7
     .claude/skills/terraform-validation/scripts/lib/all.sh: sha256:dc9b27d00ff0b37be6f5c986a59a8107f59a83bede4de5818e453a38ae51f216
     .claude/skills/terraform-validation/scripts/lib/aws.sh: sha256:9378617c56fa762fe44fc13b84c0eb941c593228842f6ead60a3487391a8d9dc
     .claude/skills/terraform-validation/scripts/lib/common.sh: sha256:0ac46c94e935f7a62cdebd56b68a450f741bc55aae32e8cfde95049b8c8c21c5
     .claude/skills/terraform-validation/scripts/lib/csv.sh: sha256:a4baeaf2d5842190c2b32c9fe131c782263766a399fda598fc83e35941e84209
     .claude/skills/terraform-validation/scripts/lib/json.sh: sha256:71376538696a43cb7558ba983306d9ce7567419e0855994bf34d3658a000aacc
-    .claude/skills/terraform-validation/scripts/lib/repo_paths.sh: sha256:18ad2548e1fc7e10161ccc7b1956bf6fcac2086699d53fc653ce099a2c96d1d9
+    .claude/skills/terraform-validation/scripts/lib/repo_paths.sh: sha256:0abc669efa1da7a8ad1eec2f2c001ca3498c93d32de8ba2c39c15a999738cfe9
     .claude/skills/terraform-validation/scripts/lib/terraform.sh: sha256:ea6645e2a7568d82745051d539eac406a35640b033dae8e5e72fbf0f96a56b55
     .claude/skills/terraform-validation/scripts/lib/validation.sh: sha256:90d4a03121954f13303571b84e4590976040d42d47015fbc0b591d0315d8a502
     .claude/skills/terraform-validation/scripts/lib/yaml_map_order.py: sha256:eb542fe34e2e1c11c08d0f78c4717cb3521fbe5ae2f6e05712317fa5478ccf80
-    .claude/skills/terraform-validation/scripts/validate.sh: sha256:eca66d694298f708cf1644f7761a6839ea33c688b8a501fdfc3104261a3e5760
+    .claude/skills/terraform-validation/scripts/validate.sh: sha256:24ce0986f992808ad90346a8dfab2d7b9b72638210ba21b42b23bb51e212b341
     .cursor/rules/terraform.mdc: sha256:9a8dfd5a87dc798a3c2466b62b3264f76e0de37f0d615763003941057d483803
-  content_hash: sha256:3dc0dfcc650083709cbe414a5956846a49539018a8615a31ca82cc1a0b477ae2
+  content_hash: sha256:dcb846eccd3a9a633cfdae8b2733a97e20b2f7d5b0bb67ab14f5c8c1fbc8026a
   declared_license: Apache-2.0
 - repo_url: y-miyazaki/config
   name: config-terraform-aws
   host: github.com
-  resolved_commit: 3875443aae2b0ec89efa6a3c3bdbc594ad4462bf
-  resolved_ref: v1.9.15
+  resolved_commit: 619efea37d6fc3a47939f63d7c38d8f838f5241d
+  resolved_ref: v1.9.16
   version: 1.0.0
   virtual_path: .apm/packages/terraform-aws
   is_virtual: true
@@ -2600,8 +2608,8 @@ dependencies:
 - repo_url: y-miyazaki/config
   name: terraform-hooks-claude
   host: github.com
-  resolved_commit: 3875443aae2b0ec89efa6a3c3bdbc594ad4462bf
-  resolved_ref: v1.9.15
+  resolved_commit: 619efea37d6fc3a47939f63d7c38d8f838f5241d
+  resolved_ref: v1.9.16
   version: 1.0.0
   virtual_path: .apm/packages/terraform-hooks-claude
   is_virtual: true
@@ -2611,14 +2619,14 @@ dependencies:
   - .claude/hooks/terraform-hooks-claude/scripts/tflint.sh
   deployed_file_hashes:
     .claude/hooks/terraform-hooks-claude/scripts/terraform_fmt.sh: sha256:629d8ae656f0de37e0922f433ddf4b2105c714c44dc1b5ab5950c4de85a27e04
-    .claude/hooks/terraform-hooks-claude/scripts/tflint.sh: sha256:c4c1eb0b6386a71243144e463d11d839c65d7ea132c7f522a5fdac1be4a42912
-  content_hash: sha256:d571492596b4dd3bcca4cbdf8c9235c69593ddfcf5c5d0a33613469b5153c335
+    .claude/hooks/terraform-hooks-claude/scripts/tflint.sh: sha256:c12eff7a5d213ff1ac530fefcb3e5ae3cca22a53b1d61ef6a9db160a19c497d1
+  content_hash: sha256:fa81b3f0848b2cf4656692c5df35be727b6fb8bfa75445b8125902b931046929
   declared_license: Apache-2.0
 - repo_url: y-miyazaki/config
   name: terraform-hooks-cursor
   host: github.com
-  resolved_commit: 3875443aae2b0ec89efa6a3c3bdbc594ad4462bf
-  resolved_ref: v1.9.15
+  resolved_commit: 619efea37d6fc3a47939f63d7c38d8f838f5241d
+  resolved_ref: v1.9.16
   version: 1.0.0
   virtual_path: .apm/packages/terraform-hooks-cursor
   is_virtual: true
@@ -2628,8 +2636,8 @@ dependencies:
   - .cursor/hooks/terraform-hooks-cursor/scripts/tflint.sh
   deployed_file_hashes:
     .cursor/hooks/terraform-hooks-cursor/scripts/terraform_fmt.sh: sha256:629d8ae656f0de37e0922f433ddf4b2105c714c44dc1b5ab5950c4de85a27e04
-    .cursor/hooks/terraform-hooks-cursor/scripts/tflint.sh: sha256:c4c1eb0b6386a71243144e463d11d839c65d7ea132c7f522a5fdac1be4a42912
-  content_hash: sha256:e091afa0925db6f92e167469104c2118f4ecbed9f0014b821f8d0e10cdb5ca44
+    .cursor/hooks/terraform-hooks-cursor/scripts/tflint.sh: sha256:c12eff7a5d213ff1ac530fefcb3e5ae3cca22a53b1d61ef6a9db160a19c497d1
+  content_hash: sha256:1618c1ea685054c699077dd0ab798069bd8729c2c2c5b6d59820cf5c05bfa83b
   declared_license: Apache-2.0
 deployments:
 - kind: project-relative
@@ -2721,7 +2729,7 @@ deployments:
   owners:
   - y-miyazaki/config/.apm/packages/shell-script-hooks-claude
   active_owner: y-miyazaki/config/.apm/packages/shell-script-hooks-claude
-  content_hash: sha256:eb8be3c6f5496907d9e34d1321e3476d36f7bc3ba58ce7afd9cd8100375165af
+  content_hash: sha256:a557c363ee593ef079f46f5ad8565503f0e902751195258dae102708120c010c
 - kind: project-relative
   target: claude
   value: .claude/hooks/shell-script-hooks-claude/scripts/shfmt.sh
@@ -2730,7 +2738,7 @@ deployments:
   owners:
   - y-miyazaki/config/.apm/packages/shell-script-hooks-claude
   active_owner: y-miyazaki/config/.apm/packages/shell-script-hooks-claude
-  content_hash: sha256:1ee58b42a134c92845a1b9ea81a91e6c4218e0c446dda35ed261a2a0bfd8e74f
+  content_hash: sha256:818c6b53d95dab143a5a8fc8b751490121adcbcd7e0640a695bd950909810d54
 - kind: project-relative
   target: claude
   value: .claude/hooks/terraform-hooks-claude/scripts/terraform_fmt.sh
@@ -2748,7 +2756,7 @@ deployments:
   owners:
   - y-miyazaki/config/.apm/packages/terraform-hooks-claude
   active_owner: y-miyazaki/config/.apm/packages/terraform-hooks-claude
-  content_hash: sha256:c4c1eb0b6386a71243144e463d11d839c65d7ea132c7f522a5fdac1be4a42912
+  content_hash: sha256:c12eff7a5d213ff1ac530fefcb3e5ae3cca22a53b1d61ef6a9db160a19c497d1
 - kind: project-relative
   target: claude
   value: .claude/rules/agent-skills.md
@@ -2767,6 +2775,24 @@ deployments:
   - y-miyazaki/config/.apm/packages/shell-script
   active_owner: y-miyazaki/config/.apm/packages/shell-script
   content_hash: sha256:1d17f095e9ced10a07b6a088c47de639f99f07f6d07647f592faa8373915d73d
+- kind: project-relative
+  target: claude
+  value: .claude/rules/claude-settings.md
+  runtime: null
+  scope: project
+  owners:
+  - y-miyazaki/config/.apm/packages/common
+  active_owner: y-miyazaki/config/.apm/packages/common
+  content_hash: sha256:7a11346bf695246e83e202ffee7b09f480ac8ff1cf89ecd9170a80ffa3d1903c
+- kind: project-relative
+  target: claude
+  value: .claude/rules/cursor-settings.md
+  runtime: null
+  scope: project
+  owners:
+  - y-miyazaki/config/.apm/packages/common
+  active_owner: y-miyazaki/config/.apm/packages/common
+  content_hash: sha256:a95d8699a466a3f182d114d7ea1b0e66f6188a334261976a2531c93b6aa98a17
 - kind: project-relative
   target: claude
   value: .claude/rules/github-actions-workflow.md
@@ -3045,7 +3071,7 @@ deployments:
   owners:
   - y-miyazaki/config/.apm/packages/common
   active_owner: y-miyazaki/config/.apm/packages/common
-  content_hash: sha256:18ad2548e1fc7e10161ccc7b1956bf6fcac2086699d53fc653ce099a2c96d1d9
+  content_hash: sha256:0abc669efa1da7a8ad1eec2f2c001ca3498c93d32de8ba2c39c15a999738cfe9
 - kind: project-relative
   target: claude
   value: .claude/skills/agent-skills-review/scripts/lib/terraform.sh
@@ -3378,7 +3404,7 @@ deployments:
   owners:
   - y-miyazaki/config/.apm/packages/repo-maintenance
   active_owner: y-miyazaki/config/.apm/packages/repo-maintenance
-  content_hash: sha256:18ad2548e1fc7e10161ccc7b1956bf6fcac2086699d53fc653ce099a2c96d1d9
+  content_hash: sha256:0abc669efa1da7a8ad1eec2f2c001ca3498c93d32de8ba2c39c15a999738cfe9
 - kind: project-relative
   target: claude
   value: .claude/skills/changelog/scripts/lib/terraform.sh
@@ -3702,7 +3728,7 @@ deployments:
   owners:
   - y-miyazaki/config/.apm/packages/repo-maintenance
   active_owner: y-miyazaki/config/.apm/packages/repo-maintenance
-  content_hash: sha256:18ad2548e1fc7e10161ccc7b1956bf6fcac2086699d53fc653ce099a2c96d1d9
+  content_hash: sha256:0abc669efa1da7a8ad1eec2f2c001ca3498c93d32de8ba2c39c15a999738cfe9
 - kind: project-relative
   target: claude
   value: .claude/skills/ci-sweeper/scripts/lib/terraform.sh
@@ -4260,7 +4286,7 @@ deployments:
   owners:
   - y-miyazaki/config/.apm/packages/repo-maintenance
   active_owner: y-miyazaki/config/.apm/packages/repo-maintenance
-  content_hash: sha256:18ad2548e1fc7e10161ccc7b1956bf6fcac2086699d53fc653ce099a2c96d1d9
+  content_hash: sha256:0abc669efa1da7a8ad1eec2f2c001ca3498c93d32de8ba2c39c15a999738cfe9
 - kind: project-relative
   target: claude
   value: .claude/skills/docs-updater/scripts/lib/terraform.sh
@@ -4629,7 +4655,7 @@ deployments:
   owners:
   - y-miyazaki/config/.apm/packages/github-actions
   active_owner: y-miyazaki/config/.apm/packages/github-actions
-  content_hash: sha256:18ad2548e1fc7e10161ccc7b1956bf6fcac2086699d53fc653ce099a2c96d1d9
+  content_hash: sha256:0abc669efa1da7a8ad1eec2f2c001ca3498c93d32de8ba2c39c15a999738cfe9
 - kind: project-relative
   target: claude
   value: .claude/skills/github-actions-validation/scripts/lib/terraform.sh
@@ -4863,7 +4889,7 @@ deployments:
   owners:
   - y-miyazaki/config/.apm/packages/github
   active_owner: y-miyazaki/config/.apm/packages/github
-  content_hash: sha256:18ad2548e1fc7e10161ccc7b1956bf6fcac2086699d53fc653ce099a2c96d1d9
+  content_hash: sha256:0abc669efa1da7a8ad1eec2f2c001ca3498c93d32de8ba2c39c15a999738cfe9
 - kind: project-relative
   target: claude
   value: .claude/skills/github-issue-autofix/scripts/lib/terraform.sh
@@ -5106,7 +5132,7 @@ deployments:
   owners:
   - y-miyazaki/config/.apm/packages/github
   active_owner: y-miyazaki/config/.apm/packages/github
-  content_hash: sha256:18ad2548e1fc7e10161ccc7b1956bf6fcac2086699d53fc653ce099a2c96d1d9
+  content_hash: sha256:0abc669efa1da7a8ad1eec2f2c001ca3498c93d32de8ba2c39c15a999738cfe9
 - kind: project-relative
   target: claude
   value: .claude/skills/github-issue-triage/scripts/lib/terraform.sh
@@ -5340,7 +5366,7 @@ deployments:
   owners:
   - y-miyazaki/config/.apm/packages/github
   active_owner: y-miyazaki/config/.apm/packages/github
-  content_hash: sha256:18ad2548e1fc7e10161ccc7b1956bf6fcac2086699d53fc653ce099a2c96d1d9
+  content_hash: sha256:0abc669efa1da7a8ad1eec2f2c001ca3498c93d32de8ba2c39c15a999738cfe9
 - kind: project-relative
   target: claude
   value: .claude/skills/github-pr-body/scripts/lib/terraform.sh
@@ -5610,7 +5636,7 @@ deployments:
   owners:
   - y-miyazaki/config/.apm/packages/github
   active_owner: y-miyazaki/config/.apm/packages/github
-  content_hash: sha256:18ad2548e1fc7e10161ccc7b1956bf6fcac2086699d53fc653ce099a2c96d1d9
+  content_hash: sha256:0abc669efa1da7a8ad1eec2f2c001ca3498c93d32de8ba2c39c15a999738cfe9
 - kind: project-relative
   target: claude
   value: .claude/skills/github-pr-review/scripts/lib/terraform.sh
@@ -5853,7 +5879,7 @@ deployments:
   owners:
   - y-miyazaki/config/.apm/packages/github
   active_owner: y-miyazaki/config/.apm/packages/github
-  content_hash: sha256:18ad2548e1fc7e10161ccc7b1956bf6fcac2086699d53fc653ce099a2c96d1d9
+  content_hash: sha256:0abc669efa1da7a8ad1eec2f2c001ca3498c93d32de8ba2c39c15a999738cfe9
 - kind: project-relative
   target: claude
   value: .claude/skills/github-pr-revise/scripts/lib/terraform.sh
@@ -6195,7 +6221,7 @@ deployments:
   owners:
   - y-miyazaki/config/.apm/packages/common
   active_owner: y-miyazaki/config/.apm/packages/common
-  content_hash: sha256:18ad2548e1fc7e10161ccc7b1956bf6fcac2086699d53fc653ce099a2c96d1d9
+  content_hash: sha256:0abc669efa1da7a8ad1eec2f2c001ca3498c93d32de8ba2c39c15a999738cfe9
 - kind: project-relative
   target: claude
   value: .claude/skills/markdown-validation/scripts/lib/terraform.sh
@@ -6591,7 +6617,7 @@ deployments:
   owners:
   - y-miyazaki/config/.apm/packages/repo-maintenance
   active_owner: y-miyazaki/config/.apm/packages/repo-maintenance
-  content_hash: sha256:18ad2548e1fc7e10161ccc7b1956bf6fcac2086699d53fc653ce099a2c96d1d9
+  content_hash: sha256:0abc669efa1da7a8ad1eec2f2c001ca3498c93d32de8ba2c39c15a999738cfe9
 - kind: project-relative
   target: claude
   value: .claude/skills/refactor/scripts/lib/terraform.sh
@@ -6825,7 +6851,7 @@ deployments:
   owners:
   - y-miyazaki/config/.apm/packages/shell-script
   active_owner: y-miyazaki/config/.apm/packages/shell-script
-  content_hash: sha256:38c4f20f53c1dd9397c47c9aa2fb9bb8a8ca7265391e583342e35b1c22d62997
+  content_hash: sha256:cc07f26188d690cd8d90500616b1498e0e8292fbfa2eab5c396f1db660ccd2ec
 - kind: project-relative
   target: claude
   value: .claude/skills/shell-script-validation/eval.yaml
@@ -6933,7 +6959,7 @@ deployments:
   owners:
   - y-miyazaki/config/.apm/packages/shell-script
   active_owner: y-miyazaki/config/.apm/packages/shell-script
-  content_hash: sha256:101cc7eba12a4baeaac3b258fcda649a79a07260c118d6072385e67cbc3647f1
+  content_hash: sha256:f62969a6828a3f7eeaa92a981a074ddb1e3f791f3e149f3be27c5742be34e7dc
 - kind: project-relative
   target: claude
   value: .claude/skills/shell-script-validation/references/common-individual-commands.md
@@ -7023,7 +7049,7 @@ deployments:
   owners:
   - y-miyazaki/config/.apm/packages/shell-script
   active_owner: y-miyazaki/config/.apm/packages/shell-script
-  content_hash: sha256:18ad2548e1fc7e10161ccc7b1956bf6fcac2086699d53fc653ce099a2c96d1d9
+  content_hash: sha256:0abc669efa1da7a8ad1eec2f2c001ca3498c93d32de8ba2c39c15a999738cfe9
 - kind: project-relative
   target: claude
   value: .claude/skills/shell-script-validation/scripts/lib/terraform.sh
@@ -7059,7 +7085,7 @@ deployments:
   owners:
   - y-miyazaki/config/.apm/packages/shell-script
   active_owner: y-miyazaki/config/.apm/packages/shell-script
-  content_hash: sha256:7362cb582f871432a4c9d67fab6dc98b5d55b7af1cf95f474e38e1151cd7a201
+  content_hash: sha256:9a01adaa3b3c13bad509759c8851a32744800524f3ea1cfa576ff9ac6fc0588c
 - kind: project-relative
   target: claude
   value: .claude/skills/tech-debt
@@ -7446,7 +7472,7 @@ deployments:
   owners:
   - y-miyazaki/config/.apm/packages/repo-maintenance
   active_owner: y-miyazaki/config/.apm/packages/repo-maintenance
-  content_hash: sha256:18ad2548e1fc7e10161ccc7b1956bf6fcac2086699d53fc653ce099a2c96d1d9
+  content_hash: sha256:0abc669efa1da7a8ad1eec2f2c001ca3498c93d32de8ba2c39c15a999738cfe9
 - kind: project-relative
   target: claude
   value: .claude/skills/tech-debt/scripts/lib/terraform.sh
@@ -7806,7 +7832,7 @@ deployments:
   owners:
   - y-miyazaki/config/.apm/packages/terraform
   active_owner: y-miyazaki/config/.apm/packages/terraform
-  content_hash: sha256:396b9dc374b6d161f7d64fd0d47eb12e536481582f1a8d8e65fddab49ccdf3ed
+  content_hash: sha256:a194bcebf23f4fc52e08ab1f91143b11beadc4a36099c0f0a107701e2a757853
 - kind: project-relative
   target: claude
   value: .claude/skills/terraform-validation/eval.yaml
@@ -7896,7 +7922,7 @@ deployments:
   owners:
   - y-miyazaki/config/.apm/packages/terraform
   active_owner: y-miyazaki/config/.apm/packages/terraform
-  content_hash: sha256:fd181d62014f177f7e9c6f3ec6eb3d7f9b12d80822fdd9214df492ba9fe9b59f
+  content_hash: sha256:adb8c41bac839475db8db224d075e6e6b67e8289dcc3237006296f55847512db
 - kind: project-relative
   target: claude
   value: .claude/skills/terraform-validation/references/common-troubleshooting.md
@@ -7959,7 +7985,7 @@ deployments:
   owners:
   - y-miyazaki/config/.apm/packages/terraform
   active_owner: y-miyazaki/config/.apm/packages/terraform
-  content_hash: sha256:18ad2548e1fc7e10161ccc7b1956bf6fcac2086699d53fc653ce099a2c96d1d9
+  content_hash: sha256:0abc669efa1da7a8ad1eec2f2c001ca3498c93d32de8ba2c39c15a999738cfe9
 - kind: project-relative
   target: claude
   value: .claude/skills/terraform-validation/scripts/lib/terraform.sh
@@ -7995,7 +8021,7 @@ deployments:
   owners:
   - y-miyazaki/config/.apm/packages/terraform
   active_owner: y-miyazaki/config/.apm/packages/terraform
-  content_hash: sha256:eca66d694298f708cf1644f7761a6839ea33c688b8a501fdfc3104261a3e5760
+  content_hash: sha256:24ce0986f992808ad90346a8dfab2d7b9b72638210ba21b42b23bb51e212b341
 - kind: project-relative
   target: claude
   value: .claude/skills/test-gap
@@ -8202,7 +8228,7 @@ deployments:
   owners:
   - y-miyazaki/config/.apm/packages/repo-maintenance
   active_owner: y-miyazaki/config/.apm/packages/repo-maintenance
-  content_hash: sha256:18ad2548e1fc7e10161ccc7b1956bf6fcac2086699d53fc653ce099a2c96d1d9
+  content_hash: sha256:0abc669efa1da7a8ad1eec2f2c001ca3498c93d32de8ba2c39c15a999738cfe9
 - kind: project-relative
   target: claude
   value: .claude/skills/test-gap/scripts/lib/terraform.sh
@@ -8463,7 +8489,7 @@ deployments:
   owners:
   - y-miyazaki/config/.apm/packages/common
   active_owner: y-miyazaki/config/.apm/packages/common
-  content_hash: sha256:18ad2548e1fc7e10161ccc7b1956bf6fcac2086699d53fc653ce099a2c96d1d9
+  content_hash: sha256:0abc669efa1da7a8ad1eec2f2c001ca3498c93d32de8ba2c39c15a999738cfe9
 - kind: project-relative
   target: cursor
   value: .agents/skills/agent-skills-review/scripts/lib/terraform.sh
@@ -8796,7 +8822,7 @@ deployments:
   owners:
   - y-miyazaki/config/.apm/packages/repo-maintenance
   active_owner: y-miyazaki/config/.apm/packages/repo-maintenance
-  content_hash: sha256:18ad2548e1fc7e10161ccc7b1956bf6fcac2086699d53fc653ce099a2c96d1d9
+  content_hash: sha256:0abc669efa1da7a8ad1eec2f2c001ca3498c93d32de8ba2c39c15a999738cfe9
 - kind: project-relative
   target: cursor
   value: .agents/skills/changelog/scripts/lib/terraform.sh
@@ -9120,7 +9146,7 @@ deployments:
   owners:
   - y-miyazaki/config/.apm/packages/repo-maintenance
   active_owner: y-miyazaki/config/.apm/packages/repo-maintenance
-  content_hash: sha256:18ad2548e1fc7e10161ccc7b1956bf6fcac2086699d53fc653ce099a2c96d1d9
+  content_hash: sha256:0abc669efa1da7a8ad1eec2f2c001ca3498c93d32de8ba2c39c15a999738cfe9
 - kind: project-relative
   target: cursor
   value: .agents/skills/ci-sweeper/scripts/lib/terraform.sh
@@ -9678,7 +9704,7 @@ deployments:
   owners:
   - y-miyazaki/config/.apm/packages/repo-maintenance
   active_owner: y-miyazaki/config/.apm/packages/repo-maintenance
-  content_hash: sha256:18ad2548e1fc7e10161ccc7b1956bf6fcac2086699d53fc653ce099a2c96d1d9
+  content_hash: sha256:0abc669efa1da7a8ad1eec2f2c001ca3498c93d32de8ba2c39c15a999738cfe9
 - kind: project-relative
   target: cursor
   value: .agents/skills/docs-updater/scripts/lib/terraform.sh
@@ -10047,7 +10073,7 @@ deployments:
   owners:
   - y-miyazaki/config/.apm/packages/github-actions
   active_owner: y-miyazaki/config/.apm/packages/github-actions
-  content_hash: sha256:18ad2548e1fc7e10161ccc7b1956bf6fcac2086699d53fc653ce099a2c96d1d9
+  content_hash: sha256:0abc669efa1da7a8ad1eec2f2c001ca3498c93d32de8ba2c39c15a999738cfe9
 - kind: project-relative
   target: cursor
   value: .agents/skills/github-actions-validation/scripts/lib/terraform.sh
@@ -10281,7 +10307,7 @@ deployments:
   owners:
   - y-miyazaki/config/.apm/packages/github
   active_owner: y-miyazaki/config/.apm/packages/github
-  content_hash: sha256:18ad2548e1fc7e10161ccc7b1956bf6fcac2086699d53fc653ce099a2c96d1d9
+  content_hash: sha256:0abc669efa1da7a8ad1eec2f2c001ca3498c93d32de8ba2c39c15a999738cfe9
 - kind: project-relative
   target: cursor
   value: .agents/skills/github-issue-autofix/scripts/lib/terraform.sh
@@ -10524,7 +10550,7 @@ deployments:
   owners:
   - y-miyazaki/config/.apm/packages/github
   active_owner: y-miyazaki/config/.apm/packages/github
-  content_hash: sha256:18ad2548e1fc7e10161ccc7b1956bf6fcac2086699d53fc653ce099a2c96d1d9
+  content_hash: sha256:0abc669efa1da7a8ad1eec2f2c001ca3498c93d32de8ba2c39c15a999738cfe9
 - kind: project-relative
   target: cursor
   value: .agents/skills/github-issue-triage/scripts/lib/terraform.sh
@@ -10758,7 +10784,7 @@ deployments:
   owners:
   - y-miyazaki/config/.apm/packages/github
   active_owner: y-miyazaki/config/.apm/packages/github
-  content_hash: sha256:18ad2548e1fc7e10161ccc7b1956bf6fcac2086699d53fc653ce099a2c96d1d9
+  content_hash: sha256:0abc669efa1da7a8ad1eec2f2c001ca3498c93d32de8ba2c39c15a999738cfe9
 - kind: project-relative
   target: cursor
   value: .agents/skills/github-pr-body/scripts/lib/terraform.sh
@@ -11028,7 +11054,7 @@ deployments:
   owners:
   - y-miyazaki/config/.apm/packages/github
   active_owner: y-miyazaki/config/.apm/packages/github
-  content_hash: sha256:18ad2548e1fc7e10161ccc7b1956bf6fcac2086699d53fc653ce099a2c96d1d9
+  content_hash: sha256:0abc669efa1da7a8ad1eec2f2c001ca3498c93d32de8ba2c39c15a999738cfe9
 - kind: project-relative
   target: cursor
   value: .agents/skills/github-pr-review/scripts/lib/terraform.sh
@@ -11271,7 +11297,7 @@ deployments:
   owners:
   - y-miyazaki/config/.apm/packages/github
   active_owner: y-miyazaki/config/.apm/packages/github
-  content_hash: sha256:18ad2548e1fc7e10161ccc7b1956bf6fcac2086699d53fc653ce099a2c96d1d9
+  content_hash: sha256:0abc669efa1da7a8ad1eec2f2c001ca3498c93d32de8ba2c39c15a999738cfe9
 - kind: project-relative
   target: cursor
   value: .agents/skills/github-pr-revise/scripts/lib/terraform.sh
@@ -11613,7 +11639,7 @@ deployments:
   owners:
   - y-miyazaki/config/.apm/packages/common
   active_owner: y-miyazaki/config/.apm/packages/common
-  content_hash: sha256:18ad2548e1fc7e10161ccc7b1956bf6fcac2086699d53fc653ce099a2c96d1d9
+  content_hash: sha256:0abc669efa1da7a8ad1eec2f2c001ca3498c93d32de8ba2c39c15a999738cfe9
 - kind: project-relative
   target: cursor
   value: .agents/skills/markdown-validation/scripts/lib/terraform.sh
@@ -12009,7 +12035,7 @@ deployments:
   owners:
   - y-miyazaki/config/.apm/packages/repo-maintenance
   active_owner: y-miyazaki/config/.apm/packages/repo-maintenance
-  content_hash: sha256:18ad2548e1fc7e10161ccc7b1956bf6fcac2086699d53fc653ce099a2c96d1d9
+  content_hash: sha256:0abc669efa1da7a8ad1eec2f2c001ca3498c93d32de8ba2c39c15a999738cfe9
 - kind: project-relative
   target: cursor
   value: .agents/skills/refactor/scripts/lib/terraform.sh
@@ -12243,7 +12269,7 @@ deployments:
   owners:
   - y-miyazaki/config/.apm/packages/shell-script
   active_owner: y-miyazaki/config/.apm/packages/shell-script
-  content_hash: sha256:38c4f20f53c1dd9397c47c9aa2fb9bb8a8ca7265391e583342e35b1c22d62997
+  content_hash: sha256:cc07f26188d690cd8d90500616b1498e0e8292fbfa2eab5c396f1db660ccd2ec
 - kind: project-relative
   target: cursor
   value: .agents/skills/shell-script-validation/eval.yaml
@@ -12351,7 +12377,7 @@ deployments:
   owners:
   - y-miyazaki/config/.apm/packages/shell-script
   active_owner: y-miyazaki/config/.apm/packages/shell-script
-  content_hash: sha256:101cc7eba12a4baeaac3b258fcda649a79a07260c118d6072385e67cbc3647f1
+  content_hash: sha256:f62969a6828a3f7eeaa92a981a074ddb1e3f791f3e149f3be27c5742be34e7dc
 - kind: project-relative
   target: cursor
   value: .agents/skills/shell-script-validation/references/common-individual-commands.md
@@ -12441,7 +12467,7 @@ deployments:
   owners:
   - y-miyazaki/config/.apm/packages/shell-script
   active_owner: y-miyazaki/config/.apm/packages/shell-script
-  content_hash: sha256:18ad2548e1fc7e10161ccc7b1956bf6fcac2086699d53fc653ce099a2c96d1d9
+  content_hash: sha256:0abc669efa1da7a8ad1eec2f2c001ca3498c93d32de8ba2c39c15a999738cfe9
 - kind: project-relative
   target: cursor
   value: .agents/skills/shell-script-validation/scripts/lib/terraform.sh
@@ -12477,7 +12503,7 @@ deployments:
   owners:
   - y-miyazaki/config/.apm/packages/shell-script
   active_owner: y-miyazaki/config/.apm/packages/shell-script
-  content_hash: sha256:7362cb582f871432a4c9d67fab6dc98b5d55b7af1cf95f474e38e1151cd7a201
+  content_hash: sha256:9a01adaa3b3c13bad509759c8851a32744800524f3ea1cfa576ff9ac6fc0588c
 - kind: project-relative
   target: cursor
   value: .agents/skills/tech-debt
@@ -12864,7 +12890,7 @@ deployments:
   owners:
   - y-miyazaki/config/.apm/packages/repo-maintenance
   active_owner: y-miyazaki/config/.apm/packages/repo-maintenance
-  content_hash: sha256:18ad2548e1fc7e10161ccc7b1956bf6fcac2086699d53fc653ce099a2c96d1d9
+  content_hash: sha256:0abc669efa1da7a8ad1eec2f2c001ca3498c93d32de8ba2c39c15a999738cfe9
 - kind: project-relative
   target: cursor
   value: .agents/skills/tech-debt/scripts/lib/terraform.sh
@@ -13224,7 +13250,7 @@ deployments:
   owners:
   - y-miyazaki/config/.apm/packages/terraform
   active_owner: y-miyazaki/config/.apm/packages/terraform
-  content_hash: sha256:396b9dc374b6d161f7d64fd0d47eb12e536481582f1a8d8e65fddab49ccdf3ed
+  content_hash: sha256:a194bcebf23f4fc52e08ab1f91143b11beadc4a36099c0f0a107701e2a757853
 - kind: project-relative
   target: cursor
   value: .agents/skills/terraform-validation/eval.yaml
@@ -13314,7 +13340,7 @@ deployments:
   owners:
   - y-miyazaki/config/.apm/packages/terraform
   active_owner: y-miyazaki/config/.apm/packages/terraform
-  content_hash: sha256:fd181d62014f177f7e9c6f3ec6eb3d7f9b12d80822fdd9214df492ba9fe9b59f
+  content_hash: sha256:adb8c41bac839475db8db224d075e6e6b67e8289dcc3237006296f55847512db
 - kind: project-relative
   target: cursor
   value: .agents/skills/terraform-validation/references/common-troubleshooting.md
@@ -13377,7 +13403,7 @@ deployments:
   owners:
   - y-miyazaki/config/.apm/packages/terraform
   active_owner: y-miyazaki/config/.apm/packages/terraform
-  content_hash: sha256:18ad2548e1fc7e10161ccc7b1956bf6fcac2086699d53fc653ce099a2c96d1d9
+  content_hash: sha256:0abc669efa1da7a8ad1eec2f2c001ca3498c93d32de8ba2c39c15a999738cfe9
 - kind: project-relative
   target: cursor
   value: .agents/skills/terraform-validation/scripts/lib/terraform.sh
@@ -13413,7 +13439,7 @@ deployments:
   owners:
   - y-miyazaki/config/.apm/packages/terraform
   active_owner: y-miyazaki/config/.apm/packages/terraform
-  content_hash: sha256:eca66d694298f708cf1644f7761a6839ea33c688b8a501fdfc3104261a3e5760
+  content_hash: sha256:24ce0986f992808ad90346a8dfab2d7b9b72638210ba21b42b23bb51e212b341
 - kind: project-relative
   target: cursor
   value: .agents/skills/test-gap
@@ -13620,7 +13646,7 @@ deployments:
   owners:
   - y-miyazaki/config/.apm/packages/repo-maintenance
   active_owner: y-miyazaki/config/.apm/packages/repo-maintenance
-  content_hash: sha256:18ad2548e1fc7e10161ccc7b1956bf6fcac2086699d53fc653ce099a2c96d1d9
+  content_hash: sha256:0abc669efa1da7a8ad1eec2f2c001ca3498c93d32de8ba2c39c15a999738cfe9
 - kind: project-relative
   target: cursor
   value: .agents/skills/test-gap/scripts/lib/terraform.sh
@@ -13746,7 +13772,7 @@ deployments:
   owners:
   - y-miyazaki/config/.apm/packages/shell-script-hooks-cursor
   active_owner: y-miyazaki/config/.apm/packages/shell-script-hooks-cursor
-  content_hash: sha256:eb8be3c6f5496907d9e34d1321e3476d36f7bc3ba58ce7afd9cd8100375165af
+  content_hash: sha256:a557c363ee593ef079f46f5ad8565503f0e902751195258dae102708120c010c
 - kind: project-relative
   target: cursor
   value: .cursor/hooks/shell-script-hooks-cursor/scripts/shfmt.sh
@@ -13755,7 +13781,7 @@ deployments:
   owners:
   - y-miyazaki/config/.apm/packages/shell-script-hooks-cursor
   active_owner: y-miyazaki/config/.apm/packages/shell-script-hooks-cursor
-  content_hash: sha256:1ee58b42a134c92845a1b9ea81a91e6c4218e0c446dda35ed261a2a0bfd8e74f
+  content_hash: sha256:818c6b53d95dab143a5a8fc8b751490121adcbcd7e0640a695bd950909810d54
 - kind: project-relative
   target: cursor
   value: .cursor/hooks/terraform-hooks-cursor/scripts/terraform_fmt.sh
@@ -13773,7 +13799,7 @@ deployments:
   owners:
   - y-miyazaki/config/.apm/packages/terraform-hooks-cursor
   active_owner: y-miyazaki/config/.apm/packages/terraform-hooks-cursor
-  content_hash: sha256:c4c1eb0b6386a71243144e463d11d839c65d7ea132c7f522a5fdac1be4a42912
+  content_hash: sha256:c12eff7a5d213ff1ac530fefcb3e5ae3cca22a53b1d61ef6a9db160a19c497d1
 - kind: project-relative
   target: cursor
   value: .cursor/rules/agent-skills.mdc
@@ -13792,6 +13818,24 @@ deployments:
   - y-miyazaki/config/.apm/packages/shell-script
   active_owner: y-miyazaki/config/.apm/packages/shell-script
   content_hash: sha256:f4cbb6ae99732d01905ae2b853475745ce3604f504abf3eb8a3d27fbe4a88f71
+- kind: project-relative
+  target: cursor
+  value: .cursor/rules/claude-settings.mdc
+  runtime: null
+  scope: project
+  owners:
+  - y-miyazaki/config/.apm/packages/common
+  active_owner: y-miyazaki/config/.apm/packages/common
+  content_hash: sha256:ea3ae11b20131657082426810672f946222a6aced0821e331946b07bd92fabb6
+- kind: project-relative
+  target: cursor
+  value: .cursor/rules/cursor-settings.mdc
+  runtime: null
+  scope: project
+  owners:
+  - y-miyazaki/config/.apm/packages/common
+  active_owner: y-miyazaki/config/.apm/packages/common
+  content_hash: sha256:ed678ed4f5237213a594083999b3108a5b3423ad7624dbe4a895e7589c189023
 - kind: project-relative
   target: cursor
   value: .cursor/rules/github-actions-workflow.mdc

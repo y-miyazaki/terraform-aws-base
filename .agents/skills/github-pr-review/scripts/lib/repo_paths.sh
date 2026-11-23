@@ -175,6 +175,106 @@ function repo_array_append_unique {
 }
 
 #######################################
+# repo_emit_changed_paths: Emit filtered paths with uncommitted git changes
+#
+# Description:
+#   Lists files that differ from HEAD (staged or unstaged) plus untracked, non-ignored files.
+#   Renames are reported as a delete plus an add, so the old location is visible with
+#   REPO_PATHS_INCLUDE_DELETED=true.
+#   Deleted files are excluded unless REPO_PATHS_INCLUDE_DELETED is true. Paths are relative to the current directory and pass
+#   repo_path_should_skip. Outside a git work tree nothing is emitted.
+#
+# Globals:
+#   REPO_PATHS_INCLUDE_DELETED - When true, also emit deleted files (callers map them to their package or module)
+#   REPO_PATHS_EXTRA_PRUNES - Comma-separated repository-relative prune roots
+#   REPO_PATHS_INCLUDE_AGENTS - When true, do not exclude agent directories
+#   REPO_PATHS_INCLUDE_GITIGNORED - When true, do not exclude gitignored paths
+#   REPO_PATHS_INCLUDE_BUILD_OUTPUT - When true, do not exclude dist/, build/, bin/
+#
+# Arguments:
+#   $1 - Optional extended-regex path filter (empty = all changed paths)
+#   $@ - Optional scope paths after $1 (relative, or absolute under the current directory);
+#        only paths equal to or under one of them are emitted
+#
+# Outputs:
+#   Sorted unique relative paths on stdout (one per line)
+#
+# Returns:
+#   0 on success
+#
+# Usage:
+#   repo_emit_changed_paths '\.go$' ./cmd
+#
+#######################################
+function repo_emit_changed_paths {
+    local pattern="${1:-}"
+    shift || true
+    local -a scopes=()
+    local scope
+    for scope in "$@"; do
+        # Normalize to a path relative to the current directory (absolute scopes are re-based)
+        if [[ ${scope} == "${PWD}" ]]; then
+            scope="."
+        elif [[ ${scope} == "${PWD}/"* ]]; then
+            scope="${scope#"${PWD}"/}"
+        fi
+        # Resolve .. segments lexically when realpath is available (GNU coreutils)
+        if [[ ${scope} == *..* ]]; then
+            scope="$(realpath -m --relative-to="${PWD}" -- "${scope}" 2> /dev/null || printf '%s' "${scope}")"
+        fi
+        while [[ ${scope} == ./* ]]; do
+            scope="${scope#./}"
+        done
+        scope="${scope%/}"
+        scopes+=("${scope}")
+    done
+    local file in_scope
+    local -a diff_filter=(--diff-filter=d)
+    if [[ ${REPO_PATHS_INCLUDE_DELETED:-false} == "true" ]]; then
+        diff_filter=()
+    fi
+
+    if ! git rev-parse --is-inside-work-tree > /dev/null 2>&1; then
+        return 0
+    fi
+
+    while IFS= read -r -d '' file; do
+        [[ -z ${file} ]] && continue
+        if [[ ${REPO_PATHS_INCLUDE_DELETED:-false} != "true" && ! -f ${file} ]]; then
+            continue
+        fi
+        if [[ -n ${pattern} ]] && [[ ! ${file} =~ ${pattern} ]]; then
+            continue
+        fi
+        if [[ ${#scopes[@]} -gt 0 ]]; then
+            in_scope=false
+            for scope in "${scopes[@]}"; do
+                if [[ ${scope} == "." || ${scope} == "" || ${file} == "${scope}" || ${file} == "${scope}/"* ]]; then
+                    in_scope=true
+                    break
+                fi
+            done
+            [[ ${in_scope} == "true" ]] || continue
+        fi
+        if repo_path_should_skip "${file}"; then
+            continue
+        fi
+        printf '%s\n' "${file}"
+    done < <(
+        {
+            if git rev-parse --verify --quiet HEAD > /dev/null 2>&1; then
+                git diff HEAD --name-only --no-renames --relative ${diff_filter[@]+"${diff_filter[@]}"} -z 2> /dev/null || true
+            else
+                # No commit yet: everything staged, plus worktree changes against the index
+                git diff --cached --name-only --no-renames --relative ${diff_filter[@]+"${diff_filter[@]}"} -z 2> /dev/null || true
+                git diff --name-only --no-renames --relative ${diff_filter[@]+"${diff_filter[@]}"} -z 2> /dev/null || true
+            fi
+            git ls-files -z --others --exclude-standard 2> /dev/null || true
+        } | sort -zu
+    )
+}
+
+#######################################
 # repo_emit_tracked_paths: Emit filtered tracked repository paths
 #
 # Globals:
@@ -287,6 +387,57 @@ function repo_list_extra_prune_roots {
         [[ -z ${extra} ]] && continue
         extra="${extra#./}"
         printf '%s\n' "${extra}"
+    done
+}
+
+#######################################
+# repo_nearest_ancestor_with: Find the nearest directory holding a marker file
+#
+# Description:
+#   Starting at the given relative directory and walking up to ".", prints the first directory
+#   that contains a regular file whose name matches the glob (for example go.mod or *.tf).
+#   Single owner of the "nearest module root" rule used by the validate scripts.
+#
+# Globals:
+#   None
+#
+# Arguments:
+#   $1 - Directory relative to the current directory
+#   $2 - File name glob passed to find -name (for example go.mod, '*.tf')
+#
+# Outputs:
+#   The matching directory (relative, "." for the current directory) on stdout
+#
+# Returns:
+#   0 when a directory is found, 1 when no directory up to "." holds the marker
+#
+# Usage:
+#   module="$(repo_nearest_ancestor_with "cmd/foo" go.mod)" || return
+#
+#######################################
+function repo_nearest_ancestor_with {
+    local dir="${1:-.}"
+    local pattern="$2"
+
+    local literal=false
+    if [[ $pattern != *[\*\?\[]* ]]; then
+        literal=true
+    fi
+
+    while true; do
+        if [[ $literal == "true" ]]; then
+            if [[ -f "$dir/$pattern" ]]; then
+                printf '%s\n' "$dir"
+                return 0
+            fi
+        elif [[ -n $(find "$dir" -maxdepth 1 -type f -name "$pattern" -print -quit 2> /dev/null) ]]; then
+            printf '%s\n' "$dir"
+            return 0
+        fi
+        if [[ $dir == "." || $dir == "/" ]]; then
+            return 1
+        fi
+        dir="$(dirname "$dir")"
     done
 }
 

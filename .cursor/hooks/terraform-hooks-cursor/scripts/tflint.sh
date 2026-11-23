@@ -30,12 +30,37 @@ if [[ ! -t 0 ]]; then
 fi
 
 #######################################
-# get_changed_dirs: Collect unique directories containing changed Terraform files
+# has_tf_files: Check whether a directory directly contains a .tf file
+#
+# Globals:
+#   None
+#
+# Arguments:
+#   $1 - Directory path
+#
+# Outputs:
+#   None
+#
+# Returns:
+#   0 if the directory exists and holds a .tf file, 1 otherwise
+#
+# Usage:
+#   has_tf_files "modules/vpc"
+#
+#######################################
+function has_tf_files {
+    [[ -d $1 ]] && [[ -n $(find "$1" -maxdepth 1 -type f -name '*.tf' -print -quit 2> /dev/null) ]]
+}
+
+#######################################
+# get_changed_dirs: Collect unique Terraform module directories with changes
 #
 # Description:
-#   Gathers modified/added/untracked Terraform files from git and extracts
-#   their parent directories. Each git command is guarded with || true to
-#   prevent pipefail from terminating the script.
+#   Gathers modified/added/removed/untracked .tf, .tfvars and .hcl files from git and maps
+#   each to its Terraform module: the nearest existing directory at or above the file that
+#   holds a .tf file. Removed files and files in directories without .tf files therefore
+#   select the surviving module that may reference them. Files with no module are skipped.
+#   Each git command is guarded with || true to prevent pipefail from terminating the script.
 #
 # Globals:
 #   None
@@ -54,16 +79,21 @@ fi
 #
 #######################################
 function get_changed_dirs {
-    local path
+    local path dir
 
     while IFS= read -r path; do
         [[ -z ${path} ]] && continue
-        [[ -f ${path} ]] || continue
-        dirname "${path}"
+        dir=$(dirname "${path}")
+        while ! has_tf_files "${dir}" && [[ ${dir} != "." && ${dir} != "/" ]]; do
+            dir=$(dirname "${dir}")
+        done
+        if has_tf_files "${dir}"; then
+            printf '%s\n' "${dir}"
+        fi
     done < <(
         {
-            git diff --name-only --diff-filter=ACMR -- '*.tf' '*.tfvars' '*.hcl' 2> /dev/null || true
-            git diff --cached --name-only --diff-filter=ACMR -- '*.tf' '*.tfvars' '*.hcl' 2> /dev/null || true
+            git diff --name-only --no-renames -- '*.tf' '*.tfvars' '*.hcl' 2> /dev/null || true
+            git diff --cached --name-only --no-renames -- '*.tf' '*.tfvars' '*.hcl' 2> /dev/null || true
             git ls-files --others --exclude-standard -- '*.tf' '*.tfvars' '*.hcl' 2> /dev/null || true
         } | awk 'NF' | sort -u
     ) | sort -u
@@ -439,7 +469,8 @@ function record_blocked_state {
 # main: Entry point
 #
 # Description:
-#   Runs tflint on each directory containing changed Terraform files.
+#   Runs tflint on the Terraform module (nearest directory with .tf files) of each changed
+#   Terraform file, including removed files.
 #   Collects failures and calls report_failure with a summary.
 #
 #   Config resolution: module-local .tflint.hcl takes priority, falling

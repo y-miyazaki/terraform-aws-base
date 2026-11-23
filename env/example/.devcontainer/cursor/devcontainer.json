@@ -59,6 +59,7 @@
   "initializeCommand": "mkdir -p env/common/tmp/gh env/common/tmp/.aws && touch env/common/tmp/.gitconfig",
   "mounts": [
     "source=devcontainer-home-vscode-local,target=/home/vscode/.local,type=volume",
+    "source=devcontainer-home-vscode-claude,target=/home/vscode/.claude,type=volume",
     "source=${localWorkspaceFolder},target=/workspace,type=bind",
     "source=${localWorkspaceFolder}/env/common/.bashrc,target=/home/vscode/.bashrc,type=bind",
     "source=${localWorkspaceFolder}/env/common/tmp/.gitconfig,target=/home/vscode/.gitconfig,type=bind",

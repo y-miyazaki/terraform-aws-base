@@ -106,7 +106,11 @@
       "Do not call the codebase-memory-mcp delete_project tool.",
       "Do not run terraform state push, taint, or workspace delete.",
       "Do not run find with -exec, -execdir, or -delete, or go get.",
-      "Do not run gitleaks or prettier directly; hooks run them.",
+      "Do not run actionlint, ghalint, gitleaks, golangci-lint, markdown-link-check, markdownlint-cli2, prettier, shellcheck, shfmt, or zizmor directly; hooks run them.",
+      "Do not run gofmt, go fmt, go vet, or terraform fmt directly.",
+      "Do not run apm directly.",
+      "Do not run bundle install, cargo install, composer install, mix deps.get, npm install, pip install, pnpm install, poetry install, yarn, or go mod download.",
+      "Do not run curl, wget, sudo, or rm -rf.",
       "Do not run terraform apply, destroy, import, state mv, state rm, or force-unlock.",
       "Do not run aws CLI delete-* or put-* subcommands.",
       "Do not read .terraform/, node_modules/, apm_modules/, lambda/outputs/, site/, or *.lock files."

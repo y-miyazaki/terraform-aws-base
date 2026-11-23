@@ -9,6 +9,7 @@
 #     -g, --generate-docs  Generate README.md using terraform-docs (requires terraform-docs installed)
 #     -f, --fix            Automatically fix formatting issues (terraform fmt); with -o also argument order
 #     -o, --check-order    Check alphabetical argument order (ORD-01) with terraform_attr_order.py (requires python3)
+#         --changed-only   Validate only modules (nearest directory with .tf files) of Terraform files with uncommitted git changes
 #   arguments:
 #     dirN                 One or more target directories to scope validation (optional)
 # Design Rules:
@@ -45,6 +46,8 @@ TARGET_DIRS=()
 GENERATE_DOCS="false"
 AUTO_FIX="false"
 CHECK_ORDER="false"
+# true when --changed-only limits TARGET_DIRS to directories with uncommitted git changes
+CHANGED_ONLY="false"
 # shellcheck disable=SC2034
 VERBOSE="false"
 EXIT_CODE=0
@@ -94,12 +97,17 @@ Options:
                        (-d is a deprecated alias; -d is reserved for --dry-run in the other validate scripts)
   -f, --fix            Automatically fix formatting issues (terraform fmt); with -o also argument order
   -o, --check-order    Check alphabetical argument order (ORD-01) with terraform_attr_order.py (requires python3)
+      --changed-only   Only modules (nearest directory with .tf files, scanned recursively) of .tf/.tfvars/.hcl
+                       files with uncommitted git changes (staged, unstaged, untracked);
+                       directory arguments narrow the set; a module at the current directory means the
+                       whole tree; init/validate run only where main.tf exists
 
 Examples:
   $0                         # scan whole workspace
   $0 modules/aws/security    # scan only that subtree
   $0 modules/aws/vpc modules/aws/iam  # scan multiple targets
   $0 -g modules/aws/vpc      # scan and generate docs
+  $0 --changed-only          # scan only directories with git changes
 EOF
     exit 0
 }
@@ -112,6 +120,7 @@ EOF
 #
 # Globals:
 #   TARGET_DIRS - Array of target directories to process
+#   CHANGED_ONLY - Limit TARGET_DIRS to directories with uncommitted git changes
 #
 # Arguments:
 #   $@ - All command line arguments passed to the script
@@ -150,6 +159,9 @@ function parse_arguments {
             -o | --check-order)
                 CHECK_ORDER="true"
                 ;;
+            --changed-only)
+                CHANGED_ONLY="true"
+                ;;
             -*)
                 error_exit "Unknown option: $1"
                 ;;
@@ -160,6 +172,25 @@ function parse_arguments {
         esac
         shift
     done
+
+    if [[ $CHANGED_ONLY == "true" ]]; then
+        local target_dir
+        for target_dir in ${TARGET_DIRS[@]+"${TARGET_DIRS[@]}"}; do
+            if [[ ! -d $target_dir ]]; then
+                error_exit "Target directory does not exist: $target_dir"
+            fi
+        done
+        local -a changed_files=()
+        # The scope list is expanded before mapfile truncates changed_files
+        mapfile -t changed_files < <(REPO_PATHS_INCLUDE_DELETED=true repo_emit_changed_paths '\.(tf|tfvars|hcl)$' ${TARGET_DIRS[@]+"${TARGET_DIRS[@]}"})
+        TARGET_DIRS=()
+        mapfile -t TARGET_DIRS < <(resolve_changed_module_dirs ${changed_files[@]+"${changed_files[@]}"})
+        if [[ ${#TARGET_DIRS[@]} -eq 0 ]]; then
+            log "INFO" "--changed-only: no changed Terraform modules"
+            print_validation_result terraform 0 "changed_only=SKIP|no changed Terraform modules" || true
+            exit 0
+        fi
+    fi
 }
 
 #######################################
@@ -223,6 +254,64 @@ function process_terraform_directory {
 
     popd > /dev/null || true
     return $failed
+}
+
+#######################################
+# resolve_changed_module_dirs: Map changed Terraform files to their module directories
+#
+# Description:
+#   For each file, walks up from its directory to the nearest one that contains a .tf file;
+#   that directory is the Terraform module. A module does not need a main.tf: fmt, tflint and
+#   trivy work on any such directory, while init/validate still run only where main.tf exists.
+#   When the nearest module is the current directory itself, "." is returned and the checks
+#   cover the whole tree (the repository root is the module). Files with no module above them
+#   are skipped with a warning. A removed file whose directory is gone selects the nearest
+#   surviving ancestor module, which is where a reference to the removed module would live. Directories nested under another result are dropped because
+#   every check already recurses into subdirectories.
+#
+# Globals:
+#   None
+#
+# Arguments:
+#   $@ - Changed file paths relative to the current directory
+#
+# Outputs:
+#   Module directories to stdout, one per line, sorted and unique
+#
+# Returns:
+#   0 on success
+#
+# Usage:
+#   mapfile -t dirs < <(resolve_changed_module_dirs "${files[@]}")
+#
+#######################################
+function resolve_changed_module_dirs {
+    local file dir
+    local -a modules=()
+    for file in "$@"; do
+        if dir="$(repo_nearest_ancestor_with "$(dirname "$file")" '*.tf')"; then
+            modules+=("$dir")
+        else
+            log "WARN" "--changed-only: no Terraform module above $file, skipping" >&2
+        fi
+    done
+    [[ ${#modules[@]} -eq 0 ]] && return 0
+
+    local -a unique=()
+    mapfile -t unique < <(printf '%s\n' "${modules[@]}" | sort -u)
+    local m other nested
+    for m in "${unique[@]}"; do
+        nested=false
+        for other in "${unique[@]}"; do
+            if [[ $other != "$m" && ($other == "." || $m == "$other/"*) ]]; then
+                nested=true
+                break
+            fi
+        done
+        if [[ $nested == "false" ]]; then
+            printf '%s\n' "$m"
+        fi
+    done
 }
 
 #######################################

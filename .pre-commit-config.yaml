@@ -150,7 +150,7 @@ repos:
   # For Renovate
   # --------------------------------------------------------------
   - repo: https://github.com/renovatebot/pre-commit-hooks
-    rev: 44.236.5
+    rev: 44.244.1
     hooks:
       - id: renovate-config-validator
         # The hook default only matches renovate.json(c|5) / .renovaterc; also cover shared presets under renovate/.
@@ -187,7 +187,7 @@ repos:
   # For Terraform
   # --------------------------------------------------------------
   - repo: https://github.com/terraform-docs/terraform-docs
-    rev: v0.24.0
+    rev: v0.25.1
     hooks:
       - id: terraform-docs-go
         args:
@@ -202,7 +202,7 @@ repos:
             "terraform",
           ]
   - repo: https://github.com/terraform-docs/terraform-docs
-    rev: v0.24.0
+    rev: v0.25.1
     hooks:
       - id: terraform-docs-go
         args:
