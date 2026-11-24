@@ -842,7 +842,7 @@ resource "aws_iam_role_policy_attachment" "this" {
 #--------------------------------------------------------------
 module "s3" {
   source  = "terraform-aws-modules/s3-bucket/aws"
-  version = "5.17.0"
+  version = "5.17.1"
 
   region = local.region
 
