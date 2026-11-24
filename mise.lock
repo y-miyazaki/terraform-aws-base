@@ -254,32 +254,32 @@ url_api = "https://api.github.com/repos/astral-sh/uv/releases/assets/740313927"
 provenance = "github-attestations"
 
 [[tools."aqua:aws/aws-cli"]]
-version = "2.40.3"
+version = "2.40.4"
 backend = "aqua:aws/aws-cli"
 
 [tools."aqua:aws/aws-cli"."platforms.linux-arm64"]
-checksum = "sha256:4c5f080c6c294eb0da77734c4520f5b5089cf45a4ee757ca34ddf7f9e512e66a"
-url = "https://awscli.amazonaws.com/awscli-exe-linux-aarch64-2.40.3.zip"
+checksum = "sha256:88961950fb3ef0b7190b40a1bccad0308b69186dbc575cb7c999b8c18959c635"
+url = "https://awscli.amazonaws.com/awscli-exe-linux-aarch64-2.40.4.zip"
 
 [tools."aqua:aws/aws-cli"."platforms.linux-arm64-musl"]
-checksum = "sha256:4c5f080c6c294eb0da77734c4520f5b5089cf45a4ee757ca34ddf7f9e512e66a"
-url = "https://awscli.amazonaws.com/awscli-exe-linux-aarch64-2.40.3.zip"
+checksum = "sha256:88961950fb3ef0b7190b40a1bccad0308b69186dbc575cb7c999b8c18959c635"
+url = "https://awscli.amazonaws.com/awscli-exe-linux-aarch64-2.40.4.zip"
 
 [tools."aqua:aws/aws-cli"."platforms.linux-x64"]
-checksum = "sha256:4770c06c4ecfc8ba94b60d89e6c7018ab7ea2cf5341b1ef05f6f93c5d6e8b705"
-url = "https://awscli.amazonaws.com/awscli-exe-linux-x86_64-2.40.3.zip"
+checksum = "sha256:81f573c2a0ace70cfb97aa4d014c17cbd605cb04cbad09adbc7aaf9c0979ae8e"
+url = "https://awscli.amazonaws.com/awscli-exe-linux-x86_64-2.40.4.zip"
 
 [tools."aqua:aws/aws-cli"."platforms.linux-x64-musl"]
-checksum = "sha256:4770c06c4ecfc8ba94b60d89e6c7018ab7ea2cf5341b1ef05f6f93c5d6e8b705"
-url = "https://awscli.amazonaws.com/awscli-exe-linux-x86_64-2.40.3.zip"
+checksum = "sha256:81f573c2a0ace70cfb97aa4d014c17cbd605cb04cbad09adbc7aaf9c0979ae8e"
+url = "https://awscli.amazonaws.com/awscli-exe-linux-x86_64-2.40.4.zip"
 
 [tools."aqua:aws/aws-cli"."platforms.macos-arm64"]
-checksum = "sha256:be032742ff205f7f2d7c189010bbb1f3891d0a67be0b1df0fe9d3e7f5fc5ad30"
-url = "https://awscli.amazonaws.com/AWSCLIV2-2.40.3.pkg"
+checksum = "sha256:c1c579b87f777d199936ac3472e87ec07e59a0b7b66927a5899be0dc5e13f64c"
+url = "https://awscli.amazonaws.com/AWSCLIV2-2.40.4.pkg"
 
 [tools."aqua:aws/aws-cli"."platforms.macos-x64"]
-checksum = "sha256:be032742ff205f7f2d7c189010bbb1f3891d0a67be0b1df0fe9d3e7f5fc5ad30"
-url = "https://awscli.amazonaws.com/AWSCLIV2-2.40.3.pkg"
+checksum = "sha256:c1c579b87f777d199936ac3472e87ec07e59a0b7b66927a5899be0dc5e13f64c"
+url = "https://awscli.amazonaws.com/AWSCLIV2-2.40.4.pkg"
 
 [[tools."aqua:aws/aws-sam-cli"]]
 version = "1.172.1"
@@ -772,43 +772,78 @@ checksum = "sha256:2244b7a379ea8c4b224a2eab411b7288f41ef36316fca27ae4b51b1cf2a53
 url = "https://releases.hashicorp.com/terraform/1.17.2/terraform_1.17.2_windows_amd64.zip"
 
 [[tools."aqua:jdx/usage"]]
-version = "7.3.0"
+version = "7.4.0"
 backend = "aqua:jdx/usage"
 
 [tools."aqua:jdx/usage"."platforms.linux-arm64"]
-checksum = "sha256:b845455e5fda89983fe6860066b2f520ba28cb0a265d64f2fde0e950eb9e0d07"
-url = "https://github.com/jdx/usage/releases/download/v7.3.0/usage-aarch64-unknown-linux-gnu.tar.gz"
-url_api = "https://api.github.com/repos/jdx/usage/releases/assets/715712902"
+checksum = "sha256:63ec67fd6bc8c54ad9e2775e95d6eea565565a30568d65c75be8423b3dd842ea"
+url = "https://github.com/jdx/usage/releases/download/v7.4.0/usage-aarch64-unknown-linux-gnu.tar.gz"
+url_api = "https://api.github.com/repos/jdx/usage/releases/assets/756265141"
 
 [tools."aqua:jdx/usage"."platforms.linux-arm64-musl"]
-checksum = "sha256:3bfcf7b5cff0daec5629f54dd15f40001a09bab551663d6e937c99c5716ae094"
-url = "https://github.com/jdx/usage/releases/download/v7.3.0/usage-aarch64-unknown-linux-musl.tar.gz"
-url_api = "https://api.github.com/repos/jdx/usage/releases/assets/715716415"
+checksum = "sha256:2b522480691d6af6bb2a96de28cf9edbd90af3a52195cefe0d19217c18652c4a"
+url = "https://github.com/jdx/usage/releases/download/v7.4.0/usage-aarch64-unknown-linux-musl.tar.gz"
+url_api = "https://api.github.com/repos/jdx/usage/releases/assets/756262084"
 
 [tools."aqua:jdx/usage"."platforms.linux-x64"]
-checksum = "sha256:78d9d765bb87c9377e95fd816ab436a5001d95d28b3b9bf7e405ed3eccfe025c"
-url = "https://github.com/jdx/usage/releases/download/v7.3.0/usage-x86_64-unknown-linux-gnu.tar.gz"
-url_api = "https://api.github.com/repos/jdx/usage/releases/assets/715713437"
+checksum = "sha256:c66011f163619cf3946182498eedd16966bf3d32a6c6cf28c73c8034dfe467d6"
+url = "https://github.com/jdx/usage/releases/download/v7.4.0/usage-x86_64-unknown-linux-gnu.tar.gz"
+url_api = "https://api.github.com/repos/jdx/usage/releases/assets/756266021"
 
 [tools."aqua:jdx/usage"."platforms.linux-x64-musl"]
-checksum = "sha256:9af5d220332a0178c38786eac6deb9fa67b767f4c3d4b2e4c8e6bd5659975e86"
-url = "https://github.com/jdx/usage/releases/download/v7.3.0/usage-x86_64-unknown-linux-musl.tar.gz"
-url_api = "https://api.github.com/repos/jdx/usage/releases/assets/715712996"
+checksum = "sha256:223f8819cc26543ffcc11161659497450c6bdbe947ad8580b70183dac4c9d182"
+url = "https://github.com/jdx/usage/releases/download/v7.4.0/usage-x86_64-unknown-linux-musl.tar.gz"
+url_api = "https://api.github.com/repos/jdx/usage/releases/assets/756263745"
 
 [tools."aqua:jdx/usage"."platforms.macos-arm64"]
-checksum = "sha256:3201ab26da21e11cbbf3b75f81da65a502e7774e014bd77956cab13e61e73b87"
-url = "https://github.com/jdx/usage/releases/download/v7.3.0/usage-universal-apple-darwin.tar.gz"
-url_api = "https://api.github.com/repos/jdx/usage/releases/assets/715718669"
+checksum = "sha256:606dbdda615111940c6b39e1cb64dbf4871839304146e8e40e7302312be095d6"
+url = "https://github.com/jdx/usage/releases/download/v7.4.0/usage-universal-apple-darwin.tar.gz"
+url_api = "https://api.github.com/repos/jdx/usage/releases/assets/756266261"
 
 [tools."aqua:jdx/usage"."platforms.macos-x64"]
-checksum = "sha256:3201ab26da21e11cbbf3b75f81da65a502e7774e014bd77956cab13e61e73b87"
-url = "https://github.com/jdx/usage/releases/download/v7.3.0/usage-universal-apple-darwin.tar.gz"
-url_api = "https://api.github.com/repos/jdx/usage/releases/assets/715718669"
+checksum = "sha256:606dbdda615111940c6b39e1cb64dbf4871839304146e8e40e7302312be095d6"
+url = "https://github.com/jdx/usage/releases/download/v7.4.0/usage-universal-apple-darwin.tar.gz"
+url_api = "https://api.github.com/repos/jdx/usage/releases/assets/756266261"
 
 [tools."aqua:jdx/usage"."platforms.windows-x64"]
-checksum = "sha256:0156c5ff413cb49275b109a44b0bb388d8aebf4ce2f47db4902333d3fbee46cc"
-url = "https://github.com/jdx/usage/releases/download/v7.3.0/usage-x86_64-pc-windows-msvc.zip"
-url_api = "https://api.github.com/repos/jdx/usage/releases/assets/715723164"
+checksum = "sha256:a0bc6718039bbb4289e19981a2cf82a7e1d8509eb426cb27fcb90c0dc34d8b66"
+url = "https://github.com/jdx/usage/releases/download/v7.4.0/usage-x86_64-pc-windows-msvc.zip"
+url_api = "https://api.github.com/repos/jdx/usage/releases/assets/756270801"
+
+[[tools."aqua:jdx/usage"]]
+version = "7.4.0"
+backend = "aqua:jdx/usage"
+
+[tools."aqua:jdx/usage".options]
+"vars.lazy" = "true"
+
+[tools."aqua:jdx/usage"."platforms.linux-arm64"]
+checksum = "sha256:2b522480691d6af6bb2a96de28cf9edbd90af3a52195cefe0d19217c18652c4a"
+url = "https://github.com/jdx/usage/releases/download/v7.4.0/usage-aarch64-unknown-linux-musl.tar.gz"
+
+[tools."aqua:jdx/usage"."platforms.linux-arm64-musl"]
+checksum = "sha256:2b522480691d6af6bb2a96de28cf9edbd90af3a52195cefe0d19217c18652c4a"
+url = "https://github.com/jdx/usage/releases/download/v7.4.0/usage-aarch64-unknown-linux-musl.tar.gz"
+
+[tools."aqua:jdx/usage"."platforms.linux-x64"]
+checksum = "sha256:223f8819cc26543ffcc11161659497450c6bdbe947ad8580b70183dac4c9d182"
+url = "https://github.com/jdx/usage/releases/download/v7.4.0/usage-x86_64-unknown-linux-musl.tar.gz"
+
+[tools."aqua:jdx/usage"."platforms.linux-x64-musl"]
+checksum = "sha256:223f8819cc26543ffcc11161659497450c6bdbe947ad8580b70183dac4c9d182"
+url = "https://github.com/jdx/usage/releases/download/v7.4.0/usage-x86_64-unknown-linux-musl.tar.gz"
+
+[tools."aqua:jdx/usage"."platforms.macos-arm64"]
+checksum = "sha256:606dbdda615111940c6b39e1cb64dbf4871839304146e8e40e7302312be095d6"
+url = "https://github.com/jdx/usage/releases/download/v7.4.0/usage-universal-apple-darwin.tar.gz"
+
+[tools."aqua:jdx/usage"."platforms.macos-x64"]
+checksum = "sha256:606dbdda615111940c6b39e1cb64dbf4871839304146e8e40e7302312be095d6"
+url = "https://github.com/jdx/usage/releases/download/v7.4.0/usage-universal-apple-darwin.tar.gz"
+
+[tools."aqua:jdx/usage"."platforms.windows-x64"]
+checksum = "sha256:a0bc6718039bbb4289e19981a2cf82a7e1d8509eb426cb27fcb90c0dc34d8b66"
+url = "https://github.com/jdx/usage/releases/download/v7.4.0/usage-x86_64-pc-windows-msvc.zip"
 
 [[tools."aqua:kayac/ecspresso"]]
 version = "3.0.0"
@@ -1596,43 +1631,43 @@ url_api = "https://api.github.com/repos/zizmorcore/zizmor/releases/assets/703541
 provenance = "github-attestations"
 
 [[tools.claude]]
-version = "2.1.325"
+version = "2.1.326"
 backend = "aqua:anthropics/claude-code"
 
 [tools.claude."platforms.linux-arm64"]
-checksum = "sha256:2abe2bea8b802190a303f335b0fd09f95eb775457e99df5a4778b09dfab6bbd6"
-url = "https://github.com/anthropics/claude-code/releases/download/v2.1.325/claude-linux-arm64.tar.gz"
-url_api = "https://api.github.com/repos/anthropics/claude-code/releases/assets/745018489"
+checksum = "sha256:61d9c24ad8aa6356e076753760641521d8c85f3e37a3641412eaae4d5885141f"
+url = "https://github.com/anthropics/claude-code/releases/download/v2.1.326/claude-linux-arm64.tar.gz"
+url_api = "https://api.github.com/repos/anthropics/claude-code/releases/assets/756011682"
 
 [tools.claude."platforms.linux-arm64-musl"]
-checksum = "sha256:e2e584d57c80de163b4f31f8dd82109cce1c3f7dcf9b542cddc705ad21d98737"
-url = "https://github.com/anthropics/claude-code/releases/download/v2.1.325/claude-linux-arm64-musl.tar.gz"
-url_api = "https://api.github.com/repos/anthropics/claude-code/releases/assets/745018488"
+checksum = "sha256:c48b1f6e2fe0e521a5f5ce936abd8dcac34ed497b151542ab997f5796308be86"
+url = "https://github.com/anthropics/claude-code/releases/download/v2.1.326/claude-linux-arm64-musl.tar.gz"
+url_api = "https://api.github.com/repos/anthropics/claude-code/releases/assets/756011685"
 
 [tools.claude."platforms.linux-x64"]
-checksum = "sha256:9686b0fb1eefbd7f2cc1f53f932516c29cd605e9d976223323a6c6e9a4c9c7fe"
-url = "https://github.com/anthropics/claude-code/releases/download/v2.1.325/claude-linux-x64.tar.gz"
-url_api = "https://api.github.com/repos/anthropics/claude-code/releases/assets/745018803"
+checksum = "sha256:30f5542005d138d74eaba6af8de7a6678e71e87dc4ba929435ac2ff9011d5a53"
+url = "https://github.com/anthropics/claude-code/releases/download/v2.1.326/claude-linux-x64.tar.gz"
+url_api = "https://api.github.com/repos/anthropics/claude-code/releases/assets/756012058"
 
 [tools.claude."platforms.linux-x64-musl"]
-checksum = "sha256:ba798cbed37b7b108cc5898dee27320321eb7e4717081b7ea611c907d2bab3ff"
-url = "https://github.com/anthropics/claude-code/releases/download/v2.1.325/claude-linux-x64-musl.tar.gz"
-url_api = "https://api.github.com/repos/anthropics/claude-code/releases/assets/745018492"
+checksum = "sha256:b1d3cedcaf268905289bced2edc2cb046a8fae95194750df3665a1ca5b895efe"
+url = "https://github.com/anthropics/claude-code/releases/download/v2.1.326/claude-linux-x64-musl.tar.gz"
+url_api = "https://api.github.com/repos/anthropics/claude-code/releases/assets/756011683"
 
 [tools.claude."platforms.macos-arm64"]
-checksum = "sha256:b0dc23f2d8c3ef55b2b22f03ef204e98b06b22b6c51a15b66d263b13442c4e03"
-url = "https://github.com/anthropics/claude-code/releases/download/v2.1.325/claude-darwin-arm64.tar.gz"
-url_api = "https://api.github.com/repos/anthropics/claude-code/releases/assets/745018486"
+checksum = "sha256:4e27662f58b98ca3c5cbe67081891d2cc86461fbb285c22ed8309078a070671b"
+url = "https://github.com/anthropics/claude-code/releases/download/v2.1.326/claude-darwin-arm64.tar.gz"
+url_api = "https://api.github.com/repos/anthropics/claude-code/releases/assets/756011686"
 
 [tools.claude."platforms.macos-x64"]
-checksum = "sha256:ea9d1cf6cc3284450208f0e7045849022b6da558000d6f0699d96515f0fd2a0d"
-url = "https://github.com/anthropics/claude-code/releases/download/v2.1.325/claude-darwin-x64.tar.gz"
-url_api = "https://api.github.com/repos/anthropics/claude-code/releases/assets/745018499"
+checksum = "sha256:ffee46842d77f57d0f275b493e23f44413a7d3208a3347c7facc07a0ba6ec48e"
+url = "https://github.com/anthropics/claude-code/releases/download/v2.1.326/claude-darwin-x64.tar.gz"
+url_api = "https://api.github.com/repos/anthropics/claude-code/releases/assets/756011701"
 
 [tools.claude."platforms.windows-x64"]
-checksum = "sha256:682cfcfe2f5ea528b53aa1e85e797061cce72b0c6b42b023f0ef64963d10304a"
-url = "https://github.com/anthropics/claude-code/releases/download/v2.1.325/claude-win32-x64.zip"
-url_api = "https://api.github.com/repos/anthropics/claude-code/releases/assets/745018888"
+checksum = "sha256:5584bf1fc9c6431d45fac930dab325699d596071c6176bc053a3ec64efc6cf5e"
+url = "https://github.com/anthropics/claude-code/releases/download/v2.1.326/claude-win32-x64.zip"
+url_api = "https://api.github.com/repos/anthropics/claude-code/releases/assets/756012068"
 
 [[tools."github:DeusData/codebase-memory-mcp"]]
 version = "0.12.1"

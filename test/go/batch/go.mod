@@ -1,3 +1,3 @@
 module example.com/batch
 
-go 1.26.11
+go 1.27.4
