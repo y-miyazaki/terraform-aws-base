@@ -254,7 +254,7 @@ function index_repository_root {
 #   None
 #
 # Outputs:
-#   Warning on stderr when apm install fails
+#   Warning with lockfile recovery steps on stderr when apm install --frozen fails
 #
 # Returns:
 #   0
@@ -265,7 +265,10 @@ function install_apm {
     [[ -f ${REPO_ROOT}/apm.yml ]] || return 0
     (
         cd "${REPO_ROOT}" || exit
-        apm install --frozen || echo "[warn] apm install failed" >&2
+        if ! apm install --frozen; then
+            echo "[warn] apm install --frozen failed: apm.lock.yaml may be out of date with apm.yml." >&2
+            echo "[warn] Run 'apm install' (without --frozen) in ${REPO_ROOT} and commit apm.lock.yaml." >&2
+        fi
     )
 }
 
