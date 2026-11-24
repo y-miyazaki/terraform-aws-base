@@ -40,7 +40,7 @@ function adjust_ownership {
     uid="$(id -u)"
     gid="$(id -g)"
 
-    for path in "${HOME}/.aws" "${HOME}/.gitconfig" "${HOME}/.local" "${HOME}/.ssh"; do
+    for path in "${HOME}/.aws" "${HOME}/.claude" "${HOME}/.gitconfig" "${HOME}/.local" "${HOME}/.ssh"; do
         if [[ -e ${path} ]]; then
             sudo chown -R "${uid}":"${gid}" "${path}" || true
         fi
