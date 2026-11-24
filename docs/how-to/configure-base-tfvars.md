@@ -140,7 +140,7 @@ When `security_cloudtrail` is enabled, the module also creates the `security-ser
 - **Security Hub:** `enable_default_standards`, `enabled_cis_aws_foundations_benchmark` / `cis_aws_foundations_benchmark_version` and `enabled_pci_dss` / `pci_dss_version` decide which standards are subscribed. `enable_default_standards` is applied only when Security Hub is enabled for the first time. Security Hub and Access Analyzer are skipped when managed by Control Tower.
 - **GuardDuty (Security):** `master_account_ids` maps a region to the administrator account whose invitation a member account accepts. Invitations are per region, so list only the invited regions. Leave it `{}` unless this account is invited with an `aws_guardduty_member` entry (`invite = true`).
 - **Regions:** `region.global` must be included in `region.targets` (validated).
-- **OIDC GitHub:** `{account_id}` in `iam_role_inline_policies` is replaced with the current AWS account ID.
+- **OIDC GitHub:** `{account_id}` in `iam_role_inline_policies` is replaced with the current AWS account ID. A `DenyDeleteLogBuckets` statement (`s3:DeleteBucket`, `s3:DeleteObject`, `s3:DeleteObjectVersion` on `<name_prefix>aws-log-*` buckets) is always appended in code to protect logs from tampering, so do not add it to tfvars.
 
 ### Control Tower
 

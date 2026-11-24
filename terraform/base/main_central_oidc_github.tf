@@ -8,6 +8,24 @@
 # SECURITY WARNING: dangerously_attach_admin_policy should be false in production!
 # Use least privilege principles and attach only necessary policies.
 #--------------------------------------------------------------
+locals {
+  # Deny deleting log data (objects and buckets) from the GitHub Actions role to prevent log tampering.
+  # Covers every "<name_prefix>aws-log-*" bucket (common, application, cloudtrail, ...) in this account.
+  oidc_github_deny_delete_log_statement = {
+    Action = [
+      "s3:DeleteBucket",
+      "s3:DeleteObject",
+      "s3:DeleteObjectVersion",
+    ]
+    Effect = "Deny"
+    Resource = [
+      "arn:aws:s3:::${var.name_prefix}aws-log-*",
+      "arn:aws:s3:::${var.name_prefix}aws-log-*/*",
+    ]
+    Sid = "DenyDeleteLogBuckets"
+  }
+}
+
 module "oidc_github" {
   for_each = var.oidc_github.settings
 
@@ -23,7 +41,13 @@ module "oidc_github" {
   iam_role_inline_policies = {
     # {account_id} in the policy is replaced with the current AWS account ID.
     format("%s%s%s%s", var.name_prefix, "oidc-github-", each.key, "-inline-policy") = replace(
-      jsonencode(each.value.iam_role_inline_policies),
+      jsonencode({
+        Version = each.value.iam_role_inline_policies.Version
+        Statement = concat(
+          each.value.iam_role_inline_policies.Statement,
+          [local.oidc_github_deny_delete_log_statement],
+        )
+      }),
       "{account_id}",
       data.aws_caller_identity.current.account_id
     )
