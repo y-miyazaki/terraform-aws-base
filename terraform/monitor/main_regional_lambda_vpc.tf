@@ -13,7 +13,7 @@ module "lambda_vpc" {
   for_each = local.monitor_regions
 
   source  = "terraform-aws-modules/vpc/aws"
-  version = "6.8.0"
+  version = "6.7.3"
 
   region = each.value
 
