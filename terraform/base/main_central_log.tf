@@ -15,7 +15,7 @@ locals {
 #--------------------------------------------------------------
 module "s3_log" {
   source  = "terraform-aws-modules/s3-bucket/aws"
-  version = "5.17.0"
+  version = "5.17.1"
 
   region = var.region.primary
 
@@ -111,7 +111,7 @@ data "aws_iam_policy_document" "s3_log_combined" {
 #--------------------------------------------------------------
 module "s3_cloudtrail" {
   source  = "terraform-aws-modules/s3-bucket/aws"
-  version = "5.17.0"
+  version = "5.17.1"
 
   region = var.region.primary
 
