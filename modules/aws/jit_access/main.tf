@@ -271,7 +271,7 @@ resource "aws_iam_role_policy_attachment" "lambda_vpc" {
 #--------------------------------------------------------------
 module "lambda_jit_access" {
   source  = "terraform-aws-modules/lambda/aws"
-  version = "8.13.0"
+  version = "8.13.2"
 
   region = local.region
 

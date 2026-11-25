@@ -36,7 +36,7 @@ module "lambda_function_health" {
   for_each = toset(var.region.targets)
 
   source  = "terraform-aws-modules/lambda/aws"
-  version = "8.13.0"
+  version = "8.13.2"
 
   create = var.health.is_enabled
   region = each.value
