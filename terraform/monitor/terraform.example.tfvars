@@ -97,9 +97,6 @@ cloudwatch_log_group = {
     # common_lambda_s3_notification_s3_object_created_for_athena = {
     #   retention_in_days = 14
     # }
-    # common_lambda_step_functions = {
-    #   retention_in_days = 14
-    # }
     # common_lambda_vpc_flow_log = {
     #   retention_in_days = 7
     # }
@@ -140,7 +137,6 @@ slack = {
   # Available function overrides:
   # - common_lambda_log: CloudWatch Alarms to Slack
   # - common_lambda_metric: Kinesis Data Firehose CloudWatch Logs Processor
-  # - step_functions: Step Functions Log to Slack
   # - cloudwatch_event_ec2: EC2 Events to Slack
   # - metric_log_application: Application Errors Report to Slack
   # - metric_log_postgresql_slowquery: PostgreSQL Slow Query to Slack
@@ -162,9 +158,6 @@ slack = {
     #   channel_id         = "C0XXXXXXXXX"
     # }
     # common_lambda_s3_notification_s3_object_created_for_athena = {
-    #   channel_id         = "C0XXXXXXXXX"
-    # }
-    # common_lambda_step_functions = {
     #   channel_id         = "C0XXXXXXXXX"
     # }
     # metric_log_application = {
@@ -209,7 +202,7 @@ common_log = {
     attach_public_policy = true
     block_public_acls    = true
     block_public_policy  = true
-    force_destroy        = true
+    force_destroy        = false
     ignore_public_acls   = true
     lifecycle_rule = [
       {
@@ -404,27 +397,6 @@ common_lambda = {
         # DEVOPS_AGENT_WEBHOOK_URL = "https://example.invalid/webhook" # pragma: allowlist secret
         # DEVOPS_AGENT_WEBHOOK_HMAC_SECRET = "xxxxxxxx" # pragma: allowlist secret
       }
-    }
-  }
-  step_functions_log = {
-    aws_sns_topic = {
-      name                                     = "aws-step-functions-log"
-      name_prefix                              = null
-      display_name                             = null
-      policy                                   = null
-      delivery_policy                          = null
-      application_success_feedback_role_arn    = null
-      application_success_feedback_sample_rate = null
-      application_failure_feedback_role_arn    = null
-      http_success_feedback_role_arn           = null
-      http_success_feedback_sample_rate        = null
-      http_failure_feedback_role_arn           = null
-      lambda_success_feedback_role_arn         = null
-      lambda_success_feedback_sample_rate      = null
-      lambda_failure_feedback_role_arn         = null
-      sqs_success_feedback_role_arn            = null
-      sqs_success_feedback_sample_rate         = null
-      sqs_failure_feedback_role_arn            = null
     }
   }
   aws_iam_role = {
@@ -700,63 +672,6 @@ metric_log_application_report = {
       # https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
       TIMEZONE = "Asia/Tokyo"
     }
-  }
-}
-
-#--------------------------------------------------------------
-# Log:Step Functions
-# The filter function of CloudWatchLogs can be used to check specified logs
-# with specified filter patterns. Those that hit the filter pattern will be
-# notified by Slack via Lambda.
-#
-# Filter logs related to Step Functions
-#--------------------------------------------------------------
-metric_log_step_functions = {
-  # CUSTOMIZE: need to set is_enabled for settings of application log.
-  is_enabled = false
-  # (Optional) Builds a list of log group name to automatically set log_group_names. If this is true, the log_group_names setting will be ignored.
-  create_auto_log_group_names = true
-  # (Optional) If create_auto_log_group_names is set to true, a list of log_group_names will be automatically registered, but at that time, specify the log group name you want to exclude using partial match.
-  auto_log_group_names_exclude_list = []
-  # (Optional) If create_auto_log_group_names is set to true and this list is not empty, only log group names matching any of these patterns (partial match) will be included.
-  auto_log_group_names_include_list = [
-    "/aws/sfn/",
-  ]
-  # (Optional) If create_auto_log_group_names is set to false, need to add log_group_name for application.
-  #       check log group name for application.
-  # check CloudWatch Group name list command.
-  # ex1) aws logs describe-log-groups --log-group-name-prefix hogehoge | jq -r ".logGroups[].logGroupName"
-  # ex2) aws logs describe-log-groups --log-group-name-prefix /aws/sfn/ | jq -r '.logGroups[] | .logGroupName = "\"" + .logGroupName + "\"," | .logGroupName'
-  log_group_names = []
-
-  aws_cloudwatch_log_metric_filter = {
-    name = "step-functions-logs-success"
-    # CUSTOMIZE: need to change pattern for application log.
-    pattern = <<PATTERN
-[( msg="*ExecutionSucceeded\"*")]
-PATTERN
-
-    metric_transformation = [
-      {
-        name      = "step-functions-logs-success"
-        namespace = "Application"
-        value     = "1"
-      }
-    ]
-  }
-  aws_cloudwatch_metric_alarm = {
-    alarm_name          = "step-functions-logs-success"
-    comparison_operator = "GreaterThanOrEqualToThreshold"
-    evaluation_periods  = 1
-    period              = 60
-    statistic           = "Sum"
-    threshold           = 1
-    threshold_metric_id = null
-    actions_enabled     = true
-    alarm_description   = "Success log notification."
-    datapoints_to_alarm = 1
-    dimensions          = null
-    treat_missing_data  = "notBreaching"
   }
 }
 

@@ -24,10 +24,6 @@ The filter function of CloudWatch Logs checks specified logs with specified filt
 
 A daily report function is also available that aggregates PostgreSQL slow query logs and sends a summary to Slack via EventBridge Scheduler.
 
-### Step Functions
-
-The filter function of CloudWatch Logs checks Step Functions execution logs with specified filter patterns. Those that hit the filter pattern will be notified by Slack via Lambda.
-
 ### WAF
 
 The filter function of CloudWatch Logs checks AWS WAF logs with specified filter patterns. Those that hit the filter pattern will be notified by Slack via Lambda.

@@ -33,7 +33,7 @@ locals {
 resource "aws_iam_user" "this" {
   for_each = var.is_enabled ? var.user : {}
 
-  force_destroy = true
+  force_destroy = false
   name          = each.key
   path          = "/"
 }

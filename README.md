@@ -68,21 +68,22 @@ The architecture when all elements are enabled is shown below. Each resource can
 
 For detailed descriptions and Slack notification examples, see [Features: Base](https://y-miyazaki.github.io/terraform-aws-base/reference/features-base/#security).
 
-| Feature               | Description                                         | Reference                                                                                              |
-| --------------------- | --------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
-| Access Analyzer       | Detects unintended external access to resources     | [Docs](https://docs.aws.amazon.com/IAM/latest/UserGuide/what-is-access-analyzer.html)                  |
-| Athena (Security)     | Athena workgroup for security log queries           | —                                                                                                      |
-| CloudTrail            | API activity logging and governance auditing        | [Docs](https://docs.aws.amazon.com/awscloudtrail/latest/userguide/)                                    |
-| Config                | Configuration compliance monitoring and recording   | [Docs](https://docs.aws.amazon.com/config/latest/developerguide/)                                      |
-| Default VPC           | Hardens default VPC by removing default rules       | [Docs](https://docs.aws.amazon.com/vpc/latest/userguide/default-vpc.html)                              |
-| EBS                   | Encryption by default and public snapshot blocking  | [Docs](https://docs.aws.amazon.com/ebs/latest/userguide/ebs-encryption.html)                           |
-| EC2 Metadata (IMDSv2) | Enforces IMDSv2 at account level                    | [Docs](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/configuring-instance-metadata-service.html) |
-| ECR                   | Sets native scanning for container images           | [Docs](https://docs.aws.amazon.com/AmazonECR/latest/userguide/image-scanning.html)                     |
-| GuardDuty             | Continuous threat detection                         | [Docs](https://docs.aws.amazon.com/guardduty/latest/ug/)                                               |
-| Inspector2            | Automated vulnerability scanning (EC2, ECR, Lambda) | [Docs](https://docs.aws.amazon.com/inspector/latest/user/)                                             |
-| Macie                 | Sensitive data discovery in S3                      | [Docs](https://docs.aws.amazon.com/macie/latest/user/)                                                 |
-| Security Hub          | Centralized security posture and compliance         | [Docs](https://docs.aws.amazon.com/securityhub/latest/userguide/)                                      |
-| SSM Automation        | Automated remediation of security findings          | [Docs](https://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-automation.html)   |
+| Feature                | Description                                         | Reference                                                                                              |
+| ---------------------- | --------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
+| Access Analyzer        | Detects unintended external access to resources     | [Docs](https://docs.aws.amazon.com/IAM/latest/UserGuide/what-is-access-analyzer.html)                  |
+| Athena (Security)      | Athena workgroup for security log queries           | —                                                                                                      |
+| CloudTrail             | API activity logging and governance auditing        | [Docs](https://docs.aws.amazon.com/awscloudtrail/latest/userguide/)                                    |
+| Config                 | Configuration compliance monitoring and recording   | [Docs](https://docs.aws.amazon.com/config/latest/developerguide/)                                      |
+| Default VPC            | Hardens default VPC by removing default rules       | [Docs](https://docs.aws.amazon.com/vpc/latest/userguide/default-vpc.html)                              |
+| EBS                    | Encryption by default and public snapshot blocking  | [Docs](https://docs.aws.amazon.com/ebs/latest/userguide/ebs-encryption.html)                           |
+| EC2 Metadata (IMDSv2)  | Enforces IMDSv2 at account level                    | [Docs](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/configuring-instance-metadata-service.html) |
+| ECR                    | Sets native scanning for container images           | [Docs](https://docs.aws.amazon.com/AmazonECR/latest/userguide/image-scanning.html)                     |
+| GuardDuty              | Continuous threat detection                         | [Docs](https://docs.aws.amazon.com/guardduty/latest/ug/)                                               |
+| Inspector2             | Automated vulnerability scanning (EC2, ECR, Lambda) | [Docs](https://docs.aws.amazon.com/inspector/latest/user/)                                             |
+| Macie                  | Sensitive data discovery in S3                      | [Docs](https://docs.aws.amazon.com/macie/latest/user/)                                                 |
+| S3 Public Access Block | Account-level S3 Block Public Access settings       | [Docs](https://docs.aws.amazon.com/AmazonS3/latest/userguide/access-control-block-public-access.html)  |
+| Security Hub           | Centralized security posture and compliance         | [Docs](https://docs.aws.amazon.com/securityhub/latest/userguide/)                                      |
+| SSM Automation         | Automated remediation of security findings          | [Docs](https://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-automation.html)   |
 
 Related: [Security Hub Controls Compliance Matrix](https://y-miyazaki.github.io/terraform-aws-base/reference/security-hub-controls/) · [Security Coverage](https://y-miyazaki.github.io/terraform-aws-base/reference/security-coverage/)
 
@@ -98,7 +99,6 @@ Related: [Security Hub Controls Compliance Matrix](https://y-miyazaki.github.io/
 | Macie Organization           | audit | Organization-wide sensitive data discovery     |
 | Budgets                      | root  | Cost monitoring and alerting                   |
 | CloudTrail (Organization)    | root  | Organization-level API audit trail             |
-| Organizational Policies      | root  | SCPs and governance policies                   |
 | OIDC GitHub                  | root  | CI/CD authentication via OIDC federation       |
 | JIT Access                   | root  | Temporary privileged access via Slack approval |
 
@@ -147,13 +147,12 @@ For detailed descriptions, see [Features: Monitor](https://y-miyazaki.github.io/
 
 CloudWatch Logs metric filters detect patterns and notify via Lambda → Slack.
 
-| Log Source     | Filter Target                 | Daily Report          |
-| -------------- | ----------------------------- | --------------------- |
-| Application    | Custom filter patterns        | ✅ Error summary      |
-| MySQL          | Slow query patterns           | —                     |
-| PostgreSQL     | Error and slow query patterns | ✅ Slow query summary |
-| Step Functions | Execution failure patterns    | —                     |
-| WAF            | Blocked request patterns      | —                     |
+| Log Source  | Filter Target                 | Daily Report          |
+| ----------- | ----------------------------- | --------------------- |
+| Application | Custom filter patterns        | ✅ Error summary      |
+| MySQL       | Slow query patterns           | —                     |
+| PostgreSQL  | Error and slow query patterns | ✅ Slow query summary |
+| WAF         | Blocked request patterns      | —                     |
 
 ### Monitoring: Events
 

@@ -12,14 +12,13 @@ Configuration for the **Management (Root) account** — the top-level account th
 
 **What it configures:**
 
-| Service                | Purpose                                  |
-| ---------------------- | ---------------------------------------- |
-| Budgets                | Cost monitoring and alerting             |
-| Organizations Policies | SCPs and tag policies                    |
-| CloudTrail             | Organization-level audit trail           |
-| OIDC GitHub            | CI/CD integration                        |
-| JIT Access             | Just-In-Time privileged access via Slack |
-| Lambda                 | Automation utilities                     |
+| Service     | Purpose                                  |
+| ----------- | ---------------------------------------- |
+| Budgets     | Cost monitoring and alerting             |
+| CloudTrail  | Organization-level audit trail           |
+| OIDC GitHub | CI/CD integration                        |
+| JIT Access  | Just-In-Time privileged access via Slack |
+| Lambda      | Automation utilities                     |
 
 **Relationship to other stacks:**
 
@@ -126,28 +125,7 @@ budgets = {
 
 ### Organizations Policy (SCP)
 
-Restricts which AWS services and regions can be used across all accounts.
-
-```hcl
-organizations_policy = {
-  policy = {
-    Version = "2012-10-17"
-    Statement = [{
-      Sid       = "AllowSpecificRegions"
-      Effect    = "Deny"
-      NotAction = ["budgets:*", "cloudfront:*", "iam:*", "organizations:*", "route53:*", "support:*"]
-      Resource  = ["*"]
-      Condition = {
-        StringNotEquals = {
-          "aws:RequestedRegion" = ["ap-northeast-1", "us-east-1"]
-        }
-      }
-    }]
-  }
-}
-```
-
-> **Caution:** Test SCPs in non-production first. Incorrect SCPs can block administrative access.
+This repository does not manage SCPs or Organizations policies. Configure guardrails through AWS Control Tower controls.
 
 ### CloudTrail
 
@@ -233,20 +211,18 @@ jit_access = {
 
 ## Validation Checklist
 
-| Category      | Check                                              |
-| ------------- | -------------------------------------------------- |
-| Slack         | OAuth token valid, default channel set             |
-| Budget        | `limit_amount` appropriate for account spend       |
-| Budget        | At least one subscriber email configured           |
-| CloudTrail    | Metric filters configured for critical events      |
-| GitHub        | OIDC repositories listed, admin policy disabled    |
-| Organizations | SCP regions and services match requirements        |
-| Organizations | SCP tested in non-production first                 |
-| KMS           | Key rotation enabled, deletion window set          |
-| JIT Access    | `bot_token` and `signing_secret` set               |
-| JIT Access    | `approver_channel_id` correct                      |
-| JIT Access    | At least one profile with valid Permission Set ARN |
-| JIT Access    | Lambda zip exists at expected path                 |
+| Category   | Check                                              |
+| ---------- | -------------------------------------------------- |
+| Slack      | OAuth token valid, default channel set             |
+| Budget     | `limit_amount` appropriate for account spend       |
+| Budget     | At least one subscriber email configured           |
+| CloudTrail | Metric filters configured for critical events      |
+| GitHub     | OIDC repositories listed, admin policy disabled    |
+| KMS        | Key rotation enabled, deletion window set          |
+| JIT Access | `bot_token` and `signing_secret` set               |
+| JIT Access | `approver_channel_id` correct                      |
+| JIT Access | At least one profile with valid Permission Set ARN |
+| JIT Access | Lambda zip exists at expected path                 |
 
 ## Related Documents
 

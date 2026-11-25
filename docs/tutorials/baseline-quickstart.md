@@ -135,7 +135,7 @@ All stacks follow the same workflow. The only differences are the directory, sta
 
 1. `base` — foundational security and IAM (no dependencies)
 2. `management/audit` — organization-level security delegation (requires Organizations setup)
-3. `management/root` — root account governance, SCPs, OIDC (requires Organizations setup)
+3. `management/root` — root account governance, OIDC (requires Organizations setup)
 4. `monitor` — CloudWatch metrics, logs, events (can reference resources created by base)
 
 > `management/audit` and `management/root` require AWS Organizations to be configured. If you are setting up a single standalone account without Organizations, only `base` and `monitor` are needed.

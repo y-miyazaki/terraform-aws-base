@@ -45,10 +45,10 @@ pnpm = { version = "11.28.13", depends = ["node"] }
 python = "3.14.6" # pinned: onnxruntime (pipx:headroom-ai dependency) has no cp315 wheels yet
 
 # AI agent tools
-"github:microsoft/apm" = { version = "v0.36.0", lazy = true, lazy_bins = ["apm"] }                                 # agent package manager
+"github:microsoft/apm" = { version = "v0.36.1", lazy = true, lazy_bins = ["apm"] }                                 # agent package manager
 claude = { version = "2.1.327", lazy = true, lazy_bins = ["claude"] }                                              # Claude Code CLI
 "github:DeusData/codebase-memory-mcp" = { version = "v0.12.1", lazy = true, lazy_bins = ["codebase-memory-mcp"] } # codebase memory MCP server
-"aqua:github/copilot-cli" = { version = "1.0.113", lazy = true, lazy_bins = ["copilot"] }                           # GitHub Copilot CLI
+"aqua:github/copilot-cli" = { version = "1.0.114", lazy = true, lazy_bins = ["copilot"] }                           # GitHub Copilot CLI
 "pipx:headroom-ai" = { version = "0.44.0", extras = "proxy,mcp,bedrock", depends = ["python"], lazy = true, lazy_bins = ["headroom", "headroom-cache-ttl"] }
 "github:microsoft/waza" = { version = "v0.41.0", lazy = true, lazy_bins = ["waza"] }                              # agent skill evaluator
 

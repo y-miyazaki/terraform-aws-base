@@ -38,7 +38,6 @@ locals {
     metric_log_mysql_slowquery             = var.metric_log_mysql_slowquery
     metric_log_postgresql                  = var.metric_log_postgresql
     metric_log_postgresql_slowquery        = var.metric_log_postgresql_slowquery
-    metric_log_step_functions              = var.metric_log_step_functions
     metric_log_waf                         = var.metric_log_waf
     metric_resource_api_gateway            = var.metric_resource_api_gateway
     metric_resource_ec2                    = var.metric_resource_ec2

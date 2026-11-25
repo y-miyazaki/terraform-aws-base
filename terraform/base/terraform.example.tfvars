@@ -1599,7 +1599,7 @@ common_log = {
     attach_public_policy = true
     block_public_acls    = true
     block_public_policy  = true
-    force_destroy        = true
+    force_destroy        = false
     ignore_public_acls   = true
     lifecycle_rule = [
       {
@@ -1652,7 +1652,7 @@ common_log = {
     attach_public_policy = true
     block_public_acls    = true
     block_public_policy  = true
-    force_destroy        = true
+    force_destroy        = false
     ignore_public_acls   = true
     lifecycle_rule = [
       {

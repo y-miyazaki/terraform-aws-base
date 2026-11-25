@@ -247,6 +247,12 @@ data "aws_iam_policy_document" "sns_topic" {
     resources = [
       aws_sns_topic.this[0].arn,
     ]
+
+    condition {
+      test     = "ArnEquals"
+      variable = "aws:SourceArn"
+      values   = [aws_cloudwatch_event_rule.securityhub[0].arn]
+    }
   }
 }
 

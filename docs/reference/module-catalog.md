@@ -14,8 +14,12 @@ This document catalogs all reusable Terraform modules under `modules/aws/`, incl
 | securityhub              | security/securityhub              | base             | Security Hub per-account                             |
 | securityhub_organization | security/securityhub_organization | management/audit | Security Hub organization config + policy            |
 | inspector2_organization  | security/inspector2_organization  | management/audit | Inspector2 organization enablement                   |
-| config                   | security/config                   | base             | AWS Config rules and recorder                        |
-| cloudtrail               | security/cloudtrail               | management/root  | Organization CloudTrail                              |
+| inspector2               | security/inspector2               | base             | Inspector2 per-account enablement                    |
+| config/create            | security/config/create            | base             | AWS Config recorder and delivery                     |
+| config/rule              | security/config/rule              | base             | AWS Config rules (for example S3)                    |
+| config/ssm_automation    | security/config/ssm_automation    | base             | AWS Config remediation via SSM Automation            |
+| cloudtrail/cloudtrail    | security/cloudtrail/cloudtrail    | management/root  | Organization CloudTrail                              |
+| cloudtrail/controltower  | security/cloudtrail/controltower  | management/root  | Organization CloudTrail for Control Tower            |
 | iam                      | security/iam                      | base             | IAM password policy, account alias                   |
 | default_vpc              | security/default_vpc              | base             | Default VPC hardening                                |
 | ebs                      | security/ebs                      | base             | EBS default encryption, snapshot public access block |
@@ -61,48 +65,54 @@ Each metric module creates CloudWatch alarms + SNS notification for a specific A
 
 ### CloudWatch Modules (modules/aws/cloudwatch/)
 
-| Module       | Purpose                       |
-| ------------ | ----------------------------- |
-| alarm        | CloudWatch alarm creation     |
-| event        | CloudWatch event rules        |
-| events       | CloudWatch events (legacy)    |
-| subscription | Log subscription filters      |
-| delivery     | CloudWatch log delivery to S3 |
+| Module       | Purpose                                                                                |
+| ------------ | -------------------------------------------------------------------------------------- |
+| alarm/log    | Log metric filter alarms                                                               |
+| alarm/metric | CloudWatch metric alarms                                                               |
+| event        | CloudWatch event rules                                                                 |
+| events       | Event rules for EC2, GuardDuty, Health, IAM password expiry, schedule, Trusted Advisor |
+| subscription | Log subscription filters                                                               |
+| delivery     | CloudWatch log delivery to S3                                                          |
 
 ## Infrastructure Modules
 
-| Module                           | Path                             | Purpose                                                                                                                                                                             |
-| -------------------------------- | -------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| vpc/subnet                       | vpc/subnet                       | Subnet creation                                                                                                                                                                     |
-| vpc/endpoint                     | vpc/endpoint                     | VPC endpoints                                                                                                                                                                       |
-| iam/user_group                   | iam/user_group                   | IAM user and group management                                                                                                                                                       |
-| iam/group                        | iam/group                        | IAM group creation                                                                                                                                                                  |
-| iam/role                         | iam/role                         | IAM role creation                                                                                                                                                                   |
-| iam/policy                       | iam/policy                       | IAM policy creation                                                                                                                                                                 |
-| iam/switch_role                  | iam/switch_role                  | Cross-account switch role                                                                                                                                                           |
-| budgets/create                   | budgets/create                   | AWS Budgets with Slack notification                                                                                                                                                 |
-| lambda/vpc                       | lambda/vpc                       | Lambda in VPC with ENI management                                                                                                                                                   |
-| chatbot/create                   | chatbot/create                   | AWS Chatbot Slack integration                                                                                                                                                       |
-| chatbot/security                 | chatbot/security                 | Security event to Chatbot routing                                                                                                                                                   |
-| organizations/delegated_services | organizations/delegated_services | Check delegated admin status                                                                                                                                                        |
-| sns/subscription                 | sns/subscription                 | SNS subscription management                                                                                                                                                         |
-| s3/bucket_policy                 | s3/bucket_policy                 | S3 bucket policy management                                                                                                                                                         |
-| kinesis/firehose                 | kinesis/firehose                 | Kinesis Firehose delivery stream                                                                                                                                                    |
-| synthetics_canary                | synthetics_canary                | CloudWatch Synthetics canary                                                                                                                                                        |
-| compute_optimizer                | compute_optimizer                | Compute Optimizer enrollment                                                                                                                                                        |
-| resource_groups                  | resource_groups                  | Resource group by tags                                                                                                                                                              |
-| athena                           | athena                           | Athena named queries (CloudFront, SES logs)                                                                                                                                         |
-| api_gateway/create               | api_gateway/create               | API Gateway creation                                                                                                                                                                |
-| api_gateway/report_csp           | api_gateway/report_csp           | CSP violation report endpoint                                                                                                                                                       |
-| devops_agent                     | devops_agent                     | AWS DevOps Agent Space, secondary account associations, GitHub / MCP server associations (tool allowlist), assets, triggers, and generic webhook (secret stored in Secrets Manager) |
-| devops_agent_secondary           | devops_agent_secondary           | Read-only cross-account IAM role in a secondary account, trusted by the AWS DevOps Agent Space in the primary account                                                               |
+| Module                           | Path                                                     | Purpose                                                                                                                                                                              |
+| -------------------------------- | -------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| vpc/subnet                       | vpc/subnet                                               | Subnet creation                                                                                                                                                                      |
+| vpc/endpoint/dynamodb            | vpc/endpoint/dynamodb                                    | VPC endpoint (DynamoDB)                                                                                                                                                              |
+| iam/user_group                   | iam/user_group                                           | IAM user and group management                                                                                                                                                        |
+| iam/group/policy_attachment      | iam/group/policy_attachment                              | IAM group policy attachment                                                                                                                                                          |
+| iam/role/*                       | iam/role/*                                               | IAM roles (aws_support_app, chatbot, cloudtrail, cloudwatch, config, ec2, ecs, eks, eks_alb_ingress_controller, eventbridge, flow_log, kinesis_firehose, lambda, monitoring_rds, s3) |
+| iam/policy/create                | iam/policy/create                                        | IAM policy creation                                                                                                                                                                  |
+| iam/switch_role/*                | iam/switch_role/*                                        | Cross-account switch role (from, to)                                                                                                                                                 |
+| budgets/create                   | budgets/create                                           | AWS Budgets with Slack notification                                                                                                                                                  |
+| lambda/vpc                       | lambda/vpc                                               | Lambda in VPC with ENI management                                                                                                                                                    |
+| chatbot/create                   | chatbot/create                                           | AWS Chatbot Slack integration                                                                                                                                                        |
+| chatbot/security/*               | chatbot/security/{access_analyzer,guardduty,securityhub} | Security event to Chatbot routing                                                                                                                                                    |
+| organizations/delegated_services | organizations/delegated_services                         | Check delegated admin status                                                                                                                                                         |
+| sns/subscription                 | sns/subscription                                         | SNS subscription management                                                                                                                                                          |
+| s3/bucket_policy/*               | s3/bucket_policy/*                                       | S3 bucket policies (access_log, cloudtrail, config, lb, redshift, security, vpce)                                                                                                    |
+| kinesis/firehose/s3              | kinesis/firehose/s3                                      | Kinesis Firehose delivery stream to S3                                                                                                                                               |
+| synthetics_canary                | synthetics_canary                                        | CloudWatch Synthetics canary                                                                                                                                                         |
+| compute_optimizer                | compute_optimizer                                        | Compute Optimizer enrollment                                                                                                                                                         |
+| resource_groups                  | resource_groups                                          | Resource group by tags                                                                                                                                                               |
+| athena                           | athena                                                   | Athena named queries (CloudFront, SES logs)                                                                                                                                          |
+| api_gateway_account              | api_gateway_account                                      | API Gateway account-level settings (CloudWatch Logs role)                                                                                                                            |
+| waf                              | waf                                                      | AWS WAF web ACL                                                                                                                                                                      |
+| jit_access                       | jit_access                                               | Just-In-Time privileged access via Slack approval                                                                                                                                    |
+| api_gateway/create               | api_gateway/create                                       | API Gateway creation                                                                                                                                                                 |
+| api_gateway/report_csp           | api_gateway/report_csp                                   | CSP violation report endpoint                                                                                                                                                        |
+| devops_agent                     | devops_agent                                             | AWS DevOps Agent Space, secondary account associations, GitHub / MCP server associations (tool allowlist), assets, triggers, and generic webhook (secret stored in Secrets Manager)  |
+| devops_agent_secondary           | devops_agent_secondary                                   | Read-only cross-account IAM role in a secondary account, trusted by the AWS DevOps Agent Space in the primary account                                                                |
 
 ## Internal Modules (modules/aws/_internal/)
 
 Shared helpers not intended for direct use:
 
-| Module                       | Purpose                                  |
-| ---------------------------- | ---------------------------------------- |
-| metric_helper                | Common metric alarm creation logic       |
-| eventbridge_scheduler_helper | EventBridge Scheduler common patterns    |
-| auto_discovery_filter        | Auto-discovery filter for metric targets |
+| Module                         | Purpose                                  |
+| ------------------------------ | ---------------------------------------- |
+| metric_helper                  | Common metric alarm creation logic       |
+| eventbridge_scheduler_helper   | EventBridge Scheduler common patterns    |
+| auto_discovery_filter          | Auto-discovery filter for metric targets |
+| cloudtrail_filter_pattern      | CloudTrail metric filter patterns        |
+| security_service_disable_alarm | Alarm for disabled security services     |

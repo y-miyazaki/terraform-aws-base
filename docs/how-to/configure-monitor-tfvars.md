@@ -10,8 +10,6 @@ Configuration for **monitoring and observability**. Sets up CloudWatch alarms, l
 
 **Customization markers:** In `terraform.example.tfvars` (and env copies), search for `CUSTOMIZE` comments — they mark values that require environment-specific changes.
 
-**Control Tower note:** Set `use_control_tower = true` to avoid conflicts with Control Tower-managed log groups.
-
 ## Required Settings
 
 | Variable (tfvars path) | Description        | Example            |
@@ -46,18 +44,14 @@ cloudwatch_log_group = {
 <details markdown>
 <summary>Available override services</summary>
 
-| Service Name                             | Description                    | Recommended |
-| ---------------------------------------- | ------------------------------ | ----------- |
-| `cloudwatch_event_ec2`                   | EC2 events via EventBridge     | 7 days      |
-| `common_lambda_log`                      | CloudWatch alarms to Slack     | 7–14 days   |
-| `common_lambda_log_us_east_1`            | Same (us-east-1 failover)      | 7–14 days   |
-| `common_lambda_metric`                   | Kinesis Data Firehose metrics  | 14 days     |
-| `common_lambda_metric_us_east_1`         | Metrics Lambda (us-east-1)     | 14 days     |
-| `common_lambda_step_functions`           | Step Functions notifications   | 14 days     |
-| `common_lambda_step_functions_us_east_1` | Step Functions (us-east-1)     | 14 days     |
-| `common_lambda_vpc_flow_log`             | VPC Flow Logs processing       | 7 days      |
-| `metric_log_application`                 | Application errors report      | 14 days     |
-| `metric_log_postgresql_slowquery`        | PostgreSQL slow query analyzer | 14–30 days  |
+| Service Name                      | Description                    | Recommended |
+| --------------------------------- | ------------------------------ | ----------- |
+| `cloudwatch_event_ec2`            | EC2 events via EventBridge     | 7 days      |
+| `common_lambda_log`               | CloudWatch alarms to Slack     | 7–14 days   |
+| `common_lambda_metric`            | Kinesis Data Firehose metrics  | 14 days     |
+| `common_lambda_vpc_flow_log`      | VPC Flow Logs processing       | 7 days      |
+| `metric_log_application`          | Application errors report      | 14 days     |
+| `metric_log_postgresql_slowquery` | PostgreSQL slow query analyzer | 14–30 days  |
 
 </details>
 
@@ -70,7 +64,6 @@ slack = {
   override = {
     common_lambda_log          = { channel_id = "C-ALERTS" }
     cloudwatch_event_ec2       = { channel_id = "C-INFRA" }
-    common_lambda_step_functions = { channel_id = "C-DEVOPS" }
   }
 }
 ```
@@ -84,7 +77,6 @@ slack = {
 | `cloudwatch_event_ec2`            | EC2 instance state changes                |
 | `common_lambda_log`               | CloudWatch alarms → SNS → Slack           |
 | `common_lambda_metric`            | Kinesis Data Firehose metrics             |
-| `common_lambda_step_functions`    | Step Functions execution logs             |
 | `metric_log_application`          | Application errors report                 |
 | `metric_log_postgresql_slowquery` | PostgreSQL slow query alerts              |
 
@@ -111,7 +103,7 @@ CloudWatch alarms that notify when thresholds are exceeded.
 | Redshift               | `metric_resource_redshift.is_enabled`                     | `false` | [Docs](https://docs.aws.amazon.com/redshift/latest/mgmt/metrics-listing.html)                                            |
 | SES                    | `metric_resource_ses.is_enabled`                          | `false` | [Docs](https://docs.aws.amazon.com/ses/latest/dg/event-publishing-retrieving-cloudwatch.html)                            |
 | SNS                    | `metric_resource_sns.is_enabled`                          | `false` | [Docs](https://docs.aws.amazon.com/sns/latest/dg/sns-monitoring-using-cloudwatch.html)                                   |
-| SQS (DLQ)              | `metric_resource_sqs_dlq.is_enabled`                      | `false` | [Docs](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-available-cloudwatch-metrics.html) |
+| SQS (DLQ)              | `metric_resource_sqs.is_enabled`                          | `false` | [Docs](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-available-cloudwatch-metrics.html) |
 | Synthetics Canary      | `metric_synthetics_canary.functions.heartbeat.is_enabled` | `false` | [Docs](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Synthetics_Canaries.html)               |
 
 Alarms for regional services (`metric_resource_*` and `metric_log_*`, except CloudFront and WAF for `us-east-1`) support multiple regions:
@@ -133,7 +125,6 @@ CloudWatch Logs metric filters with Lambda → Slack notification.
 | MySQL slow query      | `metric_log_mysql_slowquery.is_enabled`      | `false` | —                                        |
 | PostgreSQL            | `metric_log_postgresql.is_enabled`           | `false` | —                                        |
 | PostgreSQL slow query | `metric_log_postgresql_slowquery.is_enabled` | `false` | `metric_log_postgresql_slowquery_report` |
-| Step Functions        | `metric_log_step_functions.is_enabled`       | `false` | —                                        |
 | WAF                   | `metric_log_waf.is_enabled`                  | `false` | —                                        |
 
 To change the filter pattern or alarm settings of specific log groups, set `metric_log_application.log_group_override` (key: exact log group name). Each entry can set `enabled`, `pattern`, `threshold`, `evaluation_periods`, `datapoints_to_alarm`, and `period`; unspecified values fall back to the common `aws_cloudwatch_log_metric_filter` and `aws_cloudwatch_metric_alarm`. `pattern` replaces the whole filter pattern, so copy the common pattern and add the exclusions. `enabled = false` creates neither the metric filter nor the alarm for that log group.
@@ -203,10 +194,6 @@ Names derived from the Agent Space name (map key):
 Renaming a key recreates the Agent Space and everything in it (the investigation history is lost).
 
 The webhook secret is returned only once when the webhook is created. Terraform creates the webhook with the AWS CLI and writes the credentials directly to the Secrets Manager secret, so the secret never enters the Terraform state or tfvars. After apply, use the outputs `devops_agent_webhook_urls` and `devops_agent_webhook_secret_arns` (maps keyed by the Agent Space name). The AWS CLI v2 and `jq` must be installed where Terraform runs. See [AWS DevOps Agent](../reference/features-monitor.md#aws-devops-agent) for the flow, lifecycle, and required permissions.
-
-### use_control_tower
-
-Set to `true` to disable services conflicting with Control Tower. Automatically disables: CloudTrail, GuardDuty, Security Hub, Config, IAM password notifications.
 
 ## Environment Examples
 

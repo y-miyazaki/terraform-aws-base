@@ -58,12 +58,6 @@ variable "cloudwatch_log_group" {
       common_lambda_metric = optional(object({
         retention_in_days = optional(number)
       }))
-      common_lambda_step_functions = optional(object({
-        retention_in_days = optional(number)
-      }))
-      common_lambda_step_functions_us_east_1 = optional(object({
-        retention_in_days = optional(number)
-      }))
       common_lambda_vpc_flow_log = optional(object({
         retention_in_days = optional(number)
       }))
@@ -116,10 +110,6 @@ variable "slack" {
         oauth_access_token = optional(string)
         channel_id         = optional(string)
       }))
-      common_lambda_step_functions = optional(object({
-        oauth_access_token = optional(string)
-        channel_id         = optional(string)
-      }))
       metric_log_application = optional(object({
         oauth_access_token = optional(string)
         channel_id         = optional(string)
@@ -166,12 +156,6 @@ variable "metric_log_application" {
 variable "metric_log_application_report" {
   type        = any
   description = "CloudWatch Logs (Application) errors report resources on AWS"
-}
-
-# TODO: will be removed in the future
-variable "metric_log_step_functions" {
-  type        = any
-  description = "CloudWatch Logs (Step Functions) resources on AWS"
 }
 
 variable "metric_log_waf" {

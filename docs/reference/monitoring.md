@@ -43,13 +43,12 @@ All monitoring resources are toggled via `is_enabled` flags in `terraform/monito
 
 ### Log Filter Alarms
 
-| Log Source     | Filter Pattern                 | Notification   |
-| -------------- | ------------------------------ | -------------- |
-| Application    | Custom filter patterns per app | Lambda → Slack |
-| MySQL          | Slow query patterns            | Lambda → Slack |
-| PostgreSQL     | Error and slow query patterns  | Lambda → Slack |
-| Step Functions | Execution failure patterns     | Lambda → Slack |
-| WAF            | Blocked request patterns       | Lambda → Slack |
+| Log Source  | Filter Pattern                 | Notification   |
+| ----------- | ------------------------------ | -------------- |
+| Application | Custom filter patterns per app | Lambda → Slack |
+| MySQL       | Slow query patterns            | Lambda → Slack |
+| PostgreSQL  | Error and slow query patterns  | Lambda → Slack |
+| WAF         | Blocked request patterns       | Lambda → Slack |
 
 ### EventBridge Events
 

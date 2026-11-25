@@ -26,7 +26,7 @@ This repository provides a reusable AWS baseline configuration that covers secur
 
 - **base/** — Per-account security baseline (GuardDuty, Config, Security Hub, IAM, EBS encryption, IMDSv2, default VPC hardening)
 - **management/audit/** — Delegated admin for organization-wide security services (Security Hub, GuardDuty, Access Analyzer, Inspector2, Macie)
-- **management/root/** — Organization root account resources (CloudTrail, Budgets, SCPs, OIDC GitHub)
+- **management/root/** — Organization root account resources (CloudTrail, Budgets, OIDC GitHub)
 - **monitor/** — CloudWatch metrics, log filters, EventBridge events, and Athena queries for operational observability
 
 Stacks are environment-specific (applied per-account with account-specific tfvars), not reusable across accounts without configuration changes.

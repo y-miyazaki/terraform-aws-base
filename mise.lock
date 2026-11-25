@@ -856,78 +856,78 @@ url = "https://github.com/getsops/sops/releases/download/v3.13.3/sops-v3.13.3.am
 url = "https://github.com/getsops/sops/releases/download/v3.13.3/sops-v3.13.3.intoto.jsonl"
 
 [[tools."aqua:github/copilot-cli"]]
-version = "1.0.113"
+version = "1.0.114"
 backend = "aqua:github/copilot-cli"
 
 [tools."aqua:github/copilot-cli"."platforms.linux-arm64"]
-checksum = "sha256:35e721d7cb32928c9249d3a1784c75dca957d8307717ede1bae9e82b608c1784"
-url = "https://github.com/github/copilot-cli/releases/download/v1.0.113/copilot-linux-arm64.tar.gz"
-url_api = "https://api.github.com/repos/github/copilot-cli/releases/assets/759809808"
+checksum = "sha256:a204154d4522a7c3aa73a65ba598e432f6aafe37d5fa31cf853163a27d98018e"
+url = "https://github.com/github/copilot-cli/releases/download/v1.0.114/copilot-linux-arm64.tar.gz"
+url_api = "https://api.github.com/repos/github/copilot-cli/releases/assets/762129865"
 
 [tools."aqua:github/copilot-cli"."platforms.linux-arm64-musl"]
-checksum = "sha256:35e721d7cb32928c9249d3a1784c75dca957d8307717ede1bae9e82b608c1784"
-url = "https://github.com/github/copilot-cli/releases/download/v1.0.113/copilot-linux-arm64.tar.gz"
-url_api = "https://api.github.com/repos/github/copilot-cli/releases/assets/759809808"
+checksum = "sha256:a204154d4522a7c3aa73a65ba598e432f6aafe37d5fa31cf853163a27d98018e"
+url = "https://github.com/github/copilot-cli/releases/download/v1.0.114/copilot-linux-arm64.tar.gz"
+url_api = "https://api.github.com/repos/github/copilot-cli/releases/assets/762129865"
 
 [tools."aqua:github/copilot-cli"."platforms.linux-x64"]
-checksum = "sha256:c44841916f59dcd5946b952bc17b688468c11227292d2c653101bbc58ed97a9e"
-url = "https://github.com/github/copilot-cli/releases/download/v1.0.113/copilot-linux-x64.tar.gz"
-url_api = "https://api.github.com/repos/github/copilot-cli/releases/assets/759810078"
+checksum = "sha256:b91a96f2257297cfb67ed6784a2a658609a6b8c2ee2ded18af9c9abe8cc790ae"
+url = "https://github.com/github/copilot-cli/releases/download/v1.0.114/copilot-linux-x64.tar.gz"
+url_api = "https://api.github.com/repos/github/copilot-cli/releases/assets/762130197"
 
 [tools."aqua:github/copilot-cli"."platforms.linux-x64-musl"]
-checksum = "sha256:c44841916f59dcd5946b952bc17b688468c11227292d2c653101bbc58ed97a9e"
-url = "https://github.com/github/copilot-cli/releases/download/v1.0.113/copilot-linux-x64.tar.gz"
-url_api = "https://api.github.com/repos/github/copilot-cli/releases/assets/759810078"
+checksum = "sha256:b91a96f2257297cfb67ed6784a2a658609a6b8c2ee2ded18af9c9abe8cc790ae"
+url = "https://github.com/github/copilot-cli/releases/download/v1.0.114/copilot-linux-x64.tar.gz"
+url_api = "https://api.github.com/repos/github/copilot-cli/releases/assets/762130197"
 
 [tools."aqua:github/copilot-cli"."platforms.macos-arm64"]
-checksum = "sha256:b62ce1b8bae60a8f2f3012166b996848580a0b147a8ccc05e00cadff2faccb40"
-url = "https://github.com/github/copilot-cli/releases/download/v1.0.113/copilot-darwin-arm64.tar.gz"
-url_api = "https://api.github.com/repos/github/copilot-cli/releases/assets/759809806"
+checksum = "sha256:35e8165a6ca811fb907b5afb7892e53d1bb85426bb77fe3f83b7f0b4e955249a"
+url = "https://github.com/github/copilot-cli/releases/download/v1.0.114/copilot-darwin-arm64.tar.gz"
+url_api = "https://api.github.com/repos/github/copilot-cli/releases/assets/762129869"
 
 [tools."aqua:github/copilot-cli"."platforms.macos-x64"]
-checksum = "sha256:e591c41d7c4a75264bed8443b99127d5105367460914edc29161d3ad074fba8b"
-url = "https://github.com/github/copilot-cli/releases/download/v1.0.113/copilot-darwin-x64.tar.gz"
-url_api = "https://api.github.com/repos/github/copilot-cli/releases/assets/759809805"
+checksum = "sha256:9ac9f8785ad036c8d6a976a386fd05d721b510b57f083f1aac0cac9e378051bb"
+url = "https://github.com/github/copilot-cli/releases/download/v1.0.114/copilot-darwin-x64.tar.gz"
+url_api = "https://api.github.com/repos/github/copilot-cli/releases/assets/762129868"
 
 [tools."aqua:github/copilot-cli"."platforms.windows-x64"]
-checksum = "sha256:d374f4dc45218e138ebe322f52dab2a6f94dfbdd5712202208aa176bc046b38a"
-url = "https://github.com/github/copilot-cli/releases/download/v1.0.113/copilot-win32-x64.zip"
-url_api = "https://api.github.com/repos/github/copilot-cli/releases/assets/759809809"
+checksum = "sha256:be5af88c044842949560535b083c47e0c2b41904769cca599ee2cbf937dc9eed"
+url = "https://github.com/github/copilot-cli/releases/download/v1.0.114/copilot-win32-x64.zip"
+url_api = "https://api.github.com/repos/github/copilot-cli/releases/assets/762129867"
 
 [[tools."aqua:github/copilot-cli"]]
-version = "1.0.113"
+version = "1.0.114"
 backend = "aqua:github/copilot-cli"
 
 [tools."aqua:github/copilot-cli".options]
 "vars.lazy" = "true"
 
 [tools."aqua:github/copilot-cli"."platforms.linux-arm64"]
-checksum = "sha256:35e721d7cb32928c9249d3a1784c75dca957d8307717ede1bae9e82b608c1784"
-url = "https://github.com/github/copilot-cli/releases/download/v1.0.113/copilot-linux-arm64.tar.gz"
+checksum = "sha256:a204154d4522a7c3aa73a65ba598e432f6aafe37d5fa31cf853163a27d98018e"
+url = "https://github.com/github/copilot-cli/releases/download/v1.0.114/copilot-linux-arm64.tar.gz"
 
 [tools."aqua:github/copilot-cli"."platforms.linux-arm64-musl"]
-checksum = "sha256:35e721d7cb32928c9249d3a1784c75dca957d8307717ede1bae9e82b608c1784"
-url = "https://github.com/github/copilot-cli/releases/download/v1.0.113/copilot-linux-arm64.tar.gz"
+checksum = "sha256:a204154d4522a7c3aa73a65ba598e432f6aafe37d5fa31cf853163a27d98018e"
+url = "https://github.com/github/copilot-cli/releases/download/v1.0.114/copilot-linux-arm64.tar.gz"
 
 [tools."aqua:github/copilot-cli"."platforms.linux-x64"]
-checksum = "sha256:c44841916f59dcd5946b952bc17b688468c11227292d2c653101bbc58ed97a9e"
-url = "https://github.com/github/copilot-cli/releases/download/v1.0.113/copilot-linux-x64.tar.gz"
+checksum = "sha256:b91a96f2257297cfb67ed6784a2a658609a6b8c2ee2ded18af9c9abe8cc790ae"
+url = "https://github.com/github/copilot-cli/releases/download/v1.0.114/copilot-linux-x64.tar.gz"
 
 [tools."aqua:github/copilot-cli"."platforms.linux-x64-musl"]
-checksum = "sha256:c44841916f59dcd5946b952bc17b688468c11227292d2c653101bbc58ed97a9e"
-url = "https://github.com/github/copilot-cli/releases/download/v1.0.113/copilot-linux-x64.tar.gz"
+checksum = "sha256:b91a96f2257297cfb67ed6784a2a658609a6b8c2ee2ded18af9c9abe8cc790ae"
+url = "https://github.com/github/copilot-cli/releases/download/v1.0.114/copilot-linux-x64.tar.gz"
 
 [tools."aqua:github/copilot-cli"."platforms.macos-arm64"]
-checksum = "sha256:b62ce1b8bae60a8f2f3012166b996848580a0b147a8ccc05e00cadff2faccb40"
-url = "https://github.com/github/copilot-cli/releases/download/v1.0.113/copilot-darwin-arm64.tar.gz"
+checksum = "sha256:35e8165a6ca811fb907b5afb7892e53d1bb85426bb77fe3f83b7f0b4e955249a"
+url = "https://github.com/github/copilot-cli/releases/download/v1.0.114/copilot-darwin-arm64.tar.gz"
 
 [tools."aqua:github/copilot-cli"."platforms.macos-x64"]
-checksum = "sha256:e591c41d7c4a75264bed8443b99127d5105367460914edc29161d3ad074fba8b"
-url = "https://github.com/github/copilot-cli/releases/download/v1.0.113/copilot-darwin-x64.tar.gz"
+checksum = "sha256:9ac9f8785ad036c8d6a976a386fd05d721b510b57f083f1aac0cac9e378051bb"
+url = "https://github.com/github/copilot-cli/releases/download/v1.0.114/copilot-darwin-x64.tar.gz"
 
 [tools."aqua:github/copilot-cli"."platforms.windows-x64"]
-checksum = "sha256:d374f4dc45218e138ebe322f52dab2a6f94dfbdd5712202208aa176bc046b38a"
-url = "https://github.com/github/copilot-cli/releases/download/v1.0.113/copilot-win32-x64.zip"
+checksum = "sha256:be5af88c044842949560535b083c47e0c2b41904769cca599ee2cbf937dc9eed"
+url = "https://github.com/github/copilot-cli/releases/download/v1.0.114/copilot-win32-x64.zip"
 
 [[tools."aqua:gitleaks/gitleaks"]]
 version = "8.30.1"
@@ -3092,43 +3092,43 @@ url_api = "https://api.github.com/repos/DeusData/codebase-memory-mcp/releases/as
 provenance = "github-attestations"
 
 [[tools."github:microsoft/apm"]]
-version = "0.36.0"
+version = "0.36.1"
 backend = "github:microsoft/apm"
 
 [tools."github:microsoft/apm"."platforms.linux-arm64"]
-checksum = "sha256:3c4dba006c655db9a6fea51c80936ae194b4be5c1fa9e64d7a4a581ce9458861"
-url = "https://github.com/microsoft/apm/releases/download/v0.36.0/apm-linux-arm64.tar.gz"
-url_api = "https://api.github.com/repos/microsoft/apm/releases/assets/760118015"
+checksum = "sha256:36ef3d537680ab499d1718442f2e4ff301e3d4c0707e51184cc423023fe50856"
+url = "https://github.com/microsoft/apm/releases/download/v0.36.1/apm-linux-arm64.tar.gz"
+url_api = "https://api.github.com/repos/microsoft/apm/releases/assets/762239767"
 
 [tools."github:microsoft/apm"."platforms.linux-arm64-musl"]
-checksum = "sha256:3c4dba006c655db9a6fea51c80936ae194b4be5c1fa9e64d7a4a581ce9458861"
-url = "https://github.com/microsoft/apm/releases/download/v0.36.0/apm-linux-arm64.tar.gz"
-url_api = "https://api.github.com/repos/microsoft/apm/releases/assets/760118015"
+checksum = "sha256:36ef3d537680ab499d1718442f2e4ff301e3d4c0707e51184cc423023fe50856"
+url = "https://github.com/microsoft/apm/releases/download/v0.36.1/apm-linux-arm64.tar.gz"
+url_api = "https://api.github.com/repos/microsoft/apm/releases/assets/762239767"
 
 [tools."github:microsoft/apm"."platforms.linux-x64"]
-checksum = "sha256:f9a8b1c8e008d9b38e081a93cac50f2ecdfb01ffd0fbfd7e3a2d3292ca193f56"
-url = "https://github.com/microsoft/apm/releases/download/v0.36.0/apm-linux-x86_64.tar.gz"
-url_api = "https://api.github.com/repos/microsoft/apm/releases/assets/760118008"
+checksum = "sha256:dd3b84b0a0279b70a80c0c1c155d348b2f112dee0aa3a95e0ae22582fc0d96ee"
+url = "https://github.com/microsoft/apm/releases/download/v0.36.1/apm-linux-x86_64.tar.gz"
+url_api = "https://api.github.com/repos/microsoft/apm/releases/assets/762239765"
 
 [tools."github:microsoft/apm"."platforms.linux-x64-musl"]
-checksum = "sha256:f9a8b1c8e008d9b38e081a93cac50f2ecdfb01ffd0fbfd7e3a2d3292ca193f56"
-url = "https://github.com/microsoft/apm/releases/download/v0.36.0/apm-linux-x86_64.tar.gz"
-url_api = "https://api.github.com/repos/microsoft/apm/releases/assets/760118008"
+checksum = "sha256:dd3b84b0a0279b70a80c0c1c155d348b2f112dee0aa3a95e0ae22582fc0d96ee"
+url = "https://github.com/microsoft/apm/releases/download/v0.36.1/apm-linux-x86_64.tar.gz"
+url_api = "https://api.github.com/repos/microsoft/apm/releases/assets/762239765"
 
 [tools."github:microsoft/apm"."platforms.macos-arm64"]
-checksum = "sha256:73c06f6d331a80bd91fdeccc99031f9069fd5547136f15c1a212c6d8f1d27ebd"
-url = "https://github.com/microsoft/apm/releases/download/v0.36.0/apm-darwin-arm64.tar.gz"
-url_api = "https://api.github.com/repos/microsoft/apm/releases/assets/760118007"
+checksum = "sha256:49334cff638a12b8cf49874e0ca681a25f641ec7602819507018e842e33852fb"
+url = "https://github.com/microsoft/apm/releases/download/v0.36.1/apm-darwin-arm64.tar.gz"
+url_api = "https://api.github.com/repos/microsoft/apm/releases/assets/762239764"
 
 [tools."github:microsoft/apm"."platforms.macos-x64"]
-checksum = "sha256:0407db05669996a081d431f8ae60c3890fcf01a0de2af2134b9f23d06d0633c7"
-url = "https://github.com/microsoft/apm/releases/download/v0.36.0/apm-darwin-x86_64.tar.gz"
-url_api = "https://api.github.com/repos/microsoft/apm/releases/assets/760118013"
+checksum = "sha256:79f32b604444dd7671fce8905da007857d1c9d49b0aeb2a4e04f86ae58cb9e69"
+url = "https://github.com/microsoft/apm/releases/download/v0.36.1/apm-darwin-x86_64.tar.gz"
+url_api = "https://api.github.com/repos/microsoft/apm/releases/assets/762239760"
 
 [tools."github:microsoft/apm"."platforms.windows-x64"]
-checksum = "sha256:7eaaa597dfcd9763cb76d4b982517a6b95ed152d8a97c4978c3ef3490b3eebb7"
-url = "https://github.com/microsoft/apm/releases/download/v0.36.0/apm-windows-x86_64.zip"
-url_api = "https://api.github.com/repos/microsoft/apm/releases/assets/760118010"
+checksum = "sha256:22a43fe9a0dc1dab6f9d8206da976a72445f6ca083e3c5f4ca7de88a9849d4ba"
+url = "https://github.com/microsoft/apm/releases/download/v0.36.1/apm-windows-x86_64.zip"
+url_api = "https://api.github.com/repos/microsoft/apm/releases/assets/762239766"
 
 [[tools."github:microsoft/waza"]]
 version = "0.41.0"

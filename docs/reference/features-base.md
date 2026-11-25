@@ -60,6 +60,10 @@ Amazon Inspector is an automated vulnerability management service that continual
 
 Amazon Macie is a data security service that uses machine learning and pattern matching to discover and help protect your sensitive data stored in Amazon S3. Macie automatically detects sensitive data such as personally identifiable information (PII) and financial data.
 
+### S3 (Account Public Access Block)
+
+Configures the account-level S3 Block Public Access settings (`block_public_acls`, `block_public_policy`, `ignore_public_acls`, `restrict_public_buckets`) so that no bucket in the account can be made public. Controlled by `security_s3` in `terraform/base/main_central_s3.tf`.
+
 ### Security Hub
 
 The AWS Security Hub provides a comprehensive view of security alerts and security status across all your AWS accounts.

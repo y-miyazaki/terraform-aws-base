@@ -28,11 +28,11 @@ Configuration for the **Audit account** in an AWS Control Tower landing zone. Th
 
 ## Required Settings
 
-| Variable (tfvars path)      | Description                              | Example            |
-| --------------------------- | ---------------------------------------- | ------------------ |
-| `region`                    | Primary AWS region                       | `"ap-northeast-1"` |
-| `security.slack_channel_id` | Slack channel for security notifications | `"C0XXXXXXXXX"`    |
-| `security.slack_team_id`    | Slack workspace ID                       | `"xxxxxxxxxxx"`    |
+| Variable (tfvars path)                   | Description                              | Example            |
+| ---------------------------------------- | ---------------------------------------- | ------------------ |
+| `region`                                 | Primary AWS region                       | `"ap-northeast-1"` |
+| `security_notification.slack_channel_id` | Slack channel for security notifications | `"C0XXXXXXXXX"`    |
+| `security_notification.slack_team_id`    | Slack workspace ID                       | `"xxxxxxxxxxx"`    |
 
 ## Optional Settings
 

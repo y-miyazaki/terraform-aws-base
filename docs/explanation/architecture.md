@@ -6,7 +6,7 @@ This document describes the AWS Organization structure, multi-account design, Te
 
 Multi-account AWS Organization with delegated administration for security services. The typical account structure is:
 
-- **Root account** — Organization management, SCPs, billing
+- **Root account** — Organization management, billing
 - **Audit account** — Delegated admin for security services (SecurityHub, GuardDuty, Access Analyzer, Inspector2)
 - **Workload accounts** — Per-environment (dev/qa/stg/prd) or per-project
 - **Log Archive account** — Centralized log storage
@@ -37,7 +37,7 @@ terraform/
 ├── base/                    # Per-account baseline (security, IAM, VPC, KMS)
 ├── management/
 │   ├── audit/               # Delegated admin: SecurityHub, GuardDuty, Access Analyzer, Inspector2
-│   └── root/                # Org root: CloudTrail, Budgets, Lambda VPC, Organizations Policy
+│   └── root/                # Org root: CloudTrail, Budgets, Lambda VPC
 └── monitor/                 # CloudWatch metrics, logs, EventBridge, Athena
 ```
 

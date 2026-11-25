@@ -65,6 +65,7 @@ cloudwatch_log_group = {
 | `iam_password_expired`       | Password expiration notifications | 14 days               |
 | `security_cloudtrail`        | CloudTrail audit logs             | 90 days               |
 | `security_config`            | Config compliance (regional)      | 30 days               |
+| `security_ssm_automation`    | SSM Automation logs               | 14 days               |
 | `trusted_advisor`            | Trusted Advisor recommendations   | 14 days               |
 
 </details>

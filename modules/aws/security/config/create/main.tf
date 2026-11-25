@@ -83,7 +83,7 @@ resource "aws_config_configuration_recorder" "this" {
 #--------------------------------------------------------------
 module "s3" {
   source  = "terraform-aws-modules/s3-bucket/aws"
-  version = "5.18.0"
+  version = "5.17.0"
 
   region = local.region
 
@@ -107,7 +107,7 @@ module "s3" {
   bucket                                    = var.s3_bucket.bucket
   control_object_ownership                  = true
   create_bucket                             = local.is_s3_enabled
-  force_destroy                             = true
+  force_destroy                             = false
   ignore_public_acls                        = true
   lifecycle_rule                            = var.s3_bucket.lifecycle_rule
   logging                                   = var.s3_bucket.logging

@@ -42,7 +42,7 @@ resource "aws_athena_workgroup" "this" {
 
   region        = local.region
   description   = var.workgroup_description
-  force_destroy = true
+  force_destroy = false
   name          = format("%s%s", var.name_prefix, var.workgroup_name)
   state         = var.workgroup_state
 
@@ -89,7 +89,7 @@ resource "aws_athena_database" "this" {
   bucket                = var.database_bucket
   comment               = var.database_comment
   expected_bucket_owner = var.database_expected_bucket_owner
-  force_destroy         = true
+  force_destroy         = false
   name                  = format("%s_%s", trimsuffix(var.name_prefix, "-"), var.database_name)
   properties            = var.database_properties
 
