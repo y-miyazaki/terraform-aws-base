@@ -47,8 +47,9 @@ fi
 #   Writes each JSON array item line-by-line to stdout
 #
 # Returns:
-#   Always 0. AWS CLI errors are tolerated (the call falls back from --max-results to
-#   --max-items) and yield no items, so callers cannot tell a failure from an empty result.
+#   0 on success. A failed AWS CLI call (after the --max-results to --max-items fallback)
+#   stops pagination and returns that call's non-zero status; items of earlier pages were
+#   already written to stdout.
 #
 # Usage:
 #   aws_paginate_items 'UserPools' aws cognito-idp list-user-pools --region us-east-1
@@ -80,9 +81,9 @@ function aws_paginate_items {
             fi
 
             if [[ -n $next_token ]]; then
-                out=$(aws_retry_exec "${cmd_args[@]}" "$start_param" "$next_token" --output json 2> /dev/null || echo '{}')
+                out=$(aws_retry_exec "${cmd_args[@]}" "$start_param" "$next_token" --output json 2> /dev/null) || return $?
             else
-                out=$(aws_retry_exec "${cmd_args[@]}" --output json 2> /dev/null || echo '{}')
+                out=$(aws_retry_exec "${cmd_args[@]}" --output json 2> /dev/null) || return $?
             fi
 
             # Print each array item (if present) as a compact JSON object line
@@ -100,9 +101,9 @@ function aws_paginate_items {
         # Special-case S3 list-objects-v2 which uses ContinuationToken
         if [[ ${cmd_args[1]:-} == "s3api" && ${cmd_args[2]:-} == "list-objects-v2" ]]; then
             if [[ -n $next_token ]]; then
-                out=$(aws_retry_exec "${cmd_args[@]}" --continuation-token "$next_token" --output json 2> /dev/null || echo '{}')
+                out=$(aws_retry_exec "${cmd_args[@]}" --continuation-token "$next_token" --output json 2> /dev/null) || return $?
             else
-                out=$(aws_retry_exec "${cmd_args[@]}" --output json 2> /dev/null || echo '{}')
+                out=$(aws_retry_exec "${cmd_args[@]}" --output json 2> /dev/null) || return $?
             fi
 
             if [[ -n $out ]]; then
@@ -117,26 +118,24 @@ function aws_paginate_items {
         fi
 
         if [[ $use_max_results -eq 1 ]]; then
-            if [[ -n $next_token ]]; then
-                out=$(aws_retry_exec 1 "${cmd_args[@]}" --max-results "$max_results" --next-token "$next_token" --output json 2> /dev/null || echo '{}')
-            else
-                out=$(aws_retry_exec 1 "${cmd_args[@]}" --max-results "$max_results" --output json 2> /dev/null || echo '{}')
-            fi
-            # If call failed and produced no JSON, try --max-items in the next pass
-            if [[ -z $out || $out == "{}" ]]; then
-                use_max_results=0
+            # A failed call (command rejects --max-results) switches to --max-items; a failure of the
+            # --max-items call is a real error and is propagated
+            local page_args=(--max-results "$max_results")
+            [[ -n $next_token ]] && page_args+=(--next-token "$next_token")
+            local page_rc=0
+            out=$(aws_retry_exec 1 "${cmd_args[@]}" "${page_args[@]}" --output json 2> /dev/null) || page_rc=$?
+            if ((page_rc != 0)); then
+                # Tokens of the two parameter families are not interchangeable: only the first page may fall back
                 if [[ -n $next_token ]]; then
-                    out=$(aws_retry_exec 1 "${cmd_args[@]}" --max-items "$max_results" --starting-token "$next_token" --output json 2> /dev/null || echo '{}')
-                else
-                    out=$(aws_retry_exec 1 "${cmd_args[@]}" --max-items "$max_results" --output json 2> /dev/null || echo '{}')
+                    return "$page_rc"
                 fi
+                use_max_results=0
             fi
-        else
-            if [[ -n $next_token ]]; then
-                out=$(aws_retry_exec 1 "${cmd_args[@]}" --max-items "$max_results" --starting-token "$next_token" --output json 2> /dev/null || echo '{}')
-            else
-                out=$(aws_retry_exec 1 "${cmd_args[@]}" --max-items "$max_results" --output json 2> /dev/null || echo '{}')
-            fi
+        fi
+        if [[ $use_max_results -eq 0 ]]; then
+            local page_args=(--max-items "$max_results")
+            [[ -n $next_token ]] && page_args+=(--starting-token "$next_token")
+            out=$(aws_retry_exec 1 "${cmd_args[@]}" "${page_args[@]}" --output json 2> /dev/null) || return $?
         fi
 
         # Print each array item (if present) as a compact JSON object line
@@ -167,7 +166,8 @@ function aws_paginate_items {
 #   $@ - AWS CLI command and arguments
 #
 # Outputs:
-#   Writes command result to stdout
+#   Writes command result (stdout only) to stdout; CLI stderr is forwarded to stderr on
+#   success so warnings never end up inside JSON, and logged on failure
 #
 # Returns:
 #   0 on success, non-zero on failure
@@ -189,16 +189,25 @@ function aws_retry_exec {
     local attempt=1
     local delay=2
     local output
+    local errput
+    local errfile
     local rc
 
     while true; do
+        errfile="$(mktemp)"
         log "DEBUG" "aws_retry_exec attempt $attempt cmd: ${cmd[*]}" >&2
         rc=0
-        output=$("${cmd[@]}" 2>&1) || rc=$?
+        # stderr is kept apart from stdout so CLI warnings never end up inside JSON output
+        output=$("${cmd[@]}" 2> "$errfile") || rc=$?
+        errput="$(< "$errfile")"
+        rm -f "$errfile"
         if ((rc == 0)); then
+            [[ -n $errput ]] && echo "$errput" >&2
             echo "$output"
             return 0
         fi
+        # Failure diagnostics and error-name detection need both streams
+        output="${output}${errput:+$'\n'}${errput}"
 
         # Detect common non-retryable client errors from AWS CLI output and abort retries.
         # AWS CLI often prints: "An error occurred (ErrorName) when calling the OperationName operation: message"
@@ -624,7 +633,7 @@ function get_kms_name {
     # Try to find an alias for the key
     local aliases_out alias_name
     # Use aws_paginate_items to reliably handle pagination and transient errors
-    aliases_out=$(aws_paginate_items 'Aliases' aws kms list-aliases --key-id "$key_id" --region "$region" 2> /dev/null | jq -s '{Aliases: .}' 2> /dev/null || echo '{}')
+    aliases_out=$(aws_paginate_items 'Aliases' aws kms list-aliases --key-id "$key_id" --region "$region" 2> /dev/null | jq -s '{Aliases: .}' 2> /dev/null) || aliases_out='{}'
     alias_name=$(echo "$aliases_out" | jq -r '.Aliases[]?.AliasName' 2> /dev/null | head -n1 || true)
     if [[ -n $alias_name && $alias_name != "null" ]]; then
         echo "$alias_name"

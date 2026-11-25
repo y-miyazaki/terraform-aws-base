@@ -31,6 +31,11 @@
       "_apm_source": "y-miyazaki/config/.apm/packages/common-hooks-cursor"
     },
     {
+      "command": ".cursor/hooks/common-hooks-cursor/scripts/review_gate.sh",
+      "timeout": 15,
+      "_apm_source": "y-miyazaki/config/.apm/packages/common-hooks-cursor"
+    },
+    {
       "command": ".cursor/hooks/shell-script-hooks-cursor/scripts/shellcheck.sh",
       "timeout": 120,
       "_apm_source": "y-miyazaki/config/.apm/packages/shell-script-hooks-cursor"
@@ -51,6 +56,11 @@
       "command": ".cursor/hooks/shell-script-hooks-cursor/scripts/shfmt.sh",
       "timeout": 120,
       "_apm_source": "y-miyazaki/config/.apm/packages/shell-script-hooks-cursor"
+    },
+    {
+      "command": ".cursor/hooks/terraform-hooks-cursor/scripts/terraform_fmt.sh",
+      "timeout": 120,
+      "_apm_source": "y-miyazaki/config/.apm/packages/terraform-hooks-cursor"
     }
   ],
   "beforeSubmitPrompt": [
@@ -58,13 +68,6 @@
       "command": ".cursor/hooks/common-hooks-cursor/scripts/gitleaks_prompt.sh",
       "timeout": 30,
       "_apm_source": "y-miyazaki/config/.apm/packages/common-hooks-cursor"
-    }
-  ],
-  "postToolUse": [
-    {
-      "command": ".cursor/hooks/terraform-hooks-cursor/scripts/terraform_fmt.sh",
-      "timeout": 120,
-      "_apm_source": "y-miyazaki/config/.apm/packages/terraform-hooks-cursor"
     }
   ]
 }

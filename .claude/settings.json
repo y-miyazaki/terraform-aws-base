@@ -412,6 +412,16 @@
         "hooks": [
           {
             "type": "command",
+            "command": "\"${CLAUDE_PROJECT_DIR}/.claude/hooks/common-hooks-claude/scripts/review_gate.sh\"",
+            "timeout": 15
+          }
+        ]
+      },
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
             "command": "\"${CLAUDE_PROJECT_DIR}/.claude/hooks/shell-script-hooks-claude/scripts/shellcheck.sh\"",
             "timeout": 120
           }

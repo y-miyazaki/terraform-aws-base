@@ -204,14 +204,14 @@ function report_failure {
             agent="antigravity"
 
         # 2. Check for hook_event_name first (most reliable discriminator)
+        elif echo "$HOOK_STDIN_DATA" | jq -e 'has("cursor_version") or has("generation_id") or has("workspace_roots")' > /dev/null 2>&1; then
+            agent="cursor"
+            hook_event=$(echo "$HOOK_STDIN_DATA" | jq -r '.hook_event_name // "stop"' 2> /dev/null)
         elif echo "$HOOK_STDIN_DATA" | jq -e ".hook_event_name" > /dev/null 2>&1; then
             hook_event=$(echo "$HOOK_STDIN_DATA" | jq -r '.hook_event_name' 2> /dev/null)
 
             # Check event name pattern to determine agent type
-            if echo "$HOOK_STDIN_DATA" | jq -e '.cursor_version // .generation_id // .workspace_roots' > /dev/null 2>&1; then
-                # Cursor stop shares hook_event_name "stop" with Kiro; use Cursor-only stdin fields
-                agent="cursor"
-            elif echo "$hook_event" | grep -qE '^(afterFileEdit|beforeShellExecution|beforeMCPExecution|beforeReadFile)$'; then
+            if echo "$hook_event" | grep -qE '^(afterFileEdit|beforeShellExecution|beforeMCPExecution|beforeReadFile)$'; then
                 # camelCase with Cursor-only event names
                 agent="cursor"
             elif echo "$hook_event" | grep -qE '^(Stop|PostToolUse|PreToolUse)$'; then
@@ -248,6 +248,7 @@ function report_failure {
         fi
     fi
 
+    # Final fallback: env var check
     if [[ -z $agent && -n ${GITHUB_COPILOT_API_TOKEN:-} ]]; then
         agent="copilot"
     fi
@@ -266,6 +267,9 @@ function report_failure {
             if [[ $hook_event == "Stop" ]]; then
                 emit_json_with_reason "$reason" '{decision: "block", reason: .}'
                 exit 0
+            elif [[ $hook_event == "PostToolUse" ]]; then
+                emit_json_with_reason "$reason" '{hookSpecificOutput: {hookEventName: "PostToolUse", additionalContext: .}}'
+                exit 0
             else
                 echo "$reason" >&2
                 exit 2
@@ -275,6 +279,10 @@ function report_failure {
             case "$hook_event" in
                 Stop | agentStop)
                     emit_json_with_reason "$reason" '{decision: "block", reason: .}'
+                    exit 0
+                    ;;
+                PostToolUse | postToolUse)
+                    emit_json_with_reason "$reason" '{additionalContext: .}'
                     exit 0
                     ;;
                 *)
@@ -304,6 +312,9 @@ function report_failure {
         vscode)
             if [[ $hook_event == "Stop" ]]; then
                 emit_json_with_reason "$reason" '{hookSpecificOutput: {hookEventName: "Stop", decision: "block", reason: .}}'
+                exit 0
+            elif [[ $hook_event == "PostToolUse" ]]; then
+                emit_json_with_reason "$reason" '{decision: "block", reason: ., hookSpecificOutput: {hookEventName: "PostToolUse", additionalContext: .}}'
                 exit 0
             else
                 echo "$reason" >&2

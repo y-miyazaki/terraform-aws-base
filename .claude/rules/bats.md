@@ -12,6 +12,7 @@ paths:
 - Shell script implementation rules remain in the companion Shell Script rules (stem `shell-script`); this file defines test-suite conventions only.
 - When adding or materially changing a shell script or sourced library, add or update the matching Bats suite in the same change (MUST) — same obligation as companion Shell Script rules (stem `shell-script`).
 - Bats does not mandate a global directory layout — follow the **repository's established test tree** (discover from existing suites, CI config, or maintainer docs).
+- A suite must give the same result on a developer machine and on a minimal CI runner (MUST): no result may depend on tools, versions or services that happen to be installed locally.
 
 ### Rule application (`globs` / `paths`)
 
@@ -102,10 +103,12 @@ Prefer [bats-support](https://github.com/bats-core/bats-support) and [bats-asser
 - BDES-03 (MUST): Wrap cwd-changing integration commands in `run bash -c 'cd … && …'` or an equivalent helper — never bare `cd` immediately before `run`
 - BDES-04 (SHOULD): Order `@test` blocks a-z by description after `setup`/`teardown` (see shell-script-review TEST-01)
 - BDES-05 (SHOULD): Source the target script once in `setup()` without redundant `source` inside individual tests
+- BDES-06 (MUST): Do not let a result depend on what is installed on the machine — mock every external CLI the target calls, or `skip` with a reason when a real tool is required; the suite must pass on a runner that has only Bats and the system tools
 
 ### Mocking (MOCK)
 
 - MOCK-01 (SHOULD): Place external CLI mocks under `BATS_TEST_TMPDIR` or repository support helpers, with `PATH` prepended in the test
+- MOCK-02 (SHOULD): Model a missing tool with a controlled `PATH` (system directories only, or only the mock directory) and verify the premise first (`command -v` fails), never by assuming the tool is absent
 
 ### Test Anti-Patterns (TAP)
 
@@ -116,6 +119,7 @@ Prefer [bats-support](https://github.com/bats-core/bats-support) and [bats-asser
 - TAP-05 (MUST): Real secrets or live tokens in fixtures — use placeholders and assert redaction behavior
 - TAP-06 (SHOULD): Skipping `teardown()` when `setup()` writes temp files or directories
 - TAP-07 (SHOULD): Mandating `test/bats/` when the repository uses a different bats root — discover and match existing layout
+- TAP-08 (MUST): A test that passes only because a tool, version or service is installed locally (for example through a version manager) while CI installs fewer — mock it or `skip` (see BDES-06)
 
 ### Code Modification Guidelines
 

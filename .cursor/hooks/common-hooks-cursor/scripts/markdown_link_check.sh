@@ -181,14 +181,14 @@ function report_failure {
             agent="antigravity"
 
         # 2. Check for hook_event_name first (most reliable discriminator)
+        elif echo "$HOOK_STDIN_DATA" | jq -e 'has("cursor_version") or has("generation_id") or has("workspace_roots")' > /dev/null 2>&1; then
+            agent="cursor"
+            hook_event=$(echo "$HOOK_STDIN_DATA" | jq -r '.hook_event_name // "stop"' 2> /dev/null)
         elif echo "$HOOK_STDIN_DATA" | jq -e ".hook_event_name" > /dev/null 2>&1; then
             hook_event=$(echo "$HOOK_STDIN_DATA" | jq -r '.hook_event_name' 2> /dev/null)
 
             # Check event name pattern to determine agent type
-            if echo "$HOOK_STDIN_DATA" | jq -e '.cursor_version // .generation_id // .workspace_roots' > /dev/null 2>&1; then
-                # Cursor stop shares hook_event_name "stop" with Kiro; use Cursor-only stdin fields
-                agent="cursor"
-            elif echo "$hook_event" | grep -qE '^(afterFileEdit|beforeShellExecution|beforeMCPExecution|beforeReadFile)$'; then
+            if echo "$hook_event" | grep -qE '^(afterFileEdit|beforeShellExecution|beforeMCPExecution|beforeReadFile)$'; then
                 # camelCase with Cursor-only event names
                 agent="cursor"
             elif echo "$hook_event" | grep -qE '^(Stop|PostToolUse|PreToolUse)$'; then

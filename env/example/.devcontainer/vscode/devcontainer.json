@@ -5,7 +5,12 @@
   "containerEnv": {
     "CLAUDE_CONFIG_DIR": "/home/vscode/.claude",
     "CONTAINER_WORKSPACE_FOLDER": "${containerWorkspaceFolder}",
-    "LOCAL_WORKSPACE_FOLDER": "${localWorkspaceFolder}"
+    "LOCAL_WORKSPACE_FOLDER": "${localWorkspaceFolder}",
+    // Review gate Stop hook (optional): empty keeps the session model and the agent's default review command.
+    // Per agent: REVIEW_GATE_MODEL_<AGENT> / REVIEW_GATE_COMMAND_<AGENT> (CLAUDE, COPILOT, CURSOR) win over these.
+    // Do not add an empty REVIEW_GATE_MODEL_<AGENT> as a placeholder: set-but-empty turns the model note off for that agent.
+    "REVIEW_GATE_COMMAND": "",
+    "REVIEW_GATE_MODEL": ""
   },
   "customizations": {
     "vscode": {

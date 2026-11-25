@@ -3,6 +3,7 @@ paths:
   - ".github/workflows/**/*.yaml"
   - ".github/workflows/**/*.yml"
   - ".github/actions/**/action.yml"
+  - ".github/actions/**/action.yaml"
 ---
 
 # GitHub Actions Workflows Instructions

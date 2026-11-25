@@ -10,7 +10,7 @@ paths:
 
 ## Scope
 
-- Scope covers repository documentation maintenance and MkDocs navigation sync.
+- Scope covers repository documentation maintenance and, when the repository has an `mkdocs.yml`, MkDocs navigation sync.
 - This file defines repository-specific documentation operations rather than general Markdown theory.
 
 ## Standards
@@ -58,7 +58,7 @@ paths:
 
 ### Code Modification Guidelines
 
-- When adding, deleting, or renaming files under `docs/`, update the `nav` section in `mkdocs.yml` to keep navigation in sync.
+- When the repository has an `mkdocs.yml` and files under `docs/` are added, deleted, or renamed, update the `nav` section in `mkdocs.yml` to keep navigation in sync.
 - When revising documentation: identify the target section, review existing content, check consistency with related files, apply updates, and verify formatting.
 
 ## Testing and Validation

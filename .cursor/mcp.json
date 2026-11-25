@@ -18,14 +18,14 @@
       "type": "stdio",
       "command": "uvx",
       "args": [
-        "awslabs.aws-documentation-mcp-server==1.2.5"
+        "awslabs.aws-documentation-mcp-server==1.2.6"
       ]
     },
     "aws-pricing-mcp-server": {
       "type": "stdio",
       "command": "uvx",
       "args": [
-        "awslabs.aws-pricing-mcp-server==1.1.1"
+        "awslabs.aws-pricing-mcp-server==1.1.2"
       ]
     },
     "context7": {
@@ -33,7 +33,7 @@
       "command": "npx",
       "args": [
         "-y",
-        "@upstash/context7-mcp@4.7.0"
+        "@upstash/context7-mcp@4.7.3"
       ]
     },
     "fetch": {

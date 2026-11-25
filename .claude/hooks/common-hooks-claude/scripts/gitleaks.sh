@@ -152,22 +152,37 @@ function report_failure {
     local agent=""
     local hook_event=""
 
+    # Step 1: Detect agent (agent-first strategy)
     if [[ -n $HOOK_STDIN_DATA ]]; then
+        # 1. Antigravity (highest priority - unique fields)
         if echo "$HOOK_STDIN_DATA" | jq -e ".terminationReason" > /dev/null 2>&1; then
             agent="antigravity"
         elif echo "$HOOK_STDIN_DATA" | jq -e ".toolCall" > /dev/null 2>&1; then
             agent="antigravity"
+
+        # 2. Check for hook_event_name first (most reliable discriminator)
+        elif echo "$HOOK_STDIN_DATA" | jq -e 'has("cursor_version") or has("generation_id") or has("workspace_roots")' > /dev/null 2>&1; then
+            agent="cursor"
+            hook_event=$(echo "$HOOK_STDIN_DATA" | jq -r '.hook_event_name // "stop"' 2> /dev/null)
         elif echo "$HOOK_STDIN_DATA" | jq -e ".hook_event_name" > /dev/null 2>&1; then
             hook_event=$(echo "$HOOK_STDIN_DATA" | jq -r '.hook_event_name' 2> /dev/null)
-            if echo "$hook_event" | grep -qE '^(Stop|PostToolUse|PreToolUse)$'; then
+
+            # Check event name pattern to determine agent type
+            if echo "$hook_event" | grep -qE '^(afterFileEdit|beforeShellExecution|beforeMCPExecution|beforeReadFile)$'; then
+                # camelCase with Cursor-only event names
+                agent="cursor"
+            elif echo "$hook_event" | grep -qE '^(Stop|PostToolUse|PreToolUse)$'; then
+                # PascalCase = Claude Code
                 agent="claude_code"
             elif echo "$hook_event" | grep -qE '^(stop|postToolUse|preToolUse|agentSpawn|userPromptSubmit)$'; then
+                # camelCase with Kiro values = Kiro
                 agent="kiro"
-            elif echo "$hook_event" | grep -qE '^(afterFileEdit|beforeShellExecution|beforeMCPExecution|beforeReadFile|stop)$'; then
-                agent="cursor"
             else
+                # Default to Claude Code for unknown PascalCase
                 agent="claude_code"
             fi
+
+        # 3. Copilot CLI (env var or Copilot-unique fields, no hook_event_name)
         elif [[ -n ${GITHUB_COPILOT_API_TOKEN:-} ]] \
             || echo "$HOOK_STDIN_DATA" | jq -e '.transcriptPath // .stopReason // .stop_reason // .toolResult // .tool_result' > /dev/null 2>&1; then
             agent="copilot"
@@ -178,6 +193,8 @@ function report_failure {
             elif echo "$HOOK_STDIN_DATA" | jq -e ".toolName" > /dev/null 2>&1; then
                 hook_event="preToolUse"
             fi
+
+        # 4. VS Code extension (fallback based on vscode-specific fields)
         elif echo "$HOOK_STDIN_DATA" | jq -e 'has("stop_hook_active") or has("tool_use_id")' > /dev/null 2>&1; then
             agent="vscode"
             if echo "$HOOK_STDIN_DATA" | jq -e 'has("stop_hook_active")' > /dev/null 2>&1; then
@@ -188,10 +205,12 @@ function report_failure {
         fi
     fi
 
+    # Final fallback: env var check
     if [[ -z $agent && -n ${GITHUB_COPILOT_API_TOKEN:-} ]]; then
         agent="copilot"
     fi
 
+    # Step 2: Build response per agent spec (A-Z order)
     if [[ $agent == "cursor" && $hook_event == "stop" ]]; then
         reason=$(collapse_reason_for_cursor_display "$reason")
     fi

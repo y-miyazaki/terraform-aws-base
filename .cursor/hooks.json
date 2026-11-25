@@ -26,6 +26,10 @@
         "timeout": 120
       },
       {
+        "command": ".cursor/hooks/common-hooks-cursor/scripts/review_gate.sh",
+        "timeout": 15
+      },
+      {
         "command": ".cursor/hooks/shell-script-hooks-cursor/scripts/shellcheck.sh",
         "timeout": 120
       },
@@ -42,18 +46,16 @@
       {
         "command": ".cursor/hooks/shell-script-hooks-cursor/scripts/shfmt.sh",
         "timeout": 120
+      },
+      {
+        "command": ".cursor/hooks/terraform-hooks-cursor/scripts/terraform_fmt.sh",
+        "timeout": 120
       }
     ],
     "beforeSubmitPrompt": [
       {
         "command": ".cursor/hooks/common-hooks-cursor/scripts/gitleaks_prompt.sh",
         "timeout": 30
-      }
-    ],
-    "postToolUse": [
-      {
-        "command": ".cursor/hooks/terraform-hooks-cursor/scripts/terraform_fmt.sh",
-        "timeout": 120
       }
     ]
   },

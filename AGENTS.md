@@ -56,13 +56,6 @@ Every rule is mandatory.
 - When a change alters documented behavior, thresholds, state transitions, inputs/outputs, or interfaces, update those docs in the same change, never in a separate follow-up.
 - State in Completion which docs were searched and updated. If none exist, state "none apply"; do not create new docs unless requested.
 
-## Self-Review
-
-- When a coherent code change is complete and you are about to hand control back to the user (final response, or asking for their decision), review the resulting diff yourself without waiting to be asked.
-- Use a review skill or tool that fits the changed files if one is available; otherwise review the diff against this file for correctness, security, scope creep, test coverage, and docs drift. Scale review depth to the diff; for a trivial diff, a self-read is enough.
-- Fix findings that are within the request's scope, then re-review once. Label off-scope findings and report them; do not fix them unasked.
-- Exceptions (state the reason in Completion): no files changed; changes only to generated or synced output (not the source of truth); the user explicitly declines review.
-
 ## Escalation
 
 - **Stop and Ask** before: destructive operations, conflicting requirements, unclear specifications with no cheap, reversible default, irreversible architectural decisions, security-sensitive ambiguity, or disproportionate cost. Criteria:
@@ -77,7 +70,7 @@ Every rule is mandatory.
 ## Completion (state in the final response when files were changed or state-changing commands were run)
 
 1. **Implementation:** Overview of changes made.
-2. **Verification:** What was verified (behavior/tests), deferred, or unavailable — lint/format re-runs are not required proof. State the self-review performed (skill or manual), its findings and dispositions, and any exception taken from Tests or Self-Review with its reason. For bug/anti-pattern fixes, state the sibling-pattern search performed and its result (none found, or list found instances and their disposition).
+2. **Verification:** What was verified (behavior/tests), deferred, or unavailable — lint/format re-runs are not required proof. State any exception taken from Tests with its reason. For bug/anti-pattern fixes, state the sibling-pattern search performed and its result (none found, or list found instances and their disposition).
 3. **Risks:** Assumptions made, residual risks, and off-scope findings or suggestions (siblings, simplifications, review findings, alternatives).
 
 Do not mention automatic processes (checks, formatters, syncs, generators) or their pending, unsynced, or uncommitted output in any message; omit them entirely. Report one only when it failed and the user must act. State only what the user cannot see from the tool results.

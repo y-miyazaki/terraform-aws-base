@@ -40,7 +40,7 @@ fi
 #
 # Arguments:
 #   $1 - Environment name (optional, uses ENV if not provided)
-#   $2 - Plan file path (optional, if provided, applies from plan file)
+#   $2 - Plan file path (optional, if provided, applies from plan file; must exist)
 #   $3 - Auto-approve flag (optional, "auto-approve" to skip confirmation)
 #
 # Outputs:
@@ -61,25 +61,29 @@ function terraform_apply {
     echo_section "Terraform apply"
 
     # Terraform stops parsing flags at the first positional argument, so flags must precede the plan file
-    local apply_flags=""
+    local apply_flags=()
     if [[ $auto_approve == "auto-approve" ]]; then
-        apply_flags=" -auto-approve"
+        apply_flags=(-auto-approve)
     fi
 
-    local apply_cmd
-    if [[ -n $plan_file && -f $plan_file ]]; then
+    local apply_cmd=()
+    if [[ -n $plan_file ]]; then
+        # An explicit plan file must exist: never fall back to an unreviewed fresh apply
+        if [[ ! -f $plan_file ]]; then
+            error_exit "Plan file not found: $plan_file"
+        fi
         # Apply from plan file
-        apply_cmd="terraform apply${apply_flags} $plan_file"
+        apply_cmd=(terraform apply ${apply_flags[@]+"${apply_flags[@]}"} "$plan_file")
     else
         # Direct apply with variables
         local var_file="terraform.${env_name}.tfvars"
         if [[ ! -f $var_file ]]; then
             error_exit "Variables file not found: $var_file"
         fi
-        apply_cmd="terraform apply${apply_flags} -var-file=$var_file"
+        apply_cmd=(terraform apply ${apply_flags[@]+"${apply_flags[@]}"} "-var-file=$var_file")
     fi
 
-    if ! execute_command_string "$apply_cmd"; then
+    if ! execute_command "${apply_cmd[@]}"; then
         error_exit "Failed to apply Terraform configuration"
     fi
 
@@ -121,14 +125,14 @@ function terraform_destroy {
         error_exit "Variables file not found: $var_file"
     fi
 
-    local destroy_cmd="terraform destroy -var-file=$var_file"
+    local destroy_cmd=(terraform destroy "-var-file=$var_file")
 
     # Add auto-approve if specified
     if [[ $auto_approve == "auto-approve" ]]; then
-        destroy_cmd="$destroy_cmd --auto-approve"
+        destroy_cmd+=(--auto-approve)
     fi
 
-    if ! execute_command_string "$destroy_cmd"; then
+    if ! execute_command "${destroy_cmd[@]}"; then
         error_exit "Failed to destroy Terraform resources"
     fi
 
@@ -162,7 +166,7 @@ function terraform_format {
 
     if [[ $check_mode == "check" ]]; then
         echo_section "Terraform format check"
-        if execute_command_string "terraform fmt -check -diff"; then
+        if execute_command terraform fmt -check -diff; then
             log "INFO" "Terraform files are properly formatted"
             return 0
         else
@@ -171,7 +175,7 @@ function terraform_format {
         fi
     else
         echo_section "Terraform format"
-        execute_command_string "terraform fmt -recursive"
+        execute_command terraform fmt -recursive
         log "INFO" "Terraform files formatted"
     fi
 }
@@ -213,7 +217,7 @@ function terraform_get_workspace {
 #
 # Arguments:
 #   $1 - Environment name (optional, uses ENV if not provided)
-#   $2 - Additional init options (optional)
+#   $2 - Additional init options (optional; split on whitespace, no shell quoting)
 #
 # Outputs:
 #   None
@@ -237,12 +241,15 @@ function terraform_init {
         error_exit "Backend configuration file not found: $backend_config"
     fi
 
-    local init_cmd="terraform init -reconfigure -backend-config=$backend_config"
+    local init_cmd=(terraform init -reconfigure "-backend-config=$backend_config")
     if [[ -n $additional_options ]]; then
-        init_cmd="$init_cmd $additional_options"
+        # Whitespace-separated options become separate arguments; no shell parsing is applied
+        local init_extra=()
+        read -ra init_extra <<< "$additional_options"
+        init_cmd+=(${init_extra[@]+"${init_extra[@]}"})
     fi
 
-    if ! execute_command_string "$init_cmd"; then
+    if ! execute_command "${init_cmd[@]}"; then
         error_exit "Failed to initialize Terraform"
     fi
 
@@ -265,7 +272,7 @@ function terraform_init {
 #   None
 #
 # Returns:
-#   None (exits on lint failure)
+#   0 on success, 1 on lint failure
 #
 # Usage:
 #   terraform_lint "recursive"
@@ -276,26 +283,28 @@ function terraform_lint {
 
     echo_section "Terraform linting"
 
-    local lint_cmd="tflint"
+    local lint_cmd=(tflint)
 
     # Use root .tflint.hcl if it exists and no explicit config is specified
     local root_config
     root_config="$(git rev-parse --show-toplevel 2> /dev/null)/.tflint.hcl"
     if [[ -f $root_config ]]; then
-        lint_cmd="$lint_cmd --config=$root_config"
+        lint_cmd+=("--config=$root_config")
         # Initialize plugins before linting
         log "INFO" "Initializing tflint plugins..."
-        if ! execute_command_string "tflint --init --config=$root_config"; then
-            error_exit "tflint --init failed"
+        if ! execute_command tflint --init "--config=$root_config"; then
+            log "ERROR" "tflint --init failed"
+            return 1
         fi
     fi
 
     if [[ $recursive_mode == "recursive" ]]; then
-        lint_cmd="$lint_cmd --recursive"
+        lint_cmd+=(--recursive)
     fi
 
-    if ! execute_command_string "$lint_cmd"; then
-        error_exit "tflint found issues in Terraform configuration"
+    if ! execute_command "${lint_cmd[@]}"; then
+        log "ERROR" "tflint found issues in Terraform configuration"
+        return 1
     fi
 
     log "INFO" "Terraform configuration linting passed"
@@ -313,7 +322,7 @@ function terraform_lint {
 # Arguments:
 #   $1 - Environment name (optional, uses ENV if not provided)
 #   $2 - Plan file path (optional, defaults to terraform.tfplan)
-#   $3 - Additional plan options (optional)
+#   $3 - Additional plan options (optional; split on whitespace, no shell quoting)
 #
 # Outputs:
 #   None
@@ -338,12 +347,15 @@ function terraform_plan {
         error_exit "Variables file not found: $var_file"
     fi
 
-    local plan_cmd="terraform plan -out=$plan_file -var-file=$var_file"
+    local plan_cmd=(terraform plan "-out=$plan_file" "-var-file=$var_file")
     if [[ -n $additional_options ]]; then
-        plan_cmd="$plan_cmd $additional_options"
+        # Whitespace-separated options become separate arguments; no shell parsing is applied
+        local plan_extra=()
+        read -ra plan_extra <<< "$additional_options"
+        plan_cmd+=(${plan_extra[@]+"${plan_extra[@]}"})
     fi
 
-    if ! execute_command_string "$plan_cmd"; then
+    if ! execute_command "${plan_cmd[@]}"; then
         error_exit "Failed to create Terraform plan"
     fi
 
@@ -406,7 +418,7 @@ function terraform_select_workspace {
 #   None
 #
 # Returns:
-#   None (exits on validation failure)
+#   0 on success, 1 on validation failure
 #
 # Usage:
 #   terraform_validate
@@ -415,8 +427,9 @@ function terraform_select_workspace {
 function terraform_validate {
     echo_section "Terraform validation"
 
-    if ! execute_command_string "terraform validate"; then
-        error_exit "Terraform configuration validation failed"
+    if ! execute_command terraform validate; then
+        log "ERROR" "Terraform configuration validation failed"
+        return 1
     fi
 
     log "INFO" "Terraform configuration is valid"
@@ -457,8 +470,8 @@ function terraform_workflow {
     # Initialize Terraform
     terraform_init "$env_name"
 
-    # Validate configuration
-    terraform_validate
+    # Validate configuration (terraform_validate returns 1 on failure; stop before plan/apply)
+    terraform_validate || error_exit "Terraform validation failed; aborting workflow"
 
     # Execute workflow based on type
     case "$workflow_type" in
@@ -507,6 +520,11 @@ function validate_terraform_env {
     # The environment may come from the argument or ENV; do not require ENV when it is passed
     if [[ -z ${env_name} ]]; then
         error_exit "Environment name is required (argument or ENV)"
+    fi
+
+    # The name is embedded in file names (terraform.<env>.tfvars); keep it to a safe character set
+    if [[ ! $env_name =~ ^[A-Za-z0-9][A-Za-z0-9._-]*$ ]]; then
+        error_exit "Invalid environment name: $env_name (allowed: letters, digits, '.', '_', '-')"
     fi
 
     # Validate required environment variables
