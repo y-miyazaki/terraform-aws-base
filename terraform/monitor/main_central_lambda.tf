@@ -25,7 +25,7 @@ locals {
 #--------------------------------------------------------------
 module "aws_lambda_create_lambda_kinesis_data_firehose_cloudwatch_logs_processor" {
   source  = "terraform-aws-modules/lambda/aws"
-  version = "8.13.0"
+  version = "8.13.2"
 
   region = var.region.primary
 
@@ -77,7 +77,7 @@ module "aws_lambda_create_lambda_kinesis_data_firehose_cloudwatch_logs_processor
 #--------------------------------------------------------------
 module "aws_lambda_create_lambda_s3_notification_s3_object_created_for_athena" {
   source  = "terraform-aws-modules/lambda/aws"
-  version = "8.13.0"
+  version = "8.13.2"
 
   region = var.region.primary
 
