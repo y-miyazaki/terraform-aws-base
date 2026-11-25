@@ -9,20 +9,21 @@
 # Design Rules:
 #   - Change detection uses git (tracked diff, staged, untracked), minus agent-managed paths:
 #     chat-only turns and Bash-made edits are both handled; no edit log is needed.
-#   - Review detection reads the session transcript (transcript_path / transcriptPath): a
-#     review marker after the last edit marker means reviewed. The agent is detected from the
-#     event JSON (detect_agent); per-agent marker strings live in set_markers only.
-#   - Without a readable transcript the gate falls back to the blocked-state counter: the same
-#     working-tree state is reported at most HOOK_BLOCK_LIMIT times (default 1 for this hook).
-#   - Only the Claude Code transcript format is verified (Claude Code, Codex and VS Code share it).
-#     Copilot CLI and Cursor document the transcript path but not its line format, so for them
-#     the gate relies on the blocked-state counter until REVIEW_GATE_*MARKER or set_markers is set.
-#   - Fail open: any error, a missing jq/git, REVIEW_GATE_DISABLED=1 or stop_hook_active=true
+#   - The working-tree state is a hash of the whole git diff and the untracked files (compute_state_hash;
+#     the ignore list only trims the file list of the message), saved per session when the
+#     gate asks for a review. A different hash than the saved one asks for a review; the same hash
+#     means the state was already reported, so the gate passes (HOOK_BLOCK_LIMIT, default 1 here).
+#   - The block reason lets the agent decide: it finishes without a second review when the diff was
+#     already reviewed in the session (for example by an automatic review tool).
+#   - Review requests per session are bounded (REVIEW_GATE_MAX_PROMPTS) so review -> fix -> review ends.
+#   - The agent is detected from the event JSON (detect_agent) only to pick the default review command.
+#   - Fail open: any error, a missing jq/git or REVIEW_GATE_DISABLED=1
 #     exits 0 without blocking, so a broken hook never traps the agent.
 #   - Supports Kiro CLI, Claude Code, Copilot CLI, Cursor, Antigravity, VS Code
 #
 # Environment:
 #   REVIEW_GATE_DISABLED   - 1 disables the gate
+#   REVIEW_GATE_MAX_PROMPTS - review requests per session (default 3)
 #   REVIEW_GATE_COMMAND    - review command named in the block reason (default per agent: /code-review for
 #                            Claude Code, /review for Copilot CLI and Cursor)
 #   REVIEW_GATE_MODEL      - model the review must use, named in the block reason (default empty: the
@@ -32,8 +33,6 @@
 #                            reason asks the agent to use the model, the gate does not verify it
 #   REVIEW_GATE_COMMAND_<AGENT> - the same per agent (CLAUDE, COPILOT, CURSOR); wins over REVIEW_GATE_COMMAND;
 #                            an empty value falls back to the shared or default command
-#   REVIEW_GATE_MARKER     - ERE that matches a transcript line proving a review ran
-#   REVIEW_GATE_EDIT_MARKER - ERE that matches a transcript line of a file-edit tool call
 #######################################
 
 set -Eeuo pipefail
@@ -331,7 +330,7 @@ function blocked_state_file {
 }
 
 #######################################
-# clear_blocked_state: Forget the blocked state after a passing run
+# clear_blocked_state: Forget the blocked state (hash and session counts) after a passing run
 #
 # Globals:
 #   None
@@ -383,11 +382,19 @@ function compute_state_hash {
 }
 
 #######################################
-# is_blocked_state: Check whether the current state was already reported enough times
+# is_blocked_state: Decide from the saved state whether the hook should let the agent stop
+#
+# Description:
+#   One shared decision, controlled by variables the hook sets in main (all optional):
+#   the same state reported HOOK_BLOCK_LIMIT times, or the session reported HOOK_SESSION_LIMIT
+#   times in total. stop_hook_active is not consulted: a changed state is asked about again.
+#   After the session limit the hook no longer runs its check unless it clears the state earlier
+#   (a hook with a cheap clean-tree test, such as review_gate.sh, does).
 #
 # Globals:
 #   HOOK_BLOCK_LIMIT - max reports per unchanged state (default 2)
-#   HOOK_STATE_HASH  - state hash captured at hook start
+#   HOOK_SESSION_LIMIT - max reports per session across changing states (default 0 = unlimited)
+#   HOOK_STATE_HASH - state hash captured at hook start
 #
 # Arguments:
 #   None
@@ -396,21 +403,27 @@ function compute_state_hash {
 #   None
 #
 # Returns:
-#   0 when the state was reported HOOK_BLOCK_LIMIT times already, 1 otherwise
+#   0 when the hook should pass (limit reached), 1 when it should report
 #
 #######################################
 function is_blocked_state {
     local current="${HOOK_STATE_HASH:-}"
     [[ -n $current ]] || return 1
 
-    local limit="${HOOK_BLOCK_LIMIT:-2}"
+    local limit="${HOOK_BLOCK_LIMIT:-2}" session_limit="${HOOK_SESSION_LIMIT:-0}"
     [[ $limit =~ ^[0-9]+$ ]] || limit=2
+    [[ $session_limit =~ ^[0-9]+$ ]] || session_limit=0
 
-    local file saved="" count=0
+    local file saved="" count=0 total=0
     file=$(blocked_state_file)
     [[ -f $file ]] || return 1
-    read -r saved count < "$file" || true
-    [[ $saved == "$current" && ${count:-0} =~ ^[0-9]+$ ]] || return 1
+    read -r saved count total < "$file" || true
+    [[ ${count:-0} =~ ^[0-9]+$ ]] || count=0
+    [[ ${total:-0} =~ ^[0-9]+$ ]] || total=0
+    if ((session_limit > 0 && total >= session_limit)); then
+        return 0
+    fi
+    [[ $saved == "$current" ]] || return 1
     ((count >= limit))
 }
 
@@ -419,7 +432,8 @@ function is_blocked_state {
 #
 # Description:
 #   Re-hashes after the tool ran so auto-fixes made by the tool itself are included.
-#   The count restarts at 1 when the state differs from the stored one.
+#   The per-state count restarts at 1 when the state differs from the stored one;
+#   the session total keeps counting until clear_blocked_state.
 #
 # Globals:
 #   None
@@ -435,21 +449,24 @@ function is_blocked_state {
 #
 #######################################
 function record_blocked_state {
-    local hash file saved="" count=0
+    local hash file saved="" count=0 total=0
     hash=$(compute_state_hash)
     [[ -n $hash ]] || return 0
     file=$(blocked_state_file)
     if [[ -f $file ]]; then
-        read -r saved count < "$file" || true
+        read -r saved count total < "$file" || true
     fi
-    if [[ $saved == "$hash" && ${count:-0} =~ ^[0-9]+$ ]]; then
+    [[ ${count:-0} =~ ^[0-9]+$ ]] || count=0
+    [[ ${total:-0} =~ ^[0-9]+$ ]] || total=0
+    if [[ $saved == "$hash" ]]; then
         count=$((count + 1))
     else
         count=1
     fi
+    total=$((total + 1))
     {
         mkdir -p "$(dirname "$file")" \
-            && printf '%s %s\n' "$hash" "$count" > "$file"
+            && printf '%s %s %s\n' "$hash" "$count" "$total" > "$file"
     } 2> /dev/null || true
 }
 
@@ -483,53 +500,6 @@ function detect_agent {
     fi
 }
 
-#######################################
-# set_markers: Choose the transcript line patterns for the detected agent
-#
-# Description:
-#   Add a case branch to support another agent; unknown agents use the Claude patterns.
-#   REVIEW_GATE_MARKER / REVIEW_GATE_EDIT_MARKER override the table.
-#
-# Globals:
-#   REVIEW_MARKER, EDIT_MARKER - set here (ERE matched against transcript lines; empty = unknown format)
-#   REVIEW_COMMAND - set here (review command named in the block reason)
-#   REVIEW_MODEL - set here (model the review should use; empty = session model)
-#
-# Arguments:
-#   $1 - agent name from detect_agent
-#
-# Outputs:
-#   None
-#
-# Returns:
-#   0 always
-#
-#######################################
-function set_markers {
-    local default_command="/code-review"
-    case "$1" in
-        copilot | cursor)
-            # Official docs give the transcript path but not its line format: leave the markers
-            # empty so review_state reports "unknown" and the blocked-state counter applies.
-            REVIEW_MARKER=""
-            EDIT_MARKER=""
-            default_command="/review"
-            ;;
-        *)
-            REVIEW_MARKER='"skill": ?"([a-z-]+:)?code-review"|"type": ?"user".*<command-name>/code-review'
-            EDIT_MARKER='"name": ?"(Edit|Write|MultiEdit|NotebookEdit|apply_patch|str_replace_editor)"'
-            ;;
-    esac
-    REVIEW_MARKER="${REVIEW_GATE_MARKER:-$REVIEW_MARKER}"
-    EDIT_MARKER="${REVIEW_GATE_EDIT_MARKER:-$EDIT_MARKER}"
-    # Per-agent override first (REVIEW_GATE_COMMAND_CLAUDE, _COPILOT, _CURSOR), then the global one
-    local agent_var="REVIEW_GATE_COMMAND_${1^^}"
-    REVIEW_COMMAND="${!agent_var:-${REVIEW_GATE_COMMAND:-$default_command}}"
-    # Optional model for the review; empty keeps the session (base) model
-    local model_var="REVIEW_GATE_MODEL_${1^^}"
-    REVIEW_MODEL="${!model_var-${REVIEW_GATE_MODEL:-}}"
-}
-
 # Agent-managed and generated paths that never need a review (single owner of the ignore list);
 # hand-edited files such as .claude/settings.json still count.
 REVIEW_IGNORE_PATHS='^(\.agents/|\.codex/|\.kiro/|\.vscode/|apm_modules/|apm\.lock\.yaml$|\.github/hooks/|\.claude/(rules|skills|agents|hooks|commands|tmp)/|\.cursor/(rules|skills|agents|hooks)/)'
@@ -561,33 +531,37 @@ function get_review_files {
 }
 
 #######################################
-# review_state: Decide from the transcript whether the changes were reviewed
+# set_review_options: Choose the review command and model for the detected agent
+#
+# Description:
+#   Add a case branch to give another agent its own default review command.
 #
 # Globals:
-#   REVIEW_MARKER, EDIT_MARKER - transcript line patterns (set_markers)
+#   REVIEW_COMMAND - set here (review command named in the block reason)
+#   REVIEW_MODEL - set here (model the review should use; empty = session model)
 #
 # Arguments:
-#   $1 - transcript path
+#   $1 - agent name from detect_agent
 #
 # Outputs:
 #   None
 #
 # Returns:
-#   0 reviewed or nothing edited this session, 1 not reviewed, 2 transcript unavailable
+#   0 always
 #
 #######################################
-function review_state {
-    local transcript="$1" last_review last_edit
-    [[ -n $transcript && -f $transcript ]] || return 2
-    [[ -n $REVIEW_MARKER && -n $EDIT_MARKER ]] || return 2
-    # tool_result lines only quote text (files, docs); they never prove a review or an edit
-    last_review=$(grep -v '"tool_result"' "$transcript" 2> /dev/null | grep -n -E "$REVIEW_MARKER" | tail -n 1 | cut -d: -f1 || true)
-    last_edit=$(grep -v '"tool_result"' "$transcript" 2> /dev/null | grep -n -E "$EDIT_MARKER" | tail -n 1 | cut -d: -f1 || true)
-    # No edit tool call in this session: the changes pre-date it (chat-only or investigation turn)
-    [[ -n $last_edit ]] || return 0
-    [[ -n $last_review ]] || return 1
-    ((last_review > last_edit)) || return 1
-    return 0
+function set_review_options {
+    local default_command="/code-review"
+    case "$1" in
+        copilot | cursor) default_command="/review" ;;
+        *) ;;
+    esac
+    # Per-agent override first (REVIEW_GATE_COMMAND_CLAUDE, _COPILOT, _CURSOR), then the global one
+    local agent_var="REVIEW_GATE_COMMAND_${1^^}"
+    REVIEW_COMMAND="${!agent_var:-${REVIEW_GATE_COMMAND:-$default_command}}"
+    # Optional model for the review; empty keeps the session (base) model
+    local model_var="REVIEW_GATE_MODEL_${1^^}"
+    REVIEW_MODEL="${!model_var-${REVIEW_GATE_MODEL:-}}"
 }
 
 #######################################
@@ -596,12 +570,13 @@ function review_state {
 # Globals:
 #   HOOK_STDIN_DATA - hook event JSON
 #   REVIEW_GATE_DISABLED - 1 disables the gate
+#   REVIEW_GATE_MAX_PROMPTS - review requests per session (default 3)
 #
 # Arguments:
 #   None
 #
 # Outputs:
-#   Block JSON through report_failure when a review is missing
+#   Block JSON through report_failure when the working-tree state has not been reported yet
 #
 # Returns:
 #   0 on pass or skip
@@ -614,9 +589,6 @@ function main {
     command -v git > /dev/null 2>&1 || exit 0
     git rev-parse --is-inside-work-tree > /dev/null 2>&1 || exit 0
     [[ -n $HOOK_STDIN_DATA ]] || exit 0
-    if [[ $(printf '%s' "$HOOK_STDIN_DATA" | jq -r '.stop_hook_active // false' 2> /dev/null) == "true" ]]; then
-        exit 0
-    fi
 
     local files=()
     mapfile -t files < <(get_review_files)
@@ -625,24 +597,24 @@ function main {
         exit 0
     fi
 
-    local transcript state=0
-    set_markers "$(detect_agent)"
-    transcript=$(printf '%s' "$HOOK_STDIN_DATA" | jq -r '.transcript_path // .transcriptPath // empty' 2> /dev/null || true)
-    review_state "$transcript" || state=$?
-    if ((state == 0)); then
-        clear_blocked_state
-        exit 0
-    fi
-
+    # Shared loop guard (is_blocked_state): a state that was already reported is not reported again,
+    # a changed state asks for a review again, review requests per session are bounded (reset by a
+    # clean tree); stop_hook_active is not consulted, so fixes made after a review are asked about again
+    local max="${REVIEW_GATE_MAX_PROMPTS:-3}"
+    [[ $max =~ ^[1-9][0-9]*$ ]] || max=3
     HOOK_BLOCK_LIMIT="${HOOK_BLOCK_LIMIT:-1}"
+    HOOK_SESSION_LIMIT="$max"
     HOOK_STATE_HASH=$(compute_state_hash)
+    # No hash tool: a reported state cannot be recognized, so fail open instead of re-asking every stop
+    [[ -n $HOOK_STATE_HASH ]] || exit 0
     if is_blocked_state; then
         exit 0
     fi
 
+    set_review_options "$(detect_agent)"
     local model_note=""
     [[ -z $REVIEW_MODEL ]] || model_note=" Run the review with the model ${REVIEW_MODEL} (use the agent's model option for the review command or its subagent)."
-    report_failure "${#files[@]} file(s) changed without a code review in this session. Run ${REVIEW_COMMAND} on the diff, fix the in-scope findings, then report the review and its dispositions.${model_note} Changed: $(printf '%s ' "${files[@]:0:10}")"
+    report_failure "${#files[@]} file(s) changed since the last review request in this session. If this exact diff was already reviewed in this session (by any review tool or skill), say so and finish without reviewing again. Otherwise run ${REVIEW_COMMAND} on the diff, fix the in-scope findings, then report the review and its dispositions.${model_note} Changed: $(printf '%s ' "${files[@]:0:10}")"
 }
 
 if [[ ${BASH_SOURCE[0]} == "${0}" ]]; then

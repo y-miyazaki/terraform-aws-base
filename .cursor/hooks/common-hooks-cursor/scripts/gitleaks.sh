@@ -311,7 +311,7 @@ function blocked_state_file {
 }
 
 #######################################
-# clear_blocked_state: Forget the blocked state after a passing run
+# clear_blocked_state: Forget the blocked state (hash and session counts) after a passing run
 #
 # Globals:
 #   None
@@ -363,11 +363,19 @@ function compute_state_hash {
 }
 
 #######################################
-# is_blocked_state: Check whether the current state was already reported enough times
+# is_blocked_state: Decide from the saved state whether the hook should let the agent stop
+#
+# Description:
+#   One shared decision, controlled by variables the hook sets in main (all optional):
+#   the same state reported HOOK_BLOCK_LIMIT times, or the session reported HOOK_SESSION_LIMIT
+#   times in total. stop_hook_active is not consulted: a changed state is asked about again.
+#   After the session limit the hook no longer runs its check unless it clears the state earlier
+#   (a hook with a cheap clean-tree test, such as review_gate.sh, does).
 #
 # Globals:
 #   HOOK_BLOCK_LIMIT - max reports per unchanged state (default 2)
-#   HOOK_STATE_HASH  - state hash captured at hook start
+#   HOOK_SESSION_LIMIT - max reports per session across changing states (default 0 = unlimited)
+#   HOOK_STATE_HASH - state hash captured at hook start
 #
 # Arguments:
 #   None
@@ -376,21 +384,27 @@ function compute_state_hash {
 #   None
 #
 # Returns:
-#   0 when the state was reported HOOK_BLOCK_LIMIT times already, 1 otherwise
+#   0 when the hook should pass (limit reached), 1 when it should report
 #
 #######################################
 function is_blocked_state {
     local current="${HOOK_STATE_HASH:-}"
     [[ -n $current ]] || return 1
 
-    local limit="${HOOK_BLOCK_LIMIT:-2}"
+    local limit="${HOOK_BLOCK_LIMIT:-2}" session_limit="${HOOK_SESSION_LIMIT:-0}"
     [[ $limit =~ ^[0-9]+$ ]] || limit=2
+    [[ $session_limit =~ ^[0-9]+$ ]] || session_limit=0
 
-    local file saved="" count=0
+    local file saved="" count=0 total=0
     file=$(blocked_state_file)
     [[ -f $file ]] || return 1
-    read -r saved count < "$file" || true
-    [[ $saved == "$current" && ${count:-0} =~ ^[0-9]+$ ]] || return 1
+    read -r saved count total < "$file" || true
+    [[ ${count:-0} =~ ^[0-9]+$ ]] || count=0
+    [[ ${total:-0} =~ ^[0-9]+$ ]] || total=0
+    if ((session_limit > 0 && total >= session_limit)); then
+        return 0
+    fi
+    [[ $saved == "$current" ]] || return 1
     ((count >= limit))
 }
 
@@ -399,7 +413,8 @@ function is_blocked_state {
 #
 # Description:
 #   Re-hashes after the tool ran so auto-fixes made by the tool itself are included.
-#   The count restarts at 1 when the state differs from the stored one.
+#   The per-state count restarts at 1 when the state differs from the stored one;
+#   the session total keeps counting until clear_blocked_state.
 #
 # Globals:
 #   None
@@ -415,21 +430,24 @@ function is_blocked_state {
 #
 #######################################
 function record_blocked_state {
-    local hash file saved="" count=0
+    local hash file saved="" count=0 total=0
     hash=$(compute_state_hash)
     [[ -n $hash ]] || return 0
     file=$(blocked_state_file)
     if [[ -f $file ]]; then
-        read -r saved count < "$file" || true
+        read -r saved count total < "$file" || true
     fi
-    if [[ $saved == "$hash" && ${count:-0} =~ ^[0-9]+$ ]]; then
+    [[ ${count:-0} =~ ^[0-9]+$ ]] || count=0
+    [[ ${total:-0} =~ ^[0-9]+$ ]] || total=0
+    if [[ $saved == "$hash" ]]; then
         count=$((count + 1))
     else
         count=1
     fi
+    total=$((total + 1))
     {
         mkdir -p "$(dirname "$file")" \
-            && printf '%s %s\n' "$hash" "$count" > "$file"
+            && printf '%s %s %s\n' "$hash" "$count" "$total" > "$file"
     } 2> /dev/null || true
 }
 
