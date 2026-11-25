@@ -71,7 +71,7 @@ module "lambda_function_config" {
   for_each = toset(var.region.targets)
 
   source  = "terraform-aws-modules/lambda/aws"
-  version = "8.13.0"
+  version = "8.13.2"
 
   create = local.is_enabled_security_config
   region = each.value
