@@ -39,7 +39,7 @@ function csv_sort {
 
     # For complex CSV data with quoted fields, use Python to sort properly
     if command -v python3 > /dev/null 2>&1; then
-        printf "%b" "$input_data" | python3 -c "
+        printf '%s\n' "$input_data" | python3 -c "
 import csv
 import sys
 from io import StringIO
@@ -60,7 +60,7 @@ try:
     ))
 
     # Write sorted CSV to stdout
-    writer = csv.writer(sys.stdout, quoting=csv.QUOTE_MINIMAL)
+    writer = csv.writer(sys.stdout, quoting=csv.QUOTE_MINIMAL, lineterminator='\\n')
     for row in sorted_rows:
         writer.writerow(row)
 except Exception as e:
@@ -69,7 +69,7 @@ except Exception as e:
 "
     else
         # Fallback to basic sort if Python is not available
-        printf "%b" "$input_data" | sort -t, -k5,5 -k2,2 -k3,3 -k4,4
+        printf '%s\n' "$input_data" | sort -t, -k5,5 -k2,2 -k3,3 -k4,4
     fi
 }
 
@@ -100,14 +100,14 @@ function make_csv_safe {
 
     # Preserve newlines for better Excel/Numbers compatibility
     # Only remove carriage returns, keep newlines
-    value=$(echo "$value" | tr -d '\r')
+    value=$(printf '%s\n' "$value" | tr -d '\r')
 
     # Convert tabs to spaces
-    value=$(echo "$value" | tr '\t' ' ')
+    value=$(printf '%s\n' "$value" | tr '\t' ' ')
 
     # Compress multiple spaces to single space (but preserve newlines)
     # Use a more precise pattern that doesn't affect newlines
-    value=$(echo "$value" | sed 's/[[:blank:]]\{2,\}/ /g' | sed 's/^[[:blank:]]*//;s/[[:blank:]]*$//')
+    value=$(printf '%s\n' "$value" | sed 's/[[:blank:]]\{2,\}/ /g' | sed 's/^[[:blank:]]*//;s/[[:blank:]]*$//')
 
     # If value contains commas, wrap in quotes and escape internal quotes
     if [[ $value == *","* ]]; then
@@ -120,7 +120,7 @@ function make_csv_safe {
         value="\"$value\""
     fi
 
-    echo "$value"
+    printf '%s\n' "$value"
 }
 
 #######################################
@@ -155,7 +155,7 @@ function normalize_csv_value {
 
     # Treat empty/null as empty string
     if [[ -z $value || $value == "null" ]]; then
-        echo "$default_value"
+        printf '%s\n' "$default_value"
         return
     fi
 
@@ -164,6 +164,6 @@ function normalize_csv_value {
         value="${value//\"/\"\"}"
         echo "\"$value\""
     else
-        echo "$value"
+        printf '%s\n' "$value"
     fi
 }

@@ -5,6 +5,10 @@
 # Usage: ./integration.sh [directory]
 #   arguments:
 #     directory: Target directory (optional, defaults to current)
+#
+# Design Rules:
+#   - ENV and TF_PLUGIN_CACHE_DIR are required environment variables.
+#   - tflint and trivy findings are reported as warnings; the integration steps themselves fail the run.
 #######################################
 
 # Error handling: exit on error, unset variable, or failed pipeline
@@ -68,10 +72,31 @@ EOF
     exit 0
 }
 
-# Show usage if -h or --help is provided
-if [ "${1:-}" = "-h" ] || [ "${1:-}" = "--help" ]; then
-    show_usage
-fi
+#######################################
+# parse_arguments: Parse command line arguments
+#
+# Globals:
+#   None
+#
+# Arguments:
+#   $@ - Command line arguments
+#
+# Outputs:
+#   Writes help to stdout when -h or --help is given
+#
+# Returns:
+#   0 on success; exits 0 after showing help
+#######################################
+function parse_arguments {
+    case "${1:-}" in
+        -h | --help)
+            show_usage
+            ;;
+        -*)
+            error_exit "Unknown option: $1"
+            ;;
+    esac
+}
 
 #######################################
 ## Additional helper functions (alphabetical):
@@ -106,8 +131,12 @@ function run_additional_checks {
 
     # Run tflint if available
     if command -v tflint &> /dev/null; then
-        log "INFO" "Running tflint with module support..."
-        if ! execute_command tflint --module; then
+        # Plugins from .tflint.hcl must be installed first or the run fails on a clean runner
+        if ! execute_command tflint --init; then
+            log "WARN" "tflint --init failed; linting may be incomplete."
+        fi
+        log "INFO" "Running tflint with module support (--call-module-type=all)..."
+        if ! execute_command tflint --call-module-type=all; then
             log "WARN" "tflint found issues that should be addressed."
         fi
     else
@@ -212,6 +241,8 @@ function validate_and_prepare {
 #
 #######################################
 function main {
+    parse_arguments "$@"
+
     # Set target directory
     local dir=${1:-./}
 

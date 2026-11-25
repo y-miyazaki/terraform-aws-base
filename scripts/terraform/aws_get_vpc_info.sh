@@ -73,7 +73,7 @@ Arguments:
 Examples:
   $(basename "$0") vpc-1234567890abcdef0
 EOF
-    exit 0
+    exit "${1:-0}"
 }
 
 #######################################
@@ -122,7 +122,7 @@ function parse_arguments {
     # Validate required arguments
     if [[ -z ${VPC_ID:-} ]]; then
         echo "Error: VPC ID is required" >&2
-        show_usage
+        show_usage 1
     fi
 }
 
@@ -223,38 +223,6 @@ function check_network_interfaces {
 }
 
 #######################################
-# check_vpn_gateways: Check VPN gateways
-#
-# Description:
-#   Checks for VPN gateways attached to the specified VPC
-#
-# Globals:
-#   VPC_ID - VPC ID to check
-#   REGION - AWS region to query
-#
-# Arguments:
-#   None
-#
-# Outputs:
-#   VPN gateway information
-#
-# Returns:
-#   0 on success
-#
-# Usage:
-#   check_vpn_gateways
-#
-#######################################
-function check_vpn_gateways {
-    echo_section "VPN Gateways"
-    if aws ec2 describe-vpn-gateways --region "$AWS_REGION" --filters 'Name=attachment.vpc-id,Values='"$VPC_ID" | grep VpnGatewayId; then
-        log "INFO" "VPN gateways found"
-    else
-        log "INFO" "No VPN gateways found"
-    fi
-}
-
-#######################################
 # check_vpc_peering: Check VPC peering connections
 #
 # Description:
@@ -283,6 +251,38 @@ function check_vpc_peering {
         log "INFO" "VPC peering connections found"
     else
         log "INFO" "No VPC peering connections found"
+    fi
+}
+
+#######################################
+# check_vpn_gateways: Check VPN gateways
+#
+# Description:
+#   Checks for VPN gateways attached to the specified VPC
+#
+# Globals:
+#   VPC_ID - VPC ID to check
+#   REGION - AWS region to query
+#
+# Arguments:
+#   None
+#
+# Outputs:
+#   VPN gateway information
+#
+# Returns:
+#   0 on success
+#
+# Usage:
+#   check_vpn_gateways
+#
+#######################################
+function check_vpn_gateways {
+    echo_section "VPN Gateways"
+    if aws ec2 describe-vpn-gateways --region "$AWS_REGION" --filters 'Name=attachment.vpc-id,Values='"$VPC_ID" | grep VpnGatewayId; then
+        log "INFO" "VPN gateways found"
+    else
+        log "INFO" "No VPN gateways found"
     fi
 }
 

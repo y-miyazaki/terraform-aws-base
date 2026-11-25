@@ -9,6 +9,11 @@
 #     -h, --help      Display this help message
 #   arguments:
 #     <stage>    Deployment stage/environment (e.g., dev, staging, prod)
+#
+# Design Rules:
+#   - The stage argument is required; usage errors exit 1 and --help exits 0.
+#   - Dependencies are installed with npm ci so package-lock.json is never rewritten.
+#   - Commands run through execute_command (array form, no shell string interpolation).
 #######################################
 
 # Error handling: exit on error, unset variable, or failed pipeline
@@ -52,7 +57,7 @@ source "${SCRIPT_DIR}/../lib/all.sh"
 #
 #######################################
 function show_usage {
-    local error_msg="$1"
+    local error_msg="${1:-}"
 
     if [ -n "$error_msg" ]; then
         echo "Error: $error_msg" >&2
@@ -74,6 +79,9 @@ Examples:
   $0 staging
   $0 prod
 EOF
+    if [ -n "$error_msg" ]; then
+        exit 1
+    fi
     exit 0
 }
 
@@ -129,7 +137,7 @@ function build_project {
 #
 #######################################
 function deploy_to_aws {
-    local stage="$1"
+    local stage="${1:-}"
 
     log "INFO" "Deploying to AWS ($stage)..."
     if ! execute_command make deploy "STAGE=${stage}"; then
@@ -189,7 +197,7 @@ function install_dependencies {
 #
 #######################################
 function validate_arguments {
-    local stage="$1"
+    local stage="${1:-}"
 
     if [ -z "$stage" ]; then
         show_usage "Stage argument is required"
@@ -219,7 +227,7 @@ function validate_arguments {
 #
 #######################################
 function main {
-    local stage="$1"
+    local stage="${1:-}"
 
     # Show usage if -h or --help is provided
     if [ "$stage" = "-h" ] || [ "$stage" = "--help" ]; then

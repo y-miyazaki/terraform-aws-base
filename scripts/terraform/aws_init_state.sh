@@ -281,8 +281,15 @@ function create_s3_bucket {
         create_args+=(--create-bucket-configuration "LocationConstraint=${REGION}")
     fi
 
-    if ! aws s3api create-bucket "${create_args[@]}" 2> /dev/null; then
-        log "WARN" "Bucket creation may have failed or bucket already exists. Proceeding with configuration."
+    # Tolerate only "already yours"; access denied or a name owned by another account must stop here,
+    # otherwise the security settings below would be applied to a bucket we do not control
+    local create_error
+    if ! create_error=$(aws s3api create-bucket "${create_args[@]}" 2>&1); then
+        if [[ $create_error == *BucketAlreadyOwnedByYou* ]]; then
+            log "INFO" "S3 bucket already exists and is owned by this account. Proceeding with configuration."
+        else
+            error_exit "Failed to create S3 bucket ${BUCKET}: ${create_error}"
+        fi
     else
         log "INFO" "S3 bucket created successfully"
     fi

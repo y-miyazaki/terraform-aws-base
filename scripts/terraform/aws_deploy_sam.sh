@@ -89,7 +89,7 @@ Examples:
   $(basename "$0") -p lambda -e prd deploy
   $(basename "$0") --path lambda --env dev validate
 EOF
-    exit 0
+    exit "${1:-0}"
 }
 
 #######################################
@@ -124,14 +124,17 @@ function parse_arguments {
                 show_usage
                 ;;
             -e | --env)
+                [[ $# -ge 2 ]] || error_exit "Option $1 requires a value"
                 ENV="$2"
                 shift 2
                 ;;
             -p | --path)
+                [[ $# -ge 2 ]] || error_exit "Option $1 requires a value"
                 LAMBDA_PATH="$2"
                 shift 2
                 ;;
             -r | --region)
+                [[ $# -ge 2 ]] || error_exit "Option $1 requires a value"
                 AWS_REGION="$2"
                 shift 2
                 ;;
@@ -151,7 +154,7 @@ function parse_arguments {
     # Validate required arguments
     if [[ -z ${LAMBDA_PATH} ]]; then
         echo "Error: --path is required" >&2
-        show_usage
+        show_usage 1
     fi
 }
 

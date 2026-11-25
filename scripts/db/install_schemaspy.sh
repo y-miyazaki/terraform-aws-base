@@ -14,7 +14,7 @@
 #     --skip-schemaspy     Skip SchemaSpy download
 #     --skip-jdbc          Skip JDBC driver download
 #     --schemaspy-version  SchemaSpy version to install (default: 6.2.4)
-#     --install-dir        Installation directory (default: ./tmp)
+#     --install-dir        Installation directory (default: $SCHEMASPY_CACHE_DIR or ~/.cache/schemaspy)
 #
 # Output:
 # - Installs Java (OpenJDK) if not present
@@ -46,9 +46,6 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # shellcheck disable=SC1091
 source "${SCRIPT_DIR}/../lib/all.sh"
 
-# Repository root (portable across environments)
-REPO_ROOT="$(git rev-parse --show-toplevel 2> /dev/null || echo "${SCRIPT_DIR}/../..")"
-
 #######################################
 # Global variables
 #######################################
@@ -61,7 +58,8 @@ SKIP_GRAPHVIZ=false
 SKIP_SCHEMASPY=false
 SKIP_JDBC=false
 SCHEMASPY_VERSION="7.0.2"
-INSTALL_DIR="${REPO_ROOT}/tmp"
+# Outside the repository tree (tmp/ is not gitignored in every repository); shared with aws_schemaspy.sh
+INSTALL_DIR="${SCHEMASPY_CACHE_DIR:-${XDG_CACHE_HOME:-${HOME:-/tmp}/.cache}/schemaspy}"
 
 # JDBC driver versions
 JDBC_VERSION_POSTGRESQL="42.7.5"
@@ -74,10 +72,10 @@ JDBC_VERSION_REDSHIFT="2.1.0.32"
 # Description:
 #   Displays usage information for the script, including options and examples
 #
-# Arguments:
+# Globals:
 #   None
 #
-# Globals:
+# Arguments:
 #   None
 #
 # Outputs:
@@ -90,7 +88,7 @@ JDBC_VERSION_REDSHIFT="2.1.0.32"
 #   show_usage
 #
 #######################################
-show_usage() {
+function show_usage {
     cat << EOF
 Usage: $(basename "$0") [options]
 
@@ -107,7 +105,7 @@ Optional Options:
   --skip-schemaspy     Skip SchemaSpy download
   --skip-jdbc          Skip JDBC driver download
   --schemaspy-version  SchemaSpy version (default: 6.2.4)
-  --install-dir        Installation directory (default: ./tmp)
+  --install-dir        Installation directory (default: $SCHEMASPY_CACHE_DIR or ${XDG_CACHE_HOME:-~/.cache}/schemaspy)
 
 Examples:
   $(basename "$0")                          # Install everything with defaults
@@ -126,7 +124,7 @@ Components Installed:
 Installation Locations:
   - Java: System package manager (/usr/lib/jvm/)
   - Graphviz: System package manager (/usr/bin/)
-  - SchemaSpy: ${INSTALL_DIR}/schemaspy-{version}.jar
+  - SchemaSpy: ${INSTALL_DIR}/schemaspy-${SCHEMASPY_VERSION}.jar
   - JDBC Drivers: ${INSTALL_DIR}/{db_type}-jdbc.jar
 
 EOF
@@ -138,9 +136,6 @@ EOF
 #
 # Description:
 #   Parses command line arguments and options
-#
-# Arguments:
-#   $@ - Command line arguments
 #
 # Globals:
 #   VERBOSE - Enable verbose output
@@ -154,6 +149,9 @@ EOF
 #   SCHEMASPY_VERSION - SchemaSpy version to download
 #   INSTALL_DIR - Installation directory
 #
+# Arguments:
+#   $@ - Command line arguments
+#
 # Outputs:
 #   None
 #
@@ -164,7 +162,7 @@ EOF
 #   parse_arguments "$@"
 #
 #######################################
-parse_arguments() {
+function parse_arguments {
     while [[ $# -gt 0 ]]; do
         case $1 in
             -h | --help)
@@ -183,6 +181,7 @@ parse_arguments() {
                 shift
                 ;;
             -t | --db-type)
+                [[ $# -ge 2 ]] || error_exit "Option $1 requires a value"
                 DB_TYPE="$2"
                 shift 2
                 ;;
@@ -203,10 +202,12 @@ parse_arguments() {
                 shift
                 ;;
             --schemaspy-version)
+                [[ $# -ge 2 ]] || error_exit "Option $1 requires a value"
                 SCHEMASPY_VERSION="$2"
                 shift 2
                 ;;
             --install-dir)
+                [[ $# -ge 2 ]] || error_exit "Option $1 requires a value"
                 INSTALL_DIR="$2"
                 shift 2
                 ;;
@@ -221,65 +222,56 @@ parse_arguments() {
 }
 
 #######################################
-# validate_parameters: Validate parameters
+# Check if Graphviz is installed
 #
-# Description:
-#   Validates parameters and sets default values
+# Globals:
+#   FORCE_INSTALL - read
 #
 # Arguments:
 #   None
 #
-# Globals:
-#   DB_TYPE - Database type
-#   INSTALL_DIR - Installation directory
-#   FORCE_INSTALL - Force reinstallation flag
-#   SKIP_JAVA - Skip Java installation flag
-#   SKIP_GRAPHVIZ - Skip Graphviz installation flag
-#   SKIP_SCHEMASPY - Skip SchemaSpy download flag
-#   SKIP_JDBC - Skip JDBC driver download flag
-#
 # Outputs:
-#   None
+#   Log messages via log (stderr)
 #
 # Returns:
-#   None
-#
-# Usage:
-#   validate_parameters
-#
+#   0 on success; non-zero on failure
 #######################################
-validate_parameters() {
-    log "INFO" "Validating parameters..."
+function check_graphviz {
+    log "INFO" "Checking Graphviz installation..."
 
-    # Validate database type
-    case "${DB_TYPE}" in
-        pgsql | mysql | oracle | redshift | all) ;;
-        *)
-            error_exit "Invalid database type: ${DB_TYPE}. Must be: pgsql, mysql, oracle, redshift, or all"
-            ;;
-    esac
+    if command -v dot &> /dev/null; then
+        local graphviz_version
+        graphviz_version=$(dot -V 2>&1 | awk '{print $5}')
+        log "INFO" "Graphviz is already installed: ${graphviz_version}"
 
-    # Create installation directory if it doesn't exist
-    if [ ! -d "${INSTALL_DIR}" ]; then
-        log "INFO" "Creating installation directory: ${INSTALL_DIR}"
-        mkdir -p "${INSTALL_DIR}"
+        if [ "${FORCE_INSTALL}" = false ]; then
+            return 0
+        else
+            log "WARN" "Force install enabled - will reinstall Graphviz"
+        fi
+    else
+        log "INFO" "Graphviz is not installed"
     fi
 
-    log "DEBUG" "Configuration:"
-    log "DEBUG" "  Database Type: ${DB_TYPE}"
-    log "DEBUG" "  SchemaSpy Version: ${SCHEMASPY_VERSION}"
-    log "DEBUG" "  Installation Directory: ${INSTALL_DIR}"
-    log "DEBUG" "  Force Install: ${FORCE_INSTALL}"
-    log "DEBUG" "  Skip Java: ${SKIP_JAVA}"
-    log "DEBUG" "  Skip Graphviz: ${SKIP_GRAPHVIZ}"
-    log "DEBUG" "  Skip SchemaSpy: ${SKIP_SCHEMASPY}"
-    log "DEBUG" "  Skip JDBC: ${SKIP_JDBC}"
+    return 1
 }
 
 #######################################
 # Check if Java is installed
+#
+# Globals:
+#   FORCE_INSTALL - read
+#
+# Arguments:
+#   None
+#
+# Outputs:
+#   Log messages via log (stderr)
+#
+# Returns:
+#   0 on success; non-zero on failure
 #######################################
-check_java() {
+function check_java {
     log "INFO" "Checking Java installation..."
 
     if command -v java &> /dev/null; then
@@ -300,9 +292,423 @@ check_java() {
 }
 
 #######################################
-# Install Java
+# Display installation summary
+#
+# Globals:
+#   DB_TYPE - read
+#   INSTALL_DIR - read
+#   JDBC_VERSION_MYSQL - read
+#   JDBC_VERSION_POSTGRESQL - read
+#   JDBC_VERSION_REDSHIFT - read
+#   SCHEMASPY_VERSION - read
+#   SKIP_GRAPHVIZ - read
+#   SKIP_JAVA - read
+#   SKIP_JDBC - read
+#   SKIP_SCHEMASPY - read
+#
+# Arguments:
+#   None
+#
+# Outputs:
+#   Log messages via log (stderr)
+#
+# Returns:
+#   0 on success
 #######################################
-install_java() {
+function display_summary {
+    log "INFO" ""
+    log "INFO" "========================================"
+    log "INFO" "Installation Summary"
+    log "INFO" "========================================"
+
+    if [ "${SKIP_JAVA}" = false ]; then
+        if command -v java &> /dev/null; then
+            local java_version
+            java_version=$(java -version 2>&1 | head -n 1 | awk -F '"' '{print $2}')
+            log "INFO" "Java: ${java_version}"
+        fi
+    fi
+
+    if [ "${SKIP_GRAPHVIZ}" = false ]; then
+        if command -v dot &> /dev/null; then
+            local graphviz_version
+            graphviz_version=$(dot -V 2>&1 | awk '{print $5}')
+            log "INFO" "Graphviz: ${graphviz_version}"
+        fi
+    fi
+
+    if [ "${SKIP_SCHEMASPY}" = false ]; then
+        log "INFO" "SchemaSpy: ${SCHEMASPY_VERSION}"
+        log "INFO" "  Location: ${INSTALL_DIR}/schemaspy-${SCHEMASPY_VERSION}.jar"
+    fi
+
+    if [ "${SKIP_JDBC}" = false ]; then
+        case "${DB_TYPE}" in
+            pgsql)
+                log "INFO" "PostgreSQL JDBC: ${JDBC_VERSION_POSTGRESQL}"
+                log "INFO" "  Location: ${INSTALL_DIR}/pgsql-jdbc.jar"
+                ;;
+            mysql)
+                log "INFO" "MySQL JDBC: ${JDBC_VERSION_MYSQL}"
+                log "INFO" "  Location: ${INSTALL_DIR}/mysql-jdbc.jar"
+                ;;
+            redshift)
+                log "INFO" "Redshift JDBC: ${JDBC_VERSION_REDSHIFT}"
+                log "INFO" "  Location: ${INSTALL_DIR}/redshift-jdbc.jar"
+                ;;
+            all)
+                log "INFO" "PostgreSQL JDBC: ${JDBC_VERSION_POSTGRESQL}"
+                log "INFO" "  Location: ${INSTALL_DIR}/pgsql-jdbc.jar"
+                log "INFO" "MySQL JDBC: ${JDBC_VERSION_MYSQL}"
+                log "INFO" "  Location: ${INSTALL_DIR}/mysql-jdbc.jar"
+                log "INFO" "Redshift JDBC: ${JDBC_VERSION_REDSHIFT}"
+                log "INFO" "  Location: ${INSTALL_DIR}/redshift-jdbc.jar"
+                ;;
+        esac
+    fi
+
+    log "INFO" ""
+    log "INFO" "Next steps:"
+    log "INFO" "  Run: ./aws_schemaspy.sh -e <env> -i <identifier> -n <db_name>"
+    log "INFO" ""
+}
+
+#######################################
+# Download JDBC drivers
+#
+# Globals:
+#   DB_TYPE - read
+#   INSTALL_DIR - read
+#   SKIP_JDBC - read
+#
+# Arguments:
+#   None
+#
+# Outputs:
+#   Log messages via log (stderr)
+#
+# Returns:
+#   0 on success
+#######################################
+function download_jdbc_drivers {
+    if [ "${SKIP_JDBC}" = true ]; then
+        log "INFO" "Skipping JDBC driver download (--skip-jdbc specified)"
+        return 0
+    fi
+
+    log "INFO" "Downloading JDBC drivers for: ${DB_TYPE}"
+
+    case "${DB_TYPE}" in
+        pgsql)
+            download_postgresql_jdbc
+            ;;
+        mysql)
+            download_mysql_jdbc
+            ;;
+        redshift)
+            download_redshift_jdbc
+            ;;
+        oracle)
+            log "WARN" "Oracle JDBC driver must be manually downloaded due to license restrictions"
+            log "INFO" "Download from: https://www.oracle.com/database/technologies/appdev/jdbc-downloads.html"
+            log "INFO" "Place driver in: ${INSTALL_DIR}/oracle-jdbc.jar"
+            ;;
+        all)
+            download_postgresql_jdbc
+            download_mysql_jdbc
+            download_redshift_jdbc
+            log "WARN" "Oracle JDBC driver must be manually downloaded (see above)"
+            ;;
+    esac
+}
+
+#######################################
+# Download JDBC driver for MySQL
+#
+# Globals:
+#   DRY_RUN - read
+#   FORCE_INSTALL - read
+#   INSTALL_DIR - read
+#   JDBC_VERSION_MYSQL - read
+#
+# Arguments:
+#   None
+#
+# Outputs:
+#   Log messages via log (stderr)
+#
+# Returns:
+#   Exits via error_exit on fatal errors
+#   0 on success
+#######################################
+function download_mysql_jdbc {
+    log "INFO" "Checking MySQL JDBC driver..."
+
+    local jdbc_jar="${INSTALL_DIR}/mysql-jdbc.jar"
+
+    if [ -f "${jdbc_jar}" ] && [ "${FORCE_INSTALL}" = false ]; then
+        log "INFO" "MySQL JDBC driver is already downloaded: ${jdbc_jar}"
+        return 0
+    fi
+
+    log "INFO" "Downloading MySQL JDBC driver ${JDBC_VERSION_MYSQL}..."
+
+    if [ "${DRY_RUN}" = true ]; then
+        log "INFO" "DRY RUN - Would download MySQL JDBC driver to ${jdbc_jar}"
+        return 0
+    fi
+
+    local download_url="https://repo1.maven.org/maven2/com/mysql/mysql-connector-j/${JDBC_VERSION_MYSQL}/mysql-connector-j-${JDBC_VERSION_MYSQL}.jar"
+
+    curl -fsSL "${download_url}" -o "${jdbc_jar}"
+
+    # Verify download
+    if [ -f "${jdbc_jar}" ]; then
+        local file_size
+        file_size=$(du -h "${jdbc_jar}" | cut -f1)
+        log "INFO" "MySQL JDBC driver downloaded successfully: ${file_size}"
+    else
+        error_exit "MySQL JDBC driver download failed"
+    fi
+}
+
+#######################################
+# Download JDBC driver for PostgreSQL
+#
+# Globals:
+#   DRY_RUN - read
+#   FORCE_INSTALL - read
+#   INSTALL_DIR - read
+#   JDBC_VERSION_POSTGRESQL - read
+#
+# Arguments:
+#   None
+#
+# Outputs:
+#   Log messages via log (stderr)
+#
+# Returns:
+#   Exits via error_exit on fatal errors
+#   0 on success
+#######################################
+function download_postgresql_jdbc {
+    log "INFO" "Checking PostgreSQL JDBC driver..."
+
+    local jdbc_jar="${INSTALL_DIR}/pgsql-jdbc.jar"
+
+    if [ -f "${jdbc_jar}" ] && [ "${FORCE_INSTALL}" = false ]; then
+        log "INFO" "PostgreSQL JDBC driver is already downloaded: ${jdbc_jar}"
+        return 0
+    fi
+
+    log "INFO" "Downloading PostgreSQL JDBC driver ${JDBC_VERSION_POSTGRESQL}..."
+
+    if [ "${DRY_RUN}" = true ]; then
+        log "INFO" "DRY RUN - Would download PostgreSQL JDBC driver to ${jdbc_jar}"
+        return 0
+    fi
+
+    local download_url="https://jdbc.postgresql.org/download/postgresql-${JDBC_VERSION_POSTGRESQL}.jar"
+
+    curl -fsSL "${download_url}" -o "${jdbc_jar}"
+
+    # Verify download
+    if [ -f "${jdbc_jar}" ]; then
+        local file_size
+        file_size=$(du -h "${jdbc_jar}" | cut -f1)
+        ln -sf "${jdbc_jar}" "${INSTALL_DIR}/postgresql-jdbc.jar"
+        ln -sf "${jdbc_jar}" "${INSTALL_DIR}/pgsql11-jdbc.jar"
+        log "INFO" "PostgreSQL JDBC driver downloaded successfully: ${file_size}"
+    else
+        error_exit "PostgreSQL JDBC driver download failed"
+    fi
+}
+
+#######################################
+# Download JDBC driver for Redshift
+#
+# Globals:
+#   DRY_RUN - read
+#   FORCE_INSTALL - read
+#   INSTALL_DIR - read
+#   JDBC_VERSION_REDSHIFT - read
+#
+# Arguments:
+#   None
+#
+# Outputs:
+#   Log messages via log (stderr)
+#
+# Returns:
+#   Exits via error_exit on fatal errors
+#   0 on success
+#######################################
+function download_redshift_jdbc {
+    log "INFO" "Checking Redshift JDBC driver..."
+
+    local jdbc_jar="${INSTALL_DIR}/redshift-jdbc.jar"
+
+    if [ -f "${jdbc_jar}" ] && [ "${FORCE_INSTALL}" = false ]; then
+        log "INFO" "Redshift JDBC driver is already downloaded: ${jdbc_jar}"
+        return 0
+    fi
+
+    log "INFO" "Downloading Redshift JDBC driver ${JDBC_VERSION_REDSHIFT}..."
+
+    if [ "${DRY_RUN}" = true ]; then
+        log "INFO" "DRY RUN - Would download Redshift JDBC driver to ${jdbc_jar}"
+        return 0
+    fi
+
+    local download_url="https://s3.amazonaws.com/redshift-downloads/drivers/jdbc/${JDBC_VERSION_REDSHIFT}/redshift-jdbc42-${JDBC_VERSION_REDSHIFT}.jar"
+
+    curl -fsSL "${download_url}" -o "${jdbc_jar}"
+
+    # Verify download
+    if [ -f "${jdbc_jar}" ]; then
+        local file_size
+        file_size=$(du -h "${jdbc_jar}" | cut -f1)
+        log "INFO" "Redshift JDBC driver downloaded successfully: ${file_size}"
+    else
+        error_exit "Redshift JDBC driver download failed"
+    fi
+}
+
+#######################################
+# Download SchemaSpy
+#
+# Globals:
+#   DRY_RUN - read
+#   FORCE_INSTALL - read
+#   INSTALL_DIR - read
+#   SCHEMASPY_VERSION - read
+#   SKIP_SCHEMASPY - read
+#
+# Arguments:
+#   None
+#
+# Outputs:
+#   Log messages via log (stderr)
+#
+# Returns:
+#   Exits via error_exit on fatal errors
+#   0 on success
+#######################################
+function download_schemaspy {
+    if [ "${SKIP_SCHEMASPY}" = true ]; then
+        log "INFO" "Skipping SchemaSpy download (--skip-schemaspy specified)"
+        return 0
+    fi
+
+    log "INFO" "Checking SchemaSpy..."
+
+    local schemaspy_jar="${INSTALL_DIR}/schemaspy-${SCHEMASPY_VERSION}.jar"
+
+    if [ -f "${schemaspy_jar}" ] && [ "${FORCE_INSTALL}" = false ]; then
+        log "INFO" "SchemaSpy is already downloaded: ${schemaspy_jar}"
+        return 0
+    fi
+
+    log "INFO" "Downloading SchemaSpy ${SCHEMASPY_VERSION}..."
+
+    if [ "${DRY_RUN}" = true ]; then
+        log "INFO" "DRY RUN - Would download SchemaSpy to ${schemaspy_jar}"
+        return 0
+    fi
+
+    local download_url="https://github.com/schemaspy/schemaspy/releases/download/v${SCHEMASPY_VERSION}/schemaspy-app.jar"
+
+    curl -fsSL "${download_url}" -o "${schemaspy_jar}"
+
+    # Verify download
+    if [ -f "${schemaspy_jar}" ]; then
+        local file_size
+        file_size=$(du -h "${schemaspy_jar}" | cut -f1)
+        log "INFO" "SchemaSpy downloaded successfully: ${file_size}"
+    else
+        error_exit "SchemaSpy download failed"
+    fi
+}
+
+#######################################
+# Install Graphviz
+#
+# Globals:
+#   DRY_RUN - read
+#   FORCE_INSTALL - read
+#   SKIP_GRAPHVIZ - read
+#
+# Arguments:
+#   None
+#
+# Outputs:
+#   Log messages via log (stderr)
+#
+# Returns:
+#   Exits via error_exit on fatal errors
+#   0 on success
+#######################################
+function install_graphviz {
+    if [ "${SKIP_GRAPHVIZ}" = true ]; then
+        log "INFO" "Skipping Graphviz installation (--skip-graphviz specified)"
+        return 0
+    fi
+
+    if check_graphviz && [ "${FORCE_INSTALL}" = false ]; then
+        return 0
+    fi
+
+    log "INFO" "Installing Graphviz..."
+
+    if [ "${DRY_RUN}" = true ]; then
+        log "INFO" "DRY RUN - Would install Graphviz"
+        return 0
+    fi
+
+    # Detect package manager and install
+    if command -v apt-get &> /dev/null; then
+        log "INFO" "Using apt-get to install Graphviz..."
+        sudo apt-get update -qq
+        sudo apt-get install -y graphviz
+    elif command -v yum &> /dev/null; then
+        log "INFO" "Using yum to install Graphviz..."
+        sudo yum install -y graphviz
+    elif command -v dnf &> /dev/null; then
+        log "INFO" "Using dnf to install Graphviz..."
+        sudo dnf install -y graphviz
+    else
+        error_exit "No supported package manager found (apt-get, yum, dnf)"
+    fi
+
+    # Verify installation
+    if command -v dot &> /dev/null; then
+        local graphviz_version
+        graphviz_version=$(dot -V 2>&1 | awk '{print $5}')
+        log "INFO" "Graphviz installed successfully: ${graphviz_version}"
+    else
+        error_exit "Graphviz installation failed"
+    fi
+}
+
+#######################################
+# Install Java
+#
+# Globals:
+#   DRY_RUN - read
+#   FORCE_INSTALL - read
+#   SKIP_JAVA - read
+#
+# Arguments:
+#   None
+#
+# Outputs:
+#   Log messages via log (stderr)
+#
+# Returns:
+#   Exits via error_exit on fatal errors
+#   0 on success
+#######################################
+function install_java {
     if [ "${SKIP_JAVA}" = true ]; then
         log "INFO" "Skipping Java installation (--skip-java specified)"
         return 0
@@ -362,255 +768,85 @@ install_java() {
 }
 
 #######################################
-# Check if Graphviz is installed
+# validate_parameters: Validate parameters
+#
+# Description:
+#   Validates parameters and sets default values
+#
+# Globals:
+#   DB_TYPE - Database type
+#   INSTALL_DIR - Installation directory
+#   FORCE_INSTALL - Force reinstallation flag
+#   SKIP_JAVA - Skip Java installation flag
+#   SKIP_GRAPHVIZ - Skip Graphviz installation flag
+#   SKIP_SCHEMASPY - Skip SchemaSpy download flag
+#   SKIP_JDBC - Skip JDBC driver download flag
+#
+# Arguments:
+#   None
+#
+# Outputs:
+#   None
+#
+# Returns:
+#   None
+#
+# Usage:
+#   validate_parameters
+#
 #######################################
-check_graphviz() {
-    log "INFO" "Checking Graphviz installation..."
+function validate_parameters {
+    log "INFO" "Validating parameters..."
 
-    if command -v dot &> /dev/null; then
-        local graphviz_version
-        graphviz_version=$(dot -V 2>&1 | awk '{print $5}')
-        log "INFO" "Graphviz is already installed: ${graphviz_version}"
-
-        if [ "${FORCE_INSTALL}" = false ]; then
-            return 0
-        else
-            log "WARN" "Force install enabled - will reinstall Graphviz"
-        fi
-    else
-        log "INFO" "Graphviz is not installed"
-    fi
-
-    return 1
-}
-
-#######################################
-# Install Graphviz
-#######################################
-install_graphviz() {
-    if [ "${SKIP_GRAPHVIZ}" = true ]; then
-        log "INFO" "Skipping Graphviz installation (--skip-graphviz specified)"
-        return 0
-    fi
-
-    if check_graphviz && [ "${FORCE_INSTALL}" = false ]; then
-        return 0
-    fi
-
-    log "INFO" "Installing Graphviz..."
-
-    if [ "${DRY_RUN}" = true ]; then
-        log "INFO" "DRY RUN - Would install Graphviz"
-        return 0
-    fi
-
-    # Detect package manager and install
-    if command -v apt-get &> /dev/null; then
-        log "INFO" "Using apt-get to install Graphviz..."
-        sudo apt-get update -qq
-        sudo apt-get install -y graphviz
-    elif command -v yum &> /dev/null; then
-        log "INFO" "Using yum to install Graphviz..."
-        sudo yum install -y graphviz
-    elif command -v dnf &> /dev/null; then
-        log "INFO" "Using dnf to install Graphviz..."
-        sudo dnf install -y graphviz
-    else
-        error_exit "No supported package manager found (apt-get, yum, dnf)"
-    fi
-
-    # Verify installation
-    if command -v dot &> /dev/null; then
-        local graphviz_version
-        graphviz_version=$(dot -V 2>&1 | awk '{print $5}')
-        log "INFO" "Graphviz installed successfully: ${graphviz_version}"
-    else
-        error_exit "Graphviz installation failed"
-    fi
-}
-
-#######################################
-# Download SchemaSpy
-#######################################
-download_schemaspy() {
-    if [ "${SKIP_SCHEMASPY}" = true ]; then
-        log "INFO" "Skipping SchemaSpy download (--skip-schemaspy specified)"
-        return 0
-    fi
-
-    log "INFO" "Checking SchemaSpy..."
-
-    local schemaspy_jar="${INSTALL_DIR}/schemaspy.jar"
-
-    if [ -f "${schemaspy_jar}" ] && [ "${FORCE_INSTALL}" = false ]; then
-        log "INFO" "SchemaSpy is already downloaded: ${schemaspy_jar}"
-        return 0
-    fi
-
-    log "INFO" "Downloading SchemaSpy ${SCHEMASPY_VERSION}..."
-
-    if [ "${DRY_RUN}" = true ]; then
-        log "INFO" "DRY RUN - Would download SchemaSpy to ${schemaspy_jar}"
-        return 0
-    fi
-
-    local download_url="https://github.com/schemaspy/schemaspy/releases/download/v${SCHEMASPY_VERSION}/schemaspy-app.jar"
-
-    curl -fsSL "${download_url}" -o "${schemaspy_jar}"
-
-    # Verify download
-    if [ -f "${schemaspy_jar}" ]; then
-        local file_size
-        file_size=$(du -h "${schemaspy_jar}" | cut -f1)
-        log "INFO" "SchemaSpy downloaded successfully: ${file_size}"
-    else
-        error_exit "SchemaSpy download failed"
-    fi
-}
-
-#######################################
-# Download JDBC driver for PostgreSQL
-#######################################
-download_postgresql_jdbc() {
-    log "INFO" "Checking PostgreSQL JDBC driver..."
-
-    local jdbc_jar="${INSTALL_DIR}/pgsql-jdbc.jar"
-
-    if [ -f "${jdbc_jar}" ] && [ "${FORCE_INSTALL}" = false ]; then
-        log "INFO" "PostgreSQL JDBC driver is already downloaded: ${jdbc_jar}"
-        return 0
-    fi
-
-    log "INFO" "Downloading PostgreSQL JDBC driver ${JDBC_VERSION_POSTGRESQL}..."
-
-    if [ "${DRY_RUN}" = true ]; then
-        log "INFO" "DRY RUN - Would download PostgreSQL JDBC driver to ${jdbc_jar}"
-        return 0
-    fi
-
-    local download_url="https://jdbc.postgresql.org/download/postgresql-${JDBC_VERSION_POSTGRESQL}.jar"
-
-    curl -fsSL "${download_url}" -o "${jdbc_jar}"
-
-    # Verify download
-    if [ -f "${jdbc_jar}" ]; then
-        local file_size
-        file_size=$(du -h "${jdbc_jar}" | cut -f1)
-        ln -s "${jdbc_jar}" "${INSTALL_DIR}/postgresql-jdbc.jar"
-        ln -s "${jdbc_jar}" "${INSTALL_DIR}/pgsql11-jdbc.jar"
-        log "INFO" "PostgreSQL JDBC driver downloaded successfully: ${file_size}"
-    else
-        error_exit "PostgreSQL JDBC driver download failed"
-    fi
-}
-
-#######################################
-# Download JDBC driver for MySQL
-#######################################
-download_mysql_jdbc() {
-    log "INFO" "Checking MySQL JDBC driver..."
-
-    local jdbc_jar="${INSTALL_DIR}/mysql-jdbc.jar"
-
-    if [ -f "${jdbc_jar}" ] && [ "${FORCE_INSTALL}" = false ]; then
-        log "INFO" "MySQL JDBC driver is already downloaded: ${jdbc_jar}"
-        return 0
-    fi
-
-    log "INFO" "Downloading MySQL JDBC driver ${JDBC_VERSION_MYSQL}..."
-
-    if [ "${DRY_RUN}" = true ]; then
-        log "INFO" "DRY RUN - Would download MySQL JDBC driver to ${jdbc_jar}"
-        return 0
-    fi
-
-    local download_url="https://repo1.maven.org/maven2/com/mysql/mysql-connector-j/${JDBC_VERSION_MYSQL}/mysql-connector-j-${JDBC_VERSION_MYSQL}.jar"
-
-    curl -fsSL "${download_url}" -o "${jdbc_jar}"
-
-    # Verify download
-    if [ -f "${jdbc_jar}" ]; then
-        local file_size
-        file_size=$(du -h "${jdbc_jar}" | cut -f1)
-        log "INFO" "MySQL JDBC driver downloaded successfully: ${file_size}"
-    else
-        error_exit "MySQL JDBC driver download failed"
-    fi
-}
-
-#######################################
-# Download JDBC driver for Redshift
-#######################################
-download_redshift_jdbc() {
-    log "INFO" "Checking Redshift JDBC driver..."
-
-    local jdbc_jar="${INSTALL_DIR}/redshift-jdbc.jar"
-
-    if [ -f "${jdbc_jar}" ] && [ "${FORCE_INSTALL}" = false ]; then
-        log "INFO" "Redshift JDBC driver is already downloaded: ${jdbc_jar}"
-        return 0
-    fi
-
-    log "INFO" "Downloading Redshift JDBC driver ${JDBC_VERSION_REDSHIFT}..."
-
-    if [ "${DRY_RUN}" = true ]; then
-        log "INFO" "DRY RUN - Would download Redshift JDBC driver to ${jdbc_jar}"
-        return 0
-    fi
-
-    local download_url="https://s3.amazonaws.com/redshift-downloads/drivers/jdbc/${JDBC_VERSION_REDSHIFT}/redshift-jdbc42-${JDBC_VERSION_REDSHIFT}.jar"
-
-    curl -fsSL "${download_url}" -o "${jdbc_jar}"
-
-    # Verify download
-    if [ -f "${jdbc_jar}" ]; then
-        local file_size
-        file_size=$(du -h "${jdbc_jar}" | cut -f1)
-        log "INFO" "Redshift JDBC driver downloaded successfully: ${file_size}"
-    else
-        error_exit "Redshift JDBC driver download failed"
-    fi
-}
-
-#######################################
-# Download JDBC drivers
-#######################################
-download_jdbc_drivers() {
-    if [ "${SKIP_JDBC}" = true ]; then
-        log "INFO" "Skipping JDBC driver download (--skip-jdbc specified)"
-        return 0
-    fi
-
-    log "INFO" "Downloading JDBC drivers for: ${DB_TYPE}"
-
+    # Validate database type
     case "${DB_TYPE}" in
-        pgsql)
-            download_postgresql_jdbc
-            ;;
-        mysql)
-            download_mysql_jdbc
-            ;;
-        redshift)
-            download_redshift_jdbc
-            ;;
-        oracle)
-            log "WARN" "Oracle JDBC driver must be manually downloaded due to license restrictions"
-            log "INFO" "Download from: https://www.oracle.com/database/technologies/appdev/jdbc-downloads.html"
-            log "INFO" "Place driver in: ${INSTALL_DIR}/oracle-jdbc.jar"
-            ;;
-        all)
-            download_postgresql_jdbc
-            download_mysql_jdbc
-            download_redshift_jdbc
-            log "WARN" "Oracle JDBC driver must be manually downloaded (see above)"
+        pgsql | mysql | oracle | redshift | all) ;;
+        *)
+            error_exit "Invalid database type: ${DB_TYPE}. Must be: pgsql, mysql, oracle, redshift, or all"
             ;;
     esac
+
+    # Create installation directory if it doesn't exist
+    if [ ! -d "${INSTALL_DIR}" ]; then
+        log "INFO" "Creating installation directory: ${INSTALL_DIR}"
+        mkdir -p "${INSTALL_DIR}"
+    fi
+
+    log "DEBUG" "Configuration:"
+    log "DEBUG" "  Database Type: ${DB_TYPE}"
+    log "DEBUG" "  SchemaSpy Version: ${SCHEMASPY_VERSION}"
+    log "DEBUG" "  Installation Directory: ${INSTALL_DIR}"
+    log "DEBUG" "  Force Install: ${FORCE_INSTALL}"
+    log "DEBUG" "  Skip Java: ${SKIP_JAVA}"
+    log "DEBUG" "  Skip Graphviz: ${SKIP_GRAPHVIZ}"
+    log "DEBUG" "  Skip SchemaSpy: ${SKIP_SCHEMASPY}"
+    log "DEBUG" "  Skip JDBC: ${SKIP_JDBC}"
 }
 
 #######################################
 # Verify installations
+#
+# Globals:
+#   DB_TYPE - read
+#   DRY_RUN - read
+#   INSTALL_DIR - read
+#   SCHEMASPY_VERSION - read
+#   SKIP_GRAPHVIZ - read
+#   SKIP_JAVA - read
+#   SKIP_JDBC - read
+#   SKIP_SCHEMASPY - read
+#
+# Arguments:
+#   None
+#
+# Outputs:
+#   Log messages via log (stderr)
+#
+# Returns:
+#   Exits via error_exit on fatal errors
+#   0 on success
 #######################################
-verify_installations() {
+function verify_installations {
     log "INFO" "Verifying installations..."
 
     if [ "${DRY_RUN}" = true ]; then
@@ -707,70 +943,21 @@ verify_installations() {
 }
 
 #######################################
-# Display installation summary
-#######################################
-display_summary() {
-    log "INFO" ""
-    log "INFO" "========================================"
-    log "INFO" "Installation Summary"
-    log "INFO" "========================================"
-
-    if [ "${SKIP_JAVA}" = false ]; then
-        if command -v java &> /dev/null; then
-            local java_version
-            java_version=$(java -version 2>&1 | head -n 1 | awk -F '"' '{print $2}')
-            log "INFO" "Java: ${java_version}"
-        fi
-    fi
-
-    if [ "${SKIP_GRAPHVIZ}" = false ]; then
-        if command -v dot &> /dev/null; then
-            local graphviz_version
-            graphviz_version=$(dot -V 2>&1 | awk '{print $5}')
-            log "INFO" "Graphviz: ${graphviz_version}"
-        fi
-    fi
-
-    if [ "${SKIP_SCHEMASPY}" = false ]; then
-        log "INFO" "SchemaSpy: ${SCHEMASPY_VERSION}"
-        log "INFO" "  Location: ${INSTALL_DIR}/schemaspy-${SCHEMASPY_VERSION}.jar"
-    fi
-
-    if [ "${SKIP_JDBC}" = false ]; then
-        case "${DB_TYPE}" in
-            pgsql)
-                log "INFO" "PostgreSQL JDBC: ${JDBC_VERSION_POSTGRESQL}"
-                log "INFO" "  Location: ${INSTALL_DIR}/pgsql-jdbc.jar"
-                ;;
-            mysql)
-                log "INFO" "MySQL JDBC: ${JDBC_VERSION_MYSQL}"
-                log "INFO" "  Location: ${INSTALL_DIR}/mysql-jdbc.jar"
-                ;;
-            redshift)
-                log "INFO" "Redshift JDBC: ${JDBC_VERSION_REDSHIFT}"
-                log "INFO" "  Location: ${INSTALL_DIR}/redshift-jdbc.jar"
-                ;;
-            all)
-                log "INFO" "PostgreSQL JDBC: ${JDBC_VERSION_POSTGRESQL}"
-                log "INFO" "  Location: ${INSTALL_DIR}/pgsql-jdbc.jar"
-                log "INFO" "MySQL JDBC: ${JDBC_VERSION_MYSQL}"
-                log "INFO" "  Location: ${INSTALL_DIR}/mysql-jdbc.jar"
-                log "INFO" "Redshift JDBC: ${JDBC_VERSION_REDSHIFT}"
-                log "INFO" "  Location: ${INSTALL_DIR}/redshift-jdbc.jar"
-                ;;
-        esac
-    fi
-
-    log "INFO" ""
-    log "INFO" "Next steps:"
-    log "INFO" "  Run: ./aws_schemaspy.sh -e <env> -i <identifier> -n <db_name>"
-    log "INFO" ""
-}
-
-#######################################
 # Main execution function
+#
+# Globals:
+#   None
+#
+# Arguments:
+#   $@ - Command line arguments
+#
+# Outputs:
+#   None
+#
+# Returns:
+#   0 on success
 #######################################
-main() {
+function main {
     echo_section "SchemaSpy Installation Script"
 
     # Parse command line arguments

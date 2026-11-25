@@ -169,14 +169,17 @@ function parse_arguments {
                 shift
                 ;;
             -o | --output)
+                [[ $# -ge 2 ]] || error_exit "Option $1 requires a value"
                 OUTPUT_FILE="$2"
                 shift 2
                 ;;
             -r | --region)
+                [[ $# -ge 2 ]] || error_exit "Option $1 requires a value"
                 AWS_REGION="$2"
                 shift 2
                 ;;
             -f | --format)
+                [[ $# -ge 2 ]] || error_exit "Option $1 requires a value"
                 OUTPUT_FORMAT="$2"
                 export OUTPUT_FORMAT
                 shift 2
@@ -361,7 +364,8 @@ function generate_generic_resources {
                             resources=$(aws ecs list-clusters --region "$region" --query "clusterArns[]" --output json 2> /dev/null || echo '[]')
                             ;;
                         "dynamodb")
-                            resources=$(aws_paginate_items 'TableNames' aws dynamodb list-tables --region "$region" 2> /dev/null || echo '[]')
+                            # aws_paginate_items emits one JSON item per line; slurp them into one array
+                            resources=$(aws_paginate_items 'TableNames' aws dynamodb list-tables --region "$region" 2> /dev/null | jq -sc '.' 2> /dev/null) || resources='[]'
                             ;;
                         *)
                             # Generic command execution for other services
@@ -437,6 +441,254 @@ EOF
             done
             ;;
     esac
+}
+
+#######################################
+# generate_hierarchical_resources: Generate hierarchical resources with complex logic
+#
+# Description:
+#   Generate hierarchical resources with complex logic
+#
+# Arguments:
+#   $1 - Resource name
+#
+# Globals:
+#   None
+#
+# Outputs:
+#   None
+#
+# Returns:
+#   None
+#
+# Usage:
+#   generate_hierarchical_resources "resource_name"
+#
+#######################################
+generate_hierarchical_resources() {
+    local resource_name="$1"
+    log "INFO" "Generating hierarchical resources for: $resource_name"
+
+    case "$resource_name" in
+        "lambda_nonvpc")
+            generate_lambda_nonvpc_hierarchical_resources
+            ;;
+        "s3_regional")
+            generate_s3_hierarchical_resources
+            ;;
+        *)
+            log "WARN" "Unknown hierarchical resource type: $resource_name"
+            ;;
+    esac
+}
+
+#######################################
+# generate_lambda_nonvpc_hierarchical_resources: Generate Non-VPC Lambda resources hierarchically
+#
+# Description:
+#   Generate Non-VPC Lambda resources hierarchically
+#
+# Arguments:
+#   None
+#
+# Globals:
+#   REGIONS_TO_CHECK - Array of regions to check
+#   TEMP_YAML_FILE - Temporary YAML file path
+#
+# Outputs:
+#   None
+#
+# Returns:
+#   None
+#
+# Usage:
+#   generate_lambda_nonvpc_hierarchical_resources
+#
+#######################################
+generate_lambda_nonvpc_hierarchical_resources() {
+    log "INFO" "Generating Lambda Non-VPC resources"
+
+    for region in "${REGIONS_TO_CHECK[@]}"; do
+        local safe_region="${region//-/_}"
+
+        # Get all Lambda functions (paginated)
+        local functions_json
+        functions_json=$(aws_paginate_items 'Functions' aws lambda list-functions --region "$region" 2> /dev/null | jq -s '{Functions: .}' 2> /dev/null) || functions_json='{"Functions":[]}'
+
+        # Filter Non-VPC functions
+        local nonvpc_functions=()
+        while IFS= read -r function_base64; do
+            local function_json
+            function_json=$(echo "$function_base64" | base64 --decode 2> /dev/null)
+            [[ -z $function_json ]] && continue
+
+            local function_name
+            function_name=$(echo "$function_json" | jq -r '.FunctionName // empty')
+            [[ -z $function_name ]] && continue
+
+            # Check VPC configuration
+            local vpc_config
+            vpc_config=$(echo "$function_json" | jq -r '.VpcConfig // empty')
+
+            local is_vpc=false
+            if [[ -n $vpc_config && $vpc_config != "null" && $vpc_config != "{}" ]]; then
+                local vpc_id
+                vpc_id=$(echo "$function_json" | jq -r '.VpcConfig.VpcId // empty')
+                if [[ -n $vpc_id && $vpc_id != "null" ]]; then
+                    is_vpc=true
+                fi
+            fi
+
+            if [[ $is_vpc != true ]]; then
+                nonvpc_functions+=("$function_name")
+            fi
+        done < <(echo "$functions_json" | jq -r '.Functions[]? | @base64')
+
+        # Generate stack if Non-VPC functions exist
+        if [[ ${#nonvpc_functions[@]} -gt 0 ]]; then
+            cat >> "$TEMP_YAML_FILE" << EOF
+
+    LambdaNonVPCStack_${safe_region}:
+      Type: AWS::Diagram::VerticalStack
+      Title: Lambda Functions (Non-VPC) ($region)
+      Children:
+EOF
+            local counter=1
+            for func_name in "${nonvpc_functions[@]}"; do
+                echo "        - LambdaNonVPC_${safe_region}_${counter}" >> "$TEMP_YAML_FILE"
+                counter=$((counter + 1))
+            done
+
+            # Generate resource definitions
+            counter=1
+            for func_name in "${nonvpc_functions[@]}"; do
+                cat >> "$TEMP_YAML_FILE" << EOF
+
+    LambdaNonVPC_${safe_region}_${counter}:
+      Type: AWS::Lambda::Function
+      Title: $func_name (Non-VPC)
+EOF
+                counter=$((counter + 1))
+            done
+        fi
+    done
+}
+
+#######################################
+# generate_lambda_vpc_hierarchical_resources: Generate lambda resources hierarchically with VPC categorization
+#
+# Description:
+#   Generate lambda resources hierarchically with VPC categorization
+#
+# Arguments:
+#   None
+#
+# Globals:
+#   None
+#
+# Outputs:
+#   None
+#
+# Returns:
+#   None
+#
+# Usage:
+#   generate_lambda_vpc_hierarchical_resources
+#
+#######################################
+generate_lambda_vpc_hierarchical_resources() {
+    log "INFO" "Lambda VPC resources integrated into VPC hierarchy (no separate stack needed)"
+    # VPC Lambda functions are automatically included in generate_vpc_hierarchical_resources
+    # This ensures proper parent-child relationships within VPC → Subnet → Lambda structure
+}
+
+#######################################
+# generate_s3_hierarchical_resources: Generate S3 resources hierarchically
+#
+# Description:
+#   Generate S3 resources hierarchically
+#
+# Arguments:
+#   None
+#
+# Globals:
+#   REGIONS_TO_CHECK - Array of regions to check
+#   TEMP_YAML_FILE - Temporary YAML file path
+#
+# Outputs:
+#   None
+#
+# Returns:
+#   None
+#
+# Usage:
+#   generate_s3_hierarchical_resources
+#
+#######################################
+generate_s3_hierarchical_resources() {
+    log "INFO" "Generating S3 resources"
+
+    for region in "${REGIONS_TO_CHECK[@]}"; do
+        local safe_region="${region//-/_}"
+
+        # Get all S3 buckets (global)
+        local buckets_json
+        buckets_json=$(aws s3api list-buckets 2> /dev/null || echo '{"Buckets":[]}')
+
+        # Filter buckets by region
+        local region_buckets=()
+        while IFS= read -r bucket_base64; do
+            local bucket_json
+            bucket_json=$(echo "$bucket_base64" | base64 --decode 2> /dev/null)
+            [[ -z $bucket_json ]] && continue
+
+            local bucket_name
+            bucket_name=$(echo "$bucket_json" | jq -r '.Name // empty')
+            [[ -z $bucket_name ]] && continue
+
+            # Get bucket location
+            local bucket_region
+            bucket_region=$(aws s3api get-bucket-location --bucket "$bucket_name" 2> /dev/null | jq -r '.LocationConstraint // "us-east-1"')
+
+            # Handle us-east-1 special case
+            if [[ $bucket_region == "null" || -z $bucket_region ]]; then
+                bucket_region="us-east-1"
+            fi
+
+            # Filter by region
+            if [[ $bucket_region == "$region" ]]; then
+                region_buckets+=("$bucket_name")
+            fi
+        done < <(echo "$buckets_json" | jq -r '.Buckets[]? | @base64')
+
+        # Generate stack if buckets exist in this region
+        if [[ ${#region_buckets[@]} -gt 0 ]]; then
+            cat >> "$TEMP_YAML_FILE" << EOF
+
+    S3Stack_${safe_region}:
+      Type: AWS::Diagram::VerticalStack
+      Title: S3 Buckets ($region)
+      Children:
+EOF
+            local counter=1
+            for bucket_name in "${region_buckets[@]}"; do
+                echo "        - S3_${safe_region}_${counter}" >> "$TEMP_YAML_FILE"
+                counter=$((counter + 1))
+            done
+
+            # Generate resource definitions
+            counter=1
+            for bucket_name in "${region_buckets[@]}"; do
+                cat >> "$TEMP_YAML_FILE" << EOF
+
+    S3_${safe_region}_${counter}:
+      Type: AWS::S3::Bucket
+      Title: $bucket_name
+EOF
+                counter=$((counter + 1))
+            done
+        fi
+    done
 }
 
 #######################################
@@ -656,7 +908,7 @@ EOF
 
                                     # Get Lambda functions in this VPC (paginated)
                                     local lambda_functions
-                                    lambda_functions=$(aws_paginate_items 'Functions' aws lambda list-functions --region "$region" 2> /dev/null | jq -s '{Functions: .}' 2> /dev/null || echo '{"Functions":[]}')
+                                    lambda_functions=$(aws_paginate_items 'Functions' aws lambda list-functions --region "$region" 2> /dev/null | jq -s '{Functions: .}' 2> /dev/null) || lambda_functions='{"Functions":[]}'
 
                                     local ec2_children=()
                                     local lambda_children=()
@@ -781,254 +1033,6 @@ EOF
             done
             ;;
     esac
-}
-
-#######################################
-# generate_hierarchical_resources: Generate hierarchical resources with complex logic
-#
-# Description:
-#   Generate hierarchical resources with complex logic
-#
-# Arguments:
-#   $1 - Resource name
-#
-# Globals:
-#   None
-#
-# Outputs:
-#   None
-#
-# Returns:
-#   None
-#
-# Usage:
-#   generate_hierarchical_resources "resource_name"
-#
-#######################################
-generate_hierarchical_resources() {
-    local resource_name="$1"
-    log "INFO" "Generating hierarchical resources for: $resource_name"
-
-    case "$resource_name" in
-        "lambda_nonvpc")
-            generate_lambda_nonvpc_hierarchical_resources
-            ;;
-        "s3_regional")
-            generate_s3_hierarchical_resources
-            ;;
-        *)
-            log "WARN" "Unknown hierarchical resource type: $resource_name"
-            ;;
-    esac
-}
-
-#######################################
-# generate_lambda_vpc_hierarchical_resources: Generate lambda resources hierarchically with VPC categorization
-#
-# Description:
-#   Generate lambda resources hierarchically with VPC categorization
-#
-# Arguments:
-#   None
-#
-# Globals:
-#   None
-#
-# Outputs:
-#   None
-#
-# Returns:
-#   None
-#
-# Usage:
-#   generate_lambda_vpc_hierarchical_resources
-#
-#######################################
-generate_lambda_vpc_hierarchical_resources() {
-    log "INFO" "Lambda VPC resources integrated into VPC hierarchy (no separate stack needed)"
-    # VPC Lambda functions are automatically included in generate_vpc_hierarchical_resources
-    # This ensures proper parent-child relationships within VPC → Subnet → Lambda structure
-}
-
-#######################################
-# generate_lambda_nonvpc_hierarchical_resources: Generate Non-VPC Lambda resources hierarchically
-#
-# Description:
-#   Generate Non-VPC Lambda resources hierarchically
-#
-# Arguments:
-#   None
-#
-# Globals:
-#   REGIONS_TO_CHECK - Array of regions to check
-#   TEMP_YAML_FILE - Temporary YAML file path
-#
-# Outputs:
-#   None
-#
-# Returns:
-#   None
-#
-# Usage:
-#   generate_lambda_nonvpc_hierarchical_resources
-#
-#######################################
-generate_lambda_nonvpc_hierarchical_resources() {
-    log "INFO" "Generating Lambda Non-VPC resources"
-
-    for region in "${REGIONS_TO_CHECK[@]}"; do
-        local safe_region="${region//-/_}"
-
-        # Get all Lambda functions (paginated)
-        local functions_json
-        functions_json=$(aws_paginate_items 'Functions' aws lambda list-functions --region "$region" 2> /dev/null | jq -s '{Functions: .}' 2> /dev/null || echo '{"Functions":[]}')
-
-        # Filter Non-VPC functions
-        local nonvpc_functions=()
-        while IFS= read -r function_base64; do
-            local function_json
-            function_json=$(echo "$function_base64" | base64 --decode 2> /dev/null)
-            [[ -z $function_json ]] && continue
-
-            local function_name
-            function_name=$(echo "$function_json" | jq -r '.FunctionName // empty')
-            [[ -z $function_name ]] && continue
-
-            # Check VPC configuration
-            local vpc_config
-            vpc_config=$(echo "$function_json" | jq -r '.VpcConfig // empty')
-
-            local is_vpc=false
-            if [[ -n $vpc_config && $vpc_config != "null" && $vpc_config != "{}" ]]; then
-                local vpc_id
-                vpc_id=$(echo "$function_json" | jq -r '.VpcConfig.VpcId // empty')
-                if [[ -n $vpc_id && $vpc_id != "null" ]]; then
-                    is_vpc=true
-                fi
-            fi
-
-            if [[ $is_vpc != true ]]; then
-                nonvpc_functions+=("$function_name")
-            fi
-        done < <(echo "$functions_json" | jq -r '.Functions[]? | @base64')
-
-        # Generate stack if Non-VPC functions exist
-        if [[ ${#nonvpc_functions[@]} -gt 0 ]]; then
-            cat >> "$TEMP_YAML_FILE" << EOF
-
-    LambdaNonVPCStack_${safe_region}:
-      Type: AWS::Diagram::VerticalStack
-      Title: Lambda Functions (Non-VPC) ($region)
-      Children:
-EOF
-            local counter=1
-            for func_name in "${nonvpc_functions[@]}"; do
-                echo "        - LambdaNonVPC_${safe_region}_${counter}" >> "$TEMP_YAML_FILE"
-                counter=$((counter + 1))
-            done
-
-            # Generate resource definitions
-            counter=1
-            for func_name in "${nonvpc_functions[@]}"; do
-                cat >> "$TEMP_YAML_FILE" << EOF
-
-    LambdaNonVPC_${safe_region}_${counter}:
-      Type: AWS::Lambda::Function
-      Title: $func_name (Non-VPC)
-EOF
-                counter=$((counter + 1))
-            done
-        fi
-    done
-}
-
-#######################################
-# generate_s3_hierarchical_resources: Generate S3 resources hierarchically
-#
-# Description:
-#   Generate S3 resources hierarchically
-#
-# Arguments:
-#   None
-#
-# Globals:
-#   REGIONS_TO_CHECK - Array of regions to check
-#   TEMP_YAML_FILE - Temporary YAML file path
-#
-# Outputs:
-#   None
-#
-# Returns:
-#   None
-#
-# Usage:
-#   generate_s3_hierarchical_resources
-#
-#######################################
-generate_s3_hierarchical_resources() {
-    log "INFO" "Generating S3 resources"
-
-    for region in "${REGIONS_TO_CHECK[@]}"; do
-        local safe_region="${region//-/_}"
-
-        # Get all S3 buckets (global)
-        local buckets_json
-        buckets_json=$(aws s3api list-buckets 2> /dev/null || echo '{"Buckets":[]}')
-
-        # Filter buckets by region
-        local region_buckets=()
-        while IFS= read -r bucket_base64; do
-            local bucket_json
-            bucket_json=$(echo "$bucket_base64" | base64 --decode 2> /dev/null)
-            [[ -z $bucket_json ]] && continue
-
-            local bucket_name
-            bucket_name=$(echo "$bucket_json" | jq -r '.Name // empty')
-            [[ -z $bucket_name ]] && continue
-
-            # Get bucket location
-            local bucket_region
-            bucket_region=$(aws s3api get-bucket-location --bucket "$bucket_name" 2> /dev/null | jq -r '.LocationConstraint // "us-east-1"')
-
-            # Handle us-east-1 special case
-            if [[ $bucket_region == "null" || -z $bucket_region ]]; then
-                bucket_region="us-east-1"
-            fi
-
-            # Filter by region
-            if [[ $bucket_region == "$region" ]]; then
-                region_buckets+=("$bucket_name")
-            fi
-        done < <(echo "$buckets_json" | jq -r '.Buckets[]? | @base64')
-
-        # Generate stack if buckets exist in this region
-        if [[ ${#region_buckets[@]} -gt 0 ]]; then
-            cat >> "$TEMP_YAML_FILE" << EOF
-
-    S3Stack_${safe_region}:
-      Type: AWS::Diagram::VerticalStack
-      Title: S3 Buckets ($region)
-      Children:
-EOF
-            local counter=1
-            for bucket_name in "${region_buckets[@]}"; do
-                echo "        - S3_${safe_region}_${counter}" >> "$TEMP_YAML_FILE"
-                counter=$((counter + 1))
-            done
-
-            # Generate resource definitions
-            counter=1
-            for bucket_name in "${region_buckets[@]}"; do
-                cat >> "$TEMP_YAML_FILE" << EOF
-
-    S3_${safe_region}_${counter}:
-      Type: AWS::S3::Bucket
-      Title: $bucket_name
-EOF
-                counter=$((counter + 1))
-            done
-        fi
-    done
 }
 
 #######################################
@@ -1218,7 +1222,7 @@ function update_git_repository {
         error_exit "Failed to add diagram file to git"
     }
 
-    git commit -m "Update AWS architecture diagram [auto] $(date '+%Y-%m-%d %H:%M:%S')" || {
+    git commit -m "Update AWS architecture diagram [auto] $(date '+%Y-%m-%d %H:%M:%S')" -- "$diagram_file" || {
         log "INFO" "No changes to commit (diagram unchanged)"
         return 0
     }

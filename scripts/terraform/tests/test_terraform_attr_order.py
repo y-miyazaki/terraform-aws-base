@@ -3,9 +3,11 @@
 
 from __future__ import annotations
 
+import os
 import sys
 import tempfile
 import unittest
+from unittest import mock
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
@@ -168,6 +170,28 @@ class VerifyAndCliTest(unittest.TestCase):
             cached.mkdir(parents=True)
             (cached / "main.tf").write_text('resource "a" "b" {\n  z = 1\n  a = 2\n}\n', encoding="utf-8")
             self.assertEqual(tao.main([tmp]), 0)
+
+
+class AtomicWriteTest(unittest.TestCase):
+    def test_fix_keeps_file_mode_and_leaves_no_temporary_files(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            target = Path(tmp) / "main.tf"
+            target.write_text('resource "a" "b" {\n  zeta = 1\n  alpha = 2\n}\n', encoding="utf-8")
+            target.chmod(0o640)
+            self.assertEqual(tao.main([str(target), "--fix"]), 0)
+            self.assertEqual(target.stat().st_mode & 0o777, 0o640)
+            self.assertEqual([entry.name for entry in Path(tmp).iterdir()], ["main.tf"])
+
+    def test_failed_write_leaves_original_untouched_and_cleans_up(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            target = Path(tmp) / "main.tf"
+            original = 'resource "a" "b" {\n  zeta = 1\n  alpha = 2\n}\n'
+            target.write_text(original, encoding="utf-8")
+            with mock.patch.object(os, "replace", side_effect=OSError("disk full")):
+                with self.assertRaises(OSError):
+                    tao.write_atomically(target, "rewritten\n")
+            self.assertEqual(target.read_text(encoding="utf-8"), original)
+            self.assertEqual([entry.name for entry in Path(tmp).iterdir()], ["main.tf"])
 
 
 if __name__ == "__main__":

@@ -32,8 +32,10 @@ from __future__ import annotations
 
 import argparse
 import collections
+import os
 import re
 import sys
+import tempfile
 from pathlib import Path
 
 HEAD_KEYS = ("count", "for_each", "source", "version")
@@ -310,6 +312,29 @@ def collect_files(paths: list[str]) -> list[Path]:
     return files
 
 
+def write_atomically(path: Path, text: str) -> None:
+    """Replace ``path`` with ``text`` so an interrupt never leaves a truncated file.
+
+    The text goes to a temporary file in the same directory (same filesystem, so the
+    final ``os.replace`` is atomic) and the original file mode is carried over.
+    """
+    directory = path.parent if str(path.parent) else Path(".")
+    handle = tempfile.NamedTemporaryFile(
+        "w", encoding="utf-8", newline="", dir=directory, prefix=f".{path.name}.", delete=False
+    )
+    try:
+        with handle:
+            handle.write(text)
+        os.chmod(handle.name, path.stat().st_mode & 0o7777)
+        os.replace(handle.name, path)
+    except BaseException:
+        try:
+            os.unlink(handle.name)
+        except OSError:
+            pass
+        raise
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
         description="Check or fix alphabetical argument order in Terraform blocks (ORD-01)."
@@ -342,8 +367,7 @@ def main(argv: list[str] | None = None) -> int:
             continue
 
         if args.fix:
-            with open(path, "w", encoding="utf-8", newline="") as handle:
-                handle.write(rewritten)
+            write_atomically(path, rewritten)
             print(f"FIXED {path} ({len(changed)} block(s))")
         else:
             violations += 1

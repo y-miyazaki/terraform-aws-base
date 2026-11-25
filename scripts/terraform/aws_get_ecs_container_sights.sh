@@ -5,6 +5,10 @@
 # Usage: ./aws_ecs_container_sights.sh [options]
 #   options:
 #     -h, --help    Display this help message
+#
+# Design Rules:
+#   - Read-only: only ECS list/describe API calls are made.
+#   - Terraform-formatted output goes to stdout; logs go to stderr.
 #######################################
 
 # Error handling: exit on error, unset variable, or failed pipeline
@@ -180,7 +184,8 @@ function generate_terraform_output {
     echo_section "Generating Terraform configuration format"
 
     for family in "${families[@]}"; do
-        items+="  {\n    ClusterName = \"\"\n    TaskDefinitionFamily = \"$family\"\n  },\n"
+        # Real newlines (not "\n" text) so the value needs no backslash interpretation later
+        items+=$'  {\n    ClusterName = ""\n    TaskDefinitionFamily = "'"$family"$'"\n  },\n'
     done
 
     # Remove trailing comma if items is not empty
@@ -250,7 +255,7 @@ function output_result {
 
     echo_section "Generating output"
     echo "["
-    echo -e "$formatted_items"
+    printf '%s\n' "$formatted_items"
     echo "]"
 }
 

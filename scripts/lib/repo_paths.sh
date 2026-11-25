@@ -12,13 +12,68 @@
 # - Caller-specific exclusions use REPO_PATHS_EXTRA_PRUNES (comma-separated roots)
 # - REPO_PATHS_INCLUDE_AGENTS=true skips agent-directory exclusion (default: exclude)
 # - REPO_PATHS_INCLUDE_GITIGNORED=true skips gitignore exclusion (default: exclude)
+# - REPO_PATHS_INCLUDE_BUILD_OUTPUT=true keeps dist/, build/, bin/ (default: exclude)
+# - git path listings use -z so non-ASCII paths are not C-quoted (core.quotePath)
 # - Dot-prefixed directory segments are excluded except structural roots (.github, .apm)
 # - Root dotfiles are not excluded by the dot-directory rule
 # - repo_append_find_prune_args is a performance prune; repo_filter_paths is authoritative
 # - Agent directory exclusion aligns with agent-skills.instructions.md S-05 plus .vscode (editor-local)
 #######################################
 
-declare -A REPO_PATHS_GITIGNORE_CACHE=()
+# "${assoc+set}" tests element [0], so use declare -p to detect an existing array
+if ! declare -p REPO_PATHS_GITIGNORE_CACHE > /dev/null 2>&1; then
+    declare -gA REPO_PATHS_GITIGNORE_CACHE=()
+fi
+
+#######################################
+# repo_append_find_prune_args: Append standard find prune predicates to an array
+#
+# Globals:
+#   REPO_PATHS_EXTRA_PRUNES - Comma-separated repository-relative prune roots
+#   REPO_PATHS_INCLUDE_AGENTS - When true, do not prune agent directories
+#   REPO_PATHS_INCLUDE_BUILD_OUTPUT - When true, do not prune dist/, build/, bin/
+#
+# Arguments:
+#   $1 - Name reference to find argument array
+#   $@ - Optional extra repository-relative prune roots (merged with REPO_PATHS_EXTRA_PRUNES)
+#
+# Outputs:
+#   None
+#
+# Returns:
+#   None
+#
+# Usage:
+#   local -a find_args=(.)
+#   repo_append_find_prune_args find_args
+#   find_args+=(-name '*.md' -type f -print)
+#   find "${find_args[@]}" | sed 's|^\./||' | repo_filter_paths
+#
+#######################################
+function repo_append_find_prune_args {
+    # shellcheck disable=SC2178 # nameref to caller array by name
+    local -n _out=$1
+    shift
+    local -a extra_prunes=()
+    local extra
+
+    mapfile -t extra_prunes < <(repo_list_extra_prune_roots "$@")
+
+    _out+=(\( -path './.git')
+    if [[ ${REPO_PATHS_INCLUDE_AGENTS:-false} != "true" ]]; then
+        _out+=(-o -path './.agents' -o -path './.cursor' -o -path './.claude' -o -path './.codex' -o -path './.kiro' -o -path './.vscode')
+    fi
+    _out+=(-o -path './apm_modules' -o -path './node_modules')
+    if [[ ${REPO_PATHS_INCLUDE_BUILD_OUTPUT:-false} != "true" ]]; then
+        _out+=(-o -path './dist' -o -path './build' -o -path './bin')
+    fi
+    for extra in "${extra_prunes[@]}"; do
+        [[ -z ${extra} ]] && continue
+        extra="${extra#./}"
+        _out+=(-o -path "./${extra}" -o -path "./${extra}/*")
+    done
+    _out+=(\) -prune -o)
+}
 
 #######################################
 # repo_apply_git_rename: Classify a git rename for detect delta consumers
@@ -120,49 +175,103 @@ function repo_array_append_unique {
 }
 
 #######################################
-# repo_append_find_prune_args: Append standard find prune predicates to an array
+# repo_emit_changed_paths: Emit filtered paths with uncommitted git changes
+#
+# Description:
+#   Lists files that differ from HEAD (staged or unstaged) plus untracked, non-ignored files.
+#   Renames are reported as a delete plus an add, so the old location is visible with
+#   REPO_PATHS_INCLUDE_DELETED=true.
+#   Deleted files are excluded unless REPO_PATHS_INCLUDE_DELETED is true. Paths are relative to the current directory and pass
+#   repo_path_should_skip. Outside a git work tree nothing is emitted.
 #
 # Globals:
+#   REPO_PATHS_INCLUDE_DELETED - When true, also emit deleted files (callers map them to their package or module)
 #   REPO_PATHS_EXTRA_PRUNES - Comma-separated repository-relative prune roots
-#   REPO_PATHS_INCLUDE_AGENTS - When true, do not prune agent directories
+#   REPO_PATHS_INCLUDE_AGENTS - When true, do not exclude agent directories
+#   REPO_PATHS_INCLUDE_GITIGNORED - When true, do not exclude gitignored paths
+#   REPO_PATHS_INCLUDE_BUILD_OUTPUT - When true, do not exclude dist/, build/, bin/
 #
 # Arguments:
-#   $1 - Name reference to find argument array
-#   $@ - Optional extra repository-relative prune roots (merged with REPO_PATHS_EXTRA_PRUNES)
+#   $1 - Optional extended-regex path filter (empty = all changed paths)
+#   $@ - Optional scope paths after $1 (relative, or absolute under the current directory);
+#        only paths equal to or under one of them are emitted
 #
 # Outputs:
-#   None
+#   Sorted unique relative paths on stdout (one per line)
 #
 # Returns:
-#   None
+#   0 on success
 #
 # Usage:
-#   local -a find_args=(.)
-#   repo_append_find_prune_args find_args
-#   find_args+=(-name '*.md' -type f -print)
-#   find "${find_args[@]}" | sed 's|^\./||' | repo_filter_paths
+#   repo_emit_changed_paths '\.go$' ./cmd
 #
 #######################################
-function repo_append_find_prune_args {
-    # shellcheck disable=SC2178 # nameref to caller array by name
-    local -n _out=$1
-    shift
-    local -a extra_prunes=()
-    local extra
-
-    mapfile -t extra_prunes < <(repo_list_extra_prune_roots "$@")
-
-    _out+=(\( -path './.git')
-    if [[ ${REPO_PATHS_INCLUDE_AGENTS:-false} != "true" ]]; then
-        _out+=(-o -path './.agents' -o -path './.cursor' -o -path './.claude' -o -path './.codex' -o -path './.kiro' -o -path './.vscode')
-    fi
-    _out+=(-o -path './apm_modules' -o -path './node_modules' -o -path './dist' -o -path './build' -o -path './bin')
-    for extra in "${extra_prunes[@]}"; do
-        [[ -z ${extra} ]] && continue
-        extra="${extra#./}"
-        _out+=(-o -path "./${extra}" -o -path "./${extra}/*")
+function repo_emit_changed_paths {
+    local pattern="${1:-}"
+    shift || true
+    local -a scopes=()
+    local scope
+    for scope in "$@"; do
+        # Normalize to a path relative to the current directory (absolute scopes are re-based)
+        if [[ ${scope} == "${PWD}" ]]; then
+            scope="."
+        elif [[ ${scope} == "${PWD}/"* ]]; then
+            scope="${scope#"${PWD}"/}"
+        fi
+        # Resolve .. segments lexically when realpath is available (GNU coreutils)
+        if [[ ${scope} == *..* ]]; then
+            scope="$(realpath -m --relative-to="${PWD}" -- "${scope}" 2> /dev/null || printf '%s' "${scope}")"
+        fi
+        while [[ ${scope} == ./* ]]; do
+            scope="${scope#./}"
+        done
+        scope="${scope%/}"
+        scopes+=("${scope}")
     done
-    _out+=(\) -prune -o)
+    local file in_scope
+    local -a diff_filter=(--diff-filter=d)
+    if [[ ${REPO_PATHS_INCLUDE_DELETED:-false} == "true" ]]; then
+        diff_filter=()
+    fi
+
+    if ! git rev-parse --is-inside-work-tree > /dev/null 2>&1; then
+        return 0
+    fi
+
+    while IFS= read -r -d '' file; do
+        [[ -z ${file} ]] && continue
+        if [[ ${REPO_PATHS_INCLUDE_DELETED:-false} != "true" && ! -f ${file} ]]; then
+            continue
+        fi
+        if [[ -n ${pattern} ]] && [[ ! ${file} =~ ${pattern} ]]; then
+            continue
+        fi
+        if [[ ${#scopes[@]} -gt 0 ]]; then
+            in_scope=false
+            for scope in "${scopes[@]}"; do
+                if [[ ${scope} == "." || ${scope} == "" || ${file} == "${scope}" || ${file} == "${scope}/"* ]]; then
+                    in_scope=true
+                    break
+                fi
+            done
+            [[ ${in_scope} == "true" ]] || continue
+        fi
+        if repo_path_should_skip "${file}"; then
+            continue
+        fi
+        printf '%s\n' "${file}"
+    done < <(
+        {
+            if git rev-parse --verify --quiet HEAD > /dev/null 2>&1; then
+                git diff HEAD --name-only --no-renames --relative ${diff_filter[@]+"${diff_filter[@]}"} -z 2> /dev/null || true
+            else
+                # No commit yet: everything staged, plus worktree changes against the index
+                git diff --cached --name-only --no-renames --relative ${diff_filter[@]+"${diff_filter[@]}"} -z 2> /dev/null || true
+                git diff --name-only --no-renames --relative ${diff_filter[@]+"${diff_filter[@]}"} -z 2> /dev/null || true
+            fi
+            git ls-files -z --others --exclude-standard 2> /dev/null || true
+        } | sort -zu
+    )
 }
 
 #######################################
@@ -171,6 +280,7 @@ function repo_append_find_prune_args {
 # Globals:
 #   REPO_PATHS_EXTRA_PRUNES - Comma-separated repository-relative prune roots
 #   REPO_PATHS_INCLUDE_AGENTS - When true, do not exclude agent directories
+#   REPO_PATHS_INCLUDE_BUILD_OUTPUT - When true, do not exclude dist/, build/, bin/
 #   REPO_PATHS_INCLUDE_GITIGNORED - When true, do not exclude gitignored paths
 #
 # Arguments:
@@ -194,7 +304,7 @@ function repo_emit_tracked_paths {
         return 0
     fi
 
-    while IFS= read -r file; do
+    while IFS= read -r -d '' file; do
         [[ -z ${file} ]] && continue
         if [[ -n ${pattern} ]] && [[ ! ${file} =~ ${pattern} ]]; then
             continue
@@ -203,7 +313,7 @@ function repo_emit_tracked_paths {
             continue
         fi
         printf '%s\n' "${file}"
-    done < <(git ls-files 2> /dev/null || true)
+    done < <(git ls-files -z 2> /dev/null || true)
 }
 
 #######################################
@@ -281,6 +391,57 @@ function repo_list_extra_prune_roots {
 }
 
 #######################################
+# repo_nearest_ancestor_with: Find the nearest directory holding a marker file
+#
+# Description:
+#   Starting at the given relative directory and walking up to ".", prints the first directory
+#   that contains a regular file whose name matches the glob (for example go.mod or *.tf).
+#   Single owner of the "nearest module root" rule used by the validate scripts.
+#
+# Globals:
+#   None
+#
+# Arguments:
+#   $1 - Directory relative to the current directory
+#   $2 - File name glob passed to find -name (for example go.mod, '*.tf')
+#
+# Outputs:
+#   The matching directory (relative, "." for the current directory) on stdout
+#
+# Returns:
+#   0 when a directory is found, 1 when no directory up to "." holds the marker
+#
+# Usage:
+#   module="$(repo_nearest_ancestor_with "cmd/foo" go.mod)" || return
+#
+#######################################
+function repo_nearest_ancestor_with {
+    local dir="${1:-.}"
+    local pattern="$2"
+
+    local literal=false
+    if [[ $pattern != *[\*\?\[]* ]]; then
+        literal=true
+    fi
+
+    while true; do
+        if [[ $literal == "true" ]]; then
+            if [[ -f "$dir/$pattern" ]]; then
+                printf '%s\n' "$dir"
+                return 0
+            fi
+        elif [[ -n $(find "$dir" -maxdepth 1 -type f -name "$pattern" -print -quit 2> /dev/null) ]]; then
+            printf '%s\n' "$dir"
+            return 0
+        fi
+        if [[ $dir == "." || $dir == "/" ]]; then
+            return 1
+        fi
+        dir="$(dirname "$dir")"
+    done
+}
+
+#######################################
 # repo_path_has_excluded_dot_directory: Return whether a path has a non-scannable dot directory
 #
 # Dot-prefixed segments are directories when more path remains; the final
@@ -341,6 +502,7 @@ function repo_path_has_excluded_dot_directory {
 #
 # Globals:
 #   REPO_PATHS_INCLUDE_AGENTS - When true, do not treat agent directories as generated
+#   REPO_PATHS_INCLUDE_BUILD_OUTPUT - When true, do not treat dist/, build/, bin/ as generated
 #
 # Arguments:
 #   $1 - Repository-relative file path
@@ -364,10 +526,15 @@ function repo_path_is_generated_or_agent {
         .git | .git/*) return 0 ;;
         apm_modules | apm_modules/*) return 0 ;;
         node_modules | node_modules/*) return 0 ;;
-        dist | dist/*) return 0 ;;
-        build | build/*) return 0 ;;
-        bin | bin/*) return 0 ;;
     esac
+
+    if [[ ${REPO_PATHS_INCLUDE_BUILD_OUTPUT:-false} != "true" ]]; then
+        case "${path}" in
+            dist | dist/*) return 0 ;;
+            build | build/*) return 0 ;;
+            bin | bin/*) return 0 ;;
+        esac
+    fi
 
     if [[ ${REPO_PATHS_INCLUDE_AGENTS:-false} == "true" ]]; then
         return 1
@@ -409,12 +576,14 @@ function repo_path_is_generated_or_agent {
 #######################################
 function repo_path_is_gitignored {
     local path="$1"
-    local cache_key="__rp_${path//\//_}"
-    cache_key="${cache_key//./_D_}"
+    # An empty path is not a valid array subscript and can never be ignored
+    [[ -n ${path} ]] || return 1
+    # Key on the path itself: any mangling (e.g. "a/b" vs "a_b") would make distinct paths collide
+    local cache_key="${path}"
     local cache_hit=0
     local cached_value=0
 
-    if [[ -z ${REPO_PATHS_GITIGNORE_CACHE+set} ]]; then
+    if ! declare -p REPO_PATHS_GITIGNORE_CACHE > /dev/null 2>&1; then
         declare -gA REPO_PATHS_GITIGNORE_CACHE=()
     fi
 
@@ -424,25 +593,19 @@ function repo_path_is_gitignored {
     if ! git rev-parse --is-inside-work-tree > /dev/null 2>&1; then
         return 1
     fi
-    set +u
-    if [[ ${REPO_PATHS_GITIGNORE_CACHE[${cache_key}]+set} == set ]]; then
+    if [[ ${REPO_PATHS_GITIGNORE_CACHE["${cache_key}"]+set} == set ]]; then
         cache_hit=1
-        cached_value="${REPO_PATHS_GITIGNORE_CACHE[${cache_key}]}"
+        cached_value="${REPO_PATHS_GITIGNORE_CACHE["${cache_key}"]}"
     fi
-    set -u
     if [[ ${cache_hit} -eq 1 ]]; then
         [[ ${cached_value} -eq 1 ]]
         return
     fi
     if git check-ignore -q -- "${path}" 2> /dev/null; then
-        set +u
-        REPO_PATHS_GITIGNORE_CACHE[${cache_key}]=1
-        set -u
+        REPO_PATHS_GITIGNORE_CACHE["${cache_key}"]=1
         return 0
     fi
-    set +u
-    REPO_PATHS_GITIGNORE_CACHE[${cache_key}]=0
-    set -u
+    REPO_PATHS_GITIGNORE_CACHE["${cache_key}"]=0
     return 1
 }
 
@@ -488,6 +651,7 @@ function repo_path_matches_extra_prune {
 # Globals:
 #   REPO_PATHS_EXTRA_PRUNES - Comma-separated repository-relative prune roots
 #   REPO_PATHS_INCLUDE_AGENTS - When true, do not exclude agent directories
+#   REPO_PATHS_INCLUDE_BUILD_OUTPUT - When true, do not exclude dist/, build/, bin/
 #   REPO_PATHS_INCLUDE_GITIGNORED - When true, do not exclude gitignored paths
 #
 # Arguments:
@@ -518,6 +682,7 @@ function repo_path_should_skip {
 #
 # Globals:
 #   REPO_PATHS_INCLUDE_AGENTS - When true, do not exclude agent directories
+#   REPO_PATHS_INCLUDE_BUILD_OUTPUT - When true, do not exclude dist/, build/, bin/
 #   REPO_PATHS_INCLUDE_GITIGNORED - When true, do not exclude gitignored paths
 #
 # Arguments:

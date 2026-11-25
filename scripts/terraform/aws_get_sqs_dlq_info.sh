@@ -136,7 +136,8 @@ function generate_terraform_output {
     echo_section "Generating Terraform configuration format"
 
     for dlq in "${dlqs[@]}"; do
-        items+="  {\n    QueueName = \"$dlq\"\n  },\n"
+        # Real newlines (not "\n" text) so the value needs no backslash interpretation later
+        items+=$'  {\n    QueueName = "'"$dlq"$'"\n  },\n'
     done
 
     # Remove trailing comma if items is not empty
@@ -172,7 +173,7 @@ function generate_terraform_output {
 function get_sqs_queues {
     echo_section "Retrieving SQS queue information"
 
-    if ! queue_urls=$(aws sqs list-queues | jq -r '.QueueUrls[]'); then
+    if ! queue_urls=$(aws sqs list-queues | jq -r '.QueueUrls[]?'); then
         error_exit "Failed to retrieve SQS queue URLs"
     fi
 
@@ -206,7 +207,7 @@ function output_result {
 
     echo_section "Generating output"
     echo "["
-    echo -e "$formatted_items"
+    printf '%s\n' "$formatted_items"
     echo "]"
 }
 

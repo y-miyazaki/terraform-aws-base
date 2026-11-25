@@ -78,6 +78,7 @@ TIMESTAMP=$(date +%Y%m%d_%H%M%S)
 
 # File paths
 SCHEMASPY_JAR=""
+SCHEMASPY_PASSWORD_FILE=""
 JDBC_DRIVER=""
 
 #######################################
@@ -86,10 +87,10 @@ JDBC_DRIVER=""
 # Description:
 #   Displays usage information for the script, including options and examples
 #
-# Arguments:
+# Globals:
 #   None
 #
-# Globals:
+# Arguments:
 #   None
 #
 # Outputs:
@@ -102,7 +103,7 @@ JDBC_DRIVER=""
 #   show_usage
 #
 #######################################
-show_usage() {
+function show_usage {
     cat << EOF
 Usage: $(basename "$0") [options]
 
@@ -157,9 +158,6 @@ EOF
 # Description:
 #   Parses command line arguments and options
 #
-# Arguments:
-#   $@ - Command line arguments
-#
 # Globals:
 #   VERBOSE - Enable verbose output
 #   DRY_RUN - Enable dry-run mode
@@ -177,6 +175,9 @@ EOF
 #   DB_THREADS - Number of database threads
 #   SKIP_CLEANUP - Skip SSM session cleanup
 #
+# Arguments:
+#   $@ - Command line arguments
+#
 # Outputs:
 #   None
 #
@@ -187,7 +188,7 @@ EOF
 #   parse_arguments "$@"
 #
 #######################################
-parse_arguments() {
+function parse_arguments {
     while [[ $# -gt 0 ]]; do
         case $1 in
             -h | --help)
@@ -202,50 +203,62 @@ parse_arguments() {
                 shift
                 ;;
             -e | --environment)
+                [[ $# -ge 2 ]] || error_exit "Option $1 requires a value"
                 ENVIRONMENT="$2"
                 shift 2
                 ;;
             -t | --db-type)
+                [[ $# -ge 2 ]] || error_exit "Option $1 requires a value"
                 DB_TYPE="$2"
                 shift 2
                 ;;
             -n | --db-name)
+                [[ $# -ge 2 ]] || error_exit "Option $1 requires a value"
                 DB_NAME="$2"
                 shift 2
                 ;;
             -s | --schema-name)
+                [[ $# -ge 2 ]] || error_exit "Option $1 requires a value"
                 SCHEMA_NAME="$2"
                 shift 2
                 ;;
             -o | --output-dir)
+                [[ $# -ge 2 ]] || error_exit "Option $1 requires a value"
                 OUTPUT_DIR="$2"
                 shift 2
                 ;;
             -p | --local-port)
+                [[ $# -ge 2 ]] || error_exit "Option $1 requires a value"
                 LOCAL_PORT="$2"
                 shift 2
                 ;;
             --secret-id)
+                [[ $# -ge 2 ]] || error_exit "Option $1 requires a value"
                 SECRET_ID="$2"
                 shift 2
                 ;;
             --bastion-id)
+                [[ $# -ge 2 ]] || error_exit "Option $1 requires a value"
                 BASTION_ID="$2"
                 shift 2
                 ;;
             --bastion-tag)
+                [[ $# -ge 2 ]] || error_exit "Option $1 requires a value"
                 BASTION_TAG="$2"
                 shift 2
                 ;;
             --schemaspy-version)
+                [[ $# -ge 2 ]] || error_exit "Option $1 requires a value"
                 SCHEMASPY_VERSION="$2"
                 shift 2
                 ;;
             --ssl-mode)
+                [[ $# -ge 2 ]] || error_exit "Option $1 requires a value"
                 SSL_MODE="$2"
                 shift 2
                 ;;
             --db-threads)
+                [[ $# -ge 2 ]] || error_exit "Option $1 requires a value"
                 DB_THREADS="$2"
                 shift 2
                 ;;
@@ -264,99 +277,31 @@ parse_arguments() {
 }
 
 #######################################
-# validate_parameters: Validate required parameters
+# Cleanup function to ensure SSM session is always terminated
 #
-# Description:
-#   Validates required parameters and sets default values
+# Globals:
+#   LOCAL_PORT - read
+#   SCHEMASPY_PASSWORD_FILE - read and written
+#   SKIP_CLEANUP - read
+#   SSM_PID - read
 #
 # Arguments:
 #   None
 #
-# Globals:
-#   ENVIRONMENT - Environment name
-#   DB_NAME - Database name
-#   SECRET_ID - AWS Secrets Manager secret ID
-#   OUTPUT_DIR - Output directory
-#   LOCAL_PORT - Local port for port forwarding
-#   DB_TYPE - Database type
-#   SCHEMA_NAME - Schema name to document
-#   SSL_MODE - SSL mode for database connection
-#   SCHEMASPY_VERSION - SchemaSpy version
-#   DB_THREADS - Number of database threads
-#
 # Outputs:
-#   None
+#   Log messages via log (stderr)
 #
 # Returns:
-#   None
-#
-# Usage:
-#   validate_parameters
-#
+#   0 on success
 #######################################
-validate_parameters() {
-    log "INFO" "Validating parameters..."
-
-    if [ -z "${ENVIRONMENT}" ]; then
-        error_exit "Environment is required. Use -e or --environment"
-    fi
-
-    if [ -z "${DB_NAME}" ]; then
-        error_exit "Database name is required. Use -n or --db-name"
-    fi
-
-    # Set default secret ID if not specified
-    if [ -z "${SECRET_ID}" ]; then
-        SECRET_ID="${ENVIRONMENT}/db/credentials"
-    fi
-
-    # Set default output directory if not specified
-    if [ -z "${OUTPUT_DIR}" ]; then
-        OUTPUT_DIR="${REPO_ROOT}/tmp/schemaspy-${ENVIRONMENT}-${DB_TYPE}-${DB_NAME}"
-    fi
-
-    # Set default local port based on database type if not specified
-    if [ -z "${LOCAL_PORT}" ]; then
-        case "${DB_TYPE}" in
-            pgsql | pgsql11)
-                LOCAL_PORT="15432"
-                ;;
-            redshift)
-                LOCAL_PORT="15439"
-                ;;
-            mysql)
-                LOCAL_PORT="13306"
-                ;;
-            *)
-                LOCAL_PORT="15432"
-                log "WARN" "Unknown database type: ${DB_TYPE}, using default port 15432"
-                ;;
-        esac
-        log "DEBUG" "Auto-detected local port: ${LOCAL_PORT}"
-    fi
-
-    log "DEBUG" "Configuration:"
-    log "DEBUG" "  Environment: ${ENVIRONMENT}"
-    log "DEBUG" "  DB Type: ${DB_TYPE}"
-    log "DEBUG" "  DB Name: ${DB_NAME}"
-    if [ -n "${SCHEMA_NAME}" ]; then
-        log "DEBUG" "  Schema Name: ${SCHEMA_NAME} (specific schema)"
-    else
-        log "DEBUG" "  Schema Name: ALL (-all flag will be used)"
-    fi
-    log "DEBUG" "  Secret ID: ${SECRET_ID}"
-    log "DEBUG" "  Output Directory: ${OUTPUT_DIR}"
-    log "DEBUG" "  Local Port: ${LOCAL_PORT}"
-    log "DEBUG" "  SSL Mode: ${SSL_MODE}"
-    log "DEBUG" "  SchemaSpy Version: ${SCHEMASPY_VERSION}"
-    log "DEBUG" "  DB Threads: ${DB_THREADS}"
-}
-
-#######################################
-# Cleanup function to ensure SSM session is always terminated
-#######################################
-cleanup() {
+function cleanup {
     local exit_code=$?
+
+    # Always remove the temporary SchemaSpy config that holds the DB password
+    if [ -n "${SCHEMASPY_PASSWORD_FILE}" ]; then
+        rm -f "${SCHEMASPY_PASSWORD_FILE}"
+        SCHEMASPY_PASSWORD_FILE=""
+    fi
 
     if [ "${SKIP_CLEANUP}" = true ]; then
         log "WARN" "Cleanup skipped (--skip-cleanup specified)"
@@ -400,8 +345,23 @@ cleanup() {
 
 #######################################
 # Auto-detect Bastion instance
+#
+# Globals:
+#   BASTION_ID - read and written
+#   BASTION_TAG - read
+#   DRY_RUN - read
+#
+# Arguments:
+#   None
+#
+# Outputs:
+#   Log messages via log (stderr)
+#
+# Returns:
+#   Exits via error_exit on fatal errors
+#   0 on success
 #######################################
-detect_bastion() {
+function detect_bastion {
     log "INFO" "Auto-detecting Bastion instance..."
 
     if [ "${DRY_RUN}" = true ]; then
@@ -423,9 +383,115 @@ detect_bastion() {
 }
 
 #######################################
-# Retrieve credentials from Secrets Manager
+# Download SchemaSpy and JDBC drivers
+#
+# Globals:
+#   DB_TYPE - read
+#   JDBC_DRIVER - read and written
+#   REPO_ROOT - read
+#   SCHEMASPY_JAR - read and written
+#   SCHEMASPY_VERSION - read
+#
+# Arguments:
+#   None
+#
+# Outputs:
+#   Log messages via log (stderr)
+#
+# Returns:
+#   Exits via error_exit on fatal errors
+#   0 on success
 #######################################
-retrieve_credentials() {
+function download_dependencies {
+    log "INFO" "Checking SchemaSpy and JDBC driver..."
+
+    local cache_dir
+    cache_dir="$(schemaspy_cache_dir)"
+    mkdir -p "${cache_dir}" || error_exit "Failed to create cache directory: ${cache_dir}"
+    # Version in the file name so changing --schemaspy-version triggers a fresh download
+    SCHEMASPY_JAR="${cache_dir}/schemaspy-${SCHEMASPY_VERSION}.jar"
+    JDBC_DRIVER="${cache_dir}/${DB_TYPE}-jdbc.jar"
+
+    # Download SchemaSpy if not cached
+    if [ ! -f "${SCHEMASPY_JAR}" ]; then
+        log "INFO" "Downloading SchemaSpy ${SCHEMASPY_VERSION}..."
+        download_file "https://github.com/schemaspy/schemaspy/releases/download/v${SCHEMASPY_VERSION}/schemaspy-app.jar" "${SCHEMASPY_JAR}"
+        log "INFO" "SchemaSpy downloaded"
+    else
+        log "DEBUG" "SchemaSpy already cached"
+    fi
+
+    # Download JDBC driver if not cached
+    if [ ! -f "${JDBC_DRIVER}" ]; then
+        log "INFO" "Downloading JDBC driver for ${DB_TYPE}..."
+        case "${DB_TYPE}" in
+            pgsql | pgsql11)
+                download_file "https://jdbc.postgresql.org/download/postgresql-42.7.5.jar" "${JDBC_DRIVER}"
+                ;;
+            redshift)
+                download_file "https://s3.amazonaws.com/redshift-downloads/drivers/jdbc/2.1.0.32/redshift-jdbc42-2.1.0.32.jar" "${JDBC_DRIVER}"
+                ;;
+            mysql)
+                download_file "https://repo1.maven.org/maven2/com/mysql/mysql-connector-j/8.0.33/mysql-connector-j-8.0.33.jar" "${JDBC_DRIVER}"
+                ;;
+            *)
+                error_exit "Unsupported database type: ${DB_TYPE}"
+                ;;
+        esac
+        log "INFO" "JDBC driver downloaded"
+    else
+        log "DEBUG" "JDBC driver already cached"
+    fi
+}
+
+#######################################
+# Download a file atomically (a partial download never leaves a corrupt cached file)
+#
+# Globals:
+#   None
+#
+# Arguments:
+#   $1 - url
+#   $2 - dest
+#
+# Outputs:
+#   None
+#
+# Returns:
+#   Exits via error_exit on fatal errors
+#   0 on success
+#######################################
+function download_file {
+    local url="$1"
+    local dest="$2"
+    local part="${dest}.part"
+
+    if ! curl -fsSL "${url}" -o "${part}"; then
+        rm -f "${part}"
+        error_exit "Failed to download: ${url}"
+    fi
+    mv "${part}" "${dest}"
+}
+
+#######################################
+# Retrieve credentials from Secrets Manager
+#
+# Globals:
+#   DB_NAME - read
+#   DRY_RUN - read
+#   SECRET_ID - read
+#
+# Arguments:
+#   None
+#
+# Outputs:
+#   Log messages via log (stderr)
+#
+# Returns:
+#   Exits via error_exit on fatal errors
+#   0 on success
+#######################################
+function retrieve_credentials {
     log "INFO" "Fetching credentials from AWS Secrets Manager..."
 
     if [ "${DRY_RUN}" = true ]; then
@@ -467,151 +533,34 @@ retrieve_credentials() {
 }
 
 #######################################
-# Verify Bastion connectivity
-#######################################
-verify_bastion() {
-    log "INFO" "Verifying Bastion connectivity via Session Manager..."
-
-    if [ "${DRY_RUN}" = true ]; then
-        log "INFO" "DRY RUN - Would verify Bastion connectivity"
-        return 0
-    fi
-
-    local ssm_status
-    ssm_status=$(aws ssm describe-instance-information \
-        --filters "Key=InstanceIds,Values=${BASTION_ID}" \
-        --query 'InstanceInformationList[0].PingStatus' \
-        --output text)
-
-    if [ "${ssm_status}" != "Online" ]; then
-        error_exit "Bastion instance is not online in Session Manager. Status: ${ssm_status}"
-    fi
-
-    log "INFO" "Bastion is online and ready"
-}
-
-#######################################
-# Start SSM port forwarding
-#######################################
-start_port_forwarding() {
-    # Clean up any existing sessions on this port first
-    local existing_pids
-    existing_pids=$(pgrep -f "session-manager-plugin.*${LOCAL_PORT}" 2> /dev/null || true)
-    if [ -n "${existing_pids}" ]; then
-        log "WARN" "Found existing SSM sessions on port ${LOCAL_PORT}, cleaning up..."
-        pkill -TERM -f "session-manager-plugin.*${LOCAL_PORT}" 2> /dev/null || true
-        sleep 2
-        pkill -9 -f "session-manager-plugin.*${LOCAL_PORT}" 2> /dev/null || true
-        sleep 1
-    fi
-
-    # Verify port is free
-    if lsof -i:"${LOCAL_PORT}" > /dev/null 2>&1; then
-        error_exit "Port ${LOCAL_PORT} is still in use. Please free it manually: pkill -9 -f 'session-manager-plugin.*${LOCAL_PORT}'"
-    fi
-
-    log "INFO" "Starting SSM port forwarding..."
-    log "INFO" "  Mapping: localhost:${LOCAL_PORT} -> ${BASTION_ID} -> ${DB_HOST}:${DB_PORT}"
-
-    if [ "${DRY_RUN}" = true ]; then
-        log "INFO" "DRY RUN - Would start SSM port forwarding"
-        SSM_PID="dry-run"
-        return 0
-    fi
-
-    local ssm_log="/tmp/ssm-session-${TIMESTAMP}.log"
-
-    # Start port forwarding in background
-    aws ssm start-session \
-        --target "${BASTION_ID}" \
-        --document-name AWS-StartPortForwardingSessionToRemoteHost \
-        --parameters "{\"host\":[\"${DB_HOST}\"],\"portNumber\":[\"${DB_PORT}\"],\"localPortNumber\":[\"${LOCAL_PORT}\"]}" \
-        > "${ssm_log}" 2>&1 &
-
-    SSM_PID=$!
-    log "INFO" "SSM Session PID: ${SSM_PID}"
-
-    # Wait for port forwarding to be established
-    log "INFO" "Waiting for port forwarding to be established..."
-    local max_wait=30
-    local elapsed=0
-
-    while [ ${elapsed} -lt ${max_wait} ]; do
-        # Check if SSM process is still running
-        if ! ps -p "${SSM_PID}" > /dev/null 2>&1; then
-            error_exit "SSM session process died unexpectedly. Check log: ${ssm_log}"
-        fi
-
-        # Check log for successful port opening
-        if grep -q "Port ${LOCAL_PORT} opened" "${ssm_log}" 2> /dev/null \
-            && grep -q "Waiting for connections" "${ssm_log}" 2> /dev/null; then
-            log "INFO" "Port forwarding is ready on localhost:${LOCAL_PORT}"
-            sleep 2 # Give additional time for port to be fully ready
-            return 0
-        fi
-
-        sleep 1
-        elapsed=$((elapsed + 1))
-
-        # Show progress every 5 seconds
-        if [ $((elapsed % 5)) -eq 0 ] && [ ${elapsed} -gt 0 ]; then
-            log "DEBUG" "${elapsed}/${max_wait} seconds: Still waiting for port forwarding..."
-        fi
-    done
-
-    error_exit "Port forwarding failed to start within ${max_wait} seconds. Check log: ${ssm_log}"
-}
-
-#######################################
-# Download SchemaSpy and JDBC drivers
-#######################################
-download_dependencies() {
-    log "INFO" "Checking SchemaSpy and JDBC driver..."
-
-    local cache_dir="${REPO_ROOT}/tmp"
-    SCHEMASPY_JAR="${cache_dir}/schemaspy.jar"
-    JDBC_DRIVER="${cache_dir}/${DB_TYPE}-jdbc.jar"
-
-    # Download SchemaSpy if not cached
-    if [ ! -f "${SCHEMASPY_JAR}" ]; then
-        log "INFO" "Downloading SchemaSpy ${SCHEMASPY_VERSION}..."
-        curl -fsSL "https://github.com/schemaspy/schemaspy/releases/download/v${SCHEMASPY_VERSION}/schemaspy-app.jar" \
-            -o "${SCHEMASPY_JAR}"
-        log "INFO" "SchemaSpy downloaded"
-    else
-        log "DEBUG" "SchemaSpy already cached"
-    fi
-
-    # Download JDBC driver if not cached
-    if [ ! -f "${JDBC_DRIVER}" ]; then
-        log "INFO" "Downloading JDBC driver for ${DB_TYPE}..."
-        case "${DB_TYPE}" in
-            pgsql | pgsql11)
-                curl -fsSL "https://jdbc.postgresql.org/download/postgresql-42.7.5.jar" \
-                    -o "${JDBC_DRIVER}"
-                ;;
-            redshift)
-                curl -fsSL "https://s3.amazonaws.com/redshift-downloads/drivers/jdbc/2.1.0.32/redshift-jdbc42-2.1.0.32.jar" \
-                    -o "${JDBC_DRIVER}"
-                ;;
-            mysql)
-                curl -fsSL "https://repo1.maven.org/maven2/com/mysql/mysql-connector-j/8.0.33/mysql-connector-j-8.0.33.jar" \
-                    -o "${JDBC_DRIVER}"
-                ;;
-            *)
-                error_exit "Unsupported database type: ${DB_TYPE}"
-                ;;
-        esac
-        log "INFO" "JDBC driver downloaded"
-    else
-        log "DEBUG" "JDBC driver already cached"
-    fi
-}
-
-#######################################
 # Run SchemaSpy
+#
+# Globals:
+#   DB_NAME - read
+#   DB_THREADS - read
+#   DB_TYPE - read
+#   DRY_RUN - read
+#   JDBC_DRIVER - read
+#   LOCAL_PORT - read
+#   OUTPUT_DIR - read
+#   REPO_ROOT - read
+#   SCHEMASPY_JAR - read
+#   SCHEMASPY_PASSWORD_FILE - read and written
+#   SCHEMA_NAME - read
+#   SSL_MODE - read
+#
+# Arguments:
+#   None
+#
+# Outputs:
+#   Log messages via log (stderr)
+#   Messages to stdout
+#
+# Returns:
+#   Exits via error_exit on fatal errors
+#   0 on success
 #######################################
-run_schemaspy() {
+function run_schemaspy {
     log "INFO" "Running SchemaSpy..."
 
     mkdir -p "${OUTPUT_DIR}"
@@ -654,7 +603,6 @@ run_schemaspy() {
         -jar "${SCHEMASPY_JAR}"
         -t "${schemaspy_type}"
         -u "${DB_USER}"
-        -p "${DB_PASSWORD}"
     )
 
     # Add schema parameter: -s for specific schema, -all for all schemas
@@ -684,10 +632,11 @@ run_schemaspy() {
     case "${DB_TYPE}" in
         redshift)
             # Redshift JDBC driver requires AWS SDK dependencies
-            local aws_sdk_jar="${REPO_ROOT}/tmp/aws-java-sdk-core.jar"
+            local aws_sdk_jar
+            aws_sdk_jar="$(schemaspy_cache_dir)/aws-java-sdk-core.jar"
             if [ ! -f "${aws_sdk_jar}" ]; then
                 log "WARN" "AWS SDK JAR not found, downloading..."
-                curl -sSL -o "${aws_sdk_jar}" "https://repo1.maven.org/maven2/com/amazonaws/aws-java-sdk-core/1.12.529/aws-java-sdk-core-1.12.529.jar"
+                download_file "https://repo1.maven.org/maven2/com/amazonaws/aws-java-sdk-core/1.12.529/aws-java-sdk-core-1.12.529.jar" "${aws_sdk_jar}"
             fi
             # Add Redshift driver + AWS SDK to classpath
             java_cmd+=(-dp "${JDBC_DRIVER}:${aws_sdk_jar}")
@@ -750,10 +699,17 @@ run_schemaspy() {
         return 0
     fi
 
-    # Execute SchemaSpy
-    "${java_cmd[@]}" 2>&1 | tee "${schemaspy_log}"
+    # Pass the password via a mode-600 properties file (outside the repository tree, so it can
+    # never be committed) instead of -p so it never appears in the process list (ps). Backslashes are escaped because .properties treats them specially.
+    SCHEMASPY_PASSWORD_FILE="$(mktemp "${TMPDIR:-/tmp}/schemaspy-config.XXXXXX")"
+    chmod 600 "${SCHEMASPY_PASSWORD_FILE}"
+    printf 'schemaspy.p=%s\n' "${DB_PASSWORD//\\/\\\\}" > "${SCHEMASPY_PASSWORD_FILE}"
+    java_cmd+=(-configFile "${SCHEMASPY_PASSWORD_FILE}")
 
-    local exit_code=${PIPESTATUS[0]}
+    # Execute SchemaSpy
+    # Under set -e/pipefail a failing java would abort here; capture its status from PIPESTATUS instead
+    local exit_code=0
+    "${java_cmd[@]}" 2>&1 | tee "${schemaspy_log}" || exit_code=${PIPESTATUS[0]}
     if [ "${exit_code}" -ne 0 ]; then
         error_exit "SchemaSpy execution failed with exit code ${exit_code}. Check log: ${schemaspy_log}"
     fi
@@ -762,9 +718,262 @@ run_schemaspy() {
 }
 
 #######################################
-# Verify generated documentation
+# Print the shared SchemaSpy/JDBC cache directory
+#
+# Globals:
+#   HOME - read
+#   SCHEMASPY_CACHE_DIR - read (overrides the default)
+#   XDG_CACHE_HOME - read
+#
+# Arguments:
+#   None
+#
+# Outputs:
+#   Cache directory path to stdout. Outside the repository tree because tmp/ is not
+#   gitignored in every repository; the same default is used by install_schemaspy.sh.
+#
+# Returns:
+#   0 on success
 #######################################
-verify_output() {
+function schemaspy_cache_dir {
+    printf '%s\n' "${SCHEMASPY_CACHE_DIR:-${XDG_CACHE_HOME:-${HOME:-/tmp}/.cache}/schemaspy}"
+}
+
+#######################################
+# Start SSM port forwarding
+#
+# Globals:
+#   BASTION_ID - read
+#   DRY_RUN - read
+#   LOCAL_PORT - read
+#   SSM_PID - read and written
+#   TIMESTAMP - read
+#
+# Arguments:
+#   None
+#
+# Outputs:
+#   Log messages via log (stderr)
+#
+# Returns:
+#   Exits via error_exit on fatal errors
+#   0 on success
+#######################################
+function start_port_forwarding {
+    if [ "${DRY_RUN}" = true ]; then
+        log "INFO" "DRY RUN - Would start SSM port forwarding (localhost:${LOCAL_PORT} -> ${BASTION_ID} -> ${DB_HOST}:${DB_PORT})"
+        SSM_PID="dry-run"
+        return 0
+    fi
+
+    # Clean up any existing sessions on this port first
+    local existing_pids
+    existing_pids=$(pgrep -f "session-manager-plugin.*${LOCAL_PORT}" 2> /dev/null || true)
+    if [ -n "${existing_pids}" ]; then
+        log "WARN" "Found existing SSM sessions on port ${LOCAL_PORT}, cleaning up..."
+        pkill -TERM -f "session-manager-plugin.*${LOCAL_PORT}" 2> /dev/null || true
+        sleep 2
+        pkill -9 -f "session-manager-plugin.*${LOCAL_PORT}" 2> /dev/null || true
+        sleep 1
+    fi
+
+    # Verify port is free
+    if lsof -i:"${LOCAL_PORT}" > /dev/null 2>&1; then
+        error_exit "Port ${LOCAL_PORT} is still in use. Please free it manually: pkill -9 -f 'session-manager-plugin.*${LOCAL_PORT}'"
+    fi
+
+    log "INFO" "Starting SSM port forwarding..."
+    log "INFO" "  Mapping: localhost:${LOCAL_PORT} -> ${BASTION_ID} -> ${DB_HOST}:${DB_PORT}"
+
+    local ssm_log
+    ssm_log="$(mktemp "${TMPDIR:-/tmp}/ssm-session-${TIMESTAMP}.XXXXXX")"
+
+    # Start port forwarding in background
+    aws ssm start-session \
+        --target "${BASTION_ID}" \
+        --document-name AWS-StartPortForwardingSessionToRemoteHost \
+        --parameters "{\"host\":[\"${DB_HOST}\"],\"portNumber\":[\"${DB_PORT}\"],\"localPortNumber\":[\"${LOCAL_PORT}\"]}" \
+        > "${ssm_log}" 2>&1 &
+
+    SSM_PID=$!
+    log "INFO" "SSM Session PID: ${SSM_PID}"
+
+    # Wait for port forwarding to be established
+    log "INFO" "Waiting for port forwarding to be established..."
+    local max_wait=30
+    local elapsed=0
+
+    while [ ${elapsed} -lt ${max_wait} ]; do
+        # Check if SSM process is still running
+        if ! ps -p "${SSM_PID}" > /dev/null 2>&1; then
+            error_exit "SSM session process died unexpectedly. Check log: ${ssm_log}"
+        fi
+
+        # Check log for successful port opening
+        if grep -q "Port ${LOCAL_PORT} opened" "${ssm_log}" 2> /dev/null \
+            && grep -q "Waiting for connections" "${ssm_log}" 2> /dev/null; then
+            log "INFO" "Port forwarding is ready on localhost:${LOCAL_PORT}"
+            sleep 2 # Give additional time for port to be fully ready
+            return 0
+        fi
+
+        sleep 1
+        elapsed=$((elapsed + 1))
+
+        # Show progress every 5 seconds
+        if [ $((elapsed % 5)) -eq 0 ] && [ ${elapsed} -gt 0 ]; then
+            log "DEBUG" "${elapsed}/${max_wait} seconds: Still waiting for port forwarding..."
+        fi
+    done
+
+    error_exit "Port forwarding failed to start within ${max_wait} seconds. Check log: ${ssm_log}"
+}
+
+#######################################
+# validate_parameters: Validate required parameters
+#
+# Description:
+#   Validates required parameters and sets default values
+#
+# Globals:
+#   ENVIRONMENT - Environment name
+#   DB_NAME - Database name
+#   SECRET_ID - AWS Secrets Manager secret ID
+#   OUTPUT_DIR - Output directory
+#   LOCAL_PORT - Local port for port forwarding
+#   DB_TYPE - Database type
+#   SCHEMA_NAME - Schema name to document
+#   SSL_MODE - SSL mode for database connection
+#   SCHEMASPY_VERSION - SchemaSpy version
+#   DB_THREADS - Number of database threads
+#
+# Arguments:
+#   None
+#
+# Outputs:
+#   None
+#
+# Returns:
+#   None
+#
+# Usage:
+#   validate_parameters
+#
+#######################################
+function validate_parameters {
+    log "INFO" "Validating parameters..."
+
+    if [ -z "${ENVIRONMENT}" ]; then
+        error_exit "Environment is required. Use -e or --environment"
+    fi
+
+    if [ -z "${DB_NAME}" ]; then
+        error_exit "Database name is required. Use -n or --db-name"
+    fi
+
+    # Set default secret ID if not specified
+    if [ -z "${SECRET_ID}" ]; then
+        SECRET_ID="${ENVIRONMENT}/db/credentials"
+    fi
+
+    # Set default output directory if not specified
+    if [ -z "${OUTPUT_DIR}" ]; then
+        OUTPUT_DIR="${REPO_ROOT}/tmp/schemaspy-${ENVIRONMENT}-${DB_TYPE}-${DB_NAME}"
+    fi
+
+    # Set default local port based on database type if not specified
+    if [ -z "${LOCAL_PORT}" ]; then
+        case "${DB_TYPE}" in
+            pgsql | pgsql11)
+                LOCAL_PORT="15432"
+                ;;
+            redshift)
+                LOCAL_PORT="15439"
+                ;;
+            mysql)
+                LOCAL_PORT="13306"
+                ;;
+            *)
+                LOCAL_PORT="15432"
+                log "WARN" "Unknown database type: ${DB_TYPE}, using default port 15432"
+                ;;
+        esac
+        log "DEBUG" "Auto-detected local port: ${LOCAL_PORT}"
+    fi
+
+    log "DEBUG" "Configuration:"
+    log "DEBUG" "  Environment: ${ENVIRONMENT}"
+    log "DEBUG" "  DB Type: ${DB_TYPE}"
+    log "DEBUG" "  DB Name: ${DB_NAME}"
+    if [ -n "${SCHEMA_NAME}" ]; then
+        log "DEBUG" "  Schema Name: ${SCHEMA_NAME} (specific schema)"
+    else
+        log "DEBUG" "  Schema Name: ALL (-all flag will be used)"
+    fi
+    log "DEBUG" "  Secret ID: ${SECRET_ID}"
+    log "DEBUG" "  Output Directory: ${OUTPUT_DIR}"
+    log "DEBUG" "  Local Port: ${LOCAL_PORT}"
+    log "DEBUG" "  SSL Mode: ${SSL_MODE}"
+    log "DEBUG" "  SchemaSpy Version: ${SCHEMASPY_VERSION}"
+    log "DEBUG" "  DB Threads: ${DB_THREADS}"
+}
+
+#######################################
+# Verify Bastion connectivity
+#
+# Globals:
+#   BASTION_ID - read
+#   DRY_RUN - read
+#
+# Arguments:
+#   None
+#
+# Outputs:
+#   Log messages via log (stderr)
+#
+# Returns:
+#   Exits via error_exit on fatal errors
+#   0 on success
+#######################################
+function verify_bastion {
+    log "INFO" "Verifying Bastion connectivity via Session Manager..."
+
+    if [ "${DRY_RUN}" = true ]; then
+        log "INFO" "DRY RUN - Would verify Bastion connectivity"
+        return 0
+    fi
+
+    local ssm_status
+    ssm_status=$(aws ssm describe-instance-information \
+        --filters "Key=InstanceIds,Values=${BASTION_ID}" \
+        --query 'InstanceInformationList[0].PingStatus' \
+        --output text)
+
+    if [ "${ssm_status}" != "Online" ]; then
+        error_exit "Bastion instance is not online in Session Manager. Status: ${ssm_status}"
+    fi
+
+    log "INFO" "Bastion is online and ready"
+}
+
+#######################################
+# Verify generated documentation
+#
+# Globals:
+#   DRY_RUN - read
+#   OUTPUT_DIR - read
+#
+# Arguments:
+#   None
+#
+# Outputs:
+#   Log messages via log (stderr)
+#
+# Returns:
+#   Exits via error_exit on fatal errors
+#   0 on success
+#######################################
+function verify_output {
     log "INFO" "Verifying generated documentation..."
 
     if [ "${DRY_RUN}" = true ]; then
@@ -797,8 +1006,20 @@ verify_output() {
 
 #######################################
 # Main execution function
+#
+# Globals:
+#   BASTION_ID - read
+#
+# Arguments:
+#   $@ - Command line arguments
+#
+# Outputs:
+#   Log messages via log (stderr)
+#
+# Returns:
+#   0 on success
 #######################################
-main() {
+function main {
     echo_section "SchemaSpy Database Documentation Generator"
 
     # Parse command line arguments
@@ -811,7 +1032,11 @@ main() {
     require_dependencies "aws" "jq" "java" "curl"
 
     # Register cleanup function
-    trap cleanup EXIT INT TERM
+    # Signals only translate to exit so cleanup runs once via the EXIT trap and the script
+    # actually stops (a plain INT/TERM trap handler returns and the script would keep running).
+    trap cleanup EXIT
+    trap 'exit 130' INT
+    trap 'exit 143' TERM
 
     # Execute workflow
     if [ -z "${BASTION_ID}" ]; then

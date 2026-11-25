@@ -91,7 +91,7 @@ Examples:
   $(basename "$0") -p ecs/ecs-service/test-server -e prd deploy
   $(basename "$0") --path ecs/ecs-service/test-server --env dev verify
 EOF
-    exit 0
+    exit "${1:-0}"
 }
 
 #######################################
@@ -126,14 +126,17 @@ function parse_arguments {
                 show_usage
                 ;;
             -e | --env)
+                [[ $# -ge 2 ]] || error_exit "Option $1 requires a value"
                 ENV="$2"
                 shift 2
                 ;;
             -p | --path)
+                [[ $# -ge 2 ]] || error_exit "Option $1 requires a value"
                 SERVICE_PATH="$2"
                 shift 2
                 ;;
             -r | --region)
+                [[ $# -ge 2 ]] || error_exit "Option $1 requires a value"
                 AWS_REGION="$2"
                 shift 2
                 ;;
@@ -153,7 +156,7 @@ function parse_arguments {
     # Validate required arguments
     if [[ -z ${SERVICE_PATH} ]]; then
         echo "Error: --path is required" >&2
-        show_usage
+        show_usage 1
     fi
 }
 
@@ -197,7 +200,7 @@ function deploy_service {
         --ext-str ENV="$ENV" \
         --ext-str NAME="$SERVICE_NAME" \
         --ext-str ACCOUNT_ID="$ACCOUNT_ID" \
-        --ext-str AWS_REGION="$AWS_REGION" 2>&1 || true); then
+        --ext-str AWS_REGION="$AWS_REGION" 2>&1); then
         # Filter out log messages to get actual diff content
         local actual_diff
         actual_diff=$(echo "$diff_output" | grep -v "^\[" | grep -v "^20[0-9][0-9]" | grep -v "^\s*$" || true)

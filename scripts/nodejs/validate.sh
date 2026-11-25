@@ -8,9 +8,15 @@
 #     -v, --verbose  Enable verbose output
 #     -d, --dry-run  Run in dry-run mode (no changes made)
 #     -f, --fix      Automatically fix issues where possible
+#         --changed-only  Validate only projects with uncommitted git changes to JS/TS/JSON files
 #   arguments:
 #     directory      Target directory to validate (optional)
 #                    If not provided, auto-detects all Node.js projects
+#
+# Design Rules:
+#   - Projects are auto-detected (package.json up to depth 2) when no directory is given.
+#   - Validation is read-only unless --fix is given; --dry-run prints planned commands only.
+#   - A missing or out-of-sync package-lock.json fails the run (non-zero exit).
 #######################################
 
 # Error handling: exit on error, unset variable, or failed pipeline
@@ -36,6 +42,8 @@ FIX_MODE=false
 TARGET_DIR=""
 EXIT_CODE=0
 IS_SCOPED=false
+# When true, validate only projects containing uncommitted git changes
+CHANGED_ONLY=false
 
 # Flags for individual checks
 INSTALL_FAILED=0
@@ -84,6 +92,8 @@ Options:
   -v, --verbose  Enable verbose output
   -d, --dry-run  Run in dry-run mode (no changes made)
   -f, --fix      Automatically fix issues where possible
+      --changed-only  Only projects containing JS/TS/JSON files with uncommitted git changes
+                 (staged, unstaged, untracked, deleted)
 
 Arguments:
   directory      Target directory to check (optional)
@@ -93,6 +103,7 @@ Examples:
   $(basename "$0")                                    # Auto-detect all Node.js projects
   $(basename "$0") -v                                 # Auto-detect with verbose output
   $(basename "$0") -f ./kinesis_data_firehose_cloudwatch_logs_processor  # Check specific project with auto-fix
+  $(basename "$0") --changed-only                     # Only projects with git changes
 EOF
     exit 0
 }
@@ -104,7 +115,7 @@ EOF
 #   Parses command line arguments and sets global variables accordingly
 #
 # Globals:
-#   None
+#   CHANGED_ONLY - Limit validation to projects with uncommitted git changes
 #
 # Arguments:
 #   $@ - All command line arguments passed to the script
@@ -131,6 +142,10 @@ function parse_arguments {
                 ;;
             -d | --dry-run)
                 DRY_RUN=true
+                shift
+                ;;
+            --changed-only)
+                CHANGED_ONLY=true
                 shift
                 ;;
             -f | --fix)
@@ -190,6 +205,7 @@ function check_package_lockfile {
         log "WARN" "  ⚠️  package-lock.json not found"
         log "WARN" "      This could indicate security risk - packages may install different versions"
         LOCKFILE_FAILED=1
+        EXIT_CODE=1
         status=1
     else
         log "INFO" "  ✅ package-lock.json found"
@@ -236,9 +252,64 @@ function check_package_sync {
     else
         log "WARN" "  ⚠️  package.json and package-lock.json may be out of sync"
         SYNC_FAILED=1
+        EXIT_CODE=1
         popd > /dev/null
         return 1
     fi
+}
+
+#######################################
+# filter_changed_projects: Keep only projects containing uncommitted git changes
+#
+# Description:
+#   Reads project directories from the arguments and emits those that own at least one file
+#   with uncommitted changes (staged, unstaged, untracked, deleted) to a JavaScript, TypeScript
+#   or JSON file. A changed file belongs to the deepest project directory that contains it.
+#
+# Globals:
+#   None
+#
+# Arguments:
+#   $@ - Project directories
+#
+# Outputs:
+#   Project directories with changes to stdout, one per line (input order)
+#
+# Returns:
+#   0 on success
+#
+# Usage:
+#   mapfile -t projects < <(filter_changed_projects "${projects[@]}")
+#
+#######################################
+function filter_changed_projects {
+    local -a abs_projects=() orig_projects=("$@")
+    local project file best_index i
+    for project in "${orig_projects[@]}"; do
+        abs_projects+=("$(cd "$project" && pwd)")
+    done
+
+    local -a owned=()
+    while IFS= read -r file; do
+        [[ -z $file ]] && continue
+        best_index=-1
+        for i in "${!abs_projects[@]}"; do
+            if [[ "$PWD/$file" == "${abs_projects[$i]}/"* ]]; then
+                if [[ $best_index -lt 0 || ${#abs_projects[$i]} -gt ${#abs_projects[$best_index]} ]]; then
+                    best_index=$i
+                fi
+            fi
+        done
+        if [[ $best_index -ge 0 ]]; then
+            owned[best_index]=1
+        fi
+    done < <(REPO_PATHS_INCLUDE_DELETED=true repo_emit_changed_paths '\.(js|jsx|mjs|cjs|ts|tsx|mts|cts|json)$')
+
+    for i in "${!abs_projects[@]}"; do
+        if [[ -n ${owned[$i]:-} ]]; then
+            printf '%s\n' "${orig_projects[$i]}"
+        fi
+    done
 }
 
 #######################################
@@ -274,7 +345,7 @@ function find_nodejs_projects {
         ! -path "*/node_modules.bak/*" \
         ! -path "*/.git/*" \
         ! -path "*/dist/*" \
-        ! -path "*/build/*" | while read -r pkg_json; do
+        ! -path "*/build/*" -print0 | while IFS= read -r -d '' pkg_json; do
         dirname "$pkg_json"
     done
 }
@@ -283,10 +354,14 @@ function find_nodejs_projects {
 # run_npm_install: Install dependencies
 #
 # Description:
-#   Installs npm dependencies for the project
+#   Installs npm dependencies for the project (npm ci; npm install with --fix)
 #
 # Globals:
-#   None
+#   DRY_RUN - Whether running in dry-run mode
+#   FIX_MODE - Use npm install instead of npm ci when true
+#   VERBOSE - Whether to show npm output
+#   INSTALL_FAILED - Set to 1 on failure
+#   EXIT_CODE - Set to 1 on failure
 #
 # Arguments:
 #   $1 - Project directory
@@ -308,37 +383,35 @@ function run_npm_install {
 
     pushd "$project_dir" > /dev/null || return 1
 
+    # npm ci installs exactly what package-lock.json pins and never rewrites it;
+    # only --fix may use npm install (which can update the lockfile).
+    local -a install_cmd=(npm ci)
+    if [[ $FIX_MODE == "true" ]]; then
+        install_cmd=(npm install)
+    fi
+
     if [[ $DRY_RUN == "true" ]]; then
-        log "INFO" "  🔍 [DRY-RUN] Would run: npm install"
+        log "INFO" "  🔍 [DRY-RUN] Would run: ${install_cmd[*]}"
         popd > /dev/null
         return 0
     fi
 
+    local install_status=0
     if [[ $VERBOSE == "true" ]]; then
-        if npm install; then
-            log "INFO" "  ✅ Dependencies installed"
-            popd > /dev/null
-            return 0
-        else
-            log "ERROR" "  ❌ Failed to install dependencies"
-            INSTALL_FAILED=1
-            EXIT_CODE=1
-            popd > /dev/null
-            return 1
-        fi
+        "${install_cmd[@]}" || install_status=$?
     else
-        if npm install > /dev/null 2>&1; then
-            log "INFO" "  ✅ Dependencies installed"
-            popd > /dev/null
-            return 0
-        else
-            log "ERROR" "  ❌ Failed to install dependencies"
-            INSTALL_FAILED=1
-            EXIT_CODE=1
-            popd > /dev/null
-            return 1
-        fi
+        "${install_cmd[@]}" > /dev/null 2>&1 || install_status=$?
     fi
+    popd > /dev/null
+
+    if [[ $install_status -eq 0 ]]; then
+        log "INFO" "  ✅ Dependencies installed (${install_cmd[*]})"
+        return 0
+    fi
+    log "ERROR" "  ❌ Failed to install dependencies (${install_cmd[*]})"
+    INSTALL_FAILED=1
+    EXIT_CODE=1
+    return 1
 }
 
 #######################################
@@ -468,7 +541,7 @@ function run_security_audit {
 
     # Count remaining vulnerabilities from the latest audit output.
     local vuln_count
-    vuln_count=$(echo "$audit_output" | grep -E "^[0-9]+ vulnerabilities" | awk '{print $1}' || echo "0")
+    vuln_count=$(echo "$audit_output" | grep -E "^[0-9]+ vulnerabilit(y|ies)" | awk '{print $1}' || echo "0")
 
     if [[ $vuln_count -gt 0 ]]; then
         log "ERROR" "  ❌ Security vulnerabilities found: $vuln_count"
@@ -680,6 +753,15 @@ function main {
         exit 0
     fi
 
+    if [[ $CHANGED_ONLY == "true" ]]; then
+        mapfile -t projects < <(filter_changed_projects "${projects[@]}")
+        if [[ ${#projects[@]} -eq 0 ]]; then
+            log "INFO" "--changed-only: no changed Node.js projects"
+            print_validation_result nodejs 0 "changed_only=SKIP|no changed Node.js projects" || true
+            exit 0
+        fi
+    fi
+
     log "INFO" "Found ${#projects[@]} Node.js project(s)"
 
     # Validate each project
@@ -703,27 +785,16 @@ function main {
         echo ""
     fi
 
-    if [[ $EXIT_CODE -eq 0 ]]; then
-        echo_section "All checks completed successfully in ${elapsed} seconds"
-        log "INFO" "✅ All validations passed"
-    else
-        echo_section "Result (completed in ${elapsed} seconds)"
-        echo "Result:" >&2
-        [[ $INSTALL_FAILED == "1" ]] && echo "❌ npm install" >&2 || echo "✅ npm install" >&2
-        [[ $LOCKFILE_FAILED == "1" ]] && echo "❌ package-lock.json" >&2 || echo "✅ package-lock.json" >&2
-        [[ $SYNC_FAILED == "1" ]] && echo "❌ package sync" >&2 || echo "✅ package sync" >&2
-        if [[ $AUDIT_FAILED == "1" ]]; then
-            if [[ $AUDIT_VULNERABILITIES -gt 0 ]]; then
-                echo "❌ security audit ($AUDIT_VULNERABILITIES vulnerabilities)" >&2
-            else
-                echo "❌ security audit" >&2
-            fi
-        else
-            echo "✅ security audit" >&2
-        fi
-        [[ $TEST_FAILED == "1" ]] && echo "❌ tests" >&2 || echo "✅ tests" >&2
-        log "ERROR" "❌ Some validations failed"
+    local audit_detail=""
+    if [[ $AUDIT_VULNERABILITIES -gt 0 ]]; then
+        audit_detail="|${AUDIT_VULNERABILITIES} vulnerabilities"
     fi
+    print_validation_result nodejs "$elapsed" \
+        "npm_install=$(check_status "$INSTALL_FAILED")" \
+        "package_lock=$(check_status "$LOCKFILE_FAILED")" \
+        "package_sync=$(check_status "$SYNC_FAILED")" \
+        "security_audit=$(check_status "$AUDIT_FAILED")${audit_detail}" \
+        "tests=$(check_status "$TEST_FAILED")" || true
 
     exit $EXIT_CODE
 }

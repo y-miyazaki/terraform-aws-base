@@ -48,6 +48,11 @@ TEST_PATHS=()
 SKIP_SCRIPTS=false
 # True when --skip-tests is given (skip Bats execution)
 SKIP_TESTS=false
+# True when --changed-only is given (limit to files with uncommitted git changes)
+CHANGED_ONLY=false
+# Root under which Bats suites mirror script paths (scripts/a/b.sh -> test/bats/scripts/a/b.bats);
+# override with the BATS_MIRROR_ROOT environment variable
+BATS_MIRROR_ROOT="${BATS_MIRROR_ROOT:-test/bats}"
 
 # Counters for statistics
 TOTAL_SCRIPTS=0
@@ -96,15 +101,22 @@ Options:
   -v, --verbose  Enable verbose output and detailed analysis
   -f, --fix      Auto-fix issues where possible (formatting, permissions)
   -q, --quiet    Suppress non-error output (only show summary)
-  -d, --check-function-docs
+  -c, --check-function-docs
+                 (-d is a deprecated alias; -d is reserved for --dry-run in the other validate scripts)
                  Opt-in: enforce Google Shell Style Guide function headers with
                  explicit Globals/Arguments/Outputs/Returns (None when N/A).
+                 Also checks top-level function order (G-03): show_usage,
+                 parse_arguments, a-z, main (detection only).
                  See https://google.github.io/styleguide/shellguide.html#s4.2-function-comments
   -t, --tests PATH
                  Limit Bats tests to PATH (directory or .bats file; repeatable).
                  Omit to run the full test/bats suite (same default as go/validate.sh).
       --skip-tests
                  Skip Bats test execution.
+      --changed-only
+                 Validate only shell scripts (.sh, or executable with a shell shebang) with uncommitted git changes (staged, unstaged, untracked);
+                 positional paths narrow the set. Without --tests, runs the Bats suites paired with
+                 those scripts (test/bats/<script path>.bats) and the changed .bats files.
 
 Design Rules:
   - Use 'set -euo pipefail' in scripts where appropriate
@@ -140,6 +152,7 @@ Examples:
   $(basename "$0") --tests test/bats/scripts/lib/common.bats      # Single Bats file
   $(basename "$0") scripts/lib --skip-tests                       # Scripts only
   $(basename "$0") -q -v                                          # Quiet / verbose
+  $(basename "$0") --changed-only                                 # Only git-changed scripts and Bats suites
 EOF
     exit 0
 }
@@ -158,6 +171,9 @@ EOF
 #   TEST_PATHS - Optional test paths from --tests
 #   SKIP_TESTS - Skip Bats test execution
 #   SKIP_SCRIPTS - Skip shell-script validation
+#   CHANGED_ONLY - Limit scripts and Bats suites to uncommitted git changes
+#   SEARCH_PATHS - Replaced by the changed scripts when CHANGED_ONLY is set
+#   TEST_PATHS - Filled with paired and changed suites when CHANGED_ONLY is set without --tests
 #
 # Arguments:
 #   $@ - Command line arguments
@@ -190,7 +206,13 @@ function parse_arguments {
                 QUIET=true
                 shift
                 ;;
-            -d | --check-function-docs)
+            -c | --check-function-docs)
+                CHECK_FUNCTION_DOCS=true
+                shift
+                ;;
+            -d)
+                # Deprecated alias: -d means --dry-run in the other scripts
+                custom_log "WARN" "-d is deprecated for --check-function-docs; use -c or --check-function-docs"
                 CHECK_FUNCTION_DOCS=true
                 shift
                 ;;
@@ -205,6 +227,10 @@ function parse_arguments {
                 SKIP_TESTS=true
                 shift
                 ;;
+            --changed-only)
+                CHANGED_ONLY=true
+                shift
+                ;;
             -*)
                 error_exit "Unknown option: $1"
                 ;;
@@ -214,6 +240,75 @@ function parse_arguments {
                 ;;
         esac
     done
+
+    if [[ $CHANGED_ONLY != "true" ]]; then
+        # A typo must not pass by checking nothing: every user-given path has to resolve
+        local user_path
+        local -a user_paths=(${SEARCH_PATHS[@]+"${SEARCH_PATHS[@]}"})
+        # --tests paths are not used when tests are skipped
+        if [[ $SKIP_TESTS != "true" ]]; then
+            user_paths+=(${TEST_PATHS[@]+"${TEST_PATHS[@]}"})
+        fi
+        # Synced skill copies derive WORKSPACE_ROOT from their own location, so a path that only
+        # exists relative to the repository root of the current directory selects that root
+        local repo_root=""
+        repo_root="$(git rev-parse --show-toplevel 2> /dev/null || true)"
+        if [[ -n $repo_root && $repo_root != "$WORKSPACE_ROOT" ]]; then
+            for user_path in ${user_paths[@]+"${user_paths[@]}"}; do
+                if [[ $user_path != /* && ! -e "${WORKSPACE_ROOT}/${user_path}" && -e "${repo_root}/${user_path}" ]]; then
+                    WORKSPACE_ROOT="$repo_root"
+                    break
+                fi
+            done
+        fi
+        for user_path in ${user_paths[@]+"${user_paths[@]}"}; do
+            if [[ ! -e "$(resolve_user_search_path "$user_path")" ]]; then
+                error_exit "Path does not exist: $user_path"
+            fi
+        done
+    fi
+
+    if [[ $CHANGED_ONLY == "true" ]]; then
+        # Discovery resolves paths against WORKSPACE_ROOT; synced skill copies derive it from
+        # their own location, so use the repository root of the current directory when there is one
+        local repo_root
+        repo_root="$(git rev-parse --show-toplevel 2> /dev/null || true)"
+        if [[ -n $repo_root ]]; then
+            WORKSPACE_ROOT="$repo_root"
+        fi
+        pushd "$WORKSPACE_ROOT" > /dev/null || error_exit "Cannot change directory to $WORKSPACE_ROOT"
+        local -a scopes=()
+        local scope
+        if [[ ${#SEARCH_PATHS[@]} -gt 0 ]]; then
+            scopes=("${SEARCH_PATHS[@]}")
+            for scope in "${scopes[@]}"; do
+                if [[ ! -e $scope ]]; then
+                    error_exit "Path does not exist: $scope"
+                fi
+            done
+        fi
+        mapfile -t SEARCH_PATHS < <(find_changed_shell_scripts ${scopes[@]+"${scopes[@]}"})
+        if [[ ${#SEARCH_PATHS[@]} -eq 0 ]]; then
+            SKIP_SCRIPTS=true
+            custom_log "INFO" "--changed-only: no changed shell scripts"
+        fi
+        if [[ ${#TEST_PATHS[@]} -eq 0 && $SKIP_TESTS != "true" ]]; then
+            # Suites paired with the changed scripts, plus changed suites (narrowed by the same scopes)
+            local -a changed_bats=()
+            mapfile -t changed_bats < <(repo_emit_changed_paths '\.bats$' ${scopes[@]+"${scopes[@]}"})
+            mapfile -t TEST_PATHS < <(
+                {
+                    find_paired_bats_tests ${SEARCH_PATHS[@]+"${SEARCH_PATHS[@]}"}
+                    printf '%s\n' ${changed_bats[@]+"${changed_bats[@]}"}
+                } | sed '/^$/d' | sort -u
+            )
+            if [[ ${#TEST_PATHS[@]} -eq 0 ]]; then
+                SKIP_TESTS=true
+                custom_log "INFO" "--changed-only: no changed Bats suites"
+            fi
+        fi
+        popd > /dev/null || true
+    fi
 
     if [[ ${#SEARCH_PATHS[@]} -eq 0 && ${#TEST_PATHS[@]} -gt 0 ]]; then
         SKIP_SCRIPTS=true
@@ -803,6 +898,78 @@ function find_bats_tests {
 #######################################
 
 #######################################
+# find_changed_shell_scripts: List changed shell scripts, including extensionless shebang scripts
+#
+# Description:
+#   Emits changed files that are *.sh, plus executable files without .sh whose first line is a
+#   shell shebang (the same rule find_shell_scripts uses for a full run). bin/, dist/, build/ and
+#   agent directories are included, as in a full run.
+#
+# Globals:
+#   None
+#
+# Arguments:
+#   $@ - Optional scope paths narrowing the changed files
+#
+# Outputs:
+#   Script paths relative to the current directory, one per line
+#
+# Returns:
+#   0 on success
+#
+# Usage:
+#   mapfile -t scripts < <(find_changed_shell_scripts scripts/lib)
+#
+#######################################
+function find_changed_shell_scripts {
+    local file
+    while IFS= read -r file; do
+        [[ -z $file ]] && continue
+        if [[ $file == *.sh ]]; then
+            printf '%s\n' "$file"
+        elif [[ -x $file ]] && has_shell_shebang "$file"; then
+            printf '%s\n' "$file"
+        fi
+    done < <(REPO_PATHS_INCLUDE_BUILD_OUTPUT=true REPO_PATHS_INCLUDE_AGENTS=true repo_emit_changed_paths '' "$@")
+}
+
+#######################################
+# find_paired_bats_tests: Find the Bats suites that mirror the given scripts
+#
+# Description:
+#   Maps each script path a/b/c.sh to ${BATS_MIRROR_ROOT}/a/b/c.bats and emits those that exist.
+#   Scripts that are not .sh files are ignored.
+#
+# Globals:
+#   BATS_MIRROR_ROOT - Root under which suites mirror script paths
+#   WORKSPACE_ROOT - Repository root used to check that the suite exists
+#
+# Arguments:
+#   $@ - Script paths relative to the repository root
+#
+# Outputs:
+#   Existing suite paths relative to the repository root, one per line
+#
+# Returns:
+#   0 on success
+#
+# Usage:
+#   find_paired_bats_tests scripts/lib/common.sh
+#
+#######################################
+function find_paired_bats_tests {
+    local script suite
+    for script in "$@"; do
+        [[ $script == *.sh ]] || continue
+        script="${script#"${WORKSPACE_ROOT}"/}"
+        suite="${BATS_MIRROR_ROOT}/${script%.sh}.bats"
+        if [[ -f "${WORKSPACE_ROOT}/${suite}" ]]; then
+            printf '%s\n' "$suite"
+        fi
+    done
+}
+
+#######################################
 # find_shell_scripts: Function to find all shell scripts recursively
 #
 # Description:
@@ -853,7 +1020,7 @@ function find_shell_scripts {
 
             # Find files with shell shebang but no .sh extension
             while IFS= read -r -d '' script; do
-                if [[ -f $script ]] && head -1 "$script" 2> /dev/null | grep -q "^#!/.*sh"; then
+                if [[ -f $script ]] && has_shell_shebang "$script"; then
                     # Only add if not already in scripts array
                     local already_added=false
                     for existing in "${scripts[@]}"; do
@@ -1095,6 +1262,32 @@ function generate_summary_report {
 #######################################
 
 #######################################
+# has_shell_shebang: Check whether a file starts with a shell shebang
+#
+# Description:
+#   Single owner of the shebang rule shared by full discovery and --changed-only discovery.
+#
+# Globals:
+#   None
+#
+# Arguments:
+#   $1 - File path
+#
+# Outputs:
+#   None
+#
+# Returns:
+#   0 when the first line matches ^#!/.*sh, 1 otherwise
+#
+# Usage:
+#   has_shell_shebang "bin/deploy"
+#
+#######################################
+function has_shell_shebang {
+    head -1 "$1" 2> /dev/null | grep -q "^#!/.*sh"
+}
+
+#######################################
 # normalize_path: Resolve a script path for stable reporting
 #
 # Description:
@@ -1203,6 +1396,12 @@ function print_bats_output {
                 ;;
         esac
     done < "$output_file"
+
+    # Non-zero exit without any "not ok": surface runner errors/warnings hidden by the filter above.
+    if [[ ${#BATS_FAILED_TESTS[@]} -eq 0 ]]; then
+        echo "Bats output (non-TAP lines; no failing tests recorded):"
+        grep -vE '^(ok |1\.\.|\s*$)' "$output_file" || true
+    fi
 
     if [[ -n $BATS_SUMMARY ]]; then
         echo ""
@@ -1503,6 +1702,7 @@ function resolve_user_search_path {
 #
 # Globals:
 #   WORKSPACE_ROOT - Workspace root directory
+#   BATS_JOBS - Optional parallel job count (default nproc; 1 = serial)
 #
 # Arguments:
 #   $@ - List of test files
@@ -1540,6 +1740,31 @@ function run_bats_tests {
 
     custom_log "INFO" "Running Bats tests with: $bats_bin"
 
+    # Run test files in parallel when a bats-supported runner (GNU parallel or rush) is installed.
+    # BATS_JOBS overrides the job count; BATS_JOBS=1 forces serial execution.
+    local -a bats_opts=(--formatter tap)
+    local parallel_bin=""
+    local jobs="${BATS_JOBS:-$(nproc 2> /dev/null || echo 1)}"
+    if [[ $jobs -gt 1 ]]; then
+        if command -v parallel &> /dev/null; then
+            parallel_bin="parallel"
+        elif command -v rush &> /dev/null; then
+            parallel_bin="rush"
+        fi
+    fi
+    if [[ -n $parallel_bin ]]; then
+        # A mise shim re-resolves PATH and drops the bats libexec dir; launch the real binary instead.
+        local runner_bin="$parallel_bin" runner_real=""
+        if [[ $(command -v "$parallel_bin") == */shims/* ]] && command -v mise &> /dev/null; then
+            runner_real=$(mise which "$parallel_bin" 2> /dev/null || true)
+            if [[ -n $runner_real && -x $runner_real ]]; then
+                runner_bin="$runner_real"
+            fi
+        fi
+        bats_opts+=(--jobs "$jobs" --parallel-binary-name "$runner_bin" --no-parallelize-within-files)
+        custom_log "INFO" "Bats parallel: jobs=$jobs runner=$parallel_bin"
+    fi
+
     local bats_output
     bats_output=$(mktemp)
     local bats_exit=0
@@ -1547,13 +1772,13 @@ function run_bats_tests {
     # Full suite when --tests omitted; scoped --tests runs use the discovered file list.
     if [[ ${#TEST_PATHS[@]} -eq 0 && -d "$WORKSPACE_ROOT/test/bats" ]]; then
         pushd "$WORKSPACE_ROOT" > /dev/null || return 1
-        if "$bats_bin" -r "test/bats" --formatter tap > "$bats_output" 2>&1; then
+        if "$bats_bin" -r "test/bats" "${bats_opts[@]}" > "$bats_output" 2>&1; then
             bats_exit=0
         else
             bats_exit=$?
         fi
         popd > /dev/null || true
-    elif "$bats_bin" "${tests[@]}" --formatter tap > "$bats_output" 2>&1; then
+    elif "$bats_bin" "${tests[@]}" "${bats_opts[@]}" > "$bats_output" 2>&1; then
         bats_exit=0
     else
         bats_exit=$?
@@ -1628,6 +1853,10 @@ function run_script_validation_steps {
     fi
 
     if ! validate_function_docs "$script"; then
+        _validation_passed=false
+    fi
+
+    if ! validate_function_order "$script"; then
         _validation_passed=false
     fi
 
@@ -1754,6 +1983,117 @@ function validate_function_docs {
 }
 
 #######################################
+# validate_function_order: Opt-in function order check (G-03)
+#
+# Description:
+#   When CHECK_FUNCTION_DOCS is true, verifies top-level functions appear in the order
+#   show_usage, parse_arguments, other functions in a-z order, then main. Scripts without
+#   show_usage/parse_arguments/main (sourced libraries) are checked for a-z order only.
+#   Heredoc bodies are skipped so text such as "terraform {" is never read as a function.
+#   Detection only: nothing is rewritten.
+#
+# Globals:
+#   CHECK_FUNCTION_DOCS - Enable function doc and order checks
+#
+# Arguments:
+#   $1 - Script path
+#
+# Outputs:
+#   Writes the first out-of-order function to stderr on failure
+#
+# Returns:
+#   0 when in order or the check is disabled; 1 when out of order
+#
+# Usage:
+#   validate_function_order "/path/to/script.sh"
+#
+#######################################
+function validate_function_order {
+    local script="$1"
+    local script_name
+    script_name="$(basename "$script")"
+
+    if [[ $CHECK_FUNCTION_DOCS != "true" ]]; then
+        return 0
+    fi
+
+    if [[ $script == *.bats ]]; then
+        return 0
+    fi
+
+    custom_log "DEBUG" "Validating function order for: $script_name"
+
+    local -a names=()
+    local -a lines=()
+    local entry
+    while IFS= read -r entry; do
+        [[ -z ${entry} ]] && continue
+        lines+=("${entry%%:*}")
+        names+=("${entry#*:}")
+    done < <(awk '
+        heredoc != "" {
+            line = $0
+            sub(/^[ \t]+/, "", line)
+            if (line == heredoc) { heredoc = "" }
+            next
+        }
+        /^(function[ \t]+)?[A-Za-z_][A-Za-z0-9_]*[ \t]*(\(\))?[ \t]*\{[ \t]*$/ {
+            name = $0
+            sub(/^function[ \t]+/, "", name)
+            sub(/[ \t]*(\(\))?[ \t]*\{[ \t]*$/, "", name)
+            print NR ":" name
+            next
+        }
+        # "(^|[^<])<<" so a here-string ("<<<") is not mistaken for a heredoc
+        match($0, /(^|[^<])<<-?[ \t]*["\x27]?[A-Za-z_][A-Za-z0-9_]*["\x27]?/) {
+            tag = substr($0, RSTART, RLENGTH)
+            sub(/^[^<]?<<-?[ \t]*["\x27]?/, "", tag)
+            sub(/["\x27]$/, "", tag)
+            heredoc = tag
+        }
+    ' "$script" 2> /dev/null || true)
+
+    if [[ ${#names[@]} -lt 2 ]]; then
+        return 0
+    fi
+
+    local -a middle=()
+    local -a expected=()
+    local name has_main=false
+    for name in "${names[@]}"; do
+        case "$name" in
+            show_usage | parse_arguments) ;;
+            main) has_main=true ;;
+            *) middle+=("$name") ;;
+        esac
+    done
+
+    # Expected: show_usage, parse_arguments (when present), a-z (byte order), main (when present)
+    local item
+    for item in show_usage parse_arguments; do
+        for name in "${names[@]}"; do
+            [[ $name == "$item" ]] && expected+=("$item")
+        done
+    done
+    if [[ ${#middle[@]} -gt 0 ]]; then
+        while IFS= read -r item; do
+            expected+=("$item")
+        done < <(printf '%s\n' "${middle[@]}" | LC_ALL=C sort)
+    fi
+    [[ $has_main == "true" ]] && expected+=("main")
+
+    local i
+    for ((i = 0; i < ${#names[@]}; i++)); do
+        if [[ ${names[i]} != "${expected[i]}" ]]; then
+            custom_log "ERROR" "❌ Function order validation failed: $script_name"
+            echo "$script:${lines[i]}: function '${names[i]}' is out of order (expected '${expected[i]}' here; G-03: show_usage, parse_arguments, a-z, main)" >&2
+            return 1
+        fi
+    done
+
+    custom_log "DEBUG" "✅ Function order validation passed: $script_name"
+    return 0
+}
 
 #######################################
 # validate_permissions: Function to validate file permissions
@@ -1796,8 +2136,12 @@ function validate_permissions {
         custom_log "WARN" "⚠️  Script is not executable: $script_name"
         if [[ $AUTO_FIX == "true" ]]; then
             custom_log "INFO" "Auto-fixing permissions for: $script_name"
-            chmod +x "$script"
-            custom_log "INFO" "✅ Made executable: $script_name"
+            if chmod +x "$script"; then
+                custom_log "INFO" "✅ Made executable: $script_name"
+                # Fixed: the run must not be reported as failed because of an issue it just repaired
+                return 0
+            fi
+            custom_log "ERROR" "Failed to make executable: $script_name"
         fi
         return 1
     fi
@@ -1966,6 +2310,10 @@ function validate_shebang {
                 rm -f "$script.bak" "$script.tmp"
                 return 1
             fi
+            # The new file is created under umask 027; keep the original mode (e.g. the exec bit)
+            if ! chmod --reference="$script" "$script.tmp" 2> /dev/null && ! chmod "$(stat -f '%Lp' "$script" 2> /dev/null)" "$script.tmp" 2> /dev/null; then
+                custom_log "WARN" "Could not preserve file mode: $script_name"
+            fi
             if ! mv "$script.tmp" "$script"; then
                 custom_log "ERROR" "Failed to replace original file: $script_name"
                 rm -f "$script.tmp"
@@ -1975,6 +2323,7 @@ function validate_shebang {
             fi
             rm -f "$script.bak"
             custom_log "INFO" "✅ Added shebang to: $script_name"
+            return 0
         fi
         return 1
     fi
@@ -2115,7 +2464,8 @@ function main {
             custom_log "INFO" "Found ${#scripts[@]} shell scripts to validate"
             custom_echo_section "Script Validation"
             for script in "${scripts[@]}"; do
-                validate_script "$script"
+                # Failures are recorded in FAILED_SCRIPTS; do not let set -e skip the summary and tests
+                validate_script "$script" || true
             done
         fi
     fi
@@ -2137,6 +2487,29 @@ function main {
     generate_recommendations
 
     custom_echo_section "Validation Complete"
+
+    local scripts_status="PASS" bats_status="PASS" scripts_detail="" bats_detail=""
+    if [[ $SKIP_SCRIPTS == "true" ]]; then
+        scripts_status="SKIP"
+    elif [[ $FAILED_SCRIPTS -gt 0 ]]; then
+        scripts_status="FAIL"
+        scripts_detail="|${FAILED_SCRIPTS} failed"
+    elif [[ ${WARNINGS_COUNT:-0} -gt 0 ]]; then
+        scripts_status="WARN"
+        scripts_detail="|${WARNINGS_COUNT} warnings"
+    fi
+    if [[ $SKIP_TESTS == "true" ]]; then
+        bats_status="SKIP"
+    elif [[ ${#BATS_FAILED_TESTS[@]} -gt 0 ]]; then
+        bats_status="FAIL"
+        bats_detail="|${#BATS_FAILED_TESTS[@]} failed"
+    elif [[ ${BATS_EXIT_CODE:-0} -ne 0 ]]; then
+        bats_status="FAIL"
+        bats_detail="|incomplete run (exit ${BATS_EXIT_CODE})"
+    fi
+    print_validation_result shell-script "$SECONDS" \
+        "scripts=${scripts_status}${scripts_detail}" \
+        "bats=${bats_status}${bats_detail}" || true
 
     # Exit with appropriate code
     if [[ $FAILED_SCRIPTS -gt 0 ]] || [[ ${#BATS_FAILED_TESTS[@]} -gt 0 ]] || [[ ${BATS_EXIT_CODE:-0} -ne 0 ]]; then

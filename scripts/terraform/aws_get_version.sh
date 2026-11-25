@@ -216,14 +216,17 @@ function parse_arguments {
                 shift
                 ;;
             -o | --output)
+                [[ $# -ge 2 ]] || error_exit "Option $1 requires a value"
                 OUTPUT_FILE="$2"
                 shift 2
                 ;;
             -r | --region)
+                [[ $# -ge 2 ]] || error_exit "Option $1 requires a value"
                 AWS_REGION="$2"
                 shift 2
                 ;;
             -c | --categories)
+                [[ $# -ge 2 ]] || error_exit "Option $1 requires a value"
                 CATEGORIES="$2"
                 shift 2
                 ;;
@@ -281,7 +284,7 @@ function collect_glue_versions {
             is_latest="Yes"
         fi
 
-        buffer+="Glue,Version,glue,$version,$region,$is_latest,$status,$end_of_support_date,$end_of_life_date\n"
+        buffer+="Glue,Version,glue,$version,$region,$is_latest,$status,$end_of_support_date,$end_of_life_date"$'\n'
     done <<< "$GLUE_DATA"
 
     echo "$buffer"
@@ -331,7 +334,7 @@ function collect_lambda_versions {
             is_latest="Yes"
         fi
 
-        buffer+="Lambda,Runtime,$family,$runtime,$region,$is_latest,$status,$deprecation_date,$block_create_date,$block_update_date\n"
+        buffer+="Lambda,Runtime,$family,$runtime,$region,$is_latest,$status,$deprecation_date,$block_create_date,$block_update_date"$'\n'
     done <<< "$LAMBDA_DATA"
 
     echo "$buffer"
@@ -378,9 +381,9 @@ function collect_rds_versions {
         local engine_versions_json
         engine_versions_json=$(aws rds describe-db-engine-versions --engine "$engine" --region "$region" 2> /dev/null | jq '.DBEngineVersions' || echo "[]")
 
-        # Get latest version by sorting versions properly
+        # Get latest version by sorting numerically on every number in the version (8.0.40 > 8.0.9, 15.4-R2 > 15.4)
         local latest_version
-        latest_version=$(echo "$engine_versions_json" | jq -r 'sort_by(.EngineVersion) | reverse | .[0].EngineVersion // ""')
+        latest_version=$(echo "$engine_versions_json" | jq -r 'sort_by(.EngineVersion | [scan("[0-9]+") | tonumber]) | reverse | .[0].EngineVersion // ""')
 
         # Process each version with AWS API data
         while IFS= read -r version_data; do
@@ -400,7 +403,7 @@ function collect_rds_versions {
                 # RDS versions don't have standardized deprecation dates from AWS API
                 local deprecation_date=""
                 local eol_date=""
-                buffer+="RDS,Engine,$engine,$version,$region,$is_latest,$status,$deprecation_date,$eol_date\n"
+                buffer+="RDS,Engine,$engine,$version,$region,$is_latest,$status,$deprecation_date,$eol_date"$'\n'
             fi
         done < <(echo "$engine_versions_json" | jq -c '.[]?')
     done
@@ -498,9 +501,10 @@ function output_csv_data {
         {
             echo "$header"
             if [[ $sort_output == "true" ]]; then
-                printf "%b" "$buffer" | sort
+                printf '%s\n' "$buffer" | sort
             else
-                printf "%b" "$buffer"
+                # Command substitution drops the buffer's trailing newline, so restore it
+                printf '%s\n' "$buffer"
             fi
             echo ""
         } >> "$OUTPUT_FILE"
@@ -598,7 +602,7 @@ function main {
 
     # Display summary
     local total_entries
-    total_entries=$(($(wc -l < "$OUTPUT_FILE") - $(echo "${RUNTIME_CATEGORIES[@]}" | wc -w))) # Subtract header lines
+    total_entries=$(($(wc -l < "$OUTPUT_FILE") - ${#categories_to_process[@]})) # Subtract header lines
     log "INFO" "Total runtime/engine versions collected: $total_entries"
 
     echo "Results written to: $OUTPUT_FILE"

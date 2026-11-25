@@ -122,7 +122,7 @@ Examples:
   # Build with custom Dockerfile and context path
   $(basename "$0") -f ./docker/Dockerfile -c ./docker my-app-repo
 EOF
-    exit 0
+    exit "${1:-0}"
 }
 
 #######################################
@@ -171,26 +171,32 @@ function parse_arguments {
                 shift
                 ;;
             -r | --region)
+                [[ $# -ge 2 ]] || error_exit "Option $1 requires a value"
                 AWS_REGION="$2"
                 shift 2
                 ;;
             -i | --image)
+                [[ $# -ge 2 ]] || error_exit "Option $1 requires a value"
                 EXISTING_IMAGE="$2"
                 shift 2
                 ;;
             -p | --platform)
+                [[ $# -ge 2 ]] || error_exit "Option $1 requires a value"
                 DOCKER_PLATFORM="$2"
                 shift 2
                 ;;
             -t | --tag)
+                [[ $# -ge 2 ]] || error_exit "Option $1 requires a value"
                 IMAGE_TAG="$2"
                 shift 2
                 ;;
             -f | --file)
+                [[ $# -ge 2 ]] || error_exit "Option $1 requires a value"
                 DOCKERFILE_PATH="$2"
                 shift 2
                 ;;
             -c | --context)
+                [[ $# -ge 2 ]] || error_exit "Option $1 requires a value"
                 BUILD_CONTEXT="$2"
                 shift 2
                 ;;
@@ -212,7 +218,7 @@ function parse_arguments {
     # Validate required arguments
     if [[ -z ${REPOSITORY_NAME} ]]; then
         echo "Error: Repository name is required" >&2
-        show_usage
+        show_usage 1
     fi
 }
 
