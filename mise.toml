@@ -46,15 +46,15 @@ python = "3.14.6" # pinned: onnxruntime (pipx:headroom-ai dependency) has no cp3
 
 # AI agent tools
 "github:microsoft/apm" = { version = "v0.36.1", lazy = true, lazy_bins = ["apm"] }                                 # agent package manager
-claude = { version = "2.1.327", lazy = true, lazy_bins = ["claude"] }                                              # Claude Code CLI
+claude = { version = "2.1.328", lazy = true, lazy_bins = ["claude"] }                                              # Claude Code CLI
 "github:DeusData/codebase-memory-mcp" = { version = "v0.12.1", lazy = true, lazy_bins = ["codebase-memory-mcp"] } # codebase memory MCP server
 "aqua:github/copilot-cli" = { version = "1.0.114", lazy = true, lazy_bins = ["copilot"] }                           # GitHub Copilot CLI
 "pipx:headroom-ai" = { version = "0.44.0", extras = "proxy,mcp,bedrock", depends = ["python"], lazy = true, lazy_bins = ["headroom", "headroom-cache-ttl"] }
 "github:microsoft/waza" = { version = "v0.41.0", lazy = true, lazy_bins = ["waza"] }                              # agent skill evaluator
 
 # AWS related tools
-"aqua:aws/aws-cli" = { version = "2.40.4", lazy = true, lazy_bins = ["aws", "aws_completer"] }                     # AWS CLI
-"aqua:aws/aws-sam-cli" = { version = "1.172.1", lazy = true, lazy_bins = ["sam"] }                                 # SAM CLI tool
+"aqua:aws/aws-cli" = { version = "2.41.1", lazy = true, lazy_bins = ["aws", "aws_completer"] }                     # AWS CLI
+"aqua:aws/aws-sam-cli" = { version = "1.173.0", lazy = true, lazy_bins = ["sam"] }                                 # SAM CLI tool
 "npm:awsp" = { version = "0.2.0", depends = [
   "node",
 ], install_env = { NPM_CONFIG_IGNORE_SCRIPTS = "true" } } # AWS profile switcher
@@ -65,7 +65,7 @@ claude = { version = "2.1.327", lazy = true, lazy_bins = ["claude"] }           
 # GitHub related tools
 "aqua:rhysd/actionlint" = { version = "1.7.12", lazy = true, lazy_bins = ["actionlint"] }                          # GitHub Actions linter
 "aqua:suzuki-shunsuke/disable-checkout-persist-credentials" = { version = "1.0.2", lazy = true, lazy_bins = ["disable-checkout-persist-credentials"] } # disable persist-credentials in checkout action
-"aqua:cli/cli" = { version = "2.104.0", lazy = true, lazy_bins = ["gh"] }                                          # GitHub CLI (gh)
+"aqua:cli/cli" = { version = "2.105.0", lazy = true, lazy_bins = ["gh"] }                                          # GitHub CLI (gh)
 "aqua:suzuki-shunsuke/ghalint" = { version = "1.6.0", lazy = true, lazy_bins = ["ghalint"] }                       # GitHub Actions linter
 "aqua:suzuki-shunsuke/ghatm" = { version = "1.0.1", lazy = true, lazy_bins = ["ghatm"] }                           # auto-set timeout-minutes for GitHub Actions jobs
 "aqua:suzuki-shunsuke/pinact" = { version = "5.0.2", lazy = true, lazy_bins = ["pinact"] }                         # GitHub Actions pinning tool
@@ -90,7 +90,7 @@ claude = { version = "2.1.327", lazy = true, lazy_bins = ["claude"] }           
 "aqua:go-swagger/go-swagger" = { version = "0.36.7", lazy = true, lazy_bins = ["swagger"] }                        # API documentation generator (swagger)
 
 # Lint / Formatter tools
-"npm:cspell" = { version = "10.5.1", depends = [
+"npm:cspell" = { version = "10.5.2", depends = [
   "node",
 ], install_env = { PNPM_CONFIG_IGNORE_SCRIPTS = "true" }, lazy = true, lazy_bins = ["cspell", "cspell-esm"] } # spell checker
 "npm:markdown-link-check" = { version = "3.15.0", depends = [
@@ -115,7 +115,7 @@ claude = { version = "2.1.327", lazy = true, lazy_bins = ["claude"] }           
 "pipx:pre-commit" = { version = "4.7.0", depends = [
   "python",
 ], lazy = true, lazy_bins = ["pre-commit"] } # pre-commit framework
-"pipx:semgrep" = { version = "1.185.0", depends = ["python"], lazy = true, lazy_bins = ["semgrep", "pysemgrep"] } # SAST scanner (uvx-backed pipx)
+"pipx:semgrep" = { version = "1.186.0", depends = ["python"], lazy = true, lazy_bins = ["semgrep", "pysemgrep"] } # SAST scanner (uvx-backed pipx)
 "aqua:aquasecurity/trivy" = { version = "0.76.2", lazy = true, lazy_bins = ["trivy"] }                             # vulnerability scanner
 
 # Terraform related tools
