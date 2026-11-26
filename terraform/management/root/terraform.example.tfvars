@@ -480,13 +480,16 @@ jit_access = {
   #     How to get: AWS Console -> Organizations -> Accounts, or
   #       aws organizations list-accounts --query "Accounts[].{Name:Name,Id:Id}"
   #
-  #   permission_set_arn (string):
-  #     ARN of the IAM Identity Center Permission Set to assign.
+  #   permission_set_name (string):
+  #     Name of the IAM Identity Center Permission Set to assign. The ARN is
+  #     resolved from the name via data source (the name must exist in the
+  #     Identity Center instance of the management account).
   #     How to get: AWS Console -> IAM Identity Center -> Permission sets
-  #       -> select the permission set -> copy the ARN, or
-  #       aws sso-admin list-permission-sets \
+  #       -> the "Name" column, or
+  #       aws sso-admin describe-permission-set \
   #         --instance-arn <identity-center-instance-arn> \
-  #         --query "PermissionSets" --output text
+  #         --permission-set-arn <permission-set-arn> \
+  #         --query "PermissionSet.Name" --output text
   #
   #   max_duration_minutes (number):
   #     Maximum allowed access duration in minutes. The user can request
@@ -505,14 +508,14 @@ jit_access = {
     #   approvers            = ["UXXXXXXXXXX", "UXXXXXXXXXX"]
     #   description          = "production administrator access"
     #   max_duration_minutes = 240
-    #   permission_set_arn   = "arn:aws:sso:::permissionSet/ssoins-xxxxxxxxxxxxxxx/ps-xxxxxxxxxxxxxxx"
+    #   permission_set_name  = "PermissionSetName"
     # }
     # Production-Developer = {
     #   account_id           = "123456789012"
     #   approvers            = ["UXXXXXXXXXX", "UXXXXXXXXXX"]
     #   description          = "production developer access"
     #   max_duration_minutes = 240
-    #   permission_set_arn   = "arn:aws:sso:::permissionSet/ssoins-xxxxxxxxxxxxxxx/ps-xxxxxxxxxxxxxxx"
+    #   permission_set_name  = "PermissionSetName"
     # }
   }
   slack = {

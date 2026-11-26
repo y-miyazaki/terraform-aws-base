@@ -24,7 +24,7 @@ locals {
               "lambda:InvokeFunction",
             ]
             Resource = [
-              "*",
+              "arn:aws:lambda:${var.region.global}:${data.aws_caller_identity.current.account_id}:function:${var.name_prefix}cloudwatch-schedule-*",
             ]
           }
         ]

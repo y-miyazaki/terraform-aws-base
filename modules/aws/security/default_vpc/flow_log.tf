@@ -56,9 +56,22 @@ data "aws_iam_policy_document" "this" {
     actions = [
       "logs:CreateLogGroup",
       "logs:CreateLogStream",
-      "logs:DescribeLogGroups",
       "logs:DescribeLogStreams",
       "logs:PutLogEvents",
+    ]
+
+    resources = [
+      aws_cloudwatch_log_group.this[0].arn,
+      "${aws_cloudwatch_log_group.this[0].arn}:*",
+    ]
+  }
+
+  # logs:DescribeLogGroups does not support resource-level permissions
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "logs:DescribeLogGroups",
     ]
 
     resources = [

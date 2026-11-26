@@ -4,7 +4,7 @@
 | Name | Version |
 | ---- | ------- |
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.5.7 |
-| <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 6.0.0, < 7.0.0 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 6.53.0, < 7.0.0 |
 
 ## Providers
 
@@ -17,7 +17,7 @@
 | Name | Source | Version |
 | ---- | ------ | ------- |
 | <a name="module_dynamodb_table_requests"></a> [dynamodb\_table\_requests](#module\_dynamodb\_table\_requests) | terraform-aws-modules/dynamodb-table/aws | 5.5.2 |
-| <a name="module_lambda_jit_access"></a> [lambda\_jit\_access](#module\_lambda\_jit\_access) | terraform-aws-modules/lambda/aws | 8.13.0 |
+| <a name="module_lambda_jit_access"></a> [lambda\_jit\_access](#module\_lambda\_jit\_access) | terraform-aws-modules/lambda/aws | 8.13.2 |
 | <a name="module_step_functions"></a> [step\_functions](#module\_step\_functions) | terraform-aws-modules/step-functions/aws | 5.1.1 |
 
 ## Resources
@@ -65,6 +65,7 @@
 | [aws_iam_policy_document.sfn](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
 | [aws_region.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/region) | data source |
 | [aws_ssoadmin_instances.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/ssoadmin_instances) | data source |
+| [aws_ssoadmin_permission_set.profiles](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/ssoadmin_permission_set) | data source |
 
 ## Inputs
 
@@ -77,7 +78,7 @@
 | <a name="input_lambda_timeout"></a> [lambda\_timeout](#input\_lambda\_timeout) | (Optional) Timeout in seconds for Lambda functions. | `number` | `300` | no |
 | <a name="input_lambda_zip_base_path"></a> [lambda\_zip\_base\_path](#input\_lambda\_zip\_base\_path) | (Required) Base path to Lambda zip files (e.g., ../../lambda/outputs). | `string` | n/a | yes |
 | <a name="input_name_prefix"></a> [name\_prefix](#input\_name\_prefix) | (Required) Prefix for all resource names. | `string` | n/a | yes |
-| <a name="input_profiles"></a> [profiles](#input\_profiles) | (Required) Map of JIT access profiles. Key is the profile name. | <pre>map(object({<br/>    # (Required) AWS account ID for the permission set assignment.<br/>    account_id = string<br/>    # (Required) Permission Set ARN to assign.<br/>    permission_set_arn = string<br/>    # (Required) Maximum allowed duration in minutes.<br/>    max_duration_minutes = number<br/>    # (Required) List of Slack user IDs who can approve requests for this profile.<br/>    approvers = list(string)<br/>    # (Optional) Human-readable description of this profile.<br/>    description = optional(string, "")<br/>  }))</pre> | n/a | yes |
+| <a name="input_profiles"></a> [profiles](#input\_profiles) | (Required) Map of JIT access profiles. Key is the profile name. | <pre>map(object({<br/>    # (Required) AWS account ID for the permission set assignment.<br/>    account_id = string<br/>    # (Required) Permission Set name to assign (resolved to its ARN via data source).<br/>    permission_set_name = string<br/>    # (Required) Maximum allowed duration in minutes.<br/>    max_duration_minutes = number<br/>    # (Required) List of Slack user IDs who can approve requests for this profile.<br/>    approvers = list(string)<br/>    # (Optional) Human-readable description of this profile.<br/>    description = optional(string, "")<br/>  }))</pre> | n/a | yes |
 | <a name="input_region"></a> [region](#input\_region) | (Optional) AWS region. Defaults to provider region. | `string` | `null` | no |
 | <a name="input_slack"></a> [slack](#input\_slack) | (Required) Slack App credentials and configuration. | <pre>object({<br/>    # (Required) Slack signing secret for request verification.<br/>    signing_secret = string<br/>    # (Required) Slack bot OAuth token.<br/>    bot_token = string<br/>    # (Required) Slack channel ID for approval notifications.<br/>    approver_channel_id = string<br/>    # (Optional) Shared secret for authenticating Slack Workflow Builder webhook requests via x-workflow-secret header. When null, the /workflow/request endpoint is not created.<br/>    workflow_secret = optional(string)<br/>    # (Optional) Slack User ID → Identity Center User ID mapping. Required only for users whose Slack email does not match Identity Center UserName.<br/>    user_mappings = optional(map(string), {})<br/>  })</pre> | n/a | yes |
 | <a name="input_ssm_parameter_prefix"></a> [ssm\_parameter\_prefix](#input\_ssm\_parameter\_prefix) | (Optional) SSM Parameter Store prefix for JIT access configuration. | `string` | `"/jit-access"` | no |

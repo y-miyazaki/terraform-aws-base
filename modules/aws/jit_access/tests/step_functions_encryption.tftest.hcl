@@ -30,6 +30,20 @@ variables {
   }
 }
 
+run "api_gateway_uses_tls13_and_tls12_security_policy" {
+  command = plan
+
+  assert {
+    condition     = aws_api_gateway_rest_api.slack.security_policy == "SecurityPolicy_TLS13_1_2_PFS_PQ_2025_09"
+    error_message = "Slack webhook REST API must use the TLS 1.3 + TLS 1.2 security policy"
+  }
+
+  assert {
+    condition     = aws_api_gateway_rest_api.slack.endpoint_access_mode == "BASIC"
+    error_message = "Enhanced security policies require endpoint_access_mode (BASIC)"
+  }
+}
+
 run "execution_role_has_no_kms_statement_without_key" {
   command = plan
 

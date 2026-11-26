@@ -17,7 +17,7 @@
 | Name | Source | Version |
 | ---- | ------ | ------- |
 | <a name="module_filter_pattern"></a> [filter\_pattern](#module\_filter\_pattern) | ../../../_internal/cloudtrail_filter_pattern | n/a |
-| <a name="module_s3"></a> [s3](#module\_s3) | terraform-aws-modules/s3-bucket/aws | 5.17.0 |
+| <a name="module_s3"></a> [s3](#module\_s3) | terraform-aws-modules/s3-bucket/aws | 5.18.0 |
 | <a name="module_security_service_disable"></a> [security\_service\_disable](#module\_security\_service\_disable) | ../../../_internal/security_service_disable_alarm | n/a |
 
 ## Resources

@@ -290,7 +290,7 @@ variable "jit_access" {
       approvers            = list(string)
       description          = optional(string, "")
       max_duration_minutes = number
-      permission_set_arn   = string
+      permission_set_name  = string
     }))
     # EventBridge schedule expression for cleanup checker.
     cleanup_schedule_expression = optional(string, "rate(15 minutes)")

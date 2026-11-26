@@ -150,6 +150,7 @@ A pending request can be approved only until its approval deadline. After the de
 - DynamoDB on-demand billing (PAY_PER_REQUEST)
 - Step Functions STANDARD type (one execution per approved request)
 - API Gateway REST API with REGIONAL endpoint (chosen over HTTP API for WAFv2 support)
+- API Gateway security policy `SecurityPolicy_TLS13_1_2_PFS_PQ_2025_09` (TLS 1.3 and TLS 1.2) with endpoint access mode `BASIC`
 
 ### Observability
 
@@ -179,6 +180,8 @@ A pending request can be approved only until its approval deadline. After the de
   "description": "Production DB hotfix access"
 }
 ```
+
+In Terraform, a profile specifies `permission_set_name` (the Identity Center permission set name). The module resolves it to `permission_set_arn` with the `aws_ssoadmin_permission_set` data source, so the stored JSON and the Lambda IAM policy always hold the ARN. The name must already exist in the Identity Center instance; otherwise `terraform plan` fails.
 
 ### DynamoDB Table Design
 

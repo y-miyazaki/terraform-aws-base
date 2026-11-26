@@ -98,7 +98,7 @@ locals {
             "organizations:DescribeAccount",
           ]
           Resource = [
-            "*",
+            "arn:aws:organizations::*:account/o-*/*",
           ]
         },
         # Note: Account API access required for account-level metadata in single-account setups

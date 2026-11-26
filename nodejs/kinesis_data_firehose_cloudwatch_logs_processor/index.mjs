@@ -139,7 +139,22 @@ function splitCWLRecord(cwlRecord) {
     );
 }
 
-async function putRecordsBase(
+// Retry backoff for re-ingestion: exponential with equal jitter (half fixed + half random), capped. Retrying immediately against a throttled
+// stream (ServiceUnavailableException) only burns the Lambda timeout without giving the stream time to recover.
+const RETRY_BASE_DELAY_MS = 200;
+const RETRY_MAX_DELAY_MS = 5000;
+
+export function retryDelayMs(attemptsMade, random = Math.random) {
+    const ceiling = Math.min(
+        RETRY_MAX_DELAY_MS,
+        RETRY_BASE_DELAY_MS * 2 ** attemptsMade,
+    );
+    return Math.floor(ceiling / 2 + (random() * ceiling) / 2);
+}
+
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+export async function putRecordsBase(
     streamName,
     records,
     client,
@@ -148,6 +163,8 @@ async function putRecordsBase(
     failureDetailsKey,
     attemptsMade,
     maxAttempts,
+    sleepFn = sleep,
+    deadline = Infinity,
 ) {
     let failed = [];
     let errMsg;
@@ -175,6 +192,15 @@ async function putRecordsBase(
             console.log(
                 `Some records failed while calling ${methodName}, retrying. ${errMsg}`,
             );
+            const delay = retryDelayMs(attemptsMade);
+            // Fail fast instead of sleeping past the Lambda timeout, so the error is reported with its cause rather than
+            // as a bare timeout. Either way Firehose retries the whole invocation (earlier batches may be re-ingested again).
+            if (Date.now() + delay > deadline) {
+                throw new Error(
+                    `Could not put records before the retry deadline (attempt ${attemptsMade + 1}). ${errMsg}`,
+                );
+            }
+            await sleepFn(delay);
             return await putRecordsBase(
                 streamName,
                 failed,
@@ -184,6 +210,8 @@ async function putRecordsBase(
                 failureDetailsKey,
                 attemptsMade + 1,
                 maxAttempts,
+                sleepFn,
+                deadline,
             );
         } else {
             throw new Error(
@@ -198,6 +226,7 @@ async function putRecordsToFirehoseStream(
     records,
     client,
     maxAttempts,
+    deadline,
 ) {
     return await putRecordsBase(
         streamName,
@@ -208,6 +237,8 @@ async function putRecordsToFirehoseStream(
         "RequestResponses",
         0,
         maxAttempts,
+        undefined,
+        deadline,
     );
 }
 
@@ -216,6 +247,7 @@ async function putRecordsToKinesisStream(
     records,
     client,
     maxAttempts,
+    deadline,
 ) {
     return await putRecordsBase(
         streamName,
@@ -226,6 +258,8 @@ async function putRecordsToKinesisStream(
         "Records",
         0,
         maxAttempts,
+        undefined,
+        deadline,
     );
 }
 
@@ -244,7 +278,7 @@ function loadJsonGzipBase64(base64Data) {
     return JSON.parse(zlib.gunzipSync(Buffer.from(base64Data, "base64")));
 }
 
-export const handler = async (event) => {
+export const handler = async (event, context) => {
     const isSas = "sourceKinesisStreamArn" in event;
     const streamARN = isSas
         ? event.sourceKinesisStreamArn
@@ -303,13 +337,21 @@ export const handler = async (event) => {
         const client = isSas
             ? new Kinesis(clientArgs)
             : new Firehose(clientArgs);
+        // Stop retrying with a safety margin before the Lambda timeout (no deadline when run without a context).
+        const remainingMs = context
+            ? context.getRemainingTimeInMillis()
+            : undefined;
+        const deadline =
+            remainingMs === undefined
+                ? Infinity
+                : Date.now() + remainingMs - Math.min(30000, remainingMs * 0.1);
         const maxBatchSize = 500;
         const flattenedList = recordListsToReingest.flat();
         for (let i = 0; i < flattenedList.length; i += maxBatchSize) {
             const recordBatch = flattenedList.slice(i, i + maxBatchSize);
             await (
                 isSas ? putRecordsToKinesisStream : putRecordsToFirehoseStream
-            )(streamName, recordBatch, client, 20);
+            )(streamName, recordBatch, client, 20, deadline);
             recordsReingestedSoFar += recordBatch.length;
             console.log(
                 `Reingested ${recordsReingestedSoFar}/${flattenedList.length}`,

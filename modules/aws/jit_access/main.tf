@@ -10,6 +10,14 @@ data "aws_caller_identity" "current" {}
 data "aws_region" "current" {}
 data "aws_ssoadmin_instances" "this" {}
 
+data "aws_ssoadmin_permission_set" "profiles" {
+  for_each = toset([for profile in var.profiles : profile.permission_set_name])
+
+  region       = local.region
+  instance_arn = local.identity_center_arn
+  name         = each.key
+}
+
 #--------------------------------------------------------------
 # Locals
 #--------------------------------------------------------------
@@ -18,6 +26,8 @@ locals {
   # Data: IAM Identity Center instance (one per account)
   identity_center_arn = tolist(data.aws_ssoadmin_instances.this.arns)[0]
   identity_store_id   = tolist(data.aws_ssoadmin_instances.this.identity_store_ids)[0]
+  # Permission Set name -> ARN, resolved from the names given in var.profiles.
+  permission_set_arns = { for name, ps in data.aws_ssoadmin_permission_set.profiles : name => ps.arn }
   # Built from the name (not the resource) to avoid a dependency cycle with the execution role.
   state_machine_arn = "arn:aws:states:${local.region}:${data.aws_caller_identity.current.account_id}:stateMachine:${var.name_prefix}jit-access-sfn"
 }
@@ -112,7 +122,7 @@ resource "aws_ssm_parameter" "profiles" {
   type   = "String"
   value = jsonencode({
     account_id           = each.value.account_id
-    permission_set_arn   = each.value.permission_set_arn
+    permission_set_arn   = local.permission_set_arns[each.value.permission_set_name]
     max_duration_minutes = each.value.max_duration_minutes
     approvers            = each.value.approvers
     description          = each.value.description
@@ -190,15 +200,28 @@ data "aws_iam_policy_document" "lambda" {
   }
 
   statement {
-    sid    = "IdentityCenter"
+    sid    = "IdentityCenterAccountAssignment"
     effect = "Allow"
     actions = [
       "sso:CreateAccountAssignment",
       "sso:DeleteAccountAssignment",
+    ]
+    # Account, Instance and PermissionSet are all required resource types for these actions.
+    resources = concat(
+      ["arn:aws:sso:::instance/*"],
+      distinct(values(local.permission_set_arns)),
+      distinct([for profile in var.profiles : "arn:aws:sso:::account/${profile.account_id}"]),
+    )
+  }
+
+  statement {
+    sid    = "IdentityCenterAccountAssignmentStatus"
+    effect = "Allow"
+    actions = [
       "sso:DescribeAccountAssignmentCreationStatus",
       "sso:DescribeAccountAssignmentDeletionStatus",
     ]
-    resources = ["*"]
+    resources = ["arn:aws:sso:::instance/*"]
   }
 
   statement {
@@ -317,7 +340,15 @@ module "lambda_jit_access" {
 resource "aws_api_gateway_rest_api" "slack" {
   region      = local.region
   description = "JIT Access Slack webhook endpoint"
-  name        = "${var.name_prefix}jit-access-slack"
+  # Enhanced policies (SecurityPolicy_*) require endpoint_access_mode.
+  # BASIC is the first step before STRICT. STRICT adds endpoint-type and SNI host-matching checks; it does not change the TLS policy.
+  endpoint_access_mode = "BASIC"
+  name                 = "${var.name_prefix}jit-access-slack"
+  # TLS 1.3 and TLS 1.2 (ECDHE/GCM only, PFS).
+  # Do not use the TLS 1.3-only policy (SecurityPolicy_TLS13_1_3_2025_09): Slack's slash command request failed with
+  # "Request did not complete." (apparently Slack does not connect over TLS 1.3 only). Verified working after deploy with this policy.
+  # Keep TLS 1.2 enabled as long as Slack is the caller.
+  security_policy = "SecurityPolicy_TLS13_1_2_PFS_PQ_2025_09"
 
   endpoint_configuration {
     types = ["REGIONAL"]

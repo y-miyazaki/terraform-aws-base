@@ -58,14 +58,17 @@ module "aws_lambda_create_lambda_kinesis_data_firehose_cloudwatch_logs_processor
   logging_application_log_level = "WARN"
   logging_log_format            = "JSON"
   logging_system_log_level      = "WARN"
-  memory_size                   = 256
-  publish                       = false
-  runtime                       = "nodejs24.x"
-  source_path                   = local.nodejs_lambda_source_path["kinesis_data_firehose_cloudwatch_logs_processor"]
-  timeout                       = 300
-  tracing_mode                  = "PassThrough"
-  vpc_security_group_ids        = local.lambda_vpc_security_group_ids["primary"]
-  vpc_subnet_ids                = local.lambda_vpc_subnet_ids["primary"]
+  # Each invocation gunzips, JSON-parses and base64-encodes a whole Firehose transformation buffer (up to ~6MB) at once,
+  # so memory usage scales with the Firehose transfer (buffer) size. 256MB was at its limit and caused Runtime.OutOfMemory/timeouts; with a 256KB buffer the observed peak is ~366MB, hence 512MB.
+  # If the Firehose transfer (buffer) size is increased, review this memory size as well.
+  memory_size            = 512
+  publish                = false
+  runtime                = "nodejs24.x"
+  source_path            = local.nodejs_lambda_source_path["kinesis_data_firehose_cloudwatch_logs_processor"]
+  timeout                = 300
+  tracing_mode           = "PassThrough"
+  vpc_security_group_ids = local.lambda_vpc_security_group_ids["primary"]
+  vpc_subnet_ids         = local.lambda_vpc_subnet_ids["primary"]
 
   tags = var.tags
 }

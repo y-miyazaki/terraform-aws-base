@@ -37,8 +37,8 @@ variable "profiles" {
   type = map(object({
     # (Required) AWS account ID for the permission set assignment.
     account_id = string
-    # (Required) Permission Set ARN to assign.
-    permission_set_arn = string
+    # (Required) Permission Set name to assign (resolved to its ARN via data source).
+    permission_set_name = string
     # (Required) Maximum allowed duration in minutes.
     max_duration_minutes = number
     # (Required) List of Slack user IDs who can approve requests for this profile.
@@ -47,6 +47,11 @@ variable "profiles" {
     description = optional(string, "")
   }))
   description = "(Required) Map of JIT access profiles. Key is the profile name."
+
+  validation {
+    condition     = alltrue([for profile in var.profiles : can(regex("^[\\w+=,.@-]{1,32}$", profile.permission_set_name))])
+    error_message = "permission_set_name must be 1-32 characters of letters, digits, and + = , . @ - _ (the IAM Identity Center permission set name)."
+  }
 }
 
 variable "cleanup_schedule_expression" {

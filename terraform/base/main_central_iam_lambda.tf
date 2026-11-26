@@ -38,8 +38,9 @@ locals {
           Action = [
             "ce:GetCostAndUsage",
           ]
+          # "*" unless a custom billing view is used; then scope to arn:aws:billing::<account_id>:billingview/<id> (service is billing, not ce).
           Resource = [
-            "arn:aws:ce:us-east-1:${data.aws_caller_identity.current.account_id}:/GetCostAndUsage",
+            "*",
           ]
         },
         {
@@ -93,7 +94,7 @@ locals {
             "organizations:DescribeAccount",
           ]
           Resource = [
-            "*",
+            "arn:aws:organizations::*:account/o-*/*",
           ]
         },
         # Note: Account API access required for account-level metadata in single-account setups

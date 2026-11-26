@@ -5,7 +5,7 @@
   "main": "index.mjs",
   "type": "module",
   "scripts": {
-    "test": "node test-local.js"
+    "test": "node --test test/put-records-retry.test.mjs && node test-local.js"
   },
   "dependencies": {
     "@aws-sdk/client-firehose": "3.1171.0",

@@ -98,8 +98,10 @@ locals {
                       parameter_value = "${var.lambda_processor_arn}:$LATEST"
                     },
                     {
-                      parameter_name  = "BufferSizeInMBs"
-                      parameter_value = try(var.aws_kinesis_firehose_delivery_stream.lambda_buffer_size_mb, "2")
+                      parameter_name = "BufferSizeInMBs"
+                      # Keep this small (default 256KB; Firehose accepts 0.2-3MB): CloudWatch Logs data is gzip-compressed, so a large
+                      # buffer expands far beyond the processor's 6MB response limit and its memory, causing OOM and re-ingestion.
+                      parameter_value = try(var.aws_kinesis_firehose_delivery_stream.lambda_buffer_size_mb, "0.256")
                     },
                     {
                       parameter_name  = "BufferIntervalInSeconds"

@@ -3,6 +3,7 @@
 # Purpose: Configure AWS Chatbot (Slack) channel with IAM role and optional SecurityHub interaction permission.
 # Notes: Unified tagging applied to IAM role; future improvement: parameterize additional managed policies and logging level.
 #--------------------------------------------------------------
+data "aws_caller_identity" "current" {}
 data "aws_region" "current" {}
 
 #--------------------------------------------------------------
@@ -52,7 +53,7 @@ data "aws_iam_policy_document" "securityhub" {
     actions = [
       "securityhub:BatchUpdateFindings",
     ]
-    resources = ["*"]
+    resources = ["arn:aws:securityhub:*:${data.aws_caller_identity.current.account_id}:hub/default"]
   }
 }
 

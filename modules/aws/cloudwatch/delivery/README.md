@@ -146,7 +146,7 @@ module "log_delivery_with_processing" {
   aws_kinesis_firehose_delivery_stream = {
     buffering_size                  = 128
     buffering_interval              = 900
-    lambda_buffer_size_mb           = "2"
+    lambda_buffer_size_mb           = "0.256"
     lambda_buffer_interval_seconds  = 900
   }
 

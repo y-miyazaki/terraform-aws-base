@@ -179,7 +179,7 @@ jit_access = {
   profiles = {
     Production-AWSAdministratorAccess = {
       account_id           = "123456789012"
-      permission_set_arn   = "arn:aws:sso:::permissionSet/ssoins-xxx/ps-xxx"
+      permission_set_name  = "PermissionSetName"
       max_duration_minutes = 60
       approvers            = ["UXXXXXXXXXX"]
       description          = "production administrator access"
@@ -199,7 +199,7 @@ jit_access = {
 | Value                        | How to Get                                                                                                      |
 | ---------------------------- | --------------------------------------------------------------------------------------------------------------- |
 | `account_id`                 | AWS Console → Organizations → Accounts                                                                          |
-| `permission_set_arn`         | IAM Identity Center → Permission sets → copy ARN                                                                |
+| `permission_set_name`        | IAM Identity Center → Permission sets → Name (ARN is resolved automatically)                                    |
 | `approvers` (Slack User IDs) | Slack profile → "..." → "Copy member ID"                                                                        |
 | `approver_channel_id`        | Channel details → "Channel ID" at bottom                                                                        |
 | `bot_token`                  | api.slack.com → Your App → OAuth & Permissions                                                                  |
