@@ -24,10 +24,10 @@ When natural units are files: enumerate eligible paths, then apply this skill's 
 
 ## This skill (`tech-debt`)
 
-| Field         | Value                                                                                                             |
-| ------------- | ----------------------------------------------------------------------------------------------------------------- |
-| Universe      | Repository sensor universe (full tree walk when unfiltered)                                                       |
-| `all`         | Full sensor pass                                                                                                  |
-| `range`       | Accepted for CLI parity — document actual sensor behavior in detect usage; do not silently redefine without tests |
-| `staged`      | Not used — the detect script accepts it and returns no signals; use `all` or `range`                              |
-| Detect script | `scripts/detect_tech_debt.sh`                                                                                     |
+| Field         | Value                                                                                |
+| ------------- | ------------------------------------------------------------------------------------ |
+| Universe      | Repository sensor universe (full tree walk when unfiltered)                          |
+| `all`         | Full sensor pass                                                                     |
+| `range`       | Accepted for CLI parity; requires `--since`                                          |
+| `staged`      | Not used — the detect script accepts it and returns no signals; use `all` or `range` |
+| Detect script | `scripts/detect_tech_debt.sh`                                                        |

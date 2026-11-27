@@ -52,11 +52,11 @@ actionlint -shellcheck= .github/workflows/*.yml
 **Purpose**: Security and configuration validation
 
 ```bash
-# Run ghalint
-ghalint run .github/workflows/
+# Run ghalint from the repository root (it takes no path argument)
+ghalint run
 
 # Run with specific config
-ghalint run -config .ghalint.yml .github/workflows/
+ghalint run --config .ghalint.yml
 ```
 
 **What it checks**:

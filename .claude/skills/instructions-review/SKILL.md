@@ -73,21 +73,6 @@ Then, in `## Issues` and `## Checks (Failed/Deferred Only)`, prefix each entry w
 4. Verify required chapter order (Scope → Standards → Guidelines → Testing and Validation → Security Guidelines), then review checklist priorities and collect failed/deferred ItemIDs.
 5. Output required report sections per [references/common-output-format.md](references/common-output-format.md).
 
-### Severity and Status Rules
-
-| Status   | When to use                                                                                 |
-| -------- | ------------------------------------------------------------------------------------------- |
-| Failed   | Check evaluated and issue confirmed with concrete evidence (file + line or missing element) |
-| Deferred | Check cannot be evaluated — its category file is unavailable                                |
-| Passed   | Check evaluated and no issue found (counted in summary only)                                |
-
-Key evaluation criteria (inline summary of common-checklist):
-
-- **Structure**: 5 H2 chapters in correct order (Scope → Standards → Guidelines → Testing and Validation → Security Guidelines)
-- **Guidelines format**: H3 headings with category IDs; rule bullets are ItemID + `(LEVEL)` + title only (synced instructions are thin — do **not** require `Check:` child bullets in `## Guidelines`; full Check/Why/Fix live in `*-review` `category-*.md`)
-- **Code Modification Guidelines**: required as the last Guidelines subsection (STRUCT-05, MUST); the clarity of its content is GUIDE-01 (SHOULD)
-- **No empty sections**: every H3 must have content
-
 ### Error Handling
 
 | Condition                                   | Severity    | Action                                                                                                |

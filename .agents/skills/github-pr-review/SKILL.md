@@ -4,7 +4,10 @@ description: >-
   Review a pull request once and write an evidence-backed review report (JSON)
   for a later step to post. Use in conversation when the user gives a PR URL or
   number and asks for a review. Also the L2 loop entry skill on newly opened
-  PRs when detect JSON is supplied. Findings need a verbatim rule or criteria
+  PRs when detect JSON is supplied. Interactive default is survey only; write
+  the report file when the request asks for changes to be made (for example
+  fix, apply, or update) or automation sets agent_edit_allowed in Constraints.
+  Findings need a verbatim rule or criteria
   quote from the base commit, or a concrete bug in the diff. Never posts,
   approves, or edits source files; do not use to fix a PR (github-pr-revise).
 license: Apache-2.0
@@ -43,28 +46,32 @@ Report file schema and rendering: [common-output-format.md](references/common-ou
 - [common-checklist.md](references/common-checklist.md) (always read)
 - [common-output-format.md](references/common-output-format.md) (always read)
 - [category-review-rules.md](references/category-review-rules.md) (always read)
+- [category-input-schema.md](references/category-input-schema.md) (read when detect JSON is present)
 - [category-automation-envelope.md](references/category-automation-envelope.md) (read on automation path)
 - [category-pr-body-links.md](references/category-pr-body-links.md) (read when writing the report)
 - `assets/report-template.json` (read when writing the report)
-- `assets/review-body-template.md` (read to see how the report is rendered into the review body)
-- `assets/inline-comment-template.md` (read to see how in-diff findings are rendered inline)
+- `assets/review-body-template.md` (read when deciding which report fields reach the review body)
+- `assets/inline-comment-template.md` (read when deciding which findings render as inline comments)
 
 ## Workflow
 
 Resolve **agent_edit_allowed** before writing anything:
 
-| Source                                | `agent_edit_allowed`                                                                                                                         |
-| ------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
-| Interactive — default                 | `false` — survey only; write no file                                                                                                         |
-| Interactive — explicit apply language | `true` — user asks to write the report file in the same request                                                                              |
-| Automation — `## Constraints`         | `agent_edit_allowed: true` or `agent_edit_allowed: false` from [category-automation-envelope.md](references/category-automation-envelope.md) |
+| Source                                                                                                          | `agent_edit_allowed`                                                                                                                         |
+| --------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| Interactive — default: the request asks to look, check, triage, or survey, or only names the skill              | `false` — survey only; write no file                                                                                                         |
+| Interactive — the request asks for changes to be made (for example fix, apply, 修正して, 適用して, update, add) | `true` — write the report file                                                                                                               |
+| Interactive — follow-up after a survey asking to apply                                                          | `true`                                                                                                                                       |
+| Automation — `## Constraints`                                                                                   | `agent_edit_allowed: true` or `agent_edit_allowed: false` from [category-automation-envelope.md](references/category-automation-envelope.md) |
+
+When intent is unclear, survey and offer to apply — edits are harder to undo than a report.
 
 When `agent_edit_allowed` is `true`, resolve `agent_edit_target`: on the **interactive** path use `report`; on the **automation** path read `agent_edit_target` from `## Constraints`. Do not branch on other caller metadata outside `## Constraints`. The report file is the only file this skill may write.
 
-1. Automation: read detect JSON; if `skip: true` or `status: error`, report the reason and stop without writing a report. Interactive: resolve the PR from the user's URL or number and its SHAs with `gh pr view <n> --json baseRefOid,headRefOid`.
+1. Automation: read detect JSON per [category-input-schema.md](references/category-input-schema.md); if `skip: true` or `status: error`, report the reason and stop without writing a report. Interactive: resolve the PR from the user's URL or number and its SHAs with `gh pr view <n> --json baseRefOid,headRefOid`.
 2. Confirm the PR's intent: read the PR title and body, linked Issues, and any related spec or design document. Record the result for `premises`.
-3. Read the PR diff with `gh pr diff`. Read each changed file at base with `git show <base_sha>:<path>` (never from the checked-out tree, which may be the PR head), and the head version with `gh api` / `gh pr diff`. On the automation path the working tree is the base checkout, so opening files there is equivalent.
-4. Collect applicable rules: read applicable instruction files (nested and path-scoped included) from the base commit with `git show <base_sha>:<path>`, and domain review criteria matching each changed file type, also from base. Domain criteria are ID-tagged items in review references that exist in the consumer repository at the base commit (for example installed review skills' `references/category-*.md`); this skill ships none of its own. When none exist for a file type, use only `rule` and `bug` evidence for that file. Never read rules from the PR head.
+3. Read the PR diff with `gh pr diff` and each changed file at base and head per [category-review-rules.md](references/category-review-rules.md) § Read rules at base.
+4. Collect applicable rules and domain review criteria from the base commit per [category-review-rules.md](references/category-review-rules.md) § Read rules at base. Domain criteria are ID-tagged items in review references that exist in the consumer repository at the base commit (for example installed review skills' `references/category-*.md`); this skill ships none of its own. When none exist for a file type, use only `rule` and `bug` evidence for that file.
 5. Draft findings limited to the three evidence kinds in [category-review-rules.md](references/category-review-rules.md). Exclude pre-existing problems and every item in the "do not report" list.
 6. Drop findings you cannot support with evidence, and findings with low confidence.
 7. Decide the response language per [Response language](references/category-review-rules.md#response-language). Automation: write the report as JSON to `result.report_path` following `assets/report-template.json`, and copy `head_sha` and `base_sha` from detect `result.head_sha` / `result.base_sha`; a missing or stale `head_sha` makes the platform refuse to post. Interactive: when `agent_edit_allowed` is `false`, present the findings in chat and write no file; when `agent_edit_allowed` is `true`, write the same JSON to the path the user names, with `head_sha` / `base_sha` from `gh pr view`.

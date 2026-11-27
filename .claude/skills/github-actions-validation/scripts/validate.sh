@@ -45,6 +45,7 @@ source "${SCRIPT_DIR}/lib/all.sh"
 VERBOSE=false
 QUIET=false
 WORKFLOWS_DIR=".github/workflows"
+WORKFLOWS_DIR_EXPLICIT=false
 
 #######################################
 # Functions
@@ -82,7 +83,7 @@ function resolve_repository_root {
 #   checks to YAML files under that directory only.
 #
 # Globals:
-#   WORKFLOWS_DIR - Path to workflows directory
+#   None
 #
 # Arguments:
 #   $1 - Name reference to output array
@@ -106,7 +107,7 @@ function collect_yaml_map_order_targets {
     _out=()
     repo_root="$(resolve_repository_root)"
 
-    if [[ ${WORKFLOWS_DIR} != ".github/workflows" ]]; then
+    if [[ ${WORKFLOWS_DIR_EXPLICIT} == true ]]; then
         while IFS= read -r file; do
             [[ -n ${file} ]] && _out+=("${file}")
         done < <(find "${WORKFLOWS_DIR}" -type f \( -name '*.yml' -o -name '*.yaml' \) 2> /dev/null | LC_ALL=C sort)
@@ -130,7 +131,7 @@ function collect_yaml_map_order_targets {
 #
 # Globals:
 #   VERBOSE - Enable verbose output
-#   WORKFLOWS_DIR - Path to workflows directory
+#   None
 #
 # Arguments:
 #   None
@@ -203,7 +204,9 @@ Usage: $0 [options] [workflows-dir]
 Validation tool for GitHub Actions workflows using ORD-01 map order checks, actionlint, ghalint, and zizmor.
 
 Arguments:
-  workflows-dir    Path to .github/workflows directory (default: .github/workflows)
+  workflows-dir    Path to a workflows directory, relative to the current directory or absolute;
+                   it scopes the ORD-01 check only (actionlint, ghalint, and zizmor scan the whole repository)
+                   (default: .github/workflows of the repository root)
 
 Options:
   -h, --help     Display this help message
@@ -213,7 +216,8 @@ Options:
 Examples:
   $0
   $0 --verbose
-  $0 /path/to/.github/workflows
+  $0 ci/workflows
+  $0 /path/to/workflows
 EOF
     exit 0
 }
@@ -228,6 +232,7 @@ EOF
 #   VERBOSE - Enable verbose output
 #   QUIET - Suppress non-error output
 #   WORKFLOWS_DIR - Path to workflows directory
+#   WORKFLOWS_DIR_EXPLICIT - Set to true when the caller passed a workflows directory
 #
 # Arguments:
 #   $@ - All command line arguments passed to the script
@@ -236,7 +241,7 @@ EOF
 #   None
 #
 # Returns:
-#   Exits with error if unknown options are provided
+#   Exits with error if unknown options are provided or a given directory does not exist
 #
 # Usage:
 #   parse_arguments "$@"
@@ -262,10 +267,16 @@ function parse_arguments {
             *)
                 # Set workflows directory
                 WORKFLOWS_DIR="$1"
+                WORKFLOWS_DIR_EXPLICIT=true
                 shift
                 ;;
         esac
     done
+
+    if [[ ${WORKFLOWS_DIR_EXPLICIT} == true ]]; then
+        [[ -e ${WORKFLOWS_DIR} ]] || error_exit "Path does not exist: ${WORKFLOWS_DIR}"
+        [[ -d ${WORKFLOWS_DIR} ]] || error_exit "Path is not a directory: ${WORKFLOWS_DIR}"
+    fi
 }
 
 #######################################
@@ -313,7 +324,10 @@ function validate_actionlint {
 # validate_ghalint: Validate workflows with ghalint
 #
 # Description:
-#   Runs ghalint to validate workflow security and configuration
+#   Runs ghalint to validate workflow security and configuration. ghalint takes no path
+#   argument (`ghalint run [options]`): it always validates .github/workflows of the
+#   directory it runs in, so it runs from the repository root and a workflows directory
+#   the caller passed does not scope it.
 #
 # Globals:
 #   None
@@ -333,16 +347,15 @@ function validate_actionlint {
 #######################################
 function validate_ghalint {
     echo_section "Running ghalint"
-    local start_time repo_root workflows_path
+    local start_time repo_root
     start_time=$(date +%s)
     repo_root="$(resolve_repository_root)"
-    workflows_path="${repo_root}/${WORKFLOWS_DIR}"
 
     if [[ $VERBOSE == true ]]; then
         log INFO "Validating workflow security and configuration with ghalint"
     fi
 
-    if ! ghalint run "${workflows_path}"; then
+    if ! (cd "${repo_root}" && ghalint run); then
         error_exit "ghalint validation failed"
     fi
 
@@ -468,7 +481,7 @@ function validate_zizmor {
 # Globals:
 #   VERBOSE - Enable verbose output
 #   QUIET - Suppress non-error output
-#   WORKFLOWS_DIR - Path to workflows directory
+#   None
 #
 # Arguments:
 #   $@ - Command line arguments

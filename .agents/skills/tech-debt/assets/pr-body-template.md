@@ -37,6 +37,6 @@ Rules:
 
 ## Verification
 
-| Check          | Result                 |
-| -------------- | ---------------------- |
-| Detect sensors | <pass \| fail \| skip> |
+| Check          | Result                            |
+| -------------- | --------------------------------- |
+| Detect sensors | <pass \| fail \| skip \| blocked> |

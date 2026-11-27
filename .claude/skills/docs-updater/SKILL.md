@@ -77,10 +77,10 @@ When `agent_edit_allowed` is `true`, resolve `agent_edit_target`: on the **inter
 ### Interactive / hook path
 
 1. Resolve scope ([category-scope.md](references/category-scope.md)). Parse detect JSON when present; otherwise resolve the detect universe from the prompt ([category-detect-scope.md](references/category-detect-scope.md)), run this skill's optional detect script with the resolved `--scope` (default `all` for Interactive free-form; `staged` for git hook; `range` when the user named a SHA range), then Agent-complement beyond mechanical output; if tools for detect are unavailable, gather changed paths from git and the user request instead of silent no-op. On detect script non-zero exit, read stdout and stop.
-2. IF detect reports `skip` OR no documentation impact after gathering → emit survey no-op per [common-output-format.md](references/common-output-format.md) (Overview explains no-op); stop.
+2. IF detect reports `skip` OR no documentation impact after gathering → emit survey no-op per [common-output-format.md](references/common-output-format.md) (Overview explains no-op); on automation path append `## Session Metrics` per [category-automation-envelope.md](references/category-automation-envelope.md); stop.
 3. Triage affected docs per [common-impact-map.md](references/common-impact-map.md); grep before full read.
-4. IF `agent_edit_allowed` is `false` OR `agent_edit_target` is not `fix` → emit survey shape per [common-output-format.md](references/common-output-format.md); stop — do not edit documentation files or run `git add`.
-5. ELSE → apply minimal patches per [common-checklist.md](references/common-checklist.md); when the repository maintains a generated documentation index and documentation files were created/deleted/renamed, regenerate it per UV-05; stage with `git add`; emit apply shape per [common-output-format.md](references/common-output-format.md).
+4. IF `agent_edit_allowed` is `false` OR `agent_edit_target` is not `fix` → emit survey shape per [common-output-format.md](references/common-output-format.md); on automation path append `## Session Metrics` per [category-automation-envelope.md](references/category-automation-envelope.md); stop — do not edit documentation files or run `git add`.
+5. ELSE → apply minimal patches per [common-checklist.md](references/common-checklist.md); when the repository maintains a generated documentation index and documentation files were created/deleted/renamed, regenerate it per UV-05; stage with `git add`; emit apply shape per [common-output-format.md](references/common-output-format.md); on automation path append `## Session Metrics` per [category-automation-envelope.md](references/category-automation-envelope.md).
 
 ### Automation path
 

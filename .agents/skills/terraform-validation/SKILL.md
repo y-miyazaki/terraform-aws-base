@@ -11,8 +11,8 @@ metadata:
 
 ## Input
 
-- Terraform path or directory (required)
-- Validation script (required): `scripts/validate.sh` (run from the terraform-validation skill directory)
+- Terraform path or directory (optional): without one, the script targets the caller's current working directory, so pass an explicit path when the working directory is not the project
+- Validation script (required): `scripts/validate.sh` (path relative to the terraform-validation skill directory; the caller's working directory decides the default target)
 - `--fix` (optional): rewrites formatting with `terraform fmt` (and argument order with `--check-order`)
 - `--verbose` (optional)
 - `--changed-only` (optional): validate only the modules (nearest directory with `.tf` files, scanned recursively; `terraform init`/`validate` still run only where `main.tf` exists) of `.tf`/`.tfvars`/`.hcl` files with uncommitted git changes (staged, unstaged, untracked); directory arguments narrow the set; a module at the current directory means the whole tree; exits 0 with nothing checked when none changed

@@ -6,7 +6,7 @@ description: >-
 license: Apache-2.0
 metadata:
   author: y-miyazaki
-  version: "1.2.0"
+  version: "1.3.0"
 ---
 
 ## Input
@@ -80,7 +80,7 @@ Each issue must include file path with line reference (`<path>#L<line>`), risk s
 8. For every finding, search the repository for sibling occurrences of the same pattern (including the mirrored side of paired modules or stacks) and fill `Siblings` (`none found` when empty).
 9. Before judging any resource or module call (arguments, defaults, required permissions, service behavior), read its documentation at the version pinned in the code, such as the Terraform Registry page for the provider resource or module. Do not decide from memory. When the documentation cannot be read, defer the check or report the claim under `Unverified`; never state it as fact.
 10. If a referenced category file is missing, defer affected checks with the missing file path.
-11. Output required sections per [references/common-output-format.md](references/common-output-format.md). Prioritize `SEC-*` findings first, then correctness, then maintainability. For conflicting findings, prioritize the higher-severity category and document the conflict in `## Issues`.
+11. Output required sections per [references/common-output-format.md](references/common-output-format.md). Order `## Issues` with `SEC-*` first, then correctness findings, then maintainability findings. For conflicting findings, prioritize the higher-severity category and document the conflict in `## Issues`.
 
 ### Error Handling
 

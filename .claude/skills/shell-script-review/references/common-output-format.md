@@ -61,6 +61,14 @@ Overall Quality: <High | Medium | Low>
 - MUST checks: Flag as Failed whenever violated regardless of context.
 - SHOULD checks: Flag as Failed only when the violation introduces concrete risk (security, correctness, maintainability degradation). If the pattern is idiomatic for the project context, mark as Passed.
 
+### Status definitions
+
+| Status   | When to use                                                                                       |
+| -------- | ------------------------------------------------------------------------------------------------- |
+| Failed   | Finding is confirmed from source code with concrete evidence (file + line)                        |
+| Deferred | Check cannot be evaluated — file too large to fully analyze, or ambiguous without runtime context |
+| Passed   | Check evaluated and no issue found (counted in summary only)                                      |
+
 ### ItemID Assignment
 
 - Assign only ItemIDs that exist in `common-checklist.md`. Do not repurpose an existing ItemID for an unrelated finding.

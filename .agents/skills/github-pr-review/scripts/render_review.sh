@@ -33,7 +33,7 @@
 #   (main runs in a set -e subshell; the entry guard always exits 0)
 # - Render fixed English headings and labels from the template defs in REVIEW_JQ_LIB
 #   (mirrors assets/review-body-template.md and assets/inline-comment-template.md)
-# - Source shared helpers from scripts/lib/all.sh (synced via scripts/self/apm/sync_skill_lib.sh)
+# - Source shared helpers from scripts/lib/all.sh (synced by the repository's skill-lib sync script)
 #
 # Dependencies:
 # - bash (POSIX bash, /bin/bash)

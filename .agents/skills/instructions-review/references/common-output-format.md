@@ -61,6 +61,16 @@ Overall Quality: <High | Medium | Low>
 - MUST checks: Flag as Failed whenever violated regardless of context.
 - SHOULD checks: Flag as Failed only when the violation introduces concrete risk (security, correctness, maintainability degradation). If the pattern is idiomatic for the project context, mark as Passed.
 
+### Status definitions
+
+| Status   | When to use                                                                                                 |
+| -------- | ----------------------------------------------------------------------------------------------------------- |
+| Failed   | Check evaluated and issue confirmed with concrete evidence (file + line or missing element)                 |
+| Deferred | Check cannot be evaluated because a prerequisite is missing (for example, its category file is unavailable) |
+| Passed   | Check evaluated and no issue found (counted in summary only)                                                |
+
+- Synced `## Guidelines` are thin: rule bullets are ItemID + `(LEVEL)` + title only. Do not require `Check:` child bullets there; full Check/Why/Fix live in `*-review` `category-*.md`.
+
 ### ItemID Assignment
 
 - Assign only ItemIDs that exist in `common-checklist.md`. Do not repurpose an existing ItemID for an unrelated finding.

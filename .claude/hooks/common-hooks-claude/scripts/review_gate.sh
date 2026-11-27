@@ -14,7 +14,8 @@
 #     gate asks for a review. A different hash than the saved one asks for a review; the same hash
 #     means the state was already reported, so the gate passes (HOOK_BLOCK_LIMIT, default 1 here).
 #   - The block reason lets the agent decide: it finishes without a second review when the diff was
-#     already reviewed in the session (for example by an automatic review tool).
+#     already reviewed in the session (for example by an automatic review tool), and it picks the review
+#     depth and, without REVIEW_GATE_MODEL, a reviewer model different from the session's.
 #   - Review requests per session are bounded (REVIEW_GATE_MAX_PROMPTS) so review -> fix -> review ends.
 #   - The agent is detected from the event JSON (detect_agent) only to pick the default review command.
 #   - Fail open: any error, a missing jq/git or REVIEW_GATE_DISABLED=1
@@ -27,7 +28,8 @@
 #   REVIEW_GATE_COMMAND    - review command named in the block reason (default per agent: /code-review for
 #                            Claude Code, /review for Copilot CLI and Cursor)
 #   REVIEW_GATE_MODEL      - model the review must use, named in the block reason (default empty: the
-#                            session's base model)
+#                            reason asks for a model different from the session's and leaves the choice,
+#                            and the review depth, to the agent)
 #   REVIEW_GATE_MODEL_<AGENT> - the same per agent; wins over REVIEW_GATE_MODEL, and an empty value
 #                            (set but empty) turns the model note off for that agent. Advisory only: the
 #                            reason asks the agent to use the model, the gate does not verify it
@@ -612,8 +614,9 @@ function main {
     fi
 
     set_review_options "$(detect_agent)"
-    local model_note=""
+    local model_note=" Prefer a reviewer on a different model than this session's (for example a review subagent) when one is available; you choose the model."
     [[ -z $REVIEW_MODEL ]] || model_note=" Run the review with the model ${REVIEW_MODEL} (use the agent's model option for the review command or its subagent)."
+    model_note+=" You also choose the review depth: light for a small follow-up to a diff already reviewed in this session, deeper for new logic or risky changes."
     report_failure "${#files[@]} file(s) changed since the last review request in this session. If this exact diff was already reviewed in this session (by any review tool or skill), say so and finish without reviewing again. Otherwise run ${REVIEW_COMMAND} on the diff, fix the in-scope findings, then report the review and its dispositions.${model_note} Changed: $(printf '%s ' "${files[@]:0:10}")"
 }
 

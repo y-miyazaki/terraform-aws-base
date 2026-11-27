@@ -20,4 +20,4 @@
 
 ## Honesty (HON)
 
-- HON-01: Run the repository's existing test command when available and report the actual result. When you cannot run it (no tooling, or the caller says tests are not run here), write the command and the expected result and mark it not run. Never write that tests passed without running them.
+- HON-01: Run the repository's existing test command when available and report the actual result. When you cannot run it (no tooling, or the caller says tests are not run here), write the command and the expected result in the Check cell and set Result to `skip` or `blocked`. Never write that tests passed without running them.

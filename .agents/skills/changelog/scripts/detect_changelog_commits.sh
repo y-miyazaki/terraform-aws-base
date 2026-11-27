@@ -18,7 +18,7 @@
 # - Skip subjects without a clear "prefix: description" shape
 # - Output structured JSON via shared lib/json.sh
 # - Exit 0 on success; fatal errors emit status=error JSON and exit 1
-# - Source shared helpers from scripts/lib/all.sh (synced via scripts/self/ai/sync_skill_lib.sh)
+# - Source shared helpers from scripts/lib/all.sh (synced by the repository's skill-lib sync script)
 #
 # Dependencies:
 # - bash (POSIX bash, /bin/bash)

@@ -36,6 +36,6 @@ Rules:
 
 ## Verification
 
-| Check                    | Result         |
-| ------------------------ | -------------- |
-| `CHANGELOG.md` structure | <pass \| fail> |
+| Check                    | Result                            |
+| ------------------------ | --------------------------------- |
+| `CHANGELOG.md` structure | <pass \| fail \| skip \| blocked> |

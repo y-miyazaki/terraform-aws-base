@@ -10,7 +10,7 @@ Report a finding only when it has one of three evidence kinds. No evidence, no f
 | `criteria` | Verbatim text of an ID-tagged item in a domain review reference present in the consumer repository at base (such as an installed review skill's `references/category-*.md`) that matches the file type; when none exists, use only `rule` or `bug` | `evidence.path`, `evidence.quote`      |
 | `bug`      | The diff line and the concrete input or state that makes it fail; no rule is needed                                                                                                                                                                | `evidence.quote` (line plus the input) |
 
-- Read rules and criteria from the **base commit** (`git show <base_sha>:<path>`; on the automation path the working tree is the base checkout), never from the PR head. A PR that edits a rule does not change what it is reviewed against.
+- Read rules and criteria from the base commit, never from the PR head — see [Read rules at base](#read-rules-at-base). A PR that edits a rule does not change what it is reviewed against.
 - Quote exactly: no paraphrase, no whitespace normalization. If the verbatim text cannot be found at base, drop the finding.
 - A `bug` finding states a failure that can be reproduced by reasoning from the diff line, for example "empty array input: `items[0]` is undefined at line 42". "Might be a problem" is not a bug.
 
@@ -43,7 +43,7 @@ Before drafting findings, read the PR body, linked Issues, and related specs. A 
 
 ## Read rules at base
 
-Do not rely on the diff alone. Read applicable instruction files (nested and path-scoped included) from the base commit with `git show <base_sha>:<path>`, never from the checked-out tree, which may be the PR head. Resolve `base_sha` from detect `result.base_sha`, or interactively with `gh pr view <n> --json baseRefOid,headRefOid`. Read the diff with `gh pr diff` and the head version with `gh api`; all `gh` calls are read-only.
+Do not rely on the diff alone. Read applicable instruction files (nested and path-scoped included) from the base commit with `git show <base_sha>:<path>`, never from the checked-out tree, which may be the PR head. Read domain review criteria for each changed file type the same way, and each changed file at base. On the automation path the working tree is the base checkout, so opening files there is equivalent. Resolve `base_sha` from detect `result.base_sha`, or interactively with `gh pr view <n> --json baseRefOid,headRefOid`. Read the diff with `gh pr diff` and the head version with `gh api`; all `gh` calls are read-only.
 
 ## Response language
 

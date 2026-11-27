@@ -11,10 +11,9 @@
 
 ### QV-02: Structure Appropriate
 
-- [ ] First line is H1 heading (descriptive title, not filename)
-- [ ] Purpose paragraph follows H1 immediately
+- [ ] New doc: first line is an H1 heading (descriptive title, not filename) followed by a purpose paragraph; existing doc: keep its original opening, including any existing frontmatter
 - [ ] Structure matches the target directory's purpose (Diataxis quadrant intent when the fallback layout applies)
-- [ ] No YAML frontmatter added
+- [ ] No YAML frontmatter added to a doc that had none
 - **PASS** if structure is clear and appropriate
 
 ### QV-03: Cross-References Valid

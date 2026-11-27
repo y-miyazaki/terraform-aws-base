@@ -25,7 +25,7 @@ Path allowlist, when present, arrives in `## Constraints`.
 
 ## Output Specification
 
-Tech-debt report per [common-output-format.md](references/common-output-format.md). Survey shape when `agent_report_file` is not written; apply shape when written — within [category-scope.md](references/category-scope.md).
+Tech-debt report per [common-output-format.md](references/common-output-format.md). Apply shape when `agent_report_file` is written, and on the Interactive path when closed-set fixes are applied without a report file (step 7); survey shape otherwise — within [category-scope.md](references/category-scope.md).
 
 ## Execution Scope
 

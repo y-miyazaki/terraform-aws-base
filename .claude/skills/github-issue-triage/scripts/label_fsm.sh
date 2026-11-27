@@ -10,7 +10,7 @@
 # - Safe to source from detect scripts; do not enable set -euo here
 #
 # Note: Lives beside detect scripts (not under scripts/lib/) so
-# scripts/self/apm/sync_skill_lib.sh does not overwrite it.
+# the repository's skill-lib sync script does not overwrite it.
 #######################################
 
 LABEL_FSM_CATALOG_PATH="${LABEL_FSM_CATALOG_PATH:-}"

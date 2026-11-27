@@ -38,8 +38,9 @@
 
 ## Migration & Refactor (MIG)
 - MIG-01 (SHOULD): Use moved blocks to avoid resource recreation on refactors
-- MIG-02 (SHOULD): Replace deprecated resource/argument features
+- MIG-02 (SHOULD): Replace deprecated or end-of-support features
 - MIG-03 (SHOULD): State-address changes are called out with their migration path
+- MIG-04 (SHOULD): Switch superseded versions and policies to the current recommended one
 
 ## Modules (M)
 - M-01 (SHOULD): Separate variables/locals/outputs by responsibility

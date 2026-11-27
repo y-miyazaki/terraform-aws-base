@@ -68,7 +68,7 @@ Each issue must include file path with line reference (`<path>#L<line>`), risk s
 | ------------------------------------- | ----------- | ----------------------------------------------------------------------------------------------------- |
 | `common-checklist.md` unavailable     | Fatal       | Stop, report missing dependency                                                                       |
 | `common-output-format.md` unavailable | Recoverable | Note missing file; emit `## Checks Summary`, `## Checks (Failed/Deferred Only)`, and `## Issues` only |
-| PR contains no workflow YAML files    | Recoverable | Report "no reviewable workflows" and stop                                                             |
+| PR contains no workflow YAML files    | Recoverable | Set `Status: skipped` in `## Checks Summary` with reason `no reviewable workflows`                    |
 
 ### Examples
 

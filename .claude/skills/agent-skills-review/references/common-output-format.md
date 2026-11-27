@@ -52,7 +52,7 @@ Overall Quality: <High | Medium | Low>
 - `## Issues` must always contain full details for each failed or deferred check.
 - If `Status` is `completed` and there are no failed or deferred checks:
   - In `## Checks (Failed/Deferred Only)`, output `No failed or deferred checks`.
-  - In `## Issues`, output `No issues found`.
+  - In `## Issues`, output `No issues found`, unless a Q-09 token-budget advisory exists: then write that advisory as one `## Issues` entry without an ItemID (token count and the 500 limit) in place of `No issues found`.
 
 ## Judgment Rules
 
@@ -65,7 +65,7 @@ Overall Quality: <High | Medium | Low>
 
 - Assign only ItemIDs that exist in `common-checklist.md`. Do not repurpose an existing ItemID for an unrelated finding.
 - Checklist-mapped findings go in `## Issues` with ItemIDs.
-- Findings that do not map to any checklist ItemID go in `## Expert Assessment` as numbered judgment items (no ItemID). Do not bury them in free-text prose after Issues. The one exception is the cause entry for a `failed` or `skipped` Status (see Rules).
+- Findings that do not map to any checklist ItemID go in `## Expert Assessment` as numbered judgment items (no ItemID). Do not bury them in free-text prose after Issues. The exceptions are the cause entry for a `failed` or `skipped` Status and the Q-09 token-budget advisory, which stays an ItemID-less `## Issues` entry and is not counted as a failed or deferred check (see Rules).
 
 ### Expert Assessment
 

@@ -39,6 +39,16 @@ Where disposable files go is set in [CLAUDE.md § Conventions](../CLAUDE.md#conv
 - A destructive script (`clean_*`, `rm -rf`) never deletes what git tracks and refuses to run when it cannot tell (for example git is unreadable in a repository).
 - A pipeline under `set -o pipefail` whose failure the script wants to tolerate uses `x=$(a | b) || x=default`, not `a | b || echo default` (the second form prints twice).
 
+## Input paths (MUST)
+
+A path argument resolves against the caller's current working directory, and absolute paths are accepted; a default target is the current directory or a fixed repository location (for example `.github/workflows` of the repository root) that the help states. A script that needs the repository root derives it itself but never re-resolves a path the caller gave against another base (the repository root or the script's own location); a tool that always scans the whole repository (for example actionlint) runs from the repository root. A path that does not exist is an error (see Failure behavior). State the default target in the script's help and in the skill's Input.
+
+A script passes an argument to an external tool only when that tool's own help or documentation defines it (check `--help`); an argument the tool silently ignores makes the script look scoped when it is not. A script that scans the whole repository changes to the repository root itself, so the result does not depend on the directory it is started in. A default value in a script distributed with a skill names no path or glob of this repository; the caller supplies it (an empty default means no filter).
+
+Audited: `scripts/go/validate.sh` and `scripts/terraform/validate.sh` resolve a path argument against the current directory and follow this rule.
+
+Known deviation: `scripts/shell-script/validate.sh` resolves paths against a root derived from its install location and falls back to the repository root; align it the next time it changes.
+
 ## Pairing (MUST)
 
 Every script and every `scripts/lib/*.sh` has a Bats suite under `test/bats/` that mirrors its path and names it in a `# Tests for <repo-relative path>` header; the Stop hook `scripts/self/hooks/bats_changed.sh` maps changed files to suites through that header. Entry scripts keep the `if [[ ${BASH_SOURCE[0]} == "$0" ]]; then main "$@"; fi` guard so a suite can source them and call one function.

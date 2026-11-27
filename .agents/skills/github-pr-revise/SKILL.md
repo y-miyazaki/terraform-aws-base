@@ -41,6 +41,7 @@ Report per [common-output-format.md](references/common-output-format.md). Automa
 
 - [common-checklist.md](references/common-checklist.md) (always read)
 - [common-output-format.md](references/common-output-format.md) (always read)
+- [category-input-schema.md](references/category-input-schema.md) (read when detect JSON is present)
 - [category-automation-envelope.md](references/category-automation-envelope.md) (read on automation path)
 - [category-pr-body-links.md](references/category-pr-body-links.md) (read when synthesizing PR body)
 - `assets/pr-body-template.md` (read when synthesizing apply PR body)
@@ -63,7 +64,7 @@ When `agent_edit_allowed` is `true`, resolve `agent_edit_target`: on the **inter
 
 **Delivery.** Interactive: leave edits in the working tree and report them; commit, push to the PR head, or open a follow-up PR only when the user explicitly asks for that step, because those change shared state that reviewers see and cannot be quietly taken back. Automation: do not push or open a PR yourself; the caller delivers the branch (to the PR head or a follow-up PR) and composes the PR body from your report.
 
-1. Automation: read detect JSON; if `skip: true` or `status: error`, report the reason and stop. Interactive: resolve the PR from the user's URL or number with `gh pr view`; if the PR is closed or merged, report that and stop.
+1. Automation: read detect JSON per [category-input-schema.md](references/category-input-schema.md); if `skip: true` or `status: error`, report the reason and stop. Interactive: resolve the PR from the user's URL or number with `gh pr view`; if the PR is closed or merged, report that and stop.
 2. On the automation path, read [category-automation-envelope.md](references/category-automation-envelope.md) for Constraints and PR templates.
 3. Read the context around each feedback comment before deciding what to change:
    - Interactive: when the user gives a comment URL, fetch that comment read-only (`gh api repos/{owner}/{repo}/pulls/comments/<id>` for an inline comment, `gh api repos/{owner}/{repo}/issues/comments/<id>` for a conversation comment) and treat it like a detect `comments[]` item; when the user pastes feedback text, treat that text as the request and read the PR body, comments, and reviews for context.

@@ -74,7 +74,7 @@ When `agent_edit_allowed` is `true`, resolve `agent_edit_target`: on the **inter
 4. Map commits and releases per [common-checklist.md](references/common-checklist.md).
 5. IF `agent_edit_allowed` is `false` → emit survey shape with `### Candidates`; on automation path load `assets/pr-body-template-survey.md` at synthesis and append `## Session Metrics` per [category-automation-envelope.md](references/category-automation-envelope.md); stop — do not edit `changelog_file`.
 6. ELSE IF `agent_edit_allowed` is `true` AND `agent_edit_target` is not `fix` → emit survey shape; note expected `agent_edit_target: fix` in Overview; stop — do not edit `changelog_file`.
-7. ELSE (`agent_edit_allowed` is `true` AND `agent_edit_target` is `fix`) → edit only `changelog_file` per [category-scope.md](references/category-scope.md); emit apply shape with `### Changes` and `## Verification`; on automation path load `assets/pr-body-template.md` at synthesis and append `## Session Metrics` per [category-automation-envelope.md](references/category-automation-envelope.md).
+7. ELSE (`agent_edit_allowed` is `true` AND `agent_edit_target` is `fix`) → first read the current `changelog_file` and copy its heading format, section order, and latest entries; then edit only `changelog_file` per [category-scope.md](references/category-scope.md); emit apply shape with `### Changes` and `## Verification`; on automation path load `assets/pr-body-template.md` at synthesis and append `## Session Metrics` per [category-automation-envelope.md](references/category-automation-envelope.md).
 
 ### Error Handling
 

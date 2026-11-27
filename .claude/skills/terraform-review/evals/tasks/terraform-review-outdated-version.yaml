@@ -1,0 +1,34 @@
+id: terraform-review-outdated-version-001
+name: terraform-review separates deprecated from superseded
+description:
+  "Validate that terraform-review reports a deprecated or end-of-support value
+  (MIG-02) and a still-supported but superseded value (MIG-04) as separate
+  findings, judged from documentation rather than a built-in list.
+
+  "
+tags:
+  - quality
+  - specific-check
+  - migration
+inputs:
+  prompt:
+    "Use terraform-review. Assume a function sets runtime = \"<runtime>\" that
+    its official documentation lists as end-of-support, and a load balancer
+    listener sets ssl_policy = \"<policy>\" that is still supported but has a
+    newer recommended option. A supported older value is not deprecated.
+    Report MIG-02 for the first and MIG-04 for the second as failed in ## Checks
+    (Failed/Deferred Only), include both in ## Checks Summary, cite the
+    documentation page under Problem, and list sibling occurrences under
+    Siblings in ## Issues. Report each value under one ItemID only."
+  context:
+    target: SKILL.md
+expected:
+  output_contains:
+    - "## Checks Summary"
+    - "## Checks (Failed/Deferred Only)"
+    - MIG-02
+    - MIG-04
+    - "## Issues"
+    - Siblings
+  outcomes:
+    - type: task_completed

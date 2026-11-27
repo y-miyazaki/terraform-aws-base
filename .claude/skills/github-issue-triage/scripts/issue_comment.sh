@@ -22,13 +22,13 @@
 #
 # Design Rules:
 # - Lives beside detect scripts (not under scripts/lib/) so
-#   scripts/self/apm/sync_skill_lib.sh does not overwrite it
+#   the repository's skill-lib sync script does not overwrite it
 # - create always posts a new Issue comment (FSM transitions and re-triage)
 # - correct updates only the latest comment that contains the skill marker
 # - Never PATCH a comment without the skill marker (human comments)
 # - Prepend the skill marker when the body file omits it
 # - Exit 0 on success; fatal errors use error_exit (stderr + non-zero)
-# - Source shared helpers from scripts/lib/all.sh (synced via scripts/self/apm/sync_skill_lib.sh)
+# - Source shared helpers from scripts/lib/all.sh (synced by the repository's skill-lib sync script)
 # - Do not call repository_dispatch
 #
 # Dependencies:

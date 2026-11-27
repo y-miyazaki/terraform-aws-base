@@ -17,9 +17,9 @@ No file edits. Summarize in chat or in the session report; **do not write the re
 
 ### Candidates
 
-| Severity                          | Location    | Evidence kind           | Summary |
-| --------------------------------- | ----------- | ----------------------- | ------- |
-| Critical \| Warning \| Suggestion | `path:line` | rule \| criteria \| bug | …       |
+| Severity                          | Location    | Evidence kind           | Title |
+| --------------------------------- | ----------- | ----------------------- | ----- |
+| Critical \| Warning \| Suggestion | `path:line` | rule \| criteria \| bug | …     |
 ```
 
 Zero findings — Overview says so explicitly; omit `### Candidates`.

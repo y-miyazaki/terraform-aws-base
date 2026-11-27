@@ -14,7 +14,7 @@
 
 ## Comment history (new vs update)
 
-Interactive: post comments only through `scripts/issue_comment.sh` (do not `gh api` PATCH Issue comments directly). In a message run, `message.md` in the message directory plays the same role: one comment per run, no PATCH. Use `create` on each FSM transition and on each re-triage after a human reply. Do **not** overwrite prior triage analysis so the thread keeps an audit trail.
+Direct run: post comments only through `scripts/issue_comment.sh` (do not `gh api` PATCH Issue comments directly). In a message run, `message.md` in the message directory plays the same role: one comment per run, no PATCH. Use `create` on each FSM transition and on each re-triage after a human reply. Do **not** overwrite prior triage analysis so the thread keeps an audit trail.
 
 | Situation                                                                | Action                                                                          |
 | ------------------------------------------------------------------------ | ------------------------------------------------------------------------------- |
@@ -33,7 +33,7 @@ When applying `triage:ready`, tell the human how to request a draft autofix PR l
 
 ## Side effects
 
-- Interactive: use `gh` for labels and comments. Message run: write `message.md` and `message_labels.json` only.
-- Only allowlisted labels from `scripts/labels.json`.
+- Direct run: use `gh` for labels and comments. Message run: write `message.md` and `message_labels.json` only.
+- Only allowlisted labels from `scripts/labels.json`, except `autofix`, which a human adds.
 - No repository file edits, regardless of `agent_edit_allowed` (see SKILL.md Edit gate).
 - Mentions / `@` triggers are out of scope.

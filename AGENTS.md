@@ -67,11 +67,29 @@ Every rule is mandatory.
 - After two failed attempts on the same approach: diagnose the root cause and switch strategy once; do not patch incrementally. An attempt is a fix that did not resolve the problem; a deliberately failing test in the test-first red phase is not an attempt. If the new strategy also fails, or none remains, Stop and Ask.
 - Non-interactive runs (CI, loops, delegated agents) cannot ask: leave the working tree in a consistent state (finish the current coherent unit, or revert only your own partial edits), and report the blocker, what was tried, and the options.
 
+## Item References
+
+- Give every item the user may answer individually an ID of a category letter and a number, so the user can reply by ID without quoting the text. This covers the alternatives of Request Evaluation, the questions and options of Stop and Ask, and the Risks of Completion. Why: replies stay short and unambiguous.
+- Only the agent that talks to the user assigns IDs. A delegated or non-interactive run reports its items without IDs, and the agent that receives them numbers them in one pass over all delegated reports, continuing after the highest ID already issued, so IDs never collide.
+- An item keeps the ID it was first given. Completion Risks restates earlier open items under their original IDs and gives each new item an R ID (including review findings and alternatives reported under Risks); I is for a defect found while working.
+
+| Letter | Category                                                         |
+| ------ | ---------------------------------------------------------------- |
+| Q      | Question that needs the user's decision                          |
+| I      | Issue found while working (defect, deviation)                    |
+| O      | Option or alternative to choose between                          |
+| R      | Risk, assumption, or off-scope finding (the Risks of Completion) |
+| A      | Proposed action or next step awaiting approval                   |
+
+- Keep one counter per letter for the whole conversation, starting at 1: never reuse or renumber an ID, and continue the sequence in later messages and across questions.
+- In follow-up messages of the same exchange, refer back to an item by ID instead of repeating its text. The final Completion restates each item's text next to its ID, because it is read without the earlier messages.
+- Label the choices under a Q as O items and reference them by O-ID. O numbering runs across all questions of the conversation (Q1 offers O1 and O2, Q2 offers O3 and O4), so an O-ID is never ambiguous. An O can stand alone, for example a Request Evaluation alternative. Use A for one proposed step awaiting yes or no, and Q for an open question. Treat a reply such as `I2: fix, Q1: O2` as the answer to those items only.
+
 ## Completion (state in the final response when files were changed or state-changing commands were run)
 
 1. **Implementation:** Overview of changes made.
 2. **Verification:** What was verified (behavior/tests), deferred, or unavailable — lint/format re-runs are not required proof. State any exception taken from Tests with its reason. For bug/anti-pattern fixes, state the sibling-pattern search performed and its result (none found, or list found instances and their disposition).
-3. **Risks:** Assumptions made, residual risks, and off-scope findings or suggestions (siblings, simplifications, review findings, alternatives).
+3. **Risks:** Assumptions made, residual risks, and off-scope findings or suggestions (siblings, simplifications, review findings, alternatives). The agent that talks to the user gives each an R ID per Item References; delegated and non-interactive runs list them without IDs.
 
 Do not mention automatic processes (checks, formatters, syncs, generators) or their pending, unsynced, or uncommitted output in any message; omit them entirely. Report one only when it failed and the user must act. State only what the user cannot see from the tool results.
 

@@ -9,7 +9,6 @@ Rules:
 - Link every repository path, commit SHA, and workflow/job in Summary tables as a markdown link per category-pr-body-links.md. <linked ...> marks where a link goes; do not emit it, and do not use a plain code span for a linkable item.
 - Keep the table columns as written; do not rename, merge, or drop columns.
 - Do not duplicate detect failure URLs in Overview — URLs belong in caller-added ## Failure context.
-- In Summary tables, link file paths and workflow/job targets — see category-pr-body-links.md.
 - Summary contains ### Changes and ### Deferred only.
 - Do NOT emit Outcome, Suggested next action, or top-level ## Changes.
 - Deferred = failures with NO fix in final working tree; reconcile with git diff before synthesis.

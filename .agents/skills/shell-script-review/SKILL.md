@@ -66,7 +66,7 @@ Each issue must include file path with line reference (`<path>#L<line>`), risk s
 4. For very large PRs (>50 changed shell scripts), prioritize security/correctness checks first and defer low-risk style checks if evidence is insufficient.
 5. When validation output (companion `shell-script-validation` report or equivalent CI results) is supplied, do not re-report failures those tools detect: take the overlapping ItemID's status from the tool result, cite the tool, and spend the review on judgment checks. Category items with a validation `Note:` name the known overlaps.
 6. Apply the full review checklist and collect failed/deferred ItemIDs.
-7. Output required report sections per [references/common-output-format.md](references/common-output-format.md). Prioritize `SEC-*` findings first.
+7. Output required report sections per [references/common-output-format.md](references/common-output-format.md). Order `## Issues` with `SEC-*` first, then `ERR-*`, then the rest.
 
 ### Error Handling
 
@@ -74,7 +74,7 @@ Each issue must include file path with line reference (`<path>#L<line>`), risk s
 | ------------------------------------- | ----------- | ----------------------------------------------------------------------------------------------------- |
 | `common-checklist.md` unavailable     | Fatal       | Stop, report missing dependency                                                                       |
 | `common-output-format.md` unavailable | Recoverable | Note missing file; emit `## Checks Summary`, `## Checks (Failed/Deferred Only)`, and `## Issues` only |
-| PR contains only non-shell files      | Recoverable | Report "no reviewable shell scripts" and stop                                                         |
+| PR contains only non-shell files      | Recoverable | Set `Status: skipped` in `## Checks Summary` with reason `no reviewable shell scripts`                |
 
 ### Examples
 

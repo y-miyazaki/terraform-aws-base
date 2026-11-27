@@ -18,7 +18,7 @@
 # - Skip unchanged, error, escalated, and unknown outcomes
 # - Prune entries older than the retention window
 # - Write via mktemp + mv; keep unrelated entries intact
-# - Source shared helpers from scripts/lib/all.sh (synced via scripts/self/apm/sync_skill_lib.sh)
+# - Source shared helpers from scripts/lib/all.sh (synced by the repository's skill-lib sync script)
 #
 # Dependencies:
 # - bash (POSIX bash, /bin/bash)

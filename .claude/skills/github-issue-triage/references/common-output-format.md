@@ -6,7 +6,7 @@ Issue number, classification decision, confidence, labels added/removed, comment
 
 ## Changes
 
-GitHub API side effects only (labels/comments). Interactive: list each `gh` mutation. Message run: list each file written to the message directory (`message.md`, `message_labels.json`) with the labels and comment it carries.
+GitHub API side effects only (labels/comments). Direct run: list each `gh` mutation. Message run: list each file written to the message directory (`message.md`, `message_labels.json`) with the labels and comment it carries.
 
 ## Deferred
 

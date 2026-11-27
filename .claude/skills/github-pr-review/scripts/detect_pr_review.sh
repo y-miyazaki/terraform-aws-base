@@ -16,7 +16,7 @@
 # - workflow_dispatch fills missing PR facts via gh pr view
 # - Output structured JSON via shared lib/json.sh
 # - Exit 0 on success; fatal errors emit status=error JSON and exit 1
-# - Source shared helpers from scripts/lib/all.sh (synced via scripts/self/apm/sync_skill_lib.sh)
+# - Source shared helpers from scripts/lib/all.sh (synced by the repository's skill-lib sync script)
 #
 # Dependencies:
 # - bash (POSIX bash, /bin/bash)

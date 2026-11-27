@@ -17,7 +17,7 @@ When natural units are files: enumerate eligible paths, then apply this skill's 
 ## Interactive discovery
 
 1. Resolve universe from the prompt / Constraints (default = this skill's config).
-2. If detect JSON is absent, run `scripts/` detect with the resolved scope (default `all`; use `staged`/`range` when the user named index or SHA range).
+2. If detect JSON is absent, run `scripts/` detect with the resolved scope (the script's default is `staged`; pass `--scope all` to survey every candidate, or `range` when the user named a SHA range).
 3. Classify mechanical output.
 4. **Agent complement:** read targets; add in-scope candidates detect cannot see. User-supplied URL/path/symbol is primary evidence when present.
 5. Empty detect alone does not force no-op if complement found work.

@@ -115,7 +115,7 @@ bash scripts/validate.sh
 For targeted checks:
 
 ```bash
-bash scripts/validate.sh ./.github/workflows/
+bash scripts/validate.sh <workflows-dir>
 ```
 
 ## Escalation Rule

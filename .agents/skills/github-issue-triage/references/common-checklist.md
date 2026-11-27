@@ -43,7 +43,7 @@ Gate IDs are for agent self-check and Deferred reasons. Issue identity in report
 ### OUT-01: Session report shape
 
 - [ ] Emit report per [common-output-format.md](common-output-format.md)
-- [ ] List each `gh` mutation (Interactive) or each file written to the message directory (message run) under **Changes**
+- [ ] List each `gh` mutation (direct run) or each file written to the message directory (message run) under **Changes**
 - [ ] Record skipped or deferred items when detect skipped or questions remain
 - **PASS** if report matches automation or interactive shape
 

@@ -16,12 +16,12 @@ metadata:
 
 ## Input
 
-- **Automation:** detect JSON in the prompt with issue facts from `detect_issue.sh`. `agent_edit_allowed` in `## Constraints` is ignored by this skill (see Edit gate). When the prompt names a message directory (a line `Loop message directory: <path>`), the run is a message run: write files there instead of posting.
+- **Automation:** detect JSON in the prompt with issue facts from `detect_issue.sh`. `agent_edit_allowed` in `## Constraints` is ignored by this skill (see Edit gate). When the prompt names a message directory (a line `Loop message directory: <path>`), the run is a message run: write files there instead of posting. Every other run (Interactive, or Automation without that line) is a direct run: apply labels and post comments with `gh`.
 - **Interactive:** natural-language Issue URL or number; there is no detect JSON. Read the Issue with read-only `gh issue view <n> --json number,title,body,state,labels,author,comments`; same label/comment rules.
 
 ## Output Specification
 
-Session report per [common-output-format.md](references/common-output-format.md). Side effects are GitHub Issue labels and comments, not repository file edits. Interactive: applied via `gh` and `scripts/issue_comment.sh`. Message run: `message.md` (comment markdown) and optional `message_labels.json` (`{"add":[...],"remove":[...]}`) in the message directory; the platform posts the comment and applies the labels.
+Session report per [common-output-format.md](references/common-output-format.md). Side effects are GitHub Issue labels and comments, not repository file edits. Direct run: applied via `gh` and `scripts/issue_comment.sh`. Message run: `message.md` (comment markdown) and optional `message_labels.json` (`{"add":[...],"remove":[...]}`) in the message directory; the platform posts the comment and applies the labels.
 
 ### Edit gate (exception)
 
@@ -40,12 +40,13 @@ Unlike other loop entry skills, the Interactive default is **not** survey-only: 
 - Opening or revising PRs (github-issue-autofix / github-pr-revise)
 - Firing `repository_dispatch` or starting github-issue-autofix (autofix starts only from a human action, such as adding the `autofix` label)
 - Mentions / `@` triggers
-- Applying labels outside `scripts/labels.json`
+- Applying labels outside `scripts/labels.json`, or applying the `autofix` label even though it is catalogued there (a human adds it)
 - Relying on AskUserQuestion — questions go to the Issue thread
 
 ## Reference Files Guide
 
 - [category-fsm.md](references/category-fsm.md) (always read)
+- [category-input-schema.md](references/category-input-schema.md) (read when detect JSON is present)
 - [category-prompt-rules.md](references/category-prompt-rules.md) (always read)
 - [common-checklist.md](references/common-checklist.md) (always read)
 - [common-output-format.md](references/common-output-format.md) (always read)
@@ -53,13 +54,13 @@ Unlike other loop entry skills, the Interactive default is **not** survey-only: 
 
 ## Workflow
 
-1. Automation: parse detect JSON (`result.issue_number`, title, body, labels, event). Interactive: resolve the Issue from the user's URL or number with `gh issue view`; use its current labels as the FSM input state.
+1. Automation: parse detect JSON per [category-input-schema.md](references/category-input-schema.md) (`result.issue_number`, title, body, labels, event). Interactive: resolve the Issue from the user's URL or number with `gh issue view`; use its current labels as the FSM input state.
 2. Automation: skip silently if detect already skipped (bot / policy). Interactive: if the Issue carries `triage:failed`, report that a human must remove it first and stop.
-3. Load allowlist from `scripts/labels.json`. Interactive only: ensure missing allowlisted labels exist before apply (`gh label create` only for catalog entries). Message run: do not create labels.
+3. Load allowlist from `scripts/labels.json`. Direct run only: ensure missing allowlisted labels exist before apply (`gh label create` only for catalog entries). Message run: do not create labels.
 4. Classify when confident; if low confidence → keep/apply `needs-triage` only and ask clarifying questions on the Issue (**no question self-censorship** — see [category-prompt-rules.md](references/category-prompt-rules.md)).
-5. Pick the FSM event per [category-fsm.md](references/category-fsm.md) § Choosing the event (`reopened` → `opened`; a human reply while `triage:needs-info` → re-classify, then `mark_ready` or `mark_needs_info`) and compute the transition. Interactive: apply them via `gh issue edit` / `gh api`. Message run: do not run `gh issue edit` or any label write; write the transition (`label_fsm_next_state` output `{"add":[...],"remove":[...]}`) to `message_labels.json` in the message directory.
-   Type labels (`bug`, `feature`, `question`, `documentation`) are outside the FSM helper: Interactive — add them with `gh issue edit <n> --add-label <type>` (and `--remove-label` for a replaced type); message run — append them to the `add` list (and a replaced type to `remove`) in the same `message_labels.json`.
-6. Comment per [category-prompt-rules.md](references/category-prompt-rules.md). Interactive: post via `scripts/issue_comment.sh` — `create` on each FSM transition or re-triage; `correct` only for minor edits to the latest marked bot comment. Message run: post nothing; write the comment markdown (no preamble, status line, or leading `---`) to `message.md` in the message directory — one comment per run.
+5. Pick the FSM event per [category-fsm.md](references/category-fsm.md) § Choosing the event (`reopened` → `opened`; a human reply while `triage:needs-info` → re-classify, then `mark_ready` or `mark_needs_info`) and compute the transition. Direct run: apply them via `gh issue edit` / `gh api`. Message run: do not run `gh issue edit` or any label write; write the transition (`label_fsm_next_state` output `{"add":[...],"remove":[...]}`) to `message_labels.json` in the message directory.
+   Type labels (`bug`, `feature`, `question`, `documentation`) are outside the FSM helper: direct run — add them with `gh issue edit <n> --add-label <type>` (and `--remove-label` for a replaced type); message run — append them to the `add` list (and a replaced type to `remove`) in the same `message_labels.json`.
+6. Comment per [category-prompt-rules.md](references/category-prompt-rules.md). Direct run: post via `scripts/issue_comment.sh` — `create` on each FSM transition or re-triage; `correct` only for minor edits to the latest marked bot comment. Message run: post nothing; write the comment markdown (no preamble, status line, or leading `---`) to `message.md` in the message directory — one comment per run.
 7. When marking `triage:ready`, comment that a human may add the `autofix` label to request a draft PR — do not invoke autofix.
 8. Emit session report. Never modify repository files.
 

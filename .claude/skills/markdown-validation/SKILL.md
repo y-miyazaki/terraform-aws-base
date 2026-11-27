@@ -46,7 +46,7 @@ Structured validation results from two tools: markdownlint-cli2 → markdown-lin
 - [common-checklist.md](references/common-checklist.md) (always read)
 - [common-output-format.md](references/common-output-format.md) (always read)
 - [common-troubleshooting.md](references/common-troubleshooting.md) (read on failure)
-- [common-individual-commands.md](references/common-individual-commands.md) (read on debugging)
+- [common-individual-commands.md](references/common-individual-commands.md) (read on failure)
 
 ## Workflow
 

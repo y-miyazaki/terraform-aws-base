@@ -72,7 +72,7 @@ When `agent_edit_allowed` is `true`, resolve `agent_edit_target`: on the **inter
 2. Discover the stack and test layout from the repository (existing test directories, CI config, repository agent rules). Do not assume a language. A caller may restrict the stack (for example to one test framework); when it does, the caller instructions win.
 3. Candidate sources, in order: files in `hotspots[]` (churn) without a matching test; production files with no paired test (per the repository's test-pairing conventions, if any); public functions with no test.
 4. `ledger.processed[]` lists test file paths. Exclude a target whose paired test file path appears there; adding another new test file for that same target also counts as selecting it again. Re-select it only with a stated new reason (for example the production file changed since), written in Overview. An `## Open Rejections` section, when the caller supplies one in the prompt (optional; it lists targets a reviewer rejected in an earlier run, with the reason), counts as a stated new reason for selecting a listed target again.
-5. Rank candidates: prefer the highest churn and the clearest observable behavior.
+5. When the user named a path, that path is the primary target and is not re-ranked. Otherwise rank candidates: prefer the highest churn and the clearest observable behavior.
 
 ### Edit gate
 
@@ -92,7 +92,7 @@ When `agent_edit_allowed` is `true`, resolve `agent_edit_target`: on the **inter
 2. Read the target and its callers. Read the nearest existing tests and copy their layout, helpers, and naming.
 3. Write tests that assert observable behavior: return values, side effects, error paths. A test that cannot fail is not acceptable.
 4. Place files only within `Allowed paths` (interactive: the repository's existing test directories). Never edit production files.
-5. Run the repository's existing test command for the new tests when it is available and report the actual result in `## Verification`. When you cannot run it (no tooling, or the caller says tests are not run here), state the command and expected result and mark it not run — never claim tests passed without running them.
+5. Run the repository's existing test command for the new tests when it is available and report the actual result in `## Verification`. When you cannot run it (no tooling, or the caller says tests are not run here), state the command and expected result in the Check cell and set Result to `skip` (the caller says tests are not run here) or `blocked` (no tooling) — never claim tests passed without running them.
 6. Emit the apply shape; reconcile `### Changes` / `### Deferred` with `git diff --name-only`.
 
 On the automation path, append `## Session Metrics` per [category-automation-envelope.md](references/category-automation-envelope.md) at every stop.

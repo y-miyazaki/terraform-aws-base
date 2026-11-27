@@ -47,9 +47,9 @@ Survey rules: MUST NOT include `### Changes`, `### Deferred`, or `## Verificatio
 
 ## Verification
 
-| Check          | Result                                                  |
-| -------------- | ------------------------------------------------------- |
-| <test command> | <pass \| fail \| not run — expected result and why not> |
+| Check                                                         | Result                            |
+| ------------------------------------------------------------- | --------------------------------- |
+| <test command; when not run, add the expected result and why> | <pass \| fail \| skip \| blocked> |
 ```
 
 Apply rules: omit empty `###` headings. Report only results of commands actually run; never write that tests passed without running them.

@@ -18,7 +18,7 @@
 # - No lint/SAST smell scores
 # - Output structured JSON via shared lib/json.sh
 # - Exit 0 on success; fatal errors emit status=error JSON and exit 1
-# - Source shared helpers from scripts/lib/all.sh (synced via scripts/self/ai/sync_skill_lib.sh)
+# - Source shared helpers from scripts/lib/all.sh (synced by the repository's skill-lib sync script)
 #
 # Dependencies:
 # - bash (POSIX bash, /bin/bash)
@@ -29,7 +29,7 @@
 #   REFACTOR_DUP_MIN_LINES          Minimum non-comment, non-empty lines for duplication_block (default: 8)
 #   REFACTOR_MAX_HINTS              Cap hints emitted per run (default: 20)
 #   REFACTOR_OVERSIZED_FILE_LINES   File line threshold for oversized_unit (default: 400)
-#   REFACTOR_SCAN_GLOBS             Comma-separated globs to scan (default: .apm/packages/**,scripts/**)
+#   REFACTOR_SCAN_GLOBS             Comma-separated globs to scan (default: empty = all tracked files)
 #######################################
 
 # Error handling: exit on error, unset variable, or failed pipeline
@@ -52,7 +52,7 @@ COMMIT_RANGE=""
 REFACTOR_DUP_MIN_LINES="${REFACTOR_DUP_MIN_LINES:-8}"
 REFACTOR_MAX_HINTS="${REFACTOR_MAX_HINTS:-20}"
 REFACTOR_OVERSIZED_FILE_LINES="${REFACTOR_OVERSIZED_FILE_LINES:-400}"
-REFACTOR_SCAN_GLOBS="${REFACTOR_SCAN_GLOBS:-.apm/packages/**,scripts/**}"
+REFACTOR_SCAN_GLOBS="${REFACTOR_SCAN_GLOBS:-}"
 
 declare -a SCAN_FILES=()
 declare -a HINTS_JSON=()
@@ -145,7 +145,7 @@ function parse_arguments {
 }
 
 #######################################
-# configure_detect_environment: Load domain env into globals
+# configure_detect_environment: Load domain env into globals and enter the repository root
 #
 # Globals:
 #   REFACTOR_* - Detect thresholds and scan globs
@@ -164,7 +164,11 @@ function parse_arguments {
 #
 #######################################
 function configure_detect_environment {
-    :
+    local repo_root
+    repo_root="$(git rev-parse --show-toplevel 2> /dev/null || true)"
+    if [[ -n ${repo_root} ]]; then
+        cd "${repo_root}" || return 1
+    fi
 }
 
 #######################################
@@ -201,8 +205,34 @@ function is_pruned_path {
         */.env | */.env.* | */credentials* | */secrets*)
             return 0
             ;;
+        *.lock | *.lock.* | *-lock.json | *.sum)
+            return 0
+            ;;
     esac
     return 1
+}
+
+#######################################
+# has_scan_globs: Test whether a scan glob filter is configured
+#
+# Globals:
+#   REFACTOR_SCAN_GLOBS - Comma-separated glob list
+#
+# Arguments:
+#   None
+#
+# Outputs:
+#   None
+#
+# Returns:
+#   0 when at least one non-blank glob is configured, 1 otherwise
+#
+# Usage:
+#   has_scan_globs || return 0
+#
+#######################################
+function has_scan_globs {
+    [[ -n "$(trim_whitespace "${REFACTOR_SCAN_GLOBS//,/ }")" ]]
 }
 
 #######################################
@@ -218,7 +248,7 @@ function is_pruned_path {
 #   None
 #
 # Returns:
-#   0 when matched, 1 otherwise
+#   0 when matched or when no glob is configured, 1 otherwise
 #
 # Usage:
 #   path_matches_scan_globs "${path}" && collect
@@ -229,6 +259,7 @@ function path_matches_scan_globs {
     local glob_part prefix
     local -a globs=()
 
+    has_scan_globs || return 0
     IFS=',' read -ra globs <<< "${REFACTOR_SCAN_GLOBS}"
     for glob_part in "${globs[@]}"; do
         glob_part="$(trim_whitespace "${glob_part}")"
@@ -303,6 +334,13 @@ function collect_scan_files_from_globs {
     local glob_part match
     local -a globs=()
 
+    if ! has_scan_globs; then
+        mapfile -t globs < <(git ls-files 2> /dev/null || true)
+        for match in "${globs[@]}"; do
+            append_scan_file "${match}"
+        done
+        return 0
+    fi
     IFS=',' read -ra globs <<< "${REFACTOR_SCAN_GLOBS}"
     shopt -s globstar nullglob
     for glob_part in "${globs[@]}"; do

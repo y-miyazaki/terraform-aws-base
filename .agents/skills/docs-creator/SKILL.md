@@ -30,7 +30,7 @@ Return structured report per [references/common-output-format.md](references/com
 
 - Create new documentation files (README, specs, architecture, tutorials, how-to guides)
 - Improve or rewrite existing documentation content
-- Apply consistent structure to unstructured docs
+- Apply consistent structure to unstructured docs when the user asks for restructuring or the file has no structure to preserve
 
 ### DO NOT USE FOR:
 
@@ -69,7 +69,7 @@ Return structured report per [references/common-output-format.md](references/com
 5. **Write or update**:
 
    - New: structure content per the target directory's purpose (Diataxis quadrant intent when the fallback applies).
-   - Existing: preserve original structure. Additions at end of sections. Restructuring requires explicit user request.
+   - Existing: preserve original structure. Additions at end of sections. Restructuring an already structured doc requires an explicit user request.
    - Cross-references: relative paths with `.md` extension.
 
 6. **Update `docs/index.md`** only when it already exists and follows the template in [common-checklist.md](references/common-checklist.md), or when the user asks for it. Otherwise leave it unchanged and note it in the report.

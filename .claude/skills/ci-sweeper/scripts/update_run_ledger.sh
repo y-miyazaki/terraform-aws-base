@@ -15,7 +15,7 @@
 # - loop-finalize passes only EXECUTE_BRANCH, LOOP_NAME, OUTCOME, STATE_FILE, TARGET_JSON, VERDICT to this script;
 #   CI_SWEEPER_LEDGER_FILE therefore stays at its default (.loop/state-ci-sweeper-run-ledger.json) when run from finalize
 # - Prune entries older than 30 days (aligned with caller run-log / state retention)
-# - Source shared helpers from scripts/lib/all.sh (synced via scripts/self/ai/sync_skill_lib.sh)
+# - Source shared helpers from scripts/lib/all.sh (synced by the repository's skill-lib sync script)
 #
 # Dependencies:
 # - bash (POSIX bash, /bin/bash)

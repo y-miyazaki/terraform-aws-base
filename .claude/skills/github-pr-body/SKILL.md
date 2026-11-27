@@ -30,7 +30,6 @@ Structured PR output:
 
 - **Always use `scripts/pr_body.sh` or `scripts/pr_fetch.sh`** to read and write the PR body. Do not run other `gh` commands, except read-only `gh pr view` for verification (Step 6).
 - `pr_body.sh` is deterministic and idempotent.
-- `scripts/pr_comment.sh` (PR overview comment) is not part of this workflow; do not use it to deliver the PR body.
 
 ### USE FOR:
 

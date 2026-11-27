@@ -54,15 +54,16 @@ Deferred subsection name for this skill: `### Skipped` (not `### Deferred`).
 
 ## Verification
 
-| Check                    | Result                                                |
-| ------------------------ | ----------------------------------------------------- |
-| `CHANGELOG.md` structure | <pass \| fail — per STRUCT-01 in common-checklist.md> |
+| Check                    | Result                                                                   |
+| ------------------------ | ------------------------------------------------------------------------ |
+| `CHANGELOG.md` structure | <pass \| fail \| skip \| blocked — per STRUCT-01 in common-checklist.md> |
 ```
 
 ### Apply rules
 
 - **MUST NOT** include `### Candidates` in final output
 - Reconcile `### Changes` with `git diff --name-only` before synthesis
+- Verification `Result`: `pass` = the check ran and passed; `fail` = it ran and failed; `skip` = not run here because the caller or request says so; `blocked` = could not run (tool or input missing). State the reason in the Check cell for `skip` and `blocked`.
 
 ## Session metrics (automation)
 

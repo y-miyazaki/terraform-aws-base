@@ -62,9 +62,9 @@ Survey runs internally first; final output uses apply shape. Write `agent_report
 
 ## Verification
 
-| Check          | Result                 |
-| -------------- | ---------------------- |
-| Detect sensors | <pass \| fail \| skip> |
+| Check          | Result                            |
+| -------------- | --------------------------------- |
+| Detect sensors | <pass \| fail \| skip \| blocked> |
 ```
 
 ### Apply rules
@@ -72,6 +72,7 @@ Survey runs internally first; final output uses apply shape. Write `agent_report
 - **MUST NOT** include `### Candidates` in final output
 - Fold Watch + non-applied candidates into `### Deferred`; omit when empty
 - Reconcile `### Changes` with `git diff --name-only` before synthesis
+- Verification `Result`: `pass` = the check ran and passed; `fail` = it ran and failed; `skip` = not run here because the caller or request says so; `blocked` = could not run (tool or input missing). State the reason in the Check cell for `skip` and `blocked`.
 
 ## Session metrics (automation)
 

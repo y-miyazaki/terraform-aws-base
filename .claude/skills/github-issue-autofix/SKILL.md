@@ -1,8 +1,8 @@
 ---
 name: github-issue-autofix
 description: >-
-  Implement a GitHub Issue fix on a branch and open a PR (Fixes #N). Use in
-  conversation when the user gives an Issue number or URL and asks to
+  Implement a GitHub Issue fix as working-tree edits (Fixes #N); the caller
+  or the user opens the PR. Use in conversation when the user gives an Issue number or URL and asks to
   implement or fix it. Also the L2 loop entry skill after autofix label,
   repository_dispatch, or workflow_dispatch. Interactive default is survey
   only; implement the fix when the request asks for changes to be made (for
@@ -43,6 +43,7 @@ Report per [common-output-format.md](references/common-output-format.md). On the
 
 - [common-checklist.md](references/common-checklist.md) (always read)
 - [common-output-format.md](references/common-output-format.md) (always read)
+- [category-input-schema.md](references/category-input-schema.md) (read when detect JSON is present)
 - [category-automation-envelope.md](references/category-automation-envelope.md) (read on automation path)
 - [category-pr-body-links.md](references/category-pr-body-links.md) (read when synthesizing PR body)
 - `assets/pr-body-template.md` (read when synthesizing apply PR body)
@@ -65,11 +66,11 @@ When `agent_edit_allowed` is `true`, resolve `agent_edit_target`: on the **inter
 
 **Delivery.** Interactive: leave edits in the working tree and report them; commit, push, or open a PR only when the user explicitly asks for that step, because those change shared state that other people see and cannot be quietly taken back. Automation: do not push or open a PR yourself; the caller delivers the branch and composes the PR body from your report.
 
-1. Automation: read detect JSON; if `skip: true` or `status: error`, report the reason and stop. Interactive: resolve the Issue from the user's URL or number with `gh issue view`; if the Issue is closed, report that and stop. Check for an open or draft PR that already closes the Issue (for example `gh pr list --state open --search "<n> in:body"` and confirm a closing keyword for `#<n>` in its body); if one exists, report it as a skip and stop — same as the detect skip.
+1. Automation: read detect JSON per [category-input-schema.md](references/category-input-schema.md); if `skip: true` or `status: error`, report the reason and stop. Interactive: resolve the Issue from the user's URL or number with `gh issue view`; if the Issue is closed, report that and stop. Check for an open or draft PR that already closes the Issue (for example `gh pr list --state open --search "<n> in:body"` and confirm a closing keyword for `#<n>` in its body); if one exists, report it as a skip and stop — same as the detect skip.
 2. On the automation path, read [category-automation-envelope.md](references/category-automation-envelope.md) for Constraints and PR templates.
 3. IF `agent_edit_allowed` is `false` → emit survey shape; load `assets/pr-body-template-survey.md` at synthesis when on automation path; stop.
 4. ELSE IF `agent_edit_allowed` is `true` AND `agent_edit_target` is not `fix` → emit survey shape; note expected `agent_edit_target: fix`; stop.
-5. ELSE IF `agent_edit_allowed` is `true` AND `agent_edit_target` is `fix` → implement the minimal fix for Issue `#N` on the worktree.
+5. ELSE IF `agent_edit_allowed` is `true` AND `agent_edit_target` is `fix` → read the Issue body and comments, the code and tests it points to, and the repository instructions nearest to those files; then implement the minimal fix for Issue `#N` on the worktree.
 6. At synthesis, load the apply PR template; ensure body includes `Fixes #<N>` (interactive: the body is written for a PR the user asks you to open, or reported in chat).
 7. Do **not** fire `repository_dispatch` or start other loops from the Agent.
 

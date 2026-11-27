@@ -19,7 +19,6 @@ Gate IDs are for agent self-check and Deferred/Watch reasons. Failure identity i
 ### SCOPE-01: Fix caps and path guards
 
 - [ ] Respect path scope per [category-scope.md](category-scope.md)
-- [ ] When more than three failures are present, fix only the first regression; defer the rest
 - [ ] A fix requiring more than five files is Watch-class — no edits for that failure
 - **PASS** if apply edits stay within scope and caps
 
@@ -43,7 +42,7 @@ Gate IDs are for agent self-check and Deferred/Watch reasons. Failure identity i
 ## Error handling
 
 - `skip` true or no actionable failures → survey no-op per [common-output-format.md](common-output-format.md) (Overview explains no-op); stop
-- More than three failures and `agent_edit_allowed` is `true` → fix only the first regression; defer the rest under `### Deferred`
+- More than three failures and `agent_edit_allowed` is `true` → apply the failure-count limit in [category-scope.md](category-scope.md); list the deferred failures under `### Deferred`
 - Fix requires >5 files → Watch-class; no edits for that failure
 - Validation tool missing → defer the failure unless fixing one line from `log_excerpt`
 
