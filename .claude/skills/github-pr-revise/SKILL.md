@@ -8,6 +8,7 @@ description: >-
   request asks for changes to be made (for example fix, apply, or update) or
   automation sets agent_edit_allowed in Constraints. Do not invent
   mention-less automation triggers or treat bot comments as triggers.
+argument-hint: "<PR number or URL> <feedback text or comment URL> [survey|apply]"
 license: Apache-2.0
 metadata:
   author: y-miyazaki

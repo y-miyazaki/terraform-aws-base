@@ -6,14 +6,15 @@ description: >-
   or restructure documentation. Also use when asked to "write docs", "improve this doc",
   "add a tutorial", "update the readme", or any request involving markdown documentation authoring,
   even if they don't explicitly say "create documentation". Not for syncing docs after code
-  changes, source code docstrings, or Markdown linting.
+  changes (fixing statements that drifted from the code), source code docstrings, or Markdown linting.
+argument-hint: "<what to document> [target_file]"
 license: Apache-2.0
 metadata:
   author: y-miyazaki
-  version: "2.0.0"
+  version: "2.1.0"
 ---
 
-**UTILITY SKILL** — creates and improves documentation content.
+**UTILITY SKILL** — creates and improves documentation content. The author's intent drives the change (new document, new section, rewrite, restructure); a change driven only by code that moved on belongs to a docs sync workflow (for example docs-updater).
 
 ## Input
 
@@ -34,7 +35,7 @@ Return structured report per [references/common-output-format.md](references/com
 
 ### DO NOT USE FOR:
 
-- Syncing docs after code changes
+- Syncing docs after code changes: correcting existing statements, tables, or links that no longer match the code, and updating paths for renames. Report these as handed off to a docs sync workflow (for example docs-updater) — unless the request also asks for new sections or a rewrite
 - Source code comments or docstrings
 - Markdown linting
 - Auto-generated references (godoc, terraform-docs output)
@@ -56,15 +57,15 @@ Return structured report per [references/common-output-format.md](references/com
 
 3. **Resolve filename**: kebab-case, lowercase, `.md`. No version numbers. If `target_file` is provided and exists, use it as-is. If the same filename already exists in a different docs directory, stop and ask the user.
 
-4. **Gather context**: read the sources for the document type before writing. The document should be self-sufficient — a reader understands the system without reading source code. Remove sections that cannot be populated rather than leaving filler.
+4. **Gather context**: read the sources for the document type before writing. The document should be self-sufficient — a reader understands the system without reading source code. Remove sections that cannot be populated rather than leaving filler. Write only what the sources confirm; a statement you cannot confirm is left out or flagged in `## Notes`.
 
-   | Document type      | Read first                                                                                  |
-   | ------------------ | ------------------------------------------------------------------------------------------- |
-   | README             | Entry points, build/run/test commands in manifests or task files, top-level config, license |
-   | Tutorial / How-to  | The commands, scripts, and config the steps use; existing tests that exercise the same path |
-   | Reference          | Public interfaces: CLI flags, config schemas, API signatures, environment variables         |
-   | Explanation / spec | Module structure, design records or ADRs, and the code paths that implement the topic       |
-   | Improving a doc    | The existing file in full, plus the sources above for its type, to correct stale content    |
+   | Document type      | Read first                                                                                                    |
+   | ------------------ | ------------------------------------------------------------------------------------------------------------- |
+   | README             | Entry points, build/run/test commands in manifests or task files, top-level config, license                   |
+   | Tutorial / How-to  | The commands, scripts, and config the steps use; existing tests that exercise the same path                   |
+   | Reference          | Public interfaces: CLI flags, config schemas, API signatures, environment variables                           |
+   | Explanation / spec | Module structure, design records or ADRs, and the code paths that implement the topic                         |
+   | Improving a doc    | The existing file in full, plus the sources above for its type, to verify and correct the statements it keeps |
 
 5. **Write or update**:
 
@@ -78,7 +79,7 @@ Return structured report per [references/common-output-format.md](references/com
 
 8. **Update README markers** (`<!-- docs-index-start/end -->`) if present.
 
-9. **Self-check** every created or updated file against QV-01..QV-05 in [common-checklist.md](references/common-checklist.md). Fix failures before reporting; list any that remain in `## Notes` with the ItemID.
+9. **Self-check** every created or updated file against QV-01..QV-06 in [common-checklist.md](references/common-checklist.md). Fix failures before reporting; list any that remain in `## Notes` with the ItemID.
 
 10. Return the report.
 

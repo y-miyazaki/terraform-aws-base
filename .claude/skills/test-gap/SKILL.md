@@ -8,6 +8,7 @@ description: >-
   supplies detect JSON (hotspots, ledger). Interactive default is survey only;
   edit test files when the request asks for changes to be made (for example
   fix, apply, or update) or automation sets agent_edit_allowed in Constraints.
+argument-hint: "<target path> [survey|apply]"
 license: Apache-2.0
 metadata:
   author: y-miyazaki

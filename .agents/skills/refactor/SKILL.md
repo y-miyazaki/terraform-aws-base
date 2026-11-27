@@ -8,6 +8,7 @@ description: >-
   request asks for changes to be made (for example fix, apply, or update) or
   automation sets agent_edit_allowed in Constraints. Not for lint-only style,
   features, behavior-changing bugfixes, or upgrades.
+argument-hint: "<paths or symbols> [survey|apply]"
 license: Apache-2.0
 metadata:
   author: y-miyazaki

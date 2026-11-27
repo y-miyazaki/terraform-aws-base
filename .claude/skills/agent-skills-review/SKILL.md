@@ -4,6 +4,7 @@ description: >-
   Review SKILL.md quality for Waza readiness and agent-skills-instructions compliance.
   Use when evaluating SKILL.md quality, checking compliance with skill authoring standards,
   preparing skills for release, reviewing skill PRs, or running waza readiness checks.
+argument-hint: "<skill name or SKILL.md path> [sibling skills]"
 license: Apache-2.0
 metadata:
   author: y-miyazaki

@@ -1,20 +1,22 @@
 ---
 name: docs-updater
 description: >-
-  Detect documentation drift and patch affected docs (candidate survey, git
-  hook, range cursor, or detect JSON). Use in conversation when the user asks
-  to sync or update docs after code changes. Also the loop entry skill for
+  Detect documentation drift and patch affected docs, including statements
+  that no longer match the code (candidate survey, git hook, range cursor, or
+  detect JSON). Use in conversation when the user asks to sync or update docs
+  after code changes. Also the loop entry skill for
   documentation drift automation. Interactive default is survey only; edit
   docs when the request asks for changes to be made (for example fix, apply,
   or update) or automation sets agent_edit_allowed in Constraints. Not for new
   document creation or markdown linting.
+argument-hint: "[all|staged|range <ref>] [path or globs] [survey|apply]"
 license: Apache-2.0
 metadata:
   author: y-miyazaki
-  version: "3.4.3"
+  version: "3.5.0"
 ---
 
-**UTILITY SKILL** — automated diff-sync and drift repair, not content authoring.
+**UTILITY SKILL** — automated diff-sync and drift repair: the code is the source of truth and the docs follow it. Not content authoring.
 
 ## Input
 
@@ -35,11 +37,12 @@ Target: candidate documentation per [common-impact-map.md](references/common-imp
 
 - Survey candidate documentation for drift and sync opportunities (Interactive `all`); update cross-references, tables, lists, and nav entries for changed paths
 - Remove dead links; update paths for renames
+- Verify each statement, table row, example, and command that a change touches against the current source (UV-07), and correct the ones that are wrong at sentence or row level; search for orphaned old names afterward (UV-08)
 - Apply minimal documentation patches per [common-checklist.md](references/common-checklist.md) and [category-documentation-maintenance.md](references/category-documentation-maintenance.md)
 
 ### DO NOT USE FOR:
 
-- New document creation or content improvement
+- New document creation, new sections, explanations of new behavior, or content improvement — report these as handed off to a documentation authoring workflow (for example docs-creator)
 - Non-documentation file edits
 - Markdown linting
 - Run detection scripts for other skills or manage caller state
@@ -78,9 +81,9 @@ When `agent_edit_allowed` is `true`, resolve `agent_edit_target`: on the **inter
 
 1. Resolve scope ([category-scope.md](references/category-scope.md)). Parse detect JSON when present; otherwise resolve the detect universe from the prompt ([category-detect-scope.md](references/category-detect-scope.md)), run this skill's optional detect script with the resolved `--scope` (default `all` for Interactive free-form; `staged` for git hook; `range` when the user named a SHA range), then Agent-complement beyond mechanical output; if tools for detect are unavailable, gather changed paths from git and the user request instead of silent no-op. On detect script non-zero exit, read stdout and stop.
 2. IF detect reports `skip` OR no documentation impact after gathering → emit survey no-op per [common-output-format.md](references/common-output-format.md) (Overview explains no-op); on automation path append `## Session Metrics` per [category-automation-envelope.md](references/category-automation-envelope.md); stop.
-3. Triage affected docs per [common-impact-map.md](references/common-impact-map.md); grep before full read.
+3. Triage affected docs per [common-impact-map.md](references/common-impact-map.md): resolve the baseline, build the symbol map, grep before full read, then compare each touched statement with its source and delegate the reading when the map is large. Record `doc:line → source:line → verdict` (UV-07).
 4. IF `agent_edit_allowed` is `false` OR `agent_edit_target` is not `fix` → emit survey shape per [common-output-format.md](references/common-output-format.md); on automation path append `## Session Metrics` per [category-automation-envelope.md](references/category-automation-envelope.md); stop — do not edit documentation files or run `git add`.
-5. ELSE → apply minimal patches per [common-checklist.md](references/common-checklist.md); when the repository maintains a generated documentation index and documentation files were created/deleted/renamed, regenerate it per UV-05; stage with `git add`; emit apply shape per [common-output-format.md](references/common-output-format.md); on automation path append `## Session Metrics` per [category-automation-envelope.md](references/category-automation-envelope.md).
+5. ELSE → apply minimal patches per [common-checklist.md](references/common-checklist.md), check deletions and renames by intent (UV-09), then run the orphan search (UV-08); when the repository maintains a generated documentation index and documentation files were created/deleted/renamed, update its entries per UV-05; stage with `git add`; emit apply shape per [common-output-format.md](references/common-output-format.md); on automation path append `## Session Metrics` per [category-automation-envelope.md](references/category-automation-envelope.md).
 
 ### Automation path
 
@@ -94,7 +97,8 @@ When detect JSON and `## Constraints` are present: follow [category-automation-e
 | No git repository                                                   | Fatal       | Stop                                                                                          |
 | Empty diff / no documentation impact                                | Info        | Emit survey no-op (Overview explains no-op); stop                                             |
 | Affected doc file missing                                           | Recoverable | Skip file; note in report                                                                     |
-| Exceeds scope (>3 H2, new top-level document, etc.)                 | Recoverable | Stop for file; note out of scope for new top-level authoring                                  |
+| Exceeds scope (>3 H2, new top-level document, new section needed)   | Recoverable | Stop for file; report handed off to a documentation authoring workflow                        |
+| Statement cannot be verified against a source                       | Recoverable | Do not patch; list under Watch                                                                |
 | `mkdocs.yml` missing                                                | Recoverable | Skip nav update                                                                               |
 | Edit requested but `## Constraints` set `agent_edit_allowed: false` | Info        | Survey only; note that the caller Constraints disallow edits                                  |
 | Automation `agent_edit_target` mismatch                             | Recoverable | Survey only per [category-automation-envelope.md](references/category-automation-envelope.md) |

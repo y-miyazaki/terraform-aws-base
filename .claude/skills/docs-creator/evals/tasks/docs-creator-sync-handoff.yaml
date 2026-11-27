@@ -1,0 +1,23 @@
+id: docs-creator-sync-handoff-001
+name: docs-creator hands off code-driven sync
+description: Validate that a pure code-follow correction is handed off to a docs sync workflow.
+tags:
+  - quality
+  - trigger-negative
+  - boundary-guardrail
+inputs:
+  prompt: >-
+    Use docs-creator. The user asks only to update the paths in docs/guide/usage.md
+    because src/auth was renamed to src/identity. This is syncing docs after a code
+    change, which is out of scope for this skill. Do not edit files. Return ## Summary
+    with 'Status: blocked' and explain in ## Notes that it is out of scope and handed
+    off to a docs sync workflow such as docs-updater.
+  context:
+    target: docs/guide/usage.md
+expected:
+  output_contains:
+    - out of scope
+    - "Status: blocked"
+    - docs-updater
+  outcomes:
+    - type: task_completed

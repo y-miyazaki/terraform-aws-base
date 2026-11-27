@@ -6,6 +6,7 @@ Apply at synthesis when emitting Summary tables in automation PR bodies.
 
 - Link repository paths as `[path](https://github.com/{owner}/{repo}/blob/{branch}/{path})`.
 - Use the **current git branch** (fix branch with your edits), not the default branch.
+- When a table cell names a line, append `#L<line>` to the link target and show `path:line` as the link text.
 - Resolve `owner/repo` from `GITHUB_REPOSITORY` when set; otherwise parse `git remote get-url origin`.
 
 ## Template placeholders (skill assets)

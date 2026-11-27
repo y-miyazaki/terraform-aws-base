@@ -8,6 +8,7 @@ description: >-
   write agent_report_file and apply closed-set fixes when the request asks for
   changes to be made (for example fix, apply, or update) or automation sets
   agent_edit_allowed in Constraints. Do not apply structural refactors.
+argument-hint: "[paths or signals] [survey|apply]"
 license: Apache-2.0
 metadata:
   author: y-miyazaki

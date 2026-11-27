@@ -3,6 +3,7 @@ name: github-pr-body
 description: >-
   Update PR body content with deterministic baseline sections and optional full-body completion.
   Use after a PR exists to fill or regenerate its body from the repository PR template.
+argument-hint: "<PR number> [owner/repo]"
 license: Apache-2.0
 metadata:
   author: y-miyazaki

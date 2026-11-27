@@ -4,6 +4,7 @@ description: >-
   Review GitHub Actions workflows for correctness, security, and maintainability.
   Use when reviewing GitHub Actions workflow PRs, checking workflow security,
   evaluating CI/CD pipeline design, or assessing permissions and secret handling.
+argument-hint: "<workflow or action YAML paths> [PR]"
 license: Apache-2.0
 metadata:
   author: y-miyazaki

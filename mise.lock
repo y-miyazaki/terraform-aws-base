@@ -454,69 +454,69 @@ url = "https://awscli.amazonaws.com/AWSCLIV2-2.41.2.pkg"
 url = "https://awscli.amazonaws.com/AWSCLIV2-2.41.2.pkg"
 
 [[tools."aqua:aws/aws-sam-cli"]]
-version = "1.173.0"
+version = "1.174.0"
 backend = "aqua:aws/aws-sam-cli"
 
 [tools."aqua:aws/aws-sam-cli"."platforms.linux-arm64"]
-checksum = "sha256:b31858ecb3bdadeadca1ffb9e584896f9ff6ad61c1e5148ce94de07107fa8141"
-url = "https://github.com/aws/aws-sam-cli/releases/download/v1.173.0/aws-sam-cli-linux-arm64.zip"
-url_api = "https://api.github.com/repos/aws/aws-sam-cli/releases/assets/761707299"
+checksum = "sha256:65901c10e2260aaacbb2b9447c017bb5d82490f294247278c63c1a61412dc8ef"
+url = "https://github.com/aws/aws-sam-cli/releases/download/v1.174.0/aws-sam-cli-linux-arm64.zip"
+url_api = "https://api.github.com/repos/aws/aws-sam-cli/releases/assets/770430545"
 
 [tools."aqua:aws/aws-sam-cli"."platforms.linux-arm64-musl"]
-checksum = "sha256:b31858ecb3bdadeadca1ffb9e584896f9ff6ad61c1e5148ce94de07107fa8141"
-url = "https://github.com/aws/aws-sam-cli/releases/download/v1.173.0/aws-sam-cli-linux-arm64.zip"
-url_api = "https://api.github.com/repos/aws/aws-sam-cli/releases/assets/761707299"
+checksum = "sha256:65901c10e2260aaacbb2b9447c017bb5d82490f294247278c63c1a61412dc8ef"
+url = "https://github.com/aws/aws-sam-cli/releases/download/v1.174.0/aws-sam-cli-linux-arm64.zip"
+url_api = "https://api.github.com/repos/aws/aws-sam-cli/releases/assets/770430545"
 
 [tools."aqua:aws/aws-sam-cli"."platforms.linux-x64"]
-checksum = "sha256:5e64bdc173ac05e0fd1c53cce5241c7c80349c3a5968ddca0e63690205c622d3"
-url = "https://github.com/aws/aws-sam-cli/releases/download/v1.173.0/aws-sam-cli-linux-x86_64.zip"
-url_api = "https://api.github.com/repos/aws/aws-sam-cli/releases/assets/761707029"
+checksum = "sha256:6e0ca662e65460e0e5267eab9b07457f6d46fe04f93089973c0f81710bfa084b"
+url = "https://github.com/aws/aws-sam-cli/releases/download/v1.174.0/aws-sam-cli-linux-x86_64.zip"
+url_api = "https://api.github.com/repos/aws/aws-sam-cli/releases/assets/770430353"
 
 [tools."aqua:aws/aws-sam-cli"."platforms.linux-x64-musl"]
-checksum = "sha256:5e64bdc173ac05e0fd1c53cce5241c7c80349c3a5968ddca0e63690205c622d3"
-url = "https://github.com/aws/aws-sam-cli/releases/download/v1.173.0/aws-sam-cli-linux-x86_64.zip"
-url_api = "https://api.github.com/repos/aws/aws-sam-cli/releases/assets/761707029"
+checksum = "sha256:6e0ca662e65460e0e5267eab9b07457f6d46fe04f93089973c0f81710bfa084b"
+url = "https://github.com/aws/aws-sam-cli/releases/download/v1.174.0/aws-sam-cli-linux-x86_64.zip"
+url_api = "https://api.github.com/repos/aws/aws-sam-cli/releases/assets/770430353"
 
 [tools."aqua:aws/aws-sam-cli"."platforms.macos-arm64"]
-checksum = "sha256:b95122bd5e03b05be2be754314009862217ad5622f7f13e2529937be7f8fbdc2"
-url = "https://github.com/aws/aws-sam-cli/releases/download/v1.173.0/aws-sam-cli-macos-arm64.pkg"
-url_api = "https://api.github.com/repos/aws/aws-sam-cli/releases/assets/761706535"
+checksum = "sha256:b0f72fea4271ec0c649661464e6b92c2a764bcfaaccb8ecef8a0aaf97b472308"
+url = "https://github.com/aws/aws-sam-cli/releases/download/v1.174.0/aws-sam-cli-macos-arm64.pkg"
+url_api = "https://api.github.com/repos/aws/aws-sam-cli/releases/assets/770429977"
 
 [tools."aqua:aws/aws-sam-cli"."platforms.macos-x64"]
-checksum = "sha256:9491bf7e340e62ad83df3fcab6d4a9efd88e35973fc602d7c795a290ebfcdd9f"
-url = "https://github.com/aws/aws-sam-cli/releases/download/v1.173.0/aws-sam-cli-macos-x86_64.pkg"
-url_api = "https://api.github.com/repos/aws/aws-sam-cli/releases/assets/761706294"
+checksum = "sha256:588154dc086477bdaff3d6754dbbe1b0dd7ebf305d24bbbdc852255d52f665b9"
+url = "https://github.com/aws/aws-sam-cli/releases/download/v1.174.0/aws-sam-cli-macos-x86_64.pkg"
+url_api = "https://api.github.com/repos/aws/aws-sam-cli/releases/assets/770430716"
 
 [[tools."aqua:aws/aws-sam-cli"]]
-version = "1.173.0"
+version = "1.174.0"
 backend = "aqua:aws/aws-sam-cli"
 
 [tools."aqua:aws/aws-sam-cli".options]
 "vars.lazy" = "true"
 
 [tools."aqua:aws/aws-sam-cli"."platforms.linux-arm64"]
-checksum = "sha256:b31858ecb3bdadeadca1ffb9e584896f9ff6ad61c1e5148ce94de07107fa8141"
-url = "https://github.com/aws/aws-sam-cli/releases/download/v1.173.0/aws-sam-cli-linux-arm64.zip"
+checksum = "sha256:65901c10e2260aaacbb2b9447c017bb5d82490f294247278c63c1a61412dc8ef"
+url = "https://github.com/aws/aws-sam-cli/releases/download/v1.174.0/aws-sam-cli-linux-arm64.zip"
 
 [tools."aqua:aws/aws-sam-cli"."platforms.linux-arm64-musl"]
-checksum = "sha256:b31858ecb3bdadeadca1ffb9e584896f9ff6ad61c1e5148ce94de07107fa8141"
-url = "https://github.com/aws/aws-sam-cli/releases/download/v1.173.0/aws-sam-cli-linux-arm64.zip"
+checksum = "sha256:65901c10e2260aaacbb2b9447c017bb5d82490f294247278c63c1a61412dc8ef"
+url = "https://github.com/aws/aws-sam-cli/releases/download/v1.174.0/aws-sam-cli-linux-arm64.zip"
 
 [tools."aqua:aws/aws-sam-cli"."platforms.linux-x64"]
-checksum = "sha256:5e64bdc173ac05e0fd1c53cce5241c7c80349c3a5968ddca0e63690205c622d3"
-url = "https://github.com/aws/aws-sam-cli/releases/download/v1.173.0/aws-sam-cli-linux-x86_64.zip"
+checksum = "sha256:6e0ca662e65460e0e5267eab9b07457f6d46fe04f93089973c0f81710bfa084b"
+url = "https://github.com/aws/aws-sam-cli/releases/download/v1.174.0/aws-sam-cli-linux-x86_64.zip"
 
 [tools."aqua:aws/aws-sam-cli"."platforms.linux-x64-musl"]
-checksum = "sha256:5e64bdc173ac05e0fd1c53cce5241c7c80349c3a5968ddca0e63690205c622d3"
-url = "https://github.com/aws/aws-sam-cli/releases/download/v1.173.0/aws-sam-cli-linux-x86_64.zip"
+checksum = "sha256:6e0ca662e65460e0e5267eab9b07457f6d46fe04f93089973c0f81710bfa084b"
+url = "https://github.com/aws/aws-sam-cli/releases/download/v1.174.0/aws-sam-cli-linux-x86_64.zip"
 
 [tools."aqua:aws/aws-sam-cli"."platforms.macos-arm64"]
-checksum = "sha256:b95122bd5e03b05be2be754314009862217ad5622f7f13e2529937be7f8fbdc2"
-url = "https://github.com/aws/aws-sam-cli/releases/download/v1.173.0/aws-sam-cli-macos-arm64.pkg"
+checksum = "sha256:b0f72fea4271ec0c649661464e6b92c2a764bcfaaccb8ecef8a0aaf97b472308"
+url = "https://github.com/aws/aws-sam-cli/releases/download/v1.174.0/aws-sam-cli-macos-arm64.pkg"
 
 [tools."aqua:aws/aws-sam-cli"."platforms.macos-x64"]
-checksum = "sha256:9491bf7e340e62ad83df3fcab6d4a9efd88e35973fc602d7c795a290ebfcdd9f"
-url = "https://github.com/aws/aws-sam-cli/releases/download/v1.173.0/aws-sam-cli-macos-x86_64.pkg"
+checksum = "sha256:588154dc086477bdaff3d6754dbbe1b0dd7ebf305d24bbbdc852255d52f665b9"
+url = "https://github.com/aws/aws-sam-cli/releases/download/v1.174.0/aws-sam-cli-macos-x86_64.pkg"
 
 [[tools."aqua:bats-core/bats-core"]]
 version = "1.14.0"
@@ -1004,78 +1004,78 @@ checksum = "sha256:d29144deff3a68aa93ced33dddf84b7fdc26070add4aa0f4513094c8332af
 url = "https://github.com/gitleaks/gitleaks/releases/download/v8.30.1/gitleaks_8.30.1_windows_x64.zip"
 
 [[tools."aqua:go-swagger/go-swagger"]]
-version = "0.36.7"
+version = "0.36.8"
 backend = "aqua:go-swagger/go-swagger"
 
 [tools."aqua:go-swagger/go-swagger"."platforms.linux-arm64"]
-checksum = "sha256:f842ecdef842c716cc48f2c9b435da921855e96a98d4107f056279abc7f1b1e6"
-url = "https://github.com/go-swagger/go-swagger/releases/download/v0.36.7/swagger_0.36.7_Linux_arm64.tar.gz"
-url_api = "https://api.github.com/repos/go-swagger/go-swagger/releases/assets/696050695"
+checksum = "sha256:6840162de96d40aeb0ed6f4f3ed32e18d23be44619dbb8868896ee6990df4e0c"
+url = "https://github.com/go-swagger/go-swagger/releases/download/v0.36.8/swagger_0.36.8_Linux_arm64.tar.gz"
+url_api = "https://api.github.com/repos/go-swagger/go-swagger/releases/assets/771148613"
 
 [tools."aqua:go-swagger/go-swagger"."platforms.linux-arm64-musl"]
-checksum = "sha256:f842ecdef842c716cc48f2c9b435da921855e96a98d4107f056279abc7f1b1e6"
-url = "https://github.com/go-swagger/go-swagger/releases/download/v0.36.7/swagger_0.36.7_Linux_arm64.tar.gz"
-url_api = "https://api.github.com/repos/go-swagger/go-swagger/releases/assets/696050695"
+checksum = "sha256:6840162de96d40aeb0ed6f4f3ed32e18d23be44619dbb8868896ee6990df4e0c"
+url = "https://github.com/go-swagger/go-swagger/releases/download/v0.36.8/swagger_0.36.8_Linux_arm64.tar.gz"
+url_api = "https://api.github.com/repos/go-swagger/go-swagger/releases/assets/771148613"
 
 [tools."aqua:go-swagger/go-swagger"."platforms.linux-x64"]
-checksum = "sha256:7d3704481cd8b82c1738550ae19a86cb59f9446ac5a2ec535b63d6120c85798c"
-url = "https://github.com/go-swagger/go-swagger/releases/download/v0.36.7/swagger_0.36.7_Linux_x86_64.tar.gz"
-url_api = "https://api.github.com/repos/go-swagger/go-swagger/releases/assets/696050691"
+checksum = "sha256:dad0dbc3eb53d01abeca6055270be4ceac23e92bb38d7be4d0cbf14f156c7df0"
+url = "https://github.com/go-swagger/go-swagger/releases/download/v0.36.8/swagger_0.36.8_Linux_x86_64.tar.gz"
+url_api = "https://api.github.com/repos/go-swagger/go-swagger/releases/assets/771148599"
 
 [tools."aqua:go-swagger/go-swagger"."platforms.linux-x64-musl"]
-checksum = "sha256:7d3704481cd8b82c1738550ae19a86cb59f9446ac5a2ec535b63d6120c85798c"
-url = "https://github.com/go-swagger/go-swagger/releases/download/v0.36.7/swagger_0.36.7_Linux_x86_64.tar.gz"
-url_api = "https://api.github.com/repos/go-swagger/go-swagger/releases/assets/696050691"
+checksum = "sha256:dad0dbc3eb53d01abeca6055270be4ceac23e92bb38d7be4d0cbf14f156c7df0"
+url = "https://github.com/go-swagger/go-swagger/releases/download/v0.36.8/swagger_0.36.8_Linux_x86_64.tar.gz"
+url_api = "https://api.github.com/repos/go-swagger/go-swagger/releases/assets/771148599"
 
 [tools."aqua:go-swagger/go-swagger"."platforms.macos-arm64"]
-checksum = "sha256:a5f55b6cc7a7431979a75a827e1c9f2578f71ca34a652b187f52ca697079e244"
-url = "https://github.com/go-swagger/go-swagger/releases/download/v0.36.7/swagger_0.36.7_Darwin_arm64.tar.gz"
-url_api = "https://api.github.com/repos/go-swagger/go-swagger/releases/assets/696050832"
+checksum = "sha256:61b1155c3f0a13b91fe0f07d634222c2bc265d51e3a546eca40726e55b9fb41d"
+url = "https://github.com/go-swagger/go-swagger/releases/download/v0.36.8/swagger_0.36.8_Darwin_arm64.tar.gz"
+url_api = "https://api.github.com/repos/go-swagger/go-swagger/releases/assets/771148849"
 
 [tools."aqua:go-swagger/go-swagger"."platforms.macos-x64"]
-checksum = "sha256:425cf7f7408da78f5e37e7f794af9bda85dd781aa53bdce348adfa6294db598b"
-url = "https://github.com/go-swagger/go-swagger/releases/download/v0.36.7/swagger_0.36.7_Darwin_x86_64.tar.gz"
-url_api = "https://api.github.com/repos/go-swagger/go-swagger/releases/assets/696050867"
+checksum = "sha256:d1dee43fa60c35777fd82eda0cc7656f38520a5aaafccfc03c22fbcc504f39eb"
+url = "https://github.com/go-swagger/go-swagger/releases/download/v0.36.8/swagger_0.36.8_Darwin_x86_64.tar.gz"
+url_api = "https://api.github.com/repos/go-swagger/go-swagger/releases/assets/771148874"
 
 [tools."aqua:go-swagger/go-swagger"."platforms.windows-x64"]
-checksum = "sha256:f45679e1264bbede1d0b421ab8b7ac9bd84b58b610d84f8070addcfabe498f4d"
-url = "https://github.com/go-swagger/go-swagger/releases/download/v0.36.7/swagger_0.36.7_Windows_x86_64.zip"
-url_api = "https://api.github.com/repos/go-swagger/go-swagger/releases/assets/696050693"
+checksum = "sha256:3dcbb78d92100b8d460cd60b89ee97df5c3d0d03bf4509b5228165cdfa7a4f48"
+url = "https://github.com/go-swagger/go-swagger/releases/download/v0.36.8/swagger_0.36.8_Windows_x86_64.zip"
+url_api = "https://api.github.com/repos/go-swagger/go-swagger/releases/assets/771148612"
 
 [[tools."aqua:go-swagger/go-swagger"]]
-version = "0.36.7"
+version = "0.36.8"
 backend = "aqua:go-swagger/go-swagger"
 
 [tools."aqua:go-swagger/go-swagger".options]
 "vars.lazy" = "true"
 
 [tools."aqua:go-swagger/go-swagger"."platforms.linux-arm64"]
-checksum = "sha256:f842ecdef842c716cc48f2c9b435da921855e96a98d4107f056279abc7f1b1e6"
-url = "https://github.com/go-swagger/go-swagger/releases/download/v0.36.7/swagger_0.36.7_Linux_arm64.tar.gz"
+checksum = "sha256:6840162de96d40aeb0ed6f4f3ed32e18d23be44619dbb8868896ee6990df4e0c"
+url = "https://github.com/go-swagger/go-swagger/releases/download/v0.36.8/swagger_0.36.8_Linux_arm64.tar.gz"
 
 [tools."aqua:go-swagger/go-swagger"."platforms.linux-arm64-musl"]
-checksum = "sha256:f842ecdef842c716cc48f2c9b435da921855e96a98d4107f056279abc7f1b1e6"
-url = "https://github.com/go-swagger/go-swagger/releases/download/v0.36.7/swagger_0.36.7_Linux_arm64.tar.gz"
+checksum = "sha256:6840162de96d40aeb0ed6f4f3ed32e18d23be44619dbb8868896ee6990df4e0c"
+url = "https://github.com/go-swagger/go-swagger/releases/download/v0.36.8/swagger_0.36.8_Linux_arm64.tar.gz"
 
 [tools."aqua:go-swagger/go-swagger"."platforms.linux-x64"]
-checksum = "sha256:7d3704481cd8b82c1738550ae19a86cb59f9446ac5a2ec535b63d6120c85798c"
-url = "https://github.com/go-swagger/go-swagger/releases/download/v0.36.7/swagger_0.36.7_Linux_x86_64.tar.gz"
+checksum = "sha256:dad0dbc3eb53d01abeca6055270be4ceac23e92bb38d7be4d0cbf14f156c7df0"
+url = "https://github.com/go-swagger/go-swagger/releases/download/v0.36.8/swagger_0.36.8_Linux_x86_64.tar.gz"
 
 [tools."aqua:go-swagger/go-swagger"."platforms.linux-x64-musl"]
-checksum = "sha256:7d3704481cd8b82c1738550ae19a86cb59f9446ac5a2ec535b63d6120c85798c"
-url = "https://github.com/go-swagger/go-swagger/releases/download/v0.36.7/swagger_0.36.7_Linux_x86_64.tar.gz"
+checksum = "sha256:dad0dbc3eb53d01abeca6055270be4ceac23e92bb38d7be4d0cbf14f156c7df0"
+url = "https://github.com/go-swagger/go-swagger/releases/download/v0.36.8/swagger_0.36.8_Linux_x86_64.tar.gz"
 
 [tools."aqua:go-swagger/go-swagger"."platforms.macos-arm64"]
-checksum = "sha256:a5f55b6cc7a7431979a75a827e1c9f2578f71ca34a652b187f52ca697079e244"
-url = "https://github.com/go-swagger/go-swagger/releases/download/v0.36.7/swagger_0.36.7_Darwin_arm64.tar.gz"
+checksum = "sha256:61b1155c3f0a13b91fe0f07d634222c2bc265d51e3a546eca40726e55b9fb41d"
+url = "https://github.com/go-swagger/go-swagger/releases/download/v0.36.8/swagger_0.36.8_Darwin_arm64.tar.gz"
 
 [tools."aqua:go-swagger/go-swagger"."platforms.macos-x64"]
-checksum = "sha256:425cf7f7408da78f5e37e7f794af9bda85dd781aa53bdce348adfa6294db598b"
-url = "https://github.com/go-swagger/go-swagger/releases/download/v0.36.7/swagger_0.36.7_Darwin_x86_64.tar.gz"
+checksum = "sha256:d1dee43fa60c35777fd82eda0cc7656f38520a5aaafccfc03c22fbcc504f39eb"
+url = "https://github.com/go-swagger/go-swagger/releases/download/v0.36.8/swagger_0.36.8_Darwin_x86_64.tar.gz"
 
 [tools."aqua:go-swagger/go-swagger"."platforms.windows-x64"]
-checksum = "sha256:f45679e1264bbede1d0b421ab8b7ac9bd84b58b610d84f8070addcfabe498f4d"
-url = "https://github.com/go-swagger/go-swagger/releases/download/v0.36.7/swagger_0.36.7_Windows_x86_64.zip"
+checksum = "sha256:3dcbb78d92100b8d460cd60b89ee97df5c3d0d03bf4509b5228165cdfa7a4f48"
+url = "https://github.com/go-swagger/go-swagger/releases/download/v0.36.8/swagger_0.36.8_Windows_x86_64.zip"
 
 [[tools."aqua:golangci/golangci-lint"]]
 version = "2.15.0"
@@ -1240,91 +1240,91 @@ checksum = "sha256:277b83ddbe836a627dcde0655720aa42b02277fdf3a9cdaebeef2a53e9859
 url = "https://github.com/google/go-jsonnet/releases/download/v0.22.0/go-jsonnet_0.22.0_windows_amd64.tar.gz"
 
 [[tools."aqua:goreleaser/goreleaser"]]
-version = "2.20.2"
+version = "2.20.3"
 backend = "aqua:goreleaser/goreleaser"
 
 [tools."aqua:goreleaser/goreleaser"."platforms.linux-arm64"]
-checksum = "sha256:f0fa989c3531348e8f975aac647eb187a09046f8a34c54e0b79bed66c84b7f96"
-url = "https://github.com/goreleaser/goreleaser/releases/download/v2.20.2/goreleaser_Linux_arm64.tar.gz"
-url_api = "https://api.github.com/repos/goreleaser/goreleaser/releases/assets/739708744"
+checksum = "sha256:cfce0afc7bcc14447df211cc10c0012cfc395646070bcf23e840b16cbce6d204"
+url = "https://github.com/goreleaser/goreleaser/releases/download/v2.20.3/goreleaser_Linux_arm64.tar.gz"
+url_api = "https://api.github.com/repos/goreleaser/goreleaser/releases/assets/770449451"
 provenance = "github-attestations"
 
 [tools."aqua:goreleaser/goreleaser"."platforms.linux-arm64-musl"]
-checksum = "sha256:f0fa989c3531348e8f975aac647eb187a09046f8a34c54e0b79bed66c84b7f96"
-url = "https://github.com/goreleaser/goreleaser/releases/download/v2.20.2/goreleaser_Linux_arm64.tar.gz"
-url_api = "https://api.github.com/repos/goreleaser/goreleaser/releases/assets/739708744"
+checksum = "sha256:cfce0afc7bcc14447df211cc10c0012cfc395646070bcf23e840b16cbce6d204"
+url = "https://github.com/goreleaser/goreleaser/releases/download/v2.20.3/goreleaser_Linux_arm64.tar.gz"
+url_api = "https://api.github.com/repos/goreleaser/goreleaser/releases/assets/770449451"
 provenance = "github-attestations"
 
 [tools."aqua:goreleaser/goreleaser"."platforms.linux-x64"]
-checksum = "sha256:f3d24969a7389a46613875711d15a96d8f6ef1553d84c6ace09d69ac1e7d44c0"
-url = "https://github.com/goreleaser/goreleaser/releases/download/v2.20.2/goreleaser_Linux_x86_64.tar.gz"
-url_api = "https://api.github.com/repos/goreleaser/goreleaser/releases/assets/739708556"
+checksum = "sha256:a36d5d7d07a5e538e052cef2a9f93f1cd4af493cf5a3712b9177c1ebe360f0e7"
+url = "https://github.com/goreleaser/goreleaser/releases/download/v2.20.3/goreleaser_Linux_x86_64.tar.gz"
+url_api = "https://api.github.com/repos/goreleaser/goreleaser/releases/assets/770449622"
 provenance = "github-attestations"
 
 [tools."aqua:goreleaser/goreleaser"."platforms.linux-x64-musl"]
-checksum = "sha256:f3d24969a7389a46613875711d15a96d8f6ef1553d84c6ace09d69ac1e7d44c0"
-url = "https://github.com/goreleaser/goreleaser/releases/download/v2.20.2/goreleaser_Linux_x86_64.tar.gz"
-url_api = "https://api.github.com/repos/goreleaser/goreleaser/releases/assets/739708556"
+checksum = "sha256:a36d5d7d07a5e538e052cef2a9f93f1cd4af493cf5a3712b9177c1ebe360f0e7"
+url = "https://github.com/goreleaser/goreleaser/releases/download/v2.20.3/goreleaser_Linux_x86_64.tar.gz"
+url_api = "https://api.github.com/repos/goreleaser/goreleaser/releases/assets/770449622"
 provenance = "github-attestations"
 
 [tools."aqua:goreleaser/goreleaser"."platforms.macos-arm64"]
-checksum = "sha256:cfe608963d9b00656da24bf356c0a067e2e92ce99710be4ac19e418a3a695ec3"
-url = "https://github.com/goreleaser/goreleaser/releases/download/v2.20.2/goreleaser_Darwin_all.tar.gz"
-url_api = "https://api.github.com/repos/goreleaser/goreleaser/releases/assets/739708845"
+checksum = "sha256:e2c896685fcdb3ec255ce30e86ab073d56f3c02eb539061e749e98d9be1fc2b6"
+url = "https://github.com/goreleaser/goreleaser/releases/download/v2.20.3/goreleaser_Darwin_all.tar.gz"
+url_api = "https://api.github.com/repos/goreleaser/goreleaser/releases/assets/770449537"
 provenance = "github-attestations"
 
 [tools."aqua:goreleaser/goreleaser"."platforms.macos-x64"]
-checksum = "sha256:cfe608963d9b00656da24bf356c0a067e2e92ce99710be4ac19e418a3a695ec3"
-url = "https://github.com/goreleaser/goreleaser/releases/download/v2.20.2/goreleaser_Darwin_all.tar.gz"
-url_api = "https://api.github.com/repos/goreleaser/goreleaser/releases/assets/739708845"
+checksum = "sha256:e2c896685fcdb3ec255ce30e86ab073d56f3c02eb539061e749e98d9be1fc2b6"
+url = "https://github.com/goreleaser/goreleaser/releases/download/v2.20.3/goreleaser_Darwin_all.tar.gz"
+url_api = "https://api.github.com/repos/goreleaser/goreleaser/releases/assets/770449537"
 provenance = "github-attestations"
 
 [tools."aqua:goreleaser/goreleaser"."platforms.windows-x64"]
-checksum = "sha256:d230d6def8b6059b277d472a2790501516b429ffe83b91469daad8b7736b8a5d"
-url = "https://github.com/goreleaser/goreleaser/releases/download/v2.20.2/goreleaser_Windows_x86_64.zip"
-url_api = "https://api.github.com/repos/goreleaser/goreleaser/releases/assets/739708670"
+checksum = "sha256:ef69177888fd7f4048a101f3cca8cc62a56b05b246201798fca5214304ba693d"
+url = "https://github.com/goreleaser/goreleaser/releases/download/v2.20.3/goreleaser_Windows_x86_64.zip"
+url_api = "https://api.github.com/repos/goreleaser/goreleaser/releases/assets/770449693"
 provenance = "github-attestations"
 
 [[tools."aqua:goreleaser/goreleaser"]]
-version = "2.20.2"
+version = "2.20.3"
 backend = "aqua:goreleaser/goreleaser"
 
 [tools."aqua:goreleaser/goreleaser".options]
 "vars.lazy" = "true"
 
 [tools."aqua:goreleaser/goreleaser"."platforms.linux-arm64"]
-checksum = "sha256:f0fa989c3531348e8f975aac647eb187a09046f8a34c54e0b79bed66c84b7f96"
-url = "https://github.com/goreleaser/goreleaser/releases/download/v2.20.2/goreleaser_Linux_arm64.tar.gz"
+checksum = "sha256:cfce0afc7bcc14447df211cc10c0012cfc395646070bcf23e840b16cbce6d204"
+url = "https://github.com/goreleaser/goreleaser/releases/download/v2.20.3/goreleaser_Linux_arm64.tar.gz"
 provenance = "github-attestations"
 
 [tools."aqua:goreleaser/goreleaser"."platforms.linux-arm64-musl"]
-checksum = "sha256:f0fa989c3531348e8f975aac647eb187a09046f8a34c54e0b79bed66c84b7f96"
-url = "https://github.com/goreleaser/goreleaser/releases/download/v2.20.2/goreleaser_Linux_arm64.tar.gz"
+checksum = "sha256:cfce0afc7bcc14447df211cc10c0012cfc395646070bcf23e840b16cbce6d204"
+url = "https://github.com/goreleaser/goreleaser/releases/download/v2.20.3/goreleaser_Linux_arm64.tar.gz"
 provenance = "github-attestations"
 
 [tools."aqua:goreleaser/goreleaser"."platforms.linux-x64"]
-checksum = "sha256:f3d24969a7389a46613875711d15a96d8f6ef1553d84c6ace09d69ac1e7d44c0"
-url = "https://github.com/goreleaser/goreleaser/releases/download/v2.20.2/goreleaser_Linux_x86_64.tar.gz"
+checksum = "sha256:a36d5d7d07a5e538e052cef2a9f93f1cd4af493cf5a3712b9177c1ebe360f0e7"
+url = "https://github.com/goreleaser/goreleaser/releases/download/v2.20.3/goreleaser_Linux_x86_64.tar.gz"
 provenance = "github-attestations"
 
 [tools."aqua:goreleaser/goreleaser"."platforms.linux-x64-musl"]
-checksum = "sha256:f3d24969a7389a46613875711d15a96d8f6ef1553d84c6ace09d69ac1e7d44c0"
-url = "https://github.com/goreleaser/goreleaser/releases/download/v2.20.2/goreleaser_Linux_x86_64.tar.gz"
+checksum = "sha256:a36d5d7d07a5e538e052cef2a9f93f1cd4af493cf5a3712b9177c1ebe360f0e7"
+url = "https://github.com/goreleaser/goreleaser/releases/download/v2.20.3/goreleaser_Linux_x86_64.tar.gz"
 provenance = "github-attestations"
 
 [tools."aqua:goreleaser/goreleaser"."platforms.macos-arm64"]
-checksum = "sha256:cfe608963d9b00656da24bf356c0a067e2e92ce99710be4ac19e418a3a695ec3"
-url = "https://github.com/goreleaser/goreleaser/releases/download/v2.20.2/goreleaser_Darwin_all.tar.gz"
+checksum = "sha256:e2c896685fcdb3ec255ce30e86ab073d56f3c02eb539061e749e98d9be1fc2b6"
+url = "https://github.com/goreleaser/goreleaser/releases/download/v2.20.3/goreleaser_Darwin_all.tar.gz"
 provenance = "github-attestations"
 
 [tools."aqua:goreleaser/goreleaser"."platforms.macos-x64"]
-checksum = "sha256:cfe608963d9b00656da24bf356c0a067e2e92ce99710be4ac19e418a3a695ec3"
-url = "https://github.com/goreleaser/goreleaser/releases/download/v2.20.2/goreleaser_Darwin_all.tar.gz"
+checksum = "sha256:e2c896685fcdb3ec255ce30e86ab073d56f3c02eb539061e749e98d9be1fc2b6"
+url = "https://github.com/goreleaser/goreleaser/releases/download/v2.20.3/goreleaser_Darwin_all.tar.gz"
 provenance = "github-attestations"
 
 [tools."aqua:goreleaser/goreleaser"."platforms.windows-x64"]
-checksum = "sha256:d230d6def8b6059b277d472a2790501516b429ffe83b91469daad8b7736b8a5d"
-url = "https://github.com/goreleaser/goreleaser/releases/download/v2.20.2/goreleaser_Windows_x86_64.zip"
+checksum = "sha256:ef69177888fd7f4048a101f3cca8cc62a56b05b246201798fca5214304ba693d"
+url = "https://github.com/goreleaser/goreleaser/releases/download/v2.20.3/goreleaser_Windows_x86_64.zip"
 provenance = "github-attestations"
 
 [[tools."aqua:grpc/grpc-go/protoc-gen-go-grpc"]]
@@ -3230,7 +3230,7 @@ version = "3.15.0"
 backend = "npm:markdown-link-check"
 
 [[tools."npm:markdownlint-cli2"]]
-version = "0.24.1"
+version = "0.24.2"
 backend = "npm:markdownlint-cli2"
 
 [[tools."npm:prettier"]]

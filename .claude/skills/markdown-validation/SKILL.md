@@ -3,6 +3,7 @@ name: markdown-validation
 description: >-
   Validate Markdown syntax, formatting, and links using markdownlint-cli2 and markdown-link-check.
   Use when committing docs changes, checking broken links, or validating Markdown in pull requests.
+argument-hint: "[file or directory]"
 license: Apache-2.0
 metadata:
   author: y-miyazaki

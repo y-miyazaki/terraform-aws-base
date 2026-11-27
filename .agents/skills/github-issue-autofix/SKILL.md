@@ -9,6 +9,7 @@ description: >-
   example fix, apply, or update) or automation sets agent_edit_allowed in
   Constraints. Detect skips when an open/draft PR already closes the Issue.
   Agent must not fire repository_dispatch.
+argument-hint: "<issue number or URL> [survey|apply]"
 license: Apache-2.0
 metadata:
   author: y-miyazaki

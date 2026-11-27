@@ -1,0 +1,24 @@
+id: docs-updater-handoff-new-section-001
+name: docs-updater hands off new-section work
+description: Validate that a change needing a new explanatory section is handed off instead of authored.
+tags:
+  - quality
+  - boundary-guardrail
+inputs:
+  prompt: >-
+    Use docs-updater. A commit added a new subcommand deploy to the CLI. Existing docs
+    only need a table row, but docs/guide/usage.md has no section explaining the new
+    workflow. Survey only; do not edit files. Emit ## Overview and ## Summary with
+    ### Candidates. For the missing explanation, state the approach as hand off to
+    docs-creator. Do not emit ### Changes.
+  context:
+    scope: range
+    affected_docs:
+      - docs/guide/usage.md
+expected:
+  output_contains:
+    - "### Candidates"
+    - docs-creator
+    - hand off
+  outcomes:
+    - type: task_completed

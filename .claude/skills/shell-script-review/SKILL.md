@@ -5,6 +5,7 @@ description: >-
   pairing (TEST-00) with emphasis on operational safety.
   Use when reviewing shell script PRs requiring judgment beyond static checks,
   including whether paired Bats suites were added or updated per TEST-00.
+argument-hint: "<shell script files or PR>"
 license: Apache-2.0
 metadata:
   author: y-miyazaki

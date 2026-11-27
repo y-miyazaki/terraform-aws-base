@@ -21,6 +21,7 @@ When natural units are files: enumerate eligible paths, then apply this skill's 
 3. Classify mechanical output.
 4. **Agent complement:** read targets; add in-scope candidates detect cannot see. User-supplied URL/path/symbol is primary evidence when present.
 5. Empty detect alone does not force no-op if complement found work.
+6. For `all`, the candidate list is the survey universe, and the symbol map and claim verification (UV-07) anchor on the baseline diff resolved per [common-impact-map.md](common-impact-map.md#baseline). Docs the baseline diff does not touch are still checked for dead references and index/nav drift; their prose claims are verified only when the user asks for a full content audit, and are otherwise listed under Watch.
 
 ## This skill (`docs-updater`)
 

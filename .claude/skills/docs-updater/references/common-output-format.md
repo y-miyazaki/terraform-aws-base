@@ -29,6 +29,9 @@ Interactive and hook runs use this structure. On the automation path, also follo
 
 - **MUST NOT** include `### Changes`, `### Deferred`, or `## Verification`
 - Zero candidates — Overview explains no-op; omit empty `### Candidates`
+- `Target` carries the doc path with the line number; `Evidence` names the source location the statement was compared with (UV-07)
+- Statements that could not be verified go under `### Watch`; a doc that needs a new section or new-behavior explanation is listed under `### Candidates` with the approach "hand off to a documentation authoring workflow (for example docs-creator)"
+- Overview states the resolved baseline when the run is change-driven
 
 ## Apply result (documentation files edited)
 
@@ -54,9 +57,9 @@ Interactive and hook runs use this structure. On the automation path, also follo
 
 ## Verification
 
-| Check                         | Result                 |
-| ----------------------------- | ---------------------- |
-| <markdown lint or link check> | <pass \| fail \| skip> |
+| Check                         | Result                            |
+| ----------------------------- | --------------------------------- |
+| <markdown lint or link check> | <pass \| fail \| skip \| blocked> |
 ```
 
 ### Apply rules
@@ -65,6 +68,10 @@ Interactive and hook runs use this structure. On the automation path, also follo
 - In **Changes**, list only files actually modified
 - **Deferred** paths MUST NOT appear in **Changes**
 - Reconcile `### Changes` with `git diff --name-only` before synthesis
+- `### Changes` `What was wrong` names the source location the fix was verified against (UV-07); `### Deferred` lists docs handed off to a documentation authoring workflow
+- Statements that could not be verified are listed under `### Deferred` with the reason "unverifiable" (the apply shape has no Watch)
+- `## Verification` includes one row for the orphan search (UV-08) and one for the claim check (UV-07), in addition to the lint or link check
+- Verification `Result`: `pass` = the check ran and passed; `fail` = it ran and failed; `skip` = not run here because the caller or request says so; `blocked` = could not run (tool or input missing). State the reason in the Check cell for `skip` and `blocked`.
 
 ## Overview (skill-specific)
 

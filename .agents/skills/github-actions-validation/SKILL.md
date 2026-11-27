@@ -4,6 +4,7 @@ description: >-
   Validate GitHub Actions workflows for syntax and security with ORD-01 map key order checks,
   actionlint, ghalint, and zizmor.
   Use when committing workflow changes, running CI validation, or checking workflow security issues.
+argument-hint: "[workflows directory] [--verbose|--quiet]"
 license: Apache-2.0
 metadata:
   author: y-miyazaki

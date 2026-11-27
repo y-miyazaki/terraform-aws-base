@@ -7,6 +7,7 @@ description: >-
   commit/release detect JSON. Interactive default is survey only; edit
   CHANGELOG.md when the request asks for changes to be made (for example fix,
   apply, or update) or automation sets agent_edit_allowed in Constraints.
+argument-hint: "[all|range <ref>] [survey|apply]"
 license: Apache-2.0
 metadata:
   author: y-miyazaki

@@ -3,6 +3,7 @@ name: terraform-validation
 description: >-
   Validate Terraform syntax, linting, and security with terraform fmt/validate, tflint, and trivy.
   Use when committing Terraform changes, running CI validation, or checking IaC security issues.
+argument-hint: "[path] [--fix] [--changed-only] [--check-order] [--generate-docs] [--verbose]"
 license: Apache-2.0
 metadata:
   author: y-miyazaki

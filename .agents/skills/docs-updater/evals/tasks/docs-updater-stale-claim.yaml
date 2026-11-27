@@ -1,0 +1,26 @@
+id: docs-updater-stale-claim-001
+name: docs-updater stale claim verified against source
+description: Validate a changed default is verified against source, patched at row level, and orphan-searched.
+tags:
+  - quality
+  - interactive
+inputs:
+  prompt: >-
+    Use docs-updater. The user asks to fix docs after a commit changed the default of
+    the --timeout flag in scripts/run.sh from 30 to 60. Resolve the baseline, build the
+    symbol map, compare docs/guide/usage.md line 12 with scripts/run.sh, and patch only
+    the wrong table row. Emit ## Overview and ## Summary with ### Changes naming the
+    source location checked, ### Deferred, and ## Verification with a claim check row
+    and an orphan search row.
+  context:
+    scope: range
+    affected_docs:
+      - docs/guide/usage.md
+expected:
+  output_contains:
+    - "### Changes"
+    - orphan search
+    - claim check
+    - "## Verification"
+  outcomes:
+    - type: task_completed

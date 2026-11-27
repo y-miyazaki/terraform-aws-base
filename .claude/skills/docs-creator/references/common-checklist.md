@@ -37,6 +37,13 @@
 - [ ] README markers updated if applicable
 - **PASS** if all auxiliary files are in sync
 
+### QV-06: Claims Verified and No Orphans
+
+- [ ] Every command, path, flag, value, and behavior written or kept was checked against the current source; documentation that is wrong is worse than documentation that is missing
+- [ ] When content was renamed, replaced, or removed, the old names were searched across the docs and no unintended occurrence remains
+- [ ] Statements that could not be verified are removed or listed in `## Notes`
+- **PASS** if every stated fact matches the source and no orphaned old name remains
+
 ## docs/index.md Generation Template
 
 When updating `docs/index.md` (it exists and follows this structure, or the user asked), use this structure:

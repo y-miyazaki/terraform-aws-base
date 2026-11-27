@@ -10,6 +10,7 @@ description: >-
   Findings need a verbatim rule or criteria
   quote from the base commit, or a concrete bug in the diff. Never posts,
   approves, or edits source files; do not use to fix a PR (github-pr-revise).
+argument-hint: "<PR number or URL> [survey|apply]"
 license: Apache-2.0
 metadata:
   author: y-miyazaki

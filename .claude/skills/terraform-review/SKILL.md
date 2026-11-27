@@ -3,6 +3,7 @@ name: terraform-review
 description: >-
   Review Terraform quality, security, and architecture decisions.
   Use when reviewing Terraform PRs requiring judgment beyond automated checks across modules and environments.
+argument-hint: "<.tf files or PR>"
 license: Apache-2.0
 metadata:
   author: y-miyazaki

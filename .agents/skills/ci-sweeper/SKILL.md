@@ -8,6 +8,7 @@ description: >-
   Interactive default is survey only; edit files when the request asks for
   changes to be made (for example fix, apply, or update) or automation sets
   agent_edit_allowed in Constraints.
+argument-hint: "<failure URL, job name, or log> [survey|apply]"
 license: Apache-2.0
 metadata:
   author: y-miyazaki

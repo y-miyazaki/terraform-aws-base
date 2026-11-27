@@ -6,6 +6,7 @@ description: >-
   to triage an Issue (URL or number) without opening a PR. Also the L1 loop
   entry skill for Issue events. Default is API side effects (labels/comments)
   in both modes; never edits repository files.
+argument-hint: "<issue number or URL>"
 license: Apache-2.0
 metadata:
   author: y-miyazaki

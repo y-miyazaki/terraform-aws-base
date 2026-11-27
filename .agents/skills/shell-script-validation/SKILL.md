@@ -4,6 +4,7 @@ description: >-
   Validate shell scripts with bash -n and shellcheck for syntax safety and maintainability checks.
   Does not enforce Bats suite pairing (TEST-00) — companion stem `bats` covers pairing rules.
   Use when committing script changes, running CI validation, or debugging shellcheck findings in PRs.
+argument-hint: "[path] [--tests PATH] [--skip-tests] [--check-function-docs]"
 license: Apache-2.0
 metadata:
   author: y-miyazaki
